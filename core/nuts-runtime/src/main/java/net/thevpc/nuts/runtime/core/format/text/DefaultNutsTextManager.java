@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.core.format.text;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.core.format.text.bloc.CustomStyleBlocTextFormatter;
+import net.thevpc.nuts.runtime.core.format.text.highlighters.CustomStyleCodeHighlighter;
 import net.thevpc.nuts.runtime.core.format.text.parser.*;
 import net.thevpc.nuts.runtime.core.util.CoreNumberUtils;
 import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
@@ -304,29 +304,29 @@ public class DefaultNutsTextManager implements NutsTextManager {
     }
 
     @Override
-    public NutsCodeFormat getCodeFormat(String kind) {
+    public NutsCodeHighlighter getCodeHighlighter(String kind) {
         checkSession();
-        return shared.getCodeFormat(kind, getSession());
+        return shared.getCodeHighlighter(kind, getSession());
     }
 
     @Override
-    public NutsTextManager addCodeFormat(NutsCodeFormat format) {
+    public NutsTextManager addCodeHighlighter(NutsCodeHighlighter format) {
         checkSession();
-        shared.addCodeFormat(format, getSession());
+        shared.addCodeHighlighter(format, getSession());
         return this;
     }
 
     @Override
-    public NutsTextManager removeCodeFormat(NutsCodeFormat format) {
+    public NutsTextManager removeCodeHighlighter(String id) {
         checkSession();
-        shared.removeCodeFormat(format, getSession());
+        shared.removeCodeHighlighter(id, getSession());
         return this;
     }
 
     @Override
-    public NutsCodeFormat[] getCodeFormats() {
+    public NutsCodeHighlighter[] getCodeHighlighters() {
         checkSession();
-        return shared.getCodeFormats(getSession());
+        return shared.getCodeHighlighters(getSession());
     }
 
     @Override
@@ -397,12 +397,12 @@ public class DefaultNutsTextManager implements NutsTextManager {
         return fg(image, 8);
     }
 
-    public NutsCodeFormat resolveBlocTextFormatter(String kind) {
+    public NutsCodeHighlighter resolveCodeHighlighter(String kind) {
         checkSession();
         if (kind == null) {
             kind = "";
         }
-        NutsCodeFormat format = getCodeFormat(kind);
+        NutsCodeHighlighter format = getCodeHighlighter(kind);
         if (format != null) {
             return format;
         }
@@ -417,16 +417,16 @@ public class DefaultNutsTextManager implements NutsTextManager {
                     NutsTextStyle found = NutsTextStyle.of(NutsTextStyleType.valueOf(expandAlias(kind.toUpperCase().substring(0, x))),
                             CoreNumberUtils.convertToInteger(kind.substring(x), 0)
                     );
-                    return new CustomStyleBlocTextFormatter(found, session);
+                    return new CustomStyleCodeHighlighter(found, session);
                 } else {
                     NutsTextStyle found = NutsTextStyle.of(NutsTextStyleType.valueOf(expandAlias(kind.toUpperCase())));
-                    return new CustomStyleBlocTextFormatter(found, session);
+                    return new CustomStyleCodeHighlighter(found, session);
                 }
             } catch (Exception ex) {
                 //ignore
             }
         }
-        return getCodeFormat("plain");
+        return getCodeHighlighter("plain");
     }
 
     private String expandAlias(String ss) {

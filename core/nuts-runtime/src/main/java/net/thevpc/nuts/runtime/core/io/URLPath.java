@@ -4,19 +4,19 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.NutsDefaultInputStreamMetadata;
 import net.thevpc.nuts.runtime.bundles.io.InputStreamMetadataAwareImpl;
 import net.thevpc.nuts.runtime.bundles.io.URLBuilder;
-import net.thevpc.nuts.runtime.core.format.DefaultFormatBase;
 import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
 import net.thevpc.nuts.spi.NutsFormatSPI;
 import net.thevpc.nuts.spi.NutsPathSPI;
 
 import java.io.*;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Instant;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Objects;
+import java.util.Set;
 
 public class URLPath implements NutsPathSPI {
     protected URL url;
@@ -352,7 +352,69 @@ public class URLPath implements NutsPathSPI {
         }
     }
 
-//    private class URLPathInput extends NutsPathInput {
+    @Override
+    public NutsPath toAbsolute(NutsPath basePath) {
+        return new NutsPathFromSPI(this);
+    }
+
+    @Override
+    public NutsPath normalize() {
+        return new NutsPathFromSPI(this);
+    }
+
+    @Override
+    public boolean isAbsolute() {
+        return true;
+    }
+
+    public NutsPath asFilePath() {
+        File f = CoreIOUtils.toFile(toURL());
+        return  (f != null) ?session.io().path(f):null;
+
+    }
+    public boolean isSymbolicLink() {
+        NutsPath f = asFilePath();
+        return  (f != null) ?f.isSymbolicLink():false;
+    }
+
+    @Override
+    public boolean isOther() {
+        NutsPath f = asFilePath();
+        return  (f != null) ?f.isOther():false;
+    }
+
+    @Override
+    public Instant getLastAccessInstant() {
+        NutsPath f = asFilePath();
+        return  (f != null) ?f.getLastAccessInstant():null;
+    }
+
+    @Override
+    public Instant getCreationInstant() {
+        NutsPath f = asFilePath();
+        return  (f != null) ?f.getCreationInstant():null;
+    }
+
+    @Override
+    public String owner() {
+        NutsPath f = asFilePath();
+        return  (f != null) ?f.owner():null;
+    }
+
+    @Override
+    public String group() {
+        NutsPath f = asFilePath();
+        return  (f != null) ?f.group():null;
+    }
+
+    @Override
+    public Set<NutsPathPermission> permissions() {
+        NutsPath f = asFilePath();
+        return  (f != null) ?f.getPermissions(): Collections.emptySet();
+    }
+
+
+    //    private class URLPathInput extends NutsPathInput {
 //        public URLPathInput() {
 //            super(URLPath.this);
 //        }
@@ -368,4 +430,16 @@ public class URLPath implements NutsPathSPI {
 //            return super.getURL();
 //        }
 //    }
+
+    @Override
+    public void setPermissions(NutsPathPermission... permissions) {
+    }
+
+    @Override
+    public void addPermissions(NutsPathPermission... permissions) {
+    }
+
+    @Override
+    public void removePermissions(NutsPathPermission... permissions) {
+    }
 }

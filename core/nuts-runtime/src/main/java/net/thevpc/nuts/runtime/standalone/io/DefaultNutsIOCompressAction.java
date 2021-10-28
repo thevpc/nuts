@@ -253,6 +253,14 @@ public class DefaultNutsIOCompressAction implements NutsIOCompressAction {
         return (List) sources;
     }
 
+    @Override
+    public NutsIOCompressAction addSource(NutsPath source) {
+        if (source != null) {
+            this.sources.add(NutsStreamOrPath.of(source));
+        }
+        return this;
+    }
+
     public NutsIOCompressAction addSource(String source) {
         if (source != null) {
             this.sources.add(NutsStreamOrPath.of(session.io().path(source)));
@@ -316,6 +324,16 @@ public class DefaultNutsIOCompressAction implements NutsIOCompressAction {
     }
 
     @Override
+    public NutsIOCompressAction setTarget(NutsPath target) {
+        if (target == null) {
+            this.target = null;
+        } else {
+            this.target = NutsStreamOrPath.of(target);
+        }
+        return this;
+    }
+
+    @Override
     public NutsIOCompressAction setTarget(Path target) {
         if (target == null) {
             this.target = null;
@@ -343,6 +361,11 @@ public class DefaultNutsIOCompressAction implements NutsIOCompressAction {
             this.target = NutsStreamOrPath.of(session.io().path(target));
         }
         return this;
+    }
+
+    @Override
+    public NutsIOCompressAction to(NutsPath target) {
+        return setTarget(target);
     }
 
     @Override

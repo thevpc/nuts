@@ -30,7 +30,7 @@ package net.thevpc.nuts.runtime.core.format.text.parser;
 import net.thevpc.nuts.NutsTextCode;
 import net.thevpc.nuts.NutsTextType;
 import net.thevpc.nuts.runtime.core.format.text.DefaultNutsTextManager;
-import net.thevpc.nuts.NutsCodeFormat;
+import net.thevpc.nuts.NutsCodeHighlighter;
 import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.NutsText;
 
@@ -59,10 +59,10 @@ public class DefaultNutsTextCode extends NutsTextSpecialBase implements NutsText
     }
 
     @Override
-    public NutsText parse(NutsSession session) {
-        NutsCodeFormat t = ((DefaultNutsTextManager) session.text())
+    public NutsText highlight(NutsSession session) {
+        NutsCodeHighlighter t = ((DefaultNutsTextManager) session.text())
                 .setSession(session)
-                .resolveBlocTextFormatter(getKind());
+                .resolveCodeHighlighter(getKind());
         return t.stringToText(text, session);
     }
 

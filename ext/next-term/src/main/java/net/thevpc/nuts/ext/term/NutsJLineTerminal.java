@@ -181,7 +181,7 @@ public class NutsJLineTerminal implements NutsSystemTerminalBase {
             }
             case CODE: {
                 NutsTextCode p = (NutsTextCode) n;
-                NutsText nn = p.parse(session);
+                NutsText nn = p.highlight(session);
                 return toAttributedString(nn, NutsTextStyles.NONE, session);
             }
             case TITLE: {

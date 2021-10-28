@@ -10,5 +10,5 @@ public interface NutsTextCode extends NutsText {
      * @param session session
      * @return return
      */
-    NutsText parse(NutsSession session);
+    NutsText highlight(NutsSession session);
 }

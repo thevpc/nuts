@@ -35,6 +35,7 @@ import java.net.URL;
 import java.nio.file.Path;
 import java.time.Instant;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Stream;
 
 /**
@@ -156,6 +157,9 @@ public interface NutsPath extends NutsFormattable {
 
     NutsPath mkdir(boolean parents);
 
+    boolean isOther();
+
+    boolean isSymbolicLink();
     boolean isDirectory();
 
     boolean isRegularFile();
@@ -165,6 +169,10 @@ public interface NutsPath extends NutsFormattable {
     long getContentLength();
 
     Instant getLastModifiedInstant();
+
+    Instant getLastAccessInstant();
+
+    Instant getCreationInstant();
 
     NutsPathBuilder builder();
 
@@ -178,5 +186,25 @@ public interface NutsPath extends NutsFormattable {
 
     String getUserKind();
     NutsPath setUserKind(String userKind);
+
+    boolean isAbsolute();
+
+    NutsPath normalize();
+
+    NutsPath toAbsolute();
+
+    NutsPath toAbsolute(String basePath);
+
+    NutsPath toAbsolute(NutsPath basePath);
+
+    String owner();
+
+    String group();
+
+    Set<NutsPathPermission> getPermissions();
+
+    NutsPath setPermissions(NutsPathPermission... permissions);
+    NutsPath addPermissions(NutsPathPermission... permissions);
+    NutsPath removePermissions(NutsPathPermission... permissions);
 
 }

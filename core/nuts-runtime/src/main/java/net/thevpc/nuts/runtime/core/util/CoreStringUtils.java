@@ -27,7 +27,10 @@ import net.thevpc.nuts.*;
 
 import java.io.*;
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
+import java.util.StringTokenizer;
 import java.util.regex.Pattern;
 
 /**
@@ -563,5 +566,53 @@ public final class CoreStringUtils {
 
     public static String coalesce(String a, String b) {
         return a==null?b:a;
+    }
+
+    public static List<String> splitOn(String line,char sep) {
+        StringTokenizer st=new StringTokenizer(line,""+sep,true);
+        List<String> ret=new ArrayList<>();
+        while(st.hasMoreTokens()){
+            ret.add(st.nextToken());
+        }
+        return ret;
+    }
+
+    public static List<String> splitOnNewlines(String line) {
+        char[] text = line.toCharArray();
+        StringBuilder sb = new StringBuilder();
+        List<String> tb = new ArrayList<>();
+        for (int i = 0; i < text.length; i++) {
+            switch (text[i]) {
+                case '\r': {
+                    if (sb.length() > 0) {
+                        tb.add(sb.toString());
+                        sb.setLength(0);
+                    }
+                    if (i + 1 < text.length && text[i + 1] == '\n') {
+                        tb.add("\r\n");
+                        i++;
+                    } else {
+                        tb.add("\r");
+                    }
+                    break;
+                }
+                case '\n': {
+                    if (sb.length() > 0) {
+                        tb.add(sb.toString());
+                        sb.setLength(0);
+                    }
+                    tb.add("\n");
+                    break;
+                }
+                default: {
+                    sb.append(text[i]);
+                }
+            }
+        }
+        if (sb.length() > 0) {
+            tb.add(sb.toString());
+            sb.setLength(0);
+        }
+        return tb;
     }
 }

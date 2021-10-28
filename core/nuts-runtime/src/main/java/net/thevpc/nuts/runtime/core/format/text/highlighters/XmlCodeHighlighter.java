@@ -1,4 +1,4 @@
-package net.thevpc.nuts.runtime.core.format.text.bloc;
+package net.thevpc.nuts.runtime.core.format.text.highlighters;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.bundles.collections.EvictingQueue;
@@ -12,14 +12,19 @@ import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 import net.thevpc.nuts.spi.NutsComponent;
 import net.thevpc.nuts.spi.NutsSupportLevelContext;
 
-public class XmlCodeFormatter implements NutsCodeFormat {
+public class XmlCodeHighlighter implements NutsCodeHighlighter {
 
     private NutsWorkspace ws;
     NutsTextManager factory;
 
-    public XmlCodeFormatter(NutsWorkspace ws) {
+    public XmlCodeHighlighter(NutsWorkspace ws) {
         this.ws = ws;
         factory = NutsWorkspaceUtils.defaultSession(ws).text();
+    }
+
+    @Override
+    public String getId() {
+        return "xml";
     }
 
     @Override

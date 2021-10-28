@@ -1,23 +1,28 @@
-package net.thevpc.nuts.runtime.core.format.text.bloc;
+package net.thevpc.nuts.runtime.core.format.text.highlighters;
 
 import net.thevpc.nuts.spi.NutsSupportLevelContext;
 import net.thevpc.nuts.NutsTextStyle;
 import net.thevpc.nuts.spi.NutsComponent;
-import net.thevpc.nuts.NutsCodeFormat;
+import net.thevpc.nuts.NutsCodeHighlighter;
 import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.NutsTextManager;
 import net.thevpc.nuts.NutsText;
 
-public class CustomStyleBlocTextFormatter implements NutsCodeFormat {
+public class CustomStyleCodeHighlighter implements NutsCodeHighlighter {
 
     private NutsSession session;
     private NutsTextStyle style;
     private NutsTextManager factory;
 
-    public CustomStyleBlocTextFormatter(NutsTextStyle style, NutsSession session) {
+    public CustomStyleCodeHighlighter(NutsTextStyle style, NutsSession session) {
         this.session = session;
         this.style = style;
         factory = session.text();
+    }
+
+    @Override
+    public String getId() {
+        return "styled("+style+")";
     }
 
     @Override

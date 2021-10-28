@@ -15,11 +15,12 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 
 public class NutsCompressedPath extends NutsPathBase {
-    private String compressedForm;
-    private NutsString formattedCompressedForm;
-    private NutsPath base;
+    private final String compressedForm;
+    private final NutsString formattedCompressedForm;
+    private final NutsPath base;
 
     public NutsCompressedPath(NutsPath base) {
         super(base.getSession());
@@ -35,26 +36,6 @@ public class NutsCompressedPath extends NutsPathBase {
         this.base = base;
     }
 
-    @Override
-    public NutsPath resolve(String other) {
-        return base.resolve(other).toCompressedForm();
-    }
-
-    @Override
-    public String getProtocol() {
-        return base.getProtocol();
-    }
-
-    @Override
-    public boolean isDirectory() {
-        return base.isDirectory();
-    }
-
-    @Override
-    public boolean isRegularFile() {
-        return base.isRegularFile();
-    }
-
     public static String compressUrl(String path) {
         if (path.startsWith("http://")
                 || path.startsWith("https://")) {
@@ -64,10 +45,10 @@ public class NutsCompressedPath extends NutsPathBase {
             } catch (MalformedURLException e) {
                 return path;
             }
-            return URLBuilder.buildURLString(u.getProtocol(),u.getAuthority(),
-                    u.getPath()!=null?compressPath(u.getPath(), 0, 2):null,
-                    u.getQuery()!=null? "?...":null,
-                    u.getRef()!=null? "#...":null
+            return URLBuilder.buildURLString(u.getProtocol(), u.getAuthority(),
+                    u.getPath() != null ? compressPath(u.getPath(), 0, 2) : null,
+                    u.getQuery() != null ? "?..." : null,
+                    u.getRef() != null ? "#..." : null
             );
         } else {
             return compressPath(path);
@@ -143,6 +124,16 @@ public class NutsCompressedPath extends NutsPathBase {
     }
 
     @Override
+    public NutsPath resolve(String other) {
+        return base.resolve(other).toCompressedForm();
+    }
+
+    @Override
+    public String getProtocol() {
+        return base.getProtocol();
+    }
+
+    @Override
     public NutsPath toCompressedForm() {
         return this;
     }
@@ -157,6 +148,19 @@ public class NutsCompressedPath extends NutsPathBase {
         return base.toFile();
     }
 
+    @Override
+    public NutsPath[] getChildren() {
+        return new NutsPath[0];
+    }
+
+    @Override
+    public InputStream getInputStream() {
+        InputStream is = base.getInputStream();
+        NutsInputStreamMetadata m = NutsInputStreamMetadata.of(is);
+        NutsInputStreamMetadata m2 = new NutsDefaultInputStreamMetadata(m).setUserKind(getUserKind());
+        return InputStreamMetadataAwareImpl.of(is, m2);
+    }
+
 //    @Override
 //    public NutsInput input() {
 //        return base.input();
@@ -166,14 +170,6 @@ public class NutsCompressedPath extends NutsPathBase {
 //    public NutsOutput output() {
 //        return base.output();
 //    }
-
-    @Override
-    public InputStream getInputStream() {
-        InputStream is = base.getInputStream();
-        NutsInputStreamMetadata m = NutsInputStreamMetadata.of(is);
-        NutsInputStreamMetadata m2 = new NutsDefaultInputStreamMetadata(m).setUserKind(getUserKind());
-        return InputStreamMetadataAwareImpl.of(is,m2);
-    }
 
     @Override
     public OutputStream getOutputStream() {
@@ -188,6 +184,26 @@ public class NutsCompressedPath extends NutsPathBase {
     @Override
     public NutsPath mkdir(boolean parents) {
         return base.mkdir(parents);
+    }
+
+    @Override
+    public boolean isOther() {
+        return base.isOther();
+    }
+
+    @Override
+    public boolean isSymbolicLink() {
+        return base.isSymbolicLink();
+    }
+
+    @Override
+    public boolean isDirectory() {
+        return base.isDirectory();
+    }
+
+    @Override
+    public boolean isRegularFile() {
+        return base.isRegularFile();
     }
 
     @Override
@@ -206,6 +222,64 @@ public class NutsCompressedPath extends NutsPathBase {
     }
 
     @Override
+    public Instant getLastAccessInstant() {
+        return base.getLastAccessInstant();
+    }
+
+    @Override
+    public Instant getCreationInstant() {
+        return base.getCreationInstant();
+    }
+
+    @Override
+    public NutsPathBuilder builder() {
+        return base.builder();
+    }
+
+    @Override
+    public NutsPath getParent() {
+        return base.getParent();
+    }
+
+    @Override
+    public boolean isAbsolute() {
+        return base.isAbsolute();
+    }
+
+    @Override
+    public NutsPath normalize() {
+        return base.normalize();
+    }
+
+    @Override
+    public NutsPath toAbsolute() {
+        return toAbsolute((NutsPath) null);
+    }
+
+    @Override
+    public NutsPath toAbsolute(NutsPath basePath) {
+        if (base.isAbsolute()) {
+            return this;
+        }
+        return basePath.toAbsolute(basePath).toCompressedForm();
+    }
+
+    @Override
+    public String owner() {
+        return base.owner();
+    }
+
+    @Override
+    public String group() {
+        return base.group();
+    }
+
+    @Override
+    public Set<NutsPathPermission> getPermissions() {
+        return base.getPermissions();
+    }
+
+    @Override
     public String toString() {
         return String.valueOf(compressedForm);
     }
@@ -218,7 +292,7 @@ public class NutsCompressedPath extends NutsPathBase {
     }
 
     private static class MyPathFormat extends DefaultFormatBase<NutsFormat> {
-        private NutsCompressedPath p;
+        private final NutsCompressedPath p;
 
         public MyPathFormat(NutsCompressedPath p) {
             super(p.getSession().getWorkspace(), "path");
@@ -241,17 +315,25 @@ public class NutsCompressedPath extends NutsPathBase {
     }
 
     @Override
-    public NutsPathBuilder builder() {
-        return base.builder();
+    public NutsPath toAbsolute(String basePath) {
+        return base.toAbsolute(basePath).toCompressedForm();
     }
 
     @Override
-    public NutsPath[] getChildren() {
-        return new NutsPath[0];
+    public NutsPath setPermissions(NutsPathPermission... permissions) {
+        base.setPermissions(permissions);
+        return this;
     }
 
     @Override
-    public NutsPath getParent() {
-        return base.getParent();
+    public NutsPath addPermissions(NutsPathPermission... permissions) {
+        base.addPermissions(permissions);
+        return this;
+    }
+
+    @Override
+    public NutsPath removePermissions(NutsPathPermission... permissions) {
+        base.removePermissions(permissions);
+        return this;
     }
 }

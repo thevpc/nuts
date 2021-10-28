@@ -23,13 +23,17 @@
  * <br>
  * ====================================================================
 */
-package net.thevpc.nuts.runtime.bundles.common;
+package net.thevpc.nuts;
 
-public class Ref<T> {
+public class NutsRef<T> {
 
     private T value;
 
-    public Ref() {
+    public NutsRef() {
+    }
+
+    public NutsRef(T value) {
+        this.value = value;
     }
 
     public T get() {

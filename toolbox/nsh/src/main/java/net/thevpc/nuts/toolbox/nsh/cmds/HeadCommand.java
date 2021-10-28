@@ -30,7 +30,6 @@ import net.thevpc.nuts.spi.NutsSingleton;
 import net.thevpc.nuts.toolbox.nsh.SimpleNshBuiltin;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
@@ -61,8 +60,8 @@ public class HeadCommand extends SimpleNshBuiltin {
             return true;
         } else if (!a.isOption()) {
             String path = commandLine.next().getString();
-            File file = new File(context.getRootContext().getAbsolutePath(path));
-            options.files.add(file.getPath());
+            String file = NutsPath.of(path, context.getSession()).toAbsolute(context.getRootContext().getCwd()).toString();
+            options.files.add(file);
             return true;
         }
         return false;

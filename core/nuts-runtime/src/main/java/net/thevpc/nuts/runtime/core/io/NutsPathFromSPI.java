@@ -14,6 +14,7 @@ import java.nio.file.Path;
 import java.time.Instant;
 import java.util.Arrays;
 import java.util.Objects;
+import java.util.Set;
 import java.util.logging.Level;
 
 public class NutsPathFromSPI extends NutsPathBase {
@@ -160,6 +161,16 @@ public class NutsPathFromSPI extends NutsPathBase {
     }
 
     @Override
+    public boolean isOther() {
+        return base.isOther();
+    }
+
+    @Override
+    public boolean isSymbolicLink() {
+        return base.isSymbolicLink();
+    }
+
+    @Override
     public boolean isDirectory() {
         return base.isDirectory();
     }
@@ -185,6 +196,28 @@ public class NutsPathFromSPI extends NutsPathBase {
     }
 
     @Override
+    public Instant getLastAccessInstant() {
+        return base.getLastAccessInstant();
+    }
+
+    @Override
+    public Instant getCreationInstant() {
+        return base.getCreationInstant();
+    }
+
+//    private class NutsPathFromSPIInput extends NutsPathInput {
+//        public NutsPathFromSPIInput() {
+//            super(NutsPathFromSPI.this);
+//        }
+//
+//        @Override
+//        public InputStream open() {
+//            return new InputStreamMetadataAwareImpl(base.inputStream(), new NutsDefaultInputStreamMetadata(getNutsPath().toString(),
+//                    getNutsPath().getContentLength()));
+//        }
+//    }
+
+    @Override
     public NutsPathBuilder builder() {
         return new DefaultPathBuilder(getSession(), this);
     }
@@ -192,6 +225,50 @@ public class NutsPathFromSPI extends NutsPathBase {
     @Override
     public NutsPath getParent() {
         return base.getParent();
+    }
+
+    @Override
+    public boolean isAbsolute() {
+        return base.isAbsolute();
+    }
+
+
+    @Override
+    public NutsPath normalize() {
+        return base.normalize();
+    }
+
+    @Override
+    public NutsPath toAbsolute() {
+        return toAbsolute((NutsPath) null);
+    }
+
+    @Override
+    public NutsPath toAbsolute(String basePath) {
+        return toAbsolute(basePath==null?null:getSession().io().path(basePath));
+    }
+
+    @Override
+    public NutsPath toAbsolute(NutsPath basePath) {
+        if (base.isAbsolute()) {
+            return this;
+        }
+        return base.toAbsolute(basePath);
+    }
+
+    @Override
+    public String owner() {
+        return base.owner();
+    }
+
+    @Override
+    public String group() {
+        return base.group();
+    }
+
+    @Override
+    public Set<NutsPathPermission> getPermissions() {
+        return base.permissions();
     }
 
     @Override
@@ -218,18 +295,6 @@ public class NutsPathFromSPI extends NutsPathBase {
         return Objects.hash(base);
     }
 
-//    private class NutsPathFromSPIInput extends NutsPathInput {
-//        public NutsPathFromSPIInput() {
-//            super(NutsPathFromSPI.this);
-//        }
-//
-//        @Override
-//        public InputStream open() {
-//            return new InputStreamMetadataAwareImpl(base.inputStream(), new NutsDefaultInputStreamMetadata(getNutsPath().toString(),
-//                    getNutsPath().getContentLength()));
-//        }
-//    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -242,4 +307,23 @@ public class NutsPathFromSPI extends NutsPathBase {
     public String toString() {
         return base.toString();
     }
+
+    @Override
+    public NutsPath setPermissions(NutsPathPermission... permissions) {
+        base.setPermissions(permissions);
+        return this;
+    }
+
+    @Override
+    public NutsPath addPermissions(NutsPathPermission... permissions) {
+        base.addPermissions(permissions);
+        return this;
+    }
+
+    @Override
+    public NutsPath removePermissions(NutsPathPermission... permissions) {
+        base.removePermissions(permissions);
+        return this;
+    }
+
 }

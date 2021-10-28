@@ -25,7 +25,6 @@
 */
 package net.thevpc.nuts.toolbox.nsh.cmds;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -145,7 +144,7 @@ public class HistoryCommand extends SimpleNshBuiltin {
 
                         shistory.save();
                     } else {
-                        shistory.save(new File(context.getSession().io().path(options.sval).builder().withWorkspaceBaseDir().build().toString()));
+                        shistory.save(context.getSession().io().path(options.sval).builder().withWorkspaceBaseDir().build());
                     }
                 } catch (IOException ex) {
                     throw new NutsExecutionException(context.getSession(), NutsMessage.cstyle("%s",ex), ex, 100);
@@ -158,7 +157,7 @@ public class HistoryCommand extends SimpleNshBuiltin {
                         shistory.clear();
                         shistory.load();
                     } else {
-                        shistory.load(new File(context.getSession().io().path(options.sval).builder().withWorkspaceBaseDir().build().toString()));
+                        shistory.load(context.getSession().io().path(options.sval).builder().withWorkspaceBaseDir().build());
                     }
                 } catch (IOException ex) {
                     throw new NutsExecutionException(context.getSession(), NutsMessage.cstyle("%s",ex), ex, 100);

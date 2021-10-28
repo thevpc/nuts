@@ -108,4 +108,25 @@ public class Test13_Color {
         }
     }
 
+    @Test
+    public void testBuilder(){
+        NutsSession session = TestUtils.openNewTestWorkspace(
+                "--archetype", "minimal",
+                "--skip-companions");
+        NutsText c = session.text().ofCode("java", "public static void main(String[] args){}")
+                .highlight(session);
+        session.out().printlnf(c);
+
+        NutsText word_static = c.builder().substring(7, 13);
+        session.out().printlnf(word_static);
+        Assertions.assertEquals("##:keyword:static##\u001E",word_static.toString());
+
+        NutsText portion_npar = c.builder().substring(22, 24);
+        session.out().printlnf(portion_npar);
+        Assertions.assertEquals("n##:separator:(##\u001E",portion_npar.toString());
+        NutsText rep=c.builder().replace(23,24,session.text().ofStyled("()(",NutsTextStyle.danger())).build();
+        session.out().printlnf(rep);
+        Assertions.assertEquals("##:keyword:public##\u001E ##:keyword:static##\u001E ##:keyword:void##\u001E main##:danger:()(##\u001EString##:separator:[##\u001E##:separator:]##\u001E args##:separator:)##\u001E##:separator:{##\u001E##:separator:}##\u001E",
+                rep.toString());
+    }
 }

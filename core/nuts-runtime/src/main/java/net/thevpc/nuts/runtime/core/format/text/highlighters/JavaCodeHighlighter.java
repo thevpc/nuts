@@ -1,4 +1,4 @@
-package net.thevpc.nuts.runtime.core.format.text.bloc;
+package net.thevpc.nuts.runtime.core.format.text.highlighters;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.bundles.parsers.StringReaderExt;
@@ -7,10 +7,10 @@ import java.util.*;
 
 import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 import net.thevpc.nuts.spi.NutsComponent;
-import net.thevpc.nuts.NutsCodeFormat;
+import net.thevpc.nuts.NutsCodeHighlighter;
 import net.thevpc.nuts.spi.NutsSupportLevelContext;
 
-public class HadraBlocTextFormatter implements NutsCodeFormat {
+public class JavaCodeHighlighter implements NutsCodeHighlighter {
 
     private static Set<String> reservedWords = new LinkedHashSet<>(
             Arrays.asList(
@@ -22,45 +22,32 @@ public class HadraBlocTextFormatter implements NutsCodeFormat {
                     "native", "new", "null", "package", "private", "protected",
                     "public", "return", "short", "static", "strictfp", "super",
                     "switch", "synchronized", "this", "throw", "throws", "transient",
-                    "true", "try", "void", "volatile", "while",
-                    //
-                    "is", "bigint", "bigdecimal", "string", "date", "time", "datetime", "timestamp",
-                    "constructor", "operator",
-                    //other reserved...
-                    "yield", "_", "it", "record", "fun", "implicit", "def",
-                    "bool", "decimal", "bigint", "bigdecimal", "string", "object",
-                    "date", "time", "datetime",
-                    "int8", "int16", "int32", "int64", "int128",
-                    "uint8", "uint16", "uint32", "uint64", "uint128",
-                    "uint", "ulong", "ref", "ptr", "unsafe", "init"
+                    "true", "try", "void", "volatile", "while"
             )
     );
     private NutsWorkspace ws;
-    NutsTextManager factory;
+    private NutsTextManager factory;
 
-    public HadraBlocTextFormatter(NutsWorkspace ws) {
+    public JavaCodeHighlighter(NutsWorkspace ws) {
         this.ws = ws;
         factory = NutsWorkspaceUtils.defaultSession(ws).text();
     }
 
     @Override
-    public int getSupportLevel(NutsSupportLevelContext<String> context) {
-        String s = context.getConstraints();
-        return "java".equals(s) ? NutsComponent.DEFAULT_SUPPORT : NutsComponent.NO_SUPPORT;
+    public String getId() {
+        return "java";
     }
 
     @Override
     public NutsText tokenToText(String text, String nodeType,NutsSession session) {
-        String str = String.valueOf(text);
-        switch (nodeType.toLowerCase()) {
-            case "separator": {
-                return factory.setSession(session).ofStyled(str, NutsTextStyle.separator());
-            }
-            case "keyword": {
-                return factory.setSession(session).ofStyled(str, NutsTextStyle.separator());
-            }
-        }
-        return factory.ofPlain(str);
+        return factory.setSession(session).ofPlain(text);
+    }
+    
+
+    @Override
+    public int getSupportLevel(NutsSupportLevelContext<String> context) {
+        String s = context.getConstraints();
+        return "java".equals(s) ? NutsComponent.DEFAULT_SUPPORT : NutsComponent.NO_SUPPORT;
     }
 
     @Override
