@@ -1,48 +1,41 @@
-package net.thevpc.nuts.runtime.core.format.text.bloc;
+package net.thevpc.nuts.runtime.core.format.text.highlighters;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.bundles.parsers.StringReaderExt;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 import net.thevpc.nuts.spi.NutsComponent;
-import net.thevpc.nuts.NutsCodeFormat;
+import net.thevpc.nuts.NutsCodeHighlighter;
 import net.thevpc.nuts.spi.NutsSupportLevelContext;
 
-public class JavaBlocTextFormatter implements NutsCodeFormat {
-
-    private static Set<String> reservedWords = new LinkedHashSet<>(
-            Arrays.asList(
-                    "abstract", "assert", "boolean", "break", "byte", "case",
-                    "catch", "char", "class", "const", "continue", "default",
-                    "double", "do", "else", "enum", "extends", "false",
-                    "final", "finally", "float", "for", "goto", "if",
-                    "implements", "import", "instanceof", "int", "interface", "long",
-                    "native", "new", "null", "package", "private", "protected",
-                    "public", "return", "short", "static", "strictfp", "super",
-                    "switch", "synchronized", "this", "throw", "throws", "transient",
-                    "true", "try", "void", "volatile", "while"
-            )
-    );
+public class JsonCodeHighlighter implements NutsCodeHighlighter {
     private NutsWorkspace ws;
     private NutsTextManager factory;
 
-    public JavaBlocTextFormatter(NutsWorkspace ws) {
+    public JsonCodeHighlighter(NutsWorkspace ws) {
         this.ws = ws;
         factory = NutsWorkspaceUtils.defaultSession(ws).text();
     }
 
     @Override
-    public NutsText tokenToText(String text, String nodeType,NutsSession session) {
-        return factory.setSession(session).ofPlain(text);
+    public String getId() {
+        return "json";
     }
-    
+
+    @Override
+    public NutsText tokenToText(String text, String nodeType,NutsSession session) {
+        factory.setSession(session);
+        return factory.ofPlain(text);
+    }
 
     @Override
     public int getSupportLevel(NutsSupportLevelContext<String> context) {
         String s = context.getConstraints();
-        return "java".equals(s) ? NutsComponent.DEFAULT_SUPPORT : NutsComponent.NO_SUPPORT;
+        return "json".equals(s) ? NutsComponent.DEFAULT_SUPPORT : NutsComponent.NO_SUPPORT;
     }
 
     @Override
@@ -54,21 +47,7 @@ public class JavaBlocTextFormatter implements NutsCodeFormat {
             switch (ar.peekChar()) {
                 case '{':
                 case '}':
-                case '(':
-                case ')':
-                case '[':
-                case ']':
-                case '@':
-                case '=':
-                case '+':
-                case '*':
-                case '%':
-                case ':':
-                case '?':
-                case '<':
-                case '>':
-                case '!':
-                case ';': {
+                case ':': {
                     all.add(factory.ofStyled(String.valueOf(ar.nextChar()), NutsTextStyle.separator()));
                     break;
                 }
@@ -94,35 +73,39 @@ public class JavaBlocTextFormatter implements NutsCodeFormat {
                     break;
                 }
                 case '.':
-                case '-': {
+                case '-':{
                     NutsText[] d = StringReaderExtUtils.readNumber(session, ar);
-                    if (d != null) {
+                    if(d!=null) {
                         all.addAll(Arrays.asList(d));
-                    } else {
+                    }else{
                         all.add(factory.ofStyled(String.valueOf(ar.nextChar()), NutsTextStyle.separator()));
                     }
                     break;
                 }
-                case '/': {
-                    if (ar.peekChars("//")) {
-                        all.addAll(Arrays.asList(StringReaderExtUtils.readSlashSlashComments(session, ar)));
-                    } else if (ar.peekChars("/*")) {
-                        all.addAll(Arrays.asList(StringReaderExtUtils.readSlashStarComments(session, ar)));
-                    } else {
+                case '/':{
+                    if(ar.peekChars("//")) {
+                        all.addAll(Arrays.asList(StringReaderExtUtils.readSlashSlashComments(session,ar)));
+                    }else if(ar.peekChars("/*")){
+                        all.addAll(Arrays.asList(StringReaderExtUtils.readSlashStarComments(session,ar)));
+                    }else{
                         all.add(factory.ofStyled(String.valueOf(ar.nextChar()), NutsTextStyle.separator()));
                     }
                     break;
                 }
                 default: {
-                    if (Character.isWhitespace(ar.peekChar())) {
-                        all.addAll(Arrays.asList(StringReaderExtUtils.readSpaces(session, ar)));
-                    } else {
+                    if(Character.isWhitespace(ar.peekChar())){
+                        all.addAll(Arrays.asList(StringReaderExtUtils.readSpaces(session,ar)));
+                    }else {
                         NutsText[] d = StringReaderExtUtils.readJSIdentifier(session, ar);
                         if (d != null) {
                             if (d.length == 1 && d[0].getType() == NutsTextType.PLAIN) {
                                 String txt = ((NutsTextPlain) d[0]).getText();
-                                if (reservedWords.contains(txt)) {
-                                    d[0] = factory.ofStyled(d[0], NutsTextStyle.keyword());
+                                switch (txt) {
+                                    case "true":
+                                    case "false": {
+                                        d[0] = factory.ofStyled(d[0], NutsTextStyle.keyword());
+                                        break;
+                                    }
                                 }
                             }
                             all.addAll(Arrays.asList(d));

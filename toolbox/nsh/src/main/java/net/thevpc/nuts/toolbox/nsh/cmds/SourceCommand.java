@@ -27,11 +27,12 @@ package net.thevpc.nuts.toolbox.nsh.cmds;
 
 import net.thevpc.nuts.NutsArgument;
 import net.thevpc.nuts.NutsCommandLine;
+import net.thevpc.nuts.NutsPath;
+import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.spi.NutsSingleton;
 import net.thevpc.nuts.toolbox.nsh.SimpleNshBuiltin;
 import net.thevpc.nuts.toolbox.nsh.bundles.jshell.JShellContext;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -65,35 +66,37 @@ public class SourceCommand extends SimpleNshBuiltin {
     protected void execBuiltin(NutsCommandLine commandLine, SimpleNshCommandContext context) {
         Options options = context.getOptions();
         final String[] paths = context.getExecutionContext().getShellContext().vars().get("PATH", "").split(":|;");
-        List<String> goodFiles = new ArrayList<>();
+        List<NutsPath> goodFiles = new ArrayList<>();
         for (String file : options.files) {
+            NutsSession session = context.getSession();
             boolean found = false;
             if (!file.contains("/")) {
                 for (String path : paths) {
-                    if (new File(path, file).isFile()) {
-                        file = new File(path, file).getPath();
+                    NutsPath path0 = NutsPath.of(path, session);
+                    if (path0.resolve(file).isFile()) {
+                        file = path0.resolve(file).toString();
                         break;
                     }
                 }
-                if (!new File(file).isFile()) {
-                    if (new File(context.getRootContext().getCwd(), file).isFile()) {
-                        file = new File(context.getRootContext().getCwd(), file).getPath();
+                if (!NutsPath.of(file, session).isFile()) {
+                    if (NutsPath.of(context.getRootContext().getCwd(),session).resolve(file).isFile()) {
+                        file = NutsPath.of(context.getRootContext().getCwd(),session).resolve(file).toString();
                     }
                 }
-                if (new File(file).isFile()) {
+                if (NutsPath.of(file, session).isFile()) {
                     found = true;
-                    goodFiles.add(file);
+                    goodFiles.add(NutsPath.of(file, session));
                 }
             }
             if (!found) {
-                goodFiles.add(file);
+                goodFiles.add(NutsPath.of(file, session));
             }
         }
 //        JShellContext c2 = context.getShell().createContext(context.getExecutionContext().getGlobalContext());
 //        c2.setArgs(context.getArgs());
         JShellContext c2 = context.getExecutionContext().getShellContext();
-        for (String goodFile : goodFiles) {
-            JShellContext c=context.getShell().createInlineContext(c2,goodFile,context.getArgs());
+        for (NutsPath goodFile : goodFiles) {
+            JShellContext c=context.getShell().createInlineContext(c2,goodFile.toString(),context.getArgs());
             context.getShell().executeServiceFile(c, false);
         }
     }

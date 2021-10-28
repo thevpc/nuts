@@ -26,19 +26,14 @@
 package net.thevpc.nuts.runtime.standalone.parsers;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.boot.NutsBootId;
-import net.thevpc.nuts.runtime.bundles.common.CorePlatformUtils;
 import net.thevpc.nuts.runtime.core.model.DefaultNutsArtifactCall;
 import net.thevpc.nuts.runtime.standalone.bridges.maven.MavenUtils;
-import net.thevpc.nuts.runtime.bundles.common.Ref;
+import net.thevpc.nuts.NutsRef;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.UncheckedIOException;
 import java.util.*;
 import java.util.function.Predicate;
-import java.util.jar.Attributes;
-import java.util.jar.Manifest;
 import java.util.stream.Collectors;
 
 import net.thevpc.nuts.runtime.bundles.io.InputStreamVisitor;
@@ -81,10 +76,10 @@ public class JarDescriptorContentParserComponent implements NutsDescriptorConten
             return null;
         }
         final NutsId JAVA = ws.id().parser().parse("java");
-        final Ref<NutsDescriptor> nutsjson = new Ref<>();
-        final Ref<NutsDescriptor> metainf = new Ref<>();
-        final Ref<NutsDescriptor> maven = new Ref<>();
-//        final Ref<String> mainClass = new Ref<>();
+        final NutsRef<NutsDescriptor> nutsjson = new NutsRef<>();
+        final NutsRef<NutsDescriptor> metainf = new NutsRef<>();
+        final NutsRef<NutsDescriptor> maven = new NutsRef<>();
+//        final NutsRef<String> mainClass = new NutsRef<>();
 
         try {
             ZipUtils.visitZipStream(parserContext.getFullStream(), new Predicate<String>() {

@@ -11,9 +11,7 @@ import java.io.OutputStream;
 import java.net.URL;
 import java.nio.file.Path;
 import java.time.Instant;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class NutsResourcePath implements NutsPathSPI {
@@ -106,6 +104,12 @@ public class NutsResourcePath implements NutsPathSPI {
     }
 
     @Override
+    public NutsPath normalize() {
+        return new NutsPathFromSPI(this);
+    }
+
+
+    @Override
     public NutsPath[] getChildren() {
         //TODO : parse urls for children!
         return new NutsPath[0];
@@ -164,6 +168,48 @@ public class NutsResourcePath implements NutsPathSPI {
     public boolean isRegularFile() {
         NutsPath up = toURLPath();
         return up != null && up.isRegularFile();
+    }
+
+    @Override
+    public boolean isSymbolicLink() {
+        NutsPath up = toURLPath();
+        return up != null && up.isSymbolicLink();
+    }
+
+    @Override
+    public boolean isOther() {
+        NutsPath up = toURLPath();
+        return up != null && up.isOther();
+    }
+
+    @Override
+    public Instant getLastAccessInstant() {
+        NutsPath up = toURLPath();
+        return up != null ? up.getLastAccessInstant():null;
+    }
+
+    @Override
+    public Instant getCreationInstant() {
+        NutsPath up = toURLPath();
+        return up != null ? up.getCreationInstant():null;
+    }
+
+    @Override
+    public String owner() {
+        NutsPath up = toURLPath();
+        return up != null ? up.owner():null;
+    }
+
+    @Override
+    public String group() {
+        NutsPath up = toURLPath();
+        return up != null ? up.group():null;
+    }
+
+    @Override
+    public Set<NutsPathPermission> permissions() {
+        NutsPath up = toURLPath();
+        return up != null ? up.getPermissions():new LinkedHashSet<>();
     }
 
     @Override
@@ -355,4 +401,27 @@ public class NutsResourcePath implements NutsPathSPI {
             return false;
         }
     }
+
+    @Override
+    public NutsPath toAbsolute(NutsPath basePath) {
+        return new NutsPathFromSPI(this);
+    }
+
+    @Override
+    public boolean isAbsolute() {
+        return true;
+    }
+
+    @Override
+    public void setPermissions(NutsPathPermission... permissions) {
+    }
+
+    @Override
+    public void addPermissions(NutsPathPermission... permissions) {
+    }
+
+    @Override
+    public void removePermissions(NutsPathPermission... permissions) {
+    }
+
 }

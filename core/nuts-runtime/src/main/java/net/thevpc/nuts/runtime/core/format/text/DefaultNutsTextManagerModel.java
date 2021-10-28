@@ -28,45 +28,80 @@ import net.thevpc.nuts.runtime.core.format.elem.DefaultNutsElementFactoryService
 import net.thevpc.nuts.runtime.core.format.elem.NutsElementFactoryService;
 import net.thevpc.nuts.runtime.core.format.elem.NutsElementStreamFormat;
 import net.thevpc.nuts.runtime.core.format.json.SimpleJson;
-import net.thevpc.nuts.runtime.core.format.text.bloc.*;
+import net.thevpc.nuts.runtime.core.format.text.highlighters.*;
 import net.thevpc.nuts.runtime.core.format.text.stylethemes.DefaultNutsTextFormatTheme;
 import net.thevpc.nuts.runtime.core.format.text.stylethemes.NutsTextFormatPropertiesTheme;
 import net.thevpc.nuts.runtime.core.format.text.stylethemes.NutsTextFormatThemeWrapper;
 import net.thevpc.nuts.runtime.core.format.xml.DefaultXmlNutsElementStreamFormat;
 import net.thevpc.nuts.runtime.core.format.yaml.SimpleYaml;
-import net.thevpc.nuts.spi.NutsComponent;
-import net.thevpc.nuts.spi.NutsDefaultSupportLevelContext;
+import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.*;
 
 /**
  * @author vpc
  */
 public class DefaultNutsTextManagerModel {
 
-    private final List<NutsCodeFormat> codeFormats = new ArrayList<>();
     private final NutsWorkspaceInitInformation info;
     private final NutsWorkspace ws;
     private String styleThemeName;
     private NutsTextFormatTheme styleTheme;
-    private JavaBlocTextFormatter javaBlocTextFormatter;
-    private HadraBlocTextFormatter hadraBlocTextFormatter;
-    private XmlCodeFormatter xmlBlocTextFormatter;
-    private JsonCodeFormatter jsonBlocTextFormatter;
-    private BashBlocTextFormatter bashBlocTextFormatter;
-    private BashBlocTextFormatter fishBlocTextFormatter;
-    private BatBlocTextFormatter batBlocTextFormatter;
-    private PlainBlocTextFormatter plainBlocTextFormatter;
     private NutsTextFormatTheme defaultTheme;
     private NutsElementFactoryService elementFactoryService;
     private NutsElementStreamFormat jsonMan;
     private NutsElementStreamFormat yamlMan;
     private NutsElementStreamFormat xmlMan;
+    private final Map<String, String> kindToHighlighter = new HashMap<>();
+
+    private final Map<String, NutsCodeHighlighter> highlighters = new HashMap<>();
 
     public DefaultNutsTextManagerModel(NutsWorkspace ws, NutsWorkspaceInitInformation info) {
         this.ws = ws;
         this.info = info;
+        for (NutsCodeHighlighter h : new NutsCodeHighlighter[]{
+                new JavaCodeHighlighter(ws),
+                new HadraCodeHighlighter(ws),
+                new XmlCodeHighlighter(ws),
+                new JsonCodeHighlighter(ws),
+                new BashCodeHighlighter(ws),
+                new FishCodeHighlighter(ws),
+                new WinCmdBlocTextHighlighter(ws),
+                new PlainCodeHighlighter(ws),
+                new NtfCodeHighlighter()
+        }) {
+            highlighters.put(h.getId().toLowerCase(), h);
+        }
+        try {
+            try (BufferedReader reader = new BufferedReader(
+                    new InputStreamReader(
+                            getClass().getResourceAsStream(
+                                    "/net/thevpc/nuts/runtime/highlighter-mappings.ini"
+                            )
+                    )
+            )) {
+                String line;
+                String group = null;
+                while ((line = reader.readLine()) != null) {
+                    line = line.trim();
+                    if (!line.startsWith("#") && line.length() > 0) {
+                        if (line.startsWith("[") && line.endsWith("]")) {
+                            group = line.substring(1, line.length() - 1).trim();
+                        } else if (group != null) {
+                            for (String s : line.split("[,;]")) {
+                                s = s.trim();
+                                kindToHighlighter.put(s, group);
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (IOException ex) {
+            throw new NutsIOException(NutsWorkspaceUtils.defaultSession(ws), ex);
+        }
     }
 
 
@@ -114,128 +149,66 @@ public class DefaultNutsTextManagerModel {
         this.styleThemeName = styleThemeName;
     }
 
-    public NutsCodeFormat getCodeFormat(String kind, NutsSession session) {
-        NutsDefaultSupportLevelContext<String> ctx = new NutsDefaultSupportLevelContext<String>(session, kind);
-        int bestCode = NutsComponent.NO_SUPPORT;
-        NutsCodeFormat format = null;
-        for (NutsCodeFormat codeFormat : getCodeFormats(session)) {
-            int s = codeFormat.getSupportLevel(ctx);
-            if (s > bestCode) {
-                format = codeFormat;
-                bestCode = s;
+    public String getCodeHighlighterId(String kind, NutsSession session) {
+        String lc = kind.toLowerCase();
+        NutsCodeHighlighter h = highlighters.get(lc);
+        if (h != null) {
+            return h.getId();
+        }
+        String a = kindToHighlighter.get(lc);
+        if (a != null) {
+            h = highlighters.get(a);
+            if (h != null) {
+                return h.getId();
             }
         }
-        if (format != null) {
-            return format;
+        if("system".equals(kind)){
+            NutsShellFamily shellFamily = session.env().getShellFamily();
+            return getCodeHighlighterId(shellFamily.id(),session);
         }
-        if (kind.length() > 0) {
-            switch (kind.toLowerCase()) {
-                case "sh":
-                case "ksh":
-                case "zsh":
-                case "csh":
-                case "bash": {
-                    return getBashBlocTextFormatter();
-                }
-                case "fish": {
-                    return getFishBlocTextFormatter();
-                }
 
-                case "bat":
-                case "cmd":
-                case "powsershell": {
-                    return getBatBlocTextFormatter();
-                }
-
-                case "system": {
-                    switch (NutsShellFamily.getCurrent()) {
-                        case SH:
-                        case BASH:
-                        case CSH:
-                        case KSH:
-                        case ZSH: {
-                            return getBashBlocTextFormatter();
-                        }
-                        case FISH: {
-                            return getFishBlocTextFormatter();
-                        }
-                        case WIN_CMD:
-                        case WIN_POWER_SHELL: {
-                            return getBatBlocTextFormatter();
-                        }
-                    }
-                    return getBashBlocTextFormatter();
-                }
-
-                case "json": {
-                    if (jsonBlocTextFormatter == null) {
-                        jsonBlocTextFormatter = new JsonCodeFormatter(ws);
-                    }
-                    return jsonBlocTextFormatter;
-                }
-
-                case "xml": {
-                    if (xmlBlocTextFormatter == null) {
-                        xmlBlocTextFormatter = new XmlCodeFormatter(ws);
-                    }
-                    return xmlBlocTextFormatter;
-                }
-
-                case "java": {
-                    if (javaBlocTextFormatter == null) {
-                        javaBlocTextFormatter = new JavaBlocTextFormatter(ws);
-                    }
-                    return javaBlocTextFormatter;
-                }
-                case "hadra": {
-                    if (hadraBlocTextFormatter == null) {
-                        hadraBlocTextFormatter = new HadraBlocTextFormatter(ws);
-                    }
-                    return hadraBlocTextFormatter;
-                }
-                case "text":
-                case "plain": {
-                    if (plainBlocTextFormatter == null) {
-                        plainBlocTextFormatter = new PlainBlocTextFormatter(ws);
-                    }
-                    return plainBlocTextFormatter;
-                }
-            }
+        h = highlighters.get("plain");
+        if (h != null) {
+            return h.getId();
         }
-        return null;
+        throw new NutsIllegalArgumentException(session, NutsMessage.plain("not found plain highlighter"));
     }
 
-    private NutsCodeFormat getBatBlocTextFormatter() {
-        if (batBlocTextFormatter == null) {
-            batBlocTextFormatter = new BatBlocTextFormatter(ws);
-        }
-        return batBlocTextFormatter;
+    public NutsCodeHighlighter getCodeHighlighter(String highlighterId, NutsSession session) {
+        highlighterId = getCodeHighlighterId(highlighterId, session);
+        return highlighters.get(highlighterId);
+
+//        NutsDefaultSupportLevelContext<String> ctx = new NutsDefaultSupportLevelContext<String>(session, highlighterId);
+//        int bestCode = NutsComponent.NO_SUPPORT;
+//        NutsCodeHighlighter format = null;
+//        for (NutsCodeHighlighter codeFormat : getCodeFormats(session)) {
+//            int s = codeFormat.getSupportLevel(ctx);
+//            if (s > bestCode) {
+//                format = codeFormat;
+//                bestCode = s;
+//            }
+//        }
+//        if (format != null) {
+//            return format;
+//        }
+//        if (highlighterId.length() > 0) {
+//            String q = getCodeHighlighterId(highlighterId, session);
+//            return highlighters.get(q);
+//        }
+//        return null;
     }
 
-    public BashBlocTextFormatter getFishBlocTextFormatter() {
-        if (fishBlocTextFormatter == null) {
-            fishBlocTextFormatter = new BashBlocTextFormatter(ws);
-        }
-        return fishBlocTextFormatter;
+
+    public void addCodeHighlighter(NutsCodeHighlighter format, NutsSession session) {
+        highlighters.put(format.getId(),format);
     }
 
-    private NutsCodeFormat getBashBlocTextFormatter() {
-        if (bashBlocTextFormatter == null) {
-            bashBlocTextFormatter = new BashBlocTextFormatter(ws);
-        }
-        return bashBlocTextFormatter;
+    public void removeCodeHighlighter(String id, NutsSession session) {
+        highlighters.remove(id);
     }
 
-    public void addCodeFormat(NutsCodeFormat format, NutsSession session) {
-        codeFormats.add(format);
-    }
-
-    public void removeCodeFormat(NutsCodeFormat format, NutsSession session) {
-        codeFormats.remove(format);
-    }
-
-    public NutsCodeFormat[] getCodeFormats(NutsSession session) {
-        return codeFormats.toArray(new NutsCodeFormat[0]);
+    public NutsCodeHighlighter[] getCodeHighlighters(NutsSession session) {
+        return highlighters.values().toArray(new NutsCodeHighlighter[0]);
     }
 
     public NutsElementFactoryService getElementFactoryService(NutsSession session) {

@@ -1,4 +1,4 @@
-package net.thevpc.nuts.runtime.core.format.text.bloc;
+package net.thevpc.nuts.runtime.core.format.text.highlighters;
 
 import net.thevpc.nuts.NutsTextStyle;
 import net.thevpc.nuts.runtime.bundles.parsers.StringReaderExt;

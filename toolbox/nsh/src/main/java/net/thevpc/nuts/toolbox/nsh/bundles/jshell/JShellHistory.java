@@ -1,5 +1,7 @@
 package net.thevpc.nuts.toolbox.nsh.bundles.jshell;
 
+import net.thevpc.nuts.NutsPath;
+
 import java.io.*;
 import java.util.List;
 
@@ -30,9 +32,13 @@ public interface JShellHistory {
 
     void load(File file) throws IOException;
 
+    void load(NutsPath reader) throws IOException;
+
     void load(Reader reader) throws IOException;
 
     void save() throws IOException;
+
+    void save(NutsPath writer) throws IOException;
 
     void save(PrintWriter writer) throws IOException;
 

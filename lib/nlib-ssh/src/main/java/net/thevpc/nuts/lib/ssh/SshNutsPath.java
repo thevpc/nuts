@@ -8,6 +8,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.time.Instant;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Set;
 
 class SshNutsPath implements NutsPathSPI {
     private SshPath path;
@@ -282,5 +284,67 @@ class SshNutsPath implements NutsPathSPI {
     @Override
     public Instant getLastModifiedInstant() {
         return null;
+    }
+
+    @Override
+    public NutsPath toAbsolute(NutsPath basePath) {
+        return getSession().io().path(toString());
+    }
+
+    @Override
+    public NutsPath normalize() {
+        return getSession().io().path(toString());
+    }
+
+    @Override
+    public boolean isAbsolute() {
+        return true;
+    }
+
+    @Override
+    public boolean isSymbolicLink() {
+        return false;
+    }
+
+    @Override
+    public boolean isOther() {
+        return false;
+    }
+
+    @Override
+    public Instant getLastAccessInstant() {
+        return null;
+    }
+
+    @Override
+    public Instant getCreationInstant() {
+        return null;
+    }
+
+    @Override
+    public String owner() {
+        return null;
+    }
+
+    @Override
+    public String group() {
+        return null;
+    }
+
+    @Override
+    public Set<NutsPathPermission> permissions() {
+        return Collections.emptySet();
+    }
+
+    @Override
+    public void setPermissions(NutsPathPermission... permissions) {
+    }
+
+    @Override
+    public void addPermissions(NutsPathPermission... permissions) {
+    }
+
+    @Override
+    public void removePermissions(NutsPathPermission... permissions) {
     }
 }

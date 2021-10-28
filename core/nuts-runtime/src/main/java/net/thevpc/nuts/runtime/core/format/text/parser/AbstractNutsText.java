@@ -1,6 +1,9 @@
 package net.thevpc.nuts.runtime.core.format.text.parser;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.core.format.text.NutsTextNodeWriterRaw;
+
+import java.util.List;
 
 public abstract class AbstractNutsText implements NutsText {
 
@@ -57,4 +60,5 @@ public abstract class AbstractNutsText implements NutsText {
     public NutsTextBuilder builder() {
         return session.text().builder().append(this);
     }
+
 }

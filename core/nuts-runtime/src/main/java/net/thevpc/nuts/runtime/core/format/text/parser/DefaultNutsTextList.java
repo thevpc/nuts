@@ -1,7 +1,7 @@
 /**
  * ====================================================================
- *            Nuts : Network Updatable Things Service
- *                  (universal package manager)
+ * Nuts : Network Updatable Things Service
+ * (universal package manager)
  * <br>
  * is a new Open Source Package Manager to help install packages and libraries
  * for runtime execution. Nuts is the ultimate companion for maven (and other
@@ -11,7 +11,7 @@
  * large range of sub managers / repositories.
  *
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc] Licensed under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -36,29 +36,66 @@ import java.util.Objects;
  */
 public class DefaultNutsTextList extends AbstractNutsText implements NutsTextList {
 
-    private List<NutsText> children = new ArrayList<NutsText>();
+    private final List<NutsText> children = new ArrayList<NutsText>();
 
     public DefaultNutsTextList(NutsSession session, NutsText... children) {
         super(session);
-        NutsTextPlain lastPlain=null;
-        NutsTextPlain newPlain=null;
+//        NutsTextPlain lastPlain=null;
+//        NutsTextPlain newPlain=null;
+//        if (children != null) {
+//            for (NutsText c : children) {
+//                if (c != null) {
+//                    newPlain=(c instanceof NutsTextPlain)?(NutsTextPlain) c:null;
+//                    if(lastPlain!=null && newPlain!=null){
+//                        this.children.remove(this.children.size()-1);
+//                        newPlain = new DefaultNutsTextPlain(
+//                                session, lastPlain.getText() + newPlain.getText()
+//                        );
+//                        this.children.add(newPlain);
+//                    }else {
+//                        this.children.add(c);
+//                    }
+//                    lastPlain=newPlain;
+//                }
+//            }
+//        }
         if (children != null) {
             for (NutsText c : children) {
                 if (c != null) {
-                    newPlain=(c instanceof NutsTextPlain)?(NutsTextPlain) c:null;
-                    if(lastPlain!=null && newPlain!=null){
-                        this.children.remove(this.children.size()-1);
-                        newPlain = new DefaultNutsTextPlain(
-                                session, lastPlain.getText() + newPlain.getText()
-                        );
-                        this.children.add(newPlain);
-                    }else {
-                        this.children.add(c);
-                    }
-                    lastPlain=newPlain;
+                    this.children.add(c);
                 }
             }
         }
+    }
+
+    @Override
+    public boolean isEmpty() {
+        for (NutsText child : children) {
+            if (!child.isEmpty()) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    @Override
+    public NutsTextType getType() {
+        return NutsTextType.LIST;
+    }
+
+    @Override
+    public int size() {
+        return children.size();
+    }
+
+    @Override
+    public NutsText get(int index) {
+        return children.get(index);
+    }
+
+    @Override
+    public List<NutsText> getChildren() {
+        return new ArrayList<>(children);
     }
 
     @Override
@@ -73,33 +110,13 @@ public class DefaultNutsTextList extends AbstractNutsText implements NutsTextLis
     }
 
     @Override
-    public boolean isEmpty() {
-        for (NutsText child : children) {
-            if(!child.isEmpty()){
-                return false;
-            }
-        }
-        return true;
-    }
-
-    @Override
-    public NutsTextType getType() {
-        return NutsTextType.LIST;
-    }
-
-    @Override
-    public NutsText get(int index) {
-        return children.get(index);
-    }
-
-    @Override
-    public int size() {
-        return children.size();
-    }
-
-    @Override
     public Iterator<NutsText> iterator() {
         return children.iterator();
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(children);
     }
 
     @Override
@@ -108,10 +125,5 @@ public class DefaultNutsTextList extends AbstractNutsText implements NutsTextLis
         if (o == null || getClass() != o.getClass()) return false;
         DefaultNutsTextList nutsTexts = (DefaultNutsTextList) o;
         return Objects.equals(children, nutsTexts.children);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(children);
     }
 }

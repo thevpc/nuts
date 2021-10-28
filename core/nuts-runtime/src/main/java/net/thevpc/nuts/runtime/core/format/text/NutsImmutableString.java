@@ -27,8 +27,11 @@
 package net.thevpc.nuts.runtime.core.format.text;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.core.format.text.parser.DefaultNutsTextList;
+import net.thevpc.nuts.runtime.core.format.text.parser.DefaultNutsTextPlain;
 
 import java.io.StringReader;
+import java.util.List;
 
 /**
  * @author thevpc
@@ -40,20 +43,6 @@ public class NutsImmutableString implements NutsString {
     public NutsImmutableString(NutsSession session, String value) {
         this.session = session;
         this.value = value == null ? "" : value;
-    }
-
-    public int textLength() {
-        return filteredText().length();
-    }
-
-    @Override
-    public String filteredText() {
-        return session.text().
-                parser().filterText(value);
-    }
-
-    public NutsText toText() {
-        return session.text().parser().parse(new StringReader(value));
     }
 
     public String getValue() {
@@ -84,8 +73,27 @@ public class NutsImmutableString implements NutsString {
     }
 
     @Override
+    public String filteredText() {
+        return session.text().
+                parser().filterText(value);
+    }
+
+    public int textLength() {
+        return filteredText().length();
+    }
+
+    public NutsText toText() {
+        return session.text().parser().parse(new StringReader(value));
+    }
+
+    @Override
     public boolean isEmpty() {
-        return textLength()==0;
+        return textLength() == 0;
+    }
+
+    @Override
+    public NutsTextBuilder builder() {
+        return session.text().builder().append(this);
     }
 
     @Override
@@ -93,8 +101,4 @@ public class NutsImmutableString implements NutsString {
         return NutsBlankable.isBlank(filteredText());
     }
 
-    @Override
-    public NutsTextBuilder builder() {
-        return session.text().builder().append(this);
-    }
 }

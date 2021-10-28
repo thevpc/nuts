@@ -6,7 +6,6 @@
 package net.thevpc.nuts.runtime.core.format.xml;
 
 import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
 import java.io.PrintWriter;
 
 import net.thevpc.nuts.*;
@@ -22,11 +21,11 @@ public class DefaultSearchFormatXml extends DefaultSearchFormatBase {
 
     private boolean compact;
     private String rootName = "root";
-    private NutsCodeFormat codeFormat;
+    private NutsCodeHighlighter codeFormat;
 
     public DefaultSearchFormatXml(NutsSession session, NutsPrintStream writer, NutsFetchDisplayOptions options) {
         super(session, writer, NutsContentType.XML, options);
-        codeFormat = session.text().setSession(session).getCodeFormat("xml");
+        codeFormat = session.text().setSession(session).getCodeHighlighter("xml");
     }
 
     public String getRootName() {

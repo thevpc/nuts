@@ -2,29 +2,27 @@ package net.thevpc.nuts.runtime.core.io;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.bundles.io.InputStreamMetadataAwareImpl;
-import net.thevpc.nuts.runtime.core.format.DefaultFormatBase;
 import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
 import net.thevpc.nuts.spi.NutsFormatSPI;
 import net.thevpc.nuts.spi.NutsPathSPI;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.UncheckedIOException;
+import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.attribute.FileTime;
+import java.nio.file.attribute.*;
 import java.time.Instant;
-import java.util.Arrays;
-import java.util.Objects;
+import java.util.*;
 
 public class FilePath implements NutsPathSPI {
     private final Path value;
-    private NutsSession session;
+    private final NutsSession session;
+    //    private PosixFileAttributes uattr = null;
+    private final boolean uattrLoaded = false;
 
-    public FilePath(Path value,NutsSession session) {
+
+    public FilePath(Path value, NutsSession session) {
         if (value == null) {
             throw new IllegalArgumentException("invalid value");
         }
@@ -32,23 +30,25 @@ public class FilePath implements NutsPathSPI {
         this.session = session;
     }
 
-    @Override
-    public NutsSession getSession() {
-        return session;
+    private NutsPath toNutsPathInstance() {
+        return new NutsPathFromSPI(this);
     }
 
     @Override
-    public String getContentEncoding() {
-        return null;
-    }
-
-    @Override
-    public String getContentType() {
-        try {
-            return Files.probeContentType(value);
-        } catch (IOException e) {
-            return null;
+    public NutsPath[] getChildren() {
+        if (Files.isDirectory(value)) {
+            try {
+                return Files.list(value).map(x -> getSession().io().path(x)).toArray(NutsPath[]::new);
+            } catch (IOException e) {
+                //
+            }
         }
+        return new NutsPath[0];
+    }
+
+    @Override
+    public NutsFormatSPI getFormatterSPI() {
+        return new MyPathFormat(this);
     }
 
     public String getName() {
@@ -56,13 +56,8 @@ public class FilePath implements NutsPathSPI {
     }
 
     @Override
-    public String asString() {
-        return value.toString();
-    }
-
-    @Override
-    public String getLocation() {
-        return value.toString();
+    public String getProtocol() {
+        return "";
     }
 
     @Override
@@ -79,15 +74,6 @@ public class FilePath implements NutsPathSPI {
         return toNutsPathInstance();
     }
 
-    private NutsPath toNutsPathInstance() {
-        return new NutsPathFromSPI(this);
-    }
-
-    @Override
-    public String getProtocol() {
-        return "";
-    }
-
     public URL toURL() {
         try {
             return value.toUri().toURL();
@@ -102,15 +88,71 @@ public class FilePath implements NutsPathSPI {
     }
 
     @Override
-    public NutsPath[] getChildren() {
-        if (Files.isDirectory(value)) {
-            try {
-                return Files.list(value).map(x -> getSession().io().path(x)).toArray(NutsPath[]::new);
-            } catch (IOException e) {
-                //
-            }
+    public boolean isSymbolicLink() {
+        PosixFileAttributes a = getUattr();
+        return a != null && a.isSymbolicLink();
+    }
+
+    @Override
+    public boolean isOther() {
+        PosixFileAttributes a = getUattr();
+        return a != null && a.isOther();
+    }
+
+    @Override
+    public boolean isDirectory() {
+        return Files.isDirectory(value);
+    }
+
+    @Override
+    public boolean isRegularFile() {
+        return Files.isRegularFile(value);
+    }
+
+    public boolean exists() {
+        return Files.exists(value);
+    }
+
+    public long getContentLength() {
+        try {
+            return Files.size(value);
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
         }
-        return new NutsPath[0];
+    }
+
+    @Override
+    public String getContentEncoding() {
+        return null;
+    }
+
+    @Override
+    public String getContentType() {
+        try {
+            return Files.probeContentType(value);
+        } catch (IOException e) {
+            return null;
+        }
+    }
+
+//    @Override
+//    public NutsOutput output() {
+//        return new NutsPathOutput(null, this, getSession()) {
+//            @Override
+//            public OutputStream open() {
+//                return getOutputStream();
+//            }
+//        };
+//    }
+
+    @Override
+    public String asString() {
+        return value.toString();
+    }
+
+    @Override
+    public String getLocation() {
+        return value.toString();
     }
 
     public InputStream getInputStream() {
@@ -129,6 +171,11 @@ public class FilePath implements NutsPathSPI {
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }
+    }
+
+    @Override
+    public NutsSession getSession() {
+        return session;
     }
 
     @Override
@@ -169,38 +216,6 @@ public class FilePath implements NutsPathSPI {
         }
     }
 
-//    @Override
-//    public NutsOutput output() {
-//        return new NutsPathOutput(null, this, getSession()) {
-//            @Override
-//            public OutputStream open() {
-//                return getOutputStream();
-//            }
-//        };
-//    }
-
-    @Override
-    public boolean isDirectory() {
-        return Files.isDirectory(value);
-    }
-
-    @Override
-    public boolean isRegularFile() {
-        return Files.isRegularFile(value);
-    }
-
-    public boolean exists() {
-        return Files.exists(value);
-    }
-
-    public long getContentLength() {
-        try {
-            return Files.size(value);
-        } catch (IOException e) {
-            throw new UncheckedIOException(e);
-        }
-    }
-
     @Override
     public Instant getLastModifiedInstant() {
         FileTime r = null;
@@ -216,12 +231,144 @@ public class FilePath implements NutsPathSPI {
     }
 
     @Override
+    public Instant getLastAccessInstant() {
+        BasicFileAttributes a = getBattr();
+        if (a != null) {
+            FileTime t = a.lastAccessTime();
+            return t == null ? null : Instant.ofEpochMilli(t.toMillis());
+        }
+        return null;
+    }
+
+    @Override
+    public Instant getCreationInstant() {
+        BasicFileAttributes a = getBattr();
+        if (a != null) {
+            FileTime t = a.creationTime();
+            return t == null ? null : Instant.ofEpochMilli(t.toMillis());
+        }
+        return null;
+    }
+
+    @Override
     public NutsPath getParent() {
         Path p = value.getParent();
         if (p == null) {
             return null;
         }
         return getSession().io().path(p);
+    }
+
+    @Override
+    public NutsPath toAbsolute(NutsPath basePath) {
+        if (isAbsolute()) {
+            return new NutsPathFromSPI(this);
+        }
+        if (basePath == null) {
+            return new NutsPathFromSPI(new FilePath(
+                    value.normalize().toAbsolutePath(), session
+            ));
+        }
+        return basePath.toAbsolute().resolve(toString());
+    }
+
+    @Override
+    public NutsPath normalize() {
+        return new NutsPathFromSPI(new FilePath(value.normalize(), session));
+    }
+
+    @Override
+    public boolean isAbsolute() {
+        return value.isAbsolute();
+    }
+
+    @Override
+    public String owner() {
+        PosixFileAttributes a = getUattr();
+        if (a != null) {
+            UserPrincipal o = a.owner();
+            return o == null ? null : o.getName();
+        }
+        return null;
+    }
+
+    @Override
+    public String group() {
+        PosixFileAttributes a = getUattr();
+        if (a != null) {
+            GroupPrincipal o = a.group();
+            return o == null ? null : o.getName();
+        }
+        return null;
+    }
+
+    @Override
+    public Set<NutsPathPermission> permissions() {
+        Set<NutsPathPermission> p = new LinkedHashSet<>();
+        PosixFileAttributes a = getUattr();
+        File file = value.toFile();
+        if (file.canRead()) {
+            p.add(NutsPathPermission.CAN_READ);
+        }
+        if (file.canWrite()) {
+            p.add(NutsPathPermission.CAN_WRITE);
+        }
+        if (file.canExecute()) {
+            p.add(NutsPathPermission.CAN_EXECUTE);
+        }
+        if (a != null) {
+            for (PosixFilePermission permission : a.permissions()) {
+                switch (permission) {
+                    case OWNER_READ: {
+                        p.add(NutsPathPermission.OWNER_READ);
+                    }
+                    case OWNER_WRITE: {
+                        p.add(NutsPathPermission.OWNER_WRITE);
+                    }
+                    case OWNER_EXECUTE: {
+                        p.add(NutsPathPermission.OWNER_EXECUTE);
+                    }
+                    case GROUP_READ: {
+                        p.add(NutsPathPermission.GROUP_READ);
+                    }
+                    case GROUP_WRITE: {
+                        p.add(NutsPathPermission.GROUP_WRITE);
+                    }
+                    case GROUP_EXECUTE: {
+                        p.add(NutsPathPermission.GROUP_EXECUTE);
+                    }
+                    case OTHERS_READ: {
+                        p.add(NutsPathPermission.OTHERS_READ);
+                    }
+                    case OTHERS_WRITE: {
+                        p.add(NutsPathPermission.OTHERS_WRITE);
+                    }
+                    case OTHERS_EXECUTE: {
+                        p.add(NutsPathPermission.OTHERS_EXECUTE);
+                    }
+                }
+            }
+        }
+        return Collections.unmodifiableSet(p);
+    }
+
+    @Override
+    public void setPermissions(NutsPathPermission... permissions) {
+        Set<NutsPathPermission> add = new LinkedHashSet<>(Arrays.asList(permissions));
+        Set<NutsPathPermission> remove = new LinkedHashSet<>(EnumSet.allOf(NutsPathPermission.class));
+        remove.addAll(add);
+        setPermissions(add.toArray(new NutsPathPermission[0]), true);
+//        setPermissions(remove.toArray(new NutsPathPermission[0]),false);
+    }
+
+    @Override
+    public void addPermissions(NutsPathPermission... permissions) {
+        setPermissions(permissions, true);
+    }
+
+    @Override
+    public void removePermissions(NutsPathPermission... permissions) {
+        //
     }
 
     @Override
@@ -242,9 +389,77 @@ public class FilePath implements NutsPathSPI {
         return value.toString();
     }
 
-    @Override
-    public NutsFormatSPI getFormatterSPI() {
-        return new MyPathFormat(this);
+    private BasicFileAttributes getBattr() {
+        try {
+            return Files.readAttributes(value, BasicFileAttributes.class);
+        } catch (Exception ex) {
+            //
+        }
+        return null;
+    }
+
+    private PosixFileAttributes getUattr() {
+        try {
+            return Files.readAttributes(value, PosixFileAttributes.class);
+        } catch (Exception ex) {
+            //
+        }
+        return null;
+    }
+
+    public void setPermissions(NutsPathPermission[] permissions, boolean f) {
+        for (NutsPathPermission permission : permissions) {
+            switch (permission) {
+                case CAN_READ: {
+                    value.toFile().setReadable(f);
+                    break;
+                }
+                case CAN_WRITE: {
+                    value.toFile().setWritable(f);
+                    break;
+                }
+                case CAN_EXECUTE: {
+                    value.toFile().setExecutable(f);
+                    break;
+                }
+                case OWNER_READ: {
+                    value.toFile().setReadable(f);
+                    break;
+                }
+                case OWNER_WRITE: {
+                    value.toFile().setWritable(f);
+                    break;
+                }
+                case OWNER_EXECUTE: {
+                    value.toFile().setExecutable(f);
+                    break;
+                }
+                case GROUP_READ: {
+                    value.toFile().setReadable(f);
+                    break;
+                }
+                case GROUP_WRITE: {
+                    value.toFile().setWritable(f);
+                    break;
+                }
+                case GROUP_EXECUTE: {
+                    value.toFile().setExecutable(f);
+                    break;
+                }
+                case OTHERS_READ: {
+                    value.toFile().setReadable(f);
+                    break;
+                }
+                case OTHERS_WRITE: {
+                    value.toFile().setWritable(f);
+                    break;
+                }
+                case OTHERS_EXECUTE: {
+                    value.toFile().setExecutable(f);
+                    break;
+                }
+            }
+        }
     }
 
     private static class MyPathFormat implements NutsFormatSPI {

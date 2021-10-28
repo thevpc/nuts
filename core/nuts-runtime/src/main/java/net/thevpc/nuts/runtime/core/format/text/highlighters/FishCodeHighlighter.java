@@ -1,8 +1,11 @@
-package net.thevpc.nuts.runtime.core.format.text.bloc;
+package net.thevpc.nuts.runtime.core.format.text.highlighters;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.bundles.parsers.StringReaderExt;
 import net.thevpc.nuts.runtime.core.format.text.parser.DefaultNutsTextPlain;
+import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
+import net.thevpc.nuts.spi.NutsComponent;
+import net.thevpc.nuts.spi.NutsSupportLevelContext;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -12,43 +15,34 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
-import net.thevpc.nuts.spi.NutsComponent;
-import net.thevpc.nuts.NutsCodeFormat;
-import net.thevpc.nuts.spi.NutsSupportLevelContext;
-
-public class BashBlocTextFormatter implements NutsCodeFormat {
+public class FishCodeHighlighter implements NutsCodeHighlighter {
 
     private NutsWorkspace ws;
     private NutsTextManager factory;
 
-    public BashBlocTextFormatter(NutsWorkspace ws) {
+    public FishCodeHighlighter(NutsWorkspace ws) {
         this.ws = ws;
         factory = NutsWorkspaceUtils.defaultSession(ws).text();
+    }
+
+    @Override
+    public String getId() {
+        return "fish";
     }
 
     @Override
     public int getSupportLevel(NutsSupportLevelContext<String> context) {
         String s = context.getConstraints();
         switch (s) {
-            case "sh":
-            case "bash":
-            case "csh":
-            case "zsh":
-            case "ksh":{
+            case "fish": {
                 return NutsComponent.DEFAULT_SUPPORT;
             }
             case "system": {
                 switch (NutsShellFamily.getCurrent()) {
-                    case SH:
-                    case BASH:
-                    case CSH:
-                    case ZSH:
-                    case KSH:{
-                        return NutsComponent.DEFAULT_SUPPORT + 10;
+                    case FISH: {
+                        return NutsComponent.DEFAULT_SUPPORT;
                     }
                 }
-                return NutsComponent.DEFAULT_SUPPORT;
             }
         }
         return NutsComponent.NO_SUPPORT;
@@ -442,7 +436,7 @@ public class BashBlocTextFormatter implements NutsCodeFormat {
                         expectedName = false;
                         if (all.size() > startIndex) {
                             TokenType t = resolveTokenType(all.get(startIndex));
-                            if (t==TokenType.ENV || t==TokenType.WORD) {
+                            if (t== TokenType.ENV || t== TokenType.WORD) {
                                 all.set(startIndex, factory.ofStyled(all.get(startIndex), NutsTextStyle.keyword(4)));
                                 wasSpace = false;
                             }

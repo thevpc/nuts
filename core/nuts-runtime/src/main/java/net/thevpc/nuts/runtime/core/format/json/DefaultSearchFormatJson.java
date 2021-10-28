@@ -5,8 +5,6 @@
  */
 package net.thevpc.nuts.runtime.core.format.json;
 
-import java.io.PrintStream;
-
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.format.NutsFetchDisplayOptions;
 import net.thevpc.nuts.runtime.core.format.DefaultSearchFormatBase;
@@ -20,12 +18,12 @@ public class DefaultSearchFormatJson extends DefaultSearchFormatBase {
     private boolean compact;
 
     NutsTextManager factory;
-    private NutsCodeFormat codeFormat;
+    private NutsCodeHighlighter codeFormat;
 
     public DefaultSearchFormatJson(NutsSession session, NutsPrintStream writer, NutsFetchDisplayOptions options) {
         super(session, writer, NutsContentType.JSON, options);
         factory = session.text();
-        codeFormat = session.text().setSession(session).getCodeFormat("json");
+        codeFormat = session.text().setSession(session).getCodeHighlighter("json");
     }
 
     @Override

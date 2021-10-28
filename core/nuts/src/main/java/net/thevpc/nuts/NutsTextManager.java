@@ -59,13 +59,13 @@ public interface NutsTextManager {
 
     NutsTextManager setTheme(String themeName);
 
-    NutsCodeFormat getCodeFormat(String kind);
+    NutsCodeHighlighter getCodeHighlighter(String kind);
 
-    NutsTextManager addCodeFormat(NutsCodeFormat format);
+    NutsTextManager addCodeHighlighter(NutsCodeHighlighter format);
 
-    NutsTextManager removeCodeFormat(NutsCodeFormat format);
+    NutsTextManager removeCodeHighlighter(String id);
 
-    NutsCodeFormat[] getCodeFormats();
+    NutsCodeHighlighter[] getCodeHighlighters();
 
     NutsText parse(String t);
 

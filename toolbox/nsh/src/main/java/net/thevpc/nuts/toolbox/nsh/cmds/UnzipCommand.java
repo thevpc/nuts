@@ -27,7 +27,6 @@ package net.thevpc.nuts.toolbox.nsh.cmds;
 
 import net.thevpc.nuts.*;
 
-import java.io.File;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
 import java.util.ArrayList;
@@ -84,12 +83,13 @@ public class UnzipCommand extends SimpleNshBuiltin {
         if (options.files.isEmpty()) {
             commandLine.required();
         }
+        NutsSession session = context.getSession();
         for (String path : options.files) {
-            File file = new File(context.getRootContext().getAbsolutePath(path));
+            NutsPath file = NutsPath.of(path, session).toAbsolute(context.getRootContext().getCwd());
             try {
                 if (options.l) {
-                    context.getSession().io().uncompress()
-                            .from(file.getPath())
+                    session.io().uncompress()
+                            .from(file)
                                     .visit(new NutsIOUncompressVisitor() {
                                         @Override
                                         public boolean visitFolder(String path) {
@@ -98,7 +98,7 @@ public class UnzipCommand extends SimpleNshBuiltin {
 
                                         @Override
                                         public boolean visitFile(String path, InputStream inputStream) {
-                                            context.getSession().out().printf("%s\n", path);
+                                            session.out().printf("%s\n", path);
                                             return true;
                                         }
                                     });
@@ -108,14 +108,14 @@ public class UnzipCommand extends SimpleNshBuiltin {
                         dir = context.getRootContext().getCwd();
                     }
                     dir = context.getRootContext().getAbsolutePath(dir);
-                    context.getSession().io().uncompress()
-                                    .from(file.getPath())
+                    session.io().uncompress()
+                                    .from(file)
                                     .to(dir)
                                             .setSkipRoot(options.skipRoot)
                                                     .run();
                 }
             } catch (UncheckedIOException| NutsIOException ex) {
-                throw new NutsExecutionException(context.getSession(), NutsMessage.cstyle("%s",ex), ex, 1);
+                throw new NutsExecutionException(session, NutsMessage.cstyle("%s",ex), ex, 1);
             }
         }
     }

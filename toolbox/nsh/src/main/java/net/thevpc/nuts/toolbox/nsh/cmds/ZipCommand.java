@@ -29,7 +29,6 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.toolbox.nsh.AbstractNshBuiltin;
 import net.thevpc.nuts.toolbox.nsh.bundles.jshell.JShellExecutionContext;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -46,11 +45,12 @@ public class ZipCommand extends AbstractNshBuiltin {
     public int execImpl(String[] args, JShellExecutionContext context) {
         NutsCommandLine commandLine = cmdLine(args, context);
         Options options = new Options();
-        List<String> files = new ArrayList<>();
+        List<NutsPath> files = new ArrayList<>();
 //        NutsPrintStream out = context.out();
-        File outZip = null;
+        NutsPath outZip = null;
         NutsArgument a;
-        NutsCommandLineManager nutsCommandLineFormat = context.getSession().commandLine();
+        NutsSession session = context.getSession();
+        NutsCommandLineManager nutsCommandLineFormat = session.commandLine();
         while (commandLine.hasNext()) {
             if (commandLine.next("-r") != null) {
                 options.r = true;
@@ -58,11 +58,11 @@ public class ZipCommand extends AbstractNshBuiltin {
                 commandLine.unexpectedArgument();
             } else if (commandLine.peek().isNonOption()) {
                 String path = commandLine.required().nextNonOption(nutsCommandLineFormat.createName("file")).getString();
-                File file = new File(context.getShellContext().getAbsolutePath(path));
+                NutsPath file = NutsPath.of(path, session).toAbsolute(context.getShellContext().getCwd());
                 if (outZip == null) {
                     outZip = file;
                 } else {
-                    files.add(file.getPath());
+                    files.add(file);
                 }
             } else {
                 context.configureLast(commandLine);
@@ -74,9 +74,9 @@ public class ZipCommand extends AbstractNshBuiltin {
         if (outZip == null) {
             commandLine.required(NutsMessage.cstyle("missing out-zip"));
         }
-        NutsIOCompressAction aa = context.getSession().io().compress()
-                .setTarget(outZip.getPath());
-        for (String file : files) {
+        NutsIOCompressAction aa = session.io().compress()
+                .setTarget(outZip);
+        for (NutsPath file : files) {
             aa.addSource(file);
         }
         aa.run();

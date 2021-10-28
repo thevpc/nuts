@@ -124,6 +124,15 @@ public interface NutsIOCompressAction {
     NutsIOCompressAction addSource(URL source);
 
     /**
+     * add source to compress
+     *
+     * @param source source
+     * @return {@code this} instance
+     * @throws NutsUnsupportedArgumentException if unsupported type
+     */
+    NutsIOCompressAction addSource(NutsPath source);
+
+    /**
      * target to compress to
      *
      * @return target to compress to
@@ -161,6 +170,22 @@ public interface NutsIOCompressAction {
      * @return {@code this} instance
      */
     NutsIOCompressAction setTarget(String target);
+
+    /**
+     * update target
+     *
+     * @param target target
+     * @return {@code this} instance
+     */
+    NutsIOCompressAction setTarget(NutsPath target);
+
+    /**
+     * update target
+     *
+     * @param target target
+     * @return {@code this} instance
+     */
+    NutsIOCompressAction to(NutsPath target);
 
     /**
      * update target

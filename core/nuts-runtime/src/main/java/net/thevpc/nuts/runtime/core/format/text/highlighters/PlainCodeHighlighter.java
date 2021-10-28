@@ -1,22 +1,27 @@
-package net.thevpc.nuts.runtime.core.format.text.bloc;
+package net.thevpc.nuts.runtime.core.format.text.highlighters;
 
 import net.thevpc.nuts.spi.NutsSupportLevelContext;
 import net.thevpc.nuts.NutsWorkspace;
 import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 import net.thevpc.nuts.spi.NutsComponent;
-import net.thevpc.nuts.NutsCodeFormat;
+import net.thevpc.nuts.NutsCodeHighlighter;
 import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.NutsTextManager;
 import net.thevpc.nuts.NutsText;
 
-public class PlainBlocTextFormatter implements NutsCodeFormat {
+public class PlainCodeHighlighter implements NutsCodeHighlighter {
 
     NutsWorkspace ws;
     private NutsTextManager factory;
 
-    public PlainBlocTextFormatter(NutsWorkspace ws) {
+    public PlainCodeHighlighter(NutsWorkspace ws) {
         this.ws = ws;
         factory = NutsWorkspaceUtils.defaultSession(ws).text();
+    }
+
+    @Override
+    public String getId() {
+        return "plain";
     }
 
     @Override

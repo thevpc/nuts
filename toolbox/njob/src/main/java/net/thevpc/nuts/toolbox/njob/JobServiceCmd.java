@@ -297,7 +297,7 @@ public class JobServiceCmd {
                 .setCommandReadHighlighter(new NutsCommandReadHighlighter() {
                     @Override
                     public NutsText highlight(String buffer, NutsSession session) {
-                        return session.text().ofCode("sh", buffer).parse(session);
+                        return session.text().ofCode("sh", buffer).highlight(session);
                     }
                 });
         session.env().setProperty(JobServiceCmd.class.getName(), this);

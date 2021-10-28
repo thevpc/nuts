@@ -480,7 +480,7 @@ public class CorePlatformUtils {
 //    }
 
     public static <T> T runWithinLoader(Callable<T> callable, ClassLoader loader, NutsSession session) {
-        Ref<T> ref = new Ref<>();
+        NutsRef<T> ref = new NutsRef<>();
         Thread thread = new Thread(() -> {
             try {
                 ref.set(callable.call());
@@ -524,10 +524,10 @@ public class CorePlatformUtils {
      * @return main class type for the given
      */
     public static MainClassType getMainClassType(InputStream stream) {
-        final Ref<Boolean> mainClass = new Ref<>();
-        final Ref<Boolean> nutsApp = new Ref<>();
-        final Ref<String> nutsAppVer = new Ref<>();
-        final Ref<String> className = new Ref<>();
+        final NutsRef<Boolean> mainClass = new NutsRef<>();
+        final NutsRef<Boolean> nutsApp = new NutsRef<>();
+        final NutsRef<String> nutsAppVer = new NutsRef<>();
+        final NutsRef<String> className = new NutsRef<>();
         SimpleClassStream.Visitor cl = new SimpleClassStream.Visitor() {
             @Override
             public void visitClassDeclaration(int access, String name, String superName, String[] interfaces) {

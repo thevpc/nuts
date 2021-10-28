@@ -1,8 +1,9 @@
-package net.thevpc.nuts.runtime.core.format.text.bloc;
+package net.thevpc.nuts.runtime.core.format.text.highlighters;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.bundles.parsers.StringReaderExt;
 import net.thevpc.nuts.runtime.core.format.text.parser.DefaultNutsTextPlain;
+import net.thevpc.nuts.runtime.core.format.text.parser.DefaultNutsTextStyled;
 import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 import net.thevpc.nuts.spi.NutsComponent;
 import net.thevpc.nuts.spi.NutsSupportLevelContext;
@@ -15,36 +16,47 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class FishBlocTextFormatter implements NutsCodeFormat {
+public class WinCmdBlocTextHighlighter implements NutsCodeHighlighter {
 
     private NutsWorkspace ws;
     private NutsTextManager factory;
 
-    public FishBlocTextFormatter(NutsWorkspace ws) {
+    public WinCmdBlocTextHighlighter(NutsWorkspace ws) {
         this.ws = ws;
         factory = NutsWorkspaceUtils.defaultSession(ws).text();
     }
 
     @Override
+    public String getId() {
+        return "cmd";
+    }
+
+    @Override
     public int getSupportLevel(NutsSupportLevelContext<String> context) {
         String s = context.getConstraints();
-        switch (s) {
-            case "fish": {
+        switch (s){
+            case "bat":
+            case "win-cmd":
+            case "wincmd":
+            case "cmd":
+            {
                 return NutsComponent.DEFAULT_SUPPORT;
             }
-            case "system": {
-                switch (NutsShellFamily.getCurrent()) {
-                    case FISH: {
-                        return NutsComponent.DEFAULT_SUPPORT;
+            case "system":{
+                switch (NutsShellFamily.getCurrent()){
+                    case WIN_CMD:
+                    case WIN_POWER_SHELL:{
+                        return NutsComponent.DEFAULT_SUPPORT+10;
                     }
                 }
+                return NutsComponent.DEFAULT_SUPPORT;
             }
         }
         return NutsComponent.NO_SUPPORT;
     }
 
     @Override
-    public NutsText tokenToText(String text, String nodeType, NutsSession session) {
+    public NutsText tokenToText(String text, String nodeType,NutsSession session) {
         factory.setSession(session);
         return factory.ofPlain(text);
     }
@@ -55,7 +67,7 @@ public class FishBlocTextFormatter implements NutsCodeFormat {
         List<NutsText> ret = new ArrayList<>();
         while (ar.hasNext()) {
             char c = ar.peekChar();
-            if (c == '\\') {
+            /*if (c == '\\') {
                 StringBuilder sb2 = new StringBuilder();
                 sb2.append(ar.nextChar());
                 if (sb.length() > 0) {
@@ -67,7 +79,7 @@ public class FishBlocTextFormatter implements NutsCodeFormat {
                 }
                 ret.add(factory.ofStyled(sb2.toString(), NutsTextStyle.separator()));
                 break;
-            } else if (c == '\'') {
+            } else */if (c == '\'') {
                 sb.append(ar.nextChar());
                 break;
             } else {
@@ -89,14 +101,14 @@ public class FishBlocTextFormatter implements NutsCodeFormat {
         while (inLoop && ar.hasNext()) {
             char c = ar.peekChar();
             switch (c) {
-                case '\\': {
-                    if (sb.length() > 0) {
-                        ret.add(factory.ofPlain(sb.toString()));
-                        sb.setLength(0);
-                    }
-                    ret.addAll(Arrays.asList(parseCommandLine_readAntiSlash(ar, session)));
-                    break;
-                }
+//                case '\\': {
+//                    if (sb.length() > 0) {
+//                        ret.add(factory.ofPlain(sb.toString()));
+//                        sb.setLength(0);
+//                    }
+//                    ret.addAll(Arrays.asList(parseCommandLine_readAntiSlash(ar, session)));
+//                    break;
+//                }
                 case ';': {
                     endsWithSep = true;
                     inLoop = false;
@@ -125,8 +137,9 @@ public class FishBlocTextFormatter implements NutsCodeFormat {
                 case '?':
                 case '#':
                 case '=':
-                case '~':
-                case '!': {
+                case '~': 
+                case '!': 
+                {
                     inLoop = false;
                     break;
                 }
@@ -206,11 +219,11 @@ public class FishBlocTextFormatter implements NutsCodeFormat {
         }
         if (sb2.length() > 0) {
             return new NutsText[]{
-                    factory.ofStyled("$", NutsTextStyle.separator()),
-                    factory.ofStyled(sb2.toString(), NutsTextStyle.keyword(4)),};
+                factory.ofStyled("$", NutsTextStyle.separator()),
+                factory.ofStyled(sb2.toString(), NutsTextStyle.keyword(4)),};
         }
         return new NutsText[]{
-                factory.ofStyled("$", NutsTextStyle.separator()),};
+            factory.ofStyled("$", NutsTextStyle.separator()),};
     }
 
     private NutsText[] parseCommandLine_readDoubleQuotes(StringReaderExt ar, NutsSession session) {
@@ -221,13 +234,13 @@ public class FishBlocTextFormatter implements NutsCodeFormat {
         ret.add(factory.ofStyled(String.valueOf(ar.nextChar()), NutsTextStyle.string()));
         while (ar.hasNext()) {
             char c = ar.peekChar();
-            if (c == '\\') {
+            /*if (c == '\\') {
                 if (sb.length() > 0) {
                     ret.add(factory.ofStyled(sb.toString(), NutsTextStyle.string()));
                     sb.setLength(0);
                 }
                 ret.addAll(Arrays.asList(parseCommandLine_readAntiSlash(ar, session)));
-            } else if (c == '$') {
+            } else */if (c == '$') {
                 if (sb.length() > 0) {
                     ret.add(factory.ofStyled(sb.toString(), NutsTextStyle.string()));
                     sb.setLength(0);
@@ -251,44 +264,29 @@ public class FishBlocTextFormatter implements NutsCodeFormat {
         return ret.toArray(new NutsText[0]);
     }
 
-
-
-    private enum TokenType{
-        ENV,WORD,SPACE,QUOTES,SEPARATORS,OTHER,EMPTY
+    private static boolean isWord(NutsText n) {
+        if (n instanceof DefaultNutsTextPlain) {
+            if (Character.isAlphabetic(((DefaultNutsTextPlain) n).getText().charAt(0))) {
+                return true;
+            }
+        }
+        return false;
     }
 
-    private static TokenType resolveTokenType(NutsText n) {
-        if (n instanceof DefaultNutsTextPlain) {
-            String text = ((DefaultNutsTextPlain) n).getText();
-            if (text.length() > 0) {
-                char c = text.charAt(0);
-                switch (c) {
-                    case '\"':
-                    case '\'':
-                    case '`': {
-                        return TokenType.QUOTES;
-                    }
+    private static boolean isSeparator(NutsText n) {
+        if (n instanceof DefaultNutsTextStyled) {
+            NutsText v = ((DefaultNutsTextStyled) n).getChild();
+            if (v instanceof DefaultNutsTextPlain) {
+                String t = ((DefaultNutsTextPlain) v).getText();
+                switch (t.charAt(0)) {
                     case ';':
                     case '&':
                     case '|':
-                    case '(':
-                    case ')':
-                    case '[':
-                    case ']':
-                    case ',':
-                        return TokenType.SEPARATORS;
-                    default: {
-                        if (Character.isWhitespace(c)) {
-                            return TokenType.SPACE;
-                        }
-                        return TokenType.WORD;
-                    }
+                        return true;
                 }
-            }else{
-                return TokenType.EMPTY;
             }
         }
-        return TokenType.OTHER;
+        return false;
     }
 
     private static boolean isWhites(NutsText n) {
@@ -303,24 +301,9 @@ public class FishBlocTextFormatter implements NutsCodeFormat {
     private static int indexOfFirstWord(List<NutsText> all, int from) {
         for (int i = from; i < all.size(); i++) {
             NutsText n = all.get(i);
-            switch (resolveTokenType(n)){
-                case SPACE:
-                case SEPARATORS:
-                case ENV:{
-                    break;
-                }
-                case WORD:{
-                    if (i == all.size() - 1) {
-                        return i;
-                    }
-                    NutsText p = all.get(i + 1);
-                    switch (resolveTokenType(n)) {
-                        case SPACE:
-                        case SEPARATORS:{
-                            return i;
-                        }
-                    }
-                    break;
+            if (isWord(n)) {
+                if (i == all.size() - 1 || isWhites(all.get(i + 1)) || isSeparator(all.get(i + 1))) {
+                    return i;
                 }
             }
         }
@@ -430,8 +413,7 @@ public class FishBlocTextFormatter implements NutsCodeFormat {
                     if (expectedName) {
                         expectedName = false;
                         if (all.size() > startIndex) {
-                            TokenType t = resolveTokenType(all.get(startIndex));
-                            if (t== TokenType.ENV || t== TokenType.WORD) {
+                            if (isWord(all.get(startIndex))) {
                                 all.set(startIndex, factory.ofStyled(all.get(startIndex), NutsTextStyle.keyword(4)));
                                 wasSpace = false;
                             }
@@ -472,10 +454,10 @@ public class FishBlocTextFormatter implements NutsCodeFormat {
     /**
      * return is space
      *
-     * @param ar         ar
-     * @param all        all
+     * @param ar ar
+     * @param all all
      * @param startIndex startIndex
-     * @param wasSpace   wasSpace
+     * @param wasSpace wasSpace
      * @return is space
      */
     private boolean parseCommandLineStep(StringReaderExt ar, List<NutsText> all, int startIndex, boolean wasSpace, NutsSession session) {
@@ -593,7 +575,8 @@ public class FishBlocTextFormatter implements NutsCodeFormat {
             case '{':
             case '}':
             case '~':
-            case '!': {
+            case '!': 
+            {
                 all.add(factory.ofStyled(String.valueOf(ar.nextChar()), NutsTextStyle.separator()));
                 break;
             }

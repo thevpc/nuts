@@ -5,6 +5,7 @@ import net.thevpc.nuts.*;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.StringTokenizer;
 
 import net.thevpc.nuts.lib.ssh.SshListener;
 import net.thevpc.nuts.toolbox.nsh.bundles._IOUtils;
@@ -104,5 +105,22 @@ public class ShellHelper {
                 return false;
             }
         }
+    }
+
+    public static List<String> splitOn(String line,char sep) {
+        StringTokenizer st=new StringTokenizer(line,""+sep,true);
+        List<String> ret=new ArrayList<>();
+        while(st.hasMoreTokens()){
+            String e = st.nextToken();
+            if(e.charAt(0)==sep){
+                String c0 = String.valueOf(e.charAt(0));
+                for (int i = e.length()-1; i >=0 ; i--) {
+                    ret.add(c0);
+                }
+            }else {
+                ret.add(e);
+            }
+        }
+        return ret;
     }
 }

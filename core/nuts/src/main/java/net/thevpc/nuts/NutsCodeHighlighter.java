@@ -29,7 +29,9 @@ import net.thevpc.nuts.spi.NutsSupportLevelContext;
 /**
  * Code Format to help formatting (syntax coloring) to NTF some code
  */
-public interface NutsCodeFormat extends NutsComponent<String> {
+public interface NutsCodeHighlighter extends NutsComponent<String> {
+
+    String getId();
 
     /**
      * evaluate support level (who much this instance should be considered convenient, acceptable)
