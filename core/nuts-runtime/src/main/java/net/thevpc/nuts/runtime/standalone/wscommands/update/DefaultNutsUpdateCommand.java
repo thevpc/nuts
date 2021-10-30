@@ -336,14 +336,14 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
                     if (update.isUpdateVersionAvailable()) {
                         arrayElementBuilder.add(e.forObject()
                                 .set("package", update.getAvailable().getId().getShortName())
-                                .set("local-version", update.getLocal().getId().getVersion().toString())
-                                .set("new-version", update.getAvailable().getId().getVersion().toString())
+                                .set("localVersion", update.getLocal().getId().getVersion().toString())
+                                .set("newVersion", update.getAvailable().getId().getVersion().toString())
                                 .build());
                     } else if (update.isUpdateStatusAvailable()) {
                         arrayElementBuilder.add(e.forObject()
                                 .set("package", update.getAvailable().getId().getShortName())
-                                .set("local-version", update.getLocal().getId().getVersion().toString())
-                                .set("new-version", "set as default")
+                                .set("localVersion", update.getLocal().getId().getVersion().toString())
+                                .set("newVersion", "set as default")
                                 .build());
                     }
                 }
