@@ -69,10 +69,10 @@ public class DefaultNutsExecCommand extends AbstractNutsExecCommand {
         }
         terminal.out().flush();
         terminal.err().flush();
-        String[] ts = command.toArray(new String[0]);
-        if (ts.length == 0) {
+        if (command == null || command.size() == 0) {
             throw new NutsIllegalArgumentException(traceSession, NutsMessage.plain("missing command"));
         }
+        String[] ts = command.toArray(new String[0]);
         NutsExecutableInformationExt exec = null;
         execSession.setTerminal(terminal);
         NutsExecutionType executionType = this.getExecutionType();
