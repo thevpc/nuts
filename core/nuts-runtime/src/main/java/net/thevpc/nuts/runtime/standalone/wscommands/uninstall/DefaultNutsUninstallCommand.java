@@ -40,7 +40,11 @@ public class DefaultNutsUninstallCommand extends AbstractNutsUninstallCommand {
         NutsWorkspaceExt dws = NutsWorkspaceExt.of(session.getWorkspace());
         session.security().setSession(getSession()).checkAllowed(NutsConstants.Permissions.UNINSTALL, "uninstall");
         List<NutsDefinition> defs = new ArrayList<>();
-        for (NutsId id : this.getIds()) {
+        NutsId[] nutsIds = this.getIds();
+        if (nutsIds.length == 0) {
+            throw new NutsExecutionException(getSession(), NutsMessage.cstyle("missing packages to uninstall"), 1);
+        }
+        for (NutsId id : nutsIds) {
             List<NutsDefinition> resultDefinitions = session.search().addId(id)
                     .setInstallStatus(session.filters().installStatus().byInstalled(true))
                     .setSession(session.copy().setTransitive(false))
