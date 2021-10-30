@@ -377,8 +377,7 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
 //            }
 //        }
         if (d0 == null) {
-            return r;
-            //throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("%s is not yet installed for it to be updated.",id));
+            throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("%s is not yet installed for it to be updated.", id));
         }
         if (!d0.getInstallInformation().isDefaultVersion()) {
             shouldUpdateDefault = true;
