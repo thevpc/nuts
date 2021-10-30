@@ -45,9 +45,12 @@ public class DefaultNutsLicenseInternalExecutable extends DefaultInternalNutsExe
             }
         }
 
-        NutsPrintStream out = getSession().out();
         String licenseString = NutsWorkspaceExt.of(getSession().getWorkspace()).getLicenseText(getSession());
-        getSession().formats().object(licenseString).configure(false, args).println(out);
+        if (getSession().isPlainOut()) {
+            getSession().out().println(licenseString);
+        } else {
+            getSession().out().printlnf(licenseString);
+        }
     }
 
 }
