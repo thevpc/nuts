@@ -66,38 +66,38 @@ public class DefaultNutsWhichInternalExecutable extends DefaultInternalNutsExecu
 //                boolean showDesc = false;
                 switch (p.getType()) {
                     case SYSTEM: {
-                        if(getSession().isPlainOut()){
+                        if (getSession().isPlainOut()) {
                             out.printf("%s : %s %s%n",
                                     factory.ofStyled(arg, NutsTextStyle.primary4()),
                                     factory.ofStyled("system command", NutsTextStyle.primary6())
                                     , p.getDescription());
 
-                        }else {
-                            getSession().eout().add(
+                        } else {
+                            getSession().out().printlnf(
                                     e.forObject()
-                                            .set("name",arg)
-                                            .set("type","system-command")
-                                            .set("description",p.getDescription())
+                                            .set("name", arg)
+                                            .set("type", "system-command")
+                                            .set("description", p.getDescription())
                                             .build()
                             );
                         }
                         break;
                     }
                     case ALIAS: {
-                        if(getSession().isPlainOut()){
+                        if (getSession().isPlainOut()) {
                             out.printf("%s : %s (owner %s ) : %s%n",
                                     factory.ofStyled(arg, NutsTextStyle.primary4()),
                                     factory.ofStyled("nuts alias", NutsTextStyle.primary6()),
                                     p.getId(),
                                     getSession().commandLine().create(getSession().commands().findCommand(p.getName()).getCommand())
                             );
-                        }else {
-                            getSession().eout().add(
+                        } else {
+                            getSession().out().printlnf(
                                     e.forObject()
-                                            .set("name",arg)
-                                            .set("type","alias")
-                                            .set("description",p.getDescription())
-                                            .set("id",p.getId().toString())
+                                            .set("name", arg)
+                                            .set("type", "alias")
+                                            .set("description", p.getDescription())
+                                            .set("id", p.getId().toString())
                                             .build()
                             );
                         }
@@ -106,42 +106,58 @@ public class DefaultNutsWhichInternalExecutable extends DefaultInternalNutsExecu
                     case ARTIFACT: {
                         if (p.getId() == null) {
                             NutsId nid = getSession().id().parser().setLenient(true).parse(arg);
-                            if(nid!=null) {
+                            if (nid != null) {
                                 throw new NutsNotFoundException(getSession(), nid);
-                            }else{
-                                throw new NutsNotFoundException(getSession(), null,NutsMessage.cstyle("artifact not found: %s%s", (arg == null ? "<null>" : arg)));
+                            } else {
+                                throw new NutsNotFoundException(getSession(), null, NutsMessage.cstyle("artifact not found: %s%s", (arg == null ? "<null>" : arg)));
                             }
                         }
-                        if(getSession().isPlainOut()){
+                        if (getSession().isPlainOut()) {
                             out.printf("%s : %s %s%n",
                                     factory.ofStyled(arg, NutsTextStyle.primary4()),
                                     factory.ofStyled("artifact", NutsTextStyle.primary6()),
                                     p.getId()/*, p.getDescription()*/
                             );
-                        }else {
-                            getSession().eout().add(
+                        } else {
+                            getSession().out().printlnf(
                                     e.forObject()
-                                            .set("name",arg)
-                                            .set("type","artifact")
-                                            .set("id",p.getId().toString())
-                                            .set("description",p.getDescription())
+                                            .set("name", arg)
+                                            .set("type", "artifact")
+                                            .set("id", p.getId().toString())
+                                            .set("description", p.getDescription())
                                             .build()
                             );
                         }
                         break;
                     }
                     case INTERNAL: {
-                        if(getSession().isPlainOut()){
+                        if (getSession().isPlainOut()) {
                             out.printf("%s : %s %n",
                                     factory.ofStyled("internal command", NutsTextStyle.primary6()),
                                     factory.ofStyled(arg, NutsTextStyle.primary4())
                             );
-                        }else {
-                            getSession().eout().add(
+                        } else {
+                            getSession().out().printlnf(
                                     e.forObject()
-                                            .set("name",arg)
-                                            .set("type","internal-command")
-                                            .set("description",p.getDescription())
+                                            .set("name", arg)
+                                            .set("type", "internal-command")
+                                            .set("description", p.getDescription())
+                                            .build()
+                            );
+                        }
+                        break;
+                    }
+                    case UNKNOWN: {
+                        if (getSession().isPlainOut()) {
+                            out.printf("%s : %s %n",
+                                    factory.ofStyled("unknown command", NutsTextStyle.primary6()),
+                                    factory.ofStyled(arg, NutsTextStyle.primary4())
+                            );
+                        } else {
+                            getSession().out().printlnf(
+                                    e.forObject()
+                                            .set("name", arg)
+                                            .set("type", "unknown-command")
                                             .build()
                             );
                         }
@@ -152,14 +168,14 @@ public class DefaultNutsWhichInternalExecutable extends DefaultInternalNutsExecu
 //                    out.printf("\t %s%n", arg/*, p.getDescription()*/);
 //                }
             } catch (NutsNotFoundException ex) {
-                if(getSession().isPlainOut()){
-                    out.printf("%s : %s%n", factory.ofStyled(arg,NutsTextStyle.primary4()),factory.ofStyled("not found",NutsTextStyle.error()));
-                }else {
+                if (getSession().isPlainOut()) {
+                    out.printf("%s : %s%n", factory.ofStyled(arg, NutsTextStyle.primary4()), factory.ofStyled("not found", NutsTextStyle.error()));
+                } else {
                     NutsElementFormat e = getSession().elem();
                     getSession().eout().add(
                             e.forObject()
-                                    .set("name",arg)
-                                    .set("type","not-found")
+                                    .set("name", arg)
+                                    .set("type", "not-found")
                                     .build()
                     );
                 }
