@@ -149,11 +149,11 @@ public class DefaultNutsExecCommand extends AbstractNutsExecCommand {
         } catch (Exception ex) {
             String p = getExtraErrorMessage();
             NutsExceptionBase ee = NutsExceptionBase.detectExceptionBase(ex);
-            int exitCode=244;
-            if(ee instanceof NutsExecutionException){
-                exitCode=((NutsExecutionException) ee).getExitCode();
+            int exitCode = 244;
+            if (ee instanceof NutsExecutionException) {
+                exitCode = ((NutsExecutionException) ee).getExitCode();
             }
-            if(exitCode!=0) {
+            if (exitCode != 0) {
                 if (p != null) {
                     result = new NutsExecutionException(getSession(),
                             NutsMessage.cstyle("execution failed with code %s and message :  of : %s ; error was : %s ; notes : %s", 244, exec, ex, p),
@@ -315,7 +315,7 @@ public class DefaultNutsExecCommand extends AbstractNutsExecCommand {
                         List<String> cmdArr = new ArrayList<>();
                         cmdArr.add(cmdName);
                         cmdArr.addAll(Arrays.asList(args));
-                        return new DefaultNutsSystemExecutable(cmdArr.toArray(new String[0]), executorOptions, prepareSession, execSession, this);
+                        return new DefaultUnknownExecutable(cmdArr.toArray(new String[0]), execSession);
                     }
                     return ws_execId(idToExec, cmdName, args, executorOptions, executionType, runAs, prepareSession, execSession);
                 }

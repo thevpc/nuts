@@ -53,7 +53,13 @@ public enum NutsExecutableType implements NutsEnum {
     /**
      * system command
      */
-    SYSTEM;
+    SYSTEM,
+
+    /**
+     * unknown command
+     * @since 0.8.3
+     */
+    UNKNOWN;
 
     /**
      * lower-cased identifier for the enum entry
