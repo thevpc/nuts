@@ -268,7 +268,7 @@ public class ShNutsShellHelper extends AbstractNixNutsShellHelper {
 
     public String escapeArgument(String arg, NutsCommandLineShellOptions options) {
         if(arg == null || arg.isEmpty()){
-            return "''";
+            return "\"\"";
         }
         if(options==null){
             options=new NutsCommandLineShellOptions();
@@ -373,7 +373,7 @@ public class ShNutsShellHelper extends AbstractNixNutsShellHelper {
             }
             case REQUIRE_QUOTES:{
                 StringBuilder sb=new StringBuilder();
-                sb.append("'");
+                sb.append("\"");
                 for (char c : arg.toCharArray()) {
                     switch (c){
                         case '\\':
@@ -396,7 +396,7 @@ public class ShNutsShellHelper extends AbstractNixNutsShellHelper {
                         }
                     }
                 }
-                sb.append("'");
+                sb.append("\"");
                 return sb.toString();
             }
             default:{
