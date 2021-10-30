@@ -6,6 +6,7 @@
 package net.thevpc.nuts.runtime.standalone.wscommands.update;
 
 import net.thevpc.nuts.NutsSession;
+import net.thevpc.nuts.runtime.core.util.CoreNutsUtils;
 import net.thevpc.nuts.runtime.standalone.wscommands.exec.DefaultInternalNutsExecutableCommand;
 
 /**
@@ -20,10 +21,10 @@ public class DefaultNutsUpdateInternalExecutable extends DefaultInternalNutsExec
 
     @Override
     public void execute() {
-//        if (CoreNutsUtils.isIncludesHelpOption(args)) {
-//            showDefaultHelp();
-//            return;
-//        }
+        if (CoreNutsUtils.isIncludesHelpOption(args)) {
+            showDefaultHelp();
+            return;
+        }
         getSession().update()
                 .configure(false, args).update();
 
