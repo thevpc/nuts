@@ -17,8 +17,8 @@ import net.thevpc.nuts.spi.NutsInstallerComponent;
 
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * type: Command Class
@@ -51,17 +51,29 @@ public class DefaultNutsUninstallCommand extends AbstractNutsUninstallCommand {
                     .setOptional(false).setEffective(true)
                     .setContent(true)//include content so that we can remove it by calling executor
                     .getResultDefinitions().toList();
-            for (Iterator<NutsDefinition> it = resultDefinitions.iterator(); it.hasNext();) {
-                NutsDefinition resultDefinition = it.next();
-                if (!resultDefinition.getInstallInformation().isInstalledOrRequired()) {
-                    it.remove();
-                }
-            }
+            resultDefinitions.removeIf(it -> !it.getInstallInformation().isInstalledOrRequired());
             if (resultDefinitions.isEmpty()) {
-                throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("not installed : %s",id));
+                throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("not installed : %s", id));
             }
             defs.addAll(resultDefinitions);
         }
+
+        NutsMemoryPrintStream mout = session.io().createMemoryPrintStream();
+        mout.println("should we proceed?");
+        NutsMessage cancelMessage = NutsMessage.cstyle("removal cancelled : %s", defs.stream()
+                .map(NutsDefinition::getId)
+                .map(NutsId::getFullName)
+                .collect(Collectors.joining(", ")));
+        if (!defs.isEmpty() && !getSession().getTerminal().ask()
+                .resetLine()
+                .setSession(session)
+                .forBoolean(mout.toString())
+                .setDefaultValue(true)
+                .setCancelMessage(cancelMessage)
+                .getBooleanValue()) {
+            throw new NutsUserCancelException(getSession(), cancelMessage);
+        }
+
         for (NutsDefinition def : defs) {
 //            NutsId id = dws.resolveEffectiveId(def.getDescriptor(), searchSession);
 
