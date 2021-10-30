@@ -1,21 +1,23 @@
 show help and exit
-       If no command names are provided, nuts help is displayed. Otherwise, Each command help is displayed.
-       When Command is unknown or invalid, an error message is displayed.
+    If no command names are provided, nuts help is displayed. Otherwise, Each command help is displayed.
+    When Command is unknown or invalid, an error message is displayed.
 
 ##) SYNOPSIS:
-```sh nuts help [<-options>]... <command-name>...```
+
+    ```sh nuts help [<-options>]... <command-name>...```
 
 #!include</net/thevpc/nuts/runtime/includes/standard-command.ntf>
 
 ##) EXAMPLES
-```sh nuts help --help```
+
+    ```sh nuts help --help```
         show this help and exit
-       
-```sh nuts help update```
+
+    ```sh nuts help update```
         show help for update internal command
 
-```sh nuts -Zy -w test help --colors ```
+    ```sh nuts -Zy -w test help --colors ```
         show NTF help
 
-```sh nuts -ZSbkKy -w=test6 settings --help ```
+    ```sh nuts -ZSbkKy -w=test6 settings --help ```
         echo with NFT format

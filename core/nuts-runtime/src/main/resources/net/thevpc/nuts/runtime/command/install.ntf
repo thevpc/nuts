@@ -1,28 +1,32 @@
 install ```sh nuts``` package <nuts-artifact>
-    install ```sh nuts``` package <nuts-artifact>
 
 ##) SYNOPSIS:
-```sh nuts  install <-options> <nuts-artifact>...```
+
+    ```sh nuts install <-options> <nuts-artifact>...```
 
 ##) OPTIONS:
-```sh -c | --companions```sh
-    include companions in the install process
-```sh -i | --installed```sh
-    include already installed artifacts in the install process (re-install)
-```sh -g | --args <args> ...```sh
-    pass the given args to the install executor
 
-#!include</net/thevpc/nut/runtime/includes/standard-command.ntf>
+    ```sh -c | --companions```
+        include companions in the install process
+
+    ```sh -i | --installed```
+        include already installed artifacts in the install process (re-install)
+
+    ```sh -g | --args <args> ...```
+        pass the given args to the install executor
+
+#!include</net/thevpc/nuts/runtime/includes/standard-command.ntf>
 
 ##) EXAMPLES:
-```sh  nuts install --help```
-            show this help and exit
-       
-```sh nuts install netbeans-launcher```
-            install netbeans-launcher
 
-```sh nuts -Zy -w test ---jdb install pnote```
-            install pnote in debug mode
+    ```sh nuts install --help```
+        show this help and exit
 
-```sh nuts -Zyb -w test --verbose install netbeans-launcher```
-            install netbeans-launcher in verbose mode
+    ```sh nuts install netbeans-launcher```
+        install netbeans-launcher
+
+    ```sh nuts -Zy -w test ---jdb install pnote```
+        install pnote in debug mode
+
+    ```sh nuts -Zyb -w test --verbose install netbeans-launcher```
+        install netbeans-launcher in verbose mode
