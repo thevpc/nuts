@@ -2,27 +2,35 @@ check for updates
     check if a newer version of ```sh nuts``` is available in the current workspace without performing updates
 
 ##) SYNOPSYS
-```sh nuts check-updates  [<-options>]... <ids> ...```
+
+    ```sh nuts check-updates [<-options>]... <ids> ...```
 
 ##) OPTIONS:
-```sh -a | --all```
-    check updates for both workspace's api, runtime extensions and installed artifacts
-```sh -w | --ws or --workspace```
-    check updates for all workspace's related artifacts (api, runtime and extensions)
-```sh -i | --installed```
-    check updates for all installed artifacts
-```sh -e | --extensions```
-    check updates for all workspace's extensions
-```sh -r | --runtime```
-    check updates for workspace's runtime artifact (minor workspace update)
-```sh -A | --api```
-    check updates for workspace's api (major workspace update)
+
+    ```sh -a | --all```
+        check updates for both workspace's api, runtime extensions and installed artifacts
+
+    ```sh -w | --ws or --workspace```
+        check updates for all workspace's related artifacts (api, runtime and extensions)
+
+    ```sh -i | --installed```
+        check updates for all installed artifacts
+
+    ```sh -e | --extensions```
+        check updates for all workspace's extensions
+
+    ```sh -r | --runtime```
+        check updates for workspace's runtime artifact (minor workspace update)
+
+    ```sh -A | --api```
+        check updates for workspace's api (major workspace update)
 
 #!include</net/thevpc/nuts/runtime/includes/standard-command.ntf>
 
 ##) EXAMPLES
-```sh  nuts check-updates --help```
-            show this help and exit
-       
-```sh  nuts check-updates```
-            check updates for current workspace
+
+    ```sh nuts check-updates --help```
+        show this help and exit
+
+    ```sh nuts check-updates```
+        check updates for current workspace

@@ -1,16 +1,13 @@
 push a ```sh nuts``` to remote repository
-    push a ```sh nuts``` to remote repository
 
 ##) SYNOPSIS:
-```sh push <id>```
 
-pushes a ```sh nuts``` to remote server
+    ```sh push <id>```
+        pushes a ```sh nuts``` to remote server
 
 #!include</net/thevpc/nuts/runtime/includes/standard-command.ntf>
 
 ##) EXAMPLES:
 
-```sh push my-group:my-name```
-   pushes the ```sh nuts```
-
-
+    ```sh push my-group:my-name```
+        pushes the ```sh nuts```

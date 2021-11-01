@@ -7,6 +7,7 @@ package net.thevpc.nuts.runtime.standalone.wscommands.info;
 
 import net.thevpc.nuts.NutsPrintStream;
 import net.thevpc.nuts.NutsSession;
+import net.thevpc.nuts.runtime.core.util.CoreNutsUtils;
 import net.thevpc.nuts.runtime.standalone.wscommands.exec.DefaultInternalNutsExecutableCommand;
 
 /**
@@ -21,10 +22,10 @@ public class DefaultNutsInfoInternalExecutable extends DefaultInternalNutsExecut
 
     @Override
     public void execute() {
-//        if (CoreNutsUtils.isIncludesHelpOption(args)) {
-//            showDefaultHelp();
-//            return;
-//        }
+        if (CoreNutsUtils.isIncludesHelpOption(args)) {
+            showDefaultHelp();
+            return;
+        }
         NutsPrintStream out = getSession().out();
         getSession().info().configure(false, args).println(out);
     }

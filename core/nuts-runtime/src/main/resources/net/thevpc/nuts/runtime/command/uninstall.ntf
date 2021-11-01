@@ -1,25 +1,34 @@
-```sh nuts uninstall <nuts-artifact>... <args> ...```
-      uninstall one or more ```sh nuts``` from repositories if installed
-      If no nuts-id is defined an error will occur
+uninstall ```sh nuts``` package <nuts-artifact>
+
+##) SYNOPSYS:
+
+    ```sh nuts uninstall <nuts-artifact>... <args> ...```
+        uninstall one or more ```sh nuts``` from repositories if installed.
+        if no nuts-id is defined an error will occur
 
 ##) OPTIONS:
-```sh  -e | --erase``` : enable erase mode to delete all of artifact's config data as well
-```sh  <args> ...```   : provide arguments to pass to uninstaller
+
+    ```sh -e | --erase```
+        enable erase mode to delete all of artifact's config data as well
+
+    ```sh <args> ...```
+        provide arguments to pass to uninstaller
 
 #!include</net/thevpc/nuts/runtime/includes/standard-command.ntf>
 
 ##) EXAMPLES
-```sh nuts uninstall --help```
-            show this help and exit
-       
-```sh nuts uninstall netbeans-launcher```
-            uninstall netbeans-launcher
 
-```sh nuts uninstall my-group:my-thing#2.3```
-           uninstalls - if able to resolve it - exactly the ```sh nuts``` "my-group:my-thing#2.3"
+    ```sh nuts uninstall --help```
+        show this help and exit
 
-```sh nuts uninstall my-group:my-thing```
-           uninstalls - if able to resolve it - the latest version  of "my-group:my-thing"
+    ```sh nuts uninstall netbeans-launcher```
+        uninstall netbeans-launcher
 
-```sh nuts```uninstall my-thing
-          uninstalls - if able to resolve it - the latest version  of "my-group:my-thing" as long as "my-group" is defined as a default import group
+    ```sh nuts uninstall my-group:my-thing#2.3```
+        uninstalls - if able to resolve it - exactly the ```sh nuts``` "my-group:my-thing#2.3"
+
+    ```sh nuts uninstall my-group:my-thing```
+        uninstalls - if able to resolve it - the latest version of "my-group:my-thing"
+
+    ```sh nuts```uninstall my-thing
+        uninstalls - if able to resolve it - the latest version of "my-group:my-thing" as long as "my-group" is defined as a default import group
