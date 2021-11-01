@@ -30,14 +30,6 @@ package net.thevpc.nuts;
 public interface NutsFormatManager {
 
     /**
-     * create element format instance
-     *
-     * @return element format
-     * @since 0.5.5
-     */
-    NutsElementFormat element();
-
-    /**
      * create tree format instance
      *
      * @return tree format
@@ -52,8 +44,6 @@ public interface NutsFormatManager {
      * @since 0.5.5
      */
     NutsTableFormat table();
-
-    NutsElementFormat element(Object value);
 
     NutsTableFormat table(Object value);
 

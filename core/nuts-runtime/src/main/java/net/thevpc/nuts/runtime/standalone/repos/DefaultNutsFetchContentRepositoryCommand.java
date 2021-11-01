@@ -52,7 +52,7 @@ public class DefaultNutsFetchContentRepositoryCommand extends AbstractNutsFetchC
 
     protected NutsLogger _LOG(NutsSession session) {
         if (LOG == null) {
-            LOG = session.log().of(DefaultNutsFetchContentRepositoryCommand.class);
+            LOG = NutsLogger.of(DefaultNutsFetchContentRepositoryCommand.class,session);
         }
         return LOG;
     }

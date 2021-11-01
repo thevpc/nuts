@@ -6,6 +6,7 @@
 package net.thevpc.nuts.core.test.blackbox;
 
 import net.thevpc.nuts.NutsSession;
+import net.thevpc.nuts.NutsVersionFormat;
 import net.thevpc.nuts.core.test.utils.TestUtils;
 import net.thevpc.nuts.NutsOsFamily;
 import net.thevpc.nuts.NutsWorkspace;
@@ -29,7 +30,7 @@ public class Test11_LogTest {
                 "--archetype", "default",
                 "--skip-companions");
 
-        TestUtils.println(ws.version().formatter());
+        TestUtils.println(NutsVersionFormat.of(ws));
         String result = ws.exec()
                 .addExecutorOption("--main-class=Version")
                 .addCommand(

@@ -507,8 +507,7 @@ public class CoreIOUtils {
                 if (goodName.length() < 3) {
                     goodName = goodName + "-repo";
                 }
-                loc = session.io().tmp()
-                        .setSession(session)
+                loc = NutsTmp.of(session)
                         .createTempFolder(goodName + "-").toString();
             } else {
                 if (NutsBlankable.isBlank(loc)) {
@@ -519,7 +518,9 @@ public class CoreIOUtils {
                 }
             }
         }
-        return session.io().path(loc).builder().setBaseDir(rootFolder.toString()).build().toString();
+        return NutsPath.of(loc,session).builder().setBaseDir(
+                NutsPath.of(rootFolder,session))
+                .build().toString();
     }
 
     public static String trimSlashes(String repositoryIdPath) {
@@ -568,8 +569,7 @@ public class CoreIOUtils {
                     try {
                         desc = parser.parse(ctx);
                     } catch (Exception e) {
-                        session.log().of(CoreIOUtils.class)
-                                .with()
+                        NutsLoggerOp.of(CoreIOUtils.class,session)
                                 .level(Level.FINE)
                                 .verb(NutsLogVerb.WARNING)
                                 .error(e)
@@ -577,13 +577,69 @@ public class CoreIOUtils {
                         //e.printStackTrace();
                     }
                     if (desc != null) {
-                        return desc;
+                        if(!desc.isBlank()) {
+                            return desc;
+                        }
+                        return checkDescriptor(desc, session);
                     }
                 }
             }
         }
         return null;
     }
+
+    private static NutsDescriptor checkDescriptor(NutsDescriptor nutsDescriptor, NutsSession session) {
+        NutsId id = nutsDescriptor.getId();
+        String groupId = id == null ? null : id.getGroupId();
+        String artifactId = id == null ? null : id.getArtifactId();
+        NutsVersion version = id == null ? null : id.getVersion();
+        if (groupId == null || artifactId == null || NutsBlankable.isBlank(version)) {
+            switch (session.getConfirm()) {
+                case ASK:
+                case ERROR: {
+                    if (groupId == null) {
+                        groupId = session.getTerminal().ask()
+                                .forString(NutsMessage.cstyle("group id"))
+                                .setDefaultValue(groupId)
+                                .setHintMessage(NutsBlankable.isBlank(groupId) ? null : NutsMessage.plain(groupId))
+                                .getValue();
+                    }
+                    if (artifactId == null) {
+                        artifactId = session.getTerminal().ask()
+                                .forString(NutsMessage.cstyle("artifact id"))
+                                .setDefaultValue(artifactId)
+                                .setHintMessage(NutsBlankable.isBlank(artifactId) ? null : NutsMessage.plain(artifactId))
+                                .getValue();
+                    }
+                    if (NutsBlankable.isBlank(version)) {
+                        String ov = version == null ? null : version.getValue();
+                        String v = session.getTerminal().ask()
+                                .forString(NutsMessage.cstyle("version"))
+                                .setDefaultValue(ov)
+                                .setHintMessage(NutsBlankable.isBlank(ov) ? null : NutsMessage.plain(ov))
+                                .getValue();
+                        version = NutsVersionParser.of(session)
+                                .setAcceptBlank(true)
+                                .setAcceptIntervals(true)
+                                .setLenient(true).parse(v);
+                    }
+                    break;
+                }
+                case NO:
+                case YES: {
+                    //silently return null
+                }
+            }
+        }
+        if (groupId == null || artifactId == null || NutsBlankable.isBlank(version)) {
+            throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("invalid descriptor id %s:%s#%s", groupId, artifactId, version));
+        }
+        return nutsDescriptor.builder()
+                .setId(NutsIdBuilder.of(session).setGroupId(groupId).setArtifactId(artifactId).setVersion(version).build())
+                .build()
+                ;
+    }
+
 
     public static String getPath(NutsId id, String ext, char sep) {
         StringBuilder sb = new StringBuilder();
@@ -814,8 +870,8 @@ public class CoreIOUtils {
     public static java.io.InputStream monitor(URL from, NutsProgressMonitor monitor, NutsSession session) {
         return monitor(
                 NutsWorkspaceUtils.of(session).openURL(from),
-                from, session.text().ofStyled(getURLName(from), NutsTextStyle.path())
-                , session.io().path(from).getContentLength(), monitor, session);
+                from, NutsTexts.of(session).ofStyled(getURLName(from), NutsTextStyle.path())
+                , NutsPath.of(from,session).getContentLength(), monitor, session);
     }
 
     public static java.io.InputStream monitor(java.io.InputStream from, Object source, NutsString sourceName, long length, NutsProgressMonitor monitor, NutsSession session) {
@@ -827,7 +883,7 @@ public class CoreIOUtils {
         long length = -1;
         NutsInputStreamMetadata m = NutsInputStreamMetadata.resolve(from);
         if (m != null) {
-            sourceName = session.text().toText(m.getName());
+            sourceName = NutsTexts.of(session).toText(m.getName());
             length = m.getContentLength();
         }
         return new MonitoredInputStream(from, source, sourceName, length, monitor, session);
@@ -856,7 +912,7 @@ public class CoreIOUtils {
             }
         }
         final int[] deleted = new int[]{0, 0, 0};
-        NutsLogger LOG = session == null ? null : session.log().of(CoreIOUtils.class);
+        NutsLogger LOG = session == null ? null : NutsLogger.of(CoreIOUtils.class,session);
         try {
             Files.walkFileTree(file, new FileVisitor<Path>() {
                 @Override
@@ -1010,7 +1066,7 @@ public class CoreIOUtils {
 //            name = String.valueOf(source);
 //        }
 //        if (formattedString == null) {
-//            formattedString = session.text().forPlain(name);
+//            formattedString = NutsTexts.of(session).forPlain(name);
 //        }
 //        return new ByteArrayInput(name, formattedString, source, typeName, session);
 //    }
@@ -1050,7 +1106,7 @@ public class CoreIOUtils {
 //    }
     public static NutsTransportConnection getHttpClientFacade(NutsSession session, String url) {
         NutsTransportComponent best = session.extensions()
-                .createSupported(NutsTransportComponent.class, url);
+                .createSupported(NutsTransportComponent.class, false, url);
         if (best == null) {
             best = DefaultHttpTransportComponent.INSTANCE;
         }
@@ -1314,7 +1370,7 @@ public class CoreIOUtils {
         String sha1 = null;
         try {
             ByteArrayOutputStream t = new ByteArrayOutputStream();
-            session.io().copy()
+            NutsCp.of(session)
                     .from(path + ".sha1").to(t).run();
             sha1 = t.toString().trim();
         } catch (NutsIOException ex) {
@@ -1340,7 +1396,7 @@ public class CoreIOUtils {
                 if (cachedID != null) {
                     Path p = urlContent.resolve(cachedID);
                     if (Files.exists(p)) {
-                        return session.io().path(p).getInputStream();
+                        return NutsPath.of(p,session).getInputStream();
                     }
                 }
             }
@@ -1370,7 +1426,7 @@ public class CoreIOUtils {
                         if (cachedID != null) {
                             Path p = urlContent.resolve(cachedID);
                             if (Files.exists(p)) {
-                                return session.io().path(p).getInputStream();
+                                return NutsPath.of(p,session).getInputStream();
                             }
                         }
                     }
@@ -1409,12 +1465,12 @@ public class CoreIOUtils {
             });
             return InputStreamMetadataAwareImpl.of(ist, new NutsDefaultInputStreamMetadata(
                     path,
-                    session.text().ofStyled(path, NutsTextStyle.path()),
-                    size,session.io().path(path).getContentType(),sourceTypeName
+                    NutsTexts.of(session).ofStyled(path, NutsTextStyle.path()),
+                    size,NutsPath.of(path,session).getContentType(),sourceTypeName
                     )
             );
 //                    session.io().input()
-//                    .setName(session.text().forStyled(path, NutsTextStyle.path()))
+//                    .setName(NutsTexts.of(session).forStyled(path, NutsTextStyle.path()))
 //                    .setTypeName(sourceTypeName)
 //                    .of();
         } catch (IOException ex) {
@@ -1534,10 +1590,9 @@ public class CoreIOUtils {
         if (is.isPath() && is.getPath().isFile()) {
             return is.getPath().toFile();
         }
-        Path temp = session.io().tmp()
-                .setSession(session)
+        Path temp = NutsTmp.of(session)
                 .createTempFile(getURLName(is.getName())).toFile();
-        NutsIOCopyAction a = session.io().copy().setSafe(false);
+        NutsCp a = NutsCp.of(session).setSafe(false);
         if (is.isPath()) {
             a.from(is.getPath());
         } else {
@@ -2672,7 +2727,7 @@ public class CoreIOUtils {
                         }
                         Files.write(out, content);
                         if (session.isPlainTrace()) {
-                            session.out().resetLine().printf("create file %s%n", session.io().path(out));
+                            session.out().resetLine().printf("create file %s%n", NutsPath.of(out,session));
                         }
                     } catch (IOException e) {
                         throw new UncheckedIOException(e);
@@ -2684,7 +2739,7 @@ public class CoreIOUtils {
                             .resetLine()
                             .setDefaultValue(true).setSession(session)
                             .forBoolean("create %s ?",
-                                    session.text().ofStyled(
+                                    NutsTexts.of(session).ofStyled(
                                             betterPath(out.toString()), NutsTextStyle.path()
                                     )
                             ).getBooleanValue()) {
@@ -2694,7 +2749,7 @@ public class CoreIOUtils {
                             }
                             Files.write(out, content);
                             if (session.isPlainTrace()) {
-                                session.out().resetLine().printf("create file %s%n", session.io().path(out));
+                                session.out().resetLine().printf("create file %s%n", NutsPath.of(out,session));
                             }
                         } catch (IOException e) {
                             throw new UncheckedIOException(e);
@@ -2723,7 +2778,7 @@ public class CoreIOUtils {
                         throw new UncheckedIOException(e);
                     }
                     if (session.isPlainTrace()) {
-                        session.out().resetLine().printf("update file %s%n", session.io().path(out));
+                        session.out().resetLine().printf("update file %s%n", NutsPath.of(out,session));
                     }
                     return PathInfo.Status.OVERRIDDEN;
                 }
@@ -2732,7 +2787,7 @@ public class CoreIOUtils {
                             .resetLine()
                             .setDefaultValue(true).setSession(session)
                             .forBoolean("override %s ?",
-                                    session.text().ofStyled(
+                                    NutsTexts.of(session).ofStyled(
                                             betterPath(out.toString()), NutsTextStyle.path()
                                     )
                             ).getBooleanValue()) {
@@ -2747,7 +2802,7 @@ public class CoreIOUtils {
                             throw new UncheckedIOException(e);
                         }
                         if (session.isPlainTrace()) {
-                            session.out().resetLine().printf("update file %s%n", session.io().path(out));
+                            session.out().resetLine().printf("update file %s%n", NutsPath.of(out,session));
                         }
                         return PathInfo.Status.OVERRIDDEN;
                     } else {

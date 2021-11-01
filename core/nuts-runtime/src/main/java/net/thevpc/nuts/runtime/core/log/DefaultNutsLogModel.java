@@ -25,8 +25,8 @@ package net.thevpc.nuts.runtime.core.log;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.AbstractNutsWorkspace;
-import net.thevpc.nuts.runtime.core.util.CoreNutsUtils;
-import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
+import net.thevpc.nuts.runtime.core.NutsWorkspaceExt;
+import net.thevpc.nuts.runtime.standalone.boot.DefaultNutsBootManager;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -70,7 +70,7 @@ public class DefaultNutsLogModel {
             logConfig.setLogFileBase(lc.getLogFileBase());
             logConfig.setLogFileSize(lc.getLogFileSize());
         }
-        out = NutsWorkspaceUtils.defaultSession(workspace).io().stderr();
+        out = (((DefaultNutsBootManager)(ws.boot()))).getModel().stderr();
     }
 
     public NutsSession getDefaultSession() {
@@ -112,7 +112,7 @@ public class DefaultNutsLogModel {
     }
 
 
-    public NutsLogger of(String name, NutsSession session) {
+    public NutsLogger createLogger(String name, NutsSession session) {
         NutsLogger y = loaded.get(name);
         if (y == null) {
             if (session == null) {
@@ -125,7 +125,7 @@ public class DefaultNutsLogModel {
     }
 
 
-    public NutsLogger of(Class clazz, NutsSession session) {
+    public NutsLogger createLogger(Class clazz, NutsSession session) {
         NutsLogger y = loaded.get(clazz.getName());
         if (y == null) {
             if (session == null) {
@@ -208,7 +208,7 @@ public class DefaultNutsLogModel {
                 }
             } else {
                 consoleHandler = new NutsLogConsoleHandler(out, false,
-                        ((AbstractNutsWorkspace) workspace).defaultSession()
+                        NutsWorkspaceExt.of(workspace).defaultSession()
                 );
                 consoleHandler.setLevel(logConfig.getLogTermLevel());
             }

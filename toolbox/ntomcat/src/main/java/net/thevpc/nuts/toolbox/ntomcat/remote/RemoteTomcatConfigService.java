@@ -65,7 +65,8 @@ public class RemoteTomcatConfigService extends RemoteTomcatServiceBase {
 
     public RemoteTomcatConfigService save() {
         Path f = getConfigPath();
-        context.getSession().elem().setContentType(NutsContentType.JSON).setValue(config).print(f);
+        NutsSession session = context.getSession();
+        NutsElements.of(session).json().setValue(config).print(f);
         return this;
     }
 
@@ -143,12 +144,13 @@ public class RemoteTomcatConfigService extends RemoteTomcatServiceBase {
     }
 
     public RemoteTomcatConfigService loadConfig() {
+        NutsSession session = context.getSession();
         if (name == null) {
-            throw new NutsExecutionException(context.getSession(), NutsMessage.cstyle("missing instance name"), 2);
+            throw new NutsExecutionException(session, NutsMessage.cstyle("missing instance name"), 2);
         }
         Path f = getConfigPath();
         if (Files.exists(f)) {
-            config = context.getSession().elem().setContentType(NutsContentType.JSON).parse(f, RemoteTomcatConfig.class);
+            config = NutsElements.of(session).json().parse(f, RemoteTomcatConfig.class);
             return this;
         }
         throw new NamedItemNotFoundException("instance not found : " + getName(),getName());
@@ -167,7 +169,8 @@ public class RemoteTomcatConfigService extends RemoteTomcatServiceBase {
 
     @Override
     public RemoteTomcatConfigService print(NutsPrintStream out) {
-        context.getSession().elem().setContentType(NutsContentType.JSON).setValue(getConfig()).print(out);
+        NutsSession session = context.getSession();
+        NutsElements.of(session).json().setValue(getConfig()).print(out);
         out.flush();
         return this;
     }

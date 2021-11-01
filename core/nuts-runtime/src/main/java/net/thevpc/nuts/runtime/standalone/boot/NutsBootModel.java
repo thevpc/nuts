@@ -23,6 +23,10 @@
  */
 package net.thevpc.nuts.runtime.standalone.boot;
 
+import net.thevpc.nuts.NutsPrintStream;
+
+import java.io.InputStream;
+
 /**
  *
  * @author vpc
@@ -32,4 +36,9 @@ public interface NutsBootModel {
     boolean isInitializing();
     boolean isFirstBoot();
 
+    NutsPrintStream stdout();
+
+    NutsPrintStream stderr();
+
+    InputStream stdin();
 }

@@ -35,6 +35,7 @@ public class NutsClassLoaderNodeBuilder {
     private String id;
     private URL url;
     private boolean enabled;
+    private boolean includedInClasspath;
     private List<NutsClassLoaderNode> dependencies = new ArrayList<>();
 
     public NutsClassLoaderNodeBuilder() {
@@ -44,6 +45,7 @@ public class NutsClassLoaderNodeBuilder {
         if (o != null) {
             id = o.getId();
             enabled = o.isEnabled();
+            includedInClasspath = o.isIncludedInClasspath();
             url = o.getURL();
             dependencies.clear();
             if (o.getDependencies() != null) {
@@ -59,6 +61,7 @@ public class NutsClassLoaderNodeBuilder {
         if (o != null) {
             id = o.getId();
             enabled = o.isEnabled();
+            includedInClasspath = o.isIncludedInClasspath();
             url = o.getURL();
             dependencies.clear();
             if (o.getDependencies() != null) {
@@ -68,6 +71,10 @@ public class NutsClassLoaderNodeBuilder {
             }
         }
         return this;
+    }
+
+    public boolean isIncludedInClasspath() {
+        return includedInClasspath;
     }
 
     public boolean isEnabled() {
@@ -92,6 +99,16 @@ public class NutsClassLoaderNodeBuilder {
         return this;
     }
 
+    public NutsClassLoaderNodeBuilder setEnabled(boolean enabled) {
+        this.enabled = enabled;
+        return this;
+    }
+
+    public NutsClassLoaderNodeBuilder setIncludedInClasspath(boolean includedInClasspath) {
+        this.includedInClasspath = includedInClasspath;
+        return this;
+    }
+
     public List<NutsClassLoaderNode> getDependencies() {
         return dependencies;
     }
@@ -107,7 +124,7 @@ public class NutsClassLoaderNodeBuilder {
     }
 
     public NutsClassLoaderNode build() {
-        return new NutsClassLoaderNode(id, url, true, dependencies.toArray(new NutsClassLoaderNode[0]));
+        return new NutsClassLoaderNode(id, url, enabled, includedInClasspath, dependencies.toArray(new NutsClassLoaderNode[0]));
     }
 
 }

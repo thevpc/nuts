@@ -47,7 +47,7 @@ public class AnyNixNdi extends BaseSystemNdi {
     }
 
     public void onPostGlobal(NdiScriptOptions options, PathInfo[] updatedPaths) {
-        NutsTextManager factory = session.text();
+        NutsTexts factory = NutsTexts.of(session);
         if (Arrays.stream(updatedPaths).anyMatch(x -> x.getStatus() != PathInfo.Status.DISCARDED) && session.isTrace()) {
             if (session.isPlainTrace()) {
                 session.out().resetLine().printf("%s %s to point to workspace %s%n",
@@ -58,7 +58,7 @@ public class AnyNixNdi extends BaseSystemNdi {
                         factory.builder().appendJoined(", ",
                                 Arrays.stream(updatedPaths).map(x ->
                                         factory.ofStyled(x.getPath().getFileName().toString(), NutsTextStyle.path())).collect(Collectors.toList())),
-                        factory.ofStyled(session.locations().getWorkspaceLocation(), NutsTextStyle.path())
+                        session.locations().getWorkspaceLocation()
                 );
             }
             final String sysRcName = NutsShellHelper.of(session.env().getShellFamily()).getSysRcName();

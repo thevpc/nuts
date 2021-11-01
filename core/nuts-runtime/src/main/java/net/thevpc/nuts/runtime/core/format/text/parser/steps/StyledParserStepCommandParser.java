@@ -45,7 +45,7 @@ public class StyledParserStepCommandParser {
         } else {
             return null;
         }
-        return NutsTextStyles.NONE.append(parsedStyles.toArray(new NutsTextStyle[0]));
+        return NutsTextStyles.PLAIN.append(parsedStyles.toArray(new NutsTextStyle[0]));
     }
 
     private boolean isHexChar(char c) {

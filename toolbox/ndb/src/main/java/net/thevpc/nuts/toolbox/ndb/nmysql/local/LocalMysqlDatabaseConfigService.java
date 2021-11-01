@@ -37,7 +37,7 @@ public class LocalMysqlDatabaseConfigService {
     }
 
     public NutsString getBracketsPrefix(String str) {
-        return context.getSession().text().builder()
+        return NutsTexts.of(context.getSession()).builder()
                 .append("[")
                 .append(str,NutsTextStyle.primary5())
                 .append("]");
@@ -52,7 +52,8 @@ public class LocalMysqlDatabaseConfigService {
     }
 
     public LocalMysqlDatabaseConfigService write(PrintStream out) {
-        context.getSession().elem().setContentType(NutsContentType.JSON).setValue(getConfig()).setNtf(false).print(out);
+        NutsSession session = context.getSession();
+        NutsElements.of(session).json().setValue(getConfig()).setNtf(false).print(out);
         return this;
     }
 
@@ -100,8 +101,9 @@ public class LocalMysqlDatabaseConfigService {
             }
         } else {
             if (session.isPlainTrace()) {
-                session.out().printf("%s create archive %s%n", getBracketsPrefix(getDatabaseName()), session
-                        .text().ofStyled(path,NutsTextStyle.path()));
+                session.out().printf("%s create archive %s%n", getBracketsPrefix(getDatabaseName()),
+                        NutsTexts.of(session)
+                        .ofStyled(path,NutsTextStyle.path()));
             }
 //                ProcessBuilder2 p = new ProcessBuilder2().setCommand("sh", "-c",
 //                        "set -o pipefail && \"" + mysql.getMysqldumpCommand() + "\" -u \"$CMD_USER\" -p\"$CMD_PWD\" --databases \"$CMD_DB\" | gzip > \"$CMD_FILE\""

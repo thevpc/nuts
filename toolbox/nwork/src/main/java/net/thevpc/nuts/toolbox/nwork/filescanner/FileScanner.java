@@ -1,6 +1,7 @@
 package net.thevpc.nuts.toolbox.nwork.filescanner;
 
-import net.thevpc.nuts.toolbox.nwork.filescanner.eval.*;
+import net.thevpc.nuts.NutsSession;
+import net.thevpc.nuts.NutsExpr;
 import net.thevpc.nuts.toolbox.nwork.filescanner.tags.*;
 
 import java.io.IOException;
@@ -30,9 +31,52 @@ public class FileScanner {
     }
 
 
-    public static Predicate<RichPath> parseExpr(String anyStr) {
-        Evaluator.Node n = new SyntaxParser(anyStr, new ScannerEvaluator()).parse();
-        return richPath -> EvalUtils.castToBoolean(n.eval(new RichPathContext(richPath)));
+    public static Predicate<RichPath> parseExpr(String anyStr, NutsSession session) {
+        NutsExpr evaluator = NutsExpr.of(session);
+        evaluator.setFunction("tag", new NutsExpr.Fct() {
+            @Override
+            public Object eval(String name, NutsExpr.Node[] args, NutsExpr context) {
+                RichPath rc = (RichPath) context.getVar("this");
+                for (NutsExpr.Node arg : args) {
+                    Object v = arg.eval(context);
+                    if (v != null) {
+                        if (rc.getTags((String) context.evalFunction("string",v)).size() == 0) {
+                            return false;
+                        }
+                    }
+                }
+                if (rc.getPath().toString().endsWith(".java")) {
+                    for (NutsExpr.Node arg : args) {
+                        Object v = arg.eval(context);
+                        if (v != null) {
+                            if (rc.getTags((String) context.evalFunction("string",v)).size() == 0) {
+                                return false;
+                            }
+                        }
+                    }
+                }
+                return true;
+            }
+        });
+        evaluator.setVar("path",new RichVar("path"));
+        evaluator.setVar("name",new RichVar("name"));
+        evaluator.setVar("length",new RichVar("length"));
+        evaluator.setVar("size",new RichVar("size"));
+        evaluator.setVar("dir",new RichVar("dir"));
+        evaluator.setVar("file",new RichVar("file"));
+        evaluator.setVar("readable",new RichVar("readable"));
+        evaluator.setVar("executable",new RichVar("executable"));
+        evaluator.setVar("exists",new RichVar("exists"));
+        evaluator.setVar("hidden",new RichVar("hidden"));
+        evaluator.setVar("symbolic",new RichVar("symbolic"));
+        evaluator.setVar("writable",new RichVar("writable"));
+        evaluator.setVar("owner",new RichVar("owner"));
+        evaluator.setVar("lastModified",new RichVar("lastModified"));
+        NutsExpr.Node node = evaluator.parse(anyStr);
+        return richPath -> {
+            evaluator.setVar("this",new RichVarThis(richPath));
+            return (Boolean) evaluator.evalFunction("boolean", evaluator.evalNode(node));
+        };
     }
 
     public List<TagScanner> getTagScanners() {
@@ -67,13 +111,13 @@ public class FileScanner {
         Stream<RichPath> a = null;
         for (Path s : source) {
             try {
-                if(Files.isRegularFile(s)){
+                if (Files.isRegularFile(s)) {
                     if (a == null) {
                         a = Stream.of(m.apply(s));
                     } else {
                         a = Stream.concat(a, Stream.of(m.apply(s)));
                     }
-                }else if(Files.isDirectory(s)){
+                } else if (Files.isDirectory(s)) {
                     Stream<RichPath> z = Files.walk(s).map(m);
                     if (a == null) {
                         a = z;
@@ -95,20 +139,42 @@ public class FileScanner {
         return a;
     }
 
-    private static class RichPathContext implements Evaluator.Context {
+    private static class RichVarThis implements NutsExpr.Var {
         private final RichPath richPath;
 
-        public RichPathContext(RichPath richPath) {
+        public RichVarThis(RichPath richPath) {
             this.richPath = richPath;
         }
 
         @Override
-        public Object getVar(String name) {
+        public Object get(String name, NutsExpr context) {
+            return richPath;
+        }
+
+        @Override
+        public void set(String name, Object value, NutsExpr context) {
+            //do nothing
+        }
+    }
+
+    private static class RichVar implements NutsExpr.Var {
+        private final String name;
+
+
+        public RichVar(String name) {
+            this.name = name;
+        }
+
+        RichPath getThis(NutsExpr context){
+            NutsExpr.Var r = context.getVar("this");
+            return (RichPath) r.get("this",context);
+        }
+        @Override
+        public Object get(String name, NutsExpr context) {
+            RichPath richPath = getThis(context);
             switch (name) {
                 case "path":
                     return richPath.getPath().toString();
-                case "this":
-                    return richPath;
                 case "name":
                     return richPath.getPath().getFileName().toString();
                 case "length":
@@ -182,37 +248,12 @@ public class FileScanner {
             }
             return null;
         }
-    }
 
-    private static class ScannerEvaluator extends SimpleEvaluator {
         @Override
-        public Object evalFunction(FctNode functionNode, Context context) {
-            switch (functionNode.getName()) {
-                case "tags":
-                case "tag": {
-                    RichPath rc = (RichPath) context.getVar("this");
-                    for (Node arg : functionNode.getArgs()) {
-                        Object v = arg.eval(context);
-                        if (v != null) {
-                            if (rc.getTags(EvalUtils.castToString(v)).size() == 0) {
-                                return false;
-                            }
-                        }
-                    }
-                    if(rc.getPath().toString().endsWith(".java")){
-                        for (Node arg : functionNode.getArgs()) {
-                            Object v = arg.eval(context);
-                            if (v != null) {
-                                if (rc.getTags(EvalUtils.castToString(v)).size() == 0) {
-                                    return false;
-                                }
-                            }
-                        }
-                    }
-                    return true;
-                }
-            }
-            return super.evalFunction(functionNode, context);
+        public void set(String name, Object value, NutsExpr context) {
+            //do nothing
         }
     }
+
+
 }

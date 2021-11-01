@@ -59,24 +59,23 @@ public class GroupNonOption extends DefaultNonOption {
 
     @Override
     public List<NutsArgumentCandidate> getCandidates(NutsCommandAutoComplete context) {
-        NutsCommandLineManager c=context.getSession().commandLine();
         List<NutsArgumentCandidate> all = new ArrayList<>();
         NutsRepository repository=context.get(NutsRepository.class);
         NutsUserConfig securityEntityConfig=context.get(NutsUserConfig.class);
         if (securityEntityConfig != null) {
             for (String n : securityEntityConfig.getGroups()) {
-                all.add(c.createCandidate(n).build());
+                all.add(new NutsArgumentCandidate(n));
             }
         } else if (repository != null) {
             for (NutsUser nutsSecurityEntityConfig : repository.security().setSession(context.getSession())
                     .findUsers()) {
-                all.add(c.createCandidate(nutsSecurityEntityConfig.getUser()).build());
+                all.add(new NutsArgumentCandidate(nutsSecurityEntityConfig.getUser()));
             }
         } else {
             for (NutsUser nutsSecurityEntityConfig : context.getSession().security()
                     .setSession(context.getSession())
                     .findUsers()) {
-                all.add(c.createCandidate(nutsSecurityEntityConfig.getUser()).build());
+                all.add(new NutsArgumentCandidate(nutsSecurityEntityConfig.getUser()));
             }
         }
         return all;

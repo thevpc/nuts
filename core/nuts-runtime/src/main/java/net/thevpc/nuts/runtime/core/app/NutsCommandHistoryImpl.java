@@ -23,14 +23,7 @@
  */
 package net.thevpc.nuts.runtime.core.app;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.PrintStream;
-import java.io.UncheckedIOException;
-import java.nio.file.Files;
+import java.io.*;
 import java.nio.file.Path;
 import java.time.Instant;
 import java.util.ArrayList;
@@ -38,7 +31,7 @@ import java.util.List;
 import java.util.ListIterator;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
+import net.thevpc.nuts.spi.NutsSupportLevelContext;
 
 /**
  *
@@ -46,20 +39,35 @@ import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
  */
 public class NutsCommandHistoryImpl implements NutsCommandHistory {
 
+    private NutsPath path;
     private NutsSession session;
     private List<NutsCommandHistoryEntry> entries = new ArrayList<>();
-    private Path path;
 
-    public NutsCommandHistoryImpl(NutsSession session, Path path) {
+    public NutsCommandHistoryImpl(NutsSession session) {
         this.session = session;
+    }
+
+    @Override
+    public NutsCommandHistory setPath(Path path) {
+        this.path = path==null?null:NutsPath.of(path,session);
+        return this;
+    }
+
+    @Override
+    public NutsCommandHistory setPath(File path) {
+        this.path = path==null?null:NutsPath.of(path,session);
+        return this;
+    }
+
+    @Override
+    public NutsCommandHistory setPath(NutsPath path) {
         this.path = path;
-        if (path == null) {
-            if(session==null) {
-                throw new IllegalArgumentException("path cannot be null");
-            }else{
-                throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("path cannot be null"));
-            }
-        }
+        return this;
+    }
+
+    @Override
+    public NutsPath getPath() {
+        return path;
     }
 
     @Override
@@ -70,8 +78,11 @@ public class NutsCommandHistoryImpl implements NutsCommandHistory {
     @Override
     public void load() {
         entries.clear();
-        if (Files.exists(path)) {
-            try (InputStream in = Files.newInputStream(path)) {
+        if(path==null){
+            throw new NutsIllegalArgumentException(session, NutsMessage.plain("missing path"));
+        }
+        if (path.exists()) {
+            try (InputStream in = path.getInputStream()) {
                 load(in);
             } catch (IOException ex) {
                 throw new UncheckedIOException(ex);
@@ -116,9 +127,14 @@ public class NutsCommandHistoryImpl implements NutsCommandHistory {
 
     @Override
     public void save() {
-        Path p = path.getParent();
-        CoreIOUtils.mkdirs(p,session);
-        try (OutputStream out = Files.newOutputStream(path)) {
+        if(path==null){
+            throw new NutsIllegalArgumentException(session, NutsMessage.plain("missing path"));
+        }
+        NutsPath p = path.getParent();
+        if(p!=null){
+            p.mkdir(true);
+        }
+        try (OutputStream out = path.getOutputStream()) {
             save(out);
         } catch (IOException ex) {
             throw new UncheckedIOException(ex);
@@ -128,12 +144,8 @@ public class NutsCommandHistoryImpl implements NutsCommandHistory {
     @Override
     public void purge() {
         entries.clear();
-        if (Files.exists(path)) {
-            try {
-                Files.delete(path);
-            } catch (IOException ex) {
-                throw new UncheckedIOException(ex);
-            }
+        if (path.exists()) {
+            path.delete();
         }
     }
 
@@ -152,4 +164,8 @@ public class NutsCommandHistoryImpl implements NutsCommandHistory {
         entries.add(new NutsCommandHistoryEntryImpl(entries.size(), line, time));
     }
 
+    @Override
+    public int getSupportLevel(NutsSupportLevelContext<Object> context) {
+        return DEFAULT_SUPPORT;
+    }
 }

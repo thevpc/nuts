@@ -27,9 +27,9 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.bundles.common.CorePlatformUtils;
 import net.thevpc.nuts.runtime.bundles.string.StringBuilder2;
 import net.thevpc.nuts.runtime.core.format.DefaultFormatBase;
-import net.thevpc.nuts.runtime.core.format.tree.DefaultNutsFormatDestructTypePredicate;
 import net.thevpc.nuts.runtime.core.util.CoreCommonUtils;
 import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
+import net.thevpc.nuts.spi.NutsSupportLevelContext;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -95,11 +95,11 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
      */
     private NutsTableBordersFormat border = CorePlatformUtils.SUPPORTS_UTF_ENCODING ? UNICODE_BORDER : SIMPLE_BORDER;
     private Object model;
-    private List<Boolean> visibleColumns = new ArrayList<>();
+    private final List<Boolean> visibleColumns = new ArrayList<>();
     private boolean visibleHeader = true;
 
-    public DefaultTableFormat(NutsWorkspace ws) {
-        super(ws, "table-format");
+    public DefaultTableFormat(NutsSession session) {
+        super(session, "table-format");
     }
 
     public static Set<String> getAvailableTableBorders() {
@@ -141,7 +141,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
         return null;
     }
 
-    public static void formatAndHorizontalAlign(StringBuilder sb, NutsPositionType a, int columns, NutsTextManager tf, NutsSession session) {
+    public static void formatAndHorizontalAlign(StringBuilder sb, NutsPositionType a, int columns, NutsTexts tf, NutsSession session) {
         int length = tf.setSession(session).parse(sb.toString()).textLength();
         switch (a) {
             case FIRST: {
@@ -223,6 +223,16 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
         return this;
     }
 
+    @Override
+    public NutsTableFormat setBorder(String borderName) {
+        NutsTableBordersFormat n = parseTableBorders(borderName);
+        if (n == null) {
+            throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("unsupported border. use one of : %s", getAvailableTableBorders()));
+        }
+        setBorder(n);
+        return this;
+    }
+
     public DefaultTableFormat setVisibleColumn(int col, Boolean visible) {
         if (visible == null) {
             if (col >= 0 && col < visibleColumns.size()) {
@@ -246,16 +256,6 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
         return null;
     }
 
-    @Override
-    public NutsTableFormat setBorder(String borderName) {
-        NutsTableBordersFormat n = parseTableBorders(borderName);
-        if (n == null) {
-            throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("unsupported border. use one of : %s", getAvailableTableBorders()));
-        }
-        setBorder(n);
-        return this;
-    }
-
     public NutsTableFormat setCellFormat(NutsTableCellFormat formatter) {
         defaultCellFormatter = formatter == null ? DefaultTableCellFormat.INSTANCE : formatter;
         return this;
@@ -271,6 +271,11 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
         return new DefaultNutsMutableTableModel();
     }
 
+    @Override
+    public NutsTableFormat setValue(Object value) {
+        this.model = value;
+        return this;
+    }
 
     private String getSeparator(NutsTableSeparator id) {
         String s = border.format(id);
@@ -300,7 +305,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
                     DefaultCell cell = cells.get(i);
                     String B = getSeparator(NutsTableSeparator.FIRST_ROW_LINE);
                     String s = cell.rendered.toString();
-                    line.write(CoreStringUtils.fillString(B, ws.text().setSession(getSession()).parse(s).textLength()));
+                    line.write(CoreStringUtils.fillString(B, NutsTexts.of(ws).parse(s).textLength()));
                 }
                 line.write(getSeparator(NutsTableSeparator.FIRST_ROW_END));
 
@@ -322,7 +327,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
                             DefaultCell cell = cells.get(i);
                             String B = getSeparator(NutsTableSeparator.MIDDLE_ROW_LINE);
                             String s = cell.rendered.toString();
-                            line.write(CoreStringUtils.fillString(B, ws.text().setSession(getSession()).parse(s).textLength()));
+                            line.write(CoreStringUtils.fillString(B, NutsTexts.of(ws).parse(s).textLength()));
                         }
                         line.write(getSeparator(NutsTableSeparator.MIDDLE_ROW_END));
 
@@ -364,7 +369,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
                     DefaultCell cell = cells.get(i);
                     String B = getSeparator(NutsTableSeparator.LAST_ROW_LINE);
                     String s = cell.rendered.toString();
-                    line.write(CoreStringUtils.fillString(B, ws.text().setSession(getSession()).parse(s).textLength()));
+                    line.write(CoreStringUtils.fillString(B, NutsTexts.of(ws).parse(s).textLength()));
                 }
                 line.write(getSeparator(NutsTableSeparator.LAST_ROW_END));
             }
@@ -384,7 +389,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
         } catch (IOException ex) {
             throw new NutsIOException(getSession(), ex);
         }
-        return new String(out.toByteArray());
+        return out.toString();
     }
 
     private NutsTableCellFormat getTableCellFormat(DefaultCell dc) {
@@ -547,9 +552,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
                 return false;
             } else if (!p && n) {
                 return true;
-            } else if (p && n) {
-                return false;
-            }
+            } else return !p || !n;
         }
         return true;
     }
@@ -566,7 +569,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
             a.add(_elems().toElement(o));
             return createTableModel(_elems().toElement(a));
         }
-        o=_elems().setDestructTypeFilter(DefaultNutsFormatDestructTypePredicate.INSTANCE).destruct(o);
+        o = _elems().setDestructTypeFilter(NutsElements.DEFAULT_FORMAT_DESTRUCTOR).destruct(o);
         if (o instanceof Collection) {
             NutsMutableTableModel model = createModel();
             LinkedHashSet<String> columns = new LinkedHashSet<>();
@@ -648,7 +651,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
             for (String column : columns) {
                 model.addHeaderCell(column);
             }
-            for (Map.Entry<Object,Object> eoelem2 : ((Map<Object,Object>) o).entrySet()) {
+            for (Map.Entry<Object, Object> eoelem2 : ((Map<Object, Object>) o).entrySet()) {
                 model.newRow();
                 model.addCell(formatObject(eoelem2.getKey()));
                 model.addCell(formatObject(eoelem2.getValue()));
@@ -766,19 +769,13 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
         }
     }
 
-    private NutsElementFormat _elems() {
-        return getSession().elem().setSession(getSession());
+    private NutsElements _elems() {
+        return NutsElements.of(getSession()).setSession(getSession());
     }
 
     @Override
     public Object getValue() {
         return model;
-    }
-
-    @Override
-    public NutsTableFormat setValue(Object value) {
-        this.model = value;
-        return this;
     }
 
     @Override
@@ -834,6 +831,11 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
         return CoreCommonUtils.stringValueFormatted(any, false, getSession());
     }
 
+    @Override
+    public int getSupportLevel(NutsSupportLevelContext<Object> context) {
+        return DEFAULT_SUPPORT;
+    }
+
     public static class Row {
 
         List<DefaultCell> cells = new ArrayList<>();
@@ -845,7 +847,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
         int rows;
         int columns;
         NutsTableCellFormat formatter;
-        NutsTextManager metrics;
+        NutsTexts metrics;
         NutsPositionType valign;
         NutsPositionType halign;
         NutsWorkspace ws;
@@ -860,7 +862,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
             this.session = session;
             this.ws = session.getWorkspace();
             this.formatter = formatter;
-            this.metrics = session.text().setSession(session);
+            this.metrics = NutsTexts.of(session).setSession(session);
             this.valign = valign;
             this.halign = halign;
             if (str == null) {
@@ -1440,4 +1442,5 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
         }
 
     }
+
 }

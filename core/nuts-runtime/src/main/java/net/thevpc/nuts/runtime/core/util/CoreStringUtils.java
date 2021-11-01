@@ -80,13 +80,16 @@ public final class CoreStringUtils {
         return sb.toString();
     }
 
+    public static String simpleQuote(String text) {
+        return simpleQuote(text,false,null);
+    }
     /**
      * @param text text
      * @param compact if true, quotes will not be used unless necessary
-     * @param entrySeparators entrySeparators
+     * @param escapedChars escapedChars, can be null
      * @return quotes
      */
-    public static String simpleQuote(String text, boolean compact, String entrySeparators) {
+    public static String simpleQuote(String text, boolean compact, String escapedChars) {
         StringBuilder sb = new StringBuilder();
         boolean q = !compact;
         for (char c : text.toCharArray()) {
@@ -113,7 +116,7 @@ public final class CoreStringUtils {
                     break;
                 }
                 default: {
-                    if (entrySeparators != null && entrySeparators.indexOf(c) >= 0) {
+                    if (escapedChars != null && escapedChars.indexOf(c) >= 0) {
                         q = true;
                         sb.append("\\").append(c);
                     } else {
@@ -242,7 +245,7 @@ public final class CoreStringUtils {
     }
 
     public static String enforceDoubleQuote(String s, NutsSession session) {
-        s = session.text().builder().append(s).toString();
+        s = NutsTexts.of(session).builder().append(s).toString();
         if (s.isEmpty() || s.contains(" ") || s.contains("\"") || s.contains("'")) {
             s = "\"" + s + "\"";
         }

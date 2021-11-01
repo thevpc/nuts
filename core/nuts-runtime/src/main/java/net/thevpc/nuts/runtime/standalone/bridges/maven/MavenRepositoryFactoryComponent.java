@@ -23,36 +23,37 @@
  */
 package net.thevpc.nuts.runtime.standalone.bridges.maven;
 
-import java.io.File;
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.core.repos.NutsRepositorySelector;
+import net.thevpc.nuts.runtime.core.repos.NutsRepositoryType;
+import net.thevpc.nuts.runtime.core.repos.NutsRepositoryURL;
 import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
-import net.thevpc.nuts.runtime.standalone.repos.RemoteRepoApi;
 import net.thevpc.nuts.runtime.standalone.repos.FilesFoldersApi;
+import net.thevpc.nuts.runtime.standalone.repos.RemoteRepoApi;
+import net.thevpc.nuts.spi.NutsComponentScope;
+import net.thevpc.nuts.spi.NutsComponentScopeType;
 import net.thevpc.nuts.spi.NutsRepositoryFactoryComponent;
+import net.thevpc.nuts.spi.NutsSupportLevelContext;
 
+import java.io.File;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Map;
-import net.thevpc.nuts.runtime.core.repos.NutsRepositorySelector;
-import net.thevpc.nuts.runtime.core.repos.NutsRepositoryType;
-import net.thevpc.nuts.runtime.core.repos.NutsRepositoryURL;
-import net.thevpc.nuts.spi.NutsSingleton;
-import net.thevpc.nuts.spi.NutsSupportLevelContext;
 
 /**
  * Created by vpc on 1/15/17.
  */
-@NutsSingleton
+@NutsComponentScope(NutsComponentScopeType.WORKSPACE)
 public class MavenRepositoryFactoryComponent implements NutsRepositoryFactoryComponent {
 
     @Override
     public NutsAddRepositoryOptions[] getDefaultRepositories(NutsSession session) {
         return new NutsAddRepositoryOptions[]{
-            NutsRepositorySelector.createRepositoryOptions(NutsRepositorySelector.parseSelection("maven-local"),
-            true, session),
-            NutsRepositorySelector.createRepositoryOptions(NutsRepositorySelector.parseSelection("maven-central"),
-            true, session)
+                NutsRepositorySelector.createRepositoryOptions(NutsRepositorySelector.parseSelection("maven-local"),
+                        true, session),
+                NutsRepositorySelector.createRepositoryOptions(NutsRepositorySelector.parseSelection("maven-central"),
+                        true, session)
         };
     }
 
@@ -88,9 +89,9 @@ public class MavenRepositoryFactoryComponent implements NutsRepositoryFactoryCom
                     return DEFAULT_SUPPORT;
                 }
                 if (nru.isHttp()) {
-                    try (InputStream s = criteria.getSession().io().path(nru.getLocation() + "/nuts-repository.json")
+                    try (InputStream s = NutsPath.of(nru.getLocation(), criteria.getSession()).resolve("nuts-repository.json")
                             .setUserKind("nuts-repository.json").getInputStream()) {
-                        Map<String, Object> m = criteria.getSession().elem().setContentType(NutsContentType.JSON)
+                        Map<String, Object> m = NutsElements.of(criteria.getSession()).setContentType(NutsContentType.JSON)
                                 .parse(s, Map.class);
                         if (m != null) {
                             String type = (String) m.get("type");
@@ -113,9 +114,8 @@ public class MavenRepositoryFactoryComponent implements NutsRepositoryFactoryCom
                         criteria.getConstraints().setType("maven+dirtext");
                         return DEFAULT_SUPPORT;
                     }
-                    if (criteria.getSession().io().path(
-                            location + "/archetype-catalog.xml"
-                    ).setUserKind("archetype-catalog.xml").exists()) {
+                    if (NutsPath.of(location, criteria.getSession()).resolve("archetype-catalog.xml")
+                            .setUserKind("archetype-catalog.xml").exists()) {
                         criteria.getConstraints().setType(NutsConstants.RepoTypes.MAVEN);
                         return DEFAULT_SUPPORT;
                     }

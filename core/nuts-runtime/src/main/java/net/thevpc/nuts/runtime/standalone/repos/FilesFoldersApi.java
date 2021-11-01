@@ -31,14 +31,13 @@ public class FilesFoldersApi {
     private static Item[] getDirList(boolean folders, boolean files, String baseUrl, NutsSession session) {
         //
         List<Item> all = new ArrayList<>();
-        NutsWorkspace ws = session.getWorkspace();
         String dotFilesUrl = baseUrl;
 //        NutsVersion versionString = ws.version().parser().parse("0.5.5");
         try {
-            session.getTerminal().printProgress("%-8s %s","browse", session.io().path(baseUrl).toCompressedForm());
+            session.getTerminal().printProgress("%-8s %s","browse", NutsPath.of(baseUrl,session).toCompressedForm());
             List<String> splitted = null;
             try (InputStream foldersFileStream
-                    = session.io().monitor().setSource(dotFilesUrl).setSession(session).create()) {
+                    = NutsInputStreamMonitor.of(session).setSource(dotFilesUrl).create()) {
                 splitted = new WebHtmlListParser().parse(foldersFileStream);
             } catch (IOException ex) {
                 //
@@ -68,7 +67,7 @@ public class FilesFoldersApi {
                 }
             }
         } catch (UncheckedIOException | NutsIOException ex) {
-            session.log().of(FilesFoldersApi.class).with().level(Level.FINE).verb(NutsLogVerb.FAIL)
+            NutsLoggerOp.of(FilesFoldersApi.class,session).level(Level.FINE).verb(NutsLogVerb.FAIL)
                     .log(NutsMessage.jstyle("unable to navigate : file not found {0}", dotFilesUrl));
         }
         return all.toArray(new Item[0]);
@@ -91,10 +90,10 @@ public class FilesFoldersApi {
         NutsWorkspace ws = session.getWorkspace();
         InputStream foldersFileStream = null;
         String dotFilesUrl = baseUrl + "/" + CoreNutsConstants.Files.DOT_FILES;
-        NutsVersion versionString = session.version().parser().parse("0.5.5");
+        NutsVersion versionString = NutsVersion.of("0.5.5",session);
         try {
-            session.getTerminal().printProgress("%-8s %s", "browse",session.io().path(baseUrl).toCompressedForm());
-            foldersFileStream = session.io().monitor().setSource(dotFilesUrl).setSession(session).create();
+            session.getTerminal().printProgress("%-8s %s", "browse",NutsPath.of(baseUrl,session).toCompressedForm());
+            foldersFileStream = NutsInputStreamMonitor.of(session).setSource(dotFilesUrl).create();
             List<String> splitted = StringTokenizerUtils.split(CoreIOUtils.loadString(foldersFileStream, true), "\n\r");
             for (String s : splitted) {
                 s = s.trim();
@@ -103,7 +102,7 @@ public class FilesFoldersApi {
                         if (all.isEmpty()) {
                             s = s.substring(1).trim();
                             if (s.startsWith("version=")) {
-                                versionString = session.version().parser().parse(s.substring("version=".length()).trim());
+                                versionString = NutsVersion.of(s.substring("version=".length()).trim(),session);
                             }
                         }
                     } else {
@@ -141,19 +140,19 @@ public class FilesFoldersApi {
                 }
             }
         } catch (UncheckedIOException | NutsIOException ex) {
-            session.log().of(FilesFoldersApi.class).with().level(Level.FINE).verb(NutsLogVerb.FAIL)
+            NutsLoggerOp.of(FilesFoldersApi.class,session).level(Level.FINE).verb(NutsLogVerb.FAIL)
                     .log(NutsMessage.jstyle("unable to navigate : file not found {0}", dotFilesUrl));
         }
         if (versionString.compareTo("0.5.7") < 0) {
             if (folders) {
                 String[] foldersFileContent = null;
                 String dotFolderUrl = baseUrl + "/" + CoreNutsConstants.Files.DOT_FOLDERS;
-                try (InputStream stream = session.io().monitor().setSource(dotFolderUrl)
-                        .setSession(session).create()) {
+                try (InputStream stream = NutsInputStreamMonitor.of(session).setSource(dotFolderUrl)
+                        .create()) {
                     foldersFileContent = StringTokenizerUtils.split(CoreIOUtils.loadString(stream, true), "\n\r")
                             .stream().map(x -> x.trim()).filter(x -> x.length() > 0).toArray(String[]::new);
                 } catch (IOException | UncheckedIOException | NutsIOException ex) {
-                    session.log().of(FilesFoldersApi.class).with().level(Level.FINE).verb(NutsLogVerb.FAIL)
+                    NutsLoggerOp.of(FilesFoldersApi.class,session).level(Level.FINE).verb(NutsLogVerb.FAIL)
                             .log(NutsMessage.jstyle("unable to navigate : file not found {0}", dotFolderUrl));
                 }
                 if (foldersFileContent != null) {
@@ -181,7 +180,7 @@ public class FilesFoldersApi {
                     try {
                         nutsDescriptor = NutsWorkspaceExt.of(session.getWorkspace()).resolveEffectiveDescriptor(t, session);
                     } catch (Exception ex) {
-                        session.log().of(FilesFoldersApi.class).with().session(session).level(Level.FINE).error(ex).log(
+                        NutsLoggerOp.of(FilesFoldersApi.class,session).level(Level.FINE).error(ex).log(
                                 NutsMessage.jstyle("error resolving effective descriptor for {0} in url {1} : {2}", t.getId(),
                                 pathname,
                                 ex));//e.printStackTrace();
@@ -206,11 +205,10 @@ public class FilesFoldersApi {
         public NutsId parseId(String pathname, String rootPath, NutsIdFilter filter, NutsRepository repository, NutsSession session) throws IOException {
             NutsDescriptor t = null;
             try {
-                t = parseDescriptor(pathname, session.io()
-                        .monitor().setSource(pathname).setSession(session).create(),
+                t = parseDescriptor(pathname, NutsInputStreamMonitor.of(session).setSource(pathname).create(),
                         NutsFetchMode.LOCAL, repository, session, rootPath);
             } catch (Exception ex) {
-                session.log().of(FilesFoldersApi.class).with().session(session).level(Level.FINE).error(ex)
+                NutsLoggerOp.of(FilesFoldersApi.class,session).level(Level.FINE).error(ex)
                         .log(NutsMessage.jstyle("error parsing url : {0} : {1}", pathname, toString()));//e.printStackTrace();
             }
             if (t != null) {

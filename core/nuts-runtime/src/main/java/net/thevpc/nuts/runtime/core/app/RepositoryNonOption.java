@@ -46,17 +46,16 @@ public class RepositoryNonOption extends DefaultNonOption {
     @Override
     public List<NutsArgumentCandidate> getCandidates(NutsCommandAutoComplete context) {
         List<NutsArgumentCandidate> all = new ArrayList<>();
-        NutsCommandLineManager c = context.getSession().commandLine();
         NutsRepository repository=context.get(NutsRepository.class);
         if(repository!=null){
             if (repository.config().isSupportedMirroring()) {
                 for (NutsRepository repo : repository.config().setSession(context.getSession()).getMirrors()) {
-                    all.add(c.createCandidate(repo.getName()).build());
+                    all.add(new NutsArgumentCandidate(repo.getName()));
                 }
             }
         }else{
             for (NutsRepository repo : context.getSession().repos().setSession(context.getSession()).getRepositories()) {
-                all.add(c.createCandidate(repo.getName()).build());
+                all.add(new NutsArgumentCandidate(repo.getName()));
             }
 
         }

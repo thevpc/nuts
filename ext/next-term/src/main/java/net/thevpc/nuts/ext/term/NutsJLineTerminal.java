@@ -31,7 +31,6 @@ import org.jline.terminal.Terminal;
 import org.jline.terminal.TerminalBuilder;
 
 import java.io.*;
-import java.nio.file.Paths;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
@@ -43,7 +42,7 @@ import org.jline.utils.AttributedStyle;
 /**
  * Created by vpc on 2/20/17.
  */
-@NutsPrototype
+@NutsComponentScope(NutsComponentScopeType.PROTOTYPE)
 public class NutsJLineTerminal implements NutsSystemTerminalBase {
 
     private static final Logger LOG = Logger.getLogger(NutsJLineTerminal.class.getName());
@@ -121,9 +120,9 @@ public class NutsJLineTerminal implements NutsSystemTerminalBase {
     private AttributedString toAttributedString(NutsText n, NutsTextStyles styles, NutsSession session) {
         switch (n.getType()) {
             case PLAIN: {
-                styles=session.text().getTheme().toBasicStyles(styles, session);
+                styles=NutsTexts.of(session).getTheme().toBasicStyles(styles, session);
                 NutsTextPlain p = (NutsTextPlain) n;
-                if (styles.isNone()) {
+                if (styles.isPlain()) {
                     return new AttributedString(p.getText());
                 } else {
                     AttributedStyle s = AttributedStyle.DEFAULT;
@@ -182,11 +181,11 @@ public class NutsJLineTerminal implements NutsSystemTerminalBase {
             case CODE: {
                 NutsTextCode p = (NutsTextCode) n;
                 NutsText nn = p.highlight(session);
-                return toAttributedString(nn, NutsTextStyles.NONE, session);
+                return toAttributedString(nn, NutsTextStyles.PLAIN, session);
             }
             case TITLE: {
                 NutsTextTitle p = (NutsTextTitle) n;
-                return toAttributedString(p.getChild(), NutsTextStyles.NONE, session);
+                return toAttributedString(p.getChild(), NutsTextStyles.PLAIN, session);
             }
             case LINK: {
                 NutsTextLink p = (NutsTextLink) n;
@@ -205,7 +204,7 @@ public class NutsJLineTerminal implements NutsSystemTerminalBase {
             }
             case STYLED: {
                 NutsTextStyled p = (NutsTextStyled) n;
-                if (styles.isNone()) {
+                if (styles.isPlain()) {
                     return toAttributedString(p.getChild(), p.getStyles(), session);
                 } else {
                     return toAttributedString(
@@ -239,10 +238,10 @@ public class NutsJLineTerminal implements NutsSystemTerminalBase {
                 .highlighter(new Highlighter() {
                     @Override
                     public AttributedString highlight(LineReader reader, String buffer) {
-                        NutsTextManager text = session.text();
+                        NutsTexts text = NutsTexts.of(session);
                         NutsCommandReadHighlighter h = getCommandReadHighlighter();
                         NutsText n=(h!=null)?h.highlight(buffer, session):text.ofPlain(buffer);
-                        return toAttributedString(n, NutsTextStyles.NONE, session);
+                        return toAttributedString(n, NutsTextStyles.PLAIN, session);
                     }
 
                     @Override
@@ -261,22 +260,22 @@ public class NutsJLineTerminal implements NutsSystemTerminalBase {
                 //                .parse(parse)
                 .build();
         reader.unsetOpt(LineReader.Option.INSERT_TAB);
-        reader.setVariable(LineReader.HISTORY_FILE, Paths.get(session.locations().getWorkspaceLocation()).resolve("history").normalize().toFile());
+        reader.setVariable(LineReader.HISTORY_FILE, session.locations().getWorkspaceLocation().resolve("history").normalize().toFile());
         if (reader instanceof LineReaderImpl) {
             ((LineReaderImpl) reader).setHistory(new NutsJLineHistory(reader, session, this));
         }
-        this.out = session.io().createPrintStream(
+        this.out = NutsPrintStream.of(
                 new TransparentPrintStream(
                         new PrintStream(reader.getTerminal().output(), true),
                         System.out
                 ),
-                NutsTerminalMode.FORMATTED);
-        this.err = session.io().createPrintStream(
+                NutsTerminalMode.FORMATTED,session);
+        this.err = NutsPrintStream.of(
                 new TransparentPrintStream(
                         new PrintStream(reader.getTerminal().output(), true),
                         System.err
                 ),
-                NutsTerminalMode.FORMATTED);//.setColor(NutsPrintStream.RED);
+                NutsTerminalMode.FORMATTED,session);//.setColor(NutsPrintStream.RED);
         this.in = new TransparentInputStream(reader.getTerminal().input(), System.in);
     }
 
@@ -292,10 +291,11 @@ public class NutsJLineTerminal implements NutsSystemTerminalBase {
 
     @Override
     public int getSupportLevel(NutsSupportLevelContext<NutsTerminalSpec> criteria) {
+        NutsSession session = criteria.getSession();
         try {
-            prepare(criteria.getSession());
+            prepare(session);
         }catch (Exception ex){
-            criteria.getSession().log().of(NutsJLineTerminal.class)
+            NutsLogger.of(NutsJLineTerminal.class,session)
                             .with().level(Level.FINEST).verb(NutsLogVerb.FAIL).error(ex)
                     .log(NutsMessage.jstyle("unable to create NutsJLineTerminal. ignored."));
             return NO_SUPPORT;
@@ -310,11 +310,11 @@ public class NutsJLineTerminal implements NutsSystemTerminalBase {
             out = getOut();
         }
         if (out == null) {
-            out = session.io().stdout();
+            out = NutsPrintStreams.of(session).stdout();
         }
         String readLine = null;
         try {
-            readLine = reader.readLine(session.text().toText(message).toString());
+            readLine = reader.readLine(NutsTexts.of(session).toText(message).toString());
         } catch (UserInterruptException e) {
             throw new NutsJLineInterruptException();
         }
@@ -330,11 +330,11 @@ public class NutsJLineTerminal implements NutsSystemTerminalBase {
     public char[] readPassword(NutsPrintStream out, NutsMessage message,NutsSession session) {
         prepare(session);
         if (out == null) {
-            return reader.readLine(session.text().toText(message).toString(), '*').toCharArray();
+            return reader.readLine(NutsTexts.of(session).toText(message).toString(), '*').toCharArray();
         }else{
             //should I use some out??
         }
-        return reader.readLine(session.text().toText(message).toString(), '*').toCharArray();
+        return reader.readLine(NutsTexts.of(session).toText(message).toString(), '*').toCharArray();
     }
 
     @Override

@@ -69,7 +69,7 @@ public class DefaultNutsSessionTerminalFromSystem extends AbstractNutsSessionTer
             out = out();
         }
         if (out == null) {
-            out = session.io().stdout();
+            out = NutsPrintStreams.of(session).stdout();
         }
         if (this.in == null && parent != null) {
             if (this.out == null) {
@@ -96,7 +96,7 @@ public class DefaultNutsSessionTerminalFromSystem extends AbstractNutsSessionTer
             out = out();
         }
         if (out == null) {
-            out = session.io().stdout();
+            out = NutsPrintStreams.of(session).stdout();
         }
 
         if (this.in == null && parent != null) {
@@ -111,12 +111,12 @@ public class DefaultNutsSessionTerminalFromSystem extends AbstractNutsSessionTer
         Console cons = null;
         char[] passwd = null;
         if (in == null) {
-            in = session.io().stdin();
+            in = NutsInputStreams.of(session).stdin();
         }
         if ((
-                in == session.io().stdin()
+                in == NutsInputStreams.of(session).stdin()
         ) && ((cons = System.console()) != null)) {
-            String txt = session.text().toText(message).toString();
+            String txt = NutsTexts.of(session).toText(message).toString();
             if ((passwd = cons.readPassword("%s", txt)) != null) {
                 return passwd;
             } else {
@@ -240,7 +240,7 @@ public class DefaultNutsSessionTerminalFromSystem extends AbstractNutsSessionTer
                 getProgressBar().printProgress(
                         Float.isNaN(progress) ? -1 :
                                 (int) (progress * 100),
-                        session.text().toText(message).toString(),
+                        NutsTexts.of(session).toText(message).toString(),
                         err()
                 );
             }

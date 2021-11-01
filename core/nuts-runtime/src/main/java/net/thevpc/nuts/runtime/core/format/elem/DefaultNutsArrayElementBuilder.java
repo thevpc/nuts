@@ -31,7 +31,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
-import net.thevpc.nuts.NutsElementFormat;
+import net.thevpc.nuts.NutsElements;
 //import net.thevpc.nuts.NutsPrimitiveElementBuilder;
 import net.thevpc.nuts.NutsSession;
 
@@ -271,8 +271,8 @@ public class DefaultNutsArrayElementBuilder implements NutsArrayElementBuilder {
         return e;
     }
 
-    private NutsElementFormat _elements() {
-        return session.elem().setSession(session);
+    private NutsElements _elements() {
+        return NutsElements.of(session).setSession(session);
     }
 //
 //    private NutsPrimitiveElementBuilder _primitive() {

@@ -15,13 +15,13 @@ public class DefaultNutsTextNodeBuilder implements NutsTextBuilder {
 
     private final List<NutsText> children = new ArrayList<>();
     private final NutsSession session;
-    NutsTextManager text1;
+    NutsTexts text1;
     private NutsTextWriteConfiguration writeConfiguration;
     private NutsTextStyleGenerator styleGenerator;
 
     public DefaultNutsTextNodeBuilder(NutsSession session) {
         this.session = session;
-        text1 = session.text();
+        text1 = NutsTexts.of(session);
     }
 
     @Override
@@ -99,9 +99,9 @@ public class DefaultNutsTextNodeBuilder implements NutsTextBuilder {
     public NutsTextBuilder append(Object text, NutsTextStyles styles) {
         if (text != null) {
             if (styles.size() == 0) {
-                children.add(session.text().toText(text));
+                children.add(NutsTexts.of(session).toText(text));
             } else {
-                children.add(text1.ofStyled(session.text().toText(text), styles));
+                children.add(text1.ofStyled(NutsTexts.of(session).toText(text), styles));
             }
         }
         return this;
@@ -110,7 +110,7 @@ public class DefaultNutsTextNodeBuilder implements NutsTextBuilder {
     @Override
     public NutsTextBuilder append(Object node) {
         if (node != null) {
-            return append(session.text().toText(node));
+            return append(NutsTexts.of(session).toText(node));
         }
         return this;
     }
@@ -237,25 +237,25 @@ public class DefaultNutsTextNodeBuilder implements NutsTextBuilder {
             to=size()-1;
         }
         if(to<=from){
-            return session.text().ofPlain("");
+            return NutsTexts.of(session).ofPlain("");
         }
-        return session.text().builder().appendAll(children.subList(from,to)).build();
+        return NutsTexts.of(session).builder().appendAll(children.subList(from,to)).build();
     }
 
     public NutsText substring(int from, int to) {
         if(to<=from){
-            return session.text().ofPlain("");
+            return NutsTexts.of(session).ofPlain("");
         }
         int firstIndex = ensureCut(from);
         if(firstIndex<0){
-            return session.text().ofPlain("");
+            return NutsTexts.of(session).ofPlain("");
         }
         int secondIndex = ensureCut(to);
         if(secondIndex<0){
             //the cut is till the end
-            return session.text().builder().appendAll(children.subList(firstIndex,children.size())).build();
+            return NutsTexts.of(session).builder().appendAll(children.subList(firstIndex,children.size())).build();
         }
-        return session.text().builder().appendAll(children.subList(firstIndex,secondIndex)).build();
+        return NutsTexts.of(session).builder().appendAll(children.subList(firstIndex,secondIndex)).build();
 //        int index=0;
 //        List<NutsText> ok=new ArrayList<>();
 //        for (NutsText child : p) {
@@ -280,7 +280,7 @@ public class DefaultNutsTextNodeBuilder implements NutsTextBuilder {
 //            }
 //        }
 //        if(ok.isEmpty()){
-//            return session.text().ofPlain("");
+//            return NutsTexts.of(session).ofPlain("");
 //        }
 //        if(ok.size()==1){
 //            return ok.get(0);
@@ -293,21 +293,21 @@ public class DefaultNutsTextNodeBuilder implements NutsTextBuilder {
 //            from=0;
 //        }
 //        if(to<=from){
-//            return session.text().ofPlain("");
+//            return NutsTexts.of(session).ofPlain("");
 //        }
 //        switch (t.getType()){
 //            case PLAIN:{
 //                NutsTextPlain p=(NutsTextPlain) t;
 //                String text = p.getText();
 //                int x=Math.min(to, text.length());
-//                return session.text().ofPlain(text.substring(from,x));
+//                return NutsTexts.of(session).ofPlain(text.substring(from,x));
 //            }
 //            case STYLED:{
 //                NutsTextStyled p=(NutsTextStyled) t;
 //                NutsTextPlain pp=(NutsTextPlain) p.getChild();
 //                String text = pp.getText();
 //                int x=Math.min(to, text.length());
-//                return session.text().ofStyled(text.substring(from,to),p.getStyles());
+//                return NutsTexts.of(session).ofStyled(text.substring(from,to),p.getStyles());
 //            }
 //            case LIST:{
 //                NutsTextList p=(NutsTextList) t;
@@ -330,7 +330,7 @@ public class DefaultNutsTextNodeBuilder implements NutsTextBuilder {
         if(at<=0){
             return 0;
         }
-        NutsTextManager text = session.text();
+        NutsTexts text = NutsTexts.of(session);
         int charPos=0;
         int index=0;
         while (index<children.size()){
@@ -462,7 +462,7 @@ public class DefaultNutsTextNodeBuilder implements NutsTextBuilder {
 
     @Override
     public NutsTextBuilder builder() {
-        return session.text().builder().append(this);
+        return NutsTexts.of(session).builder().append(this);
     }
 
     @Override

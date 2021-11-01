@@ -38,7 +38,7 @@ public class FilePath implements NutsPathSPI {
     public NutsPath[] getChildren() {
         if (Files.isDirectory(value)) {
             try {
-                return Files.list(value).map(x -> getSession().io().path(x)).toArray(NutsPath[]::new);
+                return Files.list(value).map(x -> NutsPath.of(x,getSession())).toArray(NutsPath[]::new);
             } catch (IOException e) {
                 //
             }
@@ -69,7 +69,7 @@ public class FilePath implements NutsPathSPI {
             for (String s : others) {
                 value2 = value2.resolve(s);
             }
-            return getSession().io().path(value2);
+            return NutsPath.of(value2,getSession());
         }
         return toNutsPathInstance();
     }
@@ -256,7 +256,7 @@ public class FilePath implements NutsPathSPI {
         if (p == null) {
             return null;
         }
-        return getSession().io().path(p);
+        return NutsPath.of(p,getSession());
     }
 
     @Override
@@ -470,7 +470,7 @@ public class FilePath implements NutsPathSPI {
         }
 
         public NutsString asFormattedString() {
-            return p.getSession().text().toText(p.value);
+            return NutsTexts.of(p.getSession()).toText(p.value);
         }
 
         @Override

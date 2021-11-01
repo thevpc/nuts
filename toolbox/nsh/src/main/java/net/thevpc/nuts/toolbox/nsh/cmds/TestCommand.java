@@ -35,6 +35,7 @@ import java.nio.file.attribute.FileTime;
 import java.nio.file.attribute.UserPrincipal;
 import java.util.Stack;
 import net.thevpc.nuts.NutsArgument;
+import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.toolbox.nsh.AbstractNshBuiltin;
 import net.thevpc.nuts.NutsCommandLine;
 import net.thevpc.nuts.toolbox.nsh.bundles.jshell.JShellExecutionContext;
@@ -171,7 +172,8 @@ public class TestCommand extends AbstractNshBuiltin {
 
     @Override
     public int execImpl(String[] args, JShellExecutionContext context) {
-        NutsCommandLine commandLine = context.getSession().commandLine().create(args)
+        NutsSession session = context.getSession();
+        NutsCommandLine commandLine = NutsCommandLine.of(args,session)
                 .setCommandName("test")
                 .setExpandSimpleOptions(false)
                 ;

@@ -8,7 +8,7 @@ public class SettingsRepoUtils {
         String disabledString = enabled ? "" : " <DISABLED>";
         NutsPrintStream out = context.getSession().out();
         out.print(prefix);
-        NutsTextManager factory = context.getSession().text();
+        NutsTexts factory = NutsTexts.of(context.getSession());
         if (enabled) {
             out.print(factory.ofStyled(repository.getName() + disabledString, NutsTextStyle.primary2()));
         } else {

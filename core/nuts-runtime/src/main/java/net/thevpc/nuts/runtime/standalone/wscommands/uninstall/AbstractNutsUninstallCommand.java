@@ -30,7 +30,7 @@ public abstract class AbstractNutsUninstallCommand extends NutsWorkspaceCommandB
     public NutsUninstallCommand addId(String id) {
         checkSession();
         NutsSession ws = getSession();
-        return addId(id == null ? null : ws.id().parser().parse(id));
+        return addId(id == null ? null : NutsId.of(id,ws));
     }
 
     @Override
@@ -72,7 +72,7 @@ public abstract class AbstractNutsUninstallCommand extends NutsWorkspaceCommandB
     public NutsUninstallCommand removeId(String id) {
         checkSession();
         NutsSession ws = getSession();
-        return removeId(ws.id().parser().parse(id));
+        return removeId(NutsId.of(id,ws));
     }
 
     @Override

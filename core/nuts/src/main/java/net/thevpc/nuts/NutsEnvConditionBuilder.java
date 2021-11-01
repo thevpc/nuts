@@ -26,6 +26,7 @@
 package net.thevpc.nuts;
 
 import net.thevpc.nuts.boot.NutsApiUtils;
+import net.thevpc.nuts.spi.NutsComponent;
 
 import java.io.Serializable;
 import java.util.Map;
@@ -36,11 +37,11 @@ import java.util.Map;
  * @app.category Descriptor
  * @since 0.8.3
  */
-public interface NutsEnvConditionBuilder extends Serializable {
+public interface NutsEnvConditionBuilder extends Serializable, NutsComponent<Object> {
 
     static NutsEnvConditionBuilder of(NutsSession session) {
         NutsApiUtils.checkSession(session);
-        return session.descriptor().envConditionBuilder();
+        return session.extensions().createSupported(NutsEnvConditionBuilder.class,true,null);
     }
 
     /**

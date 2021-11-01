@@ -28,9 +28,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.NutsString;
-import net.thevpc.nuts.NutsWorkspace;
+
+import net.thevpc.nuts.*;
 
 /**
  *
@@ -85,14 +84,19 @@ public class XNode {
             return keyAsElement;
         }
         NutsString _title = resolveTitle();
-        NutsString titleOrValueAsElement = format.stringValue(_title != null ? _title : value, session);
+        NutsString titleOrValueAsElement = null;
+        if(getChildren()==null || getChildren().isEmpty()){
+            titleOrValueAsElement = format.stringValue(_title != null ? _title : value, session);
+        }else{
+            titleOrValueAsElement = format.stringValue(_title, session);
+        }
         if (key == null) {
             return titleOrValueAsElement;
         } else {
             if (value instanceof List || value instanceof Map) {
-                return session.text().builder().append(keyAsElement);
+                return NutsTexts.of(session).builder().append(keyAsElement);
             } else {
-                return session.text().builder().append(keyAsElement).append("=").append(titleOrValueAsElement);
+                return NutsTexts.of(session).builder().append(keyAsElement).append("=").append(titleOrValueAsElement);
             }
         }
     }
@@ -168,7 +172,7 @@ public class XNode {
                 if (map == null) {
                     all.add(entryNode(keyStr, me.getValue(), session, format));
                 } else {
-                    all.add(entryNode(keyStr, session.elem()
+                    all.add(entryNode(keyStr, NutsElements.of(session)
                             .toElement(Arrays.asList(map)), session, format));
                 }
             }

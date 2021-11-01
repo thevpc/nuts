@@ -103,12 +103,13 @@ public class DefaultNutsSearchCommand extends AbstractNutsSearchCommand {
             }
         }
 
+        NutsRepositoryFilters repository = NutsRepositoryFilters.of(session);
         if(!searchInInstalled && searchInOtherRepositories) {
-            otherFilters.add(session.filters().repository().installedRepo().neg());
+            otherFilters.add(repository.installedRepo().neg());
         }else if(searchInInstalled && !searchInOtherRepositories){
-            otherFilters.add(session.filters().repository().installedRepo());
+            otherFilters.add(repository.installedRepo());
         }else if(!searchInInstalled && !searchInOtherRepositories){
-            otherFilters.add(session.filters().repository().never());
+            otherFilters.add(repository.never());
         }
         if(otherFilters.isEmpty()){
             return null;
@@ -139,13 +140,13 @@ public class DefaultNutsSearchCommand extends AbstractNutsSearchCommand {
     //@Override
     private DefaultNutsSearch build() {
         checkSession();
-        NutsSession ws = getSession();
+        NutsSession session = getSession();
         HashSet<String> someIds = new HashSet<>();
         for (NutsId id : this.getIds()) {
             someIds.add(id.toString());
         }
         if (this.getIds().length == 0 && isCompanion()) {
-            someIds.addAll(session.extensions().getCompanionIds().stream().map(NutsId::getShortName).collect(Collectors.toList()));
+            someIds.addAll(this.session.extensions().getCompanionIds().stream().map(NutsId::getShortName).collect(Collectors.toList()));
         }
         if (this.getIds().length == 0 && isRuntime()) {
             someIds.add(NutsConstants.Ids.NUTS_RUNTIME);
@@ -185,28 +186,29 @@ public class DefaultNutsSearchCommand extends AbstractNutsSearchCommand {
                 if (oo.isEmpty()) {
                     idFilter0 = null;
                 } else {
-                    idFilter0 = session.id().filter().any(oo.toArray(new NutsIdFilter[0]));
+                    idFilter0 = NutsIdFilters.of(this.session).any(oo.toArray(new NutsIdFilter[0]));
                 }
             }
         }
 
-        NutsDescriptorFilter _descriptorFilter = ws.descriptor().filter().always();
-        NutsIdFilter _idFilter = session.id().filter().always();
-        NutsDependencyFilter depFilter = ws.dependency().filter().always();
-        NutsRepositoryFilter rfilter = session.repos().filter().always();
+        NutsDescriptorFilters dfilter = NutsDescriptorFilters.of(session);
+        NutsDescriptorFilter _descriptorFilter = dfilter.always();
+        NutsIdFilter _idFilter = NutsIdFilters.of(this.session).always();
+        NutsDependencyFilter depFilter = NutsDependencyFilters.of(session).always();
+        NutsRepositoryFilter rfilter = this.session.repos().filter().always();
         for (String j : this.getScripts()) {
             if (!NutsBlankable.isBlank(j)) {
                 if (CoreStringUtils.containsTopWord(j, "descriptor")) {
-                    _descriptorFilter = _descriptorFilter.and(ws.descriptor().filter().byExpression(j));
+                    _descriptorFilter = _descriptorFilter.and(dfilter.parse(j));
                 } else if (CoreStringUtils.containsTopWord(j, "dependency")) {
-                    depFilter = depFilter.and(ws.dependency().filter().byExpression(j));
+                    depFilter = depFilter.and(NutsDependencyFilters.of(session).parse(j));
                 } else {
-                    _idFilter = _idFilter.and(ws.id().filter().byExpression(j));
+                    _idFilter = _idFilter.and(NutsIdFilters.of(session).parse(j));
                 }
             }
         }
-        NutsDescriptorFilter packs = ws.descriptor().filter().byPackaging(getPackaging());
-        NutsDescriptorFilter archs = ws.descriptor().filter().byArch(getArch());
+        NutsDescriptorFilter packs = dfilter.byPackaging(getPackaging());
+        NutsDescriptorFilter archs = dfilter.byArch(getArch());
         _descriptorFilter = _descriptorFilter.and(packs).and(archs);
 
         NutsRepositoryFilter _repositoryFilter = rfilter.and(this.getRepositoryFilter());
@@ -214,50 +216,50 @@ public class DefaultNutsSearchCommand extends AbstractNutsSearchCommand {
 
         _idFilter = _idFilter.and(idFilter0);
         if (getInstallStatus() != null) {
-            _idFilter = _idFilter.and(ws.id().filter().byInstallStatus(getInstallStatus()));
+            _idFilter = _idFilter.and(NutsIdFilters.of(session).byInstallStatus(getInstallStatus()));
         }
         if (getDefaultVersions() != null) {
-            _idFilter = _idFilter.and(ws.id().filter().byDefaultVersion(getDefaultVersions()));
+            _idFilter = _idFilter.and(NutsIdFilters.of(session).byDefaultVersion(getDefaultVersions()));
         }
         if (execType != null) {
             switch (execType) {
                 case "lib": {
-                    _descriptorFilter = _descriptorFilter.and(ws.descriptor().filter().byFlag(NutsDescriptorFlag.EXEC).neg());
+                    _descriptorFilter = _descriptorFilter.and(dfilter.byFlag(NutsDescriptorFlag.EXEC).neg());
                     break;
                 }
                 case "exec": {
-                    _descriptorFilter = _descriptorFilter.and(ws.descriptor().filter().byFlag(NutsDescriptorFlag.EXEC));
+                    _descriptorFilter = _descriptorFilter.and(dfilter.byFlag(NutsDescriptorFlag.EXEC));
                     break;
                 }
                 case "app": {
-                    _descriptorFilter = _descriptorFilter.and(ws.descriptor().filter().byFlag(NutsDescriptorFlag.APP));
+                    _descriptorFilter = _descriptorFilter.and(dfilter.byFlag(NutsDescriptorFlag.APP));
                     break;
                 }
                 case "extension": {
-                    _descriptorFilter = _descriptorFilter.and(ws.descriptor().filter().byExtension(targetApiVersion));
+                    _descriptorFilter = _descriptorFilter.and(dfilter.byExtension(targetApiVersion));
                     break;
                 }
                 case "runtime": {
-                    _descriptorFilter = _descriptorFilter.and(ws.descriptor().filter().byRuntime(targetApiVersion));
+                    _descriptorFilter = _descriptorFilter.and(dfilter.byRuntime(targetApiVersion));
                     break;
                 }
                 case "companions": {
-                    _descriptorFilter = _descriptorFilter.and(ws.descriptor().filter().byCompanion(targetApiVersion));
+                    _descriptorFilter = _descriptorFilter.and(dfilter.byCompanion(targetApiVersion));
                     break;
                 }
             }
         } else {
             if (targetApiVersion != null) {
-                _descriptorFilter = _descriptorFilter.and(ws.descriptor().filter().byApiVersion(targetApiVersion));
+                _descriptorFilter = _descriptorFilter.and(dfilter.byApiVersion(targetApiVersion));
             }
         }
         if (!lockedIds.isEmpty()) {
-            _descriptorFilter = _descriptorFilter.and(ws.descriptor().filter().byLockedIds(
+            _descriptorFilter = _descriptorFilter.and(dfilter.byLockedIds(
                     lockedIds.stream().map(NutsId::getFullName).toArray(String[]::new)
             ));
         }
         if (!wildcardIds.isEmpty()) {
-            _idFilter = _idFilter.and(ws.id().filter().byName(wildcardIds.toArray(new String[0])));
+            _idFilter = _idFilter.and(NutsIdFilters.of(session).byName(wildcardIds.toArray(new String[0])));
         }
         NutsRepositoryFilter extraRepositoryFilter = createRepositoryFilter(installStatus, _idFilter, getSession());
         if(extraRepositoryFilter!=null){
@@ -534,7 +536,7 @@ public class DefaultNutsSearchCommand extends AbstractNutsSearchCommand {
         NutsWorkspaceUtils wu = NutsWorkspaceUtils.of(session);
         if (regularIds.length > 0) {
             for (String id : regularIds) {
-                NutsId nutsId = session.id().parser().parse(id);
+                NutsId nutsId = NutsId.of(id,session);
                 if (nutsId != null) {
                     List<NutsId> nutsId2 = new ArrayList<>();
                     if (NutsBlankable.isBlank(nutsId.getGroupId())) {
@@ -546,7 +548,7 @@ public class DefaultNutsSearchCommand extends AbstractNutsSearchCommand {
                             if (!nutsId.getArtifactId().contains("*")) {
                                 NutsRepositorySPI repoSPI = wu
                                         .repoSPI(NutsWorkspaceExt.of(getWorkspace()).getInstalledRepository());
-                                Iterator<NutsId> it = repoSPI.search().setFetchMode(NutsFetchMode.LOCAL).setFilter(session.filters().id().byName(
+                                Iterator<NutsId> it = repoSPI.search().setFetchMode(NutsFetchMode.LOCAL).setFilter(NutsIdFilters.of(session).byName(
                                         nutsId.builder().setGroupId("*").build().toString()
                                 )).setSession(getSession()).getResult();
                                 installedIds = IteratorUtils.toList(it);
@@ -567,8 +569,8 @@ public class DefaultNutsSearchCommand extends AbstractNutsSearchCommand {
                     }
                     List<Iterator<? extends NutsId>> toConcat = new ArrayList<>();
                     for (NutsId nutsId1 : nutsId2) {
-                        NutsIdFilter idFilter2 = session.filters().all(sIdFilter,
-                                session.id().filter().byName(nutsId1.getFullName())
+                        NutsIdFilter idFilter2 = NutsFilters.of(session).all(sIdFilter,
+                                NutsIdFilters.of(session).byName(nutsId1.getFullName())
                         );
                         NutsIdFilter filter = CoreNutsUtils.simplify(CoreFilterUtils.idFilterOf(nutsId1.getProperties(),
                                 idFilter2, sDescriptorFilter, session));
@@ -607,7 +609,7 @@ public class DefaultNutsSearchCommand extends AbstractNutsSearchCommand {
                                 .setRepositoryFilter(search.getRepositoryFilter())
                                 .setDescriptorFilter(search.getDescriptorFilter());
                         search2.setIdFilter(
-                                session.id().filter().byName(nutsId.builder().setGroupId("*").build().toString())
+                                NutsIdFilters.of(session).byName(nutsId.builder().setGroupId("*").build().toString())
                                         .and(search.getIdFilter())
                         );
                         Iterator<NutsId> extraResult = search2.getResultIds().iterator();

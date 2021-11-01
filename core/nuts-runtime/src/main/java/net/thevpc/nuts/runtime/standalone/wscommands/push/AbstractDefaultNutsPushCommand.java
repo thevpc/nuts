@@ -48,14 +48,14 @@ public abstract class AbstractDefaultNutsPushCommand extends NutsWorkspaceComman
     public NutsPushCommand addId(String id) {
         checkSession();
         NutsSession ws = getSession();
-        return addId(id == null ? null : ws.id().parser().setLenient(false).parse(id));
+        return addId(id == null ? null : NutsId.of(id,ws));
     }
 
     @Override
     public NutsPushCommand addLockedId(String id) {
         checkSession();
         NutsSession ws = getSession();
-        return addLockedId(id == null ? null : ws.id().parser().setLenient(false).parse(id));
+        return addLockedId(id == null ? null : NutsId.of(id,ws));
     }
 
     @Override
@@ -82,7 +82,7 @@ public abstract class AbstractDefaultNutsPushCommand extends NutsWorkspaceComman
         if (id != null) {
             checkSession();
             NutsSession ws = getSession();
-            ids.remove(ws.id().parser().parse(id));
+            ids.remove(NutsId.of(id,ws));
         }
         return this;
     }
@@ -103,7 +103,7 @@ public abstract class AbstractDefaultNutsPushCommand extends NutsWorkspaceComman
         NutsSession ws = getSession();
         if (id != null) {
             if (lockedIds != null) {
-                lockedIds.remove(ws.id().parser().parse(id));
+                lockedIds.remove(NutsId.of(id,ws));
             }
         }
         return this;

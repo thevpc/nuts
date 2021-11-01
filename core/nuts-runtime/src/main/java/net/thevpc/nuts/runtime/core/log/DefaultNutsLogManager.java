@@ -1,107 +1,109 @@
 package net.thevpc.nuts.runtime.core.log;
 
-import net.thevpc.nuts.*;
+import net.thevpc.nuts.NutsLogger;
+import net.thevpc.nuts.NutsSession;
+import net.thevpc.nuts.NutsWorkspace;
+import net.thevpc.nuts.runtime.core.NutsWorkspaceExt;
+import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
+import net.thevpc.nuts.spi.NutsComponentScope;
+import net.thevpc.nuts.spi.NutsComponentScopeType;
+import net.thevpc.nuts.spi.NutsLogManager;
+import net.thevpc.nuts.spi.NutsSupportLevelContext;
+
 import java.util.logging.Handler;
 import java.util.logging.Level;
-import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 
+@NutsComponentScope(NutsComponentScopeType.WORKSPACE)
 public class DefaultNutsLogManager implements NutsLogManager {
 
-    private DefaultNutsLogModel model;
-    private NutsSession session;
+    private final DefaultNutsLogModel model;
+    private final NutsWorkspace ws;
 
-    public DefaultNutsLogManager(DefaultNutsLogModel model) {
-        this.model = model;
+    public DefaultNutsLogManager(NutsWorkspace ws) {
+        this.ws = ws;
+        this.model = ((NutsWorkspaceExt) ws).getModel().logModel;
     }
 
     @Override
-    public Handler[] getHandlers() {
-        checkSession();
+    public Handler[] getHandlers(NutsSession session) {
+        checkSession(session);
         return model.getHandlers();
     }
 
     @Override
-    public NutsLogManager removeHandler(Handler handler) {
-        checkSession();
+    public NutsLogManager removeHandler(Handler handler, NutsSession session) {
+        checkSession(session);
         model.removeHandler(handler);
         return this;
     }
 
     @Override
-    public NutsLogManager addHandler(Handler handler) {
-        checkSession();
+    public NutsLogManager addHandler(Handler handler, NutsSession session) {
+        checkSession(session);
         model.addHandler(handler);
         return this;
     }
 
     @Override
-    public Handler getTermHandler() {
-        checkSession();
+    public Handler getTermHandler(NutsSession session) {
+        checkSession(session);
         return model.getTermHandler();
     }
 
     @Override
-    public Handler getFileHandler() {
-        checkSession();
+    public Handler getFileHandler(NutsSession session) {
+        checkSession(session);
         return model.getFileHandler();
     }
 
     @Override
-    public NutsLogger of(String name) {
-        checkSession();
-        return model.of(name,getSession());
+    public NutsLogger createLogger(String name, NutsSession session) {
+        checkSession(session);
+        return model.createLogger(name, session);
     }
 
     @Override
-    public NutsLogger of(Class clazz) {
-        checkSession();
-        return model.of(clazz,getSession());
+    public NutsLogger createLogger(Class clazz, NutsSession session) {
+        checkSession(session);
+        return model.createLogger(clazz, session);
     }
 
     @Override
-    public Level getTermLevel() {
-        checkSession();
+    public Level getTermLevel(NutsSession session) {
+        checkSession(session);
         return model.getTermLevel();
     }
 
     @Override
-    public NutsLogManager setTermLevel(Level level) {
-        checkSession();
+    public NutsLogManager setTermLevel(Level level, NutsSession session) {
+        checkSession(session);
         model.setTermLevel(level, session);
         return this;
     }
 
     @Override
-    public Level getFileLevel() {
-        checkSession();
+    public Level getFileLevel(NutsSession session) {
+        checkSession(session);
         return model.getFileLevel();
     }
 
     @Override
-    public NutsLogManager setFileLevel(Level level) {
-        checkSession();
+    public NutsLogManager setFileLevel(Level level, NutsSession session) {
+        checkSession(session);
         model.setFileLevel(level, session);
         return this;
     }
 
-    private void checkSession() {
+    private void checkSession(NutsSession session) {
         NutsWorkspaceUtils.checkSession(model.getWorkspace(), session);
-    }
-
-    @Override
-    public NutsSession getSession() {
-        return this.session;
-    }
-
-    @Override
-    public NutsLogManager setSession(NutsSession session) {
-        this.session = NutsWorkspaceUtils.bindSession(model.getWorkspace(), session);
-        return this;
     }
 
     public DefaultNutsLogModel getModel() {
         return model;
     }
-    
 
+    @Override
+    public int getSupportLevel(NutsSupportLevelContext<Object> context) {
+        return DEFAULT_SUPPORT;
+    }
 }

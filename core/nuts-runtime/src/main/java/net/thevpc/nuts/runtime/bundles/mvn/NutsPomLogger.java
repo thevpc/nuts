@@ -1,9 +1,6 @@
 package net.thevpc.nuts.runtime.bundles.mvn;
 
-import net.thevpc.nuts.NutsLogVerb;
-import net.thevpc.nuts.NutsLogger;
-import net.thevpc.nuts.NutsMessage;
-import net.thevpc.nuts.NutsSession;
+import net.thevpc.nuts.*;
 
 import java.util.logging.Level;
 
@@ -14,7 +11,7 @@ public class NutsPomLogger implements PomLogger {
 
     public NutsPomLogger(NutsSession session) {
         this.session = session;
-        LOG = session.log().of(PomIdResolver.class);
+        LOG = NutsLogger.of(PomIdResolver.class,session);
     }
 
     @Override

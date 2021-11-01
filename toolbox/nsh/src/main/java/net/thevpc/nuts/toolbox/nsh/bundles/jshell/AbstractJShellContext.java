@@ -92,7 +92,7 @@ public abstract class AbstractJShellContext implements JShellContext {
     @Override
     public JShellContext setOut(PrintStream out) {
         getSession().getTerminal().setOut(
-                getSession().io().createPrintStream(out)
+                NutsPrintStream.of(out,getSession())
         );
 //        commandContext.getTerminal().setOut(workspace.createPrintStream(out,
 //                true//formatted
@@ -102,7 +102,7 @@ public abstract class AbstractJShellContext implements JShellContext {
 
     public JShellContext setErr(PrintStream err) {
         getSession().getTerminal().setErr(
-                getSession().io().createPrintStream(err)
+                NutsPrintStream.of(err,getSession())
         );
         return this;
     }
@@ -166,8 +166,7 @@ public abstract class AbstractJShellContext implements JShellContext {
                             if (s.length() > 0) {
                                 if (s.startsWith(NutsApplicationContext.AUTO_COMPLETE_CANDIDATE_PREFIX)) {
                                     s = s.substring(NutsApplicationContext.AUTO_COMPLETE_CANDIDATE_PREFIX.length()).trim();
-                                    NutsCommandLineManager commandLineFormat = session.commandLine();
-                                    NutsCommandLine args = commandLineFormat.parse(s);
+                                    NutsCommandLine args = NutsCommandLine.parse(s,session);
                                     String value = null;
                                     String display = null;
                                     if (args.hasNext()) {
@@ -181,9 +180,9 @@ public abstract class AbstractJShellContext implements JShellContext {
                                             display = value;
                                         }
                                         autoComplete.addCandidate(
-                                                commandLineFormat.createCandidate(
+                                                new NutsArgumentCandidate(
                                                         value
-                                                ).build()
+                                                )
                                         );
                                     }
                                 } else {
@@ -225,7 +224,7 @@ public abstract class AbstractJShellContext implements JShellContext {
             setParentNode(other.getParentNode());
             setFileSystem(other.getFileSystem());
             setCwd(other.getCwd());
-            setSession(other.session() == null ? null : other.session().copy());
+            setSession(other.getSession() == null ? null : other.getSession().copy());
             setFunctionManager(other.functions());
         }
     }
@@ -272,11 +271,6 @@ public abstract class AbstractJShellContext implements JShellContext {
     }
 
     @Override
-    public NutsSession session() {
-        return getSession();
-    }
-
-    @Override
     public NutsSession getSession() {
         return session;
     }
@@ -285,11 +279,6 @@ public abstract class AbstractJShellContext implements JShellContext {
     public JShellContext setSession(NutsSession session) {
         this.session = session;
         return this;
-    }
-
-    @Override
-    public NutsWorkspace workspace() {
-        return getWorkspace();
     }
 
     @Override

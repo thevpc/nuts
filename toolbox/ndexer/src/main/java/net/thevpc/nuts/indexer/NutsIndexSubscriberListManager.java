@@ -22,7 +22,7 @@ public class NutsIndexSubscriberListManager {
         this.name = name.trim();
         Path file = getConfigFile(session);
         if (Files.exists(file)) {
-            this.config = this.defaultWorkspace.elem().setContentType(NutsContentType.JSON).parse(file, NutsIndexSubscriberListConfig.class);
+            this.config = NutsElements.of(defaultWorkspace).json().parse(file, NutsIndexSubscriberListConfig.class);
             if (this.config.getSubscribers() != null) {
                 for (NutsIndexSubscriber var : this.config.getSubscribers()) {
                     this.subscribers.put(var.getUuid(), var);
@@ -39,8 +39,8 @@ public class NutsIndexSubscriberListManager {
     private Path getConfigFile(NutsSession session) {
         return Paths.get(session
                 .locations()
-                .getStoreLocation(session
-                                .id().resolveId(NutsIndexSubscriberListManager.class),
+                .getStoreLocation(NutsIdResolver.of(session)
+                                .resolveId(NutsIndexSubscriberListManager.class),
                         NutsStoreLocation.CONFIG)).resolve(
                         name + "-nuts-subscriber-list.json");
     }
@@ -101,7 +101,7 @@ public class NutsIndexSubscriberListManager {
                 ? null
                 : new ArrayList<>(this.subscribers.values()));
         Path file = getConfigFile(session);
-        this.defaultWorkspace.elem().setContentType(NutsContentType.JSON).setValue(this.config)
+        NutsElements.of(defaultWorkspace).json().setValue(this.config)
                 .setNtf(false).print(file);
     }
 

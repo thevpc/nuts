@@ -152,7 +152,7 @@ public class FromTemplateScriptBuilder extends AbstractScriptBuilder {
                                     case "NUTS_VERSION":
                                         return getSession().getWorkspace().getApiVersion().toString();
                                     case "NUTS_WORKSPACE":
-                                        return getSession().locations().getWorkspaceLocation();
+                                        return getSession().locations().getWorkspaceLocation().toString();
                                     case "NUTS_WORKSPACE_APPS":
                                         return getSession().locations().getStoreLocation(NutsStoreLocation.APPS);
                                     case "NUTS_WORKSPACE_CONFIG":

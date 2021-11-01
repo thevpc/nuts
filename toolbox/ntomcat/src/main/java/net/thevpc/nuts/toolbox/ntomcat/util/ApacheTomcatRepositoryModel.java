@@ -45,7 +45,7 @@ public class ApacheTomcatRepositoryModel implements NutsRepositoryModel {
         }
         List<NutsId> all = new ArrayList<>();
 //        NutsWorkspace ws = session.getWorkspace();
-        NutsIdBuilder idBuilder = session.id().builder().setGroupId("org.apache.catalina").setArtifactId("apache-tomcat");
+        NutsIdBuilder idBuilder = NutsIdBuilder.of(session).setGroupId("org.apache.catalina").setArtifactId("apache-tomcat");
         for (String s : list(HTTPS_ARCHIVE_APACHE_ORG_DIST_TOMCAT, "tomcat-[0-9.]+/", session)) {
             for (String s2 : list(HTTPS_ARCHIVE_APACHE_ORG_DIST_TOMCAT + s, "v.+/", session)) {
                 String prefix = "apache-tomcat-";
@@ -58,7 +58,7 @@ public class ApacheTomcatRepositoryModel implements NutsRepositoryModel {
                     //will ignore all alpha versions
                     continue;
                 }
-                NutsVersion version = session.version().parser().parse(s2.substring(1, s2.length() - 1));
+                NutsVersion version = NutsVersion.of(s2.substring(1, s2.length() - 1),session);
                 if (version.compareTo("4.1.32") < 0) {
                     prefix = "jakarta-tomcat-";
                 }
@@ -71,7 +71,7 @@ public class ApacheTomcatRepositoryModel implements NutsRepositoryModel {
                             prefix + "[0-9]+\\.[0-9]+\\.[0-9]+\\.zip",
                             session)) {
                         String v0 = s3.substring(prefix.length(), s3.length() - 4);
-                        NutsVersion v = session.version().parser().parse(v0);
+                        NutsVersion v = NutsVersion.of(v0,session);
                         NutsId id2 = idBuilder.setVersion(v).build();
                         if (filter == null || filter.acceptId(id2, session)) {
                             all.add(id2);
@@ -166,8 +166,7 @@ public class ApacheTomcatRepositoryModel implements NutsRepositoryModel {
                     }
                 }
 
-                return session.descriptor()
-                        .descriptorBuilder()
+                return NutsDescriptorBuilder.of(session)
                         .setId(id.getLongId())
                         .setPackaging("zip")
                         .setCondition(
@@ -192,9 +191,9 @@ public class ApacheTomcatRepositoryModel implements NutsRepositoryModel {
             if (localPath == null) {
                 localPath = getIdLocalFile(id.builder().setFaceContent().build(), fetchMode, repository, session);
             }
-            session.io().copy().from(r).to(localPath).setSafe(true).setLogProgress(true).run();
+            NutsCp.of(session).from(r).to(localPath).setSafe(true).setLogProgress(true).run();
             return new NutsDefaultContent(
-                    session.io().path(localPath), false, false);
+                    NutsPath.of(localPath,session), false, false);
         }
         return null;
     }
@@ -211,7 +210,7 @@ public class ApacheTomcatRepositoryModel implements NutsRepositoryModel {
         List<String> all = new ArrayList<>();
         try {
             //NutsWorkspace ws = session.getWorkspace();
-            byte[] bytes = session.io().copy().from(url).setLogProgress(true).getByteArrayResult();
+            byte[] bytes = NutsCp.of(session).from(url).setLogProgress(true).getByteArrayResult();
             Document doc = null;
             try {
                 doc = Jsoup.parse(new ByteArrayInputStream(bytes), "UTF-8", url);

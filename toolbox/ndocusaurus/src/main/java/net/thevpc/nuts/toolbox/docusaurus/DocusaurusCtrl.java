@@ -83,15 +83,16 @@ public class DocusaurusCtrl {
         boolean genSidebarMenu = Boolean.parseBoolean(genSidebarMenuString);
         Path basePath = base;
         Path preProcessor = getPreProcessorBaseDir();
+        NutsSession session = appContext.getSession();
         if (Files.isDirectory(preProcessor) && Files.isRegularFile(preProcessor.resolve("project.nsh"))) {
 //            Files.walk(base).filter(x->Files.isDirectory(base))
             Path docs = basePath.resolve("docs");
             if (Files.isDirectory(basePath.resolve("node_modules")) && Files.isRegularFile(basePath.resolve("docusaurus.config.js"))) {
-                appContext.getSession().out().printf("clear folder %s%n",docs);
+                session.out().printf("clear folder %s%n",docs);
                 deletePathChildren(docs);
             }
 
-            appContext.getSession().out().printf("process template %s -> %s%n",preProcessor,getTargetBaseDir());
+            session.out().printf("process template %s -> %s%n",preProcessor,getTargetBaseDir());
             TemplateConfig config = new TemplateConfig()
                     .setProjectPath(preProcessor.toString())
                     .setTargetFolder(getTargetBaseDir().toString());
@@ -109,22 +110,22 @@ public class DocusaurusCtrl {
         if (genSidebarMenu) {
             DocusaurusFolder root = project.getPhysicalDocsFolder();
             root = new DocusaurusFolder(
-                    "someSidebar", "someSidebar", 0, appContext.getSession().elem().forObject().build(), root.getChildren(),
-                    root.getContent(appContext.getSession()),
+                    "someSidebar", "someSidebar", 0, NutsElements.of(session).forObject().build(), root.getChildren(),
+                    root.getContent(session),
                     project.getPhysicalDocsFolderBasePath().toString()
             );
             String s = "module.exports = {\n" +
                     root.toJSON(1)
                     + "\n};";
-            if (appContext.getSession().isPlainOut()) {
-                appContext.getSession().out().printf("build sidebar %s%n", base.resolve("sidebars.js"));
-                appContext.getSession().out().printf("\tusing release folder : %s%n", project.getPhysicalDocsFolderBasePath());
-                appContext.getSession().out().printf("\tusing config folder  : %s%n", project.getPhysicalDocsFolderConfigPath());
+            if (session.isPlainOut()) {
+                session.out().printf("build sidebar %s%n", base.resolve("sidebars.js"));
+                session.out().printf("\tusing release folder : %s%n", project.getPhysicalDocsFolderBasePath());
+                session.out().printf("\tusing config folder  : %s%n", project.getPhysicalDocsFolderConfigPath());
             }
             try {
                 Files.write(base.resolve("sidebars.js"), s.getBytes());
             } catch (IOException e) {
-                throw new NutsIOException(appContext.getSession(), NutsMessage.cstyle("%s",e));
+                throw new NutsIOException(session, NutsMessage.cstyle("%s",e));
             }
 //            System.out.println(s);
         }
@@ -133,13 +134,13 @@ public class DocusaurusCtrl {
                 .getSafe("path")
                 .isNull()) {
             Docusaurus2Asciidoctor d2a = new Docusaurus2Asciidoctor(project);
-            appContext.getSession().out().printf("build adoc file : %s%n", d2a.getAdocFile());
+            session.out().printf("build adoc file : %s%n", d2a.getAdocFile());
             d2a.createAdocFile();
-            appContext.getSession().out().printf("build pdf  file : %s%n", d2a.getPdfFile());
+            session.out().printf("build pdf  file : %s%n", d2a.getPdfFile());
             d2a.createPdfFile();
         }
         if (isBuildWebSite()) {
-            appContext.getSession().out().printf("build website%n");
+            session.out().printf("build website%n");
             runNativeCommand(base, getEffectiveNpmCommandPath(), "run-script", "build");
             String copyBuildPath = project.getConfig().getSafeObject("customFields")
                     .getSafe("copyBuildPath")
@@ -153,7 +154,7 @@ public class DocusaurusCtrl {
                 }
                 Path toPath = FileProcessorUtils.toAbsolute(Paths.get(copyBuildPath), base);
                 deleteFolderIfFound(toPath, "index.html", "404.html", "sitemap.xml");
-                new FileTemplater(appContext.getSession())
+                new FileTemplater(session)
                         .setWorkingDir(fromPath)
                         .setTargetPath(toPath)
                         .setMimeTypeResolver((String path) -> MimeTypeConstants.ANY_TYPE)
@@ -325,13 +326,12 @@ public class DocusaurusCtrl {
         @Override
         public Object eval(String content, FileTemplater context) {
             NutsSession session = context.getSession().copy();
-            NutsPrintStream out = session.io().createMemoryPrintStream();
+            NutsPrintStream out = NutsMemoryPrintStream.of(session);
             session.setTerminal(
-                    session.term()
-                            .createTerminal(
+                    NutsSessionTerminal.of(
                                     new ByteArrayInputStream(new byte[0]),
                                     out,
-                                    out)
+                                    out,session)
             );
             JShellContext ctx = shell.createInlineContext(
                     shell.getRootContext(),

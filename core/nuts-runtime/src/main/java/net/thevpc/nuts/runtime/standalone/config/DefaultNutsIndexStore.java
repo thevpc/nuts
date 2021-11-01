@@ -66,9 +66,9 @@ public class DefaultNutsIndexStore extends AbstractNutsIndexStore {
                     try {
                         NutsTransportConnection clientFacade = CoreIOUtils.getHttpClientFacade(session,
                                 URL);
-                        Map[] array = session.elem().setContentType(NutsContentType.JSON).parse(new InputStreamReader(clientFacade.open()), Map[].class);
+                        Map[] array = NutsElements.of(session).json().parse(new InputStreamReader(clientFacade.open()), Map[].class);
                         return Arrays.stream(array)
-                                .map(s -> session.id().parser().parse(s.get("stringId").toString()))
+                                .map(s -> NutsId.of(s.get("stringId").toString(),session))
                                 .collect(Collectors.toList()).iterator();
                     } catch (UncheckedIOException | NutsIOException e) {
                         setInaccessible();
@@ -91,9 +91,9 @@ public class DefaultNutsIndexStore extends AbstractNutsIndexStore {
                     try {
                         NutsTransportConnection clientFacade = CoreIOUtils.getHttpClientFacade(session,
                                 URL);
-                        Map[] array = session.elem().setContentType(NutsContentType.JSON).parse(new InputStreamReader(clientFacade.open()), Map[].class);
+                        Map[] array = NutsElements.of(session).json().parse(new InputStreamReader(clientFacade.open()), Map[].class);
                         return Arrays.stream(array)
-                                .map(s -> session.id().parser().parse(s.get("stringId").toString()))
+                                .map(s -> NutsId.of(s.get("stringId").toString(),session))
                                 .filter(filter != null ? new NutsIdFilterToNutsIdPredicate(filter, session) : NutsPredicates.always())
                                 .iterator();
                     } catch (UncheckedIOException | NutsIOException e) {

@@ -23,23 +23,22 @@
  */
 package net.thevpc.nuts.runtime.standalone.archetypes;
 
-import java.util.HashMap;
-
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.core.repos.NutsRepositorySelector;
 import net.thevpc.nuts.runtime.standalone.config.DefaultNutsWorkspaceConfigManager;
 import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
-import net.thevpc.nuts.spi.NutsSingleton;
+import net.thevpc.nuts.spi.NutsComponentScope;
+import net.thevpc.nuts.spi.NutsComponentScopeType;
 import net.thevpc.nuts.spi.NutsSupportLevelContext;
 import net.thevpc.nuts.spi.NutsWorkspaceArchetypeComponent;
 
+import java.util.HashMap;
 import java.util.Map;
-
-import net.thevpc.nuts.runtime.core.repos.NutsRepositorySelector;
 
 /**
  * Created by vpc on 1/23/17.
  */
-@NutsSingleton
+@NutsComponentScope(NutsComponentScopeType.WORKSPACE)
 public class MinimalNutsWorkspaceArchetypeComponent implements NutsWorkspaceArchetypeComponent {
     private NutsLogger LOG;
 
@@ -50,7 +49,7 @@ public class MinimalNutsWorkspaceArchetypeComponent implements NutsWorkspaceArch
 
     @Override
     public void initializeWorkspace(NutsSession session) {
-        this.LOG = session.log().of(MinimalNutsWorkspaceArchetypeComponent.class);
+        this.LOG = NutsLogger.of(MinimalNutsWorkspaceArchetypeComponent.class, session);
 //        NutsWorkspace ws = session.getWorkspace();
 
         DefaultNutsWorkspaceConfigManager rm = (DefaultNutsWorkspaceConfigManager) session.config();

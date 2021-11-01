@@ -38,7 +38,7 @@ public class NutsSettingsBackupSubCommand extends AbstractNutsSettingsSubCommand
             }
             if (commandLine.isExecMode()) {
                 List<String> all = new ArrayList<>();
-                all.add(Paths.get(session.locations().getWorkspaceLocation())
+                all.add(session.locations().getWorkspaceLocation().toFile()
                         .resolve("nuts-workspace.json").toString()
                 );
                 for (NutsStoreLocation value : NutsStoreLocation.values()) {
@@ -57,9 +57,7 @@ public class NutsSettingsBackupSubCommand extends AbstractNutsSettingsSubCommand
                 if (Paths.get(file).getFileName().toString().indexOf('.') < 0) {
                     file += ".zip";
                 }
-                NutsIOCompressAction cmp = session
-                        .io()
-                        .compress();
+                NutsCompress cmp = NutsCompress.of(session);
                 for (String s : all) {
                     cmp.addSource(s);
                 }
@@ -97,9 +95,8 @@ public class NutsSettingsBackupSubCommand extends AbstractNutsSettingsSubCommand
             }
             if (commandLine.isExecMode()) {
                 NutsObjectElement[] nutsWorkspaceConfigRef = new NutsObjectElement[1];
-                session
-                        .io()
-                        .uncompress()
+                NutsElements elem = NutsElements.of(session);
+                NutsUncompress.of(session)
                         .from(file)
                         .visit(new NutsIOUncompressVisitor() {
                             @Override
@@ -110,7 +107,7 @@ public class NutsSettingsBackupSubCommand extends AbstractNutsSettingsSubCommand
                             @Override
                             public boolean visitFile(String path, InputStream inputStream) {
                                 if ("/nuts-workspace.json".equals(path)) {
-                                    NutsObjectElement e = session.elem().setContentType(NutsContentType.JSON)
+                                    NutsObjectElement e = elem.json()
                                             .parse(inputStream, NutsObjectElement.class).asObject();
                                     nutsWorkspaceConfigRef[0] = e;
                                     return false;
@@ -122,7 +119,7 @@ public class NutsSettingsBackupSubCommand extends AbstractNutsSettingsSubCommand
                     commandLine.required(NutsMessage.cstyle("not a valid file : %s", file));
                 }
                 if (ws == null || ws.isEmpty()) {
-                    NutsElementFormat prv = session.elem().setSession(session);
+                    NutsElements prv = elem.setSession(session);
                     ws = nutsWorkspaceConfigRef[0].get(prv.forString("name")).asString();
                 }
                 if (ws == null || ws.isEmpty()) {
@@ -130,9 +127,7 @@ public class NutsSettingsBackupSubCommand extends AbstractNutsSettingsSubCommand
                 }
                 String platformHomeFolder = NutsUtilPlatforms.getWorkspaceLocation(null,
                         session.config().stored().isGlobal(), ws);
-                session
-                        .io()
-                        .uncompress()
+                NutsUncompress.of(session)
                         .from(file)
                         .to(platformHomeFolder)
                         .setSkipRoot(true).run();

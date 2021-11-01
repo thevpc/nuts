@@ -16,8 +16,7 @@ public abstract class AbstractNutsFetchCommand extends DefaultNutsQueryBaseOptio
     @Override
     public NutsFetchCommand setId(String id) {
         checkSession();
-        NutsWorkspace ws = getSession().getWorkspace();
-        this.id = session.id().parser().setLenient(false).parse(id);
+        this.id = NutsId.of(id,session);
         return this;
     }
 
@@ -101,7 +100,7 @@ public abstract class AbstractNutsFetchCommand extends DefaultNutsQueryBaseOptio
                 cmdLine.skip();
                 if (enabled) {
                     setRepositoryFilter(
-                            getSession().filters().repository().installedRepo().neg()
+                            NutsRepositoryFilters.of(getSession()).installedRepo().neg()
                                     .and(this.getRepositoryFilter())
                     );
                 }
@@ -112,7 +111,7 @@ public abstract class AbstractNutsFetchCommand extends DefaultNutsQueryBaseOptio
                 cmdLine.skip();
                 if (enabled) {
                     setRepositoryFilter(
-                            getSession().filters().repository().installedRepo()
+                            NutsRepositoryFilters.of(session).installedRepo()
                                     .and(this.getRepositoryFilter())
                     );
                 }

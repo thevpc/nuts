@@ -35,7 +35,7 @@ public abstract class AbstractNutsUndeployCommand extends NutsWorkspaceCommandBa
     public NutsUndeployCommand addId(String id) {
         checkSession();
         NutsSession ws = getSession();
-        return addId(NutsBlankable.isBlank(id) ? null : ws.id().parser().setLenient(false).parse(id));
+        return addId(NutsBlankable.isBlank(id) ? null : NutsId.of(id,ws));
     }
 
     @Override
@@ -45,7 +45,7 @@ public abstract class AbstractNutsUndeployCommand extends NutsWorkspaceCommandBa
         if (values != null) {
             for (String s : values) {
                 if (!NutsBlankable.isBlank(s)) {
-                    ids.add(ws.id().parser().setLenient(false).parse(s));
+                    ids.add(NutsId.of(s,ws));
                 }
             }
         }

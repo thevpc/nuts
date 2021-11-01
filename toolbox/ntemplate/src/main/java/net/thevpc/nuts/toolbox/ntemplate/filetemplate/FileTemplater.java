@@ -102,7 +102,7 @@ public class FileTemplater {
 
             private NutsLoggerOp log() {
                 if (logOp == null) {
-                    logOp = session.log().of(FileTemplater.this.getClass())
+                    logOp = NutsLogger.of(FileTemplater.class,session)
                             .with()
                     ;
                 }

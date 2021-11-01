@@ -1,7 +1,7 @@
 /**
  * ====================================================================
- *            Nuts : Network Updatable Things Service
- *                  (universal package manager)
+ * Nuts : Network Updatable Things Service
+ * (universal package manager)
  * <br>
  * is a new Open Source Package Manager to help install packages and libraries
  * for runtime execution. Nuts is the ultimate companion for maven (and other
@@ -10,7 +10,7 @@
  * other 'things' . Its based on an extensible architecture to help supporting a
  * large range of sub managers / repositories.
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc] Licensed under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -24,7 +24,6 @@
 package net.thevpc.nuts.runtime.bundles.string;
 
 import net.thevpc.nuts.NutsBlankable;
-import net.thevpc.nuts.NutsUtilStrings;
 
 import java.util.regex.Pattern;
 
@@ -34,7 +33,7 @@ import java.util.regex.Pattern;
  */
 public class GlobUtils {
 
-    private static final Pattern PATTERN_ALL = Pattern.compile(".*");
+    public static final Pattern PATTERN_ALL = Pattern.compile(".*");
 
     public static Pattern ofExact(String pattern) {
         if (NutsBlankable.isBlank(pattern)) {
@@ -42,6 +41,7 @@ public class GlobUtils {
         }
         return Pattern.compile(simpexpToRegexp(pattern, false));
     }
+
     public static Pattern ofContains(String pattern) {
         if (NutsBlankable.isBlank(pattern)) {
             return PATTERN_ALL;
@@ -109,5 +109,77 @@ public class GlobUtils {
             sb.append('$');
         }
         return sb.toString();
+    }
+
+
+    public static Pattern glob(String o,char s) {
+        switch (s){
+            case '{':
+            case '}':
+            case '(':
+            case ')':
+            case '<':
+            case '>':
+            case '*':
+            case '?':{
+                throw new IllegalArgumentException("unsupported glob separator "+s);
+            }
+        }
+        while (true) {
+            if (o.endsWith(s+"**"+s+"*")) {
+                o = o.substring(0, o.length() - 5);
+            } else if (o.endsWith(s+"**")) {
+                o = o.substring(0, o.length() - 3);
+            } else if (o.endsWith(s+"*")) {
+                o = o.substring(0, o.length() - 2);
+            } else {
+                break;
+            }
+        }
+        if (o.isEmpty()) {
+            return Pattern.compile(".*");
+        }
+        StringBuilder sb = new StringBuilder();
+        char[] chars = o.toCharArray();
+        for (int i = 0; i < chars.length; i++) {
+            char c = chars[i];
+            switch (c) {
+                case '.':
+                case '{':
+                case '}':
+                case '<':
+                case '>': {
+                    sb.append('\\');
+                    sb.append(c);
+                    break;
+                }
+                case '*': {
+                    if (i + 1 < chars.length && chars[i + 1] == '*') {
+                        if (i + 2 < chars.length && chars[i + 2] == s) {
+                            i++;
+                            if (i + 3 < chars.length) {
+                                sb.append(".*["+s+"]");
+                            } else {
+                                sb.append(".*");
+                            }
+                        } else {
+                            i++;
+                            sb.append(".*");
+                        }
+                    } else {
+                        sb.append("[^"+s+"]*");
+                    }
+                    break;
+                }
+                case '?': {
+                    sb.append("[^").append(s).append("]?");
+                    break;
+                }
+                default: {
+                    sb.append(c);
+                }
+            }
+        }
+        return Pattern.compile(sb.toString());
     }
 }

@@ -62,7 +62,7 @@ public class NutsHttpFolderRepository extends NutsCachedRepository {
         @Override
         public NutsDescriptor parseDescriptor(String pathname, InputStream in, NutsFetchMode fetchMode, NutsRepository repository, NutsSession session, String rootURL) throws IOException {
             try {
-                return session.descriptor().parser().setSession(session).parse(in);
+                return NutsDescriptorParser.of(session).parse(in);
             } finally {
                 in.close();
             }
@@ -72,7 +72,7 @@ public class NutsHttpFolderRepository extends NutsCachedRepository {
 
     public NutsHttpFolderRepository(NutsAddRepositoryOptions options, NutsSession session, NutsRepository parentRepository) {
         super(options, session, parentRepository, NutsSpeedQualifier.SLOW, false, NutsConstants.RepoTypes.NUTS);
-        LOG = session.log().of(NutsHttpFolderRepository.class);
+        LOG = NutsLogger.of(NutsHttpFolderRepository.class,session);
     }
 
     private boolean isDescFile0(String pathname) {
@@ -107,11 +107,11 @@ public class NutsHttpFolderRepository extends NutsCachedRepository {
     }
 
     protected InputStream openStream(String path, Object source, String sourceTypeName, NutsSession session) {
-        return session.io().monitor().setSource(path).setOrigin(source).setSourceTypeName(sourceTypeName).create();
+        return NutsInputStreamMonitor.of(session).setSource(path).setOrigin(source).setSourceTypeName(sourceTypeName).create();
     }
 
     protected InputStream openStream(NutsId id, String path, Object source, String sourceTypeName, NutsSession session) {
-        return session.io().monitor().setSource(path).setOrigin(source).setSourceTypeName(sourceTypeName).create();
+        return NutsInputStreamMonitor.of(session).setSource(path).setOrigin(source).setSourceTypeName(sourceTypeName).create();
     }
 
     public Iterator<NutsId> findVersionsImplGithub(NutsId id, NutsIdFilter idFilter, NutsSession session) {
@@ -132,8 +132,8 @@ public class NutsHttpFolderRepository extends NutsCachedRepository {
             } catch (UncheckedIOException | NutsIOException ex) {
                 throw new NutsNotFoundException(session, id, ex);
             }
-            List<Map<String, Object>> info = session.elem()
-                    .setContentType(NutsContentType.JSON).parse(new InputStreamReader(metadataStream), List.class);
+            List<Map<String, Object>> info = NutsElements.of(session)
+                    .json().parse(new InputStreamReader(metadataStream), List.class);
             if (info != null) {
                 for (Map<String, Object> version : info) {
                     if ("dir".equals(version.get("type"))) {
@@ -143,7 +143,7 @@ public class NutsHttpFolderRepository extends NutsCachedRepository {
                         if (idFilter != null && !idFilter.acceptId(nutsId, session)) {
                             continue;
                         }
-                        ret.add(session.id().builder()
+                        ret.add(NutsIdBuilder.of(session)
                                 .setGroupId(groupId)
                                 .setArtifactId(artifactId)
                                 .setVersion(versionName).build()
@@ -224,8 +224,8 @@ public class NutsHttpFolderRepository extends NutsCachedRepository {
             }
             return ret.iterator();
         } else {
-            NutsIdFilter filter2 = session.id().filter().nonnull(idFilter).and(
-                    session.id().filter().byName(id.getShortName())
+            NutsIdFilter filter2 = NutsIdFilters.of(session).nonnull(idFilter).and(
+                    NutsIdFilters.of(session).byName(id.getShortName())
             );
             switch (versionApi) {
                 case DEFAULT:
@@ -271,7 +271,7 @@ public class NutsHttpFolderRepository extends NutsCachedRepository {
             throw new NutsNotFoundException(session, id, new NutsFetchModeNotSupportedException(session, this, fetchMode, id.toString(), null));
         }
         try (InputStream stream = getDescStream(id, session)) {
-            return session.descriptor().parser().setSession(session).parse(stream);
+            return NutsDescriptorParser.of(session).parse(stream);
         } catch (IOException | UncheckedIOException | NutsIOException ex) {
             throw new NutsNotFoundException(session, id, ex);
         }
@@ -284,16 +284,16 @@ public class NutsHttpFolderRepository extends NutsCachedRepository {
         }
         if (descriptor.getLocations().length == 0) {
             String path = getPath(id, session);
-            session.io().copy().from(path).to(localFile).setSafe(true).setLogProgress(true).run();
+            NutsCp.of(session).from(path).to(localFile).setSafe(true).setLogProgress(true).run();
             return new NutsDefaultContent(
-                    session.io().path(localFile), false, false);
+                    NutsPath.of(localFile,session), false, false);
         } else {
             for (NutsIdLocation location : descriptor.getLocations()) {
                 if (CoreNutsUtils.acceptClassifier(location, id.getClassifier())) {
                     try {
-                        session.io().copy().from(location.getUrl()).to(localFile).setSafe(true).setLogProgress(true).run();
+                        NutsCp.of(session).from(location.getUrl()).to(localFile).setSafe(true).setLogProgress(true).run();
                         return new NutsDefaultContent(
-                                session.io().path(localFile), false, false);
+                                NutsPath.of(localFile,session), false, false);
                     } catch (Exception ex) {
                         LOG.with().session(session).level(Level.SEVERE).error(ex)
                                 .log(NutsMessage.jstyle("unable to download location for id {0} in location {1} : {2}", id, location.getUrl(), ex));

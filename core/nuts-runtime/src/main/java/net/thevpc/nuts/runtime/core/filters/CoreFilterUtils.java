@@ -258,7 +258,7 @@ public class CoreFilterUtils {
     public static <T extends NutsFilter> T[]
     getTopLevelFilters(NutsFilter idFilter, Class<T> clazz, NutsSession ws) {
         return Arrays.stream(getTopLevelFilters(idFilter))
-                .map(x -> ws.filters().as(clazz, x))
+                .map(x -> NutsFilters.of(ws).as(clazz, x))
                 .toArray(value -> (T[]) Array.newInstance(clazz, value));
     }
 
@@ -274,15 +274,15 @@ public class CoreFilterUtils {
 
     public static NutsIdFilter idFilterOf(Map<String, String> map, NutsIdFilter idFilter, NutsDescriptorFilter
             descriptorFilter, NutsSession ws) {
-        return (NutsIdFilter) ws.id().filter().nonnull(idFilter).and(
+        return (NutsIdFilter) NutsIdFilters.of(ws).nonnull(idFilter).and(
                 CoreFilterUtils.createNutsDescriptorFilter(map, ws).and(descriptorFilter).to(NutsIdFilter.class)
         );
     }
 
 
     public static NutsDescriptorFilter createNutsDescriptorFilter(String arch, String os, String osDist, String
-            platform, String desktopEnv, NutsSession ws) {
-        NutsDescriptorFilterManager d = ws.descriptor().filter();
+            platform, String desktopEnv, NutsSession session) {
+        NutsDescriptorFilters d = NutsDescriptorFilters.of(session);
         return (NutsDescriptorFilter) d.byArch(arch)
                 .and(d.byOs(os))
                 .and(d.byOsDist(osDist))
@@ -339,7 +339,7 @@ public class CoreFilterUtils {
         if (NutsBlankable.isBlank(desc.getPackaging())) {
             return true;
         }
-        NutsIdParser parser = session.id().parser();
+        NutsIdParser parser = NutsIdParser.of(session);
         NutsId _v = parser.parse(packaging);
         NutsId _v2 = parser.parse(desc.getPackaging());
         if (_v == null || _v2 == null) {
@@ -405,7 +405,7 @@ public class CoreFilterUtils {
         if (NutsBlankable.isBlank(current)) {
             return true;
         }
-        NutsIdParser parser = session.id().parser();
+        NutsIdParser parser = NutsIdParser.of(session);
         NutsId currentId = parser.parse(current);
         String[] allConds = envCond.getArch();
         if (allConds != null && allConds.length > 0) {
@@ -434,7 +434,7 @@ public class CoreFilterUtils {
         if (NutsBlankable.isBlank(os)) {
             return true;
         }
-        NutsIdParser parser = session.id().parser();
+        NutsIdParser parser = NutsIdParser.of(session);
         NutsId currentId = parser.parse(os);
         String[] allConds = envCond.getOs();
         if (allConds != null && allConds.length > 0) {
@@ -459,7 +459,7 @@ public class CoreFilterUtils {
         if (NutsBlankable.isBlank(current)) {
             return true;
         }
-        NutsIdParser parser = session.id().parser();
+        NutsIdParser parser = NutsIdParser.of(session);
         NutsId currentId = parser.parse(current);
         String[] allConds = envCond.getOsDist();
         if (allConds != null && allConds.length > 0) {
@@ -493,7 +493,7 @@ public class CoreFilterUtils {
         if (NutsBlankable.isBlank(current)) {
             return true;
         }
-        NutsIdParser parser = session.id().parser();
+        NutsIdParser parser = NutsIdParser.of(session);
         NutsId currentId = parser.parse(current);
         String[] allConds = envCond.getPlatform();
         if (allConds != null && allConds.length > 0) {
@@ -527,7 +527,7 @@ public class CoreFilterUtils {
         if (NutsBlankable.isBlank(current)) {
             return true;
         }
-        NutsIdParser parser = session.id().parser();
+        NutsIdParser parser = NutsIdParser.of(session);
         NutsId currentId = parser.parse(current);
         String[] allConds = envCond.getDesktopEnvironment();
         if (allConds != null && allConds.length > 0) {

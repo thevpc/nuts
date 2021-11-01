@@ -25,10 +25,7 @@
 */
 package net.thevpc.nuts.core.test.whitebox;
 
-import net.thevpc.nuts.Nuts;
-import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.NutsVersionFilter;
-import net.thevpc.nuts.NutsWorkspace;
+import net.thevpc.nuts.*;
 import net.thevpc.nuts.core.test.utils.TestUtils;
 import net.thevpc.nuts.runtime.core.filters.version.DefaultNutsVersionFilter;
 import org.junit.jupiter.api.*;
@@ -62,6 +59,6 @@ public class Test09_VersionIntervals {
     @Test
     public void test2(){
         NutsSession session = TestUtils.openNewTestWorkspace();
-        TestUtils.println(session.version().parser().parse("").inc(-1).getValue());
+        TestUtils.println(NutsVersion.of("",session).inc(-1).getValue());
     }
 }

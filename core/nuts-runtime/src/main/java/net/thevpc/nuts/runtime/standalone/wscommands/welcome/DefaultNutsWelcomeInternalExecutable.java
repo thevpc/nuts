@@ -29,7 +29,7 @@ public class DefaultNutsWelcomeInternalExecutable extends DefaultInternalNutsExe
             return;
         }
         NutsSession session = getSession();
-        NutsCommandLine commandLine = session.commandLine().create(args);
+        NutsCommandLine commandLine = NutsCommandLine.of(args,session);
         while (commandLine.hasNext()) {
             NutsArgument a = commandLine.peek();
             if (a.isOption()) {
@@ -53,17 +53,17 @@ public class DefaultNutsWelcomeInternalExecutable extends DefaultInternalNutsExe
         } else {
             Map<String, Object> welcome = new LinkedHashMap<>();
             welcome.put("message", "Welcome to nuts. Yeah, it is working...");
-            welcome.put("name", session.text().ofStyled("nuts", NutsTextStyle.primary(1)));
+            welcome.put("name", NutsTexts.of(session).ofStyled("nuts", NutsTextStyle.primary(1)));
             welcome.put("long-name", "Network Updatable Things Services");
             welcome.put("description", "The Free and Open Source Package Manager for Java (TM) and other Things ...");
-            welcome.put("url", session.io().path("http://github.com/thevpc/nuts"));
+            welcome.put("url", NutsPath.of("http://github.com/thevpc/nuts",session));
             welcome.put("author", "thevpc");
             welcome.put("api-id", session.getWorkspace().getApiId().builder().setVersion("").build());
             welcome.put("api-version", session.getWorkspace().getApiVersion());
             welcome.put("runtime-id", session.getWorkspace().getRuntimeId().builder().setVersion("").build());
             welcome.put("runtime-version", session.getWorkspace().getRuntimeId().getVersion());
-            welcome.put("workspace", session.io().path(session.locations().getWorkspaceLocation()));
-            welcome.put("hash-name", session.io().path(session.getWorkspace().getHashName()));
+            welcome.put("workspace", session.locations().getWorkspaceLocation());
+            welcome.put("hash-name", NutsPath.of(session.getWorkspace().getHashName(),session));
             if (session.isPlainOut()) {
                 session = session.copy().setOutputFormat(NutsContentType.PROPS);
             }

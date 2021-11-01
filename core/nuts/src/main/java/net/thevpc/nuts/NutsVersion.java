@@ -26,6 +26,7 @@
 package net.thevpc.nuts;
 
 import net.thevpc.nuts.boot.NutsApiUtils;
+import net.thevpc.nuts.spi.NutsPaths;
 
 import java.io.Serializable;
 import java.math.BigInteger;
@@ -53,8 +54,10 @@ public interface NutsVersion extends Serializable, /*NutsTokenFilter, */NutsForm
      * @return parsed value
      */
     static NutsVersion of(String str, NutsSession session) {
-        NutsApiUtils.checkSession(session);
-        return session.version().parse(str);
+        return
+                NutsApiUtils
+                        .createSessionCachedType(NutsVersionParser.class, session,()->NutsVersionParser.of(session))
+                .parse(str);
     }
 
     /**

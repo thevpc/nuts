@@ -10,72 +10,41 @@
  * to share shell scripts and other 'things' . Its based on an extensible
  * architecture to help supporting a large range of sub managers / repositories.
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc]
- * Licensed under the Apache License, Version 2.0 (the "License"); you may 
- * not use this file except in compliance with the License. You may obtain a 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may
+ * not use this file except in compliance with the License. You may obtain a
  * copy of the License at http://www.apache.org/licenses/LICENSE-2.0
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an 
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
- * either express or implied. See the License for the specific language 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+ * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  * <br>
  * ====================================================================
-*/
+ */
 package net.thevpc.nuts.toolbox.nsh.cmds;
 
-import java.util.ArrayList;
-
-import net.thevpc.nuts.spi.NutsSingleton;
-import net.thevpc.nuts.toolbox.nsh.SimpleNshBuiltin;
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.spi.NutsComponentScope;
+import net.thevpc.nuts.spi.NutsComponentScopeType;
+import net.thevpc.nuts.toolbox.nsh.SimpleNshBuiltin;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
 
 /**
  * Created by vpc on 1/7/17.
  */
-@NutsSingleton
+@NutsComponentScope(NutsComponentScopeType.WORKSPACE)
 public class WhoamiCommand extends SimpleNshBuiltin {
 
     public WhoamiCommand() {
         super("whoami", DEFAULT_SUPPORT);
     }
 
-    private static class Options {
-
-        boolean argAll = false;
-        boolean nutsUser = false;
-    }
-
-    private static class RepoResult {
-
-        private String name;
-        private String[] identities;
-        private String[] rights;
-        private String[] inherited;
-        private String remoteId;
-
-    }
-
     @Override
     protected Object createOptions() {
         return new Options();
-    }
-
-    private static class Result {
-
-        private String login;
-        private String[] loginStack;
-        private String[] groups;
-        private String[] rights;
-        private String[] inherited;
-        private String remoteId;
-        private RepoResult[] repos;
     }
 
     @Override
@@ -177,66 +146,66 @@ public class WhoamiCommand extends SimpleNshBuiltin {
                 NutsPrintStream out = context.getSession().out();
                 out.printf("%s\n", result.login);
                 if (options.nutsUser) {
-                    NutsTextManager factory = context.getSession().text();
+                    NutsTexts factory = NutsTexts.of(context.getSession());
                     if (result.loginStack != null) {
                         out.printf("%s      :",
-                                factory.ofStyled("stack",NutsTextStyle.primary5())
+                                factory.ofStyled("stack", NutsTextStyle.primary5())
                         );
                         for (String log : result.loginStack) {
                             out.printf(" %s",
-                                    factory.ofStyled(log,NutsTextStyle.primary3())
+                                    factory.ofStyled(log, NutsTextStyle.primary3())
                             );
                         }
                         out.println();
                     }
                     if (result.groups != null && result.groups.length > 0) {
                         out.printf("%s : %s\n",
-                                factory.ofStyled("identities",NutsTextStyle.primary5()),
+                                factory.ofStyled("identities", NutsTextStyle.primary5()),
                                 Arrays.toString(result.groups));
                     }
                     if (result.rights != null && result.rights.length > 0) {
                         out.printf("%s     : %s\n",
-                                factory.ofStyled("rights",NutsTextStyle.primary5()),
+                                factory.ofStyled("rights", NutsTextStyle.primary5()),
                                 Arrays.toString(result.rights));
                     }
                     if (result.inherited != null && result.inherited.length > 0) {
                         out.printf("%s  : %s\n",
-                                factory.ofStyled("inherited",NutsTextStyle.primary5()),
+                                factory.ofStyled("inherited", NutsTextStyle.primary5()),
                                 Arrays.toString(result.inherited));
                     } else {
                         out.printf("%s  : %s\n",
-                                factory.ofStyled("inherited",NutsTextStyle.primary5()),
+                                factory.ofStyled("inherited", NutsTextStyle.primary5()),
                                 "NONE");
                     }
                     if (result.remoteId != null) {
                         out.printf("%s  : %s\n",
-                                factory.ofStyled("remote-id",NutsTextStyle.primary5()),
+                                factory.ofStyled("remote-id", NutsTextStyle.primary5()),
                                 result.remoteId);
                     }
                     if (result.repos != null) {
                         for (RepoResult repo : result.repos) {
                             out.printf(
                                     "[ %s ]: \n",
-                                    factory.ofStyled(repo.name,NutsTextStyle.primary4())
+                                    factory.ofStyled(repo.name, NutsTextStyle.primary4())
                             );
                             if (repo.identities.length > 0) {
                                 out.printf("    %s : %s\n",
-                                        factory.ofStyled("identities",NutsTextStyle.primary5()),
+                                        factory.ofStyled("identities", NutsTextStyle.primary5()),
                                         Arrays.toString(repo.identities));
                             }
                             if (result.rights != null && repo.rights.length > 0) {
                                 out.printf("    %s     : %s\n",
-                                        factory.ofStyled("rights",NutsTextStyle.primary5()),
+                                        factory.ofStyled("rights", NutsTextStyle.primary5()),
                                         Arrays.toString(repo.rights));
                             }
                             if (repo.inherited != null && repo.inherited.length > 0) {
                                 out.printf("    %s  : %s\n",
-                                        factory.ofStyled("inherited",NutsTextStyle.primary5()),
+                                        factory.ofStyled("inherited", NutsTextStyle.primary5()),
                                         Arrays.toString(repo.inherited));
                             }
                             if (repo.remoteId != null) {
                                 out.printf("    %s  : %s\n",
-                                        factory.ofStyled("remote-id",NutsTextStyle.primary5()),
+                                        factory.ofStyled("remote-id", NutsTextStyle.primary5()),
                                         repo.remoteId);
                             }
                         }
@@ -248,6 +217,33 @@ public class WhoamiCommand extends SimpleNshBuiltin {
                 context.getSession().out().printlnf(result);
             }
         }
+    }
+
+    private static class Options {
+
+        boolean argAll = false;
+        boolean nutsUser = false;
+    }
+
+    private static class RepoResult {
+
+        private String name;
+        private String[] identities;
+        private String[] rights;
+        private String[] inherited;
+        private String remoteId;
+
+    }
+
+    private static class Result {
+
+        private String login;
+        private String[] loginStack;
+        private String[] groups;
+        private String[] rights;
+        private String[] inherited;
+        private String remoteId;
+        private RepoResult[] repos;
     }
 
 

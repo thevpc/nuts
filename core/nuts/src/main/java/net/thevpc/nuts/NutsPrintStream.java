@@ -7,23 +7,39 @@ import java.util.Locale;
 
 public interface NutsPrintStream {
     static NutsPrintStream ofNull(NutsSession session) {
-        return session.io().createNullPrintStream();
+        return NutsPrintStreams.of(session).createNull();
     }
 
-    static NutsPrintStream ofMemory(NutsSession session) {
-        return session.io().createMemoryPrintStream();
+    /**
+     * return new in-memory NutsPrintStream implementation.
+     * this is equivalent to {@code NutsMemoryPrintStream.of(session)}
+     * @param session session
+     * @return new in-memory NutsPrintStream implementation
+     */
+    static NutsMemoryPrintStream ofInMemory(NutsSession session) {
+        return NutsPrintStreams.of(session).createInMemory();
     }
 
     static NutsPrintStream of(OutputStream out, NutsSession session) {
-        return session.io().createPrintStream(out);
+        return NutsPrintStreams.of(session).create(out);
     }
 
+    /**
+     * create print stream that supports the given {@code mode}. If the given
+     * {@code out} is a PrintStream that supports {@code mode}, it should be
+     * returned without modification.
+     *
+     * @param out  stream to wrap
+     * @param mode mode to support
+     * @param session session
+     * @return {@code mode} supporting PrintStream
+     */
     static NutsPrintStream of(OutputStream out, NutsTerminalMode mode, NutsSession session) {
-        return session.io().createPrintStream(out, mode);
+        return NutsPrintStreams.of(session).create(out, mode);
     }
 
     static NutsPrintStream of(Writer out, NutsSession session) {
-        return session.io().createPrintStream(out);
+        return NutsPrintStreams.of(session).create(out);
     }
 
     NutsSession getSession();

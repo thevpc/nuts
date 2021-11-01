@@ -27,15 +27,16 @@
 package net.thevpc.nuts;
 
 import net.thevpc.nuts.boot.NutsApiUtils;
+import net.thevpc.nuts.spi.NutsComponent;
 
 /**
  * @app.category Base
  */
-public interface NutsVersionParser {
+public interface NutsVersionParser extends NutsComponent<Object> {
 
-    static NutsVersionParser parse(NutsSession session) {
+    static NutsVersionParser of(NutsSession session) {
         NutsApiUtils.checkSession(session);
-        return session.version().parser();
+        return session.extensions().createSupported(NutsVersionParser.class, true,null);
     }
 
     /**
@@ -58,6 +59,7 @@ public interface NutsVersionParser {
     boolean isAcceptIntervals();
 
     NutsVersionParser setAcceptIntervals(boolean acceptIntervals);
+
     /**
      * return version instance representing the {@code version} string
      *

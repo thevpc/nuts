@@ -1,5 +1,6 @@
 package net.thevpc.nuts.toolbox.ntomcat.local;
 
+import net.thevpc.nuts.NutsPath;
 import net.thevpc.nuts.NutsSession;
 
 class LocalTomcatLogLineVisitor {
@@ -19,7 +20,7 @@ class LocalTomcatLogLineVisitor {
     }
 
     public void visit() {
-        session.io().path(path).lines()
+        NutsPath.of(path,session).lines()
                 .forEach(this::nextLine);
     }
 

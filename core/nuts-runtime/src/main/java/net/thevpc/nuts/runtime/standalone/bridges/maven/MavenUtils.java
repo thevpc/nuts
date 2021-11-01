@@ -65,7 +65,7 @@ public class MavenUtils {
 
     private MavenUtils(NutsSession session) {
         this.session = session;
-        LOG = session.log().of(MavenUtils.class);
+        LOG = NutsLogger.of(MavenUtils.class,session);
     }
 
     public static MavenUtils of(NutsSession session) {
@@ -103,7 +103,7 @@ public class MavenUtils {
     }
 
     public NutsId toNutsId(PomId d) {
-        return session.id().builder().setGroupId(d.getGroupId()).setArtifactId(d.getArtifactId()).setVersion(toNutsVersion(d.getVersion())).build();
+        return NutsIdBuilder.of(session).setGroupId(d.getGroupId()).setArtifactId(d.getArtifactId()).setVersion(toNutsVersion(d.getVersion())).build();
     }
 
     public NutsEnvCondition toCondition(NutsSession session, String os0, String arch0, PomProfileActivation a) {
@@ -144,7 +144,7 @@ public class MavenUtils {
         if (arch != null) {
             ars = arch.id();
         }
-        return session.descriptor().envConditionBuilder()
+        return NutsEnvConditionBuilder.of(session)
                 .setOs(oss == null ? new String[0] : new String[]{oss})
                 .setArch(ars == null ? new String[0] : new String[]{ars})
                 .setPlatform(platform == null ? new String[0] : new String[]{platform})
@@ -193,7 +193,7 @@ public class MavenUtils {
                 }
             }
         }
-        return session.dependency().builder()
+        return NutsDependencyBuilder.of(session)
                 .setGroupId(d.getGroupId())
                 .setArtifactId(d.getArtifactId())
                 .setClassifier(d.getClassifier())
@@ -278,7 +278,7 @@ public class MavenUtils {
             LOG.with().session(session).level(Level.FINEST).verb(NutsLogVerb.SUCCESS).time(time)
                     .log(NutsMessage.jstyle("{0}{1} parse pom    {2}", fetchString,
                             CoreStringUtils.alignLeft(repository == null ? "<no-repo>" : repository.getName(), 20),
-                            session.text().ofStyled(urlDesc, NutsTextStyle.path())
+                            NutsTexts.of(session).ofStyled(urlDesc, NutsTextStyle.path())
                     ));
 
             String icons = pom.getProperties().get("nuts.icons");
@@ -302,12 +302,12 @@ public class MavenUtils {
             }
             List<NutsDescriptorProperty> props = new ArrayList<>();
             for (Map.Entry<String, String> e : pom.getProperties().entrySet()) {
-                props.add(session.descriptor().propertyBuilder().setName(e.getKey())
+                props.add(NutsDescriptorPropertyBuilder.of(session).setName(e.getKey())
                         .setValue(e.getValue()).build());
             }
             for (PomProfile profile : profiles) {
                 for (Map.Entry<String, String> e : profile.getProperties().entrySet()) {
-                    props.add(session.descriptor().propertyBuilder()
+                    props.add(NutsDescriptorPropertyBuilder.of(session)
                             .setName(e.getKey())
                             .setValue(e.getValue())
                             .setCondition(toCondition(session, null, null, profile.getActivation()))
@@ -320,7 +320,7 @@ public class MavenUtils {
             } else {
                 mavenCompilerTarget = "";
             }
-            return session.descriptor().descriptorBuilder()
+            return NutsDescriptorBuilder.of(session)
                     .setId(toNutsId(pom.getPomId()))
                     .setParents(pom.getParent() == null ? new NutsId[0] : new NutsId[]{toNutsId(pom.getParent())})
                     .setPackaging(pom.getPackaging())
@@ -369,7 +369,7 @@ public class MavenUtils {
 
     public NutsDescriptor parsePomXmlAndResolveParents(Path path, NutsFetchMode fetchMode, NutsRepository repository) throws IOException {
         try {
-            session.getTerminal().printProgress("%-8s %s", "parse", session.io().path(path.toString()).toCompressedForm());
+            session.getTerminal().printProgress("%-8s %s", "parse", NutsPath.of(path,session).toCompressedForm());
             try (InputStream is = Files.newInputStream(path)) {
                 NutsDescriptor nutsDescriptor = parsePomXmlAndResolveParents(is, fetchMode, path.toString(), repository);
                 if (nutsDescriptor.getId().getArtifactId() == null) {
@@ -556,7 +556,7 @@ public class MavenUtils {
     }
 
     public DepsAndRepos loadDependenciesAndRepositoriesFromPomUrl(String url, NutsSession session) {
-        session.getTerminal().printProgress("%-8s %s", "load", session.io().path(url).toCompressedForm());
+        session.getTerminal().printProgress("%-8s %s", "load", NutsPath.of(url,session).toCompressedForm());
         DepsAndRepos depsAndRepos = new DepsAndRepos();
 //        String repositories = null;
 //        String dependencies = null;

@@ -27,6 +27,7 @@ package net.thevpc.nuts;
 
 import net.thevpc.nuts.boot.NutsApiUtils;
 
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -97,13 +98,19 @@ import java.util.List;
 public interface NutsCommandLine extends Iterable<NutsArgument>, NutsFormattable {
 
     static NutsCommandLine of(String[] args, NutsSession session) {
-        NutsApiUtils.checkSession(session);
-        return session.commandLine().create(args);
+        return NutsCommandLines.of(session).create(args);
+    }
+
+    static NutsCommandLine of(List<String> args, NutsSession session) {
+        return NutsCommandLines.of(session).create(args);
     }
 
     static NutsCommandLine parse(String line, NutsSession session) {
-        NutsApiUtils.checkSession(session);
-        return session.commandLine().parse(line);
+        return NutsCommandLines.of(session).parse(line);
+    }
+
+    static NutsCommandLine parse(String line, NutsShellFamily shellFamily, NutsSession session) {
+        return NutsCommandLines.of(session).setShellFamily(shellFamily).parse(line);
     }
 
     /**

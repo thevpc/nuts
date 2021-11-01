@@ -101,7 +101,7 @@ public class SimpleYaml implements NutsElementStreamFormat {
 
         private BufferedReader reader;
         private NutsElementFactoryContext context;
-        private NutsElementFormat ebuilder;
+        private NutsElements ebuilder;
         private int fileOffset;
         private int lineNumber;
         private int lineOffset;
@@ -199,9 +199,9 @@ public class SimpleYaml implements NutsElementStreamFormat {
             }
         }
 
-        public NutsElementFormat builder() {
+        public NutsElements builder() {
             if (ebuilder == null) {
-                ebuilder = context.getSession().elem().setSession(context.getSession());
+                ebuilder = NutsElements.of(context.getSession()).setSession(context.getSession());
             }
             return ebuilder;
         }

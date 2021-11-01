@@ -25,16 +25,18 @@
  */
 package net.thevpc.nuts.toolbox.nsh.cmds;
 
-import net.thevpc.nuts.NutsTextCode;
-import net.thevpc.nuts.NutsUtilStrings;
-import net.thevpc.nuts.spi.NutsSingleton;
-import net.thevpc.nuts.toolbox.nsh.SimpleNshBuiltin;
 import net.thevpc.nuts.NutsCommandLine;
+import net.thevpc.nuts.NutsTextCode;
+import net.thevpc.nuts.NutsTexts;
+import net.thevpc.nuts.NutsUtilStrings;
+import net.thevpc.nuts.spi.NutsComponentScope;
+import net.thevpc.nuts.spi.NutsComponentScopeType;
+import net.thevpc.nuts.toolbox.nsh.SimpleNshBuiltin;
 
 /**
  * Created by vpc on 1/7/17.
  */
-@NutsSingleton
+@NutsComponentScope(NutsComponentScopeType.WORKSPACE)
 public class EchoCommand extends SimpleNshBuiltin {
 
     public EchoCommand() {
@@ -87,7 +89,7 @@ public class EchoCommand extends SimpleNshBuiltin {
         if (options.highlighter == null || "text".equalsIgnoreCase(options.highlighter) || "plain".equalsIgnoreCase(options.highlighter)) {
             ns = options.message.toString();
         } else {
-            NutsTextCode c = context.getSession().text().ofCode(options.highlighter, options.message.toString());
+            NutsTextCode c = NutsTexts.of(context.getSession()).ofCode(options.highlighter, options.message.toString());
             ns = c.highlight(context.getSession());
         }
         if (options.newLine) {

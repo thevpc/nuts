@@ -25,23 +25,22 @@
  */
 package net.thevpc.nuts.runtime.standalone.archetypes;
 
-import java.util.HashMap;
-
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.core.repos.NutsRepositorySelector;
 import net.thevpc.nuts.runtime.standalone.config.DefaultNutsWorkspaceConfigManager;
 import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
-import net.thevpc.nuts.spi.NutsSingleton;
+import net.thevpc.nuts.spi.NutsComponentScope;
+import net.thevpc.nuts.spi.NutsComponentScopeType;
 import net.thevpc.nuts.spi.NutsSupportLevelContext;
 import net.thevpc.nuts.spi.NutsWorkspaceArchetypeComponent;
 
+import java.util.HashMap;
 import java.util.Map;
-
-import net.thevpc.nuts.runtime.core.repos.NutsRepositorySelector;
 
 /**
  * Created by vpc on 1/23/17.
  */
-@NutsSingleton
+@NutsComponentScope(NutsComponentScopeType.WORKSPACE)
 public class ServerNutsWorkspaceArchetypeComponent implements NutsWorkspaceArchetypeComponent {
     private NutsLogger LOG;
 
@@ -52,7 +51,7 @@ public class ServerNutsWorkspaceArchetypeComponent implements NutsWorkspaceArche
 
     @Override
     public void initializeWorkspace(NutsSession session) {
-        this.LOG = session.log().of(ServerNutsWorkspaceArchetypeComponent.class);
+        this.LOG = NutsLogger.of(ServerNutsWorkspaceArchetypeComponent.class, session);
         DefaultNutsWorkspaceConfigManager rm = (DefaultNutsWorkspaceConfigManager) session.config();
         Map<String, String> defaults = new HashMap<>();
         defaults.put("maven-local", null);

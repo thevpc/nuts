@@ -63,7 +63,7 @@ public class DefaultNutsDependency implements NutsDependency {
         this.repository = NutsUtilStrings.trimToNull(repository);
         this.groupId = NutsUtilStrings.trimToNull(groupId);
         this.artifactId = NutsUtilStrings.trimToNull(artifactId);
-        this.version = version == null ? session.version().parser().parse("") : version;
+        this.version = version == null ? NutsVersion.of("",session) : version;
         this.classifier = NutsUtilStrings.trimToNull(classifier);
         this.scope = NutsDependencyScope.parseLenient(scope,NutsDependencyScope.API,NutsDependencyScope.OTHER).id();
 
@@ -145,7 +145,7 @@ public class DefaultNutsDependency implements NutsDependency {
             }
             m.put(NutsConstants.IdProperties.EXCLUSIONS, String.join(",", ex));
         }
-        return session.id().builder()
+        return NutsIdBuilder.of(session)
                 .setGroupId(getGroupId())
                 .setArtifactId(getArtifactId())
                 .setVersion(getVersion())
@@ -299,7 +299,7 @@ public class DefaultNutsDependency implements NutsDependency {
 
     @Override
     public NutsDependencyFormat formatter() {
-        return session.dependency().formatter().setValue(this);
+        return NutsDependencyFormat.of(session).setValue(this);
     }
 
     @Override

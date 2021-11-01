@@ -21,11 +21,10 @@ public class ShellHelper {
     }
 
     public static NutsPath xfileOf(String expression, String cwd, NutsSession session) {
-        NutsIOManager io = session.io();
         if (expression.startsWith("file:") || expression.contains("://")) {
-            return io.path(expression);
+            return NutsPath.of(expression,session);
         }
-        return io.path(_IOUtils.getAbsoluteFile2(expression, cwd));
+        return NutsPath.of(_IOUtils.getAbsoluteFile2(expression, cwd),session);
     }
 
     public static String[] splitNameAndValue(String arg) {
@@ -87,7 +86,7 @@ public class ShellHelper {
 
         @Override
         public InputStream monitorInputStream(InputStream stream, long length, NutsString message) {
-            return session.io().monitor().setSource(stream).setLength(length).setName(message).create();
+            return NutsInputStreamMonitor.of(session).setSource(stream).setLength(length).setName(message).create();
         }
     }
 

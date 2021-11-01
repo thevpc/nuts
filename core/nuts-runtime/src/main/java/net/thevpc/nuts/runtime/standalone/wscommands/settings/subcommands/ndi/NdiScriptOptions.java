@@ -204,10 +204,10 @@ public class NdiScriptOptions implements Cloneable {
                                             .getParent())
                             .filter(
                                     f
-                                            -> session.version().parse(f.getFileName().toString()).getLong(0, -1)==-1
+                                            -> NutsVersion.of(f.getFileName().toString(),session).getLong(0, -1)==-1
                                             && Files.exists(f.resolve("nuts-api-config.json"))
                             ).map(
-                                    f -> session.version().parse(f.getFileName().toString())
+                                    f -> NutsVersion.of(f.getFileName().toString(),session)
                             ).sorted(Comparator.reverseOrder()).findFirst().orElse(null);
                 } catch (IOException e) {
                     throw new UncheckedIOException(e);
@@ -230,7 +230,7 @@ public class NdiScriptOptions implements Cloneable {
             NutsWorkspaceBootConfig bootConfig = loadSwitchWorkspaceLocationConfig(getLauncher().getSwitchWorkspaceLocation());
             return Paths.get(bootConfig.getEffectiveWorkspace());
         } else {
-            return Paths.get(session.locations().getWorkspaceLocation());
+            return session.locations().getWorkspaceLocation().toFile();
         }
     }
 

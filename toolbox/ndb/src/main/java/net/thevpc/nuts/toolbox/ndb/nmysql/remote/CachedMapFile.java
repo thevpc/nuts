@@ -1,8 +1,6 @@
 package net.thevpc.nuts.toolbox.ndb.nmysql.remote;
 
-import net.thevpc.nuts.NutsApplicationContext;
-import net.thevpc.nuts.NutsContentType;
-import net.thevpc.nuts.NutsId;
+import net.thevpc.nuts.*;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -32,8 +30,9 @@ public class CachedMapFile {
         if (enabled) {
             if (Files.isRegularFile(path)) {
                 try {
-                    map = context.getSession().elem()
-                            .setContentType(NutsContentType.JSON)
+                    NutsSession session = context.getSession();
+                    map = NutsElements.of(session)
+                            .json()
                             .parse(path, Map.class);
                     loaded=true;
                 } catch (Exception ex) {
@@ -91,8 +90,9 @@ public class CachedMapFile {
             }
             map.put(k, v);
             try {
-                context.getSession().elem().setValue(map)
-                        .setContentType(NutsContentType.JSON)
+                NutsSession session = context.getSession();
+                NutsElements.of(session).setValue(map)
+                        .json()
                         .setNtf(false)
                         .print(path);
             } catch (Exception ex) {

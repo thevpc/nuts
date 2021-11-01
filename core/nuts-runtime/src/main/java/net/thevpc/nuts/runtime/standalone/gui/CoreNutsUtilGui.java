@@ -3,7 +3,7 @@ package net.thevpc.nuts.runtime.standalone.gui;
 import net.thevpc.nuts.Nuts;
 import net.thevpc.nuts.NutsMessage;
 import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.NutsTextManager;
+import net.thevpc.nuts.NutsTexts;
 
 import javax.swing.*;
 
@@ -34,7 +34,7 @@ public final class CoreNutsUtilGui {
 
     public static String inputString(NutsMessage message, NutsMessage title, NutsSession session) {
         try {
-            NutsTextManager text = session.text();
+            NutsTexts text = NutsTexts.of(session);
             if (title == null) {
                 title = NutsMessage.cstyle("Nuts Package Manager - %s", Nuts.getVersion());
             }
@@ -60,7 +60,7 @@ public final class CoreNutsUtilGui {
         if (message == null) {
             message = NutsMessage.plain("");
         }
-        NutsTextManager text = session.text();
+        NutsTexts text = NutsTexts.of(session);
         String messageString = text.toText(message).filteredText();
         String titleString = text.toText(title).filteredText();
         try {
@@ -88,7 +88,7 @@ public final class CoreNutsUtilGui {
         if (title == null) {
             title = NutsMessage.cstyle("Nuts Package Manager - %s", Nuts.getVersion());
         }
-        NutsTextManager text = session.text();
+        NutsTexts text = NutsTexts.of(session);
         String messageString = text.toText(message==null?"":message).filteredText();
         String titleString = text.toText(title).filteredText();
         try {

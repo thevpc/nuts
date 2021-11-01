@@ -1,9 +1,6 @@
 package net.thevpc.nuts.runtime.bundles.mvn;
 
-import net.thevpc.nuts.NutsBlankable;
-import net.thevpc.nuts.NutsId;
-import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.NutsUtilStrings;
+import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.format.xml.NutsXmlUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -182,7 +179,7 @@ public class PomXmlParser {
         if (d_scope.isEmpty()) {
             d_scope = "compile";
         }
-        NutsId id = session.id().builder().setGroupId(d_groupId).setArtifactId(d_artifactId).build();
+        NutsId id = NutsIdBuilder.of(session).setGroupId(d_groupId).setArtifactId(d_artifactId).build();
         return new PomDependency(
                 d_groupId, d_artifactId, d_classifier, d_version, d_scope, d_optional,
                 props == null ? null : props.getOs(id),
@@ -208,7 +205,7 @@ public class PomXmlParser {
                         if(a.startsWith("#")){
                             //ignore!
                         }else{
-                            NutsId id = session.id().parser().setLenient(true).parse(a);
+                            NutsId id = NutsIdParser.of(session).setLenient(true).parse(a);
                             if(id!=null) {
                                 if (!NutsBlankable.isBlank(os)) {
                                     osMap.put(id.getShortName(), os);

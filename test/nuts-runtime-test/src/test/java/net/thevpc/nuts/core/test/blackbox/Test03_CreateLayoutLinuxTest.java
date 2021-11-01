@@ -63,7 +63,7 @@ public class Test03_CreateLayoutLinuxTest {
                 ));
 
         if(NDI_COMPANIONS>0) {
-            NutsId ndiId = s.search().setInstallStatus(s.filters().installStatus().byInstalled(true)).addId("nsh")
+            NutsId ndiId = s.search().setInstallStatus(NutsInstallStatusFilters.of(s).byInstalled(true)).addId("nsh")
                     .setDistinct(true)
                     .getResultIds().singleton();
             Assertions.assertTrue(ndiId.getVersion().getValue().startsWith(TestUtils.NUTS_VERSION + "."));
@@ -154,7 +154,7 @@ public class Test03_CreateLayoutLinuxTest {
                 "info"));
 
         if(NDI_COMPANIONS>0) {
-            NutsId ndiId = s2.search().setInstallStatus(s2.filters().installStatus().byInstalled(true)).addId("nsh")
+            NutsId ndiId = s2.search().setInstallStatus(NutsInstallStatusFilters.of(s2).byInstalled(true)).addId("nsh")
                     .setDistinct(true).getResultIds().singleton();
             Assertions.assertTrue(ndiId.getVersion().getValue().startsWith(TestUtils.NUTS_VERSION + "."));
         }
@@ -195,10 +195,10 @@ public class Test03_CreateLayoutLinuxTest {
         if(NDI_COMPANIONS>0) {
             NutsId nshId = null;
             try {
-                nshId = s.search().setInstallStatus(s.filters().installStatus().byInstalled(true)).addId("nsh")
+                nshId = s.search().setInstallStatus(NutsInstallStatusFilters.of(s).byInstalled(true)).addId("nsh")
                         .setDistinct(true).getResultIds().singleton();
             } catch (Exception ex) {
-                nshId = s.search().setInstallStatus(s.filters().installStatus().byInstalled(true)).addId("nsh")
+                nshId = s.search().setInstallStatus(NutsInstallStatusFilters.of(s).byInstalled(true)).addId("nsh")
                         .setDistinct(true).getResultIds().singleton();
             }
             Assertions.assertTrue(nshId.getVersion().getValue().startsWith(TestUtils.NUTS_VERSION + "."));

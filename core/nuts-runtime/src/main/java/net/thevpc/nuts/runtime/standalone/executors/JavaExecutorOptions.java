@@ -56,9 +56,8 @@ public final class JavaExecutorOptions {
         this.execArgs = executorOptions;
 //        List<String> classPath0 = new ArrayList<>();
 //        List<NutsClassLoaderNode> extraCp = new ArrayList<>();
-        NutsIdFormat nutsIdFormat = session.id().formatter().setOmitRepository(true);
         //will accept all -- and - based options!
-        NutsCommandLine cmdLine = session.commandLine().create(getExecArgs()).setExpandSimpleOptions(false);
+        NutsCommandLine cmdLine = NutsCommandLine.of(getExecArgs(),session).setExpandSimpleOptions(false);
         NutsArgument a;
         List<NutsClassLoaderNode> currentCP = new ArrayList<>();
         while (cmdLine.hasNext()) {
@@ -194,7 +193,7 @@ public final class JavaExecutorOptions {
             if (mainClass == null) {
                 if (path != null) {
                     //check manifest!
-                    NutsExecutionEntry[] classes = session.apps().execEntries().parse(path);
+                    NutsExecutionEntry[] classes = NutsExecutionEntries.of(session).parse(path);
                     if (classes.length > 0) {
                         mainClass = String.join(":",
                                 Arrays.stream(classes).map(NutsExecutionEntry::getName)
@@ -203,7 +202,7 @@ public final class JavaExecutorOptions {
                     }
                 }
             } else if (!mainClass.contains(".")) {
-                NutsExecutionEntry[] classes = session.apps().execEntries().parse(path);
+                NutsExecutionEntry[] classes = NutsExecutionEntries.of(session).parse(path);
                 List<String> possibleClasses = Arrays.stream(classes).map(NutsExecutionEntry::getName)
                         .collect(Collectors.toList());
                 String r = resolveMainClass(mainClass, possibleClasses);
@@ -255,7 +254,7 @@ public final class JavaExecutorOptions {
                             ) {
                                 throw new NutsExecutionException(session, NutsMessage.cstyle("multiple runnable classes detected : %s" + possibleClasses), 102);
                             }
-                            NutsTextManager text = session.text();
+                            NutsTexts text = NutsTexts.of(session);
                             NutsTextBuilder msgString = text.builder();
 
                             msgString.append("multiple runnable classes detected  - actually ")
@@ -382,7 +381,7 @@ public final class JavaExecutorOptions {
                     } catch (MalformedURLException ex) {
                         throw new IllegalArgumentException("invalid url " + url);
                     }
-                    classPath.add(new NutsClassLoaderNode("", url, true));
+                    classPath.add(new NutsClassLoaderNode("", url, true,true));
                 }
             }
         }

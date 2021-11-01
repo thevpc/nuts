@@ -1,7 +1,7 @@
 /**
  * ====================================================================
- *            Nuts : Network Updatable Things Service
- *                  (universal package manager)
+ * Nuts : Network Updatable Things Service
+ * (universal package manager)
  * <br>
  * is a new Open Source Package Manager to help install packages
  * and libraries for runtime execution. Nuts is the ultimate companion for
@@ -11,7 +11,7 @@
  * architecture to help supporting a large range of sub managers / repositories.
  *
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc]
  * Licensed under the Apache License, Version 2.0 (the "License"); you may
  * not use this file except in compliance with the License. You may obtain a
@@ -23,19 +23,20 @@
  * governing permissions and limitations under the License.
  * <br>
  * ====================================================================
-*/
+ */
 package net.thevpc.nuts.runtime.core.filters.descriptor;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 
 import java.util.Objects;
+
 import net.thevpc.nuts.runtime.core.filters.CoreFilterUtils;
 
 /**
  * Created by vpc on 2/20/17.
  */
-public class NutsDescriptorFilterOs extends AbstractDescriptorFilter implements JsNutsDescriptorFilter {
+public class NutsDescriptorFilterOs extends AbstractDescriptorFilter {
 
     private final String os;
 
@@ -65,16 +66,6 @@ public class NutsDescriptorFilterOs extends AbstractDescriptorFilter implements 
     }
 
     @Override
-    public String toJsNutsDescriptorFilterExpr() {
-        return "descriptor.matchesOs('" + CoreStringUtils.escapeQuoteStrings(os) + "')";
-    }
-
-    @Override
-    public String toString() {
-        return "Os{" + os + '}';
-    }
-
-    @Override
     public int hashCode() {
         int hash = 7;
         hash = 29 * hash + Objects.hashCode(this.os);
@@ -93,10 +84,12 @@ public class NutsDescriptorFilterOs extends AbstractDescriptorFilter implements 
             return false;
         }
         final NutsDescriptorFilterOs other = (NutsDescriptorFilterOs) obj;
-        if (!Objects.equals(this.os, other.os)) {
-            return false;
-        }
-        return true;
+        return Objects.equals(this.os, other.os);
+    }
+
+    @Override
+    public String toString() {
+        return "Os{" + os + '}';
     }
 
 }

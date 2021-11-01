@@ -7,7 +7,6 @@ package net.thevpc.nuts.core.test.blackbox;
 
 import net.thevpc.nuts.core.test.utils.TestUtils;
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
 import org.junit.jupiter.api.*;
 
 import java.io.BufferedWriter;
@@ -16,10 +15,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  *
@@ -34,9 +29,9 @@ public class Test12_CopyTest {
                 "--archetype", "default",
                 "--log-info",
                 "--skip-companions");
-        NutsPath from = session.io().tmp()
+        NutsPath from = NutsTmp.of(session)
                 .createTempFolder("source");
-        NutsPath to = session.io().tmp()
+        NutsPath to = NutsTmp.of(session)
                 .createTempFolder("target");
         TestUtils.println("from="+from);
         TestUtils.println("to="+to);
@@ -58,7 +53,7 @@ public class Test12_CopyTest {
         }
         TestUtils.println("start-----------");
 
-        session.io().copy().from(from).to(to)
+        NutsCp.of(session).from(from).to(to)
                 .setLogProgress(true)
                 .setProgressMonitor(new NutsProgressMonitor() {
             @Override

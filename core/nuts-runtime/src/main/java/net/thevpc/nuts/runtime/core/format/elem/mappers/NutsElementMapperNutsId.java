@@ -9,7 +9,7 @@ public class NutsElementMapperNutsId implements NutsElementMapper<NutsId> {
     @Override
     public Object destruct(NutsId o, Type typeOfSrc, NutsElementFactoryContext context) {
         if (context.elem().isNtf()) {
-            return context.getSession().id().formatter(o).setNtf(true).format();
+            return o.formatter().setNtf(true).format();
         } else {
             return o.toString();
         }
@@ -21,8 +21,8 @@ public class NutsElementMapperNutsId implements NutsElementMapper<NutsId> {
 //                NutsWorkspace ws = context.getSession().getWorkspace();
 //                NutsText n = ws.text().toText(ws.id().formatter(o).setNtf(true).format());
 //                return ws.elem().forPrimitive().buildNutsString(n);
-            NutsSession ws = context.getSession();
-            return ws.elem().forString(ws.id().formatter(o).setNtf(true).format().toString());
+            NutsSession session = context.getSession();
+            return NutsElements.of(session).forString(o.formatter().setNtf(true).format().toString());
         } else {
             return context.defaultObjectToElement(o.toString(), null);
         }
@@ -30,7 +30,8 @@ public class NutsElementMapperNutsId implements NutsElementMapper<NutsId> {
 
     @Override
     public NutsId createObject(NutsElement o, Type typeOfResult, NutsElementFactoryContext context) {
-        return context.getSession().id().parser().parse(o.asPrimitive().getString());
+        NutsSession session = context.getSession();
+        return NutsId.of(o.asPrimitive().getString(),session);
     }
 
 }

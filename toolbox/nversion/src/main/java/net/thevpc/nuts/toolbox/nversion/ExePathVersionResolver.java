@@ -30,9 +30,8 @@ import java.io.UncheckedIOException;
 import java.util.HashSet;
 import java.util.Properties;
 import java.util.Set;
-import net.thevpc.nuts.NutsApplicationContext;
-import net.thevpc.nuts.NutsBlankable;
-import net.thevpc.nuts.NutsUtilStrings;
+
+import net.thevpc.nuts.*;
 import org.boris.pecoff4j.PE;
 import org.boris.pecoff4j.ResourceDirectory;
 import org.boris.pecoff4j.ResourceEntry;
@@ -101,8 +100,9 @@ public class ExePathVersionResolver implements PathVersionResolver{
                     }
                     p.setProperty("nuts.version-provider", "win-pe");
                     if (!NutsBlankable.isBlank(artifactId) && !NutsBlankable.isBlank(artifactVersion)) {
+                        NutsSession session = context.getSession();
                         d.add(new VersionDescriptor(
-                                context.getSession().id().builder().setArtifactId(artifactId).setVersion(artifactVersion).build(),
+                                NutsIdBuilder.of(session).setArtifactId(artifactId).setVersion(artifactVersion).build(),
                                 p
                         ));
                     }

@@ -50,14 +50,13 @@ public class ZipCommand extends AbstractNshBuiltin {
         NutsPath outZip = null;
         NutsArgument a;
         NutsSession session = context.getSession();
-        NutsCommandLineManager nutsCommandLineFormat = session.commandLine();
         while (commandLine.hasNext()) {
             if (commandLine.next("-r") != null) {
                 options.r = true;
             } else if (commandLine.peek().isOption()) {
                 commandLine.unexpectedArgument();
             } else if (commandLine.peek().isNonOption()) {
-                String path = commandLine.required().nextNonOption(nutsCommandLineFormat.createName("file")).getString();
+                String path = commandLine.required().nextNonOption(NutsArgumentName.of("file",session)).getString();
                 NutsPath file = NutsPath.of(path, session).toAbsolute(context.getShellContext().getCwd());
                 if (outZip == null) {
                     outZip = file;
@@ -74,7 +73,7 @@ public class ZipCommand extends AbstractNshBuiltin {
         if (outZip == null) {
             commandLine.required(NutsMessage.cstyle("missing out-zip"));
         }
-        NutsIOCompressAction aa = session.io().compress()
+        NutsCompress aa = NutsCompress.of(session)
                 .setTarget(outZip);
         for (NutsPath file : files) {
             aa.addSource(file);

@@ -32,7 +32,7 @@ public class CommandNutsWorkspaceCommandFactory implements NutsWorkspaceCommandF
             findCommand = validateCommand(p.get("find"));
             execCommand = validateCommand(p.get("exec"));
             String slistCommand = p.get("list");
-            listCommand = slistCommand == null ? new String[0] : ws.commandLine().parse(slistCommand).toStringArray();
+            listCommand = slistCommand == null ? new String[0] : NutsCommandLine.parse(slistCommand,ws).toStringArray();
             if (listCommand.length > 0 && !listCommand[0].contains(":")) {
                 listCommand = new String[0];
             }
@@ -53,7 +53,7 @@ public class CommandNutsWorkspaceCommandFactory implements NutsWorkspaceCommandF
         if (command == null) {
             return new String[0];
         }
-        String[] commandArr = ws.commandLine().parse(command).toStringArray();
+        String[] commandArr = NutsCommandLine.parse(command,ws).toStringArray();
         if (commandArr.length == 0) {
             return commandArr;
         }
@@ -98,7 +98,7 @@ public class CommandNutsWorkspaceCommandFactory implements NutsWorkspaceCommandF
             if (r == 0) {
                 return new NutsCommandConfig()
                         .setFactoryId(getFactoryId())
-                        .setOwner(session.id().parser().parse(ec[0]))
+                        .setOwner(NutsId.of(ec[0],session))
                         .setName(name)
                         .setCommand(Arrays.copyOfRange(ec, 1, ec.length));
             }

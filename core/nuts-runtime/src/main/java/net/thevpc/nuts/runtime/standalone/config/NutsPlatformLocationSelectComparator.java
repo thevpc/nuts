@@ -20,8 +20,8 @@ public class NutsPlatformLocationSelectComparator implements Comparator<NutsPlat
         if(x!=0){
             return x;
         }
-        NutsVersion v1 = ws.version().parser().parse(o1.getVersion());
-        NutsVersion v2 = ws.version().parser().parse(o2.getVersion());
+        NutsVersion v1 = NutsVersion.of(o1.getVersion(),ws);
+        NutsVersion v2 = NutsVersion.of(o2.getVersion(),ws);
         x = (v1 == null || v2 == null) ? 0 : (v1 != null && v2 != null) ? v2.compareTo(v1) : v2 == null ? -1 : 1;
         if (x != 0) {
             return x;

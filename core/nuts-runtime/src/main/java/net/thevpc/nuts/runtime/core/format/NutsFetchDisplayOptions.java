@@ -45,7 +45,7 @@ public class NutsFetchDisplayOptions {
 
     public NutsFetchDisplayOptions(NutsSession ws) {
         this.ws = ws;
-        this.idFormat = ws.id().formatter();
+        this.idFormat = NutsIdFormat.of(ws);
         this.idFormat.setHighlightImportedGroupId(true);
         this.idFormat.setOmitOtherProperties(true);
         this.idFormat.setOmitFace(true);
@@ -118,7 +118,7 @@ public class NutsFetchDisplayOptions {
     }
 
     public final NutsFetchDisplayOptions configure(boolean skipUnsupported, String... args) {
-        configure(false, ws.commandLine().create(args));
+        configure(false, NutsCommandLine.of(args,ws));
         return this;
     }
 

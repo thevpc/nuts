@@ -24,6 +24,8 @@
  */
 package net.thevpc.nuts;
 
+import net.thevpc.nuts.boot.NutsApiUtils;
+
 /**
  * Tree Format handles terminal output in Tree format. It is one of the many
  * formats supported bu nuts such as plain,table, xml, json. To use Tree format,
@@ -37,6 +39,10 @@ package net.thevpc.nuts;
  * @app.category Format
  */
 public interface NutsTreeFormat extends NutsObjectFormat {
+    static NutsTreeFormat of(NutsSession session){
+        NutsApiUtils.checkSession(session);
+        return session.extensions().createSupported(NutsTreeFormat.class, true, null);
+    }
 
     /**
      * return node format

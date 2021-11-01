@@ -6,7 +6,6 @@ import java.io.*;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Arrays;
 
 public class NutsStreamOrPath {
@@ -36,6 +35,22 @@ public class NutsStreamOrPath {
         return new NutsStreamOrPath(value, Type.PATH, true);
     }
 
+    public static NutsStreamOrPath of(File value,NutsSession session) {
+        return of(NutsPath.of(value,session));
+    }
+
+    public static NutsStreamOrPath of(URL value,NutsSession session) {
+        return of(NutsPath.of(value,session));
+    }
+
+    public static NutsStreamOrPath of(Path value,NutsSession session) {
+        return of(NutsPath.of(value,session));
+    }
+
+    public static NutsStreamOrPath of(String value,NutsSession session) {
+        return of(NutsPath.of(value,session));
+    }
+
     public static NutsStreamOrPath of(NutsPath value) {
         return new NutsStreamOrPath(value, Type.PATH, false);
     }
@@ -58,16 +73,16 @@ public class NutsStreamOrPath {
             return of((NutsPath) value);
         }
         if (value instanceof File) {
-            return of(session.io().path((File) value));
+            return of((File) value,session);
         }
         if (value instanceof URL) {
-            return of(session.io().path((URL) value));
+            return of((URL) value,session);
         }
         if (value instanceof Path) {
-            return of(session.io().path((Path) value));
+            return of((Path) value,session);
         }
         if (value instanceof String) {
-            return of(session.io().path((String) value));
+            return of((String) value,session);
         }
         return null;
     }
@@ -104,8 +119,8 @@ public class NutsStreamOrPath {
 
     public NutsStreamOrPath toDisposable(NutsSession session) {
         String name = getName();
-        Path tempFile = session.io().tmp().createTempFile(name).toFile();
-        NutsIOCopyAction copy = session.io().copy();
+        Path tempFile = NutsTmp.of(session).createTempFile(name).toFile();
+        NutsCp copy = NutsCp.of(session);
         if (type == Type.PATH) {
             copy.from((NutsPath) value);
         } else {

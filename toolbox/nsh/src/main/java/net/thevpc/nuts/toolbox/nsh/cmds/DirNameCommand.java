@@ -26,18 +26,19 @@
  */
 package net.thevpc.nuts.toolbox.nsh.cmds;
 
+import net.thevpc.nuts.NutsArgument;
+import net.thevpc.nuts.NutsCommandLine;
+import net.thevpc.nuts.spi.NutsComponentScope;
+import net.thevpc.nuts.spi.NutsComponentScopeType;
+import net.thevpc.nuts.toolbox.nsh.SimpleNshBuiltin;
+
 import java.util.ArrayList;
 import java.util.List;
-
-import net.thevpc.nuts.NutsArgument;
-import net.thevpc.nuts.spi.NutsSingleton;
-import net.thevpc.nuts.toolbox.nsh.SimpleNshBuiltin;
-import net.thevpc.nuts.NutsCommandLine;
 
 /**
  * Created by vpc on 1/7/17.
  */
-@NutsSingleton
+@NutsComponentScope(NutsComponentScopeType.WORKSPACE)
 public class DirNameCommand extends SimpleNshBuiltin {
 
     public DirNameCommand() {

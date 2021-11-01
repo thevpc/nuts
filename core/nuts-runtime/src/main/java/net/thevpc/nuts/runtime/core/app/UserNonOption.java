@@ -40,19 +40,18 @@ public class UserNonOption extends DefaultNonOption {
     @Override
     public List<NutsArgumentCandidate> getCandidates(NutsCommandAutoComplete context) {
         List<NutsArgumentCandidate> all = new ArrayList<>();
-        NutsCommandLineManager c = context.getSession().commandLine();
         NutsRepository repository = context.get(NutsRepository.class);
         if (repository != null) {
             for (NutsUser nutsSecurityEntityConfig : repository.security()
                     .setSession(context.getSession())
                     .findUsers()) {
-                all.add(c.createCandidate(nutsSecurityEntityConfig.getUser()).build());
+                all.add(new NutsArgumentCandidate(nutsSecurityEntityConfig.getUser()));
             }
         } else {
             for (NutsUser nutsSecurityEntityConfig : context.getSession().security()
                     .setSession(context.getSession())
                     .findUsers()) {
-                all.add(c.createCandidate(nutsSecurityEntityConfig.getUser()).build());
+                all.add(new NutsArgumentCandidate(nutsSecurityEntityConfig.getUser()));
             }
         }
 

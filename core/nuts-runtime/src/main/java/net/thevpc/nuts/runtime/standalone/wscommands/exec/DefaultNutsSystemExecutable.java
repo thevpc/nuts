@@ -27,7 +27,7 @@ public class DefaultNutsSystemExecutable extends AbstractNutsExecutableCommand {
     public DefaultNutsSystemExecutable(String[] cmd,
                                        String[] executorOptions, NutsSession traceSession, NutsSession execSession, NutsExecCommand execCommand) {
         super(cmd[0],
-                execSession.commandLine().create(cmd).toString(),
+                NutsCommandLine.of(cmd,traceSession).toString(),
                 NutsExecutableType.SYSTEM);
         this.inheritSystemIO = execCommand.isInheritSystemIO();
         this.cmd = cmd;
@@ -35,7 +35,7 @@ public class DefaultNutsSystemExecutable extends AbstractNutsExecutableCommand {
         this.executorOptions = executorOptions == null ? new String[0] : executorOptions;
         this.traceSession = traceSession;
         this.execSession = execSession;
-        NutsCommandLine cmdLine = execSession.commandLine().create(this.executorOptions);
+        NutsCommandLine cmdLine = NutsCommandLine.of(this.executorOptions,traceSession);
         while (cmdLine.hasNext()) {
             NutsArgument a = cmdLine.peek();
             switch (a.getKey().getString()) {
@@ -102,7 +102,7 @@ public class DefaultNutsSystemExecutable extends AbstractNutsExecutableCommand {
 
     @Override
     public String toString() {
-        return execCommand.getRunAs() + "_CMD " + execSession.commandLine().create(cmd).toString();
+        return execCommand.getRunAs() + "_CMD " + NutsCommandLine.of(cmd,traceSession).toString();
     }
 
 }

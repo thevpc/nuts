@@ -36,6 +36,18 @@ import net.thevpc.nuts.*;
  */
 public interface NutsDependencySolver{
 
+    static NutsDependencySolver of(NutsSession session){
+        return NutsDependencySolvers.of(session).createSolver(session);
+    }
+
+    static NutsDependencySolver of(String solverName, NutsSession session){
+        return NutsDependencySolvers.of(session).createSolver(solverName,session);
+    }
+
+    static String[] getSolverNames(NutsSession session){
+        return NutsDependencySolvers.of(session).getSolverNames(session);
+    }
+
 
     NutsDependencySolver add(NutsDefinition def);
 

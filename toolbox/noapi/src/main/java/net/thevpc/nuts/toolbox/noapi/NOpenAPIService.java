@@ -40,17 +40,18 @@ public class NOpenAPIService {
             targetType = "adoc";
         }
         MdDocument md = toMarkdown(source);
+        NutsSession session = appContext.getSession();
         if (targetType.equals("adoc")) {
-            writeAdoc(md, target, appContext.getSession().isPlainTrace());
+            writeAdoc(md, target, session.isPlainTrace());
         } else if (targetType.equals("pdf")) {
             String temp = null;
             if (keep) {
                 temp = addExtension(source, "adoc").toString();
             } else {
-                temp = appContext.getSession().io().tmp()
+                temp = NutsTmp.of(session)
                         .createTempFile("temp.adoc").toString();
             }
-            writeAdoc(md, temp, keep && appContext.getSession().isPlainTrace());
+            writeAdoc(md, temp, keep && session.isPlainTrace());
             if (new File(target).getParentFile() != null) {
                 new File(target).getParentFile().mkdirs();
             }
@@ -62,9 +63,9 @@ public class NOpenAPIService {
                             .safe(SafeMode.UNSAFE)
                             .toFile(new File(target))
             );
-            if (appContext.getSession().isPlainTrace()) {
-                appContext.getSession().out().printf("generated pdf %s\n",
-                        appContext.getSession().text().ofStyled(
+            if (session.isPlainTrace()) {
+                session.out().printf("generated pdf %s\n",
+                        NutsTexts.of(session).ofStyled(
                                 target, NutsTextStyle.primary4()
                         )
                 );
@@ -73,7 +74,7 @@ public class NOpenAPIService {
                 new File(temp).delete();
             }
         } else {
-            throw new NutsIllegalArgumentException(appContext.getSession(), NutsMessage.cstyle("unsupported"));
+            throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("unsupported"));
         }
     }
 
@@ -85,7 +86,7 @@ public class NOpenAPIService {
         }
         if (trace) {
             appContext.getSession().out().printf("generated src %s\n",
-                    appContext.getSession().text().ofStyled(
+                    NutsTexts.of(appContext.getSession()).ofStyled(
                             target, NutsTextStyle.primary4()
                     )
             );
@@ -131,17 +132,19 @@ public class NOpenAPIService {
     }
 
     private NutsElement loadElement(InputStream inputStream, boolean json) {
+        NutsSession session = appContext.getSession();
         if (json) {
-            return appContext.getSession().elem().setContentType(NutsContentType.JSON).parse(inputStream, NutsElement.class);
+            return NutsElements.of(session).json().parse(inputStream, NutsElement.class);
         } else {
-            return appContext.getSession().elem().setContentType(NutsContentType.YAML).parse(inputStream, NutsElement.class);
+            return NutsElements.of(session).json().parse(inputStream, NutsElement.class);
 //            final Object o = new Yaml().load(inputStream);
 //            return appContext.getWorkspace().elem().toElement(o);
         }
     }
 
     private MdDocument toMarkdown(InputStream inputStream, boolean json) {
-        NutsElementFormat prv = appContext.getSession().elem();
+        NutsSession session = appContext.getSession();
+        NutsElements prv = NutsElements.of(session);
         MdDocumentBuilder doc = new MdDocumentBuilder();
         doc.setProperty("headers", new String[]{
             ":source-highlighter: coderay",
@@ -400,7 +403,8 @@ public class NOpenAPIService {
     }
 
     private String toCode(NutsElement o, String indent) {
-        NutsElementFormat prv = appContext.getSession().elem();
+        NutsSession session = appContext.getSession();
+        NutsElements prv = NutsElements.of(session);
         String descSep = " // ";
         if (o.isObject()) {
             NutsElement a = o.asObject().get(prv.forString("schema"));

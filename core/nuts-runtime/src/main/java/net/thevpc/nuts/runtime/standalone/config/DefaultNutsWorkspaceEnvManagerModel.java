@@ -83,7 +83,7 @@ public class DefaultNutsWorkspaceEnvManagerModel {
         }
         osDist = nip.parse(platformOsDist);
         platform = NutsJavaSdkUtils.of(session).createJdkId(System.getProperty("java.version"), session);
-        arch = session.id().parser().parse(System.getProperty("os.arch"));
+        arch = NutsId.of(System.getProperty("os.arch"),session);
 
     }
 
@@ -241,7 +241,7 @@ public class DefaultNutsWorkspaceEnvManagerModel {
             ).toArray(new String[0]);
             String sd = _XDG_SESSION_DESKTOP.toLowerCase();
             for (int i = 0; i < supportedSessions.length; i++) {
-                NutsIdBuilder nb = session.id().builder().setArtifactId(supportedSessions[i]);
+                NutsIdBuilder nb = NutsIdBuilder.of(session).setArtifactId(supportedSessions[i]);
                 if ("kde".equals(sd)) {
                     String _KDE_FULL_SESSION = System.getenv("KDE_FULL_SESSION");
                     String _KDE_SESSION_VERSION = System.getenv("KDE_SESSION_VERSION");
@@ -270,30 +270,30 @@ public class DefaultNutsWorkspaceEnvManagerModel {
     protected NutsId[] getDesktopEnvironments0(NutsSession session) {
         if (!isGraphicalDesktopEnvironment()) {
             return new NutsId[]{
-                    session.id().builder().setArtifactId(NutsDesktopEnvironmentFamily.WINDOWS_SHELL.id()).build()
+                    NutsIdBuilder.of(session).setArtifactId(NutsDesktopEnvironmentFamily.WINDOWS_SHELL.id()).build()
             };
         }
         switch (session.env().getOsFamily()) {
             case WINDOWS: {
                 return new NutsId[]{
-                        session.id().builder().setArtifactId(NutsDesktopEnvironmentFamily.WINDOWS_SHELL.id()).build()
+                        NutsIdBuilder.of(session).setArtifactId(NutsDesktopEnvironmentFamily.WINDOWS_SHELL.id()).build()
                 };
             }
             case MACOS: {
                 return new NutsId[]{
-                        session.id().builder().setArtifactId(NutsDesktopEnvironmentFamily.MACOS_AQUA.id()).build()
+                        NutsIdBuilder.of(session).setArtifactId(NutsDesktopEnvironmentFamily.MACOS_AQUA.id()).build()
                 };
             }
             case UNIX:
             case LINUX: {
                 NutsId[] all = getDesktopEnvironmentsXDGOrEmpty(session);
                 if (all.length == 0) {
-                    return new NutsId[]{session.id().builder().setArtifactId(NutsDesktopEnvironmentFamily.UNKNOWN.id()).build()};
+                    return new NutsId[]{NutsIdBuilder.of(session).setArtifactId(NutsDesktopEnvironmentFamily.UNKNOWN.id()).build()};
                 }
                 return all;
             }
             default: {
-                return new NutsId[]{session.id().builder().setArtifactId(NutsDesktopEnvironmentFamily.UNKNOWN.id()).build()};
+                return new NutsId[]{NutsIdBuilder.of(session).setArtifactId(NutsDesktopEnvironmentFamily.UNKNOWN.id()).build()};
             }
         }
     }

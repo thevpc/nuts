@@ -40,7 +40,10 @@ public interface NutsDependency extends Serializable, NutsFormattable,NutsBlanka
 
     static NutsDependency of(String value, NutsSession session) {
         NutsApiUtils.checkSession(session);
-        return session.dependency().parser().parseDependency(value);
+        return
+                NutsApiUtils
+                        .createSessionCachedType(NutsDependencyParser.class, session,()->NutsDependencyParser.of(session))
+                .parse(value);
     }
 
     /**

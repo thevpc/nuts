@@ -52,10 +52,10 @@ public class NutsTextNodeWriterRaw {
                 for (String line : CoreStringUtils.splitOnNewlines(text)) {
                     boolean newline = line.startsWith("\n")
                             || line.startsWith("\r");
-                    if (newline || ctx.isFiltered() || style == null || style.isNone()) {
-                        items.add(session.text().ofPlain(line));
+                    if (newline || ctx.isFiltered() || style == null || style.isPlain()) {
+                        items.add(NutsTexts.of(session).ofPlain(line));
                     } else {
-                        items.add(session.text().ofStyled(line, style));
+                        items.add(NutsTexts.of(session).ofStyled(line, style));
                     }
                 }
                 break;
@@ -84,12 +84,12 @@ public class NutsTextNodeWriterRaw {
                 if (ctx.isTitleNumberEnabled()) {
                     NutsTextNumbering seq = ctx.getTitleNumberSequence();
                     if (seq == null) {
-                        seq = session.text().ofNumbering();
+                        seq = NutsTexts.of(session).ofNumbering();
                         ctx.setTitleNumberSequence(seq);
                     }
                     NutsTextNumbering a = seq.newLevel(s.getTextStyleCode().length());
                     String ts = a.toString() + " ";
-                    flattenNode(session.text().ofPlain(ts), ctx, NutsTextStyles.of(NutsTextStyle.title(s.getLevel())));
+                    flattenNode(NutsTexts.of(session).ofPlain(ts), ctx, NutsTextStyles.of(NutsTextStyle.title(s.getLevel())));
                 }
                 flattenNode(s.getChild(), ctx, NutsTextStyles.of(NutsTextStyle.title(s.getLevel())));
                 break;
@@ -117,7 +117,7 @@ public class NutsTextNodeWriterRaw {
                 if (!ctx.isFiltered()) {
                     flattenNode(s.highlight(session), ctx, null);
                 } else {
-                    flattenNode(session.text().ofPlain(s.getText()), ctx, style);
+                    flattenNode(NutsTexts.of(session).ofPlain(s.getText()), ctx, style);
                 }
                 break;
             }

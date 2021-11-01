@@ -1,23 +1,20 @@
 package net.thevpc.nuts.runtime.core.format.text.highlighters;
 
+import net.thevpc.nuts.*;
 import net.thevpc.nuts.spi.NutsSupportLevelContext;
-import net.thevpc.nuts.NutsTextStyle;
 import net.thevpc.nuts.spi.NutsComponent;
-import net.thevpc.nuts.NutsCodeHighlighter;
-import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.NutsTextManager;
-import net.thevpc.nuts.NutsText;
+import net.thevpc.nuts.NutsTexts;
 
 public class CustomStyleCodeHighlighter implements NutsCodeHighlighter {
 
     private NutsSession session;
     private NutsTextStyle style;
-    private NutsTextManager factory;
+    private NutsTexts factory;
 
     public CustomStyleCodeHighlighter(NutsTextStyle style, NutsSession session) {
         this.session = session;
         this.style = style;
-        factory = session.text();
+        factory = NutsTexts.of(session);
     }
 
     @Override

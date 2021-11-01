@@ -14,10 +14,10 @@ import java.util.stream.Stream;
 
 public class NJobsSubCmd {
 
-    private JobService service;
-    private NutsApplicationContext context;
-    private NutsSession session;
-    private JobServiceCmd parent;
+    private final JobService service;
+    private final NutsApplicationContext context;
+    private final NutsSession session;
+    private final JobServiceCmd parent;
 
     public NJobsSubCmd(JobServiceCmd parent) {
         this.parent = parent;
@@ -87,15 +87,15 @@ public class NJobsSubCmd {
             service.jobs().addJob(t);
             if (context.getSession().isPlainTrace()) {
                 context.getSession().out().printf("job %s (%s) added.\n",
-                        context.getSession().text().ofStyled(t.getId(), NutsTextStyle.primary5()),
+                        NutsTexts.of(context.getSession()).ofStyled(t.getId(), NutsTextStyle.primary5()),
                         t.getName()
                 );
             }
             if (show) {
-                runJobShow(session.commandLine().create(t.getId()));
+                runJobShow(NutsCommandLine.of(new String[]{t.getId()}, session));
             }
             if (list) {
-                runJobList(session.commandLine().create());
+                runJobList(NutsCommandLine.of(new String[0], session));
             }
         }
     }
@@ -196,7 +196,7 @@ public class NJobsSubCmd {
                     c.accept(job);
                 }
             }
-            NutsTextManager text = context.getSession().text();
+            NutsTexts text = NutsTexts.of(context.getSession());
             for (NJob job : new LinkedHashSet<>(jobs)) {
                 service.jobs().updateJob(job);
                 if (context.getSession().isPlainTrace()) {
@@ -208,11 +208,11 @@ public class NJobsSubCmd {
             }
             if (show) {
                 for (NJob t : new LinkedHashSet<>(jobs)) {
-                    runJobList(session.commandLine().create(t.getId()));
+                    runJobList(NutsCommandLine.of(new String[]{t.getId()}, session));
                 }
             }
             if (list) {
-                runJobList(session.commandLine().create());
+                runJobList(NutsCommandLine.of(new String[0], session));
             }
         }
     }
@@ -246,7 +246,7 @@ public class NJobsSubCmd {
     }
 
     private void runJobRemove(NutsCommandLine cmd) {
-        NutsTextManager text = context.getSession().text();
+        NutsTexts text = NutsTexts.of(context.getSession());
         while (cmd.hasNext()) {
             NutsArgument a = cmd.next();
             NJob t = findJob(a.toString(), cmd);
@@ -282,18 +282,18 @@ public class NJobsSubCmd {
                             job.getId()
                     );
                     String prefix = "\t                    ";
-                    context.getSession().out().printf("\t```kw2 job name```      : %s:\n", parent.formatWithPrefix(job.getName(), prefix));
+                    context.getSession().out().printf("\t```kw2 job name```      : %s:\n", JobServiceCmd.formatWithPrefix(job.getName(), prefix));
                     String project = job.getProject();
                     NProject p = service.projects().getProject(project);
                     if (project == null || project.length() == 0) {
                         context.getSession().out().printf("\t```kw2 project```       : %s\n", "");
                     } else {
-                        context.getSession().out().printf("\t```kw2 project```       : %s (%s)\n", project, parent.formatWithPrefix(p == null ? "?" : p.getName(), prefix));
+                        context.getSession().out().printf("\t```kw2 project```       : %s (%s)\n", project, JobServiceCmd.formatWithPrefix(p == null ? "?" : p.getName(), prefix));
                     }
-                    context.getSession().out().printf("\t```kw2 duration```      : %s\n", parent.formatWithPrefix(job.getDuration(), prefix));
-                    context.getSession().out().printf("\t```kw2 start time```    : %s\n", parent.formatWithPrefix(job.getStartTime(), prefix));
-                    context.getSession().out().printf("\t```kw2 duration extra```: %s\n", parent.formatWithPrefix(job.getInternalDuration(), prefix));
-                    context.getSession().out().printf("\t```kw2 observations```  : %s\n", parent.formatWithPrefix(job.getObservations(), prefix));
+                    context.getSession().out().printf("\t```kw2 duration```      : %s\n", JobServiceCmd.formatWithPrefix(job.getDuration(), prefix));
+                    context.getSession().out().printf("\t```kw2 start time```    : %s\n", JobServiceCmd.formatWithPrefix(job.getStartTime(), prefix));
+                    context.getSession().out().printf("\t```kw2 duration extra```: %s\n", JobServiceCmd.formatWithPrefix(job.getInternalDuration(), prefix));
+                    context.getSession().out().printf("\t```kw2 observations```  : %s\n", JobServiceCmd.formatWithPrefix(job.getObservations(), prefix));
                 }
             }
         }
@@ -427,25 +427,25 @@ public class NJobsSubCmd {
                 List<NJob> lastResults = new ArrayList<>();
                 int[] index = new int[1];
                 r.forEach(x -> {
-                    NutsString durationString = session.text().ofStyled(String.valueOf(timeUnit0 == null ? x.getDuration() : x.getDuration().toUnit(timeUnit0, hoursPerDay)), NutsTextStyle.keyword());
+                    NutsString durationString = NutsTexts.of(session).ofStyled(String.valueOf(timeUnit0 == null ? x.getDuration() : x.getDuration().toUnit(timeUnit0, hoursPerDay)), NutsTextStyle.keyword());
                     index[0]++;
                     lastResults.add(x);
                     m.newRow().addCells(
                             (finalGroupBy != null)
                                     ? new Object[]{
-                                parent.createHashId(index[0], -1),
-                                parent.getFormattedDate(x.getStartTime()),
-                                durationString,
-                                parent.getFormattedProject(x.getProject() == null ? "*" : x.getProject()),
-                                x.getName()
+                                    parent.createHashId(index[0], -1),
+                                    parent.getFormattedDate(x.getStartTime()),
+                                    durationString,
+                                    parent.getFormattedProject(x.getProject() == null ? "*" : x.getProject()),
+                                    x.getName()
 
                             } : new Object[]{
-                                parent.createHashId(index[0], -1),
-                                session.text().ofStyled(x.getId(), NutsTextStyle.pale()),
-                                parent.getFormattedDate(x.getStartTime()),
-                                durationString,
-                                parent.getFormattedProject(x.getProject() == null ? "*" : x.getProject()),
-                                x.getName()
+                                    parent.createHashId(index[0], -1),
+                                    NutsTexts.of(session).ofStyled(x.getId(), NutsTextStyle.pale()),
+                                    parent.getFormattedDate(x.getStartTime()),
+                                    durationString,
+                                    parent.getFormattedProject(x.getProject() == null ? "*" : x.getProject()),
+                                    x.getName()
 
                             }
                     );
@@ -463,7 +463,7 @@ public class NJobsSubCmd {
     private NJob findJob(String pid, NutsCommandLine cmd) {
         NJob t = null;
         if (pid.startsWith("#")) {
-            int x = parent.parseIntOrFF(pid.substring(1));
+            int x = JobServiceCmd.parseIntOrFF(pid.substring(1));
             if (x >= 1) {
                 Object lastResults = context.getSession().getProperty("LastResults");
                 if (lastResults instanceof NJob[] && x <= ((NJob[]) lastResults).length) {
@@ -475,7 +475,7 @@ public class NJobsSubCmd {
             t = service.jobs().getJob(pid);
         }
         if (t == null) {
-            cmd.throwError(NutsMessage.cstyle("job not found: %s",pid));
+            cmd.throwError(NutsMessage.cstyle("job not found: %s", pid));
         }
         return t;
     }

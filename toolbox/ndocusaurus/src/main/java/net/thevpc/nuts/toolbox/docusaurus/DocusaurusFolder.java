@@ -1,9 +1,6 @@
 package net.thevpc.nuts.toolbox.docusaurus;
 
-import net.thevpc.nuts.NutsElement;
-import net.thevpc.nuts.NutsObjectElement;
-import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.NutsUtilStrings;
+import net.thevpc.nuts.*;
 import net.thevpc.nuts.lib.md.MdElement;
 import net.thevpc.nuts.lib.md.docusaurus.DocusaurusUtils;
 import net.thevpc.nuts.lib.md.util.MdUtils;
@@ -117,7 +114,7 @@ public class DocusaurusFolder implements DocusaurusFileOrFolder {
                 }
             }
             if (config == null) {
-                config = session.elem().forObject().build();
+                config = NutsElements.of(session).forObject().build();
             }
             if (title == null || title.trim().isEmpty()) {
                 title = path.getFileName().toString();
@@ -157,7 +154,7 @@ public class DocusaurusFolder implements DocusaurusFileOrFolder {
     }
 
     public static DocusaurusFolder ofRoot(NutsSession session, DocusaurusFileOrFolder[] children, MdElement tree, String path) {
-        return new DocusaurusFolder("/", "/", 0, session.elem().forObject().build(), children, tree, path);
+        return new DocusaurusFolder("/", "/", 0, NutsElements.of(session).forObject().build(), children, tree, path);
     }
 
     public static DocusaurusFolder of(String longId, String title, int order, NutsObjectElement config, DocusaurusFileOrFolder[] children, String path) {

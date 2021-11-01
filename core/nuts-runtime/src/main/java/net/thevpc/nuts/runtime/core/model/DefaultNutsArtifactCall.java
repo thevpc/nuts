@@ -136,4 +136,13 @@ public class DefaultNutsArtifactCall implements NutsArtifactCall, Serializable {
         result = 31 * result + Arrays.hashCode(arguments);
         return result;
     }
+
+    @Override
+    public String toString() {
+        return "DefaultNutsArtifactCall{" +
+                "id=" + id +
+                ", arguments=" + Arrays.toString(arguments) +
+                ", properties=" + properties +
+                '}';
+    }
 }

@@ -91,7 +91,7 @@ public class NutsRepositoryUtils {
 
     protected NutsLogger _LOG(NutsSession session) {
         if (LOG == null) {
-            LOG = session.log().of(NutsRepositoryUtils.class);
+            LOG = NutsLogger.of(NutsRepositoryUtils.class,session);
         }
         return LOG;
     }

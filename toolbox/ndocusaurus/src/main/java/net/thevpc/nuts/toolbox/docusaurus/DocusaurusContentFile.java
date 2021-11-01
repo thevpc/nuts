@@ -2,6 +2,7 @@ package net.thevpc.nuts.toolbox.docusaurus;
 
 import net.thevpc.nuts.NutsContentType;
 import net.thevpc.nuts.NutsElement;
+import net.thevpc.nuts.NutsElements;
 import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.lib.md.MdElement;
 import net.thevpc.nuts.lib.md.docusaurus.DocusaurusMdParser;
@@ -56,7 +57,7 @@ public class DocusaurusContentFile extends DocusaurusFile{
                         props.put(key, value);
                         if("type".equals(key) && value.length()>0){
                             try {
-                                config = session.elem().setContentType(NutsContentType.JSON).parse(value);
+                                config = NutsElements.of(session).json().parse(value);
                             }catch (Exception ex){
                                 throw new IllegalArgumentException("invalid json for type in "+location);
                             }

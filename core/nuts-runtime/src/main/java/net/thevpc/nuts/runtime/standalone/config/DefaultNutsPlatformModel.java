@@ -66,12 +66,12 @@ public class DefaultNutsPlatformModel {
             if (notify) {
                 if (session.isPlainTrace()) {
                     session.out().resetLine().printf("%s %s %s (%s) %s at %s%n",
-                            session.text().ofStyled("install",NutsTextStyles.of(NutsTextStyle.success())),
+                            NutsTexts.of(session).ofStyled("install",NutsTextStyles.of(NutsTextStyle.success())),
                             location.getId().getShortName(),
                             location.getPackaging(),
                             location.getProduct(),
-                            session.version().parser().parse(location.getVersion()),
-                            session.io().path(location.getPath())
+                            NutsVersion.of(location.getVersion(),session),
+                            NutsPath.of(location.getPath(),session)
                     );
                 }
                 NutsWorkspaceConfigManagerExt.of(session.config())
@@ -144,7 +144,7 @@ public class DefaultNutsPlatformModel {
 
     public NutsPlatformLocation findPlatformByVersion(NutsPlatformType type, NutsVersionFilter javaVersionFilter, final NutsSession session) {
         return findOnePlatform(type,
-                location -> javaVersionFilter == null || javaVersionFilter.acceptVersion(session.version().parser().parse(location.getVersion()), session),
+                location -> javaVersionFilter == null || javaVersionFilter.acceptVersion(NutsVersion.of(location.getVersion(),session), session),
                  session);
     }
 

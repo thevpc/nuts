@@ -27,15 +27,16 @@
 package net.thevpc.nuts;
 
 import net.thevpc.nuts.boot.NutsApiUtils;
+import net.thevpc.nuts.spi.NutsComponent;
 
 /**
  * @app.category Base
  */
-public interface NutsIdParser {
+public interface NutsIdParser extends NutsComponent<Object> {
 
     static NutsIdParser of(NutsSession session) {
         NutsApiUtils.checkSession(session);
-        return session.id().parser();
+        return session.extensions().createSupported(NutsIdParser.class,true,null);
     }
 
     /**

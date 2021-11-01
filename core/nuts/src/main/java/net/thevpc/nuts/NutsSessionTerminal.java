@@ -26,6 +26,8 @@
 package net.thevpc.nuts;
 
 
+import net.thevpc.nuts.spi.NutsTerminals;
+
 import java.io.InputStream;
 
 /**
@@ -35,6 +37,17 @@ import java.io.InputStream;
  * @since 0.5.4
  */
 public interface NutsSessionTerminal {
+    static NutsSessionTerminal of(NutsSession session) {
+        return NutsTerminals.of(session).createTerminal(session);
+    }
+
+    static NutsSessionTerminal of(NutsSessionTerminal parent, NutsSession session) {
+        return NutsTerminals.of(session).createTerminal(parent,session);
+    }
+
+    static NutsSessionTerminal of(InputStream in, NutsPrintStream out, NutsPrintStream err, NutsSession session) {
+        return NutsTerminals.of(session).createTerminal(in, out, err,session);
+    }
 
     String readLine(NutsPrintStream out, String prompt, Object... params);
 

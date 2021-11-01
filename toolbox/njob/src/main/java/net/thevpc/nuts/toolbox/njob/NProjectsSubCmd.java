@@ -66,15 +66,15 @@ public class NProjectsSubCmd {
             service.projects().addProject(t);
             if (context.getSession().isPlainTrace()) {
                 context.getSession().out().printf("project %s (%s) added.\n",
-                        context.getSession().text().ofStyled(t.getId(), NutsTextStyle.primary5()),
+                        NutsTexts.of(context.getSession()).ofStyled(t.getId(), NutsTextStyle.primary5()),
                         t.getName()
                 );
             }
             if (show) {
-                runProjectShow(session.commandLine().create(t.getId()));
+                runProjectShow(NutsCommandLine.of(new String[]{t.getId()}, session));
             }
             if (list) {
-                runProjectList(session.commandLine().create());
+                runProjectList(NutsCommandLine.of(new String[0], session));
             }
         }
     }
@@ -180,7 +180,7 @@ public class NProjectsSubCmd {
             cmd.throwError(NutsMessage.formatted("project name expected"));
         }
         if (cmd.isExecMode()) {
-            NutsTextManager text = context.getSession().text();
+            NutsTexts text = NutsTexts.of(context.getSession());
             for (NProject project : projects) {
                 for (Consumer<NProject> c : runLater) {
                     c.accept(project);
@@ -197,18 +197,18 @@ public class NProjectsSubCmd {
                 service.projects().mergeProjects(mergeTo, projects.stream().map(x -> x.getId()).toArray(String[]::new));
                 if (context.getSession().isPlainTrace()) {
                     context.getSession().out().printf("projects merged to %s.\n",
-                            context.getSession()
-                            .text().ofStyled(mergeTo, NutsTextStyle.primary5())
+                            NutsTexts.of(context.getSession())
+                            .ofStyled(mergeTo, NutsTextStyle.primary5())
                     );
                 }
             }
             if (show) {
                 for (NProject t : new LinkedHashSet<>(projects)) {
-                    runProjectShow(session.commandLine().create(t.getId()));
+                    runProjectShow(NutsCommandLine.of(new String[]{t.getId()}, session));
                 }
             }
             if (list) {
-                runProjectList(session.commandLine().create());
+                runProjectList(NutsCommandLine.of(new String[0], session));
             }
         }
     }
@@ -310,7 +310,7 @@ public class NProjectsSubCmd {
     }
 
     private void runProjectRemove(NutsCommandLine cmd) {
-        NutsTextManager text = context.getSession().text();
+        NutsTexts text = NutsTexts.of(context.getSession());
         while (cmd.hasNext()) {
             NutsArgument a = cmd.next();
             if (cmd.isExecMode()) {

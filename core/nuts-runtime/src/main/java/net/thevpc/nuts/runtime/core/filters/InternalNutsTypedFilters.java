@@ -7,6 +7,7 @@ import net.thevpc.nuts.NutsWorkspace;
 import java.util.ArrayList;
 import java.util.List;
 import net.thevpc.nuts.NutsSession;
+import net.thevpc.nuts.runtime.core.NutsWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 
 public abstract class InternalNutsTypedFilters<T extends NutsFilter> implements NutsTypedFilters<T> {
@@ -16,23 +17,17 @@ public abstract class InternalNutsTypedFilters<T extends NutsFilter> implements 
     private Class<T> type;
     private NutsSession session;
 
-    public InternalNutsTypedFilters(DefaultNutsFilterModel model, Class<T> type) {
-        this.model = model;
+    public InternalNutsTypedFilters(NutsSession session, Class<T> type) {
+        this.session = session;
+        this.model = NutsWorkspaceExt.of(session.getWorkspace()).getModel().filtersModel;
         this.ws = model.getWorkspace();
         this.type = type;
     }
 
-    @Override
     public NutsSession getSession() {
         return session;
     }
 
-    @Override
-    public NutsTypedFilters setSession(NutsSession session) {
-        this.session = NutsWorkspaceUtils.bindSession(ws, session);
-        return this;
-    }
-    
     protected void checkSession(){
         NutsWorkspaceUtils.checkSession(ws, session);
     }

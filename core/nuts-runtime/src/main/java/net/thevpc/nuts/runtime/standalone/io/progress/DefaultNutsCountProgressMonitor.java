@@ -61,14 +61,14 @@ public class DefaultNutsCountProgressMonitor implements NutsProgressMonitor/*, N
         return true;
     }
 //
-//    private String escapeText(NutsTextManager text , String str) {
+//    private String escapeText(NutsTexts text , String str) {
 //        return text.builder().append(str).toString();
 //    }
 
     public boolean onProgress0(NutsProgressEvent event, boolean end) {
         double partialSeconds = event.getPartialMillis() / 1000.0;
         if (event.getCurrentValue() == 0 || partialSeconds > 0.5 || event.getCurrentValue() == event.getMaxValue()) {
-            NutsTextManager text = event.getSession().text();
+            NutsTexts text = NutsTexts.of(event.getSession());
             out.resetLine();
             double globalSeconds = event.getTimeMillis() / 1000.0;
             long globalSpeed = globalSeconds == 0 ? 0 : (long) (event.getCurrentValue() / globalSeconds);

@@ -17,13 +17,13 @@ public class DefaultSearchFormatJson extends DefaultSearchFormatBase {
 
     private boolean compact;
 
-    NutsTextManager factory;
+    NutsTexts factory;
     private NutsCodeHighlighter codeFormat;
 
     public DefaultSearchFormatJson(NutsSession session, NutsPrintStream writer, NutsFetchDisplayOptions options) {
         super(session, writer, NutsContentType.JSON, options);
-        factory = session.text();
-        codeFormat = session.text().setSession(session).getCodeHighlighter("json");
+        factory = NutsTexts.of(session);
+        codeFormat = NutsTexts.of(session).setSession(session).getCodeHighlighter("json");
     }
 
     @Override
@@ -67,8 +67,8 @@ public class DefaultSearchFormatJson extends DefaultSearchFormatBase {
         }else{
             getWriter().print("  ");
         }
-        String json = getSession().elem()
-                .setContentType(NutsContentType.JSON).setValue(object).setCompact(isCompact())
+        String json = NutsElements.of(getSession())
+                .json().setValue(object).setCompact(isCompact())
                 .format()
                 .filteredText()
                 ;

@@ -23,8 +23,12 @@
  */
 package net.thevpc.nuts.toolbox.nsh.cmds;
 
-import net.thevpc.nuts.*;
-import net.thevpc.nuts.spi.NutsSingleton;
+import net.thevpc.nuts.NutsArchFamily;
+import net.thevpc.nuts.NutsCommandLine;
+import net.thevpc.nuts.NutsId;
+import net.thevpc.nuts.NutsSession;
+import net.thevpc.nuts.spi.NutsComponentScope;
+import net.thevpc.nuts.spi.NutsComponentScopeType;
 import net.thevpc.nuts.toolbox.nsh.SimpleNshBuiltin;
 
 import java.util.ArrayList;
@@ -33,7 +37,7 @@ import java.util.List;
 /**
  * Created by vpc on 1/7/17.
  */
-@NutsSingleton
+@NutsComponentScope(NutsComponentScopeType.WORKSPACE)
 public class UnameCommand extends SimpleNshBuiltin {
 
     public UnameCommand() {
@@ -117,7 +121,6 @@ public class UnameCommand extends SimpleNshBuiltin {
             }
         }
     }
-
 
 
     private static class Options {

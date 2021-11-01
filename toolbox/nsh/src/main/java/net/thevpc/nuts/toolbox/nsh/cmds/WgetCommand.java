@@ -10,7 +10,7 @@
  * other 'things' . Its based on an extensible architecture to help supporting a
  * large range of sub managers / repositories.
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc]
  * Licensed under the Apache License, Version 2.0 (the "License"); you may
  * not use this file except in compliance with the License. You may obtain a
@@ -22,10 +22,15 @@
  * governing permissions and limitations under the License.
  * <br>
  * ====================================================================
-*/
+ */
 package net.thevpc.nuts.toolbox.nsh.cmds;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.spi.NutsComponentScope;
+import net.thevpc.nuts.spi.NutsComponentScopeType;
+import net.thevpc.nuts.toolbox.nsh.SimpleNshBuiltin;
+import net.thevpc.nuts.toolbox.nsh.bundles._URLUtils;
+import net.thevpc.nuts.toolbox.nsh.bundles.jshell.JShellExecutionContext;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -34,25 +39,14 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.thevpc.nuts.spi.NutsSingleton;
-import net.thevpc.nuts.toolbox.nsh.SimpleNshBuiltin;
-import net.thevpc.nuts.toolbox.nsh.bundles._URLUtils;
-import net.thevpc.nuts.toolbox.nsh.bundles.jshell.JShellExecutionContext;
-
 /**
  * Created by vpc on 1/7/17.
  */
-@NutsSingleton
+@NutsComponentScope(NutsComponentScopeType.WORKSPACE)
 public class WgetCommand extends SimpleNshBuiltin {
 
     public WgetCommand() {
         super("wget", DEFAULT_SUPPORT);
-    }
-
-    private static class Options {
-
-        String outputDocument = null;
-        List<String> files = new ArrayList<>();
     }
 
     @Override
@@ -89,20 +83,25 @@ public class WgetCommand extends SimpleNshBuiltin {
     protected void download(String path, String output, JShellExecutionContext context) {
         String output2 = output;
         URL url;
+        NutsSession session = context.getSession();
         try {
             url = new URL(path);
         } catch (MalformedURLException ex) {
-            throw new NutsExecutionException(context.getSession(), NutsMessage.cstyle("%s",ex), ex, 100);
+            throw new NutsExecutionException(session, NutsMessage.cstyle("%s", ex), ex, 100);
         }
         String urlName = _URLUtils.getURLName(url);
         if (!NutsBlankable.isBlank(output2)) {
             output2 = output2.replace("{}", urlName);
         }
         Path file = Paths.get(context.getShellContext().getAbsolutePath(NutsBlankable.isBlank(output2) ? urlName : output2));
-        context.getSession().io()
-                .copy()
-                .setSession(context.getSession())
-                .from(path).to(file).setSession(context.getSession())
+        NutsCp.of(session)
+                .from(path).to(file).setSession(session)
                 .setLogProgress(true).run();
+    }
+
+    private static class Options {
+
+        String outputDocument = null;
+        List<String> files = new ArrayList<>();
     }
 }

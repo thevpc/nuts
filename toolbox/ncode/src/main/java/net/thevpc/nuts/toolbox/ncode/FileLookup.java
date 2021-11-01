@@ -6,6 +6,7 @@
 package net.thevpc.nuts.toolbox.ncode;
 
 import net.thevpc.nuts.NutsApplicationContext;
+import net.thevpc.nuts.NutsPath;
 import net.thevpc.nuts.NutsSession;
 
 /**
@@ -18,7 +19,7 @@ public class FileLookup implements SourceProcessor {
 
     @Override
     public Object process(Source source, NutsSession session) {
-        return session.io().path(source.getExternalPath());
+        return NutsPath.of(source.getExternalPath(),session);
     }
 
 }

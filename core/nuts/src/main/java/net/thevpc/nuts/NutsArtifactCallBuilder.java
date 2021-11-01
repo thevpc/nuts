@@ -26,6 +26,7 @@
 package net.thevpc.nuts;
 
 import net.thevpc.nuts.boot.NutsApiUtils;
+import net.thevpc.nuts.spi.NutsComponent;
 
 import java.io.Serializable;
 import java.util.Map;
@@ -35,13 +36,13 @@ import java.util.Map;
  * as NutsDescriptor executor or installer.
  * To get an instance of NutsArtifactCallBuilder you can use {@code workspace.descriptor().callBuilder()}
  *
- * @since 0.5.4
  * @app.category Base
+ * @since 0.5.4
  */
-public interface NutsArtifactCallBuilder extends Serializable {
+public interface NutsArtifactCallBuilder extends Serializable, NutsComponent<Object> {
     static NutsArtifactCallBuilder of(NutsSession session) {
         NutsApiUtils.checkSession(session);
-        return session.descriptor().callBuilder();
+        return session.extensions().createSupported(NutsArtifactCallBuilder.class, true, null);
     }
 
     /**

@@ -26,30 +26,83 @@
  */
 package net.thevpc.nuts;
 
+import java.util.Objects;
+
 /**
  * This class is used in {@link NutsDescriptor} to describe
  * locations/mirrors to download artifact content instead of the
  * regular location.
  * @app.category Descriptor
  */
-public interface NutsIdLocation extends NutsBlankable{
+public class NutsIdLocation implements NutsBlankable{
+    private String url;
+    private String region;
+    private String classifier;
+
+    public NutsIdLocation(String url, String region, String classifier) {
+        this.url = url;
+        this.region = region;
+        this.classifier = classifier;
+    }
 
     /**
      * location url of the artifact content
      * @return location url of the artifact content
      */
-    String getUrl();
+    public String getUrl() {
+        return url;
+    }
 
     /**
      * location (geographic) region that may be used to select
      * the most effective mirror
      * @return location (geographic) region that may be used to select the most effective mirror
      */
-    String getRegion();
+    public String getRegion() {
+        return region;
+    }
 
     /**
      * classifier for the artifact
      * @return classifier for the artifact
      */
-    String getClassifier();
+    public String getClassifier() {
+        return classifier;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        NutsIdLocation that = (NutsIdLocation) o;
+        return Objects.equals(url, that.url) && Objects.equals(region, that.region) && Objects.equals(classifier, that.classifier);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(url, region, classifier);
+    }
+
+    @Override
+    public String toString() {
+        return "NutsIdLocation{" +
+                "url='" + url + '\'' +
+                ", region='" + region + '\'' +
+                ", classifier='" + classifier + '\'' +
+                '}';
+    }
+
+    @Override
+    public boolean isBlank() {
+        if(!NutsBlankable.isBlank(url)){
+            return false;
+        }
+        if(!NutsBlankable.isBlank(classifier)){
+            return false;
+        }
+        if(!NutsBlankable.isBlank(region)){
+            return false;
+        }
+        return true;
+    }
 }

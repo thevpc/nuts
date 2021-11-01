@@ -36,17 +36,17 @@ import java.io.PrintStream;
 public interface NutsString extends NutsBlankable{
 
     static NutsString of(NutsMessage str, NutsSession session) {
-        return session.text().toText(str);
+        return NutsTexts.of(session).toText(str);
     }
 
     static NutsString parse(String str, NutsSession session) {
         NutsApiUtils.checkSession(session);
-        return session.text().parse(str);
+        return NutsTexts.of(session).parse(str);
     }
 
     static NutsString plain(String str, NutsSession session) {
         NutsApiUtils.checkSession(session);
-        return session.text().ofPlain(str);
+        return NutsTexts.of(session).ofPlain(str);
     }
 
     NutsString immutable();

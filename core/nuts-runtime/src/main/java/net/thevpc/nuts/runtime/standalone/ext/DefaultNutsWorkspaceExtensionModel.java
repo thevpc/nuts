@@ -85,7 +85,7 @@ public class DefaultNutsWorkspaceExtensionModel {
 
     protected NutsLogger _LOG(NutsSession session) {
         if (LOG == null) {
-            LOG = session.log().of(DefaultNutsWorkspaceExtensionModel.class);
+            LOG = NutsLogger.of(DefaultNutsWorkspaceExtensionModel.class,session);
         }
         return LOG;
     }
@@ -99,7 +99,7 @@ public class DefaultNutsWorkspaceExtensionModel {
         if (excluded != null) {
             for (String ex : excluded) {
                 for (String e : StringTokenizerUtils.split(ex, ",; ")) {
-                    NutsId ee = session.id().parser().parse(e);
+                    NutsId ee = NutsId.of(e,session);
                     if (ee != null) {
                         this.exclusions.add(ee.getShortName());
                     }
@@ -124,7 +124,7 @@ public class DefaultNutsWorkspaceExtensionModel {
 
     //@Override
     public List<NutsExtensionInformation> findExtensions(String id, String extensionType, NutsSession session) {
-        return findExtensions(session.id().parser().setLenient(false).parse(id), extensionType, session);
+        return findExtensions(NutsId.of(id,session), extensionType, session);
     }
 
     // @Override
@@ -141,7 +141,7 @@ public class DefaultNutsWorkspaceExtensionModel {
             if (u != null) {
                 NutsExtensionInformation[] s = new NutsExtensionInformation[0];
                 try (Reader rr = new InputStreamReader(NutsWorkspaceUtils.of(session).openURL(u))) {
-                    s = session.elem().setContentType(NutsContentType.JSON).parse(rr, DefaultNutsExtensionInformation[].class);
+                    s = NutsElements.of(session).json().parse(rr, DefaultNutsExtensionInformation[].class);
                 } catch (IOException ex) {
                     _LOGOP(session).level(Level.SEVERE).error(ex)
                             .log(NutsMessage.jstyle("failed to parse NutsExtensionInformation from {0} : {1}", u, ex));
@@ -173,15 +173,14 @@ public class DefaultNutsWorkspaceExtensionModel {
     }
 
     public void onInitializeWorkspace(NutsWorkspaceInitInformation info, ClassLoader bootClassLoader, NutsSession session) {
-        //now will iterate over Extension classes to wire them ...
         objectFactory.discoverTypes(
-                session.id().setSession(session).parser().parse(info.getRuntimeBootDependencyNode().getId()),
+                NutsId.of(info.getRuntimeBootDependencyNode().getId(),session),
                 info.getRuntimeBootDependencyNode().getURL(),
                 bootClassLoader,
                 session);
         for (NutsClassLoaderNode idurl : info.getExtensionBootDependencyNodes()) {
             objectFactory.discoverTypes(
-                    session.id().setSession(session).parser().parse(idurl.getId()),
+                    NutsId.of(idurl.getId(),session),
                     idurl.getURL(),
                     bootClassLoader,
                     session);
@@ -252,13 +251,13 @@ public class DefaultNutsWorkspaceExtensionModel {
         return new DefaultNutsServiceLoader<T, B>(session, serviceType, criteriaType, classLoader);
     }
 
-    public <T extends NutsComponent<V>, V> T createSupported(Class<T> type, V supportCriteria, NutsSession session) {
-        return objectFactory.createSupported(type, supportCriteria, session);
+    public <T extends NutsComponent<V>, V> T createSupported(Class<T> type, V supportCriteria, boolean required, NutsSession session) {
+        return objectFactory.createSupported(type, supportCriteria, required, session);
     }
 
-    public <T extends NutsComponent<V>, V> T createSupported(Class<T> type, V supportCriteria, Class[] constructorParameterTypes, Object[] constructorParameters, NutsSession session) {
-        return objectFactory.createSupported(type, supportCriteria, constructorParameterTypes, constructorParameters, session);
-    }
+//    public <T extends NutsComponent<V>, V> T createSupported(Class<T> type, V supportCriteria, Class[] constructorParameterTypes, Object[] constructorParameters, boolean required, NutsSession session) {
+//        return objectFactory.createSupported(type, supportCriteria, constructorParameterTypes, constructorParameters, required, session);
+//    }
 
     public <T extends NutsComponent<V>, V> List<T> createAllSupported(Class<T> type, V supportCriteria, NutsSession session) {
         return objectFactory.createAllSupported(type, supportCriteria, session);
@@ -489,7 +488,7 @@ public class DefaultNutsWorkspaceExtensionModel {
 
     private boolean isLoadedClassPath(NutsDefinition file, NutsSession session) {
         //session = CoreNutsUtils.validateSession(session,ws);
-        if (file.getId().equalsShortId(session.id().parser().setLenient(false).parse(NutsConstants.Ids.NUTS_API))) {
+        if (file.getId().equalsShortId(NutsId.of(NutsConstants.Ids.NUTS_API,session))) {
             return true;
         }
         try {
@@ -567,10 +566,7 @@ public class DefaultNutsWorkspaceExtensionModel {
 //        throw new ClassCastException(NutsComponent.class.getName());
 //    }
     public NutsSessionTerminal createTerminal(NutsTerminalSpec spec, NutsSession session) {
-        NutsSystemTerminalBase termb= createSupported(NutsSystemTerminalBase.class, spec, session);
-        if (termb == null) {
-            throw new NutsExtensionNotFoundException(session, NutsSystemTerminalBase.class, "TerminalBase");
-        }
+        NutsSystemTerminalBase termb= createSupported(NutsSystemTerminalBase.class, spec, true, session);
         if (spec != null && spec.get("ignoreClass") != null && spec.get("ignoreClass").equals(termb.getClass())) {
             return null;
         }
@@ -607,7 +603,7 @@ public class DefaultNutsWorkspaceExtensionModel {
 
     protected URL expandURL(String url, NutsSession session) {
         try {
-            url = session.io().path(url).builder().withWorkspaceBaseDir().build().toString();
+            url = NutsPathBuilder.of(url,session).withWorkspaceBaseDir().build().toString();
             if (CoreIOUtils.isPathHttp(url)) {
                 return new URL(url);
             }
@@ -778,6 +774,10 @@ public class DefaultNutsWorkspaceExtensionModel {
 
 
     //TODO fix me!
+    public <T> T createFirst(Class<T> type,NutsSession session){
+        return objectFactory.createFirst(type, session);
+    }
+
     public <T> T createApiTypeInstance(Class<T> type,String name,Class[] argTypes,Object[] args,NutsSession session){
         if(name==null || name.equals("")){
             name="default";

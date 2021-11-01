@@ -1,8 +1,6 @@
 package net.thevpc.nuts.toolbox.ntomcat.util;
 
-import net.thevpc.nuts.NutsApplicationContext;
-import net.thevpc.nuts.NutsBlankable;
-import net.thevpc.nuts.NutsUtilStrings;
+import net.thevpc.nuts.*;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -141,8 +139,9 @@ public class TomcatUtils {
     }
 
     public static RunningTomcat[] getRunningInstances(NutsApplicationContext context) {
-        return context.getSession().io().ps().type("java").getResultList()
+        NutsSession session = context.getSession();
+        return NutsPs.of(session).type("java").getResultList()
                 .stream().filter((p) -> p.getName().equals("org.apache.catalina.startup.Bootstrap"))
-                .map(x -> new RunningTomcat(x, context.getSession())).toArray(RunningTomcat[]::new);
+                .map(x -> new RunningTomcat(x, session)).toArray(RunningTomcat[]::new);
     }
 }

@@ -95,7 +95,7 @@
 //    @Override
 //    public NutsPrintStream format(Locale l, String format, Object... args) {
 //        if(l==null){
-//            NutsText s = session.text().setSession(session).toText(
+//            NutsText s = NutsTexts.of(session).setSession(session).toText(
 //                    NutsMessage.cstyle(
 //                            format, args
 //                    )

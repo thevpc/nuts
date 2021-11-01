@@ -35,7 +35,7 @@ import net.thevpc.nuts.runtime.core.filters.CoreFilterUtils;
 /**
  * Created by vpc on 2/20/17.
  */
-public class NutsDescriptorFilterArch extends AbstractDescriptorFilter implements JsNutsDescriptorFilter {
+public class NutsDescriptorFilterArch extends AbstractDescriptorFilter {
 
     private final String arch;
 
@@ -63,11 +63,11 @@ public class NutsDescriptorFilterArch extends AbstractDescriptorFilter implement
         }
         return this;
     }
-
-    @Override
-    public String toJsNutsDescriptorFilterExpr() {
-        return "descriptor.matchesArch('" + CoreStringUtils.escapeQuoteStrings(arch) + "')";
-    }
+//
+//    @Override
+//    public String toJsNutsDescriptorFilterExpr() {
+//        return "descriptor.matchesArch('" + CoreStringUtils.escapeQuoteStrings(arch) + "')";
+//    }
 
     @Override
     public int hashCode() {

@@ -4,12 +4,13 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.util.CoreNutsUtils;
 import net.thevpc.nuts.runtime.standalone.io.DefaultNutsQuestion;
 import net.thevpc.nuts.runtime.standalone.io.progress.CProgressBar;
-import net.thevpc.nuts.spi.NutsPrototype;
+import net.thevpc.nuts.spi.NutsComponentScope;
+import net.thevpc.nuts.spi.NutsComponentScopeType;
 
 import java.io.*;
 import java.util.Scanner;
 
-@NutsPrototype
+@NutsComponentScope(NutsComponentScopeType.PROTOTYPE)
 public class DefaultNutsSessionTerminalFromSession extends AbstractNutsSessionTerminal {
 
     protected NutsWorkspace ws;
@@ -69,7 +70,7 @@ public class DefaultNutsSessionTerminalFromSession extends AbstractNutsSessionTe
             out = out();
         }
         if (out == null) {
-            out = session.io().stdout();
+            out = NutsPrintStreams.of(session).stdout();
         }
         if (this.in == null && parent != null) {
             if (this.out == null) {
@@ -96,7 +97,7 @@ public class DefaultNutsSessionTerminalFromSession extends AbstractNutsSessionTe
             out = out();
         }
         if (out == null) {
-            out = session.io().stdout();
+            out = NutsPrintStreams.of(session).stdout();
         }
 
         if (this.in == null && parent != null) {
@@ -111,12 +112,12 @@ public class DefaultNutsSessionTerminalFromSession extends AbstractNutsSessionTe
         Console cons = null;
         char[] passwd = null;
         if (in == null) {
-            in = session.io().stdin();
+            in = NutsInputStreams.of(session).stdin();
         }
         if ((
-                in == session.io().stdin()
+                in == NutsInputStreams.of(session).stdin()
         ) && ((cons = System.console()) != null)) {
-            String txt = session.text().toText(message).toString();
+            String txt = NutsTexts.of(session).toText(message).toString();
             if ((passwd = cons.readPassword("%s", txt)) != null) {
                 return passwd;
             } else {
@@ -240,7 +241,7 @@ public class DefaultNutsSessionTerminalFromSession extends AbstractNutsSessionTe
                 getProgressBar().printProgress(
                         Float.isNaN(progress) ? -1 :
                                 (int) (progress * 100),
-                        session.text().toText(message).toString(),
+                        NutsTexts.of(session).toText(message).toString(),
                         err()
                 );
             }

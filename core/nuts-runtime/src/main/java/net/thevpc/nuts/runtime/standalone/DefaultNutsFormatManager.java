@@ -2,11 +2,9 @@ package net.thevpc.nuts.runtime.standalone;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.format.DefaultNutsObjectFormat;
-import net.thevpc.nuts.runtime.core.format.elem.DefaultNutsElementFormat;
-import net.thevpc.nuts.runtime.core.format.tree.DefaultTreeFormat;
-import net.thevpc.nuts.runtime.core.format.props.DefaultPropertiesFormat;
+import net.thevpc.nuts.runtime.core.format.props.DefaultNutsPropertiesFormat;
+import net.thevpc.nuts.runtime.core.format.tree.DefaultNutsTreeFormat;
 import net.thevpc.nuts.runtime.core.format.table.DefaultTableFormat;
-import net.thevpc.nuts.runtime.core.format.text.DefaultNutsTextManager;
 import net.thevpc.nuts.runtime.core.format.text.DefaultNutsTextManagerModel;
 import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 
@@ -30,38 +28,14 @@ public class DefaultNutsFormatManager implements NutsFormatManager {
         return this;
     }
 
-//    @Override
-//    public NutsJsonFormat json() {
-//        return new DefaultNutsJsonFormat(ws);
-//    }
-//
-//    @Override
-//    public NutsXmlFormat xml() {
-//        return new DefaultNutsXmlFormat(ws);
-//    }
-    @Override
-    public NutsElementFormat element() {
-        return new DefaultNutsElementFormat(model).setSession(getSession());
-    }
-//
-//    @Override
-//    public NutsStringFormat str() {
-//        return new DefaultNutsStringFormat(ws);
-//    }
-
     @Override
     public NutsTreeFormat tree() {
-        return new DefaultTreeFormat(ws).setSession(getSession());
+        return new DefaultNutsTreeFormat(getSession());
     }
 
     @Override
     public NutsTableFormat table() {
-        return new DefaultTableFormat(ws).setSession(getSession());
-    }
-
-    @Override
-    public NutsElementFormat element(Object value) {
-        return element().setValue(value);
+        return new DefaultTableFormat(getSession());
     }
 
     @Override
@@ -81,7 +55,7 @@ public class DefaultNutsFormatManager implements NutsFormatManager {
 
     @Override
     public NutsPropertiesFormat props() {
-        return new DefaultPropertiesFormat(ws).setSession(getSession());
+        return new DefaultNutsPropertiesFormat(getSession());
     }
 
     @Override
@@ -91,7 +65,7 @@ public class DefaultNutsFormatManager implements NutsFormatManager {
 
     @Override
     public NutsObjectFormat object() {
-        return new DefaultNutsObjectFormat(ws).setSession(getSession());
+        return new DefaultNutsObjectFormat(getSession());
     }
 
 }

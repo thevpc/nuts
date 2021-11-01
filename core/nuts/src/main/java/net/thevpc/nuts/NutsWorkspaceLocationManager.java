@@ -77,7 +77,7 @@ public interface NutsWorkspaceLocationManager {
 
     String getHomeLocation(NutsHomeLocation location);
 
-    String getWorkspaceLocation();
+    NutsPath getWorkspaceLocation();
 
     NutsWorkspaceLocationManager setStoreLocation(NutsStoreLocation folderType, String location);
 

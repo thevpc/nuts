@@ -4,6 +4,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.bundles.io.InputStreamMetadataAwareImpl;
 import net.thevpc.nuts.runtime.bundles.io.URLBuilder;
 import net.thevpc.nuts.runtime.core.format.DefaultFormatBase;
+import net.thevpc.nuts.spi.NutsSupportLevelContext;
 
 import java.io.File;
 import java.io.InputStream;
@@ -26,7 +27,7 @@ public class NutsCompressedPath extends NutsPathBase {
         super(base.getSession());
         this.base = base;
         this.compressedForm = compressUrl(base.toString());
-        this.formattedCompressedForm = base.getSession().text().ofStyled(compressedForm, NutsTextStyle.path());
+        this.formattedCompressedForm = NutsTexts.of(base.getSession()).ofStyled(compressedForm, NutsTextStyle.path());
     }
 
     public NutsCompressedPath(NutsPath base, String compressedForm, NutsString formattedCompressedForm) {
@@ -295,12 +296,12 @@ public class NutsCompressedPath extends NutsPathBase {
         private final NutsCompressedPath p;
 
         public MyPathFormat(NutsCompressedPath p) {
-            super(p.getSession().getWorkspace(), "path");
+            super(p.getSession(), "path");
             this.p = p;
         }
 
         public NutsString asFormattedString() {
-            return p.base.getSession().text().ofStyled(p.compressedForm, NutsTextStyle.path());
+            return NutsTexts.of(p.base.getSession()).ofStyled(p.compressedForm, NutsTextStyle.path());
         }
 
         @Override
@@ -311,6 +312,11 @@ public class NutsCompressedPath extends NutsPathBase {
         @Override
         public boolean configureFirst(NutsCommandLine commandLine) {
             return false;
+        }
+
+        @Override
+        public int getSupportLevel(NutsSupportLevelContext<Object> context) {
+            return DEFAULT_SUPPORT;
         }
     }
 

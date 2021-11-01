@@ -345,7 +345,7 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
                             getTerminal().setOut(getTerminal().out().setMode(NutsTerminalMode.FORMATTED));
                             getTerminal().setErr(getTerminal().err().setMode(NutsTerminalMode.FORMATTED));
                         } else {
-                            NutsArgument bb = commandLine().createArgument(v);
+                            NutsArgument bb = NutsArgument.of(v,this);
                             Boolean b = bb.getAll().getBoolean(null);
                             if (b != null) {
                                 if (b) {
@@ -669,7 +669,7 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
         try {
             DefaultNutsSession cloned = (DefaultNutsSession) clone();
             cloned.ws = new NutsWorkspaceSessionAwareImpl(cloned, ws);
-            cloned.terminal = terminal == null ? null : cloned.term().createTerminal(terminal);
+            cloned.terminal = terminal == null ? null : NutsSessionTerminal.of(terminal,cloned);
             cloned.properties = properties == null ? null : properties.copy();
             cloned.outputFormatOptions = outputFormatOptions == null ? null : new ArrayList<>(outputFormatOptions);
             cloned.listeners = null;
@@ -1003,7 +1003,7 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
         if (!iterableOut) {
             return null;
         }
-        return elem().setContentType(getOutputFormat()).iter(out());
+        return NutsElements.of(this).setContentType(getOutputFormat()).iter(out());
 //        if (iterFormatHandler == null) {
 //            return null;
 //        }
@@ -1413,11 +1413,6 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
     }
 
     @Override
-    public NutsWorkspaceAppsManager apps() {
-        return getWorkspace().apps();
-    }
-
-    @Override
     public NutsWorkspaceExtensionManager extensions() {
         return getWorkspace().extensions();
     }
@@ -1437,69 +1432,19 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
         return getWorkspace().security();
     }
 
-    @Override
-    public NutsFilterManager filters() {
-        return getWorkspace().filters();
-    }
-
-    @Override
-    public NutsIOManager io() {
-        return getWorkspace().io();
-    }
-
-    @Override
-    public NutsLogManager log() {
-        return getWorkspace().log();
-    }
 
     @Override
     public NutsWorkspaceEventManager events() {
         return getWorkspace().events();
     }
 
-    @Override
-    public NutsCommandLineManager commandLine() {
-        return getWorkspace().commandLine();
-    }
-
-    @Override
-    public NutsIdManager id() {
-        return getWorkspace().id();
-    }
-
-    @Override
-    public NutsVersionManager version() {
-        return getWorkspace().version();
-    }
-
-    @Override
     public NutsInfoFormat info() {
         return getWorkspace().info();
     }
 
     @Override
-    public NutsDescriptorManager descriptor() {
-        return getWorkspace().descriptor();
-    }
-
-    @Override
-    public NutsDependencyManager dependency() {
-        return getWorkspace().dependency();
-    }
-
-    @Override
     public NutsFormatManager formats() {
         return getWorkspace().formats();
-    }
-
-    @Override
-    public NutsConcurrentManager concurrent() {
-        return getWorkspace().concurrent();
-    }
-
-    @Override
-    public NutsUtilManager util() {
-        return getWorkspace().util();
     }
 
     @Override
@@ -1525,21 +1470,6 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
     @Override
     public NutsBootManager boot() {
         return getWorkspace().boot();
-    }
-
-    @Override
-    public NutsTerminalManager term() {
-        return getWorkspace().term();
-    }
-
-    @Override
-    public NutsTextManager text() {
-        return getWorkspace().text();
-    }
-
-    @Override
-    public NutsElementFormat elem() {
-        return getWorkspace().elem();
     }
 
     @Override

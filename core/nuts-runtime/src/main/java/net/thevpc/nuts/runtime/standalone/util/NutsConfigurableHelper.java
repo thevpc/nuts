@@ -49,7 +49,7 @@ public class NutsConfigurableHelper {
      * @return {@code this} instance
      */
     public static <T> T configure(NutsCommandLineConfigurable c, NutsSession session, boolean skipUnsupported, String[] args, String commandName) {
-        c.configure(skipUnsupported, session.commandLine().create(args).setCommandName(commandName));
+        c.configure(skipUnsupported, NutsCommandLine.of(args,session).setCommandName(commandName));
         return (T) c;
     }
 

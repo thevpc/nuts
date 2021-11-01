@@ -79,7 +79,7 @@ public class MavenRepositoryFolderHelper {
 
     protected NutsLogger _LOG(NutsSession session) {
         if (LOG == null) {
-            LOG = session.log().of(MavenRepositoryFolderHelper.class);
+            LOG = NutsLogger.of(MavenRepositoryFolderHelper.class,session);
         }
         return LOG;
     }
@@ -93,7 +93,7 @@ public class MavenRepositoryFolderHelper {
         Path cacheContent = getIdLocalFile(id, session);
         if (cacheContent != null && Files.exists(cacheContent)) {
             return new NutsDefaultContent(
-                    session.io().path(cacheContent.toString()), true, false);
+                    NutsPath.of(cacheContent,session), true, false);
         }
         return null;
     }

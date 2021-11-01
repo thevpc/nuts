@@ -1,14 +1,12 @@
 package net.thevpc.nuts.runtime.standalone.security;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.spi.NutsAuthenticationAgent;
-import net.thevpc.nuts.spi.NutsSingleton;
-import net.thevpc.nuts.spi.NutsSupportLevelContext;
+import net.thevpc.nuts.spi.*;
 
 import java.util.Arrays;
 import java.util.Map;
 
-@NutsSingleton
+@NutsComponentScope(NutsComponentScopeType.WORKSPACE)
 public class PlainNutsAuthenticationAgent implements NutsAuthenticationAgent {
 
     private NutsWorkspace ws;

@@ -27,15 +27,16 @@
 package net.thevpc.nuts;
 
 import net.thevpc.nuts.boot.NutsApiUtils;
+import net.thevpc.nuts.spi.NutsComponent;
 
 /**
  * @app.category Base
  */
-public interface NutsDependencyParser {
+public interface NutsDependencyParser extends NutsComponent<Object> {
 
     static NutsDependencyParser of(NutsSession session) {
         NutsApiUtils.checkSession(session);
-        return session.dependency().parser();
+        return session.extensions().createSupported(NutsDependencyParser.class,true,null);
     }
 
     boolean isLenient();
@@ -49,8 +50,6 @@ public interface NutsDependencyParser {
      * @param dependency dependency
      * @return new instance of parsed dependency
      */
-    NutsDependency parseDependency(String dependency);
+    NutsDependency parse(String dependency);
 
-
-    boolean parseOptional(String optional);
 }

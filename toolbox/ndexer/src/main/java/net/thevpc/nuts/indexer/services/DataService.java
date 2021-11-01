@@ -143,7 +143,7 @@ public class DataService {
                     .setContent(false)
                     .getResultIds().toList();
             Map<String, String> oldRow = new HashMap<>(row);
-            row.put("allDependencies", session.elem().setContentType(NutsContentType.JSON)
+            row.put("allDependencies", NutsElements.of(session).json()
                     .setValue(allDependencies.stream().map(Object::toString)
                             .collect(Collectors.toList()))
                             .setNtf(false)
@@ -152,9 +152,9 @@ public class DataService {
             );
             updateData(dirPath, oldRow, row);
         }
-        String[] array = session.elem().setContentType(NutsContentType.JSON).parse(new StringReader(row.get("allDependencies")), String[].class);
+        String[] array = NutsElements.of(session).json().parse(new StringReader(row.get("allDependencies")), String[].class);
         List<Map<String, String>> allDependencies = Arrays.stream(array)
-                .map(s -> NutsIndexerUtils.nutsIdToMap(session.id().parser().parse(s)))
+                .map(s -> NutsIndexerUtils.nutsIdToMap(NutsId.of(s,session)))
                 .collect(Collectors.toList());
         return allDependencies;
     }
@@ -165,9 +165,9 @@ public class DataService {
             return null;
         }
         Map<String, String> row = rows.get(0);
-        String[] array = session.elem().setContentType(NutsContentType.JSON).parse(new StringReader(row.get("dependencies")), String[].class);
+        String[] array = NutsElements.of(session).json().parse(new StringReader(row.get("dependencies")), String[].class);
         List<Map<String, String>> dependencies = Arrays.stream(array)
-                .map(s -> NutsIndexerUtils.nutsIdToMap(session.id().parser().parse(s)))
+                .map(s -> NutsIndexerUtils.nutsIdToMap(NutsId.of(s,session)))
                 .collect(Collectors.toList());
         return dependencies;
     }

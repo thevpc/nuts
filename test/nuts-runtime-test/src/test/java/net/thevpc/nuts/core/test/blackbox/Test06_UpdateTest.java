@@ -16,7 +16,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.file.*;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -190,19 +189,19 @@ public class Test06_UpdateTest {
                 "--json",
                 "version"
         );
-        TestUtils.println(uws.commandLine().create(b.createProcessCommandLine()).toString());
+        TestUtils.println(NutsCommandLine.of(b.createProcessCommandLine(),uws).toString());
 
         String ss = uws.exec().setExecutionType(NutsExecutionType.SYSTEM).addCommand(b.createProcessCommandLine()).grabOutputString().run().getOutputString();
         TestUtils.println("================");
         TestUtils.println(ss);
-        Map m = uws.elem().setContentType(NutsContentType.JSON).parse(ss, Map.class);
+        Map m = NutsElements.of(uws).json().parse(ss, Map.class);
         Assertions.assertEquals(newApiVersion, m.get("nuts-api-version"));
         Assertions.assertEquals(newRuntimeVersion, m.get("nuts-runtime-version"));
     }
 
     private Path replaceAPIJar(Path p, FromTo api, NutsSession session) {
         try {
-            Path zipFilePath = session.io().tmp()
+            Path zipFilePath = NutsTmp.of(session)
                     .createTempFile(".zip").toFile();
             Files.copy(p, zipFilePath, StandardCopyOption.REPLACE_EXISTING);
             try (FileSystem fs = FileSystems.newFileSystem(zipFilePath, (ClassLoader) null)) {
@@ -241,7 +240,7 @@ public class Test06_UpdateTest {
 
     private Path replaceRuntimeJar(Path p, FromTo api, FromTo impl, NutsSession session) {
         try {
-            Path zipFilePath = session.io().tmp()
+            Path zipFilePath = NutsTmp.of(session)
                     .createTempFile(".zip").toFile();
             Files.copy(p, zipFilePath, StandardCopyOption.REPLACE_EXISTING);
             try (FileSystem fs = FileSystems.newFileSystem(zipFilePath, (ClassLoader) null)) {

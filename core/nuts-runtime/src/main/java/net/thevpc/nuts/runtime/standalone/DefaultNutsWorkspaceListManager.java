@@ -15,20 +15,20 @@ import java.util.*;
  */
 public class DefaultNutsWorkspaceListManager implements NutsWorkspaceListManager {
 
-    private final NutsSession defaultWorkspace;
+    private final NutsSession defaultSession;
     private final String name;
     private Map<String, NutsWorkspaceLocation> workspaces = new LinkedHashMap<>();
     private NutsWorkspaceListConfig config;
 
     public DefaultNutsWorkspaceListManager(NutsSession session, String name) {
-        this.defaultWorkspace = session;
+        this.defaultSession = session;
         if (NutsBlankable.isBlank(name)) {
             name = "default";
         }
         this.name = name.trim();
         Path file = getConfigFile(session);
         if (Files.exists(file)) {
-            this.config = this.defaultWorkspace.elem().setContentType(NutsContentType.JSON).parse(file, NutsWorkspaceListConfig.class);
+            this.config = NutsElements.of(this.defaultSession).json().parse(file, NutsWorkspaceListConfig.class);
             for (NutsWorkspaceLocation var : this.config.getWorkspaces()) {
                 this.workspaces.put(var.getUuid(), var);
             }
@@ -40,17 +40,16 @@ public class DefaultNutsWorkspaceListManager implements NutsWorkspaceListManager
                     new NutsWorkspaceLocation()
                             .setUuid(session.getWorkspace().getUuid())
                             .setName(NutsConstants.Names.DEFAULT_WORKSPACE_NAME)
-                            .setLocation(this.defaultWorkspace.locations().getWorkspaceLocation())
+                            .setLocation(this.defaultSession.locations().getWorkspaceLocation().toString())
             );
             this.save(session);
         }
     }
 
     private Path getConfigFile(NutsSession session) {
-        return Paths.get(this.defaultWorkspace
+        return Paths.get(session
                         .locations()
-                        .getStoreLocation(this.defaultWorkspace
-                                        .id().setSession(session).resolveId(DefaultNutsWorkspaceListManager.class),
+                        .getStoreLocation(NutsIdResolver.of(session).resolveId(DefaultNutsWorkspaceListManager.class),
                                 NutsStoreLocation.CONFIG))
                 .resolve(name + "-nuts-workspace-list.json");
     }
@@ -81,10 +80,8 @@ public class DefaultNutsWorkspaceListManager implements NutsWorkspaceListManager
         NutsSession ss = this.createWorkspace(path);
         NutsWorkspaceLocation workspaceLocation = new NutsWorkspaceLocation()
                 .setUuid(ss.getWorkspace().getUuid())
-                .setName(
-                        Paths.get(ss.locations().getWorkspaceLocation())
-                                .getFileName().toString())
-                .setLocation(ss.locations().getWorkspaceLocation());
+                .setName(ss.locations().getWorkspaceLocation().getName())
+                .setLocation(ss.locations().getWorkspaceLocation().toString());
         workspaces.put(ss.getWorkspace().getUuid(), workspaceLocation);
         this.save(session);
         return ss;
@@ -105,7 +102,7 @@ public class DefaultNutsWorkspaceListManager implements NutsWorkspaceListManager
                 ? null
                 : new ArrayList<>(this.workspaces.values()));
         Path file = getConfigFile(session);
-        this.defaultWorkspace.elem().setContentType(NutsContentType.JSON).setValue(this.config)
+        NutsElements.of(this.defaultSession).json().setValue(this.config)
                 .setNtf(false)
                 .print(file);
     }
@@ -117,7 +114,7 @@ public class DefaultNutsWorkspaceListManager implements NutsWorkspaceListManager
 
     private NutsSession createWorkspace(String path) {
         return Nuts.openWorkspace(
-                this.defaultWorkspace.config().optionsBuilder()
+                this.defaultSession.config().optionsBuilder()
                         .setWorkspace(path)
                         .setOpenMode(NutsOpenMode.OPEN_OR_CREATE)
                         .setSkipCompanions(true)

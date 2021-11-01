@@ -25,6 +25,10 @@
  */
 package net.thevpc.nuts;
 
+import net.thevpc.nuts.spi.NutsComponent;
+import net.thevpc.nuts.spi.NutsComponentScope;
+import net.thevpc.nuts.spi.NutsComponentScopeType;
+
 /**
  * Filters helper
  *
@@ -32,11 +36,8 @@ package net.thevpc.nuts;
  * @app.category Config
  * @since 0.8.0
  */
-public interface NutsTypedFilters<T extends NutsFilter> {
-    NutsSession getSession();
-
-    NutsTypedFilters setSession(NutsSession session);
-
+@NutsComponentScope(NutsComponentScopeType.SESSION)
+public interface NutsTypedFilters<T extends NutsFilter> extends NutsComponent<Object> {
     T nonnull(NutsFilter filter);
 
     T always();

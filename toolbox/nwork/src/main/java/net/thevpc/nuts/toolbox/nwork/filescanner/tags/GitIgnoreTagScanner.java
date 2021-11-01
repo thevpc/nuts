@@ -1,9 +1,9 @@
 package net.thevpc.nuts.toolbox.nwork.filescanner.tags;
 
+import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.toolbox.nwork.filescanner.DefaultTagInfo;
 import net.thevpc.nuts.toolbox.nwork.filescanner.TagInfo;
 import net.thevpc.nuts.toolbox.nwork.filescanner.TagScanner;
-import net.thevpc.nuts.toolbox.nwork.filescanner.eval.EvalUtils;
 
 import java.nio.file.Path;
 import java.util.*;
@@ -21,7 +21,7 @@ public class GitIgnoreTagScanner implements TagScanner {
         GitIgnoreFile ii = (GitIgnoreFile) shared.get(GitIgnoreFile.class.getName());
         if (path.getFileName().toString().equalsIgnoreCase(".gitignore")) {
             if (ii == null) {
-                ii = new GitIgnoreFile();
+                ii = new GitIgnoreFile(ii.session);
             }
             shared.put(GitIgnoreFile.class.getName(), ii);
             ii.loadFrom(path);
@@ -45,6 +45,8 @@ public class GitIgnoreTagScanner implements TagScanner {
 
 
     public static class GitIgnoreFile extends PathFilterList {
-
+        public GitIgnoreFile(NutsSession session) {
+            super(session);
+        }
     }
 }

@@ -29,10 +29,7 @@ package net.thevpc.nuts.runtime.standalone.parsers;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.model.DefaultNutsArtifactCall;
 import net.thevpc.nuts.runtime.core.format.json.JsonStringBuffer;
-import net.thevpc.nuts.spi.NutsDescriptorContentParserComponent;
-import net.thevpc.nuts.spi.NutsDescriptorContentParserContext;
-import net.thevpc.nuts.spi.NutsSingleton;
-import net.thevpc.nuts.spi.NutsSupportLevelContext;
+import net.thevpc.nuts.spi.*;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -45,7 +42,7 @@ import java.util.Set;
 /**
  * Created by vpc on 1/15/17.
  */
-@NutsSingleton
+@NutsComponentScope(NutsComponentScopeType.WORKSPACE)
 public class NshDescriptorContentParserComponent implements NutsDescriptorContentParserComponent {
 
     public static NutsId NSH;
@@ -66,7 +63,8 @@ public class NshDescriptorContentParserComponent implements NutsDescriptorConten
     @Override
     public int getSupportLevel(NutsSupportLevelContext<NutsDescriptorContentParserContext> criteria) {
         if(NSH==null){
-            NSH=criteria.getSession().id().parser().parse("nsh");
+            NutsSession session = criteria.getSession();
+            NSH= NutsId.of("nsh",session);
         }
         String e = NutsUtilStrings.trim(criteria.getConstraints().getFileExtension());
         switch (e){
@@ -150,13 +148,13 @@ public class NshDescriptorContentParserComponent implements NutsDescriptorConten
                 }
             }
             if (comment.toString().trim().isEmpty()) {
-                return session.descriptor().descriptorBuilder()
-                        .setId(session.id().parser().parse("temp:nsh#1.0"))
+                return NutsDescriptorBuilder.of(session)
+                        .setId(NutsId.of("temp:nsh#1.0",session))
                         .setPackaging("nsh")
-                        .setExecutor(new DefaultNutsArtifactCall(session.id().parser().parse("net.thevpc.nuts.toolbox:nsh")))
+                        .setExecutor(new DefaultNutsArtifactCall(NutsId.of("net.thevpc.nuts.toolbox:nsh",session)))
                         .build();
             }
-            return session.descriptor().parser().parse(comment.getValidString());
+            return NutsDescriptorParser.of(session).parse(comment.getValidString());
         } finally {
             if (r != null) {
                 r.close();

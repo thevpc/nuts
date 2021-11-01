@@ -15,7 +15,7 @@ class NshAutoCompleter implements NutsCommandAutoCompleteResolver {
 
         if (wordIndex == 0) {
             for (JShellBuiltin command : fileContext.builtins().getAll()) {
-                candidates.add(session.commandLine().createCandidate(command.getName()).build());
+                candidates.add(new NutsArgumentCandidate(command.getName()));
             }
         } else {
             List<String> autoCompleteWords = new ArrayList<>(Arrays.asList(commandline.toStringArray()));
@@ -32,7 +32,7 @@ class NshAutoCompleter implements NutsCommandAutoCompleteResolver {
                         if (NutsBlankable.isBlank(display)) {
                             display = value;
                         }
-                        candidates.add(session.commandLine().createCandidate(value).setDisplay(display).build());
+                        candidates.add(new NutsArgumentCandidate(value,display));
                     }
                 }
             }

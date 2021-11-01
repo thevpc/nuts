@@ -262,7 +262,7 @@ public class CoreNutsWorkspaceOptionsFormat implements NutsWorkspaceOptionsForma
                 }
             }
         }
-        return session.commandLine().create(arguments.toArray(new String[0]));
+        return NutsCommandLine.of(arguments,session);
     }
 
     @Override
@@ -606,7 +606,7 @@ public class CoreNutsWorkspaceOptionsFormat implements NutsWorkspaceOptionsForma
     public NutsVersion getApiVersionObj() {
         if (apiVersionObj == null) {
             if (apiVersion != null) {
-                apiVersionObj = session.version().parser().parse(apiVersion);
+                apiVersionObj = NutsVersion.of(apiVersion,session);
             }
         }
         return apiVersionObj;

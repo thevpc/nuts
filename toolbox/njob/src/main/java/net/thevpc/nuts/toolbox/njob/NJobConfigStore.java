@@ -18,12 +18,13 @@ import java.util.stream.StreamSupport;
 
 public class NJobConfigStore {
     private NutsApplicationContext context;
-    private NutsElementFormat json;
+    private NutsElements json;
     private Path dbPath;
 
     public NJobConfigStore(NutsApplicationContext applicationContext) {
         this.context = applicationContext;
-        json = applicationContext.getSession().elem().setContentType(NutsContentType.JSON).setNtf(false);
+        NutsSession session = applicationContext.getSession();
+        json = NutsElements.of(session).json().setNtf(false);
         json.setCompact(false);
         //ensure we always consider the latest config version
         dbPath = Paths.get(applicationContext.getVersionFolderFolder(NutsStoreLocation.CONFIG, NJobConfigVersions.CURRENT))

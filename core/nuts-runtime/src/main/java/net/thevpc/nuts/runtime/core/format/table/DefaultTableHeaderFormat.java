@@ -1,9 +1,6 @@
 package net.thevpc.nuts.runtime.core.format.table;
 
-import net.thevpc.nuts.NutsPositionType;
-import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.NutsTableCellFormat;
-import net.thevpc.nuts.NutsTextStyle;
+import net.thevpc.nuts.*;
 
 /**
  *
@@ -19,7 +16,7 @@ public class DefaultTableHeaderFormat implements NutsTableCellFormat {
 
     @Override
     public String format(int row, int col, Object value, NutsSession session) {
-        return session.text().builder().append(String.valueOf(value),
+        return NutsTexts.of(session).builder().append(String.valueOf(value),
                 NutsTextStyle.primary1()
                 ).toString();
     }

@@ -1,15 +1,12 @@
 package net.thevpc.nuts.runtime.core.terminals;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.spi.NutsPrototype;
-import net.thevpc.nuts.spi.NutsSupportLevelContext;
-import net.thevpc.nuts.spi.NutsSystemTerminalBase;
-import net.thevpc.nuts.spi.NutsTerminalSpec;
+import net.thevpc.nuts.spi.*;
 
 import java.io.InputStream;
 import java.util.Scanner;
 
-@NutsPrototype
+@NutsComponentScope(NutsComponentScopeType.PROTOTYPE)
 public class DefaultNutsSystemTerminalBase implements NutsSystemTerminalBase {
 
     private NutsLogger LOG;
@@ -28,7 +25,7 @@ public class DefaultNutsSystemTerminalBase implements NutsSystemTerminalBase {
 
     private NutsLogger _LOG() {
         if (LOG == null && session != null) {
-            LOG = session.log().of(NutsSystemTerminalBase.class);
+            LOG = NutsLogger.of(NutsSystemTerminalBase.class,session);
         }
         return LOG;
     }
@@ -67,7 +64,7 @@ public class DefaultNutsSystemTerminalBase implements NutsSystemTerminalBase {
 //            getProgressBar().printProgress(
 //                    Float.isNaN(progress)?-1:
 //                            (int)(progress*100),
-//                    session.text().toText(NutsMessage.cstyle(prompt,params)).toString(),
+//                    NutsTexts.of(session).toText(NutsMessage.cstyle(prompt,params)).toString(),
 //                    getErr()
 //            );
 //        }
@@ -80,7 +77,7 @@ public class DefaultNutsSystemTerminalBase implements NutsSystemTerminalBase {
 //            getParent().printProgress(prompt, params);
 //        }else{
 //            getProgressBar().printProgress(-1,
-//                    session.text().toText(NutsMessage.cstyle(prompt,params)).toString(),
+//                    NutsTexts.of(session).toText(NutsMessage.cstyle(prompt,params)).toString(),
 //                    getErr()
 //            );
 //        }
@@ -120,9 +117,9 @@ public class DefaultNutsSystemTerminalBase implements NutsSystemTerminalBase {
                     terminalMode = NutsTerminalMode.FORMATTED;
                 }
             }
-            this.out = session.io().stdout().setMode(terminalMode);
-            this.err = session.io().stderr().setMode(terminalMode);
-            this.in = session.io().stdin();
+            this.out = NutsPrintStreams.of(session).stdout().setMode(terminalMode);
+            this.err = NutsPrintStreams.of(session).stderr().setMode(terminalMode);
+            this.in = NutsInputStreams.of(session).stdin();
             this.scanner = new Scanner(this.in);
         } else {
             //on uninstall do nothing
@@ -137,7 +134,7 @@ public class DefaultNutsSystemTerminalBase implements NutsSystemTerminalBase {
             out = getOut();
         }
         if (out == null) {
-            out = session.io().stdout();
+            out = NutsPrintStreams.of(session).stdout();
         }
         if(message!=null) {
             out.printf("%s", message);
@@ -152,7 +149,7 @@ public class DefaultNutsSystemTerminalBase implements NutsSystemTerminalBase {
             out = getOut();
         }
         if (out == null) {
-            out = session.io().stdout();
+            out = NutsPrintStreams.of(session).stdout();
         }
         if(message!=null) {
             out.printf("%s", message);

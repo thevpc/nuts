@@ -433,7 +433,7 @@ public class NMysqlMain implements NdbSupport {
             commandLine.required(NutsMessage.cstyle("required --server option"));
         }
         NutsSession session = service.getContext().getSession();
-        NutsTextManager factory = session.text();
+        NutsTexts factory = NutsTexts.of(session);
         if (commandLine.isExecMode()) {
             if (!expectedRemote) {
                 LocalMysqlConfigService c = service.loadLocalMysqlConfig(name.getConfigName(), add ? NutsOpenMode.OPEN_OR_CREATE : NutsOpenMode.OPEN_OR_ERROR);
@@ -786,7 +786,7 @@ public class NMysqlMain implements NdbSupport {
     }
 
     public Object toObject(String dbName, String confName, LocalMysqlDatabaseConfig config, boolean describe, boolean plain, NutsApplicationContext context) {
-        NutsTextManager text = context.getSession().text();
+        NutsTexts text = NutsTexts.of(context.getSession());
         if (!describe) {
             if (plain) {
                 return text.builder()
@@ -810,7 +810,7 @@ public class NMysqlMain implements NdbSupport {
     }
 
     public Object toObject(String dbName, String confName, RemoteMysqlDatabaseConfig config, boolean describe, boolean plain, NutsApplicationContext context) {
-        NutsTextManager text = context.getSession().text();
+        NutsTexts text = NutsTexts.of(context.getSession());
         if (!describe) {
             if (plain) {
                 return text.builder()

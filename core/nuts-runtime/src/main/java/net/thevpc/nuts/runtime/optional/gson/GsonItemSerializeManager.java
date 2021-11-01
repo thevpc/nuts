@@ -48,7 +48,7 @@
 //import net.thevpc.nuts.runtime.core.format.elem.NutsElementFactoryContext;
 //import net.thevpc.nuts.runtime.core.format.elem.NutsElementStreamFormat;
 //import net.thevpc.nuts.NutsElementEntry;
-//import net.thevpc.nuts.NutsElementFormat;
+//import net.thevpc.nuts.NutsElements;
 //import net.thevpc.nuts.NutsElementType;
 //import net.thevpc.nuts.NutsObjectElement;
 //
@@ -70,7 +70,7 @@
 //    public NutsElement gsonToElement(JsonElement o,NutsElementFactoryContext context) {
 //        JsonElement je = (JsonElement) o;
 //        NutsWorkspace ws = context.getWorkspace();
-//        NutsElementFormat element = ws.elem().setSession(context.getSession());
+//        NutsElements element = ws.elem().setSession(context.getSession());
 //        if (je.isJsonNull()) {
 //            return element.forNull();
 //        } else if (je.isJsonPrimitive()) {

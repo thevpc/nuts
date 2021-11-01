@@ -85,7 +85,7 @@ public enum NutsSupportMode implements NutsEnum {
 
     public boolean acceptCondition(NutsSupportCondition request, NutsSession session) {
         if (session == null) {
-            throw new IllegalArgumentException("missing session");
+            throw new NutsMissingSessionException();
         }
         if (request == null) {
             request = NutsSupportCondition.NEVER;

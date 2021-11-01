@@ -50,7 +50,7 @@ public abstract class AbstractNutsRepositoryBase extends AbstractNutsRepository 
 
     public AbstractNutsRepositoryBase(NutsAddRepositoryOptions options, NutsSession session, NutsRepository parentRepository, NutsSpeedQualifier speed, boolean supportedMirroring, String repositoryType) {
         this.initSession=session;
-        LOG = session.log().of(AbstractNutsRepositoryBase.class);
+        LOG = NutsLogger.of(AbstractNutsRepositoryBase.class,session);
         init(options, session, parentRepository, speed, supportedMirroring, repositoryType);
     }
 

@@ -1,16 +1,15 @@
 package net.thevpc.nuts.runtime.core.filters;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.core.filters.dependency.InternalNutsDependencyFilterManager;
+import net.thevpc.nuts.runtime.core.filters.dependency.InternalNutsDependencyFilters;
 import net.thevpc.nuts.runtime.core.filters.dependency.NutsDependencyFilterNone;
-import net.thevpc.nuts.runtime.core.filters.descriptor.InternalNutsDescriptorFilterManager;
+import net.thevpc.nuts.runtime.core.filters.descriptor.InternalNutsDescriptorFilters;
 import net.thevpc.nuts.runtime.core.filters.descriptor.NutsDescriptorFilterNone;
-import net.thevpc.nuts.runtime.core.filters.id.InternalNutsIdFilterManager;
 import net.thevpc.nuts.runtime.core.filters.id.NutsIdFilterNone;
-import net.thevpc.nuts.runtime.core.filters.installstatus.InternalNutsInstallStatusFilterManager;
-import net.thevpc.nuts.runtime.core.filters.repository.InternalNutsRepositoryFilterManager;
+import net.thevpc.nuts.runtime.core.filters.installstatus.InternalNutsInstallStatusFilters;
+import net.thevpc.nuts.runtime.core.filters.repository.InternalNutsRepositoryFilters;
 import net.thevpc.nuts.runtime.core.filters.repository.NutsRepositoryFilterNone;
-import net.thevpc.nuts.runtime.core.filters.version.InternalNutsVersionFilterManager;
+import net.thevpc.nuts.runtime.core.filters.version.InternalNutsVersionFilters;
 import net.thevpc.nuts.runtime.core.filters.version.NutsVersionFilterNone;
 
 import java.util.*;
@@ -46,22 +45,22 @@ public class DefaultNutsFilterModel {
         }
         switch (type.getName()) {
             case "net.thevpc.nuts.NutsDependencyFilter": {
-                return dependency().setSession(session);
+                return NutsDependencyFilters.of(session);
             }
             case "net.thevpc.nuts.NutsRepositoryFilter": {
-                return repository().setSession(session);
+                return NutsRepositoryFilters.of(session);
             }
             case "net.thevpc.nuts.NutsIdFilter": {
-                return id().setSession(session);
+                return NutsIdFilters.of(session);
             }
             case "net.thevpc.nuts.NutsVersionFilter": {
-                return version().setSession(session);
+                return NutsVersionFilters.of(session);
             }
             case "net.thevpc.nuts.NutsDescriptorFilter": {
-                return descriptor().setSession(session);
+                return NutsDescriptorFilters.of(session);
             }
             case "net.thevpc.nuts.NutsInstallStatusFilter": {
-                return installStatus().setSession(session);
+                return NutsInstallStatusFilters.of(session);
             }
         }
         throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("unsupported filter type: %s", type));
@@ -137,7 +136,7 @@ public class DefaultNutsFilterModel {
             case "net.thevpc.nuts.NutsDependencyFilter": {
                 List<NutsDependencyFilter> all = new ArrayList<>();
                 for (NutsFilter other : others) {
-                    NutsDependencyFilter a = dependency().from(other);
+                    NutsDependencyFilter a = NutsDependencyFilters.of(session).from(other);
                     if (a != null) {
                         all.add(a);
                     }
@@ -150,7 +149,7 @@ public class DefaultNutsFilterModel {
             case "net.thevpc.nuts.NutsRepositoryFilter": {
                 List<NutsRepositoryFilter> all = new ArrayList<>();
                 for (NutsFilter other : others) {
-                    NutsRepositoryFilter a = repository().from(other);
+                    NutsRepositoryFilter a = NutsRepositoryFilters.of(session).from(other);
                     if (a != null) {
                         all.add(a);
                     }
@@ -163,7 +162,7 @@ public class DefaultNutsFilterModel {
             case "net.thevpc.nuts.NutsIdFilter": {
                 List<NutsIdFilter> all = new ArrayList<>();
                 for (NutsFilter other : others) {
-                    NutsIdFilter a = id().from(other);
+                    NutsIdFilter a = NutsIdFilters.of(session).from(other);
                     if (a != null) {
                         all.add(a);
                     }
@@ -176,7 +175,7 @@ public class DefaultNutsFilterModel {
             case "net.thevpc.nuts.NutsVersionFilter": {
                 List<NutsVersionFilter> all = new ArrayList<>();
                 for (NutsFilter other : others) {
-                    NutsVersionFilter a = version().from(other);
+                    NutsVersionFilter a = NutsVersionFilters.of(session).from(other);
                     if (a != null) {
                         all.add(a);
                     }
@@ -189,7 +188,7 @@ public class DefaultNutsFilterModel {
             case "net.thevpc.nuts.NutsDescriptorFilter": {
                 List<NutsDescriptorFilter> all = new ArrayList<>();
                 for (NutsFilter other : others) {
-                    NutsDescriptorFilter a = descriptor().from(other);
+                    NutsDescriptorFilter a = NutsDescriptorFilters.of(session).from(other);
                     if (a != null) {
                         all.add(a);
                     }
@@ -220,30 +219,6 @@ public class DefaultNutsFilterModel {
             return null;
         }
         return detectType(nutsFilter.getClass(), session);
-    }
-
-    public NutsIdFilterManager id() {
-        return new InternalNutsIdFilterManager(this);
-    }
-
-    public NutsDependencyFilterManager dependency() {
-        return new InternalNutsDependencyFilterManager(this);
-    }
-
-    public NutsRepositoryFilterManager repository() {
-        return new InternalNutsRepositoryFilterManager(this);
-    }
-
-    public NutsVersionFilterManager version() {
-        return new InternalNutsVersionFilterManager(this);
-    }
-
-    public NutsDescriptorFilterManager descriptor() {
-        return new InternalNutsDescriptorFilterManager(this);
-    }
-
-    public NutsInstallStatusFilterManager installStatus() {
-        return new InternalNutsInstallStatusFilterManager(this);
     }
 
     private Collection<NutsFilter> expandAny(NutsFilter... others) {

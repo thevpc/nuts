@@ -27,6 +27,8 @@
 package net.thevpc.nuts;
 
 import net.thevpc.nuts.boot.NutsApiUtils;
+import net.thevpc.nuts.spi.NutsPathFactory;
+import net.thevpc.nuts.spi.NutsPaths;
 
 import java.io.File;
 import java.io.InputStream;
@@ -39,34 +41,50 @@ import java.util.Set;
 import java.util.stream.Stream;
 
 /**
- * this interface describes any local or remote file path. It includes simple file path (ex. '/home/here' and 'c:\\here')
+ * this interface describes any local or remote resource path. It includes simple file path (ex. '/home/here' and 'c:\\here')
  * as well as urls and uri ('ssh://here'), etc.
+ *
  * @app.category Input Output
  */
 public interface NutsPath extends NutsFormattable {
     static NutsPath of(URL path, NutsSession session) {
-        NutsApiUtils.checkSession(session);
-        return session.io().path(path);
+        return NutsApiUtils
+                .createSessionCachedType(NutsPaths.class, session,()->NutsPaths.of(session))
+                .createPath(path,session);
     }
 
     static NutsPath of(String path, ClassLoader classLoader, NutsSession session) {
-        NutsApiUtils.checkSession(session);
-        return session.io().path(path, classLoader);
+        return NutsPaths.of(session).createPath(path, classLoader,session);
     }
 
     static NutsPath of(File path, NutsSession session) {
-        NutsApiUtils.checkSession(session);
-        return session.io().path(path);
+        return NutsApiUtils
+                .createSessionCachedType(NutsPaths.class, session,()->NutsPaths.of(session))
+                .createPath(path,session);
     }
 
     static NutsPath of(Path path, NutsSession session) {
-        NutsApiUtils.checkSession(session);
-        return session.io().path(path);
+        return NutsApiUtils
+                .createSessionCachedType(NutsPaths.class, session,()->NutsPaths.of(session))
+                .createPath(path,session);
     }
 
     static NutsPath of(String path, NutsSession session) {
-        NutsApiUtils.checkSession(session);
-        return session.io().path(path);
+        return NutsApiUtils
+                .createSessionCachedType(NutsPaths.class, session,()->NutsPaths.of(session))
+                .createPath(path,session);
+    }
+
+    static void addPathFactory(NutsPathFactory pathFactory,NutsSession session){
+        NutsApiUtils
+                .createSessionCachedType(NutsPaths.class, session,()->NutsPaths.of(session))
+                .addPathFactory(pathFactory, session);
+    }
+
+    static void removePathFactory(NutsPathFactory pathFactory,NutsSession session){
+        NutsApiUtils
+                .createSessionCachedType(NutsPaths.class, session,()->NutsPaths.of(session))
+                .removePathFactory(pathFactory, session);
     }
 
     /**
@@ -104,6 +122,7 @@ public interface NutsPath extends NutsFormattable {
     /**
      * path protocol or null if undefined. This is some how similar to url protocol
      * Particularly file system paths have an empty (aka "") protocol
+     *
      * @return path protocol or null if undefined
      */
     String getProtocol();
@@ -114,12 +133,14 @@ public interface NutsPath extends NutsFormattable {
 
     /**
      * return true if the path is or can be converted to a valid url
+     *
      * @return true if the path is or can be converted to a valid url
      */
     boolean isURL();
 
     /**
      * return true if the path is or can be converted to a valid local file
+     *
      * @return true if the path is or can be converted to a valid local file
      */
     boolean isFile();
@@ -131,12 +152,14 @@ public interface NutsPath extends NutsFormattable {
 
     /**
      * return a valid url or null
+     *
      * @return a valid url or null
      */
     URL asURL();
 
     /**
      * return a valid local file
+     *
      * @return return a valid local file
      */
     Path asFilePath();
@@ -160,6 +183,7 @@ public interface NutsPath extends NutsFormattable {
     boolean isOther();
 
     boolean isSymbolicLink();
+
     boolean isDirectory();
 
     boolean isRegularFile();
@@ -185,6 +209,7 @@ public interface NutsPath extends NutsFormattable {
     NutsPath getParent();
 
     String getUserKind();
+
     NutsPath setUserKind(String userKind);
 
     boolean isAbsolute();
@@ -204,7 +229,9 @@ public interface NutsPath extends NutsFormattable {
     Set<NutsPathPermission> getPermissions();
 
     NutsPath setPermissions(NutsPathPermission... permissions);
+
     NutsPath addPermissions(NutsPathPermission... permissions);
+
     NutsPath removePermissions(NutsPathPermission... permissions);
 
 }

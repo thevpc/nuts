@@ -3,6 +3,7 @@ package net.thevpc.nuts.lib.ssh;
 import com.jcraft.jsch.*;
 import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.NutsString;
+import net.thevpc.nuts.NutsTexts;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -671,7 +672,7 @@ public class SShConnection implements AutoCloseable {
     public InputStream prepareStream(File file) throws FileNotFoundException {
         FileInputStream in = new FileInputStream(file);
         for (SshListener listener : listeners) {
-            InputStream v = listener.monitorInputStream(in, file.length(), nutsSession.text().toText(file.getPath()));
+            InputStream v = listener.monitorInputStream(in, file.length(), NutsTexts.of(nutsSession).toText(file.getPath()));
             if (v != null) {
                 return v;
             }

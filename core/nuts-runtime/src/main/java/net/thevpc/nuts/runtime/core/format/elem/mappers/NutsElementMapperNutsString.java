@@ -1,9 +1,6 @@
 package net.thevpc.nuts.runtime.core.format.elem.mappers;
 
-import net.thevpc.nuts.NutsElement;
-import net.thevpc.nuts.NutsElementFactoryContext;
-import net.thevpc.nuts.NutsElementMapper;
-import net.thevpc.nuts.NutsString;
+import net.thevpc.nuts.*;
 
 import java.lang.reflect.Type;
 
@@ -22,6 +19,6 @@ public class NutsElementMapperNutsString implements NutsElementMapper<NutsString
     @Override
     public NutsString createObject(NutsElement o, Type to, NutsElementFactoryContext context) {
         String i = context.defaultElementToObject(o, String.class);
-        return context.getSession().text().parse(i);
+        return NutsTexts.of(context.getSession()).parse(i);
     }
 }

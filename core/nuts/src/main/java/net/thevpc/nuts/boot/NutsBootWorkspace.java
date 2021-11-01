@@ -27,6 +27,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.spi.NutsBootWorkspaceFactory;
 
 import java.io.*;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -759,7 +760,6 @@ public final class NutsBootWorkspace {
             }
             boolean recover = options.isRecover() || options.isReset();
 
-//            LinkedHashMap<String, PrivateNutsBootClassLoader.NutsClassLoaderNode> allExtensionFiles = new LinkedHashMap<>();
             List<NutsClassLoaderNode> deps = new ArrayList<>();
 
             String workspaceBootLibFolder = workspaceInformation.getLib();
@@ -769,51 +769,13 @@ public final class NutsBootWorkspace {
                             .split("[\n;]")
                     ).map(String::trim).filter(x -> x.length() > 0).toArray(String[]::new);
 
-            NutsClassLoaderNodeBuilder rt = new NutsClassLoaderNodeBuilder();
-            File runtimeJarFile = PrivateNutsUtilMaven.getBootCacheJar(workspaceInformation.getRuntimeId(), repositories, workspaceBootLibFolder, !recover, "runtime", options.getExpireTime(), errorList, workspaceInformation, pathExpansionConverter, LOG);
-
-            if (LOG.isLoggable(Level.CONFIG)) {
-                String rtHash = "";
-                if (workspaceInformation.getRuntimeId() != null) {
-                    rtHash = PrivateNutsUtilDigest.getFileOrDirectoryDigest(runtimeJarFile.toPath());
-                    if (rtHash == null) {
-                        rtHash = "";
-                    }
-                }
-                LOG.log(Level.CONFIG, NutsLogVerb.INFO, NutsMessage.jstyle("detect nuts-runtime version {0} - digest {1} from {2}", workspaceInformation.getRuntimeId(), rtHash, runtimeJarFile));
-            }
-
-            rt.setId(workspaceInformation.getRuntimeId().toString())
-                    .setUrl(runtimeJarFile
-                            .toURI().toURL());
-            for (NutsBootId s : workspaceInformation.getRuntimeBootDescriptor().getDependencies()) {
-                NutsClassLoaderNodeBuilder x = new NutsClassLoaderNodeBuilder();
-                if (PrivateNutsUtilBootId.isAcceptDependency(s, workspaceInformation.getOptions())) {
-                    x.setId(s.toString())
-                            .setUrl(PrivateNutsUtilMaven.getBootCacheJar(s, repositories, workspaceBootLibFolder, !recover, "runtime dependency", options.getExpireTime(), errorList, workspaceInformation, pathExpansionConverter, LOG)
-                                    .toURI().toURL()
-                            );
-                    rt.addDependency(x.build());
-                }
-            }
-            workspaceInformation.setRuntimeBootDependencyNode(rt.build());
+            workspaceInformation.setRuntimeBootDependencyNode(
+                    createClassLoaderNode(workspaceInformation.getRuntimeBootDescriptor(),
+                            repositories, workspaceBootLibFolder, recover, errorList, true));
 
             for (NutsBootDescriptor nutsBootDescriptor : workspaceInformation.getExtensionBootDescriptors()) {
-                NutsClassLoaderNodeBuilder rt2 = new NutsClassLoaderNodeBuilder();
-                rt2.setId(nutsBootDescriptor.getId().toString())
-                        .setUrl(PrivateNutsUtilMaven.getBootCacheJar(workspaceInformation.getRuntimeId(), repositories, workspaceBootLibFolder, !recover, "extension " + nutsBootDescriptor.getId(), options.getExpireTime(), errorList, workspaceInformation, pathExpansionConverter, LOG)
-                                .toURI().toURL());
-                for (NutsBootId s : nutsBootDescriptor.getDependencies()) {
-                    if (PrivateNutsUtilBootId.isAcceptDependency(s, workspaceInformation.getOptions())) {
-                        NutsClassLoaderNodeBuilder x = new NutsClassLoaderNodeBuilder();
-                        x.setId(s.toString())
-                                .setUrl(PrivateNutsUtilMaven.getBootCacheJar(s, repositories, workspaceBootLibFolder, !recover, "extension " + nutsBootDescriptor.getId() + " dependency", options.getExpireTime(), errorList, workspaceInformation, pathExpansionConverter, LOG)
-                                        .toURI().toURL()
-                                );
-                        rt2.addDependency(x.build());
-                    }
-                }
-                deps.add(rt2.build());
+                deps.add(createClassLoaderNode(nutsBootDescriptor,repositories, workspaceBootLibFolder, recover,
+                                errorList, false));
             }
             workspaceInformation.setExtensionBootDependencyNodes(deps.toArray(new NutsClassLoaderNode[0]));
             deps.add(0, workspaceInformation.getRuntimeBootDependencyNode());
@@ -1138,7 +1100,7 @@ public final class NutsBootWorkspace {
 
         session.setAppId(workspace.getApiId());
         if (LOG2 == null) {
-            LOG2 = session.log().of(NutsBootWorkspace.class);
+            LOG2 = NutsLogger.of(NutsBootWorkspace.class,session);
             LOG2_SESSION = session;
         }
         NutsLoggerOp logOp = LOG2.with().session(session).level(Level.CONFIG);
@@ -1351,6 +1313,51 @@ public final class NutsBootWorkspace {
             return sb.toString();
         }
         return null;
+    }
+
+    private NutsClassLoaderNode createClassLoaderNode(NutsBootDescriptor descr,String[] repositories,
+                                                  String workspaceBootLibFolder,boolean recover,PrivateNutsErrorInfoList errorList,
+                                                  boolean runtimeDep
+                                                  ) throws MalformedURLException {
+        NutsBootId id=descr.getId();
+        NutsBootId[] deps=descr.getDependencies();
+        NutsClassLoaderNodeBuilder rt = new NutsClassLoaderNodeBuilder();
+        String name=runtimeDep?"runtime":("extension " + id.toString());
+        File file=PrivateNutsUtilMaven.getBootCacheJar(workspaceInformation.getRuntimeId(), repositories, workspaceBootLibFolder,
+                !recover, name, options.getExpireTime(), errorList,
+                workspaceInformation, pathExpansionConverter, LOG);
+        rt.setId(id.toString());
+        rt.setUrl(file.toURI().toURL());
+        rt.setIncludedInClasspath(
+                PrivateNutsUtilClassLoader.isLoadedClassPath(
+                rt.getURL(),getContextClassLoader(), LOG));
+
+        if (LOG.isLoggable(Level.CONFIG)) {
+            String rtHash = "";
+            if (workspaceInformation.getRuntimeId() != null) {
+                rtHash = PrivateNutsUtilDigest.getFileOrDirectoryDigest(file.toPath());
+                if (rtHash == null) {
+                    rtHash = "";
+                }
+            }
+            LOG.log(Level.CONFIG, NutsLogVerb.INFO, NutsMessage.jstyle("detect "+name+" version {0} - digest {1} from {2}", id.toString(), rtHash, file));
+        }
+
+        for (NutsBootId s : deps) {
+            NutsClassLoaderNodeBuilder x = new NutsClassLoaderNodeBuilder();
+            if (PrivateNutsUtilBootId.isAcceptDependency(s, workspaceInformation.getOptions())) {
+                x.setId(s.toString())
+                        .setUrl(PrivateNutsUtilMaven.getBootCacheJar(s, repositories, workspaceBootLibFolder, !recover,
+                                        name+" dependency",
+                                        options.getExpireTime(), errorList, workspaceInformation, pathExpansionConverter, LOG)
+                                .toURI().toURL()
+                        );
+                x.setIncludedInClasspath(PrivateNutsUtilClassLoader.isLoadedClassPath(
+                        x.getURL(),getContextClassLoader(), LOG));
+                rt.addDependency(x.build());
+            }
+        }
+        return rt.build();
     }
 
 }

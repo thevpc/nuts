@@ -26,6 +26,7 @@
 package net.thevpc.nuts;
 
 import net.thevpc.nuts.boot.NutsApiUtils;
+import net.thevpc.nuts.spi.NutsComponent;
 
 import java.util.Map;
 
@@ -38,11 +39,11 @@ import java.util.Map;
  * @app.category Descriptor
  * @since 0.5.4
  */
-public interface NutsDependencyBuilder {
+public interface NutsDependencyBuilder extends NutsComponent<Object> {
 
     static NutsDependencyBuilder of(NutsSession session) {
         NutsApiUtils.checkSession(session);
-        return session.dependency().builder();
+        return session.extensions().createSupported(NutsDependencyBuilder.class,true,null);
     }
 
     /**

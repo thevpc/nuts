@@ -26,6 +26,7 @@
 package net.thevpc.nuts;
 
 import net.thevpc.nuts.boot.NutsApiUtils;
+import net.thevpc.nuts.spi.NutsComponent;
 
 import java.io.Serializable;
 import java.util.List;
@@ -42,11 +43,11 @@ import java.util.function.UnaryOperator;
  * @app.category Descriptor
  * @since 0.5.4
  */
-public interface NutsDescriptorBuilder extends Serializable {
+public interface NutsDescriptorBuilder extends Serializable, NutsComponent<Object> {
 
     static NutsDescriptorBuilder of(NutsSession session) {
         NutsApiUtils.checkSession(session);
-        return session.descriptor().descriptorBuilder();
+        return session.extensions().createSupported(NutsDescriptorBuilder.class, true,null);
     }
 
     /**

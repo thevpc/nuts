@@ -80,15 +80,15 @@ public class JShell {
     }
 
     public JShell(NutsSession session, String[] args) {
-        this(session.apps().createApplicationContext(null, new String[]{}, 0, Nsh.class, null), null, null, args);
+        this(NutsApplicationContext.of(new String[]{}, 0, Nsh.class, null,session), null, null, args);
     }
 
     public JShell(NutsSession session, NutsId appId, String[] args) {
-        this(session.apps().createApplicationContext(session, new String[]{}, 0, Nsh.class, null), appId, null, args);
+        this(NutsApplicationContext.of(new String[]{}, 0, Nsh.class, null,session), appId, null, args);
     }
 
     public JShell(NutsSession session, NutsId appId, String serviceName, String[] args) {
-        this(session.apps().createApplicationContext(session, new String[]{}, 0, Nsh.class, null), appId, serviceName, args);
+        this(NutsApplicationContext.of(new String[]{}, 0, Nsh.class, null,session), appId, serviceName, args);
     }
 
     private JShell(NutsApplicationContext appContext, NutsId appId, String serviceName, String[] args) {
@@ -101,7 +101,7 @@ public class JShell {
         this.appId = appId;
         //super.setCwd(workspace.getConfigManager().getCwd());
         if (this.appId == null) {
-            this.appId = appContext.getSession().id().resolveId(JShell.class);
+            this.appId = NutsIdResolver.of(appContext.getSession()).resolveId(JShell.class);
         }
         if (this.appId == null) {
             throw new IllegalArgumentException("unable to resolve application id");
@@ -192,7 +192,7 @@ public class JShell {
     private static String resolveServiceName(NutsApplicationContext appContext, String serviceName, NutsId appId) {
         if ((serviceName == null || serviceName.trim().isEmpty())) {
             if (appId == null) {
-                appId = appContext.getSession().id().resolveId(JShell.class);
+                appId = NutsIdResolver.of(appContext.getSession()).resolveId(JShell.class);
             }
             serviceName = appId.getArtifactId();
         }
@@ -558,7 +558,7 @@ public class JShell {
     }
 
     protected void printHeader(NutsPrintStream out) {
-        out.resetLine().println(appContext.getSession().text().builder()
+        out.resetLine().println(NutsTexts.of(appContext.getSession()).builder()
                 .appendCode("sh", "nuts")
                 .append(" shell ")
                 .append("v" + getRootContext().getWorkspace().getRuntimeId().getVersion().toString(), NutsTextStyle.version())
@@ -575,18 +575,18 @@ public class JShell {
     }
 
     protected void executeInteractive(JShellContext context) {
-        appContext.getSession().term().enableRichTerm();
-        appContext.getSession().term().getSystemTerminal()
+        NutsSession session = appContext.getSession();
+        NutsSystemTerminal.enableRichTerm(session);
+        session.config().getSystemTerminal()
                 .setCommandAutoCompleteResolver(new NshAutoCompleter())
                 .setCommandHistory(
-                        appContext.getSession().commandLine().createHistory()
+                        NutsCommandHistory.of(session)
                                 .setPath(Paths.get(appContext.getVarFolder()).resolve("nsh-history.hist"))
-                                .build()
                 )
                 .setCommandReadHighlighter(new NutsCommandReadHighlighter() {
                     @Override
                     public NutsText highlight(String buffer, NutsSession session) {
-                        return session.text().ofCode("sh", buffer).highlight(session);
+                        return NutsTexts.of(session).ofCode("sh", buffer).highlight(session);
                     }
                 });
         prepareContext(getRootContext());
@@ -1084,7 +1084,7 @@ public class JShell {
     }
 
     public String getVersion() {
-        NutsId nutsId = appContext.getSession().id().resolveId(getClass());
+        NutsId nutsId = NutsIdResolver.of(appContext.getSession()).resolveId(getClass());
         if (nutsId == null) {
             return "dev";
         }

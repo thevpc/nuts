@@ -3,23 +3,22 @@ package net.thevpc.nuts.runtime.core.format.text.highlighters;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.bundles.collections.EvictingQueue;
 import net.thevpc.nuts.runtime.bundles.parsers.StreamTokenizerExt;
+import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
+import net.thevpc.nuts.spi.NutsComponent;
+import net.thevpc.nuts.spi.NutsSupportLevelContext;
 
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
-import net.thevpc.nuts.spi.NutsComponent;
-import net.thevpc.nuts.spi.NutsSupportLevelContext;
-
 public class XmlCodeHighlighter implements NutsCodeHighlighter {
 
-    private NutsWorkspace ws;
-    NutsTextManager factory;
+    NutsTexts factory;
+    private final NutsWorkspace ws;
 
     public XmlCodeHighlighter(NutsWorkspace ws) {
         this.ws = ws;
-        factory = NutsWorkspaceUtils.defaultSession(ws).text();
+        factory = NutsTexts.of(NutsWorkspaceUtils.defaultSession(ws));
     }
 
     @Override
@@ -31,39 +30,6 @@ public class XmlCodeHighlighter implements NutsCodeHighlighter {
     public int getSupportLevel(NutsSupportLevelContext<String> context) {
         String s = context.getConstraints();
         return "xml".equals(s) ? NutsComponent.DEFAULT_SUPPORT : NutsComponent.NO_SUPPORT;
-    }
-
-    public NutsText tokenToText(String text, String nodeType,NutsSession session) {
-        factory.setSession(session);
-        switch (NutsUtilStrings.trim(nodeType).toLowerCase()) {
-            case "name":
-                return formatNodeName(text);
-            case "attribute":
-                return formatNodeName(text);
-            case "string":
-                return formatNodeString(text);
-            case "<":
-            case "<?":
-            case "</":
-            case ">":
-            case "&":
-            case "=":
-            case "separator":
-                return formatNodeSeparator(text);
-        }
-        return factory.ofPlain(text);
-    }
-
-    public NutsText formatNodeName(String text) {
-        return factory.ofStyled(factory.ofPlain(text), NutsTextStyle.keyword());
-    }
-
-    public NutsText formatNodeString(String text) {
-        return factory.ofStyled(factory.ofPlain(text), NutsTextStyle.string());
-    }
-
-    public NutsText formatNodeSeparator(String text) {
-        return factory.ofStyled(factory.ofPlain(text), NutsTextStyle.separator());
     }
 
     @Override
@@ -132,5 +98,38 @@ public class XmlCodeHighlighter implements NutsCodeHighlighter {
             last.add(st.image == null ? "" : st.image);
         }
         return factory.ofList(nodes).simplify();
+    }
+
+    public NutsText tokenToText(String text, String nodeType, NutsSession session) {
+        factory.setSession(session);
+        switch (NutsUtilStrings.trim(nodeType).toLowerCase()) {
+            case "name":
+                return formatNodeName(text);
+            case "attribute":
+                return formatNodeName(text);
+            case "string":
+                return formatNodeString(text);
+            case "<":
+            case "<?":
+            case "</":
+            case ">":
+            case "&":
+            case "=":
+            case "separator":
+                return formatNodeSeparator(text);
+        }
+        return factory.ofPlain(text);
+    }
+
+    public NutsText formatNodeName(String text) {
+        return factory.ofStyled(factory.ofPlain(text), NutsTextStyle.keyword());
+    }
+
+    public NutsText formatNodeString(String text) {
+        return factory.ofStyled(factory.ofPlain(text), NutsTextStyle.string());
+    }
+
+    public NutsText formatNodeSeparator(String text) {
+        return factory.ofStyled(factory.ofPlain(text), NutsTextStyle.separator());
     }
 }

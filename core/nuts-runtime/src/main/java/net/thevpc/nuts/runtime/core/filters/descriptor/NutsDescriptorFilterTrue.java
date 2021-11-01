@@ -10,7 +10,7 @@
  * to share shell scripts and other 'things' . Its based on an extensible
  * architecture to help supporting a large range of sub managers / repositories.
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc]
  * Licensed under the Apache License, Version 2.0 (the "License"); you may
  * not use this file except in compliance with the License. You may obtain a
@@ -22,7 +22,7 @@
  * governing permissions and limitations under the License.
  * <br>
  * ====================================================================
-*/
+ */
 package net.thevpc.nuts.runtime.core.filters.descriptor;
 
 import net.thevpc.nuts.*;
@@ -30,7 +30,7 @@ import net.thevpc.nuts.*;
 /**
  * Created by vpc on 2/20/17.
  */
-public class NutsDescriptorFilterTrue extends AbstractDescriptorFilter implements JsNutsDescriptorFilter {
+public class NutsDescriptorFilterTrue extends AbstractDescriptorFilter {
 
     public NutsDescriptorFilterTrue(NutsSession session) {
         super(session, NutsFilterOp.TRUE);
@@ -47,11 +47,6 @@ public class NutsDescriptorFilterTrue extends AbstractDescriptorFilter implement
     @Override
     public NutsDescriptorFilter simplify() {
         return null;
-    }
-
-    @Override
-    public String toJsNutsDescriptorFilterExpr() {
-        return "true";
     }
 
     @Override

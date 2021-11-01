@@ -30,7 +30,7 @@ public class DefaultNutsWorkspaceCustomCommand implements NutsWorkspaceCustomCom
 
     protected NutsLogger _LOG(NutsSession session) {
         if (LOG == null) {
-            LOG = session.log().setSession(session).of(DefaultNutsWorkspaceCustomCommand.class);
+            LOG = NutsLogger.of(DefaultNutsWorkspaceCustomCommand.class,session);
         }
         return LOG;
     }

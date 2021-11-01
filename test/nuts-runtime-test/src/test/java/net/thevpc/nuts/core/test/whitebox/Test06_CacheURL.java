@@ -12,8 +12,6 @@ import net.thevpc.nuts.*;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.HashMap;
-import java.util.Map;
 
 import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
 import org.junit.jupiter.api.*;
@@ -37,11 +35,11 @@ public class Test06_CacheURL {
         final String url = "https://repo.maven.apache.org/maven2/archetype-catalog.xml";
         InputStream j1 = CoreIOUtils.getCachedUrlWithSHA1(url, "archetype-catalog", true,session);
         //just to consume the stream
-        session.io().copy().from(j1).to(new ByteArrayOutputStream()).setLogProgress(true).run();
+        NutsCp.of(session).from(j1).to(new ByteArrayOutputStream()).setLogProgress(true).run();
         TestUtils.println(j1);
         InputStream j2 = CoreIOUtils.getCachedUrlWithSHA1(url, "archetype-catalog", true,session);
         //just to consume the stream
-        session.io().copy().from(j2).to(new ByteArrayOutputStream()).setLogProgress(true).run();
+        NutsCp.of(session).from(j2).to(new ByteArrayOutputStream()).setLogProgress(true).run();
         TestUtils.println(j2);
     }
 

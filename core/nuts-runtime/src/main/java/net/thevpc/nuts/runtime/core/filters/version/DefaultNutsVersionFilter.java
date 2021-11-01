@@ -80,7 +80,7 @@ public class DefaultNutsVersionFilter extends AbstractVersionFilter implements N
     public static NutsVersionFilter parse(String version, NutsSession session) {
         if (DefaultNutsVersion.isBlankVersion(version) || "*".equals(version)) {
 //            if(session!=null){
-            return session.version().filter().always();
+            return NutsVersionFilters.of(session).always();
 //            }
 //            return new NutsVersionFilterTrue(session.getWorkspace());
         }
@@ -217,7 +217,7 @@ public class DefaultNutsVersionFilter extends AbstractVersionFilter implements N
                 if (min.equals("")) {
                     dd.add(new DefaultNutsVersionInterval(false, false, min, null));
                 } else {
-                    String max = session.version().parser().parse(min).inc(-1).getValue();
+                    String max = NutsVersion.of(min,session).inc(-1).getValue();
                     dd.add(new DefaultNutsVersionInterval(true, false, min, max));
                 }
             } else {

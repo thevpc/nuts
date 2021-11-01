@@ -40,7 +40,7 @@ import java.util.stream.Collectors;
 public class CoreCommonUtils {
 
     public static NutsString stringValueFormatted(Object o, boolean escapeString, NutsSession session) {
-        NutsTextManager txt = session.text();
+        NutsTexts txt = NutsTexts.of(session);
         if (o == null) {
             return txt.ofBlank();
         }
@@ -70,7 +70,7 @@ public class CoreCommonUtils {
 
         } else if (o instanceof NutsElementEntry) {
             NutsElementEntry ne = (NutsElementEntry) o;
-            NutsTextBuilder sb = session.text().builder();
+            NutsTextBuilder sb = NutsTexts.of(session).builder();
             sb.append(stringValueFormatted(ne.getKey(), escapeString, session));
             sb.append("=");
             if (ne.getValue().type() == NutsElementType.STRING) {
@@ -86,7 +86,7 @@ public class CoreCommonUtils {
             o = sb.toString();
         } else if (o instanceof Map.Entry) {
             Map.Entry ne = (Map.Entry) o;
-            NutsTextBuilder sb = session.text().builder();
+            NutsTextBuilder sb = NutsTexts.of(session).builder();
             sb.append(stringValueFormatted(ne.getKey(), escapeString, session));
             sb.append("=");
             if (ne.getValue() instanceof String

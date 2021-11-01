@@ -28,8 +28,9 @@ public class RemoteTomcatAppConfigService extends RemoteTomcatServiceBase {
     public void install() {
         RemoteTomcatConfig cconfig = client.getConfig();
         String localWarPath = this.config.getPath();
+        NutsSession session = context.getSession();
         if (!new File(localWarPath).exists()) {
-            throw new NutsExecutionException(context.getSession(), NutsMessage.cstyle("missing source war file %s", localWarPath), 2);
+            throw new NutsExecutionException(session, NutsMessage.cstyle("missing source war file %s", localWarPath), 2);
         }
         String remoteTempPath = cconfig.getRemoteTempPath();
         if (NutsBlankable.isBlank(remoteTempPath)) {
@@ -43,7 +44,7 @@ public class RemoteTomcatAppConfigService extends RemoteTomcatServiceBase {
         if (!server.startsWith("ssh://")) {
             server = "ssh://" + server;
         }
-        context.getSession().exec()
+        session.exec()
                 .addCommand(
                         "nsh",
                         "--bot",
@@ -52,14 +53,14 @@ public class RemoteTomcatAppConfigService extends RemoteTomcatServiceBase {
                         "--mkdir",
                         localWarPath,
                         server + "/" + remoteFilePath
-                ).setSession(context.getSession())
+                ).setSession(session)
                 .run();
         String v = config.getVersionCommand();
         if (NutsBlankable.isBlank(v)) {
             v = "nsh nversion --color=never %file";
         }
         List<String> cmd = Arrays.asList(
-                context.getSession().commandLine().parse(v).toStringArray()
+                NutsCommandLine.parse(v,session).toStringArray()
         );
         boolean fileAdded = false;
         for (int i = 0; i < cmd.size(); i++) {
@@ -71,7 +72,7 @@ public class RemoteTomcatAppConfigService extends RemoteTomcatServiceBase {
         if (!fileAdded) {
             cmd.add(config.getPath());
         }
-        NutsExecCommand s = context.getSession()
+        NutsExecCommand s = session
                 .exec()
                 .setRedirectErrorStream(true)
                 .grabOutputString()
@@ -96,7 +97,7 @@ public class RemoteTomcatAppConfigService extends RemoteTomcatServiceBase {
                     remoteFilePath
             );
         } else {
-            throw new NutsExecutionException(context.getSession(), NutsMessage.cstyle("unable to detect file version of %s.\n%s",localWarPath ,
+            throw new NutsExecutionException(session, NutsMessage.cstyle("unable to detect file version of %s.\n%s",localWarPath ,
                     s.getOutputString()), 2);
         }
     }
@@ -126,7 +127,7 @@ public class RemoteTomcatAppConfigService extends RemoteTomcatServiceBase {
         NutsSession session = context.getSession();
         Map<String, Object> m = new LinkedHashMap<>();
         m.put("config-name", getName());
-        m.putAll(session.elem().convert(getConfig(), Map.class));
+        m.putAll(NutsElements.of(session).convert(getConfig(), Map.class));
         session.formats().object().setSession(context.getSession()).setValue(m).print(out);
         return this;
     }
@@ -139,7 +140,7 @@ public class RemoteTomcatAppConfigService extends RemoteTomcatServiceBase {
     }
 
     public NutsString getBracketsPrefix(String str) {
-        return context.getSession().text().builder()
+        return NutsTexts.of(context.getSession()).builder()
                 .append("[")
                 .append(str, NutsTextStyle.primary5())
                 .append("]");

@@ -3,7 +3,6 @@ package net.thevpc.nuts.runtime.standalone.wscommands.exec;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.bundles.io.ProcessBuilder2;
-import net.thevpc.nuts.runtime.core.format.DefaultNutsExecCommandFormat;
 import net.thevpc.nuts.runtime.standalone.io.NutsByteArrayPrintStream;
 import net.thevpc.nuts.runtime.standalone.wscommands.NutsWorkspaceCommandBase;
 
@@ -34,8 +33,8 @@ public abstract class AbstractNutsExecCommand extends NutsWorkspaceCommandBase<N
     protected boolean failFast;
     protected boolean dry;
     private boolean inheritSystemIO;
-    private String redirectOuputFile;
-    private String redirectInpuFile;
+    private String redirectOutputFile;
+    private String redirectInputFile;
 
     public AbstractNutsExecCommand(NutsWorkspace ws) {
         super(ws, "exec");
@@ -43,7 +42,7 @@ public abstract class AbstractNutsExecCommand extends NutsWorkspaceCommandBase<N
 
     @Override
     public NutsExecCommandFormat formatter() {
-        return (NutsExecCommandFormat) new DefaultNutsExecCommandFormat(ws).setValue(this).setSession(getSession());
+        return NutsExecCommandFormat.of(getSession()).setValue(this);
     }
 
     @Override
@@ -765,20 +764,20 @@ public abstract class AbstractNutsExecCommand extends NutsWorkspaceCommandBase<N
     }
 
     public String getRedirectOutputFile() {
-        return redirectOuputFile;
+        return redirectOutputFile;
     }
 
     public NutsExecCommand setRedirectOutputFile(String redirectOutputFile) {
-        this.redirectOuputFile = redirectOutputFile;
+        this.redirectOutputFile = redirectOutputFile;
         return this;
     }
 
     public String getRedirectInputFile() {
-        return redirectInpuFile;
+        return redirectInputFile;
     }
 
     public NutsExecCommand setRedirectInputFile(String redirectInpuFile) {
-        this.redirectInpuFile = redirectInpuFile;
+        this.redirectInputFile = redirectInpuFile;
         return this;
     }
 

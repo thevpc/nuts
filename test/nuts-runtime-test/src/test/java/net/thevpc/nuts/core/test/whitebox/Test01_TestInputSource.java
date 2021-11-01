@@ -19,20 +19,20 @@ public class Test01_TestInputSource {
     @Test
     public void test1() throws Exception {
         NutsSession session = TestUtils.openNewTestWorkspace();
-        NutsPath s = session.io().path("http://maven.ibiblio.org/maven2/archetype-catalog.xml");
+        NutsPath s = NutsPath.of("http://maven.ibiblio.org/maven2/archetype-catalog.xml",session);
 
         //this is a remote file
         Assertions.assertFalse(s.isFile());
         //the file is actually a http url
         Assertions.assertTrue(s.isURL());
 
-        s = session.io().path("file://maven.ibiblio.org/maven2/archetype-catalog.xml");
+        s = NutsPath.of("file://maven.ibiblio.org/maven2/archetype-catalog.xml",session);
         //the file has an 'authority' (//) so it cannot be converted to a valid file
         Assertions.assertFalse(s.isFile());
         //the file is actually a file url
         Assertions.assertTrue(s.isURL());
 
-        s = session.io().path("file:/maven.ibiblio.org/maven2/archetype-catalog.xml");
+        s = NutsPath.of("file:/maven.ibiblio.org/maven2/archetype-catalog.xml",session);
         //the file is actually a file url
         Assertions.assertTrue(s.isFile());
         //the file is actually a URL
@@ -41,7 +41,7 @@ public class Test01_TestInputSource {
 //        s = CoreIOUtils.createInputSource("zip://maven.ibiblio.org/maven2/toto.zip?archetype-catalog.xml");
 //        Assertions.assertFalse(s.isPath());
 //        Assertions.assertTrue(s.isURL());
-        s = session.io().path("/maven.ibiblio.org/maven2/archetype-catalog.xml");
+        s = NutsPath.of("/maven.ibiblio.org/maven2/archetype-catalog.xml",session);
         //the file is actually a file
         Assertions.assertTrue(s.isFile());
         //the file can be converted to URL

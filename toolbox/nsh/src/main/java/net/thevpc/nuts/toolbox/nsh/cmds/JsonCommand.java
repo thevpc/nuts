@@ -26,7 +26,8 @@
 package net.thevpc.nuts.toolbox.nsh.cmds;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.spi.NutsSingleton;
+import net.thevpc.nuts.spi.NutsComponentScope;
+import net.thevpc.nuts.spi.NutsComponentScopeType;
 import net.thevpc.nuts.toolbox.nsh.SimpleNshBuiltin;
 import net.thevpc.nuts.toolbox.nsh.bundles.jshell.JShellContext;
 import org.w3c.dom.Document;
@@ -47,7 +48,7 @@ import java.util.List;
 /**
  * Created by vpc on 1/7/17.
  */
-@NutsSingleton
+@NutsComponentScope(NutsComponentScopeType.WORKSPACE)
 public class JsonCommand extends SimpleNshBuiltin {
 
     public JsonCommand() {
@@ -85,12 +86,13 @@ public class JsonCommand extends SimpleNshBuiltin {
 //            commandLine.required();
 //        }
 
+        NutsSession session = context.getSession();
         if (options.queries.isEmpty()) {
             NutsElement inputDocument = readJsonConvertElement(options.input, context.getRootContext());
-            if (context.getSession().getOutputFormat() == NutsContentType.PLAIN) {
-                context.getSession().out().printlnf(context.getSession().elem().setContentType(NutsContentType.JSON).setValue(inputDocument).format());
+            if (session.getOutputFormat() == NutsContentType.PLAIN) {
+                session.out().printlnf(NutsElements.of(session).json().setValue(inputDocument).format());
             } else {
-                context.getSession().out().printlnf(inputDocument);
+                session.out().printlnf(inputDocument);
             }
         } else {
             switch (options.queryType) {
@@ -102,7 +104,7 @@ public class JsonCommand extends SimpleNshBuiltin {
                     try {
                         resultDocument = documentFactory.newDocumentBuilder().newDocument();
                     } catch (ParserConfigurationException ex) {
-                        throw new NutsExecutionException(context.getSession(), NutsMessage.plain("failed to create xml document"), ex, 1);
+                        throw new NutsExecutionException(session, NutsMessage.plain("failed to create xml document"), ex, 1);
                     }
                     Element resultElement = resultDocument.createElement("result");
                     resultDocument.appendChild(resultElement);
@@ -115,13 +117,13 @@ public class JsonCommand extends SimpleNshBuiltin {
                                 resultElement.appendChild(o);
                             }
                         } catch (XPathExpressionException ex) {
-                            throw new NutsExecutionException(context.getSession(), NutsMessage.cstyle("%s", ex), ex, 103);
+                            throw new NutsExecutionException(session, NutsMessage.cstyle("%s", ex), ex, 103);
                         }
                     }
-                    if (context.getSession().getOutputFormat(null) == null) {
-                        context.getSession().out().printlnf(context.getSession().elem().setContentType(NutsContentType.JSON).setValue(resultDocument).format());
+                    if (session.getOutputFormat(null) == null) {
+                        session.out().printlnf(NutsElements.of(session).json().setValue(resultDocument).format());
                     } else {
-                        context.getSession().out().printlnf(resultDocument);
+                        session.out().printlnf(resultDocument);
                     }
                     break;
                 }
@@ -129,17 +131,16 @@ public class JsonCommand extends SimpleNshBuiltin {
                     NutsElement inputDocument = readJsonConvertElement(options.input, context.getRootContext());
                     List<NutsElement> all = new ArrayList<>();
                     for (String query : options.queries) {
-                        all.addAll(context.getSession().elem()
-                                .setSession(context.getSession())
+                        all.addAll(NutsElements.of(session)
                                 .compilePath(query)
                                 .filter(inputDocument)
                         );
                     }
                     Object result = all.size() == 1 ? all.get(0) : all;
-                    if (context.getSession().getOutputFormat(null) == null) {
-                        context.getSession().out().printlnf(context.getSession().elem().setContentType(NutsContentType.JSON).setValue(result).format());
+                    if (session.getOutputFormat(null) == null) {
+                        session.out().printlnf(NutsElements.of(session).json().setValue(result).format());
                     } else {
-                        context.getSession().out().printlnf(result);
+                        session.out().printlnf(result);
                     }
                     break;
                 }
@@ -157,14 +158,15 @@ public class JsonCommand extends SimpleNshBuiltin {
     }
 
     private <T> T readJsonConvertAny(String path, Class<T> cls, JShellContext context) {
-        NutsElementFormat njson = context.getSession().elem().setContentType(NutsContentType.JSON);
+        NutsSession session = context.getSession();
+        NutsElements njson = NutsElements.of(session).json();
         T inputDocument = null;
         if (path != null) {
             File file = new File(context.getAbsolutePath(path));
             if (file.isFile()) {
                 inputDocument = njson.parse(file, cls);
             } else {
-                throw new NutsExecutionException(context.getSession(), NutsMessage.cstyle("invalid path %s", path), 1);
+                throw new NutsExecutionException(session, NutsMessage.cstyle("invalid path %s", path), 1);
             }
         } else {
             StringBuilder sb = new StringBuilder();
@@ -174,7 +176,7 @@ public class JsonCommand extends SimpleNshBuiltin {
                 try {
                     line = reader.readLine();
                 } catch (IOException ex) {
-                    throw new NutsExecutionException(context.getSession(), NutsMessage.cstyle("broken Input"), 2);
+                    throw new NutsExecutionException(session, NutsMessage.cstyle("broken Input"), 2);
                 }
                 if (line == null) {
                     inputDocument = njson.parse(new StringReader(sb.toString()), cls);

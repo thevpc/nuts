@@ -52,7 +52,7 @@ public class NutsMessage {
     }
 
     public NutsString toNutsString(NutsSession session) {
-        return session.text().toText(this);
+        return NutsTexts.of(session).toText(this);
     }
 
     @Override

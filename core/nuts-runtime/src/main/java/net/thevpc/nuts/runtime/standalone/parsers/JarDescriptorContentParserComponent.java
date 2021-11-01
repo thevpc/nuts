@@ -39,15 +39,12 @@ import java.util.stream.Collectors;
 import net.thevpc.nuts.runtime.bundles.io.InputStreamVisitor;
 import net.thevpc.nuts.runtime.bundles.io.ZipUtils;
 import net.thevpc.nuts.runtime.standalone.util.CoreDigestHelper;
-import net.thevpc.nuts.spi.NutsDescriptorContentParserComponent;
-import net.thevpc.nuts.spi.NutsDescriptorContentParserContext;
-import net.thevpc.nuts.spi.NutsSingleton;
-import net.thevpc.nuts.spi.NutsSupportLevelContext;
+import net.thevpc.nuts.spi.*;
 
 /**
  * Created by vpc on 1/15/17.
  */
-@NutsSingleton
+@NutsComponentScope(NutsComponentScopeType.WORKSPACE)
 public class JarDescriptorContentParserComponent implements NutsDescriptorContentParserComponent {
 
     public static final Set<String> POSSIBLE_EXT = new HashSet<>(Collections.singletonList("jar"));//, "war", "ear"
@@ -75,12 +72,13 @@ public class JarDescriptorContentParserComponent implements NutsDescriptorConten
         if (!POSSIBLE_EXT.contains(parserContext.getFileExtension())) {
             return null;
         }
-        final NutsId JAVA = ws.id().parser().parse("java");
+        final NutsId JAVA = NutsId.of("java",ws);
         final NutsRef<NutsDescriptor> nutsjson = new NutsRef<>();
         final NutsRef<NutsDescriptor> metainf = new NutsRef<>();
         final NutsRef<NutsDescriptor> maven = new NutsRef<>();
 //        final NutsRef<String> mainClass = new NutsRef<>();
 
+        NutsSession session = parserContext.getSession();
         try {
             ZipUtils.visitZipStream(parserContext.getFullStream(), new Predicate<String>() {
                 @Override
@@ -99,8 +97,7 @@ public class JarDescriptorContentParserComponent implements NutsDescriptorConten
                     switch (path) {
                         case "META-INF/MANIFEST.MF": {
                             try {
-                                nutsjson.set(parserContext.getSession().descriptor().parser()
-                                        .setSession(parserContext.getSession())
+                                metainf.set(NutsDescriptorParser.of(session)
                                         .setDescriptorStyle(NutsDescriptorStyle.MANIFEST)
                                         .setLenient(true)
                                         .parse(inputStream));
@@ -111,8 +108,7 @@ public class JarDescriptorContentParserComponent implements NutsDescriptorConten
                         }
                         case ("META-INF/" + NutsConstants.Files.DESCRIPTOR_FILE_NAME): {
                             try {
-                                nutsjson.set(parserContext.getSession().descriptor().parser()
-                                        .setSession(parserContext.getSession())
+                                nutsjson.set(NutsDescriptorParser.of(session)
                                         .setDescriptorStyle(NutsDescriptorStyle.NUTS)
                                         .parse(inputStream));
                             } finally {
@@ -122,7 +118,7 @@ public class JarDescriptorContentParserComponent implements NutsDescriptorConten
                         }
                         default: {
                             try {
-                                maven.set(MavenUtils.of(parserContext.getSession()).parsePomXmlAndResolveParents(inputStream, NutsFetchMode.REMOTE, path, null));
+                                maven.set(MavenUtils.of(session).parsePomXmlAndResolveParents(inputStream, NutsFetchMode.REMOTE, path, null));
                             } finally {
                                 inputStream.close();
                             }
@@ -137,7 +133,7 @@ public class JarDescriptorContentParserComponent implements NutsDescriptorConten
             throw new NutsIOException(ws, ex);
         }
         if (nutsjson.isSet()) {
-            return checkDescriptor(nutsjson.get(), parserContext.getSession());
+            return nutsjson.get();
         }
         String mainClassString = null;
         if (metainf.isSet()) {
@@ -159,10 +155,8 @@ public class JarDescriptorContentParserComponent implements NutsDescriptorConten
         if (maven.isSet()) {
             baseNutsDescriptor = maven.get();
             if (!NutsBlankable.isBlank(mainClassString)) {
-                return checkDescriptor(
-                        baseNutsDescriptor.builder().setExecutor(new DefaultNutsArtifactCall(JAVA, new String[]{
-                                "--main-class", mainClassString})).build()
-                        , parserContext.getSession());
+                return baseNutsDescriptor.builder().setExecutor(new DefaultNutsArtifactCall(JAVA, new String[]{
+                                "--main-class", mainClassString})).build();
             }
         } else if (metainf.isSet()) {
             baseNutsDescriptor = metainf.get();
@@ -171,14 +165,14 @@ public class JarDescriptorContentParserComponent implements NutsDescriptorConten
             CoreDigestHelper d = new CoreDigestHelper();
             d.append(parserContext.getFullStream());
             String artifactId = d.getDigest();
-            baseNutsDescriptor = parserContext.getSession().descriptor().descriptorBuilder()
-                    .setId(ws.id().builder().setGroupId("temp").setArtifactId(artifactId).setVersion("1.0").build())
+            baseNutsDescriptor = NutsDescriptorBuilder.of(session)
+                    .setId(NutsIdBuilder.of(session).setGroupId("temp").setArtifactId(artifactId).setVersion("1.0").build())
                     .addFlag(mainClassString != null ? NutsDescriptorFlag.EXEC : null)
                     .setPackaging("jar")
                     .build();
         }
         boolean alwaysSelectAllMainClasses = false;
-        NutsCommandLine cmd = parserContext.getSession().commandLine().create(parserContext.getParseOptions());
+        NutsCommandLine cmd = NutsCommandLine.of(parserContext.getParseOptions(),session);
         NutsArgument a;
         while (!cmd.isEmpty()) {
             if ((a = cmd.nextBoolean("--all-mains")) != null) {
@@ -188,75 +182,21 @@ public class JarDescriptorContentParserComponent implements NutsDescriptorConten
             }
         }
         if (NutsBlankable.isBlank(mainClassString) || alwaysSelectAllMainClasses) {
-            NutsExecutionEntry[] classes = parserContext.getSession().apps().execEntries()
-                    .setSession(parserContext.getSession())
+            NutsExecutionEntry[] classes = NutsExecutionEntries.of(session)
                     .parse(parserContext.getFullStream(), "java", parserContext.getFullStream().toString());
             if (classes.length == 0) {
-                return checkDescriptor(baseNutsDescriptor, parserContext.getSession());
+                return baseNutsDescriptor;
             } else {
-                return checkDescriptor(baseNutsDescriptor.builder().setExecutor(new DefaultNutsArtifactCall(JAVA, new String[]{
+                return baseNutsDescriptor.builder().setExecutor(new DefaultNutsArtifactCall(JAVA, new String[]{
                                 "--main-class=" + String.join(":",
                                         Arrays.stream(classes)
                                                 .map(x -> x.getName())
                                                 .collect(Collectors.toList())
-                                )}, null)).addFlag(NutsDescriptorFlag.EXEC).build()
-                        , parserContext.getSession())
-                        ;
+                                )}, null)).addFlag(NutsDescriptorFlag.EXEC).build();
             }
         } else {
-            return checkDescriptor(baseNutsDescriptor, parserContext.getSession());
+            return baseNutsDescriptor;
         }
     }
 
-    private NutsDescriptor checkDescriptor(NutsDescriptor nutsDescriptor, NutsSession session) {
-        NutsId id = nutsDescriptor.getId();
-        String groupId = id == null ? null : id.getGroupId();
-        String artifactId = id == null ? null : id.getArtifactId();
-        NutsVersion version = id == null ? null : id.getVersion();
-        if (groupId == null || artifactId == null || NutsBlankable.isBlank(version)) {
-            switch (session.getConfirm()) {
-                case ASK:
-                case ERROR: {
-                    if (groupId == null) {
-                        groupId = session.getTerminal().ask()
-                                .forString(NutsMessage.cstyle("group id"))
-                                .setDefaultValue(groupId)
-                                .setHintMessage(NutsBlankable.isBlank(groupId) ? null : NutsMessage.plain(groupId))
-                                .getValue();
-                    }
-                    if (artifactId == null) {
-                        artifactId = session.getTerminal().ask()
-                                .forString(NutsMessage.cstyle("artifact id"))
-                                .setDefaultValue(artifactId)
-                                .setHintMessage(NutsBlankable.isBlank(artifactId) ? null : NutsMessage.plain(artifactId))
-                                .getValue();
-                    }
-                    if (NutsBlankable.isBlank(version)) {
-                        String ov = version == null ? null : version.getValue();
-                        String v = session.getTerminal().ask()
-                                .forString(NutsMessage.cstyle("version"))
-                                .setDefaultValue(ov)
-                                .setHintMessage(NutsBlankable.isBlank(ov) ? null : NutsMessage.plain(ov))
-                                .getValue();
-                        version = session.version().parser()
-                                .setAcceptBlank(true)
-                                .setAcceptIntervals(true)
-                                .setLenient(true).parse(v);
-                    }
-                    break;
-                }
-                case NO:
-                case YES: {
-                    //silently return null
-                }
-            }
-        }
-        if (groupId == null || artifactId == null || NutsBlankable.isBlank(version)) {
-            throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("invalid descriptor id %s:%s#%s", groupId, artifactId, version));
-        }
-        return nutsDescriptor.builder()
-                .setId(session.id().builder().setGroupId(groupId).setArtifactId(artifactId).setVersion(version).build())
-                .build()
-                ;
-    }
 }

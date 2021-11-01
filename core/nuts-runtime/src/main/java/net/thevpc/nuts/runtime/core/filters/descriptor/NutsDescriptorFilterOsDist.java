@@ -34,7 +34,7 @@ import java.util.Objects;
 /**
  * Created by vpc on 2/20/17.
  */
-public class NutsDescriptorFilterOsDist extends AbstractDescriptorFilter implements JsNutsDescriptorFilter {
+public class NutsDescriptorFilterOsDist extends AbstractDescriptorFilter  {
 
     private final String osDist;
 
@@ -61,11 +61,6 @@ public class NutsDescriptorFilterOsDist extends AbstractDescriptorFilter impleme
             return null;
         }
         return this;
-    }
-
-    @Override
-    public String toJsNutsDescriptorFilterExpr() {
-        return "descriptor.matchesOsdist('" + CoreStringUtils.escapeQuoteStrings(osDist) + "')";
     }
 
     @Override

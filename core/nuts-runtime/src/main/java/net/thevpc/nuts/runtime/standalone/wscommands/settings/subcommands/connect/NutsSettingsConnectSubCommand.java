@@ -24,7 +24,6 @@ public class NutsSettingsConnectSubCommand extends AbstractNutsSettingsSubComman
 
     @Override
     public boolean exec(NutsCommandLine commandLine, Boolean autoSave, NutsSession session) {
-        NutsCommandLineManager commandLineFormat = session.commandLine();
         if (commandLine.next("connect") != null) {
             char[] password = null;
             String server = null;
@@ -35,7 +34,7 @@ public class NutsSettingsConnectSubCommand extends AbstractNutsSettingsSubComman
                 } else if (commandLine.peek().isOption()) {
                     session.configureLast(commandLine);
                 } else {
-                    server = commandLine.nextRequiredNonOption(commandLineFormat.createName("ServerAddress")).getString();
+                    server = commandLine.nextRequiredNonOption(NutsArgumentName.of("ServerAddress",session)).getString();
                     commandLine.setCommandName("settings connect").unexpectedArgument();
                 }
             }

@@ -1,12 +1,9 @@
 package net.thevpc.nuts.runtime.core.format.text.parser.steps;
 
-import net.thevpc.nuts.NutsIllegalArgumentException;
-import net.thevpc.nuts.NutsMessage;
-import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.runtime.core.format.text.DefaultNutsTextManager;
+import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.core.format.text.DefaultNutsTexts;
 import net.thevpc.nuts.runtime.core.format.text.parser.DefaultNutsTextNodeParser;
 import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
-import net.thevpc.nuts.NutsText;
 
 
 public class NewLineParserStep extends ParserStep {
@@ -41,7 +38,7 @@ public class NewLineParserStep extends ParserStep {
 
     @Override
     public NutsText toText() {
-        DefaultNutsTextManager factory0 = (DefaultNutsTextManager) session.text();
+        DefaultNutsTexts factory0 = (DefaultNutsTexts) NutsTexts.of(session);
         return factory0.ofPlain(start.toString());
     }
 

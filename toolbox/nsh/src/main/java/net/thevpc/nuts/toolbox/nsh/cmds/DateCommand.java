@@ -1,7 +1,7 @@
 /**
  * ====================================================================
- *            Nuts : Network Updatable Things Service
- *                  (universal package manager)
+ * Nuts : Network Updatable Things Service
+ * (universal package manager)
  * <br>
  * is a new Open Source Package Manager to help install packages
  * and libraries for runtime execution. Nuts is the ultimate companion for
@@ -11,7 +11,7 @@
  * architecture to help supporting a large range of sub managers / repositories.
  *
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc]
  * Licensed under the Apache License, Version 2.0 (the "License"); you may
  * not use this file except in compliance with the License. You may obtain a
@@ -23,25 +23,273 @@
  * governing permissions and limitations under the License.
  * <br>
  * ====================================================================
-*/
+ */
 package net.thevpc.nuts.toolbox.nsh.cmds;
 
 import net.thevpc.nuts.NutsArgument;
 import net.thevpc.nuts.NutsCommandLine;
-import net.thevpc.nuts.spi.NutsSingleton;
+import net.thevpc.nuts.spi.NutsComponentScope;
+import net.thevpc.nuts.spi.NutsComponentScopeType;
 import net.thevpc.nuts.toolbox.nsh.SimpleNshBuiltin;
 
-import java.time.*;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 
 /**
  * Created by vpc on 1/7/17.
  */
-@NutsSingleton
+@NutsComponentScope(NutsComponentScopeType.WORKSPACE)
 public class DateCommand extends SimpleNshBuiltin {
 
     public DateCommand() {
         super("date", DEFAULT_SUPPORT);
+    }
+
+    @Override
+    protected Object createOptions() {
+        return new Options();
+    }
+
+    @Override
+    protected boolean configureFirst(NutsCommandLine cmdLine, SimpleNshCommandContext context) {
+        Options options = context.getOptions();
+        NutsArgument a = cmdLine.peek();
+        switch (a.getKey().getString()) {
+            case "-d":
+            case "--date": {
+                if (context.getShell().getOptions().isNsh()) {
+                    a = cmdLine.nextString();
+                    if (a.isEnabled()) {
+                        options.date = a.getValue().getString();
+                    }
+                } else {
+                    a = cmdLine.next();
+                    options.date = a.getValue().getString();
+                }
+                return true;
+            }
+            case "-f":
+            case "--file": {
+                if (context.getShell().getOptions().isNsh()) {
+                    a = cmdLine.nextString();
+                    if (a.isEnabled()) {
+                        options.file = a.getValue().getString();
+                    }
+                } else {
+                    a = cmdLine.next();
+                    options.file = a.getValue().getString();
+                }
+                return true;
+            }
+            case "--rfc-3339": {
+                if (context.getShell().getOptions().isNsh()) {
+                    a = cmdLine.next();
+                    if (a.isEnabled()) {
+                        String s = a.getValue().getString();
+                        if (s == null) {
+                            s = "";
+                        }
+                        options.rfc3339 = s;
+                    }
+                } else {
+                    a = cmdLine.next();
+                    String s = a.getValue().getString();
+                    if (s == null) {
+                        s = "";
+                    }
+                    options.rfc3339 = s;
+                }
+                return true;
+            }
+            case "--iso-8601": {
+                if (context.getShell().getOptions().isNsh()) {
+                    a = cmdLine.next();
+                    if (a.isEnabled()) {
+                        String s = a.getValue().getString();
+                        if (s == null) {
+                            s = "";
+                        }
+                        options.rfc8601 = s;
+                    }
+                } else {
+                    a = cmdLine.next();
+                    String s = a.getValue().getString();
+                    if (s == null) {
+                        s = "";
+                    }
+                    options.rfc8601 = s;
+                }
+                return true;
+            }
+            case "-s":
+            case "--set": {
+                if (context.getShell().getOptions().isNsh()) {
+                    a = cmdLine.next();
+                    if (a.isEnabled()) {
+                        String s = a.getValue().getString();
+                        if (s == null) {
+                            s = "";
+                        }
+                        options.setdate = s;
+                    }
+                } else {
+                    a = cmdLine.next();
+                    String s = a.getValue().getString();
+                    if (s == null) {
+                        s = "";
+                    }
+                    options.setdate = s;
+                }
+                return true;
+            }
+            case "-Id":
+            case "-Idate":
+            case "-Ih":
+            case "-Ihours":
+            case "-Im":
+            case "-Iminutes":
+            case "-Is":
+            case "-Iseconds":
+            case "-Ins": {
+                if (context.getShell().getOptions().isNsh()) {
+                    a = cmdLine.next();
+                    if (a.isEnabled()) {
+                        options.rfc8601 = a.getString().substring(2);
+                    }
+                } else {
+                    a = cmdLine.next();
+                    options.rfc8601 = a.getString().substring(2);
+                }
+                return true;
+            }
+            case "--debug": {
+                if (context.getShell().getOptions().isNsh()) {
+                    a = cmdLine.nextBoolean();
+                    if (a.isEnabled()) {
+                        options.debug = a.getValue().getBoolean();
+                    }
+                } else {
+                    a = cmdLine.next();
+                    options.debug = true;
+                }
+                return true;
+            }
+            case "-u":
+            case "--utc":
+            case "--universal": {
+                if (context.getShell().getOptions().isNsh()) {
+                    a = cmdLine.nextBoolean();
+                    if (a.isEnabled()) {
+                        options.utc = a.getValue().getBoolean();
+                    }
+                } else {
+                    a = cmdLine.next();
+                    options.utc = true;
+                }
+                return true;
+            }
+            case "-R":
+            case "--rfc-email": {
+                if (context.getShell().getOptions().isNsh()) {
+                    a = cmdLine.nextBoolean();
+                    if (a.isEnabled()) {
+                        options.rfcMail = a.getValue().getBoolean();
+                    }
+                } else {
+                    a = cmdLine.next();
+                    options.rfcMail = true;
+                }
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    protected void execBuiltin(NutsCommandLine cmdLine, SimpleNshCommandContext context) {
+        Options options = context.getOptions();
+        ZonedDateTime dateTimeInMyZone = ZonedDateTime.
+                of(LocalDateTime.now(), ZoneId.systemDefault());
+        if (options.utc) {
+            dateTimeInMyZone = dateTimeInMyZone.withZoneSameInstant(ZoneOffset.UTC);
+        }
+        if (options.iso != null) {
+            switch (options.iso) {
+                case "":
+                case "d":
+                case "date": {
+                    context.getSession().out().printlnf(dateTimeInMyZone.toLocalDate().toString());
+                    break;
+                }
+                case "m":
+                case "minutes": {
+                    context.getSession().out().printlnf(DateTimeFormatter.ofPattern("uuuu-MM-dd'T'HH:mm").format(dateTimeInMyZone.toLocalDateTime()));
+                    break;
+                }
+                case "s":
+                case "seconds": {
+                    context.getSession().out().printlnf(DateTimeFormatter.ofPattern("uuuu-MM-dd'T'HH:mm:ss").format(dateTimeInMyZone.toLocalDateTime()));
+                    break;
+                }
+                case "ns": {
+                    context.getSession().out().printlnf(DateTimeFormatter.ofPattern("uuuu-MM-dd'T'HH:mm:ss.SSSSSSSSS").format(dateTimeInMyZone.toLocalDateTime()));
+                    break;
+                }
+                default: {
+                    //error??
+                    context.getSession().out().printlnf(dateTimeInMyZone.toLocalDate().toString());
+                    break;
+                }
+            }
+        } else if (options.rfc3339 != null) {
+            switch (options.rfc3339) {
+                case "":
+                case "d":
+                case "date": {
+                    context.getSession().out().printlnf(dateTimeInMyZone.toLocalDate().toString());
+                    break;
+                }
+                case "m":
+                case "minutes": {
+                    context.getSession().out().printlnf(DateTimeFormatter.ofPattern("uuuu-MM-dd' 'HH:mmXXX").format(dateTimeInMyZone.toLocalDate()));
+                    break;
+                }
+                case "s":
+                case "seconds": {
+                    context.getSession().out().printlnf(DateTimeFormatter.ofPattern("uuuu-MM-dd' 'HH:mm:ssXXX").format(dateTimeInMyZone.toLocalDateTime()));
+                    break;
+                }
+                case "ns": {
+                    context.getSession().out().printlnf(DateTimeFormatter.ofPattern("uuuu-MM-dd' 'HH:mm:ss.SSSSSSSSSXXX").format(dateTimeInMyZone.toLocalDateTime()));
+                    break;
+                }
+                default: {
+                    //error??
+                    context.getSession().out().printlnf(dateTimeInMyZone.toLocalDate().toString());
+                    break;
+                }
+            }
+        } else if (options.rfcMail) {
+            context.getSession().out().printlnf(DateTimeFormatter.ofPattern("EEE, d MMM yyyy HH:mm:ss Z").format(dateTimeInMyZone));
+        } else {
+            context.getSession().out().printlnf(DateTimeFormatter.ofPattern("EEE MMM d hh:mm:ss a Z yyyy").format(dateTimeInMyZone));
+        }
+    }
+
+    @Override
+    protected void initCommandLine(NutsCommandLine commandLine) {
+        for (String s : new String[]{
+                "-Id", "-Idate",
+                "-Ih", "-Ihours",
+                "-Im", "-Iminutes",
+                "-Is", "-Iseconds",
+                "-Ins"
+        }) {
+            commandLine.registerSpecialSimpleOption(s);
+        }
     }
 
     private static class Options {
@@ -56,252 +304,5 @@ public class DateCommand extends SimpleNshBuiltin {
         String reference;
         String setdate;
         boolean utc;
-    }
-
-    @Override
-    protected Object createOptions() {
-        return new Options();
-    }
-
-    @Override
-    protected void initCommandLine(NutsCommandLine commandLine) {
-        for (String s : new String[]{
-                "-Id","-Idate",
-                "-Ih","-Ihours",
-                "-Im","-Iminutes",
-                "-Is","-Iseconds",
-                "-Ins"
-        }) {
-            commandLine.registerSpecialSimpleOption(s);
-        }
-    }
-
-    @Override
-    protected boolean configureFirst(NutsCommandLine cmdLine, SimpleNshCommandContext context) {
-        Options options = context.getOptions();
-        NutsArgument a = cmdLine.peek();
-        switch (a.getKey().getString()) {
-            case "-d":
-            case "--date": {
-                if(context.getShell().getOptions().isNsh()){
-                    a = cmdLine.nextString();
-                    if(a.isEnabled()){
-                        options.date=a.getValue().getString();
-                    }
-                }else {
-                    a = cmdLine.next();
-                    options.date=a.getValue().getString();
-                }
-                return true;
-            }
-            case "-f":
-            case "--file": {
-                if(context.getShell().getOptions().isNsh()){
-                    a = cmdLine.nextString();
-                    if(a.isEnabled()){
-                        options.file=a.getValue().getString();
-                    }
-                }else {
-                    a = cmdLine.next();
-                    options.file=a.getValue().getString();
-                }
-                return true;
-            }
-            case "--rfc-3339": {
-                if(context.getShell().getOptions().isNsh()){
-                    a = cmdLine.next();
-                    if(a.isEnabled()){
-                        String s = a.getValue().getString();
-                        if(s==null){
-                            s="";
-                        }
-                        options.rfc3339=s;
-                    }
-                }else {
-                    a = cmdLine.next();
-                    String s = a.getValue().getString();
-                    if(s==null){
-                        s="";
-                    }
-                    options.rfc3339=s;
-                }
-                return true;
-            }
-            case "--iso-8601": {
-                if(context.getShell().getOptions().isNsh()){
-                    a = cmdLine.next();
-                    if(a.isEnabled()){
-                        String s = a.getValue().getString();
-                        if(s==null){
-                            s="";
-                        }
-                        options.rfc8601=s;
-                    }
-                }else {
-                    a = cmdLine.next();
-                    String s = a.getValue().getString();
-                    if(s==null){
-                        s="";
-                    }
-                    options.rfc8601=s;
-                }
-                return true;
-            }
-            case "-s":
-            case "--set":
-                {
-                if(context.getShell().getOptions().isNsh()){
-                    a = cmdLine.next();
-                    if(a.isEnabled()){
-                        String s = a.getValue().getString();
-                        if(s==null){
-                            s="";
-                        }
-                        options.setdate=s;
-                    }
-                }else {
-                    a = cmdLine.next();
-                    String s = a.getValue().getString();
-                    if(s==null){
-                        s="";
-                    }
-                    options.setdate=s;
-                }
-                return true;
-            }
-            case "-Id":
-            case "-Idate":
-            case "-Ih":
-            case "-Ihours":
-            case "-Im":
-            case "-Iminutes":
-            case "-Is":
-            case "-Iseconds":
-            case "-Ins":
-                {
-                if(context.getShell().getOptions().isNsh()){
-                    a = cmdLine.next();
-                    if(a.isEnabled()){
-                        options.rfc8601=a.getString().substring(2);
-                    }
-                }else {
-                    a = cmdLine.next();
-                    options.rfc8601=a.getString().substring(2);
-                }
-                return true;
-            }
-            case "--debug": {
-                if(context.getShell().getOptions().isNsh()){
-                    a = cmdLine.nextBoolean();
-                    if(a.isEnabled()){
-                        options.debug=a.getValue().getBoolean();
-                    }
-                }else {
-                    a = cmdLine.next();
-                    options.debug=true;
-                }
-                return true;
-            }
-            case "-u":
-            case "--utc":
-            case "--universal":
-                {
-                if(context.getShell().getOptions().isNsh()){
-                    a = cmdLine.nextBoolean();
-                    if(a.isEnabled()){
-                        options.utc=a.getValue().getBoolean();
-                    }
-                }else {
-                    a = cmdLine.next();
-                    options.utc=true;
-                }
-                return true;
-            }
-            case "-R":
-            case "--rfc-email":{
-                if(context.getShell().getOptions().isNsh()){
-                    a = cmdLine.nextBoolean();
-                    if(a.isEnabled()){
-                        options.rfcMail=a.getValue().getBoolean();
-                    }
-                }else {
-                    a = cmdLine.next();
-                    options.rfcMail=true;
-                }
-                return true;
-            }
-        }
-        return false;
-    }
-
-    @Override
-    protected void execBuiltin(NutsCommandLine cmdLine, SimpleNshCommandContext context) {
-        Options options = context.getOptions();
-        ZonedDateTime dateTimeInMyZone = ZonedDateTime.
-                of(LocalDateTime.now(), ZoneId.systemDefault());
-        if(options.utc) {
-            dateTimeInMyZone = dateTimeInMyZone.withZoneSameInstant(ZoneOffset.UTC);
-        }
-        if(options.iso!=null){
-            switch (options.iso){
-                case "":
-                case "d":
-                case "date":{
-                    context.getSession().out().printlnf(dateTimeInMyZone.toLocalDate().toString());
-                    break;
-                }
-                case "m":
-                case "minutes":{
-                    context.getSession().out().printlnf(DateTimeFormatter.ofPattern("uuuu-MM-dd'T'HH:mm").format(dateTimeInMyZone.toLocalDateTime()));
-                    break;
-                }
-                case "s":
-                case "seconds":{
-                    context.getSession().out().printlnf(DateTimeFormatter.ofPattern("uuuu-MM-dd'T'HH:mm:ss").format(dateTimeInMyZone.toLocalDateTime()));
-                    break;
-                }
-                case "ns":{
-                    context.getSession().out().printlnf(DateTimeFormatter.ofPattern("uuuu-MM-dd'T'HH:mm:ss.SSSSSSSSS").format(dateTimeInMyZone.toLocalDateTime()));
-                    break;
-                }
-                default:{
-                    //error??
-                    context.getSession().out().printlnf(dateTimeInMyZone.toLocalDate().toString());
-                    break;
-                }
-            }
-        }else if(options.rfc3339!=null){
-            switch (options.rfc3339){
-                case "":
-                case "d":
-                case "date":{
-                    context.getSession().out().printlnf(dateTimeInMyZone.toLocalDate().toString());
-                    break;
-                }
-                case "m":
-                case "minutes":{
-                    context.getSession().out().printlnf(DateTimeFormatter.ofPattern("uuuu-MM-dd' 'HH:mmXXX").format(dateTimeInMyZone.toLocalDate()));
-                    break;
-                }
-                case "s":
-                case "seconds":{
-                    context.getSession().out().printlnf(DateTimeFormatter.ofPattern("uuuu-MM-dd' 'HH:mm:ssXXX").format(dateTimeInMyZone.toLocalDateTime()));
-                    break;
-                }
-                case "ns":{
-                    context.getSession().out().printlnf(DateTimeFormatter.ofPattern("uuuu-MM-dd' 'HH:mm:ss.SSSSSSSSSXXX").format(dateTimeInMyZone.toLocalDateTime()));
-                    break;
-                }
-                default:{
-                    //error??
-                    context.getSession().out().printlnf(dateTimeInMyZone.toLocalDate().toString());
-                    break;
-                }
-            }
-        }else  if(options.rfcMail){
-            context.getSession().out().printlnf(DateTimeFormatter.ofPattern("EEE, d MMM yyyy HH:mm:ss Z").format(dateTimeInMyZone));
-        }else{
-            context.getSession().out().printlnf(DateTimeFormatter.ofPattern("EEE MMM d hh:mm:ss a Z yyyy").format(dateTimeInMyZone));
-        }
     }
 }

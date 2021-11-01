@@ -26,7 +26,7 @@
 //import net.thevpc.nuts.NutsElement;
 //import net.thevpc.nuts.NutsElementEntry;
 //import net.thevpc.nuts.NutsElementEntryBuilder;
-//import net.thevpc.nuts.NutsElementFormat;
+//import net.thevpc.nuts.NutsElements;
 //import net.thevpc.nuts.NutsPrimitiveElementBuilder;
 //import net.thevpc.nuts.NutsSession;
 //
@@ -80,8 +80,8 @@
 //        );
 //    }
 //
-//    private NutsElementFormat _element() {
-//        return session.elem();
+//    private NutsElements _element() {
+//        return NutsElements.of(session);
 //    }
 //
 //}

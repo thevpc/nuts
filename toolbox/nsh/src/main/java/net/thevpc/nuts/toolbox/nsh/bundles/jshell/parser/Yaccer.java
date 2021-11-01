@@ -614,10 +614,10 @@ public class Yaccer {
             return null;
         }
         return new Argument(a);
-//        List<Token> ok = new ArrayList<>();
+//        List<NutsToken> ok = new ArrayList<>();
 //        boolean loop = true;
 //        while (loop) {
-//            Token t = jShellParser2.lexer().peedToken();
+//            NutsToken t = jShellParser2.lexer().peedToken();
 //            if (t == null) {
 //                break;
 //            }

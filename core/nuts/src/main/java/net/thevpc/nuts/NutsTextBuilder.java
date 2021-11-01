@@ -11,7 +11,7 @@ import java.util.List;
 public interface NutsTextBuilder extends NutsString {
     static NutsTextBuilder of(NutsSession session) {
         NutsApiUtils.checkSession(session);
-        return session.text().builder();
+        return NutsTexts.of(session).builder();
     }
 
     NutsTextStyleGenerator getStyleGenerator();

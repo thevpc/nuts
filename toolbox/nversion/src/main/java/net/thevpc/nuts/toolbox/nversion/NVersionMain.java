@@ -23,14 +23,6 @@ public class NVersionMain implements NutsApplication {
         new NVersionMain().runAndExit(args);
     }
 
-    public static NutsPath xfileOf(String expression, String cwd, NutsSession session) {
-        NutsIOManager io = session.io();
-        if (expression.startsWith("file:") || expression.contains("://")) {
-            return io.path(expression);
-        }
-        return io.path(expression).builder().setBaseDir(cwd).build();
-    }
-
     private Set<VersionDescriptor> detectVersions(String filePath, NutsApplicationContext context) throws IOException {
         for (PathVersionResolver r : resolvers) {
             Set<VersionDescriptor> x = r.resolve(filePath, context);
@@ -112,30 +104,29 @@ public class NVersionMain implements NutsApplication {
                 Set<VersionDescriptor> value = null;
                 try {
                     processed++;
-                    value = detectVersions(context.getSession().io()
-                            .path(arg).builder().withAppBaseDir().build().toString(), context);
+                    value = detectVersions(NutsPath.of(arg, session).builder().withAppBaseDir().build().toString(), context);
                 } catch (IOException e) {
-                    throw new NutsExecutionException(context.getSession(),NutsMessage.cstyle("nversion: unable to detect version for %s",arg), e, 2);
+                    throw new NutsExecutionException(session,NutsMessage.cstyle("nversion: unable to detect version for %s",arg), e, 2);
                 }
                 if (!value.isEmpty()) {
                     results.put(arg, value);
                 }
             }
             if (processed == 0) {
-                throw new NutsExecutionException(context.getSession(), NutsMessage.cstyle("nversion: missing file"), 2);
+                throw new NutsExecutionException(session, NutsMessage.cstyle("nversion: missing file"), 2);
             }
             if (table && all) {
-                throw new NutsExecutionException(context.getSession(), NutsMessage.cstyle("nversion: options conflict --table --all"), 1);
+                throw new NutsExecutionException(session, NutsMessage.cstyle("nversion: options conflict --table --all"), 1);
             }
             if (table && longFormat) {
-                throw new NutsExecutionException(context.getSession(), NutsMessage.cstyle("nversion: options conflict --table --long"), 1);
+                throw new NutsExecutionException(session, NutsMessage.cstyle("nversion: options conflict --table --long"), 1);
             }
 
-            NutsPrintStream out = context.getSession().out();
-            NutsPrintStream err = context.getSession().out();
-            NutsTextManager text = context.getSession().text();
+            NutsPrintStream out = session.out();
+            NutsPrintStream err = session.out();
+            NutsTexts text = NutsTexts.of(session);
             if (table) {
-                NutsPropertiesFormat tt = context.getSession().formats().props().setSorted(sort);
+                NutsPropertiesFormat tt = session.formats().props().setSorted(sort);
                 Properties pp = new Properties();
                 for (Map.Entry<String, Set<VersionDescriptor>> entry : results.entrySet()) {
                     VersionDescriptor o = entry.getValue().toArray(new VersionDescriptor[0])[0];
@@ -151,7 +142,7 @@ public class NVersionMain implements NutsApplication {
                 }
                 if (error) {
                     for (String t : unsupportedFileTypes) {
-                        File f = new File(context.getSession().io().path(t).builder().withAppBaseDir().build().toString());
+                        File f = new File(NutsPath.of(t,session).builder().withAppBaseDir().build().toString());
                         if (f.isFile()) {
                             pp.setProperty(t, text.builder().append("<<ERROR>>", NutsTextStyle.error()).append(" unsupported file type").toString());
                         } else if (f.isDirectory()) {
@@ -182,7 +173,7 @@ public class NVersionMain implements NutsApplication {
                             out.printf("%s%n", text.toText(descriptor.getId()));
                         } else if (longFormat) {
                             out.printf("%s%n", text.toText(descriptor.getId()));
-                            NutsPropertiesFormat f = context.getSession().formats().props()
+                            NutsPropertiesFormat f = session.formats().props()
                                     .setSorted(true);
                             f.setValue(descriptor.getProperties()).print(out);
                         } else {
@@ -196,7 +187,7 @@ public class NVersionMain implements NutsApplication {
                 if (error) {
                     if (!unsupportedFileTypes.isEmpty()) {
                         for (String t : unsupportedFileTypes) {
-                            File f = new File(context.getSession().io().path(t).builder().withAppBaseDir().build().toString());
+                            File f = NutsPath.of(t,session).builder().withAppBaseDir().build().toFile().toFile();
                             if (f.isFile()) {
                                 err.printf("%s : unsupported file type%n", t);
                             } else if (f.isDirectory()) {
@@ -209,7 +200,7 @@ public class NVersionMain implements NutsApplication {
                 }
             }
             if (!unsupportedFileTypes.isEmpty()) {
-                throw new NutsExecutionException(context.getSession(), NutsMessage.cstyle("nversion: unsupported file types %s", unsupportedFileTypes), 3);
+                throw new NutsExecutionException(session, NutsMessage.cstyle("nversion: unsupported file types %s", unsupportedFileTypes), 3);
             }
         }
     }

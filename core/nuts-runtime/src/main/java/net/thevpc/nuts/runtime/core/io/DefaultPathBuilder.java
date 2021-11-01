@@ -14,7 +14,7 @@ public class DefaultPathBuilder implements NutsPathBuilder {
     EffectiveResolver effectiveResolver;
     private Function<String, String> resolver;
     private NutsSession session;
-    private String baseDir;
+    private NutsPath baseDir;
     private NutsPath base;
     private boolean expandVars = true;
 
@@ -48,20 +48,20 @@ public class DefaultPathBuilder implements NutsPathBuilder {
 
     @Override
     public NutsPathBuilder withAppBaseDir() {
-        setBaseDir(System.getProperty("user.dir"));
+        setBaseDir(NutsPath.of(System.getProperty("user.dir"),session));
         return this;
     }
 
     @Override
-    public String getBaseDir() {
+    public NutsPath getBaseDir() {
         if (baseDir == null) {
-            return System.getProperty("user.dir");
+            return NutsPath.of(System.getProperty("user.dir"),session);
         }
         return baseDir;
     }
 
     @Override
-    public NutsPathBuilder setBaseDir(String baseDir) {
+    public NutsPathBuilder setBaseDir(NutsPath baseDir) {
         this.baseDir = baseDir;
         return this;
     }
@@ -96,13 +96,11 @@ public class DefaultPathBuilder implements NutsPathBuilder {
     }
 
     private NutsPath expandVars(NutsPath path) {
-        NutsIOManager io = session.io();
-        return io.path(StringPlaceHolderParser.replaceDollarPlaceHolders(path.toString(), effectiveResolver));
+        return NutsPath.of(StringPlaceHolderParser.replaceDollarPlaceHolders(path.toString(), effectiveResolver),session);
     }
 
     private NutsPath expandFile(NutsPath npath) {
         Path fp = npath.toFile();
-        NutsIOManager io = session.io();
         if (fp != null && fp.toString().length() > 0) {
             Path ppath = fp;
             String path = fp.toString();
@@ -113,36 +111,36 @@ public class DefaultPathBuilder implements NutsPathBuilder {
                 NutsWorkspaceLocationManager locations = session.locations();
                 if (path.equals("~~")) {
                     Path nutsHome = Paths.get(locations.getHomeLocation(NutsStoreLocation.CONFIG));
-                    return io.path(nutsHome.normalize().toString());
+                    return NutsPath.of(nutsHome.normalize(),session);
                 } else if (path.startsWith("~~") && path.length() > 2 && (path.charAt(2) == '/' || path.charAt(2) == '\\')) {
                     Path nutsHome = Paths.get(locations.getHomeLocation(NutsStoreLocation.CONFIG));
-                    return io.path(nutsHome.resolve(path.substring(3)).normalize().toString());
+                    return NutsPath.of(nutsHome.resolve(path.substring(3)).normalize(),session);
                 } else if (path.equals("~")) {
-                    return io.path(System.getProperty("user.home"));
+                    return NutsPath.of(System.getProperty("user.home"),session);
                 } else if (path.startsWith("~") && path.length() > 1 && (path.charAt(1) == '/' || path.charAt(1) == '\\')) {
-                    return io.path(System.getProperty("user.home") + File.separator + path.substring(2));
+                    return NutsPath.of(System.getProperty("user.home") + File.separator + path.substring(2),session);
                 } else if (baseDir != null) {
-                    if (CoreIOUtils.isURL(baseDir)) {
-                        return io.path(baseDir + "/" + path);
+                    if (baseDir.isURL()) {
+                        return baseDir.resolve(path);
                     }
-                    return io.path(Paths.get(baseDir).resolve(path).toAbsolutePath().normalize());
+                    return baseDir.resolve(path).toAbsolute().normalize();
                 } else {
                     if (CoreIOUtils.isURL(path)) {
-                        return io.path(path);
+                        return NutsPath.of(path,session);
                     }
-                    return io.path(ppath.toAbsolutePath().normalize());
+                    return NutsPath.of(ppath.toAbsolutePath().normalize(),session);
                 }
             } else if (path.equals(".") || path.equals("..")) {
-                return io.path(ppath.toAbsolutePath().normalize());
+                return NutsPath.of(ppath.toAbsolutePath().normalize(),session);
             } else if (ppath.isAbsolute()) {
-                return io.path(ppath.normalize());
+                return NutsPath.of(ppath.normalize(),session);
             } else if (baseDir != null) {
-                if (CoreIOUtils.isURL(baseDir)) {
-                    return io.path(baseDir + "/" + path);
+                if (baseDir.isURL()) {
+                    return baseDir.resolve( path);
                 }
-                return io.path(Paths.get(baseDir).resolve(path).toAbsolutePath().normalize());
+                return baseDir.resolve(path).toAbsolute().normalize();
             } else {
-                return io.path(ppath.toAbsolutePath().normalize());
+                return NutsPath.of(ppath.toAbsolutePath().normalize(),session);
             }
         }
         return npath;

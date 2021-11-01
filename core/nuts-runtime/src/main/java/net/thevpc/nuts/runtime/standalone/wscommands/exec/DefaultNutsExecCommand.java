@@ -53,7 +53,7 @@ public class DefaultNutsExecCommand extends AbstractNutsExecCommand {
         checkSession();
         NutsSession traceSession = getSession();
         NutsSession execSession = traceSession.copy();
-        NutsSessionTerminal terminal = execSession.term().createTerminal(traceSession.getTerminal());
+        NutsSessionTerminal terminal = NutsSessionTerminal.of(traceSession.getTerminal(),execSession);
         if (this.in != null) {
             terminal.setIn(this.in);
         }
@@ -194,12 +194,12 @@ public class DefaultNutsExecCommand extends AbstractNutsExecCommand {
         String goodKw = null;
         boolean forceInstalled = false;
         if (cmdName.endsWith("!")) {
-            goodId = session.id().parser().setLenient(true).parse(cmdName.substring(0, cmdName.length() - 1));
+            goodId = NutsIdParser.of(session).setLenient(true).parse(cmdName.substring(0, cmdName.length() - 1));
             if (goodId != null) {
                 forceInstalled = true;
             }
         } else {
-            goodId = session.id().parser().setLenient(true).parse(cmdName);
+            goodId = NutsIdParser.of(session).setLenient(true).parse(cmdName);
         }
 
         if (cmdName.contains("/") || cmdName.contains("\\")) {
@@ -331,7 +331,7 @@ public class DefaultNutsExecCommand extends AbstractNutsExecCommand {
         }
         NutsSession noProgressSession = traceSession.copy().setProgressOptions("none");
         List<NutsId> ff = traceSession.search().addId(nid).setSession(noProgressSession).setOptional(false).setLatest(true).setFailFast(false)
-                .setInstallStatus(session.filters().installStatus().byDeployed(true))
+                .setInstallStatus(NutsInstallStatusFilters.of(session).byDeployed(true))
                 .getResultDefinitions().stream()
                 .sorted(Comparator.comparing(x -> !x.getInstallInformation().isDefaultVersion())) // default first
                 .map(NutsDefinition::getId).collect(Collectors.toList());
@@ -353,7 +353,7 @@ public class DefaultNutsExecCommand extends AbstractNutsExecCommand {
                 if (traceSession.isPlainTrace()) {
                     traceSession.out().resetLine().printf("%s is %s, will search for it online. Type ```error CTRL^C``` to stop...\n",
                             nid,
-                            session.text().ofStyled("not installed", NutsTextStyle.error())
+                            NutsTexts.of(session).ofStyled("not installed", NutsTextStyle.error())
                     );
                     traceSession.out().flush();
                 }
@@ -489,10 +489,7 @@ public class DefaultNutsExecCommand extends AbstractNutsExecCommand {
                 }
             }
             if (execComponent == null) {
-                execComponent = getSession().extensions().createSupported(NutsExecutorComponent.class, def);
-                if (execComponent == null) {
-                    throw new NutsNotFoundException(getSession(), def.getId());
-                }
+                execComponent = getSession().extensions().createSupported(NutsExecutorComponent.class, true, def);
             }
             if (executorCall != null) {
                 executorArgs.addAll(Arrays.asList(executorCall.getArguments()));

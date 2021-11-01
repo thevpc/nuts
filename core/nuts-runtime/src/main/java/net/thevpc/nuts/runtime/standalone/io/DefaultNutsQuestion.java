@@ -97,7 +97,7 @@ public class DefaultNutsQuestion<T> implements NutsQuestion<T> {
             ByteArrayOutputStream bos = null;
             if (gui) {
                 bos = new ByteArrayOutputStream();
-                out = session.io().createPrintStream(bos);
+                out = NutsPrintStream.of(bos,session);
             }
             if (resetLine) {
                 out.resetLine();
@@ -111,7 +111,7 @@ public class DefaultNutsQuestion<T> implements NutsQuestion<T> {
                 } else {
                     out.print(", ");
                 }
-                out.printf("default is %s", session.text().ofStyled(ff.format(this.getDefaultValue(), this), NutsTextStyle.primary1()));
+                out.printf("default is %s", NutsTexts.of(session).ofStyled(ff.format(this.getDefaultValue(), this), NutsTextStyle.primary1()));
             }
             if (getHintMessage() != null) {
                 out.print(" (");
@@ -133,7 +133,7 @@ public class DefaultNutsQuestion<T> implements NutsQuestion<T> {
                         }
                         sb.append(ff.format(acceptedValue, this));
                     }
-                    out.printf("accepts %s", session.text().ofStyled(sb.toString(), NutsTextStyle.primary4()));
+                    out.printf("accepts %s", NutsTexts.of(session).ofStyled(sb.toString(), NutsTextStyle.primary4()));
                 }
                 if (!first) {
                     out.print(")");
@@ -252,7 +252,7 @@ public class DefaultNutsQuestion<T> implements NutsQuestion<T> {
     }
 
     private String showGuiInput(String str, boolean pwd) {
-        String ft = getSession().text().parse(str).filteredText();
+        String ft = NutsTexts.of(getSession()).parse(str).filteredText();
         NutsMessage title = NutsMessage.cstyle("Nuts Package Manager - %s", getSession().getWorkspace().getApiId().getVersion());
         if (session.getAppId() != null) {
             try {

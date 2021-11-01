@@ -28,7 +28,7 @@ public abstract class AbstractNutsText implements NutsText {
 
     @Override
     public NutsString immutable() {
-        return session.text().builder().append(this).immutable();
+        return NutsTexts.of(session).builder().append(this).immutable();
     }
 
     @Override
@@ -58,7 +58,7 @@ public abstract class AbstractNutsText implements NutsText {
 
     @Override
     public NutsTextBuilder builder() {
-        return session.text().builder().append(this);
+        return NutsTexts.of(session).builder().append(this);
     }
 
 }

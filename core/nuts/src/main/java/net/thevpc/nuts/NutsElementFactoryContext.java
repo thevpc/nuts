@@ -39,7 +39,7 @@ public interface NutsElementFactoryContext {
 
     NutsWorkspace getWorkspace();
 
-    NutsElementFormat elem();
+    NutsElements elem();
 
     Map<String, Object> getProperties();
 

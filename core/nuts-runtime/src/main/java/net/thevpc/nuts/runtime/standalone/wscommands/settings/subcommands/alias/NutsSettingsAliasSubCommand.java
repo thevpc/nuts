@@ -38,8 +38,8 @@ public class NutsSettingsAliasSubCommand extends AbstractNutsSettingsSubCommand 
 
         public AliasInfo(NutsWorkspaceCustomCommand a, NutsSession ws) {
             name = a.getName();
-            command = ws.commandLine().create(a.getCommand()).toString();
-            executionOptions = ws.commandLine().create(a.getExecutorOptions()).toString();
+            command = NutsCommandLine.of(a.getCommand(),ws).toString();
+            executionOptions = NutsCommandLine.of(a.getExecutorOptions(),ws).toString();
             factoryId = a.getFactoryId();
             owner = a.getOwner();
         }
@@ -109,7 +109,7 @@ public class NutsSettingsAliasSubCommand extends AbstractNutsSettingsSubCommand 
                                     r.stream().collect(
                                             Collectors.toMap(
                                                     NutsWorkspaceCustomCommand::getName,
-                                                    x -> session.commandLine().create(x.getCommand()).toString(),
+                                                    x -> NutsCommandLine.of(x.getCommand(),session).toString(),
                                                     (x, y) -> {
                                                         throw new NutsIllegalArgumentException(session,NutsMessage.cstyle("duplicate %s",x));
                                                     },
@@ -164,9 +164,9 @@ public class NutsSettingsAliasSubCommand extends AbstractNutsSettingsSubCommand 
                     session.commands()
                             .addCommand(
                             new NutsCommandConfig()
-                                    .setCommand(session.commandLine().parse(value.command).toStringArray())
+                                    .setCommand(NutsCommandLine.parse(value.command,session).toStringArray())
                                     .setName(value.name)
-                                    .setExecutorOptions(session.commandLine().parse(value.executionOptions).toStringArray())
+                                    .setExecutorOptions(NutsCommandLine.parse(value.executionOptions,session).toStringArray())
                              );
                 }
                 session.config().save();

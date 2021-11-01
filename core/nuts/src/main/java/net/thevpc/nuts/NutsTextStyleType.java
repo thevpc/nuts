@@ -29,6 +29,7 @@ import net.thevpc.nuts.boot.NutsApiUtils;
  * @app.category Format
  */
 public enum NutsTextStyleType implements NutsEnum {
+    PLAIN(true),//f
     UNDERLINED(true),//_
     ITALIC(true),// /
     STRIKED(true),// -
@@ -84,10 +85,139 @@ public enum NutsTextStyleType implements NutsEnum {
         if (value == null) {
             value = "";
         } else {
-            value = value.toUpperCase().trim().replace('-', '_');
+            value = value.toUpperCase().trim().replace('-', '_').replace("_","");
         }
         if (value.isEmpty()) {
             return emptyValue;
+        }
+        switch (value.toLowerCase()) {
+            case "f":
+            case "foreground":
+            case "foregroundcolor": {
+                return FORE_COLOR;
+            }
+            case "plain": {
+                return PLAIN;
+            }
+            case "foregroundtruecolor": {
+                return FORE_TRUE_COLOR;
+            }
+            case "b":
+            case "background":
+            case "back_color":
+            case "backcolor":
+            case "backgroundcolor": {
+                return BACK_COLOR;
+            }
+            case "backtruecolor":
+            case "backgroundtruecolor": {
+                return BACK_TRUE_COLOR;
+
+            }
+
+            case "p":
+            case "primary": {
+                return PRIMARY;
+            }
+            case "s":
+            case "secondary": {
+                return SECONDARY;
+            }
+            case "underlined": {
+                return UNDERLINED;
+            }
+            case "bold": {
+                return BOLD;
+            }
+            case "boolean":
+            case "bool":
+            {
+                return BOOLEAN;
+            }
+            case "blink": {
+                return BLINK;
+            }
+            case "comments": {
+                return COMMENTS;
+            }
+            case "config": {
+                return CONFIG;
+            }
+            case "danger": {
+                return DANGER;
+            }
+            case "date": {
+                return DATE;
+            }
+            case "number": {
+                return NUMBER;
+            }
+            case "error": {
+                return ERROR;
+            }
+            case "warning":
+            case "warn":
+            {
+                return WARN;
+            }
+            case "version": {
+                return VERSION;
+            }
+            case "var":
+            case "variable":
+            {
+                return VAR;
+            }
+            case "input": {
+                return INPUT;
+            }
+            case "title": {
+                return TITLE;
+            }
+            case "success": {
+                return SUCCESS;
+            }
+            case "string": {
+                return STRING;
+            }
+            case "strike":
+            case "striked": {
+                return STRIKED;
+            }
+            case "separator": {
+                return SEPARATOR;
+            }
+            case "reversed": {
+                return REVERSED;
+            }
+            case "path": {
+                return PATH;
+            }
+            case "option": {
+                return OPTION;
+            }
+            case "pale": {
+                return PALE;
+            }
+            case "operator": {
+                return OPERATOR;
+            }
+            case "kw":
+            case "keyword":
+            {
+                return KEYWORD;
+            }
+            case "italic": {
+                return ITALIC;
+            }
+            case "information":
+            case "info":
+            {
+                return INFO;
+            }
+            case "fail": {
+                return FAIL;
+            }
         }
         try {
             return NutsTextStyleType.valueOf(value.toUpperCase());

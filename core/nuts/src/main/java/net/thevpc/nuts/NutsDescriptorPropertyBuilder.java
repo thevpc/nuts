@@ -1,11 +1,13 @@
 package net.thevpc.nuts;
 
 import net.thevpc.nuts.boot.NutsApiUtils;
+import net.thevpc.nuts.spi.NutsComponent;
 
-public interface NutsDescriptorPropertyBuilder {
+public interface NutsDescriptorPropertyBuilder extends NutsComponent<Object> {
+
     static NutsDescriptorPropertyBuilder of(NutsSession session) {
         NutsApiUtils.checkSession(session);
-        return session.descriptor().propertyBuilder();
+        return session.extensions().createSupported(NutsDescriptorPropertyBuilder.class,true,null);
     }
 
     String getName();

@@ -6,6 +6,7 @@
 package net.thevpc.nuts.runtime.core;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.core.log.DefaultNutsLogModel;
 import net.thevpc.nuts.runtime.core.repos.NutsInstalledRepository;
 import net.thevpc.nuts.runtime.core.commands.ws.NutsExecutionContextBuilder;
 import net.thevpc.nuts.spi.NutsInstallerComponent;
@@ -70,4 +71,5 @@ public interface NutsWorkspaceExt {
 
     NutsSession defaultSession();
 
+    NutsWorkspaceModel getModel();
 }

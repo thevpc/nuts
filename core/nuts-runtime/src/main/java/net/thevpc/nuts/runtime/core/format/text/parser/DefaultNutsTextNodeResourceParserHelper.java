@@ -117,7 +117,7 @@ public class DefaultNutsTextNodeResourceParserHelper {
                         try {
                             other = parseResource(e, classLoader);
                         } catch (Throwable t) {
-                            other = session.text().
+                            other = NutsTexts.of(session).
                                     builder().append("NOT FOUND", NutsTextStyle.error())
                                     .append(" <" + e + ">").toText();
                         }
@@ -132,8 +132,8 @@ public class DefaultNutsTextNodeResourceParserHelper {
         if (vars) {
             help = StringPlaceHolderParser.replaceDollarPlaceHolders(help, pathExpansionConverter);
         }
-//        NutsTextParser p = session.text().parser().parse()new DefaultNutsTextNodeParser(session);
-        NutsText node = session.text().parser().parse(new StringReader(help));
+//        NutsTextParser p = NutsTexts.of(session).parser().parse()new DefaultNutsTextNodeParser(session);
+        NutsText node = NutsTexts.of(session).parser().parse(new StringReader(help));
         if (anchor != null) {
             List<NutsText> ok = new ArrayList<>();
             boolean start = false;
@@ -149,7 +149,7 @@ public class DefaultNutsTextNodeResourceParserHelper {
                 }
             }
             if (start) {
-                node = session.text().ofList(ok).simplify();
+                node = NutsTexts.of(session).ofList(ok).simplify();
             }
             return node;
         }

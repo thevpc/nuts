@@ -1,6 +1,7 @@
 package net.thevpc.nuts.runtime.core.format;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.spi.NutsSupportLevelContext;
 
 import java.io.*;
 
@@ -9,8 +10,8 @@ public class DefaultNutsDescriptorFormat extends DefaultFormatBase<NutsDescripto
     private boolean compact;
     private NutsDescriptor desc;
 
-    public DefaultNutsDescriptorFormat(NutsWorkspace ws) {
-        super(ws, "descriptor-format");
+    public DefaultNutsDescriptorFormat(NutsSession session) {
+        super(session, "descriptor-format");
     }
 
     public NutsDescriptorFormat setNtf(boolean ntf) {
@@ -62,18 +63,21 @@ public class DefaultNutsDescriptorFormat extends DefaultFormatBase<NutsDescripto
         checkSession();
         if (isNtf()) {
             ByteArrayOutputStream os=new ByteArrayOutputStream();
-            getSession()
-                    .elem().setNtf(true).setContentType(NutsContentType.JSON)
+            NutsElements.of(getSession())
+                    .setNtf(true).json()
                     .setValue(desc).setCompact(isCompact())
                     .print(os);
-            NutsTextCode r = getSession().text().ofCode("json", os.toString());
+            NutsTextCode r = NutsTexts.of(getSession()).ofCode("json", os.toString());
             out.print(r);
         } else {
-            getSession()
-                    .elem().setNtf(false).setContentType(NutsContentType.JSON)
+            NutsElements.of(getSession()).setNtf(false).json()
                     .setValue(desc).setCompact(isCompact())
                     .print(out);
         }
     }
 
+    @Override
+    public int getSupportLevel(NutsSupportLevelContext<Object> context) {
+        return DEFAULT_SUPPORT;
+    }
 }

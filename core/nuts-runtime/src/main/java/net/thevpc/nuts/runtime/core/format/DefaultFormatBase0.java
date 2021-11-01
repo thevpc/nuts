@@ -29,6 +29,11 @@ public abstract class DefaultFormatBase0<T> implements NutsCommandLineConfigurab
         this.workspace = workspace;
         this.name = name;
     }
+    public DefaultFormatBase0(NutsSession session, String name) {
+        this.session = session;
+        this.workspace = session.getWorkspace();
+        this.name = name;
+    }
 
     protected void checkSession() {
         NutsWorkspaceUtils.checkSession(getWorkspace(), getSession());

@@ -64,7 +64,7 @@ public abstract class AbstractNutsDeployCommand extends NutsWorkspaceCommandBase
 
     @Override
     public NutsDeployCommand setContent(String path) {
-        content = path==null?null:NutsStreamOrPath.of(getSession().io().path(path));
+        content = path==null?null:NutsStreamOrPath.of(path,getSession());
         return this;
     }
 
@@ -82,14 +82,14 @@ public abstract class AbstractNutsDeployCommand extends NutsWorkspaceCommandBase
 
     @Override
     public NutsDeployCommand setContent(File file) {
-        content = file==null?null:NutsStreamOrPath.of(getSession().io().path(file));
+        content = file==null?null:NutsStreamOrPath.of(file,getSession());
         invalidateResult();
         return this;
     }
 
     @Override
     public NutsDeployCommand setContent(Path file) {
-        content = file==null?null:NutsStreamOrPath.of(getSession().io().path(file));
+        content = file==null?null:NutsStreamOrPath.of(file,getSession());
         invalidateResult();
         return this;
     }
@@ -151,7 +151,7 @@ public abstract class AbstractNutsDeployCommand extends NutsWorkspaceCommandBase
 
     @Override
     public NutsDeployCommand setContent(URL url) {
-        content = url==null?null:NutsStreamOrPath.of(getSession().io().path(url));
+        content = url==null?null:NutsStreamOrPath.of(url,getSession());
         invalidateResult();
         return this;
     }
@@ -232,7 +232,7 @@ public abstract class AbstractNutsDeployCommand extends NutsWorkspaceCommandBase
 //        if (getSession().isPlainTrace()) {
 //            getSession().getTerminal().out().resetLine().printf("Nuts %s deployed successfully to %s%n",
 //                    nid,
-//                    session.text().ofStyled(toRepository == null ? "<default-repo>" : toRepository, NutsTextStyle.primary3())
+//                    NutsTexts.of(session).ofStyled(toRepository == null ? "<default-repo>" : toRepository, NutsTextStyle.primary3())
 //            );
 //        }
     }
@@ -244,7 +244,7 @@ public abstract class AbstractNutsDeployCommand extends NutsWorkspaceCommandBase
         if (values != null) {
             for (String s : values) {
                 if (!NutsBlankable.isBlank(s)) {
-                    ids.add(session.id().parser().setLenient(false).parse(s));
+                    ids.add(NutsId.of(s,session));
                 }
             }
         }
@@ -288,8 +288,7 @@ public abstract class AbstractNutsDeployCommand extends NutsWorkspaceCommandBase
     @Override
     public NutsDeployCommand removeId(String id) {
         checkSession();
-        NutsWorkspace ws = getSession().getWorkspace();
-        ids.remove(session.id().parser().parse(id));
+        ids.remove(NutsId.of(id,session));
         return this;
     }
 
@@ -297,7 +296,7 @@ public abstract class AbstractNutsDeployCommand extends NutsWorkspaceCommandBase
     public NutsDeployCommand addId(String id) {
         checkSession();
         if (!NutsBlankable.isBlank(id)) {
-            ids.add(session.id().parser().setLenient(false).parse(id));
+            ids.add(NutsId.of(id,session));
         }
         return this;
     }

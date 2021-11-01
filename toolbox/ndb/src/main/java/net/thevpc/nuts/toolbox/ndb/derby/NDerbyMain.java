@@ -69,7 +69,7 @@ public class NDerbyMain implements NdbSupport {
             DerbyService srv = new DerbyService(appContext);
             int effectivePort = options.port < 0 ? 1527 : options.port;
             if (options.cmd == Command.start) {
-                NutsTextManager factory = session.text();
+                NutsTexts factory = NutsTexts.of(session);
                 if (cmdLine.isExecMode()) {
                     if (new DerbyService(appContext).isRunning()) {
                         session.out().printf("derby is %s on port %s%n",
@@ -80,7 +80,7 @@ public class NDerbyMain implements NdbSupport {
                     }
                 }
             } else if (options.cmd == Command.shutdown) {
-                NutsTextManager factory = appContext.getSession().text();
+                NutsTexts factory = NutsTexts.of(appContext.getSession());
                 if (cmdLine.isExecMode()) {
                     if (!new DerbyService(appContext).isRunning()) {
                         session.out().printf("derby is %s on port %s%n",
@@ -108,7 +108,7 @@ public class NDerbyMain implements NdbSupport {
         }
         options.cmd = Command.ping;
         NutsSession session = appContext.getSession();
-        NutsTextManager factory = session.text();
+        NutsTexts factory = NutsTexts.of(session);
         if (cmdLine.isExecMode()) {
             if (new DerbyService(appContext).isRunning()) {
                 session.out().printf("derby is %s%n", factory.ofStyled("running", NutsTextStyle.primary1()));
@@ -165,7 +165,7 @@ public class NDerbyMain implements NdbSupport {
             }
         }
         NutsSession session = appContext.getSession();
-        NutsTextManager factory = session.text();
+        NutsTexts factory = NutsTexts.of(session);
         if (args.isExecMode()) {
             if (session.isPlainOut()) {
                 NutsPrintStream out = session.out();

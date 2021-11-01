@@ -32,7 +32,7 @@ public class DefaultNutsPushRepositoryCommand extends AbstractNutsPushRepository
 
     protected NutsLogger _LOG(NutsSession session) {
         if (LOG == null) {
-            LOG = session.log().of(DefaultNutsPushRepositoryCommand.class);
+            LOG = NutsLogger.of(DefaultNutsPushRepositoryCommand.class,session);
         }
         return LOG;
     }

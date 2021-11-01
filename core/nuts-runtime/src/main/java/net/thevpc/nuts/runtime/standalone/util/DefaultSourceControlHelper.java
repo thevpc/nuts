@@ -37,7 +37,7 @@ public class DefaultSourceControlHelper {
 
     protected NutsLogger _LOG(NutsSession session) {
         if (LOG == null) {
-            LOG = session.log().of(DefaultSourceControlHelper.class);
+            LOG = NutsLogger.of(DefaultSourceControlHelper.class,session);
         }
         return LOG;
     }
@@ -51,11 +51,11 @@ public class DefaultSourceControlHelper {
         }
 
         Path file = folder.resolve(NutsConstants.Files.DESCRIPTOR_FILE_NAME);
-        NutsDescriptor d = session.descriptor().parser().setSession(session).parse(file);
+        NutsDescriptor d = NutsDescriptorParser.of(session).parse(file);
         String oldVersion = NutsUtilStrings.trim(d.getId().getVersion().getValue());
         if (oldVersion.endsWith(CoreNutsConstants.Versions.CHECKED_OUT_EXTENSION)) {
             oldVersion = oldVersion.substring(0, oldVersion.length() - CoreNutsConstants.Versions.CHECKED_OUT_EXTENSION.length());
-            String newVersion = session.version().parser().parse(oldVersion).inc().getValue();
+            String newVersion = NutsVersion.of(oldVersion,session).inc().getValue();
             NutsDefinition newVersionFound = null;
             try {
                 newVersionFound = session.fetch().setId(d.getId().builder().setVersion(newVersion).build()).setSession(session).getResultDefinition();
@@ -70,7 +70,7 @@ public class DefaultSourceControlHelper {
                 d = d.builder().setId(d.getId().builder().setVersion(oldVersion + ".1").build()).build();
             }
             NutsId newId = session.deploy().setContent(folder).setDescriptor(d).setSession(session).getResult()[0];
-            session.descriptor().formatter(d).print(file);
+            d.formatter().setSession(session).print(file);
             CoreIOUtils.delete(session, folder);
             return newId;
         } else {
@@ -80,7 +80,7 @@ public class DefaultSourceControlHelper {
 
     //    @Override
     public NutsDefinition checkout(String id, Path folder, NutsSession session) {
-        return checkout(session.id().parser().setLenient(false).parse(id), folder, session);
+        return checkout(NutsId.of(id,session), folder, session);
     }
 
     //    @Override
@@ -91,19 +91,19 @@ public class DefaultSourceControlHelper {
         if ("zip".equals(nutToInstall.getDescriptor().getPackaging())) {
 
             try {
-                ZipUtils.unzip(session, nutToInstall.getPath().toString(), session.io()
-                        .path(folder.toString()).builder().withAppBaseDir().build().toString(), new UnzipOptions().setSkipRoot(false));
+                ZipUtils.unzip(session, nutToInstall.getPath().toString(), NutsPath.of(folder,session)
+                        .builder().withAppBaseDir().build().toString(), new UnzipOptions().setSkipRoot(false));
             } catch (IOException ex) {
                 throw new UncheckedIOException(ex);
             }
 
             Path file = folder.resolve(NutsConstants.Files.DESCRIPTOR_FILE_NAME);
-            NutsDescriptor d = session.descriptor().parser().setSession(session).parse(file);
+            NutsDescriptor d = NutsDescriptorParser.of(session).parse(file);
             NutsVersion oldVersion = d.getId().getVersion();
             NutsId newId = d.getId().builder().setVersion(oldVersion + CoreNutsConstants.Versions.CHECKED_OUT_EXTENSION).build();
             d = d.builder().setId(newId).build();
 
-            session.descriptor().formatter(d).print(file);
+            d.formatter().setSession(session).print(file);
 
             NutsIdType idType = NutsWorkspaceExt.of(ws).resolveNutsIdType(newId, session);
             return new DefaultNutsDefinition(
@@ -112,7 +112,7 @@ public class DefaultSourceControlHelper {
                     newId.getLongId(),
                     d,
                     new NutsDefaultContent(
-                            session.io().path(folder.toString()),
+                            NutsPath.of(folder,session),
                             false,
                             false),
                     null,

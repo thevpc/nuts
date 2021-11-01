@@ -109,7 +109,7 @@ public class DefaultNutsTextStyleGenerator implements NutsTextStyleGenerator {
             boolean includeAny = isIncludeAny();
             supps = new ArrayList<>();
             if (includePlain || includeAny) {
-                supps.add((i) -> NutsTextStyles.NONE);
+                supps.add((i) -> NutsTextStyles.PLAIN);
             }
             if (includeForeground || includeAny) {
                 supps.add((i) -> {

@@ -146,7 +146,7 @@ public abstract class AbstractSystemTerminalAdapter extends AbstractNutsTerminal
                 getProgressBar(session).printProgress(
                         Float.isNaN(progress) ? -1
                                 : (int) (progress * 100),
-                        session.text().toText(message).toString(),
+                        NutsTexts.of(session).toText(message).toString(),
                         err()
                 );
             }

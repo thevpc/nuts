@@ -12,7 +12,7 @@
 //import javax.xml.parsers.ParserConfigurationException;
 //import javax.xml.transform.TransformerException;
 //import javax.xml.transform.stream.StreamResult;
-//import net.thevpc.nuts.runtime.core.format.props.DefaultPropertiesFormat;
+//import net.thevpc.nuts.runtime.core.format.props.DefaultNutsPropertiesFormat;
 //import net.thevpc.nuts.runtime.core.format.NutsObjectFormatBase;
 //import org.w3c.dom.Document;
 //
@@ -34,7 +34,7 @@
 //        NutsArgument n = commandLine.peek();
 //        if (n != null) {
 //            NutsArgument a;
-//            if ((a = commandLine.nextString(DefaultPropertiesFormat.OPTION_MULTILINE_PROPERTY)) != null) {
+//            if ((a = commandLine.nextString(DefaultNutsPropertiesFormat.OPTION_MULTILINE_PROPERTY)) != null) {
 //                if(a.isEnabled()) {
 //                    NutsArgument i = a.getArgumentValue();
 //                    extraConfig.add(a.getString());

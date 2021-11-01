@@ -34,8 +34,6 @@ import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * @author thevpc
@@ -60,7 +58,7 @@ public class Test12_ParseNTF {
         NutsSession session = TestUtils.openNewTestWorkspace(
                 "--standalone",
                 "--skip-companions");
-        NutsTextManager txt = session.text();
+        NutsTexts txt = NutsTexts.of(session);
         NutsText parsed = txt.parse("##:error0:n#01##");
         System.out.println(parsed);
     }
@@ -72,7 +70,7 @@ public class Test12_ParseNTF {
                 "-Z",
                 "--yes",
                 "--skip-companions");
-        NutsTextManager txt = session.text();
+        NutsTexts txt = NutsTexts.of(session);
 
 //        String str="missing command. try ```sh ndocusaurus pdf | start | build```";
         String str = "##:p2:╭───╮##\u001E\n##:p3:│##";
@@ -92,7 +90,7 @@ public class Test12_ParseNTF {
                 "-Z",
                 "--yes",
                 "--skip-companions");
-        NutsTextManager txt = session.text();
+        NutsTexts txt = NutsTexts.of(session);
 
 //        String str="missing command. try ```sh ndocusaurus pdf | start | build```";
         String str = "##:p2:╭───╮##\u001E\n##:p3:│##";
@@ -109,7 +107,7 @@ public class Test12_ParseNTF {
                 "--standalone",
                 "-Z",
                 "--skip-companions");
-        NutsTextManager txt = session.text();
+        NutsTexts txt = NutsTexts.of(session);
 
 //        String str="missing command. try ```sh ndocusaurus pdf | start | build```";
         //String str="##{error0:##{error0:not installed : ##:p1:ntomcat##\u001E}}##\u001E}##\u001E";
@@ -126,7 +124,7 @@ public class Test12_ParseNTF {
                 "--standalone",
                 "-Z",
                 "--skip-companions");
-        NutsTextManager txt = session.text();
+        NutsTexts txt = NutsTexts.of(session);
 
         String str = "##:separator0:{##\u001E\n" +
                 "  ##:string0:\"id\"##\u001E##:separator0::##\u001E ##:string0:\"<main>://com.github.vatbub:mslinks#1.0.5\"##\u001E##:separator0:,##\u001E\n" +
@@ -179,7 +177,7 @@ public class Test12_ParseNTF {
                 "--standalone",
                 "-Z",
                 "--skip-companions");
-        NutsTextManager txt = session.text();
+        NutsTexts txt = NutsTexts.of(session);
 
         String str = "##:separator0:{##\u001E\n" +
                 "  ##:string0:\"id\"##\u001E##:separator0::##\u001E ##{string0:\"<main>://com.github.vatbub:mslinks#1.0.5\"}##\u001E##:separator0:,##\u001E\n" +
@@ -233,7 +231,7 @@ public class Test12_ParseNTF {
                 "--standalone",
                 "-Z",
                 "--skip-companions");
-        NutsTextManager txt = session.text();
+        NutsTexts txt = NutsTexts.of(session);
 
 //        String str = "##{string0:\"<main>://com.github.vatbub:mslinks#1.0.5\"}##";
         String str = "##{string:a#b}##";
@@ -246,7 +244,7 @@ public class Test12_ParseNTF {
     @Test
     public void test8() {
         NutsSession session = TestUtils.openNewTestWorkspace("-ZSkK");
-        NutsTextManager txt = session.text();
+        NutsTexts txt = NutsTexts.of(session);
 
 //        String str = "##{string0:\"<main>://com.github.vatbub:mslinks#1.0.5\"}##";
         String str = "##:string:\"a#b\"##";

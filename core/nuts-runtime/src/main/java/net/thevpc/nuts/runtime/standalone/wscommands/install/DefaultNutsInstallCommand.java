@@ -187,7 +187,7 @@ public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
 //        Map<NutsId, NutsDefinition> defsOk = new LinkedHashMap<>();
         if (isInstalled()) {
             for (NutsId resultId : session.search().setSession(session).setInstallStatus(
-                    session.filters().installStatus().byInstalled(true)).getResultIds()) {
+                    NutsInstallStatusFilters.of(session).byInstalled(true)).getResultIds()) {
                 list.addForInstall(resultId, getInstalled(), true);
             }
             // This bloc is to handle packages that were installed but their jar/content was removed for any reason!
@@ -348,15 +348,15 @@ public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
             for (Map.Entry<String, List<InstallIdInfo>> stringListEntry : error.entrySet()) {
                 out.resetLine().println("the following " + (stringListEntry.getValue().size() > 1 ? "artifacts are" : "artifact is") + " cannot be ```error installed``` (" + stringListEntry.getKey() + ") : "
                         + stringListEntry.getValue().stream().map(x -> x.id)
-                        .map(x -> session.id().formatter().setOmitImportedGroupId(true).setValue(x.getLongId()).format().toString())
+                        .map(x -> NutsIdFormat.of(session).setOmitImportedGroupId(true).setValue(x.getLongId()).format().toString())
                         .collect(Collectors.joining(", ")));
                 sb.append("\n" + "the following ").append(stringListEntry.getValue().size() > 1 ? "artifacts are" : "artifact is").append(" cannot be installed (").append(stringListEntry.getKey()).append(") : ").append(stringListEntry.getValue().stream().map(x -> x.id)
-                        .map(x -> session.id().formatter().setOmitImportedGroupId(true).setValue(x.getLongId()).format().toString())
+                        .map(x -> NutsIdFormat.of(session).setOmitImportedGroupId(true).setValue(x.getLongId()).format().toString())
                         .collect(Collectors.joining(", ")));
             }
             throw new NutsInstallException(getSession(), null, NutsMessage.formatted(sb.toString().trim()), null);
         }
-        NutsMemoryPrintStream mout = session.io().createMemoryPrintStream();
+        NutsMemoryPrintStream mout = NutsMemoryPrintStream.of(session);
         if (getSession().isPlainTrace() || (!list.emptyCommand && getSession().getConfirm() == NutsConfirmationMode.ASK)) {
             printList(mout, "new","installed",
                     list.ids(x -> x.doInstall && !x.isAlreadyExists()));
@@ -386,7 +386,7 @@ public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
         }
         mout.println("should we proceed?");
         List<NutsId> nonIgnored = list.ids(x -> !x.ignored);
-        if (!nonIgnored.isEmpty() && !getSession().term().getTerminal().ask()
+        if (!nonIgnored.isEmpty() && !getSession().config().getDefaultTerminal().ask()
                 .resetLine()
                 .setSession(session)
                 .forBoolean(mout.toString())
@@ -419,7 +419,7 @@ public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
                                 .log(NutsMessage.jstyle("failed to install {0}", info.id));
                         failedList.add(info.id);
                         if (session.isPlainTrace()) {
-                            if (!getSession().term().getTerminal().ask()
+                            if (!getSession().config().getDefaultTerminal().ask()
                                     .resetLine()
                                     .setSession(session)
                                     .forBoolean("```error failed to install``` %s and its dependencies... Continue installation?", info.id)
@@ -450,7 +450,7 @@ public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
     private void printList(NutsPrintStream out, String skind, String saction, List<NutsId> all) {
         if (all.size() > 0) {
             if(session.isPlainOut()) {
-                NutsTextManager text = session.text();
+                NutsTexts text = NutsTexts.of(session);
                 NutsText kind = text.ofStyled(skind, NutsTextStyle.primary2());
                 NutsText action =
                         text.ofStyled(saction,
@@ -459,26 +459,26 @@ public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
                                                 NutsTextStyle.primary1()
                         );
                 NutsSession session = getSession();
-                NutsTextBuilder msg = getSession().text().builder();
+                NutsTextBuilder msg = NutsTexts.of(getSession()).builder();
                 msg.append("the following ")
                         .append(kind).append(" ").append((all.size() > 1 ? "artifacts are" : "artifact is"))
                         .append(" going to be ").append(action).append(" : ")
                         .appendJoined(
-                                session.text().ofPlain(", "),
+                                NutsTexts.of(session).ofPlain(", "),
                                 all.stream().map(x
-                                                -> session.text().toText(
+                                                -> NutsTexts.of(session).toText(
                                                 x.builder().omitImportedGroupId().build()
                                         )
                                 ).collect(Collectors.toList())
                         );
                 out.resetLine().println(msg);
             }else{
-                NutsElementFormat elm = session.elem();
-                session.eout().add(elm.forObject()
+                NutsElements elem = NutsElements.of(session);
+                session.eout().add(elem.forObject()
                         .set("command","warning")
                         .set("artifact-kind",skind)
                         .set("action-warning",saction)
-                        .set("artifacts",elm.forArray().addAll(
+                        .set("artifacts",elem.forArray().addAll(
                                 all.stream().map(x->x.toString()).toArray(String[]::new)
                         ).build())
                         .build()

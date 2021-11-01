@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
 import net.thevpc.nuts.NutsApplicationContext;
+import net.thevpc.nuts.NutsPs;
+import net.thevpc.nuts.NutsSession;
 
 public class DerbyUtils {
 
@@ -25,9 +27,11 @@ public class DerbyUtils {
     }
 
     public static RunningDerby[] getRunningInstances(NutsApplicationContext context) {
-        return context.getSession().io().ps().type("java").getResultList()
+        NutsSession session = context.getSession();
+        return NutsPs.of(session)
+                .type("java").getResultList()
                 .stream().filter((p) -> p.getName().equals("org.apache.derby.drda.NetworkServerControl"))
-                .map(x -> new RunningDerby(x, context.getSession())).toArray(RunningDerby[]::new);
+                .map(x -> new RunningDerby(x, session)).toArray(RunningDerby[]::new);
     }
 
 }

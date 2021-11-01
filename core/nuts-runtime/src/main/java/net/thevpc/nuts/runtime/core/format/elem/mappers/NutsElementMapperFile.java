@@ -15,11 +15,11 @@ public class NutsElementMapperFile implements NutsElementMapper<File> {
     @Override
     public NutsElement createElement(File o, Type typeOfSrc, NutsElementFactoryContext context) {
         if (context.elem().isNtf()) {
-            NutsSession ws = context.getSession();
+            NutsSession session = context.getSession();
 //                NutsText n = ws.text().forStyled(o.toString(), NutsTextStyle.path());
 //                return ws.elem().forPrimitive().buildNutsString(n);
-            NutsText n = ws.text().ofStyled(o.toString(), NutsTextStyle.path());
-            return ws.elem().forString(n.toString());
+            NutsText n = NutsTexts.of(session).ofStyled(o.toString(), NutsTextStyle.path());
+            return NutsElements.of(session).forString(n.toString());
         } else {
             return context.defaultObjectToElement(o.toString(), null);
         }

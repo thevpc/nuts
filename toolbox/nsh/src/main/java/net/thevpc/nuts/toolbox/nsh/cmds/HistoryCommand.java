@@ -10,51 +10,36 @@
  * other 'things' . Its based on an extensible architecture to help supporting a
  * large range of sub managers / repositories.
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc]
- * Licensed under the Apache License, Version 2.0 (the "License"); you may 
- * not use this file except in compliance with the License. You may obtain a 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may
+ * not use this file except in compliance with the License. You may obtain a
  * copy of the License at http://www.apache.org/licenses/LICENSE-2.0
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an 
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
- * either express or implied. See the License for the specific language 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+ * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  * <br>
  * ====================================================================
-*/
+ */
 package net.thevpc.nuts.toolbox.nsh.cmds;
+
+import net.thevpc.nuts.*;
+import net.thevpc.nuts.spi.NutsComponentScope;
+import net.thevpc.nuts.spi.NutsComponentScopeType;
+import net.thevpc.nuts.toolbox.nsh.SimpleNshBuiltin;
+import net.thevpc.nuts.toolbox.nsh.bundles.jshell.JShellHistory;
 
 import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.List;
 
-import net.thevpc.nuts.*;
-import net.thevpc.nuts.spi.NutsSingleton;
-import net.thevpc.nuts.toolbox.nsh.bundles.jshell.JShellHistory;
-import net.thevpc.nuts.toolbox.nsh.SimpleNshBuiltin;
-
 /**
  * Created by vpc on 1/7/17.
  */
-@NutsSingleton
+@NutsComponentScope(NutsComponentScopeType.WORKSPACE)
 public class HistoryCommand extends SimpleNshBuiltin {
-
-    private static enum Action {
-        CLEAR,
-        DELETE,
-        REMOVE_DUPLICATES,
-        WRITE,
-        READ,
-        PRINT
-    }
-
-    private static class Options {
-
-        public String sval;
-        int ival = -1;
-        Action action = Action.PRINT;
-    }
 
     public HistoryCommand() {
         super("history", DEFAULT_SUPPORT);
@@ -114,6 +99,7 @@ public class HistoryCommand extends SimpleNshBuiltin {
     protected void execBuiltin(NutsCommandLine commandLine, SimpleNshCommandContext context) {
         Options options = context.getOptions();
         JShellHistory shistory = context.getShell().getHistory();
+        NutsSession session = context.getSession();
         switch (options.action) {
             case PRINT: {
                 List<String> history = shistory.getElements(options.ival <= 0 ? 1000 : options.ival);
@@ -123,7 +109,7 @@ public class HistoryCommand extends SimpleNshBuiltin {
                     String historyElement = history.get(i);
                     result.put(String.valueOf(offset + i + 1), historyElement);
                 }
-                context.getSession().out().printlnf(result);
+                session.out().printlnf(result);
                 break;
             }
             case CLEAR: {
@@ -144,10 +130,10 @@ public class HistoryCommand extends SimpleNshBuiltin {
 
                         shistory.save();
                     } else {
-                        shistory.save(context.getSession().io().path(options.sval).builder().withWorkspaceBaseDir().build());
+                        shistory.save(NutsPath.of(options.sval, session).builder().withWorkspaceBaseDir().build());
                     }
                 } catch (IOException ex) {
-                    throw new NutsExecutionException(context.getSession(), NutsMessage.cstyle("%s",ex), ex, 100);
+                    throw new NutsExecutionException(session, NutsMessage.cstyle("%s", ex), ex, 100);
                 }
                 return;
             }
@@ -157,16 +143,32 @@ public class HistoryCommand extends SimpleNshBuiltin {
                         shistory.clear();
                         shistory.load();
                     } else {
-                        shistory.load(context.getSession().io().path(options.sval).builder().withWorkspaceBaseDir().build());
+                        shistory.load(NutsPath.of(options.sval, session).builder().withWorkspaceBaseDir().build());
                     }
                 } catch (IOException ex) {
-                    throw new NutsExecutionException(context.getSession(), NutsMessage.cstyle("%s",ex), ex, 100);
+                    throw new NutsExecutionException(session, NutsMessage.cstyle("%s", ex), ex, 100);
                 }
                 return;
             }
             default: {
-                throw new NutsUnsupportedArgumentException(context.getSession(), NutsMessage.cstyle("unsupported %s",String.valueOf(options.action)));
+                throw new NutsUnsupportedArgumentException(session, NutsMessage.cstyle("unsupported %s", String.valueOf(options.action)));
             }
         }
+    }
+
+    private enum Action {
+        CLEAR,
+        DELETE,
+        REMOVE_DUPLICATES,
+        WRITE,
+        READ,
+        PRINT
+    }
+
+    private static class Options {
+
+        public String sval;
+        int ival = -1;
+        Action action = Action.PRINT;
     }
 }

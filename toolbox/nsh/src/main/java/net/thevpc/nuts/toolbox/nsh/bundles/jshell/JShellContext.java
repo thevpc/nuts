@@ -98,13 +98,9 @@ public interface JShellContext {
 
 //    JShellContext copy() ;
 
-    NutsSession session();
-
     NutsSession getSession();
 
     JShellContext setSession(NutsSession session);
-
-    NutsWorkspace workspace();
 
     NutsWorkspace getWorkspace();
 

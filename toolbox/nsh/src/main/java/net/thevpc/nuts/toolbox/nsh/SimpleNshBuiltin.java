@@ -113,7 +113,8 @@ public abstract class SimpleNshBuiltin extends AbstractNshBuiltin {
         boolean conf = false;
         int maxLoops = 1000;
         boolean robustMode = false;
-        NutsCommandLine commandLine = context.getSession().commandLine().create(args).setCommandName(getName());
+        NutsSession session = context.getSession();
+        NutsCommandLine commandLine = NutsCommandLine.of(args,session).setCommandName(getName());
         initCommandLine(commandLine);
         SimpleNshCommandContext context2 = new SimpleNshCommandContext(args, context, createOptions());
         while (commandLine.hasNext()) {

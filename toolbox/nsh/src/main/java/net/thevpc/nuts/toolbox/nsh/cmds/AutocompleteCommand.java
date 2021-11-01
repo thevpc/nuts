@@ -10,7 +10,7 @@
  * other 'things' . Its based on an extensible architecture to help supporting a
  * large range of sub managers / repositories.
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc]
  * Licensed under the Apache License, Version 2.0 (the "License"); you may
  * not use this file except in compliance with the License. You may obtain a
@@ -22,31 +22,25 @@
  * governing permissions and limitations under the License.
  * <br>
  * ====================================================================
-*/
+ */
 package net.thevpc.nuts.toolbox.nsh.cmds;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.spi.NutsSingleton;
+import net.thevpc.nuts.spi.NutsComponentScope;
+import net.thevpc.nuts.spi.NutsComponentScopeType;
+import net.thevpc.nuts.toolbox.nsh.SimpleNshBuiltin;
 import net.thevpc.nuts.toolbox.nsh.bundles.jshell.JShellAutoCompleteCandidate;
 
 import java.util.*;
-import net.thevpc.nuts.toolbox.nsh.SimpleNshBuiltin;
 
 /**
  * Created by vpc on 1/7/17.
  */
-@NutsSingleton
+@NutsComponentScope(NutsComponentScopeType.WORKSPACE)
 public class AutocompleteCommand extends SimpleNshBuiltin {
 
     public AutocompleteCommand() {
         super("autocomplete", DEFAULT_SUPPORT);
-    }
-
-    private static class Options {
-
-        String cmd = null;
-        List<String> items = new ArrayList<>();
-        int index = -1;
     }
 
     @Override
@@ -79,8 +73,9 @@ public class AutocompleteCommand extends SimpleNshBuiltin {
     @Override
     protected void execBuiltin(NutsCommandLine commandLine, SimpleNshCommandContext context) {
         Options options = context.getOptions();
+        NutsSession session = context.getSession();
         if (options.cmd == null) {
-            throw new NutsExecutionException(context.getSession(), NutsMessage.cstyle("missing JShellCommandNode"), 1);
+            throw new NutsExecutionException(session, NutsMessage.cstyle("missing JShellCommandNode"), 1);
         }
         if (options.index < 0) {
             options.index = options.items.size();
@@ -88,7 +83,7 @@ public class AutocompleteCommand extends SimpleNshBuiltin {
         }
         List<JShellAutoCompleteCandidate> aa = context.getRootContext().resolveAutoCompleteCandidates(
                 options.cmd, options.items, options.index,
-                context.getSession().commandLine().create(options.items).toString()
+                NutsCommandLine.of(options.items, session).toString()
         );
         Properties p = new Properties();
         for (JShellAutoCompleteCandidate autoCompleteCandidate : aa) {
@@ -99,27 +94,34 @@ public class AutocompleteCommand extends SimpleNshBuiltin {
             }
             p.setProperty(value == null ? "" : value, dvalue == null ? "" : dvalue);
         }
-        switch (context.getSession().getOutputFormat()) {
+        switch (session.getOutputFormat()) {
             case PLAIN: {
-                NutsTextManager text = context.getSession().text();
+                NutsTexts text = NutsTexts.of(session);
                 for (String o : new TreeSet<String>((Set) p.keySet())) {
                     if (o.startsWith("-")) {
                         // option
-                        context.getSession().out().printf("%s\n", text.ofStyled(o,NutsTextStyle.primary4()));
+                        session.out().printf("%s\n", text.ofStyled(o, NutsTextStyle.primary4()));
                     } else if (o.startsWith("<")) {
-                        context.getSession().out().printf("%s\n", text.ofStyled(o,NutsTextStyle.primary1()));
+                        session.out().printf("%s\n", text.ofStyled(o, NutsTextStyle.primary1()));
                     } else {
-                        context.getSession().out().printf("%s\n",
-                                text.ofStyled(o,NutsTextStyle.pale())
+                        session.out().printf("%s\n",
+                                text.ofStyled(o, NutsTextStyle.pale())
                         );
                     }
                 }
                 break;
             }
             default: {
-                context.getSession().out().printlnf(p);
+                session.out().printlnf(p);
             }
         }
+    }
+
+    private static class Options {
+
+        String cmd = null;
+        List<String> items = new ArrayList<>();
+        int index = -1;
     }
 
 }

@@ -80,9 +80,10 @@ public class TailCommand extends AbstractNshBuiltin {
 
     private void tail(String file, int max, JShellExecutionContext context) {
         BufferedReader r = null;
+        NutsSession session = context.getSession();
         try {
             try {
-                r = new BufferedReader(new InputStreamReader(context.getSession().io().path(file)
+                r = new BufferedReader(new InputStreamReader(NutsPath.of(file,session)
                         .getInputStream()));
                 String line = null;
                 int count = 0;
@@ -103,7 +104,7 @@ public class TailCommand extends AbstractNshBuiltin {
                 }
             }
         } catch (IOException ex) {
-            throw new NutsExecutionException(context.getSession(), NutsMessage.cstyle("%s",ex), ex, 100);
+            throw new NutsExecutionException(session, NutsMessage.cstyle("%s",ex), ex, 100);
         }
     }
 }

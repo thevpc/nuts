@@ -25,6 +25,8 @@
  */
 package net.thevpc.nuts;
 
+import net.thevpc.nuts.boot.NutsApiUtils;
+
 /**
  * Simple Command line Format
  *
@@ -33,6 +35,11 @@ package net.thevpc.nuts;
  * @app.category Command Line
  */
 public interface NutsCommandLineFormat extends NutsFormat {
+
+    static NutsCommandLineFormat of(NutsSession session){
+        NutsApiUtils.checkSession(session);
+        return session.extensions().createSupported(NutsCommandLineFormat.class, true, null);
+    }
 
     /**
      * return current command line

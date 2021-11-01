@@ -1,9 +1,6 @@
 package net.thevpc.nuts.toolbox.njob;
 
-import net.thevpc.nuts.NutsApplication;
-import net.thevpc.nuts.NutsApplicationContext;
-import net.thevpc.nuts.NutsArgument;
-import net.thevpc.nuts.NutsCommandLine;
+import net.thevpc.nuts.*;
 
 public class NJobMain implements NutsApplication {
 
@@ -35,7 +32,8 @@ public class NJobMain implements NutsApplication {
                 cmdLine.unexpectedArgument();
             }
         };
-        ts.runCommands(appContext.getSession().commandLine().create("summary"));
+        NutsSession session = appContext.getSession();
+        ts.runCommands(NutsCommandLine.of(new String[]{"summary"}, session));
     }
 
 }

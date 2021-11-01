@@ -23,7 +23,6 @@ public class NanoDBNutsIdSerializer extends NanoDBNonNullSerializer<NutsId>{
 
     @Override
     public NutsId read(NanoDBInputStream in) {
-        NutsIdParser parser = session.id().parser();
-        return parser.parse(in.readUTF());
+        return NutsId.of(in.readUTF(),session);
     }
 }

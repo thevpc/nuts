@@ -25,6 +25,8 @@
  */
 package net.thevpc.nuts;
 
+import net.thevpc.nuts.boot.NutsApiUtils;
+
 /**
  *
  * @author thevpc
@@ -32,6 +34,10 @@ package net.thevpc.nuts;
  * @app.category Format
  */
 public interface NutsTableFormat extends NutsObjectFormat {
+    static NutsTableFormat of(NutsSession session){
+        NutsApiUtils.checkSession(session);
+        return session.extensions().createSupported(NutsTableFormat.class, true, null);
+    }
 
     boolean isVisibleHeader();
 

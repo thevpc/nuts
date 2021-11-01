@@ -36,7 +36,7 @@ public class HadraCodeHighlighter implements NutsCodeHighlighter {
             )
     );
     private NutsWorkspace ws;
-    NutsTextManager factory;
+    NutsTexts factory;
 
     @Override
     public String getId() {
@@ -45,7 +45,7 @@ public class HadraCodeHighlighter implements NutsCodeHighlighter {
 
     public HadraCodeHighlighter(NutsWorkspace ws) {
         this.ws = ws;
-        factory = NutsWorkspaceUtils.defaultSession(ws).text();
+        factory = NutsTexts.of(NutsWorkspaceUtils.defaultSession(ws));
     }
 
     @Override

@@ -26,7 +26,8 @@ public class DefaultNutsLicenseInternalExecutable extends DefaultInternalNutsExe
             showDefaultHelp();
             return;
         }
-        NutsCommandLine commandLine = getSession().commandLine().create(args);
+        NutsSession session = getSession();
+        NutsCommandLine commandLine = NutsCommandLine.of(args,session);
         while (commandLine.hasNext()) {
             NutsArgument a = commandLine.peek();
             if (a.isOption()) {
@@ -37,19 +38,19 @@ public class DefaultNutsLicenseInternalExecutable extends DefaultInternalNutsExe
                         return;
                     }
                     default: {
-                        getSession().configureLast(commandLine);
+                        session.configureLast(commandLine);
                     }
                 }
             } else {
-                getSession().configureLast(commandLine);
+                session.configureLast(commandLine);
             }
         }
 
-        String licenseString = NutsWorkspaceExt.of(getSession().getWorkspace()).getLicenseText(getSession());
-        if (getSession().isPlainOut()) {
-            getSession().out().println(licenseString);
+        String licenseString = NutsWorkspaceExt.of(session.getWorkspace()).getLicenseText(session);
+        if (session.isPlainOut()) {
+            session.out().println(licenseString);
         } else {
-            getSession().out().printlnf(licenseString);
+            session.out().printlnf(licenseString);
         }
     }
 

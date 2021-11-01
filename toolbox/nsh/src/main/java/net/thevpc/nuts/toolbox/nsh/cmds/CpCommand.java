@@ -10,48 +10,40 @@
  * other 'things' . Its based on an extensible architecture to help supporting a
  * large range of sub managers / repositories.
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc]
- * Licensed under the Apache License, Version 2.0 (the "License"); you may 
- * not use this file except in compliance with the License. You may obtain a 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may
+ * not use this file except in compliance with the License. You may obtain a
  * copy of the License at http://www.apache.org/licenses/LICENSE-2.0
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an 
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
- * either express or implied. See the License for the specific language 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+ * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  * <br>
  * ====================================================================
-*/
+ */
 package net.thevpc.nuts.toolbox.nsh.cmds;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.spi.NutsSingleton;
+import net.thevpc.nuts.spi.NutsComponentScope;
+import net.thevpc.nuts.spi.NutsComponentScopeType;
+import net.thevpc.nuts.toolbox.nsh.SimpleNshBuiltin;
 import net.thevpc.nuts.toolbox.nsh.bundles.jshell.JShellExecutionContext;
 import net.thevpc.nuts.toolbox.nsh.util.ShellHelper;
+
 import java.util.ArrayList;
 import java.util.List;
-
-import net.thevpc.nuts.toolbox.nsh.SimpleNshBuiltin;
 
 /**
  * Created by vpc on 1/7/17. ssh copy credits to Chanaka Lakmal from
  * https://medium.com/ldclakmal/scp-with-java-b7b7dbcdbc85
  */
-@NutsSingleton
+@NutsComponentScope(NutsComponentScopeType.WORKSPACE)
 public class CpCommand extends SimpleNshBuiltin {
 
     public CpCommand() {
         super("cp", DEFAULT_SUPPORT);
-    }
-
-    public static class Options {
-
-        boolean mkdir;
-        boolean recursive;
-        ShellHelper.WsSshListener sshlistener;
-        List<String> files = new ArrayList<>();
-        List<NutsPath> xfiles = new ArrayList<>();
     }
 
     @Override
@@ -63,19 +55,19 @@ public class CpCommand extends SimpleNshBuiltin {
     protected boolean configureFirst(NutsCommandLine commandLine, SimpleNshCommandContext context) {
         Options options = context.getOptions();
         NutsArgument a;
-        switch (commandLine.peek().getKey().getString()){
-            case "--mkdir":{
+        switch (commandLine.peek().getKey().getString()) {
+            case "--mkdir": {
                 options.mkdir = commandLine.nextBoolean().getValue().getBoolean();
                 return true;
             }
             case "-r":
             case "-R":
-            case "--recursive":{
+            case "--recursive": {
                 options.recursive = commandLine.nextBoolean().getValue().getBoolean();
                 return true;
             }
-            default:{
-                if(commandLine.peek().isNonOption()){
+            default: {
+                if (commandLine.peek().isNonOption()) {
                     options.files.add(commandLine.next().getString());
                     return true;
                 }
@@ -87,31 +79,32 @@ public class CpCommand extends SimpleNshBuiltin {
     @Override
     protected void execBuiltin(NutsCommandLine commandLine, SimpleNshCommandContext context) {
         Options options = context.getOptions();
+        NutsSession session = context.getSession();
         for (String value : options.files) {
             if (NutsBlankable.isBlank(value)) {
-                throw new NutsExecutionException(context.getSession(), NutsMessage.cstyle("empty file path"), 2);
+                throw new NutsExecutionException(session, NutsMessage.cstyle("empty file path"), 2);
             }
-            options.xfiles.add(context.getSession().io().path((value.contains("://") ? value :
-                    context.getSession().io().path(value).builder().withWorkspaceBaseDir().build().toString()
-            )));
+            options.xfiles.add(NutsPath.of((value.contains("://") ? value :
+                    NutsPath.of(value, session).builder().withWorkspaceBaseDir().build().toString()
+            ), session));
         }
         if (options.xfiles.size() < 2) {
-            throw new NutsExecutionException(context.getSession(), NutsMessage.cstyle("missing parameters"), 2);
+            throw new NutsExecutionException(session, NutsMessage.cstyle("missing parameters"), 2);
         }
 
-        options.sshlistener = new ShellHelper.WsSshListener(context.getSession());
+        options.sshlistener = new ShellHelper.WsSshListener(session);
         for (int i = 0; i < options.xfiles.size() - 1; i++) {
             copy(options.xfiles.get(i), options.xfiles.get(options.xfiles.size() - 1), options, context.getExecutionContext());
         }
     }
 
     public void copy(NutsPath from, NutsPath to, Options o, JShellExecutionContext context) {
-        NutsIOCopyAction ccp = context.getSession().io().copy()
+        NutsSession session = context.getSession();
+        NutsCp ccp = NutsCp.of(session)
                 .from(from)
                 .to(to)
                 .setRecursive(o.recursive)
-                .setMkdirs(o.mkdir)
-                ;
+                .setMkdirs(o.mkdir);
         ccp.run();
 //        if (from.getProtocol().equals("file") && to.getProtocol().equals("file")) {
 //            File from1 = ((JavaXFile) from).getFile();
@@ -184,6 +177,15 @@ public class CpCommand extends SimpleNshBuiltin {
 //        } else {
 //            throw new NutsIllegalArgumentException(context.getSession(), "cp: unsupported protocols " + from + "->" + to);
 //        }
+    }
+
+    public static class Options {
+
+        boolean mkdir;
+        boolean recursive;
+        ShellHelper.WsSshListener sshlistener;
+        List<String> files = new ArrayList<>();
+        List<NutsPath> xfiles = new ArrayList<>();
     }
 
 //    private void copyFolder(File from1, File to1) {

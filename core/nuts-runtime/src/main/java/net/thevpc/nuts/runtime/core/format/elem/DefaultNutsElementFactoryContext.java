@@ -23,15 +23,14 @@
  */
 package net.thevpc.nuts.runtime.core.format.elem;
 
-import net.thevpc.nuts.NutsElementFactoryContext;
+import net.thevpc.nuts.*;
+
 import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Predicate;
-import net.thevpc.nuts.NutsElement;
-import net.thevpc.nuts.NutsElementFormat;
-import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.NutsWorkspace;
+
+import net.thevpc.nuts.NutsElements;
 
 /**
  *
@@ -39,10 +38,10 @@ import net.thevpc.nuts.NutsWorkspace;
  */
 public class DefaultNutsElementFactoryContext implements NutsElementFactoryContext {
 
-    private DefaultNutsElementFormat base;
+    private DefaultNutsElements base;
     private final Map<String, Object> properties = new HashMap<>();
 
-    public DefaultNutsElementFactoryContext(DefaultNutsElementFormat base) {
+    public DefaultNutsElementFactoryContext(DefaultNutsElements base) {
         this.base = base;
     }
 
@@ -57,7 +56,7 @@ public class DefaultNutsElementFactoryContext implements NutsElementFactoryConte
     }
 
     @Override
-    public NutsElementFormat elem() {
+    public NutsElements elem() {
         return base;
     }
 
