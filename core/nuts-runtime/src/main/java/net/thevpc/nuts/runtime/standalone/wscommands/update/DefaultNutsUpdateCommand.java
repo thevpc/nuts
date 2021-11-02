@@ -291,9 +291,10 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
     protected void traceUpdates(NutsWorkspaceUpdateResult result) {
         checkSession();
         NutsSession session = getSession();
+        NutsPrintStream out = getSession().out();
+        NutsUpdateResult[] updates = result.getAllUpdates();
+
         if (getSession().isPlainTrace()) {
-            NutsPrintStream out = getSession().out();
-            NutsUpdateResult[] updates = result.getAllUpdates();
             if (updates.length == 0) {
                 out.resetLine().printf("all packages are %s. You are running latest version%s.%n",
                         NutsTexts.of(session).ofStyled("up-to-date", NutsTextStyle.success()),
@@ -321,6 +322,32 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
                                 factory.ofStyled("set as default", NutsTextStyle.primary4()));
                     }
                 }
+            }
+        } else {
+            NutsElementFormat e = getSession().elem();
+
+            if (updates.length == 0) {
+                out.printlnf(e.forObject()
+                        .set("message", "all packages are up-to-date. You are running latest version" + (result.getAllResults().length > 1 ? "s" : "") + ".")
+                        .build());
+            } else {
+                NutsArrayElementBuilder arrayElementBuilder = e.forArray();
+                for (NutsUpdateResult update : updates) {
+                    if (update.isUpdateVersionAvailable()) {
+                        arrayElementBuilder.add(e.forObject()
+                                .set("package", update.getAvailable().getId().getShortName())
+                                .set("localVersion", update.getLocal().getId().getVersion().toString())
+                                .set("newVersion", update.getAvailable().getId().getVersion().toString())
+                                .build());
+                    } else if (update.isUpdateStatusAvailable()) {
+                        arrayElementBuilder.add(e.forObject()
+                                .set("package", update.getAvailable().getId().getShortName())
+                                .set("localVersion", update.getLocal().getId().getVersion().toString())
+                                .set("newVersion", "set as default")
+                                .build());
+                    }
+                }
+                out.printlnf(arrayElementBuilder.build());
             }
         }
     }
