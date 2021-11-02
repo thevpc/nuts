@@ -13,14 +13,14 @@ import java.nio.file.Paths;
 import java.util.Map;
 
 public class DefaultNutsWorkspaceLocationModel {
-    private NutsWorkspace ws;
-    private String workspaceLocation;
-    private NutsWorkspaceInitInformation info;
+    private final NutsWorkspace ws;
+    private final NutsPath workspaceLocation;
+    private final NutsWorkspaceInitInformation info;
 
     public DefaultNutsWorkspaceLocationModel(NutsWorkspace ws, NutsWorkspaceInitInformation info, String workspaceLocation) {
         this.ws = ws;
         this.info = info;
-        this.workspaceLocation = workspaceLocation;
+        this.workspaceLocation = NutsPath.of(workspaceLocation, NutsWorkspaceUtils.defaultSession(ws));
     }
 
     public NutsWorkspace getWorkspace() {
@@ -43,7 +43,7 @@ public class DefaultNutsWorkspaceLocationModel {
     }
 
 
-    public String getWorkspaceLocation() {
+    public NutsPath getWorkspaceLocation() {
         return workspaceLocation;
     }
 

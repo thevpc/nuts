@@ -49,9 +49,9 @@ public class NutsHttpSrvRepository extends NutsCachedRepository {
 
     public NutsHttpSrvRepository(NutsAddRepositoryOptions options, NutsSession session, NutsRepository parentRepository) {
         super(options, session, parentRepository, NutsSpeedQualifier.SLOW, false, "nuts:api");
-        LOG = session.log().of(NutsHttpSrvRepository.class);
+        LOG = NutsLogger.of(NutsHttpSrvRepository.class,session);
         try {
-            remoteId = session.id().parser().setLenient(false).parse((options.getLocation() + "/version"));
+            remoteId = getRemoteId(session);
         } catch (Exception ex) {
             LOG.with().session(session).level(Level.WARNING).verb(NutsLogVerb.FAIL)
                     .log(NutsMessage.jstyle("unable to initialize Repository NutsId for repository {0}", options.getLocation()));
@@ -65,7 +65,7 @@ public class NutsHttpSrvRepository extends NutsCachedRepository {
     public NutsId getRemoteId(NutsSession session) {
         if (remoteId == null) {
             try {
-                remoteId = session.id().parser().setLenient(false).parse(httpGetString(getUrl("/version"), session));
+                remoteId = NutsId.of(httpGetString(getUrl("/version"), session),session);
             } catch (Exception ex) {
                 LOG.with().session(session).level(Level.WARNING).verb(NutsLogVerb.FAIL)
                         .log(NutsMessage.jstyle("unable to resolve Repository NutsId for remote repository {0}", config().getLocation(false)));
@@ -84,13 +84,13 @@ public class NutsHttpSrvRepository extends NutsCachedRepository {
         }
         NutsWorkspaceUtils.checkSession(getWorkspace(), session);
         ByteArrayOutputStream descStream = new ByteArrayOutputStream();
-        session.descriptor().formatter(desc).print(new OutputStreamWriter(descStream));
+        desc.formatter().setSession(session).print(new OutputStreamWriter(descStream));
         httpUpload(CoreIOUtils.buildUrl(config().getLocation(true), "/deploy?" + resolveAuthURLPart(session)),
                 session,
                 new NutsTransportParamBinaryStreamPart("descriptor", "Project.nuts",
                         new ByteArrayInputStream(descStream.toByteArray())),
                 new NutsTransportParamBinaryFilePart("content", content.getPath().getName(), content.getFilePath()),
-                new NutsTransportParamParamPart("descriptor-hash", session.io().hash().sha1().setSource(desc).computeString()),
+                new NutsTransportParamParamPart("descriptor-hash", NutsHash.of(session).sha1().setSource(desc).computeString()),
                 new NutsTransportParamParamPart("content-hash", CoreIOUtils.evalSHA1Hex(content.getFilePath())),
                 new NutsTransportParamParamPart("force", String.valueOf(session.isYes()))
         );
@@ -104,7 +104,7 @@ public class NutsHttpSrvRepository extends NutsCachedRepository {
         boolean transitive = session.isTransitive();
         session.getTerminal().printProgress("loading descriptor for ", id.getLongId());
         try (InputStream stream = CoreIOUtils.getHttpClientFacade(session, getUrl("/fetch-descriptor?id=" + CoreIOUtils.urlEncodeString(id.toString()) + (transitive ? ("&transitive") : "") + "&" + resolveAuthURLPart(session))).open()) {
-            NutsDescriptor descriptor = session.descriptor().parser().setSession(session).parse(stream);
+            NutsDescriptor descriptor = NutsDescriptorParser.of(session).parse(stream);
             if (descriptor != null) {
                 String hash = httpGetString(getUrl("/fetch-descriptor-hash?id=" + CoreIOUtils.urlEncodeString(id.toString()) + (transitive ? ("&transitive") : "") + "&" + resolveAuthURLPart(session)), session);
                 if (hash.equals(descriptor.toString())) {
@@ -131,8 +131,8 @@ public class NutsHttpSrvRepository extends NutsCachedRepository {
             return IteratorUtils.emptyIterator();
         }
         Iterator<NutsId> it = new NamedNutIdFromStreamIterator(ret,session);
-        NutsIdFilter filter2 = session.id().filter().nonnull(idFilter).and(
-                session.id().filter().byName(id.getShortName())
+        NutsIdFilter filter2 = NutsIdFilters.of(session).nonnull(idFilter).and(
+                NutsIdFilters.of(session).byName(id.getShortName())
         );
         if (filter2 != null) {
             it = IteratorBuilder.of(it).filter(CoreFilterUtils.createFilter(filter2, session)).iterator();
@@ -187,20 +187,19 @@ public class NutsHttpSrvRepository extends NutsCachedRepository {
         if (localPath == null) {
             temp = true;
             String p = getIdFilename(id, session);
-            localPath = session.io().tmp()
-                    .setSession(session)
+            localPath = NutsTmp.of(session)
                     .setRepositoryId(getUuid())
                     .createTempFile(new File(p).getName()).toString();
         }
 
         try {
             String location = getUrl("/fetch?id=" + CoreIOUtils.urlEncodeString(id.toString()) + (transitive ? ("&transitive") : "") + "&" + resolveAuthURLPart(session));
-            session.io().copy().from(location).to(localPath).setSafe(true).setLogProgress(true).run();
+            NutsCp.of(session).from(location).to(localPath).setSafe(true).setLogProgress(true).run();
             String rhash = httpGetString(getUrl("/fetch-hash?id=" + CoreIOUtils.urlEncodeString(id.toString()) + (transitive ? ("&transitive") : "") + "&" + resolveAuthURLPart(session)), session);
             String lhash = CoreIOUtils.evalSHA1Hex(Paths.get(localPath));
             if (rhash.equalsIgnoreCase(lhash)) {
                 return new NutsDefaultContent(
-                        session.io().path(localPath)
+                        NutsPath.of(localPath,session)
                         , false, temp);
             }
         } catch (UncheckedIOException | NutsIOException ex) {
@@ -322,7 +321,7 @@ public class NutsHttpSrvRepository extends NutsCachedRepository {
 
         @Override
         public NutsId next() {
-            NutsId nutsId = session.id().parser().setLenient(false).parse(line);
+            NutsId nutsId = NutsId.of(line,session);
             return nutsId.builder().setRepository(getName()).build();
         }
     }

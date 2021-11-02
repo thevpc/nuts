@@ -34,6 +34,7 @@ import java.util.Map;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.NutsContentType;
 import net.thevpc.nuts.runtime.core.format.plain.NutsObjectFormatPlain;
+import net.thevpc.nuts.spi.NutsSupportLevelContext;
 
 /**
  *
@@ -44,8 +45,8 @@ public class DefaultNutsObjectFormat extends NutsObjectFormatBase {
     private NutsContentType outputFormat;
 //    private NutsObjectFormat base;
 
-    public DefaultNutsObjectFormat(NutsWorkspace ws) {
-        super(ws, "object-format");
+    public DefaultNutsObjectFormat(NutsSession session) {
+        super(session, "object-format");
     }
 
 //    public NutsContentType getOutputFormat() {
@@ -80,12 +81,12 @@ public class DefaultNutsObjectFormat extends NutsObjectFormatBase {
 
     public NutsObjectFormat createObjectFormat() {
         checkSession();
-        NutsSession ws = getSession();
+        NutsSession session = getSession();
         NutsContentType t = getSession().getOutputFormat();
         if(t==null){
             t = NutsContentType.PLAIN;
             Object v = getValue();
-            Object vv = getSession().elem().destruct(v);
+            Object vv = NutsElements.of(getSession()).destruct(v);
             if(vv instanceof Map || vv instanceof List){
                 t = NutsContentType.JSON;
             }
@@ -112,19 +113,19 @@ public class DefaultNutsObjectFormat extends NutsObjectFormatBase {
             case TSON:
             case YAML:
             {
-                return ws.elem().setContentType(t);
+                return NutsElements.of(session).setContentType(t);
             }
             case PROPS: {
-                return ws.formats().props();
+                return session.formats().props();
             }
             case TREE: {
-                return ws.formats().tree();
+                return session.formats().tree();
             }
             case TABLE: {
-                return ws.formats().table();
+                return session.formats().table();
             }
             case PLAIN: {
-                return new NutsObjectFormatPlain(ws.getWorkspace());
+                return new NutsObjectFormatPlain(session);
             }
         }
         throw new NutsUnsupportedEnumException(getSession(), t);
@@ -203,5 +204,10 @@ public class DefaultNutsObjectFormat extends NutsObjectFormatBase {
     @Override
     public boolean configureFirst(NutsCommandLine commandLine) {
         return getBase().configureFirst(commandLine);
+    }
+
+    @Override
+    public int getSupportLevel(NutsSupportLevelContext<Object> context) {
+        return DEFAULT_SUPPORT;
     }
 }

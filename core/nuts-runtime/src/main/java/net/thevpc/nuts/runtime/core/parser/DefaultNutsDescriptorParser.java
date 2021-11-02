@@ -7,6 +7,7 @@ import net.thevpc.nuts.runtime.core.model.DefaultNutsDescriptorPropertyBuilder;
 import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.bridges.maven.MavenUtils;
 import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
+import net.thevpc.nuts.spi.NutsSupportLevelContext;
 
 import java.io.*;
 import java.net.URL;
@@ -24,14 +25,15 @@ public class DefaultNutsDescriptorParser implements NutsDescriptorParser {
     private NutsDescriptorStyle descriptorStyle;
     private String format;
 
-    public DefaultNutsDescriptorParser(NutsWorkspace ws) {
-        this.ws = ws;
+    public DefaultNutsDescriptorParser(NutsSession session) {
+        this.session = session;
+        this.ws = session.getWorkspace();
     }
 
     @Override
     public NutsDescriptor parse(URL url) {
         checkSession();
-        return parse(getSession().io().path(url));
+        return parse(NutsPath.of(url, getSession()));
     }
 
     @Override
@@ -42,7 +44,7 @@ public class DefaultNutsDescriptorParser implements NutsDescriptorParser {
     @Override
     public NutsDescriptor parse(Path path) {
         checkSession();
-        return parse(getSession().io().path(path));
+        return parse(NutsPath.of(path, getSession()));
     }
 
     @Override
@@ -126,14 +128,14 @@ public class DefaultNutsDescriptorParser implements NutsDescriptorParser {
     }
 
     private NutsDescriptor parse(InputStream in, boolean closeStream) {
-        if(isLenient()){
-            try{
-                return parseNonLenient(in,closeStream);
-            }catch (Exception ex){
+        if (isLenient()) {
+            try {
+                return parseNonLenient(in, closeStream);
+            } catch (Exception ex) {
                 return null;
             }
         }
-        return parseNonLenient(in,closeStream);
+        return parseNonLenient(in, closeStream);
     }
 
     private NutsDescriptor parseNonLenient(InputStream in, boolean closeStream) {
@@ -151,7 +153,7 @@ public class DefaultNutsDescriptorParser implements NutsDescriptorParser {
                         try {
                             in.close();
                         } catch (IOException ex) {
-                            throw new NutsIOException(getSession(),ex);
+                            throw new NutsIOException(getSession(), ex);
                         }
                     }
                 }
@@ -159,15 +161,15 @@ public class DefaultNutsDescriptorParser implements NutsDescriptorParser {
             case NUTS: {
                 try {
                     Reader rr = new InputStreamReader(in);
-                    return getSession().elem()
+                    return NutsElements.of(getSession())
                             .setSession(session)
-                            .setContentType(NutsContentType.JSON).parse(rr, NutsDescriptor.class);
+                            .json().parse(rr, NutsDescriptor.class);
                 } finally {
                     if (closeStream) {
                         try {
                             in.close();
                         } catch (IOException ex) {
-                            throw new NutsIOException(getSession(),ex);
+                            throw new NutsIOException(getSession(), ex);
                         }
                     }
                 }
@@ -177,9 +179,11 @@ public class DefaultNutsDescriptorParser implements NutsDescriptorParser {
                     try {
                         Manifest manifest = new Manifest(in);
                         Attributes attrs = manifest.getMainAttributes();
-                        String groupAndArtifact = null;
+                        String automaticModuleName = null;
                         String mainVersion = null;
                         String mainClass = null;
+                        String implVendorId = null;
+                        String implVendorTitle = null;
                         Set<NutsDependency> deps = new LinkedHashSet<>();
                         NutsId explicitId = null;
                         Map<String, String> all = new HashMap<>();
@@ -189,13 +193,19 @@ public class DefaultNutsDescriptorParser implements NutsDescriptorParser {
                                 mainClass = (NutsUtilStrings.trimToNull(attrs.getValue(attrName)));
                             }
                             if ("Automatic-Module-Name".equals(attrName.toString())) {
-                                groupAndArtifact = NutsUtilStrings.trimToNull(attrs.getValue(attrName));
+                                automaticModuleName = NutsUtilStrings.trimToNull(attrs.getValue(attrName));
                             }
                             if ("Implementation-Version".equals(attrName.toString())) {
                                 mainVersion = NutsUtilStrings.trimToNull(attrs.getValue(attrName));
                             }
+                            if ("Implementation-Vendor-Id".equals(attrName.toString())) {
+                                implVendorId = NutsUtilStrings.trimToNull(attrs.getValue(attrName));
+                            }
+                            if ("Implementation-Vendor-Title".equals(attrName.toString())) {
+                                implVendorTitle = NutsUtilStrings.trimToNull(attrs.getValue(attrName));
+                            }
                             if ("Nuts-Id".equals(attrName.toString())) {
-                                explicitId = getSession().id().parser().setLenient(true).parse(NutsUtilStrings.trimToNull(attrs.getValue(attrName)));
+                                explicitId = NutsIdParser.of(getSession()).setLenient(true).parse(NutsUtilStrings.trimToNull(attrs.getValue(attrName)));
                             }
                             if ("Nuts-Dependencies".equals(attrName.toString())) {
                                 String nutsDependencies = NutsUtilStrings.trimToNull(attrs.getValue(attrName));
@@ -203,45 +213,52 @@ public class DefaultNutsDescriptorParser implements NutsDescriptorParser {
                                         Arrays.stream(nutsDependencies.split(";"))
                                                 .map(String::trim)
                                                 .filter(x -> x.length() > 0)
-                                                .map(getSession().dependency().parser().setLenient(true)
-                                                        ::parseDependency)
+                                                .map(NutsDependencyParser.of(session).setLenient(true)
+                                                        ::parse)
                                                 .filter(Objects::nonNull)
                                                 .collect(Collectors.toCollection(LinkedHashSet::new));
                             }
                             all.put(attrName.toString(), NutsUtilStrings.trimToNull(attrs.getValue(attrName)));
                         }
                         if (explicitId == null) {
-                            if (groupAndArtifact == null) {
+                            if (automaticModuleName == null && implVendorId == null) {
                                 if (!NutsBlankable.isBlank(mainClass)) {
-                                    groupAndArtifact = CorePlatformUtils.getPackageName(mainClass);
+                                    automaticModuleName = CorePlatformUtils.getPackageName(mainClass);
                                 }
+                            } else if (automaticModuleName == null && implVendorId != null) {
+                                automaticModuleName = implVendorId;
                             }
-                            if (groupAndArtifact != null
+                            if (automaticModuleName != null
                                     || mainVersion != null
                                     || !deps.isEmpty()
                             ) {
-                                String groupId = groupAndArtifact == null ? "" : CorePlatformUtils.getPackageName(groupAndArtifact);
-                                String artifactId = groupAndArtifact == null ? "" : CorePlatformUtils.getSimpleClassName(groupAndArtifact);
-                                explicitId = ws.id().builder().setGroupId(groupId).setArtifactId(artifactId)
+                                String groupId = automaticModuleName == null ? "" : CorePlatformUtils.getPackageName(automaticModuleName);
+                                String artifactId = automaticModuleName == null ? "" : CorePlatformUtils.getSimpleClassName(automaticModuleName);
+                                explicitId = NutsIdBuilder.of(session).setGroupId(groupId).setArtifactId(artifactId)
                                         .setVersion(
                                                 NutsBlankable.isBlank(mainVersion) ? "1.0" : mainVersion.trim()
                                         ).build();
                             }
                         }
                         if (explicitId != null || !deps.isEmpty()) {
-                            return getSession().descriptor().descriptorBuilder()
+                            String nutsName = NutsUtilStrings.trimToNull(all.get("Nuts-Name"));
+                            if(nutsName==null){
+                                nutsName=implVendorTitle;
+                            }
+                            return NutsDescriptorBuilder.of(getSession())
                                     .setId(explicitId)
+                                    .setName(nutsName)
                                     .addFlag(NutsBlankable.isBlank(mainClass) ? NutsDescriptorFlag.EXEC : null)
                                     .addFlags(
                                             Arrays.stream(NutsUtilStrings.trim(
-                                                    all.get("Nuts-Flags")
-                                            ).split("; ,"))
+                                                            all.get("Nuts-Flags")
+                                                    ).split("; ,"))
                                                     .map(NutsDescriptorFlag::parseLenient)
                                                     .filter(Objects::nonNull)
                                                     .toArray(NutsDescriptorFlag[]::new)
                                     )
                                     .setPackaging(CoreStringUtils.coalesce(
-                                            NutsUtilStrings.trimToNull(all.get("Nuts-Flags")),
+                                            NutsUtilStrings.trimToNull(all.get("Nuts-Packaging")),
                                             "jar"
                                     ))
                                     .setCategories(
@@ -260,20 +277,20 @@ public class DefaultNutsDescriptorParser implements NutsDescriptorParser {
                                                     .filter(Objects::nonNull)
                                                     .collect(Collectors.toList())
                                     )
-                                    .setName(NutsUtilStrings.trimToNull(all.get("Nuts-Name")))
+                                    .setName(nutsName)
                                     .setDescription(NutsUtilStrings.trimToNull(all.get("Nuts-Description")))
                                     .setGenericName(NutsUtilStrings.trimToNull(all.get("Nuts-Generic-Name")))
                                     .setProperties(all.entrySet().stream()
-                                                    .filter(x->x.getKey().startsWith("Nuts-Property-"))
-                                                            .map(x-> new DefaultNutsDescriptorPropertyBuilder(getSession())
-                                                                    .setName(x.getKey().substring("Nuts-Property-".length()))
-                                                                    .setValue(x.getValue())
-                                                                    //.setCondition()
-                                                                    .build())
-                                                                    .toArray(NutsDescriptorProperty[]::new))
+                                            .filter(x -> x.getKey().startsWith("Nuts-Property-"))
+                                            .map(x -> new DefaultNutsDescriptorPropertyBuilder(getSession())
+                                                    .setName(x.getKey().substring("Nuts-Property-".length()))
+                                                    .setValue(x.getValue())
+                                                    //.setCondition()
+                                                    .build())
+                                            .toArray(NutsDescriptorProperty[]::new))
                                     //.setCondition()
                                     .setExecutor(new DefaultNutsArtifactCall(
-                                            getSession().id().parser().parse("java"),
+                                            NutsId.of("java", getSession()),
                                             //new String[]{"-jar"}
                                             NutsBlankable.isBlank(mainClass) ? new String[0]
                                                     : new String[]{
@@ -283,7 +300,7 @@ public class DefaultNutsDescriptorParser implements NutsDescriptorParser {
                                     .setDependencies(deps.toArray(new NutsDependency[0]))
                                     .build();
                         }
-                        throw new NutsParseException(getSession(), NutsMessage.cstyle("unable to parse Descriptor for Manifest from %s",in));
+                        throw new NutsParseException(getSession(), NutsMessage.cstyle("unable to parse Descriptor for Manifest from %s", in));
                     } catch (IOException ex) {
                         throw new NutsIOException(getSession(), ex);
                     }
@@ -305,5 +322,10 @@ public class DefaultNutsDescriptorParser implements NutsDescriptorParser {
 
     public NutsWorkspace getWorkspace() {
         return ws;
+    }
+
+    @Override
+    public int getSupportLevel(NutsSupportLevelContext<Object> context) {
+        return DEFAULT_SUPPORT;
     }
 }

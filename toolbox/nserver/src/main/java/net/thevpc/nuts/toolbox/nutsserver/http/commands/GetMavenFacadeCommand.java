@@ -25,12 +25,13 @@ public class GetMavenFacadeCommand extends AbstractFacadeCommand {
 //        System.out.println("get-mvn " + uri.toString());
         List<String> split = NutsServerUtils.split(uri.toString(), "/");
         String n = split.get(split.size() - 1);
+        NutsSession session = context.getSession();
         if (n.endsWith(".pom")) {
             if (split.size() >= 4) {
-                NutsId id = context.getSession().id().builder().setArtifactId(split.get(split.size() - 3))
+                NutsId id = NutsIdBuilder.of(session).setArtifactId(split.get(split.size() - 3))
                         .setGroupId(String.join(".", split.subList(0, split.size() - 3)))
                         .setVersion(split.get(split.size() - 2)).build();
-                NutsDefinition fetch = context.getSession().fetch().setId(id).setSession(context.getSession())
+                NutsDefinition fetch = session.fetch().setId(id).setSession(session)
                         .getResultDefinition();
                 NutsDescriptor d = fetch.getDescriptor();
                 if(context.isHeadMethod()){
@@ -105,10 +106,10 @@ public class GetMavenFacadeCommand extends AbstractFacadeCommand {
             }
         } else if (n.endsWith(".jar")) {
             if (split.size() >= 4) {
-                NutsId id = context.getSession().id().builder().setArtifactId(split.get(split.size() - 3))
+                NutsId id = NutsIdBuilder.of(session).setArtifactId(split.get(split.size() - 3))
                         .setGroupId(String.join(".", split.subList(0, split.size() - 3)))
                         .setVersion(split.get(split.size() - 2)).build();
-                NutsDefinition fetch = context.getSession().fetch().setId(id).setSession(context.getSession())
+                NutsDefinition fetch = session.fetch().setId(id).setSession(session)
                         .getResultDefinition();
                 if(context.isHeadMethod()){
                     context.sendResponseHeaders(200,-1);
@@ -120,9 +121,9 @@ public class GetMavenFacadeCommand extends AbstractFacadeCommand {
             }
         } else if (n.equals("maven-metadata.xml")) {
             if (split.size() >= 3) {
-                NutsId id = context.getSession().id().builder().setArtifactId(split.get(split.size() - 2))
+                NutsId id = NutsIdBuilder.of(session).setArtifactId(split.get(split.size() - 2))
                         .setGroupId(String.join(".", split.subList(0, split.size() - 2))).build();
-                NutsStream<NutsId> resultIds = context.getSession().search().addId(id).setDistinct(true).setSorted(true).getResultIds();
+                NutsStream<NutsId> resultIds = session.search().addId(id).setDistinct(true).setSorted(true).getResultIds();
                 if(context.isHeadMethod()){
                     context.sendResponseHeaders(200,-1);
                     return;

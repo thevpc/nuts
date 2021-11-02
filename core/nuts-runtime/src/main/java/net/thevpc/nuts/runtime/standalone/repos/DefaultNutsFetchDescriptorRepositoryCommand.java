@@ -53,7 +53,7 @@ public class DefaultNutsFetchDescriptorRepositoryCommand extends AbstractNutsFet
 
     protected NutsLogger _LOG(NutsSession session) {
         if (LOG == null) {
-            LOG = session.log().of(DefaultNutsFetchDescriptorRepositoryCommand.class);
+            LOG = NutsLogger.of(DefaultNutsFetchDescriptorRepositoryCommand.class,session);
         }
         return LOG;
     }
@@ -95,7 +95,7 @@ public class DefaultNutsFetchDescriptorRepositoryCommand extends AbstractNutsFet
                 id = id.builder().setFaceDescriptor().build();
                 d = xrepo.fetchDescriptorImpl(id, getFetchMode(), session);
             } else {
-                NutsIdFilter filter = CoreFilterUtils.idFilterOf(id.getProperties(), session.id().filter().byName(id.getFullName()), null, session);
+                NutsIdFilter filter = CoreFilterUtils.idFilterOf(id.getProperties(), NutsIdFilters.of(session).byName(id.getFullName()), null, session);
                 NutsId a = xrepo.searchLatestVersion(id.builder().setVersion("").build(), filter, getFetchMode(), session);
                 if (a == null) {
                     throw new NutsNotFoundException(getSession(), id.getLongId());

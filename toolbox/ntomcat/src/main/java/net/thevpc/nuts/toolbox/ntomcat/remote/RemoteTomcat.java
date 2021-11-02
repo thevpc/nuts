@@ -161,7 +161,7 @@ public class RemoteTomcat {
             c = loadOrCreateTomcatConfig(null);
         }
         boolean ok = false;
-        NutsTextManager text = getContext().getSession().text();
+        NutsTexts text = NutsTexts.of(getContext().getSession());
         while (!ok) {
             try {
                 ok = true;
@@ -308,15 +308,16 @@ public class RemoteTomcat {
                 context.configureLast(args);
             }
         }
+        NutsSession session = getContext().getSession();
         if (install) {
             for (String app : apps) {
-                install(getContext().getSession().commandLine().create(
+                install(NutsCommandLine.of(
                         new String[]{
                                 "--name",
                                 instance,
                                 "--app",
                                 app
-                        }
+                        },session
                 ));
             }
         }
@@ -369,10 +370,10 @@ public class RemoteTomcat {
             public void show(RemoteTomcatServiceBase aa) {
                 NutsSession session = getContext().getSession();
                 if (json) {
-                    session.out().printf("%s :\n", session.text().ofStyled(aa.getName(), NutsTextStyle.primary4()));
+                    session.out().printf("%s :\n", NutsTexts.of(session).ofStyled(aa.getName(), NutsTextStyle.primary4()));
                     aa.println(session.out());
                 } else {
-                    session.out().printf("%s :\n", session.text().ofStyled(aa.getName(), NutsTextStyle.primary4()));
+                    session.out().printf("%s :\n", NutsTexts.of(session).ofStyled(aa.getName(), NutsTextStyle.primary4()));
                     aa.println(session.out());
                 }
             }

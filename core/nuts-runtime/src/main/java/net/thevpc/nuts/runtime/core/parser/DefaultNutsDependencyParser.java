@@ -6,22 +6,18 @@ import net.thevpc.nuts.runtime.standalone.util.NutsDependencyScopes;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 import net.thevpc.nuts.runtime.bundles.parsers.StringMapParser;
+import net.thevpc.nuts.spi.NutsSupportLevelContext;
 
 public class DefaultNutsDependencyParser implements NutsDependencyParser {
-    private static final StringMapParser QPARSER = new StringMapParser("=","&");
-    private NutsSession session;
-    private boolean lenient=false;
     public static final Pattern DEPENDENCY_NUTS_DESCRIPTOR_PATTERN = Pattern.compile("^(?<group>[a-zA-Z0-9_.${}-]+)(:(?<artifact>[a-zA-Z0-9_.${}-]+))?(#(?<version>[^?]+))?(\\?(?<face>.+))?$");
+    private static final StringMapParser QPARSER = new StringMapParser("=", "&");
+    private final NutsSession session;
+    private boolean lenient = false;
 
     public DefaultNutsDependencyParser(NutsSession session) {
         this.session = session;
-    }
-
-    @Override
-    public NutsDependencyParser setLenient(boolean lenient) {
-        this.lenient=lenient;
-        return this;
     }
 
     @Override
@@ -30,7 +26,13 @@ public class DefaultNutsDependencyParser implements NutsDependencyParser {
     }
 
     @Override
-    public NutsDependency parseDependency(String dependency) {
+    public NutsDependencyParser setLenient(boolean lenient) {
+        this.lenient = lenient;
+        return this;
+    }
+
+    @Override
+    public NutsDependency parse(String dependency) {
         if (dependency == null) {
             return null;
         }
@@ -45,7 +47,7 @@ public class DefaultNutsDependencyParser implements NutsDependencyParser {
                 name = group;
                 group = null;
             }
-            return session.dependency().builder()
+            return NutsDependencyBuilder.of(session)
                     .setGroupId(group)
                     .setArtifactId(name)
                     .setVersion(version)
@@ -59,10 +61,7 @@ public class DefaultNutsDependencyParser implements NutsDependencyParser {
     }
 
     @Override
-    public boolean parseOptional(String optional) {
-        if(NutsBlankable.isBlank(optional)){
-            return false;
-        }
-        return "true".equals(optional.trim());
+    public int getSupportLevel(NutsSupportLevelContext<Object> context) {
+        return DEFAULT_SUPPORT;
     }
 }

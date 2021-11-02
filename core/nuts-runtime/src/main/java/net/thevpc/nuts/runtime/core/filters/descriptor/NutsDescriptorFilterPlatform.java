@@ -36,7 +36,7 @@ import net.thevpc.nuts.runtime.core.filters.CoreFilterUtils;
 /**
  * Created by vpc on 2/20/17.
  */
-public class NutsDescriptorFilterPlatform extends AbstractDescriptorFilter implements JsNutsDescriptorFilter {
+public class NutsDescriptorFilterPlatform extends AbstractDescriptorFilter {
 
     private final String platform;
 
@@ -63,11 +63,6 @@ public class NutsDescriptorFilterPlatform extends AbstractDescriptorFilter imple
             return null;
         }
         return this;
-    }
-
-    @Override
-    public String toJsNutsDescriptorFilterExpr() {
-        return "descriptor.matchesPlatform('" + CoreStringUtils.escapeQuoteStrings(platform) + "')";
     }
 
     @Override

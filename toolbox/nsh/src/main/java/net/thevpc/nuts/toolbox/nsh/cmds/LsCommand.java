@@ -25,20 +25,21 @@
  */
 package net.thevpc.nuts.toolbox.nsh.cmds;
 
+import net.thevpc.nuts.*;
+import net.thevpc.nuts.spi.NutsComponentScope;
+import net.thevpc.nuts.spi.NutsComponentScopeType;
+import net.thevpc.nuts.toolbox.nsh.SimpleNshBuiltin;
+import net.thevpc.nuts.toolbox.nsh.bundles.BytesSizeFormat;
+
 import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import net.thevpc.nuts.*;
-import net.thevpc.nuts.spi.NutsSingleton;
-import net.thevpc.nuts.toolbox.nsh.SimpleNshBuiltin;
-import net.thevpc.nuts.toolbox.nsh.bundles.BytesSizeFormat;
-
 /**
  * Created by vpc on 1/7/17.
  */
-@NutsSingleton
+@NutsComponentScope(NutsComponentScopeType.WORKSPACE)
 public class LsCommand extends SimpleNshBuiltin {
 
     private static final FileSorter FILE_SORTER = new FileSorter();
@@ -73,7 +74,8 @@ public class LsCommand extends SimpleNshBuiltin {
             options.h = a.getValue().getBoolean();
             return true;
         } else if (commandLine.peek().isNonOption()) {
-            String path = commandLine.next(context.getSession().commandLine().createName("file")).getString();
+            NutsSession session = context.getSession();
+            String path = commandLine.next(NutsArgumentName.of("file", session)).getString();
             options.paths.add(path);
             options.paths.addAll(Arrays.asList(commandLine.toStringArray()));
             commandLine.skip();
@@ -92,8 +94,9 @@ public class LsCommand extends SimpleNshBuiltin {
         if (options.paths.isEmpty()) {
             options.paths.add(context.getRootContext().getAbsolutePath("."));
         }
+        NutsSession session = context.getSession();
         for (String path : options.paths) {
-            NutsPath file = NutsPath.of(path, context.getSession()).toAbsolute(NutsPath.of(context.getRootContext().getCwd(), context.getSession()));
+            NutsPath file = NutsPath.of(path, session).toAbsolute(NutsPath.of(context.getRootContext().getCwd(), session));
             if (!file.exists()) {
                 exitCode = 1;
                 if (errors == null) {
@@ -123,8 +126,8 @@ public class LsCommand extends SimpleNshBuiltin {
             }
         }
         if (success != null) {
-            NutsPrintStream out = context.getSession().out();
-            switch (context.getSession().getOutputFormat()) {
+            NutsPrintStream out = session.out();
+            switch (session.getOutputFormat()) {
                 case XML:
                 case JSON:
                 case YAML:
@@ -141,7 +144,7 @@ public class LsCommand extends SimpleNshBuiltin {
                     out.printlnf(success.result.stream()
                             .flatMap(x ->
                                     x.children.stream().map(y -> {
-                                        Map m = (Map) context.getSession().elem().destruct(y);
+                                        Map m = (Map) NutsElements.of(session).destruct(y);
                                         m.put("group", x.name);
                                         return m;
                                     })).collect(Collectors.toList()));
@@ -155,10 +158,10 @@ public class LsCommand extends SimpleNshBuiltin {
                                 out.printf("%s:\n", resultGroup.name);
                             }
                             for (ResultItem resultItem : resultGroup.children) {
-                                printPlain(resultItem, options, out, context.getSession());
+                                printPlain(resultItem, options, out, session);
                             }
                         } else {
-                            printPlain(resultGroup.file, options, out, context.getSession());
+                            printPlain(resultGroup.file, options, out, session);
                         }
                     }
                     break;
@@ -169,14 +172,14 @@ public class LsCommand extends SimpleNshBuiltin {
             // if plain
 //            ResultError s = context.getResult();
 //            for (Map.Entry<String, NutsMessage> e : s.result.entrySet()) {
-//                NutsTextManager text = session.text();
+//                NutsTexts text = NutsTexts.of(session);
 //                out.printf("%s%n",
 //                        text.builder().append(e.getKey(),NutsTextStyle.primary5())
 //                                .append(" : ")
 //                                .append(e.getValue(),NutsTextStyle.error())
 //                );
 //            }
-            throwExecutionException(errors.result, exitCode, context.getSession());
+            throwExecutionException(errors.result, exitCode, session);
         }
     }
 
@@ -200,8 +203,8 @@ public class LsCommand extends SimpleNshBuiltin {
             out.printf("%s", SIMPLE_DATE_FORMAT.format(item.modified));
             out.print(" ");
         }
-        String name = session.io().path(item.path).getName();
-        NutsTextManager text = session.text();
+        String name = NutsPath.of(item.path, session).getName();
+        NutsTexts text = NutsTexts.of(session);
         if (item.hidden) {
             out.println(text.ofStyled(name, NutsTextStyle.pale()));
         } else if (item.type == 'd') {

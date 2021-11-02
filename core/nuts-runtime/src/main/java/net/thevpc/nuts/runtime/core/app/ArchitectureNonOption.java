@@ -27,7 +27,7 @@ package net.thevpc.nuts.runtime.core.app;
 
 import net.thevpc.nuts.NutsArgumentCandidate;
 import net.thevpc.nuts.NutsCommandAutoComplete;
-import net.thevpc.nuts.NutsCommandLineManager;
+import net.thevpc.nuts.NutsCommandLines;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,11 +45,10 @@ public class ArchitectureNonOption extends DefaultNonOption {
     @Override
     public List<NutsArgumentCandidate> getCandidates(NutsCommandAutoComplete context) {
         List<NutsArgumentCandidate> all = new ArrayList<>();
-        NutsCommandLineManager c = context.getSession().commandLine();
-        all.add(c.createCandidate("\"linux x86\"").build());
-        all.add(c.createCandidate("\"linux x64\"").build());
-        all.add(c.createCandidate("\"win x86\"").build());
-        all.add(c.createCandidate("\"win x64\"").build());
+        all.add(new NutsArgumentCandidate("\"linux x86\""));
+        all.add(new NutsArgumentCandidate("\"linux x64\""));
+        all.add(new NutsArgumentCandidate("\"win x86\""));
+        all.add(new NutsArgumentCandidate("\"win x64\""));
         return all;
     }
 

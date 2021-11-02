@@ -79,13 +79,13 @@ public class NutsComponentController {
             if (iterator.hasNext()) {
                 NutsWorkspaceLocation workspaceLocation = iterator.next();
                 NutsSession session = Nuts.openWorkspace("--workspace",workspaceLocation.getLocation());
-                NutsId id = session.id().builder()
+                NutsId id = NutsIdBuilder.of(session)
                         .setArtifactId(name)
                         .setRepository(namespace)
                         .setGroupId(group)
                         .setVersion(version)
                         .setCondition(
-                                session.descriptor().envConditionBuilder()
+                                NutsEnvConditionBuilder.of(session)
                                         .setArch(arch)
                                         .setOs(os)
                                         .setOsDist(osdist).build()
@@ -126,7 +126,7 @@ public class NutsComponentController {
             if (iterator.hasNext()) {
                 NutsWorkspaceLocation workspaceLocation = iterator.next();
                 NutsSession session = Nuts.openWorkspace("--workspace",workspaceLocation.getLocation());
-                NutsId id = session.id().builder()
+                NutsId id = NutsIdBuilder.of(session)
                         .setArtifactId(name)
                         .setRepository(namespace)
                         .setGroupId(group)
@@ -172,7 +172,7 @@ public class NutsComponentController {
                 NutsSession session = Nuts.openWorkspace("--workspace",workspaceLocation.getLocation());
                 NutsWorkspace ws = session.getWorkspace();
                 Map<String, String> data = NutsIndexerUtils.nutsIdToMap(
-                        session.id().builder()
+                        NutsIdBuilder.of(session)
                                 .setArtifactId(name)
                                 .setRepository(namespace)
                                 .setGroupId(group)
@@ -216,7 +216,7 @@ public class NutsComponentController {
             if (iterator.hasNext()) {
                 NutsWorkspaceLocation workspaceLocation = iterator.next();
                 NutsSession session = Nuts.openWorkspace("--workspace",workspaceLocation.getLocation());
-                NutsId id = session.id().builder()
+                NutsId id = NutsIdBuilder.of(session)
                         .setArtifactId(name)
                         .setRepository(namespace)
                         .setGroupId(group)
@@ -246,7 +246,7 @@ public class NutsComponentController {
                     if (it.hasNext()) {
                         NutsDefinition definition = it.next();
                         NutsDependency[] directDependencies = definition.getEffectiveDescriptor().getDependencies();
-                        data.put("dependencies", session.elem().setContentType(NutsContentType.JSON)
+                        data.put("dependencies", NutsElements.of(session).json()
                                 .setValue(Arrays.stream(directDependencies).map(Object::toString)
                                         .collect(Collectors.toList()))
                                         .setNtf(false)
@@ -271,18 +271,18 @@ public class NutsComponentController {
         for (Map<String, String> row : rows) {
             Map<String, Object> d = new HashMap<>(row);
             if (d.containsKey("dependencies")) {
-                String[] array = session.elem().setContentType(NutsContentType.JSON).parse(new StringReader(row.get("dependencies")), String[].class);
+                String[] array = NutsElements.of(session).json().parse(new StringReader(row.get("dependencies")), String[].class);
                 List<Map<String, String>> dependencies = new ArrayList<>();
                 for (String s : array) {
-                    dependencies.add(NutsIndexerUtils.nutsIdToMap(session.id().parser().parse(s)));
+                    dependencies.add(NutsIndexerUtils.nutsIdToMap(NutsId.of(s,session)));
                 }
                 d.put("dependencies", dependencies);
             }
             if (d.containsKey("allDependencies")) {
-                String[] array = session.elem().setContentType(NutsContentType.JSON).parse(new StringReader(row.get("allDependencies")), String[].class);
+                String[] array = NutsElements.of(session).json().parse(new StringReader(row.get("allDependencies")), String[].class);
                 List<Map<String, String>> allDependencies = new ArrayList<>();
                 for (String s : array) {
-                    allDependencies.add(NutsIndexerUtils.nutsIdToMap(session.id().parser().parse(s)));
+                    allDependencies.add(NutsIndexerUtils.nutsIdToMap(NutsId.of(s,session)));
                 }
                 d.put("allDependencies", allDependencies);
             }

@@ -7,7 +7,6 @@ package net.thevpc.nuts.runtime.standalone.wscommands.exec;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.util.CoreNutsUtils;
-import net.thevpc.nuts.runtime.standalone.wscommands.exec.AbstractNutsExecutableCommand;
 
 /**
  *
@@ -40,7 +39,7 @@ public abstract class DefaultInternalNutsExecutableCommand extends AbstractNutsE
 
     @Override
     public String getHelpText() {
-        NutsTextManager txt = getSession().text();
+        NutsTexts txt = NutsTexts.of(getSession());
         NutsText n = txt.parser().parseResource("/net/thevpc/nuts/runtime/command/" + name + ".ntf",
                 txt.parser().createLoader(getClass().getClassLoader())
         );
@@ -52,18 +51,19 @@ public abstract class DefaultInternalNutsExecutableCommand extends AbstractNutsE
 
     @Override
     public void dryExecute() {
+        NutsSession session = getSession();
         if (CoreNutsUtils.isIncludesHelpOption(args)) {
-            getSession().out().println("[dry] ==show-help==");
+            session.out().println("[dry] ==show-help==");
             return;
         }
-        NutsTextManager text = getSession().text();
-        getSession().out().printf("[dry] %s%n",
+        NutsTexts text = NutsTexts.of(session);
+        session.out().printf("[dry] %s%n",
                 text.builder()
                         .append("internal", NutsTextStyle.pale())
                         .append(" ")
                         .append(getName(),NutsTextStyle.primary5())
                         .append(" ")
-                        .append(getSession().commandLine().create(args))
+                        .append(NutsCommandLine.of(args,session))
                 );
     }
 

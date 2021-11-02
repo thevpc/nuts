@@ -25,6 +25,9 @@
  */
 package net.thevpc.nuts;
 
+import net.thevpc.nuts.boot.NutsApiUtils;
+import net.thevpc.nuts.spi.NutsComponent;
+
 /**
  * Class responsible of manipulating  {@link NutsId} instances:
  * <ul>
@@ -35,7 +38,11 @@ package net.thevpc.nuts;
  * @since 0.5.4
  * @app.category Format
  */
-public interface NutsIdFormat extends NutsFormat {
+public interface NutsIdFormat extends NutsFormat, NutsComponent<Object> {
+    static NutsIdFormat of(NutsSession session) {
+        NutsApiUtils.checkSession(session);
+        return session.extensions().createSupported(NutsIdFormat.class,true,null);
+    }
 
     /**
      * return true when the repository should not be included in formatted instance

@@ -30,7 +30,7 @@ public class DefaultNutsRepositoryModel {
 
     private final NutsRepositoryRegistryHelper repositoryRegistryHelper;
     public NutsLogger LOG;
-    private NutsWorkspace workspace;
+    private final NutsWorkspace workspace;
 
     public DefaultNutsRepositoryModel(NutsWorkspace workspace) {
         this.workspace = workspace;
@@ -43,13 +43,9 @@ public class DefaultNutsRepositoryModel {
 
     protected NutsLogger _LOG(NutsSession session) {
         if (LOG == null) {
-            LOG = session.log().of(DefaultNutsRepositoryModel.class);
+            LOG = NutsLogger.of(DefaultNutsRepositoryModel.class,session);
         }
         return LOG;
-    }
-
-    public NutsRepositoryFilterManager filter() {
-        return getWorkspace().filters().repository();
     }
 
     public NutsRepository[] getRepositories(NutsSession session) {
@@ -203,8 +199,9 @@ public class DefaultNutsRepositoryModel {
         if (rootFolder == null) {
             if (parentRepository == null) {
                 NutsWorkspaceConfigManagerExt cc = NutsWorkspaceConfigManagerExt.of(session.config());
-                rootFolder = options.isTemporary() ? Paths.get(cc.getModel().getTempRepositoriesRoot(session))
-                        : Paths.get(cc.getModel().getRepositoriesRoot(session));
+                rootFolder = options.isTemporary() ?
+                        cc.getModel().getTempRepositoriesRoot(session).toFile()
+                        : cc.getModel().getRepositoriesRoot(session).toFile();
             } else {
                 NutsRepositoryConfigManagerExt cc = NutsRepositoryConfigManagerExt.of(parentRepository.config());
                 rootFolder = options.isTemporary() ? cc.getModel().getTempMirrorsRoot(session)
@@ -245,7 +242,7 @@ public class DefaultNutsRepositoryModel {
                 options.setEnabled(true);
             } else if (conf == null) {
                 options.setLocation(CoreIOUtils.resolveRepositoryPath(options, rootFolder, session));
-                conf = loadRepository(Paths.get(options.getLocation(), NutsConstants.Files.REPOSITORY_CONFIG_FILE_NAME), options.getName(),session);
+                conf = loadRepository(Paths.get(options.getLocation(), NutsConstants.Files.REPOSITORY_CONFIG_FILE_NAME), options.getName(), session);
                 if (conf == null) {
                     if (options.isFailSafe()) {
                         return null;
@@ -281,14 +278,14 @@ public class DefaultNutsRepositoryModel {
             if (NutsBlankable.isBlank(conf.getType())
                     && NutsBlankable.isBlank(conf.getLocation())
                     && !NutsBlankable.isBlank(options.getLocation())
-                    && session.io().path(options.getLocation()).isFile()
+                    && NutsPath.of(options.getLocation(), session).isFile()
             ) {
                 conf.setType("nuts");
                 conf.setLocation(options.getLocation());
             }
             NutsRepositoryFactoryComponent factory_ = session.extensions()
                     .setSession(session)
-                    .createSupported(NutsRepositoryFactoryComponent.class, conf);
+                    .createSupported(NutsRepositoryFactoryComponent.class, false, conf);
             if (factory_ != null) {
                 NutsRepository r = factory_.create(options, session, parentRepository);
                 if (r != null) {
@@ -338,7 +335,8 @@ public class DefaultNutsRepositoryModel {
                 throw new UncheckedIOException(ex);
             }
             try {
-                Map<String, Object> a_config0 = session.elem().setContentType(NutsContentType.JSON).parse(bytes, Map.class);
+                NutsElements elem = NutsElements.of(session);
+                Map<String, Object> a_config0 = elem.json().parse(bytes, Map.class);
                 String version = (String) a_config0.get("configVersion");
                 if (version == null) {
                     version = session.getWorkspace().getApiVersion().toString();
@@ -347,7 +345,7 @@ public class DefaultNutsRepositoryModel {
                 if (buildNumber < 506) {
 
                 }
-                conf = session.elem().setSession(session).setContentType(NutsContentType.JSON).parse(file, NutsRepositoryConfig.class);
+                conf = elem.json().parse(file, NutsRepositoryConfig.class);
             } catch (RuntimeException ex) {
                 if (session.boot().getBootOptions().isRecover()) {
                     onLoadRepositoryError(file, name, null, ex, session);
@@ -376,9 +374,9 @@ public class DefaultNutsRepositoryModel {
         Path logError = Paths.get(session.locations().getStoreLocation(getWorkspace().getApiId(), NutsStoreLocation.LOG))
                 .resolve("invalid-config");
         try {
-            CoreIOUtils.mkdirs(logError,session);
+            CoreIOUtils.mkdirs(logError, session);
         } catch (Exception ex1) {
-            throw new UncheckedIOException("unable to log repository error while loading config file " + file.toString() + " : " + ex1.toString(), new IOException(ex));
+            throw new UncheckedIOException("unable to log repository error while loading config file " + file.toString() + " : " + ex1, new IOException(ex));
         }
         Path newfile = logError.resolve(fileName + ".json");
         LOG.with().session(session).level(Level.SEVERE).verb(NutsLogVerb.FAIL)
@@ -386,17 +384,17 @@ public class DefaultNutsRepositoryModel {
         try {
             Files.move(file, newfile);
         } catch (IOException e) {
-            throw new UncheckedIOException("Unable to load and re-create repository config file " + file.toString() + " : " + e.toString(), new IOException(ex));
+            throw new UncheckedIOException("Unable to load and re-create repository config file " + file + " : " + e, new IOException(ex));
         }
 
         try (PrintStream o = new PrintStream(logError.resolve(fileName + ".error").toFile())) {
-            o.println("workspace.path:" + session.locations().getWorkspaceLocation());
-            o.println("repository.path:" + file);
-            o.println("workspace.options:" + wboot.getBootOptions().formatter().setCompact(false).setRuntime(true).setInit(true).setExported(true).getBootCommandLine());
+            o.printf("workspace.path:%s%n", session.locations().getWorkspaceLocation());
+            o.printf("repository.path:%s%n", file);
+            o.printf("workspace.options:%s%n", wboot.getBootOptions().formatter().setCompact(false).setRuntime(true).setInit(true).setExported(true).getBootCommandLine());
             for (NutsStoreLocation location : NutsStoreLocation.values()) {
-                o.println("location." + location.id() + ":" + session.locations().getStoreLocation(location));
+                o.printf("location." + location.id() + ":%s%n", session.locations().getStoreLocation(location));
             }
-            o.println("java.class.path:" + System.getProperty("java.class.path"));
+            o.printf("java.class.path:%s%n", System.getProperty("java.class.path"));
             o.println();
             ex.printStackTrace(o);
         } catch (Exception ex2) {

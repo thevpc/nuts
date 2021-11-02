@@ -37,11 +37,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
 import java.util.function.Supplier;
-import net.thevpc.nuts.NutsArrayElementBuilder;
-import net.thevpc.nuts.NutsElement;
-import net.thevpc.nuts.NutsObjectElement;
-import net.thevpc.nuts.NutsObjectElementBuilder;
-import net.thevpc.nuts.NutsElementFactoryContext;
+
+import net.thevpc.nuts.*;
 import org.w3c.dom.Attr;
 import org.w3c.dom.CDATASection;
 import org.w3c.dom.Document;
@@ -50,11 +47,7 @@ import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Text;
-import net.thevpc.nuts.NutsElementMapper;
-import net.thevpc.nuts.NutsElementEntry;
-import net.thevpc.nuts.NutsElementFormat;
-import net.thevpc.nuts.NutsElementType;
-import net.thevpc.nuts.NutsString;
+import net.thevpc.nuts.NutsElements;
 
 /**
  *
@@ -251,7 +244,7 @@ public class NutsElementFactoryXmlElement implements NutsElementMapper<Node> {
     }
 
     public NutsElement createElement(String type, String value, NutsElementFactoryContext context) {
-        NutsElementFormat f = context.getSession().elem();
+        NutsElements f = NutsElements.of(context.getSession());
         switch (type) {
             case "null": {
                 return f.forNull();
@@ -455,7 +448,7 @@ public class NutsElementFactoryXmlElement implements NutsElementMapper<Node> {
 
     @Override
     public NutsElement createElement(Node node, Type typeOfSrc, NutsElementFactoryContext context) {
-        NutsElementFormat elements = context.getSession().elem().setSession(context.getSession());
+        NutsElements elements = NutsElements.of(context.getSession()).setSession(context.getSession());
         if (node instanceof Attr) {
             Attr at = (Attr) node;
             return elements.forObject().set(at.getName(), context.objectToElement(at.getValue(), String.class)).build();

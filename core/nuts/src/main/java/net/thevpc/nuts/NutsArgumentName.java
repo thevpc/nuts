@@ -37,6 +37,12 @@ import java.util.List;
  */
 public interface NutsArgumentName extends Serializable {
 
+    static NutsArgumentName of(String type, String label,NutsSession session){
+        return NutsCommandLines.of(session).createName(type,label);
+    }
+    static NutsArgumentName of(String type,NutsSession session){
+        return NutsCommandLines.of(session).createName(type);
+    }
     /**
      * argument name
      *

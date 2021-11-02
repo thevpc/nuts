@@ -57,7 +57,7 @@ public class NutsServerMain implements NutsApplication {
             if (servers.isEmpty()) {
                 out.print("No Server is Running by current instance\n");
             }
-            NutsTextManager text = context.getSession().text();
+            NutsTexts text = NutsTexts.of(context.getSession());
             for (NutsServer o : servers) {
                 if (o.isRunning()) {
                     out.printf("%s %s\n",
@@ -74,8 +74,8 @@ public class NutsServerMain implements NutsApplication {
     }
 
     private void stop(NutsApplicationContext context, NutsCommandLine cmdLine) {
-        NutsWorkspaceServerManager serverManager = new DefaultNutsWorkspaceServerManager(context.getSession());
-        NutsCommandLineManager commandLineFormat = context.getSession().commandLine();
+        NutsSession session = context.getSession();
+        NutsWorkspaceServerManager serverManager = new DefaultNutsWorkspaceServerManager(session);
         String s;
         int count = 0;
         while (cmdLine.hasNext()) {
@@ -85,7 +85,7 @@ public class NutsServerMain implements NutsApplication {
                 break;
             }
             count++;
-            s = cmdLine.nextRequiredNonOption(commandLineFormat.createName("ServerName")).getString();
+            s = cmdLine.nextRequiredNonOption(NutsArgumentName.of("ServerName",session)).getString();
             if (cmdLine.isExecMode()) {
                 serverManager.stopServer(s);
             }
@@ -94,7 +94,6 @@ public class NutsServerMain implements NutsApplication {
 
     private void start(NutsApplicationContext context, NutsCommandLine commandLine) {
         NutsWorkspaceServerManager serverManager = new DefaultNutsWorkspaceServerManager(context.getSession());
-        NutsCommandLineManager commandLineFormat = context.getSession().commandLine();
         SrvInfoList servers = new SrvInfoList(context.getSession());
         NutsArgument a;
         while (commandLine.hasNext()) {
@@ -309,7 +308,6 @@ public class NutsServerMain implements NutsApplication {
 
     private void status(NutsApplicationContext context, NutsCommandLine commandLine) {
         NutsWorkspaceServerManager serverManager = new DefaultNutsWorkspaceServerManager(context.getSession());
-        NutsCommandLineManager commandLineFormat = context.getSession().commandLine();
         SrvInfoList servers = new SrvInfoList(context.getSession());
         NutsArgument a;
         while (commandLine.hasNext()) {
@@ -391,7 +389,7 @@ public class NutsServerMain implements NutsApplication {
                 }
             }
             if (context.getSession().isPlainOut()) {
-                NutsTextManager text = context.getSession().text();
+                NutsTexts text = NutsTexts.of(context.getSession());
                 for (StatusResult result : results) {
                     context.getSession().out().printf(
                             "%s server at %s is %s%n",

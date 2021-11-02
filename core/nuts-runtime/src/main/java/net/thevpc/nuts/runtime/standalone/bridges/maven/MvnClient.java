@@ -19,7 +19,7 @@ public class MvnClient {
 
     public MvnClient(NutsSession session) {
         this.session = session;
-        LOG=session.log().of(MvnClient.class);
+        LOG=NutsLogger.of(MvnClient.class,session);
     }
 
     public boolean get(NutsId id, String repoURL, NutsSession session) {

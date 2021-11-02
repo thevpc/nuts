@@ -336,7 +336,7 @@ public class CProgressBar {
         lastPrint = now;
         boolean indeterminate = percent < 0;
         if (indeterminate) {
-            NutsTextBuilder formattedLine = session.text().builder();
+            NutsTextBuilder formattedLine = NutsTexts.of(session).builder();
             formattedLine.append(getFormatter().getStart());
             int indeterminateSize = (int) (this.indeterminateSize * size);
             boolean forward = true;
@@ -388,7 +388,7 @@ public class CProgressBar {
             double d = (size / 100.0 * percent);
             int x = (int) d;
             float rest = (float) (d - x);
-            NutsTextBuilder formattedLine = session.text().builder();
+            NutsTextBuilder formattedLine = NutsTexts.of(session).builder();
             formattedLine.append(getFormatter().getStart());
             if (x > 0) {
                 StringBuilder sb = new StringBuilder();
@@ -422,7 +422,7 @@ public class CProgressBar {
         lastPrint = now;
         boolean indeterminate = percent < 0;
         if (indeterminate) {
-            NutsTextBuilder formattedLine = session.text().builder();
+            NutsTextBuilder formattedLine = NutsTexts.of(session).builder();
             formattedLine.append(getFormatter().getStart());
             int indeterminateSize = (int) (this.indeterminateSize * size);
             boolean forward = true;
@@ -474,7 +474,7 @@ public class CProgressBar {
             double d = (size / 100.0 * percent);
             int x = (int) d;
             float rest = (float) (d - x);
-            NutsTextBuilder formattedLine = session.text().builder();
+            NutsTextBuilder formattedLine = NutsTexts.of(session).builder();
             formattedLine.append(getFormatter().getStart());
             StringBuilder sb = new StringBuilder();
             if (x > 0) {
@@ -516,7 +516,7 @@ public class CProgressBar {
             if (msg == null) {
                 msg = "";
             }
-            s2 = session == null ? msg.length() : session.text().builder().append(msg).textLength();
+            s2 = session == null ? msg.length() : NutsTexts.of(session).builder().append(msg).textLength();
             if (isPrefixMoveLineStart()) {
                 if (optionNewline) {
                     if (!isSuffixMoveLineStart()) {

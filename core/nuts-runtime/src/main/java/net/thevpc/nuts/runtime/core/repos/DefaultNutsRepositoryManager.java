@@ -26,8 +26,8 @@ public class DefaultNutsRepositoryManager implements NutsRepositoryManager {
     }
 
     @Override
-    public NutsRepositoryFilterManager filter() {
-        return model.getWorkspace().filters().repository().setSession(getSession());
+    public NutsRepositoryFilters filter() {
+        return NutsRepositoryFilters.of(getSession());
     }
 
     private NutsRepository toSessionAwareRepo(NutsRepository x){

@@ -35,7 +35,7 @@ import java.util.Objects;
 /**
  * Created by vpc on 2/20/17.
  */
-public class NutsDescriptorFilterDesktopEnvironment extends AbstractDescriptorFilter implements JsNutsDescriptorFilter {
+public class NutsDescriptorFilterDesktopEnvironment extends AbstractDescriptorFilter  {
 
     private final String desktopEnvironment;
 
@@ -62,11 +62,6 @@ public class NutsDescriptorFilterDesktopEnvironment extends AbstractDescriptorFi
             return null;
         }
         return this;
-    }
-
-    @Override
-    public String toJsNutsDescriptorFilterExpr() {
-        return "descriptor.matchesPlatform('" + CoreStringUtils.escapeQuoteStrings(desktopEnvironment) + "')";
     }
 
     @Override

@@ -2,6 +2,7 @@ package net.thevpc.nuts.runtime.core.format;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.util.NutsDependencyScopes;
+import net.thevpc.nuts.spi.NutsSupportLevelContext;
 
 import java.util.*;
 
@@ -17,8 +18,8 @@ public class DefaultNutsIdFormat extends DefaultFormatBase<NutsIdFormat> impleme
     private Set<String> omittedProperties = new HashSet<>();
     private NutsId id;
 
-    public DefaultNutsIdFormat(NutsWorkspace ws) {
-        super(ws, "id-format");
+    public DefaultNutsIdFormat(NutsSession session) {
+        super(session, "id-format");
     }
 
     public NutsIdFormat setNtf(boolean ntf) {
@@ -181,8 +182,8 @@ public class DefaultNutsIdFormat extends DefaultFormatBase<NutsIdFormat> impleme
         checkSession();
         if (id == null) {
             return isNtf() ?
-                    getSession().text().ofStyled("<null>", NutsTextStyle.of(NutsTextStyleType.BOOLEAN))
-                    : getSession().text().ofPlain("<null>")
+                    NutsTexts.of(getSession()).ofStyled("<null>", NutsTextStyle.of(NutsTextStyleType.BOOLEAN))
+                    : NutsTexts.of(getSession()).ofPlain("<null>")
                     ;
         }
         Map<String, String> queryMap = id.getProperties();
@@ -199,7 +200,7 @@ public class DefaultNutsIdFormat extends DefaultFormatBase<NutsIdFormat> impleme
             idBuilder.setProperty(NutsConstants.IdProperties.FACE, null);
         }
         id = idBuilder.build();
-        NutsTextBuilder sb = getSession().text().builder();
+        NutsTextBuilder sb = NutsTexts.of(getSession()).builder();
         if (!isOmitGroupId()) {
             if (!NutsBlankable.isBlank(id.getGroupId())) {
                 boolean importedGroup2 = "net.thevpc.nuts".equals(id.getGroupId());
@@ -299,7 +300,7 @@ public class DefaultNutsIdFormat extends DefaultFormatBase<NutsIdFormat> impleme
         if (isNtf()) {
             return sb.immutable();
         } else {
-            return getSession().text().ofPlain(sb.filteredText());
+            return NutsTexts.of(getSession()).ofPlain(sb.filteredText());
         }
     }
 
@@ -389,5 +390,10 @@ public class DefaultNutsIdFormat extends DefaultFormatBase<NutsIdFormat> impleme
             }
         }
         return false;
+    }
+
+    @Override
+    public int getSupportLevel(NutsSupportLevelContext<Object> context) {
+        return DEFAULT_SUPPORT;
     }
 }

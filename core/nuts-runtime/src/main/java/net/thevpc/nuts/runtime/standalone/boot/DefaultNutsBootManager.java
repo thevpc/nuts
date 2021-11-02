@@ -23,10 +23,9 @@
  */
 package net.thevpc.nuts.runtime.standalone.boot;
 
-import net.thevpc.nuts.NutsBootManager;
-import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.NutsVal;
-import net.thevpc.nuts.NutsWorkspaceOptions;
+import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.core.NutsWorkspaceExt;
+import net.thevpc.nuts.runtime.core.NutsWorkspaceModel;
 import net.thevpc.nuts.runtime.standalone.DefaultNutsVal;
 import net.thevpc.nuts.runtime.standalone.config.DefaultNutsWorkspaceConfigManager;
 import net.thevpc.nuts.runtime.standalone.config.DefaultNutsWorkspaceConfigModel;
@@ -61,6 +60,12 @@ public class DefaultNutsBootManager implements NutsBootManager {
         return session;
     }
 
+    public NutsClassLoaderNode getBootRuntimeClassLoaderNode(){
+        return model.workspaceInitInformation.getRuntimeBootDependencyNode();
+    }
+    public NutsClassLoaderNode[] getBootExtensionClassLoaderNode(){
+        return model.workspaceInitInformation.getExtensionBootDependencyNodes();
+    }
     @Override
     public NutsBootManager setSession(NutsSession session) {
         this.session = NutsWorkspaceUtils.bindSession(model.getWorkspace(), session);
@@ -105,6 +110,12 @@ public class DefaultNutsBootManager implements NutsBootManager {
         checkSession();
         return _configModel().getBootClassWorldURLs();
     }
+
+//    public ee(){
+//        NutsWorkspaceModel wsModel = ((NutsWorkspaceExt) session.getWorkspace()).getModel();
+//        wsModel.bootModel.getWorkspaceInitInformation().getOptions();
+//
+//    }
 
     @Override
     public String getBootRepositories() {

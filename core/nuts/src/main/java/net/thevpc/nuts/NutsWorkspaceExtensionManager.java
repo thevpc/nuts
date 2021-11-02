@@ -54,23 +54,11 @@ public interface NutsWorkspaceExtensionManager {
      * @param <T>             extension type class
      * @param <V>             extension context type
      * @param type            extension type
+     * @param required
      * @param supportCriteria context
      * @return valid instance or null if no extension implementation was found
      */
-    <T extends NutsComponent<V>, V> T createSupported(Class<T> type, V supportCriteria);
-
-    /**
-     * create supported extension implementation or return null.
-     *
-     * @param <T>                       extension type class
-     * @param <V>                       extension context type
-     * @param type                      extension type
-     * @param supportCriteria           context
-     * @param constructorParameterTypes constructor Parameter Types
-     * @param constructorParameters     constructor Parameters
-     * @return valid instance or null if no extension implementation was found
-     */
-    <T extends NutsComponent<V>, V> T createSupported(Class<T> type, V supportCriteria, Class[] constructorParameterTypes, Object[] constructorParameters);
+    <T extends NutsComponent<V>, V> T createSupported(Class<T> type, boolean required, V supportCriteria);
 
     <T extends NutsComponent<V>, V> List<T> createAllSupported(Class<T> type, V supportCriteria);
 

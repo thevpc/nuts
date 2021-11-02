@@ -63,7 +63,7 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
         session = this.session;//will be used later
         int wordIndex = -1;
         if (args.length > 0 && args[0].startsWith("--nuts-exec-mode=")) {
-            NutsCommandLine execModeCommand = this.session.commandLine().parse(args[0].substring(args[0].indexOf('=') + 1));
+            NutsCommandLine execModeCommand = NutsCommandLine.parse(args[0].substring(args[0].indexOf('=') + 1),session);
             if (execModeCommand.hasNext()) {
                 NutsArgument a = execModeCommand.next();
                 switch (a.getKey().getString()) {
@@ -91,7 +91,7 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
                     case "update": {
                         mode = NutsApplicationMode.UPDATE;
                         if (execModeCommand.hasNext()) {
-                            appPreviousVersion = session.version().parser().parse(execModeCommand.next().getString());
+                            appPreviousVersion = NutsVersion.of(execModeCommand.next().getString(),session);
                         }
                         modeArgs = execModeCommand.toStringArray();
                         execModeCommand.skipAll();
@@ -108,7 +108,7 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
         if (_appId != null) {
             //("=== Inherited "+_appId);
         } else {
-            _appId = this.session.id().setSession(session).resolveId(appClass);
+            _appId = NutsIdResolver.of(session).resolveId(appClass);
         }
         if (_appId == null) {
             throw new NutsExecutionException(session, NutsMessage.cstyle("invalid Nuts Application (%s). Id cannot be resolved",appClass.getName()), 203);
@@ -229,7 +229,7 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
                 cmd.skip();
                 if (enabled) {
                     if (cmd.isExecMode()) {
-                        getSession().out().printf("%s%n", getSession().id().resolveId(getClass()).getVersion().toString());
+                        getSession().out().printf("%s%n", NutsIdResolver.of(session).resolveId(getClass()).getVersion().toString());
                         cmd.skipAll();
                     }
                     throw new NutsExecutionException(session, NutsMessage.cstyle("version"), 0);
@@ -424,8 +424,7 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
 
     @Override
     public NutsCommandLine getCommandLine() {
-        return this.session.commandLine().setSession(getSession())
-                .create(getArguments())
+        return NutsCommandLine.of(getArguments(),getSession())
                 .setCommandName(getAppId().getArtifactId())
                 .setAutoComplete(getAutoComplete());
     }

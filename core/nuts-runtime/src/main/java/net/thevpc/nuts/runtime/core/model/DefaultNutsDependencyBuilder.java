@@ -30,6 +30,7 @@ import net.thevpc.nuts.runtime.bundles.parsers.QueryStringParser;
 import java.util.*;
 
 import net.thevpc.nuts.runtime.core.util.CoreNutsDependencyUtils;
+import net.thevpc.nuts.spi.NutsSupportLevelContext;
 
 /**
  * Created by vpc on 1/5/17.
@@ -266,7 +267,7 @@ public class DefaultNutsDependencyBuilder implements NutsDependencyBuilder {
             }
             m.put(NutsConstants.IdProperties.EXCLUSIONS, String.join(",", ex));
         }
-        return session.id().builder()
+        return NutsIdBuilder.of(session)
                 .setRepository(getRepository())
                 .setGroupId(getGroupId())
                 .setArtifactId(getArtifactId())
@@ -335,13 +336,13 @@ public class DefaultNutsDependencyBuilder implements NutsDependencyBuilder {
 
     @Override
     public NutsDependencyBuilder setVersion(NutsVersion version) {
-        this.version = version == null ? session.version().parser().parse("") : version;
+        this.version = version == null ? NutsVersion.of("",session) : version;
         return this;
     }
 
     @Override
-    public NutsDependencyBuilder setVersion(String classifier) {
-        this.version = session.version().parser().parse(classifier);
+    public NutsDependencyBuilder setVersion(String version) {
+        this.version = NutsVersion.of(version,session);
         return this;
     }
 
@@ -435,7 +436,7 @@ public class DefaultNutsDependencyBuilder implements NutsDependencyBuilder {
             exclusions = "";
         }
         List<NutsId> ids = new ArrayList<>();
-        NutsIdParser parser = session.id().parser();
+        NutsIdParser parser = NutsIdParser.of(session);
         for (String s : exclusions.split("[;,]")) {
             NutsId ii = parser.parse(s.trim());
             if (ii != null) {
@@ -449,5 +450,10 @@ public class DefaultNutsDependencyBuilder implements NutsDependencyBuilder {
     @Override
     public String toString() {
         return build().toString();
+    }
+
+    @Override
+    public int getSupportLevel(NutsSupportLevelContext<Object> context) {
+        return DEFAULT_SUPPORT;
     }
 }

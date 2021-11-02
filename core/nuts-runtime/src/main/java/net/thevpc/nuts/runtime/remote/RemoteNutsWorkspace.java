@@ -12,7 +12,7 @@ public abstract class RemoteNutsWorkspace extends AbstractNutsWorkspace {
 
     public NutsElement createCall(String commandName, NutsElement body,NutsSession session) {
         try (NTalkClient cli = new NTalkClient()) {
-            NutsElementFormat e = session.elem().setContentType(NutsContentType.JSON);
+            NutsElements e = NutsElements.of(session).json();
             NutsObjectElement q = e.forObject()
                     .set("cmd", commandName)
                     .set("body", body).build();
@@ -20,7 +20,7 @@ public abstract class RemoteNutsWorkspace extends AbstractNutsWorkspace {
             String wsURL = session.boot().getBootOptions().getWorkspace();
             byte[] result = cli.request("nuts/ws:"+wsURL, json.toString().getBytes());
             NutsObjectElement resultObject = e.parse(result, NutsObjectElement.class);
-            NutsElementFormat prv = session.elem();
+            NutsElements prv = NutsElements.of(session);
             boolean success = resultObject.get(prv.forString("success")
                     ).asPrimitive().getBoolean();
             if (success) {
@@ -28,13 +28,13 @@ public abstract class RemoteNutsWorkspace extends AbstractNutsWorkspace {
             } else {
                 //TODO mush deserialize exception
                 throw new NutsException(session, NutsMessage.cstyle("unable to call %s",
-                        session.text().ofStyled(commandName,NutsTextStyle.primary1())));
+                        NutsTexts.of(session).ofStyled(commandName,NutsTextStyle.primary1())));
             }
         }
     }
 
     public NutsElement createCall(String commandName, String callId, NutsElement body,NutsSession session) {
-        NutsElementFormat e = session.elem();
+        NutsElements e = NutsElements.of(session);
         return e.forObject()
                 .set(
                         "cmd",
@@ -94,7 +94,7 @@ public abstract class RemoteNutsWorkspace extends AbstractNutsWorkspace {
 //    }
 //
 //    @Override
-//    public NutsFilterManager filters() {
+//    public NutsFilters filters() {
 //        throw new NutsUnsupportedOperationException(configManager.getWorkspace(), "not yet supported filters");
 //    }
 //

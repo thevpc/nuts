@@ -37,23 +37,19 @@ import java.util.function.Function;
  */
 public interface NutsPathBuilder extends NutsFormattable {
     static NutsPathBuilder of(URL path, NutsSession session) {
-        NutsApiUtils.checkSession(session);
-        return session.io().path(path).builder();
+        return NutsPath.of(path,session).builder();
     }
 
     static NutsPathBuilder of(String path, ClassLoader classLoader, NutsSession session) {
-        NutsApiUtils.checkSession(session);
-        return session.io().path(path, classLoader).builder();
+        return NutsPath.of(path,classLoader,session).builder();
     }
 
     static NutsPathBuilder of(File path, NutsSession session) {
-        NutsApiUtils.checkSession(session);
-        return session.io().path(path).builder();
+        return NutsPath.of(path,session).builder();
     }
 
     static NutsPathBuilder of(String path, NutsSession session) {
-        NutsApiUtils.checkSession(session);
-        return session.io().path(path).builder();
+        return NutsPath.of(path,session).builder();
     }
 
     Function<String, String> getVarResolver();
@@ -64,9 +60,9 @@ public interface NutsPathBuilder extends NutsFormattable {
 
     NutsPathBuilder withAppBaseDir();
 
-    String getBaseDir();
+    NutsPath getBaseDir();
 
-    NutsPathBuilder setBaseDir(String baseDir);
+    NutsPathBuilder setBaseDir(NutsPath baseDir);
 
     /**
      * expand path to {@code baseFolder}. Expansion mechanism supports '~'

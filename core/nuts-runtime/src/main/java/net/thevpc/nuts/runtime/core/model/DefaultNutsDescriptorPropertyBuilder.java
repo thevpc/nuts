@@ -27,6 +27,7 @@
 package net.thevpc.nuts.runtime.core.model;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.spi.NutsSupportLevelContext;
 
 public class DefaultNutsDescriptorPropertyBuilder implements NutsDescriptorPropertyBuilder {
 
@@ -42,7 +43,7 @@ public class DefaultNutsDescriptorPropertyBuilder implements NutsDescriptorPrope
 
     public DefaultNutsDescriptorPropertyBuilder(NutsSession session) {
         this.session = session;
-        this.condition = session.descriptor().envConditionBuilder();
+        this.condition = NutsEnvConditionBuilder.of(session);
     }
 
     @Override
@@ -117,4 +118,8 @@ public class DefaultNutsDescriptorPropertyBuilder implements NutsDescriptorPrope
         return new DefaultNutsDescriptorProperty(getName(), getValue(), getCondition().build(), session);
     }
 
+    @Override
+    public int getSupportLevel(NutsSupportLevelContext<Object> context) {
+        return DEFAULT_SUPPORT;
+    }
 }

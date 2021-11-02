@@ -48,7 +48,7 @@ public class DefaultNutsId implements NutsId {
         this.session = session;
         this.groupId = NutsUtilStrings.trimToNull(groupId);
         this.artifactId = NutsUtilStrings.trimToNull(artifactId);
-        this.version = version == null ? this.session.version().parser().parse("") : version;
+        this.version = version == null ? NutsVersion.of("",session) : version;
         String c0 = NutsUtilStrings.trimToNull(classifier);
         String c1 = null;
         if(properties!=null) {
@@ -82,7 +82,7 @@ public class DefaultNutsId implements NutsId {
 
     @Override
     public NutsFormat formatter() {
-        return session.id().formatter().setValue(this);
+        return NutsIdFormat.of(session).setValue(this);
     }
 
     @Override
@@ -257,7 +257,7 @@ public class DefaultNutsId implements NutsId {
 
     @Override
     public NutsEnvCondition getCondition() {
-        NutsEnvConditionBuilder c = session.descriptor().envConditionBuilder();
+        NutsEnvConditionBuilder c = NutsEnvConditionBuilder.of(session);
         Map<String, String> properties = getProperties();
         c.setOs(
                 Arrays.stream(
@@ -438,12 +438,12 @@ public class DefaultNutsId implements NutsId {
         }
         List<NutsId> a=new ArrayList<>();
         for (String s : exc.split("[;,]")) {
-            NutsId n = session.id().parser().parse(s);
+            NutsId n = NutsId.of(s,session);
             if(n!=null){
                 a.add(n);
             }
         }
-        return session.dependency().builder()
+        return NutsDependencyBuilder.of(session)
                 .setRepository(getRepository())
                 .setArtifactId(getArtifactId())
                 .setGroupId(getGroupId())

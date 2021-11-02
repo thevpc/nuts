@@ -26,22 +26,25 @@
 package net.thevpc.nuts;
 
 import net.thevpc.nuts.boot.NutsApiUtils;
+import net.thevpc.nuts.spi.NutsComponent;
 
 /**
  * Descriptor Format class that help building, formatting and parsing Descriptors.
+ *
  * @author thevpc
- * @since 0.5.4
  * @app.category Format
+ * @since 0.5.4
  */
-public interface NutsDescriptorFormat extends NutsFormat {
+public interface NutsDescriptorFormat extends NutsFormat, NutsComponent<Object> {
     static NutsDescriptorFormat of(NutsSession session) {
         NutsApiUtils.checkSession(session);
-        return session.descriptor().formatter();
+        return session.extensions().createSupported(NutsDescriptorFormat.class, true, null);
     }
 
     /**
      * true if compact flag is armed.
      * When true, formatted Descriptor will compact JSON result.
+     *
      * @return true if compact flag is armed
      */
     boolean isCompact();
@@ -49,6 +52,7 @@ public interface NutsDescriptorFormat extends NutsFormat {
     /**
      * value compact flag.
      * When true, formatted Descriptor will compact JSON result.
+     *
      * @param compact compact value
      * @return {@code this} instance
      */
@@ -57,6 +61,7 @@ public interface NutsDescriptorFormat extends NutsFormat {
     /**
      * value compact flag.
      * When true, formatted Descriptor will compact JSON result.
+     *
      * @param compact compact value
      * @return {@code this} instance
      */
@@ -65,6 +70,7 @@ public interface NutsDescriptorFormat extends NutsFormat {
     /**
      * value compact flag to true.
      * When true, formatted Descriptor will compact JSON result.
+     *
      * @return {@code this} instance
      */
     NutsDescriptorFormat compact();
@@ -84,11 +90,13 @@ public interface NutsDescriptorFormat extends NutsFormat {
      * to help return a more specific return type;
      *
      * @param skipUnsupported when true, all unsupported options are skipped
-     * @param args argument to configure with
+     * @param args            argument to configure with
      * @return {@code this} instance
      */
     @Override
     NutsDescriptorFormat configure(boolean skipUnsupported, String... args);
 
     NutsDescriptorFormat setNtf(boolean ntf);
+
+    NutsDescriptorFormat setSession(NutsSession session);
 }

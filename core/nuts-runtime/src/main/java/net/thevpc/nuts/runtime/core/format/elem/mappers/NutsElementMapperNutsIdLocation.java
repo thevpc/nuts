@@ -4,26 +4,30 @@ import net.thevpc.nuts.NutsElement;
 import net.thevpc.nuts.NutsElementFactoryContext;
 import net.thevpc.nuts.NutsElementMapper;
 import net.thevpc.nuts.NutsIdLocation;
-import net.thevpc.nuts.runtime.standalone.config.DefaultNutsIdLocationBuilder;
 
 import java.lang.reflect.Type;
+import java.util.Map;
 
 public class NutsElementMapperNutsIdLocation implements NutsElementMapper<NutsIdLocation> {
 
     @Override
     public Object destruct(NutsIdLocation src, Type typeOfSrc, NutsElementFactoryContext context) {
-        return context.defaultDestruct(new DefaultNutsIdLocationBuilder(context.getSession()).set(src), null);
+        return context.defaultDestruct(src, null);
     }
 
     @Override
     public NutsElement createElement(NutsIdLocation o, Type typeOfSrc, NutsElementFactoryContext context) {
-        return context.defaultObjectToElement(new DefaultNutsIdLocationBuilder(context.getSession()).set(o), null);
+        return context.defaultObjectToElement(o, null);
     }
 
     @Override
     public NutsIdLocation createObject(NutsElement o, Type typeOfResult, NutsElementFactoryContext context) {
-        DefaultNutsIdLocationBuilder builder = (DefaultNutsIdLocationBuilder) context.defaultElementToObject(o, DefaultNutsIdLocationBuilder.class);
-        return builder.build();
+        Map builder = context.defaultElementToObject(o, Map.class);
+        return new NutsIdLocation(
+                (String) builder.get("url"),
+                (String) builder.get("region"),
+                (String) builder.get("classifier")
+        );
     }
 
 }

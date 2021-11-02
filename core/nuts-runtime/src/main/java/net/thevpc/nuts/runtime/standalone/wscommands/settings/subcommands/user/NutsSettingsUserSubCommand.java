@@ -22,31 +22,29 @@ public class NutsSettingsUserSubCommand extends AbstractNutsSettingsSubCommand {
     }
 
     public static boolean exec(NutsRepository editedRepo, NutsCommandLine cmdLine, Boolean autoSave, NutsSession session) {
-//        NutsWorkspace ws = session.getWorkspace();
-        NutsCommandLineManager commandLineFormat = session.commandLine();
         if (cmdLine.next("add user", "au") != null) {
             NutsRepository repository = null;
             if (editedRepo != null) {
                 repository = editedRepo;
             } else {
                 if (cmdLine.next("--repo", "-r") != null) {
-                    repository = session.repos().getRepository(cmdLine.required().nextNonOption(commandLineFormat.createName("RepositoryId")).getString());
+                    repository = session.repos().getRepository(cmdLine.required().nextNonOption(NutsArgumentName.of("RepositoryId",session)).getString());
                 }
             }
             if (repository == null) {
-                String user = cmdLine.required().nextNonOption(commandLineFormat.createName("Username")).getString();
-                char[] password = cmdLine.nextNonOption(commandLineFormat.createName("Password")).getString().toCharArray();
+                String user = cmdLine.required().nextNonOption(NutsArgumentName.of("Username",session)).getString();
+                char[] password = cmdLine.nextNonOption(NutsArgumentName.of("Password",session)).getString().toCharArray();
                 if (cmdLine.isExecMode()) {
                     session.security().addUser(user).setCredentials(password).run();
                 }
             } else {
-                String user = cmdLine.required().nextNonOption(commandLineFormat.createName("Username")).getString();
-                char[] password = cmdLine.nextNonOption(commandLineFormat.createName("Password")).getString().toCharArray();
+                String user = cmdLine.required().nextNonOption(NutsArgumentName.of("Username",session)).getString();
+                char[] password = cmdLine.nextNonOption(NutsArgumentName.of("Password",session)).getString().toCharArray();
                 String mappedUser=null;
                 char[] remotePassword=null;
                 if(!cmdLine.isEmpty()) {
-                    mappedUser = cmdLine.nextNonOption(commandLineFormat.createName("RemoteId")).getString();
-                    remotePassword = cmdLine.nextNonOption(commandLineFormat.createName("RemotePassword")).getString().toCharArray();
+                    mappedUser = cmdLine.nextNonOption(NutsArgumentName.of("RemoteId",session)).getString();
+                    remotePassword = cmdLine.nextNonOption(NutsArgumentName.of("RemotePassword",session)).getString().toCharArray();
                 }
                 if (cmdLine.isExecMode()) {
                     repository.security().addUser(user).setCredentials(password).setRemoteIdentity(mappedUser).setRemoteCredentials(remotePassword).run();
@@ -64,7 +62,7 @@ public class NutsSettingsUserSubCommand extends AbstractNutsSettingsSubCommand {
                     repository = editedRepo;
                 } else {
                     if (cmdLine.next("--repo", "-r") != null) {
-                        repository = session.repos().getRepository(cmdLine.required().nextNonOption(commandLineFormat.createName("repository")).getString());
+                        repository = session.repos().getRepository(cmdLine.required().nextNonOption(NutsArgumentName.of("repository",session)).getString());
                     }
                 }
                 if (cmdLine.isExecMode()) {
@@ -92,7 +90,7 @@ public class NutsSettingsUserSubCommand extends AbstractNutsSettingsSubCommand {
                     repository = editedRepo;
                 } else {
                     if (cmdLine.next("--repo", "-r") != null) {
-                        repository = session.repos().getRepository(cmdLine.required().nextNonOption(commandLineFormat.createName("RepositoryId")).getString());
+                        repository = session.repos().getRepository(cmdLine.required().nextNonOption(NutsArgumentName.of("RepositoryId",session)).getString());
                     }
                 }
 
@@ -101,11 +99,11 @@ public class NutsSettingsUserSubCommand extends AbstractNutsSettingsSubCommand {
                 char[] oldPassword = null;
                 do {
                     if (cmdLine.next("--user") != null) {
-                        user = cmdLine.required().nextNonOption(commandLineFormat.createName("Username")).getString();
+                        user = cmdLine.required().nextNonOption(NutsArgumentName.of("Username",session)).getString();
                     } else if (cmdLine.next("--password") != null) {
-                        password = cmdLine.required().nextNonOption(commandLineFormat.createName("Password")).getString().toCharArray();
+                        password = cmdLine.required().nextNonOption(NutsArgumentName.of("Password",session)).getString().toCharArray();
                     } else if (cmdLine.next("--old-password") != null) {
-                        oldPassword = cmdLine.required().nextNonOption(commandLineFormat.createName("OldPassword")).getString().toCharArray();
+                        oldPassword = cmdLine.required().nextNonOption(NutsArgumentName.of("OldPassword",session)).getString().toCharArray();
                     } else {
                         cmdLine.setCommandName("config password").unexpectedArgument();
                     }
@@ -140,11 +138,11 @@ public class NutsSettingsUserSubCommand extends AbstractNutsSettingsSubCommand {
                     repository = editedRepo;
                 } else {
                     if (cmdLine.next("--repo", "-r") != null) {
-                        repository = session.repos().getRepository(cmdLine.required().nextNonOption(commandLineFormat.createName("RepositoryId")).getString());
+                        repository = session.repos().getRepository(cmdLine.required().nextNonOption(NutsArgumentName.of("RepositoryId",session)).getString());
                     }
                 }
 
-                String user = cmdLine.required().nextNonOption(commandLineFormat.createName("Username")).getString();
+                String user = cmdLine.required().nextNonOption(NutsArgumentName.of("Username",session)).getString();
                 if (cmdLine.isExecMode()) {
                     NutsUser u = null;
                     if (repository == null) {
@@ -184,7 +182,7 @@ public class NutsSettingsUserSubCommand extends AbstractNutsSettingsSubCommand {
                     } else {
                         switch (lastOption) {
                             case "--add-group": {
-                                String a = cmdLine.required().nextNonOption(commandLineFormat.createName("Group")).getString();
+                                String a = cmdLine.required().nextNonOption(NutsArgumentName.of("Group",session)).getString();
                                 if (cmdLine.isExecMode()) {
                                     if (repository != null) {
                                         repository.security().updateUser(user).addGroup(a).run();
@@ -195,7 +193,7 @@ public class NutsSettingsUserSubCommand extends AbstractNutsSettingsSubCommand {
                                 break;
                             }
                             case "--remove-group": {
-                                String a = cmdLine.required().nextNonOption(commandLineFormat.createName("Group")).getString();
+                                String a = cmdLine.required().nextNonOption(NutsArgumentName.of("Group",session)).getString();
                                 if (cmdLine.isExecMode()) {
                                     if (repository != null) {
                                         repository.security().updateUser(user).removeGroup(a).run();
@@ -206,7 +204,7 @@ public class NutsSettingsUserSubCommand extends AbstractNutsSettingsSubCommand {
                                 break;
                             }
                             case "--add-right": {
-                                String a = cmdLine.required().nextNonOption(commandLineFormat.createName("Right")).getString();
+                                String a = cmdLine.required().nextNonOption(NutsArgumentName.of("Right",session)).getString();
                                 if (cmdLine.isExecMode()) {
                                     if (repository != null) {
                                         repository.security().updateUser(user).addPermission(a).run();
@@ -217,7 +215,7 @@ public class NutsSettingsUserSubCommand extends AbstractNutsSettingsSubCommand {
                                 break;
                             }
                             case "--remove-right": {
-                                String a = cmdLine.required().nextNonOption(commandLineFormat.createName("Right")).getString();
+                                String a = cmdLine.required().nextNonOption(NutsArgumentName.of("Right",session)).getString();
                                 if (cmdLine.isExecMode()) {
                                     if (repository != null) {
                                         repository.security().updateUser(user).removePermission(a).run();
@@ -228,7 +226,7 @@ public class NutsSettingsUserSubCommand extends AbstractNutsSettingsSubCommand {
                                 break;
                             }
                             case "--mapped-user": {
-                                String a = cmdLine.required().nextNonOption(commandLineFormat.createName("RemoteIdentity")).getString();
+                                String a = cmdLine.required().nextNonOption(NutsArgumentName.of("RemoteIdentity",session)).getString();
                                 if (cmdLine.isExecMode()) {
                                     if (repository != null) {
                                         repository.security().updateUser(user).setRemoteIdentity(a).run();
@@ -239,8 +237,8 @@ public class NutsSettingsUserSubCommand extends AbstractNutsSettingsSubCommand {
                                 break;
                             }
                             case "--password":
-                                char[] pwd = (cmdLine.required().nextNonOption(commandLineFormat.createName("password", "Password")).getString()).toCharArray();
-                                char[] old = (cmdLine.required().nextNonOption(commandLineFormat.createName("password", "OldPassword")).getString()).toCharArray();
+                                char[] pwd = (cmdLine.required().nextNonOption(NutsArgumentName.of("password", "Password",session)).getString()).toCharArray();
+                                char[] old = (cmdLine.required().nextNonOption(NutsArgumentName.of("password", "OldPassword",session)).getString()).toCharArray();
                                 if (cmdLine.isExecMode()) {
                                     if (repository != null) {
                                         repository.security().updateUser(user).setCredentials(pwd).setOldCredentials(old).run();
@@ -268,7 +266,7 @@ public class NutsSettingsUserSubCommand extends AbstractNutsSettingsSubCommand {
                     repository = editedRepo;
                 } else {
                     if (cmdLine.next("--repo", "-r") != null) {
-                        repository = session.repos().getRepository(cmdLine.required().nextNonOption(commandLineFormat.createName("RepositoryId")).getString());
+                        repository = session.repos().getRepository(cmdLine.required().nextNonOption(NutsArgumentName.of("RepositoryId",session)).getString());
                     }
                 }
                 //unsecure-box
@@ -298,7 +296,7 @@ public class NutsSettingsUserSubCommand extends AbstractNutsSettingsSubCommand {
                     repository = editedRepo;
                 } else {
                     if (cmdLine.next("--repo", "-r") != null) {
-                        repository = session.repos().getRepository(cmdLine.required().nextNonOption(commandLineFormat.createName("RepositoryId")).getString());
+                        repository = session.repos().getRepository(cmdLine.required().nextNonOption(NutsArgumentName.of("RepositoryId",session)).getString());
                     }
                 }
                 //secure-box

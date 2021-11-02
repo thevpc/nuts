@@ -1,6 +1,7 @@
 package net.thevpc.nuts.toolbox.nwork.filescanner.tags;
 
-import net.thevpc.nuts.toolbox.nwork.filescanner.eval.EvalUtils;
+import net.thevpc.nuts.NutsGlob;
+import net.thevpc.nuts.NutsSession;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -11,9 +12,16 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 class PathFilterList {
-    PatternGroupConf includes = new PatternGroupConf();
-    PatternGroupConf excludes = new PatternGroupConf();
+    PatternGroupConf includes;
+    PatternGroupConf excludes;
     List<Path> alreadyIgnored = new ArrayList<>();
+    NutsSession session;
+
+    public PathFilterList(NutsSession session) {
+        this.session = session;
+        includes = new PatternGroupConf(session);
+        excludes = new PatternGroupConf(session);
+    }
 
     public void loadFrom(Path file) {
         if (Files.isRegularFile(file)) {
@@ -78,6 +86,11 @@ class PathFilterList {
         HashSet<String> prefixes = new HashSet<>();
         HashSet<String> exact = new HashSet<>();
         HashSet<Pattern> patterns = new HashSet<>();
+        NutsSession session;
+
+        public PatternGroupConf(NutsSession session) {
+            this.session = session;
+        }
 
         public int size() {
             return prefixes.size() + exact.size() + patterns.size();
@@ -92,12 +105,9 @@ class PathFilterList {
                 line = line.substring(1);
             }
             String a = (line.isEmpty() ? root : root.resolve(line)).toString();
-            if (a.contains("*")) {
-                if (a.endsWith("/*") && !a.substring(0, a.length() - 2).contains("*")) {
-                    prefixes.add(a.substring(0, a.length() - 2));
-                } else {
-                    patterns.add(EvalUtils.glob(a));
-                }
+            NutsGlob glob = NutsGlob.of(session).setSeparator('/');
+            if (glob.isGlob(a)) {
+                patterns.add(glob.toPattern(a));
             } else {
                 exact.add(a);
             }

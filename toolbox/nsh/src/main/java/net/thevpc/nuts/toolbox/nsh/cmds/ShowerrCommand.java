@@ -26,14 +26,15 @@
 package net.thevpc.nuts.toolbox.nsh.cmds;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.spi.NutsSingleton;
-import net.thevpc.nuts.toolbox.nsh.bundles.jshell.JShellResult;
+import net.thevpc.nuts.spi.NutsComponentScope;
+import net.thevpc.nuts.spi.NutsComponentScopeType;
 import net.thevpc.nuts.toolbox.nsh.SimpleNshBuiltin;
+import net.thevpc.nuts.toolbox.nsh.bundles.jshell.JShellResult;
 
 /**
  * Created by vpc on 1/7/17.
  */
-@NutsSingleton
+@NutsComponentScope(NutsComponentScopeType.WORKSPACE)
 public class ShowerrCommand extends SimpleNshBuiltin {
 
     public ShowerrCommand() {
@@ -50,11 +51,12 @@ public class ShowerrCommand extends SimpleNshBuiltin {
         Options options = context.getOptions();
         NutsArgument a = commandLine.peek();
         if (!a.isOption()) {
+            NutsSession session = context.getSession();
             if (options.login == null) {
-                options.login = commandLine.next(context.getSession().commandLine().createName("username")).getString();
+                options.login = commandLine.next(NutsArgumentName.of("username", session)).getString();
                 return true;
             } else if (options.password == null) {
-                options.password = commandLine.next(context.getSession().commandLine().createName("password")).getString().toCharArray();
+                options.password = commandLine.next(NutsArgumentName.of("password", session)).getString().toCharArray();
                 return true;
             }
         }
@@ -69,22 +71,22 @@ public class ShowerrCommand extends SimpleNshBuiltin {
             case PLAIN: {
                 if (r.getCode() == 0) {
                     out.println(
-                            context.getSession().text().ofStyled(
+                            NutsTexts.of(context.getSession()).ofStyled(
                                     "last command ended successfully with no errors.", NutsTextStyle.success()
                             ));
                 } else {
                     out.println(
-                            context.getSession().text()
+                            NutsTexts.of(context.getSession())
                                     .ofStyled("last command ended abnormally with the following error :", NutsTextStyle.error())
                     );
                     if (r.getMessage() != null) {
-                        out.println(context.getSession().text()
+                        out.println(NutsTexts.of(context.getSession())
                                 .ofStyled(r.getMessage(), NutsTextStyle.error()
                                 ));
                     }
                     if (r.getStackTrace() != null) {
                         context.err().println(
-                                context.getSession().text()
+                                NutsTexts.of(context.getSession())
                                         .ofStyled(r.getStackTrace(), NutsTextStyle.error())
                         );
                     }

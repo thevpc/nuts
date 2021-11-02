@@ -10,7 +10,7 @@
  * other 'things' . Its based on an extensible architecture to help supporting a
  * large range of sub managers / repositories.
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc] Licensed under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -24,23 +24,18 @@
 package net.thevpc.nuts.toolbox.nsh.cmds;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.spi.NutsSingleton;
+import net.thevpc.nuts.spi.NutsComponentScope;
+import net.thevpc.nuts.spi.NutsComponentScopeType;
 import net.thevpc.nuts.toolbox.nsh.SimpleNshBuiltin;
 
 /**
  * Created by vpc on 1/7/17.
  */
-@NutsSingleton
+@NutsComponentScope(NutsComponentScopeType.WORKSPACE)
 public class LoginCommand extends SimpleNshBuiltin {
 
     public LoginCommand() {
         super("login", DEFAULT_SUPPORT);
-    }
-
-    private static class Options {
-
-        String login;
-        char[] password;
     }
 
     @Override
@@ -53,11 +48,12 @@ public class LoginCommand extends SimpleNshBuiltin {
         Options options = context.getOptions();
         NutsArgument a = commandLine.peek();
         if (!a.isOption()) {
+            NutsSession session = context.getSession();
             if (options.login == null) {
-                options.login = commandLine.next(context.getSession().commandLine().createName("username")).getString();
+                options.login = commandLine.next(NutsArgumentName.of("username", session)).getString();
                 return true;
             } else if (options.password == null) {
-                options.password = commandLine.next(context.getSession().commandLine().createName("password")).getString().toCharArray();
+                options.password = commandLine.next(NutsArgumentName.of("password", session)).getString().toCharArray();
                 return true;
             }
         }
@@ -76,6 +72,12 @@ public class LoginCommand extends SimpleNshBuiltin {
                     .forPassword("Password:").getValue();
         }
         context.getSession().security().login(options.login, options.password);
+    }
+
+    private static class Options {
+
+        String login;
+        char[] password;
     }
 
 }

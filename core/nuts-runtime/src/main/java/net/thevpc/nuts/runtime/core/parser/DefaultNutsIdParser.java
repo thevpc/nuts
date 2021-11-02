@@ -1,6 +1,7 @@
 package net.thevpc.nuts.runtime.core.parser;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.spi.NutsSupportLevelContext;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -53,7 +54,7 @@ public class DefaultNutsIdParser implements NutsIdParser {
         }
         Matcher m = NUTS_ID_PATTERN.matcher(nutsId);
         if (m.find()) {
-            NutsIdBuilder builder = session.id().builder();
+            NutsIdBuilder builder = NutsIdBuilder.of(session);
             String group = m.group("group");
             String artifact = m.group("artifact");
             builder.setArtifactId(artifact);
@@ -73,4 +74,8 @@ public class DefaultNutsIdParser implements NutsIdParser {
         return null;
     }
 
+    @Override
+    public int getSupportLevel(NutsSupportLevelContext<Object> context) {
+        return DEFAULT_SUPPORT;
+    }
 }

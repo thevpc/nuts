@@ -1,6 +1,7 @@
 package net.thevpc.nuts.runtime.core.log;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.spi.NutsLogManager;
 
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -53,14 +54,13 @@ public class DefaultNutsLogger implements NutsLogger {
     }
 
     public boolean isLoggable(Level level) {
-        NutsLogManager _log = getSession().log();
-        if (isLoggable(level, _log.getTermLevel())) {
+        if (isLoggable(level, NutsLogger.getTermLevel(getSession()))) {
             return true;
         }
-        if (isLoggable(level, _log.getFileLevel())) {
+        if (isLoggable(level, NutsLogger.getFileLevel(getSession()))) {
             return true;
         }
-        for (Handler handler : _log.getHandlers()) {
+        for (Handler handler : NutsLogger.getHandlers(getSession())) {
             if (isLoggable(level, handler.getLevel())) {
                 return true;
             }
@@ -148,7 +148,7 @@ public class DefaultNutsLogger implements NutsLogger {
      * @param record the LogRecord to be published
      */
     private void log0(LogRecord record) {
-        DefaultNutsLogManager logManager = (DefaultNutsLogManager) getSession().log();
+        DefaultNutsLogManager logManager = (DefaultNutsLogManager) NutsLogManager.of(getSession());
         logManager.getModel().updateHandlers(record);
         Handler ch = logManager.getModel().getTermHandler();
         if (ch != null) {
@@ -183,8 +183,8 @@ public class DefaultNutsLogger implements NutsLogger {
 
     public void resumeTerminal(NutsSession session) {
         suspendTerminalMode = false;
-        DefaultNutsLogManager logManager = (DefaultNutsLogManager) session.log().setSession(session);
-        Handler ch = logManager.getTermHandler();
+        Handler ch = NutsLogger.getTermHandler(session);
+        DefaultNutsLogManager logManager = (DefaultNutsLogManager) NutsLogManager.of(session);
         for (Iterator<LogRecord> iterator = suspendedTerminalRecords.iterator(); iterator.hasNext(); ) {
             LogRecord r = iterator.next();
             iterator.remove();

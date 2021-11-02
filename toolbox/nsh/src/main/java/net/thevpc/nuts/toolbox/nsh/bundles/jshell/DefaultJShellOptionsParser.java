@@ -2,6 +2,7 @@ package net.thevpc.nuts.toolbox.nsh.bundles.jshell;
 
 import net.thevpc.nuts.NutsApplicationContext;
 import net.thevpc.nuts.NutsCommandLine;
+import net.thevpc.nuts.NutsSession;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -197,8 +198,9 @@ public class DefaultJShellOptionsParser implements JShellOptionsParser {
     }
 
     protected void parseUnsupportedNextArgument(List<String> args, JShellOptions options) {
-        NutsCommandLine a = appContext.getSession().commandLine().create(args);
-        if(appContext.getSession().configureFirst(a)){
+        NutsSession session = appContext.getSession();
+        NutsCommandLine a = NutsCommandLine.of(args,session);
+        if(session.configureFirst(a)){
             //replace remaining...
             args.clear();
             args.addAll(Arrays.asList(a.toStringArray()));

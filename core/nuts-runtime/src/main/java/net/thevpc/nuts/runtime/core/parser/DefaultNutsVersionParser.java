@@ -2,6 +2,7 @@ package net.thevpc.nuts.runtime.core.parser;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.model.DefaultNutsVersion;
+import net.thevpc.nuts.spi.NutsSupportLevelContext;
 
 import java.util.regex.Pattern;
 
@@ -73,5 +74,10 @@ public class DefaultNutsVersionParser implements NutsVersionParser {
             return v;
         }
         throw new NutsParseException(session, NutsMessage.cstyle("invalid version format : %s", version));
+    }
+
+    @Override
+    public int getSupportLevel(NutsSupportLevelContext<Object> context) {
+        return DEFAULT_SUPPORT;
     }
 }

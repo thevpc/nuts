@@ -81,7 +81,7 @@ public class MavenFolderRepository extends NutsCachedRepository {
 
     public MavenFolderRepository(NutsAddRepositoryOptions options, NutsSession session, NutsRepository parentRepository) {
         super(options, session, parentRepository, NutsSpeedQualifier.FASTER, false, NutsConstants.RepoTypes.MAVEN);
-        LOG = session.log().of(MavenFolderRepository.class);
+        LOG = NutsLogger.of(MavenFolderRepository.class,session);
         if (options.getConfig().getStoreLocationStrategy() != NutsStoreLocationStrategy.STANDALONE) {
             cache.setWriteEnabled(false);
             cache.setReadEnabled(false);
@@ -146,13 +146,13 @@ public class MavenFolderRepository extends NutsCachedRepository {
         }
         if (localPath == null) {
             return new NutsDefaultContent(
-                    session.io().path(f.toString()), true, false);
+                    NutsPath.of(f,session), true, false);
         } else {
-            session.io().copy()
+            NutsCp.of(session)
                     .setSession(session)
                     .from(f).to(localPath).setSafe(true).run();
             return new NutsDefaultContent(
-                    session.io().path(localPath), true, false);
+                    NutsPath.of(localPath,session), true, false);
         }
     }
 
@@ -188,8 +188,8 @@ public class MavenFolderRepository extends NutsCachedRepository {
             }
             try {
                 namedNutIdIterator = findInFolder(getLocationAsPath(session),getLocalGroupAndArtifactFile(id, session),
-                        session.id().filter().nonnull(idFilter).and(
-                                session.id().filter().byName(id.getShortName())
+                        NutsIdFilters.of(session).nonnull(idFilter).and(
+                                NutsIdFilters.of(session).byName(id.getShortName())
                         ),
                         Integer.MAX_VALUE, session);
             } catch (NutsNotFoundException ex) {
@@ -358,7 +358,7 @@ public class MavenFolderRepository extends NutsCachedRepository {
                                         gn.append(ns);
                                     }
                                     return validate(
-                                            session.id().builder()
+                                            NutsIdBuilder.of(session)
                                                     .setGroupId(gn.toString())
                                                     .setArtifactId(an)
                                                     .setVersion(vn)

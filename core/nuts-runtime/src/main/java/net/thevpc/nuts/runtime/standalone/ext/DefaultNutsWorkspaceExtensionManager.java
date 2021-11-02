@@ -30,7 +30,7 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
     @Override
     public Set<NutsId> getCompanionIds() {
         NutsWorkspaceUtils.checkSession(model.getWorkspace(),getSession());
-        NutsIdParser parser = session.id().parser();
+        NutsIdParser parser = NutsIdParser.of(getSession());
         return Collections.unmodifiableSet(new HashSet<>(
                         Arrays.asList(parser.parse("net.thevpc.nuts.toolbox:nsh"))
                 )
@@ -66,16 +66,16 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
         return model.createServiceLoader(serviceType, criteriaType, classLoader, session);
     }
 
-    public <T extends NutsComponent<V>, V> T createSupported(Class<T> serviceType, V criteriaType) {
+    public <T extends NutsComponent<V>, V> T createSupported(Class<T> serviceType, boolean required, V criteriaType) {
         checkSession();
-        return model.createSupported(serviceType, criteriaType, session);
+        return model.createSupported(serviceType, criteriaType, required, session);
     }
 
-    @Override
-    public <T extends NutsComponent<V>, V> T createSupported(Class<T> serviceType, V criteriaType, Class[] constructorParameterTypes, Object[] constructorParameters) {
-        checkSession();
-        return model.createSupported(serviceType, criteriaType, constructorParameterTypes, constructorParameters, session);
-    }
+//    @Override
+//    public <T extends NutsComponent<V>, V> T createSupported(Class<T> serviceType, V criteriaType, Class[] constructorParameterTypes, boolean required, Object[] constructorParameters) {
+//        checkSession();
+//        return model.createSupported(serviceType, criteriaType, constructorParameterTypes, constructorParameters, required, session);
+//    }
 
     @Override
     public <T extends NutsComponent<V>, V> List<T> createAllSupported(Class<T> serviceType, V criteriaType) {
@@ -180,5 +180,4 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
         checkSession();
         return model.createApiTypeInstance(type, name, argTypes, args,session);
     }
-
 }

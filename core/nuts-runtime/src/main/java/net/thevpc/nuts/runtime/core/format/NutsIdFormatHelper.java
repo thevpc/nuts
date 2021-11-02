@@ -110,7 +110,7 @@ public class NutsIdFormatHelper {
     }
 
     private NutsIdFormatHelper(NutsId id, NutsDescriptor desc, NutsDefinition def, NutsDependency dep, NutsSession session) {
-        LOG = session.log().of(NutsIdFormatHelper.class);
+        LOG = NutsLogger.of(NutsIdFormatHelper.class,session);
         if (id == null) {
             if (def != null) {
                 id = def.getId();
@@ -299,7 +299,7 @@ public class NutsIdFormatHelper {
 
     public NutsString getSingleColumnRow(NutsFetchDisplayOptions oo) {
         NutsDisplayProperty[] a = oo.getDisplayProperties();
-        NutsTextManager txt = session.text();
+        NutsTexts txt = NutsTexts.of(session);
         NutsTextBuilder sb = txt.builder();
         for (int j = 0; j < a.length; j++) {
             NutsString s = buildMain(oo, a[j]);
@@ -339,7 +339,7 @@ public class NutsIdFormatHelper {
 
     public NutsString buildMain(NutsFetchDisplayOptions oo, NutsDisplayProperty dp) {
         NutsSession ws = session;
-        NutsTextManager text = ws.text();
+        NutsTexts text =NutsTexts.of(ws);
         if (oo.isRequireDefinition()) {
             buildLong();
         }
@@ -502,7 +502,7 @@ public class NutsIdFormatHelper {
             case EXEC_ENTRY: {
                 if (def != null && def.getContent() != null && def.getContent().getPath() != null) {
                     List<NutsString> results = new ArrayList<NutsString>();
-                    for (NutsExecutionEntry entry : session.apps().execEntries().parse(def.getContent().getFilePath())) {
+                    for (NutsExecutionEntry entry : NutsExecutionEntries.of(session).parse(def.getContent().getFilePath())) {
                         if (entry.isDefaultEntry()) {
                             //should all mark?
                             results.add(text.ofPlain(entry.getName()));
@@ -721,7 +721,7 @@ public class NutsIdFormatHelper {
     }
 
     public NutsString getFormattedStatusString() {
-        NutsTextManager text = session.text();
+        NutsTexts text = NutsTexts.of(session);
         if (dep != null) {
             return text.ofStyled("" + status_f
                     //                    + status_obs
@@ -752,7 +752,7 @@ public class NutsIdFormatHelper {
     }
 
     private NutsString keywordArr0(String[] any, NutsTextStyle style) {
-        NutsTextManager txt = session.text();
+        NutsTexts txt = NutsTexts.of(session);
         if (any == null || any.length == 0) {
             return txt.ofBlank();
         }

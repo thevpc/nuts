@@ -89,15 +89,15 @@ public final class DefaultNutsWorkspaceCurrentConfig {
 
     public void setRuntimeId(String s, NutsSession session) {
         this.bootRuntime = s.contains("#")
-                ? session.id().parser().parse(s)
-                : session.id().parser().parse(NutsConstants.Ids.NUTS_RUNTIME + "#" + s);
+                ? NutsId.of(s,session)
+                : NutsId.of(NutsConstants.Ids.NUTS_RUNTIME + "#" + s,session);
     }
 
     public DefaultNutsWorkspaceCurrentConfig mergeRuntime(NutsWorkspaceOptions c, NutsSession session) {
         if (c.getRuntimeId() != null) {
             this.bootRuntime = c.getRuntimeId().contains("#")
-                    ? session.id().parser().parse(c.getRuntimeId())
-                    : session.id().parser().parse(NutsConstants.Ids.NUTS_RUNTIME + "#" + c.getRuntimeId());
+                    ? NutsId.of(c.getRuntimeId(),session)
+                    : NutsId.of(NutsConstants.Ids.NUTS_RUNTIME + "#" + c.getRuntimeId(),session);
         }
 //        this.bootRuntimeDependencies = c.getRuntimeDependencies();
 //        this.bootExtensionDependencies = c.getExtensionDependencies();
@@ -111,7 +111,7 @@ public final class DefaultNutsWorkspaceCurrentConfig {
         return this;
     }
 
-    public DefaultNutsWorkspaceCurrentConfig build(String workspaceLocation, NutsSession session) {
+    public DefaultNutsWorkspaceCurrentConfig build(NutsPath workspaceLocation, NutsSession session) {
         if (storeLocationStrategy == null) {
             storeLocationStrategy = NutsStoreLocationStrategy.EXPLODED;
         }
@@ -119,7 +119,7 @@ public final class DefaultNutsWorkspaceCurrentConfig {
             repositoryStoreLocationStrategy = NutsStoreLocationStrategy.EXPLODED;
         }
         Map<NutsStoreLocation, String> storeLocations = NutsUtilPlatforms.buildLocations(getStoreLocationLayout(), storeLocationStrategy,
-                getStoreLocations(), homeLocations, isGlobal(), workspaceLocation,
+                getStoreLocations(), homeLocations, isGlobal(), workspaceLocation.toString(),
                 session
         );
         this.effStoreLocationsMap.clear();
@@ -128,7 +128,7 @@ public final class DefaultNutsWorkspaceCurrentConfig {
             effStoreLocationPath[i] = Paths.get(effStoreLocationsMap.get(NutsStoreLocation.values()[i]));
         }
         if (apiId == null) {
-            apiId = session.id().parser().parse(NutsConstants.Ids.NUTS_API + "#" + Nuts.getVersion());
+            apiId = NutsId.of(NutsConstants.Ids.NUTS_API + "#" + Nuts.getVersion(),session);
         }
         if (storeLocationLayout == null) {
             storeLocationLayout = session.env().getOsFamily();
@@ -137,7 +137,7 @@ public final class DefaultNutsWorkspaceCurrentConfig {
     }
 
     public DefaultNutsWorkspaceCurrentConfig merge(NutsWorkspaceConfigApi c, NutsSession session) {
-        NutsIdParser parser = session.id().parser();
+        NutsIdParser parser = NutsIdParser.of(session);
         if (c.getApiVersion() != null) {
             this.apiId = parser.parse(NutsConstants.Ids.NUTS_API + "#" + c.getApiVersion());
         }
@@ -160,7 +160,7 @@ public final class DefaultNutsWorkspaceCurrentConfig {
 
     public DefaultNutsWorkspaceCurrentConfig merge(NutsWorkspaceConfigRuntime c, NutsSession session) {
         if (c.getId() != null) {
-            this.bootRuntime = session.id().parser().parse(c.getId());
+            this.bootRuntime = NutsId.of(c.getId(),session);
         }
         if (c.getDependencies() != null) {
             this.runtimeBootDescriptor = new NutsBootDescriptor(
@@ -207,7 +207,7 @@ public final class DefaultNutsWorkspaceCurrentConfig {
 
     public DefaultNutsWorkspaceCurrentConfig merge(NutsBootConfig c, NutsSession session) {
         this.name = c.getName();
-        NutsIdParser parser = session.id().parser();
+        NutsIdParser parser = NutsIdParser.of(session);
         if (c.getApiVersion() != null) {
             this.apiId = parser.parse(NutsConstants.Ids.NUTS_API + "#" + c.getApiVersion());
         }
@@ -474,7 +474,7 @@ public final class DefaultNutsWorkspaceCurrentConfig {
 
     //
     public String getStoreLocation(String id, NutsStoreLocation folderType, NutsSession session) {
-        return getStoreLocation(session.id().parser().parse(id), folderType, session);
+        return getStoreLocation(NutsId.of(id,session), folderType, session);
     }
 
     //

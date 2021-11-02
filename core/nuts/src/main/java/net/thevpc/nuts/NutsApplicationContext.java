@@ -32,15 +32,28 @@ package net.thevpc.nuts;
  * execution mode, workspace, etc.
  *
  * @author thevpc
- * @since 0.5.5
  * @app.category Application
+ * @since 0.5.5
  */
 public interface NutsApplicationContext extends NutsCommandLineConfigurable {
-
     /**
      * string that prefix each auto complete candidate
      */
     String AUTO_COMPLETE_CANDIDATE_PREFIX = "```error Candidate```: ";
+
+    /**
+     * create a new instance of {@link NutsApplicationContext}
+     *
+     * @param session session context session. If null will consider {@code getSession()} that should not be null as well.
+     * @param args            application arguments
+     * @param startTimeMillis application start time
+     * @param appClass        application class
+     * @param storeId         application store id or null
+     * @return new instance of {@link NutsApplicationContext}
+     */
+    static NutsApplicationContext of(String[] args, long startTimeMillis, Class appClass, String storeId, NutsSession session) {
+        return NutsApplicationContexts.of(session).create(args, startTimeMillis, appClass, storeId);
+    }
 
     /**
      * application execution mode
@@ -70,7 +83,7 @@ public interface NutsApplicationContext extends NutsCommandLineConfigurable {
      * to help return a more specific return type;
      *
      * @param skipUnsupported when true, all unsupported options are skipped
-     * @param args argument to configure with
+     * @param args            argument to configure with
      * @return {@code this} instance
      */
     @Override
@@ -270,7 +283,7 @@ public interface NutsApplicationContext extends NutsCommandLineConfigurable {
      *             commandLineProcessor.exec();
      *         }
      * </pre>
-     *
+     * <p>
      * This as an example of its usage
      * <pre>
      *     applicationContext.processCommandLine(new NutsCommandLineProcessor() {
@@ -335,6 +348,7 @@ public interface NutsApplicationContext extends NutsCommandLineConfigurable {
 
     /**
      * application store folder path for the given {@code location}
+     *
      * @param location location type
      * @return application store folder path for the given {@code location}
      */
@@ -342,6 +356,7 @@ public interface NutsApplicationContext extends NutsCommandLineConfigurable {
 
     /**
      * return true if {@code getAutoComplete()==null }
+     *
      * @return true if {@code getAutoComplete()==null }
      */
     boolean isExecMode();

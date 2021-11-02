@@ -40,7 +40,7 @@ public class NutsDescriptorIdFilter extends AbstractIdFilter implements NutsIdFi
             return true;
         }
         if(LOG==null){
-            LOG=session.log().of(MavenRepositoryFolderHelper.class);
+            LOG=NutsLogger.of(MavenRepositoryFolderHelper.class,session);
         }
         NutsDescriptor descriptor = null;
         try {

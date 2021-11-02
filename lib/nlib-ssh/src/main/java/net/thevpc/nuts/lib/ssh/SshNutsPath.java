@@ -32,7 +32,7 @@ class SshNutsPath implements NutsPathSPI {
             }
             loc.append(String.join("/", others));
             return
-                    getSession().io().path(
+                    NutsPath.of(
                             SshPath.toString(
                                     this.path.getHost(),
                                     this.path.getPort(),
@@ -40,9 +40,9 @@ class SshNutsPath implements NutsPathSPI {
                                     this.path.getUser(),
                                     this.path.getPassword(),
                                     this.path.getKeyFile()
-                            ));
+                            ),getSession());
         }
-        return getSession().io().path(toString());
+        return NutsPath.of(toString(),getSession());
     }
 
     public static String getURLParentPath(String ppath) {
@@ -71,7 +71,7 @@ class SshNutsPath implements NutsPathSPI {
             return null;
         }
         return
-                getSession().io().path(
+                NutsPath.of(
                         SshPath.toString(
                                 this.path.getHost(),
                                 this.path.getPort(),
@@ -79,7 +79,7 @@ class SshNutsPath implements NutsPathSPI {
                                 this.path.getUser(),
                                 this.path.getPassword(),
                                 this.path.getKeyFile()
-                        ));
+                        ),getSession());
     }
 
     @Override
@@ -112,7 +112,7 @@ class SshNutsPath implements NutsPathSPI {
                 NutsTextStyle _path = NutsTextStyle.path();
                 NutsTextStyle _nbr = NutsTextStyle.number();
 //        if(true) {
-                NutsTextManager text = session.text();
+                NutsTexts text = NutsTexts.of(session);
                 NutsTextBuilder sb = text.builder();
                 String user=path.getUser();
                 String host=path.getHost();
@@ -272,7 +272,7 @@ class SshNutsPath implements NutsPathSPI {
                             cc+="/";
                         }
                         cc+=x;
-                        return getSession().io().path(path.setPath(cc).toString());
+                        return NutsPath.of(path.setPath(cc).toString(),getSession());
                     }
             ).toArray(NutsPath[]::new);
         }catch (Exception e){
@@ -288,12 +288,12 @@ class SshNutsPath implements NutsPathSPI {
 
     @Override
     public NutsPath toAbsolute(NutsPath basePath) {
-        return getSession().io().path(toString());
+        return NutsPath.of(toString(),getSession());
     }
 
     @Override
     public NutsPath normalize() {
-        return getSession().io().path(toString());
+        return NutsPath.of(toString(),getSession());
     }
 
     @Override

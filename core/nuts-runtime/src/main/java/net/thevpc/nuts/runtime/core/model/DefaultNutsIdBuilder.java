@@ -30,6 +30,7 @@ import net.thevpc.nuts.runtime.bundles.parsers.StringTokenizerUtils;
 import net.thevpc.nuts.runtime.core.util.CoreNutsUtils;
 import net.thevpc.nuts.runtime.bundles.parsers.QueryStringParser;
 import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
+import net.thevpc.nuts.spi.NutsSupportLevelContext;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -85,12 +86,12 @@ public class DefaultNutsIdBuilder implements NutsIdBuilder {
 
     public DefaultNutsIdBuilder(NutsSession session) {
         this.session=session;
-        this.condition=session.descriptor().envConditionBuilder();
+        this.condition=NutsEnvConditionBuilder.of(session);
     }
 
     public DefaultNutsIdBuilder(NutsId id,NutsSession session) {
         this.session=session;
-        this.condition=session.descriptor().envConditionBuilder();
+        this.condition=NutsEnvConditionBuilder.of(session);
         setGroupId(id.getGroupId());
         setArtifactId(id.getArtifactId());
         setVersion(id.getVersion());
@@ -100,10 +101,10 @@ public class DefaultNutsIdBuilder implements NutsIdBuilder {
 
     public DefaultNutsIdBuilder(String groupId, String artifactId, NutsVersion version, String classifier,String propertiesQuery,NutsSession session) {
         this.session=session;
-        this.condition=session.descriptor().envConditionBuilder();
+        this.condition=NutsEnvConditionBuilder.of(session);
         this.groupId = NutsUtilStrings.trimToNull(groupId);
         this.artifactId = NutsUtilStrings.trimToNull(artifactId);
-        this.version = version == null ? session.version().parser().parse("") : version;
+        this.version = version == null ? NutsVersion.of("",session) : version;
 
         String c0 = NutsUtilStrings.trimToNull(classifier);
         String c1 = null;
@@ -168,13 +169,13 @@ public class DefaultNutsIdBuilder implements NutsIdBuilder {
 
     @Override
     public NutsIdBuilder setVersion(NutsVersion value) {
-        this.version = value == null ? session.version().parser().parse("") : value;
+        this.version = value == null ? NutsVersion.of("",session) : value;
         return this;
     }
 
     @Override
     public NutsIdBuilder setVersion(String value) {
-        this.version = session.version().parser().parse(value);
+        this.version = NutsVersion.of(value,session);
         return this;
     }
 
@@ -262,8 +263,12 @@ public class DefaultNutsIdBuilder implements NutsIdBuilder {
 
     @Override
     public NutsEnvConditionBuilder getCondition() {
-        return session.descriptor().envConditionBuilder()
+        return NutsEnvConditionBuilder.of(session)
                 .setOs(CoreStringUtils.parseAndTrimToDistinctArray(getProperties().get(NutsConstants.IdProperties.OS)))
+                .setArch(CoreStringUtils.parseAndTrimToDistinctArray(getProperties().get(NutsConstants.IdProperties.ARCH)))
+                .setOsDist(CoreStringUtils.parseAndTrimToDistinctArray(getProperties().get(NutsConstants.IdProperties.OS_DIST)))
+                .setPlatform(CoreStringUtils.parseAndTrimToDistinctArray(getProperties().get(NutsConstants.IdProperties.PLATFORM)))
+                .setDesktopEnvironment(CoreStringUtils.parseAndTrimToDistinctArray(getProperties().get(NutsConstants.IdProperties.DESKTOP_ENVIRONMENT)))
                 ;
     }
 
@@ -522,4 +527,8 @@ public class DefaultNutsIdBuilder implements NutsIdBuilder {
         );
     }
 
+    @Override
+    public int getSupportLevel(NutsSupportLevelContext<Object> context) {
+        return DEFAULT_SUPPORT;
+    }
 }

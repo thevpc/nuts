@@ -27,6 +27,7 @@ import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.bundles.io.URLBuilder;
 import net.thevpc.nuts.runtime.bundles.io.ZipOptions;
 import net.thevpc.nuts.runtime.bundles.io.ZipUtils;
+import net.thevpc.nuts.runtime.standalone.util.CoreDigestHelper;
 import net.thevpc.nuts.spi.NutsDependencySolver;
 
 /**
@@ -46,9 +47,9 @@ public class DefaultNutsArtifactPathExecutable extends AbstractNutsExecutableCom
 
     public DefaultNutsArtifactPathExecutable(String cmdName, String[] args, String[] executorOptions, NutsExecutionType executionType, NutsRunAs runAs,NutsSession traceSession, NutsSession execSession, DefaultNutsExecCommand execCommand, boolean inheritSystemIO) {
         super(cmdName,
-                execSession.commandLine().create(args).toString(),
+                NutsCommandLine.of(args,execSession).toString(),
                 NutsExecutableType.ARTIFACT);
-        LOG = execSession.log().of(DefaultNutsArtifactPathExecutable.class);
+        LOG = NutsLogger.of(DefaultNutsArtifactPathExecutable.class,traceSession);
         this.runAs = runAs;
         this.cmdName = cmdName;
         this.args = args;
@@ -58,7 +59,7 @@ public class DefaultNutsArtifactPathExecutable extends AbstractNutsExecutableCom
         this.execCommand = execCommand;
         List<String> executorOptionsList = new ArrayList<>();
         for (String option : executorOptions) {
-            NutsArgument a = traceSession.commandLine().createArgument(option);
+            NutsArgument a = NutsArgument.of(option,traceSession);
             if (a.getKey().getString().equals("--nuts-auto-install")) {
                 if (a.isKeyValue()) {
 //                    autoInstall= a.isNegated() != a.getBooleanValue();
@@ -74,7 +75,7 @@ public class DefaultNutsArtifactPathExecutable extends AbstractNutsExecutableCom
 
     @Override
     public NutsId getId() {
-        try (final CharacterizedExecFile c = characterizeForExec(NutsStreamOrPath.of(traceSession.io().path(cmdName)), traceSession, executorOptions)) {
+        try (final CharacterizedExecFile c = characterizeForExec(NutsStreamOrPath.of(cmdName,traceSession), traceSession, executorOptions)) {
             return c.descriptor == null ? null : c.descriptor.getId();
         }
     }
@@ -90,11 +91,11 @@ public class DefaultNutsArtifactPathExecutable extends AbstractNutsExecutableCom
     }
 
     public void executeHelper(boolean dry) {
-        try (final CharacterizedExecFile c = characterizeForExec(NutsStreamOrPath.of(traceSession.io().path(cmdName)), traceSession, executorOptions)) {
+        try (final CharacterizedExecFile c = characterizeForExec(NutsStreamOrPath.of(cmdName,traceSession), traceSession, executorOptions)) {
             if (c.descriptor == null) {
                 throw new NutsNotFoundException(execSession, null, NutsMessage.cstyle("unable to resolve a valid descriptor for %s",cmdName), null);
             }
-            String tempFolder = traceSession.io().tmp()
+            String tempFolder = NutsTmp.of(traceSession)
                     .createTempFolder("exec-path-").toString();
             NutsId _id = c.descriptor.getId();
             NutsIdType idType = NutsWorkspaceExt.of(traceSession).resolveNutsIdType(_id, traceSession);
@@ -104,13 +105,13 @@ public class DefaultNutsArtifactPathExecutable extends AbstractNutsExecutableCom
                     _id.getLongId(),
                     c.descriptor,
                     new NutsDefaultContent(
-                            execSession.io().path(c.contentFile)
+                            NutsPath.of(c.contentFile,execSession)
                             , false, c.temps.size() > 0),
                     DefaultNutsInstallInfo.notInstalled(_id),
                     idType, null, traceSession
             );
-            NutsDependencySolver resolver = traceSession.dependency().createSolver();
-            NutsDependencyFilterManager ff = traceSession.dependency().filter();
+            NutsDependencySolver resolver = NutsDependencySolver.of(traceSession);
+            NutsDependencyFilters ff = NutsDependencyFilters.of(traceSession);
 
             resolver
                     .setFilter(ff.byScope(NutsDependencyScopePattern.RUN)
@@ -149,15 +150,14 @@ public class DefaultNutsArtifactPathExecutable extends AbstractNutsExecutableCom
             if (Files.isDirectory(fileSource)) {
                 Path ext = fileSource.resolve(NutsConstants.Files.DESCRIPTOR_FILE_NAME);
                 if (Files.exists(ext)) {
-                    c.descriptor = session.descriptor().parser().setSession(session).parse(ext);
+                    c.descriptor = NutsDescriptorParser.of(session).parse(ext);
                 } else {
                     c.descriptor = CoreIOUtils.resolveNutsDescriptorFromFileContent(c.contentFile, execOptions, session);
                 }
                 if (c.descriptor != null) {
                     if ("zip".equals(c.descriptor.getPackaging())) {
-                        Path zipFilePath = Paths.get(session.io().path(fileSource.toString() + ".zip")
-                                .builder().withAppBaseDir().build().toString()
-                        );
+                        Path zipFilePath = NutsPath.of(fileSource+ ".zip",session)
+                                .builder().withAppBaseDir().build().toFile();
                         ZipUtils.zip(session, fileSource.toString(), new ZipOptions(), zipFilePath.toString());
                         c.contentFile = zipFilePath;
                         c.addTemp(zipFilePath);
@@ -168,7 +168,7 @@ public class DefaultNutsArtifactPathExecutable extends AbstractNutsExecutableCom
             } else if (Files.isRegularFile(fileSource)) {
                 if (c.contentFile.getFileName().toString().endsWith(NutsConstants.Files.DESCRIPTOR_FILE_NAME)) {
                     try (InputStream in = Files.newInputStream(c.contentFile)) {
-                        c.descriptor = session.descriptor().parser().setSession(session).parse(in);
+                        c.descriptor = NutsDescriptorParser.of(session).parse(in);
                     }
                     c.contentFile = null;
                     if (c.streamOrPath.isPath() && c.streamOrPath.getPath().isURL()) {
@@ -176,7 +176,7 @@ public class DefaultNutsArtifactPathExecutable extends AbstractNutsExecutableCom
                         try {
                             c.contentFile = CoreIOUtils.toPathInputSource(
                                     NutsStreamOrPath.of(
-                                            session.io().path(ub.resolveSibling(session.locations().getDefaultIdFilename(c.descriptor.getId())).toURL())
+                                            ub.resolveSibling(session.locations().getDefaultIdFilename(c.descriptor.getId())).toURL(),session
                                     ),
                                     c.temps, session);
                         } catch (Exception ex) {
@@ -191,7 +191,7 @@ public class DefaultNutsArtifactPathExecutable extends AbstractNutsExecutableCom
                                 if (CoreIOUtils.isPathHttp(location)) {
                                     try {
                                         c.contentFile = CoreIOUtils.toPathInputSource(
-                                                NutsStreamOrPath.of(session.io().path(new URL(location))),
+                                                NutsStreamOrPath.of(new URL(location),session),
                                                 c.temps, session);
                                     } catch (Exception ex) {
 
@@ -200,7 +200,7 @@ public class DefaultNutsArtifactPathExecutable extends AbstractNutsExecutableCom
                                     URLBuilder ub = new URLBuilder(c.streamOrPath.getPath().toURL().toString());
                                     try {
                                         c.contentFile = CoreIOUtils.toPathInputSource(
-                                                NutsStreamOrPath.of(session.io().path(ub.resolveSibling(session.locations().getDefaultIdFilename(c.descriptor.getId())).toURL())),
+                                                NutsStreamOrPath.of(ub.resolveSibling(session.locations().getDefaultIdFilename(c.descriptor.getId())).toURL(),session),
                                                 c.temps, session);
                                     } catch (Exception ex) {
 
@@ -218,8 +218,11 @@ public class DefaultNutsArtifactPathExecutable extends AbstractNutsExecutableCom
                 } else {
                     c.descriptor = CoreIOUtils.resolveNutsDescriptorFromFileContent(c.contentFile, execOptions, session);
                     if (c.descriptor == null) {
-                        c.descriptor = session.descriptor().descriptorBuilder()
-                                .setId("temp")
+                        CoreDigestHelper d = new CoreDigestHelper();
+                        d.append(c.contentFile);
+                        String artifactId = d.getDigest();
+                        c.descriptor = NutsDescriptorBuilder.of(session)
+                                .setId("temp:"+artifactId+"#1.0")
                                 .setPackaging(CoreIOUtils.getFileExtension(contentFile.getName()))
                                 .build();
                     }
@@ -235,7 +238,7 @@ public class DefaultNutsArtifactPathExecutable extends AbstractNutsExecutableCom
 
     @Override
     public String toString() {
-        return "NUTS " + cmdName + " " + execSession.commandLine().create(args).toString();
+        return "NUTS " + cmdName + " " + NutsCommandLine.of(args,execSession).toString();
     }
 
 }

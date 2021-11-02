@@ -48,7 +48,7 @@ public class DefaultNutsTextFormatTheme implements NutsTextFormatTheme {
 
     @Override
     public NutsTextStyles toBasicStyles(NutsTextStyles styles, NutsSession session) {
-        NutsTextStyles ret = NutsTextStyles.NONE;
+        NutsTextStyles ret = NutsTextStyles.PLAIN;
         if (styles != null) {
             for (NutsTextStyle style : styles) {
                 ret = ret.append(toBasicStyles(style));
@@ -65,7 +65,7 @@ public class DefaultNutsTextFormatTheme implements NutsTextFormatTheme {
      */
     public NutsTextStyles toBasicStyles(NutsTextStyle style) {
         if (style == null) {
-            return NutsTextStyles.NONE;
+            return NutsTextStyles.PLAIN;
         }
         switch (style.getType()) {
             case FORE_COLOR: //will be called by recursion

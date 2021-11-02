@@ -78,7 +78,7 @@ public class RefreshDataService {
 
                 NutsDependency[] directDependencies = definition.getEffectiveDescriptor().getDependencies();
                 id.put("dependencies",
-                        session.elem().setContentType(NutsContentType.JSON).setValue(Arrays.stream(directDependencies).map(Object::toString).collect(Collectors.toList()))
+                        NutsElements.of(session).json().setValue(Arrays.stream(directDependencies).map(Object::toString).collect(Collectors.toList()))
                                 .setNtf(false).format().filteredText()
                 );
                 dataToIndex.add(id);

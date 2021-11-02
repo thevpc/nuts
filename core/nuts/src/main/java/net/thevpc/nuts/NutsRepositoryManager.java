@@ -29,7 +29,7 @@ package net.thevpc.nuts;
  */
 public interface NutsRepositoryManager {
 
-    NutsRepositoryFilterManager filter();
+    NutsRepositoryFilters filter();
 
     NutsRepository addRepository(NutsAddRepositoryOptions options);
 

@@ -26,7 +26,8 @@
 package net.thevpc.nuts.toolbox.nsh.cmds;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.spi.NutsSingleton;
+import net.thevpc.nuts.spi.NutsComponentScope;
+import net.thevpc.nuts.spi.NutsComponentScopeType;
 import net.thevpc.nuts.toolbox.nsh.SimpleNshBuiltin;
 import net.thevpc.nuts.toolbox.nsh.util.ShellHelper;
 
@@ -34,10 +35,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by vpc on 1/7/17. ssh copy credits to Chanaka Lakmal from
- * https://medium.com/ldclakmal/scp-with-java-b7b7dbcdbc85
+ * Created by vpc on 1/7/17.
  */
-@NutsSingleton
+@NutsComponentScope(NutsComponentScopeType.WORKSPACE)
 public class RmCommand extends SimpleNshBuiltin {
 
     public RmCommand() {

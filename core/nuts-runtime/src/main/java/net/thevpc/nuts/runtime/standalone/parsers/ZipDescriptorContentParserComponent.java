@@ -1,7 +1,7 @@
 /**
  * ====================================================================
- *            Nuts : Network Updatable Things Service
- *                  (universal package manager)
+ * Nuts : Network Updatable Things Service
+ * (universal package manager)
  * <br>
  * is a new Open Source Package Manager to help install packages
  * and libraries for runtime execution. Nuts is the ultimate companion for
@@ -11,7 +11,7 @@
  * architecture to help supporting a large range of sub managers / repositories.
  *
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc]
  * Licensed under the Apache License, Version 2.0 (the "License"); you may
  * not use this file except in compliance with the License. You may obtain a
@@ -23,10 +23,12 @@
  * governing permissions and limitations under the License.
  * <br>
  * ====================================================================
-*/
+ */
 package net.thevpc.nuts.runtime.standalone.parsers;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.bundles.io.ZipUtils;
+import net.thevpc.nuts.spi.*;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -36,16 +38,10 @@ import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import net.thevpc.nuts.runtime.bundles.io.ZipUtils;
-import net.thevpc.nuts.spi.NutsDescriptorContentParserComponent;
-import net.thevpc.nuts.spi.NutsDescriptorContentParserContext;
-import net.thevpc.nuts.spi.NutsSingleton;
-import net.thevpc.nuts.spi.NutsSupportLevelContext;
-
 /**
  * Created by vpc on 1/15/17.
  */
-@NutsSingleton
+@NutsComponentScope(NutsComponentScopeType.WORKSPACE)
 public class ZipDescriptorContentParserComponent implements NutsDescriptorContentParserComponent {
 
     public static final Set<String> POSSIBLE_PATHS = new LinkedHashSet<>(Arrays.asList(
@@ -59,13 +55,12 @@ public class ZipDescriptorContentParserComponent implements NutsDescriptorConten
     @Override
     public int getSupportLevel(NutsSupportLevelContext<NutsDescriptorContentParserContext> criteria) {
         String e = NutsUtilStrings.trim(criteria.getConstraints().getFileExtension());
-        switch (e){
+        switch (e) {
             case "zip":
             case "gzip":
             case "jar":
             case "war":
-            case "ear":
-            {
+            case "ear": {
                 return DEFAULT_SUPPORT;
             }
         }
@@ -80,8 +75,8 @@ public class ZipDescriptorContentParserComponent implements NutsDescriptorConten
         ByteArrayOutputStream buffer = new ByteArrayOutputStream();
         try {
             if (ZipUtils.extractFirstPath(parserContext.getFullStream(), POSSIBLE_PATHS, buffer, true)) {
-                return parserContext.getSession().descriptor().parser()
-                        .setSession(parserContext.getSession())
+                NutsSession session = parserContext.getSession();
+                return NutsDescriptorParser.of(session)
                         .parse(buffer.toByteArray());
             }
         } catch (IOException e) {

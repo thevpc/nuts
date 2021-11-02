@@ -20,7 +20,7 @@ class SilentStartNutsInputStreamProgressMonitorAdapter implements NutsProgressMo
 
     protected NutsLogger _LOG(NutsSession session) {
         if (LOG == null) {
-            LOG = session.log().of(SilentStartNutsInputStreamProgressMonitorAdapter.class);
+            LOG = NutsLogger.of(SilentStartNutsInputStreamProgressMonitorAdapter.class,session);
         }
         return LOG;
     }

@@ -44,7 +44,7 @@
 //        NutsArgument n = commandLine.peek();
 //        if (n != null) {
 //            NutsArgument a;
-//            if ((a = commandLine.nextString(DefaultPropertiesFormat.OPTION_MULTILINE_PROPERTY)) != null) {
+//            if ((a = commandLine.nextString(DefaultNutsPropertiesFormat.OPTION_MULTILINE_PROPERTY)) != null) {
 //                NutsArgument i = a.getArgumentValue();
 //                if(a.isEnabled()) {
 //                    extraConfig.add(a.getString());

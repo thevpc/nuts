@@ -63,7 +63,7 @@ public class DefaultProjectTemplate implements ProjectTemplate {
                 return term.ask()
                         .resetLine()
                         .forString(
-                        getSession().text().builder()
+                        NutsTexts.of(getSession()).builder()
                                 .append(propertyTitle, NutsTextStyle.primary4())
                                 .append(" (")
                                 .append(propName,NutsTextStyle.pale())
@@ -408,7 +408,7 @@ public class DefaultProjectTemplate implements ProjectTemplate {
             if (!pomFile.isFile()) {
                 return null;
             }
-            session.descriptor().parser().setDescriptorStyle(NutsDescriptorStyle.MAVEN).parse(pomFile);
+            NutsDescriptorParser.of(session).setDescriptorStyle(NutsDescriptorStyle.MAVEN).parse(pomFile);
             return pomFile;
         } catch (Exception ex) {
             throw new RuntimeException(ex);
@@ -431,7 +431,7 @@ public class DefaultProjectTemplate implements ProjectTemplate {
                 if (!getSession().getTerminal().ask()
                         .resetLine()
                         .forBoolean("accept project location %s?",
-                        applicationContext.getSession().text().ofStyled(p.getPath(),NutsTextStyle.path()))
+                        NutsTexts.of(applicationContext.getSession()).ofStyled(p.getPath(),NutsTextStyle.path()))
                         .setDefaultValue(false)
                         .getBooleanValue()) {
                     throw new NutsUserCancelException(getSession());
@@ -439,7 +439,7 @@ public class DefaultProjectTemplate implements ProjectTemplate {
             }
         }
         try {
-            return session.descriptor().parser().setDescriptorStyle(NutsDescriptorStyle.MAVEN)
+            return NutsDescriptorParser.of(session).setDescriptorStyle(NutsDescriptorStyle.MAVEN)
                     .parse(new File(getProjectRootFolder(), "pom.xml"));
         } catch (Exception ex) {
             throw new RuntimeException(ex);

@@ -70,7 +70,7 @@ public class StyledParserStep extends ParserStep {
 
     public void consume(char c, DefaultNutsTextNodeParser.State state, boolean wasNewLine) {
         charQueue.add(c);
-        NutsTextManager text = session.text();
+        NutsTexts text = NutsTexts.of(session);
         switch (curState) {
             case EMPTY: {
                 throw new IllegalArgumentException("unexpected");
@@ -586,7 +586,7 @@ public class StyledParserStep extends ParserStep {
     @Override
     public NutsText toText() {
         List<NutsText> childrenTextNodes2 = new ArrayList<>(children);
-        NutsTextManager text = session.text();
+        NutsTexts text = NutsTexts.of(session);
         if (!content.isEmpty()) {
             childrenTextNodes2.add(text.ofPlain(content.toString()));
         }

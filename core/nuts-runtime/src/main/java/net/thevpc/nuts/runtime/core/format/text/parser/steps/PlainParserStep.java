@@ -1,6 +1,7 @@
 package net.thevpc.nuts.runtime.core.format.text.parser.steps;
 
 import net.thevpc.nuts.NutsSession;
+import net.thevpc.nuts.NutsTexts;
 import net.thevpc.nuts.runtime.core.format.text.parser.DefaultNutsTextNodeParser;
 import net.thevpc.nuts.runtime.bundles.string.StringBuilder2;
 
@@ -278,7 +279,7 @@ public class PlainParserStep extends ParserStep {
     public NutsText toText() {
         String t = value.toString();
 //        String q = NutsTextNodeWriterStringer.removeEscapes(t);
-        return session.text().ofPlain(t);
+        return NutsTexts.of(session).ofPlain(t);
     }
 
     @Override

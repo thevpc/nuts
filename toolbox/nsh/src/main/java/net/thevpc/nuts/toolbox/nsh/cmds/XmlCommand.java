@@ -10,51 +10,47 @@
  * other 'things' . Its based on an extensible architecture to help supporting a
  * large range of sub managers / repositories.
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc]
- * Licensed under the Apache License, Version 2.0 (the "License"); you may 
- * not use this file except in compliance with the License. You may obtain a 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may
+ * not use this file except in compliance with the License. You may obtain a
  * copy of the License at http://www.apache.org/licenses/LICENSE-2.0
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an 
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
- * either express or implied. See the License for the specific language 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+ * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  * <br>
  * ====================================================================
-*/
+ */
 package net.thevpc.nuts.toolbox.nsh.cmds;
 
-import java.io.*;
-import java.util.*;
+import net.thevpc.nuts.*;
+import net.thevpc.nuts.spi.NutsComponentScope;
+import net.thevpc.nuts.spi.NutsComponentScopeType;
+import net.thevpc.nuts.toolbox.nsh.SimpleNshBuiltin;
+import org.w3c.dom.Document;
+import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
+
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
-
-import net.thevpc.nuts.*;
-import net.thevpc.nuts.spi.NutsSingleton;
-import net.thevpc.nuts.toolbox.nsh.SimpleNshBuiltin;
-import org.w3c.dom.Document;
-import org.w3c.dom.NodeList;
-import org.xml.sax.InputSource;
+import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by vpc on 1/7/17.
  */
-@NutsSingleton
+@NutsComponentScope(NutsComponentScopeType.WORKSPACE)
 public class XmlCommand extends SimpleNshBuiltin {
 
     public XmlCommand() {
         super("xml", DEFAULT_SUPPORT);
-    }
-
-    private static class Options {
-
-        String input;
-        List<String> xpaths = new ArrayList<>();
     }
 
     @Override
@@ -96,13 +92,13 @@ public class XmlCommand extends SimpleNshBuiltin {
         if (options.input != null) {
             NutsPath file = NutsPath.of(options.input, session).toAbsolute(context.getRootContext().getCwd());
             if (file.isFile()) {
-                try (InputStream is=file.getInputStream()){
+                try (InputStream is = file.getInputStream()) {
                     doc = dBuilder.parse(is);
                 } catch (Exception ex) {
                     throw new NutsExecutionException(session, NutsMessage.cstyle("invalid xml %s", options.input), ex, 2);
                 }
             } else {
-                throw new NutsExecutionException(session, NutsMessage.cstyle("invalid path %s",options.input), 1);
+                throw new NutsExecutionException(session, NutsMessage.cstyle("invalid path %s", options.input), 1);
             }
         } else {
             StringBuilder sb = new StringBuilder();
@@ -118,7 +114,7 @@ public class XmlCommand extends SimpleNshBuiltin {
                     try {
                         doc = dBuilder.parse(new InputSource(new StringReader(sb.toString())));
                     } catch (Exception ex) {
-                        throw new NutsExecutionException(session, NutsMessage.cstyle("invalid xml : %s",sb), ex, 2);
+                        throw new NutsExecutionException(session, NutsMessage.cstyle("invalid xml : %s", sb), ex, 2);
                     }
                     break;
                 } else {
@@ -144,7 +140,7 @@ public class XmlCommand extends SimpleNshBuiltin {
             try {
                 result.add((NodeList) xPath.compile(query).evaluate(doc, XPathConstants.NODESET));
             } catch (XPathExpressionException ex) {
-                throw new NutsExecutionException(session, NutsMessage.cstyle("%s",ex), ex, 103);
+                throw new NutsExecutionException(session, NutsMessage.cstyle("%s", ex), ex, 103);
             }
         }
         if (all.size() == 1) {
@@ -152,6 +148,12 @@ public class XmlCommand extends SimpleNshBuiltin {
         } else {
             session.out().printlnf(all);
         }
+    }
+
+    private static class Options {
+
+        String input;
+        List<String> xpaths = new ArrayList<>();
     }
 
 }

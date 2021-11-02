@@ -32,7 +32,8 @@ public class WorkspaceService {
         Path c = getConfigFile();
         if (Files.isRegularFile(c)) {
             try {
-                config = appContext.getSession().elem().setContentType(NutsContentType.JSON).parse(c, WorkspaceConfig.class);
+                NutsSession session = appContext.getSession();
+                config = NutsElements.of(session).json().parse(c, WorkspaceConfig.class);
             } catch (Exception ex) {
                 //
             }
@@ -100,7 +101,8 @@ public class WorkspaceService {
         } catch (IOException ex) {
             throw new UncheckedIOException(ex);
         }
-        appContext.getSession().elem().setContentType(NutsContentType.JSON).setValue(c).print(configFile);
+        NutsSession session = appContext.getSession();
+        NutsElements.of(session).json().setValue(c).print(configFile);
     }
 
     private void updateBools(Boolean[] all, boolean ok) {
@@ -184,7 +186,7 @@ public class WorkspaceService {
     }
 
     private NutsTextBuilder formatProjectConfig(NutsApplicationContext appContext, ProjectConfig p2) {
-        NutsTextManager text = appContext.getSession().text();
+        NutsTexts text = NutsTexts.of(appContext.getSession());
         return text.builder()
                 .append(p2.getId(), NutsTextStyle.primary4())
                 .append(" ")
@@ -199,11 +201,11 @@ public class WorkspaceService {
     }
 
     public void scan(NutsCommandLine cmdLine, NutsApplicationContext context) {
+        NutsSession session = context.getSession();
         boolean interactive = false;
         NutsArgument a;
         boolean run = false;
         boolean reset = false;
-        NutsCommandLineManager commandLineFormat = context.getSession().commandLine();
         List<File> toScan = new ArrayList<>();
         while (cmdLine.hasNext()) {
             if ((a = cmdLine.nextBoolean("-i", "--interactive")) != null) {
@@ -211,7 +213,7 @@ public class WorkspaceService {
             } else if ((a = cmdLine.nextBoolean("-r", "--reset")) != null) {
                 reset = a.getValue().getBoolean();
             } else if (cmdLine.peek().isNonOption()) {
-                String folder = cmdLine.nextNonOption(commandLineFormat.createName("Folder")).getString();
+                String folder = cmdLine.nextNonOption(NutsArgumentName.of("Folder", session)).getString();
                 run = true;
                 toScan.add(new File(folder));
             } else {
@@ -234,14 +236,14 @@ public class WorkspaceService {
     }
     public void find(NutsCommandLine cmdLine, NutsApplicationContext context) {
         NutsArgument a;
-        NutsCommandLineManager commandLineFormat = context.getSession().commandLine();
+        NutsSession session = context.getSession();
         List<File> toScan = new ArrayList<>();
         String where=null;
         while (cmdLine.hasNext()) {
             if ((a = cmdLine.nextString("-w", "--where")) != null) {
                 where = a.getValue().getString();
             }else if (cmdLine.peek().isNonOption()) {
-                String folder = cmdLine.nextNonOption(commandLineFormat.createName("Folder")).getString();
+                String folder = cmdLine.nextNonOption(NutsArgumentName.of("Folder",session)).getString();
                 toScan.add(new File(folder));
             } else {
                 context.configureLast(cmdLine);
@@ -311,14 +313,14 @@ public class WorkspaceService {
 
         List<ProjectService> all = findProjectServices();
         all.sort((x, y) -> x.getConfig().getId().compareTo(y.getConfig().getId()));
-        NutsIdParser idparser = appContext.getSession().id().parser();
+        NutsSession session = appContext.getSession();
 
         for (Iterator<ProjectService> iterator = all.iterator(); iterator.hasNext();) {
             ProjectService projectService = iterator.next();
             String id = projectService.getConfig().getId();
             NutsDescriptor pom = projectService.getPom();
             if (pom != null) {
-                dependencies.put(idparser.parse(id).getShortName(), pom);
+                dependencies.put(NutsId.of(id,session).getShortName(), pom);
             }
         }
 
@@ -330,16 +332,16 @@ public class WorkspaceService {
         }
 
         int maxSize = 1;
-        NutsVersionParser parser = appContext.getSession().version().parser();
+        NutsVersionParser parser = NutsVersionParser.of(session);
         for (int i = 0; i < all.size(); i++) {
             ProjectService projectService = all.get(i);
             DataRow d = new DataRow();
             d.id = projectService.getConfig().getId();
-            NutsDescriptor pom = dependencies.get(idparser.parse(d.id).getShortName());
+            NutsDescriptor pom = dependencies.get(NutsId.of(d.id,session).getShortName());
             if (pom != null) {
                 for (NutsDependency dependency : pom.getDependencies()) {
                     String did = dependency.getGroupId() + ":" + dependency.getArtifactId();
-                    NutsDescriptor expectedPom = dependencies.get(idparser.parse(did).getShortName());
+                    NutsDescriptor expectedPom = dependencies.get(NutsId.of(did,session).getShortName());
                     if (expectedPom != null) {
                         String expectedVersion = expectedPom.getId().getVersion().toString();
                         String currentVersion = dependency.getVersion().toString();
@@ -359,9 +361,9 @@ public class WorkspaceService {
                     }
                 }
             }
-            if (progress && appContext.getSession().isPlainOut()) {
+            if (progress && session.isPlainOut()) {
                 maxSize = Math.max(maxSize, projectService.getConfig().getId().length());
-                appContext.getSession().out().resetLine().printf("(%s / %s) %s", (i + 1), all.size(), _StringUtils.alignLeft(projectService.getConfig().getId(), maxSize));
+                session.out().resetLine().printf("(%s / %s) %s", (i + 1), all.size(), _StringUtils.alignLeft(projectService.getConfig().getId(), maxSize));
             }
             d.local = projectService.detectLocalVersion();
             d.remote = d.local == null ? null : projectService.detectRemoteVersion();
@@ -400,7 +402,7 @@ public class WorkspaceService {
             ddd.add(d);
         }
         if (all.size() > 0) {
-            appContext.getSession().out().println("");
+            session.out().println("");
         }
 
         Collections.sort(ddd);
@@ -447,12 +449,12 @@ public class WorkspaceService {
             //"%s %s %s%n",projectService.getConfig().getId(),local,remote
 //            tf.addRow(d.id, d.local, d.remote, d.status);
         }
-        if (!ddd.isEmpty() || !appContext.getSession().isPlainOut()) {
-            NutsTextManager tfactory = appContext.getSession().text();
-            if (appContext.getSession().isPlainOut()) {
+        if (!ddd.isEmpty() || !session.isPlainOut()) {
+            NutsTexts tfactory = NutsTexts.of(session);
+            if (session.isPlainOut()) {
                 for (DataRow p2 : ddd) {
                     String status = p2.status;
-                    NutsTextManager tf = appContext.getSession().text();
+                    NutsTexts tf = NutsTexts.of(session);
                     int len = tf.parse(status).textLength();
                     while (len < 10) {
                         status += " ";
@@ -460,7 +462,7 @@ public class WorkspaceService {
                     }
                     switch (tf.ofPlain(p2.status).filteredText()) {
                         case "new": {
-                            appContext.getSession().out().printf("[%s] %s : %s",
+                            session.out().printf("[%s] %s : %s",
                                     tfactory.ofStyled("new", NutsTextStyle.primary3()),
                                     p2.id,
                                     tfactory.ofStyled(p2.local, NutsTextStyle.primary2())
@@ -468,7 +470,7 @@ public class WorkspaceService {
                             break;
                         }
                         case "commitable": {
-                            appContext.getSession().out().printf("[%s] %s : %s - %s",
+                            session.out().printf("[%s] %s : %s - %s",
                                     tfactory.ofStyled("commitable", NutsTextStyle.primary4()),
                                     p2.id,
                                     tfactory.ofStyled(p2.local, NutsTextStyle.primary2()),
@@ -477,42 +479,42 @@ public class WorkspaceService {
                             break;
                         }
                         case "dirty": {
-                            appContext.getSession().out().printf("[```error dirty```] %s : ```error %s``` - %s", p2.id, p2.local, p2.remote);
-                            printDiffResults("  ", appContext.getSession().out(), p2.details);
+                            session.out().printf("[```error dirty```] %s : ```error %s``` - %s", p2.id, p2.local, p2.remote);
+                            printDiffResults("  ", session.out(), p2.details);
                             break;
                         }
                         case "old": {
-                            appContext.getSession().out().printf("[%s] %s : ```error %s``` - %s",
+                            session.out().printf("[%s] %s : ```error %s``` - %s",
                                     tfactory.ofStyled("old", NutsTextStyle.primary2()),
                                     p2.id, p2.local, p2.remote);
                             break;
                         }
                         case "invalid": {
-                            appContext.getSession().out().printf("[```error invalid```invalid ] %s : ```error %s``` - %s", p2.id, p2.local, p2.remote);
+                            session.out().printf("[```error invalid```invalid ] %s : ```error %s``` - %s", p2.id, p2.local, p2.remote);
                             break;
                         }
                         case "uptodate": {
-                            appContext.getSession().out().printf("[uptodate] %s : %s", p2.id, p2.local);
+                            session.out().printf("[uptodate] %s : %s", p2.id, p2.local);
                             break;
                         }
                         default: {
-                            appContext.getSession().out().printf("[%s] %s : %s - %s", status, p2.id, p2.local, p2.remote);
+                            session.out().printf("[%s] %s : %s - %s", status, p2.id, p2.local, p2.remote);
                             break;
                         }
                     }
                     if (p2.dependencies.size() > 0) {
-                        appContext.getSession().out().printf(" ; bad-deps:");
+                        session.out().printf(" ; bad-deps:");
                         for (DiffVersion dependency : p2.dependencies) {
-                            appContext.getSession().out().printf(" %s : %s <> expected %s", dependency.id,
+                            session.out().printf(" %s : %s <> expected %s", dependency.id,
                                     parser.parse(dependency.current),
                                     parser.parse(dependency.expected)
                             );
                         }
                     }
-                    appContext.getSession().out().println();
+                    session.out().println();
                 }
             } else {
-                appContext.getSession().formats().object()
+                session.formats().object()
                         .setValue(ddd).println();
             }
         }
@@ -530,7 +532,8 @@ public class WorkspaceService {
     private boolean matches(String id, List<String> filters) {
         boolean accept = filters.isEmpty();
         if (!accept) {
-            NutsId nid = appContext.getSession().id().parser().parse(id);
+            NutsSession session = appContext.getSession();
+            NutsId nid = NutsId.of(id,session);
             for (String filter : filters) {
                 if (id.equals(filter)
                         || id.matches(wildcardToRegex(filter))
@@ -606,7 +609,7 @@ public class WorkspaceService {
     public int find(List<File> folders,String where) {
         FileScanner fs=new FileScanner();
         if(where!=null && where.trim().length()>0) {
-            fs.setPathFilter(FileScanner.parseExpr(where));
+            fs.setPathFilter(FileScanner.parseExpr(where, appContext.getSession()));
         }
         fs.getSource().addAll(folders.stream().map(File::toPath).collect(Collectors.toSet()));
         fs.scan().forEach(x->{
@@ -628,7 +631,7 @@ public class WorkspaceService {
             File folder = stack.pop();
             if (folder.isDirectory()) {
                 if (isScanEnabled(folder)) {
-                    NutsTextManager text = session.text();
+                    NutsTexts text = NutsTexts.of(session);
                     ProjectConfig p2 = new ProjectService(appContext, config.getDefaultRepositoryAddress(), new ProjectConfig().setPath(folder.getPath())
                     ).rebuildProjectMetadata();
                     if (p2.getTechnologies().size() > 0) {
@@ -741,9 +744,10 @@ public class WorkspaceService {
         Path ni = folder.resolve(".nuts-info");
         Map p = null;
         boolean scan = true;
+        NutsSession session = appContext.getSession();
         if (Files.isRegularFile(ni)) {
             try {
-                p = appContext.getSession().elem().setContentType(NutsContentType.JSON).parse(ni, Map.class);
+                p = NutsElements.of(session).json().parse(ni, Map.class);
                 String v = p.get(SCAN) == null ? null : String.valueOf(p.get(SCAN));
                 if (v == null || "false".equals(v.trim())) {
                     scan = false;
@@ -758,7 +762,7 @@ public class WorkspaceService {
                 p = new Properties();
             }
             p.put(SCAN, enable);
-            appContext.getSession().elem().setContentType(NutsContentType.JSON).setValue(p).print(ni);
+            NutsElements.of(session).json().setValue(p).print(ni);
         }
     }
 
@@ -768,7 +772,8 @@ public class WorkspaceService {
         Map p = null;
         if (ni.isFile()) {
             try {
-                p = appContext.getSession().elem().setContentType(NutsContentType.JSON).parse(ni, Map.class);
+                NutsSession session = appContext.getSession();
+                p = NutsElements.of(session).json().parse(ni, Map.class);
                 String v = p.get(SCAN) == null ? null : String.valueOf(p.get(SCAN));
                 if (v == null || "false".equals(v.trim())) {
                     scan = false;

@@ -1,6 +1,7 @@
 package net.thevpc.nuts.runtime.core.format;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.spi.NutsSupportLevelContext;
 
 import java.io.*;
 import java.util.Map;
@@ -20,8 +21,8 @@ public class DefaultNutsExecCommandFormat extends DefaultFormatBase<NutsExecComm
     private boolean redirectError=true;
     private NutsExecCommand value;
 
-    public DefaultNutsExecCommandFormat(NutsWorkspace ws) {
-        super(ws, "exec-command");
+    public DefaultNutsExecCommandFormat(NutsSession session) {
+        super(session, "exec-command");
     }
 
     @Override
@@ -249,5 +250,8 @@ public class DefaultNutsExecCommandFormat extends DefaultFormatBase<NutsExecComm
         return false;
     }
 
-
+    @Override
+    public int getSupportLevel(NutsSupportLevelContext<Object> context) {
+        return DEFAULT_SUPPORT;
+    }
 }

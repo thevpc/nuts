@@ -75,7 +75,7 @@ public class DefaultNutsWorkspaceSecurityModel {
 
     protected NutsLogger _LOG(NutsSession session) {
         if (LOG == null) {
-            LOG = session.log().setSession(session).of(DefaultNutsWorkspaceSecurityModel.class);
+            LOG = NutsLogger.of(DefaultNutsWorkspaceSecurityModel.class,session);
         }
         return LOG;
     }

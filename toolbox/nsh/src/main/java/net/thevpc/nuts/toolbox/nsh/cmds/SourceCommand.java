@@ -29,7 +29,8 @@ import net.thevpc.nuts.NutsArgument;
 import net.thevpc.nuts.NutsCommandLine;
 import net.thevpc.nuts.NutsPath;
 import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.spi.NutsSingleton;
+import net.thevpc.nuts.spi.NutsComponentScope;
+import net.thevpc.nuts.spi.NutsComponentScopeType;
 import net.thevpc.nuts.toolbox.nsh.SimpleNshBuiltin;
 import net.thevpc.nuts.toolbox.nsh.bundles.jshell.JShellContext;
 
@@ -39,7 +40,7 @@ import java.util.List;
 /**
  * Created by vpc on 1/7/17.
  */
-@NutsSingleton
+@NutsComponentScope(NutsComponentScopeType.WORKSPACE)
 public class SourceCommand extends SimpleNshBuiltin {
 
     public SourceCommand() {
@@ -79,8 +80,8 @@ public class SourceCommand extends SimpleNshBuiltin {
                     }
                 }
                 if (!NutsPath.of(file, session).isFile()) {
-                    if (NutsPath.of(context.getRootContext().getCwd(),session).resolve(file).isFile()) {
-                        file = NutsPath.of(context.getRootContext().getCwd(),session).resolve(file).toString();
+                    if (NutsPath.of(context.getRootContext().getCwd(), session).resolve(file).isFile()) {
+                        file = NutsPath.of(context.getRootContext().getCwd(), session).resolve(file).toString();
                     }
                 }
                 if (NutsPath.of(file, session).isFile()) {
@@ -96,7 +97,7 @@ public class SourceCommand extends SimpleNshBuiltin {
 //        c2.setArgs(context.getArgs());
         JShellContext c2 = context.getExecutionContext().getShellContext();
         for (NutsPath goodFile : goodFiles) {
-            JShellContext c=context.getShell().createInlineContext(c2,goodFile.toString(),context.getArgs());
+            JShellContext c = context.getShell().createInlineContext(c2, goodFile.toString(), context.getArgs());
             context.getShell().executeServiceFile(c, false);
         }
     }

@@ -9,8 +9,8 @@ public class NutsDependencyFilterParser extends NutsTypedFiltersParser<NutsDepen
     }
 
     @Override
-    protected NutsDependencyFilterManager getTManager() {
-        return getSession().filters().dependency();
+    protected NutsDependencyFilters getTManager() {
+        return NutsDependencyFilters.of(getSession());
     }
 
     protected NutsDependencyFilter wordToPredicate(String word){

@@ -26,17 +26,12 @@
 */
 package net.thevpc.nuts.toolbox.nsh.test;
 
-import net.thevpc.nuts.Nuts;
-import net.thevpc.nuts.NutsMemoryPrintStream;
-import net.thevpc.nuts.NutsPath;
-import net.thevpc.nuts.NutsSession;
+import net.thevpc.nuts.*;
 import net.thevpc.nuts.toolbox.nsh.bundles.jshell.JShell;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayInputStream;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 
 /**
  *
@@ -46,20 +41,20 @@ public class TestExportVar {
     @Test
     public void testVars1() {
         NutsSession ws = TestUtils.openNewTestWorkspace("--verbose");
-        NutsPath tempFolder = ws.io().tmp().createTempFolder();
+        NutsPath tempFolder = NutsTmp.of(ws).createTempFolder();
         NutsPath a = tempFolder.resolve("a.nsh");
         NutsPath b = tempFolder.resolve("b.nsh");
         System.out.println("----------------------------------------------");
-        ws.io().copy().from("echo 'run a' ; a=1; echo a0=$a ; source b.nsh ; echo 'back-to a' ; echo a1=$a ; echo b1=$b".getBytes()).to(a).run();
-        ws.io().copy().from("echo 'run b' ; echo a2=$a ; a=2; b=3 ; echo a2=$a ; echo b2=$b".getBytes()).to(b).run();
+        NutsCp.of(ws).from("echo 'run a' ; a=1; echo a0=$a ; source b.nsh ; echo 'back-to a' ; echo a1=$a ; echo b1=$b".getBytes()).to(a).run();
+        NutsCp.of(ws).from("echo 'run b' ; echo a2=$a ; a=2; b=3 ; echo a2=$a ; echo b2=$b".getBytes()).to(b).run();
         JShell c = new JShell(ws,new String[]{a.toString()});
         NutsSession session = c.getRootContext().getSession();
-        NutsMemoryPrintStream out = session.io().createMemoryPrintStream();
+        NutsMemoryPrintStream out = NutsMemoryPrintStream.of(session);
         session.setTerminal(
-                session.term().createTerminal(
+                NutsSessionTerminal.of(
                         new ByteArrayInputStream(new byte[0]),
                         out,
-                        out
+                        out,session
                 )
         );
         c.getRootContext().setCwd(tempFolder.toString());

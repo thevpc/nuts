@@ -274,7 +274,7 @@ public class ShNutsShellHelper extends AbstractNixNutsShellHelper {
             options=new NutsCommandLineShellOptions();
         }
         if(options.getSession()==null){
-            throw new IllegalArgumentException("missing session");
+            throw new NutsMissingSessionException();
         }
         NutsCommandLineFormatStrategy s = options.getFormatStrategy();
         if(s==null|| s==NutsCommandLineFormatStrategy.DEFAULT){

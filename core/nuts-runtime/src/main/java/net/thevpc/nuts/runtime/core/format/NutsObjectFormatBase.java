@@ -6,6 +6,7 @@
 package net.thevpc.nuts.runtime.core.format;
 
 import net.thevpc.nuts.NutsObjectFormat;
+import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.NutsWorkspace;
 import net.thevpc.nuts.NutsCommandLine;
 
@@ -18,8 +19,8 @@ public abstract class NutsObjectFormatBase extends DefaultFormatBase<NutsObjectF
 
     private Object value;
 
-    public NutsObjectFormatBase(NutsWorkspace ws, String name) {
-        super(ws, name);
+    public NutsObjectFormatBase(NutsSession session, String name) {
+        super(session, name);
     }
 
     @Override

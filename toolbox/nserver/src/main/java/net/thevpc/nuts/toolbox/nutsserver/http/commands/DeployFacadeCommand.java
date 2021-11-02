@@ -1,9 +1,6 @@
 package net.thevpc.nuts.toolbox.nutsserver.http.commands;
 
-import net.thevpc.nuts.NutsBlankable;
-import net.thevpc.nuts.NutsDescriptor;
-import net.thevpc.nuts.NutsId;
-import net.thevpc.nuts.NutsUtilStrings;
+import net.thevpc.nuts.*;
 import net.thevpc.nuts.toolbox.nutsserver.AbstractFacadeCommand;
 import net.thevpc.nuts.toolbox.nutsserver.FacadeCommandContext;
 import net.thevpc.nuts.toolbox.nutsserver.util.ItemStreamInfo;
@@ -28,7 +25,8 @@ public class DeployFacadeCommand extends AbstractFacadeCommand {
             context.sendError(400, "invalid JShellCommandNode arguments : " + getName() + " . invalid format.");
             return;
         }
-        MultipartStreamHelper stream = new MultipartStreamHelper(context.getRequestBody(), boundary,context.getSession());
+        NutsSession session = context.getSession();
+        MultipartStreamHelper stream = new MultipartStreamHelper(context.getRequestBody(), boundary, session);
         NutsDescriptor descriptor = null;
         String receivedContentHash = null;
         InputStream content = null;
@@ -38,28 +36,28 @@ public class DeployFacadeCommand extends AbstractFacadeCommand {
             switch (name) {
                 case "descriptor":
                     try {
-                        descriptor = context.getSession().descriptor().parser()
-                                .setSession(context.getSession()).parse(info.getContent());
+                        descriptor = NutsDescriptorParser.of(session)
+                                .setSession(session).parse(info.getContent());
                     } finally {
                         info.getContent().close();
                     }
                     break;
                 case "content-hash":
                     try {
-                        receivedContentHash = context.getSession().io().hash().setSource(info.getContent()).computeString();
+                        receivedContentHash = NutsHash.of(session).setSource(info.getContent()).computeString();
                     } finally {
                         info.getContent().close();
                     }
                     break;
                 case "content":
-                    contentFile = context.getSession().io().tmp()
-                            .setSession(context.getSession())
+                    contentFile = NutsTmp.of(session)
+                            .setSession(session)
                             .createTempFile(
-                            context.getSession().locations().getDefaultIdFilename(
+                            session.locations().getDefaultIdFilename(
                                     descriptor.getId().builder().setFaceDescriptor().build()
                             )).toString();
-                    context.getSession().io().copy()
-                            .setSession(context.getSession())
+                    NutsCp.of(session)
+                            .setSession(session)
                             .setSource(info.getContent())
                             .setTarget(contentFile)
                             .run();
@@ -69,10 +67,10 @@ public class DeployFacadeCommand extends AbstractFacadeCommand {
         if (contentFile == null) {
             context.sendError(400, "invalid JShellCommandNode arguments : " + getName() + " : missing file");
         }
-        NutsId id = context.getSession().deploy().setContent(contentFile)
+        NutsId id = session.deploy().setContent(contentFile)
                 .setSha1(receivedContentHash)
                 .setDescriptor(descriptor)
-                .setSession(context.getSession().copy())
+                .setSession(session.copy())
                 .getResult()[0];
 //                NutsId id = workspace.deploy(content, descriptor, null);
         context.sendResponseText(200, id.toString());

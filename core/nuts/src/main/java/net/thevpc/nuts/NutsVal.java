@@ -32,7 +32,6 @@ package net.thevpc.nuts;
  * @see net.thevpc.nuts.NutsArgument
  * @see net.thevpc.nuts.NutsBootManager
  * @see net.thevpc.nuts.NutsWorkspaceEnvManager
- * @see net.thevpc.nuts.NutsUtilManager
  */
 public interface NutsVal extends NutsBlankable {
     /**
@@ -42,7 +41,7 @@ public interface NutsVal extends NutsBlankable {
      * @return a wrapped instance for the given value
      */
     static NutsVal of(Object value, NutsSession session) {
-        return session.util().valOf(value);
+        return NutsVals.of(session).of(value);
     }
 
     /**

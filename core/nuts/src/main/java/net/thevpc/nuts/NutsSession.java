@@ -124,71 +124,6 @@ public interface NutsSession extends NutsCommandLineConfigurable {
 
     NutsSession setBot(Boolean bot);
 
-//    /**
-//     * equivalent to {@code setTrace(false)}
-//     *
-//     * @return {@code this} instance
-//     */
-//    NutsSession setSilent();
-//    /**
-//     * true if force flag is armed. some operations may require user
-//     * confirmation before performing critical operations such as overriding
-//     * existing values, deleting sensitive information ; in such cases, arming
-//     * force flag will provide an implicit confirmation.
-//     *
-//     * @return true if force flag is armed.
-//     */
-//    boolean isForce();
-//    /**
-//     * change force flag value. some operations may require user confirmation
-//     * before performing critical operations such as overriding existing values,
-//     * deleting sensitive information ; in such cases, arming force flag will
-//     * provide an implicit confirmation.
-//     *
-//     * @param enable if true force flag is armed
-//     * @return {@code this} instance
-//     */
-//    NutsSession setForce(Boolean enable);
-//
-//    /**
-//     * equivalent to {@code setAsk(true)}
-//     *
-//     * @return {@code this} instance
-//     */
-//    NutsSession ask();
-//    /**
-//     * equivalent to {@code setConfirm(enable?ASK:null)}
-//     *
-//     * @param enable new value
-//     * @return {@code this} instance
-//     */
-//    NutsSession setAsk(boolean enable);
-//    /**
-//     * change YES flag value. some operations may require user confirmation
-//     * before performing critical operations such as overriding existing values,
-//     * deleting sensitive information ; in such cases, arming yes flag will
-//     * provide an implicit confirmation.
-//     *
-//     * @param enable if true yes flag is armed
-//     * @return {@code this} instance
-//     */
-//    NutsSession setYes(boolean enable);
-//
-//    /**
-//     * equivalent to {@code setYes(true)}
-//     *
-//     * @return {@code this} instance
-//     */
-//    NutsSession yes();
-//
-//    /**
-//     * equivalent to {@code setYes(enable)}
-//     *
-//     * @param enable new value
-//     * @return {@code this} instance
-//     */
-//    NutsSession yes(boolean enable);
-
     /**
      * true if YES is armed.
      *
@@ -196,31 +131,6 @@ public interface NutsSession extends NutsCommandLineConfigurable {
      * @since 0.5.7
      */
     boolean isYes();
-
-//    /**
-//     * change no flag value. some operations may require user confirmation
-//     * before performing critical operations such as overriding existing values,
-//     * deleting sensitive information ; in such cases, arming no flag will
-//     * provide an implicit negative confirmation.
-//     *
-//     * @param enable if true NO flag is armed
-//     * @return {@code this} instance
-//     */
-//    NutsSession setNo(boolean enable);
-//    /**
-//     * equivalent to {@code setNo(true)}
-//     *
-//     * @return {@code this} instance
-//     */
-//    NutsSession no();
-//
-//    /**
-//     * equivalent to {@code setNo(enable)}
-//     *
-//     * @param enable new value
-//     * @return {@code this} instance
-//     */
-//    NutsSession no(boolean enable);
 
     /**
      * true if NO is armed.
@@ -735,13 +645,6 @@ public interface NutsSession extends NutsCommandLineConfigurable {
     /**
      *
      * @since 0.8.3
-     * @return new apps manager instance
-     */
-    NutsWorkspaceAppsManager apps();
-
-    /**
-     *
-     * @since 0.8.3
      * @return new extension manager instance
      */
     NutsWorkspaceExtensionManager extensions();
@@ -770,54 +673,10 @@ public interface NutsSession extends NutsCommandLineConfigurable {
     /**
      *
      * @since 0.8.3
-     * @return new filter manager instance
-     */
-    NutsFilterManager filters();
-
-    /**
-     *
-     * @since 0.8.3
-     * @return new io manager instance
-     */
-    NutsIOManager io();
-
-    /**
-     *
-     * @since 0.8.3
-     * @return new log manager instance
-     */
-    NutsLogManager log();
-
-    /**
-     *
-     * @since 0.8.3
      * @return new events manager instance
      */
 
     NutsWorkspaceEventManager events();
-
-    /**
-     *
-     * @since 0.8.3
-     * @return new events commandline instance
-     */
-    NutsCommandLineManager commandLine();
-
-    /**
-     * create id format instance
-     *
-     * @return id format
-     * @since 0.8.3
-     */
-    NutsIdManager id();
-
-    /**
-     * create version format instance
-     *
-     * @return version format
-     * @since 0.8.3
-     */
-    NutsVersionManager version();
 
     /**
      * create info format instance
@@ -828,41 +687,11 @@ public interface NutsSession extends NutsCommandLineConfigurable {
     NutsInfoFormat info();
 
     /**
-     * create descriptor format instance
-     *
-     * @return descriptor format
-     * @since 0.8.3
-     */
-    NutsDescriptorManager descriptor();
-
-    /**
-     * return dependency manager
-     *
-     * @return dependency manager
-     * @since 0.8.3
-     */
-    NutsDependencyManager dependency();
-
-    /**
      *
      * @since 0.8.3
      * @return new format manager instance
      */
     NutsFormatManager formats();
-
-    /**
-     *
-     * @since 0.8.3
-     * @return new concurrent manager instance
-     */
-    NutsConcurrentManager concurrent();
-
-    /**
-     *
-     * @since 0.8.3
-     * @return new utilities' manager instance
-     */
-    NutsUtilManager util();
 
     /**
      *
@@ -898,28 +727,6 @@ public interface NutsSession extends NutsCommandLineConfigurable {
      * @return new boot manager instance
      */
     NutsBootManager boot();
-
-    /**
-     *
-     * @since 0.8.3
-     * @return new terminal manager instance
-     */
-    NutsTerminalManager term();
-
-    /**
-     *
-     * @since 0.8.3
-     * @return new text manager instance
-     */
-    NutsTextManager text();
-
-    /**
-     * create element format instance
-     *
-     * @return element format
-     * @since 0.8.3
-     */
-    NutsElementFormat elem();
 
     /**
      * return dependency solver Name

@@ -6,6 +6,7 @@
 package net.thevpc.nuts.core.test.blackbox;
 
 import net.thevpc.nuts.NutsSession;
+import net.thevpc.nuts.NutsVersionFormat;
 import net.thevpc.nuts.core.test.utils.TestUtils;
 import net.thevpc.nuts.NutsOsFamily;
 import net.thevpc.nuts.NutsWorkspace;
@@ -29,13 +30,13 @@ public class Test11_LogTest {
                 "--archetype", "default",
                 "--skip-companions");
 
-        TestUtils.println(ws.version().formatter());
+        TestUtils.println(NutsVersionFormat.of(ws));
         String result = ws.exec()
-                .addExecutorOption("--main-class=Version")
+                //.addExecutorOption("--main-class=Version")
                 .addCommand(
                 //this is an old link, do not change to 'thevpc'
-//                "https://search.maven.org/remotecontent?filepath=net/thevpc/hl/hl/0.1.0/hl-0.1.0.jar",
-                "https://search.maven.org/remotecontent?filepath=junit/junit/4.12/junit-4.12.jar",
+                "https://search.maven.org/remotecontent?filepath=net/thevpc/hl/hl/0.1.0/hl-0.1.0.jar",
+//                "https://search.maven.org/remotecontent?filepath=junit/junit/4.12/junit-4.12.jar",
                 "--version"
         ).setRedirectErrorStream(true).grabOutputString().setFailFast(true).getOutputString();
         TestUtils.println("Result:");

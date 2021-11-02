@@ -9,8 +9,8 @@ public class NutsVersionFilterParser extends NutsTypedFiltersParser<NutsVersionF
     }
 
     @Override
-    protected NutsVersionFilterManager getTManager() {
-        return getSession().filters().version();
+    protected NutsVersionFilters getTManager() {
+        return NutsVersionFilters.of(getSession());
     }
 
     protected NutsVersionFilter wordToPredicate(String word){

@@ -40,7 +40,7 @@ public class NutsIdIdFilter extends AbstractIdFilter implements NutsIdFilter, Si
             return true;
         }
         if(LOG==null){
-            LOG=session.log().of(NutsIdIdFilter.class);
+            LOG=NutsLogger.of(NutsIdIdFilter.class,session);
         }
         if(id.getShortName().equals(filter.getShortName())){
             if (!filter.getVersion().filter().acceptVersion(id.getVersion(), session)) {

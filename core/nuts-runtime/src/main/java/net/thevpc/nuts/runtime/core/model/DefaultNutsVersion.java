@@ -73,7 +73,7 @@ public class DefaultNutsVersion /*extends DefaultNutsTokenFilter*/ implements Nu
 
     @Override
     public NutsFormat formatter() {
-        return session.version().formatter().setVersion(this);
+        return NutsVersionFormat.of(session).setVersion(this);
     }
 
     @Override

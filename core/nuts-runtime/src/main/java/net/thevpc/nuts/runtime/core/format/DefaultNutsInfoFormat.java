@@ -12,10 +12,12 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
-import net.thevpc.nuts.runtime.standalone.solvers.NutsDependencySolvers;
+import net.thevpc.nuts.runtime.standalone.solvers.NutsDependencySolverUtils;
 import net.thevpc.nuts.runtime.standalone.util.NutsJavaSdkUtils;
 import net.thevpc.nuts.runtime.core.util.CoreCommonUtils;
 import net.thevpc.nuts.runtime.core.util.CoreTimeUtils;
+import net.thevpc.nuts.spi.NutsDependencySolver;
+import net.thevpc.nuts.spi.NutsSupportLevelContext;
 
 /**
  * type: Command Class
@@ -31,8 +33,8 @@ public class DefaultNutsInfoFormat extends DefaultFormatBase<NutsInfoFormat> imp
     private Predicate<String> filter = NutsPredicates.always();
     private boolean lenient = false;
 
-    public DefaultNutsInfoFormat(NutsWorkspace ws) {
-        super(ws, "info");
+    public DefaultNutsInfoFormat(NutsSession session) {
+        super(session, "info");
     }
 
     @Override
@@ -264,22 +266,23 @@ public class DefaultNutsInfoFormat extends DefaultFormatBase<NutsInfoFormat> imp
                     } catch (URISyntaxException ex) {
                         s = s.replace(":", "\\:");
                     }
-                    runtimeClassPath.add(ws.io().path(s));
+                    runtimeClassPath.add(NutsPath.of(s,ws));
                 }
             }
         }
 
+        NutsTexts txt = NutsTexts.of(ws);
         props.put("nuts-runtime-classpath",
-                ws.text().builder().appendJoined(";",runtimeClassPath)
+                txt.builder().appendJoined(";",runtimeClassPath)
         );
-        props.put("nuts-workspace-id", ws.text().ofStyled(stringValue(ws.getWorkspace().getUuid()),NutsTextStyle.path()));
+        props.put("nuts-workspace-id", txt.ofStyled(stringValue(ws.getWorkspace().getUuid()),NutsTextStyle.path()));
         props.put("nuts-store-layout", ws.locations().getStoreLocationLayout());
         props.put("nuts-store-strategy", ws.locations().getStoreLocationStrategy());
         props.put("nuts-repo-store-strategy", ws.locations().getRepositoryStoreLocationStrategy());
         props.put("nuts-global", options.isGlobal());
-        props.put("nuts-workspace", ws.io().path(ws.locations().getWorkspaceLocation()));
+        props.put("nuts-workspace", ws.locations().getWorkspaceLocation());
         for (NutsStoreLocation folderType : NutsStoreLocation.values()) {
-            props.put("nuts-workspace-" + folderType.id(), ws.io().path(ws.locations().getStoreLocation(folderType)));
+            props.put("nuts-workspace-" + folderType.id(), ws.locations().getStoreLocation(folderType));
         }
         props.put("nuts-open-mode", (options.getOpenMode() == null ? NutsOpenMode.OPEN_OR_CREATE : options.getOpenMode()));
         props.put("nuts-secure", (ws.security().isSecure()));
@@ -293,38 +296,38 @@ public class DefaultNutsInfoFormat extends DefaultFormatBase<NutsInfoFormat> imp
         props.put("nuts-skip-companions", options.isSkipCompanions());
         props.put("nuts-skip-welcome", options.isSkipWelcome());
         props.put("nuts-skip-boot", options.isSkipBoot());
-        String ds = NutsDependencySolvers.resolveSolverName(options.getDependencySolver());
-        String[] allDs = ws.dependency().getSolverNames();
+        String ds = NutsDependencySolverUtils.resolveSolverName(options.getDependencySolver());
+        String[] allDs = NutsDependencySolver.getSolverNames(ws);
         props.put("nuts-solver",
-                ws.text().ofStyled(
+                txt.ofStyled(
                         ds,
-                        Arrays.stream(allDs).map(x->NutsDependencySolvers.resolveSolverName(x))
+                        Arrays.stream(allDs).map(x-> NutsDependencySolverUtils.resolveSolverName(x))
                                 .anyMatch(x->x.equals(ds))
                         ?NutsTextStyle.keyword() : NutsTextStyle.error())
                 );
         props.put("nuts-solver-list",
-                ws.text().builder().appendJoined(";",
+                txt.builder().appendJoined(";",
                         Arrays.stream(allDs)
-                                .map(x->ws.text().ofStyled(x,NutsTextStyle.keyword()))
+                                .map(x-> txt.ofStyled(x,NutsTextStyle.keyword()))
                                 .collect(Collectors.toList())
                 )
 
         );
-        props.put("java-version", ws.version().parser().parse(System.getProperty("java.version")));
+        props.put("java-version", NutsVersion.of(System.getProperty("java.version"),ws));
         props.put("platform", ws.env().getPlatform());
-        props.put("java-home", ws.io().path(System.getProperty("java.home")));
-        props.put("java-executable", ws.io().path(NutsJavaSdkUtils.of(ws).resolveJavaCommandByHome(null, getSession())));
+        props.put("java-home", NutsPath.of(System.getProperty("java.home"),ws));
+        props.put("java-executable", NutsPath.of(NutsJavaSdkUtils.of(ws).resolveJavaCommandByHome(null, getSession()),ws));
         props.put("java-classpath",
-                ws.text().builder().appendJoined(";",
+                txt.builder().appendJoined(";",
                         Arrays.stream(System.getProperty("java.class.path").split(File.pathSeparator))
-                                .map(x->ws.io().path(x))
+                                .map(x->NutsPath.of(x,ws))
                                 .collect(Collectors.toList())
                         )
         );
         props.put("java-library-path",
-                ws.text().builder().appendJoined(";",
+                txt.builder().appendJoined(";",
                         Arrays.stream(System.getProperty("java.library.path").split(File.pathSeparator))
-                                .map(x->ws.io().path(x))
+                                .map(x->NutsPath.of(x,ws))
                                 .collect(Collectors.toList())
                 )
         );
@@ -336,16 +339,16 @@ public class DefaultNutsInfoFormat extends DefaultFormatBase<NutsInfoFormat> imp
         props.put("os-arch", ws.env().getArchFamily());
         props.put("os-shell", ws.env().getShellFamily());
         props.put("user-name", stringValue(System.getProperty("user.name")));
-        props.put("user-home", ws.io().path(System.getProperty("user.home")));
-        props.put("user-dir", ws.io().path(System.getProperty("user.dir")));
+        props.put("user-home", NutsPath.of(System.getProperty("user.home"),ws));
+        props.put("user-dir", NutsPath.of(System.getProperty("user.dir"),ws));
         props.put("command-line-long",
                 ws.boot().getBootOptions().formatter().setCompact(false).getBootCommandLine()
         );
         props.put("command-line-short", ws.boot().getBootOptions().formatter().setCompact(true).getBootCommandLine());
         props.put("inherited", ws.boot().getBootOptions().isInherited());
         // nuts-boot-args must always be parsed in bash format
-        props.put("inherited-nuts-boot-args", ws.commandLine().setCommandlineFamily(NutsShellFamily.SH).parse(System.getProperty("nuts.boot.args")).format());
-        props.put("inherited-nuts-args", ws.commandLine().parse(System.getProperty("nuts.args"))
+        props.put("inherited-nuts-boot-args", NutsCommandLine.parse(System.getProperty("nuts.boot.args"),NutsShellFamily.SH,ws).format());
+        props.put("inherited-nuts-args", NutsCommandLine.parse(System.getProperty("nuts.args"),NutsShellFamily.SH,ws)
                 .format()
         );
         props.put("creation-started", Instant.ofEpochMilli(ws.boot().getCreationStartTimeMillis()));
@@ -374,7 +377,7 @@ public class DefaultNutsInfoFormat extends DefaultFormatBase<NutsInfoFormat> imp
         props.put(key(prefix, "uuid"), stringValue(repo.getUuid()));
         props.put(key(prefix, "type"),
                 //display as enum
-                ws.text().ofStyled(repo.config().getType(),NutsTextStyle.option())
+                NutsTexts.of(ws).ofStyled(repo.config().getType(),NutsTextStyle.option())
                 );
         props.put(key(prefix, "speed"), (repo.config().getSpeed()));
         props.put(key(prefix, "enabled"), (repo.config().isEnabled()));
@@ -386,9 +389,9 @@ public class DefaultNutsInfoFormat extends DefaultFormatBase<NutsInfoFormat> imp
         }
         props.put(key(prefix, "deploy-order"), (repo.config().getDeployWeight()));
         props.put(key(prefix, "store-location-strategy"), (repo.config().getStoreLocationStrategy()));
-        props.put(key(prefix, "store-location"), getSession().io().path(repo.config().getStoreLocation()));
+        props.put(key(prefix, "store-location"), NutsPath.of(repo.config().getStoreLocation(),getSession()));
         for (NutsStoreLocation value : NutsStoreLocation.values()) {
-            props.put(key(prefix, "store-location-" + value.id()), getSession().io().path(repo.config().getStoreLocation(value)));
+            props.put(key(prefix, "store-location-" + value.id()), NutsPath.of(repo.config().getStoreLocation(value),getSession()));
         }
         props.put(key(prefix, "supported-mirroring"), (repo.config().isSupportedMirroring()));
         if (repo.config().isSupportedMirroring()) {
@@ -413,7 +416,7 @@ public class DefaultNutsInfoFormat extends DefaultFormatBase<NutsInfoFormat> imp
     }
 
     private String stringValue(Object s) {
-        return getSession().text().builder().append(CoreCommonUtils.stringValue(s)).toString();
+        return NutsTexts.of(getSession()).builder().append(CoreCommonUtils.stringValue(s)).toString();
     }
 
     public boolean isLenient() {
@@ -465,4 +468,9 @@ public class DefaultNutsInfoFormat extends DefaultFormatBase<NutsInfoFormat> imp
             return data;
         }
     }
+    @Override
+    public int getSupportLevel(NutsSupportLevelContext<Object> context) {
+        return DEFAULT_SUPPORT;
+    }
+
 }

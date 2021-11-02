@@ -1,9 +1,6 @@
 package net.thevpc.nuts.runtime.core.filters;
 
-import net.thevpc.nuts.NutsFilter;
-import net.thevpc.nuts.NutsFilterOp;
-import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.NutsWorkspace;
+import net.thevpc.nuts.*;
 
 public abstract class AbstractNutsFilter implements NutsFilter {
 
@@ -39,27 +36,27 @@ public abstract class AbstractNutsFilter implements NutsFilter {
 
     @Override
     public NutsFilter or(NutsFilter other) {
-        return other == null ? this : getSession().filters().any(this, other);
+        return other == null ? this : NutsFilters.of(getSession()).any(this, other);
     }
 
     @Override
     public NutsFilter and(NutsFilter other) {
-        return other == null ? this : getSession().filters().all(this, other);
+        return other == null ? this : NutsFilters.of(getSession()).all(this, other);
     }
 
     @Override
     public NutsFilter neg() {
-        return getSession().filters().not(this);
+        return NutsFilters.of(getSession()).not(this);
     }
 
     @Override
     public <T extends NutsFilter> T to(Class<T> type) {
-        return getSession().filters().to(type, this);
+        return NutsFilters.of(getSession()).to(type, this);
     }
 
     @Override
     public Class<? extends NutsFilter> getFilterType() {
-        return getSession().filters().detectType(this);
+        return NutsFilters.of(getSession()).detectType(this);
     }
 
     @Override

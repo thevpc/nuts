@@ -56,7 +56,7 @@ public class LocalMysqlConfigService {
 
     public LocalMysqlConfigService saveConfig() {
         Path f = getServerConfigPath();
-        context.getSession().elem().setNtf(false).setContentType(NutsContentType.JSON).setValue(config).print(f);
+        NutsElements.of(context.getSession()).setNtf(false).json().setValue(config).print(f);
         return this;
     }
 
@@ -88,8 +88,9 @@ public class LocalMysqlConfigService {
     public LocalMysqlConfigService loadConfig() {
         String name = getName();
         Path f = getServerConfigPath();
+        NutsSession session = context.getSession();
         if (Files.exists(f)) {
-            config = context.getSession().elem().setContentType(NutsContentType.JSON).parse(f, LocalMysqlConfig.class);
+            config = NutsElements.of(session).json().parse(f, LocalMysqlConfig.class);
             return this;
         } else if ("default".equals(name)) {
             //auto create default config
@@ -97,7 +98,7 @@ public class LocalMysqlConfigService {
             saveConfig();
             return this;
         }
-        throw new NutsIllegalArgumentException(context.getSession(),NutsMessage.cstyle("no such mysql config : %s",name));
+        throw new NutsIllegalArgumentException(session,NutsMessage.cstyle("no such mysql config : %s",name));
     }
 
     public LocalMysqlConfigService removeConfig() {
@@ -110,7 +111,8 @@ public class LocalMysqlConfigService {
     }
 
     public LocalMysqlConfigService write(PrintStream out) {
-        context.getSession().elem().setContentType(NutsContentType.JSON).setValue(getConfig()).setNtf(false).print(out);
+        NutsSession session = context.getSession();
+        NutsElements.of(session).json().setValue(getConfig()).setNtf(false).print(out);
         return this;
     }
 

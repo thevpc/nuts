@@ -59,7 +59,7 @@ public class NutsSettingsDeleteFoldersSubCommand extends AbstractNutsSettingsSub
     private void deleteWorkspaceFolder(NutsSession session, NutsStoreLocation folder, boolean force) {
         String sstoreLocation = session.locations().getStoreLocation(folder);
         if (sstoreLocation != null) {
-            NutsTextManager factory = session.text();
+            NutsTexts factory = NutsTexts.of(session);
             Path storeLocation = Paths.get(sstoreLocation);
             if (Files.exists(storeLocation)) {
                 session.out().printf("```error deleting``` %s for workspace %s folder %s ...%n",
@@ -88,7 +88,7 @@ public class NutsSettingsDeleteFoldersSubCommand extends AbstractNutsSettingsSub
         String sstoreLocation = session.locations().getStoreLocation(folder);
         if (sstoreLocation != null) {
             Path storeLocation=Paths.get(sstoreLocation);
-            NutsTextManager factory = session.text();
+            NutsTexts factory = NutsTexts.of(session);
             if (Files.exists(storeLocation)) {
                 session.out().printf("```error deleting``` %s for repository %s folder %s ...%n",
                         factory.ofStyled(folder.id(),NutsTextStyle.primary1()),
@@ -137,7 +137,7 @@ public class NutsSettingsDeleteFoldersSubCommand extends AbstractNutsSettingsSub
         if (s != null) {
             if (Files.exists(s)) {
                 session.out().printf("```error deleting``` %s folder %s ...%n",
-                        session.text().ofStyled("cache",NutsTextStyle.primary1())
+                        NutsTexts.of(session).ofStyled("cache",NutsTextStyle.primary1())
                         ,s);
                 if (force
                         || session.getTerminal().ask()

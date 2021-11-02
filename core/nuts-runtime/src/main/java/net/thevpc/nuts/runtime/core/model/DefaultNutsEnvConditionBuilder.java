@@ -30,6 +30,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.bundles.common.MapToFunction;
 import net.thevpc.nuts.runtime.core.util.CoreArrayUtils;
 import net.thevpc.nuts.runtime.core.util.CoreNutsUtils;
+import net.thevpc.nuts.spi.NutsSupportLevelContext;
 
 import java.util.*;
 import java.util.function.Function;
@@ -307,5 +308,10 @@ public class DefaultNutsEnvConditionBuilder implements NutsEnvConditionBuilder {
         this.setPlatform(CoreNutsUtils.applyStringProperties(getPlatform(), map));
         this.setDesktopEnvironment(CoreNutsUtils.applyStringProperties(getDesktopEnvironment(), map));
         return this;
+    }
+
+    @Override
+    public int getSupportLevel(NutsSupportLevelContext<Object> context) {
+        return DEFAULT_SUPPORT;
     }
 }

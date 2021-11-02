@@ -1,5 +1,6 @@
 package net.thevpc.nuts.toolbox.nutsserver.http.commands;
 
+import net.thevpc.nuts.NutsPrintStream;
 import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.NutsTerminalMode;
 import net.thevpc.nuts.NutsWorkspace;
@@ -57,7 +58,7 @@ public class ExecFacadeCommand extends AbstractFacadeCommand {
         }
         NutsSession session = context.getSession();
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        session.getTerminal().setOut(session.io().createPrintStream(out, NutsTerminalMode.FILTERED));
+        session.getTerminal().setOut(NutsPrintStream.of(out, NutsTerminalMode.FILTERED,session));
         session.getTerminal().setIn(new ByteArrayInputStream(new byte[0]));
 
         int result = session.exec()

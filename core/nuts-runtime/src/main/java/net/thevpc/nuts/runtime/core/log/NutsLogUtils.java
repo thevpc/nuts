@@ -2,6 +2,7 @@ package net.thevpc.nuts.runtime.core.log;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.AbstractNutsWorkspace;
+import net.thevpc.nuts.runtime.core.NutsWorkspaceExt;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -172,7 +173,7 @@ public class NutsLogUtils {
             session=((NutsLogRecord) record).getSession();
         }
         if(session==null){
-            session=((AbstractNutsWorkspace)ws).defaultSession();
+            session=NutsWorkspaceExt.of(ws).defaultSession();
         }
         return session;
     }

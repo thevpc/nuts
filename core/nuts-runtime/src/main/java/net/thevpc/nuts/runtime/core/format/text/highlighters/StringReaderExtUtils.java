@@ -6,13 +6,13 @@ import net.thevpc.nuts.runtime.bundles.parsers.StringReaderExt;
 import java.util.ArrayList;
 import java.util.List;
 import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.NutsTextManager;
+import net.thevpc.nuts.NutsTexts;
 import net.thevpc.nuts.NutsText;
 
 public class StringReaderExtUtils {
 
     public static NutsText[] readSpaces(NutsSession session, StringReaderExt ar) {
-        NutsTextManager factory = session.text();
+        NutsTexts factory = NutsTexts.of(session);
         StringBuilder sb = new StringBuilder();
         while (ar.hasNext() && ar.peekChar() <= 32) {
             sb.append(ar.nextChar());
@@ -23,7 +23,7 @@ public class StringReaderExtUtils {
     }
 
     public static NutsText[] readSlashSlashComments(NutsSession session, StringReaderExt ar) {
-        NutsTextManager factory = session.text();
+        NutsTexts factory = NutsTexts.of(session);
         StringBuilder sb = new StringBuilder();
         if (!ar.peekChars("//")) {
             return null;
@@ -52,7 +52,7 @@ public class StringReaderExtUtils {
     }
 
     public static NutsText[] readSlashStarComments(NutsSession session, StringReaderExt ar) {
-        NutsTextManager factory = session.text();
+        NutsTexts factory = NutsTexts.of(session);
         StringBuilder sb = new StringBuilder();
         if (!ar.peekChars("/*")) {
             return null;
@@ -81,7 +81,7 @@ public class StringReaderExtUtils {
     }
 
     public static NutsText[] readJSDoubleQuotesString(NutsSession session, StringReaderExt ar) {
-        NutsTextManager factory = session.text();
+        NutsTexts factory = NutsTexts.of(session);
         List<NutsText> all = new ArrayList<>();
         boolean inLoop = true;
         StringBuilder sb = new StringBuilder();
@@ -131,7 +131,7 @@ public class StringReaderExtUtils {
     }
 
     public static NutsText[] readJSSimpleQuotes(NutsSession session, StringReaderExt ar) {
-        NutsTextManager factory = session.text();
+        NutsTexts factory = NutsTexts.of(session);
         List<NutsText> all = new ArrayList<>();
         boolean inLoop = true;
         StringBuilder sb = new StringBuilder();
@@ -181,7 +181,7 @@ public class StringReaderExtUtils {
     }
 
     public static NutsText[] readJSIdentifier(NutsSession session, StringReaderExt ar) {
-        NutsTextManager factory = session.text();
+        NutsTexts factory = NutsTexts.of(session);
         List<NutsText> all = new ArrayList<>();
         StringBuilder sb = new StringBuilder();
         if (!ar.hasNext() || !Character.isJavaIdentifierStart(ar.peekChar())) {
@@ -201,7 +201,7 @@ public class StringReaderExtUtils {
     }
 
     public static NutsText[] readNumber(NutsSession session, StringReaderExt ar) {
-        NutsTextManager factory = session.text();
+        NutsTexts factory = NutsTexts.of(session);
         boolean nbrVisited = false;
         boolean minusVisited = false;
         boolean EminusVisited = false;

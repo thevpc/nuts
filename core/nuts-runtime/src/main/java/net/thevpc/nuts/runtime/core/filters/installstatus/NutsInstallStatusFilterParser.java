@@ -1,9 +1,8 @@
 package net.thevpc.nuts.runtime.core.filters.installstatus;
 
 import net.thevpc.nuts.NutsInstallStatusFilter;
-import net.thevpc.nuts.NutsInstallStatusFilterManager;
+import net.thevpc.nuts.NutsInstallStatusFilters;
 import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.NutsWorkspace;
 import net.thevpc.nuts.runtime.core.filters.NutsTypedFiltersParser;
 
 public class NutsInstallStatusFilterParser extends NutsTypedFiltersParser<NutsInstallStatusFilter> {
@@ -12,8 +11,8 @@ public class NutsInstallStatusFilterParser extends NutsTypedFiltersParser<NutsIn
     }
 
     @Override
-    protected NutsInstallStatusFilterManager getTManager() {
-        return getSession().filters().installStatus();
+    protected NutsInstallStatusFilters getTManager() {
+        return NutsInstallStatusFilters.of(getSession());
     }
 
     protected NutsInstallStatusFilter wordToPredicate(String word){

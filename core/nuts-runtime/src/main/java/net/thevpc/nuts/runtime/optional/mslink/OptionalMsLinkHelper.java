@@ -1,6 +1,7 @@
 package net.thevpc.nuts.runtime.optional.mslink;
 
 import net.thevpc.nuts.NutsBlankable;
+import net.thevpc.nuts.NutsCommandLine;
 import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.NutsUtilStrings;
 import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
@@ -49,11 +50,11 @@ public class OptionalMsLinkHelper {
     }
 
     public void write() {
-        String[] cmd = session.commandLine().parse(command).toStringArray();
+        String[] cmd = NutsCommandLine.parse(command,session).toStringArray();
         mslinks.ShellLink se = mslinks.ShellLink.createLink(cmd[0])
                 .setWorkingDir(wd)
-                .setCMDArgs(session.commandLine().create(
-                        Arrays.copyOfRange(cmd, 1, cmd.length)
+                .setCMDArgs(NutsCommandLine.of(
+                        Arrays.copyOfRange(cmd, 1, cmd.length),session
                 ).toString());
 
         if (NutsBlankable.isBlank(icon)) {

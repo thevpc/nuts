@@ -188,11 +188,11 @@ public class CoreNutsUtils {
         }
         String s = child.getValue();
         if (NutsBlankable.isBlank(s)) {
-            return ws.version().parser().parse("");
+            return NutsVersion.of("", ws);
         }
         String s2 = applyStringProperties(s, properties);
         if (!NutsUtilStrings.trim(s2).equals(s)) {
-            return ws.version().parser().parse(s2);
+            return NutsVersion.of(s2, ws);
         }
         return child;
     }
@@ -232,7 +232,7 @@ public class CoreNutsUtils {
 
     public static <T extends NutsFilter> T simplifyFilterOr(NutsSession ws, Class<T> cls, T base, NutsFilter... all) {
         if (all.length == 0) {
-            return (T) ws.filters().always(cls);
+            return NutsFilters.of(ws).always(cls);
         }
         if (all.length == 1) {
             return (T) all[0].simplify();
@@ -245,7 +245,7 @@ public class CoreNutsUtils {
             if (t2 != null) {
                 switch (t2.getFilterOp()) {
                     case TRUE: {
-                        return (T) ws.filters().always(cls);
+                        return NutsFilters.of(ws).always(cls);
                     }
                     case FALSE: {
                         someFalse = true;
@@ -264,9 +264,9 @@ public class CoreNutsUtils {
         }
         if (all2.isEmpty()) {
             if (someFalse) {
-                return (T) ws.filters().never(cls);
+                return NutsFilters.of(ws).never(cls);
             }
-            return (T) ws.filters().always(cls);
+            return NutsFilters.of(ws).always(cls);
         }
         if (all2.size() == 1) {
             return all2.get(0);
@@ -274,12 +274,12 @@ public class CoreNutsUtils {
         if (!updates) {
             return base;
         }
-        return (T) ws.filters().any(cls, all2.toArray((T[]) Array.newInstance(cls, 0)));
+        return NutsFilters.of(ws).any(cls, all2.toArray((T[]) Array.newInstance(cls, 0)));
     }
 
     public static <T extends NutsFilter> T simplifyFilterAnd(NutsSession ws, Class<T> cls, T base, NutsFilter... all) {
         if (all.length == 0) {
-            return (T) ws.filters().always(cls);
+            return NutsFilters.of(ws).always(cls);
         }
         if (all.length == 1) {
             return (T) all[0].simplify();
@@ -291,7 +291,7 @@ public class CoreNutsUtils {
             if (t2 != null) {
                 switch (t2.getFilterOp()) {
                     case FALSE: {
-                        return (T) ws.filters().never(cls);
+                        return NutsFilters.of(ws).never(cls);
                     }
                     case TRUE: {
                         updates = true;
@@ -309,7 +309,7 @@ public class CoreNutsUtils {
             }
         }
         if (all2.size() == 0) {
-            return (T) ws.filters().always(cls);
+            return NutsFilters.of(ws).always(cls);
         }
         if (all2.size() == 1) {
             return all2.get(0);
@@ -317,12 +317,12 @@ public class CoreNutsUtils {
         if (!updates) {
             return base;
         }
-        return (T) ws.filters().all(cls, all2.toArray((T[]) Array.newInstance(cls, 0)));
+        return NutsFilters.of(ws).all(cls, all2.toArray((T[]) Array.newInstance(cls, 0)));
     }
 
     public static <T extends NutsFilter> T simplifyFilterNone(NutsSession ws, Class<T> cls, T base, NutsFilter... all) {
         if (all.length == 0) {
-            return (T) ws.filters().always(cls);
+            return NutsFilters.of(ws).always(cls);
         }
         List<T> all2 = new ArrayList<>();
         boolean updates = false;
@@ -331,7 +331,7 @@ public class CoreNutsUtils {
             if (t2 != null) {
                 switch (t2.getFilterOp()) {
                     case TRUE: {
-                        return (T) ws.filters().never(cls);
+                        return NutsFilters.of(ws).never(cls);
                     }
                     case FALSE: {
                         updates = true;
@@ -349,12 +349,12 @@ public class CoreNutsUtils {
             }
         }
         if (all2.size() == 0) {
-            return (T) ws.filters().always(cls);
+            return NutsFilters.of(ws).always(cls);
         }
         if (!updates) {
             return base;
         }
-        return (T) ws.filters().none(cls, all2.toArray((T[]) Array.newInstance(cls, 0)));
+        return NutsFilters.of(ws).none(cls, all2.toArray((T[]) Array.newInstance(cls, 0)));
     }
 
     public static <T> T[] simplifyAndShrink(Class<T> cls, T... any) {
@@ -431,7 +431,7 @@ public class CoreNutsUtils {
                 props.putAll(parentFaceMap);
             }
             if (modified) {
-                return ws.id().builder().setRepository(repository)
+                return NutsIdBuilder.of(ws).setRepository(repository)
                         .setGroupId(group)
                         .setArtifactId(name)
                         .setVersion(version)
@@ -494,7 +494,7 @@ public class CoreNutsUtils {
         }
         if (def.getInstallInformation() != null) {
             if (def.getInstallInformation().getInstallFolder() != null) {
-                x.put("install-folder", def.getInstallInformation().getInstallFolder().toString());
+                x.put("install-folder", def.getInstallInformation().getInstallFolder());
             }
             x.put("install-status", def.getInstallInformation().getInstallStatus().toString());
             x.put("was-installed", def.getInstallInformation().isWasInstalled());
@@ -507,10 +507,9 @@ public class CoreNutsUtils {
             x.put("repository-uuid", def.getRepositoryUuid());
         }
         if (def.getDescriptor() != null) {
-            x.put("descriptor", session.descriptor().formatter().setValue(def.getDescriptor()).format());
-            x.put("effective-descriptor", session.descriptor().formatter(
-                    NutsWorkspaceUtils.of(session).getEffectiveDescriptor(def)
-            ).format());
+            x.put("descriptor", def.getDescriptor().formatter().setSession(session).format());
+            x.put("effective-descriptor", NutsWorkspaceUtils.of(session).getEffectiveDescriptor(def)
+                    .formatter().setSession(session).format());
         }
         return x;
     }
@@ -673,13 +672,9 @@ public class CoreNutsUtils {
             return true;
         }
         String workspaceName = workspace.trim();
-        if (workspaceName.matches("[^/\\\\]+")
+        return workspaceName.matches("[^/\\\\]+")
                 && !workspaceName.equals(".")
-                && !workspaceName.equals("..")) {
-            return true;
-        } else {
-            return false;
-        }
+                && !workspaceName.equals("..");
     }
 
     public static String resolveValidWorkspaceName(String workspace) {
@@ -737,7 +732,7 @@ public class CoreNutsUtils {
         return c0.equals(c1);
     }
 
-    public static NutsString formatLogValue(NutsTextManager text, Object unresolved, Object resolved) {
+    public static NutsString formatLogValue(NutsTexts text, Object unresolved, Object resolved) {
         NutsString a = desc(unresolved, text);
         NutsString b = desc(resolved, text);
         if (a.equals(b)) {
@@ -752,7 +747,7 @@ public class CoreNutsUtils {
         }
     }
 
-    public static NutsString desc(Object s, NutsTextManager text) {
+    public static NutsString desc(Object s, NutsTexts text) {
         if (s == null || (s instanceof String && ((String) s).isEmpty())) {
             return text.ofStyled("<EMPTY>", NutsTextStyle.option());
         }
@@ -767,9 +762,7 @@ public class CoreNutsUtils {
         if (ex instanceof NutsNotFoundException) {
             if (ex.getCause() != null) {
                 Throwable ex2 = ex.getCause();
-                if (ex2 instanceof NutsFetchModeNotSupportedException) {
-                    return true;
-                }
+                return ex2 instanceof NutsFetchModeNotSupportedException;
             }
         }
         return false;
@@ -804,10 +797,7 @@ public class CoreNutsUtils {
         if (!session.isPlainOut()) {
             return false;
         }
-        if (session.isBot() || !parseProgressOptions(session).isEnabled()) {
-            return false;
-        }
-        return true;
+        return !session.isBot() && parseProgressOptions(session).isEnabled();
     }
 
     public static boolean acceptMonitoring(NutsSession session) {
@@ -822,7 +812,7 @@ public class CoreNutsUtils {
         Object o = session.getProperty("monitor-allowed");
         NutsWorkspace ws = session.getWorkspace();
         if (o != null) {
-            o = session.commandLine().create(String.valueOf(o)).next().getAll().getBoolean();
+            o = NutsCommandLine.of(new String[]{String.valueOf(o)}, session).next().getAll().getBoolean();
         }
         boolean monitorable = true;
         if (o instanceof Boolean) {
@@ -941,9 +931,33 @@ public class CoreNutsUtils {
         return m;
     }
 
+    public static NutsIdType detectIdType(NutsId depId, NutsSession session) {
+        switch (depId.getShortName()) {
+            case NutsConstants.Ids.NUTS_API: {
+                return NutsIdType.API;
+            }
+            case NutsConstants.Ids.NUTS_RUNTIME: {
+                return NutsIdType.RUNTIME;
+            }
+            default: {
+                String rt = session.getWorkspace().getRuntimeId().getShortName();
+                if (rt.equals(depId.getShortName())) {
+                    return NutsIdType.RUNTIME;
+                } else {
+                    for (NutsClassLoaderNode n : session.boot().getBootExtensionClassLoaderNode()) {
+                        if (NutsId.of(n.getId(),session).equalsShortId(depId)) {
+                            return NutsIdType.EXTENSION;
+                        }
+                    }
+                    return NutsIdType.REGULAR;
+                }
+            }
+        }
+    }
+
     public static class ProgressOptions {
-        private boolean enabled=true;
-        private Map<String, NutsVal> vals = new LinkedHashMap<>();
+        private boolean enabled = true;
+        private final Map<String, NutsVal> vals = new LinkedHashMap<>();
 
         public boolean isEnabled() {
             return enabled;

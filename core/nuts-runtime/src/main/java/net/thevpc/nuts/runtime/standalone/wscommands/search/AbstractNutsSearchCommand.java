@@ -79,7 +79,7 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
     public NutsSearchCommand addId(String id) {
         checkSession();
         if (!NutsBlankable.isBlank(id)) {
-            ids.add(getSession().id().parser().setLenient(false).parse(id));
+            ids.add(NutsId.of(id,getSession()));
         }
         return this;
     }
@@ -98,7 +98,7 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
         if (values != null) {
             for (String s : values) {
                 if (!NutsBlankable.isBlank(s)) {
-                    ids.add(getSession().id().parser().setLenient(false).parse(s));
+                    ids.add(NutsId.of(s,getSession()));
                 }
             }
         }
@@ -120,7 +120,7 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
     @Override
     public NutsSearchCommand removeId(String id) {
         checkSession();
-        ids.remove(getSession().id().parser().parse(id));
+        ids.remove(NutsId.of(id,getSession()));
         return this;
     }
 
@@ -252,7 +252,7 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
         if (values != null) {
             for (String s : values) {
                 if (!NutsBlankable.isBlank(s)) {
-                    lockedIds.add(getSession().id().parser().setLenient(false).parse(s));
+                    lockedIds.add(NutsId.of(s,getSession()));
                 }
             }
         }
@@ -362,7 +362,7 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
     @Override
     public NutsSearchCommand removeLockedId(String id) {
         checkSession();
-        lockedIds.remove(getSession().id().parser().parse(id));
+        lockedIds.remove(NutsId.of(id,getSession()));
         return this;
     }
 
@@ -370,7 +370,7 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
     public NutsSearchCommand addLockedId(String id) {
         checkSession();
         if (!NutsBlankable.isBlank(id)) {
-            lockedIds.add(getSession().id().parser().setLenient(false).parse(id));
+            lockedIds.add(NutsId.of(id,getSession()));
         }
         return this;
     }
@@ -475,7 +475,7 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
     @Override
     public NutsSearchCommand setDescriptorFilter(String filter) {
         checkSession();
-        this.descriptorFilter = getSession().descriptor().filter().byExpression(filter);
+        this.descriptorFilter = NutsDescriptorFilters.of(session).parse(filter);
         return this;
     }
 
@@ -493,7 +493,7 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
     @Override
     public NutsSearchCommand setIdFilter(String filter) {
         checkSession();
-        this.idFilter = getSession().id().filter().byExpression(filter);
+        this.idFilter = NutsIdFilters.of(getSession()).parse(filter);
         return this;
     }
 
@@ -754,7 +754,7 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
         return postProcessResult(IteratorBuilder.of(getResultDefinitionIteratorBase(isContent(), isEffective()))
                 .mapMulti(x
                         -> (x.getContent() == null || x.getContent().getFilePath() == null) ? Collections.emptyList()
-                        : Arrays.asList(getSession().apps().execEntries().setSession(getSession()).parse(x.getContent().getFilePath()))));
+                        : Arrays.asList(NutsExecutionEntries.of(getSession()).parse(x.getContent().getFilePath()))));
     }
 
     @Override
@@ -952,7 +952,7 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
             case "--api-version": {
                 String val = cmdLine.nextBoolean().getValue().getString();
                 if (enabled) {
-                    this.setTargetApiVersion(getSession().version().parse(val));
+                    this.setTargetApiVersion(NutsVersion.of(val,getSession()));
                 }
                 return true;
             }
@@ -1017,7 +1017,7 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
                 NutsArgument b = cmdLine.nextBoolean();
                 if (enabled) {
                     checkSession();
-                    this.setInstallStatus(getSession().filters().installStatus().byDeployed(b.getValue().getBoolean()));
+                    this.setInstallStatus(NutsInstallStatusFilters.of(session).byDeployed(b.getValue().getBoolean()));
                 }
                 return true;
             }
@@ -1027,7 +1027,7 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
                 if (enabled) {
                     checkSession();
                     this.setInstallStatus(
-                            getSession().filters().installStatus().byInstalled(b.getValue().getBoolean())
+                            NutsInstallStatusFilters.of(session).byInstalled(b.getValue().getBoolean())
                     );
                 }
                 return true;
@@ -1036,7 +1036,7 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
                 NutsArgument b = cmdLine.nextBoolean();
                 if (enabled) {
                     checkSession();
-                    this.setInstallStatus(getSession().filters().installStatus().byRequired(b.getValue().getBoolean()));
+                    this.setInstallStatus(NutsInstallStatusFilters.of(session).byRequired(b.getValue().getBoolean()));
                 }
                 return true;
             }
@@ -1044,7 +1044,7 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
                 NutsArgument b = cmdLine.nextBoolean();
                 if (enabled) {
                     checkSession();
-                    this.setInstallStatus(getSession().filters().installStatus().byObsolete(b.getValue().getBoolean()));
+                    this.setInstallStatus(NutsInstallStatusFilters.of(session).byObsolete(b.getValue().getBoolean()));
                 }
                 return true;
             }
@@ -1052,7 +1052,7 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
                 NutsArgument aa = cmdLine.nextString();
                 if (enabled) {
                     checkSession();
-                    this.setInstallStatus(getSession().filters().installStatus().parse(aa.getValue().getString()));
+                    this.setInstallStatus(NutsInstallStatusFilters.of(session).parse(aa.getValue().getString()));
                 }
                 return true;
             }

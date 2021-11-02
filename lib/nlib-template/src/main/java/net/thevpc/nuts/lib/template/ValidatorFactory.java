@@ -1,5 +1,6 @@
 package net.thevpc.nuts.lib.template;
 
+import net.thevpc.nuts.NutsArgument;
 import net.thevpc.nuts.NutsSession;
 
 public class ValidatorFactory {
@@ -124,7 +125,7 @@ public class ValidatorFactory {
     public final StringValidator BOOLEAN = new StringValidator() {
         @Override
         public String validate(String value) {
-            Boolean b = session.commandLine().createArgument(value).getAll().getBoolean(null);
+            Boolean b = NutsArgument.of(value,session).getAll().getBoolean(null);
             if (b == null) {
                 throw new IllegalArgumentException("Invalid boolean");
             }

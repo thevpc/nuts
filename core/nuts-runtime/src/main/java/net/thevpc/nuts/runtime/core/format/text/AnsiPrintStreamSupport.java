@@ -1,13 +1,5 @@
 package net.thevpc.nuts.runtime.core.format.text;
 
-import net.thevpc.nuts.NutsTerminalMode;
-import net.thevpc.nuts.NutsWorkspace;
-import net.thevpc.nuts.runtime.standalone.io.DefaultNutsIOManager;
-
-import java.io.*;
-import java.util.Locale;
-import net.thevpc.nuts.NutsSession;
-
 public final class AnsiPrintStreamSupport {
 
     private AnsiPrintStreamSupport() {

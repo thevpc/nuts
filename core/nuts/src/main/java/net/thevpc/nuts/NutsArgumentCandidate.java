@@ -29,20 +29,32 @@ package net.thevpc.nuts;
 import net.thevpc.nuts.boot.NutsApiUtils;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 /**
  * Argument Candidate used in Auto Complete.
- *
+ * <p>
  * Created by vpc on 3/7/17.
  *
- * @since 0.5.5
  * @app.category Command Line
+ * @since 0.5.5
  */
-public interface NutsArgumentCandidate extends Serializable {
+public class NutsArgumentCandidate implements Serializable {
 
-    static NutsArgumentCandidate of(String value, NutsSession session) {
-        NutsApiUtils.checkSession(session);
-        return session.commandLine().createCandidate(value).build();
+    private final String value;
+    private final String display;
+
+    /**
+     * @param value value
+     */
+    public NutsArgumentCandidate(String value) {
+        this.value = value;
+        this.display = value;
+    }
+
+    public NutsArgumentCandidate(String value, String display) {
+        this.value = value;
+        this.display = display;
     }
 
     /**
@@ -50,12 +62,34 @@ public interface NutsArgumentCandidate extends Serializable {
      *
      * @return argument value
      */
-    String getValue();
+    public String getValue() {
+        return value;
+    }
 
     /**
      * human display
      *
      * @return human display
      */
-    String getDisplay();
+    public String getDisplay() {
+        return display;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(value, display);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        NutsArgumentCandidate that = (NutsArgumentCandidate) o;
+        return Objects.equals(value, that.value) && Objects.equals(display, that.display);
+    }
+
+    @Override
+    public String toString() {
+        return String.valueOf(value);
+    }
 }

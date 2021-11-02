@@ -1476,9 +1476,10 @@ public final class CoreNutsWorkspaceOptions implements Serializable, Cloneable, 
 
     @Override
     public NutsWorkspaceOptionsBuilder parseCommandLine(String commandLine) {
-        return parseArguments(session.commandLine()
-                .setCommandlineFamily(NutsShellFamily.SH)
-                .parse(commandLine).toStringArray());
+        return parseArguments(
+                NutsCommandLine.parse(commandLine,NutsShellFamily.SH,session)
+                        .toStringArray()
+        );
     }
 
     @Override

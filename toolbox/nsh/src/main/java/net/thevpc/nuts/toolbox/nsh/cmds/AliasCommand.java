@@ -1,7 +1,7 @@
 /**
  * ====================================================================
- *            Nuts : Network Updatable Things Service
- *                  (universal package manager)
+ * Nuts : Network Updatable Things Service
+ * (universal package manager)
  * <br>
  * is a new Open Source Package Manager to help install packages
  * and libraries for runtime execution. Nuts is the ultimate companion for
@@ -10,60 +10,38 @@
  * to share shell scripts and other 'things' . Its based on an extensible
  * architecture to help supporting a large range of sub managers / repositories.
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc]
- * Licensed under the Apache License, Version 2.0 (the "License"); you may 
- * not use this file except in compliance with the License. You may obtain a 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may
+ * not use this file except in compliance with the License. You may obtain a
  * copy of the License at http://www.apache.org/licenses/LICENSE-2.0
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an 
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
- * either express or implied. See the License for the specific language 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+ * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  * <br>
  * ====================================================================
-*/
+ */
 package net.thevpc.nuts.toolbox.nsh.cmds;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import net.thevpc.nuts.NutsArgument;
-import net.thevpc.nuts.spi.NutsSingleton;
+import net.thevpc.nuts.NutsCommandLine;
+import net.thevpc.nuts.spi.NutsComponentScope;
+import net.thevpc.nuts.spi.NutsComponentScopeType;
 import net.thevpc.nuts.toolbox.nsh.SimpleNshBuiltin;
 import net.thevpc.nuts.toolbox.nsh.bundles.jshell.JShell;
-import net.thevpc.nuts.NutsCommandLine;
+
+import java.util.*;
 
 /**
  * Created by vpc on 1/7/17.
  */
-@NutsSingleton
+@NutsComponentScope(NutsComponentScopeType.WORKSPACE)
 public class AliasCommand extends SimpleNshBuiltin {
 
     public AliasCommand() {
         super("alias", DEFAULT_SUPPORT);
-    }
-
-    private static class Options {
-
-        LinkedHashMap<String, String> add = new LinkedHashMap<String, String>();
-        Set<String> show = new LinkedHashSet<String>();
-        List<String> displayOptions = new ArrayList<String>();
-    }
-
-    private static class ResultItem {
-
-        String name;
-        String value;
-
-        public ResultItem(String name, String value) {
-            this.name = name;
-            this.value = value;
-        }
-
     }
 
     @Override
@@ -113,8 +91,8 @@ public class AliasCommand extends SimpleNshBuiltin {
                 outRes.add(new ResultItem(a, v));
             }
         }
-        switch (context.getSession().getOutputFormat()){
-            case PLAIN:{
+        switch (context.getSession().getOutputFormat()) {
+            case PLAIN: {
                 for (ResultItem resultItem : outRes) {
                     if (resultItem.value == null) {
                         context.getSession().err().printf("alias : %s ```error not found```%n", resultItem.name);
@@ -124,13 +102,32 @@ public class AliasCommand extends SimpleNshBuiltin {
                 }
                 break;
             }
-            default:{
+            default: {
                 context.getSession().out().printlnf(outRes);
             }
         }
         if (!errRes.isEmpty()) {
-            throwExecutionException(errRes,1,context.getSession());
+            throwExecutionException(errRes, 1, context.getSession());
         }
+    }
+
+    private static class Options {
+
+        LinkedHashMap<String, String> add = new LinkedHashMap<String, String>();
+        Set<String> show = new LinkedHashSet<String>();
+        List<String> displayOptions = new ArrayList<String>();
+    }
+
+    private static class ResultItem {
+
+        String name;
+        String value;
+
+        public ResultItem(String name, String value) {
+            this.name = name;
+            this.value = value;
+        }
+
     }
 
 

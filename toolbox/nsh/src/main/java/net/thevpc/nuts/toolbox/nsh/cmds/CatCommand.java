@@ -26,22 +26,23 @@
 package net.thevpc.nuts.toolbox.nsh.cmds;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.spi.NutsComponentScope;
+import net.thevpc.nuts.spi.NutsComponentScopeType;
+import net.thevpc.nuts.toolbox.nsh.SimpleNshBuiltin;
+import net.thevpc.nuts.toolbox.nsh.bundles._IOUtils;
+import net.thevpc.nuts.toolbox.nsh.bundles._StringUtils;
+import net.thevpc.nuts.toolbox.nsh.util.ColumnRuler;
+import net.thevpc.nuts.toolbox.nsh.util.FileInfo;
+import net.thevpc.nuts.toolbox.nsh.util.ShellHelper;
 
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.thevpc.nuts.spi.NutsSingleton;
-import net.thevpc.nuts.toolbox.nsh.SimpleNshBuiltin;
-import net.thevpc.nuts.toolbox.nsh.bundles._IOUtils;
-import net.thevpc.nuts.toolbox.nsh.bundles._StringUtils;
-import net.thevpc.nuts.toolbox.nsh.util.FileInfo;
-import net.thevpc.nuts.toolbox.nsh.util.ShellHelper;
-
 /**
  * Created by vpc on 1/7/17.
  */
-@NutsSingleton
+@NutsComponentScope(NutsComponentScopeType.WORKSPACE)
 public class CatCommand extends SimpleNshBuiltin {
 
     public CatCommand() {
@@ -90,6 +91,15 @@ public class CatCommand extends SimpleNshBuiltin {
         NutsPrintStream out = context.getSession().out();
         try {
             options.currentNumber = 1;
+
+            OutputStream os = null;
+            boolean plain = true;
+            if (context.getSession().getOutputFormat() == NutsContentType.PLAIN) {
+                os = out.asOutputStream();
+            } else {
+                plain = false;
+            }
+            List<CatResult> results = new ArrayList<>();
             //text mode
             for (FileInfo f : options.files) {
                 boolean close = false;
@@ -112,15 +122,73 @@ public class CatCommand extends SimpleNshBuiltin {
                     close = true;
                 }
                 try {
-                    catText(in, out.asOutputStream(), options, context, f);
+                    if (plain) {
+                        catText(in, os, options, context, f);
+                    } else {
+                        catText2(in, options, context, f, results);
+                    }
                 } finally {
                     if (close) {
                         in.close();
                     }
                 }
             }
+            if (!plain) {
+                out.printf(results);
+            }
         } catch (IOException ex) {
             throw new NutsExecutionException(context.getSession(), NutsMessage.cstyle("%s", ex), ex, 100);
+        }
+    }
+
+    private void catText2(InputStream in, Options options, SimpleNshCommandContext context, FileInfo info, List<CatResult> results) throws IOException {
+        boolean whole = true;
+        NutsSession session = context.getSession();
+        if (whole && info.getHighlighter() != null) {
+            ByteArrayOutputStream bout = new ByteArrayOutputStream();
+            NutsCp.of(session).from(in).to(bout).run();
+            String text = bout.toString();
+            NutsTextBuilder nutsText = NutsTexts.of(session).ofCode(info.getHighlighter(), text).highlight(session)
+                    .builder()
+                    .flatten();
+            List<NutsText> children = nutsText.getChildren();
+            Tracker tracker = new Tracker();
+            boolean n = options.n;
+            options.n = false;
+            while (true) {
+                NutsText line = nextLine(children, session, tracker, options, true);
+                if (line != null) {
+                    CatResult r = new CatResult();
+                    if (n) {
+                        r.number = tracker.line;
+                    }
+                    r.line = line;
+                    results.add(r);
+                } else {
+                    break;
+                }
+            }
+            options.n = n;
+        } else {
+            //do not close!!
+            BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+            String line = null;
+            while ((line = reader.readLine()) != null) {
+                CatResult r = new CatResult();
+                if (options.n) {
+                    r.number = options.currentNumber;
+                }
+                if (options.T) {
+                    line = line.replace("\t", "^I");
+                }
+                NutsTextCode c = NutsTexts.of(session).ofCode(info.getHighlighter(), line);
+                line = c.highlight(session).toString();
+                if (options.E) {
+                    line += "$";
+                }
+                r.line = NutsTexts.of(session).ofPlain(line);
+                options.currentNumber++;
+            }
         }
     }
 
@@ -132,17 +200,27 @@ public class CatCommand extends SimpleNshBuiltin {
             }
         }
         boolean whole = true;
+        NutsSession session = context.getSession();
         if (whole && info.getHighlighter() != null) {
             ByteArrayOutputStream bout = new ByteArrayOutputStream();
-            context.getSession().io().copy().from(in).to(bout).run();
+            NutsCp.of(session).from(in).to(bout).run();
             String text = bout.toString();
-            NutsTextBuilder nutsText = context.getSession().text().ofCode(options.highlighter, text).highlight(context.getSession())
+            NutsTextBuilder nutsText = NutsTexts.of(session).ofCode(info.getHighlighter(), text).highlight(session)
                     .builder()
                     .flatten();
-            NutsPrintStream out = context.getSession().io().createPrintStream(os);
-            writeNode(nutsText.build(), context.getSession(), new Tracker(), out, options);
+            NutsPrintStream out = NutsPrintStream.of(os, session);
+            List<NutsText> children = nutsText.getChildren();
+            Tracker tracker = new Tracker();
+            while (true) {
+                NutsText line = nextLine(children, session, tracker, options, false);
+                if (line != null) {
+                    out.printf(line);
+                } else {
+                    break;
+                }
+            }
         } else {
-            NutsPrintStream out = context.getSession().io().createPrintStream(os);
+            NutsPrintStream out = NutsPrintStream.of(os, session);
             try {
 
                 //do not close!!
@@ -157,8 +235,8 @@ public class CatCommand extends SimpleNshBuiltin {
                         line = line.replace("\t", "^I");
                     }
 
-                    NutsTextCode c = context.getSession().text().ofCode(options.highlighter, line);
-                    line = c.highlight(context.getSession()).toString();
+                    NutsTextCode c = NutsTexts.of(session).ofCode(info.getHighlighter(), line);
+                    line = c.highlight(session).toString();
 
                     out.print(line);
 
@@ -174,19 +252,30 @@ public class CatCommand extends SimpleNshBuiltin {
         }
     }
 
+    private NutsText nextLine(List<NutsText> t, NutsSession session, Tracker tracker, Options options, boolean skipNewline) {
+        NutsTextBuilder b = NutsTexts.of(session).builder();
+        while (!t.isEmpty()) {
+            NutsText ii = t.remove(0);
+            NutsText n = nextNode(ii, session, tracker, options);
+            if (tracker.wasNewline) {
+                if (!skipNewline) {
+                    b.append(n);
+                }
+                return b.build();
+            } else {
+                b.append(n);
+            }
+        }
+        return null;
+    }
 
-    private void writeNode(NutsText t, NutsSession session, Tracker tracker, NutsPrintStream out, Options options) {
+    private NutsText nextNode(NutsText t, NutsSession session, Tracker tracker, Options options) {
         switch (t.getType()) {
             case PLAIN: {
                 String text = ((NutsTextPlain) t).getText();
-                NutsTextBuilder tb = session.text().builder();
+                NutsTextBuilder tb = NutsTexts.of(session).builder();
                 if (options.n && tracker.wasNewline) {
-                    String ruleText = String.valueOf(tracker.line);
-                    if (tracker.ruleWidth <= ruleText.length()) {
-                        tracker.ruleWidth = ruleText.length() + 1;
-                    }
-                    tb.append(_StringUtils.formatRight(ruleText, tracker.ruleWidth), NutsTextStyle.number());
-                    tb.append("  ");
+                    tb.append(tracker.ruler.nextNum(tracker.line, session));
                 }
                 if (text.charAt(0) == '\n' || text.charAt(0) == '\r') {
                     //this is a new line
@@ -206,29 +295,16 @@ public class CatCommand extends SimpleNshBuiltin {
                     }
                     tracker.wasNewline = false;
                 }
-                out.printf(tb.build());
-                break;
-            }
-            case LIST: {
-                NutsTextList tt = (NutsTextList) t;
-                for (NutsText n : tt) {
-                    writeNode(n, session, tracker, out, options);
-                }
-                break;
+                return tb.build();
             }
             case STYLED: {
                 NutsTextStyled tt = (NutsTextStyled) t;
                 NutsTextPlain pt = (NutsTextPlain) tt.getChild();
 
                 String text = pt.getText();
-                NutsTextBuilder tb = session.text().builder();
+                NutsTextBuilder tb = NutsTexts.of(session).builder();
                 if (options.n && tracker.wasNewline) {
-                    String ruleText = String.valueOf(tracker.line);
-                    if (tracker.ruleWidth <= ruleText.length()) {
-                        tracker.ruleWidth = ruleText.length() + 1;
-                    }
-                    tb.append(_StringUtils.formatRight(ruleText, tracker.ruleWidth), NutsTextStyle.number());
-                    tb.append("  ");
+                    tb.append(tracker.ruler.nextNum(tracker.line, session));
                 }
                 for (String s : ShellHelper.splitOn(text, '\t')) {
                     if (s.startsWith("\t")) {
@@ -238,10 +314,15 @@ public class CatCommand extends SimpleNshBuiltin {
                     }
                 }
                 tracker.wasNewline = false;
-                out.printf(tb.build());
-                break;
+                return tb.build();
             }
         }
+        throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("unsupported"));
+    }
+
+    public static class CatResult {
+        Long number;
+        NutsString line;
     }
 
     private static class Options {
@@ -255,7 +336,7 @@ public class CatCommand extends SimpleNshBuiltin {
     }
 
     private class Tracker {
-        int ruleWidth = 6;
+        ColumnRuler ruler = new ColumnRuler(6);
         long line;
         boolean wasNewline = true;
     }

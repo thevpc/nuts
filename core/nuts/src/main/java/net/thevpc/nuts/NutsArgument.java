@@ -46,7 +46,7 @@ public interface NutsArgument {
      */
     static NutsArgument of(String value, NutsSession session) {
         NutsApiUtils.checkSession(session);
-        return session.commandLine().createArgument(value);
+        return NutsCommandLines.of(session).createArgument(value);
     }
 
     /**

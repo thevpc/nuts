@@ -46,7 +46,7 @@ public class DefaultNutsUninstallCommand extends AbstractNutsUninstallCommand {
         }
         for (NutsId id : nutsIds) {
             List<NutsDefinition> resultDefinitions = session.search().addId(id)
-                    .setInstallStatus(session.filters().installStatus().byInstalled(true))
+                    .setInstallStatus(NutsInstallStatusFilters.of(session).byInstalled(true))
                     .setSession(session.copy().setTransitive(false))
                     .setOptional(false).setEffective(true)
                     .setContent(true)//include content so that we can remove it by calling executor
@@ -58,7 +58,7 @@ public class DefaultNutsUninstallCommand extends AbstractNutsUninstallCommand {
             defs.addAll(resultDefinitions);
         }
 
-        NutsMemoryPrintStream mout = session.io().createMemoryPrintStream();
+        NutsMemoryPrintStream mout = NutsMemoryPrintStream.of(session);
         mout.println("should we proceed?");
         NutsMessage cancelMessage = NutsMessage.cstyle("removal cancelled : %s", defs.stream()
                 .map(NutsDefinition::getId)
@@ -113,7 +113,7 @@ public class DefaultNutsUninstallCommand extends AbstractNutsUninstallCommand {
                 wcfg.getModel().fireConfigurationChanged("extensions", session, ConfigEventType.BOOT);
             }
             if (getSession().isPlainTrace()) {
-                out.printf("%s uninstalled %s%n", id, session.text().ofStyled(
+                out.printf("%s uninstalled %s%n", id, NutsTexts.of(session).ofStyled(
                         "successfully", NutsTextStyle.success()
                 ));
             }

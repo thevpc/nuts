@@ -5,11 +5,7 @@
  */
 package net.thevpc.nuts.runtime.standalone.wscommands.settings;
 
-import net.thevpc.nuts.NutsCommandExecOptions;
-import net.thevpc.nuts.NutsExecutableType;
-import net.thevpc.nuts.NutsId;
-import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.NutsWorkspaceCustomCommand;
+import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.wscommands.exec.AbstractNutsExecutableCommand;
 
 /**
@@ -25,7 +21,7 @@ public class DefaultNutsAliasExecutable extends AbstractNutsExecutableCommand {
 
     public DefaultNutsAliasExecutable(NutsWorkspaceCustomCommand command, NutsCommandExecOptions o, NutsSession session, String[] args) {
         super(command.getName(),
-                session.commandLine().create(command.getCommand()).toString(),
+                NutsCommandLine.of(command.getCommand(),session).toString(),
                 NutsExecutableType.ALIAS);
         this.command = command;
         this.o = o;

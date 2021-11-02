@@ -27,6 +27,7 @@ package net.thevpc.nuts.runtime.core.model;
 
 import net.thevpc.nuts.NutsDescriptor;
 import net.thevpc.nuts.NutsDescriptorBuilder;
+import net.thevpc.nuts.NutsDescriptorFormat;
 import net.thevpc.nuts.NutsSession;
 
 /**
@@ -41,7 +42,11 @@ public abstract class AbstractNutsDescriptor implements NutsDescriptor {
 
     @Override
     public NutsDescriptorBuilder builder() {
-        return session.descriptor().descriptorBuilder().setAll(this);
+        return NutsDescriptorBuilder.of(session).setAll(this);
     }
 
+    @Override
+    public NutsDescriptorFormat formatter() {
+        return NutsDescriptorFormat.of(session).setValue(this);
+    }
 }

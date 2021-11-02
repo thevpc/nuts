@@ -1,8 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.bridges.maven;
 
-import net.thevpc.nuts.NutsId;
-import net.thevpc.nuts.NutsIdParser;
-import net.thevpc.nuts.NutsSession;
+import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.bundles.mvn.DirtyLuceneIndexParser;
 import net.thevpc.nuts.runtime.standalone.index.ArtifactsIndexDB;
 
@@ -23,12 +21,12 @@ public class LuceneIndexImporter {
 
     public long importGzURL(URL url, String repository,NutsSession session) {
 //        NutsWorkspace ws = session.getWorkspace();
-        String tempGzFile = session.io().tmp().createTempFile("lucene-repository.gz").toString();
-        session.io().copy()
+        String tempGzFile = NutsTmp.of(session).createTempFile("lucene-repository.gz").toString();
+        NutsCp.of(session)
                 .setSession(session)
                 .from(url).to(tempGzFile).run();
-        String tempFolder = session.io().tmp().createTempFolder("lucene-repository").toString();
-        session.io().uncompress().from(tempGzFile).to(
+        String tempFolder = NutsTmp.of(session).createTempFolder("lucene-repository").toString();
+        NutsUncompress.of(session).from(tempGzFile).to(
                 tempFolder
         ).setFormat("gz").run();
         try {
@@ -46,7 +44,7 @@ public class LuceneIndexImporter {
 
     public long importFile(String filePath,String repository,NutsSession session) {
         ArtifactsIndexDB adb = ArtifactsIndexDB.of(session);
-        NutsIdParser idParser = session.id().parser();
+        NutsIdParser idParser = NutsIdParser.of(session);
         int addedCount=0;
         int allCount=0;
         try (DirtyLuceneIndexParser p = new DirtyLuceneIndexParser(new FileInputStream(filePath))) {

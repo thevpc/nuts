@@ -108,7 +108,7 @@ public abstract class AbstractNutsStream<T> implements NutsStream<T> {
         if (it.hasNext()) {
             return it.next();
         }
-        NutsId n = session.id().parser().setLenient(true).parse(nutsBase);
+        NutsId n = NutsIdParser.of(session).setLenient(true).parse(nutsBase);
         if (n != null) {
             throw new NutsNotFoundException(session, n);
         }
@@ -125,7 +125,7 @@ public abstract class AbstractNutsStream<T> implements NutsStream<T> {
             }
             return t;
         } else {
-            NutsId nid = session.id().parser().setLenient(true).parse(nutsBase);
+            NutsId nid = NutsIdParser.of(session).setLenient(true).parse(nutsBase);
             if (nid != null) {
                 throw new NutsNotFoundException(session, nid);
             }

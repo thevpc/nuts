@@ -7,7 +7,7 @@
 //
 //import net.thevpc.nuts.*;
 //import net.thevpc.nuts.runtime.core.format.NutsObjectFormatBase;
-//import net.thevpc.nuts.runtime.core.format.props.DefaultPropertiesFormat;
+//import net.thevpc.nuts.runtime.core.format.props.DefaultNutsPropertiesFormat;
 //import net.thevpc.nuts.runtime.core.util.CoreCommonUtils;
 //
 //import java.io.PrintStream;
@@ -44,7 +44,7 @@
 //        NutsArgument n = commandLine.peek();
 //        if (n != null) {
 //            NutsArgument a;
-//            if ((a = commandLine.nextString(DefaultPropertiesFormat.OPTION_MULTILINE_PROPERTY)) != null) {
+//            if ((a = commandLine.nextString(DefaultNutsPropertiesFormat.OPTION_MULTILINE_PROPERTY)) != null) {
 //                NutsArgument i = a.getArgumentValue();
 //                if(a.isEnabled()) {
 //                    extraConfig.add(a.getString());

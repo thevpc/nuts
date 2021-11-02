@@ -10,7 +10,7 @@ public class NutsElementMapperNutsVersion implements NutsElementMapper<NutsVersi
     public Object destruct(NutsVersion src, Type typeOfSrc, NutsElementFactoryContext context) {
         if (context.elem().isNtf()) {
             NutsSession ws = context.getSession();
-            return ws.version().formatter(src).setNtf(true).format();
+            return src.formatter().setSession(ws).setNtf(true).format();
         } else {
             return src.toString();
         }
@@ -19,10 +19,10 @@ public class NutsElementMapperNutsVersion implements NutsElementMapper<NutsVersi
     @Override
     public NutsElement createElement(NutsVersion o, Type typeOfSrc, NutsElementFactoryContext context) {
         if (context.elem().isNtf()) {
-            NutsSession ws = context.getSession();
+            NutsSession session = context.getSession();
 //                NutsText n = ws.text().toText(ws.version().formatter(o).setNtf(true).format());
 //                return ws.elem().forPrimitive().buildNutsString(n);
-            return ws.elem().forString(ws.version().formatter(o).setNtf(true).format().toString());
+            return NutsElements.of(session).forString(o.formatter().setNtf(true).format().toString());
         } else {
             return context.defaultObjectToElement(o.toString(), null);
         }
@@ -30,7 +30,8 @@ public class NutsElementMapperNutsVersion implements NutsElementMapper<NutsVersi
 
     @Override
     public NutsVersion createObject(NutsElement o, Type typeOfResult, NutsElementFactoryContext context) {
-        return context.getSession().version().parser().parse(o.asPrimitive().getString());
+        NutsSession session = context.getSession();
+        return NutsVersion.of(o.asPrimitive().getString(),session);
     }
 
 }

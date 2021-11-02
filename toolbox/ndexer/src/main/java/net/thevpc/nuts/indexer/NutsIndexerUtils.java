@@ -21,7 +21,7 @@ public class NutsIndexerUtils {
         String m = session.env().getProperty(k).getString();
         if (m == null) {
             m = session.locations()
-                    .getStoreLocation(session.id().resolveId(NutsIndexerUtils.class),
+                    .getStoreLocation(NutsIdResolver.of(session).resolveId(NutsIndexerUtils.class),
                             NutsStoreLocation.CACHE) + File.separator + entity;
             session.env().setProperty(k, m);
         }
@@ -49,9 +49,9 @@ public class NutsIndexerUtils {
         return entity;
     }
 
-    public static String mapToJson(Map<String, String> map, NutsSession ws) {
+    public static String mapToJson(Map<String, String> map, NutsSession session) {
         StringWriter s = new StringWriter();
-        ws.elem().setContentType(NutsContentType.JSON).setValue(map)
+        NutsElements.of(session).json().setValue(map)
                 .setNtf(false).print(s);
         return s.toString();
     }
@@ -138,13 +138,13 @@ public class NutsIndexerUtils {
     }
 
     public static NutsId mapToNutsId(Map<String, String> map, NutsSession session) {
-        return session.id().builder()
+        return NutsIdBuilder.of(session)
                 .setArtifactId(NutsUtilStrings.trim(map.get("name")))
                 .setRepository(NutsUtilStrings.trim(map.get("namespace")))
                 .setGroupId(NutsUtilStrings.trim(map.get("group")))
                 .setVersion(NutsUtilStrings.trim(map.get("version")))
                 .setCondition(
-                        session.descriptor().envConditionBuilder()
+                        NutsEnvConditionBuilder.of(session)
                                 //TODO what if the result is ',' separated array?
                                 .setArch(NutsUtilStrings.trim(map.get(NutsConstants.IdProperties.ARCH)))
                                 .setOs(NutsUtilStrings.trim(map.get(NutsConstants.IdProperties.OS)))

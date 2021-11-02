@@ -23,18 +23,15 @@
  */
 package net.thevpc.nuts;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
- *
  * @author vpc
  */
-public final class NutsTextStyles implements Iterable<NutsTextStyle> {
+public final class NutsTextStyles implements Iterable<NutsTextStyle>, NutsEnum {
 
-    public static NutsTextStyles NONE = new NutsTextStyles(new NutsTextStyle[0]);
+    public static NutsTextStyles PLAIN = new NutsTextStyles(new NutsTextStyle[0]);
 
     private final NutsTextStyle[] elements;
 
@@ -43,67 +40,70 @@ public final class NutsTextStyles implements Iterable<NutsTextStyle> {
     }
 
     public static NutsTextStyles of(NutsTextStyle... others) {
-        return NONE.append(others);
+        Map<NutsTextStyleType,NutsTextStyle> visited=new TreeMap<>();
+        if(others!=null) {
+            for (NutsTextStyle element : others) {
+                if(element!=null) {
+                    visited.put(element.getType(), element);
+                }
+            }
+        }
+        visited.remove(NutsTextStyleType.PLAIN);
+        if(visited.isEmpty()){
+            return PLAIN;
+        }
+        return new NutsTextStyles(visited.values().toArray(new NutsTextStyle[0]));
     }
 
     public static NutsTextStyles of(NutsTextStyle other) {
-        if (other == null) {
-            return NONE;
+        if (other == null || other.getType()==NutsTextStyleType.PLAIN) {
+            return PLAIN;
         }
         return new NutsTextStyles(new NutsTextStyle[]{other});
     }
 
     public NutsTextStyles append(NutsTextStyles other) {
-        if (other == null || other.isNone()) {
+        if (other == null || other.isPlain()) {
             return this;
         }
-        if (this.isNone()) {
+        if (this.isPlain()) {
             return other;
         }
         return append(other.elements);
     }
 
     public NutsTextStyles append(NutsTextStyle... others) {
-        if (others.length == 0) {
+        if (others==null || others.length == 0) {
             return this;
         }
         List<NutsTextStyle> all = new ArrayList<NutsTextStyle>(size() + others.length + 1);
-        for (NutsTextStyle i : elements) {
-            all.add(i);
-        }
-        for (NutsTextStyle i : others) {
-            if (i != null) {
-                all.add(i);
-            }
-        }
-        if (all.isEmpty()) {
-            return NONE;
-        }
-        return new NutsTextStyles(all.toArray(new NutsTextStyle[0]));
+        all.addAll(Arrays.asList(elements));
+        all.addAll(Arrays.asList(others));
+        return of(all.toArray(new NutsTextStyle[0]));
     }
 
     public NutsTextStyles append(NutsTextStyle other) {
-        if (other == null) {
+        if (other == null || other.getType()==NutsTextStyleType.PLAIN) {
             return this;
         }
         NutsTextStyle[] elements2 = new NutsTextStyle[elements.length + 1];
         System.arraycopy(elements, 0, elements2, 0, elements.length);
         elements2[elements.length] = other;
-        return new NutsTextStyles(elements2);
+        return of(elements2);
     }
 
     public NutsTextStyles removeLast() {
         if (elements.length <= 0) {
             return this;
         }
-        return new NutsTextStyles(Arrays.copyOf(elements, elements.length - 1));
+        return of(Arrays.copyOf(elements, elements.length - 1));
     }
 
     public NutsTextStyles removeFirst() {
         if (elements.length <= 0) {
             return this;
         }
-        return new NutsTextStyles(Arrays.copyOfRange(elements, 1, elements.length));
+        return of(Arrays.copyOfRange(elements, 1, elements.length));
     }
 
     public NutsTextStyle get(int index) {
@@ -116,10 +116,23 @@ public final class NutsTextStyles implements Iterable<NutsTextStyle> {
 
     @Override
     public String toString() {
-        return Arrays.toString(elements);
+        return id();
     }
 
-    public boolean isNone() {
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        NutsTextStyles that = (NutsTextStyles) o;
+        return Arrays.equals(elements, that.elements);
+    }
+
+    @Override
+    public int hashCode() {
+        return Arrays.hashCode(elements);
+    }
+
+    public boolean isPlain() {
         return elements.length == 0;
     }
 
@@ -129,4 +142,35 @@ public final class NutsTextStyles implements Iterable<NutsTextStyle> {
     }
 
 
+    public static NutsTextStyles parseLenient(String value) {
+        return parseLenient(value,null,null);
+    }
+
+    public static NutsTextStyles parseLenient(String value, NutsTextStyles emptyValue) {
+        return parseLenient(value,emptyValue,emptyValue);
+    }
+    public static NutsTextStyles parseLenient(String value, NutsTextStyles emptyValue, NutsTextStyles errorValue) {
+        value = value.trim();
+        List<NutsTextStyle> all=new ArrayList<>();
+        for (String s : value.split(",")) {
+            s=s.trim();
+            if(s.length()>0){
+                NutsTextStyle a = NutsTextStyle.parseLenient(s, null, null);
+                if(a==null){
+                    return errorValue;
+                }
+                all.add(a);
+            }
+        }
+        return of(all.toArray(new NutsTextStyle[0]));
+    }
+
+
+    @Override
+    public String id() {
+        if (elements.length == 0) {
+            return "plain";
+        }
+        return Arrays.stream(elements).map(NutsTextStyle::id).collect(Collectors.joining(","));
+    }
 }

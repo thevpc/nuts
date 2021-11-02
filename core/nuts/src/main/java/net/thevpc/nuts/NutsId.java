@@ -31,19 +31,21 @@ import java.util.Map;
 
 /**
  * Immutable Artifact id information.
+ *
  * @author thevpc
- * @since 0.1.0
  * @app.category Descriptor
+ * @since 0.1.0
  */
-public interface NutsId extends /*NutsTokenFilter, Serializable,*/ Comparable<NutsId>, NutsFormattable, NutsBlankable {
+public interface NutsId extends Comparable<NutsId>, NutsFormattable, NutsBlankable {
 
     static NutsId of(String value, NutsSession session) {
-        NutsApiUtils.checkSession(session);
-        return session.id().parser().parse(value);
+        return NutsApiUtils.createSessionCachedType(NutsIdParser.class, session,()->NutsIdParser.of(session))
+                .parse(value);
     }
 
     /**
      * true if other has exact short name than {@code this}
+     *
      * @param other other id
      * @return true if other has exact short name than {@code this}
      */
@@ -51,6 +53,7 @@ public interface NutsId extends /*NutsTokenFilter, Serializable,*/ Comparable<Nu
 
     /**
      * true if other has exact long name than {@code this}
+     *
      * @param other other id
      * @return true if other has exact long name than {@code this}
      */
@@ -58,6 +61,7 @@ public interface NutsId extends /*NutsTokenFilter, Serializable,*/ Comparable<Nu
 
     /**
      * true if this id is a long name
+     *
      * @return true if this id is a long name
      */
     boolean isLongId();
@@ -104,36 +108,42 @@ public interface NutsId extends /*NutsTokenFilter, Serializable,*/ Comparable<Nu
      * id face define is a release file type selector of the id.
      * It helps discriminating content (jar) from descriptor, from other (hash,...)
      * files released for the very same  artifact.
+     *
      * @return id face selector
      */
     String getFace();
 
     /**
      * os supported by the artifact
+     *
      * @return os supported by the artifact
      */
     NutsEnvCondition getCondition();
 
     /**
      * properties in the url query form
+     *
      * @return properties in the url query form.
      */
     String getPropertiesQuery();
 
     /**
      * properties as map.
+     *
      * @return properties as map.
      */
     Map<String, String> getProperties();
 
     /**
      * artifact repository (usually repository name or id)
+     *
      * @return artifact repository (usually repository name or id)
      */
     String getRepository();
 
     /**
      * artifact group which identifies uniquely projects and group of projects.
+     *
      * @return artifact group which identifies uniquely projects and group of projects.
      */
     String getGroupId();
@@ -191,24 +201,28 @@ public interface NutsId extends /*NutsTokenFilter, Serializable,*/ Comparable<Nu
 
     /**
      * tag used to distinguish between different artifacts that were built from the same source code
+     *
      * @return tag used to distinguish between different artifacts that were built from the same source code
      */
     String getClassifier();
 
     /**
      * package packaging type
+     *
      * @return packaging
      */
     String getPackaging();
 
     /**
      * artifact version (never null)
+     *
      * @return artifact version (never null)
      */
     NutsVersion getVersion();
 
     /**
      * create a builder (mutable id) based on this id
+     *
      * @return a new instance of builder (mutable id) based on this id
      */
     NutsIdBuilder builder();
@@ -237,7 +251,7 @@ public interface NutsId extends /*NutsTokenFilter, Serializable,*/ Comparable<Nu
      * @return when the current version is a single value version X , returns [X,[ version that guarantees forward compatibility in all other cases returns the current version
      * @since 0.8.3
      */
-    NutsId compatOlder() ;
+    NutsId compatOlder();
 
     boolean isNull();
 

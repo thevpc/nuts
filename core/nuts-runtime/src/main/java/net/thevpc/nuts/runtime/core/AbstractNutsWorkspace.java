@@ -32,26 +32,10 @@ import net.thevpc.nuts.spi.NutsSupportLevelContext;
  */
 public abstract class AbstractNutsWorkspace implements NutsWorkspace {
 
-    protected NutsSession initSession;
-    protected DefaultNutsBootModel bootModel;
 
     public AbstractNutsWorkspace() {
     }
 
-    public NutsSession defaultSession() {
-        if (initSession != null) {
-            return initSession;
-        }
-        return bootModel.bootSession();
-    }
-
-    @Override
-    public NutsSession createSession() {
-        NutsSession nutsSession = new DefaultNutsSession(this);
-        nutsSession.setTerminal(nutsSession.term().createTerminal());
-        nutsSession.setExpireTime(nutsSession.boot().getBootOptions().getExpireTime());
-        return nutsSession;
-    }
 
     @Override
     public int getSupportLevel(NutsSupportLevelContext<NutsWorkspaceOptions> criteria) {
@@ -64,5 +48,6 @@ public abstract class AbstractNutsWorkspace implements NutsWorkspace {
                 + getName()
                 + '}';
     }
+
 
 }

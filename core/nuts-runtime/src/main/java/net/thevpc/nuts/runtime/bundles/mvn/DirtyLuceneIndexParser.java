@@ -1,6 +1,6 @@
 package net.thevpc.nuts.runtime.bundles.mvn;
 
-import net.thevpc.nuts.runtime.bundles.collections.EvictingQueue;
+import net.thevpc.nuts.runtime.bundles.collections.EvictingIntQueue;
 
 import java.io.*;
 import java.util.Iterator;
@@ -8,7 +8,7 @@ import java.util.Iterator;
 public class DirtyLuceneIndexParser implements Iterator<String>, Closeable {
     private PushbackReader reader;
     private String last;
-    private EvictingQueue<Integer> whites = new EvictingQueue<>(10);
+    private EvictingIntQueue whites = new EvictingIntQueue(10);
     private long count = 0;
     private boolean closed=false;
 
@@ -70,7 +70,7 @@ public class DirtyLuceneIndexParser implements Iterator<String>, Closeable {
                     if (withPipe) {
                         String s = sb.toString();
                         boolean ignore = false;
-                        if (whites.size() == 3 && whites.get(0).equals(0) && whites.get(1).equals(0) && whites.get(2).equals(0)) {
+                        if (whites.size() == 3 && whites.get(0)==0 && whites.get(1)==0 && whites.get(2)==0) {
                             s = s.substring(1);
                         }
                         if (!ignore) {

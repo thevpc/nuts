@@ -119,7 +119,7 @@ public class NutsWorkspaceUtils {
 
     protected NutsLogger _LOG(NutsSession session) {
         if (LOG == null) {
-            LOG = session.log().of(NutsWorkspaceUtils.class);
+            LOG = NutsLogger.of(NutsWorkspaceUtils.class,session);
         }
         return LOG;
     }
@@ -152,7 +152,7 @@ public class NutsWorkspaceUtils {
         if ("java".equalsIgnoreCase(type)) {
             return NutsJavaSdkUtils.of(ws).createJdkId(version, session);
         } else {
-            return session.id().builder().setArtifactId(type)
+            return NutsIdBuilder.of(session).setArtifactId(type)
                     .setVersion(version)
                     .build();
         }
@@ -160,7 +160,7 @@ public class NutsWorkspaceUtils {
 
     public void checkReadOnly() {
         if (session.config().isReadOnly()) {
-            throw new NutsReadOnlyException(session, session.locations().getWorkspaceLocation());
+            throw new NutsReadOnlyException(session, session.locations().getWorkspaceLocation().toString());
         }
     }
 
@@ -230,7 +230,7 @@ public class NutsWorkspaceUtils {
     }
 
     public List<NutsRepository> filterRepositoriesDeploy(NutsId id, NutsRepositoryFilter repositoryFilter) {
-        NutsRepositoryFilter f = session.filters().repository().installedRepo().neg().and(repositoryFilter);
+        NutsRepositoryFilter f = NutsRepositoryFilters.of(session).installedRepo().neg().and(repositoryFilter);
         return filterRepositories(NutsRepositorySupportedAction.DEPLOY, id, f, NutsFetchMode.LOCAL);
     }
 
@@ -329,7 +329,7 @@ public class NutsWorkspaceUtils {
         String k = DefaultSearchFormatPlain.class.getName() + "#NutsIdFormat";
         NutsIdFormat f = (NutsIdFormat) session.env().getProperty(k).getObject();
         if (f == null) {
-            f = session.id().formatter();
+            f = NutsIdFormat.of(session);
             session.env().setProperty(k, f);
         }
         return f;
@@ -339,7 +339,7 @@ public class NutsWorkspaceUtils {
         String k = DefaultSearchFormatPlain.class.getName() + "#NutsDescriptorFormat";
         NutsDescriptorFormat f = (NutsDescriptorFormat) session.env().getProperty(k).getObject();
         if (f == null) {
-            f = session.descriptor().formatter();
+            f = NutsDescriptorFormat.of(session);
             session.env().setProperty(k, f);
         }
         return f;
@@ -636,7 +636,7 @@ public class NutsWorkspaceUtils {
                     someAdded++;
                 }
             }
-            NutsTextManager factory = session.text();
+            NutsTexts factory = NutsTexts.of(session);
             if (session.isPlainTrace()) {
                 if (someAdded == 0) {
                     session.out().print("```error no new``` java installation locations found...\n");
@@ -677,7 +677,7 @@ public class NutsWorkspaceUtils {
                     someAdded++;
                 }
             }
-            NutsTextManager factory = session.text();
+            NutsTexts factory = NutsTexts.of(session);
             if (session.isPlainTrace()) {
                 if (someAdded == 0) {
                     session.out().print("```error no new``` java installation locations found...\n");
@@ -727,7 +727,7 @@ public class NutsWorkspaceUtils {
     }
 
     public void installCompanions() {
-        NutsTextManager text = session.text();
+        NutsTexts text = NutsTexts.of(session);
         Set<NutsId> companionIds = session.extensions().getCompanionIds();
         if (companionIds.isEmpty()) {
             return;

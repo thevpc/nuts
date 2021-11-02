@@ -19,11 +19,11 @@ import java.util.List;
 public class WinCmdBlocTextHighlighter implements NutsCodeHighlighter {
 
     private NutsWorkspace ws;
-    private NutsTextManager factory;
+    private NutsTexts factory;
 
     public WinCmdBlocTextHighlighter(NutsWorkspace ws) {
         this.ws = ws;
-        factory = NutsWorkspaceUtils.defaultSession(ws).text();
+        factory = NutsTexts.of(NutsWorkspaceUtils.defaultSession(ws));
     }
 
     @Override
@@ -172,7 +172,7 @@ public class WinCmdBlocTextHighlighter implements NutsCodeHighlighter {
         if (ar.hasNext()) {
             sb2.append(ar.nextChar());
         }
-        NutsTextManager factory = session.text();
+        NutsTexts factory = NutsTexts.of(session);
         return new NutsText[]{factory.ofStyled(sb2.toString(), NutsTextStyle.separator())};
     }
 
@@ -707,7 +707,7 @@ public class WinCmdBlocTextHighlighter implements NutsCodeHighlighter {
     public NutsText next(StringReaderExt reader, boolean exitOnClosedCurlBrace, boolean exitOnClosedPar, boolean exitOnDblQuote, boolean exitOnAntiQuote, NutsSession session) {
         boolean lineStart = true;
         List<NutsText> all = new ArrayList<>();
-        NutsTextManager factory = session.text();
+        NutsTexts factory = NutsTexts.of(session);
         boolean exit = false;
         while (!exit && reader.hasNext()) {
             switch (reader.peekChar()) {
@@ -1057,7 +1057,7 @@ public class WinCmdBlocTextHighlighter implements NutsCodeHighlighter {
     }
 
     private NutsText nextDollar(StringReaderExt reader, NutsSession session) {
-        NutsTextManager factory = session.text();
+        NutsTexts factory = NutsTexts.of(session);
         if (reader.isAvailable(2)) {
             char c = reader.peekChar(1);
             switch (c) {
@@ -1116,7 +1116,7 @@ public class WinCmdBlocTextHighlighter implements NutsCodeHighlighter {
 
     public NutsText nextDoubleQuotes(StringReaderExt reader, NutsSession session) {
         List<NutsText> all = new ArrayList<>();
-        NutsTextManager factory = session.text();
+        NutsTexts factory = NutsTexts.of(session);
         boolean exit = false;
         StringBuilder sb = new StringBuilder();
         sb.append(reader.nextChar());

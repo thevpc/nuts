@@ -42,19 +42,16 @@ import java.util.Set;
 public interface NutsWorkspaceFactory {
 
     Set<Class> discoverTypes(NutsId id, URL url, ClassLoader bootClassLoader, NutsSession session);
+
     Set<Class> discoverTypes(NutsId id, URL url, ClassLoader bootClassLoader, Class[] extensionPoints, NutsSession session);
 
-//    Set<Class> discoverTypes(ClassLoader bootClassLoader);
-
-    <T extends NutsComponent<V>, V> T createSupported(Class<T> type, V supportCriteria, NutsSession session);
-
-    <T extends NutsComponent<V>, V> T createSupported(Class<T> type, V supportCriteria, Class[] constructorParameterTypes, Object[] constructorParameters, NutsSession session);
+    <T extends NutsComponent<V>, V> T createSupported(Class<T> type, V supportCriteria, boolean required, NutsSession session);
 
     <T extends NutsComponent<V>, V> List<T> createAllSupported(Class<T> type, V supportCriteria, NutsSession session);
 
     <T> List<T> createAll(Class<T> type, NutsSession session);
 
-//    Set<Class> getExtensionPoints();
+    <T> T createFirst(Class<T> type, NutsSession session);
 
     Set<Class> getExtensionTypes(Class extensionPoint, NutsSession session);
 

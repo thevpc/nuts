@@ -29,6 +29,7 @@ import net.thevpc.nuts.NutsArtifactCall;
 import net.thevpc.nuts.NutsArtifactCallBuilder;
 import net.thevpc.nuts.NutsId;
 import net.thevpc.nuts.NutsSession;
+import net.thevpc.nuts.spi.NutsSupportLevelContext;
 
 import java.io.Serializable;
 import java.util.*;
@@ -146,5 +147,10 @@ public class DefaultNutsArtifactCallBuilder implements NutsArtifactCallBuilder, 
     @Override
     public NutsArtifactCall build() {
         return new DefaultNutsArtifactCall(id, arguments, properties);
+    }
+
+    @Override
+    public int getSupportLevel(NutsSupportLevelContext<Object> context) {
+        return DEFAULT_SUPPORT;
     }
 }

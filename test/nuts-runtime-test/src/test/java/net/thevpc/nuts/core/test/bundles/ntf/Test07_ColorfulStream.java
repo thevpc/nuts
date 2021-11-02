@@ -45,7 +45,7 @@ public class Test07_ColorfulStream {
         NutsSession ws = TestUtils.openNewTestWorkspace("--verbose","--skip-companions");
         {
             NutsText node = new DefaultNutsTextNodeParser(ws).parse(new StringReader(s));
-            NutsTextNodeWriter w = new NutsTextNodeWriterRenderer(ws.io().stdout(), AnsiUnixTermPrintRenderer.ANSI_RENDERER, ws)
+            NutsTextNodeWriter w = new NutsTextNodeWriterRenderer(NutsPrintStreams.of(ws).stdout(), AnsiUnixTermPrintRenderer.ANSI_RENDERER, ws)
                     .setWriteConfiguration(new NutsTextWriteConfiguration().setTitleNumberEnabled(true));
             w.writeNode(node);
         }
@@ -482,7 +482,7 @@ public class Test07_ColorfulStream {
 //
 //        NutsWorkspace ws = TestUtils.openNewTestWorkspace();
 //        {
-//            NutsText command = ws.text().command(NutsTerminalManager.CMD_LATER_RESET_LINE);
+//            NutsText command = ws.text().command(NutsTerminals.CMD_LATER_RESET_LINE);
 //            NutsTextNodeWriter w = new NutsTextNodeWriterRenderer(System.out, AnsiUnixTermPrintRenderer.ANSI_RENDERER, ws)
 //                    .setWriteConfiguration(new NutsTextWriteConfiguration().setTitleNumberEnabled(true));
 //            w.writeNode(command);
@@ -500,7 +500,7 @@ public class Test07_ColorfulStream {
 //        NutsWorkspace ws = TestUtils.openNewTestWorkspace();
 //        NutsSession session = ws.createSession();
 //        session.out().print("Hi");
-//        ws.io().term().sendCommand(session.out(), NutsTerminalManager.CMD_LATER_RESET_LINE);
+//        ws.io().term().sendCommand(session.out(), NutsTerminals.CMD_LATER_RESET_LINE);
 //        session.out().print("Bye");
 //    }
 //

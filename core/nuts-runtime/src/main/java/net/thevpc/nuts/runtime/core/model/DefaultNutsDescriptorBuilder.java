@@ -30,6 +30,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.bundles.common.MapToFunction;
 import net.thevpc.nuts.runtime.core.util.CoreNutsUtils;
 import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
+import net.thevpc.nuts.spi.NutsSupportLevelContext;
 
 import java.util.*;
 import java.util.function.Function;
@@ -97,7 +98,7 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
 
     @Override
     public NutsDescriptorBuilder setId(String id) {
-        this.id = session.id().parser().setLenient(false).parse(id);
+        this.id = NutsId.of(id,session);
         return this;
     }
 
@@ -308,7 +309,7 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
 
     @Override
     public NutsDescriptorBuilder setProperty(String name, String value) {
-        NutsDescriptorProperty pp = session.descriptor().propertyBuilder()
+        NutsDescriptorProperty pp = NutsDescriptorPropertyBuilder.of(session)
                 .setName(name)
                 .setValue(value)
                 .build();
@@ -523,7 +524,7 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
         if (properties != null) {
             n_props.addAll(Arrays.asList(properties));
         }
-        NutsEnvConditionBuilder b = session.descriptor().envConditionBuilder();
+        NutsEnvConditionBuilder b = NutsEnvConditionBuilder.of(session);
 
         LinkedHashSet<NutsDependency> n_deps = new LinkedHashSet<>();
         LinkedHashSet<NutsDependency> n_sdeps = new LinkedHashSet<>();
@@ -854,7 +855,7 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
     }
 
     private NutsId applyNutsIdProperties(NutsId child, Function<String, String> properties) {
-        return session.id().builder()
+        return NutsIdBuilder.of(session)
                 .setRepository(CoreNutsUtils.applyStringProperties(child.getRepository(), properties))
                 .setGroupId(CoreNutsUtils.applyStringProperties(child.getGroupId(), properties))
                 .setArtifactId(CoreNutsUtils.applyStringProperties(child.getArtifactId(), properties))
@@ -871,7 +872,7 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
         for (int i = 0; i < exclusions.length; i++) {
             exclusions[i] = applyNutsIdProperties(exclusions[i], properties);
         }
-        return session.dependency().builder()
+        return NutsDependencyBuilder.of(session)
                 .setRepository(CoreNutsUtils.applyStringProperties(child.getRepository(), properties))
                 .setGroupId(CoreNutsUtils.applyStringProperties(child.getGroupId(), properties))
                 .setArtifactId(CoreNutsUtils.applyStringProperties(child.getArtifactId(), properties))
@@ -913,5 +914,10 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
                 && Objects.equals(flags, that.flags)
                 && Objects.equals(solver, that.solver)
                 && Objects.equals(session, that.session);
+    }
+
+    @Override
+    public int getSupportLevel(NutsSupportLevelContext<Object> context) {
+        return DEFAULT_SUPPORT;
     }
 }

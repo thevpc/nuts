@@ -5,8 +5,9 @@
  */
 package net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.imports;
 
+import net.thevpc.nuts.NutsArgumentName;
 import net.thevpc.nuts.NutsCommandLine;
-import net.thevpc.nuts.NutsCommandLineManager;
+import net.thevpc.nuts.NutsCommandLines;
 import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.AbstractNutsSettingsSubCommand;
 
@@ -18,7 +19,6 @@ public class NutsSettingsImportSubCommand extends AbstractNutsSettingsSubCommand
 
     @Override
     public boolean exec(NutsCommandLine cmdLine, Boolean autoSave, NutsSession session) {
-        NutsCommandLineManager commandLineFormat = session.commandLine();
         if (cmdLine.next("list imports", "li") != null) {
             cmdLine.setCommandName("config list imports").unexpectedArgument();
             if (cmdLine.isExecMode()) {
@@ -36,7 +36,7 @@ public class NutsSettingsImportSubCommand extends AbstractNutsSettingsSubCommand
             return true;
         } else if (cmdLine.next("import", "ia") != null) {
             do {
-                String a = cmdLine.required().nextNonOption(commandLineFormat.createName("import")).getString();
+                String a = cmdLine.required().nextNonOption(NutsArgumentName.of("import",session)).getString();
                 if (cmdLine.isExecMode()) {
                     session.imports().add(new String[]{a});
                 }
@@ -47,7 +47,7 @@ public class NutsSettingsImportSubCommand extends AbstractNutsSettingsSubCommand
             return true;
         } else if (cmdLine.next("unimport", "ir") != null) {
             while (cmdLine.hasNext()) {
-                String ii = cmdLine.required().nextNonOption(commandLineFormat.createName("import")).getString();
+                String ii = cmdLine.required().nextNonOption(NutsArgumentName.of("import",session)).getString();
                 if (cmdLine.isExecMode()) {
                     session.imports().remove(new String[]{ii});
                 }

@@ -27,8 +27,6 @@ package net.thevpc.nuts;
 
 import net.thevpc.nuts.spi.NutsComponent;
 
-import java.util.Set;
-
 /**
  * Created by vpc on 1/5/17.
  *
@@ -86,8 +84,6 @@ public interface NutsWorkspace extends NutsComponent<NutsWorkspaceOptions> {
 
 
     ///////////////////// sub system
-    NutsWorkspaceAppsManager apps();
-
     NutsWorkspaceExtensionManager extensions();
 
     NutsWorkspaceConfigManager config();
@@ -96,32 +92,7 @@ public interface NutsWorkspace extends NutsComponent<NutsWorkspaceOptions> {
 
     NutsWorkspaceSecurityManager security();
 
-    NutsFilterManager filters();
-
-    NutsIOManager io();
-
-    NutsLogManager log();
-
-
     NutsWorkspaceEventManager events();
-
-    NutsCommandLineManager commandLine();
-
-    /**
-     * create id format instance
-     *
-     * @return id format
-     * @since 0.5.5
-     */
-    NutsIdManager id();
-
-    /**
-     * create version format instance
-     *
-     * @return version format
-     * @since 0.5.5
-     */
-    NutsVersionManager version();
 
     /**
      * create info format instance
@@ -131,27 +102,7 @@ public interface NutsWorkspace extends NutsComponent<NutsWorkspaceOptions> {
      */
     NutsInfoFormat info();
 
-    /**
-     * create descriptor format instance
-     *
-     * @return descriptor format
-     * @since 0.5.5
-     */
-    NutsDescriptorManager descriptor();
-
-    /**
-     * return dependency manager
-     *
-     * @return dependency manager
-     * @since 0.8.0
-     */
-    NutsDependencyManager dependency();
-
     NutsFormatManager formats();
-
-    NutsConcurrentManager concurrent();
-
-    NutsUtilManager util();
 
     NutsImportManager imports();
 
@@ -163,15 +114,4 @@ public interface NutsWorkspace extends NutsComponent<NutsWorkspaceOptions> {
 
     NutsBootManager boot();
 
-    NutsTerminalManager term();
-
-    NutsTextManager text();
-
-    /**
-     * create element format instance
-     *
-     * @return element format
-     * @since 0.5.5
-     */
-    NutsElementFormat elem();
 }

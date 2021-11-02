@@ -112,14 +112,17 @@ public class DefaultNutsBootModel implements NutsBootModel {
         return this;
     }
 
+    @Override
     public NutsPrintStream stdout() {
         return stdout;
     }
 
+    @Override
     public NutsPrintStream stderr() {
         return stderr;
     }
 
+    @Override
     public InputStream stdin() {
         return stdin;
     }

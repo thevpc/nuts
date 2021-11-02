@@ -129,7 +129,7 @@ public final class NutsApplications {
         NutsApplicationContext applicationContext = null;
         applicationContext = applicationInstance.createApplicationContext(session, args, startTimeMillis);
         if (applicationContext == null) {
-            applicationContext = session.apps().createApplicationContext(session, args, startTimeMillis, applicationInstance.getClass(), null);
+            applicationContext = NutsApplicationContext.of(args, startTimeMillis, applicationInstance.getClass(), null,session);
         }
 
         //copy inter-process parameters only
@@ -141,7 +141,7 @@ public final class NutsApplications {
         ctxSession.setIndexed(session.isIndexed());
         ctxSession.setCached(session.isCached());
         ctxSession.setTransitive(session.isTransitive());
-        ctxSession.setTerminal(ctxSession.term().createTerminal(session.getTerminal()));
+        ctxSession.setTerminal(NutsSessionTerminal.of(session.getTerminal(),ctxSession));
         return applicationContext;
     }
 
@@ -156,11 +156,11 @@ public final class NutsApplications {
         NutsApplicationContext applicationContext = createApplicationContext(applicationInstance, args, session);
         session = applicationContext.getSession();
         boolean inherited = session.boot().getBootOptions().isInherited();
-        session.log().of(NutsApplications.class).with().level(Level.FINE).verb(NutsLogVerb.START)
+        NutsLogger.of(NutsApplications.class,session).with().level(Level.FINE).verb(NutsLogVerb.START)
                 .log(
                         NutsMessage.jstyle(
                         "running application {0}: {1} {2}", inherited ? "(inherited)" : "",
-                        applicationInstance.getClass().getName(), session.commandLine().create(args)
+                        applicationInstance.getClass().getName(), NutsCommandLine.of(args,session)
                         )
                 );
         switch (applicationContext.getMode()) {

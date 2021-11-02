@@ -1,9 +1,13 @@
 package net.thevpc.nuts;
 
+import net.thevpc.nuts.boot.NutsApiUtils;
+
+import java.util.Objects;
+
 /**
  * @app.category Format
  */
-public class NutsTextStyle {
+public class NutsTextStyle implements NutsEnum {
     private final NutsTextStyleType type;
     private final int variant;
 
@@ -310,5 +314,76 @@ public class NutsTextStyle {
             return String.valueOf(type);
         }
         return type + "(" + variant + ")";
+    }
+
+    public static NutsTextStyle parseLenient(String value) {
+        return parseLenient(value, null, null);
+    }
+
+    public static NutsTextStyle parseLenient(String value, NutsTextStyle emptyValue) {
+        return parseLenient(value, emptyValue, emptyValue);
+    }
+
+    public static NutsTextStyle parseLenient(String value, NutsTextStyle emptyValue, NutsTextStyle errorValue) {
+        value = value == null ? "" : value.trim();
+        int par = value.indexOf('(');
+        String nbr = "";
+        String key = value;
+        if (par > 0) {
+            int b = value.indexOf(')', par);
+            if (b > 0) {
+                nbr = value.substring(par + 1, b);
+                key = value.substring(0, par);
+            }
+        }else{
+            int len = value.length();
+            int x= len;
+            while(x-1>=0 && Character.isDigit(value.charAt(x-1))){
+                x--;
+            }
+            if(x< len){
+                nbr = value.substring(x, len);
+                key = value.substring(0, x);
+            }
+        }
+        nbr = nbr.trim();
+        key = key.trim();
+        if (nbr.isEmpty()) {
+            nbr = "0";
+        }
+        NutsTextStyleType t = NutsTextStyleType.parseLenient(key, null, null);
+        if (t == null) {
+            if (NutsBlankable.isBlank(key)) {
+                return emptyValue;
+            }
+            return errorValue;
+        }
+        Integer ii = NutsApiUtils.parseInt(nbr, null, null);
+        if (ii == null) {
+            if (NutsBlankable.isBlank(key)) {
+                ii = 0;
+            } else {
+                return errorValue;
+            }
+        }
+        return NutsTextStyle.of(t, ii);
+    }
+
+    @Override
+    public String id() {
+        return type.id() + (variant == 0 ? "" : String.valueOf(variant));
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        NutsTextStyle that = (NutsTextStyle) o;
+        return variant == that.variant && type == that.type;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(type, variant);
     }
 }

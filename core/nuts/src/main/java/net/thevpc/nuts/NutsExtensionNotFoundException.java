@@ -42,23 +42,27 @@ public class NutsExtensionNotFoundException extends NutsExtensionException {
     /**
      * extension name
      */
-    private final String extensionName;
+    private final Object criteria;
 
     /**
      * Constructs a new NutsExtensionNotFoundException exception
      *
      * @param session       workspace
      * @param missingType   missing type
-     * @param extensionName extension name
+     * @param criteria extension support criteria object
      */
-    public NutsExtensionNotFoundException(NutsSession session, Class missingType, String extensionName) {
+    public NutsExtensionNotFoundException(NutsSession session, Class missingType, Object criteria) {
         super(session, null,
+                criteria==null?
+                        NutsMessage.cstyle(
+                                "extension %s could not found: type %s could not be wired", missingType.getSimpleName()
+                        ):
                 NutsMessage.cstyle(
-                        "extension %s could not found: type %s could not be wired", extensionName, missingType.getName()
+                        "extension %s could not found: type %s could not be wired with: %s", missingType.getSimpleName(), criteria
                 )
                 , null);
         this.missingType = missingType;
-        this.extensionName = extensionName;
+        this.criteria = criteria;
     }
 
     /**
@@ -76,7 +80,7 @@ public class NutsExtensionNotFoundException extends NutsExtensionException {
      *
      * @return extension name
      */
-    public String getExtensionName() {
-        return extensionName;
+    public Object getCriteria() {
+        return criteria;
     }
 }

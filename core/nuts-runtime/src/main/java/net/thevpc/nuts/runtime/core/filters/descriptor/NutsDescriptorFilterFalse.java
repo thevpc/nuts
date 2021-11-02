@@ -30,7 +30,7 @@ import net.thevpc.nuts.*;
 /**
  * Created by vpc on 2/20/17.
  */
-public class NutsDescriptorFilterFalse extends AbstractDescriptorFilter implements JsNutsDescriptorFilter {
+public class NutsDescriptorFilterFalse extends AbstractDescriptorFilter  {
 
     public NutsDescriptorFilterFalse(NutsSession session) {
         super(session, NutsFilterOp.FALSE);
@@ -47,11 +47,6 @@ public class NutsDescriptorFilterFalse extends AbstractDescriptorFilter implemen
     @Override
     public NutsDescriptorFilter simplify() {
         return this;
-    }
-
-    @Override
-    public String toJsNutsDescriptorFilterExpr() {
-        return "false";
     }
 
     @Override

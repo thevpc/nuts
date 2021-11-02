@@ -2,6 +2,7 @@ package net.thevpc.nuts.runtime.core.io;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.format.DefaultFormatBase;
+import net.thevpc.nuts.spi.NutsSupportLevelContext;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -61,7 +62,7 @@ public abstract class NutsPathBase implements NutsPath {
 
     @Override
     public NutsString getFormattedName() {
-        return getSession().text().ofStyled(getName(),NutsTextStyle.path());
+        return NutsTexts.of(getSession()).ofStyled(getName(),NutsTextStyle.path());
     }
 
     @Override
@@ -97,7 +98,7 @@ public abstract class NutsPathBase implements NutsPath {
 
 
     public NutsString toNutsString() {
-        return session.text().ofPlain(toString());
+        return NutsTexts.of(session).ofPlain(toString());
     }
 
     @Override
@@ -111,18 +112,23 @@ public abstract class NutsPathBase implements NutsPath {
         private NutsPathBase p;
 
         public PathFormat(NutsPathBase p) {
-            super(p.session.getWorkspace(), "path");
+            super(p.session, "path");
             this.p = p;
         }
 
         @Override
         public void print(NutsPrintStream out) {
-            out.print(p.session.text().ofStyled(p.toNutsString(), NutsTextStyle.path()));
+            out.print(NutsTexts.of(p.session).ofStyled(p.toNutsString(), NutsTextStyle.path()));
         }
 
         @Override
         public boolean configureFirst(NutsCommandLine commandLine) {
             return false;
+        }
+
+        @Override
+        public int getSupportLevel(NutsSupportLevelContext<Object> context) {
+            return DEFAULT_SUPPORT;
         }
     }
 

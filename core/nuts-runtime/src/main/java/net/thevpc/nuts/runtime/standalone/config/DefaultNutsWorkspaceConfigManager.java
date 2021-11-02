@@ -27,17 +27,19 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.config.NutsWorkspaceConfigManagerExt;
 import net.thevpc.nuts.runtime.core.model.CoreNutsWorkspaceOptions;
 import net.thevpc.nuts.runtime.core.util.CoreNutsUtils;
-import net.thevpc.nuts.runtime.standalone.solvers.NutsDependencySolvers;
+import net.thevpc.nuts.runtime.standalone.solvers.NutsDependencySolverUtils;
 import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 import net.thevpc.nuts.spi.NutsDependencySolver;
 import net.thevpc.nuts.spi.NutsDependencySolverFactory;
 import net.thevpc.nuts.spi.NutsIndexStoreFactory;
+import net.thevpc.nuts.spi.NutsSystemTerminalBase;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Set;
+import java.util.concurrent.ExecutorService;
 
 /**
  * @author thevpc
@@ -130,7 +132,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
     @Override
     public String resolveRepositoryPath(String repositoryLocation) {
         checkSession();
-        return model.resolveRepositoryPath(repositoryLocation, session);
+        return model.resolveRepositoryPath(NutsPath.of(repositoryLocation,session), session);
     }
 
     @Override
@@ -250,7 +252,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
                     @Override
                     public int compare(String o1, String o2) {
                         if(!o1.equals(o2)){
-                            String n = NutsDependencySolvers.resolveSolverName(session.getDependencySolver());
+                            String n = NutsDependencySolverUtils.resolveSolverName(session.getDependencySolver());
                             if(o1.equals(n)){
                                 return -1;
                             }
@@ -268,6 +270,38 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
     public NutsDependencySolver createDependencySolver(String name) {
         checkSession();
         return model.createDependencySolver(name, getSession());
+    }
+
+    @Override
+    public ExecutorService executorService() {
+        checkSession();
+        return model.executorService(getSession());
+    }
+
+    @Override
+    public NutsSystemTerminal getSystemTerminal() {
+        checkSession();
+        return model.getSystemTerminal();
+    }
+
+    @Override
+    public NutsWorkspaceConfigManager setSystemTerminal(NutsSystemTerminalBase terminal) {
+        checkSession();
+        model.setSystemTerminal(terminal, session);
+        return this;
+    }
+
+    @Override
+    public NutsSessionTerminal getDefaultTerminal() {
+        checkSession();
+        return model.getTerminal();
+    }
+
+    @Override
+    public NutsWorkspaceConfigManager setDefaultTerminal(NutsSessionTerminal terminal) {
+        checkSession();
+        model.setTerminal(terminal, session);
+        return this;
     }
 
 }

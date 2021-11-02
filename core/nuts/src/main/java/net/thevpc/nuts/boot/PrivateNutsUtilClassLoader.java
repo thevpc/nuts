@@ -16,27 +16,26 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 class PrivateNutsUtilClassLoader {
-    private static void fillBootDependencyNodes(NutsClassLoaderNode node, Set<URL> urls) {
-        urls.add(node.getURL());
-        for (NutsClassLoaderNode dependency : node.getDependencies()) {
-            fillBootDependencyNodes(dependency, urls);
+    private static void fillBootDependencyNodes(NutsClassLoaderNode node, Set<URL> urls, Set<String> visitedIds,PrivateNutsLog LOG) {
+        String shortName = NutsBootId.parse(node.getId()).getShortName();
+        if(!visitedIds.contains(shortName)){
+            visitedIds.add(shortName);
+            if(!node.isIncludedInClasspath()) {
+                urls.add(node.getURL());
+            }else{
+                LOG.log(Level.WARNING, NutsLogVerb.CACHE, NutsMessage.jstyle("url will not be loaded (already in classloader) : {0}", node.getURL()));
+            }
+            for (NutsClassLoaderNode dependency : node.getDependencies()) {
+                fillBootDependencyNodes(dependency, urls,visitedIds,LOG);
+            }
         }
     }
 
     static URL[] resolveClassWorldURLs(NutsClassLoaderNode[] nodes, ClassLoader contextClassLoader, PrivateNutsLog LOG) {
-        LinkedHashSet<URL> urls0 = new LinkedHashSet<>();
+        LinkedHashSet<URL> urls = new LinkedHashSet<>();
+        Set<String> visitedIds=new HashSet<>();
         for (NutsClassLoaderNode info : nodes) {
-            fillBootDependencyNodes(info, urls0);
-        }
-        List<URL> urls = new ArrayList<>();
-        for (URL url0 : urls0) {
-            if (url0 != null) {
-                if (isLoadedClassPath(url0, contextClassLoader, LOG)) {
-                    LOG.log(Level.WARNING, NutsLogVerb.CACHE, NutsMessage.jstyle("url will not be loaded (already in classloader) : {0}", url0));
-                } else {
-                    urls.add(url0);
-                }
-            }
+            fillBootDependencyNodes(info, urls,visitedIds,LOG);
         }
         return urls.toArray(new URL[0]);
     }
@@ -107,7 +106,7 @@ class PrivateNutsUtilClassLoader {
         return all.toArray(new URL[0]);
     }
 
-    private static boolean isLoadedClassPath(URL url, ClassLoader contextClassLoader, PrivateNutsLog LOG) {
+    public static boolean isLoadedClassPath(URL url, ClassLoader contextClassLoader, PrivateNutsLog LOG) {
         try {
             if (url != null) {
                 if (contextClassLoader == null) {

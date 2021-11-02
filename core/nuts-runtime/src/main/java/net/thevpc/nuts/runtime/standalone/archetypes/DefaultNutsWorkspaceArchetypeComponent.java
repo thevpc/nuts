@@ -28,7 +28,8 @@ import java.util.*;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.config.DefaultNutsWorkspaceConfigManager;
 import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
-import net.thevpc.nuts.spi.NutsSingleton;
+import net.thevpc.nuts.spi.NutsComponentScope;
+import net.thevpc.nuts.spi.NutsComponentScopeType;
 import net.thevpc.nuts.spi.NutsSupportLevelContext;
 import net.thevpc.nuts.spi.NutsWorkspaceArchetypeComponent;
 
@@ -37,7 +38,7 @@ import net.thevpc.nuts.runtime.core.repos.NutsRepositorySelector;
 /**
  * Created by vpc on 1/23/17.
  */
-@NutsSingleton
+@NutsComponentScope(NutsComponentScopeType.WORKSPACE)
 public class DefaultNutsWorkspaceArchetypeComponent implements NutsWorkspaceArchetypeComponent {
     private NutsLogger LOG;
 
@@ -48,15 +49,15 @@ public class DefaultNutsWorkspaceArchetypeComponent implements NutsWorkspaceArch
 
     @Override
     public void initializeWorkspace(NutsSession session) {
-        this.LOG = session.log().of(DefaultNutsWorkspaceArchetypeComponent.class);
+        this.LOG = NutsLogger.of(DefaultNutsWorkspaceArchetypeComponent.class,session);
         DefaultNutsWorkspaceConfigManager rm = (DefaultNutsWorkspaceConfigManager) session.config();
         LinkedHashMap<String, NutsAddRepositoryOptions> def = new LinkedHashMap<>();
         Map<String, String> defaults = new HashMap<>();
         for (NutsAddRepositoryOptions d : rm.getDefaultRepositories()) {
             if (d.getConfig() != null) {
-                def.put(session.io().path(d.getConfig().getLocation()).builder().build().toString(), d);
+                def.put(NutsPath.of(d.getConfig().getLocation(),session).builder().build().toString(), d);
             } else {
-                def.put(session.io().path(d.getLocation()).builder().build().toString(), d);
+                def.put(NutsPath.of(d.getLocation(),session).builder().build().toString(), d);
             }
             defaults.put(d.getName(), null);
         }
@@ -64,8 +65,7 @@ public class DefaultNutsWorkspaceArchetypeComponent implements NutsWorkspaceArch
         NutsRepositorySelector.Selection[] br = rm.getModel().resolveBootRepositoriesList().resolveSelectors(defaults);
         for (NutsRepositorySelector.Selection s : br) {
             NutsAddRepositoryOptions oo = NutsRepositorySelector.createRepositoryOptions(s, false, session);
-            String sloc = session.io()
-                    .path(oo.getConfig().getLocation()).builder().build().toString();
+            String sloc = NutsPath.of(oo.getConfig().getLocation(),session).builder().build().toString();
             if (def.containsKey(sloc)) {
                 session.repos().addRepository(def.get(sloc));
                 def.remove(sloc);

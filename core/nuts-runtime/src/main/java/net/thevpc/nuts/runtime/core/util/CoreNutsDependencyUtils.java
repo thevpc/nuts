@@ -36,7 +36,7 @@ public class CoreNutsDependencyUtils {
     }
 
     public static NutsDependencyFilter createJavaRunDependencyFilter(NutsSession session) {
-        NutsDependencyFilterManager d = session.dependency().filter();
+        NutsDependencyFilters d = NutsDependencyFilters.of(session);
         return d
                 .byScope(NutsDependencyScopePattern.RUN)
                 .and(d.byOptional(false))

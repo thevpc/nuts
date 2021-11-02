@@ -54,4 +54,6 @@ public interface NutsBootManager {
     long getCreationTimeMillis();
 
 
+    NutsClassLoaderNode getBootRuntimeClassLoaderNode();
+    NutsClassLoaderNode[] getBootExtensionClassLoaderNode();
 }

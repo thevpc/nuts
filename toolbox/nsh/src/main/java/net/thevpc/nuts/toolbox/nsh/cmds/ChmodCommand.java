@@ -10,7 +10,7 @@
  * other 'things' . Its based on an extensible architecture to help supporting a
  * large range of sub managers / repositories.
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc]
  * Licensed under the Apache License, Version 2.0 (the "License"); you may
  * not use this file except in compliance with the License. You may obtain a
@@ -22,23 +22,25 @@
  * governing permissions and limitations under the License.
  * <br>
  * ====================================================================
-*/
+ */
 package net.thevpc.nuts.toolbox.nsh.cmds;
+
+import net.thevpc.nuts.NutsArgument;
+import net.thevpc.nuts.NutsCommandLine;
+import net.thevpc.nuts.spi.NutsComponentScope;
+import net.thevpc.nuts.spi.NutsComponentScopeType;
+import net.thevpc.nuts.toolbox.nsh.SimpleNshBuiltin;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import net.thevpc.nuts.NutsArgument;
-import net.thevpc.nuts.NutsCommandLine;
-import net.thevpc.nuts.spi.NutsSingleton;
-import net.thevpc.nuts.toolbox.nsh.SimpleNshBuiltin;
 
 /**
  * Created by vpc on 1/7/17.
  */
-@NutsSingleton
+@NutsComponentScope(NutsComponentScopeType.WORKSPACE)
 public class ChmodCommand extends SimpleNshBuiltin {
 
     public ChmodCommand() {
@@ -61,44 +63,6 @@ public class ChmodCommand extends SimpleNshBuiltin {
         return true;
     }
 
-    private static class Mods {
-
-        int x = 0;
-        int w = 0;
-        int r = 0;
-        boolean user = false;
-        boolean recursive = false;
-
-        @Override
-        public String toString() {
-            StringBuilder sb = new StringBuilder();
-            if (user) {
-                sb.append("u");
-            } else {
-                sb.append("a");
-            }
-            if (r > 0) {
-                sb.append("+r");
-            } else if (r < 0) {
-                sb.append("-r");
-            }
-            if (w > 0) {
-                sb.append("+w");
-            } else if (w < 0) {
-                sb.append("-w");
-            }
-            if (x > 0) {
-                sb.append("+x");
-            } else if (x < 0) {
-                sb.append("-x");
-            }
-            if (recursive) {
-                sb.append(" [recursive]");
-            }
-            return sb.toString();
-        }
-    }
-
     public void apply(String s, Mods m, int v) {
         for (char c : s.toCharArray()) {
             switch (c) {
@@ -116,12 +80,6 @@ public class ChmodCommand extends SimpleNshBuiltin {
                 }
             }
         }
-    }
-
-    private static class Options {
-
-        List<File> files = new ArrayList<>();
-        Mods m = new Mods();
     }
 
     @Override
@@ -203,7 +161,7 @@ public class ChmodCommand extends SimpleNshBuiltin {
             chmod(f, options.m, errors);
         }
         if (!errors.isEmpty()) {
-            throwExecutionException(errors,1, context.getSession());
+            throwExecutionException(errors, 1, context.getSession());
         }
     }
 
@@ -235,5 +193,49 @@ public class ChmodCommand extends SimpleNshBuiltin {
                 }
             }
         }
+    }
+
+    private static class Mods {
+
+        int x = 0;
+        int w = 0;
+        int r = 0;
+        boolean user = false;
+        boolean recursive = false;
+
+        @Override
+        public String toString() {
+            StringBuilder sb = new StringBuilder();
+            if (user) {
+                sb.append("u");
+            } else {
+                sb.append("a");
+            }
+            if (r > 0) {
+                sb.append("+r");
+            } else if (r < 0) {
+                sb.append("-r");
+            }
+            if (w > 0) {
+                sb.append("+w");
+            } else if (w < 0) {
+                sb.append("-w");
+            }
+            if (x > 0) {
+                sb.append("+x");
+            } else if (x < 0) {
+                sb.append("-x");
+            }
+            if (recursive) {
+                sb.append(" [recursive]");
+            }
+            return sb.toString();
+        }
+    }
+
+    private static class Options {
+
+        List<File> files = new ArrayList<>();
+        Mods m = new Mods();
     }
 }

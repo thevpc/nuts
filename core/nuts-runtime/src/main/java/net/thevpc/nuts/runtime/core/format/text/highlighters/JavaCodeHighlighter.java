@@ -26,11 +26,11 @@ public class JavaCodeHighlighter implements NutsCodeHighlighter {
             )
     );
     private NutsWorkspace ws;
-    private NutsTextManager factory;
+    private NutsTexts factory;
 
     public JavaCodeHighlighter(NutsWorkspace ws) {
         this.ws = ws;
-        factory = NutsWorkspaceUtils.defaultSession(ws).text();
+        factory = NutsTexts.of(NutsWorkspaceUtils.defaultSession(ws));
     }
 
     @Override

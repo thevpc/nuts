@@ -10,7 +10,7 @@
  * other 'things' . Its based on an extensible architecture to help supporting a
  * large range of sub managers / repositories.
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc]
  * Licensed under the Apache License, Version 2.0 (the "License"); you may
  * not use this file except in compliance with the License. You may obtain a
@@ -22,36 +22,30 @@
  * governing permissions and limitations under the License.
  * <br>
  * ====================================================================
-*/
+ */
 package net.thevpc.nuts.toolbox.nsh.cmds;
 
-import net.thevpc.nuts.*;
-import net.thevpc.nuts.spi.NutsSingleton;
+import net.thevpc.nuts.NutsArgument;
+import net.thevpc.nuts.NutsCommandLine;
+import net.thevpc.nuts.NutsPath;
+import net.thevpc.nuts.spi.NutsComponentScope;
+import net.thevpc.nuts.spi.NutsComponentScopeType;
+import net.thevpc.nuts.toolbox.nsh.SimpleNshBuiltin;
 import net.thevpc.nuts.toolbox.nsh.util.ShellHelper;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import net.thevpc.nuts.toolbox.nsh.SimpleNshBuiltin;
-
 /**
  * Created by vpc on 1/7/17. ssh copy credits to Chanaka Lakmal from
  * https://medium.com/ldclakmal/scp-with-java-b7b7dbcdbc85
  */
-@NutsSingleton
+@NutsComponentScope(NutsComponentScopeType.WORKSPACE)
 public class MkdirCommand extends SimpleNshBuiltin {
 
     public MkdirCommand() {
         super("mkdir", DEFAULT_SUPPORT);
-    }
-
-    public static class Options {
-
-        List<String> files = new ArrayList<>();
-        List<NutsPath> xfiles = new ArrayList<>();
-
-        boolean p;
     }
 
     @Override
@@ -77,7 +71,7 @@ public class MkdirCommand extends SimpleNshBuiltin {
     @Override
     protected void execBuiltin(NutsCommandLine commandLine, SimpleNshCommandContext context) {
         Options options = context.getOptions();
-        options.xfiles = ShellHelper.xfilesOf(options.files, context.getCwd(),context.getSession());
+        options.xfiles = ShellHelper.xfilesOf(options.files, context.getCwd(), context.getSession());
         if (options.xfiles.size() < 1) {
             commandLine.required();
         }
@@ -88,5 +82,13 @@ public class MkdirCommand extends SimpleNshBuiltin {
 //            }
             v.mkdir(options.p);
         }
+    }
+
+    public static class Options {
+
+        List<String> files = new ArrayList<>();
+        List<NutsPath> xfiles = new ArrayList<>();
+
+        boolean p;
     }
 }

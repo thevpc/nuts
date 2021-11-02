@@ -24,15 +24,25 @@
  */
 package net.thevpc.nuts;
 
+import net.thevpc.nuts.boot.NutsApiUtils;
+import net.thevpc.nuts.spi.NutsComponent;
+
+import java.io.File;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.file.Path;
 import java.time.Instant;
 import java.util.ListIterator;
 
 /**
  * @app.category Command Line
  */
-public interface NutsCommandHistory {
+public interface NutsCommandHistory extends NutsComponent<Object> {
+    static NutsCommandHistory of(NutsSession session){
+        NutsApiUtils.checkSession(session);
+        return session.extensions().createSupported(NutsCommandHistory.class, true, null);
+    }
+
 
     void load();
 
@@ -41,6 +51,14 @@ public interface NutsCommandHistory {
     void load(InputStream in);
 
     void save(OutputStream out);
+
+    NutsCommandHistory setPath(Path path);
+
+    NutsCommandHistory setPath(File path);
+
+    NutsCommandHistory setPath(NutsPath path);
+
+    NutsPath getPath();
 
     int size();
 

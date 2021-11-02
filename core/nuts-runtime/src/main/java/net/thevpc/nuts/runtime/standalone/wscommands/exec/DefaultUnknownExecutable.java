@@ -16,7 +16,7 @@ public class DefaultUnknownExecutable extends AbstractNutsExecutableCommand {
     NutsSession execSession;
 
     public DefaultUnknownExecutable(String[] cmd, NutsSession execSession) {
-        super(cmd[0], execSession.commandLine().create(cmd).toString(), NutsExecutableType.UNKNOWN);
+        super(cmd[0], NutsCommandLine.of(cmd,execSession).toString(), NutsExecutableType.UNKNOWN);
         this.execSession = execSession;
     }
 

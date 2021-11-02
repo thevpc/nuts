@@ -90,7 +90,7 @@ public class NutsTextNodeWriterStringer extends AbstractNutsTextNodeWriter {
                             writeNode(s.getChild(), ctx);
                         } else {
                             writeNode(
-                                    ws.text().ofStyled(s.getChild(), s.getStyles().removeFirst()),
+                                    NutsTexts.of(ws).ofStyled(s.getChild(), s.getStyles().removeFirst()),
                                     ctx);
                         }
                         writeRaw(s.getEnd());
@@ -102,7 +102,7 @@ public class NutsTextNodeWriterStringer extends AbstractNutsTextNodeWriter {
                             writeNode(s.getChild(), ctx);
                         } else {
                             writeNode(
-                                    ws.text().ofStyled(s.getChild(), s.getStyles().removeFirst()),
+                                    NutsTexts.of(ws).ofStyled(s.getChild(), s.getStyles().removeFirst()),
                                     ctx);
                         }
                         writeRaw("}##");//complex format always uses ##
@@ -119,7 +119,7 @@ public class NutsTextNodeWriterStringer extends AbstractNutsTextNodeWriter {
                 if (ctx.isTitleNumberEnabled()) {
                     NutsTextNumbering seq = ctx.getTitleNumberSequence();
                     if (seq == null) {
-                        seq = ws.text().ofNumbering();
+                        seq = NutsTexts.of(ws).ofNumbering();
                         ctx.setTitleNumberSequence(seq);
                     }
                     NutsTextNumbering a = seq.newLevel(s.getTextStyleCode().length());

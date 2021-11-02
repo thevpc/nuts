@@ -66,14 +66,15 @@ public class MavenNutsDependencySolver implements NutsDependencySolver {
         NutsDependencyInfoSet mergedVisitedSet = new NutsDependencyInfoSet();
         NutsDependencyInfoSet nonMergedVisitedSet = new NutsDependencyInfoSet();
         NutsDependencyFilter effDependencyFilter = null;
+        NutsDependencyFilters filter = NutsDependencyFilters.of(session);
         if (dependencyFilter == null) {
-            effDependencyFilter = session.dependency().filter().byOs(session.env().getOsFamily())
-                    .and(session.dependency().filter().byArch(session.env().getArchFamily()));
+            effDependencyFilter = filter.byOs(session.env().getOsFamily())
+                    .and(filter.byArch(session.env().getArchFamily()));
         } else {
             effDependencyFilter
                     = dependencyFilter
-                    .and(session.dependency().filter().byOs(session.env().getOsFamily()))
-                    .and(session.dependency().filter().byArch(session.env().getArchFamily()));
+                    .and(filter.byOs(session.env().getOsFamily()))
+                    .and(filter.byArch(session.env().getArchFamily()));
         }
         for (NutsDependencyTreeNodeBuild currentNode : defs) {
             NutsId id = currentNode.getEffectiveId();

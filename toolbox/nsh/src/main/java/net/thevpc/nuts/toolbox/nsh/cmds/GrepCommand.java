@@ -36,6 +36,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import net.thevpc.nuts.toolbox.nsh.bundles.jshell.JShellExecutionContext;
+import net.thevpc.nuts.toolbox.nsh.util.ColumnRuler;
 import net.thevpc.nuts.toolbox.nsh.util.FileInfo;
 
 /**
@@ -116,6 +117,8 @@ public class GrepCommand extends AbstractNshBuiltin {
                 options.ignoreCase = true;
             } else if ((a = commandLine.next("-H", "--highlighter")) != null) {
                 options.highlighter = NutsUtilStrings.trim(a.getValue().getString());
+            } else if ((a = commandLine.next("-S", "--selection-style")) != null) {
+                options.selectionStyle = NutsUtilStrings.trimToNull(a.getValue().getString());
             } else if (commandLine.next("--version") != null) {
                 out.printf("%s\n", "1.0");
                 return 0;
@@ -155,20 +158,20 @@ public class GrepCommand extends AbstractNshBuiltin {
         //text mode
         boolean prefixFileName = files.size() > 1;
         int x = 0;
-        List<ResultItem> results = new ArrayList<>();
+        List<GrepResultItem> results = new ArrayList<>();
         for (FileInfo f : files) {
             x = grepFile(f, p, options, context, prefixFileName, results);
         }
         switch (context.getSession().getOutputFormat()) {
             case PLAIN: {
-                for (ResultItem result : results) {
+                ColumnRuler ruler=new ColumnRuler();
+                for (GrepResultItem result : results) {
                     if (options.n) {
                         if (result.path != null && prefixFileName) {
-                            out.print(result.path);
+                            out.printf(result.path);
                             out.print(":");
                         }
-                        out.print(result.number);
-                        out.print(":");
+                        out.print(ruler.nextNum(result.number, context.getSession()));
                     }
                     out.println(result.line);
                 }
@@ -188,16 +191,17 @@ public class GrepCommand extends AbstractNshBuiltin {
         return x;
     }
 
-    protected int grepFile(FileInfo f, Pattern p, Options options, JShellExecutionContext context, boolean prefixFileName, List<ResultItem> results) {
+    protected int grepFile(FileInfo f, Pattern p, Options options, JShellExecutionContext context, boolean prefixFileName, List<GrepResultItem> results) {
 
         Reader reader = null;
         boolean closeReader = false;
+        NutsSession session = context.getSession();
         try {
             try {
                 if (f == null) {
                     closeReader = false;
                     reader = new InputStreamReader(context.in());
-                    processByLine(reader, options, p, f, results, context.getSession());
+                    processByLine(reader, options, p, f, results, session);
                 } else if (f.getFile().isDirectory()) {
                     NutsPath[] files = f.getFile().getChildren();
                     if (files != null) {
@@ -210,10 +214,13 @@ public class GrepCommand extends AbstractNshBuiltin {
                     closeReader = true;
                     reader = new InputStreamReader(f.getFile().getInputStream());
                     if (f.getHighlighter() == null) {
-                        processByLine(reader, options, p, f, results, context.getSession());
+                        processByLine(reader, options, p, f, results, session);
                     } else {
-                        String text = new String(context.getSession().io().copy().from(f.getFile()).getByteArrayResult());
-                        processByText(text, options, p, f, results, context.getSession());
+                        String text = new String(NutsCp.of(session).from(f.getFile()).getByteArrayResult());
+                        if(NutsBlankable.isBlank(f.getHighlighter())){
+                            f.setHighlighter(f.getFile().getContentType());
+                        }
+                        processByText(text, options, p, f, results, session);
                     }
                 }
             } finally {
@@ -222,7 +229,7 @@ public class GrepCommand extends AbstractNshBuiltin {
                 }
             }
         } catch (IOException ex) {
-            throw new NutsExecutionException(context.getSession(), NutsMessage.cstyle("%s", ex), ex, 100);
+            throw new NutsExecutionException(session, NutsMessage.cstyle("%s", ex), ex, 100);
         }
         return 0;
     }
@@ -248,26 +255,54 @@ public class GrepCommand extends AbstractNshBuiltin {
             }
             r.add(t);
         }
-        return session.text().builder().appendAll(r);
+        return NutsTexts.of(session).builder().appendAll(r);
     }
 
-    private void processByLine(Reader reader, Options options, Pattern p, FileInfo f, List<ResultItem> results, NutsSession session) throws IOException {
+    private void processByLine(Reader reader, Options options, Pattern p, FileInfo f, List<GrepResultItem> results, NutsSession session) throws IOException {
         try (BufferedReader r = new BufferedReader(reader)) {
             String line = null;
             long nn = 1;
             while ((line = r.readLine()) != null) {
-                boolean matches = p.matcher(line).matches();
-                if (matches != options.invertMatch) {
-                    NutsText cl = session.text().ofCode(f.getHighlighter(), line).highlight(session);
-                    results.add(new ResultItem(f.getFile(), nn, cl));
+                GrepResultItem rr = createResult(nn, line, null, options, p, f, session);
+                if (rr!=null) {
+                    results.add(rr);
                 }
                 nn++;
             }
         }
     }
 
-    private void processByText(String text, Options options, Pattern p, FileInfo f, List<ResultItem> results, NutsSession session) throws IOException {
-        NutsTextBuilder flattened = session.text().ofCode(f.getHighlighter(), text).highlight(session)
+    private GrepResultItem createResult(long nn, String line, NutsTextBuilder coloredLine, Options options, Pattern p, FileInfo f, NutsSession session) {
+        if (coloredLine == null) {
+            coloredLine = NutsTexts.of(session).ofCode(f.getHighlighter(), line).highlight(session).builder();
+        }
+        Matcher matcher = p.matcher(line);
+        boolean anyMatch = false;
+        while (matcher.find()) {
+            anyMatch = true;
+            int pos = matcher.start();
+            int end = matcher.end();
+            coloredLine.replace(pos, end,
+                    NutsTexts.of(session).ofStyled(
+                            coloredLine.substring(pos, end)
+                            , selectionStyle(options)
+                    )
+            );
+        }
+        if (anyMatch != options.invertMatch) {
+            return new GrepResultItem(f.getFile(), nn, coloredLine.build(),true);
+        }
+        if(options.all){
+            return new GrepResultItem(f.getFile(), nn, coloredLine.build(),false);
+        }
+        if(options.all){
+
+        }
+        return null;
+    }
+
+    private void processByText(String text, Options options, Pattern p, FileInfo f, List<GrepResultItem> results, NutsSession session) throws IOException {
+        NutsTextBuilder flattened = NutsTexts.of(session).ofCode(f.getHighlighter(), text).highlight(session)
                 .builder()
                 .flatten();
         try (BufferedReader r = new BufferedReader(new InputStreamReader(f.getFile().getInputStream()))) {
@@ -275,46 +310,50 @@ public class GrepCommand extends AbstractNshBuiltin {
             long nn = 1;
             while ((line = r.readLine()) != null) {
                 NutsTextBuilder coloredLine = readLine(flattened, session);
-                if (coloredLine == null) {
-                    coloredLine = session.text().ofCode(f.getHighlighter(), line).highlight(session).builder();
-                }
-                Matcher matcher = p.matcher(line);
-                boolean anyMatch = false;
-                while (matcher.find()) {
-                    anyMatch = true;
-                    int pos = matcher.start();
-                    int end = matcher.end();
-                    NutsText toh = coloredLine.substring(pos, end);
-                    coloredLine.replace(pos, end, session.text().ofStyled(toh, NutsTextStyle.underlined()));
-                }
-                if (anyMatch != options.invertMatch) {
-                    results.add(new ResultItem(f.getFile(), nn, coloredLine.build()));
+                GrepResultItem rr = createResult(nn, line, coloredLine, options, p, f, session);
+                if (rr != null) {
+                    results.add(rr);
                 }
                 nn++;
             }
         }
     }
 
+    public NutsTextStyles selectionStyle(Options options) {
+        String s = options.selectionStyle;
+        NutsTextStyles def = NutsTextStyles.of(NutsTextStyle.secondary(2));
+        if (NutsBlankable.isBlank(s)) {
+            return def;
+        }
+        return NutsTextStyles.parseLenient(s, def, def);
+    }
+
     private static class Options {
 
-//        boolean regexp = false;
+        //        boolean regexp = false;
         boolean invertMatch = false;
         boolean word = false;
         boolean lineRegexp = false;
         boolean ignoreCase = false;
         String highlighter;
+        String selectionStyle;
         boolean n = false;
+        boolean all = false;
+        int windowBefore = 0;
+        int windowAfter = 0;
     }
 
-    private static class ResultItem {
+    private static class GrepResultItem {
         NutsPath path;
         long number;
         NutsText line;
+        Boolean match;
 
-        public ResultItem(NutsPath path, long number, NutsText line) {
+        public GrepResultItem(NutsPath path, long number, NutsText line,Boolean match) {
             this.path = path;
             this.number = number;
             this.line = line;
+            this.match = match;
         }
     }
 

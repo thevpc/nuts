@@ -26,22 +26,19 @@
  */
 package net.thevpc.nuts.toolbox.nsh.cmds;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import net.thevpc.nuts.*;
-import net.thevpc.nuts.spi.NutsSingleton;
+import net.thevpc.nuts.NutsArgument;
+import net.thevpc.nuts.NutsCommandLine;
+import net.thevpc.nuts.spi.NutsComponentScope;
+import net.thevpc.nuts.spi.NutsComponentScopeType;
 import net.thevpc.nuts.toolbox.nsh.SimpleNshBuiltin;
 import net.thevpc.nuts.toolbox.nsh.bundles.jshell.JShellBuiltin;
+
+import java.util.*;
 
 /**
  * Created by vpc on 1/7/17.
  */
-@NutsSingleton
+@NutsComponentScope(NutsComponentScopeType.WORKSPACE)
 public class EnableCommand extends SimpleNshBuiltin {
 
     public EnableCommand() {

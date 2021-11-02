@@ -35,7 +35,8 @@ import java.util.concurrent.Executor;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.spi.NutsComponent;
-import net.thevpc.nuts.spi.NutsSingleton;
+import net.thevpc.nuts.spi.NutsComponentScope;
+import net.thevpc.nuts.spi.NutsComponentScopeType;
 import net.thevpc.nuts.toolbox.nsh.SimpleNshBuiltin;
 import net.thevpc.nuts.toolbox.nsh.bundles.jshell.JShell;
 import net.thevpc.nuts.toolbox.nutsserver.NutsServer;
@@ -51,18 +52,18 @@ public class AdminServerRunnable implements NutsServer, Runnable {
     int finalBacklog;
     InetAddress address;
     Executor finalExecutor;
-    NutsSession invokerWorkspace;
+    NutsSession invokerSession;
     boolean running;
     ServerSocket serverSocket = null;
     NutsSession session = null;
 
-    public AdminServerRunnable(String serverId, int finalPort, int finalBacklog, InetAddress address, Executor finalExecutor, NutsSession invokerWorkspace, NutsSession session) {
+    public AdminServerRunnable(String serverId, int finalPort, int finalBacklog, InetAddress address, Executor finalExecutor, NutsSession invokerSession, NutsSession session) {
         this.serverId = serverId;
         this.finalPort = finalPort;
         this.finalBacklog = finalBacklog;
         this.address = address;
         this.finalExecutor = finalExecutor;
-        this.invokerWorkspace = invokerWorkspace;
+        this.invokerSession = invokerSession;
         this.session = session;
     }
 
@@ -117,15 +118,16 @@ public class AdminServerRunnable implements NutsServer, Runnable {
                             try {
                                 try {
                                     PrintStream out = new PrintStream(finalAccept.getOutputStream());
-                                    NutsPrintStream eout = invokerWorkspace.io().createPrintStream(out, NutsTerminalMode.FORMATTED);
-                                    NutsSession session = invokerWorkspace;
+                                    NutsPrintStream eout = NutsPrintStream.of(out, NutsTerminalMode.FORMATTED, invokerSession);
+                                    NutsSession session = invokerSession;
                                     session.setTerminal(
-                                            invokerWorkspace.term().createTerminal(
+                                            NutsSessionTerminal.of(
                                                     finalAccept.getInputStream(),
-                                                    eout,eout)
+                                                    eout,eout, invokerSession)
                                     );
                                     cli = new JShell(session,
-                                            invokerWorkspace.id().setSession(session).resolveId(AdminServerRunnable.class),
+                                            NutsIdResolver.of(invokerSession)
+                                                    .resolveId(AdminServerRunnable.class),
                                             serverId,new String[0]);
                                     cli.getRootContext().builtins().unset("connect");
                                     cli.getRootContext().builtins().set(new StopServerBuiltin2(finalServerSocket));
@@ -153,7 +155,7 @@ public class AdminServerRunnable implements NutsServer, Runnable {
         return "Nuts Admin Server{" + "running=" + running + '}';
     }
 
-    @NutsSingleton
+    @NutsComponentScope(NutsComponentScopeType.WORKSPACE)
     private static class StopServerBuiltin2 extends SimpleNshBuiltin {
 
         private final ServerSocket socket;

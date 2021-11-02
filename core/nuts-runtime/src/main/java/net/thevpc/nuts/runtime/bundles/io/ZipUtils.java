@@ -10,7 +10,7 @@
  * other 'things' . Its based on an extensible architecture to help supporting a
  * large range of sub managers / repositories.
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc] Licensed under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -23,10 +23,7 @@
  */
 package net.thevpc.nuts.runtime.bundles.io;
 
-import net.thevpc.nuts.NutsMessage;
-import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.NutsWorkspace;
-import net.thevpc.nuts.NutsLogVerb;
+import net.thevpc.nuts.*;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -44,7 +41,7 @@ import java.util.zip.ZipOutputStream;
  */
 public class ZipUtils {
 
-//    private static final Logger LOG = Logger.getLogger(ZipUtils.class.getName());
+    //    private static final Logger LOG = Logger.getLogger(ZipUtils.class.getName());
     public static void zip(NutsSession ws, String target, ZipOptions options, String... source) throws IOException {
         if (options == null) {
             options = new ZipOptions();
@@ -202,7 +199,7 @@ public class ZipUtils {
 
         //get the zip file content
         try (ZipInputStream zis
-                = new ZipInputStream(new FileInputStream(new File(zipFile)))) {
+                     = new ZipInputStream(new FileInputStream(new File(zipFile)))) {
             //get the zipped file list entry
             ZipEntry ze = zis.getNextEntry();
             String root = null;
@@ -230,7 +227,7 @@ public class ZipUtils {
                     newFile.mkdirs();
                 } else {
                     File newFile = new File(outputFolder + File.separator + fileName);
-                    session.log().of(ZipUtils.class).with().session(session).level(Level.FINEST).verb(NutsLogVerb.WARNING)
+                    NutsLoggerOp.of(ZipUtils.class, session).level(Level.FINEST).verb(NutsLogVerb.WARNING)
                             .log(NutsMessage.jstyle("file unzip : {0}", newFile.getAbsoluteFile()));
                     //create all non exists folders
                     //else you will hit FileNotFoundException for compressed folder
@@ -291,7 +288,7 @@ public class ZipUtils {
         return false;
     }
 
-//    public static void zip(final File _folder, final File _zipFilePath) {
+    //    public static void zip(final File _folder, final File _zipFilePath) {
 //        final Path folder = _folder.toPath();
 //        Path zipFilePath = _zipFilePath.toPath();
 //        try (

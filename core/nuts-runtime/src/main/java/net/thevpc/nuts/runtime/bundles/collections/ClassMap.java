@@ -95,6 +95,14 @@ public class ClassMap<V> {
         return result.toArray(new Class[result.size()]);
     }
 
+    public Set<V> keySet() {
+        return new HashSet(values.keySet());
+    }
+
+    public Collection<V> values() {
+        return values.values();
+    }
+
     public V put(Class classKey, V value) {
         cachedValues.clear();
         return values.put(classKey, value);
@@ -208,4 +216,7 @@ public class ClassMap<V> {
         cachedHierarchy.clear();
     }
 
+    public int size() {
+        return values.size();
+    }
 }

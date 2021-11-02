@@ -19,7 +19,7 @@ public abstract class AbstractSyncIProcessExecHelper implements IProcessExecHelp
 
     @Override
     public Future<Integer> execAsync() {
-        return session.concurrent().executorService().submit(new Callable<Integer>() {
+        return session.config().executorService().submit(new Callable<Integer>() {
             @Override
             public Integer call() throws Exception {
                 return exec();

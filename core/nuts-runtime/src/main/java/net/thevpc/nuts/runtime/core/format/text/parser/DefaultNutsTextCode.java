@@ -27,12 +27,8 @@
 package net.thevpc.nuts.runtime.core.format.text.parser;
 
 
-import net.thevpc.nuts.NutsTextCode;
-import net.thevpc.nuts.NutsTextType;
-import net.thevpc.nuts.runtime.core.format.text.DefaultNutsTextManager;
-import net.thevpc.nuts.NutsCodeHighlighter;
-import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.NutsText;
+import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.core.format.text.DefaultNutsTexts;
 
 import java.util.Objects;
 
@@ -60,7 +56,7 @@ public class DefaultNutsTextCode extends NutsTextSpecialBase implements NutsText
 
     @Override
     public NutsText highlight(NutsSession session) {
-        NutsCodeHighlighter t = ((DefaultNutsTextManager) session.text())
+        NutsCodeHighlighter t = ((DefaultNutsTexts) NutsTexts.of(session))
                 .setSession(session)
                 .resolveCodeHighlighter(getKind());
         return t.stringToText(text, session);

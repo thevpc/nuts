@@ -43,12 +43,12 @@ public class VersionCommand extends AbstractNshBuiltin {
 
     @Override
     public int execImpl(String[] args, JShellExecutionContext context) {
-        NutsSession ws = context.getSession();
-        NutsCommandLine cmdLine = context.getSession().commandLine().create(args);
-        NutsVersionFormat version = ws.version().formatter();
+        NutsSession session = context.getSession();
+        NutsCommandLine cmdLine = NutsCommandLine.of(args,session);
+        NutsVersionFormat version = NutsVersionFormat.of(session);
         version.configure(true, cmdLine);
         version
-                .setSession(context.getSession())
+                .setSession(session)
                 .addProperty("nsh-version", context.getAppContext().getAppId().getVersion().getValue())
                 .println(context.out());
         return 0;

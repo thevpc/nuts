@@ -54,7 +54,7 @@ public class DefaultNutsArtifactExecutable extends AbstractNutsExecutableCommand
 
         List<String> executorOptionsList = new ArrayList<>();
         for (String option : executorOptions) {
-            NutsArgument a = traceSession.commandLine().createArgument(option);
+            NutsArgument a = NutsArgument.of(option,traceSession);
             if (a.getKey().getString().equals("--nuts-auto-install")) {
                 if (a.isKeyValue()) {
                     autoInstall = a.isNegated() != a.getValue().getBoolean();
@@ -132,7 +132,7 @@ public class DefaultNutsArtifactExecutable extends AbstractNutsExecutableCommand
 
     @Override
     public String toString() {
-        return "NUTS " + getId().toString() + " " + execSession.commandLine().create(appArgs).toString();
+        return "NUTS " + getId().toString() + " " + NutsCommandLine.of(appArgs,execSession).toString();
     }
 
 }

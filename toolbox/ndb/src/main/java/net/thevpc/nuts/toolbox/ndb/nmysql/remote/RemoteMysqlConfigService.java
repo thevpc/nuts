@@ -53,7 +53,8 @@ public class RemoteMysqlConfigService {
 
     public RemoteMysqlConfigService saveConfig() {
         Path f = getConfigPath();
-        context.getSession().elem().setContentType(NutsContentType.JSON).setValue(config)
+        NutsSession session = context.getSession();
+        NutsElements.of(session).json().setValue(config)
                 .setNtf(false).print(f);
         return this;
     }
@@ -68,12 +69,13 @@ public class RemoteMysqlConfigService {
     }
 
     public RemoteMysqlConfigService loadConfig() {
+        NutsSession session = context.getSession();
         if (name == null) {
-            throw new NutsExecutionException(context.getSession(), NutsMessage.cstyle("missing config name"), 2);
+            throw new NutsExecutionException(session, NutsMessage.cstyle("missing config name"), 2);
         }
         Path f = getConfigPath();
         if (Files.exists(f)) {
-            config = context.getSession().elem().setContentType(NutsContentType.JSON)
+            config = NutsElements.of(session).json()
                     .setNtf(false)
                     .parse(f, RemoteMysqlConfig.class);
             return this;
@@ -92,7 +94,8 @@ public class RemoteMysqlConfigService {
     }
 
     public RemoteMysqlConfigService write(PrintStream out) {
-        context.getSession().elem().setContentType(NutsContentType.JSON).setValue(getConfig())
+        NutsSession session = context.getSession();
+        NutsElements.of(session).json().setValue(getConfig())
                 .setNtf(false).print(out);
         out.flush();
         return this;

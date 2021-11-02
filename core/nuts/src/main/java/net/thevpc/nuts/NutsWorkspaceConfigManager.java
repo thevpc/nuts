@@ -26,8 +26,10 @@
 package net.thevpc.nuts;
 
 import net.thevpc.nuts.spi.NutsIndexStoreFactory;
+import net.thevpc.nuts.spi.NutsSystemTerminalBase;
 
 import java.util.Set;
+import java.util.concurrent.ExecutorService;
 
 /**
  * @author thevpc
@@ -85,4 +87,35 @@ public interface NutsWorkspaceConfigManager {
     String getHashName(Object o);
 
     String getWorkspaceHashName(String path);
+
+    ExecutorService executorService();
+
+    /**
+     * return workspace system terminal.
+     *
+     * @return workspace system terminal
+     */
+    NutsSystemTerminal getSystemTerminal();
+
+    /**
+     * update workspace wide system terminal
+     *
+     * @param terminal system terminal
+     * @return {@code this} instance
+     */
+    NutsWorkspaceConfigManager setSystemTerminal(NutsSystemTerminalBase terminal);
+    /**
+     * return workspace default terminal
+     *
+     * @return workspace default terminal
+     */
+    NutsSessionTerminal getDefaultTerminal();
+
+    /**
+     * update workspace wide terminal
+     *
+     * @param terminal terminal
+     * @return {@code this} instance
+     */
+    NutsWorkspaceConfigManager setDefaultTerminal(NutsSessionTerminal terminal);
 }

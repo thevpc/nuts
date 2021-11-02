@@ -96,7 +96,7 @@ public class SimpleHttpClient {
     }
 
     private void readHeader() {
-        NutsPath info = session.io().path(url);
+        NutsPath info = NutsPath.of(url,session);
         this.contentEncoding = info.getContentEncoding();
         this.contentType = info.getContentType();
         this.contentLength = info.getContentLength();

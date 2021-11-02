@@ -66,7 +66,7 @@ public class NutsCachedRepository extends AbstractNutsRepositoryBase {
 
     protected NutsLogger _LOG(NutsSession session) {
         if (LOG == null) {
-            LOG = session.log().of(NutsCachedRepository.class);
+            LOG = NutsLogger.of(NutsCachedRepository.class,session);
         }
         return LOG;
     }
@@ -87,7 +87,7 @@ public class NutsCachedRepository extends AbstractNutsRepositoryBase {
         }
         RuntimeException mirrorsEx = null;
 
-        SuccessFailResult<NutsDescriptor, RuntimeException> res = session.concurrent().lock().setSource(id.builder().setFaceDescriptor().build()).call(() -> {
+        SuccessFailResult<NutsDescriptor, RuntimeException> res = NutsLocks.of(session).setSource(id.builder().setFaceDescriptor().build()).call(() -> {
             try {
                 NutsDescriptor success = fetchDescriptorCore(id, fetchMode, session);
                 if (success != null) {
@@ -186,7 +186,7 @@ public class NutsCachedRepository extends AbstractNutsRepositoryBase {
 
         RuntimeException mirrorsEx = null;
         NutsContent c = null;
-        SuccessFailResult<NutsContent, RuntimeException> res = session.concurrent().lock().setSource(id.builder().setFaceContent().build()).call(() -> {
+        SuccessFailResult<NutsContent, RuntimeException> res = NutsLocks.of(session).setSource(id.builder().setFaceContent().build()).call(() -> {
             if (cache.isWriteEnabled()) {
                 Path cachePath = cache.getLongIdLocalFile(id, session);
                 NutsContent c2 = fetchContentCore(id, descriptor, cachePath.toString(), fetchMode, session);
@@ -195,13 +195,13 @@ public class NutsCachedRepository extends AbstractNutsRepositoryBase {
                     //already deployed because fetchContentImpl2 is run against cachePath
 //                cache.deployContent(id, c.getPath(), session);
                     if (localPath2 != null) {
-                        session.io().copy()
+                        NutsCp.of(session)
                                 .from(cachePath).to(localPath2).run();
                     } else {
                         localPath2 = cachePath.toString();
                     }
                     return SuccessFailResult.success(new NutsDefaultContent(
-                            session.io().path(localPath2), true, false));
+                            NutsPath.of(localPath2,session), true, false));
                 } else {
                     return SuccessFailResult.fail(new NutsNotFoundException(session, id));
                 }

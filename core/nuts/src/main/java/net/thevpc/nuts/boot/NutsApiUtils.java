@@ -5,6 +5,7 @@ import net.thevpc.nuts.*;
 import java.io.PrintStream;
 import java.net.URL;
 import java.util.Arrays;
+import java.util.function.Supplier;
 import java.util.logging.Level;
 
 /**
@@ -33,7 +34,7 @@ public class NutsApiUtils {
 
     public static void checkSession(NutsSession session) {
         if (session == null) {
-            throw new IllegalArgumentException("missing session");
+            throw new NutsMissingSessionException();
         }
     }
 
@@ -65,25 +66,26 @@ public class NutsApiUtils {
         String d = resolveNutsIdDigest();
         if (d == null) {
             ClassLoader cl = Thread.currentThread().getContextClassLoader();
-            URL[] urls = PrivateNutsUtilClassLoader.resolveClasspathURLs(cl,true);
+            URL[] urls = PrivateNutsUtilClassLoader.resolveClasspathURLs(cl, true);
             throw new NutsBootException(
                     NutsMessage.plain(
                             "unable to detect nuts digest. Most likely you are missing valid compilation of nuts." +
                                     "\n\t 'pom.properties' could not be resolved and hence, we are unable to resolve nuts version." +
-                                    "\n\t java="+ System.getProperty("java.home")+ " as "+System.getProperty("java.version")+
-                                    "\n\t class-path="+ System.getProperty("java.class.path")+
-                                    "\n\t urls="+ Arrays.toString(urls)+
-                                    "\n\t class-loader="+ cl.getClass().getName()+" as "+cl
+                                    "\n\t java=" + System.getProperty("java.home") + " as " + System.getProperty("java.version") +
+                                    "\n\t class-path=" + System.getProperty("java.class.path") +
+                                    "\n\t urls=" + Arrays.toString(urls) +
+                                    "\n\t class-loader=" + cl.getClass().getName() + " as " + cl
                     )
             );
         }
         return d;
 
     }
+
     public static String resolveNutsIdDigest() {
         return resolveNutsIdDigest(
                 new NutsBootId("net.thevpc.nuts", "nuts", NutsBootVersion.parse(Nuts.getVersion())),
-                PrivateNutsUtilClassLoader.resolveClasspathURLs(Thread.currentThread().getContextClassLoader(),true)
+                PrivateNutsUtilClassLoader.resolveClasspathURLs(Thread.currentThread().getContextClassLoader(), true)
         );
     }
 
@@ -141,5 +143,25 @@ public class NutsApiUtils {
 
     public static Integer parseFileSizeInBytes(String value, Integer defaultMultiplier, Integer emptyValue, Integer errorValue) {
         return PrivateNutsUtils.parseFileSizeInBytes(value, defaultMultiplier, emptyValue, errorValue);
+    }
+
+    public static <T> T createSessionCachedType(String name, Class<T> t, NutsSession session, Supplier<T> sup) {
+        checkSession(session);
+        name = NutsUtilStrings.trim(name);
+        if (NutsBlankable.isBlank(name)) {
+            name = "default";
+        }
+        String key = t + "." + name + "." + "." + System.identityHashCode(session);
+        Object v = session.getProperty(key);
+        if (v != null && t.isInstance(v)) {
+            return (T) v;
+        }
+        v = sup.get();
+        session.setProperty(key, v);
+        return (T) v;
+    }
+
+    public static <T> T createSessionCachedType(Class<T> t, NutsSession session, Supplier<T> sup) {
+        return createSessionCachedType("default", t, session, sup);
     }
 }

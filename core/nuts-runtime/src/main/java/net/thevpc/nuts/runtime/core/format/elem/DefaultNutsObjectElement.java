@@ -29,7 +29,7 @@ public class DefaultNutsObjectElement extends AbstractNutsObjectElement {
 
     @Override
     public NutsElement get(String s) {
-        DefaultNutsElementFormat element = (DefaultNutsElementFormat) this.session.elem();
+        DefaultNutsElements element = (DefaultNutsElements) NutsElements.of(session);
         return values.get(element.forString(s));//no need for session
     }
 
@@ -41,7 +41,7 @@ public class DefaultNutsObjectElement extends AbstractNutsObjectElement {
     @Override
     public NutsElement getSafe(String key) {
         NutsElement a = get(key);
-        return a == null ? this.session.elem().forNull() : a;
+        return a == null ? NutsElements.of(session).forNull() : a;
     }
 
     @Override
@@ -68,7 +68,7 @@ public class DefaultNutsObjectElement extends AbstractNutsObjectElement {
     @Override
     public NutsElement getSafe(NutsElement key) {
         NutsElement a = get(key);
-        return a == null ? this.session.elem().forNull() : a;
+        return a == null ? NutsElements.of(session).forNull() : a;
     }
 
     @Override

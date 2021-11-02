@@ -54,11 +54,11 @@ public class Test17_Json {
 //                .setNtf(false)
 //                .format();
 
-//        System.out.println(session.text().forPlain("a@@@"));
-//        System.out.println(session.text().forPlain("a@@@").filteredText());
+//        System.out.println(NutsTexts.of(session).forPlain("a@@@"));
+//        System.out.println(NutsTexts.of(session).forPlain("a@@@").filteredText());
 
-        System.out.println(session.text().ofPlain("a##@"));
-        System.out.println(session.text().ofPlain("a##@").filteredText());
+        System.out.println(NutsTexts.of(session).ofPlain("a##@"));
+        System.out.println(NutsTexts.of(session).ofPlain("a##@").filteredText());
 
     }
 
@@ -67,7 +67,7 @@ public class Test17_Json {
         NutsSession ws = TestUtils.openNewTestWorkspace(
                 "-byZSKk"
         );
-        NutsElement a = ws.elem().setContentType(NutsContentType.JSON)
+        NutsElement a = NutsElements.of(ws).json()
                 .parse(
                         "{\n" +
                                 "    title: 'NCA Coding Standards',\n" +
@@ -218,11 +218,11 @@ public class Test17_Json {
 //                .setNtf(false)
 //                .format();
 
-//        System.out.println(session.text().forPlain("a@@@"));
-//        System.out.println(session.text().forPlain("a@@@").filteredText());
+//        System.out.println(NutsTexts.of(session).forPlain("a@@@"));
+//        System.out.println(NutsTexts.of(session).forPlain("a@@@").filteredText());
 
-        System.out.println(ws.text().ofPlain("a##@"));
-        System.out.println(ws.text().ofPlain("a##@").filteredText());
+        System.out.println(NutsTexts.of(ws).ofPlain("a##@"));
+        System.out.println(NutsTexts.of(ws).ofPlain("a##@").filteredText());
 
     }
 

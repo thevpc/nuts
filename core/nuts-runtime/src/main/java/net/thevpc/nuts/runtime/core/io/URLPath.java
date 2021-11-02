@@ -137,7 +137,7 @@ public class URLPath implements NutsPathSPI {
     public NutsPath[] getChildren() {
         try {
             Path f = toFile();
-            return getSession().io().path(f).getChildren();
+            return NutsPath.of(f,session).getChildren();
         } catch (Exception e) {
             //
         }
@@ -145,7 +145,7 @@ public class URLPath implements NutsPathSPI {
     }
 
     private NutsPath wrapperNutsPath(){
-        return getSession().io().path(url);
+        return NutsPath.of(url,getSession());
     }
 
     public InputStream getInputStream() {
@@ -269,7 +269,7 @@ public class URLPath implements NutsPathSPI {
         try {
             File f = CoreIOUtils.toFile(toURL());
             if (f != null) {
-                return getSession().io().path(f.toPath().getParent());
+                return NutsPath.of(f.toPath().getParent(),getSession());
             }
             String ppath = CoreIOUtils.getURLParentPath(url.getPath());
             if(ppath==null){
@@ -284,14 +284,14 @@ public class URLPath implements NutsPathSPI {
                             this.url.getRef()
                     )
             );
-            return getSession().io().path(url);
+            return NutsPath.of(url,getSession());
         } catch (IOException e) {
             return null;
         }
     }
 
     protected NutsPath rebuildURLPath(String other) {
-        return session.io().path(other);
+        return NutsPath.of(other,session);
     }
 
     protected String rebuildURLString(String protocol, String authority, String file, String ref) {
@@ -336,9 +336,9 @@ public class URLPath implements NutsPathSPI {
 
         public NutsString asFormattedString() {
             if (p.url == null) {
-                return p.getSession().text().ofPlain("");
+                return NutsTexts.of(p.getSession()).ofPlain("");
             }
-            return p.getSession().text().toText(p.url);
+            return NutsTexts.of(p.getSession()).toText(p.url);
         }
 
         @Override
@@ -369,7 +369,7 @@ public class URLPath implements NutsPathSPI {
 
     public NutsPath asFilePath() {
         File f = CoreIOUtils.toFile(toURL());
-        return  (f != null) ?session.io().path(f):null;
+        return  (f != null) ?NutsPath.of(f,getSession()):null;
 
     }
     public boolean isSymbolicLink() {

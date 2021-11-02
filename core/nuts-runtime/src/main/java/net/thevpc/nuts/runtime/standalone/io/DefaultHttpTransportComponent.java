@@ -38,7 +38,7 @@ import java.net.URL;
 /**
  * Created by vpc on 1/21/17.
  */
-@NutsSingleton
+@NutsComponentScope(NutsComponentScopeType.WORKSPACE)
 public class DefaultHttpTransportComponent implements NutsTransportComponent {
 
     public static final NutsTransportComponent INSTANCE = new DefaultHttpTransportComponent();
@@ -79,7 +79,7 @@ public class DefaultHttpTransportComponent implements NutsTransportComponent {
 
         @Override
         public NutsPath getPath() {
-            return session.io().path(url);
+            return NutsPath.of(url,session);
         }
 
         public InputStream upload(NutsTransportParamPart... parts) {

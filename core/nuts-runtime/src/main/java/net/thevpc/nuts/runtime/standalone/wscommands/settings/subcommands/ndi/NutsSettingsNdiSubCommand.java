@@ -154,7 +154,7 @@ public class NutsSettingsNdiSubCommand extends AbstractNutsSettingsSubCommand {
             } else if ((a = commandLine.nextString("-i", "--installed")) != null) {
                 session.setConfirm(NutsConfirmationMode.YES);
                 for (NutsId resultId : session.search().setInstallStatus(
-                        session.filters().installStatus().byInstalled(true)
+                        NutsInstallStatusFilters.of(session).byInstalled(true)
                 ).getResultIds()) {
                     idsToInstall.add(resultId.getLongName());
                     missingAnyArgument = false;
@@ -256,7 +256,6 @@ public class NutsSettingsNdiSubCommand extends AbstractNutsSettingsSubCommand {
         if (missingAnyArgument) {
             commandLine.required();
         }
-        Path workspaceLocation = Paths.get(session.locations().getWorkspaceLocation());
         if (commandLine.isExecMode()) {
             if (forceAll) {
                 session.setConfirm(NutsConfirmationMode.YES);
@@ -384,12 +383,12 @@ public class NutsSettingsNdiSubCommand extends AbstractNutsSettingsSubCommand {
                     session.out().resetLine().printf("%s script %-" + namesSize + "s for %s"
                                     + " at %s%n",
                             (ndiScriptInfo.getStatus() == PathInfo.Status.OVERRIDDEN)
-                                    ? session.text().ofStyled("re-install", NutsTextStyles.of(NutsTextStyle.success(), NutsTextStyle.underlined()))
-                                    : session.text().ofStyled("install", NutsTextStyle.success())
+                                    ? NutsTexts.of(session).ofStyled("re-install", NutsTextStyles.of(NutsTextStyle.success(), NutsTextStyle.underlined()))
+                                    : NutsTexts.of(session).ofStyled("install", NutsTextStyle.success())
                             ,
-                            session.text().ofStyled(ndiScriptInfo.getPath().getFileName().toString(), NutsTextStyle.path()),
+                            NutsTexts.of(session).ofStyled(ndiScriptInfo.getPath().getFileName().toString(), NutsTextStyle.path()),
                             ndiScriptInfo.getId(),
-                            session.text().ofStyled(CoreIOUtils.betterPath(ndiScriptInfo.getPath().toString()), NutsTextStyle.path())
+                            NutsTexts.of(session).ofStyled(CoreIOUtils.betterPath(ndiScriptInfo.getPath().toString()), NutsTextStyle.path())
                     );
                 }
 

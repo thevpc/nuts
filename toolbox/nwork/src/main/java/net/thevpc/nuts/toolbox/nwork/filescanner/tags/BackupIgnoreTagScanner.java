@@ -1,5 +1,6 @@
 package net.thevpc.nuts.toolbox.nwork.filescanner.tags;
 
+import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.toolbox.nwork.filescanner.DefaultTagInfo;
 import net.thevpc.nuts.toolbox.nwork.filescanner.TagInfo;
 import net.thevpc.nuts.toolbox.nwork.filescanner.TagScanner;
@@ -22,7 +23,7 @@ public class BackupIgnoreTagScanner implements TagScanner {
         BackupIgnoreFile ii = (BackupIgnoreFile) shared.get(BackupIgnoreFile.class.getName());
         if (path.getFileName().toString().equalsIgnoreCase(".backup-ignore")) {
             if (ii == null) {
-                ii = new BackupIgnoreFile();
+                ii = new BackupIgnoreFile(ii.session);
             }
             shared.put(BackupIgnoreFile.class.getName(), ii);
             ii.loadFrom(path);
@@ -42,6 +43,8 @@ public class BackupIgnoreTagScanner implements TagScanner {
 
 
     public static class BackupIgnoreFile extends PathFilterList {
-
+        public BackupIgnoreFile(NutsSession session) {
+            super(session);
+        }
     }
 }

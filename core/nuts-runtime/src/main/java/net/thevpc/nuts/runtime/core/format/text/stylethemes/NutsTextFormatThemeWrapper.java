@@ -22,7 +22,7 @@ public class NutsTextFormatThemeWrapper implements NutsTextFormatTheme {
 
     @Override
     public NutsTextStyles toBasicStyles(NutsTextStyles styles, NutsSession session) {
-        NutsTextStyles ret = NutsTextStyles.NONE;
+        NutsTextStyles ret = NutsTextStyles.PLAIN;
         if (styles != null) {
             for (NutsTextStyle style : styles) {
                 ret = ret.append(toBasicStyles(style,session));
@@ -33,14 +33,14 @@ public class NutsTextFormatThemeWrapper implements NutsTextFormatTheme {
 
     public NutsTextStyles toBasicStyles(NutsTextStyle style,NutsSession session) {
         if (style == null) {
-            return NutsTextStyles.NONE;
+            return NutsTextStyles.PLAIN;
         }
         if (style.getType().basic()) {
             return NutsTextStyles.of(style);
         }
         NutsTextStyles t = other.toBasicStyles(NutsTextStyles.of(style), session);
         if (t == null) {
-            return NutsTextStyles.NONE;
+            return NutsTextStyles.PLAIN;
         }
         List<NutsTextStyle> rr = new ArrayList<>();
         for (NutsTextStyle s : t) {
@@ -50,6 +50,6 @@ public class NutsTextFormatThemeWrapper implements NutsTextFormatTheme {
                 //ignore...
             }
         }
-        return NutsTextStyles.NONE.append(rr.toArray(new NutsTextStyle[0]));
+        return NutsTextStyles.PLAIN.append(rr.toArray(new NutsTextStyle[0]));
     }
 }

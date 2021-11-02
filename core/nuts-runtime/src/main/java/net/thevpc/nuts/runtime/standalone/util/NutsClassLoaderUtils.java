@@ -49,6 +49,7 @@ public final class NutsClassLoaderUtils {
                 def.getId().toString(),
                 def.getContent().getURL(),
                 true,
+                true,
                 def.getDependencies().nodes().stream().map(x -> toClassLoaderNode(x, session))
                         .filter(Objects::nonNull)
                         .toArray(NutsClassLoaderNode[]::new)
@@ -78,7 +79,7 @@ public final class NutsClassLoaderUtils {
             throw new NutsNotFoundException(session, d.getDependency().toId());
         }
         return new NutsClassLoaderNode(
-                d.getDependency().toId().toString(), url, true,
+                d.getDependency().toId().toString(), url, true, true,
                 Arrays.stream(d.getChildren()).map(x -> toClassLoaderNode(x, session)).toArray(NutsClassLoaderNode[]::new)
         );
     }

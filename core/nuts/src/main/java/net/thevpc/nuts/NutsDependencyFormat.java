@@ -27,6 +27,7 @@
 package net.thevpc.nuts;
 
 import net.thevpc.nuts.boot.NutsApiUtils;
+import net.thevpc.nuts.spi.NutsComponent;
 
 /**
  * Dependency Format Helper
@@ -34,11 +35,11 @@ import net.thevpc.nuts.boot.NutsApiUtils;
  * @since 0.5.6
  * @app.category Format
  */
-public interface NutsDependencyFormat extends NutsFormat {
+public interface NutsDependencyFormat extends NutsFormat, NutsComponent<Object> {
 
     static NutsDependencyFormat of(NutsSession session) {
         NutsApiUtils.checkSession(session);
-        return session.dependency().formatter();
+        return session.extensions().createSupported(NutsDependencyFormat.class,true,null);
     }
 
     /**

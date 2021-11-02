@@ -6,6 +6,7 @@ import net.thevpc.nuts.runtime.core.format.DefaultFormatBase;
 import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
 import net.thevpc.nuts.spi.NutsFormatSPI;
 import net.thevpc.nuts.spi.NutsPathSPI;
+import net.thevpc.nuts.spi.NutsSupportLevelContext;
 
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -109,8 +110,7 @@ public class NutsPathFromSPI extends NutsPathBase {
                 return p;
             }
         } catch (Exception ex) {
-            getSession().log().of(NutsPathFromSPI.class)
-                    .with()
+            NutsLoggerOp.of(NutsPathFromSPI.class,getSession())
                     .verb(NutsLogVerb.WARNING)
                     .level(Level.WARNING)
                     .error(ex)
@@ -245,7 +245,7 @@ public class NutsPathFromSPI extends NutsPathBase {
 
     @Override
     public NutsPath toAbsolute(String basePath) {
-        return toAbsolute(basePath==null?null:getSession().io().path(basePath));
+        return toAbsolute(basePath==null?null:NutsPath.of(basePath,getSession()));
     }
 
     @Override
@@ -275,7 +275,7 @@ public class NutsPathFromSPI extends NutsPathBase {
     public NutsFormat formatter() {
         NutsFormatSPI fspi = base.getFormatterSPI();
         if (fspi != null) {
-            return new DefaultFormatBase<NutsFormat>(getSession().getWorkspace(), "path") {
+            return new DefaultFormatBase<NutsFormat>(getSession(), "path") {
                 @Override
                 public void print(NutsPrintStream out) {
                     fspi.print(out);
@@ -285,7 +285,12 @@ public class NutsPathFromSPI extends NutsPathBase {
                 public boolean configureFirst(NutsCommandLine commandLine) {
                     return fspi.configureFirst(commandLine);
                 }
-            }.setSession(getSession());
+
+                @Override
+                public int getSupportLevel(NutsSupportLevelContext<Object> context) {
+                    return DEFAULT_SUPPORT;
+                }
+            };
         }
         return super.formatter();
     }

@@ -32,8 +32,8 @@ public class RemoteNutsSearchCommand extends AbstractNutsSearchCommand {
 
     @Override
     protected Iterator<NutsId> getResultIdIteratorBase(Boolean forceInlineDependencies) {
-        NutsSession ws = getSession();
-        NutsElementFormat e = ws.elem().setSession(getSession());
+        NutsSession session = getSession();
+        NutsElements e = NutsElements.of(getSession()).setSession(getSession());
         NutsObjectElementBuilder eb = e.forObject()
                 .set("execType", getExecType())
                 .set("defaultVersions", getDefaultVersions())
@@ -47,7 +47,7 @@ public class RemoteNutsSearchCommand extends AbstractNutsSearchCommand {
             eb.set("idFilter", e.toElement(getIdFilter()));
         }
         if (getDescriptorFilter() != null) {
-            eb.set("descriptorFilter", ws.elem().toElement(getDescriptorFilter()));
+            eb.set("descriptorFilter", NutsElements.of(getSession()).toElement(getDescriptorFilter()));
         }
         if (getInstallStatus() != null) {
             eb.set("installStatus", e.forString(getInstallStatus().toString()));

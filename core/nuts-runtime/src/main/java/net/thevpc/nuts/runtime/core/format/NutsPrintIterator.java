@@ -8,10 +8,7 @@ package net.thevpc.nuts.runtime.core.format;
 import java.io.PrintStream;
 import java.util.Iterator;
 
-import net.thevpc.nuts.NutsIterableFormat;
-import net.thevpc.nuts.NutsPrintStream;
-import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.NutsWorkspace;
+import net.thevpc.nuts.*;
 //import net.thevpc.nuts.NutsIterableOutput;
 
 /**
@@ -34,7 +31,7 @@ public class NutsPrintIterator<T> implements Iterator<T> {
         this.listFormat = session.getIterableOutput();
         this.displayOptions = displayOptions;
         if (this.listFormat == null) {
-            this.listFormat = session.elem().setContentType(session.getOutputFormat()).iter(out);
+            this.listFormat = NutsElements.of(session).setContentType(session.getOutputFormat()).iter(out);
         }
         this.listFormat
                 .configure(true, displayOptions.toCommandLineOptions())

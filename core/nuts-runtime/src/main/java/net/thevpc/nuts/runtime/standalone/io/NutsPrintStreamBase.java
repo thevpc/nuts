@@ -206,7 +206,7 @@ public abstract class NutsPrintStreamBase implements NutsPrintStream {
 
     @Override
     public NutsPrintStream printj(String format, Object... args) {
-        NutsText s = session.text().toText(
+        NutsText s = NutsTexts.of(session).toText(
                 NutsMessage.jstyle(
                         format, args
                 )
@@ -242,7 +242,7 @@ public abstract class NutsPrintStreamBase implements NutsPrintStream {
     @Override
     public NutsPrintStream format(Locale l, String format, Object... args) {
         if (l == null) {
-            NutsText s = session.text().toText(
+            NutsText s = NutsTexts.of(session).toText(
                     NutsMessage.cstyle(
                             format, args
                     )
@@ -250,7 +250,7 @@ public abstract class NutsPrintStreamBase implements NutsPrintStream {
             print(s);
         } else {
             NutsSession sess = this.session.copy().setLocale(l.toString());
-            NutsText s = sess.text().toText(
+            NutsText s = NutsTexts.of(sess).toText(
                     NutsMessage.cstyle(
                             format, args
                     )

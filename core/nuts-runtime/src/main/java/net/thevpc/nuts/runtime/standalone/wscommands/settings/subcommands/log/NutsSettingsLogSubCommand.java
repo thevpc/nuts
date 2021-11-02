@@ -21,42 +21,41 @@ public class NutsSettingsLogSubCommand extends AbstractNutsSettingsSubCommand {
     public boolean exec(NutsCommandLine cmdLine, Boolean autoSave, NutsSession session) {
         if (cmdLine.next("set loglevel", "sll") != null) {
 //            NutsWorkspaceConfigManager configManager = context.getWorkspace().config();
-            NutsLogManager lm= session.log();
             if (cmdLine.next("verbose", "finest") != null) {
                 if (cmdLine.isExecMode()) {
-                    lm.setTermLevel(Level.FINEST);
+                    NutsLogger.setTermLevel(Level.FINEST,session);
                 }
             } else if (cmdLine.next("fine") != null) {
                 if (cmdLine.isExecMode()) {
-                    lm.setTermLevel(Level.FINE);
+                    NutsLogger.setTermLevel(Level.FINE,session);
                 }
             } else if (cmdLine.next("finer") != null) {
                 if (cmdLine.isExecMode()) {
-                    lm.setTermLevel(Level.FINER);
+                    NutsLogger.setTermLevel(Level.FINER,session);
                 }
             } else if (cmdLine.next("info") != null) {
                 if (cmdLine.isExecMode()) {
-                    lm.setTermLevel(Level.INFO);
+                    NutsLogger.setTermLevel(Level.INFO,session);
                 }
             } else if (cmdLine.next("warning") != null) {
                 if (cmdLine.isExecMode()) {
-                    lm.setTermLevel(Level.WARNING);
+                    NutsLogger.setTermLevel(Level.WARNING,session);
                 }
             } else if (cmdLine.next("severe", "error") != null) {
                 if (cmdLine.isExecMode()) {
-                    lm.setTermLevel(Level.SEVERE);
+                    NutsLogger.setTermLevel(Level.SEVERE,session);
                 }
             } else if (cmdLine.next("config") != null) {
                 if (cmdLine.isExecMode()) {
-                    lm.setTermLevel(Level.CONFIG);
+                    NutsLogger.setTermLevel(Level.CONFIG,session);
                 }
             } else if (cmdLine.next("off") != null) {
                 if (cmdLine.isExecMode()) {
-                    lm.setTermLevel(Level.OFF);
+                    NutsLogger.setTermLevel(Level.OFF,session);
                 }
             } else if (cmdLine.next("all") != null) {
                 if (cmdLine.isExecMode()) {
-                    lm.setTermLevel(Level.ALL);
+                    NutsLogger.setTermLevel(Level.ALL,session);
                 }
             } else {
                 if (cmdLine.isExecMode()) {

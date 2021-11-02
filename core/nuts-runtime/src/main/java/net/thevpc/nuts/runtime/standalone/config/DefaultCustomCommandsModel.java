@@ -28,7 +28,7 @@ public class DefaultCustomCommandsModel {
 
     protected NutsLogger _LOG(NutsSession session) {
         if (LOG == null) {
-            LOG = session.log().of(DefaultCustomCommandsModel.class);
+            LOG = NutsLogger.of(DefaultCustomCommandsModel.class,session);
         }
         return LOG;
     }
@@ -176,7 +176,7 @@ public class DefaultCustomCommandsModel {
                     .resetLine()
                     .setDefaultValue(false)
                     .forBoolean("override existing command %s ?",
-                            session.text().ofStyled(
+                            NutsTexts.of(session).ofStyled(
                                     command.getName(), NutsTextStyle.primary1()
                             )
                     ).getBooleanValue()) {
@@ -189,7 +189,7 @@ public class DefaultCustomCommandsModel {
             defaultCommandFactory.installCommand(command, session);
             if (session.isPlainTrace()) {
                 NutsPrintStream out = session.getTerminal().out();
-                NutsTextManager text = session.text();
+                NutsTexts text = NutsTexts.of(session);
                 out.printf("%s command %s%n",
                         text.ofStyled("install", NutsTextStyle.success()),
                         text.ofStyled(command.getName(), NutsTextStyle.primary3()));
@@ -218,7 +218,7 @@ public class DefaultCustomCommandsModel {
             defaultCommandFactory.installCommand(command, session);
             if (session.isPlainTrace()) {
                 NutsPrintStream out = session.getTerminal().out();
-                NutsTextManager text = session.text();
+                NutsTexts text = NutsTexts.of(session);
                 out.printf("%s command %s%n",
                         text.ofStyled("update ", NutsTextStyles.of(NutsTextStyle.success(), NutsTextStyle.underlined())),
                         text.ofStyled(command.getName(), NutsTextStyle.primary3()));
@@ -248,7 +248,7 @@ public class DefaultCustomCommandsModel {
         defaultCommandFactory.uninstallCommand(name, session);
         if (session.isPlainTrace()) {
             NutsPrintStream out = session.getTerminal().out();
-            out.printf("%s command %s%n", "uninstall", session.text().ofStyled(name, NutsTextStyle.primary3()));
+            out.printf("%s command %s%n", "uninstall", NutsTexts.of(session).ofStyled(name, NutsTextStyle.primary3()));
         }
     }
 
@@ -326,7 +326,7 @@ public class DefaultCustomCommandsModel {
     public NutsWorkspaceCustomCommand find(String name, NutsId forId, NutsId forOwner, NutsSession session) {
         NutsWorkspaceCustomCommand a = find(name, session);
         if (a != null && a.getCommand() != null && a.getCommand().length > 0) {
-            NutsId i = session.id().parser().parse(a.getCommand()[0]);
+            NutsId i = NutsId.of(a.getCommand()[0],session);
             if (i != null
                     && (forId == null
                     || i.getShortName().equals(forId.getArtifactId())

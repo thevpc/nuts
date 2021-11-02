@@ -28,7 +28,7 @@ package net.thevpc.nuts.runtime.core.app;
 
 import net.thevpc.nuts.NutsArgumentCandidate;
 import net.thevpc.nuts.NutsCommandAutoComplete;
-import net.thevpc.nuts.NutsCommandLineManager;
+import net.thevpc.nuts.NutsCommandLines;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -46,15 +46,14 @@ public class PackagingNonOption extends DefaultNonOption {
     @Override
     public List<NutsArgumentCandidate> getCandidates(NutsCommandAutoComplete context) {
         List<NutsArgumentCandidate> all = new ArrayList<>();
-        NutsCommandLineManager c=context.getSession().commandLine();
-        all.add(c.createCandidate("jar").build());
-        all.add(c.createCandidate("war").build());
-        all.add(c.createCandidate("war").build());
-        all.add(c.createCandidate("ear").build());
-        all.add(c.createCandidate("nuts-extension").build());
-        all.add(c.createCandidate("elf").build());
-        all.add(c.createCandidate("pe").build());
-        all.add(c.createCandidate("bin").build());
+        all.add(new NutsArgumentCandidate("jar"));
+        all.add(new NutsArgumentCandidate("war"));
+        all.add(new NutsArgumentCandidate("war"));
+        all.add(new NutsArgumentCandidate("ear"));
+        all.add(new NutsArgumentCandidate("nuts-extension"));
+        all.add(new NutsArgumentCandidate("elf"));
+        all.add(new NutsArgumentCandidate("pe"));
+        all.add(new NutsArgumentCandidate("bin"));
         return all;
     }
 

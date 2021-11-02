@@ -23,6 +23,9 @@ public abstract class DefaultFormatBase<T extends NutsFormat> extends DefaultFor
     public DefaultFormatBase(NutsWorkspace ws, String name) {
         super(ws, name);
     }
+    public DefaultFormatBase(NutsSession session, String name) {
+        super(session, name);
+    }
 
 //    @Override
 //    public PrintWriter getValidPrintWriter(Writer out) {
@@ -58,12 +61,12 @@ public abstract class DefaultFormatBase<T extends NutsFormat> extends DefaultFor
     @Override
     public NutsString format() {
         checkSession();
-        NutsPrintStream out = getSession().io().createMemoryPrintStream();
+        NutsPrintStream out = NutsMemoryPrintStream.of(getSession());
         print(out);
         return isNtf() ?
-                getSession().text().parse(out.toString())
+                NutsTexts.of(getSession()).parse(out.toString())
                 :
-                getSession().text().ofPlain(out.toString())
+                NutsTexts.of(getSession()).ofPlain(out.toString())
                 ;
     }
 
@@ -98,7 +101,7 @@ public abstract class DefaultFormatBase<T extends NutsFormat> extends DefaultFor
             print(pout);
             pout.flush();
         } else {
-            NutsPrintStream pout = getSession().io().createPrintStream(out);
+            NutsPrintStream pout = NutsPrintStream.of(out,getSession());
             print(pout);
             pout.flush();
         }
@@ -109,7 +112,7 @@ public abstract class DefaultFormatBase<T extends NutsFormat> extends DefaultFor
         checkSession();
         NutsPrintStream p =
                 out == null ? getValidPrintStream() :
-                        getSession().io().createPrintStream(out);
+                        NutsPrintStream.of(out,getSession());
         print(p);
         p.flush();
     }
@@ -144,7 +147,7 @@ public abstract class DefaultFormatBase<T extends NutsFormat> extends DefaultFor
             println(pout);
             pout.flush();
         } else {
-            NutsPrintStream pout = getSession().io().createPrintStream(w);
+            NutsPrintStream pout = NutsPrintStream.of(w,getSession());
             println(pout);
             pout.flush();
         }
@@ -167,7 +170,7 @@ public abstract class DefaultFormatBase<T extends NutsFormat> extends DefaultFor
             println(pout);
             pout.flush();
         } else {
-            NutsPrintStream pout = getSession().io().createPrintStream(out);
+            NutsPrintStream pout = NutsPrintStream.of(out,getSession());
             println(pout);
             pout.flush();
         }

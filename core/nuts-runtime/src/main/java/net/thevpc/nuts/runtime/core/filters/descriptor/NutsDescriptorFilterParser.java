@@ -9,8 +9,8 @@ public class NutsDescriptorFilterParser extends NutsTypedFiltersParser<NutsDescr
     }
 
     @Override
-    protected NutsDescriptorFilterManager getTManager() {
-        return getSession().filters().descriptor();
+    protected NutsDescriptorFilters getTManager() {
+        return NutsDescriptorFilters.of(getSession());
     }
 
     protected NutsDescriptorFilter wordToPredicate(String word){

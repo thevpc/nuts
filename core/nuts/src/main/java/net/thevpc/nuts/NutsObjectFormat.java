@@ -26,6 +26,8 @@
  */
 package net.thevpc.nuts;
 
+import net.thevpc.nuts.boot.NutsApiUtils;
+
 /**
  * Object format is responsible of formatting to terminal
  * a given object. Multiple implementation should be available
@@ -34,6 +36,11 @@ package net.thevpc.nuts;
  * @app.category Format
  */
 public interface NutsObjectFormat extends NutsFormat {
+
+    static NutsObjectFormat of(NutsSession session){
+        NutsApiUtils.checkSession(session);
+        return session.extensions().createSupported(NutsObjectFormat.class, true, null);
+    }
 
     /**
      * return value to format

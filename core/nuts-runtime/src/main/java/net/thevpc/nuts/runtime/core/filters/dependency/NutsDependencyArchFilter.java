@@ -61,6 +61,6 @@ public class NutsDependencyArchFilter extends AbstractDependencyFilter {
 
     @Override
     public NutsDependencyFilter simplify() {
-        return archs.isEmpty() ? getSession().filters().dependency().always() : this;
+        return archs.isEmpty() ? NutsDependencyFilters.of(getSession()).always() : this;
     }
 }

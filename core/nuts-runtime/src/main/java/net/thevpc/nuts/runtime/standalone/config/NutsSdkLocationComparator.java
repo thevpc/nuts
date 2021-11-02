@@ -12,8 +12,8 @@ public class NutsSdkLocationComparator implements Comparator<NutsPlatformLocatio
 
     @Override
     public int compare(NutsPlatformLocation o1, NutsPlatformLocation o2) {
-        NutsVersion v1 = session.version().parser().parse(o1.getVersion());
-        NutsVersion v2 = session.version().parser().parse(o2.getVersion());
+        NutsVersion v1 = NutsVersion.of(o1.getVersion(),session);
+        NutsVersion v2 = NutsVersion.of(o2.getVersion(),session);
         int x = (v1 == null || v2 == null) ? 0 : (v1 != null && v2 != null) ? v1.compareTo(v2) : v2 == null ? 1 : -1;
         if (x != 0) {
             return x;

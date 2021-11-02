@@ -5,9 +5,21 @@ print lines matching a pattern
 
 print lines matching a pattern
 
+##) OPTIONS:
+
+```sh --highlighter [<HIGHLIGHTER>]```
+
+```sh --selection-style [<style>]```
+
 ##) EXAMPLES:
 
 ```sh grep -r toto log.txt```
    print all lines containing toto
+
+```sh grep --H=java toto file.txt```
+   print all lines containing toto in the java file named file.txt
+
+```sh grep --H=java toto file.txt --selection-style=secondary2,underlined```
+   print all lines containing toto in the java file named file.txt
 
 

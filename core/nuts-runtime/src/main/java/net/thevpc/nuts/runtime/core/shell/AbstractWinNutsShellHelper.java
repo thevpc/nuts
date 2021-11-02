@@ -8,6 +8,9 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 public abstract class AbstractWinNutsShellHelper implements NutsShellHelper{
+    public AbstractWinNutsShellHelper() {
+    }
+
     public String newlineString() {
         return "\r\n";
     }
@@ -156,7 +159,7 @@ public abstract class AbstractWinNutsShellHelper implements NutsShellHelper{
             options=new NutsCommandLineShellOptions();
         }
         if(options.getSession()==null){
-            throw new IllegalArgumentException("missing session");
+            throw new NutsMissingSessionException();
         }
         NutsCommandLineFormatStrategy s = options.getFormatStrategy();
         if(s==null|| s==NutsCommandLineFormatStrategy.DEFAULT){

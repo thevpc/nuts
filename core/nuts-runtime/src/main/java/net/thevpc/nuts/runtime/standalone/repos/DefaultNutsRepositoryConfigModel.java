@@ -97,7 +97,7 @@ public class DefaultNutsRepositoryConfigModel implements NutsRepositoryConfigMod
 
     protected NutsLogger _LOG(NutsSession session) {
         if (LOG == null) {
-            LOG = session.log().of(DefaultNutsRepositoryConfigModel.class);
+            LOG = NutsLogger.of(DefaultNutsRepositoryConfigModel.class,session);
         }
         return LOG;
     }
@@ -210,7 +210,7 @@ public class DefaultNutsRepositoryConfigModel implements NutsRepositoryConfigMod
     public String getLocation(boolean expand,NutsSession session) {
         String s = config.getLocation();
         if (s != null && expand) {
-            s = session.io().path(s).builder().withWorkspaceBaseDir().build().toString();
+            s = NutsPath.of(s,session).builder().withWorkspaceBaseDir().build().toString();
         }
         return s;
     }
@@ -430,7 +430,7 @@ public class DefaultNutsRepositoryConfigModel implements NutsRepositoryConfigMod
 //            if (NutsBlankable.isBlank(config.getConfigVersion())) {
 //                config.setConfigVersion(repository.getWorkspace().getApiVersion());
 //            }
-            session.elem().setSession(session).setContentType(NutsContentType.JSON).setValue(config)
+            NutsElements.of(session).setSession(session).json().setValue(config)
                     .setNtf(false)
                     .print(file);
             configurationChanged = false;
@@ -440,13 +440,13 @@ public class DefaultNutsRepositoryConfigModel implements NutsRepositoryConfigMod
                             .log(NutsMessage.jstyle(
                                     "{0} created repository {1} at {2}",
                                     CoreStringUtils.alignLeft(repository.getName(), 20) , repository.getName() ,
-                                    session.text().ofStyled(getStoreLocation(),NutsTextStyle.path())
+                                    NutsTexts.of(session).ofStyled(getStoreLocation(),NutsTextStyle.path())
                                     ));
                 } else {
                     _LOGOP(session).level(Level.CONFIG).verb(NutsLogVerb.SUCCESS).log(NutsMessage.jstyle(
                             "{0} updated repository {1} at {2}",
                             CoreStringUtils.alignLeft(repository.getName(), 20) , repository.getName() ,
-                            session.text().ofStyled(getStoreLocation(),NutsTextStyle.path())
+                            NutsTexts.of(session).ofStyled(getStoreLocation(),NutsTextStyle.path())
                     ));
                 }
             }

@@ -27,6 +27,7 @@
 package net.thevpc.nuts;
 
 import net.thevpc.nuts.spi.NutsSystemTerminalBase;
+import net.thevpc.nuts.spi.NutsTerminals;
 
 import java.io.InputStream;
 
@@ -37,6 +38,9 @@ import java.io.InputStream;
  * @app.category Input Output
  */
 public interface NutsSystemTerminal extends NutsSystemTerminalBase {
+    static void enableRichTerm(NutsSession session){
+        NutsTerminals.of(session).enableRichTerm(session);
+    }
     /**
      * Reads a single line of text from the terminal's input stream.
      *
@@ -91,4 +95,6 @@ public interface NutsSystemTerminal extends NutsSystemTerminalBase {
      * @return {@code this} instance
      */
     NutsSystemTerminal printProgress(float progress, NutsMessage message, NutsSession session);
+
+    NutsSystemTerminalBase getParent();
 }

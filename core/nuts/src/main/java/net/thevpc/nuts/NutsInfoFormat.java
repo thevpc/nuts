@@ -25,6 +25,8 @@
  */
 package net.thevpc.nuts;
 
+import net.thevpc.nuts.boot.NutsApiUtils;
+
 import java.util.Map;
 
 /**
@@ -35,6 +37,11 @@ import java.util.Map;
  * @app.category Base
  */
 public interface NutsInfoFormat extends NutsFormat {
+
+    static NutsInfoFormat of(NutsSession session){
+        NutsApiUtils.checkSession(session);
+        return session.extensions().createSupported(NutsInfoFormat.class, true, null);
+    }
 
     /**
      * update session

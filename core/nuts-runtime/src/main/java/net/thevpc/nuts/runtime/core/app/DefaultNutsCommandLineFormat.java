@@ -3,6 +3,7 @@ package net.thevpc.nuts.runtime.core.app;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.format.DefaultFormatBase;
 import net.thevpc.nuts.runtime.core.shell.NutsShellHelper;
+import net.thevpc.nuts.spi.NutsSupportLevelContext;
 
 public class DefaultNutsCommandLineFormat extends DefaultFormatBase<NutsCommandLineFormat> implements NutsCommandLineFormat {
 
@@ -10,8 +11,8 @@ public class DefaultNutsCommandLineFormat extends DefaultFormatBase<NutsCommandL
     private NutsShellFamily formatFamily=NutsShellFamily.getCurrent();
     private NutsCommandLineFormatStrategy formatStrategy=NutsCommandLineFormatStrategy.DEFAULT;
 
-    public DefaultNutsCommandLineFormat(NutsWorkspace ws) {
-        super(ws, "commandline");
+    public DefaultNutsCommandLineFormat(NutsSession session) {
+        super(session, "commandline");
     }
 
     public NutsCommandLineFormat setNtf(boolean ntf) {
@@ -28,12 +29,12 @@ public class DefaultNutsCommandLineFormat extends DefaultFormatBase<NutsCommandL
     @Override
     public NutsCommandLineFormat setValue(String[] args) {
         checkSession();
-        return setValue(args == null ? null : getSession().commandLine().create(args));
+        return setValue(args == null ? null : NutsCommandLine.of(args,getSession()));
     }
 
     @Override
     public NutsCommandLineFormat setValue(String args) {
-        return setValue(args == null ? null : getSession().commandLine().parse(args));
+        return setValue(args == null ? null : NutsCommandLine.parse(args,getSession()));
     }
     public NutsShellFamily getShellFamily() {
         return formatFamily;
@@ -80,5 +81,10 @@ public class DefaultNutsCommandLineFormat extends DefaultFormatBase<NutsCommandL
                 out.print(cmd);
             }
         }
+    }
+
+    @Override
+    public int getSupportLevel(NutsSupportLevelContext<Object> context) {
+        return DEFAULT_SUPPORT;
     }
 }

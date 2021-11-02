@@ -25,7 +25,7 @@ package net.thevpc.nuts.runtime.standalone.executors;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.model.DefaultNutsDefinition;
-import net.thevpc.nuts.spi.NutsExecutorComponent;
+import net.thevpc.nuts.spi.*;
 
 import javax.tools.JavaCompiler;
 import javax.tools.ToolProvider;
@@ -34,13 +34,11 @@ import java.nio.file.Path;
 
 import net.thevpc.nuts.runtime.core.NutsWorkspaceExt;
 import net.thevpc.nuts.runtime.core.util.CoreArrayUtils;
-import net.thevpc.nuts.spi.NutsSingleton;
-import net.thevpc.nuts.spi.NutsSupportLevelContext;
 
 /**
  * Created by vpc on 1/7/17.
  */
-@NutsSingleton
+@NutsComponentScope(NutsComponentScopeType.WORKSPACE)
 public class JavaSourceExecutorComponent implements NutsExecutorComponent {
 
     public static NutsId ID;
@@ -55,7 +53,7 @@ public class JavaSourceExecutorComponent implements NutsExecutorComponent {
     public int getSupportLevel(NutsSupportLevelContext<NutsDefinition> nutsDefinition) {
         this.ws = nutsDefinition.getSession();
         if (ID == null) {
-            ID = ws.id().parser().parse("net.thevpc.nuts.exec:exec-java-src");
+            ID = NutsId.of("net.thevpc.nuts.exec:exec-java-src",ws);
         }
         if ("java".equals(nutsDefinition.getConstraints().getDescriptor().getPackaging())) {
             return DEFAULT_SUPPORT + 1;
@@ -70,20 +68,22 @@ public class JavaSourceExecutorComponent implements NutsExecutorComponent {
 //        JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
         String folder = "__temp_folder";
         NutsPrintStream out = executionContext.getTraceSession().out();
-        out.println(executionContext.getTraceSession().text().ofStyled("compile", NutsTextStyle.primary4()));
+        out.println(NutsTexts.of(executionContext.getTraceSession()).ofStyled("compile", NutsTextStyle.primary4()));
         out.printf("%s%n",
-                executionContext.getTraceSession().commandLine().create(
-                        "embedded-javac",
-                        "-d",
-                        "<temp-folder>",
-                        javaFile.toString()
+                NutsCommandLine.of(
+                        new String[]{
+                                "embedded-javac",
+                                "-d",
+                                "<temp-folder>",
+                                javaFile.toString()
+                        },executionContext.getTraceSession()
                 )
         );
         JavaExecutorComponent cc = new JavaExecutorComponent();
         NutsDefinition d = executionContext.getDefinition();
         d = new DefaultNutsDefinition(d, executionContext.getTraceSession());
         ((DefaultNutsDefinition) d).setContent(new NutsDefaultContent(
-                executionContext.getTraceSession().io().path(folder),
+                NutsPath.of(folder,executionContext.getTraceSession()),
                 false,
                 true
         ));
@@ -113,8 +113,7 @@ public class JavaSourceExecutorComponent implements NutsExecutorComponent {
         Path javaFile = nutMainFile.getPath();
         JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
         NutsSession session = executionContext.getTraceSession();
-        Path folder = session.io().tmp()
-                .setSession(session)
+        Path folder = NutsTmp.of(session)
                 .createTempFolder("jj").toFile();
         int res = compiler.run(null, null, null, "-d", folder.toString(), javaFile.toString());
         if (res != 0) {
@@ -124,7 +123,7 @@ public class JavaSourceExecutorComponent implements NutsExecutorComponent {
         NutsDefinition d = executionContext.getDefinition();
         d = new DefaultNutsDefinition(d, session);
         ((DefaultNutsDefinition) d).setContent(new NutsDefaultContent(
-                session.io().path(folder.toString()),
+                NutsPath.of(folder,session),
                 false,
                 true
         ));

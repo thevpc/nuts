@@ -1,7 +1,7 @@
 /**
  * ====================================================================
- *            Nuts : Network Updatable Things Service
- *                  (universal package manager)
+ * Nuts : Network Updatable Things Service
+ * (universal package manager)
  * <br>
  * is a new Open Source Package Manager to help install packages
  * and libraries for runtime execution. Nuts is the ultimate companion for
@@ -10,7 +10,7 @@
  * to share shell scripts and other 'things' . Its based on an extensible
  * architecture to help supporting a large range of sub managers / repositories.
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc]
  * Licensed under the Apache License, Version 2.0 (the "License"); you may
  * not use this file except in compliance with the License. You may obtain a
@@ -22,7 +22,7 @@
  * governing permissions and limitations under the License.
  * <br>
  * ====================================================================
-*/
+ */
 package net.thevpc.nuts.toolbox.nversion;
 
 import java.io.IOException;
@@ -38,18 +38,17 @@ import net.thevpc.nuts.*;
  *
  * @author thevpc
  */
-public class JarPathVersionResolver implements PathVersionResolver{
-    public Set<VersionDescriptor> resolve(String filePath, NutsApplicationContext context){
+public class JarPathVersionResolver implements PathVersionResolver {
+    public Set<VersionDescriptor> resolve(String filePath, NutsApplicationContext context) {
         if (filePath.endsWith(".jar") || filePath.endsWith(".war") || filePath.endsWith(".ear")) {
-            
-        }else{
+
+        } else {
             return null;
         }
         Set<VersionDescriptor> all = new HashSet<>();
-        try (InputStream is = context.getSession().io().path(context.getSession().io()
-                .path(filePath).builder().withAppBaseDir().build().toString()
-        ).getInputStream()) {
-            context.getSession().io().uncompress()
+        NutsSession session = context.getSession();
+        try (InputStream is = (NutsPath.of(filePath, session).builder().withAppBaseDir().build()).getInputStream()) {
+            NutsUncompress.of(session)
                     .from(is)
                     .visit(new NutsIOUncompressVisitor() {
                         @Override
@@ -64,7 +63,7 @@ public class JarPathVersionResolver implements PathVersionResolver{
                                 try {
                                     manifest = new Manifest(inputStream);
                                 } catch (IOException e) {
-                                    throw new NutsIOException(context.getSession(), e);
+                                    throw new NutsIOException(session, e);
                                 }
                                 Attributes attrs = manifest.getMainAttributes();
                                 String Bundle_SymbolicName = null;
@@ -92,14 +91,14 @@ public class JarPathVersionResolver implements PathVersionResolver{
                                         && !NutsBlankable.isBlank(Bundle_Name)
                                         && !NutsBlankable.isBlank(Bundle_Version)) {
                                     all.add(new VersionDescriptor(
-                                            context.getSession().id().builder().setGroupId(Bundle_SymbolicName).setArtifactId(Bundle_Name).setVersion(Bundle_Version).build(),
+                                            NutsIdBuilder.of(session).setGroupId(Bundle_SymbolicName).setArtifactId(Bundle_Name).setVersion(Bundle_Version).build(),
                                             properties
                                     ));
                                 }
 
                             } else if (("META-INF/" + NutsConstants.Files.DESCRIPTOR_FILE_NAME).equals(path)) {
                                 try {
-                                    NutsDescriptor d = context.getSession().descriptor().parser().parse(inputStream);
+                                    NutsDescriptor d = NutsDescriptorParser.of(session).parse(inputStream);
                                     inputStream.close();
                                     Properties properties = new Properties();
                                     properties.setProperty("parents", Arrays.stream(d.getParents()).map(Object::toString).collect(Collectors.joining(",")));
@@ -116,7 +115,7 @@ public class JarPathVersionResolver implements PathVersionResolver{
                                     if (d.getDescription() != null) {
                                         properties.setProperty("description", d.getDescription());
                                     }
-                                    properties.setProperty("locations", context.getSession().elem().setContentType(NutsContentType.JSON)
+                                    properties.setProperty("locations", NutsElements.of(session).json()
                                             .setValue(d.getLocations()).setNtf(false).format().filteredText()
                                     );
                                     properties.setProperty(NutsConstants.IdProperties.ARCH, String.join(";", d.getCondition().getArch()));
@@ -139,8 +138,8 @@ public class JarPathVersionResolver implements PathVersionResolver{
 
                                 Properties properties = new Properties();
                                 try {
-                                    NutsDescriptor d = context.getSession().descriptor()
-                                            .parser().setDescriptorStyle(NutsDescriptorStyle.MAVEN)
+                                    NutsDescriptor d = NutsDescriptorParser.of(session)
+                                            .setDescriptorStyle(NutsDescriptorStyle.MAVEN)
                                             .parse(inputStream);
                                     properties.put("groupId", d.getId().getGroupId());
                                     properties.put("artifactId", d.getId().getArtifactId());
@@ -153,7 +152,7 @@ public class JarPathVersionResolver implements PathVersionResolver{
                                         }
                                     }
                                     all.add(new VersionDescriptor(
-                                            context.getSession().id().builder().setGroupId(d.getId().getGroupId())
+                                            NutsIdBuilder.of(session).setGroupId(d.getId().getGroupId())
                                                     .setRepository(d.getId().getArtifactId())
                                                     .setVersion(d.getId().getVersion())
                                                     .build(),
@@ -176,7 +175,7 @@ public class JarPathVersionResolver implements PathVersionResolver{
                                     prop.setProperty("nuts.version-provider", "maven");
                                     if (version != null && version.trim().length() != 0) {
                                         all.add(new VersionDescriptor(
-                                                context.getSession().id().builder()
+                                                NutsIdBuilder.of(session)
                                                         .setGroupId(groupId).setArtifactId(artifactId).setVersion(version)
                                                         .build(),
                                                 prop
@@ -190,8 +189,8 @@ public class JarPathVersionResolver implements PathVersionResolver{
                             return true;
                         }
                     });
-        }catch (IOException ex){
-            throw new NutsIOException(context.getSession(),ex);
+        } catch (IOException ex) {
+            throw new NutsIOException(session, ex);
         }
         return all;
     }

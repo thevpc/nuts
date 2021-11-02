@@ -76,7 +76,7 @@ public class DefaultJShellExecutionContext implements JShellExecutionContext {
             case "--version": {
                 cmd.skip();
                 if (cmd.isExecMode()) {
-                    out().printf("%s%n", getSession().id().setSession(getSession()).resolveId(getClass()).getVersion().toString());
+                    out().printf("%s%n", NutsIdResolver.of(getSession()).resolveId(getClass()).getVersion().toString());
                     cmd.skipAll();
                 }
                 throw new NutsExecutionException(shellContext.getSession(), NutsMessage.cstyle("Help"), 0);

@@ -56,14 +56,14 @@ public class Test13_Color {
                 Assertions.assertThrows(NutsIllegalArgumentException.class,()->
 
                         {
-                            NutsSystemTerminal systemTerminal = session.term().getSystemTerminal();
+                            NutsSystemTerminal systemTerminal = session.config().getSystemTerminal();
                             NutsPrintStream sysInitMode = systemTerminal.out();
                             TestUtils.println(
                                     "sys-init="+(sysInitMode.mode()==null?"default": sysInitMode.mode().id())
                                             +", sys-fixed="+(systemMode==null?"default":systemMode.id())
                                             +" ->"+sessionMode.id());
 
-                            NutsSessionTerminal terminal = session.term().createTerminal();
+                            NutsSessionTerminal terminal = NutsSessionTerminal.of(session);
                             NutsPrintStream out = terminal.out().setMode(systemMode);
                             NutsTerminalMode initMode = out.mode();
                             Assertions.assertEquals(systemMode,initMode);
@@ -86,9 +86,9 @@ public class Test13_Color {
                 );
                 return;
             }else{
-                NutsSystemTerminal systemTerminal = session.term().getSystemTerminal();
+                NutsSystemTerminal systemTerminal = session.config().getSystemTerminal();
                 NutsPrintStream sysInitMode = systemTerminal.out();
-                NutsSessionTerminal terminal = session.term().createTerminal();
+                NutsSessionTerminal terminal = NutsSessionTerminal.of(session);
                 NutsPrintStream out = terminal.out().setMode(systemMode);
                 NutsTerminalMode initMode = out.mode();
                 Assertions.assertEquals(systemMode,initMode);
@@ -113,7 +113,7 @@ public class Test13_Color {
         NutsSession session = TestUtils.openNewTestWorkspace(
                 "--archetype", "minimal",
                 "--skip-companions");
-        NutsText c = session.text().ofCode("java", "public static void main(String[] args){}")
+        NutsText c = NutsTexts.of(session).ofCode("java", "public static void main(String[] args){}")
                 .highlight(session);
         session.out().printlnf(c);
 
@@ -124,7 +124,7 @@ public class Test13_Color {
         NutsText portion_npar = c.builder().substring(22, 24);
         session.out().printlnf(portion_npar);
         Assertions.assertEquals("n##:separator:(##\u001E",portion_npar.toString());
-        NutsText rep=c.builder().replace(23,24,session.text().ofStyled("()(",NutsTextStyle.danger())).build();
+        NutsText rep=c.builder().replace(23,24,NutsTexts.of(session).ofStyled("()(",NutsTextStyle.danger())).build();
         session.out().printlnf(rep);
         Assertions.assertEquals("##:keyword:public##\u001E ##:keyword:static##\u001E ##:keyword:void##\u001E main##:danger:()(##\u001EString##:separator:[##\u001E##:separator:]##\u001E args##:separator:)##\u001E##:separator:{##\u001E##:separator:}##\u001E",
                 rep.toString());

@@ -99,7 +99,7 @@ public class NutsRepositoryFolderHelper {
         Path cacheContent = getLongIdLocalFile(id.builder().setFaceContent().build(), session);
         if (cacheContent != null && pathExists(cacheContent, session)) {
             return new NutsDefaultContent(
-                    session.io().path(cacheContent.toString()),
+                    NutsPath.of(cacheContent,session),
                     cacheFolder, false);
         }
         return null;
@@ -136,7 +136,7 @@ public class NutsRepositoryFolderHelper {
         Path versionFolder = getLongIdLocalFolder(id, session);
         goodFile = versionFolder.resolve(idFilename);
         if (pathExists(goodFile, session)) {
-            return session.descriptor().parser().setSession(session).parse(goodFile);
+            return NutsDescriptorParser.of(session).parse(goodFile);
         }
 //        String alt = id.getAlternative();
 //        String goodAlt = null;
@@ -198,7 +198,7 @@ public class NutsRepositoryFolderHelper {
 
     protected NutsDescriptor loadMatchingDescriptor(Path file, NutsId id, NutsSession session) {
         if (pathExists(file, session)) {
-            NutsDescriptor d = Files.isRegularFile(file) ? session.descriptor().parser().setSession(session).parse(file) : null;
+            NutsDescriptor d = Files.isRegularFile(file) ? NutsDescriptorParser.of(session).parse(file) : null;
             if (d != null) {
                 Map<String, String> query = id.getProperties();
                 String os = query.get(NutsConstants.IdProperties.OS);
@@ -233,8 +233,8 @@ public class NutsRepositoryFolderHelper {
             return null;
         }
         NutsWorkspace ws = session.getWorkspace();
-        NutsIdFilter filter2 = session.id().filter().all(filter,
-                session.id().filter().byName(id.getShortName())
+        NutsIdFilter filter2 = NutsIdFilters.of(session).all(filter,
+                NutsIdFilters.of(session).byName(id.getShortName())
         );
         return findInFolder(getLocalGroupAndArtifactFile(id, session), filter2,
                 deep ? Integer.MAX_VALUE : 1,
@@ -283,7 +283,7 @@ public class NutsRepositoryFolderHelper {
                     //this is invalid cache!
                     return null;
                 } else {
-                    return session.descriptor().parser().setSession(session).parse(pathname);
+                    return NutsDescriptorParser.of(session).parse(pathname);
                 }
             }
         }, maxDepth);
@@ -374,14 +374,14 @@ public class NutsRepositoryFolderHelper {
         Path pckFile = deployContent(id, inputSource, descriptor, writeType, session);
         if (repo != null) {
             NutsRepositoryUtils.of(repo).events().fireOnDeploy(new DefaultNutsContentEvent(
-                    session.io().path(pckFile.toString()), deployment, session, repo));
+                    NutsPath.of(pckFile,session), deployment, session, repo));
         }
         return descriptor.builder().setId(id.getLongId()).build();
     }
 
     protected NutsLogger _LOG(NutsSession session) {
         if (LOG == null) {
-            LOG = session.log().of(DefaultNutsFetchContentRepositoryCommand.class);
+            LOG = NutsLogger.of(DefaultNutsFetchContentRepositoryCommand.class,session);
         }
         return LOG;
     }
@@ -402,11 +402,11 @@ public class NutsRepositoryFolderHelper {
                 return descFile;
             }
         }
-        return session.concurrent().lock().setSource(descFile).call(() -> {
+        return NutsLocks.of(session).setSource(descFile).call(() -> {
 
-            session.descriptor().formatter(desc).setNtf(false).print(descFile);
-            byte[] bytes = session.io().hash().sha1().setSource(desc).computeString().getBytes();
-            session.io().copy()
+            desc.formatter().setSession(session).setNtf(false).print(descFile);
+            byte[] bytes = NutsHash.of(session).sha1().setSource(desc).computeString().getBytes();
+            NutsCp.of(session)
                     .from(
                             InputStreamMetadataAwareImpl.of(
                                     new ByteArrayInputStream(bytes)
@@ -448,10 +448,10 @@ public class NutsRepositoryFolderHelper {
                 return pckFile;
             }
         }
-        return session.concurrent().lock().setSource(pckFile).call(() -> {
-            (content.isPath() ? session.io().copy().from(content.getPath()) : session.io().copy().from(content.getInputStream()))
+        return NutsLocks.of(session).setSource(pckFile).call(() -> {
+            (content.isPath() ? NutsCp.of(session).from(content.getPath()) : NutsCp.of(session).from(content.getInputStream()))
                     .to(pckFile).setSafe(true).run();
-            session.io().copy().from(
+            NutsCp.of(session).from(
                     CoreIOUtils.createBytesStream(CoreIOUtils.evalSHA1Hex(pckFile).getBytes(),
                             NutsMessage.cstyle("sha1://%s", id),
                             CoreIOUtils.MIME_TYPE_SHA1,
@@ -469,13 +469,13 @@ public class NutsRepositoryFolderHelper {
         }
         Path localFolder = getLongIdLocalFile(command.getId().builder().setFaceContent().build(), command.getSession());
         if (localFolder != null && Files.exists(localFolder)) {
-            if (command.getSession().concurrent().lock().setSource(localFolder).call(() -> {
+            if (NutsLocks.of(command.getSession()).setSource(localFolder).call(() -> {
                 CoreIOUtils.delete(command.getSession(), localFolder);
                 return false;
             })) {
                 if (repo != null) {
                     NutsRepositoryUtils.of(repo).events().fireOnUndeploy(new DefaultNutsContentEvent(
-                            command.getSession().io().path(localFolder.toString())
+                            NutsPath.of(localFolder,command.getSession())
                             , command, command.getSession(), repo));
                     return true;
                 }

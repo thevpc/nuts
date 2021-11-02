@@ -7,9 +7,9 @@ package net.thevpc.nuts.runtime.core.format.plain;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.format.NutsObjectFormatBase;
-import net.thevpc.nuts.runtime.core.format.props.DefaultPropertiesFormat;
-import net.thevpc.nuts.runtime.core.format.tree.DefaultNutsFormatDestructTypePredicate;
+import net.thevpc.nuts.runtime.core.format.props.DefaultNutsPropertiesFormat;
 import net.thevpc.nuts.runtime.core.format.xml.NutsXmlUtils;
+import net.thevpc.nuts.spi.NutsSupportLevelContext;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -28,8 +28,8 @@ public class NutsObjectFormatPlain extends NutsObjectFormatBase {
     private final List<String> extraConfig = new ArrayList<>();
     private final Map<String, String> multilineProperties = new HashMap<>();
 
-    public NutsObjectFormatPlain(NutsWorkspace ws) {
-        super(ws, NutsContentType.PLAIN.id() + "-format");
+    public NutsObjectFormatPlain(NutsSession session) {
+        super(session, NutsContentType.PLAIN.id() + "-format");
     }
 
     @Override
@@ -38,7 +38,7 @@ public class NutsObjectFormatPlain extends NutsObjectFormatBase {
         if (n != null) {
             NutsArgument a;
             boolean enabled = n.isEnabled();
-            if ((a = commandLine.nextString(DefaultPropertiesFormat.OPTION_MULTILINE_PROPERTY)) != null) {
+            if ((a = commandLine.nextString(DefaultNutsPropertiesFormat.OPTION_MULTILINE_PROPERTY)) != null) {
                 if (enabled) {
                     NutsArgument i = NutsArgument.of(a.getValue().getString(),getSession());
                     extraConfig.add(a.getString());
@@ -72,11 +72,11 @@ public class NutsObjectFormatPlain extends NutsObjectFormatBase {
     public void print(NutsPrintStream w) {
         checkSession();
         Object value = getValue();
-        NutsSession ws = getSession();
+        NutsSession session = getSession();
         if (value instanceof NutsTableModel) {
-            ws.formats().table(value).configure(true, extraConfig.toArray(new String[0])).print(w);
+            session.formats().table(value).configure(true, extraConfig.toArray(new String[0])).print(w);
         } else if (value instanceof NutsTreeModel) {
-            ws.formats().tree(value).configure(true, extraConfig.toArray(new String[0])).print(w);
+            session.formats().tree(value).configure(true, extraConfig.toArray(new String[0])).print(w);
 //        } else if (value instanceof Map) {
 //            ws.props().setModel(((Map) value)).configure(true, extraConfig.toArray(new String[0])).print(w);
         } else if (value instanceof org.w3c.dom.Document) {
@@ -87,10 +87,10 @@ public class NutsObjectFormatPlain extends NutsObjectFormatBase {
             doc.appendChild(doc.importNode(elem, true));
             NutsXmlUtils.writeDocument(doc, new StreamResult(w.asPrintStream()), false, false, getSession());
         } else {
-            NutsElementFormat element = ws.elem();
+            NutsElements element = NutsElements.of(session);
             element
                     .setNtf(true)
-                    .setDestructTypeFilter(DefaultNutsFormatDestructTypePredicate.INSTANCE);
+                    .setDestructTypeFilter(NutsElements.DEFAULT_FORMAT_DESTRUCTOR);
             printElement(w, element
                     .destruct(value));
         }
@@ -159,4 +159,9 @@ public class NutsObjectFormatPlain extends NutsObjectFormatBase {
 //    private String formatObject(Object any) {
 //        return CoreCommonUtils.stringValueFormatted(any, false, getValidSession());
 //    }
+@Override
+public int getSupportLevel(NutsSupportLevelContext<Object> context) {
+    return DEFAULT_SUPPORT;
+}
+
 }

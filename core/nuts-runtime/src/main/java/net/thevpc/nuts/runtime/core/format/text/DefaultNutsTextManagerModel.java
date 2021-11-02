@@ -27,7 +27,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.format.elem.DefaultNutsElementFactoryService;
 import net.thevpc.nuts.runtime.core.format.elem.NutsElementFactoryService;
 import net.thevpc.nuts.runtime.core.format.elem.NutsElementStreamFormat;
-import net.thevpc.nuts.runtime.core.format.json.SimpleJson;
+import net.thevpc.nuts.runtime.core.format.json.DefaultJsonElementFormat;
 import net.thevpc.nuts.runtime.core.format.text.highlighters.*;
 import net.thevpc.nuts.runtime.core.format.text.stylethemes.DefaultNutsTextFormatTheme;
 import net.thevpc.nuts.runtime.core.format.text.stylethemes.NutsTextFormatPropertiesTheme;
@@ -220,7 +220,7 @@ public class DefaultNutsTextManagerModel {
 
     public NutsElementStreamFormat getJsonMan(NutsSession session) {
         if (jsonMan == null) {
-            jsonMan = new SimpleJson(ws);
+            jsonMan = new DefaultJsonElementFormat(ws);
         }
         return jsonMan;
     }

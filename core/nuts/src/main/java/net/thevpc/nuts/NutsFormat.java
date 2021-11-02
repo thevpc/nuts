@@ -26,6 +26,8 @@
  */
 package net.thevpc.nuts;
 
+import net.thevpc.nuts.spi.NutsComponent;
+
 import java.io.File;
 import java.io.OutputStream;
 import java.io.Writer;
@@ -37,7 +39,7 @@ import java.nio.file.Path;
  * @since 0.5.5
  * @app.category Format
  */
-public interface NutsFormat extends NutsCommandLineConfigurable {
+public interface NutsFormat extends NutsCommandLineConfigurable, NutsComponent<Object> {
 
     /**
      * equivalent to {@link #format() }

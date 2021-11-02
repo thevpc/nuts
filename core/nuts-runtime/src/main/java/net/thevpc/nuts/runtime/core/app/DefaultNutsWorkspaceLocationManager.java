@@ -109,7 +109,7 @@ public class DefaultNutsWorkspaceLocationManager implements NutsWorkspaceLocatio
     }
 
     @Override
-    public String getWorkspaceLocation() {
+    public NutsPath getWorkspaceLocation() {
         return model.getWorkspaceLocation();
     }
 

@@ -1111,7 +1111,7 @@ public final class CoreNutsArgumentsParser {
         )
         )) {
             if (!showError.isEmpty()) {
-                NutsTextBuilder errorMessage = session.text().builder();
+                NutsTextBuilder errorMessage = NutsTexts.of(session).builder();
                 for (NutsMessage s : showError) {
                     errorMessage.append(s).append("\n");
                 }

@@ -10,55 +10,36 @@
  * other 'things' . Its based on an extensible architecture to help supporting a
  * large range of sub managers / repositories.
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc]
- * Licensed under the Apache License, Version 2.0 (the "License"); you may 
- * not use this file except in compliance with the License. You may obtain a 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may
+ * not use this file except in compliance with the License. You may obtain a
  * copy of the License at http://www.apache.org/licenses/LICENSE-2.0
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an 
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
- * either express or implied. See the License for the specific language 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+ * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  * <br>
  * ====================================================================
-*/
+ */
 package net.thevpc.nuts.toolbox.nsh.cmds;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.SortedMap;
-import java.util.TreeMap;
-
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.spi.NutsSingleton;
+import net.thevpc.nuts.spi.NutsComponentScope;
+import net.thevpc.nuts.spi.NutsComponentScopeType;
 import net.thevpc.nuts.toolbox.nsh.SimpleNshBuiltin;
+
+import java.util.*;
 
 /**
  * Created by vpc on 1/7/17.
  */
-@NutsSingleton
+@NutsComponentScope(NutsComponentScopeType.WORKSPACE)
 public class EnvCommand extends SimpleNshBuiltin {
 
     public EnvCommand() {
         super("env", DEFAULT_SUPPORT);
-    }
-
-    public static class Options {
-
-        int readStatus = 0;
-        LinkedHashMap<String, String> newEnv = new LinkedHashMap<>();
-        List<String> command = new ArrayList<String>();
-        Set<String> unsetVers = new HashSet<String>();
-        boolean sort = true;
-        boolean ignoreEnvironment = false;
-        String dir = null;
-        NutsExecutionType executionType = null;
-        NutsRunAs runAs = null;
     }
 
     @Override
@@ -90,27 +71,27 @@ public class EnvCommand extends SimpleNshBuiltin {
                         options.executionType = (NutsExecutionType.EMBEDDED);
                         return true;
                     }
-                    case "--system":{
+                    case "--system": {
                         commandLine.skip();
                         options.executionType = (NutsExecutionType.SYSTEM);
                         return true;
                     }
-                    case "--current-user":{
+                    case "--current-user": {
                         commandLine.skip();
                         options.runAs = NutsRunAs.currentUser();
                         return true;
                     }
-                    case "--as-root":{
+                    case "--as-root": {
                         commandLine.skip();
                         options.runAs = NutsRunAs.root();
                         return true;
                     }
-                    case "--sudo":{
+                    case "--sudo": {
                         commandLine.skip();
                         options.runAs = NutsRunAs.sudo();
                         return true;
                     }
-                    case "--as-user":{
+                    case "--as-user": {
                         a = commandLine.nextString();
                         options.runAs = NutsRunAs.user(a.getValue().getString());
                         return true;
@@ -199,6 +180,19 @@ public class EnvCommand extends SimpleNshBuiltin {
             }
             e.run();
         }
+    }
+
+    public static class Options {
+
+        int readStatus = 0;
+        LinkedHashMap<String, String> newEnv = new LinkedHashMap<>();
+        List<String> command = new ArrayList<String>();
+        Set<String> unsetVers = new HashSet<String>();
+        boolean sort = true;
+        boolean ignoreEnvironment = false;
+        String dir = null;
+        NutsExecutionType executionType = null;
+        NutsRunAs runAs = null;
     }
 
 }

@@ -16,11 +16,11 @@ public class NutsElementMapperPath implements NutsElementMapper<Path> {
     @Override
     public NutsElement createElement(Path o, Type typeOfSrc, NutsElementFactoryContext context) {
         if (context.elem().isNtf()) {
-            NutsSession ws = context.getSession();
-//                NutsText n = ws.text().forStyled(o.toString(), NutsTextStyle.path());
-//                return ws.elem().forPrimitive().buildNutsString(n);
-            NutsText n = ws.text().ofStyled(o.toString(), NutsTextStyle.path());
-            return ws.elem().forString(n.toString());
+            NutsSession session = context.getSession();
+//                NutsText n = NutsTexts.of(session).forStyled(o.toString(), NutsTextStyle.path());
+//                return session.elem().forPrimitive().buildNutsString(n);
+            NutsText n = NutsTexts.of(session).ofStyled(o.toString(), NutsTextStyle.path());
+            return NutsElements.of(session).forString(n.toString());
         } else {
             return context.defaultObjectToElement(o.toString(), null);
         }

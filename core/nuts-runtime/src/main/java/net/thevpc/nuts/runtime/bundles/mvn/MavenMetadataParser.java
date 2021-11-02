@@ -45,7 +45,7 @@ public class MavenMetadataParser {
 
     public MavenMetadataParser(NutsSession session) {
         this.session = session;
-        LOG=session.log().of(MavenMetadataParser.class);
+        LOG=NutsLogger.of(MavenMetadataParser.class,session);
     }
 
     public String toXmlString(MavenMetadata m) {

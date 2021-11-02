@@ -23,25 +23,26 @@
  */
 package net.thevpc.nuts.runtime.standalone.repos;
 
-import java.io.File;
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.core.repos.NutsRepositorySelector;
+import net.thevpc.nuts.runtime.core.repos.NutsRepositoryType;
+import net.thevpc.nuts.runtime.core.repos.NutsRepositoryURL;
 import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
+import net.thevpc.nuts.spi.NutsComponentScope;
+import net.thevpc.nuts.spi.NutsComponentScopeType;
 import net.thevpc.nuts.spi.NutsRepositoryFactoryComponent;
+import net.thevpc.nuts.spi.NutsSupportLevelContext;
 
+import java.io.File;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Map;
-import net.thevpc.nuts.runtime.core.repos.NutsRepositorySelector;
-import net.thevpc.nuts.runtime.core.repos.NutsRepositoryType;
-import net.thevpc.nuts.runtime.core.repos.NutsRepositoryURL;
-import net.thevpc.nuts.spi.NutsSingleton;
-import net.thevpc.nuts.spi.NutsSupportLevelContext;
 
 /**
  * Created by vpc on 1/15/17.
  */
-@NutsSingleton
+@NutsComponentScope(NutsComponentScopeType.WORKSPACE)
 public class DefaultNutsRepoFactoryComponent implements NutsRepositoryFactoryComponent {
 
     @Override
@@ -60,11 +61,9 @@ public class DefaultNutsRepoFactoryComponent implements NutsRepositoryFactoryCom
                     return DEFAULT_SUPPORT;
                 }
                 if (nru.isHttp()) {
-                    NutsPath in = criteria.getSession().io().path(
-                            nru.getLocation() + "/nuts-repository.json"
-                    );
+                    NutsPath in = NutsPath.of(nru.getLocation(), criteria.getSession()).resolve("nuts-repository.json");
                     try (InputStream s = in.getInputStream()) {
-                        Map<String, Object> m = criteria.getSession().elem().setSession(criteria.getSession()).setContentType(NutsContentType.JSON)
+                        Map<String, Object> m = NutsElements.of(criteria.getSession()).setSession(criteria.getSession()).setContentType(NutsContentType.JSON)
                                 .parse(s, Map.class);
                         if (m != null) {
                             String type = (String) m.get("type");
@@ -122,7 +121,7 @@ public class DefaultNutsRepoFactoryComponent implements NutsRepositoryFactoryCom
     public NutsAddRepositoryOptions[] getDefaultRepositories(NutsSession session) {
         if (!session.config().isGlobal()) {
             return new NutsAddRepositoryOptions[]{
-                NutsRepositorySelector.createRepositoryOptions(NutsRepositorySelector.parseSelection("system"), true, session)
+                    NutsRepositorySelector.createRepositoryOptions(NutsRepositorySelector.parseSelection("system"), true, session)
             };
         }
         return new NutsAddRepositoryOptions[0];

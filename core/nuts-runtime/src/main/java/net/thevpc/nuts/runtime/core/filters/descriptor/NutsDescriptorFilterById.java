@@ -36,7 +36,7 @@ import java.util.Objects;
  *
  * @author thevpc
  */
-public class NutsDescriptorFilterById extends AbstractDescriptorFilter implements JsNutsDescriptorFilter {
+public class NutsDescriptorFilterById extends AbstractDescriptorFilter  {
 
     private NutsIdFilter id;
 
@@ -65,17 +65,6 @@ public class NutsDescriptorFilterById extends AbstractDescriptorFilter implement
             }
         }
         return this;
-    }
-
-    @Override
-    public String toJsNutsDescriptorFilterExpr() {
-        if (id == null) {
-            return "true";
-        }
-        if (id instanceof NutsScriptAwareIdFilter) {
-            return ((NutsScriptAwareIdFilter) id).toJsNutsIdFilterExpr();
-        }
-        return null;
     }
 
     @Override

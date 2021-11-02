@@ -31,7 +31,7 @@ import java.util.List;
 import net.thevpc.nuts.NutsArgumentCandidate;
 import net.thevpc.nuts.NutsArgumentName;
 import net.thevpc.nuts.NutsCommandAutoComplete;
-import net.thevpc.nuts.NutsCommandLineManager;
+import net.thevpc.nuts.NutsCommandLines;
 import net.thevpc.nuts.toolbox.nsh.bundles.jshell.JShellBuiltin;
 import net.thevpc.nuts.toolbox.nsh.bundles.jshell.JShellContext;
 
@@ -57,9 +57,8 @@ public class CommandNonOption implements NutsArgumentName {
     @Override
     public List<NutsArgumentCandidate> getCandidates(NutsCommandAutoComplete context) {
         List<NutsArgumentCandidate> all = new ArrayList<>();
-        NutsCommandLineManager c = this.context.getSession().commandLine();
         for (JShellBuiltin command : this.context.builtins().getAll()) {
-            all.add(c.createCandidate(command.getName()).build());
+            all.add(new NutsArgumentCandidate(command.getName()));
         }
         return all;
     }

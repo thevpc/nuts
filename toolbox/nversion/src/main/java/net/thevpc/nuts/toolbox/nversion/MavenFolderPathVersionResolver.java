@@ -31,10 +31,8 @@ import java.nio.file.Paths;
 import java.util.HashSet;
 import java.util.Properties;
 import java.util.Set;
-import net.thevpc.nuts.NutsApplicationContext;
-import net.thevpc.nuts.NutsDescriptor;
-import net.thevpc.nuts.NutsDescriptorProperty;
-import net.thevpc.nuts.NutsDescriptorStyle;
+
+import net.thevpc.nuts.*;
 
 /**
  *
@@ -47,8 +45,9 @@ public class MavenFolderPathVersionResolver implements PathVersionResolver {
             Properties properties = new Properties();
             Set<VersionDescriptor> all = new HashSet<>();
             try (InputStream inputStream = Files.newInputStream(Paths.get(filePath).resolve("pom.xml"))) {
-                NutsDescriptor d = context.getSession().descriptor()
-                        .parser().setDescriptorStyle(NutsDescriptorStyle.MAVEN)
+                NutsSession session = context.getSession();
+                NutsDescriptor d = NutsDescriptorParser.of(session)
+                        .setDescriptorStyle(NutsDescriptorStyle.MAVEN)
                         .parse(inputStream);
 
                 properties.put("groupId", d.getId().getGroupId());
@@ -62,7 +61,7 @@ public class MavenFolderPathVersionResolver implements PathVersionResolver {
                     }
                 }
                 all.add(new VersionDescriptor(
-                        context.getSession().id().builder().setGroupId(d.getId().getGroupId())
+                        NutsIdBuilder.of(session).setGroupId(d.getId().getGroupId())
                                 .setRepository(d.getId().getArtifactId())
                                 .setVersion(d.getId().getVersion())
                                 .build(),

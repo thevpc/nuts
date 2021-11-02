@@ -96,7 +96,7 @@ public class NutsXmlUtils {
 //        if(elemIndex>=0){
 //            elem.setAttribute("index",CoreCommonUtils.stringValue(elemIndex));
 //        }
-//        NutsElement elem2 = session.elem().convert(o,NutsElement.class);
+//        NutsElement elem2 = NutsElements.of(session).convert(o,NutsElement.class);
 //        switch (elem2.type()){
 //            case STRING:{
 //                elem.setAttribute("type", "string");
@@ -242,21 +242,21 @@ public class NutsXmlUtils {
         b.setErrorHandler(new ErrorHandler() {
             @Override
             public void warning(SAXParseException exception) throws SAXException {
-                session.log().of(NutsXmlUtils.class).with().session(session)
+                NutsLoggerOp.of(NutsXmlUtils.class,session)
                         .level(Level.FINEST).verb(NutsLogVerb.WARNING)
                         .log(NutsMessage.jstyle("{0}",exception));
             }
 
             @Override
             public void error(SAXParseException exception) throws SAXException {
-                session.log().of(NutsXmlUtils.class).with().session(session)
+                NutsLoggerOp.of(NutsXmlUtils.class,session)
                         .level(Level.FINEST).verb(NutsLogVerb.WARNING)
                         .log(NutsMessage.jstyle("{0}",exception));
             }
 
             @Override
             public void fatalError(SAXParseException exception) throws SAXException {
-                session.log().of(NutsXmlUtils.class).with().session(session)
+                NutsLoggerOp.of(NutsXmlUtils.class,session)
                         .level(Level.FINEST).verb(NutsLogVerb.WARNING)
                         .log(NutsMessage.jstyle("{0}",exception));
             }

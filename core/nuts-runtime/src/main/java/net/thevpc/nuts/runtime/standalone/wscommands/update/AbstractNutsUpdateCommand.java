@@ -47,7 +47,7 @@ public abstract class AbstractNutsUpdateCommand extends NutsWorkspaceCommandBase
     public NutsUpdateCommand addId(String id) {
         checkSession();
         NutsSession ws = getSession();
-        return addId(id == null ? null : ws.id().parser().parse(id));
+        return addId(id == null ? null : NutsId.of(id,ws));
     }
 
     @Override
@@ -89,7 +89,7 @@ public abstract class AbstractNutsUpdateCommand extends NutsWorkspaceCommandBase
     public NutsUpdateCommand removeId(String id) {
         checkSession();
         NutsSession ws = getSession();
-        return removeId(ws.id().parser().parse(id));
+        return removeId(NutsId.of(id,ws));
     }
 
     @Override
@@ -368,7 +368,7 @@ public abstract class AbstractNutsUpdateCommand extends NutsWorkspaceCommandBase
         checkSession();
         NutsSession ws = getSession();
         if (!NutsBlankable.isBlank(id)) {
-            lockedIds.add(ws.id().parser().setLenient(false).parse(id));
+            lockedIds.add(NutsId.of(id,ws));
         }
         return this;
     }
@@ -477,7 +477,7 @@ public abstract class AbstractNutsUpdateCommand extends NutsWorkspaceCommandBase
             case "--to-version": {
                 String val = cmdLine.nextString().getValue().getString();
                 if (enabled) {
-                    this.setApiVersion(getSession().version().parse(val));
+                    this.setApiVersion(NutsVersion.of(val,getSession()));
                 }
                 return true;
             }

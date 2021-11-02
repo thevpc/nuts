@@ -30,6 +30,9 @@ import net.thevpc.nuts.*;
 
 import static net.thevpc.nuts.ext.term.NutsJLineHistory.DEFAULT_HISTORY_FILE_SIZE;
 import static net.thevpc.nuts.ext.term.NutsJLineHistory.DEFAULT_HISTORY_SIZE;
+
+import net.thevpc.nuts.spi.NutsSupportLevelContext;
+import net.thevpc.nuts.spi.NutsSystemTerminalBase;
 import org.jline.reader.History;
 import org.jline.reader.History.Entry;
 import org.jline.reader.LineReader;
@@ -49,6 +52,7 @@ public class NutsJLineCommandHistory implements NutsCommandHistory {
     private LineReader reader;
     private final LinkedList<History.Entry> items = new LinkedList<>();
 
+    private NutsPath path;
     private int lastLoaded = 0;
     private int nbEntriesInFile = 0;
     private int offset = 0;
@@ -65,6 +69,7 @@ public class NutsJLineCommandHistory implements NutsCommandHistory {
         items.clear();
     }
 
+
     public LineReader getReader() {
         return reader;
     }
@@ -73,7 +78,48 @@ public class NutsJLineCommandHistory implements NutsCommandHistory {
         this.reader = reader;
     }
 
-    private Path getPath() {
+    @Override
+    public NutsCommandHistory setPath(Path path) {
+        return setPath(path==null?null:NutsPath.of(path,session));
+    }
+
+    @Override
+    public NutsCommandHistory setPath(File path) {
+        return setPath(path==null?null:NutsPath.of(path,session));
+    }
+
+    @Override
+    public NutsCommandHistory setPath(NutsPath path) {
+        this.path=path;
+        if(this.path!=null) {
+            reader.getVariables().put(LineReader.HISTORY_FILE, path.toFile());
+        }
+        return this;
+    }
+
+    @Override
+    public NutsPath getPath() {
+        return null;
+    }
+
+    @Override
+    public int getSupportLevel(NutsSupportLevelContext<Object> context) {
+        NutsSystemTerminal st = context.getSession().config().getSystemTerminal();
+        boolean jline=false;
+        NutsSystemTerminalBase b = st.getParent();
+        if(b!=null){
+            if (b instanceof NutsJLineTerminal){
+                jline=true;
+            }
+        }
+        if(jline) {
+            return DEFAULT_SUPPORT + 10;
+        }else{
+            return -1;
+        }
+    }
+
+    private Path getPathPath() {
         Object obj = reader != null ? reader.getVariables().get(LineReader.HISTORY_FILE) : null;
         if (obj instanceof Path) {
             return (Path) obj;
@@ -116,7 +162,7 @@ public class NutsJLineCommandHistory implements NutsCommandHistory {
 
     @Override
     public void load() {
-        Path path = getPath();
+        Path path = getPathPath();
         if (path != null) {
             try {
                 if (Files.exists(path)) {
@@ -139,7 +185,7 @@ public class NutsJLineCommandHistory implements NutsCommandHistory {
 //            shellHistory.save();
 //        } else {
         try {
-            Path path = getPath();
+            Path path = getPathPath();
             if (path != null) {
                 // Append new items to the history file
                 try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(out))) {
@@ -164,7 +210,7 @@ public class NutsJLineCommandHistory implements NutsCommandHistory {
     @Override
     public void save() {
         try {
-            Path path = getPath();
+            Path path = getPathPath();
             if (path != null) {
                 Log.trace("Saving history to: ", path);
                 Files.createDirectories(path.toAbsolutePath().getParent());
@@ -190,7 +236,7 @@ public class NutsJLineCommandHistory implements NutsCommandHistory {
 //            shellHistory.clear();
 //        } else {
         internalClear();
-        Path path = getPath();
+        Path path = getPathPath();
         if (path != null) {
             try {
                 Log.trace("Purging history from: ", path);

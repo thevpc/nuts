@@ -189,4 +189,5 @@ public interface NutsDescriptor extends Serializable, NutsBlankable {
      */
     NutsDescriptorBuilder builder();
 
+    NutsDescriptorFormat formatter();
 }

@@ -8,7 +8,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class NutsDescriptorFilterOr extends AbstractDescriptorFilter implements JsNutsDescriptorFilter {
+public class NutsDescriptorFilterOr extends AbstractDescriptorFilter  {
 
     private NutsDescriptorFilter[] all;
 
@@ -41,36 +41,6 @@ public class NutsDescriptorFilterOr extends AbstractDescriptorFilter implements 
     @Override
     public NutsDescriptorFilter simplify() {
         return CoreNutsUtils.simplifyFilterOr(getSession(),NutsDescriptorFilter.class,this,all);
-    }
-
-    @Override
-    public String toJsNutsDescriptorFilterExpr() {
-        StringBuilder sb = new StringBuilder();
-        if (all.length == 0) {
-            return "true";
-        }
-        if (all.length > 1) {
-            sb.append("(");
-        }
-        for (NutsDescriptorFilter id : all) {
-            if (sb.length() > 0) {
-                sb.append(" || ");
-            }
-            if (id instanceof JsNutsDescriptorFilter) {
-                JsNutsDescriptorFilter b = (JsNutsDescriptorFilter) id;
-                String expr = b.toJsNutsDescriptorFilterExpr();
-                if (NutsBlankable.isBlank(expr)) {
-                    return null;
-                }
-                sb.append("(").append(expr).append("')");
-            } else {
-                return null;
-            }
-        }
-        if (all.length > 0) {
-            sb.append(")");
-        }
-        return sb.toString();
     }
 
     @Override

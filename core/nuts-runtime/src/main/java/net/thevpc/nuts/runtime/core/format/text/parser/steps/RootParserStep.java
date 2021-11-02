@@ -2,6 +2,7 @@ package net.thevpc.nuts.runtime.core.format.text.parser.steps;
 
 import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.NutsTextPlain;
+import net.thevpc.nuts.NutsTexts;
 import net.thevpc.nuts.runtime.core.format.text.parser.DefaultNutsTextNodeParser;
 
 import java.util.ArrayList;
@@ -69,7 +70,7 @@ public class RootParserStep extends ParserStep {
                 all.add(n);
             }
         }
-        return session.text().ofList(all).simplify();
+        return NutsTexts.of(session).ofList(all).simplify();
     }
 
     @Override

@@ -25,7 +25,7 @@ public class DefaultNutsHelpInternalExecutable extends DefaultInternalNutsExecut
     private final NutsLogger LOG;
     public DefaultNutsHelpInternalExecutable(String[] args, NutsSession session) {
         super("help", args, session);
-        LOG=session.log().of(DefaultNutsHelpInternalExecutable.class);
+        LOG=NutsLogger.of(DefaultNutsHelpInternalExecutable.class,session);
     }
 
     @Override
@@ -35,7 +35,8 @@ public class DefaultNutsHelpInternalExecutable extends DefaultInternalNutsExecut
             return;
         }
         List<String> helpFor = new ArrayList<>();
-        NutsCommandLine cmdLine = getSession().commandLine().create(args);
+        NutsSession session = getSession();
+        NutsCommandLine cmdLine = NutsCommandLine.of(args,session);
         NutsContentType outputFormat = NutsContentType.PLAIN;
         boolean helpColors=false;
         while (cmdLine.hasNext()) {
@@ -55,7 +56,7 @@ public class DefaultNutsHelpInternalExecutable extends DefaultInternalNutsExecut
                             break;
                         }
                         default: {
-                            getSession().configureLast(cmdLine);
+                            session.configureLast(cmdLine);
                         }
                     }
                 } else {
@@ -68,19 +69,19 @@ public class DefaultNutsHelpInternalExecutable extends DefaultInternalNutsExecut
         }
 
         if(helpColors){
-            NutsTextManager txt = getSession().text();
+            NutsTexts txt = NutsTexts.of(session);
             NutsText n = txt.parser().parseResource("/net/thevpc/nuts/runtime/ntf-help.ntf",
                     txt.parser().createLoader(getClass().getClassLoader())
             );
-            getSession().getTerminal().out().print(
+            session.getTerminal().out().print(
                     n==null?("no help found for " + name):n.toString()
             );
         }
         switch (outputFormat) {
             case PLAIN: {
-                NutsPrintStream fout = getSession().out();
+                NutsPrintStream fout = session.out();
                 if (!helpColors && helpFor.isEmpty()) {
-                    fout.println(NutsWorkspaceExt.of(getSession().getWorkspace()).getHelpText(getSession()));
+                    fout.println(NutsWorkspaceExt.of(session.getWorkspace()).getHelpText(session));
                     fout.flush();
                 }
                 for (String arg : helpFor) {
@@ -91,9 +92,9 @@ public class DefaultNutsHelpInternalExecutable extends DefaultInternalNutsExecut
                         fout.flush();
                     } else {
                         try {
-                            w = getSession().exec().addCommand(arg).which();
+                            w = session.exec().addCommand(arg).which();
                         } catch (Exception ex) {
-                            LOG.with().session(getSession()).level(Level.FINE).error(ex).log( NutsMessage.jstyle("failed to execute : {0}", arg));
+                            LOG.with().session(session).level(Level.FINE).error(ex).log( NutsMessage.jstyle("failed to execute : {0}", arg));
                             //ignore
                         }
                         if (w != null) {
@@ -101,14 +102,14 @@ public class DefaultNutsHelpInternalExecutable extends DefaultInternalNutsExecut
                             fout.println(w.getHelpText());
                             fout.flush();
                         } else {
-                            getSession().getTerminal().err().println(arg + " : Not found");
+                            session.getTerminal().err().println(arg + " : Not found");
                         }
                     }
                 }
                 break;
             }
             default: {
-                throw new NutsUnsupportedOperationException(getSession(), NutsMessage.cstyle("unsupported format %s",outputFormat));
+                throw new NutsUnsupportedOperationException(session, NutsMessage.cstyle("unsupported format %s",outputFormat));
             }
         }
 

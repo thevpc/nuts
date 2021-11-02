@@ -26,7 +26,8 @@
 package net.thevpc.nuts.toolbox.nsh.cmds;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.spi.NutsSingleton;
+import net.thevpc.nuts.spi.NutsComponentScope;
+import net.thevpc.nuts.spi.NutsComponentScopeType;
 import net.thevpc.nuts.toolbox.nsh.SimpleNshBuiltin;
 
 import java.io.BufferedReader;
@@ -39,7 +40,7 @@ import java.util.List;
 /**
  * Created by vpc on 1/7/17.
  */
-@NutsSingleton
+@NutsComponentScope(NutsComponentScopeType.WORKSPACE)
 public class HeadCommand extends SimpleNshBuiltin {
     public HeadCommand() {
         super("head", DEFAULT_SUPPORT);
@@ -80,14 +81,15 @@ public class HeadCommand extends SimpleNshBuiltin {
 
     private void head(String file, int max, SimpleNshCommandContext context) {
         BufferedReader r = null;
+        NutsSession session = context.getSession();
         try {
             try {
-                r = new BufferedReader(new InputStreamReader(context.getSession().io().path(file)
+                r = new BufferedReader(new InputStreamReader(NutsPath.of(file, session)
                         .getInputStream()));
                 String line = null;
                 int count = 0;
                 while (count < max && (line = r.readLine()) != null) {
-                    context.getSession().out().println(line);
+                    session.out().println(line);
                     count++;
                 }
             } finally {
@@ -96,7 +98,7 @@ public class HeadCommand extends SimpleNshBuiltin {
                 }
             }
         } catch (IOException ex) {
-            throw new NutsExecutionException(context.getSession(), NutsMessage.cstyle("%s",ex), ex, 100);
+            throw new NutsExecutionException(session, NutsMessage.cstyle("%s", ex), ex, 100);
         }
     }
 

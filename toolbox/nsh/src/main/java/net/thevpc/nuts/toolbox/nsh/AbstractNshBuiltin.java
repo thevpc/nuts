@@ -56,7 +56,8 @@ public abstract class AbstractNshBuiltin implements NshBuiltin {
     }
 
     protected NutsCommandLine cmdLine(String[] args, JShellExecutionContext context) {
-        return context.getSession().commandLine().create(args)
+        NutsSession session = context.getSession();
+        return NutsCommandLine.of(args,session)
                 .setAutoComplete(context.getShellContext().getAutoComplete())
                 .setCommandName(getName());
     }
@@ -163,7 +164,7 @@ public abstract class AbstractNshBuiltin implements NshBuiltin {
 
     protected void throwExecutionException(Object errObject,int errorCode,NutsSession session) {
         session=session.copy();
-        NutsPrintStream printStream = session.io().createMemoryPrintStream();
+        NutsPrintStream printStream = NutsMemoryPrintStream.of(session);
         if (errObject != null) {
             printStream.printf(errObject);
         }else{

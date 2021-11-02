@@ -76,7 +76,7 @@
 //        checkSession();
 //        NutsString n = getName();
 //        if(n==null){
-//            n=getSession().text().forStyled("<bytes>",NutsTextStyle.path());
+//            n=NutsTexts.of(getSession()).forStyled("<bytes>",NutsTextStyle.path());
 //        }
 //        NutsInput v = CoreIOUtils.createInputSource(bytes, n.filteredText(),n,  getTypeName(), getSession());
 //        v = toMulti(v);
@@ -91,7 +91,7 @@
 //        checkSession();
 //        NutsString name = getName();
 //        if(name==null){
-//            name=getSession().text().toText(source);
+//            name=NutsTexts.of(getSession()).toText(source);
 //        }
 //        return toMulti(new CoreIOUtils.InputStream(name.filteredText(),name, source, "inputStream", getSession()));
 //    }

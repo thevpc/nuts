@@ -143,7 +143,7 @@ public class NTasksSubCmd {
                 runLater.add(t -> t.setPriority(NPriority.NORMAL));
             } else {
                 if (cmd.peek().isNonOption() && !nameVisited) {
-                    String n = cmd.next(session.commandLine().createName("name")).getString();
+                    String n = cmd.next(NutsArgumentName.of("name",session)).getString();
                     runLater.add(t -> t.setName(n));
                 } else {
                     cmd.unexpectedArgument();
@@ -158,15 +158,15 @@ public class NTasksSubCmd {
             service.tasks().addTask(t);
             if (context.getSession().isPlainTrace()) {
                 context.getSession().out().printf("task %s (%s) added.\n",
-                        context.getSession().text().ofStyled(t.getId(), NutsTextStyle.primary5()),
+                        NutsTexts.of(context.getSession()).ofStyled(t.getId(), NutsTextStyle.primary5()),
                         t.getName()
                 );
             }
             if (show) {
-                runTaskShow(session.commandLine().create(t.getId()));
+                runTaskShow(NutsCommandLine.of(new String[]{t.getId()}, session));
             }
             if (list) {
-                runTaskList(session.commandLine().create());
+                runTaskList(NutsCommandLine.of(new String[0], session));
             }
         }
     }
@@ -392,7 +392,7 @@ public class NTasksSubCmd {
                     c.accept(task);
                 }
             }
-            NutsTextManager text = context.getSession().text();
+            NutsTexts text = NutsTexts.of(context.getSession());
             for (NTask task : new LinkedHashSet<>(tasks)) {
                 service.tasks().updateTask(task);
                 if (context.getSession().isPlainTrace()) {
@@ -404,11 +404,11 @@ public class NTasksSubCmd {
             }
             if (show) {
                 for (NTask t : new LinkedHashSet<>(tasks)) {
-                    runTaskList(session.commandLine().create(t.getId()));
+                    runTaskList(NutsCommandLine.of(new String[]{t.getId()}, session));
                 }
             }
             if (list) {
-                runTaskList(session.commandLine().create());
+                runTaskList(NutsCommandLine.of(new String[0], session));
             }
         }
     }
@@ -600,7 +600,7 @@ public class NTasksSubCmd {
         NProject p = project == null ? null : service.projects().getProject(project);
         NTaskStatus s = x.getStatus();
         String dte0 = parent.getFormattedDate(x.getDueTime());
-        NutsTextBuilder dte = session.text().builder();
+        NutsTextBuilder dte = NutsTexts.of(session).builder();
         if (s == NTaskStatus.CANCELLED || s == NTaskStatus.DONE) {
             dte.append(dte0, NutsTextStyle.pale());
         } else if (x.getDueTime() != null && x.getDueTime().compareTo(Instant.now()) < 0) {
@@ -611,7 +611,7 @@ public class NTasksSubCmd {
         String projectName = p != null ? p.getName() : project != null ? project : "*";
         return new Object[]{
             index,
-            session.text().builder().append(x.getId(), NutsTextStyle.pale()),
+            NutsTexts.of(session).builder().append(x.getId(), NutsTextStyle.pale()),
             parent.getFlagString(x.getFlag()),
             parent.getStatusString(x.getStatus()),
             parent.getPriorityString(x.getPriority()),
@@ -622,7 +622,7 @@ public class NTasksSubCmd {
     }
 
     private void runTaskRemove(NutsCommandLine cmd) {
-        NutsTextManager text = context.getSession().text();
+        NutsTexts text = NutsTexts.of(context.getSession());
         while (cmd.hasNext()) {
             NutsArgument a = cmd.next();
             if (cmd.isExecMode()) {

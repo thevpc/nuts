@@ -34,7 +34,7 @@ public class NutsPrintStreamFormatted extends NutsPrintStreamRendered {
 
     @Override
     public NutsPrintStream run(NutsTerminalCommand command) {
-        printf("%s", session.text().ofCommand(command));
+        printf("%s", NutsTexts.of(session).ofCommand(command));
         flush();
         return this;
     }

@@ -1,7 +1,7 @@
 package net.thevpc.nuts.boot;
 
 import net.thevpc.nuts.NutsArgument;
-import net.thevpc.nuts.NutsCommandLineManager;
+import net.thevpc.nuts.NutsCommandLines;
 import net.thevpc.nuts.NutsUtilStrings;
 import net.thevpc.nuts.NutsVal;
 
@@ -10,7 +10,7 @@ import java.util.NoSuchElementException;
 /**
  * This is a minimal implementation of NutsArgument and hence should not be
  * used. Instead an instance of NutsArgument can be retrieved using
- * {@link NutsCommandLineManager#createArgument(String)}
+ * {@link NutsCommandLines#createArgument(String)}
  *
  * @author thevpc
  * @app.category Format

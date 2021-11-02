@@ -31,7 +31,7 @@ public class Test14_Commandline {
                 "--skip-welcome"
         );
 
-        NutsArgument[] cmd = session.commandLine().parse("-ad+ +ad--").toArgumentArray();
+        NutsArgument[] cmd = NutsCommandLine.parse("-ad+ +ad--",session).toArgumentArray();
         Set<String> set = Arrays.stream(cmd).map(x -> x.toString()).collect(Collectors.toSet());
         Set<String> expectedSet = new HashSet<>(Arrays.asList(
                 "-a", "-d+", "+a","+d--"

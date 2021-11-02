@@ -60,7 +60,7 @@ public class NutsElementMapperObjReflect implements NutsElementMapper<Object> {
             instance = m.newInstance();
         }
         NutsObjectElement eobj = o.asObject();
-        NutsElementFormat prv = context.elem();
+        NutsElements prv = context.elem();
         for (ReflectProperty property : m.getProperties()) {
             if (property.isWrite()) {
                 NutsElement v = eobj.get(prv.forString(property.getName()));

@@ -28,17 +28,15 @@ package net.thevpc.nuts.runtime.standalone.executors;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.util.ProcessExecHelper;
 import net.thevpc.nuts.runtime.bundles.io.IProcessExecHelper;
-import net.thevpc.nuts.spi.NutsExecutorComponent;
+import net.thevpc.nuts.spi.*;
 
 import java.util.*;
 import net.thevpc.nuts.runtime.core.util.CoreBooleanUtils;
-import net.thevpc.nuts.spi.NutsSingleton;
-import net.thevpc.nuts.spi.NutsSupportLevelContext;
 
 /**
  * Created by vpc on 1/7/17.
  */
-@NutsSingleton
+@NutsComponentScope(NutsComponentScopeType.WORKSPACE)
 public class ProcessExecutorComponent implements NutsExecutorComponent {
 
     public static NutsId ID;
@@ -53,7 +51,7 @@ public class ProcessExecutorComponent implements NutsExecutorComponent {
     public int getSupportLevel(NutsSupportLevelContext<NutsDefinition> nutsDefinition) {
         this.ws=nutsDefinition.getSession();
         if(ID==null){
-            ID=ws.id().parser().parse("net.thevpc.nuts.exec:exec-native");
+            ID=NutsId.of("net.thevpc.nuts.exec:exec-native",ws);
         }
         return DEFAULT_SUPPORT;
     }
@@ -100,7 +98,8 @@ public class ProcessExecutorComponent implements NutsExecutorComponent {
                 dir = execArgs[i].substring(arg.indexOf('=') + 1);
             }
         }
-        String directory = NutsBlankable.isBlank(dir) ? null : executionContext.getTraceSession().io().path(dir).builder().withAppBaseDir().build().toString();
+        String directory = NutsBlankable.isBlank(dir) ? null :
+                NutsPath.of(dir,executionContext.getTraceSession()).builder().withAppBaseDir().build().toString();
         return ProcessExecHelper.ofDefinition(nutMainFile,
                 app.toArray(new String[0]), osEnv, directory, executionContext.getExecutorProperties(), showCommand, true, executionContext.getSleepMillis(), false, false, null, null, executionContext.getRunAs(), executionContext.getTraceSession(),
                 executionContext.getExecSession()

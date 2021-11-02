@@ -25,15 +25,11 @@
  */
 package net.thevpc.nuts.runtime.bundles.io;
 
-import net.thevpc.nuts.NutsLogVerb;
-import net.thevpc.nuts.NutsMessage;
-import net.thevpc.nuts.NutsWorkspace;
+import net.thevpc.nuts.*;
 
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.logging.Level;
-
-import net.thevpc.nuts.NutsSession;
 
 public class PipeThread extends Thread implements StopMonitor {
 
@@ -64,7 +60,7 @@ public class PipeThread extends Thread implements StopMonitor {
                 try {
                     lock.wait();
                 } catch (InterruptedException e) {
-                    session.log().of(PipeThread.class).with()
+                    NutsLoggerOp.of(PipeThread.class,session)
                             .error(e)
                             .level(Level.FINEST)
                             .verb(NutsLogVerb.WARNING)
@@ -95,7 +91,7 @@ public class PipeThread extends Thread implements StopMonitor {
                 }
             }
         } catch (IOException e) {
-            session.log().of(PipeThread.class).with()
+            NutsLoggerOp.of(PipeThread.class,session)
                     .error(e)
                     .level(Level.FINEST)
                     .verb(NutsLogVerb.WARNING)

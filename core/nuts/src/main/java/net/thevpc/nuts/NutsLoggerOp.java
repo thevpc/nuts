@@ -38,8 +38,10 @@ import java.util.logging.Level;
  */
 public interface NutsLoggerOp {
     static NutsLoggerOp of(Class clazz, NutsSession session) {
-        NutsApiUtils.checkSession(session);
-        return session.log().of(clazz).with();
+        return NutsLogger.of(clazz,session).with();
+    }
+    static NutsLoggerOp of(String name, NutsSession session) {
+        return NutsLogger.of(name,session).with();
     }
 
     NutsLoggerOp session(NutsSession session);

@@ -1,5 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.ndi.win;
 
+import net.thevpc.nuts.NutsCommandLine;
 import net.thevpc.nuts.NutsId;
 import net.thevpc.nuts.NutsPrintStream;
 import net.thevpc.nuts.NutsSession;
@@ -66,7 +67,7 @@ public class WindowFreeDesktopEntryWriter extends AbstractFreeDesktopEntryWriter
         if (wd == null) {
             wd = System.getProperty("user.home");
         }
-        String[] cmd = session.commandLine().parse(root.getExec()).toStringArray();
+        String[] cmd = NutsCommandLine.parse(root.getExec(),session).toStringArray();
         List<String> categories = new ArrayList<>(root.getCategories());
         if (categories.isEmpty()) {
             categories.add("/");

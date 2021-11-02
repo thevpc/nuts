@@ -1,7 +1,7 @@
 /**
  * ====================================================================
- *            Nuts : Network Updatable Things Service
- *                  (universal package manager)
+ * Nuts : Network Updatable Things Service
+ * (universal package manager)
  * <br>
  * is a new Open Source Package Manager to help install packages
  * and libraries for runtime execution. Nuts is the ultimate companion for
@@ -11,7 +11,7 @@
  * architecture to help supporting a large range of sub managers / repositories.
  *
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc]
  * Licensed under the Apache License, Version 2.0 (the "License"); you may
  * not use this file except in compliance with the License. You may obtain a
@@ -23,7 +23,7 @@
  * governing permissions and limitations under the License.
  * <br>
  * ====================================================================
-*/
+ */
 package net.thevpc.nuts.runtime.core.filters.descriptor;
 
 import net.thevpc.nuts.*;
@@ -35,7 +35,7 @@ import java.util.Objects;
 /**
  * Created by vpc on 2/20/17.
  */
-public class NutsDescriptorFilterPackaging extends AbstractDescriptorFilter implements JsNutsDescriptorFilter {
+public class NutsDescriptorFilterPackaging extends AbstractDescriptorFilter {
 
     private final String packaging;
 
@@ -64,11 +64,7 @@ public class NutsDescriptorFilterPackaging extends AbstractDescriptorFilter impl
         return this;
     }
 
-    @Override
-    public String toJsNutsDescriptorFilterExpr() {
-        return "descriptor.matchesPackaging('" + CoreStringUtils.escapeQuoteStrings(packaging) + "')";
-    }
-
+    
     @Override
     public int hashCode() {
         int hash = 3;
@@ -88,10 +84,7 @@ public class NutsDescriptorFilterPackaging extends AbstractDescriptorFilter impl
             return false;
         }
         final NutsDescriptorFilterPackaging other = (NutsDescriptorFilterPackaging) obj;
-        if (!Objects.equals(this.packaging, other.packaging)) {
-            return false;
-        }
-        return true;
+        return Objects.equals(this.packaging, other.packaging);
     }
 
     @Override

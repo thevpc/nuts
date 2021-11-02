@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.Set;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.spi.NutsSupportLevelContext;
 
 public class DefaultNutsDependencyFormat extends DefaultFormatBase<NutsDependencyFormat> implements NutsDependencyFormat {
 
@@ -19,8 +20,8 @@ public class DefaultNutsDependencyFormat extends DefaultFormatBase<NutsDependenc
     private NutsDependency value;
     private Set<String> queryPropertiesOmitted = new HashSet<>();
 
-    public DefaultNutsDependencyFormat(NutsWorkspace ws) {
-        super(ws, "dependency-format");
+    public DefaultNutsDependencyFormat(NutsSession session) {
+        super(session, "dependency-format");
     }
 
     public NutsDependencyFormat setNtf(boolean ntf) {
@@ -137,7 +138,7 @@ public class DefaultNutsDependencyFormat extends DefaultFormatBase<NutsDependenc
                 }
             }
         }
-        NutsIdFormat id1 = getSession().id().formatter();
+        NutsIdFormat id1 = NutsIdFormat.of(getSession());
         for (String omitQueryProperty : getOmitQueryProperties()) {
             id1.setOmitProperty(omitQueryProperty,true);
         }
@@ -316,5 +317,10 @@ public class DefaultNutsDependencyFormat extends DefaultFormatBase<NutsDependenc
             }
         }
         return false;
+    }
+
+    @Override
+    public int getSupportLevel(NutsSupportLevelContext<Object> context) {
+        return DEFAULT_SUPPORT;
     }
 }

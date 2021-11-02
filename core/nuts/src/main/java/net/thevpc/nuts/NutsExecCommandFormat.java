@@ -25,6 +25,8 @@
  */
 package net.thevpc.nuts;
 
+import net.thevpc.nuts.boot.NutsApiUtils;
+
 import java.util.function.Function;
 import java.util.function.Predicate;
 
@@ -37,6 +39,11 @@ import java.util.function.Predicate;
  * @app.category Format
  */
 public interface NutsExecCommandFormat extends NutsFormat {
+    static NutsExecCommandFormat of(NutsSession session){
+        NutsApiUtils.checkSession(session);
+        return session.extensions().createSupported(NutsExecCommandFormat.class, true, null);
+    }
+
     /**
      * true if input redirection is displayed
      * @return true if input redirection is displayed

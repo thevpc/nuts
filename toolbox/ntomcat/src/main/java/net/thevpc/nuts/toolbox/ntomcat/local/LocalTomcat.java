@@ -191,7 +191,7 @@ public class LocalTomcat {
         }
         if (args.isExecMode()) {
             NutsSession session = context.getSession();
-            NutsTextManager factory = session.text();
+            NutsTexts factory = NutsTexts.of(session);
             if (session.isPlainOut()) {
                 NutsPrintStream out = session.out();
                 for (RunningTomcat jpsResult : TomcatUtils.getRunningInstances(context)) {
@@ -440,7 +440,7 @@ public class LocalTomcat {
     }
 
     public NutsString getBracketsPrefix(String str) {
-        return context.getSession().text().builder()
+        return NutsTexts.of(context.getSession()).builder()
                 .append("[")
                 .append(str, NutsTextStyle.primary5())
                 .append("]");
@@ -460,13 +460,14 @@ public class LocalTomcat {
         if (c != null) {
             c.printStatus();
         } else {
-            if (context.getSession().isPlainOut()) {
-                context.getSession().out().printf("%s Tomcat %s.\n", getBracketsPrefix(name),
-                        context.getSession().text().ofStyled("not found", NutsTextStyle.error())
+            NutsSession session = context.getSession();
+            if (session.isPlainOut()) {
+                session.out().printf("%s Tomcat %s.\n", getBracketsPrefix(name),
+                        NutsTexts.of(session).ofStyled("not found", NutsTextStyle.error())
                 );
             } else {
-                context.getSession().eout().add(
-                        context.getSession().elem().forObject()
+                session.eout().add(
+                        NutsElements.of(session).forObject()
                                 .set("config-name", name)
                                 .set("status", "not-found")
                                 .build()

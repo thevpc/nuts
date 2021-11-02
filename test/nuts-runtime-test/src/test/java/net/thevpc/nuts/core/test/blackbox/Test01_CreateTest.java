@@ -9,10 +9,15 @@ import net.thevpc.nuts.core.test.utils.TestUtils;
 import net.thevpc.nuts.*;
 
 import java.io.File;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.util.Set;
+import java.util.regex.Pattern;
 
+import net.thevpc.nuts.runtime.core.util.CoreServiceUtils;
+import net.thevpc.nuts.spi.NutsComponent;
+import net.thevpc.nuts.spi.NutsDependencySolver;
+import net.thevpc.nuts.spi.NutsTerminals;
 import org.junit.jupiter.api.*;
 
 /**
@@ -20,6 +25,18 @@ import org.junit.jupiter.api.*;
  */
 public class Test01_CreateTest {
 
+    @Test
+    public void tempTest(){
+        try {
+            Set<String> q = CoreServiceUtils.loadZipServiceClassNames(new File("/home/vpc/nuts-runtime-0.8.3.0-err.jar").toURI().toURL(), NutsComponent.class);
+            System.out.println(q.size());
+            for (String s : q) {
+                System.out.println(s);
+            }
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+    }
     @Test
     public void minimal1() throws Exception {
         String wsPath = TestUtils.getTestBaseFolder().getPath();
@@ -30,7 +47,7 @@ public class Test01_CreateTest {
                 "--verbose",
                 "--skip-companions");
         Assertions.assertEquals(new File(wsPath, "cache").getPath(), session.locations().getStoreLocation(NutsStoreLocation.CACHE));
-        Assertions.assertEquals(0,session.repos().getRepositories().length);
+        Assertions.assertEquals(0, session.repos().getRepositories().length);
 //        Assertions.assertEquals(new File(wsPath,  "cache/" + NutsConstants.Folders.REPOSITORIES + "/" +
 //                        session.repos().getRepositories()[0].getName() +
 //                        "/" + session.repos().getRepositories()[0].getUuid()).getPath(),
@@ -57,7 +74,7 @@ public class Test01_CreateTest {
                 "a\n\nb";
         System.out.println("-----------------------");
         System.out.println(str);
-        NutsText txt = session.text().parse(str);
+        NutsText txt = NutsTexts.of(session).parse(str);
         System.out.println("-----------------------");
         System.out.println(txt);
     }
@@ -92,15 +109,14 @@ public class Test01_CreateTest {
         String base = "";
         switch (NutsOsFamily.getCurrent()) {
             case WINDOWS: {
-                base =new File(System.getProperty("user.home"),"AppData\\Local\\nuts\\cache").getPath();
+                base = new File(System.getProperty("user.home"), "AppData\\Local\\nuts\\cache").getPath();
                 break;
             }
             case MACOS:
             case LINUX:
             case UNIX:
-            case UNKNOWN:
-            {
-                base =new File(System.getProperty("user.home"),".cache/nuts").getPath();
+            case UNKNOWN: {
+                base = new File(System.getProperty("user.home"), ".cache/nuts").getPath();
                 break;
             }
         }
@@ -133,24 +149,241 @@ public class Test01_CreateTest {
                 "--skip-companions").getWorkspace();
     }
 
-    @BeforeAll
-    public static void setUpClass() throws IOException {
-        TestUtils.println("####### RUNNING TEST @ " + TestUtils.getCallerClassSimpleName());
-    }
+    @Test
+    public void createUtilTypes() {
+        NutsSession s = TestUtils.runNewTestWorkspace("--verbose","-b");
 
-    @AfterAll
-    public static void tearUpClass() throws IOException {
-    }
+        {
+            NutsPath home = NutsPath.of(new File(System.getProperty("user.home")), s);
+            Assertions.assertNotNull(home);
+        }
 
-    @BeforeEach
-    public void startup() throws IOException {
-//        Assumptions.assumeTrue(NutsOsFamily.getCurrent()== NutsOsFamily.LINUX);
-        TestUtils.unsetNutsSystemProperties();
-    }
+        {
+            NutsCommandLine cmd = NutsCommandLine.of(new String[]{"cmd", "--test"}, s);
+            Assertions.assertNotNull(cmd);
+        }
 
-    @AfterEach
-    public void cleanup() {
-        TestUtils.unsetNutsSystemProperties();
-    }
+        {
+            NutsArgument arg = NutsArgument.of("arg", s);
+            Assertions.assertNotNull(arg);
+        }
 
+        {
+            NutsExpr expr = NutsExpr.of(s);
+            Assertions.assertNotNull(expr);
+        }
+
+        {
+            NutsStream<String> stream = NutsStream.of(new String[]{"a"}, s);
+            Assertions.assertNotNull(stream);
+        }
+
+        {
+            NutsVal v = NutsVal.of("a", s);
+            Assertions.assertNotNull(v);
+        }
+
+        {
+            Pattern g = NutsGlob.of(s).toPattern("a.*");
+            Assertions.assertNotNull(g);
+        }
+
+        {
+            InputStream stdin = NutsInputStreams.of(s).stdin();
+            Assertions.assertNotNull(stdin);
+        }
+
+        {
+            NutsPrintStream stdout = NutsPrintStreams.of(s).stdout();
+            Assertions.assertNotNull(stdout);
+        }
+
+        {
+            NutsCommandHistory h = NutsCommandHistory.of(s);
+            Assertions.assertNotNull(h);
+        }
+
+        {
+            NutsApplicationContexts c = NutsApplicationContexts.of(s);
+            Assertions.assertNotNull(c);
+        }
+
+        {
+            NutsExecutionEntries c = NutsExecutionEntries.of(s);
+            Assertions.assertNotNull(c);
+        }
+
+        {
+            NutsHash c = NutsHash.of(s);
+            Assertions.assertNotNull(c);
+        }
+
+        {
+            NutsInputStreamMonitor c = NutsInputStreamMonitor.of(s);
+            Assertions.assertNotNull(c);
+        }
+        {
+            NutsLocks c = NutsLocks.of(s);
+            Assertions.assertNotNull(c);
+        }
+        {
+            NutsTerminals c = NutsTerminals.of(s);
+            Assertions.assertNotNull(c);
+        }
+        {
+            NutsTmp c = NutsTmp.of(s);
+            Assertions.assertNotNull(c);
+        }
+        {
+            NutsRm c = NutsRm.of(s);
+            Assertions.assertNotNull(c);
+        }
+        {
+            NutsCp c = NutsCp.of(s);
+            Assertions.assertNotNull(c);
+        }
+        {
+            NutsPs c = NutsPs.of(s);
+            Assertions.assertNotNull(c);
+        }
+        {
+            NutsCompress c = NutsCompress.of(s);
+            Assertions.assertNotNull(c);
+        }
+        {
+            NutsUncompress c = NutsUncompress.of(s);
+            Assertions.assertNotNull(c);
+        }
+        {
+            NutsLogger log = NutsLogger.of(Test01_CreateTest.class, s);
+            Assertions.assertNotNull(log);
+            NutsLoggerOp logop = NutsLoggerOp.of(Test01_CreateTest.class, s);
+            Assertions.assertNotNull(logop);
+        }
+        {
+            NutsIdResolver r = NutsIdResolver.of(s);
+            Assertions.assertNotNull(r);
+        }
+        {
+            NutsIdParser r = NutsIdParser.of(s);
+            Assertions.assertNotNull(r);
+        }
+        {
+            NutsIdBuilder r = NutsIdBuilder.of(s);
+            Assertions.assertNotNull(r);
+        }
+        {
+            NutsIdFormat r = NutsIdFormat.of(s);
+            Assertions.assertNotNull(r);
+        }
+        {
+            NutsIdFilters r = NutsIdFilters.of(s);
+            Assertions.assertNotNull(r);
+        }
+        {
+            NutsVersionFilters r = NutsVersionFilters.of(s);
+            Assertions.assertNotNull(r);
+        }
+        {
+            NutsDependencyFilters r = NutsDependencyFilters.of(s);
+            Assertions.assertNotNull(r);
+        }
+        {
+            NutsDescriptorFilters r = NutsDescriptorFilters.of(s);
+            Assertions.assertNotNull(r);
+        }
+        {
+            NutsInstallStatusFilters r = NutsInstallStatusFilters.of(s);
+            Assertions.assertNotNull(r);
+        }
+        {
+            NutsRepositoryFilters r = NutsRepositoryFilters.of(s);
+            Assertions.assertNotNull(r);
+        }
+        {
+            NutsElements r = NutsElements.of(s);
+            Assertions.assertNotNull(r);
+        }
+        {
+            NutsDescriptorParser r = NutsDescriptorParser.of(s);
+            Assertions.assertNotNull(r);
+        }
+        {
+            NutsDescriptorBuilder r = NutsDescriptorBuilder.of(s);
+            Assertions.assertNotNull(r);
+        }
+        {
+            NutsEnvConditionBuilder r = NutsEnvConditionBuilder.of(s);
+            Assertions.assertNotNull(r);
+        }
+        {
+            NutsDescriptorPropertyBuilder r = NutsDescriptorPropertyBuilder.of(s);
+            Assertions.assertNotNull(r);
+        }
+        {
+            NutsArtifactCallBuilder r = NutsArtifactCallBuilder.of(s);
+            Assertions.assertNotNull(r);
+        }
+        {
+            NutsDescriptorFormat r = NutsDescriptorFormat.of(s);
+            Assertions.assertNotNull(r);
+        }
+        {
+            NutsDependencySolver r = NutsDependencySolver.of(s);
+            Assertions.assertNotNull(r);
+        }
+        {
+            NutsDependencyBuilder r = NutsDependencyBuilder.of(s);
+            Assertions.assertNotNull(r);
+        }
+        {
+            NutsDependencyParser r = NutsDependencyParser.of(s);
+            Assertions.assertNotNull(r);
+        }
+        {
+            NutsVersionParser r = NutsVersionParser.of(s);
+            Assertions.assertNotNull(r);
+        }
+        {
+            NutsVersionFormat r = NutsVersionFormat.of(s);
+            Assertions.assertNotNull(r);
+        }
+        {
+            NutsFilters r = NutsFilters.of(s);
+            Assertions.assertNotNull(r);
+        }
+        {
+            NutsTexts r = NutsTexts.of(s);
+            Assertions.assertNotNull(r);
+        }
+        {
+            NutsObjectFormat r = NutsObjectFormat.of(s);
+            Assertions.assertNotNull(r);
+        }
+        {
+            NutsInfoFormat r = NutsInfoFormat.of(s);
+            Assertions.assertNotNull(r);
+        }
+        {
+            NutsExecCommandFormat r = NutsExecCommandFormat.of(s);
+            Assertions.assertNotNull(r);
+        }
+        {
+            NutsCommandLineFormat r = NutsCommandLineFormat.of(s);
+            Assertions.assertNotNull(r);
+        }
+        {
+            NutsTableFormat r = NutsTableFormat.of(s);
+            Assertions.assertNotNull(r);
+        }
+        {
+            NutsTreeFormat r = NutsTreeFormat.of(s);
+            Assertions.assertNotNull(r);
+        }
+        {
+            NutsPropertiesFormat r = NutsPropertiesFormat.of(s);
+            Assertions.assertNotNull(r);
+        }
+
+    }
 }

@@ -2,7 +2,8 @@ package net.thevpc.nuts.runtime.core.format.text.parser.steps;
 
 import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.NutsTerminalCommand;
-import net.thevpc.nuts.runtime.core.format.text.DefaultNutsTextManager;
+import net.thevpc.nuts.NutsTexts;
+import net.thevpc.nuts.runtime.core.format.text.DefaultNutsTexts;
 import net.thevpc.nuts.runtime.core.format.text.parser.*;
 import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 import net.thevpc.nuts.NutsText;
@@ -130,7 +131,7 @@ public class AntiQuote3ParserStep extends ParserStep {
     public NutsText toText() {
         char[] dst = new char[value.length()];
         value.getChars(0,value.length(), dst,0 );
-        DefaultNutsTextManager factory0 = (DefaultNutsTextManager) session.text();
+        DefaultNutsTexts factory0 = (DefaultNutsTexts) NutsTexts.of(session);
         int i=0;
         int endOffset=-1;
         if(dst.length>0 && dst[i]=='!') {

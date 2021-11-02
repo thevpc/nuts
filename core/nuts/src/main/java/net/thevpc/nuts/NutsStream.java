@@ -42,6 +42,36 @@ import java.util.stream.Stream;
  * @since 0.5.4
  */
 public interface NutsStream<T> extends Iterable<T> {
+    static <T> NutsStream<T> of(T[] str, String name,NutsSession session){
+        return NutsStreams.of(session).create(str,name);
+    }
+
+    static <T> NutsStream<T> of(Iterable<T> str, String name,NutsSession session){
+        return NutsStreams.of(session).create(str,name);
+    }
+
+    static <T> NutsStream<T> of(Iterator<T> str, String name,NutsSession session){
+        return NutsStreams.of(session).create(str,name);
+    }
+
+    static <T> NutsStream<T> of(Stream<T> str, String name,NutsSession session){
+        return NutsStreams.of(session).create(str,name);
+    }
+    static <T> NutsStream<T> of(T[] str, NutsSession session){
+        return NutsStreams.of(session).create(str,null);
+    }
+
+    static <T> NutsStream<T> of(Iterable<T> str, NutsSession session){
+        return NutsStreams.of(session).create(str,null);
+    }
+
+    static <T> NutsStream<T> of(Iterator<T> str, NutsSession session){
+        return NutsStreams.of(session).create(str,null);
+    }
+
+    static <T> NutsStream<T> of(Stream<T> str, NutsSession session){
+        return NutsStreams.of(session).create(str,null);
+    }
 
     /**
      * return result as a  java.util.List .
