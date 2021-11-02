@@ -486,7 +486,7 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
     @Override
     public NutsDescriptorBuilder applyProperties() {
         return applyProperties(
-                CoreNutsUtils.getPropertiesMap(getProperties())
+                CoreNutsUtils.getPropertiesMap(getProperties(),session)
 
         );
     }

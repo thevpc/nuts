@@ -1,16 +1,19 @@
-package net.thevpc.nuts.runtime.standalone.config.compat.v507;
+package net.thevpc.nuts.runtime.standalone.config.compat.v803;
 
-import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.standalone.config.*;
+import net.thevpc.nuts.NutsConstants;
+import net.thevpc.nuts.NutsElements;
+import net.thevpc.nuts.NutsSession;
+import net.thevpc.nuts.NutsStoreLocation;
 import net.thevpc.nuts.runtime.core.CoreNutsConstants;
+import net.thevpc.nuts.runtime.standalone.config.*;
 import net.thevpc.nuts.runtime.standalone.config.compat.AbstractNutsVersionCompat;
 import net.thevpc.nuts.runtime.standalone.config.compat.CompatUtils;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-public class NutsVersionCompat507 extends AbstractNutsVersionCompat {
-    public NutsVersionCompat507(NutsSession ws, String apiVersion) {
+public class NutsVersionCompat803 extends AbstractNutsVersionCompat {
+    public NutsVersionCompat803(NutsSession ws, String apiVersion) {
         super(ws, apiVersion, 507);
     }
 
@@ -64,16 +67,9 @@ public class NutsVersionCompat507 extends AbstractNutsVersionCompat {
                 , NutsStoreLocation.CONFIG))
                 .resolve(CoreNutsConstants.Files.WORKSPACE_MAIN_CONFIG_FILE_NAME);
         byte[] bytes = CompatUtils.readAllBytes(path);
-        NutsWorkspaceConfigMain507 c = bytes==null?null:NutsElements.of(session)
+        NutsWorkspaceConfigMain c = bytes==null?null:NutsElements.of(session)
                 .setSession(session)
-                .json().parse(bytes, NutsWorkspaceConfigMain507.class);
-        NutsWorkspaceConfigMain m=new NutsWorkspaceConfigMain();
-        m.setEnv(c.getEnv());
-        m.setCommandFactories(c.getCommandFactories());
-        m.setRepositories(c.getRepositories());
-        m.setImports(c.getImports());
-        m.setConfigVersion("5.0.7");
-        m.setPlatforms(c.getSdk());
-        return m;
+                .json().parse(bytes, NutsWorkspaceConfigMain.class);
+        return c;
     }
 }

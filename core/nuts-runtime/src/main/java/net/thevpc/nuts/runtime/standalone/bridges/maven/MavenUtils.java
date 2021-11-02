@@ -462,7 +462,7 @@ public class MavenUtils {
                         done.add(pid.getShortName());
                         if (CoreNutsUtils.containsVars(thisId)) {
                             thisId.builder().apply(new MapToFunction<>(
-                                    CoreNutsUtils.getPropertiesMap(d.getProperties())
+                                    CoreNutsUtils.getPropertiesMap(d.getProperties(),session)
                             )).build();
                         } else {
                             break;

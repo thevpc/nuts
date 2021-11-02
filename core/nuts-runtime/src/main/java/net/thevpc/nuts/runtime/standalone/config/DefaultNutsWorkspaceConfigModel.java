@@ -49,6 +49,7 @@ import net.thevpc.nuts.runtime.standalone.config.compat.NutsVersionCompat;
 import net.thevpc.nuts.runtime.standalone.config.compat.v502.NutsVersionCompat502;
 import net.thevpc.nuts.runtime.standalone.config.compat.v506.NutsVersionCompat506;
 import net.thevpc.nuts.runtime.standalone.config.compat.v507.NutsVersionCompat507;
+import net.thevpc.nuts.runtime.standalone.config.compat.v803.NutsVersionCompat803;
 import net.thevpc.nuts.runtime.standalone.io.NutsPrintStreamNull;
 import net.thevpc.nuts.runtime.standalone.io.NutsWorkspaceVarExpansionFunction;
 import net.thevpc.nuts.runtime.standalone.security.ReadOnlyNutsWorkspaceOptions;
@@ -223,7 +224,7 @@ public class DefaultNutsWorkspaceConfigModel {
         if (force || storeModelMainChanged) {
             List<NutsPlatformLocation> plainSdks = new ArrayList<>();
             plainSdks.addAll(Arrays.asList(session.env().platforms().findPlatforms()));
-            storeModelMain.setSdk(plainSdks);
+            storeModelMain.setPlatforms(plainSdks);
             storeModelMain.setRepositories(new ArrayList<>(
                     Arrays.stream(session.repos().getRepositories()).filter(x -> !x.config().isTemporary())
                             .map(x -> x.config().getRepositoryRef()).collect(Collectors.toList())
@@ -243,8 +244,8 @@ public class DefaultNutsWorkspaceConfigModel {
                     item.setConfigVersion(null);
                 }
             }
-            if (storeModelMain.getSdk() != null) {
-                for (NutsPlatformLocation item : storeModelMain.getSdk()) {
+            if (storeModelMain.getPlatforms() != null) {
+                for (NutsPlatformLocation item : storeModelMain.getPlatforms()) {
                     //inherited
                     item.setConfigVersion(null);
                 }
@@ -985,7 +986,7 @@ public class DefaultNutsWorkspaceConfigModel {
     private void setConfigMain(NutsWorkspaceConfigMain config, NutsSession session, boolean fire) {
         this.storeModelMain = config == null ? new NutsWorkspaceConfigMain() : config;
         DefaultNutsPlatformManager d = (DefaultNutsPlatformManager) session.env().platforms();
-        d.getModel().setPlatforms(this.storeModelMain.getSdk().toArray(new NutsPlatformLocation[0]), session);
+        d.getModel().setPlatforms(this.storeModelMain.getPlatforms().toArray(new NutsPlatformLocation[0]), session);
         NutsRepositoryManager repos = session.repos();
         repos.removeAllRepositories();
         if (this.storeModelMain.getRepositories() != null) {
@@ -1368,12 +1369,14 @@ public class DefaultNutsWorkspaceConfigModel {
 
     private NutsVersionCompat createNutsVersionCompat(String apiVersion, NutsSession session) {
         int buildNumber = CoreNutsUtils.getApiVersionOrdinalNumber(apiVersion);
-        if (buildNumber < 506) {
-            return new NutsVersionCompat502(session, apiVersion);
-        } else if (buildNumber <= 506) {
-            return new NutsVersionCompat506(session, apiVersion);
-        } else {
+        if (buildNumber >= 803) {
+            return new NutsVersionCompat803(session, apiVersion);
+        }else if(buildNumber >= 507){
             return new NutsVersionCompat507(session, apiVersion);
+        }else if(buildNumber >= 506){
+            return new NutsVersionCompat506(session, apiVersion);
+        }else{
+            return new NutsVersionCompat502(session, apiVersion);
         }
     }
 

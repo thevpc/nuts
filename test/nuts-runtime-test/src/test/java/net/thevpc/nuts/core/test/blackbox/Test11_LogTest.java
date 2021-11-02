@@ -32,6 +32,7 @@ public class Test11_LogTest {
 
         TestUtils.println(NutsVersionFormat.of(ws));
         String result = ws.exec()
+                .addExecutorOption("-Dnuts.args=--bot -w="+ws.locations().getWorkspaceLocation().resolve("temp-ws"))
                 //.addExecutorOption("--main-class=Version")
                 .addCommand(
                 //this is an old link, do not change to 'thevpc'

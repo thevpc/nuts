@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 public final class JavaExecutorOptions {
 
     private String javaVersion = null;//runnerProps.getProperty("java.parseVersion");
-    private String javaHome = null;//runnerProps.getProperty("java.parseVersion");
+    private String javaCommand = null;//runnerProps.getProperty("java.parseVersion");
     private String mainClass = null;
     private String dir = null;
     private boolean javaw = false;
@@ -70,7 +70,7 @@ public final class JavaExecutorOptions {
                 }
                 case "--java-home":
                 case "-java-home": {
-                    javaHome = cmdLine.nextString().getValue().getString();
+                    javaCommand = cmdLine.nextString().getValue().getString();
                     break;
                 }
                 case "--class-path":
@@ -130,22 +130,22 @@ public final class JavaExecutorOptions {
                 }
             }
         }
-        if (getJavaHome() == null) {
+        if (getJavaCommand() == null) {
             if (javaw) {
                 if (!NutsBlankable.isBlank(getJavaVersion())) {
-                    javaHome = "${javaw#" + getJavaVersion() + "}";
+                    javaCommand = "${javaw#" + getJavaVersion() + "}";
                 } else {
-                    javaHome = "${javaw}";
+                    javaCommand = "${javaw}";
                 }
             } else {
                 if (!NutsBlankable.isBlank(getJavaVersion())) {
-                    javaHome = "${java#" + getJavaVersion() + "}";
+                    javaCommand = "${java#" + getJavaVersion() + "}";
                 } else {
-                    javaHome = "${java}";
+                    javaCommand = "${java}";
                 }
             }
         } else {
-            javaHome = NutsJavaSdkUtils.of(session).resolveJavaCommandByHome(getJavaHome(), session);
+            javaCommand = NutsJavaSdkUtils.of(session).resolveJavaCommandByHome(getJavaCommand(), session);
         }
 
         List<NutsDefinition> nutsDefinitions = new ArrayList<>();
@@ -408,8 +408,8 @@ public final class JavaExecutorOptions {
         return javaVersion;
     }
 
-    public String getJavaHome() {
-        return javaHome;
+    public String getJavaCommand() {
+        return javaCommand;
     }
 
     public String getMainClass() {

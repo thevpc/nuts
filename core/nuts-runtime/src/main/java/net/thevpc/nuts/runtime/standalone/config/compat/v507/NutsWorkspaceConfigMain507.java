@@ -23,38 +23,41 @@
  * <br>
  * ====================================================================
 */
-package net.thevpc.nuts.runtime.standalone.config;
+package net.thevpc.nuts.runtime.standalone.config.compat.v507;
 
 import net.thevpc.nuts.NutsCommandFactoryConfig;
 import net.thevpc.nuts.NutsConfigItem;
 import net.thevpc.nuts.NutsPlatformLocation;
 import net.thevpc.nuts.NutsRepositoryRef;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  *
  * @author thevpc
  * @since 0.5.4
  */
-public final class NutsWorkspaceConfigMain extends NutsConfigItem {
+public final class NutsWorkspaceConfigMain507 extends NutsConfigItem {
 
     private static final long serialVersionUID = 4;
 
     private List<NutsRepositoryRef> repositories;
     private List<NutsCommandFactoryConfig> commandFactories;
     private Map<String,String> env = new LinkedHashMap<>();
-    private List<NutsPlatformLocation> platforms = new ArrayList<>();
+    private List<NutsPlatformLocation> sdk = new ArrayList<>();
     private List<String> imports = new ArrayList<>();
 
-    public NutsWorkspaceConfigMain() {
+    public NutsWorkspaceConfigMain507() {
     }
 
     public List<NutsRepositoryRef> getRepositories() {
         return repositories;
     }
 
-    public NutsWorkspaceConfigMain setRepositories(List<NutsRepositoryRef> repositories) {
+    public NutsWorkspaceConfigMain507 setRepositories(List<NutsRepositoryRef> repositories) {
         this.repositories = repositories;
         return this;
     }
@@ -63,18 +66,18 @@ public final class NutsWorkspaceConfigMain extends NutsConfigItem {
         return imports;
     }
 
-    public NutsWorkspaceConfigMain setImports(List<String> imports) {
+    public NutsWorkspaceConfigMain507 setImports(List<String> imports) {
         this.imports = imports;
         return this;
     }
 
-    public NutsWorkspaceConfigMain setCommandFactories(List<NutsCommandFactoryConfig> commandFactories) {
+    public NutsWorkspaceConfigMain507 setCommandFactories(List<NutsCommandFactoryConfig> commandFactories) {
         this.commandFactories = commandFactories;
         return this;
     }
 
-    public NutsWorkspaceConfigMain setPlatforms(List<NutsPlatformLocation> platforms) {
-        this.platforms = platforms;
+    public NutsWorkspaceConfigMain507 setSdk(List<NutsPlatformLocation> sdk) {
+        this.sdk = sdk;
         return this;
     }
 
@@ -82,13 +85,13 @@ public final class NutsWorkspaceConfigMain extends NutsConfigItem {
         return env;
     }
 
-    public NutsWorkspaceConfigMain setEnv(Map<String,String> env) {
+    public NutsWorkspaceConfigMain507 setEnv(Map<String,String> env) {
         this.env = env;
         return this;
     }
 
-    public List<NutsPlatformLocation> getPlatforms() {
-        return platforms;
+    public List<NutsPlatformLocation> getSdk() {
+        return sdk;
     }
 
     public List<NutsCommandFactoryConfig> getCommandFactories() {

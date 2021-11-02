@@ -248,14 +248,14 @@ public class JavaExecutorComponent implements NutsExecutorComponent {
                 List<String> args = new ArrayList<>();
 
                 NutsTexts txt = NutsTexts.of(session);
-                xargs.add(txt.ofPlain(joptions.getJavaHome()));
+                xargs.add(txt.ofPlain(joptions.getJavaCommand()));
                 xargs.addAll(
                         joptions.getJvmArgs().stream()
                                 .map(txt::ofPlain)
                                 .collect(Collectors.toList())
                 );
 
-                args.add(joptions.getJavaHome());
+                args.add(joptions.getJavaCommand());
                 args.addAll(joptions.getJvmArgs());
 
 //                if (!NutsBlankable.isBlank(bootArgumentsString)) {
