@@ -324,7 +324,7 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
                 }
             }
         } else {
-            NutsElementFormat e = getSession().elem();
+            NutsElements e = NutsElements.of(getSession());
 
             if (updates.length == 0) {
                 out.printlnf(e.forObject()
