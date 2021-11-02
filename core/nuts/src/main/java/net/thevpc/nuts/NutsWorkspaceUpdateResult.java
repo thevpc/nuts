@@ -52,7 +52,7 @@ public interface NutsWorkspaceUpdateResult {
 
     int getUpdatesCount();
 
-    NutsUpdateResult[] getAllUpdates();
+    NutsUpdateResult[] getUpdatable();
 
     NutsUpdateResult[] getAllResults();
 }

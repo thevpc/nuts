@@ -149,7 +149,7 @@ public class Test06_UpdateTest {
 
         //check updates!
         NutsUpdateCommand foundUpdates = nws.update().setAll().checkUpdates();
-        for (NutsUpdateResult u : foundUpdates.getResult().getAllUpdates()) {
+        for (NutsUpdateResult u : foundUpdates.getResult().getUpdatable()) {
             TestUtils.println(u.getAvailable());
         }
         Assertions.assertEquals(implOnly ? 1 : 2, foundUpdates.getResultCount(),"checkUpdates result count is incorrect");

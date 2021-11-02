@@ -44,6 +44,7 @@ public final class DefaultNutsUpdateResult implements NutsUpdateResult {
     private boolean updateForced;
     private boolean updateVersionAvailable;
     private boolean updateStatusAvailable;
+    private boolean installed;
 
     public DefaultNutsUpdateResult() {
     }
@@ -54,6 +55,15 @@ public final class DefaultNutsUpdateResult implements NutsUpdateResult {
         this.available = available;
         this.runtime = runtime;
         this.dependencies = dependencies == null ? new NutsId[0] : dependencies;
+    }
+
+    public DefaultNutsUpdateResult setInstalled(boolean installed) {
+        this.installed = installed;
+        return this;
+    }
+
+    public boolean isInstalled() {
+        return installed;
     }
 
     public boolean isRuntime() {
@@ -99,7 +109,7 @@ public final class DefaultNutsUpdateResult implements NutsUpdateResult {
     }
 
     @Override
-    public boolean isUpdateAvailable() {
+    public boolean isUpdatable() {
         return isUpdateVersionAvailable() || isUpdateStatusAvailable() || isUpdateForced();
     }
 

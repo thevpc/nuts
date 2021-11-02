@@ -43,18 +43,18 @@ public class DefaultNutsWorkspaceUpdateResult implements NutsWorkspaceUpdateResu
 
     @Override
     public boolean isUpdatableApi() {
-        return api != null && api.isUpdateAvailable();
+        return api != null && api.isUpdatable();
     }
 
     @Override
     public boolean isUpdatableRuntime() {
-        return runtime != null && runtime.isUpdateAvailable();
+        return runtime != null && runtime.isUpdatable();
     }
 
     @Override
     public boolean isUpdatableExtensions() {
         for (NutsUpdateResult r : extensions) {
-            if (r.isUpdateAvailable()) {
+            if (r.isUpdatable()) {
                 return true;
             }
         }
@@ -67,21 +67,21 @@ public class DefaultNutsWorkspaceUpdateResult implements NutsWorkspaceUpdateResu
     }
 
     @Override
-    public NutsUpdateResult[] getAllUpdates() {
+    public NutsUpdateResult[] getUpdatable() {
         List<NutsUpdateResult> all = new ArrayList<>();
-        if (api != null && api.isUpdateAvailable()) {
+        if (api != null && api.isUpdatable()) {
             all.add(api);
         }
-        if (runtime != null && runtime.isUpdateAvailable()) {
+        if (runtime != null && runtime.isUpdatable()) {
             all.add(runtime);
         }
         for (NutsUpdateResult r : extensions) {
-            if (r.isUpdateAvailable()) {
+            if (r.isUpdatable()) {
                 all.add(r);
             }
         }
         for (NutsUpdateResult r : artifacts) {
-            if (r.isUpdateAvailable()) {
+            if (r.isUpdatable()) {
                 all.add(r);
             }
         }
@@ -105,19 +105,19 @@ public class DefaultNutsWorkspaceUpdateResult implements NutsWorkspaceUpdateResu
     @Override
     public int getUpdatesCount() {
         int c = 0;
-        if (api != null && api.isUpdateAvailable()) {
+        if (api != null && api.isUpdatable()) {
             c++;
         }
-        if (runtime != null && runtime.isUpdateAvailable()) {
+        if (runtime != null && runtime.isUpdatable()) {
             c++;
         }
         for (NutsUpdateResult r : extensions) {
-            if (r.isUpdateAvailable()) {
+            if (r.isUpdatable()) {
                 c++;
             }
         }
         for (NutsUpdateResult r : artifacts) {
-            if (r.isUpdateAvailable()) {
+            if (r.isUpdatable()) {
                 c++;
             }
         }

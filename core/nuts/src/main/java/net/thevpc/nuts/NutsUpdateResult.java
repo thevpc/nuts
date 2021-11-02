@@ -41,6 +41,8 @@ public interface NutsUpdateResult {
      */
     NutsId getId();
 
+    boolean isInstalled();
+
     /**
      * return installed/local definition or null
      *
@@ -75,7 +77,7 @@ public interface NutsUpdateResult {
      *
      * @return true if any update is available
      */
-    boolean isUpdateAvailable();
+    boolean isUpdatable();
 
     /**
      * return true if artifact has newer available version
