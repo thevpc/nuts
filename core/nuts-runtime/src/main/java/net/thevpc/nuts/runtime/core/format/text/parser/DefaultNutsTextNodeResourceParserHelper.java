@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.core.format.text.parser;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.bundles.parsers.StringPlaceHolderParser;
+import net.thevpc.nuts.runtime.core.expr.StringPlaceHolderParser;
 import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.io.NutsWorkspaceVarExpansionFunction;
 

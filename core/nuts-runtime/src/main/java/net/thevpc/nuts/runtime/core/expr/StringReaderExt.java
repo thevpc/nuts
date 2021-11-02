@@ -1,4 +1,4 @@
-package net.thevpc.nuts.runtime.bundles.parsers;
+package net.thevpc.nuts.runtime.core.expr;
 
 public class StringReaderExt {
     String content;

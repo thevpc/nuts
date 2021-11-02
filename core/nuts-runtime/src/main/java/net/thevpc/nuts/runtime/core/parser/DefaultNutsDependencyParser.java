@@ -1,13 +1,12 @@
 package net.thevpc.nuts.runtime.core.parser;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.standalone.util.NutsDependencyScopes;
 
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import net.thevpc.nuts.runtime.bundles.parsers.StringMapParser;
+import net.thevpc.nuts.runtime.core.expr.StringMapParser;
 import net.thevpc.nuts.spi.NutsSupportLevelContext;
 
 public class DefaultNutsDependencyParser implements NutsDependencyParser {

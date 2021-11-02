@@ -2,7 +2,8 @@ package net.thevpc.nuts.runtime.core.format.text.highlighters;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.bundles.collections.EvictingQueue;
-import net.thevpc.nuts.runtime.bundles.parsers.StreamTokenizerExt;
+import net.thevpc.nuts.runtime.core.expr.StreamTokenizerExt;
+import net.thevpc.nuts.runtime.core.expr.NutsToken;
 import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 import net.thevpc.nuts.spi.NutsComponent;
 import net.thevpc.nuts.spi.NutsSupportLevelContext;
@@ -55,8 +56,12 @@ public class XmlCodeHighlighter implements NutsCodeHighlighter {
                     nodes.add(factory.ofStyled(factory.ofPlain(st.image), NutsTextStyle.comments()));
                     break;
                 }
-                case StreamTokenizerExt.TT_INTEGER:
-                case StreamTokenizerExt.TT_DOUBLE: {
+                case NutsToken.TT_INT:
+                case NutsToken.TT_LONG:
+                case NutsToken.TT_BIG_INT:
+                case NutsToken.TT_FLOAT:
+                case NutsToken.TT_DOUBLE:
+                case NutsToken.TT_BIG_DECIMAL:{
                     nodes.add(factory.ofStyled(factory.ofPlain(st.image), NutsTextStyle.number()));
                     break;
                 }

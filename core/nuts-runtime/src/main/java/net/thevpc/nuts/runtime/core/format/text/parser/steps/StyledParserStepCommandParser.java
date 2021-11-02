@@ -3,7 +3,7 @@ package net.thevpc.nuts.runtime.core.format.text.parser.steps;
 import net.thevpc.nuts.NutsTextStyle;
 import net.thevpc.nuts.NutsTextStyleType;
 import net.thevpc.nuts.NutsTextStyles;
-import net.thevpc.nuts.runtime.bundles.parsers.StringReaderExt;
+import net.thevpc.nuts.runtime.core.expr.StringReaderExt;
 
 import java.util.ArrayList;
 import java.util.List;

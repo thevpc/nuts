@@ -25,7 +25,7 @@ package net.thevpc.nuts.runtime.core.model;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.util.NutsDependencyScopes;
-import net.thevpc.nuts.runtime.bundles.parsers.QueryStringParser;
+import net.thevpc.nuts.runtime.core.expr.QueryStringParser;
 
 import java.util.*;
 

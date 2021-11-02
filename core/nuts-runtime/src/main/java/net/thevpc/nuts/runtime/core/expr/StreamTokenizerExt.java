@@ -1,8 +1,10 @@
-package net.thevpc.nuts.runtime.bundles.parsers;
+package net.thevpc.nuts.runtime.core.expr;
 
 import java.io.IOException;
 import java.io.Reader;
 import java.io.UncheckedIOException;
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Arrays;
 
 /**
@@ -51,14 +53,18 @@ public class StreamTokenizerExt {
     /**
      * A constant indicating that a number token has been read.
      */
-    public static final int TT_DOUBLE = -2;
     /**
      * A constant indicating that a word token has been read.
      */
     public static final int TT_WORD = -3;
-    public static final int TT_INTEGER = -4;
-    public static final int TT_COMMENTS = -5;
-    public static final int TT_SPACES = -6;
+    public static final int TT_INT = -4;
+    public static final int TT_LONG = -5;
+    public static final int TT_BIG_INT = -6;
+    public static final int TT_FLOAT = -7;
+    public static final int TT_DOUBLE = -8;
+    public static final int TT_BIG_DECIMAL = -9;
+    public static final int TT_COMMENTS = -10;
+    public static final int TT_SPACES = -11;
     private static final int NEED_CHAR = Integer.MAX_VALUE;
     private static final int SKIP_LF = Integer.MAX_VALUE - 1;
     private static final byte CT_WHITESPACE = 1;
@@ -70,7 +76,7 @@ public class StreamTokenizerExt {
      * initializing ttype.  FIXME This could be made public and
      * made available as the part of the API in a future release.
      */
-    private static final int TT_NOTHING = -5;
+    private static final int TT_NOTHING = -25;
     /**
      * After a call to the {@code nextToken} method, this field
      * contains the type of the token just read. For a single character
@@ -116,8 +122,9 @@ public class StreamTokenizerExt {
      * The initial value of this field is 0.0.
      *
      */
-    public double dval;
-    public long ival;
+    public Number nval;
+//    public double dval;
+//    public long ival;
     public boolean returnComments=true;
     public boolean returnSpaces=true;
     /* Only one of these will be non-null */
@@ -586,23 +593,49 @@ public class StreamTokenizerExt {
                 }
             }
             peekc = c;
-            if (decexp != 0) {
-                double denom = 10;
-                decexp--;
-                while (decexp > 0) {
-                    denom *= 10;
-                    decexp--;
-                }
-                /* Do one division of a likely-to-be-more-accurate number */
-                dv = dv / denom;
-            }
-            dval = neg ? -dv : dv;
+//            if (decexp != 0) {
+//                double denom = 10;
+//                decexp--;
+//                while (decexp > 0) {
+//                    denom *= 10;
+//                    decexp--;
+//                }
+//                /* Do one division of a likely-to-be-more-accurate number */
+//                dv = dv / denom;
+//            }
+//            dval = neg ? -dv : dv;
             this.image = image.toString();
             if(intType){
-                ival=neg ? -iv : iv;
-                return ttype = TT_INTEGER;
+                try{
+                    nval=Integer.parseInt(image.toString());
+                    ttype = TT_INT;
+                }catch (Exception ex){
+                    try{
+                        nval=Long.parseLong(image.toString());
+                        ttype = TT_LONG;
+                    }catch (Exception ex2){
+                        nval=new BigInteger(image.toString());
+                        ttype = TT_BIG_INT;
+                    }
+                }
+//                ival=neg ? -iv : iv;
+                return ttype;
+            }else{
+                try{
+                    nval=Float.parseFloat(image.toString());
+                    ttype = TT_FLOAT;
+                }catch (Exception ex){
+                    try{
+                        nval=Double.parseDouble(image.toString());
+                        ttype = TT_DOUBLE;
+                    }catch (Exception ex2){
+                        nval=new BigDecimal(image.toString());
+                        ttype = TT_BIG_DECIMAL;
+                    }
+                }
+//                ival=neg ? -iv : iv;
             }
-            return ttype = TT_DOUBLE;
+            return ttype;
         }
 
         if ((ctype & CT_ALPHA) != 0) {
@@ -872,11 +905,23 @@ public class StreamTokenizerExt {
             case TT_WORD:
                 ret = sval;
                 break;
-            case TT_DOUBLE:
-                ret = "d=" + dval;
+            case TT_INT:
+                ret = "I=" + nval;
                 break;
-            case TT_INTEGER:
-                ret = "i=" + ival;
+            case TT_LONG:
+                ret = "L=" + nval;
+                break;
+            case TT_BIG_INT:
+                ret = "BI=" + nval;
+                break;
+            case TT_FLOAT:
+                ret = "F=" + nval;
+                break;
+            case TT_DOUBLE:
+                ret = "D=" + nval;
+                break;
+            case TT_BIG_DECIMAL:
+                ret = "BD=" + nval;
                 break;
             case TT_NOTHING:
                 ret = "NOTHING";

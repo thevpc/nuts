@@ -26,9 +26,8 @@
 package net.thevpc.nuts.runtime.core.model;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.bundles.parsers.StringTokenizerUtils;
 import net.thevpc.nuts.runtime.core.util.CoreNutsUtils;
-import net.thevpc.nuts.runtime.bundles.parsers.QueryStringParser;
+import net.thevpc.nuts.runtime.core.expr.QueryStringParser;
 import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 import net.thevpc.nuts.spi.NutsSupportLevelContext;
 

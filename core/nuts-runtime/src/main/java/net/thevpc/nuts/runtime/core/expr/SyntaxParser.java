@@ -1,4 +1,4 @@
-package net.thevpc.nuts.runtime.core.eval;
+package net.thevpc.nuts.runtime.core.expr;
 
 import net.thevpc.nuts.NutsExpr;
 import net.thevpc.nuts.NutsIllegalArgumentException;
@@ -46,7 +46,12 @@ public class SyntaxParser {
             case NutsToken.TT_STRING_LITERAL:
             case NutsToken.TT_EOL:
             case NutsToken.TT_EOF:
-            case NutsToken.TT_NUMBER:
+            case NutsToken.TT_INT:
+            case NutsToken.TT_LONG:
+            case NutsToken.TT_BIG_INT:
+            case NutsToken.TT_FLOAT:
+            case NutsToken.TT_DOUBLE:
+            case NutsToken.TT_BIG_DECIMAL:
                 return null;
         }
         String s=t.sval;
@@ -67,7 +72,12 @@ public class SyntaxParser {
             case NutsToken.TT_STRING_LITERAL:
             case NutsToken.TT_EOL:
             case NutsToken.TT_EOF:
-            case NutsToken.TT_NUMBER:
+            case NutsToken.TT_INT:
+            case NutsToken.TT_LONG:
+            case NutsToken.TT_BIG_INT:
+            case NutsToken.TT_FLOAT:
+            case NutsToken.TT_DOUBLE:
+            case NutsToken.TT_BIG_DECIMAL:
                 return false;
         }
         String s=t.sval;
@@ -195,7 +205,12 @@ public class SyntaxParser {
                     return new DefaultVarNode(n);
                 }
             }
-            case NutsToken.TT_NUMBER: {
+            case NutsToken.TT_INT:
+            case NutsToken.TT_LONG:
+            case NutsToken.TT_BIG_INT:
+            case NutsToken.TT_FLOAT:
+            case NutsToken.TT_DOUBLE:
+            case NutsToken.TT_BIG_DECIMAL: {
                 tokens.next();
                 return new DefaultLiteralNode(t.nval);
             }

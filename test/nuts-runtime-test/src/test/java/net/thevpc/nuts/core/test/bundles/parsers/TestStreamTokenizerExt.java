@@ -1,6 +1,6 @@
 package net.thevpc.nuts.core.test.bundles.parsers;
 
-import net.thevpc.nuts.runtime.bundles.parsers.StreamTokenizerExt;
+import net.thevpc.nuts.runtime.core.expr.StreamTokenizerExt;
 import org.junit.jupiter.api.Test;
 
 import java.io.StringReader;

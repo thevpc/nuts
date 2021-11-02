@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.executors;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.bundles.parsers.StringTokenizerUtils;
+import net.thevpc.nuts.runtime.core.expr.StringTokenizerUtils;
 import net.thevpc.nuts.runtime.core.util.*;
 import net.thevpc.nuts.runtime.standalone.util.NutsClassLoaderUtils;
 import net.thevpc.nuts.runtime.standalone.util.NutsJavaSdkUtils;

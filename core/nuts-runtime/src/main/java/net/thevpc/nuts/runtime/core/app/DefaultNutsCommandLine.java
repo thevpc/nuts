@@ -24,7 +24,7 @@
 package net.thevpc.nuts.runtime.core.app;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.bundles.parsers.StringTokenizerUtils;
+import net.thevpc.nuts.runtime.core.expr.StringTokenizerUtils;
 
 import java.util.*;
 

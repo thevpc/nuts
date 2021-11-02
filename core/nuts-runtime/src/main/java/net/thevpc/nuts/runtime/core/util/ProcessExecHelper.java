@@ -3,7 +3,7 @@ package net.thevpc.nuts.runtime.core.util;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.bundles.io.IProcessExecHelper;
 import net.thevpc.nuts.runtime.bundles.io.ProcessBuilder2;
-import net.thevpc.nuts.runtime.bundles.parsers.StringPlaceHolderParser;
+import net.thevpc.nuts.runtime.core.expr.StringPlaceHolderParser;
 import net.thevpc.nuts.runtime.standalone.util.NutsJavaSdkUtils;
 import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 

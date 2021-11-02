@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.core.format.text.stylethemes;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.bundles.parsers.StringReaderExt;
+import net.thevpc.nuts.runtime.core.expr.StringReaderExt;
 import net.thevpc.nuts.runtime.core.util.CoreNumberUtils;
 
 import java.io.IOException;

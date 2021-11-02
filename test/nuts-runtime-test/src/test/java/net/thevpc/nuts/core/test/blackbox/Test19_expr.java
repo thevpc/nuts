@@ -36,11 +36,6 @@ import java.io.IOException;
  */
 public class Test19_expr {
 
-
-    @AfterAll
-    public static void tearUpClass() throws IOException {
-        //CoreIOUtils.delete(null,new File(baseFolder));
-    }
     private void _retain(NutsExpr expr,String... patterns){
         for (NutsExpr.OpType opt : NutsExpr.OpType.values()) {
             for (String o : expr.getOperatorNames(opt)) {
@@ -72,23 +67,25 @@ public class Test19_expr {
             }
         }
     }
+
     @Test
     public void test1() throws Exception {
         NutsSession session = TestUtils.openNewTestWorkspace();
         NutsExpr expr = NutsExpr.of(session);
         _retain(expr,"infix:+");
+        NutsExpr.Node n = expr.parse("1+2+3");
+        System.out.println(n);
+        Assertions.assertEquals("1 + 2 + 3",n.toString());
+    }
+
+    @Test
+    public void test2() throws Exception {
+        NutsSession session = TestUtils.openNewTestWorkspace();
+        NutsExpr expr = NutsExpr.of(session);
+//        _retain(expr,"infix:+");
         NutsExpr.Node n = expr.parse("1+2*3");
         System.out.println(n);
+        Assertions.assertEquals("1 + 2 * 3",n.toString());
     }
 
-    @BeforeEach
-    public void startup() throws IOException {
-        //Assumptions.assumeTrue(Nuts.getPlatformOsFamily() == NutsOsFamily.LINUX);
-        TestUtils.unsetNutsSystemProperties();
-    }
-
-    @AfterEach
-    public void cleanup() {
-        TestUtils.unsetNutsSystemProperties();
-    }
 }

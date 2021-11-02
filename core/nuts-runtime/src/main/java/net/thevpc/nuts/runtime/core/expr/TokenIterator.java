@@ -1,19 +1,18 @@
-package net.thevpc.nuts.runtime.core.eval;
+package net.thevpc.nuts.runtime.core.expr;
 
-import java.io.IOException;
 import java.io.Reader;
 import java.io.StreamTokenizer;
 import java.util.Iterator;
 
 class TokenIterator implements Iterator<NutsToken> {
-    private final StreamTokenizer st;
+    private final StreamTokenizerExt st;
     private NutsToken previous;
     private boolean returnSpace=false;
     private boolean returnComment=false;
     private boolean doReplay;
 
     public TokenIterator(Reader r) {
-        this.st=new StreamTokenizer(r);
+        this.st=new StreamTokenizerExt(r);
     }
 
     public void pushBack() {
@@ -45,12 +44,7 @@ class TokenIterator implements Iterator<NutsToken> {
             return true;
         }
         while (true) {
-            int nt = StreamTokenizer.TT_EOF;
-            try {
-                nt = st.nextToken();
-            } catch (IOException e) {
-                return false;
-            }
+            int nt = st.nextToken();
             switch (nt) {
                 case StreamTokenizer.TT_EOF: {
                     previous = null;
@@ -83,8 +77,14 @@ class TokenIterator implements Iterator<NutsToken> {
                             previous = new NutsToken(NutsToken.TT_STRING_LITERAL, sval, 0, st.lineno());
                             return true;
                         }
-                        case NutsToken.TT_NUMBER: {
-                            previous = new NutsToken(NutsToken.TT_NUMBER, st.sval, st.nval, st.lineno());
+                        case NutsToken.TT_INT:
+                        case NutsToken.TT_LONG:
+                        case NutsToken.TT_BIG_INT:
+                        case NutsToken.TT_FLOAT:
+                        case NutsToken.TT_DOUBLE:
+                        case NutsToken.TT_BIG_DECIMAL:
+                        {
+                            previous = new NutsToken(st.ttype, st.sval, st.nval, st.lineno());
                             return true;
                         }
                         default:{

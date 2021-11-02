@@ -31,7 +31,7 @@ net.thevpc.nuts.runtime.core.log.DefaultNutsLogManager
 
 ##################### Utilities
 
-net.thevpc.nuts.runtime.core.eval.DefaultNutsExpr
+net.thevpc.nuts.runtime.core.expr.DefaultNutsExpr
 net.thevpc.nuts.runtime.standalone.DefaultNutsStreams
 net.thevpc.nuts.runtime.standalone.DefaultNutsVals
 net.thevpc.nuts.runtime.standalone.DefaultNutsGlob

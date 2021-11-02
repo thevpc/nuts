@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.core.format.text.highlighters;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.bundles.parsers.StringReaderExt;
+import net.thevpc.nuts.runtime.core.expr.StringReaderExt;
 import net.thevpc.nuts.runtime.core.format.text.parser.DefaultNutsTextPlain;
 import net.thevpc.nuts.runtime.core.format.text.parser.DefaultNutsTextStyled;
 import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
