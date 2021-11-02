@@ -32,11 +32,11 @@ public class Test11_LogTest {
 
         TestUtils.println(NutsVersionFormat.of(ws));
         String result = ws.exec()
-                .addExecutorOption("--main-class=Version")
+                //.addExecutorOption("--main-class=Version")
                 .addCommand(
                 //this is an old link, do not change to 'thevpc'
-//                "https://search.maven.org/remotecontent?filepath=net/thevpc/hl/hl/0.1.0/hl-0.1.0.jar",
-                "https://search.maven.org/remotecontent?filepath=junit/junit/4.12/junit-4.12.jar",
+                "https://search.maven.org/remotecontent?filepath=net/thevpc/hl/hl/0.1.0/hl-0.1.0.jar",
+//                "https://search.maven.org/remotecontent?filepath=junit/junit/4.12/junit-4.12.jar",
                 "--version"
         ).setRedirectErrorStream(true).grabOutputString().setFailFast(true).getOutputString();
         TestUtils.println("Result:");

@@ -40,9 +40,9 @@ public final class JavaExecutorOptions {
         NutsDescriptor descriptor = null;
         if (tempId) {
             descriptor = def.getDescriptor();
-            if (!CoreNutsUtils.isEffectiveId(id)) {
-                throw new NutsException(session, NutsMessage.cstyle("id should be effective : %s", id));
-            }
+//            if (!CoreNutsUtils.isEffectiveId(id)) {
+//                throw new NutsException(session, NutsMessage.cstyle("id should be effective : %s", id));
+//            }
             id = descriptor.getId();
         } else {
             descriptor = NutsWorkspaceUtils.of(getSession()).getEffectiveDescriptor(def);
