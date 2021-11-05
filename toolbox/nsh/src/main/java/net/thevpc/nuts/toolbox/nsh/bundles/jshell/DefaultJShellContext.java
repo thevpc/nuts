@@ -39,6 +39,13 @@ public class DefaultJShellContext extends AbstractJShellContext {
                                 String serviceName, String[] args
     ) {
         this(parentContext);
+        workspace=(workspace != null ? workspace : parentContext != null ? parentContext.getWorkspace() : null);
+        if (session == null) {
+            if (workspace != null) {
+                session = getWorkspace().createSession();
+            }
+        }
+        setSession(session);
         setServiceName(serviceName);
         setArgs(args);
         this.vars = new JShellVariables(this);
@@ -47,13 +54,6 @@ public class DefaultJShellContext extends AbstractJShellContext {
         if (parentContext != null) {
             setCwd(parentContext.getCwd());
         }
-        workspace=(workspace != null ? workspace : parentContext != null ? parentContext.getWorkspace() : null);
-        if (session == null) {
-            if (workspace != null) {
-                session = getWorkspace().createSession();
-            }
-        }
-        setSession(session);
         setRootNode(rootNode);
         setParentNode(parentNode);
         if (parentContext != null) {

@@ -45,7 +45,7 @@ public class DefaultNutsContentTypes implements NutsContentTypes {
             }
         }
         if (best == null) {
-            throw new NutsIllegalArgumentException(session, NutsMessage.plain("missing type resolver"));
+            throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("missing type resolver for %s",path));
         }
         return best.getValue();
     }
