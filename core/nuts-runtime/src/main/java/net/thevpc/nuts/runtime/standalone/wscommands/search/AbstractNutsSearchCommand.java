@@ -753,8 +753,8 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
         checkSession();
         return postProcessResult(IteratorBuilder.of(getResultDefinitionIteratorBase(isContent(), isEffective()))
                 .mapMulti(x
-                        -> (x.getContent() == null || x.getContent().getFilePath() == null) ? Collections.emptyList()
-                        : Arrays.asList(NutsExecutionEntries.of(getSession()).parse(x.getContent().getFilePath()))));
+                        -> (x.getContent() == null || x.getContent().getFile() == null) ? Collections.emptyList()
+                        : Arrays.asList(NutsExecutionEntries.of(getSession()).parse(x.getContent().getFile()))));
     }
 
     @Override

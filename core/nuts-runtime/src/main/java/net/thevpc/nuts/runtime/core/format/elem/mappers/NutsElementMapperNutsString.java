@@ -8,7 +8,11 @@ public class NutsElementMapperNutsString implements NutsElementMapper<NutsString
 
     @Override
     public Object destruct(NutsString src, Type typeOfSrc, NutsElementFactoryContext context) {
-        return src.toString();
+        if(context.isNtf()) {
+            return src.toString();
+        }else{
+            return src.filteredText();
+        }
     }
 
     @Override

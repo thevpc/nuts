@@ -36,7 +36,7 @@ import java.nio.file.Path;
 /**
  * @app.category Base
  */
-public interface NutsExecutionEntries extends NutsComponent<Object> {
+public interface NutsExecutionEntries extends NutsComponent {
     static NutsExecutionEntries of(NutsSession session) {
         NutsApiUtils.checkSession(session);
         return session.extensions().createSupported(NutsExecutionEntries.class, true, null);

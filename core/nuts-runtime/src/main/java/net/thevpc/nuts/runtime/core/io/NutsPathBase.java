@@ -16,7 +16,7 @@ import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 public abstract class NutsPathBase implements NutsPath {
-    private NutsSession session;
+    private final NutsSession session;
     private String userKind;
 
     public NutsPathBase(NutsSession session) {
@@ -28,55 +28,51 @@ public abstract class NutsPathBase implements NutsPath {
     }
 
     @Override
+    public NutsString getFormattedName() {
+        return NutsTexts.of(getSession()).ofStyled(getName(), NutsTextStyle.path());
+    }
+
+    @Override
     public String getBaseName() {
-        String n=getName();
+        String n = getName();
         int i = n.indexOf('.');
-        if(i<0){
+        if (i < 0) {
             return n;
         }
-        if(i==n.length()-1){
+        if (i == n.length() - 1) {
             return n;
         }
-        return n.substring(0,i);
+        return n.substring(0, i);
     }
 
     @Override
     public String getLastExtension() {
-        String n=getName();
+        String n = getName();
         int i = n.lastIndexOf('.');
-        if(i<0){
+        if (i < 0) {
             return "";
         }
-        return n.substring(i+1);
+        return n.substring(i + 1);
     }
 
     @Override
     public String getFullExtension() {
-        String n=getName();
+        String n = getName();
         int i = n.indexOf('.');
-        if(i<0){
+        if (i < 0) {
             return "";
         }
-        return n.substring(i+1);
-    }
-
-    @Override
-    public NutsString getFormattedName() {
-        return NutsTexts.of(getSession()).ofStyled(getName(),NutsTextStyle.path());
+        return n.substring(i + 1);
     }
 
     @Override
     public boolean isURL() {
-        return asURL()!=null;
+        return asURL() != null;
     }
 
     @Override
     public boolean isFile() {
-        return asFilePath()!=null;
-    }
-
-    public NutsSession getSession() {
-        return session;
+        return asFile() != null;
     }
 
     public URL asURL() {
@@ -88,7 +84,7 @@ public abstract class NutsPathBase implements NutsPath {
     }
 
     @Override
-    public Path asFilePath() {
+    public Path asFile() {
         try {
             return toFile();
         } catch (Exception ex) {
@@ -96,40 +92,13 @@ public abstract class NutsPathBase implements NutsPath {
         }
     }
 
-
-    public NutsString toNutsString() {
-        return NutsTexts.of(session).ofPlain(toString());
+    public NutsSession getSession() {
+        return session;
     }
 
     @Override
-    public NutsFormat formatter() {
-        return new PathFormat(this)
-                .setSession(getSession())
-                ;
-    }
-
-    private static class PathFormat extends DefaultFormatBase<NutsFormat> {
-        private NutsPathBase p;
-
-        public PathFormat(NutsPathBase p) {
-            super(p.session, "path");
-            this.p = p;
-        }
-
-        @Override
-        public void print(NutsPrintStream out) {
-            out.print(NutsTexts.of(p.session).ofStyled(p.toNutsString(), NutsTextStyle.path()));
-        }
-
-        @Override
-        public boolean configureFirst(NutsCommandLine commandLine) {
-            return false;
-        }
-
-        @Override
-        public int getSupportLevel(NutsSupportLevelContext<Object> context) {
-            return DEFAULT_SUPPORT;
-        }
+    public NutsPath delete() {
+        return delete(false);
     }
 
     @Override
@@ -206,8 +175,54 @@ public abstract class NutsPathBase implements NutsPath {
         return this;
     }
 
+    public NutsString toNutsString() {
+        return NutsTexts.of(session).ofPlain(toString());
+    }
+
     @Override
-    public NutsPath delete() {
-        return delete(false);
+    public NutsFormat formatter() {
+        return new PathFormat(this)
+                .setSession(getSession())
+                ;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(session, userKind, toString());
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        NutsPathBase that = (NutsPathBase) o;
+        return Objects.equals(session, that.session)
+                && Objects.equals(userKind, that.userKind)
+                && Objects.equals(toString(), toString())
+                ;
+    }
+
+    private static class PathFormat extends DefaultFormatBase<NutsFormat> {
+        private final NutsPathBase p;
+
+        public PathFormat(NutsPathBase p) {
+            super(p.session, "path");
+            this.p = p;
+        }
+
+        @Override
+        public void print(NutsPrintStream out) {
+            out.print(NutsTexts.of(p.session).ofStyled(p.toNutsString(), NutsTextStyle.path()));
+        }
+
+        @Override
+        public boolean configureFirst(NutsCommandLine commandLine) {
+            return false;
+        }
+
+        @Override
+        public int getSupportLevel(NutsSupportLevelContext context) {
+            return DEFAULT_SUPPORT;
+        }
     }
 }

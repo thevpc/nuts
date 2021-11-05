@@ -37,7 +37,7 @@ import java.nio.file.Path;
 /**
  * @app.category Base
  */
-public interface NutsDescriptorParser extends NutsComponent<Object> {
+public interface NutsDescriptorParser extends NutsComponent {
 
     static NutsDescriptorParser of(NutsSession session) {
         NutsApiUtils.checkSession(session);

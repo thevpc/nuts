@@ -34,7 +34,7 @@ import net.thevpc.nuts.NutsRepository;
  * @since 0.5.4
  * @app.category Base
  */
-public interface NutsIndexStoreFactory extends NutsComponent<Object/*any object or null*/> {
+public interface NutsIndexStoreFactory extends NutsComponent/*any object or null*/ {
 
     /**
      * create a new index store implementation or null if not supported

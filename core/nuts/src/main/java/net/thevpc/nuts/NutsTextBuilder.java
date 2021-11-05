@@ -55,6 +55,7 @@ public interface NutsTextBuilder extends NutsString {
     NutsText substring(int from, int to);
 
     NutsTextBuilder insert(int at, NutsText... newTexts);
+
     NutsTextBuilder replace(int from, int to, NutsText... newTexts);
 
     NutsTextBuilder replaceChildren(int from, int to, NutsText... newTexts);
@@ -71,14 +72,29 @@ public interface NutsTextBuilder extends NutsString {
      * replaces the builder content with the simplest text in the form of suite of plain or styled text elements.
      * the possible returned types are plain text (NutsTextPlain) if there is no styling or
      * styled plain (NutsTextStyled) if any style is detected.
-     *
+     * <p>
      * Compound nodes are flattened so than the returned instance is one of the following:
      * - a single line plain text (plain text than either does not include any newline or is a single newline)
      * - a styled plain (style nodes that have a single line plain text child)
+     *
      * @return {@code this} instance with flattened children
      */
-    NutsTextBuilder flatten() ;
+    NutsTextBuilder flatten();
 
     NutsTextBuilder removeAt(int index);
+
+    /**
+     * returns a stream of flattened text lines
+     *
+     * @return a stream of flattened text lines
+     */
+    NutsStream<NutsTextBuilder> lines();
+
+    /**
+     * return new Builder containing a flattened line read from the start of this builder
+     *
+     * @return new Builder containing a flattened line read from the start of this builder
+     */
+    NutsTextBuilder readLine();
 
 }

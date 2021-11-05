@@ -38,7 +38,7 @@ import net.thevpc.nuts.spi.NutsComponent;
  * @since 0.5.4
  * @app.category Format
  */
-public interface NutsIdFormat extends NutsFormat, NutsComponent<Object> {
+public interface NutsIdFormat extends NutsFormat, NutsComponent {
     static NutsIdFormat of(NutsSession session) {
         NutsApiUtils.checkSession(session);
         return session.extensions().createSupported(NutsIdFormat.class,true,null);

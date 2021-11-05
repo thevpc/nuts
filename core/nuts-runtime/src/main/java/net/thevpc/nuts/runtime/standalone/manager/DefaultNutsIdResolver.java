@@ -2,11 +2,7 @@ package net.thevpc.nuts.runtime.standalone.manager;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.bundles.mvn.PomId;
-import net.thevpc.nuts.runtime.core.format.DefaultNutsIdFormat;
-import net.thevpc.nuts.runtime.core.model.DefaultNutsIdBuilder;
-import net.thevpc.nuts.runtime.core.parser.DefaultNutsIdParser;
 import net.thevpc.nuts.runtime.standalone.bridges.maven.MavenUtils;
-import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 import net.thevpc.nuts.spi.NutsSupportLevelContext;
 
 public class DefaultNutsIdResolver implements NutsIdResolver {
@@ -38,7 +34,7 @@ public class DefaultNutsIdResolver implements NutsIdResolver {
     }
 
     @Override
-    public int getSupportLevel(NutsSupportLevelContext<Object> context) {
+    public int getSupportLevel(NutsSupportLevelContext context) {
         return DEFAULT_SUPPORT;
     }
 }

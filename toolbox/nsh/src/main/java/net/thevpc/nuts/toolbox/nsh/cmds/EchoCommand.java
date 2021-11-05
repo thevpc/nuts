@@ -63,7 +63,7 @@ public class EchoCommand extends SimpleNshBuiltin {
             }
             case "-H":
             case "--highlighter": {
-                options.highlighter = NutsUtilStrings.trim(commandLine.nextString().getValue().getString());
+                options.highlighter = NutsUtilStrings.trim(commandLine.next().getValue().getString());
                 return true;
             }
             default: {
@@ -86,10 +86,12 @@ public class EchoCommand extends SimpleNshBuiltin {
     protected void execBuiltin(NutsCommandLine commandLine, SimpleNshCommandContext context) {
         Options options = context.getOptions();
         Object ns = null;
-        if (options.highlighter == null || "text".equalsIgnoreCase(options.highlighter) || "plain".equalsIgnoreCase(options.highlighter)) {
+        if (options.highlighter == null) {
             ns = options.message.toString();
         } else {
-            NutsTextCode c = NutsTexts.of(context.getSession()).ofCode(options.highlighter, options.message.toString());
+            NutsTextCode c = NutsTexts.of(context.getSession()).ofCode(
+                    options.highlighter.isEmpty()?"ntf":options.highlighter
+                    , options.message.toString());
             ns = c.highlight(context.getSession());
         }
         if (options.newLine) {

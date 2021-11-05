@@ -15,7 +15,7 @@ public class NutsElementMapperPath implements NutsElementMapper<Path> {
 
     @Override
     public NutsElement createElement(Path o, Type typeOfSrc, NutsElementFactoryContext context) {
-        if (context.elem().isNtf()) {
+        if (context.isNtf()) {
             NutsSession session = context.getSession();
 //                NutsText n = NutsTexts.of(session).forStyled(o.toString(), NutsTextStyle.path());
 //                return session.elem().forPrimitive().buildNutsString(n);

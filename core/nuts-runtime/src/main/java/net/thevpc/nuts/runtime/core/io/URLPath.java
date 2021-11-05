@@ -80,11 +80,6 @@ public class URLPath implements NutsPathSPI {
     }
 
     @Override
-    public String asString() {
-        return url == null ? "" : url.toString();
-    }
-
-    @Override
     public String getLocation() {
         return url == null ? null : url.getFile();
     }
@@ -134,10 +129,10 @@ public class URLPath implements NutsPathSPI {
 //    }
 
     @Override
-    public NutsPath[] getChildren() {
+    public NutsPath[] list() {
         try {
             Path f = toFile();
-            return NutsPath.of(f,session).getChildren();
+            return NutsPath.of(f,session).list();
         } catch (Exception e) {
             //
         }

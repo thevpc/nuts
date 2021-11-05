@@ -31,7 +31,7 @@ import net.thevpc.nuts.toolbox.nsh.bundles.jshell.JShellExecutionContext;
 /**
  * Created by vpc on 3/7/17.
  */
-public interface NutsCommandAutoCompleteComponent extends NutsComponent<NshBuiltin> {
+public interface NutsCommandAutoCompleteComponent extends NutsComponent {
 
     void autoComplete(NshBuiltin command, JShellExecutionContext context);
 }

@@ -51,17 +51,20 @@ public class JarDescriptorContentParserComponent implements NutsDescriptorConten
     private NutsSession ws;
 
     @Override
-    public int getSupportLevel(NutsSupportLevelContext<NutsDescriptorContentParserContext> criteria) {
+    public int getSupportLevel(NutsSupportLevelContext criteria) {
         this.ws = criteria.getSession();
-        String e = NutsUtilStrings.trim(criteria.getConstraints().getFileExtension());
-        switch (e) {
-            case "jar":
-            case "war":
-            case "ear": {
-                return DEFAULT_SUPPORT + 10;
-            }
-            case "zip": {
-                return DEFAULT_SUPPORT + 5;
+        NutsDescriptorContentParserContext cons=criteria.getConstraints(NutsDescriptorContentParserContext.class);
+        if(cons!=null) {
+            String e = NutsUtilStrings.trim(cons.getFileExtension());
+            switch (e) {
+                case "jar":
+                case "war":
+                case "ear": {
+                    return DEFAULT_SUPPORT + 10;
+                }
+                case "zip": {
+                    return DEFAULT_SUPPORT + 5;
+                }
             }
         }
         return NO_SUPPORT;

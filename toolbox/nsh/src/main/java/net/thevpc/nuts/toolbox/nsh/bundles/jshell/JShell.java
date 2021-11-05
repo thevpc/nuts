@@ -72,7 +72,7 @@ public class JShell {
     private BufferedReader _in_reader = null;
     private List<JShellVarListener> listeners = new ArrayList<>();
     private NutsApplicationContext appContext;
-    private File histFile = null;
+    private NutsPath histFile = null;
     private NutsId appId = null;
 
     public JShell(NutsApplicationContext appContext, String[] args) {
@@ -114,7 +114,7 @@ public class JShell {
         _rootContext.setSession(appContext.getSession());
         //add default commands
         List<NshBuiltin> allCommand = new ArrayList<>();
-        NutsSupportLevelContext<JShell> constraints = new NutsDefaultSupportLevelContext<>(appContext.getSession(), this);
+        NutsSupportLevelContext constraints = new NutsDefaultSupportLevelContext(appContext.getSession(), this);
 
         for (NshBuiltin command : this.appContext.getSession().extensions().
                 createServiceLoader(NshBuiltin.class, JShell.class, NshBuiltin.class.getClassLoader())
@@ -128,8 +128,9 @@ public class JShell {
         _rootContext.builtins().set(allCommand.toArray(new JShellBuiltin[0]));
         _rootContext.getUserProperties().put(JShellContext.class.getName(), _rootContext);
         try {
-            histFile = Paths.get(ws.locations().getStoreLocation(this.appId,
-                    NutsStoreLocation.VAR)).resolve(serviceName + ".history").toFile();
+            histFile =NutsPath.of(
+                    Paths.get(ws.locations().getStoreLocation(this.appId,
+                    NutsStoreLocation.VAR)).resolve(serviceName + ".history").toFile(),ws);
             hist.setHistoryFile(histFile);
             if (histFile.exists()) {
                 hist.load(histFile);
@@ -243,29 +244,17 @@ public class JShell {
         this.errorHandler = errorHandler;
     }
 
-    public List<String> findFiles(final String namePattern, boolean exact, String parent) {
+    public List<String> findFiles(final String namePattern, boolean exact, String parent,NutsSession session) {
         if (exact) {
-            String[] all = new File(parent).list(new FilenameFilter() {
-                @Override
-                public boolean accept(File dir, String name) {
-                    return namePattern.equals(name);
-                }
-            });
-            if (all == null) {
-                all = new String[0];
-            }
+            String[] all = Arrays.stream(NutsPath.of(parent, session).list())
+                    .filter(x->namePattern.equals(x.getName()))
+                    .map(NutsPath::toString).toArray(String[]::new);
             return Arrays.asList(all);
         } else {
             final Pattern o = Pattern.compile(namePattern);
-            String[] all = new File(parent).list(new FilenameFilter() {
-                @Override
-                public boolean accept(File dir, String name) {
-                    return o.matcher(name).matches();
-                }
-            });
-            if (all == null) {
-                all = new String[0];
-            }
+            String[] all = Arrays.stream(NutsPath.of(parent, session).list())
+                    .filter(x->o.matcher(x.getName()).matches())
+                    .map(NutsPath::toString).toArray(String[]::new);
             return Arrays.asList(all);
         }
     }
@@ -673,11 +662,12 @@ public class JShell {
     }
 
     public int executeServiceFile(JShellContext context, boolean ignoreIfNotFound) {
+        NutsSession session=appContext.getSession();
         String file = context.getServiceName();
         if (file != null) {
-            file = ShellUtils.getAbsolutePath(new File(context.getCwd()), file);
+            file = NutsPath.of(file,session).toAbsolute(context.getCwd()).toString();
         }
-        if (file == null || !new File(file).isFile()) {
+        if (file == null || !NutsPath.of(file,session).isFile()) {
             if (ignoreIfNotFound) {
                 return 0;
             }

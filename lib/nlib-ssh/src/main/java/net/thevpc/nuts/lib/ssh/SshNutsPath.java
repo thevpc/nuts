@@ -98,11 +98,6 @@ class SshNutsPath implements NutsPathSPI {
     }
 
     @Override
-    public String asString() {
-        return path.toString();
-    }
-
-    @Override
     public NutsFormatSPI getFormatterSPI() {
         return new NutsFormatSPI() {
             @Override
@@ -255,7 +250,7 @@ class SshNutsPath implements NutsPathSPI {
     }
 
     @Override
-    public NutsPath[] getChildren() {
+    public NutsPath[] list() {
         try (SShConnection c = new SShConnection(path.toAddress(),getSession())
                 .addListener(listener)
         ) {

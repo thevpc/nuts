@@ -110,6 +110,32 @@ public class DefaultNutsElements extends DefaultFormatBase<NutsElements> impleme
     }
 
     @Override
+    public <T> T parse(NutsPath path, Class<T> clazz) {
+        checkSession();
+        switch (contentType) {
+            case JSON:
+            case YAML:
+            case XML:
+            case TSON: {
+                try {
+                    try (InputStream is = path.getInputStream()) {
+                        return parse(new InputStreamReader(is), clazz);
+                    } catch (NutsException ex) {
+                        throw ex;
+                    } catch (UncheckedIOException ex) {
+                        throw new NutsIOException(getSession(), ex);
+                    } catch (RuntimeException ex) {
+                        throw new NutsParseException(getSession(), NutsMessage.cstyle("unable to parse path %s" , path), ex);
+                    }
+                } catch (IOException ex) {
+                    throw new NutsParseException(getSession(), NutsMessage.cstyle("unable to parse path %s", path), ex);
+                }
+            }
+        }
+        throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("invalid content type %s. Only structured content types are allowed.",contentType));
+    }
+
+    @Override
     public <T> T parse(InputStream inputStream, Class<T> clazz) {
         checkSession();
         switch (contentType) {
@@ -176,7 +202,17 @@ public class DefaultNutsElements extends DefaultFormatBase<NutsElements> impleme
     }
 
     private DefaultNutsElementFactoryContext createFactoryContext() {
-        return new DefaultNutsElementFactoryContext(this);
+        DefaultNutsElementFactoryContext c = new DefaultNutsElementFactoryContext(this);
+        switch (getContentType()){
+            case XML:
+            case JSON:
+            case TSON:
+            case YAML:{
+                c.setNtf(false);
+                break;
+            }
+        }
+        return c;
     }
 
     @Override
@@ -556,7 +592,7 @@ public class DefaultNutsElements extends DefaultFormatBase<NutsElements> impleme
     }
 
     @Override
-    public int getSupportLevel(NutsSupportLevelContext<Object> context) {
+    public int getSupportLevel(NutsSupportLevelContext context) {
         return DEFAULT_SUPPORT;
     }
 }

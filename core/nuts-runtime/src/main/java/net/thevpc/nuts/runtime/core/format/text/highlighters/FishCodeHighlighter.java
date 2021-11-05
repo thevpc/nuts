@@ -31,8 +31,11 @@ public class FishCodeHighlighter implements NutsCodeHighlighter {
     }
 
     @Override
-    public int getSupportLevel(NutsSupportLevelContext<String> context) {
+    public int getSupportLevel(NutsSupportLevelContext context) {
         String s = context.getConstraints();
+        if(s==null){
+            return DEFAULT_SUPPORT;
+        }
         switch (s) {
             case "fish": {
                 return NutsComponent.DEFAULT_SUPPORT;
@@ -153,7 +156,7 @@ public class FishCodeHighlighter implements NutsCodeHighlighter {
             throw new IllegalArgumentException("was not expecting " + ar.peekChar() + " as part of word");
         }
         if (ret.get(0).getType() == NutsTextType.PLAIN && isOption(((NutsTextPlain) ret.get(0)).getText())) {
-            ret.set(0, factory.ofStyled(ret.get(0), NutsTextStyle.option()));
+            ret.set(0, factory.applyStyles(ret.get(0), NutsTextStyle.option()));
         }
         return ret.toArray(new NutsText[0]);
     }
@@ -437,7 +440,7 @@ public class FishCodeHighlighter implements NutsCodeHighlighter {
                         if (all.size() > startIndex) {
                             TokenType t = resolveTokenType(all.get(startIndex));
                             if (t== TokenType.ENV || t== TokenType.WORD) {
-                                all.set(startIndex, factory.ofStyled(all.get(startIndex), NutsTextStyle.keyword(4)));
+                                all.set(startIndex, factory.applyStyles(all.get(startIndex), NutsTextStyle.keyword(4)));
                                 wasSpace = false;
                             }
                         }
@@ -636,7 +639,7 @@ public class FishCodeHighlighter implements NutsCodeHighlighter {
                     if (first) {
                         int i = indexOfFirstWord(all, startIndex);
                         if (i >= 0) {
-                            all.set(i, factory.ofStyled(all.get(i), NutsTextStyle.keyword()));
+                            all.set(i, factory.applyStyles(all.get(i), NutsTextStyle.keyword()));
                         }
                     }
                 } else {

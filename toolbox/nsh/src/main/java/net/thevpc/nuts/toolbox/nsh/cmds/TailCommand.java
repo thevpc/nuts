@@ -53,8 +53,9 @@ public class TailCommand extends AbstractNshBuiltin {
     public int execImpl(String[] args, JShellExecutionContext context) {
         NutsCommandLine commandLine = cmdLine(args, context);
         Options options = new Options();
-        List<String> files = new ArrayList<>();
+        List<NutsPath> files = new ArrayList<>();
         NutsPrintStream out = context.out();
+        NutsSession session = context.getSession();
         while (commandLine.hasNext()) {
             NutsArgument a = commandLine.peek();
             if (a.isOption()) {
@@ -65,26 +66,25 @@ public class TailCommand extends AbstractNshBuiltin {
                 }
             } else {
                 String path = a.getString();
-                File file = new File(context.getShellContext().getAbsolutePath(path));
-                files.add(file.getPath());
+                NutsPath file = NutsPath.of(path, session).toAbsolute(context.getShellContext().getCwd());
+                files.add(file);
             }
         }
         if (files.isEmpty()) {
-            throw new NutsExecutionException(context.getSession(), NutsMessage.cstyle("not yet supported"), 2);
+            throw new NutsExecutionException(session, NutsMessage.cstyle("not yet supported"), 2);
         }
-        for (String file : files) {
+        for (NutsPath file : files) {
             tail(file, options.max, context);
         }
         return 0;
     }
 
-    private void tail(String file, int max, JShellExecutionContext context) {
+    private void tail(NutsPath file, int max, JShellExecutionContext context) {
         BufferedReader r = null;
         NutsSession session = context.getSession();
         try {
             try {
-                r = new BufferedReader(new InputStreamReader(NutsPath.of(file,session)
-                        .getInputStream()));
+                r = new BufferedReader(new InputStreamReader(file.getInputStream()));
                 String line = null;
                 int count = 0;
                 LinkedList<String> lines=new LinkedList<>();

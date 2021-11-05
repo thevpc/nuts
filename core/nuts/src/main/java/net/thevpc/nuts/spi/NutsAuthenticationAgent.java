@@ -28,7 +28,6 @@ package net.thevpc.nuts.spi;
 
 import net.thevpc.nuts.NutsSecurityException;
 import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.spi.NutsComponent;
 
 import java.util.Map;
 
@@ -42,7 +41,7 @@ import java.util.Map;
  * @since 0.5.4
  * @app.category Security
  */
-public interface NutsAuthenticationAgent extends NutsComponent<String/* as authentication agent*/> {
+public interface NutsAuthenticationAgent extends NutsComponent/* as authentication agent*/ {
 
     /**
      * agent id;

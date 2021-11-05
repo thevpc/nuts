@@ -141,6 +141,10 @@ public class NutsApiUtils {
         return PrivateNutsUtils.parseInt(value, emptyValue, errorValue);
     }
 
+    public static Integer parseInt16(String value, Integer emptyValue, Integer errorValue) {
+        return PrivateNutsUtils.parseInt16(value, emptyValue, errorValue);
+    }
+
     public static Integer parseFileSizeInBytes(String value, Integer defaultMultiplier, Integer emptyValue, Integer errorValue) {
         return PrivateNutsUtils.parseFileSizeInBytes(value, defaultMultiplier, emptyValue, errorValue);
     }

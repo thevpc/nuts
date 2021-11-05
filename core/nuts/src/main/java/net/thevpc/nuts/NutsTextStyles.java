@@ -150,7 +150,10 @@ public final class NutsTextStyles implements Iterable<NutsTextStyle>, NutsEnum {
         return parseLenient(value,emptyValue,emptyValue);
     }
     public static NutsTextStyles parseLenient(String value, NutsTextStyles emptyValue, NutsTextStyles errorValue) {
-        value = value.trim();
+        value = NutsUtilStrings.trim(value);
+        if(value.isEmpty()){
+            return emptyValue;
+        }
         List<NutsTextStyle> all=new ArrayList<>();
         for (String s : value.split(",")) {
             s=s.trim();
@@ -163,6 +166,14 @@ public final class NutsTextStyles implements Iterable<NutsTextStyle>, NutsEnum {
             }
         }
         return of(all.toArray(new NutsTextStyle[0]));
+    }
+
+    public NutsTextStyle[] toArray(){
+        return Arrays.copyOf(elements,elements.length);
+    }
+
+    public List<NutsTextStyle> toList(){
+        return Collections.unmodifiableList(Arrays.asList(elements));
     }
 
 

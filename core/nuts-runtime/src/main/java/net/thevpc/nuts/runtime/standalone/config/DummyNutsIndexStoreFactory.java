@@ -8,7 +8,7 @@ import net.thevpc.nuts.spi.NutsSupportLevelContext;
 public class DummyNutsIndexStoreFactory implements NutsIndexStoreFactory {
 
     @Override
-    public int getSupportLevel(NutsSupportLevelContext<Object> criteria) {
+    public int getSupportLevel(NutsSupportLevelContext criteria) {
         return DEFAULT_SUPPORT;
     }
 

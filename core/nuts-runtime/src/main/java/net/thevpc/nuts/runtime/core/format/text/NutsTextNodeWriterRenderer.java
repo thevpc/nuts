@@ -157,7 +157,7 @@ public class NutsTextNodeWriterRenderer extends AbstractNutsTextNodeWriter {
                 DefaultNutsTexts factory0 = (DefaultNutsTexts) NutsTexts.of(session);
                 writeNode(
                         formats,
-                        factory0.createStyled(((NutsTextLink) node).getChild(),
+                        factory0.createStyledOrPlain(((NutsTextLink) node).getChild(),
                                 NutsTextStyles.of(NutsTextStyle.underlined()),
                                 true
                         ),

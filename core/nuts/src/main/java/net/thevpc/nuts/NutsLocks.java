@@ -40,7 +40,7 @@ import java.util.concurrent.locks.Lock;
  * @since 0.5.8
  * @app.category Input Output
  */
-public interface NutsLocks extends NutsComponent<Object> {
+public interface NutsLocks extends NutsComponent {
     static NutsLocks of(NutsSession session) {
         NutsApiUtils.checkSession(session);
         return session.extensions().createSupported(NutsLocks.class, true, null);

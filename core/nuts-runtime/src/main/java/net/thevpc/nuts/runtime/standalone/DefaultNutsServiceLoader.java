@@ -10,7 +10,7 @@ import net.thevpc.nuts.spi.NutsDefaultSupportLevelContext;
 import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.spi.NutsSupportLevelContext;
 
-public class DefaultNutsServiceLoader<T extends NutsComponent<B>, B> implements NutsServiceLoader<T, B> {
+public class DefaultNutsServiceLoader<T extends NutsComponent, B> implements NutsServiceLoader<T> {
 
     private final ClassLoader classLoader;
     private final Class<T> serviceType;
@@ -29,9 +29,9 @@ public class DefaultNutsServiceLoader<T extends NutsComponent<B>, B> implements 
     }
 
     @Override
-    public List<T> loadAll(B criteria) {
+    public List<T> loadAll(Object criteria) {
         List<T> all = new ArrayList<>();
-        NutsSupportLevelContext<B> c=new NutsDefaultSupportLevelContext<>(session,criteria);
+        NutsSupportLevelContext c=new NutsDefaultSupportLevelContext(session,criteria);
         for (T t : loader) {
             int p = t.getSupportLevel(c);
             if (p > NutsComponent.NO_SUPPORT) {
@@ -42,10 +42,10 @@ public class DefaultNutsServiceLoader<T extends NutsComponent<B>, B> implements 
     }
 
     @Override
-    public T loadBest(B criteria) {
+    public T loadBest(Object criteria) {
         T best = null;
         int bestVal = NutsComponent.NO_SUPPORT;
-        NutsSupportLevelContext<B> c=new NutsDefaultSupportLevelContext<>(session,criteria);
+        NutsSupportLevelContext c=new NutsDefaultSupportLevelContext(session,criteria);
         for (T t : loader) {
             int p = t.getSupportLevel(c);
             if (p > NutsComponent.NO_SUPPORT) {

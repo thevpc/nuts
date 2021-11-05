@@ -40,14 +40,9 @@ public class NutsPathFromSPI extends NutsPathBase {
     public String getName() {
         String n = base.getName();
         if (n == null) {
-            return CoreIOUtils.getURLName(asString());
+            return CoreIOUtils.getURLName(toString());
         }
         return n;
-    }
-
-    @Override
-    public String asString() {
-        return base.asString();
     }
 
     @Override
@@ -103,9 +98,9 @@ public class NutsPathFromSPI extends NutsPathBase {
     }
 
     @Override
-    public NutsPath[] getChildren() {
+    public NutsPath[] list() {
         try {
-            NutsPath[] p = base.getChildren();
+            NutsPath[] p = base.list();
             if (p != null) {
                 return p;
             }
@@ -115,7 +110,7 @@ public class NutsPathFromSPI extends NutsPathBase {
                     .level(Level.WARNING)
                     .error(ex)
                     .log(
-                            NutsMessage.jstyle("error execution {0}.children()", base.getClass().getName())
+                            NutsMessage.jstyle("error execution {0}.list()", base.getClass().getName())
                     );
         }
         return new NutsPath[0];
@@ -287,25 +282,12 @@ public class NutsPathFromSPI extends NutsPathBase {
                 }
 
                 @Override
-                public int getSupportLevel(NutsSupportLevelContext<Object> context) {
+                public int getSupportLevel(NutsSupportLevelContext context) {
                     return DEFAULT_SUPPORT;
                 }
             };
         }
         return super.formatter();
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(base);
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        NutsPathFromSPI that = (NutsPathFromSPI) o;
-        return base.equals(that.base);
     }
 
     @Override
@@ -330,5 +312,7 @@ public class NutsPathFromSPI extends NutsPathBase {
         base.removePermissions(permissions);
         return this;
     }
+
+
 
 }

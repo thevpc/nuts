@@ -1,23 +1,20 @@
 package net.thevpc.nuts.runtime.core.format.text;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.core.format.text.parser.DefaultNutsTextNodeParser;
 import net.thevpc.nuts.runtime.standalone.DefaultNutsTextStyleGenerator;
 
 import java.io.ByteArrayOutputStream;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-
-import net.thevpc.nuts.runtime.core.format.text.parser.DefaultNutsTextNodeParser;
+import java.util.*;
 
 public class DefaultNutsTextNodeBuilder implements NutsTextBuilder {
 
     private final List<NutsText> children = new ArrayList<>();
     private final NutsSession session;
-    NutsTexts text1;
+    private final NutsTexts text1;
     private NutsTextWriteConfiguration writeConfiguration;
     private NutsTextStyleGenerator styleGenerator;
+    private boolean flattened = true;
 
     public DefaultNutsTextNodeBuilder(NutsSession session) {
         this.session = session;
@@ -51,13 +48,13 @@ public class DefaultNutsTextNodeBuilder implements NutsTextBuilder {
 
     @Override
     public NutsTextBuilder appendCommand(NutsTerminalCommand command) {
-        children.add(text1.ofCommand(command));
+        append(text1.ofCommand(command));
         return this;
     }
 
     @Override
     public NutsTextBuilder appendCode(String lang, String text) {
-        children.add(text1.ofCode(lang, text));
+        append(text1.ofCode(lang, text));
         return this;
     }
 
@@ -99,9 +96,9 @@ public class DefaultNutsTextNodeBuilder implements NutsTextBuilder {
     public NutsTextBuilder append(Object text, NutsTextStyles styles) {
         if (text != null) {
             if (styles.size() == 0) {
-                children.add(NutsTexts.of(session).toText(text));
+                append(NutsTexts.of(session).toText(text));
             } else {
-                children.add(text1.ofStyled(NutsTexts.of(session).toText(text), styles));
+                append(text1.applyStyles(NutsTexts.of(session).toText(text), styles));
             }
         }
         return this;
@@ -119,6 +116,7 @@ public class DefaultNutsTextNodeBuilder implements NutsTextBuilder {
     public NutsTextBuilder append(NutsText node) {
         if (node != null) {
             children.add(node);
+            flattened = false;
         }
         return this;
     }
@@ -190,72 +188,38 @@ public class DefaultNutsTextNodeBuilder implements NutsTextBuilder {
     }
 
     @Override
-    public int size() {
-        return children.size();
-    }
-
-    public NutsText get(int index) {
-        return children.get(index);
-    }
-
-    @Override
-    public Iterable<NutsText> items() {
-        return children;
-    }
-
-    @Override
-    public NutsTextBuilder flatten() {
-        NutsTextNodeWriterRaw ss = new NutsTextNodeWriterRaw(session);
-        ss.flattenNode(build(), getConfiguration());
-        List<NutsText> i = ss.getItems();
-        if (i.isEmpty()) {
-            return this;
-        }
-        this.children.clear();
-        this.children.addAll(i);
-        return this;
-    }
-
-    @Override
-    public NutsTextBuilder removeAt(int index) {
-        children.remove(index);
-        return this;
-    }
-
-    public NutsTextBuilder copy() {
-        return new DefaultNutsTextNodeBuilder(session).appendAll(
-                children
-        );
+    public List<NutsText> getChildren() {
+        return new ArrayList<>(children);
     }
 
     @Override
     public NutsText subChildren(int from, int to) {
-        if(from<0){
-            from=0;
+        if (from < 0) {
+            from = 0;
         }
-        if(to>=size()){
-            to=size()-1;
+        if (to >= size()) {
+            to = size() - 1;
         }
-        if(to<=from){
+        if (to <= from) {
             return NutsTexts.of(session).ofPlain("");
         }
-        return NutsTexts.of(session).builder().appendAll(children.subList(from,to)).build();
+        return NutsTexts.of(session).builder().appendAll(children.subList(from, to)).build();
     }
 
     public NutsText substring(int from, int to) {
-        if(to<=from){
+        if (to <= from) {
             return NutsTexts.of(session).ofPlain("");
         }
         int firstIndex = ensureCut(from);
-        if(firstIndex<0){
+        if (firstIndex < 0) {
             return NutsTexts.of(session).ofPlain("");
         }
         int secondIndex = ensureCut(to);
-        if(secondIndex<0){
+        if (secondIndex < 0) {
             //the cut is till the end
-            return NutsTexts.of(session).builder().appendAll(children.subList(firstIndex,children.size())).build();
+            return NutsTexts.of(session).builder().appendAll(children.subList(firstIndex, children.size())).build();
         }
-        return NutsTexts.of(session).builder().appendAll(children.subList(firstIndex,secondIndex)).build();
+        return NutsTexts.of(session).builder().appendAll(children.subList(firstIndex, secondIndex)).build();
 //        int index=0;
 //        List<NutsText> ok=new ArrayList<>();
 //        for (NutsText child : p) {
@@ -286,6 +250,75 @@ public class DefaultNutsTextNodeBuilder implements NutsTextBuilder {
 //            return ok.get(0);
 //        }
 //        return new DefaultNutsTextList(session,ok.toArray(new NutsText[0]));
+    }
+
+    @Override
+    public NutsTextBuilder insert(int at, NutsText... newTexts) {
+        return replaceChildren(at, at + 1, newTexts);
+    }
+
+    @Override
+    public NutsTextBuilder replace(int from, int to, NutsText... newTexts) {
+        if (to <= from) {
+            return this;
+        }
+        int firstIndex = ensureCut(from);
+        if (firstIndex < 0) {
+            return this;
+        }
+        int secondIndex = ensureCut(to);
+        if (secondIndex < 0) {
+            //the cut is till the end
+            replaceChildren(firstIndex, children.size(), newTexts);
+        }
+        replaceChildren(firstIndex, secondIndex, newTexts);
+        return this;
+    }
+
+    @Override
+    public NutsTextBuilder replaceChildren(int from, int to, NutsText... newTexts) {
+        if (newTexts == null) {
+            newTexts = new NutsText[0];
+        } else {
+            newTexts = Arrays.stream(newTexts).filter(x -> x != null && !x.isEmpty()).toArray(NutsText[]::new);
+        }
+        if (from < to) {
+            children.subList(from, to).clear();
+            if (newTexts.length > 0) {
+                children.addAll(from, Arrays.asList(newTexts));
+            }
+        }
+        return this;
+    }
+
+    @Override
+    public int size() {
+        return children.size();
+    }
+
+    public NutsText get(int index) {
+        return children.get(index);
+    }
+
+    @Override
+    public Iterable<NutsText> items() {
+        return children;
+    }
+
+    @Override
+    public NutsTextBuilder flatten() {
+        if (!flattened) {
+            NutsTextNodeWriterRaw ss = new NutsTextNodeWriterRaw(session);
+            ss.flattenNode(build(), getConfiguration());
+            List<NutsText> i = ss.getItems();
+            if (i.isEmpty()) {
+                return this;
+            }
+            this.children.clear();
+            this.children.addAll(i);
+            flattened = true;
+        }
+        return this;
     }
 
 //    private NutsText substring(int from, int to,NutsText t) {
@@ -321,36 +354,90 @@ public class DefaultNutsTextNodeBuilder implements NutsTextBuilder {
 //    }
 
     @Override
-    public List<NutsText> getChildren() {
-        return new ArrayList<>(children);
+    public NutsTextBuilder removeAt(int index) {
+        children.remove(index);
+        return this;
+    }
+
+    @Override
+    public NutsStream<NutsTextBuilder> lines() {
+        DefaultNutsTextNodeBuilder z = (DefaultNutsTextNodeBuilder) copy().flatten();
+        return NutsStream.of(
+                new Iterator<NutsTextBuilder>() {
+                    NutsTextBuilder n;
+                    @Override
+                    public boolean hasNext() {
+                        n=z.readLine();
+                        return n!=null;
+                    }
+
+                    @Override
+                    public NutsTextBuilder next() {
+                        return n;
+                    }
+                },session
+        );
+    }
+
+    @Override
+    public NutsTextBuilder readLine() {
+        if (this.size() == 0) {
+            return null;
+        }
+        List<NutsText> r = new ArrayList<>();
+        while (this.size() > 0) {
+            NutsText t = this.get(0);
+            this.removeAt(0);
+            if (isNewLine(t)) {
+                break;
+            }
+            r.add(t);
+        }
+        return NutsTexts.of(session).builder().appendAll(r);
+    }
+
+    private boolean isNewLine(NutsText t) {
+        if (t.getType() == NutsTextType.PLAIN) {
+            String txt = ((NutsTextPlain) t).getText();
+            return (txt.equals("\n") || txt.equals("\r\n"));
+        }
+        return false;
+    }
+
+
+    public NutsTextBuilder copy() {
+        DefaultNutsTextNodeBuilder c = new DefaultNutsTextNodeBuilder(session);
+        c.appendAll(children);
+        c.flattened = flattened;
+        return c;
     }
 
     public int ensureCut(int at) {
 //        List<NutsText> newValues=new ArrayList<>();
-        if(at<=0){
+        if (at <= 0) {
             return 0;
         }
         NutsTexts text = NutsTexts.of(session);
-        int charPos=0;
-        int index=0;
-        while (index<children.size()){
+        int charPos = 0;
+        int index = 0;
+        while (index < children.size()) {
             NutsText c = children.get(index);
-            int start=charPos;
-            int len=c.textLength();
-            int end=start+len;
-            if(at<start){
+            int start = charPos;
+            int len = c.textLength();
+            int end = start + len;
+            if (at < start) {
                 //continue
-            }else if(at==start){
+            } else if (at == start) {
                 return index;
-            }else if(at==end){
-                if(index+1<children.size()){
-                    return index+1;
+            } else if (at == end) {
+                if (index + 1 < children.size()) {
+                    return index + 1;
                 }
                 return -1;
-            }else if(at>start && at<end){
-                List<NutsText> rv=c.builder().flatten().getChildren();
-                List<NutsText> rv2=new ArrayList<>(rv.size()+1);
-                int toReturn=-1;
+            } else if (at > start && at < end) {
+                List<NutsText> rv = c.builder().flatten().getChildren();
+                List<NutsText> rv2 = new ArrayList<>(rv.size() + 1);
+                int toReturn = -1;
                 for (int i = 0; i < rv.size(); i++) {
                     NutsText child = rv.get(i);
                     start = charPos;
@@ -360,7 +447,7 @@ public class DefaultNutsTextNodeBuilder implements NutsTextBuilder {
                         rv2.add(child);
                     } else if (at == start) {
                         rv2.add(child);
-                        toReturn=i+index;
+                        toReturn = i + index;
                     } else if (at >= end) {
                         rv2.add(child);
                     } else {
@@ -371,65 +458,26 @@ public class DefaultNutsTextNodeBuilder implements NutsTextBuilder {
                             String b = tp.substring(at - start);
                             rv2.add(text.ofPlain(a));
                             rv2.add(text.ofPlain(b));
-                            toReturn=index+i+1;
-                        }else if (child.getType() == NutsTextType.STYLED) {
+                            toReturn = index + i + 1;
+                        } else if (child.getType() == NutsTextType.STYLED) {
                             NutsTextStyled p = (NutsTextStyled) child;
-                            String tp = ((NutsTextPlain)p.getChild()).getText();
+                            String tp = ((NutsTextPlain) p.getChild()).getText();
                             String a = tp.substring(0, at - start);
                             String b = tp.substring(at - start);
-                            rv2.add(text.ofStyled(a,p.getStyles()));
-                            rv2.add(text.ofStyled(b,p.getStyles()));
-                            toReturn=index+i+1;
+                            rv2.add(text.ofStyled(a, p.getStyles()));
+                            rv2.add(text.ofStyled(b, p.getStyles()));
+                            toReturn = index + i + 1;
                         }
                     }
-                    charPos=end;
+                    charPos = end;
                 }
-                replaceChildren(index,index+1,rv2.toArray(new NutsText[0]));
+                replaceChildren(index, index + 1, rv2.toArray(new NutsText[0]));
                 return toReturn;
             }
-            charPos=end;
+            charPos = end;
             index++;
         }
         return -1;
-    }
-
-    @Override
-    public NutsTextBuilder insert(int at, NutsText... newTexts) {
-        return replaceChildren(at,at+1,newTexts);
-    }
-
-    @Override
-    public NutsTextBuilder replace(int from, int to, NutsText... newTexts) {
-        if(to<=from){
-            return this;
-        }
-        int firstIndex = ensureCut(from);
-        if(firstIndex<0){
-            return this;
-        }
-        int secondIndex = ensureCut(to);
-        if(secondIndex<0){
-            //the cut is till the end
-            replaceChildren(firstIndex,children.size(),newTexts);
-        }
-        replaceChildren(firstIndex,secondIndex,newTexts);
-        return this;
-    }
-
-    @Override
-    public NutsTextBuilder replaceChildren(int from, int to, NutsText... newTexts) {
-        if (newTexts == null) {
-            newTexts = new NutsText[0];
-        } else {
-            newTexts = Arrays.stream(newTexts).filter(x -> x != null && !x.isEmpty()).toArray(NutsText[]::new);
-        }
-        if (from < to) {
-            children.subList(from, to).clear();
-            if(newTexts.length>0) {
-                children.addAll(from, Arrays.asList(newTexts));
-            }
-        }
-        return this;
     }
 
     @Override

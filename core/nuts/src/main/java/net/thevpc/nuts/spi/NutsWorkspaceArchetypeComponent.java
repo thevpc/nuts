@@ -33,7 +33,7 @@ import net.thevpc.nuts.NutsSession;
  * @since 0.5.4
  * @app.category SPI Base
  */
-public interface NutsWorkspaceArchetypeComponent extends NutsComponent<String/*archetype id*/> {
+public interface NutsWorkspaceArchetypeComponent extends NutsComponent/*archetype id*/ {
 
     String getName();
 

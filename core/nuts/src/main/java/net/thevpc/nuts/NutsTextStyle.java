@@ -292,6 +292,92 @@ public class NutsTextStyle implements NutsEnum {
         return of(NutsTextStyleType.BACK_TRUE_COLOR, variant);
     }
 
+    public static NutsTextStyle parseLenient(String value) {
+        return parseLenient(value, null, null);
+    }
+
+    public static NutsTextStyle parseLenient(String value, NutsTextStyle emptyValue) {
+        return parseLenient(value, emptyValue, emptyValue);
+    }
+
+    public static NutsTextStyle parseLenient(String value, NutsTextStyle emptyValue, NutsTextStyle errorValue) {
+        value = value == null ? "" : value.trim();
+        if (value.isEmpty()) {
+            return emptyValue;
+        }
+        int par = value.indexOf('(');
+        String nbr = "";
+        String key = value;
+        if (par > 0) {
+            int b = value.indexOf(')', par);
+            if (b > 0) {
+                nbr = value.substring(par + 1, b);
+                key = value.substring(0, par);
+            }
+        } else {
+            if (value.trim().startsWith("fx") || value.trim().startsWith("bx")) {
+                key = value.trim().substring(0, 2);
+                nbr = value.trim().substring(2);
+            } else if (value.trim().startsWith("foregroundx")) {
+                int len = "foregroundx".length();
+                key = value.trim().substring(0, len);
+                nbr = value.trim().substring(len);
+            } else if (value.trim().startsWith("backgroundx")) {
+                int len = "backgroundx".length();
+                key = value.trim().substring(0, len);
+                nbr = value.trim().substring(len);
+            } else {
+                int len = value.length();
+                int x = len;
+                while (x - 1 >= 0 && Character.isDigit(value.charAt(x - 1))) {
+                    x--;
+                }
+                if (x < len) {
+                    nbr = value.substring(x, len);
+                    key = value.substring(0, x);
+                }
+            }
+        }
+        nbr = nbr.trim();
+        key = key.trim();
+        if (nbr.isEmpty()) {
+            nbr = "0";
+        }
+        NutsTextStyleType t = NutsTextStyleType.parseLenient(key, null, null);
+        if (t == null) {
+            if (NutsBlankable.isBlank(key)) {
+                return emptyValue;
+            }
+            return errorValue;
+        }
+        switch (t) {
+            case FORE_TRUE_COLOR:
+            case BACK_TRUE_COLOR: {
+                Integer ii = NutsApiUtils.parseInt16(nbr, null, null);
+                if (ii == null) {
+                    if (NutsBlankable.isBlank(key)) {
+                        ii = 0;
+                    } else {
+                        return errorValue;
+                    }
+                }
+                return NutsTextStyle.of(t, ii);
+            }
+            default: {
+                Integer ii = NutsApiUtils.parseInt(nbr, null, null);
+                if (ii == null) {
+                    if (NutsBlankable.isBlank(key)) {
+                        ii = 0;
+                    } else {
+                        return errorValue;
+                    }
+                }
+                return NutsTextStyle.of(t, ii);
+
+            }
+        }
+    }
+
     public NutsTextStyles append(NutsTextStyle other) {
         return NutsTextStyles.of(this, other);
     }
@@ -309,69 +395,53 @@ public class NutsTextStyle implements NutsEnum {
     }
 
     @Override
-    public String toString() {
-        if (variant == 0) {
-            return String.valueOf(type);
-        }
-        return type + "(" + variant + ")";
-    }
-
-    public static NutsTextStyle parseLenient(String value) {
-        return parseLenient(value, null, null);
-    }
-
-    public static NutsTextStyle parseLenient(String value, NutsTextStyle emptyValue) {
-        return parseLenient(value, emptyValue, emptyValue);
-    }
-
-    public static NutsTextStyle parseLenient(String value, NutsTextStyle emptyValue, NutsTextStyle errorValue) {
-        value = value == null ? "" : value.trim();
-        int par = value.indexOf('(');
-        String nbr = "";
-        String key = value;
-        if (par > 0) {
-            int b = value.indexOf(')', par);
-            if (b > 0) {
-                nbr = value.substring(par + 1, b);
-                key = value.substring(0, par);
+    public String id() {
+        switch (type) {
+            case PLAIN:
+                return "";
+            case PRIMARY:
+                return "p" + (variant <= 0 ? "" : String.valueOf(variant));
+            case SECONDARY:
+                return "s" + (variant <= 0 ? "" : String.valueOf(variant));
+            case UNDERLINED:
+                return "_" + (variant <= 0 ? "" : String.valueOf(variant));
+            case BLINK:
+                return "%" + (variant <= 0 ? "" : String.valueOf(variant));
+            case ITALIC:
+                return "/" + (variant <= 0 ? "" : String.valueOf(variant));
+            case BOLD:
+                return "+" + (variant <= 0 ? "" : String.valueOf(variant));
+            case REVERSED:
+                return "!" + (variant <= 0 ? "" : String.valueOf(variant));
+            case FORE_COLOR: {
+                return "f" + (variant <= 0 ? "0" : String.valueOf(variant));
             }
-        }else{
-            int len = value.length();
-            int x= len;
-            while(x-1>=0 && Character.isDigit(value.charAt(x-1))){
-                x--;
+            case BACK_COLOR: {
+                return "b" + (variant <= 0 ? "0" : String.valueOf(variant));
             }
-            if(x< len){
-                nbr = value.substring(x, len);
-                key = value.substring(0, x);
+            case FORE_TRUE_COLOR: {
+                StringBuilder s = new StringBuilder(Integer.toString(variant, 16));
+                while (s.length() < 8) {
+                    s.insert(0, '0');
+                }
+                return "fx" + s;
             }
-        }
-        nbr = nbr.trim();
-        key = key.trim();
-        if (nbr.isEmpty()) {
-            nbr = "0";
-        }
-        NutsTextStyleType t = NutsTextStyleType.parseLenient(key, null, null);
-        if (t == null) {
-            if (NutsBlankable.isBlank(key)) {
-                return emptyValue;
+            case BACK_TRUE_COLOR: {
+                StringBuilder s = new StringBuilder(Integer.toString(variant, 16));
+                while (s.length() < 8) {
+                    s.insert(0, '0');
+                }
+                return "bx" + s;
             }
-            return errorValue;
-        }
-        Integer ii = NutsApiUtils.parseInt(nbr, null, null);
-        if (ii == null) {
-            if (NutsBlankable.isBlank(key)) {
-                ii = 0;
-            } else {
-                return errorValue;
+            default: {
+                return type.id() + (variant <= 0 ? "" : String.valueOf(variant));
             }
         }
-        return NutsTextStyle.of(t, ii);
     }
 
     @Override
-    public String id() {
-        return type.id() + (variant == 0 ? "" : String.valueOf(variant));
+    public int hashCode() {
+        return Objects.hash(type, variant);
     }
 
     @Override
@@ -383,7 +453,10 @@ public class NutsTextStyle implements NutsEnum {
     }
 
     @Override
-    public int hashCode() {
-        return Objects.hash(type, variant);
+    public String toString() {
+        if (variant == 0) {
+            return String.valueOf(type);
+        }
+        return type + "(" + variant + ")";
     }
 }

@@ -203,7 +203,7 @@ public class GrepCommand extends AbstractNshBuiltin {
                     reader = new InputStreamReader(context.in());
                     processByLine(reader, options, p, f, results, session);
                 } else if (f.getFile().isDirectory()) {
-                    NutsPath[] files = f.getFile().getChildren();
+                    NutsPath[] files = f.getFile().list();
                     if (files != null) {
                         for (NutsPath ff : files) {
                             grepFile(new FileInfo(ff, f.getHighlighter()), p, options, context, true, results);
@@ -283,7 +283,7 @@ public class GrepCommand extends AbstractNshBuiltin {
             int pos = matcher.start();
             int end = matcher.end();
             coloredLine.replace(pos, end,
-                    NutsTexts.of(session).ofStyled(
+                    NutsTexts.of(session).applyStyles(
                             coloredLine.substring(pos, end)
                             , selectionStyle(options)
                     )

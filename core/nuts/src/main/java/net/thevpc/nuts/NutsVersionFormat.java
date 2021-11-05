@@ -36,7 +36,7 @@ import java.util.Map;
  * @since 0.5.4
  * @app.category Format
  */
-public interface NutsVersionFormat extends NutsFormat, NutsComponent<Object> {
+public interface NutsVersionFormat extends NutsFormat, NutsComponent {
 
     static NutsVersionFormat of(NutsSession session) {
         NutsApiUtils.checkSession(session);

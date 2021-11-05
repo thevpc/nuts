@@ -607,7 +607,7 @@ public class StyledParserStep extends ParserStep {
             case SHARP_CONTENT_SHARP:
             case SHARP_CONTENT_SHARP_END:
             {
-                return text.ofStyled(a, NutsTextStyle.primary(sharpsStartCount));
+                return text.applyStyles(a, NutsTextStyle.primary(sharpsStartCount));
             }
             case SHARP2_OBRACE_NAME:{
                 return text.ofPlain("##{"+ name.toString());
@@ -623,11 +623,10 @@ public class StyledParserStep extends ParserStep {
             case SHARP2_COL_NAME_CONTENT_SHARP:
             case SHARP2_COL_NAME_CONTENT_SHARP_END:
             {
-                NutsTextStyle s = parseHelper.parseSimpleNutsTextStyle(name.toString());
+                NutsTextStyles s = parseHelper.parseSimpleNutsTextStyles(name.toString());
                 if (s != null) {
-                    return text.ofStyled(a, s);
+                    return text.applyStyles(a, s);
                 }
-                s = parseHelper.parseSimpleNutsTextStyle(name.toString());
                 throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("unable to resolve style from %s",name.toString()));
             }
         }

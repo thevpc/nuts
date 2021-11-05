@@ -205,10 +205,10 @@ public abstract class AbstractJShellContext implements JShellContext {
 
     @Override
     public String getAbsolutePath(String path) {
-        if (new File(path).isAbsolute()) {
-            return getFileSystem().getAbsolutePath(path);
+        if (NutsPath.of(path,getSession()).isAbsolute()) {
+            return getFileSystem().getAbsolutePath(path,getSession());
         }
-        return getFileSystem().getAbsolutePath(getCwd() + "/" + path);
+        return getFileSystem().getAbsolutePath(getCwd() + "/" + path,getSession());
     }
 
     @Override

@@ -251,7 +251,7 @@ public abstract class AbstractNutsStream<T> implements NutsStream<T> {
     }
 
     @Override
-    public T[] toArray(IntFunction<T[]> generator) {
+    public <A> A[] toArray(IntFunction<A[]> generator) {
         return stream().toArray(generator);
     }
 

@@ -1,7 +1,6 @@
 package net.thevpc.nuts.runtime.core.filters.repository;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.core.NutsWorkspaceExt;
 import net.thevpc.nuts.runtime.core.filters.InternalNutsTypedFilters;
 
 import java.util.Arrays;
@@ -124,7 +123,7 @@ public class InternalNutsRepositoryFilters extends InternalNutsTypedFilters<Nuts
     }
 
     @Override
-    public int getSupportLevel(NutsSupportLevelContext<Object> context) {
+    public int getSupportLevel(NutsSupportLevelContext context) {
         return DEFAULT_SUPPORT;
     }
 }

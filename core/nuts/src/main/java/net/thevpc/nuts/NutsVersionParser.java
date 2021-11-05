@@ -32,7 +32,7 @@ import net.thevpc.nuts.spi.NutsComponent;
 /**
  * @app.category Base
  */
-public interface NutsVersionParser extends NutsComponent<Object> {
+public interface NutsVersionParser extends NutsComponent {
 
     static NutsVersionParser of(NutsSession session) {
         NutsApiUtils.checkSession(session);

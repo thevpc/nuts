@@ -24,7 +24,7 @@ public class CustomStyleCodeHighlighter implements NutsCodeHighlighter {
 
     @Override
     public NutsText stringToText(String text, NutsSession session) {
-        return factory.setSession(session).ofStyled(factory.setSession(session).ofPlain(text), style);
+        return factory.setSession(session).applyStyles(factory.setSession(session).ofPlain(text), style);
     }
 
     @Override
@@ -33,7 +33,7 @@ public class CustomStyleCodeHighlighter implements NutsCodeHighlighter {
     }
 
     @Override
-    public int getSupportLevel(NutsSupportLevelContext<String> context) {
+    public int getSupportLevel(NutsSupportLevelContext context) {
         return NutsComponent.DEFAULT_SUPPORT;
     }
 

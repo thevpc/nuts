@@ -113,7 +113,7 @@ public class DefaultNutsObjectFormat extends NutsObjectFormatBase {
             case TSON:
             case YAML:
             {
-                return NutsElements.of(session).setContentType(t);
+                return NutsElements.of(session).setNtf(isNtf()).setContentType(t);
             }
             case PROPS: {
                 return session.formats().props();
@@ -207,7 +207,7 @@ public class DefaultNutsObjectFormat extends NutsObjectFormatBase {
     }
 
     @Override
-    public int getSupportLevel(NutsSupportLevelContext<Object> context) {
+    public int getSupportLevel(NutsSupportLevelContext context) {
         return DEFAULT_SUPPORT;
     }
 }

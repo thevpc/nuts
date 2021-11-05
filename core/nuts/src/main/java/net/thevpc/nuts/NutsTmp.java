@@ -32,7 +32,7 @@ import net.thevpc.nuts.spi.NutsComponent;
 /**
  * @app.category Input Output
  */
-public interface NutsTmp extends NutsComponent<Object> {
+public interface NutsTmp extends NutsComponent {
     static NutsTmp of(NutsSession session) {
         NutsApiUtils.checkSession(session);
         return session.extensions().createSupported(NutsTmp.class, true, null);

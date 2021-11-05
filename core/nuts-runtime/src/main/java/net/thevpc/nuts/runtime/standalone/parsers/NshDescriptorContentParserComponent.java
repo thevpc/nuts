@@ -61,19 +61,21 @@ public class NshDescriptorContentParserComponent implements NutsDescriptorConten
     }
 
     @Override
-    public int getSupportLevel(NutsSupportLevelContext<NutsDescriptorContentParserContext> criteria) {
+    public int getSupportLevel(NutsSupportLevelContext criteria) {
         if(NSH==null){
             NutsSession session = criteria.getSession();
             NSH= NutsId.of("nsh",session);
         }
-        String e = NutsUtilStrings.trim(criteria.getConstraints().getFileExtension());
-        switch (e){
-            case "":
-            case "sh":
-            case "nsh":
-            case "bash":
-            {
-                return DEFAULT_SUPPORT;
+        NutsDescriptorContentParserContext ctr=criteria.getConstraints(NutsDescriptorContentParserContext.class);
+        if(ctr!=null) {
+            String e = NutsUtilStrings.trim(ctr.getFileExtension());
+            switch (e) {
+                case "":
+                case "sh":
+                case "nsh":
+                case "bash": {
+                    return DEFAULT_SUPPORT;
+                }
             }
         }
         return NO_SUPPORT;

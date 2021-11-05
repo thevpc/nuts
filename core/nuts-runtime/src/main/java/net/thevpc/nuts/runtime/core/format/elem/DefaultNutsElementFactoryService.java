@@ -356,7 +356,7 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
             }
             return preloaded;
         } else {
-            return Arrays.stream((Object[]) array).map(x -> context.objectToElement(x, null)).collect(Collectors.toList());
+            return Arrays.stream((Object[]) array).map(x -> context.destruct(x, null)).collect(Collectors.toList());
         }
     }
 

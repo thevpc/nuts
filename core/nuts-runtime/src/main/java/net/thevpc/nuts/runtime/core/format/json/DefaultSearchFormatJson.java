@@ -68,7 +68,7 @@ public class DefaultSearchFormatJson extends DefaultSearchFormatBase {
             getWriter().print("  ");
         }
         String json = NutsElements.of(getSession())
-                .json().setValue(object).setCompact(isCompact())
+                .json().setNtf(false).setValue(object).setCompact(isCompact())
                 .format()
                 .filteredText()
                 ;

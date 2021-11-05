@@ -184,7 +184,7 @@ public interface NutsStream<T> extends Iterable<T> {
 
     NutsStream<T> coalesce(Iterator<? extends T> other);
 
-    T[] toArray(IntFunction<T[]> generator);
+    <A> A[] toArray(IntFunction<A[]> generator);
 
     <K, U> Map<K, U> toMap(Function<? super T, ? extends K> keyMapper,
                            Function<? super T, ? extends U> valueMapper);

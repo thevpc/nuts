@@ -125,7 +125,7 @@ public class DefaultNutsSystemTerminalBaseBoot implements NutsSystemTerminalBase
 //    }
 
     @Override
-    public int getSupportLevel(NutsSupportLevelContext<NutsTerminalSpec> criteria) {
+    public int getSupportLevel(NutsSupportLevelContext criteria) {
         return DEFAULT_SUPPORT;
     }
 

@@ -5,7 +5,6 @@ import net.thevpc.nuts.runtime.core.util.CoreNutsUtils;
 import net.thevpc.nuts.runtime.standalone.io.progress.CProgressBar;
 import net.thevpc.nuts.spi.NutsSupportLevelContext;
 import net.thevpc.nuts.spi.NutsSystemTerminalBase;
-import net.thevpc.nuts.spi.NutsTerminalSpec;
 
 import java.io.InputStream;
 
@@ -161,7 +160,7 @@ public abstract class AbstractSystemTerminalAdapter extends AbstractNutsTerminal
     }
 
     @Override
-    public int getSupportLevel(NutsSupportLevelContext<NutsTerminalSpec> criteria) {
+    public int getSupportLevel(NutsSupportLevelContext criteria) {
         return DEFAULT_SUPPORT;
     }
 

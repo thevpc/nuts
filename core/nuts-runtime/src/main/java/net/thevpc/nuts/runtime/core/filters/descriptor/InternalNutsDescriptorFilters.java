@@ -1,7 +1,6 @@
 package net.thevpc.nuts.runtime.core.filters.descriptor;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.core.NutsWorkspaceExt;
 import net.thevpc.nuts.runtime.core.filters.InternalNutsTypedFilters;
 import net.thevpc.nuts.runtime.core.filters.id.*;
 
@@ -253,7 +252,7 @@ public class InternalNutsDescriptorFilters extends InternalNutsTypedFilters<Nuts
     }
 
     @Override
-    public int getSupportLevel(NutsSupportLevelContext<Object> context) {
+    public int getSupportLevel(NutsSupportLevelContext context) {
         return DEFAULT_SUPPORT;
     }
 }

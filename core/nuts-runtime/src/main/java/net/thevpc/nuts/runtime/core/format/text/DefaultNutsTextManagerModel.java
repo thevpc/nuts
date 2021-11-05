@@ -28,18 +28,21 @@ import net.thevpc.nuts.runtime.core.format.elem.DefaultNutsElementFactoryService
 import net.thevpc.nuts.runtime.core.format.elem.NutsElementFactoryService;
 import net.thevpc.nuts.runtime.core.format.elem.NutsElementStreamFormat;
 import net.thevpc.nuts.runtime.core.format.json.DefaultJsonElementFormat;
-import net.thevpc.nuts.runtime.core.format.text.highlighters.*;
+import net.thevpc.nuts.runtime.core.format.text.highlighters.CustomStyleCodeHighlighter;
 import net.thevpc.nuts.runtime.core.format.text.stylethemes.DefaultNutsTextFormatTheme;
 import net.thevpc.nuts.runtime.core.format.text.stylethemes.NutsTextFormatPropertiesTheme;
 import net.thevpc.nuts.runtime.core.format.text.stylethemes.NutsTextFormatThemeWrapper;
 import net.thevpc.nuts.runtime.core.format.xml.DefaultXmlNutsElementStreamFormat;
 import net.thevpc.nuts.runtime.core.format.yaml.SimpleYaml;
 import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
+import net.thevpc.nuts.spi.NutsDefaultSupportLevelContext;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author vpc
@@ -48,6 +51,9 @@ public class DefaultNutsTextManagerModel {
 
     private final NutsWorkspaceInitInformation info;
     private final NutsWorkspace ws;
+    private final Map<String, String> kindToHighlighter = new HashMap<>();
+    private final Map<String, NutsCodeHighlighter> highlighters = new HashMap<>();
+    private final Map<String, NutsCodeHighlighter> _cachedHighlighters = new HashMap<>();
     private String styleThemeName;
     private NutsTextFormatTheme styleTheme;
     private NutsTextFormatTheme defaultTheme;
@@ -55,24 +61,13 @@ public class DefaultNutsTextManagerModel {
     private NutsElementStreamFormat jsonMan;
     private NutsElementStreamFormat yamlMan;
     private NutsElementStreamFormat xmlMan;
-    private final Map<String, String> kindToHighlighter = new HashMap<>();
-
-    private final Map<String, NutsCodeHighlighter> highlighters = new HashMap<>();
 
     public DefaultNutsTextManagerModel(NutsWorkspace ws, NutsWorkspaceInitInformation info) {
         this.ws = ws;
         this.info = info;
-        for (NutsCodeHighlighter h : new NutsCodeHighlighter[]{
-                new JavaCodeHighlighter(ws),
-                new HadraCodeHighlighter(ws),
-                new XmlCodeHighlighter(ws),
-                new JsonCodeHighlighter(ws),
-                new BashCodeHighlighter(ws),
-                new FishCodeHighlighter(ws),
-                new WinCmdBlocTextHighlighter(ws),
-                new PlainCodeHighlighter(ws),
-                new NtfCodeHighlighter()
-        }) {
+        NutsSession session = NutsWorkspaceUtils.defaultSession(ws);
+        List<NutsCodeHighlighter> all = session.extensions().createAllSupported(NutsCodeHighlighter.class, null);
+        for (NutsCodeHighlighter h : all) {
             highlighters.put(h.getId().toLowerCase(), h);
         }
         try {
@@ -100,7 +95,7 @@ public class DefaultNutsTextManagerModel {
                 }
             }
         } catch (IOException ex) {
-            throw new NutsIOException(NutsWorkspaceUtils.defaultSession(ws), ex);
+            throw new NutsIOException(session, ex);
         }
     }
 
@@ -149,58 +144,83 @@ public class DefaultNutsTextManagerModel {
         this.styleThemeName = styleThemeName;
     }
 
-    public String getCodeHighlighterId(String kind, NutsSession session) {
-        String lc = kind.toLowerCase();
+    public NutsCodeHighlighter getCodeHighlighter(String highlighterId, NutsSession session) {
+        String lc = NutsUtilStrings.trim(highlighterId).toLowerCase();
+        NutsCodeHighlighter old = _cachedHighlighters.get(lc);
+        if (old != null) {
+            return old;
+        }
         NutsCodeHighlighter h = highlighters.get(lc);
         if (h != null) {
-            return h.getId();
+            _cachedHighlighters.put(lc, h);
+            return h;
+        }
+        int best = -1;
+        for (NutsCodeHighlighter hh : highlighters.values()) {
+            int lvl = hh.getSupportLevel(new NutsDefaultSupportLevelContext(
+                    session, lc
+            ));
+            if (lvl > 0 && best < lvl) {
+                best = lvl;
+                h = hh;
+            }
+        }
+        if (best > 0) {
+            _cachedHighlighters.put(lc, h);
+            return h;
         }
         String a = kindToHighlighter.get(lc);
         if (a != null) {
             h = highlighters.get(a);
             if (h != null) {
-                return h.getId();
+                _cachedHighlighters.put(lc, h);
+                return h;
             }
         }
-        if("system".equals(kind)){
+        if ("system".equals(lc)) {
             NutsShellFamily shellFamily = session.env().getShellFamily();
-            return getCodeHighlighterId(shellFamily.id(),session);
+            h = getCodeHighlighter(shellFamily.id(), session);
+            _cachedHighlighters.put(lc, h);
+            return h;
+        }
+
+        if (lc.length() > 0) {
+            try {
+                NutsTextStyle found = NutsTextStyle.parseLenient(lc);
+                if (found != null) {
+                    h = new CustomStyleCodeHighlighter(found, session);
+                    _cachedHighlighters.put(lc, h);
+                    return h;
+                }
+            } catch (Exception ex) {
+                //ignore
+            }
         }
 
         h = highlighters.get("plain");
         if (h != null) {
-            return h.getId();
+            return h;
         }
         throw new NutsIllegalArgumentException(session, NutsMessage.plain("not found plain highlighter"));
     }
 
-    public NutsCodeHighlighter getCodeHighlighter(String highlighterId, NutsSession session) {
-        highlighterId = getCodeHighlighterId(highlighterId, session);
-        return highlighters.get(highlighterId);
-
-//        NutsDefaultSupportLevelContext<String> ctx = new NutsDefaultSupportLevelContext<String>(session, highlighterId);
-//        int bestCode = NutsComponent.NO_SUPPORT;
-//        NutsCodeHighlighter format = null;
-//        for (NutsCodeHighlighter codeFormat : getCodeFormats(session)) {
-//            int s = codeFormat.getSupportLevel(ctx);
-//            if (s > bestCode) {
-//                format = codeFormat;
-//                bestCode = s;
-//            }
-//        }
-//        if (format != null) {
-//            return format;
-//        }
-//        if (highlighterId.length() > 0) {
-//            String q = getCodeHighlighterId(highlighterId, session);
-//            return highlighters.get(q);
-//        }
-//        return null;
+    private String expandAlias(String ss) {
+        switch (ss.toUpperCase()) {
+            case "BOOL": {
+                ss = "BOOLEAN";
+                break;
+            }
+            case "KW": {
+                ss = "KEYWORD";
+                break;
+            }
+        }
+        return ss;
     }
 
 
     public void addCodeHighlighter(NutsCodeHighlighter format, NutsSession session) {
-        highlighters.put(format.getId(),format);
+        highlighters.put(format.getId(), format);
     }
 
     public void removeCodeHighlighter(String id, NutsSession session) {

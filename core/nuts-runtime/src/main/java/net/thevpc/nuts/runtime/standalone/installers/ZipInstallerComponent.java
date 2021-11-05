@@ -42,10 +42,13 @@ import net.thevpc.nuts.spi.*;
 public class ZipInstallerComponent implements NutsInstallerComponent {
 
     @Override
-    public int getSupportLevel(NutsSupportLevelContext<NutsDefinition> nutsDefinition) {
-        if (nutsDefinition != null && nutsDefinition.getConstraints().getDescriptor() != null) {
-            if ("zip".equals(nutsDefinition.getConstraints().getDescriptor().getPackaging())) {
-                return DEFAULT_SUPPORT;
+    public int getSupportLevel(NutsSupportLevelContext ctx) {
+        NutsDefinition def=ctx.getConstraints(NutsDefinition.class);
+        if(def!=null) {
+            if (def.getDescriptor() != null) {
+                if ("zip".equals(def.getDescriptor().getPackaging())) {
+                    return DEFAULT_SUPPORT;
+                }
             }
         }
         return NO_SUPPORT;

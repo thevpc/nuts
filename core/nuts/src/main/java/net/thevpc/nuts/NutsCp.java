@@ -55,7 +55,7 @@ import java.nio.file.Path;
  * @since 0.5.4
  * @app.category Input Output
  */
-public interface NutsCp extends NutsComponent<Object> {
+public interface NutsCp extends NutsComponent {
     static NutsCp of(NutsSession session) {
         NutsApiUtils.checkSession(session);
         return session.extensions().createSupported(NutsCp.class, true, null);

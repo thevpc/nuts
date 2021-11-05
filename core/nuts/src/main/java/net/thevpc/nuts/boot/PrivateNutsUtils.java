@@ -425,6 +425,18 @@ final class PrivateNutsUtils {
         }
     }
 
+    public static Integer parseInt16(String value, Integer emptyValue, Integer errorValue) {
+        if (NutsBlankable.isBlank(value)) {
+            return emptyValue;
+        }
+        value = value.trim();
+        try {
+            return Integer.parseInt(value, 16);
+        } catch (Exception ex) {
+            return errorValue;
+        }
+    }
+
     public static Integer parseFileSizeInBytes(String value, Integer defaultMultiplier, Integer emptyValue, Integer errorValue) {
         if (NutsBlankable.isBlank(value)) {
             return emptyValue;

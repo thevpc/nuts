@@ -37,7 +37,7 @@ import net.thevpc.nuts.spi.NutsComponentScopeType;
  * @since 0.8.0
  */
 @NutsComponentScope(NutsComponentScopeType.SESSION)
-public interface NutsTypedFilters<T extends NutsFilter> extends NutsComponent<Object> {
+public interface NutsTypedFilters<T extends NutsFilter> extends NutsComponent {
     T nonnull(NutsFilter filter);
 
     T always();

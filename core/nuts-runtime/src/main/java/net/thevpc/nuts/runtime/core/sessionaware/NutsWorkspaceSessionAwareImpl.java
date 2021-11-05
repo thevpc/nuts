@@ -206,7 +206,7 @@ public class NutsWorkspaceSessionAwareImpl implements NutsWorkspace, NutsWorkspa
 
 
     @Override
-    public int getSupportLevel(NutsSupportLevelContext<NutsWorkspaceOptions> context) {
+    public int getSupportLevel(NutsSupportLevelContext context) {
         return ws().getSupportLevel(context);
     }
 

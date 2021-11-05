@@ -41,7 +41,7 @@ import net.thevpc.nuts.spi.NutsComponentScopeType;
  * @since 0.5.5
  */
 @NutsComponentScope(NutsComponentScopeType.WORKSPACE)
-public interface NutsApplicationContexts extends NutsComponent<Object> {
+public interface NutsApplicationContexts extends NutsComponent {
     static NutsApplicationContexts of(NutsSession session) {
         NutsApiUtils.checkSession(session);
         return session.extensions().createSupported(NutsApplicationContexts.class, true, null);

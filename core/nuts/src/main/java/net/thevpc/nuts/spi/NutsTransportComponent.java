@@ -34,7 +34,7 @@ import java.io.UncheckedIOException;
  * @since 0.5.4
  * @app.category SPI Base
  */
-public interface NutsTransportComponent extends NutsComponent<String/*url*/> {
+public interface NutsTransportComponent extends NutsComponent/*url*/ {
 
     /**
      * open url and return a valid {@link NutsTransportConnection}

@@ -38,7 +38,7 @@ import java.util.logging.Level;
  * @app.category Logging
  */
 @NutsComponentScope(NutsComponentScopeType.WORKSPACE)
-public interface NutsLogManager extends NutsComponent<Object> {
+public interface NutsLogManager extends NutsComponent {
     static NutsLogManager of(NutsSession session) {
         NutsApiUtils.checkSession(session);
         return session.extensions().createSupported(NutsLogManager.class,true,null);

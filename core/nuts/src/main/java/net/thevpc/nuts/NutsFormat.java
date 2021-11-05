@@ -39,7 +39,7 @@ import java.nio.file.Path;
  * @since 0.5.5
  * @app.category Format
  */
-public interface NutsFormat extends NutsCommandLineConfigurable, NutsComponent<Object> {
+public interface NutsFormat extends NutsCommandLineConfigurable, NutsComponent {
 
     /**
      * equivalent to {@link #format() }

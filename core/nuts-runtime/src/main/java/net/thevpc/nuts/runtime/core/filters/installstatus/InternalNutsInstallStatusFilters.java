@@ -1,7 +1,6 @@
 package net.thevpc.nuts.runtime.core.filters.installstatus;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.core.NutsWorkspaceExt;
 import net.thevpc.nuts.runtime.core.filters.InternalNutsTypedFilters;
 
 import java.util.List;
@@ -127,7 +126,7 @@ public class InternalNutsInstallStatusFilters extends InternalNutsTypedFilters<N
     }
 
     @Override
-    public int getSupportLevel(NutsSupportLevelContext<Object> context) {
+    public int getSupportLevel(NutsSupportLevelContext context) {
         return DEFAULT_SUPPORT;
     }
 }

@@ -45,7 +45,7 @@ import java.util.function.Predicate;
  * @since 0.5.5
  * @app.category Format
  */
-public interface NutsElements extends NutsObjectFormat, NutsComponent<Object> {
+public interface NutsElements extends NutsObjectFormat, NutsComponent {
     Predicate<Type> DEFAULT_FORMAT_DESTRUCTOR=new Predicate<Type>() {
         @Override
         public boolean test(Type x) {
@@ -168,6 +168,16 @@ public interface NutsElements extends NutsObjectFormat, NutsComponent<Object> {
      * @return new instance of the given class
      */
     <T> T parse(URL url, Class<T> clazz);
+
+    /**
+     * parse path as a valid object of the given type
+     *
+     * @param path source path
+     * @param clazz target type
+     * @param <T> target type
+     * @return new instance of the given class
+     */
+    <T> T parse(NutsPath path, Class<T> clazz);
 
     /**
      * parse inputStream as a valid object of the given type

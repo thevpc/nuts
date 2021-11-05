@@ -44,7 +44,7 @@ import java.util.List;
  * @since 0.5.4
  * @app.category Toolkit
  */
-public interface NutsCompress extends NutsComponent<Object> {
+public interface NutsCompress extends NutsComponent {
     static NutsCompress of(NutsSession session) {
         NutsApiUtils.checkSession(session);
         return session.extensions().createSupported(NutsCompress.class, true, null);

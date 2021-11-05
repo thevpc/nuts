@@ -193,7 +193,7 @@ public class NutsStreamOrPath {
     public NutsStreamOrPath[] list() {
         if (isPath()) {
             NutsPath p = getPath();
-            return Arrays.stream(p.getChildren()).map(NutsStreamOrPath::of)
+            return Arrays.stream(p.list()).map(NutsStreamOrPath::of)
                     .toArray(NutsStreamOrPath[]::new);
         }
         return new NutsStreamOrPath[0];

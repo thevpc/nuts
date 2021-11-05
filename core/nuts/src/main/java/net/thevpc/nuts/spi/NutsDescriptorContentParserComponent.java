@@ -34,7 +34,7 @@ import net.thevpc.nuts.NutsDescriptor;
  * @since 0.5.4
  * @app.category SPI Base
  */
-public interface NutsDescriptorContentParserComponent extends NutsComponent<NutsDescriptorContentParserContext/*any object or null*/> {
+public interface NutsDescriptorContentParserComponent extends NutsComponent {
 
     /**
      * parse content and return a valid NutsDescriptor or null if not supported.

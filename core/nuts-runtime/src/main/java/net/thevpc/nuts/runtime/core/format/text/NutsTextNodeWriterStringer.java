@@ -90,7 +90,7 @@ public class NutsTextNodeWriterStringer extends AbstractNutsTextNodeWriter {
                             writeNode(s.getChild(), ctx);
                         } else {
                             writeNode(
-                                    NutsTexts.of(ws).ofStyled(s.getChild(), s.getStyles().removeFirst()),
+                                    NutsTexts.of(ws).applyStyles(s.getChild(), s.getStyles().removeFirst()),
                                     ctx);
                         }
                         writeRaw(s.getEnd());
@@ -102,7 +102,7 @@ public class NutsTextNodeWriterStringer extends AbstractNutsTextNodeWriter {
                             writeNode(s.getChild(), ctx);
                         } else {
                             writeNode(
-                                    NutsTexts.of(ws).ofStyled(s.getChild(), s.getStyles().removeFirst()),
+                                    NutsTexts.of(ws).applyStyles(s.getChild(), s.getStyles().removeFirst()),
                                     ctx);
                         }
                         writeRaw("}##");//complex format always uses ##

@@ -29,17 +29,18 @@ import net.thevpc.nuts.spi.NutsSupportLevelContext;
 /**
  * Code Format to help formatting (syntax coloring) to NTF some code
  */
-public interface NutsCodeHighlighter extends NutsComponent<String> {
+public interface NutsCodeHighlighter extends NutsComponent {
 
     String getId();
 
     /**
      * evaluate support level (who much this instance should be considered convenient, acceptable)
      * for the given arguments (provided in context).
+     *
      * @param context evaluation context
      * @return support level value
      */
-    int getSupportLevel(NutsSupportLevelContext<String> context);
+    int getSupportLevel(NutsSupportLevelContext context);
 
     NutsText stringToText(String text, NutsSession session);
 

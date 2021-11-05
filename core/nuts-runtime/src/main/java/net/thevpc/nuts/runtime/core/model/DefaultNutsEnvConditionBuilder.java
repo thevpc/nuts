@@ -34,7 +34,6 @@ import net.thevpc.nuts.spi.NutsSupportLevelContext;
 
 import java.util.*;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 public class DefaultNutsEnvConditionBuilder implements NutsEnvConditionBuilder {
 
@@ -311,7 +310,7 @@ public class DefaultNutsEnvConditionBuilder implements NutsEnvConditionBuilder {
     }
 
     @Override
-    public int getSupportLevel(NutsSupportLevelContext<Object> context) {
+    public int getSupportLevel(NutsSupportLevelContext context) {
         return DEFAULT_SUPPORT;
     }
 }

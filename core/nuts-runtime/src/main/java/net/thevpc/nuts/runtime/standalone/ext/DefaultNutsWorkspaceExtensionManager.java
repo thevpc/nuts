@@ -55,18 +55,18 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
 //        return objectFactory.discoverTypes(classLoader);
 //    }
     @Override
-    public <T extends NutsComponent<B>, B> NutsServiceLoader<T, B> createServiceLoader(Class<T> serviceType, Class<B> criteriaType) {
+    public <T extends NutsComponent, B> NutsServiceLoader<T> createServiceLoader(Class<T> serviceType, Class<B> criteriaType) {
         checkSession();
         return model.createServiceLoader(serviceType, criteriaType, session);
     }
 
     @Override
-    public <T extends NutsComponent<B>, B> NutsServiceLoader<T, B> createServiceLoader(Class<T> serviceType, Class<B> criteriaType, ClassLoader classLoader) {
+    public <T extends NutsComponent, B> NutsServiceLoader<T> createServiceLoader(Class<T> serviceType, Class<B> criteriaType, ClassLoader classLoader) {
         checkSession();
         return model.createServiceLoader(serviceType, criteriaType, classLoader, session);
     }
 
-    public <T extends NutsComponent<V>, V> T createSupported(Class<T> serviceType, boolean required, V criteriaType) {
+    public <T extends NutsComponent, V> T createSupported(Class<T> serviceType, boolean required, V criteriaType) {
         checkSession();
         return model.createSupported(serviceType, criteriaType, required, session);
     }
@@ -78,7 +78,7 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
 //    }
 
     @Override
-    public <T extends NutsComponent<V>, V> List<T> createAllSupported(Class<T> serviceType, V criteriaType) {
+    public <T extends NutsComponent, V> List<T> createAllSupported(Class<T> serviceType, V criteriaType) {
         checkSession();
         return model.createAllSupported(serviceType, criteriaType, session);
     }

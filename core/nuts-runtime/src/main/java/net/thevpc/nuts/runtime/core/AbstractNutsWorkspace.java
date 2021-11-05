@@ -24,7 +24,6 @@
 package net.thevpc.nuts.runtime.core;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.standalone.boot.DefaultNutsBootModel;
 import net.thevpc.nuts.spi.NutsSupportLevelContext;
 
 /**
@@ -38,7 +37,7 @@ public abstract class AbstractNutsWorkspace implements NutsWorkspace {
 
 
     @Override
-    public int getSupportLevel(NutsSupportLevelContext<NutsWorkspaceOptions> criteria) {
+    public int getSupportLevel(NutsSupportLevelContext criteria) {
         return DEFAULT_SUPPORT;
     }
 

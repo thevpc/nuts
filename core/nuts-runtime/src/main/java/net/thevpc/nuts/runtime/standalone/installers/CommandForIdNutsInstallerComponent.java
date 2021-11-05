@@ -130,7 +130,7 @@ public class CommandForIdNutsInstallerComponent implements NutsInstallerComponen
     }
 
     @Override
-    public int getSupportLevel(NutsSupportLevelContext<NutsDefinition> criteria) {
+    public int getSupportLevel(NutsSupportLevelContext criteria) {
         return DEFAULT_SUPPORT;
     }
 

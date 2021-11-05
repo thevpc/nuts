@@ -2529,7 +2529,24 @@ public class CoreIOUtils {
 //        }
 //    }
 
-    public static final int readFully(byte[] b, int off, int len, java.io.InputStream in) {
+    public static byte[] readBestEffort(int len, java.io.InputStream in) {
+        if (len < 0) {
+            throw new IndexOutOfBoundsException();
+        }
+        if(len==0){
+            return new byte[0];
+        }
+        byte[] buf=new byte[len];
+        int count= readBestEffort(buf,0,len,in);
+        if(count==len){
+            return buf;
+        }
+        byte[] buf2=new byte[count];
+        System.arraycopy(buf,0,buf2,0,count);
+        return buf2;
+    }
+
+    public static int readBestEffort(byte[] b, int off, int len, java.io.InputStream in) {
         if (len < 0)
             throw new IndexOutOfBoundsException();
         int n = 0;
@@ -2575,8 +2592,8 @@ public class CoreIOUtils {
                     try (java.io.InputStream in1 = Files.newInputStream(file1)) {
                         try (java.io.InputStream in2 = Files.newInputStream(file1)) {
                             while (true) {
-                                int c1 = readFully(b1, 0, b1.length, in1);
-                                int c2 = readFully(b2, 0, b2.length, in2);
+                                int c1 = readBestEffort(b1, 0, b1.length, in1);
+                                int c2 = readBestEffort(b2, 0, b2.length, in2);
                                 if (c1 != c2) {
                                     return false;
                                 }

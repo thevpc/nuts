@@ -99,7 +99,9 @@ public enum NutsTextStyleType implements NutsEnum {
             case "plain": {
                 return PLAIN;
             }
-            case "foregroundtruecolor": {
+            case "foregroundx":
+            case "foregroundtruecolor":
+            {
                 return FORE_TRUE_COLOR;
             }
             case "b":
@@ -110,7 +112,9 @@ public enum NutsTextStyleType implements NutsEnum {
                 return BACK_COLOR;
             }
             case "backtruecolor":
-            case "backgroundtruecolor": {
+            case "backgroundx":
+            case "backgroundtruecolor":
+            {
                 return BACK_TRUE_COLOR;
 
             }
@@ -137,7 +141,9 @@ public enum NutsTextStyleType implements NutsEnum {
             case "blink": {
                 return BLINK;
             }
-            case "comments": {
+            case "comment":
+            case "comments":
+            {
                 return COMMENTS;
             }
             case "config": {
@@ -184,7 +190,9 @@ public enum NutsTextStyleType implements NutsEnum {
             case "striked": {
                 return STRIKED;
             }
-            case "separator": {
+            case "sep":
+            case "separator":
+            {
                 return SEPARATOR;
             }
             case "reversed": {

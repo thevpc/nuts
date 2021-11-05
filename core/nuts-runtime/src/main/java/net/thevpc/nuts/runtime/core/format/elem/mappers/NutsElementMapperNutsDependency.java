@@ -12,13 +12,13 @@ public class NutsElementMapperNutsDependency implements NutsElementMapper<NutsDe
         NutsSession session = context.getSession();
         if (o.getExclusions().length == 0) {
             //use compact form
-            if (context.elem().isNtf()) {
+            if (context.isNtf()) {
                 return NutsDependencyFormat.of(session).setNtf(true).setValue(o).format();
             } else {
 
                 return context.defaultDestruct(o.formatter()
                                 .setSession(session)
-                        .setNtf(context.elem().isNtf())
+                        .setNtf(context.isNtf())
                         .format(), null);
             }
         }
@@ -43,7 +43,7 @@ public class NutsElementMapperNutsDependency implements NutsElementMapper<NutsDe
 
         return context.defaultObjectToElement(
                 o.formatter().setSession(context.getSession())
-                .setNtf(context.elem().isNtf())
+                .setNtf(context.isNtf())
                 .format(), null);
 //                }
 //            }

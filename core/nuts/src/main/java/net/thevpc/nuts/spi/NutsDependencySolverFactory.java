@@ -34,7 +34,7 @@ import net.thevpc.nuts.*;
  * @since 0.8.3
  * @app.category Descriptor
  */
-public interface NutsDependencySolverFactory extends NutsComponent<Object> {
+public interface NutsDependencySolverFactory extends NutsComponent {
 
     NutsDependencySolver create(NutsSession session);
 

@@ -115,11 +115,6 @@ public class NutsCompressedPath extends NutsPathBase {
     }
 
     @Override
-    public String asString() {
-        return base.asString();
-    }
-
-    @Override
     public String getLocation() {
         return base.getLocation();
     }
@@ -150,7 +145,7 @@ public class NutsCompressedPath extends NutsPathBase {
     }
 
     @Override
-    public NutsPath[] getChildren() {
+    public NutsPath[] list() {
         return new NutsPath[0];
     }
 
@@ -315,7 +310,7 @@ public class NutsCompressedPath extends NutsPathBase {
         }
 
         @Override
-        public int getSupportLevel(NutsSupportLevelContext<Object> context) {
+        public int getSupportLevel(NutsSupportLevelContext context) {
             return DEFAULT_SUPPORT;
         }
     }

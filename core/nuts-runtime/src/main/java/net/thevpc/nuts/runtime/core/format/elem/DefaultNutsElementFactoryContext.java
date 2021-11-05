@@ -40,9 +40,21 @@ public class DefaultNutsElementFactoryContext implements NutsElementFactoryConte
 
     private DefaultNutsElements base;
     private final Map<String, Object> properties = new HashMap<>();
+    private boolean ntf;
 
     public DefaultNutsElementFactoryContext(DefaultNutsElements base) {
         this.base = base;
+        this.ntf = base.isNtf();
+    }
+
+    @Override
+    public boolean isNtf() {
+        return ntf;
+    }
+
+    public DefaultNutsElementFactoryContext setNtf(boolean ntf) {
+        this.ntf = ntf;
+        return this;
     }
 
     @Override

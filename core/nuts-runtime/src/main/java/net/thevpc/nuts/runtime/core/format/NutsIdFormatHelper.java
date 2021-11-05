@@ -502,7 +502,7 @@ public class NutsIdFormatHelper {
             case EXEC_ENTRY: {
                 if (def != null && def.getContent() != null && def.getContent().getPath() != null) {
                     List<NutsString> results = new ArrayList<NutsString>();
-                    for (NutsExecutionEntry entry : NutsExecutionEntries.of(session).parse(def.getContent().getFilePath())) {
+                    for (NutsExecutionEntry entry : NutsExecutionEntries.of(session).parse(def.getContent().getFile())) {
                         if (entry.isDefaultEntry()) {
                             //should all mark?
                             results.add(text.ofPlain(entry.getName()));

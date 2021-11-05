@@ -44,9 +44,9 @@ public interface NutsWorkspaceExtensionManager {
 
     Set<Class> discoverTypes(NutsId id, ClassLoader classLoader);
 
-    <T extends NutsComponent<B>, B> NutsServiceLoader<T, B> createServiceLoader(Class<T> serviceType, Class<B> criteriaType);
+    <T extends NutsComponent, B> NutsServiceLoader<T> createServiceLoader(Class<T> serviceType, Class<B> criteriaType);
 
-    <T extends NutsComponent<B>, B> NutsServiceLoader<T, B> createServiceLoader(Class<T> serviceType, Class<B> criteriaType, ClassLoader classLoader);
+    <T extends NutsComponent, B> NutsServiceLoader<T> createServiceLoader(Class<T> serviceType, Class<B> criteriaType, ClassLoader classLoader);
 
     /**
      * create supported extension implementation or return null.
@@ -58,9 +58,9 @@ public interface NutsWorkspaceExtensionManager {
      * @param supportCriteria context
      * @return valid instance or null if no extension implementation was found
      */
-    <T extends NutsComponent<V>, V> T createSupported(Class<T> type, boolean required, V supportCriteria);
+    <T extends NutsComponent, V> T createSupported(Class<T> type, boolean required, V supportCriteria);
 
-    <T extends NutsComponent<V>, V> List<T> createAllSupported(Class<T> type, V supportCriteria);
+    <T extends NutsComponent, V> List<T> createAllSupported(Class<T> type, V supportCriteria);
 
     <T> List<T> createAll(Class<T> type);
 

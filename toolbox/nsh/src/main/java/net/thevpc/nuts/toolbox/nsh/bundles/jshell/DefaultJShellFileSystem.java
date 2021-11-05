@@ -5,6 +5,9 @@
  */
 package net.thevpc.nuts.toolbox.nsh.bundles.jshell;
 
+import net.thevpc.nuts.NutsPath;
+import net.thevpc.nuts.NutsSession;
+
 import java.io.File;
 import java.nio.file.Paths;
 
@@ -15,32 +18,32 @@ import java.nio.file.Paths;
 public class DefaultJShellFileSystem implements JShellFileSystem {
 
     @Override
-    public String getInitialWorkingDir() {
+    public String getInitialWorkingDir(NutsSession session) {
         return System.getProperty("user.dir");
     }
 
     @Override
-    public String getHomeWorkingDir() {
+    public String getHomeWorkingDir(NutsSession session) {
         return System.getProperty("user.home");
     }
 
     @Override
-    public String getAbsolutePath(String path) {
-        return Paths.get(path).normalize().toString();
+    public String getAbsolutePath(String path, NutsSession session) {
+        return NutsPath.of(path,session).normalize().toString();
     }
 
     @Override
-    public boolean isAbsolute(String path) {
-        return new File(path).isAbsolute();
+    public boolean isAbsolute(String path, NutsSession session) {
+        return NutsPath.of(path,session).isAbsolute();
     }
 
     @Override
-    public boolean isDirectory(String path) {
-        return new File(path).isDirectory();
+    public boolean isDirectory(String path, NutsSession session) {
+        return NutsPath.of(path,session).isDirectory();
     }
 
     @Override
-    public boolean exists(String path) {
-        return new File(path).exists();
+    public boolean exists(String path, NutsSession session) {
+        return NutsPath.of(path,session).exists();
     }
 }

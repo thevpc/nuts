@@ -5,7 +5,7 @@ import net.thevpc.nuts.spi.NutsComponent;
 
 import java.io.InputStream;
 
-public interface NutsInputStreams extends NutsComponent<Object> {
+public interface NutsInputStreams extends NutsComponent {
     static NutsInputStreams of(NutsSession session) {
         NutsApiUtils.checkSession(session);
         return session.extensions().createSupported(NutsInputStreams.class, true, session);

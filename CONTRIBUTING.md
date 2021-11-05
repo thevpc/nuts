@@ -1,4 +1,4 @@
-# Contributing to Nuts
+ # Contributing to Nuts
 
 Thanks for your interest in `nuts`. 
 Our goal is to leverage the power of Java, Maven and Gradle to build a rock solid package manager.

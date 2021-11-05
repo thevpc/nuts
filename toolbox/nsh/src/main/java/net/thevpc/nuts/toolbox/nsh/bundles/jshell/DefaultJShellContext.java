@@ -172,13 +172,13 @@ public class DefaultJShellContext extends AbstractJShellContext {
     public void setCwd(String cwd) {
         JShellFileSystem fs = getFileSystem();
         if (cwd == null || cwd.isEmpty()) {
-            this.cwd = fs.getHomeWorkingDir();
+            this.cwd = fs.getHomeWorkingDir(getSession());
         } else {
             String r =
-                    fs.isAbsolute(cwd) ? cwd :
-                            fs.getAbsolutePath(this.cwd + "/" + cwd);
-            if (fs.exists(r)) {
-                if (fs.isDirectory(r)) {
+                    fs.isAbsolute(cwd,getSession()) ? cwd :
+                            fs.getAbsolutePath(this.cwd + "/" + cwd,getSession());
+            if (fs.exists(r,getSession())) {
+                if (fs.isDirectory(r,getSession())) {
                     this.cwd = r;
                 } else {
                     throw new IllegalArgumentException("not a directory : " + cwd);
@@ -197,7 +197,7 @@ public class DefaultJShellContext extends AbstractJShellContext {
     @Override
     public void setFileSystem(JShellFileSystem fileSystem) {
         this.fileSystem = fileSystem;
-        setCwd(this.fileSystem.getInitialWorkingDir());
+        setCwd(this.fileSystem.getInitialWorkingDir(getSession()));
     }
 
     @Override

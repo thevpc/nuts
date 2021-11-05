@@ -31,7 +31,6 @@ import net.thevpc.nuts.spi.NutsComponentScopeType;
 import net.thevpc.nuts.toolbox.nsh.SimpleNshBuiltin;
 import net.thevpc.nuts.toolbox.nsh.bundles.BytesSizeFormat;
 
-import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -115,7 +114,7 @@ public class LsCommand extends SimpleNshBuiltin {
                 if (!file.isDirectory() || options.d) {
                     g.file = build(file);
                 } else {
-                    NutsPath[] children = file.getChildren();
+                    NutsPath[] children = file.list();
                     if (children != null) {
                         Arrays.sort(children, FILE_SORTER);
                         g.children = new ArrayList<>();

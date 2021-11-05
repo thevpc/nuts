@@ -1,13 +1,12 @@
 package net.thevpc.nuts.runtime.core.filters.id;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.core.NutsWorkspaceExt;
 import net.thevpc.nuts.runtime.core.filters.InternalNutsTypedFilters;
 import net.thevpc.nuts.runtime.core.filters.NutsPatternIdFilter;
 import net.thevpc.nuts.runtime.bundles.io.NutsInstallStatusIdFilter;
 
 import java.util.List;
-import net.thevpc.nuts.runtime.core.filters.DefaultNutsFilterModel;
+
 import net.thevpc.nuts.spi.NutsSupportLevelContext;
 
 public class InternalNutsIdFilters extends InternalNutsTypedFilters<NutsIdFilter> implements NutsIdFilters {
@@ -131,7 +130,7 @@ public class InternalNutsIdFilters extends InternalNutsTypedFilters<NutsIdFilter
     }
 
     @Override
-    public int getSupportLevel(NutsSupportLevelContext<Object> context) {
+    public int getSupportLevel(NutsSupportLevelContext context) {
         return DEFAULT_SUPPORT;
     }
 }

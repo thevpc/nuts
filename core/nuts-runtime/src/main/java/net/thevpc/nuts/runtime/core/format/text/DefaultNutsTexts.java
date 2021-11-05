@@ -19,8 +19,8 @@ import java.util.*;
 public class DefaultNutsTexts implements NutsTexts {
 
     private final NutsWorkspace ws;
-    private NutsSession session;
     private final DefaultNutsTextManagerModel shared;
+    private NutsSession session;
 
     public DefaultNutsTexts(NutsSession session) {
         this.session = session;
@@ -166,7 +166,7 @@ public class DefaultNutsTexts implements NutsTexts {
             return ofStyled(t.toString(), NutsTextStyle.path());
         }
         if (t instanceof Throwable) {
-            return ofStyled(
+            return applyStyles(
                     toText(CoreStringUtils.exceptionToMessage((Throwable) t)),
                     NutsTextStyle.error()
             );
@@ -198,14 +198,14 @@ public class DefaultNutsTexts implements NutsTexts {
     }
 
     @Override
-    public NutsTextStyled ofStyled(String other, NutsTextStyles decorations) {
-        return ofStyled(ofPlain(other), decorations);
+    public NutsTextStyled ofStyled(String other, NutsTextStyles styles) {
+        return ofStyled(ofPlain(other), styles);
     }
 
     @Override
-    public NutsTextStyled ofStyled(NutsString other, NutsTextStyles decorations) {
+    public NutsTextStyled ofStyled(NutsString other, NutsTextStyles styles) {
         checkSession();
-        return ofStyled(other.toText(), decorations);
+        return ofStyled(other.toText(), styles);
     }
 
     @Override
@@ -214,24 +214,44 @@ public class DefaultNutsTexts implements NutsTexts {
     }
 
     @Override
-    public NutsTextStyled ofStyled(String other, NutsTextStyle decorations) {
-        return ofStyled(ofPlain(other), decorations);
+    public NutsText applyStyles(NutsText other, NutsTextStyles styles) {
+        return createStyledOrPlain(other, styles, true);
     }
 
     @Override
-    public NutsTextStyled ofStyled(NutsString other, NutsTextStyle decorations) {
-        return ofStyled(other.toText(), decorations);
+    public NutsText applyStyles(NutsText other, NutsTextStyle... styles) {
+        return applyStyles(other, NutsTextStyles.of(styles));
+    }
+
+    @Override
+    public NutsText applyStyles(NutsString other, NutsTextStyles styles) {
+        return createStyledOrPlain(other.toText(), styles, true);
+    }
+
+    @Override
+    public NutsText applyStyles(NutsString other, NutsTextStyle... styles) {
+        return applyStyles(other, NutsTextStyles.of(styles));
+    }
+
+    @Override
+    public NutsTextStyled ofStyled(String other, NutsTextStyle styles) {
+        return ofStyled(ofPlain(other), styles);
+    }
+
+    @Override
+    public NutsTextStyled ofStyled(NutsString other, NutsTextStyle styles) {
+        return ofStyled(other.toText(), styles);
     }
 
     /**
      * this is the default theme!
      *
      * @param other         other
-     * @param textNodeStyle textNodeStyle
+     * @param styles textNodeStyle
      * @return NutsText
      */
-    public NutsTextStyled ofStyled(NutsText other, NutsTextStyle textNodeStyle) {
-        return createStyled(other, NutsTextStyles.of(textNodeStyle), true);
+    public NutsTextStyled ofStyled(NutsText other, NutsTextStyle styles) {
+        return createStyled(other, NutsTextStyles.of(styles), true);
     }
 
     @Override
@@ -446,67 +466,20 @@ public class DefaultNutsTexts implements NutsTexts {
         return ss;
     }
 
+    public NutsText createStyledOrPlain(NutsText child, NutsTextStyles textStyles, boolean completed) {
+        if (textStyles == null || textStyles.isPlain()) {
+            return child;
+        }
+        return createStyled(child, textStyles, completed);
+    }
+
     public NutsTextStyled createStyled(NutsText child, NutsTextStyles textStyles, boolean completed) {
-        NutsText curr = child;
         if (textStyles == null || textStyles.isPlain()) {
             return createStyled("", "", child, textStyles, completed);
         }
-        for (int i = textStyles.size() - 1; i >= 0; i--) {
-            NutsTextStyle textStyle = textStyles.get(i);
-            NutsTextStyles textStyle2 = NutsTextStyles.of(textStyle);
-            String svar = textStyle.getVariant() == 0 ? "" : ("" + textStyle.getVariant());
-            switch (textStyle.getType()) {
-                case PRIMARY: {
-                    curr = createStyled("##:p" + svar + ":", "##", curr, textStyle2, completed);
-                    break;
-                }
-                case SECONDARY: {
-                    curr = createStyled("##:s" + svar + ":", "##", curr, textStyle2, completed);
-                    break;
-                }
-                case UNDERLINED: {
-                    curr = createStyled("##:_:", "##", curr, textStyle2, completed);
-                    break;
-                }
-                case BLINK: {
-                    curr = createStyled("##:%:", "##", curr, textStyle2, completed);
-                    break;
-                }
-                case ITALIC: {
-                    curr = createStyled("##:/:", "##", curr, textStyle2, completed);
-                    break;
-                }
-                case BOLD: {
-                    curr = createStyled("##:+:", "##", curr, textStyle2, completed);
-                    break;
-                }
-                case REVERSED: {
-                    curr = createStyled("##:!:", "##", curr, textStyle2, completed);
-                    break;
-                }
-                case FORE_COLOR: {
-                    String s = Integer.toString(textStyle.getVariant(), 16);
-                    while (s.length() < 8) {
-                        s = "0" + s;
-                    }
-                    curr = createStyled("##:f" + s + ":", "##", curr, textStyle2, completed);
-                    break;
-                }
-                case BACK_COLOR: {
-                    String s = Integer.toString(textStyle.getVariant(), 16);
-                    while (s.length() < 8) {
-                        s = "0" + s;
-                    }
-                    curr = createStyled("##:b" + svar + ":", "##", curr, textStyle2, completed);
-                    break;
-                }
-                default: {
-                    curr = createStyled("##:" + textStyle.getType().toString().toUpperCase() + ":", "##", curr, textStyle2, completed);
-                }
-            }
-        }
-        return (NutsTextStyled) curr;
+        return createStyled("##:" + textStyles.id() + ":", "##", child, textStyles, completed);
     }
+
 
     public NutsTextStyled createStyled(String start, String end, NutsText child, NutsTextStyles textStyle, boolean completed) {
         if (textStyle == null) {
@@ -542,7 +515,8 @@ public class DefaultNutsTexts implements NutsTexts {
     }
 
     @Override
-    public int getSupportLevel(NutsSupportLevelContext<Object> context) {
+    public int getSupportLevel(NutsSupportLevelContext context) {
         return DEFAULT_SUPPORT;
     }
+
 }

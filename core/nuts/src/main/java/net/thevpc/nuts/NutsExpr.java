@@ -2,7 +2,7 @@ package net.thevpc.nuts;
 
 import net.thevpc.nuts.spi.NutsComponent;
 
-public interface NutsExpr extends NutsComponent<Object> {
+public interface NutsExpr extends NutsComponent {
     static NutsExpr of(NutsSession session){
         return session.extensions().createSupported(NutsExpr.class, true, null);
     }

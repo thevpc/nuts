@@ -8,7 +8,7 @@ import java.util.Collection;
 /**
  * @app.category Format
  */
-public interface NutsTexts extends NutsComponent<Object> {
+public interface NutsTexts extends NutsComponent {
     static NutsTexts of(NutsSession session) {
         NutsApiUtils.checkSession(session);
         return session.extensions().createSupported(NutsTexts.class,true,null);
@@ -30,17 +30,37 @@ public interface NutsTexts extends NutsComponent<Object> {
 
     NutsTextList ofList(Collection<NutsText> nodes);
 
-    NutsTextStyled ofStyled(String other, NutsTextStyles decorations);
+    NutsTextStyled ofStyled(String other, NutsTextStyles styles);
 
-    NutsTextStyled ofStyled(NutsString other, NutsTextStyles decorations);
+    NutsTextStyled ofStyled(NutsString other, NutsTextStyles styles);
 
-    NutsTextStyled ofStyled(NutsText other, NutsTextStyles decorations);
+    NutsTextStyled ofStyled(NutsText other, NutsTextStyles styles);
 
-    NutsTextStyled ofStyled(String other, NutsTextStyle decorations);
+    /**
+     * apply style to the given text or return it as is if no style is to be applied.
+     * @param other text to apply style to.
+     * @param styles styles to apply
+     * @return the given text with the applied style
+     */
+    NutsText applyStyles(NutsText other, NutsTextStyles styles);
 
-    NutsTextStyled ofStyled(NutsString other, NutsTextStyle decorations);
+    NutsText applyStyles(NutsText other, NutsTextStyle ...styles);
 
-    NutsTextStyled ofStyled(NutsText other, NutsTextStyle decorations);
+    /**
+     * apply style to the given text or return it as is if no style is to be applied.
+     * @param other text to apply style to.
+     * @param styles styles to apply
+     * @return the given text with the applied style
+     */
+    NutsText applyStyles(NutsString other, NutsTextStyles styles);
+
+    NutsText applyStyles(NutsString other, NutsTextStyle ... styles);
+
+    NutsTextStyled ofStyled(String other, NutsTextStyle styles);
+
+    NutsTextStyled ofStyled(NutsString other, NutsTextStyle styles);
+
+    NutsTextStyled ofStyled(NutsText other, NutsTextStyle styles);
 
     NutsTextCommand ofCommand(NutsTerminalCommand command);
 

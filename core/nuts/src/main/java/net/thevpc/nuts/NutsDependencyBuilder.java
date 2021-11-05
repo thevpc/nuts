@@ -39,7 +39,7 @@ import java.util.Map;
  * @app.category Descriptor
  * @since 0.5.4
  */
-public interface NutsDependencyBuilder extends NutsComponent<Object> {
+public interface NutsDependencyBuilder extends NutsComponent {
 
     static NutsDependencyBuilder of(NutsSession session) {
         NutsApiUtils.checkSession(session);

@@ -38,7 +38,7 @@ import java.nio.file.Path;
  * @author thevpc
  * @app.category Toolkit
  */
-public interface NutsInputStreamMonitor extends NutsComponent<Object> {
+public interface NutsInputStreamMonitor extends NutsComponent {
     static NutsInputStreamMonitor of(NutsSession session) {
         NutsApiUtils.checkSession(session);
         return session.extensions().createSupported(NutsInputStreamMonitor.class, true, null);

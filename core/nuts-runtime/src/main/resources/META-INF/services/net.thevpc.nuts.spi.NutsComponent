@@ -51,6 +51,8 @@ net.thevpc.nuts.runtime.core.format.props.DefaultNutsPropertiesFormat
 net.thevpc.nuts.runtime.core.format.table.DefaultTableFormat
 net.thevpc.nuts.runtime.core.format.tree.DefaultNutsTreeFormat
 
+net.thevpc.nuts.runtime.core.io.DefaultNutsContentTypeResolver
+net.thevpc.nuts.runtime.core.io.DefaultNutsContentTypes
 
 net.thevpc.nuts.runtime.standalone.io.DefaultNutsExecutionEntries
 net.thevpc.nuts.runtime.standalone.io.DefaultNutsHash
@@ -96,6 +98,18 @@ net.thevpc.nuts.runtime.core.format.elem.DefaultNutsElements
 net.thevpc.nuts.runtime.core.format.text.DefaultNutsTexts
 
 net.thevpc.nuts.runtime.standalone.solvers.DefaultNutsDependencySolvers
+
+
+net.thevpc.nuts.runtime.core.format.text.highlighters.JavaCodeHighlighter
+net.thevpc.nuts.runtime.core.format.text.highlighters.BashCodeHighlighter
+net.thevpc.nuts.runtime.core.format.text.highlighters.FishCodeHighlighter
+net.thevpc.nuts.runtime.core.format.text.highlighters.HadraCodeHighlighter
+net.thevpc.nuts.runtime.core.format.text.highlighters.JsonCodeHighlighter
+net.thevpc.nuts.runtime.core.format.text.highlighters.NtfCodeHighlighter
+net.thevpc.nuts.runtime.core.format.text.highlighters.XmlCodeHighlighter
+net.thevpc.nuts.runtime.core.format.text.highlighters.WinCmdBlocTextHighlighter
+net.thevpc.nuts.runtime.core.format.text.highlighters.CppCodeHighlighter
+net.thevpc.nuts.runtime.core.format.text.highlighters.PlainCodeHighlighter
 
 ##################### Settings Subcommands!
 

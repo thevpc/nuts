@@ -7,7 +7,7 @@ import net.thevpc.nuts.spi.NutsDependencySolverFactory;
 
 public class GradleFirstNutsDependencySolverFactory implements NutsDependencySolverFactory {
     @Override
-    public int getSupportLevel(NutsSupportLevelContext<Object> context) {
+    public int getSupportLevel(NutsSupportLevelContext context) {
         return 1;
     }
 

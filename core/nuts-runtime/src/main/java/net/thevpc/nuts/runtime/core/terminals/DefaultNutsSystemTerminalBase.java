@@ -104,7 +104,7 @@ public class DefaultNutsSystemTerminalBase implements NutsSystemTerminalBase {
 //    }
 
     @Override
-    public int getSupportLevel(NutsSupportLevelContext<NutsTerminalSpec> criteria) {
+    public int getSupportLevel(NutsSupportLevelContext criteria) {
         this.session = criteria.getSession();
         this.workspace = session.getWorkspace();
         if (workspace != null) {

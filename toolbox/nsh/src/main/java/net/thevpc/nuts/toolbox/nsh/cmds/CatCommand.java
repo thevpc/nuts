@@ -62,16 +62,16 @@ public class CatCommand extends SimpleNshBuiltin {
         if (commandLine.next("-") != null) {
             options.files.add(null);
             return true;
-        } else if ((a = commandLine.next("-n", "--number")) != null) {
+        } else if ((a = commandLine.nextBoolean("-n", "--number")) != null) {
             options.n = a.getValue().getBoolean();
             return true;
-        } else if ((a = commandLine.next("-t", "--show-tabs")) != null) {
+        } else if ((a = commandLine.nextBoolean("-t", "--show-tabs")) != null) {
             options.T = a.getValue().getBoolean();
             return true;
-        } else if ((a = commandLine.next("-E", "--show-ends")) != null) {
+        } else if ((a = commandLine.nextBoolean("-E", "--show-ends")) != null) {
             options.E = a.getValue().getBoolean();
             return true;
-        } else if ((a = commandLine.next("-H", "--highlighter")) != null) {
+        } else if ((a = commandLine.next("-H", "--highlight", "--highlighter")) != null) {
             options.highlighter = NutsUtilStrings.trim(a.getValue().getString());
             return true;
         } else if (!commandLine.peek().isOption()) {
@@ -108,6 +108,8 @@ public class CatCommand extends SimpleNshBuiltin {
                     in = context.in();
                     if (f.getHighlighter() == null) {
                         f.setHighlighter("plain");
+                    }else if(f.getHighlighter().isEmpty()){
+                        f.setHighlighter("ntf");
                     }
                 } else {
                     in = f.getFile().getInputStream();
@@ -193,7 +195,7 @@ public class CatCommand extends SimpleNshBuiltin {
     }
 
     private void catText(InputStream in, OutputStream os, Options options, SimpleNshCommandContext context, FileInfo info) throws IOException {
-        if (info.getHighlighter() == null || "plain".equalsIgnoreCase(info.getHighlighter()) || "text".equalsIgnoreCase(info.getHighlighter())) {
+        if (info.getHighlighter() == null/* || "plain".equalsIgnoreCase(info.getHighlighter()) || "text".equalsIgnoreCase(info.getHighlighter())*/) {
             if (!options.n && !options.T && !options.E) {
                 _IOUtils.copy(in, os, 4096 * 2);
                 return;

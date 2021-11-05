@@ -50,18 +50,15 @@ public class ZipDescriptorContentParserComponent implements NutsDescriptorConten
             "WEB-INF/" + NutsConstants.Files.DESCRIPTOR_FILE_NAME,
             "APP-INF/" + NutsConstants.Files.DESCRIPTOR_FILE_NAME
     ));
-    public static final Set<String> POSSIBLE_EXT = new HashSet<>(Arrays.asList("zip", "gzip", "gz"));
+    public static final Set<String> POSSIBLE_EXT = new HashSet<>(Arrays.asList("zip", "gzip", "gz","war","ear"));
 
     @Override
-    public int getSupportLevel(NutsSupportLevelContext<NutsDescriptorContentParserContext> criteria) {
-        String e = NutsUtilStrings.trim(criteria.getConstraints().getFileExtension());
-        switch (e) {
-            case "zip":
-            case "gzip":
-            case "jar":
-            case "war":
-            case "ear": {
-                return DEFAULT_SUPPORT;
+    public int getSupportLevel(NutsSupportLevelContext criteria) {
+        NutsDescriptorContentParserContext constraints = criteria.getConstraints(NutsDescriptorContentParserContext.class);
+        if(constraints!=null) {
+            String e = NutsUtilStrings.trim(constraints.getFileExtension());
+            if (!POSSIBLE_EXT.contains(e)) {
+                return NO_SUPPORT;
             }
         }
         return NO_SUPPORT;
@@ -69,7 +66,8 @@ public class ZipDescriptorContentParserComponent implements NutsDescriptorConten
 
     @Override
     public NutsDescriptor parse(NutsDescriptorContentParserContext parserContext) {
-        if (!POSSIBLE_EXT.contains(parserContext.getFileExtension())) {
+        String e = NutsUtilStrings.trim(parserContext.getFileExtension());
+        if (!POSSIBLE_EXT.contains(e)) {
             return null;
         }
         ByteArrayOutputStream buffer = new ByteArrayOutputStream();
@@ -79,8 +77,8 @@ public class ZipDescriptorContentParserComponent implements NutsDescriptorConten
                 return NutsDescriptorParser.of(session)
                         .parse(buffer.toByteArray());
             }
-        } catch (IOException e) {
-            throw new UncheckedIOException(e);
+        } catch (IOException ex) {
+            throw new NutsIOException(parserContext.getSession(),ex);
         }
         return null;
     }

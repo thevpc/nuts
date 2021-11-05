@@ -26,9 +26,7 @@
  */
 package net.thevpc.nuts.spi;
 
-import net.thevpc.nuts.NutsDefinition;
 import net.thevpc.nuts.NutsExecutionContext;
-import net.thevpc.nuts.spi.NutsComponent;
 
 /**
  * Component responsible of installing other artifacts.
@@ -36,7 +34,7 @@ import net.thevpc.nuts.spi.NutsComponent;
  * @since 0.5.4
  * @app.category SPI Base
  */
-public interface NutsInstallerComponent extends NutsComponent<NutsDefinition> {
+public interface NutsInstallerComponent extends NutsComponent {
 
     /**
      * install artifact

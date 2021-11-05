@@ -35,7 +35,7 @@ public class DefaultNutsDependencySolvers implements NutsDependencySolvers {
     }
 
     @Override
-    public int getSupportLevel(NutsSupportLevelContext<Object> context) {
+    public int getSupportLevel(NutsSupportLevelContext context) {
         return DEFAULT_SUPPORT;
     }
 }

@@ -48,7 +48,7 @@ public class ProcessExecutorComponent implements NutsExecutorComponent {
     }
 
     @Override
-    public int getSupportLevel(NutsSupportLevelContext<NutsDefinition> nutsDefinition) {
+    public int getSupportLevel(NutsSupportLevelContext nutsDefinition) {
         this.ws=nutsDefinition.getSession();
         if(ID==null){
             ID=NutsId.of("net.thevpc.nuts.exec:exec-native",ws);

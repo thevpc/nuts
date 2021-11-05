@@ -9,7 +9,7 @@ import java.net.URL;
 import java.nio.file.Path;
 
 @NutsComponentScope(NutsComponentScopeType.WORKSPACE)
-public interface NutsPaths extends NutsComponent<Object> {
+public interface NutsPaths extends NutsComponent {
     static NutsPaths of(NutsSession session){
         NutsApiUtils.checkSession(session);
         return session.extensions().createSupported(NutsPaths.class, true, session);

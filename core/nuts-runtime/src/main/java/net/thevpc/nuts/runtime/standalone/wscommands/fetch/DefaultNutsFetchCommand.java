@@ -290,7 +290,7 @@ public class DefaultNutsFetchCommand extends AbstractNutsFetchCommand {
                                         .setDescriptor(foundDefinition.getDescriptor())
                                         .setSession(this.session.copy().setConfirm(NutsConfirmationMode.YES))
                                         //.setFetchMode(mode)
-                                        .setContent(foundDefinition.getContent().getFilePath())
+                                        .setContent(foundDefinition.getContent().getFile())
                                         .run();
 
                             }
@@ -362,7 +362,7 @@ public class DefaultNutsFetchCommand extends AbstractNutsFetchCommand {
                         .setFetchMode(mode)
                         .getResult();
                 if (content != null) {
-                    if (content.getFilePath() == null) {
+                    if (content.getFile() == null) {
                         content = repoSPI.fetchContent()
                                 .setId(id1).setDescriptor(foundDefinition.getDescriptor())
                                 .setLocalPath(copyTo == null ? null : copyTo.toString())
@@ -371,7 +371,7 @@ public class DefaultNutsFetchCommand extends AbstractNutsFetchCommand {
                                 .getResult();
                     }
                     foundDefinition.setContent(content);
-                    foundDefinition.setDescriptor(resolveExecProperties(foundDefinition.getDescriptor(), content.getFilePath()));
+                    foundDefinition.setDescriptor(resolveExecProperties(foundDefinition.getDescriptor(), content.getFile()));
                     return true;
                 }
             } catch (NutsNotFoundException ex) {
@@ -392,7 +392,7 @@ public class DefaultNutsFetchCommand extends AbstractNutsFetchCommand {
                     .setFetchMode(repo.getFetchMode())
                     .getResult();
             if (content != null) {
-                if (content.getFilePath() == null) {
+                if (content.getFile() == null) {
                     content = repoSPI.fetchContent()
                             .setId(id1).setDescriptor(foundDefinition.getDescriptor())
                             .setLocalPath(copyTo == null ? null : copyTo.toString())
@@ -401,7 +401,7 @@ public class DefaultNutsFetchCommand extends AbstractNutsFetchCommand {
                             .getResult();
                 }
                 foundDefinition.setContent(content);
-                foundDefinition.setDescriptor(resolveExecProperties(foundDefinition.getDescriptor(), content.getFilePath()));
+                foundDefinition.setDescriptor(resolveExecProperties(foundDefinition.getDescriptor(), content.getFile()));
                 return true;
             }
         } catch (NutsNotFoundException ex) {

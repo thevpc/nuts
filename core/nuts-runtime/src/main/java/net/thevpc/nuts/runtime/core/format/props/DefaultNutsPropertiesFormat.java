@@ -281,7 +281,7 @@ public class DefaultNutsPropertiesFormat extends DefaultFormatBase<NutsPropertie
     }
 
     @Override
-    public int getSupportLevel(NutsSupportLevelContext<Object> context) {
+    public int getSupportLevel(NutsSupportLevelContext context) {
         return DEFAULT_SUPPORT;
     }
 }

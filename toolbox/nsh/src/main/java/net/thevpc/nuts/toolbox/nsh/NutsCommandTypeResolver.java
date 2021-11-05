@@ -28,6 +28,8 @@ package net.thevpc.nuts.toolbox.nsh;
 
 import java.io.File;
 
+import net.thevpc.nuts.NutsPath;
+import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.toolbox.nsh.bundles.jshell.JShellContext;
 import net.thevpc.nuts.NutsExecutableInformation;
 import net.thevpc.nuts.toolbox.nsh.bundles.jshell.JShellCommandType;
@@ -49,11 +51,12 @@ public class NutsCommandTypeResolver implements JShellCommandTypeResolver {
         if (!item.startsWith("/")) {
             path = context.getCwd() + "/" + item;
         }
-        final NutsExecutableInformation w = context.getSession().exec().addCommand(item).which();
+        NutsSession session = context.getSession();
+        final NutsExecutableInformation w = session.exec().addCommand(item).which();
         if (w != null) {
             return new JShellCommandType(item, "nuts " + w.getType().toString().toLowerCase(), w.getValue(), w.getDescription());
         }
-        if (new File(path).isFile()) {
+        if (NutsPath.of(path, session).isFile()) {
             return new JShellCommandType(item, "path", path, item + " is " + path);
         }
         return null;

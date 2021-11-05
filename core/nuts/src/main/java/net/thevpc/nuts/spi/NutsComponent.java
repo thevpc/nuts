@@ -37,11 +37,10 @@ package net.thevpc.nuts.spi;
  * Implementations with higher support level are selected first.
  *
  *
- * @param <CriteriaType> support criteria type
  * @since 0.5.4
  * @app.category SPI Base
  */
-public interface NutsComponent<CriteriaType> {
+public interface NutsComponent {
 
     /**
      * minimum support level for user defined implementations.
@@ -62,5 +61,5 @@ public interface NutsComponent<CriteriaType> {
      * @param context evaluation context
      * @return support level value
      */
-    int getSupportLevel(NutsSupportLevelContext<CriteriaType> context);
+    int getSupportLevel(NutsSupportLevelContext context);
 }

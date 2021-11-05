@@ -34,12 +34,14 @@ public class StyledParserStepCommandParser {
                 if (readEnd(r)) {
                     break;
                 }
-                NutsTextStyle s = readNext(r);
+                NutsTextStyles s = readNextStyles(r);
                 if (s == null) {
                     //this is an invalid style string hence add
                     return null;
                 } else {
-                    parsedStyles.add(s);
+                    for (NutsTextStyle ss : s) {
+                        parsedStyles.add(ss);
+                    }
                 }
             }
         } else {
@@ -98,9 +100,9 @@ public class StyledParserStepCommandParser {
         return false;
     }
 
-    public NutsTextStyle parseSimpleNutsTextStyle(String str) {
+    public NutsTextStyles parseSimpleNutsTextStyles(String str) {
         StringReaderExt e = new StringReaderExt(str);
-        NutsTextStyle a = readNext(e);
+        NutsTextStyles a = readNextStyles(e);
         if (a == null) {
             return null;
         }
@@ -145,7 +147,25 @@ public class StyledParserStepCommandParser {
         return null;
     }
 
-    private NutsTextStyle readNext(StringReaderExt r) {
+    private NutsTextStyles readNextStyles(StringReaderExt r) {
+        List<NutsTextStyle> all=new ArrayList<>();
+        NutsTextStyle s=readNextStyle(r);
+        if(s!=null) {
+            all.add(s);
+            while (s!=null && r.hasNext()) {
+                if (',' == r.peekChar()) {
+                    r.nextChar();
+                }
+                s = readNextStyle(r);
+            }
+        }
+        if(all.isEmpty()){
+            return null;
+        }
+        return NutsTextStyles.of(all.toArray(all.toArray(new NutsTextStyle[0])));
+    }
+
+    private NutsTextStyle readNextStyle(StringReaderExt r) {
         if (r.hasNext()) {
             char c = r.peekChar();
             switch (c) {

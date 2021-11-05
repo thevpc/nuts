@@ -38,7 +38,7 @@ import java.nio.file.Path;
  * @since 0.5.8
  * @app.category Input Output
  */
-public interface NutsRm extends NutsComponent<Object> {
+public interface NutsRm extends NutsComponent {
     static NutsRm of(NutsSession session) {
         NutsApiUtils.checkSession(session);
         return session.extensions().createSupported(NutsRm.class, true, null);

@@ -37,7 +37,7 @@ import java.util.Map;
  * @app.category Descriptor
  * @since 0.8.3
  */
-public interface NutsEnvConditionBuilder extends Serializable, NutsComponent<Object> {
+public interface NutsEnvConditionBuilder extends Serializable, NutsComponent {
 
     static NutsEnvConditionBuilder of(NutsSession session) {
         NutsApiUtils.checkSession(session);

@@ -28,7 +28,6 @@ package net.thevpc.nuts.spi;
 
 import net.thevpc.nuts.NutsAddRepositoryOptions;
 import net.thevpc.nuts.NutsRepository;
-import net.thevpc.nuts.NutsRepositoryConfig;
 import net.thevpc.nuts.NutsSession;
 
 /**
@@ -37,7 +36,7 @@ import net.thevpc.nuts.NutsSession;
  * @since 0.5.4
  * @app.category SPI Base
  */
-public interface NutsRepositoryFactoryComponent extends NutsComponent<NutsRepositoryConfig> {
+public interface NutsRepositoryFactoryComponent extends NutsComponent {
 
     NutsAddRepositoryOptions[] getDefaultRepositories(NutsSession session);
 

@@ -13,7 +13,7 @@ import net.thevpc.nuts.spi.NutsComponent;
  *
  * @author thevpc
  */
-public interface NutsSettingsSubCommand extends NutsComponent<Object> {
+public interface NutsSettingsSubCommand extends NutsComponent {
 
     /**
      * execute command and return true.

@@ -14,7 +14,7 @@ website : [https://thevpc.github.io/nuts](https://thevpc.github.io/nuts)
 
 Unlike maven which resolves dependencies at compile time, ```nuts``` solves dependencies and builds the classpath at install time and, as a result, saves disk and bandwidth by downloading and caching only libraries required for the current environment and share them between multiple installed applications.
 
-```nuts``` is unique in that it reuses maven and other build tool descriptor formats to solve dependency graph, and as a result, it does not, whatsoever, have any requirement on existing maven created packages.
+```nuts``` is unique in that it reuses maven and other build tool descriptor formats to solve dependency graph, and does not, whatsoever, have any requirement on existing maven created packages.
 
 ```nuts``` is the ultimate solution to get rid of the ugly lib jars, fat-jars, uber-jars and one-jars used for deploying java applications.
 
@@ -97,13 +97,13 @@ nuts update
 To install a command using **nuts** just type
 
 ```
-nuts install <artifact-id>
+nuts install <package>
 ```
 
 To run an artifact using **nuts** just type
 
 ```
-nuts <artifact-id>
+nuts <package>
 ```
 
 Several commands are available, and you can always manually run any java and non java application. More info is available in the Nuts official website : [https://thevpc.github.io/nuts](https://thevpc.github.io/nuts).

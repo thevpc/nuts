@@ -38,7 +38,7 @@ public abstract class AbstractNutsAuthenticationAgent implements NutsAuthenticat
     }
 
     @Override
-    public int getSupportLevel(NutsSupportLevelContext<String> authenticationAgent) {
+    public int getSupportLevel(NutsSupportLevelContext authenticationAgent) {
         return supportLevel;
     }
 

@@ -59,4 +59,6 @@ public interface NutsElementFactoryContext {
 
     Object defaultElementToObject(NutsElement o, Type type);
 
+    boolean isNtf();
+
 }

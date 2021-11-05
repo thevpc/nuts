@@ -37,7 +37,7 @@ import java.io.InputStream;
  * @app.category Input Output
  */
 @NutsComponentScope(NutsComponentScopeType.WORKSPACE)
-public interface NutsTerminals extends NutsComponent<Object> {
+public interface NutsTerminals extends NutsComponent {
     static NutsTerminals of(NutsSession session) {
         NutsApiUtils.checkSession(session);
         return session.extensions().createSupported(NutsTerminals.class, true, null);

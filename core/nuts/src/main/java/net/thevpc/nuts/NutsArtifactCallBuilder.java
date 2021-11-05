@@ -39,7 +39,7 @@ import java.util.Map;
  * @app.category Base
  * @since 0.5.4
  */
-public interface NutsArtifactCallBuilder extends Serializable, NutsComponent<Object> {
+public interface NutsArtifactCallBuilder extends Serializable, NutsComponent {
     static NutsArtifactCallBuilder of(NutsSession session) {
         NutsApiUtils.checkSession(session);
         return session.extensions().createSupported(NutsArtifactCallBuilder.class, true, null);

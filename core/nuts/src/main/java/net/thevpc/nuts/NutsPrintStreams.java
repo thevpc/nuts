@@ -6,7 +6,7 @@ import net.thevpc.nuts.spi.NutsComponent;
 import java.io.OutputStream;
 import java.io.Writer;
 
-public interface NutsPrintStreams extends NutsComponent<Object> {
+public interface NutsPrintStreams extends NutsComponent {
     static NutsPrintStreams of(NutsSession session) {
         NutsApiUtils.checkSession(session);
         return session.extensions().createSupported(NutsPrintStreams.class, true, session);

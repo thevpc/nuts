@@ -33,7 +33,7 @@ import java.io.InputStream;
  * @since 0.5.4
  * @app.category SPI Base
  */
-public interface NutsSystemTerminalBase extends NutsComponent<NutsTerminalSpec> {
+public interface NutsSystemTerminalBase extends NutsComponent {
     String readLine(NutsPrintStream out, NutsMessage message, NutsSession session);
 
     char[] readPassword(NutsPrintStream out, NutsMessage message, NutsSession session);

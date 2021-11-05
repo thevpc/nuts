@@ -243,15 +243,15 @@ public class DefaultNutsWorkspaceExtensionModel {
 //    public Set<Class> discoverTypes(ClassLoader classLoader, NutsSession session) {
 //        return objectFactory.discoverTypes(classLoader);
 //    }
-    public <T extends NutsComponent<B>, B> NutsServiceLoader<T, B> createServiceLoader(Class<T> serviceType, Class<B> criteriaType, NutsSession session) {
+    public <T extends NutsComponent, B> NutsServiceLoader<T> createServiceLoader(Class<T> serviceType, Class<B> criteriaType, NutsSession session) {
         return createServiceLoader(serviceType, criteriaType, null);
     }
 
-    public <T extends NutsComponent<B>, B> NutsServiceLoader<T, B> createServiceLoader(Class<T> serviceType, Class<B> criteriaType, ClassLoader classLoader, NutsSession session) {
+    public <T extends NutsComponent, B> NutsServiceLoader<T> createServiceLoader(Class<T> serviceType, Class<B> criteriaType, ClassLoader classLoader, NutsSession session) {
         return new DefaultNutsServiceLoader<T, B>(session, serviceType, criteriaType, classLoader);
     }
 
-    public <T extends NutsComponent<V>, V> T createSupported(Class<T> type, V supportCriteria, boolean required, NutsSession session) {
+    public <T extends NutsComponent, V> T createSupported(Class<T> type, V supportCriteria, boolean required, NutsSession session) {
         return objectFactory.createSupported(type, supportCriteria, required, session);
     }
 
@@ -259,7 +259,7 @@ public class DefaultNutsWorkspaceExtensionModel {
 //        return objectFactory.createSupported(type, supportCriteria, constructorParameterTypes, constructorParameters, required, session);
 //    }
 
-    public <T extends NutsComponent<V>, V> List<T> createAllSupported(Class<T> type, V supportCriteria, NutsSession session) {
+    public <T extends NutsComponent, V> List<T> createAllSupported(Class<T> type, V supportCriteria, NutsSession session) {
         return objectFactory.createAllSupported(type, supportCriteria, session);
     }
 //    public List<Class> resolveComponentTypesOld(Class o) {

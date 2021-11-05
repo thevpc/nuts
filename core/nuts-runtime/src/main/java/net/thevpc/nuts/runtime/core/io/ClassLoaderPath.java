@@ -31,11 +31,6 @@ public class ClassLoaderPath extends URLPath {
     }
 
     @Override
-    public String asString() {
-        return path;
-    }
-
-    @Override
     public String getLocation() {
         if (url != null) {
             return super.getLocation();

@@ -26,11 +26,9 @@
  */
 package net.thevpc.nuts.spi;
 
-import net.thevpc.nuts.NutsDefinition;
 import net.thevpc.nuts.NutsExecutionContext;
 import net.thevpc.nuts.NutsExecutionException;
 import net.thevpc.nuts.NutsId;
-import net.thevpc.nuts.spi.NutsComponent;
 
 /**
  * An Executor Component is responsible of "executing" a nuts package
@@ -39,7 +37,7 @@ import net.thevpc.nuts.spi.NutsComponent;
  * @since 0.5.4
  * @app.category SPI Base
  */
-public interface NutsExecutorComponent extends NutsComponent<NutsDefinition> {
+public interface NutsExecutorComponent extends NutsComponent {
 
     /**
      * artifact id

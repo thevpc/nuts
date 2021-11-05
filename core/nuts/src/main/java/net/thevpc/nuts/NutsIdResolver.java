@@ -35,7 +35,7 @@ import net.thevpc.nuts.spi.NutsComponent;
  * @app.category Descriptor
  * @since 0.8.3
  */
-public interface NutsIdResolver extends NutsComponent<Object> {
+public interface NutsIdResolver extends NutsComponent {
 
     static NutsIdResolver of(NutsSession session) {
         NutsApiUtils.checkSession(session);

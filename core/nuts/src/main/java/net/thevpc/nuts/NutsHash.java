@@ -41,7 +41,7 @@ import java.security.MessageDigest;
  * @app.category Input Output
  * @since 0.5.5
  */
-public interface NutsHash extends NutsComponent<Object> {
+public interface NutsHash extends NutsComponent {
     static NutsHash of(NutsSession session) {
         NutsApiUtils.checkSession(session);
         return session.extensions().createSupported(NutsHash.class, true, null);

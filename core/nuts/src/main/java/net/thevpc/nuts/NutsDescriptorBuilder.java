@@ -43,7 +43,7 @@ import java.util.function.UnaryOperator;
  * @app.category Descriptor
  * @since 0.5.4
  */
-public interface NutsDescriptorBuilder extends Serializable, NutsComponent<Object> {
+public interface NutsDescriptorBuilder extends Serializable, NutsComponent {
 
     static NutsDescriptorBuilder of(NutsSession session) {
         NutsApiUtils.checkSession(session);

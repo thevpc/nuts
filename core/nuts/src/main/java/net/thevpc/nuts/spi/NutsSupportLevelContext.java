@@ -31,14 +31,25 @@ import net.thevpc.nuts.NutsWorkspace;
 /**
  *
  * @author thevpc
- * @param <T> T
  * @app.category SPI Base
  */
-public interface NutsSupportLevelContext<T> {
+public interface NutsSupportLevelContext {
 
     NutsSession getSession();
 
     NutsWorkspace getWorkspace();
 
-    T getConstraints();
+    /**
+     * return constraints casted to T, throws CCE if not compatible
+     * @param <T> expected type
+     * @return constraints casted to T, throws CCE if not compatible
+     */
+    <T> T getConstraints();
+
+    /**
+     * return constraints casted to T, returns null if not compatible
+     * @param <T> expected type
+     * @return constraints casted to T, returns null if not compatible
+     */
+    <T> T getConstraints(Class<T> expected);
 }

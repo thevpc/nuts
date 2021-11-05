@@ -37,7 +37,7 @@ import java.util.ListIterator;
 /**
  * @app.category Command Line
  */
-public interface NutsCommandHistory extends NutsComponent<Object> {
+public interface NutsCommandHistory extends NutsComponent {
     static NutsCommandHistory of(NutsSession session){
         NutsApiUtils.checkSession(session);
         return session.extensions().createSupported(NutsCommandHistory.class, true, null);

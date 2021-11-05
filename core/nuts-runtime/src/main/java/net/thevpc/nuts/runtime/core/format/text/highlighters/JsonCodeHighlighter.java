@@ -33,9 +33,20 @@ public class JsonCodeHighlighter implements NutsCodeHighlighter {
     }
 
     @Override
-    public int getSupportLevel(NutsSupportLevelContext<String> context) {
+    public int getSupportLevel(NutsSupportLevelContext context) {
         String s = context.getConstraints();
-        return "json".equals(s) ? NutsComponent.DEFAULT_SUPPORT : NutsComponent.NO_SUPPORT;
+        if(s==null){
+            return DEFAULT_SUPPORT;
+        }
+        switch (s){
+            case "json":
+            case "application/json":
+            case "text/json":
+            {
+                return NutsComponent.DEFAULT_SUPPORT;
+            }
+        }
+        return NutsComponent.NO_SUPPORT;
     }
 
     @Override
@@ -103,7 +114,7 @@ public class JsonCodeHighlighter implements NutsCodeHighlighter {
                                 switch (txt) {
                                     case "true":
                                     case "false": {
-                                        d[0] = factory.ofStyled(d[0], NutsTextStyle.keyword());
+                                        d[0] = factory.applyStyles(d[0], NutsTextStyle.bool());
                                         break;
                                     }
                                 }

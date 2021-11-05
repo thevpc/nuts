@@ -28,7 +28,6 @@ package net.thevpc.nuts.toolbox.nsh;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.spi.NutsSupportLevelContext;
 import net.thevpc.nuts.toolbox.nsh.bundles._IOUtils;
-import net.thevpc.nuts.toolbox.nsh.bundles.jshell.JShell;
 import net.thevpc.nuts.toolbox.nsh.bundles.jshell.JShellException;
 import net.thevpc.nuts.toolbox.nsh.bundles.jshell.JShellExecutionContext;
 
@@ -63,7 +62,7 @@ public abstract class AbstractNshBuiltin implements NshBuiltin {
     }
 
     @Override
-    public int getSupportLevel(NutsSupportLevelContext<JShell> param) {
+    public int getSupportLevel(NutsSupportLevelContext param) {
         return supportLevel;
     }
 

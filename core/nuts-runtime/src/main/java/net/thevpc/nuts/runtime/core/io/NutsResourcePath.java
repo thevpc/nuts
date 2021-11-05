@@ -110,7 +110,7 @@ public class NutsResourcePath implements NutsPathSPI {
 
 
     @Override
-    public NutsPath[] getChildren() {
+    public NutsPath[] list() {
         //TODO : parse urls for children!
         return new NutsPath[0];
     }
@@ -246,11 +246,6 @@ public class NutsResourcePath implements NutsPathSPI {
             return up.getContentType();
         }
         return null;
-    }
-
-    @Override
-    public String asString() {
-        return path;
     }
 
     @Override

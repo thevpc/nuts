@@ -85,11 +85,11 @@ public class DefaultNutsWorkspaceFactory implements NutsWorkspaceFactory {
     }
 
     @Override
-    public <T extends NutsComponent<V>, V> T createSupported(Class<T> type, V supportCriteria, boolean required, NutsSession session) {
+    public <T extends NutsComponent> T createSupported(Class<T> type, Object supportCriteria, boolean required, NutsSession session) {
         List<T> list = createAll(type, session);
         int bestSupportLevel = Integer.MIN_VALUE;
         T bestObj = null;
-        NutsSupportLevelContext<V> context = new NutsDefaultSupportLevelContext<>(session, supportCriteria);
+        NutsSupportLevelContext context = new NutsDefaultSupportLevelContext(session, supportCriteria);
         for (T t : list) {
             int supportLevel = t.getSupportLevel(context);
             if (supportLevel > 0) {
@@ -142,7 +142,7 @@ public class DefaultNutsWorkspaceFactory implements NutsWorkspaceFactory {
 //    }
 
     @Override
-    public <T extends NutsComponent<V>, V> List<T> createAllSupported(Class<T> type, V supportCriteria, NutsSession session) {
+    public <T extends NutsComponent> List<T> createAllSupported(Class<T> type, Object supportCriteria, NutsSession session) {
         List<T> list = createAll(type, session);
         class TypeAndLevel {
             final T t;
@@ -154,7 +154,7 @@ public class DefaultNutsWorkspaceFactory implements NutsWorkspaceFactory {
             }
         }
         List<TypeAndLevel> r = new ArrayList<>();
-        NutsDefaultSupportLevelContext<V> context = new NutsDefaultSupportLevelContext<>(session, supportCriteria);
+        NutsDefaultSupportLevelContext context = new NutsDefaultSupportLevelContext(session, supportCriteria);
         for (Iterator<T> iterator = list.iterator(); iterator.hasNext(); ) {
             T t = iterator.next();
             int supportLevel = t.getSupportLevel(context);
@@ -182,9 +182,7 @@ public class DefaultNutsWorkspaceFactory implements NutsWorkspaceFactory {
         for (Object obj : instances.getAll(type)) {
             all.add((T) obj);
         }
-        LinkedHashSet<Class> allTypes = new LinkedHashSet<>();
-        allTypes.addAll(getExtensionTypes(type, session));
-        for (Class c : allTypes) {
+        for (Class c : getExtensionTypes(type, session)) {
             T obj = null;
             try {
                 obj = (T) resolveInstance(c, type, session);

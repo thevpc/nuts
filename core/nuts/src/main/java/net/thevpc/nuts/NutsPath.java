@@ -113,8 +113,6 @@ public interface NutsPath extends NutsFormattable {
 
     String getName();
 
-    String asString();
-
     String getLocation();
 
     NutsPath resolve(String other);
@@ -160,11 +158,11 @@ public interface NutsPath extends NutsFormattable {
     /**
      * return a valid local file
      *
-     * @return return a valid local file
+     * @return return a valid local file or null
      */
-    Path asFilePath();
+    Path asFile();
 
-    NutsPath[] getChildren();
+    NutsPath[] list();
 
     InputStream getInputStream();
 

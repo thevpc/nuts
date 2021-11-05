@@ -28,10 +28,23 @@ public class XmlCodeHighlighter implements NutsCodeHighlighter {
     }
 
     @Override
-    public int getSupportLevel(NutsSupportLevelContext<String> context) {
+    public int getSupportLevel(NutsSupportLevelContext context) {
         String s = context.getConstraints();
-        return "xml".equals(s) ? NutsComponent.DEFAULT_SUPPORT : NutsComponent.NO_SUPPORT;
-    }
+        if(s==null){
+            return DEFAULT_SUPPORT;
+        }
+        switch (s){
+            case "xml":
+            case "xsl":
+            case "text/xml":
+            case "text/html":
+            case "html":
+            case "sgml":
+            {
+                return NutsComponent.DEFAULT_SUPPORT;
+            }
+        }
+        return NutsComponent.NO_SUPPORT;    }
 
     @Override
     public NutsText stringToText(String text, NutsSession session) {
@@ -53,7 +66,7 @@ public class XmlCodeHighlighter implements NutsCodeHighlighter {
                     break;
                 }
                 case StreamTokenizerExt.TT_COMMENTS: {
-                    nodes.add(factory.ofStyled(factory.ofPlain(st.image), NutsTextStyle.comments()));
+                    nodes.add(factory.applyStyles(factory.ofPlain(st.image), NutsTextStyle.comments()));
                     break;
                 }
                 case NutsToken.TT_INT:
@@ -62,7 +75,7 @@ public class XmlCodeHighlighter implements NutsCodeHighlighter {
                 case NutsToken.TT_FLOAT:
                 case NutsToken.TT_DOUBLE:
                 case NutsToken.TT_BIG_DECIMAL:{
-                    nodes.add(factory.ofStyled(factory.ofPlain(st.image), NutsTextStyle.number()));
+                    nodes.add(factory.applyStyles(factory.ofPlain(st.image), NutsTextStyle.number()));
                     break;
                 }
                 case StreamTokenizerExt.TT_WORD: {
@@ -93,11 +106,11 @@ public class XmlCodeHighlighter implements NutsCodeHighlighter {
                 case '>':
                 case '&':
                 case '=': {
-                    nodes.add(factory.ofStyled(factory.ofPlain(st.image), NutsTextStyle.separator()));
+                    nodes.add(factory.applyStyles(factory.ofPlain(st.image), NutsTextStyle.separator()));
                     break;
                 }
                 default: {
-                    nodes.add(factory.ofStyled(factory.ofPlain(st.image), NutsTextStyle.separator()));
+                    nodes.add(factory.applyStyles(factory.ofPlain(st.image), NutsTextStyle.separator()));
                 }
             }
             last.add(st.image == null ? "" : st.image);
@@ -127,14 +140,14 @@ public class XmlCodeHighlighter implements NutsCodeHighlighter {
     }
 
     public NutsText formatNodeName(String text) {
-        return factory.ofStyled(factory.ofPlain(text), NutsTextStyle.keyword());
+        return factory.applyStyles(factory.ofPlain(text), NutsTextStyle.keyword());
     }
 
     public NutsText formatNodeString(String text) {
-        return factory.ofStyled(factory.ofPlain(text), NutsTextStyle.string());
+        return factory.applyStyles(factory.ofPlain(text), NutsTextStyle.string());
     }
 
     public NutsText formatNodeSeparator(String text) {
-        return factory.ofStyled(factory.ofPlain(text), NutsTextStyle.separator());
+        return factory.applyStyles(factory.ofPlain(text), NutsTextStyle.separator());
     }
 }

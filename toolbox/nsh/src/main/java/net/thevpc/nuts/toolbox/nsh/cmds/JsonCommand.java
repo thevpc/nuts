@@ -162,7 +162,7 @@ public class JsonCommand extends SimpleNshBuiltin {
         NutsElements njson = NutsElements.of(session).json();
         T inputDocument = null;
         if (path != null) {
-            File file = new File(context.getAbsolutePath(path));
+            NutsPath file = NutsPath.of(path, session).toAbsolute(context.getCwd());
             if (file.isFile()) {
                 inputDocument = njson.parse(file, cls);
             } else {

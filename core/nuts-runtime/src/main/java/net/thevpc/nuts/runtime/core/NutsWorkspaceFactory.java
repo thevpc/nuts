@@ -45,9 +45,9 @@ public interface NutsWorkspaceFactory {
 
     Set<Class> discoverTypes(NutsId id, URL url, ClassLoader bootClassLoader, Class[] extensionPoints, NutsSession session);
 
-    <T extends NutsComponent<V>, V> T createSupported(Class<T> type, V supportCriteria, boolean required, NutsSession session);
+    <T extends NutsComponent> T createSupported(Class<T> type, Object supportCriteria, boolean required, NutsSession session);
 
-    <T extends NutsComponent<V>, V> List<T> createAllSupported(Class<T> type, V supportCriteria, NutsSession session);
+    <T extends NutsComponent> List<T> createAllSupported(Class<T> type, Object supportCriteria, NutsSession session);
 
     <T> List<T> createAll(Class<T> type, NutsSession session);
 

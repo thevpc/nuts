@@ -4,7 +4,7 @@ import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.boot.NutsApiUtils;
 
 @NutsComponentScope(NutsComponentScopeType.WORKSPACE)
-public interface NutsDependencySolvers extends NutsComponent<Object> {
+public interface NutsDependencySolvers extends NutsComponent {
     static NutsDependencySolvers of(NutsSession session) {
         NutsApiUtils.checkSession(session);
         return session.extensions().createSupported(NutsDependencySolvers.class,true,null);

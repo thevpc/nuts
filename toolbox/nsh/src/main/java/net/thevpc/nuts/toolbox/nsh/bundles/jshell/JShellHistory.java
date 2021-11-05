@@ -6,9 +6,9 @@ import java.io.*;
 import java.util.List;
 
 public interface JShellHistory {
-    File getHistoryFile();
+    NutsPath getHistoryFile();
 
-    JShellHistory setHistoryFile(File historyFile);
+    JShellHistory setHistoryFile(NutsPath historyFile);
 
     void add(String e);
 
@@ -30,8 +30,6 @@ public interface JShellHistory {
 
     void load() throws IOException;
 
-    void load(File file) throws IOException;
-
     void load(NutsPath reader) throws IOException;
 
     void load(Reader reader) throws IOException;
@@ -43,8 +41,6 @@ public interface JShellHistory {
     void save(PrintWriter writer) throws IOException;
 
     void save(PrintStream writer) throws IOException;
-
-    void save(File writer) throws IOException;
 
     void append(JShellHistory other);
 

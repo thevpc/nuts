@@ -74,74 +74,77 @@ public class MavenRepositoryFactoryComponent implements NutsRepositoryFactoryCom
     }
 
     @Override
-    public int getSupportLevel(NutsSupportLevelContext<NutsRepositoryConfig> criteria) {
+    public int getSupportLevel(NutsSupportLevelContext criteria) {
         if (criteria == null) {
             return NO_SUPPORT;
         }
-        String repositoryType = criteria.getConstraints().getType();
-        String location = criteria.getConstraints().getLocation();
-        if (NutsBlankable.isBlank(repositoryType)) {
-            if (!NutsBlankable.isBlank(location)) {
-                NutsRepositoryURL nru = new NutsRepositoryURL(location);
-                if (nru.getRepositoryType().isMaven()) {
-                    criteria.getConstraints().setType(nru.getRepositoryType().toString());
-                    criteria.getConstraints().setLocation(nru.getLocation());
-                    return DEFAULT_SUPPORT;
-                }
-                if (nru.isHttp()) {
-                    try (InputStream s = NutsPath.of(nru.getLocation(), criteria.getSession()).resolve("nuts-repository.json")
-                            .setUserKind("nuts-repository.json").getInputStream()) {
-                        Map<String, Object> m = NutsElements.of(criteria.getSession()).setContentType(NutsContentType.JSON)
-                                .parse(s, Map.class);
-                        if (m != null) {
-                            String type = (String) m.get("type");
-                            NutsRepositoryType nrt = new NutsRepositoryType(type);
-                            if (nrt.isMaven()) {
-                                criteria.getConstraints().setType(type);
+        NutsRepositoryConfig r = criteria.getConstraints(NutsRepositoryConfig.class);
+        if(r!=null) {
+            String repositoryType = r.getType();
+            String location = r.getLocation();
+            if (NutsBlankable.isBlank(repositoryType)) {
+                if (!NutsBlankable.isBlank(location)) {
+                    NutsRepositoryURL nru = new NutsRepositoryURL(location);
+                    if (nru.getRepositoryType().isMaven()) {
+                        r.setType(nru.getRepositoryType().toString());
+                        r.setLocation(nru.getLocation());
+                        return DEFAULT_SUPPORT;
+                    }
+                    if (nru.isHttp()) {
+                        try (InputStream s = NutsPath.of(nru.getLocation(), criteria.getSession()).resolve("nuts-repository.json")
+                                .setUserKind("nuts-repository.json").getInputStream()) {
+                            Map<String, Object> m = NutsElements.of(criteria.getSession()).setContentType(NutsContentType.JSON)
+                                    .parse(s, Map.class);
+                            if (m != null) {
+                                String type = (String) m.get("type");
+                                NutsRepositoryType nrt = new NutsRepositoryType(type);
+                                if (nrt.isMaven()) {
+                                    r.setType(type);
+                                    return DEFAULT_SUPPORT;
+                                }
+                            }
+                        } catch (Exception ex) {
+                            //ignore
+                        }
+                        FilesFoldersApi.Item[] dirList = FilesFoldersApi.getDirItems(true, true, RemoteRepoApi.DIR_LIST, location, criteria.getSession());
+                        if (dirList != null) {
+                            r.setType("maven+dirlist");
+                            return DEFAULT_SUPPORT;
+                        }
+                        dirList = FilesFoldersApi.getDirItems(true, true, RemoteRepoApi.DIR_TEXT, location, criteria.getSession());
+                        if (dirList != null) {
+                            r.setType("maven+dirtext");
+                            return DEFAULT_SUPPORT;
+                        }
+                        if (NutsPath.of(location, criteria.getSession()).resolve("archetype-catalog.xml")
+                                .setUserKind("archetype-catalog.xml").exists()) {
+                            r.setType(NutsConstants.RepoTypes.MAVEN);
+                            return DEFAULT_SUPPORT;
+                        }
+                    } else if (nru.getPathProtocol().equals("file")) {
+                        File file = CoreIOUtils.toFile(nru.getLocation());
+                        if (file != null) {
+                            if (Files.exists(file.toPath().resolve("repository.xml"))) {
+                                r.setType(NutsConstants.RepoTypes.MAVEN);
                                 return DEFAULT_SUPPORT;
                             }
                         }
-                    } catch (Exception ex) {
-                        //ignore
-                    }
-                    FilesFoldersApi.Item[] dirList = FilesFoldersApi.getDirItems(true, true, RemoteRepoApi.DIR_LIST, location, criteria.getSession());
-                    if (dirList != null) {
-                        criteria.getConstraints().setType("maven+dirlist");
-                        return DEFAULT_SUPPORT;
-                    }
-                    dirList = FilesFoldersApi.getDirItems(true, true, RemoteRepoApi.DIR_TEXT, location, criteria.getSession());
-                    if (dirList != null) {
-                        criteria.getConstraints().setType("maven+dirtext");
-                        return DEFAULT_SUPPORT;
-                    }
-                    if (NutsPath.of(location, criteria.getSession()).resolve("archetype-catalog.xml")
-                            .setUserKind("archetype-catalog.xml").exists()) {
-                        criteria.getConstraints().setType(NutsConstants.RepoTypes.MAVEN);
-                        return DEFAULT_SUPPORT;
-                    }
-                } else if (nru.getPathProtocol().equals("file")) {
-                    File file = CoreIOUtils.toFile(nru.getLocation());
-                    if (file != null) {
-                        if (Files.exists(file.toPath().resolve("repository.xml"))) {
-                            criteria.getConstraints().setType(NutsConstants.RepoTypes.MAVEN);
+                    } else if (nru.getProtocols().isEmpty()) {
+                        if (Files.exists(Paths.get(location).resolve("repository.xml"))) {
+                            r.setType(NutsConstants.RepoTypes.MAVEN);
                             return DEFAULT_SUPPORT;
                         }
                     }
-                } else if (nru.getProtocols().isEmpty()) {
-                    if (Files.exists(Paths.get(location).resolve("repository.xml"))) {
-                        criteria.getConstraints().setType(NutsConstants.RepoTypes.MAVEN);
-                        return DEFAULT_SUPPORT;
-                    }
                 }
+                return NO_SUPPORT;
             }
-            return NO_SUPPORT;
-        }
-        switch (repositoryType) {
-            case "maven":
-            case "maven+dirlist":
-            case "maven+dirtext":
-            case "maven+github": {
-                return DEFAULT_SUPPORT;
+            switch (repositoryType) {
+                case "maven":
+                case "maven+dirlist":
+                case "maven+dirtext":
+                case "maven+github": {
+                    return DEFAULT_SUPPORT;
+                }
             }
         }
         return NO_SUPPORT;

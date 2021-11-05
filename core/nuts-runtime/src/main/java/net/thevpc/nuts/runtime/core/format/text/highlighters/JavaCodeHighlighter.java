@@ -45,9 +45,20 @@ public class JavaCodeHighlighter implements NutsCodeHighlighter {
     
 
     @Override
-    public int getSupportLevel(NutsSupportLevelContext<String> context) {
+    public int getSupportLevel(NutsSupportLevelContext context) {
         String s = context.getConstraints();
-        return "java".equals(s) ? NutsComponent.DEFAULT_SUPPORT : NutsComponent.NO_SUPPORT;
+        if(s==null){
+            return DEFAULT_SUPPORT;
+        }
+        switch (s){
+            case "java":
+            case "jav":
+            case "text/x-java":
+            {
+                return NutsComponent.DEFAULT_SUPPORT;
+            }
+        }
+        return NutsComponent.NO_SUPPORT;
     }
 
     @Override
@@ -127,7 +138,7 @@ public class JavaCodeHighlighter implements NutsCodeHighlighter {
                             if (d.length == 1 && d[0].getType() == NutsTextType.PLAIN) {
                                 String txt = ((NutsTextPlain) d[0]).getText();
                                 if (reservedWords.contains(txt)) {
-                                    d[0] = factory.ofStyled(d[0], NutsTextStyle.keyword());
+                                    d[0] = factory.applyStyles(d[0], NutsTextStyle.keyword());
                                 }
                             }
                             all.addAll(Arrays.asList(d));

@@ -46,73 +46,76 @@ import java.util.Map;
 public class DefaultNutsRepoFactoryComponent implements NutsRepositoryFactoryComponent {
 
     @Override
-    public int getSupportLevel(NutsSupportLevelContext<NutsRepositoryConfig> criteria) {
+    public int getSupportLevel(NutsSupportLevelContext criteria) {
         if (criteria == null) {
             return NO_SUPPORT;
         }
-        String repositoryType = criteria.getConstraints().getType();
-        if (NutsBlankable.isBlank(repositoryType)) {
-            String location = criteria.getConstraints().getLocation();
-            if (!NutsBlankable.isBlank(location)) {
-                NutsRepositoryURL nru = new NutsRepositoryURL(location);
-                if (nru.getRepositoryType().isNuts()) {
-                    criteria.getConstraints().setType(nru.getRepositoryType().toString());
-                    criteria.getConstraints().setLocation(nru.getLocation());
-                    return DEFAULT_SUPPORT;
-                }
-                if (nru.isHttp()) {
-                    NutsPath in = NutsPath.of(nru.getLocation(), criteria.getSession()).resolve("nuts-repository.json");
-                    try (InputStream s = in.getInputStream()) {
-                        Map<String, Object> m = NutsElements.of(criteria.getSession()).setSession(criteria.getSession()).setContentType(NutsContentType.JSON)
-                                .parse(s, Map.class);
-                        if (m != null) {
-                            String type = (String) m.get("type");
-                            NutsRepositoryType nrt = new NutsRepositoryType(type);
-                            if (nrt.isNuts()) {
-                                criteria.getConstraints().setType(type);
+        NutsRepositoryConfig r=criteria.getConstraints(NutsRepositoryConfig.class);
+        if(r!=null) {
+            String repositoryType = r.getType();
+            if (NutsBlankable.isBlank(repositoryType)) {
+                String location = r.getLocation();
+                if (!NutsBlankable.isBlank(location)) {
+                    NutsRepositoryURL nru = new NutsRepositoryURL(location);
+                    if (nru.getRepositoryType().isNuts()) {
+                        r.setType(nru.getRepositoryType().toString());
+                        r.setLocation(nru.getLocation());
+                        return DEFAULT_SUPPORT;
+                    }
+                    if (nru.isHttp()) {
+                        NutsPath in = NutsPath.of(nru.getLocation(), criteria.getSession()).resolve("nuts-repository.json");
+                        try (InputStream s = in.getInputStream()) {
+                            Map<String, Object> m = NutsElements.of(criteria.getSession()).setSession(criteria.getSession()).setContentType(NutsContentType.JSON)
+                                    .parse(s, Map.class);
+                            if (m != null) {
+                                String type = (String) m.get("type");
+                                NutsRepositoryType nrt = new NutsRepositoryType(type);
+                                if (nrt.isNuts()) {
+                                    r.setType(type);
+                                    return DEFAULT_SUPPORT;
+                                }
+                            }
+                        } catch (Exception ex) {
+                            //ignore
+                        }
+                    } else if (nru.getPathProtocol().equals("file")) {
+                        File file = CoreIOUtils.toFile(nru.getLocation());
+                        if (file != null) {
+                            if (Files.exists(file.toPath().resolve("nuts-repository.json"))) {
+                                r.setType(NutsConstants.RepoTypes.NUTS);
                                 return DEFAULT_SUPPORT;
                             }
-                        }
-                    } catch (Exception ex) {
-                        //ignore
-                    }
-                } else if (nru.getPathProtocol().equals("file")) {
-                    File file = CoreIOUtils.toFile(nru.getLocation());
-                    if (file != null) {
-                        if (Files.exists(file.toPath().resolve("nuts-repository.json"))) {
-                            criteria.getConstraints().setType(NutsConstants.RepoTypes.NUTS);
+                            r.setType(NutsConstants.RepoTypes.NUTS);
                             return DEFAULT_SUPPORT;
                         }
-                        criteria.getConstraints().setType(NutsConstants.RepoTypes.NUTS);
-                        return DEFAULT_SUPPORT;
-                    }
-                } else if (nru.getProtocols().isEmpty()) {
-                    if (Files.exists(Paths.get(location).resolve("nuts-repository.json"))) {
-                        criteria.getConstraints().setType(NutsConstants.RepoTypes.NUTS);
-                        return DEFAULT_SUPPORT;
-                    }
-                    File file = CoreIOUtils.toFile(nru.getLocation());
-                    if (file != null) {
-                        criteria.getConstraints().setType(NutsConstants.RepoTypes.NUTS);
-                        return DEFAULT_SUPPORT;
+                    } else if (nru.getProtocols().isEmpty()) {
+                        if (Files.exists(Paths.get(location).resolve("nuts-repository.json"))) {
+                            r.setType(NutsConstants.RepoTypes.NUTS);
+                            return DEFAULT_SUPPORT;
+                        }
+                        File file = CoreIOUtils.toFile(nru.getLocation());
+                        if (file != null) {
+                            r.setType(NutsConstants.RepoTypes.NUTS);
+                            return DEFAULT_SUPPORT;
+                        }
                     }
                 }
+                return NO_SUPPORT;
             }
-            return NO_SUPPORT;
-        }
-        String location = criteria.getConstraints().getLocation();
-        if (!NutsConstants.RepoTypes.NUTS.equals(repositoryType)
-                && !"nuts:api".equals(repositoryType)) {
-            return NO_SUPPORT;
-        }
-        if (NutsBlankable.isBlank(location)) {
-            return DEFAULT_SUPPORT;
-        }
-        if (!location.contains("://")) {
-            return DEFAULT_SUPPORT;
-        }
-        if (CoreIOUtils.isPathHttp(location)) {
-            return DEFAULT_SUPPORT;
+            String location = r.getLocation();
+            if (!NutsConstants.RepoTypes.NUTS.equals(repositoryType)
+                    && !"nuts:api".equals(repositoryType)) {
+                return NO_SUPPORT;
+            }
+            if (NutsBlankable.isBlank(location)) {
+                return DEFAULT_SUPPORT;
+            }
+            if (!location.contains("://")) {
+                return DEFAULT_SUPPORT;
+            }
+            if (CoreIOUtils.isPathHttp(location)) {
+                return DEFAULT_SUPPORT;
+            }
         }
         return NO_SUPPORT;
     }

@@ -92,7 +92,7 @@ public class NutsHttpServerComponent implements NutsServerComponent {
     }
 
     @Override
-    public int getSupportLevel(NutsSupportLevelContext<ServerConfig> config) {
+    public int getSupportLevel(NutsSupportLevelContext config) {
         ServerConfig c = config.getConstraints();
         return (c == null || c instanceof NutsHttpServerConfig) ? DEFAULT_SUPPORT : NO_SUPPORT;
     }

@@ -34,7 +34,7 @@ import java.util.List;
 /**
  * @app.category Command Line
  */
-public interface NutsCommandLines extends NutsComponent<Object> {
+public interface NutsCommandLines extends NutsComponent {
     static NutsCommandLines of(NutsSession session){
         NutsApiUtils.checkSession(session);
         return session.extensions().createSupported(NutsCommandLines.class, true, session);

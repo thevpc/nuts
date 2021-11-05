@@ -28,7 +28,6 @@ package net.thevpc.nuts.runtime.core.io;
 
 import net.thevpc.nuts.spi.NutsComponent;
 
-import java.io.OutputStream;
 import java.io.PrintStream;
 
 /**
@@ -36,7 +35,7 @@ import java.io.PrintStream;
  * @author thevpc
  * @since 0.5.4
  */
-public interface NutsFormattedPrintStream extends NutsComponent<OutputStream> {
+public interface NutsFormattedPrintStream extends NutsComponent {
 
     PrintStream getUnformattedInstance();
 }

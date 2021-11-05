@@ -5,6 +5,8 @@
  */
 package net.thevpc.nuts.toolbox.nsh.bundles.jshell;
 
+import net.thevpc.nuts.NutsPath;
+
 import java.io.File;
 
 /**
@@ -19,12 +21,9 @@ public class DefaultJShellCommandTypeResolver implements JShellCommandTypeResolv
         if (a != null) {
             return new JShellCommandType(item, "path", a, item + " is aliased to " + a);
         }
-        String path = item;
-        if (!item.startsWith("/")) {
-            path = context.getCwd() + "/" + item;
-        }
-        if (new File(path).isFile()) {
-            return new JShellCommandType(item, "path", path, item + " is " + path);
+        NutsPath path = NutsPath.of(item,context.getSession()).toAbsolute(context.getCwd());
+        if (path.isFile()) {
+            return new JShellCommandType(item, "path", path.toString(), item + " is " + path);
         }
         return null;
     }

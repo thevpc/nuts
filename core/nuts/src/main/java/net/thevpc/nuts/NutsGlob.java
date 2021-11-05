@@ -4,7 +4,7 @@ import net.thevpc.nuts.spi.NutsComponent;
 
 import java.util.regex.Pattern;
 
-public interface NutsGlob extends NutsComponent<Object> {
+public interface NutsGlob extends NutsComponent {
     static NutsGlob of(NutsSession session) {
         return session.extensions().createSupported(NutsGlob.class, true, session);
     }

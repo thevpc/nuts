@@ -3,7 +3,7 @@ package net.thevpc.nuts;
 import net.thevpc.nuts.boot.NutsApiUtils;
 import net.thevpc.nuts.spi.NutsComponent;
 
-public interface NutsDescriptorPropertyBuilder extends NutsComponent<Object> {
+public interface NutsDescriptorPropertyBuilder extends NutsComponent {
 
     static NutsDescriptorPropertyBuilder of(NutsSession session) {
         NutsApiUtils.checkSession(session);

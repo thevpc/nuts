@@ -39,7 +39,7 @@ import java.nio.file.Path;
  * @since 0.5.8
  * @app.category Input Output
  */
-public interface NutsUncompress extends NutsComponent<Object> {
+public interface NutsUncompress extends NutsComponent {
     static NutsUncompress of(NutsSession session) {
         NutsApiUtils.checkSession(session);
         return session.extensions().createSupported(NutsUncompress.class, true, null);

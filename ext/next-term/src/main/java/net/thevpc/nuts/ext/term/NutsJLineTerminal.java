@@ -290,7 +290,7 @@ public class NutsJLineTerminal implements NutsSystemTerminalBase {
     }
 
     @Override
-    public int getSupportLevel(NutsSupportLevelContext<NutsTerminalSpec> criteria) {
+    public int getSupportLevel(NutsSupportLevelContext criteria) {
         NutsSession session = criteria.getSession();
         try {
             prepare(session);

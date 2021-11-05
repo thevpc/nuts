@@ -15,7 +15,7 @@ import net.thevpc.nuts.runtime.standalone.wscommands.settings.NutsSettingsSubCom
 public abstract class AbstractNutsSettingsSubCommand implements NutsSettingsSubCommand {
 
     @Override
-    public int getSupportLevel(NutsSupportLevelContext<Object> criteria) {
+    public int getSupportLevel(NutsSupportLevelContext criteria) {
         return DEFAULT_SUPPORT;
     }
 }

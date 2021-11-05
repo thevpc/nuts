@@ -13,7 +13,7 @@ import java.time.Instant;
 import java.util.Set;
 
 public interface NutsPathSPI {
-    NutsPath[] getChildren();
+    NutsPath[] list();
 
     NutsFormatSPI getFormatterSPI();
 
@@ -56,8 +56,6 @@ public interface NutsPathSPI {
     String getContentType();
 
     String toString();
-
-    String asString();
 
     String getLocation();
 

@@ -44,7 +44,7 @@ public class DefaultHttpTransportComponent implements NutsTransportComponent {
     public static final NutsTransportComponent INSTANCE = new DefaultHttpTransportComponent();
     private NutsSession session;
     @Override
-    public int getSupportLevel(NutsSupportLevelContext<String> url) {
+    public int getSupportLevel(NutsSupportLevelContext url) {
         session=url.getSession();
         return DEFAULT_SUPPORT;
     }

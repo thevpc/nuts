@@ -34,7 +34,7 @@ import net.thevpc.nuts.spi.NutsComponentScopeType;
  * Created by vpc on 1/24/17.
  */
 @NutsComponentScope(NutsComponentScopeType.WORKSPACE)
-public interface NutsServerComponent extends NutsComponent<ServerConfig> {
+public interface NutsServerComponent extends NutsComponent {
 
     /**
      *

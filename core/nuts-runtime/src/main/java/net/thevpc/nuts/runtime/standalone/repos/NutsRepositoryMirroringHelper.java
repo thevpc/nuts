@@ -82,7 +82,7 @@ public class NutsRepositoryMirroringHelper {
                     if (c != null) {
                         if (localPath != null) {
                             NutsCp.of(session)
-                                    .from(c.getFilePath()).to(localPath).setSafe(true).run();
+                                    .from(c.getFile()).to(localPath).setSafe(true).run();
                         } else {
                             return c;
                         }
@@ -201,7 +201,7 @@ public class NutsRepositoryMirroringHelper {
                     ;
             NutsDeployRepositoryCommand dep = repoSPI.deploy()
                     .setId(effId)
-                    .setContent(local.getFilePath())
+                    .setContent(local.getFile())
                     .setDescriptor(desc)
 //                    .setOffline(cmd.isOffline())
                     //.setFetchMode(NutsFetchMode.LOCAL)

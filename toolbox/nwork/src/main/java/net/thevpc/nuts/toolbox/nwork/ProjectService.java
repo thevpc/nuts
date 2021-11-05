@@ -226,7 +226,7 @@ public class ProjectService {
                         .addRepositoryFilter(NutsRepositoryFilters.of(s).byName(nutsRepository))
                         .setLatest(true).setSession(s).setContent(true).getResultDefinitions().toList();
                 if (found.size() > 0) {
-                    Path p = found.get(0).getContent().getFilePath();
+                    Path p = found.get(0).getContent().getFile();
                     if (p == null) {
                         return null;
                     }

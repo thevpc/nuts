@@ -33,7 +33,7 @@ import net.thevpc.nuts.spi.NutsComponent;
  * @since 0.5.4
  * @app.category Base
  */
-public interface NutsWorkspace extends NutsComponent<NutsWorkspaceOptions> {
+public interface NutsWorkspace extends NutsComponent {
 
     /**
      * Workspace identifier, most likely to be unique cross machines

@@ -32,22 +32,23 @@ import java.util.Objects;
 
 /**
  * Default and dummy NutsSupportLevelContext implementation
+ *
  * @author thevpc
- * @param <T> support level type
  * @app.category SPI Base
  */
-public class NutsDefaultSupportLevelContext<T> implements NutsSupportLevelContext<T> {
+public class NutsDefaultSupportLevelContext implements NutsSupportLevelContext {
 
     private final NutsSession session;
     private final NutsWorkspace ws;
-    private final T constraints;
+    private final Object constraints;
 
     /**
      * default constructor
-     * @param session session
+     *
+     * @param session     session
      * @param constraints constraints
      */
-    public NutsDefaultSupportLevelContext(NutsSession session, T constraints) {
+    public NutsDefaultSupportLevelContext(NutsSession session, Object constraints) {
         if (session == null) {
             throw new NullPointerException();
         }
@@ -67,8 +68,19 @@ public class NutsDefaultSupportLevelContext<T> implements NutsSupportLevelContex
     }
 
     @Override
-    public T getConstraints() {
-        return constraints;
+    public <T> T getConstraints() {
+        return (T) constraints;
+    }
+
+    @Override
+    public <T> T getConstraints(Class<T> expected) {
+        if (constraints == null) {
+            return null;
+        }
+        if (expected.isInstance(constraints)) {
+            return (T) constraints;
+        }
+        return null;
     }
 
     @Override
@@ -80,7 +92,7 @@ public class NutsDefaultSupportLevelContext<T> implements NutsSupportLevelContex
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        NutsDefaultSupportLevelContext<?> that = (NutsDefaultSupportLevelContext<?>) o;
+        NutsDefaultSupportLevelContext that = (NutsDefaultSupportLevelContext) o;
         return Objects.equals(ws, that.ws) &&
                 Objects.equals(constraints, that.constraints);
     }

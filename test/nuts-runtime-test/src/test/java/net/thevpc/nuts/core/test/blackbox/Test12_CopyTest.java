@@ -35,7 +35,7 @@ public class Test12_CopyTest {
                 .createTempFolder("target");
         TestUtils.println("from="+from);
         TestUtils.println("to="+to);
-        long collect = from.getChildren().length;
+        long collect = from.list().length;
         Assertions.assertEquals(0L,collect);
         for (String s : new String[]{
                 "/a/b/c.txt",

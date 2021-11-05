@@ -8,7 +8,7 @@ public class NutsElementMapperNutsVersion implements NutsElementMapper<NutsVersi
 
     @Override
     public Object destruct(NutsVersion src, Type typeOfSrc, NutsElementFactoryContext context) {
-        if (context.elem().isNtf()) {
+        if (context.isNtf()) {
             NutsSession ws = context.getSession();
             return src.formatter().setSession(ws).setNtf(true).format();
         } else {
@@ -18,7 +18,7 @@ public class NutsElementMapperNutsVersion implements NutsElementMapper<NutsVersi
 
     @Override
     public NutsElement createElement(NutsVersion o, Type typeOfSrc, NutsElementFactoryContext context) {
-        if (context.elem().isNtf()) {
+        if (context.isNtf()) {
             NutsSession session = context.getSession();
 //                NutsText n = ws.text().toText(ws.version().formatter(o).setNtf(true).format());
 //                return ws.elem().forPrimitive().buildNutsString(n);

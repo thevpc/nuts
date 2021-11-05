@@ -5,21 +5,6 @@ import net.thevpc.nuts.NutsPath;
 import java.io.*;
 
 public abstract class AbstractJShellHistory implements JShellHistory {
-    @Override
-    public void load(File file) throws IOException {
-        BufferedReader bufferedReader = null;
-        try {
-            bufferedReader = new BufferedReader(new FileReader(file));
-            String line = null;
-            while ((line = bufferedReader.readLine()) != null) {
-                add(line);
-            }
-        } finally {
-            if (bufferedReader != null) {
-                bufferedReader.close();
-            }
-        }
-    }
 
     @Override
     public void load(NutsPath reader) throws IOException {
@@ -90,24 +75,6 @@ public abstract class AbstractJShellHistory implements JShellHistory {
         }
     }
 
-    @Override
-    public void save(File file) throws IOException {
-        if (file == null) {
-            return;
-        }
-        if (file.getParentFile() != null) {
-            file.getParentFile().mkdirs();
-        }
-        PrintWriter w = null;
-        try {
-            w = new PrintWriter(new FileWriter(file));
-            save(w);
-        } finally {
-            if (w != null) {
-                w.close();
-            }
-        }
-    }
 
     @Override
     public void append(JShellHistory other) {

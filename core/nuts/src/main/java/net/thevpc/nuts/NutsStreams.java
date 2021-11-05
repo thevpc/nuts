@@ -8,7 +8,7 @@ import java.util.Iterator;
 import java.util.stream.Stream;
 
 @NutsComponentScope(NutsComponentScopeType.WORKSPACE)
-public interface NutsStreams extends NutsComponent<Object> {
+public interface NutsStreams extends NutsComponent {
     static NutsStreams of(NutsSession session) {
         return session.extensions().createSupported(NutsStreams.class, true, session);
     }

@@ -35,7 +35,7 @@ public class FilePath implements NutsPathSPI {
     }
 
     @Override
-    public NutsPath[] getChildren() {
+    public NutsPath[] list() {
         if (Files.isDirectory(value)) {
             try {
                 return Files.list(value).map(x -> NutsPath.of(x,getSession())).toArray(NutsPath[]::new);
@@ -128,26 +128,7 @@ public class FilePath implements NutsPathSPI {
 
     @Override
     public String getContentType() {
-        try {
-            return Files.probeContentType(value);
-        } catch (IOException e) {
-            return null;
-        }
-    }
-
-//    @Override
-//    public NutsOutput output() {
-//        return new NutsPathOutput(null, this, getSession()) {
-//            @Override
-//            public OutputStream open() {
-//                return getOutputStream();
-//            }
-//        };
-//    }
-
-    @Override
-    public String asString() {
-        return value.toString();
+        return NutsContentTypes.of(session).probeContentType(value);
     }
 
     @Override

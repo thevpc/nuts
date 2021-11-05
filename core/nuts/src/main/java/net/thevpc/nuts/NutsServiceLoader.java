@@ -38,19 +38,19 @@ import java.util.List;
  * @since 0.5.4
  * @app.category SPI Base
  */
-public interface NutsServiceLoader<T extends NutsComponent<B>, B> {
+public interface NutsServiceLoader<T extends NutsComponent> {
 
     /**
      * load all NutsComponent instances matching criteria
      * @param criteria criteria to match
      * @return load all NutsComponent instances matching criteria
      */
-    List<T> loadAll(B criteria);
+    List<T> loadAll(Object criteria);
 
     /**
      * load best NutsComponent instance matching criteria
      * @param criteria criteria to match
      * @return load best NutsComponent instance matching criteria
      */
-    T loadBest(B criteria);
+    T loadBest(Object criteria);
 }

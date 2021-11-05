@@ -38,7 +38,7 @@ import java.util.function.Function;
  * @since 0.5.4
  * @app.category Descriptor
  */
-public interface NutsIdBuilder extends NutsComponent<Object>, Serializable {
+public interface NutsIdBuilder extends NutsComponent, Serializable {
     static NutsIdBuilder of(NutsSession session) {
         NutsApiUtils.checkSession(session);
         return session.extensions().createSupported(NutsIdBuilder.class,true,null);

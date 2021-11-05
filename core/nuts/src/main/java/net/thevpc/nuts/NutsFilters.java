@@ -36,7 +36,7 @@ import net.thevpc.nuts.spi.NutsComponentScopeType;
  * @since 0.8.0
  */
 @NutsComponentScope(NutsComponentScopeType.SESSION)
-public interface NutsFilters extends NutsComponent<Object> {
+public interface NutsFilters extends NutsComponent {
     static NutsFilters of(NutsSession session) {
         NutsApiUtils.checkSession(session);
         return session.extensions().createSupported(NutsFilters.class,true,null);

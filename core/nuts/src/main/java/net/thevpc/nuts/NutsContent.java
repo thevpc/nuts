@@ -44,7 +44,7 @@ public interface NutsContent extends Serializable {
      *
      * @return artifact local path
      */
-    Path getFilePath();
+    Path getFile();
 
     NutsPath getPath();
 

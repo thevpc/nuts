@@ -397,6 +397,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
     }
 
     private List<Row> rebuild(NutsSession session) {
+        NutsTexts metrics = NutsTexts.of(session).setSession(session);
         List<Row> rows1 = new ArrayList<>();
         NutsTableModel model = getModel();
         int columnsCount = model.getColumnsCount();
@@ -488,6 +489,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
                         formatter,
                         formatter.getVerticalAlign(r0, c0, cvalue, session),
                         formatter.getHorizontalAlign(r0, c0, cvalue, session),
+                        metrics,
                         session
                 ));
                 cell.cw = cell.getRendered().columns;
@@ -508,7 +510,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
         for (Row row : effectiveRows) {
             for (DefaultCell cell : row.cells) {
                 int rows = b.evalRowSize(cell.y, cell.rowspan);
-                int columns = b.evalColumnSize(cell.x, cell.rowspan);
+                int columns = b.evalColumnSize(cell.x, cell.colspan);
                 cell.rendered = cell.rendered.resize(rows, columns);
                 cell.cw = cell.getRendered().columns;
                 cell.ch = cell.getRendered().rows;
@@ -832,7 +834,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
     }
 
     @Override
-    public int getSupportLevel(NutsSupportLevelContext<Object> context) {
+    public int getSupportLevel(NutsSupportLevelContext context) {
         return DEFAULT_SUPPORT;
     }
 
@@ -853,16 +855,17 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
         NutsWorkspace ws;
         NutsSession session;
 
-        private RenderedCell(NutsSession session) {
+        private RenderedCell(NutsTexts metrics,NutsSession session) {
             this.session = session;
+            this.metrics = metrics;
             this.ws = session.getWorkspace();
         }
 
-        public RenderedCell(int c, int r, Object o, String str, NutsTableCellFormat formatter, NutsPositionType valign, NutsPositionType halign, NutsSession session) {
+        public RenderedCell(int c, int r, Object o, String str, NutsTableCellFormat formatter, NutsPositionType valign, NutsPositionType halign, NutsTexts metrics,NutsSession session) {
             this.session = session;
             this.ws = session.getWorkspace();
             this.formatter = formatter;
-            this.metrics = NutsTexts.of(session).setSession(session);
+            this.metrics = metrics;
             this.valign = valign;
             this.halign = halign;
             if (str == null) {
@@ -885,10 +888,16 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
                 }
             }
             rows = strings.size();
-            rendered = new char[rows][];
-            for (int i = 0, stringsSize = strings.size(); i < stringsSize; i++) {
-                StringBuilder s = strings.get(i);
-                rendered[i] = s.toString().toCharArray();
+            if(rows==0){
+                rendered = new char[][]{{' '}};
+                rows=1;
+                columns=1;
+            }else {
+                rendered = new char[rows][];
+                for (int i = 0, stringsSize = strings.size(); i < stringsSize; i++) {
+                    StringBuilder s = strings.get(i);
+                    rendered[i] = s.toString().toCharArray();
+                }
             }
         }
 
@@ -916,7 +925,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
                 }
                 rendered0[i] = sb.toString().toCharArray();
             }
-            RenderedCell c = new RenderedCell(session);
+            RenderedCell c = new RenderedCell(metrics,session);
             c.rendered = rendered0;
             c.columns = columns + other.columns;
             c.rows = rendered0.length;
@@ -948,7 +957,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
                 }
                 rendered0[i + rendered.length] = sb.toString().toCharArray();
             }
-            RenderedCell c = new RenderedCell(session);
+            RenderedCell c = new RenderedCell(metrics,session);
             c.rendered = rendered0;
             c.columns = columns + other.columns;
             c.rows = rendered0.length;
@@ -962,7 +971,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
                     rendered0[row + r][col + c] = other.rendered[r][c];
                 }
             }
-            RenderedCell c = new RenderedCell(session);
+            RenderedCell c = new RenderedCell(metrics,session);
             c.rendered = rendered0;
             c.columns = columns;
             c.rows = rows;
@@ -974,7 +983,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
             for (int i = 0; i < rendered0.length; i++) {
                 System.arraycopy(rendered[i + row], col, rendered0[i], 0, toCol - col);
             }
-            RenderedCell c = new RenderedCell(session);
+            RenderedCell c = new RenderedCell(metrics,session);
             c.rendered = rendered0;
             c.columns = columns;
             c.rows = rows;
@@ -1059,7 +1068,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
 //                    Arrays.fill(rendered0[i],0,columns,' ');
 //                }
 //            }
-            RenderedCell c = new RenderedCell(session);
+            RenderedCell c = new RenderedCell(metrics,session);
             c.rendered = rendered0;
             c.columns = columns;
             c.rows = rows;
@@ -1073,7 +1082,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
                 rendered0[i] = new char[rendered[i].length];
                 System.arraycopy(rendered[i], 0, rendered0[i], 0, rendered[i].length);
             }
-            RenderedCell c = new RenderedCell(session);
+            RenderedCell c = new RenderedCell(metrics,session);
             c.rendered = rendered0;
             c.columns = columns;
             c.rows = rows;

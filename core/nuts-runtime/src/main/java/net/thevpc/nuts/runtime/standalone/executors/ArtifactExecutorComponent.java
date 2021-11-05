@@ -51,7 +51,7 @@ public class ArtifactExecutorComponent implements NutsExecutorComponent {
     }
 
     @Override
-    public int getSupportLevel(NutsSupportLevelContext<NutsDefinition> nutsDefinition) {
+    public int getSupportLevel(NutsSupportLevelContext nutsDefinition) {
         return NO_SUPPORT;
     }
 

@@ -69,21 +69,24 @@ public class JavaExecutorComponent implements NutsExecutorComponent {
     }
 
     @Override
-    public int getSupportLevel(NutsSupportLevelContext<NutsDefinition> nutsDefinition) {
-        this.ws = nutsDefinition.getSession();
+    public int getSupportLevel(NutsSupportLevelContext ctx) {
+        this.ws = ctx.getSession();
         if (ID == null) {
             ID = NutsId.of("net.thevpc.nuts.exec:java",ws);
         }
-        String shortName = nutsDefinition.getConstraints().getId().getShortName();
-        //for executors
-        if ("net.thevpc.nuts.exec:exec-java".equals(shortName)) {
-            return DEFAULT_SUPPORT + 1;
-        }
-        if ("java".equals(shortName)) {
-            return DEFAULT_SUPPORT + 1;
-        }
-        if ("jar".equals(nutsDefinition.getConstraints().getDescriptor().getPackaging())) {
-            return DEFAULT_SUPPORT + 1;
+        NutsDefinition def=ctx.getConstraints(NutsDefinition.class);
+        if(def!=null) {
+            String shortName = def.getId().getShortName();
+            //for executors
+            if ("net.thevpc.nuts.exec:exec-java".equals(shortName)) {
+                return DEFAULT_SUPPORT + 1;
+            }
+            if ("java".equals(shortName)) {
+                return DEFAULT_SUPPORT + 1;
+            }
+            if ("jar".equals(def.getDescriptor().getPackaging())) {
+                return DEFAULT_SUPPORT + 1;
+            }
         }
         return NO_SUPPORT;
     }
@@ -273,17 +276,18 @@ public class JavaExecutorComponent implements NutsExecutorComponent {
                             if (arg.matches("[0-9]+")) {
                                 port= CoreNumberUtils.convertToInteger(arg,port);
                             } else {
-                                switch (arg) {
-                                    case "suspend": {
-                                        suspend = true;
+                                NutsArgument a = NutsArgument.of(arg, session);
+                                switch (a.getKey().getString()) {
+                                    case "suspend":{
+                                        boolean b=a.getValue().getBoolean();
+                                        if(a.isNegated()){
+                                            b=!b;
+                                        }
+                                        suspend =b;
                                         break;
                                     }
-                                    case "no-suspend": {
-                                        suspend = false;
-                                        break;
-                                    }
-                                    case "!suspend": {
-                                        suspend = false;
+                                    case "port":{
+                                        port =a.getValue().getInt();
                                         break;
                                     }
                                 }

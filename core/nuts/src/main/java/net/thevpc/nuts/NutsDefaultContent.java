@@ -61,8 +61,8 @@ public class NutsDefaultContent implements NutsContent {
      * @return content path location
      */
     @Override
-    public Path getFilePath() {
-        return location == null ? null : Paths.get(location.asString());
+    public Path getFile() {
+        return location == null ? null : Paths.get(location.toString());
     }
 
     @Override

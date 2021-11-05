@@ -34,8 +34,20 @@ public class PlainCodeHighlighter implements NutsCodeHighlighter {
     }
 
     @Override
-    public int getSupportLevel(NutsSupportLevelContext<String> context) {
-        return NutsComponent.DEFAULT_SUPPORT;
+    public int getSupportLevel(NutsSupportLevelContext context) {
+        String s = context.getConstraints();
+        if(s==null){
+            return DEFAULT_SUPPORT;
+        }
+        switch (s){
+            case "plain":
+            case "text":
+            case "text/plain":
+            {
+                return NutsComponent.DEFAULT_SUPPORT;
+            }
+        }
+        return NutsComponent.NO_SUPPORT;
     }
 
 }
