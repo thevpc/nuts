@@ -1,4 +1,3 @@
-net.thevpc.nuts.runtime.standalone.io.DefaultHttpTransportComponent
 
 net.thevpc.nuts.runtime.standalone.repos.DefaultNutsRepoFactoryComponent
 
@@ -35,9 +34,6 @@ net.thevpc.nuts.runtime.core.expr.DefaultNutsExpr
 net.thevpc.nuts.runtime.standalone.DefaultNutsStreams
 net.thevpc.nuts.runtime.standalone.DefaultNutsVals
 net.thevpc.nuts.runtime.standalone.DefaultNutsGlob
-net.thevpc.nuts.runtime.standalone.io.DefaultNutsPaths
-net.thevpc.nuts.runtime.standalone.io.DefaultNutsInputStreams
-net.thevpc.nuts.runtime.standalone.io.DefaultNutsPrintStreams
 net.thevpc.nuts.runtime.core.app.NutsCommandHistoryImpl
 net.thevpc.nuts.runtime.core.app.DefaultNutsCommandLines
 net.thevpc.nuts.runtime.core.app.DefaultDefaultNutsApplicationContexts
@@ -50,10 +46,30 @@ net.thevpc.nuts.runtime.core.format.DefaultNutsVersionFormat
 net.thevpc.nuts.runtime.core.format.props.DefaultNutsPropertiesFormat
 net.thevpc.nuts.runtime.core.format.table.DefaultTableFormat
 net.thevpc.nuts.runtime.core.format.tree.DefaultNutsTreeFormat
+net.thevpc.nuts.runtime.core.format.DefaultNutsIdFormat
+net.thevpc.nuts.runtime.core.format.DefaultNutsDescriptorFormat
+net.thevpc.nuts.runtime.core.format.DefaultNutsVersionFormat
+net.thevpc.nuts.runtime.core.format.DefaultNutsDependencyFormat
+net.thevpc.nuts.runtime.core.format.elem.DefaultNutsElements
+net.thevpc.nuts.runtime.core.format.text.DefaultNutsTexts
+net.thevpc.nuts.runtime.core.format.text.highlighters.JavaCodeHighlighter
+net.thevpc.nuts.runtime.core.format.text.highlighters.BashCodeHighlighter
+net.thevpc.nuts.runtime.core.format.text.highlighters.FishCodeHighlighter
+net.thevpc.nuts.runtime.core.format.text.highlighters.HadraCodeHighlighter
+net.thevpc.nuts.runtime.core.format.text.highlighters.JsonCodeHighlighter
+net.thevpc.nuts.runtime.core.format.text.highlighters.NtfCodeHighlighter
+net.thevpc.nuts.runtime.core.format.text.highlighters.XmlCodeHighlighter
+net.thevpc.nuts.runtime.core.format.text.highlighters.WinCmdBlocTextHighlighter
+net.thevpc.nuts.runtime.core.format.text.highlighters.CppCodeHighlighter
+net.thevpc.nuts.runtime.core.format.text.highlighters.PlainCodeHighlighter
+
 
 net.thevpc.nuts.runtime.core.io.DefaultNutsContentTypeResolver
 net.thevpc.nuts.runtime.core.io.DefaultNutsContentTypes
-
+net.thevpc.nuts.runtime.standalone.io.DefaultHttpTransportComponent
+net.thevpc.nuts.runtime.standalone.io.DefaultNutsPaths
+net.thevpc.nuts.runtime.standalone.io.DefaultNutsInputStreams
+net.thevpc.nuts.runtime.standalone.io.DefaultNutsPrintStreams
 net.thevpc.nuts.runtime.standalone.io.DefaultNutsExecutionEntries
 net.thevpc.nuts.runtime.standalone.io.DefaultNutsHash
 net.thevpc.nuts.runtime.standalone.io.DefaultNutsInputStreamMonitor
@@ -79,10 +95,6 @@ net.thevpc.nuts.runtime.core.model.DefaultNutsDescriptorPropertyBuilder
 net.thevpc.nuts.runtime.core.model.DefaultNutsDependencyBuilder
 net.thevpc.nuts.runtime.core.model.DefaultNutsArtifactCallBuilder
 
-net.thevpc.nuts.runtime.core.format.DefaultNutsIdFormat
-net.thevpc.nuts.runtime.core.format.DefaultNutsDescriptorFormat
-net.thevpc.nuts.runtime.core.format.DefaultNutsVersionFormat
-net.thevpc.nuts.runtime.core.format.DefaultNutsDependencyFormat
 
 net.thevpc.nuts.runtime.core.filters.id.InternalNutsIdFilters
 net.thevpc.nuts.runtime.core.filters.version.InternalNutsVersionFilters
@@ -90,26 +102,9 @@ net.thevpc.nuts.runtime.core.filters.dependency.InternalNutsDependencyFilters
 net.thevpc.nuts.runtime.core.filters.descriptor.InternalNutsDescriptorFilters
 net.thevpc.nuts.runtime.core.filters.installstatus.InternalNutsInstallStatusFilters
 net.thevpc.nuts.runtime.core.filters.repository.InternalNutsRepositoryFilters
-
-
 net.thevpc.nuts.runtime.core.filters.DefaultNutsFilters
 
-net.thevpc.nuts.runtime.core.format.elem.DefaultNutsElements
-net.thevpc.nuts.runtime.core.format.text.DefaultNutsTexts
-
 net.thevpc.nuts.runtime.standalone.solvers.DefaultNutsDependencySolvers
-
-
-net.thevpc.nuts.runtime.core.format.text.highlighters.JavaCodeHighlighter
-net.thevpc.nuts.runtime.core.format.text.highlighters.BashCodeHighlighter
-net.thevpc.nuts.runtime.core.format.text.highlighters.FishCodeHighlighter
-net.thevpc.nuts.runtime.core.format.text.highlighters.HadraCodeHighlighter
-net.thevpc.nuts.runtime.core.format.text.highlighters.JsonCodeHighlighter
-net.thevpc.nuts.runtime.core.format.text.highlighters.NtfCodeHighlighter
-net.thevpc.nuts.runtime.core.format.text.highlighters.XmlCodeHighlighter
-net.thevpc.nuts.runtime.core.format.text.highlighters.WinCmdBlocTextHighlighter
-net.thevpc.nuts.runtime.core.format.text.highlighters.CppCodeHighlighter
-net.thevpc.nuts.runtime.core.format.text.highlighters.PlainCodeHighlighter
 
 ##################### Settings Subcommands!
 
