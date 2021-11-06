@@ -36,7 +36,7 @@ import net.thevpc.nuts.NutsUpdateResult;
 public final class DefaultNutsUpdateResult implements NutsUpdateResult {
 
     private NutsId id;
-    private NutsDefinition local;
+    private NutsDefinition installed;
     private NutsDefinition available;
     private NutsId[] dependencies;
     private boolean runtime;
@@ -44,26 +44,21 @@ public final class DefaultNutsUpdateResult implements NutsUpdateResult {
     private boolean updateForced;
     private boolean updateVersionAvailable;
     private boolean updateStatusAvailable;
-    private boolean installed;
 
     public DefaultNutsUpdateResult() {
     }
 
-    public DefaultNutsUpdateResult(NutsId id, NutsDefinition local, NutsDefinition available, NutsId[] dependencies, boolean runtime) {
+    public DefaultNutsUpdateResult(NutsId id, NutsDefinition installed, NutsDefinition available, NutsId[] dependencies, boolean runtime) {
         this.id = id;
-        this.local = local;
+        this.installed = installed;
         this.available = available;
         this.runtime = runtime;
         this.dependencies = dependencies == null ? new NutsId[0] : dependencies;
     }
 
-    public DefaultNutsUpdateResult setInstalled(boolean installed) {
-        this.installed = installed;
-        return this;
-    }
 
     public boolean isInstalled() {
-        return installed;
+        return installed !=null;
     }
 
     public boolean isRuntime() {
@@ -76,8 +71,8 @@ public final class DefaultNutsUpdateResult implements NutsUpdateResult {
     }
 
     @Override
-    public NutsDefinition getLocal() {
-        return local;
+    public NutsDefinition getInstalled() {
+        return installed;
     }
 
     @Override
@@ -131,8 +126,8 @@ public final class DefaultNutsUpdateResult implements NutsUpdateResult {
         this.updateStatusAvailable = updateStatus;
     }
 
-    public void setLocal(NutsDefinition local) {
-        this.local = local;
+    public void setInstalled(NutsDefinition installed) {
+        this.installed = installed;
     }
 
     public void setAvailable(NutsDefinition available) {

@@ -388,7 +388,7 @@ public class DefaultNutsDependencyBuilder implements NutsDependencyBuilder {
 
     @Override
     public NutsDependencyBuilder addProperties(String propertiesQuery) {
-        this.propertiesQuery.addProperties(propertiesQuery);
+        this.propertiesQuery.addProperties(propertiesQuery,session);
         return this;
     }
 
@@ -410,7 +410,7 @@ public class DefaultNutsDependencyBuilder implements NutsDependencyBuilder {
 
     @Override
     public NutsDependencyBuilder setProperties(String propertiesQuery) {
-        this.propertiesQuery.setProperties(propertiesQuery);
+        this.propertiesQuery.setProperties(propertiesQuery,session);
         return this;
     }
 

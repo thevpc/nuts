@@ -72,7 +72,7 @@ public abstract class AbstractScriptBuilder implements ScriptBuilder {
         String newContent = buildString();
 //        PathInfo.Status update0 = NdiUtils.tryWriteStatus(newContent.getBytes(), script,session);
         PathInfo.Status update = CoreIOUtils.tryWrite(newContent.getBytes(), script,session);
-        CoreIOUtils.setExecutable(script);
+        CoreIOUtils.setExecutable(script,session);
         return new PathInfo(type, anyId, script, update);
     }
 }

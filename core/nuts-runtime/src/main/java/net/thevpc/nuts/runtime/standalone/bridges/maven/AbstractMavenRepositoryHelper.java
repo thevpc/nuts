@@ -66,7 +66,7 @@ public abstract class AbstractMavenRepositoryHelper {
 
     protected String getStreamAsString(NutsId id, String typeName, String action, NutsSession session) {
         String url = getIdPath(id, session);
-        return CoreIOUtils.loadString(openStream(id, url, id, typeName, action, session), true);
+        return CoreIOUtils.loadString(openStream(id, url, id, typeName, action, session), true,session);
     }
 
     protected void checkSHA1Hash(NutsId id, InputStream stream, String typeName, NutsSession session) throws IOException {
@@ -89,7 +89,7 @@ public abstract class AbstractMavenRepositoryHelper {
                 //sha is not provided... so do not check anything!
                 return;
             }
-            String lhash = CoreIOUtils.evalSHA1Hex(stream, true);
+            String lhash = CoreIOUtils.evalSHA1Hex(stream, true,session);
             if (!rhash.equalsIgnoreCase(lhash)) {
                 throw new IOException("invalid file hash " + id);
             }
@@ -125,7 +125,7 @@ public abstract class AbstractMavenRepositoryHelper {
             NutsId idDesc = id.builder().setFaceDescriptor().build();
             try {
                 stream = getStream(idDesc, "artifact descriptor", "retrieve", session);
-                bytes = CoreIOUtils.loadByteArray(stream, true);
+                bytes = CoreIOUtils.loadByteArray(stream, true,session);
                 name = NutsInputStreamMetadata.of(stream).getName();
                 nutsDescriptor = MavenUtils.of(session).parsePomXmlAndResolveParents(
                         CoreIOUtils.createBytesStream(bytes, name == null ? null : NutsMessage.formatted(name), "text/xml", "pom.xml", session)

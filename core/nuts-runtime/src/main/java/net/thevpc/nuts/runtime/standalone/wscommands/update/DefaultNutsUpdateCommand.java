@@ -338,27 +338,27 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
                 int widthCol2 = 2;
                 for (NutsUpdateResult update : all) {
                     widthCol1 = Math.max(widthCol1, update.getAvailable()==null?0:update.getAvailable().getId().getShortName().length());
-                    widthCol2 = Math.max(widthCol2, update.getLocal()==null?0:update.getLocal().getId().getVersion().toString().length());
+                    widthCol2 = Math.max(widthCol2, update.getInstalled()==null?0:update.getInstalled().getId().getVersion().toString().length());
                 }
                 NutsTexts factory = NutsTexts.of(session);
                 for (NutsUpdateResult update : all) {
-                    if (update.getLocal() == null) {
+                    if (update.getInstalled() == null) {
                         out.printf("%s  : %s%n",
                                 factory.ofStyled(CoreStringUtils.alignLeft(update.getId().toString(), widthCol2), NutsTextStyle.primary6()),
                                 factory.ofStyled("not installed",NutsTextStyle.error()));
                     }else if (update.isUpdateVersionAvailable()) {
                         out.printf("%s  : %s => %s%n",
-                                factory.ofStyled(CoreStringUtils.alignLeft(update.getLocal().getId().getVersion().toString(), widthCol2), NutsTextStyle.primary6()),
+                                factory.ofStyled(CoreStringUtils.alignLeft(update.getInstalled().getId().getVersion().toString(), widthCol2), NutsTextStyle.primary6()),
                                 CoreStringUtils.alignLeft(update.getAvailable().getId().getShortName(), widthCol1),
                                 factory.ofPlain(update.getAvailable().getId().getVersion().toString()));
                     } else if (update.isUpdateStatusAvailable()) {
                         out.printf("%s  : %s => %s%n",
-                                factory.ofStyled(CoreStringUtils.alignLeft(update.getLocal().getId().getVersion().toString(), widthCol2), NutsTextStyle.primary6()),
+                                factory.ofStyled(CoreStringUtils.alignLeft(update.getInstalled().getId().getVersion().toString(), widthCol2), NutsTextStyle.primary6()),
                                 CoreStringUtils.alignLeft(update.getAvailable().getId().getShortName(), widthCol1),
                                 factory.ofStyled("set as default", NutsTextStyle.primary4()));
                     }else {
                         out.printf("%s  : %s%n",
-                                factory.ofStyled(CoreStringUtils.alignLeft(update.getLocal().getId().getVersion().toString(), widthCol2), NutsTextStyle.primary6()),
+                                factory.ofStyled(CoreStringUtils.alignLeft(update.getInstalled().getId().getVersion().toString(), widthCol2), NutsTextStyle.primary6()),
                                 factory.ofStyled("up-to-date",NutsTextStyle.warn()));
                     }
                 }
@@ -373,7 +373,7 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
             } else {
                 NutsArrayElementBuilder arrayElementBuilder = e.forArray();
                 for (NutsUpdateResult update : all) {
-                    if (update.getLocal() == null) {
+                    if (update.getInstalled() == null) {
                         arrayElementBuilder.add(e.forObject()
                                 .set("package", update.getId().getShortName())
                                 .set("status", "not-installed")
@@ -382,20 +382,20 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
                         arrayElementBuilder.add(e.forObject()
                                 .set("package", update.getAvailable().getId().getShortName())
                                 .set("status", "update-version-available")
-                                .set("localVersion", update.getLocal().getId().getVersion().toString())
+                                .set("localVersion", update.getInstalled().getId().getVersion().toString())
                                 .set("newVersion", update.getAvailable().getId().getVersion().toString())
                                 .build());
                     } else if (update.isUpdateStatusAvailable()) {
                         arrayElementBuilder.add(e.forObject()
                                 .set("package", update.getAvailable().getId().getShortName())
-                                .set("localVersion", update.getLocal().getId().getVersion().toString())
+                                .set("localVersion", update.getInstalled().getId().getVersion().toString())
                                 .set("status", "update-default-available")
                                 .set("newVersion", "set as default")
                                 .build());
                     }else{
                         arrayElementBuilder.add(e.forObject()
                                 .set("package", update.getId().getShortName())
-                                .set("localVersion", update.getLocal().getId().getVersion().toString())
+                                .set("localVersion", update.getInstalled().getId().getVersion().toString())
                                 .set("status", "up-to-date")
                                 .build());
                     }
@@ -484,7 +484,7 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
             sc.addScopes(scopes.toArray(new NutsDependencyScope[0]));
         }
         NutsDefinition d1 = sc.getResultDefinitions().first();
-        r.setLocal(d0);
+        r.setInstalled(d0);
         r.setAvailable(d1);
         if (d1 == null) {
             //this is very interesting. Why the hell is this happening?
@@ -532,7 +532,7 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
         NutsUpdateResult apiUpdate = result.getApi();
         NutsUpdateResult runtimeUpdate = result.getRuntime();
         List<NutsId> notInstalled = Arrays.stream(result.getAllResults())
-                .filter(x -> x.getLocal() == null) //not installed
+                .filter(x -> x.getInstalled() == null) //not installed
                 .map(NutsUpdateResult::getId)
                 .collect(Collectors.toList());
         if (!notInstalled.isEmpty()) {
@@ -578,7 +578,7 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
             traceSingleUpdate(runtimeUpdate);
         }
         for (NutsUpdateResult extension : result.getExtensions()) {
-            NutsId finalExtensionId = extension.getAvailable() == null ? extension.getLocal().getId() : extension.getAvailable().getId();
+            NutsId finalExtensionId = extension.getAvailable() == null ? extension.getInstalled().getId() : extension.getAvailable().getId();
             wcfg.getModel().prepareBootExtension(finalExtensionId, true, validWorkspaceSession);
         }
         NutsExtensionListHelper h = new NutsExtensionListHelper(wcfg.getModel().getStoredConfigBoot().getExtensions())
@@ -617,7 +617,7 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
         checkSession();
         NutsSession session = getSession();
         NutsId id = r.getId();
-        NutsDefinition d0 = r.getLocal();
+        NutsDefinition d0 = r.getInstalled();
         NutsDefinition d1 = r.getAvailable();
 //        final String simpleName = d0 != null ? d0.getId().getShortName() : d1 != null ? d1.getId().getShortName() : id.getShortName();
         final NutsId simpleId = d0 != null ? d0.getId().getShortId() : d1 != null ? d1.getId().getShortId() : id.getShortId();
@@ -774,7 +774,6 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
         DefaultNutsUpdateResult defaultNutsUpdateResult = new DefaultNutsUpdateResult(id, oldFile, newFile,
                 newFile == null ? null : newFile.getDependencies().stream().map(NutsDependency::toId).toArray(NutsId[]::new),
                 false);
-        defaultNutsUpdateResult.setInstalled(oldFile!=null);
         if (cnewId != null && newFile != null && coldId != null && cnewId.getVersion().compareTo(coldId.getVersion()) > 0) {
             defaultNutsUpdateResult.setUpdateVersionAvailable(true);
         }
@@ -802,7 +801,7 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
         NutsSession session = getSession();
         final NutsPrintStream out = session.out();
 //        NutsId id = r.getId();
-        NutsDefinition d0 = r.getLocal();
+        NutsDefinition d0 = r.getInstalled();
         NutsDefinition d1 = r.getAvailable();
         if (d0 == null) {
             getSession().security().checkAllowed(NutsConstants.Permissions.UPDATE, "update");

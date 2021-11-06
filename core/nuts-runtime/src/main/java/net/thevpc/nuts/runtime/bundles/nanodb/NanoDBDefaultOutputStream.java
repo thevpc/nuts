@@ -1,14 +1,19 @@
 package net.thevpc.nuts.runtime.bundles.nanodb;
 
+import net.thevpc.nuts.NutsIOException;
+import net.thevpc.nuts.NutsSession;
+
 import java.io.*;
 
 public class NanoDBDefaultOutputStream implements NanoDBOutputStream {
     private DataOutputStream dos;
     private NanoDBOutputStreamCounter counter;
+    private NutsSession session;
 
-    public NanoDBDefaultOutputStream(OutputStream out) {
+    public NanoDBDefaultOutputStream(OutputStream out,NutsSession session) {
         counter = new NanoDBOutputStreamCounter(out);
         dos = new DataOutputStream(counter);
+        this.session=session;
     }
 
     @Override
@@ -26,7 +31,7 @@ public class NanoDBDefaultOutputStream implements NanoDBOutputStream {
                 }
             }
         } catch (IOException ex) {
-            throw new UncheckedIOException(ex);
+            throw new NutsIOException(session,ex);
         }
     }
 
@@ -40,7 +45,7 @@ public class NanoDBDefaultOutputStream implements NanoDBOutputStream {
         try {
             dos.writeBoolean(val);
         } catch (IOException ex) {
-            throw new UncheckedIOException(ex);
+            throw new NutsIOException(session,ex);
         }
     }
 
@@ -49,7 +54,7 @@ public class NanoDBDefaultOutputStream implements NanoDBOutputStream {
         try {
             dos.writeByte(val);
         } catch (IOException ex) {
-            throw new UncheckedIOException(ex);
+            throw new NutsIOException(session,ex);
         }
     }
 
@@ -58,7 +63,7 @@ public class NanoDBDefaultOutputStream implements NanoDBOutputStream {
         try {
             dos.writeShort(val);
         } catch (IOException ex) {
-            throw new UncheckedIOException(ex);
+            throw new NutsIOException(session,ex);
         }
     }
 
@@ -67,7 +72,7 @@ public class NanoDBDefaultOutputStream implements NanoDBOutputStream {
         try {
             dos.writeChar(val);
         } catch (IOException ex) {
-            throw new UncheckedIOException(ex);
+            throw new NutsIOException(session,ex);
         }
     }
 
@@ -76,7 +81,7 @@ public class NanoDBDefaultOutputStream implements NanoDBOutputStream {
         try {
             dos.writeInt(val);
         } catch (IOException ex) {
-            throw new UncheckedIOException(ex);
+            throw new NutsIOException(session,ex);
         }
     }
 
@@ -85,7 +90,7 @@ public class NanoDBDefaultOutputStream implements NanoDBOutputStream {
         try {
             dos.writeLong(val);
         } catch (IOException ex) {
-            throw new UncheckedIOException(ex);
+            throw new NutsIOException(session,ex);
         }
     }
 
@@ -94,7 +99,7 @@ public class NanoDBDefaultOutputStream implements NanoDBOutputStream {
         try {
             dos.writeFloat(val);
         } catch (IOException ex) {
-            throw new UncheckedIOException(ex);
+            throw new NutsIOException(session,ex);
         }
     }
 
@@ -103,7 +108,7 @@ public class NanoDBDefaultOutputStream implements NanoDBOutputStream {
         try {
             dos.writeDouble(val);
         } catch (IOException ex) {
-            throw new UncheckedIOException(ex);
+            throw new NutsIOException(session,ex);
         }
     }
 
@@ -112,7 +117,7 @@ public class NanoDBDefaultOutputStream implements NanoDBOutputStream {
         try {
             dos.writeBytes(str);
         } catch (IOException ex) {
-            throw new UncheckedIOException(ex);
+            throw new NutsIOException(session,ex);
         }
     }
 
@@ -121,7 +126,7 @@ public class NanoDBDefaultOutputStream implements NanoDBOutputStream {
         try {
             dos.writeChars(str);
         } catch (IOException ex) {
-            throw new UncheckedIOException(ex);
+            throw new NutsIOException(session,ex);
         }
     }
 
@@ -130,7 +135,7 @@ public class NanoDBDefaultOutputStream implements NanoDBOutputStream {
         try {
             dos.writeUTF(str);
         } catch (IOException ex) {
-            throw new UncheckedIOException(ex);
+            throw new NutsIOException(session,ex);
         }
     }
 
@@ -139,7 +144,7 @@ public class NanoDBDefaultOutputStream implements NanoDBOutputStream {
         try {
             dos.close();
         } catch (IOException ex) {
-            throw new UncheckedIOException(ex);
+            throw new NutsIOException(session,ex);
         }
     }
 
@@ -148,7 +153,7 @@ public class NanoDBDefaultOutputStream implements NanoDBOutputStream {
         try {
             dos.flush();
         } catch (IOException ex) {
-            throw new UncheckedIOException(ex);
+            throw new NutsIOException(session,ex);
         }
     }
 
@@ -157,7 +162,7 @@ public class NanoDBDefaultOutputStream implements NanoDBOutputStream {
 //        try {
 //            dos.writeObject(obj);
 //        } catch (IOException ex) {
-//            throw new UncheckedIOException(ex);
+//            throw new NutsIOException(session,ex);
 //        }
 //    }
 }

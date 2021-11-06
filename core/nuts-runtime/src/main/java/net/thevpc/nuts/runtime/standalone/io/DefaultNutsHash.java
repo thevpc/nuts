@@ -43,7 +43,7 @@ public class DefaultNutsHash implements NutsHash {
 
     private NutsStreamOrPath source;
     private String algorithm;
-    private NutsWorkspace ws;
+    private final NutsWorkspace ws;
     private NutsSession session;
 
     public DefaultNutsHash(NutsSession session) {
@@ -53,37 +53,37 @@ public class DefaultNutsHash implements NutsHash {
 
     @Override
     public NutsHash setSource(InputStream source) {
-        this.source = source==null?null:NutsStreamOrPath.of(source);
+        this.source = source == null ? null : NutsStreamOrPath.of(source);
         return this;
     }
 
     @Override
-    public NutsHash setSource(byte[] source) {
-        this.source = source==null?null:NutsStreamOrPath.of(new ByteArrayInputStream(source));
-        return null;
-    }
-
-    @Override
     public NutsHash setSource(File source) {
-        this.source = source==null?null:NutsStreamOrPath.of(source,getSession());
+        this.source = source == null ? null : NutsStreamOrPath.of(source, getSession());
         return this;
     }
 
     @Override
     public NutsHash setSource(Path source) {
-        this.source = source==null?null:NutsStreamOrPath.of(source,getSession());
+        this.source = source == null ? null : NutsStreamOrPath.of(source, getSession());
         return this;
     }
 
     @Override
     public NutsHash setSource(NutsPath source) {
-        this.source = source==null?null:NutsStreamOrPath.of(source);
+        this.source = source == null ? null : NutsStreamOrPath.of(source);
         return this;
     }
 
     @Override
+    public NutsHash setSource(byte[] source) {
+        this.source = source == null ? null : NutsStreamOrPath.of(new ByteArrayInputStream(source));
+        return null;
+    }
+
+    @Override
     public NutsHash setSource(NutsDescriptor source) {
-        this.source = source==null?null:NutsStreamOrPath.ofSpecial(source, NutsStreamOrPath.Type.DESCRIPTOR);
+        this.source = source == null ? null : NutsStreamOrPath.ofSpecial(source, NutsStreamOrPath.Type.DESCRIPTOR);
         return this;
     }
 
@@ -100,13 +100,13 @@ public class DefaultNutsHash implements NutsHash {
         checkSession();
         switch (source.getType()) {
             case INPUT_STREAM: {
-                return CoreIOUtils.evalHash(source.getInputStream(), getValidAlgo());
+                return CoreIOUtils.evalHash(source.getInputStream(), getValidAlgo(),session);
             }
             case PATH: {
                 try (InputStream is = new BufferedInputStream(source.getInputStream())) {
-                    return CoreIOUtils.evalHash(is, getValidAlgo());
+                    return CoreIOUtils.evalHash(is, getValidAlgo(),session);
                 } catch (IOException ex) {
-                    throw new UncheckedIOException(ex);
+                    throw new NutsIOException(session, ex);
                 }
             }
             case DESCRIPTOR: {
@@ -114,9 +114,9 @@ public class DefaultNutsHash implements NutsHash {
                 ((NutsDescriptor) source.getValue()).formatter().setSession(session)
                         .compact().setSession(session).print(new OutputStreamWriter(o));
                 try (InputStream is = new ByteArrayInputStream(o.toByteArray())) {
-                    return CoreIOUtils.evalHash(is, getValidAlgo());
+                    return CoreIOUtils.evalHash(is, getValidAlgo(),session);
                 } catch (IOException ex) {
-                    throw new UncheckedIOException(ex);
+                    throw new NutsIOException(session, ex);
                 }
             }
             default: {
@@ -130,7 +130,7 @@ public class DefaultNutsHash implements NutsHash {
         try {
             out.write(computeBytes());
         } catch (IOException ex) {
-            throw new UncheckedIOException(ex);
+            throw new NutsIOException(session, ex);
         }
         return this;
     }
@@ -162,6 +162,16 @@ public class DefaultNutsHash implements NutsHash {
     }
 
     @Override
+    public NutsHash algorithm(String algorithm) {
+        return setAlgorithm(algorithm);
+    }
+
+    @Override
+    public String getAlgorithm() {
+        return algorithm;
+    }
+
+    @Override
     public NutsHash setAlgorithm(String algorithm) {
         if (NutsBlankable.isBlank(algorithm)) {
             algorithm = null;
@@ -170,19 +180,9 @@ public class DefaultNutsHash implements NutsHash {
             MessageDigest.getInstance(algorithm);
             this.algorithm = algorithm;
         } catch (NoSuchAlgorithmException ex) {
-            throw new NutsIllegalArgumentException(getSession(),NutsMessage.cstyle("unable to resolve algo: %s",algorithm),ex);
+            throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("unable to resolve algo: %s", algorithm), ex);
         }
         return this;
-    }
-
-    @Override
-    public NutsHash algorithm(String algorithm) {
-        return setAlgorithm(algorithm);
-    }
-
-    @Override
-    public String getAlgorithm() {
-        return algorithm;
     }
 
     protected String getValidAlgo() {

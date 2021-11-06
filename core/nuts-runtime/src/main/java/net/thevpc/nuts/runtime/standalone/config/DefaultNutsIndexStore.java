@@ -161,8 +161,8 @@ public class DefaultNutsIndexStore extends AbstractNutsIndexStore {
     @Override
     public NutsIndexStore subscribe(NutsSession session) {
         String URL = "http://localhost:7070/indexer/subscription/subscribe?workspaceLocation="
-                + CoreIOUtils.urlEncodeString(session.locations().getWorkspaceLocation().toString())
-                + "&repositoryUuid=" + CoreIOUtils.urlEncodeString(getRepository().getUuid());
+                + CoreIOUtils.urlEncodeString(session.locations().getWorkspaceLocation().toString(),session)
+                + "&repositoryUuid=" + CoreIOUtils.urlEncodeString(getRepository().getUuid(),session);
         try {
             NutsTransportConnection clientFacade = CoreIOUtils.getHttpClientFacade(session,
                     URL);
@@ -176,8 +176,8 @@ public class DefaultNutsIndexStore extends AbstractNutsIndexStore {
     @Override
     public NutsIndexStore unsubscribe(NutsSession session) {
         String URL = "http://localhost:7070/indexer/subscription/unsubscribe?workspaceLocation="
-                + CoreIOUtils.urlEncodeString(session.locations().getWorkspaceLocation().toString())
-                + "&repositoryUuid=" + CoreIOUtils.urlEncodeString(getRepository().getUuid());
+                + CoreIOUtils.urlEncodeString(session.locations().getWorkspaceLocation().toString(),session)
+                + "&repositoryUuid=" + CoreIOUtils.urlEncodeString(getRepository().getUuid(),session);
         try {
             NutsTransportConnection clientFacade = CoreIOUtils.getHttpClientFacade(session,
                     URL);
@@ -191,8 +191,8 @@ public class DefaultNutsIndexStore extends AbstractNutsIndexStore {
     @Override
     public boolean isSubscribed(NutsSession session) {
         String URL = "http://localhost:7070/indexer/subscription/isSubscribed?workspaceLocation="
-                + CoreIOUtils.urlEncodeString(session.locations().getWorkspaceLocation().toString())
-                + "&repositoryUuid=" + CoreIOUtils.urlEncodeString(getRepository().getUuid());
+                + CoreIOUtils.urlEncodeString(session.locations().getWorkspaceLocation().toString(),session)
+                + "&repositoryUuid=" + CoreIOUtils.urlEncodeString(getRepository().getUuid(),session);
         try {
             NutsTransportConnection clientFacade = CoreIOUtils.getHttpClientFacade(session,
                     URL);

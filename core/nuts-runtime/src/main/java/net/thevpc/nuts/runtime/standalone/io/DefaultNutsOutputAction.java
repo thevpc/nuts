@@ -7,7 +7,6 @@
 //import java.io.File;
 //import java.io.IOException;
 //import java.io.OutputStream;
-//import java.io.UncheckedIOException;
 //import java.net.URL;
 //import java.nio.file.Path;
 //
@@ -42,7 +41,7 @@
 ////                try {
 ////                    ((OutputStream) getSource()).close();
 ////                } catch (IOException ex) {
-////                    throw new UncheckedIOException(ex);
+////                    throw new NutsIOException(session,ex);
 ////                }
 ////            }
 ////        };

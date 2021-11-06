@@ -1,14 +1,11 @@
 package net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.ndi.unix;
 
-import net.thevpc.nuts.NutsExecutionType;
-import net.thevpc.nuts.NutsId;
-import net.thevpc.nuts.NutsPrintStream;
-import net.thevpc.nuts.NutsSession;
+import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.wscommands.settings.PathInfo;
-import net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.ndi.base.AbstractFreeDesktopEntryWriter;
 import net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.ndi.FreeDesktopEntry;
+import net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.ndi.base.AbstractFreeDesktopEntryWriter;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -21,7 +18,10 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-import java.io.*;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.PrintStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -122,12 +122,12 @@ public class UnixFreeDesktopEntryWriter extends AbstractFreeDesktopEntryWriter {
         return all.toArray(new PathInfo[0]);
     }
 
-    private void callMeMaye(String ... command) {
-        List<String> cmdList=new ArrayList<>(Arrays.asList(command));
-        String sysCmd=cmdList.remove(0);
+    private void callMeMaye(String... command) {
+        List<String> cmdList = new ArrayList<>(Arrays.asList(command));
+        String sysCmd = cmdList.remove(0);
         Path a = CoreIOUtils.sysWhich(sysCmd);
         if (a != null) {
-            cmdList.add(0,a.toString());
+            cmdList.add(0, a.toString());
             String outStr = session.exec()
                     .setCommand(cmdList)
                     .addCommand()
@@ -136,17 +136,18 @@ public class UnixFreeDesktopEntryWriter extends AbstractFreeDesktopEntryWriter {
                     .run()
                     .getOutputString().trim();
             if (session.isPlainTrace() && !outStr.isEmpty()) {
-                session.out().println(CoreStringUtils.prefixLinesOsNL(outStr,"["+sysCmd+"] "));
+                session.out().println(CoreStringUtils.prefixLinesOsNL(outStr, "[" + sysCmd + "] "));
             }
         }
     }
+
     private void updateDesktopMenus() {
         //    KDE  : 'kbuildsycoca5'
         callMeMaye("kbuildsycoca5");
         //    GNOME: update-desktop-database ~/.local/share/applications
-        callMeMaye("update-desktop-database",System.getProperty("user.home") + "/.local/share/applications");
+        callMeMaye("update-desktop-database", System.getProperty("user.home") + "/.local/share/applications");
         // more generic : xdg-desktop-menu forceupdate
-        callMeMaye("xdg-desktop-menu","forceupdate");
+        callMeMaye("xdg-desktop-menu", "forceupdate");
     }
 
     private String getDesktopEnvironment() {
@@ -180,7 +181,7 @@ public class UnixFreeDesktopEntryWriter extends AbstractFreeDesktopEntryWriter {
         try (PrintStream p = new PrintStream(Files.newOutputStream(out))) {
             write(file, p);
         } catch (IOException ex) {
-            throw new UncheckedIOException(ex);
+            throw new NutsIOException(session, ex);
         }
     }
 
@@ -208,7 +209,7 @@ public class UnixFreeDesktopEntryWriter extends AbstractFreeDesktopEntryWriter {
         try (PrintStream p = new PrintStream(out)) {
             write(file, p);
         } catch (IOException ex) {
-            throw new UncheckedIOException(ex);
+            throw new NutsIOException(session, ex);
         }
     }
 

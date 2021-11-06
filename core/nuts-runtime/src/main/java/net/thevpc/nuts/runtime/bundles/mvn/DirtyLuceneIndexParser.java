@@ -1,5 +1,7 @@
 package net.thevpc.nuts.runtime.bundles.mvn;
 
+import net.thevpc.nuts.NutsIOException;
+import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.runtime.bundles.collections.EvictingIntQueue;
 
 import java.io.*;
@@ -11,8 +13,10 @@ public class DirtyLuceneIndexParser implements Iterator<String>, Closeable {
     private EvictingIntQueue whites = new EvictingIntQueue(10);
     private long count = 0;
     private boolean closed=false;
+    private NutsSession session;
 
-    public DirtyLuceneIndexParser(InputStream reader) {
+    public DirtyLuceneIndexParser(InputStream reader, NutsSession session) {
+        this.session = session;
         this.reader = new PushbackReader(new InputStreamReader(reader));
     }
 
@@ -116,7 +120,7 @@ public class DirtyLuceneIndexParser implements Iterator<String>, Closeable {
                 }
             }
         } catch (IOException ex) {
-            throw new UncheckedIOException(ex);
+            throw new NutsIOException(session,ex);
         }
         close();
         return null;
@@ -130,7 +134,7 @@ public class DirtyLuceneIndexParser implements Iterator<String>, Closeable {
         try {
             reader.close();
         } catch (IOException ex) {
-            throw new UncheckedIOException(ex);
+            throw new NutsIOException(session,ex);
         }
     }
 }

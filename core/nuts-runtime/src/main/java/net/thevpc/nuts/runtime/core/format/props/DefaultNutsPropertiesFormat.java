@@ -153,7 +153,7 @@ public class DefaultNutsPropertiesFormat extends DefaultFormatBase<NutsPropertie
             mm = model;
         }
         if (javaProps) {
-            CoreIOUtils.storeProperties(ObjectOutputFormatWriterHelper.explodeMap(mm), w.asPrintStream(), sorted);
+            CoreIOUtils.storeProperties(ObjectOutputFormatWriterHelper.explodeMap(mm), w.asPrintStream(), sorted,getSession());
         } else {
             printMap(out, NutsTexts.of(getSession()).ofBlank(), mm);
         }

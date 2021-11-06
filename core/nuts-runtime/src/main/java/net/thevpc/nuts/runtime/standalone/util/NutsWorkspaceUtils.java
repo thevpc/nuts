@@ -28,7 +28,6 @@ import net.thevpc.nuts.spi.NutsSessionAware;
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.UncheckedIOException;
 import java.net.URL;
 import java.util.*;
 import java.util.function.Predicate;
@@ -388,7 +387,7 @@ public class NutsWorkspaceUtils {
     public NutsExecutionEntry parseClassExecutionEntry(InputStream classStream, String sourceName) {
         CorePlatformUtils.MainClassType mainClass = null;
         try {
-            mainClass = CorePlatformUtils.getMainClassType(classStream);
+            mainClass = CorePlatformUtils.getMainClassType(classStream,session);
         } catch (Exception ex) {
             _LOGOP(session).level(Level.FINE).error(ex)
                     .log(NutsMessage.jstyle("invalid file format {0}", sourceName));
@@ -438,7 +437,7 @@ public class NutsWorkspaceUtils {
                 }
             });
         } catch (IOException ex) {
-            throw new UncheckedIOException(ex);
+            throw new NutsIOException(session, ex);
         }
         List<NutsExecutionEntry> entries = new ArrayList<>();
         String defaultEntry = null;

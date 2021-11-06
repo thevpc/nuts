@@ -124,7 +124,7 @@ public class Test02_SimpleClassStream {
                 TestUtils.println("\t\tfield " + accessFlags + " " + name + " " + descriptor);
             }
 
-        }
+        },session
         );
     }
 

@@ -41,7 +41,7 @@ public class DefaultNutsDependencyParser implements NutsDependencyParser {
             String name = m.group("artifact");
             String version = m.group("version");
             String face = NutsUtilStrings.trim(m.group("face"));
-            Map<String, String> queryMap = QPARSER.parseMap(face);
+            Map<String, String> queryMap = QPARSER.parseMap(face,session);
             if (name == null) {
                 name = group;
                 group = null;

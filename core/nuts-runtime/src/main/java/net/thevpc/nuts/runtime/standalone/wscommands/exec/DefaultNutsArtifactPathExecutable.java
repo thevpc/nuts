@@ -139,7 +139,7 @@ public class DefaultNutsArtifactPathExecutable extends AbstractNutsExecutableCom
 
     public static CharacterizedExecFile characterizeForExec(NutsStreamOrPath contentFile, NutsSession session, String[] execOptions) {
         String classifier = null;//TODO how to get classifier?
-        CharacterizedExecFile c = new CharacterizedExecFile();
+        CharacterizedExecFile c = new CharacterizedExecFile(session);
         try {
             c.streamOrPath = contentFile;
             c.contentFile = CoreIOUtils.toPathInputSource(contentFile, c.temps, session);
@@ -231,7 +231,7 @@ public class DefaultNutsArtifactPathExecutable extends AbstractNutsExecutableCom
                 throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("path does not denote a valid file or folder %s", c.streamOrPath));
             }
         } catch (IOException ex) {
-            throw new UncheckedIOException(ex);
+            throw new NutsIOException(session,ex);
         }
         return c;
     }

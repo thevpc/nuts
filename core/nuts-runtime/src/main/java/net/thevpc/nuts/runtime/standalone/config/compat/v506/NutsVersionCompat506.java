@@ -24,7 +24,7 @@ public class NutsVersionCompat506 extends AbstractNutsVersionCompat {
         cc.setApiVersion(getApiVersion());
         NutsWorkspaceConfigBoot506 c = parseConfig506(CompatUtils.readAllBytes(
                 session.locations().getWorkspaceLocation().toFile()
-                .resolve(NutsConstants.Files.WORKSPACE_CONFIG_FILE_NAME)));
+                .resolve(NutsConstants.Files.WORKSPACE_CONFIG_FILE_NAME),session));
         if (c != null) {
 //            cc.setConfigVersion(???);
             cc.setApiVersion(c.getApiVersion());
@@ -42,7 +42,7 @@ public class NutsVersionCompat506 extends AbstractNutsVersionCompat {
 //        cc.setApiVersion(getApiVersion());
         NutsWorkspaceConfigBoot506 c = parseConfig506(CompatUtils.readAllBytes(
                 session.locations().getWorkspaceLocation().toFile()
-                        .resolve(NutsConstants.Files.WORKSPACE_CONFIG_FILE_NAME)));
+                        .resolve(NutsConstants.Files.WORKSPACE_CONFIG_FILE_NAME),session));
         if (c != null) {
 //            cc.setConfigVersion(???);
             cc.setDependencies(c.getRuntimeDependencies());
@@ -60,7 +60,7 @@ public class NutsVersionCompat506 extends AbstractNutsVersionCompat {
         NutsWorkspaceConfigSecurity cc = new NutsWorkspaceConfigSecurity();
         NutsWorkspaceConfigBoot506 c = parseConfig506(CompatUtils.readAllBytes(
                 session.locations().getWorkspaceLocation().toFile()
-                        .resolve(NutsConstants.Files.WORKSPACE_CONFIG_FILE_NAME)));
+                        .resolve(NutsConstants.Files.WORKSPACE_CONFIG_FILE_NAME),session));
         if (c != null) {
 //            cc.setConfigVersion(???);
             cc.setSecure(c.isSecure());
@@ -76,7 +76,7 @@ public class NutsVersionCompat506 extends AbstractNutsVersionCompat {
         NutsWorkspaceConfigMain cc = new NutsWorkspaceConfigMain();
         NutsWorkspaceConfigBoot506 c = parseConfig506(CompatUtils.readAllBytes(
                 session.locations().getWorkspaceLocation().toFile()
-                        .resolve(NutsConstants.Files.WORKSPACE_CONFIG_FILE_NAME)));
+                        .resolve(NutsConstants.Files.WORKSPACE_CONFIG_FILE_NAME),session));
         if (c != null) {
             c.setRepositories(CompatUtils.copyNutsRepositoryRefList(c.getRepositories()));
             c.setCommandFactories(CompatUtils.copyNutsCommandAliasFactoryConfigList(c.getCommandFactories()));

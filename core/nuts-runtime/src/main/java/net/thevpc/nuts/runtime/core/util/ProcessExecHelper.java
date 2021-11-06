@@ -202,7 +202,7 @@ public class ProcessExecHelper implements IProcessExecHelper {
         Path wsLocation = session.locations().getWorkspaceLocation().toFile();
         Path path = wsLocation.resolve(args[0]).normalize();
         if (Files.exists(path)) {
-            CoreIOUtils.setExecutable(path);
+            CoreIOUtils.setExecutable(path,session);
         }
         Path pdirectory = null;
         if (NutsBlankable.isBlank(directory)) {
@@ -447,7 +447,7 @@ public class ProcessExecHelper implements IProcessExecHelper {
             ProcessBuilder2 p = pb.start();
             return p.waitFor().getResult();
         } catch (IOException ex) {
-            throw new UncheckedIOException(ex);
+            throw new NutsIOException(session,ex);
         }
     }
 
@@ -459,7 +459,7 @@ public class ProcessExecHelper implements IProcessExecHelper {
             ProcessBuilder2 p = pb.start();
             return new FutureTask<Integer>(() -> p.waitFor().getResult());
         } catch (IOException ex) {
-            throw new UncheckedIOException(ex);
+            throw new NutsIOException(session,ex);
         }
     }
 }

@@ -712,7 +712,7 @@ public class DefaultNutsWorkspaceFactory implements NutsWorkspaceFactory {
                 ClassClassMap cc = new ClassClassMap();
                 classes.put(extensionPoint, cc);
                 Class<NutsComponent> serviceClass = NutsComponent.class;
-                for (String n : CoreServiceUtils.loadZipServiceClassNames(url, serviceClass)) {
+                for (String n : CoreServiceUtils.loadZipServiceClassNames(url, serviceClass,session)) {
                     Class<?> c = null;
                     try {
                         c = Class.forName(n, false, bootClassLoader);

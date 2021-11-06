@@ -3,8 +3,6 @@ package net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.ndi;
 import net.thevpc.nuts.*;
 
 import java.io.IOException;
-import java.io.UncheckedIOException;
-import java.math.BigInteger;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -190,8 +188,8 @@ public class NdiScriptOptions implements Cloneable {
                     nutsApiId = session.getWorkspace().getApiId();
                 } else {
                     nutsApiId = session.search().addId(
-                            session.getWorkspace().getApiId().builder().setVersion(nutsVersion).build()
-                    ).setLatest(true)
+                                    session.getWorkspace().getApiId().builder().setVersion(nutsVersion).build()
+                            ).setLatest(true)
                             .setDistinct(true)
                             .getResultIds().singleton();
                 }
@@ -204,13 +202,13 @@ public class NdiScriptOptions implements Cloneable {
                                             .getParent())
                             .filter(
                                     f
-                                            -> NutsVersion.of(f.getFileName().toString(),session).getLong(0, -1)==-1
+                                            -> NutsVersion.of(f.getFileName().toString(), session).getLong(0, -1) == -1
                                             && Files.exists(f.resolve("nuts-api-config.json"))
                             ).map(
-                                    f -> NutsVersion.of(f.getFileName().toString(),session)
+                                    f -> NutsVersion.of(f.getFileName().toString(), session)
                             ).sorted(Comparator.reverseOrder()).findFirst().orElse(null);
                 } catch (IOException e) {
-                    throw new UncheckedIOException(e);
+                    throw new NutsIOException(session, e);
                 }
                 if (_latestVersion == null) {
                     throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("missing nuts-api version to link to"));

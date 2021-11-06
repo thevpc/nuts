@@ -6,7 +6,6 @@ import net.thevpc.nuts.runtime.core.util.CoreNumberUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.UncheckedIOException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -15,13 +14,13 @@ import java.util.Properties;
 import java.util.UUID;
 
 public class NutsTextFormatPropertiesTheme implements NutsTextFormatTheme {
-    private Properties props = new Properties();
-    private NutsSession session;
+    private final Properties props = new Properties();
+    private final NutsSession session;
 
     public NutsTextFormatPropertiesTheme(String name, ClassLoader cls, NutsSession session) {
         this.session = session;
         if (name.indexOf('/') >= 0 || name.indexOf('\\') >= 0) {
-            try (InputStream is = NutsPath.of(name,session).getInputStream()) {
+            try (InputStream is = NutsPath.of(name, session).getInputStream()) {
                 props.load(is);
             } catch (IOException e) {
                 throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("invalid theme: %s", name), e);
@@ -44,11 +43,11 @@ public class NutsTextFormatPropertiesTheme implements NutsTextFormatTheme {
                         inStream.close();
                     }
                 } catch (IOException e) {
-                    throw new UncheckedIOException(e);
+                    throw new NutsIOException(session, e);
                 }
             } else {
                 Path themeFile = Paths.get(session.locations().getStoreLocation(
-                        NutsId.of("net.thevpc.nuts:nuts-runtime#SHARED",session),
+                        NutsId.of("net.thevpc.nuts:nuts-runtime#SHARED", session),
                         NutsStoreLocation.CONFIG
                 )).resolve("themes").resolve(name);
                 if (Files.isRegularFile(themeFile)) {
@@ -103,7 +102,7 @@ public class NutsTextFormatPropertiesTheme implements NutsTextFormatTheme {
                         while (r.hasNext() && r.peekChar() >= '0' && r.peekChar() <= '9') {
                             mod.append(r.nextChar());
                         }
-                        sb.append(variant % (CoreNumberUtils.convertToInteger(mod.toString(),1)));
+                        sb.append(variant % (CoreNumberUtils.convertToInteger(mod.toString(), 1)));
                     } else {
                         r.nextChar();
                         sb.append(variant);
@@ -118,7 +117,7 @@ public class NutsTextFormatPropertiesTheme implements NutsTextFormatTheme {
     }
 
     private int getVarValAsInt(String n) {
-        return CoreNumberUtils.convertToInteger(props.getProperty(n),0);
+        return CoreNumberUtils.convertToInteger(props.getProperty(n), 0);
     }
 
     private String getProp(NutsTextStyleType t, String variant) {
@@ -172,10 +171,10 @@ public class NutsTextFormatPropertiesTheme implements NutsTextFormatTheme {
             n = "" + defaultVariant;
         }
         NutsTextStyleType st = NutsTextStyleType.parseLenient(k, null);
-        if(st==null){
-            if(NutsBlankable.isBlank(n)){
+        if (st == null) {
+            if (NutsBlankable.isBlank(n)) {
                 return NutsTextStyles.PLAIN;
-            }else {
+            } else {
                 String z = props.getProperty(n);
                 if (z != null) {
                     if (maxLoop < 0) {
@@ -186,27 +185,26 @@ public class NutsTextFormatPropertiesTheme implements NutsTextFormatTheme {
                 return NutsTextStyles.PLAIN;
             }
         }
-        switch (st){
-            case PLAIN:{
-                return NutsTextStyles.of(NutsTextStyle.of(st,0));
+        switch (st) {
+            case PLAIN: {
+                return NutsTextStyles.of(NutsTextStyle.of(st, 0));
             }
             case FORE_COLOR:
             case FORE_TRUE_COLOR:
             case BACK_COLOR:
-            case BACK_TRUE_COLOR:{
+            case BACK_TRUE_COLOR: {
                 Integer ii = CoreNumberUtils.convertToInteger(n, null);
                 if (ii == null) {
                     ii = getVarValAsInt(n);
                 }
-                return NutsTextStyles.of(NutsTextStyle.of(st,ii));
+                return NutsTextStyles.of(NutsTextStyle.of(st, ii));
             }
-            default:
-            {
+            default: {
                 Integer ii = CoreNumberUtils.convertToInteger(n, null);
                 if (ii == null) {
                     ii = getVarValAsInt(n);
                 }
-                return toBasicStyles(NutsTextStyle.of(st,ii), session, maxLoop);
+                return toBasicStyles(NutsTextStyle.of(st, ii), session, maxLoop);
             }
         }
     }

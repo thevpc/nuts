@@ -6,7 +6,6 @@ import net.thevpc.nuts.runtime.standalone.config.NutsSdkLocationComparator;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.UncheckedIOException;
 import java.math.BigInteger;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
@@ -195,7 +194,7 @@ public class NutsJavaSdkUtils {
                     }
                 }
             } catch (IOException ex) {
-                throw new UncheckedIOException(ex);
+                throw new NutsIOException(session, ex);
             }
         }
         all.sort(new NutsSdkLocationComparator(session));
@@ -236,7 +235,7 @@ public class NutsJavaSdkUtils {
                     );
                 }
             } catch (IOException ex) {
-                throw new UncheckedIOException(ex);
+                throw new NutsIOException(session, ex);
             }
         }
         return session.config().executorService().submit(new Callable<NutsPlatformLocation[]>() {

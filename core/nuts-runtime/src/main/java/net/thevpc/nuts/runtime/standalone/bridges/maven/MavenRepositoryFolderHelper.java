@@ -268,9 +268,9 @@ public class MavenRepositoryFolderHelper {
                             }
 //                            println(MavenMetadataParser.toXmlString(m));
                             new MavenMetadataParser(session).writeMavenMetaData(m, metadataxml);
-                            String md5 = CoreIOUtils.evalMD5Hex(metadataxml).toLowerCase();
+                            String md5 = CoreIOUtils.evalMD5Hex(metadataxml,session).toLowerCase();
                             Files.write(metadataxml.resolveSibling("maven-metadata.xml.md5"), md5.getBytes());
-                            String sha1 = CoreIOUtils.evalSHA1Hex(metadataxml).toLowerCase();
+                            String sha1 = CoreIOUtils.evalSHA1Hex(metadataxml,session).toLowerCase();
                             Files.write(metadataxml.resolveSibling("maven-metadata.xml.sha1"), sha1.getBytes());
                         }
                         if (applyRawNavigation) {

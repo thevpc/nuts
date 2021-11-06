@@ -1,9 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.config.compat;
 
-import net.thevpc.nuts.NutsCommandFactoryConfig;
-import net.thevpc.nuts.NutsPlatformLocation;
-import net.thevpc.nuts.NutsRepositoryRef;
-import net.thevpc.nuts.NutsUserConfig;
+import net.thevpc.nuts.*;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
@@ -139,14 +136,14 @@ public class CompatUtils {
         return pp;
     }
 
-    public static byte[] readAllBytes(Path file) {
+    public static byte[] readAllBytes(Path file, NutsSession session) {
         if (!Files.isRegularFile(file)) {
             return null;
         }
         try {
             return Files.readAllBytes(file);
         } catch (IOException ex) {
-            throw new UncheckedIOException(ex);
+            throw new NutsIOException(session, ex);
         }
     }
 

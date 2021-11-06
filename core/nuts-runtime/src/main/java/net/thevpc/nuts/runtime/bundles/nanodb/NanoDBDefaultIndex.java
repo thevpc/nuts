@@ -1,5 +1,9 @@
 package net.thevpc.nuts.runtime.bundles.nanodb;
 
+import net.thevpc.nuts.NutsIOException;
+import net.thevpc.nuts.NutsMessage;
+import net.thevpc.nuts.NutsSession;
+
 import java.io.*;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -25,46 +29,46 @@ public class NanoDBDefaultIndex<T> extends NanoDBAbstractIndex<T> {
     }
 
     @Override
-    public void load() {
+    public void load(NutsSession session) {
         if (file.exists()) {
-            load(file);
+            load(file,session);
         }
     }
 
     @Override
-    public void flush() {
+    public void flush(NutsSession session) {
         file.getParentFile().mkdirs();
         try (OutputStream out = new FileOutputStream(file)) {
-            store(new NanoDBDefaultOutputStream(out));
+            store(new NanoDBDefaultOutputStream(out,session),session);
         } catch (IOException e) {
-            throw new UncheckedIOException(e);
+            throw new NutsIOException(session,e);
         }
     }
 
     @Override
-    public void put(T s, long position) {
+    public void put(T s, long position,NutsSession session) {
         DBIndexValueStore store = index.get(s);
         if (store == null) {
             store = storeFactory.create(this, s);
             index.put(s, store);
         }
-        store.add(position);
+        store.add(position,session);
 
     }
 
     @Override
-    public LongStream get(T s) {
+    public LongStream get(T s,NutsSession session) {
         DBIndexValueStore store = index.get(s);
-        return store == null ? Arrays.stream(new long[0]) : store.stream();
+        return store == null ? Arrays.stream(new long[0]) : store.stream(session);
     }
 
     @Override
-    public void clear() {
+    public void clear(NutsSession session) {
         index.clear();
     }
 
     @Override
-    public Stream<T> findAll() {
+    public Stream<T> findAll(NutsSession session) {
         return index.keySet().stream();
     }
 
@@ -73,7 +77,7 @@ public class NanoDBDefaultIndex<T> extends NanoDBAbstractIndex<T> {
     }
 
 
-    public void store(NanoDBOutputStream dos) {
+    public void store(NanoDBOutputStream dos,NutsSession session) {
         try {
             dos.writeUTF(NANODB_INDEX_0_8_1);
             dos.writeLong(index.size());
@@ -82,7 +86,7 @@ public class NanoDBDefaultIndex<T> extends NanoDBAbstractIndex<T> {
                 DBIndexValueStore store = e.getValue();
                 boolean mem = store.isMem();
                 if (mem) {
-                    long[] pos = store.stream().toArray();
+                    long[] pos = store.stream(session).toArray();
                     dos.writeByte(0);
                     dos.writeInt(pos.length);
                     for (long po : pos) {
@@ -90,26 +94,26 @@ public class NanoDBDefaultIndex<T> extends NanoDBAbstractIndex<T> {
                     }
                 } else {
                     dos.writeByte(1);
-                    store.flush();
+                    store.flush(session);
                 }
             }
             dos.flush();
         } catch (IOException ex) {
-            throw new UncheckedIOException(ex);
+            throw new NutsIOException(session,ex);
         }
     }
 
-    public void load(NanoDBInputStream in) {
+    public void load(NanoDBInputStream in,NutsSession session) {
         try {
             String header = in.readUTF();
             if (!NANODB_INDEX_0_8_1.equals(header)) {
-                throw new UncheckedIOException(new IOException("Unsupported index file " + header));
+                throw new NutsIOException(session, NutsMessage.cstyle("unsupported index file %s",header));
             }
             long r = in.readLong();
             index = new HashMap<T, DBIndexValueStore>(r <= 10 ? 10 : (int) r);
 
             for (long i = 0; i < r; i++) {
-                T o = readKey(in);
+                T o = readKey(in,session);
                 byte type = in.readByte();
                 if (type == 0 /**in  memory **/) {
                     int len = in.readInt();
@@ -125,27 +129,27 @@ public class NanoDBDefaultIndex<T> extends NanoDBAbstractIndex<T> {
                 }
             }
         } catch (IOException ex) {
-            throw new UncheckedIOException(ex);
+            throw new NutsIOException(session,ex);
         }
     }
 
-    protected T readKey(NanoDBInputStream in) throws IOException {
+    protected T readKey(NanoDBInputStream in,NutsSession session) throws IOException {
         return ser.read(in);
     }
 
-    public void store(File stream) throws IOException {
+    public void store(File stream,NutsSession session) throws IOException {
         try (OutputStream out = new FileOutputStream(stream)) {
-            store(new NanoDBDefaultOutputStream(out));
+            store(new NanoDBDefaultOutputStream(out,session),session);
         }
     }
 
 
 
-    public void load(File stream) {
+    public void load(File stream,NutsSession session) {
         try (InputStream out = new FileInputStream(stream)) {
-            load(new NanoDBDefaultInputStream(out));
+            load(new NanoDBDefaultInputStream(out,session),session);
         } catch (IOException ex) {
-            throw new UncheckedIOException(ex);
+            throw new NutsIOException(session,ex);
         }
     }
 

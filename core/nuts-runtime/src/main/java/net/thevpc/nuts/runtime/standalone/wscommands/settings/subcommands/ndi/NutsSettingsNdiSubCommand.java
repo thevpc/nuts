@@ -5,12 +5,11 @@ import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.optional.mslink.OptionalMsLinkHelper;
 import net.thevpc.nuts.runtime.standalone.wscommands.settings.PathInfo;
 import net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.AbstractNutsSettingsSubCommand;
-import net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.ndi.unix.*;
+import net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.ndi.unix.LinuxNdi;
+import net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.ndi.unix.MacosNdi;
 import net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.ndi.win.WindowsNdi;
 
 import java.io.UncheckedIOException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -24,7 +23,7 @@ public class NutsSettingsNdiSubCommand extends AbstractNutsSettingsSubCommand {
             case LINUX:
             case UNIX: {
 
-                ndi=new LinuxNdi(session);
+                ndi = new LinuxNdi(session);
                 break;
             }
             case MACOS: {
@@ -279,7 +278,7 @@ public class NutsSettingsNdiSubCommand extends AbstractNutsSettingsSubCommand {
                                 null,
                                 session.copy().setTrace(subTrace)
                         );
-                    } catch (UncheckedIOException e) {
+                    } catch (UncheckedIOException | NutsIOException e) {
                         throw new NutsExecutionException(session, NutsMessage.cstyle("unable to run script %s : %s", id, e), e);
                     }
                 }

@@ -24,7 +24,7 @@ public class NutsVersionCompat502 extends AbstractNutsVersionCompat {
         cc.setApiVersion(getApiVersion());
         NutsWorkspaceConfigBoot502 c = parseConfig502(CompatUtils.readAllBytes(
                 session.locations().getWorkspaceLocation().toFile()
-                .resolve(NutsConstants.Files.WORKSPACE_CONFIG_FILE_NAME)), session);
+                .resolve(NutsConstants.Files.WORKSPACE_CONFIG_FILE_NAME),session), session);
         if (c != null) {
             cc.setApiVersion(c.getBootApiVersion());
             cc.setRuntimeId(c.getBootRuntime());
@@ -40,7 +40,7 @@ public class NutsVersionCompat502 extends AbstractNutsVersionCompat {
 //        cc.setApiVersion(getApiVersion());
         NutsWorkspaceConfigBoot502 c = parseConfig502(CompatUtils.readAllBytes(
                 session.locations().getWorkspaceLocation().toFile()
-                        .resolve(NutsConstants.Files.WORKSPACE_CONFIG_FILE_NAME)), session);
+                        .resolve(NutsConstants.Files.WORKSPACE_CONFIG_FILE_NAME),session), session);
         if (c != null) {
             cc.setDependencies(c.getBootRuntimeDependencies());
             cc.setId(c.getBootRuntime());
@@ -53,7 +53,7 @@ public class NutsVersionCompat502 extends AbstractNutsVersionCompat {
         NutsWorkspaceConfigSecurity cc = new NutsWorkspaceConfigSecurity();
         NutsWorkspaceConfigBoot502 c = parseConfig502(CompatUtils.readAllBytes(
                 session.locations().getWorkspaceLocation().toFile()
-                        .resolve(NutsConstants.Files.WORKSPACE_CONFIG_FILE_NAME)), session);
+                        .resolve(NutsConstants.Files.WORKSPACE_CONFIG_FILE_NAME),session), session);
         if (c != null) {
 //            cc.setConfigVersion(???);
             cc.setSecure(c.isSecure());
@@ -69,7 +69,7 @@ public class NutsVersionCompat502 extends AbstractNutsVersionCompat {
         NutsWorkspaceConfigMain cc = new NutsWorkspaceConfigMain();
         NutsWorkspaceConfigBoot502 c = parseConfig502(CompatUtils.readAllBytes(
                 session.locations().getWorkspaceLocation().toFile()
-                        .resolve(NutsConstants.Files.WORKSPACE_CONFIG_FILE_NAME)), session);
+                        .resolve(NutsConstants.Files.WORKSPACE_CONFIG_FILE_NAME),session), session);
         if (c != null) {
             c.setRepositories(CompatUtils.copyNutsRepositoryRefList(c.getRepositories()));
             c.setCommandFactories(CompatUtils.copyNutsCommandAliasFactoryConfigList(c.getCommandFactories()));

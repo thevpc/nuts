@@ -58,7 +58,7 @@ public class FromTemplateScriptBuilder extends AbstractScriptBuilder {
                 a.add(c);
             }
         } catch (IOException e) {
-            throw new UncheckedIOException(e);
+            throw new NutsIOException(getSession(),e);
         }
         return a;
 
@@ -198,7 +198,7 @@ public class FromTemplateScriptBuilder extends AbstractScriptBuilder {
             }
             return bos.toString();
         } catch (IOException ex) {
-            throw new UncheckedIOException(ex);
+            throw new NutsIOException(getSession(),ex);
         }
     }
 

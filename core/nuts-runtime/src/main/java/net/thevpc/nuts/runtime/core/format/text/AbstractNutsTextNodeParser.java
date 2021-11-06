@@ -6,18 +6,19 @@ import net.thevpc.nuts.runtime.core.format.text.parser.DefaultNutsTextNodeResour
 import java.io.*;
 
 public abstract class AbstractNutsTextNodeParser implements NutsTextParser {
-    protected int bufferSize=4096;
+    protected int bufferSize = 4096;
     protected NutsSession session;
     protected DefaultNutsTextNodeResourceParserHelper rp;
 
     public AbstractNutsTextNodeParser(NutsSession session) {
         this.session = session;
-        rp=new DefaultNutsTextNodeResourceParserHelper(this, session);
+        rp = new DefaultNutsTextNodeResourceParserHelper(this, session);
     }
 
     public NutsWorkspace getWorkspace() {
         return session.getWorkspace();
     }
+
     public NutsSession getSession() {
         return session;
     }
@@ -29,7 +30,7 @@ public abstract class AbstractNutsTextNodeParser implements NutsTextParser {
 
     @Override
     public long parse(InputStream in, NutsTextVisitor visitor) {
-        return parse(new BufferedReader(new InputStreamReader(in)),visitor);
+        return parse(new BufferedReader(new InputStreamReader(in)), visitor);
     }
 
     public long parse(Reader in, NutsTextVisitor visitor) {
@@ -40,9 +41,9 @@ public abstract class AbstractNutsTextNodeParser implements NutsTextParser {
             try {
                 if (!((r = in.read(buffer)) > 0)) break;
             } catch (IOException ex) {
-                throw new UncheckedIOException(ex);
+                throw new NutsIOException(session, ex);
             }
-            parseIncremental(buffer,0,r,visitor);
+            parseIncremental(buffer, 0, r, visitor);
         }
         parseRemaining(visitor);
         return count;
@@ -108,14 +109,14 @@ public abstract class AbstractNutsTextNodeParser implements NutsTextParser {
     @Override
     public NutsText parseIncremental(byte[] buf, int off, int len) {
         NutsTextNodeCollector doc = new NutsTextNodeCollector(session);
-        parseIncremental(buf,off,len, doc);
+        parseIncremental(buf, off, len, doc);
         return doc.getRootOrEmpty();
     }
 
     @Override
     public NutsText parseIncremental(char[] buf, int off, int len) {
         NutsTextNodeCollector doc = new NutsTextNodeCollector(session);
-        parseIncremental(buf,off,len, doc);
+        parseIncremental(buf, off, len, doc);
         return doc.getRootOrEmpty();
     }
 

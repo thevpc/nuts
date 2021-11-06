@@ -17,7 +17,6 @@ import net.thevpc.nuts.spi.NutsRepositorySPI;
 
 import java.io.IOException;
 import java.io.PrintStream;
-import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -29,8 +28,8 @@ import java.util.logging.Level;
 public class DefaultNutsRepositoryModel {
 
     private final NutsRepositoryRegistryHelper repositoryRegistryHelper;
-    public NutsLogger LOG;
     private final NutsWorkspace workspace;
+    public NutsLogger LOG;
 
     public DefaultNutsRepositoryModel(NutsWorkspace workspace) {
         this.workspace = workspace;
@@ -43,7 +42,7 @@ public class DefaultNutsRepositoryModel {
 
     protected NutsLogger _LOG(NutsSession session) {
         if (LOG == null) {
-            LOG = NutsLogger.of(DefaultNutsRepositoryModel.class,session);
+            LOG = NutsLogger.of(DefaultNutsRepositoryModel.class, session);
         }
         return LOG;
     }
@@ -332,7 +331,7 @@ public class DefaultNutsRepositoryModel {
             try {
                 bytes = Files.readAllBytes(file);
             } catch (IOException ex) {
-                throw new UncheckedIOException(ex);
+                throw new NutsIOException(session, ex);
             }
             try {
                 NutsElements elem = NutsElements.of(session);
@@ -366,7 +365,7 @@ public class DefaultNutsRepositoryModel {
         NutsBootManager wboot = session.boot().setSession(session);
         NutsWorkspaceEnvManager wenv = session.env().setSession(session);
         if (wconfig.isReadOnly()) {
-            throw new UncheckedIOException("error loading repository " + file.toString(), new IOException(ex));
+            throw new NutsIOException(session, NutsMessage.cstyle("error loading repository %s", file), ex);
         }
         String fileName = "nuts-repository" + (name == null ? "" : ("-") + name) + (uuid == null ? "" : ("-") + uuid) + "-" + Instant.now().toString();
         LOG.with().session(session).level(Level.SEVERE).verb(NutsLogVerb.FAIL).log(
@@ -376,7 +375,7 @@ public class DefaultNutsRepositoryModel {
         try {
             CoreIOUtils.mkdirs(logError, session);
         } catch (Exception ex1) {
-            throw new UncheckedIOException("unable to log repository error while loading config file " + file.toString() + " : " + ex1, new IOException(ex));
+            throw new NutsIOException(session, NutsMessage.cstyle("unable to log repository error while loading config file %s : %s", file, ex1), ex);
         }
         Path newfile = logError.resolve(fileName + ".json");
         LOG.with().session(session).level(Level.SEVERE).verb(NutsLogVerb.FAIL)
@@ -384,7 +383,7 @@ public class DefaultNutsRepositoryModel {
         try {
             Files.move(file, newfile);
         } catch (IOException e) {
-            throw new UncheckedIOException("Unable to load and re-create repository config file " + file + " : " + e, new IOException(ex));
+            throw new NutsIOException(session, NutsMessage.cstyle("nable to load and re-create repository config file %s : %s", file, e), ex);
         }
 
         try (PrintStream o = new PrintStream(logError.resolve(fileName + ".error").toFile())) {

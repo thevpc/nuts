@@ -1,5 +1,7 @@
 package net.thevpc.nuts.runtime.core.expr;
 
+import net.thevpc.nuts.NutsSession;
+
 import java.io.Reader;
 import java.io.StreamTokenizer;
 import java.util.Iterator;
@@ -11,8 +13,8 @@ class TokenIterator implements Iterator<NutsToken> {
     private boolean returnComment=false;
     private boolean doReplay;
 
-    public TokenIterator(Reader r) {
-        this.st=new StreamTokenizerExt(r);
+    public TokenIterator(Reader r, NutsSession session) {
+        this.st=new StreamTokenizerExt(r,session);
     }
 
     public void pushBack() {

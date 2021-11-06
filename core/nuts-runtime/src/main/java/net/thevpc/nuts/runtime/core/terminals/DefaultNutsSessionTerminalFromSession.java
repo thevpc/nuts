@@ -84,7 +84,7 @@ public class DefaultNutsSessionTerminalFromSession extends AbstractNutsSessionTe
         try {
             return getReader().readLine();
         } catch (IOException e) {
-            throw new UncheckedIOException(e);
+            throw new NutsIOException(session,e);
         }
     }
 

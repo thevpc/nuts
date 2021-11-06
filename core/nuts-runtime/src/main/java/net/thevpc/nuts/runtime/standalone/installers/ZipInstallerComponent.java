@@ -25,15 +25,20 @@
 */
 package net.thevpc.nuts.runtime.standalone.installers;
 
-import java.io.IOException;
-import java.io.UncheckedIOException;
-
-import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.core.NutsWorkspaceExt;
+import net.thevpc.nuts.NutsDefinition;
+import net.thevpc.nuts.NutsExecutionContext;
+import net.thevpc.nuts.NutsIOException;
+import net.thevpc.nuts.NutsStoreLocation;
 import net.thevpc.nuts.runtime.bundles.io.UnzipOptions;
 import net.thevpc.nuts.runtime.bundles.io.ZipUtils;
+import net.thevpc.nuts.runtime.core.NutsWorkspaceExt;
 import net.thevpc.nuts.runtime.core.model.DefaultNutsDefinition;
-import net.thevpc.nuts.spi.*;
+import net.thevpc.nuts.spi.NutsComponentScope;
+import net.thevpc.nuts.spi.NutsComponentScopeType;
+import net.thevpc.nuts.spi.NutsInstallerComponent;
+import net.thevpc.nuts.spi.NutsSupportLevelContext;
+
+import java.io.IOException;
 
 /**
  * Created by vpc on 1/7/17.
@@ -66,7 +71,7 @@ public class ZipInstallerComponent implements NutsInstallerComponent {
                     new UnzipOptions().setSkipRoot("true".equalsIgnoreCase(skipRoot))
             );
         } catch (IOException ex) {
-            throw new UncheckedIOException(ex);
+            throw new NutsIOException(executionContext.getTraceSession(),ex);
         }
         nutsDefinition.setInstallInformation(NutsWorkspaceExt.of(executionContext.getTraceSession()).getInstalledRepository().getInstallInformation(nutsDefinition.getId(), executionContext.getExecSession()));
         if (executionContext.getExecutorArguments().length > 0) {

@@ -48,7 +48,7 @@ public interface NutsUpdateResult {
      *
      * @return installed/local definition or null
      */
-    NutsDefinition getLocal();
+    NutsDefinition getInstalled();
 
     /**
      * return available definition or null

@@ -1,5 +1,7 @@
 package net.thevpc.nuts.runtime.bundles.nanodb;
 
+import net.thevpc.nuts.NutsSession;
+
 import java.io.File;
 import java.util.Arrays;
 import java.util.stream.LongStream;
@@ -7,9 +9,9 @@ import java.util.stream.LongStream;
 public class DBIndexValueMemStore implements DBIndexValueStore {
     private long[] val;
     private File file;
-    private int max = 1000;
-    private NanoDBIndex index;
-    private Object indexKey;
+    private final int max = 1000;
+    private final NanoDBIndex index;
+    private final Object indexKey;
     private DBIndexValueFileStore fallback;
 
     public DBIndexValueMemStore(NanoDBIndex index, Object indexKey, long[] val) {
@@ -19,7 +21,7 @@ public class DBIndexValueMemStore implements DBIndexValueStore {
     }
 
     @Override
-    public void add(long position) {
+    public void add(long position, NutsSession session) {
         if (fallback == null && val.length + 1 < max) {
             if (val.length == 0) {
                 val = new long[]{position};
@@ -32,19 +34,19 @@ public class DBIndexValueMemStore implements DBIndexValueStore {
         } else {
             if (fallback == null) {
                 fallback = new DBIndexValueFileStore(index, indexKey);
-                fallback.addAll(val);
+                fallback.addAll(val, session);
                 val = null;
             }
-            fallback.add(position);
+            fallback.add(position, session);
         }
     }
 
 
     @Override
-    public void addAll(long[] position) {
+    public void addAll(long[] position, NutsSession session) {
         if (fallback == null && val.length + position.length < max) {
             if (val.length == 0) {
-                val = Arrays.copyOf(position,position.length);
+                val = Arrays.copyOf(position, position.length);
             } else {
                 long[] t2 = new long[val.length + position.length];
                 System.arraycopy(val, 0, t2, 0, val.length);
@@ -54,19 +56,19 @@ public class DBIndexValueMemStore implements DBIndexValueStore {
         } else {
             if (fallback == null) {
                 fallback = new DBIndexValueFileStore(index, indexKey);
-                fallback.addAll(val);
+                fallback.addAll(val, session);
                 val = null;
             }
-            fallback.addAll(position);
+            fallback.addAll(position, session);
         }
     }
 
     @Override
-    public LongStream stream() {
+    public LongStream stream(NutsSession session) {
         if (fallback == null) {
             return Arrays.stream(val);
         } else {
-            return fallback.stream();
+            return fallback.stream(session);
         }
     }
 
@@ -75,9 +77,9 @@ public class DBIndexValueMemStore implements DBIndexValueStore {
         return fallback == null;
     }
 
-    public void flush() {
+    public void flush(NutsSession session) {
         if (fallback != null) {
-            fallback.flush();
+            fallback.flush(session);
         }
     }
 }

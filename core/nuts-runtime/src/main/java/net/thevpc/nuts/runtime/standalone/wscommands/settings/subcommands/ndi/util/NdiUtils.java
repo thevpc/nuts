@@ -26,7 +26,10 @@
 package net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.ndi.util;
 
 
-import net.thevpc.nuts.*;
+import net.thevpc.nuts.NutsIOException;
+import net.thevpc.nuts.NutsIllegalArgumentException;
+import net.thevpc.nuts.NutsMessage;
+import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.ndi.unix.AnyNixNdi;
 
 import java.io.*;
@@ -47,7 +50,7 @@ public class NdiUtils {
         try {
             w.flush();
         } catch (IOException ex) {
-            throw new UncheckedIOException(ex);
+            throw new NutsIOException(session, ex);
         }
         return b.toString();
     }
@@ -83,7 +86,7 @@ public class NdiUtils {
             }
             w.flush();
         } catch (IOException ex) {
-            throw new UncheckedIOException(ex);
+            throw new NutsIOException(session, ex);
         }
     }
 

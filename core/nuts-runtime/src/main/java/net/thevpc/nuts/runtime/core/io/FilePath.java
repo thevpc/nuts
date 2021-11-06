@@ -78,7 +78,7 @@ public class FilePath implements NutsPathSPI {
         try {
             return value.toUri().toURL();
         } catch (MalformedURLException e) {
-            throw new UncheckedIOException(e);
+            throw new NutsIOException(session,e);
         }
     }
 
@@ -117,7 +117,7 @@ public class FilePath implements NutsPathSPI {
         try {
             return Files.size(value);
         } catch (IOException e) {
-            throw new UncheckedIOException(e);
+            throw new NutsIOException(session,e);
         }
     }
 
@@ -142,7 +142,7 @@ public class FilePath implements NutsPathSPI {
                     new NutsDefaultInputStreamMetadata(toNutsPathInstance())
             );
         } catch (IOException e) {
-            throw new UncheckedIOException(e);
+            throw new NutsIOException(session,e);
         }
     }
 
@@ -150,7 +150,7 @@ public class FilePath implements NutsPathSPI {
         try {
             return Files.newOutputStream(value);
         } catch (IOException e) {
-            throw new UncheckedIOException(e);
+            throw new NutsIOException(session,e);
         }
     }
 

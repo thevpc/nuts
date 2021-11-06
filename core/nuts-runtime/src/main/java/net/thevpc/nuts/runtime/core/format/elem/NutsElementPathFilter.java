@@ -1,7 +1,7 @@
 /**
  * ====================================================================
- *            Nuts : Network Updatable Things Service
- *                  (universal package manager)
+ * Nuts : Network Updatable Things Service
+ * (universal package manager)
  * <br>
  * is a new Open Source Package Manager to help install packages
  * and libraries for runtime execution. Nuts is the ultimate companion for
@@ -11,7 +11,7 @@
  * architecture to help supporting a large range of sub managers / repositories.
  *
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc]
  * Licensed under the Apache License, Version 2.0 (the "License"); you may
  * not use this file except in compliance with the License. You may obtain a
@@ -23,25 +23,17 @@
  * governing permissions and limitations under the License.
  * <br>
  * ====================================================================
-*/
+ */
 package net.thevpc.nuts.runtime.core.format.elem;
+
+import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.core.util.CoreNumberUtils;
 
 import java.io.IOException;
 import java.io.StreamTokenizer;
 import java.io.StringReader;
-import java.io.UncheckedIOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
-
-import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.core.util.CoreNumberUtils;
 
 /**
  *
@@ -134,9 +126,19 @@ public class NutsElementPathFilter {
                 }
             }
         } catch (IOException ex) {
-            throw new UncheckedIOException(ex);
+            throw new NutsIOException(session, ex);
         }
         return q;
+    }
+
+    public interface NutsElementNameMatcher {
+
+        boolean matches(int index, NutsElement name, int len, Map<String, Object> matchContext, NutsSession session);
+    }
+
+    public interface NutsElementIndexMatcher {
+
+        boolean matches(NutsElement value, int index, int len, Map<String, Object> matchContext, NutsSession session);
     }
 
     private static class QueueJsonPath implements NutsElementPath {
@@ -144,18 +146,18 @@ public class NutsElementPathFilter {
         List<NutsElementPath> queue = new ArrayList<>();
 
         @Override
+        public List<NutsElement> filter(NutsElement element) {
+            List<NutsElement> a = new ArrayList<>();
+            a.add(element);
+            return filter(a);
+        }
+
+        @Override
         public List<NutsElement> filter(List<NutsElement> elements) {
             for (NutsElementPath jsonPath : queue) {
                 elements = jsonPath.filter(elements);
             }
             return elements;
-        }
-
-        @Override
-        public List<NutsElement> filter(NutsElement element) {
-            List<NutsElement> a = new ArrayList<>();
-            a.add(element);
-            return filter(a);
         }
 
         @Override
@@ -167,8 +169,8 @@ public class NutsElementPathFilter {
 
     private static class ArrItemCollectorJsonPath implements NutsElementPath {
 
-        private NutsSession session;
-        private NutsElements builder;
+        private final NutsSession session;
+        private final NutsElements builder;
 
         public ArrItemCollectorJsonPath(NutsSession session) {
             this.session = session;
@@ -195,7 +197,7 @@ public class NutsElementPathFilter {
 
     private static class SubItemJsonPath extends AbstractJsonPath {
 
-        private String pattern;
+        private final String pattern;
 
         public SubItemJsonPath(String subItem, NutsSession session) {
             super(session);
@@ -433,16 +435,6 @@ public class NutsElementPathFilter {
 
     }
 
-    public interface NutsElementNameMatcher {
-
-        boolean matches(int index, NutsElement name, int len, Map<String, Object> matchContext, NutsSession session);
-    }
-
-    public interface NutsElementIndexMatcher {
-
-        boolean matches(NutsElement value, int index, int len, Map<String, Object> matchContext, NutsSession session);
-    }
-
     private static class NutsElementIndexMatcherEven implements NutsElementIndexMatcher {
 
         public NutsElementIndexMatcherEven() {
@@ -565,8 +557,8 @@ public class NutsElementPathFilter {
 
         @Override
         public boolean matches(int index, NutsElement name, int len, Map<String, Object> matchContext, NutsSession session) {
-            if(name.type()==NutsElementType.STRING){
-                String sname=name.asPrimitive().getString();
+            if (name.type() == NutsElementType.STRING) {
+                String sname = name.asPrimitive().getString();
                 return lower
                         ? sname.toLowerCase().matches(pat)
                         : sname.matches(pat);
@@ -632,8 +624,7 @@ public class NutsElementPathFilter {
                 matchContext.put("unique", u);
             }
             String v = NutsElements.of(session).setSession(session).json().setNtf(false).setValue(value).format()
-                    .filteredText()
-                    ;
+                    .filteredText();
             if (u.contains(v)) {
                 return false;
             }

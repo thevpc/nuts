@@ -207,7 +207,7 @@ public final class CoreStringUtils {
                 last_ttype = tokenizer.ttype;
             }
         } catch (IOException ex) {
-            throw new UncheckedIOException(ex);
+            // not error expected here
         }
         return false;
     }

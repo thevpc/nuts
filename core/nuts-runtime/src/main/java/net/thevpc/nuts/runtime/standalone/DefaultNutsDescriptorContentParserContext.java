@@ -74,7 +74,7 @@ public class DefaultNutsDescriptorContentParserContext implements NutsDescriptor
         if (bytes == null) {
             try {
                 try (InputStream is = file.getInputStream()) {
-                    bytes = CoreIOUtils.loadByteArray(is, 1024 * 1024 * 10, true);
+                    bytes = CoreIOUtils.loadByteArray(is, 1024 * 1024 * 10, true,session);
                 }
             } catch (IOException e) {
                 throw new NutsIOException(session,e);

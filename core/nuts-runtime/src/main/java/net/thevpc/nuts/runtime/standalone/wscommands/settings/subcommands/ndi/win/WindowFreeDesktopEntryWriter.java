@@ -1,27 +1,26 @@
 package net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.ndi.win;
 
-import net.thevpc.nuts.NutsCommandLine;
-import net.thevpc.nuts.NutsId;
-import net.thevpc.nuts.NutsPrintStream;
-import net.thevpc.nuts.NutsSession;
+import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.optional.mslink.OptionalMsLinkHelper;
 import net.thevpc.nuts.runtime.standalone.wscommands.settings.PathInfo;
-import net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.ndi.base.AbstractFreeDesktopEntryWriter;
 import net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.ndi.FreeDesktopEntry;
+import net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.ndi.base.AbstractFreeDesktopEntryWriter;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
-import java.io.UncheckedIOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public class WindowFreeDesktopEntryWriter extends AbstractFreeDesktopEntryWriter {
-    private NutsSession session;
-    private Path desktopPath;
+    private final NutsSession session;
+    private final Path desktopPath;
 
     public WindowFreeDesktopEntryWriter(Path desktopPath, NutsSession session) {
         this.session = session;
@@ -67,7 +66,7 @@ public class WindowFreeDesktopEntryWriter extends AbstractFreeDesktopEntryWriter
         if (wd == null) {
             wd = System.getProperty("user.home");
         }
-        String[] cmd = NutsCommandLine.parse(root.getExec(),session).toStringArray();
+        String[] cmd = NutsCommandLine.parse(root.getExec(), session).toStringArray();
         List<String> categories = new ArrayList<>(root.getCategories());
         if (categories.isEmpty()) {
             categories.add("/");
@@ -128,7 +127,7 @@ public class WindowFreeDesktopEntryWriter extends AbstractFreeDesktopEntryWriter
         try (PrintStream p = new PrintStream(out)) {
             write(file, p);
         } catch (IOException ex) {
-            throw new UncheckedIOException(ex);
+            throw new NutsIOException(session, ex);
         }
     }
 

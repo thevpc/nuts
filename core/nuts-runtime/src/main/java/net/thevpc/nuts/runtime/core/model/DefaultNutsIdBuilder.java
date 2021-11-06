@@ -107,7 +107,7 @@ public class DefaultNutsIdBuilder implements NutsIdBuilder {
 
         String c0 = NutsUtilStrings.trimToNull(classifier);
         String c1 = null;
-        Map<String,String> properties=propertiesQuery==null?new LinkedHashMap<>() : QueryStringParser.parseMap(propertiesQuery);
+        Map<String,String> properties=propertiesQuery==null?new LinkedHashMap<>() : QueryStringParser.parseMap(propertiesQuery,session);
         if(!properties.isEmpty()) {
             c1=properties.remove(NutsConstants.IdProperties.CLASSIFIER);
         }
@@ -333,13 +333,13 @@ public class DefaultNutsIdBuilder implements NutsIdBuilder {
 
     @Override
     public NutsIdBuilder setProperties(String propertiesQuery) {
-        this.propertiesQuery.setProperties(propertiesQuery);
+        this.propertiesQuery.setProperties(propertiesQuery,session);
         return this;
     }
 
     @Override
     public NutsIdBuilder addProperties(String propertiesQuery) {
-        this.propertiesQuery.addProperties(propertiesQuery);
+        this.propertiesQuery.addProperties(propertiesQuery,session);
         return this;
     }
 

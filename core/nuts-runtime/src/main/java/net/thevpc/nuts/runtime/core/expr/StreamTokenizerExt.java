@@ -1,8 +1,10 @@
 package net.thevpc.nuts.runtime.core.expr;
 
+import net.thevpc.nuts.NutsIOException;
+import net.thevpc.nuts.NutsSession;
+
 import java.io.IOException;
 import java.io.Reader;
-import java.io.UncheckedIOException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Arrays;
@@ -77,6 +79,8 @@ public class StreamTokenizerExt {
      * made available as the part of the API in a future release.
      */
     private static final int TT_NOTHING = -25;
+    private final StringBuilder bufImage = new StringBuilder();
+    private final byte[] ctype = new byte[256];
     /**
      * After a call to the {@code nextToken} method, this field
      * contains the type of the token just read. For a single character
@@ -95,7 +99,6 @@ public class StreamTokenizerExt {
      * </ul>
      * <p>
      * The initial value of this field is -4.
-     *
      */
     public int ttype = TT_NOTHING;
     /**
@@ -110,7 +113,6 @@ public class StreamTokenizerExt {
      * a quote character.
      * <p>
      * The initial value of this field is null.
-     *
      */
     public String sval;
     public String image;
@@ -120,18 +122,16 @@ public class StreamTokenizerExt {
      * the {@code ttype} field is {@code TT_NUMBER}.
      * <p>
      * The initial value of this field is 0.0.
-     *
      */
     public Number nval;
-//    public double dval;
+    //    public double dval;
 //    public long ival;
-    public boolean returnComments=true;
-    public boolean returnSpaces=true;
+    public boolean returnComments = true;
+    public boolean returnSpaces = true;
     /* Only one of these will be non-null */
     private Reader reader = null;
-//    private InputStream input = null;
+    //    private InputStream input = null;
     private char[] buf = new char[20];
-    private StringBuilder bufImage = new StringBuilder();
     /**
      * The next character to be considered by the nextToken method.  May also
      * be NEED_CHAR to indicate that a new character should be read, or SKIP_LF
@@ -150,12 +150,13 @@ public class StreamTokenizerExt {
     private boolean slashSlashCommentsP = false;
     private boolean slashStarCommentsP = false;
     private boolean xmlCommentsP = false;
-    private byte ctype[] = new byte[256];
+    private NutsSession session;
 
     /**
      * Private constructor that initializes everything except the streams.
      */
-    private StreamTokenizerExt() {
+    private StreamTokenizerExt(NutsSession session) {
+        this.session = session;
         wordChars('a', 'z');
         wordChars('A', 'Z');
         wordChars(128 + 32, 255);
@@ -174,8 +175,8 @@ public class StreamTokenizerExt {
      * @param r a Reader object providing the input stream.
      * @since JDK1.1
      */
-    public StreamTokenizerExt(Reader r) {
-        this();
+    public StreamTokenizerExt(Reader r,NutsSession session) {
+        this(session);
         if (r == null) {
             throw new NullPointerException();
         }
@@ -186,7 +187,6 @@ public class StreamTokenizerExt {
      * Resets this tokenizer's syntax table so that all characters are
      * "ordinary." See the {@code ordinaryChar} method
      * for more information on a character being ordinary.
-     *
      */
     public void resetSyntax() {
         for (int i = ctype.length; --i >= 0; )
@@ -327,7 +327,6 @@ public class StreamTokenizerExt {
      * number rather than a word, by setting the {@code ttype}
      * field to the value {@code TT_NUMBER} and putting the numeric
      * value of the token into the {@code nval} field.
-     *
      */
     public void parseNumbers() {
         for (int i = '0'; i <= '9'; i++)
@@ -446,7 +445,7 @@ public class StreamTokenizerExt {
         try {
             return reader.read();
         } catch (IOException ex) {
-            throw new UncheckedIOException(ex);
+            throw new NutsIOException(session, ex);
         }
     }
 
@@ -454,7 +453,7 @@ public class StreamTokenizerExt {
         try {
             reader.mark(count);
         } catch (IOException ex) {
-            throw new UncheckedIOException(ex);
+            throw new NutsIOException(session, ex);
         }
     }
 
@@ -462,7 +461,7 @@ public class StreamTokenizerExt {
         try {
             reader.reset();
         } catch (IOException ex) {
-            throw new UncheckedIOException(ex);
+            throw new NutsIOException(session, ex);
         }
     }
 
@@ -486,7 +485,7 @@ public class StreamTokenizerExt {
             pushedBack = false;
             return ttype;
         }
-        byte ct[] = ctype;
+        byte[] ct = ctype;
         sval = null;
 
         int c = peekc;
@@ -514,7 +513,7 @@ public class StreamTokenizerExt {
         int ctype = c < 256 ? ct[c] : CT_ALPHA;
         bufImage.setLength(0);
         while ((ctype & CT_WHITESPACE) != 0) {
-            bufImage.append((char)c);
+            bufImage.append((char) c);
             if (c == '\r') {
                 LINENO++;
                 if (eolIsSignificantP) {
@@ -523,7 +522,7 @@ public class StreamTokenizerExt {
                 }
                 c = read();
                 if (c == '\n') {
-                    bufImage.append((char)c);
+                    bufImage.append((char) c);
                     c = read();
                 }
             } else {
@@ -535,9 +534,9 @@ public class StreamTokenizerExt {
                 }
                 c = read();
             }
-            if(bufImage.length()>0 && returnSpaces){
+            if (bufImage.length() > 0 && returnSpaces) {
                 peekc = c;
-                image=bufImage.toString();
+                image = bufImage.toString();
                 return ttype = TT_SPACES;
             }
             if (c < 0)
@@ -563,18 +562,18 @@ public class StreamTokenizerExt {
             long iv = 0;
             int decexp = 0;
             int seendot = 0;
-            boolean loop=true;
+            boolean loop = true;
             if (c == '.' && seendot == 0) {
                 seendot = 1;
-                intType=false;
-            }else if ('0' <= c && c <= '9') {
+                intType = false;
+            } else if ('0' <= c && c <= '9') {
                 dv = dv * 10 + (c - '0');
                 iv = iv * 10 + (c - '0');
                 decexp += seendot;
             } else {
-                loop=false;
+                loop = false;
             }
-            if(loop) {
+            if (loop) {
                 c = read();
                 while (true) {
                     if (c == '.' && seendot == 0) {
@@ -605,31 +604,31 @@ public class StreamTokenizerExt {
 //            }
 //            dval = neg ? -dv : dv;
             this.image = image.toString();
-            if(intType){
-                try{
-                    nval=Integer.parseInt(image.toString());
+            if (intType) {
+                try {
+                    nval = Integer.parseInt(image.toString());
                     ttype = TT_INT;
-                }catch (Exception ex){
-                    try{
-                        nval=Long.parseLong(image.toString());
+                } catch (Exception ex) {
+                    try {
+                        nval = Long.parseLong(image.toString());
                         ttype = TT_LONG;
-                    }catch (Exception ex2){
-                        nval=new BigInteger(image.toString());
+                    } catch (Exception ex2) {
+                        nval = new BigInteger(image.toString());
                         ttype = TT_BIG_INT;
                     }
                 }
 //                ival=neg ? -iv : iv;
                 return ttype;
-            }else{
-                try{
-                    nval=Float.parseFloat(image.toString());
+            } else {
+                try {
+                    nval = Float.parseFloat(image.toString());
                     ttype = TT_FLOAT;
-                }catch (Exception ex){
-                    try{
-                        nval=Double.parseDouble(image.toString());
+                } catch (Exception ex) {
+                    try {
+                        nval = Double.parseDouble(image.toString());
                         ttype = TT_DOUBLE;
-                    }catch (Exception ex2){
-                        nval=new BigDecimal(image.toString());
+                    } catch (Exception ex2) {
+                        nval = new BigDecimal(image.toString());
                         ttype = TT_BIG_DECIMAL;
                     }
                 }
@@ -650,7 +649,7 @@ public class StreamTokenizerExt {
             } while ((ctype & (CT_ALPHA | CT_DIGIT)) != 0);
             peekc = c;
             sval = String.copyValueOf(buf, 0, i);
-            image=sval;
+            image = sval;
             if (forceLower)
                 sval = sval.toLowerCase();
             return ttype = TT_WORD;
@@ -659,7 +658,7 @@ public class StreamTokenizerExt {
         if ((ctype & CT_QUOTE) != 0) {
             ttype = c;
             bufImage.setLength(0);
-            bufImage.append((char)c);
+            bufImage.append((char) c);
             int i = 0;
             /* Invariants (because \Octal needs a lookahead):
              *   (i)  c contains char value
@@ -667,19 +666,19 @@ public class StreamTokenizerExt {
              */
             int d = read();
             while (d >= 0 && d != ttype && d != '\n' && d != '\r') {
-                bufImage.append((char)d);
+                bufImage.append((char) d);
                 if (d == '\\') {
                     c = read();
                     int first = c;   /* To allow \377, but not \477 */
                     if (c >= '0' && c <= '7') {
-                        bufImage.append((char)d);
+                        bufImage.append((char) d);
                         c = c - '0';
                         int c2 = read();
                         if ('0' <= c2 && c2 <= '7') {
-                            bufImage.append((char)d);
+                            bufImage.append((char) d);
                             c = (c << 3) + (c2 - '0');
                             c2 = read();
-                            bufImage.append((char)d);
+                            bufImage.append((char) d);
                             if ('0' <= c2 && c2 <= '7' && first <= '3') {
                                 c = (c << 3) + (c2 - '0');
                                 d = read();
@@ -688,7 +687,7 @@ public class StreamTokenizerExt {
                         } else
                             d = c2;
                     } else {
-                        bufImage.append((char)d);
+                        bufImage.append((char) d);
                         switch (c) {
                             case 'a':
                                 c = 0x7;
@@ -729,34 +728,34 @@ public class StreamTokenizerExt {
              * around; otherwise, save the character.
              */
             peekc = (d == ttype) ? NEED_CHAR : d;
-            if(d == ttype){
-                bufImage.append((char)d);
+            if (d == ttype) {
+                bufImage.append((char) d);
             }
             sval = String.copyValueOf(buf, 0, i);
-            image=bufImage.toString();
+            image = bufImage.toString();
             return ttype;
         }
 
         if (c == '/' && (slashSlashCommentsP || slashStarCommentsP)) {
-            StringBuilder sb=new StringBuilder();
-            sb.append((char)c);
+            StringBuilder sb = new StringBuilder();
+            sb.append((char) c);
             c = read();
             if (c == '*' && slashStarCommentsP) {
-                sb.append((char)c);
+                sb.append((char) c);
                 int prevc = 0;
                 while ((c = read()) != '/' || prevc != '*') {
                     if (c == '\r') {
-                        sb.append((char)c);
+                        sb.append((char) c);
                         LINENO++;
                         c = read();
                         if (c == '\n') {
-                            sb.append((char)c);
+                            sb.append((char) c);
                             c = read();
                         }
                     } else {
                         if (c == '\n') {
                             LINENO++;
-                            sb.append((char)c);
+                            sb.append((char) c);
                             c = read();
                         }
                     }
@@ -764,31 +763,31 @@ public class StreamTokenizerExt {
                         return ttype = TT_EOF;
                     prevc = c;
                 }
-                if(returnComments){
-                    image=sb.toString();
+                if (returnComments) {
+                    image = sb.toString();
                     return ttype = TT_COMMENTS;
                 }
                 return nextToken();
             } else if (c == '/' && slashSlashCommentsP) {
-                sb.append((char)c);
+                sb.append((char) c);
                 while ((c = read()) != '\n' && c != '\r' && c >= 0) {
-                    sb.append((char)c);
+                    sb.append((char) c);
                 }
                 peekc = c;
-                if(returnComments){
-                    image=sb.toString();
+                if (returnComments) {
+                    image = sb.toString();
                     return ttype = TT_COMMENTS;
                 }
                 return nextToken();
             } else {
                 /* Now see if it is still a single line comment */
                 if ((ct['/'] & CT_COMMENT) != 0) {
-                    sb.append((char)c);
+                    sb.append((char) c);
                     while ((c = read()) != '\n' && c != '\r' && c >= 0) {
-                        sb.append((char)c);
+                        sb.append((char) c);
                     }
-                    if(returnComments){
-                        image=sb.toString();
+                    if (returnComments) {
+                        image = sb.toString();
                         return ttype = TT_COMMENTS;
                     }
                     peekc = c;
@@ -798,65 +797,65 @@ public class StreamTokenizerExt {
                     return ttype = '/';
                 }
             }
-        }else if(c == '<' && (xmlCommentsP)){
-            StringBuilder sb=new StringBuilder();
-            sb.append((char)c);
+        } else if (c == '<' && (xmlCommentsP)) {
+            StringBuilder sb = new StringBuilder();
+            sb.append((char) c);
             mark(4);
             int a = read();
-            if(a=='!'){
-                sb.append((char)c);
+            if (a == '!') {
+                sb.append((char) c);
                 a = read();
-                if(a=='-') {
-                    sb.append((char)c);
+                if (a == '-') {
+                    sb.append((char) c);
                     a = read();
-                    if(a=='-') {
-                        sb.append((char)c);
-                        while (true){
-                            c=read();
-                            boolean wasEnd=false;
-                            if(c == '-'){
-                                sb.append((char)c);
+                    if (a == '-') {
+                        sb.append((char) c);
+                        while (true) {
+                            c = read();
+                            boolean wasEnd = false;
+                            if (c == '-') {
+                                sb.append((char) c);
                                 a = read();
-                                if(a=='-'){
+                                if (a == '-') {
                                     a = read();
-                                    if(a=='>'){
-                                        wasEnd=true;
+                                    if (a == '>') {
+                                        wasEnd = true;
                                     }
                                 }
-                                if(wasEnd){
+                                if (wasEnd) {
                                     sb.append("->");
                                     break;
-                                }else{
+                                } else {
                                     reset();
                                 }
-                            }else{
-                                sb.append((char)c);
+                            } else {
+                                sb.append((char) c);
                             }
                         }
-                        if(returnComments){
-                            image=sb.toString();
+                        if (returnComments) {
+                            image = sb.toString();
                             return ttype = TT_COMMENTS;
-                        }else{
+                        } else {
                             return nextToken();
                         }
                     }
                 }
             }
             reset();
-            image="<";
+            image = "<";
             return ttype = '<';
         }
 
         if ((ctype & CT_COMMENT) != 0) {
-            StringBuilder sb=new StringBuilder();
+            StringBuilder sb = new StringBuilder();
             while ((c = read()) != '\n' && c != '\r' && c >= 0) {
-                sb.append((char)c);
+                sb.append((char) c);
             }
             peekc = c;
             return nextToken();
         }
 
-        image=String.valueOf((char)c);
+        image = String.valueOf((char) c);
         return ttype = c;
     }
 
@@ -865,7 +864,6 @@ public class StreamTokenizerExt {
      * tokenizer to return the current value in the {@code ttype}
      * field, and not to modify the value in the {@code nval} or
      * {@code sval} field.
-     *
      */
     public void pushBack() {
         if (ttype != TT_NOTHING) {  /* No-op if nextToken() not called */
@@ -939,7 +937,7 @@ public class StreamTokenizerExt {
                     break;
                 }
 
-                char s[] = new char[3];
+                char[] s = new char[3];
                 s[0] = s[2] = '\'';
                 s[1] = (char) ttype;
                 ret = new String(s);

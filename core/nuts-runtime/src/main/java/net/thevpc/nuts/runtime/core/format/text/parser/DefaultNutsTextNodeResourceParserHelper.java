@@ -35,11 +35,11 @@ public class DefaultNutsTextNodeResourceParserHelper {
     }
 
     public NutsTextFormatLoader createClassPathLoader(ClassLoader loader) {
-        return new NutsTextFormatLoaderClassPath(loader);
+        return new NutsTextFormatLoaderClassPath(loader,session);
     }
 
     public NutsTextFormatLoader createFileLoader(File root) {
-        return new NutsTextFormatLoaderFile(root);
+        return new NutsTextFormatLoaderFile(root,session);
     }
 
     public NutsText parseResource(String resourceName, Reader reader, NutsTextFormatLoader loader) {
@@ -52,7 +52,7 @@ public class DefaultNutsTextNodeResourceParserHelper {
         if (reader == null) {
             return null;
         }
-        return processHelp(CoreIOUtils.loadString(reader, true), loader, true, null);
+        return processHelp(CoreIOUtils.loadString(reader, true,session), loader, true, null);
     }
 
 //    private String loadHelp(String urlPath, ClassLoader clazz, boolean err, boolean vars, String defaultValue) {
@@ -93,7 +93,7 @@ public class DefaultNutsTextNodeResourceParserHelper {
 //        try (Reader is = in) {
 //            return loadHelp(is, classLoader, true, depth, vars, forAnchor);
 //        } catch (IOException ex) {
-//            throw new UncheckedIOException(ex);
+//            throw new NutsIOException(session,ex);
 //        }
 //    }
 //
@@ -159,9 +159,11 @@ public class DefaultNutsTextNodeResourceParserHelper {
     private static class NutsTextFormatLoaderClassPath implements NutsTextFormatLoader {
 
         private final ClassLoader loader;
+        private final NutsSession session;
 
-        public NutsTextFormatLoaderClassPath(ClassLoader loader) {
+        public NutsTextFormatLoaderClassPath(ClassLoader loader,NutsSession session) {
             this.loader = loader;
+            this.session = session;
         }
 
         @Override
@@ -182,7 +184,7 @@ public class DefaultNutsTextNodeResourceParserHelper {
             try {
                 return new InputStreamReader(r.openStream());
             } catch (IOException e) {
-                throw new UncheckedIOException(e);
+                throw new NutsIOException(session,e);
             }
         }
     }
@@ -190,9 +192,11 @@ public class DefaultNutsTextNodeResourceParserHelper {
     private static class NutsTextFormatLoaderFile implements NutsTextFormatLoader {
 
         private final File root;
+        private final NutsSession session;
 
-        public NutsTextFormatLoaderFile(File root) {
+        public NutsTextFormatLoaderFile(File root,NutsSession session) {
             this.root = root;
+            this.session = session;
         }
 
         @Override
@@ -204,7 +208,7 @@ public class DefaultNutsTextNodeResourceParserHelper {
             try {
                 return new FileReader(r);
             } catch (IOException e) {
-                throw new UncheckedIOException(e);
+                throw new NutsIOException(session,e);
             }
         }
     }

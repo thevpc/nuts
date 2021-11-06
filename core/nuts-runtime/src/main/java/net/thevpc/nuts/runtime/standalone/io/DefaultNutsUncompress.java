@@ -416,7 +416,7 @@ public class DefaultNutsUncompress implements NutsUncompress {
             _LOGOP(session).level(Level.CONFIG).verb(NutsLogVerb.FAIL).log(
                     NutsMessage.jstyle("error uncompressing {0} to {1} : {2}",
                     _source.getValue(), target.getValue(), ex));
-            throw new UncheckedIOException(ex);
+            throw new NutsIOException(session,ex);
         }
     }
     private void visitZip(NutsIOUncompressVisitor visitor) {
@@ -490,7 +490,7 @@ public class DefaultNutsUncompress implements NutsUncompress {
             _LOGOP(session).level(Level.CONFIG).verb(NutsLogVerb.FAIL)
                     .log(NutsMessage.jstyle("error uncompressing {0} to {1} : {2}",
                     _source.getValue(), target.getValue(), ex));
-            throw new UncheckedIOException(ex);
+            throw new NutsIOException(session,ex);
         }
     }
 
@@ -537,7 +537,7 @@ public class DefaultNutsUncompress implements NutsUncompress {
             _LOGOP(session).level(Level.CONFIG).verb(NutsLogVerb.FAIL)
                     .log(NutsMessage.jstyle("error uncompressing {0} to {1} : {2}", _source.getValue(),
                             target.getValue(), ex));
-            throw new UncheckedIOException(ex);
+            throw new NutsIOException(session,ex);
         }
     }
     private void visitGZip(NutsIOUncompressVisitor visitor) {
@@ -582,7 +582,7 @@ public class DefaultNutsUncompress implements NutsUncompress {
             _LOGOP(session).level(Level.CONFIG).verb(NutsLogVerb.FAIL)
                     .log(NutsMessage.jstyle("error uncompressing {0} to {1} : {2}", _source.getValue(),
                             target.getValue(), ex));
-            throw new UncheckedIOException(ex);
+            throw new NutsIOException(session,ex);
         }
     }
 

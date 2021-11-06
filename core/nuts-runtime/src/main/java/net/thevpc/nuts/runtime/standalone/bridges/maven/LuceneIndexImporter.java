@@ -38,7 +38,7 @@ public class LuceneIndexImporter {
             );
             return ref[0];
         } catch (IOException ex) {
-            throw new UncheckedIOException(ex);
+            throw new NutsIOException(session, ex);
         }
     }
 
@@ -47,19 +47,19 @@ public class LuceneIndexImporter {
         NutsIdParser idParser = NutsIdParser.of(session);
         int addedCount=0;
         int allCount=0;
-        try (DirtyLuceneIndexParser p = new DirtyLuceneIndexParser(new FileInputStream(filePath))) {
+        try (DirtyLuceneIndexParser p = new DirtyLuceneIndexParser(new FileInputStream(filePath),session)) {
             while (p.hasNext()) {
                 NutsId id = idParser.parse(p.next()).builder().setRepository(repository).build();
-                if (!adb.contains(id)) {
+                if (!adb.contains(id,session)) {
                     addedCount++;
-                    adb.add(id);
+                    adb.add(id,session);
                 }
                 allCount++;
             }
         } catch (IOException ex) {
-            throw new UncheckedIOException(ex);
+            throw new NutsIOException(session, ex);
         } finally {
-            adb.flush();
+            adb.flush(session);
         }
         return addedCount;
     }

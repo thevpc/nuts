@@ -1,11 +1,11 @@
 package net.thevpc.nuts.runtime.bundles.http;
 
+import net.thevpc.nuts.NutsIOException;
 import net.thevpc.nuts.NutsPath;
 import net.thevpc.nuts.NutsSession;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.UncheckedIOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
@@ -57,7 +57,7 @@ public class SimpleHttpClient {
             this.url = new URL(url);
             this.session=session;
         } catch (MalformedURLException e) {
-            throw new UncheckedIOException(e);
+            throw new NutsIOException(session,e);
         }
     }
 
@@ -141,7 +141,7 @@ public class SimpleHttpClient {
             }
             return conn;
         } catch (IOException e) {
-            throw new UncheckedIOException(e);
+            throw new NutsIOException(session,e);
         }
     }
 
@@ -154,7 +154,7 @@ public class SimpleHttpClient {
                 return url.openStream();
             }
         } catch (IOException ex) {
-            throw new UncheckedIOException(ex);
+            throw new NutsIOException(session,ex);
         }
     }
 }

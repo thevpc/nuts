@@ -1,9 +1,6 @@
 package net.thevpc.nuts.runtime.optional.mslink;
 
-import net.thevpc.nuts.NutsBlankable;
-import net.thevpc.nuts.NutsCommandLine;
-import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.NutsUtilStrings;
+import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
 
 import java.io.IOException;
@@ -71,7 +68,7 @@ public class OptionalMsLinkHelper {
             CoreIOUtils.mkdirs(Paths.get(filePath).getParent(),session);
             se.saveTo(filePath);
         } catch (IOException ex) {
-            throw new UncheckedIOException(ex);
+            throw new NutsIOException(session,ex);
         }
     }
 }

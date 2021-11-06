@@ -5,9 +5,9 @@
  */
 package net.thevpc.nuts.core.test.blackbox;
 
+import net.thevpc.nuts.*;
 import net.thevpc.nuts.boot.NutsBootWorkspace;
 import net.thevpc.nuts.core.test.utils.TestUtils;
-import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
 import org.junit.jupiter.api.*;
 
@@ -117,7 +117,7 @@ public class Test06_UpdateTest {
                 .run();
 
         TestUtils.println("[LOCAL]");
-        
+
         TestUtils.println(uws.repos().getRepository("local").config().getStoreLocationStrategy());
         TestUtils.println(uws.repos().getRepository("local").config().getStoreLocation());
         TestUtils.println(uws.repos().getRepository("local").config().getStoreLocation(NutsStoreLocation.LIB));
@@ -152,7 +152,7 @@ public class Test06_UpdateTest {
         for (NutsUpdateResult u : foundUpdates.getResult().getUpdatable()) {
             TestUtils.println(u.getAvailable());
         }
-        Assertions.assertEquals(implOnly ? 1 : 2, foundUpdates.getResultCount(),"checkUpdates result count is incorrect");
+        Assertions.assertEquals(implOnly ? 1 : 2, foundUpdates.getResultCount(), "checkUpdates result count is incorrect");
         foundUpdates.update();
 
         final String newApiVersion = foundUpdates.getResult().getApi().getAvailable().getId().getVersion().toString();
@@ -189,7 +189,7 @@ public class Test06_UpdateTest {
                 "--json",
                 "version"
         );
-        TestUtils.println(NutsCommandLine.of(b.createProcessCommandLine(),uws).toString());
+        TestUtils.println(NutsCommandLine.of(b.createProcessCommandLine(), uws).toString());
 
         String ss = uws.exec().setExecutionType(NutsExecutionType.SYSTEM).addCommand(b.createProcessCommandLine()).grabOutputString().run().getOutputString();
         TestUtils.println("================");
@@ -228,13 +228,13 @@ public class Test06_UpdateTest {
                 }
 
             } catch (IOException ex) {
-                throw new UncheckedIOException(ex);
+                throw new NutsIOException(session, ex);
             }
             Path jar = zipFilePath.resolveSibling("nuts-" + api.to + ".jar");
             Files.move(zipFilePath, jar, StandardCopyOption.REPLACE_EXISTING);
             return jar;
         } catch (IOException ex) {
-            throw new UncheckedIOException(ex);
+            throw new NutsIOException(session, ex);
         }
     }
 
@@ -277,13 +277,13 @@ public class Test06_UpdateTest {
                 }
 
             } catch (IOException ex) {
-                throw new UncheckedIOException(ex);
+                throw new NutsIOException(session, ex);
             }
             Path jar = zipFilePath.resolveSibling("nuts-" + api.to + ".jar");
             Files.move(zipFilePath, jar, StandardCopyOption.REPLACE_EXISTING);
             return jar;
         } catch (IOException ex) {
-            throw new UncheckedIOException(ex);
+            throw new NutsIOException(session, ex);
         }
     }
 

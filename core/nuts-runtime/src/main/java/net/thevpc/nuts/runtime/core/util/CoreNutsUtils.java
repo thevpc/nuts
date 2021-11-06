@@ -772,7 +772,7 @@ public class CoreNutsUtils {
         ProgressOptions o = new ProgressOptions();
         boolean enabledVisited = false;
         StringMapParser p = new StringMapParser("=", ",; ");
-        Map<String, String> m = p.parseMap(session.getProgressOptions());
+        Map<String, String> m = p.parseMap(session.getProgressOptions(),session);
         for (Map.Entry<String, String> e : m.entrySet()) {
             String k = e.getKey();
             String v = e.getValue();

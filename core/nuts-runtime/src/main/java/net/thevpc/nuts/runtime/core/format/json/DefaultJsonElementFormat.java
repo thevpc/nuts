@@ -748,7 +748,7 @@ public class DefaultJsonElementFormat implements NutsElementStreamFormat {
                         reader.reset();
                     }
                 } catch (IOException ex) {
-                    throw new UncheckedIOException(ex);
+                    throw new NutsIOException(context.getSession(),ex);
                 }
             }
             return sb.toString();
@@ -779,7 +779,7 @@ public class DefaultJsonElementFormat implements NutsElementStreamFormat {
                     }
                 }
             } catch (IOException ex) {
-                throw new UncheckedIOException(ex);
+                throw new NutsIOException(context.getSession(),ex);
             }
         }
 

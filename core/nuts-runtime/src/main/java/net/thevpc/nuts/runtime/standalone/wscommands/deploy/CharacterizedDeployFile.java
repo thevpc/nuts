@@ -1,10 +1,11 @@
 package net.thevpc.nuts.runtime.standalone.wscommands.deploy;
 
 import net.thevpc.nuts.NutsDescriptor;
+import net.thevpc.nuts.NutsIOException;
+import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.runtime.bundles.io.NutsStreamOrPath;
 
 import java.io.IOException;
-import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -17,9 +18,11 @@ class CharacterizedDeployFile implements AutoCloseable {
     public NutsStreamOrPath contentStreamOrPath;
     public List<Path> temps = new ArrayList<>();
     public NutsDescriptor descriptor;
+    public NutsSession session;
 
-
-
+    public CharacterizedDeployFile(NutsSession session) {
+        this.session = session;
+    }
 
     public void addTemp(Path f) {
         temps.add(f);
@@ -32,7 +35,7 @@ class CharacterizedDeployFile implements AutoCloseable {
             try {
                 Files.delete(temp);
             } catch (IOException ex) {
-                throw new UncheckedIOException(ex);
+                throw new NutsIOException(session, ex);
             }
             it.remove();
         }

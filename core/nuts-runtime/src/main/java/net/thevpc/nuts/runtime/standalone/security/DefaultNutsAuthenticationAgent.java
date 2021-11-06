@@ -14,17 +14,17 @@ public class DefaultNutsAuthenticationAgent extends AbstractNutsAuthenticationAg
 
     @Override
     protected char[] decryptChars(char[] data, String passphrase, NutsSession session) {
-        return CoreSecurityUtils.defaultDecryptChars(data, passphrase);
+        return CoreSecurityUtils.defaultDecryptChars(data, passphrase,session);
     }
 
     @Override
     protected char[] encryptChars(char[] data, String passphrase, NutsSession session) {
-        return CoreSecurityUtils.defaultEncryptChars(data, passphrase);
+        return CoreSecurityUtils.defaultEncryptChars(data, passphrase,session);
     }
 
     @Override
     protected char[] hashChars(char[] data, String passphrase, NutsSession session) {
-        return CoreSecurityUtils.defaultHashChars(data, passphrase);
+        return CoreSecurityUtils.defaultHashChars(data, passphrase,session);
     }
 
 }

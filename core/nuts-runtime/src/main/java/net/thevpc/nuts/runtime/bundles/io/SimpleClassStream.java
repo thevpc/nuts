@@ -5,6 +5,9 @@
  */
 package net.thevpc.nuts.runtime.bundles.io;
 
+import net.thevpc.nuts.NutsIOException;
+import net.thevpc.nuts.NutsSession;
+
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -34,22 +37,24 @@ public class SimpleClassStream {
     private static final int FLAG_MODULE = 19;
     private static final int FLAG_PACKAGE = 20;
     private DataInputStream stream;
+    private NutsSession session;
     private Visitor visitor;
     private Map<Integer, Constant> constants = new HashMap<Integer, Constant>();
 
-    public SimpleClassStream(InputStream stream) {
-        this(stream, null);
+    public SimpleClassStream(InputStream stream,NutsSession session) {
+        this(stream, null,session);
     }
 
-    public SimpleClassStream(DataInputStream stream) {
-        this(stream, null);
+    public SimpleClassStream(DataInputStream stream,NutsSession session) {
+        this(stream, null,session);
     }
 
-    public SimpleClassStream(InputStream stream, Visitor visitor) {
-        this((stream instanceof DataInputStream) ? ((DataInputStream) stream) : new DataInputStream(stream), visitor);
+    public SimpleClassStream(InputStream stream, Visitor visitor,NutsSession session) {
+        this((stream instanceof DataInputStream) ? ((DataInputStream) stream) : new DataInputStream(stream), visitor,session);
     }
 
-    public SimpleClassStream(DataInputStream stream, Visitor visitor) {
+    public SimpleClassStream(DataInputStream stream, Visitor visitor, NutsSession session) {
+        this.session = session;
         this.stream = stream;
         this.visitor = visitor;
         try {
@@ -91,7 +96,7 @@ public class SimpleClassStream {
                 new ClassAttribute();
             }
         } catch (IOException ex) {
-            throw new UncheckedIOException(ex);
+            throw new NutsIOException(session,ex);
         }
 
     }
@@ -110,7 +115,7 @@ public class SimpleClassStream {
             }
 
         } catch (IOException ex) {
-            throw new UncheckedIOException(ex);
+            throw new NutsIOException(session,ex);
         }
 
     }
@@ -131,7 +136,7 @@ public class SimpleClassStream {
             }
             visitField(accessFlags, name, descriptor, attributes);
         } catch (IOException ex) {
-            throw new UncheckedIOException(ex);
+            throw new NutsIOException(session,ex);
         }
 
     }
@@ -150,7 +155,7 @@ public class SimpleClassStream {
             }
             visitMethod(accessFlags, name, descriptor, attributes);
         } catch (IOException ex) {
-            throw new UncheckedIOException(ex);
+            throw new NutsIOException(session,ex);
         }
     }
 
@@ -277,7 +282,7 @@ public class SimpleClassStream {
                 }
                 stream.skipBytes(stream.readInt());
             } catch (IOException ex) {
-                throw new UncheckedIOException(ex);
+                throw new NutsIOException(session,ex);
             }
         }
     }
@@ -385,7 +390,7 @@ public class SimpleClassStream {
                         throw new IOException("Unknown constant tag: " + tag);
                 }
             } catch (IOException ex) {
-                throw new UncheckedIOException(ex);
+                throw new NutsIOException(session,ex);
             }
 
         }

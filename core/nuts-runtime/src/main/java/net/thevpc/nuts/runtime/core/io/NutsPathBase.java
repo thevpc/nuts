@@ -114,7 +114,7 @@ public abstract class NutsPathBase implements NutsPath {
                     try {
                         line = br.readLine();
                     } catch (IOException e) {
-                        throw new UncheckedIOException(e);
+                        throw new NutsIOException(session,e);
                     }
                     hasNext = line != null;
                     return hasNext;
@@ -123,7 +123,7 @@ public abstract class NutsPathBase implements NutsPath {
                         try {
                             br.close();
                         } catch (IOException e) {
-                            throw new UncheckedIOException(e);
+                            throw new NutsIOException(session,e);
                         }
                     }
                 }
@@ -159,7 +159,7 @@ public abstract class NutsPathBase implements NutsPath {
                 }
             }
         } catch (IOException e) {
-            throw new UncheckedIOException(e);
+            throw new NutsIOException(session, e);
         }
         return lines;
     }

@@ -172,7 +172,7 @@ public class NutsRepositoryFolderHelper {
 //                        }
 //                    }
 //                } catch (IOException ex) {
-//                    throw new UncheckedIOException(ex);
+//                    throw new NutsIOException(session,ex);
 //                }
 //            }
 //            goodFile = versionFolder.resolve(idFilename);
@@ -452,7 +452,7 @@ public class NutsRepositoryFolderHelper {
             (content.isPath() ? NutsCp.of(session).from(content.getPath()) : NutsCp.of(session).from(content.getInputStream()))
                     .to(pckFile).setSafe(true).run();
             NutsCp.of(session).from(
-                    CoreIOUtils.createBytesStream(CoreIOUtils.evalSHA1Hex(pckFile).getBytes(),
+                    CoreIOUtils.createBytesStream(CoreIOUtils.evalSHA1Hex(pckFile,session).getBytes(),
                             NutsMessage.cstyle("sha1://%s", id),
                             CoreIOUtils.MIME_TYPE_SHA1,
                             null,
@@ -542,7 +542,7 @@ public class NutsRepositoryFolderHelper {
                 }
             });
         } catch (IOException ex) {
-            throw new UncheckedIOException(ex);
+            throw new NutsIOException(session,ex);
         }
         return true;
     }

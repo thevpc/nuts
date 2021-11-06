@@ -179,7 +179,7 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
                 try {
                     Files.delete(pp);
                 } catch (IOException ex) {
-                    throw new UncheckedIOException(ex);
+                    throw new NutsIOException(session,ex);
                 }
             }
         } else {
@@ -187,7 +187,7 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
                 CoreIOUtils.mkdirs(pp.getParent(),session);
                 Files.write(pp, version.trim().getBytes());
             } catch (IOException ex) {
-                throw new UncheckedIOException(ex);
+                throw new NutsIOException(session,ex);
             }
         }
         synchronized (cachedDefaultVersions) {
@@ -631,7 +631,7 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
         try {
             Files.write(getPath(id, name, session), value.getBytes());
         } catch (IOException ex) {
-            throw new UncheckedIOException(ex);
+            throw new NutsIOException(session,ex);
         }
     }
 
@@ -653,7 +653,7 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
             Path path = getPath(id, name, session);
             Files.delete(path);
         } catch (IOException ex) {
-            throw new UncheckedIOException(ex);
+            throw new NutsIOException(session,ex);
         }
     }
 

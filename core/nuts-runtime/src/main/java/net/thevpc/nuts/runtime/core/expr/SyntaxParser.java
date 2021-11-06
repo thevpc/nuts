@@ -3,6 +3,7 @@ package net.thevpc.nuts.runtime.core.expr;
 import net.thevpc.nuts.NutsExpr;
 import net.thevpc.nuts.NutsIllegalArgumentException;
 import net.thevpc.nuts.NutsMessage;
+import net.thevpc.nuts.NutsSession;
 
 import java.io.StringReader;
 import java.util.*;
@@ -13,7 +14,7 @@ public class SyntaxParser {
     NutsExprWithCache withCache;
 
     public SyntaxParser(String anyStr, NutsExprWithCache withCache) {
-        this(new TokenIterator(new StringReader(anyStr == null ? "" : anyStr)), withCache);
+        this(new TokenIterator(new StringReader(anyStr == null ? "" : anyStr),withCache.getEvaluator().getSession()), withCache);
     }
 
 

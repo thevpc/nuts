@@ -69,7 +69,7 @@ import java.util.logging.Level;
 public class CoreIOUtils {
 
     public static final int DEFAULT_BUFFER_SIZE = 1024;
-    public static final String MIME_TYPE_SHA1="text/sha-1";
+    public static final String MIME_TYPE_SHA1 = "text/sha-1";
     //    public static final NutsPrintStream out=new NutsPrintStreamRaw(System.out,null,null,null,);
 //    public static final NutsPrintStream err=new NutsPrintStreamRaw(System.err);
     //    private static final Logger LOG = Logger.getLogger(CoreIOUtils.class.getName());
@@ -95,7 +95,7 @@ public class CoreIOUtils {
                 return (PrintWriter) writer;
             }
         }
-        ExtendedFormatAwarePrintWriter s = new ExtendedFormatAwarePrintWriter(writer,session);
+        ExtendedFormatAwarePrintWriter s = new ExtendedFormatAwarePrintWriter(writer, session);
         NutsWorkspaceUtils.setSession(s, session);
         return s;
     }
@@ -104,7 +104,7 @@ public class CoreIOUtils {
         if (writer == null) {
             return null;
         }
-        ExtendedFormatAwarePrintWriter s = new ExtendedFormatAwarePrintWriter(writer,session);
+        ExtendedFormatAwarePrintWriter s = new ExtendedFormatAwarePrintWriter(writer, session);
         NutsWorkspaceUtils.setSession(s, session);
         return s;
     }
@@ -158,7 +158,7 @@ public class CoreIOUtils {
                 return aw.convert(NutsTerminalModeOp.FILTER);
             }
             default: {
-                throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("unsupported terminal mode %s",expected));
+                throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("unsupported terminal mode %s", expected));
             }
         }
     }
@@ -191,7 +191,7 @@ public class CoreIOUtils {
         return null;
     }
 
-    public static URL[] toURL(String[] all) {
+    public static URL[] toURL(String[] all, NutsSession session) {
         List<URL> urls = new ArrayList<>();
         if (all != null) {
             for (String s : all) {
@@ -204,7 +204,7 @@ public class CoreIOUtils {
                         try {
                             urls.add(new File(s).toURI().toURL());
                         } catch (IOException ex) {
-                            throw new UncheckedIOException(ex);
+                            throw new NutsIOException(session, ex);
                         }
                     }
                 }
@@ -213,7 +213,7 @@ public class CoreIOUtils {
         return urls.toArray(new URL[0]);
     }
 
-    public static URL[] toURL(File[] all) {
+    public static URL[] toURL(File[] all, NutsSession session) {
         List<URL> urls = new ArrayList<>();
         if (all != null) {
             for (File s : all) {
@@ -221,7 +221,7 @@ public class CoreIOUtils {
                     try {
                         urls.add(s.toURI().toURL());
                     } catch (MalformedURLException e) {
-                        throw new UncheckedIOException(e);
+                        throw new NutsIOException(session, e);
                     }
                 }
             }
@@ -331,7 +331,7 @@ public class CoreIOUtils {
         return null;
     }
 
-    public static boolean setExecutable(Path path) {
+    public static boolean setExecutable(Path path, NutsSession session) {
         if (Files.exists(path) && !Files.isExecutable(path)) {
             PosixFileAttributeView p = Files.getFileAttributeView(path, PosixFileAttributeView.class);
             if (p != null) {
@@ -340,7 +340,7 @@ public class CoreIOUtils {
                     old.add(PosixFilePermission.OWNER_EXECUTE);
                     Files.setPosixFilePermissions(path, old);
                 } catch (IOException ex) {
-                    throw new UncheckedIOException(ex);
+                    throw new NutsIOException(session, ex);
                 }
                 return true;
             }
@@ -398,7 +398,7 @@ public class CoreIOUtils {
             } catch (URISyntaxException ex) {
                 throw new NutsParseException(session, NutsMessage.cstyle("not a file path : %s", s));
             } catch (IOException ex) {
-                throw new UncheckedIOException(ex);
+                throw new NutsIOException(session,ex);
             }
         }
         if (s.startsWith("http://")
@@ -518,8 +518,8 @@ public class CoreIOUtils {
                 }
             }
         }
-        return NutsPath.of(loc,session).builder().setBaseDir(
-                NutsPath.of(rootFolder,session))
+        return NutsPath.of(loc, session).builder().setBaseDir(
+                        NutsPath.of(rootFolder, session))
                 .build().toString();
     }
 
@@ -569,15 +569,15 @@ public class CoreIOUtils {
                     try {
                         desc = parser.parse(ctx);
                     } catch (Exception e) {
-                        NutsLoggerOp.of(CoreIOUtils.class,session)
+                        NutsLoggerOp.of(CoreIOUtils.class, session)
                                 .level(Level.FINE)
                                 .verb(NutsLogVerb.WARNING)
                                 .error(e)
-                                .log(NutsMessage.cstyle("error parsing %s with %s",localPath,parser.getClass().getSimpleName()+". Error ignored"));
+                                .log(NutsMessage.cstyle("error parsing %s with %s", localPath, parser.getClass().getSimpleName() + ". Error ignored"));
                         //e.printStackTrace();
                     }
                     if (desc != null) {
-                        if(!desc.isBlank()) {
+                        if (!desc.isBlank()) {
                             return desc;
                         }
                         return checkDescriptor(desc, session);
@@ -661,8 +661,8 @@ public class CoreIOUtils {
      * @param in  entree
      * @param out sortie
      */
-    public static void copy(Reader in, Writer out) {
-        copy(in, out, DEFAULT_BUFFER_SIZE);
+    public static void copy(Reader in, Writer out, NutsSession session) {
+        copy(in, out, DEFAULT_BUFFER_SIZE, session);
     }
 
     /**
@@ -672,8 +672,8 @@ public class CoreIOUtils {
      * @param out sortie
      * @return size copied
      */
-    public static long copy(java.io.InputStream in, OutputStream out) {
-        return copy(in, out, DEFAULT_BUFFER_SIZE);
+    public static long copy(java.io.InputStream in, OutputStream out, NutsSession session) {
+        return copy(in, out, DEFAULT_BUFFER_SIZE, session);
     }
 
     /**
@@ -684,7 +684,7 @@ public class CoreIOUtils {
      * @param bufferSize bufferSize
      * @return size copied
      */
-    public static long copy(java.io.InputStream in, OutputStream out, int bufferSize) {
+    public static long copy(java.io.InputStream in, OutputStream out, int bufferSize, NutsSession session) {
         byte[] buffer = new byte[bufferSize];
         int len;
         long count = 0;
@@ -695,7 +695,7 @@ public class CoreIOUtils {
             }
             return len;
         } catch (IOException ex) {
-            throw new UncheckedIOException(ex);
+            throw new NutsIOException(session, ex);
         }
     }
 
@@ -706,7 +706,7 @@ public class CoreIOUtils {
      * @param out        sortie
      * @param bufferSize bufferSize
      */
-    public static void copy(Reader in, Writer out, int bufferSize) {
+    public static void copy(Reader in, Writer out, int bufferSize, NutsSession session) {
         char[] buffer = new char[bufferSize];
         int len;
         try {
@@ -714,14 +714,14 @@ public class CoreIOUtils {
                 out.write(buffer, 0, len);
             }
         } catch (IOException ex) {
-            throw new UncheckedIOException(ex);
+            throw new NutsIOException(session, ex);
         }
     }
 
-    public static String loadString(java.io.InputStream is, boolean close) {
+    public static String loadString(java.io.InputStream is, boolean close, NutsSession session) {
         try {
             try {
-                byte[] bytes = loadByteArray(is);
+                byte[] bytes = loadByteArray(is, session);
                 return new String(bytes);
             } finally {
                 if (is != null && close) {
@@ -729,14 +729,14 @@ public class CoreIOUtils {
                 }
             }
         } catch (IOException ex) {
-            throw new UncheckedIOException(ex);
+            throw new NutsIOException(session, ex);
         }
     }
 
-    public static String loadString(Reader is, boolean close) {
+    public static String loadString(Reader is, boolean close, NutsSession session) {
         try {
             try {
-                char[] bytes = loadCharArray(is);
+                char[] bytes = loadCharArray(is, session);
                 return new String(bytes);
             } finally {
                 if (is != null && close) {
@@ -744,16 +744,16 @@ public class CoreIOUtils {
                 }
             }
         } catch (IOException ex) {
-            throw new UncheckedIOException(ex);
+            throw new NutsIOException(session, ex);
         }
     }
 
-    public static char[] loadCharArray(Reader r) {
+    public static char[] loadCharArray(Reader r, NutsSession session) {
         CharArrayWriter out = null;
 
         try {
             out = new CharArrayWriter();
-            copy(r, out);
+            copy(r, out, session);
             out.flush();
             return out.toCharArray();
         } finally {
@@ -764,13 +764,13 @@ public class CoreIOUtils {
 
     }
 
-    public static byte[] loadByteArray(java.io.InputStream r) {
+    public static byte[] loadByteArray(java.io.InputStream r, NutsSession session) {
         ByteArrayOutputStream out = null;
 
         try {
             try {
                 out = new ByteArrayOutputStream();
-                copy(r, out);
+                copy(r, out, session);
                 out.flush();
                 return out.toByteArray();
             } finally {
@@ -779,17 +779,17 @@ public class CoreIOUtils {
                 }
             }
         } catch (IOException ex) {
-            throw new UncheckedIOException(ex);
+            throw new NutsIOException(session, ex);
         }
     }
 
-    public static byte[] loadByteArray(java.io.InputStream r, boolean close) {
+    public static byte[] loadByteArray(java.io.InputStream r, boolean close, NutsSession session) {
         ByteArrayOutputStream out = null;
 
         try {
             try {
                 out = new ByteArrayOutputStream();
-                copy(r, out);
+                copy(r, out, session);
                 out.flush();
                 return out.toByteArray();
             } finally {
@@ -801,11 +801,11 @@ public class CoreIOUtils {
                 }
             }
         } catch (IOException ex) {
-            throw new UncheckedIOException(ex);
+            throw new NutsIOException(session, ex);
         }
     }
 
-    public static byte[] loadByteArray(java.io.InputStream stream, int maxSize, boolean close) {
+    public static byte[] loadByteArray(java.io.InputStream stream, int maxSize, boolean close, NutsSession session) {
         try {
             try {
                 if (maxSize > 0) {
@@ -827,7 +827,7 @@ public class CoreIOUtils {
                     return to.toByteArray();
                 } else {
                     ByteArrayOutputStream os = new ByteArrayOutputStream();
-                    copy(stream, os, close, true);
+                    copy(stream, os, close, true, session);
                     return os.toByteArray();
                 }
             } finally {
@@ -836,11 +836,11 @@ public class CoreIOUtils {
                 }
             }
         } catch (IOException ex) {
-            throw new UncheckedIOException(ex);
+            throw new NutsIOException(session, ex);
         }
     }
 
-    public static long copy(java.io.InputStream from, OutputStream to, boolean closeInput, boolean closeOutput) {
+    public static long copy(java.io.InputStream from, OutputStream to, boolean closeInput, boolean closeOutput, NutsSession session) {
         byte[] bytes = new byte[1024];//
         int count;
         long all = 0;
@@ -863,7 +863,7 @@ public class CoreIOUtils {
                 }
             }
         } catch (IOException ex) {
-            throw new UncheckedIOException(ex);
+            throw new NutsIOException(session, ex);
         }
     }
 
@@ -871,7 +871,7 @@ public class CoreIOUtils {
         return monitor(
                 NutsWorkspaceUtils.of(session).openURL(from),
                 from, NutsTexts.of(session).ofStyled(getURLName(from), NutsTextStyle.path())
-                , NutsPath.of(from,session).getContentLength(), monitor, session);
+                , NutsPath.of(from, session).getContentLength(), monitor, session);
     }
 
     public static java.io.InputStream monitor(java.io.InputStream from, Object source, NutsString sourceName, long length, NutsProgressMonitor monitor, NutsSession session) {
@@ -912,7 +912,7 @@ public class CoreIOUtils {
             }
         }
         final int[] deleted = new int[]{0, 0, 0};
-        NutsLogger LOG = session == null ? null : NutsLogger.of(CoreIOUtils.class,session);
+        NutsLogger LOG = session == null ? null : NutsLogger.of(CoreIOUtils.class, session);
         try {
             Files.walkFileTree(file, new FileVisitor<Path>() {
                 @Override
@@ -932,7 +932,7 @@ public class CoreIOUtils {
                     } catch (IOException e) {
                         if (LOG != null) {
                             LOG.with().session(session).level(Level.FINEST).verb(NutsLogVerb.WARNING)
-                                    .log(NutsMessage.jstyle("failed deleting file : {0}",file)
+                                    .log(NutsMessage.jstyle("failed deleting file : {0}", file)
                                     );
                         }
                         deleted[2]++;
@@ -966,7 +966,7 @@ public class CoreIOUtils {
                 }
             });
         } catch (IOException ex) {
-            throw new UncheckedIOException(ex);
+            throw new NutsIOException(session, ex);
         }
     }
 
@@ -1113,14 +1113,14 @@ public class CoreIOUtils {
         return best.open(url);
     }
 
-    public static String urlEncodeString(String s) {
+    public static String urlEncodeString(String s,NutsSession session) {
         if (s == null || s.trim().length() == 0) {
             return "";
         }
         try {
             return URLEncoder.encode(s, "UTF-8");
         } catch (UnsupportedEncodingException e) {
-            throw new UncheckedIOException(e);
+            throw new NutsIOException(session,e);
         }
     }
 
@@ -1152,7 +1152,7 @@ public class CoreIOUtils {
                 try {
                     return new URL("file:" + jarFile);
                 } catch (IOException ex2) {
-                    throw new UncheckedIOException(ex2);
+                    throw new NutsIOException(session, ex2);
                 }
             }
         } else {
@@ -1162,7 +1162,7 @@ public class CoreIOUtils {
                 try {
                     return new URL(url_tostring.substring(0, url_tostring.length() - encoded.length()));
                 } catch (IOException ex) {
-                    throw new UncheckedIOException(ex);
+                    throw new NutsIOException(session, ex);
                 }
             }
             throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("unable to resolve url from %s", urlPath));
@@ -1200,28 +1200,28 @@ public class CoreIOUtils {
     }
 
 
-    public static byte[] evalMD5(String input) {
+    public static byte[] evalMD5(String input, NutsSession session) {
         byte[] bytesOfMessage = input.getBytes(StandardCharsets.UTF_8);
-        return evalMD5(bytesOfMessage);
+        return evalMD5(bytesOfMessage, session);
     }
 
-    public static String evalMD5Hex(Path path) {
-        return NutsUtilStrings.toHexString(evalMD5(path));
+    public static String evalMD5Hex(Path path, NutsSession session) {
+        return NutsUtilStrings.toHexString(evalMD5(path, session));
     }
 
-    public static byte[] evalMD5(Path path) {
+    public static byte[] evalMD5(Path path, NutsSession session) {
         try (java.io.InputStream is = new BufferedInputStream(Files.newInputStream(path))) {
-            return evalMD5(is);
+            return evalMD5(is, session);
         } catch (IOException ex) {
-            throw new UncheckedIOException(ex);
+            throw new NutsIOException(session, ex);
         }
     }
 
-    public static String evalMD5Hex(java.io.InputStream input) {
-        return NutsUtilStrings.toHexString(evalMD5(input));
+    public static String evalMD5Hex(java.io.InputStream input, NutsSession session) {
+        return NutsUtilStrings.toHexString(evalMD5(input, session));
     }
 
-    public static byte[] evalHash(java.io.InputStream input, String algo) {
+    public static byte[] evalHash(java.io.InputStream input, String algo,NutsSession session) {
 
         try {
             MessageDigest md;
@@ -1235,15 +1235,15 @@ public class CoreIOUtils {
                     len = input.read(buffer);
                 }
             } catch (IOException e) {
-                throw new UncheckedIOException(e);
+                throw new NutsIOException(session,e);
             }
             return md.digest();
         } catch (NoSuchAlgorithmException e) {
-            throw new UncheckedIOException(new IOException(e));
+            throw new NutsIOException(session,new IOException(e));
         }
     }
 
-    public static byte[] evalMD5(java.io.InputStream input) {
+    public static byte[] evalMD5(java.io.InputStream input, NutsSession session) {
 
         try {
             MessageDigest md;
@@ -1257,37 +1257,37 @@ public class CoreIOUtils {
                     len = input.read(buffer);
                 }
             } catch (IOException e) {
-                throw new UncheckedIOException(e);
+                throw new NutsIOException(session, e);
             }
             return md.digest();
         } catch (NoSuchAlgorithmException e) {
-            throw new UncheckedIOException(new IOException(e));
+            throw new NutsIOException(session, e);
         }
     }
 
-    public static byte[] evalMD5(byte[] bytesOfMessage) {
+    public static byte[] evalMD5(byte[] bytesOfMessage, NutsSession session) {
         try {
             MessageDigest md;
             md = MessageDigest.getInstance("MD5");
             return md.digest(bytesOfMessage);
         } catch (NoSuchAlgorithmException e) {
-            throw new UncheckedIOException(new IOException(e));
+            throw new NutsIOException(session, e);
         }
     }
 
-    public static String evalSHA1Hex(Path file) {
+    public static String evalSHA1Hex(Path file, NutsSession session) {
         try {
-            return evalSHA1Hex(Files.newInputStream(file), true);
+            return evalSHA1Hex(Files.newInputStream(file), true,session);
         } catch (IOException e) {
-            throw new UncheckedIOException(e);
+            throw new NutsIOException(session, e);
         }
     }
 
-    public static String evalSHA1(File file) {
+    public static String evalSHA1(File file, NutsSession session) {
         try {
-            return evalSHA1Hex(new FileInputStream(file), true);
+            return evalSHA1Hex(new FileInputStream(file), true,session);
         } catch (FileNotFoundException e) {
-            throw new UncheckedIOException(e);
+            throw new NutsIOException(session, e);
         }
     }
 
@@ -1312,32 +1312,32 @@ public class CoreIOUtils {
         return chars;
     }
 
-    public static char[] evalSHA1(char[] input) {
+    public static char[] evalSHA1(char[] input, NutsSession session) {
         byte[] bytes = charsToBytes(input);
-        char[] r = evalSHA1HexChars(new ByteArrayInputStream(bytes), true);
+        char[] r = evalSHA1HexChars(new ByteArrayInputStream(bytes), true, session);
         Arrays.fill(bytes, (byte) 0);
         return r;
     }
 
-    public static String evalSHA1(String input) {
-        return evalSHA1Hex(new ByteArrayInputStream(input.getBytes()), true);
+    public static String evalSHA1(String input, NutsSession session) {
+        return evalSHA1Hex(new ByteArrayInputStream(input.getBytes()), true, session);
     }
 
-    public static String evalSHA1Hex(java.io.InputStream input, boolean closeStream) {
-        return NutsUtilStrings.toHexString(evalSHA1(input, closeStream));
+    public static String evalSHA1Hex(java.io.InputStream input, boolean closeStream, NutsSession session) {
+        return NutsUtilStrings.toHexString(evalSHA1(input, closeStream, session));
     }
 
-    public static char[] evalSHA1HexChars(java.io.InputStream input, boolean closeStream) {
-        return NutsUtilStrings.toHexString(evalSHA1(input, closeStream)).toCharArray();
+    public static char[] evalSHA1HexChars(java.io.InputStream input, boolean closeStream, NutsSession session) {
+        return NutsUtilStrings.toHexString(evalSHA1(input, closeStream, session)).toCharArray();
     }
 
-    public static byte[] evalSHA1(java.io.InputStream input, boolean closeStream) {
+    public static byte[] evalSHA1(java.io.InputStream input, boolean closeStream, NutsSession session) {
         try {
             MessageDigest sha1 = null;
             try {
                 sha1 = MessageDigest.getInstance("SHA-1");
             } catch (NoSuchAlgorithmException ex) {
-                throw new UncheckedIOException(new IOException(ex));
+                throw new NutsIOException(session, ex);
             }
             byte[] buffer = new byte[8192];
             int len = 0;
@@ -1348,7 +1348,7 @@ public class CoreIOUtils {
                     len = input.read(buffer);
                 }
             } catch (IOException e) {
-                throw new UncheckedIOException(e);
+                throw new NutsIOException(session, e);
             }
             return sha1.digest();
         } finally {
@@ -1357,7 +1357,7 @@ public class CoreIOUtils {
                     try {
                         input.close();
                     } catch (IOException ex) {
-                        throw new UncheckedIOException(ex);
+                        throw new NutsIOException(session, ex);
                     }
                 }
             }
@@ -1380,13 +1380,13 @@ public class CoreIOUtils {
         }
         NanoDB cachedDB = CacheDB.of(session);
         NanoDBTableFile<CachedURL> cacheTable =
-                cachedDB.tableBuilder(CachedURL.class).setNullable(false)
+                cachedDB.tableBuilder(CachedURL.class, session).setNullable(false)
                         .addAllFields()
                         .addIndices("url")
                         .getOrCreate();
 
 //        final PersistentMap<String, String> cu=getCachedUrls(session);
-        CachedURL old = cacheTable.findByIndex("url", path).findFirst().orElse(null);
+        CachedURL old = cacheTable.findByIndex("url", path, session).findFirst().orElse(null);
 //        String cachedSha1 = cu.get("sha1://" + path);
 //        String oldLastModified =cu.get("lastModified://" + path);
 //        String oldSize =cu.get("length://" + path);
@@ -1396,7 +1396,7 @@ public class CoreIOUtils {
                 if (cachedID != null) {
                     Path p = urlContent.resolve(cachedID);
                     if (Files.exists(p)) {
-                        return NutsPath.of(p,session).getInputStream();
+                        return NutsPath.of(p, session).getInputStream();
                     }
                 }
             }
@@ -1426,7 +1426,7 @@ public class CoreIOUtils {
                         if (cachedID != null) {
                             Path p = urlContent.resolve(cachedID);
                             if (Files.exists(p)) {
-                                return NutsPath.of(p,session).getInputStream();
+                                return NutsPath.of(p, session).getInputStream();
                             }
                         }
                     }
@@ -1444,7 +1444,7 @@ public class CoreIOUtils {
                     CachedURL ccu = new CachedURL();
                     ccu.url = path;
                     ccu.path = s;
-                    ccu.sha1 = evalSHA1Hex(outPath);
+                    ccu.sha1 = evalSHA1Hex(outPath, session);
                     long newSize = -1;
                     try {
                         newSize = Files.size(outPath);
@@ -1457,16 +1457,16 @@ public class CoreIOUtils {
                     try {
                         Files.move(outPath, newLocalPath, StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE);
                     } catch (IOException ex) {
-                        throw new UncheckedIOException(ex);
+                        throw new NutsIOException(session, ex);
                     }
-                    cacheTable.add(ccu);
-                    cacheTable.flush();
+                    cacheTable.add(ccu, session);
+                    cacheTable.flush(session);
                 }
             });
             return InputStreamMetadataAwareImpl.of(ist, new NutsDefaultInputStreamMetadata(
-                    path,
-                    NutsTexts.of(session).ofStyled(path, NutsTextStyle.path()),
-                    size,NutsPath.of(path,session).getContentType(),sourceTypeName
+                            path,
+                            NutsTexts.of(session).ofStyled(path, NutsTextStyle.path()),
+                            size, NutsPath.of(path, session).getContentType(), sourceTypeName
                     )
             );
 //                    session.io().input()
@@ -1474,7 +1474,7 @@ public class CoreIOUtils {
 //                    .setTypeName(sourceTypeName)
 //                    .of();
         } catch (IOException ex) {
-            throw new UncheckedIOException(ex);
+            throw new NutsIOException(session, ex);
         }
     }
 
@@ -1491,11 +1491,11 @@ public class CoreIOUtils {
 //        }
 //        return m;
 //    }
-    public static void storeProperties(Map<String, String> props, OutputStream out, boolean sort) {
-        storeProperties(props, new OutputStreamWriter(out), sort);
+    public static void storeProperties(Map<String, String> props, OutputStream out, boolean sort, NutsSession session) {
+        storeProperties(props, new OutputStreamWriter(out), sort, session);
     }
 
-    public static void storeProperties(Map<String, String> props, Writer w, boolean sort) {
+    public static void storeProperties(Map<String, String> props, Writer w, boolean sort, NutsSession session) {
         try {
             Set<String> keys = props.keySet();
             if (sort) {
@@ -1511,7 +1511,7 @@ public class CoreIOUtils {
             }
             w.flush();
         } catch (IOException ex) {
-            throw new UncheckedIOException(ex);
+            throw new NutsIOException(session, ex);
         }
     }
 
@@ -1586,7 +1586,6 @@ public class CoreIOUtils {
     }
 
     public static Path toPathInputSource(NutsStreamOrPath is, List<Path> tempPaths, NutsSession session) {
-        NutsWorkspace ws = session.getWorkspace();
         if (is.isPath() && is.getPath().isFile()) {
             return is.getPath().toFile();
         }
@@ -1620,12 +1619,12 @@ public class CoreIOUtils {
         return new File(path).toPath().toAbsolutePath().normalize().toString();
     }
 
-    public static void copyFolder(Path src, Path dest) {
+    public static void copyFolder(Path src, Path dest, NutsSession session) {
         try {
             Files.walk(src)
                     .forEach(source -> copy(source, dest.resolve(src.relativize(source))));
         } catch (IOException e) {
-            throw new UncheckedIOException(e);
+            throw new NutsIOException(session, e);
         }
     }
 
@@ -1917,7 +1916,7 @@ public class CoreIOUtils {
 //                }
 //            }
 //        } catch (IOException e) {
-//            throw new UncheckedIOException(e);
+//            throw new NutsIOException(session,e);
 //        }
 //        return lines;
 //    }
@@ -1934,7 +1933,7 @@ public class CoreIOUtils {
 //                    try {
 //                        line = br.readLine();
 //                    } catch (IOException e) {
-//                        throw new UncheckedIOException(e);
+//                        throw new NutsIOException(session,e);
 //                    }
 //                    hasNext = line != null;
 //                    return hasNext;
@@ -1943,7 +1942,7 @@ public class CoreIOUtils {
 //                        try {
 //                            br.close();
 //                        } catch (IOException e) {
-//                            throw new UncheckedIOException(e);
+//                            throw new NutsIOException(session,e);
 //                        }
 //                    }
 //                }
@@ -2233,7 +2232,7 @@ public class CoreIOUtils {
 //            try {
 //                Files.copy(open(), path, StandardCopyOption.REPLACE_EXISTING);
 //            } catch (IOException ex) {
-//                throw new UncheckedIOException(ex);
+//                throw new NutsIOException(session,ex);
 //            }
 //        }
 //
@@ -2427,7 +2426,7 @@ public class CoreIOUtils {
 //            try {
 //                return this.getFilePath().toUri().toURL();
 //            } catch (MalformedURLException ex) {
-//                throw new UncheckedIOException(ex);
+//                throw new NutsIOException(session,ex);
 //            }
 //        }
 //
@@ -2439,7 +2438,7 @@ public class CoreIOUtils {
 //            try {
 //                Files.copy(this.getFilePath(), path, StandardCopyOption.REPLACE_EXISTING);
 //            } catch (IOException ex) {
-//                throw new UncheckedIOException(ex);
+//                throw new NutsIOException(session,ex);
 //            }
 //        }
 //
@@ -2499,7 +2498,7 @@ public class CoreIOUtils {
 //            try (java.io.InputStream o = open()) {
 //                Files.copy(o, path, StandardCopyOption.REPLACE_EXISTING);
 //            } catch (IOException ex) {
-//                throw new UncheckedIOException(ex);
+//                throw new NutsIOException(session,ex);
 //            }
 //        }
 //
@@ -2529,24 +2528,24 @@ public class CoreIOUtils {
 //        }
 //    }
 
-    public static byte[] readBestEffort(int len, java.io.InputStream in) {
+    public static byte[] readBestEffort(int len, java.io.InputStream in,NutsSession session) {
         if (len < 0) {
             throw new IndexOutOfBoundsException();
         }
-        if(len==0){
+        if (len == 0) {
             return new byte[0];
         }
-        byte[] buf=new byte[len];
-        int count= readBestEffort(buf,0,len,in);
-        if(count==len){
+        byte[] buf = new byte[len];
+        int count = readBestEffort(buf, 0, len, in,session);
+        if (count == len) {
             return buf;
         }
-        byte[] buf2=new byte[count];
-        System.arraycopy(buf,0,buf2,0,count);
+        byte[] buf2 = new byte[count];
+        System.arraycopy(buf, 0, buf2, 0, count);
         return buf2;
     }
 
-    public static int readBestEffort(byte[] b, int off, int len, java.io.InputStream in) {
+    public static int readBestEffort(byte[] b, int off, int len, java.io.InputStream in, NutsSession session) {
         if (len < 0)
             throw new IndexOutOfBoundsException();
         int n = 0;
@@ -2555,7 +2554,7 @@ public class CoreIOUtils {
             try {
                 count = in.read(b, off + n, len - n);
             } catch (IOException e) {
-                throw new UncheckedIOException(e);
+                throw new NutsIOException(session, e);
             }
             if (count < 0) {
                 break;
@@ -2582,7 +2581,7 @@ public class CoreIOUtils {
         return true;
     }
 
-    public static boolean compareContent(Path file1, Path file2) {
+    public static boolean compareContent(Path file1, Path file2, NutsSession session) {
         if (Files.isRegularFile(file1) && Files.isRegularFile(file2)) {
             try {
                 if (Files.size(file1) == Files.size(file2)) {
@@ -2592,8 +2591,8 @@ public class CoreIOUtils {
                     try (java.io.InputStream in1 = Files.newInputStream(file1)) {
                         try (java.io.InputStream in2 = Files.newInputStream(file1)) {
                             while (true) {
-                                int c1 = readBestEffort(b1, 0, b1.length, in1);
-                                int c2 = readBestEffort(b2, 0, b2.length, in2);
+                                int c1 = readBestEffort(b1, 0, b1.length, in1, session);
+                                int c2 = readBestEffort(b2, 0, b2.length, in2, session);
                                 if (c1 != c2) {
                                     return false;
                                 }
@@ -2611,7 +2610,7 @@ public class CoreIOUtils {
                     }
                 }
             } catch (IOException e) {
-                throw new UncheckedIOException(e);
+                throw new NutsIOException(session, e);
             }
         }
         return false;
@@ -2744,10 +2743,10 @@ public class CoreIOUtils {
                         }
                         Files.write(out, content);
                         if (session.isPlainTrace()) {
-                            session.out().resetLine().printf("create file %s%n", NutsPath.of(out,session));
+                            session.out().resetLine().printf("create file %s%n", NutsPath.of(out, session));
                         }
                     } catch (IOException e) {
-                        throw new UncheckedIOException(e);
+                        throw new NutsIOException(session, e);
                     }
                     return PathInfo.Status.CREATED;
                 }
@@ -2766,10 +2765,10 @@ public class CoreIOUtils {
                             }
                             Files.write(out, content);
                             if (session.isPlainTrace()) {
-                                session.out().resetLine().printf("create file %s%n", NutsPath.of(out,session));
+                                session.out().resetLine().printf("create file %s%n", NutsPath.of(out, session));
                             }
                         } catch (IOException e) {
-                            throw new UncheckedIOException(e);
+                            throw new NutsIOException(session, e);
                         }
                         return PathInfo.Status.CREATED;
                     } else {
@@ -2792,10 +2791,10 @@ public class CoreIOUtils {
                     try {
                         Files.write(out, content);
                     } catch (IOException e) {
-                        throw new UncheckedIOException(e);
+                        throw new NutsIOException(session, e);
                     }
                     if (session.isPlainTrace()) {
-                        session.out().resetLine().printf("update file %s%n", NutsPath.of(out,session));
+                        session.out().resetLine().printf("update file %s%n", NutsPath.of(out, session));
                     }
                     return PathInfo.Status.OVERRIDDEN;
                 }
@@ -2812,14 +2811,14 @@ public class CoreIOUtils {
                             try {
                                 Files.write(out, content);
                             } catch (IOException e) {
-                                throw new UncheckedIOException(e);
+                                throw new NutsIOException(session, e);
                             }
                             Files.write(out, content);
                         } catch (IOException e) {
-                            throw new UncheckedIOException(e);
+                            throw new NutsIOException(session, e);
                         }
                         if (session.isPlainTrace()) {
-                            session.out().resetLine().printf("update file %s%n", NutsPath.of(out,session));
+                            session.out().resetLine().printf("update file %s%n", NutsPath.of(out, session));
                         }
                         return PathInfo.Status.OVERRIDDEN;
                     } else {

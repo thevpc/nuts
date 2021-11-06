@@ -152,7 +152,7 @@ public class URLPath implements NutsPathSPI {
                     , new NutsDefaultInputStreamMetadata(wrapperNutsPath()))
                     ;
         } catch (IOException e) {
-            throw new UncheckedIOException(e);
+            throw new NutsIOException(session,e);
         }
     }
 
@@ -163,7 +163,7 @@ public class URLPath implements NutsPathSPI {
             }
             return url.openConnection().getOutputStream();
         } catch (IOException e) {
-            throw new UncheckedIOException(e);
+            throw new NutsIOException(session,e);
         }
     }
 

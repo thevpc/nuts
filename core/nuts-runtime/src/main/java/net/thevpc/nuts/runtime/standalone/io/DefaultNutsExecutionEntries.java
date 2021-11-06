@@ -1,21 +1,17 @@
 package net.thevpc.nuts.runtime.standalone.io;
 
-import net.thevpc.nuts.NutsExecutionEntries;
-import net.thevpc.nuts.NutsExecutionEntry;
-import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.NutsWorkspace;
+import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 import net.thevpc.nuts.spi.NutsSupportLevelContext;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
 public class DefaultNutsExecutionEntries implements NutsExecutionEntries {
-    private NutsWorkspace ws;
+    private final NutsWorkspace ws;
     private NutsSession session;
 
     public DefaultNutsExecutionEntries(NutsSession session) {
@@ -36,7 +32,7 @@ public class DefaultNutsExecutionEntries implements NutsExecutionEntries {
                     return parse(in, "java", file.toAbsolutePath().normalize().toString());
                 }
             } catch (IOException ex) {
-                throw new UncheckedIOException(ex);
+                throw new NutsIOException(session, ex);
             }
         } else if (file.getFileName().toString().toLowerCase().endsWith(".class")) {
             try {
@@ -44,7 +40,7 @@ public class DefaultNutsExecutionEntries implements NutsExecutionEntries {
                     return parse(in, "class", file.toAbsolutePath().normalize().toString());
                 }
             } catch (IOException ex) {
-                throw new UncheckedIOException(ex);
+                throw new NutsIOException(session, ex);
             }
         } else {
             return new NutsExecutionEntry[0];

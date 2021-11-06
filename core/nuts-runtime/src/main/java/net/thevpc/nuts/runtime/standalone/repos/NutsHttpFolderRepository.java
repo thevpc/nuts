@@ -26,10 +26,10 @@
 package net.thevpc.nuts.runtime.standalone.repos;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.bundles.iter.IteratorUtils;
 import net.thevpc.nuts.runtime.core.CoreNutsConstants;
 import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.core.util.CoreNutsUtils;
-import net.thevpc.nuts.runtime.bundles.iter.IteratorUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -45,10 +45,10 @@ public class NutsHttpFolderRepository extends NutsCachedRepository {
 
     private final NutsLogger LOG;
 
-    private RemoteRepoApi versionApi = RemoteRepoApi.DEFAULT;
-    private RemoteRepoApi findApi = RemoteRepoApi.DEFAULT;
+    private final RemoteRepoApi versionApi = RemoteRepoApi.DEFAULT;
+    private final RemoteRepoApi findApi = RemoteRepoApi.DEFAULT;
 
-    private FilesFoldersApi.IteratorModel findModel = new FilesFoldersApi.AbstractIteratorModel() {
+    private final FilesFoldersApi.IteratorModel findModel = new FilesFoldersApi.AbstractIteratorModel() {
         @Override
         public void undeploy(NutsId id, NutsSession session) throws NutsExecutionException {
             throw new NutsUnsupportedOperationException(session, NutsMessage.cstyle("not supported undeploy."));
@@ -67,12 +67,12 @@ public class NutsHttpFolderRepository extends NutsCachedRepository {
                 in.close();
             }
         }
-        
+
     };
 
     public NutsHttpFolderRepository(NutsAddRepositoryOptions options, NutsSession session, NutsRepository parentRepository) {
         super(options, session, parentRepository, NutsSpeedQualifier.SLOW, false, NutsConstants.RepoTypes.NUTS);
-        LOG = NutsLogger.of(NutsHttpFolderRepository.class,session);
+        LOG = NutsLogger.of(NutsHttpFolderRepository.class, session);
     }
 
     private boolean isDescFile0(String pathname) {
@@ -157,7 +157,7 @@ public class NutsHttpFolderRepository extends NutsCachedRepository {
                 try {
                     metadataStream.close();
                 } catch (IOException e) {
-                    throw new UncheckedIOException(e);
+                    throw new NutsIOException(session, e);
                 }
             }
         }
@@ -286,14 +286,14 @@ public class NutsHttpFolderRepository extends NutsCachedRepository {
             String path = getPath(id, session);
             NutsCp.of(session).from(path).to(localFile).setSafe(true).setLogProgress(true).run();
             return new NutsDefaultContent(
-                    NutsPath.of(localFile,session), false, false);
+                    NutsPath.of(localFile, session), false, false);
         } else {
             for (NutsIdLocation location : descriptor.getLocations()) {
                 if (CoreNutsUtils.acceptClassifier(location, id.getClassifier())) {
                     try {
                         NutsCp.of(session).from(location.getUrl()).to(localFile).setSafe(true).setLogProgress(true).run();
                         return new NutsDefaultContent(
-                                NutsPath.of(localFile,session), false, false);
+                                NutsPath.of(localFile, session), false, false);
                     } catch (Exception ex) {
                         LOG.with().session(session).level(Level.SEVERE).error(ex)
                                 .log(NutsMessage.jstyle("unable to download location for id {0} in location {1} : {2}", id, location.getUrl(), ex));
@@ -345,6 +345,7 @@ public class NutsHttpFolderRepository extends NutsCachedRepository {
             }
         }
     }
+
     @Override
     public boolean isAcceptFetchMode(NutsFetchMode mode, NutsSession session) {
         return true;

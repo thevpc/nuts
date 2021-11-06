@@ -1,5 +1,8 @@
 package net.thevpc.nuts.runtime.bundles.nanodb;
 
+import net.thevpc.nuts.NutsIOException;
+import net.thevpc.nuts.NutsSession;
+
 import java.io.*;
 import java.util.PrimitiveIterator;
 import java.util.Spliterator;
@@ -12,30 +15,30 @@ public class DBIndexValueFileStore implements DBIndexValueStore {
     public static final String NANODB_INDEX_STORE_0_8_1 = "nanodb-index-store-0.8.1";
     private File file;
     private DataOutputStream out;
-    private NanoDBIndex index;
-    private Object indexKey;
+    private final NanoDBIndex index;
+    private final Object indexKey;
 
     public DBIndexValueFileStore(NanoDBIndex index, Object indexKey) {
-        this.index=index;
-        this.indexKey=indexKey;
+        this.index = index;
+        this.indexKey = indexKey;
     }
 
     public File getFile() {
         if (file == null) {
             File indexFile = ((NanoDBDefaultIndex) this.index).getFile();
             String indexFileName = indexFile.getName();
-            if(indexFileName.endsWith(".index")){
-                file = new File(indexFile.getParentFile(), indexFileName.substring(0,indexFileName.length()-".index".length())
-                        + "." + String.valueOf(indexKey) + ".index-store");
-            }else {
+            if (indexFileName.endsWith(".index")) {
+                file = new File(indexFile.getParentFile(), indexFileName.substring(0, indexFileName.length() - ".index".length())
+                        + "." + indexKey + ".index-store");
+            } else {
                 file = new File(indexFile.getParentFile(), indexFileName
-                        + "." + String.valueOf(indexKey) + ".index-store");
+                        + "." + indexKey + ".index-store");
             }
         }
         return file;
     }
 
-    public void add(long position) {
+    public void add(long position, NutsSession session) {
         if (out == null) {
             try {
                 File pf = getFile().getParentFile();
@@ -45,24 +48,24 @@ public class DBIndexValueFileStore implements DBIndexValueStore {
                 out = new DataOutputStream(new FileOutputStream(getFile(), true));
                 out.writeUTF(NANODB_INDEX_STORE_0_8_1);
             } catch (IOException e) {
-                throw new UncheckedIOException(e);
+                throw new NutsIOException(session, e);
             }
         }
         try {
             out.writeLong(position);
         } catch (IOException ex) {
-            throw new UncheckedIOException(ex);
+            throw new NutsIOException(session, ex);
         }
         try {
             out.close();
             out = null;
         } catch (IOException ex) {
-            throw new UncheckedIOException(ex);
+            throw new NutsIOException(session, ex);
         }
     }
 
     @Override
-    public void addAll(long[] positions) {
+    public void addAll(long[] positions,NutsSession session) {
         if (out == null) {
             try {
                 File pf = getFile().getParentFile();
@@ -79,29 +82,29 @@ public class DBIndexValueFileStore implements DBIndexValueStore {
                 out.writeLong(position);
             }
         } catch (IOException ex) {
-            throw new UncheckedIOException(ex);
+            throw new NutsIOException(session, ex);
         }
         try {
             out.close();
             out = null;
         } catch (IOException ex) {
-            throw new UncheckedIOException(ex);
+            throw new NutsIOException(session, ex);
         }
     }
 
     @Override
-    public LongStream stream() {
+    public LongStream stream(NutsSession session) {
         final PrimitiveIterator.OfLong iterator = new PrimitiveIterator.OfLong() {
-            DataInputStream in;
+            final DataInputStream in;
             long nextValue;
-            String header;
+            final String header;
 
             {
                 try {
                     in = new DataInputStream(new FileInputStream(getFile()));
                     header = in.readUTF();
                 } catch (IOException e) {
-                    throw new UncheckedIOException(e);
+                    throw new NutsIOException(session, e);
                 }
             }
 
@@ -115,7 +118,7 @@ public class DBIndexValueFileStore implements DBIndexValueStore {
                 } catch (EOFException ex) {
                     return false;
                 } catch (IOException ex) {
-                    throw new UncheckedIOException(ex);
+                    throw new NutsIOException(session, ex);
                 }
                 return true;
             }
@@ -136,7 +139,7 @@ public class DBIndexValueFileStore implements DBIndexValueStore {
     }
 
     @Override
-    public void flush() {
+    public void flush(NutsSession session) {
 
     }
 }

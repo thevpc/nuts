@@ -64,14 +64,14 @@ public class DefaultNutsContentTypes implements NutsContentTypes {
             }
         }
         if (best == null) {
-            throw new NutsIllegalArgumentException(session, NutsMessage.plain("missing type resolver"));
+            throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("missing type resolver for %s",path));
         }
         return best.getValue();
     }
 
     @Override
     public String probeContentType(InputStream stream, String name) {
-        byte[] buffer=CoreIOUtils.readBestEffort(4096,stream);
+        byte[] buffer=CoreIOUtils.readBestEffort(4096,stream,session);
         return probeContentType(buffer,name);
     }
 
@@ -92,7 +92,7 @@ public class DefaultNutsContentTypes implements NutsContentTypes {
             }
         }
         if (best == null) {
-            throw new NutsIllegalArgumentException(session, NutsMessage.plain("missing type resolver"));
+            throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("missing type resolver for stream named %s",name));
         }
         return best.getValue();
     }

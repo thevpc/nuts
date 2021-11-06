@@ -343,7 +343,7 @@ public class MavenRemoteRepository extends NutsCachedRepository {
                     final InputStream is = NutsInputStreamMonitor.of(session).setSource(s).create();
                     return MavenUtils.of(session)
                             .createArchetypeCatalogIterator(is, filter, true, session);
-                } catch (UncheckedIOException ex) {
+                } catch (UncheckedIOException | NutsIOException ex) {
                     return IteratorUtils.emptyIterator();
                 }
             }

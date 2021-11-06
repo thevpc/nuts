@@ -49,7 +49,7 @@ public class XmlCodeHighlighter implements NutsCodeHighlighter {
     @Override
     public NutsText stringToText(String text, NutsSession session) {
         factory.setSession(session);
-        StreamTokenizerExt st = new StreamTokenizerExt(new StringReader(text));
+        StreamTokenizerExt st = new StreamTokenizerExt(new StringReader(text),session);
         st.xmlComments(true);
         st.doNotParseNumbers();
         st.wordChars('0', '9');

@@ -1,18 +1,20 @@
 package net.thevpc.nuts.runtime.bundles.mvn;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
+import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.core.format.xml.NutsXmlUtils;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.io.UncheckedIOException;
-import java.io.Writer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.stream.StreamResult;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.text.SimpleDateFormat;
@@ -20,14 +22,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 import java.util.logging.Level;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.stream.StreamResult;
-
-import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.core.format.xml.NutsXmlUtils;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 
 public class MavenMetadataParser {
     private final NutsLogger LOG;
@@ -53,10 +47,8 @@ public class MavenMetadataParser {
         try (Writer w = new OutputStreamWriter(s)) {
             writeMavenMetaData(m, new StreamResult(s));
             w.flush();
-        } catch (TransformerException | ParserConfigurationException e) {
-            throw new UncheckedIOException(new IOException(e));
-        } catch (IOException e) {
-            throw new UncheckedIOException(e);
+        } catch (TransformerException | ParserConfigurationException | IOException e) {
+            throw new NutsIOException(session,e);
         }
         return new String(s.toByteArray());
     }
@@ -64,10 +56,8 @@ public class MavenMetadataParser {
     public void writeMavenMetaData(MavenMetadata m, Path path) {
         try (Writer w = Files.newBufferedWriter(path)) {
             writeMavenMetaData(m, new StreamResult(path.toFile()));
-        } catch (TransformerException | ParserConfigurationException e) {
-            throw new UncheckedIOException(new IOException(e));
-        } catch (IOException e) {
-            throw new UncheckedIOException(e);
+        } catch (TransformerException | ParserConfigurationException | IOException e) {
+            throw new NutsIOException(session,e);
         }
     }
 
@@ -126,7 +116,7 @@ public class MavenMetadataParser {
         try (InputStream s = Files.newInputStream(stream)) {
             return parseMavenMetaData(s);
         } catch (IOException ex) {
-            throw new UncheckedIOException(ex);
+            throw new NutsIOException(session,ex);
         }
     }
 

@@ -94,7 +94,7 @@ public class FilesFoldersApi {
         try {
             session.getTerminal().printProgress("%-8s %s", "browse",NutsPath.of(baseUrl,session).toCompressedForm());
             foldersFileStream = NutsInputStreamMonitor.of(session).setSource(dotFilesUrl).create();
-            List<String> splitted = StringTokenizerUtils.split(CoreIOUtils.loadString(foldersFileStream, true), "\n\r");
+            List<String> splitted = StringTokenizerUtils.split(CoreIOUtils.loadString(foldersFileStream, true,session), "\n\r");
             for (String s : splitted) {
                 s = s.trim();
                 if (s.length() > 0) {
@@ -149,7 +149,7 @@ public class FilesFoldersApi {
                 String dotFolderUrl = baseUrl + "/" + CoreNutsConstants.Files.DOT_FOLDERS;
                 try (InputStream stream = NutsInputStreamMonitor.of(session).setSource(dotFolderUrl)
                         .create()) {
-                    foldersFileContent = StringTokenizerUtils.split(CoreIOUtils.loadString(stream, true), "\n\r")
+                    foldersFileContent = StringTokenizerUtils.split(CoreIOUtils.loadString(stream, true,session), "\n\r")
                             .stream().map(x -> x.trim()).filter(x -> x.length() > 0).toArray(String[]::new);
                 } catch (IOException | UncheckedIOException | NutsIOException ex) {
                     NutsLoggerOp.of(FilesFoldersApi.class,session).level(Level.FINE).verb(NutsLogVerb.FAIL)

@@ -54,7 +54,7 @@ public class DefaultNutsDependency implements NutsDependency {
     public DefaultNutsDependency(String repository, String groupId, String artifactId, String classifier, NutsVersion version, String scope, String optional, NutsId[] exclusions,
                                  NutsEnvCondition condition, String type,
                                  Map<String, String> properties, NutsSession session) {
-        this(repository, groupId, artifactId, classifier, version, scope, optional, exclusions, condition, type, QueryStringParser.formatSortedPropertiesQuery(properties), session);
+        this(repository, groupId, artifactId, classifier, version, scope, optional, exclusions, condition, type, QueryStringParser.formatSortedPropertiesQuery(properties,session), session);
     }
 
     public DefaultNutsDependency(String repository, String groupId, String artifactId, String classifier, NutsVersion version, String scope, String optional, NutsId[] exclusions,
@@ -82,7 +82,7 @@ public class DefaultNutsDependency implements NutsDependency {
         }
         this.condition = CoreNutsUtils.trimToBlank(condition,session);
         this.type = NutsUtilStrings.trimToNull(type);
-        this.properties = QueryStringParser.formatSortedPropertiesQuery(properties);
+        this.properties = QueryStringParser.formatSortedPropertiesQuery(properties,session);
         this.session = session;
 //        if (toString().contains("jai_imageio")) {
 //            System.out.print("");
@@ -294,7 +294,7 @@ public class DefaultNutsDependency implements NutsDependency {
 
     @Override
     public Map<String, String> getProperties() {
-        return QueryStringParser.parseMap(properties);
+        return QueryStringParser.parseMap(properties,session);
     }
 
     @Override

@@ -6,15 +6,14 @@
 package net.thevpc.nuts.runtime.standalone.util;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.core.NutsWorkspaceExt;
-import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
-import net.thevpc.nuts.runtime.core.CoreNutsConstants;
-import net.thevpc.nuts.runtime.core.model.DefaultNutsDefinition;
 import net.thevpc.nuts.runtime.bundles.io.UnzipOptions;
 import net.thevpc.nuts.runtime.bundles.io.ZipUtils;
+import net.thevpc.nuts.runtime.core.CoreNutsConstants;
+import net.thevpc.nuts.runtime.core.NutsWorkspaceExt;
+import net.thevpc.nuts.runtime.core.model.DefaultNutsDefinition;
+import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
 
 import java.io.IOException;
-import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.logging.Level;
@@ -94,7 +93,7 @@ public class DefaultSourceControlHelper {
                 ZipUtils.unzip(session, nutToInstall.getPath().toString(), NutsPath.of(folder,session)
                         .builder().withAppBaseDir().build().toString(), new UnzipOptions().setSkipRoot(false));
             } catch (IOException ex) {
-                throw new UncheckedIOException(ex);
+                throw new NutsIOException(session, ex);
             }
 
             Path file = folder.resolve(NutsConstants.Files.DESCRIPTOR_FILE_NAME);

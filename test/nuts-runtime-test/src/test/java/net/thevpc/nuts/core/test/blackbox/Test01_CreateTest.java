@@ -28,7 +28,8 @@ public class Test01_CreateTest {
     @Test
     public void tempTest(){
         try {
-            Set<String> q = CoreServiceUtils.loadZipServiceClassNames(new File("/home/vpc/nuts-runtime-0.8.3.0-err.jar").toURI().toURL(), NutsComponent.class);
+            NutsSession session = TestUtils.openExistingTestWorkspace();
+            Set<String> q = CoreServiceUtils.loadZipServiceClassNames(new File("/home/vpc/nuts-runtime-0.8.3.0-err.jar").toURI().toURL(), NutsComponent.class,session);
             System.out.println(q.size());
             for (String s : q) {
                 System.out.println(s);

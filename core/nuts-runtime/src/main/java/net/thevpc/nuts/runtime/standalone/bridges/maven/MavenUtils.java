@@ -80,7 +80,7 @@ public class MavenUtils {
     public static PomIdResolver createPomIdResolver(NutsSession session) {
         PomIdResolver wp = (PomIdResolver) session.env().getProperty(PomIdResolver.class.getName()).getObject();
         if (wp == null) {
-            wp = new PomIdResolver(new NutsPomUrlReader(session), new NutsPomLogger(session));
+            wp = new PomIdResolver(new NutsPomUrlReader(), new NutsPomLogger(session));
             session.env().setProperty(PomIdResolver.class.getName(), wp);
         }
         return wp;
@@ -229,7 +229,7 @@ public class MavenUtils {
             if (stream == null) {
                 return null;
             }
-            byte[] bytes = CoreIOUtils.loadByteArray(stream);
+            byte[] bytes = CoreIOUtils.loadByteArray(stream,session);
             InputStream bytesStream = CoreIOUtils.createBytesStream(bytes,
                     urlDesc == null ? NutsMessage.formatted("pom.xml") : NutsMessage.formatted(urlDesc), "text/xml",
                     urlDesc == null ? "pom.xml" : urlDesc, session);
@@ -731,14 +731,10 @@ public class MavenUtils {
 
     private static class NutsPomUrlReader implements PomUrlReader {
 
-        private final NutsSession session;
-
-        public NutsPomUrlReader(NutsSession session) {
-            this.session = session;
-        }
+        public NutsPomUrlReader(){}
 
         @Override
-        public InputStream openStream(URL url) {
+        public InputStream openStream(URL url,NutsSession session) {
             return NutsWorkspaceUtils.of(session).openURL(url);
         }
     }

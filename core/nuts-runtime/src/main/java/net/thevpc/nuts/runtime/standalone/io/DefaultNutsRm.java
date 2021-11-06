@@ -6,7 +6,6 @@ import net.thevpc.nuts.spi.NutsSupportLevelContext;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.UncheckedIOException;
 import java.nio.file.FileVisitResult;
 import java.nio.file.FileVisitor;
 import java.nio.file.Files;
@@ -24,7 +23,7 @@ public class DefaultNutsRm extends AbstractNutsRm {
     private void grabException(IOException e) {
         this.error = e;
         if (isFailFast()) {
-            throw new UncheckedIOException(e);
+            throw new NutsIOException(getSession(),e);
         }
     }
     @Override

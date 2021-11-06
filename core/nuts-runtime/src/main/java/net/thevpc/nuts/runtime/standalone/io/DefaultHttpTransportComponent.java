@@ -54,7 +54,7 @@ public class DefaultHttpTransportComponent implements NutsTransportComponent {
         try {
             return new DefaultNutsTransportConnection(new URL(url),session);
         } catch (MalformedURLException e) {
-            throw new UncheckedIOException(e);
+            throw new NutsIOException(session,e);
         }
     }
 

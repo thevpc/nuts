@@ -60,11 +60,11 @@ public class DefaultNutsId implements NutsId {
             }
         }
         this.classifier = c0;
-        this.properties = QueryStringParser.formatSortedPropertiesQuery(properties);
+        this.properties = QueryStringParser.formatSortedPropertiesQuery(properties,session);
     }
 
     public DefaultNutsId(String groupId, String artifactId, NutsVersion version, String classifier,String properties, NutsSession session) {
-        this(groupId, artifactId, version, classifier,new QueryStringParser(true,null).setProperties(properties).getProperties(), session);
+        this(groupId, artifactId, version, classifier,new QueryStringParser(true,null).setProperties(properties,session).getProperties(), session);
     }
 
 //    public DefaultNutsId(String groupId, String artifactId, String version,NutsSession session) {
@@ -295,7 +295,7 @@ public class DefaultNutsId implements NutsId {
 
     @Override
     public Map<String, String> getProperties() {
-        return QueryStringParser.parseMap(properties);
+        return QueryStringParser.parseMap(properties,session);
     }
 
     @Override

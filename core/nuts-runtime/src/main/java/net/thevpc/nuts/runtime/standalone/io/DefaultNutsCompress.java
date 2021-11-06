@@ -141,7 +141,7 @@ public class DefaultNutsCompress implements NutsCompress {
                     if (this.target.isOutputStream()) {
                         CoreIOUtils.copy(
                                 Files.newInputStream(tempPath),
-                                this.target.getOutputStream()
+                                this.target.getOutputStream(),session
                         );
                     } else if (this.target.isPath()
                             && this.target.getPath().isFile()) {
@@ -150,7 +150,7 @@ public class DefaultNutsCompress implements NutsCompress {
                     } else {
                         try (InputStream ii = Files.newInputStream(tempPath)) {
                             try (OutputStream jj = this.target.getPath().getOutputStream()) {
-                                CoreIOUtils.copy(ii, jj);
+                                CoreIOUtils.copy(ii, jj,session);
                             }
                         }
                     }
@@ -162,7 +162,7 @@ public class DefaultNutsCompress implements NutsCompress {
             _LOG(session).with().level(Level.CONFIG).verb(NutsLogVerb.FAIL)
                     .log(NutsMessage.jstyle("error compressing {0} to {1} : {2}",
                             sources, target.getValue(), ex));
-            throw new UncheckedIOException(ex);
+            throw new NutsIOException(session,ex);
         }
     }
 
@@ -216,7 +216,7 @@ public class DefaultNutsCompress implements NutsCompress {
                 }
             }
         } catch (IOException ex) {
-            throw new UncheckedIOException(ex);
+            throw new NutsIOException(session,ex);
         }
     }
 

@@ -24,6 +24,7 @@
 package net.thevpc.nuts.runtime.core.util;
 
 import net.thevpc.nuts.NutsException;
+import net.thevpc.nuts.NutsIOException;
 import net.thevpc.nuts.NutsMessage;
 import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.runtime.bundles.io.InputStreamVisitor;
@@ -42,7 +43,7 @@ public final class CoreServiceUtils {
     private CoreServiceUtils() {
     }
 
-    public static Set<String> loadZipServiceClassNames(URL url, Class service) {
+    public static Set<String> loadZipServiceClassNames(URL url, Class service,NutsSession session) {
         LinkedHashSet<String> found = new LinkedHashSet<>();
         try (final InputStream jarStream = url.openStream()) {
             if (jarStream != null) {
@@ -62,12 +63,12 @@ public final class CoreServiceUtils {
                 });
             }
         } catch (IOException ex) {
-            throw new UncheckedIOException(ex);
+            throw new NutsIOException(session, ex);
         }
         return found;
     }
 
-    public static List<String> loadServiceClasseNames(URL u, Class<?> service) {
+    public static List<String> loadServiceClasseNames(URL u, Class<?> service,NutsSession session) {
         InputStream in = null;
         BufferedReader r = null;
         List<String> names = new ArrayList<>();
@@ -83,7 +84,7 @@ public final class CoreServiceUtils {
                 }
             }
         } catch (IOException ex) {
-            throw new UncheckedIOException(ex);
+            throw new NutsIOException(session,ex);
         } finally {
             try {
                 if (r != null) {
@@ -93,7 +94,7 @@ public final class CoreServiceUtils {
                     in.close();
                 }
             } catch (IOException ex2) {
-                throw new UncheckedIOException(ex2);
+                throw new NutsIOException(session, ex2);
             }
         }
         return names;
@@ -110,10 +111,10 @@ public final class CoreServiceUtils {
                 configs = classLoader.getResources(fullName);
             }
         } catch (IOException ex) {
-            throw new UncheckedIOException(ex);
+            throw new NutsIOException(session,ex);
         }
         while (configs.hasMoreElements()) {
-            names.addAll(loadServiceClasseNames(configs.nextElement(), service));
+            names.addAll(loadServiceClasseNames(configs.nextElement(), service,session));
         }
         List<Class> classes = new ArrayList<>();
         for (String n : names) {

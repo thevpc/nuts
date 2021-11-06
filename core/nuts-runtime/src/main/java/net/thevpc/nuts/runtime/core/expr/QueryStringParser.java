@@ -1,5 +1,7 @@
 package net.thevpc.nuts.runtime.core.expr;
 
+import net.thevpc.nuts.Nuts;
+import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.NutsUtilStrings;
 import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 
@@ -88,8 +90,8 @@ public class QueryStringParser {
         return this;
     }
 
-    public QueryStringParser setProperties(String propertiesQuery) {
-        Map<String, String> m2 = parseMap(propertiesQuery);
+    public QueryStringParser setProperties(String propertiesQuery,NutsSession session) {
+        Map<String, String> m2 = parseMap(propertiesQuery,session);
         this.properties.clear();
         for (Map.Entry<String, String> e : m2.entrySet()) {
             setProperty(e.getKey(), e.getValue());
@@ -97,8 +99,8 @@ public class QueryStringParser {
         return this;
     }
 
-    public void addProperties(String propertiesQuery) {
-        Map<String, String> m2 = parseMap(propertiesQuery);
+    public void addProperties(String propertiesQuery,NutsSession session) {
+        Map<String, String> m2 = parseMap(propertiesQuery,session);
         for (Map.Entry<String, String> e : m2.entrySet()) {
             setProperty(e.getKey(), e.getValue());
         }
@@ -152,15 +154,15 @@ public class QueryStringParser {
         return NutsUtilStrings.trimToNull(sb.toString());
     }
 
-    public static String formatSortedPropertiesQuery(String query){
+    public static String formatSortedPropertiesQuery(String query,NutsSession session){
+        return new QueryStringParser(true,null).setProperties(query,session).getPropertiesQuery();
+    }
+
+    public static String formatSortedPropertiesQuery(Map<String,String> query,NutsSession session){
         return new QueryStringParser(true,null).setProperties(query).getPropertiesQuery();
     }
 
-    public static String formatSortedPropertiesQuery(Map<String,String> query){
-        return new QueryStringParser(true,null).setProperties(query).getPropertiesQuery();
-    }
-
-    public static Map<String, String> parseMap(String text) {
-        return QPARSER.parseMap(text);
+    public static Map<String, String> parseMap(String text, NutsSession session) {
+        return QPARSER.parseMap(text,session);
     }
 }

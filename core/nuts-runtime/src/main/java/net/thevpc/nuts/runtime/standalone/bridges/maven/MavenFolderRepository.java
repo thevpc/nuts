@@ -66,7 +66,7 @@ public class MavenFolderRepository extends NutsCachedRepository {
 
         @Override
         protected String getStreamSHA1(NutsId id, NutsSession session, String typeName) {
-            return CoreIOUtils.evalSHA1Hex(getStream(id.builder().setFace(NutsConstants.QueryFaces.CONTENT_HASH).build(), typeName, "verify", session), true);
+            return CoreIOUtils.evalSHA1Hex(getStream(id.builder().setFace(NutsConstants.QueryFaces.CONTENT_HASH).build(), typeName, "verify", session), true,session);
         }
 
         @Override

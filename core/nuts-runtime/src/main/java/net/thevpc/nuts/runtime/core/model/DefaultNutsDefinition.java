@@ -159,7 +159,7 @@ public class DefaultNutsDefinition implements NutsDefinition {
             try {
                 return p.toUri().toURL();
             } catch (MalformedURLException e) {
-                throw new UncheckedIOException(e);
+                throw new NutsIOException(session,e);
             }
         }
         return null;

@@ -14,7 +14,6 @@ import net.thevpc.nuts.spi.NutsRepositorySPI;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -34,7 +33,7 @@ public class DefaultNutsDeployCommand extends AbstractNutsDeployCommand {
         if (parseOptions == null) {
             parseOptions = new String[0];
         }
-        CharacterizedDeployFile c = new CharacterizedDeployFile();
+        CharacterizedDeployFile c = new CharacterizedDeployFile(session);
         try {
             c.baseFile = CoreIOUtils.toPathInputSource(contentFile, c.temps, session);
             c.contentStreamOrPath = contentFile;
@@ -82,7 +81,7 @@ public class DefaultNutsDeployCommand extends AbstractNutsDeployCommand {
                 throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("path does not denote a valid file or folder %s", c.contentStreamOrPath));
             }
         } catch (IOException ex) {
-            throw new UncheckedIOException(ex);
+            throw new NutsIOException(session,ex);
         }
         return c;
     }
@@ -193,7 +192,7 @@ public class DefaultNutsDeployCommand extends AbstractNutsDeployCommand {
                             try {
                                 ZipUtils.zip(session, contentFile.toString(), new ZipOptions(), zipFilePath.toString());
                             } catch (IOException ex) {
-                                throw new UncheckedIOException(ex);
+                                throw new NutsIOException(session,ex);
                             }
                             contentFile = zipFilePath;
                             tempFile2 = contentFile;
@@ -261,7 +260,7 @@ public class DefaultNutsDeployCommand extends AbstractNutsDeployCommand {
                     try {
                         Files.delete(tempFile2);
                     } catch (IOException ex) {
-                        throw new UncheckedIOException(ex);
+                        throw new NutsIOException(session,ex);
                     }
                 }
             }
@@ -303,13 +302,13 @@ public class DefaultNutsDeployCommand extends AbstractNutsDeployCommand {
                                 throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("invalid content Hash"));
                             }
                         } catch (IOException ex) {
-                            throw new UncheckedIOException(ex);
+                            throw new NutsIOException(session,ex);
                         }
                     }
                     try (InputStream is = d.getInputStream()) {
                         return NutsDescriptorParser.of(session).parse(is);
                     } catch (IOException ex) {
-                        throw new UncheckedIOException(ex);
+                        throw new NutsIOException(session,ex);
                     }
                 } finally {
                     d.dispose();

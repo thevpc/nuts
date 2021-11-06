@@ -82,7 +82,6 @@ import net.thevpc.nuts.runtime.standalone.wscommands.update.DefaultNutsUpdateCom
 import net.thevpc.nuts.spi.*;
 
 import java.io.IOException;
-import java.io.UncheckedIOException;
 import java.io.Writer;
 import java.net.URL;
 import java.nio.file.Files;
@@ -140,7 +139,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
 //                        try {
 //                            ZipUtils.zip(contentFolder.toString(), new ZipOptions(), destFile.toString());
 //                        } catch (IOException ex) {
-//                            throw new UncheckedIOException(ex);
+//                            throw new NutsIOException(session,ex);
 //                        }
 //                        return new DefaultNutsDefinition(
 //                                this, null,
@@ -274,7 +273,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                 NutsElements.of(defaultSession());
 
                 LOGCSF.log(NutsMessage.jstyle(" ==============================================================================="));
-                String s = CoreIOUtils.loadString(getClass().getResourceAsStream("/net/thevpc/nuts/runtime/includes/standard-header.ntf"), true);
+                String s = CoreIOUtils.loadString(getClass().getResourceAsStream("/net/thevpc/nuts/runtime/includes/standard-header.ntf"), true,defaultSession());
                 s = s.replace("${nuts.workspace-runtime.version}", Nuts.getVersion());
                 for (String s1 : s.split("\n")) {
                     LOGCSF.log(NutsMessage.jstyle(s1));
@@ -1563,9 +1562,9 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                     bootstrapFolder.resolve(session.locations().getDefaultIdBasedir(def.getId().getLongId()))
                             .resolve("nuts.properties")
             )) {
-                CoreIOUtils.storeProperties(pr, writer, false);
+                CoreIOUtils.storeProperties(pr, writer, false,session);
             } catch (IOException ex) {
-                throw new UncheckedIOException(ex);
+                throw new NutsIOException(session, ex);
             }
         }
     }

@@ -57,7 +57,10 @@ import net.thevpc.nuts.runtime.standalone.solvers.NutsDependencySolverUtils;
 import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 import net.thevpc.nuts.spi.*;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.PrintStream;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -89,6 +92,9 @@ public class DefaultNutsWorkspaceConfigModel {
     private final NutsWorkspaceOptions options;
     private final NutsWorkspaceInitInformation initOptions;
     private final Function<String, String> pathExpansionConverter;
+    private final WorkspaceSystemTerminalAdapter workspaceSystemTerminalAdapter;
+    private final List<NutsPathFactory> pathFactories = new ArrayList<>();
+    private final DefaultNutsBootModel bootModel;
     protected NutsWorkspaceConfigBoot storeModelBoot = new NutsWorkspaceConfigBoot();
     protected NutsWorkspaceConfigApi storeModelApi = new NutsWorkspaceConfigApi();
     protected NutsWorkspaceConfigRuntime storeModelRuntime = new NutsWorkspaceConfigRuntime();
@@ -112,13 +118,10 @@ public class DefaultNutsWorkspaceConfigModel {
     private ExecutorService executorService;
     private NutsSessionTerminal terminal;
     private NutsSystemTerminal systemTerminal;
-    private final WorkspaceSystemTerminalAdapter workspaceSystemTerminalAdapter;
     //    private final NutsLogger LOG;
     private InputStream stdin = null;
     private NutsPrintStream stdout;
     private NutsPrintStream stderr;
-    private final List<NutsPathFactory> pathFactories = new ArrayList<>();
-    private final DefaultNutsBootModel bootModel;
 
     public DefaultNutsWorkspaceConfigModel(final DefaultNutsWorkspace ws, NutsWorkspaceInitInformation initOptions) {
         this.ws = ws;
@@ -1170,8 +1173,8 @@ public class DefaultNutsWorkspaceConfigModel {
         // and hence there is no repository to look from.
         // In that case we look in default repos on "first boot"
         if (isFirstBoot()) {
-            boolean deployFromDefaultRepos=false;
-            if(deployFromDefaultRepos) {
+            boolean deployFromDefaultRepos = false;
+            if (deployFromDefaultRepos) {
                 String tmp = null;
                 try {
                     String idFileName = session.locations().getDefaultIdFilename(id.builder().setFaceContent().setPackaging("jar").build());
@@ -1186,7 +1189,7 @@ public class DefaultNutsWorkspaceConfigModel {
                             NutsPath srcPath = pp
                                     .resolve(session.locations().getDefaultIdBasedir(id))
                                     .resolve(idFileName);
-                            if(srcPath.exists()) {
+                            if (srcPath.exists()) {
                                 NutsCp.of(session).from(srcPath).to(tmp).run();
                                 copiedLocally = true;
                             }
@@ -1194,7 +1197,7 @@ public class DefaultNutsWorkspaceConfigModel {
                             //
                         }
                         if (copiedLocally) {
-                            if(deployToInstalledRepository(idType,Paths.get(tmp),session)) {
+                            if (deployToInstalledRepository(idType, Paths.get(tmp), session)) {
                                 return;
                             }
                         }
@@ -1209,13 +1212,13 @@ public class DefaultNutsWorkspaceConfigModel {
                 }
             }
             NutsClassLoaderNode n = searchBootNode(id, session);
-            if(n!=null){
-                if(deployToInstalledRepository(idType,
-                        NutsPath.of(n.getURL(),session).toFile()
-                        ,session)) {
+            if (n != null) {
+                if (deployToInstalledRepository(idType,
+                        NutsPath.of(n.getURL(), session).toFile()
+                        , session)) {
                     for (NutsClassLoaderNode d : n.getDependencies()) {
                         NutsId depId = NutsId.of(d.getId(), session);
-                        downloadId(depId,CoreNutsUtils.detectIdType(depId,session), session);
+                        downloadId(depId, CoreNutsUtils.detectIdType(depId, session), session);
                     }
                     return;
                 }
@@ -1224,7 +1227,7 @@ public class DefaultNutsWorkspaceConfigModel {
         throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("unable to load %s", id));
     }
 
-    private boolean deployToInstalledRepository(NutsIdType idType,Path tmp,NutsSession session){
+    private boolean deployToInstalledRepository(NutsIdType idType, Path tmp, NutsSession session) {
         NutsInstalledRepository ins = NutsWorkspaceExt.of(session.getWorkspace()).getInstalledRepository();
         NutsDescriptor descriptor = CoreIOUtils.resolveNutsDescriptorFromFileContent(tmp, null, session);
         if (descriptor != null) {
@@ -1241,23 +1244,23 @@ public class DefaultNutsWorkspaceConfigModel {
         return false;
     }
 
-    private NutsClassLoaderNode searchBootNode(NutsId id,NutsSession session){
+    private NutsClassLoaderNode searchBootNode(NutsId id, NutsSession session) {
         NutsBootManager boot = session.boot();
-        List<NutsClassLoaderNode> all=new ArrayList();
+        List<NutsClassLoaderNode> all = new ArrayList();
         all.add(boot.getBootRuntimeClassLoaderNode());
         all.addAll(Arrays.asList(boot.getBootExtensionClassLoaderNode()));
-        return searchBootNode(id,all.toArray(new NutsClassLoaderNode[0]));
+        return searchBootNode(id, all.toArray(new NutsClassLoaderNode[0]));
     }
 
-    private NutsClassLoaderNode searchBootNode(NutsId id,NutsClassLoaderNode[] into){
+    private NutsClassLoaderNode searchBootNode(NutsId id, NutsClassLoaderNode[] into) {
         for (NutsClassLoaderNode n : into) {
-            if(n!=null){
-                if(id.getLongName().equals(n.getId())){
+            if (n != null) {
+                if (id.getLongName().equals(n.getId())) {
                     return n;
                 }
             }
             NutsClassLoaderNode a = searchBootNode(id, n.getDependencies());
-            if(a!=null){
+            if (a != null) {
                 return a;
             }
         }
@@ -1283,7 +1286,7 @@ public class DefaultNutsWorkspaceConfigModel {
             if (!oldPath.equals(newPath)) {
                 Path oldPathObj = Paths.get(oldPath);
                 if (Files.exists(oldPathObj)) {
-                    CoreIOUtils.copyFolder(oldPathObj, Paths.get(newPath));
+                    CoreIOUtils.copyFolder(oldPathObj, Paths.get(newPath),session);
                 }
             }
         }
@@ -1294,7 +1297,7 @@ public class DefaultNutsWorkspaceConfigModel {
         DefaultNutsWorkspaceConfigModel wconfig = this;
         Path file = session.locations().getWorkspaceLocation().toFile().resolve(NutsConstants.Files.WORKSPACE_CONFIG_FILE_NAME);
         if (wconfig.isReadOnly()) {
-            throw new UncheckedIOException("unable to load config file " + file, new IOException(ex));
+            throw new NutsIOException(session, NutsMessage.cstyle("unable to load config file %s", file), ex);
         }
         String fileSuffix = Instant.now().toString();
         fileSuffix = fileSuffix.replace(':', '-');
@@ -1306,7 +1309,7 @@ public class DefaultNutsWorkspaceConfigModel {
         try {
             CoreIOUtils.mkdirs(logError, session);
         } catch (Exception ex1) {
-            throw new UncheckedIOException("unable to log workspace error while loading config file " + file + " : " + ex1, new IOException(ex));
+            throw new NutsIOException(session, NutsMessage.cstyle("unable to log workspace error while loading config file %s : %s", file, ex1), ex);
         }
         Path newfile = logError.resolve(fileName + ".json");
         _LOGOP(session).level(Level.SEVERE).verb(NutsLogVerb.FAIL)
@@ -1314,7 +1317,7 @@ public class DefaultNutsWorkspaceConfigModel {
         try {
             Files.move(file, newfile);
         } catch (IOException e) {
-            throw new UncheckedIOException("unable to load and re-create config file " + file + " : " + e, new IOException(ex));
+            throw new NutsIOException(session, NutsMessage.cstyle("unable to load and re-create config file %s : %s", file, e), ex);
         }
 
         try (PrintStream o = new PrintStream(logFile.toFile())) {
@@ -1345,7 +1348,7 @@ public class DefaultNutsWorkspaceConfigModel {
 
     private NutsWorkspaceConfigBoot parseBootConfig(NutsPath path, NutsSession session) {
         Path file = path.toFile().resolve(NutsConstants.Files.WORKSPACE_CONFIG_FILE_NAME);
-        byte[] bytes = CompatUtils.readAllBytes(file);
+        byte[] bytes = CompatUtils.readAllBytes(file, session);
         if (bytes == null) {
             return null;
         }
@@ -1363,7 +1366,7 @@ public class DefaultNutsWorkspaceConfigModel {
             _LOGOP(session).level(Level.SEVERE).verb(NutsLogVerb.FAIL)
                     .log(NutsMessage.jstyle("erroneous workspace config file. Unable to load file {0} : {1}",
                             file, ex));
-            throw new UncheckedIOException("unable to load config file " + file, new IOException(ex));
+            throw new NutsIOException(session, NutsMessage.cstyle("unable to load config file %s", file), ex);
         }
     }
 
@@ -1371,11 +1374,11 @@ public class DefaultNutsWorkspaceConfigModel {
         int buildNumber = CoreNutsUtils.getApiVersionOrdinalNumber(apiVersion);
         if (buildNumber >= 803) {
             return new NutsVersionCompat803(session, apiVersion);
-        }else if(buildNumber >= 507){
+        } else if (buildNumber >= 507) {
             return new NutsVersionCompat507(session, apiVersion);
-        }else if(buildNumber >= 506){
+        } else if (buildNumber >= 506) {
             return new NutsVersionCompat506(session, apiVersion);
-        }else{
+        } else {
             return new NutsVersionCompat502(session, apiVersion);
         }
     }

@@ -523,7 +523,7 @@ public class CorePlatformUtils {
      * @param stream stream
      * @return main class type for the given
      */
-    public static MainClassType getMainClassType(InputStream stream) {
+    public static MainClassType getMainClassType(InputStream stream,NutsSession session) {
         final NutsRef<Boolean> mainClass = new NutsRef<>();
         final NutsRef<Boolean> nutsApp = new NutsRef<>();
         final NutsRef<String> nutsAppVer = new NutsRef<>();
@@ -563,7 +563,7 @@ public class CorePlatformUtils {
                 }
             }
         };
-        SimpleClassStream classReader = new SimpleClassStream(new BufferedInputStream(stream), cl);
+        SimpleClassStream classReader = new SimpleClassStream(new BufferedInputStream(stream), cl,session);
         if (mainClass.isSet() || nutsApp.isSet()) {
             return new MainClassType(className.get(), mainClass.isSet(), nutsApp.isSet());
         }

@@ -48,7 +48,7 @@ public class DefaultSearchFormatProps extends DefaultSearchFormatBase {
                 NutsElements.of(getSession())
                         .toElement(object)
         );
-        CoreIOUtils.storeProperties(p, getWriter().asPrintStream(), false);
+        CoreIOUtils.storeProperties(p, getWriter().asPrintStream(), false,getSession());
         getWriter().flush();
     }
 

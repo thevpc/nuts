@@ -124,7 +124,7 @@ public class DefaultNutsWorkspaceSecurityModel {
             NutsWorkspaceConfigManagerExt.of(session.config()).getModel().setUser(u, session);
         }
 
-        char[] credentials = CoreIOUtils.evalSHA1(adminPassword);
+        char[] credentials = CoreIOUtils.evalSHA1(adminPassword,session);
         if (Arrays.equals(credentials, adminPassword)) {
             Arrays.fill(credentials, '\0');
             throw new NutsSecurityException(session, NutsMessage.plain("invalid credentials"));
@@ -143,7 +143,7 @@ public class DefaultNutsWorkspaceSecurityModel {
             adminPassword = new char[0];
         }
         boolean deactivated = false;
-        char[] credentials = CoreIOUtils.evalSHA1(adminPassword);
+        char[] credentials = CoreIOUtils.evalSHA1(adminPassword,session);
         if (Arrays.equals(credentials, adminPassword)) {
             Arrays.fill(credentials, '\0');
             throw new NutsSecurityException(session, NutsMessage.plain("invalid credentials"));

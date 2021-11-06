@@ -717,7 +717,7 @@ public class FishCodeHighlighter implements NutsCodeHighlighter {
                     break;
                 }
             } catch (IOException ex) {
-                throw new UncheckedIOException(ex);
+                throw new NutsIOException(session,ex);
             }
             if (first) {
                 first = false;

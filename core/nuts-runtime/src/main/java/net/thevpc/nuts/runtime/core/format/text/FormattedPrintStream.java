@@ -238,7 +238,7 @@
 //        try {
 //            formatNodeHelper.processBytes(buf, off, len);
 //        } catch (IOException e) {
-//            throw new UncheckedIOException(e);
+//            throw new NutsIOException(session,e);
 //        }
 //    }
 //
@@ -248,7 +248,7 @@
 //        try {
 //            formatNodeHelper.processByte(b);
 //        } catch (IOException e) {
-//            throw new UncheckedIOException(e);
+//            throw new NutsIOException(session,e);
 //        }
 //    }
 //
@@ -258,7 +258,7 @@
 //        try {
 //            formatNodeHelper.flush();
 //        } catch (IOException e) {
-//            throw new UncheckedIOException(e);
+//            throw new NutsIOException(session,e);
 //        }
 //        super.flush();
 //    }

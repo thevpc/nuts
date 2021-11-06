@@ -6,16 +6,15 @@ import net.thevpc.nuts.runtime.core.format.text.parser.*;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.UncheckedIOException;
 
 public class NutsTextNodeWriterStringer extends AbstractNutsTextNodeWriter {
 
     private OutputStream out;
-    private NutsSession ws;
+    private NutsSession session;
 
-    public NutsTextNodeWriterStringer(OutputStream out, NutsSession ws) {
+    public NutsTextNodeWriterStringer(OutputStream out, NutsSession session) {
         this.out = out;
-        this.ws = ws;
+        this.session = session;
     }
 
     public static String toString(NutsText n, NutsSession ws) {
@@ -48,7 +47,7 @@ public class NutsTextNodeWriterStringer extends AbstractNutsTextNodeWriter {
         try {
             out.flush();
         } catch (IOException ex) {
-            throw new UncheckedIOException(ex);
+            throw new NutsIOException(session,ex);
         }
         return true;
     }
@@ -90,7 +89,7 @@ public class NutsTextNodeWriterStringer extends AbstractNutsTextNodeWriter {
                             writeNode(s.getChild(), ctx);
                         } else {
                             writeNode(
-                                    NutsTexts.of(ws).applyStyles(s.getChild(), s.getStyles().removeFirst()),
+                                    NutsTexts.of(session).applyStyles(s.getChild(), s.getStyles().removeFirst()),
                                     ctx);
                         }
                         writeRaw(s.getEnd());
@@ -102,7 +101,7 @@ public class NutsTextNodeWriterStringer extends AbstractNutsTextNodeWriter {
                             writeNode(s.getChild(), ctx);
                         } else {
                             writeNode(
-                                    NutsTexts.of(ws).applyStyles(s.getChild(), s.getStyles().removeFirst()),
+                                    NutsTexts.of(session).applyStyles(s.getChild(), s.getStyles().removeFirst()),
                                     ctx);
                         }
                         writeRaw("}##");//complex format always uses ##
@@ -119,7 +118,7 @@ public class NutsTextNodeWriterStringer extends AbstractNutsTextNodeWriter {
                 if (ctx.isTitleNumberEnabled()) {
                     NutsTextNumbering seq = ctx.getTitleNumberSequence();
                     if (seq == null) {
-                        seq = NutsTexts.of(ws).ofNumbering();
+                        seq = NutsTexts.of(session).ofNumbering();
                         ctx.setTitleNumberSequence(seq);
                     }
                     NutsTextNumbering a = seq.newLevel(s.getTextStyleCode().length());
@@ -269,7 +268,7 @@ public class NutsTextNodeWriterStringer extends AbstractNutsTextNodeWriter {
         try {
             out.write(rawString.getBytes());
         } catch (IOException ex) {
-            throw new UncheckedIOException(ex);
+            throw new NutsIOException(session,ex);
         }
     }
 

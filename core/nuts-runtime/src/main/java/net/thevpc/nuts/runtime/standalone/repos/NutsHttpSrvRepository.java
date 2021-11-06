@@ -91,7 +91,7 @@ public class NutsHttpSrvRepository extends NutsCachedRepository {
                         new ByteArrayInputStream(descStream.toByteArray())),
                 new NutsTransportParamBinaryFilePart("content", content.getPath().getName(), content.getFile()),
                 new NutsTransportParamParamPart("descriptor-hash", NutsHash.of(session).sha1().setSource(desc).computeString()),
-                new NutsTransportParamParamPart("content-hash", CoreIOUtils.evalSHA1Hex(content.getFile())),
+                new NutsTransportParamParamPart("content-hash", CoreIOUtils.evalSHA1Hex(content.getFile(),session)),
                 new NutsTransportParamParamPart("force", String.valueOf(session.isYes()))
         );
     }
@@ -103,10 +103,10 @@ public class NutsHttpSrvRepository extends NutsCachedRepository {
         }
         boolean transitive = session.isTransitive();
         session.getTerminal().printProgress("loading descriptor for ", id.getLongId());
-        try (InputStream stream = CoreIOUtils.getHttpClientFacade(session, getUrl("/fetch-descriptor?id=" + CoreIOUtils.urlEncodeString(id.toString()) + (transitive ? ("&transitive") : "") + "&" + resolveAuthURLPart(session))).open()) {
+        try (InputStream stream = CoreIOUtils.getHttpClientFacade(session, getUrl("/fetch-descriptor?id=" + CoreIOUtils.urlEncodeString(id.toString(),session) + (transitive ? ("&transitive") : "") + "&" + resolveAuthURLPart(session))).open()) {
             NutsDescriptor descriptor = NutsDescriptorParser.of(session).parse(stream);
             if (descriptor != null) {
-                String hash = httpGetString(getUrl("/fetch-descriptor-hash?id=" + CoreIOUtils.urlEncodeString(id.toString()) + (transitive ? ("&transitive") : "") + "&" + resolveAuthURLPart(session)), session);
+                String hash = httpGetString(getUrl("/fetch-descriptor-hash?id=" + CoreIOUtils.urlEncodeString(id.toString(),session) + (transitive ? ("&transitive") : "") + "&" + resolveAuthURLPart(session)), session);
                 if (hash.equals(descriptor.toString())) {
                     return descriptor;
                 }
@@ -126,7 +126,7 @@ public class NutsHttpSrvRepository extends NutsCachedRepository {
         InputStream ret = null;
         try {
             session.getTerminal().printProgress("search version for %s", id.getLongId(), session);
-            ret = CoreIOUtils.getHttpClientFacade(session, getUrl("/find-versions?id=" + CoreIOUtils.urlEncodeString(id.toString()) + (transitive ? ("&transitive") : "") + "&" + resolveAuthURLPart(session))).open();
+            ret = CoreIOUtils.getHttpClientFacade(session, getUrl("/find-versions?id=" + CoreIOUtils.urlEncodeString(id.toString(),session) + (transitive ? ("&transitive") : "") + "&" + resolveAuthURLPart(session))).open();
         } catch (UncheckedIOException | NutsIOException e) {
             return IteratorUtils.emptyIterator();
         }
@@ -193,10 +193,10 @@ public class NutsHttpSrvRepository extends NutsCachedRepository {
         }
 
         try {
-            String location = getUrl("/fetch?id=" + CoreIOUtils.urlEncodeString(id.toString()) + (transitive ? ("&transitive") : "") + "&" + resolveAuthURLPart(session));
+            String location = getUrl("/fetch?id=" + CoreIOUtils.urlEncodeString(id.toString(),session) + (transitive ? ("&transitive") : "") + "&" + resolveAuthURLPart(session));
             NutsCp.of(session).from(location).to(localPath).setSafe(true).setLogProgress(true).run();
-            String rhash = httpGetString(getUrl("/fetch-hash?id=" + CoreIOUtils.urlEncodeString(id.toString()) + (transitive ? ("&transitive") : "") + "&" + resolveAuthURLPart(session)), session);
-            String lhash = CoreIOUtils.evalSHA1Hex(Paths.get(localPath));
+            String rhash = httpGetString(getUrl("/fetch-hash?id=" + CoreIOUtils.urlEncodeString(id.toString(),session) + (transitive ? ("&transitive") : "") + "&" + resolveAuthURLPart(session)), session);
+            String lhash = CoreIOUtils.evalSHA1Hex(Paths.get(localPath),session);
             if (rhash.equalsIgnoreCase(lhash)) {
                 return new NutsDefaultContent(
                         NutsPath.of(localPath,session)
@@ -212,7 +212,7 @@ public class NutsHttpSrvRepository extends NutsCachedRepository {
     private String httpGetString(String url, NutsSession session) {
         LOG.with().session(session).level(Level.FINEST).verb(NutsLogVerb.START)
                 .log(NutsMessage.jstyle("get URL{0}", url));
-        return CoreIOUtils.loadString(CoreIOUtils.getHttpClientFacade(session, url).open(), true);
+        return CoreIOUtils.loadString(CoreIOUtils.getHttpClientFacade(session, url).open(), true,session);
     }
 
     private InputStream httpUpload(String url, NutsSession session, NutsTransportParamPart... parts) {
@@ -258,14 +258,14 @@ public class NutsHttpSrvRepository extends NutsCachedRepository {
         }
 
         String passphrase = env().get(CoreSecurityUtils.ENV_KEY_PASSPHRASE, CoreSecurityUtils.DEFAULT_PASSPHRASE);
-        newLogin = new String(CoreSecurityUtils.defaultEncryptChars(NutsUtilStrings.trim(newLogin).toCharArray(), passphrase));
-        credentials = CoreSecurityUtils.defaultEncryptChars(credentials, passphrase);
+        newLogin = new String(CoreSecurityUtils.defaultEncryptChars(NutsUtilStrings.trim(newLogin).toCharArray(), passphrase,session));
+        credentials = CoreSecurityUtils.defaultEncryptChars(credentials, passphrase,session);
         return new String[]{newLogin, new String(credentials)};
     }
 
     private String resolveAuthURLPart(NutsSession session) {
         String[] auth = resolveEncryptedAuth(session);
-        return "ul=" + CoreIOUtils.urlEncodeString(auth[0]) + "&up=" + CoreIOUtils.urlEncodeString(auth[0]);
+        return "ul=" + CoreIOUtils.urlEncodeString(auth[0],session) + "&up=" + CoreIOUtils.urlEncodeString(auth[0],session);
     }
 
 //    @Override

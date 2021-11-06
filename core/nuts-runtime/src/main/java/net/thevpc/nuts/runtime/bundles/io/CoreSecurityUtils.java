@@ -23,7 +23,7 @@
  */
 package net.thevpc.nuts.runtime.bundles.io;
 
-import net.thevpc.nuts.NutsUtilStrings;
+import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
 
 import javax.crypto.Cipher;
@@ -44,19 +44,19 @@ public class CoreSecurityUtils {
     public static final String ENV_KEY_PASSPHRASE = "passphrase";
     public static final String DEFAULT_PASSPHRASE = NutsUtilStrings.toHexString("It's completely nuts!!".getBytes());
 
-    public static char[] defaultDecryptChars(char[] data, String passphrase) {
-        return decryptString(new String(data), passphrase).toCharArray();
+    public static char[] defaultDecryptChars(char[] data, String passphrase,NutsSession session) {
+        return decryptString(new String(data), passphrase,session).toCharArray();
 //        return CoreIOUtils.bytesToChars(CoreSecurityUtils.httpDecrypt(CoreIOUtils.charsToBytes(data), passphrase));
     }
 
-    public static char[] defaultEncryptChars(char[] data, String passphrase) {
-        return encryptString(new String(data), passphrase).toCharArray();
+    public static char[] defaultEncryptChars(char[] data, String passphrase,NutsSession session) {
+        return encryptString(new String(data), passphrase,session).toCharArray();
 //        byte[] bytes = httpEncrypt(CoreIOUtils.charsToBytes(data), passphrase);
 //        return CoreIOUtils.bytesToChars(bytes);
     }
 
-    public static char[] defaultHashChars(char[] data, String passphrase) {
-        return defaultEncryptChars(CoreIOUtils.evalSHA1(data), passphrase);
+    public static char[] defaultHashChars(char[] data, String passphrase, NutsSession session) {
+        return defaultEncryptChars(CoreIOUtils.evalSHA1(data,session), passphrase,session);
     }
 
 //    public static byte[] httpDecrypt(byte[] data, String passphrase) {
@@ -69,7 +69,7 @@ public class CoreSecurityUtils {
 //
 //            return c.doFinal(decoded);
 //        } catch (GeneralSecurityException e) {
-//            throw new UncheckedIOException(new IOException(e));
+//            throw NutsIOException(session,e);
 //        }
 //    }
 //
@@ -84,11 +84,11 @@ public class CoreSecurityUtils {
 //            byte[] encryptedData = c.doFinal(data);
 //            return (Base64.getEncoder().encode(encryptedData));
 //        } catch (GeneralSecurityException e) {
-//            throw new UncheckedIOException(new IOException(e));
+//            throw new NutsIOException(session,e);
 //        }
 //    }
 
-    private static String encryptString(String strToEncrypt, String secret) {
+    private static String encryptString(String strToEncrypt, String secret,NutsSession session) {
         try {
             //strToEncrypt must be multiple of 16 (bug in jdk11)
             byte[] bytes = strToEncrypt.getBytes(StandardCharsets.UTF_8);
@@ -106,18 +106,20 @@ public class CoreSecurityUtils {
             }
             bytes=out.toByteArray();
 
-            KeyInfo k = createKeyInfo(secret);
+            KeyInfo k = createKeyInfo(secret,session);
             Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
             cipher.init(Cipher.ENCRYPT_MODE, k.secretKey);
             return Base64.getEncoder().encodeToString(cipher.doFinal(bytes));
+        } catch (NutsException ex) {
+            throw ex;
         } catch (Exception ex) {
-            throw new RuntimeException(ex);
+            throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("encryption failed"),ex);
         }
     }
 
-    private static String decryptString(String strToDecrypt, String secret) {
+    private static String decryptString(String strToDecrypt, String secret,NutsSession session) {
         try {
-            KeyInfo k = createKeyInfo(secret);
+            KeyInfo k = createKeyInfo(secret,session);
             Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
             cipher.init(Cipher.DECRYPT_MODE, k.secretKey);
             byte[] bytes = cipher.doFinal(Base64.getDecoder().decode(strToDecrypt));
@@ -132,8 +134,10 @@ public class CoreSecurityUtils {
             int v= ((ch1 << 24) + (ch2 << 16) + (ch3 << 8) + (ch4 << 0));
             bytes=Arrays.copyOfRange(bytes,4,4+v);
             return new String(bytes);
+        } catch (NutsException ex) {
+            throw ex;
         } catch (Exception ex) {
-            throw new RuntimeException(ex);
+            throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("decryption failed"),ex);
         }
     }
 
@@ -143,7 +147,7 @@ public class CoreSecurityUtils {
         byte[] key;
     }
 
-    private static KeyInfo createKeyInfo(String password) {
+    private static KeyInfo createKeyInfo(String password,NutsSession session) {
         if (password == null || password.length() == 0) {
             password = "password";
         }
@@ -155,7 +159,7 @@ public class CoreSecurityUtils {
             k.key = sha.digest(k.key);
             k.secretKey = new SecretKeySpec(k.key, "AES");
         } catch (NoSuchAlgorithmException ex) {
-            throw new RuntimeException(ex);
+            throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("encryption key building failed"),ex);
         }
         return k;
     }

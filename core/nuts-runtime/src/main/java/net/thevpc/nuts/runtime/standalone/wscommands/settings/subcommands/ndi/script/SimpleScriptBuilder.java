@@ -1,5 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.ndi.script;
 
+import net.thevpc.nuts.NutsIOException;
 import net.thevpc.nuts.NutsId;
 import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.NutsShellFamily;
@@ -10,7 +11,6 @@ import net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.ndi.ba
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringReader;
-import java.io.UncheckedIOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
@@ -52,7 +52,7 @@ public class SimpleScriptBuilder extends AbstractScriptBuilder {
                 a.add(c);
             }
         } catch (IOException e) {
-            throw new UncheckedIOException(e);
+            throw new NutsIOException(getSession(),e);
         }
         return a;
 

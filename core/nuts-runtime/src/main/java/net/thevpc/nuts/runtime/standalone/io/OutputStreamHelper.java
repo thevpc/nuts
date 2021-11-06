@@ -1,22 +1,20 @@
 package net.thevpc.nuts.runtime.standalone.io;
 
-import net.thevpc.nuts.NutsIllegalArgumentException;
-import net.thevpc.nuts.NutsMessage;
-import net.thevpc.nuts.NutsOutputStreamTransparentAdapter;
-import net.thevpc.nuts.NutsSession;
+import net.thevpc.nuts.*;
 
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
-import java.io.UncheckedIOException;
 import java.util.Arrays;
 
 public class OutputStreamHelper implements OutputHelper {
     private OutputStream rawOutput;
     private OutputStream rawOutput0;
     private PrintStream ps;
+    private NutsSession session;
 
     public OutputStreamHelper(OutputStream rawOutput, NutsSession session) {
+        this.session = session;
         this.rawOutput = rawOutput;
         this.rawOutput0 = rawOutput;
         int loopGard = 100;
@@ -38,7 +36,7 @@ public class OutputStreamHelper implements OutputHelper {
         try {
             rawOutput0.write(b, offset, len);
         } catch (IOException ex) {
-            throw new UncheckedIOException(ex);
+            throw new NutsIOException(session,ex);
         }
     }
     //@Override
@@ -55,7 +53,7 @@ public class OutputStreamHelper implements OutputHelper {
             try {
                 rawOutput0.write(bb, 0, bb.length);
             } catch (IOException ex) {
-                throw new UncheckedIOException(ex);
+                throw new NutsIOException(session,ex);
             }
         }
     }
