@@ -18,24 +18,24 @@ public class DefaultNutsSystemExecutable extends AbstractNutsExecutableCommand {
 
     String[] cmd;
     String[] executorOptions;
-    NutsSession traceSession;
+    NutsSession session;
     NutsSession execSession;
     NutsExecCommand execCommand;
     private boolean showCommand = false;
     private final boolean inheritSystemIO;
 
     public DefaultNutsSystemExecutable(String[] cmd,
-                                       String[] executorOptions, NutsSession traceSession, NutsSession execSession, NutsExecCommand execCommand) {
+                                       String[] executorOptions, NutsSession session, NutsSession execSession, NutsExecCommand execCommand) {
         super(cmd[0],
-                NutsCommandLine.of(cmd,traceSession).toString(),
+                NutsCommandLine.of(cmd, session).toString(),
                 NutsExecutableType.SYSTEM);
         this.inheritSystemIO = execCommand.isInheritSystemIO();
         this.cmd = cmd;
         this.execCommand = execCommand;
         this.executorOptions = executorOptions == null ? new String[0] : executorOptions;
-        this.traceSession = traceSession;
+        this.session = session;
         this.execSession = execSession;
-        NutsCommandLine cmdLine = NutsCommandLine.of(this.executorOptions,traceSession);
+        NutsCommandLine cmdLine = NutsCommandLine.of(this.executorOptions, session);
         while (cmdLine.hasNext()) {
             NutsArgument a = cmdLine.peek();
             switch (a.getKey().getString()) {
@@ -64,14 +64,14 @@ public class DefaultNutsSystemExecutable extends AbstractNutsExecutableCommand {
         return ProcessExecHelper.ofArgs(
                 execCommand.getCommand(), e2,
                 CoreIOUtils.toPath(execCommand.getDirectory()),
-                traceSession.getTerminal(),
+                session.getTerminal(),
                 execSession.getTerminal(), showCommand, true, execCommand.getSleepMillis(),
                 inheritSystemIO,
                 /*redirectErr*/ false,
                 /*fileIn*/ null,
                 /*fileOut*/ null,
                 execCommand.getRunAs(),
-                traceSession);
+                session);
     }
 
 
@@ -102,7 +102,7 @@ public class DefaultNutsSystemExecutable extends AbstractNutsExecutableCommand {
 
     @Override
     public String toString() {
-        return execCommand.getRunAs() + "_CMD " + NutsCommandLine.of(cmd,traceSession).toString();
+        return execCommand.getRunAs() + " " + NutsCommandLine.of(cmd, session).toString();
     }
 
 }

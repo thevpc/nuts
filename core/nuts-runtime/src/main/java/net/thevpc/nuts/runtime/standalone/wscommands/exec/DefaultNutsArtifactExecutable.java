@@ -21,7 +21,7 @@ public class DefaultNutsArtifactExecutable extends AbstractNutsExecutableCommand
     Map<String, String> env;
     String dir;
     boolean failFast;
-    NutsSession traceSession;
+    NutsSession session;
     NutsSession execSession;
     NutsExecutionType executionType;
     NutsRunAs runAs;
@@ -30,7 +30,7 @@ public class DefaultNutsArtifactExecutable extends AbstractNutsExecutableCommand
 
     public DefaultNutsArtifactExecutable(NutsDefinition def, String commandName, String[] appArgs, String[] executorOptions,
             Map<String, String> env, String dir, boolean failFast,
-            NutsSession traceSession,
+            NutsSession session,
             NutsSession execSession,
             NutsExecutionType executionType, NutsRunAs runAs, DefaultNutsExecCommand execCommand) {
         super(commandName, def.getId().getLongName(), NutsExecutableType.ARTIFACT);
@@ -47,14 +47,14 @@ public class DefaultNutsArtifactExecutable extends AbstractNutsExecutableCommand
         this.env = env;
         this.dir = dir;
         this.failFast = failFast;
-        this.traceSession = traceSession;
+        this.session = session;
         this.execSession = execSession;
         this.executionType = executionType;
         this.execCommand = execCommand;
 
         List<String> executorOptionsList = new ArrayList<>();
         for (String option : executorOptions) {
-            NutsArgument a = NutsArgument.of(option,traceSession);
+            NutsArgument a = NutsArgument.of(option, session);
             if (a.getKey().getString().equals("--nuts-auto-install")) {
                 if (a.isKeyValue()) {
                     autoInstall = a.isNegated() != a.getValue().getBoolean();
@@ -78,8 +78,8 @@ public class DefaultNutsArtifactExecutable extends AbstractNutsExecutableCommand
         NutsInstallStatus installStatus = def.getInstallInformation().getInstallStatus();
         if (!installStatus.isInstalled()) {
             if(autoInstall) {
-                traceSession.install().setSession(traceSession).addId(def.getId()).run();
-                NutsInstallStatus st = traceSession.fetch().setSession(traceSession).setId(def.getId()).getResultDefinition().getInstallInformation().getInstallStatus();
+                session.install().setSession(session).addId(def.getId()).run();
+                NutsInstallStatus st = session.fetch().setSession(session).setId(def.getId()).getResultDefinition().getInstallInformation().getInstallStatus();
                 if (!st.isInstalled()) {
                     throw new NutsUnexpectedException(execSession, NutsMessage.cstyle("auto installation of %s failed",def.getId()));
                 }
@@ -87,7 +87,7 @@ public class DefaultNutsArtifactExecutable extends AbstractNutsExecutableCommand
                 throw new NutsUnexpectedException(execSession, NutsMessage.cstyle("you must install %s to be able to run it",def.getId()));
             }
         } else if (installStatus.isObsolete()) {
-            traceSession.install().setSession(traceSession).addId(def.getId()).run();
+            session.install().setSession(session).addId(def.getId()).run();
         }
 //        LinkedHashSet<NutsDependency> reinstall = new LinkedHashSet<>();
 //        NutsDependencyFilter depFilter = CoreNutsDependencyUtils.createJavaRunDependencyFilter(traceSession);
@@ -117,7 +117,7 @@ public class DefaultNutsArtifactExecutable extends AbstractNutsExecutableCommand
 //                }
 //            }
 //        }
-        execCommand.ws_execId(def, commandName, appArgs, executorOptions, env, dir, failFast, false, traceSession, execSession, executionType,runAs, false);
+        execCommand.ws_execId(def, commandName, appArgs, executorOptions, env, dir, failFast, false, session, execSession, executionType,runAs, false);
     }
 
     @Override
@@ -127,7 +127,7 @@ public class DefaultNutsArtifactExecutable extends AbstractNutsExecutableCommand
             NutsPrintStream out = execSession.out();
             out.printf("[dry] ==install== %s%n", def.getId().getLongName());
         }
-        execCommand.ws_execId(def, commandName, appArgs, executorOptions, env, dir, failFast, false, traceSession, execSession, executionType,runAs, true);
+        execCommand.ws_execId(def, commandName, appArgs, executorOptions, env, dir, failFast, false, session, execSession, executionType,runAs, true);
     }
 
     @Override

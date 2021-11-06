@@ -96,7 +96,7 @@ public interface NutsExecutionContextBuilder {
      */
     NutsSession getExecSession();
 
-    NutsSession getTraceSession();
+    NutsSession getSession();
 
     /**
      * execution environment
@@ -155,7 +155,7 @@ public interface NutsExecutionContextBuilder {
 
     NutsExecutionContextBuilder setExecSession(NutsSession execSession);
 
-    NutsExecutionContextBuilder setTraceSession(NutsSession traceSession);
+    NutsExecutionContextBuilder setSession(NutsSession session);
 
     NutsExecutionContextBuilder setWorkspace(NutsWorkspace workspace);
 

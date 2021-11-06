@@ -96,7 +96,7 @@ public interface NutsExecutionContext {
      */
     NutsSession getExecSession();
 
-    NutsSession getTraceSession();
+    NutsSession getSession();
 
     /**
      * execution environment

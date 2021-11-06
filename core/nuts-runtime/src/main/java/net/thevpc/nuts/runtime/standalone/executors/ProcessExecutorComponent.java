@@ -82,7 +82,7 @@ public class ProcessExecutorComponent implements NutsExecutorComponent {
         }
 
         Map<String, String> osEnv = new HashMap<>();
-        String bootArgumentsString = executionContext.getTraceSession().boot().getBootOptions()
+        String bootArgumentsString = executionContext.getSession().boot().getBootOptions()
                 .formatter().setExported(true).setCompact(true).getBootCommandLine().toString();
         osEnv.put("nuts_boot_args", bootArgumentsString);
         String dir = null;
@@ -99,9 +99,9 @@ public class ProcessExecutorComponent implements NutsExecutorComponent {
             }
         }
         String directory = NutsBlankable.isBlank(dir) ? null :
-                NutsPath.of(dir,executionContext.getTraceSession()).builder().withAppBaseDir().build().toString();
+                NutsPath.of(dir,executionContext.getSession()).builder().withAppBaseDir().build().toString();
         return ProcessExecHelper.ofDefinition(nutMainFile,
-                app.toArray(new String[0]), osEnv, directory, executionContext.getExecutorProperties(), showCommand, true, executionContext.getSleepMillis(), false, false, null, null, executionContext.getRunAs(), executionContext.getTraceSession(),
+                app.toArray(new String[0]), osEnv, directory, executionContext.getExecutorProperties(), showCommand, true, executionContext.getSleepMillis(), false, false, null, null, executionContext.getRunAs(), executionContext.getSession(),
                 executionContext.getExecSession()
         );
     }

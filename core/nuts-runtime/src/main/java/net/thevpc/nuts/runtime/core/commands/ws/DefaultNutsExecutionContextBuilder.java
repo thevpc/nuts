@@ -38,7 +38,7 @@ public class DefaultNutsExecutionContextBuilder implements NutsExecutionContextB
     private Map<String, String> executorProperties = new LinkedHashMap<>();
     private String[] arguments;
     private NutsSession execSession;
-    private NutsSession traceSession;
+    private NutsSession session;
     private NutsWorkspace workspace;
     private NutsArtifactCall executorDescriptor;
     private String cwd;
@@ -78,7 +78,7 @@ public class DefaultNutsExecutionContextBuilder implements NutsExecutionContextB
 
     public DefaultNutsExecutionContextBuilder(NutsDefinition definition,
                                               String[] arguments, String[] executorArgs, Map<String, String> env, Map<String, String> executorProperties,
-                                              String cwd, NutsSession traceSession, NutsSession execSession, NutsWorkspace workspace, boolean failFast,
+                                              String cwd, NutsSession session, NutsSession execSession, NutsWorkspace workspace, boolean failFast,
                                               boolean temporary,
                                               NutsExecutionType executionType,
                                               String commandName,
@@ -97,7 +97,7 @@ public class DefaultNutsExecutionContextBuilder implements NutsExecutionContextB
         this.definition = definition;
         this.arguments = arguments;
         this.execSession = execSession;
-        this.traceSession = traceSession;
+        this.session = session;
         this.workspace = workspace;
         this.executorArguments.addAll(Arrays.asList(executorArgs));
         this.executorProperties.putAll(executorProperties);
@@ -118,7 +118,7 @@ public class DefaultNutsExecutionContextBuilder implements NutsExecutionContextB
         this.definition = other.getDefinition();
         this.arguments = other.getArguments();
         this.execSession = other.getExecSession();
-        this.traceSession = other.getTraceSession();
+        this.session = other.getSession();
         this.workspace = other.getWorkspace();
         this.executorArguments.addAll(Arrays.asList(other.getExecutorArguments()));
         this.executorProperties.putAll(other.getExecutorProperties());
@@ -176,8 +176,8 @@ public class DefaultNutsExecutionContextBuilder implements NutsExecutionContextB
     }
 
     @Override
-    public NutsSession getTraceSession() {
-        return traceSession;
+    public NutsSession getSession() {
+        return session;
     }
 
     @Override
@@ -273,8 +273,8 @@ public class DefaultNutsExecutionContextBuilder implements NutsExecutionContextB
     }
 
     @Override
-    public NutsExecutionContextBuilder setTraceSession(NutsSession traceSession) {
-        this.traceSession = traceSession;
+    public NutsExecutionContextBuilder setSession(NutsSession session) {
+        this.session = session;
         return this;
     }
 
@@ -356,7 +356,7 @@ public class DefaultNutsExecutionContextBuilder implements NutsExecutionContextB
     @Override
     public NutsExecutionContext build() {
         return new DefaultNutsExecutionContext(
-                definition, arguments, executorArguments.toArray(new String[0]), env, executorProperties, cwd, traceSession, execSession,
+                definition, arguments, executorArguments.toArray(new String[0]), env, executorProperties, cwd, session, execSession,
                 workspace, failFast, temporary, executionType,
                 commandName, sleepMillis, inheritSystemIO, redirectOuputFile, redirectInpuFile
         );
@@ -367,7 +367,7 @@ public class DefaultNutsExecutionContextBuilder implements NutsExecutionContextB
         this.definition = other.getDefinition();
         this.arguments = other.getArguments();
         this.execSession = other.getExecSession();
-        this.traceSession = other.getTraceSession();
+        this.session = other.getSession();
         this.workspace = other.getWorkspace();
         this.executorArguments.clear();
         this.executorArguments.addAll(Arrays.asList(other.getExecutorArguments()));

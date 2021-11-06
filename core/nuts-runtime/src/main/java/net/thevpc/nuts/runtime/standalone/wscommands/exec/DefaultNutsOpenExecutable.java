@@ -20,24 +20,24 @@ public class DefaultNutsOpenExecutable extends AbstractNutsExecutableCommand {
 
     String[] cmd;
     String[] executorOptions;
-    NutsSession traceSession;
+    NutsSession session;
     NutsSession execSession;
     NutsExecCommand execCommand;
     private boolean showCommand = false;
     private String[] effectiveOpenExecutable;
 
     public DefaultNutsOpenExecutable(String[] cmd,
-                                     String[] executorOptions, NutsSession traceSession, NutsSession execSession, NutsExecCommand execCommand
+                                     String[] executorOptions, NutsSession session, NutsSession execSession, NutsExecCommand execCommand
     ) {
         super(cmd[0],
-                NutsCommandLine.of(cmd,traceSession).toString(),
+                NutsCommandLine.of(cmd, session).toString(),
                 NutsExecutableType.SYSTEM);
         this.cmd = cmd;
         this.execCommand = execCommand;
         this.executorOptions = executorOptions == null ? new String[0] : executorOptions;
-        this.traceSession = traceSession;
+        this.session = session;
         this.execSession = execSession;
-        NutsCommandLine cmdLine = NutsCommandLine.of(this.executorOptions,traceSession);
+        NutsCommandLine cmdLine = NutsCommandLine.of(this.executorOptions, session);
         while (cmdLine.hasNext()) {
             NutsArgument a = cmdLine.peek();
             switch (a.getKey().getString()) {
@@ -50,7 +50,7 @@ public class DefaultNutsOpenExecutable extends AbstractNutsExecutableCommand {
                 }
             }
         }
-        switch (traceSession.env().getOsFamily()) {
+        switch (session.env().getOsFamily()) {
             case LINUX: {
                 Path execPath = CoreIOUtils.sysWhich("xdg-open");
                 if (execPath != null) {
@@ -90,7 +90,7 @@ public class DefaultNutsOpenExecutable extends AbstractNutsExecutableCommand {
 
     private NutsExecCommand resolveExecHelper() {
         if (effectiveOpenExecutable == null) {
-            throw new NutsIllegalArgumentException(traceSession, NutsMessage.cstyle("unable to resolve viewer for %s", cmd[0]));
+            throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("unable to resolve viewer for %s", cmd[0]));
         }
         NutsExecCommand cc = execCommand.copy();
         cc.setExecutionType(NutsExecutionType.SYSTEM);
@@ -125,9 +125,9 @@ public class DefaultNutsOpenExecutable extends AbstractNutsExecutableCommand {
     @Override
     public String toString() {
         if (effectiveOpenExecutable == null) {
-            return "FAIL TO OPEN " + NutsCommandLine.of(cmd,traceSession).toString();
+            return "FAIL TO OPEN " + NutsCommandLine.of(cmd, session).toString();
         }
-        return "OPEN with " + effectiveOpenExecutable[0] + " : " + NutsCommandLine.of(cmd,traceSession).toString();
+        return "OPEN with " + effectiveOpenExecutable[0] + " : " + NutsCommandLine.of(cmd, session).toString();
     }
 
 }

@@ -54,25 +54,25 @@ public class CommandForIdNutsInstallerComponent implements NutsInstallerComponen
 
     @Override
     public void install(NutsExecutionContext executionContext) {
-        NutsWorkspaceUtils.of(executionContext.getTraceSession()).checkReadOnly();
+        NutsWorkspaceUtils.of(executionContext.getSession()).checkReadOnly();
 //        NutsId id = executionContext.getDefinition().getId();
         NutsDescriptor descriptor = executionContext.getDefinition().getDescriptor();
         if (descriptor.isApplication()) {
-            DefaultNutsDefinition def2 = new DefaultNutsDefinition(executionContext.getDefinition(), executionContext.getTraceSession())
+            DefaultNutsDefinition def2 = new DefaultNutsDefinition(executionContext.getDefinition(), executionContext.getSession())
                     .setInstallInformation(
                             new DefaultNutsInstallInfo(executionContext.getDefinition().getInstallInformation())
                                     .setInstallStatus(
                                             executionContext.getDefinition().getInstallInformation().getInstallStatus().withInstalled(true)
                                     )
                     );
-            executionContext.getTraceSession().exec()
+            executionContext.getSession().exec()
                     .setSession(executionContext.getExecSession())
                     //                    .executionType(NutsExecutionType.EMBEDDED)
                     .setCommand(def2)
                     .addCommand("--nuts-exec-mode=install")
                     .addExecutorOptions("--nuts-auto-install=false")
                     .addCommand(executionContext.getArguments())
-                    .setExecutionType(executionContext.getTraceSession().boot().getBootOptions().getExecutionType())
+                    .setExecutionType(executionContext.getSession().boot().getBootOptions().getExecutionType())
                     .setFailFast(true)
                     .run();
         }
@@ -80,18 +80,18 @@ public class CommandForIdNutsInstallerComponent implements NutsInstallerComponen
 
     @Override
     public void update(NutsExecutionContext executionContext) {
-        NutsWorkspaceUtils.of(executionContext.getTraceSession()).checkReadOnly();
+        NutsWorkspaceUtils.of(executionContext.getSession()).checkReadOnly();
 //        NutsId id = executionContext.getDefinition().getId();
         NutsDescriptor descriptor = executionContext.getDefinition().getDescriptor();
         if (descriptor.isApplication()) {
-            DefaultNutsDefinition def2 = new DefaultNutsDefinition(executionContext.getDefinition(), executionContext.getTraceSession())
+            DefaultNutsDefinition def2 = new DefaultNutsDefinition(executionContext.getDefinition(), executionContext.getSession())
                     .setInstallInformation(
                             new DefaultNutsInstallInfo(executionContext.getDefinition().getInstallInformation())
                                     .setInstallStatus(
                                             executionContext.getDefinition().getInstallInformation().getInstallStatus().withInstalled(true)
                                     )
                     );
-            executionContext.getTraceSession().exec()
+            executionContext.getSession().exec()
                     .setCommand(def2)
                     .addCommand("--nuts-exec-mode=update", "--yes")
                     //                    .addCommand(id.builder().setRepository(null).build().toString(), "--nuts-exec-mode=update", "--force")
@@ -104,7 +104,7 @@ public class CommandForIdNutsInstallerComponent implements NutsInstallerComponen
     public void uninstall(NutsExecutionContext executionContext, boolean deleteData) {
         NutsSession session = executionContext.getExecSession();
 //        NutsWorkspace ws = executionContext.getWorkspace();
-        NutsWorkspaceUtils.of(executionContext.getTraceSession()).checkReadOnly();
+        NutsWorkspaceUtils.of(executionContext.getSession()).checkReadOnly();
         NutsId id = executionContext.getDefinition().getId();
         if ("jar".equals(executionContext.getDefinition().getDescriptor().getPackaging())) {
             NutsExecutionEntry[] executionEntries = NutsExecutionEntries.of(session).parse(executionContext.getDefinition().getPath());

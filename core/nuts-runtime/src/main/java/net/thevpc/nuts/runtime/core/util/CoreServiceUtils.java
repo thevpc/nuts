@@ -68,7 +68,7 @@ public final class CoreServiceUtils {
         return found;
     }
 
-    public static List<String> loadServiceClasseNames(URL u, Class<?> service,NutsSession session) {
+    public static List<String> loadServiceClassNames(URL u, Class<?> service, NutsSession session) {
         InputStream in = null;
         BufferedReader r = null;
         List<String> names = new ArrayList<>();
@@ -114,7 +114,7 @@ public final class CoreServiceUtils {
             throw new NutsIOException(session,ex);
         }
         while (configs.hasMoreElements()) {
-            names.addAll(loadServiceClasseNames(configs.nextElement(), service,session));
+            names.addAll(loadServiceClassNames(configs.nextElement(), service,session));
         }
         List<Class> classes = new ArrayList<>();
         for (String n : names) {

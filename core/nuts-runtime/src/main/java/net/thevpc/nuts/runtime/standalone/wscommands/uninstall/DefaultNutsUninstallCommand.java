@@ -84,7 +84,7 @@ public class DefaultNutsUninstallCommand extends AbstractNutsUninstallCommand {
                         .setDefinition(def)
                         .setArguments(getArgs())
                         .setExecSession(session)
-                        .setTraceSession(session)
+                        .setSession(session)
                         .setWorkspace(session.getWorkspace())
                         .setFailFast(true)
                         .setTemporary(false)

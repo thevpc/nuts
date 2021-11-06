@@ -64,7 +64,7 @@ public class NutsRunAs {
             case ROOT:
                 return "run-as:root";
             case USER:
-                return "run-as:user:" + user;
+                return "run-as:" + user;
         }
         return "run-as:" + mode + " , user='" + user + '\'';
     }

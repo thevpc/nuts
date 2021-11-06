@@ -56,7 +56,7 @@ public class JavaSourceExecutorComponent implements NutsExecutorComponent {
         NutsDefinition nutMainFile = executionContext.getDefinition();//executionContext.getWorkspace().fetch(.getId().toString(), true, false);
         Path javaFile = nutMainFile.getPath();
         JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
-        NutsSession session = executionContext.getTraceSession();
+        NutsSession session = executionContext.getSession();
         Path folder = NutsTmp.of(session)
                 .createTempFolder("jj").toFile();
         int res = compiler.run(null, null, null, "-d", folder.toString(), javaFile.toString());
@@ -72,7 +72,7 @@ public class JavaSourceExecutorComponent implements NutsExecutorComponent {
                 true
         ));
         String fileName = javaFile.getFileName().toString();
-        NutsExecutionContext executionContext2 = NutsWorkspaceExt.of(executionContext.getTraceSession())
+        NutsExecutionContext executionContext2 = NutsWorkspaceExt.of(executionContext.getSession())
                 .createExecutionContext()
                 .setAll(executionContext)
                 .setDefinition(d)
@@ -96,8 +96,8 @@ public class JavaSourceExecutorComponent implements NutsExecutorComponent {
         Path javaFile = nutMainFile.getPath();
 //        JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
         String folder = "__temp_folder";
-        NutsPrintStream out = executionContext.getTraceSession().out();
-        out.println(NutsTexts.of(executionContext.getTraceSession()).ofStyled("compile", NutsTextStyle.primary4()));
+        NutsPrintStream out = executionContext.getSession().out();
+        out.println(NutsTexts.of(executionContext.getSession()).ofStyled("compile", NutsTextStyle.primary4()));
         out.printf("%s%n",
                 NutsCommandLine.of(
                         new String[]{
@@ -105,19 +105,19 @@ public class JavaSourceExecutorComponent implements NutsExecutorComponent {
                                 "-d",
                                 "<temp-folder>",
                                 javaFile.toString()
-                        }, executionContext.getTraceSession()
+                        }, executionContext.getSession()
                 )
         );
         JavaExecutorComponent cc = new JavaExecutorComponent();
         NutsDefinition d = executionContext.getDefinition();
-        d = new DefaultNutsDefinition(d, executionContext.getTraceSession());
+        d = new DefaultNutsDefinition(d, executionContext.getSession());
         ((DefaultNutsDefinition) d).setContent(new NutsDefaultContent(
-                NutsPath.of(folder, executionContext.getTraceSession()),
+                NutsPath.of(folder, executionContext.getSession()),
                 false,
                 true
         ));
         String fileName = javaFile.getFileName().toString();
-        NutsExecutionContext executionContext2 = NutsWorkspaceExt.of(executionContext.getTraceSession())
+        NutsExecutionContext executionContext2 = NutsWorkspaceExt.of(executionContext.getSession())
                 .createExecutionContext()
                 .setAll(executionContext)
                 .setDefinition(d)

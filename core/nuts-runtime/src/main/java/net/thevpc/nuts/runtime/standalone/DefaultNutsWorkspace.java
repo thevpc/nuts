@@ -949,7 +949,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
 
             //should change def to reflect install location!
             NutsExecutionContextBuilder cc = createExecutionContext()
-                    .setTraceSession(session.copy())
+                    .setSession(session.copy())
                     .setExecSession(session.copy())
                     .setDefinition(def).setArguments(args).setFailFast(true).setTemporary(false)
                     .setExecutionType(session.boot().getBootOptions().getExecutionType())
@@ -960,7 +960,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                 cc.addExecutorArguments(installer.getArguments());
                 cc.addExecutorProperties(installer.getProperties());
             }
-            cc.setWorkspace(cc.getTraceSession().getWorkspace());
+            cc.setWorkspace(cc.getSession().getWorkspace());
             NutsExecutionContext executionContext = cc.build();
 
             if (strategy0 == InstallStrategy0.REQUIRE) {

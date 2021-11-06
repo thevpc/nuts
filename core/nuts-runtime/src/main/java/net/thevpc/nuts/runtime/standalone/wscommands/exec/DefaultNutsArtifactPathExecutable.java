@@ -41,25 +41,25 @@ public class DefaultNutsArtifactPathExecutable extends AbstractNutsExecutableCom
     String[] executorOptions;
     NutsExecutionType executionType;
     NutsRunAs runAs;
-    NutsSession traceSession;
+    NutsSession session;
     NutsSession execSession;
     DefaultNutsExecCommand execCommand;
 
-    public DefaultNutsArtifactPathExecutable(String cmdName, String[] args, String[] executorOptions, NutsExecutionType executionType, NutsRunAs runAs,NutsSession traceSession, NutsSession execSession, DefaultNutsExecCommand execCommand, boolean inheritSystemIO) {
+    public DefaultNutsArtifactPathExecutable(String cmdName, String[] args, String[] executorOptions, NutsExecutionType executionType, NutsRunAs runAs, NutsSession session, NutsSession execSession, DefaultNutsExecCommand execCommand, boolean inheritSystemIO) {
         super(cmdName,
                 NutsCommandLine.of(args,execSession).toString(),
                 NutsExecutableType.ARTIFACT);
-        LOG = NutsLogger.of(DefaultNutsArtifactPathExecutable.class,traceSession);
+        LOG = NutsLogger.of(DefaultNutsArtifactPathExecutable.class, session);
         this.runAs = runAs;
         this.cmdName = cmdName;
         this.args = args;
         this.executionType = executionType;
-        this.traceSession = traceSession;
+        this.session = session;
         this.execSession = execSession;
         this.execCommand = execCommand;
         List<String> executorOptionsList = new ArrayList<>();
         for (String option : executorOptions) {
-            NutsArgument a = NutsArgument.of(option,traceSession);
+            NutsArgument a = NutsArgument.of(option, session);
             if (a.getKey().getString().equals("--nuts-auto-install")) {
                 if (a.isKeyValue()) {
 //                    autoInstall= a.isNegated() != a.getBooleanValue();
@@ -75,7 +75,7 @@ public class DefaultNutsArtifactPathExecutable extends AbstractNutsExecutableCom
 
     @Override
     public NutsId getId() {
-        try (final CharacterizedExecFile c = characterizeForExec(NutsStreamOrPath.of(cmdName,traceSession), traceSession, executorOptions)) {
+        try (final CharacterizedExecFile c = characterizeForExec(NutsStreamOrPath.of(cmdName, session), session, executorOptions)) {
             return c.descriptor == null ? null : c.descriptor.getId();
         }
     }
@@ -91,14 +91,14 @@ public class DefaultNutsArtifactPathExecutable extends AbstractNutsExecutableCom
     }
 
     public void executeHelper(boolean dry) {
-        try (final CharacterizedExecFile c = characterizeForExec(NutsStreamOrPath.of(cmdName,traceSession), traceSession, executorOptions)) {
+        try (final CharacterizedExecFile c = characterizeForExec(NutsStreamOrPath.of(cmdName, session), session, executorOptions)) {
             if (c.descriptor == null) {
                 throw new NutsNotFoundException(execSession, null, NutsMessage.cstyle("unable to resolve a valid descriptor for %s",cmdName), null);
             }
-            String tempFolder = NutsTmp.of(traceSession)
+            String tempFolder = NutsTmp.of(session)
                     .createTempFolder("exec-path-").toString();
             NutsId _id = c.descriptor.getId();
-            NutsIdType idType = NutsWorkspaceExt.of(traceSession).resolveNutsIdType(_id, traceSession);
+            NutsIdType idType = NutsWorkspaceExt.of(session).resolveNutsIdType(_id, session);
             DefaultNutsDefinition nutToRun = new DefaultNutsDefinition(
                     null,
                     null,
@@ -108,10 +108,10 @@ public class DefaultNutsArtifactPathExecutable extends AbstractNutsExecutableCom
                             NutsPath.of(c.contentFile,execSession)
                             , false, c.temps.size() > 0),
                     DefaultNutsInstallInfo.notInstalled(_id),
-                    idType, null, traceSession
+                    idType, null, session
             );
-            NutsDependencySolver resolver = NutsDependencySolver.of(traceSession);
-            NutsDependencyFilters ff = NutsDependencyFilters.of(traceSession);
+            NutsDependencySolver resolver = NutsDependencySolver.of(session);
+            NutsDependencyFilters ff = NutsDependencyFilters.of(session);
 
             resolver
                     .setFilter(ff.byScope(NutsDependencyScopePattern.RUN)
@@ -125,12 +125,12 @@ public class DefaultNutsArtifactPathExecutable extends AbstractNutsExecutableCom
 
             try {
                 execCommand.ws_execId(nutToRun, cmdName, args, executorOptions, execCommand.getEnv(),
-                        execCommand.getDirectory(), execCommand.isFailFast(), true, traceSession, execSession, executionType,runAs, dry);
+                        execCommand.getDirectory(), execCommand.isFailFast(), true, session, execSession, executionType,runAs, dry);
             } finally {
                 try {
-                    CoreIOUtils.delete(traceSession, Paths.get(tempFolder));
+                    CoreIOUtils.delete(session, Paths.get(tempFolder));
                 } catch (UncheckedIOException | NutsIOException e) {
-                    LOG.with().session(traceSession).level(Level.FINEST).verb(NutsLogVerb.FAIL)
+                    LOG.with().session(session).level(Level.FINEST).verb(NutsLogVerb.FAIL)
                             .log(NutsMessage.jstyle("unable to delete temp folder created for execution : {0}",tempFolder));
                 }
             }
