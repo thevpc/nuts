@@ -39,6 +39,8 @@ public interface NutsBootManager {
 
     NutsVal getCustomBootOption(String name);
 
+    NutsVal getCustomBootOption(String ... names);
+
     NutsWorkspaceOptions getBootOptions();
 
     ClassLoader getBootClassLoader();

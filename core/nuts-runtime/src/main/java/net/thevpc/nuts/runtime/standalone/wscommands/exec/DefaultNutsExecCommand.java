@@ -436,19 +436,19 @@ public class DefaultNutsExecCommand extends AbstractNutsExecCommand {
     }
 
     public void ws_execId(NutsDefinition def, String commandName, String[] appArgs, String[] executorOptions, Map<String, String> env, String dir, boolean failFast, boolean temporary,
-                          NutsSession traceSession,
+                          NutsSession session,
                           NutsSession execSession,
                           NutsExecutionType executionType,
                           NutsRunAs runAs,
                           boolean dry
     ) {
         //TODO ! one of the sessions needs to be removed!
-        NutsWorkspaceUtils.checkSession(ws, session);
+        NutsWorkspaceUtils.checkSession(ws, this.session);
         checkSession();
         NutsWorkspace ws = getSession().getWorkspace();
-        session.security().checkAllowed(NutsConstants.Permissions.EXEC, commandName);
+        this.session.security().checkAllowed(NutsConstants.Permissions.EXEC, commandName);
         NutsWorkspaceUtils.checkSession(ws, execSession);
-        NutsWorkspaceUtils.checkSession(ws, traceSession);
+        NutsWorkspaceUtils.checkSession(ws, session);
         if (def != null && def.getPath() != null) {
             NutsDescriptor descriptor = def.getDescriptor();
             if (!descriptor.isExecutable()) {
@@ -478,12 +478,12 @@ public class DefaultNutsExecCommand extends AbstractNutsExecCommand {
                                 .getResultDefinitions();
                         NutsDefinition[] availableExecutors = q.stream().limit(2).toArray(NutsDefinition[]::new);
                         if (availableExecutors.length > 1) {
-                            throw new NutsTooManyElementsException(session, NutsMessage.cstyle("too many results for executor %s", eid));
+                            throw new NutsTooManyElementsException(this.session, NutsMessage.cstyle("too many results for executor %s", eid));
                         } else if (availableExecutors.length == 1) {
-                            execComponent = new ArtifactExecutorComponent(availableExecutors[0].getId(), session);
+                            execComponent = new ArtifactExecutorComponent(availableExecutors[0].getId(), this.session);
                         } else {
                             // availableExecutors.length=0;
-                            throw new NutsNotFoundException(session, eid, NutsMessage.cstyle("executor not found %s", eid));
+                            throw new NutsNotFoundException(this.session, eid, NutsMessage.cstyle("executor not found %s", eid));
                         }
                     }
                 }
@@ -504,8 +504,8 @@ public class DefaultNutsExecCommand extends AbstractNutsExecCommand {
                     .setEnv(env)
                     .setExecutorProperties(execProps)
                     .setCwd(dir)
-                    .setWorkspace(traceSession.getWorkspace())
-                    .setSession(traceSession)
+                    .setWorkspace(session.getWorkspace())
+                    .setSession(session)
                     .setExecSession(execSession)
                     .setFailFast(failFast)
                     .setTemporary(temporary)

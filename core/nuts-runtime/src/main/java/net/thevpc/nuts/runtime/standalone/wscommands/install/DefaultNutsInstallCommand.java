@@ -97,12 +97,12 @@ public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
 
     private boolean doThis(NutsId id, InstallIdList list, NutsSession session) {
         List<String> cmdArgs = new ArrayList<>(Arrays.asList(this.getArgs()));
-        if (session.isYes()) {
-            cmdArgs.add(0, "--yes");
-        }
-        if (session.isTrace()) {
-            cmdArgs.add(0, "--trace");
-        }
+//        if (session.isYes()) {
+//            cmdArgs.add(0, "--yes");
+//        }
+//        if (session.isTrace()) {
+//            cmdArgs.add(0, "--trace");
+//        }
 
         checkSession();
         NutsWorkspace ws = getSession().getWorkspace();

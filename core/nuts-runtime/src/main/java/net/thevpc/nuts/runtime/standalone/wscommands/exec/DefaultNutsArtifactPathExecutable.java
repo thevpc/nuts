@@ -60,15 +60,15 @@ public class DefaultNutsArtifactPathExecutable extends AbstractNutsExecutableCom
         List<String> executorOptionsList = new ArrayList<>();
         for (String option : executorOptions) {
             NutsArgument a = NutsArgument.of(option, session);
-            if (a.getKey().getString().equals("--nuts-auto-install")) {
-                if (a.isKeyValue()) {
+//            if (a.getKey().getString().equals("--nuts-auto-install")) {
+//                if (a.isKeyValue()) {
 //                    autoInstall= a.isNegated() != a.getBooleanValue();
-                } else {
+//                } else {
 //                    autoInstall=true;
-                }
-            } else {
+//                }
+//            } else {
                 executorOptionsList.add(option);
-            }
+//            }
         }
         this.executorOptions = executorOptionsList.toArray(new String[0]);
     }

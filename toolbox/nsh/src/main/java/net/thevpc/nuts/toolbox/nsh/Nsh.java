@@ -102,14 +102,18 @@ public class Nsh implements NutsApplication {
             }
         }
         cfg.save(false);
-        session.env().addLauncher(
-                new NutsLauncherOptions()
-                        .setId(session.getAppId())
-                        .setCreateScript(true)
-                        .setCreateDesktopShortcut(NutsSupportCondition.PREFERRED)
-                        .setCreateMenuShortcut(NutsSupportCondition.SUPPORTED)
-                        .setOpenTerminal(true)
-        );
+        NutsVal initScripts = session.boot().getCustomBootOption("init-scripts","nuts.init-scripts");
+        if(initScripts.getBoolean(true)) {
+            NutsVal initLaunchers = session.boot().getCustomBootOption("init-launchers","nuts.init-launchers");
+                session.env().addLauncher(
+                        new NutsLauncherOptions()
+                                .setId(session.getAppId())
+                                .setCreateScript(true)
+                                .setCreateDesktopShortcut(initLaunchers.getBoolean(true)?NutsSupportCondition.PREFERRED:NutsSupportCondition.NEVER)
+                                .setCreateMenuShortcut(initLaunchers.getBoolean(true)?NutsSupportCondition.SUPPORTED:NutsSupportCondition.NEVER)
+                                .setOpenTerminal(true)
+                );
+        }
     }
 
     @Override

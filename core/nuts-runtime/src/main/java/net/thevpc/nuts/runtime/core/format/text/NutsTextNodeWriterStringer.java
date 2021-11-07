@@ -82,29 +82,16 @@ public class NutsTextNodeWriterStringer extends AbstractNutsTextNodeWriter {
 //                    writeNode(s.getChild(), ctx.copy().setFiltered(false));
                     writeNode(s.getChild(), ctx);
                 } else {
+                    NutsTextStyles styles = s.getStyles();
                     if (s.getChild().getType() == NutsTextType.PLAIN) {
-                        NutsTextStyles styles = s.getStyles();
-                        writeStyledStart(s.getStyles().get(0), false);
-                        if (styles.size() <= 1) {
-                            writeNode(s.getChild(), ctx);
-                        } else {
-                            writeNode(
-                                    NutsTexts.of(session).applyStyles(s.getChild(), s.getStyles().removeFirst()),
-                                    ctx);
-                        }
-                        writeRaw(s.getEnd());
+                        writeRaw("##:"+styles.id()+":");
+                        writeNode(s.getChild(), ctx);
+                        writeRaw("##");
                         writeRaw(NutsConstants.Ntf.SILENT);
                     } else {
-                        NutsTextStyles styles = s.getStyles();
-                        writeStyledStart(s.getStyles().get(0), true);
-                        if (styles.size() <= 1) {
-                            writeNode(s.getChild(), ctx);
-                        } else {
-                            writeNode(
-                                    NutsTexts.of(session).applyStyles(s.getChild(), s.getStyles().removeFirst()),
-                                    ctx);
-                        }
-                        writeRaw("}##");//complex format always uses ##
+                        writeRaw("##{"+styles.id()+":");
+                        writeNode(s.getChild(), ctx);
+                        writeRaw("}##");
                         writeRaw(NutsConstants.Ntf.SILENT);
                     }
                 }
@@ -272,77 +259,15 @@ public class NutsTextNodeWriterStringer extends AbstractNutsTextNodeWriter {
         }
     }
 
-    private void writeStyledStart(NutsTextStyle style, boolean complex) {
-        String h = complex ? "##{" : "##:";
-        switch (style.getType()) {
-            case FORE_COLOR: {
-                writeRaw(h + "f" + style.getVariant() + ":");
-                break;
-            }
-            case BACK_COLOR: {
-                writeRaw(h + "b" + style.getVariant() + ":");
-                break;
-            }
-            case FORE_TRUE_COLOR: {
-                String s = Integer.toString(0, style.getVariant());
-                while (s.length() < 8) {
-                    s = "0" + s;
-                }
-                writeRaw(h + "fx" + s + ":");
-                break;
-            }
-            case BACK_TRUE_COLOR: {
-                String s = Integer.toString(0, style.getVariant());
-                while (s.length() < 8) {
-                    s = "0" + s;
-                }
-                writeRaw(h + "bx" + style.getVariant() + ":");
-                break;
-            }
-            case UNDERLINED: {
-                writeRaw(h + "_:");
-                break;
-            }
-            case ITALIC: {
-                writeRaw(h + "/:");
-                break;
-            }
-            case STRIKED: {
-                writeRaw(h + "-:");
-                break;
-            }
-            case REVERSED: {
-                writeRaw(h + "!:");
-                break;
-            }
-            case BOLD: {
-                writeRaw(h + "+:");
-                break;
-            }
-            case BLINK: {
-                writeRaw(h + "%:");
-                break;
-            }
-            case PRIMARY: {
-                writeRaw(h + "p" + style.getVariant() + ":");
-                break;
-            }
-            case SECONDARY: {
-                writeRaw(h + "s" + style.getVariant() + ":");
-                break;
-            }
-            default: {
-                if(style.getVariant()==0){
-                    writeRaw(h
-                            + style.getType().toString().toLowerCase()
-                            + ":");
-                }else {
-                    writeRaw(h
-                            + style.getType().toString().toLowerCase() + style.getVariant()
-                            + ":");
-                }
-                break;
-            }
+    private void writeStyledStart(NutsTextStyles styles, boolean complex) {
+        StringBuilder sb=new StringBuilder();
+        if(complex){
+            sb.append("##{");
+        }else{
+            sb.append("##:");
         }
+        sb.append(styles.id());
+        sb.append(":");
+        writeRaw(sb.toString());
     }
 }

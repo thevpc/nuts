@@ -84,15 +84,15 @@ public class ServerNutsWorkspaceArchetypeComponent implements NutsWorkspaceArche
     @Override
     public void startWorkspace(NutsSession session) {
         NutsBootManager boot = session.boot();
-        boolean initializeAllPlatforms = boot.getCustomBootOption("init-platforms").getBoolean(false, false);
-        if (initializeAllPlatforms && boot.getCustomBootOption("init-java").getBoolean(false, false)) {
+        boolean initializeAllPlatforms = boot.getCustomBootOption("init-platforms", "nuts.init-platforms").getBoolean(false, false);
+        if (initializeAllPlatforms && boot.getCustomBootOption("init-java", "nuts.init-java").getBoolean(false, false)) {
             NutsWorkspaceUtils.of(session).installAllJVM();
         } else {
             //at least add current vm
             NutsWorkspaceUtils.of(session).installCurrentJVM();
         }
-        Boolean initScripts = boot.getCustomBootOption("init-scripts").getBoolean(true, false);
-        Boolean initLaunchers = boot.getCustomBootOption("init-launchers").getBoolean(true, false);
+        Boolean initScripts = boot.getCustomBootOption("init-scripts", "nuts.init-scripts").getBoolean(true, false);
+        Boolean initLaunchers = boot.getCustomBootOption("init-launchers", "nuts.init-launchers").getBoolean(true, false);
         if (initScripts || initLaunchers) {
             NutsWorkspaceUtils.of(session).installLaunchers(initLaunchers);
         }

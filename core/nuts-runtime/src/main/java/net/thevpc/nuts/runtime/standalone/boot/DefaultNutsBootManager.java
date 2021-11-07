@@ -83,6 +83,18 @@ public class DefaultNutsBootManager implements NutsBootManager {
     }
 
     @Override
+    public NutsVal getCustomBootOption(String ... names) {
+        checkSession();
+        for (String name : names) {
+            NutsVal q = model.getCustomBootOptions().get(name);
+            if(q!=null){
+                return q;
+            }
+        }
+        return new DefaultNutsVal(null);
+    }
+
+    @Override
     public NutsWorkspaceOptions getBootOptions() {
         checkSession();
         return _configModel().getOptions(getSession());
