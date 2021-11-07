@@ -2,7 +2,6 @@ package net.thevpc.nuts.runtime.bundles.nanodb;
 
 import net.thevpc.nuts.NutsIOException;
 import net.thevpc.nuts.NutsSession;
-import org.jetbrains.annotations.NotNull;
 
 import java.io.*;
 import java.nio.channels.FileChannel;
@@ -138,7 +137,6 @@ public class NanoDBTableFile<T> implements Iterable<T>, AutoCloseable {
 
     public Iterable<T> items(NutsSession s) {
         return new Iterable<T>() {
-            @NotNull
             @Override
             public Iterator<T> iterator() {
                 return NanoDBTableFile.this.iterator(s);

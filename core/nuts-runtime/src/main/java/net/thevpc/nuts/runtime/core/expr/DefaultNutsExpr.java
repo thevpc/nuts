@@ -2,7 +2,6 @@ package net.thevpc.nuts.runtime.core.expr;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.spi.NutsSupportLevelContext;
-import org.jetbrains.annotations.NotNull;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -373,7 +372,6 @@ public class DefaultNutsExpr implements NutsExpr {
         return node.eval(this);
     }
 
-    @NotNull
     private NutsExprWithCache getEvalWithCache() {
         return new NutsExprWithCache(this);
     }
