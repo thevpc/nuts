@@ -5,6 +5,9 @@
  */
 package net.thevpc.nuts.toolbox.nsh.bundles.jshell;
 
+import net.thevpc.nuts.NutsMessage;
+import net.thevpc.nuts.NutsSession;
+
 /**
  *
  * @author thevpc
@@ -13,8 +16,8 @@ public class JShellUniformException extends JShellException {
 
     private boolean quit;
 
-    public JShellUniformException(int code, boolean quit, Throwable cause) {
-        super(code,cause);
+    public JShellUniformException(NutsSession session,int code, boolean quit, Throwable cause) {
+        super(session, NutsMessage.plain("error"),cause,code);
         this.quit = quit;
     }
 
@@ -25,7 +28,7 @@ public class JShellUniformException extends JShellException {
         if (getCause() instanceof RuntimeException) {
             throw (RuntimeException) getCause();
         }
-        throw new JShellQuitException(getResult(), getCause());
+        throw new JShellQuitException(getSession(), getCause(), getExitCode());
     }
 
     public void throwAny() {
@@ -35,7 +38,7 @@ public class JShellUniformException extends JShellException {
         if (getCause() instanceof RuntimeException) {
             throw (RuntimeException) getCause();
         }
-        throw new JShellException(getResult(), getCause());
+        throw new JShellException(getSession(),getFormattedMessage(), getCause(),getExitCode());
     }
 
     public boolean isQuit() {

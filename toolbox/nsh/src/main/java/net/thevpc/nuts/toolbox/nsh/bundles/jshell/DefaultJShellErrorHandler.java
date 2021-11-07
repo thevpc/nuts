@@ -12,14 +12,14 @@ package net.thevpc.nuts.toolbox.nsh.bundles.jshell;
 public class DefaultJShellErrorHandler implements JShellErrorHandler {
 
     @Override
-    public boolean isRequireExit(Throwable th) {
+    public boolean isQuitException(Throwable th) {
         return th instanceof JShellQuitException;
     }
 
     @Override
     public int errorToCode(Throwable th) {
         if (th instanceof JShellException) {
-            return ((JShellException) th).getResult();
+            return ((JShellException) th).getExitCode();
         }
         return 1;
     }

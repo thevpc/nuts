@@ -701,15 +701,21 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
                     || appDef.getId().getGroupId().startsWith("net.thevpc.nuts")
             ) {
                 //get default icon
-                NutsId appId0 = session.getAppId();
-                if (appId0 == null) {
-                    appId0 = session.getWorkspace().getRuntimeId();
-                }
+                NutsId rid = session.getWorkspace().getRuntimeId();
                 descAppIcon =
                         resolveBestIcon(
-                                "nuts-resource://" + appId0.getLongName() + "/net/thevpc/nuts/runtime/nuts.svg",
-                                "nuts-resource://" + appId0.getLongName() + "/net/thevpc/nuts/runtime/nuts.png",
-                                "nuts-resource://" + appId0.getLongName() + "/net/thevpc/nuts/runtime/nuts.ico"
+                                "nuts-resource://" + rid.getLongName() + "/net/thevpc/nuts/runtime/nuts.svg",
+                                "nuts-resource://" + rid.getLongName() + "/net/thevpc/nuts/runtime/nuts.png",
+                                "nuts-resource://" + rid.getLongName() + "/net/thevpc/nuts/runtime/nuts.ico"
+                        );
+            }else if (appDef.getId().getGroupId().startsWith("net.thevpc.nuts")) {
+                //get default icon
+                NutsId rid = session.getWorkspace().getRuntimeId();
+                descAppIcon =
+                        resolveBestIcon(
+                                "nuts-resource://" + rid.getLongName() + "/net/thevpc/nuts/runtime/nuts-app.svg",
+                                "nuts-resource://" + rid.getLongName() + "/net/thevpc/nuts/runtime/nuts-app.png",
+                                "nuts-resource://" + rid.getLongName() + "/net/thevpc/nuts/runtime/nuts-app.ico"
                         );
             }
         }
@@ -717,6 +723,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
         if (descAppIcon != null) {
             String descAppIcon0 = descAppIcon;
             String descAppIconDigest = NutsHash.of(session).md5().setSource(new ByteArrayInputStream(descAppIcon0.getBytes())).computeString();
+//            System.out.println(">>>>>>> "+descAppIconDigest+" :: "+descAppIcon0);
             NutsPath p0 = NutsPath.of(descAppIcon, session);
             if (descAppIcon.startsWith("classpath://")) {
                 descAppIcon = "nuts-resource://" + appDef.getId().getLongName() + "" + descAppIcon.substring("classpath://".length() - 1);

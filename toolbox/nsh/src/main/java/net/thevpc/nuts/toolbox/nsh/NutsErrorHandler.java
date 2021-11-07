@@ -40,7 +40,7 @@ import net.thevpc.nuts.toolbox.nsh.bundles._StringUtils;
 public class NutsErrorHandler implements JShellErrorHandler {
     
     @Override
-    public boolean isRequireExit(Throwable th) {
+    public boolean isQuitException(Throwable th) {
         return th instanceof JShellQuitException;
     }
 
@@ -48,9 +48,6 @@ public class NutsErrorHandler implements JShellErrorHandler {
     public int errorToCode(Throwable th) {
         if (th instanceof NutsExecutionException) {
             return ((NutsExecutionException) th).getExitCode();
-        }
-        if (th instanceof JShellException) {
-            return ((JShellException) th).getResult();
         }
         return 1;
     }

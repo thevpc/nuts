@@ -31,6 +31,9 @@
 */
 package net.thevpc.nuts.toolbox.nsh.bundles.jshell;
 
+import net.thevpc.nuts.NutsMessage;
+import net.thevpc.nuts.NutsSession;
+
 /**
  * @author thevpc (taha.bensalah@gmail.com)
  * %lastmodified 04-dec.-2005
@@ -38,16 +41,16 @@ package net.thevpc.nuts.toolbox.nsh.bundles.jshell;
  */
 public class JShellQuitException extends JShellException {
 
-    public JShellQuitException(int result) {
-        super(result);
+    public JShellQuitException(NutsSession session,int result) {
+        this(session, null, result);
     }
     
-    public JShellQuitException() {
-        super(0);
+    public JShellQuitException(NutsSession session) {
+        this(session, null, 0);
     }
 
-    public JShellQuitException(int result, Throwable cause) {
-        super(result, cause);
+    public JShellQuitException(NutsSession session, Throwable cause, int result) {
+        super(session, NutsMessage.plain("quit"), cause,result);
     }
     
 }

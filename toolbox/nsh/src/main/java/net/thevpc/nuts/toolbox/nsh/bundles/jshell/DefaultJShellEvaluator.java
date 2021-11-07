@@ -5,6 +5,7 @@
  */
 package net.thevpc.nuts.toolbox.nsh.bundles.jshell;
 
+import net.thevpc.nuts.NutsMessage;
 import net.thevpc.nuts.toolbox.nsh.bundles.jshell.util.JavaShellNonBlockingInputStream;
 import net.thevpc.nuts.toolbox.nsh.bundles.jshell.util.JavaShellNonBlockingInputStreamAdapter;
 import net.thevpc.nuts.toolbox.nsh.bundles.jshell.util.ShellUtils;
@@ -79,21 +80,21 @@ public class DefaultJShellEvaluator implements JShellEvaluator {
                 return evalSuffixAndOperation(node, context);
             }
         }
-        throw new JShellException(1, "unsupported suffix operator " + opString);
+        throw new JShellException(context.getSession(), NutsMessage.cstyle("unsupported suffix operator %s", opString), 1);
     }
 
     @Override
     public int evalSuffixAndOperation(JShellCommandNode node, JShellContext context) {
-        return context.getShell().evalNode(node,context);
+        return context.getShell().evalNode(node, context);
     }
 
     @Override
     public int evalBinaryAndOperation(JShellCommandNode left, JShellCommandNode right, JShellContext context) {
         int r = context.getShell().evalNode(left, context);
-        if(r !=0){
+        if (r != 0) {
             return r;
         }
-        return context.getShell().evalNode(right,context);
+        return context.getShell().evalNode(right, context);
     }
 
     @Override
@@ -112,14 +113,14 @@ public class DefaultJShellEvaluator implements JShellEvaluator {
         } else if ("|".equals(opString)) {
             return evalBinaryPipeOperation(left, right, context);
         } else {
-            throw new JShellException(1, "unsupported operator " + opString);
+            throw new JShellException(context.getSession(),NutsMessage.cstyle("unsupported operator %s", opString),1);
         }
     }
 
     @Override
     public int evalBinaryOrOperation(final JShellCommandNode left, JShellCommandNode right, final JShellContext context) {
         try {
-            if(context.getShell().evalNode(left, context)==0) {
+            if (context.getShell().evalNode(left, context) == 0) {
                 return 0;
             }
         } catch (JShellUniformException e) {
@@ -128,7 +129,7 @@ public class DefaultJShellEvaluator implements JShellEvaluator {
                 return 0;
             }
         }
-        return context.getShell().evalNode(right,context);
+        return context.getShell().evalNode(right, context);
     }
 
     @Override
@@ -142,7 +143,7 @@ public class DefaultJShellEvaluator implements JShellEvaluator {
             in2 = (in instanceof JavaShellNonBlockingInputStream) ? (JavaShellNonBlockingInputStream) in : new JavaShellNonBlockingInputStreamAdapter("jpipe-" + right.toString(), in);
         } catch (IOException ex) {
 //            Logger.getLogger(BinoOp.class.getName()).log(Level.SEVERE, null, ex);
-            throw new JShellException(1, ex);
+            throw new JShellException(context.getSession(), ex, 1);
         }
         final JShellUniformException[] a = new JShellUniformException[2];
         final PrintStream out1 = new PrintStream(out);
@@ -197,10 +198,10 @@ public class DefaultJShellEvaluator implements JShellEvaluator {
                 return 0;
             }
         }
-        if(r!=0 && context.getShell().getOptions().isErrExit()){
+        if (r != 0 && context.getShell().getOptions().isErrExit()) {
             return r;
         }
-        return context.getShell().evalNode(right,context);
+        return context.getShell().evalNode(right, context);
     }
 
     @Override
@@ -209,7 +210,7 @@ public class DefaultJShellEvaluator implements JShellEvaluator {
         JShellContext c2 = context.getShell().createNewContext(context, context.getServiceName(), context.getArgsArray());
         PrintStream p = new PrintStream(out);
         c2.setOut(p);
-        context.getShell().evalNode(command,c2);
+        context.getShell().evalNode(command, c2);
         p.flush();
         String cc = evalFieldSubstitutionAfterCommandSubstitution(out.toString(), context);
         return (context.getShell().escapeString(cc));
@@ -319,7 +320,7 @@ public class DefaultJShellEvaluator implements JShellEvaluator {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         JShellContext c2 = context.getShell().createNewContext(context);
         c2.setOut(new PrintStream(out));
-        context.getShell().evalNode(t,c2);
+        context.getShell().evalNode(t, c2);
         c2.out().flush();
         return out.toString();
     }

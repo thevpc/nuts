@@ -14,7 +14,8 @@ public interface FreeDesktopEntryWriter {
     PathInfo[] writeMenu(FreeDesktopEntry.Group descriptor, String fileName, boolean doOverride, NutsId id);
 
 
-    PathInfo[] writeShortcut(FreeDesktopEntry descriptor, Path path,boolean doOverride, NutsId id);
+    PathInfo[] writeShortcut(FreeDesktopEntry descriptor, Path path, boolean doOverride, NutsId id);
+
     PathInfo[] writeDesktop(FreeDesktopEntry descriptor, String fileName, boolean doOverride, NutsId id);
 
     PathInfo[] writeMenu(FreeDesktopEntry descriptor, String fileName, boolean doOverride, NutsId id);

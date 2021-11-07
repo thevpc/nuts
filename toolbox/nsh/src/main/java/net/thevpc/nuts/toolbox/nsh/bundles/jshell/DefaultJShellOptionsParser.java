@@ -2,6 +2,7 @@ package net.thevpc.nuts.toolbox.nsh.bundles.jshell;
 
 import net.thevpc.nuts.NutsApplicationContext;
 import net.thevpc.nuts.NutsCommandLine;
+import net.thevpc.nuts.NutsMessage;
 import net.thevpc.nuts.NutsSession;
 
 import java.util.ArrayList;
@@ -11,31 +12,31 @@ import java.util.List;
 public class DefaultJShellOptionsParser implements JShellOptionsParser {
     private NutsApplicationContext appContext;
 
-    protected JShellOptions createOptions(NutsApplicationContext appContext) {
-        return new JShellOptions();
-    }
-
     public DefaultJShellOptionsParser(NutsApplicationContext appContext) {
         this.appContext = appContext;
     }
 
+    protected JShellOptions createOptions(NutsApplicationContext appContext) {
+        return new JShellOptions();
+    }
+
     @Override
     public JShellOptions parse(String[] args) {
-        JShellOptions options= createOptions(appContext);
+        JShellOptions options = createOptions(appContext);
         List<String> args0 = new ArrayList<>(Arrays.asList(args));
         while (!args0.isEmpty()) {
-            parseNextArgument(args0,options);
+            parseNextArgument(args0, options);
         }
         postParse(options);
         return options;
     }
 
     protected void postParse(JShellOptions options) {
-        if(options.isInteractive() ||
+        if (options.isInteractive() ||
                 (options.getFiles().isEmpty()
-                && !options.isStdInAndPos()
-                && !options.isCommand())
-        ){
+                        && !options.isStdInAndPos()
+                        && !options.isCommand())
+        ) {
             options.setEffectiveInteractive(true);
         }
     }
@@ -184,7 +185,7 @@ public class DefaultJShellOptionsParser implements JShellOptionsParser {
             }
             default: {
                 if (arg.startsWith("-")) {
-                    parseUnsupportedNextArgument(args,options);
+                    parseUnsupportedNextArgument(args, options);
                 } else {
                     options.getFiles().add(args.remove(0));
                     options.getCommandArgs().addAll(Arrays.asList(args.toArray(new String[0])));
@@ -199,13 +200,13 @@ public class DefaultJShellOptionsParser implements JShellOptionsParser {
 
     protected void parseUnsupportedNextArgument(List<String> args, JShellOptions options) {
         NutsSession session = appContext.getSession();
-        NutsCommandLine a = NutsCommandLine.of(args,session);
-        if(session.configureFirst(a)){
+        NutsCommandLine a = NutsCommandLine.of(args, session);
+        if (session.configureFirst(a)) {
             //replace remaining...
             args.clear();
             args.addAll(Arrays.asList(a.toStringArray()));
-        }else{
-            throw new JShellException(1, "unsupported option "+args.get(0));
+        } else {
+            throw new JShellException(session, NutsMessage.cstyle("unsupported option %s", args.get(0)), 1);
         }
     }
 

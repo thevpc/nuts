@@ -31,35 +31,34 @@
 */
 package net.thevpc.nuts.toolbox.nsh.bundles.jshell;
 
+import net.thevpc.nuts.NutsException;
+import net.thevpc.nuts.NutsExecutionException;
+import net.thevpc.nuts.NutsMessage;
+import net.thevpc.nuts.NutsSession;
+
 /**
  * @author thevpc (taha.bensalah@gmail.com)
  * %lastmodified 04-dec.-2005 Time: 17:53:11
  */
-public class JShellException extends RuntimeException {
+public class JShellException extends NutsExecutionException {
 
-    private int result;
-
-    public JShellException(int result) {
-        this.result = result;
+    public JShellException(NutsSession session, NutsMessage message, int exitCode) {
+        super(session, message, exitCode);
     }
 
-    public JShellException(int result, Throwable cause) {
-        super(cause);
-        this.result = result;
+    public JShellException(NutsSession session, NutsMessage message, Throwable cause) {
+        super(session, message, cause);
     }
 
-    public JShellException(int result, String message, Throwable cause) {
-        super(message, cause);
-        this.result = result;
+    public JShellException(NutsSession session, NutsMessage message, Throwable cause, int exitCode) {
+        super(session, message, cause, exitCode);
     }
 
-    public JShellException(int result, String message) {
-        super(message);
-        this.result = result;
+    public JShellException(NutsSession session, Throwable cause, int exitCode) {
+        super(session, NutsMessage.cstyle("error"), cause, exitCode);
     }
 
-    public int getResult() {
-        return result;
+    public JShellException(NutsSession session, NutsMessage message, Throwable cause, boolean enableSuppression, boolean writableStackTrace, int exitCode) {
+        super(session, message, cause, enableSuppression, writableStackTrace, exitCode);
     }
-
 }

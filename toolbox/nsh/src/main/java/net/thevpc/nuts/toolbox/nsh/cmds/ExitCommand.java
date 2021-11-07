@@ -68,7 +68,7 @@ public class ExitCommand extends SimpleNshBuiltin {
     @Override
     protected void execBuiltin(NutsCommandLine commandLine, SimpleNshCommandContext context) {
         Options options = context.getOptions();
-        throw new JShellQuitException(options.code);
+        throw new JShellQuitException(context.getSession(), options.code);
     }
 
     private static class Options {

@@ -8,6 +8,8 @@ import net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.ndi.Fr
 import net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.ndi.base.AbstractFreeDesktopEntryWriter;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -57,7 +59,6 @@ public class UnixFreeDesktopEntryWriter extends AbstractFreeDesktopEntryWriter {
 
     @Override
     public PathInfo[] writeMenu(FreeDesktopEntry descriptor, String fileName, boolean doOverride, NutsId id) {
-        String menuFileName = Paths.get(ensureName(fileName, descriptor.getOrCreateDesktopEntry().getName(), "menu")).getFileName().toString();
         String desktopFileName = Paths.get(ensureName(fileName, descriptor.getOrCreateDesktopEntry().getName(), "desktop")).getFileName().toString();
 
         List<PathInfo> all = new ArrayList<>();
@@ -65,7 +66,7 @@ public class UnixFreeDesktopEntryWriter extends AbstractFreeDesktopEntryWriter {
         File folder4shortcuts = new File(System.getProperty("user.home") + "/.local/share/applications");
         folder4shortcuts.mkdirs();
         File shortcutFile = new File(folder4shortcuts, desktopFileName);
-        all.add(new PathInfo("desktop-menu", id,
+        all.add(new PathInfo("desktop-icon", id,
                 shortcutFile.toPath(), tryWrite(descriptor, shortcutFile)));
 
         List<String> categories = new ArrayList<>(root.getCategories());
@@ -75,46 +76,37 @@ public class UnixFreeDesktopEntryWriter extends AbstractFreeDesktopEntryWriter {
         File folder4menus = new File(System.getProperty("user.home") + "/.config/menus/applications-merged");
         folder4menus.mkdirs();
 
-        for (String menuPath : categories) {
-            String[] part = Arrays.stream((menuPath == null ? "" : menuPath).split("/")).filter(x -> !x.isEmpty()).toArray(String[]::new);
-            if (part.length == 0) {
-                part = new String[]{"Applications"};
-            } else if (!part[0].equals("Applications")) {
-                List<String> li = new ArrayList<>();
-                li.add("Applications");
-                li.addAll(Arrays.asList(part));
-                part = li.toArray(new String[0]);
-            }
-            try {
+        //menu name must include category
+        String menuFileName = Paths.get(ensureName(fileName, descriptor.getOrCreateDesktopEntry().getName(), "menu")).getFileName().toString();
 
-                //menu
-                DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-                Document dom = builder.newDocument();
-//        <Menu>
-//    <Name>Applications</Name>
-//    <Menu>
-//        <Directory>YourApp-top.directory</Directory>
-//        <Name>YourApp-top</Name>
-//        <Menu>
-//            <Directory>YourApp-second.directory</Directory>
-//            <Name>YourApp-second</Name>
-//            <Include>
-//                <Filename>YourApp-test.desktop</Filename>
-//            </Include>
-//        </Menu>
-//    </Menu>
-//</Menu>
-                dom.appendChild(createMenuXmlElement(part, desktopFileName, dom));
-                // write DOM to XML file
-                Transformer tr = TransformerFactory.newInstance().newTransformer();
-                tr.setOutputProperty(OutputKeys.INDENT, "yes");
-                ByteArrayOutputStream b = new ByteArrayOutputStream();
-                tr.transform(new DOMSource(dom), new StreamResult(b));
-                File menuFile = new File(folder4menus, menuFileName);
-                all.add(new PathInfo("desktop-menu", id, menuFile.toPath(), CoreIOUtils.tryWrite(b.toByteArray(), menuFile.toPath(), session)));
-            } catch (ParserConfigurationException | TransformerException ex) {
-                throw new RuntimeException(ex);
+        try {
+            //menu
+            DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+            Document dom = builder.newDocument();
+
+            for (String menuPath : categories) {
+                String[] part = Arrays.stream((menuPath == null ? "" : menuPath).split("/")).filter(x -> !x.isEmpty()).toArray(String[]::new);
+                if (part.length == 0) {
+                    part = new String[]{"Applications"};
+                } else if (!part[0].equals("Applications")) {
+                    List<String> li = new ArrayList<>();
+                    li.add("Applications");
+                    li.addAll(Arrays.asList(part));
+                    part = li.toArray(new String[0]);
+                }
+                createMenuXmlElement(part, desktopFileName, dom);
             }
+            // write DOM to XML file
+            Transformer tr = TransformerFactory.newInstance().newTransformer();
+            tr.setOutputProperty(OutputKeys.INDENT, "yes");
+            tr.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
+
+            ByteArrayOutputStream b = new ByteArrayOutputStream();
+            tr.transform(new DOMSource(dom), new StreamResult(b));
+            File menuFile = new File(folder4menus, menuFileName);
+            all.add(new PathInfo("desktop-menu", id, menuFile.toPath(), CoreIOUtils.tryWrite(b.toByteArray(), menuFile.toPath(), session)));
+        } catch (ParserConfigurationException | TransformerException ex) {
+            throw new RuntimeException(ex);
         }
         if (all.stream().anyMatch(x -> x.getStatus() != PathInfo.Status.DISCARDED)) {
             updateDesktopMenus();
@@ -154,25 +146,57 @@ public class UnixFreeDesktopEntryWriter extends AbstractFreeDesktopEntryWriter {
         return System.getenv("XDG_SESSION_DESKTOP");
     }
 
-    private Element createMenuXmlElement(String[] a, String name, Document dom) {
+    private Element ensureXmlChild(Node parent, String name) {
+        NodeList cn = parent.getChildNodes();
+        for (int i = 0; i < cn.getLength(); i++) {
+            Node ci = cn.item(i);
+            if (ci instanceof Element) {
+                Element e = (Element) ci;
+                String nn = (e).getNodeName();
+                if (name.equals(nn)) {
+                    return e;
+                }
+            }
+        }
+        Document doc = (parent instanceof Document)?(Document)parent : parent.getOwnerDocument();
+        Element elem = doc.createElement(name);
+        parent.appendChild(elem);
+        return elem;
+    }
+
+    /**
+     * //        <Menu>
+     * //    <Name>Applications</Name>
+     * //    <Menu>
+     * //        <Directory>YourApp-top.directory</Directory>
+     * //        <Name>YourApp-top</Name>
+     * //        <Menu>
+     * //            <Directory>YourApp-second.directory</Directory>
+     * //            <Name>YourApp-second</Name>
+     * //            <Include>
+     * //                <Filename>YourApp-test.desktop</Filename>
+     * //            </Include>
+     * //        </Menu>
+     * //    </Menu>
+     * //</Menu>
+     *
+     * @param a      a
+     * @param name   name
+     * @param parent parent
+     */
+    private void createMenuXmlElement(String[] a, String name, Node parent) {
         if (a.length == 1) {
-            Element menu = dom.createElement("Menu");
-            Element d = dom.createElement("Name");
-            d.setTextContent(a[0]);
-            Element f = dom.createElement("Filename");
-            f.setTextContent(name);
-            Element i = dom.createElement("Include");
-            i.appendChild(f);
-            menu.appendChild(d);
-            menu.appendChild(i);
-            return menu;
+            Element emenu = ensureXmlChild(parent, "Menu");
+            Element ename = ensureXmlChild(emenu, "Name");
+            ename.setTextContent(a[0]);
+            Element einclude = ensureXmlChild(emenu, "Include");
+            Element efilename = ensureXmlChild(einclude, "Filename");
+            efilename.setTextContent(name);
         } else {
-            Element menu = dom.createElement("Menu");
-            Element d = dom.createElement("Name");
-            d.setTextContent(a[0]);
-            menu.appendChild(d);
-            menu.appendChild(createMenuXmlElement(Arrays.copyOfRange(a, 1, a.length), name, dom));
-            return menu;
+            Element emenu = ensureXmlChild(parent, "Menu");
+            Element ename = ensureXmlChild(emenu, "Name");
+            ename.setTextContent(a[0]);
+            createMenuXmlElement(Arrays.copyOfRange(a, 1, a.length), name, emenu);
         }
     }
 

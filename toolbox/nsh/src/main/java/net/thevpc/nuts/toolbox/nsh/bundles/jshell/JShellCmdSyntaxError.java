@@ -31,17 +31,20 @@
 */
 package net.thevpc.nuts.toolbox.nsh.bundles.jshell;
 
+import net.thevpc.nuts.NutsMessage;
+import net.thevpc.nuts.NutsSession;
+
 /**
  * @author thevpc (taha.bensalah@gmail.com)
  * %lastmodified 13 nov. 2004 Time: 21:17:13
  */
 public class JShellCmdSyntaxError extends JShellException {
 
-    public JShellCmdSyntaxError(int result, String[] args, String cmd, String desc, String message) {
-        super(result, buildMessage(args, cmd, desc, message));
+    public JShellCmdSyntaxError(NutsSession session, int result, String[] args, String cmd, String desc, String message) {
+        super(session, buildMessage(args, cmd, desc, message,session),result);
     }
 
-    private static String buildMessage(String[] args, String cmd, String desc, String message) {
+    private static NutsMessage buildMessage(String[] args, String cmd, String desc, String message,NutsSession session) {
         StringBuilder s = new StringBuilder();
         if (cmd != null) {
             s.append(cmd);
@@ -66,6 +69,6 @@ public class JShellCmdSyntaxError extends JShellException {
             s.append("\n");
             s.append(desc);
         }
-        return s.toString();
+        return NutsMessage.plain(s.toString());
     }
 }

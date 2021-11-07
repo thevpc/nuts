@@ -50,7 +50,7 @@ public class NshEvaluator extends DefaultJShellEvaluator {
             in = new PipedInputStream(out, 1024);
             in2 = (in instanceof JavaShellNonBlockingInputStream) ? (JavaShellNonBlockingInputStream) in : new JavaShellNonBlockingInputStreamAdapter("jpipe-" + right.toString(), in);
         } catch (IOException ex) {
-            throw new JShellException(1, ex);
+            throw new JShellException(context.getSession(), ex, 1);
         }
         final JShellContext leftContext = context.getShell().createNewContext(context).setOut(nout.asPrintStream());
         final JShellUniformException[] a = new JShellUniformException[2];
