@@ -131,7 +131,6 @@ public class CoreIOUtils {
 //        NutsWorkspaceUtils.setSession(s, session);
 //        return s;
 //    }
-
     public static OutputStream convertOutputStream(OutputStream out, NutsTerminalMode expected, NutsSession session) {
         ExtendedFormatAware a = convertOutputStreamToExtendedFormatAware(out, expected, session);
         return (OutputStream) a;
@@ -173,12 +172,9 @@ public class CoreIOUtils {
 //            out.run(NutsTerminalCommand.MOVE_LINE_START);
 //        }
 //    }
-
 //    public static NutsURLHeader getURLHeader(URL url) {
 //        return new DefaultNutsURLHeader(new SimpleHttpClient(url));
 //    }
-
-
     public static URL asURL(String s) {
         if (s == null || s.trim().isEmpty()) {
             return null;
@@ -519,7 +515,7 @@ public class CoreIOUtils {
             }
         }
         return NutsPath.of(loc, session).builder().setBaseDir(
-                        NutsPath.of(rootFolder, session))
+                NutsPath.of(rootFolder, session))
                 .build().toString();
     }
 
@@ -542,15 +538,15 @@ public class CoreIOUtils {
     }
 
     public static NutsPrintStream resolveOut(NutsSession session) {
-        return (session.getTerminal() == null) ? NutsPrintStream.ofNull(session) :
-                session.getTerminal().out();
+        return (session.getTerminal() == null) ? NutsPrintStream.ofNull(session)
+                : session.getTerminal().out();
     }
 
     /**
-     * @param localPath    localPath
+     * @param localPath localPath
      * @param parseOptions may include --all-mains to force lookup of all main
-     *                     classes if available
-     * @param session      session
+     * classes if available
+     * @param session session
      * @return descriptor
      */
     public static NutsDescriptor resolveNutsDescriptorFromFileContent(Path localPath, String[] parseOptions, NutsSession session) {
@@ -636,10 +632,8 @@ public class CoreIOUtils {
         }
         return nutsDescriptor.builder()
                 .setId(NutsIdBuilder.of(session).setGroupId(groupId).setArtifactId(artifactId).setVersion(version).build())
-                .build()
-                ;
+                .build();
     }
-
 
     public static String getPath(NutsId id, String ext, char sep) {
         StringBuilder sb = new StringBuilder();
@@ -658,7 +652,7 @@ public class CoreIOUtils {
     /**
      * copy input to output
      *
-     * @param in  entree
+     * @param in entree
      * @param out sortie
      */
     public static void copy(Reader in, Writer out, NutsSession session) {
@@ -668,7 +662,7 @@ public class CoreIOUtils {
     /**
      * copy input to output
      *
-     * @param in  entree
+     * @param in entree
      * @param out sortie
      * @return size copied
      */
@@ -679,8 +673,8 @@ public class CoreIOUtils {
     /**
      * copy input stream to output stream using the buffer size in bytes
      *
-     * @param in         entree
-     * @param out        sortie
+     * @param in entree
+     * @param out sortie
      * @param bufferSize bufferSize
      * @return size copied
      */
@@ -702,8 +696,8 @@ public class CoreIOUtils {
     /**
      * copy input stream to output stream using the buffer size in bytes
      *
-     * @param in         entree
-     * @param out        sortie
+     * @param in entree
+     * @param out sortie
      * @param bufferSize bufferSize
      */
     public static void copy(Reader in, Writer out, int bufferSize, NutsSession session) {
@@ -870,8 +864,8 @@ public class CoreIOUtils {
     public static java.io.InputStream monitor(URL from, NutsProgressMonitor monitor, NutsSession session) {
         return monitor(
                 NutsWorkspaceUtils.of(session).openURL(from),
-                from, NutsTexts.of(session).ofStyled(getURLName(from), NutsTextStyle.path())
-                , NutsPath.of(from, session).getContentLength(), monitor, session);
+                from, NutsTexts.of(session).ofStyled(getURLName(from), NutsTextStyle.path()),
+                 NutsPath.of(from, session).getContentLength(), monitor, session);
     }
 
     public static java.io.InputStream monitor(java.io.InputStream from, Object source, NutsString sourceName, long length, NutsProgressMonitor monitor, NutsSession session) {
@@ -1070,16 +1064,13 @@ public class CoreIOUtils {
 //        }
 //        return new ByteArrayInput(name, formattedString, source, typeName, session);
 //    }
-
-
     public static boolean isValidInputStreamSource(Class type) {
         return URL.class.isAssignableFrom(type)
                 || File.class.isAssignableFrom(type)
                 || Path.class.isAssignableFrom(type)
                 || byte[].class.isAssignableFrom(type)
                 || java.io.InputStream.class.isAssignableFrom(type)
-                || String.class.isAssignableFrom(type)
-//                || CoreInput.class.isAssignableFrom(type)
+                || String.class.isAssignableFrom(type) //                || CoreInput.class.isAssignableFrom(type)
                 ;
     }
 
@@ -1198,7 +1189,6 @@ public class CoreIOUtils {
             return new File(url.getPath());
         }
     }
-
 
     public static byte[] evalMD5(String input, NutsSession session) {
         byte[] bytesOfMessage = input.getBytes(StandardCharsets.UTF_8);
@@ -1379,8 +1369,8 @@ public class CoreIOUtils {
             }
         }
         NanoDB cachedDB = CacheDB.of(session);
-        NanoDBTableFile<CachedURL> cacheTable =
-                cachedDB.tableBuilder(CachedURL.class, session).setNullable(false)
+        NanoDBTableFile<CachedURL> cacheTable
+                = cachedDB.tableBuilder(CachedURL.class, session).setNullable(false)
                         .addAllFields()
                         .addIndices("url")
                         .getOrCreate();
@@ -1464,10 +1454,10 @@ public class CoreIOUtils {
                 }
             });
             return InputStreamMetadataAwareImpl.of(ist, new NutsDefaultInputStreamMetadata(
-                            path,
-                            NutsTexts.of(session).ofStyled(path, NutsTextStyle.path()),
-                            size, NutsPath.of(path, session).getContentType(), sourceTypeName
-                    )
+                    path,
+                    NutsTexts.of(session).ofStyled(path, NutsTextStyle.path()),
+                    size, NutsPath.of(path, session).getContentType(), sourceTypeName
+            )
             );
 //                    session.io().input()
 //                    .setName(NutsTexts.of(session).forStyled(path, NutsTextStyle.path()))
@@ -1522,7 +1512,7 @@ public class CoreIOUtils {
      * is private but we need call it handle special properties files
      */
     public static String escapePropsString(String theString,
-                                           boolean escapeSpace) {
+            boolean escapeSpace) {
         if (theString == null) {
             theString = "";
         }
@@ -1884,13 +1874,11 @@ public class CoreIOUtils {
 //        NutsPrintStream err = io.getModel().getCurrentStderr();
 //        return err == null ? CoreIOUtils.err : err;
 //    }
-
 //    public static java.io.InputStream in(NutsWorkspace ws) {
 //        DefaultNutsIOManager io = (DefaultNutsIOManager) ws.io();
 //        java.io.InputStream in = io.getModel().stdin();
 //        return in == null ? System.in : in;
 //    }
-
     public static boolean isObsoleteInstant(NutsSession session, Instant instant) {
         if (session.getExpireTime() != null) {
             return instant == null || instant.isBefore(session.getExpireTime());
@@ -1920,7 +1908,6 @@ public class CoreIOUtils {
 //        }
 //        return lines;
 //    }
-
 //    public static Stream<String> linesFrom(NutsInput input) {
 //        BufferedReader br = new BufferedReader(new InputStreamReader(input.open()));
 //        Iterator<String> sourceIterator = new Iterator<String>() {
@@ -1957,7 +1944,6 @@ public class CoreIOUtils {
 //                Spliterators.spliteratorUnknownSize(sourceIterator, Spliterator.ORDERED),
 //                false);
 //    }
-
     public static String loadFileContentLenientString(Path out) {
         return new String(loadFileContentLenient(out));
     }
@@ -1974,7 +1960,7 @@ public class CoreIOUtils {
     }
 
     public static PipeThread pipe(String name, String cmd, String desc, final NonBlockingInputStream in, final OutputStream out, NutsSession session) {
-        PipeThread p = new PipeThread(name, cmd, desc, in, out, session);
+        PipeThread p = new PipeThread(name, cmd, desc, in, out, true, session);
         session.config().executorService().submit(p);
         return p;
     }
@@ -2124,7 +2110,6 @@ public class CoreIOUtils {
 //            return base.toString();
 //        }
 //    }
-
 //    public static abstract class AbstractMultiReadItem
 //            extends AbstractItem
 //            implements MultiInput {
@@ -2134,7 +2119,6 @@ public class CoreIOUtils {
 //        }
 //
 //    }
-
 //    public static abstract class AbstractItem implements CoreInput {
 //
 //        Object value;
@@ -2244,7 +2228,6 @@ public class CoreIOUtils {
 //            return (MultiInput) new DefaultMultiReadItem(this, getTypeName());
 //        }
 //    }
-
 //    private static class ByteArrayInput extends AbstractMultiReadItem {
 //
 //        public ByteArrayInput(String name, NutsString formattedName, byte[] value, String typeName, NutsSession session) {
@@ -2283,7 +2266,6 @@ public class CoreIOUtils {
 //            return "bytes://" + ((byte[]) this.getSource()).length;
 //        }
 //    }
-
 //    public static class URLInput extends AbstractItem {
 //
 //        private NutsPath cachedNutsURLHeader = null;
@@ -2398,7 +2380,6 @@ public class CoreIOUtils {
 //        }
 //
 //    }
-
 //    private static class PathInput extends AbstractMultiReadItem {
 //
 //        public PathInput(String name, NutsString formattedName, Path value, String typeName, NutsSession session) {
@@ -2481,7 +2462,6 @@ public class CoreIOUtils {
 //        }
 //
 //    }
-
 //    public static class InputStream extends AbstractItem {
 //
 //        public InputStream(String name, NutsString formattedName, java.io.InputStream value, String typeName, NutsSession session) {
@@ -2527,7 +2507,6 @@ public class CoreIOUtils {
 //            return "input-stream://" + getSource();
 //        }
 //    }
-
     public static byte[] readBestEffort(int len, java.io.InputStream in, NutsSession session) {
         if (len < 0) {
             throw new IndexOutOfBoundsException();
@@ -2546,8 +2525,9 @@ public class CoreIOUtils {
     }
 
     public static int readBestEffort(byte[] b, int off, int len, java.io.InputStream in, NutsSession session) {
-        if (len < 0)
+        if (len < 0) {
             throw new IndexOutOfBoundsException();
+        }
         int n = 0;
         while (n < len) {
             int count = 0;
@@ -2565,7 +2545,7 @@ public class CoreIOUtils {
     }
 
     public static boolean Arrays_equals(byte[] a, int aFromIndex, int aToIndex,
-                                        byte[] b, int bFromIndex, int bToIndex) {
+            byte[] b, int bFromIndex, int bToIndex) {
         //method added in JDK 9
         int aLength = aToIndex - aFromIndex;
         int bLength = bToIndex - bFromIndex;
@@ -2616,11 +2596,10 @@ public class CoreIOUtils {
         return false;
     }
 
-
     public static InputStream createBytesStream(byte[] bytes, NutsMessage message, String contentType, String kind, NutsSession session) {
         return InputStreamMetadataAwareImpl.of(
-                new ByteArrayInputStream(bytes)
-                , new NutsDefaultInputStreamMetadata(
+                new ByteArrayInputStream(bytes),
+                 new NutsDefaultInputStreamMetadata(
                         message,
                         bytes.length,
                         contentType,
@@ -2854,7 +2833,6 @@ public class CoreIOUtils {
 //        }
 //        return writable;
 //    }
-
     public enum MonitorType {
         STREAM,
         DEFAULT,

@@ -994,6 +994,7 @@ public class CoreNutsUtils {
                     + "-";
         }
 
+        @Override
         public Thread newThread(Runnable r) {
             Thread t = new Thread(group, r,
                     namePrefix + threadNumber.getAndIncrement(),

@@ -12,29 +12,29 @@ import java.util.regex.Pattern;
 
 public class TimePeriod {
     private static Pattern PATTERN = Pattern.compile("(<?val>[-+]?[0-9]+)[ ]*(<?unit>([a-zA-Z]+))?");
-    private long unitCount;
+    private long count;
     private TimeUnit unit;
 
-    public TimePeriod(long unitCount, TimeUnit unit) {
-        this.unitCount = unitCount;
+    public TimePeriod(long count, TimeUnit unit) {
+        this.count = count;
         this.unit = unit;
     }
 
     public static TimePeriod parse(String str, TimeUnit defaultUnit, NutsSession session) {
-        TimePeriod v = parseLenient(str, defaultUnit, session);
+        TimePeriod v = parseLenient(str, defaultUnit);
         if(v==null){
             throw new NutsParseException(session, NutsMessage.cstyle("invalid Time period %s", str));
         }
         return v;
     }
 
-    public static TimePeriod parseLenient(String str, TimeUnit defaultUnit, NutsSession session) {
-        return parseLenient(str,null,null,defaultUnit,session);
+    public static TimePeriod parseLenient(String str, TimeUnit defaultUnit) {
+        return parseLenient(str, defaultUnit, null,null);
     }
 
-    public static TimePeriod parseLenient(String str, TimePeriod emptyValue,TimePeriod errorValue,TimeUnit defaultUnit, NutsSession session) {
+    public static TimePeriod parseLenient(String str, TimeUnit defaultUnit, TimePeriod emptyValue, TimePeriod errorValue) {
         if (NutsBlankable.isBlank(str)) {
-            return null;
+            return emptyValue;
         }
         if (defaultUnit == null) {
             defaultUnit = TimeUnit.MILLISECONDS;
@@ -45,10 +45,7 @@ public class TimePeriod {
             try {
                 unitCount = Long.parseLong(matcher.group("val"));
             } catch (Exception ex) {
-                return null;
-            }
-            if (unitCount < 0) {
-                return null;
+                return errorValue;
             }
             String u = matcher.group("unit");
             if (u == null) {
@@ -106,11 +103,11 @@ public class TimePeriod {
             }
             return new TimePeriod(unitCount, unit);
         }
-        return null;
+        return errorValue;
     }
 
-    public long getUnitCount() {
-        return unitCount;
+    public long getCount() {
+        return count;
     }
 
     public TimeUnit getUnit() {
@@ -119,7 +116,7 @@ public class TimePeriod {
 
     @Override
     public int hashCode() {
-        return Objects.hash(unitCount, unit);
+        return Objects.hash(count, unit);
     }
 
     @Override
@@ -127,11 +124,11 @@ public class TimePeriod {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         TimePeriod that = (TimePeriod) o;
-        return unitCount == that.unitCount && unit == that.unit;
+        return count == that.count && unit == that.unit;
     }
 
     @Override
     public String toString() {
-        return unitCount + unit.name().toLowerCase();
+        return count + unit.name().toLowerCase();
     }
 }

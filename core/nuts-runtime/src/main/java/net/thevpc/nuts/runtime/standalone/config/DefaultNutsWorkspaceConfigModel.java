@@ -28,6 +28,7 @@ import net.thevpc.nuts.runtime.core.CoreNutsConstants;
 import net.thevpc.nuts.runtime.core.NutsSupplierBase;
 import net.thevpc.nuts.runtime.core.NutsWorkspaceExt;
 import net.thevpc.nuts.runtime.core.app.DefaultNutsWorkspaceLocationManager;
+import net.thevpc.nuts.runtime.core.common.TimePeriod;
 import net.thevpc.nuts.runtime.core.config.NutsRepositoryConfigManagerExt;
 import net.thevpc.nuts.runtime.core.config.NutsWorkspaceConfigManagerExt;
 import net.thevpc.nuts.runtime.core.events.DefaultNutsWorkspaceEvent;
@@ -1439,15 +1440,18 @@ public class DefaultNutsWorkspaceConfigModel {
                         if(minPoolSize>maxPoolSize){
                             minPoolSize=maxPoolSize;
                         }
-                        int keepAliveSeconds = getConfigProperty("nuts.threads.keep-alive").getInt(60);
-                        if(keepAliveSeconds<1) {
-                            keepAliveSeconds = 60;
-                        }else if(keepAliveSeconds>3600*10){
-                            keepAliveSeconds=3600*10;
+                        TimePeriod defaultPeriod = new TimePeriod(3, TimeUnit.SECONDS);
+                        TimePeriod period=TimePeriod.parseLenient(
+                                getConfigProperty("nuts.threads.keep-alive").getString(),
+                                TimeUnit.SECONDS, defaultPeriod,
+                                defaultPeriod
+                        );
+                        if(period.getCount()<0){
+                            period=defaultPeriod;
                         }
                         ThreadPoolExecutor executorService2 = (ThreadPoolExecutor) Executors.newCachedThreadPool(CoreNutsUtils.nutsDefaultThreadFactory);
                         executorService2.setCorePoolSize(minPoolSize);
-                        executorService2.setKeepAliveTime(keepAliveSeconds, TimeUnit.SECONDS);
+                        executorService2.setKeepAliveTime(period.getCount(), period.getUnit());
                         executorService2.setMaximumPoolSize(maxPoolSize);
                         executorService = executorService2;
                     }

@@ -26,8 +26,8 @@ public class DefaultFileNutsLock implements NutsLock {
     public TimePeriod getDefaultTimePeriod() {
         TimePeriod tp = TimePeriod.parseLenient(
                 session.config().getConfigProperty("nuts.file-lock.timeout").getString(),
-                TimeUnit.SECONDS,
-                session);
+                TimeUnit.SECONDS
+        );
         if (tp == null) {
             return FIVE_MINUTES;
         }
@@ -37,7 +37,7 @@ public class DefaultFileNutsLock implements NutsLock {
     @Override
     public void lockInterruptibly() throws InterruptedException {
         TimePeriod tp = getDefaultTimePeriod();
-        if (!tryLockInterruptibly(tp.getUnitCount(), tp.getUnit())) {
+        if (!tryLockInterruptibly(tp.getCount(), tp.getUnit())) {
             throw new NutsLockAcquireException(session, null, lockedObject, this, null);
         }
     }
@@ -45,7 +45,7 @@ public class DefaultFileNutsLock implements NutsLock {
     @Override
     public synchronized void lock() {
         TimePeriod tp = getDefaultTimePeriod();
-        if (!tryLock(tp.getUnitCount(), tp.getUnit())) {
+        if (!tryLock(tp.getCount(), tp.getUnit())) {
             throw new NutsLockAcquireException(session, null, lockedObject, this, null);
         }
     }
@@ -75,7 +75,7 @@ public class DefaultFileNutsLock implements NutsLock {
     }
 
     public boolean tryLock(TimePeriod p) {
-        return tryLock(p.getUnitCount(), p.getUnit());
+        return tryLock(p.getCount(), p.getUnit());
     }
 
     private class PollTime {

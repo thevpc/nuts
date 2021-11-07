@@ -11,17 +11,15 @@
  * large range of sub managers / repositories.
  * <br>
  * <p>
- * Copyright [2020] [thevpc]
- * Licensed under the Apache License, Version 2.0 (the "License"); you may
- * not use this file except in compliance with the License. You may obtain a
- * copy of the License at http://www.apache.org/licenses/LICENSE-2.0
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
- * either express or implied. See the License for the specific language
+ * Copyright [2020] [thevpc] Licensed under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0 Unless required by applicable law
+ * or agreed to in writing, software distributed under the License is
+ * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
- * <br>
- * ====================================================================
+ * <br> ====================================================================
  */
 package net.thevpc.nuts.runtime.bundles.io;
 
@@ -33,6 +31,7 @@ import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 
 import java.io.*;
+import java.lang.reflect.Field;
 import java.util.*;
 
 public class ProcessBuilder2 {
@@ -48,6 +47,7 @@ public class ProcessBuilder2 {
     private boolean baseIO;
     private boolean failFast;
     private Process proc;
+    private long pid;
     private long sleepMillis = 1000;
     private NutsSession session;
 
@@ -77,6 +77,29 @@ public class ProcessBuilder2 {
             }
         }
         return sb.toString();
+    }
+
+    public static long getProcessId(Process p) {
+        try {
+            //for windows
+            if (p.getClass().getName().equals("java.lang.Win32Process") || p.getClass().getName().equals("java.lang.ProcessImpl")) {
+                Field f = p.getClass().getDeclaredField("handle");
+                f.setAccessible(true);
+                long handle = f.getLong(p);
+//                Kernel32 kernel = Kernel32.INSTANCE;
+//                WinNT.HANDLE hand = new WinNT.HANDLE();
+//                hand.setPointer(Pointer.createConstant(handl));
+//                pid = kernel.GetProcessId(hand);
+            } else if (p.getClass().getName().equals("java.lang.UNIXProcess")) {
+                //for unix based operating systems
+                Field f = p.getClass().getDeclaredField("pid");
+                f.setAccessible(true);
+                return f.getLong(p);
+            }
+        } catch (Exception anyException) {
+            //ignore
+        }
+        return -1;
     }
 
     public long getSleepMillis() {
@@ -254,6 +277,7 @@ public class ProcessBuilder2 {
             }
         }
         proc = base.start();
+        pid = getProcessId(proc);
         return this;
     }
 
@@ -269,23 +293,24 @@ public class ProcessBuilder2 {
             NonBlockingInputStreamAdapter procError;
             NonBlockingInputStreamAdapter termIn = null;
             List<PipeThread> pipes = new ArrayList<>();
-            String procString = proc.toString();
+            String procString = NutsPath.of(command.get(0), session).getName()
+                    + "-" + (pid < 0 ? ("unknown-pid" + String.valueOf(-pid)) : String.valueOf(pid));
             String cmdStr = String.join(" ", command);
             if (out != null) {
                 procInput = new NonBlockingInputStreamAdapter("pipe-out-proc-" + procString, proc.getInputStream());
-                pipes.add(CoreIOUtils.pipe("pipe-out-proc-" + procString, cmdStr, "out", procInput, out,session));
+                pipes.add(CoreIOUtils.pipe("pipe-out-proc-" + procString, cmdStr, "out", procInput, out, session));
             }
             if (err != null) {
                 procError = new NonBlockingInputStreamAdapter("pipe-err-proc-" + procString, proc.getErrorStream());
                 if (base.redirectErrorStream()) {
-                    pipes.add(CoreIOUtils.pipe("pipe-err-proc-" + procString, cmdStr, "err", procError, out,session));
+                    pipes.add(CoreIOUtils.pipe("pipe-err-proc-" + procString, cmdStr, "err", procError, out, session));
                 } else {
-                    pipes.add(CoreIOUtils.pipe("pipe-err-proc-" + procString, cmdStr, "err", procError, err,session));
+                    pipes.add(CoreIOUtils.pipe("pipe-err-proc-" + procString, cmdStr, "err", procError, err, session));
                 }
             }
             if (in != null) {
                 termIn = new NonBlockingInputStreamAdapter("pipe-in-proc-" + procString, in);
-                pipes.add(CoreIOUtils.pipe("pipe-in-proc-" + procString, cmdStr, "in", termIn, proc.getOutputStream(),session));
+                pipes.add(CoreIOUtils.pipe("pipe-in-proc-" + procString, cmdStr, "in", termIn, proc.getOutputStream(), session));
             }
             while (proc.isAlive()) {
                 if (termIn != null) {
@@ -322,7 +347,6 @@ public class ProcessBuilder2 {
         } else {
             waitFor0();
         }
-        PipeThread.dump();
         return this;
     }
 
@@ -338,15 +362,15 @@ public class ProcessBuilder2 {
                     if (isGrabOutputString()) {
                         throw new NutsExecutionException(session,
                                 NutsMessage.cstyle("execution failed with code %d and message : %s. Command was %s", result, getOutputString(),
-                                        NutsCommandLine.of(getCommand(), session))
-                                , result);
+                                        NutsCommandLine.of(getCommand(), session)),
+                                result);
                     }
                 } else {
                     if (isGrabErrorString()) {
                         throw new NutsExecutionException(session,
                                 NutsMessage.cstyle("execution failed with code %d and message : %s. Command was %s", result, getOutputString(),
-                                        NutsCommandLine.of(getCommand(), session))
-                                , result);
+                                        NutsCommandLine.of(getCommand(), session)),
+                                result);
                     }
                     if (isGrabOutputString()) {
                         throw new NutsExecutionException(session, NutsMessage.cstyle(
@@ -730,14 +754,14 @@ public class ProcessBuilder2 {
 
         StringBuilder sb = new StringBuilder()
                 .append("```system ").append(
-                        NutsShellHelper.of(NutsShellFamily.getCurrent())
-                                .escapeArguments(fullCommandString.toArray(new String[0]),
-                                        new NutsCommandLineShellOptions()
-                                                .setSession(session)
-                                                .setFormatStrategy(NutsCommandLineFormatStrategy.SUPPORT_QUOTES)
-                                                .setExpectEnv(true)
-                                )
-                ).append(" ```");
+                NutsShellHelper.of(NutsShellFamily.getCurrent())
+                        .escapeArguments(fullCommandString.toArray(new String[0]),
+                                new NutsCommandLineShellOptions()
+                                        .setSession(session)
+                                        .setFormatStrategy(NutsCommandLineFormatStrategy.SUPPORT_QUOTES)
+                                        .setExpectEnv(true)
+                        )
+        ).append(" ```");
 
         if (baseIO) {
             ProcessBuilder.Redirect r;
@@ -859,8 +883,6 @@ public class ProcessBuilder2 {
     public ProcessBuilder2 setFailFast() {
         return setFailFast(true);
     }
-
-
 
     @Override
     public String toString() {
