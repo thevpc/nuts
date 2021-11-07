@@ -10,13 +10,15 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.Instant;
 import java.util.*;
 import java.util.stream.Collectors;
 
 public class NutsResourcePath implements NutsPathSPI {
+
     private String path;
-    private List<NutsId> ids;
+    private final List<NutsId> ids;
     private String location;
     private boolean urlPathLookedUp = false;
     private URL[] urls = null;
@@ -79,8 +81,8 @@ public class NutsResourcePath implements NutsPathSPI {
             try {
                 String loc = location;
                 ClassLoader resultClassLoader = getSession().search().addIds(
-                                this.ids.toArray(new NutsId[0])
-                        ).setLatest(true).setContent(true).setDependencies(true)
+                        this.ids.toArray(new NutsId[0])
+                ).setLatest(true).setContent(true).setDependencies(true)
                         .setDependencyFilter(
                                 NutsDependencyFilters.of(getSession())
                                         .byScope(NutsDependencyScopePattern.RUN)
@@ -93,7 +95,7 @@ public class NutsResourcePath implements NutsPathSPI {
                 }
                 URL resource = resultClassLoader.getResource(loc);
                 if (resource != null) {
-                    urlPath = NutsPath.of(resource,getSession());
+                    urlPath = NutsPath.of(resource, getSession());
                 }
             } catch (Exception e) {
                 //e.printStackTrace();
@@ -108,11 +110,14 @@ public class NutsResourcePath implements NutsPathSPI {
         return new NutsPathFromSPI(this);
     }
 
+    @Override
+    public NutsStream<NutsPath> list() {
+        return toURLPath().list();
+    }
 
     @Override
-    public NutsPath[] list() {
-        //TODO : parse urls for children!
-        return new NutsPath[0];
+    public NutsStream<NutsPath> walk(int maxDepth, NutsPathVisitOption[] options) {
+        return toURLPath().walk(maxDepth, options);
     }
 
     @Override
@@ -120,8 +125,10 @@ public class NutsResourcePath implements NutsPathSPI {
         return new MyPathFormat(this);
     }
 
+    @Override
     public String getName() {
-        return CoreIOUtils.getURLName(path);
+        String loc = getLocation();
+        return loc == null ? "" : Paths.get(loc).getFileName().toString();
     }
 
     @Override
@@ -130,32 +137,51 @@ public class NutsResourcePath implements NutsPathSPI {
     }
 
     @Override
-    public NutsPath resolve(String path) {
-        String[] others = Arrays.stream(NutsUtilStrings.trim(path).split("[/\\\\]"))
-                .filter(x -> x.length() > 0).toArray(String[]::new);
+    public NutsPath resolve(String[] others, boolean trailingSeparator) {
         if (others.length > 0) {
             StringBuilder loc = new StringBuilder(location);
             if (loc.length() == 0 || loc.charAt(loc.length() - 1) != '/') {
                 loc.append('/');
             }
             loc.append(String.join("/", others));
+            if (trailingSeparator) {
+                loc.append('/');
+            }
             return new NutsPathFromSPI(new NutsResourcePath(loc.toString(), getSession()));
         }
         return new NutsPathFromSPI(this);
     }
 
+//    @Override
+//    public NutsPath resolve(String path) {
+//        String[] others = Arrays.stream(NutsUtilStrings.trim(path).split("[/\\\\]"))
+//                .filter(x -> x.length() > 0).toArray(String[]::new);
+//        if (others.length > 0) {
+//            StringBuilder loc = new StringBuilder(location);
+//            if (loc.length() == 0 || loc.charAt(loc.length() - 1) != '/') {
+//                loc.append('/');
+//            }
+//            loc.append(String.join("/", others));
+//            return new NutsPathFromSPI(new NutsResourcePath(loc.toString(), getSession()));
+//        }
+//        return new NutsPathFromSPI(this);
+//    }
     @Override
     public URL toURL() {
         NutsPath up = toURLPath();
-        if (up == null) {
-            throw new NutsIOException(getSession(), NutsMessage.cstyle("unable to resolve url %s", toString()));
+        if (up != null) {
+            return up.toURL();
         }
-        return up.toURL();
+        throw new NutsIOException(getSession(), NutsMessage.cstyle("unable to resolve url from %s", toString()));
     }
 
     @Override
     public Path toFile() {
-        throw new NutsIOException(getSession(), NutsMessage.cstyle("unable to resolve file %s", toString()));
+        NutsPath up = toURLPath();
+        if (up != null) {
+            return up.toFile();
+        }
+        throw new NutsIOException(getSession(), NutsMessage.cstyle("unable to resolve file from %s", toString()));
     }
 
     @Override
@@ -185,31 +211,31 @@ public class NutsResourcePath implements NutsPathSPI {
     @Override
     public Instant getLastAccessInstant() {
         NutsPath up = toURLPath();
-        return up != null ? up.getLastAccessInstant():null;
+        return up != null ? up.getLastAccessInstant() : null;
     }
 
     @Override
     public Instant getCreationInstant() {
         NutsPath up = toURLPath();
-        return up != null ? up.getCreationInstant():null;
+        return up != null ? up.getCreationInstant() : null;
     }
 
     @Override
     public String owner() {
         NutsPath up = toURLPath();
-        return up != null ? up.owner():null;
+        return up != null ? up.owner() : null;
     }
 
     @Override
     public String group() {
         NutsPath up = toURLPath();
-        return up != null ? up.group():null;
+        return up != null ? up.group() : null;
     }
 
     @Override
     public Set<NutsPathPermission> permissions() {
         NutsPath up = toURLPath();
-        return up != null ? up.getPermissions():new LinkedHashSet<>();
+        return up != null ? up.getPermissions() : new LinkedHashSet<>();
     }
 
     @Override
@@ -256,10 +282,10 @@ public class NutsResourcePath implements NutsPathSPI {
     @Override
     public NutsPath getParent() {
         String ppath = CoreIOUtils.getURLParentPath(location);
-        if(ppath==null){
+        if (ppath == null) {
             return null;
         }
-        return NutsPath.of(rebuildURL(ppath,ids.toArray(new NutsId[0])),getSession());
+        return NutsPath.of(rebuildURL(ppath, ids.toArray(new NutsId[0])), getSession());
     }
 
     @Override
@@ -319,8 +345,12 @@ public class NutsResourcePath implements NutsPathSPI {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         NutsResourcePath that = (NutsResourcePath) o;
         return urlPathLookedUp == that.urlPathLookedUp && Objects.equals(path, that.path) && Objects.equals(ids, that.ids) && Objects.equals(location, that.location) && Objects.equals(urlPath, that.urlPath) && Objects.equals(session, that.session);
     }
@@ -331,6 +361,7 @@ public class NutsResourcePath implements NutsPathSPI {
     }
 
     private static class MyPathFormat implements NutsFormatSPI {
+
         private NutsResourcePath p;
 
         public MyPathFormat(NutsResourcePath p) {
@@ -349,18 +380,18 @@ public class NutsResourcePath implements NutsPathSPI {
                     String idsStr = path.substring("nuts-resource://(".length(), x);
                     NutsIdParser nutsIdParser = NutsIdParser.of(p.getSession());
                     tb.appendJoined(
-                            NutsTexts.of(p.getSession()).ofStyled(";",NutsTextStyle.separator()),
+                            NutsTexts.of(p.getSession()).ofStyled(";", NutsTextStyle.separator()),
                             Arrays.stream(idsStr.split(";")).map(xi -> {
-                        xi = xi.trim();
-                        if (xi.length() > 0) {
-                            NutsId pp = nutsIdParser.parse(xi);
-                            if(pp==null){
-                                return xi;
-                            }
-                            return pp;
-                        }
-                        return null;
-                    }).filter(Objects::nonNull).collect(Collectors.toList()));
+                                xi = xi.trim();
+                                if (xi.length() > 0) {
+                                    NutsId pp = nutsIdParser.parse(xi);
+                                    if (pp == null) {
+                                        return xi;
+                                    }
+                                    return pp;
+                                }
+                                return null;
+                            }).filter(Objects::nonNull).collect(Collectors.toList()));
                     tb.append(")", NutsTextStyle.separator());
                     tb.append(path.substring(x + 1), NutsTextStyle.path());
                 } else {
@@ -370,10 +401,10 @@ public class NutsResourcePath implements NutsPathSPI {
                 int x = path.indexOf('/', "nuts-resource://".length());
                 if (x > 0) {
                     String sid = path.substring("nuts-resource://".length(), x);
-                    NutsId ii = NutsId.of(sid,p.getSession());
-                    if(ii==null) {
+                    NutsId ii = NutsId.of(sid, p.getSession());
+                    if (ii == null) {
                         tb.append(sid);
-                    }else{
+                    } else {
                         tb.append(ii);
                     }
                     tb.append(path.substring(x), NutsTextStyle.path());
@@ -419,4 +450,36 @@ public class NutsResourcePath implements NutsPathSPI {
     public void removePermissions(NutsPathPermission... permissions) {
     }
 
+    @Override
+    public boolean isName() {
+        return false;
+    }
+
+    @Override
+    public int getPathCount() {
+        String location = getLocation();
+        if (NutsBlankable.isBlank(location)) {
+            return 0;
+        }
+        return NutsPath.of(location, getSession()).getPathCount();
+    }
+
+    @Override
+    public boolean isRoot() {
+        String loc = getLocation();
+        if (NutsBlankable.isBlank(loc)) {
+            return false;
+        }
+        switch (loc) {
+            case "/":
+            case "\\\\":
+                return true;
+        }
+        return NutsPath.of(loc, getSession()).isRoot();
+    }
+
+    @Override
+    public NutsPath toCompressedForm() {
+        return null;
+    }
 }

@@ -55,7 +55,7 @@ public class NutsExtensionNotFoundException extends NutsExtensionException {
         super(session, null,
                 criteria==null?
                         NutsMessage.cstyle(
-                                "extension %s could not found: type %s could not be wired", missingType.getSimpleName()
+                                "extension %s could not be wired", missingType.getSimpleName()
                         ):
                 NutsMessage.cstyle(
                         "extension %s could not found: type %s could not be wired with: %s", missingType.getSimpleName(), criteria

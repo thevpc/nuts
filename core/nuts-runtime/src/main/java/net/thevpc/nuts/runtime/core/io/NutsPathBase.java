@@ -225,4 +225,20 @@ public abstract class NutsPathBase implements NutsPath {
             return DEFAULT_SUPPORT;
         }
     }
+
+    @Override
+    public NutsStream<NutsPath> walk() {
+        return walk(Integer.MAX_VALUE,new NutsPathVisitOption[0]);
+    }
+
+    @Override
+    public NutsStream<NutsPath> walk(NutsPathVisitOption... options) {
+        return walk(Integer.MAX_VALUE,options);
+    }
+
+    @Override
+    public NutsStream<NutsPath> walk(int maxDepth) {
+        return walk(maxDepth<=0?Integer.MAX_VALUE:maxDepth,new NutsPathVisitOption[0]);
+    }
+
 }

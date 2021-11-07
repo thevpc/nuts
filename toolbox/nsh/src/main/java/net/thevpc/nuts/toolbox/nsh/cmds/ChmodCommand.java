@@ -73,12 +73,12 @@ public class ChmodCommand extends SimpleNshBuiltin {
         NutsArgument a = commandLine.peek();
         String s = a.getString();
         if (s.equals("-R") || s.equals("--recursive")) {
-                commandLine.skip();
-                options.m.recursive = true;
-                return true;
+            commandLine.skip();
+            options.m.recursive = true;
+            return true;
         } else {
             commandLine.skip();
-            boolean add=true;
+            boolean add = true;
             int x = 0;
             int w = 0;
             int r = 0;
@@ -86,112 +86,112 @@ public class ChmodCommand extends SimpleNshBuiltin {
             boolean group = false;
             boolean others = false;
             for (char c : s.substring(1).toCharArray()) {
-                switch (c){
-                    case '+':{
-                        add=true;
+                switch (c) {
+                    case '+': {
+                        add = true;
                         break;
                     }
-                    case '-':{
-                        add=false;
+                    case '-': {
+                        add = false;
                         break;
                     }
-                    case 'a':{
-                        user=true;
-                        group=true;
-                        others=true;
+                    case 'a': {
+                        user = true;
+                        group = true;
+                        others = true;
                         break;
                     }
-                    case 'u':{
-                        user=true;
+                    case 'u': {
+                        user = true;
                         break;
                     }
-                    case 'g':{
-                        group=true;
+                    case 'g': {
+                        group = true;
                         break;
                     }
-                    case 'o':{
-                        others=true;
+                    case 'o': {
+                        others = true;
                         break;
                     }
-                    case 'r':{
-                        if(user || (!group && !others)){
-                            if(add){
+                    case 'r': {
+                        if (user || (!group && !others)) {
+                            if (add) {
                                 options.m.addPermissions.add(NutsPathPermission.CAN_READ);
                                 options.m.addPermissions.add(NutsPathPermission.OWNER_READ);
-                            }else{
+                            } else {
                                 options.m.removePermissions.add(NutsPathPermission.CAN_READ);
                                 options.m.removePermissions.add(NutsPathPermission.OWNER_READ);
                             }
                         }
-                        if(group){
-                            if(add){
+                        if (group) {
+                            if (add) {
                                 options.m.addPermissions.add(NutsPathPermission.GROUP_READ);
-                            }else{
+                            } else {
                                 options.m.removePermissions.add(NutsPathPermission.GROUP_READ);
                             }
                         }
-                        if(others){
-                            if(add){
+                        if (others) {
+                            if (add) {
                                 options.m.addPermissions.add(NutsPathPermission.OTHERS_READ);
-                            }else{
+                            } else {
                                 options.m.removePermissions.add(NutsPathPermission.OTHERS_READ);
                             }
                         }
                         break;
                     }
-                    case 'w':{
-                        if(user || (!group && !others)){
-                            if(add) {
+                    case 'w': {
+                        if (user || (!group && !others)) {
+                            if (add) {
                                 options.m.addPermissions.add(NutsPathPermission.CAN_WRITE);
                                 options.m.addPermissions.add(NutsPathPermission.OWNER_WRITE);
-                            }else{
+                            } else {
                                 options.m.removePermissions.add(NutsPathPermission.CAN_WRITE);
                                 options.m.removePermissions.add(NutsPathPermission.OWNER_WRITE);
                             }
                         }
-                        if(group){
-                            if(add){
+                        if (group) {
+                            if (add) {
                                 options.m.addPermissions.add(NutsPathPermission.GROUP_WRITE);
-                            }else{
+                            } else {
                                 options.m.removePermissions.add(NutsPathPermission.GROUP_WRITE);
                             }
                         }
-                        if(others){
-                            if(add){
+                        if (others) {
+                            if (add) {
                                 options.m.addPermissions.add(NutsPathPermission.OTHERS_WRITE);
-                            }else{
+                            } else {
                                 options.m.removePermissions.add(NutsPathPermission.OTHERS_WRITE);
                             }
                         }
                         break;
                     }
-                    case 'x':{
-                        if(user || (!group && !others)){
-                            if(add) {
+                    case 'x': {
+                        if (user || (!group && !others)) {
+                            if (add) {
                                 options.m.addPermissions.add(NutsPathPermission.CAN_EXECUTE);
                                 options.m.addPermissions.add(NutsPathPermission.OWNER_EXECUTE);
-                            }else{
+                            } else {
                                 options.m.removePermissions.add(NutsPathPermission.CAN_EXECUTE);
                                 options.m.removePermissions.add(NutsPathPermission.OWNER_EXECUTE);
                             }
                         }
-                        if(group){
-                            if(add){
+                        if (group) {
+                            if (add) {
                                 options.m.addPermissions.add(NutsPathPermission.GROUP_EXECUTE);
-                            }else{
+                            } else {
                                 options.m.removePermissions.add(NutsPathPermission.GROUP_EXECUTE);
                             }
                         }
-                        if(others){
-                            if(add){
+                        if (others) {
+                            if (add) {
                                 options.m.addPermissions.add(NutsPathPermission.OTHERS_EXECUTE);
-                            }else{
+                            } else {
                                 options.m.removePermissions.add(NutsPathPermission.OTHERS_EXECUTE);
                             }
                         }
                         break;
                     }
-                    default:{
+                    default: {
                         return false;
                     }
                 }
@@ -219,11 +219,8 @@ public class ChmodCommand extends SimpleNshBuiltin {
         f.addPermissions(m.addPermissions.toArray(new NutsPathPermission[0]));
         f.removePermissions(m.removePermissions.toArray(new NutsPathPermission[0]));
         if (f.isDirectory()) {
-            NutsPath[] files = f.list();
-            if (files != null) {
-                for (NutsPath file : files) {
-                    chmod(file, m, errors);
-                }
+            for (NutsPath file : f.list()) {
+                chmod(file, m, errors);
             }
         }
     }
@@ -238,13 +235,13 @@ public class ChmodCommand extends SimpleNshBuiltin {
         public String toString() {
             StringBuilder sb = new StringBuilder();
             for (NutsPathPermission p : addPermissions) {
-                if(sb.length()>0){
+                if (sb.length() > 0) {
                     sb.append(",");
                 }
                 sb.append("+").append(p.id());
             }
             for (NutsPathPermission p : removePermissions) {
-                if(sb.length()>0){
+                if (sb.length() > 0) {
                     sb.append(",");
                 }
                 sb.append("-").append(p.id());

@@ -116,6 +116,8 @@ public interface NutsPath extends NutsFormattable {
     String getLocation();
 
     NutsPath resolve(String other);
+    
+    NutsPath resolve(NutsPath other);
 
     /**
      * path protocol or null if undefined. This is some how similar to url protocol
@@ -162,7 +164,7 @@ public interface NutsPath extends NutsFormattable {
      */
     Path asFile();
 
-    NutsPath[] list();
+    NutsStream<NutsPath> list();
 
     InputStream getInputStream();
 
@@ -232,4 +234,60 @@ public interface NutsPath extends NutsFormattable {
 
     NutsPath removePermissions(NutsPathPermission... permissions);
 
+    /**
+     * return true if this path is a simple name that do not contain '/' or equivalent
+     * @return true if this path is a simple name that do not contain '/' or equivalent
+     */
+    boolean isName();
+
+    /**
+     * return path items count
+     * @return path items count
+     */
+    int getPathCount();
+
+    /**
+     * true if this is the root of the path file system.
+     * good examples are:
+     * '/' , 'C:\' and 'http://myserver/'
+     * @return true if this is the root of the path file system
+     */
+    boolean isRoot();
+
+
+    /**
+     * Return a Stream that is lazily populated with Path by walking the file tree rooted at a given starting file.
+     * The file tree is traversed depth-first, the elements in the stream are Path objects that are obtained as if by resolving the relative path against start.
+     *
+     * @param options  options
+     * @param maxDepth max depth
+     * @return a Stream that is lazily populated with Path by walking the file tree rooted at a given starting file
+     */
+    NutsStream<NutsPath> walk(int maxDepth, NutsPathVisitOption[] options);
+
+    /**
+     * Return a Stream that is lazily populated with Path by walking the file tree rooted at a given starting file.
+     * The file tree is traversed depth-first, the elements in the stream are Path objects that are obtained as if by resolving the relative path against start.
+     *
+     * @param options  options
+     * @return a Stream that is lazily populated with Path by walking the file tree rooted at a given starting file
+     */
+    NutsStream<NutsPath> walk(NutsPathVisitOption... options);
+
+    /**
+     * Return a Stream that is lazily populated with Path by walking the file tree rooted at a given starting file.
+     * The file tree is traversed depth-first, the elements in the stream are Path objects that are obtained as if by resolving the relative path against start.
+     *
+     * @param maxDepth  max depth
+     * @return a Stream that is lazily populated with Path by walking the file tree rooted at a given starting file
+     */
+    NutsStream<NutsPath> walk(int maxDepth);
+
+    /**
+     * Return a Stream that is lazily populated with Path by walking the file tree rooted at a given starting file.
+     * The file tree is traversed depth-first, the elements in the stream are Path objects that are obtained as if by resolving the relative path against start.
+     *
+     * @return a Stream that is lazily populated with Path by walking the file tree rooted at a given starting file
+     */
+    NutsStream<NutsPath> walk();
 }

@@ -7,8 +7,8 @@ import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
 
 public class ClassLoaderPath extends URLPath {
-    private String path;
-    private ClassLoader loader;
+    private final String path;
+    private final ClassLoader loader;
 
     public ClassLoaderPath(String path, ClassLoader loader, NutsSession session) {
         super(loader.getResource(path.substring("classpath://".length())), session, true);

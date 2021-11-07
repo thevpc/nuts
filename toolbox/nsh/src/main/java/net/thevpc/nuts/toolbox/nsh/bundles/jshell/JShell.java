@@ -246,13 +246,13 @@ public class JShell {
 
     public List<String> findFiles(final String namePattern, boolean exact, String parent,NutsSession session) {
         if (exact) {
-            String[] all = Arrays.stream(NutsPath.of(parent, session).list())
+            String[] all = NutsPath.of(parent, session).list()
                     .filter(x->namePattern.equals(x.getName()))
                     .map(NutsPath::toString).toArray(String[]::new);
             return Arrays.asList(all);
         } else {
             final Pattern o = Pattern.compile(namePattern);
-            String[] all = Arrays.stream(NutsPath.of(parent, session).list())
+            String[] all = NutsPath.of(parent, session).list()
                     .filter(x->o.matcher(x.getName()).matches())
                     .map(NutsPath::toString).toArray(String[]::new);
             return Arrays.asList(all);
@@ -667,7 +667,7 @@ public class JShell {
         if (file != null) {
             file = NutsPath.of(file,session).toAbsolute(context.getCwd()).toString();
         }
-        if (file == null || !NutsPath.of(file,session).isFile()) {
+        if (file == null || !NutsPath.of(file,session).exists()) {
             if (ignoreIfNotFound) {
                 return 0;
             }

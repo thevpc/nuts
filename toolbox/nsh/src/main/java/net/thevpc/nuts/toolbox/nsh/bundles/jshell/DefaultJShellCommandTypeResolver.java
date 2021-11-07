@@ -22,7 +22,7 @@ public class DefaultJShellCommandTypeResolver implements JShellCommandTypeResolv
             return new JShellCommandType(item, "path", a, item + " is aliased to " + a);
         }
         NutsPath path = NutsPath.of(item,context.getSession()).toAbsolute(context.getCwd());
-        if (path.isFile()) {
+        if (path.exists()) {
             return new JShellCommandType(item, "path", path.toString(), item + " is " + path);
         }
         return null;

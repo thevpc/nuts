@@ -44,12 +44,12 @@ import java.util.stream.Collectors;
 public class LsCommand extends SimpleNshBuiltin {
 
     private static final FileSorter FILE_SORTER = new FileSorter();
-    private DateTimeFormatter SIMPLE_DATE_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
-                     .withZone( ZoneId.systemDefault() );
-            ;
     private final HashSet<String> fileTypeArchive = new HashSet<String>(Arrays.asList("jar", "war", "ear", "rar", "zip", "tar", "gz"));
+    ;
     private final HashSet<String> fileTypeExec2 = new HashSet<String>(Arrays.asList("jar", "war", "ear", "rar", "zip", "bin", "exe", "tar", "gz", "class", "sh"));
     private final HashSet<String> fileTypeConfig = new HashSet<String>(Arrays.asList("xml", "config", "cfg", "json", "iml", "ipr"));
+    private DateTimeFormatter SIMPLE_DATE_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
+            .withZone(ZoneId.systemDefault());
 
     public LsCommand() {
         super("ls", DEFAULT_SUPPORT);
@@ -114,17 +114,11 @@ public class LsCommand extends SimpleNshBuiltin {
                 if (!file.isDirectory() || options.d) {
                     g.file = build(file);
                 } else {
-                    NutsPath[] children = file.list();
-                    if (children != null) {
-                        Arrays.sort(children, FILE_SORTER);
-                        g.children = new ArrayList<>();
-                        for (NutsPath ch : children) {
-                            ResultItem b = build(ch);
-                            if (options.a || !b.hidden) {
-                                g.children.add(b);
-                            }
-                        }
-                    }
+                    g.children = file.list()
+                            .sorted(FILE_SORTER)
+                            .map(this::build)
+                            .filter(b -> options.a || !b.hidden)
+                            .toList();
                 }
             }
         }
@@ -228,7 +222,7 @@ public class LsCommand extends SimpleNshBuiltin {
         r.path = path.toString();
         r.name = path.getName();
         boolean dir = path.isDirectory();
-        boolean regular = path.isFile();
+        boolean regular = path.isRegularFile();
         boolean link = path.isSymbolicLink();
         boolean other = false;
         Set<NutsPathPermission> permissions = path.getPermissions();
@@ -342,8 +336,8 @@ public class LsCommand extends SimpleNshBuiltin {
 
         @Override
         public int compare(NutsPath o1, NutsPath o2) {
-            int d1 = o1.isDirectory() ? 0 : o1.isFile() ? 1 : 2;
-            int d2 = o2.isDirectory() ? 0 : o2.isFile() ? 1 : 2;
+            int d1 = o1.isDirectory() ? 0 : o1.isRegularFile() ? 1 : 2;
+            int d2 = o2.isDirectory() ? 0 : o2.isRegularFile() ? 1 : 2;
             int x = 0;
             if (foldersFirst) {
                 x = d1 - d2;

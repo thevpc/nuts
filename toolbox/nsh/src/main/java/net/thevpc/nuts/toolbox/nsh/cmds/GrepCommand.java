@@ -203,11 +203,8 @@ public class GrepCommand extends AbstractNshBuiltin {
                     reader = new InputStreamReader(context.in());
                     processByLine(reader, options, p, f, results, session);
                 } else if (f.getFile().isDirectory()) {
-                    NutsPath[] files = f.getFile().list();
-                    if (files != null) {
-                        for (NutsPath ff : files) {
-                            grepFile(new FileInfo(ff, f.getHighlighter()), p, options, context, true, results);
-                        }
+                    for (NutsPath ff : f.getFile().list()) {
+                        grepFile(new FileInfo(ff, f.getHighlighter()), p, options, context, true, results);
                     }
                     return 0;
                 } else {

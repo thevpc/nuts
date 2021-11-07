@@ -216,15 +216,16 @@ public abstract class AbstractJShellContext implements JShellContext {
         return new DirectoryScanner(path).toArray();
     }
 
+    @Override
     public void copyFrom(JShellContext other) {
         if (other != null) {
+            setSession(other.getSession() == null ? null : other.getSession().copy());
             setAliases(other.aliases());
             setBuiltins(other.builtins());
             setRootNode(other.getRootNode());
             setParentNode(other.getParentNode());
             setFileSystem(other.getFileSystem());
             setCwd(other.getCwd());
-            setSession(other.getSession() == null ? null : other.getSession().copy());
             setFunctionManager(other.functions());
         }
     }

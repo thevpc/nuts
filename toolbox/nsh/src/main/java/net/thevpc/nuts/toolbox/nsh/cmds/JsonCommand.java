@@ -163,7 +163,7 @@ public class JsonCommand extends SimpleNshBuiltin {
         T inputDocument = null;
         if (path != null) {
             NutsPath file = NutsPath.of(path, session).toAbsolute(context.getCwd());
-            if (file.isFile()) {
+            if (file.exists()) {
                 inputDocument = njson.parse(file, cls);
             } else {
                 throw new NutsExecutionException(session, NutsMessage.cstyle("invalid path %s", path), 1);

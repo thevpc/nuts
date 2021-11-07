@@ -517,7 +517,7 @@ public class DefaultNutsCompress implements NutsCompress {
         private Item[] list() {
             if (o.isPath()) {
                 NutsPath p = o.getPath();
-                return Arrays.stream(p.list()).map(x -> new Item(NutsStreamOrPath.of(x)))
+                return p.list().map(x -> new Item(NutsStreamOrPath.of(x)))
                         .toArray(Item[]::new);
             }
             return new Item[0];

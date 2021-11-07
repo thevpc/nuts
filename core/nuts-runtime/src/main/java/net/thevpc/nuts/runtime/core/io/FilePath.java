@@ -6,9 +6,13 @@ import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
 import net.thevpc.nuts.spi.NutsFormatSPI;
 import net.thevpc.nuts.spi.NutsPathSPI;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.file.FileVisitOption;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.attribute.*;
@@ -16,11 +20,9 @@ import java.time.Instant;
 import java.util.*;
 
 public class FilePath implements NutsPathSPI {
+
     private final Path value;
     private final NutsSession session;
-    //    private PosixFileAttributes uattr = null;
-    private final boolean uattrLoaded = false;
-
 
     public FilePath(Path value, NutsSession session) {
         if (value == null) {
@@ -35,15 +37,16 @@ public class FilePath implements NutsPathSPI {
     }
 
     @Override
-    public NutsPath[] list() {
+    public NutsStream<NutsPath> list() {
         if (Files.isDirectory(value)) {
             try {
-                return Files.list(value).map(x -> NutsPath.of(x,getSession())).toArray(NutsPath[]::new);
+                return NutsStream.of(Files.list(value).map(x -> NutsPath.of(x, getSession())),
+                        getSession());
             } catch (IOException e) {
                 //
             }
         }
-        return new NutsPath[0];
+        return NutsStream.ofEmpty(getSession());
     }
 
     @Override
@@ -51,8 +54,9 @@ public class FilePath implements NutsPathSPI {
         return new MyPathFormat(this);
     }
 
+    @Override
     public String getName() {
-        return CoreIOUtils.getURLName(value.toString());
+        return value.getFileName().toString();
     }
 
     @Override
@@ -61,24 +65,36 @@ public class FilePath implements NutsPathSPI {
     }
 
     @Override
-    public NutsPath resolve(String other) {
-        String[] others = Arrays.stream(NutsUtilStrings.trim(other).split("[/\\\\]"))
-                .filter(x -> x.length() > 0).toArray(String[]::new);
+    public NutsPath resolve(String[] others, boolean trailingSeparator) {
         if (others.length > 0) {
             Path value2 = value;
             for (String s : others) {
                 value2 = value2.resolve(s);
             }
-            return NutsPath.of(value2,getSession());
+            return NutsPath.of(value2, getSession());
         }
         return toNutsPathInstance();
     }
 
+//    @Override
+//    public NutsPath resolve(String other) {
+//        String[] others = Arrays.stream(NutsUtilStrings.trim(other).split("[/\\\\]"))
+//                .filter(x -> x.length() > 0).toArray(String[]::new);
+//        if (others.length > 0) {
+//            Path value2 = value;
+//            for (String s : others) {
+//                value2 = value2.resolve(s);
+//            }
+//            return NutsPath.of(value2, getSession());
+//        }
+//        return toNutsPathInstance();
+//    }
+    @Override
     public URL toURL() {
         try {
             return value.toUri().toURL();
         } catch (MalformedURLException e) {
-            throw new NutsIOException(session,e);
+            throw new NutsIOException(session, e);
         }
     }
 
@@ -117,7 +133,7 @@ public class FilePath implements NutsPathSPI {
         try {
             return Files.size(value);
         } catch (IOException e) {
-            throw new NutsIOException(session,e);
+            throw new NutsIOException(session, e);
         }
     }
 
@@ -142,7 +158,7 @@ public class FilePath implements NutsPathSPI {
                     new NutsDefaultInputStreamMetadata(toNutsPathInstance())
             );
         } catch (IOException e) {
-            throw new NutsIOException(session,e);
+            throw new NutsIOException(session, e);
         }
     }
 
@@ -150,7 +166,7 @@ public class FilePath implements NutsPathSPI {
         try {
             return Files.newOutputStream(value);
         } catch (IOException e) {
-            throw new NutsIOException(session,e);
+            throw new NutsIOException(session, e);
         }
     }
 
@@ -237,7 +253,7 @@ public class FilePath implements NutsPathSPI {
         if (p == null) {
             return null;
         }
-        return NutsPath.of(p,getSession());
+        return NutsPath.of(p, getSession());
     }
 
     @Override
@@ -353,14 +369,77 @@ public class FilePath implements NutsPathSPI {
     }
 
     @Override
+    public boolean isName() {
+        if (value.getNameCount() > 1) {
+            return false;
+        }
+        String v = value.toString();
+        switch (v) {
+            case "/":
+            case "\\":
+            case ".":
+            case "..": {
+                return false;
+            }
+        }
+        for (char c : v.toCharArray()) {
+            switch (c) {
+                case '/':
+                case '\\': {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    @Override
+    public int getPathCount() {
+        return value.getNameCount();
+    }
+
+    @Override
+    public boolean isRoot() {
+        return value.getNameCount() == 0;
+    }
+
+    @Override
+    public NutsStream<NutsPath> walk(int maxDepth, NutsPathVisitOption[] options) {
+        FileVisitOption[] fileOptions = Arrays.stream(options)
+                .map(x -> {
+                    if (x == null) {
+                        return null;
+                    }
+                    switch (x) {
+                        case FOLLOW_LINKS:
+                            return FileVisitOption.FOLLOW_LINKS;
+                    }
+                    return null;
+                }).filter(Objects::nonNull).toArray(FileVisitOption[]::new);
+        if (Files.isDirectory(value)) {
+            try {
+                return NutsStream.of(Files.walk(value, maxDepth, fileOptions).map(x -> NutsPath.of(x, getSession())),
+                        getSession());
+            } catch (IOException e) {
+                //
+            }
+        }
+        return NutsStream.ofEmpty(getSession());
+    }
+
+    @Override
     public int hashCode() {
         return Objects.hash(value);
     }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         FilePath urlPath = (FilePath) o;
         return Objects.equals(value, urlPath.value);
     }
@@ -388,62 +467,103 @@ public class FilePath implements NutsPathSPI {
         return null;
     }
 
-    public void setPermissions(NutsPathPermission[] permissions, boolean f) {
+    public boolean setPermissions(NutsPathPermission[] permissions, boolean f) {
+        int count = 0;
+        permissions = permissions == null ? new NutsPathPermission[0]
+                : Arrays.stream(permissions).filter(Objects::nonNull).distinct().toArray(NutsPathPermission[]::new);
         for (NutsPathPermission permission : permissions) {
             switch (permission) {
                 case CAN_READ: {
-                    value.toFile().setReadable(f);
+                    boolean b = value.toFile().setReadable(f);
+                    if (b) {
+                        count++;
+                    }
                     break;
                 }
                 case CAN_WRITE: {
-                    value.toFile().setWritable(f);
+                    boolean b = value.toFile().setWritable(f);
+                    if (b) {
+                        count++;
+                    }
                     break;
                 }
                 case CAN_EXECUTE: {
-                    value.toFile().setExecutable(f);
+                    boolean b = value.toFile().setExecutable(f);
+                    if (b) {
+                        count++;
+                    }
                     break;
                 }
                 case OWNER_READ: {
-                    value.toFile().setReadable(f);
+                    boolean b = value.toFile().setReadable(f);
+                    if (b) {
+                        count++;
+                    }
                     break;
                 }
                 case OWNER_WRITE: {
-                    value.toFile().setWritable(f);
+                    boolean b = value.toFile().setWritable(f);
+                    if (b) {
+                        count++;
+                    }
                     break;
                 }
                 case OWNER_EXECUTE: {
-                    value.toFile().setExecutable(f);
+                    boolean b = value.toFile().setExecutable(f);
+                    if (b) {
+                        count++;
+                    }
                     break;
                 }
                 case GROUP_READ: {
-                    value.toFile().setReadable(f);
+                    boolean b = value.toFile().setReadable(f);
+                    if (b) {
+                        count++;
+                    }
                     break;
                 }
                 case GROUP_WRITE: {
-                    value.toFile().setWritable(f);
+                    boolean b = value.toFile().setWritable(f);
+                    if (b) {
+                        count++;
+                    }
                     break;
                 }
                 case GROUP_EXECUTE: {
-                    value.toFile().setExecutable(f);
+                    boolean b = value.toFile().setExecutable(f);
+                    if (b) {
+                        count++;
+                    }
                     break;
                 }
                 case OTHERS_READ: {
-                    value.toFile().setReadable(f);
+                    boolean b = value.toFile().setReadable(f);
+                    if (b) {
+                        count++;
+                    }
                     break;
                 }
                 case OTHERS_WRITE: {
-                    value.toFile().setWritable(f);
+                    boolean b = value.toFile().setWritable(f);
+                    if (b) {
+                        count++;
+                    }
                     break;
                 }
                 case OTHERS_EXECUTE: {
-                    value.toFile().setExecutable(f);
+                    boolean b = value.toFile().setExecutable(f);
+                    if (b) {
+                        count++;
+                    }
                     break;
                 }
             }
         }
+        return count == permissions.length;
     }
 
     private static class MyPathFormat implements NutsFormatSPI {
+
         private final FilePath p;
 
         public MyPathFormat(FilePath p) {
@@ -464,4 +584,10 @@ public class FilePath implements NutsPathSPI {
             return false;
         }
     }
+
+    @Override
+    public NutsPath toCompressedForm() {
+        return null;
+    }
+    
 }

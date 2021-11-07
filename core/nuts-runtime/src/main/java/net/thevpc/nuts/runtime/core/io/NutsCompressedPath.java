@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Set;
 
 public class NutsCompressedPath extends NutsPathBase {
+
     private final String compressedForm;
     private final NutsString formattedCompressedForm;
     private final NutsPath base;
@@ -145,8 +146,8 @@ public class NutsCompressedPath extends NutsPathBase {
     }
 
     @Override
-    public NutsPath[] list() {
-        return new NutsPath[0];
+    public NutsStream<NutsPath> list() {
+        return base.list();
     }
 
     @Override
@@ -166,7 +167,6 @@ public class NutsCompressedPath extends NutsPathBase {
 //    public NutsOutput output() {
 //        return base.output();
 //    }
-
     @Override
     public OutputStream getOutputStream() {
         return base.getOutputStream();
@@ -253,6 +253,11 @@ public class NutsCompressedPath extends NutsPathBase {
     }
 
     @Override
+    public NutsPath toAbsolute(String basePath) {
+        return base.toAbsolute(basePath).toCompressedForm();
+    }
+
+    @Override
     public NutsPath toAbsolute(NutsPath basePath) {
         if (base.isAbsolute()) {
             return this;
@@ -276,6 +281,44 @@ public class NutsCompressedPath extends NutsPathBase {
     }
 
     @Override
+    public NutsPath setPermissions(NutsPathPermission... permissions) {
+        base.setPermissions(permissions);
+        return this;
+    }
+
+    @Override
+    public NutsPath addPermissions(NutsPathPermission... permissions) {
+        base.addPermissions(permissions);
+        return this;
+    }
+
+    @Override
+    public NutsPath removePermissions(NutsPathPermission... permissions) {
+        base.removePermissions(permissions);
+        return this;
+    }
+
+    @Override
+    public boolean isName() {
+        return base.isName();
+    }
+
+    @Override
+    public int getPathCount() {
+        return base.getPathCount();
+    }
+
+    @Override
+    public boolean isRoot() {
+        return base.isRoot();
+    }
+
+    @Override
+    public NutsStream<NutsPath> walk(int maxDepth, NutsPathVisitOption[] options) {
+        return base.walk(maxDepth, options);
+    }
+
+    @Override
     public String toString() {
         return String.valueOf(compressedForm);
     }
@@ -283,11 +326,11 @@ public class NutsCompressedPath extends NutsPathBase {
     @Override
     public NutsFormat formatter() {
         return new MyPathFormat(this)
-                .setSession(getSession())
-                ;
+                .setSession(getSession());
     }
 
     private static class MyPathFormat extends DefaultFormatBase<NutsFormat> {
+
         private final NutsCompressedPath p;
 
         public MyPathFormat(NutsCompressedPath p) {
@@ -316,25 +359,8 @@ public class NutsCompressedPath extends NutsPathBase {
     }
 
     @Override
-    public NutsPath toAbsolute(String basePath) {
-        return base.toAbsolute(basePath).toCompressedForm();
+    public NutsPath resolve(NutsPath other) {
+        return base.resolve(other).toCompressedForm();
     }
 
-    @Override
-    public NutsPath setPermissions(NutsPathPermission... permissions) {
-        base.setPermissions(permissions);
-        return this;
-    }
-
-    @Override
-    public NutsPath addPermissions(NutsPathPermission... permissions) {
-        base.addPermissions(permissions);
-        return this;
-    }
-
-    @Override
-    public NutsPath removePermissions(NutsPathPermission... permissions) {
-        base.removePermissions(permissions);
-        return this;
-    }
 }

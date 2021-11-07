@@ -56,7 +56,7 @@ public class NutsCommandTypeResolver implements JShellCommandTypeResolver {
         if (w != null) {
             return new JShellCommandType(item, "nuts " + w.getType().toString().toLowerCase(), w.getValue(), w.getDescription());
         }
-        if (NutsPath.of(path, session).isFile()) {
+        if (NutsPath.of(path, session).exists()) {
             return new JShellCommandType(item, "path", path, item + " is " + path);
         }
         return null;

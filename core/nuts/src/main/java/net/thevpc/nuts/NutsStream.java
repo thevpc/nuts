@@ -73,6 +73,14 @@ public interface NutsStream<T> extends Iterable<T> {
         return NutsStreams.of(session).create(str,null);
     }
 
+    static <T> NutsStream<T> ofEmpty(NutsSession session) {
+        return of(Collections.emptyList(),session);
+    }
+
+    static <T> NutsStream<T> ofSingleton(T element,NutsSession session) {
+        return of(Arrays.asList(element),session);
+    }
+
     /**
      * return result as a  java.util.List .
      * <p>

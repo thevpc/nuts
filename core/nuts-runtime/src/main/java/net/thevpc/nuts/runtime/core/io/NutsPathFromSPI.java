@@ -19,6 +19,7 @@ import java.util.Set;
 import java.util.logging.Level;
 
 public class NutsPathFromSPI extends NutsPathBase {
+
     private final NutsPathSPI base;
 
     public NutsPathFromSPI(NutsPathSPI base) {
@@ -40,7 +41,8 @@ public class NutsPathFromSPI extends NutsPathBase {
     public String getName() {
         String n = base.getName();
         if (n == null) {
-            return CoreIOUtils.getURLName(toString());
+            String loc = getLocation();
+            return loc == null ? "" : CoreIOUtils.getURLName(loc);
         }
         return n;
     }
@@ -51,17 +53,36 @@ public class NutsPathFromSPI extends NutsPathBase {
     }
 
     @Override
-    public NutsPath resolve(String other) {
-        String[] others = Arrays.stream(NutsUtilStrings.trim(other).split("[/\\\\]"))
+    public NutsPath resolve(NutsPath other) {
+        if (other == null) {
+            return this;
+        }
+        if (other.isAbsolute()) {
+            return other;
+        }
+        String loc = other.getLocation();
+        if (NutsBlankable.isBlank(loc)) {
+            return this;
+        }
+        String[] others = Arrays.stream(loc.split("[/\\\\]"))
                 .filter(x -> x.length() > 0).toArray(String[]::new);
         if (others.length == 0) {
             return this;
         }
-        NutsPath n = base.resolve(String.join("/", others));
+        char lastChar = loc.charAt(loc.length() - 1);
+        NutsPath n = base.resolve(others, lastChar == '/' || lastChar == '\\');
         if (n == null) {
             throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("unable to resolve %s", other));
         }
         return n;
+    }
+
+    @Override
+    public NutsPath resolve(String other) {
+        if (NutsBlankable.isBlank(other)) {
+            return this;
+        }
+        return resolve(NutsPath.of(other, getSession()));
     }
 
     @Override
@@ -98,14 +119,14 @@ public class NutsPathFromSPI extends NutsPathBase {
     }
 
     @Override
-    public NutsPath[] list() {
+    public NutsStream<NutsPath> list() {
         try {
-            NutsPath[] p = base.list();
+            NutsStream<NutsPath> p = base.list();
             if (p != null) {
                 return p;
             }
         } catch (Exception ex) {
-            NutsLoggerOp.of(NutsPathFromSPI.class,getSession())
+            NutsLoggerOp.of(NutsPathFromSPI.class, getSession())
                     .verb(NutsLogVerb.WARNING)
                     .level(Level.WARNING)
                     .error(ex)
@@ -113,7 +134,7 @@ public class NutsPathFromSPI extends NutsPathBase {
                             NutsMessage.jstyle("error execution {0}.list()", base.getClass().getName())
                     );
         }
-        return new NutsPath[0];
+        return NutsStream.ofEmpty(getSession());
     }
 
     @Override
@@ -122,21 +143,6 @@ public class NutsPathFromSPI extends NutsPathBase {
                 new NutsDefaultInputStreamMetadata(this)
         );
     }
-
-//    @Override
-//    public NutsInput input() {
-//        return new NutsPathFromSPIInput();
-//    }
-//
-//    @Override
-//    public NutsOutput output() {
-//        return new NutsPathOutput(null, this, getSession()) {
-//            @Override
-//            public OutputStream open() {
-//                return base.getOutputStream();
-//            }
-//        };
-//    }
 
     @Override
     public OutputStream getOutputStream() {
@@ -211,7 +217,6 @@ public class NutsPathFromSPI extends NutsPathBase {
 //                    getNutsPath().getContentLength()));
 //        }
 //    }
-
     @Override
     public NutsPathBuilder builder() {
         return new DefaultPathBuilder(getSession(), this);
@@ -227,7 +232,6 @@ public class NutsPathFromSPI extends NutsPathBase {
         return base.isAbsolute();
     }
 
-
     @Override
     public NutsPath normalize() {
         return base.normalize();
@@ -240,7 +244,7 @@ public class NutsPathFromSPI extends NutsPathBase {
 
     @Override
     public NutsPath toAbsolute(String basePath) {
-        return toAbsolute(basePath==null?null:NutsPath.of(basePath,getSession()));
+        return toAbsolute(basePath == null ? null : NutsPath.of(basePath, getSession()));
     }
 
     @Override
@@ -313,6 +317,28 @@ public class NutsPathFromSPI extends NutsPathBase {
         return this;
     }
 
+    @Override
+    public boolean isName() {
+        return base.isName();
+    }
 
+    @Override
+    public int getPathCount() {
+        return base.getPathCount();
+    }
 
+    @Override
+    public boolean isRoot() {
+        return base.isRoot();
+    }
+
+    @Override
+    public NutsStream<NutsPath> walk(int maxDepth, NutsPathVisitOption[] options) {
+        return base.walk(maxDepth <= 0 ? Integer.MAX_VALUE : maxDepth,
+                options == null ? new NutsPathVisitOption[0]
+                        : Arrays.stream(options).filter(Objects::isNull)
+                                .distinct()
+                                .toArray(NutsPathVisitOption[]::new)
+        );
+    }
 }

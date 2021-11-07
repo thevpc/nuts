@@ -26,19 +26,6 @@ import org.junit.jupiter.api.*;
 public class Test01_CreateTest {
 
     @Test
-    public void tempTest(){
-        try {
-            NutsSession session = TestUtils.openExistingTestWorkspace();
-            Set<String> q = CoreServiceUtils.loadZipServiceClassNames(new File("/home/vpc/nuts-runtime-0.8.3.0-err.jar").toURI().toURL(), NutsComponent.class,session);
-            System.out.println(q.size());
-            for (String s : q) {
-                System.out.println(s);
-            }
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        }
-    }
-    @Test
     public void minimal1() throws Exception {
         String wsPath = TestUtils.getTestBaseFolder().getPath();
 
@@ -92,6 +79,7 @@ public class Test01_CreateTest {
     @Test
     public void minimal3() throws Exception {
         NutsWorkspace ws = TestUtils.openNewTestWorkspace(
+                "--reset", // required for exploded repos
                 "--exploded",
                 "--archetype", "minimal",
                 "--verbose",
@@ -103,6 +91,7 @@ public class Test01_CreateTest {
         String wsPath = TestUtils.getTestBaseFolder().getPath();
 
         NutsSession session = TestUtils.openNewTestWorkspace(
+                "--reset", // required for exploded repos
                 "--exploded",
                 "--archetype", "default",
                 "--verbose",
@@ -135,6 +124,7 @@ public class Test01_CreateTest {
     @Test
     public void default2() throws Exception {
         NutsWorkspace ws = TestUtils.openNewTestWorkspace(
+                "--reset", // required for exploded repos
                 "--exploded",
                 "--archetype", "minimal",
                 "--verbose",
@@ -144,6 +134,7 @@ public class Test01_CreateTest {
     @Test
     public void default3() throws Exception {
         NutsWorkspace ws = TestUtils.openNewTestWorkspace(
+                "--reset", // required for exploded repos
                 "--exploded",
                 "--archetype", "minimal",
                 "--verbose",

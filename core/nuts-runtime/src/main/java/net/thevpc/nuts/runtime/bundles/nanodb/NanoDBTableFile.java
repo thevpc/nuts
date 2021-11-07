@@ -193,13 +193,13 @@ public class NanoDBTableFile<T> implements Iterable<T>, AutoCloseable {
                                     return false;
                                 }
                             }
-                            if (ex instanceof RuntimeException) {
-                                throw (RuntimeException) ex;
+                            if (ex instanceof NutsIOException) {
+                                if (ex.getCause() instanceof EOFException) {
+                                    return false;
+                                }
+                                throw (NutsIOException) ex;
                             }
-                            if (ex instanceof IOException) {
-                                throw new NutsIOException(session, ex);
-                            }
-                            throw new RuntimeException(ex);
+                            throw new NutsIOException(session, ex);
                         }
                     }
                     return false;

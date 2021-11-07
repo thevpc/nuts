@@ -1,43 +1,31 @@
 package net.thevpc.nuts.spi;
 
-import net.thevpc.nuts.NutsPath;
-import net.thevpc.nuts.NutsPathPermission;
-import net.thevpc.nuts.NutsSession;
+import net.thevpc.nuts.*;
 
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
 import java.nio.file.Path;
-import java.nio.file.attribute.PosixFileAttributes;
 import java.time.Instant;
 import java.util.Set;
 
 public interface NutsPathSPI {
-    NutsPath[] list();
+
+    NutsStream<NutsPath> list();
 
     NutsFormatSPI getFormatterSPI();
 
-    default String getName() {
-        return null;
-    }
+    String getName();
 
-    default String getProtocol() {
-        return null;
-    }
+    String getProtocol();
 
-    NutsPath resolve(String path);
+    NutsPath resolve(String[] pathItems, boolean trailingSeparator);
 
-    default NutsPath toCompressedForm() {
-        return null;
-    }
+    NutsPath toCompressedForm();
 
-    default URL toURL() {
-        return null;
-    }
+    URL toURL();
 
-    default Path toFile() {
-        return null;
-    }
+    Path toFile();
 
     boolean isSymbolicLink();
 
@@ -70,7 +58,9 @@ public interface NutsPathSPI {
     void mkdir(boolean parents);
 
     Instant getLastModifiedInstant();
+
     Instant getLastAccessInstant();
+
     Instant getCreationInstant();
 
     NutsPath getParent();
@@ -79,7 +69,8 @@ public interface NutsPathSPI {
 
     NutsPath normalize();
 
-    boolean isAbsolute() ;
+    boolean isAbsolute();
+
     String owner();
 
     String group();
@@ -87,7 +78,45 @@ public interface NutsPathSPI {
     Set<NutsPathPermission> permissions();
 
     void setPermissions(NutsPathPermission... permissions);
+
     void addPermissions(NutsPathPermission... permissions);
+
     void removePermissions(NutsPathPermission... permissions);
 
+    /**
+     * return true if this path is a simple name that do not contain '/' or
+     * equivalent
+     *
+     * @return true if this path is a simple name that do not contain '/' or
+     * equivalent
+     */
+    boolean isName();
+
+    /**
+     * return path items count
+     *
+     * @return path items count
+     */
+    int getPathCount();
+
+    /**
+     * true if this is the root of the path file system. good examples are: '/'
+     * , 'C:\' and 'http://myserver/'
+     *
+     * @return true if this is the root of the path file system
+     */
+    boolean isRoot();
+
+    /**
+     * Return a Stream that is lazily populated with Path by walking the file
+     * tree rooted at a given starting file. The file tree is traversed
+     * depth-first, the elements in the stream are Path objects that are
+     * obtained as if by resolving the relative path against start.
+     *
+     * @param options options
+     * @param maxDepth max depth
+     * @return a Stream that is lazily populated with Path by walking the file
+     * tree rooted at a given starting file
+     */
+    NutsStream<NutsPath> walk(int maxDepth, NutsPathVisitOption[] options);
 }
