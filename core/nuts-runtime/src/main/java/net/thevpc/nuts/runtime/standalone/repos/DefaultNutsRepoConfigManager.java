@@ -5,22 +5,25 @@ import net.thevpc.nuts.runtime.core.config.NutsRepositoryConfigManagerExt;
 import net.thevpc.nuts.runtime.core.repos.NutsRepositoryConfigModel;
 import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 
+import java.util.Map;
+
 public class DefaultNutsRepoConfigManager implements NutsRepositoryConfigManager, NutsRepositoryConfigManagerExt {
 
-    private NutsRepositoryConfigModel model;
+    private final NutsRepositoryConfigModel model;
     private NutsSession session;
 
     public DefaultNutsRepoConfigManager(NutsRepositoryConfigModel model) {
         this.model = model;
     }
 
-    public NutsSession getSession() {
-        return session;
+    private void checkSession() {
+        NutsWorkspaceUtils.checkSession(getModel().getWorkspace(), session);
     }
 
-    public NutsRepositoryConfigManager setSession(NutsSession session) {
-        this.session = NutsWorkspaceUtils.bindSession(model.getWorkspace(), session);
-        return this;
+    @Override
+    public String getGlobalName() {
+        checkSession();
+        return getModel().getGlobalName(session);
     }
 
     public NutsRepositoryRef getRepositoryRef() {
@@ -35,18 +38,6 @@ public class DefaultNutsRepoConfigManager implements NutsRepositoryConfigManager
 //    }
 
     @Override
-    public int getDeployWeight() {
-        checkSession();
-        return getModel().getDeployWeight(session);
-    }
-
-    @Override
-    public NutsSpeedQualifier getSpeed() {
-        checkSession();
-        return getModel().getSpeed(session);
-    }
-
-    @Override
     public String getType() {
         checkSession();
         return getModel().getType(session);
@@ -59,56 +50,9 @@ public class DefaultNutsRepoConfigManager implements NutsRepositoryConfigManager
     }
 
     @Override
-    public String getLocation(boolean expand) {
+    public NutsSpeedQualifier getSpeed() {
         checkSession();
-        return getModel().getLocation(expand,session);
-    }
-
-    @Override
-    public String getStoreLocation() {
-        checkSession();
-        return getModel().getStoreLocation();
-    }
-
-    @Override
-    public NutsStoreLocationStrategy getStoreLocationStrategy() {
-        checkSession();
-        return getModel().getStoreLocationStrategy(session);
-    }
-
-    @Override
-    public String getStoreLocation(NutsStoreLocation folderType) {
-        checkSession();
-        return getModel().getStoreLocation(folderType,session);
-    }
-
-//    @Override
-//    public String getUuid() {
-////        checkSession();
-//        return getModel().getUuid();
-//    }
-
-    @Override
-    public NutsRepositoryConfigManager setIndexEnabled(boolean enabled) {
-        checkSession();
-        getModel().setIndexEnabled(enabled, session);
-        return this;
-    }
-
-    private void checkSession() {
-        NutsWorkspaceUtils.checkSession(getModel().getWorkspace(), session);
-    }
-
-    @Override
-    public boolean isIndexEnabled() {
-        checkSession();
-        return getModel().isIndexEnabled(session);
-    }
-
-    @Override
-    public boolean isEnabled() {
-//        checkSession();
-        return getModel().isEnabled(session);
+        return getModel().getSpeed(session);
     }
 
     @Override
@@ -118,38 +62,53 @@ public class DefaultNutsRepoConfigManager implements NutsRepositoryConfigManager
     }
 
     @Override
-    public String getGlobalName() {
+    public NutsRepositoryConfigManager setTemporary(boolean enabled) {
         checkSession();
-        return getModel().getGlobalName(session);
-    }
-
-    @Override
-    public boolean isSupportedMirroring() {
-        checkSession();
-        return getModel().isSupportedMirroring(session);
-    }
-
-    @Override
-    public NutsRepository[] getMirrors() {
-        checkSession();
-        return getModel().getMirrors(session);
-    }
-
-    @Override
-    public NutsRepository addMirror(NutsAddRepositoryOptions options) {
-        checkSession();
-        return getModel().addMirror(options, session);
-    }
-
-    @Override
-    public NutsRepositoryConfigModel getModel() {
-        return model;
+        getModel().setTemporary(enabled, session);
+        return this;
     }
 
     @Override
     public boolean isIndexSubscribed() {
         checkSession();
         return getModel().isIndexSubscribed(session);
+    }
+
+    @Override
+    public String getLocation(boolean expand) {
+        checkSession();
+        return getModel().getLocation(expand, session);
+    }
+
+    @Override
+    public String getStoreLocation() {
+        checkSession();
+        return getModel().getStoreLocation();
+    }
+
+//    @Override
+//    public String getUuid() {
+////        checkSession();
+//        return getModel().getUuid();
+//    }
+
+    @Override
+    public String getStoreLocation(NutsStoreLocation folderType) {
+        checkSession();
+        return getModel().getStoreLocation(folderType, session);
+    }
+
+    @Override
+    public boolean isIndexEnabled() {
+        checkSession();
+        return getModel().isIndexEnabled(session);
+    }
+
+    @Override
+    public NutsRepositoryConfigManager setIndexEnabled(boolean enabled) {
+        checkSession();
+        getModel().setIndexEnabled(enabled, session);
+        return this;
     }
 
     @Override
@@ -160,16 +119,21 @@ public class DefaultNutsRepoConfigManager implements NutsRepositoryConfigManager
     }
 
     @Override
-    public NutsRepositoryConfigManager setEnabled(boolean enabled) {
+    public int getDeployWeight() {
         checkSession();
-        getModel().setEnabled(enabled, session);
-        return this;
+        return getModel().getDeployWeight(session);
     }
 
     @Override
-    public NutsRepositoryConfigManager setTemporary(boolean enabled) {
+    public boolean isEnabled() {
+//        checkSession();
+        return getModel().isEnabled(session);
+    }
+
+    @Override
+    public NutsRepositoryConfigManager setEnabled(boolean enabled) {
         checkSession();
-        getModel().setTemporary(enabled, session);
+        getModel().setEnabled(enabled, session);
         return this;
     }
 
@@ -188,6 +152,12 @@ public class DefaultNutsRepoConfigManager implements NutsRepositoryConfigManager
     }
 
     @Override
+    public boolean isSupportedMirroring() {
+        checkSession();
+        return getModel().isSupportedMirroring(session);
+    }
+
+    @Override
     public NutsRepository findMirrorById(String repositoryNameOrId) {
         checkSession();
         return getModel().findMirrorById(repositoryNameOrId, session);
@@ -197,6 +167,12 @@ public class DefaultNutsRepoConfigManager implements NutsRepositoryConfigManager
     public NutsRepository findMirrorByName(String repositoryName) {
         checkSession();
         return getModel().findMirrorById(repositoryName, session);
+    }
+
+    @Override
+    public NutsRepository[] getMirrors() {
+        checkSession();
+        return getModel().getMirrors(session);
     }
 
     @Override
@@ -212,11 +188,67 @@ public class DefaultNutsRepoConfigManager implements NutsRepositoryConfigManager
     }
 
     @Override
+    public NutsRepository addMirror(NutsAddRepositoryOptions options) {
+        checkSession();
+        return getModel().addMirror(options, session);
+    }
+
+    @Override
     public NutsRepositoryConfigManager removeMirror(String repositoryId) {
         checkSession();
         getModel().removeMirror(repositoryId, session);
         return this;
     }
 
-    
+    @Override
+    public NutsStoreLocationStrategy getStoreLocationStrategy() {
+        checkSession();
+        return getModel().getStoreLocationStrategy(session);
+    }
+
+    public NutsSession getSession() {
+        return session;
+    }
+
+    public NutsRepositoryConfigManager setSession(NutsSession session) {
+        this.session = NutsWorkspaceUtils.bindSession(model.getWorkspace(), session);
+        return this;
+    }
+
+    @Override
+    public Map<String, String> getConfigMap(boolean inherit) {
+        NutsWorkspaceUtils.checkSession(model.getWorkspace(), session);
+        return model.toMap(inherit, getSession());
+    }
+
+    @Override
+    public String getConfigProperty(String key, String defaultValue, boolean inherit) {
+        NutsWorkspaceUtils.checkSession(model.getWorkspace(), session);
+        return model.get(key, defaultValue, inherit, getSession());
+    }
+
+    @Override
+    public Map<String, String> getConfigMap() {
+        NutsWorkspaceUtils.checkSession(model.getWorkspace(), session);
+        return model.toMap(getSession());
+    }
+
+    @Override
+    public String getConfigProperty(String property, String defaultValue) {
+        NutsWorkspaceUtils.checkSession(model.getWorkspace(), session);
+        return model.get(property, defaultValue, getSession());
+    }
+
+    @Override
+    public NutsRepositoryConfigManager setConfigProperty(String property, String value) {
+        NutsWorkspaceUtils.checkSession(model.getWorkspace(), session);
+        model.set(property, value, session);
+        return this;
+    }
+
+    @Override
+    public NutsRepositoryConfigModel getModel() {
+        return model;
+    }
+
 }

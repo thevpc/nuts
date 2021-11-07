@@ -55,12 +55,6 @@ public interface NutsRepository {
     String getName();
 
     /**
-     * ENV
-     * @return ENV
-     */
-    NutsRepositoryEnvManager env();
-
-    /**
      * return parent workspace
      * @return parent workspace
      */

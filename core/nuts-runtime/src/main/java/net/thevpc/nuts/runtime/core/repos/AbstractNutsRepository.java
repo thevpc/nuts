@@ -26,7 +26,6 @@ package net.thevpc.nuts.runtime.core.repos;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.common.DefaultObservableMap;
 import net.thevpc.nuts.runtime.core.common.ObservableMap;
-import net.thevpc.nuts.runtime.standalone.repos.DefaultNutsRepositoryEnvManager;
 import net.thevpc.nuts.spi.NutsRepositorySPI;
 
 import java.nio.file.Paths;
@@ -34,7 +33,6 @@ import java.util.*;
 import net.thevpc.nuts.runtime.core.config.NutsRepositoryConfigManagerExt;
 import net.thevpc.nuts.runtime.core.util.CachedValue;
 import net.thevpc.nuts.runtime.standalone.repos.DefaultNutsRepoConfigManager;
-import net.thevpc.nuts.runtime.standalone.repos.DefaultNutsRepositoryEnvModel;
 import net.thevpc.nuts.runtime.standalone.security.DefaultNutsRepositorySecurityManager;
 import net.thevpc.nuts.runtime.standalone.security.DefaultNutsRepositorySecurityModel;
 
@@ -53,14 +51,12 @@ public abstract class AbstractNutsRepository implements NutsRepository, NutsRepo
     protected NutsRepositoryConfigModel configModel;
     protected ObservableMap<String, Object> userProperties;
     protected boolean enabled = true;
-    protected DefaultNutsRepositoryEnvModel envModel;
     protected NutsSession initSession;
     protected CachedValue<Boolean> available = new CachedValue<>(() -> isAvailableImpl(), 0);
     protected CachedValue<Boolean> supportedDeploy = new CachedValue<>(() -> isSupportedDeployImpl(), 0);
 
     public AbstractNutsRepository() {
         userProperties = new DefaultObservableMap<>();
-        envModel = new DefaultNutsRepositoryEnvModel(this);
         securityModel = new DefaultNutsRepositorySecurityModel(this);
     }
 
@@ -96,11 +92,6 @@ public abstract class AbstractNutsRepository implements NutsRepository, NutsRepo
 
     protected boolean isAvailableImpl() {
         return true;
-    }
-
-    @Override
-    public NutsRepositoryEnvManager env() {
-        return new DefaultNutsRepositoryEnvManager(envModel);
     }
 
     @Override

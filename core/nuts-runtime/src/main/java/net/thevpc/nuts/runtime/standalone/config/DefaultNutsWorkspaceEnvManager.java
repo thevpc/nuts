@@ -34,30 +34,6 @@ public class DefaultNutsWorkspaceEnvManager implements NutsWorkspaceEnvManager {
         return new DefaultNutsPlatformManager(sdkModel).setSession(getSession());
     }
 
-    NutsWorkspaceConfigMain getStoreModelMain() {
-        checkSession();
-        return model.getStoreModelMain();
-    }
-
-    @Override
-    public Map<String, String> getEnvMap() {
-        checkSession();
-        return model.getEnvMap();
-    }
-
-    @Override
-    public NutsVal getEnv(String property) {
-        checkSession();
-        return model.getEnv(property);
-    }
-
-    @Override
-    public NutsWorkspaceEnvManager setEnv(String property, String value) {
-        checkSession();
-        model.setEnv(property, value, session);
-        return this;
-    }
-
     @Override
     public Map<String, Object> getProperties() {
         checkSession();

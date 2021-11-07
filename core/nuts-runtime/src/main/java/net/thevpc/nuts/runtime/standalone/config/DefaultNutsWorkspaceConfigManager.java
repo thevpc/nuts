@@ -38,6 +38,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 
@@ -301,6 +302,26 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
     public NutsWorkspaceConfigManager setDefaultTerminal(NutsSessionTerminal terminal) {
         checkSession();
         model.setTerminal(terminal, session);
+        return this;
+    }
+
+    @Override
+    public Map<String, String> getConfigMap() {
+        checkSession();
+        return model.getConfigMap();
+    }
+
+    @Override
+    public NutsVal getConfigProperty(String property) {
+        checkSession();
+        return model.getConfigProperty(property);
+    }
+
+    @Override
+    public NutsWorkspaceConfigManager setConfigProperty(String property, String value) {
+        checkSession();
+        model.setConfigProperty(property, value, session);
+        model.save(getSession());
         return this;
     }
 

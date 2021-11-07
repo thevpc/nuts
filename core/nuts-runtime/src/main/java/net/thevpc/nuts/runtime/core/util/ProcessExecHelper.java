@@ -220,9 +220,9 @@ public class ProcessExecHelper implements IProcessExecHelper {
         NutsOsFamily sysFamily = session.env().getOsFamily();
         switch (sysFamily) {
             case WINDOWS: {
-                String s = (String) session.getProperty("WINDOWS_ROOT_USER");
+                String s = (String) session.getProperty("nuts.windows.root-user");
                 if (s == null) {
-                    s = session.env().getEnv("WINDOWS_ROOT_USER").getString();
+                    s = session.config().getConfigProperty("nuts.windows.root-user").getString();
                 }
                 if (NutsBlankable.isBlank(s)) {
                     s = "Administrator";

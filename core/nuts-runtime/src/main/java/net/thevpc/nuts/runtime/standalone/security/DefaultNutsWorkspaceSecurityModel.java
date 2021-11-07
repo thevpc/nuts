@@ -65,7 +65,7 @@ public class DefaultNutsWorkspaceSecurityModel {
 
     public DefaultNutsWorkspaceSecurityModel(final DefaultNutsWorkspace ws) {
         this.ws = ws;
-        this.agent = new WrapperNutsAuthenticationAgent(ws, (session) -> session.env().getEnvMap(), (x, s) -> getAuthenticationAgent(x, s));
+        this.agent = new WrapperNutsAuthenticationAgent(ws, (session) -> session.config().getConfigMap(), (x, s) -> getAuthenticationAgent(x, s));
         NutsWorkspaceUtils.defaultSession(ws).events().addWorkspaceListener(new ClearAuthOnWorkspaceChange());
     }
 

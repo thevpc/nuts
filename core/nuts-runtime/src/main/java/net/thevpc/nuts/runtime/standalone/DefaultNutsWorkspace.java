@@ -488,6 +488,18 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                 wsModel.configModel.setConfigBoot(bconfig, defaultSession());
                 wsModel.configModel.setConfigApi(aconfig, defaultSession());
                 wsModel.configModel.setConfigRuntime(rconfig, defaultSession());
+                //load all "---config.*" custom options into persistent config
+                for (String customOption : uoptions.getCustomOptions()) {
+                    NutsArgument a = NutsArgument.of(customOption, defaultSession());
+                    if(a.getKey().getString().startsWith("config.")){
+                        if(a.isEnabled()) {
+                            defaultSession().config().setConfigProperty(
+                                    a.getKey().getString("").substring("config.".length()),
+                                    a.getValue().getString()
+                            );
+                        }
+                    }
+                }
                 justInstalledArchetype=initializeWorkspace(uoptions.getArchetype(), defaultSession());
                 if (!_config.isReadOnly()) {
                     _config.save();

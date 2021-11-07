@@ -84,7 +84,7 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
 
     protected NutsLogger _LOG(NutsSession session) {
         if (LOG == null) {
-            LOG = NutsLogger.of(DefaultNutsInstalledRepository.class,session);
+            LOG = NutsLogger.of(DefaultNutsInstalledRepository.class, session);
         }
         return LOG;
     }
@@ -179,15 +179,15 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
                 try {
                     Files.delete(pp);
                 } catch (IOException ex) {
-                    throw new NutsIOException(session,ex);
+                    throw new NutsIOException(session, ex);
                 }
             }
         } else {
             try {
-                CoreIOUtils.mkdirs(pp.getParent(),session);
+                CoreIOUtils.mkdirs(pp.getParent(), session);
                 Files.write(pp, version.trim().getBytes());
             } catch (IOException ex) {
-                throw new NutsIOException(session,ex);
+                throw new NutsIOException(session, ex);
             }
         }
         synchronized (cachedDefaultVersions) {
@@ -341,7 +341,7 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
             scope = NutsDependencyScope.API;
         }
         //remove repository from id!
-        from=from.builder().setRepository(null).build();
+        from = from.builder().setRepository(null).build();
         InstallInfoConfig fi = getInstallInfoConfig(from, null, session);
         if (fi == null) {
             throw new NutsInstallException(session, from);
@@ -446,7 +446,7 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
             );
             if (c != null) {
                 boolean changeStatus = false;
-                NutsVersion v = NutsVersion.of(c.getConfigVersion(),session);
+                NutsVersion v = NutsVersion.of(c.getConfigVersion(), session);
                 if (v.isBlank()) {
                     c.setInstalled(true);
                     c.setConfigVersion("0.5.8"); //last version before 0.6
@@ -631,7 +631,7 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
         try {
             Files.write(getPath(id, name, session), value.getBytes());
         } catch (IOException ex) {
-            throw new NutsIOException(session,ex);
+            throw new NutsIOException(session, ex);
         }
     }
 
@@ -653,7 +653,7 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
             Path path = getPath(id, name, session);
             Files.delete(path);
         } catch (IOException ex) {
-            throw new NutsIOException(session,ex);
+            throw new NutsIOException(session, ex);
         }
     }
 
@@ -703,8 +703,8 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
             @Override
             public NutsPushRepositoryCommand run() {
                 throw new NutsIllegalArgumentException(getSession(),
-                NutsMessage.cstyle("unsupported push() for %s repository",getName())
-                        );
+                        NutsMessage.cstyle("unsupported push() for %s repository", getName())
+                );
             }
         };
     }
@@ -772,7 +772,7 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
                                             public NutsId apply(File folder) {
                                                 if (folder.isDirectory()
                                                         && new File(folder, NUTS_INSTALL_FILE).isFile()) {
-                                                    NutsVersion vv = NutsVersion.of(folder.getName(),getSession());
+                                                    NutsVersion vv = NutsVersion.of(folder.getName(), getSession());
                                                     NutsIdFilter filter = getFilter();
                                                     NutsSession session = getSession();
                                                     if (filter0.acceptVersion(vv, session) && (filter == null || filter.acceptId(
@@ -1182,5 +1182,35 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
             throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("not supported : getConfig"));
         }
 
+        @Override
+        public Map<String, String> toMap(boolean inherit, NutsSession session) {
+            if (inherit) {
+                return session.config().getConfigMap();
+            }
+            return new HashMap<>();
+        }
+
+        @Override
+        public Map<String, String> toMap(NutsSession session) {
+            return new HashMap<>();
+        }
+
+        @Override
+        public String get(String key, String defaultValue, boolean inherit, NutsSession session) {
+            if (inherit) {
+                return session.config().getConfigProperty(key).getString(defaultValue);
+            }
+            return null;
+        }
+
+        @Override
+        public String get(String property, String defaultValue, NutsSession session) {
+            return defaultValue;
+        }
+
+        @Override
+        public void set(String property, String value, NutsSession session) {
+
+        }
     }
 }

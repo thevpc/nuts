@@ -32,7 +32,7 @@ public class DefaultNutsRepositorySecurityModel {
 
     public DefaultNutsRepositorySecurityModel(final NutsRepository repo) {
         this.repository = repo;
-        this.agent = new WrapperNutsAuthenticationAgent(repo.getWorkspace(), (session) -> repo.env().setSession(session).toMap(), (x, s) -> getAuthenticationAgent(x, s));
+        this.agent = new WrapperNutsAuthenticationAgent(repo.getWorkspace(), (session) -> repo.config().setSession(session).getConfigMap(), (x, s) -> getAuthenticationAgent(x, s));
         this.repository.addRepositoryListener(new NutsRepositoryListener() {
 
             public void onConfigurationChanged(NutsRepositoryEvent event) {

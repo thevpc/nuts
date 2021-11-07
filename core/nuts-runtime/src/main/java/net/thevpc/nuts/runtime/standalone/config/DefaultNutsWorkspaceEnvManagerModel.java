@@ -87,53 +87,6 @@ public class DefaultNutsWorkspaceEnvManagerModel {
 
     }
 
-    NutsWorkspaceConfigMain getStoreModelMain() {
-        return ((DefaultNutsWorkspaceConfigManager) NutsWorkspaceUtils.defaultSession(workspace).config())
-                .getModel()
-                .getStoreModelMain();
-    }
-
-    public Map<String, String> getEnvMap() {
-        Map<String, String> p = new LinkedHashMap<>();
-        if (getStoreModelMain().getEnv() != null) {
-            p.putAll(getStoreModelMain().getEnv());
-        }
-//        p.putAll(options);
-        return p;
-    }
-
-    public NutsVal getEnv(String property) {
-        Map<String, String> env = getStoreModelMain().getEnv();
-        if (env != null) {
-            return new DefaultNutsVal(env.get(property));
-        }
-        return new DefaultNutsVal(null);
-    }
-
-    public void setEnv(String property, String value, NutsSession session) {
-        Map<String, String> env = getStoreModelMain().getEnv();
-//        session = CoreNutsUtils.validate(session, workspace);
-        if (NutsBlankable.isBlank(value)) {
-            if (env != null && env.containsKey(property)) {
-                env.remove(property);
-                NutsWorkspaceConfigManagerExt.of(session.config())
-                        .getModel()
-                        .fireConfigurationChanged("env", session, ConfigEventType.MAIN);
-            }
-        } else {
-            if (env == null) {
-                env = new LinkedHashMap<>();
-                getStoreModelMain().setEnv(env);
-            }
-            String old = env.get(property);
-            if (!value.equals(old)) {
-                env.put(property, value);
-                NutsWorkspaceConfigManagerExt.of(session.config())
-                        .getModel()
-                        .fireConfigurationChanged("env", session, ConfigEventType.MAIN);
-            }
-        }
-    }
 //
 //    private DefaultNutsWorkspaceCurrentConfig current() {
 //        return NutsWorkspaceConfigManagerExt.of(workspace.config())

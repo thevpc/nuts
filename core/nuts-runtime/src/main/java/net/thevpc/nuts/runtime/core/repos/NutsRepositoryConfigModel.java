@@ -1,7 +1,7 @@
 /**
  * ====================================================================
- *            Nuts : Network Updatable Things Service
- *                  (universal package manager)
+ * Nuts : Network Updatable Things Service
+ * (universal package manager)
  * <br>
  * is a new Open Source Package Manager to help install packages and libraries
  * for runtime execution. Nuts is the ultimate companion for maven (and other
@@ -10,7 +10,7 @@
  * other 'things' . Its based on an extensible architecture to help supporting a
  * large range of sub managers / repositories.
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc] Licensed under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -23,9 +23,10 @@
  */
 package net.thevpc.nuts.runtime.core.repos;
 
-import java.nio.file.Path;
-
 import net.thevpc.nuts.*;
+
+import java.nio.file.Path;
+import java.util.Map;
 
 /**
  *
@@ -55,7 +56,7 @@ public interface NutsRepositoryConfigModel {
 
     String getGroups(NutsSession session);
 
-    String getLocation(boolean expand,NutsSession session);
+    String getLocation(boolean expand, NutsSession session);
 
     NutsRepository getMirror(String repositoryIdOrName, NutsSession session);
 
@@ -69,7 +70,7 @@ public interface NutsRepositoryConfigModel {
 
     String getStoreLocation();
 
-    String getStoreLocation(NutsStoreLocation folderType,NutsSession session);
+    String getStoreLocation(NutsStoreLocation folderType, NutsSession session);
 
     //        @Override
     //        public int getSupportLevel(NutsRepositorySupportedAction supportedAction, NutsId id, NutsFetchMode fetchMode, boolean transitive) {
@@ -80,7 +81,7 @@ public interface NutsRepositoryConfigModel {
     String getType(NutsSession session);
 
     String getUuid();
-    
+
     String getLocation();
 
     boolean isEnabled(NutsSession session);
@@ -128,5 +129,17 @@ public interface NutsRepositoryConfigModel {
     void removeUser(String userId, NutsSession session);
 
     NutsRepositoryConfig getConfig(NutsSession session);
+
+    Map<String, String> toMap(boolean inherit, NutsSession session);
+
+    Map<String, String> toMap(NutsSession session);
+
+
+    String get(String key, String defaultValue, boolean inherit, NutsSession session);
+
+    String get(String property, String defaultValue, NutsSession session);
+
+    void set(String property, String value, NutsSession session);
+
 
 }

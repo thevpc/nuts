@@ -57,12 +57,6 @@ public interface NutsRepositorySPI {
     String getName();
 
     /**
-     * env
-     * @return env
-     */
-    NutsRepositoryEnvManager env();
-
-    /**
      * return parent workspace
      * @return parent workspace
      */

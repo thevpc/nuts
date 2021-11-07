@@ -32,18 +32,6 @@ import java.util.Map;
  */
 public interface NutsWorkspaceEnvManager {
 
-    Map<String, String> getEnvMap();
-
-    NutsVal getEnv(String property);
-
-    /**
-     * @param property property
-     * @param value    value
-     *                 //     * @param options options
-     * @return {@code this} instance
-     */
-    NutsWorkspaceEnvManager setEnv(String property, String value);
-
     /**
      * @return properties
      * @since 0.8.1

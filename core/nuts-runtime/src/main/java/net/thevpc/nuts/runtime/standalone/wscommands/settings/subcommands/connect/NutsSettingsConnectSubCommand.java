@@ -24,6 +24,7 @@ public class NutsSettingsConnectSubCommand extends AbstractNutsSettingsSubComman
 
     @Override
     public boolean exec(NutsCommandLine commandLine, Boolean autoSave, NutsSession session) {
+        String cmd0 = commandLine.toString();
         if (commandLine.next("connect") != null) {
             char[] password = null;
             String server = null;
@@ -62,7 +63,9 @@ public class NutsSettingsConnectSubCommand extends AbstractNutsSettingsSubComman
                 try {
                     int validPort = port <= 0 ? DEFAULT_ADMIN_SERVER_PORT : port;
                     socket = new Socket(InetAddress.getByName(server), validPort);
-                    CoreIOUtils.pipe("pipe-out-socket-" + server + ":" + validPort, new NonBlockingInputStreamAdapter("pipe-out-socket-" + server + ":" + validPort, socket.getInputStream()), session.out().asPrintStream(),session);
+                    CoreIOUtils.pipe("pipe-out-socket-" + server + ":" + validPort,
+                            cmd0,"connect-socket",
+                            new NonBlockingInputStreamAdapter("pipe-out-socket-" + server + ":" + validPort, socket.getInputStream()), session.out().asPrintStream(),session);
                     PrintStream out = new PrintStream(socket.getOutputStream());
                     if (!NutsBlankable.isBlank(login)) {
                         out.printf("connect ==%s %s== %n", login, new String(password));

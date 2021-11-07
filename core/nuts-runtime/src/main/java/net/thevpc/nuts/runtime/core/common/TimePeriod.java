@@ -1,14 +1,17 @@
 package net.thevpc.nuts.runtime.core.common;
 
 import net.thevpc.nuts.NutsBlankable;
-import net.thevpc.nuts.NutsUtilStrings;
+import net.thevpc.nuts.NutsMessage;
+import net.thevpc.nuts.NutsParseException;
+import net.thevpc.nuts.NutsSession;
 
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class TimePeriod {
-    private static Pattern PATTERN = Pattern.compile("(<?val>[0-9]+)[ ]*(<?unit>([a-zA-Z]+))?");
+    private static Pattern PATTERN = Pattern.compile("(<?val>[-+]?[0-9]+)[ ]*(<?unit>([a-zA-Z]+))?");
     private long unitCount;
     private TimeUnit unit;
 
@@ -17,7 +20,19 @@ public class TimePeriod {
         this.unit = unit;
     }
 
-    public static TimePeriod parse(String str, boolean lenient, TimeUnit defaultUnit) {
+    public static TimePeriod parse(String str, TimeUnit defaultUnit, NutsSession session) {
+        TimePeriod v = parseLenient(str, defaultUnit, session);
+        if(v==null){
+            throw new NutsParseException(session, NutsMessage.cstyle("invalid Time period %s", str));
+        }
+        return v;
+    }
+
+    public static TimePeriod parseLenient(String str, TimeUnit defaultUnit, NutsSession session) {
+        return parseLenient(str,null,null,defaultUnit,session);
+    }
+
+    public static TimePeriod parseLenient(String str, TimePeriod emptyValue,TimePeriod errorValue,TimeUnit defaultUnit, NutsSession session) {
         if (NutsBlankable.isBlank(str)) {
             return null;
         }
@@ -30,16 +45,10 @@ public class TimePeriod {
             try {
                 unitCount = Long.parseLong(matcher.group("val"));
             } catch (Exception ex) {
-                if (lenient) {
-                    return null;
-                }
-                throw new IllegalArgumentException("Invalid Time period " + matcher.group("val"));
+                return null;
             }
             if (unitCount < 0) {
-                if (lenient) {
-                    return null;
-                }
-                throw new IllegalArgumentException("Invalid Time period " + matcher.group("val"));
+                return null;
             }
             String u = matcher.group("unit");
             if (u == null) {
@@ -92,18 +101,12 @@ public class TimePeriod {
                     break;
                 }
                 default: {
-                    if (lenient) {
-                        return null;
-                    }
-                    throw new IllegalArgumentException("Unsupported time unit " + u);
+                    return null;
                 }
             }
             return new TimePeriod(unitCount, unit);
         }
-        if (lenient) {
-            return null;
-        }
-        throw new IllegalArgumentException("Invalid Time period format " + str);
+        return null;
     }
 
     public long getUnitCount() {
@@ -114,4 +117,21 @@ public class TimePeriod {
         return unit;
     }
 
+    @Override
+    public int hashCode() {
+        return Objects.hash(unitCount, unit);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        TimePeriod that = (TimePeriod) o;
+        return unitCount == that.unitCount && unit == that.unit;
+    }
+
+    @Override
+    public String toString() {
+        return unitCount + unit.name().toLowerCase();
+    }
 }

@@ -588,8 +588,8 @@ public class DefaultNutsWorkspaceExtensionModel {
     public String[] getExtensionRepositoryLocations(NutsId appId) {
         //should parse this form config?
         //or should be parse from and extension component?
-        String repos = NutsWorkspaceUtils.defaultSession(ws).env()
-                .getEnv("bootstrapRepositoryLocations").getString( "") + ";" //                + NutsConstants.BootstrapURLs.LOCAL_NUTS_FOLDER
+        String repos = NutsWorkspaceUtils.defaultSession(ws).config()
+                .getConfigProperty("nuts.bootstrap-repository-locations").getString( "") + ";" //                + NutsConstants.BootstrapURLs.LOCAL_NUTS_FOLDER
                 //                + ";" + NutsConstants.BootstrapURLs.REMOTE_NUTS_GIT
                 ;
         List<String> urls = new ArrayList<>();

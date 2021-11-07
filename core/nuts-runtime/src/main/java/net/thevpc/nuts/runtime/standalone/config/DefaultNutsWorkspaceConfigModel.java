@@ -29,6 +29,7 @@ import net.thevpc.nuts.runtime.core.NutsSupplierBase;
 import net.thevpc.nuts.runtime.core.NutsWorkspaceExt;
 import net.thevpc.nuts.runtime.core.app.DefaultNutsWorkspaceLocationManager;
 import net.thevpc.nuts.runtime.core.config.NutsRepositoryConfigManagerExt;
+import net.thevpc.nuts.runtime.core.config.NutsWorkspaceConfigManagerExt;
 import net.thevpc.nuts.runtime.core.events.DefaultNutsWorkspaceEvent;
 import net.thevpc.nuts.runtime.core.io.*;
 import net.thevpc.nuts.runtime.core.model.CoreNutsWorkspaceOptions;
@@ -1422,9 +1423,32 @@ public class DefaultNutsWorkspaceConfigModel {
                 if (executorService == null) {
                     executorService = session.boot().getBootOptions().getExecutorService();
                     if (executorService == null) {
+
+                        int minPoolSize = getConfigProperty("nuts.threads.min").getInt(2);
+                        if(minPoolSize<1) {
+                            minPoolSize = 60;
+                        }else if(minPoolSize>500){
+                            minPoolSize=500;
+                        }
+                        int maxPoolSize = getConfigProperty("nuts.threads.max").getInt(60);
+                        if(maxPoolSize<1) {
+                            maxPoolSize = 60;
+                        }else if(maxPoolSize>500){
+                            maxPoolSize=500;
+                        }
+                        if(minPoolSize>maxPoolSize){
+                            minPoolSize=maxPoolSize;
+                        }
+                        int keepAliveSeconds = getConfigProperty("nuts.threads.keep-alive").getInt(60);
+                        if(keepAliveSeconds<1) {
+                            keepAliveSeconds = 60;
+                        }else if(keepAliveSeconds>3600*10){
+                            keepAliveSeconds=3600*10;
+                        }
                         ThreadPoolExecutor executorService2 = (ThreadPoolExecutor) Executors.newCachedThreadPool(CoreNutsUtils.nutsDefaultThreadFactory);
-                        executorService2.setKeepAliveTime(60, TimeUnit.SECONDS);
-                        executorService2.setMaximumPoolSize(60);
+                        executorService2.setCorePoolSize(minPoolSize);
+                        executorService2.setKeepAliveTime(keepAliveSeconds, TimeUnit.SECONDS);
+                        executorService2.setMaximumPoolSize(maxPoolSize);
                         executorService = executorService2;
                     }
                 }
@@ -1816,6 +1840,48 @@ public class DefaultNutsWorkspaceConfigModel {
                 //ignore
             }
             return null;
+        }
+    }
+
+    public Map<String, String> getConfigMap() {
+        Map<String, String> p = new LinkedHashMap<>();
+        if (getStoreModelMain().getEnv() != null) {
+            p.putAll(getStoreModelMain().getEnv());
+        }
+//        p.putAll(options);
+        return p;
+    }
+
+    public NutsVal getConfigProperty(String property) {
+        Map<String, String> env = getStoreModelMain().getEnv();
+        if (env != null) {
+            return new DefaultNutsVal(env.get(property));
+        }
+        return new DefaultNutsVal(null);
+    }
+
+    public void setConfigProperty(String property, String value, NutsSession session) {
+        Map<String, String> env = getStoreModelMain().getEnv();
+//        session = CoreNutsUtils.validate(session, workspace);
+        if (NutsBlankable.isBlank(value)) {
+            if (env != null && env.containsKey(property)) {
+                env.remove(property);
+                NutsWorkspaceConfigManagerExt.of(session.config())
+                        .getModel()
+                        .fireConfigurationChanged("env", session, ConfigEventType.MAIN);
+            }
+        } else {
+            if (env == null) {
+                env = new LinkedHashMap<>();
+                getStoreModelMain().setEnv(env);
+            }
+            String old = env.get(property);
+            if (!value.equals(old)) {
+                env.put(property, value);
+                NutsWorkspaceConfigManagerExt.of(session.config())
+                        .getModel()
+                        .fireConfigurationChanged("env", session, ConfigEventType.MAIN);
+            }
         }
     }
 

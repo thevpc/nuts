@@ -23,6 +23,8 @@
  */
 package net.thevpc.nuts;
 
+import java.util.Map;
+
 /**
  * @author thevpc
  * @since 0.5.4
@@ -126,4 +128,14 @@ public interface NutsRepositoryConfigManager {
     NutsSession getSession();
 
     NutsRepositoryConfigManager setSession(NutsSession session);
+
+    Map<String, String> getConfigMap(boolean inherit);
+
+    String getConfigProperty(String key, String defaultValue, boolean inherit);
+
+    Map<String, String> getConfigMap();
+
+    String getConfigProperty(String property, String defaultValue);
+
+    NutsRepositoryConfigManager setConfigProperty(String property, String value);
 }

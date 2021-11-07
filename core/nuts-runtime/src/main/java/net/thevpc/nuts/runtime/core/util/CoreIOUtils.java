@@ -398,7 +398,7 @@ public class CoreIOUtils {
             } catch (URISyntaxException ex) {
                 throw new NutsParseException(session, NutsMessage.cstyle("not a file path : %s", s));
             } catch (IOException ex) {
-                throw new NutsIOException(session,ex);
+                throw new NutsIOException(session, ex);
             }
         }
         if (s.startsWith("http://")
@@ -1113,14 +1113,14 @@ public class CoreIOUtils {
         return best.open(url);
     }
 
-    public static String urlEncodeString(String s,NutsSession session) {
+    public static String urlEncodeString(String s, NutsSession session) {
         if (s == null || s.trim().length() == 0) {
             return "";
         }
         try {
             return URLEncoder.encode(s, "UTF-8");
         } catch (UnsupportedEncodingException e) {
-            throw new NutsIOException(session,e);
+            throw new NutsIOException(session, e);
         }
     }
 
@@ -1221,7 +1221,7 @@ public class CoreIOUtils {
         return NutsUtilStrings.toHexString(evalMD5(input, session));
     }
 
-    public static byte[] evalHash(java.io.InputStream input, String algo,NutsSession session) {
+    public static byte[] evalHash(java.io.InputStream input, String algo, NutsSession session) {
 
         try {
             MessageDigest md;
@@ -1235,11 +1235,11 @@ public class CoreIOUtils {
                     len = input.read(buffer);
                 }
             } catch (IOException e) {
-                throw new NutsIOException(session,e);
+                throw new NutsIOException(session, e);
             }
             return md.digest();
         } catch (NoSuchAlgorithmException e) {
-            throw new NutsIOException(session,new IOException(e));
+            throw new NutsIOException(session, new IOException(e));
         }
     }
 
@@ -1277,7 +1277,7 @@ public class CoreIOUtils {
 
     public static String evalSHA1Hex(Path file, NutsSession session) {
         try {
-            return evalSHA1Hex(Files.newInputStream(file), true,session);
+            return evalSHA1Hex(Files.newInputStream(file), true, session);
         } catch (IOException e) {
             throw new NutsIOException(session, e);
         }
@@ -1285,7 +1285,7 @@ public class CoreIOUtils {
 
     public static String evalSHA1(File file, NutsSession session) {
         try {
-            return evalSHA1Hex(new FileInputStream(file), true,session);
+            return evalSHA1Hex(new FileInputStream(file), true, session);
         } catch (FileNotFoundException e) {
             throw new NutsIOException(session, e);
         }
@@ -1973,9 +1973,9 @@ public class CoreIOUtils {
         return new byte[0];
     }
 
-    public static PipeThread pipe(String name, final NonBlockingInputStream in, final OutputStream out, NutsSession session) {
-        PipeThread p = new PipeThread(name, in, out, session);
-        p.start();
+    public static PipeThread pipe(String name, String cmd, String desc, final NonBlockingInputStream in, final OutputStream out, NutsSession session) {
+        PipeThread p = new PipeThread(name, cmd, desc, in, out, session);
+        session.config().executorService().submit(p);
         return p;
     }
 
@@ -2528,7 +2528,7 @@ public class CoreIOUtils {
 //        }
 //    }
 
-    public static byte[] readBestEffort(int len, java.io.InputStream in,NutsSession session) {
+    public static byte[] readBestEffort(int len, java.io.InputStream in, NutsSession session) {
         if (len < 0) {
             throw new IndexOutOfBoundsException();
         }
@@ -2536,7 +2536,7 @@ public class CoreIOUtils {
             return new byte[0];
         }
         byte[] buf = new byte[len];
-        int count = readBestEffort(buf, 0, len, in,session);
+        int count = readBestEffort(buf, 0, len, in, session);
         if (count == len) {
             return buf;
         }

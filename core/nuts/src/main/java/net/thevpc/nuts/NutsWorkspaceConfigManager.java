@@ -28,6 +28,7 @@ package net.thevpc.nuts;
 import net.thevpc.nuts.spi.NutsIndexStoreFactory;
 import net.thevpc.nuts.spi.NutsSystemTerminalBase;
 
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 
@@ -118,4 +119,16 @@ public interface NutsWorkspaceConfigManager {
      * @return {@code this} instance
      */
     NutsWorkspaceConfigManager setDefaultTerminal(NutsSessionTerminal terminal);
+
+    Map<String, String> getConfigMap();
+
+    NutsVal getConfigProperty(String property);
+
+    /**
+     * @param property property
+     * @param value    value
+     *                 //     * @param options options
+     * @return {@code this} instance
+     */
+    NutsWorkspaceConfigManager setConfigProperty(String property, String value);
 }

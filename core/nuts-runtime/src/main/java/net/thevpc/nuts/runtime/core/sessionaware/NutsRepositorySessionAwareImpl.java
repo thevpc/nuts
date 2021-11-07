@@ -34,7 +34,6 @@ import net.thevpc.nuts.NutsIndexStore;
 import net.thevpc.nuts.NutsMapListener;
 import net.thevpc.nuts.NutsRepository;
 import net.thevpc.nuts.NutsRepositoryConfigManager;
-import net.thevpc.nuts.NutsRepositoryEnvManager;
 import net.thevpc.nuts.NutsRepositoryListener;
 import net.thevpc.nuts.NutsRepositorySecurityManager;
 import net.thevpc.nuts.NutsSession;
@@ -112,11 +111,6 @@ public class NutsRepositorySessionAwareImpl implements NutsRepository, NutsRepos
     @Override
     public String getName() {
         return repo.getName();
-    }
-
-    @Override
-    public NutsRepositoryEnvManager env() {
-        return repo.env().setSession(session);
     }
 
     @Override

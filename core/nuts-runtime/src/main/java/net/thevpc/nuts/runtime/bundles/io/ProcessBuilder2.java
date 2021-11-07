@@ -29,6 +29,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.app.DefaultNutsArgument;
 import net.thevpc.nuts.runtime.core.app.NutsCommandLineShellOptions;
 import net.thevpc.nuts.runtime.core.shell.NutsShellHelper;
+import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
 
 import java.io.*;
@@ -269,21 +270,22 @@ public class ProcessBuilder2 {
             NonBlockingInputStreamAdapter termIn = null;
             List<PipeThread> pipes = new ArrayList<>();
             String procString = proc.toString();
+            String cmdStr = String.join(" ", command);
             if (out != null) {
                 procInput = new NonBlockingInputStreamAdapter("pipe-out-proc-" + procString, proc.getInputStream());
-                pipes.add(pipe("pipe-out-proc-" + procString, procInput, out));
+                pipes.add(CoreIOUtils.pipe("pipe-out-proc-" + procString, cmdStr, "out", procInput, out,session));
             }
             if (err != null) {
                 procError = new NonBlockingInputStreamAdapter("pipe-err-proc-" + procString, proc.getErrorStream());
                 if (base.redirectErrorStream()) {
-                    pipes.add(pipe("pipe-err-proc-" + procString, procError, out));
+                    pipes.add(CoreIOUtils.pipe("pipe-err-proc-" + procString, cmdStr, "err", procError, out,session));
                 } else {
-                    pipes.add(pipe("pipe-err-proc-" + procString, procError, err));
+                    pipes.add(CoreIOUtils.pipe("pipe-err-proc-" + procString, cmdStr, "err", procError, err,session));
                 }
             }
             if (in != null) {
                 termIn = new NonBlockingInputStreamAdapter("pipe-in-proc-" + procString, in);
-                pipes.add(pipe("pipe-in-proc-" + procString, termIn, proc.getOutputStream()));
+                pipes.add(CoreIOUtils.pipe("pipe-in-proc-" + procString, cmdStr, "in", termIn, proc.getOutputStream(),session));
             }
             while (proc.isAlive()) {
                 if (termIn != null) {
@@ -320,6 +322,7 @@ public class ProcessBuilder2 {
         } else {
             waitFor0();
         }
+        PipeThread.dump();
         return this;
     }
 
@@ -335,26 +338,26 @@ public class ProcessBuilder2 {
                     if (isGrabOutputString()) {
                         throw new NutsExecutionException(session,
                                 NutsMessage.cstyle("execution failed with code %d and message : %s. Command was %s", result, getOutputString(),
-                                        NutsCommandLine.of(getCommand(),session))
+                                        NutsCommandLine.of(getCommand(), session))
                                 , result);
                     }
                 } else {
                     if (isGrabErrorString()) {
                         throw new NutsExecutionException(session,
                                 NutsMessage.cstyle("execution failed with code %d and message : %s. Command was %s", result, getOutputString(),
-                                        NutsCommandLine.of(getCommand(),session))
+                                        NutsCommandLine.of(getCommand(), session))
                                 , result);
                     }
                     if (isGrabOutputString()) {
                         throw new NutsExecutionException(session, NutsMessage.cstyle(
                                 "execution failed with code %d and message : %s. Command was %s", result, getOutputString(),
-                                NutsCommandLine.of(getCommand(),session)
-                                ), result);
+                                NutsCommandLine.of(getCommand(), session)
+                        ), result);
                     }
                 }
                 throw new NutsExecutionException(session, NutsMessage.cstyle("execution failed with code %d. Command was %s", result,
-                        NutsCommandLine.of(getCommand(),session)
-                        ), result);
+                        NutsCommandLine.of(getCommand(), session)
+                ), result);
             }
         }
     }
@@ -494,7 +497,7 @@ public class ProcessBuilder2 {
     }
 
     public String getCommandString(CommandStringFormat f) {
-        List<String> fullCommandString=new ArrayList<>();
+        List<String> fullCommandString = new ArrayList<>();
         File ff = getDirectory();
         if (ff == null) {
             ff = new File(".");
@@ -504,7 +507,7 @@ public class ProcessBuilder2 {
         } catch (Exception ex) {
             ff = ff.getAbsoluteFile();
         }
-        fullCommandString.add("cwd="+ff.getPath());
+        fullCommandString.add("cwd=" + ff.getPath());
         if (env != null) {
             for (Map.Entry<String, String> e : env.entrySet()) {
                 String k = e.getKey();
@@ -528,7 +531,7 @@ public class ProcessBuilder2 {
                         v = v2;
                     }
                 }
-                fullCommandString.add(k+"="+v);
+                fullCommandString.add(k + "=" + v);
             }
         }
         for (int i = 0; i < command.size(); i++) {
@@ -544,7 +547,7 @@ public class ProcessBuilder2 {
             }
             fullCommandString.add(s);
         }
-        StringBuilder sb=new StringBuilder()
+        StringBuilder sb = new StringBuilder()
                 .append(
                         NutsShellHelper.of(NutsShellFamily.getCurrent())
                                 .escapeArguments(fullCommandString.toArray(new String[0]),
@@ -682,8 +685,8 @@ public class ProcessBuilder2 {
         } catch (Exception ex) {
             ff = ff.getAbsoluteFile();
         }
-        List<String> fullCommandString=new ArrayList<>();
-        fullCommandString.add("cwd="+ff.getPath());
+        List<String> fullCommandString = new ArrayList<>();
+        fullCommandString.add("cwd=" + ff.getPath());
         if (env != null) {
             for (Map.Entry<String, String> e : env.entrySet()) {
                 String k = e.getKey();
@@ -707,7 +710,7 @@ public class ProcessBuilder2 {
                         v = v2;
                     }
                 }
-                fullCommandString.add(k+"="+v);
+                fullCommandString.add(k + "=" + v);
             }
         }
         boolean commandFirstTokenVisited = false;
@@ -725,16 +728,16 @@ public class ProcessBuilder2 {
             fullCommandString.add(s);
         }
 
-        StringBuilder sb=new StringBuilder()
+        StringBuilder sb = new StringBuilder()
                 .append("```system ").append(
                         NutsShellHelper.of(NutsShellFamily.getCurrent())
-                        .escapeArguments(fullCommandString.toArray(new String[0]),
-                                new NutsCommandLineShellOptions()
-                                        .setSession(session)
-                                        .setFormatStrategy(NutsCommandLineFormatStrategy.SUPPORT_QUOTES)
-                                        .setExpectEnv(true)
+                                .escapeArguments(fullCommandString.toArray(new String[0]),
+                                        new NutsCommandLineShellOptions()
+                                                .setSession(session)
+                                                .setFormatStrategy(NutsCommandLineFormatStrategy.SUPPORT_QUOTES)
+                                                .setExpectEnv(true)
                                 )
-        ).append(" ```");
+                ).append(" ```");
 
         if (baseIO) {
             ProcessBuilder.Redirect r;
@@ -857,11 +860,7 @@ public class ProcessBuilder2 {
         return setFailFast(true);
     }
 
-    private PipeThread pipe(String name, final NonBlockingInputStream in, final OutputStream out) {
-        PipeThread p = new PipeThread(name, in, out, session);
-        p.start();
-        return p;
-    }
+
 
     @Override
     public String toString() {
