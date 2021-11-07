@@ -25,7 +25,7 @@ public final class JavaExecutorOptions {
     private boolean javaw = false;
     private boolean mainClassApp = false;
     private boolean excludeBase = false;
-    private boolean showCommand = CoreBooleanUtils.getSysBoolNutsProperty("show-command", false);
+    private boolean showCommand;
     private boolean jar = false;
     private String[] execArgs;
     private List<String> jvmArgs = new ArrayList<String>();
@@ -36,6 +36,7 @@ public final class JavaExecutorOptions {
 
     public JavaExecutorOptions(NutsDefinition def, boolean tempId, String[] args, String[] executorOptions, String dir, NutsSession session) {
         this.session = session;
+        showCommand=getSession().boot().getCustomBootOption("show-command").getBoolean(false);
         NutsId id = def.getId();
         NutsDescriptor descriptor = null;
         if (tempId) {

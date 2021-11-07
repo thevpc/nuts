@@ -108,6 +108,7 @@ public final class NutsBootWorkspace {
         this.options=new PrivateBootWorkspaceOptions(LOG)
                 .parseArguments(args)
                 .setBootTerminal(bootTerminal)
+                .setCreationTime(creationTime)
                 .build();
         LOG.setOptions(this.options);
         newInstanceRequirements = 0;
@@ -464,6 +465,14 @@ public final class NutsBootWorkspace {
                     } else {
                         LOG.log(Level.CONFIG, NutsLogVerb.WARNING, NutsMessage.jstyle("reset workspace"));
                         countDeleted = PrivateNutsUtilDeleteFiles.deleteStoreLocations(lastWorkspaceInformation, getOptions(), true, LOG, NutsStoreLocation.values());
+                        PrivateNutsUtilLauncher.ndiUndo(LOG);
+                    }
+                }else{
+                    if (options.isDry()) {
+                        LOG.log(Level.INFO, NutsLogVerb.DEBUG,NutsMessage.jstyle("[dry] [reset] delete ALL workspace folders and configurations"));
+                    } else {
+                        LOG.log(Level.CONFIG, NutsLogVerb.WARNING, NutsMessage.jstyle("reset workspace"));
+                        countDeleted = PrivateNutsUtilDeleteFiles.deleteStoreLocations(workspaceInformation, getOptions(), true, LOG, NutsStoreLocation.values());
                         PrivateNutsUtilLauncher.ndiUndo(LOG);
                     }
                 }

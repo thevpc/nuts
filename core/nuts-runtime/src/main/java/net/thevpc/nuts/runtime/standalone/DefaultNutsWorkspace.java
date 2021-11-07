@@ -91,7 +91,6 @@ import java.time.Instant;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
-import net.thevpc.nuts.runtime.bundles.io.PipeThread;
 
 /**
  * Created by vpc on 1/6/17.
@@ -188,7 +187,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
             this.wsModel.uuid = info.getUuid();
 
             this.wsModel.bootModel = new DefaultNutsBootModel(this, info);
-
+            ((CoreNutsWorkspaceInitInformation) info).setSession(defaultSession());
             //load suspendable LOG
             this.LOG = new DefaultNutsLogger(this, defaultSession(), DefaultNutsWorkspace.class);
             ((DefaultNutsLogger) LOG).suspendTerminal();
@@ -262,6 +261,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                 LOG.with().level(Level.CONFIG).verb(NutsLogVerb.FAIL).session(defaultSession())
                         .log(NutsMessage.jstyle("unable to load theme {0}. Reset to default!", info.getOptions().getTheme()));
             }
+            NutsElements elems = NutsElements.of(defaultSession());
             if (LOG.isLoggable(Level.CONFIG)) {
                 //just log known implementations
                 NutsCommandLines.of(defaultSession());
@@ -271,7 +271,6 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                 NutsIdFormat.of(defaultSession());
                 NutsInputStreams.of(defaultSession());
                 NutsIdParser.of(defaultSession());
-                NutsElements.of(defaultSession());
 
                 LOGCSF.log(NutsMessage.jstyle(" ==============================================================================="));
                 String s = CoreIOUtils.loadString(getClass().getResourceAsStream("/net/thevpc/nuts/runtime/includes/standard-header.ntf"), true, defaultSession());
@@ -629,19 +628,40 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                 }
                 defaultSession().security().setSession(defaultSession()).login(uoptions.getUserName(), password);
             }
+            wsModel.configModel.setEndCreateTimeMillis(System.currentTimeMillis());
+//            LOG.with().session(defaultSession()).level(Level.FINE).verb(NutsLogVerb.SUCCESS)
+//                    .log(
+//                            NutsMessage.jstyle("```sh nuts``` workspace loaded in ```error {0}``` (started at {1}, finished at {2}, now is {3})",
+//                                    CoreTimeUtils.formatPeriodMilli(_boot.getCreationFinishTimeMillis() - _boot.getCreationStartTimeMillis()),
+//                                    new Date(_boot.getCreationStartTimeMillis()).toInstant(),
+//                                    new Date(_boot.getCreationFinishTimeMillis()).toInstant(),
+//                                    new Date().toInstant()
+//                            )
+//                    );
             LOG.with().session(defaultSession()).level(Level.FINE).verb(NutsLogVerb.SUCCESS)
                     .log(
                             NutsMessage.jstyle("```sh nuts``` workspace loaded in ```error {0}```",
                                     CoreTimeUtils.formatPeriodMilli(_boot.getCreationFinishTimeMillis() - _boot.getCreationStartTimeMillis())
                             )
                     );
+            if (defaultSession().boot().getCustomBootOption("perf").getBoolean(false)) {
+                if (defaultSession().isPlainOut()) {
+                    defaultSession().out().printf("```sh nuts``` workspace loaded in %s%n",
+                            text.ofStyled(CoreTimeUtils.formatPeriodMilli(_boot.getCreationFinishTimeMillis() - _boot.getCreationStartTimeMillis()),
+                                    NutsTextStyle.error()
+                            )
+                    );
+                } else {
+                    defaultSession().eout().add(elems.forObject()
+                            .set("workspace-loaded-in",
+                                    elems.forObject()
+                                            .set("ms", _boot.getCreationFinishTimeMillis() - _boot.getCreationStartTimeMillis())
+                                            .set("text", CoreTimeUtils.formatPeriodMilli(_boot.getCreationFinishTimeMillis() - _boot.getCreationStartTimeMillis()))
+                                            .build()
 
-            if (CoreBooleanUtils.getSysBoolNutsProperty("perf", false)) {
-                defaultSession().out().printf("```sh nuts``` workspace loaded in %s%n",
-                        text.ofStyled(CoreTimeUtils.formatPeriodMilli(_boot.getCreationFinishTimeMillis() - _boot.getCreationStartTimeMillis()),
-                                NutsTextStyle.error()
-                        )
-                );
+                            )
+                            .build());
+                }
             }
         } finally {
             if (wsModel.bootModel != null) {
@@ -816,8 +836,8 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
     }
 
     public void installOrUpdateImpl(NutsDefinition def, String[] args, NutsInstallerComponent installerComponent, NutsSession session,
-            boolean resolveInstaller, boolean updateDefaultVersion, InstallStrategy0 strategy0, boolean requireDependencies, NutsId[] forIds,
-            NutsDependencyScope scope) {
+                                    boolean resolveInstaller, boolean updateDefaultVersion, InstallStrategy0 strategy0, boolean requireDependencies, NutsId[] forIds,
+                                    NutsDependencyScope scope) {
         checkSession(session);
         if (def == null) {
             return;
@@ -1562,7 +1582,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                     String.join(";",
                             def.getDependencies().stream()
                                     .filter(x -> !x.isOptional()
-                                    && CoreNutsDependencyUtils.createJavaRunDependencyFilter(session)
+                                            && CoreNutsDependencyUtils.createJavaRunDependencyFilter(session)
                                             .acceptDependency(def.getId(), x, session))
                                     .map(x -> x.toId().getLongName())
                                     .collect(Collectors.toList())
@@ -1578,6 +1598,18 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                 throw new NutsIOException(session, ex);
             }
         }
+    }
+
+    public NutsSession defaultSession() {
+        if (wsModel.initSession != null) {
+            return wsModel.initSession;
+        }
+        return wsModel.bootModel.bootSession();
+    }
+
+    @Override
+    public NutsWorkspaceModel getModel() {
+        return wsModel;
     }
 
     @Override
@@ -1615,28 +1647,12 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
         return wsModel.location;
     }
 
-//    @Override
-//    public Set<NutsId> getCompanionIds(NutsSession session) {
-//        NutsWorkspaceUtils.checkSession(this, session);
-//        NutsIdParser parser = id().setSession(session).parser();
-//        return Collections.unmodifiableSet(new HashSet<>(
-//                        Arrays.asList(parser.parse("net.thevpc.nuts.toolbox:nsh"))
-//                )
-//        );
-//    }
     @Override
-    public NutsSearchCommand search() {
-        return new DefaultNutsSearchCommand(this);
-    }
-
-    @Override
-    public NutsFetchCommand fetch() {
-        return new DefaultNutsFetchCommand(this);
-    }
-
-    @Override
-    public NutsDeployCommand deploy() {
-        return new DefaultNutsDeployCommand(this);
+    public NutsSession createSession() {
+        NutsSession nutsSession = new DefaultNutsSession(this);
+        nutsSession.setTerminal(NutsSessionTerminal.of(nutsSession));
+        nutsSession.setExpireTime(nutsSession.boot().getBootOptions().getExpireTime());
+        return nutsSession;
     }
 //    public NutsExecutionContext createNutsExecutionContext(
 //            NutsDefinition def,
@@ -1676,6 +1692,30 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
 //                traceSession,
 //                execSession, this, failFast, temporary, executionType, commandName,sleepMillis);
 //    }
+
+    //    @Override
+//    public Set<NutsId> getCompanionIds(NutsSession session) {
+//        NutsWorkspaceUtils.checkSession(this, session);
+//        NutsIdParser parser = id().setSession(session).parser();
+//        return Collections.unmodifiableSet(new HashSet<>(
+//                        Arrays.asList(parser.parse("net.thevpc.nuts.toolbox:nsh"))
+//                )
+//        );
+//    }
+    @Override
+    public NutsSearchCommand search() {
+        return new DefaultNutsSearchCommand(this);
+    }
+
+    @Override
+    public NutsFetchCommand fetch() {
+        return new DefaultNutsFetchCommand(this);
+    }
+
+    @Override
+    public NutsDeployCommand deploy() {
+        return new DefaultNutsDeployCommand(this);
+    }
 
     @Override
     public NutsUndeployCommand undeploy() {
@@ -1841,26 +1881,6 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
             return id;
         }
 
-    }
-
-    @Override
-    public NutsWorkspaceModel getModel() {
-        return wsModel;
-    }
-
-    public NutsSession defaultSession() {
-        if (wsModel.initSession != null) {
-            return wsModel.initSession;
-        }
-        return wsModel.bootModel.bootSession();
-    }
-
-    @Override
-    public NutsSession createSession() {
-        NutsSession nutsSession = new DefaultNutsSession(this);
-        nutsSession.setTerminal(NutsSessionTerminal.of(nutsSession));
-        nutsSession.setExpireTime(nutsSession.boot().getBootOptions().getExpireTime());
-        return nutsSession;
     }
 
 }

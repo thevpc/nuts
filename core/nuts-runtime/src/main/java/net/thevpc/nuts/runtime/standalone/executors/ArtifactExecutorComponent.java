@@ -68,20 +68,6 @@ public class ArtifactExecutorComponent implements NutsExecutorComponent {
         String[] execArgs = executionContext.getExecutorArguments();
         String[] appArgs = executionContext.getArguments();
 
-//        String dir = null;
-//        boolean showCommand = CoreBooleanUtils.getSysBoolNutsProperty("show-command", false);
-//        for (int i = 0; i < execArgs.length; i++) {
-//            String arg = execArgs[i];
-//            if (arg.equals("--show-command") || arg.equals("-show-command")) {
-//                showCommand = true;
-//            } else if (arg.equals("--dir") || arg.equals("-dir")) {
-//                i++;
-//                dir = execArgs[i];
-//            } else if (arg.startsWith("--dir=") || arg.startsWith("-dir=")) {
-//                dir = execArgs[i].substring(arg.indexOf('=') + 1);
-//            }
-//        }
-
         List<String> app = new ArrayList<>();
         app.add(id.toString());
         app.add(nutMainFile.getPath().toString());

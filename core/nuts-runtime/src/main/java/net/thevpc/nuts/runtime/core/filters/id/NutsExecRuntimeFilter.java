@@ -7,7 +7,6 @@ package net.thevpc.nuts.runtime.core.filters.id;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.filters.descriptor.AbstractDescriptorFilter;
-import net.thevpc.nuts.runtime.core.util.CoreBooleanUtils;
 
 /**
  *

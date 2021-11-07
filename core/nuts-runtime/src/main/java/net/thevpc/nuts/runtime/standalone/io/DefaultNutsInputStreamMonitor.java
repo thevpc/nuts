@@ -8,7 +8,6 @@ package net.thevpc.nuts.runtime.standalone.io;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.bundles.io.InputStreamMetadataAwareImpl;
 import net.thevpc.nuts.runtime.bundles.io.NutsStreamOrPath;
-import net.thevpc.nuts.runtime.core.util.CoreBooleanUtils;
 import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.io.progress.DefaultNutsProgressEvent;
 import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
@@ -134,7 +133,7 @@ public class DefaultNutsInputStreamMonitor implements NutsInputStreamMonitor {
         }
         NutsProgressMonitor monitor = CoreIOUtils.createProgressMonitor(CoreIOUtils.MonitorType.STREAM, source.getValue(), sourceOrigin, session, isLogProgress(), getProgressFactory());
         boolean verboseMode
-                = CoreBooleanUtils.getSysBoolNutsProperty("monitor.start", false);
+                = getSession().boot().getCustomBootOption("monitor.start").getBoolean( false);
         long size = -1;
         try {
             if (verboseMode && monitor != null) {

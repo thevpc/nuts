@@ -31,7 +31,6 @@ import net.thevpc.nuts.runtime.bundles.io.IProcessExecHelper;
 import net.thevpc.nuts.spi.*;
 
 import java.util.*;
-import net.thevpc.nuts.runtime.core.util.CoreBooleanUtils;
 
 /**
  * Created by vpc on 1/7/17.
@@ -86,7 +85,7 @@ public class ProcessExecutorComponent implements NutsExecutorComponent {
                 .formatter().setExported(true).setCompact(true).getBootCommandLine().toString();
         osEnv.put("nuts_boot_args", bootArgumentsString);
         String dir = null;
-        boolean showCommand = CoreBooleanUtils.getSysBoolNutsProperty("show-command", false);
+        boolean showCommand = executionContext.getSession().boot().getCustomBootOption("show-command").getBoolean( false);
         for (int i = 0; i < execArgs.length; i++) {
             String arg = execArgs[i];
             if (arg.equals("--show-command") || arg.equals("-show-command")) {

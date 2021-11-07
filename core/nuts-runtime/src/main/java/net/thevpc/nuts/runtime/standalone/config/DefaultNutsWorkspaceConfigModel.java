@@ -38,7 +38,6 @@ import net.thevpc.nuts.runtime.core.model.DefaultNutsDefinition;
 import net.thevpc.nuts.runtime.core.repos.NutsInstalledRepository;
 import net.thevpc.nuts.runtime.core.repos.NutsRepositorySelector;
 import net.thevpc.nuts.runtime.core.terminals.*;
-import net.thevpc.nuts.runtime.core.util.CoreBooleanUtils;
 import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.core.util.CoreNutsDependencyUtils;
 import net.thevpc.nuts.runtime.core.util.CoreNutsUtils;
@@ -84,7 +83,6 @@ import java.util.stream.Collectors;
 public class DefaultNutsWorkspaceConfigModel {
     public static final Pattern MOSTLY_URL_PATTERN = Pattern.compile("([a-zA-Z][a-zA-Z0-9_-]+):.*");
 
-    public static final boolean NO_M2 = CoreBooleanUtils.getSysBoolNutsProperty("no-m2", false);
     public final NutsPrintStream nullOut;
     private final DefaultNutsWorkspace ws;
     private final Map<String, NutsUserConfig> configUsers = new LinkedHashMap<>();
