@@ -6,7 +6,7 @@
     <artifactId>nuts-runtime-test</artifactId>
     <version>0.8.3.0</version>
     <packaging>jar</packaging>
-    <name>net.thevpc.nuts.nuts-runtime</name>
+    <name>net.thevpc.nuts.nuts-runtime-test</name>
     <url>https://github.com/thevpc/nuts</url>
     <description>Nuts Reference Implementation Test</description>
     <properties>
