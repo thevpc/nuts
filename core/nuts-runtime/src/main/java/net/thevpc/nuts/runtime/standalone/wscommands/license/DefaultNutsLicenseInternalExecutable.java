@@ -22,7 +22,7 @@ public class DefaultNutsLicenseInternalExecutable extends DefaultInternalNutsExe
 
     @Override
     public void execute() {
-        if (CoreNutsUtils.isIncludesHelpOption(args)) {
+        if (CoreNutsUtils.processHelpOptions(args, getSession())) {
             showDefaultHelp();
             return;
         }
@@ -30,20 +30,7 @@ public class DefaultNutsLicenseInternalExecutable extends DefaultInternalNutsExe
         NutsCommandLine commandLine = NutsCommandLine.of(args,session);
         while (commandLine.hasNext()) {
             NutsArgument a = commandLine.peek();
-            if (a.isOption()) {
-                switch (a.getKey().getString()) {
-                    case "--help": {
-                        commandLine.skipAll();
-                        showDefaultHelp();
-                        return;
-                    }
-                    default: {
-                        session.configureLast(commandLine);
-                    }
-                }
-            } else {
-                session.configureLast(commandLine);
-            }
+            session.configureLast(commandLine);
         }
 
         String licenseString = NutsWorkspaceExt.of(session.getWorkspace()).getLicenseText(session);

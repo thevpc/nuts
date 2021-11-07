@@ -22,7 +22,7 @@ public class DefaultNutsInfoInternalExecutable extends DefaultInternalNutsExecut
 
     @Override
     public void execute() {
-        if (CoreNutsUtils.isIncludesHelpOption(args)) {
+        if (CoreNutsUtils.processHelpOptions(args, getSession())) {
             showDefaultHelp();
             return;
         }

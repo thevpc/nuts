@@ -10,7 +10,6 @@ import net.thevpc.nuts.runtime.core.util.CoreNutsUtils;
 import net.thevpc.nuts.runtime.standalone.wscommands.exec.DefaultInternalNutsExecutableCommand;
 
 /**
- *
  * @author thevpc
  */
 public class DefaultNutsDeployInternalExecutable extends DefaultInternalNutsExecutableCommand {
@@ -21,7 +20,7 @@ public class DefaultNutsDeployInternalExecutable extends DefaultInternalNutsExec
 
     @Override
     public void execute() {
-        if (CoreNutsUtils.isIncludesHelpOption(args)) {
+        if (CoreNutsUtils.processHelpOptions(args, getSession())) {
             showDefaultHelp();
             return;
         }

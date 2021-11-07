@@ -24,7 +24,7 @@ public class DefaultNutsWelcomeInternalExecutable extends DefaultInternalNutsExe
 
     @Override
     public void execute() {
-        if (CoreNutsUtils.isIncludesHelpOption(args)) {
+        if (CoreNutsUtils.processHelpOptions(args, getSession())) {
             showDefaultHelp();
             return;
         }
@@ -34,11 +34,6 @@ public class DefaultNutsWelcomeInternalExecutable extends DefaultInternalNutsExe
             NutsArgument a = commandLine.peek();
             if (a.isOption()) {
                 switch (a.getKey().getString()) {
-                    case "--help": {
-                        commandLine.skipAll();
-                        showDefaultHelp();
-                        return;
-                    }
                     default: {
                         getSession().configureLast(commandLine);
                     }

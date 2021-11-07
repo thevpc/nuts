@@ -9,7 +9,6 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.util.CoreNutsUtils;
 
 /**
- *
  * @author thevpc
  */
 public abstract class DefaultInternalNutsExecutableCommand extends AbstractNutsExecutableCommand {
@@ -43,7 +42,7 @@ public abstract class DefaultInternalNutsExecutableCommand extends AbstractNutsE
         NutsText n = txt.parser().parseResource("/net/thevpc/nuts/runtime/command/" + name + ".ntf",
                 txt.parser().createLoader(getClass().getClassLoader())
         );
-        if(n==null){
+        if (n == null) {
             return "no help found for " + name;
         }
         return n.toString();
@@ -52,24 +51,41 @@ public abstract class DefaultInternalNutsExecutableCommand extends AbstractNutsE
     @Override
     public void dryExecute() {
         NutsSession session = getSession();
-        if (CoreNutsUtils.isIncludesHelpOption(args)) {
-            session.out().println("[dry] ==show-help==");
+        if (CoreNutsUtils.processHelpOptions(args, getSession())) {
+            if (getSession().isPlainOut()) {
+                session.out().println("[dry] ==show-help==");
+            } else {
+                session.out().printlnf("[dry] ==show-help==");
+            }
             return;
         }
         NutsTexts text = NutsTexts.of(session);
-        session.out().printf("[dry] %s%n",
-                text.builder()
-                        .append("internal", NutsTextStyle.pale())
-                        .append(" ")
-                        .append(getName(),NutsTextStyle.primary5())
-                        .append(" ")
-                        .append(NutsCommandLine.of(args,session))
-                );
+        if (getSession().isPlainOut()) {
+            session.out().printlnf("[dry] %s%n",
+                    text.builder()
+                            .append("internal", NutsTextStyle.pale())
+                            .append(" ")
+                            .append(getName(), NutsTextStyle.primary5())
+                            .append(" ")
+                            .append(NutsCommandLine.of(args, session))
+            );
+        } else {
+            session.out().printlnf(NutsMessage.cstyle(
+                            "[dry] %s",
+                            text.builder()
+                                    .append("internal", NutsTextStyle.pale())
+                                    .append(" ")
+                                    .append(getName(), NutsTextStyle.primary5())
+                                    .append(" ")
+                                    .append(NutsCommandLine.of(args, session))
+                    )
+            );
+        }
     }
 
     @Override
     public String toString() {
-        return getName()+" "+ NutsCommandLine.of(args,getSession()).toString();
+        return getName() + " " + NutsCommandLine.of(args, getSession()).toString();
     }
 
 }

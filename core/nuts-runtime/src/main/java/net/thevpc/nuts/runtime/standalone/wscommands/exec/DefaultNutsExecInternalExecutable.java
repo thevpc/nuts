@@ -24,7 +24,7 @@ public class DefaultNutsExecInternalExecutable extends DefaultInternalNutsExecut
 
     @Override
     public void execute() {
-        if (CoreNutsUtils.isIncludesHelpOption(args)) {
+        if (CoreNutsUtils.processHelpOptions(args, getSession())) {
             showDefaultHelp();
             return;
         }
@@ -33,7 +33,7 @@ public class DefaultNutsExecInternalExecutable extends DefaultInternalNutsExecut
 
     @Override
     public void dryExecute() {
-        if (CoreNutsUtils.isIncludesHelpOption(args)) {
+        if (CoreNutsUtils.processHelpOptions(args, getSession())) {
             getSession().out().println("[dry] ==show-help==");
             return;
         }

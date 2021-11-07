@@ -514,6 +514,31 @@ public class CoreNutsUtils {
         return x;
     }
 
+    public static boolean processHelpOptions(String[] args, NutsSession session) {
+        if(isIncludesHelpOption(args)) {
+            NutsCommandLine cmdLine = NutsCommandLine.of(args, session);
+            while (cmdLine.hasNext()) {
+                NutsArgument a = cmdLine.peek();
+                if (a.isOption()) {
+                    switch (a.getKey().getString()) {
+                        case "--help": {
+                            cmdLine.skip();
+                            break;
+                        }
+                        default: {
+                            session.configureLast(cmdLine);
+                        }
+                    }
+                } else {
+                    cmdLine.skip();
+                    cmdLine.skipAll();
+                }
+            }
+            return true;
+        }
+        return false;
+    }
+
     public static boolean isIncludesHelpOption(String[] cmd) {
         if (cmd != null) {
             for (String c : cmd) {
@@ -550,36 +575,48 @@ public class CoreNutsUtils {
                         extraMsg));
     }
 
-    public static NutsContentType readOptionOutputFormat(NutsCommandLine cmdLine) {
-        NutsArgument a = cmdLine.peek();
-        switch (a.getKey().getString()) {
-            case "--output-format": {
-                a = cmdLine.nextString();
-                return CoreEnumUtils.parseEnumString(a.getValue().getString(), NutsContentType.class, false);
-            }
-            case "--json": {
-                a = cmdLine.nextString();
-                return (NutsContentType.JSON);
-            }
-            case "--props": {
-                a = cmdLine.nextString();
-                return (NutsContentType.PROPS);
-            }
-            case "--table": {
-                a = cmdLine.nextString();
-                return (NutsContentType.TABLE);
-            }
-            case "--tree": {
-                a = cmdLine.nextString();
-                return (NutsContentType.TREE);
-            }
-            case "--plain": {
-                a = cmdLine.nextString();
-                return (NutsContentType.PLAIN);
-            }
-        }
-        return null;
-    }
+//    public static NutsContentType readOptionOutputFormat(NutsCommandLine cmdLine) {
+//        NutsArgument a = cmdLine.peek();
+//        switch (a.getKey().getString()) {
+//            case "--output-format": {
+//                a = cmdLine.nextString();
+//                return CoreEnumUtils.parseEnumString(a.getValue().getString(), NutsContentType.class, false);
+//            }
+//            case "--json": {
+//                a = cmdLine.nextString();
+//                return (NutsContentType.JSON);
+//            }
+//            case "--props": {
+//                a = cmdLine.nextString();
+//                return (NutsContentType.PROPS);
+//            }
+//            case "--table": {
+//                a = cmdLine.nextString();
+//                return (NutsContentType.TABLE);
+//            }
+//            case "--tree": {
+//                a = cmdLine.nextString();
+//                return (NutsContentType.TREE);
+//            }
+//            case "--plain": {
+//                a = cmdLine.nextString();
+//                return (NutsContentType.PLAIN);
+//            }
+//            case "--xml": {
+//                a = cmdLine.nextString();
+//                return (NutsContentType.XML);
+//            }
+//            case "--tson": {
+//                a = cmdLine.nextString();
+//                return (NutsContentType.TSON);
+//            }
+//            case "--yaml": {
+//                a = cmdLine.nextString();
+//                return (NutsContentType.YAML);
+//            }
+//        }
+//        return null;
+//    }
 
     public static boolean matchesSimpleNameStaticVersion(NutsId id, NutsId pattern) {
         if (pattern == null) {
@@ -772,7 +809,7 @@ public class CoreNutsUtils {
         ProgressOptions o = new ProgressOptions();
         boolean enabledVisited = false;
         StringMapParser p = new StringMapParser("=", ",; ");
-        Map<String, String> m = p.parseMap(session.getProgressOptions(),session);
+        Map<String, String> m = p.parseMap(session.getProgressOptions(), session);
         for (Map.Entry<String, String> e : m.entrySet()) {
             String k = e.getKey();
             String v = e.getValue();
@@ -818,7 +855,7 @@ public class CoreNutsUtils {
         if (o instanceof Boolean) {
             monitorable = ((Boolean) o).booleanValue();
         }
-        if (!session.boot().getCustomBootOption("monitor.enabled").getBoolean( true)) {
+        if (!session.boot().getCustomBootOption("monitor.enabled").getBoolean(true)) {
             monitorable = false;
         }
         if (ws instanceof DefaultNutsWorkspace) {
@@ -917,14 +954,14 @@ public class CoreNutsUtils {
         return c;
     }
 
-    public static Map<String, String> getPropertiesMap(NutsDescriptorProperty[] list,NutsSession session) {
+    public static Map<String, String> getPropertiesMap(NutsDescriptorProperty[] list, NutsSession session) {
         Map<String, String> m = new LinkedHashMap<>();
         if (list != null) {
             for (NutsDescriptorProperty property : list) {
                 if (property.getCondition() == null || property.getCondition().isBlank()) {
                     m.put(property.getName(), property.getValue());
                 } else {
-                    throw new NutsIllegalArgumentException(session,NutsMessage.plain("unexpected properties with conditions. probably a bug"));
+                    throw new NutsIllegalArgumentException(session, NutsMessage.plain("unexpected properties with conditions. probably a bug"));
                 }
             }
         }
@@ -945,7 +982,7 @@ public class CoreNutsUtils {
                     return NutsIdType.RUNTIME;
                 } else {
                     for (NutsClassLoaderNode n : session.boot().getBootExtensionClassLoaderNode()) {
-                        if (NutsId.of(n.getId(),session).equalsShortId(depId)) {
+                        if (NutsId.of(n.getId(), session).equalsShortId(depId)) {
                             return NutsIdType.EXTENSION;
                         }
                     }
@@ -956,8 +993,8 @@ public class CoreNutsUtils {
     }
 
     public static class ProgressOptions {
-        private boolean enabled = true;
         private final Map<String, NutsVal> vals = new LinkedHashMap<>();
+        private boolean enabled = true;
 
         public boolean isEnabled() {
             return enabled;
