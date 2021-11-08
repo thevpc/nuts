@@ -209,7 +209,8 @@ public class NutsXmlUtils {
             documentFactory.setExpandEntityReferences(false);
             // This is the PRIMARY defense. If DTDs (doctypes) are disallowed, almost all XML entity attacks are prevented
             // Xerces 2 only - http://xerces.apache.org/xerces2-j/features.html#disallow-doctype-decl
-            setLenientFeature(documentFactory, "http://apache.org/xml/features/disallow-doctype-decl", true);
+            //commented because some pom.xml contains <!DOCTYPE xml>
+            //setLenientFeature(documentFactory, "http://apache.org/xml/features/disallow-doctype-decl", true);
 
             // If you can't completely disable DTDs, then at least do the following:
             // Xerces 1 - http://xerces.apache.org/xerces-j/features.html#external-general-entities

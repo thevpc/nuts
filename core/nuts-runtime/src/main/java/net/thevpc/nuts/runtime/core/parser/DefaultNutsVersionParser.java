@@ -10,7 +10,7 @@ public class DefaultNutsVersionParser implements NutsVersionParser {
     /**
      * ${} added to support versions as maven place-holders
      */
-    private static final Pattern PATTERN=Pattern.compile("[A-Za-z0-9._*,()\\[\\] ${}-]+");
+    private static final Pattern PATTERN=Pattern.compile("[A-Za-z0-9._*,()\\[\\] ${}+-]+");
     private NutsSession session;
     private boolean lenient=false;
     private boolean acceptBlank = true;
