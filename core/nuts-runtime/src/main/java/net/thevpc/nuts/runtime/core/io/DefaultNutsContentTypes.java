@@ -33,21 +33,7 @@ public class DefaultNutsContentTypes implements NutsContentTypes {
 
     @Override
     public String probeContentType(Path path) {
-        List<NutsContentTypeResolver> allSupported = session.extensions()
-                .createAllSupported(NutsContentTypeResolver.class, path);
-        NutsSupported<String> best = null;
-        for (NutsContentTypeResolver r : allSupported) {
-            NutsSupported<String> s = r.probeContentType(path, session);
-            if (s != null && s.isValid()) {
-                if (best == null || s.getSupportLevel() > best.getSupportLevel()) {
-                    best = s;
-                }
-            }
-        }
-        if (best == null) {
-            throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("missing type resolver for %s",path));
-        }
-        return best.getValue();
+        return probeContentType(path == null ? null : NutsPath.of(path, session));
     }
 
     @Override
@@ -64,27 +50,27 @@ public class DefaultNutsContentTypes implements NutsContentTypes {
             }
         }
         if (best == null) {
-            throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("missing type resolver for %s",path));
+            throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("missing type resolver for %s", path));
         }
         return best.getValue();
     }
 
     @Override
     public String probeContentType(InputStream stream, String name) {
-        byte[] buffer=CoreIOUtils.readBestEffort(4096,stream,session);
-        return probeContentType(buffer,name);
+        byte[] buffer = CoreIOUtils.readBestEffort(4096, stream, session);
+        return probeContentType(buffer, name);
     }
 
     @Override
     public String probeContentType(byte[] bytes, String name) {
-        Map<String,Object> constraints=new HashMap<>();
-        constraints.put("bytes",bytes);
-        constraints.put("name",name);
+        Map<String, Object> constraints = new HashMap<>();
+        constraints.put("bytes", bytes);
+        constraints.put("name", name);
         List<NutsContentTypeResolver> allSupported = session.extensions()
                 .createAllSupported(NutsContentTypeResolver.class, constraints);
         NutsSupported<String> best = null;
         for (NutsContentTypeResolver r : allSupported) {
-            NutsSupported<String> s = r.probeContentType(bytes,name, session);
+            NutsSupported<String> s = r.probeContentType(bytes, name, session);
             if (s != null && s.isValid()) {
                 if (best == null || s.getSupportLevel() > best.getSupportLevel()) {
                     best = s;
@@ -92,7 +78,7 @@ public class DefaultNutsContentTypes implements NutsContentTypes {
             }
         }
         if (best == null) {
-            throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("missing type resolver for stream named %s",name));
+            throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("missing type resolver for stream named %s", name));
         }
         return best.getValue();
     }

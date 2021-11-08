@@ -227,10 +227,14 @@ public class URLPath implements NutsPathSPI {
             return f.getContentType();
         }
         try {
-            return url.openConnection().getContentType();
+            String c = url.openConnection().getContentType();
+            if(c!=null) {
+                return c;
+            }
         } catch (IOException e) {
-            return null;
+            //
         }
+        return NutsContentTypes.of(session).probeContentType(new NutsPathFromSPI(this));
     }
 
     @Override
@@ -244,7 +248,7 @@ public class URLPath implements NutsPathSPI {
                 throw new NutsIOException(getSession(), NutsMessage.cstyle("unable to resolve input stream %s", toString()));
             }
             return InputStreamMetadataAwareImpl.of(url.openStream(),
-                    new NutsDefaultInputStreamMetadata(wrapperNutsPath()));
+                    new NutsPathInputStreamMetadata(wrapperNutsPath()));
         } catch (IOException e) {
             throw new NutsIOException(session, e);
         }

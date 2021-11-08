@@ -140,7 +140,7 @@ public class NutsPathFromSPI extends NutsPathBase {
     @Override
     public InputStream getInputStream() {
         return InputStreamMetadataAwareImpl.of(base.getInputStream(),
-                new NutsDefaultInputStreamMetadata(this)
+                new NutsPathInputStreamMetadata(this)
         );
     }
 
