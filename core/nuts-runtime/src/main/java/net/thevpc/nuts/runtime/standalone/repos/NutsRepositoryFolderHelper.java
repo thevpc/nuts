@@ -127,7 +127,7 @@ public class NutsRepositoryFolderHelper {
         return versionFolder.resolve(idFilename);
     }
 
-    protected NutsDescriptor fetchDescriptorImpl(NutsId id, NutsSession session) {
+    public NutsDescriptor fetchDescriptorImpl(NutsId id, NutsSession session) {
         if (!isReadEnabled()) {
             return null;
         }

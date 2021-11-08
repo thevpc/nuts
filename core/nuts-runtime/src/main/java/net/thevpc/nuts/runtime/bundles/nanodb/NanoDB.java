@@ -105,6 +105,7 @@ public class NanoDB implements AutoCloseable {
             }
         }
         NanoDBTableFile<T> f = new NanoDBTableFile<T>(
+                def.getType(),
                 dir, name, serializer,
                 this,
                 indices, session
@@ -118,7 +119,7 @@ public class NanoDB implements AutoCloseable {
         return tables.containsKey(tableName);
     }
 
-    public <T> NanoDBIndex<T> createIndexFor(NanoDBSerializer ser, File file,NutsSession session) {
-        return new NanoDBDefaultIndex<T>(ser, new DBIndexValueStoreDefaultFactory(), new HashMap<>(), file);
+    public <T> NanoDBIndex<T> createIndexFor(Class<T> type,NanoDBSerializer<T> ser, File file,NutsSession session) {
+        return new NanoDBDefaultIndex<T>(type,ser, new DBIndexValueStoreDefaultFactory(), new HashMap<>(), file);
     }
 }

@@ -16,7 +16,7 @@ import net.thevpc.nuts.runtime.standalone.config.DefaultImportModel;
 import net.thevpc.nuts.runtime.standalone.config.DefaultNutsWorkspaceConfigModel;
 import net.thevpc.nuts.runtime.standalone.config.DefaultNutsWorkspaceEnvManagerModel;
 import net.thevpc.nuts.runtime.standalone.ext.DefaultNutsWorkspaceExtensionModel;
-import net.thevpc.nuts.runtime.standalone.repos.DefaultNutsInstalledRepository;
+import net.thevpc.nuts.runtime.standalone.repos.main.DefaultNutsInstalledRepository;
 import net.thevpc.nuts.runtime.standalone.security.DefaultNutsWorkspaceSecurityModel;
 
 public class NutsWorkspaceModel {

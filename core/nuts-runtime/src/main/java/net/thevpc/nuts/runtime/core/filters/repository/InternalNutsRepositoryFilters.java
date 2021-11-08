@@ -6,7 +6,7 @@ import net.thevpc.nuts.runtime.core.filters.InternalNutsTypedFilters;
 import java.util.Arrays;
 import java.util.List;
 
-import net.thevpc.nuts.runtime.standalone.repos.DefaultNutsInstalledRepository;
+import net.thevpc.nuts.runtime.standalone.repos.main.DefaultNutsInstalledRepository;
 import net.thevpc.nuts.spi.NutsSupportLevelContext;
 
 public class InternalNutsRepositoryFilters extends InternalNutsTypedFilters<NutsRepositoryFilter>

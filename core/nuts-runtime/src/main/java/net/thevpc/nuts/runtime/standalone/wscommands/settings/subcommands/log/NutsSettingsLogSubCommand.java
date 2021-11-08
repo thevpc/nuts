@@ -6,6 +6,8 @@
 package net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.log;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.core.NutsWorkspaceExt;
+import net.thevpc.nuts.runtime.standalone.repos.main.NutsInstallLogRecord;
 import net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.AbstractNutsSettingsSubCommand;
 
 import java.util.logging.Level;
@@ -69,6 +71,31 @@ public class NutsSettingsLogSubCommand extends AbstractNutsSettingsSubCommand {
                 Logger rootLogger = Logger.getLogger("");
                 session.out().printf("%s%n", rootLogger.getLevel().toString());
             }
+        } else if (cmdLine.next("install-log") != null) {
+            if (cmdLine.isExecMode()) {
+                if(session.isPlainOut()) {
+                    for (NutsInstallLogRecord r : NutsWorkspaceExt.of(session).getInstalledRepository().findLog(session)) {
+                        NutsTexts txt = NutsTexts.of(session);
+                        session.out().printf("%s %s %s %s %s %s %s%n",
+                                r.getDate(),
+                                r.getUser(),
+                                r.getAction(),
+                                r.isSucceeded()?
+                                        txt.ofStyled("Succeeded",NutsTextStyle.success())
+                                        :
+                                        txt.ofStyled("Failed",NutsTextStyle.fail()),
+                                r.getId()==null?"":r.getId(),
+                                r.getForId()==null?"":r.getForId(),
+                                NutsUtilStrings.trim(r.getMessage())
+                        );
+                    }
+                }else{
+                    session.out().printlnf(
+                            NutsWorkspaceExt.of(session).getInstalledRepository().findLog(session).toList()
+                    );
+                }
+            }
+            return true;
         }
         return false;
     }

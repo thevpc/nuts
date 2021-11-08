@@ -17,7 +17,7 @@ public class Test25_LuceneTest {
                         "/net/thevpc/nuts/core/test/nexus-maven-repository-index.359.gz"
                 ), "maven-central", session
         );
-        long count0 = ArtifactsIndexDB.of(session).findAll().count();
+        long count0 = ArtifactsIndexDB.of(session).findAll(session).count();
         System.out.println(count);
         Assertions.assertEquals(count0, count);
     }

@@ -1,5 +1,10 @@
 package net.thevpc.nuts.runtime.bundles.nanodb;
 
+import net.thevpc.nuts.NutsIOException;
+import net.thevpc.nuts.NutsSession;
+
+import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
@@ -20,12 +25,12 @@ public class NanoDBSerializerForBean<T> extends NanoDBNonNullSerializer<T>{
         this.fields = buildFields(type, acceptedFields,serializers);
     }
 
-    public void write(T obj, NanoDBOutputStream out) {
-        writeNonNullHelper(obj,getSupportedType(), out, fields);
+    public void write(T obj, NanoDBOutputStream out, NutsSession session) {
+        writeNonNullHelper(obj,getSupportedType(), out, fields, session);
     }
 
-    public T read(NanoDBInputStream in) {
-        return readNonNullHelper(in,getSupportedType(), fields);
+    public T read(NanoDBInputStream in, Class expectedType, NutsSession session) {
+        return readNonNullHelper(in,getSupportedType(), fields, session);
     }
 
     private static <T> LinkedHashMap<String, FieldInfo> buildFields(Class<T> type, Set<String> acceptedFields,NanoDBSerializers serializers){
@@ -54,7 +59,7 @@ public class NanoDBSerializerForBean<T> extends NanoDBNonNullSerializer<T>{
         return fields;
     }
 
-    private static <T> void writeNonNullHelper(T obj,Class<T> supportedType, NanoDBOutputStream out, Map<String, FieldInfo> fields) {
+    private static <T> void writeNonNullHelper(T obj, Class<T> supportedType, NanoDBOutputStream out, Map<String, FieldInfo> fields, NutsSession session) {
         for (FieldInfo value : fields.values()) {
             Object u = null;
             try {
@@ -62,16 +67,18 @@ public class NanoDBSerializerForBean<T> extends NanoDBNonNullSerializer<T>{
             } catch (IllegalAccessException e) {
                 throw new IllegalArgumentException(e);
             }
-            value.ser.write(u, out);
+            value.ser.write(u, out, session);
         }
     }
 
-    private static  <T> T readNonNullHelper(NanoDBInputStream in,Class<T> supportedType, Map<String, FieldInfo> fields) {
+    private static  <T> T readNonNullHelper(NanoDBInputStream in, Class<T> supportedType, Map<String, FieldInfo> fields, NutsSession session) {
         try {
             T newInstance = supportedType.getConstructor().newInstance();
             for (FieldInfo value : fields.values()) {
                 try {
-                    value.field.set(newInstance, value.ser.read(in));
+                    value.field.set(newInstance, value.ser.read(in, value.field.getType(), session));
+                } catch (NutsIOException| UncheckedIOException ex) {
+                    throw ex;
                 } catch (Exception ex) {
                     throw new IllegalArgumentException("error loading field " + supportedType.getSimpleName() + "." + value.name + ": " + ex.getMessage(), ex);
                 }

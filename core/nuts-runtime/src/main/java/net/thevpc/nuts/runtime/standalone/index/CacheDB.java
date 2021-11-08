@@ -11,7 +11,7 @@ import java.io.File;
 public class CacheDB {
     public static NanoDB of(NutsSession session) {
         synchronized (session.getWorkspace()) {
-            NanoDB o = (NanoDB) session.env().getProperties().get(NanoDB.class.getName());
+            NanoDB o = (NanoDB) session.env().getProperties().get(CacheDB.class.getName());
             if (o == null) {
                 o = new NanoDB(
                         new File(
@@ -22,7 +22,7 @@ public class CacheDB {
                         ),"/cachedb")
                 );
                 o.getSerializers().setSerializer(NutsId.class,()->new NanoDBNutsIdSerializer(session));
-                session.env().getProperties().put(NanoDB.class.getName(), o);
+                session.env().getProperties().put(CacheDB.class.getName(), o);
             }
             return o;
         }

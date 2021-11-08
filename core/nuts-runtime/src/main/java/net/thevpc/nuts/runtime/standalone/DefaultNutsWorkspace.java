@@ -62,7 +62,7 @@ import net.thevpc.nuts.runtime.standalone.config.*;
 import net.thevpc.nuts.runtime.standalone.ext.DefaultNutsWorkspaceExtensionManager;
 import net.thevpc.nuts.runtime.standalone.ext.DefaultNutsWorkspaceExtensionModel;
 import net.thevpc.nuts.runtime.standalone.installers.CommandForIdNutsInstallerComponent;
-import net.thevpc.nuts.runtime.standalone.repos.DefaultNutsInstalledRepository;
+import net.thevpc.nuts.runtime.standalone.repos.main.DefaultNutsInstalledRepository;
 import net.thevpc.nuts.runtime.standalone.security.DefaultNutsWorkspaceSecurityManager;
 import net.thevpc.nuts.runtime.standalone.security.DefaultNutsWorkspaceSecurityModel;
 import net.thevpc.nuts.runtime.standalone.security.ReadOnlyNutsWorkspaceOptions;

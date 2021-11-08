@@ -1,6 +1,7 @@
 package net.thevpc.nuts.runtime.core.repos;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.standalone.repos.main.NutsInstallLogRecord;
 
 import java.util.Iterator;
 
@@ -28,4 +29,5 @@ public interface NutsInstalledRepository extends NutsRepository {
 
     void unrequire(NutsId id, NutsId forId, NutsDependencyScope scope, NutsSession session);
 
+    NutsStream<NutsInstallLogRecord> findLog(NutsSession session);
 }

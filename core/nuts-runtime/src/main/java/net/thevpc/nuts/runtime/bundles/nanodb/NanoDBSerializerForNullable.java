@@ -1,5 +1,7 @@
 package net.thevpc.nuts.runtime.bundles.nanodb;
 
+import net.thevpc.nuts.NutsSession;
+
 public class NanoDBSerializerForNullable<T> extends NanoDBNullSerializer<T>{
     private NanoDBSerializer<T> nonNullSer;
 
@@ -9,12 +11,12 @@ public class NanoDBSerializerForNullable<T> extends NanoDBNullSerializer<T>{
     }
 
     @Override
-    public void writeNonNull(T obj, NanoDBOutputStream out) {
-        nonNullSer.write(obj,out);
+    public void writeNonNull(T obj, NanoDBOutputStream out, NutsSession session) {
+        nonNullSer.write(obj,out, session);
     }
 
     @Override
-    public T readNonNull(NanoDBInputStream in) {
-        return nonNullSer.read(in);
+    public T readNonNull(NanoDBInputStream in, Class expectedType, NutsSession session) {
+        return nonNullSer.read(in, expectedType, session);
     }
 }

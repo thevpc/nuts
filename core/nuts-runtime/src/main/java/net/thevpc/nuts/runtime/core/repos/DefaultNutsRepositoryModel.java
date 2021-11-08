@@ -8,7 +8,7 @@ import net.thevpc.nuts.runtime.core.events.DefaultNutsWorkspaceEvent;
 import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.core.util.CoreNutsUtils;
 import net.thevpc.nuts.runtime.standalone.config.ConfigEventType;
-import net.thevpc.nuts.runtime.standalone.repos.DefaultNutsInstalledRepository;
+import net.thevpc.nuts.runtime.standalone.repos.main.DefaultNutsInstalledRepository;
 import net.thevpc.nuts.runtime.standalone.repos.NutsRepositoryRegistryHelper;
 import net.thevpc.nuts.runtime.standalone.repos.NutsSimpleRepositoryWrapper;
 import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;

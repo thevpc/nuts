@@ -16,9 +16,11 @@ public class NanoDBDefaultIndex<T> extends NanoDBAbstractIndex<T> {
     private Map<T, DBIndexValueStore> index = new HashMap<>();
     private DBIndexValueStoreFactory storeFactory;
     private File file;
+    private Class<T> keyType;
 
-    public NanoDBDefaultIndex(NanoDBSerializer<T> ser, DBIndexValueStoreFactory storeFactory, Map<T, DBIndexValueStore> index, File file) {
+    public NanoDBDefaultIndex(Class<T> keyType,NanoDBSerializer<T> ser, DBIndexValueStoreFactory storeFactory, Map<T, DBIndexValueStore> index, File file) {
         super(ser);
+        this.keyType = keyType;
         this.index = index;
         this.storeFactory = storeFactory;
         this.file = file;
@@ -72,8 +74,8 @@ public class NanoDBDefaultIndex<T> extends NanoDBAbstractIndex<T> {
         return index.keySet().stream();
     }
 
-    public void storeKey(T k, NanoDBOutputStream dos) throws IOException {
-        ser.write(k, dos);
+    public void storeKey(T k, NanoDBOutputStream dos, NutsSession session) throws IOException {
+        ser.write(k, dos, session);
     }
 
 
@@ -82,7 +84,7 @@ public class NanoDBDefaultIndex<T> extends NanoDBAbstractIndex<T> {
             dos.writeUTF(NANODB_INDEX_0_8_1);
             dos.writeLong(index.size());
             for (Map.Entry<T, DBIndexValueStore> e : index.entrySet()) {
-                storeKey(e.getKey(), dos);
+                storeKey(e.getKey(), dos, session);
                 DBIndexValueStore store = e.getValue();
                 boolean mem = store.isMem();
                 if (mem) {
@@ -134,7 +136,7 @@ public class NanoDBDefaultIndex<T> extends NanoDBAbstractIndex<T> {
     }
 
     protected T readKey(NanoDBInputStream in,NutsSession session) throws IOException {
-        return ser.read(in);
+        return ser.read(in, keyType, session);
     }
 
     public void store(File stream,NutsSession session) throws IOException {

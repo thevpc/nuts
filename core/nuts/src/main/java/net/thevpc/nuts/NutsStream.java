@@ -30,6 +30,9 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.function.IntFunction;
 import java.util.function.Predicate;
+import java.util.stream.DoubleStream;
+import java.util.stream.IntStream;
+import java.util.stream.LongStream;
 import java.util.stream.Stream;
 
 /**
@@ -205,9 +208,29 @@ public interface NutsStream<T> extends Iterable<T> {
 
     <R> NutsStream<R> flatMapIter(Function<? super T, ? extends Iterator<? extends R>> mapper);
 
+    <R> NutsStream<R> flatMapList(Function<? super T, ? extends List<? extends R>> mapper);
+
+    <R> NutsStream<R> flatMapArray(Function<? super T, ? extends R[]> mapper);
+
     <R> NutsStream<R> flatMapStream(Function<? super T, ? extends Stream<? extends R>> mapper);
 
     <K> Map<K, List<T>> groupBy(Function<? super T, ? extends K> classifier);
 
     <K> NutsStream<Map.Entry<K, List<T>>> groupedBy(Function<? super T, ? extends K> classifier);
+
+    Optional<T> findAny();
+
+    Optional<T> findFirst();
+
+    DoubleStream flatMapToDouble(Function<? super T, ? extends DoubleStream> mapper);
+
+    IntStream flatMapToInt(Function<? super T, ? extends IntStream> mapper);
+
+    LongStream flatMapToLong(Function<? super T, ? extends LongStream> mapper);
+
+    boolean allMatch(Predicate<? super T> predicate);
+
+    boolean noneMatch(Predicate<? super T> predicate);
+
+    NutsStream<T> limit(long maxSize);
 }

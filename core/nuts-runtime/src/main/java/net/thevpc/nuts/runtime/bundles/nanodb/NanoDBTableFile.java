@@ -2,11 +2,11 @@ package net.thevpc.nuts.runtime.bundles.nanodb;
 
 import net.thevpc.nuts.NutsIOException;
 import net.thevpc.nuts.NutsSession;
+import net.thevpc.nuts.NutsStream;
 
 import java.io.*;
 import java.nio.channels.FileChannel;
 import java.util.*;
-import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 public class NanoDBTableFile<T> implements Iterable<T>, AutoCloseable {
@@ -16,18 +16,20 @@ public class NanoDBTableFile<T> implements Iterable<T>, AutoCloseable {
     private final Map<String, IndexInfo> indexDefinitions = new HashMap<>();
     private final File dir;
     private final String tableName;
+    private final NanoDB db;
+    private final NutsSession session0;
     private NanoDBOutputStream writeStream;
     private NanoDBInputStream readStream;
     private FileChannel readChannel;
-    private final NanoDB db;
-    private final NutsSession session0;
+    private Class<T> rowType;
 
-    public NanoDBTableFile(File dir, String tableName
+    public NanoDBTableFile(Class<T> rowType,File dir, String tableName
             , NanoDBSerializer<T> serializer
             , NanoDB db
             , NanoDBIndexDefinition<T>[] indexDefinitions, NutsSession session0
     ) {
         this.session0 = session0;
+        this.rowType = rowType;
         this.dir = dir;
         this.db = db;
         this.tableName = tableName;
@@ -37,7 +39,7 @@ public class NanoDBTableFile<T> implements Iterable<T>, AutoCloseable {
         }
     }
 
-    public static int getUTFLength(String s,NutsSession session) {
+    public static int getUTFLength(String s, NutsSession session) {
         ByteArrayOutputStream o = new ByteArrayOutputStream();
         int init = 0;
         try {
@@ -68,7 +70,7 @@ public class NanoDBTableFile<T> implements Iterable<T>, AutoCloseable {
             } catch (IOException e) {
                 throw new NutsIOException(session, e);
             }
-            return serializer.read(readStream);
+            return serializer.read(readStream, rowType, session);
         }
     }
 
@@ -94,7 +96,7 @@ public class NanoDBTableFile<T> implements Iterable<T>, AutoCloseable {
                 writeStream.flush();
                 len = writeStream.getPosition();
             }
-            serializer.write(a, writeStream);
+            serializer.write(a, writeStream, session);
             updateIndices(a, len, session);
             return len;
         }
@@ -129,10 +131,11 @@ public class NanoDBTableFile<T> implements Iterable<T>, AutoCloseable {
         }
     }
 
-    public Stream<T> stream() {
-        return StreamSupport.stream(
-                Spliterators.spliteratorUnknownSize(iterator(), Spliterator.ORDERED),
-                false);
+    public NutsStream<T> stream(NutsSession session) {
+        return NutsStream.of(
+                StreamSupport.stream(
+                        Spliterators.spliteratorUnknownSize(iterator(session), Spliterator.ORDERED),
+                        false), session);
     }
 
     public Iterable<T> items(NutsSession s) {
@@ -175,7 +178,7 @@ public class NanoDBTableFile<T> implements Iterable<T>, AutoCloseable {
                     }
                     if (is != null) {
                         try {
-                            nextValue = serializer.read(is);
+                            nextValue = serializer.read(is, rowType, session);
                             return nextValue != null;
                         } catch (Exception ex) {
                             try {
@@ -225,13 +228,16 @@ public class NanoDBTableFile<T> implements Iterable<T>, AutoCloseable {
         return new File(dir, tableName + ".table");
     }
 
-    public Stream<T> findByIndex(String indexName, Object value, NutsSession session) {
-        return resolveIndexInfo(indexName).getData(session).get(value, session)
-                .mapToObj(pos -> get(pos, session));
+    public NutsStream<T> findByIndex(String indexName, Object value, NutsSession session) {
+        return NutsStream.of(
+                resolveIndexInfo(indexName).getData(session).get(value, session)
+                .mapToObj(pos -> get(pos, session)),session);
     }
 
-    public <T> Stream<T> findIndexValues(String indexName, NutsSession session) {
-        return resolveIndexInfo(indexName).getData(session).findAll(session);
+    public <T> NutsStream<T> findIndexValues(String indexName, NutsSession session) {
+        return NutsStream.of(
+                resolveIndexInfo(indexName).getData(session).findAll(session)
+                ,session);
     }
 
     public long getFileLength() {
@@ -277,8 +283,10 @@ public class NanoDBTableFile<T> implements Iterable<T>, AutoCloseable {
                 if (data != null) {
                     return data;
                 }
-                NanoDBIndex fi = db.createIndexFor(db.getSerializers().findSerializer(def.getIndexType(), def.isNullable()),
-                        getIndexFile(),session
+                NanoDBIndex fi = db.createIndexFor(
+                        def.getIndexType(),
+                        db.getSerializers().findSerializer(def.getIndexType(), def.isNullable()),
+                        getIndexFile(), session
                 );
                 fi.load(session);
                 data = fi;

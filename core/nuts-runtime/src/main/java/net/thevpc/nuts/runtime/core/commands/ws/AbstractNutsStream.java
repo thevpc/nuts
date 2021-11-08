@@ -31,13 +31,8 @@ import net.thevpc.nuts.runtime.bundles.iter.IteratorUtils;
 import net.thevpc.nuts.runtime.standalone.util.NutsIteratorStream;
 
 import java.util.*;
-import java.util.function.BinaryOperator;
-import java.util.function.Function;
-import java.util.function.IntFunction;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
+import java.util.function.*;
+import java.util.stream.*;
 
 /**
  * @param <T> Type
@@ -285,6 +280,29 @@ public abstract class AbstractNutsStream<T> implements NutsStream<T> {
     }
 
     @Override
+    public <R> NutsStream<R> flatMapList(Function<? super T, ? extends List<? extends R>> mapper) {
+        return new AbstractNutsStream<R>(session, nutsBase) {
+            @Override
+            public Iterator<R> iterator() {
+                Iterator<T> it = AbstractNutsStream.this.iterator();
+                return IteratorUtils.flatMap(it, t -> mapper.apply(t).iterator());
+            }
+        };
+    }
+
+    @Override
+    public <R> NutsStream<R> flatMapArray(Function<? super T, ? extends R[]> mapper) {
+        return new AbstractNutsStream<R>(session, nutsBase) {
+            @Override
+            public Iterator<R> iterator() {
+                Iterator<T> it = AbstractNutsStream.this.iterator();
+                return IteratorUtils.flatMap(it, t -> Arrays.asList(mapper.apply(t))
+                        .iterator());
+            }
+        };
+    }
+
+    @Override
     public <R> NutsStream<R> flatMapStream(Function<? super T, ? extends Stream<? extends R>> mapper) {
         return new AbstractNutsStream<R>(session, nutsBase) {
             @Override
@@ -309,5 +327,49 @@ public abstract class AbstractNutsStream<T> implements NutsStream<T> {
                 session, nutsBase, entries.iterator()
         );
     }
+
+    @Override
+    public Optional<T> findAny() {
+        return stream().findAny();
+    }
+
+    @Override
+    public Optional<T> findFirst() {
+        return stream().findFirst();
+    }
+
+    @Override
+    public DoubleStream flatMapToDouble(Function<? super T, ? extends DoubleStream> mapper) {
+        return stream().flatMapToDouble(mapper);
+    }
+
+    @Override
+    public IntStream flatMapToInt(Function<? super T, ? extends IntStream> mapper) {
+        return stream().flatMapToInt(mapper);
+    }
+
+    @Override
+    public LongStream flatMapToLong(Function<? super T, ? extends LongStream> mapper) {
+        return stream().flatMapToLong(mapper);
+    }
+
+
+    @Override
+    public boolean allMatch(Predicate<? super T> predicate) {
+        return stream().allMatch(predicate);
+    }
+
+    @Override
+    public boolean noneMatch(Predicate<? super T> predicate) {
+        return stream().noneMatch(predicate);
+    }
+
+    @Override
+    public NutsStream<T> limit(long maxSize) {
+        return NutsStream.of(stream().limit(maxSize),session);
+    }
+
+
+
 
 }

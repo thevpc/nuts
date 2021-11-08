@@ -2,6 +2,7 @@ package net.thevpc.nuts.runtime.standalone.index;
 
 import net.thevpc.nuts.NutsId;
 import net.thevpc.nuts.NutsSession;
+import net.thevpc.nuts.NutsStream;
 import net.thevpc.nuts.runtime.bundles.nanodb.NanoDB;
 import net.thevpc.nuts.runtime.bundles.nanodb.NanoDBDefaultIndexDefinition;
 import net.thevpc.nuts.runtime.bundles.nanodb.NanoDBTableDefinition;
@@ -47,15 +48,15 @@ public class ArtifactsIndexDB {
         );
     }
 
-    public Stream<NutsId> findAll() {
-        return table.stream();
+    public NutsStream<NutsId> findAll(NutsSession session) {
+        return table.stream(session);
     }
 
-    public Stream<NutsId> findByGroupId(String groupId, NutsSession session) {
+    public NutsStream<NutsId> findByGroupId(String groupId, NutsSession session) {
         return table.findByIndex("groupId", groupId, session);
     }
 
-    public Stream<NutsId> findByArtifactId(String artifactId, NutsSession session) {
+    public NutsStream<NutsId> findByArtifactId(String artifactId, NutsSession session) {
         return table.findByIndex("artifactId", artifactId, session);
     }
 

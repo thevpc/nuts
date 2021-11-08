@@ -3,7 +3,6 @@ package net.thevpc.nuts.runtime.bundles.nanodb;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
 import java.util.function.Supplier;
 
 public class NanoDBSerializers {
@@ -115,6 +114,12 @@ public class NanoDBSerializers {
             case "java.lang.String": {
                 return new NanoDBSerializerForString();
             }
+            case "java.time.Instant": {
+                return new NanoDBSerializerForInstant();
+            }
+        }
+        if (id.getCls().isEnum()) {
+            return new NanoDBSerializerForEnumByName();
         }
         return null;
     }
@@ -138,16 +143,16 @@ public class NanoDBSerializers {
         }
 
         @Override
+        public int hashCode() {
+            return Objects.hash(cls, nullable);
+        }
+
+        @Override
         public boolean equals(Object o) {
             if (this == o) return true;
             if (o == null || getClass() != o.getClass()) return false;
             ClassWithNullable that = (ClassWithNullable) o;
             return nullable == that.nullable && Objects.equals(cls, that.cls);
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(cls, nullable);
         }
 
         @Override
