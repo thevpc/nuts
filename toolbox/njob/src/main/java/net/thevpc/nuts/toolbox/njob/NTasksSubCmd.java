@@ -575,7 +575,7 @@ public class NTasksSubCmd {
             Stream<NTask> r = service.tasks().findTasks(status, null, count, countType, whereFilter, groupBy, timeUnit, hoursPerDay);
 
             if (context.getSession().isPlainTrace()) {
-                NutsMutableTableModel m = session.formats().table().createModel();
+                NutsMutableTableModel m = NutsMutableTableModel.of(session);
                 List<NTask> lastResults = new ArrayList<>();
                 int[] index = new int[1];
                 r.forEach(x -> {
@@ -586,7 +586,7 @@ public class NTasksSubCmd {
                     lastResults.add(x);
                 });
                 context.getSession().setProperty("LastResults", lastResults.toArray(new NTask[0]));
-                session.formats().table()
+                NutsTableFormat.of(session)
                         .setBorder("spaces")
                         .setValue(m).println();
             } else {

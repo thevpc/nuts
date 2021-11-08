@@ -35,8 +35,8 @@ public class DefaultSearchFormatTable extends DefaultSearchFormatBase {
 
     public NutsTableFormat getTable(NutsSession ws) {
         if (table == null) {
-            table = ws.formats().table();
-            model = table.createModel();
+            table = NutsTableFormat.of(ws);
+            model = NutsMutableTableModel.of(ws);
             table.setValue(model);
             if (getSession() != null && getSession().getOutputFormatOptions() != null) {
                 for (String outputFormatOption : getSession().getOutputFormatOptions()) {

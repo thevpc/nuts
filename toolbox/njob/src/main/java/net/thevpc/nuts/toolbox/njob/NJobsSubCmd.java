@@ -422,7 +422,7 @@ public class NJobsSubCmd {
             Stream<NJob> r = service.jobs().findLastJobs(null, count, countType, whereFilter, groupBy, timeUnit, hoursPerDay);
             ChronoUnit timeUnit0 = timeUnit;
             if (context.getSession().isPlainTrace()) {
-                NutsMutableTableModel m = session.formats().table().createModel();
+                NutsMutableTableModel m = NutsMutableTableModel.of(session);
                 NJobGroup finalGroupBy = groupBy;
                 List<NJob> lastResults = new ArrayList<>();
                 int[] index = new int[1];
@@ -451,7 +451,7 @@ public class NJobsSubCmd {
                     );
                 });
                 context.getSession().setProperty("LastResults", lastResults.toArray(new NJob[0]));
-                session.formats().table()
+                NutsTableFormat.of(session)
                         .setBorder("spaces")
                         .setValue(m).println();
             } else {

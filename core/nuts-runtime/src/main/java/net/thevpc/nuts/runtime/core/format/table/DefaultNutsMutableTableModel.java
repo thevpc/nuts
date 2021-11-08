@@ -8,7 +8,10 @@ package net.thevpc.nuts.runtime.core.format.table;
 import net.thevpc.nuts.NutsMutableTableModel;
 import java.util.ArrayList;
 import java.util.List;
+
+import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.NutsTableCell;
+import net.thevpc.nuts.spi.NutsSupportLevelContext;
 
 /**
  *
@@ -18,6 +21,11 @@ public class DefaultNutsMutableTableModel implements NutsMutableTableModel {
 
     private final Row header = new Row();
     private final List<Row> rows = new ArrayList<>();
+    private NutsSession session;
+
+    public DefaultNutsMutableTableModel(NutsSession session) {
+        this.session = session;
+    }
 
     @Override
     public NutsMutableTableModel newRow() {
@@ -209,4 +217,8 @@ public class DefaultNutsMutableTableModel implements NutsMutableTableModel {
         }
     }
 
+    @Override
+    public int getSupportLevel(NutsSupportLevelContext context) {
+        return DEFAULT_SUPPORT;
+    }
 }

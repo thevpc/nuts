@@ -278,7 +278,7 @@ public class NProjectsSubCmd {
                             );
 
             if (context.getSession().isPlainTrace()) {
-                NutsMutableTableModel m = session.formats().table().createModel();
+                NutsMutableTableModel m = NutsMutableTableModel.of(session);
                 List<NProject> lastResults = new ArrayList<>();
                 int[] index = new int[1];
                 r.forEach(x -> {
@@ -300,7 +300,7 @@ public class NProjectsSubCmd {
                     );
                 });
                 context.getSession().setProperty("LastResults", lastResults.toArray(new NProject[0]));
-                session.formats().table()
+                NutsTableFormat.of(session)
                         .setBorder("spaces")
                         .setValue(m).println(context.getSession().out());
             } else {

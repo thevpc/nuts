@@ -28,8 +28,9 @@ package net.thevpc.nuts.toolbox.nsh.cmds;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.spi.NutsComponentScope;
 import net.thevpc.nuts.spi.NutsComponentScopeType;
-import net.thevpc.nuts.toolbox.nsh.SimpleNshBuiltin;
-import net.thevpc.nuts.toolbox.nsh.bundles.jshell.JShellHistory;
+import net.thevpc.nuts.toolbox.nsh.SimpleJShellBuiltin;
+import net.thevpc.nuts.toolbox.nsh.jshell.JShellExecutionContext;
+import net.thevpc.nuts.toolbox.nsh.jshell.JShellHistory;
 
 import java.io.IOException;
 import java.util.LinkedHashMap;
@@ -39,19 +40,14 @@ import java.util.List;
  * Created by vpc on 1/7/17.
  */
 @NutsComponentScope(NutsComponentScopeType.WORKSPACE)
-public class HistoryCommand extends SimpleNshBuiltin {
+public class HistoryCommand extends SimpleJShellBuiltin {
 
     public HistoryCommand() {
-        super("history", DEFAULT_SUPPORT);
+        super("history", DEFAULT_SUPPORT,Options.class);
     }
 
     @Override
-    protected Object createOptions() {
-        return new Options();
-    }
-
-    @Override
-    protected boolean configureFirst(NutsCommandLine commandLine, SimpleNshCommandContext context) {
+    protected boolean configureFirst(NutsCommandLine commandLine, JShellExecutionContext context) {
         Options options = context.getOptions();
         NutsArgument a;
         if (commandLine.next("-c", "--clear") != null) {
@@ -96,7 +92,7 @@ public class HistoryCommand extends SimpleNshBuiltin {
     }
 
     @Override
-    protected void execBuiltin(NutsCommandLine commandLine, SimpleNshCommandContext context) {
+    protected void execBuiltin(NutsCommandLine commandLine, JShellExecutionContext context) {
         Options options = context.getOptions();
         JShellHistory shistory = context.getShell().getHistory();
         NutsSession session = context.getSession();

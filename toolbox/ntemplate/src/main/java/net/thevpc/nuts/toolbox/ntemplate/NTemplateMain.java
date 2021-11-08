@@ -1,10 +1,11 @@
 package net.thevpc.nuts.toolbox.ntemplate;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.toolbox.nsh.AbstractNshBuiltin;
-import net.thevpc.nuts.toolbox.nsh.bundles.jshell.*;
+import net.thevpc.nuts.toolbox.nsh.AbstractJShellBuiltin;
+import net.thevpc.nuts.toolbox.nsh.jshell.*;
 import net.thevpc.nuts.toolbox.ntemplate.filetemplate.ExprEvaluator;
 import net.thevpc.nuts.toolbox.ntemplate.filetemplate.FileTemplater;
+import net.thevpc.nuts.toolbox.ntemplate.filetemplate.ProcessCmd;
 import net.thevpc.nuts.toolbox.ntemplate.filetemplate.TemplateConfig;
 import net.thevpc.nuts.toolbox.ntemplate.filetemplate.util.StringUtils;
 
@@ -103,21 +104,7 @@ public class NTemplateMain implements NutsApplication {
             );
             rootContext
                     .builtins()
-                    .set(
-                            new AbstractNshBuiltin("process", 10) {
-                                @Override
-                                public int execImpl(String[] args, JShellExecutionContext context) {
-                                    if (args.length != 1) {
-                                        context.err().println(getName() + " : invalid arguments count");
-                                        return 1;
-                                    }
-                                    String pathString = args[0];
-                                    fileTemplater.getLog().debug("eval", getName() + "(" + StringUtils.toLiteralString(pathString) + ")");
-                                    fileTemplater.executeRegularFile(Paths.get(pathString), null);
-                                    return 0;
-                                }
-                            }
-                    );
+                    .set(new ProcessCmd(fileTemplater));
         }
 
         public void setVar(String varName, String newValue) {

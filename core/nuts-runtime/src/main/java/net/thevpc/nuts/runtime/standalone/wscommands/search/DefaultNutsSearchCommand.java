@@ -556,7 +556,7 @@ public class DefaultNutsSearchCommand extends AbstractNutsSearchCommand {
                             if (!installedIds.isEmpty()) {
                                 nutsId2.addAll(installedIds);
                             } else {
-                                for (String aImport : session.imports().getAll()) {
+                                for (String aImport : session.imports().getAllImports()) {
                                     //example import(net.thevpc),search(pnote) ==>net.thevpc:pnote
                                     nutsId2.add(nutsId.builder().setGroupId(aImport).build());
                                     //example import(net.thevpc),search(pnote) ==>net.thevpc.pnote:pnote

@@ -28,7 +28,8 @@ package net.thevpc.nuts.toolbox.nsh.cmds;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.spi.NutsComponentScope;
 import net.thevpc.nuts.spi.NutsComponentScopeType;
-import net.thevpc.nuts.toolbox.nsh.SimpleNshBuiltin;
+import net.thevpc.nuts.toolbox.nsh.SimpleJShellBuiltin;
+import net.thevpc.nuts.toolbox.nsh.jshell.JShellExecutionContext;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -41,18 +42,13 @@ import java.util.List;
  * Created by vpc on 1/7/17.
  */
 @NutsComponentScope(NutsComponentScopeType.WORKSPACE)
-public class HeadCommand extends SimpleNshBuiltin {
+public class HeadCommand extends SimpleJShellBuiltin {
     public HeadCommand() {
-        super("head", DEFAULT_SUPPORT);
+        super("head", DEFAULT_SUPPORT,Options.class);
     }
 
     @Override
-    protected Object createOptions() {
-        return new Options();
-    }
-
-    @Override
-    protected boolean configureFirst(NutsCommandLine commandLine, SimpleNshCommandContext context) {
+    protected boolean configureFirst(NutsCommandLine commandLine, JShellExecutionContext context) {
         Options options = context.getOptions();
         NutsArgument a = commandLine.peek();
         if (a.isOption() && a.getKey().isInt()) {
@@ -61,7 +57,7 @@ public class HeadCommand extends SimpleNshBuiltin {
             return true;
         } else if (!a.isOption()) {
             String path = commandLine.next().getString();
-            String file = NutsPath.of(path, context.getSession()).toAbsolute(context.getRootContext().getCwd()).toString();
+            String file = NutsPath.of(path, context.getSession()).toAbsolute(context.getShellContext().getCwd()).toString();
             options.files.add(file);
             return true;
         }
@@ -69,7 +65,7 @@ public class HeadCommand extends SimpleNshBuiltin {
     }
 
     @Override
-    protected void execBuiltin(NutsCommandLine commandLine, SimpleNshCommandContext context) {
+    protected void execBuiltin(NutsCommandLine commandLine, JShellExecutionContext context) {
         Options options = context.getOptions();
         if (options.files.isEmpty()) {
             commandLine.required();
@@ -79,7 +75,7 @@ public class HeadCommand extends SimpleNshBuiltin {
         }
     }
 
-    private void head(String file, int max, SimpleNshCommandContext context) {
+    private void head(String file, int max, JShellExecutionContext context) {
         BufferedReader r = null;
         NutsSession session = context.getSession();
         try {

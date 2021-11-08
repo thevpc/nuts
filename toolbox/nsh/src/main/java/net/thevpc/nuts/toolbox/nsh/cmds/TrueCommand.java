@@ -29,32 +29,32 @@ package net.thevpc.nuts.toolbox.nsh.cmds;
 import net.thevpc.nuts.NutsCommandLine;
 import net.thevpc.nuts.spi.NutsComponentScope;
 import net.thevpc.nuts.spi.NutsComponentScopeType;
-import net.thevpc.nuts.toolbox.nsh.SimpleNshBuiltin;
+import net.thevpc.nuts.toolbox.nsh.SimpleJShellBuiltin;
+import net.thevpc.nuts.toolbox.nsh.jshell.JShellExecutionContext;
 
 /**
  * Created by vpc on 1/7/17.
  */
 @NutsComponentScope(NutsComponentScopeType.WORKSPACE)
-public class TrueCommand extends SimpleNshBuiltin {
+public class TrueCommand extends SimpleJShellBuiltin {
 
     public TrueCommand() {
-        super("true", DEFAULT_SUPPORT);
+        super("true", DEFAULT_SUPPORT,Options.class);
+    }
+
+    private static class Options{
+
     }
 
     @Override
-    protected Object createOptions() {
-        return null;
-    }
-
-    @Override
-    protected boolean configureFirst(NutsCommandLine commandLine, SimpleNshCommandContext context) {
+    protected boolean configureFirst(NutsCommandLine commandLine, JShellExecutionContext context) {
         //ignore all
         commandLine.skip();
         return true;
     }
 
     @Override
-    protected void execBuiltin(NutsCommandLine commandLine, SimpleNshCommandContext context) {
+    protected void execBuiltin(NutsCommandLine commandLine, JShellExecutionContext context) {
         //do nothing, return true
     }
 

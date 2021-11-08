@@ -13,7 +13,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
-//import net.thevpc.nuts.runtime.standalone.util.fprint.FormattedPrintStream;
 
 
 /**
@@ -73,96 +72,34 @@ public class DefaultNutsHelpInternalExecutable extends DefaultInternalNutsExecut
             );
         }
         NutsContentType outputFormat = session.getOutputFormat();
-        switch (outputFormat) {
-            case PLAIN: {
-                NutsPrintStream fout = session.out();
-                if (!helpColors && helpFor.isEmpty()) {
-                    fout.println(NutsWorkspaceExt.of(session.getWorkspace()).getHelpText(session));
+        NutsPrintStream fout = NutsPrintStream.ofInMemory(session);
+        if (!helpColors && helpFor.isEmpty()) {
+            fout.println(NutsWorkspaceExt.of(session.getWorkspace()).getHelpText(session));
+            fout.flush();
+        }
+        for (String arg : helpFor) {
+            NutsExecutableInformation w = null;
+            if (arg.equals("help")) {
+                fout.println(arg + " :");
+                showDefaultHelp();
+                fout.flush();
+            } else {
+                try {
+                    w = session.exec().addCommand(arg).which();
+                } catch (Exception ex) {
+                    LOG.with().session(session).level(Level.FINE).error(ex).log(NutsMessage.jstyle("failed to execute : {0}", arg));
+                    //ignore
+                }
+                if (w != null) {
+                    fout.println(arg + " :");
+                    fout.println(w.getHelpText());
                     fout.flush();
+                } else {
+                    session.getTerminal().err().println(arg + " : Not found");
                 }
-                for (String arg : helpFor) {
-                    NutsExecutableInformation w = null;
-                    if (arg.equals("help")) {
-                        fout.println(arg + " :");
-                        showDefaultHelp();
-                        fout.flush();
-                    } else {
-                        try {
-                            w = session.exec().addCommand(arg).which();
-                        } catch (Exception ex) {
-                            LOG.with().session(session).level(Level.FINE).error(ex).log(NutsMessage.jstyle("failed to execute : {0}", arg));
-                            //ignore
-                        }
-                        if (w != null) {
-                            fout.println(arg + " :");
-                            fout.println(w.getHelpText());
-                            fout.flush();
-                        } else {
-                            session.getTerminal().err().println(arg + " : Not found");
-                        }
-                    }
-                }
-                break;
-            }
-            default: {
-                session = session.copy().setOutputFormat(outputFormat);
-                NutsPrintStream fout = NutsPrintStream.ofInMemory(session);
-                if (!helpColors && helpFor.isEmpty()) {
-                    fout.println(NutsWorkspaceExt.of(session.getWorkspace()).getHelpText(session));
-                    fout.flush();
-                }
-                for (String arg : helpFor) {
-                    NutsExecutableInformation w = null;
-                    if (arg.equals("help")) {
-                        fout.println(arg + " :");
-                        showDefaultHelp();
-                        fout.flush();
-                    } else {
-                        try {
-                            w = session.exec().addCommand(arg).which();
-                        } catch (Exception ex) {
-                            LOG.with().session(session).level(Level.FINE).error(ex).log(NutsMessage.jstyle("failed to execute : {0}", arg));
-                            //ignore
-                        }
-                        if (w != null) {
-                            fout.println(arg + " :");
-                            fout.println(w.getHelpText());
-                            fout.flush();
-                        } else {
-                            session.getTerminal().err().println(arg + " : Not found");
-                        }
-                    }
-                }
-                switch (outputFormat) {
-                    case XML:
-                    case JSON:
-                    case TSON:
-                    case YAML: {
-                        NutsTextBuilder builder = NutsTexts.of(session).parse(fout.toString())
-                                .builder();
-                        Object[] r = builder.lines().map(x -> {
-                            if (true) {
-                                return x.filteredText();
-                            }
-                            return (Object) x.filteredText();
-                        }).toArray(Object[]::new);
-                        session.out().printlnf(r);
-                        break;
-                    }
-                    case TABLE:
-                    case PROPS:
-                    case TREE: {
-                        NutsTextBuilder builder = NutsTexts.of(session).parse(fout.toString())
-                                .builder();
-                        Object[] r = builder.lines().toArray(Object[]::new);
-                        session.out().printlnf(r);
-                        break;
-                    }
-                }
-
             }
         }
-
+        session.out().printlnf(NutsString.parse(fout.toString(), session));
     }
 
 }

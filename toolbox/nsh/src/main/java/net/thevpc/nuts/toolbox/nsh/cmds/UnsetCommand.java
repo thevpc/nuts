@@ -29,7 +29,8 @@ import net.thevpc.nuts.NutsArgument;
 import net.thevpc.nuts.NutsCommandLine;
 import net.thevpc.nuts.spi.NutsComponentScope;
 import net.thevpc.nuts.spi.NutsComponentScopeType;
-import net.thevpc.nuts.toolbox.nsh.SimpleNshBuiltin;
+import net.thevpc.nuts.toolbox.nsh.SimpleJShellBuiltin;
+import net.thevpc.nuts.toolbox.nsh.jshell.JShellExecutionContext;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -39,19 +40,14 @@ import java.util.Set;
  * Created by vpc on 1/7/17.
  */
 @NutsComponentScope(NutsComponentScopeType.WORKSPACE)
-public class UnsetCommand extends SimpleNshBuiltin {
+public class UnsetCommand extends SimpleJShellBuiltin {
 
     public UnsetCommand() {
-        super("unset", DEFAULT_SUPPORT);
+        super("unset", DEFAULT_SUPPORT,Options.class);
     }
 
     @Override
-    protected Object createOptions() {
-        return new Options();
-    }
-
-    @Override
-    protected boolean configureFirst(NutsCommandLine commandLine, SimpleNshCommandContext context) {
+    protected boolean configureFirst(NutsCommandLine commandLine, JShellExecutionContext context) {
         Options options = context.getOptions();
         NutsArgument a = commandLine.peek();
         if (a.isOption()) {
@@ -70,15 +66,15 @@ public class UnsetCommand extends SimpleNshBuiltin {
     }
 
     @Override
-    protected void execBuiltin(NutsCommandLine commandLine, SimpleNshCommandContext context) {
+    protected void execBuiltin(NutsCommandLine commandLine, JShellExecutionContext context) {
         Options options = context.getOptions();
         if (options.fct) {
             for (String k : options.list) {
-                context.getRootContext().functions().unset(k);
+                context.getShellContext().functions().unset(k);
             }
         } else {
             for (String k : options.list) {
-                context.getRootContext().aliases().set(k, null);
+                context.getShellContext().aliases().set(k, null);
             }
         }
     }

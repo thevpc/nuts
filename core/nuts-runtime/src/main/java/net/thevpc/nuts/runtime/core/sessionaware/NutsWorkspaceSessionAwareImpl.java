@@ -174,11 +174,6 @@ public class NutsWorkspaceSessionAwareImpl implements NutsWorkspace, NutsWorkspa
     }
 
     @Override
-    public NutsFormatManager formats() {
-        return ws().formats().setSession(getSession());
-    }
-
-    @Override
     public NutsImportManager imports() {
         return ws().imports().setSession(getSession());
     }

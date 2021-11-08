@@ -116,7 +116,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
         result.put("ajp-redirect-port", getAjpConnectorRedirectPort());
         result.put("shutdown-port", getShutdownPort());
         result.put("config", getConfig());
-        context.getSession().formats().object().setSession(context.getSession()).setValue(result).print(out);
+        NutsObjectFormat.of(context.getSession()).setValue(result).print(out);
         return this;
     }
 
@@ -297,7 +297,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
     }
 
     public NutsObjectFormat object() {
-        return context.getSession().formats().object().setSession(context.getSession());
+        return NutsObjectFormat.of(context.getSession());
     }
 
     public String[] parseApps(String[] args) {

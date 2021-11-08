@@ -531,7 +531,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                                     .append(")")
                     );
 
-                    defaultSession().formats().setSession(defaultSession()).table().setValue(
+                    NutsTableFormat.of(defaultSession()).setValue(
                             NutsTableModel.of(defaultSession())
                                     .addCell(
                                             txt.builder()
@@ -1780,11 +1780,6 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
     @Override
     public NutsInfoFormat info() {
         return new DefaultNutsInfoFormat(defaultSession());
-    }
-
-    @Override
-    public NutsFormatManager formats() {
-        return new DefaultNutsFormatManager(this, wsModel.textModel);
     }
 
     @Override

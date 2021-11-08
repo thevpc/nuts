@@ -35,7 +35,7 @@ import net.thevpc.nuts.boot.NutsApiUtils;
  * @author thevpc
  * @app.category Format
  */
-public interface NutsObjectFormat extends NutsFormat {
+public interface NutsObjectFormat extends NutsContentTypeFormat {
 
     static NutsObjectFormat of(NutsSession session){
         NutsApiUtils.checkSession(session);

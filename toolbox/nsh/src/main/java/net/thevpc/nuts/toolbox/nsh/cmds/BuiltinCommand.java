@@ -1,7 +1,7 @@
 /**
  * ====================================================================
- *            Nuts : Network Updatable Things Service
- *                  (universal package manager)
+ * Nuts : Network Updatable Things Service
+ * (universal package manager)
  * <br>
  * is a new Open Source Package Manager to help install packages
  * and libraries for runtime execution. Nuts is the ultimate companion for
@@ -11,7 +11,7 @@
  * architecture to help supporting a large range of sub managers / repositories.
  *
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc]
  * Licensed under the Apache License, Version 2.0 (the "License"); you may
  * not use this file except in compliance with the License. You may obtain a
@@ -23,30 +23,50 @@
  * governing permissions and limitations under the License.
  * <br>
  * ====================================================================
-*/
+ */
 package net.thevpc.nuts.toolbox.nsh.cmds;
 
+import net.thevpc.nuts.NutsCommandLine;
+import net.thevpc.nuts.NutsExecutionException;
+import net.thevpc.nuts.NutsMessage;
+import net.thevpc.nuts.toolbox.nsh.SimpleJShellBuiltin;
+import net.thevpc.nuts.toolbox.nsh.jshell.JShellBuiltin;
+import net.thevpc.nuts.toolbox.nsh.jshell.JShellExecutionContext;
+
 import java.util.Arrays;
-import net.thevpc.nuts.toolbox.nsh.AbstractNshBuiltin;
-import net.thevpc.nuts.toolbox.nsh.bundles.jshell.JShellBuiltin;
-import net.thevpc.nuts.toolbox.nsh.bundles.jshell.JShellExecutionContext;
 
 /**
  * Created by vpc on 1/7/17.
  */
-public class BuiltinCommand extends AbstractNshBuiltin {
+public class BuiltinCommand extends SimpleJShellBuiltin {
 
     public BuiltinCommand() {
-        super("builtin", DEFAULT_SUPPORT);
+        super("builtin", DEFAULT_SUPPORT, Options.class);
     }
 
     @Override
-    public int execImpl(String[] args, JShellExecutionContext context) {
-        if (args.length > 0) {
-            JShellBuiltin a = context.getShellContext().builtins().get(args[0]);
-            return a.exec(Arrays.copyOfRange(args, 1, args.length), context);
-        }
-        return 1;
+    protected boolean configureFirst(NutsCommandLine commandLine, JShellExecutionContext context) {
+        Options o = context.getOptions();
+        o.args = commandLine.toStringArray();
+        commandLine.skipAll();
+        return true;
     }
+
+    @Override
+    protected void execBuiltin(NutsCommandLine commandLine, JShellExecutionContext context) {
+        Options o = context.getOptions();
+        if (o.args.length > 0) {
+            JShellBuiltin a = context.getShellContext().builtins().get(o.args[0]);
+            a.exec(Arrays.copyOfRange(o.args, 1, o.args.length), context);
+            return;
+        }
+        commandLine.required();
+    }
+
+
+    private static class Options {
+        String[] args;
+    }
+
 
 }

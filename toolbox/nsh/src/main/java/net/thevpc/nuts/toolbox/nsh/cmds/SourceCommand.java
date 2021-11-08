@@ -29,83 +29,76 @@ import net.thevpc.nuts.NutsPath;
 import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.spi.NutsComponentScope;
 import net.thevpc.nuts.spi.NutsComponentScopeType;
-import net.thevpc.nuts.toolbox.nsh.SimpleNshBuiltin;
-import net.thevpc.nuts.toolbox.nsh.bundles.jshell.JShellContext;
+import net.thevpc.nuts.toolbox.nsh.SimpleJShellBuiltin;
+import net.thevpc.nuts.toolbox.nsh.jshell.JShellContext;
+import net.thevpc.nuts.toolbox.nsh.jshell.JShellExecutionContext;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
  * Created by vpc on 1/7/17.
  */
 @NutsComponentScope(NutsComponentScopeType.WORKSPACE)
-public class SourceCommand extends SimpleNshBuiltin {
+public class SourceCommand extends SimpleJShellBuiltin {
 
     public SourceCommand() {
-        super("source", DEFAULT_SUPPORT);
+        super("source", DEFAULT_SUPPORT, Options.class);
     }
 
     @Override
-    protected Object createOptions() {
-        return new Options();
-    }
-
-    @Override
-    protected boolean configureFirst(NutsCommandLine commandLine, SimpleNshCommandContext context) {
+    protected boolean configureFirst(NutsCommandLine commandLine, JShellExecutionContext context) {
         Options options = context.getOptions();
         final NutsArgument a = commandLine.peek();
         if (!a.isOption()) {
-            options.files.add(commandLine.next().getString());
+            options.args.addAll(Arrays.asList(commandLine.toStringArray()));
+            commandLine.skipAll();
             return true;
+        } else {
+            return false;
         }
-        return false;
     }
 
     @Override
-    protected void execBuiltin(NutsCommandLine commandLine, SimpleNshCommandContext context) {
+    protected void execBuiltin(NutsCommandLine commandLine, JShellExecutionContext context) {
         Options options = context.getOptions();
-        final String[] paths = context.getExecutionContext().getShellContext().vars().get("PATH", "").split(":|;");
-        List<NutsPath> goodFiles = new ArrayList<>();
-        for (String file : options.files) {
-            NutsSession session = context.getSession();
-            NutsPath file0=NutsPath.of(file, session);
-            boolean found = false;
-            if (file0.isName()) {
-                for (String path : paths) {
-                    NutsPath basePathFolder = NutsPath.of(path, session);
-                    if (basePathFolder.resolve(file0).isRegularFile()) {
-                        file = basePathFolder.resolve(file).toString();
-                        break;
-                    }
+        NutsSession session = context.getSession();
+        if (options.args.isEmpty()) {
+            throwExecutionException("missing command", 1, session);
+        }
+        final String[] paths = context.getShellContext().vars().get("PATH", "").split(":|;");
+        NutsPath goodFile = null;
+        String file = options.args.remove(0);
+        NutsPath file0 = NutsPath.of(file, session);
+        boolean found = false;
+        if (file0.isName()) {
+            for (String path : paths) {
+                NutsPath basePathFolder = NutsPath.of(path, session);
+                if (basePathFolder.resolve(file0).isRegularFile()) {
+                    file = basePathFolder.resolve(file).toString();
+                    break;
                 }
-            }
-            if (!NutsPath.of(file, session).isFile()) {
-                if (NutsPath.of(context.getRootContext().getCwd(), session).resolve(file).isRegularFile()) {
-                    file = NutsPath.of(context.getRootContext().getCwd(), session).resolve(file).toString();
-                }
-            }
-            if (NutsPath.of(file, session).isRegularFile()) {
-                found = true;
-                goodFiles.add(NutsPath.of(file, session));
-            }
-
-            if (!found) {
-                //badFiles??
-                goodFiles.add(NutsPath.of(file, session));
             }
         }
-//        JShellContext c2 = context.getShell().createContext(context.getExecutionContext().getGlobalContext());
-//        c2.setArgs(context.getArgs());
-        JShellContext c2 = context.getExecutionContext().getShellContext();
-        for (NutsPath goodFile : goodFiles) {
-            JShellContext c = context.getShell().createInlineContext(c2, goodFile.toString(), context.getArgs());
+        if (!NutsPath.of(file, session).isFile()) {
+            if (NutsPath.of(context.getShellContext().getCwd(), session).resolve(file).isRegularFile()) {
+                file = NutsPath.of(context.getShellContext().getCwd(), session).resolve(file).toString();
+            }
+        }
+        if (!NutsPath.of(file, session).isRegularFile()) {
+            throwExecutionException("file not found", 1, session);
+        } else {
+            goodFile = NutsPath.of(file, session);
+            JShellContext c2 = context.getShellContext();
+            JShellContext c = context.getShell().createInlineContext(c2, goodFile.toString(), options.args.toArray(new String[0]));
             context.getShell().executeServiceFile(c, false);
         }
     }
 
     private static class Options {
 
-        List<String> files = new ArrayList<>();
+        List<String> args = new ArrayList<>();
     }
 
 }

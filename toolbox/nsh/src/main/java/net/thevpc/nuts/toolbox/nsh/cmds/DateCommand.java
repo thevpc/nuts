@@ -30,7 +30,8 @@ import net.thevpc.nuts.NutsArgument;
 import net.thevpc.nuts.NutsCommandLine;
 import net.thevpc.nuts.spi.NutsComponentScope;
 import net.thevpc.nuts.spi.NutsComponentScopeType;
-import net.thevpc.nuts.toolbox.nsh.SimpleNshBuiltin;
+import net.thevpc.nuts.toolbox.nsh.SimpleJShellBuiltin;
+import net.thevpc.nuts.toolbox.nsh.jshell.JShellExecutionContext;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -42,19 +43,14 @@ import java.time.format.DateTimeFormatter;
  * Created by vpc on 1/7/17.
  */
 @NutsComponentScope(NutsComponentScopeType.WORKSPACE)
-public class DateCommand extends SimpleNshBuiltin {
+public class DateCommand extends SimpleJShellBuiltin {
 
     public DateCommand() {
-        super("date", DEFAULT_SUPPORT);
+        super("date", DEFAULT_SUPPORT,Options.class);
     }
 
     @Override
-    protected Object createOptions() {
-        return new Options();
-    }
-
-    @Override
-    protected boolean configureFirst(NutsCommandLine cmdLine, SimpleNshCommandContext context) {
+    protected boolean configureFirst(NutsCommandLine cmdLine, JShellExecutionContext context) {
         Options options = context.getOptions();
         NutsArgument a = cmdLine.peek();
         switch (a.getKey().getString()) {
@@ -209,7 +205,7 @@ public class DateCommand extends SimpleNshBuiltin {
     }
 
     @Override
-    protected void execBuiltin(NutsCommandLine cmdLine, SimpleNshCommandContext context) {
+    protected void execBuiltin(NutsCommandLine cmdLine, JShellExecutionContext context) {
         Options options = context.getOptions();
         ZonedDateTime dateTimeInMyZone = ZonedDateTime.
                 of(LocalDateTime.now(), ZoneId.systemDefault());

@@ -28,9 +28,8 @@ package net.thevpc.nuts.toolbox.nsh.cmds;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.spi.NutsComponentScope;
 import net.thevpc.nuts.spi.NutsComponentScopeType;
-import net.thevpc.nuts.toolbox.nsh.SimpleNshBuiltin;
-import net.thevpc.nuts.toolbox.nsh.bundles._URLUtils;
-import net.thevpc.nuts.toolbox.nsh.bundles.jshell.JShellExecutionContext;
+import net.thevpc.nuts.toolbox.nsh.SimpleJShellBuiltin;
+import net.thevpc.nuts.toolbox.nsh.jshell.JShellExecutionContext;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -43,19 +42,14 @@ import java.util.List;
  * Created by vpc on 1/7/17.
  */
 @NutsComponentScope(NutsComponentScopeType.WORKSPACE)
-public class WgetCommand extends SimpleNshBuiltin {
+public class WgetCommand extends SimpleJShellBuiltin {
 
     public WgetCommand() {
-        super("wget", DEFAULT_SUPPORT);
+        super("wget", DEFAULT_SUPPORT,Options.class);
     }
 
     @Override
-    protected Object createOptions() {
-        return new Options();
-    }
-
-    @Override
-    protected boolean configureFirst(NutsCommandLine commandLine, SimpleNshCommandContext context) {
+    protected boolean configureFirst(NutsCommandLine commandLine, JShellExecutionContext context) {
         Options options = context.getOptions();
         if (commandLine.next("-O", "--output-document") != null) {
             options.outputDocument = commandLine.requireNonOption().next().getString();
@@ -70,13 +64,13 @@ public class WgetCommand extends SimpleNshBuiltin {
     }
 
     @Override
-    protected void execBuiltin(NutsCommandLine commandLine, SimpleNshCommandContext context) {
+    protected void execBuiltin(NutsCommandLine commandLine, JShellExecutionContext context) {
         Options options = context.getOptions();
         if (options.files.isEmpty()) {
             throw new NutsExecutionException(context.getSession(), NutsMessage.cstyle("wget: Missing Files"), 2);
         }
         for (String file : options.files) {
-            download(file, options.outputDocument, context.getExecutionContext());
+            download(file, options.outputDocument, context);
         }
     }
 
@@ -89,7 +83,7 @@ public class WgetCommand extends SimpleNshBuiltin {
         } catch (MalformedURLException ex) {
             throw new NutsExecutionException(session, NutsMessage.cstyle("%s", ex), ex, 100);
         }
-        String urlName = _URLUtils.getURLName(url);
+        String urlName = NutsPath.of(url,session).getName();
         if (!NutsBlankable.isBlank(output2)) {
             output2 = output2.replace("{}", urlName);
         }

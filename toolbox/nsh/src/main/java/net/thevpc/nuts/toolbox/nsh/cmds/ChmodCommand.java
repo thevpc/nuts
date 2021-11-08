@@ -28,7 +28,8 @@ package net.thevpc.nuts.toolbox.nsh.cmds;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.spi.NutsComponentScope;
 import net.thevpc.nuts.spi.NutsComponentScopeType;
-import net.thevpc.nuts.toolbox.nsh.SimpleNshBuiltin;
+import net.thevpc.nuts.toolbox.nsh.SimpleJShellBuiltin;
+import net.thevpc.nuts.toolbox.nsh.jshell.JShellExecutionContext;
 
 import java.util.*;
 
@@ -36,38 +37,18 @@ import java.util.*;
  * Created by vpc on 1/7/17.
  */
 @NutsComponentScope(NutsComponentScopeType.WORKSPACE)
-public class ChmodCommand extends SimpleNshBuiltin {
+public class ChmodCommand extends SimpleJShellBuiltin {
 
     public ChmodCommand() {
-        super("chmod", DEFAULT_SUPPORT);
+        super("chmod", DEFAULT_SUPPORT,Options.class);
     }
 
-    private boolean isRights(String r) {
-        for (char c : r.toCharArray()) {
-            switch (c) {
-                case 'r':
-                case 'w':
-                case 'x': {
-                    break;
-                }
-                default: {
-                    return false;
-                }
-            }
-        }
-        return true;
-    }
 
     @Override
-    protected Object createOptions() {
-        return new Options();
-    }
-
-    @Override
-    protected boolean configureFirst(NutsCommandLine commandLine, SimpleNshCommandContext context) {
+    protected boolean configureFirst(NutsCommandLine commandLine, JShellExecutionContext context) {
         Options options = context.getOptions();
         //invert processing order!
-        if (context.getExecutionContext().configureFirst(commandLine)) {
+        if (context.configureFirst(commandLine)) {
             return true;
         }
         NutsArgument a = commandLine.peek();
@@ -201,7 +182,7 @@ public class ChmodCommand extends SimpleNshBuiltin {
     }
 
     @Override
-    protected void execBuiltin(NutsCommandLine commandLine, SimpleNshCommandContext context) {
+    protected void execBuiltin(NutsCommandLine commandLine, JShellExecutionContext context) {
         Options options = context.getOptions();
         if (options.files.isEmpty()) {
             commandLine.required();

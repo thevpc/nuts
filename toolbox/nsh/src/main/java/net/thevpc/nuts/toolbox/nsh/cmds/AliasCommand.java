@@ -29,8 +29,9 @@ import net.thevpc.nuts.NutsArgument;
 import net.thevpc.nuts.NutsCommandLine;
 import net.thevpc.nuts.spi.NutsComponentScope;
 import net.thevpc.nuts.spi.NutsComponentScopeType;
-import net.thevpc.nuts.toolbox.nsh.SimpleNshBuiltin;
-import net.thevpc.nuts.toolbox.nsh.bundles.jshell.JShell;
+import net.thevpc.nuts.toolbox.nsh.SimpleJShellBuiltin;
+import net.thevpc.nuts.toolbox.nsh.jshell.JShell;
+import net.thevpc.nuts.toolbox.nsh.jshell.JShellExecutionContext;
 
 import java.util.*;
 
@@ -38,19 +39,14 @@ import java.util.*;
  * Created by vpc on 1/7/17.
  */
 @NutsComponentScope(NutsComponentScopeType.WORKSPACE)
-public class AliasCommand extends SimpleNshBuiltin {
+public class AliasCommand extends SimpleJShellBuiltin {
 
     public AliasCommand() {
-        super("alias", DEFAULT_SUPPORT);
+        super("alias", DEFAULT_SUPPORT,Options.class);
     }
 
     @Override
-    protected Object createOptions() {
-        return new Options();
-    }
-
-    @Override
-    protected boolean configureFirst(NutsCommandLine commandLine, SimpleNshCommandContext context) {
+    protected boolean configureFirst(NutsCommandLine commandLine, JShellExecutionContext context) {
         Options options = context.getOptions();
         final NutsArgument a = commandLine.peek();
         if (a.isOption()) {
@@ -72,19 +68,19 @@ public class AliasCommand extends SimpleNshBuiltin {
     }
 
     @Override
-    protected void execBuiltin(NutsCommandLine commandLine, SimpleNshCommandContext context) {
+    protected void execBuiltin(NutsCommandLine commandLine, JShellExecutionContext context) {
         Options options = context.getOptions();
         JShell shell = context.getShell();
         if (options.add.isEmpty() && options.show.isEmpty()) {
-            options.show.addAll(context.getRootContext().aliases().getAll());
+            options.show.addAll(context.getShellContext().aliases().getAll());
         }
         for (Map.Entry<String, String> entry : options.add.entrySet()) {
-            context.getRootContext().aliases().set(entry.getKey(), entry.getValue());
+            context.getShellContext().aliases().set(entry.getKey(), entry.getValue());
         }
         List<ResultItem> outRes = new ArrayList<>();
         List<ResultItem> errRes = new ArrayList<>();
         for (String a : options.show) {
-            final String v = context.getRootContext().aliases().get(a);
+            final String v = context.getShellContext().aliases().get(a);
             if (v == null) {
                 errRes.add(new ResultItem(a, v));
             } else {

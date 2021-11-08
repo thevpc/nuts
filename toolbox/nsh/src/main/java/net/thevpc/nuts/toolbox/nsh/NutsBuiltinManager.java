@@ -1,7 +1,7 @@
 /**
  * ====================================================================
- *            Nuts : Network Updatable Things Service
- *                  (universal package manager)
+ * Nuts : Network Updatable Things Service
+ * (universal package manager)
  * <br>
  * is a new Open Source Package Manager to help install packages
  * and libraries for runtime execution. Nuts is the ultimate companion for
@@ -11,49 +11,45 @@
  * architecture to help supporting a large range of sub managers / repositories.
  *
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc]
- * Licensed under the Apache License, Version 2.0 (the "License"); you may 
- * not use this file except in compliance with the License. You may obtain a 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may
+ * not use this file except in compliance with the License. You may obtain a
  * copy of the License at http://www.apache.org/licenses/LICENSE-2.0
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an 
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
- * either express or implied. See the License for the specific language 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+ * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  * <br>
  * ====================================================================
-*/
+ */
 package net.thevpc.nuts.toolbox.nsh;
+
+import net.thevpc.nuts.toolbox.nsh.jshell.JShellBuiltin;
+import net.thevpc.nuts.toolbox.nsh.jshell.JShellBuiltinManager;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import net.thevpc.nuts.toolbox.nsh.bundles.jshell.JShellBuiltin;
-import net.thevpc.nuts.toolbox.nsh.bundles.jshell.JShellBuiltinManager;
 
 /**
  *
  * @author thevpc
  */
 public class NutsBuiltinManager implements JShellBuiltinManager {
-        private static final Logger LOG = Logger.getLogger(NutsBuiltinManager.class.getName());
+    private static final Logger LOG = Logger.getLogger(NutsBuiltinManager.class.getName());
 
-    private Map<String, NshBuiltin> commands = new HashMap<>();
-
-    @Override
-    public boolean contains(String cmd) {
-        return find(cmd) != null;
-    }
+    private Map<String, JShellBuiltin> commands = new HashMap<>();
 
     @Override
-    public NshBuiltin find(String command) {
+    public JShellBuiltin find(String command) {
         return commands.get(command);
     }
 
-        @Override
+    @Override
     public JShellBuiltin get(String cmd) {
         JShellBuiltin command = find(cmd);
         if (command == null) {
@@ -66,16 +62,18 @@ public class NutsBuiltinManager implements JShellBuiltinManager {
     }
 
     @Override
+    public boolean contains(String cmd) {
+        return find(cmd) != null;
+    }
+
+    @Override
     public void set(JShellBuiltin command) {
-        if (!(command instanceof NshBuiltin)) {
-            command = new ShellToNshCommand(command);
-        }
-        boolean b = commands.put(command.getName(), (NshBuiltin) command) == null;
+        boolean b = commands.put(command.getName(), command) == null;
         if (LOG.isLoggable(Level.FINE)) {
             if (b) {
-                LOG.log(Level.FINE, "Registering builtin : " + command.getName());
+                LOG.log(Level.FINE, "registering builtin : {0}", command.getName());
             } else {
-                LOG.log(Level.FINE, "Unregistering builtin : " + command.getName());
+                LOG.log(Level.FINE, "unregistering builtin : {0}", command.getName());
             }
         }
     }
@@ -88,10 +86,7 @@ public class NutsBuiltinManager implements JShellBuiltinManager {
         int reinstalledCount = 0;
         boolean loggable = LOG.isLoggable(Level.FINE);
         for (JShellBuiltin command : cmds) {
-            if (!(command instanceof NshBuiltin)) {
-                command = new ShellToNshCommand(command);
-            }
-            boolean b = commands.put(command.getName(), (NshBuiltin) command) == null;
+            boolean b = commands.put(command.getName(), command) == null;
             if (loggable) {
                 if (b) {
                     if (installed.length() > 0) {
@@ -132,8 +127,8 @@ public class NutsBuiltinManager implements JShellBuiltinManager {
     }
 
     @Override
-    public NshBuiltin[] getAll() {
-        return commands.values().toArray(new NshBuiltin[0]);
+    public JShellBuiltin[] getAll() {
+        return commands.values().toArray(new JShellBuiltin[0]);
     }
-    
+
 }

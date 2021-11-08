@@ -37,8 +37,9 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.spi.NutsComponent;
 import net.thevpc.nuts.spi.NutsComponentScope;
 import net.thevpc.nuts.spi.NutsComponentScopeType;
-import net.thevpc.nuts.toolbox.nsh.SimpleNshBuiltin;
-import net.thevpc.nuts.toolbox.nsh.bundles.jshell.JShell;
+import net.thevpc.nuts.toolbox.nsh.SimpleJShellBuiltin;
+import net.thevpc.nuts.toolbox.nsh.jshell.JShell;
+import net.thevpc.nuts.toolbox.nsh.jshell.JShellExecutionContext;
 import net.thevpc.nuts.toolbox.nutsserver.NutsServer;
 
 /**
@@ -156,12 +157,12 @@ public class AdminServerRunnable implements NutsServer, Runnable {
     }
 
     @NutsComponentScope(NutsComponentScopeType.WORKSPACE)
-    private static class StopServerBuiltin2 extends SimpleNshBuiltin {
+    private static class StopServerBuiltin2 extends SimpleJShellBuiltin {
 
         private final ServerSocket socket;
 
         public StopServerBuiltin2(ServerSocket finalServerSocket) {
-            super("stop-server", NutsComponent.DEFAULT_SUPPORT);
+            super("stop-server", NutsComponent.DEFAULT_SUPPORT,Options.class);
             this.socket = finalServerSocket;
         }
 
@@ -170,17 +171,12 @@ public class AdminServerRunnable implements NutsServer, Runnable {
         }
 
         @Override
-        protected Object createOptions() {
-            return new Options();
-        }
-
-        @Override
-        protected boolean configureFirst(NutsCommandLine commandLine, SimpleNshCommandContext context) {
+        protected boolean configureFirst(NutsCommandLine commandLine, JShellExecutionContext context) {
             return false;
         }
 
         @Override
-        protected void execBuiltin(NutsCommandLine commandLine, SimpleNshCommandContext context) {
+        protected void execBuiltin(NutsCommandLine commandLine, JShellExecutionContext context) {
             if (context.getSession().isPlainTrace()) {
                 context.getSession().out().println("Stopping Server ...");
             }

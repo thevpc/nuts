@@ -29,8 +29,9 @@ import net.thevpc.nuts.NutsArgument;
 import net.thevpc.nuts.NutsCommandLine;
 import net.thevpc.nuts.spi.NutsComponentScope;
 import net.thevpc.nuts.spi.NutsComponentScopeType;
-import net.thevpc.nuts.toolbox.nsh.SimpleNshBuiltin;
-import net.thevpc.nuts.toolbox.nsh.bundles.jshell.JShellFunction;
+import net.thevpc.nuts.toolbox.nsh.SimpleJShellBuiltin;
+import net.thevpc.nuts.toolbox.nsh.jshell.JShellExecutionContext;
+import net.thevpc.nuts.toolbox.nsh.jshell.JShellFunction;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -41,19 +42,14 @@ import java.util.Map;
  * Created by vpc on 1/7/17.
  */
 @NutsComponentScope(NutsComponentScopeType.WORKSPACE)
-public class SetCommand extends SimpleNshBuiltin {
+public class SetCommand extends SimpleJShellBuiltin {
 
     public SetCommand() {
-        super("set", DEFAULT_SUPPORT);
+        super("set", DEFAULT_SUPPORT,Options.class);
     }
 
     @Override
-    protected Object createOptions() {
-        return new Options();
-    }
-
-    @Override
-    protected boolean configureFirst(NutsCommandLine commandLine, SimpleNshCommandContext context) {
+    protected boolean configureFirst(NutsCommandLine commandLine, JShellExecutionContext context) {
         Options options = context.getOptions();
         NutsArgument a = commandLine.peek();
         if (a.isNonOption()) {
@@ -66,20 +62,20 @@ public class SetCommand extends SimpleNshBuiltin {
     }
 
     @Override
-    protected void execBuiltin(NutsCommandLine commandLine, SimpleNshCommandContext context) {
+    protected void execBuiltin(NutsCommandLine commandLine, JShellExecutionContext context) {
         Options options = context.getOptions();
         if (options.vars.isEmpty()) {
             List<String> results = new ArrayList<>();
-            for (Map.Entry<Object, Object> entry : context.getExecutionContext().vars().getAll().entrySet()) {
+            for (Map.Entry<Object, Object> entry : context.getShellContext().vars().getAll().entrySet()) {
                 results.add(entry.getKey() + "=" + entry.getValue());
             }
-            for (JShellFunction function : context.getRootContext().functions().getAll()) {
+            for (JShellFunction function : context.getShellContext().functions().getAll()) {
                 results.add(function.getDefinition());
             }
             context.getSession().out().printlnf(results);
         } else {
             for (Map.Entry<String, String> entry : options.vars.entrySet()) {
-                context.getExecutionContext().vars().set(entry.getKey(), entry.getValue());
+                context.getShellContext().vars().set(entry.getKey(), entry.getValue());
             }
         }
     }

@@ -26,14 +26,12 @@
 */
 package net.thevpc.nuts.toolbox.nsh;
 
-import java.io.File;
-
 import net.thevpc.nuts.NutsPath;
 import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.toolbox.nsh.bundles.jshell.JShellContext;
+import net.thevpc.nuts.toolbox.nsh.jshell.JShellContext;
 import net.thevpc.nuts.NutsExecutableInformation;
-import net.thevpc.nuts.toolbox.nsh.bundles.jshell.JShellCommandType;
-import net.thevpc.nuts.toolbox.nsh.bundles.jshell.JShellCommandTypeResolver;
+import net.thevpc.nuts.toolbox.nsh.jshell.JShellCommandType;
+import net.thevpc.nuts.toolbox.nsh.jshell.JShellCommandTypeResolver;
 
 /**
  *

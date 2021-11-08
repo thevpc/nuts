@@ -30,8 +30,9 @@ import net.thevpc.nuts.NutsArgument;
 import net.thevpc.nuts.NutsCommandLine;
 import net.thevpc.nuts.spi.NutsComponentScope;
 import net.thevpc.nuts.spi.NutsComponentScopeType;
-import net.thevpc.nuts.toolbox.nsh.SimpleNshBuiltin;
-import net.thevpc.nuts.toolbox.nsh.bundles.jshell.JShellBuiltin;
+import net.thevpc.nuts.toolbox.nsh.SimpleJShellBuiltin;
+import net.thevpc.nuts.toolbox.nsh.jshell.JShellBuiltin;
+import net.thevpc.nuts.toolbox.nsh.jshell.JShellExecutionContext;
 
 import java.util.*;
 
@@ -39,19 +40,14 @@ import java.util.*;
  * Created by vpc on 1/7/17.
  */
 @NutsComponentScope(NutsComponentScopeType.WORKSPACE)
-public class EnableCommand extends SimpleNshBuiltin {
+public class EnableCommand extends SimpleJShellBuiltin {
 
     public EnableCommand() {
-        super("enable", DEFAULT_SUPPORT);
+        super("enable", DEFAULT_SUPPORT,Options.class);
     }
 
     @Override
-    protected Object createOptions() {
-        return new Options();
-    }
-
-    @Override
-    protected boolean configureFirst(NutsCommandLine commandLine, SimpleNshCommandContext context) {
+    protected boolean configureFirst(NutsCommandLine commandLine, JShellExecutionContext context) {
         Options options = context.getOptions();
         final NutsArgument a = commandLine.peek();
         if (a.isOption()) {
@@ -94,11 +90,11 @@ public class EnableCommand extends SimpleNshBuiltin {
     }
 
     @Override
-    protected void execBuiltin(NutsCommandLine commandLine, SimpleNshCommandContext context) {
+    protected void execBuiltin(NutsCommandLine commandLine, JShellExecutionContext context) {
         Options options = context.getOptions();
         if (options.p || options.names.isEmpty()) {
             Map<String, String> result = new LinkedHashMap<>();
-            for (JShellBuiltin command : context.getRootContext().builtins().getAll()) {
+            for (JShellBuiltin command : context.getShellContext().builtins().getAll()) {
                 result.put(command.getName(), command.isEnabled() ? "enabled" : "disabled");
             }
             switch (context.getSession().getOutputFormat()) {
@@ -124,7 +120,7 @@ public class EnableCommand extends SimpleNshBuiltin {
         } else if (options.n) {
             List<String> nobuiltin = new ArrayList<>();
             for (String name : options.names) {
-                JShellBuiltin c = context.getRootContext().builtins().find(name);
+                JShellBuiltin c = context.getShellContext().builtins().find(name);
                 if (c == null) {
                     nobuiltin.add(name);
                 } else {

@@ -45,6 +45,7 @@ net.thevpc.nuts.runtime.core.format.DefaultNutsInfoFormat
 net.thevpc.nuts.runtime.core.format.DefaultNutsVersionFormat
 net.thevpc.nuts.runtime.core.format.props.DefaultNutsPropertiesFormat
 net.thevpc.nuts.runtime.core.format.table.DefaultTableFormat
+net.thevpc.nuts.runtime.core.format.table.DefaultNutsMutableTableModel
 net.thevpc.nuts.runtime.core.format.tree.DefaultNutsTreeFormat
 net.thevpc.nuts.runtime.core.format.DefaultNutsIdFormat
 net.thevpc.nuts.runtime.core.format.DefaultNutsDescriptorFormat

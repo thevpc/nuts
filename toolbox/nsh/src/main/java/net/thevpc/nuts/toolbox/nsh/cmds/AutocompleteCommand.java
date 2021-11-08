@@ -28,8 +28,9 @@ package net.thevpc.nuts.toolbox.nsh.cmds;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.spi.NutsComponentScope;
 import net.thevpc.nuts.spi.NutsComponentScopeType;
-import net.thevpc.nuts.toolbox.nsh.SimpleNshBuiltin;
-import net.thevpc.nuts.toolbox.nsh.bundles.jshell.JShellAutoCompleteCandidate;
+import net.thevpc.nuts.toolbox.nsh.SimpleJShellBuiltin;
+import net.thevpc.nuts.toolbox.nsh.jshell.JShellAutoCompleteCandidate;
+import net.thevpc.nuts.toolbox.nsh.jshell.JShellExecutionContext;
 
 import java.util.*;
 
@@ -37,19 +38,14 @@ import java.util.*;
  * Created by vpc on 1/7/17.
  */
 @NutsComponentScope(NutsComponentScopeType.WORKSPACE)
-public class AutocompleteCommand extends SimpleNshBuiltin {
+public class AutocompleteCommand extends SimpleJShellBuiltin {
 
     public AutocompleteCommand() {
-        super("autocomplete", DEFAULT_SUPPORT);
+        super("autocomplete", DEFAULT_SUPPORT,Options.class);
     }
 
     @Override
-    protected Object createOptions() {
-        return new Options();
-    }
-
-    @Override
-    protected boolean configureFirst(NutsCommandLine cmdLine, SimpleNshCommandContext context) {
+    protected boolean configureFirst(NutsCommandLine cmdLine, JShellExecutionContext context) {
         Options options = context.getOptions();
         if (!cmdLine.peek().isOption()) {
             while (cmdLine.hasNext()) {
@@ -71,7 +67,7 @@ public class AutocompleteCommand extends SimpleNshBuiltin {
     }
 
     @Override
-    protected void execBuiltin(NutsCommandLine commandLine, SimpleNshCommandContext context) {
+    protected void execBuiltin(NutsCommandLine commandLine, JShellExecutionContext context) {
         Options options = context.getOptions();
         NutsSession session = context.getSession();
         if (options.cmd == null) {
@@ -81,7 +77,7 @@ public class AutocompleteCommand extends SimpleNshBuiltin {
             options.index = options.items.size();
             options.items.add("");
         }
-        List<JShellAutoCompleteCandidate> aa = context.getRootContext().resolveAutoCompleteCandidates(
+        List<JShellAutoCompleteCandidate> aa = context.getShellContext().resolveAutoCompleteCandidates(
                 options.cmd, options.items, options.index,
                 NutsCommandLine.of(options.items, session).toString()
         );

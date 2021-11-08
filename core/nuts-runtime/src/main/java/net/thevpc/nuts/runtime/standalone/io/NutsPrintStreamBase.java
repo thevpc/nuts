@@ -1,7 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.io;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 
 import java.io.OutputStream;
 import java.io.PrintStream;
@@ -51,6 +50,12 @@ public abstract class NutsPrintStreamBase implements NutsPrintStream {
     }
 
     @Override
+    public NutsPrintStream print(NutsString b) {
+        this.print(String.valueOf(b));
+        return this;
+    }
+
+    @Override
     public NutsPrintStream print(boolean b) {
         this.print(b ? "true" : "false");
         return this;
@@ -96,18 +101,6 @@ public abstract class NutsPrintStreamBase implements NutsPrintStream {
     }
 
     @Override
-    public NutsPrintStream print(NutsString b) {
-        this.print(String.valueOf(b));
-        return this;
-    }
-
-    @Override
-    public NutsPrintStream println(NutsString b) {
-        this.println(String.valueOf(b));
-        return this;
-    }
-
-    @Override
     public NutsPrintStream print(Object obj) {
         this.print(String.valueOf(obj));
         return this;
@@ -115,13 +108,13 @@ public abstract class NutsPrintStreamBase implements NutsPrintStream {
 
     @Override
     public NutsPrintStream printf(Object obj) {
-        session.formats().object().setValue(obj).print(this);
+        NutsObjectFormat.of(session).setValue(obj).print(this);
         return this;
     }
 
     @Override
     public NutsPrintStream printlnf(Object obj) {
-        session.formats().object().setValue(obj).println(this);
+        NutsObjectFormat.of(session).setValue(obj).println(this);
         return this;
     }
 
@@ -145,6 +138,12 @@ public abstract class NutsPrintStreamBase implements NutsPrintStream {
     public NutsPrintStream println(char x) {
         print(x);
         println();
+        return this;
+    }
+
+    @Override
+    public NutsPrintStream println(NutsString b) {
+        this.println(String.valueOf(b));
         return this;
     }
 
@@ -205,6 +204,12 @@ public abstract class NutsPrintStreamBase implements NutsPrintStream {
     }
 
     @Override
+    public NutsPrintStream printf(String format, Object... args) {
+        format(format, args);
+        return this;
+    }
+
+    @Override
     public NutsPrintStream printj(String format, Object... args) {
         NutsText s = NutsTexts.of(session).toText(
                 NutsMessage.jstyle(
@@ -212,12 +217,6 @@ public abstract class NutsPrintStreamBase implements NutsPrintStream {
                 )
         );
         print(s);
-        return this;
-    }
-
-    @Override
-    public NutsPrintStream printf(String format, Object... args) {
-        format(format, args);
         return this;
     }
 

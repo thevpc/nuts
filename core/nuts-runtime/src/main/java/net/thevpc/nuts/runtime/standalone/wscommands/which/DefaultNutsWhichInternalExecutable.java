@@ -49,7 +49,7 @@ public class DefaultNutsWhichInternalExecutable extends DefaultInternalNutsExecu
             throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("which: missing commands"));
         }
         NutsTexts factory = NutsTexts.of(getSession());
-        for (String arg : this.args) {
+        for (String arg : commands) {
             NutsPrintStream out = getSession().out();
             NutsElements elem = NutsElements.of(getSession());
             try {

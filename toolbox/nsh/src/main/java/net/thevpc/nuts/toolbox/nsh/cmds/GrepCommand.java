@@ -26,7 +26,6 @@
 package net.thevpc.nuts.toolbox.nsh.cmds;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.toolbox.nsh.AbstractNshBuiltin;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -35,116 +34,75 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import net.thevpc.nuts.toolbox.nsh.bundles.jshell.JShellExecutionContext;
+import net.thevpc.nuts.toolbox.nsh.SimpleJShellBuiltin;
+import net.thevpc.nuts.toolbox.nsh.jshell.JShellExecutionContext;
 import net.thevpc.nuts.toolbox.nsh.util.ColumnRuler;
 import net.thevpc.nuts.toolbox.nsh.util.FileInfo;
 
 /**
  * Created by vpc on 1/7/17.
  */
-public class GrepCommand extends AbstractNshBuiltin {
+public class GrepCommand extends SimpleJShellBuiltin {
 
     public GrepCommand() {
-        super("grep", DEFAULT_SUPPORT);
+        super("grep", DEFAULT_SUPPORT,Options.class);
     }
 
-    public static String simpexpToRegexp(String pattern, boolean contains) {
-        if (pattern == null) {
-            pattern = "*";
-        }
-        int i = 0;
-        char[] cc = pattern.toCharArray();
-        StringBuilder sb = new StringBuilder();
-        while (i < cc.length) {
-            char c = cc[i];
-            switch (c) {
-                case '.':
-                case '!':
-                case '$':
-                case '[':
-                case ']':
-                case '(':
-                case ')':
-                case '?':
-                case '^':
-                case '|':
-                case '\\': {
-                    sb.append('\\').append(c);
-                    break;
-                }
-                case '*': {
-//                    if (i + 1 < cc.length && cc[i + 1] == '*') {
-//                        i++;
-//                        sb.append("[a-zA-Z_0-9_$.-]*");
-//                    } else {
-//                        sb.append("[a-zA-Z_0-9_$-]*");
-//                    }
-                    sb.append(".*");
-                    break;
-                }
-                default: {
-                    sb.append(c);
-                }
-            }
-            i++;
-        }
-        if (!contains) {
-            sb.insert(0, '^');
-            sb.append('$');
-        }
-        return sb.toString();
-    }
-
-    public int execImpl(String[] args, JShellExecutionContext context) {
-        NutsCommandLine commandLine = cmdLine(args, context);
-        Options options = new Options();
-        List<FileInfo> files = new ArrayList<>();
-        String expression = null;
-        NutsPrintStream out = context.out();
+    @Override
+    protected boolean configureFirst(NutsCommandLine commandLine, JShellExecutionContext context) {
+        Options options = context.getOptions();
         NutsArgument a;
-        while (commandLine.hasNext()) {
-            if (commandLine.next("-") != null) {
-                files.add(null);
-            } else if (commandLine.next("-e", "--regexp") != null) {
-                //options.regexp = true;
-            } else if (commandLine.next("-v", "--invert-match") != null) {
-                options.invertMatch = true;
-            } else if (commandLine.next("-w", "--word-regexp") != null) {
-                options.word = true;
-            } else if (commandLine.next("-x", "--line-regexp") != null) {
-                options.lineRegexp = true;
-            } else if (commandLine.next("-i", "--ignore-case") != null) {
-                options.ignoreCase = true;
-            } else if ((a = commandLine.next("-H", "--highlighter")) != null) {
-                options.highlighter = NutsUtilStrings.trim(a.getValue().getString());
-            } else if ((a = commandLine.next("-S", "--selection-style")) != null) {
-                options.selectionStyle = NutsUtilStrings.trimToNull(a.getValue().getString());
-            } else if (commandLine.next("--version") != null) {
-                out.printf("%s\n", "1.0");
-                return 0;
-            } else if (commandLine.next("-n") != null) {
-                options.n = true;
-            } else if (commandLine.next("--help") != null) {
-                out.printf("%s\n", getHelp());
-                return 0;
-            } else if (commandLine.peek().isNonOption()) {
-                if (expression == null) {
-                    expression = commandLine.next().getString();
-                } else {
-                    String path = commandLine.next().getString();
-                    files.add(new FileInfo(NutsPath.of(path, context.getSession()), options.highlighter));
-                }
+        if (commandLine.next("-") != null) {
+            options.files.add(null);
+            return true;
+        } else if (commandLine.next("-e", "--regexp") != null) {
+            //options.regexp = true;
+            return true;
+        } else if (commandLine.next("-v", "--invert-match") != null) {
+            options.invertMatch = true;
+            return true;
+        } else if (commandLine.next("-w", "--word-regexp") != null) {
+            options.word = true;
+            return true;
+        } else if (commandLine.next("-x", "--line-regexp") != null) {
+            options.lineRegexp = true;
+            return true;
+        } else if (commandLine.next("-i", "--ignore-case") != null) {
+            options.ignoreCase = true;
+            return true;
+        } else if ((a = commandLine.next("-H", "--highlighter")) != null) {
+            options.highlighter = NutsUtilStrings.trim(a.getValue().getString());
+            return true;
+        } else if ((a = commandLine.next("-S", "--selection-style")) != null) {
+            options.selectionStyle = NutsUtilStrings.trimToNull(a.getValue().getString());
+            return true;
+        } else if (commandLine.next("-n") != null) {
+            options.n = true;
+            return true;
+        } else if (commandLine.peek().isNonOption()) {
+            if (options.expression == null) {
+                options.expression = commandLine.next().getString();
             } else {
-                context.configureLast(commandLine);
+                String path = commandLine.next().getString();
+                options.files.add(new FileInfo(NutsPath.of(path, context.getSession()), options.highlighter));
             }
+            return true;
+        } else {
+            return false;
         }
-        if (files.isEmpty()) {
-            files.add(null);
+    }
+
+    @Override
+    protected void execBuiltin(NutsCommandLine commandLine, JShellExecutionContext context) {
+        Options options = context.getOptions();
+        NutsPrintStream out = context.out();
+        if (options.files.isEmpty()) {
+            options.files.add(null);
         }
-        if (expression == null) {
+        if (options.expression == null) {
             throw new NutsExecutionException(context.getSession(), NutsMessage.cstyle("missing Expression"), 2);
         }
-        String baseExpr = simpexpToRegexp(expression, true);
+        String baseExpr = simpexpToRegexp(options.expression, true);
         if (options.word) {
             baseExpr = "\\b" + baseExpr + "\\b";
         }
@@ -156,10 +114,10 @@ public class GrepCommand extends AbstractNshBuiltin {
         }
         Pattern p = Pattern.compile(baseExpr);
         //text mode
-        boolean prefixFileName = files.size() > 1;
+        boolean prefixFileName = options.files.size() > 1;
         int x = 0;
         List<GrepResultItem> results = new ArrayList<>();
-        for (FileInfo f : files) {
+        for (FileInfo f : options.files) {
             x = grepFile(f, p, options, context, prefixFileName, results);
         }
         switch (context.getSession().getOutputFormat()) {
@@ -188,7 +146,6 @@ public class GrepCommand extends AbstractNshBuiltin {
         if (x != 0) {
             throwExecutionException("error", x, context.getSession());
         }
-        return x;
     }
 
     protected int grepFile(FileInfo f, Pattern p, Options options, JShellExecutionContext context, boolean prefixFileName, List<GrepResultItem> results) {
@@ -338,6 +295,8 @@ public class GrepCommand extends AbstractNshBuiltin {
         boolean all = false;
         int windowBefore = 0;
         int windowAfter = 0;
+        List<FileInfo> files = new ArrayList<>();
+        String expression = null;
     }
 
     private static class GrepResultItem {
@@ -354,4 +313,50 @@ public class GrepCommand extends AbstractNshBuiltin {
         }
     }
 
+    public static String simpexpToRegexp(String pattern, boolean contains) {
+        if (pattern == null) {
+            pattern = "*";
+        }
+        int i = 0;
+        char[] cc = pattern.toCharArray();
+        StringBuilder sb = new StringBuilder();
+        while (i < cc.length) {
+            char c = cc[i];
+            switch (c) {
+                case '.':
+                case '!':
+                case '$':
+                case '[':
+                case ']':
+                case '(':
+                case ')':
+                case '?':
+                case '^':
+                case '|':
+                case '\\': {
+                    sb.append('\\').append(c);
+                    break;
+                }
+                case '*': {
+//                    if (i + 1 < cc.length && cc[i + 1] == '*') {
+//                        i++;
+//                        sb.append("[a-zA-Z_0-9_$.-]*");
+//                    } else {
+//                        sb.append("[a-zA-Z_0-9_$-]*");
+//                    }
+                    sb.append(".*");
+                    break;
+                }
+                default: {
+                    sb.append(c);
+                }
+            }
+            i++;
+        }
+        if (!contains) {
+            sb.insert(0, '^');
+            sb.append('$');
+        }
+        return sb.toString();
+    }
 }

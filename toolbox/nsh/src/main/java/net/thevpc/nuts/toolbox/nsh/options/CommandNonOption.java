@@ -31,9 +31,8 @@ import java.util.List;
 import net.thevpc.nuts.NutsArgumentCandidate;
 import net.thevpc.nuts.NutsArgumentName;
 import net.thevpc.nuts.NutsCommandAutoComplete;
-import net.thevpc.nuts.NutsCommandLines;
-import net.thevpc.nuts.toolbox.nsh.bundles.jshell.JShellBuiltin;
-import net.thevpc.nuts.toolbox.nsh.bundles.jshell.JShellContext;
+import net.thevpc.nuts.toolbox.nsh.jshell.JShellBuiltin;
+import net.thevpc.nuts.toolbox.nsh.jshell.JShellContext;
 
 /**
  *

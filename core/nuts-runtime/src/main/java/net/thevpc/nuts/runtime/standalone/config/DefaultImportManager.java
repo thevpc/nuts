@@ -14,7 +14,7 @@ public class DefaultImportManager implements NutsImportManager {
     }
 
     @Override
-    public NutsImportManager add(String[] importExpressions) {
+    public NutsImportManager addImports(String... importExpressions) {
         checkSession();
         model.add(importExpressions, session);
         return this;
@@ -25,21 +25,21 @@ public class DefaultImportManager implements NutsImportManager {
     }
 
     @Override
-    public NutsImportManager removeAll() {
+    public NutsImportManager clearImports() {
         checkSession();
         model.removeAll(session);
         return this;
     }
 
     @Override
-    public NutsImportManager remove(String[] importExpressions) {
+    public NutsImportManager removeImports(String... importExpressions) {
         checkSession();
         model.remove(importExpressions, session);
         return this;
     }
 
     @Override
-    public NutsImportManager set(String[] imports) {
+    public NutsImportManager updateImports(String[] imports) {
         checkSession();
         model.set(imports, session);
         return this;
@@ -52,7 +52,7 @@ public class DefaultImportManager implements NutsImportManager {
     }
 
     @Override
-    public Set<String> getAll() {
+    public Set<String> getAllImports() {
         checkSession();
         return model.getAll();
     }

@@ -26,8 +26,8 @@
 package net.thevpc.nuts.toolbox.nsh.cmds;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.toolbox.nsh.AbstractNshBuiltin;
-import net.thevpc.nuts.toolbox.nsh.bundles.jshell.JShellExecutionContext;
+import net.thevpc.nuts.toolbox.nsh.SimpleJShellBuiltin;
+import net.thevpc.nuts.toolbox.nsh.jshell.JShellExecutionContext;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,54 +35,56 @@ import java.util.List;
 /**
  * Created by vpc on 1/7/17.
  */
-public class ZipCommand extends AbstractNshBuiltin {
+public class ZipCommand extends SimpleJShellBuiltin {
 
     public ZipCommand() {
-        super("zip", DEFAULT_SUPPORT);
+        super("zip", DEFAULT_SUPPORT, Options.class);
     }
 
     @Override
-    public int execImpl(String[] args, JShellExecutionContext context) {
-        NutsCommandLine commandLine = cmdLine(args, context);
-        Options options = new Options();
-        List<NutsPath> files = new ArrayList<>();
-//        NutsPrintStream out = context.out();
-        NutsPath outZip = null;
-        NutsArgument a;
+    protected boolean configureFirst(NutsCommandLine commandLine, JShellExecutionContext context) {
+        Options options = context.getOptions();
         NutsSession session = context.getSession();
-        while (commandLine.hasNext()) {
-            if (commandLine.next("-r") != null) {
-                options.r = true;
-            } else if (commandLine.peek().isOption()) {
-                commandLine.unexpectedArgument();
-            } else if (commandLine.peek().isNonOption()) {
-                String path = commandLine.required().nextNonOption(NutsArgumentName.of("file",session)).getString();
-                NutsPath file = NutsPath.of(path, session).toAbsolute(context.getShellContext().getCwd());
-                if (outZip == null) {
-                    outZip = file;
-                } else {
-                    files.add(file);
-                }
+        if (commandLine.next("-r") != null) {
+            options.r = true;
+            return true;
+        } else if (commandLine.peek().isOption()) {
+            return false;
+        } else if (commandLine.peek().isNonOption()) {
+            String path = commandLine.required().nextNonOption(NutsArgumentName.of("file", session)).getString();
+            NutsPath file = NutsPath.of(path, session).toAbsolute(context.getShellContext().getCwd());
+            if (options.outZip == null) {
+                options.outZip = file;
             } else {
-                context.configureLast(commandLine);
+                options.files.add(file);
             }
+            return true;
         }
-        if (files.isEmpty()) {
+        return false;
+    }
+
+    @Override
+    protected void execBuiltin(NutsCommandLine commandLine, JShellExecutionContext context) {
+        Options options = context.getOptions();
+        NutsSession session = context.getSession();
+        if (options.files.isEmpty()) {
             commandLine.required(NutsMessage.cstyle("missing input-files"));
         }
-        if (outZip == null) {
+        if (options.outZip == null) {
             commandLine.required(NutsMessage.cstyle("missing out-zip"));
         }
         NutsCompress aa = NutsCompress.of(session)
-                .setTarget(outZip);
-        for (NutsPath file : files) {
+                .setTarget(options.outZip);
+        for (NutsPath file : options.files) {
             aa.addSource(file);
         }
         aa.run();
-        return 0;
     }
 
+
     private static class Options {
+        List<NutsPath> files = new ArrayList<>();
+        NutsPath outZip = null;
 
         boolean r = false;
     }

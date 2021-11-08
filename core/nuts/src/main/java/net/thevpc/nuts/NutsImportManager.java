@@ -31,15 +31,15 @@ import java.util.Set;
  */
 public interface NutsImportManager {
 
-    NutsImportManager add(String[] importExpression);
+    NutsImportManager addImports(String... importExpression);
 
-    NutsImportManager removeAll();
+    NutsImportManager clearImports();
 
-    NutsImportManager remove(String[] importExpression);
+    NutsImportManager removeImports(String... importExpression);
 
-    NutsImportManager set(String[] imports);
+    NutsImportManager updateImports(String[] imports);
 
-    Set<String> getAll();
+    Set<String> getAllImports();
 
     boolean isImportedGroupId(String groupId);
 

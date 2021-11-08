@@ -78,7 +78,7 @@ public class DefaultNutsWorkspaceArchetypeComponent implements NutsWorkspaceArch
 //        for (NutsAddRepositoryOptions d : def.values()) {
 //            ws.repos().addRepository(d);
 //        }
-        session.imports().add(new String[]{
+        session.imports().addImports(new String[]{
                 "net.thevpc.nuts.toolbox",
                 "net.thevpc"
         });

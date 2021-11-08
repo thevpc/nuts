@@ -26,12 +26,13 @@
 package net.thevpc.nuts.toolbox.nsh;
 
 import net.thevpc.nuts.spi.NutsComponent;
-import net.thevpc.nuts.toolbox.nsh.bundles.jshell.JShellExecutionContext;
+import net.thevpc.nuts.toolbox.nsh.jshell.JShellBuiltin;
+import net.thevpc.nuts.toolbox.nsh.jshell.JShellExecutionContext;
 
 /**
  * Created by vpc on 3/7/17.
  */
 public interface NutsCommandAutoCompleteComponent extends NutsComponent {
 
-    void autoComplete(NshBuiltin command, JShellExecutionContext context);
+    void autoComplete(JShellBuiltin command, JShellExecutionContext context);
 }

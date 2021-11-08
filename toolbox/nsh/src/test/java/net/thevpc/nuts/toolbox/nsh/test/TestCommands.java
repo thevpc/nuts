@@ -26,8 +26,8 @@
 */
 package net.thevpc.nuts.toolbox.nsh.test;
 
-import net.thevpc.nuts.toolbox.nsh.bundles.jshell.JShell;
-import net.thevpc.nuts.toolbox.nsh.bundles.jshell.MemResult;
+import net.thevpc.nuts.toolbox.nsh.jshell.JShell;
+import net.thevpc.nuts.toolbox.nsh.jshell.MemResult;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

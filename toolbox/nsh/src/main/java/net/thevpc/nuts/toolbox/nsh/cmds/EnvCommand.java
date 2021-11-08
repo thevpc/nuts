@@ -28,7 +28,8 @@ package net.thevpc.nuts.toolbox.nsh.cmds;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.spi.NutsComponentScope;
 import net.thevpc.nuts.spi.NutsComponentScopeType;
-import net.thevpc.nuts.toolbox.nsh.SimpleNshBuiltin;
+import net.thevpc.nuts.toolbox.nsh.SimpleJShellBuiltin;
+import net.thevpc.nuts.toolbox.nsh.jshell.JShellExecutionContext;
 
 import java.util.*;
 
@@ -36,19 +37,14 @@ import java.util.*;
  * Created by vpc on 1/7/17.
  */
 @NutsComponentScope(NutsComponentScopeType.WORKSPACE)
-public class EnvCommand extends SimpleNshBuiltin {
+public class EnvCommand extends SimpleJShellBuiltin {
 
     public EnvCommand() {
-        super("env", DEFAULT_SUPPORT);
+        super("env", DEFAULT_SUPPORT,Options.class);
     }
 
     @Override
-    protected Object createOptions() {
-        return new Options();
-    }
-
-    @Override
-    protected boolean configureFirst(NutsCommandLine commandLine, SimpleNshCommandContext context) {
+    protected boolean configureFirst(NutsCommandLine commandLine, JShellExecutionContext context) {
         Options options = context.getOptions();
         NutsArgument a = commandLine.peek();
         switch (options.readStatus) {
@@ -153,14 +149,14 @@ public class EnvCommand extends SimpleNshBuiltin {
     }
 
     @Override
-    protected void execBuiltin(NutsCommandLine commandLine, SimpleNshCommandContext context) {
+    protected void execBuiltin(NutsCommandLine commandLine, JShellExecutionContext context) {
         Options options = context.getOptions();
         if (options.sort) {
             context.getSession().addOutputFormatOptions("--sort");
         }
         SortedMap<String, String> env = new TreeMap<>();
         if (!options.ignoreEnvironment) {
-            env.putAll((Map) context.getRootContext().vars().getAll());
+            env.putAll((Map) context.getShellContext().vars().getAll());
         }
         for (String v : options.unsetVers) {
             env.remove(v);

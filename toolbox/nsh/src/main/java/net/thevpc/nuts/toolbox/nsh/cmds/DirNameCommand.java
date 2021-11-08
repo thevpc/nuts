@@ -30,7 +30,8 @@ import net.thevpc.nuts.NutsArgument;
 import net.thevpc.nuts.NutsCommandLine;
 import net.thevpc.nuts.spi.NutsComponentScope;
 import net.thevpc.nuts.spi.NutsComponentScopeType;
-import net.thevpc.nuts.toolbox.nsh.SimpleNshBuiltin;
+import net.thevpc.nuts.toolbox.nsh.SimpleJShellBuiltin;
+import net.thevpc.nuts.toolbox.nsh.jshell.JShellExecutionContext;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,19 +40,14 @@ import java.util.List;
  * Created by vpc on 1/7/17.
  */
 @NutsComponentScope(NutsComponentScopeType.WORKSPACE)
-public class DirNameCommand extends SimpleNshBuiltin {
+public class DirNameCommand extends SimpleJShellBuiltin {
 
     public DirNameCommand() {
-        super("dirname", DEFAULT_SUPPORT);
+        super("dirname", DEFAULT_SUPPORT,Options.class);
     }
 
     @Override
-    protected Object createOptions() {
-        return new Options();
-    }
-
-    @Override
-    protected boolean configureFirst(NutsCommandLine cmdLine, SimpleNshCommandContext context) {
+    protected boolean configureFirst(NutsCommandLine cmdLine, JShellExecutionContext context) {
         Options options = context.getOptions();
         NutsArgument a = cmdLine.peek();
         switch (a.getKey().getString()) {
@@ -74,7 +70,7 @@ public class DirNameCommand extends SimpleNshBuiltin {
     }
 
     @Override
-    protected void execBuiltin(NutsCommandLine cmdLine, SimpleNshCommandContext context) {
+    protected void execBuiltin(NutsCommandLine cmdLine, JShellExecutionContext context) {
         Options options = context.getOptions();
         if (options.names.isEmpty()) {
             cmdLine.required();

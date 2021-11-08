@@ -126,7 +126,7 @@ public class NVersionMain implements NutsApplication {
             NutsPrintStream err = session.out();
             NutsTexts text = NutsTexts.of(session);
             if (table) {
-                NutsPropertiesFormat tt = session.formats().props().setSorted(sort);
+                NutsPropertiesFormat tt = NutsPropertiesFormat.of(session).setSorted(sort);
                 Properties pp = new Properties();
                 for (Map.Entry<String, Set<VersionDescriptor>> entry : results.entrySet()) {
                     VersionDescriptor o = entry.getValue().toArray(new VersionDescriptor[0])[0];
@@ -173,7 +173,7 @@ public class NVersionMain implements NutsApplication {
                             out.printf("%s%n", text.toText(descriptor.getId()));
                         } else if (longFormat) {
                             out.printf("%s%n", text.toText(descriptor.getId()));
-                            NutsPropertiesFormat f = session.formats().props()
+                            NutsPropertiesFormat f = NutsPropertiesFormat.of(session)
                                     .setSorted(true);
                             f.setValue(descriptor.getProperties()).print(out);
                         } else {

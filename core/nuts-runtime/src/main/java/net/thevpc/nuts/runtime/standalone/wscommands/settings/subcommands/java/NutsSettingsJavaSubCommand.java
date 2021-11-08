@@ -78,10 +78,10 @@ public class NutsSettingsJavaSubCommand extends AbstractNutsSettingsSubCommand {
             }
             return true;
         } else if (cmdLine.next("list java") != null) {
-            NutsTableFormat t = session.formats().table()
+            NutsTableFormat t = NutsTableFormat.of(session)
                     //                    .setBorder(TableFormatter.SPACE_BORDER)
                     .setVisibleHeader(true);
-            NutsMutableTableModel m = t.createModel();
+            NutsMutableTableModel m = NutsMutableTableModel.of(session);
             t.setValue(m);
             m.addHeaderCells("Name", "Version", "Path");
             while (cmdLine.hasNext()) {

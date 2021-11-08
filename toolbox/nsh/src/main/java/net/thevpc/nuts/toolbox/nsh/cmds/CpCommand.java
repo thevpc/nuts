@@ -28,8 +28,8 @@ package net.thevpc.nuts.toolbox.nsh.cmds;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.spi.NutsComponentScope;
 import net.thevpc.nuts.spi.NutsComponentScopeType;
-import net.thevpc.nuts.toolbox.nsh.SimpleNshBuiltin;
-import net.thevpc.nuts.toolbox.nsh.bundles.jshell.JShellExecutionContext;
+import net.thevpc.nuts.toolbox.nsh.SimpleJShellBuiltin;
+import net.thevpc.nuts.toolbox.nsh.jshell.JShellExecutionContext;
 import net.thevpc.nuts.toolbox.nsh.util.ShellHelper;
 
 import java.util.ArrayList;
@@ -40,19 +40,15 @@ import java.util.List;
  * https://medium.com/ldclakmal/scp-with-java-b7b7dbcdbc85
  */
 @NutsComponentScope(NutsComponentScopeType.WORKSPACE)
-public class CpCommand extends SimpleNshBuiltin {
+public class CpCommand extends SimpleJShellBuiltin {
 
     public CpCommand() {
-        super("cp", DEFAULT_SUPPORT);
+        super("cp", DEFAULT_SUPPORT,Options.class);
     }
 
-    @Override
-    protected Object createOptions() {
-        return new Options();
-    }
 
     @Override
-    protected boolean configureFirst(NutsCommandLine commandLine, SimpleNshCommandContext context) {
+    protected boolean configureFirst(NutsCommandLine commandLine, JShellExecutionContext context) {
         Options options = context.getOptions();
         NutsArgument a;
         switch (commandLine.peek().getKey().getString()) {
@@ -77,7 +73,7 @@ public class CpCommand extends SimpleNshBuiltin {
     }
 
     @Override
-    protected void execBuiltin(NutsCommandLine commandLine, SimpleNshCommandContext context) {
+    protected void execBuiltin(NutsCommandLine commandLine, JShellExecutionContext context) {
         Options options = context.getOptions();
         NutsSession session = context.getSession();
         for (String value : options.files) {
@@ -94,7 +90,7 @@ public class CpCommand extends SimpleNshBuiltin {
 
         options.sshlistener = new ShellHelper.WsSshListener(session);
         for (int i = 0; i < options.xfiles.size() - 1; i++) {
-            copy(options.xfiles.get(i), options.xfiles.get(options.xfiles.size() - 1), options, context.getExecutionContext());
+            copy(options.xfiles.get(i), options.xfiles.get(options.xfiles.size() - 1), options, context);
         }
     }
 

@@ -1443,11 +1443,6 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
     }
 
     @Override
-    public NutsFormatManager formats() {
-        return getWorkspace().formats();
-    }
-
-    @Override
     public NutsImportManager imports() {
         return getWorkspace().imports();
     }

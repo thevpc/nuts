@@ -1,9 +1,9 @@
 package net.thevpc.nuts.toolbox.nsh;
 
-import net.thevpc.nuts.toolbox.nsh.bundles.jshell.DefaultJShellOptionsParser;
-import net.thevpc.nuts.toolbox.nsh.bundles.jshell.JShell;
-import net.thevpc.nuts.toolbox.nsh.bundles.jshell.JShellBuiltin;
-import net.thevpc.nuts.toolbox.nsh.bundles.jshell.JShellOptions;
+import net.thevpc.nuts.toolbox.nsh.jshell.DefaultJShellOptionsParser;
+import net.thevpc.nuts.toolbox.nsh.jshell.JShell;
+import net.thevpc.nuts.toolbox.nsh.jshell.JShellBuiltin;
+import net.thevpc.nuts.toolbox.nsh.jshell.JShellOptions;
 import net.thevpc.nuts.*;
 
 import java.util.Arrays;

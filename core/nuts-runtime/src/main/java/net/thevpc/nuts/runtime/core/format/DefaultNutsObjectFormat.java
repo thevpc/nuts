@@ -1,7 +1,7 @@
 /**
  * ====================================================================
- *            Nuts : Network Updatable Things Service
- *                  (universal package manager)
+ * Nuts : Network Updatable Things Service
+ * (universal package manager)
  * <br>
  * is a new Open Source Package Manager to help install packages
  * and libraries for runtime execution. Nuts is the ultimate companion for
@@ -10,20 +10,24 @@
  * to share shell scripts and other 'things' . Its based on an extensible
  * architecture to help supporting a large range of sub managers / repositories.
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc]
- * Licensed under the Apache License, Version 2.0 (the "License"); you may 
- * not use this file except in compliance with the License. You may obtain a 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may
+ * not use this file except in compliance with the License. You may obtain a
  * copy of the License at http://www.apache.org/licenses/LICENSE-2.0
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an 
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
- * either express or implied. See the License for the specific language 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+ * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  * <br>
  * ====================================================================
-*/
+ */
 package net.thevpc.nuts.runtime.core.format;
+
+import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.core.format.plain.NutsFormatPlain;
+import net.thevpc.nuts.spi.NutsSupportLevelContext;
 
 import java.io.File;
 import java.io.Writer;
@@ -31,16 +35,13 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
 
-import net.thevpc.nuts.*;
-import net.thevpc.nuts.NutsContentType;
-import net.thevpc.nuts.runtime.core.format.plain.NutsObjectFormatPlain;
-import net.thevpc.nuts.spi.NutsSupportLevelContext;
-
 /**
  *
  * @author thevpc
  */
-public class DefaultNutsObjectFormat extends NutsObjectFormatBase {
+public class DefaultNutsObjectFormat extends DefaultFormatBase<NutsObjectFormat> implements NutsObjectFormat{
+
+    private Object value;
 
     private NutsContentType outputFormat;
 //    private NutsObjectFormat base;
@@ -48,6 +49,18 @@ public class DefaultNutsObjectFormat extends NutsObjectFormatBase {
     public DefaultNutsObjectFormat(NutsSession session) {
         super(session, "object-format");
     }
+
+    @Override
+    public NutsObjectFormat setValue(Object value) {
+        this.value = value;
+        return this;
+    }
+
+    @Override
+    public Object getValue() {
+        return value;
+    }
+
 
 //    public NutsContentType getOutputFormat() {
 //        checkSession();
@@ -68,26 +81,25 @@ public class DefaultNutsObjectFormat extends NutsObjectFormatBase {
 //        return t;
 //    }
 
-    public NutsObjectFormat getBase() {
+    public NutsContentTypeFormat getBase() {
         checkSession();
         NutsSession session = getSession();
-        NutsObjectFormat base = createObjectFormat();
-        base.setValue(getValue());
+        NutsContentTypeFormat base = createObjectFormat();
         base.setSession(session);
         base.configure(true, session.boot().getBootOptions().getOutputFormatOptions());
         base.configure(true, session.getOutputFormatOptions());
         return base;
     }
 
-    public NutsObjectFormat createObjectFormat() {
+    public NutsContentTypeFormat createObjectFormat() {
         checkSession();
         NutsSession session = getSession();
         NutsContentType t = getSession().getOutputFormat();
-        if(t==null){
+        Object value = getValue();
+        if (t == null) {
             t = NutsContentType.PLAIN;
-            Object v = getValue();
-            Object vv = NutsElements.of(getSession()).destruct(v);
-            if(vv instanceof Map || vv instanceof List){
+            Object vv = NutsElements.of(getSession()).destruct(value);
+            if (vv instanceof Map || vv instanceof List) {
                 t = NutsContentType.JSON;
             }
 //        }else {
@@ -111,21 +123,59 @@ public class DefaultNutsObjectFormat extends NutsObjectFormatBase {
             case XML:
             case JSON:
             case TSON:
-            case YAML:
-            {
-                return NutsElements.of(session).setNtf(isNtf()).setContentType(t);
+            case YAML: {
+                NutsElements ee = NutsElements.of(session).setNtf(isNtf()).setContentType(t);
+                if (value instanceof NutsString) {
+                    NutsTextBuilder builder = ((NutsString)value).builder();
+                    Object[] r = builder.lines().map(x -> {
+                        if (true) {
+                            return x.filteredText();
+                        }
+                        return (Object) x.filteredText();
+                    }).toArray(Object[]::new);
+                    ee.setValue(r);
+                } else {
+                    ee.setValue(value);
+                }
+                return ee;
             }
             case PROPS: {
-                return session.formats().props();
+                NutsPropertiesFormat ee = NutsPropertiesFormat.of(session);
+                if (value instanceof NutsString) {
+                    NutsTextBuilder builder = ((NutsString)value).builder();
+                    Object[] r = builder.lines().toArray(Object[]::new);
+                    ee.setValue(r);
+                } else {
+                    ee.setValue(value);
+                }
+                return ee;
             }
             case TREE: {
-                return session.formats().tree();
+                NutsTreeFormat ee = NutsTreeFormat.of(session);
+                if (value instanceof NutsString) {
+                    NutsTextBuilder builder = ((NutsString)value).builder();
+                    Object[] r = builder.lines().toArray(Object[]::new);
+                    ee.setValue(r);
+                } else {
+                    ee.setValue(value);
+                }
+                return ee;
             }
             case TABLE: {
-                return session.formats().table();
+                NutsTableFormat ee = NutsTableFormat.of(session);
+                if (value instanceof NutsString) {
+                    NutsTextBuilder builder = ((NutsString)value).builder();
+                    Object[] r = builder.lines().toArray(Object[]::new);
+                    ee.setValue(r);
+                } else {
+                    ee.setValue(value);
+                }
+                return ee;
             }
             case PLAIN: {
-                return new NutsObjectFormatPlain(session);
+                NutsFormatPlain ee = new NutsFormatPlain(session);
+                ee.setValue(value);
+                return ee;
             }
         }
         throw new NutsUnsupportedEnumException(getSession(), t);
@@ -139,6 +189,16 @@ public class DefaultNutsObjectFormat extends NutsObjectFormatBase {
     @Override
     public NutsString format() {
         return getBase().format();
+    }
+
+    @Override
+    public void print() {
+        getBase().print();
+    }
+
+    @Override
+    public void println() {
+        getBase().println();
     }
 
     @Override
@@ -162,11 +222,6 @@ public class DefaultNutsObjectFormat extends NutsObjectFormatBase {
     }
 
     @Override
-    public void print() {
-        getBase().print();
-    }
-
-    @Override
     public void print(NutsSessionTerminal terminal) {
         getBase().print(terminal);
     }
@@ -184,11 +239,6 @@ public class DefaultNutsObjectFormat extends NutsObjectFormatBase {
     @Override
     public void println(Path path) {
         getBase().println(path);
-    }
-
-    @Override
-    public void println() {
-        getBase().println();
     }
 
     @Override

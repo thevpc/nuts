@@ -6,8 +6,7 @@
 package net.thevpc.nuts.toolbox.docusaurus;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.toolbox.nsh.AbstractNshBuiltin;
-import net.thevpc.nuts.toolbox.nsh.bundles.jshell.*;
+import net.thevpc.nuts.toolbox.nsh.jshell.*;
 import net.thevpc.nuts.toolbox.ntemplate.filetemplate.*;
 import net.thevpc.nuts.toolbox.ntemplate.filetemplate.util.FileProcessorUtils;
 import net.thevpc.nuts.toolbox.ntemplate.filetemplate.util.StringUtils;
@@ -16,10 +15,7 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.Objects;
+import java.util.*;
 import java.util.function.Function;
 
 /**
@@ -88,11 +84,11 @@ public class DocusaurusCtrl {
 //            Files.walk(base).filter(x->Files.isDirectory(base))
             Path docs = basePath.resolve("docs");
             if (Files.isDirectory(basePath.resolve("node_modules")) && Files.isRegularFile(basePath.resolve("docusaurus.config.js"))) {
-                session.out().printf("clear folder %s%n",docs);
+                session.out().printf("clear folder %s%n", docs);
                 deletePathChildren(docs);
             }
 
-            session.out().printf("process template %s -> %s%n",preProcessor,getTargetBaseDir());
+            session.out().printf("process template %s -> %s%n", preProcessor, getTargetBaseDir());
             TemplateConfig config = new TemplateConfig()
                     .setProjectPath(preProcessor.toString())
                     .setTargetFolder(getTargetBaseDir().toString());
@@ -125,7 +121,7 @@ public class DocusaurusCtrl {
             try {
                 Files.write(base.resolve("sidebars.js"), s.getBytes());
             } catch (IOException e) {
-                throw new NutsIOException(session, NutsMessage.cstyle("%s",e));
+                throw new NutsIOException(session, NutsMessage.cstyle("%s", e));
             }
 //            System.out.println(s);
         }
@@ -226,7 +222,7 @@ public class DocusaurusCtrl {
     }
 
     private void deletePathChildren(Path path) {
-        if(Files.isDirectory(path)) {
+        if (Files.isDirectory(path)) {
             try {
                 Files.list(path).forEach(
                         x -> deletePath(x)
@@ -301,21 +297,7 @@ public class DocusaurusCtrl {
             );
             shell.getRootContext()
                     .builtins()
-                    .set(
-                            new AbstractNshBuiltin("process", 10) {
-                                @Override
-                                public int execImpl(String[] args, JShellExecutionContext context) {
-                                    if (args.length != 1) {
-                                        context.err().println(getName() + " : invalid arguments count");
-                                        return 1;
-                                    }
-                                    String pathString = args[0];
-                                    fileTemplater.getLog().debug("eval", getName() + "(" + StringUtils.toLiteralString(pathString) + ")");
-                                    fileTemplater.executeRegularFile(Paths.get(pathString), null);
-                                    return 0;
-                                }
-                            }
-                    );
+                    .set(new ProcessCmd(fileTemplater));
         }
 
         public void setVar(String varName, String newValue) {
@@ -329,9 +311,9 @@ public class DocusaurusCtrl {
             NutsPrintStream out = NutsMemoryPrintStream.of(session);
             session.setTerminal(
                     NutsSessionTerminal.of(
-                                    new ByteArrayInputStream(new byte[0]),
-                                    out,
-                                    out,session)
+                            new ByteArrayInputStream(new byte[0]),
+                            out,
+                            out, session)
             );
             JShellContext ctx = shell.createInlineContext(
                     shell.getRootContext(),
@@ -346,6 +328,7 @@ public class DocusaurusCtrl {
         public String toString() {
             return "nsh";
         }
+
     }
 
     private static class NFileTemplater extends FileTemplater {

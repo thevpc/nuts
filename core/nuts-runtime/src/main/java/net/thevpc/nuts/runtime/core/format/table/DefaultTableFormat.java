@@ -267,11 +267,6 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
     }
 
     @Override
-    public NutsMutableTableModel createModel() {
-        return new DefaultNutsMutableTableModel();
-    }
-
-    @Override
     public NutsTableFormat setValue(Object value) {
         this.model = value;
         return this;
@@ -561,7 +556,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
 
     private NutsTableModel createTableModel(Object o) {
         if (o == null) {
-            return new DefaultNutsMutableTableModel();
+            return NutsMutableTableModel.of(getSession());
         }
         if (o instanceof NutsTableModel) {
             return (NutsTableModel) o;
@@ -573,7 +568,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
         }
         o = _elems().setDestructTypeFilter(NutsElements.DEFAULT_FORMAT_DESTRUCTOR).destruct(o);
         if (o instanceof Collection) {
-            NutsMutableTableModel model = createModel();
+            NutsMutableTableModel model = NutsMutableTableModel.of(getSession());
             LinkedHashSet<String> columns = new LinkedHashSet<>();
             resolveColumns(o, columns);
             for (String column : columns) {
@@ -645,7 +640,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
             return model;
         }
         if (o instanceof Map) {
-            NutsMutableTableModel model = createModel();
+            NutsMutableTableModel model = NutsMutableTableModel.of(getSession());
             LinkedHashSet<String> columns = new LinkedHashSet<>();
             columns.add("Name");
             columns.add("Value");
@@ -680,7 +675,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
                 return createTableModel(_elems().toElement(elem.asObject().children()));
             }
             case ARRAY: {
-                NutsMutableTableModel model = createModel();
+                NutsMutableTableModel model = NutsMutableTableModel.of(getSession());
                 LinkedHashSet<String> columns = new LinkedHashSet<>();
                 resolveColumns(elem, columns);
                 for (String column : columns) {

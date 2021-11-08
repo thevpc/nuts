@@ -28,7 +28,7 @@ package net.thevpc.nuts.toolbox.nsh;
 
 import net.thevpc.nuts.NutsPrintStream;
 import net.thevpc.nuts.NutsTexts;
-import net.thevpc.nuts.toolbox.nsh.bundles.jshell.*;
+import net.thevpc.nuts.toolbox.nsh.jshell.*;
 import net.thevpc.nuts.NutsExecutionException;
 import net.thevpc.nuts.NutsTextStyle;
 import net.thevpc.nuts.toolbox.nsh.bundles._StringUtils;

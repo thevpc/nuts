@@ -105,7 +105,7 @@ public class NutsSettingsAliasSubCommand extends AbstractNutsSettingsSubCommand 
                         .sorted((x, y) -> x.getName().compareTo(y.getName()))
                         .collect(Collectors.toList());
                 if (session.isPlainOut()) {
-                    session.formats().props(
+                    NutsPropertiesFormat.of(session).setValue(
                                     r.stream().collect(
                                             Collectors.toMap(
                                                     NutsWorkspaceCustomCommand::getName,

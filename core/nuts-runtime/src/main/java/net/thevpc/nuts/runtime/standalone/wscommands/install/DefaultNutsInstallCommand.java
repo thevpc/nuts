@@ -357,45 +357,62 @@ public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
             throw new NutsInstallException(getSession(), null, NutsMessage.formatted(sb.toString().trim()), null);
         }
         NutsMemoryPrintStream mout = NutsMemoryPrintStream.of(session);
-        if (getSession().isPlainTrace() || (!list.emptyCommand && getSession().getConfirm() == NutsConfirmationMode.ASK)) {
-            printList(mout, "new","installed",
-                    list.ids(x -> x.doInstall && !x.isAlreadyExists()));
-
-            printList(mout, "new","required",
-                    list.ids(x -> x.doRequire && !x.doInstall && !x.isAlreadyExists()));
-            printList(mout,
-                    "required", "re-required",
-                    list.ids(x -> (!x.doInstall && x.doRequire) && x.isAlreadyRequired()));
-            printList(mout,
-                    "required",
-                    "installed",
-                    list.ids(x -> x.doInstall && x.isAlreadyRequired() && !x.isAlreadyInstalled()));
-
-            printList(mout,
-                    "required",
-                    "re-reinstalled",
-                    list.ids(x -> x.doInstall && x.isAlreadyInstalled()));
-            printList(mout,
-                    "installed",
-                    "set as default",
-                    list.ids(x -> x.doSwitchVersion && x.isAlreadyInstalled()));
-            printList(mout,
-                    "installed",
-                    "ignored",
-                    list.ids(x -> x.ignored));
-        }
-        mout.println("should we proceed?");
         List<NutsId> nonIgnored = list.ids(x -> !x.ignored);
-        if (!nonIgnored.isEmpty() && !getSession().config().getDefaultTerminal().ask()
-                .resetLine()
-                .setSession(session)
-                .forBoolean(mout.toString())
-                .setDefaultValue(true)
-                .setCancelMessage(
-                        NutsMessage.cstyle("installation cancelled : %s ", nonIgnored.stream().map(NutsId::getFullName).collect(Collectors.joining(", ")))
-                )
-                .getBooleanValue()) {
-            throw new NutsUserCancelException(getSession(), NutsMessage.cstyle("installation cancelled: %s", nonIgnored.stream().map(NutsId::getFullName).collect(Collectors.joining(", "))));
+        List<NutsId> list_new_installed = list.ids(x -> x.doInstall && !x.isAlreadyExists());
+        List<NutsId> list_new_required = list.ids(x -> x.doRequire && !x.doInstall && !x.isAlreadyExists());
+        List<NutsId> list_required_rerequired = list.ids(x -> (!x.doInstall && x.doRequire) && x.isAlreadyRequired());
+        List<NutsId> list_required_installed = list.ids(x -> x.doInstall && x.isAlreadyRequired() && !x.isAlreadyInstalled());
+        List<NutsId> list_required_reinstalled = list.ids(x -> x.doInstall && x.isAlreadyInstalled());
+        List<NutsId> list_installed_setdefault = list.ids(x -> x.doSwitchVersion && x.isAlreadyInstalled());
+        List<NutsId> installed_ignored = list.ids(x -> x.ignored);
+
+        if (!nonIgnored.isEmpty()) {
+            if (getSession().isPlainTrace() || (!list.emptyCommand && getSession().getConfirm() == NutsConfirmationMode.ASK)) {
+                printList(mout, "new", "installed", list_new_installed);
+                printList(mout, "new", "required", list_new_required);
+                printList(mout, "required", "re-required", list_required_rerequired);
+                printList(mout, "required", "installed", list_required_installed);
+                printList(mout, "required", "re-reinstalled", list_required_reinstalled);
+                printList(mout, "installed", "set as default", list_installed_setdefault);
+                printList(mout, "installed", "ignored", installed_ignored);
+            }
+            mout.println("should we proceed?");
+            if (!getSession().config().getDefaultTerminal().ask()
+                    .resetLine()
+                    .setSession(session)
+                    .forBoolean(mout.toString())
+                    .setDefaultValue(true)
+                    .setCancelMessage(
+                            NutsMessage.cstyle("installation cancelled : %s ", nonIgnored.stream().map(NutsId::getFullName).collect(Collectors.joining(", ")))
+                    )
+                    .getBooleanValue()) {
+                throw new NutsUserCancelException(getSession(), NutsMessage.cstyle("installation cancelled: %s", nonIgnored.stream().map(NutsId::getFullName).collect(Collectors.joining(", "))));
+            }
+        } else if (!installed_ignored.isEmpty()) {
+            //all packages are already installed, ask if we need to re-install!
+            if (getSession().isPlainTrace() || (!list.emptyCommand && getSession().getConfirm() == NutsConfirmationMode.ASK)) {
+                printList(mout, "installed", "re-reinstalled", installed_ignored);
+            }
+            mout.println("should we proceed?");
+            if (!getSession().config().getDefaultTerminal().ask()
+                    .resetLine()
+                    .setSession(session)
+                    .forBoolean(mout.toString())
+                    .setDefaultValue(true)
+                    .setCancelMessage(
+                            NutsMessage.cstyle("installation cancelled : %s ", nonIgnored.stream().map(NutsId::getFullName).collect(Collectors.joining(", ")))
+                    )
+                    .getBooleanValue()) {
+                throw new NutsUserCancelException(getSession(), NutsMessage.cstyle("installation cancelled: %s", nonIgnored.stream().map(NutsId::getFullName).collect(Collectors.joining(", "))));
+            }
+            //force installation
+            for (InstallIdInfo info : list.infos()) {
+                if(info.ignored){
+                    info.ignored=false;
+                    info.doInstall=true;
+                    info.forced=true;
+                }
+            }
         }
 //        List<String> cmdArgs = new ArrayList<>(Arrays.asList(this.getArgs()));
 //        if (session.isForce()) {
@@ -449,7 +466,7 @@ public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
 
     private void printList(NutsPrintStream out, String skind, String saction, List<NutsId> all) {
         if (all.size() > 0) {
-            if(session.isPlainOut()) {
+            if (session.isPlainOut()) {
                 NutsTexts text = NutsTexts.of(session);
                 NutsText kind = text.ofStyled(skind, NutsTextStyle.primary2());
                 NutsText action =
@@ -472,14 +489,14 @@ public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
                                 ).collect(Collectors.toList())
                         );
                 out.resetLine().println(msg);
-            }else{
+            } else {
                 NutsElements elem = NutsElements.of(session);
                 session.eout().add(elem.forObject()
-                        .set("command","warning")
-                        .set("artifact-kind",skind)
-                        .set("action-warning",saction)
-                        .set("artifacts",elem.forArray().addAll(
-                                all.stream().map(x->x.toString()).toArray(String[]::new)
+                        .set("command", "warning")
+                        .set("artifact-kind", skind)
+                        .set("action-warning", saction)
+                        .set("artifacts", elem.forArray().addAll(
+                                all.stream().map(x -> x.toString()).toArray(String[]::new)
                         ).build())
                         .build()
                 );

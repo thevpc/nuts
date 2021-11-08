@@ -223,7 +223,7 @@ public class LocalTomcat {
                     }
                 }
             } else {
-                context.getSession().formats().object()
+                NutsObjectFormat.of(context.getSession())
                         .setValue(TomcatUtils.getRunningInstances(context))
                         .println();
             }
@@ -607,7 +607,7 @@ public class LocalTomcat {
             context.configureLast(args);
         }
         LocalTomcatConfigService c = toLocalTomcatConfigService(s);
-        context.getSession().formats().object().setSession(context.getSession())
+        NutsObjectFormat.of(context.getSession())
                 .setValue(c.getCatalinaBase())
                 .println();
     }
@@ -620,7 +620,7 @@ public class LocalTomcat {
             context.configureLast(args);
         }
         LocalTomcatConfigService c = toLocalTomcatConfigService(s);
-        context.getSession().formats().object().setSession(context.getSession())
+        NutsObjectFormat.of(context.getSession())
                 .setValue(c.getValidCatalinaVersion())
                 .println();
     }
@@ -633,7 +633,7 @@ public class LocalTomcat {
             context.configureLast(args);
         }
         LocalTomcatConfigService c = toLocalTomcatConfigService(s);
-        context.getSession().formats().object().setSession(context.getSession())
+        NutsObjectFormat.of(context.getSession())
                 .setValue(c.getCatalinaHome())
                 .println();
     }
@@ -713,7 +713,7 @@ public class LocalTomcat {
                     break;
                 }
             }
-            context.getSession().formats().object().setSession(context.getSession())
+            NutsObjectFormat.of(context.getSession())
                     .setValue(port)
                     .println();
         }

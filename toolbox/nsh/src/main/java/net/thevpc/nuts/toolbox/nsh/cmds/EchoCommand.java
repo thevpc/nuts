@@ -31,25 +31,21 @@ import net.thevpc.nuts.NutsTexts;
 import net.thevpc.nuts.NutsUtilStrings;
 import net.thevpc.nuts.spi.NutsComponentScope;
 import net.thevpc.nuts.spi.NutsComponentScopeType;
-import net.thevpc.nuts.toolbox.nsh.SimpleNshBuiltin;
+import net.thevpc.nuts.toolbox.nsh.SimpleJShellBuiltin;
+import net.thevpc.nuts.toolbox.nsh.jshell.JShellExecutionContext;
 
 /**
  * Created by vpc on 1/7/17.
  */
 @NutsComponentScope(NutsComponentScopeType.WORKSPACE)
-public class EchoCommand extends SimpleNshBuiltin {
+public class EchoCommand extends SimpleJShellBuiltin {
 
     public EchoCommand() {
-        super("echo", DEFAULT_SUPPORT);
+        super("echo", DEFAULT_SUPPORT,Options.class);
     }
 
     @Override
-    protected Object createOptions() {
-        return new Options();
-    }
-
-    @Override
-    protected boolean configureFirst(NutsCommandLine commandLine, SimpleNshCommandContext context) {
+    protected boolean configureFirst(NutsCommandLine commandLine, JShellExecutionContext context) {
         Options options = context.getOptions();
         switch (commandLine.peek().getKey().getString()) {
             case "-n": {
@@ -83,7 +79,7 @@ public class EchoCommand extends SimpleNshBuiltin {
     }
 
     @Override
-    protected void execBuiltin(NutsCommandLine commandLine, SimpleNshCommandContext context) {
+    protected void execBuiltin(NutsCommandLine commandLine, JShellExecutionContext context) {
         Options options = context.getOptions();
         Object ns = null;
         if (options.highlighter == null) {

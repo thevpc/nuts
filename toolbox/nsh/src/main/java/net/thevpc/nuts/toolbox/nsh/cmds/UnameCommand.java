@@ -29,7 +29,8 @@ import net.thevpc.nuts.NutsId;
 import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.spi.NutsComponentScope;
 import net.thevpc.nuts.spi.NutsComponentScopeType;
-import net.thevpc.nuts.toolbox.nsh.SimpleNshBuiltin;
+import net.thevpc.nuts.toolbox.nsh.SimpleJShellBuiltin;
+import net.thevpc.nuts.toolbox.nsh.jshell.JShellExecutionContext;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,19 +39,15 @@ import java.util.List;
  * Created by vpc on 1/7/17.
  */
 @NutsComponentScope(NutsComponentScopeType.WORKSPACE)
-public class UnameCommand extends SimpleNshBuiltin {
+public class UnameCommand extends SimpleJShellBuiltin {
 
     public UnameCommand() {
-        super("uname", DEFAULT_SUPPORT);
+        super("uname", DEFAULT_SUPPORT,Options.class);
     }
 
-    @Override
-    protected Object createOptions() {
-        return new Options();
-    }
 
     @Override
-    protected boolean configureFirst(NutsCommandLine cmdLine, SimpleNshCommandContext context) {
+    protected boolean configureFirst(NutsCommandLine cmdLine, JShellExecutionContext context) {
         Options config = context.getOptions();
         switch (cmdLine.peek().getKey().getString()) {
             case "-m": {
@@ -76,7 +73,7 @@ public class UnameCommand extends SimpleNshBuiltin {
     }
 
     @Override
-    protected void execBuiltin(NutsCommandLine commandLine, SimpleNshCommandContext context) {
+    protected void execBuiltin(NutsCommandLine commandLine, JShellExecutionContext context) {
         Options config = context.getOptions();
         NutsSession ws = context.getSession();
 

@@ -10,47 +10,59 @@
  * other 'things' . Its based on an extensible architecture to help supporting a
  * large range of sub managers / repositories.
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc]
- * Licensed under the Apache License, Version 2.0 (the "License"); you may 
- * not use this file except in compliance with the License. You may obtain a 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may
+ * not use this file except in compliance with the License. You may obtain a
  * copy of the License at http://www.apache.org/licenses/LICENSE-2.0
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an 
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
- * either express or implied. See the License for the specific language 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+ * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  * <br>
  * ====================================================================
-*/
+ */
 package net.thevpc.nuts.toolbox.nsh.cmds;
 
-import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.NutsWorkspace;
-import net.thevpc.nuts.toolbox.nsh.AbstractNshBuiltin;
 import net.thevpc.nuts.NutsCommandLine;
+import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.NutsVersionFormat;
-import net.thevpc.nuts.toolbox.nsh.bundles.jshell.JShellExecutionContext;
+import net.thevpc.nuts.toolbox.nsh.SimpleJShellBuiltin;
+import net.thevpc.nuts.toolbox.nsh.jshell.JShellExecutionContext;
 
 /**
  * Created by vpc on 1/7/17.
  */
-public class VersionCommand extends AbstractNshBuiltin {
+public class VersionCommand extends SimpleJShellBuiltin {
 
     public VersionCommand() {
-        super("version", DEFAULT_SUPPORT);
+        super("version", DEFAULT_SUPPORT, null);
     }
 
     @Override
-    public int execImpl(String[] args, JShellExecutionContext context) {
+    protected boolean configureFirst(NutsCommandLine commandLine, JShellExecutionContext context) {
+        Options options = context.getOptions();
+        if (options.version == null) {
+            options.version = NutsVersionFormat.of(context.getSession());
+        }
+        return options.version.configureFirst(commandLine);
+    }
+
+    @Override
+    protected void execBuiltin(NutsCommandLine commandLine, JShellExecutionContext context) {
         NutsSession session = context.getSession();
-        NutsCommandLine cmdLine = NutsCommandLine.of(args,session);
-        NutsVersionFormat version = NutsVersionFormat.of(session);
-        version.configure(true, cmdLine);
-        version
+        Options options = context.getOptions();
+        if (options.version == null) {
+            options.version = NutsVersionFormat.of(context.getSession());
+        }
+        options.version
                 .setSession(session)
                 .addProperty("nsh-version", context.getAppContext().getAppId().getVersion().getValue())
                 .println(context.out());
-        return 0;
+    }
+
+    private static class Options {
+        NutsVersionFormat version;
     }
 }

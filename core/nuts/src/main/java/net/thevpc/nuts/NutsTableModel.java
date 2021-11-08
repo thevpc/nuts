@@ -25,19 +25,15 @@
  */
 package net.thevpc.nuts;
 
-import net.thevpc.nuts.boot.NutsApiUtils;
-
 /**
- *
  * @author thevpc
- * @since 0.5.5
  * @app.category Format
+ * @since 0.5.5
  */
 public interface NutsTableModel {
 
     static NutsMutableTableModel of(NutsSession session) {
-        NutsApiUtils.checkSession(session);
-        return session.formats().table().createModel();
+        return NutsMutableTableModel.of(session);
     }
 
     int getColumnsCount();

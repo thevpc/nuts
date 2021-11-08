@@ -689,13 +689,6 @@ public interface NutsSession extends NutsCommandLineConfigurable {
     /**
      *
      * @since 0.8.3
-     * @return new format manager instance
-     */
-    NutsFormatManager formats();
-
-    /**
-     *
-     * @since 0.8.3
      * @return new import manager instance
      */
     NutsImportManager imports();

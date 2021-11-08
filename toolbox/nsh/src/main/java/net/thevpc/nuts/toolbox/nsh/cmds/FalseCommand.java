@@ -31,32 +31,31 @@ import net.thevpc.nuts.NutsExecutionException;
 import net.thevpc.nuts.NutsMessage;
 import net.thevpc.nuts.spi.NutsComponentScope;
 import net.thevpc.nuts.spi.NutsComponentScopeType;
-import net.thevpc.nuts.toolbox.nsh.SimpleNshBuiltin;
+import net.thevpc.nuts.toolbox.nsh.SimpleJShellBuiltin;
+import net.thevpc.nuts.toolbox.nsh.jshell.JShellExecutionContext;
 
 /**
  * Created by vpc on 1/7/17.
  */
 @NutsComponentScope(NutsComponentScopeType.WORKSPACE)
-public class FalseCommand extends SimpleNshBuiltin {
+public class FalseCommand extends SimpleJShellBuiltin {
 
     public FalseCommand() {
-        super("false", DEFAULT_SUPPORT);
+        super("false", DEFAULT_SUPPORT,Options.class);
     }
 
-    @Override
-    protected Object createOptions() {
-        return null;
-    }
+    private static class Options{
 
+    }
     @Override
-    protected boolean configureFirst(NutsCommandLine commandLine, SimpleNshCommandContext context) {
+    protected boolean configureFirst(NutsCommandLine commandLine, JShellExecutionContext context) {
         //ignore all
         commandLine.skip();
         return true;
     }
 
     @Override
-    protected void execBuiltin(NutsCommandLine commandLine, SimpleNshCommandContext context) {
+    protected void execBuiltin(NutsCommandLine commandLine, JShellExecutionContext context) {
         //do nothing, return true
         throw new NutsExecutionException(context.getSession(), NutsMessage.plain(""), 1);
     }

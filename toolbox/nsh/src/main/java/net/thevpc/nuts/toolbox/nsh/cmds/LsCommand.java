@@ -28,8 +28,9 @@ package net.thevpc.nuts.toolbox.nsh.cmds;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.spi.NutsComponentScope;
 import net.thevpc.nuts.spi.NutsComponentScopeType;
-import net.thevpc.nuts.toolbox.nsh.SimpleNshBuiltin;
+import net.thevpc.nuts.toolbox.nsh.SimpleJShellBuiltin;
 import net.thevpc.nuts.toolbox.nsh.bundles.BytesSizeFormat;
+import net.thevpc.nuts.toolbox.nsh.jshell.JShellExecutionContext;
 
 import java.time.Instant;
 import java.time.ZoneId;
@@ -41,7 +42,7 @@ import java.util.stream.Collectors;
  * Created by vpc on 1/7/17.
  */
 @NutsComponentScope(NutsComponentScopeType.WORKSPACE)
-public class LsCommand extends SimpleNshBuiltin {
+public class LsCommand extends SimpleJShellBuiltin {
 
     private static final FileSorter FILE_SORTER = new FileSorter();
     private final HashSet<String> fileTypeArchive = new HashSet<String>(Arrays.asList("jar", "war", "ear", "rar", "zip", "tar", "gz"));
@@ -52,16 +53,11 @@ public class LsCommand extends SimpleNshBuiltin {
             .withZone(ZoneId.systemDefault());
 
     public LsCommand() {
-        super("ls", DEFAULT_SUPPORT);
+        super("ls", DEFAULT_SUPPORT,Options.class);
     }
 
     @Override
-    protected Object createOptions() {
-        return new Options();
-    }
-
-    @Override
-    protected boolean configureFirst(NutsCommandLine commandLine, SimpleNshCommandContext context) {
+    protected boolean configureFirst(NutsCommandLine commandLine, JShellExecutionContext context) {
         Options options = context.getOptions();
         NutsArgument a;
         if ((a = commandLine.nextBoolean("-d", "--dir")) != null) {
@@ -88,23 +84,23 @@ public class LsCommand extends SimpleNshBuiltin {
     }
 
     @Override
-    protected void execBuiltin(NutsCommandLine commandLine, SimpleNshCommandContext context) {
+    protected void execBuiltin(NutsCommandLine commandLine, JShellExecutionContext context) {
         Options options = context.getOptions();
         ResultSuccess success = new ResultSuccess();
-        success.workingDir = context.getRootContext().getAbsolutePath(".");
+        success.workingDir = context.getShellContext().getAbsolutePath(".");
         ResultError errors = null;
         int exitCode = 0;
         if (options.paths.isEmpty()) {
-            options.paths.add(context.getRootContext().getAbsolutePath("."));
+            options.paths.add(context.getShellContext().getAbsolutePath("."));
         }
         NutsSession session = context.getSession();
         for (String path : options.paths) {
-            NutsPath file = NutsPath.of(path, session).toAbsolute(NutsPath.of(context.getRootContext().getCwd(), session));
+            NutsPath file = NutsPath.of(path, session).toAbsolute(NutsPath.of(context.getShellContext().getCwd(), session));
             if (!file.exists()) {
                 exitCode = 1;
                 if (errors == null) {
                     errors = new ResultError();
-                    errors.workingDir = context.getRootContext().getAbsolutePath(".");
+                    errors.workingDir = context.getShellContext().getAbsolutePath(".");
                 }
                 errors.result.put(path, NutsMessage.cstyle("cannot access '%s': No such file or directory", file));
             } else {

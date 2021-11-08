@@ -278,8 +278,8 @@ public class NutsSettingsRepositorySubCommand extends AbstractNutsSettingsSubCom
                         .isSupportedMirroring()
                                 ? editedRepo.config().setSession(session).getMirrors() : new NutsRepository[0];
                 out.printf("%s sub repositories.%n", linkRepositories.length);
-                NutsTableFormat t = session.formats().table();
-                NutsMutableTableModel m = t.createModel();
+                NutsTableFormat t = NutsTableFormat.of(session);
+                NutsMutableTableModel m = NutsMutableTableModel.of(session);
                 t.setValue(m);
                 m.addHeaderCells("Id", "Enabled", "Type", "Location");
                 while (cmdLine.hasNext()) {

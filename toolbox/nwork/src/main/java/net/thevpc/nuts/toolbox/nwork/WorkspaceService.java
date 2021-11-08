@@ -179,7 +179,7 @@ public class WorkspaceService {
                     );
                 }
             } else {
-                appContext.getSession().formats().object()
+                NutsObjectFormat.of(appContext.getSession())
                         .setValue(result).println();
             }
         }
@@ -514,7 +514,7 @@ public class WorkspaceService {
                     session.out().println();
                 }
             } else {
-                session.formats().object()
+                NutsObjectFormat.of(session)
                         .setValue(ddd).println();
             }
         }

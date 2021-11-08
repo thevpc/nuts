@@ -1,7 +1,7 @@
 /**
  * ====================================================================
- *            Nuts : Network Updatable Things Service
- *                  (universal package manager)
+ * Nuts : Network Updatable Things Service
+ * (universal package manager)
  * <br>
  * is a new Open Source Package Manager to help install packages
  * and libraries for runtime execution. Nuts is the ultimate companion for
@@ -11,7 +11,7 @@
  * architecture to help supporting a large range of sub managers / repositories.
  *
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc]
  * Licensed under the Apache License, Version 2.0 (the "License"); you may
  * not use this file except in compliance with the License. You may obtain a
@@ -23,8 +23,14 @@
  * governing permissions and limitations under the License.
  * <br>
  * ====================================================================
-*/
+ */
 package net.thevpc.nuts.toolbox.nsh.cmds;
+
+import net.thevpc.nuts.NutsArgument;
+import net.thevpc.nuts.NutsCommandLine;
+import net.thevpc.nuts.NutsSession;
+import net.thevpc.nuts.toolbox.nsh.SimpleJShellBuiltin;
+import net.thevpc.nuts.toolbox.nsh.jshell.JShellExecutionContext;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -34,19 +40,32 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.nio.file.attribute.FileTime;
 import java.nio.file.attribute.UserPrincipal;
 import java.util.Stack;
-import net.thevpc.nuts.NutsArgument;
-import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.toolbox.nsh.AbstractNshBuiltin;
-import net.thevpc.nuts.NutsCommandLine;
-import net.thevpc.nuts.toolbox.nsh.bundles.jshell.JShellExecutionContext;
 
 /**
  * Created by vpc on 1/7/17.
  */
-public class TestCommand extends AbstractNshBuiltin {
+public class TestCommand extends SimpleJShellBuiltin {
 
     public TestCommand() {
-        super("test", DEFAULT_SUPPORT);
+        super("test", DEFAULT_SUPPORT, Options.class);
+    }
+
+    private static Path evalPath(Eval a, JShellExecutionContext context) {
+        return Paths.get(evalStr(a, context));
+    }
+
+    private static String evalStr(Eval a, JShellExecutionContext context) {
+        if (a instanceof EvalArg) {
+            return ((EvalArg) a).arg.getString();
+        }
+        return String.valueOf(a.eval(context));
+    }
+
+    private static int evalInt(Eval a, JShellExecutionContext context) {
+        if (a instanceof EvalArg) {
+            return ((EvalArg) a).arg.getAll().getInt();
+        }
+        return a.eval(context);
     }
 
     private int getArgsCount(String s) {
@@ -171,74 +190,76 @@ public class TestCommand extends AbstractNshBuiltin {
     }
 
     @Override
-    public int execImpl(String[] args, JShellExecutionContext context) {
-        NutsSession session = context.getSession();
-        NutsCommandLine commandLine = NutsCommandLine.of(args,session)
-                .setCommandName("test")
-                .setExpandSimpleOptions(false)
-                ;
-        if (commandLine.isEmpty()) {
-            return 1;
-        }
-        if (args.length > 0) {
-            Stack<String> operators = new Stack<>();
-            Stack<Eval> operands = new Stack<>();
-            while (commandLine.hasNext()) {
-                NutsArgument a = commandLine.next();
-                switch (a.getString()) {
-                    case "(": {
-                        operators.add(a.getString());
-                        break;
-                    }
-                    case ")": {
-                        reduce(operators, operands, 0);
-                        if (operators.size() < 1 || !operators.peek().equals("(")) {
-                            throw new IllegalArgumentException("')' has no equivalent '('");
-                        }
-                        operators.pop();
-                        break;
-                    }
-                    case "]": {
-                        reduce(operators, operands, 0);
-                        if (operators.size() > 0 && !operators.peek().equals("[")) {
-                            throw new IllegalArgumentException("']' has no equivalent '['");
-                        }
-                        if (operators.size() == 1 && operators.peek().equals("[")) {
-                            operators.pop();
-                        }
-                        break;
-                    }
-                    default: {
-                        if (getArgsCount(a.getString()) > 0) {
-                            reduce(operators, operands, getArgsPrio(a.getString()));
-                            operators.add(a.getString());
-                        } else {
-                            operands.add(new EvalArg(a));
-                        }
-                        break;
-                    }
+    protected boolean configureFirst(NutsCommandLine commandLine, JShellExecutionContext context) {
+        commandLine.setExpandSimpleOptions(false);
+        Options options=context.getOptions();
+        NutsArgument a = commandLine.next();
+        switch (a.getString()) {
+            case "(": {
+                options.operators.add(a.getString());
+                return true;
+            }
+            case ")": {
+                reduce(options.operators, options.operands, 0);
+                if (options.operators.size() < 1 || !options.operators.peek().equals("(")) {
+                    throw new IllegalArgumentException("')' has no equivalent '('");
                 }
+                options.operators.pop();
+                return true;
             }
-            reduce(operators, operands, 0);
-            if (operands.size() != 1) {
-                throw new IllegalArgumentException("missing operand");
+            case "]": {
+                reduce(options.operators, options.operands, 0);
+                if (options.operators.size() > 0 && !options.operators.peek().equals("[")) {
+                    throw new IllegalArgumentException("']' has no equivalent '['");
+                }
+                if (options.operators.size() == 1 && options.operators.peek().equals("[")) {
+                    options.operators.pop();
+                }
+                return true;
             }
-            if (!operators.isEmpty()) {
-                throw new IllegalArgumentException("too many operators");
-            }
-            int result = operands.pop().eval(context);
-            if (result != 0) {
-                return result;
+            default: {
+                if (getArgsCount(a.getString()) > 0) {
+                    reduce(options.operators, options.operands, getArgsPrio(a.getString()));
+                    options.operators.add(a.getString());
+                } else {
+                    options.operands.add(new EvalArg(a));
+                }
+                return true;
             }
         }
-        return 0;
     }
 
-    public static interface Eval {
+    @Override
+    protected void execBuiltin(NutsCommandLine commandLine, JShellExecutionContext context) {
+        NutsSession session = context.getSession();
+        Options options=context.getOptions();
+        if(options.operands.isEmpty()){
+            throwExecutionException("result",1,session);
+        }
+        reduce(options.operators, options.operands, 0);
+        if (options.operands.size() != 1) {
+            throw new IllegalArgumentException("missing operand");
+        }
+        if (!options.operators.isEmpty()) {
+            throw new IllegalArgumentException("too many operators");
+        }
+        int result = options.operands.pop().eval(context);
+        if (result != 0) {
+            throwExecutionException("result",result,session);
+        }
+    }
+
+    public interface Eval {
 
         String getType();
 
         int eval(JShellExecutionContext context);
+    }
+
+    private static class Options {
+        Stack<String> operators = new Stack<>();
+        Stack<Eval> operands = new Stack<>();
+
     }
 
     public static abstract class EvalBase implements Eval {
@@ -396,24 +417,6 @@ public class TestCommand extends AbstractNshBuiltin {
             return 1;
         }
 
-    }
-
-    private static Path evalPath(Eval a, JShellExecutionContext context) {
-        return Paths.get(evalStr(a, context));
-    }
-
-    private static String evalStr(Eval a, JShellExecutionContext context) {
-        if (a instanceof EvalArg) {
-            return ((EvalArg) a).arg.getString();
-        }
-        return String.valueOf(a.eval(context));
-    }
-
-    private static int evalInt(Eval a, JShellExecutionContext context) {
-        if (a instanceof EvalArg) {
-            return ((EvalArg) a).arg.getAll().getInt();
-        }
-        return a.eval(context);
     }
 
     private static class EvalBinary extends EvalBase {

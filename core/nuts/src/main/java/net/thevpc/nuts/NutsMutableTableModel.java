@@ -26,33 +26,38 @@
 package net.thevpc.nuts;
 
 import net.thevpc.nuts.boot.NutsApiUtils;
+import net.thevpc.nuts.spi.NutsComponent;
 
 /**
  * Mutable Table Model
+ *
  * @author thevpc
  * @app.category Format
  */
-public interface NutsMutableTableModel extends NutsTableModel {
+public interface NutsMutableTableModel extends NutsTableModel, NutsComponent {
 
     static NutsMutableTableModel of(NutsSession session) {
         NutsApiUtils.checkSession(session);
-        return session.formats().table().createModel();
+        return session.extensions().createSupported(NutsMutableTableModel.class, true, null);
     }
 
     /**
      * add new row to the model
+     *
      * @return {@code this} instance
      */
     NutsMutableTableModel newRow();
 
     /**
      * clear header
+     *
      * @return {@code this} instance
      */
     NutsMutableTableModel clearHeader();
 
     /**
-     *  add header cells
+     * add header cells
+     *
      * @param values cells
      * @return {@code this} instance
      */
@@ -60,6 +65,7 @@ public interface NutsMutableTableModel extends NutsTableModel {
 
     /**
      * add header cell
+     *
      * @param value cell
      * @return {@code this} instance
      */
@@ -67,6 +73,7 @@ public interface NutsMutableTableModel extends NutsTableModel {
 
     /**
      * add row cells
+     *
      * @param values row cells
      * @return {@code this} instance
      */
@@ -74,6 +81,7 @@ public interface NutsMutableTableModel extends NutsTableModel {
 
     /**
      * add row cells
+     *
      * @param values row cells
      * @return {@code this} instance
      */
@@ -81,6 +89,7 @@ public interface NutsMutableTableModel extends NutsTableModel {
 
     /**
      * add row cell
+     *
      * @param value cell
      * @return {@code this} instance
      */
@@ -88,43 +97,48 @@ public interface NutsMutableTableModel extends NutsTableModel {
 
     /**
      * update cell at the given position
-     * @param row row index
+     *
+     * @param row    row index
      * @param column column index
-     * @param value cell value
+     * @param value  cell value
      * @return {@code this} instance
      */
     NutsMutableTableModel setCellValue(int row, int column, Object value);
 
     /**
      * update cell colspan
-     * @param row row index
+     *
+     * @param row    row index
      * @param column column index
-     * @param value new value
+     * @param value  new value
      * @return {@code this} instance
      */
     NutsMutableTableModel setCellColSpan(int row, int column, int value);
 
     /**
      * update cell rowspan
-     * @param row row index
+     *
+     * @param row    row index
      * @param column column index
-     * @param value new value
+     * @param value  new value
      * @return {@code this} instance
      */
     NutsMutableTableModel setCellRowSpan(int row, int column, int value);
 
     /**
      * update header value
+     *
      * @param column header column
-     * @param value new value
+     * @param value  new value
      * @return {@code this} instance
      */
     NutsMutableTableModel setHeaderValue(int column, Object value);
 
     /**
      * update header colspan
+     *
      * @param column new value
-     * @param value new value
+     * @param value  new value
      * @return {@code this} instance
      */
     NutsMutableTableModel setHeaderColSpan(int column, int value);

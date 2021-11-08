@@ -68,7 +68,7 @@ public class DefaultSearchFormatTree extends DefaultSearchFormatBase {
     }
 
     public void formatElement(Object object, long index, boolean last) {
-        NutsTreeFormat tree = getSession().formats().tree();
+        NutsTreeFormat tree = NutsTreeFormat.of(getSession());
         List<String> options = new ArrayList<>();
         options.add("--omit-root");
         if (!last) {

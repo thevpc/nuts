@@ -122,7 +122,7 @@ public class DefaultNutsInfoFormat extends DefaultFormatBase<NutsInfoFormat> imp
                 }
             }
         }
-        getSession().formats().object(result).configure(true, args.toArray(new String[0])).print(w);
+        NutsObjectFormat.of(getSession()).setValue(result).configure(true, args.toArray(new String[0])).print(w);
     }
 
     @Override

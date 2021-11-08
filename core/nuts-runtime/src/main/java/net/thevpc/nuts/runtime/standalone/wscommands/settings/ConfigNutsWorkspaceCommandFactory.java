@@ -118,7 +118,7 @@ public class ConfigNutsWorkspaceCommandFactory implements NutsWorkspaceCommandFa
         try {
             Path storeLocation = getCommandsFolder(session);
             if (!Files.isDirectory(storeLocation)) {
-                _LOGOP(session).level(Level.SEVERE).log(NutsMessage.jstyle("unable to locate commands. Invalid store locate {0}", storeLocation));
+                //_LOGOP(session).level(Level.SEVERE).log(NutsMessage.jstyle("unable to locate commands. Invalid store locate {0}", storeLocation));
                 return all;
             }
             Files.list(storeLocation).forEach(file -> {

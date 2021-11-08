@@ -92,7 +92,7 @@ public class Test08_ElementTest {
                                 .build()
                 ).build())
                 .build();
-        NutsObjectFormat ss = ws.json().formats().object(p);
+        NutsObjectFormat ss = NutsObjectFormat.of(ws).setValue(p);
         ss.println();
         String json = ss.format().toString();
         Assertions.assertEquals("[\n"

@@ -33,7 +33,7 @@ import net.thevpc.nuts.boot.NutsApiUtils;
  * @since 0.5.5
  * @app.category Format
  */
-public interface NutsTableFormat extends NutsObjectFormat {
+public interface NutsTableFormat extends NutsContentTypeFormat {
     static NutsTableFormat of(NutsSession session){
         NutsApiUtils.checkSession(session);
         return session.extensions().createSupported(NutsTableFormat.class, true, null);
@@ -56,8 +56,6 @@ public interface NutsTableFormat extends NutsObjectFormat {
     NutsTableFormat setCellFormat(NutsTableCellFormat formatter);
 
     NutsTableModel getModel();
-
-    NutsMutableTableModel createModel();
 
     @Override
     NutsTableFormat setValue(Object value);

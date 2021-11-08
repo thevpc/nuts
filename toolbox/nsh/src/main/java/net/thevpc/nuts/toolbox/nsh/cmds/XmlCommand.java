@@ -28,7 +28,8 @@ package net.thevpc.nuts.toolbox.nsh.cmds;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.spi.NutsComponentScope;
 import net.thevpc.nuts.spi.NutsComponentScopeType;
-import net.thevpc.nuts.toolbox.nsh.SimpleNshBuiltin;
+import net.thevpc.nuts.toolbox.nsh.SimpleJShellBuiltin;
+import net.thevpc.nuts.toolbox.nsh.jshell.JShellExecutionContext;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
@@ -47,19 +48,14 @@ import java.util.List;
  * Created by vpc on 1/7/17.
  */
 @NutsComponentScope(NutsComponentScopeType.WORKSPACE)
-public class XmlCommand extends SimpleNshBuiltin {
+public class XmlCommand extends SimpleJShellBuiltin {
 
     public XmlCommand() {
-        super("xml", DEFAULT_SUPPORT);
+        super("xml", DEFAULT_SUPPORT,Options.class);
     }
 
     @Override
-    protected Object createOptions() {
-        return new Options();
-    }
-
-    @Override
-    protected boolean configureFirst(NutsCommandLine commandLine, SimpleNshCommandContext context) {
+    protected boolean configureFirst(NutsCommandLine commandLine, JShellExecutionContext context) {
         Options options = context.getOptions();
         NutsArgument a;
         if ((a = commandLine.nextString("-f", "--file")) != null) {
@@ -73,7 +69,7 @@ public class XmlCommand extends SimpleNshBuiltin {
     }
 
     @Override
-    protected void execBuiltin(NutsCommandLine commandLine, SimpleNshCommandContext context) {
+    protected void execBuiltin(NutsCommandLine commandLine, JShellExecutionContext context) {
         Options options = context.getOptions();
         if (options.xpaths.isEmpty()) {
             commandLine.required();
@@ -90,7 +86,7 @@ public class XmlCommand extends SimpleNshBuiltin {
 
         Document doc = null;
         if (options.input != null) {
-            NutsPath file = NutsPath.of(options.input, session).toAbsolute(context.getRootContext().getCwd());
+            NutsPath file = NutsPath.of(options.input, session).toAbsolute(context.getShellContext().getCwd());
             if (file.isFile()) {
                 try (InputStream is = file.getInputStream()) {
                     doc = dBuilder.parse(is);

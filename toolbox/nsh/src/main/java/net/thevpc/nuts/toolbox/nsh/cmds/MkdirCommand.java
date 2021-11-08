@@ -30,7 +30,8 @@ import net.thevpc.nuts.NutsCommandLine;
 import net.thevpc.nuts.NutsPath;
 import net.thevpc.nuts.spi.NutsComponentScope;
 import net.thevpc.nuts.spi.NutsComponentScopeType;
-import net.thevpc.nuts.toolbox.nsh.SimpleNshBuiltin;
+import net.thevpc.nuts.toolbox.nsh.SimpleJShellBuiltin;
+import net.thevpc.nuts.toolbox.nsh.jshell.JShellExecutionContext;
 import net.thevpc.nuts.toolbox.nsh.util.ShellHelper;
 
 import java.util.ArrayList;
@@ -42,19 +43,14 @@ import java.util.List;
  * https://medium.com/ldclakmal/scp-with-java-b7b7dbcdbc85
  */
 @NutsComponentScope(NutsComponentScopeType.WORKSPACE)
-public class MkdirCommand extends SimpleNshBuiltin {
+public class MkdirCommand extends SimpleJShellBuiltin {
 
     public MkdirCommand() {
-        super("mkdir", DEFAULT_SUPPORT);
+        super("mkdir", DEFAULT_SUPPORT,Options.class);
     }
 
     @Override
-    protected Object createOptions() {
-        return new Options();
-    }
-
-    @Override
-    protected boolean configureFirst(NutsCommandLine commandLine, SimpleNshCommandContext context) {
+    protected boolean configureFirst(NutsCommandLine commandLine, JShellExecutionContext context) {
         Options options = context.getOptions();
         NutsArgument a;
         if ((a = commandLine.nextBoolean("--parent", "-p")) != null) {
@@ -69,9 +65,9 @@ public class MkdirCommand extends SimpleNshBuiltin {
     }
 
     @Override
-    protected void execBuiltin(NutsCommandLine commandLine, SimpleNshCommandContext context) {
+    protected void execBuiltin(NutsCommandLine commandLine, JShellExecutionContext context) {
         Options options = context.getOptions();
-        options.xfiles = ShellHelper.xfilesOf(options.files, context.getCwd(), context.getSession());
+        options.xfiles = ShellHelper.xfilesOf(options.files, context.getShellContext().getCwd(), context.getSession());
         if (options.xfiles.size() < 1) {
             commandLine.required();
         }

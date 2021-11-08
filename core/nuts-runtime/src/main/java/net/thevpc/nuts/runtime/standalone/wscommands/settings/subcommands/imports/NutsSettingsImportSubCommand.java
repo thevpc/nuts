@@ -7,7 +7,6 @@ package net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.impor
 
 import net.thevpc.nuts.NutsArgumentName;
 import net.thevpc.nuts.NutsCommandLine;
-import net.thevpc.nuts.NutsCommandLines;
 import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.AbstractNutsSettingsSubCommand;
 
@@ -22,7 +21,7 @@ public class NutsSettingsImportSubCommand extends AbstractNutsSettingsSubCommand
         if (cmdLine.next("list imports", "li") != null) {
             cmdLine.setCommandName("config list imports").unexpectedArgument();
             if (cmdLine.isExecMode()) {
-                for (String imp : (session.imports().getAll())) {
+                for (String imp : (session.imports().getAllImports())) {
                     session.out().printf("%s%n", imp);
                 }
             }
@@ -30,7 +29,7 @@ public class NutsSettingsImportSubCommand extends AbstractNutsSettingsSubCommand
         } else if (cmdLine.next("clear imports", "ci") != null) {
             cmdLine.setCommandName("config clear imports").unexpectedArgument();
             if (cmdLine.isExecMode()) {
-                session.imports().removeAll();
+                session.imports().clearImports();
                 session.config().save();
             }
             return true;
@@ -38,7 +37,7 @@ public class NutsSettingsImportSubCommand extends AbstractNutsSettingsSubCommand
             do {
                 String a = cmdLine.required().nextNonOption(NutsArgumentName.of("import",session)).getString();
                 if (cmdLine.isExecMode()) {
-                    session.imports().add(new String[]{a});
+                    session.imports().addImports(new String[]{a});
                 }
             } while (cmdLine.hasNext());
             if (cmdLine.isExecMode()) {
@@ -49,7 +48,7 @@ public class NutsSettingsImportSubCommand extends AbstractNutsSettingsSubCommand
             while (cmdLine.hasNext()) {
                 String ii = cmdLine.required().nextNonOption(NutsArgumentName.of("import",session)).getString();
                 if (cmdLine.isExecMode()) {
-                    session.imports().remove(new String[]{ii});
+                    session.imports().removeImports(new String[]{ii});
                 }
             }
             if (cmdLine.isExecMode()) {

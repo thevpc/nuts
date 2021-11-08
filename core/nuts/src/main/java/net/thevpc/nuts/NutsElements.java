@@ -45,7 +45,7 @@ import java.util.function.Predicate;
  * @since 0.5.5
  * @app.category Format
  */
-public interface NutsElements extends NutsObjectFormat, NutsComponent {
+public interface NutsElements extends NutsContentTypeFormat {
     Predicate<Type> DEFAULT_FORMAT_DESTRUCTOR=new Predicate<Type>() {
         @Override
         public boolean test(Type x) {

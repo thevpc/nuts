@@ -27,7 +27,7 @@
 package net.thevpc.nuts.toolbox.nsh.test;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.toolbox.nsh.bundles.jshell.JShell;
+import net.thevpc.nuts.toolbox.nsh.jshell.JShell;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

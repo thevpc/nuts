@@ -26,8 +26,8 @@
 */
 package net.thevpc.nuts.toolbox.nsh;
 
-import net.thevpc.nuts.toolbox.nsh.bundles.jshell.JShellContext;
-import net.thevpc.nuts.toolbox.nsh.bundles.jshell.JShellExternalExecutor;
+import net.thevpc.nuts.toolbox.nsh.jshell.JShellContext;
+import net.thevpc.nuts.toolbox.nsh.jshell.JShellExternalExecutor;
 
 /**
  *

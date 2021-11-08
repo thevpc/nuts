@@ -28,8 +28,9 @@ package net.thevpc.nuts.toolbox.nsh.cmds;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.spi.NutsComponentScope;
 import net.thevpc.nuts.spi.NutsComponentScopeType;
-import net.thevpc.nuts.toolbox.nsh.SimpleNshBuiltin;
-import net.thevpc.nuts.toolbox.nsh.bundles.jshell.JShellContext;
+import net.thevpc.nuts.toolbox.nsh.SimpleJShellBuiltin;
+import net.thevpc.nuts.toolbox.nsh.jshell.JShellContext;
+import net.thevpc.nuts.toolbox.nsh.jshell.JShellExecutionContext;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -49,19 +50,14 @@ import java.util.List;
  * Created by vpc on 1/7/17.
  */
 @NutsComponentScope(NutsComponentScopeType.WORKSPACE)
-public class JsonCommand extends SimpleNshBuiltin {
+public class JsonCommand extends SimpleJShellBuiltin {
 
     public JsonCommand() {
-        super("json", DEFAULT_SUPPORT);
+        super("json", DEFAULT_SUPPORT,Options.class);
     }
 
     @Override
-    protected Object createOptions() {
-        return new Options();
-    }
-
-    @Override
-    protected boolean configureFirst(NutsCommandLine commandLine, SimpleNshCommandContext context) {
+    protected boolean configureFirst(NutsCommandLine commandLine, JShellExecutionContext context) {
         Options options = context.getOptions();
         NutsArgument a;
         if ((a = commandLine.nextString("-f", "--file")) != null) {
@@ -80,7 +76,7 @@ public class JsonCommand extends SimpleNshBuiltin {
     }
 
     @Override
-    protected void execBuiltin(NutsCommandLine commandLine, SimpleNshCommandContext context) {
+    protected void execBuiltin(NutsCommandLine commandLine, JShellExecutionContext context) {
         Options options = context.getOptions();
 //        if (options.xpaths.isEmpty()) {
 //            commandLine.required();
@@ -88,7 +84,7 @@ public class JsonCommand extends SimpleNshBuiltin {
 
         NutsSession session = context.getSession();
         if (options.queries.isEmpty()) {
-            NutsElement inputDocument = readJsonConvertElement(options.input, context.getRootContext());
+            NutsElement inputDocument = readJsonConvertElement(options.input, context.getShellContext());
             if (session.getOutputFormat() == NutsContentType.PLAIN) {
                 session.out().printlnf(NutsElements.of(session).json().setValue(inputDocument).format());
             } else {
@@ -97,7 +93,7 @@ public class JsonCommand extends SimpleNshBuiltin {
         } else {
             switch (options.queryType) {
                 case "xpath": {
-                    Document inputDocument = readJsonConvertXml(options.input, context.getRootContext());
+                    Document inputDocument = readJsonConvertXml(options.input, context.getShellContext());
                     XPath xPath = XPathFactory.newInstance().newXPath();
                     DocumentBuilderFactory documentFactory = DocumentBuilderFactory.newInstance();
                     Document resultDocument;
@@ -128,7 +124,7 @@ public class JsonCommand extends SimpleNshBuiltin {
                     break;
                 }
                 case "jpath": {
-                    NutsElement inputDocument = readJsonConvertElement(options.input, context.getRootContext());
+                    NutsElement inputDocument = readJsonConvertElement(options.input, context.getShellContext());
                     List<NutsElement> all = new ArrayList<>();
                     for (String query : options.queries) {
                         all.addAll(NutsElements.of(session)

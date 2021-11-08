@@ -29,10 +29,11 @@ import net.thevpc.nuts.NutsArgument;
 import net.thevpc.nuts.NutsCommandLine;
 import net.thevpc.nuts.spi.NutsComponentScope;
 import net.thevpc.nuts.spi.NutsComponentScopeType;
-import net.thevpc.nuts.toolbox.nsh.SimpleNshBuiltin;
-import net.thevpc.nuts.toolbox.nsh.bundles.jshell.JShell;
-import net.thevpc.nuts.toolbox.nsh.bundles.jshell.JShellBuiltin;
-import net.thevpc.nuts.toolbox.nsh.bundles.jshell.JShellCommandType;
+import net.thevpc.nuts.toolbox.nsh.SimpleJShellBuiltin;
+import net.thevpc.nuts.toolbox.nsh.jshell.JShell;
+import net.thevpc.nuts.toolbox.nsh.jshell.JShellBuiltin;
+import net.thevpc.nuts.toolbox.nsh.jshell.JShellCommandType;
+import net.thevpc.nuts.toolbox.nsh.jshell.JShellExecutionContext;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,19 +42,14 @@ import java.util.List;
  * Created by vpc on 1/7/17.
  */
 @NutsComponentScope(NutsComponentScopeType.WORKSPACE)
-public class TypeCommand extends SimpleNshBuiltin {
+public class TypeCommand extends SimpleJShellBuiltin {
 
     public TypeCommand() {
-        super("type", DEFAULT_SUPPORT);
+        super("type", DEFAULT_SUPPORT,Options.class);
     }
 
     @Override
-    protected Object createOptions() {
-        return new Options();
-    }
-
-    @Override
-    protected boolean configureFirst(NutsCommandLine commandLine, SimpleNshCommandContext context) {
+    protected boolean configureFirst(NutsCommandLine commandLine, JShellExecutionContext context) {
         Options config = context.getOptions();
         NutsArgument a = commandLine.peek();
         if (a.isNonOption()) {
@@ -64,12 +60,12 @@ public class TypeCommand extends SimpleNshBuiltin {
     }
 
     @Override
-    protected void execBuiltin(NutsCommandLine commandLine, SimpleNshCommandContext context) {
+    protected void execBuiltin(NutsCommandLine commandLine, JShellExecutionContext context) {
         Options config = context.getOptions();
         JShell shell = context.getShell();
         List<ResultItem> result = new ArrayList<>();
         for (String cmd : config.commands) {
-            JShellBuiltin ic = context.getRootContext().builtins().find(cmd);
+            JShellBuiltin ic = context.getShellContext().builtins().find(cmd);
             if (ic != null && ic.isEnabled()) {
                 result.add(new ResultItem(
                         cmd,
@@ -77,7 +73,7 @@ public class TypeCommand extends SimpleNshBuiltin {
                         cmd + " is a shell builtin"
                 ));
             } else {
-                String alias = context.getRootContext().aliases().get(cmd);
+                String alias = context.getShellContext().aliases().get(cmd);
                 if (alias != null) {
                     result.add(new ResultItem(
                             cmd,
@@ -85,7 +81,7 @@ public class TypeCommand extends SimpleNshBuiltin {
                             cmd + " is aliased to `" + alias + "`"
                     ));
                 } else {
-                    JShellCommandType pp = shell.getCommandTypeResolver().type(cmd, context.getGlobalContext());
+                    JShellCommandType pp = shell.getCommandTypeResolver().type(cmd, context.getShellContext());
                     if (pp != null) {
                         result.add(new ResultItem(
                                 cmd,

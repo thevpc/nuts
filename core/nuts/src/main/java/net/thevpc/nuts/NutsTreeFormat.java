@@ -38,7 +38,7 @@ import net.thevpc.nuts.boot.NutsApiUtils;
  * @since 0.5.5
  * @app.category Format
  */
-public interface NutsTreeFormat extends NutsObjectFormat {
+public interface NutsTreeFormat extends NutsContentTypeFormat {
     static NutsTreeFormat of(NutsSession session){
         NutsApiUtils.checkSession(session);
         return session.extensions().createSupported(NutsTreeFormat.class, true, null);

@@ -102,8 +102,6 @@ public interface NutsWorkspace extends NutsComponent {
      */
     NutsInfoFormat info();
 
-    NutsFormatManager formats();
-
     NutsImportManager imports();
 
     NutsCustomCommandManager commands();

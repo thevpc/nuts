@@ -34,7 +34,7 @@ import java.util.Map;
  * Class formatting Map/Properties objects
  * @app.category Format
  */
-public interface NutsPropertiesFormat extends NutsObjectFormat {
+public interface NutsPropertiesFormat extends NutsContentTypeFormat {
     static NutsPropertiesFormat of(NutsSession session){
         NutsApiUtils.checkSession(session);
         return session.extensions().createSupported(NutsPropertiesFormat.class, true, null);

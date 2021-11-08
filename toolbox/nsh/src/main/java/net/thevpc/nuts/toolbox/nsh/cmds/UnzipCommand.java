@@ -28,7 +28,8 @@ package net.thevpc.nuts.toolbox.nsh.cmds;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.spi.NutsComponentScope;
 import net.thevpc.nuts.spi.NutsComponentScopeType;
-import net.thevpc.nuts.toolbox.nsh.SimpleNshBuiltin;
+import net.thevpc.nuts.toolbox.nsh.SimpleJShellBuiltin;
+import net.thevpc.nuts.toolbox.nsh.jshell.JShellExecutionContext;
 
 import java.io.InputStream;
 import java.io.UncheckedIOException;
@@ -39,19 +40,14 @@ import java.util.List;
  * Created by vpc on 1/7/17.
  */
 @NutsComponentScope(NutsComponentScopeType.WORKSPACE)
-public class UnzipCommand extends SimpleNshBuiltin {
+public class UnzipCommand extends SimpleJShellBuiltin {
 
     public UnzipCommand() {
-        super("unzip", DEFAULT_SUPPORT);
+        super("unzip", DEFAULT_SUPPORT,Options.class);
     }
 
     @Override
-    protected Object createOptions() {
-        return new Options();
-    }
-
-    @Override
-    protected boolean configureFirst(NutsCommandLine commandLine, SimpleNshCommandContext context) {
+    protected boolean configureFirst(NutsCommandLine commandLine, JShellExecutionContext context) {
         Options options = context.getOptions();
         NutsArgument a;
         if ((a = commandLine.nextBoolean("-l")) != null) {
@@ -70,14 +66,14 @@ public class UnzipCommand extends SimpleNshBuiltin {
     }
 
     @Override
-    protected void execBuiltin(NutsCommandLine commandLine, SimpleNshCommandContext context) {
+    protected void execBuiltin(NutsCommandLine commandLine, JShellExecutionContext context) {
         Options options = context.getOptions();
         if (options.files.isEmpty()) {
             commandLine.required();
         }
         NutsSession session = context.getSession();
         for (String path : options.files) {
-            NutsPath file = NutsPath.of(path, session).toAbsolute(context.getRootContext().getCwd());
+            NutsPath file = NutsPath.of(path, session).toAbsolute(context.getShellContext().getCwd());
             try {
                 if (options.l) {
                     NutsUncompress.of(session)
@@ -97,9 +93,9 @@ public class UnzipCommand extends SimpleNshBuiltin {
                 } else {
                     String dir = options.dir;
                     if (NutsBlankable.isBlank(dir)) {
-                        dir = context.getRootContext().getCwd();
+                        dir = context.getShellContext().getCwd();
                     }
-                    dir = context.getRootContext().getAbsolutePath(dir);
+                    dir = context.getShellContext().getAbsolutePath(dir);
                     NutsUncompress.of(session)
                             .from(file)
                             .to(dir)

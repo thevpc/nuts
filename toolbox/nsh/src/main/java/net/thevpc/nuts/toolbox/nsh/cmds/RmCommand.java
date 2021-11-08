@@ -28,7 +28,8 @@ package net.thevpc.nuts.toolbox.nsh.cmds;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.spi.NutsComponentScope;
 import net.thevpc.nuts.spi.NutsComponentScopeType;
-import net.thevpc.nuts.toolbox.nsh.SimpleNshBuiltin;
+import net.thevpc.nuts.toolbox.nsh.SimpleJShellBuiltin;
+import net.thevpc.nuts.toolbox.nsh.jshell.JShellExecutionContext;
 import net.thevpc.nuts.toolbox.nsh.util.ShellHelper;
 
 import java.util.ArrayList;
@@ -38,33 +39,28 @@ import java.util.List;
  * Created by vpc on 1/7/17.
  */
 @NutsComponentScope(NutsComponentScopeType.WORKSPACE)
-public class RmCommand extends SimpleNshBuiltin {
+public class RmCommand extends SimpleJShellBuiltin {
 
     public RmCommand() {
-        super("rm", DEFAULT_SUPPORT);
+        super("rm", DEFAULT_SUPPORT,Options.class);
     }
 
     @Override
-    protected Object createOptions() {
-        return new Options();
-    }
-
-    @Override
-    protected boolean configureFirst(NutsCommandLine commandLine, SimpleNshCommandContext context) {
+    protected boolean configureFirst(NutsCommandLine commandLine, JShellExecutionContext context) {
         Options options = context.getOptions();
         NutsArgument a;
         if ((a = commandLine.nextBoolean("-R")) != null) {
             options.R = a.getValue().getBoolean();
             return true;
         } else if (commandLine.peek().isNonOption()) {
-            options.files.add(ShellHelper.xfileOf(commandLine.next().getString(), context.getRootContext().getCwd(), context.getSession()));
+            options.files.add(ShellHelper.xfileOf(commandLine.next().getString(), context.getShellContext().getCwd(), context.getSession()));
             return true;
         }
         return false;
     }
 
     @Override
-    protected void execBuiltin(NutsCommandLine commandLine, SimpleNshCommandContext context) {
+    protected void execBuiltin(NutsCommandLine commandLine, JShellExecutionContext context) {
         Options options = context.getOptions();
         if (options.files.size() < 1) {
             throw new NutsExecutionException(context.getSession(), NutsMessage.cstyle("missing parameters"), 2);

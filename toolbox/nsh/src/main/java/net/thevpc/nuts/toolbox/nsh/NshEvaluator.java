@@ -26,9 +26,9 @@
 package net.thevpc.nuts.toolbox.nsh;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.toolbox.nsh.bundles.jshell.*;
-import net.thevpc.nuts.toolbox.nsh.bundles.jshell.util.JavaShellNonBlockingInputStream;
-import net.thevpc.nuts.toolbox.nsh.bundles.jshell.util.JavaShellNonBlockingInputStreamAdapter;
+import net.thevpc.nuts.toolbox.nsh.jshell.*;
+import net.thevpc.nuts.toolbox.nsh.jshell.util.JavaShellNonBlockingInputStream;
+import net.thevpc.nuts.toolbox.nsh.jshell.util.JavaShellNonBlockingInputStreamAdapter;
 
 import java.io.*;
 import java.util.logging.Level;

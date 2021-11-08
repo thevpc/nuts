@@ -10,7 +10,7 @@
  * other 'things' . Its based on an extensible architecture to help supporting a
  * large range of sub managers / repositories.
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc]
  * Licensed under the Apache License, Version 2.0 (the "License"); you may
  * not use this file except in compliance with the License. You may obtain a
@@ -22,14 +22,14 @@
  * governing permissions and limitations under the License.
  * <br>
  * ====================================================================
-*/
+ */
 package net.thevpc.nuts.toolbox.nsh.cmds;
 
-import net.thevpc.nuts.lib.ssh.SShConnection;
-import net.thevpc.nuts.toolbox.nsh.AbstractNshBuiltin;
-import net.thevpc.nuts.toolbox.nsh.bundles.jshell.JShellExecutionContext;
-import net.thevpc.nuts.toolbox.nsh.util.ShellHelper;
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.lib.ssh.SShConnection;
+import net.thevpc.nuts.toolbox.nsh.SimpleJShellBuiltin;
+import net.thevpc.nuts.toolbox.nsh.jshell.JShellExecutionContext;
+import net.thevpc.nuts.toolbox.nsh.util.ShellHelper;
 
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -39,55 +39,53 @@ import java.util.List;
  * Created by vpc on 1/7/17. ssh copy credits to Chanaka Lakmal from
  * https://medium.com/ldclakmal/scp-with-java-b7b7dbcdbc85
  */
-public class SshCommand extends AbstractNshBuiltin {
+public class SshCommand extends SimpleJShellBuiltin {
 
     public SshCommand() {
-        super("ssh", DEFAULT_SUPPORT);
+        super("ssh", DEFAULT_SUPPORT, Options.class);
     }
 
-    private static class Options {
-
-        boolean invokeNuts;
-        String nutsCommand;
-        String nutsJre;
-        String address;
-        List<String> cmd = new ArrayList<>();
-    }
-
-    public int execImpl(String[] args, JShellExecutionContext context) {
-        NutsCommandLine commandLine = cmdLine(args, context);
-        Options o = new Options();
+    @Override
+    protected boolean configureFirst(NutsCommandLine commandLine, JShellExecutionContext context) {
+        Options o = context.getOptions();
         NutsArgument a;
-        // address --nuts [nuts options] args
-        boolean acceptDashNuts = true;
-        while (commandLine.hasNext()) {
-            if (!o.cmd.isEmpty()) {
-                o.cmd.add(commandLine.next().getString());
-            } else if (commandLine.peek().isNonOption()) {
-                if (o.address == null) {
-                    o.address = commandLine.next().getString();
-                } else {
-                    o.cmd.add(commandLine.next().getString());
-                }
-            } else if ((a = commandLine.next("--nuts")) != null) {
-                if (acceptDashNuts) {
-                    o.invokeNuts = true;
-                } else {
-                    o.cmd.add(a.getString());
-                }
-            } else if ((a = commandLine.next("--nuts-jre")) != null) {
-                if (acceptDashNuts) {
-                    o.nutsJre = a.getValue().getString();
-                } else {
-                    o.cmd.add(a.getString());
-                }
-            } else if (o.address == null || commandLine.peek().isNonOption()) {
-                acceptDashNuts = false;
-                o.cmd.add(commandLine.next().getString());
+        if (!o.cmd.isEmpty()) {
+            o.cmd.add(commandLine.next().getString());
+            return true;
+        } else if (commandLine.peek().isNonOption()) {
+            if (o.address == null) {
+                o.address = commandLine.next().getString();
             } else {
-                context.configureLast(commandLine);
+                o.cmd.add(commandLine.next().getString());
             }
+            return true;
+        } else if ((a = commandLine.next("--nuts")) != null) {
+            if (o.acceptDashNuts) {
+                o.invokeNuts = true;
+            } else {
+                o.cmd.add(a.getString());
+            }
+            return true;
+        } else if ((a = commandLine.next("--nuts-jre")) != null) {
+            if (o.acceptDashNuts) {
+                o.nutsJre = a.getValue().getString();
+            } else {
+                o.cmd.add(a.getString());
+            }
+            return true;
+        } else if (o.address == null || commandLine.peek().isNonOption()) {
+            o.acceptDashNuts = false;
+            o.cmd.add(commandLine.next().getString());
+            return true;
         }
+
+        return false;
+    }
+
+    @Override
+    protected void execBuiltin(NutsCommandLine commandLine, JShellExecutionContext context) {
+        Options o = context.getOptions();
+        // address --nuts [nuts options] args
         if (o.address == null) {
             throw new NutsExecutionException(context.getSession(), NutsMessage.cstyle("missing ssh address"), 2);
         }
@@ -98,12 +96,12 @@ public class SshCommand extends AbstractNshBuiltin {
         }
         final NutsSession session = context.getSession();
         ShellHelper.WsSshListener listener = new ShellHelper.WsSshListener(context.getSession());
-        try (SShConnection sshSession = new SShConnection(o.address,context.getSession())
+        try (SShConnection sshSession = new SShConnection(o.address, context.getSession())
                 .addListener(listener)) {
             List<String> cmd = new ArrayList<>();
             if (o.invokeNuts) {
                 String workspace = null;
-                NutsCommandLine c = NutsCommandLine.of(o.cmd.subList(1, o.cmd.size()),session);
+                NutsCommandLine c = NutsCommandLine.of(o.cmd.subList(1, o.cmd.size()), session);
                 NutsArgument arg = null;
                 while (c.hasNext()) {
                     if ((arg = c.next("--workspace")) != null) {
@@ -155,7 +153,15 @@ public class SshCommand extends AbstractNshBuiltin {
             cmd.addAll(o.cmd);
             sshSession.grabOutputString(false).setFailFast(true).exec(cmd);
         }
-        return 0;
+    }
+
+    private static class Options {
+        boolean acceptDashNuts = true;
+        boolean invokeNuts;
+        String nutsCommand;
+        String nutsJre;
+        String address;
+        List<String> cmd = new ArrayList<>();
     }
 
 }
