@@ -137,7 +137,8 @@ public abstract class AbstractNutsStream<T> implements NutsStream<T> {
     public long count() {
         long count = 0;
         Iterator<T> it = iterator();
-        if (it.hasNext()) {
+        while (it.hasNext()) {
+            it.next();
             count++;
         }
         return count;

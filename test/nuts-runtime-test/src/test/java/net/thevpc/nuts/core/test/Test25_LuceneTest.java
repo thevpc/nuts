@@ -12,13 +12,13 @@ public class Test25_LuceneTest {
     public void test() {
         NutsSession session = TestUtils.openNewTestWorkspace("-ZyKk");
         LuceneIndexImporter lii = new LuceneIndexImporter(session);
-        long count = lii.importGzURL(
+        long countWritten = lii.importGzURL(
                 Test25_LuceneTest.class.getResource(
                         "/net/thevpc/nuts/core/test/nexus-maven-repository-index.359.gz"
                 ), "maven-central", session
         );
-        long count0 = ArtifactsIndexDB.of(session).findAll(session).count();
-        System.out.println(count);
-        Assertions.assertEquals(count0, count);
+        long countRead = ArtifactsIndexDB.of(session).findAll(session).count();
+        System.out.println(countWritten);
+        Assertions.assertEquals(countWritten,countRead);
     }
 }
