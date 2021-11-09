@@ -376,8 +376,8 @@ public class DefaultNutsWorkspaceExtensionModel {
                     if (def == null || def.getContent() == null) {
                         throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("extension not found: %s", extension));
                     }
-                    if (def.getType() != NutsIdType.EXTENSION) {
-                        throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("not an extension: " ,extension));
+                    if (def.getDescriptor().getIdType() != NutsIdType.EXTENSION) {
+                        throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("not an extension: %s" ,extension));
                     }
 //                    ws.install().setSession(session).id(def.getId());
                     workspaceExtensionsClassLoader.add(NutsClassLoaderUtils.definitionToClassLoaderNode(def, session));

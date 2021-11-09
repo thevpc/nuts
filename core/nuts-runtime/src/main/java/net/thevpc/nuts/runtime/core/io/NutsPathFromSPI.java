@@ -146,7 +146,7 @@ public class NutsPathFromSPI extends NutsPathBase {
 
     @Override
     public OutputStream getOutputStream() {
-        return null;
+        return base.getOutputStream();
     }
 
     @Override

@@ -161,7 +161,7 @@ public class DefaultNutsEnvCondition implements NutsEnvCondition {
                         .toArray(String[]::new)
                 );
         if(s.isEmpty()){
-            return "no-cond";
+            return "blank";
         }
         return s;
     }

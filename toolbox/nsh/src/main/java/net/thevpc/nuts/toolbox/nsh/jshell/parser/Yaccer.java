@@ -1,5 +1,7 @@
 package net.thevpc.nuts.toolbox.nsh.jshell.parser;
 
+import net.thevpc.nuts.NutsIllegalArgumentException;
+import net.thevpc.nuts.NutsMessage;
 import net.thevpc.nuts.toolbox.nsh.jshell.*;
 import net.thevpc.nuts.toolbox.nsh.jshell.util.DirectoryScanner;
 
@@ -1040,7 +1042,7 @@ public class Yaccer {
 
         @Override
         public int eval(JShellContext context) {
-            throw new IllegalArgumentException("Not yet");
+            throw new NutsIllegalArgumentException(context.getSession(), NutsMessage.cstyle("not yet implemented UnOpSuffix %s",op.image));
         }
     }
 
@@ -1090,7 +1092,7 @@ public class Yaccer {
 
         @Override
         public int eval(JShellContext context) {
-            throw new IllegalArgumentException("Not yet");
+            throw new NutsIllegalArgumentException(context.getSession(), NutsMessage.cstyle("not yet implemented UnOpPrefix %s",op.image));
         }
     }
 
@@ -1114,7 +1116,7 @@ public class Yaccer {
 
         @Override
         public int eval(JShellContext context) {
-            throw new IllegalArgumentException("Not yet");
+            throw new NutsIllegalArgumentException(context.getSession(), NutsMessage.cstyle("not yet implemented BinOp %s",op.image));
         }
     }
 

@@ -45,7 +45,6 @@ public class DefaultNutsDefinition implements NutsDefinition {
     private NutsInstallInformation installInformation;
     private NutsDependencies dependencies;
     private NutsDescriptor effectiveDescriptor;
-    private NutsIdType type;
     private NutsId apiId = null;
     private transient NutsSession session;
 
@@ -53,7 +52,7 @@ public class DefaultNutsDefinition implements NutsDefinition {
 //        System.out.println("");
     }
 
-    public DefaultNutsDefinition(String repoUuid, String repoName, NutsId id, NutsDescriptor descriptor, NutsContent content, NutsInstallInformation install, NutsIdType type, NutsId apiId, NutsSession session) {
+    public DefaultNutsDefinition(String repoUuid, String repoName, NutsId id, NutsDescriptor descriptor, NutsContent content, NutsInstallInformation install, NutsId apiId, NutsSession session) {
         this.descriptor = descriptor;
         this.content = content;
         this.id = id;
@@ -63,7 +62,6 @@ public class DefaultNutsDefinition implements NutsDefinition {
         this.installInformation = install;
         this.repositoryUuid = repoUuid;
         this.repositoryName = repoName;
-        this.type = type == null ? NutsIdType.REGULAR : type;
         this.apiId = apiId;
         this.session = session;
     }
@@ -79,15 +77,9 @@ public class DefaultNutsDefinition implements NutsDefinition {
             this.installInformation = other.getInstallInformation();
             this.effectiveDescriptor = !other.isSetEffectiveDescriptor() ? null : other.getEffectiveDescriptor();
             this.dependencies = !other.isSetDependencies() ? null : other.getDependencies();
-            this.type = other.getType() == null ? NutsIdType.REGULAR : other.getType();
             this.apiId = other.getApiId();
         }
         this.session = session;
-    }
-
-    @Override
-    public NutsIdType getType() {
-        return type;
     }
 
     @Override

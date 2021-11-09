@@ -98,7 +98,6 @@ public class DefaultNutsArtifactPathExecutable extends AbstractNutsExecutableCom
             String tempFolder = NutsTmp.of(session)
                     .createTempFolder("exec-path-").toString();
             NutsId _id = c.descriptor.getId();
-            NutsIdType idType = NutsWorkspaceExt.of(session).resolveNutsIdType(_id, session);
             DefaultNutsDefinition nutToRun = new DefaultNutsDefinition(
                     null,
                     null,
@@ -108,7 +107,7 @@ public class DefaultNutsArtifactPathExecutable extends AbstractNutsExecutableCom
                             NutsPath.of(c.contentFile,execSession)
                             , false, c.temps.size() > 0),
                     DefaultNutsInstallInfo.notInstalled(_id),
-                    idType, null, session
+                    null, session
             );
             NutsDependencySolver resolver = NutsDependencySolver.of(session);
             NutsDependencyFilters ff = NutsDependencyFilters.of(session);

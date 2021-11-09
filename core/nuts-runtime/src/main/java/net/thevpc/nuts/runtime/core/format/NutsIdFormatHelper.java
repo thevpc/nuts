@@ -528,14 +528,14 @@ public class NutsIdFormatHelper {
             }
             case LONG_STATUS: {
                 List<NutsString> all = new ArrayList<>();
-                if (def != null && def.getType() != null) {
-                    switch (def.getType()) {
+                if (def != null && def.getDescriptor().getIdType() != null) {
+                    switch (def.getDescriptor().getIdType()) {
                         case REGULAR: {
-                            all.add(text.ofPlain(def.getType().id()));
+                            all.add(text.ofPlain(def.getDescriptor().getIdType().id()));
                             break;
                         }
                         default: {
-                            all.add(text.ofStyled(def.getType().id(), NutsTextStyle.primary1()));
+                            all.add(text.ofStyled(def.getDescriptor().getIdType().id(), NutsTextStyle.primary1()));
                             break;
                         }
                     }
@@ -619,7 +619,7 @@ public class NutsIdFormatHelper {
                     : this.fetched ? 'f' : 'r';
 //            this.status_obs=(this.installStatus.isInstalled()?'O':'U');
             if (def != null) {
-                switch (def.getType()) {
+                switch (def.getDescriptor().getIdType()) {
                     case API: {
                         this.status_e = 'a';
                         break;

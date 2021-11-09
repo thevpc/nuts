@@ -71,7 +71,8 @@ public abstract class SimpleJShellBuiltin extends AbstractJShellBuiltin {
         int maxLoops = 1000;
         boolean robustMode = false;
         NutsSession session = context.getSession();
-        NutsCommandLine commandLine = NutsCommandLine.of(args, session).setCommandName(getName());
+        NutsCommandLine commandLine = NutsCommandLine.of(args, session).setCommandName(getName())
+                .setAutoComplete(context.getShellContext().getAutoComplete());
         initCommandLine(commandLine);
         context.setOptions(createOptions());
         while (commandLine.hasNext()) {

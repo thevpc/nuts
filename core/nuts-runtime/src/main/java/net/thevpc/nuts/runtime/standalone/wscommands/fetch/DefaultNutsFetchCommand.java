@@ -177,9 +177,9 @@ public class DefaultNutsFetchCommand extends AbstractNutsFetchCommand {
         NutsWorkspaceExt dws = NutsWorkspaceExt.of(_ws);
         NutsFetchStrategy nutsFetchModes = NutsWorkspaceHelper.validate(_ws.getFetchStrategy());
         NutsRepositoryFilter repositoryFilter = this.getRepositoryFilter();
-        if(!NutsBlankable.isBlank(id.getRepository())){
-            NutsRepositoryFilter repositoryFilter2=NutsRepositoryFilters.of(_ws).byName(id.getRepository());
-            repositoryFilter=repositoryFilter2.and(repositoryFilter);
+        if (!NutsBlankable.isBlank(id.getRepository())) {
+            NutsRepositoryFilter repositoryFilter2 = NutsRepositoryFilters.of(_ws).byName(id.getRepository());
+            repositoryFilter = repositoryFilter2.and(repositoryFilter);
         }
         NutsRepositoryAndFetchModeTracker descTracker = new NutsRepositoryAndFetchModeTracker(
                 wu.filterRepositoryAndFetchModes(NutsRepositorySupportedAction.SEARCH, id, repositoryFilter,
@@ -462,10 +462,10 @@ public class DefaultNutsFetchCommand extends AbstractNutsFetchCommand {
             }
         }
         NutsDescriptorBuilder nb = nutsDescriptor.builder();
-        if(executable){
+        if (executable) {
             nb.addFlag(NutsDescriptorFlag.EXEC);
         }
-        if(nutsApp){
+        if (nutsApp) {
             nb.addFlag(NutsDescriptorFlag.APP);
         }
         return nb.build();
@@ -533,12 +533,11 @@ public class DefaultNutsFetchCommand extends AbstractNutsFetchCommand {
             }
             NutsId newId = newIdBuilder.build();
 
-            NutsIdType idType = NutsIdType.REGULAR;
             NutsId apiId0 = null;
             NutsId apiId = null;
 
             if (getId().getShortName().equals(NutsConstants.Ids.NUTS_API)) {
-                idType = NutsIdType.API;
+                //
             } else {
                 apiId = null;
                 for (NutsDependency dependency : descriptor.getDependencies()) {
@@ -549,23 +548,13 @@ public class DefaultNutsFetchCommand extends AbstractNutsFetchCommand {
                 }
                 if (apiId0 != null) {
                     if (getId().getShortName().equals(NutsConstants.Ids.NUTS_RUNTIME)) {
-                        idType = NutsIdType.RUNTIME;
                         apiId = apiId0;
-                    } else {
-                        if (descriptor.getFlags().contains(NutsDescriptorFlag.NUTS_RUNTIME)) {
-                            idType = NutsIdType.RUNTIME;
-                        } else if (descriptor.getFlags().contains(NutsDescriptorFlag.NUTS_EXTENSION)) {
-                            idType = NutsIdType.EXTENSION;
-                            apiId = apiId0;
-                        }
-                    }
-                    if (idType == NutsIdType.REGULAR) {
-                        for (NutsId companionTool : session.extensions().getCompanionIds()) {
-                            if (companionTool.getShortName().equals(getId().getShortName())) {
-                                idType = NutsIdType.COMPANION;
-                                apiId = apiId0;
-                            }
-                        }
+                    } else if (descriptor.getIdType() == NutsIdType.RUNTIME) {
+                        apiId = apiId0;
+                    } else if (descriptor.getIdType() == NutsIdType.EXTENSION) {
+                        apiId = apiId0;
+                    } else if (descriptor.getIdType() == NutsIdType.COMPANION){
+                        apiId = apiId0;
                     }
                 }
             }
@@ -577,7 +566,7 @@ public class DefaultNutsFetchCommand extends AbstractNutsFetchCommand {
                     descriptor,
                     null,
                     null,
-                    idType, apiId, session
+                    apiId, session
             );
             if (withCache) {
                 try {

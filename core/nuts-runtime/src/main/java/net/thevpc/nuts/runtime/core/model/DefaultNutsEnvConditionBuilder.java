@@ -26,13 +26,18 @@
  */
 package net.thevpc.nuts.runtime.core.model;
 
-import net.thevpc.nuts.*;
+import net.thevpc.nuts.NutsEnvCondition;
+import net.thevpc.nuts.NutsEnvConditionBuilder;
+import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.runtime.bundles.common.MapToFunction;
 import net.thevpc.nuts.runtime.core.util.CoreArrayUtils;
 import net.thevpc.nuts.runtime.core.util.CoreNutsUtils;
 import net.thevpc.nuts.spi.NutsSupportLevelContext;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
 
 public class DefaultNutsEnvConditionBuilder implements NutsEnvConditionBuilder {
@@ -219,11 +224,11 @@ public class DefaultNutsEnvConditionBuilder implements NutsEnvConditionBuilder {
     @Override
     public NutsEnvConditionBuilder addAll(NutsEnvCondition other) {
         if (other != null) {
-            setArch(CoreArrayUtils.toDistinctTrimmedNonEmptyArray(getArch(),other.getArch()));
-            setOs(CoreArrayUtils.toDistinctTrimmedNonEmptyArray(getOs(),other.getOs()));
-            setOsDist(CoreArrayUtils.toDistinctTrimmedNonEmptyArray(getOsDist(),other.getOsDist()));
-            setPlatform(CoreArrayUtils.toDistinctTrimmedNonEmptyArray(getPlatform(),other.getPlatform()));
-            setDesktopEnvironment(CoreArrayUtils.toDistinctTrimmedNonEmptyArray(getDesktopEnvironment(),other.getDesktopEnvironment()));
+            setArch(CoreArrayUtils.toDistinctTrimmedNonEmptyArray(getArch(), other.getArch()));
+            setOs(CoreArrayUtils.toDistinctTrimmedNonEmptyArray(getOs(), other.getOs()));
+            setOsDist(CoreArrayUtils.toDistinctTrimmedNonEmptyArray(getOsDist(), other.getOsDist()));
+            setPlatform(CoreArrayUtils.toDistinctTrimmedNonEmptyArray(getPlatform(), other.getPlatform()));
+            setDesktopEnvironment(CoreArrayUtils.toDistinctTrimmedNonEmptyArray(getDesktopEnvironment(), other.getDesktopEnvironment()));
         }
         return this;
     }
@@ -231,11 +236,11 @@ public class DefaultNutsEnvConditionBuilder implements NutsEnvConditionBuilder {
     @Override
     public NutsEnvConditionBuilder addAll(NutsEnvConditionBuilder other) {
         if (other != null) {
-            setArch(CoreArrayUtils.toDistinctTrimmedNonEmptyArray(getArch(),other.getArch()));
-            setOs(CoreArrayUtils.toDistinctTrimmedNonEmptyArray(getOs(),other.getOs()));
-            setOsDist(CoreArrayUtils.toDistinctTrimmedNonEmptyArray(getOsDist(),other.getOsDist()));
-            setPlatform(CoreArrayUtils.toDistinctTrimmedNonEmptyArray(getPlatform(),other.getPlatform()));
-            setDesktopEnvironment(CoreArrayUtils.toDistinctTrimmedNonEmptyArray(getDesktopEnvironment(),other.getDesktopEnvironment()));
+            setArch(CoreArrayUtils.toDistinctTrimmedNonEmptyArray(getArch(), other.getArch()));
+            setOs(CoreArrayUtils.toDistinctTrimmedNonEmptyArray(getOs(), other.getOs()));
+            setOsDist(CoreArrayUtils.toDistinctTrimmedNonEmptyArray(getOsDist(), other.getOsDist()));
+            setPlatform(CoreArrayUtils.toDistinctTrimmedNonEmptyArray(getPlatform(), other.getPlatform()));
+            setDesktopEnvironment(CoreArrayUtils.toDistinctTrimmedNonEmptyArray(getDesktopEnvironment(), other.getDesktopEnvironment()));
         }
         return this;
     }
@@ -273,31 +278,6 @@ public class DefaultNutsEnvConditionBuilder implements NutsEnvConditionBuilder {
     }
 
     @Override
-    public String toString() {
-        String s= String.join(" & ",
-                Arrays.stream(new String[]{
-                                ts("arch",arch.toArray(new String[0])),
-                                ts("os",os.toArray(new String[0])),
-                                ts("osDist", osDist.toArray(new String[0])),
-                                ts("platform",platform.toArray(new String[0])),
-                                ts("desktopEnvironment",desktopEnvironment.toArray(new String[0]))
-                        })
-                        .filter(x->x.length()>0)
-                        .toArray(String[]::new)
-        );
-        if(s.isEmpty()){
-            return "no-cond";
-        }
-        return s;
-    }
-    private String ts(String n,String[] vs){
-        if(vs.length==0){
-            return "";
-        }
-        return n+"="+String.join(",",vs[0]);
-    }
-
-    @Override
     public NutsEnvConditionBuilder applyProperties(Map<String, String> properties) {
         Function<String, String> map = new MapToFunction<>(properties);
 
@@ -307,6 +287,32 @@ public class DefaultNutsEnvConditionBuilder implements NutsEnvConditionBuilder {
         this.setPlatform(CoreNutsUtils.applyStringProperties(getPlatform(), map));
         this.setDesktopEnvironment(CoreNutsUtils.applyStringProperties(getDesktopEnvironment(), map));
         return this;
+    }
+
+    @Override
+    public String toString() {
+        String s = String.join(" & ",
+                Arrays.stream(new String[]{
+                                ts("arch", arch.toArray(new String[0])),
+                                ts("os", os.toArray(new String[0])),
+                                ts("osDist", osDist.toArray(new String[0])),
+                                ts("platform", platform.toArray(new String[0])),
+                                ts("desktopEnvironment", desktopEnvironment.toArray(new String[0]))
+                        })
+                        .filter(x -> x.length() > 0)
+                        .toArray(String[]::new)
+        );
+        if (s.isEmpty()) {
+            return "blank";
+        }
+        return s;
+    }
+
+    private String ts(String n, String[] vs) {
+        if (vs.length == 0) {
+            return "";
+        }
+        return n + "=" + String.join(",", vs[0]);
     }
 
     @Override

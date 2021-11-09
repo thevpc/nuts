@@ -27,16 +27,23 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.bundles.collections.StringKeyValueList;
 import net.thevpc.nuts.runtime.bundles.io.IProcessExecHelper;
 import net.thevpc.nuts.runtime.core.DefaultNutsClassLoader;
-import net.thevpc.nuts.runtime.core.util.*;
+import net.thevpc.nuts.runtime.core.util.CoreNumberUtils;
+import net.thevpc.nuts.runtime.core.util.ProcessExecHelper;
 import net.thevpc.nuts.runtime.standalone.ext.DefaultNutsWorkspaceExtensionManager;
-import net.thevpc.nuts.spi.*;
+import net.thevpc.nuts.spi.NutsComponentScope;
+import net.thevpc.nuts.spi.NutsComponentScopeType;
+import net.thevpc.nuts.spi.NutsExecutorComponent;
+import net.thevpc.nuts.spi.NutsSupportLevelContext;
 
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.nio.file.Path;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Properties;
 import java.util.concurrent.Future;
 import java.util.logging.Filter;
 import java.util.logging.Level;
@@ -72,10 +79,10 @@ public class JavaExecutorComponent implements NutsExecutorComponent {
     public int getSupportLevel(NutsSupportLevelContext ctx) {
         this.ws = ctx.getSession();
         if (ID == null) {
-            ID = NutsId.of("net.thevpc.nuts.exec:java",ws);
+            ID = NutsId.of("net.thevpc.nuts.exec:java", ws);
         }
-        NutsDefinition def=ctx.getConstraints(NutsDefinition.class);
-        if(def!=null) {
+        NutsDefinition def = ctx.getConstraints(NutsDefinition.class);
+        if (def != null) {
             String shortName = def.getId().getShortName();
             //for executors
             if ("net.thevpc.nuts.exec:exec-java".equals(shortName)) {
@@ -114,11 +121,11 @@ public class JavaExecutorComponent implements NutsExecutorComponent {
             default: {
                 StringKeyValueList runnerProps = new StringKeyValueList();
                 if (executionContext.getExecutorDescriptor() != null) {
-                    runnerProps.add((Map) executionContext.getExecutorDescriptor().getProperties());
+                    runnerProps.add(executionContext.getExecutorDescriptor().getProperties());
                 }
 
                 if (executionContext.getEnv() != null) {
-                    runnerProps.add((Map) executionContext.getEnv());
+                    runnerProps.add(executionContext.getEnv());
                 }
 
                 HashMap<String, String> osEnv = new HashMap<>();
@@ -156,13 +163,13 @@ public class JavaExecutorComponent implements NutsExecutorComponent {
                 for (String s : joptions.getClassPathNidStrings()) {
                     if (s.startsWith("net.thevpc.nuts:nuts#")) {
                         String v = s.substring("net.thevpc.nuts:nuts#".length());
-                        nutsDependencyVersion = NutsVersion.of(v,session);
+                        nutsDependencyVersion = NutsVersion.of(v, session);
                     } else {
                         Pattern pp = Pattern.compile(".*[/\\\\]nuts-(?<v>[0-9.]+)[.]jar");
                         Matcher mm = pp.matcher(s);
                         if (mm.find()) {
                             String v = mm.group("v");
-                            nutsDependencyVersion = NutsVersion.of(v,session);
+                            nutsDependencyVersion = NutsVersion.of(v, session);
                             break;
                         }
                     }
@@ -274,20 +281,20 @@ public class JavaExecutorComponent implements NutsExecutorComponent {
                         arg = arg.trim();
                         if (arg.length() > 0) {
                             if (arg.matches("[0-9]+")) {
-                                port= CoreNumberUtils.convertToInteger(arg,port);
+                                port = CoreNumberUtils.convertToInteger(arg, port);
                             } else {
                                 NutsArgument a = NutsArgument.of(arg, session);
                                 switch (a.getKey().getString()) {
-                                    case "suspend":{
-                                        boolean b=a.getValue().getBoolean();
-                                        if(a.isNegated()){
-                                            b=!b;
+                                    case "suspend": {
+                                        boolean b = a.getValue().getBoolean();
+                                        if (a.isNegated()) {
+                                            b = !b;
                                         }
-                                        suspend =b;
+                                        suspend = b;
                                         break;
                                     }
-                                    case "port":{
-                                        port =a.getValue().getInt();
+                                    case "port": {
+                                        port = a.getValue().getInt();
                                         break;
                                     }
                                 }
@@ -336,9 +343,9 @@ public class JavaExecutorComponent implements NutsExecutorComponent {
 
     static class EmbeddedProcessExecHelper extends AbstractSyncIProcessExecHelper {
 
-        private NutsDefinition def;
-        private JavaExecutorOptions joptions;
-        private NutsPrintStream out;
+        private final NutsDefinition def;
+        private final JavaExecutorOptions joptions;
+        private final NutsPrintStream out;
 
         public EmbeddedProcessExecHelper(NutsDefinition def, NutsSession session, JavaExecutorOptions joptions, NutsPrintStream out) {
             super(session);
@@ -362,7 +369,7 @@ public class JavaExecutorComponent implements NutsExecutorComponent {
                     text.builder()
                             .append("exec", NutsTextStyle.pale())
                             .append(" ")
-                            .append(NutsCommandLine.of(cmdLine,session))
+                            .append(NutsCommandLine.of(cmdLine, session))
             );
         }
 
@@ -406,7 +413,7 @@ public class JavaExecutorComponent implements NutsExecutorComponent {
                 }
                 NutsExecutionException nex = (NutsExecutionException) th;
                 if (nex.getExitCode() != 0) {
-                    throw new NutsExecutionException(session, NutsMessage.cstyle("error executing %s : %s", def.getId(), th), th);
+                    throw new NutsExecutionException(session, NutsMessage.cstyle("error executing %s : %s", def == null ? null : def.getId(), th), th);
                 }
             }
             return 0;
@@ -453,7 +460,7 @@ public class JavaExecutorComponent implements NutsExecutorComponent {
                             .setFailFast(true)
                             .setDry(session.isDry())
                             .run();
-                }finally {
+                } finally {
                     NutsApplications.getSharedMap().put("nuts.embedded.application.id", oldId);
                 }
                 return null;
@@ -555,7 +562,7 @@ public class JavaExecutorComponent implements NutsExecutorComponent {
                 out.println("\t\t " + xarg);
 //                }
             }
-            String directory = NutsBlankable.isBlank(joptions.getDir()) ? null : NutsPath.of(joptions.getDir(),ws).builder().withAppBaseDir().build().toString();
+            String directory = NutsBlankable.isBlank(joptions.getDir()) ? null : NutsPath.of(joptions.getDir(), ws).builder().withAppBaseDir().build().toString();
             ProcessExecHelper.ofDefinition(def,
                     args.toArray(new String[0]), osEnv, directory, executionContext.getExecutorProperties(), joptions.isShowCommand(), true, executionContext.getSleepMillis(), executionContext.isInheritSystemIO(), false, NutsBlankable.isBlank(executionContext.getRedirectOutputFile()) ? null : new File(executionContext.getRedirectOutputFile()), NutsBlankable.isBlank(executionContext.getRedirectInputFile()) ? null : new File(executionContext.getRedirectInputFile()), executionContext.getRunAs(), executionContext.getSession(),
                     execSession
@@ -582,7 +589,7 @@ public class JavaExecutorComponent implements NutsExecutorComponent {
 //                    }
                 }
             }
-            String directory = NutsBlankable.isBlank(joptions.getDir()) ? null : NutsPath.of(joptions.getDir(),ws).builder().withAppBaseDir().build().toString();
+            String directory = NutsBlankable.isBlank(joptions.getDir()) ? null : NutsPath.of(joptions.getDir(), ws).builder().withAppBaseDir().build().toString();
             return ProcessExecHelper.ofDefinition(def,
                     args.toArray(new String[0]), osEnv, directory, executionContext.getExecutorProperties(), joptions.isShowCommand(), true, executionContext.getSleepMillis(), executionContext.isInheritSystemIO(), false, NutsBlankable.isBlank(executionContext.getRedirectOutputFile()) ? null : new File(executionContext.getRedirectOutputFile()), NutsBlankable.isBlank(executionContext.getRedirectInputFile()) ? null : new File(executionContext.getRedirectInputFile()), executionContext.getRunAs(), executionContext.getSession(),
                     execSession

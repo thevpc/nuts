@@ -46,13 +46,6 @@ public interface NutsDefinition extends Serializable, Comparable<NutsDefinition>
     NutsId getId();
 
     /**
-     * return artifact type
-     *
-     * @return return artifact type
-     */
-    NutsIdType getType();
-
-    /**
      * return artifact descriptor
      *
      * @return artifact descriptor

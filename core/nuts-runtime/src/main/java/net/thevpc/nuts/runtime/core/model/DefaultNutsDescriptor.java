@@ -39,12 +39,19 @@ public class DefaultNutsDescriptor extends AbstractNutsDescriptor {
 
     private static final long serialVersionUID = 1L;
     private final String solver;
+    private final NutsArtifactCall executor;
+    private final NutsArtifactCall installer;
+    private final NutsEnvCondition condition;
+    private final NutsIdLocation[] locations;
+    private final NutsDependency[] dependencies;
+    private final NutsDependency[] standardDependencies;
+    private final NutsDescriptorProperty[] properties;
+    private final Set<NutsDescriptorFlag> flags;
     private NutsId id;
+    private NutsIdType idType;
     //    private String alternative;
     private NutsId[] parents;
     private String packaging;
-    private final NutsArtifactCall executor;
-    private final NutsArtifactCall installer;
     /**
      * short description
      */
@@ -56,16 +63,11 @@ public class DefaultNutsDescriptor extends AbstractNutsDescriptor {
     private String[] icons;
     private String[] categories;
     private String genericName;
-    private final NutsEnvCondition condition;
-    private final NutsIdLocation[] locations;
-    private final NutsDependency[] dependencies;
-    private final NutsDependency[] standardDependencies;
-    private final NutsDescriptorProperty[] properties;
-    private final Set<NutsDescriptorFlag> flags;
 
     public DefaultNutsDescriptor(NutsDescriptor d, NutsSession session) {
         this(
                 d.getId(),
+                d.getIdType(),
                 d.getParents(),
                 d.getPackaging(),
                 d.getExecutor(),
@@ -86,7 +88,7 @@ public class DefaultNutsDescriptor extends AbstractNutsDescriptor {
         );
     }
 
-    public DefaultNutsDescriptor(NutsId id, /*String alternative, */NutsId[] parents, String packaging,
+    public DefaultNutsDescriptor(NutsId id, NutsIdType idType, NutsId[] parents, String packaging,
                                  //                                 String ext,
                                  NutsArtifactCall executor, NutsArtifactCall installer, String name, String description,
                                  NutsEnvCondition condition,
@@ -100,6 +102,7 @@ public class DefaultNutsDescriptor extends AbstractNutsDescriptor {
         super(session);
         //id can have empty groupId (namely for executors like 'java')
         this.id = id == null ? NutsId.of("", session) : id;
+        this.idType = idType == null ? NutsIdType.REGULAR : idType;
 //        this.alternative = NutsUtilStrings.trimToNull(alternative);
         this.packaging = NutsUtilStrings.trimToNull(packaging);
         this.parents = parents == null ? new NutsId[0] : new NutsId[parents.length];
@@ -147,11 +150,19 @@ public class DefaultNutsDescriptor extends AbstractNutsDescriptor {
         this.solver = NutsUtilStrings.trimToNull(solver);
     }
 
+    @Override
+    public NutsIdType getIdType() {
+        return idType;
+    }
+
     public boolean isBlank() {
         if (!NutsBlankable.isBlank(id)) {
             return false;
         }
         if (!NutsBlankable.isBlank(packaging)) {
+            return false;
+        }
+        if (idType!=NutsIdType.REGULAR) {
             return false;
         }
         if (parents != null) {
@@ -383,7 +394,7 @@ public class DefaultNutsDescriptor extends AbstractNutsDescriptor {
     @Override
     public int hashCode() {
 
-        int result = Objects.hash(id, /*alternative,*/ packaging,
+        int result = Objects.hash(id, idType, packaging,
                 //                ext,
                 executor, installer, name, description, genericName, condition, flags,
                 solver
@@ -408,7 +419,7 @@ public class DefaultNutsDescriptor extends AbstractNutsDescriptor {
         }
         DefaultNutsDescriptor that = (DefaultNutsDescriptor) o;
         return Objects.equals(id, that.id)
-//                && Objects.equals(alternative, that.alternative)
+                && Objects.equals(idType, that.idType)
                 && Arrays.equals(parents, that.parents)
                 && Objects.equals(solver, that.solver)
                 && Objects.equals(packaging, that.packaging)
@@ -432,7 +443,7 @@ public class DefaultNutsDescriptor extends AbstractNutsDescriptor {
     public String toString() {
         return "DefaultNutsDescriptor{"
                 + "id=" + id
-//                + ", alternative='" + alternative + '\''
+                + ", idType=" + idType.id()
                 + ", parents=" + Arrays.toString(parents)
                 + ", packaging='" + packaging + '\''
                 + ", executor=" + executor

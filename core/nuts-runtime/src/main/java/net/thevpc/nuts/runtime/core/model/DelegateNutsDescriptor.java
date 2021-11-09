@@ -148,4 +148,9 @@ public abstract class DelegateNutsDescriptor extends AbstractNutsDescriptor {
     public String getPropertyValue(String name) {
         return getBase().getPropertyValue(name);
     }
+
+    @Override
+    public NutsIdType getIdType() {
+        return getBase().getIdType();
+    }
 }

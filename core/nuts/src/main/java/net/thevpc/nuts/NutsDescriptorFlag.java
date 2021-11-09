@@ -57,13 +57,9 @@ public enum NutsDescriptorFlag implements NutsEnum {
     GUI,
 
     /**
-     * nuts extension
+     * nuts companion
      */
-    NUTS_EXTENSION,
-    /**
-     * nuts extension
-     */
-    NUTS_RUNTIME,
+    NUTS_API,
 
     ;
 

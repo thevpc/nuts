@@ -104,7 +104,6 @@ public class DefaultSourceControlHelper {
 
             d.formatter().setSession(session).print(file);
 
-            NutsIdType idType = NutsWorkspaceExt.of(ws).resolveNutsIdType(newId, session);
             return new DefaultNutsDefinition(
                     nutToInstall.getRepositoryUuid(),
                     nutToInstall.getRepositoryName(),
@@ -114,8 +113,7 @@ public class DefaultSourceControlHelper {
                             NutsPath.of(folder,session),
                             false,
                             false),
-                    null,
-                    idType, null, session
+                    null, null, session
             );
         } else {
             throw new NutsUnsupportedOperationException(session, NutsMessage.cstyle("checkout not supported"));

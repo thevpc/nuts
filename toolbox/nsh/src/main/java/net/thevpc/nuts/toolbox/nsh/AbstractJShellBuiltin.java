@@ -97,12 +97,13 @@ public abstract class AbstractJShellBuiltin implements JShellBuiltin {
         try {
             execImpl(args, context);
         } catch (NutsExecutionException ex) {
-            if(ex.getExitCode()!=0) {
-                context.err().println(ex.toString());
-            }
+//            if(ex.getExitCode()!=0) {
+//                context.err().println(ex.toString());
+//            }
             throw ex;
+        } catch (NutsException ex) {
+            throw new NutsExecutionException(context.getSession(),ex.getFormattedMessage(),ex,254);
         } catch (Exception ex) {
-            context.err().println(ex.toString());
             throw new NutsExecutionException(context.getSession(),NutsMessage.plain("error"),ex,254);
         }
     }

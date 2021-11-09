@@ -904,7 +904,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
 //        checkSession(session);
         NutsDefinition oldDef = null;
         if (strategy0 == InstallStrategy0.UPDATE) {
-            switch (def.getType()) {
+            switch (def.getDescriptor().getIdType()) {
                 case API: {
                     oldDef = session.fetch().setSession(
                             session.copy().setFetchStrategy(NutsFetchStrategy.ONLINE)
@@ -926,7 +926,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
         }
         NutsPrintStream out = session.out();
         out.flush();
-        switch (def.getType()) {
+        switch (def.getDescriptor().getIdType()) {
             case API: {
                 wsModel.configModel.prepareBootApi(def.getId(), null, true, session);
                 break;
@@ -1083,7 +1083,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
             wu.events().fireOnInstall(new DefaultNutsInstallEvent(def, session, new NutsId[0], reinstall));
         }
 
-        if (def.getType() == NutsIdType.EXTENSION) {
+        if (def.getDescriptor().getIdType() == NutsIdType.EXTENSION) {
             NutsWorkspaceConfigManagerExt wcfg = NutsWorkspaceConfigManagerExt.of(config);
             NutsExtensionListHelper h = new NutsExtensionListHelper(wcfg.getModel().getStoredConfigBoot().getExtensions())
                     .save();

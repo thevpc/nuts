@@ -104,7 +104,7 @@ public class DefaultNutsUninstallCommand extends AbstractNutsUninstallCommand {
                 CoreIOUtils.delete(getSession(), Paths.get(session.locations().getStoreLocation(id, NutsStoreLocation.CONFIG)).toFile());
             }
 
-            if (def.getType() == NutsIdType.EXTENSION) {
+            if (def.getDescriptor().getIdType() == NutsIdType.EXTENSION) {
                 NutsWorkspaceConfigManagerExt wcfg = NutsWorkspaceConfigManagerExt.of(session.config());
                 NutsExtensionListHelper h = new NutsExtensionListHelper(wcfg.getModel().getStoredConfigBoot().getExtensions())
                         .save();

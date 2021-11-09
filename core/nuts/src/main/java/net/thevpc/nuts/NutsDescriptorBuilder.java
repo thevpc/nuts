@@ -509,4 +509,18 @@ public interface NutsDescriptorBuilder extends Serializable, NutsComponent {
      * @since 0.8.3
      */
     String getPropertyValue(String name);
+
+    /**
+     * return id type
+     * @return id type
+     */
+    NutsIdType getIdType();
+
+    /**
+     * set idType
+     * @param idType idType
+     * @return {@code this} instance
+     */
+    NutsDescriptorBuilder setIdType(NutsIdType idType);
+
 }

@@ -95,7 +95,24 @@ public class LsCommand extends SimpleJShellBuiltin {
         }
         NutsSession session = context.getSession();
         for (String path : options.paths) {
-            NutsPath file = NutsPath.of(path, session).toAbsolute(NutsPath.of(context.getShellContext().getCwd(), session));
+            if(NutsBlankable.isBlank(path)){
+                if (errors == null) {
+                    errors = new ResultError();
+                    errors.workingDir = context.getShellContext().getAbsolutePath(".");
+                }
+                errors.result.put(path, NutsMessage.cstyle("cannot access '%s': No such file or directory", path));
+                continue;
+            }
+            NutsPath file = NutsPath.of(path, session);
+            if(file==null){
+                if (errors == null) {
+                    errors = new ResultError();
+                    errors.workingDir = context.getShellContext().getAbsolutePath(".");
+                }
+                errors.result.put(path, NutsMessage.cstyle("cannot access '%s': No such file or directory", path));
+                continue;
+            }
+            file=file.toAbsolute(NutsPath.of(context.getShellContext().getCwd(), session));
             if (!file.exists()) {
                 exitCode = 1;
                 if (errors == null) {

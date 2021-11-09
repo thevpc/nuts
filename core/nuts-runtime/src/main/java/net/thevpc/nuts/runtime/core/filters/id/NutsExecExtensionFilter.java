@@ -21,7 +21,7 @@ public class NutsExecExtensionFilter extends AbstractDescriptorFilter {
 
     @Override
     public boolean acceptDescriptor(NutsDescriptor other, NutsSession session) {
-        if(!other.getFlags().contains(NutsDescriptorFlag.NUTS_EXTENSION)){
+        if(other.getIdType()!=NutsIdType.EXTENSION){
             return false;
         }
         for (NutsDependency dependency : other.getDependencies()) {

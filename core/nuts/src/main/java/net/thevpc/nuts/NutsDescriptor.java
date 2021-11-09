@@ -84,7 +84,12 @@ public interface NutsDescriptor extends Serializable, NutsBlankable {
      */
     Set<NutsDescriptorFlag> getFlags();
 
-    //    String getAlternative();
+
+    /**
+     * return id type
+     * @return id type
+     */
+    NutsIdType getIdType();
 
     /**
      * return descriptor packaging (used to resolve file extension)
