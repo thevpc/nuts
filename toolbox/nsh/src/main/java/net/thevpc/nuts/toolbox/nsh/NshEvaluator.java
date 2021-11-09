@@ -25,12 +25,18 @@
  */
 package net.thevpc.nuts.toolbox.nsh;
 
-import net.thevpc.nuts.*;
+import net.thevpc.nuts.NutsPrintStream;
+import net.thevpc.nuts.NutsSession;
+import net.thevpc.nuts.NutsSessionTerminal;
+import net.thevpc.nuts.NutsTerminalMode;
 import net.thevpc.nuts.toolbox.nsh.jshell.*;
 import net.thevpc.nuts.toolbox.nsh.jshell.util.JavaShellNonBlockingInputStream;
 import net.thevpc.nuts.toolbox.nsh.jshell.util.JavaShellNonBlockingInputStreamAdapter;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.PipedInputStream;
+import java.io.PipedOutputStream;
 import java.util.logging.Level;
 
 /**
@@ -94,23 +100,16 @@ public class NshEvaluator extends DefaultJShellEvaluator {
 
     @Override
     public String evalCommandAndReturnString(JShellCommandNode command, JShellContext context) {
-        JShellContext c1 = context.getShell().createNewContext(context);
-        DefaultJShellContext c2 = (DefaultJShellContext) c1;
-        NutsSession session = c2.getSession();
-        c2.setSession(session.copy());
+        DefaultJShellContext newCtx = (DefaultJShellContext) context.getShell().createNewContext(context);
+        NutsSession session = newCtx.getSession().copy();
+        newCtx.setSession(session);
         session.setLogLevel(Level.OFF);
 
-        NutsPrintStream out = NutsMemoryPrintStream.of(session);
-        NutsPrintStream err = NutsMemoryPrintStream.of(session);
-
-        NutsSessionTerminal terminal = NutsSessionTerminal.of(
-                new ByteArrayInputStream(new byte[0]), out, err,session
-        );
-        session.setTerminal(terminal);
-        context.getShell().evalNode(command,c1);
-        String str = evalFieldSubstitutionAfterCommandSubstitution(out.toString(), context);
+        session.setTerminal(NutsSessionTerminal.ofMem(session));
+        context.getShell().evalNode(command, newCtx);
+        String str = evalFieldSubstitutionAfterCommandSubstitution(session.out().toString(), context);
         String s = context.getShell().escapeString(str);
-        context.err().print(err.toString());
+        context.err().print(session.err().toString());
         return s;
     }
 }

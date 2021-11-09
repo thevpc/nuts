@@ -116,18 +116,10 @@ public class NTemplateMain implements NutsApplication {
         public Object eval(String content, FileTemplater context) {
             JShellContext ctx=shell.createInlineContext(shell.getRootContext(),context.getSourcePath().orElse("nsh"),new String[0]);
             NutsSession session = context.getSession().copy();
-            NutsPrintStream out = NutsMemoryPrintStream.of(session);
-            NutsPrintStream err = NutsMemoryPrintStream.of(session);
-            session.setTerminal(
-                    NutsSessionTerminal.of(
-                                    new ByteArrayInputStream(new byte[0]),
-                                    out,
-                                    err,session
-                            )
-            );
+            session.setTerminal(NutsSessionTerminal.ofMem(session));
             ctx.setSession(session);
             shell.executeScript(content, ctx);
-            return out.toString();
+            return session.out().toString();
         }
 
         @Override

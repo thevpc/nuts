@@ -2,16 +2,14 @@ package net.thevpc.nuts.toolbox.nutsserver.http.commands;
 
 import net.thevpc.nuts.NutsPrintStream;
 import net.thevpc.nuts.NutsSession;
+import net.thevpc.nuts.NutsSessionTerminal;
 import net.thevpc.nuts.NutsTerminalMode;
-import net.thevpc.nuts.NutsWorkspace;
 import net.thevpc.nuts.toolbox.nutsserver.AbstractFacadeCommand;
 import net.thevpc.nuts.toolbox.nutsserver.FacadeCommandContext;
 
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -53,18 +51,19 @@ public class ExecFacadeCommand extends AbstractFacadeCommand {
 //                }
         Map<String, List<String>> parameters = context.getParameters();
         List<String> cmd = parameters.get("cmd");
-        if(cmd==null){
-            cmd=new ArrayList<>();
+        if (cmd == null) {
+            cmd = new ArrayList<>();
         }
-        NutsSession session = context.getSession();
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        session.getTerminal().setOut(NutsPrintStream.of(out, NutsTerminalMode.FILTERED,session));
-        session.getTerminal().setIn(new ByteArrayInputStream(new byte[0]));
-
+        NutsSession session = context.getSession().copy();
+        session.setTerminal(NutsSessionTerminal.of(
+                new ByteArrayInputStream(new byte[0]),
+                NutsPrintStream.ofInMemory(session).setMode(NutsTerminalMode.FILTERED),
+                NutsPrintStream.ofInMemory(session),
+                session
+        ));
         int result = session.exec()
                 .addCommand(cmd)
                 .getResult();
-
-        context.sendResponseText(200, result + "\n" + out);
+        context.sendResponseText(200, result + "\n" + session.out().toString());
     }
 }

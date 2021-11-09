@@ -65,4 +65,8 @@ public interface NutsTerminals extends NutsComponent {
 
     NutsSessionTerminal createTerminal(NutsSessionTerminal terminal, NutsSession session);
 
+    NutsSessionTerminal createMemTerminal(NutsSession session);
+
+    NutsSessionTerminal createMemTerminal(boolean mergeErr, NutsSession session);
+
 }

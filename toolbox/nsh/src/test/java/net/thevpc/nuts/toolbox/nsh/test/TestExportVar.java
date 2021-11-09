@@ -49,18 +49,11 @@ public class TestExportVar {
         NutsCp.of(ws).from("echo 'run b' ; echo a2=$a ; a=2; b=3 ; echo a2=$a ; echo b2=$b".getBytes()).to(b).run();
         JShell c = new JShell(ws,new String[]{a.toString()});
         NutsSession session = c.getRootContext().getSession();
-        NutsMemoryPrintStream out = NutsMemoryPrintStream.of(session);
-        session.setTerminal(
-                NutsSessionTerminal.of(
-                        new ByteArrayInputStream(new byte[0]),
-                        out,
-                        out,session
-                )
-        );
+        session.setTerminal(NutsSessionTerminal.ofMem(session));
         c.getRootContext().setCwd(tempFolder.toString());
         c.run();
         System.out.println("-------------------------------------");
-        String result=out.toString();
+        String result=session.out().toString();
         System.out.println(result);
         Assertions.assertEquals(
                 "run a\n" +

@@ -308,20 +308,14 @@ public class DocusaurusCtrl {
         @Override
         public Object eval(String content, FileTemplater context) {
             NutsSession session = context.getSession().copy();
-            NutsPrintStream out = NutsMemoryPrintStream.of(session);
-            session.setTerminal(
-                    NutsSessionTerminal.of(
-                            new ByteArrayInputStream(new byte[0]),
-                            out,
-                            out, session)
-            );
+            session.setTerminal(NutsSessionTerminal.ofMem(session));
             JShellContext ctx = shell.createInlineContext(
                     shell.getRootContext(),
                     context.getSourcePath().orElseGet(() -> "nsh"), new String[0]
             );
             ctx.setSession(session);
             shell.executeScript(content, ctx);
-            return out.toString();
+            return session.out().toString();
         }
 
         @Override

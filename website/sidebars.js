@@ -32,6 +32,7 @@ module.exports = {
          'cmd/welcome-cmd',
       ],
       'Application Framework': [
+         'dev/nutsDescriptorIntegration',
          'dev/nutsPath',
          'dev/nutsStream',
          'dev/nutsApp',

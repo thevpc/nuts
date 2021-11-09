@@ -42,11 +42,19 @@ public interface NutsSessionTerminal {
     }
 
     static NutsSessionTerminal of(NutsSessionTerminal parent, NutsSession session) {
-        return NutsTerminals.of(session).createTerminal(parent,session);
+        return NutsTerminals.of(session).createTerminal(parent, session);
     }
 
     static NutsSessionTerminal of(InputStream in, NutsPrintStream out, NutsPrintStream err, NutsSession session) {
-        return NutsTerminals.of(session).createTerminal(in, out, err,session);
+        return NutsTerminals.of(session).createTerminal(in, out, err, session);
+    }
+
+    static NutsSessionTerminal ofMem(NutsSession session) {
+        return NutsTerminals.of(session).createMemTerminal(session);
+    }
+
+    static NutsSessionTerminal ofMem(boolean mergeError, NutsSession session) {
+        return NutsTerminals.of(session).createMemTerminal(mergeError, session);
     }
 
     String readLine(NutsPrintStream out, String prompt, Object... params);
