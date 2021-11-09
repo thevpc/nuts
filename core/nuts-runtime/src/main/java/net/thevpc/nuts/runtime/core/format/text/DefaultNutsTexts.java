@@ -285,7 +285,7 @@ public class DefaultNutsTexts implements NutsTexts {
     }
 
     @Override
-    public NutsTextNumbering ofTitleNumberSequence(String pattern) {
+    public NutsTextNumbering ofNumbering(String pattern) {
         checkSession();
         return new DefaultNutsTitleNumberSequence((pattern == null || pattern.isEmpty()) ? "1.1.1.a.1" : pattern);
     }

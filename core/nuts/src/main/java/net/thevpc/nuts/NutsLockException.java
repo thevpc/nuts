@@ -27,6 +27,7 @@ package net.thevpc.nuts;
 
 /**
  * Exception Thrown when a locked object is invoked.
+ *
  * @author thevpc
  * @app.category Exceptions
  */
@@ -44,9 +45,10 @@ public class NutsLockException extends NutsException {
 
     /**
      * Constructs a new ock exception.
-     * @param session workspace
+     *
+     * @param session      workspace
      * @param lockedObject locked Object
-     * @param lockObject lock Object
+     * @param lockObject   lock Object
      */
     public NutsLockException(NutsSession session, Object lockedObject, Object lockObject) {
         this(session, null, lockedObject, lockObject);
@@ -54,10 +56,11 @@ public class NutsLockException extends NutsException {
 
     /**
      * Constructs a new ock exception.
-     * @param session workspace
-     * @param message message or null
+     *
+     * @param session      workspace
+     * @param message      message or null
      * @param lockedObject locked Object
-     * @param lockObject lock Object
+     * @param lockObject   lock Object
      */
     public NutsLockException(NutsSession session, NutsMessage message, Object lockedObject, Object lockObject) {
         super(session,
@@ -70,11 +73,12 @@ public class NutsLockException extends NutsException {
 
     /**
      * Constructs a new ock exception.
-     * @param session workspace
-     * @param message message or null
+     *
+     * @param session      workspace
+     * @param message      message or null
      * @param lockedObject locked Object
-     * @param lockObject lock Object
-     * @param cause cause
+     * @param lockObject   lock Object
+     * @param cause        cause
      */
     public NutsLockException(NutsSession session, NutsMessage message, Object lockedObject, Object lockObject, Throwable cause) {
         super(session,
@@ -87,6 +91,7 @@ public class NutsLockException extends NutsException {
 
     /**
      * return locked object
+     *
      * @return locked object
      */
     public Object getLockedObject() {
@@ -95,6 +100,7 @@ public class NutsLockException extends NutsException {
 
     /**
      * return lock object
+     *
      * @return lock object
      */
     public Object getLockObject() {

@@ -35,7 +35,7 @@ import net.thevpc.nuts.NutsUtilStrings;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 public class CoreCollectionUtils {
 

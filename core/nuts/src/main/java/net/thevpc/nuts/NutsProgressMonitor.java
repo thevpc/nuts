@@ -28,14 +28,16 @@ package net.thevpc.nuts;
 
 /**
  * Monitor handles events from copy, compress and delete actions
+ *
  * @author thevpc
- * @since 0.5.8
  * @app.category Toolkit
+ * @since 0.5.8
  */
 public interface NutsProgressMonitor {
 
     /**
      * called when the action starts
+     *
      * @param event event
      */
     default void onStart(NutsProgressEvent event) {
@@ -43,6 +45,7 @@ public interface NutsProgressMonitor {
 
     /**
      * called when the action terminates
+     *
      * @param event event
      */
     default void onComplete(NutsProgressEvent event) {

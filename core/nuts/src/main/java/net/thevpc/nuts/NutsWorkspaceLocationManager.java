@@ -27,6 +27,7 @@ package net.thevpc.nuts;
 import java.util.Map;
 
 /**
+ * @author thevpc
  * @app.category Base
  */
 public interface NutsWorkspaceLocationManager {

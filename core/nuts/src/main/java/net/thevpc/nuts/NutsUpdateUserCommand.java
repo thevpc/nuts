@@ -29,10 +29,9 @@ package net.thevpc.nuts;
 import java.util.Collection;
 
 /**
- *
  * @author thevpc
- * @since 0.5.5
  * @app.category Security
+ * @since 0.5.5
  */
 public interface NutsUpdateUserCommand extends NutsWorkspaceCommand {
 
@@ -155,7 +154,7 @@ public interface NutsUpdateUserCommand extends NutsWorkspaceCommand {
      * to help return a more specific return type;
      *
      * @param skipUnsupported when true, all unsupported options are skipped
-     * @param args argument to configure with
+     * @param args            argument to configure with
      * @return {@code this} instance
      */
     @Override

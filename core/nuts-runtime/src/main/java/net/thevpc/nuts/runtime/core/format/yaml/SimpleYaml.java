@@ -25,7 +25,7 @@ package net.thevpc.nuts.runtime.core.format.yaml;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 
 import net.thevpc.nuts.*;

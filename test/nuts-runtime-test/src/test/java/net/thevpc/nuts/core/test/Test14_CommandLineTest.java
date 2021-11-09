@@ -8,10 +8,8 @@ package net.thevpc.nuts.core.test;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.core.test.utils.TestUtils;
 import net.thevpc.nuts.runtime.core.app.DefaultNutsArgument;
-import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
 import org.junit.jupiter.api.*;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -32,7 +30,7 @@ public class Test14_CommandLineTest {
                 "--skip-welcome"
         );
 
-        NutsArgument[] cmd = NutsCommandLine.parse("-ad+ +ad--",session).toArgumentArray();
+        NutsArgument[] cmd = NutsCommandLine.of("-ad+ +ad--",session).toArgumentArray();
         Set<String> set = Arrays.stream(cmd).map(x -> x.toString()).collect(Collectors.toSet());
         Set<String> expectedSet = new HashSet<>(Arrays.asList(
                 "-a", "-d+", "+a","+d--"

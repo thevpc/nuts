@@ -28,7 +28,7 @@ import net.thevpc.nuts.NutsTreeLinkFormat;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 class UnicodeTreeLinkFormat implements NutsTreeLinkFormat {
 

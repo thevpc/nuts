@@ -25,7 +25,7 @@ package net.thevpc.nuts.runtime.core.format.json;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 public class ReaderLocation {
     

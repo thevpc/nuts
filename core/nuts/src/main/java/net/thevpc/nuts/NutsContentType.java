@@ -30,9 +30,10 @@ import net.thevpc.nuts.boot.NutsApiUtils;
 
 /**
  * Formats supported by Nuts
+ *
  * @author thevpc
- * @since 0.5.4
  * @app.category Format
+ * @since 0.5.4
  */
 public enum NutsContentType implements NutsEnum {
     /**
@@ -67,12 +68,14 @@ public enum NutsContentType implements NutsEnum {
 
     /**
      * Type Safe Object Notation
+     *
      * @since 0.8.1
      */
     TSON,
 
     /**
      * YAML Ain't Markup Language
+     *
      * @since 0.8.1
      */
     YAML,
@@ -120,12 +123,13 @@ public enum NutsContentType implements NutsEnum {
 
     public static NutsContentType parse(String value, NutsContentType emptyValue, NutsSession session) {
         NutsContentType v = parseLenient(value, emptyValue, null);
-        NutsApiUtils.checkNonNullEnum(v,value,NutsContentType.class,session);
+        NutsApiUtils.checkNonNullEnum(v, value, NutsContentType.class, session);
         return v;
     }
 
     /**
      * lower cased identifier.
+     *
      * @return lower cased identifier
      */
     public String id() {

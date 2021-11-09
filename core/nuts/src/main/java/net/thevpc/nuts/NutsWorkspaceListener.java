@@ -28,8 +28,9 @@ package net.thevpc.nuts;
 /**
  * Created by vpc on 1/20/17.
  *
- * @since 0.5.4
+ * @author thevpc
  * @app.category Events
+ * @since 0.5.4
  */
 public interface NutsWorkspaceListener extends NutsListener {
 

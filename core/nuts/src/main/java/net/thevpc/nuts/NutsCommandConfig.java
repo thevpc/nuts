@@ -31,9 +31,10 @@ import java.util.Objects;
 
 /**
  * Command Alias definition class Config
+ *
  * @author thevpc
- * @since 0.5.4
  * @app.category Config
+ * @since 0.5.4
  */
 public class NutsCommandConfig extends NutsConfigItem {
     private static final long serialVersionUID = 1;
@@ -75,6 +76,7 @@ public class NutsCommandConfig extends NutsConfigItem {
 
     /**
      * alias definition
+     *
      * @return alias definition
      */
     public NutsId getOwner() {
@@ -83,6 +85,7 @@ public class NutsCommandConfig extends NutsConfigItem {
 
     /**
      * alias definition
+     *
      * @param value new value
      * @return {@code this} instance
      */
@@ -93,6 +96,7 @@ public class NutsCommandConfig extends NutsConfigItem {
 
     /**
      * alias factory id
+     *
      * @return alias factory id
      */
     public String getFactoryId() {
@@ -101,6 +105,7 @@ public class NutsCommandConfig extends NutsConfigItem {
 
     /**
      * alias factory id
+     *
      * @param value new value
      * @return {@code this} instance
      */
@@ -111,6 +116,7 @@ public class NutsCommandConfig extends NutsConfigItem {
 
     /**
      * alias command arguments
+     *
      * @return alias command arguments
      */
     public String[] getCommand() {
@@ -119,6 +125,7 @@ public class NutsCommandConfig extends NutsConfigItem {
 
     /**
      * alias command arguments
+     *
      * @param value new value
      * @return {@code this} instance
      */
@@ -129,6 +136,7 @@ public class NutsCommandConfig extends NutsConfigItem {
 
     /**
      * alias name
+     *
      * @return alias name
      */
     public String getName() {
@@ -137,6 +145,7 @@ public class NutsCommandConfig extends NutsConfigItem {
 
     /**
      * alias name
+     *
      * @param value new value
      * @return {@code this} instance
      */
@@ -147,6 +156,7 @@ public class NutsCommandConfig extends NutsConfigItem {
 
     /**
      * alias command execution options
+     *
      * @return alias command execution options
      */
     public String[] getExecutorOptions() {
@@ -155,6 +165,7 @@ public class NutsCommandConfig extends NutsConfigItem {
 
     /**
      * alias command execution options
+     *
      * @param value new value
      * @return {@code this} instance
      */
@@ -165,6 +176,7 @@ public class NutsCommandConfig extends NutsConfigItem {
 
     /**
      * alias help command (command to display help)
+     *
      * @return alias help command (command to display help)
      */
     public String[] getHelpCommand() {
@@ -173,6 +185,7 @@ public class NutsCommandConfig extends NutsConfigItem {
 
     /**
      * alias help command (command to display help)
+     *
      * @param value new value
      * @return {@code this} instance
      */
@@ -183,6 +196,7 @@ public class NutsCommandConfig extends NutsConfigItem {
 
     /**
      * alias help text (meaningful if helpCommand is not defined)
+     *
      * @return alias help text (meaningful if helpCommand is not defined)
      */
     public String getHelpText() {
@@ -191,6 +205,7 @@ public class NutsCommandConfig extends NutsConfigItem {
 
     /**
      * alias help text (meaningful if helpCommand is not defined)
+     *
      * @param value new value
      * @return {@code this} instance
      */

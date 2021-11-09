@@ -7,45 +7,46 @@ package net.thevpc.nuts;
 
 
 /**
- *
  * @author thevpc
  */
 public class NutsDefaultInputStreamMetadata implements NutsInputStreamMetadata {
 
-    private long contentLength;
-    private NutsString formattedName;
-    private String contentType;
-    private String name;
+    private final long contentLength;
+    private final NutsString formattedName;
+    private final String contentType;
+    private final String name;
     private String userKind;
 
     public NutsDefaultInputStreamMetadata(NutsInputStreamMetadata other) {
-        if(other!=null){
-            this.contentLength =other.getContentLength();
-            this.name=other.getName();
-            this.formattedName=other.getFormattedName();
-            this.userKind=other.getUserKind();
-            this.contentType=other.getContentType();
-        }else{
-            this.contentLength =-1;
-            this.name=null;
-            this.formattedName=null;
-            this.userKind=null;
-            this.contentType=null;
+        if (other != null) {
+            this.contentLength = other.getContentLength();
+            this.name = other.getName();
+            this.formattedName = other.getFormattedName();
+            this.userKind = other.getUserKind();
+            this.contentType = other.getContentType();
+        } else {
+            this.contentLength = -1;
+            this.name = null;
+            this.formattedName = null;
+            this.userKind = null;
+            this.contentType = null;
         }
     }
 
     public NutsDefaultInputStreamMetadata() {
-        this.contentLength =-1;
-        this.name=null;
-        this.formattedName=null;
-        this.userKind=null;
-        this.contentType=null;
+        this.contentLength = -1;
+        this.name = null;
+        this.formattedName = null;
+        this.userKind = null;
+        this.contentType = null;
     }
-    public NutsDefaultInputStreamMetadata(NutsMessage message, long contentLength, String contentType, String userKind,NutsSession session) {
-        this(message==null?null:message.toString(),message==null?null:message.toNutsString(session),contentLength,contentType,userKind);
+
+    public NutsDefaultInputStreamMetadata(NutsMessage message, long contentLength, String contentType, String userKind, NutsSession session) {
+        this(message == null ? null : message.toString(), message == null ? null : message.toNutsString(session), contentLength, contentType, userKind);
     }
+
     public NutsDefaultInputStreamMetadata(NutsString message, long contentLength, String contentType, String userKind) {
-        this(message==null?null:message.toString(),message,contentLength,contentType,userKind);
+        this(message == null ? null : message.toString(), message, contentLength, contentType, userKind);
     }
 
     public NutsDefaultInputStreamMetadata(NutsPath path) {
@@ -64,13 +65,9 @@ public class NutsDefaultInputStreamMetadata implements NutsInputStreamMetadata {
         this.contentType = contentType;
     }
 
-    public String getUserKind() {
-        return userKind;
-    }
-
-    public NutsInputStreamMetadata setUserKind(String userKind) {
-        this.userKind = userKind;
-        return this;
+    @Override
+    public long getContentLength() {
+        return contentLength;
     }
 
     @Override
@@ -79,8 +76,8 @@ public class NutsDefaultInputStreamMetadata implements NutsInputStreamMetadata {
     }
 
     @Override
-    public long getContentLength() {
-        return contentLength;
+    public String getContentType() {
+        return contentType;
     }
 
     @Override
@@ -88,8 +85,12 @@ public class NutsDefaultInputStreamMetadata implements NutsInputStreamMetadata {
         return name;
     }
 
-    @Override
-    public String getContentType() {
-        return contentType;
+    public String getUserKind() {
+        return userKind;
+    }
+
+    public NutsInputStreamMetadata setUserKind(String userKind) {
+        this.userKind = userKind;
+        return this;
     }
 }

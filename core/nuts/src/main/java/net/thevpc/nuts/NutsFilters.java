@@ -39,7 +39,7 @@ import net.thevpc.nuts.spi.NutsComponentScopeType;
 public interface NutsFilters extends NutsComponent {
     static NutsFilters of(NutsSession session) {
         NutsApiUtils.checkSession(session);
-        return session.extensions().createSupported(NutsFilters.class,true,null);
+        return session.extensions().createSupported(NutsFilters.class, true, null);
     }
 
 
@@ -69,9 +69,9 @@ public interface NutsFilters extends NutsComponent {
      * convert {@code filter} to {@code toFilterInterface} or throw error
      *
      * @param toFilterInterface one of the valid interfaces of
-     * {@code NutsFilter}
-     * @param filter filter instance
-     * @param <T> filter type
+     *                          {@code NutsFilter}
+     * @param filter            filter instance
+     * @param <T>               filter type
      * @return instance of {@code T} converted from {@code filter} or error
      */
     <T extends NutsFilter> T to(Class<T> toFilterInterface, NutsFilter filter);
@@ -80,9 +80,9 @@ public interface NutsFilters extends NutsComponent {
      * convert {@code filter} to {@code toFilterInterface} or throw error
      *
      * @param toFilterInterface one of the valid interfaces of
-     * {@code NutsFilter}
-     * @param filter filter instance
-     * @param <T> filter type
+     *                          {@code NutsFilter}
+     * @param filter            filter instance
+     * @param <T>               filter type
      * @return instance of {@code T} converted from {@code filter} or null
      */
     <T extends NutsFilter> T as(Class<T> toFilterInterface, NutsFilter filter);

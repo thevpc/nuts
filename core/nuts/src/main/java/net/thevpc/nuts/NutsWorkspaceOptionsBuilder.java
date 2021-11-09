@@ -39,6 +39,7 @@ import java.util.function.Supplier;
 /**
  * Mutable Workspace options
  *
+ * @author thevpc
  * @app.category Config
  */
 public interface NutsWorkspaceOptionsBuilder extends Serializable {
@@ -893,8 +894,6 @@ public interface NutsWorkspaceOptionsBuilder extends Serializable {
      */
     NutsWorkspaceOptionsBuilder setLocale(String locale);
 
-//    NutsWorkspaceOptionsBuilder setBootRepositories(String bootRepositories);
-
     /**
      * theme
      *
@@ -933,16 +932,18 @@ public interface NutsWorkspaceOptionsBuilder extends Serializable {
 
     /**
      * return dependency solver Name
+     *
      * @return dependency solver Name
      * @since 0.8.3
      */
-    String getDependencySolver() ;
+    String getDependencySolver();
 
     /**
      * update dependency solver Name
+     *
      * @param dependencySolver dependency solver name
      * @return {@code this} instance
      * @since 0.8.3
      */
-    NutsWorkspaceOptionsBuilder setDependencySolver(String dependencySolver) ;
+    NutsWorkspaceOptionsBuilder setDependencySolver(String dependencySolver);
 }

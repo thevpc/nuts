@@ -30,7 +30,7 @@ import net.thevpc.nuts.runtime.standalone.boot.StdFd;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 public class OptionalJansi {
 

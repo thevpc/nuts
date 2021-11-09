@@ -29,8 +29,8 @@ package net.thevpc.nuts;
  * package update result
  *
  * @author thevpc
- * @since 0.5.4
  * @app.category Commands
+ * @since 0.5.4
  */
 public interface NutsUpdateResult {
 

@@ -29,9 +29,10 @@ import java.util.List;
 
 /**
  * Auto Complete Helper class used to collect argument candidates
+ *
  * @author thevpc
- * @since 0.5.5
  * @app.category Command Line
+ * @since 0.5.5
  */
 public interface NutsCommandAutoComplete {
 
@@ -43,30 +44,35 @@ public interface NutsCommandAutoComplete {
 
     /**
      * command line string
+     *
      * @return line
      */
     String getLine();
 
     /**
      * command line arguments
+     *
      * @return words
      */
     List<String> getWords();
 
     /**
      * current candidates
+     *
      * @return current candidates
      */
     List<NutsArgumentCandidate> getCandidates();
 
     /**
      * candidates index
+     *
      * @return candidates index
      */
     int getCurrentWordIndex();
 
     /**
      * add candidate
+     *
      * @param value candidate
      */
     void addCandidate(NutsArgumentCandidate value);

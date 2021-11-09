@@ -2,9 +2,12 @@ package net.thevpc.nuts.runtime.core.io;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
+import net.thevpc.nuts.spi.NutsContentTypeResolver;
 import net.thevpc.nuts.spi.NutsSupportLevelContext;
 
+import java.io.File;
 import java.io.InputStream;
+import java.net.URL;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.List;
@@ -19,20 +22,18 @@ public class DefaultNutsContentTypes implements NutsContentTypes {
         this.ws = session.getWorkspace();
     }
 
-//    private Shared getShared(NutsSession session) {
-//        String key = "internal:" + Shared.class.getName();
-//        Shared o = (Shared) session.getWorkspace().env().getProperties().get(key);
-//        if (o == null) {
-//            o = new Shared();
-//            session.getWorkspace().env().setProperty(key, o);
-//
-//        }
-//        return o;
-//    }
-
-
     @Override
     public String probeContentType(Path path) {
+        return probeContentType(path == null ? null : NutsPath.of(path, session));
+    }
+
+    @Override
+    public String probeContentType(File path) {
+        return probeContentType(path == null ? null : NutsPath.of(path, session));
+    }
+
+    @Override
+    public String probeContentType(URL path) {
         return probeContentType(path == null ? null : NutsPath.of(path, session));
     }
 
@@ -50,27 +51,24 @@ public class DefaultNutsContentTypes implements NutsContentTypes {
             }
         }
         if (best == null) {
-            throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("missing type resolver for %s", path));
+            return null;
         }
         return best.getValue();
     }
 
     @Override
-    public String probeContentType(InputStream stream, String name) {
+    public String probeContentType(InputStream stream) {
         byte[] buffer = CoreIOUtils.readBestEffort(4096, stream, session);
-        return probeContentType(buffer, name);
+        return probeContentType(buffer);
     }
 
     @Override
-    public String probeContentType(byte[] bytes, String name) {
-        Map<String, Object> constraints = new HashMap<>();
-        constraints.put("bytes", bytes);
-        constraints.put("name", name);
+    public String probeContentType(byte[] bytes) {
         List<NutsContentTypeResolver> allSupported = session.extensions()
-                .createAllSupported(NutsContentTypeResolver.class, constraints);
+                .createAllSupported(NutsContentTypeResolver.class, bytes);
         NutsSupported<String> best = null;
         for (NutsContentTypeResolver r : allSupported) {
-            NutsSupported<String> s = r.probeContentType(bytes, name, session);
+            NutsSupported<String> s = r.probeContentType(bytes, session);
             if (s != null && s.isValid()) {
                 if (best == null || s.getSupportLevel() > best.getSupportLevel()) {
                     best = s;
@@ -78,7 +76,7 @@ public class DefaultNutsContentTypes implements NutsContentTypes {
             }
         }
         if (best == null) {
-            throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("missing type resolver for stream named %s", name));
+            return null;
         }
         return best.getValue();
     }

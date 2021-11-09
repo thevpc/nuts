@@ -146,6 +146,7 @@ package net.thevpc.nuts;
  *     }
  * </pre>
  *
+ * @author thevpc
  * @app.category Application
  * @since 0.5.5
  */

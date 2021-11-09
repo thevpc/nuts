@@ -33,7 +33,7 @@ import net.thevpc.nuts.spi.NutsInstallerComponent;
 import net.thevpc.nuts.spi.NutsSupportLevelContext;
 
 /**
- * @author vpc
+ * @author thevpc
  */
 public class NutsWorkspaceSessionAwareImpl implements NutsWorkspace, NutsWorkspaceExt {
 

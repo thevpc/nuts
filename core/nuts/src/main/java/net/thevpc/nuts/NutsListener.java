@@ -28,9 +28,10 @@ package net.thevpc.nuts;
 
 /**
  * Anchor interface for all Nuts Listeners.
+ *
  * @author thevpc
- * @since 0.5.5
  * @app.category Events
+ * @since 0.5.5
  */
 public interface NutsListener {
 }

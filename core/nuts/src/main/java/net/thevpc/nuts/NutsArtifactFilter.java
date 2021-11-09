@@ -28,15 +28,17 @@ package net.thevpc.nuts;
 
 /**
  * SearchId Filter.
+ *
  * @author thevpc
- * @since 0.5.4
  * @app.category Base
+ * @since 0.5.4
  */
 public interface NutsArtifactFilter extends NutsFilter {
 
     /**
      * true if search id is accepted
-     * @param sid search id
+     *
+     * @param sid     search id
      * @param session session
      * @return true if search id is accepted
      */

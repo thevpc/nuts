@@ -27,7 +27,7 @@ package net.thevpc.nuts;
 /**
  * version interval is a version filter that accepts interval ranges of
  * versions.
- *
+ * <p>
  * version intervals can be in one of the following forms
  * <pre>
  * [ version, ]
@@ -49,11 +49,12 @@ package net.thevpc.nuts;
  *   [ version1 , version2 ], [ version1 , version2 ]
  *   [ version1 , version2 ]  [ version1 , version2 ]
  * </pre>
- *
+ * <p>
  * Created by vpc on 1/8/17.
  *
- * @since 0.5.4
+ * @author thevpc
  * @app.category Descriptor
+ * @since 0.5.4
  */
 public interface NutsVersionFilter extends NutsArtifactFilter {
 
@@ -69,7 +70,7 @@ public interface NutsVersionFilter extends NutsArtifactFilter {
     /**
      * true if the version is accepted by this instance filter
      *
-     * @param sid search id
+     * @param sid     search id
      * @param session current session instance
      * @return true if accepted
      */

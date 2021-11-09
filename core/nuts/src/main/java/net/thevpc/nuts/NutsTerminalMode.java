@@ -29,10 +29,9 @@ package net.thevpc.nuts;
 import net.thevpc.nuts.boot.NutsApiUtils;
 
 /**
- *
  * @author thevpc
- * @since 0.5.4
  * @app.category Base
+ * @since 0.5.4
  */
 public enum NutsTerminalMode implements NutsEnum {
     /**
@@ -99,12 +98,13 @@ public enum NutsTerminalMode implements NutsEnum {
 
     public static NutsTerminalMode parse(String value, NutsTerminalMode emptyValue, NutsSession session) {
         NutsTerminalMode v = parseLenient(value, emptyValue, null);
-        NutsApiUtils.checkNonNullEnum(v,value,NutsTerminalMode.class,session);
+        NutsApiUtils.checkNonNullEnum(v, value, NutsTerminalMode.class, session);
         return v;
     }
 
     /**
      * lower cased identifier.
+     *
      * @return lower cased identifier
      */
     public String id() {

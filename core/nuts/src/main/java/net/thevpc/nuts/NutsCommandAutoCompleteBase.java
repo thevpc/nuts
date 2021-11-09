@@ -32,9 +32,10 @@ import java.util.List;
 
 /**
  * Base (Abstract) implementation of NutsCommandAutoComplete
+ *
  * @author thevpc
- * @since 0.5.5
  * @app.category Command Line
+ * @since 0.5.5
  */
 public abstract class NutsCommandAutoCompleteBase implements NutsCommandAutoComplete {
 
@@ -55,6 +56,7 @@ public abstract class NutsCommandAutoCompleteBase implements NutsCommandAutoComp
 
     /**
      * possible candidates
+     *
      * @return possible candidates
      */
     @Override
@@ -64,6 +66,7 @@ public abstract class NutsCommandAutoCompleteBase implements NutsCommandAutoComp
 
     /**
      * add candidate
+     *
      * @param value candidate
      */
     @Override
@@ -75,6 +78,7 @@ public abstract class NutsCommandAutoCompleteBase implements NutsCommandAutoComp
 
     /**
      * simple add candidates implementation
+     *
      * @param value candidate
      * @return {@code this} instance
      */

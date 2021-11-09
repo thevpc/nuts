@@ -29,10 +29,9 @@ package net.thevpc.nuts;
 import java.util.Objects;
 
 /**
- *
  * @author thevpc
- * @since 0.5.4
  * @app.category Base
+ * @since 0.5.4
  */
 public class NutsRepositoryRef extends NutsConfigItem {
 

@@ -32,16 +32,18 @@ import java.util.List;
 
 /**
  * Component service class loader.
- * @author thevpc
+ *
  * @param <T> component type
  * @param <B> component support constraint type
- * @since 0.5.4
+ * @author thevpc
  * @app.category SPI Base
+ * @since 0.5.4
  */
 public interface NutsServiceLoader<T extends NutsComponent> {
 
     /**
      * load all NutsComponent instances matching criteria
+     *
      * @param criteria criteria to match
      * @return load all NutsComponent instances matching criteria
      */
@@ -49,6 +51,7 @@ public interface NutsServiceLoader<T extends NutsComponent> {
 
     /**
      * load best NutsComponent instance matching criteria
+     *
      * @param criteria criteria to match
      * @return load best NutsComponent instance matching criteria
      */

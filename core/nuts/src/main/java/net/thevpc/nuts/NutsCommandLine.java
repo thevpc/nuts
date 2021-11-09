@@ -25,9 +25,6 @@
  */
 package net.thevpc.nuts;
 
-import net.thevpc.nuts.boot.NutsApiUtils;
-
-import java.util.Collection;
 import java.util.List;
 
 /**
@@ -89,28 +86,41 @@ import java.util.List;
  * option may start with '!' to switch armed flags expandSimpleOptions : when
  * activated
  *
- *
- *
  * @author thevpc
- * @since 0.5.5
  * @app.category Command Line
+ * @since 0.5.5
  */
 public interface NutsCommandLine extends Iterable<NutsArgument>, NutsFormattable {
 
     static NutsCommandLine of(String[] args, NutsSession session) {
-        return NutsCommandLines.of(session).create(args);
+        return NutsCommandLines.of(session).createCommandline(args);
     }
 
     static NutsCommandLine of(List<String> args, NutsSession session) {
-        return NutsCommandLines.of(session).create(args);
+        return NutsCommandLines.of(session).createCommandline(args);
     }
 
-    static NutsCommandLine parse(String line, NutsSession session) {
-        return NutsCommandLines.of(session).parse(line);
+    /**
+     * parses the line into a command line using system shell family
+     *
+     * @param line    line to parse
+     * @param session session
+     * @return new command line instance
+     */
+    static NutsCommandLine of(String line, NutsSession session) {
+        return NutsCommandLines.of(session).parseCommandline(line);
     }
 
-    static NutsCommandLine parse(String line, NutsShellFamily shellFamily, NutsSession session) {
-        return NutsCommandLines.of(session).setShellFamily(shellFamily).parse(line);
+    /**
+     * parses the line into a command line using the provided shell family
+     *
+     * @param line        line to parse
+     * @param shellFamily shell family
+     * @param session     session
+     * @return new command line instance
+     */
+    static NutsCommandLine of(String line, NutsShellFamily shellFamily, NutsSession session) {
+        return NutsCommandLines.of(session).setShellFamily(shellFamily).parseCommandline(line);
     }
 
     /**
@@ -342,7 +352,7 @@ public interface NutsCommandLine extends Iterable<NutsArgument>, NutsFormattable
      * next argument with any value type (may having not a value).
      *
      * @param expectValue expected value type
-     * @param names names
+     * @param names       names
      * @return next argument
      */
     NutsArgument next(NutsArgumentType expectValue, String... names);
@@ -406,7 +416,7 @@ public interface NutsCommandLine extends Iterable<NutsArgument>, NutsFormattable
     /**
      * true if arguments start at index {@code index} with the given suite.
      *
-     * @param index starting index
+     * @param index  starting index
      * @param values arguments suite
      * @return true if arguments start with the given suite.
      */
@@ -509,19 +519,22 @@ public interface NutsCommandLine extends Iterable<NutsArgument>, NutsFormattable
 
     /**
      * throw a new command line error
+     *
      * @param message message
      */
     void throwError(NutsMessage message);
 
     /**
      * run the processor and fall back to defaultConfigurable
+     *
      * @param defaultConfigurable default configurable
-     * @param processor processor 
+     * @param processor           processor
      */
     void process(NutsCommandLineConfigurable defaultConfigurable, NutsCommandLineProcessor processor);
 
     /**
      * throw a new command line error
+     *
      * @param message message
      */
     void throwError(NutsString message);

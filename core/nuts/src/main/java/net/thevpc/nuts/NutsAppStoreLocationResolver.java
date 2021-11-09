@@ -26,6 +26,7 @@ package net.thevpc.nuts;
 /**
  * application store location
  *
+ * @author thevpc
  * @app.category Application
  */
 public interface NutsAppStoreLocationResolver {

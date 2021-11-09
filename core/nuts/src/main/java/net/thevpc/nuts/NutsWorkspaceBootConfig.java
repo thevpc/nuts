@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
+ * @author thevpc
  * @app.category Config
  */
 public interface NutsWorkspaceBootConfig {

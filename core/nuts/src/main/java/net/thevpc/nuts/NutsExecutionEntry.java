@@ -27,26 +27,30 @@ package net.thevpc.nuts;
 
 /**
  * Execution entry is a class that can be executed.
+ *
  * @author thevpc
- * @since 0.5.4
  * @app.category Descriptor
+ * @since 0.5.4
  */
 public interface NutsExecutionEntry extends Comparable<NutsExecutionEntry> {
 
     /**
      * true if the entry resolved to a valid nuts application
+     *
      * @return true if the entry resolved to a valid nuts application
      */
     boolean isApp();
 
     /**
      * class name
+     *
      * @return class name
      */
     String getName();
 
     /**
      * true if the class if registered as main class in META-INF
+     *
      * @return true if the class if registered as main class in META-INF
      */
     boolean isDefaultEntry();

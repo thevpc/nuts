@@ -43,7 +43,7 @@ public interface NutsDependencyBuilder extends NutsComponent {
 
     static NutsDependencyBuilder of(NutsSession session) {
         NutsApiUtils.checkSession(session);
-        return session.extensions().createSupported(NutsDependencyBuilder.class,true,null);
+        return session.extensions().createSupported(NutsDependencyBuilder.class, true, null);
     }
 
     /**

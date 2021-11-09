@@ -39,12 +39,13 @@ public interface NutsIdResolver extends NutsComponent {
 
     static NutsIdResolver of(NutsSession session) {
         NutsApiUtils.checkSession(session);
-        return session.extensions().createSupported(NutsIdResolver.class,true,null);
+        return session.extensions().createSupported(NutsIdResolver.class, true, null);
     }
 
     /**
      * detect nuts id from resources containing the given class
      * or null if not found. If multiple resolutions return the first.
+     *
      * @param clazz to search for
      * @return nuts id detected from resources containing the given class
      */
@@ -52,6 +53,7 @@ public interface NutsIdResolver extends NutsComponent {
 
     /**
      * detect all nuts ids from resources containing the given class.
+     *
      * @param clazz to search for
      * @return all nuts ids detected from resources containing the given class
      */

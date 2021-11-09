@@ -32,8 +32,8 @@ import net.thevpc.nuts.boot.NutsApiUtils;
  * Argument parse Type
  *
  * @author thevpc
- * @since 0.5.5
  * @app.category Command Line
+ * @since 0.5.5
  */
 public enum NutsArgumentType implements NutsEnum {
     /**
@@ -67,6 +67,7 @@ public enum NutsArgumentType implements NutsEnum {
 
     /**
      * parse string and return null if parse fails
+     *
      * @param value value to parse
      * @return parsed instance or null
      */
@@ -76,8 +77,9 @@ public enum NutsArgumentType implements NutsEnum {
 
     /**
      * parse string and return {@code emptyOrErrorValue} if parse fails
+     *
      * @param emptyOrErrorValue emptyOrErrorValue
-     * @param value value to parse
+     * @param value             value to parse
      * @return parsed instance or {@code emptyOrErrorValue}
      */
     public static NutsArgumentType parseLenient(String value, NutsArgumentType emptyOrErrorValue) {
@@ -85,9 +87,9 @@ public enum NutsArgumentType implements NutsEnum {
     }
 
     /**
-     *
      * parse string and return {@code emptyValue} when null or {@code errorValue} if parse fails
-     * @param value value to parse
+     *
+     * @param value      value to parse
      * @param emptyValue value when the value is null or empty
      * @param errorValue value when the value cannot be parsed
      * @return parsed value
@@ -114,12 +116,13 @@ public enum NutsArgumentType implements NutsEnum {
 
     public static NutsArgumentType parse(String value, NutsArgumentType emptyValue, NutsSession session) {
         NutsArgumentType v = parseLenient(value, emptyValue, null);
-        NutsApiUtils.checkNonNullEnum(v,value,NutsArgumentType.class,session);
+        NutsApiUtils.checkNonNullEnum(v, value, NutsArgumentType.class, session);
         return v;
     }
 
     /**
      * lower cased identifier.
+     *
      * @return lower cased identifier
      */
     public String id() {

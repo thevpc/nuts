@@ -32,8 +32,8 @@ import java.time.Instant;
  * generic JSON like parsable objects.
  *
  * @author thevpc
- * @since 0.5.6
  * @app.category Elements
+ * @since 0.5.6
  */
 public interface NutsPrimitiveElement extends NutsElement {
 

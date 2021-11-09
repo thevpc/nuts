@@ -28,14 +28,16 @@ package net.thevpc.nuts;
 
 /**
  * Format class responsible of formatting prefix of a tree
+ *
  * @author thevpc
- * @since 0.5.5
  * @app.category Format
+ * @since 0.5.5
  */
 public interface NutsTreeLinkFormat {
 
     /**
      * return prefix for node root for the given layout
+     *
      * @param type position type
      * @return formatted prefix
      */
@@ -43,6 +45,7 @@ public interface NutsTreeLinkFormat {
 
     /**
      * return prefix for node child for the given layout
+     *
      * @param type position type
      * @return formatted prefix
      */

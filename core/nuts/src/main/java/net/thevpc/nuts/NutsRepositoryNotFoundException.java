@@ -30,14 +30,15 @@ package net.thevpc.nuts;
  * This exception is thrown when a repository location could no be loaded because
  * the repository config files are missing.
  *
- * @since 0.5.4
  * @app.category Exceptions
+ * @since 0.5.4
  */
 public class NutsRepositoryNotFoundException extends NutsRepositoryException {
 
     /**
      * Constructs a new NutsRepositoryNotFoundException exception
-     * @param session  workspace
+     *
+     * @param session    workspace
      * @param repository repository
      */
     public NutsRepositoryNotFoundException(NutsSession session, String repository) {

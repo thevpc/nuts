@@ -35,7 +35,7 @@ import java.util.ListIterator;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 public class NutsCommandHistoryImpl implements NutsCommandHistory {
 

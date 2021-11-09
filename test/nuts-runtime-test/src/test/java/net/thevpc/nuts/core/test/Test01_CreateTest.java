@@ -12,6 +12,7 @@ import java.io.File;
 import java.io.InputStream;
 import java.util.regex.Pattern;
 
+import net.thevpc.nuts.spi.NutsApplicationContexts;
 import net.thevpc.nuts.spi.NutsDependencySolver;
 import net.thevpc.nuts.spi.NutsTerminals;
 import org.junit.jupiter.api.*;

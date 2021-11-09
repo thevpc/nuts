@@ -30,7 +30,7 @@ import net.thevpc.nuts.NutsSession;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 public enum ReflectPropertyDefaultValueStrategy implements NutsEnum {
     TYPE_DEFAULT,

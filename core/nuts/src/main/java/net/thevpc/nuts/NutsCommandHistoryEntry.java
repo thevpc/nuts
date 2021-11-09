@@ -26,8 +26,10 @@ package net.thevpc.nuts;
 import java.time.Instant;
 
 /**
+ * Command History Item
  *
- * @author vpc
+ * @author thevpc
+ * @since 0.8.2
  */
 public interface NutsCommandHistoryEntry {
 

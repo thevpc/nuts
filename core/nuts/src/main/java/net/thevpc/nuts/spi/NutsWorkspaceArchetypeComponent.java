@@ -28,16 +28,39 @@ package net.thevpc.nuts.spi;
 import net.thevpc.nuts.NutsSession;
 
 /**
- * Created by vpc on 1/23/17.
+ * Archetype implementation of this component define the behaviour of
+ * the workspace upon creation. By default thread implementations are provided by nuts:
+ * 'minimal' archetype does little to nothing and hence does not populate the
+ * configuration with popular repositories for instance.
+ * 'default' archetype prepares the workspace for usual usage and populates with maven
+ * and local repositories.
+ * 'server' archetype prepares is intended for network exposed workspace.
  *
- * @since 0.5.4
+ * @author thevpc
  * @app.category SPI Base
+ * @since 0.5.4
  */
 public interface NutsWorkspaceArchetypeComponent extends NutsComponent/*archetype id*/ {
 
+    /**
+     * archetype identifier name
+     *
+     * @return archetype identifier name
+     */
     String getName();
 
+    /**
+     * called to initialize the workspace
+     *
+     * @param session session
+     */
     void initializeWorkspace(NutsSession session);
 
+    /**
+     * called after the workspace starts to perform extra configuration such
+     * as installing packages.
+     *
+     * @param session session
+     */
     void startWorkspace(NutsSession session);
 }

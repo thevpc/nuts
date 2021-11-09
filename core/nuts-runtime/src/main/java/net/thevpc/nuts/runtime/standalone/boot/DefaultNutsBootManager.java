@@ -35,7 +35,7 @@ import java.net.URL;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 public class DefaultNutsBootManager implements NutsBootManager {
 

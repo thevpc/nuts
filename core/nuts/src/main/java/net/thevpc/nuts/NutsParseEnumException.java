@@ -27,6 +27,7 @@ package net.thevpc.nuts;
 
 /**
  * Exception Thrown when for any reason, the enum value is not expected/supported.
+ *
  * @author thevpc
  * @app.category Exceptions
  */
@@ -36,8 +37,9 @@ public class NutsParseEnumException extends NutsException {
 
     /**
      * create new instance of NutsUnexpectedEnumException
-     * @param session workspace
-     * @param enumType java Enum or NutsEnum type (cannot be null)
+     *
+     * @param session      workspace
+     * @param enumType     java Enum or NutsEnum type (cannot be null)
      * @param invalidValue invalid value
      */
     public NutsParseEnumException(NutsSession session, String invalidValue, Class enumType) {
@@ -46,10 +48,11 @@ public class NutsParseEnumException extends NutsException {
 
     /**
      * create new instance of NutsUnexpectedEnumException
-     * @param session workspace
-     * @param enumType java Enum or NutsEnum type (cannot be null)
+     *
+     * @param session      workspace
+     * @param enumType     java Enum or NutsEnum type (cannot be null)
      * @param invalidValue invalid value
-     * @param message message
+     * @param message      message
      */
     public NutsParseEnumException(NutsSession session, NutsMessage message, String invalidValue, Class enumType) {
         super(session,
@@ -57,8 +60,8 @@ public class NutsParseEnumException extends NutsException {
                         NutsMessage.cstyle("invalid value %s of type %s", invalidValue, enumType.getName()))
                         : message
         );
-        if(enumType==null || (!Enum.class.isAssignableFrom(enumType) && !NutsEnum.class.isAssignableFrom(enumType))){
-            throw new NutsIllegalArgumentException(session,NutsMessage.cstyle("failed creating NutsParseEnumException for %s",(enumType==null?null: enumType.getName())));
+        if (enumType == null || (!Enum.class.isAssignableFrom(enumType) && !NutsEnum.class.isAssignableFrom(enumType))) {
+            throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("failed creating NutsParseEnumException for %s", (enumType == null ? null : enumType.getName())));
         }
         this.enumType = enumType;
         this.invalidValue = invalidValue;
@@ -66,6 +69,7 @@ public class NutsParseEnumException extends NutsException {
 
     /**
      * return invalid value
+     *
      * @return invalid value
      */
     public String getInvalidValue() {
@@ -74,6 +78,7 @@ public class NutsParseEnumException extends NutsException {
 
     /**
      * enum type
+     *
      * @return enum type
      */
     public Class getEnumType() {

@@ -32,7 +32,6 @@ import net.thevpc.nuts.spi.NutsBootWorkspaceFactory;
 import java.util.Comparator;
 
 /**
- *
  * @author thevpc
  * @app.category Internal
  */

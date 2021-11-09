@@ -34,8 +34,8 @@ import java.util.Set;
  * files.
  *
  * @author thevpc
- * @since 0.5.4
  * @app.category Commands
+ * @since 0.5.4
  */
 public interface NutsFetchCommand extends NutsWorkspaceCommand {
 
@@ -269,12 +269,14 @@ public interface NutsFetchCommand extends NutsWorkspaceCommand {
 
     /**
      * dependencies scope filters
+     *
      * @return dependencies scope filters
      */
     Set<NutsDependencyScope> getScope();
 
     /**
      * optional filter
+     *
      * @return optional filter
      */
     Boolean getOptional();
@@ -294,12 +296,14 @@ public interface NutsFetchCommand extends NutsWorkspaceCommand {
 
     /**
      * content filter
+     *
      * @return content filter
      */
     boolean isContent();
 
     /**
      * enable/disable retrieval of content info
+     *
      * @param enable if true retrieval is enabled.
      * @return {@code this} instance
      */
@@ -307,12 +311,14 @@ public interface NutsFetchCommand extends NutsWorkspaceCommand {
 
     /**
      * effective filter
+     *
      * @return effective filter
      */
     boolean isEffective();
 
     /**
      * enable/disable effective descriptor evaluation
+     *
      * @param enable if true evaluation is enabled.
      * @return {@code this} instance
      */
@@ -320,12 +326,14 @@ public interface NutsFetchCommand extends NutsWorkspaceCommand {
 
     /**
      * if true dependencies list is retrieved
+     *
      * @return dependencies list retrieval status
      */
     boolean isDependencies();
 
     /**
      * enable/disable dependencies list retrieval
+     *
      * @param enable if true retrieval is enabled.
      * @return {@code this} instance
      */
@@ -383,14 +391,6 @@ public interface NutsFetchCommand extends NutsWorkspaceCommand {
 //    NutsFetchCommand addRepository(String value);
 
     /**
-     * copy session
-     *
-     * @return {@code this} instance
-     */
-    @Override
-    NutsFetchCommand copySession();
-
-    /**
      * update session
      *
      * @param session session
@@ -400,13 +400,21 @@ public interface NutsFetchCommand extends NutsWorkspaceCommand {
     NutsFetchCommand setSession(NutsSession session);
 
     /**
+     * copy session
+     *
+     * @return {@code this} instance
+     */
+    @Override
+    NutsFetchCommand copySession();
+
+    /**
      * configure the current command with the given arguments. This is an
      * override of the {@link NutsCommandLineConfigurable#configure(boolean, java.lang.String...)
      * }
      * to help return a more specific return type;
      *
      * @param skipUnsupported when true, all unsupported options are skipped
-     * @param args argument to configure with
+     * @param args            argument to configure with
      * @return {@code this} instance
      */
     @Override

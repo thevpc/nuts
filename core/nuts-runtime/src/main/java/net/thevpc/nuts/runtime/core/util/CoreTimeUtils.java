@@ -25,7 +25,7 @@ package net.thevpc.nuts.runtime.core.util;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 public class CoreTimeUtils {
 

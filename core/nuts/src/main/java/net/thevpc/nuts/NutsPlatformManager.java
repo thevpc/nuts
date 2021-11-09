@@ -56,7 +56,7 @@ public interface NutsPlatformManager {
     /**
      * verify if the path is a valid platform path and return null if not
      *
-     * @param platformType       platform type
+     * @param platformType  platform type
      * @param path          platform path
      * @param preferredName preferredName
      * @return null if not a valid jdk path

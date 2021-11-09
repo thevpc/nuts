@@ -25,6 +25,8 @@
  */
 package net.thevpc.nuts;
 
+import net.thevpc.nuts.spi.NutsVals;
+
 /**
  * NutsVal is a simple null-safe wrapper for objects and strings that can be parsed as numbers or other common types.
  * This wrapper is helpful when manipulating "arguments", "options", and "properties".
@@ -36,7 +38,8 @@ package net.thevpc.nuts;
 public interface NutsVal extends NutsBlankable {
     /**
      * create a wrapped instance for the given value
-     * @param value value
+     *
+     * @param value   value
      * @param session session
      * @return a wrapped instance for the given value
      */
@@ -68,7 +71,7 @@ public interface NutsVal extends NutsBlankable {
     /**
      * return best effort to convert the value to an int. return {@code emptyOrErrorValue} when blank or  fails
      *
-     * @param  emptyOrErrorValue emptyOrErrorValue
+     * @param emptyOrErrorValue emptyOrErrorValue
      * @return best effort to convert the value to an int
      */
     Integer getInt(Integer emptyOrErrorValue);
@@ -76,14 +79,15 @@ public interface NutsVal extends NutsBlankable {
     /**
      * return best effort to convert the value to an int. return {@code emptyValue} whe blank and {@code errorValue} when fails
      *
-     * @param  emptyValue emptyValue
-     * @param  errorValue errorValue
+     * @param emptyValue emptyValue
+     * @param errorValue errorValue
      * @return best effort to convert the value to an int
      */
     Integer getInt(Integer emptyValue, Integer errorValue);
 
     /**
      * return true if the object can be resolved as a valid long
+     *
      * @return true if the object can be resolved as a valid integer
      */
     boolean isLong();
@@ -91,7 +95,7 @@ public interface NutsVal extends NutsBlankable {
     /**
      * return best effort to convert the value to a long. return {@code emptyOrErrorValue} when blank or  fails
      *
-     * @param  emptyOrErrorValue emptyOrErrorValue
+     * @param emptyOrErrorValue emptyOrErrorValue
      * @return best effort to convert the value to a long
      */
     Long getLong(Long emptyOrErrorValue);
@@ -99,8 +103,8 @@ public interface NutsVal extends NutsBlankable {
     /**
      * return best effort to convert the value to a long. return {@code emptyValue} whe blank and {@code errorValue} when fails
      *
-     * @param  emptyValue emptyValue
-     * @param  errorValue errorValue
+     * @param emptyValue emptyValue
+     * @param errorValue errorValue
      * @return best effort to convert the value to a long
      */
     Long getLong(Long emptyValue, Long errorValue);
@@ -114,12 +118,14 @@ public interface NutsVal extends NutsBlankable {
 
     /**
      * return true if the object can be resolved as a valid double
+     *
      * @return return true if the object can be resolved as a valid double
      */
     boolean isDouble();
 
     /**
      * return true if the object can be resolved as a valid float
+     *
      * @return true if the object can be resolved as a valid integer
      */
     boolean isFloat();
@@ -127,7 +133,7 @@ public interface NutsVal extends NutsBlankable {
     /**
      * return best effort to convert the value to a double. return {@code emptyOrErrorValue} when blank or  fails
      *
-     * @param  emptyOrErrorValue emptyOrErrorValue
+     * @param emptyOrErrorValue emptyOrErrorValue
      * @return best effort to convert the value to a double
      */
     Double getDouble(Double emptyOrErrorValue);
@@ -135,8 +141,8 @@ public interface NutsVal extends NutsBlankable {
     /**
      * return best effort to convert the value to a double. return {@code emptyValue} whe blank and {@code errorValue} when fails
      *
-     * @param  emptyValue emptyValue
-     * @param  errorValue errorValue
+     * @param emptyValue emptyValue
+     * @param errorValue errorValue
      * @return best effort to convert the value to a double
      */
     Double getDouble(Double emptyValue, Double errorValue);
@@ -152,7 +158,7 @@ public interface NutsVal extends NutsBlankable {
     /**
      * return best effort to convert the value to a float. return {@code emptyOrErrorValue} when blank or  fails
      *
-     * @param  emptyOrErrorValue emptyOrErrorValue
+     * @param emptyOrErrorValue emptyOrErrorValue
      * @return best effort to convert the value to a float
      */
     Float getFloat(Float emptyOrErrorValue);
@@ -160,8 +166,8 @@ public interface NutsVal extends NutsBlankable {
     /**
      * return best effort to convert the value to a float. return {@code emptyValue} whe blank and {@code errorValue} when fails
      *
-     * @param  emptyValue emptyValue
-     * @param  errorValue errorValue
+     * @param emptyValue emptyValue
+     * @param errorValue errorValue
      * @return best effort to convert the value to a float
      */
     Float getFloat(Float emptyValue, Float errorValue);
@@ -175,12 +181,14 @@ public interface NutsVal extends NutsBlankable {
 
     /**
      * return true if the object can be resolved as a valid boolean
+     *
      * @return true if the object can be resolved as a valid integer
      */
     boolean isBoolean();
 
     /**
      * return true if the object can be resolved as a valid integer
+     *
      * @return true if the object can be resolved as a valid integer
      */
     boolean isInt();
@@ -195,7 +203,7 @@ public interface NutsVal extends NutsBlankable {
     /**
      * return best effort to convert the value to a boolean. return {@code emptyOrErrorValue} when blank or  fails
      *
-     * @param  emptyOrErrorValue emptyOrErrorValue
+     * @param emptyOrErrorValue emptyOrErrorValue
      * @return best effort to convert the value to a boolean
      */
     Boolean getBoolean(Boolean emptyOrErrorValue);
@@ -203,8 +211,8 @@ public interface NutsVal extends NutsBlankable {
     /**
      * return best effort to convert the value to a boolean. return {@code emptyValue} whe blank and {@code errorValue} when fails
      *
-     * @param  emptyValue emptyValue
-     * @param  errorValue errorValue
+     * @param emptyValue emptyValue
+     * @param errorValue errorValue
      * @return best effort to convert the value to a boolean
      */
     Boolean getBoolean(Boolean emptyValue, Boolean errorValue);
@@ -212,18 +220,21 @@ public interface NutsVal extends NutsBlankable {
 
     /**
      * return true if the object can be resolved as a valid string (is a CharSequence)
+     *
      * @return true if the object can be resolved as a valid integer
      */
     boolean isString();
 
     /**
      * return null if the value is null or calls Object.toString()
+     *
      * @return null if the value is null or calls Object.toString()
      */
     String getString();
 
     /**
-     *  return {@code defaultValue} if the value is null or calls {@code Object.toString()}
+     * return {@code defaultValue} if the value is null or calls {@code Object.toString()}
+     *
      * @param defaultValue defaultValue
      * @return {@code defaultValue} if the value is null or calls {@code Object.toString()}
      */
@@ -231,12 +242,14 @@ public interface NutsVal extends NutsBlankable {
 
     /**
      * return the related object defining the current value
+     *
      * @return the related object defining the current value
      */
     Object getObject();
 
     /**
-     *  return {@code defaultValue} if the value is null or the current value
+     * return {@code defaultValue} if the value is null or the current value
+     *
      * @param defaultValue defaultValue
      * @return {@code defaultValue} if the value is null or the current value
      */

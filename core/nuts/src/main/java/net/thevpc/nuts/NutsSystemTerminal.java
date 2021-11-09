@@ -32,20 +32,20 @@ import net.thevpc.nuts.spi.NutsTerminals;
 import java.io.InputStream;
 
 /**
- *
  * @author thevpc
- * @since 0.5.4
  * @app.category Input Output
+ * @since 0.5.4
  */
 public interface NutsSystemTerminal extends NutsSystemTerminalBase {
-    static void enableRichTerm(NutsSession session){
+    static void enableRichTerm(NutsSession session) {
         NutsTerminals.of(session).enableRichTerm(session);
     }
+
     /**
      * Reads a single line of text from the terminal's input stream.
      *
-     * @param message       message
-     * @param session       session
+     * @param message message
+     * @param session session
      * @return A string containing the line read from the terminal's input
      * stream, not including any line-termination characters, or {@code null}
      * if an end of stream has been reached.
@@ -56,8 +56,8 @@ public interface NutsSystemTerminal extends NutsSystemTerminalBase {
     /**
      * Reads password as a single line of text from the terminal's input stream.
      *
-     * @param message       message
-     * @param session       session
+     * @param message message
+     * @param session session
      * @return A string containing the line read from the terminal's input
      * stream, not including any line-termination characters, or {@code null}
      * if an end of stream has been reached.
@@ -91,7 +91,7 @@ public interface NutsSystemTerminal extends NutsSystemTerminalBase {
      *
      * @param progress 0.0f-1.0f value
      * @param message  message
-     * @param session session
+     * @param session  session
      * @return {@code this} instance
      */
     NutsSystemTerminal printProgress(float progress, NutsMessage message, NutsSession session);

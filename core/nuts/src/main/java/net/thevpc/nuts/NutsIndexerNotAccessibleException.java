@@ -27,12 +27,14 @@ package net.thevpc.nuts;
 
 /**
  * Exception thrown when copy validation fails
+ *
  * @app.category Exceptions
  */
 public class NutsIndexerNotAccessibleException extends NutsException {
 
     /**
      * Constructs a new Validation Exception
+     *
      * @param message message
      * @param session workspace
      */
@@ -42,9 +44,10 @@ public class NutsIndexerNotAccessibleException extends NutsException {
 
     /**
      * Constructs a new Validation Exception
+     *
      * @param session workspace
      * @param message message
-     * @param cause cause
+     * @param cause   cause
      */
     public NutsIndexerNotAccessibleException(NutsSession session, NutsMessage message, Throwable cause) {
         super(session, message, cause);

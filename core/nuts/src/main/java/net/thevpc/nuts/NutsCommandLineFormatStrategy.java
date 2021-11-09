@@ -84,7 +84,7 @@ public enum NutsCommandLineFormatStrategy implements NutsEnum {
 
     public static NutsCommandLineFormatStrategy parse(String value, NutsCommandLineFormatStrategy emptyValue, NutsSession session) {
         NutsCommandLineFormatStrategy v = parseLenient(value, emptyValue, null);
-        NutsApiUtils.checkNonNullEnum(v,value,NutsCommandLineFormatStrategy.class,session);
+        NutsApiUtils.checkNonNullEnum(v, value, NutsCommandLineFormatStrategy.class, session);
         return v;
     }
 

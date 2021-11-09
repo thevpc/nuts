@@ -30,14 +30,16 @@ import net.thevpc.nuts.NutsRepository;
 
 /**
  * Index Store Factory responsible of creating stores for a given repository
+ *
  * @author thevpc
- * @since 0.5.4
  * @app.category Base
+ * @since 0.5.4
  */
 public interface NutsIndexStoreFactory extends NutsComponent/*any object or null*/ {
 
     /**
      * create a new index store implementation or null if not supported
+     *
      * @param repository repository to greate the index store to
      * @return a new index store implementation or null if not supported
      */

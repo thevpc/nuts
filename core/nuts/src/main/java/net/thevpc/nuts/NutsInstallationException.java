@@ -29,8 +29,8 @@ package net.thevpc.nuts;
 /**
  * Base exception for installation fails.
  *
- * @since 0.5.4
  * @app.category Exceptions
+ * @since 0.5.4
  */
 public abstract class NutsInstallationException extends NutsException {
 
@@ -43,9 +43,9 @@ public abstract class NutsInstallationException extends NutsException {
      * Custom Constructor
      *
      * @param session workspace
-     * @param id nuts id
-     * @param msg message
-     * @param ex exception
+     * @param id      nuts id
+     * @param msg     message
+     * @param ex      exception
      */
     public NutsInstallationException(NutsSession session, NutsId id, NutsMessage msg, Throwable ex) {
         super(session, msg == null ? NutsMessage.cstyle("failed to install %s" + (id == null ? "<null>" : id)) : msg, ex);

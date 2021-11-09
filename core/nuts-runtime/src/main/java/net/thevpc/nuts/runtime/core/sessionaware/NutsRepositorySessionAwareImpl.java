@@ -52,7 +52,7 @@ import net.thevpc.nuts.spi.NutsUpdateRepositoryStatisticsCommand;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 public class NutsRepositorySessionAwareImpl implements NutsRepository, NutsRepositorySPI, NutsRepositoryExt {
 

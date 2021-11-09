@@ -38,6 +38,7 @@ import java.util.function.Supplier;
 /**
  * Workspace creation/opening options class.
  *
+ * @author thevpc
  * @app.category Internal
  * @since 0.5.4
  */
@@ -47,60 +48,51 @@ final class PrivateBootWorkspaceOptions implements Serializable, Cloneable, Nuts
      * option-type : exported (inherited in child workspaces)
      */
     private final List<String> outputFormatOptions = new ArrayList<>();
-
+    private final PrivateNutsLog log;
     private String[] customOptions;
     /**
      * nuts api version to boot option-type : exported (inherited in child
      * workspaces)
      */
     private String apiVersion = null;
-
     /**
      * nuts runtime id (or version) to boot option-type : exported (inherited in
      * child workspaces)
      */
     private String runtimeId;
-
     /**
      * option-type : exported (inherited in child workspaces)
      */
     private String javaCommand;
-
     /**
      * option-type : exported (inherited in child workspaces)
      */
     private String javaOptions;
-
     /**
      * workspace folder location path option-type : exported (inherited in child
      * workspaces)
      */
     private String workspace = null;
-
     /**
      * out line prefix, option-type : exported (inherited in child
      * workspaces)
      */
     private String outLinePrefix = null;
-
     /**
      * err line prefix, option-type : exported (inherited in child
      * workspaces)
      */
     private String errLinePrefix = null;
-
     /**
      * user friendly workspace name option-type : exported (inherited in child
      * workspaces)
      */
     private String name = null;
-
     /**
      * if true, do not install nuts companion tools upon workspace creation
      * option-type : exported (inherited in child workspaces)
      */
     private Boolean skipCompanions;
-
     /**
      * if true, do not run welcome when no application arguments were resolved.
      * defaults to false option-type : exported (inherited in child workspaces)
@@ -108,7 +100,6 @@ final class PrivateBootWorkspaceOptions implements Serializable, Cloneable, Nuts
      * @since 0.5.5
      */
     private Boolean skipWelcome;
-
     /**
      * if true, do not bootstrap workspace after reset/recover.
      * When reset/recover is not active this option is not accepted and an error will be thrown
@@ -116,142 +107,115 @@ final class PrivateBootWorkspaceOptions implements Serializable, Cloneable, Nuts
      * @since 0.6.0
      */
     private Boolean skipBoot;
-
     /**
      * if true consider global/system repository
      * <br>
      * option-type : exported (inherited in child workspaces)
      */
     private Boolean global;
-
     /**
      * if true consider GUI/Swing mode
      * <br>
      * option-type : exported (inherited in child workspaces)
      */
     private Boolean gui;
-
     /**
      * option-type : exported (inherited in child workspaces)
      */
     private String[] excludedExtensions;
-
     /**
      * option-type : exported (inherited in child workspaces)
      */
     private String[] repositories;
-
     /**
      * option-type : exported (inherited in child workspaces)
      */
     private String userName = null;
-
     /**
      * option-type : exported (inherited in child workspaces)
      */
     private char[] credentials = null;
-
     /**
      * option-type : exported (inherited in child workspaces)
      */
     private NutsTerminalMode terminalMode = null;
-
     /**
      * option-type : exported (inherited in child workspaces)
      */
     private Boolean readOnly;
-
     /**
      * option-type : exported (inherited in child workspaces)
      */
     private Boolean trace;
-
     /**
      * option-type : exported (inherited in child workspaces)
      */
     private String progressOptions = null;
-
     /**
      * option-type : exported (inherited in child workspaces)
      */
     private String dependencySolver = null;
-
     /**
      * option-type : exported (inherited in child workspaces)
      */
     private NutsLogConfig logConfig;
-
     /**
      * option-type : exported (inherited in child workspaces)
      */
     private NutsConfirmationMode confirm = null;
-
     /**
      * option-type : exported (inherited in child workspaces)
      */
     private NutsContentType outputFormat = null;
-
     /**
      * option-type : runtime (available only for the current workspace instance)
      */
     private String[] applicationArguments;
-
     /**
      * option-type : runtime (available only for the current workspace instance)
      */
     private NutsOpenMode openMode = NutsOpenMode.OPEN_OR_CREATE;
-
     /**
      * option-type : runtime (available only for the current workspace instance)
      */
     private long creationTime;
-
     /**
      * if true no real execution, wil dry exec
      * option-type : runtime (available only for the current workspace instance)
      */
     private Boolean dry;
-
     /**
      * option-type : runtime (available only for the current workspace instance)
      */
     private Supplier<ClassLoader> classLoaderSupplier;
-
     /**
      * option-type : runtime (available only for the current workspace instance)
      */
     private String[] executorOptions;
-
     /**
      * option-type : runtime (available only for the current workspace instance)
      */
     private Boolean recover;
-
     /**
      * option-type : runtime (available only for the current workspace instance)
      */
     private Boolean reset;
-
     /**
      * option-type : runtime (available only for the current workspace instance)
      */
     private Boolean commandVersion;
-
     /**
      * option-type : runtime (available only for the current workspace instance)
      */
     private Boolean commandHelp;
-
     /**
      * option-type : runtime (available only for the current workspace instance)
      */
     private Boolean debug;
-
     /**
      * option-type : runtime (available only for the current workspace instance)
      */
     private Boolean inherited;
-
     /**
      * option-type : runtime (available only for the current workspace instance)
      */
@@ -262,13 +226,11 @@ final class PrivateBootWorkspaceOptions implements Serializable, Cloneable, Nuts
      * @since 0.8.1
      */
     private NutsRunAs runAs = NutsRunAs.CURRENT_USER;
-
     /**
      * option-type : create (used when creating new workspace. will not be
      * exported nor promoted to runtime)
      */
     private String archetype;
-
     /**
      * option-type : create (used when creating new workspace. will not be
      * exported nor promoted to runtime)
@@ -276,86 +238,71 @@ final class PrivateBootWorkspaceOptions implements Serializable, Cloneable, Nuts
      * @since 0.8.0
      */
     private Boolean switchWorkspace;
-
     /**
      * option-type : create (used when creating new workspace. will not be
      * exported nor promoted to runtime)
      */
     private Map<NutsStoreLocation, String> storeLocations = new HashMap<>();
-
     /**
      * option-type : create (used when creating new workspace. will not be
      * exported nor promoted to runtime)
      */
     private Map<NutsHomeLocation, String> homeLocations = new HashMap<>();
-
     /**
      * option-type : create (used when creating new workspace. will not be
      * exported nor promoted to runtime)
      */
     private NutsOsFamily storeLocationLayout = null;
-
     /**
      * option-type : create (used when creating new workspace. will not be
      * exported nor promoted to runtime)
      */
     private NutsStoreLocationStrategy storeLocationStrategy = null;
-
     /**
      * option-type : create (used when creating new workspace. will not be
      * exported nor promoted to runtime)
      */
     private NutsStoreLocationStrategy repositoryStoreLocationStrategy = null;
-
     /**
      * option-type : exported (inherited in child workspaces)
      */
     private NutsFetchStrategy fetchStrategy = NutsFetchStrategy.ONLINE;
-
     /**
      * option-type : exported (inherited in child workspaces)
      */
     private Boolean cached;
-
     /**
      * option-type : exported (inherited in child workspaces)
      */
     private Boolean indexed;
-
     /**
      * option-type : exported (inherited in child workspaces)
      */
     private Boolean transitive;
-
     /**
      * option-type : exported (inherited in child workspaces)
      */
     private Boolean bot;
-
     /**
      * not parsed
      * option-type : runtime (available only for the current workspace instance)
      */
     private InputStream stdin = null;
-
     /**
      * not parsed
      * option-type : runtime (available only for the current workspace instance)
      */
     private PrintStream stdout = null;
-
     /**
      * not parsed
      * option-type : runtime (available only for the current workspace instance)
      */
     private PrintStream stderr = null;
-
     /**
      * not parsed
      * option-type : runtime (available only for the current workspace instance)
      */
     private ExecutorService executorService = null;
-
     /**
      * option-type : runtime (available only for the current workspace instance)
      */
@@ -363,18 +310,15 @@ final class PrivateBootWorkspaceOptions implements Serializable, Cloneable, Nuts
     private Instant expireTime = null;
     private NutsMessage[] errors = new NutsMessage[0];
     private Boolean skipErrors;
-
     /**
      * option-type : exported (inherited in child workspaces)
      */
     private String locale;
-
     /**
      * option-type : exported (inherited in child workspaces)
      */
     private String theme;
     private NutsBootTerminal bootTerminal;
-    private final PrivateNutsLog log;
 
     public PrivateBootWorkspaceOptions(PrivateNutsLog log) {
         this.log = log;

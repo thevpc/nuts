@@ -29,8 +29,8 @@ package net.thevpc.nuts;
 /**
  * Created by vpc on 1/15/17.
  *
- * @since 0.5.4
  * @app.category Exceptions
+ * @since 0.5.4
  */
 public class NutsWorkspaceAlreadyExistsException extends NutsBootException {
 
@@ -41,6 +41,7 @@ public class NutsWorkspaceAlreadyExistsException extends NutsBootException {
 
     /**
      * Constructs a new NutsWorkspaceAlreadyExistsException exception
+     *
      * @param workspaceLocation location
      */
     public NutsWorkspaceAlreadyExistsException(String workspaceLocation) {
@@ -50,8 +51,9 @@ public class NutsWorkspaceAlreadyExistsException extends NutsBootException {
 
     /**
      * Constructs a new NutsWorkspaceAlreadyExistsException exception
+     *
      * @param workspaceLocation location
-     * @param err exception
+     * @param err               exception
      */
     public NutsWorkspaceAlreadyExistsException(String workspaceLocation, Throwable err) {
         super(NutsMessage.cstyle("workspace already exists %s", (workspaceLocation == null ? "<null>" : workspaceLocation)), err);
@@ -60,6 +62,7 @@ public class NutsWorkspaceAlreadyExistsException extends NutsBootException {
 
     /**
      * workspace location
+     *
      * @return workspace location
      */
     public String getWorkspaceLocation() {

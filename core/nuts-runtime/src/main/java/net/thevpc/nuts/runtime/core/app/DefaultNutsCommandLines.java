@@ -42,7 +42,7 @@ public class DefaultNutsCommandLines implements NutsCommandLines {
     }
 
     @Override
-    public NutsCommandLine parse(String line) {
+    public NutsCommandLine parseCommandline(String line) {
         checkSession();
         return new DefaultNutsCommandLine(getSession(), parseCommandLineArr(line));
     }
@@ -60,13 +60,13 @@ public class DefaultNutsCommandLines implements NutsCommandLines {
     }
 
     @Override
-    public NutsCommandLine create(String... args) {
+    public NutsCommandLine createCommandline(String... args) {
         checkSession();
         return new DefaultNutsCommandLine(getSession(), args);
     }
 
     @Override
-    public NutsCommandLine create(List<String> args) {
+    public NutsCommandLine createCommandline(List<String> args) {
         checkSession();
         return new DefaultNutsCommandLine(getSession(), args, null);
     }

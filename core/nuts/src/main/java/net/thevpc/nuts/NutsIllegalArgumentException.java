@@ -29,8 +29,8 @@ package net.thevpc.nuts;
  * argument.
  *
  * @author thevpc
- * @since 0.5.4
  * @app.category Exceptions
+ * @since 0.5.4
  */
 public class NutsIllegalArgumentException extends NutsException {
 
@@ -49,7 +49,7 @@ public class NutsIllegalArgumentException extends NutsException {
      *
      * @param session workspace
      * @param message message
-     * @param cause cause
+     * @param cause   cause
      */
     public NutsIllegalArgumentException(NutsSession session, NutsMessage message, Throwable cause) {
         super(session, message, cause);
@@ -58,13 +58,13 @@ public class NutsIllegalArgumentException extends NutsException {
     /**
      * Constructs a new NutsIllegalArgumentException exception
      *
-     * @param session workspace
-     * @param message message
-     * @param cause cause
-     * @param enableSuppression whether or not suppression is enabled or
-     * disabled
+     * @param session            workspace
+     * @param message            message
+     * @param cause              cause
+     * @param enableSuppression  whether or not suppression is enabled or
+     *                           disabled
      * @param writableStackTrace whether or not the stack trace should be
-     * writable
+     *                           writable
      */
     public NutsIllegalArgumentException(NutsSession session, NutsMessage message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
         super(session, message, cause, enableSuppression, writableStackTrace);

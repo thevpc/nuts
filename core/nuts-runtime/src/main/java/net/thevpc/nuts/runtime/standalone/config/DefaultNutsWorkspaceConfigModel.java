@@ -25,7 +25,6 @@ package net.thevpc.nuts.runtime.standalone.config;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.CoreNutsConstants;
-import net.thevpc.nuts.runtime.core.NutsSupplierBase;
 import net.thevpc.nuts.runtime.core.NutsWorkspaceExt;
 import net.thevpc.nuts.runtime.core.app.DefaultNutsWorkspaceLocationManager;
 import net.thevpc.nuts.runtime.core.common.TimePeriod;
@@ -1621,7 +1620,7 @@ public class DefaultNutsWorkspaceConfigModel {
         }
         //
         ClassLoader finalClassLoader = classLoader;
-        NutsSupplier<NutsPathSPI> z = Arrays.stream(getPathFactories())
+        NutsSupported<NutsPathSPI> z = Arrays.stream(getPathFactories())
                 .map(x -> {
                     try {
                         return x.createPath(path, session, finalClassLoader);
@@ -1630,10 +1629,10 @@ public class DefaultNutsWorkspaceConfigModel {
                     }
                     return null;
                 })
-                .filter(x -> x != null && x.getLevel() > 0)
-                .max(Comparator.comparingInt(NutsSupplier::getLevel))
+                .filter(x -> x != null && x.getSupportLevel() > 0)
+                .max(Comparator.comparingInt(NutsSupported::getSupportLevel))
                 .orElse(null);
-        NutsPathSPI s = z == null ? null : z.create();
+        NutsPathSPI s = z == null ? null : z.getValue();
         if (s != null) {
             if (s instanceof NutsPath) {
                 return (NutsPath) s;
@@ -1766,16 +1765,11 @@ public class DefaultNutsWorkspaceConfigModel {
 
     private class URLPathFactory implements NutsPathFactory {
         @Override
-        public NutsSupplier<NutsPathSPI> createPath(String path, NutsSession session, ClassLoader classLoader) {
+        public NutsSupported<NutsPathSPI> createPath(String path, NutsSession session, ClassLoader classLoader) {
             NutsWorkspaceUtils.checkSession(getWorkspace(), session);
             try {
                 URL url = new URL(path);
-                return new NutsSupplierBase<NutsPathSPI>(2) {
-                    @Override
-                    public NutsPathSPI create() {
-                        return new URLPath(url, session);
-                    }
-                };
+                return NutsSupported.of(2,()->new URLPath(url, session));
             } catch (Exception ex) {
                 //ignore
             }
@@ -1785,16 +1779,11 @@ public class DefaultNutsWorkspaceConfigModel {
 
     private class NutsResourcePathFactory implements NutsPathFactory {
         @Override
-        public NutsSupplier<NutsPathSPI> createPath(String path, NutsSession session, ClassLoader classLoader) {
+        public NutsSupported<NutsPathSPI> createPath(String path, NutsSession session, ClassLoader classLoader) {
             NutsWorkspaceUtils.checkSession(getWorkspace(), session);
             try {
                 if (path.startsWith("nuts-resource:")) {
-                    return new NutsSupplierBase<NutsPathSPI>(2) {
-                        @Override
-                        public NutsPathSPI create() {
-                            return new NutsResourcePath(path, session);
-                        }
-                    };
+                    return NutsSupported.of(2,()->new NutsResourcePath(path, session));
                 }
             } catch (Exception ex) {
                 //ignore
@@ -1805,16 +1794,11 @@ public class DefaultNutsWorkspaceConfigModel {
 
     private class ClasspathNutsPathFactory implements NutsPathFactory {
         @Override
-        public NutsSupplier<NutsPathSPI> createPath(String path, NutsSession session, ClassLoader classLoader) {
+        public NutsSupported<NutsPathSPI> createPath(String path, NutsSession session, ClassLoader classLoader) {
             NutsWorkspaceUtils.checkSession(getWorkspace(), session);
             try {
                 if (path.startsWith("classpath:")) {
-                    return new NutsSupplierBase<NutsPathSPI>(2) {
-                        @Override
-                        public NutsPathSPI create() {
-                            return new ClassLoaderPath(path, classLoader, session);
-                        }
-                    };
+                    return NutsSupported.of(2,()->new ClassLoaderPath(path, classLoader, session));
                 }
             } catch (Exception ex) {
                 //ignore
@@ -1825,19 +1809,14 @@ public class DefaultNutsWorkspaceConfigModel {
 
     private class FilePathFactory implements NutsPathFactory {
         @Override
-        public NutsSupplier<NutsPathSPI> createPath(String path, NutsSession session, ClassLoader classLoader) {
+        public NutsSupported<NutsPathSPI> createPath(String path, NutsSession session, ClassLoader classLoader) {
             NutsWorkspaceUtils.checkSession(getWorkspace(), session);
             try {
                 if (MOSTLY_URL_PATTERN.matcher(path).matches()) {
                     return null;
                 }
                 Path value = Paths.get(path);
-                return new NutsSupplierBase<NutsPathSPI>(1) {
-                    @Override
-                    public NutsPathSPI create() {
-                        return new FilePath(value, session);
-                    }
-                };
+                return NutsSupported.of(1,()->new FilePath(value, session));
             } catch (Exception ex) {
                 //ignore
             }

@@ -30,13 +30,16 @@ import net.thevpc.nuts.boot.NutsApiUtils;
 import net.thevpc.nuts.spi.NutsComponent;
 
 /**
+ * Dependency Parser
+ *
+ * @author thevpc
  * @app.category Base
  */
 public interface NutsDependencyParser extends NutsComponent {
 
     static NutsDependencyParser of(NutsSession session) {
         NutsApiUtils.checkSession(session);
-        return session.extensions().createSupported(NutsDependencyParser.class,true,null);
+        return session.extensions().createSupported(NutsDependencyParser.class, true, null);
     }
 
     boolean isLenient();
@@ -47,6 +50,7 @@ public interface NutsDependencyParser extends NutsComponent {
      * parse dependency in the form
      * group:name#version?scope=&lt;scope&gt;{@code &}optional=&lt;optional&gt;
      * If the string cannot be evaluated, return null (when not required).
+     *
      * @param dependency dependency
      * @return new instance of parsed dependency
      */

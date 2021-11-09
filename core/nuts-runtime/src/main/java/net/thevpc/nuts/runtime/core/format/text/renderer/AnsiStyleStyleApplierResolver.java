@@ -28,7 +28,7 @@ import net.thevpc.nuts.runtime.core.format.text.renderer.ansi.AnsiStyleStyleAppl
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 public interface AnsiStyleStyleApplierResolver {
     AnsiStyleStyleApplier resolveStyleApplyer(AnsiEscapeCommand format);

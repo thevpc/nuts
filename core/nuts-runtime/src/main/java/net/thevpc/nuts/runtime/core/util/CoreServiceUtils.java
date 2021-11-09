@@ -36,7 +36,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 /**
- * @author vpc
+ * @author thevpc
  */
 public final class CoreServiceUtils {
 

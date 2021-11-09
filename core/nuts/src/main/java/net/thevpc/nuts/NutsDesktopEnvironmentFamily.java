@@ -1,3 +1,29 @@
+/**
+ * ====================================================================
+ * Nuts : Network Updatable Things Service
+ * (universal package manager)
+ * <br>
+ * is a new Open Source Package Manager to help install packages
+ * and libraries for runtime execution. Nuts is the ultimate companion for
+ * maven (and other build managers) as it helps installing all package
+ * dependencies at runtime. Nuts is not tied to java and is a good choice
+ * to share shell scripts and other 'things' . Its based on an extensible
+ * architecture to help supporting a large range of sub managers / repositories.
+ *
+ * <br>
+ * <p>
+ * Copyright [2020] [thevpc]
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may
+ * not use this file except in compliance with the License. You may obtain a
+ * copy of the License at http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+ * either express or implied. See the License for the specific language
+ * governing permissions and limitations under the License.
+ * <br>
+ * ====================================================================
+ */
 package net.thevpc.nuts;
 
 import net.thevpc.nuts.boot.NutsApiUtils;
@@ -50,7 +76,7 @@ public enum NutsDesktopEnvironmentFamily implements NutsEnum {
         if (e == null) {
             e = "";
         } else {
-            e = e.toLowerCase().trim().replace("-","").replace("_","");
+            e = e.toLowerCase().trim().replace("-", "").replace("_", "");
         }
         switch (e) {
             case "":
@@ -72,10 +98,10 @@ public enum NutsDesktopEnvironmentFamily implements NutsEnum {
                 return GNOME;
             case "unknown":
                 return UNKNOWN;
-            default:{
+            default: {
                 try {
                     return NutsDesktopEnvironmentFamily.valueOf(e.toUpperCase());
-                }catch (Exception ex){
+                } catch (Exception ex) {
                     //ignore error
                 }
             }
@@ -89,7 +115,7 @@ public enum NutsDesktopEnvironmentFamily implements NutsEnum {
 
     public static NutsDesktopEnvironmentFamily parse(String value, NutsDesktopEnvironmentFamily emptyValue, NutsSession session) {
         NutsDesktopEnvironmentFamily v = parseLenient(value, emptyValue, null);
-        NutsApiUtils.checkNonNullEnum(v,value,NutsDesktopEnvironmentFamily.class,session);
+        NutsApiUtils.checkNonNullEnum(v, value, NutsDesktopEnvironmentFamily.class, session);
         return v;
     }
 

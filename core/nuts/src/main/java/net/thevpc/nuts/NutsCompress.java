@@ -41,8 +41,8 @@ import java.util.List;
  * Default implementation should handle
  *
  * @author thevpc
- * @since 0.5.4
  * @app.category Toolkit
+ * @since 0.5.4
  */
 public interface NutsCompress extends NutsComponent {
     static NutsCompress of(NutsSession session) {
@@ -52,14 +52,16 @@ public interface NutsCompress extends NutsComponent {
 
     /**
      * update format option
+     *
      * @param option option name
-     * @param value value
+     * @param value  value
      * @return {@code this} instance
      */
     NutsCompress setFormatOption(String option, Object value);
 
     /**
      * return format option
+     *
      * @param option option name
      * @return option value
      */
@@ -67,12 +69,14 @@ public interface NutsCompress extends NutsComponent {
 
     /**
      * format
+     *
      * @return format
      */
     String getFormat();
 
     /**
      * update format
+     *
      * @param format format
      * @return {@code this} instance
      */

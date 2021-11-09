@@ -29,8 +29,9 @@ package net.thevpc.nuts;
 /**
  * Created by vpc on 1/15/17.
  *
- * @since 0.5.4
+ * @author thevpc
  * @app.category Extensions
+ * @since 0.5.4
  */
 public interface NutsWorkspaceExtension {
 

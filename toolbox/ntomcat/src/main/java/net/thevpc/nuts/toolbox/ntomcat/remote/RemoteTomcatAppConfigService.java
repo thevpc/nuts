@@ -60,7 +60,7 @@ public class RemoteTomcatAppConfigService extends RemoteTomcatServiceBase {
             v = "nsh nversion --color=never %file";
         }
         List<String> cmd = Arrays.asList(
-                NutsCommandLine.parse(v,session).toStringArray()
+                NutsCommandLine.of(v,session).toStringArray()
         );
         boolean fileAdded = false;
         for (int i = 0; i < cmd.size(); i++) {

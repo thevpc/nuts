@@ -546,7 +546,7 @@ public class DefaultNutsCommandLine implements NutsCommandLine {
 
     public NutsCommandLine parseLine(String commandLine) {
         setArguments(
-                NutsCommandLine.parse(commandLine,session).toStringArray()
+                NutsCommandLine.of(commandLine,session).toStringArray()
         );
         return this;
     }

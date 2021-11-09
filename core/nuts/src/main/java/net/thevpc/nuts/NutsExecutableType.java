@@ -29,6 +29,7 @@ import net.thevpc.nuts.boot.NutsApiUtils;
 
 /**
  * Executable command type returned by which internal command
+ *
  * @author thevpc
  * @since 0.5.4
  */
@@ -57,6 +58,7 @@ public enum NutsExecutableType implements NutsEnum {
 
     /**
      * unknown command
+     *
      * @since 0.8.3
      */
     UNKNOWN;
@@ -103,12 +105,13 @@ public enum NutsExecutableType implements NutsEnum {
 
     public static NutsExecutableType parse(String value, NutsExecutableType emptyValue, NutsSession session) {
         NutsExecutableType v = parseLenient(value, emptyValue, null);
-        NutsApiUtils.checkNonNullEnum(v,value,NutsExecutableType.class,session);
+        NutsApiUtils.checkNonNullEnum(v, value, NutsExecutableType.class, session);
         return v;
     }
 
     /**
      * lower cased identifier.
+     *
      * @return lower cased identifier
      */
     public String id() {

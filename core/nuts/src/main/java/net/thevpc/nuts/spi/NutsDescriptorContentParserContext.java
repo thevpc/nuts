@@ -33,8 +33,8 @@ import java.io.InputStream;
 /**
  * context holding useful information for {@link NutsDescriptorContentParserComponent#parse(NutsDescriptorContentParserContext)}
  *
- * @since 0.5.4
  * @app.category SPI Base
+ * @since 0.5.4
  */
 public interface NutsDescriptorContentParserContext {
 
@@ -46,6 +46,7 @@ public interface NutsDescriptorContentParserContext {
      * of all main classes even though a Main-Class attribute is visited in the MANIFEST.MF
      * file.
      * This array may continue any non supported options. They should be discarded by the parser.
+     *
      * @return parser options.
      * @since 0.5.8
      */
@@ -55,42 +56,49 @@ public interface NutsDescriptorContentParserContext {
      * return content header stream.
      * if the content size is less than 1Mb, then all the content is returned.
      * If not, at least 1Mb is returned.
+     *
      * @return content header stream
      */
     InputStream getHeadStream();
 
     /**
      * content stream
+     *
      * @return content stream
      */
     InputStream getFullStream();
 
     /**
      * content file extension or null. At least one of file extension or file mime-type is provided.
+     *
      * @return content file extension
      */
     String getFileExtension();
 
     /**
      * content mime-type or null. At least one of file extension or file mime-type is provided.
+     *
      * @return content file extension
      */
     String getMimeType();
 
     /**
      * content name (mostly content file name)
+     *
      * @return content name (mostly content file name)
      */
     String getName();
 
     /**
      * return workspace
+     *
      * @return workspace
      */
     NutsWorkspace getWorkspace();
 
     /**
      * return session
+     *
      * @return session
      */
     NutsSession getSession();

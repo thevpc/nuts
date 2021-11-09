@@ -35,11 +35,11 @@ import net.thevpc.nuts.boot.NutsApiUtils;
  * </pre>
  *
  * @author thevpc
- * @since 0.5.5
  * @app.category Format
+ * @since 0.5.5
  */
 public interface NutsTreeFormat extends NutsContentTypeFormat {
-    static NutsTreeFormat of(NutsSession session){
+    static NutsTreeFormat of(NutsSession session) {
         NutsApiUtils.checkSession(session);
         return session.extensions().createSupported(NutsTreeFormat.class, true, null);
     }
@@ -100,7 +100,7 @@ public interface NutsTreeFormat extends NutsContentTypeFormat {
      * to help return a more specific return type;
      *
      * @param skipUnsupported when true, all unsupported options are skipped
-     * @param args argument to configure with
+     * @param args            argument to configure with
      * @return {@code this} instance
      */
     @Override

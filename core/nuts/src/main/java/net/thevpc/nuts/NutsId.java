@@ -39,7 +39,7 @@ import java.util.Map;
 public interface NutsId extends Comparable<NutsId>, NutsFormattable, NutsBlankable {
 
     static NutsId of(String value, NutsSession session) {
-        return NutsApiUtils.createSessionCachedType(NutsIdParser.class, session,()->NutsIdParser.of(session))
+        return NutsApiUtils.createSessionCachedType(NutsIdParser.class, session, () -> NutsIdParser.of(session))
                 .parse(value);
     }
 

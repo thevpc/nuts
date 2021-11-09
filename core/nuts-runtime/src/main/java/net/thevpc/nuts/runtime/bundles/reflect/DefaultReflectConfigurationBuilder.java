@@ -27,7 +27,7 @@ import java.util.function.Function;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 public class DefaultReflectConfigurationBuilder implements ReflectConfigurationBuilder {
 

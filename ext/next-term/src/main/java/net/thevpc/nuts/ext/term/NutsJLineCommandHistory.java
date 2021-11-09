@@ -45,7 +45,7 @@ import org.jline.utils.Log;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 public class NutsJLineCommandHistory implements NutsCommandHistory {
 

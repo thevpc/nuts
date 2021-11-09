@@ -24,37 +24,25 @@
  * <br>
  * ====================================================================
  */
-package net.thevpc.nuts;
+package net.thevpc.nuts.spi;
 
+import net.thevpc.nuts.NutsSession;
+import net.thevpc.nuts.NutsStream;
 
-import net.thevpc.nuts.boot.NutsApiUtils;
-import net.thevpc.nuts.spi.NutsComponent;
-import net.thevpc.nuts.spi.NutsComponentScope;
-import net.thevpc.nuts.spi.NutsComponentScopeType;
+import java.util.Iterator;
+import java.util.stream.Stream;
 
-/**
- * Application context that store all relevant information about application
- * execution mode, workspace, etc.
- *
- * @author thevpc
- * @app.category Application
- * @since 0.5.5
- */
 @NutsComponentScope(NutsComponentScopeType.WORKSPACE)
-public interface NutsApplicationContexts extends NutsComponent {
-    static NutsApplicationContexts of(NutsSession session) {
-        NutsApiUtils.checkSession(session);
-        return session.extensions().createSupported(NutsApplicationContexts.class, true, null);
+public interface NutsStreams extends NutsComponent {
+    static NutsStreams of(NutsSession session) {
+        return session.extensions().createSupported(NutsStreams.class, true, session);
     }
 
-    /**
-     * create a new instance of {@link NutsApplicationContext}
-     *
-     * @param args            application arguments
-     * @param startTimeMillis application start time
-     * @param appClass        application class
-     * @param storeId         application store id or null
-     * @return new instance of {@link NutsApplicationContext}
-     */
-    NutsApplicationContext create(String[] args, long startTimeMillis, Class appClass, String storeId);
+    <T> NutsStream<T> createStream(T[] str, String name);
+
+    <T> NutsStream<T> createStream(Iterable<T> str, String name);
+
+    <T> NutsStream<T> createStream(Iterator<T> str, String name);
+
+    <T> NutsStream<T> createStream(Stream<T> str, String name);
 }

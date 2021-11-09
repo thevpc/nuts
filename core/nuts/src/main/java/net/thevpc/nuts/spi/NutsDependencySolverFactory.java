@@ -25,14 +25,13 @@
  */
 package net.thevpc.nuts.spi;
 
-import net.thevpc.nuts.*;
+import net.thevpc.nuts.NutsSession;
 
 /**
  * Nuts descriptors solver factory responsible to building traversable dependency tree
  *
- *
- * @since 0.8.3
  * @app.category Descriptor
+ * @since 0.8.3
  */
 public interface NutsDependencySolverFactory extends NutsComponent {
 

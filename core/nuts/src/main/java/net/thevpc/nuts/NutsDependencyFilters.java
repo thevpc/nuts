@@ -25,13 +25,15 @@
 package net.thevpc.nuts;
 
 import net.thevpc.nuts.boot.NutsApiUtils;
-import net.thevpc.nuts.spi.NutsComponent;
 import net.thevpc.nuts.spi.NutsComponentScope;
 import net.thevpc.nuts.spi.NutsComponentScopeType;
 
 import java.util.Collection;
 
 /**
+ * Dependencies filter factory
+ *
+ * @author thevpc
  * @app.category Base
  */
 @NutsComponentScope(NutsComponentScopeType.SESSION)
@@ -39,7 +41,7 @@ public interface NutsDependencyFilters extends NutsTypedFilters<NutsDependencyFi
 
     static NutsDependencyFilters of(NutsSession session) {
         NutsApiUtils.checkSession(session);
-        return session.extensions().createSupported(NutsDependencyFilters.class,true,null);
+        return session.extensions().createSupported(NutsDependencyFilters.class, true, null);
     }
 
     NutsDependencyFilter byScope(NutsDependencyScopePattern scope);

@@ -29,8 +29,8 @@ package net.thevpc.nuts;
 /**
  * This Exception is thrown when the workspace fails to initialize.
  *
- * @since 0.5.4
  * @app.category Exceptions
+ * @since 0.5.4
  */
 public class NutsInvalidWorkspaceException extends NutsBootException {
 
@@ -41,8 +41,9 @@ public class NutsInvalidWorkspaceException extends NutsBootException {
 
     /**
      * Constructs a new NutsInvalidWorkspaceException exception
+     *
      * @param workspaceLocation workspaceLocation
-     * @param errorMessage errorMessage
+     * @param errorMessage      errorMessage
      */
     public NutsInvalidWorkspaceException(String workspaceLocation, NutsMessage errorMessage) {
         super(
@@ -53,6 +54,7 @@ public class NutsInvalidWorkspaceException extends NutsBootException {
 
     /**
      * workspace location
+     *
      * @return workspace location
      */
     public String getWorkspaceLocation() {

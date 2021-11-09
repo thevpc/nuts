@@ -32,28 +32,32 @@ import java.util.Map;
 
 /**
  * Class formatting Map/Properties objects
+ *
  * @app.category Format
  */
 public interface NutsPropertiesFormat extends NutsContentTypeFormat {
-    static NutsPropertiesFormat of(NutsSession session){
+    static NutsPropertiesFormat of(NutsSession session) {
         NutsApiUtils.checkSession(session);
         return session.extensions().createSupported(NutsPropertiesFormat.class, true, null);
     }
 
     /**
      * return model to format
+     *
      * @return model to format
      */
     Map<?, ?> getModel();
 
     /**
      * return true is key has to be sorted when formatting
+     *
      * @return true is key has to be sorted when formatting
      */
     boolean isSorted();
 
     /**
      * enable/disable key sorting
+     *
      * @param sort when true enable sorting
      * @return {@code this} instance
      */
@@ -61,12 +65,14 @@ public interface NutsPropertiesFormat extends NutsContentTypeFormat {
 
     /**
      * return key/value separator, default is " = "
+     *
      * @return key/value separator
      */
     String getSeparator();
 
     /**
      * set key/value separator
+     *
      * @param separator key/value separator
      * @return {@code this} instance
      */
@@ -91,7 +97,7 @@ public interface NutsPropertiesFormat extends NutsContentTypeFormat {
      * to help return a more specific return type;
      *
      * @param skipUnsupported when true, all unsupported options are skipped
-     * @param args argument to configure with
+     * @param args            argument to configure with
      * @return {@code this} instance
      */
     @Override

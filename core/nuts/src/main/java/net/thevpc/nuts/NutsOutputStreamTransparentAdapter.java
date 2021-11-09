@@ -34,8 +34,8 @@ import java.io.OutputStream;
  * OutputStream i a system io. In that cas nuts will "inherit" output/error
  * stream
  *
- * @since 0.5.4
  * @app.category Input Output
+ * @since 0.5.4
  */
 public interface NutsOutputStreamTransparentAdapter {
 

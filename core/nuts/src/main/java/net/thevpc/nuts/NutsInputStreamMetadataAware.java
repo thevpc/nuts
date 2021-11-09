@@ -6,7 +6,6 @@
 package net.thevpc.nuts;
 
 /**
- *
  * @author thevpc
  */
 public interface NutsInputStreamMetadataAware {

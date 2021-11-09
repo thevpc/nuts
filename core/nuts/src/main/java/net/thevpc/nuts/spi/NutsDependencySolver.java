@@ -30,21 +30,20 @@ import net.thevpc.nuts.*;
 /**
  * Nuts descriptors solver responsible to building traversable dependency tree
  *
- *
- * @since 0.8.3
  * @app.category Descriptor
+ * @since 0.8.3
  */
-public interface NutsDependencySolver{
+public interface NutsDependencySolver {
 
-    static NutsDependencySolver of(NutsSession session){
+    static NutsDependencySolver of(NutsSession session) {
         return NutsDependencySolvers.of(session).createSolver(session);
     }
 
-    static NutsDependencySolver of(String solverName, NutsSession session){
-        return NutsDependencySolvers.of(session).createSolver(solverName,session);
+    static NutsDependencySolver of(String solverName, NutsSession session) {
+        return NutsDependencySolvers.of(session).createSolver(solverName, session);
     }
 
-    static String[] getSolverNames(NutsSession session){
+    static String[] getSolverNames(NutsSession session) {
         return NutsDependencySolvers.of(session).getSolverNames(session);
     }
 

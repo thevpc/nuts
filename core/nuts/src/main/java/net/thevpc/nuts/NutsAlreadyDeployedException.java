@@ -30,8 +30,9 @@ package net.thevpc.nuts;
  * Exception fired in {@link NutsWorkspace#deploy()} method if the package is
  * already deployed Created by vpc on 1/15/17.
  *
- * @since 0.5.4
+ * @author thevpc
  * @app.category Exceptions
+ * @since 0.5.4
  */
 public class NutsAlreadyDeployedException extends NutsInstallationException {
 
@@ -40,7 +41,7 @@ public class NutsAlreadyDeployedException extends NutsInstallationException {
      * Custom Constructor
      *
      * @param session workspace
-     * @param id nuts id
+     * @param id      nuts id
      */
     public NutsAlreadyDeployedException(NutsSession session, NutsId id) {
         this(session, id, null, null);
@@ -51,9 +52,9 @@ public class NutsAlreadyDeployedException extends NutsInstallationException {
      * Custom Constructor
      *
      * @param session workspace
-     * @param id nuts id
-     * @param msg message
-     * @param cause cuse
+     * @param id      nuts id
+     * @param msg     message
+     * @param cause   cuse
      */
     public NutsAlreadyDeployedException(NutsSession session, NutsId id, NutsMessage msg, Throwable cause) {
         super(session, id, msg == null ? NutsMessage.cstyle("already deployed %s", (id == null ? "<null>" : id)) : msg, cause);

@@ -292,13 +292,7 @@ public class JobServiceCmd {
                 .setCommandHistory(
                         NutsCommandHistory.of(session)
                                 .setPath(Paths.get(context.getVarFolder()).resolve("njob-history.hist"))
-                )
-                .setCommandReadHighlighter(new NutsCommandReadHighlighter() {
-                    @Override
-                    public NutsText highlight(String buffer, NutsSession session) {
-                        return NutsTexts.of(session).ofCode("sh", buffer).highlight(session);
-                    }
-                });
+                );
         session.env().setProperty(JobServiceCmd.class.getName(), this);
 
 //        session.setTerminal(
@@ -334,7 +328,7 @@ public class JobServiceCmd {
                     lastError.printStackTrace(session.out().asPrintStream());
                 }
             } else {
-                NutsCommandLine cmd = NutsCommandLine.parse(line,this.session);
+                NutsCommandLine cmd = NutsCommandLine.of(line,this.session);
                 cmd.setCommandName(context.getAppId().getArtifactId());
                 try {
                     lastError = null;

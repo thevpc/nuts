@@ -24,8 +24,7 @@
 package net.thevpc.nuts;
 
 /**
- *
- * @author vpc
+ * @author thevpc
  */
 public interface NutsElementBuilder {
 

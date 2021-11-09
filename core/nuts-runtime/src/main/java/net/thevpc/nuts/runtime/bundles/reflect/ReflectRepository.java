@@ -27,7 +27,7 @@ import java.lang.reflect.Type;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 public interface ReflectRepository {
     ReflectType getType(Type clazz);

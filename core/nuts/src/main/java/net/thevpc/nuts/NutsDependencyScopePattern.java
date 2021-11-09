@@ -32,9 +32,10 @@ import java.util.EnumSet;
 /**
  * Supported dependency scope pattern.
  * A dependency scope pattern
+ *
  * @author thevpc
- * @since 0.5.6
  * @app.category Descriptor
+ * @since 0.5.6
  */
 public enum NutsDependencyScopePattern implements NutsEnum {
     /**
@@ -223,12 +224,13 @@ public enum NutsDependencyScopePattern implements NutsEnum {
 
     public static NutsDependencyScopePattern parse(String value, NutsDependencyScopePattern emptyValue, NutsSession session) {
         NutsDependencyScopePattern v = parseLenient(value, emptyValue, null);
-        NutsApiUtils.checkNonNullEnum(v,value,NutsDependencyScopePattern.class,session);
+        NutsApiUtils.checkNonNullEnum(v, value, NutsDependencyScopePattern.class, session);
         return v;
     }
 
     /**
      * lower cased identifier.
+     *
      * @return lower cased identifier
      */
     public String id() {

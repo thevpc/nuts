@@ -27,6 +27,8 @@
 package net.thevpc.nuts;
 
 
+import net.thevpc.nuts.spi.NutsApplicationContexts;
+
 /**
  * Application context that store all relevant information about application
  * execution mode, workspace, etc.
@@ -44,7 +46,7 @@ public interface NutsApplicationContext extends NutsCommandLineConfigurable {
     /**
      * create a new instance of {@link NutsApplicationContext}
      *
-     * @param session session context session. If null will consider {@code getSession()} that should not be null as well.
+     * @param session         session context session. If null will consider {@code getSession()} that should not be null as well.
      * @param args            application arguments
      * @param startTimeMillis application start time
      * @param appClass        application class

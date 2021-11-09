@@ -31,13 +31,15 @@ import java.io.UncheckedIOException;
 /**
  * Transport component responsible of creating a connexion to remote servers.
  * Should handle at least valid http connections.
- * @since 0.5.4
+ *
  * @app.category SPI Base
+ * @since 0.5.4
  */
 public interface NutsTransportComponent extends NutsComponent/*url*/ {
 
     /**
      * open url and return a valid {@link NutsTransportConnection}
+     *
      * @param url url to open
      * @return new instance of {@link NutsTransportConnection}
      * @throws UncheckedIOException when i/o exception occurs

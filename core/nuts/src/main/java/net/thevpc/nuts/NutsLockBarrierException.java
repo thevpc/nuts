@@ -27,15 +27,17 @@ package net.thevpc.nuts;
 
 /**
  * Exception Thrown when a locked object is invoked.
+ *
  * @author thevpc
  * @app.category Exceptions
  */
 public class NutsLockBarrierException extends NutsLockException {
     /**
      * Constructs a new lock exception.
-     * @param session workspace
+     *
+     * @param session      workspace
      * @param lockedObject locked Object
-     * @param lockObject lock Object
+     * @param lockObject   lock Object
      */
     public NutsLockBarrierException(NutsSession session, Object lockedObject, Object lockObject) {
         this(session, null, lockedObject, lockObject);
@@ -43,10 +45,11 @@ public class NutsLockBarrierException extends NutsLockException {
 
     /**
      * Constructs a new lock exception.
-     * @param session workspace
-     * @param message message or null
+     *
+     * @param session      workspace
+     * @param message      message or null
      * @param lockedObject locked Object
-     * @param lockObject lock Object
+     * @param lockObject   lock Object
      */
     public NutsLockBarrierException(NutsSession session, NutsMessage message, Object lockedObject, Object lockObject) {
         super(session,
@@ -57,11 +60,12 @@ public class NutsLockBarrierException extends NutsLockException {
 
     /**
      * Constructs a new lock exception.
-     * @param session workspace
-     * @param message message or null
+     *
+     * @param session      workspace
+     * @param message      message or null
      * @param lockedObject locked Object
-     * @param lockObject lock Object
-     * @param cause cause
+     * @param lockObject   lock Object
+     * @param cause        cause
      */
     public NutsLockBarrierException(NutsSession session, NutsMessage message, Object lockedObject, Object lockObject, Throwable cause) {
         super(session,

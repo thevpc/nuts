@@ -31,8 +31,8 @@ import java.util.Objects;
  * repository creation options
  *
  * @author thevpc
- * @since 0.5.4
  * @app.category Config
+ * @since 0.5.4
  */
 public class NutsAddRepositoryOptions implements Serializable {
 
@@ -128,6 +128,7 @@ public class NutsAddRepositoryOptions implements Serializable {
 
     /**
      * repository model
+     *
      * @return repository model
      */
     public NutsRepositoryModel getRepositoryModel() {
@@ -136,6 +137,7 @@ public class NutsAddRepositoryOptions implements Serializable {
 
     /**
      * set repository model
+     *
      * @param repositoryModel repository model
      * @return {@code this instance}
      */
@@ -147,6 +149,7 @@ public class NutsAddRepositoryOptions implements Serializable {
     /**
      * repository processing order. Lower values ensure processing (using, searching,...)
      * repositories before others.
+     *
      * @return order
      */
     public int getOrder() {
@@ -155,6 +158,7 @@ public class NutsAddRepositoryOptions implements Serializable {
 
     /**
      * set repository order number
+     *
      * @param order order
      * @return {@code this instance}
      */

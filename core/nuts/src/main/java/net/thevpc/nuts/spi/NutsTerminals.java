@@ -34,20 +34,37 @@ import net.thevpc.nuts.boot.NutsApiUtils;
 import java.io.InputStream;
 
 /**
+ * This interface exposes utility methods to manipulate Terminals
+ *
  * @app.category Input Output
  */
 @NutsComponentScope(NutsComponentScopeType.WORKSPACE)
 public interface NutsTerminals extends NutsComponent {
+
+    /**
+     * retrieves the singleton instance of NutsTerminals for the given session
+     *
+     * @param session session
+     * @return the singleton instance of NutsTerminals for the given session
+     */
     static NutsTerminals of(NutsSession session) {
         NutsApiUtils.checkSession(session);
         return session.extensions().createSupported(NutsTerminals.class, true, null);
     }
 
-
+    /**
+     * Checks for the current system terminal and does best effort
+     * to enable a rich terminal. Rich terminals add somme features
+     * including 'auto-complete'. This Method may replace the system
+     * terminal and may even load a nuts extension to enable such features.
+     *
+     * @param session session
+     * @return {@code this} instance
+     */
     NutsTerminals enableRichTerm(NutsSession session);
 
     /**
-     * return new terminal bound to system terminal
+     * return new terminal bound to the given session
      *
      * @return new terminal
      */
@@ -63,10 +80,33 @@ public interface NutsTerminals extends NutsComponent {
      */
     NutsSessionTerminal createTerminal(InputStream in, NutsPrintStream out, NutsPrintStream err, NutsSession session);
 
+    /**
+     * return new terminal bound to the given parent terminal and session.
+     *
+     * @param terminal parent terminal (or null)
+     * @param session  session
+     * @return new terminal bound to the given parent terminal and session.
+     */
     NutsSessionTerminal createTerminal(NutsSessionTerminal terminal, NutsSession session);
 
+    /**
+     * return a new terminal with empty input and byte-array output/error.
+     * Using such terminals help capturing all output/error stream upon execution.
+     * This method is equivalent to createMemTerminal(false,session)
+     *
+     * @param session session
+     * @return a new terminal with empty input and byte-array output/error.
+     */
     NutsSessionTerminal createMemTerminal(NutsSession session);
 
+    /**
+     * return a new terminal with empty input and byte-array output/error.
+     * Using such terminals help capturing all output/error stream upon execution.
+     *
+     * @param mergeErr when true out and err are merged into a single stream
+     * @param session  session
+     * @return a new terminal with empty input and byte-array output/error.
+     */
     NutsSessionTerminal createMemTerminal(boolean mergeErr, NutsSession session);
 
 }

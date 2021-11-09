@@ -30,10 +30,9 @@ import java.nio.file.Path;
 import java.util.Collection;
 
 /**
- *
  * @author thevpc
- * @since 0.5.5
  * @app.category Config
+ * @since 0.5.5
  */
 public interface NutsUpdateStatisticsCommand extends NutsWorkspaceCommand {
 
@@ -80,7 +79,7 @@ public interface NutsUpdateStatisticsCommand extends NutsWorkspaceCommand {
      * to help return a more specific return type;
      *
      * @param skipUnsupported when true, all unsupported options are skipped
-     * @param args argument to configure with
+     * @param args            argument to configure with
      * @return {@code this} instance
      */
     @Override
@@ -97,6 +96,7 @@ public interface NutsUpdateStatisticsCommand extends NutsWorkspaceCommand {
     /**
      * add path if repoOrPath is a path (contains path separator or is '.' or '..')
      * if not add repo name or id
+     *
      * @param repoOrPath repo uuid, name or path
      */
     void add(String repoOrPath);

@@ -37,7 +37,7 @@ public class NutsUnsupportedEnumException extends NutsException {
     /**
      * create new instance of NutsUnexpectedEnumException
      *
-     * @param session workspace
+     * @param session   workspace
      * @param enumValue enumeration instance (cannot be null)
      */
     public NutsUnsupportedEnumException(NutsSession session, Enum enumValue) {
@@ -47,7 +47,7 @@ public class NutsUnsupportedEnumException extends NutsException {
     /**
      * create new instance of NutsUnexpectedEnumException
      *
-     * @param session workspace
+     * @param session   workspace
      * @param enumValue enumeration instance (cannot be null)
      * @param message   message
      */
@@ -62,10 +62,10 @@ public class NutsUnsupportedEnumException extends NutsException {
     /**
      * create new instance of NutsUnexpectedEnumException
      *
-     * @param session   workspace
+     * @param session     workspace
      * @param enumValue   enumeration instance (cannot be null)
      * @param stringValue invalid value
-     * @param message message
+     * @param message     message
      */
     public NutsUnsupportedEnumException(NutsSession session, NutsMessage message, String stringValue, Enum enumValue) {
         super(session,

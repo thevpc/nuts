@@ -63,7 +63,7 @@ public class DefaultNutsPropertiesFormat extends DefaultFormatBase<NutsPropertie
     public Map buildModel() {
         Object value = NutsElements.of(getSession()).setDestructTypeFilter(NutsElements.DEFAULT_FORMAT_DESTRUCTOR).destruct(getValue());
         LinkedHashMap<NutsString, NutsString> map = new LinkedHashMap<>();
-        fillMap(NutsString.parse((rootName==null?"":rootName),getSession()), value, map);
+        fillMap(NutsString.of((rootName==null?"":rootName),getSession()), value, map);
         return map;
     }
 
@@ -88,7 +88,7 @@ public class DefaultNutsPropertiesFormat extends DefaultFormatBase<NutsPropertie
                 if(!entryKey.isEmpty()) {
                     map.put(entryKey, stringValue(entryValue));
                 }else{
-                    map.put(NutsString.parse("value",getSession()), stringValue(entryValue));
+                    map.put(NutsString.of("value",getSession()), stringValue(entryValue));
                 }
             }
         }

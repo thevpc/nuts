@@ -32,22 +32,24 @@ import java.util.Map;
 
 /**
  * NutsDependency is an <strong>immutable</strong> object that contains all information about a package's dependency.
+ *
  * @author thevpc
- * @since 0.5.3
  * @app.category Descriptor
+ * @since 0.5.3
  */
-public interface NutsDependency extends Serializable, NutsFormattable,NutsBlankable {
+public interface NutsDependency extends Serializable, NutsFormattable, NutsBlankable {
 
     static NutsDependency of(String value, NutsSession session) {
         NutsApiUtils.checkSession(session);
         return
                 NutsApiUtils
-                        .createSessionCachedType(NutsDependencyParser.class, session,()->NutsDependencyParser.of(session))
-                .parse(value);
+                        .createSessionCachedType(NutsDependencyParser.class, session, () -> NutsDependencyParser.of(session))
+                        .parse(value);
     }
 
     /**
      * return mutable id builder instance initialized with {@code this} instance.
+     *
      * @return mutable id builder instance initialized with {@code this} instance
      */
     NutsDependencyBuilder builder();
@@ -55,36 +57,42 @@ public interface NutsDependency extends Serializable, NutsFormattable,NutsBlanka
     /**
      * true if this dependency is optional.
      * equivalent to {@code Boolean.parseBoolean(getOptional())}
+     *
      * @return true if this dependency is optional.
      */
     boolean isOptional();
 
     /**
      * Indicates the dependency is optional for use of this library.
+     *
      * @return string representation (or $ var) that can be evaluated as 'true'
      */
     String getOptional();
 
     /**
      * get scope string value (may be $ var).
+     *
      * @return scope string value (may be $ var)
      */
     String getScope();
 
     /**
      * get classifier string value (may be $ var)
+     *
      * @return classifier string
      */
     String getClassifier();
 
     /**
      * convert to NutsId
+     *
      * @return converted to NutsId
      */
     NutsId toId();
 
     /**
      * return repository
+     *
      * @return repository
      */
     String getRepository();
@@ -92,12 +100,14 @@ public interface NutsDependency extends Serializable, NutsFormattable,NutsBlanka
 
     /**
      * return artifact group id (aka groupId in maven)
+     *
      * @return artifact group id (aka groupId in maven)
      */
     String getGroupId();
 
     /**
      * return artifact id (aka artifactId)
+     *
      * @return artifact id (aka artifactId in maven)
      */
     String getArtifactId();
@@ -128,6 +138,7 @@ public interface NutsDependency extends Serializable, NutsFormattable,NutsBlanka
 
     /**
      * return dependency version
+     *
      * @return return dependency version
      */
     NutsVersion getVersion();
@@ -138,12 +149,14 @@ public interface NutsDependency extends Serializable, NutsFormattable,NutsBlanka
 
     /**
      * dependency exclusions
+     *
      * @return dependency exclusions
      */
     NutsId[] getExclusions();
 
     /**
      * properties in the URL query form
+     *
      * @return properties in the URL query form.
      * @since 0.5.7
      */
@@ -151,6 +164,7 @@ public interface NutsDependency extends Serializable, NutsFormattable,NutsBlanka
 
     /**
      * properties in the URL query form
+     *
      * @return properties in the URL query form.
      * @since 0.5.7
      */

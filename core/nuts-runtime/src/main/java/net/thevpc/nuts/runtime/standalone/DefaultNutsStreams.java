@@ -2,7 +2,7 @@ package net.thevpc.nuts.runtime.standalone;
 
 import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.NutsStream;
-import net.thevpc.nuts.NutsStreams;
+import net.thevpc.nuts.spi.NutsStreams;
 import net.thevpc.nuts.runtime.standalone.util.*;
 import net.thevpc.nuts.spi.NutsComponentScope;
 import net.thevpc.nuts.spi.NutsComponentScopeType;
@@ -28,7 +28,7 @@ public class DefaultNutsStreams implements NutsStreams {
     }
 
     @Override
-    public <T> NutsStream<T> create(T[] str, String name) {
+    public <T> NutsStream<T> createStream(T[] str, String name) {
         checkSession();
         if (str == null) {
             return new NutsEmptyStream<T>(getSession(), name);
@@ -37,7 +37,7 @@ public class DefaultNutsStreams implements NutsStreams {
     }
 
     @Override
-    public <T> NutsStream<T> create(Iterable<T> str, String name) {
+    public <T> NutsStream<T> createStream(Iterable<T> str, String name) {
         checkSession();
         if (str == null) {
             return new NutsEmptyStream<T>(getSession(), name);
@@ -52,12 +52,12 @@ public class DefaultNutsStreams implements NutsStreams {
     }
 
     @Override
-    public <T> NutsStream<T> create(Iterator<T> str, String name) {
+    public <T> NutsStream<T> createStream(Iterator<T> str, String name) {
         return new NutsIteratorStream<T>(session, name, str);
     }
 
     @Override
-    public <T> NutsStream<T> create(Stream<T> str, String name) {
+    public <T> NutsStream<T> createStream(Stream<T> str, String name) {
         checkSession();
         return new NutsJavaStream<>(getSession(), name, str);
     }

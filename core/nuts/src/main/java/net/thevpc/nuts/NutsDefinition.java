@@ -32,8 +32,9 @@ import java.nio.file.Path;
 /**
  * Definition is an <strong>immutable</strong> object that contains all information about a artifact identified by it's Id.
  *
- * @since 0.5.4
+ * @author thevpc
  * @app.category Base
+ * @since 0.5.4
  */
 public interface NutsDefinition extends Serializable, Comparable<NutsDefinition> {
 
@@ -46,12 +47,14 @@ public interface NutsDefinition extends Serializable, Comparable<NutsDefinition>
 
     /**
      * return artifact type
+     *
      * @return return artifact type
      */
     NutsIdType getType();
 
     /**
      * return artifact descriptor
+     *
      * @return artifact descriptor
      */
     NutsDescriptor getDescriptor();
@@ -144,12 +147,14 @@ public interface NutsDefinition extends Serializable, Comparable<NutsDefinition>
 
     /**
      * id of the repository providing this id.
+     *
      * @return id of the repository providing this id.
      */
     String getRepositoryUuid();
 
     /**
      * name of the repository providing this id.
+     *
      * @return name of the repository providing this id.
      */
     String getRepositoryName();

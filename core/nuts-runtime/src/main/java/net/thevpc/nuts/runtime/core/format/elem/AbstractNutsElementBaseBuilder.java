@@ -25,7 +25,7 @@ package net.thevpc.nuts.runtime.core.format.elem;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 public class AbstractNutsElementBaseBuilder {
     

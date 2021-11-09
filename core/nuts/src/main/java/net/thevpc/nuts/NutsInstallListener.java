@@ -31,8 +31,8 @@ package net.thevpc.nuts;
  * wants to be informed of install artifacts actions.
  *
  * @author thevpc
- * @since 0.5.4
  * @app.category Events
+ * @since 0.5.4
  */
 public interface NutsInstallListener extends NutsListener {
 

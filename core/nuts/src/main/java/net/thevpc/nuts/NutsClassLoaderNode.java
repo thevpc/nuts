@@ -5,6 +5,9 @@ import java.util.Arrays;
 import java.util.Objects;
 
 /**
+ * Loaded Package Information used to Boot
+ *
+ * @author thevpc
  * @app.category Internal
  */
 public class NutsClassLoaderNode {
@@ -44,14 +47,10 @@ public class NutsClassLoaderNode {
     }
 
     @Override
-    public String toString() {
-        return "NutsClassLoaderNode{" +
-                "id='" + id + '\'' +
-                ", loaded=" + includedInClasspath +
-                ", url=" + url +
-                ", enabled=" + enabled +
-                ", dependencies=" + Arrays.toString(dependencies) +
-                '}';
+    public int hashCode() {
+        int result = Objects.hash(id, includedInClasspath, url, enabled);
+        result = 31 * result + Arrays.hashCode(dependencies);
+        return result;
     }
 
     @Override
@@ -63,9 +62,13 @@ public class NutsClassLoaderNode {
     }
 
     @Override
-    public int hashCode() {
-        int result = Objects.hash(id, includedInClasspath, url, enabled);
-        result = 31 * result + Arrays.hashCode(dependencies);
-        return result;
+    public String toString() {
+        return "NutsClassLoaderNode{" +
+                "id='" + id + '\'' +
+                ", loaded=" + includedInClasspath +
+                ", url=" + url +
+                ", enabled=" + enabled +
+                ", dependencies=" + Arrays.toString(dependencies) +
+                '}';
     }
 }

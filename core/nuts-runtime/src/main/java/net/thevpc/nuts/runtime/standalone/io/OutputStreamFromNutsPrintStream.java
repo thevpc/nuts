@@ -13,7 +13,7 @@ public class OutputStreamFromNutsPrintStream extends OutputStream implements Nut
         this.base = base;
     }
 
-    public NutsPrintStream getBaseNutsPrintStream() {
+    public NutsPrintStream getBasePrintStream() {
         return base;
     }
 

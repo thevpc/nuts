@@ -37,11 +37,8 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Scanner;
 import java.util.logging.Level;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
- *
  * @author thevpc
  * @app.category Internal
  */
@@ -54,25 +51,25 @@ public class PrivateNutsLog {
             = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS")
             .withZone(ZoneId.systemDefault());
     private NutsWorkspaceOptions options;
-    private NutsBootTerminal bootTerminal;
+    private final NutsBootTerminal bootTerminal;
     private Scanner inScanner;
 
     public PrivateNutsLog(NutsBootTerminal bootTerminal) {
         InputStream in = (bootTerminal == null || bootTerminal.getIn() == null) ? System.in : bootTerminal.getIn();
         PrintStream out = (bootTerminal == null || bootTerminal.getOut() == null) ? System.out : bootTerminal.getOut();
         PrintStream err = (bootTerminal == null || bootTerminal.getErr() == null) ? out : bootTerminal.getErr();
-        this.bootTerminal=new NutsBootTerminal(in,out,err);
+        this.bootTerminal = new NutsBootTerminal(in, out, err);
     }
 
     public void log(Level lvl, NutsLogVerb logVerb, NutsMessage message) {
         if (isLoggable(lvl)) {
-            doLog(lvl, logVerb, message==null?"":message.toString());
+            doLog(lvl, logVerb, message == null ? "" : message.toString());
         }
     }
 
     public void log(Level lvl, NutsMessage message, Throwable err) {
         if (isLoggable(lvl)) {
-            doLog(lvl, NutsLogVerb.FAIL, message==null?"":message.toString());
+            doLog(lvl, NutsLogVerb.FAIL, message == null ? "" : message.toString());
             err.printStackTrace(System.err);
         }
     }
@@ -82,11 +79,11 @@ public class PrivateNutsLog {
     }
 
     public boolean isLoggable(Level lvl) {
-        if(lvl.intValue()==Level.OFF.intValue()){
+        if (lvl.intValue() == Level.OFF.intValue()) {
             //this is a special case where we do log in all cases!
             return true;
         }
-        if (options == null || options.getLogConfig()==null) {
+        if (options == null || options.getLogConfig() == null) {
             return false;
         }
         return lvl.intValue() >= options.getLogConfig().getLogTermLevel().intValue();

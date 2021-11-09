@@ -31,13 +31,14 @@ import net.thevpc.nuts.NutsDescriptor;
 /**
  * Content parser component is responsible of resolving a Nuts descriptor form a content file
  *
- * @since 0.5.4
  * @app.category SPI Base
+ * @since 0.5.4
  */
 public interface NutsDescriptorContentParserComponent extends NutsComponent {
 
     /**
      * parse content and return a valid NutsDescriptor or null if not supported.
+     *
      * @param parserContext context
      * @return valid descriptor or null.
      */

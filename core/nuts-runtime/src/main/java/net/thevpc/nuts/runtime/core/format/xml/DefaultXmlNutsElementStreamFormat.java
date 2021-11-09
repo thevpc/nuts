@@ -35,7 +35,7 @@ import org.xml.sax.SAXException;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 public class DefaultXmlNutsElementStreamFormat implements NutsElementStreamFormat {
 

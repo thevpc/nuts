@@ -570,13 +570,7 @@ public class JShell {
                 .setCommandHistory(
                         NutsCommandHistory.of(session)
                                 .setPath(Paths.get(appContext.getVarFolder()).resolve("nsh-history.hist"))
-                )
-                .setCommandReadHighlighter(new NutsCommandReadHighlighter() {
-                    @Override
-                    public NutsText highlight(String buffer, NutsSession session) {
-                        return NutsTexts.of(session).ofCode("sh", buffer).highlight(session);
-                    }
-                });
+                );
         prepareContext(getRootContext());
         printHeader(context.out());
         if (getOptions().isLogin()) {

@@ -34,26 +34,29 @@ import java.util.function.Function;
 
 /**
  * Mutable Artifact id information used to create instance of {@link NutsId}
+ *
  * @author thevpc
- * @since 0.5.4
  * @app.category Descriptor
+ * @since 0.5.4
  */
 public interface NutsIdBuilder extends NutsComponent, Serializable {
     static NutsIdBuilder of(NutsSession session) {
         NutsApiUtils.checkSession(session);
-        return session.extensions().createSupported(NutsIdBuilder.class,true,null);
+        return session.extensions().createSupported(NutsIdBuilder.class, true, null);
     }
 
     /**
      * id face define is a release file type selector of the id.
      * It helps discriminating content (jar) from descriptor, from other (hash,...)
      * files released for the very same  artifact.
+     *
      * @return id face selector
      */
     String getFace();
 
     /**
      * update id face which defines is a release file type selector
+     *
      * @param value new value
      * @return {@code this} instance
      */
@@ -61,6 +64,7 @@ public interface NutsIdBuilder extends NutsComponent, Serializable {
 
     /**
      * os and env supported by the artifact
+     *
      * @return os supported by the artifact
      */
     NutsEnvConditionBuilder getCondition();
@@ -71,12 +75,14 @@ public interface NutsIdBuilder extends NutsComponent, Serializable {
 
     /**
      * tag used to distinguish between different artifacts that were built from the same source code
+     *
      * @return tag used to distinguish between different artifacts that were built from the same source code
      */
     String getClassifier();
 
     /**
      * update classifier
+     *
      * @param value new value
      * @return {@code this} instance
      */
@@ -84,12 +90,14 @@ public interface NutsIdBuilder extends NutsComponent, Serializable {
 
     /**
      * packaging
+     *
      * @return packaging
      */
     String getPackaging();
 
     /**
      * update packaging
+     *
      * @param packaging new value
      * @return {@code this} instance
      */
@@ -97,12 +105,14 @@ public interface NutsIdBuilder extends NutsComponent, Serializable {
 
     /**
      * equivalent to {@code setFace(NutsConstants.QueryFaces.CONTENT)}
+     *
      * @return this instance
      */
     NutsIdBuilder setFaceContent();
 
     /**
      * equivalent to {@code setFace(NutsConstants.QueryFaces.DESCRIPTOR)}
+     *
      * @return {@code this} instance
      */
     NutsIdBuilder setFaceDescriptor();
@@ -110,8 +120,9 @@ public interface NutsIdBuilder extends NutsComponent, Serializable {
     /**
      * update property.
      * When {@code value} is null, property will be removed.
+     *
      * @param property name
-     * @param value new value
+     * @param value    new value
      * @return {@code this} instance
      */
     NutsIdBuilder setProperty(String property, String value);
@@ -119,6 +130,7 @@ public interface NutsIdBuilder extends NutsComponent, Serializable {
     /**
      * update all properties property while retaining old,
      * non overridden properties.
+     *
      * @param queryMap new value
      * @return {@code this} instance
      */
@@ -127,6 +139,7 @@ public interface NutsIdBuilder extends NutsComponent, Serializable {
     /**
      * update all properties property while retaining old,
      * non overridden properties.
+     *
      * @param query new value
      * @return {@code this} instance
      */
@@ -134,18 +147,21 @@ public interface NutsIdBuilder extends NutsComponent, Serializable {
 
     /**
      * properties in the url query form
+     *
      * @return properties in the url query form.
      */
     String getPropertiesQuery();
 
     /**
      * properties as map.
+     *
      * @return properties as map.
      */
     Map<String, String> getProperties();
 
     /**
      * update all properties property.
+     *
      * @param queryMap new value
      * @return {@code this} instance
      */
@@ -153,6 +169,7 @@ public interface NutsIdBuilder extends NutsComponent, Serializable {
 
     /**
      * update all properties property.
+     *
      * @param query new value
      * @return {@code this} instance
      */
@@ -160,12 +177,14 @@ public interface NutsIdBuilder extends NutsComponent, Serializable {
 
     /**
      * artifact repository (usually repository name or id)
+     *
      * @return artifact repository (usually repository name or id)
      */
     String getRepository();
 
     /**
      * update repository
+     *
      * @param value new value
      * @return {@code this} instance
      */
@@ -173,12 +192,14 @@ public interface NutsIdBuilder extends NutsComponent, Serializable {
 
     /**
      * artifact group which identifies uniquely projects and group of projects.
+     *
      * @return artifact group which identifies uniquely projects and group of projects.
      */
     String getGroupId();
 
     /**
      * update groupId
+     *
      * @param value new value
      * @return {@code this} instance
      */
@@ -221,6 +242,7 @@ public interface NutsIdBuilder extends NutsComponent, Serializable {
 
     /**
      * update artifactId
+     *
      * @param value new value
      * @return {@code this} instance
      */
@@ -228,12 +250,14 @@ public interface NutsIdBuilder extends NutsComponent, Serializable {
 
     /**
      * artifact version (never null)
+     *
      * @return artifact version (never null)
      */
     NutsVersion getVersion();
 
     /**
      * update version
+     *
      * @param value new value
      * @return {@code this} instance
      */
@@ -241,6 +265,7 @@ public interface NutsIdBuilder extends NutsComponent, Serializable {
 
     /**
      * update setVersion
+     *
      * @param value new value
      * @return {@code this} instance
      */
@@ -248,6 +273,7 @@ public interface NutsIdBuilder extends NutsComponent, Serializable {
 
     /**
      * update all arguments
+     *
      * @param id new value
      * @return {@code this} instance
      */
@@ -256,6 +282,7 @@ public interface NutsIdBuilder extends NutsComponent, Serializable {
 
     /**
      * update all arguments
+     *
      * @param id new value
      * @return {@code this} instance
      */
@@ -263,6 +290,7 @@ public interface NutsIdBuilder extends NutsComponent, Serializable {
 
     /**
      * replace dollar based variables with the given properties
+     *
      * @param properties to replace
      * @return {@code this} instance
      */
@@ -277,6 +305,7 @@ public interface NutsIdBuilder extends NutsComponent, Serializable {
 
     /**
      * create new instance of {@link NutsId} initialized with this builder values.
+     *
      * @return new instance of {@link NutsId} initialized with this builder values.
      */
     NutsId build();

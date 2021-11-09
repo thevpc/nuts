@@ -27,17 +27,18 @@ package net.thevpc.nuts;
 /**
  * Dependency filter
  *
- * @since 0.5.4
+ * @author thevpc
  * @app.category Descriptor
+ * @since 0.5.4
  */
 public interface NutsDependencyFilter extends NutsFilter {
 
     /**
      * return true if the {@code dependency} is accepted
      *
-     * @param from parent (dependent) id
+     * @param from       parent (dependent) id
      * @param dependency dependency id
-     * @param session session
+     * @param session    session
      * @return true if the {@code dependency} is accepted
      */
     boolean acceptDependency(NutsId from, NutsDependency dependency, NutsSession session);

@@ -31,8 +31,9 @@ import java.util.concurrent.locks.Lock;
  * NutsLock is simply an adapter to standard {@link Lock}.
  * It adds no extra functionality but rather is provided as
  * a base for future changes.
- * @since 0.5.8
+ *
  * @app.category Input Output
+ * @since 0.5.8
  */
 public interface NutsLock extends Lock {
 }

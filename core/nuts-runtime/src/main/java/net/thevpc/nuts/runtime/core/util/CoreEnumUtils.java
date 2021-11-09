@@ -28,7 +28,7 @@ import net.thevpc.nuts.NutsEnum;
 import java.util.NoSuchElementException;
 
 /**
- * @author vpc
+ * @author thevpc
  */
 public class CoreEnumUtils {
 

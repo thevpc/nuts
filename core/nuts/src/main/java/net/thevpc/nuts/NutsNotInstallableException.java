@@ -29,15 +29,16 @@ package net.thevpc.nuts;
 /**
  * This exception is thrown when an artifact fails to be installed.
  *
- * @since 0.5.4
  * @app.category Exceptions
+ * @since 0.5.4
  */
 public class NutsNotInstallableException extends NutsInstallationException {
 
     /**
      * Constructs a new NutsNotInstallableException exception
+     *
      * @param session workspace
-     * @param id artifact
+     * @param id      artifact
      */
     public NutsNotInstallableException(NutsSession session, NutsId id) {
         this(session, id, null, null);
@@ -46,10 +47,11 @@ public class NutsNotInstallableException extends NutsInstallationException {
 
     /**
      * Constructs a new NutsNotInstallableException exception
+     *
      * @param session workspace
-     * @param id artifact
-     * @param msg message
-     * @param ex exception
+     * @param id      artifact
+     * @param msg     message
+     * @param ex      exception
      */
     public NutsNotInstallableException(NutsSession session, NutsId id, NutsMessage msg, Exception ex) {
         super(session, id,

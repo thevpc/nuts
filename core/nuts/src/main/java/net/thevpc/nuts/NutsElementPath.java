@@ -37,6 +37,7 @@ public interface NutsElementPath {
 
     /**
      * filter element to a valid children list
+     *
      * @param element element to filter
      * @return filtered children list
      */
@@ -44,6 +45,7 @@ public interface NutsElementPath {
 
     /**
      * filter elements to a valid children list
+     *
      * @param elements elements to filter
      * @return filtered children list
      */

@@ -104,7 +104,7 @@ public abstract class SimpleJShellBuiltin extends AbstractJShellBuiltin {
             return;
         }
         if (context.isAskHelp()) {
-            session.out().printlnf(NutsString.parse(getHelp(), session));
+            session.out().printlnf(NutsString.of(getHelp(), session));
             return;
         }
         if (context.isAskVersion()) {

@@ -32,15 +32,17 @@ import java.util.function.Predicate;
 
 /**
  * Command for installing artifacts
+ *
  * @author thevpc
- * @since 0.5.4
  * @app.category Base
  * @app.category Commands
+ * @since 0.5.4
  */
 public interface NutsInstallCommand extends NutsWorkspaceCommand {
 
     /**
      * remove artifact id to install
+     *
      * @param id id to install
      * @return {@code this} instance
      */
@@ -48,6 +50,7 @@ public interface NutsInstallCommand extends NutsWorkspaceCommand {
 
     /**
      * remove artifact id to install
+     *
      * @param id id to install
      * @return {@code this} instance
      */
@@ -55,6 +58,7 @@ public interface NutsInstallCommand extends NutsWorkspaceCommand {
 
     /**
      * add artifact id to install
+     *
      * @param id id to install
      * @return {@code this} instance
      */
@@ -62,6 +66,7 @@ public interface NutsInstallCommand extends NutsWorkspaceCommand {
 
     /**
      * add artifact id to install
+     *
      * @param id id to install
      * @return {@code this} instance
      */
@@ -69,6 +74,7 @@ public interface NutsInstallCommand extends NutsWorkspaceCommand {
 
     /**
      * add artifact ids to install
+     *
      * @param ids ids to install
      * @return {@code this} instance
      */
@@ -76,6 +82,7 @@ public interface NutsInstallCommand extends NutsWorkspaceCommand {
 
     /**
      * add artifact ids to install
+     *
      * @param ids ids to install
      * @return {@code this} instance
      */
@@ -84,6 +91,7 @@ public interface NutsInstallCommand extends NutsWorkspaceCommand {
 
     /**
      * add artifact id to install
+     *
      * @param id id to install
      * @return {@code this} instance
      */
@@ -91,6 +99,7 @@ public interface NutsInstallCommand extends NutsWorkspaceCommand {
 
     /**
      * add artifact id to install
+     *
      * @param id id to install
      * @return {@code this} instance
      */
@@ -98,18 +107,21 @@ public interface NutsInstallCommand extends NutsWorkspaceCommand {
 
     /**
      * clear ids to install
+     *
      * @return {@code this} instance
      */
     NutsInstallCommand clearIds();
 
     /**
      * return all ids to install
+     *
      * @return all ids to install
      */
     NutsId[] getIds();
 
     /**
      * add artifact ids to install
+     *
      * @param ids ids to install
      * @return {@code this} instance
      */
@@ -117,6 +129,7 @@ public interface NutsInstallCommand extends NutsWorkspaceCommand {
 
     /**
      * add artifact ids to install
+     *
      * @param ids ids to install
      * @return {@code this} instance
      */
@@ -124,6 +137,7 @@ public interface NutsInstallCommand extends NutsWorkspaceCommand {
 
     /**
      * add argument to pass to the install command
+     *
      * @param arg argument
      * @return {@code this} instance
      */
@@ -133,6 +147,7 @@ public interface NutsInstallCommand extends NutsWorkspaceCommand {
 
     /**
      * add arguments to pass to the install command
+     *
      * @param args argument
      * @return {@code this} instance
      */
@@ -140,6 +155,7 @@ public interface NutsInstallCommand extends NutsWorkspaceCommand {
 
     /**
      * add arguments to pass to the install command
+     *
      * @param args argument
      * @return {@code this} instance
      */
@@ -147,40 +163,46 @@ public interface NutsInstallCommand extends NutsWorkspaceCommand {
 
     /**
      * clear all arguments to pass to the install command
+     *
      * @return {@code this} instance
      */
     NutsInstallCommand clearArgs();
 
     /**
      * return all arguments to pass to the install command
+     *
      * @return all arguments to pass to the install command
      */
     String[] getArgs();
 
     /**
      * set default version flag. the installed version will be defined as default.
+     *
      * @return {@code this} instance
      */
     NutsInstallCommand defaultVersion();
 
     /**
      * set default version flag. when true, the installed version will be defined as default
+     *
      * @param defaultVersion when true, the installed version will be defined as
-     * default
+     *                       default
      * @return {@code this} instance
      */
     NutsInstallCommand defaultVersion(boolean defaultVersion);
 
     /**
      * return true if the installer will update the default version
+     *
      * @return true if the installer will update the default version
      */
     boolean isDefaultVersion();
 
     /**
      * set default version flag. when true, the installed version will be defined as default
+     *
      * @param defaultVersion when true, the installed version will be defined as
-     * default
+     *                       default
      * @return {@code this} instance
      */
     NutsInstallCommand setDefaultVersion(boolean defaultVersion);
@@ -189,18 +211,21 @@ public interface NutsInstallCommand extends NutsWorkspaceCommand {
 
     /**
      * return true companions should be installed as well
+     *
      * @return return true companions should be installed as well
      */
     boolean isCompanions();
 
     /**
      * update companions
+     *
      * @return return {@code this} instance
      */
     NutsInstallCommand companions();
 
     /**
      * if true update companions
+     *
      * @param value flag
      * @return return {@code this} instance
      */
@@ -210,6 +235,7 @@ public interface NutsInstallCommand extends NutsWorkspaceCommand {
 
     /**
      * if true update companions
+     *
      * @param value flag
      * @return return {@code this} instance
      */
@@ -217,6 +243,7 @@ public interface NutsInstallCommand extends NutsWorkspaceCommand {
 
     /**
      * return true installed artifacts should be re-installed as well
+     *
      * @return true installed artifacts should be re-installed as well
      */
     boolean isInstalled();
@@ -225,6 +252,7 @@ public interface NutsInstallCommand extends NutsWorkspaceCommand {
 
     /**
      * if true reinstall installed artifacts
+     *
      * @param value flag
      * @return {@code this} instance
      */
@@ -236,17 +264,10 @@ public interface NutsInstallCommand extends NutsWorkspaceCommand {
 
     /**
      * execute installation and return result.
+     *
      * @return installation result
      */
     NutsStream<NutsDefinition> getResult();
-
-    /**
-     * copy session
-     *
-     * @return {@code this} instance
-     */
-    @Override
-    NutsInstallCommand copySession();
 
     /**
      * update session
@@ -258,12 +279,20 @@ public interface NutsInstallCommand extends NutsWorkspaceCommand {
     NutsInstallCommand setSession(NutsSession session);
 
     /**
+     * copy session
+     *
+     * @return {@code this} instance
+     */
+    @Override
+    NutsInstallCommand copySession();
+
+    /**
      * configure the current command with the given arguments. This is an
      * override of the {@link NutsCommandLineConfigurable#configure(boolean, java.lang.String...) }
      * to help return a more specific return type;
      *
      * @param skipUnsupported when true, all unsupported options are skipped
-     * @param args argument to configure with
+     * @param args            argument to configure with
      * @return {@code this} instance
      */
     @Override

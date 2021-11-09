@@ -29,7 +29,6 @@ package net.thevpc.nuts;
 import java.io.Serializable;
 
 /**
- *
  * @author thevpc
  * @app.category Config
  */

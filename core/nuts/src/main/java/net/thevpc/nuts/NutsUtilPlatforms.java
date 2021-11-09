@@ -42,20 +42,6 @@ import java.util.Map;
  */
 public final class NutsUtilPlatforms {
 
-//    /**
-//     * creates a string key combining layout and location.
-//     * le key has the form of a concatenated layout and location ids separated by ':'
-//     * where null layout is replaced by 'system' keyword.
-//     * used in {@link NutsWorkspaceOptions#getHomeLocations()}.
-//     *
-//     * @param storeLocationLayout layout
-//     * @param location            location
-//     * @return combination of layout and location separated by ':'.
-//     */
-//    public static String createHomeLocationKey(NutsOsFamily storeLocationLayout, NutsStoreLocation location) {
-//        return NutsApiUtils.createHomeLocationKey(storeLocationLayout, location);
-//    }
-
     /**
      * resolves custom nuts home folder from {@code homeLocations}.
      * Home folder is the root for nuts folders.
@@ -126,12 +112,12 @@ public final class NutsUtilPlatforms {
     public static String getWorkspaceLocation(NutsOsFamily platformOsFamily, boolean global, String workspaceName) {
         if (NutsBlankable.isBlank(workspaceName)) {
             workspaceName = NutsConstants.Names.DEFAULT_WORKSPACE_NAME;
-        }else if(workspaceName.equals(".") || workspaceName.equals("..") || workspaceName.indexOf('/')>=0 || workspaceName.indexOf('\\')>=0){
+        } else if (workspaceName.equals(".") || workspaceName.equals("..") || workspaceName.indexOf('/') >= 0 || workspaceName.indexOf('\\') >= 0) {
             //this is a path!
             //return it as is and make it absolute
             return Paths.get(workspaceName).normalize().toAbsolutePath().toString();
         }
-        if(platformOsFamily==null){
+        if (platformOsFamily == null) {
             platformOsFamily = NutsOsFamily.getCurrent();
         }
         if (global) {
@@ -139,11 +125,11 @@ public final class NutsUtilPlatforms {
                 case WINDOWS: {
                     return getWindowsProgramFiles() + "\\nuts\\" + syspath(workspaceName);
                 }
-                default:{
+                default: {
                     return "/etc/opt/nuts/" + workspaceName;
                 }
             }
-        }else{
+        } else {
             switch (platformOsFamily) {
                 case WINDOWS: {
                     return System.getProperty("user.home") + syspath("/AppData/Roaming/nuts/config/" + workspaceName);
@@ -178,12 +164,12 @@ public final class NutsUtilPlatforms {
         }
         if (NutsBlankable.isBlank(workspaceName)) {
             workspaceName = NutsConstants.Names.DEFAULT_WORKSPACE_NAME;
-        }else{
+        } else {
             Path fileName = Paths.get(workspaceName).normalize().toAbsolutePath().getFileName();
-            if(fileName==null){
+            if (fileName == null) {
                 //this happens when workspaceName='/' in that case use NutsConstants.Names.DEFAULT_WORKSPACE_NAME
                 workspaceName = NutsConstants.Names.DEFAULT_WORKSPACE_NAME;
-            }else {
+            } else {
                 workspaceName = fileName.toString();
             }
         }
@@ -228,7 +214,7 @@ public final class NutsUtilPlatforms {
                         case WINDOWS: {
                             return getWindowsProgramFiles() + "\\nuts\\config\\" + syspath(workspaceName);
                         }
-                        default:{
+                        default: {
                             return "/etc/opt/nuts/" + workspaceName + "/config";
                         }
                     }
@@ -432,14 +418,13 @@ public final class NutsUtilPlatforms {
     }
 
     /**
-     *
-     * @param platformOsFamily platformOsFamily or null
+     * @param platformOsFamily      platformOsFamily or null
      * @param storeLocationStrategy storeLocationStrategy or null
-     * @param baseLocations baseLocations or null
-     * @param homeLocations homeLocations or null
-     * @param global global
-     * @param workspaceLocation workspaceName or null
-     * @param session session or null
+     * @param baseLocations         baseLocations or null
+     * @param homeLocations         homeLocations or null
+     * @param global                global
+     * @param workspaceLocation     workspaceName or null
+     * @param session               session or null
      * @return locations map
      */
     public static Map<NutsStoreLocation, String> buildLocations(
@@ -447,16 +432,16 @@ public final class NutsUtilPlatforms {
             NutsStoreLocationStrategy storeLocationStrategy,
             Map<NutsStoreLocation, String> baseLocations,
             Map<NutsHomeLocation, String> homeLocations,
-            boolean global, String workspaceLocation,NutsSession session) {
-        workspaceLocation=getWorkspaceLocation(platformOsFamily, global, workspaceLocation);
+            boolean global, String workspaceLocation, NutsSession session) {
+        workspaceLocation = getWorkspaceLocation(platformOsFamily, global, workspaceLocation);
         String[] homes = new String[NutsStoreLocation.values().length];
         for (NutsStoreLocation location : NutsStoreLocation.values()) {
             String platformHomeFolder = getPlatformHomeFolder(platformOsFamily, location, homeLocations,
                     global, workspaceLocation);
             if (NutsBlankable.isBlank(platformHomeFolder)) {
-                if(session==null) {
+                if (session == null) {
                     throw new NutsBootException(NutsMessage.cstyle("missing Home for %s", location.id()));
-                }else{
+                } else {
                     throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("missing Home for %s", location.id()));
                 }
             }
@@ -466,13 +451,13 @@ public final class NutsUtilPlatforms {
             storeLocationStrategy = NutsStoreLocationStrategy.EXPLODED;
         }
         Map<NutsStoreLocation, String> storeLocations = new LinkedHashMap<>();
-        if(baseLocations!=null){
+        if (baseLocations != null) {
             for (Map.Entry<NutsStoreLocation, String> e : baseLocations.entrySet()) {
                 NutsStoreLocation loc = e.getKey();
-                if(loc==null){
-                    if(session==null) {
+                if (loc == null) {
+                    if (session == null) {
                         throw new NutsBootException(NutsMessage.plain("null location"));
-                    }else{
+                    } else {
                         throw new NutsIllegalArgumentException(session, NutsMessage.plain("null location"));
                     }
                 }

@@ -53,7 +53,7 @@ public class NutsJLineTerminal implements NutsSystemTerminalBase {
     private InputStream in;
     private NutsCommandAutoCompleteResolver autoCompleteResolver;
     private NutsCommandHistory commandHistory;
-    private NutsCommandReadHighlighter commandReadHighlighter;
+    private String commandHighlighter;
 
     public NutsJLineTerminal() {
     }
@@ -69,15 +69,14 @@ public class NutsJLineTerminal implements NutsSystemTerminalBase {
         return commandHistory;
     }
 
-    public NutsCommandReadHighlighter getCommandReadHighlighter() {
-        return commandReadHighlighter;
+    public String getCommandHighlighter() {
+        return commandHighlighter;
     }
 
-    public NutsSystemTerminalBase setCommandReadHighlighter(NutsCommandReadHighlighter commandReadHighlighter) {
-        this.commandReadHighlighter = commandReadHighlighter;
+    public NutsJLineTerminal setCommandHighlighter(String commandHighlighter) {
+        this.commandHighlighter = commandHighlighter;
         return this;
     }
-    
 
     @Override
     public NutsCommandAutoCompleteResolver getAutoCompleteResolver() {
@@ -239,8 +238,11 @@ public class NutsJLineTerminal implements NutsSystemTerminalBase {
                     @Override
                     public AttributedString highlight(LineReader reader, String buffer) {
                         NutsTexts text = NutsTexts.of(session);
-                        NutsCommandReadHighlighter h = getCommandReadHighlighter();
-                        NutsText n=(h!=null)?h.highlight(buffer, session):text.ofPlain(buffer);
+                        String ct = getCommandHighlighter();
+                        if(NutsBlankable.isBlank(ct)){
+                            ct="system";
+                        }
+                        NutsText n=NutsTexts.of(session).ofCode(ct, buffer).highlight(session);
                         return toAttributedString(n, NutsTextStyles.PLAIN, session);
                     }
 

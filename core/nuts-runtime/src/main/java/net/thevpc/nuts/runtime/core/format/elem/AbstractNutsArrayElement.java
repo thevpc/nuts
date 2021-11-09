@@ -30,7 +30,7 @@ import net.thevpc.nuts.NutsSession;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 public abstract class AbstractNutsArrayElement
         extends AbstractNutsElement

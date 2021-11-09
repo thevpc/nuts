@@ -32,24 +32,27 @@ import net.thevpc.nuts.boot.NutsApiUtils;
  * Object format is responsible of formatting to terminal
  * a given object. Multiple implementation should be available
  * to support tables, trees, json, xml,...
+ *
  * @author thevpc
  * @app.category Format
  */
 public interface NutsObjectFormat extends NutsContentTypeFormat {
 
-    static NutsObjectFormat of(NutsSession session){
+    static NutsObjectFormat of(NutsSession session) {
         NutsApiUtils.checkSession(session);
         return session.extensions().createSupported(NutsObjectFormat.class, true, null);
     }
 
     /**
      * return value to format
+     *
      * @return value to format
      */
     Object getValue();
 
     /**
      * set value to format
+     *
      * @param value value to format
      * @return {@code this} instance
      */
@@ -70,7 +73,7 @@ public interface NutsObjectFormat extends NutsContentTypeFormat {
      * to help return a more specific return type;
      *
      * @param skipUnsupported when true, all unsupported options are skipped
-     * @param args argument to configure with
+     * @param args            argument to configure with
      * @return {@code this} instance
      */
     @Override

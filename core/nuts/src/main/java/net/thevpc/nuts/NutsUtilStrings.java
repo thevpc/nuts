@@ -1,3 +1,29 @@
+/**
+ * ====================================================================
+ * Nuts : Network Updatable Things Service
+ * (universal package manager)
+ * <br>
+ * is a new Open Source Package Manager to help install packages
+ * and libraries for runtime execution. Nuts is the ultimate companion for
+ * maven (and other build managers) as it helps installing all package
+ * dependencies at runtime. Nuts is not tied to java and is a good choice
+ * to share shell scripts and other 'things' . Its based on an extensible
+ * architecture to help supporting a large range of sub managers / repositories.
+ *
+ * <br>
+ * <p>
+ * Copyright [2020] [thevpc]
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may
+ * not use this file except in compliance with the License. You may obtain a
+ * copy of the License at http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+ * either express or implied. See the License for the specific language
+ * governing permissions and limitations under the License.
+ * <br>
+ * ====================================================================
+ */
 package net.thevpc.nuts;
 
 /**
@@ -6,8 +32,7 @@ package net.thevpc.nuts;
  * @since 0.8.1
  */
 public class NutsUtilStrings {
-    private static final char[] HEX_ARR = "0123456789ABCDEF".toCharArray();
-
+    private static final char[] BASE16_CHARS = "0123456789ABCDEF".toCharArray();
 
 
     /**
@@ -54,14 +79,14 @@ public class NutsUtilStrings {
         char[] hexChars = new char[bytes.length * 2];
         for (int j = 0; j < bytes.length; j++) {
             int v = bytes[j] & 255;
-            hexChars[j * 2] = HEX_ARR[v >>> 4];
-            hexChars[j * 2 + 1] = HEX_ARR[v & 15];
+            hexChars[j * 2] = BASE16_CHARS[v >>> 4];
+            hexChars[j * 2 + 1] = BASE16_CHARS[v & 15];
         }
         return new String(hexChars);
     }
 
     public static char toHexChar(int nibble) {
-        return HEX_ARR[nibble & 15];
+        return BASE16_CHARS[nibble & 15];
     }
 
 }

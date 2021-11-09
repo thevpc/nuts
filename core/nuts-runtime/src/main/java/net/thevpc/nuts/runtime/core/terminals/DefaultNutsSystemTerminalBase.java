@@ -1,7 +1,10 @@
 package net.thevpc.nuts.runtime.core.terminals;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.spi.*;
+import net.thevpc.nuts.spi.NutsComponentScope;
+import net.thevpc.nuts.spi.NutsComponentScopeType;
+import net.thevpc.nuts.spi.NutsSupportLevelContext;
+import net.thevpc.nuts.spi.NutsSystemTerminalBase;
 
 import java.io.InputStream;
 import java.util.Scanner;
@@ -18,6 +21,9 @@ public class DefaultNutsSystemTerminalBase implements NutsSystemTerminalBase {
     private InputStream in;
     private NutsWorkspace workspace;
     private NutsSession session;
+    private NutsCommandHistory history;
+    private String commandHighlighter;
+    private NutsCommandAutoCompleteResolver commandAutoCompleteResolver;
 
     public DefaultNutsSystemTerminalBase() {
 
@@ -25,90 +31,17 @@ public class DefaultNutsSystemTerminalBase implements NutsSystemTerminalBase {
 
     private NutsLogger _LOG() {
         if (LOG == null && session != null) {
-            LOG = NutsLogger.of(NutsSystemTerminalBase.class,session);
+            LOG = NutsLogger.of(NutsSystemTerminalBase.class, session);
         }
         return LOG;
     }
-
-//    @Override
-//    public NutsTerminalMode getOutMode() {
-//        return outMode;
-//    }
-//
-//    @Override
-//    public NutsSystemTerminalBase setOutMode(NutsTerminalMode mode) {
-//        if (mode == null) {
-//            mode = NutsTerminalMode.FORMATTED;
-//        }
-//        if (_LOG() != null) {
-//            _LOG().with().session(session).level(Level.CONFIG).verb(NutsLogVerb.UPDATE).formatted().log("change terminal Out mode : {0}",
-//                    workspace.text().forStyled(mode.id(), NutsTextStyle.primary1())
-//            );
-//        }
-//        FPrint.installStdOut(this.outMode = mode, session);
-//        return this;
-//    }
-
-//    private CProgressBar getProgressBar() {
-//        if(progressBar==null){
-//            progressBar= CoreTerminalUtils.createProgressBar(session);
-//        }
-//        return progressBar;
-//    }
-//
-//    @Override
-//    public NutsTerminalBase printProgress(float progress, String prompt, Object... params) {
-//        if(getParent()!=null) {
-//            getParent().printProgress(progress, prompt, params);
-//        }else{
-//            getProgressBar().printProgress(
-//                    Float.isNaN(progress)?-1:
-//                            (int)(progress*100),
-//                    NutsTexts.of(session).toText(NutsMessage.cstyle(prompt,params)).toString(),
-//                    getErr()
-//            );
-//        }
-//        return this;
-//    }
-//
-//    @Override
-//    public NutsTerminalBase printProgress(String prompt, Object... params) {
-//        if(getParent()!=null) {
-//            getParent().printProgress(prompt, params);
-//        }else{
-//            getProgressBar().printProgress(-1,
-//                    NutsTexts.of(session).toText(NutsMessage.cstyle(prompt,params)).toString(),
-//                    getErr()
-//            );
-//        }
-//        return this;
-//    }
-
-//    @Override
-//    public NutsSystemTerminalBase setErrMode(NutsTerminalMode mode) {
-//        if (mode == null) {
-//            mode = NutsTerminalMode.FORMATTED;
-//        }
-//        if (_LOG() != null) {
-//            _LOG().with().session(session).level(Level.CONFIG).verb(NutsLogVerb.UPDATE).formatted().log("change terminal Err mode : {0}",
-//                    workspace.text().forStyled(mode.id(), NutsTextStyle.primary1())
-//            );
-//        }
-//        FPrint.installStdErr(this.errMode = mode, session);
-//        return this;
-//    }
-//
-//    @Override
-//    public NutsTerminalMode getErrMode() {
-//        return errMode;
-//    }
 
     @Override
     public int getSupportLevel(NutsSupportLevelContext criteria) {
         this.session = criteria.getSession();
         this.workspace = session.getWorkspace();
         if (workspace != null) {
-            NutsWorkspaceOptions options=session.boot().getBootOptions();
+            NutsWorkspaceOptions options = session.boot().getBootOptions();
             NutsTerminalMode terminalMode = options.getTerminalMode();
             if (terminalMode == null) {
                 if (options.isBot()) {
@@ -129,14 +62,14 @@ public class DefaultNutsSystemTerminalBase implements NutsSystemTerminalBase {
     }
 
     @Override
-    public String readLine(NutsPrintStream out, NutsMessage message,NutsSession session) {
+    public String readLine(NutsPrintStream out, NutsMessage message, NutsSession session) {
         if (out == null) {
             out = getOut();
         }
         if (out == null) {
             out = NutsPrintStreams.of(session).stdout();
         }
-        if(message!=null) {
+        if (message != null) {
             out.printf("%s", message);
             out.flush();
         }
@@ -144,14 +77,14 @@ public class DefaultNutsSystemTerminalBase implements NutsSystemTerminalBase {
     }
 
     @Override
-    public char[] readPassword(NutsPrintStream out, NutsMessage message,NutsSession session) {
+    public char[] readPassword(NutsPrintStream out, NutsMessage message, NutsSession session) {
         if (out == null) {
             out = getOut();
         }
         if (out == null) {
             out = NutsPrintStreams.of(session).stdout();
         }
-        if(message!=null) {
+        if (message != null) {
             out.printf("%s", message);
             out.flush();
         }
@@ -175,7 +108,7 @@ public class DefaultNutsSystemTerminalBase implements NutsSystemTerminalBase {
 
     @Override
     public NutsCommandAutoCompleteResolver getAutoCompleteResolver() {
-        return null;
+        return commandAutoCompleteResolver;
     }
 
     @Override
@@ -185,27 +118,29 @@ public class DefaultNutsSystemTerminalBase implements NutsSystemTerminalBase {
 
     @Override
     public NutsSystemTerminalBase setCommandAutoCompleteResolver(NutsCommandAutoCompleteResolver autoCompleteResolver) {
-        return this;
-    }
-
-    @Override
-    public NutsSystemTerminalBase setCommandHistory(NutsCommandHistory history) {
+        this.commandAutoCompleteResolver = autoCompleteResolver;
         return this;
     }
 
     @Override
     public NutsCommandHistory getCommandHistory() {
-        return null;
+        return history;
     }
 
     @Override
-    public NutsCommandReadHighlighter getCommandReadHighlighter() {
-        return null;
-    }
-
-    @Override
-    public NutsSystemTerminalBase setCommandReadHighlighter(NutsCommandReadHighlighter commandReadHighlighter) {
+    public NutsSystemTerminalBase setCommandHistory(NutsCommandHistory history) {
+        this.history = history;
         return this;
     }
 
+    @Override
+    public String getCommandHighlighter() {
+        return commandHighlighter;
+    }
+
+    @Override
+    public DefaultNutsSystemTerminalBase setCommandHighlighter(String commandHighlighter) {
+        this.commandHighlighter = commandHighlighter;
+        return this;
+    }
 }

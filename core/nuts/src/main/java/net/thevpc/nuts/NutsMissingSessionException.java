@@ -26,10 +26,6 @@
  */
 package net.thevpc.nuts;
 
-import java.util.HashSet;
-import java.util.Set;
-import java.util.Stack;
-
 /**
  * Base Boot Nuts Exception. Thrown when the Workspace could is booting
  * and is not yet available.
@@ -44,7 +40,6 @@ public class NutsMissingSessionException extends RuntimeException {
 
     /**
      * Constructs a 'missing session' exception
-     *
      */
     public NutsMissingSessionException() {
         this(NutsMessage.plain("missing session"));

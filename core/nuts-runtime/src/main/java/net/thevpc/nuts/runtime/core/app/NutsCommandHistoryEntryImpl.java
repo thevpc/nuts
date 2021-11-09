@@ -28,7 +28,7 @@ import net.thevpc.nuts.NutsCommandHistoryEntry;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 public class NutsCommandHistoryEntryImpl implements NutsCommandHistoryEntry {
     

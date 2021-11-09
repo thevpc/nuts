@@ -27,8 +27,9 @@ package net.thevpc.nuts;
 /**
  * Descriptor filter
  *
- * @since 0.5.4
+ * @author thevpc
  * @app.category Descriptor
+ * @since 0.5.4
  */
 public interface NutsDescriptorFilter extends NutsArtifactFilter {
 
@@ -36,7 +37,7 @@ public interface NutsDescriptorFilter extends NutsArtifactFilter {
      * return true if descriptor is accepted
      *
      * @param descriptor descriptor
-     * @param session session
+     * @param session    session
      * @return true if descriptor is accepted
      */
     boolean acceptDescriptor(NutsDescriptor descriptor, NutsSession session);
@@ -44,7 +45,7 @@ public interface NutsDescriptorFilter extends NutsArtifactFilter {
     /**
      * default implementation of {@link NutsArtifactFilter}
      *
-     * @param sid search id
+     * @param sid     search id
      * @param session session
      * @return true if accepted
      */

@@ -30,7 +30,7 @@ import java.util.Objects;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 public abstract class AbstractReflectProperty implements ReflectProperty {
 

@@ -30,7 +30,7 @@ import java.math.BigInteger;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 public class CoreNumberUtils {
 

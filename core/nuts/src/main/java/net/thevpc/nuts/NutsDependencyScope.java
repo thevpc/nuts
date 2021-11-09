@@ -29,9 +29,10 @@ import net.thevpc.nuts.boot.NutsApiUtils;
 
 /**
  * Supported dependency scope lists
+ *
  * @author thevpc
- * @since 0.5.4
  * @app.category Descriptor
+ * @since 0.5.4
  */
 public enum NutsDependencyScope implements NutsEnum {
     /**
@@ -194,7 +195,7 @@ public enum NutsDependencyScope implements NutsEnum {
 
     public static NutsDependencyScope parse(String value, NutsDependencyScope emptyValue, NutsSession session) {
         NutsDependencyScope v = parseLenient(value, emptyValue, null);
-        NutsApiUtils.checkNonNullEnum(v,value,NutsDependencyScope.class,session);
+        NutsApiUtils.checkNonNullEnum(v, value, NutsDependencyScope.class, session);
         return v;
     }
 
@@ -232,6 +233,7 @@ public enum NutsDependencyScope implements NutsEnum {
 
     /**
      * lower cased identifier.
+     *
      * @return lower cased identifier
      */
     public String id() {

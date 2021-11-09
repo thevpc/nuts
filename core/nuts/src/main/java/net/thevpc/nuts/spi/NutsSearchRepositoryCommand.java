@@ -34,7 +34,6 @@ import net.thevpc.nuts.NutsSession;
 import java.util.Iterator;
 
 /**
- *
  * @author thevpc
  * @app.category SPI Base
  */
@@ -50,6 +49,7 @@ public interface NutsSearchRepositoryCommand extends NutsRepositoryCommand {
     /**
      * this method should return immediately after initializing a valid iterator to be
      * retrieved by {@code getResult()}
+     *
      * @return {@code this} instance
      */
     @Override
@@ -57,12 +57,14 @@ public interface NutsSearchRepositoryCommand extends NutsRepositoryCommand {
 
     /**
      * get fetchMode
+     *
      * @return {@code this} instance
      */
     NutsFetchMode getFetchMode();
 
     /**
      * fetchMode
+     *
      * @param fetchMode fetchMode
      * @return {@code this} instance
      */
@@ -72,6 +74,7 @@ public interface NutsSearchRepositoryCommand extends NutsRepositoryCommand {
      * this method should return immediately and returns valid iterator.
      * visiting iterator may be blocking but not this method call.
      * If {@code run()} method has not been called yet, it will be called.
+     *
      * @return {@code this} instance
      */
     Iterator<NutsId> getResult();

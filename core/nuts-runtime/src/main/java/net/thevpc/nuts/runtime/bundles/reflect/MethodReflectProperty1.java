@@ -28,7 +28,7 @@ import java.lang.reflect.Method;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 public class MethodReflectProperty1 extends AbstractReflectProperty {
 

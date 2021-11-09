@@ -28,10 +28,11 @@ import net.thevpc.nuts.*;
 import java.io.InputStream;
 
 /**
- * Created by vpc on 2/20/17.
+ * System Terminal defines all low level term interaction
  *
- * @since 0.5.4
+ * @author thevpc
  * @app.category SPI Base
+ * @since 0.5.4
  */
 public interface NutsSystemTerminalBase extends NutsComponent {
     String readLine(NutsPrintStream out, NutsMessage message, NutsSession session);
@@ -52,20 +53,41 @@ public interface NutsSystemTerminalBase extends NutsComponent {
         return false;
     }
 
-    //    default NutsSystemTerminalBase setCommandAutoCompleteResolver(NutsCommandAutoCompleteResolver autoCompleteResolver){
-//        return this;
-//    }
     NutsSystemTerminalBase setCommandAutoCompleteResolver(NutsCommandAutoCompleteResolver autoCompleteResolver);
 
+    /**
+     * return History implementation
+     *
+     * @return History implementation
+     */
     NutsCommandHistory getCommandHistory();
 
+    /**
+     * set History implementation
+     *
+     * @param history new history implementation
+     * @return {@code this} instance
+     */
     NutsSystemTerminalBase setCommandHistory(NutsCommandHistory history);
 
-    NutsCommandReadHighlighter getCommandReadHighlighter();
+    /**
+     * return command line language content type (or simple id) used for highlighting (syntax coloring).
+     * when this returns blank, nuts uses 'system' which refers to the system shell highlighter
+     *
+     * @return command line language content type (or simple id) used for highlighting (syntax coloring)
+     * @since 0.8.3
+     */
+    String getCommandHighlighter();
 
-    NutsSystemTerminalBase setCommandReadHighlighter(NutsCommandReadHighlighter commandReadHighlighter);
+    /**
+     * set command line language content type (or simple id) used for highlighting (syntax coloring).
+     * when {@code commandContentType} is blank, nuts uses 'system' which refers to the system shell highlighter
+     *
+     * @param commandHighlighter commandContentType
+     * @return {@code this} instance
+     * @since 0.8.3
+     */
+    NutsSystemTerminalBase setCommandHighlighter(String commandHighlighter);
 
-
-//    NutsSystemTerminalBase getParent();
 
 }

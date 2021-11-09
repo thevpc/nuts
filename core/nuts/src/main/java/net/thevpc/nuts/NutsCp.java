@@ -51,9 +51,10 @@ import java.nio.file.Path;
  *     <li>File (file or directory)</li>
  *     <li>Path (file or directory)</li>
  * </ul>
+ *
  * @author thevpc
- * @since 0.5.4
  * @app.category Input Output
+ * @since 0.5.4
  */
 public interface NutsCp extends NutsComponent {
     static NutsCp of(NutsSession session) {
@@ -63,12 +64,14 @@ public interface NutsCp extends NutsComponent {
 
     /**
      * source object to copy from. It may be of any of the supported types.
+     *
      * @return source object to copy from
      */
     Object getSource();
 
     /**
      * update source to copy from
+     *
      * @param source source to copy from
      * @return {@code this} instance
      * @throws NutsUnsupportedArgumentException if unsupported type
@@ -77,6 +80,7 @@ public interface NutsCp extends NutsComponent {
 
     /**
      * update source to copy from
+     *
      * @param source source to copy from
      * @return {@code this} instance
      */
@@ -84,6 +88,7 @@ public interface NutsCp extends NutsComponent {
 
     /**
      * update source to copy from
+     *
      * @param source source to copy from
      * @return {@code this} instance
      */
@@ -91,6 +96,7 @@ public interface NutsCp extends NutsComponent {
 
     /**
      * update source to copy from
+     *
      * @param source source to copy from
      * @return {@code this} instance
      */
@@ -98,6 +104,7 @@ public interface NutsCp extends NutsComponent {
 
     /**
      * update source to copy from
+     *
      * @param source source to copy from
      * @return {@code this} instance
      */
@@ -105,6 +112,7 @@ public interface NutsCp extends NutsComponent {
 
     /**
      * update source to copy from
+     *
      * @param source source to copy from
      * @return {@code this} instance
      */
@@ -120,56 +128,7 @@ public interface NutsCp extends NutsComponent {
 
     /**
      * update source to copy from
-     * @param source source to copy from
-     * @return {@code this} instance
-     */
-    NutsCp from(String source);
-
-    /**
-     * update source to copy from
-     * @param source source to copy from
-     * @return {@code this} instance
-     */
-    NutsCp from(NutsPath source);
-
-    /**
-     * update source to copy from
-     * @param source source to copy from
-     * @return {@code this} instance
-     */
-    NutsCp from(InputStream source);
-
-    /**
-     * update source to copy from
-     * @param source source to copy from
-     * @return {@code this} instance
-     */
-    NutsCp from(File source);
-
-    /**
-     * update source to copy from
-     * @param source source to copy from
-     * @return {@code this} instance
-     */
-    NutsCp from(Path source);
-
-    /**
-     * update source to copy from
-     * @param source source to copy from
-     * @return {@code this} instance
-     */
-    NutsCp from(URL source);
-
-    /**
-     * update source to copy from
-     * @param source source to copy from
-     * @return {@code this} instance
-     * @since 0.8.3
-     */
-    NutsCp from(byte[] source);
-
-    /**
-     * update source to copy from
+     *
      * @param source source to copy from
      * @return {@code this} instance
      * @since 0.8.3
@@ -177,13 +136,72 @@ public interface NutsCp extends NutsComponent {
     NutsCp setSource(byte[] source);
 
     /**
+     * update source to copy from
+     *
+     * @param source source to copy from
+     * @return {@code this} instance
+     */
+    NutsCp from(String source);
+
+    /**
+     * update source to copy from
+     *
+     * @param source source to copy from
+     * @return {@code this} instance
+     */
+    NutsCp from(NutsPath source);
+
+    /**
+     * update source to copy from
+     *
+     * @param source source to copy from
+     * @return {@code this} instance
+     */
+    NutsCp from(InputStream source);
+
+    /**
+     * update source to copy from
+     *
+     * @param source source to copy from
+     * @return {@code this} instance
+     */
+    NutsCp from(File source);
+
+    /**
+     * update source to copy from
+     *
+     * @param source source to copy from
+     * @return {@code this} instance
+     */
+    NutsCp from(Path source);
+
+    /**
+     * update source to copy from
+     *
+     * @param source source to copy from
+     * @return {@code this} instance
+     */
+    NutsCp from(URL source);
+
+    /**
+     * update source to copy from
+     *
+     * @param source source to copy from
+     * @return {@code this} instance
+     * @since 0.8.3
+     */
+    NutsCp from(byte[] source);
+
+    /**
      * source object to copy to. It may be of any of the supported types.
+     *
      * @return target object to copy to
      */
     Object getTarget();
 
     /**
      * update target to copy from
+     *
      * @param target target to copy to
      * @return {@code this} instance
      */
@@ -191,6 +209,7 @@ public interface NutsCp extends NutsComponent {
 
     /**
      * update target to copy from
+     *
      * @param target target to copy to
      * @return {@code this} instance
      */
@@ -205,6 +224,7 @@ public interface NutsCp extends NutsComponent {
 
     /**
      * update target to copy from
+     *
      * @param target target to copy to
      * @return {@code this} instance
      */
@@ -212,6 +232,7 @@ public interface NutsCp extends NutsComponent {
 
     /**
      * update target to copy from
+     *
      * @param target target to copy to
      * @return {@code this} instance
      */
@@ -219,6 +240,7 @@ public interface NutsCp extends NutsComponent {
 
     /**
      * update target to copy from
+     *
      * @param target target to copy to
      * @return {@code this} instance
      */
@@ -226,6 +248,7 @@ public interface NutsCp extends NutsComponent {
 
     /**
      * update target to copy from
+     *
      * @param target target to copy to
      * @return {@code this} instance
      */
@@ -240,6 +263,7 @@ public interface NutsCp extends NutsComponent {
 
     /**
      * update target
+     *
      * @param target target
      * @return {@code this} instance
      */
@@ -248,6 +272,7 @@ public interface NutsCp extends NutsComponent {
 
     /**
      * update target
+     *
      * @param target target
      * @return {@code this} instance
      */
@@ -255,6 +280,7 @@ public interface NutsCp extends NutsComponent {
 
     /**
      * update target to copy from
+     *
      * @param target target to copy to
      * @return {@code this} instance
      */
@@ -262,6 +288,7 @@ public interface NutsCp extends NutsComponent {
 
     /**
      * update target to copy from
+     *
      * @param target target to copy to
      * @return {@code this} instance
      */
@@ -269,6 +296,7 @@ public interface NutsCp extends NutsComponent {
 
     /**
      * update target to copy from
+     *
      * @param target target to copy to
      * @return {@code this} instance
      */
@@ -276,6 +304,7 @@ public interface NutsCp extends NutsComponent {
 
     /**
      * update target to copy from
+     *
      * @param target target to copy to
      * @return {@code this} instance
      */
@@ -283,12 +312,14 @@ public interface NutsCp extends NutsComponent {
 
     /**
      * return validator
+     *
      * @return validator
      */
     NutsIOCopyValidator getValidator();
 
     /**
      * update validator
+     *
      * @param validator validator
      * @return {@code this} instance
      */
@@ -304,12 +335,14 @@ public interface NutsCp extends NutsComponent {
 
     /**
      * return true if safe copy flag is armed
+     *
      * @return true if safe copy flag is armed
      */
     boolean isSafe();
 
     /**
      * switch safe copy flag to {@code value}
+     *
      * @param value value
      * @return {@code this} instance
      */
@@ -317,12 +350,14 @@ public interface NutsCp extends NutsComponent {
 
     /**
      * return current session
+     *
      * @return current session
      */
     NutsSession getSession();
 
     /**
      * update current session
+     *
      * @param session current session
      * @return {@code this} instance
      */
@@ -330,12 +365,14 @@ public interface NutsCp extends NutsComponent {
 
     /**
      * run this copy action with {@link java.io.ByteArrayOutputStream} target and return bytes result
+     *
      * @return {@code this} instance
      */
     byte[] getByteArrayResult();
 
     /**
      * run this copy action
+     *
      * @return {@code this} instance
      */
     NutsCp run();
@@ -343,12 +380,14 @@ public interface NutsCp extends NutsComponent {
 
     /**
      * true if log progress flag is armed
+     *
      * @return true if log progress flag is armed
      */
     boolean isLogProgress();
 
     /**
      * switch log progress flag to {@code value}.
+     *
      * @param value value
      * @return {@code this} instance
      */
@@ -399,12 +438,14 @@ public interface NutsCp extends NutsComponent {
 
     /**
      * return true created stream should be marked as interruptible
+     *
      * @return {@code this} instance
      */
     boolean isInterruptible();
 
     /**
      * mark created stream as interruptible so that one can call {@link #interrupt()}
+     *
      * @param interruptible new value
      * @return {@code this} instance
      */
@@ -412,6 +453,7 @@ public interface NutsCp extends NutsComponent {
 
     /**
      * interrupt last created stream. An exception is throws when the stream is read.
+     *
      * @return {@code this} instance
      */
     NutsCp interrupt();

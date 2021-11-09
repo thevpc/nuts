@@ -27,6 +27,7 @@ package net.thevpc.nuts;
 
 /**
  * Named Element
+ *
  * @author thevpc
  * @app.category Format
  */
@@ -34,12 +35,14 @@ public interface NutsElementEntry {
 
     /**
      * element name
+     *
      * @return element name
      */
     NutsElement getKey();
 
     /**
      * element value
+     *
      * @return value
      */
     NutsElement getValue();

@@ -34,10 +34,10 @@ import java.util.Set;
  * Common Nuts constants. Represents various constants used in runtime
  * implementation.
  * <br>
- * Created by vpc on 1/14/17.
  *
- * @since 0.1.0
+ * @author thevpc
  * @app.category Constants
+ * @since 0.1.0
  */
 public final class NutsConstants {
 
@@ -49,6 +49,7 @@ public final class NutsConstants {
 
     /**
      * name constants
+     *
      * @app.category Constants
      */
     public static final class Names {
@@ -105,6 +106,7 @@ public final class NutsConstants {
      * <br>
      * This class defines all standard key names and their default values in the
      * query part.
+     *
      * @app.category Constants
      */
     public static final class IdProperties {
@@ -258,6 +260,7 @@ public final class NutsConstants {
 
     /**
      * valid values for Query parameter "face"
+     *
      * @app.category Constants
      */
     public static final class QueryFaces {
@@ -320,6 +323,7 @@ public final class NutsConstants {
 
     /**
      * nuts standard user names
+     *
      * @app.category Constants
      */
     public static final class Users {
@@ -345,6 +349,7 @@ public final class NutsConstants {
 
     /**
      * standard right keys for distinct operations in nuts.
+     *
      * @app.category Constants
      */
     public static final class Permissions {
@@ -440,6 +445,7 @@ public final class NutsConstants {
 
     /**
      * file related constants
+     *
      * @app.category Constants
      */
     public static final class Files {
@@ -497,6 +503,7 @@ public final class NutsConstants {
 
     /**
      * identifier related constants
+     *
      * @app.category Constants
      */
     public static final class Ids {
@@ -523,6 +530,7 @@ public final class NutsConstants {
 
     /**
      * default folder names
+     *
      * @app.category Constants
      */
     public static final class Folders {
@@ -557,6 +565,7 @@ public final class NutsConstants {
 
     /**
      * version special names
+     *
      * @app.category Constants
      */
     public static final class Versions {
@@ -580,6 +589,7 @@ public final class NutsConstants {
 
     /**
      * version special names
+     *
      * @app.category Constants
      */
     public static final class Ntf {

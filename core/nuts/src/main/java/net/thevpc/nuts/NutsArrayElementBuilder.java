@@ -30,8 +30,9 @@ import net.thevpc.nuts.boot.NutsApiUtils;
 import java.util.List;
 
 /**
- * Array element Builder is a mutable NutsArrayElement that helps 
+ * Array element Builder is a mutable NutsArrayElement that helps
  * manipulating arrays.
+ *
  * @author thevpc
  * @app.category Elements
  */
@@ -44,12 +45,14 @@ public interface NutsArrayElementBuilder extends NutsElementBuilder {
 
     /**
      * array items
+     *
      * @return array items
      */
     List<NutsElement> children();
 
     /**
      * element count
+     *
      * @return element count
      */
     int size();
@@ -57,6 +60,7 @@ public interface NutsArrayElementBuilder extends NutsElementBuilder {
 
     /**
      * element at index
+     *
      * @param index index
      * @return element at index
      */
@@ -64,6 +68,7 @@ public interface NutsArrayElementBuilder extends NutsElementBuilder {
 
     /**
      * all all elements in the given array
+     *
      * @param value value
      * @return {@code this} instance
      */
@@ -71,6 +76,7 @@ public interface NutsArrayElementBuilder extends NutsElementBuilder {
 
     /**
      * all all elements in the given array
+     *
      * @param value value
      * @return {@code this} instance
      */
@@ -78,6 +84,7 @@ public interface NutsArrayElementBuilder extends NutsElementBuilder {
 
     /**
      * all all elements in the given array
+     *
      * @param value value
      * @return {@code this} instance
      */
@@ -85,6 +92,7 @@ public interface NutsArrayElementBuilder extends NutsElementBuilder {
 
     /**
      * add element to the given array
+     *
      * @param value value
      * @return {@code this} instance
      */
@@ -92,6 +100,7 @@ public interface NutsArrayElementBuilder extends NutsElementBuilder {
 
     /**
      * add element to the given array
+     *
      * @param value value
      * @return {@code this} instance
      */
@@ -99,6 +108,7 @@ public interface NutsArrayElementBuilder extends NutsElementBuilder {
 
     /**
      * add element to the given array
+     *
      * @param value value
      * @return {@code this} instance
      */
@@ -106,6 +116,7 @@ public interface NutsArrayElementBuilder extends NutsElementBuilder {
 
     /**
      * add element to the given array
+     *
      * @param value value
      * @return {@code this} instance
      */
@@ -113,6 +124,7 @@ public interface NutsArrayElementBuilder extends NutsElementBuilder {
 
     /**
      * add element to the given array
+     *
      * @param value value
      * @return {@code this} instance
      */
@@ -120,6 +132,7 @@ public interface NutsArrayElementBuilder extends NutsElementBuilder {
 
     /**
      * add element to the given array
+     *
      * @param value value
      * @return {@code this} instance
      */
@@ -127,6 +140,7 @@ public interface NutsArrayElementBuilder extends NutsElementBuilder {
 
     /**
      * add element to the given array
+     *
      * @param value value
      * @return {@code this} instance
      */
@@ -134,6 +148,7 @@ public interface NutsArrayElementBuilder extends NutsElementBuilder {
 
     /**
      * add element to the given array
+     *
      * @param value value
      * @return {@code this} instance
      */
@@ -141,6 +156,7 @@ public interface NutsArrayElementBuilder extends NutsElementBuilder {
 
     /**
      * add element to the given array
+     *
      * @param value value
      * @return {@code this} instance
      */
@@ -148,6 +164,7 @@ public interface NutsArrayElementBuilder extends NutsElementBuilder {
 
     /**
      * all all elements in the given array
+     *
      * @param value value
      * @return {@code this} instance
      */
@@ -155,6 +172,7 @@ public interface NutsArrayElementBuilder extends NutsElementBuilder {
 
     /**
      * all all elements in the given array
+     *
      * @param value value
      * @return {@code this} instance
      */
@@ -162,6 +180,7 @@ public interface NutsArrayElementBuilder extends NutsElementBuilder {
 
     /**
      * all all elements in the given array
+     *
      * @param value value
      * @return {@code this} instance
      */
@@ -169,6 +188,7 @@ public interface NutsArrayElementBuilder extends NutsElementBuilder {
 
     /**
      * all all elements in the given array
+     *
      * @param value value
      * @return {@code this} instance
      */
@@ -176,6 +196,7 @@ public interface NutsArrayElementBuilder extends NutsElementBuilder {
 
     /**
      * all all elements in the given array
+     *
      * @param value value
      * @return {@code this} instance
      */
@@ -183,6 +204,7 @@ public interface NutsArrayElementBuilder extends NutsElementBuilder {
 
     /**
      * all all elements in the given array
+     *
      * @param value value
      * @return {@code this} instance
      */
@@ -190,6 +212,7 @@ public interface NutsArrayElementBuilder extends NutsElementBuilder {
 
     /**
      * all all elements in the given array
+     *
      * @param value value
      * @return {@code this} instance
      */
@@ -197,13 +220,14 @@ public interface NutsArrayElementBuilder extends NutsElementBuilder {
 
     /**
      * all all elements in the given array builder
+     *
      * @param value value
      * @return {@code this} instance
      */
     NutsArrayElementBuilder addAll(NutsArrayElementBuilder value);
 
     /**
-     * add new element to the end of the array. 
+     * add new element to the end of the array.
      *
      * @param element element to add, should no be null
      * @return {@code this} instance
@@ -214,24 +238,24 @@ public interface NutsArrayElementBuilder extends NutsElementBuilder {
     /**
      * insert new element at the given index.
      *
-     * @param index index to insert into
+     * @param index   index to insert into
      * @param element element to add, should no be null
      * @return {@code this} instance
-     * @throws NullPointerException if {@code element==null}
+     * @throws NullPointerException      if {@code element==null}
      * @throws IndexOutOfBoundsException if the index is out of range
-     *         ({@code index < 0 || index > size()})
+     *                                   ({@code index < 0 || index > size()})
      */
     NutsArrayElementBuilder insert(int index, NutsElement element);
 
     /**
      * update element at the given index.
      *
-     * @param index index to update
+     * @param index   index to update
      * @param element element to add, should no be null
      * @return {@code this} instance
-     * @throws NullPointerException if {@code element==null}
+     * @throws NullPointerException      if {@code element==null}
      * @throws IndexOutOfBoundsException if the index is out of range
-     *         ({@code index < 0 || index >= size()})
+     *                                   ({@code index < 0 || index >= size()})
      */
     NutsArrayElementBuilder set(int index, NutsElement element);
 
@@ -243,17 +267,18 @@ public interface NutsArrayElementBuilder extends NutsElementBuilder {
     NutsArrayElementBuilder clear();
 
     /**
-     * add new element to the end of the array. 
+     * add new element to the end of the array.
      *
      * @param index index to remove
      * @return {@code this} instance
      * @throws IndexOutOfBoundsException if the index is out of range
-     *         ({@code index < 0 || index > size()})
+     *                                   ({@code index < 0 || index > size()})
      */
     NutsArrayElementBuilder remove(int index);
 
     /**
      * reset this instance with the given array
+     *
      * @param other array
      * @return {@code this} instance
      */
@@ -261,6 +286,7 @@ public interface NutsArrayElementBuilder extends NutsElementBuilder {
 
     /**
      * reset this instance with the given array
+     *
      * @param other array builder
      * @return {@code this} instance
      */
@@ -268,6 +294,7 @@ public interface NutsArrayElementBuilder extends NutsElementBuilder {
 
     /**
      * create array with this instance elements
+     *
      * @return new array instance
      */
     NutsArrayElement build();

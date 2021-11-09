@@ -33,6 +33,7 @@ import java.util.LinkedHashMap;
 /**
  * Simple Implementation of Nuts BootClassLoader
  *
+ * @author thevpc
  * @app.category Boot
  */
 class PrivateNutsBootClassLoader extends URLClassLoader {
@@ -43,7 +44,7 @@ class PrivateNutsBootClassLoader extends URLClassLoader {
     /**
      * default constructor
      *
-     * @param urls urls
+     * @param urls   urls
      * @param parent parent class loader
      */
     PrivateNutsBootClassLoader(NutsClassLoaderNode[] urls, ClassLoader parent) {

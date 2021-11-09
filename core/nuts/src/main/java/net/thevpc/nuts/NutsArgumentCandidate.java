@@ -26,16 +26,14 @@
  */
 package net.thevpc.nuts;
 
-import net.thevpc.nuts.boot.NutsApiUtils;
-
 import java.io.Serializable;
 import java.util.Objects;
 
 /**
  * Argument Candidate used in Auto Complete.
  * <p>
- * Created by vpc on 3/7/17.
  *
+ * @author thevpc
  * @app.category Command Line
  * @since 0.5.5
  */

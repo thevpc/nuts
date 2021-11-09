@@ -29,8 +29,8 @@ package net.thevpc.nuts;
 /**
  * Standard Execution thrown when an artifact fails to run.
  *
- * @since 0.5.4
  * @app.category Exceptions
+ * @since 0.5.4
  */
 public class NutsExecutionException extends NutsException {
 
@@ -39,8 +39,9 @@ public class NutsExecutionException extends NutsException {
 
     /**
      * Constructs a new NutsExecutionException exception
-     * @param session workspace
-     * @param message message
+     *
+     * @param session  workspace
+     * @param message  message
      * @param exitCode exit code
      */
     public NutsExecutionException(NutsSession session, NutsMessage message, int exitCode) {
@@ -50,9 +51,10 @@ public class NutsExecutionException extends NutsException {
 
     /**
      * Constructs a new NutsExecutionException exception
+     *
      * @param session workspace
      * @param message message
-     * @param cause cause
+     * @param cause   cause
      */
     public NutsExecutionException(NutsSession session, NutsMessage message, Throwable cause) {
         this(session, message, cause, DEFAULT_ERROR_EXIT_CODE);
@@ -60,9 +62,10 @@ public class NutsExecutionException extends NutsException {
 
     /**
      * Constructs a new NutsExecutionException exception
-     * @param session workspace
-     * @param message message
-     * @param cause cause
+     *
+     * @param session  workspace
+     * @param message  message
+     * @param cause    cause
      * @param exitCode exit code
      */
     public NutsExecutionException(NutsSession session, NutsMessage message, Throwable cause, int exitCode) {
@@ -72,12 +75,13 @@ public class NutsExecutionException extends NutsException {
 
     /**
      * Constructs a new NutsExecutionException exception
-     * @param session workspace
-     * @param message message
-     * @param cause cause
-     * @param enableSuppression whether or not suppression is enabled or disabled
+     *
+     * @param session            workspace
+     * @param message            message
+     * @param cause              cause
+     * @param enableSuppression  whether or not suppression is enabled or disabled
      * @param writableStackTrace whether or not the stack trace should be writable
-     * @param exitCode exit code
+     * @param exitCode           exit code
      */
     public NutsExecutionException(NutsSession session, NutsMessage message, Throwable cause, boolean enableSuppression, boolean writableStackTrace, int exitCode) {
         super(session, message, cause, enableSuppression, writableStackTrace);
@@ -86,6 +90,7 @@ public class NutsExecutionException extends NutsException {
 
     /**
      * artifact exit code
+     *
      * @return artifact exit code
      */
     public int getExitCode() {

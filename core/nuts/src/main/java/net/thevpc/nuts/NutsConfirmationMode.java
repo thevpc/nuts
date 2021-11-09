@@ -96,7 +96,7 @@ public enum NutsConfirmationMode implements NutsEnum {
 
     public static NutsConfirmationMode parse(String value, NutsConfirmationMode emptyValue, NutsSession session) {
         NutsConfirmationMode v = parseLenient(value, emptyValue, null);
-        NutsApiUtils.checkNonNullEnum(v,value,NutsConfirmationMode.class,session);
+        NutsApiUtils.checkNonNullEnum(v, value, NutsConfirmationMode.class, session);
         return v;
     }
 

@@ -32,8 +32,8 @@ import net.thevpc.nuts.spi.NutsComponent;
  * I/O Action that help monitoring processes
  *
  * @author thevpc
- * @since 0.5.8
  * @app.category Toolkit
+ * @since 0.5.8
  */
 public interface NutsPs extends NutsComponent {
     static NutsPs of(NutsSession session) {

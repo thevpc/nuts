@@ -35,10 +35,13 @@ import java.time.Instant;
 import java.util.ListIterator;
 
 /**
+ * Command History
+ *
+ * @author thevpc
  * @app.category Command Line
  */
 public interface NutsCommandHistory extends NutsComponent {
-    static NutsCommandHistory of(NutsSession session){
+    static NutsCommandHistory of(NutsSession session) {
         NutsApiUtils.checkSession(session);
         return session.extensions().createSupported(NutsCommandHistory.class, true, null);
     }
@@ -52,13 +55,13 @@ public interface NutsCommandHistory extends NutsComponent {
 
     void save(OutputStream out);
 
+    NutsPath getPath();
+
     NutsCommandHistory setPath(Path path);
 
     NutsCommandHistory setPath(File path);
 
     NutsCommandHistory setPath(NutsPath path);
-
-    NutsPath getPath();
 
     int size();
 

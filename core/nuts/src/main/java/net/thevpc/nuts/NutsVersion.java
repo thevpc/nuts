@@ -26,7 +26,6 @@
 package net.thevpc.nuts;
 
 import net.thevpc.nuts.boot.NutsApiUtils;
-import net.thevpc.nuts.spi.NutsPaths;
 
 import java.io.Serializable;
 import java.math.BigInteger;
@@ -56,8 +55,8 @@ public interface NutsVersion extends Serializable, /*NutsTokenFilter, */NutsForm
     static NutsVersion of(String str, NutsSession session) {
         return
                 NutsApiUtils
-                        .createSessionCachedType(NutsVersionParser.class, session,()->NutsVersionParser.of(session))
-                .parse(str);
+                        .createSessionCachedType(NutsVersionParser.class, session, () -> NutsVersionParser.of(session))
+                        .parse(str);
     }
 
     /**
@@ -93,6 +92,7 @@ public interface NutsVersion extends Serializable, /*NutsTokenFilter, */NutsForm
 
     /**
      * compare this version to the other version
+     *
      * @param other other version
      * @return a negative integer, zero, or a positive integer as this object
      * is less than, equal to, or greater than the specified object.
@@ -123,7 +123,7 @@ public interface NutsVersion extends Serializable, /*NutsTokenFilter, */NutsForm
      * @return when the current version is a single value version X , returns [X,[ version that guarantees forward compatibility in all other cases returns the current version
      * @since 0.8.3
      */
-    NutsVersion compatOlder() ;
+    NutsVersion compatOlder();
 
     /**
      * parse the current version as an interval array

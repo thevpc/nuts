@@ -29,14 +29,15 @@ package net.thevpc.nuts;
 /**
  * Class for filtering Artifact Ids
  *
- * @since 0.5.4
  * @app.category Descriptor
+ * @since 0.5.4
  */
 public interface NutsIdFilter extends NutsArtifactFilter {
 
     /**
      * return true when the id is to be accepted
-     * @param id id to check
+     *
+     * @param id      id to check
      * @param session current workspace session
      * @return true when the id is to be accepted
      */

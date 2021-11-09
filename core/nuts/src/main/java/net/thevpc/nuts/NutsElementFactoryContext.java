@@ -28,7 +28,6 @@ import java.util.Map;
 import java.util.function.Predicate;
 
 /**
- *
  * @author thevpc
  */
 public interface NutsElementFactoryContext {

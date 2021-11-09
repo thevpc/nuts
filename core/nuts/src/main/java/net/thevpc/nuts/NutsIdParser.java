@@ -36,13 +36,14 @@ public interface NutsIdParser extends NutsComponent {
 
     static NutsIdParser of(NutsSession session) {
         NutsApiUtils.checkSession(session);
-        return session.extensions().createSupported(NutsIdParser.class,true,null);
+        return session.extensions().createSupported(NutsIdParser.class, true, null);
     }
 
     /**
      * return blank mode.
      * when true, null is returned whenever a blank id is encountered.
      * when false, an error is thrown in that case.
+     *
      * @return true if the parse is lenient
      */
     boolean isAcceptBlank();
@@ -51,6 +52,7 @@ public interface NutsIdParser extends NutsComponent {
      * set blank mode.
      * when true, null is returned whenever a blank id is encountered.
      * when false, an error is thrown in that case.
+     *
      * @param acceptBlank acceptBlank
      * @return true if the parse is lenient
      */
@@ -60,6 +62,7 @@ public interface NutsIdParser extends NutsComponent {
      * return lenient mode.
      * when true, null is returned whenever a non blank id cannot be parsed as a valid nuts id.
      * when false, an error is thrown in that case.
+     *
      * @return true if the parse is lenient
      */
     boolean isLenient();
@@ -68,6 +71,7 @@ public interface NutsIdParser extends NutsComponent {
      * set lenient mode.
      * when true, null is returned whenever a non blank id cannot be parsed as a valid nuts id
      * when false, an error is thrown in that case.
+     *
      * @param lenient true if the parse is lenient
      * @return {@code this instance}
      */
@@ -77,7 +81,7 @@ public interface NutsIdParser extends NutsComponent {
      * parse id or null if not valid.
      * id is parsed in the form
      * group:name#version?key=&lt;value&gt;{@code &}key=&lt;value&gt; ...
-     *
+     * <p>
      * an error is thrown if not lenient or do not accept blank at the given condition.
      *
      * @param id to parse

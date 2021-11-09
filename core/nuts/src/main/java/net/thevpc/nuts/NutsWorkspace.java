@@ -30,8 +30,9 @@ import net.thevpc.nuts.spi.NutsComponent;
 /**
  * Created by vpc on 1/5/17.
  *
- * @since 0.5.4
+ * @author thevpc
  * @app.category Base
+ * @since 0.5.4
  */
 public interface NutsWorkspace extends NutsComponent {
 

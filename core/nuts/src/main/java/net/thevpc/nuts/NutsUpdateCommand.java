@@ -29,8 +29,8 @@ import java.util.Collection;
 
 /**
  * @author thevpc
- * @since 0.5.4
  * @app.category Commands
+ * @since 0.5.4
  */
 public interface NutsUpdateCommand extends NutsWorkspaceCommand {
 
@@ -158,6 +158,7 @@ public interface NutsUpdateCommand extends NutsWorkspaceCommand {
 
     /**
      * update workspace companion versions
+     *
      * @param updateCompanions updateCompanions
      * @return {@code this} instance
      */
@@ -180,14 +181,6 @@ public interface NutsUpdateCommand extends NutsWorkspaceCommand {
     NutsUpdateCommand clearScopes();
 
     /**
-     * copy session
-     *
-     * @return {@code this} instance
-     */
-    @Override
-    NutsUpdateCommand copySession();
-
-    /**
      * update session
      *
      * @param session session
@@ -195,6 +188,14 @@ public interface NutsUpdateCommand extends NutsWorkspaceCommand {
      */
     @Override
     NutsUpdateCommand setSession(NutsSession session);
+
+    /**
+     * copy session
+     *
+     * @return {@code this} instance
+     */
+    @Override
+    NutsUpdateCommand copySession();
 
     /**
      * configure the current command with the given arguments. This is an

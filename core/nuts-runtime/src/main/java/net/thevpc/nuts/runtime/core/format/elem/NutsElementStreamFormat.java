@@ -31,7 +31,7 @@ import net.thevpc.nuts.NutsPrintStream;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 public interface NutsElementStreamFormat {
 

@@ -30,26 +30,30 @@ import net.thevpc.nuts.*;
 
 /**
  * Repository command bound to FetchCommand used to fetch an artifact content from a specific repository.
+ *
  * @author thevpc
- * @since 0.5.5
  * @app.category SPI Base
+ * @since 0.5.5
  */
 public interface NutsFetchContentRepositoryCommand extends NutsRepositoryCommand {
 
     /**
      * return fetch result. if the command is not yet executed, it will be executed first.
+     *
      * @return return fetch result.
      */
     NutsContent getResult();
 
     /**
      * get id to fetch
+     *
      * @return id to fetch
      */
     NutsId getId();
 
     /**
      * set id to fetch.
+     *
      * @param id id to fetch
      * @return {@code this} instance
      */
@@ -57,6 +61,7 @@ public interface NutsFetchContentRepositoryCommand extends NutsRepositoryCommand
 
     /**
      * set current session.
+     *
      * @param session current session
      * @return {@code this} instance
      */
@@ -66,6 +71,7 @@ public interface NutsFetchContentRepositoryCommand extends NutsRepositoryCommand
     /**
      * preform command. Should be called after setting all parameters.
      * Result is retrievable with {@link #getResult()}.
+     *
      * @return {@code this} instance
      */
     @Override
@@ -73,12 +79,14 @@ public interface NutsFetchContentRepositoryCommand extends NutsRepositoryCommand
 
     /**
      * get fetchMode
+     *
      * @return {@code this} instance
      */
     NutsFetchMode getFetchMode();
 
     /**
      * fetchMode
+     *
      * @param fetchMode fetchMode
      * @return {@code this} instance
      */
@@ -86,12 +94,14 @@ public interface NutsFetchContentRepositoryCommand extends NutsRepositoryCommand
 
     /**
      * path to store to
+     *
      * @return path to store to
      */
     String getLocalPath();
 
     /**
      * set localPath to store to.
+     *
      * @param localPath localPath to store to
      * @return {@code this} instance
      */
@@ -99,12 +109,14 @@ public interface NutsFetchContentRepositoryCommand extends NutsRepositoryCommand
 
     /**
      * description
+     *
      * @return description
      */
     NutsDescriptor getDescriptor();
 
     /**
      * set descriptor to fetch.
+     *
      * @param descriptor descriptor to fetch
      * @return {@code this} instance
      */

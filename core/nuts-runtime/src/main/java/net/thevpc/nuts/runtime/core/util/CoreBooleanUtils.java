@@ -27,7 +27,7 @@
 //
 ///**
 // *
-// * @author vpc
+// * @author thevpc
 // */
 //public final class CoreBooleanUtils {
 //

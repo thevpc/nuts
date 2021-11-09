@@ -27,10 +27,9 @@ package net.thevpc.nuts;
 import net.thevpc.nuts.spi.NutsAuthenticationAgent;
 
 /**
- *
  * @author thevpc
- * @since 0.5.4
  * @app.category Security
+ * @since 0.5.4
  */
 public interface NutsRepositorySecurityManager {
 
@@ -57,9 +56,9 @@ public interface NutsRepositorySecurityManager {
      * by the Authentication Agent for  <code>credentialsId</code>
      *
      * @param credentialsId credentialsId
-     * @param password password
-     * @throws NutsSecurityException when check failed
+     * @param password      password
      * @return this
+     * @throws NutsSecurityException when check failed
      */
     NutsRepositorySecurityManager checkCredentials(char[] credentialsId, char[] password) throws NutsSecurityException;
 
@@ -90,10 +89,10 @@ public interface NutsRepositorySecurityManager {
      * present or returned, <strong>MUST</strong> be prefixed with
      * AuthenticationAgent's id and ':' character
      *
-     * @param credentials credential
+     * @param credentials   credential
      * @param allowRetrieve when true {@link #getCredentials(char[])} can be
-     * invoked over {@code credentialId}
-     * @param credentialId preferred credentialId, if null, a new one is created
+     *                      invoked over {@code credentialId}
+     * @param credentialId  preferred credentialId, if null, a new one is created
      * @return credentials-id
      */
     char[] createCredentials(char[] credentials, boolean allowRetrieve, char[] credentialId);

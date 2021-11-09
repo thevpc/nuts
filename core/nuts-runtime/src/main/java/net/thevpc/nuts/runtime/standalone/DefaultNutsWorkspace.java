@@ -344,10 +344,10 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                 LOGCRF.log(NutsMessage.jstyle("   option-progress                : {0}", CoreNutsUtils.desc(info.getOptions().getProgressOptions(), text)));
                 LOGCRF.log(NutsMessage.jstyle("   inherited                      : {0}", info.getOptions().isInherited()));
                 LOGCRF.log(NutsMessage.jstyle("   inherited-nuts-boot-args       : {0}", System.getProperty("nuts.boot.args") == null ? CoreNutsUtils.desc(null, text)
-                        : CoreNutsUtils.desc(NutsCommandLine.parse(System.getProperty("nuts.boot.args"), NutsShellFamily.SH, defaultSession()), text)
+                        : CoreNutsUtils.desc(NutsCommandLine.of(System.getProperty("nuts.boot.args"), NutsShellFamily.SH, defaultSession()), text)
                 ));
                 LOGCRF.log(NutsMessage.jstyle("   inherited-nuts-args            : {0}", System.getProperty("nuts.args") == null ? CoreNutsUtils.desc(null, text)
-                        : CoreNutsUtils.desc(text.toText(NutsCommandLine.parse(System.getProperty("nuts.args"), NutsShellFamily.SH, defaultSession())), text)
+                        : CoreNutsUtils.desc(text.toText(NutsCommandLine.of(System.getProperty("nuts.args"), NutsShellFamily.SH, defaultSession())), text)
                 ));
                 LOGCRF.log(NutsMessage.jstyle("   option-open-mode               : {0}", CoreNutsUtils.formatLogValue(text, info.getOptions().getOpenMode(), info.getOptions().getOpenMode() == null ? NutsOpenMode.OPEN_OR_CREATE : info.getOptions().getOpenMode())));
                 LOGCRF.log(NutsMessage.jstyle("   java-home                      : {0}", System.getProperty("java.home")));

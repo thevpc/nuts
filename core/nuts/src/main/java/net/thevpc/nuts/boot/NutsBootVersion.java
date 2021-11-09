@@ -1,3 +1,29 @@
+/**
+ * ====================================================================
+ * Nuts : Network Updatable Things Service
+ * (universal package manager)
+ * <br>
+ * is a new Open Source Package Manager to help install packages
+ * and libraries for runtime execution. Nuts is the ultimate companion for
+ * maven (and other build managers) as it helps installing all package
+ * dependencies at runtime. Nuts is not tied to java and is a good choice
+ * to share shell scripts and other 'things' . Its based on an extensible
+ * architecture to help supporting a large range of sub managers / repositories.
+ *
+ * <br>
+ * <p>
+ * Copyright [2020] [thevpc]
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may
+ * not use this file except in compliance with the License. You may obtain a
+ * copy of the License at http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+ * either express or implied. See the License for the specific language
+ * governing permissions and limitations under the License.
+ * <br>
+ * ====================================================================
+ */
 package net.thevpc.nuts.boot;
 
 import net.thevpc.nuts.NutsBootException;
@@ -13,6 +39,8 @@ import java.util.Objects;
  * Simplistic implementation of Nuts Version (does not implement the hole interface nor does it implement all the features).
  * This implementation is mainly meant to handle nuts-runtime and its dependencies versions. For instance it doe not
  * not support multiple intervals.
+ *
+ * @author thevpc
  */
 public class NutsBootVersion {
     private final String from;
@@ -167,8 +195,8 @@ public class NutsBootVersion {
             if (p1.length > p2.length) {
                 return 1;
             }
-            int i1 = NutsApiUtils.parseInt(a1i,-1,-1);
-            int i2 = NutsApiUtils.parseInt(a2i,-1,-1);
+            int i1 = NutsApiUtils.parseInt(a1i, -1, -1);
+            int i2 = NutsApiUtils.parseInt(a2i, -1, -1);
             if (i1 != i2) {
                 return Integer.compare(i1, i2);
             }

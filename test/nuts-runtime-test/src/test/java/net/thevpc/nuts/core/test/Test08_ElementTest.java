@@ -267,7 +267,7 @@ public class Test08_ElementTest {
             TestUtils.println("CHECKING : '" + tt.path + "'");
             List<NutsElement> filtered1 = e.compilePath(tt.path).filter(p);
             ss.setValue(filtered1).println();
-            NutsString sexpected = NutsString.plain(tt.expected.get(0), e.getSession());
+            NutsString sexpected = NutsString.ofPlain(tt.expected.get(0), e.getSession());
             NutsString sresult = ss.format().immutable();
             Assertions.assertEquals(sexpected.immutable(), sresult.immutable());
         }

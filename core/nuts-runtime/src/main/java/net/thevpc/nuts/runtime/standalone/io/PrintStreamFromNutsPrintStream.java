@@ -10,7 +10,7 @@ public class PrintStreamFromNutsPrintStream extends PrintStream implements NutsP
 
     public PrintStreamFromNutsPrintStream(OutputStreamFromNutsPrintStream out) {
         super(out);
-        this.base = out.getBaseNutsPrintStream();
+        this.base = out.getBasePrintStream();
     }
 
     public PrintStreamFromNutsPrintStream(NutsPrintStream out) {
@@ -19,7 +19,7 @@ public class PrintStreamFromNutsPrintStream extends PrintStream implements NutsP
     }
 
     @Override
-    public NutsPrintStream getBaseNutsPrintStream() {
+    public NutsPrintStream getBasePrintStream() {
         return base;
     }
 }

@@ -29,8 +29,8 @@ package net.thevpc.nuts;
 /**
  * Exception thrown when a non executable nuts id is requested to run.
  *
- * @since 0.5.4
  * @app.category Exceptions
+ * @since 0.5.4
  */
 public class NutsNotExecutableException extends NutsExecutionException {
 
@@ -41,8 +41,9 @@ public class NutsNotExecutableException extends NutsExecutionException {
 
     /**
      * Constructs a new NutsNotExecutableException exception
+     *
      * @param session workspace
-     * @param id artifact id
+     * @param id      artifact id
      */
     public NutsNotExecutableException(NutsSession session, NutsId id) {
         super(session, NutsMessage.cstyle("not executable %s", (id == null ? "<null>" : id)), -1);
@@ -51,6 +52,7 @@ public class NutsNotExecutableException extends NutsExecutionException {
 
     /**
      * artifact id
+     *
      * @return artifact id
      */
     public NutsId getId() {

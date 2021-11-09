@@ -32,13 +32,14 @@ import java.util.Map;
 /**
  * this class is responsible of displaying general information about the current workspace and repositories.
  * Il is invoked by the "info" standard commmad,
+ *
  * @author thevpc
- * @since 0.5.4
  * @app.category Base
+ * @since 0.5.4
  */
 public interface NutsInfoFormat extends NutsFormat {
 
-    static NutsInfoFormat of(NutsSession session){
+    static NutsInfoFormat of(NutsSession session) {
         NutsApiUtils.checkSession(session);
         return session.extensions().createSupported(NutsInfoFormat.class, true, null);
     }
@@ -58,7 +59,7 @@ public interface NutsInfoFormat extends NutsFormat {
      * to help return a more specific return type;
      *
      * @param skipUnsupported when true, all unsupported options are skipped
-     * @param args argument to configure with
+     * @param args            argument to configure with
      * @return {@code this} instance
      */
     @Override
@@ -69,7 +70,8 @@ public interface NutsInfoFormat extends NutsFormat {
 
     /**
      * include a custom property
-     * @param key custom property key
+     *
+     * @param key   custom property key
      * @param value custom property value
      * @return {@code this} instance
      */
@@ -77,6 +79,7 @@ public interface NutsInfoFormat extends NutsFormat {
 
     /**
      * include custom properties from the given map
+     *
      * @param customProperties custom properties
      * @return {@code this} instance
      */
@@ -84,12 +87,14 @@ public interface NutsInfoFormat extends NutsFormat {
 
     /**
      * return true if displaying repositories is enabled
+     *
      * @return true if displaying repositories is enabled
      */
     boolean isShowRepositories();
 
     /**
      * enable or disable display of all repositories information
+     *
      * @param enable if true enable
      * @return {@code this} instance
      */
@@ -97,12 +102,14 @@ public interface NutsInfoFormat extends NutsFormat {
 
     /**
      * return true if fancy mode armed
+     *
      * @return true if fancy mode armed
      */
     boolean isFancy();
 
     /**
      * enable fancy (custom, pretty) display mode
+     *
      * @param fancy if true enable fancy mode
      * @return {@code this} instance
      */

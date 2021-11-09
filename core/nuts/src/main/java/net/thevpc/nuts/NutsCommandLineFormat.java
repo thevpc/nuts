@@ -31,12 +31,12 @@ import net.thevpc.nuts.boot.NutsApiUtils;
  * Simple Command line Format
  *
  * @author thevpc
- * @since 0.5.7
  * @app.category Command Line
+ * @since 0.5.7
  */
 public interface NutsCommandLineFormat extends NutsFormat {
 
-    static NutsCommandLineFormat of(NutsSession session){
+    static NutsCommandLineFormat of(NutsSession session) {
         NutsApiUtils.checkSession(session);
         return session.extensions().createSupported(NutsCommandLineFormat.class, true, null);
     }
@@ -50,6 +50,7 @@ public interface NutsCommandLineFormat extends NutsFormat {
 
     /**
      * set command line
+     *
      * @param value value
      * @return {@code this} instance
      */
@@ -57,6 +58,7 @@ public interface NutsCommandLineFormat extends NutsFormat {
 
     /**
      * set command line from string array
+     *
      * @param args args
      * @return {@code this} instance
      */
@@ -64,6 +66,7 @@ public interface NutsCommandLineFormat extends NutsFormat {
 
     /**
      * set command line from parsed string
+     *
      * @param args args
      * @return {@code this} instance
      */
@@ -71,13 +74,15 @@ public interface NutsCommandLineFormat extends NutsFormat {
 
     /**
      * return command line family
-     * @since 0.8.1
+     *
      * @return command line family
+     * @since 0.8.1
      */
     NutsShellFamily getShellFamily();
 
     /**
      * change command line family
+     *
      * @param family family
      * @return {@code this} instance
      */
@@ -98,7 +103,7 @@ public interface NutsCommandLineFormat extends NutsFormat {
      * to help return a more specific return type;
      *
      * @param skipUnsupported when true, all unsupported options are skipped
-     * @param args argument to configure with
+     * @param args            argument to configure with
      * @return {@code this} instance
      */
     @Override

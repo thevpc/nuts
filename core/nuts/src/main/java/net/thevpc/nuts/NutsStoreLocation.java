@@ -29,10 +29,9 @@ package net.thevpc.nuts;
 import net.thevpc.nuts.boot.NutsApiUtils;
 
 /**
- *
  * @author thevpc
- * @since 0.5.4
  * @app.category Base
+ * @since 0.5.4
  */
 public enum NutsStoreLocation implements NutsEnum {
 
@@ -74,7 +73,7 @@ public enum NutsStoreLocation implements NutsEnum {
     /**
      * defines the base directory relative to which user specific non-essential
      * data files should be stored. equivalent to $XDG_CACHE_HOME on LINUX.
-     * Contains cached files, libraries and applications that could be 
+     * Contains cached files, libraries and applications that could be
      * downloaded/re-created again when needed.
      */
     CACHE,
@@ -133,12 +132,13 @@ public enum NutsStoreLocation implements NutsEnum {
 
     public static NutsStoreLocation parse(String value, NutsStoreLocation emptyValue, NutsSession session) {
         NutsStoreLocation v = parseLenient(value, emptyValue, null);
-        NutsApiUtils.checkNonNullEnum(v,value,NutsStoreLocation.class,session);
+        NutsApiUtils.checkNonNullEnum(v, value, NutsStoreLocation.class, session);
         return v;
     }
 
     /**
      * lower cased identifier.
+     *
      * @return lower cased identifier
      */
     public String id() {

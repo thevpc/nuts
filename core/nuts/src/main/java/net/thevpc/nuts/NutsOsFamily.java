@@ -147,7 +147,7 @@ public enum NutsOsFamily implements NutsEnum {
 
     public static NutsOsFamily parse(String value, NutsOsFamily emptyValue, NutsSession session) {
         NutsOsFamily v = parseLenient(value, emptyValue, null);
-        NutsApiUtils.checkNonNullEnum(v,value,NutsOsFamily.class,session);
+        NutsApiUtils.checkNonNullEnum(v, value, NutsOsFamily.class, session);
         return v;
     }
 

@@ -28,6 +28,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * Builder for Loaded Package Information used to Boot
+ *
+ * @author thevpc
  * @app.category Internal
  */
 public class NutsClassLoaderNodeBuilder {
@@ -77,8 +80,18 @@ public class NutsClassLoaderNodeBuilder {
         return includedInClasspath;
     }
 
+    public NutsClassLoaderNodeBuilder setIncludedInClasspath(boolean includedInClasspath) {
+        this.includedInClasspath = includedInClasspath;
+        return this;
+    }
+
     public boolean isEnabled() {
         return enabled;
+    }
+
+    public NutsClassLoaderNodeBuilder setEnabled(boolean enabled) {
+        this.enabled = enabled;
+        return this;
     }
 
     public String getId() {
@@ -96,16 +109,6 @@ public class NutsClassLoaderNodeBuilder {
 
     public NutsClassLoaderNodeBuilder setUrl(URL url) {
         this.url = url;
-        return this;
-    }
-
-    public NutsClassLoaderNodeBuilder setEnabled(boolean enabled) {
-        this.enabled = enabled;
-        return this;
-    }
-
-    public NutsClassLoaderNodeBuilder setIncludedInClasspath(boolean includedInClasspath) {
-        this.includedInClasspath = includedInClasspath;
         return this;
     }
 

@@ -29,7 +29,6 @@ package net.thevpc.nuts;
 import java.util.Iterator;
 
 /**
- *
  * @author thevpc
  * @app.category Extensions
  */

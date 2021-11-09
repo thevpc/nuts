@@ -28,13 +28,12 @@ package net.thevpc.nuts;
 import net.thevpc.nuts.boot.NutsApiUtils;
 
 /**
- *
  * @author thevpc
- * @since 0.5.5
  * @app.category Format
+ * @since 0.5.5
  */
 public interface NutsTableFormat extends NutsContentTypeFormat {
-    static NutsTableFormat of(NutsSession session){
+    static NutsTableFormat of(NutsSession session) {
         NutsApiUtils.checkSession(session);
         return session.extensions().createSupported(NutsTableFormat.class, true, null);
     }
@@ -75,7 +74,7 @@ public interface NutsTableFormat extends NutsContentTypeFormat {
      * to help return a more specific return type;
      *
      * @param skipUnsupported when true, all unsupported options are skipped
-     * @param args argument to configure with
+     * @param args            argument to configure with
      * @return {@code this} instance
      */
     @Override

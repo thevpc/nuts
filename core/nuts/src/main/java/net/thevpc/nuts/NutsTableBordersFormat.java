@@ -27,9 +27,8 @@
 package net.thevpc.nuts;
 
 /**
- *
- * @since 0.5.5
  * @app.category Format
+ * @since 0.5.5
  */
 public interface NutsTableBordersFormat {
 

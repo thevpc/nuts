@@ -27,10 +27,9 @@
 package net.thevpc.nuts;
 
 /**
- *
  * @author thevpc
- * @since 0.5.6
  * @app.category Events
+ * @since 0.5.6
  */
 public interface NutsUpdateEvent {
 

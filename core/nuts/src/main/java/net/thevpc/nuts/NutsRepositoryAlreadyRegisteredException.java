@@ -28,15 +28,17 @@ package net.thevpc.nuts;
 
 /**
  * This exception is thrown when a repository location could no be loaded because
- *  the repository is already registered for the actual workspace.
- * @since 0.5.4
+ * the repository is already registered for the actual workspace.
+ *
  * @app.category Exceptions
+ * @since 0.5.4
  */
 public class NutsRepositoryAlreadyRegisteredException extends NutsRepositoryException {
 
     /**
      * Constructs a new NutsNotInstalledException exception
-     * @param session  workspace
+     *
+     * @param session    workspace
      * @param repository repository
      */
     public NutsRepositoryAlreadyRegisteredException(NutsSession session, String repository) {
@@ -47,9 +49,10 @@ public class NutsRepositoryAlreadyRegisteredException extends NutsRepositoryExce
 
     /**
      * Constructs a new NutsNotInstalledException exception
-     * @param session  workspace
+     *
+     * @param session    workspace
      * @param repository repository
-     * @param err error
+     * @param err        error
      */
     public NutsRepositoryAlreadyRegisteredException(NutsSession session, String repository, Throwable err) {
         super(session, repository,

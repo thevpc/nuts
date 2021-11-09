@@ -27,15 +27,15 @@
 package net.thevpc.nuts;
 
 /**
- *
  * @author thevpc
- * @since 0.5.4
  * @app.category Exceptions
+ * @since 0.5.4
  */
 public class NutsUnexpectedException extends NutsException {
 
     /**
      * Constructs a new NutsUnexpectedException exception
+     *
      * @param session workspace
      */
     public NutsUnexpectedException(NutsSession session) {
@@ -44,6 +44,7 @@ public class NutsUnexpectedException extends NutsException {
 
     /**
      * Constructs a new NutsUnexpectedException exception
+     *
      * @param session workspace
      * @param message message
      */
@@ -53,9 +54,10 @@ public class NutsUnexpectedException extends NutsException {
 
     /**
      * Constructs a new NutsUnexpectedException exception
+     *
      * @param session workspace
      * @param message message
-     * @param cause cause
+     * @param cause   cause
      */
     public NutsUnexpectedException(NutsSession session, NutsMessage message, Throwable cause) {
         super(session, message == null ? NutsMessage.plain("unexpected behaviour") : message, cause);
@@ -63,10 +65,11 @@ public class NutsUnexpectedException extends NutsException {
 
     /**
      * Constructs a new NutsUnexpectedException exception
-     * @param session workspace
-     * @param message message
-     * @param cause cause
-     * @param enableSuppression whether or not suppression is enabled or disabled
+     *
+     * @param session            workspace
+     * @param message            message
+     * @param cause              cause
+     * @param enableSuppression  whether or not suppression is enabled or disabled
      * @param writableStackTrace whether or not the stack trace should be writable
      */
     public NutsUnexpectedException(NutsSession session, NutsMessage message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {

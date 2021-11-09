@@ -32,8 +32,8 @@ import java.util.Map;
  * internal, external, alias and system
  *
  * @author thevpc
- * @since 0.5.4
  * @app.category Commands
+ * @since 0.5.4
  */
 public interface NutsExecCommand extends NutsWorkspaceCommand {
 
@@ -53,7 +53,7 @@ public interface NutsExecCommand extends NutsWorkspaceCommand {
      * state the output message
      *
      * @param failFast failFast if true an exception will be thrown if exit code
-     * is not zero
+     *                 is not zero
      * @return {@code this} instance
      */
     NutsExecCommand setFailFast(boolean failFast);
@@ -171,7 +171,7 @@ public interface NutsExecCommand extends NutsWorkspaceCommand {
     /**
      * set or unset env property. the property is unset if the value is null.
      *
-     * @param key env key
+     * @param key   env key
      * @param value env value
      * @return {@code this} instance
      */
@@ -365,14 +365,6 @@ public interface NutsExecCommand extends NutsWorkspaceCommand {
     NutsExecutionException getResultException();
 
     /**
-     * copy session
-     *
-     * @return {@code this} instance
-     */
-    @Override
-    NutsExecCommand copySession();
-
-    /**
      * update session
      *
      * @param session session
@@ -382,13 +374,21 @@ public interface NutsExecCommand extends NutsWorkspaceCommand {
     NutsExecCommand setSession(NutsSession session);
 
     /**
+     * copy session
+     *
+     * @return {@code this} instance
+     */
+    @Override
+    NutsExecCommand copySession();
+
+    /**
      * configure the current command with the given arguments. This is an
      * override of the {@link NutsCommandLineConfigurable#configure(boolean, java.lang.String...)
      * }
      * to help return a more specific return type;
      *
      * @param skipUnsupported when true, all unsupported options are skipped
-     * @param args argument to configure with
+     * @param args            argument to configure with
      * @return {@code this} instance
      */
     @Override

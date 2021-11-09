@@ -36,7 +36,7 @@ import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 public class NutsRepositorySelector {
 

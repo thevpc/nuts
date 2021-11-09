@@ -32,12 +32,13 @@ import java.util.Objects;
  * This class is used in {@link NutsDescriptor} to describe
  * locations/mirrors to download artifact content instead of the
  * regular location.
+ *
  * @app.category Descriptor
  */
-public class NutsIdLocation implements NutsBlankable{
-    private String url;
-    private String region;
-    private String classifier;
+public class NutsIdLocation implements NutsBlankable {
+    private final String url;
+    private final String region;
+    private final String classifier;
 
     public NutsIdLocation(String url, String region, String classifier) {
         this.url = url;
@@ -47,6 +48,7 @@ public class NutsIdLocation implements NutsBlankable{
 
     /**
      * location url of the artifact content
+     *
      * @return location url of the artifact content
      */
     public String getUrl() {
@@ -56,6 +58,7 @@ public class NutsIdLocation implements NutsBlankable{
     /**
      * location (geographic) region that may be used to select
      * the most effective mirror
+     *
      * @return location (geographic) region that may be used to select the most effective mirror
      */
     public String getRegion() {
@@ -64,10 +67,16 @@ public class NutsIdLocation implements NutsBlankable{
 
     /**
      * classifier for the artifact
+     *
      * @return classifier for the artifact
      */
     public String getClassifier() {
         return classifier;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(url, region, classifier);
     }
 
     @Override
@@ -76,11 +85,6 @@ public class NutsIdLocation implements NutsBlankable{
         if (o == null || getClass() != o.getClass()) return false;
         NutsIdLocation that = (NutsIdLocation) o;
         return Objects.equals(url, that.url) && Objects.equals(region, that.region) && Objects.equals(classifier, that.classifier);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(url, region, classifier);
     }
 
     @Override
@@ -94,15 +98,12 @@ public class NutsIdLocation implements NutsBlankable{
 
     @Override
     public boolean isBlank() {
-        if(!NutsBlankable.isBlank(url)){
+        if (!NutsBlankable.isBlank(url)) {
             return false;
         }
-        if(!NutsBlankable.isBlank(classifier)){
+        if (!NutsBlankable.isBlank(classifier)) {
             return false;
         }
-        if(!NutsBlankable.isBlank(region)){
-            return false;
-        }
-        return true;
+        return NutsBlankable.isBlank(region);
     }
 }

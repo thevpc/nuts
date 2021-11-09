@@ -26,10 +26,9 @@
 package net.thevpc.nuts;
 
 /**
- *
  * @author thevpc
- * @since 0.5.4
  * @app.category Commands
+ * @since 0.5.4
  */
 public interface NutsUndeployCommand extends NutsWorkspaceCommand {
 
@@ -54,14 +53,6 @@ public interface NutsUndeployCommand extends NutsWorkspaceCommand {
     NutsUndeployCommand clearIds();
 
     /**
-     * copy session
-     *
-     * @return {@code this} instance
-     */
-    @Override
-    NutsUndeployCommand copySession();
-
-    /**
      * update session
      *
      * @param session session
@@ -71,12 +62,20 @@ public interface NutsUndeployCommand extends NutsWorkspaceCommand {
     NutsUndeployCommand setSession(NutsSession session);
 
     /**
+     * copy session
+     *
+     * @return {@code this} instance
+     */
+    @Override
+    NutsUndeployCommand copySession();
+
+    /**
      * configure the current command with the given arguments. This is an
      * override of the {@link NutsCommandLineConfigurable#configure(boolean, java.lang.String...) }
      * to help return a more specific return type;
      *
      * @param skipUnsupported when true, all unsupported options are skipped
-     * @param args argument to configure with
+     * @param args            argument to configure with
      * @return {@code this} instance
      */
     @Override

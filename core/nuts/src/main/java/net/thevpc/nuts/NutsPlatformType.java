@@ -62,7 +62,7 @@ public enum NutsPlatformType implements NutsEnum {
     /**
      * parse string and return {@code emptyOrErrorValue} if parse fails
      *
-     * @param value value to parse
+     * @param value             value to parse
      * @param emptyOrErrorValue emptyOrErrorValue
      * @return parsed instance or {@code emptyOrErrorValue}
      */
@@ -114,7 +114,7 @@ public enum NutsPlatformType implements NutsEnum {
 
     public static NutsPlatformType parse(String value, NutsPlatformType emptyValue, NutsSession session) {
         NutsPlatformType v = parseLenient(value, emptyValue, null);
-        NutsApiUtils.checkNonNullEnum(v,value,NutsPlatformType.class,session);
+        NutsApiUtils.checkNonNullEnum(v, value, NutsPlatformType.class, session);
         return v;
     }
 

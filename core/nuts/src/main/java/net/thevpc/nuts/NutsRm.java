@@ -35,8 +35,8 @@ import java.nio.file.Path;
  * I/O Action that help monitored delete.
  *
  * @author thevpc
- * @since 0.5.8
  * @app.category Input Output
+ * @since 0.5.8
  */
 public interface NutsRm extends NutsComponent {
     static NutsRm of(NutsSession session) {
@@ -46,12 +46,14 @@ public interface NutsRm extends NutsComponent {
 
     /**
      * return target to delete
+     *
      * @return return target to delete
      */
     Object getTarget();
 
     /**
      * update target to delete
+     *
      * @param target target
      * @return {@code this} instance
      */
@@ -59,6 +61,7 @@ public interface NutsRm extends NutsComponent {
 
     /**
      * update target to delete
+     *
      * @param target target
      * @return {@code this} instance
      */
@@ -66,6 +69,7 @@ public interface NutsRm extends NutsComponent {
 
     /**
      * update target to delete
+     *
      * @param target target
      * @return {@code this} instance
      */
@@ -73,12 +77,14 @@ public interface NutsRm extends NutsComponent {
 
     /**
      * current session
+     *
      * @return current session
      */
     NutsSession getSession();
 
     /**
      * update session
+     *
      * @param session session
      * @return {@code this} instance
      */
@@ -86,6 +92,7 @@ public interface NutsRm extends NutsComponent {
 
     /**
      * run delete action and return {@code this}
+     *
      * @return {@code this} instance
      */
     NutsRm run();
@@ -94,12 +101,14 @@ public interface NutsRm extends NutsComponent {
      * return true if fail fast.
      * When fail fast flag is armed, the first
      * error that occurs will throw an {@link java.io.UncheckedIOException}
+     *
      * @return true if fail fast
      */
     boolean isFailFast();
 
     /**
      * update fail fast flag
+     *
      * @param failFast value
      * @return {@code this} instance
      */

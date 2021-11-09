@@ -35,9 +35,10 @@ import java.nio.file.Path;
 
 /**
  * I/O Action that help monitored uncompress of one or multiple resource types.
+ *
  * @author thevpc
- * @since 0.5.8
  * @app.category Input Output
+ * @since 0.5.8
  */
 public interface NutsUncompress extends NutsComponent {
     static NutsUncompress of(NutsSession session) {
@@ -47,12 +48,14 @@ public interface NutsUncompress extends NutsComponent {
 
     /**
      * format
+     *
      * @return format
      */
     String getFormat();
 
     /**
      * update format
+     *
      * @param format format
      * @return {@code this} instance
      */
@@ -60,14 +63,16 @@ public interface NutsUncompress extends NutsComponent {
 
     /**
      * update format option
+     *
      * @param option option name
-     * @param value value
+     * @param value  value
      * @return {@code this} instance
      */
     NutsUncompress setFormatOption(String option, Object value);
 
     /**
      * return format option
+     *
      * @param option option name
      * @return option value
      */
@@ -75,18 +80,22 @@ public interface NutsUncompress extends NutsComponent {
 
     /**
      * source to uncompress
+     *
      * @return source to uncompress
      */
     Object getSource();
 
     /**
      * update source to uncompress from
+     *
      * @param source source to uncompress from
      * @return {@code this} instance
      */
     NutsUncompress setSource(InputStream source);
+
     /**
      * update source to uncompress from
+     *
      * @param source source to uncompress from
      * @return {@code this} instance
      */
@@ -94,6 +103,7 @@ public interface NutsUncompress extends NutsComponent {
 
     /**
      * update source to uncompress from
+     *
      * @param source source to uncompress from
      * @return {@code this} instance
      */
@@ -101,6 +111,7 @@ public interface NutsUncompress extends NutsComponent {
 
     /**
      * update source to uncompress from
+     *
      * @param source source to uncompress from
      * @return {@code this} instance
      */
@@ -108,6 +119,7 @@ public interface NutsUncompress extends NutsComponent {
 
     /**
      * update source to uncompress from
+     *
      * @param source source to uncompress from
      * @return {@code this} instance
      */
@@ -115,6 +127,7 @@ public interface NutsUncompress extends NutsComponent {
 
     /**
      * update source to uncompress from
+     *
      * @param source source to uncompress from
      * @return {@code this} instance
      */
@@ -122,6 +135,7 @@ public interface NutsUncompress extends NutsComponent {
 
     /**
      * update source to uncompress from
+     *
      * @param source source to uncompress from
      * @return {@code this} instance
      */
@@ -129,6 +143,7 @@ public interface NutsUncompress extends NutsComponent {
 
     /**
      * update source to uncompress from
+     *
      * @param source source to uncompress from
      * @return {@code this} instance
      */
@@ -136,6 +151,7 @@ public interface NutsUncompress extends NutsComponent {
 
     /**
      * update source to uncompress from
+     *
      * @param source source to uncompress from
      * @return {@code this} instance
      */
@@ -145,12 +161,14 @@ public interface NutsUncompress extends NutsComponent {
 
     /**
      * target to uncompress to
+     *
      * @return target to uncompress to
      */
     Object getTarget();
 
     /**
      * update target
+     *
      * @param target target
      * @return {@code this} instance
      */
@@ -158,6 +176,7 @@ public interface NutsUncompress extends NutsComponent {
 
     /**
      * update target
+     *
      * @param target target
      * @return {@code this} instance
      */
@@ -165,6 +184,7 @@ public interface NutsUncompress extends NutsComponent {
 
     /**
      * update target
+     *
      * @param target target
      * @return {@code this} instance
      */
@@ -174,6 +194,7 @@ public interface NutsUncompress extends NutsComponent {
 
     /**
      * update source to uncompress from
+     *
      * @param source source to uncompress from
      * @return {@code this} instance
      */
@@ -181,6 +202,7 @@ public interface NutsUncompress extends NutsComponent {
 
     /**
      * update target
+     *
      * @param target target
      * @return {@code this} instance
      */
@@ -188,6 +210,7 @@ public interface NutsUncompress extends NutsComponent {
 
     /**
      * update target
+     *
      * @param target target
      * @return {@code this} instance
      */
@@ -195,6 +218,7 @@ public interface NutsUncompress extends NutsComponent {
 
     /**
      * update target
+     *
      * @param target target
      * @return {@code this} instance
      */
@@ -202,6 +226,7 @@ public interface NutsUncompress extends NutsComponent {
 
     /**
      * update source to uncompress from
+     *
      * @param source source to uncompress from
      * @return {@code this} instance
      */
@@ -209,12 +234,14 @@ public interface NutsUncompress extends NutsComponent {
 
     /**
      * return current session
+     *
      * @return current session
      */
     NutsSession getSession();
 
     /**
      * update current session
+     *
      * @param session current session
      * @return {@code this} instance
      */
@@ -222,6 +249,7 @@ public interface NutsUncompress extends NutsComponent {
 
     /**
      * run this uncompress action
+     *
      * @return {@code this} instance
      */
     NutsUncompress run();
@@ -230,12 +258,14 @@ public interface NutsUncompress extends NutsComponent {
 
     /**
      * true if log progress flag is armed
+     *
      * @return true if log progress flag is armed
      */
     boolean isLogProgress();
 
     /**
      * switch log progress flag to {@code value}.
+     *
      * @param value value
      * @return {@code this} instance
      */
@@ -295,12 +325,14 @@ public interface NutsUncompress extends NutsComponent {
 
     /**
      * return true if safe flag is armed
+     *
      * @return true if safe flag is armed
      */
     boolean isSafe();
 
     /**
      * switch safe flag to {@code value}
+     *
      * @param value value
      * @return {@code this} instance
      */

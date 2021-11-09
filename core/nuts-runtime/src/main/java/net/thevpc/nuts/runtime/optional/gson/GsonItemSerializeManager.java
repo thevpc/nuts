@@ -54,7 +54,7 @@
 //
 ///**
 // *
-// * @author vpc
+// * @author thevpc
 // */
 //public class GsonItemSerializeManager implements NutsElementStreamFormat {
 //

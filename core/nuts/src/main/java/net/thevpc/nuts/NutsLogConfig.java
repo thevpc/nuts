@@ -33,9 +33,10 @@ import java.util.logging.Level;
 
 /**
  * log configuration for running nuts
+ *
  * @author thevpc
- * @since 0.5.4
  * @app.category Logging
+ * @since 0.5.4
  */
 public class NutsLogConfig implements Serializable, Cloneable {
     private static final long serialVersionUID = 1;
@@ -106,7 +107,8 @@ public class NutsLogConfig implements Serializable, Cloneable {
 
     /**
      * Log File Size in Mega Bytes
-     * @return  log file size
+     *
+     * @return log file size
      */
     public int getLogFileSize() {
         return logFileSize;
@@ -114,6 +116,7 @@ public class NutsLogConfig implements Serializable, Cloneable {
 
     /**
      * update Log File Size in Mega Bytes
+     *
      * @param logFileSize Log File Size in Mega Bytes
      * @return {@code this} instance
      */
@@ -124,6 +127,7 @@ public class NutsLogConfig implements Serializable, Cloneable {
 
     /**
      * Log File rotation count
+     *
      * @return log rotation files count
      */
     public int getLogFileCount() {
@@ -132,6 +136,7 @@ public class NutsLogConfig implements Serializable, Cloneable {
 
     /**
      * update Log File rotation count
+     *
      * @param logFileCount Log File rotation count
      * @return {@code this} instance
      */
@@ -142,6 +147,7 @@ public class NutsLogConfig implements Serializable, Cloneable {
 
     /**
      * Log File Name pattern
+     *
      * @return Log File Name pattern
      */
     public String getLogFileName() {
@@ -150,6 +156,7 @@ public class NutsLogConfig implements Serializable, Cloneable {
 
     /**
      * update Log File Name pattern
+     *
      * @param logFileName Log File Name pattern
      * @return {@code this} instance
      */
@@ -160,6 +167,7 @@ public class NutsLogConfig implements Serializable, Cloneable {
 
     /**
      * Log File Base directory
+     *
      * @return Log File Base directory
      */
     public String getLogFileBase() {
@@ -168,6 +176,7 @@ public class NutsLogConfig implements Serializable, Cloneable {
 
     /**
      * update Log File Base directory
+     *
      * @param logFileBase Log File Base directory
      * @return {@code this} instance
      */

@@ -34,9 +34,10 @@ import java.util.Objects;
 
 /**
  * Default Content implementation.
+ *
  * @author thevpc
- * @since 0.5.4
  * @app.category Descriptor
+ * @since 0.5.4
  */
 public class NutsDefaultContent implements NutsContent {
 
@@ -46,8 +47,9 @@ public class NutsDefaultContent implements NutsContent {
 
     /**
      * Default Content implementation constructor
-     * @param location content file path
-     * @param cached true if the file is cached (may be not up to date)
+     *
+     * @param location  content file path
+     * @param cached    true if the file is cached (may be not up to date)
      * @param temporary true if file is temporary (should be deleted later)
      */
     public NutsDefaultContent(NutsPath location, boolean cached, boolean temporary) {
@@ -58,6 +60,7 @@ public class NutsDefaultContent implements NutsContent {
 
     /**
      * content path location
+     *
      * @return content path location
      */
     @Override
@@ -82,6 +85,7 @@ public class NutsDefaultContent implements NutsContent {
 
     /**
      * true if the file is cached (may be not up to date)
+     *
      * @return true if the file is cached (may be not up to date)
      */
     @Override
@@ -91,6 +95,7 @@ public class NutsDefaultContent implements NutsContent {
 
     /**
      * true if file is temporary (should be deleted later)
+     *
      * @return true if file is temporary (should be deleted later)
      */
     @Override

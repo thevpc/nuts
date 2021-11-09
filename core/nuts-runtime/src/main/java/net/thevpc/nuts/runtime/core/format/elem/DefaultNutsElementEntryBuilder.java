@@ -32,7 +32,7 @@
 //
 ///**
 // *
-// * @author vpc
+// * @author thevpc
 // */
 //public class DefaultNutsElementEntryBuilder extends AbstractNutsElementBaseBuilder implements NutsElementEntryBuilder {
 //

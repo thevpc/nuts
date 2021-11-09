@@ -31,6 +31,7 @@ import net.thevpc.nuts.NutsSession;
 
 /**
  * Root class for all Repository commands.
+ *
  * @author thevpc
  * @app.category SPI Base
  */
@@ -38,12 +39,14 @@ public interface NutsRepositoryCommand extends NutsCommandLineConfigurable {
 
     /**
      * return session
+     *
      * @return {@code this} instance
      */
     NutsSession getSession();
 
     /**
      * set session
+     *
      * @param session session
      * @return {@code this} instance
      */
@@ -51,6 +54,7 @@ public interface NutsRepositoryCommand extends NutsCommandLineConfigurable {
 
     /**
      * run this command and return {@code this} instance
+     *
      * @return {@code this} instance
      */
     NutsRepositoryCommand run();
@@ -61,7 +65,7 @@ public interface NutsRepositoryCommand extends NutsCommandLineConfigurable {
      * to help return a more specific return type;
      *
      * @param skipUnsupported when true, all unsupported options are skipped
-     * @param args argument to configure with
+     * @param args            argument to configure with
      * @return {@code this} instance
      */
     @Override

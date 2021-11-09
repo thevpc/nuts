@@ -165,7 +165,7 @@ public abstract class AbstractJShellContext implements JShellContext {
                             if (s.length() > 0) {
                                 if (s.startsWith(NutsApplicationContext.AUTO_COMPLETE_CANDIDATE_PREFIX)) {
                                     s = s.substring(NutsApplicationContext.AUTO_COMPLETE_CANDIDATE_PREFIX.length()).trim();
-                                    NutsCommandLine args = NutsCommandLine.parse(s,session);
+                                    NutsCommandLine args = NutsCommandLine.of(s,session);
                                     String value = null;
                                     String display = null;
                                     if (args.hasNext()) {

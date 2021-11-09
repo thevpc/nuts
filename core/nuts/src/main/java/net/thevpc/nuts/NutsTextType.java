@@ -73,7 +73,7 @@ public enum NutsTextType implements NutsEnum {
 
     public static NutsTextType parse(String value, NutsTextType emptyValue, NutsSession session) {
         NutsTextType v = parseLenient(value, emptyValue, null);
-        NutsApiUtils.checkNonNullEnum(v,value,NutsTextType.class,session);
+        NutsApiUtils.checkNonNullEnum(v, value, NutsTextType.class, session);
         return v;
     }
 

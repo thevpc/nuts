@@ -32,20 +32,23 @@ import net.thevpc.nuts.spi.NutsComponent;
 import java.util.List;
 
 /**
+ * @author thevpc
  * @app.category Command Line
+ * @since 0.8.3
  */
 public interface NutsCommandLines extends NutsComponent {
-    static NutsCommandLines of(NutsSession session){
+    static NutsCommandLines of(NutsSession session) {
         NutsApiUtils.checkSession(session);
         return session.extensions().createSupported(NutsCommandLines.class, true, session);
     }
 
     /**
      * return new Command line instance
+     *
      * @param line command line to parse
      * @return new Command line instance
      */
-    NutsCommandLine parse(String line);
+    NutsCommandLine parseCommandline(String line);
 
     /**
      * return new Command line instance
@@ -53,7 +56,7 @@ public interface NutsCommandLines extends NutsComponent {
      * @param args command line args
      * @return new Command line instance
      */
-    NutsCommandLine create(String... args);
+    NutsCommandLine createCommandline(String... args);
 
     /**
      * return new Command line instance
@@ -61,11 +64,12 @@ public interface NutsCommandLines extends NutsComponent {
      * @param args command line args
      * @return new Command line instance
      */
-    NutsCommandLine create(List<String> args);
+    NutsCommandLine createCommandline(List<String> args);
 
 
     /**
      * create new argument
+     *
      * @param argument new argument
      * @return new argument
      */
@@ -73,6 +77,7 @@ public interface NutsCommandLines extends NutsComponent {
 
     /**
      * create argument name
+     *
      * @param type create argument type
      * @return argument name
      */
@@ -82,7 +87,8 @@ public interface NutsCommandLines extends NutsComponent {
 
     /**
      * create argument name
-     * @param type argument type
+     *
+     * @param type  argument type
      * @param label argument label
      * @return argument name
      */
@@ -95,13 +101,15 @@ public interface NutsCommandLines extends NutsComponent {
 
     /**
      * return command line family
-     * @since 0.8.1
+     *
      * @return command line family
+     * @since 0.8.1
      */
     NutsShellFamily getShellFamily();
 
     /**
      * change command line family
+     *
      * @param family family
      * @return {@code this} instance
      */

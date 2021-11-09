@@ -27,12 +27,14 @@ package net.thevpc.nuts;
 
 /**
  * Exception thrown when copy validation fails
+ *
  * @app.category Exceptions
  */
 public class NutsIOException extends NutsException {
 
     /**
      * Constructs a new Validation Exception
+     *
      * @param session workspace
      * @param message message
      */
@@ -42,9 +44,10 @@ public class NutsIOException extends NutsException {
 
     /**
      * Constructs a new Validation Exception
+     *
      * @param session workspace
      * @param message message
-     * @param cause cause
+     * @param cause   cause
      */
     public NutsIOException(NutsSession session, NutsMessage message, Throwable cause) {
         super(session, message, cause);
@@ -52,15 +55,16 @@ public class NutsIOException extends NutsException {
 
     /**
      * Constructs a new Validation Exception
+     *
      * @param session workspace
-     * @param cause cause
+     * @param cause   cause
      */
     public NutsIOException(NutsSession session, Throwable cause) {
         super(session,
                 cause == null ? null
                         : (cause instanceof NutsExceptionBase) ?
                         ((NutsExceptionBase) cause).getFormattedMessage()
-                        : NutsMessage.plain(cause.getMessage()==null?"error":cause.getMessage()),
+                        : NutsMessage.plain(cause.getMessage() == null ? "error" : cause.getMessage()),
                 cause);
     }
 }

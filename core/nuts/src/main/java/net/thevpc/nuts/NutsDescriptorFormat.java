@@ -84,6 +84,8 @@ public interface NutsDescriptorFormat extends NutsFormat, NutsComponent {
      */
     NutsDescriptorFormat setValue(NutsDescriptor descriptor);
 
+    NutsDescriptorFormat setSession(NutsSession session);
+
     /**
      * configure the current command with the given arguments. This is an
      * override of the {@link NutsCommandLineConfigurable#configure(boolean, java.lang.String...) }
@@ -97,6 +99,4 @@ public interface NutsDescriptorFormat extends NutsFormat, NutsComponent {
     NutsDescriptorFormat configure(boolean skipUnsupported, String... args);
 
     NutsDescriptorFormat setNtf(boolean ntf);
-
-    NutsDescriptorFormat setSession(NutsSession session);
 }

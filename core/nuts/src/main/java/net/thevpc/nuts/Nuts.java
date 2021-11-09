@@ -23,7 +23,10 @@
  */
 package net.thevpc.nuts;
 
-import net.thevpc.nuts.boot.*;
+import net.thevpc.nuts.boot.NutsApiUtils;
+import net.thevpc.nuts.boot.NutsBootTerminal;
+import net.thevpc.nuts.boot.NutsBootWorkspace;
+import net.thevpc.nuts.boot.PrivateNutsLog;
 
 import java.util.logging.Level;
 
@@ -31,6 +34,7 @@ import java.util.logging.Level;
  * Nuts Top Class. Nuts is a Package manager for Java Applications and this
  * class is it's main class for creating and opening nuts workspaces.
  *
+ * @author thevpc
  * @app.category Base
  * @since 0.1.0
  */
@@ -216,7 +220,7 @@ public final class Nuts {
      * @return session
      */
     public static NutsSession runWorkspace(NutsBootTerminal term, String... args) throws NutsExecutionException {
-        return new NutsBootWorkspace(term,args).runWorkspace();
+        return new NutsBootWorkspace(term, args).runWorkspace();
     }
 
     /**
@@ -230,6 +234,6 @@ public final class Nuts {
      * @return session
      */
     public static NutsSession runWorkspace(String... args) throws NutsExecutionException {
-        return new NutsBootWorkspace(null,args).runWorkspace();
+        return new NutsBootWorkspace(null, args).runWorkspace();
     }
 }

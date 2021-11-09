@@ -31,8 +31,8 @@ package net.thevpc.nuts;
  * 'run' method to perform the operation.
  *
  * @author thevpc
- * @since 0.5.5
  * @app.category Commands
+ * @since 0.5.5
  */
 public interface NutsWorkspaceCommand extends NutsCommandLineConfigurable {
 

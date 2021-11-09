@@ -32,17 +32,19 @@ import java.util.List;
  * Non Option Argument specification
  *
  * @author thevpc
- * @since 0.5.5
  * @app.category Command Line
+ * @since 0.5.5
  */
 public interface NutsArgumentName extends Serializable {
 
-    static NutsArgumentName of(String type, String label,NutsSession session){
-        return NutsCommandLines.of(session).createName(type,label);
+    static NutsArgumentName of(String type, String label, NutsSession session) {
+        return NutsCommandLines.of(session).createName(type, label);
     }
-    static NutsArgumentName of(String type,NutsSession session){
+
+    static NutsArgumentName of(String type, NutsSession session) {
         return NutsCommandLines.of(session).createName(type);
     }
+
     /**
      * argument name
      *

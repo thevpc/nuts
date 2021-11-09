@@ -141,7 +141,7 @@ public enum NutsElementType implements NutsEnum {
 
     public static NutsElementType parse(String value, NutsElementType emptyValue, NutsSession session) {
         NutsElementType v = parseLenient(value, emptyValue, null);
-        NutsApiUtils.checkNonNullEnum(v,value,NutsElementType.class,session);
+        NutsApiUtils.checkNonNullEnum(v, value, NutsElementType.class, session);
         return v;
     }
 

@@ -27,11 +27,13 @@ package net.thevpc.nuts;
 
 /**
  * System Process Information
+ *
  * @app.category Base
  */
 public interface NutsProcessInfo {
     /**
      * Process Id in string representation
+     *
      * @return Process Id in string representation
      */
     String getPid();
@@ -39,18 +41,21 @@ public interface NutsProcessInfo {
     /**
      * Process Name.
      * This should represent Fully Qualified Java Main Class Name for java processes.
+     *
      * @return Process Name or Java Class Name for Java Processes
      */
     String getName();
 
     /**
      * Process Title / Window Title if available
+     *
      * @return Process Title / Window Title if available
      */
     String getTitle();
 
     /**
      * Process command line
+     *
      * @return Process command line
      */
     String getCommandLine();

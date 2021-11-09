@@ -31,9 +31,10 @@ import net.thevpc.nuts.NutsPrintStream;
 
 /**
  * Base Format Interface used to print "things".
+ *
  * @author thevpc
- * @since 0.8.1
  * @app.category SPI Base
+ * @since 0.8.1
  */
 public interface NutsFormatSPI {
 

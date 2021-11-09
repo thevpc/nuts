@@ -29,13 +29,14 @@ import net.thevpc.nuts.spi.NutsComponentScope;
 import net.thevpc.nuts.spi.NutsComponentScopeType;
 
 /**
+ * @author thevpc
  * @app.category Base
  */
 @NutsComponentScope(NutsComponentScopeType.SESSION)
 public interface NutsVersionFilters extends NutsTypedFilters<NutsVersionFilter> {
     static NutsVersionFilters of(NutsSession session) {
         NutsApiUtils.checkSession(session);
-        return session.extensions().createSupported(NutsVersionFilters.class,true,null);
+        return session.extensions().createSupported(NutsVersionFilters.class, true, null);
     }
 
     NutsVersionFilter byValue(String version);

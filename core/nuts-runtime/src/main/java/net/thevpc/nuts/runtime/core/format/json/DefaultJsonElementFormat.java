@@ -29,7 +29,7 @@ import net.thevpc.nuts.runtime.core.format.elem.NutsElementStreamFormat;
 import java.io.*;
 
 /**
- * @author vpc
+ * @author thevpc
  */
 public class DefaultJsonElementFormat implements NutsElementStreamFormat {
 

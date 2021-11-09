@@ -31,7 +31,7 @@ import java.io.IOException;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 public class Test18_PathTest {
 

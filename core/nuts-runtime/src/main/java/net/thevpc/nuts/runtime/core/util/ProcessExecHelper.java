@@ -10,7 +10,6 @@ import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
@@ -192,7 +191,7 @@ public class ProcessExecHelper implements IProcessExecHelper {
         for (String arg : args) {
             String s = NutsUtilStrings.trim(StringPlaceHolderParser.replaceDollarPlaceHolders(arg, mapper));
             if (s.startsWith("<::expand::>")) {
-                Collections.addAll(args2, NutsCommandLine.parse(s,session).toStringArray());
+                Collections.addAll(args2, NutsCommandLine.of(s,session).toStringArray());
             } else {
                 args2.add(s);
             }

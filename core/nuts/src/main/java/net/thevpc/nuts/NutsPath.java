@@ -49,41 +49,41 @@ import java.util.stream.Stream;
 public interface NutsPath extends NutsFormattable {
     static NutsPath of(URL path, NutsSession session) {
         return NutsApiUtils
-                .createSessionCachedType(NutsPaths.class, session,()->NutsPaths.of(session))
-                .createPath(path,session);
+                .createSessionCachedType(NutsPaths.class, session, () -> NutsPaths.of(session))
+                .createPath(path, session);
     }
 
     static NutsPath of(String path, ClassLoader classLoader, NutsSession session) {
-        return NutsPaths.of(session).createPath(path, classLoader,session);
+        return NutsPaths.of(session).createPath(path, classLoader, session);
     }
 
     static NutsPath of(File path, NutsSession session) {
         return NutsApiUtils
-                .createSessionCachedType(NutsPaths.class, session,()->NutsPaths.of(session))
-                .createPath(path,session);
+                .createSessionCachedType(NutsPaths.class, session, () -> NutsPaths.of(session))
+                .createPath(path, session);
     }
 
     static NutsPath of(Path path, NutsSession session) {
         return NutsApiUtils
-                .createSessionCachedType(NutsPaths.class, session,()->NutsPaths.of(session))
-                .createPath(path,session);
+                .createSessionCachedType(NutsPaths.class, session, () -> NutsPaths.of(session))
+                .createPath(path, session);
     }
 
     static NutsPath of(String path, NutsSession session) {
         return NutsApiUtils
-                .createSessionCachedType(NutsPaths.class, session,()->NutsPaths.of(session))
-                .createPath(path,session);
+                .createSessionCachedType(NutsPaths.class, session, () -> NutsPaths.of(session))
+                .createPath(path, session);
     }
 
-    static void addPathFactory(NutsPathFactory pathFactory,NutsSession session){
+    static void addPathFactory(NutsPathFactory pathFactory, NutsSession session) {
         NutsApiUtils
-                .createSessionCachedType(NutsPaths.class, session,()->NutsPaths.of(session))
+                .createSessionCachedType(NutsPaths.class, session, () -> NutsPaths.of(session))
                 .addPathFactory(pathFactory, session);
     }
 
-    static void removePathFactory(NutsPathFactory pathFactory,NutsSession session){
+    static void removePathFactory(NutsPathFactory pathFactory, NutsSession session) {
         NutsApiUtils
-                .createSessionCachedType(NutsPaths.class, session,()->NutsPaths.of(session))
+                .createSessionCachedType(NutsPaths.class, session, () -> NutsPaths.of(session))
                 .removePathFactory(pathFactory, session);
     }
 
@@ -116,7 +116,7 @@ public interface NutsPath extends NutsFormattable {
     String getLocation();
 
     NutsPath resolve(String other);
-    
+
     NutsPath resolve(NutsPath other);
 
     /**
@@ -236,12 +236,14 @@ public interface NutsPath extends NutsFormattable {
 
     /**
      * return true if this path is a simple name that do not contain '/' or equivalent
+     *
      * @return true if this path is a simple name that do not contain '/' or equivalent
      */
     boolean isName();
 
     /**
      * return path items count
+     *
      * @return path items count
      */
     int getPathCount();
@@ -250,6 +252,7 @@ public interface NutsPath extends NutsFormattable {
      * true if this is the root of the path file system.
      * good examples are:
      * '/' , 'C:\' and 'http://myserver/'
+     *
      * @return true if this is the root of the path file system
      */
     boolean isRoot();
@@ -269,7 +272,7 @@ public interface NutsPath extends NutsFormattable {
      * Return a Stream that is lazily populated with Path by walking the file tree rooted at a given starting file.
      * The file tree is traversed depth-first, the elements in the stream are Path objects that are obtained as if by resolving the relative path against start.
      *
-     * @param options  options
+     * @param options options
      * @return a Stream that is lazily populated with Path by walking the file tree rooted at a given starting file
      */
     NutsStream<NutsPath> walk(NutsPathVisitOption... options);
@@ -278,7 +281,7 @@ public interface NutsPath extends NutsFormattable {
      * Return a Stream that is lazily populated with Path by walking the file tree rooted at a given starting file.
      * The file tree is traversed depth-first, the elements in the stream are Path objects that are obtained as if by resolving the relative path against start.
      *
-     * @param maxDepth  max depth
+     * @param maxDepth max depth
      * @return a Stream that is lazily populated with Path by walking the file tree rooted at a given starting file
      */
     NutsStream<NutsPath> walk(int maxDepth);

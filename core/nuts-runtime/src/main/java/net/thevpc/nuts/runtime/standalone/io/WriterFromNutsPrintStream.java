@@ -14,7 +14,7 @@ public class WriterFromNutsPrintStream extends Writer implements NutsPrintStream
     }
 
     @Override
-    public NutsPrintStream getBaseNutsPrintStream() {
+    public NutsPrintStream getBasePrintStream() {
         return base;
     }
 

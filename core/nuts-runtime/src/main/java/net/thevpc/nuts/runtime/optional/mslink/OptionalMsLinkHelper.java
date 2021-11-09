@@ -4,7 +4,6 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
 
 import java.io.IOException;
-import java.io.UncheckedIOException;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -47,7 +46,7 @@ public class OptionalMsLinkHelper {
     }
 
     public void write() {
-        String[] cmd = NutsCommandLine.parse(command,session).toStringArray();
+        String[] cmd = NutsCommandLine.of(command,session).toStringArray();
         mslinks.ShellLink se = mslinks.ShellLink.createLink(cmd[0])
                 .setWorkingDir(wd)
                 .setCMDArgs(NutsCommandLine.of(

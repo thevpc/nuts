@@ -33,8 +33,8 @@ import java.util.Objects;
  * Command Alias Factory Definition Config
  *
  * @author thevpc
- * @since 0.5.4
  * @app.category SPI Base
+ * @since 0.5.4
  */
 public class NutsCommandFactoryConfig extends NutsConfigItem {
     private static final long serialVersionUID = 1;
@@ -61,6 +61,7 @@ public class NutsCommandFactoryConfig extends NutsConfigItem {
 
     /**
      * Factory id (unique identifier in the workspace)
+     *
      * @return Factory id (unique identifier in the workspace)
      */
     public String getFactoryId() {
@@ -69,6 +70,7 @@ public class NutsCommandFactoryConfig extends NutsConfigItem {
 
     /**
      * Factory id (unique identifier in the workspace)
+     *
      * @param value new value
      * @return {@code this} instance
      */
@@ -79,6 +81,7 @@ public class NutsCommandFactoryConfig extends NutsConfigItem {
 
     /**
      * Factory Type
+     *
      * @return Factory Type
      */
     public String getFactoryType() {
@@ -87,6 +90,7 @@ public class NutsCommandFactoryConfig extends NutsConfigItem {
 
     /**
      * Factory Type
+     *
      * @param value new value
      * @return {@code this} instance
      */
@@ -97,6 +101,7 @@ public class NutsCommandFactoryConfig extends NutsConfigItem {
 
     /**
      * factory parameters
+     *
      * @return factory parameters
      */
     public Map<String, String> getParameters() {
@@ -105,6 +110,7 @@ public class NutsCommandFactoryConfig extends NutsConfigItem {
 
     /**
      * factory parameters
+     *
      * @param value new value
      * @return {@code this} instance
      */
@@ -115,6 +121,7 @@ public class NutsCommandFactoryConfig extends NutsConfigItem {
 
     /**
      * priority (the higher the better)
+     *
      * @return priority (the higher the better)
      */
     public int getPriority() {
@@ -123,6 +130,7 @@ public class NutsCommandFactoryConfig extends NutsConfigItem {
 
     /**
      * priority (the higher the better)
+     *
      * @param value new value
      * @return {@code this} instance
      */

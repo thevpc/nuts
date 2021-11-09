@@ -29,22 +29,25 @@ import java.util.List;
 
 /**
  * Tree Model to use in tree format
+ *
  * @author thevpc
- * @since 0.5.5
  * @app.category Format
+ * @since 0.5.5
  */
 public interface NutsTreeModel {
 
     /**
      * tree node
+     *
      * @return tree node
      */
     Object getRoot();
 
     /**
      * return children of the given {@code node}
+     *
      * @param node node to retrieve children for
-     * @param <T> children type
+     * @param <T>  children type
      * @return node children
      */
     <T> List<T> getChildren(Object node);

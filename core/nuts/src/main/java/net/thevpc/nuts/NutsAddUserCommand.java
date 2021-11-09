@@ -31,17 +31,17 @@ import java.util.Collection;
  * Command class for adding users to workspaces and repositories. All Command
  * classes have a 'run' method to perform the operation.
  *
+ * @author thevpc
+ * @app.category Security
  * @see NutsWorkspaceSecurityManager#addUser(String)
  * @see NutsRepositorySecurityManager#addUser(String)
- *
- * @author thevpc
  * @since 0.5.5
- * @app.category Security
  */
 public interface NutsAddUserCommand extends NutsWorkspaceCommand {
 
     /**
      * add group named {@code group} to the specified user
+     *
      * @param group group name
      * @return {@code this} instance
      */
@@ -49,6 +49,7 @@ public interface NutsAddUserCommand extends NutsWorkspaceCommand {
 
     /**
      * add group list named {@code groups} to the specified user
+     *
      * @param groups group list
      * @return {@code this} instance
      */
@@ -56,6 +57,7 @@ public interface NutsAddUserCommand extends NutsWorkspaceCommand {
 
     /**
      * add group list named {@code groups} to the specified user
+     *
      * @param groups group list
      * @return {@code this} instance
      */
@@ -63,6 +65,7 @@ public interface NutsAddUserCommand extends NutsWorkspaceCommand {
 
     /**
      * add permission named {@code permission} to the specified user
+     *
      * @param permission permission name from {@code NutsConstants.Permissions}
      * @return {@code this} instance
      */
@@ -70,6 +73,7 @@ public interface NutsAddUserCommand extends NutsWorkspaceCommand {
 
     /**
      * add permissions list named {@code permissions} to the specified user
+     *
      * @param permissions group list
      * @return {@code this} instance
      */
@@ -77,6 +81,7 @@ public interface NutsAddUserCommand extends NutsWorkspaceCommand {
 
     /**
      * add permissions list named {@code permissions} to the specified user
+     *
      * @param permissions group list
      * @return {@code this} instance
      */
@@ -84,18 +89,21 @@ public interface NutsAddUserCommand extends NutsWorkspaceCommand {
 
     /**
      * group list defined by {@link #addGroup}, @link {@link #addGroups(String...)}} and @link {@link #addGroups(Collection)}}
+     *
      * @return group list
      */
     String[] getGroups();
 
     /**
      * return username
+     *
      * @return username
      */
     String getUsername();
 
     /**
      * set username
+     *
      * @param username new value
      * @return {@code this} instance
      */
@@ -103,12 +111,12 @@ public interface NutsAddUserCommand extends NutsWorkspaceCommand {
 
     /**
      * return credentials
+     *
      * @return credentials
      */
     char[] getCredentials();
 
     /**
-     *
      * @param password new value
      * @return {@code this} instance
      */
@@ -116,12 +124,14 @@ public interface NutsAddUserCommand extends NutsWorkspaceCommand {
 
     /**
      * return remote identity
+     *
      * @return remote identity
      */
     String getRemoteIdentity();
 
     /**
      * set remote identity
+     *
      * @param remoteIdentity new value
      * @return {@code this} instance
      */
@@ -129,12 +139,14 @@ public interface NutsAddUserCommand extends NutsWorkspaceCommand {
 
     /**
      * return permissions
+     *
      * @return permissions
      */
     String[] getPermissions();
 
     /**
      * remove group
+     *
      * @param groups new value
      * @return {@code this} instance
      */
@@ -142,6 +154,7 @@ public interface NutsAddUserCommand extends NutsWorkspaceCommand {
 
     /**
      * remove groups
+     *
      * @param groups groups to remove
      * @return {@code this} instance
      */
@@ -149,6 +162,7 @@ public interface NutsAddUserCommand extends NutsWorkspaceCommand {
 
     /**
      * remove permissions
+     *
      * @param permissions permission to remove
      * @return {@code this} instance
      */
@@ -156,6 +170,7 @@ public interface NutsAddUserCommand extends NutsWorkspaceCommand {
 
     /**
      * remove permissions
+     *
      * @param permissions permissions to remove
      * @return {@code this} instance
      */
@@ -163,24 +178,18 @@ public interface NutsAddUserCommand extends NutsWorkspaceCommand {
 
     /**
      * remote credentials
+     *
      * @return remote credentials
      */
     char[] getRemoteCredentials();
 
     /**
      * set remote credentials
+     *
      * @param password new value
      * @return {@code this} instance
      */
     NutsAddUserCommand setRemoteCredentials(char[] password);
-
-    /**
-     * copy session
-     *
-     * @return {@code this} instance
-     */
-    @Override
-    NutsAddUserCommand copySession();
 
     /**
      * update session
@@ -192,12 +201,20 @@ public interface NutsAddUserCommand extends NutsWorkspaceCommand {
     NutsAddUserCommand setSession(NutsSession session);
 
     /**
+     * copy session
+     *
+     * @return {@code this} instance
+     */
+    @Override
+    NutsAddUserCommand copySession();
+
+    /**
      * configure the current command with the given arguments. This is an
      * override of the {@link NutsCommandLineConfigurable#configure(boolean, java.lang.String...) }
      * to help return a more specific return type;
      *
      * @param skipUnsupported when true, all unsupported options are skipped
-     * @param args argument to configure with
+     * @param args            argument to configure with
      * @return {@code this} instance
      */
     @Override

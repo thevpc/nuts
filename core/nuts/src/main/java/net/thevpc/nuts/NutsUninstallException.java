@@ -29,8 +29,8 @@ package net.thevpc.nuts;
 /**
  * This Exception is thrown when an artifact fails to be uninstalled
  *
- * @since 0.5.4
  * @app.category Exceptions
+ * @since 0.5.4
  */
 public class NutsUninstallException extends NutsInstallationException {
 
@@ -38,7 +38,7 @@ public class NutsUninstallException extends NutsInstallationException {
      * Custom Constructor
      *
      * @param session workspace
-     * @param id nuts id
+     * @param id      nuts id
      */
     public NutsUninstallException(NutsSession session, NutsId id) {
         this(session, id, null, null);
@@ -48,9 +48,9 @@ public class NutsUninstallException extends NutsInstallationException {
      * Custom Constructor
      *
      * @param session workspace
-     * @param id nuts id
-     * @param msg message
-     * @param ex exception
+     * @param id      nuts id
+     * @param msg     message
+     * @param ex      exception
      */
     public NutsUninstallException(NutsSession session, NutsId id, NutsMessage msg, Throwable ex) {
         super(session, id,

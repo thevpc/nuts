@@ -33,9 +33,10 @@ import java.util.Iterator;
 
 /**
  * Fetch strategy defines modes (see {@link NutsFetchMode}) to use when searching for an artifact.
+ *
  * @author thevpc
- * @since 0.5.4
  * @app.category Commands
+ * @since 0.5.4
  */
 public enum NutsFetchStrategy implements Iterable<NutsFetchMode>, NutsEnum {
     /**
@@ -78,8 +79,9 @@ public enum NutsFetchStrategy implements Iterable<NutsFetchMode>, NutsEnum {
 
     /**
      * private default constructor
+     *
      * @param stopFast stopFast flag
-     * @param all modes
+     * @param all      modes
      */
     NutsFetchStrategy(boolean stopFast, NutsFetchMode... all) {
         this.id = name().toLowerCase().replace('_', '-');
@@ -117,12 +119,13 @@ public enum NutsFetchStrategy implements Iterable<NutsFetchMode>, NutsEnum {
 
     public static NutsFetchStrategy parse(String value, NutsFetchStrategy emptyValue, NutsSession session) {
         NutsFetchStrategy v = parseLenient(value, emptyValue, null);
-        NutsApiUtils.checkNonNullEnum(v,value,NutsFetchStrategy.class,session);
+        NutsApiUtils.checkNonNullEnum(v, value, NutsFetchStrategy.class, session);
         return v;
     }
 
     /**
      * lower cased identifier.
+     *
      * @return lower cased identifier
      */
     public String id() {
@@ -131,6 +134,7 @@ public enum NutsFetchStrategy implements Iterable<NutsFetchMode>, NutsEnum {
 
     /**
      * if true, do not consider next Fetch mode if the latter gives at least one result.
+     *
      * @return true if do not consider next Fetch mode if the latter gives at least one result.
      */
     public boolean isStopFast() {
@@ -139,6 +143,7 @@ public enum NutsFetchStrategy implements Iterable<NutsFetchMode>, NutsEnum {
 
     /**
      * ordered fetch modes
+     *
      * @return ordered fetch modes
      */
     public NutsFetchMode[] modes() {
@@ -147,6 +152,7 @@ public enum NutsFetchStrategy implements Iterable<NutsFetchMode>, NutsEnum {
 
     /**
      * ordered fetch modes iterator
+     *
      * @return ordered fetch modes iterator
      */
     @Override

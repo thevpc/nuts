@@ -26,20 +26,19 @@ package net.thevpc.nuts;
 import java.net.URL;
 
 /**
- *
- * @author vpc
+ * @author thevpc
  */
 public interface NutsBootManager {
 
     NutsSession getSession();
 
-    boolean isFirstBoot();
-
     NutsBootManager setSession(NutsSession session);
+
+    boolean isFirstBoot();
 
     NutsVal getCustomBootOption(String name);
 
-    NutsVal getCustomBootOption(String ... names);
+    NutsVal getCustomBootOption(String... names);
 
     NutsWorkspaceOptions getBootOptions();
 
@@ -57,5 +56,6 @@ public interface NutsBootManager {
 
 
     NutsClassLoaderNode getBootRuntimeClassLoaderNode();
+
     NutsClassLoaderNode[] getBootExtensionClassLoaderNode();
 }

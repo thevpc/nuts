@@ -28,44 +28,51 @@ package net.thevpc.nuts;
 
 /**
  * Class describing executable command.
+ *
  * @author thevpc
- * @since 0.5.4
  * @app.category Descriptor
+ * @since 0.5.4
  */
 public interface NutsExecutableInformation {
 
     /**
      * return executable type
+     *
      * @return executable type
      */
     NutsExecutableType getType();
 
     /**
      * executable artifact id
+     *
      * @return executable artifact id
      */
     NutsId getId();
 
     /**
      * executable name
+     *
      * @return executable name
      */
     String getName();
 
     /**
      * versatile executable name
+     *
      * @return versatile executable name
      */
     String getValue();
 
     /**
      * executable description
+     *
      * @return executable description
      */
     String getDescription();
 
     /**
      * executable help string
+     *
      * @return executable help string
      */
     String getHelpText();

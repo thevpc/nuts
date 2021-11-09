@@ -36,6 +36,7 @@ import java.util.Set;
 
 /**
  * This class holds information gathered by nuts Boot and passed to Runtime on BootTime
+ *
  * @author thevpc
  * @app.category Internal
  */

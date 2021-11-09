@@ -27,8 +27,8 @@ import java.util.Map;
 
 /**
  * @author thevpc
- * @since 0.5.4
  * @app.category Config
+ * @since 0.5.4
  */
 public interface NutsRepositoryConfigManager {
 
@@ -57,7 +57,7 @@ public interface NutsRepositoryConfigManager {
      * return repository configured location as string
      *
      * @param expand when true, location will be expanded (~ and $ params will
-     * be expanded)
+     *               be expanded)
      * @return repository location
      */
     String getLocation(boolean expand);

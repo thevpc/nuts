@@ -33,18 +33,18 @@ import java.io.PrintStream;
 /**
  * @app.category Base
  */
-public interface NutsString extends NutsBlankable{
+public interface NutsString extends NutsBlankable {
 
     static NutsString of(NutsMessage str, NutsSession session) {
         return NutsTexts.of(session).toText(str);
     }
 
-    static NutsString parse(String str, NutsSession session) {
+    static NutsString of(String str, NutsSession session) {
         NutsApiUtils.checkSession(session);
         return NutsTexts.of(session).parse(str);
     }
 
-    static NutsString plain(String str, NutsSession session) {
+    static NutsString ofPlain(String str, NutsSession session) {
         NutsApiUtils.checkSession(session);
         return NutsTexts.of(session).ofPlain(str);
     }

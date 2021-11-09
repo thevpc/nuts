@@ -29,10 +29,9 @@ import java.util.Arrays;
 import java.util.Objects;
 
 /**
- *
  * @author thevpc
- * @since 0.5.4
  * @app.category Config
+ * @since 0.5.4
  */
 public final class NutsUserConfig extends NutsConfigItem {
 

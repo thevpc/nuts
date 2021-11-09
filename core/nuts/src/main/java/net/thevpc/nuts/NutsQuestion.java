@@ -28,10 +28,11 @@ package net.thevpc.nuts;
 /**
  * Question is helpful object that permits user interaction by reading a typed object from
  * standard input or an equivalent input system.
+ *
  * @param <T> value type returned by this question object
  * @author thevpc
- * @since 0.5.4
  * @app.category Toolkit
+ * @since 0.5.4
  */
 public interface NutsQuestion<T> extends NutsCommandLineConfigurable {
 
@@ -59,90 +60,101 @@ public interface NutsQuestion<T> extends NutsCommandLineConfigurable {
 
     /**
      * ask for message of type Boolean
+     *
      * @param msg message
      * @return ask for message of type Boolean
      * @since 0.8.3
-     * */
+     */
     NutsQuestion<Boolean> forBoolean(NutsMessage msg);
 
     /**
      * ask for message of type Password
+     *
      * @param msg message
      * @return ask for message of type Password
      * @since 0.8.3
-     * */
+     */
     NutsQuestion<char[]> forPassword(NutsMessage msg);
 
     /**
      * ask for message of type String
+     *
      * @param msg message
      * @return ask for message of type String
      * @since 0.8.3
-     * */
+     */
     NutsQuestion<String> forString(NutsMessage msg);
 
     /**
      * ask for message of type int
+     *
      * @param msg message
      * @return ask for message of type int
      * @since 0.8.3
-     * */
+     */
     NutsQuestion<Integer> forInteger(NutsMessage msg);
 
     /**
      * ask for message of type long
+     *
      * @param msg message
      * @return ask for message of type long
      * @since 0.8.3
-     * */
+     */
     NutsQuestion<Long> forLong(NutsMessage msg);
 
     /**
      * ask for message of type float
+     *
      * @param msg message
      * @return ask for message of type float
      * @since 0.8.3
-     * */
+     */
     NutsQuestion<Float> forFloat(NutsMessage msg);
 
     /**
      * ask for message of type double
+     *
      * @param msg message
      * @return ask for message of type double
      * @since 0.8.3
-     * */
+     */
     NutsQuestion<Double> forDouble(NutsMessage msg);
 
     /**
      * ask for message of type enum
+     *
      * @param msg message
      * @return ask for message of type enum
      * @since 0.8.3
-     * */
+     */
     <K extends Enum> NutsQuestion<K> forEnum(Class<K> enumType, NutsMessage msg);
 
 
     NutsMessage getHintMessage();
 
-    NutsMessage getMessage();
+    NutsQuestion<T> setHintMessage(NutsMessage message);
 
-    NutsMessage getCancelMessage();
+    NutsMessage getMessage();
 
     /**
      * set message
+     *
      * @param message message
      * @return {@code this} instance
      * @since 0.8.3
-     * */
+     */
     NutsQuestion<T> setMessage(NutsMessage message);
-    NutsQuestion<T> setHintMessage(NutsMessage message);
+
+    NutsMessage getCancelMessage();
+
+    NutsQuestion<T> setCancelMessage(NutsMessage message);
 
     Object[] getAcceptedValues();
 
     NutsQuestion<T> setAcceptedValues(Object[] acceptedValues);
 
     T getDefaultValue();
-
 
     NutsQuestion<T> setDefaultValue(T defaultValue);
 
@@ -177,8 +189,6 @@ public interface NutsQuestion<T> extends NutsCommandLineConfigurable {
     NutsSession getSession();
 
     NutsQuestion<T> setSession(NutsSession session);
-
-    NutsQuestion<T> setCancelMessage(NutsMessage message);
 
     /**
      * configure the current command with the given arguments. This is an

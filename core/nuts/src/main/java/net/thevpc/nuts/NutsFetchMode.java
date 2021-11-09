@@ -50,8 +50,9 @@ import net.thevpc.nuts.boot.NutsApiUtils;
  * It is important to say that a repository may serve both local and remote artifacts as usually remote repositories
  * enable cache support; in which case, if the artifact si cached, it will be accessed locally.
  * <br>
- * @since 0.5.4
+ *
  * @app.category Commands
+ * @since 0.5.4
  */
 public enum NutsFetchMode implements NutsEnum {
     /**
@@ -103,12 +104,13 @@ public enum NutsFetchMode implements NutsEnum {
 
     public static NutsFetchMode parse(String value, NutsFetchMode emptyValue, NutsSession session) {
         NutsFetchMode v = parseLenient(value, emptyValue, null);
-        NutsApiUtils.checkNonNullEnum(v,value,NutsFetchMode.class,session);
+        NutsApiUtils.checkNonNullEnum(v, value, NutsFetchMode.class, session);
         return v;
     }
 
     /**
      * lower cased identifier.
+     *
      * @return lower cased identifier
      */
     public String id() {

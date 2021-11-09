@@ -31,16 +31,15 @@ import net.thevpc.nuts.spi.NutsComponent;
 import java.util.Map;
 
 /**
- *
  * @author thevpc
- * @since 0.5.4
  * @app.category Format
+ * @since 0.5.4
  */
 public interface NutsVersionFormat extends NutsFormat, NutsComponent {
 
     static NutsVersionFormat of(NutsSession session) {
         NutsApiUtils.checkSession(session);
-        return session.extensions().createSupported(NutsVersionFormat.class, true,null);
+        return session.extensions().createSupported(NutsVersionFormat.class, true, null);
     }
 
     /**

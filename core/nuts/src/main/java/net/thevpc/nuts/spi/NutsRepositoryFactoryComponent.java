@@ -33,8 +33,8 @@ import net.thevpc.nuts.NutsSession;
 /**
  * Created by vpc on 1/15/17.
  *
- * @since 0.5.4
  * @app.category SPI Base
+ * @since 0.5.4
  */
 public interface NutsRepositoryFactoryComponent extends NutsComponent {
 

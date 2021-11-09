@@ -29,8 +29,8 @@ import java.time.Instant;
  * Nuts Element types are generic JSON like parsable objects.
  *
  * @author thevpc
- * @since 0.5.6
  * @app.category Elements
+ * @since 0.5.6
  */
 public interface NutsElement {
 

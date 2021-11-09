@@ -31,13 +31,15 @@ import net.thevpc.nuts.boot.NutsApiUtils;
 /**
  * Capable of being blank
  *
- * @since 0.8.3
+ * @author thevpc
  * @app.category Command Line
+ * @since 0.8.3
  */
 public interface NutsBlankable {
 
     /**
      * true if the value is null or blank (trimmed to empty)
+     *
      * @param value value to check
      * @return true if the value is null or blank
      */
@@ -47,6 +49,7 @@ public interface NutsBlankable {
 
     /**
      * true if the value is null or blank (trimmed to empty)
+     *
      * @param value value to check
      * @return true if the value is null or blank
      */
@@ -56,6 +59,7 @@ public interface NutsBlankable {
 
     /**
      * true if the value is null or blank (trimmed to empty)
+     *
      * @param value value to check
      * @return true if the value is null or blank
      */
@@ -65,6 +69,7 @@ public interface NutsBlankable {
 
     /**
      * true if the value is null or blank
+     *
      * @param value value to check
      * @return true if the value is null or blank
      */

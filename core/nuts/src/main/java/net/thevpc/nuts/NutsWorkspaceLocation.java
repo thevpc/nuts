@@ -33,8 +33,8 @@ import java.io.Serializable;
  *
  * @author Nasreddine Bac Ali
  * date 2019-03-02
- * @since 0.5.4
  * @app.category Config
+ * @since 0.5.4
  */
 public class NutsWorkspaceLocation implements Serializable {
 

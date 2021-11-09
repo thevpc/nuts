@@ -31,6 +31,7 @@ import net.thevpc.nuts.NutsSession;
 
 /**
  * Push Command
+ *
  * @author thevpc
  * @app.category SPI Base
  */
@@ -53,6 +54,7 @@ public interface NutsPushRepositoryCommand extends NutsRepositoryCommand {
 
     /**
      * set session
+     *
      * @param session session
      * @return {@code this} instance
      */
@@ -61,6 +63,7 @@ public interface NutsPushRepositoryCommand extends NutsRepositoryCommand {
 
     /**
      * run this command and return {@code this} instance
+     *
      * @return {@code this} instance
      */
     @Override
@@ -68,12 +71,14 @@ public interface NutsPushRepositoryCommand extends NutsRepositoryCommand {
 
     /**
      * return all arguments to pass to the push command
+     *
      * @return all arguments to pass to the push command
      */
     String[] getArgs();
 
     /**
      * args args to push
+     *
      * @param args args to push
      * @return {@code this} instance
      */
@@ -81,12 +86,14 @@ public interface NutsPushRepositoryCommand extends NutsRepositoryCommand {
 
     /**
      * true if offline mode is activated
+     *
      * @return true if offline mode is activated
      */
     boolean isOffline();
 
     /**
      * local only (installed or not)
+     *
      * @param offline enable offline mode
      * @return {@code this} instance
      */
@@ -94,12 +101,14 @@ public interface NutsPushRepositoryCommand extends NutsRepositoryCommand {
 
     /**
      * repository to push from
+     *
      * @return repository to push from
      */
     String getRepository();
 
     /**
      * repository to push from
+     *
      * @param repository repository to push from
      * @return {@code this} instance
      */

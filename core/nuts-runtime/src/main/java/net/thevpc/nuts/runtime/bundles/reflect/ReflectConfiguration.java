@@ -25,7 +25,7 @@ package net.thevpc.nuts.runtime.bundles.reflect;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 public interface ReflectConfiguration {
 

@@ -29,7 +29,7 @@ import net.thevpc.nuts.runtime.core.util.CoreCommonUtils;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 interface XNodeFormatter {
 

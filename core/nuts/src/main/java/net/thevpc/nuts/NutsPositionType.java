@@ -32,8 +32,8 @@ import net.thevpc.nuts.boot.NutsApiUtils;
  * Text align constants
  *
  * @author thevpc
- * @since 0.5.5
  * @app.category Format
+ * @since 0.5.5
  */
 public enum NutsPositionType implements NutsEnum {
     /**
@@ -92,12 +92,13 @@ public enum NutsPositionType implements NutsEnum {
 
     public static NutsPositionType parse(String value, NutsPositionType emptyValue, NutsSession session) {
         NutsPositionType v = parseLenient(value, emptyValue, null);
-        NutsApiUtils.checkNonNullEnum(v,value,NutsPositionType.class,session);
+        NutsApiUtils.checkNonNullEnum(v, value, NutsPositionType.class, session);
         return v;
     }
 
     /**
      * lower cased identifier.
+     *
      * @return lower cased identifier
      */
     public String id() {

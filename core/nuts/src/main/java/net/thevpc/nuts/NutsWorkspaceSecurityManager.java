@@ -32,14 +32,16 @@ import javax.security.auth.callback.CallbackHandler;
 
 /**
  * Workspace Security configuration manager
+ *
  * @author thevpc
- * @since 0.5.4
  * @app.category Security
+ * @since 0.5.4
  */
 public interface NutsWorkspaceSecurityManager {
 
     /**
      * current user
+     *
      * @return current user
      */
     String getCurrentUsername();
@@ -47,12 +49,14 @@ public interface NutsWorkspaceSecurityManager {
     /**
      * current user stack.
      * this is useful when login with multiple user identities.
+     *
      * @return current user stack
      */
     String[] getCurrentLoginStack();
 
     /**
      * impersonate user and log as a distinct user with the given credentials.
+     *
      * @param username user name
      * @param password user password
      * @return {@code this} instance
@@ -62,6 +66,7 @@ public interface NutsWorkspaceSecurityManager {
     /**
      * impersonate user and log as a distinct user with the given credentials and stack
      * user name so that it can be retrieved using @{code getCurrentLoginStack()}.
+     *
      * @param handler security handler
      * @return {@code this} instance
      */
@@ -69,6 +74,7 @@ public interface NutsWorkspaceSecurityManager {
 
     /**
      * log out from last logged in user (if any) and pop out from user name stack.
+     *
      * @return {@code this} instance
      */
     NutsWorkspaceSecurityManager logout();
@@ -77,6 +83,7 @@ public interface NutsWorkspaceSecurityManager {
      * create a User Create command.
      * No user will be added when simply calling this method.
      * You must fill in command parameters then call {@link NutsAddUserCommand#run()}.
+     *
      * @param name user name
      * @return create add user command.
      */
@@ -86,6 +93,7 @@ public interface NutsWorkspaceSecurityManager {
      * create a Update Create command.
      * No user will be updated when simply calling this method.
      * You must fill in command parameters then call {@link NutsUpdateUserCommand#run()}.
+     *
      * @param name user name
      * @return create update user command.
      */
@@ -95,6 +103,7 @@ public interface NutsWorkspaceSecurityManager {
      * create a Remove Create command.
      * No user will be removed when simply calling this method.
      * You must fill in command parameters then call {@link NutsRemoveUserCommand#run()}.
+     *
      * @param name user name
      * @return create remove user command.
      */
@@ -102,12 +111,14 @@ public interface NutsWorkspaceSecurityManager {
 
     /**
      * find all registered users
+     *
      * @return all registered users
      */
     NutsUser[] findUsers();
 
     /**
      * find user with the given name or null.
+     *
      * @param username user name
      * @return user effective information
      */
@@ -115,6 +126,7 @@ public interface NutsWorkspaceSecurityManager {
 
     /**
      * return true if permission is valid and allowed for the current user.
+     *
      * @param permission permission name. see {@code NutsConstants.Rights } class
      * @return true if permission is valid and allowed for the current user
      */
@@ -122,7 +134,8 @@ public interface NutsWorkspaceSecurityManager {
 
     /**
      * check if allowed and throw a Security exception if not.
-     * @param permission permission name. see {@code NutsConstants.Rights } class
+     *
+     * @param permission    permission name. see {@code NutsConstants.Rights } class
      * @param operationName operation name
      * @return {@code this} instance
      */
@@ -131,7 +144,8 @@ public interface NutsWorkspaceSecurityManager {
     /**
      * switch from/to secure mode.
      * when secure mode is disabled, no authorizations are checked against.
-     * @param secure true if secure mode
+     *
+     * @param secure        true if secure mode
      * @param adminPassword password for admin user
      * @return true if mode was switched correctly
      * @since 0.5.7
@@ -147,7 +161,8 @@ public interface NutsWorkspaceSecurityManager {
 
     /**
      * update default authentication agent.
-     * @param authenticationAgentId  authentication agent id
+     *
+     * @param authenticationAgentId authentication agent id
      * @return {@code this} instance
      */
     NutsWorkspaceSecurityManager setAuthenticationAgent(String authenticationAgentId);
@@ -155,6 +170,7 @@ public interface NutsWorkspaceSecurityManager {
     /**
      * get authentication agent with id {@code authenticationAgentId}.
      * if is blank, return default authentication agent
+     *
      * @param authenticationAgentId agent id
      * @return authentication agent
      */
@@ -172,9 +188,9 @@ public interface NutsWorkspaceSecurityManager {
      * by the Authentication Agent for  <code>credentialsId</code>
      *
      * @param credentialsId credentialsId
-     * @param password password
-     * @throws NutsSecurityException when check failed
+     * @param password      password
      * @return this
+     * @throws NutsSecurityException when check failed
      */
     NutsWorkspaceSecurityManager checkCredentials(char[] credentialsId, char[] password) throws NutsSecurityException;
 
@@ -205,10 +221,10 @@ public interface NutsWorkspaceSecurityManager {
      * present or returned, <strong>MUST</strong> be prefixed with
      * AuthenticationAgent's id and ':' character
      *
-     * @param credentials credential
+     * @param credentials   credential
      * @param allowRetrieve when true {@link #getCredentials(char[])} can be
-     * invoked over {@code credentialId}
-     * @param credentialId preferred credentialId, if null, a new one is created
+     *                      invoked over {@code credentialId}
+     * @param credentialId  preferred credentialId, if null, a new one is created
      * @return credentials-id
      */
     char[] createCredentials(char[] credentials, boolean allowRetrieve, char[] credentialId);

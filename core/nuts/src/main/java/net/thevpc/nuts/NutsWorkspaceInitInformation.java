@@ -34,11 +34,12 @@ import java.util.Set;
 
 /**
  * workspace initialization options.
- *
+ * <p>
  * Created by vpc on 1/23/17.
  *
- * @since 0.5.7
+ * @author thevpc
  * @app.category SPI Base
+ * @since 0.5.7
  */
 public interface NutsWorkspaceInitInformation extends Serializable {
 

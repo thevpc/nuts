@@ -34,7 +34,7 @@ import java.util.Map;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 public class StringMapParser {
     private final String eqSeparators;

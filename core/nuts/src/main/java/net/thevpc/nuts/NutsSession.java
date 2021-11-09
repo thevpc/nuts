@@ -573,107 +573,92 @@ public interface NutsSession extends NutsCommandLineConfigurable {
     //COMMANDS
 
     /**
-     *
-     * @since 0.8.3
      * @return new search command instance
+     * @since 0.8.3
      */
     NutsSearchCommand search();
 
     /**
-     *
-     * @since 0.8.3
      * @return new fetch command instance
+     * @since 0.8.3
      */
     NutsFetchCommand fetch();
 
     /**
-     *
-     * @since 0.8.3
      * @return new deploy command instance
+     * @since 0.8.3
      */
     NutsDeployCommand deploy();
 
     /**
-     *
-     * @since 0.8.3
      * @return new undeploy command instance
+     * @since 0.8.3
      */
     NutsUndeployCommand undeploy();
 
     /**
-     *
-     * @since 0.8.3
      * @return new execution command instance
+     * @since 0.8.3
      */
     NutsExecCommand exec();
 
     /**
-     *
-     * @since 0.8.3
      * @return new installation command instance
+     * @since 0.8.3
      */
     NutsInstallCommand install();
 
     /**
-     *
-     * @since 0.8.3
      * @return new un-installation command instance
+     * @since 0.8.3
      */
     NutsUninstallCommand uninstall();
 
     /**
-     *
-     * @since 0.8.3
      * @return new update command instance
+     * @since 0.8.3
      */
     NutsUpdateCommand update();
 
     /**
-     *
-     * @since 0.8.3
      * @return new push command instance
+     * @since 0.8.3
      */
     NutsPushCommand push();
 
     /**
-     *
-     * @since 0.8.3
      * @return new update-stats manager instance
+     * @since 0.8.3
      */
     NutsUpdateStatisticsCommand updateStatistics();
 
     /**
-     *
-     * @since 0.8.3
      * @return new extension manager instance
+     * @since 0.8.3
      */
     NutsWorkspaceExtensionManager extensions();
 
     /**
-     *
-     * @since 0.8.3
      * @return new config manager instance
+     * @since 0.8.3
      */
     NutsWorkspaceConfigManager config();
 
     /**
-     *
-     * @since 0.8.3
      * @return new repo manager instance
+     * @since 0.8.3
      */
     NutsRepositoryManager repos();
 
     /**
-     *
-     * @since 0.8.3
      * @return new security manager instance
+     * @since 0.8.3
      */
     NutsWorkspaceSecurityManager security();
 
     /**
-     *
-     * @since 0.8.3
      * @return new events manager instance
+     * @since 0.8.3
      */
 
     NutsWorkspaceEventManager events();
@@ -687,42 +672,38 @@ public interface NutsSession extends NutsCommandLineConfigurable {
     NutsInfoFormat info();
 
     /**
-     *
-     * @since 0.8.3
      * @return new import manager instance
+     * @since 0.8.3
      */
     NutsImportManager imports();
 
     /**
-     *
-     * @since 0.8.3
      * @return new alias command manager instance
+     * @since 0.8.3
      */
     NutsCustomCommandManager commands();
 
     /**
-     *
-     * @since 0.8.3
      * @return new location manager instance
+     * @since 0.8.3
      */
     NutsWorkspaceLocationManager locations();
 
     /**
-     *
-     * @since 0.8.3
      * @return new env manager instance
+     * @since 0.8.3
      */
     NutsWorkspaceEnvManager env();
 
     /**
-     *
-     * @since 0.8.3
      * @return new boot manager instance
+     * @since 0.8.3
      */
     NutsBootManager boot();
 
     /**
      * return dependency solver Name
+     *
      * @return dependency solver Name
      * @since 0.8.3
      */
@@ -730,6 +711,7 @@ public interface NutsSession extends NutsCommandLineConfigurable {
 
     /**
      * update dependency solver Name
+     *
      * @param dependencySolver dependency solver name
      * @return {@code this} instance
      * @since 0.8.3

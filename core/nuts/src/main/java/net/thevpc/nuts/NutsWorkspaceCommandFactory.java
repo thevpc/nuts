@@ -29,10 +29,9 @@ package net.thevpc.nuts;
 import java.util.List;
 
 /**
- *
  * @author thevpc
- * @since 0.5.4
  * @app.category Config
+ * @since 0.5.4
  */
 public interface NutsWorkspaceCommandFactory {
 

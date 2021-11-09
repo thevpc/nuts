@@ -32,19 +32,21 @@ import java.util.Map;
 /**
  * Nuts repository manages a set of packages
  *
- * @since 0.5.4
  * @app.category Base
+ * @since 0.5.4
  */
 public interface NutsRepositorySPI {
 
     /**
      * return repository type
+     *
      * @return repository type
      */
     String getRepositoryType();
 
     /**
      * return repository unique identifier
+     *
      * @return repository unique identifier
      */
     String getUuid();
@@ -52,72 +54,84 @@ public interface NutsRepositorySPI {
     /**
      * return repository name.
      * equivalent to config().name()
+     *
      * @return repository name
      */
     String getName();
 
     /**
      * return parent workspace
+     *
      * @return parent workspace
      */
     NutsWorkspace getWorkspace();
 
     /**
      * return parent repository or null
+     *
      * @return parent repository or null
      */
     NutsRepository getParentRepository();
 
     /**
      * return repository configuration manager
+     *
      * @return repository configuration manager
      */
     NutsRepositoryConfigManager config();
 
     /**
      * return repository security manager
+     *
      * @return repository security manager
      */
     NutsRepositorySecurityManager security();
 
     /**
      * create deploy command
+     *
      * @return deploy command
      */
     NutsDeployRepositoryCommand deploy();
 
     /**
      * create undeploy command
+     *
      * @return undeploy command
      */
     NutsRepositoryUndeployCommand undeploy();
 
     /**
      * create push command
+     *
      * @return push command
      */
     NutsPushRepositoryCommand push();
 
     /**
      * create fetchDescriptor command
+     *
      * @return fetchDescriptor command
      */
     NutsFetchDescriptorRepositoryCommand fetchDescriptor();
 
     /**
      * create fetchContent command
+     *
      * @return fetchContent command
      */
     NutsFetchContentRepositoryCommand fetchContent();
 
     /**
      * create search command
+     *
      * @return search command
      */
     NutsSearchRepositoryCommand search();
 
     /**
      * create searchVersions command
+     *
      * @return searchVersions command
      */
     NutsSearchVersionsRepositoryCommand searchVersions();
@@ -152,6 +166,7 @@ public interface NutsRepositorySPI {
 
     /**
      * return mutable instance of user properties
+     *
      * @return mutable instance of user properties
      */
     Map<String, Object> getUserProperties();
@@ -170,18 +185,21 @@ public interface NutsRepositorySPI {
 
     /**
      * return array of registered user properties listeners
+     *
      * @return array of registered user properties listeners
      */
     NutsMapListener<String, Object>[] getUserPropertyListeners();
 
     /**
      * enabled if config is enabled and runtime is enabled
+     *
      * @return true if config is enabled and runtime is enabled
      */
     boolean isEnabled();
 
     /**
      * set runtime enabled
+     *
      * @param enabled runtime enabled value
      * @return {@code this} instance
      */
@@ -189,7 +207,8 @@ public interface NutsRepositorySPI {
 
     /**
      * true if fetch mode is accepted
-     * @param mode fetch mode
+     *
+     * @param mode    fetch mode
      * @param session session
      * @return true if fetch mode is accepted
      */

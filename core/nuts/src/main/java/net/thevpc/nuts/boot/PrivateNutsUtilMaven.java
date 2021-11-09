@@ -1,3 +1,29 @@
+/**
+ * ====================================================================
+ * Nuts : Network Updatable Things Service
+ * (universal package manager)
+ * <br>
+ * is a new Open Source Package Manager to help install packages
+ * and libraries for runtime execution. Nuts is the ultimate companion for
+ * maven (and other build managers) as it helps installing all package
+ * dependencies at runtime. Nuts is not tied to java and is a good choice
+ * to share shell scripts and other 'things' . Its based on an extensible
+ * architecture to help supporting a large range of sub managers / repositories.
+ *
+ * <br>
+ * <p>
+ * Copyright [2020] [thevpc]
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may
+ * not use this file except in compliance with the License. You may obtain a
+ * copy of the License at http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+ * either express or implied. See the License for the specific language
+ * governing permissions and limitations under the License.
+ * <br>
+ * ====================================================================
+ */
 package net.thevpc.nuts.boot;
 
 import net.thevpc.nuts.*;
@@ -209,7 +235,7 @@ public final class PrivateNutsUtilMaven {
             if (url.startsWith("http://") || url.startsWith("https://")) {
                 URL url1 = new URL(url);
                 try {
-                    xml = PrivateNutsUtilIO.openURLStream(url1,LOG);
+                    xml = PrivateNutsUtilIO.openURLStream(url1, LOG);
                 } catch (IOException ex) {
                     //do not need to log error
                     return depsAndRepos;
@@ -220,7 +246,7 @@ public final class PrivateNutsUtilMaven {
                 if (file == null) {
                     // was not able to resolve to File
                     try {
-                        xml = PrivateNutsUtilIO.openURLStream(url1,LOG);
+                        xml = PrivateNutsUtilIO.openURLStream(url1, LOG);
                     } catch (IOException ex) {
                         //do not need to log error
                         return depsAndRepos;
@@ -332,19 +358,19 @@ public final class PrivateNutsUtilMaven {
                                 }
                                 default: {
                                     Matcher m = NUTS_OS_ARCH_DEPS_PATTERN.matcher(nodeName);
-                                    if(m.find()){
+                                    if (m.find()) {
                                         String os = m.group("os");
                                         String arch = m.group("arch");
                                         String txt = c3.getTextContent().trim();
                                         for (String a : txt.trim().split("[;,\n\t]")) {
-                                            a=a.trim();
-                                            if(a.startsWith("#")){
+                                            a = a.trim();
+                                            if (a.startsWith("#")) {
                                                 //ignore!
-                                            }else{
-                                                if(!NutsBlankable.isBlank(os)){
+                                            } else {
+                                                if (!NutsBlankable.isBlank(os)) {
                                                     osMap.put(a, os);
                                                 }
-                                                if(!NutsBlankable.isBlank(arch)){
+                                                if (!NutsBlankable.isBlank(arch)) {
                                                     archMap.put(a, arch);
                                                 }
                                             }
@@ -380,7 +406,7 @@ public final class PrivateNutsUtilMaven {
             depsAndRepos.deps.addAll(ok);
 
         } catch (Exception ex) {
-            LOG.log(Level.FINE, NutsMessage.jstyle("unable to loadDependenciesAndRepositoriesFromPomUrl {0}" , url), ex);
+            LOG.log(Level.FINE, NutsMessage.jstyle("unable to loadDependenciesAndRepositoriesFromPomUrl {0}", url), ex);
         } finally {
             if (xml != null) {
                 try {
@@ -403,7 +429,7 @@ public final class PrivateNutsUtilMaven {
             DocumentBuilder builder = factory.newDocumentBuilder();
             InputStream is = null;
             try {
-                is = PrivateNutsUtilIO.openURLStream(runtimeMetadata,LOG);
+                is = PrivateNutsUtilIO.openURLStream(runtimeMetadata, LOG);
             } catch (IOException ex) {
                 //do not need to log error
                 //ignore
@@ -513,7 +539,7 @@ public final class PrivateNutsUtilMaven {
                     }
                 }
                 if (!found) {
-                    for (NutsBootVersion p : detectVersionsFromTomcatDirectoryListing(basePath,LOG)) {
+                    for (NutsBootVersion p : detectVersionsFromTomcatDirectoryListing(basePath, LOG)) {
                         if (filter == null || filter.test(p)) {
                             found = true;
                             if (bestVersion == null || bestVersion.compareTo(p) < 0) {
@@ -536,9 +562,9 @@ public final class PrivateNutsUtilMaven {
         return iid;
     }
 
-    private static List<NutsBootVersion> detectVersionsFromTomcatDirectoryListing(String basePath,PrivateNutsLog LOG) {
+    private static List<NutsBootVersion> detectVersionsFromTomcatDirectoryListing(String basePath, PrivateNutsLog LOG) {
         List<NutsBootVersion> all = new ArrayList<>();
-        try (InputStream in = PrivateNutsUtilIO.openURLStream(new URL(basePath),LOG)) {
+        try (InputStream in = PrivateNutsUtilIO.openURLStream(new URL(basePath), LOG)) {
             List<String> p = new SimpleTomcatDirectoryListParser().parse(in);
             if (p != null) {
                 for (String s : p) {
@@ -667,10 +693,10 @@ public final class PrivateNutsUtilMaven {
                     }
                     if (to.isFile()) {
                         PrivateNutsUtilIO.copy(ff, to, LOG);
-                        LOG.log(Level.CONFIG, NutsLogVerb.CACHE, NutsMessage.jstyle("recover cached {0} file {0} to {1}",ext, ff, to));
+                        LOG.log(Level.CONFIG, NutsLogVerb.CACHE, NutsMessage.jstyle("recover cached {0} file {0} to {1}", ext, ff, to));
                     } else {
                         PrivateNutsUtilIO.copy(ff, to, LOG);
-                        LOG.log(Level.CONFIG, NutsLogVerb.CACHE, NutsMessage.jstyle("cache {0} file {0} to {1}", ext,ff, to));
+                        LOG.log(Level.CONFIG, NutsLogVerb.CACHE, NutsMessage.jstyle("cache {0} file {0} to {1}", ext, ff, to));
                     }
                     return to;
                 } catch (IOException ex) {
@@ -712,7 +738,7 @@ public final class PrivateNutsUtilMaven {
         }
         URL pomXml = Nuts.class.getResource("/META-INF/maven/net.thevpc.nuts/nuts/pom.xml");
         if (pomXml != null) {
-            try (InputStream is = PrivateNutsUtilIO.openURLStream(pomXml,LOG)) {
+            try (InputStream is = PrivateNutsUtilIO.openURLStream(pomXml, LOG)) {
                 propValue = resolvePomTagValues(new String[]{propName}, is).get(propName);
             } catch (Exception ex) {
                 //

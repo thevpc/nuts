@@ -27,10 +27,9 @@
 package net.thevpc.nuts;
 
 /**
- *
  * @author thevpc
- * @since 0.5.4
  * @app.category Config
+ * @since 0.5.4
  */
 public interface NutsWorkspaceCustomCommand {
 

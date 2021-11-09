@@ -27,18 +27,20 @@
 package net.thevpc.nuts;
 
 import net.thevpc.nuts.boot.NutsApiUtils;
-import net.thevpc.nuts.spi.NutsComponent;
 import net.thevpc.nuts.spi.NutsComponentScope;
 import net.thevpc.nuts.spi.NutsComponentScopeType;
 
 /**
+ * Descriptor Filter Factory
+ *
+ * @author thevpc
  * @app.category Base
  */
 @NutsComponentScope(NutsComponentScopeType.SESSION)
-public interface NutsDescriptorFilters extends NutsTypedFilters<NutsDescriptorFilter>{
+public interface NutsDescriptorFilters extends NutsTypedFilters<NutsDescriptorFilter> {
     static NutsDescriptorFilters of(NutsSession session) {
         NutsApiUtils.checkSession(session);
-        return session.extensions().createSupported(NutsDescriptorFilters.class, true,null);
+        return session.extensions().createSupported(NutsDescriptorFilters.class, true, null);
     }
 
     NutsDescriptorFilter byPackaging(String... values);

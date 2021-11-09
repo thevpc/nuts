@@ -26,8 +26,7 @@ package net.thevpc.nuts;
 import java.util.Objects;
 
 /**
- *
- * @author vpc
+ * @author thevpc
  */
 public final class NutsTerminalCommand {
 
@@ -141,16 +140,16 @@ public final class NutsTerminalCommand {
     }
 
     @Override
+    public int hashCode() {
+        return Objects.hash(name, args);
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         NutsTerminalCommand that = (NutsTerminalCommand) o;
         return Objects.equals(name, that.name) && Objects.equals(args, that.args);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(name, args);
     }
 
     @Override
@@ -174,6 +173,7 @@ public final class NutsTerminalCommand {
         public static final String CLEAR_LINE = ("clear-line");
         public static final String CLEAR_LINE_TO_CURSOR = ("clear-line-to-cursor");
         public static final String CLEAR_LINE_FROM_CURSOR = ("clear-line-from-cursor");
+
         private Ids() {
         }
 

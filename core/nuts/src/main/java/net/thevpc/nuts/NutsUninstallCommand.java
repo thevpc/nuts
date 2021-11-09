@@ -29,10 +29,9 @@ package net.thevpc.nuts;
 import java.util.Collection;
 
 /**
- *
  * @author thevpc
- * @since 0.5.4
  * @app.category Commands
+ * @since 0.5.4
  */
 public interface NutsUninstallCommand extends NutsWorkspaceCommand {
 
@@ -67,14 +66,6 @@ public interface NutsUninstallCommand extends NutsWorkspaceCommand {
     NutsUninstallCommand setErase(boolean erase);
 
     /**
-     * copy session
-     *
-     * @return {@code this} instance
-     */
-    @Override
-    NutsUninstallCommand copySession();
-
-    /**
      * update session
      *
      * @param session session
@@ -84,12 +75,20 @@ public interface NutsUninstallCommand extends NutsWorkspaceCommand {
     NutsUninstallCommand setSession(NutsSession session);
 
     /**
+     * copy session
+     *
+     * @return {@code this} instance
+     */
+    @Override
+    NutsUninstallCommand copySession();
+
+    /**
      * configure the current command with the given arguments. This is an
      * override of the {@link NutsCommandLineConfigurable#configure(boolean, java.lang.String...) }
      * to help return a more specific return type;
      *
      * @param skipUnsupported when true, all unsupported options are skipped
-     * @param args argument to configure with
+     * @param args            argument to configure with
      * @return {@code this} instance
      */
     @Override

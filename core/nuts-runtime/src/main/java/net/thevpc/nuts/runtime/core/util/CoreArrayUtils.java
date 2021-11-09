@@ -32,7 +32,7 @@ import net.thevpc.nuts.NutsIdLocation;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 public class CoreArrayUtils {
 

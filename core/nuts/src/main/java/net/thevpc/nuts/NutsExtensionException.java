@@ -28,8 +28,8 @@ package net.thevpc.nuts;
 /**
  * Base exception for Extension related exceptions
  *
- * @since 0.5.4
  * @app.category Exceptions
+ * @since 0.5.4
  */
 public abstract class NutsExtensionException extends NutsException {
 
@@ -46,14 +46,14 @@ public abstract class NutsExtensionException extends NutsException {
      * {@code cause} is <i>not</i> automatically incorporated in
      * this runtime exception's detail message.
      *
-     * @param  message the detail message (which is saved for later retrieval
-     *         by the {@link #getMessage()} method). if the message is null, a
-     *         default one is provided
-     * @param  cause the cause (which is saved for later retrieval by the
-     *         {@link #getCause()} method).  (A {@code null} value is
-     *         permitted, and indicates that the cause is nonexistent or
-     *         unknown.)
-     * @param session the workspace of this Nuts Exception
+     * @param message     the detail message (which is saved for later retrieval
+     *                    by the {@link #getMessage()} method). if the message is null, a
+     *                    default one is provided
+     * @param cause       the cause (which is saved for later retrieval by the
+     *                    {@link #getCause()} method).  (A {@code null} value is
+     *                    permitted, and indicates that the cause is nonexistent or
+     *                    unknown.)
+     * @param session     the workspace of this Nuts Exception
      * @param extensionId extension id
      */
     public NutsExtensionException(NutsSession session, NutsId extensionId, NutsMessage message, Throwable cause) {
@@ -65,6 +65,7 @@ public abstract class NutsExtensionException extends NutsException {
 
     /**
      * extension id
+     *
      * @return extension id
      */
     public NutsId getId() {

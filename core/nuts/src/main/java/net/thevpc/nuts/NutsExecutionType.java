@@ -29,9 +29,10 @@ import net.thevpc.nuts.boot.NutsApiUtils;
 
 /**
  * Command execution type.
+ *
  * @author thevpc
- * @since 0.5.4
  * @app.category Commands
+ * @since 0.5.4
  */
 public enum NutsExecutionType implements NutsEnum {
     /**
@@ -99,12 +100,13 @@ public enum NutsExecutionType implements NutsEnum {
 
     public static NutsExecutionType parse(String value, NutsExecutionType emptyValue, NutsSession session) {
         NutsExecutionType v = parseLenient(value, emptyValue, null);
-        NutsApiUtils.checkNonNullEnum(v,value,NutsExecutionType.class,session);
+        NutsApiUtils.checkNonNullEnum(v, value, NutsExecutionType.class, session);
         return v;
     }
 
     /**
      * lower cased identifier.
+     *
      * @return lower cased identifier
      */
     public String id() {

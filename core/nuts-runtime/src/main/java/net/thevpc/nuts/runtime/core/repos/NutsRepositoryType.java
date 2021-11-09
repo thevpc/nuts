@@ -30,7 +30,7 @@ import java.util.Set;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 public class NutsRepositoryType {
 

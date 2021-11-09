@@ -30,6 +30,7 @@ import net.thevpc.nuts.boot.NutsApiUtils;
 
 /**
  * Created by vpc on 5/23/17.
+ *
  * @app.category Format
  */
 public interface NutsText extends NutsString {

@@ -40,6 +40,7 @@ import java.util.function.UnaryOperator;
  * Nuts descriptors define a <strong>mutable</strong> image to all information needed to execute an artifact.
  * It help creating an instance of {@link NutsDescriptor} by calling {@link #build()}
  *
+ * @author thevpc
  * @app.category Descriptor
  * @since 0.5.4
  */
@@ -47,7 +48,7 @@ public interface NutsDescriptorBuilder extends Serializable, NutsComponent {
 
     static NutsDescriptorBuilder of(NutsSession session) {
         NutsApiUtils.checkSession(session);
-        return session.extensions().createSupported(NutsDescriptorBuilder.class, true,null);
+        return session.extensions().createSupported(NutsDescriptorBuilder.class, true, null);
     }
 
     /**
@@ -111,25 +112,27 @@ public interface NutsDescriptorBuilder extends Serializable, NutsComponent {
     String getName();
 
     /**
-     * dependency resolution solver.
-     * @return dependency resolution solver
-     */
-    String getSolver();
-
-    /**
-     * update dependency resolution solver
-     * @param solver dependency resolution solver
-     * @return {@code this} instance
-     */
-    NutsDescriptorBuilder setSolver(String solver);
-
-    /**
      * set name
      *
      * @param name value to set
      * @return {@code this} instance
      */
     NutsDescriptorBuilder setName(String name);
+
+    /**
+     * dependency resolution solver.
+     *
+     * @return dependency resolution solver
+     */
+    String getSolver();
+
+    /**
+     * update dependency resolution solver
+     *
+     * @param solver dependency resolution solver
+     * @return {@code this} instance
+     */
+    NutsDescriptorBuilder setSolver(String solver);
 
     String getGenericName();
 
@@ -439,9 +442,10 @@ public interface NutsDescriptorBuilder extends Serializable, NutsComponent {
 
     /**
      * return descriptor flags
+     *
      * @return return descriptor flags
      */
-    Set<NutsDescriptorFlag> getFlags() ;
+    Set<NutsDescriptorFlag> getFlags();
 
     /**
      * set flags
@@ -449,7 +453,7 @@ public interface NutsDescriptorBuilder extends Serializable, NutsComponent {
      * @param flags flags
      * @return {@code this} instance
      */
-    NutsDescriptorBuilder setFlags(Set<NutsDescriptorFlag> flags) ;
+    NutsDescriptorBuilder setFlags(Set<NutsDescriptorFlag> flags);
 
     /**
      * add flag
@@ -458,7 +462,7 @@ public interface NutsDescriptorBuilder extends Serializable, NutsComponent {
      * @return {@code this} instance
      * @since 0.8.3
      */
-    NutsDescriptorBuilder addFlag(NutsDescriptorFlag flag) ;
+    NutsDescriptorBuilder addFlag(NutsDescriptorFlag flag);
 
     /**
      * add flags
@@ -467,7 +471,7 @@ public interface NutsDescriptorBuilder extends Serializable, NutsComponent {
      * @return {@code this} instance
      * @since 0.8.3
      */
-    NutsDescriptorBuilder addFlags(NutsDescriptorFlag ... flags) ;
+    NutsDescriptorBuilder addFlags(NutsDescriptorFlag... flags);
 
     /**
      * remove flag
@@ -476,7 +480,7 @@ public interface NutsDescriptorBuilder extends Serializable, NutsComponent {
      * @return {@code this} instance
      * @since 0.8.3
      */
-    NutsDescriptorBuilder removeFlag(NutsDescriptorFlag flag) ;
+    NutsDescriptorBuilder removeFlag(NutsDescriptorFlag flag);
 
     /**
      * remove flags
@@ -485,7 +489,7 @@ public interface NutsDescriptorBuilder extends Serializable, NutsComponent {
      * @return {@code this} instance
      * @since 0.8.3
      */
-    NutsDescriptorBuilder removeFlags(NutsDescriptorFlag ... flags) ;
+    NutsDescriptorBuilder removeFlags(NutsDescriptorFlag... flags);
 
 
     /**

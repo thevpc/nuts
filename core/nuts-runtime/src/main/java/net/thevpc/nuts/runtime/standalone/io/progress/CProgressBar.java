@@ -16,7 +16,7 @@ import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
  * inspired by
  * https://github.com/Changaco/unicode-progress-bars/blob/master/generator.html
  *
- * @author vpc
+ * @author thevpc
  */
 public class CProgressBar {
 

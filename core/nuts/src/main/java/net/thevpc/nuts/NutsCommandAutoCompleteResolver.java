@@ -27,9 +27,21 @@ package net.thevpc.nuts;
 import java.util.List;
 
 /**
+ * Auto Complete Resolver
+ *
+ * @author thevpc
  * @app.category Command Line
+ * @since 0.8.0
  */
 public interface NutsCommandAutoCompleteResolver {
 
+    /**
+     * resolve possible candidates
+     *
+     * @param commandline command line
+     * @param wordIndex   cursor index where to complete
+     * @param session     session
+     * @return possible candidates
+     */
     List<NutsArgumentCandidate> resolveCandidates(NutsCommandLine commandline, int wordIndex, NutsSession session);
 }

@@ -28,14 +28,15 @@ package net.thevpc.nuts;
 /**
  * Created by vpc on 1/15/17.
  *
- * @since 0.5.4
  * @app.category Exceptions
+ * @since 0.5.4
  */
 public class NutsReadOnlyException extends NutsException {
 
     /**
      * Constructs a new NutsReadOnlyException exception
-     * @param session workspace
+     *
+     * @param session  workspace
      * @param location location
      */
     public NutsReadOnlyException(NutsSession session, String location) {
@@ -44,6 +45,7 @@ public class NutsReadOnlyException extends NutsException {
 
     /**
      * Constructs a new NutsReadOnlyException exception
+     *
      * @param session workspace
      */
     public NutsReadOnlyException(NutsSession session) {

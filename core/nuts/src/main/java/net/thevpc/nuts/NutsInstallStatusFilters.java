@@ -25,7 +25,6 @@
 package net.thevpc.nuts;
 
 import net.thevpc.nuts.boot.NutsApiUtils;
-import net.thevpc.nuts.spi.NutsComponent;
 import net.thevpc.nuts.spi.NutsComponentScope;
 import net.thevpc.nuts.spi.NutsComponentScopeType;
 
@@ -36,7 +35,7 @@ import net.thevpc.nuts.spi.NutsComponentScopeType;
 public interface NutsInstallStatusFilters extends NutsTypedFilters<NutsInstallStatusFilter> {
     static NutsInstallStatusFilters of(NutsSession session) {
         NutsApiUtils.checkSession(session);
-        return session.extensions().createSupported(NutsInstallStatusFilters.class,true,null);
+        return session.extensions().createSupported(NutsInstallStatusFilters.class, true, null);
     }
 
     NutsInstallStatusFilter byInstalled(boolean value);

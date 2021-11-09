@@ -35,7 +35,7 @@ import net.thevpc.nuts.NutsCommandAutoCompleteResolver;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 public class JobAutoCompleter implements NutsCommandAutoCompleteResolver {
 

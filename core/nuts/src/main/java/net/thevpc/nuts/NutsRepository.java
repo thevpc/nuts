@@ -30,19 +30,21 @@ import java.util.Map;
 /**
  * Nuts repository manages a set of packages
  *
- * @since 0.5.4
  * @app.category Base
+ * @since 0.5.4
  */
 public interface NutsRepository {
 
     /**
      * return repository type
+     *
      * @return repository type
      */
     String getRepositoryType();
 
     /**
      * return repository unique identifier
+     *
      * @return repository unique identifier
      */
     String getUuid();
@@ -50,30 +52,35 @@ public interface NutsRepository {
     /**
      * return repository name.
      * equivalent to config().name()
+     *
      * @return repository name
      */
     String getName();
 
     /**
      * return parent workspace
+     *
      * @return parent workspace
      */
     NutsWorkspace getWorkspace();
 
     /**
      * return parent repository or null
+     *
      * @return parent repository or null
      */
     NutsRepository getParentRepository();
 
     /**
      * return repository configuration manager
+     *
      * @return repository configuration manager
      */
     NutsRepositoryConfigManager config();
 
     /**
      * return repository security manager
+     *
      * @return repository security manager
      */
     NutsRepositorySecurityManager security();
@@ -103,12 +110,14 @@ public interface NutsRepository {
 
     /**
      * return mutable instance of user properties
+     *
      * @return mutable instance of user properties
      */
     Map<String, Object> getUserProperties();
 
     /**
      * add listener to user properties
+     *
      * @param listener listener
      * @return this
      */
@@ -116,6 +125,7 @@ public interface NutsRepository {
 
     /**
      * remove listener from user properties
+     *
      * @param listener listener
      * @return this
      */
@@ -123,18 +133,21 @@ public interface NutsRepository {
 
     /**
      * return array of registered user properties listeners
+     *
      * @return array of registered user properties listeners
      */
     NutsMapListener<String, Object>[] getUserPropertyListeners();
 
     /**
      * available if local and the folder exists or remote and could ping the repository
+     *
      * @return true if config is enabled and runtime is enabled
      */
     boolean isAvailable();
 
     /**
      * available if local and the folder exists or remote and could ping the repository
+     *
      * @param force when force, check immediate availability and do not rely on cache
      * @return true if config is enabled and runtime is enabled
      */
@@ -142,12 +155,14 @@ public interface NutsRepository {
 
     /**
      * available if local or remote repo exists and could deploy to
+     *
      * @return true if config is enabled and runtime is enabled
      */
     boolean isSupportedDeploy();
 
     /**
      * available if local or remote repo exists and could deploy to
+     *
      * @param force when force, check immediate availability and do not rely on cache
      * @return true if config is enabled and runtime is enabled
      */
@@ -155,12 +170,14 @@ public interface NutsRepository {
 
     /**
      * enabled if config is enabled and runtime is enabled
+     *
      * @return true if config is enabled and runtime is enabled
      */
     boolean isEnabled();
 
     /**
      * set runtime enabled
+     *
      * @param enabled runtime enabled value
      * @return {@code this} instance
      */

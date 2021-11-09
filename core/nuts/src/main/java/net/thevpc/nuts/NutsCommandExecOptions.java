@@ -33,9 +33,10 @@ import java.util.Objects;
 
 /**
  * Command execution options
+ *
  * @author thevpc
- * @since 0.5.4
  * @app.category Command Line
+ * @since 0.5.4
  */
 public class NutsCommandExecOptions implements Serializable {
     private static final long serialVersionUID = 1;
@@ -67,6 +68,7 @@ public class NutsCommandExecOptions implements Serializable {
 
     /**
      * execution options
+     *
      * @return execution options
      */
     public String[] getExecutorOptions() {
@@ -75,6 +77,7 @@ public class NutsCommandExecOptions implements Serializable {
 
     /**
      * execution options
+     *
      * @param executorOptions new value
      * @return {@code this} instance
      */
@@ -85,6 +88,7 @@ public class NutsCommandExecOptions implements Serializable {
 
     /**
      * execution environment variables
+     *
      * @return execution environment variables
      */
     public Map<String, String> getEnv() {
@@ -93,6 +97,7 @@ public class NutsCommandExecOptions implements Serializable {
 
     /**
      * execution environment variables
+     *
      * @param env new value
      * @return {@code this} instance
      */
@@ -103,6 +108,7 @@ public class NutsCommandExecOptions implements Serializable {
 
     /**
      * execution directory
+     *
      * @return execution directory
      */
     public String getDirectory() {
@@ -111,6 +117,7 @@ public class NutsCommandExecOptions implements Serializable {
 
     /**
      * execution directory
+     *
      * @param directory new value
      * @return {@code this} instance
      */
@@ -121,6 +128,7 @@ public class NutsCommandExecOptions implements Serializable {
 
     /**
      * when fail fast,non zero exit value will raise NutsExecutionException
+     *
      * @return when fail fast,non zero exit value will raise NutsExecutionException
      */
     public boolean isFailFast() {
@@ -129,6 +137,7 @@ public class NutsCommandExecOptions implements Serializable {
 
     /**
      * when fail fast,non zero exit value will raise NutsExecutionException
+     *
      * @param failFast new value
      * @return {@code this} instance
      */
@@ -139,6 +148,7 @@ public class NutsCommandExecOptions implements Serializable {
 
     /**
      * execution type
+     *
      * @return execution type
      */
     public NutsExecutionType getExecutionType() {
@@ -147,6 +157,7 @@ public class NutsCommandExecOptions implements Serializable {
 
     /**
      * execution type
+     *
      * @param executionType new value
      * @return {@code this} instance
      */

@@ -34,7 +34,7 @@ public class DefaultNutsCommandLineFormat extends DefaultFormatBase<NutsCommandL
 
     @Override
     public NutsCommandLineFormat setValue(String args) {
-        return setValue(args == null ? null : NutsCommandLine.parse(args,getSession()));
+        return setValue(args == null ? null : NutsCommandLine.of(args,getSession()));
     }
     public NutsShellFamily getShellFamily() {
         return formatFamily;

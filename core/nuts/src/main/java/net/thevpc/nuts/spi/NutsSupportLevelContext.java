@@ -29,7 +29,6 @@ import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.NutsWorkspace;
 
 /**
- *
  * @author thevpc
  * @app.category SPI Base
  */
@@ -41,6 +40,7 @@ public interface NutsSupportLevelContext {
 
     /**
      * return constraints casted to T, throws CCE if not compatible
+     *
      * @param <T> expected type
      * @return constraints casted to T, throws CCE if not compatible
      */
@@ -48,6 +48,7 @@ public interface NutsSupportLevelContext {
 
     /**
      * return constraints casted to T, returns null if not compatible
+     *
      * @param <T> expected type
      * @return constraints casted to T, returns null if not compatible
      */

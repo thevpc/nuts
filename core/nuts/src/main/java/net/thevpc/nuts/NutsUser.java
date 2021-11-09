@@ -28,44 +28,51 @@ package net.thevpc.nuts;
 
 /**
  * Effective (including inherited) user information
+ *
  * @author thevpc
- * @since 0.5.4
  * @app.category Config
+ * @since 0.5.4
  */
 public interface NutsUser {
 
     /**
      * return remote identity if applicable
+     *
      * @return remote identity if applicable
      */
     String getRemoteIdentity();
 
     /**
      * return user name
+     *
      * @return return user name
      */
     String getUser();
 
     /**
-     *  true if the use has some credentials
+     * true if the use has some credentials
+     *
      * @return true if the use has some credentials
      */
     boolean hasCredentials();
 
     /**
      * user allowed permissions
+     *
      * @return user allowed permissions
      */
     String[] getPermissions();
 
     /**
      * user inherited allowed permissions
+     *
      * @return user inherited allowed permissions
      */
     String[] getInheritedPermissions();
 
     /**
      * user groups
+     *
      * @return user groups
      */
     String[] getGroups();

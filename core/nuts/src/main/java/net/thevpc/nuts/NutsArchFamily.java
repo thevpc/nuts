@@ -79,7 +79,7 @@ public enum NutsArchFamily implements NutsEnum {
      * parse string and return {@code emptyOrErrorValue} if parse fails
      *
      * @param emptyOrErrorValue emptyOrErrorValue
-     * @param arch value to parse
+     * @param arch              value to parse
      * @return parsed instance or {@code emptyOrErrorValue}
      */
     public static NutsArchFamily parseLenient(String arch, NutsArchFamily emptyOrErrorValue) {
@@ -211,7 +211,7 @@ public enum NutsArchFamily implements NutsEnum {
 
     public static NutsArchFamily parse(String value, NutsArchFamily emptyValue, NutsSession session) {
         NutsArchFamily v = parseLenient(value, emptyValue, null);
-        NutsApiUtils.checkNonNullEnum(v,value,NutsArchFamily.class,session);
+        NutsApiUtils.checkNonNullEnum(v, value, NutsArchFamily.class, session);
         return v;
     }
 

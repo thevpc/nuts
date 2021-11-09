@@ -76,7 +76,7 @@ public enum NutsPathVisitOption implements NutsEnum {
 
     public static NutsPathVisitOption parse(String value, NutsPathVisitOption emptyValue, NutsSession session) {
         NutsPathVisitOption v = parseLenient(value, emptyValue, null);
-        NutsApiUtils.checkNonNullEnum(v,value, NutsPathVisitOption.class,session);
+        NutsApiUtils.checkNonNullEnum(v, value, NutsPathVisitOption.class, session);
         return v;
     }
 

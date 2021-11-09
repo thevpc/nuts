@@ -2,7 +2,10 @@ package net.thevpc.nuts.runtime.core.terminals;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.boot.DefaultNutsBootModel;
-import net.thevpc.nuts.spi.*;
+import net.thevpc.nuts.spi.NutsComponentScope;
+import net.thevpc.nuts.spi.NutsComponentScopeType;
+import net.thevpc.nuts.spi.NutsSupportLevelContext;
+import net.thevpc.nuts.spi.NutsSystemTerminalBase;
 
 import java.io.InputStream;
 import java.util.Scanner;
@@ -10,16 +13,19 @@ import java.util.Scanner;
 @NutsComponentScope(NutsComponentScopeType.PROTOTYPE)
 public class DefaultNutsSystemTerminalBaseBoot implements NutsSystemTerminalBase {
 
-    private NutsLogger LOG;
-    private Scanner scanner;
-//    private NutsTerminalMode outMode = NutsTerminalMode.FORMATTED;
+    private final Scanner scanner;
+    //    private NutsTerminalMode outMode = NutsTerminalMode.FORMATTED;
 //    private NutsTerminalMode errMode = NutsTerminalMode.FORMATTED;
-    private NutsPrintStream out;
-    private NutsPrintStream err;
-    private InputStream in;
-    private NutsWorkspace workspace;
-    private NutsSession session;
-    private DefaultNutsBootModel bootModel;
+    private final NutsPrintStream out;
+    private final NutsPrintStream err;
+    private final InputStream in;
+    private final NutsWorkspace workspace;
+    private final NutsSession session;
+    private final DefaultNutsBootModel bootModel;
+    private NutsLogger LOG;
+    private NutsCommandHistory history;
+    private String commandHighlighter;
+    private NutsCommandAutoCompleteResolver commandAutoCompleteResolver;
 
     public DefaultNutsSystemTerminalBaseBoot(DefaultNutsBootModel bootModel) {
         this.bootModel = bootModel;
@@ -46,7 +52,7 @@ public class DefaultNutsSystemTerminalBaseBoot implements NutsSystemTerminalBase
 
     private NutsLogger _LOG() {
         if (LOG == null && session != null) {
-            LOG = NutsLogger.of(NutsSystemTerminalBase.class,session);
+            LOG = NutsLogger.of(NutsSystemTerminalBase.class, session);
         }
         return LOG;
     }
@@ -129,41 +135,6 @@ public class DefaultNutsSystemTerminalBaseBoot implements NutsSystemTerminalBase
         return DEFAULT_SUPPORT;
     }
 
-    @Override
-    public NutsCommandAutoCompleteResolver getAutoCompleteResolver() {
-        return null;
-    }
-
-    @Override
-    public boolean isAutoCompleteSupported() {
-        return false;
-    }
-
-    @Override
-    public NutsSystemTerminalBase setCommandAutoCompleteResolver(NutsCommandAutoCompleteResolver autoCompleteResolver) {
-        return this;
-    }
-
-    @Override
-    public NutsSystemTerminalBase setCommandHistory(NutsCommandHistory history) {
-        return this;
-    }
-
-    @Override
-    public NutsCommandHistory getCommandHistory() {
-        return null;
-    }
-
-    @Override
-    public NutsCommandReadHighlighter getCommandReadHighlighter() {
-        return null;
-    }
-
-    @Override
-    public NutsSystemTerminalBase setCommandReadHighlighter(NutsCommandReadHighlighter commandReadHighlighter) {
-        return this;
-    }
-
     public String readLine(NutsPrintStream out, NutsMessage message, NutsSession session) {
         if (out == null) {
             out = getOut();
@@ -206,6 +177,44 @@ public class DefaultNutsSystemTerminalBaseBoot implements NutsSystemTerminalBase
     @Override
     public NutsPrintStream getErr() {
         return this.err;
+    }
+
+    @Override
+    public NutsCommandAutoCompleteResolver getAutoCompleteResolver() {
+        return commandAutoCompleteResolver;
+    }
+
+    @Override
+    public boolean isAutoCompleteSupported() {
+        return false;
+    }
+
+    @Override
+    public NutsSystemTerminalBase setCommandAutoCompleteResolver(NutsCommandAutoCompleteResolver autoCompleteResolver) {
+        this.commandAutoCompleteResolver = autoCompleteResolver;
+        return this;
+    }
+
+    @Override
+    public NutsCommandHistory getCommandHistory() {
+        return history;
+    }
+
+    @Override
+    public NutsSystemTerminalBase setCommandHistory(NutsCommandHistory history) {
+        this.history = history;
+        return this;
+    }
+
+    @Override
+    public String getCommandHighlighter() {
+        return commandHighlighter;
+    }
+
+    @Override
+    public NutsSystemTerminalBase setCommandHighlighter(String commandHighlighter) {
+        this.commandHighlighter = commandHighlighter;
+        return this;
     }
 
 }

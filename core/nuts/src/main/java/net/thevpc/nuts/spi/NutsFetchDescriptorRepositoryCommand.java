@@ -33,26 +33,30 @@ import net.thevpc.nuts.NutsSession;
 
 /**
  * Repository command used to fetch an artifact descriptor from a specific repository.
+ *
  * @author thevpc
- * @since 0.5.5
  * @app.category SPI Base
+ * @since 0.5.5
  */
 public interface NutsFetchDescriptorRepositoryCommand extends NutsRepositoryCommand {
 
     /**
      * return fetch result. if the command is not yet executed, it will be executed first.
+     *
      * @return return fetch result.
      */
     NutsDescriptor getResult();
 
     /**
      * id to fetch
+     *
      * @return id to fetch
      */
     NutsId getId();
 
     /**
      * set id to fetch
+     *
      * @param id id to fetch
      * @return {@code this} instance
      */
@@ -64,6 +68,7 @@ public interface NutsFetchDescriptorRepositoryCommand extends NutsRepositoryComm
     /**
      * preform command. Should be called after setting all parameters.
      * Result is retrievable with {@link #getResult()}.
+     *
      * @return {@code this} instance
      */
     @Override
@@ -71,12 +76,14 @@ public interface NutsFetchDescriptorRepositoryCommand extends NutsRepositoryComm
 
     /**
      * get fetchMode
+     *
      * @return {@code this} instance
      */
     NutsFetchMode getFetchMode();
 
     /**
      * fetchMode
+     *
      * @param fetchMode fetchMode
      * @return {@code this} instance
      */

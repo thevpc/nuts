@@ -28,6 +28,7 @@ package net.thevpc.nuts;
 
 /**
  * Remove User Command
+ *
  * @author thevpc
  * @app.category Security
  */
@@ -35,6 +36,7 @@ public interface NutsRemoveUserCommand extends NutsWorkspaceCommand {
 
     /**
      * username of user to remove
+     *
      * @return user name
      */
     String getUsername();
@@ -42,6 +44,7 @@ public interface NutsRemoveUserCommand extends NutsWorkspaceCommand {
 
     /**
      * set username of user to remove
+     *
      * @param username user name
      * @return {@code this} instance
      */
@@ -70,7 +73,7 @@ public interface NutsRemoveUserCommand extends NutsWorkspaceCommand {
      * to help return a more specific return type;
      *
      * @param skipUnsupported when true, all unsupported options are skipped
-     * @param args argument to configure with
+     * @param args            argument to configure with
      * @return {@code this} instance
      */
     @Override

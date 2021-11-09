@@ -26,6 +26,8 @@
  */
 package net.thevpc.nuts;
 
+import net.thevpc.nuts.spi.NutsStreams;
+
 import java.util.*;
 import java.util.function.Function;
 import java.util.function.IntFunction;
@@ -45,43 +47,44 @@ import java.util.stream.Stream;
  * @since 0.5.4
  */
 public interface NutsStream<T> extends Iterable<T> {
-    static <T> NutsStream<T> of(T[] str, String name,NutsSession session){
-        return NutsStreams.of(session).create(str,name);
+    static <T> NutsStream<T> of(T[] str, String name, NutsSession session) {
+        return NutsStreams.of(session).createStream(str, name);
     }
 
-    static <T> NutsStream<T> of(Iterable<T> str, String name,NutsSession session){
-        return NutsStreams.of(session).create(str,name);
+    static <T> NutsStream<T> of(Iterable<T> str, String name, NutsSession session) {
+        return NutsStreams.of(session).createStream(str, name);
     }
 
-    static <T> NutsStream<T> of(Iterator<T> str, String name,NutsSession session){
-        return NutsStreams.of(session).create(str,name);
+    static <T> NutsStream<T> of(Iterator<T> str, String name, NutsSession session) {
+        return NutsStreams.of(session).createStream(str, name);
     }
 
-    static <T> NutsStream<T> of(Stream<T> str, String name,NutsSession session){
-        return NutsStreams.of(session).create(str,name);
-    }
-    static <T> NutsStream<T> of(T[] str, NutsSession session){
-        return NutsStreams.of(session).create(str,null);
+    static <T> NutsStream<T> of(Stream<T> str, String name, NutsSession session) {
+        return NutsStreams.of(session).createStream(str, name);
     }
 
-    static <T> NutsStream<T> of(Iterable<T> str, NutsSession session){
-        return NutsStreams.of(session).create(str,null);
+    static <T> NutsStream<T> of(T[] str, NutsSession session) {
+        return NutsStreams.of(session).createStream(str, null);
     }
 
-    static <T> NutsStream<T> of(Iterator<T> str, NutsSession session){
-        return NutsStreams.of(session).create(str,null);
+    static <T> NutsStream<T> of(Iterable<T> str, NutsSession session) {
+        return NutsStreams.of(session).createStream(str, null);
     }
 
-    static <T> NutsStream<T> of(Stream<T> str, NutsSession session){
-        return NutsStreams.of(session).create(str,null);
+    static <T> NutsStream<T> of(Iterator<T> str, NutsSession session) {
+        return NutsStreams.of(session).createStream(str, null);
+    }
+
+    static <T> NutsStream<T> of(Stream<T> str, NutsSession session) {
+        return NutsStreams.of(session).createStream(str, null);
     }
 
     static <T> NutsStream<T> ofEmpty(NutsSession session) {
-        return of(Collections.emptyList(),session);
+        return of(Collections.emptyList(), session);
     }
 
-    static <T> NutsStream<T> ofSingleton(T element,NutsSession session) {
-        return of(Arrays.asList(element),session);
+    static <T> NutsStream<T> ofSingleton(T element, NutsSession session) {
+        return of(Arrays.asList(element), session);
     }
 
     /**

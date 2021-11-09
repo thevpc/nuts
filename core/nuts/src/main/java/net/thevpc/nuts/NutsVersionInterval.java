@@ -29,10 +29,9 @@ package net.thevpc.nuts;
 import java.io.Serializable;
 
 /**
- * Created by vpc on 2/1/17.
- *
- * @since 0.5.4
+ * @author thevpc
  * @app.category Base
+ * @since 0.5.4
  */
 public interface NutsVersionInterval extends Serializable {
 

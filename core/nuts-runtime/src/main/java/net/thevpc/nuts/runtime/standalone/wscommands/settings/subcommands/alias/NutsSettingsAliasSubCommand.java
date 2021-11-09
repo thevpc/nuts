@@ -164,9 +164,9 @@ public class NutsSettingsAliasSubCommand extends AbstractNutsSettingsSubCommand 
                     session.commands()
                             .addCommand(
                             new NutsCommandConfig()
-                                    .setCommand(NutsCommandLine.parse(value.command,session).toStringArray())
+                                    .setCommand(NutsCommandLine.of(value.command,session).toStringArray())
                                     .setName(value.name)
-                                    .setExecutorOptions(NutsCommandLine.parse(value.executionOptions,session).toStringArray())
+                                    .setExecutorOptions(NutsCommandLine.of(value.executionOptions,session).toStringArray())
                              );
                 }
                 session.config().save();

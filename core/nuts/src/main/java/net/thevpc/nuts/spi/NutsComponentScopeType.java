@@ -76,7 +76,7 @@ public enum NutsComponentScopeType implements NutsEnum {
      * parse string and return {@code emptyOrErrorValue} if parse fails
      *
      * @param emptyOrErrorValue emptyOrErrorValue
-     * @param value value to parse
+     * @param value             value to parse
      * @return parsed instance or {@code emptyOrErrorValue}
      */
     public static NutsComponentScopeType parseLenient(String value, NutsComponentScopeType emptyOrErrorValue) {
@@ -113,7 +113,7 @@ public enum NutsComponentScopeType implements NutsEnum {
 
     public static NutsComponentScopeType parse(String value, NutsComponentScopeType emptyValue, NutsSession session) {
         NutsComponentScopeType v = parseLenient(value, emptyValue, null);
-        NutsApiUtils.checkNonNullEnum(v,value, NutsComponentScopeType.class,session);
+        NutsApiUtils.checkNonNullEnum(v, value, NutsComponentScopeType.class, session);
         return v;
     }
 

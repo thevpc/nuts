@@ -42,7 +42,7 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 /**
- * @author vpc
+ * @author thevpc
  */
 public class DefaultNutsWorkspaceEnvManagerModel {
 

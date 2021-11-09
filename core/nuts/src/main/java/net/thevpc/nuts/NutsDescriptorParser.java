@@ -35,13 +35,16 @@ import java.net.URL;
 import java.nio.file.Path;
 
 /**
- * @app.category Base
+ * Descriptor Parser
+ *
+ * @author thevpc
+ * @app.category Descriptor
  */
 public interface NutsDescriptorParser extends NutsComponent {
 
     static NutsDescriptorParser of(NutsSession session) {
         NutsApiUtils.checkSession(session);
-        return session.extensions().createSupported(NutsDescriptorParser.class, true,null);
+        return session.extensions().createSupported(NutsDescriptorParser.class, true, null);
     }
 
     /**

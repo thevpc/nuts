@@ -29,8 +29,8 @@ package net.thevpc.nuts;
 /**
  * Base exception for Repository related exceptions
  *
- * @since 0.5.4
  * @app.category Exceptions
+ * @since 0.5.4
  */
 public abstract class NutsRepositoryException extends NutsException {
 
@@ -38,10 +38,11 @@ public abstract class NutsRepositoryException extends NutsException {
 
     /**
      * Constructs a new NutsRepositoryException exception
-     * @param session workspace
+     *
+     * @param session    workspace
      * @param repository repository
-     * @param message message
-     * @param ex exception
+     * @param message    message
+     * @param ex         exception
      */
     public NutsRepositoryException(NutsSession session, String repository, NutsMessage message, Throwable ex) {
         super(session,
@@ -51,6 +52,7 @@ public abstract class NutsRepositoryException extends NutsException {
 
     /**
      * the repository of this exception
+     *
      * @return the repository of this exception
      */
     public String getRepository() {

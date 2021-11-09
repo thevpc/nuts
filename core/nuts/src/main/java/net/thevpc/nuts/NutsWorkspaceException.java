@@ -29,16 +29,18 @@ package net.thevpc.nuts;
 /**
  * NutsWorkspaceException is the base class for Workspace related exceptions.
  *
- * @since 0.5.4
+ * @author thevpc
  * @app.category Exceptions
+ * @since 0.5.4
  */
 public abstract class NutsWorkspaceException extends NutsException {
 
     /**
      * Constructs a new NutsWorkspaceException exception
+     *
      * @param session workspace
      * @param message message
-     * @param ex exception
+     * @param ex      exception
      */
     public NutsWorkspaceException(NutsSession session, NutsMessage message, Throwable ex) {
         super(session,

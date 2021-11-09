@@ -28,9 +28,10 @@ package net.thevpc.nuts;
 /**
  * Configurable interface define a extensible way to configure nuts commands
  * and objects using simple argument line options.
+ *
  * @author thevpc
- * @since 0.5.5
  * @app.category Command Line
+ * @since 0.5.5
  */
 public interface NutsCommandLineConfigurable {
 
@@ -38,8 +39,8 @@ public interface NutsCommandLineConfigurable {
      * configure the current command with the given arguments.
      *
      * @param skipUnsupported when true, all unsupported options are skipped
-     * silently
-     * @param args arguments to configure with
+     *                        silently
+     * @param args            arguments to configure with
      * @return {@code this} instance
      */
     Object configure(boolean skipUnsupported, String... args);
@@ -48,8 +49,8 @@ public interface NutsCommandLineConfigurable {
      * configure the current command with the given arguments.
      *
      * @param skipUnsupported when true, all unsupported options are skipped
-     * silently
-     * @param commandLine arguments to configure with
+     *                        silently
+     * @param commandLine     arguments to configure with
      * @return true when the at least one argument was processed
      */
     boolean configure(boolean skipUnsupported, NutsCommandLine commandLine);

@@ -25,7 +25,7 @@ package net.thevpc.nuts.toolbox.nwork;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 public class _StringUtils {
 

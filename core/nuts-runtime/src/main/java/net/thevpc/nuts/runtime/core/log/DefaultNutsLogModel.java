@@ -40,7 +40,7 @@ import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 
 /**
- * @author vpc
+ * @author thevpc
  */
 public class DefaultNutsLogModel {
     private static Handler[] EMPTY = new Handler[0];

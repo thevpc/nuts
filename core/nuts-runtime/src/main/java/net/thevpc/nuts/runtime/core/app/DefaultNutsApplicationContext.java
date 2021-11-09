@@ -63,7 +63,7 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
         session = this.session;//will be used later
         int wordIndex = -1;
         if (args.length > 0 && args[0].startsWith("--nuts-exec-mode=")) {
-            NutsCommandLine execModeCommand = NutsCommandLine.parse(args[0].substring(args[0].indexOf('=') + 1),session);
+            NutsCommandLine execModeCommand = NutsCommandLine.of(args[0].substring(args[0].indexOf('=') + 1),session);
             if (execModeCommand.hasNext()) {
                 NutsArgument a = execModeCommand.next();
                 switch (a.getKey().getString()) {

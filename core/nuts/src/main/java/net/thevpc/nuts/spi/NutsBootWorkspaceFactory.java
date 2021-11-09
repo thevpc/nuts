@@ -34,8 +34,8 @@ import net.thevpc.nuts.NutsWorkspaceOptions;
  * Class responsible of creating and initializing Workspace
  * Created by vpc on 1/5/17.
  *
- * @since 0.5.4
  * @app.category SPI Base
+ * @since 0.5.4
  */
 public interface NutsBootWorkspaceFactory {
 
@@ -44,6 +44,7 @@ public interface NutsBootWorkspaceFactory {
      * the maximum value of {@code getBootSupportLevel(options)}.
      * Note that default value (for the reference implementation) is {@code NutsComponent.DEFAULT_SUPPORT}.
      * Any value less or equal to zero is ignored (and the factory is discarded)
+     *
      * @param options command line options
      * @return support level
      */
@@ -51,6 +52,7 @@ public interface NutsBootWorkspaceFactory {
 
     /**
      * create workspace with the given options
+     *
      * @param options boot init options
      * @return initialized workspace
      */

@@ -31,19 +31,21 @@ import net.thevpc.nuts.spi.NutsComponent;
 
 /**
  * Dependency Format Helper
+ *
  * @author thevpc
- * @since 0.5.6
  * @app.category Format
+ * @since 0.5.6
  */
 public interface NutsDependencyFormat extends NutsFormat, NutsComponent {
 
     static NutsDependencyFormat of(NutsSession session) {
         NutsApiUtils.checkSession(session);
-        return session.extensions().createSupported(NutsDependencyFormat.class,true,null);
+        return session.extensions().createSupported(NutsDependencyFormat.class, true, null);
     }
 
     /**
      * true if omit repository from formatted string.
+     *
      * @return true if omit repository from formatted string
      */
     boolean isOmitRepository();
@@ -51,6 +53,7 @@ public interface NutsDependencyFormat extends NutsFormat, NutsComponent {
     /**
      * if true omit (do not include) repository when formatting the value
      * set using {@link #setValue(NutsDependency)} .
+     *
      * @param omitRepository new value
      * @return {@code this} instance
      */
@@ -58,6 +61,7 @@ public interface NutsDependencyFormat extends NutsFormat, NutsComponent {
 
     /**
      * return true if omit group
+     *
      * @return true if omit group
      */
     boolean isOmitGroupId();
@@ -65,6 +69,7 @@ public interface NutsDependencyFormat extends NutsFormat, NutsComponent {
     /**
      * if true omit (do not include) group when formatting the value
      * set using {@link #setValue(NutsDependency)} .
+     *
      * @param omitGroup new value
      * @return {@code this} instance
      */
@@ -72,6 +77,7 @@ public interface NutsDependencyFormat extends NutsFormat, NutsComponent {
 
     /**
      * omit imported group
+     *
      * @return omit imported group
      */
     boolean isOmitImportedGroupId();
@@ -79,6 +85,7 @@ public interface NutsDependencyFormat extends NutsFormat, NutsComponent {
     /**
      * if true omit (do not include) group (if the group is imported) when formatting the value
      * set using {@link #setValue(NutsDependency)} .
+     *
      * @param omitEnv new value
      * @return {@code this} instance
      */
@@ -86,6 +93,7 @@ public interface NutsDependencyFormat extends NutsFormat, NutsComponent {
 
     /**
      * return true if omit all query properties
+     *
      * @return true if omit all query properties
      */
     boolean isOmitOtherProperties();
@@ -93,6 +101,7 @@ public interface NutsDependencyFormat extends NutsFormat, NutsComponent {
     /**
      * if true omit (do not include) query (scope and optional) when formatting the value
      * set using {@link #setValue(NutsDependency)} .
+     *
      * @param value new value
      * @return {@code this} instance
      */
@@ -100,6 +109,7 @@ public interface NutsDependencyFormat extends NutsFormat, NutsComponent {
 
     /**
      * return true if omit scope
+     *
      * @return true if omit scope
      */
     boolean isOmitScope();
@@ -107,6 +117,7 @@ public interface NutsDependencyFormat extends NutsFormat, NutsComponent {
     /**
      * if true omit (do not include) face when formatting the value
      * set using {@link #setValue(NutsDependency)} .
+     *
      * @param value new value
      * @return {@code this} instance
      */
@@ -114,6 +125,7 @@ public interface NutsDependencyFormat extends NutsFormat, NutsComponent {
 
     /**
      * return true if omit scope
+     *
      * @return true if omit scope
      */
     boolean isOmitClassifier();
@@ -121,6 +133,7 @@ public interface NutsDependencyFormat extends NutsFormat, NutsComponent {
     /**
      * if true omit (do not include) face when formatting the value
      * set using {@link #setValue(NutsDependency)} .
+     *
      * @param value new value
      * @return {@code this} instance
      */
@@ -156,6 +169,7 @@ public interface NutsDependencyFormat extends NutsFormat, NutsComponent {
 
     /**
      * return true if omit exclusions
+     *
      * @return true if omit exclusions
      */
     boolean isOmitExclusions();
@@ -163,6 +177,7 @@ public interface NutsDependencyFormat extends NutsFormat, NutsComponent {
     /**
      * if true omit (do not include) face when formatting the value
      * set using {@link #setValue(NutsDependency)} .
+     *
      * @param value new value
      * @return {@code this} instance
      */
@@ -170,6 +185,7 @@ public interface NutsDependencyFormat extends NutsFormat, NutsComponent {
 
     /**
      * return true if omit optional
+     *
      * @return true if omit optional
      */
     boolean isOmitOptional();
@@ -177,6 +193,7 @@ public interface NutsDependencyFormat extends NutsFormat, NutsComponent {
     /**
      * if true omit (do not include) face when formatting the value
      * set using {@link #setValue(NutsDependency)} .
+     *
      * @param value new value
      * @return {@code this} instance
      */
@@ -184,12 +201,14 @@ public interface NutsDependencyFormat extends NutsFormat, NutsComponent {
 
     /**
      * list of all omitted query properties
+     *
      * @return list of all omitted query properties
      */
     String[] getOmitQueryProperties();
 
     /**
      * return true if omit query property named {@code name}
+     *
      * @param name property name
      * @return true if omit query property named {@code name}
      */
@@ -198,7 +217,8 @@ public interface NutsDependencyFormat extends NutsFormat, NutsComponent {
     /**
      * if true omit (do not include) query property named {@code name} when formatting the value
      * set using {@link #setValue(NutsDependency)} .
-     * @param name property name
+     *
+     * @param name  property name
      * @param value new value
      * @return {@code this} instance
      */
@@ -207,6 +227,7 @@ public interface NutsDependencyFormat extends NutsFormat, NutsComponent {
 
     /**
      * true if highlight (distinct color) imported group
+     *
      * @return true if highlight (distinct color) imported group
      */
     boolean isHighlightImportedGroup();
@@ -214,6 +235,7 @@ public interface NutsDependencyFormat extends NutsFormat, NutsComponent {
     /**
      * if true omit (do not include) name space when formatting the value
      * set using {@link #setValue(NutsDependency)} .
+     *
      * @param highlightImportedGroup new value
      * @return {@code this} instance
      */
@@ -221,6 +243,7 @@ public interface NutsDependencyFormat extends NutsFormat, NutsComponent {
 
     /**
      * return true if scope is highlighted
+     *
      * @return true if scope is highlighted
      */
     boolean isHighlightScope();
@@ -228,6 +251,7 @@ public interface NutsDependencyFormat extends NutsFormat, NutsComponent {
     /**
      * if true omit (do not include) name space when formatting the value
      * set using {@link #setValue(NutsDependency)} .
+     *
      * @param highlightScope new value
      * @return {@code this} instance
      */
@@ -235,6 +259,7 @@ public interface NutsDependencyFormat extends NutsFormat, NutsComponent {
 
     /**
      * return true if optional is highlighted
+     *
      * @return true if optional is highlighted
      */
     boolean isHighlightOptional();
@@ -242,6 +267,7 @@ public interface NutsDependencyFormat extends NutsFormat, NutsComponent {
     /**
      * if true omit (do not include) name space when formatting the value
      * set using {@link #setValue(NutsDependency)} .
+     *
      * @param highlightOptional new value
      * @return {@code this} instance
      */
@@ -249,6 +275,7 @@ public interface NutsDependencyFormat extends NutsFormat, NutsComponent {
 
     /**
      * return current value to format
+     *
      * @return current value to format
      * @since 0.5.6
      */
@@ -256,6 +283,7 @@ public interface NutsDependencyFormat extends NutsFormat, NutsComponent {
 
     /**
      * value dependency to format
+     *
      * @param dependency dependency to format
      * @return {@code this} instance
      * @since 0.5.6
@@ -277,7 +305,7 @@ public interface NutsDependencyFormat extends NutsFormat, NutsComponent {
      * to help return a more specific return type;
      *
      * @param skipUnsupported when true, all unsupported options are skipped
-     * @param args argument to configure with
+     * @param args            argument to configure with
      * @return {@code this} instance
      */
     @Override

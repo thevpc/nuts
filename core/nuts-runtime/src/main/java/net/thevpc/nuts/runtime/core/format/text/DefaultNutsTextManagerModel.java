@@ -45,7 +45,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * @author vpc
+ * @author thevpc
  */
 public class DefaultNutsTextManagerModel {
 

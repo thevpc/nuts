@@ -26,7 +26,6 @@ package net.thevpc.nuts;
 import java.lang.reflect.Type;
 
 /**
- *
  * @author thevpc
  * @since 0.8.1
  */

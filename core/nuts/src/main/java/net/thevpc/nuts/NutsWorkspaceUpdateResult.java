@@ -27,10 +27,9 @@
 package net.thevpc.nuts;
 
 /**
- * Created by vpc on 6/23/17.
- *
- * @since 0.5.5
+ * @author thevpc
  * @app.category Commands
+ * @since 0.5.5
  */
 public interface NutsWorkspaceUpdateResult {
 

@@ -38,20 +38,23 @@ import java.nio.file.Path;
 /**
  * Repository Deploy command provided by Repository and used by Workspace.
  * This class is part of Nuts SPI and is not to be used by end users.
+ *
  * @author thevpc
- * @since 0.5.4
  * @app.category SPI Base
+ * @since 0.5.4
  */
 public interface NutsDeployRepositoryCommand extends NutsRepositoryCommand {
 
     /**
      * content to deploy
+     *
      * @return content to deploy
      */
     Object getContent();
 
     /**
      * set content to deploy
+     *
      * @param content content to deploy
      * @return {@code this} instance
      */
@@ -59,6 +62,7 @@ public interface NutsDeployRepositoryCommand extends NutsRepositoryCommand {
 
     /**
      * set content to deploy
+     *
      * @param content content to deploy
      * @return {@code this} instance
      */
@@ -66,6 +70,7 @@ public interface NutsDeployRepositoryCommand extends NutsRepositoryCommand {
 
     /**
      * set content to deploy
+     *
      * @param content content to deploy
      * @return {@code this} instance
      */
@@ -73,6 +78,7 @@ public interface NutsDeployRepositoryCommand extends NutsRepositoryCommand {
 
     /**
      * set content to deploy
+     *
      * @param content content to deploy
      * @return {@code this} instance
      */
@@ -80,6 +86,7 @@ public interface NutsDeployRepositoryCommand extends NutsRepositoryCommand {
 
     /**
      * set content to deploy
+     *
      * @param content content to deploy
      * @return {@code this} instance
      */
@@ -87,12 +94,14 @@ public interface NutsDeployRepositoryCommand extends NutsRepositoryCommand {
 
     /**
      * descriptor to deploy
+     *
      * @return descriptor to deploy
      */
     NutsDescriptor getDescriptor();
 
     /**
      * set descriptor to deploy
+     *
      * @param descriptor descriptor to deploy
      * @return {@code this} instance
      */
@@ -100,12 +109,14 @@ public interface NutsDeployRepositoryCommand extends NutsRepositoryCommand {
 
     /**
      * id to deploy
+     *
      * @return id to deploy
      */
     NutsId getId();
 
     /**
      * set id to deploy
+     *
      * @param id id to deploy
      * @return {@code this} instance
      */
@@ -113,6 +124,7 @@ public interface NutsDeployRepositoryCommand extends NutsRepositoryCommand {
 
     /**
      * session
+     *
      * @param session session
      * @return {@code this} instance
      */
@@ -121,6 +133,7 @@ public interface NutsDeployRepositoryCommand extends NutsRepositoryCommand {
 
     /**
      * run deploy command
+     *
      * @return {@code this} instance
      */
     @Override

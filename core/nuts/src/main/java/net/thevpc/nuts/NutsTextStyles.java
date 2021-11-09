@@ -27,7 +27,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 /**
- * @author vpc
+ * @author thevpc
  */
 public final class NutsTextStyles implements Iterable<NutsTextStyle>, NutsEnum {
 
@@ -40,26 +40,53 @@ public final class NutsTextStyles implements Iterable<NutsTextStyle>, NutsEnum {
     }
 
     public static NutsTextStyles of(NutsTextStyle... others) {
-        Map<NutsTextStyleType,NutsTextStyle> visited=new TreeMap<>();
-        if(others!=null) {
+        Map<NutsTextStyleType, NutsTextStyle> visited = new TreeMap<>();
+        if (others != null) {
             for (NutsTextStyle element : others) {
-                if(element!=null) {
+                if (element != null) {
                     visited.put(element.getType(), element);
                 }
             }
         }
         visited.remove(NutsTextStyleType.PLAIN);
-        if(visited.isEmpty()){
+        if (visited.isEmpty()) {
             return PLAIN;
         }
         return new NutsTextStyles(visited.values().toArray(new NutsTextStyle[0]));
     }
 
     public static NutsTextStyles of(NutsTextStyle other) {
-        if (other == null || other.getType()==NutsTextStyleType.PLAIN) {
+        if (other == null || other.getType() == NutsTextStyleType.PLAIN) {
             return PLAIN;
         }
         return new NutsTextStyles(new NutsTextStyle[]{other});
+    }
+
+    public static NutsTextStyles parseLenient(String value) {
+        return parseLenient(value, null, null);
+    }
+
+    public static NutsTextStyles parseLenient(String value, NutsTextStyles emptyValue) {
+        return parseLenient(value, emptyValue, emptyValue);
+    }
+
+    public static NutsTextStyles parseLenient(String value, NutsTextStyles emptyValue, NutsTextStyles errorValue) {
+        value = NutsUtilStrings.trim(value);
+        if (value.isEmpty()) {
+            return emptyValue;
+        }
+        List<NutsTextStyle> all = new ArrayList<>();
+        for (String s : value.split(",")) {
+            s = s.trim();
+            if (s.length() > 0) {
+                NutsTextStyle a = NutsTextStyle.parseLenient(s, null, null);
+                if (a == null) {
+                    return errorValue;
+                }
+                all.add(a);
+            }
+        }
+        return of(all.toArray(new NutsTextStyle[0]));
     }
 
     public NutsTextStyles append(NutsTextStyles other) {
@@ -73,7 +100,7 @@ public final class NutsTextStyles implements Iterable<NutsTextStyle>, NutsEnum {
     }
 
     public NutsTextStyles append(NutsTextStyle... others) {
-        if (others==null || others.length == 0) {
+        if (others == null || others.length == 0) {
             return this;
         }
         List<NutsTextStyle> all = new ArrayList<NutsTextStyle>(size() + others.length + 1);
@@ -83,7 +110,7 @@ public final class NutsTextStyles implements Iterable<NutsTextStyle>, NutsEnum {
     }
 
     public NutsTextStyles append(NutsTextStyle other) {
-        if (other == null || other.getType()==NutsTextStyleType.PLAIN) {
+        if (other == null || other.getType() == NutsTextStyleType.PLAIN) {
             return this;
         }
         NutsTextStyle[] elements2 = new NutsTextStyle[elements.length + 1];
@@ -115,8 +142,8 @@ public final class NutsTextStyles implements Iterable<NutsTextStyle>, NutsEnum {
     }
 
     @Override
-    public String toString() {
-        return id();
+    public int hashCode() {
+        return Arrays.hashCode(elements);
     }
 
     @Override
@@ -128,8 +155,8 @@ public final class NutsTextStyles implements Iterable<NutsTextStyle>, NutsEnum {
     }
 
     @Override
-    public int hashCode() {
-        return Arrays.hashCode(elements);
+    public String toString() {
+        return id();
     }
 
     public boolean isPlain() {
@@ -141,38 +168,11 @@ public final class NutsTextStyles implements Iterable<NutsTextStyle>, NutsEnum {
         return Arrays.asList(elements).iterator();
     }
 
-
-    public static NutsTextStyles parseLenient(String value) {
-        return parseLenient(value,null,null);
+    public NutsTextStyle[] toArray() {
+        return Arrays.copyOf(elements, elements.length);
     }
 
-    public static NutsTextStyles parseLenient(String value, NutsTextStyles emptyValue) {
-        return parseLenient(value,emptyValue,emptyValue);
-    }
-    public static NutsTextStyles parseLenient(String value, NutsTextStyles emptyValue, NutsTextStyles errorValue) {
-        value = NutsUtilStrings.trim(value);
-        if(value.isEmpty()){
-            return emptyValue;
-        }
-        List<NutsTextStyle> all=new ArrayList<>();
-        for (String s : value.split(",")) {
-            s=s.trim();
-            if(s.length()>0){
-                NutsTextStyle a = NutsTextStyle.parseLenient(s, null, null);
-                if(a==null){
-                    return errorValue;
-                }
-                all.add(a);
-            }
-        }
-        return of(all.toArray(new NutsTextStyle[0]));
-    }
-
-    public NutsTextStyle[] toArray(){
-        return Arrays.copyOf(elements,elements.length);
-    }
-
-    public List<NutsTextStyle> toList(){
+    public List<NutsTextStyle> toList() {
         return Collections.unmodifiableList(Arrays.asList(elements));
     }
 

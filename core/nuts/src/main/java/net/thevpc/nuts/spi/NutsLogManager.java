@@ -35,49 +35,56 @@ import java.util.logging.Level;
 
 /**
  * Nuts Log Manager
+ *
  * @app.category Logging
  */
 @NutsComponentScope(NutsComponentScopeType.WORKSPACE)
 public interface NutsLogManager extends NutsComponent {
     static NutsLogManager of(NutsSession session) {
         NutsApiUtils.checkSession(session);
-        return session.extensions().createSupported(NutsLogManager.class,true,null);
+        return session.extensions().createSupported(NutsLogManager.class, true, null);
     }
 
     /**
      * Log handler
+     *
      * @return Log handler
      */
     Handler[] getHandlers(NutsSession session);
 
     /**
      * remove the given handler
+     *
      * @param handler handler to remove
      * @return this
      */
-    NutsLogManager removeHandler(Handler handler,NutsSession session);
+    NutsLogManager removeHandler(Handler handler, NutsSession session);
 
     /**
      * add the given handler
+     *
      * @param handler handler to add
      * @return this
      */
-    NutsLogManager addHandler(Handler handler,NutsSession session);
+    NutsLogManager addHandler(Handler handler, NutsSession session);
 
     /**
      * terminal handler
+     *
      * @return terminal handler
      */
     Handler getTermHandler(NutsSession session);
 
     /**
      * file handler
+     *
      * @return file handler
      */
     Handler getFileHandler(NutsSession session);
 
     /**
      * create an instance of {@link NutsLogger}
+     *
      * @param name logger name
      * @return new instance of {@link NutsLogger}
      */
@@ -85,6 +92,7 @@ public interface NutsLogManager extends NutsComponent {
 
     /**
      * create an instance of {@link NutsLogger}
+     *
      * @param clazz logger clazz
      * @return new instance of {@link NutsLogger}
      */
@@ -92,28 +100,32 @@ public interface NutsLogManager extends NutsComponent {
 
     /**
      * return terminal logger level
+     *
      * @return terminal logger level
      */
     Level getTermLevel(NutsSession session);
 
     /**
      * set terminal logger level
+     *
      * @param level new level
      * @return this
      */
-    NutsLogManager setTermLevel(Level level,NutsSession session);
+    NutsLogManager setTermLevel(Level level, NutsSession session);
 
     /**
      * return file logger level
+     *
      * @return file logger level
      */
     Level getFileLevel(NutsSession session);
 
     /**
      * set file logger level
+     *
      * @param level new level
      * @return this
      */
-    NutsLogManager setFileLevel(Level level,NutsSession session);
+    NutsLogManager setFileLevel(Level level, NutsSession session);
 
 }

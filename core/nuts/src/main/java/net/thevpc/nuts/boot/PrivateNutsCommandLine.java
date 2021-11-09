@@ -308,15 +308,15 @@ final class PrivateNutsCommandLine implements NutsCommandLine {
     }
 
     @Override
-    public NutsCommandLine setAutoComplete(NutsCommandAutoComplete autoComplete) {
-        throw new NutsBootException(NutsMessage.plain(NOT_SUPPORTED));
-    }
-
-    @Override
     public NutsCommandAutoComplete getAutoComplete() {
         return null;
         //AUTOCOMPLETE
 //        return autoComplete;
+    }
+
+    @Override
+    public NutsCommandLine setAutoComplete(NutsCommandAutoComplete autoComplete) {
+        throw new NutsBootException(NutsMessage.plain(NOT_SUPPORTED));
     }
 
     @Override

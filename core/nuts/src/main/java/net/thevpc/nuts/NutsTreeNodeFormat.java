@@ -28,17 +28,18 @@ package net.thevpc.nuts;
 
 /**
  * classes implementing this interface handle formatting of the tree node.
+ *
  * @author thevpc
- * @since 0.5.5
  * @app.category Format
+ * @since 0.5.5
  */
 public interface NutsTreeNodeFormat {
 
     /**
      * format (transform to rich string) object at the given depth
      *
-     * @param object object to transform
-     * @param depth tree node depth
+     * @param object  object to transform
+     * @param depth   tree node depth
      * @param session session
      * @return string representation
      */

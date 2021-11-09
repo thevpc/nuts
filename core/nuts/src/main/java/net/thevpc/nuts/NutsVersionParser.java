@@ -30,19 +30,21 @@ import net.thevpc.nuts.boot.NutsApiUtils;
 import net.thevpc.nuts.spi.NutsComponent;
 
 /**
+ * @author thevpc
  * @app.category Base
  */
 public interface NutsVersionParser extends NutsComponent {
 
     static NutsVersionParser of(NutsSession session) {
         NutsApiUtils.checkSession(session);
-        return session.extensions().createSupported(NutsVersionParser.class, true,null);
+        return session.extensions().createSupported(NutsVersionParser.class, true, null);
     }
 
     /**
      * return blank mode.
      * when true, null is returned whenever a blank id is encountered.
      * when false, an error is thrown in that case.
+     *
      * @return true if the parse is lenient
      */
     boolean isAcceptBlank();
@@ -51,6 +53,7 @@ public interface NutsVersionParser extends NutsComponent {
      * set blank mode.
      * when true, null is returned whenever a blank id is encountered.
      * when false, an error is thrown in that case.
+     *
      * @param acceptBlank acceptBlank
      * @return true if the parse is lenient
      */

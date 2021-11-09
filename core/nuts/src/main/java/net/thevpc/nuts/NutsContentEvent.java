@@ -28,32 +28,37 @@ package net.thevpc.nuts;
 
 /**
  * Event for {@link NutsRepositoryListener} methods.
+ *
  * @author thevpc
- * @since 0.5.3
  * @app.category Events
+ * @since 0.5.3
  */
 public interface NutsContentEvent {
 
     /**
      * artifact path
+     *
      * @return artifact path
      */
     NutsPath getLocation();
 
     /**
      * current workspace
+     *
      * @return workspace
      */
     NutsWorkspace getWorkspace();
 
     /**
      * current session
+     *
      * @return session
      */
     NutsSession getSession();
 
     /**
      * current repository
+     *
      * @return current repository
      */
     NutsRepository getRepository();

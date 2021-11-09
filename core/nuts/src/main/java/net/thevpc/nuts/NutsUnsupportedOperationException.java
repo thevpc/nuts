@@ -27,15 +27,15 @@
 package net.thevpc.nuts;
 
 /**
- *
  * @author thevpc
- * @since 0.5.4
  * @app.category Exceptions
+ * @since 0.5.4
  */
 public class NutsUnsupportedOperationException extends NutsException {
 
     /**
      * Constructs a new NutsUnsupportedOperationException exception
+     *
      * @param session workspace
      * @param message message
      */
@@ -45,9 +45,10 @@ public class NutsUnsupportedOperationException extends NutsException {
 
     /**
      * Constructs a new NutsUnsupportedOperationException exception
+     *
      * @param session workspace
      * @param message message
-     * @param cause cause
+     * @param cause   cause
      */
     public NutsUnsupportedOperationException(NutsSession session, NutsMessage message, Throwable cause) {
         super(session, message, cause);
@@ -55,10 +56,11 @@ public class NutsUnsupportedOperationException extends NutsException {
 
     /**
      * Constructs a new NutsUnsupportedOperationException exception
-     * @param session workspace
-     * @param message message
-     * @param cause cause
-     * @param enableSuppression whether or not suppression is enabled or disabled
+     *
+     * @param session            workspace
+     * @param message            message
+     * @param cause              cause
+     * @param enableSuppression  whether or not suppression is enabled or disabled
      * @param writableStackTrace whether or not the stack trace should be writable
      */
     public NutsUnsupportedOperationException(NutsSession session, NutsMessage message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {

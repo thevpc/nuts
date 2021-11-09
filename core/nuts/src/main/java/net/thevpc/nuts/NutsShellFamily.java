@@ -74,6 +74,14 @@ public enum NutsShellFamily implements NutsEnum {
 
 
     private static final NutsShellFamily _curr = _resolveCurrent();
+    /**
+     * lower-cased identifier for the enum entry
+     */
+    private final String id;
+
+    NutsShellFamily() {
+        this.id = name().toLowerCase().replace('_', '-');
+    }
 
     private static NutsShellFamily _resolveCurrent() {
         switch (NutsOsFamily.getCurrent()) {
@@ -89,15 +97,6 @@ public enum NutsShellFamily implements NutsEnum {
             }
         }
         return UNKNOWN;
-    }
-
-    /**
-     * lower-cased identifier for the enum entry
-     */
-    private final String id;
-
-    NutsShellFamily() {
-        this.id = name().toLowerCase().replace('_', '-');
     }
 
     public static NutsShellFamily parseLenient(String value) {

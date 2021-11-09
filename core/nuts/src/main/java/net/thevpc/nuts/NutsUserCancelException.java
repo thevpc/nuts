@@ -27,10 +27,9 @@
 package net.thevpc.nuts;
 
 /**
- *
  * @author thevpc
- * @since 0.5.4
  * @app.category Exceptions
+ * @since 0.5.4
  */
 public class NutsUserCancelException extends NutsExecutionException {
 
@@ -38,6 +37,7 @@ public class NutsUserCancelException extends NutsExecutionException {
 
     /**
      * Constructs a new NutsUserCancelException exception
+     *
      * @param session workspace
      */
     public NutsUserCancelException(NutsSession session) {
@@ -46,6 +46,7 @@ public class NutsUserCancelException extends NutsExecutionException {
 
     /**
      * Constructs a new NutsUserCancelException exception
+     *
      * @param session workspace
      * @param message message
      */
@@ -55,8 +56,9 @@ public class NutsUserCancelException extends NutsExecutionException {
 
     /**
      * Constructs a new NutsUserCancelException exception
-     * @param session workspace
-     * @param message message
+     *
+     * @param session  workspace
+     * @param message  message
      * @param exitCode exit code
      */
     public NutsUserCancelException(NutsSession session, NutsMessage message, int exitCode) {

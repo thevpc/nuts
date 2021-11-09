@@ -48,6 +48,7 @@ public interface NutsTmp extends NutsComponent {
 
     /**
      * create temp file in the repositoryId's temp folder
+     *
      * @param name file name
      * @return newly created file path
      */
@@ -55,12 +56,14 @@ public interface NutsTmp extends NutsComponent {
 
     /**
      * create temp file in the repositoryId's temp folder
+     *
      * @return newly created file path
      */
     NutsPath createTempFile();
 
     /**
      * create temp folder in the workspace's temp folder
+     *
      * @param name folder name
      * @return newly created temp folder
      */
@@ -68,6 +71,7 @@ public interface NutsTmp extends NutsComponent {
 
     /**
      * create temp folder in the workspace's temp folder
+     *
      * @return newly created temp folder
      */
     NutsPath createTempFolder();

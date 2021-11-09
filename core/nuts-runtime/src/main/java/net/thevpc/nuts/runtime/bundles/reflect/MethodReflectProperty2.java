@@ -29,7 +29,7 @@ import java.lang.reflect.Method;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 public class MethodReflectProperty2 extends AbstractReflectProperty {
 

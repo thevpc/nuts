@@ -26,8 +26,6 @@
  */
 package net.thevpc.nuts;
 
-import net.thevpc.nuts.boot.NutsApiUtils;
-
 import java.io.File;
 import java.net.URL;
 import java.util.function.Function;
@@ -37,19 +35,19 @@ import java.util.function.Function;
  */
 public interface NutsPathBuilder extends NutsFormattable {
     static NutsPathBuilder of(URL path, NutsSession session) {
-        return NutsPath.of(path,session).builder();
+        return NutsPath.of(path, session).builder();
     }
 
     static NutsPathBuilder of(String path, ClassLoader classLoader, NutsSession session) {
-        return NutsPath.of(path,classLoader,session).builder();
+        return NutsPath.of(path, classLoader, session).builder();
     }
 
     static NutsPathBuilder of(File path, NutsSession session) {
-        return NutsPath.of(path,session).builder();
+        return NutsPath.of(path, session).builder();
     }
 
     static NutsPathBuilder of(String path, NutsSession session) {
-        return NutsPath.of(path,session).builder();
+        return NutsPath.of(path, session).builder();
     }
 
     Function<String, String> getVarResolver();

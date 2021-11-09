@@ -347,8 +347,8 @@ public class DefaultNutsInfoFormat extends DefaultFormatBase<NutsInfoFormat> imp
         props.put("command-line-short", ws.boot().getBootOptions().formatter().setCompact(true).getBootCommandLine());
         props.put("inherited", ws.boot().getBootOptions().isInherited());
         // nuts-boot-args must always be parsed in bash format
-        props.put("inherited-nuts-boot-args", NutsCommandLine.parse(System.getProperty("nuts.boot.args"),NutsShellFamily.SH,ws).format());
-        props.put("inherited-nuts-args", NutsCommandLine.parse(System.getProperty("nuts.args"),NutsShellFamily.SH,ws)
+        props.put("inherited-nuts-boot-args", NutsCommandLine.of(System.getProperty("nuts.boot.args"),NutsShellFamily.SH,ws).format());
+        props.put("inherited-nuts-args", NutsCommandLine.of(System.getProperty("nuts.args"),NutsShellFamily.SH,ws)
                 .format()
         );
         props.put("creation-started", Instant.ofEpochMilli(ws.boot().getCreationStartTimeMillis()));

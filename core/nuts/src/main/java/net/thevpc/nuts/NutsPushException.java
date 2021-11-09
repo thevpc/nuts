@@ -29,8 +29,8 @@ package net.thevpc.nuts;
 /**
  * Push Exception
  *
- * @since 0.5.4
  * @app.category Exceptions
+ * @since 0.5.4
  */
 public class NutsPushException extends NutsException {
 
@@ -41,8 +41,9 @@ public class NutsPushException extends NutsException {
 
     /**
      * Constructs a new NutsPushException exception
+     *
      * @param session workspace
-     * @param id artifact id
+     * @param id      artifact id
      */
     public NutsPushException(NutsSession session, NutsId id) {
         this(session, id, null, null);
@@ -50,8 +51,9 @@ public class NutsPushException extends NutsException {
 
     /**
      * Constructs a new NutsPushException exception
+     *
      * @param session workspace
-     * @param id artifact id
+     * @param id      artifact id
      * @param message message
      */
     public NutsPushException(NutsSession session, NutsId id, NutsMessage message) {
@@ -60,10 +62,11 @@ public class NutsPushException extends NutsException {
 
     /**
      * Constructs a new NutsPushException exception
+     *
      * @param session workspace
-     * @param id artifact id
+     * @param id      artifact id
      * @param message message
-     * @param cause cause
+     * @param cause   cause
      */
     public NutsPushException(NutsSession session, NutsId id, NutsMessage message, Throwable cause) {
         super(session, message == null ? NutsMessage.cstyle("unable to push %s", id == null ? "<null>" : id) : message, cause);
@@ -72,6 +75,7 @@ public class NutsPushException extends NutsException {
 
     /**
      * artifact id
+     *
      * @return artifact id
      */
     public NutsId getId() {

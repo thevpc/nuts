@@ -34,7 +34,6 @@ import net.thevpc.nuts.NutsSession;
 import java.util.Iterator;
 
 /**
- *
  * @author thevpc
  * @app.category SPI Base
  */
@@ -53,6 +52,7 @@ public interface NutsSearchVersionsRepositoryCommand extends NutsRepositoryComma
 
     /**
      * run this command and return {@code this} instance
+     *
      * @return {@code this} instance
      */
     @Override
@@ -60,12 +60,14 @@ public interface NutsSearchVersionsRepositoryCommand extends NutsRepositoryComma
 
     /**
      * get fetchMode
+     *
      * @return {@code this} instance
      */
     NutsFetchMode getFetchMode();
 
     /**
      * fetchMode
+     *
      * @param fetchMode fetchMode
      * @return {@code this} instance
      */

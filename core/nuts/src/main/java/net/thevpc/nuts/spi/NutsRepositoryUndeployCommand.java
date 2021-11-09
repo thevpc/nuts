@@ -30,10 +30,9 @@ import net.thevpc.nuts.NutsId;
 import net.thevpc.nuts.NutsSession;
 
 /**
- *
  * @author thevpc
- * @since 0.5.4
  * @app.category SPI Base
+ * @since 0.5.4
  */
 public interface NutsRepositoryUndeployCommand extends NutsRepositoryCommand {
 
@@ -50,6 +49,7 @@ public interface NutsRepositoryUndeployCommand extends NutsRepositoryCommand {
 
     /**
      * run this command and return {@code this} instance
+     *
      * @return {@code this} instance
      */
     @Override

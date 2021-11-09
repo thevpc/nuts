@@ -27,12 +27,11 @@
 package net.thevpc.nuts.spi;
 
 import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.NutsSupplier;
-import net.thevpc.nuts.spi.NutsPathSPI;
+import net.thevpc.nuts.NutsSupported;
 
 /**
  * @app.category Input Output
  */
 public interface NutsPathFactory {
-    NutsSupplier<NutsPathSPI> createPath(String path, NutsSession session, ClassLoader classLoader);
+    NutsSupported<NutsPathSPI> createPath(String path, NutsSession session, ClassLoader classLoader);
 }

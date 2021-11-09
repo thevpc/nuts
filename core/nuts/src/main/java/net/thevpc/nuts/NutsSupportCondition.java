@@ -70,7 +70,7 @@ public enum NutsSupportCondition implements NutsEnum {
 
     public static NutsSupportCondition parse(String value, NutsSupportCondition emptyValue, NutsSession session) {
         NutsSupportCondition v = parseLenient(value, emptyValue, null);
-        NutsApiUtils.checkNonNullEnum(v,value,NutsSupportCondition.class,session);
+        NutsApiUtils.checkNonNullEnum(v, value, NutsSupportCondition.class, session);
         return v;
     }
 

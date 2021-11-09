@@ -28,6 +28,7 @@ import java.nio.file.Path;
 import java.util.Map;
 
 /**
+ * @author thevpc
  * @app.category Base
  */
 public interface NutsWorkspaceEnvManager {

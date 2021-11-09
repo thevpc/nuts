@@ -28,7 +28,7 @@ import java.lang.reflect.Modifier;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 public class FieldReflectProperty extends AbstractReflectProperty {
 

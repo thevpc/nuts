@@ -35,9 +35,10 @@ import java.nio.file.Path;
 
 /**
  * Base Format Interface used to print "things".
+ *
  * @author thevpc
- * @since 0.5.5
  * @app.category Format
+ * @since 0.5.5
  */
 public interface NutsFormat extends NutsCommandLineConfigurable, NutsComponent {
 
@@ -58,7 +59,6 @@ public interface NutsFormat extends NutsCommandLineConfigurable, NutsComponent {
 
     /**
      * format current value and write result to {@code getSession().out()}.
-     *
      */
     void print();
 
@@ -180,7 +180,7 @@ public interface NutsFormat extends NutsCommandLineConfigurable, NutsComponent {
      * to help return a more specific return type;
      *
      * @param skipUnsupported when true, all unsupported options are skipped
-     * @param args argument to configure with
+     * @param args            argument to configure with
      * @return {@code this} instance
      */
     @Override
@@ -188,6 +188,7 @@ public interface NutsFormat extends NutsCommandLineConfigurable, NutsComponent {
 
     /**
      * true when Nuts Text Format is used for formatting (default)
+     *
      * @return true when Nuts Text Format is used for formatting (default)
      */
     boolean isNtf();

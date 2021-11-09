@@ -28,32 +28,37 @@ package net.thevpc.nuts;
 
 /**
  * Event describing installation of an artifact
+ *
  * @author thevpc
- * @since 0.5.6
  * @app.category Events
+ * @since 0.5.6
  */
 public interface NutsInstallEvent {
 
     /**
      * return artifact definition
+     *
      * @return artifact definition
      */
     NutsDefinition getDefinition();
 
     /**
      * vcurrent workspace
+     *
      * @return current workspace
      */
     NutsWorkspace getWorkspace();
 
     /**
      * return current session
+     *
      * @return current session
      */
     NutsSession getSession();
 
     /**
      * return true if installation was forced
+     *
      * @return true if installation was forced
      */
     boolean isForce();

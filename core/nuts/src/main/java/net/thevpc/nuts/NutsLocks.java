@@ -36,9 +36,10 @@ import java.util.concurrent.locks.Lock;
 
 /**
  * Lock builder to create mainly File based Locks
+ *
  * @author thevpc
- * @since 0.5.8
  * @app.category Input Output
+ * @since 0.5.8
  */
 public interface NutsLocks extends NutsComponent {
     static NutsLocks of(NutsSession session) {
@@ -49,12 +50,14 @@ public interface NutsLocks extends NutsComponent {
     /**
      * lock source represents a user defined
      * object for which the lock will be created.
+     *
      * @return lock source
      */
     Object getSource();
 
     /**
      * update source
+     *
      * @param source source
      * @return {@code this} instance
      */
@@ -63,12 +66,14 @@ public interface NutsLocks extends NutsComponent {
     /**
      * lock resource represents the lock it self.
      * In most cases this will be the lock file.
+     *
      * @return lock resource
      */
     Object getResource();
 
     /**
      * update resource
+     *
      * @param source resource
      * @return {@code this} instance
      */
@@ -76,6 +81,7 @@ public interface NutsLocks extends NutsComponent {
 
     /**
      * update resource
+     *
      * @param source resource
      * @return {@code this} instance
      */
@@ -83,6 +89,7 @@ public interface NutsLocks extends NutsComponent {
 
     /**
      * update resource
+     *
      * @param source resource
      * @return {@code this} instance
      */
@@ -90,12 +97,14 @@ public interface NutsLocks extends NutsComponent {
 
     /**
      * return session
+     *
      * @return session
      */
     NutsSession getSession();
 
     /**
      * update session
+     *
      * @param session session
      * @return {@code this} instance
      */
@@ -103,39 +112,44 @@ public interface NutsLocks extends NutsComponent {
 
     /**
      * create lock object for the given source and resource
+     *
      * @return new {@link Lock} instance
      */
     NutsLock create();
 
     /**
      * create lock object for the given source and resource
+     *
      * @param runnable runnable
-     * @param <T> result type
+     * @param <T>      result type
      * @return result
      */
     <T> T call(Callable<T> runnable);
 
     /**
      * create lock object for the given source and resource
+     *
      * @param runnable runnable
-     * @param <T> result type
-     * @param time time
-     * @param unit unit
+     * @param <T>      result type
+     * @param time     time
+     * @param unit     unit
      * @return result
      */
     <T> T call(Callable<T> runnable, long time, TimeUnit unit);
 
     /**
      * create lock object for the given source and resource
+     *
      * @param runnable runnable
      */
     void run(Runnable runnable);
 
     /**
      * create lock object for the given source and resource
+     *
      * @param runnable runnable
-     * @param time time
-     * @param unit unit
+     * @param time     time
+     * @param unit     unit
      */
     void run(Runnable runnable, long time, TimeUnit unit);
 }

@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.core.app;
 
 import net.thevpc.nuts.NutsApplicationContext;
-import net.thevpc.nuts.NutsApplicationContexts;
+import net.thevpc.nuts.spi.NutsApplicationContexts;
 import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.spi.NutsComponentScope;
 import net.thevpc.nuts.spi.NutsComponentScopeType;

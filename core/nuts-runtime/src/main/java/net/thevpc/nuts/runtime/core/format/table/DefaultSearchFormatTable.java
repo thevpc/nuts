@@ -5,11 +5,9 @@
  */
 package net.thevpc.nuts.runtime.core.format.table;
 
-import java.io.PrintStream;
 import java.util.Arrays;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.core.util.CoreCommonUtils;
 import net.thevpc.nuts.runtime.core.format.NutsIdFormatHelper;
 import net.thevpc.nuts.runtime.core.format.DefaultSearchFormatBase;
 import net.thevpc.nuts.runtime.core.format.NutsFetchDisplayOptions;
@@ -41,7 +39,7 @@ public class DefaultSearchFormatTable extends DefaultSearchFormatBase {
             if (getSession() != null && getSession().getOutputFormatOptions() != null) {
                 for (String outputFormatOption : getSession().getOutputFormatOptions()) {
                     if (outputFormatOption != null) {
-                        table.configure(true, NutsCommandLine.parse(outputFormatOption,ws));
+                        table.configure(true, NutsCommandLine.of(outputFormatOption,ws));
                     }
                 }
             }

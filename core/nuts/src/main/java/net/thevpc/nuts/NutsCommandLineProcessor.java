@@ -34,6 +34,8 @@ package net.thevpc.nuts;
  *  <li>{@code prepare}: called when the command line is fully consumed</li>
  *  <li>{@code exec}|{@code autoComplete}: called to process execution of autcomplete</li>
  * </ul>
+ *
+ * @author thevpc
  * @app.category Command Line
  */
 public interface NutsCommandLineProcessor {
@@ -58,7 +60,8 @@ public interface NutsCommandLineProcessor {
      * process the given option argument that was peeked from the command line.
      * Implementations <strong>MUST</strong> call one of
      * the "next" methods to
-     * @param option peeked argument
+     *
+     * @param option      peeked argument
      * @param commandline associated commandline
      * @return true if the argument can be processed, false otherwise.
      */
@@ -68,7 +71,8 @@ public interface NutsCommandLineProcessor {
      * process the given non option argument that was peeked from the command line.
      * Implementations <strong>MUST</strong> call one of
      * the "next" methods to
-     * @param nonOption peeked argument
+     *
+     * @param nonOption   peeked argument
      * @param commandline associated commandline
      * @return true if the argument can be processed, false otherwise.
      */
@@ -77,6 +81,7 @@ public interface NutsCommandLineProcessor {
     /**
      * initialize the processor.
      * Called before any other method.
+     *
      * @param commandline associated commandline
      */
     default void onInit(NutsCommandLine commandline) {
@@ -86,6 +91,7 @@ public interface NutsCommandLineProcessor {
     /**
      * prepare for execution of for auto-complete.
      * Called after all next methods and before exec and autoComplete methods
+     *
      * @param commandline associated commandline
      */
     default void onPrepare(NutsCommandLine commandline) {
@@ -100,6 +106,7 @@ public interface NutsCommandLineProcessor {
 
     /**
      * called when auto-complete ({@code autoComplete} is not null)
+     *
      * @param autoComplete autoComplete instance
      */
     default void onAutoComplete(NutsCommandAutoComplete autoComplete) {

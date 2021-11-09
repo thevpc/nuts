@@ -47,7 +47,7 @@ public interface NutsWorkspaceConfigManager {
      * save config file if force is activated or non read only and some changes
      * was detected in config file
      *
-     * @param force   when true, save will always be performed
+     * @param force when true, save will always be performed
      * @return true if the save action was applied
      */
     boolean save(boolean force);
@@ -105,6 +105,7 @@ public interface NutsWorkspaceConfigManager {
      * @return {@code this} instance
      */
     NutsWorkspaceConfigManager setSystemTerminal(NutsSystemTerminalBase terminal);
+
     /**
      * return workspace default terminal
      *

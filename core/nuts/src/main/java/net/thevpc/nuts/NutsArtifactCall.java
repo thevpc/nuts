@@ -31,25 +31,28 @@ import java.util.Map;
 /**
  * artifact call descriptor used to define executor and installer call definitions.
  *
- * @since 0.5.4
  * @app.category Base
+ * @since 0.5.4
  */
 public interface NutsArtifactCall extends Serializable, NutsBlankable {
 
     /**
      * artifact id
+     *
      * @return artifact id
      */
     NutsId getId();
 
     /**
      * execution arguments
+     *
      * @return execution arguments
      */
     String[] getArguments();
 
     /**
      * execution properties
+     *
      * @return execution properties
      */
     Map<String, String> getProperties();

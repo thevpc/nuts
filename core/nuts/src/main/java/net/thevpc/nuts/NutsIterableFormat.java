@@ -27,14 +27,16 @@ package net.thevpc.nuts;
 
 /**
  * This class handles formatting of iterable items in Search.
+ *
  * @author thevpc
- * @since 0.5.5
  * @app.category Format
+ * @since 0.5.5
  */
 public interface NutsIterableFormat extends NutsCommandLineConfigurable {
 
     /**
      * Current output format
+     *
      * @return Current output format
      */
     NutsContentType getOutputFormat();
@@ -57,13 +59,15 @@ public interface NutsIterableFormat extends NutsCommandLineConfigurable {
 
     /**
      * called at each new item visited
+     *
      * @param object visited item
-     * @param index visited item index
+     * @param index  visited item index
      */
     void next(Object object, long index);
 
     /**
      * called at the iteration completing
+     *
      * @param count iterated items count
      */
     void complete(long count);

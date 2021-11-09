@@ -37,14 +37,16 @@ import java.util.Map;
  * gnome-keyring...). And Id of the stored password is then saved as plain text
  * in nuts config file.
  * Criteria type is a string representing authentication agent id
+ *
  * @author thevpc
- * @since 0.5.4
  * @app.category Security
+ * @since 0.5.4
  */
 public interface NutsAuthenticationAgent extends NutsComponent/* as authentication agent*/ {
 
     /**
      * agent id;
+     *
      * @return agent id
      */
     String getId();
@@ -54,9 +56,9 @@ public interface NutsAuthenticationAgent extends NutsComponent/* as authenticati
      * by the Authentication Agent for  <code>credentialsId</code>
      *
      * @param credentialsId credentialsId
-     * @param password password
-     * @param envProvider environment provider, nullable
-     * @param session session
+     * @param password      password
+     * @param envProvider   environment provider, nullable
+     * @param session       session
      * @throws NutsSecurityException when check failed
      */
     void checkCredentials(char[] credentialsId, char[] password, Map<String, String> envProvider, NutsSession session) throws NutsSecurityException;
@@ -67,8 +69,8 @@ public interface NutsAuthenticationAgent extends NutsComponent/* as authenticati
      * character
      *
      * @param credentialsId credentials-id
-     * @param envProvider environment provider, nullable
-     * @param session session
+     * @param envProvider   environment provider, nullable
+     * @param session       session
      * @return credentials
      */
     char[] getCredentials(char[] credentialsId, Map<String, String> envProvider, NutsSession session);
@@ -79,8 +81,8 @@ public interface NutsAuthenticationAgent extends NutsComponent/* as authenticati
      * character
      *
      * @param credentialsId credentials-id
-     * @param envProvider environment provider, nullable
-     * @param session session
+     * @param envProvider   environment provider, nullable
+     * @param session       session
      * @return credentials
      */
     boolean removeCredentials(char[] credentialsId, Map<String, String> envProvider, NutsSession session);
@@ -92,12 +94,12 @@ public interface NutsAuthenticationAgent extends NutsComponent/* as authenticati
      * present or returned, <strong>MUST</strong> be prefixed with
      * AuthenticationAgent'd id and ':' character
      *
-     * @param credentials credential
+     * @param credentials   credential
      * @param allowRetrieve when true {@link #getCredentials(char[], Map, NutsSession)}  }
-     * can be invoked over {@code credentialId}
-     * @param credentialId preferred credentialId, if null, a new one is created
-     * @param envProvider environment provider, nullable
-     * @param session session
+     *                      can be invoked over {@code credentialId}
+     * @param credentialId  preferred credentialId, if null, a new one is created
+     * @param envProvider   environment provider, nullable
+     * @param session       session
      * @return credentials-id
      */
     char[] createCredentials(char[] credentials, boolean allowRetrieve, char[] credentialId, Map<String, String> envProvider, NutsSession session);

@@ -32,7 +32,7 @@ import net.thevpc.nuts.runtime.core.util.Simplifiable;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 public abstract class AbstractDependencyFilter extends AbstractNutsFilter implements NutsDependencyFilter, Simplifiable<NutsDependencyFilter> {
 

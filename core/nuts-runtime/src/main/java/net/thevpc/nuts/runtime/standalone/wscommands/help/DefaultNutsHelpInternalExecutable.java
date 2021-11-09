@@ -99,7 +99,7 @@ public class DefaultNutsHelpInternalExecutable extends DefaultInternalNutsExecut
                 }
             }
         }
-        session.out().printlnf(NutsString.parse(fout.toString(), session));
+        session.out().printlnf(NutsString.of(fout.toString(), session));
     }
 
 }

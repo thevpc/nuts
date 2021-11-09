@@ -55,7 +55,7 @@ final class PrivateNutsBootConfigLoader {
                 LOG.log(Level.CONFIG, NutsLogVerb.FAIL, NutsMessage.jstyle("previous Workspace config not found at {0}", bootFile.getPath()));
             }
         } catch (Exception ex) {
-            LOG.log(Level.CONFIG, NutsMessage.jstyle("unable to load nuts version file {0}.\n",bootFile), ex);
+            LOG.log(Level.CONFIG, NutsMessage.jstyle("unable to load nuts version file {0}.\n", bootFile), ex);
         }
         return null;
     }
@@ -76,15 +76,15 @@ final class PrivateNutsBootConfigLoader {
         int buildNumber = getApiVersionOrdinalNumber(configVersion);
         if (buildNumber <= 501) {
             //load nothing!
-            LOG.log(Level.CONFIG, NutsLogVerb.READ, NutsMessage.jstyle("detect config version {0} ( considered as 0.5.1, very old config, ignored)",configVersion));
+            LOG.log(Level.CONFIG, NutsLogVerb.READ, NutsMessage.jstyle("detect config version {0} ( considered as 0.5.1, very old config, ignored)", configVersion));
         } else if (buildNumber <= 505) {
-            LOG.log(Level.CONFIG, NutsLogVerb.READ, NutsMessage.jstyle("detect config version {0} ( compatible with 0.5.2 config file )",configVersion));
+            LOG.log(Level.CONFIG, NutsLogVerb.READ, NutsMessage.jstyle("detect config version {0} ( compatible with 0.5.2 config file )", configVersion));
             loadConfigVersion502(c, jsonObject, LOG);
         } else if (buildNumber <= 506) {
-            LOG.log(Level.CONFIG, NutsLogVerb.READ, NutsMessage.jstyle("detect config version {0} ( compatible with 0.5.6 config file )",configVersion));
+            LOG.log(Level.CONFIG, NutsLogVerb.READ, NutsMessage.jstyle("detect config version {0} ( compatible with 0.5.6 config file )", configVersion));
             loadConfigVersion506(c, jsonObject, LOG);
         } else {
-            LOG.log(Level.CONFIG, NutsLogVerb.READ, NutsMessage.jstyle("detect config version {0} ( compatible with 0.5.7 config file )",configVersion));
+            LOG.log(Level.CONFIG, NutsLogVerb.READ, NutsMessage.jstyle("detect config version {0} ( compatible with 0.5.7 config file )", configVersion));
             loadConfigVersion507(c, jsonObject, LOG);
         }
         return c;
@@ -94,7 +94,7 @@ final class PrivateNutsBootConfigLoader {
         try {
             int a = 0;
             for (String part : s.split("\\.")) {
-                a = a * 100 + NutsApiUtils.parseInt(part,0,0);
+                a = a * 100 + NutsApiUtils.parseInt(part, 0, 0);
             }
             return a;
         } catch (Exception ex) {
@@ -141,7 +141,7 @@ final class PrivateNutsBootConfigLoader {
 
     private static Map<NutsHomeLocation, String> asNutsHomeLocationMap(Map m) {
         Map<NutsHomeLocation, String> a = new LinkedHashMap<>();
-        if(m!=null) {
+        if (m != null) {
             for (Map.Entry<Object, String> e : ((Map<Object, String>) m).entrySet()) {
                 Object k = e.getKey();
                 NutsHomeLocation kk;

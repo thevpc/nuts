@@ -32,6 +32,7 @@ import net.thevpc.nuts.NutsSession;
  * called upon its creation (by factory) with a non {@code null} argument to <strong>initialize</strong>.
  * They <strong>may</strong> accept a call with a {@code null}
  * argument later to <strong>dispose</strong> the instance.
+ *
  * @author thevpc
  * @app.category SPI Base
  */
@@ -42,6 +43,7 @@ public interface NutsSessionAware {
      * when session is not null, the instance should initialize it values
      * accordingly.
      * when session is null, the instance should dispose resources.
+     *
      * @param session session reference or null
      */
     void setSession(NutsSession session);

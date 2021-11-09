@@ -28,6 +28,9 @@ import net.thevpc.nuts.spi.NutsSupportLevelContext;
 
 /**
  * Code Format to help formatting (syntax coloring) to NTF some code
+ *
+ * @author thevpc
+ * @since 0.8.3
  */
 public interface NutsCodeHighlighter extends NutsComponent {
 

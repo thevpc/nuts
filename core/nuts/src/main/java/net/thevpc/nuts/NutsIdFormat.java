@@ -34,24 +34,27 @@ import net.thevpc.nuts.spi.NutsComponent;
  *     <li>formatting (in Nuts Stream Format)</li>
  *     <li>parsing</li>
  * </ul>
+ *
  * @author thevpc
- * @since 0.5.4
  * @app.category Format
+ * @since 0.5.4
  */
 public interface NutsIdFormat extends NutsFormat, NutsComponent {
     static NutsIdFormat of(NutsSession session) {
         NutsApiUtils.checkSession(session);
-        return session.extensions().createSupported(NutsIdFormat.class,true,null);
+        return session.extensions().createSupported(NutsIdFormat.class, true, null);
     }
 
     /**
      * return true when the repository should not be included in formatted instance
+     *
      * @return return true when the repository should not be included in formatted instance
      */
     boolean isOmitRepository();
 
     /**
      * update omitRepository
+     *
      * @param value true when the repository should not be included in formatted instance
      * @return {@code this} instance
      */
@@ -59,12 +62,14 @@ public interface NutsIdFormat extends NutsFormat, NutsComponent {
 
     /**
      * return true when the groupId should not be included in formatted instance
+     *
      * @return return true when the groupId should not be included in formatted instance
      */
     boolean isOmitGroupId();
 
     /**
      * update omitGroup
+     *
      * @param value new value
      * @return {@code this} instance
      */
@@ -72,12 +77,14 @@ public interface NutsIdFormat extends NutsFormat, NutsComponent {
 
     /**
      * return true when the imported groupId should not be included in formatted instance
+     *
      * @return return true when the imported groupId should not be included in formatted instance
      */
     boolean isOmitImportedGroupId();
 
     /**
      * update omitImportedGroupId
+     *
      * @param value value
      * @return {@code this} instance
      */
@@ -85,12 +92,14 @@ public interface NutsIdFormat extends NutsFormat, NutsComponent {
 
     /**
      * return true if omit other properties
+     *
      * @return true if omit other properties
      */
     boolean isOmitOtherProperties();
 
     /**
      * update omitOtherProperties
+     *
      * @param value value
      * @return {@code this} instance
      */
@@ -98,12 +107,14 @@ public interface NutsIdFormat extends NutsFormat, NutsComponent {
 
     /**
      * return true when the face should not be included in formatted instance
+     *
      * @return return true when the face should not be included in formatted instance
      */
     boolean isOmitFace();
 
     /**
      * update omitFace
+     *
      * @param value value
      * @return {@code this} instance
      */
@@ -112,12 +123,14 @@ public interface NutsIdFormat extends NutsFormat, NutsComponent {
 
     /**
      * return true when the imported group should be highlighted in formatted instance
+     *
      * @return return true when the imported group should be highlighted in formatted instance
      */
     boolean isHighlightImportedGroupId();
 
     /**
      * update highlightImportedGroupId
+     *
      * @param value value
      * @return {@code this} instance
      */
@@ -125,12 +138,14 @@ public interface NutsIdFormat extends NutsFormat, NutsComponent {
 
     /**
      * return true when the scope should be highlighted in formatted instance
+     *
      * @return return true when the scope should be highlighted in formatted instance
      */
     boolean isHighlightScope();
 
     /**
      * update highlightScope
+     *
      * @param value value
      * @return {@code this} instance
      */
@@ -138,12 +153,14 @@ public interface NutsIdFormat extends NutsFormat, NutsComponent {
 
     /**
      * return true when the optional should be highlighted in formatted instance
+     *
      * @return return true when the optional should be highlighted in formatted instance
      */
     boolean isHighlightOptional();
 
     /**
      * update highlightOptional
+     *
      * @param value value
      * @return {@code this} instance
      */
@@ -151,6 +168,7 @@ public interface NutsIdFormat extends NutsFormat, NutsComponent {
 
     /**
      * return true if omit scope
+     *
      * @return true if omit scope
      */
     boolean isOmitClassifier();
@@ -158,6 +176,7 @@ public interface NutsIdFormat extends NutsFormat, NutsComponent {
     /**
      * if true omit (do not include) face when formatting the value
      * set using {@link #setValue(NutsId)} .
+     *
      * @param value new value
      * @return {@code this} instance
      */
@@ -165,12 +184,14 @@ public interface NutsIdFormat extends NutsFormat, NutsComponent {
 
     /**
      * query properties omitted
+     *
      * @return query properties omitted
      */
     String[] getOmitProperties();
 
     /**
      * return true if omit query property named {@code name}
+     *
      * @param name property name
      * @return true if omit query property named {@code name}
      */
@@ -179,7 +200,8 @@ public interface NutsIdFormat extends NutsFormat, NutsComponent {
     /**
      * if true omit (do not include) query property named {@code name} when formatting the value
      * set using {@link #setValue(NutsId)} .
-     * @param name property name
+     *
+     * @param name  property name
      * @param value new value
      * @return {@code this} instance
      */
@@ -187,6 +209,7 @@ public interface NutsIdFormat extends NutsFormat, NutsComponent {
 
     /**
      * id to format
+     *
      * @return id to format
      * @since 0.5.6
      */
@@ -194,6 +217,7 @@ public interface NutsIdFormat extends NutsFormat, NutsComponent {
 
     /**
      * id to format
+     *
      * @param id id to format
      * @return {@code this} instance
      * @since 0.5.6
@@ -215,7 +239,7 @@ public interface NutsIdFormat extends NutsFormat, NutsComponent {
      * to help return a more specific return type;
      *
      * @param skipUnsupported when true, all unsupported options are skipped
-     * @param args argument to configure with
+     * @param args            argument to configure with
      * @return {@code this} instance
      */
     @Override

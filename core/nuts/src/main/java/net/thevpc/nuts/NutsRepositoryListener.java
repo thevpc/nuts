@@ -28,8 +28,8 @@ package net.thevpc.nuts;
 /**
  * Created by vpc on 1/20/17.
  *
- * @since 0.5.4
  * @app.category Events
+ * @since 0.5.4
  */
 public interface NutsRepositoryListener extends NutsListener {
 

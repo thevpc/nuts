@@ -100,7 +100,7 @@ public enum NutsPathPermission implements NutsEnum {
 
         try {
             return valueOf(value);
-        }catch (Exception ex){
+        } catch (Exception ex) {
             return errorValue;
         }
 

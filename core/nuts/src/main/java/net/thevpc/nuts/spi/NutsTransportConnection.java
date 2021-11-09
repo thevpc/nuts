@@ -34,13 +34,14 @@ import java.io.UncheckedIOException;
 /**
  * Connection to a remote server.
  *
- * @since 0.5.4
  * @app.category SPI Base
+ * @since 0.5.4
  */
 public interface NutsTransportConnection {
 
     /**
      * option connection and retrieve input stream
+     *
      * @return a valid stream or throw a {@link UncheckedIOException}
      * @throws UncheckedIOException if the connection is not valid
      */
@@ -50,6 +51,7 @@ public interface NutsTransportConnection {
 
     /**
      * parse connection header and return meaningful information
+     *
      * @param parts parts to upload
      * @return InputStream stream to the remote server to read returned resource
      * @throws UncheckedIOException if the connection is not valid

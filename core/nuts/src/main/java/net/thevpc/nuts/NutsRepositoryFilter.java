@@ -27,8 +27,8 @@ package net.thevpc.nuts;
 /**
  * Created by vpc on 1/5/17.
  *
- * @since 0.5.4
  * @app.category Base
+ * @since 0.5.4
  */
 public interface NutsRepositoryFilter extends NutsFilter {
 

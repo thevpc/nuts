@@ -63,10 +63,10 @@ public enum NutsSupportMode implements NutsEnum {
                 return PREFERRED;
             case "":
                 return emptyValue;
-            default:{
+            default: {
                 Boolean b = NutsUtilStrings.parseBoolean(any, null, null);
-                if(b!=null){
-                    return b?SUPPORTED:UNSUPPORTED;
+                if (b != null) {
+                    return b ? SUPPORTED : UNSUPPORTED;
                 }
             }
         }
@@ -79,7 +79,7 @@ public enum NutsSupportMode implements NutsEnum {
 
     public static NutsSupportMode parse(String value, NutsSupportMode emptyValue, NutsSession session) {
         NutsSupportMode v = parseLenient(value, emptyValue, null);
-        NutsApiUtils.checkNonNullEnum(v,value,NutsSupportMode.class,session);
+        NutsApiUtils.checkNonNullEnum(v, value, NutsSupportMode.class, session);
         return v;
     }
 

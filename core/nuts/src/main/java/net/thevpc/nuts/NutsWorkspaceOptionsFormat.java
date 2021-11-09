@@ -29,6 +29,7 @@ package net.thevpc.nuts;
 import java.io.Serializable;
 
 /**
+ * @author thevpc
  * @app.category Format
  */
 public interface NutsWorkspaceOptionsFormat extends Serializable {

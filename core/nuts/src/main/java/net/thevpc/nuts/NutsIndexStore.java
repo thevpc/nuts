@@ -31,15 +31,17 @@ import java.util.Iterator;
 /**
  * Classes implementations of {@code NutsIndexStore} handle
  * indexing of repositories to enable faster search.
+ *
  * @author thevpc
- * @since 0.5.4
  * @app.category Base
+ * @since 0.5.4
  */
 public interface NutsIndexStore {
 
     /**
      * search all versions of the given artifact
-     * @param id artifact to search for
+     *
+     * @param id      artifact to search for
      * @param session current session
      * @return all available versions (in the index)
      */
@@ -47,7 +49,8 @@ public interface NutsIndexStore {
 
     /**
      * search all artifacts matching the given filter
-     * @param filter filter or null for all
+     *
+     * @param filter  filter or null for all
      * @param session current session
      * @return all available versions (in the index)
      */
@@ -55,12 +58,14 @@ public interface NutsIndexStore {
 
     /**
      * return true if the index is enabled
+     *
      * @return true if the index is enabled
      */
     boolean isEnabled();
 
     /**
      * enable of disable ot index
+     *
      * @param enabled new value
      * @return {@code this} instance
      */
@@ -68,7 +73,8 @@ public interface NutsIndexStore {
 
     /**
      * invalidate the artifact from the index
-     * @param id id to invalidate
+     *
+     * @param id      id to invalidate
      * @param session session
      * @return {@code this} instance
      */
@@ -76,7 +82,8 @@ public interface NutsIndexStore {
 
     /**
      * invalidate the artifact from the index and re-index it
-     * @param id id to re-index
+     *
+     * @param id      id to re-index
      * @param session session
      * @return {@code this} instance
      */
@@ -85,23 +92,26 @@ public interface NutsIndexStore {
     /**
      * subscribe the current repository so the indexing
      * is processed.
-     * @return {@code this} instance
+     *
      * @param session session
+     * @return {@code this} instance
      */
     NutsIndexStore subscribe(NutsSession session);
 
     /**
      * unsubscribe the current repository so that the indexing
      * is disabled and the index is removed.
-     * @return {@code this} instance
+     *
      * @param session session
+     * @return {@code this} instance
      */
     NutsIndexStore unsubscribe(NutsSession session);
 
     /**
      * return true if the current repository is registered
-     * @return true if the current repository is registered
+     *
      * @param session session
+     * @return true if the current repository is registered
      */
     boolean isSubscribed(NutsSession session);
 }

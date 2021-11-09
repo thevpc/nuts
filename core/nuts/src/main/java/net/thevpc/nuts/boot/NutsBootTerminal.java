@@ -29,6 +29,8 @@ import java.util.Objects;
 
 /**
  * Boot Terminal allows usage of custom stdin/out/err when calling nuts
+ *
+ * @author thevpc
  */
 public final class NutsBootTerminal {
     private final InputStream in;
@@ -54,16 +56,16 @@ public final class NutsBootTerminal {
     }
 
     @Override
+    public int hashCode() {
+        return Objects.hash(in, out, err);
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         NutsBootTerminal that = (NutsBootTerminal) o;
         return Objects.equals(in, that.in) && Objects.equals(out, that.out) && Objects.equals(err, that.err);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(in, out, err);
     }
 
     @Override

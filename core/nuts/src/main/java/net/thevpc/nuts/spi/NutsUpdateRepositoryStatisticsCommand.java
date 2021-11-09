@@ -30,18 +30,26 @@ import net.thevpc.nuts.NutsCommandLineConfigurable;
 import net.thevpc.nuts.NutsSession;
 
 /**
+ * Command for repository maintenance and statistics building
  *
  * @author thevpc
- * @since 0.5.5
  * @app.category SPI Base
+ * @since 0.5.5
  */
 public interface NutsUpdateRepositoryStatisticsCommand extends NutsRepositoryCommand {
 
+    /**
+     * set session
+     *
+     * @param session session
+     * @return {@code} this instance
+     */
     @Override
     NutsUpdateRepositoryStatisticsCommand setSession(NutsSession session);
 
     /**
      * run this command and return {@code this} instance
+     *
      * @return {@code this} instance
      */
     @Override
@@ -53,7 +61,7 @@ public interface NutsUpdateRepositoryStatisticsCommand extends NutsRepositoryCom
      * to help return a more specific return type;
      *
      * @param skipUnsupported when true, all unsupported options are skipped
-     * @param args argument to configure with
+     * @param args            argument to configure with
      * @return {@code this} instance
      */
     @Override

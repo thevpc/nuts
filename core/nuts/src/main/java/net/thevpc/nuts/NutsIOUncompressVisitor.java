@@ -29,9 +29,10 @@ import java.io.InputStream;
 
 /**
  * I/O Action that help visit compressed resource.
+ *
  * @author thevpc
- * @since 0.5.8
  * @app.category Input Output
+ * @since 0.5.8
  */
 public interface NutsIOUncompressVisitor {
     boolean visitFolder(String path);

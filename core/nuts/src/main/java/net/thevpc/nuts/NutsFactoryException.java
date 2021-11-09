@@ -28,14 +28,16 @@ package net.thevpc.nuts;
 
 /**
  * Exception thrown when a package cannot be resolved by the factory.
+ *
  * @author thevpc
- * @since 0.5.4
  * @app.category Exceptions
+ * @since 0.5.4
  */
 public class NutsFactoryException extends NutsException {
 
     /**
      * Constructs a new NutsFactoryException exception
+     *
      * @param session workspace
      * @param message message
      */
@@ -45,9 +47,10 @@ public class NutsFactoryException extends NutsException {
 
     /**
      * Constructs a new NutsFactoryException exception
+     *
      * @param session workspace
      * @param message message
-     * @param cause cause
+     * @param cause   cause
      */
     public NutsFactoryException(NutsSession session, NutsMessage message, Throwable cause) {
         super(session, message, cause);
@@ -55,10 +58,11 @@ public class NutsFactoryException extends NutsException {
 
     /**
      * Constructs a new NutsFactoryException exception
-     * @param session workspace
-     * @param message message
-     * @param cause cause cause
-     * @param enableSuppression whether or not suppression is enabled or disabled
+     *
+     * @param session            workspace
+     * @param message            message
+     * @param cause              cause cause
+     * @param enableSuppression  whether or not suppression is enabled or disabled
      * @param writableStackTrace whether or not the stack trace should be writable
      */
     public NutsFactoryException(NutsSession session, NutsMessage message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {

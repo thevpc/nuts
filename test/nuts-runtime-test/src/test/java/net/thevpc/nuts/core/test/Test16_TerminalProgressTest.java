@@ -30,7 +30,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 /**
- * @author vpc
+ * @author thevpc
  */
 public class Test16_TerminalProgressTest {
 

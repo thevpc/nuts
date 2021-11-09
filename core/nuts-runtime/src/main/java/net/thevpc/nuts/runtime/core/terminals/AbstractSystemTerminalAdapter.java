@@ -12,6 +12,7 @@ public abstract class AbstractSystemTerminalAdapter extends AbstractNutsTerminal
 
     protected CProgressBar progressBar;
     private NutsWorkspace ws;
+    private String commandHighlighter;
 
     @Override
     public NutsCommandAutoCompleteResolver getAutoCompleteResolver() {
@@ -44,17 +45,6 @@ public abstract class AbstractSystemTerminalAdapter extends AbstractNutsTerminal
     @Override
     public NutsCommandHistory getCommandHistory() {
         return getParent().getCommandHistory();
-    }
-
-    @Override
-    public NutsCommandReadHighlighter getCommandReadHighlighter() {
-        return getParent().getCommandReadHighlighter();
-    }
-
-    @Override
-    public NutsSystemTerminalBase setCommandReadHighlighter(NutsCommandReadHighlighter commandReadHighlighter) {
-        getParent().setCommandReadHighlighter(commandReadHighlighter);
-        return this;
     }
 
     @Override
@@ -191,17 +181,14 @@ public abstract class AbstractSystemTerminalAdapter extends AbstractNutsTerminal
 
     public abstract NutsSystemTerminalBase getParent();
 
+    @Override
+    public String getCommandHighlighter() {
+        return commandHighlighter;
+    }
 
-
-//    @Override
-//    public NutsTerminal sendOutCommand(NutsTerminalCommand command) {
-//        session.term().sendTerminalCommand(out(), command);
-//        return this;
-//    }
-
-//    @Override
-//    public NutsTerminal sendErrCommand(NutsTerminalCommand command) {
-//        session.term().sendTerminalCommand(out(), command);
-//        return this;
-//    }
+    @Override
+    public NutsSystemTerminal setCommandHighlighter(String commandHighlighter) {
+        this.commandHighlighter = commandHighlighter;
+        return this;
+    }
 }

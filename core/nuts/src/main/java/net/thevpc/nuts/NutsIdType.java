@@ -32,6 +32,7 @@ import net.thevpc.nuts.boot.NutsApiUtils;
  * Artifacts are organized according to {@code NutsIdType} to reflect how the artifact
  * should be managed by the workspace.
  * This information is available in {@link NutsDefinition}
+ *
  * @app.category Base
  */
 public enum NutsIdType implements NutsEnum {
@@ -60,7 +61,6 @@ public enum NutsIdType implements NutsEnum {
      * <ul>
      *     <li>net.thevpc.nuts.toolbox:nsh</li>
      * </ul>
-     *
      */
     COMPANION,
 
@@ -107,12 +107,13 @@ public enum NutsIdType implements NutsEnum {
 
     public static NutsIdType parse(String value, NutsIdType emptyValue, NutsSession session) {
         NutsIdType v = parseLenient(value, emptyValue, null);
-        NutsApiUtils.checkNonNullEnum(v,value,NutsIdType.class,session);
+        NutsApiUtils.checkNonNullEnum(v, value, NutsIdType.class, session);
         return v;
     }
 
     /**
      * lower cased identifier.
+     *
      * @return lower cased identifier
      */
     public String id() {

@@ -30,10 +30,11 @@ import java.io.Serializable;
 
 /**
  * Generic Add options
- *
+ * <p>
  * author vpc
- * @since 0.5.7
+ *
  * @app.category Commands
+ * @since 0.5.7
  */
 public class NutsUpdateOptions implements Serializable {
     private static final long serialVersionUID = 1;

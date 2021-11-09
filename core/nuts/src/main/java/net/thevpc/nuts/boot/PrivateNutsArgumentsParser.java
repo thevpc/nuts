@@ -1113,18 +1113,18 @@ final class PrivateNutsArgumentsParser {
                 String v = a.getValue().getString();
                 if (enabled) {
                     Integer fileSize = NutsApiUtils.parseFileSizeInBytes(v, 1024 * 1024, null, null);
-                    if(fileSize==null){
-                        if(NutsBlankable.isBlank(v)){
+                    if (fileSize == null) {
+                        if (NutsBlankable.isBlank(v)) {
                             throw new NutsBootException(NutsMessage.cstyle("invalid file size : %s", v));
                         }
-                    }else{
+                    } else {
                         //always in mega
-                        fileSize=fileSize/(1024 * 1024);
-                        if(fileSize<=0){
+                        fileSize = fileSize / (1024 * 1024);
+                        if (fileSize <= 0) {
                             throw new NutsBootException(NutsMessage.cstyle("invalid file size : %s < 1Mb", v));
                         }
                     }
-                    if(fileSize!=null) {
+                    if (fileSize != null) {
                         logConfig.setLogFileSize(fileSize);
                     }
                 }
@@ -1223,24 +1223,24 @@ final class PrivateNutsArgumentsParser {
     }
 
     private static NutsStoreLocationStrategy parseNutsStoreLocationStrategy(String s) {
-        NutsStoreLocationStrategy m=NutsStoreLocationStrategy.parseLenient(s,null,null);
-        if(m==null && !NutsBlankable.isBlank(s)){
+        NutsStoreLocationStrategy m = NutsStoreLocationStrategy.parseLenient(s, null, null);
+        if (m == null && !NutsBlankable.isBlank(s)) {
             throw new NutsBootException(NutsMessage.cstyle("unable to parse value for NutsStoreLocationStrategy : %s", s));
         }
         return m;
     }
 
     private static NutsOsFamily parseNutsOsFamily(String s) {
-        NutsOsFamily m=NutsOsFamily.parseLenient(s,null,null);
-        if(m==null && !NutsBlankable.isBlank(s)){
+        NutsOsFamily m = NutsOsFamily.parseLenient(s, null, null);
+        if (m == null && !NutsBlankable.isBlank(s)) {
             throw new NutsBootException(NutsMessage.cstyle("unable to parse value for NutsOsFamily : %s", s));
         }
         return m;
     }
 
     private static NutsOpenMode parseNutsOpenMode(String s) {
-        NutsOpenMode m=NutsOpenMode.parseLenient(s,null,null);
-        if(m==null && !NutsBlankable.isBlank(s)){
+        NutsOpenMode m = NutsOpenMode.parseLenient(s, null, null);
+        if (m == null && !NutsBlankable.isBlank(s)) {
             throw new NutsBootException(NutsMessage.cstyle("unable to parse value for NutsOpenMode : %s", s));
         }
         return m;
@@ -1248,7 +1248,7 @@ final class PrivateNutsArgumentsParser {
 
     private static Level parseLevel(String s) {
         Level m = NutsApiUtils.parseLenientLogLevel(s, null, null);
-        if(m==null && !NutsBlankable.isBlank(s)){
+        if (m == null && !NutsBlankable.isBlank(s)) {
             throw new NutsBootException(NutsMessage.cstyle("unable to parse value for Level : %s", s));
         }
         return m;

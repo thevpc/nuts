@@ -34,24 +34,26 @@ import java.util.function.Predicate;
  * Format used to format command line by {@link NutsExecCommand}
  *
  * @author thevpc
+ * @app.category Format
  * @see NutsExecCommand#formatter()
  * @since 0.5.4
- * @app.category Format
  */
 public interface NutsExecCommandFormat extends NutsFormat {
-    static NutsExecCommandFormat of(NutsSession session){
+    static NutsExecCommandFormat of(NutsSession session) {
         NutsApiUtils.checkSession(session);
         return session.extensions().createSupported(NutsExecCommandFormat.class, true, null);
     }
 
     /**
      * true if input redirection is displayed
+     *
      * @return true if input redirection is displayed
      */
     boolean isRedirectInput();
 
     /**
      * if true input redirection is displayed
+     *
      * @param redirectInput new value
      * @return {@code this} instance
      */
@@ -59,12 +61,14 @@ public interface NutsExecCommandFormat extends NutsFormat {
 
     /**
      * true if output redirection is displayed
+     *
      * @return true if output redirection is displayed
      */
     boolean isRedirectOutput();
 
     /**
      * if true output redirection is displayed
+     *
      * @param redirectOutput new value
      * @return {@code this} instance
      */
@@ -72,12 +76,14 @@ public interface NutsExecCommandFormat extends NutsFormat {
 
     /**
      * true if error redirection is displayed
+     *
      * @return true if error redirection is displayed
      */
     boolean isRedirectError();
 
     /**
      * if true error redirection is displayed
+     *
      * @param redirectError new value
      * @return {@code this} instance
      */
@@ -85,12 +91,14 @@ public interface NutsExecCommandFormat extends NutsFormat {
 
     /**
      * return value to format
+     *
      * @return value to format
      */
     NutsExecCommand getValue();
 
     /**
      * set value to format
+     *
      * @param value value to format
      * @return {@code this} instance
      */
@@ -98,12 +106,14 @@ public interface NutsExecCommandFormat extends NutsFormat {
 
     /**
      * return argument filter
+     *
      * @return argument filter
      */
     Predicate<ArgEntry> getArgumentFilter();
 
     /**
      * set arg filter
+     *
      * @param filter arg filter
      * @return {@code this} instance
      */
@@ -111,12 +121,14 @@ public interface NutsExecCommandFormat extends NutsFormat {
 
     /**
      * return argument replacer
+     *
      * @return argument replacer
      */
     Function<ArgEntry, String> getArgumentReplacer();
 
     /**
      * set arg replacer
+     *
      * @param replacer arg replacer
      * @return {@code this} instance
      */
@@ -124,12 +136,14 @@ public interface NutsExecCommandFormat extends NutsFormat {
 
     /**
      * return env filter
+     *
      * @return env filter
      */
     Predicate<EnvEntry> getEnvFilter();
 
     /**
      * set env filter
+     *
      * @param filter env filter
      * @return {@code this} instance
      */
@@ -137,12 +151,14 @@ public interface NutsExecCommandFormat extends NutsFormat {
 
     /**
      * return env replacer
+     *
      * @return env replacer
      */
     Function<EnvEntry, String> getEnvReplacer();
 
     /**
      * set env replacer
+     *
      * @param replacer env replacer
      * @return {@code this} instance
      */
@@ -153,17 +169,20 @@ public interface NutsExecCommandFormat extends NutsFormat {
 
     /**
      * env entry
+     *
      * @app.category Format
      */
     interface EnvEntry {
         /**
          * env name
+         *
          * @return env name
          */
         String getName();
 
         /**
          * env value
+         *
          * @return env value
          */
         String getValue();
@@ -171,17 +190,20 @@ public interface NutsExecCommandFormat extends NutsFormat {
 
     /**
      * argument entry
+     *
      * @app.category Format
      */
     interface ArgEntry {
         /**
          * argument index
+         *
          * @return argument index
          */
         int getIndex();
 
         /**
          * argument value
+         *
          * @return argument value
          */
         String getValue();

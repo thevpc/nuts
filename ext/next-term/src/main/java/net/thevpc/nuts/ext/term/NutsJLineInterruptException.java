@@ -7,7 +7,7 @@ package net.thevpc.nuts.ext.term;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 public class NutsJLineInterruptException extends RuntimeException{
 

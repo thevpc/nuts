@@ -31,27 +31,30 @@ import net.thevpc.nuts.NutsExecutionContext;
 /**
  * Component responsible of installing other artifacts.
  *
- * @since 0.5.4
  * @app.category SPI Base
+ * @since 0.5.4
  */
 public interface NutsInstallerComponent extends NutsComponent {
 
     /**
      * install artifact
+     *
      * @param executionContext execution context
      */
     void install(NutsExecutionContext executionContext);
 
     /**
      * update artifact
+     *
      * @param executionContext execution context
      */
     void update(NutsExecutionContext executionContext);
 
     /**
      * uninstall artifact
+     *
      * @param executionContext execution context
-     * @param deleteData delete data after uninstall
+     * @param deleteData       delete data after uninstall
      */
     void uninstall(NutsExecutionContext executionContext, boolean deleteData);
 }

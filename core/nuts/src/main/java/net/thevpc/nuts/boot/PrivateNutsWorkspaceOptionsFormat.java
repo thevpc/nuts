@@ -439,21 +439,21 @@ final class PrivateNutsWorkspaceOptionsFormat implements NutsWorkspaceOptionsFor
                 if (value instanceof NutsOpenMode) {
                     switch ((NutsOpenMode) value) {
                         case OPEN_OR_ERROR: {
-                            fillOption0(selectOptionName("--open-mode","-o"), selectOptionVal("open-or-error", "r"), arguments, forceSingle);
+                            fillOption0(selectOptionName("--open-mode", "-o"), selectOptionVal("open-or-error", "r"), arguments, forceSingle);
                             return true;
                         }
                         case CREATE_OR_ERROR: {
-                            fillOption0(selectOptionName("--open-mode","-o"), selectOptionVal("create-or-error", "w"), arguments, forceSingle);
+                            fillOption0(selectOptionName("--open-mode", "-o"), selectOptionVal("create-or-error", "w"), arguments, forceSingle);
                             return true;
                         }
                         case OPEN_OR_CREATE: {
                             if (!omitDefaults) {
-                                fillOption0(selectOptionName("--open-mode","-o"), selectOptionVal("open-or-create", "rw"), arguments, forceSingle);
+                                fillOption0(selectOptionName("--open-mode", "-o"), selectOptionVal("open-or-create", "rw"), arguments, forceSingle);
                             }
                             return true;
                         }
                         case OPEN_OR_NULL: {
-                            fillOption0(selectOptionName("--open-mode","-o"), selectOptionVal("open-or-null", "on"), arguments, forceSingle);
+                            fillOption0(selectOptionName("--open-mode", "-o"), selectOptionVal("open-or-null", "on"), arguments, forceSingle);
                             return true;
                         }
                     }
@@ -471,17 +471,17 @@ final class PrivateNutsWorkspaceOptionsFormat implements NutsWorkspaceOptionsFor
                             return true;
                         }
                         case EMBEDDED: {
-                            arguments.add(selectOptionName("--embedded","-b"));
+                            arguments.add(selectOptionName("--embedded", "-b"));
                             return true;
                         }
                         case SPAWN: {
                             if (!omitDefaults) {
-                                arguments.add(selectOptionName("--spawn","-x"));
+                                arguments.add(selectOptionName("--spawn", "-x"));
                             }
                             return true;
                         }
                         case OPEN: {
-                            arguments.add(selectOptionName("--open-file","--open-file"));
+                            arguments.add(selectOptionName("--open-file", "--open-file"));
                             return true;
                         }
                     }
@@ -489,11 +489,11 @@ final class PrivateNutsWorkspaceOptionsFormat implements NutsWorkspaceOptionsFor
                 if (value instanceof NutsConfirmationMode) {
                     switch ((NutsConfirmationMode) value) {
                         case YES: {
-                            arguments.add(selectOptionName("--yes","-y"));
+                            arguments.add(selectOptionName("--yes", "-y"));
                             return true;
                         }
                         case NO: {
-                            arguments.add(selectOptionName("-no","-n"));
+                            arguments.add(selectOptionName("-no", "-n"));
                             return true;
                         }
                         case ASK: {
@@ -512,19 +512,19 @@ final class PrivateNutsWorkspaceOptionsFormat implements NutsWorkspaceOptionsFor
                 if (value instanceof NutsTerminalMode) {
                     switch ((NutsTerminalMode) value) {
                         case FILTERED: {
-                            arguments.add(selectOptionName("--!color","-!c"));
+                            arguments.add(selectOptionName("--!color", "-!c"));
                             return true;
                         }
                         case FORMATTED: {
-                            arguments.add(selectOptionName("--color","-c"));
+                            arguments.add(selectOptionName("--color", "-c"));
                             return true;
                         }
                         case INHERITED: {
-                            arguments.add(selectOptionName("--color=inherited","-c=h"));
+                            arguments.add(selectOptionName("--color=inherited", "-c=h"));
                             return true;
                         }
-                        case ANSI:{
-                            arguments.add(selectOptionName("--color=ansi","-c=a"));
+                        case ANSI: {
+                            arguments.add(selectOptionName("--color=ansi", "-c=a"));
                             return true;
                         }
                     }

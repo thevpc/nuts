@@ -27,14 +27,16 @@ package net.thevpc.nuts;
 
 /**
  * Search id defines a uniform interface to ids, versions and descriptors
+ *
  * @author thevpc
- * @since 0.5.4
  * @app.category Base
+ * @since 0.5.4
  */
 public interface NutsSearchId {
 
     /**
      * return id
+     *
      * @param session session
      * @return id
      */
@@ -42,6 +44,7 @@ public interface NutsSearchId {
 
     /**
      * return descriptor
+     *
      * @param session session
      * @return descriptor
      */

@@ -27,7 +27,6 @@
 package net.thevpc.nuts;
 
 import net.thevpc.nuts.boot.NutsApiUtils;
-import net.thevpc.nuts.spi.NutsComponent;
 import net.thevpc.nuts.spi.NutsComponentScope;
 import net.thevpc.nuts.spi.NutsComponentScopeType;
 
@@ -35,10 +34,10 @@ import net.thevpc.nuts.spi.NutsComponentScopeType;
  * @app.category Base
  */
 @NutsComponentScope(NutsComponentScopeType.SESSION)
-public interface NutsRepositoryFilters extends NutsTypedFilters<NutsRepositoryFilter>{
+public interface NutsRepositoryFilters extends NutsTypedFilters<NutsRepositoryFilter> {
     static NutsRepositoryFilters of(NutsSession session) {
         NutsApiUtils.checkSession(session);
-        return session.extensions().createSupported(NutsRepositoryFilters.class,true,null);
+        return session.extensions().createSupported(NutsRepositoryFilters.class, true, null);
     }
 
     NutsRepositoryFilter byName(String... names);

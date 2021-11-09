@@ -30,16 +30,18 @@ import java.io.InputStream;
 
 /**
  * classes implementing this interface should check the validity of the stream that was copied.
- * @since 0.5.8
+ *
  * @app.category Input Output
+ * @since 0.5.8
  */
 public interface NutsIOCopyValidator {
 
     /**
      * Check the validity of the stream that was copied.
+     *
      * @param targetContent targetContent
      * @throws NutsIOCopyValidationException when no valid
-     * @throws IOException when I/O error occurs.
+     * @throws IOException                   when I/O error occurs.
      */
     void validate(InputStream targetContent) throws NutsIOCopyValidationException, IOException;
 }

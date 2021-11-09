@@ -31,15 +31,15 @@ package net.thevpc.nuts;
  *
  * @param <K> key type
  * @param <V> value type
- * @since 0.2.0
  * @app.category Base
+ * @since 0.2.0
  */
 public interface NutsMapListener<K, V> extends NutsListener {
 
     /**
      * Invoked when item added
      *
-     * @param key key
+     * @param key   key
      * @param value value
      */
     default void entryAdded(K key, V value) {
@@ -49,7 +49,7 @@ public interface NutsMapListener<K, V> extends NutsListener {
     /**
      * Invoked when item removed
      *
-     * @param key key
+     * @param key   key
      * @param value value
      */
     default void entryRemoved(K key, V value) {
@@ -59,7 +59,7 @@ public interface NutsMapListener<K, V> extends NutsListener {
     /**
      * Invoked when item updated
      *
-     * @param key key
+     * @param key      key
      * @param newValue new value
      * @param oldValue old value
      */

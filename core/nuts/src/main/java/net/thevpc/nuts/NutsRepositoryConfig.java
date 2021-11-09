@@ -30,10 +30,9 @@ import java.util.Map;
 import java.util.Objects;
 
 /**
- *
  * @author thevpc
- * @since 0.5.4
  * @app.category Config
+ * @since 0.5.4
  */
 public class NutsRepositoryConfig extends NutsConfigItem {
 

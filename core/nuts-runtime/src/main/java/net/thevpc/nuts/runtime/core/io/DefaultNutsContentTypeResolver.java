@@ -1,6 +1,32 @@
+/**
+ * ====================================================================
+ * Nuts : Network Updatable Things Service
+ * (universal package manager)
+ * <br>
+ * is a new Open Source Package Manager to help install packages
+ * and libraries for runtime execution. Nuts is the ultimate companion for
+ * maven (and other build managers) as it helps installing all package
+ * dependencies at runtime. Nuts is not tied to java and is a good choice
+ * to share shell scripts and other 'things' . Its based on an extensible
+ * architecture to help supporting a large range of sub managers / repositories.
+ *
+ * <br>
+ * <p>
+ * Copyright [2020] [thevpc]
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may
+ * not use this file except in compliance with the License. You may obtain a
+ * copy of the License at http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+ * either express or implied. See the License for the specific language
+ * governing permissions and limitations under the License.
+ * <br>
+ * ====================================================================
+ */
 package net.thevpc.nuts.runtime.core.io;
 
-import net.thevpc.nuts.NutsContentTypeResolver;
+import net.thevpc.nuts.spi.NutsContentTypeResolver;
 import net.thevpc.nuts.NutsPath;
 import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.NutsSupported;
@@ -36,16 +62,30 @@ public class DefaultNutsContentTypeResolver implements NutsContentTypeResolver {
                 } catch (IOException e) {
                     //
                 }
-
             }
+
             if (contentType == null) {
-                NutsSupported<String> s = probeContentType(null, path.getName(), session);
-                if (s.isValid()) {
-                    return s;
+                String name=path.getName();
+                try {
+                    contentType = URLConnection.guessContentTypeFromName(name);
+                } catch (Exception e) {
+                    //ignore
+                }
+                if (contentType == null || "text/plain".equals(contentType)) {
+                    String e = NutsPath.of(Paths.get(name), session).getLastExtension();
+                    if (e != null && e.equalsIgnoreCase("ntf")) {
+                        return NutsSupported.of(DEFAULT_SUPPORT + 10, "text/x-nuts-text-format");
+                    }
+                }
+                if (contentType == null || "text/plain".equals(contentType)) {
+                    String e = NutsPath.of(Paths.get(name), session).getLastExtension();
+                    if (e != null && e.equalsIgnoreCase("nuts")) {
+                        return NutsSupported.of(DEFAULT_SUPPORT + 10, "application/json");
+                    }
                 }
             }
             if (contentType != null) {
-                return NutsSupported.of(contentType, DEFAULT_SUPPORT);
+                return NutsSupported.of(DEFAULT_SUPPORT, contentType);
             }
         }
 
@@ -54,7 +94,7 @@ public class DefaultNutsContentTypeResolver implements NutsContentTypeResolver {
 
 
     @Override
-    public NutsSupported<String> probeContentType(byte[] bytes, String name, NutsSession session) {
+    public NutsSupported<String> probeContentType(byte[] bytes, NutsSession session) {
         String contentType = null;
         if (bytes != null) {
             try {
@@ -63,36 +103,8 @@ public class DefaultNutsContentTypeResolver implements NutsContentTypeResolver {
                 //ignore
             }
         }
-        if (contentType == null) {
-            if (name != null) {
-                try {
-                    contentType = Files.probeContentType(Paths.get(name));
-                } catch (IOException e) {
-                    //ignore
-                }
-                if (contentType == null) {
-                    try {
-                        contentType = URLConnection.guessContentTypeFromName(name);
-                    } catch (Exception e) {
-                        //ignore
-                    }
-                }
-                if (contentType == null || "text/plain".equals(contentType)) {
-                    String e = NutsPath.of(Paths.get(name), session).getLastExtension();
-                    if (e != null && e.equalsIgnoreCase("ntf")) {
-                        return NutsSupported.of("text/x-nuts-text-format", DEFAULT_SUPPORT + 10);
-                    }
-                }
-                if (contentType == null || "text/plain".equals(contentType)) {
-                    String e = NutsPath.of(Paths.get(name), session).getLastExtension();
-                    if (e != null && e.equalsIgnoreCase("nuts")) {
-                        return NutsSupported.of("application/json", DEFAULT_SUPPORT + 10);
-                    }
-                }
-            }
-        }
         if (contentType != null) {
-            return NutsSupported.of(contentType, DEFAULT_SUPPORT);
+            return NutsSupported.of(DEFAULT_SUPPORT, contentType);
         }
         return NutsSupported.invalid();
     }

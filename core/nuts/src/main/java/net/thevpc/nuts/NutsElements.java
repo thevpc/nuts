@@ -25,7 +25,6 @@
 package net.thevpc.nuts;
 
 import net.thevpc.nuts.boot.NutsApiUtils;
-import net.thevpc.nuts.spi.NutsComponent;
 
 import java.io.File;
 import java.io.InputStream;
@@ -42,11 +41,11 @@ import java.util.function.Predicate;
  * from, converting to and formatting such types.
  *
  * @author thevpc
- * @since 0.5.5
  * @app.category Format
+ * @since 0.5.5
  */
 public interface NutsElements extends NutsContentTypeFormat {
-    Predicate<Type> DEFAULT_FORMAT_DESTRUCTOR=new Predicate<Type>() {
+    Predicate<Type> DEFAULT_FORMAT_DESTRUCTOR = new Predicate<Type>() {
         @Override
         public boolean test(Type x) {
             if (x instanceof Class) {
@@ -75,8 +74,6 @@ public interface NutsElements extends NutsContentTypeFormat {
      */
     NutsContentType getContentType();
 
-    NutsElements json();
-
     /**
      * set the parse content type. defaults to JSON. Non structured content
      * types are not allowed.
@@ -86,6 +83,8 @@ public interface NutsElements extends NutsContentTypeFormat {
      * @since 0.8.1
      */
     NutsElements setContentType(NutsContentType contentType);
+
+    NutsElements json();
 
     /**
      * return current value to format.
@@ -122,7 +121,7 @@ public interface NutsElements extends NutsContentTypeFormat {
      * to help return a more specific return type;
      *
      * @param skipUnsupported when true, all unsupported options are skipped
-     * @param args argument to configure with
+     * @param args            argument to configure with
      * @return {@code this} instance
      */
     @Override
@@ -162,9 +161,9 @@ public interface NutsElements extends NutsContentTypeFormat {
     /**
      * parse url as a valid object of the given type
      *
-     * @param url source url
+     * @param url   source url
      * @param clazz target type
-     * @param <T> target type
+     * @param <T>   target type
      * @return new instance of the given class
      */
     <T> T parse(URL url, Class<T> clazz);
@@ -172,9 +171,9 @@ public interface NutsElements extends NutsContentTypeFormat {
     /**
      * parse path as a valid object of the given type
      *
-     * @param path source path
+     * @param path  source path
      * @param clazz target type
-     * @param <T> target type
+     * @param <T>   target type
      * @return new instance of the given class
      */
     <T> T parse(NutsPath path, Class<T> clazz);
@@ -183,8 +182,8 @@ public interface NutsElements extends NutsContentTypeFormat {
      * parse inputStream as a valid object of the given type
      *
      * @param inputStream source inputStream
-     * @param clazz target type
-     * @param <T> target type
+     * @param clazz       target type
+     * @param <T>         target type
      * @return new instance of the given class
      */
     <T> T parse(InputStream inputStream, Class<T> clazz);
@@ -193,8 +192,8 @@ public interface NutsElements extends NutsContentTypeFormat {
      * parse inputStream as a valid object of the given type
      *
      * @param string source as json string
-     * @param clazz target type
-     * @param <T> target type
+     * @param clazz  target type
+     * @param <T>    target type
      * @return new instance of the given class
      */
     <T> T parse(String string, Class<T> clazz);
@@ -204,7 +203,7 @@ public interface NutsElements extends NutsContentTypeFormat {
      *
      * @param bytes source bytes
      * @param clazz target type
-     * @param <T> target type
+     * @param <T>   target type
      * @return new instance of the given class
      */
     <T> T parse(byte[] bytes, Class<T> clazz);
@@ -213,8 +212,8 @@ public interface NutsElements extends NutsContentTypeFormat {
      * parse reader as a valid object of the given type
      *
      * @param reader source reader
-     * @param clazz target type
-     * @param <T> target type
+     * @param clazz  target type
+     * @param <T>    target type
      * @return new instance of the given class
      */
     <T> T parse(Reader reader, Class<T> clazz);
@@ -222,9 +221,9 @@ public interface NutsElements extends NutsContentTypeFormat {
     /**
      * parse file as a valid object of the given type
      *
-     * @param file source url
+     * @param file  source url
      * @param clazz target type
-     * @param <T> target type
+     * @param <T>   target type
      * @return new instance of the given class
      */
     <T> T parse(Path file, Class<T> clazz);
@@ -232,9 +231,9 @@ public interface NutsElements extends NutsContentTypeFormat {
     /**
      * parse file as a valid object of the given type
      *
-     * @param file source URL
+     * @param file  source URL
      * @param clazz target type
-     * @param <T> target type
+     * @param <T>   target type
      * @return new instance of the given class
      */
     <T> T parse(File file, Class<T> clazz);
@@ -302,7 +301,7 @@ public interface NutsElements extends NutsContentTypeFormat {
      *
      * @param <T> return type
      * @param any element to convert
-     * @param to class type
+     * @param to  class type
      * @return instance of type {@code T} converted from {@code element}
      */
     <T> T convert(Object any, Class<T> to);

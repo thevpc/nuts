@@ -31,6 +31,7 @@ import net.thevpc.nuts.boot.NutsApiUtils;
 /**
  * Modes Application can run with
  *
+ * @author thevpc
  * @app.category Application
  * @since 0.5.5
  */
@@ -100,7 +101,7 @@ public enum NutsApplicationMode implements NutsEnum {
      * parse string and return {@code emptyOrErrorValue} if parse fails
      *
      * @param emptyOrErrorValue emptyOrErrorValue
-     * @param value value to parse
+     * @param value             value to parse
      * @return parsed instance or {@code emptyOrErrorValue}
      */
     public static NutsApplicationMode parseLenient(String value, NutsApplicationMode emptyOrErrorValue) {
@@ -137,7 +138,7 @@ public enum NutsApplicationMode implements NutsEnum {
 
     public static NutsApplicationMode parse(String value, NutsApplicationMode emptyValue, NutsSession session) {
         NutsApplicationMode v = parseLenient(value, emptyValue, null);
-        NutsApiUtils.checkNonNullEnum(v,value,NutsApplicationMode.class,session);
+        NutsApiUtils.checkNonNullEnum(v, value, NutsApplicationMode.class, session);
         return v;
     }
 

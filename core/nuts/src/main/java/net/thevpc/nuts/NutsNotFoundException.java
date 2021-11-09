@@ -48,7 +48,7 @@ public class NutsNotFoundException extends NutsException {
      * Constructs a new NutsNotFoundException exception
      *
      * @param session workspace
-     * @param id        artifact id
+     * @param id      artifact id
      */
     public NutsNotFoundException(NutsSession session, NutsId id) {
         this(session, id, (NutsMessage) null);
@@ -58,8 +58,8 @@ public class NutsNotFoundException extends NutsException {
      * Constructs a new NutsNotFoundException exception
      *
      * @param session workspace
-     * @param id        artifact id
-     * @param cause     cause
+     * @param id      artifact id
+     * @param cause   cause
      */
     public NutsNotFoundException(NutsSession session, NutsId id, Throwable cause) {
         this(session, id, null, null, cause);
@@ -69,11 +69,11 @@ public class NutsNotFoundException extends NutsException {
     /**
      * Constructs a new NutsNotFoundException exception
      *
-     * @param session workspace
-     * @param id        artifact id
+     * @param session      workspace
+     * @param id           artifact id
      * @param dependencies dependencies
-     * @param locations locations
-     * @param cause cause
+     * @param locations    locations
+     * @param cause        cause
      */
     public NutsNotFoundException(NutsSession session, NutsId id, NutsIdInvalidDependency[] dependencies, NutsIdInvalidLocation[] locations, Throwable cause) {
         super(session,
@@ -92,9 +92,9 @@ public class NutsNotFoundException extends NutsException {
      * Constructs a new NutsNotFoundException exception
      *
      * @param session workspace
-     * @param id        artifact id
-     * @param message   message
-     * @param cause     cause
+     * @param id      artifact id
+     * @param message message
+     * @param cause   cause
      */
     public NutsNotFoundException(NutsSession session, NutsId id, NutsMessage message, Throwable cause) {
         super(
@@ -107,8 +107,8 @@ public class NutsNotFoundException extends NutsException {
      * Constructs a new NutsNotFoundException exception
      *
      * @param session workspace
-     * @param id        artifact id
-     * @param message   message
+     * @param id      artifact id
+     * @param message message
      */
     public NutsNotFoundException(NutsSession session, NutsId id, NutsMessage message) {
         this(session, id, message, null);

@@ -29,9 +29,10 @@ import java.util.Collection;
 
 /**
  * Push command
+ *
  * @author thevpc
- * @since 0.5.4
  * @app.category Commands
+ * @since 0.5.4
  */
 public interface NutsPushCommand extends NutsWorkspaceCommand {
 
@@ -85,18 +86,21 @@ public interface NutsPushCommand extends NutsWorkspaceCommand {
 
     /**
      * reset ids to push for
+     *
      * @return {@code this} instance
      */
     NutsPushCommand clearIds();
 
     /**
      * return ids to push for
+     *
      * @return ids to push for
      */
     NutsId[] getIds();
 
     /**
      * remove locked ids to prevent them to be updated or the force other ids to use them (the installed version).
+     *
      * @param id id to unlock
      * @return {@code this} instance
      */
@@ -104,6 +108,7 @@ public interface NutsPushCommand extends NutsWorkspaceCommand {
 
     /**
      * add locked ids to prevent them to be updated or the force other ids to use them (the installed version).
+     *
      * @param id id to lock
      * @return {@code this} instance
      */
@@ -111,6 +116,7 @@ public interface NutsPushCommand extends NutsWorkspaceCommand {
 
     /**
      * remove locked ids to prevent them to be updated or the force other ids to use them (the installed version).
+     *
      * @param id id to unlock
      * @return {@code this} instance
      */
@@ -118,6 +124,7 @@ public interface NutsPushCommand extends NutsWorkspaceCommand {
 
     /**
      * add locked ids to prevent them to be updated or the force other ids to use them (the installed version).
+     *
      * @param id id to lock
      * @return {@code this} instance
      */
@@ -125,6 +132,7 @@ public interface NutsPushCommand extends NutsWorkspaceCommand {
 
     /**
      * add locked ids to prevent them to be updated or the force other ids to use them (the installed version).
+     *
      * @param values id to lock
      * @return {@code this} instance
      */
@@ -132,6 +140,7 @@ public interface NutsPushCommand extends NutsWorkspaceCommand {
 
     /**
      * define locked ids to prevent them to be updated or the force other ids to use them (the installed version).
+     *
      * @param values ids
      * @return {@code this} instance
      */
@@ -139,18 +148,21 @@ public interface NutsPushCommand extends NutsWorkspaceCommand {
 
     /**
      * reset locked ids
+     *
      * @return {@code this} instance
      */
     NutsPushCommand clearLockedIds();
 
     /**
      * return locked ids to prevent them to be updated or the force other ids to use them (the installed version).
+     *
      * @return locked ids
      */
     NutsId[] getLockedIds();
 
     /**
      * add argument to pass to the push command
+     *
      * @param arg argument
      * @return {@code this} instance
      */
@@ -158,6 +170,7 @@ public interface NutsPushCommand extends NutsWorkspaceCommand {
 
     /**
      * add arguments to pass to the push command
+     *
      * @param args argument
      * @return {@code this} instance
      */
@@ -165,6 +178,7 @@ public interface NutsPushCommand extends NutsWorkspaceCommand {
 
     /**
      * add arguments to pass to the push command
+     *
      * @param args argument
      * @return {@code this} instance
      */
@@ -172,6 +186,7 @@ public interface NutsPushCommand extends NutsWorkspaceCommand {
 
     /**
      * add arguments to pass to the push command
+     *
      * @param args argument
      * @return {@code this} instance
      */
@@ -179,24 +194,28 @@ public interface NutsPushCommand extends NutsWorkspaceCommand {
 
     /**
      * clear all arguments to pass to the push command
+     *
      * @return {@code this} instance
      */
     NutsPushCommand clearArgs();
 
     /**
      * return all arguments to pass to the push command
+     *
      * @return all arguments to pass to the push command
      */
     String[] getArgs();
 
     /**
      * true when offline mode
+     *
      * @return true when offline mode
      */
     boolean isOffline();
 
     /**
      * local only (installed or not)
+     *
      * @param offline enable offline mode
      * @return {@code this} instance
      */
@@ -204,24 +223,18 @@ public interface NutsPushCommand extends NutsWorkspaceCommand {
 
     /**
      * repository to push from
+     *
      * @return repository to push from
      */
     String getRepository();
 
     /**
      * repository to push from
+     *
      * @param repository repository to push from
      * @return {@code this} instance
      */
     NutsPushCommand setRepository(String repository);
-
-    /**
-     * copy session
-     *
-     * @return {@code this} instance
-     */
-    @Override
-    NutsPushCommand copySession();
 
     /**
      * update session
@@ -233,12 +246,20 @@ public interface NutsPushCommand extends NutsWorkspaceCommand {
     NutsPushCommand setSession(NutsSession session);
 
     /**
+     * copy session
+     *
+     * @return {@code this} instance
+     */
+    @Override
+    NutsPushCommand copySession();
+
+    /**
      * configure the current command with the given arguments. This is an
      * override of the {@link NutsCommandLineConfigurable#configure(boolean, java.lang.String...) }
      * to help return a more specific return type;
      *
      * @param skipUnsupported when true, all unsupported options are skipped
-     * @param args argument to configure with
+     * @param args            argument to configure with
      * @return {@code this} instance
      */
     @Override

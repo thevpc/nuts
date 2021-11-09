@@ -34,19 +34,21 @@ import net.thevpc.nuts.NutsId;
  * An Executor Component is responsible of "executing" a nuts package
  * (package) Created by vpc on 1/7/17.
  *
- * @since 0.5.4
  * @app.category SPI Base
+ * @since 0.5.4
  */
 public interface NutsExecutorComponent extends NutsComponent {
 
     /**
      * artifact id
+     *
      * @return artifact id
      */
     NutsId getId();
 
     /**
      * execute the artifact
+     *
      * @param executionContext executionContext
      * @throws NutsExecutionException when execution fails
      */
@@ -55,6 +57,7 @@ public interface NutsExecutorComponent extends NutsComponent {
     /**
      * performs a dry execution (simulation) avoiding any side effect and issuing trace to standard
      * output in order to log simulation workflow.
+     *
      * @param executionContext executionContext
      * @throws NutsExecutionException when execution fails
      */

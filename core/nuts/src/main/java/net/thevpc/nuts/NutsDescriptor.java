@@ -42,39 +42,45 @@ import java.util.Set;
  * </ul>
  * A versatile way to change descriptor is to use builder ({@link #builder()}).
  *
- * @since 0.1.0
+ * @author thevpc
  * @app.category Descriptor
+ * @since 0.1.0
  */
 public interface NutsDescriptor extends Serializable, NutsBlankable {
 
     /**
      * artifact full id (groupId+artifactId+version)
+     *
      * @return artifact id
      */
     NutsId getId();
 
     /**
      * descriptor parent list (may be empty)
+     *
      * @return descriptor parent list (may be empty)
      */
     NutsId[] getParents();
 
     /**
      * true if the artifact is executable and is considered an application. if not it is a library.
+     *
      * @return true if the artifact is executable
      */
     boolean isExecutable();
 
     /**
      * true if the artifact is a java executable that implements {@link NutsApplication} interface.
+     *
      * @return true if the artifact is a java executable that implements {@link NutsApplication} interface.
      */
     boolean isApplication();
 
     /**
      * return descriptor flags
-     * @since 0.8.3
+     *
      * @return descriptor flags
+     * @since 0.8.3
      */
     Set<NutsDescriptorFlag> getFlags();
 
@@ -82,12 +88,14 @@ public interface NutsDescriptor extends Serializable, NutsBlankable {
 
     /**
      * return descriptor packaging (used to resolve file extension)
+     *
      * @return return descriptor packaging (used to resolve file extension)
      */
     String getPackaging();
 
     /**
      * dependency resolution solver. defaults to 'maven'
+     *
      * @return dependency resolution solver
      */
     String getSolver();
@@ -96,18 +104,21 @@ public interface NutsDescriptor extends Serializable, NutsBlankable {
 
     /**
      * user friendly name, a short description for the artifact
+     *
      * @return user friendly name
      */
     String getName();
 
     /**
      * url (external or classpath url) to the application Icon
+     *
      * @return url (external or classpath url) to the application Icon
      */
     String[] getIcons();
 
     /**
      * Generic Artifact Name (like 'Text Editor', 'Image Processing Application', etc)
+     *
      * @return Generic Artifact Name
      */
     String getGenericName();
@@ -115,12 +126,14 @@ public interface NutsDescriptor extends Serializable, NutsBlankable {
     /**
      * category path of the artifact (slash separated).
      * Standard Category Names should be used.
+     *
      * @return category path of the artifact
      */
     String[] getCategories();
 
     /**
      * long description for the artifact
+     *
      * @return long description for the artifact
      */
     String getDescription();
@@ -128,6 +141,7 @@ public interface NutsDescriptor extends Serializable, NutsBlankable {
     /**
      * list of available mirror locations from which nuts can download artifact content.
      * location can be mapped to a classifier.
+     *
      * @return list of available mirror locations
      */
     NutsIdLocation[] getLocations();
@@ -145,30 +159,35 @@ public interface NutsDescriptor extends Serializable, NutsBlankable {
 
     /**
      * list of immediate (non inherited and non transitive dependencies
+     *
      * @return list of immediate (non inherited and non transitive dependencies
      */
     NutsDependency[] getDependencies();
 
     /**
      * descriptor of artifact responsible of running this artifact
+     *
      * @return descriptor of artifact responsible of running this artifact
      */
     NutsArtifactCall getExecutor();
 
     /**
      * descriptor of artifact responsible of installing this artifact
+     *
      * @return descriptor of artifact responsible of installing this artifact
      */
     NutsArtifactCall getInstaller();
 
     /**
      * custom properties that can be used as place holders (int ${name} form) in other fields.
+     *
      * @return custom properties that can be used as place holders (int ${name} form) in other fields.
      */
     NutsDescriptorProperty[] getProperties();
 
     /**
      * custom property
+     *
      * @param name name
      * @return custom property value by name
      * @since 0.8.3
@@ -177,6 +196,7 @@ public interface NutsDescriptor extends Serializable, NutsBlankable {
 
     /**
      * custom property
+     *
      * @param name name
      * @return custom property value by name
      * @since 0.8.3
@@ -185,6 +205,7 @@ public interface NutsDescriptor extends Serializable, NutsBlankable {
 
     /**
      * create new builder filled with this descriptor fields.
+     *
      * @return new builder filled with this descriptor fields.
      */
     NutsDescriptorBuilder builder();

@@ -31,7 +31,6 @@ import net.thevpc.nuts.boot.NutsApiUtils;
 import java.util.Locale;
 
 /**
- *
  * @author thevpc
  * @app.category Format
  */
@@ -90,7 +89,7 @@ public enum NutsTextFormatStyle implements NutsEnum {
 
     public static NutsTextFormatStyle parse(String value, NutsTextFormatStyle emptyValue, NutsSession session) {
         NutsTextFormatStyle v = parseLenient(value, emptyValue, null);
-        NutsApiUtils.checkNonNullEnum(v,value,NutsTextFormatStyle.class,session);
+        NutsApiUtils.checkNonNullEnum(v, value, NutsTextFormatStyle.class, session);
         return v;
     }
 

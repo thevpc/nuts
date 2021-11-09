@@ -32,8 +32,8 @@ import java.io.InputStream;
  * will dereference NutsInputStreamTransparentAdapter to check if the
  * InputStream i a system io. In that case nuts will "inherit" input stream
  *
- * @since 0.5.4
  * @app.category SPI Base
+ * @since 0.5.4
  */
 public interface NutsInputStreamTransparentAdapter {
 

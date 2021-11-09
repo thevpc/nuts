@@ -11,7 +11,7 @@ import org.jline.reader.History;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 class NutsJLineCommandHistoryEntry implements History.Entry, NutsCommandHistoryEntry {
     

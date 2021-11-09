@@ -7,21 +7,40 @@ package net.thevpc.nuts;
 
 
 /**
- *
  * @author thevpc
  */
 public class NutsPathInputStreamMetadata implements NutsInputStreamMetadata {
 
     private String userKind;
-    private NutsPath path;
+    private final NutsPath path;
 
     public NutsPathInputStreamMetadata(NutsPath path) {
-        this.path=path;
+        this.path = path;
 //        this(path.getName(),
 //                path.getFormattedName(),
 //                path.getContentLength(),
 //                path.getContentType(),
 //                path.getUserKind());
+    }
+
+    @Override
+    public long getContentLength() {
+        return path.getContentLength();
+    }
+
+    @Override
+    public NutsString getFormattedName() {
+        return path.getFormattedName();
+    }
+
+    @Override
+    public String getContentType() {
+        return path.getContentType();
+    }
+
+    @Override
+    public String getName() {
+        return path.getName();
     }
 
     public String getUserKind() {
@@ -31,25 +50,5 @@ public class NutsPathInputStreamMetadata implements NutsInputStreamMetadata {
     public NutsInputStreamMetadata setUserKind(String userKind) {
         this.userKind = userKind;
         return this;
-    }
-
-    @Override
-    public NutsString getFormattedName() {
-        return path.getFormattedName();
-    }
-
-    @Override
-    public long getContentLength() {
-        return path.getContentLength();
-    }
-
-    @Override
-    public String getName() {
-        return path.getName();
-    }
-
-    @Override
-    public String getContentType() {
-        return path.getContentType();
     }
 }

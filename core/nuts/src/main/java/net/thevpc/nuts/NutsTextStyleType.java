@@ -85,7 +85,7 @@ public enum NutsTextStyleType implements NutsEnum {
         if (value == null) {
             value = "";
         } else {
-            value = value.toUpperCase().trim().replace('-', '_').replace("_","");
+            value = value.toUpperCase().trim().replace('-', '_').replace("_", "");
         }
         if (value.isEmpty()) {
             return emptyValue;
@@ -100,8 +100,7 @@ public enum NutsTextStyleType implements NutsEnum {
                 return PLAIN;
             }
             case "foregroundx":
-            case "foregroundtruecolor":
-            {
+            case "foregroundtruecolor": {
                 return FORE_TRUE_COLOR;
             }
             case "b":
@@ -113,8 +112,7 @@ public enum NutsTextStyleType implements NutsEnum {
             }
             case "backtruecolor":
             case "backgroundx":
-            case "backgroundtruecolor":
-            {
+            case "backgroundtruecolor": {
                 return BACK_TRUE_COLOR;
 
             }
@@ -134,16 +132,14 @@ public enum NutsTextStyleType implements NutsEnum {
                 return BOLD;
             }
             case "boolean":
-            case "bool":
-            {
+            case "bool": {
                 return BOOLEAN;
             }
             case "blink": {
                 return BLINK;
             }
             case "comment":
-            case "comments":
-            {
+            case "comments": {
                 return COMMENTS;
             }
             case "config": {
@@ -162,16 +158,14 @@ public enum NutsTextStyleType implements NutsEnum {
                 return ERROR;
             }
             case "warning":
-            case "warn":
-            {
+            case "warn": {
                 return WARN;
             }
             case "version": {
                 return VERSION;
             }
             case "var":
-            case "variable":
-            {
+            case "variable": {
                 return VAR;
             }
             case "input": {
@@ -191,8 +185,7 @@ public enum NutsTextStyleType implements NutsEnum {
                 return STRIKED;
             }
             case "sep":
-            case "separator":
-            {
+            case "separator": {
                 return SEPARATOR;
             }
             case "reversed": {
@@ -211,16 +204,14 @@ public enum NutsTextStyleType implements NutsEnum {
                 return OPERATOR;
             }
             case "kw":
-            case "keyword":
-            {
+            case "keyword": {
                 return KEYWORD;
             }
             case "italic": {
                 return ITALIC;
             }
             case "information":
-            case "info":
-            {
+            case "info": {
                 return INFO;
             }
             case "fail": {
@@ -240,7 +231,7 @@ public enum NutsTextStyleType implements NutsEnum {
 
     public static NutsTextStyleType parse(String value, NutsTextStyleType emptyValue, NutsSession session) {
         NutsTextStyleType v = parseLenient(value, emptyValue, null);
-        NutsApiUtils.checkNonNullEnum(v,value,NutsTextStyleType.class,session);
+        NutsApiUtils.checkNonNullEnum(v, value, NutsTextStyleType.class, session);
         return v;
     }
 
