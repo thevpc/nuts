@@ -20,7 +20,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class PomXmlParser {
-    public static final Pattern NUTS_OS_ARCH_DEPS_PATTERN = Pattern.compile("^nuts([.](?<os>[a-zA-Z0-9-_]+-os))?([.](?<arch>[a-zA-Z0-9-_]+-arch))?-dependencies$");
+    public static final Pattern NUTS_OS_ARCH_DEPS_PATTERN = Pattern.compile("^nuts([.](?<os>[a-zA-Z0-9-_]+)-os)?([.](?<arch>[a-zA-Z0-9-_]+)-arch)?-dependencies$");
 
     private static Map<String, String> map = new HashMap<>();
     private static Pattern ENTITY_PATTERN = Pattern.compile("&[a-zA-Z]+;");

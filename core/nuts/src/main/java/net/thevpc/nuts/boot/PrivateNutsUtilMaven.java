@@ -53,7 +53,7 @@ import java.util.zip.ZipFile;
 public final class PrivateNutsUtilMaven {
     public static final Pattern JAR_POM_PATH = Pattern.compile("META-INF/maven/(?<g>[a-zA-Z0-9_.]+)/(?<a>[a-zA-Z0-9_]+)/pom.xml");
     public static final Pattern JAR_NUTS_JSON_POM_PATH = Pattern.compile("META-INF/nuts/(?<g>[a-zA-Z0-9_.]+)/(?<a>[a-zA-Z0-9_]+)/nuts.json");
-    public static final Pattern NUTS_OS_ARCH_DEPS_PATTERN = Pattern.compile("^nuts([.](?<os>[a-zA-Z0-9-_]+-os))?([.](?<arch>[a-zA-Z0-9-_]+-arch))?-dependencies$");
+    public static final Pattern NUTS_OS_ARCH_DEPS_PATTERN = Pattern.compile("^nuts([.](?<os>[a-zA-Z0-9-_]+)-os)?([.](?<arch>[a-zA-Z0-9-_]+)-arch)?-dependencies$");
 
     public PrivateNutsUtilMaven() {
     }
