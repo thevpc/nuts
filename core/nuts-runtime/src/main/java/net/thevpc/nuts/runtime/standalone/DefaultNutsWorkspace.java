@@ -355,8 +355,10 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                 LOGCRF.log(NutsMessage.jstyle("   java-library-path              : {0}", System.getProperty("java.library.path")));
                 LOGCRF.log(NutsMessage.jstyle("   os-name                        : {0}", System.getProperty("os.name")));
                 NutsWorkspaceEnvManager senv = defaultSession().env();
+                LOGCRF.log(NutsMessage.jstyle("   os-family                      : {0}", senv.getOsFamily()));
                 LOGCRF.log(NutsMessage.jstyle("   os-dist                        : {0}", senv.getOsDist().getArtifactId()));
                 LOGCRF.log(NutsMessage.jstyle("   os-arch                        : {0}", System.getProperty("os.arch")));
+                LOGCRF.log(NutsMessage.jstyle("   os-shell                       : {0}", senv.getShellFamily()));
                 LOGCRF.log(NutsMessage.jstyle("   os-version                     : {0}", senv.getOsDist().getVersion()));
                 LOGCRF.log(NutsMessage.jstyle("   user-name                      : {0}", System.getProperty("user.name")));
                 LOGCRF.log(NutsMessage.jstyle("   user-dir                       : {0}", NutsPath.of(System.getProperty("user.dir"), defaultSession())));
