@@ -230,10 +230,7 @@ public class NutsStreamOrPath {
 
     @Override
     public String toString() {
-        return "NutsStreamOrPath{" +
-                "value=" + value +
-                ", type=" + type +
-                ", disposable=" + disposable +
-                '}';
+        return String.valueOf(value);
     }
+
 }
