@@ -9,7 +9,6 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.bundles.io.UnzipOptions;
 import net.thevpc.nuts.runtime.bundles.io.ZipUtils;
 import net.thevpc.nuts.runtime.core.CoreNutsConstants;
-import net.thevpc.nuts.runtime.core.NutsWorkspaceExt;
 import net.thevpc.nuts.runtime.core.model.DefaultNutsDefinition;
 import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
 
@@ -90,8 +89,8 @@ public class DefaultSourceControlHelper {
         if ("zip".equals(nutToInstall.getDescriptor().getPackaging())) {
 
             try {
-                ZipUtils.unzip(session, nutToInstall.getPath().toString(), NutsPath.of(folder,session)
-                        .builder().withAppBaseDir().build().toString(), new UnzipOptions().setSkipRoot(false));
+                ZipUtils.unzip(session, nutToInstall.getFile().toString(), NutsPath.of(folder,session)
+                        .toAbsolute().toString(), new UnzipOptions().setSkipRoot(false));
             } catch (IOException ex) {
                 throw new NutsIOException(session, ex);
             }

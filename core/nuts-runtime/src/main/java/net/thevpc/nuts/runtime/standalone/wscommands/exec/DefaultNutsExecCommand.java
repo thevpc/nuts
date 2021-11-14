@@ -449,7 +449,7 @@ public class DefaultNutsExecCommand extends AbstractNutsExecCommand {
         this.session.security().checkAllowed(NutsConstants.Permissions.EXEC, commandName);
         NutsWorkspaceUtils.checkSession(ws, execSession);
         NutsWorkspaceUtils.checkSession(ws, session);
-        if (def != null && def.getPath() != null) {
+        if (def != null && def.getFile() != null) {
             NutsDescriptor descriptor = def.getDescriptor();
             if (!descriptor.isExecutable()) {
 //                session.getTerminal().getErr().println(nutToRun.getId()+" is not executable... will perform extra checks.");

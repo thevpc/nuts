@@ -189,7 +189,7 @@ public class DefaultNutsWorkspaceConfigModel {
         NutsWorkspaceUtils.checkSession(this.ws, session);
         boolean ok = false;
         session.security().checkAllowed(NutsConstants.Permissions.SAVE, "save");
-        String apiVersionSpecificLocation = session.locations().getStoreLocation(session.getWorkspace().getApiId(), NutsStoreLocation.CONFIG);
+        NutsPath apiVersionSpecificLocation = session.locations().getStoreLocation(session.getWorkspace().getApiId(), NutsStoreLocation.CONFIG);
         NutsElements elem = NutsElements.of(session);
         if (force || storeModelBootChanged) {
 
@@ -207,11 +207,11 @@ public class DefaultNutsWorkspaceConfigModel {
             ok = true;
         }
 
-        String configVersionSpecificLocation = session.locations().getStoreLocation(session.getWorkspace().getApiId().builder().setVersion(NutsConstants.Versions.RELEASE).build(), NutsStoreLocation.CONFIG);
+        NutsPath configVersionSpecificLocation = session.locations().getStoreLocation(session.getWorkspace().getApiId().builder().setVersion(NutsConstants.Versions.RELEASE).build(), NutsStoreLocation.CONFIG);
         if (force || storeModelSecurityChanged) {
             storeModelSecurity.setUsers(configUsers.isEmpty() ? null : configUsers.values().toArray(new NutsUserConfig[0]));
 
-            Path file = Paths.get(configVersionSpecificLocation).resolve(CoreNutsConstants.Files.WORKSPACE_SECURITY_CONFIG_FILE_NAME);
+            NutsPath file = configVersionSpecificLocation.resolve(CoreNutsConstants.Files.WORKSPACE_SECURITY_CONFIG_FILE_NAME);
             storeModelSecurity.setConfigVersion(current().getApiVersion());
             if (storeModelSecurity.getUsers() != null) {
                 for (NutsUserConfig extension : storeModelSecurity.getUsers()) {
@@ -234,7 +234,7 @@ public class DefaultNutsWorkspaceConfigModel {
                             .map(x -> x.config().getRepositoryRef()).collect(Collectors.toList())
             ));
 
-            Path file = Paths.get(configVersionSpecificLocation).resolve(CoreNutsConstants.Files.WORKSPACE_MAIN_CONFIG_FILE_NAME);
+            NutsPath file = configVersionSpecificLocation.resolve(CoreNutsConstants.Files.WORKSPACE_MAIN_CONFIG_FILE_NAME);
             storeModelMain.setConfigVersion(current().getApiVersion());
             if (storeModelMain.getCommandFactories() != null) {
                 for (NutsCommandFactoryConfig item : storeModelMain.getCommandFactories()) {
@@ -261,7 +261,7 @@ public class DefaultNutsWorkspaceConfigModel {
         }
 
         if (force || storeModelApiChanged) {
-            Path afile = Paths.get(apiVersionSpecificLocation).resolve(NutsConstants.Files.WORKSPACE_API_CONFIG_FILE_NAME);
+            NutsPath afile = apiVersionSpecificLocation.resolve(NutsConstants.Files.WORKSPACE_API_CONFIG_FILE_NAME);
             storeModelApi.setConfigVersion(current().getApiVersion());
             if (storeModelSecurity.getUsers() != null) {
                 for (NutsUserConfig item : storeModelSecurity.getUsers()) {
@@ -275,9 +275,9 @@ public class DefaultNutsWorkspaceConfigModel {
             ok = true;
         }
         if (force || storeModelRuntimeChanged) {
-            Path runtimeVersionSpecificLocation = Paths.get(session.locations().getStoreLocation(NutsStoreLocation.CONFIG))
+            NutsPath runtimeVersionSpecificLocation = session.locations().getStoreLocation(NutsStoreLocation.CONFIG)
                     .resolve(NutsConstants.Folders.ID).resolve(session.locations().getDefaultIdBasedir(session.getWorkspace().getRuntimeId()));
-            Path afile = runtimeVersionSpecificLocation.resolve(NutsConstants.Files.WORKSPACE_RUNTIME_CONFIG_FILE_NAME);
+            NutsPath afile = runtimeVersionSpecificLocation.resolve(NutsConstants.Files.WORKSPACE_RUNTIME_CONFIG_FILE_NAME);
             storeModelRuntime.setConfigVersion(current().getApiVersion());
             elem.setSession(session).json().setValue(storeModelRuntime)
                     .setNtf(false).print(afile);
@@ -502,14 +502,13 @@ public class DefaultNutsWorkspaceConfigModel {
 //        String passphrase = getEnv(CoreSecurityUtils.ENV_KEY_PASSPHRASE, CoreSecurityUtils.DEFAULT_PASSPHRASE);
 //        return CoreSecurityUtils.httpEncrypt(input, passphrase);
 //    }
-    public String resolveRepositoryPath(NutsPath repositoryLocation, NutsSession session) {
+    public NutsPath resolveRepositoryPath(NutsPath repositoryLocation, NutsSession session) {
         NutsPath root = this.getRepositoriesRoot(session);
-        return Paths.get(repositoryLocation.builder()
-                .setBaseDir(root != null ? root :
-                        NutsPath.of(
-                                        Paths.get(session.locations().getStoreLocation(NutsStoreLocation.CONFIG)), session)
+        return repositoryLocation
+                .toAbsolute(root != null ? root :
+                        session.locations().getStoreLocation(NutsStoreLocation.CONFIG)
                                 .resolve(NutsConstants.Folders.REPOSITORIES))
-                .build().toString()).toString();
+                ;
     }
 
     //
@@ -609,9 +608,9 @@ public class DefaultNutsWorkspaceConfigModel {
         if (apiId == null) {
             throw new NutsNotFoundException(session, apiId);
         }
-        Path apiConfigFile = Paths.get(session.locations().getStoreLocation(apiId, NutsStoreLocation.CONFIG))
+        NutsPath apiConfigFile = session.locations().getStoreLocation(apiId, NutsStoreLocation.CONFIG)
                 .resolve(NutsConstants.Files.WORKSPACE_API_CONFIG_FILE_NAME);
-        if (force || !Files.isRegularFile(apiConfigFile)) {
+        if (force || !apiConfigFile.isRegularFile()) {
             Map<String, Object> m = new LinkedHashMap<>();
             if (runtimeId == null) {
                 runtimeId = session.search().addId(NutsConstants.Ids.NUTS_RUNTIME)
@@ -889,17 +888,11 @@ public class DefaultNutsWorkspaceConfigModel {
 
 
     public NutsPath getRepositoriesRoot(NutsSession session) {
-        return NutsPath.of(
-                Paths.get(session.locations().getStoreLocation(NutsStoreLocation.CONFIG)).resolve(NutsConstants.Folders.REPOSITORIES),
-                session)
-                ;
+        return session.locations().getStoreLocation(NutsStoreLocation.CONFIG).resolve(NutsConstants.Folders.REPOSITORIES);
     }
 
     public NutsPath getTempRepositoriesRoot(NutsSession session) {
-        return NutsPath.of(
-                Paths.get(session.locations().getStoreLocation(NutsStoreLocation.TEMP)).resolve(NutsConstants.Folders.REPOSITORIES)
-                , session
-        );
+        return session.locations().getStoreLocation(NutsStoreLocation.TEMP).resolve(NutsConstants.Folders.REPOSITORIES);
     }
 
     public boolean isValidWorkspaceFolder(NutsSession session) {
@@ -1082,16 +1075,16 @@ public class DefaultNutsWorkspaceConfigModel {
 
     public void prepareBootRuntimeOrExtension(NutsId id, boolean force, NutsIdType idType, NutsSession session) {
         NutsWorkspaceUtils.checkSession(ws, session);
-        Path configFile = Paths.get(session.locations().getStoreLocation(NutsStoreLocation.CACHE))
+        NutsPath configFile = session.locations().getStoreLocation(NutsStoreLocation.CACHE)
                 .resolve(NutsConstants.Folders.ID).resolve(session.locations().getDefaultIdBasedir(id)).resolve(
                         idType == NutsIdType.RUNTIME
                                 ? NutsConstants.Files.WORKSPACE_RUNTIME_CACHE_FILE_NAME
                                 : NutsConstants.Files.WORKSPACE_EXTENSION_CACHE_FILE_NAME
                 );
-        Path jarFile = Paths.get(session.locations().getStoreLocation(NutsStoreLocation.LIB))
+        NutsPath jarFile = session.locations().getStoreLocation(NutsStoreLocation.LIB)
                 .resolve(NutsConstants.Folders.ID).resolve(session.locations().getDefaultIdBasedir(id))
                 .resolve(session.locations().getDefaultIdFilename(id.builder().setFaceContent().setPackaging("jar").build()));
-        if (!force && (Files.isRegularFile(configFile) && Files.isRegularFile(jarFile))) {
+        if (!force && (configFile.isRegularFile() && jarFile.isRegularFile())) {
             return;
         }
         List<NutsId> deps = new ArrayList<>();
@@ -1143,7 +1136,7 @@ public class DefaultNutsWorkspaceConfigModel {
             }
         }
 
-        if (force || !Files.isRegularFile(configFile)) {
+        if (force || !configFile.isRegularFile()) {
             NutsElements.of(session).json().setValue(m)
                     .setNtf(false).print(configFile);
         }
@@ -1303,25 +1296,26 @@ public class DefaultNutsWorkspaceConfigModel {
         String fileSuffix = Instant.now().toString();
         fileSuffix = fileSuffix.replace(':', '-');
         String fileName = "nuts-workspace-" + fileSuffix;
-        Path logError = Paths.get(session.locations().getStoreLocation(ws.getApiId(), NutsStoreLocation.LOG)).resolve("invalid-config");
-        Path logFile = logError.resolve(fileName + ".error");
+        NutsPath logError = session.locations().getStoreLocation(ws.getApiId(), NutsStoreLocation.LOG).resolve("invalid-config");
+        NutsPath logFile = logError.resolve(fileName + ".error");
         _LOGOP(session).level(Level.SEVERE).verb(NutsLogVerb.FAIL)
                 .log(NutsMessage.jstyle("erroneous workspace config file. Unable to load file {0} : {1}", file, ex));
+
         try {
-            CoreIOUtils.mkdirs(logError, session);
+            logFile.mkParentDirs();
         } catch (Exception ex1) {
             throw new NutsIOException(session, NutsMessage.cstyle("unable to log workspace error while loading config file %s : %s", file, ex1), ex);
         }
-        Path newfile = logError.resolve(fileName + ".json");
+        NutsPath newfile = logError.resolve(fileName + ".json");
         _LOGOP(session).level(Level.SEVERE).verb(NutsLogVerb.FAIL)
                 .log(NutsMessage.jstyle("erroneous workspace config file will be replaced by a fresh one. Old config is copied to {0}\n error logged to  {1}", newfile.toString(), logFile));
         try {
-            Files.move(file, newfile);
+            Files.move(file, newfile.toFile());
         } catch (IOException e) {
             throw new NutsIOException(session, NutsMessage.cstyle("unable to load and re-create config file %s : %s", file, e), ex);
         }
 
-        try (PrintStream o = new PrintStream(logFile.toFile())) {
+        try (PrintStream o = new PrintStream(logFile.getOutputStream())) {
             o.println("workspace.path:");
             o.println(session.locations().getWorkspaceLocation());
             o.println("workspace.options:");

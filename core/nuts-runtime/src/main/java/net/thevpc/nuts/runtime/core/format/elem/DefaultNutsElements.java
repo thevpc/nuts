@@ -7,7 +7,6 @@ import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.net.URL;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Instant;
 import java.util.Date;
@@ -218,21 +217,13 @@ public class DefaultNutsElements extends DefaultFormatBase<NutsElements> impleme
     @Override
     public <T> T parse(Path file, Class<T> clazz) {
         checkSession();
-        try (Reader r = Files.newBufferedReader(file)) {
-            return parse(r, clazz);
-        } catch (IOException ex) {
-            throw new NutsIOException(getSession(), ex);
-        }
+        return parse(NutsPath.of(file,getSession()),clazz);
     }
 
     @Override
     public <T> T parse(File file, Class<T> clazz) {
         checkSession();
-        try (FileReader r = new FileReader(file)) {
-            return parse(r, clazz);
-        } catch (IOException ex) {
-            throw new NutsIOException(getSession(), ex);
-        }
+        return parse(NutsPath.of(file,getSession()),clazz);
     }
 
 

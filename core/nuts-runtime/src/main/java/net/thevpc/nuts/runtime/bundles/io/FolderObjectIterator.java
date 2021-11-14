@@ -29,9 +29,6 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.repos.main.DefaultNutsInstalledRepository;
 
 import java.io.IOException;
-import java.nio.file.DirectoryStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.Iterator;
 import java.util.Stack;
 import java.util.function.Predicate;
@@ -44,14 +41,14 @@ public class FolderObjectIterator<T> implements Iterator<T> {
 //    private static final Logger LOG=Logger.getLogger(FolderNutIdIterator.class.getName());
 
     private T last;
-    private Path lastPath;
+    private NutsPath lastPath;
 
     private static class PathAndDepth {
 
-        private Path path;
+        private NutsPath path;
         private int depth;
 
-        public PathAndDepth(Path path, int depth) {
+        public PathAndDepth(NutsPath path, int depth) {
             this.path = path;
             this.depth = depth;
         }
@@ -67,9 +64,9 @@ public class FolderObjectIterator<T> implements Iterator<T> {
     private int maxDepth;
     private final NutsLogger LOG;
     private final String name;
-    private final Path folder;
+    private final NutsPath folder;
 
-    public FolderObjectIterator(String name,Path folder, Predicate<T> filter, int maxDepth, NutsSession session, FolderIteratorModel<T> model) {
+    public FolderObjectIterator(String name,NutsPath folder, Predicate<T> filter, int maxDepth, NutsSession session, FolderIteratorModel<T> model) {
         this.session = session;
         this.filter = filter;
         this.model = model;
@@ -91,34 +88,32 @@ public class FolderObjectIterator<T> implements Iterator<T> {
         last = null;
         while (!stack.isEmpty()) {
             PathAndDepth file = stack.pop();
-            if (Files.isDirectory(file.path)) {
-                session.getTerminal().printProgress("%-8s %s","browse",NutsPath.of(file.path,session).toCompressedForm());
+            if (file.path.isDirectory()) {
+                session.getTerminal().printProgress("%-8s %s","browse",file.path.toCompressedForm());
                 visitedFoldersCount++;
                 boolean deep = maxDepth < 0 || file.depth < maxDepth;
-                if (Files.isDirectory(file.path)) {
-                    try (DirectoryStream<Path> stream = Files.newDirectoryStream(file.path, new DirectoryStream.Filter<Path>() {
-                        @Override
-                        public boolean accept(Path pathname) throws IOException {
-                            try {
-                                return (deep && Files.isDirectory(pathname)) || model.isObjectFile(pathname);
-                            } catch (Exception ex) {
-                                NutsLoggerOp.of(FolderObjectIterator.class,session).level(Level.FINE).error(ex)
-                                        .log(NutsMessage.jstyle("Unable to test desk file {0}" ,pathname));
-                                return false;
-                            }
-                        }
-                    })) {
-
-                        for (Path item : stream) {
-                            if (Files.isDirectory(item)) {
+                if (file.path.isDirectory()) {
+                    try {
+                        file.path.list().filter(
+                                pathname->{
+                                    try {
+                                        return (deep && pathname.isDirectory()) || model.isObjectFile(pathname);
+                                    } catch (Exception ex) {
+                                        NutsLoggerOp.of(FolderObjectIterator.class,session).level(Level.FINE).error(ex)
+                                                .log(NutsMessage.jstyle("Unable to test desk file {0}" ,pathname));
+                                        return false;
+                                    }
+                                }
+                        ).forEach(item-> {
+                            if (item.isDirectory()) {
                                 if (maxDepth < 0 || file.depth < maxDepth) {
                                     stack.push(new PathAndDepth(item, file.depth + 1));
                                 }
                             } else {
                                 stack.push(new PathAndDepth(item, file.depth));
                             }
-                        }
-                    } catch (IOException ex) {
+                        });
+                    } catch (Exception ex) {
                         LOG.with().error(ex).log(
                                 NutsMessage.jstyle("unable to parse {0}",file.path));
                     }
@@ -170,13 +165,13 @@ public class FolderObjectIterator<T> implements Iterator<T> {
 
     public interface FolderIteratorModel<T> {
 
-        default void remove(T object, Path objectPath, NutsSession session) throws NutsExecutionException {
+        default void remove(T object, NutsPath objectPath, NutsSession session) throws NutsExecutionException {
 
         }
 
-        boolean isObjectFile(Path pathname);
+        boolean isObjectFile(NutsPath pathname);
 
-        T parseObject(Path pathname, NutsSession session) throws IOException;
+        T parseObject(NutsPath pathname, NutsSession session) throws IOException;
     }
 
     @Override

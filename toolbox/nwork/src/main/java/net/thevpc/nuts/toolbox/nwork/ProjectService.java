@@ -16,21 +16,21 @@ public class ProjectService {
     private ProjectConfig config;
     private final NutsApplicationContext appContext;
     private final RepositoryAddress defaultRepositoryAddress;
-    private final Path sharedConfigFolder;
+    private final NutsPath sharedConfigFolder;
 
-    public ProjectService(NutsApplicationContext context, RepositoryAddress defaultRepositoryAddress, Path file) throws IOException {
+    public ProjectService(NutsApplicationContext context, RepositoryAddress defaultRepositoryAddress, NutsPath file) throws IOException {
         this.appContext = context;
         this.defaultRepositoryAddress = defaultRepositoryAddress == null ? new RepositoryAddress() : defaultRepositoryAddress;
         NutsSession session = context.getSession();
         config = NutsElements.of(session).json().parse(file, ProjectConfig.class);
-        sharedConfigFolder = Paths.get(context.getVersionFolderFolder(NutsStoreLocation.CONFIG, NWorkConfigVersions.CURRENT));
+        sharedConfigFolder = context.getVersionFolder(NutsStoreLocation.CONFIG, NWorkConfigVersions.CURRENT);
     }
 
     public ProjectService(NutsApplicationContext context, RepositoryAddress defaultRepositoryAddress, ProjectConfig config) {
         this.config = config;
         this.appContext = context;
         this.defaultRepositoryAddress = defaultRepositoryAddress;
-        sharedConfigFolder = Paths.get(context.getVersionFolderFolder(NutsStoreLocation.CONFIG, NWorkConfigVersions.CURRENT));
+        sharedConfigFolder = context.getVersionFolder(NutsStoreLocation.CONFIG, NWorkConfigVersions.CURRENT);
     }
 
     public ProjectConfig getConfig() {
@@ -46,21 +46,21 @@ public class ProjectService {
         return false;
     }
 
-    public Path getConfigFile() {
-        Path storeLocation = sharedConfigFolder.resolve("projects");
+    public NutsPath getConfigFile() {
+        NutsPath storeLocation = sharedConfigFolder.resolve("projects");
         return storeLocation.resolve(config.getId().replace(":", "-") + ".config");
     }
 
     public void save() throws IOException {
-        Path configFile = getConfigFile();
-        Files.createDirectories(configFile.getParent());
+        NutsPath configFile = getConfigFile();
+        configFile.mkParentDirs();
         NutsSession session = appContext.getSession();
         NutsElements.of(session).json().setValue(config).print(configFile);
     }
 
     public boolean load() {
-        Path configFile = getConfigFile();
-        if (Files.isRegularFile(configFile)) {
+        NutsPath configFile = getConfigFile();
+        if (configFile.isRegularFile()) {
             NutsSession session = appContext.getSession();
             ProjectConfig u = NutsElements.of(session).json().parse(configFile, ProjectConfig.class);
             if (u != null) {

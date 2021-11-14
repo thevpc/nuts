@@ -75,13 +75,13 @@ public class DefaultNutsRepoConfigManager implements NutsRepositoryConfigManager
     }
 
     @Override
-    public String getLocation(boolean expand) {
+    public NutsPath getLocation(boolean expand) {
         checkSession();
         return getModel().getLocation(expand, session);
     }
 
     @Override
-    public String getStoreLocation() {
+    public NutsPath getStoreLocation() {
         checkSession();
         return getModel().getStoreLocation();
     }
@@ -93,7 +93,7 @@ public class DefaultNutsRepoConfigManager implements NutsRepositoryConfigManager
 //    }
 
     @Override
-    public String getStoreLocation(NutsStoreLocation folderType) {
+    public NutsPath getStoreLocation(NutsStoreLocation folderType) {
         checkSession();
         return getModel().getStoreLocation(folderType, session);
     }

@@ -14,7 +14,7 @@ public class DefaultNutsWorkspaceLocationManager implements NutsWorkspaceLocatio
     }
 
     @Override
-    public String getHomeLocation(NutsStoreLocation folderType) {
+    public NutsPath getHomeLocation(NutsStoreLocation folderType) {
         checkSession();
         return model.getHomeLocation(folderType,session);
     }
@@ -25,25 +25,25 @@ public class DefaultNutsWorkspaceLocationManager implements NutsWorkspaceLocatio
     
 
     @Override
-    public String getStoreLocation(NutsStoreLocation folderType) {
+    public NutsPath getStoreLocation(NutsStoreLocation folderType) {
         checkSession();
         return model.getStoreLocation(folderType,session);
     }
 
     @Override
-    public String getStoreLocation(NutsId id, NutsStoreLocation folderType) {
+    public NutsPath getStoreLocation(NutsId id, NutsStoreLocation folderType) {
         checkSession();
         return model.getStoreLocation(id,folderType,session);
     }
 
     @Override
-    public String getStoreLocation(NutsStoreLocation folderType, String repositoryIdOrName) {
+    public NutsPath getStoreLocation(NutsStoreLocation folderType, String repositoryIdOrName) {
         checkSession();
         return model.getStoreLocation(folderType, repositoryIdOrName, session);
     }
 
     @Override
-    public String getStoreLocation(NutsId id, NutsStoreLocation folderType, String repositoryIdOrName) {
+    public NutsPath getStoreLocation(NutsId id, NutsStoreLocation folderType, String repositoryIdOrName) {
         checkSession();
         return model.getStoreLocation(id, folderType, repositoryIdOrName, session);
     }
@@ -79,7 +79,7 @@ public class DefaultNutsWorkspaceLocationManager implements NutsWorkspaceLocatio
     }
 
     @Override
-    public String getDefaultIdBasedir(NutsId id) {
+    public NutsPath getDefaultIdBasedir(NutsId id) {
         checkSession();
         return model.getDefaultIdBasedir(id,session);
     }
@@ -103,7 +103,7 @@ public class DefaultNutsWorkspaceLocationManager implements NutsWorkspaceLocatio
     }
 
     @Override
-    public String getHomeLocation(NutsHomeLocation location) {
+    public NutsPath getHomeLocation(NutsHomeLocation location) {
         checkSession();
         return model.getHomeLocation(location, session);
     }

@@ -2,9 +2,6 @@ package net.thevpc.nuts.runtime.standalone;
 
 import net.thevpc.nuts.*;
 
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.*;
 
 /**
@@ -26,8 +23,8 @@ public class DefaultNutsWorkspaceListManager implements NutsWorkspaceListManager
             name = "default";
         }
         this.name = name.trim();
-        Path file = getConfigFile(session);
-        if (Files.exists(file)) {
+        NutsPath file = getConfigFile(session);
+        if (file.exists()) {
             this.config = NutsElements.of(this.defaultSession).json().parse(file, NutsWorkspaceListConfig.class);
             for (NutsWorkspaceLocation var : this.config.getWorkspaces()) {
                 this.workspaces.put(var.getUuid(), var);
@@ -46,11 +43,11 @@ public class DefaultNutsWorkspaceListManager implements NutsWorkspaceListManager
         }
     }
 
-    private Path getConfigFile(NutsSession session) {
-        return Paths.get(session
+    private NutsPath getConfigFile(NutsSession session) {
+        return session
                         .locations()
                         .getStoreLocation(NutsIdResolver.of(session).resolveId(DefaultNutsWorkspaceListManager.class),
-                                NutsStoreLocation.CONFIG))
+                                NutsStoreLocation.CONFIG)
                 .resolve(name + "-nuts-workspace-list.json");
     }
 
@@ -101,7 +98,7 @@ public class DefaultNutsWorkspaceListManager implements NutsWorkspaceListManager
         this.config.setWorkspaces(this.workspaces.isEmpty()
                 ? null
                 : new ArrayList<>(this.workspaces.values()));
-        Path file = getConfigFile(session);
+        NutsPath file = getConfigFile(session);
         NutsElements.of(this.defaultSession).json().setValue(this.config)
                 .setNtf(false)
                 .print(file);

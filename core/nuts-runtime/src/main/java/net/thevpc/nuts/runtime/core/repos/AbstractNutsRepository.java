@@ -188,8 +188,8 @@ public abstract class AbstractNutsRepository implements NutsRepository, NutsRepo
         String loc = cc.getModel().getLocation();
         String impl = getClass().getSimpleName();
         if (c != null) {
-            String storeLocation = cc.getModel().getStoreLocation();
-            storePath = storeLocation == null ? null : Paths.get(storeLocation).toAbsolutePath().toString();
+            NutsPath storeLocation = cc.getModel().getStoreLocation();
+            storePath = storeLocation == null ? null : storeLocation.toAbsolute().toString();
         }
         LinkedHashMap<String, String> a = new LinkedHashMap<>();
         if (name != null) {
@@ -211,7 +211,7 @@ public abstract class AbstractNutsRepository implements NutsRepository, NutsRepo
         return session.locations().getDefaultIdExtension(id);
     }
 
-    public String getIdBasedir(NutsId id, NutsSession session) {
+    public NutsPath getIdBasedir(NutsId id, NutsSession session) {
         return session.locations().getDefaultIdBasedir(id);
     }
 

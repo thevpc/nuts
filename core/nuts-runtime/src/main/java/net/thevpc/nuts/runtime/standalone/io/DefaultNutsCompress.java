@@ -98,10 +98,7 @@ public class DefaultNutsCompress implements NutsCompress {
                             .createTempFile("zip").toFile();
                 }
                 if (this.target.isPath()) {
-                    NutsPath parent = this.target.getPath().getParent();
-                    if (parent != null) {
-                        parent.mkdir(true);
-                    }
+                    this.target.getPath().mkParentDirs();
                 }
                 if (tempPath == null) {
                     fW = target.isOutputStream() ? target.getOutputStream() : target.getPath().getOutputStream();

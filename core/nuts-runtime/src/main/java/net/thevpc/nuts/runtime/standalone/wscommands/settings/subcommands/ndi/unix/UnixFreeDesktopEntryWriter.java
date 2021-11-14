@@ -35,17 +35,17 @@ import java.util.stream.Collectors;
 
 public class UnixFreeDesktopEntryWriter extends AbstractFreeDesktopEntryWriter {
     private final NutsSession session;
-    private final Path desktopPath;
+    private final NutsPath desktopPath;
 
-    public UnixFreeDesktopEntryWriter(NutsSession session, Path desktopPath) {
+    public UnixFreeDesktopEntryWriter(NutsSession session, NutsPath desktopPath) {
         this.session = session;
         this.desktopPath = desktopPath;
     }
 
 
     @Override
-    public PathInfo[] writeShortcut(FreeDesktopEntry descriptor, Path path, boolean doOverride, NutsId id) {
-        path = Paths.get(ensureName(path == null ? null : path.toString(), descriptor.getOrCreateDesktopEntry().getName(), "desktop"));
+    public PathInfo[] writeShortcut(FreeDesktopEntry descriptor, NutsPath path, boolean doOverride, NutsId id) {
+        path = NutsPath.of(ensureName(path == null ? null : path.toString(), descriptor.getOrCreateDesktopEntry().getName(), "desktop"),session);
         PathInfo.Status s = tryWrite(descriptor, path);
         return new PathInfo[]{new PathInfo("desktop-shortcut", id, path, s)};
     }
@@ -53,8 +53,8 @@ public class UnixFreeDesktopEntryWriter extends AbstractFreeDesktopEntryWriter {
     @Override
     public PathInfo[] writeDesktop(FreeDesktopEntry descriptor, String fileName, boolean doOverride, NutsId id) {
         fileName = Paths.get(ensureName(fileName, descriptor.getOrCreateDesktopEntry().getName(), "desktop")).getFileName().toString();
-        File q = desktopPath.resolve(fileName).toFile();
-        return writeShortcut(descriptor, q.toPath(), doOverride, id);
+        NutsPath q = desktopPath.resolve(fileName);
+        return writeShortcut(descriptor, q, doOverride, id);
     }
 
     @Override
@@ -63,17 +63,17 @@ public class UnixFreeDesktopEntryWriter extends AbstractFreeDesktopEntryWriter {
 
         List<PathInfo> all = new ArrayList<>();
         FreeDesktopEntry.Group root = descriptor.getOrCreateDesktopEntry();
-        File folder4shortcuts = new File(System.getProperty("user.home") + "/.local/share/applications");
+        NutsPath folder4shortcuts = NutsPath.of(System.getProperty("user.home"),session).resolve(".local/share/applications");
         folder4shortcuts.mkdirs();
-        File shortcutFile = new File(folder4shortcuts, desktopFileName);
+        NutsPath shortcutFile =folder4shortcuts.resolve(desktopFileName);
         all.add(new PathInfo("desktop-icon", id,
-                shortcutFile.toPath(), tryWrite(descriptor, shortcutFile)));
+                shortcutFile, tryWrite(descriptor, shortcutFile)));
 
         List<String> categories = new ArrayList<>(root.getCategories());
         if (categories.isEmpty()) {
             categories.add("/");
         }
-        File folder4menus = new File(System.getProperty("user.home") + "/.config/menus/applications-merged");
+        NutsPath folder4menus = NutsPath.of(System.getProperty("user.home"),session).resolve(".config/menus/applications-merged");
         folder4menus.mkdirs();
 
         //menu name must include category
@@ -103,8 +103,8 @@ public class UnixFreeDesktopEntryWriter extends AbstractFreeDesktopEntryWriter {
 
             ByteArrayOutputStream b = new ByteArrayOutputStream();
             tr.transform(new DOMSource(dom), new StreamResult(b));
-            File menuFile = new File(folder4menus, menuFileName);
-            all.add(new PathInfo("desktop-menu", id, menuFile.toPath(), CoreIOUtils.tryWrite(b.toByteArray(), menuFile.toPath(), session)));
+            NutsPath menuFile = folder4menus.resolve(menuFileName);
+            all.add(new PathInfo("desktop-menu", id, menuFile, CoreIOUtils.tryWrite(b.toByteArray(), menuFile, session)));
         } catch (ParserConfigurationException | TransformerException ex) {
             throw new RuntimeException(ex);
         }
@@ -210,13 +210,9 @@ public class UnixFreeDesktopEntryWriter extends AbstractFreeDesktopEntryWriter {
     }
 
 
-    public PathInfo.Status tryWrite(FreeDesktopEntry file, Path out) {
-        CoreIOUtils.mkdirs(out.getParent(), session);
+    public PathInfo.Status tryWrite(FreeDesktopEntry file, NutsPath out) {
+        out.mkParentDirs();
         return CoreIOUtils.tryWrite(writeAsString(file).getBytes(), out, session);
-    }
-
-    public PathInfo.Status tryWrite(FreeDesktopEntry file, File out) {
-        return tryWrite(file, out.toPath());
     }
 
     public String writeAsString(FreeDesktopEntry file) {

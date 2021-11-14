@@ -12,7 +12,6 @@ import net.thevpc.nuts.toolbox.nwork.filescanner.FileScanner;
 import java.io.File;
 import java.io.IOException;
 import java.io.UncheckedIOException;
-import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -23,14 +22,14 @@ public class WorkspaceService {
 
     public static final String SCAN = "net.thevpc.nuts.toolbox.nwork.scan";
     private WorkspaceConfig config;
-    private NutsApplicationContext appContext;
-    private Path sharedConfigFolder;
+    private final NutsApplicationContext appContext;
+    private final NutsPath sharedConfigFolder;
 
     public WorkspaceService(NutsApplicationContext appContext) {
         this.appContext = appContext;
-        sharedConfigFolder = Paths.get(appContext.getVersionFolderFolder(NutsStoreLocation.CONFIG, NWorkConfigVersions.CURRENT));
-        Path c = getConfigFile();
-        if (Files.isRegularFile(c)) {
+        sharedConfigFolder = appContext.getVersionFolder(NutsStoreLocation.CONFIG, NWorkConfigVersions.CURRENT);
+        NutsPath c = getConfigFile();
+        if (c.isRegularFile()) {
             try {
                 NutsSession session = appContext.getSession();
                 config = NutsElements.of(session).json().parse(c, WorkspaceConfig.class);
@@ -95,12 +94,8 @@ public class WorkspaceService {
             c = new WorkspaceConfig();
         }
         config = c;
-        Path configFile = getConfigFile();
-        try {
-            Files.createDirectories(configFile.getParent());
-        } catch (IOException ex) {
-            throw new UncheckedIOException(ex);
-        }
+        NutsPath configFile = getConfigFile();
+        configFile.mkParentDirs();
         NutsSession session = appContext.getSession();
         NutsElements.of(session).json().setValue(c).print(configFile);
     }
@@ -234,23 +229,24 @@ public class WorkspaceService {
             }
         }
     }
+
     public void find(NutsCommandLine cmdLine, NutsApplicationContext context) {
         NutsArgument a;
         NutsSession session = context.getSession();
         List<File> toScan = new ArrayList<>();
-        String where=null;
+        String where = null;
         while (cmdLine.hasNext()) {
             if ((a = cmdLine.nextString("-w", "--where")) != null) {
                 where = a.getValue().getString();
-            }else if (cmdLine.peek().isNonOption()) {
-                String folder = cmdLine.nextNonOption(NutsArgumentName.of("Folder",session)).getString();
+            } else if (cmdLine.peek().isNonOption()) {
+                String folder = cmdLine.nextNonOption(NutsArgumentName.of("Folder", session)).getString();
                 toScan.add(new File(folder));
             } else {
                 context.configureLast(cmdLine);
             }
         }
         if (cmdLine.isExecMode()) {
-            int scanned = find(toScan,where);
+            int scanned = find(toScan, where);
             if (appContext.getSession().isPlainOut()) {
                 appContext.getSession().out().printf("##SUMMARY## : %s projects scanned%n", scanned);
             }
@@ -315,16 +311,16 @@ public class WorkspaceService {
         all.sort((x, y) -> x.getConfig().getId().compareTo(y.getConfig().getId()));
         NutsSession session = appContext.getSession();
 
-        for (Iterator<ProjectService> iterator = all.iterator(); iterator.hasNext();) {
+        for (Iterator<ProjectService> iterator = all.iterator(); iterator.hasNext(); ) {
             ProjectService projectService = iterator.next();
             String id = projectService.getConfig().getId();
             NutsDescriptor pom = projectService.getPom();
             if (pom != null) {
-                dependencies.put(NutsId.of(id,session).getShortName(), pom);
+                dependencies.put(NutsId.of(id, session).getShortName(), pom);
             }
         }
 
-        for (Iterator<ProjectService> iterator = all.iterator(); iterator.hasNext();) {
+        for (Iterator<ProjectService> iterator = all.iterator(); iterator.hasNext(); ) {
             ProjectService projectService = iterator.next();
             if (!matches(projectService.getConfig().getId(), filters)) {
                 iterator.remove();
@@ -337,11 +333,11 @@ public class WorkspaceService {
             ProjectService projectService = all.get(i);
             DataRow d = new DataRow();
             d.id = projectService.getConfig().getId();
-            NutsDescriptor pom = dependencies.get(NutsId.of(d.id,session).getShortName());
+            NutsDescriptor pom = dependencies.get(NutsId.of(d.id, session).getShortName());
             if (pom != null) {
                 for (NutsDependency dependency : pom.getDependencies()) {
                     String did = dependency.getGroupId() + ":" + dependency.getArtifactId();
-                    NutsDescriptor expectedPom = dependencies.get(NutsId.of(did,session).getShortName());
+                    NutsDescriptor expectedPom = dependencies.get(NutsId.of(did, session).getShortName());
                     if (expectedPom != null) {
                         String expectedVersion = expectedPom.getId().getVersion().toString();
                         String currentVersion = dependency.getVersion().toString();
@@ -406,7 +402,7 @@ public class WorkspaceService {
         }
 
         Collections.sort(ddd);
-        for (Iterator<DataRow> iterator = ddd.iterator(); iterator.hasNext();) {
+        for (Iterator<DataRow> iterator = ddd.iterator(); iterator.hasNext(); ) {
             DataRow d = iterator.next();
             switch (d.status) {
                 case "invalid": {
@@ -533,7 +529,7 @@ public class WorkspaceService {
         boolean accept = filters.isEmpty();
         if (!accept) {
             NutsSession session = appContext.getSession();
-            NutsId nid = NutsId.of(id,session);
+            NutsId nid = NutsId.of(id, session);
             for (String filter : filters) {
                 if (id.equals(filter)
                         || id.matches(wildcardToRegex(filter))
@@ -546,74 +542,47 @@ public class WorkspaceService {
         return accept;
     }
 
-    public Path getConfigFile() {
+    public NutsPath getConfigFile() {
         return sharedConfigFolder.resolve("workspace.projects");
     }
 
     public void resetAllProjectServices() {
-        Path storeLocation = sharedConfigFolder.resolve("projects");
-        if (Files.isDirectory(storeLocation)) {
-            try (DirectoryStream<Path> ds = Files.newDirectoryStream(storeLocation)) {
-                for (Path file : ds) {
-                    if (Files.isRegularFile(file) && file.getFileName().toString().endsWith(".config")) {
-                        try {
-                            Files.delete(file);
-                        } catch (IOException e) {
-                            //ignore
-                        }
-                    }
+        NutsPath storeLocation = sharedConfigFolder.resolve("projects");
+        if (storeLocation.isDirectory()) {
+            for (NutsPath file : storeLocation.list().toList()) {
+                if (file.isRegularFile() && file.getName().endsWith(".config")) {
+                    file.delete();
                 }
-            } catch (IOException ex) {
-                throw new UncheckedIOException(ex);
             }
         }
     }
 
     public List<ProjectService> findProjectServices() {
         List<ProjectService> all = new ArrayList<>();
-        Path storeLocation = sharedConfigFolder.resolve("projects");
+        NutsPath storeLocation = sharedConfigFolder.resolve("projects");
 
-        if (Files.isDirectory(storeLocation)) {
-            try (DirectoryStream<Path> ds = Files.newDirectoryStream(storeLocation)) {
-                for (Path file : ds) {
-                    if (Files.isRegularFile(file) && file.getFileName().toString().endsWith(".config")) {
-                        try {
-                            all.add(new ProjectService(appContext, config.getDefaultRepositoryAddress(), file));
-                        } catch (IOException e) {
-                            //ignore
-                        }
+        if (storeLocation.isDirectory()) {
+            for (NutsPath file : storeLocation.list().toList()) {
+                if (file.isRegularFile() && file.getName().endsWith(".config")) {
+                    try {
+                        all.add(new ProjectService(appContext, config.getDefaultRepositoryAddress(), file));
+                    } catch (IOException e) {
+                        //ignore
                     }
                 }
-            } catch (IOException ex) {
-                throw new UncheckedIOException(ex);
             }
         }
         return all;
     }
 
-    public static class ScanResult {
-
-        String path;
-        String status;
-        String message;
-
-        public ScanResult(String path, String status, String message) {
-            this.path = path;
-            this.message = message;
-            this.status = status;
-            System.out.println(this.path + " " + status/*+" "+message*/);
-        }
-
-    }
-
-    public int find(List<File> folders,String where) {
-        FileScanner fs=new FileScanner();
-        if(where!=null && where.trim().length()>0) {
+    public int find(List<File> folders, String where) {
+        FileScanner fs = new FileScanner();
+        if (where != null && where.trim().length() > 0) {
             fs.setPathFilter(FileScanner.parseExpr(where, appContext.getSession()));
         }
         fs.getSource().addAll(folders.stream().map(File::toPath).collect(Collectors.toSet()));
-        fs.scan().forEach(x->{
-            appContext.getSession().out().printf("%s%n",x);
+        fs.scan().forEach(x -> {
+            appContext.getSession().out().printf("%s%n", x);
         });
         return 0;
     }
@@ -655,7 +624,7 @@ public class WorkspaceService {
                             } else if (!p2.getPath().equals(p3.getPath())) {
                                 if (session.isPlainOut()) {
                                     session.out().printf("```error [CONFLICT]``` multiple paths for the same id %s. "
-                                            + "please consider adding .nuts-info file with " + SCAN + "=false  :  %s -- %s%n",
+                                                    + "please consider adding .nuts-info file with " + SCAN + "=false  :  %s -- %s%n",
                                             text.ofStyled(p2.getId(), NutsTextStyle.primary2()),
                                             text.ofStyled(p2.getPath(), NutsTextStyle.path()),
                                             text.ofStyled(p3.getPath(), NutsTextStyle.path())
@@ -665,7 +634,7 @@ public class WorkspaceService {
                                     result.add(new ScanResult(folder.getPath(), "conflict",
                                             NutsMessage.cstyle(
                                                     "[CONFLICT] multiple paths for the same id %s. "
-                                                    + "please consider adding .nuts-info file with " + SCAN + "=false  :  %s -- %s",
+                                                            + "please consider adding .nuts-info file with " + SCAN + "=false  :  %s -- %s",
                                                     p2.getId(),
                                                     p2.getPath(),
                                                     p3.getPath()
@@ -804,6 +773,21 @@ public class WorkspaceService {
         return 0;
     }
 
+    public static class ScanResult {
+
+        String path;
+        String status;
+        String message;
+
+        public ScanResult(String path, String status, String message) {
+            this.path = path;
+            this.message = message;
+            this.status = status;
+            System.out.println(this.path + " " + status/*+" "+message*/);
+        }
+
+    }
+
     static class DiffVersion {
 
         String id;
@@ -834,10 +818,7 @@ public class WorkspaceService {
                 return v;
             }
             v = id.compareTo(o.id);
-            if (v != 0) {
-                return v;
-            }
-            return 0;
+            return v;
         }
     }
 }

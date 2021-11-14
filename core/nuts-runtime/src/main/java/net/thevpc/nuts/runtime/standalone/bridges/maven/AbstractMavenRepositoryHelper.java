@@ -57,15 +57,15 @@ public abstract class AbstractMavenRepositoryHelper {
         return LOG;
     }
 
-    protected abstract String getIdPath(NutsId id, NutsSession session);
+    protected abstract NutsPath getIdPath(NutsId id, NutsSession session);
 
     protected InputStream getStream(NutsId id, String typeName, String action, NutsSession session) {
-        String url = getIdPath(id, session);
+        NutsPath url = getIdPath(id, session);
         return openStream(id, url, id, typeName, action, session);
     }
 
     protected String getStreamAsString(NutsId id, String typeName, String action, NutsSession session) {
-        String url = getIdPath(id, session);
+        NutsPath url = getIdPath(id, session);
         return CoreIOUtils.loadString(openStream(id, url, id, typeName, action, session), true,session);
     }
 
@@ -108,8 +108,8 @@ public abstract class AbstractMavenRepositoryHelper {
         return hash.split("[ \n\r]")[0];
     }
 
-    protected abstract boolean exists(NutsId id, String path, Object source, String typeName, NutsSession session);
-    protected abstract InputStream openStream(NutsId id, String path, Object source, String typeName, String action, NutsSession session);
+    protected abstract boolean exists(NutsId id, NutsPath path, Object source, String typeName, NutsSession session);
+    protected abstract InputStream openStream(NutsId id, NutsPath path, Object source, String typeName, String action, NutsSession session);
 
     private void checkSession(NutsSession session) {
         NutsWorkspaceUtils.checkSession(repository.getWorkspace(), session);
@@ -129,7 +129,7 @@ public abstract class AbstractMavenRepositoryHelper {
                 name = NutsInputStreamMetadata.of(stream).getName();
                 nutsDescriptor = MavenUtils.of(session).parsePomXmlAndResolveParents(
                         CoreIOUtils.createBytesStream(bytes, name == null ? null : NutsMessage.formatted(name), "text/xml", "pom.xml", session)
-                        , fetchMode, getIdPath(id, session), repository);
+                        , fetchMode, getIdPath(id, session).toString(), repository);
             } finally {
                 if (stream != null) {
                     stream.close();

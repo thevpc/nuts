@@ -84,8 +84,6 @@ import net.thevpc.nuts.spi.*;
 import java.io.IOException;
 import java.io.Writer;
 import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.Instant;
 import java.util.*;
@@ -898,7 +896,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
         boolean remoteRepo = true;
         if (resolveInstaller) {
             if (installerComponent == null) {
-                if (def.getPath() != null) {
+                if (def.getFile() != null) {
                     installerComponent = getInstaller(def, session);
                 }
             }
@@ -944,7 +942,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
         }
         NutsInstallInformation newNutsInstallInformation = null;
         NutsWorkspaceConfigManager config = session.config().setSession(session);
-        if (def.getPath() != null) {
+        if (def.getFile() != null) {
             if (requireDependencies) {
                 def.getDependencies();
                 List<NutsDefinition> requiredDefinitions = new ArrayList<>();
@@ -962,7 +960,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                                     .setEffective(true)
                                     .getResultDefinitions().first();
                             if (dd != null) {
-                                if (dd.getPath() == null) {
+                                if (dd.getFile() == null) {
                                     throw new NutsInstallException(session, def.getId(),
                                             NutsMessage.cstyle("unable to install %s. required dependency content is missing for %s", def.getId(), dependency.toId()),
                                             null);
@@ -1126,7 +1124,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                                         def.getId().getLongId(),
                                         remoteRepo ? "remote" : "local",
                                         def.getRepositoryName(),
-                                        def.getLocation(),
+                                        def.getPath(),
                                         text.parse(setAsDefaultString)
                                 );
                             }
@@ -1147,7 +1145,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                                         def.getId().getLongId(),
                                         remoteRepo ? "remote" : "local",
                                         def.getRepositoryName(),
-                                        def.getLocation(),
+                                        def.getPath(),
                                         text.parse(setAsDefaultString));
                             }
                         } else {
@@ -1403,7 +1401,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
     @Override
     public NutsInstallerComponent getInstaller(NutsDefinition nutToInstall, NutsSession session) {
         checkSession(session);
-        if (nutToInstall != null && nutToInstall.getPath() != null) {
+        if (nutToInstall != null && nutToInstall.getFile() != null) {
             NutsDescriptor descriptor = nutToInstall.getDescriptor();
             NutsArtifactCall installerDescriptor = descriptor.getInstaller();
             NutsDefinition runnerFile = nutToInstall;
@@ -1471,13 +1469,13 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
 
     @Override
     public NutsDescriptor resolveEffectiveDescriptor(NutsDescriptor descriptor, NutsSession session) {
-        Path eff = null;
+        NutsPath eff = null;
         NutsWorkspaceLocationManager loc = session.locations().setSession(session);
         if (!descriptor.getId().getVersion().isBlank() && descriptor.getId().getVersion().isSingleValue() && descriptor.getId().toString().indexOf('$') < 0) {
-            Path l = Paths.get(loc.getStoreLocation(descriptor.getId(), NutsStoreLocation.CACHE));
+            NutsPath l = loc.getStoreLocation(descriptor.getId(), NutsStoreLocation.CACHE);
             String nn = loc.getDefaultIdFilename(descriptor.getId().builder().setFace("eff-nuts.cache").build());
             eff = l.resolve(nn);
-            if (Files.isRegularFile(eff)) {
+            if (eff.isRegularFile()) {
                 try {
                     NutsDescriptor d = NutsDescriptorParser.of(session).parse(eff);
                     if (d != null) {
@@ -1494,7 +1492,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
         }
         NutsDescriptor effectiveDescriptor = _resolveEffectiveDescriptor(descriptor, session);
         if (eff == null) {
-            Path l = Paths.get(session.locations().getStoreLocation(effectiveDescriptor.getId(), NutsStoreLocation.CACHE));
+            NutsPath l = session.locations().getStoreLocation(effectiveDescriptor.getId(), NutsStoreLocation.CACHE);
             String nn = loc.getDefaultIdFilename(effectiveDescriptor.getId().builder().setFace("eff-nuts.cache").build());
             eff = l.resolve(nn);
         }
@@ -1559,9 +1557,9 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
             }
         }
         for (NutsDefinition def : defs.values()) {
-            Path bootstrapFolder = Paths.get(session.locations().getStoreLocation(NutsStoreLocation.LIB)).resolve(NutsConstants.Folders.ID);
+            NutsPath bootstrapFolder = session.locations().getStoreLocation(NutsStoreLocation.LIB).resolve(NutsConstants.Folders.ID);
             NutsId id2 = def.getId();
-            NutsCp.of(session).from(def.getPath())
+            NutsCp.of(session).from(def.getFile())
                     .to(bootstrapFolder.resolve(session.locations().getDefaultIdBasedir(id2))
                             .resolve(session.locations().getDefaultIdFilename(id2.builder().setFaceContent().setPackaging("jar").build()))
                     ).run();
@@ -1591,10 +1589,9 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                     )
             );
 
-            try (Writer writer = Files.newBufferedWriter(
-                    bootstrapFolder.resolve(session.locations().getDefaultIdBasedir(def.getId().getLongId()))
-                            .resolve("nuts.properties")
-            )) {
+            try (Writer writer = bootstrapFolder.resolve(session.locations().getDefaultIdBasedir(def.getId().getLongId()))
+                            .resolve("nuts.properties").getWriter()
+            ) {
                 CoreIOUtils.storeProperties(pr, writer, false, session);
             } catch (IOException ex) {
                 throw new NutsIOException(session, ex);

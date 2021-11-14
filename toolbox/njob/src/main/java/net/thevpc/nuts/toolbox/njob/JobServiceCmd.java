@@ -291,7 +291,7 @@ public class JobServiceCmd {
                 .setCommandAutoCompleteResolver(new JobAutoCompleter())
                 .setCommandHistory(
                         NutsCommandHistory.of(session)
-                                .setPath(Paths.get(context.getVarFolder()).resolve("njob-history.hist"))
+                                .setPath(context.getVarFolder().resolve("njob-history.hist"))
                 );
         session.env().setProperty(JobServiceCmd.class.getName(), this);
 

@@ -47,7 +47,7 @@ public class JarPathVersionResolver implements PathVersionResolver {
         }
         Set<VersionDescriptor> all = new HashSet<>();
         NutsSession session = context.getSession();
-        try (InputStream is = (NutsPath.of(filePath, session).builder().withAppBaseDir().build()).getInputStream()) {
+        try (InputStream is = (NutsPath.of(filePath, session).toAbsolute()).getInputStream()) {
             NutsUncompress.of(session)
                     .from(is)
                     .visit(new NutsIOUncompressVisitor() {

@@ -4,10 +4,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.format.DefaultFormatBase;
 import net.thevpc.nuts.spi.NutsSupportLevelContext;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.UncheckedIOException;
+import java.io.*;
 import java.net.URL;
 import java.nio.file.Path;
 import java.util.*;
@@ -188,7 +185,7 @@ public abstract class NutsPathBase implements NutsPath {
 
     @Override
     public int hashCode() {
-        return Objects.hash(session, userKind, toString());
+        return Objects.hash(/*session, */userKind, toString());
     }
 
     @Override
@@ -196,8 +193,9 @@ public abstract class NutsPathBase implements NutsPath {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         NutsPathBase that = (NutsPathBase) o;
-        return Objects.equals(session, that.session)
-                && Objects.equals(userKind, that.userKind)
+        return  //Objects.equals(session, that.session)
+                //&&
+                Objects.equals(userKind, that.userKind)
                 && Objects.equals(toString(), toString())
                 ;
     }
@@ -241,4 +239,13 @@ public abstract class NutsPathBase implements NutsPath {
         return walk(maxDepth<=0?Integer.MAX_VALUE:maxDepth,new NutsPathVisitOption[0]);
     }
 
+    @Override
+    public Writer getWriter() {
+        return new BufferedWriter(new OutputStreamWriter(getOutputStream()));
+    }
+
+    @Override
+    public Reader getReader() {
+        return new BufferedReader(new InputStreamReader(getInputStream()));
+    }
 }

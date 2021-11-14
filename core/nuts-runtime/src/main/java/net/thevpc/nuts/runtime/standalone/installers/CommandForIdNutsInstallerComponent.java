@@ -107,7 +107,7 @@ public class CommandForIdNutsInstallerComponent implements NutsInstallerComponen
         NutsWorkspaceUtils.of(executionContext.getSession()).checkReadOnly();
         NutsId id = executionContext.getDefinition().getId();
         if ("jar".equals(executionContext.getDefinition().getDescriptor().getPackaging())) {
-            NutsExecutionEntry[] executionEntries = NutsExecutionEntries.of(session).parse(executionContext.getDefinition().getPath());
+            NutsExecutionEntry[] executionEntries = NutsExecutionEntries.of(session).parse(executionContext.getDefinition().getFile());
             for (NutsExecutionEntry executionEntry : executionEntries) {
                 if (executionEntry.isApp()) {
                     //

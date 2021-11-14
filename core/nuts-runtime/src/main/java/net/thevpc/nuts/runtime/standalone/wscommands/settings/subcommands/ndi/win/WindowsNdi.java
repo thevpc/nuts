@@ -1,6 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.ndi.win;
 
 import net.thevpc.nuts.NutsId;
+import net.thevpc.nuts.NutsPath;
 import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.NutsShellFamily;
 import net.thevpc.nuts.runtime.standalone.wscommands.settings.PathInfo;
@@ -10,7 +11,6 @@ import net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.ndi.Nd
 import net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.ndi.base.BaseSystemNdi;
 import net.thevpc.nuts.runtime.core.shell.NutsShellHelper;
 
-import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.Objects;
@@ -79,7 +79,7 @@ public class WindowsNdi extends BaseSystemNdi {
     @Override
     protected FreeDesktopEntryWriter createFreeDesktopEntryWriter() {
         return new WindowFreeDesktopEntryWriter(
-                session.env().getDesktopPath()
+                session.env().getDesktopPath()==null?null:NutsPath.of(session.env().getDesktopPath(),getSession())
                 , session);
     }
 
@@ -130,7 +130,7 @@ public class WindowsNdi extends BaseSystemNdi {
             {
                 return new NdiScriptInfo() {
                     @Override
-                    public Path path() {
+                    public NutsPath path() {
                         return options.resolveBinFolder().resolve("nuts-term.cmd");
                     }
 
@@ -146,7 +146,7 @@ public class WindowsNdi extends BaseSystemNdi {
             {
                 return new NdiScriptInfo() {
                     @Override
-                    public Path path() {
+                    public NutsPath path() {
                         return options.resolveBinFolder().resolve("nuts-term.ps1");
                     }
 
@@ -167,7 +167,7 @@ public class WindowsNdi extends BaseSystemNdi {
             case WIN_CMD:{
                 return new NdiScriptInfo() {
                     @Override
-                    public Path path() {
+                    public NutsPath path() {
                         return options.resolveIncFolder().resolve(".nuts-env.cmd");
                     }
 
@@ -182,7 +182,7 @@ public class WindowsNdi extends BaseSystemNdi {
             case WIN_POWER_SHELL: {
                 return new NdiScriptInfo() {
                     @Override
-                    public Path path() {
+                    public NutsPath path() {
                         return options.resolveIncFolder().resolve(".nuts-env.ps1");
                     }
 
@@ -203,7 +203,7 @@ public class WindowsNdi extends BaseSystemNdi {
                 return
                         new NdiScriptInfo() {
                             @Override
-                            public Path path() {
+                            public NutsPath path() {
                                 return options.resolveIncFolder().resolve(".nuts-term-init.cmd");
                             }
 
@@ -220,7 +220,7 @@ public class WindowsNdi extends BaseSystemNdi {
                 return
                         new NdiScriptInfo() {
                             @Override
-                            public Path path() {
+                            public NutsPath path() {
                                 return options.resolveIncFolder().resolve(".nuts-term-init.ps1");
                             }
 
@@ -242,13 +242,13 @@ public class WindowsNdi extends BaseSystemNdi {
             case WIN_CMD:{
                 return new NdiScriptInfo() {
                     @Override
-                    public Path path() {
+                    public NutsPath path() {
                         return options.resolveIncFolder().resolve(".nuts-init.cmd");
                     }
 
                     @Override
                     public PathInfo create() {
-                        Path apiConfigFile = path();
+                        NutsPath apiConfigFile = path();
                         return scriptBuilderTemplate("nuts-init", NutsShellFamily.WIN_CMD, "nuts-init", options.resolveNutsApiId(), options)
                                 .setPath(apiConfigFile)
                                 .buildAddLine(WindowsNdi.this);
@@ -258,13 +258,13 @@ public class WindowsNdi extends BaseSystemNdi {
             case WIN_POWER_SHELL: {
                 return new NdiScriptInfo() {
                     @Override
-                    public Path path() {
+                    public NutsPath path() {
                         return options.resolveIncFolder().resolve(".nuts-init.ps1");
                     }
 
                     @Override
                     public PathInfo create() {
-                        Path apiConfigFile = path();
+                        NutsPath apiConfigFile = path();
                         return scriptBuilderTemplate("nuts-init", NutsShellFamily.WIN_POWER_SHELL, "nuts-init", options.resolveNutsApiId(), options)
                                 .setPath(apiConfigFile)
                                 .buildAddLine(WindowsNdi.this);

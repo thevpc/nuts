@@ -367,10 +367,10 @@ public class MavenUtils {
         return version == null ? null : version.replace("(", "]").replace(")", "[");
     }
 
-    public NutsDescriptor parsePomXmlAndResolveParents(Path path, NutsFetchMode fetchMode, NutsRepository repository) throws IOException {
+    public NutsDescriptor parsePomXmlAndResolveParents(NutsPath path, NutsFetchMode fetchMode, NutsRepository repository) throws IOException {
         try {
-            session.getTerminal().printProgress("%-8s %s", "parse", NutsPath.of(path,session).toCompressedForm());
-            try (InputStream is = Files.newInputStream(path)) {
+            session.getTerminal().printProgress("%-8s %s", "parse", path.toCompressedForm());
+            try (InputStream is = path.getInputStream()) {
                 NutsDescriptor nutsDescriptor = parsePomXmlAndResolveParents(is, fetchMode, path.toString(), repository);
                 if (nutsDescriptor.getId().getArtifactId() == null) {
                     //why name is null ? should checkout!

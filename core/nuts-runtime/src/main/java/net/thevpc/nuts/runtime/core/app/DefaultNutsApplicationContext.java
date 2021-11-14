@@ -16,8 +16,8 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
     private final Class appClass;
     private NutsWorkspace workspace;
     private NutsSession session;
-    private String[] folders = new String[NutsStoreLocation.values().length];
-    private String[] sharedFolders = new String[NutsStoreLocation.values().length];
+    private NutsPath[] folders = new NutsPath[NutsStoreLocation.values().length];
+    private NutsPath[] sharedFolders = new NutsPath[NutsStoreLocation.values().length];
     private NutsId appId;
     private long startTimeMillis;
     private String[] args;
@@ -283,52 +283,52 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
     }
 
     @Override
-    public String getAppsFolder() {
+    public NutsPath getAppsFolder() {
         return getFolder(NutsStoreLocation.APPS);
     }
 
     @Override
-    public String getConfigFolder() {
+    public NutsPath getConfigFolder() {
         return getFolder(NutsStoreLocation.CONFIG);
     }
 
     @Override
-    public String getLogFolder() {
+    public NutsPath getLogFolder() {
         return getFolder(NutsStoreLocation.LOG);
     }
 
     @Override
-    public String getTempFolder() {
+    public NutsPath getTempFolder() {
         return getFolder(NutsStoreLocation.TEMP);
     }
 
     @Override
-    public String getVarFolder() {
+    public NutsPath getVarFolder() {
         return getFolder(NutsStoreLocation.VAR);
     }
 
     @Override
-    public String getLibFolder() {
+    public NutsPath getLibFolder() {
         return getFolder(NutsStoreLocation.LIB);
     }
 
     @Override
-    public String getRunFolder() {
+    public NutsPath getRunFolder() {
         return getFolder(NutsStoreLocation.RUN);
     }
 
     @Override
-    public String getCacheFolder() {
+    public NutsPath getCacheFolder() {
         return getFolder(NutsStoreLocation.CACHE);
     }
 
     @Override
-    public String getFolder(NutsStoreLocation location) {
+    public NutsPath getFolder(NutsStoreLocation location) {
         return folders[location.ordinal()];
     }
 
     @Override
-    public String getVersionFolderFolder(NutsStoreLocation location, String version) {
+    public NutsPath getVersionFolder(NutsStoreLocation location, String version) {
         if (version == null
                 || version.isEmpty()
                 || version.equalsIgnoreCase("current")
@@ -337,7 +337,7 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
         }
         NutsId newId = this.getAppId().builder().setVersion(version).build();
         if (storeLocationResolver != null) {
-            String r = storeLocationResolver.getStoreLocation(newId, location);
+            NutsPath r = storeLocationResolver.getStoreLocation(newId, location);
             if (r != null) {
                 return r;
             }
@@ -345,53 +345,53 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
         return session.locations().getStoreLocation(newId,location);
     }
 
-    public NutsApplicationContext setFolder(NutsStoreLocation location, String folder) {
+    public NutsApplicationContext setFolder(NutsStoreLocation location, NutsPath folder) {
         this.folders[location.ordinal()] = folder;
         return this;
     }
 
-    public NutsApplicationContext setSharedFolder(NutsStoreLocation location, String folder) {
+    public NutsApplicationContext setSharedFolder(NutsStoreLocation location, NutsPath folder) {
         this.sharedFolders[location.ordinal()] = folder;
         return this;
     }
 
     @Override
-    public String getSharedAppsFolder() {
+    public NutsPath getSharedAppsFolder() {
         return getSharedFolder(NutsStoreLocation.APPS);
     }
 
     @Override
-    public String getSharedConfigFolder() {
+    public NutsPath getSharedConfigFolder() {
         return getSharedFolder(NutsStoreLocation.CONFIG);
     }
 
     @Override
-    public String getSharedLogFolder() {
+    public NutsPath getSharedLogFolder() {
         return getSharedFolder(NutsStoreLocation.LOG);
     }
 
     @Override
-    public String getSharedTempFolder() {
+    public NutsPath getSharedTempFolder() {
         return getSharedFolder(NutsStoreLocation.TEMP);
     }
 
     @Override
-    public String getSharedVarFolder() {
+    public NutsPath getSharedVarFolder() {
         return getSharedFolder(NutsStoreLocation.VAR);
     }
 
     @Override
-    public String getSharedLibFolder() {
+    public NutsPath getSharedLibFolder() {
         return getSharedFolder(NutsStoreLocation.LIB);
     }
 
     @Override
-    public String getSharedRunFolder() {
+    public NutsPath getSharedRunFolder() {
         return getSharedFolder(NutsStoreLocation.RUN);
     }
 
     @Override
-    public String getSharedFolder(NutsStoreLocation location) {
+    public NutsPath getSharedFolder(NutsStoreLocation location) {
         return sharedFolders[location.ordinal()];
     }
 

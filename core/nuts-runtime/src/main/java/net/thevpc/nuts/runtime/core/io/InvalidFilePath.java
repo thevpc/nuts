@@ -1,26 +1,18 @@
 package net.thevpc.nuts.runtime.core.io;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.bundles.io.InputStreamMetadataAwareImpl;
-import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.config.DefaultNutsWorkspaceConfigModel;
 import net.thevpc.nuts.spi.NutsFormatSPI;
 import net.thevpc.nuts.spi.NutsPathSPI;
 
-import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.nio.file.FileVisitOption;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.attribute.*;
 import java.time.Instant;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class InvalidFilePath implements NutsPathSPI {
 
@@ -61,15 +53,38 @@ public class InvalidFilePath implements NutsPathSPI {
     }
 
     @Override
-    public NutsPath resolve(String[] others, boolean trailingSeparator) {
-        StringBuilder sb = new StringBuilder(value);
-        for (String other : others) {
-            if (sb.length() == 0 || (sb.charAt(sb.length() - 1) != '/' && sb.charAt(sb.length() - 1) != '\\')) {
-                sb.append('/');
-            }
-            sb.append(other);
+    public NutsPath resolve(String path) {
+        String b = value;
+        if (b.endsWith("/") || b.endsWith("\\")) {
+            return NutsPath.of(b + path, session);
         }
-        return NutsPath.of(sb.toString(), getSession());
+        return NutsPath.of(b + "/" + path, session);
+    }
+
+    @Override
+    public NutsPath resolve(NutsPath path) {
+        return resolve(path == null ? null : path.toString());
+    }
+
+    @Override
+    public NutsPath resolveSibling(String path) {
+        if (path == null || path.isEmpty()) {
+            return getParent();
+        }
+        if (isRoot()) {
+            return NutsPath.of("/" + path, session);
+        }
+        return getParent().resolve(path);
+    }
+
+    @Override
+    public NutsPath resolveSibling(NutsPath path) {
+        return resolveSibling(path == null ? null : path.toString());
+    }
+
+    @Override
+    public NutsPath toCompressedForm() {
+        return null;
     }
 
     @Override
@@ -233,10 +248,7 @@ public class InvalidFilePath implements NutsPathSPI {
         ) {
             return true;
         }
-        if (DefaultNutsWorkspaceConfigModel.MOSTLY_URL_PATTERN.matcher(value).matches()) {
-            return true;
-        }
-        return false;
+        return DefaultNutsWorkspaceConfigModel.MOSTLY_URL_PATTERN.matcher(value).matches();
     }
 
     @Override
@@ -265,41 +277,6 @@ public class InvalidFilePath implements NutsPathSPI {
 
     @Override
     public void removePermissions(NutsPathPermission... permissions) {
-    }
-
-    private String[] normalizePath(String[] aa) {
-        List<String> p = new ArrayList<>(Arrays.asList(aa));
-        for (int i = p.size() - 1; i >= 0; i--) {
-            switch (p.get(i)) {
-                case ".": {
-                    p.remove(i);
-                    i++;
-                    break;
-                }
-                case "..": {
-                    p.remove(i);
-                    if (i > 0) {
-                        p.remove(i);
-                    }
-                    break;
-                }
-                default: {
-                    //do nothing
-                }
-            }
-        }
-        return p.toArray(new String[0]);
-    }
-
-    private String[] asPathArray(String s) {
-        return Arrays.stream(value.split("[/\\\\]"))
-                .filter(x -> x.length() == 0)
-                .toArray(String[]::new)
-                ;
-    }
-
-    private String[] asPathArray() {
-        return asPathArray(value);
     }
 
     @Override
@@ -348,6 +325,52 @@ public class InvalidFilePath implements NutsPathSPI {
     }
 
     @Override
+    public NutsPath subpath(int beginIndex, int endIndex) {
+        String[] a = asPathArray();
+        return NutsPath.of(String.join("/", Arrays.copyOfRange(a, beginIndex, endIndex)), getSession());
+    }
+
+    @Override
+    public String[] getItems() {
+        return asPathArray();
+    }
+
+    private String[] normalizePath(String[] aa) {
+        List<String> p = new ArrayList<>(Arrays.asList(aa));
+        for (int i = p.size() - 1; i >= 0; i--) {
+            switch (p.get(i)) {
+                case ".": {
+                    p.remove(i);
+                    i++;
+                    break;
+                }
+                case "..": {
+                    p.remove(i);
+                    if (i > 0) {
+                        p.remove(i);
+                    }
+                    break;
+                }
+                default: {
+                    //do nothing
+                }
+            }
+        }
+        return p.toArray(new String[0]);
+    }
+
+    private String[] asPathArray(String s) {
+        return Arrays.stream(value.split("[/\\\\]"))
+                .filter(x -> x.length() == 0)
+                .toArray(String[]::new)
+                ;
+    }
+
+    private String[] asPathArray() {
+        return asPathArray(value);
+    }
+
+    @Override
     public int hashCode() {
         return Objects.hash(value);
     }
@@ -368,7 +391,6 @@ public class InvalidFilePath implements NutsPathSPI {
     public String toString() {
         return value;
     }
-
 
     private static class MyPathFormat implements NutsFormatSPI {
 
@@ -392,10 +414,4 @@ public class InvalidFilePath implements NutsPathSPI {
             return false;
         }
     }
-
-    @Override
-    public NutsPath toCompressedForm() {
-        return null;
-    }
-
 }

@@ -67,24 +67,20 @@ public class DefaultNutsTmp implements NutsTmp {
     }
 
     public NutsPath createTempFile(String name, boolean folder) {
-        File rootFolder = null;
+        NutsPath rootFolder = null;
         NutsRepository repositoryById = null;
         if (repositoryId == null) {
-            rootFolder = Paths.get(getSession().locations().setSession(getSession()).getStoreLocation(NutsStoreLocation.TEMP)).toFile();
+            rootFolder = getSession().locations().setSession(getSession()).getStoreLocation(NutsStoreLocation.TEMP);
         } else {
             repositoryById = getSession().repos().setSession(getSession()).getRepository(repositoryId);
-            rootFolder = Paths.get(repositoryById.config().setSession(getSession()).getStoreLocation(NutsStoreLocation.TEMP)).toFile();
+            rootFolder = repositoryById.config().setSession(getSession()).getStoreLocation(NutsStoreLocation.TEMP);
         }
         NutsId appId = getSession().getAppId();
         if (appId == null) {
             appId = getSession().getWorkspace().getRuntimeId();
         }
         if (appId != null) {
-            rootFolder = new File(
-                    rootFolder,
-                    NutsConstants.Folders.ID + File.separator
-                            + getSession().locations().getDefaultIdBasedir(appId)
-            );
+            rootFolder = rootFolder.resolve(NutsConstants.Folders.ID).resolve(getSession().locations().getDefaultIdBasedir(appId));
         }
         if (name == null) {
             name = "";
@@ -122,7 +118,7 @@ public class DefaultNutsTmp implements NutsTmp {
             for (int i = 0; i < 15; i++) {
                 File temp = null;
                 try {
-                    temp = File.createTempFile(prefix.toString(), ext.toString(), rootFolder);
+                    temp = File.createTempFile(prefix.toString(), ext.toString(), rootFolder.toFile().toFile());
                     if (temp.delete() && temp.mkdir()) {
                         return NutsPath.of(temp.toPath(),session);
                     }
@@ -133,7 +129,7 @@ public class DefaultNutsTmp implements NutsTmp {
             throw new NutsIOException(session, NutsMessage.cstyle("could not create temp directory: %s*%s", rootFolder + File.separator + prefix, ext));
         } else {
             try {
-                return NutsPath.of(File.createTempFile(prefix.toString(), ext.toString(), rootFolder).toPath(),session);
+                return NutsPath.of(File.createTempFile(prefix.toString(), ext.toString(), rootFolder.toFile().toFile()).toPath(),session);
             } catch (IOException e) {
                 throw new NutsIOException(session, e);
             }

@@ -62,9 +62,9 @@ public class MavenRepositoryFolderHelper {
     private NutsLogger LOG;
     private NutsRepository repo;
     private NutsWorkspace ws;
-    private Path rootPath;
+    private NutsPath rootPath;
 
-    public MavenRepositoryFolderHelper(NutsRepository repo, NutsSession session, Path rootPath) {
+    public MavenRepositoryFolderHelper(NutsRepository repo, NutsSession session, NutsPath rootPath) {
         this.repo = repo;
         this.ws = session != null ? session.getWorkspace() : repo == null ? null : repo.getWorkspace();
         if (repo == null && session == null) {
@@ -84,16 +84,15 @@ public class MavenRepositoryFolderHelper {
         return LOG;
     }
 
-    public Path getIdLocalFile(NutsId id, NutsSession session) {
+    public NutsPath getIdLocalFile(NutsId id, NutsSession session) {
         return getStoreLocation().resolve(NutsRepositoryExt.of(repo).getIdBasedir(id, session))
                 .resolve(session.locations().getDefaultIdFilename(id));
     }
 
     public NutsContent fetchContentImpl(NutsId id, Path localPath, NutsSession session) {
-        Path cacheContent = getIdLocalFile(id, session);
-        if (cacheContent != null && Files.exists(cacheContent)) {
-            return new NutsDefaultContent(
-                    NutsPath.of(cacheContent,session), true, false);
+        NutsPath cacheContent = getIdLocalFile(id, session);
+        if (cacheContent != null && cacheContent.exists()) {
+            return new NutsDefaultContent(cacheContent, true, false);
         }
         return null;
     }
@@ -109,17 +108,17 @@ public class MavenRepositoryFolderHelper {
         return NutsRepositoryExt.of(repo).getIdFilename(id, session);
     }
 
-    public Path getLocalGroupAndArtifactFile(NutsId id, NutsSession session) {
+    public NutsPath getLocalGroupAndArtifactFile(NutsId id, NutsSession session) {
         NutsWorkspaceUtils.of(session).checkShortId(id);
-        Path groupFolder = getStoreLocation().resolve(id.getGroupId().replace('.', File.separatorChar));
+        NutsPath groupFolder = getStoreLocation().resolve(id.getGroupId().replace('.', File.separatorChar));
         return groupFolder.resolve(id.getArtifactId());
     }
 
     public Iterator<NutsId> searchVersions(NutsId id, final NutsIdFilter filter, boolean deep, NutsSession session) {
         if (id.getVersion().isSingleValue()) {
             NutsId id1 = id.builder().setFaceDescriptor().build();
-            Path localFile = getIdLocalFile(id1, session);
-            if (localFile != null && Files.isRegularFile(localFile)) {
+            NutsPath localFile = getIdLocalFile(id1, session);
+            if (localFile != null && localFile.isRegularFile()) {
                 return Collections.singletonList(id.builder().setRepository(repo == null ? null : repo.getName()).build()).iterator();
             }
             return null;
@@ -129,9 +128,9 @@ public class MavenRepositoryFolderHelper {
                 session);
     }
 
-    public Iterator<NutsId> searchInFolder(Path folder, final NutsIdFilter filter, int maxDepth, NutsSession session) {
+    public Iterator<NutsId> searchInFolder(NutsPath folder, final NutsIdFilter filter, int maxDepth, NutsSession session) {
         folder = rootPath.resolve(folder);
-        if (folder == null || !Files.exists(folder) || !Files.isDirectory(folder)) {
+        if (folder == null || !folder.exists() || !folder.isDirectory()) {
             //            return IteratorUtils.emptyIterator();
             return null;
         }
@@ -142,37 +141,30 @@ public class MavenRepositoryFolderHelper {
             }
 
             @Override
-            public boolean isDescFile(Path pathname) {
-                return pathname.getFileName().toString().equals("pom.xml");
+            public boolean isDescFile(NutsPath pathname) {
+                return pathname.getName().toString().equals("pom.xml");
             }
 
             @Override
-            public NutsDescriptor parseDescriptor(Path pathname, NutsSession session) throws IOException {
+            public NutsDescriptor parseDescriptor(NutsPath pathname, NutsSession session) throws IOException {
                 return MavenUtils.of(session).parsePomXmlAndResolveParents(pathname, NutsFetchMode.LOCAL, repo);
             }
         }, maxDepth);
     }
 
-    public Path getStoreLocation() {
+    public NutsPath getStoreLocation() {
         return rootPath;
     }
 
     public NutsId searchLatestVersion(NutsId id, NutsIdFilter filter, NutsSession session) {
         NutsId bestId = null;
-        File file = getLocalGroupAndArtifactFile(id, session).toFile();
+        NutsPath  file = getLocalGroupAndArtifactFile(id, session);
         if (file.exists()) {
-            File[] versionFolders = file.listFiles(new FileFilter() {
-                @Override
-                public boolean accept(File pathname) {
-                    return pathname.isDirectory();
-                }
-            });
-            if (versionFolders != null) {
-                for (File versionFolder : versionFolders) {
-                    NutsId id2 = id.builder().setVersion(versionFolder.getName()).build();
-                    if (bestId == null || id2.getVersion().compareTo(bestId.getVersion()) > 0) {
-                        bestId = id2;
-                    }
+            NutsPath[] versionFolders = file.list().filter(NutsPath::isDirectory).toArray(NutsPath[]::new);
+            for (NutsPath versionFolder : versionFolders) {
+                NutsId id2 = id.builder().setVersion(versionFolder.getName()).build();
+                if (bestId == null || id2.getVersion().compareTo(bestId.getVersion()) > 0) {
+                    bestId = id2;
                 }
             }
         }
@@ -183,9 +175,9 @@ public class MavenRepositoryFolderHelper {
         reindexFolder(getStoreLocation(), true, session);
     }
 
-    private void reindexFolder(Path path, boolean applyRawNavigation, NutsSession session) {
+    private void reindexFolder(NutsPath path, boolean applyRawNavigation, NutsSession session) {
         try {
-            Files.walkFileTree(path, new FileVisitor<Path>() {
+            Files.walkFileTree(path.toFile(), new FileVisitor<Path>() {
                 @Override
                 public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
                     return FileVisitResult.CONTINUE;
@@ -270,7 +262,7 @@ public class MavenRepositoryFolderHelper {
                             new MavenMetadataParser(session).writeMavenMetaData(m, metadataxml);
                             String md5 = CoreIOUtils.evalMD5Hex(metadataxml,session).toLowerCase();
                             Files.write(metadataxml.resolveSibling("maven-metadata.xml.md5"), md5.getBytes());
-                            String sha1 = CoreIOUtils.evalSHA1Hex(metadataxml,session).toLowerCase();
+                            String sha1 = CoreIOUtils.evalSHA1Hex(NutsPath.of(metadataxml,session),session).toLowerCase();
                             Files.write(metadataxml.resolveSibling("maven-metadata.xml.sha1"), sha1.getBytes());
                         }
                         if (applyRawNavigation) {

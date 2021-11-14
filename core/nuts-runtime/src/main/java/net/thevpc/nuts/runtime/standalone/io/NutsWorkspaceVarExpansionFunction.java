@@ -11,25 +11,29 @@ public class NutsWorkspaceVarExpansionFunction implements Function<String, Strin
         this.ws = ws;
     }
 
+    private String str(NutsPath p){
+        return p==null?null:p.toString();
+    }
+
     @Override
     public String apply(String from) {
         switch (from) {
             case "home.config":
-                return ws.locations().getHomeLocation(NutsStoreLocation.CONFIG);
+                return str(ws.locations().getHomeLocation(NutsStoreLocation.CONFIG));
             case "home.apps":
-                return ws.locations().getHomeLocation(NutsStoreLocation.APPS);
+                return str(ws.locations().getHomeLocation(NutsStoreLocation.APPS));
             case "home.lib":
-                return ws.locations().getHomeLocation(NutsStoreLocation.LIB);
+                return str(ws.locations().getHomeLocation(NutsStoreLocation.LIB));
             case "home.temp":
-                return ws.locations().getHomeLocation(NutsStoreLocation.TEMP);
+                return str(ws.locations().getHomeLocation(NutsStoreLocation.TEMP));
             case "home.var":
-                return ws.locations().getHomeLocation(NutsStoreLocation.VAR);
+                return str(ws.locations().getHomeLocation(NutsStoreLocation.VAR));
             case "home.cache":
-                return ws.locations().getHomeLocation(NutsStoreLocation.CACHE);
+                return str(ws.locations().getHomeLocation(NutsStoreLocation.CACHE));
             case "home.log":
-                return ws.locations().getHomeLocation(NutsStoreLocation.LOG);
+                return str(ws.locations().getHomeLocation(NutsStoreLocation.LOG));
             case "home.run":
-                return ws.locations().getHomeLocation(NutsStoreLocation.RUN);
+                return str(ws.locations().getHomeLocation(NutsStoreLocation.RUN));
             case "workspace.hash-name":
                 return ws.getWorkspace().getHashName();
             case "workspace.name":

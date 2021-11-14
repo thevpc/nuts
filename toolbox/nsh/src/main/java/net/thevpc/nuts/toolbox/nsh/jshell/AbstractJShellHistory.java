@@ -48,7 +48,7 @@ public abstract class AbstractJShellHistory implements JShellHistory {
             return;
         }
         if (file.getParent() != null) {
-            file.getParent().mkdir(true);
+            file.getParent().mkdirs();
         }
         PrintWriter w = null;
         try {

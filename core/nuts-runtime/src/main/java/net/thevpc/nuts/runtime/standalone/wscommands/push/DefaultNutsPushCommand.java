@@ -34,7 +34,6 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
-import net.thevpc.nuts.runtime.standalone.wscommands.push.AbstractDefaultNutsPushCommand;
 import net.thevpc.nuts.spi.NutsRepositorySPI;
 
 /**
@@ -122,7 +121,7 @@ public class DefaultNutsPushCommand extends AbstractDefaultNutsPushCommand {
                 NutsRepositorySPI repoSPI = wu.repoSPI(repo);
                 repoSPI.deploy().setSession(session)
                         .setId(effId)
-                        .setContent(file.getPath())
+                        .setContent(file.getFile())
                         .setDescriptor(file.getDescriptor())
                         //                        .setFetchMode(fetchMode)
                         //                        .setOffline(this.isOffline())

@@ -42,7 +42,7 @@ import java.util.List;
 public class RmCommand extends SimpleJShellBuiltin {
 
     public RmCommand() {
-        super("rm", DEFAULT_SUPPORT,Options.class);
+        super("rm", DEFAULT_SUPPORT, Options.class);
     }
 
     @Override
@@ -70,7 +70,11 @@ public class RmCommand extends SimpleJShellBuiltin {
 //            if (p instanceof SshXFile) {
 //                ((SshXFile) p).setListener(listener);
 //            }
-            p.delete(options.R);
+            if (options.R) {
+                p.deleteTree();
+            } else {
+                p.delete();
+            }
         }
     }
 

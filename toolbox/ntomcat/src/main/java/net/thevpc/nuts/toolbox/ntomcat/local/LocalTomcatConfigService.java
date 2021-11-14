@@ -18,29 +18,26 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-import java.io.File;
 import java.io.IOException;
 import java.io.UncheckedIOException;
-import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.*;
 
 public class LocalTomcatConfigService extends LocalTomcatServiceBase {
 
     public static final String LOCAL_CONFIG_EXT = ".local-config";
+    private final LocalTomcat app;
+    private final NutsApplicationContext context;
+    private final NutsPath sharedConfigFolder;
     private String name;
-    private LocalTomcat app;
     private LocalTomcatConfig config;
-    private NutsApplicationContext context;
     private NutsDefinition catalinaNutsDefinition;
     private String catalinaVersion;
-    private Path sharedConfigFolder;
 
-    public LocalTomcatConfigService(Path file, LocalTomcat app) {
+    public LocalTomcatConfigService(NutsPath file, LocalTomcat app) {
         this(
-                file.getFileName().toString().substring(0, file.getFileName().toString().length() - LocalTomcatConfigService.LOCAL_CONFIG_EXT.length()),
+                file.getName().substring(0, file.getName().length() - LocalTomcatConfigService.LOCAL_CONFIG_EXT.length()),
                 app
         );
         loadConfig();
@@ -50,7 +47,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
         this.app = app;
         setName(name);
         this.context = app.getContext();
-        sharedConfigFolder = Paths.get(app.getContext().getVersionFolderFolder(NutsStoreLocation.CONFIG, NTomcatConfigVersions.CURRENT));
+        sharedConfigFolder = app.getContext().getVersionFolder(NutsStoreLocation.CONFIG, NTomcatConfigVersions.CURRENT);
     }
 
     public void open(NutsOpenMode autoCreate) {
@@ -116,18 +113,14 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
         result.put("ajp-redirect-port", getAjpConnectorRedirectPort());
         result.put("shutdown-port", getShutdownPort());
         result.put("config", getConfig());
-        NutsObjectFormat.of(context.getSession()).setValue(result).print(out);
+        NutsObjectFormat.of(getSession()).setValue(result).print(out);
         return this;
     }
 
     @Override
     public LocalTomcatConfigService remove() {
-        try {
-            Files.delete(sharedConfigFolder.resolve(getName() + LOCAL_CONFIG_EXT));
-            return this;
-        } catch (IOException ex) {
-            throw new UncheckedIOException(ex);
-        }
+        sharedConfigFolder.resolve(getName() + LOCAL_CONFIG_EXT).delete();
+        return this;
     }
 
     public LocalTomcatConfigService setConfig(LocalTomcatConfig config) {
@@ -143,18 +136,18 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
                 getConfig().setCatalinaVersion(v);
             }
         }
-        Path f = getConfigPath();
-        NutsSession session = context.getSession();
+        NutsPath f = getConfigPath();
+        NutsSession session = getSession();
         NutsElements.of(session).json().setValue(config).print(f);
         return this;
     }
 
-    public Path getConfigPath() {
+    public NutsPath getConfigPath() {
         return sharedConfigFolder.resolve(getName() + LOCAL_CONFIG_EXT);
     }
 
     public boolean existsConfig() {
-        return (Files.exists(getConfigPath()));
+        return getConfigPath().exists();
     }
 
     public String getRequestedCatalinaVersion() {
@@ -176,13 +169,13 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
         return nf.getId().getVersion().toString();
     }
 
-    public Path getCatalinaBase() {
+    public NutsPath getCatalinaBase() {
         LocalTomcatConfig c = getConfig();
-        Path catalinaBase = c.getCatalinaBase() == null ? null : Paths.get(c.getCatalinaBase());
-        Path catalinaHome = getCatalinaHome();
+        NutsPath catalinaBase = c.getCatalinaBase() == null ? null : NutsPath.of(c.getCatalinaBase(), getSession());
+        NutsPath catalinaHome = getCatalinaHome();
         if (NutsBlankable.isBlank(getConfig().getCatalinaHome())
                 && catalinaBase == null) {
-            catalinaBase = Paths.get(getName());
+            catalinaBase = NutsPath.of(getName(), getSession());
         }
         if (catalinaBase == null) {
             String v = getValidCatalinaVersion();
@@ -191,7 +184,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
             if (x2 > 0) {
                 v = v.substring(0, x2);
             }
-            catalinaBase = Paths.get(context.getSharedConfigFolder()).resolve("catalina-base-" + v).resolve("default");
+            catalinaBase = context.getSharedConfigFolder().resolve("catalina-base-" + v).resolve("default");
         } else {
             if (!catalinaBase.isAbsolute()) {
                 String v = getValidCatalinaVersion();
@@ -200,19 +193,19 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
                 if (x2 > 0) {
                     v = v.substring(0, x2);
                 }
-                catalinaBase = Paths.get(context.getSharedConfigFolder()).resolve("catalina-base-" + v).resolve(catalinaBase);
+                catalinaBase = context.getSharedConfigFolder().resolve("catalina-base-" + v).resolve(catalinaBase);
             }
         }
         return catalinaBase;
     }
 
-    public Path resolveCatalinaHome() {
+    public NutsPath resolveCatalinaHome() {
         NutsDefinition f = getCatalinaNutsDefinition();
-        Path u = Paths.get(f.getInstallInformation().getInstallFolder());
-        Path[] paths;
+        NutsPath u = f.getInstallInformation().getInstallFolder();
+        NutsPath[] paths;
         try {
-            paths = Files.list(u).filter(x -> Files.isDirectory(x)).toArray(Path[]::new);
-            if (paths.length == 1 && paths[0].getFileName().toString().toLowerCase().startsWith("apache-tomcat")) {
+            paths = u.list().filter(x -> x.isDirectory()).toArray(NutsPath[]::new);
+            if (paths.length == 1 && paths[0].getName().toLowerCase().startsWith("apache-tomcat")) {
                 return paths[0];
             }
         } catch (Exception e) {
@@ -221,57 +214,51 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
         return u;
     }
 
-    public Path getCatalinaHome() {
+    public NutsPath getCatalinaHome() {
         String h = getConfig().getCatalinaHome();
         if (NutsBlankable.isBlank(h)) {
-            Path h2 = resolveCatalinaHome();
+            NutsPath h2 = resolveCatalinaHome();
             getConfig().setCatalinaHome(h2.toString());
             save();
             return h2;
         }
-        return Paths.get(h);
+        return NutsPath.of(h, getSession());
+    }
+
+    private NutsSession getSession() {
+        return context.getSession();
     }
 
     public NutsString getFormattedError(String str) {
-        return NutsTexts.of(context.getSession()).ofStyled(str, NutsTextStyle.error())
+        return NutsTexts.of(getSession()).ofStyled(str, NutsTextStyle.error())
                 ;
     }
 
     public NutsString getFormattedSuccess(String str) {
-        return NutsTexts.of(context.getSession()).ofStyled(str, NutsTextStyle.success())
-                ;
-    }
-
-    public NutsString getFormattedPath(Path str) {
-        return NutsTexts.of(context.getSession()).ofStyled(str == null ? "" : str.toString(), NutsTextStyle.path())
-                ;
-    }
-
-    public NutsString getFormattedPath(String str) {
-        return NutsTexts.of(context.getSession()).ofStyled(str == null ? "" : str.toString(), NutsTextStyle.path())
+        return NutsTexts.of(getSession()).ofStyled(str, NutsTextStyle.success())
                 ;
     }
 
     public NutsString getFormattedPrefix(String str) {
-        return NutsTexts.of(context.getSession()).builder()
+        return NutsTexts.of(getSession()).builder()
                 .append("[")
                 .append(str, NutsTextStyle.primary5())
                 .append("]");
     }
 
     public void printStatus() {
-        if (context.getSession().isPlainOut()) {
+        if (getSession().isPlainOut()) {
             switch (getStatus()) {
                 case RUNNING: {
-                    context.getSession().out().printf("%s Tomcat %s.\n", getFormattedPrefix(getName()), getFormattedSuccess("running"));
+                    getSession().out().printf("%s Tomcat %s.\n", getFormattedPrefix(getName()), getFormattedSuccess("running"));
                     break;
                 }
                 case STOPPED: {
-                    context.getSession().out().printf("%s Tomcat %s.\n", getFormattedPrefix(getName()), getFormattedError("stopped"));
+                    getSession().out().printf("%s Tomcat %s.\n", getFormattedPrefix(getName()), getFormattedError("stopped"));
                     break;
                 }
                 case OUT_OF_MEMORY: {
-                    context.getSession().out().printf("%s Tomcat %s.\n", getFormattedPrefix(getName()), getFormattedError("out-of-memory"));
+                    getSession().out().printf("%s Tomcat %s.\n", getFormattedPrefix(getName()), getFormattedError("out-of-memory"));
                     break;
                 }
             }
@@ -297,7 +284,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
     }
 
     public NutsObjectFormat object() {
-        return NutsObjectFormat.of(context.getSession());
+        return NutsObjectFormat.of(getSession());
     }
 
     public String[] parseApps(String[] args) {
@@ -321,56 +308,53 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
     }
 
     public boolean buildCatalinaBase() {
-        Path catalinaHome = getCatalinaHome();
-        Path catalinaBase = getCatalinaBase();
+        NutsPath catalinaHome = getCatalinaHome();
+        NutsPath catalinaBase = getCatalinaBase();
         boolean catalinaBaseUpdated = false;
         catalinaBaseUpdated |= mkdirs(catalinaBase);
-        String ext = context.getSession().env().getOsFamily() == NutsOsFamily.WINDOWS ? "bat" : "sh";
+        String ext = getSession().env().getOsFamily() == NutsOsFamily.WINDOWS ? "bat" : "sh";
         catalinaBaseUpdated |= checkExec(catalinaHome.resolve("bin").resolve("catalina." + ext));
         LocalTomcatConfig c = getConfig();
         catalinaBaseUpdated |= mkdirs(catalinaBase.resolve("logs"));
         catalinaBaseUpdated |= mkdirs(catalinaBase.resolve("logs"));
         catalinaBaseUpdated |= mkdirs(catalinaBase.resolve("temp"));
         catalinaBaseUpdated |= mkdirs(catalinaBase.resolve("conf"));
-        if (Files.isDirectory(catalinaHome.resolve("conf"))) {
-            try (DirectoryStream<Path> ss = Files.newDirectoryStream(catalinaHome.resolve("conf"))) {
-                for (Path conf : ss) {
-                    Path confFile = catalinaBase.resolve("conf/" + conf.getFileName());
-                    if (!Files.exists(confFile)) {
-                        catalinaBaseUpdated = true;
-                        try {
-                            Files.copy(conf, confFile);
-                        } catch (IOException e) {
-                            throw new UncheckedIOException(e);
-                        }
-                    }
+        if (catalinaHome.resolve("conf").isDirectory()) {
+            for (NutsPath conf : catalinaHome.resolve("conf").list()) {
+                NutsPath confFile = catalinaBase.resolve("conf/" + conf.getName());
+                if (!confFile.exists()) {
+                    catalinaBaseUpdated = true;
+                    NutsCp.of(getSession())
+                            .from(conf).to(confFile)
+                            .run();
                 }
-            } catch (IOException ex) {
-                throw new UncheckedIOException(ex);
             }
         }
         if (c.isDev()) {
-            if (Files.isDirectory(catalinaHome.resolve("webapps").resolve("host-manager"))) {
-                catalinaBaseUpdated |= TomcatUtils.copyDir(
-                        catalinaHome.resolve("webapps").resolve("host-manager"),
-                        catalinaBase.resolve("webapps").resolve("host-manager"),
-                        false
-                );
+            if (catalinaHome.resolve("webapps").resolve("host-manager").isDirectory()) {
+                NutsCp.of(getSession())
+                        .from(catalinaHome.resolve("webapps").resolve("host-manager"))
+                        .to(catalinaBase.resolve("webapps").resolve("host-manager"))
+                        .setReplaceExisting(false)
+                        .run();
+                catalinaBaseUpdated = true;
             }
-            if (Files.isDirectory(catalinaHome.resolve("webapps").resolve("manager"))) {
-                catalinaBaseUpdated |= TomcatUtils.copyDir(
-                        catalinaHome.resolve("webapps").resolve("manager"),
-                        catalinaBase.resolve("webapps").resolve("manager"),
-                        false
-                );
+            if (catalinaHome.resolve("webapps").resolve("manager").isDirectory()) {
+                NutsCp.of(getSession())
+                        .from(catalinaHome.resolve("webapps").resolve("manager"))
+                        .to(catalinaBase.resolve("webapps").resolve("manager"))
+                        .setReplaceExisting(false)
+                        .run();
+                catalinaBaseUpdated = true;
             }
         } else {
-            catalinaBaseUpdated |= TomcatUtils.deleteDir(catalinaBase.resolve("webapps").resolve("host-manager"));
-            catalinaBaseUpdated |= TomcatUtils.deleteDir(catalinaBase.resolve("webapps").resolve("manager"));
+            catalinaBase.resolve("webapps").resolve("host-manager").deleteTree();
+            catalinaBase.resolve("webapps").resolve("manager").deleteTree();
+            catalinaBaseUpdated = true;
         }
         if (catalinaBaseUpdated) {
-            if (context.getSession().isPlainOut()) {
-                context.getSession().out().printf("%s updated catalina base %s\n", getFormattedPrefix(getName()), getFormattedPath(catalinaBase));
+            if (getSession().isPlainOut()) {
+                getSession().out().printf("%s updated catalina base %s\n", getFormattedPrefix(getName()), catalinaBase);
             }
             return true;
         }
@@ -379,9 +363,9 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
 
     public NutsExecCommand invokeCatalina(String catalinaCommand) {
         buildCatalinaBase();
-        Path catalinaHome = getCatalinaHome();
-        Path catalinaBase = getCatalinaBase();
-        NutsSession session = context.getSession();
+        NutsPath catalinaHome = getCatalinaHome();
+        NutsPath catalinaBase = getCatalinaBase();
+        NutsSession session = getSession();
         String ext = session.env().getOsFamily() == NutsOsFamily.WINDOWS ? "bat" : "sh";
 
         //b.
@@ -416,35 +400,35 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
         b.setEnv("CATALINA_TMPDIR", catalinaBase.resolve("temp").toString());
 
         NutsElements elem = NutsElements.of(session);
-        if("start".equals(catalinaCommand)) {
+        if ("start".equals(catalinaCommand)) {
             if (session.isPlainOut()) {
                 session.out().printf("%s starting Tomcat on port " + getHttpConnectorPort() + ". CMD=%s.\n", getFormattedPrefix(getName()), b.toString());
                 b.getResult();
-            }else{
+            } else {
                 b.grabOutputString();
-                int x=b.getResult();
-                String txt=b.getOutputString();
+                int x = b.getResult();
+                String txt = b.getOutputString();
                 session.eout().add(
                         elem.forObject()
-                        .set("command","catalina-start")
-                        .set("result-code",x)
-                        .set("catalina-out",txt)
-                        .build()
+                                .set("command", "catalina-start")
+                                .set("result-code", x)
+                                .set("catalina-out", txt)
+                                .build()
                 );
             }
-        }else if("stop".equals(catalinaCommand)){
+        } else if ("stop".equals(catalinaCommand)) {
             if (session.isPlainOut()) {
                 session.out().printf("%s stopping Tomcat. CMD=%s.\n", getFormattedPrefix(getName()), b.toString());
                 b.getResult();
-            }else{
+            } else {
                 b.grabOutputString();
-                int x=b.getResult();
-                String txt=b.getOutputString();
+                int x = b.getResult();
+                String txt = b.getOutputString();
                 session.eout().add(
                         elem.forObject()
-                                .set("command","catalina-stop")
-                                .set("result-code",x)
-                                .set("catalina-out",txt)
+                                .set("command", "catalina-stop")
+                                .set("result-code", x)
+                                .set("catalina-out", txt)
                                 .build()
                 );
             }
@@ -453,13 +437,9 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
         return b;
     }
 
-    private boolean mkdirs(Path catalinaBase) {
-        if (!Files.isDirectory(catalinaBase.resolve("logs"))) {
-            try {
-                Files.createDirectories(catalinaBase.resolve("logs"));
-            } catch (IOException ex) {
-                throw new UncheckedIOException(ex);
-            }
+    private boolean mkdirs(NutsPath catalinaBase) {
+        if (!catalinaBase.resolve("logs").isDirectory()) {
+            catalinaBase.resolve("logs").mkdirs();
             return true;
         }
         return false;
@@ -469,10 +449,10 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
         LocalTomcatConfig c = getConfig();
         RunningTomcat jpsResult = getRunningTomcat();
         if (jpsResult != null) {
-            NutsSession session = context.getSession();
-            if(session.isPlainOut()) {
+            NutsSession session = getSession();
+            if (session.isPlainOut()) {
                 session.out().printf("%s Tomcat already started on port " + getHttpConnectorPort() + ".\n", getFormattedPrefix(getName()));
-            }else {
+            } else {
                 session.eout().add(
                         NutsElements.of(session).forObject()
                                 .set("config-name", getName())
@@ -506,7 +486,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
             catalinaVersion = "";
         }
         catalinaVersion = catalinaVersion.trim();
-        NutsSession session = context.getSession();
+        NutsSession session = getSession();
         if (catalinaVersion.isEmpty()) {
             NutsVersion javaVersion = session.env().getPlatform().getVersion();
             //  http://tomcat.apache.org/whichversion.html
@@ -535,7 +515,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
                 cv = "[" + catalinaVersion + "," + catalinaVersion + ".99999]";
             }
             NutsSearchCommand searchLatestCommand = session.search().addId("org.apache.catalina:apache-tomcat#" + cv)
-                    .setSession(context.getSession()).setLatest(true);
+                    .setSession(getSession()).setLatest(true);
             NutsDefinition r = searchLatestCommand
                     .setInstallStatus(NutsInstallStatusFilters.of(session).byDeployed(true))
                     .getResultDefinitions().first();
@@ -556,12 +536,12 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
                 catalinaNutsDefinition = session
                         .install()
                         .addId(r.getId())
-                        .setSession(context.getSession().copy().addListener(new NutsInstallListener() {
+                        .setSession(getSession().copy().addListener(new NutsInstallListener() {
                             @Override
                             public void onInstall(NutsInstallEvent event) {
-                                if (context.getSession().isPlainOut()) {
-                                    context.getSession().out().printf("%s Tomcat installed to catalina home %s\n", getFormattedPrefix(getName()),
-                                            getFormattedPath(event.getDefinition().getInstallInformation().getInstallFolder())
+                                if (getSession().isPlainOut()) {
+                                    getSession().out().printf("%s Tomcat installed to catalina home %s\n", getFormattedPrefix(getName()),
+                                            event.getDefinition().getInstallInformation().getInstallFolder()
                                     );
                                 }
                             }
@@ -574,21 +554,17 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
         return catalinaNutsDefinition;
     }
 
-    public void deployFile(Path file, String contextName, String domain) {
-        String fileName = file.getFileName().toString();
+    public void deployFile(NutsPath file, String contextName, String domain) {
+        String fileName = file.getName().toString();
         if (fileName.endsWith(".war")) {
             if (NutsBlankable.isBlank(contextName)) {
                 contextName = fileName.substring(0, fileName.length() - ".war".length());
             }
-            Path c = getDefaulDeployFolder(domain).resolve(contextName + ".war");
-            if (context.getSession().isPlainOut()) {
-                context.getSession().out().printf("%s deploy file file %s to %s.\n", getFormattedPrefix(getName()), getFormattedPath(file), getFormattedPath(c));
+            NutsPath c = getDefaulDeployFolder(domain).resolve(contextName + ".war");
+            if (getSession().isPlainOut()) {
+                getSession().out().printf("%s deploy file file %s to %s.\n", getFormattedPrefix(getName()), file, c);
             }
-            try {
-                Files.copy(file, c);
-            } catch (IOException ex) {
-                throw new UncheckedIOException(ex);
-            }
+            NutsCp.of(getSession()).from(file).to(c).run();
         } else {
             throw new RuntimeException("expected war file");
         }
@@ -596,8 +572,8 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
 
     public boolean stop() {
         if (getRunningTomcat() == null) {
-            if (context.getSession().isPlainOut()) {
-                context.getSession().out().printf("%s Tomcat already stopped.\n", getFormattedPrefix(getName()));
+            if (getSession().isPlainOut()) {
+                getSession().out().printf("%s Tomcat already stopped.\n", getFormattedPrefix(getName()));
             }
             return false;
         }
@@ -607,21 +583,17 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
     }
 
     public RunningTomcat getRunningTomcat() {
-        Path catalinaBase = getCatalinaBase();
+        NutsPath catalinaBase = getCatalinaBase();
         return Arrays.stream(TomcatUtils.getRunningInstances(context))
                 .filter(p -> (catalinaBase == null
                         || catalinaBase.toString().equals(p.getBase())))
                 .findFirst().orElse(null);
     }
 
-    private boolean checkExec(Path pathname) {
-        File file = pathname.toFile();
-        if (!file.canExecute()) {
-            if (!file.setExecutable(true)) {
-                //context.out.println(file.canExecute());
-            } else {
-                return true;
-            }
+    private boolean checkExec(NutsPath pathname) {
+        if (!pathname.getPermissions().contains(NutsPathPermission.CAN_EXECUTE)) {
+            pathname.addPermissions(NutsPathPermission.CAN_EXECUTE);
+            return true;
         }
         return false;
     }
@@ -633,7 +605,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
     public boolean restart(String[] deployApps, boolean deleteLog) {
         stop();
         if (getRunningTomcat() != null) {
-            throw new NutsExecutionException(context.getSession(), NutsMessage.cstyle("server %s is running. it cannot be stopped!", getName()), 2);
+            throw new NutsExecutionException(getSession(), NutsMessage.cstyle("server %s is running. it cannot be stopped!", getName()), 2);
         }
         start(deployApps, deleteLog);
         return true;
@@ -642,17 +614,17 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
     public AppStatus waitForRunningStatus(String domain, String app, int timeout) {
         long startTime = System.currentTimeMillis();
         AppStatus y = getStatus(domain, app);
-        NutsSession session = context.getSession();
+        NutsSession session = getSession();
         NutsElements elem = NutsElements.of(session);
         if (y == AppStatus.RUNNING) {
-            if(session.isPlainOut()) {
+            if (session.isPlainOut()) {
                 session.out().printf("%s Tomcat started on port " + getHttpConnectorPort() + ".\n", getFormattedPrefix(getName()));
-            }else{
+            } else {
                 session.eout().add(elem
                         .forObject()
-                        .set("command","wait-for-running")
-                        .set("time",0)
-                        .set("result","success")
+                        .set("command", "wait-for-running")
+                        .set("time", 0)
+                        .set("result", "success")
                         .build()
                 );
             }
@@ -661,25 +633,25 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
         if (timeout <= 0) {
             RunningTomcat ps = getRunningTomcat();
             if (ps != null) {
-                if(session.isPlainOut()) {
+                if (session.isPlainOut()) {
                     session.out().printf("%s Tomcat started on port" + getHttpConnectorPort() + " .\n", getFormattedPrefix(getName()));
                     return AppStatus.RUNNING;
-                }else{
+                } else {
                     session.eout().add(elem
                             .forObject()
-                            .set("command","wait-for-running")
-                            .set("time",0)
-                            .set("result","success")
+                            .set("command", "wait-for-running")
+                            .set("time", 0)
+                            .set("result", "success")
                             .build()
                     );
                 }
-            }else{
-                if(!session.isPlainOut()) {
+            } else {
+                if (!session.isPlainOut()) {
                     session.eout().add(elem
                             .forObject()
-                            .set("command","wait-for-running")
-                            .set("time",0)
-                            .set("result","fail")
+                            .set("command", "wait-for-running")
+                            .set("time", 0)
+                            .set("result", "fail")
                             .build()
                     );
                 }
@@ -694,16 +666,16 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
             }
             y = getStatus(domain, app);
             if (y == AppStatus.RUNNING) {
-                if(session.isPlainOut()) {
+                if (session.isPlainOut()) {
                     session.out().printf("%s Tomcat started on port " + getHttpConnectorPort() + ".\n", getFormattedPrefix(getName()));
-                }else{
+                } else {
                     session.eout().add(elem
                             .forObject()
-                            .set("command","wait-for-running")
-                            .set("config-name",getName())
-                            .set("http-connector-port",getHttpConnectorPort())
-                            .set("time",System.currentTimeMillis()-startTime)
-                            .set("result","success")
+                            .set("command", "wait-for-running")
+                            .set("config-name", getName())
+                            .set("http-connector-port", getHttpConnectorPort())
+                            .set("time", System.currentTimeMillis() - startTime)
+                            .set("result", "success")
                             .build()
                     );
                 }
@@ -711,16 +683,16 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
             }
         }
         if (y == AppStatus.OUT_OF_MEMORY) {
-            if(session.isPlainOut()) {
+            if (session.isPlainOut()) {
                 session.out().printf("%s Tomcat out of memory.\n", getFormattedPrefix(getName()));
-            }else{
+            } else {
                 session.eout().add(elem
                         .forObject()
-                        .set("command","wait-for-running")
-                        .set("config-name",getName())
-                        .set("http-connector-port",getHttpConnectorPort())
-                        .set("time",System.currentTimeMillis()-startTime)
-                        .set("result","out-of-memory")
+                        .set("command", "wait-for-running")
+                        .set("config-name", getName())
+                        .set("http-connector-port", getHttpConnectorPort())
+                        .set("time", System.currentTimeMillis() - startTime)
+                        .set("result", "out-of-memory")
                         .build()
                 );
             }
@@ -730,20 +702,20 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
     }
 
     public boolean waitForStoppedStatus(int timeout, boolean kill) {
-        long startTime=System.currentTimeMillis();
+        long startTime = System.currentTimeMillis();
         RunningTomcat ps = getRunningTomcat();
-        NutsSession session = context.getSession();
+        NutsSession session = getSession();
         if (ps == null) {
-            if(session.isPlainOut()) {
+            if (session.isPlainOut()) {
                 session.out().printf("%s Tomcat stopped.\n", getFormattedPrefix(getName()));
-            }else{
+            } else {
                 session.eout().add(NutsElements.of(session)
                         .forObject()
-                        .set("command","wait-for-stopped")
-                        .set("config-name",getName())
-                        .set("http-connector-port",getHttpConnectorPort())
-                        .set("time",0)
-                        .set("result","stopped")
+                        .set("command", "wait-for-stopped")
+                        .set("config-name", getName())
+                        .set("http-connector-port", getHttpConnectorPort())
+                        .set("time", 0)
+                        .set("result", "stopped")
                         .build()
                 );
             }
@@ -758,16 +730,16 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
             }
             ps = getRunningTomcat();
             if (ps == null) {
-                if(session.isPlainOut()) {
+                if (session.isPlainOut()) {
                     session.out().printf("%s Tomcat stopped.\n", getFormattedPrefix(getName()));
-                }else{
+                } else {
                     session.eout().add(NutsElements.of(session)
                             .forObject()
-                            .set("command","wait-for-stopped")
-                            .set("config-name",getName())
-                            .set("http-connector-port",getHttpConnectorPort())
-                            .set("time",System.currentTimeMillis()-startTime)
-                            .set("result","stopped")
+                            .set("command", "wait-for-stopped")
+                            .set("config-name", getName())
+                            .set("http-connector-port", getHttpConnectorPort())
+                            .set("time", System.currentTimeMillis() - startTime)
+                            .set("result", "stopped")
                             .build()
                     );
                 }
@@ -780,33 +752,33 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
             if (ps != null) {
 
                 if (NutsPs.of(session).killProcess(ps.getPid())) {
-                    if(session.isPlainOut()) {
+                    if (session.isPlainOut()) {
                         session.out().printf("%s Tomcat process killed (%s).\n", getFormattedPrefix(getName()), ps.getPid());
-                    }else{
+                    } else {
                         session.eout().add(NutsElements.of(session)
                                 .forObject()
-                                .set("command","wait-for-stopped")
-                                .set("config-name",getName())
-                                .set("http-connector-port",getHttpConnectorPort())
-                                .set("time",System.currentTimeMillis()-startTime)
-                                .set("pid",ps.getPid())
-                                .set("result","killed")
+                                .set("command", "wait-for-stopped")
+                                .set("config-name", getName())
+                                .set("http-connector-port", getHttpConnectorPort())
+                                .set("time", System.currentTimeMillis() - startTime)
+                                .set("pid", ps.getPid())
+                                .set("result", "killed")
                                 .build()
                         );
                     }
                     return true;
                 } else {
-                    if(session.isPlainOut()) {
+                    if (session.isPlainOut()) {
                         session.out().printf("%s Tomcat process could not be killed ( %s).\n", getFormattedPrefix(getName()), ps.getPid());
-                    }else{
+                    } else {
                         session.eout().add(NutsElements.of(session)
                                 .forObject()
-                                .set("command","wait-for-stopped")
-                                .set("config-name",getName())
-                                .set("http-connector-port",getHttpConnectorPort())
-                                .set("time",System.currentTimeMillis()-startTime)
-                                .set("pid",ps.getPid())
-                                .set("result","unable-to-kill")
+                                .set("command", "wait-for-stopped")
+                                .set("config-name", getName())
+                                .set("http-connector-port", getHttpConnectorPort())
+                                .set("time", System.currentTimeMillis() - startTime)
+                                .set("pid", ps.getPid())
+                                .set("result", "unable-to-kill")
                                 .build()
                         );
                     }
@@ -817,32 +789,32 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
         }
         ps = getRunningTomcat();
         if (ps != null) {
-            if(session.isPlainOut()) {
+            if (session.isPlainOut()) {
                 session.out().printf("%s Tomcat process could not be terminated (%s).\n", getFormattedPrefix(getName()), ps.getPid());
-            }else{
+            } else {
                 session.eout().add(NutsElements.of(session)
                         .forObject()
-                        .set("command","wait-for-stopped")
-                        .set("config-name",getName())
-                        .set("http-connector-port",getHttpConnectorPort())
-                        .set("time",System.currentTimeMillis()-startTime)
-                        .set("pid",ps.getPid())
-                        .set("result","unable-to-stop")
+                        .set("command", "wait-for-stopped")
+                        .set("config-name", getName())
+                        .set("http-connector-port", getHttpConnectorPort())
+                        .set("time", System.currentTimeMillis() - startTime)
+                        .set("pid", ps.getPid())
+                        .set("result", "unable-to-stop")
                         .build()
                 );
             }
             return true;
         }
-        if(session.isPlainOut()) {
+        if (session.isPlainOut()) {
             session.out().printf("%s\n", getFormattedError("Tomcat stopped"));
-        }else{
+        } else {
             session.eout().add(NutsElements.of(session)
                     .forObject()
-                    .set("command","wait-for-stopped")
-                    .set("config-name",getName())
-                    .set("http-connector-port",getHttpConnectorPort())
-                    .set("time",System.currentTimeMillis()-startTime)
-                    .set("result","stopped")
+                    .set("command", "wait-for-stopped")
+                    .set("config-name", getName())
+                    .set("http-connector-port", getHttpConnectorPort())
+                    .set("time", System.currentTimeMillis() - startTime)
+                    .set("result", "stopped")
                     .build()
             );
         }
@@ -855,7 +827,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
 
     public AppStatus getStatus(String domain, String app) {
         LocalTomcatConfig c = getConfig();
-        Path catalinaBase = getCatalinaBase();
+        NutsPath catalinaBase = getCatalinaBase();
         RunningTomcat ps = getRunningTomcat();
         if (ps != null) {
             String startupMessage = null;
@@ -895,11 +867,11 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
                 logFile = "logs/catalina.out";
             }
 
-            Path log = catalinaBase.resolve(logFile);
-            if (!Files.exists(log)) {
+            NutsPath log = catalinaBase.resolve(logFile);
+            if (!log.exists()) {
                 return AppStatus.STOPPED;
             }
-            LocalTomcatLogLineVisitor visitor = new LocalTomcatLogLineVisitor(log.toString(), startupMessage, shutdownMessage, context.getSession());
+            LocalTomcatLogLineVisitor visitor = new LocalTomcatLogLineVisitor(log.toString(), startupMessage, shutdownMessage, getSession());
             visitor.visit();
             if (visitor.outOfMemoryError) {
                 return AppStatus.OUT_OF_MEMORY;
@@ -921,9 +893,9 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
 
     public LocalTomcatConfigService loadConfig() {
         String name = getName();
-        Path f = sharedConfigFolder.resolve(name + LOCAL_CONFIG_EXT);
-        if (Files.exists(f)) {
-            NutsSession session = context.getSession();
+        NutsPath f = sharedConfigFolder.resolve(name + LOCAL_CONFIG_EXT);
+        if (f.exists()) {
+            NutsSession session = getSession();
             config = NutsElements.of(session).json().parse(f, LocalTomcatConfig.class);
             return this;
 //        } else if ("default".equals(name)) {
@@ -946,7 +918,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
             switch (mode) {
                 case OPEN_OR_ERROR: {
                     if (a == null) {
-                        throw new NutsExecutionException(context.getSession(), NutsMessage.cstyle("app not found : %s", appName), 2);
+                        throw new NutsExecutionException(getSession(), NutsMessage.cstyle("app not found : %s", appName), 2);
                     }
                     break;
                 }
@@ -955,7 +927,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
                         a = new LocalTomcatAppConfig();
                         getConfig().getApps().put(appName, a);
                     } else {
-                        throw new NutsExecutionException(context.getSession(), NutsMessage.cstyle("app already found : %s", appName), 2);
+                        throw new NutsExecutionException(getSession(), NutsMessage.cstyle("app already found : %s", appName), 2);
                     }
                     break;
                 }
@@ -982,7 +954,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
             switch (mode) {
                 case OPEN_OR_ERROR: {
                     if (a == null) {
-                        throw new NutsExecutionException(context.getSession(), NutsMessage.cstyle("domain not found : %s", domainName), 2);
+                        throw new NutsExecutionException(getSession(), NutsMessage.cstyle("domain not found : %s", domainName), 2);
                     }
                     break;
                 }
@@ -991,7 +963,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
                         a = new LocalTomcatDomainConfig();
                         getConfig().getDomains().put(domainName, a);
                     } else {
-                        throw new NutsExecutionException(context.getSession(), NutsMessage.cstyle("domain already found : %s", domainName), 2);
+                        throw new NutsExecutionException(getSession(), NutsMessage.cstyle("domain already found : %s", domainName), 2);
                     }
                     break;
                 }
@@ -1007,110 +979,93 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
         return new LocalTomcatDomainConfigService(domainName, a, this);
     }
 
-    public Path getLogFolder() {
+    public NutsPath getLogFolder() {
         return getCatalinaBase().resolve("logs");
     }
 
-    public Path getTempFolder() {
+    public NutsPath getTempFolder() {
         return getCatalinaBase().resolve("temp");
     }
 
-    public Path getWorkFolder() {
+    public NutsPath getWorkFolder() {
         return getCatalinaBase().resolve("work");
     }
 
     public void deleteOutLog() {
         //get it from config?
-        Path file = getLogFolder().resolve("catalina.out");
-        if (Files.isRegularFile(file)) {
-            if (context.getSession().isPlainOut()) {
-                context.getSession().out().printf("%s delete log file %s.\n", getFormattedPrefix(getName()), getFormattedPath(file));
+        NutsPath file = getLogFolder().resolve("catalina.out");
+        if (file.isRegularFile()) {
+            if (getSession().isPlainOut()) {
+                getSession().out().printf("%s delete log file %s.\n", getFormattedPrefix(getName()), file);
             }
-            try {
-                Files.delete(file);
-            } catch (IOException ex) {
-                throw new UncheckedIOException(ex);
-            }
+            file.delete();
         }
     }
 
     public void deleteTemp() {
-        Path tempFolder = getTempFolder();
-        if (Files.isDirectory(tempFolder)) {
-            try (DirectoryStream<Path> files = Files.newDirectoryStream(tempFolder)) {
-                for (Path file : files) {
-                    if (context.getSession().isPlainOut()) {
-                        context.getSession().out().printf("%s delete temp file %s.\n", getFormattedPrefix(getName()), getFormattedPath(file));
-                    }
-                    Files.delete(file);
-                }
-            } catch (IOException ex) {
-                throw new UncheckedIOException(ex);
-            }
+        NutsPath tempFolder = getTempFolder();
+        if (tempFolder.isDirectory()) {
+            tempFolder.list()
+                    .forEach(file -> {
+                        if (getSession().isPlainOut()) {
+                            getSession().out().printf("%s delete temp file %s.\n", getFormattedPrefix(getName()), file);
+                        }
+                        file.delete();
+                    });
         }
     }
 
     public void deleteWork() {
-        Path workFolder = getWorkFolder();
-        if (Files.isDirectory(workFolder)) {
-            try (DirectoryStream<Path> files = Files.newDirectoryStream(workFolder)) {
-                for (Path file : files) {
-                    if (context.getSession().isPlainOut()) {
-                        context.getSession().out().printf("%s delete work file %s.\n", getFormattedPrefix(getName()), getFormattedPath(file));
-                    }
-                    Files.delete(file);
-
-                }
-
-            } catch (IOException ex) {
-                throw new UncheckedIOException(ex);
-            }
+        NutsPath workFolder = getWorkFolder();
+        if (workFolder.isDirectory()) {
+            workFolder.list()
+                    .forEach(file -> {
+                        if (getSession().isPlainOut()) {
+                            getSession().out().printf("%s delete work file %s.\n", getFormattedPrefix(getName()), file);
+                        }
+                        file.delete();
+                    });
         }
     }
 
-    public Path getOutLogFile() {
+    public NutsPath getOutLogFile() {
         return getLogFolder().resolve("catalina.out");
     }
 
     public void showOutLog(int tail) {
         //get it from config?
-        Path file = getOutLogFile();
-        NutsSession session = context.getSession();
+        NutsPath file = getOutLogFile();
+        NutsSession session = getSession();
         if (tail <= 0) {
             NutsCp.of(session).from(file).to(session.out()).run();
             return;
         }
-        if (Files.isRegularFile(file)) {
-            for (String line : NutsPath.of(file, session)
-                    .tail(tail)) {
+        if (file.isRegularFile()) {
+            for (String line : file.tail(tail)) {
                 session.out().println(line);
             }
         }
     }
 
     public void deleteAllLog() {
-        Path logFolder = getLogFolder();
-        if (Files.isDirectory(logFolder)) {
-            try (DirectoryStream<Path> files = Files.newDirectoryStream(logFolder)) {
-                for (Path file : files) {
-                    if (Files.isRegularFile(file)) {
-                        String n = file.getFileName().toString();
-                        if (n.endsWith(".out")
-                                || n.endsWith(".txt")
-                                || n.endsWith(".log")) {
-                            //this is a log file, will delete it
-                            if (context.getSession().isPlainOut()) {
-                                context.getSession().out().printf("%s delete log file %s.\n", getFormattedPrefix(getName()), getFormattedPath(file));
+        NutsPath logFolder = getLogFolder();
+        if (logFolder.isDirectory()) {
+            logFolder.list()
+                    .forEach(file -> {
+                        if (file.isRegularFile()) {
+                            String n = file.getName();
+                            if (n.endsWith(".out")
+                                    || n.endsWith(".txt")
+                                    || n.endsWith(".log")) {
+                                //this is a log file, will delete it
+                                if (getSession().isPlainOut()) {
+                                    getSession().out().printf("%s delete log file %s.\n", getFormattedPrefix(getName()), file);
+                                }
+                                file.delete();
                             }
-                            Files.delete(file);
                         }
-                    }
-                }
-            } catch (IOException ex) {
-                throw new UncheckedIOException(ex);
-            }
+                    });
         }
-
     }
 
     public List<LocalTomcatAppConfigService> getApps() {
@@ -1129,7 +1084,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
         return a;
     }
 
-    public Path getDefaulDeployFolder(String domainName) {
+    public NutsPath getDefaulDeployFolder(String domainName) {
         String p = "webapps";
         if (domainName == null) {
             domainName = "";
@@ -1152,16 +1107,16 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
         try {
             DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
             DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
-            Path serverXml = getCatalinaBase().resolve("conf").resolve("server.xml");
-            if (Files.exists(serverXml)) {
-                Document doc = docBuilder.parse(serverXml.toFile());
+            NutsPath serverXml = getCatalinaBase().resolve("conf").resolve("server.xml");
+            if (serverXml.exists()) {
+                Document doc = docBuilder.parse(serverXml.toFile().toFile());
                 Element root = doc.getDocumentElement();
                 String port = root.getAttribute("port");
                 return port == null ? null : Integer.parseInt(port);
             }
         } catch (SAXException | IOException | ParserConfigurationException ex) {
-            if (context.getSession().isPlainOut()) {
-                context.getSession().err().println("```error ERROR:``` : " + ex);
+            if (getSession().isPlainOut()) {
+                getSession().err().println("```error ERROR:``` : " + ex);
             }
         }
         //
@@ -1175,9 +1130,9 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
             }
             DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
             DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
-            Path serverXml = getCatalinaBase().resolve("conf").resolve("server.xml");
-            if (Files.exists(serverXml)) {
-                Document doc = docBuilder.parse(serverXml.toFile());
+            NutsPath serverXml = getCatalinaBase().resolve("conf").resolve("server.xml");
+            if (serverXml.exists()) {
+                Document doc = docBuilder.parse(serverXml.toFile().toFile());
                 Element root = doc.getDocumentElement();
                 String p = root.getAttribute("port");
                 if (String.valueOf(port).equals(p)) {
@@ -1187,12 +1142,12 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
                 TransformerFactory transformerFactory = TransformerFactory.newInstance();
                 Transformer transformer = transformerFactory.newTransformer();
                 DOMSource domSource = new DOMSource(doc);
-                StreamResult streamResult = new StreamResult(serverXml.toFile());
+                StreamResult streamResult = new StreamResult(serverXml.toFile().toFile());
                 transformer.transform(domSource, streamResult);
             }
         } catch (SAXException | IOException | ParserConfigurationException | TransformerException ex) {
-            if (context.getSession().isPlainOut()) {
-                context.getSession().err().println("```error ERROR:``` : " + ex);
+            if (getSession().isPlainOut()) {
+                getSession().err().println("```error ERROR:``` : " + ex);
             }
             //
         }
@@ -1230,9 +1185,9 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
         try {
             DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
             DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
-            Path serverXml = getCatalinaBase().resolve("conf").resolve("server.xml");
-            if (Files.exists(serverXml)) {
-                Document doc = docBuilder.parse(serverXml.toFile());
+            NutsPath serverXml = getCatalinaBase().resolve("conf").resolve("server.xml");
+            if (serverXml.exists()) {
+                Document doc = docBuilder.parse(serverXml.toFile().toFile());
                 Element root = doc.getDocumentElement();
                 String port = XmlUtils.streamElements(root.getChildNodes())
                         .filter(x -> "Service".equalsIgnoreCase(x.getTagName()))
@@ -1243,8 +1198,8 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
                 return port == null ? null : Integer.parseInt(port);
             }
         } catch (SAXException | IOException | ParserConfigurationException ex) {
-            if (context.getSession().isPlainOut()) {
-                context.getSession().err().println("```error ERROR:``` : " + ex);
+            if (getSession().isPlainOut()) {
+                getSession().err().println("```error ERROR:``` : " + ex);
             }
         }
         //
@@ -1274,9 +1229,9 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
         try {
             DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
             DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
-            Path serverXml = getCatalinaBase().resolve("conf").resolve("server.xml");
-            if (Files.exists(serverXml)) {
-                Document doc = docBuilder.parse(serverXml.toFile());
+            NutsPath serverXml = getCatalinaBase().resolve("conf").resolve("server.xml");
+            if (serverXml.exists()) {
+                Document doc = docBuilder.parse(serverXml.toFile().toFile());
                 Element root = doc.getDocumentElement();
                 Element elem = XmlUtils.streamElements(root.getChildNodes())
                         .filter(x -> "Service".equalsIgnoreCase(x.getTagName()))
@@ -1292,15 +1247,15 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
                     TransformerFactory transformerFactory = TransformerFactory.newInstance();
                     Transformer transformer = transformerFactory.newTransformer();
                     DOMSource domSource = new DOMSource(doc);
-                    StreamResult streamResult = new StreamResult(serverXml.toFile());
+                    StreamResult streamResult = new StreamResult(serverXml.toFile().toFile());
                     transformer.transform(domSource, streamResult);
                     return;
                 }
-                throw new NutsIllegalArgumentException(context.getSession(), NutsMessage.cstyle("not found connector"));
+                throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("not found connector"));
             }
         } catch (SAXException | IOException | ParserConfigurationException | TransformerException ex) {
-            if (context.getSession().isPlainOut()) {
-                context.getSession().err().printf("```error ERROR:``` : %s%n", ex);
+            if (getSession().isPlainOut()) {
+                getSession().err().printf("```error ERROR:``` : %s%n", ex);
             }
             //
         }

@@ -14,12 +14,11 @@ public class CacheDB {
             NanoDB o = (NanoDB) session.env().getProperties().get(CacheDB.class.getName());
             if (o == null) {
                 o = new NanoDB(
-                        new File(
                                 session.locations().getStoreLocation(
                                         session.getWorkspace().getApiId().builder().setVersion("SHARED").build()
                                 ,
                                 NutsStoreLocation.CACHE
-                        ),"/cachedb")
+                        ).resolve("cachedb").toFile().toFile()
                 );
                 o.getSerializers().setSerializer(NutsId.class,()->new NanoDBNutsIdSerializer(session));
                 session.env().getProperties().put(CacheDB.class.getName(), o);

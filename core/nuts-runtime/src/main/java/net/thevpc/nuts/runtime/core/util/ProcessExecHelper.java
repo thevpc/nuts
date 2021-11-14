@@ -117,8 +117,8 @@ public class ProcessExecHelper implements IProcessExecHelper {
     ) throws NutsExecutionException {
         NutsWorkspace workspace = execSession.getWorkspace();
         NutsId id = nutMainFile.getId();
-        Path installerFile = nutMainFile.getPath();
-        String storeFolder = nutMainFile.getInstallInformation().getInstallFolder();
+        Path installerFile = nutMainFile.getFile();
+        NutsPath storeFolder = nutMainFile.getInstallInformation().getInstallFolder();
         HashMap<String, String> map = new HashMap<>();
         HashMap<String, String> envmap = new HashMap<>();
 //        for (Map.Entry<Object, Object> entry : System.getProperties().entrySet()) {
@@ -132,7 +132,7 @@ public class ProcessExecHelper implements IProcessExecHelper {
             map.put("nuts.jar", nutsJarFile.toAbsolutePath().normalize().toString());
         }
         map.put("nuts.artifact", id.toString());
-        map.put("nuts.file", nutMainFile.getPath().toString());
+        map.put("nuts.file", nutMainFile.getFile().toString());
         String defaultJavaCommand = NutsJavaSdkUtils.of(execSession.getWorkspace()).resolveJavaCommandByVersion("", false, session);
 
         map.put("nuts.java", defaultJavaCommand);
@@ -146,7 +146,7 @@ public class ProcessExecHelper implements IProcessExecHelper {
         if (storeFolder == null && installerFile != null) {
             map.put("nuts.store", installerFile.getParent().toString());
         } else if (storeFolder != null) {
-            map.put("nuts.store", storeFolder);
+            map.put("nuts.store", storeFolder.toString());
         }
         if (env != null) {
             map.putAll(env);
@@ -170,8 +170,8 @@ public class ProcessExecHelper implements IProcessExecHelper {
                     NutsDefinition nutsDefinition;
                     nutsDefinition = session.fetch().setId(NutsConstants.Ids.NUTS_API)
                             .setSession(session).getResultDefinition();
-                    if (nutsDefinition.getPath() != null) {
-                        return ("<::expand::> " + apply("java") + " -jar " + nutsDefinition.getPath());
+                    if (nutsDefinition.getFile() != null) {
+                        return ("<::expand::> " + apply("java") + " -jar " + nutsDefinition.getFile());
                     }
                     return null;
                 }

@@ -23,7 +23,7 @@ import org.junit.jupiter.api.*;
 public class Test01_CreateTest {
 
     @Test
-    public void minimal1() throws Exception {
+    public void minimal1()  {
         String wsPath = TestUtils.getTestBaseFolder().getPath();
 
         NutsSession session = TestUtils.openNewTestWorkspace("--workspace", wsPath,
@@ -31,7 +31,9 @@ public class Test01_CreateTest {
                 "--archetype", "minimal",
                 "--verbose",
                 "--skip-companions");
-        Assertions.assertEquals(new File(wsPath, "cache").getPath(), session.locations().getStoreLocation(NutsStoreLocation.CACHE));
+        Assertions.assertEquals(
+                NutsPath.of(new File(wsPath, "cache"),session),
+                session.locations().getStoreLocation(NutsStoreLocation.CACHE));
         Assertions.assertEquals(0, session.repos().getRepositories().length);
 //        Assertions.assertEquals(new File(wsPath,  "cache/" + NutsConstants.Folders.REPOSITORIES + "/" +
 //                        session.repos().getRepositories()[0].getName() +
@@ -65,7 +67,7 @@ public class Test01_CreateTest {
     }
 
     @Test
-    public void minimal2() throws Exception {
+    public void minimal2()  {
         NutsWorkspace ws = TestUtils.openNewTestWorkspace(
                 "--standalone",
                 "--archetype", "minimal",
@@ -74,7 +76,7 @@ public class Test01_CreateTest {
     }
 
     @Test
-    public void minimal3() throws Exception {
+    public void minimal3()  {
         NutsWorkspace ws = TestUtils.openNewTestWorkspace(
                 "--reset", // required for exploded repos
                 "--exploded",
@@ -107,14 +109,15 @@ public class Test01_CreateTest {
                 break;
             }
         }
-        Assertions.assertEquals(new File(base, new File(wsPath).getName()).getPath(),
+        Assertions.assertEquals(
+                NutsPath.of(new File(base, new File(wsPath).getName()),session),
                 session.locations().getStoreLocation(NutsStoreLocation.CACHE));
         Assertions.assertEquals(
-                new File(base, new File(wsPath).getName() + "/"
+                NutsPath.of(new File(base, new File(wsPath).getName() + "/"
                         + NutsConstants.Folders.REPOSITORIES + "/"
                         + session.repos().getRepositories()[0].getName()
                         + "/" + session.repos().getRepositories()[0].getUuid()
-                ).getPath(),
+                ),session),
                 session.repos().getRepositories()[0].config().getStoreLocation(NutsStoreLocation.CACHE));
     }
 

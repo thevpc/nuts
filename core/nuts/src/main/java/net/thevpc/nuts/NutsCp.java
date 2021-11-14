@@ -457,4 +457,8 @@ public interface NutsCp extends NutsComponent {
      * @return {@code this} instance
      */
     NutsCp interrupt();
+
+    NutsCp setReplaceExisting(boolean replaceExisting);
+
+    boolean isReplaceExisting();
 }

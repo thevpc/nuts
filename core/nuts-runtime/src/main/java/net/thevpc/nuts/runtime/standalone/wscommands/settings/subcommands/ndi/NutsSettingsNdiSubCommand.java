@@ -377,7 +377,7 @@ public class NutsSettingsNdiSubCommand extends AbstractNutsSettingsSubCommand {
         if (session.isTrace()) {
             result = Arrays.stream(result).filter(x -> x.getStatus() != PathInfo.Status.DISCARDED).toArray(PathInfo[]::new);
             if (session.isPlainTrace()) {
-                int namesSize = Arrays.stream(result).mapToInt(x -> x.getPath().getFileName().toString().length()).max().orElse(1);
+                int namesSize = Arrays.stream(result).mapToInt(x -> x.getPath().getName().length()).max().orElse(1);
                 for (PathInfo ndiScriptInfo : result) {
                     session.out().resetLine().printf("%s script %-" + namesSize + "s for %s"
                                     + " at %s%n",
@@ -385,7 +385,7 @@ public class NutsSettingsNdiSubCommand extends AbstractNutsSettingsSubCommand {
                                     ? NutsTexts.of(session).ofStyled("re-install", NutsTextStyles.of(NutsTextStyle.success(), NutsTextStyle.underlined()))
                                     : NutsTexts.of(session).ofStyled("install", NutsTextStyle.success())
                             ,
-                            NutsTexts.of(session).ofStyled(ndiScriptInfo.getPath().getFileName().toString(), NutsTextStyle.path()),
+                            NutsTexts.of(session).ofStyled(ndiScriptInfo.getPath().getName(), NutsTextStyle.path()),
                             ndiScriptInfo.getId(),
                             NutsTexts.of(session).ofStyled(CoreIOUtils.betterPath(ndiScriptInfo.getPath().toString()), NutsTextStyle.path())
                     );

@@ -14,11 +14,10 @@ public class InstallLogDB {
             NanoDB o = (NanoDB) session.env().getProperties().get(NanoDB.class.getName());
             if (o == null) {
                 o = new NanoDB(
-                        new File(
                                 session.locations().getStoreLocation(
                                         session.getWorkspace().getApiId().builder().setVersion("SHARED").build(),
                                         NutsStoreLocation.VAR
-                                ), "/install-log")
+                                ).resolve("install-log").toFile().toFile()
                 );
                 o.getSerializers().setSerializer(NutsId.class, () -> new NanoDBNutsIdSerializer(session));
                 session.env().getProperties().put(NanoDB.class.getName(), o);

@@ -30,14 +30,13 @@ import net.thevpc.nuts.boot.NutsApiUtils;
 import net.thevpc.nuts.spi.NutsPathFactory;
 import net.thevpc.nuts.spi.NutsPaths;
 
-import java.io.File;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.URL;
 import java.nio.file.Path;
 import java.time.Instant;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Stream;
 
 /**
@@ -119,6 +118,14 @@ public interface NutsPath extends NutsFormattable {
 
     NutsPath resolve(NutsPath other);
 
+    NutsPath resolveSibling(String other);
+
+    NutsPath resolveSibling(NutsPath other);
+
+    byte[] readAllBytes();
+
+    NutsPath writeBytes(byte[] bytes);
+
     /**
      * path protocol or null if undefined. This is some how similar to url protocol
      * Particularly file system paths have an empty (aka "") protocol
@@ -170,15 +177,33 @@ public interface NutsPath extends NutsFormattable {
 
     OutputStream getOutputStream();
 
+    Reader getReader();
+
+    Writer getWriter();
+
 //    NutsOutput output();
 
     NutsSession getSession();
 
     NutsPath delete();
 
+    NutsPath deleteTree();
+
     NutsPath delete(boolean recurse);
 
     NutsPath mkdir(boolean parents);
+
+    NutsPath mkdirs();
+
+    NutsPath mkdir();
+
+    NutsPath expandPath(Function<String, String> resolver);
+
+    /**
+     * create all parent folders if not existing
+     * @return {@code this} instance
+     */
+    NutsPath mkParentDirs();
 
     boolean isOther();
 
@@ -197,8 +222,6 @@ public interface NutsPath extends NutsFormattable {
     Instant getLastAccessInstant();
 
     Instant getCreationInstant();
-
-    NutsPathBuilder builder();
 
     Stream<String> lines();
 
@@ -293,4 +316,9 @@ public interface NutsPath extends NutsFormattable {
      * @return a Stream that is lazily populated with Path by walking the file tree rooted at a given starting file
      */
     NutsStream<NutsPath> walk();
+
+    NutsPath subpath(int beginIndex, int endIndex);
+
+    String getItem(int index);
+    String[] getItems();
 }

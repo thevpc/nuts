@@ -51,7 +51,7 @@ public final class JavaExecutorOptions {
                 id = descriptor.getId();
             }
         }
-        Path path = def.getPath();
+        Path path = def.getFile();
         this.app = new ArrayList<>(Arrays.asList(args));
         this.dir = dir;
         this.execArgs = executorOptions;
@@ -216,7 +216,7 @@ public final class JavaExecutorOptions {
             }
             boolean baseDetected = false;
             for (NutsDefinition nutsDefinition : nutsDefinitions) {
-                if (nutsDefinition.getPath() != null) {
+                if (nutsDefinition.getFile() != null) {
                     if (id.getLongName().equals(nutsDefinition.getId().getLongName())) {
                         baseDetected = true;
                         if (!isExcludeBase()) {

@@ -35,7 +35,6 @@ import net.thevpc.nuts.runtime.core.repos.AbstractNutsRepository;
 import net.thevpc.nuts.runtime.core.repos.NutsInstalledRepository;
 import net.thevpc.nuts.runtime.core.repos.NutsRepositoryExt0;
 import net.thevpc.nuts.runtime.core.util.CoreCollectionUtils;
-import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.core.util.CoreNutsUtils;
 import net.thevpc.nuts.runtime.core.util.NutsIdFilterToPredicate;
 import net.thevpc.nuts.runtime.standalone.DefaultNutsInstallInfo;
@@ -45,12 +44,8 @@ import net.thevpc.nuts.runtime.standalone.repos.NutsRepositoryFolderHelper;
 import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 import net.thevpc.nuts.spi.*;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.UncheckedIOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.time.Instant;
 import java.util.*;
 import java.util.function.Function;
@@ -69,10 +64,10 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
 
     public DefaultNutsInstalledRepository(NutsWorkspace ws, NutsWorkspaceInitInformation info) {
         this.workspace = ws;
-        deployments = new NutsRepositoryFolderHelper(this,
-                NutsWorkspaceUtils.defaultSession(ws)
-                ,
-                Paths.get(info.getStoreLocation(NutsStoreLocation.LIB)).resolve(NutsConstants.Folders.ID)
+        this.initSession = NutsWorkspaceUtils.defaultSession(ws);
+        this.deployments = new NutsRepositoryFolderHelper(this,
+                NutsWorkspaceUtils.defaultSession(ws),
+                NutsPath.of(info.getStoreLocation(NutsStoreLocation.LIB),initSession).resolve(NutsConstants.Folders.ID)
                 , false
         );
         configModel = new InstalledRepositoryConfigModel(workspace, this);
@@ -113,17 +108,17 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
 
     @Override
     public Iterator<NutsInstallInformation> searchInstallInformation(NutsSession session) {
-        Path rootFolder = Paths.get(session.locations().getStoreLocation(NutsStoreLocation.CONFIG)).resolve(NutsConstants.Folders.ID);
+        NutsPath rootFolder = session.locations().getStoreLocation(NutsStoreLocation.CONFIG).resolve(NutsConstants.Folders.ID);
         return new FolderObjectIterator<NutsInstallInformation>("NutsInstallInformation",
                 rootFolder,
                 null, -1, session, new FolderObjectIterator.FolderIteratorModel<NutsInstallInformation>() {
             @Override
-            public boolean isObjectFile(Path pathname) {
-                return pathname.getFileName().toString().equals(NUTS_INSTALL_FILE);
+            public boolean isObjectFile(NutsPath pathname) {
+                return pathname.getName().equals(NUTS_INSTALL_FILE);
             }
 
             @Override
-            public NutsInstallInformation parseObject(Path path, NutsSession session) throws IOException {
+            public NutsInstallInformation parseObject(NutsPath path, NutsSession session) throws IOException {
                 try {
                     InstallInfoConfig c = getInstallInfoConfig(null, path, session);
                     if (c != null) {
@@ -148,15 +143,15 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
                 return p;
             }
         }
-        Path pp = Paths.get(session.locations().getStoreLocation(id
+        NutsPath pp = session.locations().getStoreLocation(id
                         //.setAlternative("")
-                        .builder().setVersion("ANY").build(), NutsStoreLocation.CONFIG))
+                        .builder().setVersion("ANY").build(), NutsStoreLocation.CONFIG)
                 .resolveSibling("default-version");
         String defaultVersion = "";
-        if (Files.isRegularFile(pp)) {
+        if (pp.isRegularFile()) {
             try {
-                defaultVersion = new String(Files.readAllBytes(pp)).trim();
-            } catch (IOException ex) {
+                defaultVersion = new String(pp.readAllBytes()).trim();
+            } catch (Exception ex) {
                 defaultVersion = "";
             }
         }
@@ -170,25 +165,17 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
     public void setDefaultVersion(NutsId id, NutsSession session) {
         NutsId baseVersion = id.getShortId();
         String version = id.getVersion().getValue();
-        Path pp = Paths.get(session.locations().getStoreLocation(id
+        NutsPath pp = session.locations().getStoreLocation(id
                         //                .setAlternative("")
-                        .builder().setVersion("ANY").build(), NutsStoreLocation.CONFIG))
+                        .builder().setVersion("ANY").build(), NutsStoreLocation.CONFIG)
                 .resolveSibling("default-version");
         if (NutsBlankable.isBlank(version)) {
-            if (Files.isRegularFile(pp)) {
-                try {
-                    Files.delete(pp);
-                } catch (IOException ex) {
-                    throw new NutsIOException(session, ex);
-                }
+            if (pp.isRegularFile()) {
+                pp.delete();
             }
         } else {
-            try {
-                CoreIOUtils.mkdirs(pp.getParent(), session);
-                Files.write(pp, version.trim().getBytes());
-            } catch (IOException ex) {
-                throw new NutsIOException(session, ex);
-            }
+            pp.mkParentDirs();
+            pp.writeBytes(version.trim().getBytes());
         }
         synchronized (cachedDefaultVersions) {
             cachedDefaultVersions.put(baseVersion, version);
@@ -394,8 +381,8 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
         return InstallLogItemTable.of(session).stream(session);
     }
 
-    public NutsId pathToId(Path path, NutsSession session) {
-        Path rootFolder = Paths.get(session.locations().getStoreLocation(NutsStoreLocation.CONFIG)).resolve(NutsConstants.Folders.ID);
+    public NutsId pathToId(NutsPath path, NutsSession session) {
+        NutsPath rootFolder = session.locations().getStoreLocation(NutsStoreLocation.CONFIG).resolve(NutsConstants.Folders.ID);
         String p = path.toString().substring(rootFolder.toString().length());
         List<String> split = StringTokenizerUtils.split(p, "/\\");
         if (split.size() >= 4) {
@@ -416,7 +403,7 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
 //    }
 
     public void updateInstallInfoConfigInstallDate(NutsId id, Instant instant, NutsSession session) {
-        Path path = getPath(id, NUTS_INSTALL_FILE, session);
+        NutsPath path = getPath(id, NUTS_INSTALL_FILE, session);
         InstallInfoConfig ii = getInstallInfoConfig(id, path, session);
         if (ii == null) {
             throw new NutsNotFoundException(session, id);
@@ -497,7 +484,7 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
 
     }
 
-    public InstallInfoConfig getInstallInfoConfig(NutsId id, Path path, NutsSession session) {
+    public InstallInfoConfig getInstallInfoConfig(NutsId id, NutsPath path, NutsSession session) {
         if (id == null && path == null) {
             NutsWorkspaceUtils.of(session).checkShortId(id);
         }
@@ -507,8 +494,8 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
 //        if (id == null) {
 //            path = getPath(id, NUTS_INSTALL_FILE);
 //        }
-        Path finalPath = path;
-        if (Files.isRegularFile(path)) {
+        NutsPath finalPath = path;
+        if (path.isRegularFile()) {
             NutsElements elem = NutsElements.of(session);
             InstallInfoConfig c = NutsLocks.of(session).setSource(path).call(
                     () -> elem.json().parse(finalPath, InstallInfoConfig.class),
@@ -557,17 +544,17 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
     }
 
     public Iterator<InstallInfoConfig> searchInstallConfig(NutsSession session) {
-        Path rootFolder = Paths.get(session.locations().getStoreLocation(NutsStoreLocation.CONFIG)).resolve(NutsConstants.Folders.ID);
+        NutsPath rootFolder = session.locations().getStoreLocation(NutsStoreLocation.CONFIG).resolve(NutsConstants.Folders.ID);
         return new FolderObjectIterator<InstallInfoConfig>("InstallInfoConfig",
                 rootFolder,
                 null, -1, session, new FolderObjectIterator.FolderIteratorModel<InstallInfoConfig>() {
             @Override
-            public boolean isObjectFile(Path pathname) {
-                return pathname.getFileName().toString().equals(NUTS_INSTALL_FILE);
+            public boolean isObjectFile(NutsPath pathname) {
+                return pathname.getName().equals(NUTS_INSTALL_FILE);
             }
 
             @Override
-            public InstallInfoConfig parseObject(Path path, NutsSession session) throws IOException {
+            public InstallInfoConfig parseObject(NutsPath path, NutsSession session) throws IOException {
                 try {
                     InstallInfoConfig c = getInstallInfoConfig(null, path, session);
                     if (c != null) {
@@ -621,7 +608,7 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
             this.deploy()
                     .setId(id1)
                     .setSession(session.copy().setConfirm(NutsConfirmationMode.YES))
-                    .setContent(def.getPath())
+                    .setContent(def.getFile())
                     //.setFetchMode(NutsFetchMode.LOCAL)
                     .setDescriptor(def.getDescriptor())
                     .run();
@@ -699,11 +686,7 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
     }
 
     public void addString(NutsId id, String name, String value, NutsSession session) {
-        try {
-            Files.write(getPath(id, name, session), value.getBytes());
-        } catch (IOException ex) {
-            throw new NutsIOException(session, ex);
-        }
+        getPath(id, name, session).writeBytes(value.getBytes());
     }
 
     public <T> T readJson(NutsId id, String name, Class<T> clazz, NutsSession session) {
@@ -720,20 +703,16 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
     }
 
     public void remove(NutsId id, String name, NutsSession session) {
-        try {
-            Path path = getPath(id, name, session);
-            Files.delete(path);
-        } catch (IOException ex) {
-            throw new NutsIOException(session, ex);
-        }
+        NutsPath path = getPath(id, name, session);
+        path.delete();
     }
 
     public boolean contains(NutsId id, String name, NutsSession session) {
-        return Files.isRegularFile(getPath(id, name, session));
+        return getPath(id, name, session).isRegularFile();
     }
 
-    public Path getPath(NutsId id, String name, NutsSession session) {
-        return Paths.get(session.locations().setSession(session).getStoreLocation(id, NutsStoreLocation.CONFIG)).resolve(name);
+    public NutsPath getPath(NutsId id, String name, NutsSession session) {
+        return session.locations().setSession(session).getStoreLocation(id, NutsStoreLocation.CONFIG).resolve(name);
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////
@@ -844,17 +823,17 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
                     result = new LazyIterator<NutsId>() {
                         @Override
                         protected Iterator<NutsId> iterator() {
-                            File installFolder
-                                    = Paths.get(getSession().locations().getStoreLocation(getId()
-                                    .builder().setVersion("ANY").build(), NutsStoreLocation.CONFIG)).toFile().getParentFile();
+                            NutsPath installFolder
+                                    = getSession().locations().getStoreLocation(getId()
+                                    .builder().setVersion("ANY").build(), NutsStoreLocation.CONFIG).getParent();
                             if (installFolder.isDirectory()) {
                                 final NutsVersionFilter filter0 = getId().getVersion().filter();
-                                return IteratorBuilder.of(Arrays.asList(installFolder.listFiles()).iterator())
-                                        .map(new Function<File, NutsId>() {
+                                return IteratorBuilder.of(installFolder.list().iterator())
+                                        .map(new Function<NutsPath, NutsId>() {
                                             @Override
-                                            public NutsId apply(File folder) {
+                                            public NutsId apply(NutsPath folder) {
                                                 if (folder.isDirectory()
-                                                        && new File(folder, NUTS_INSTALL_FILE).isFile()) {
+                                                        && folder.resolve(NUTS_INSTALL_FILE).isRegularFile()) {
                                                     NutsVersion vv = NutsVersion.of(folder.getName(), getSession());
                                                     NutsIdFilter filter = getFilter();
                                                     NutsSession session = getSession();

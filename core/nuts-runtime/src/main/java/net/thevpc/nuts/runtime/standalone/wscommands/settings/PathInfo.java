@@ -1,16 +1,17 @@
 package net.thevpc.nuts.runtime.standalone.wscommands.settings;
 
 import net.thevpc.nuts.NutsId;
+import net.thevpc.nuts.NutsPath;
 
 import java.nio.file.Path;
 
 public class PathInfo {
     private String type;
     private NutsId id;
-    private Path path;
+    private NutsPath path;
     private Status status;
 
-    public PathInfo(String type, NutsId id, Path path, Status status) {
+    public PathInfo(String type, NutsId id, NutsPath path, Status status) {
         this.id = id;
         this.type = type;
         this.path = path;
@@ -25,7 +26,7 @@ public class PathInfo {
         return type;
     }
 
-    public Path getPath() {
+    public NutsPath getPath() {
         return path;
     }
 

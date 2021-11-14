@@ -28,8 +28,10 @@ package net.thevpc.nuts.runtime.standalone;
 import net.thevpc.nuts.NutsId;
 import net.thevpc.nuts.NutsInstallInformation;
 import net.thevpc.nuts.NutsInstallStatus;
+import net.thevpc.nuts.NutsPath;
 
 import java.time.Instant;
+import java.util.Objects;
 
 /**
  * @author thevpc
@@ -44,12 +46,12 @@ public class DefaultNutsInstallInfo implements NutsInstallInformation {
     private Instant lasModifiedDate;
     private Instant createdDate;
     private String installUser;
-    private String installFolder;
+    private NutsPath installFolder;
     private String sourceRepositoryName;
     private String sourceRepositoryUUID;
     private boolean justInstalled;
     private boolean justRequired;
-    public DefaultNutsInstallInfo(NutsId id, NutsInstallStatus installStatus, String installFolder, Instant createdDate, Instant lasModifiedDate, String installUser, String sourceRepositoryName, String sourceRepositoryUUID,boolean justInstalled,boolean justRequired) {
+    public DefaultNutsInstallInfo(NutsId id, NutsInstallStatus installStatus, NutsPath installFolder, Instant createdDate, Instant lasModifiedDate, String installUser, String sourceRepositoryName, String sourceRepositoryUUID,boolean justInstalled,boolean justRequired) {
         this.id = id;
         this.installStatus = installStatus;
         this.installFolder = installFolder;
@@ -107,7 +109,7 @@ public class DefaultNutsInstallInfo implements NutsInstallInformation {
     }
 
     @Override
-    public String getInstallFolder() {
+    public NutsPath getInstallFolder() {
         return installFolder;
     }
 
@@ -176,7 +178,7 @@ public class DefaultNutsInstallInfo implements NutsInstallInformation {
         return this;
     }
 
-    public DefaultNutsInstallInfo setInstallFolder(String installFolder) {
+    public DefaultNutsInstallInfo setInstallFolder(NutsPath installFolder) {
         this.installFolder = installFolder;
         return this;
     }
@@ -224,5 +226,18 @@ public class DefaultNutsInstallInfo implements NutsInstallInformation {
     public DefaultNutsInstallInfo setJustRequired(boolean justRequired) {
         this.justRequired = justRequired;
         return this;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        DefaultNutsInstallInfo that = (DefaultNutsInstallInfo) o;
+        return wasInstalled == that.wasInstalled && wasRequired == that.wasRequired && justInstalled == that.justInstalled && justRequired == that.justRequired && Objects.equals(id, that.id) && Objects.equals(installStatus, that.installStatus) && Objects.equals(lasModifiedDate, that.lasModifiedDate) && Objects.equals(createdDate, that.createdDate) && Objects.equals(installUser, that.installUser) && Objects.equals(installFolder, that.installFolder) && Objects.equals(sourceRepositoryName, that.sourceRepositoryName) && Objects.equals(sourceRepositoryUUID, that.sourceRepositoryUUID);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, installStatus, wasInstalled, wasRequired, lasModifiedDate, createdDate, installUser, installFolder, sourceRepositoryName, sourceRepositoryUUID, justInstalled, justRequired);
     }
 }

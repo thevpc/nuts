@@ -19,7 +19,7 @@ import java.util.stream.StreamSupport;
 public class NJobConfigStore {
     private NutsApplicationContext context;
     private NutsElements json;
-    private Path dbPath;
+    private NutsPath dbPath;
 
     public NJobConfigStore(NutsApplicationContext applicationContext) {
         this.context = applicationContext;
@@ -27,7 +27,7 @@ public class NJobConfigStore {
         json = NutsElements.of(session).json().setNtf(false);
         json.setCompact(false);
         //ensure we always consider the latest config version
-        dbPath = Paths.get(applicationContext.getVersionFolderFolder(NutsStoreLocation.CONFIG, NJobConfigVersions.CURRENT))
+        dbPath = applicationContext.getVersionFolder(NutsStoreLocation.CONFIG, NJobConfigVersions.CURRENT)
         .resolve("db");
     }
 
@@ -54,37 +54,24 @@ public class NJobConfigStore {
         return o.getSimpleName().toLowerCase();
     }
 
-    private Path getObjectFile(Object o) {
+    private NutsPath getObjectFile(Object o) {
         return getFile(getEntityName(o.getClass()), getKey(o));
     }
 
-    private Path getFile(String entityName, Object id) {
+    private NutsPath getFile(String entityName, Object id) {
         return dbPath.resolve(entityName).resolve(id + ".json");
     }
 
     public <T> Stream<T> search(Class<T> type) {
-        Path f = getFile(getEntityName(type), "any").getParent();
-        try {
-            if (!Files.isDirectory(f)) {
-                return Collections.<T>emptyList().stream();
-            }
-            return StreamSupport.stream(Files.newDirectoryStream(f, x -> Files.isRegularFile(x) && x.toString().endsWith(".json"))
-                    .spliterator(), false)
-                    .map(x -> {
-                        try {
-                            return json.parse(x, type);
-                        } catch (Exception ex) {
-                            return null;
-                        }
-                    }).filter(x -> x != null);
-        } catch (IOException e) {
-            throw new IllegalArgumentException(e);
-        }
+        NutsPath f = getFile(getEntityName(type), "any").getParent();
+        return f.list().filter(x -> x.isRegularFile() && x.getName().endsWith(".json"))
+                .mapUnsafe(x -> json.parse(x, type),null)
+                .filterNonNull().stream();
     }
 
     public <T> T load(Class<T> type, Object id) {
-        Path f = getFile(getEntityName(type), id);
-        if (Files.exists(f)) {
+        NutsPath f = getFile(getEntityName(type), id);
+        if (f.exists()) {
             return json.parse(f, type);
         }
         return null;
@@ -110,14 +97,8 @@ public class NJobConfigStore {
                 j.setId(generateId(NProject.class));
             }
         }
-        Path objectFile = getObjectFile(o);
-        if(!Files.isDirectory(objectFile.getParent())){
-            try {
-                Files.createDirectories(objectFile.getParent());
-            } catch (IOException e) {
-                throw new NutsIllegalArgumentException(context.getSession(),NutsMessage.cstyle("unable to create parent path"));
-            }
-        }
+        NutsPath objectFile = getObjectFile(o);
+        objectFile.mkParentDirs();
         json.setValue(o).println(objectFile);
     }
 
@@ -127,8 +108,8 @@ public class NJobConfigStore {
             //test until we reach next millisecond
             String nid= UUID.randomUUID().toString();
 //                    yyyyMMddHHmmssSSS.format(new Date());
-            Path f = getFile(getEntityName(clz), nid);
-            if(!Files.exists(f)){
+            NutsPath f = getFile(getEntityName(clz), nid);
+            if(!f.exists()){
                 return nid;
             }
         }
@@ -139,14 +120,10 @@ public class NJobConfigStore {
     }
 
     public boolean delete(String entityName, Object id) {
-        Path f = getFile(entityName, id);
-        if (Files.exists(f)) {
-            try {
-                Files.delete(f);
-                return true;
-            } catch (IOException e) {
-                throw new IllegalArgumentException(e);
-            }
+        NutsPath f = getFile(entityName, id);
+        if (f.exists()) {
+            f.delete();
+            return true;
         }
         return false;
     }

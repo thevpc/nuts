@@ -81,20 +81,47 @@ public class URLPath implements NutsPathSPI {
     }
 
     @Override
-    public NutsPath resolve(String[] others, boolean trailingSeparator) {
-        if (others.length > 0) {
-            StringBuilder loc=new StringBuilder(url.getFile());
-            if (loc.length() == 0 || loc.charAt(loc.length() - 1) != '/') {
-                loc.append('/');
-            }
-            loc.append(String.join("/", others));
-            if (trailingSeparator) {
-                loc.append('/');
-            }
-            return rebuildURLPath(rebuildURLString(url.getProtocol(), url.getAuthority(), loc.toString(), url.getRef()));
-        }
-        return null;
+    public NutsPath resolve(String path) {
+        return rebuildURLPath(rebuildURLString(url.getProtocol(), url.getAuthority(),
+                NutsPath.of(url.getFile(),getSession()).resolve(path).toString()
+                , url.getRef()));
     }
+
+    @Override
+    public NutsPath resolve(NutsPath path) {
+        return rebuildURLPath(rebuildURLString(url.getProtocol(), url.getAuthority(),
+                NutsPath.of(url.getFile(),getSession()).resolve(path).toString()
+                , url.getRef()));
+    }
+
+
+    @Override
+    public NutsPath resolveSibling(String path) {
+        return rebuildURLPath(rebuildURLString(url.getProtocol(), url.getAuthority(),
+                NutsPath.of(url.getFile(),getSession()).resolveSibling(path).toString()
+                , url.getRef()));
+    }
+
+    @Override
+    public NutsPath resolveSibling(NutsPath path) {
+        return rebuildURLPath(rebuildURLString(url.getProtocol(), url.getAuthority(),
+                NutsPath.of(url.getFile(),getSession()).resolveSibling(path).toString()
+                , url.getRef()));
+    }
+
+
+    @Override
+    public NutsPath subpath(int beginIndex, int endIndex) {
+        return rebuildURLPath(
+                        NutsPath.of(getLocation(),getSession()).subpath(beginIndex,endIndex).toString()
+                );
+    }
+
+    @Override
+    public String[] getItems() {
+        return NutsPath.of(getLocation(),getSession()).getItems();
+    }
+
 
 //    @Override
 //    public NutsPath resolve(String other) {
@@ -532,5 +559,6 @@ public class URLPath implements NutsPathSPI {
         String loc = getLocation();
         return loc == null ? "" : Paths.get(loc).getFileName().toString();
     }
-    
+
+
 }

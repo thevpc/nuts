@@ -137,9 +137,14 @@ public class DefaultNutsLocks extends AbstractNutsLocks {
             if (NutsBlankable.isBlank(face)) {
                 face = "content";
             }
-            return Paths.get(getSession().locations().setSession(getSession()).getStoreLocation((NutsId) lockedObject, NutsStoreLocation.RUN)).resolve("nuts-" + face);
+            return getSession().locations().setSession(getSession()).getStoreLocation((NutsId) lockedObject, NutsStoreLocation.RUN)
+                    .resolve("nuts-" + face)
+                    .toFile()
+                    ;
         } else if (lockedObject instanceof Path) {
             return (Path) lockedObject;
+        } else if (lockedObject instanceof NutsPath) {
+            return ((NutsPath) lockedObject).toFile();
         } else if (lockedObject instanceof File) {
             return ((File) lockedObject).toPath();
         } else if (lockedObject instanceof String) {

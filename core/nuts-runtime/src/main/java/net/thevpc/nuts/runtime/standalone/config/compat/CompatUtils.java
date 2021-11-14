@@ -146,5 +146,11 @@ public class CompatUtils {
             throw new NutsIOException(session, ex);
         }
     }
+    public static byte[] readAllBytes(NutsPath file, NutsSession session) {
+        if (!file.isRegularFile()) {
+            return null;
+        }
+        return file.readAllBytes();
+    }
 
 }

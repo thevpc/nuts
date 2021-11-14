@@ -493,10 +493,10 @@ public class DefaultNutsWorkspaceExtensionModel {
         }
         try {
             //            NutsDefinition file = fetch(parse.toString(), session);
-            if (file.getPath() != null) {
+            if (file.getFile() != null) {
                 ZipFile zipFile = null;
                 try {
-                    zipFile = new ZipFile(file.getPath().toFile());
+                    zipFile = new ZipFile(file.getFile().toFile());
                     Enumeration<? extends ZipEntry> entries = zipFile.entries();
                     while (entries.hasMoreElements()) {
                         ZipEntry zipEntry = entries.nextElement();
@@ -518,7 +518,7 @@ public class DefaultNutsWorkspaceExtensionModel {
                         } catch (IOException ex) {
                             _LOGOP(session).level(Level.SEVERE)
                                     .error(ex).log(NutsMessage.jstyle("failed to close zip file {0} : {1}",
-                                    file.getPath(), ex));
+                                    file.getFile(), ex));
                             //ignore return false;
                         }
                     }
@@ -603,7 +603,9 @@ public class DefaultNutsWorkspaceExtensionModel {
 
     protected URL expandURL(String url, NutsSession session) {
         try {
-            url = NutsPathBuilder.of(url,session).withWorkspaceBaseDir().build().toString();
+            url = NutsPath.of(url,session)
+                    .toAbsolute(session.locations().getWorkspaceLocation())
+                    .toString();
             if (CoreIOUtils.isPathHttp(url)) {
                 return new URL(url);
             }

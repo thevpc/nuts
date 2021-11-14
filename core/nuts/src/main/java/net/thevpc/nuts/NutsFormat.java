@@ -99,6 +99,13 @@ public interface NutsFormat extends NutsCommandLineConfigurable, NutsComponent {
     /**
      * format current value and write result to {@code out}
      *
+     * @param out recipient path
+     */
+    void print(NutsPath out);
+
+    /**
+     * format current value and write result to {@code out}
+     *
      * @param out recipient file
      */
     void print(File out);
@@ -141,6 +148,14 @@ public interface NutsFormat extends NutsCommandLineConfigurable, NutsComponent {
      * @param out recipient path
      */
     void println(Path out);
+
+    /**
+     * format current value and write result to {@code out} and finally appends
+     * a new line.
+     *
+     * @param out recipient path
+     */
+    void println(NutsPath out);
 
     /**
      * format current value and write result to {@code terminal} and finally appends

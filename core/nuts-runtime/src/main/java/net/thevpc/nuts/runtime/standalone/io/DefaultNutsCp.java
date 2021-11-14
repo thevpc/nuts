@@ -18,6 +18,8 @@ import java.io.*;
 import java.net.URL;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.logging.Level;
 
@@ -42,6 +44,7 @@ public class DefaultNutsCp implements NutsCp {
     private boolean mkdirs;
     private Interruptible interruptibleInstance;
     private final NutsWorkspace ws;
+    private boolean replaceExisting =true;
 
     public DefaultNutsCp(NutsSession session) {
         this.session = session;
@@ -457,6 +460,11 @@ public class DefaultNutsCp implements NutsCp {
 
     private void copyFolderWithMonitor(Path srcBase, Path targetBase, CopyData f) {
         checkSession();
+        List<CopyOption> a=new ArrayList<>();
+        if(isReplaceExisting()){
+            a.add(StandardCopyOption.REPLACE_EXISTING);
+        }
+        CopyOption[] options = a.toArray(new CopyOption[0]);
         NutsSession session = getSession();
         long start = System.currentTimeMillis();
         NutsProgressMonitor m = CoreIOUtils.createProgressMonitor(CoreIOUtils.MonitorType.DEFAULT, srcBase, srcBase, session, isLogProgress(), getProgressMonitorFactory());
@@ -480,7 +488,7 @@ public class DefaultNutsCp implements NutsCp {
                 public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
                     checkInterrupted();
                     f.doneFiles++;
-                    copy(file, transformPath(file, srcBase, targetBase));
+                    copy(file, transformPath(file, srcBase, targetBase),options);
                     m.onProgress(new DefaultNutsProgressEvent(srcBase, srcBaseMessage, f.doneFiles + f.doneFolders, System.currentTimeMillis() - start, 0, 0, f.files + f.folders, null, finalSession, false));
                     return FileVisitResult.CONTINUE;
                 }
@@ -506,6 +514,11 @@ public class DefaultNutsCp implements NutsCp {
 
     public Path copy(Path source, Path target, CopyOption... options) throws IOException {
         if (interruptible) {
+            if(Files.exists(target)){
+                if(!isReplaceExisting()){
+                    return null;
+                }
+            }
             try (InputStream in = CoreIOUtils.interruptible(Files.newInputStream(source))) {
                 interruptibleInstance = (Interruptible) in;
                 try (OutputStream out = Files.newOutputStream(target)) {
@@ -565,6 +578,11 @@ public class DefaultNutsCp implements NutsCp {
 
     private void copyFolderNoMonitor(Path srcBase, Path targetBase, CopyData f) {
         try {
+            List<CopyOption> a=new ArrayList<>();
+            if(isReplaceExisting()){
+                a.add(StandardCopyOption.REPLACE_EXISTING);
+            }
+            CopyOption[] options = a.toArray(new CopyOption[0]);
             Files.walkFileTree(srcBase, new FileVisitor<Path>() {
                 @Override
                 public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
@@ -578,7 +596,7 @@ public class DefaultNutsCp implements NutsCp {
                 public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
                     checkInterrupted();
                     f.doneFiles++;
-                    copy(file, transformPath(file, srcBase, targetBase));
+                    copy(file, transformPath(file, srcBase, targetBase), options);
                     return FileVisitResult.CONTINUE;
                 }
 
@@ -745,5 +763,16 @@ public class DefaultNutsCp implements NutsCp {
         long folders;
         long doneFiles;
         long doneFolders;
+    }
+
+    @Override
+    public NutsCp setReplaceExisting(boolean replaceExisting) {
+        this.replaceExisting =replaceExisting;
+        return this;
+    }
+
+    @Override
+    public boolean isReplaceExisting() {
+        return replaceExisting;
     }
 }

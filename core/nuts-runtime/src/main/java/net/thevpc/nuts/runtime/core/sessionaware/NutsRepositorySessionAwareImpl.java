@@ -25,19 +25,8 @@ package net.thevpc.nuts.runtime.core.sessionaware;
 
 import java.util.Iterator;
 import java.util.Map;
-import net.thevpc.nuts.NutsContent;
-import net.thevpc.nuts.NutsDescriptor;
-import net.thevpc.nuts.NutsFetchMode;
-import net.thevpc.nuts.NutsId;
-import net.thevpc.nuts.NutsIdFilter;
-import net.thevpc.nuts.NutsIndexStore;
-import net.thevpc.nuts.NutsMapListener;
-import net.thevpc.nuts.NutsRepository;
-import net.thevpc.nuts.NutsRepositoryConfigManager;
-import net.thevpc.nuts.NutsRepositoryListener;
-import net.thevpc.nuts.NutsRepositorySecurityManager;
-import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.NutsWorkspace;
+
+import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.commands.repo.NutsRepositorySupportedAction;
 import net.thevpc.nuts.runtime.core.repos.NutsRepositoryExt;
 import net.thevpc.nuts.spi.NutsDeployRepositoryCommand;
@@ -302,7 +291,7 @@ public class NutsRepositorySessionAwareImpl implements NutsRepository, NutsRepos
     }
 
     @Override
-    public String getIdBasedir(NutsId id, NutsSession session) {
+    public NutsPath getIdBasedir(NutsId id, NutsSession session) {
         return repoExt().getIdBasedir(id, session);
     }
 

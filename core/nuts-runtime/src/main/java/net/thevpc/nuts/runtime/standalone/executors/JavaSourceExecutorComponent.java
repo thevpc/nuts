@@ -54,7 +54,7 @@ public class JavaSourceExecutorComponent implements NutsExecutorComponent {
     @Override
     public void exec(NutsExecutionContext executionContext) {
         NutsDefinition nutMainFile = executionContext.getDefinition();//executionContext.getWorkspace().fetch(.getId().toString(), true, false);
-        Path javaFile = nutMainFile.getPath();
+        Path javaFile = nutMainFile.getFile();
         JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
         NutsSession session = executionContext.getSession();
         Path folder = NutsTmp.of(session)
@@ -93,7 +93,7 @@ public class JavaSourceExecutorComponent implements NutsExecutorComponent {
     @Override
     public void dryExec(NutsExecutionContext executionContext) throws NutsExecutionException {
         NutsDefinition nutMainFile = executionContext.getDefinition();//executionContext.getWorkspace().fetch(.getId().toString(), true, false);
-        Path javaFile = nutMainFile.getPath();
+        Path javaFile = nutMainFile.getFile();
 //        JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
         String folder = "__temp_folder";
         NutsPrintStream out = executionContext.getSession().out();

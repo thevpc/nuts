@@ -23,7 +23,7 @@ public class NdiScriptOptions implements Cloneable {
     private NutsSession session;
 
     private NutsId nutsApiId;
-    private Path nutsApiJarPath;
+    private NutsPath nutsApiJarPath;
     private NutsWorkspaceBootConfig workspaceBootConfig;
 
     public NdiScriptOptions() {
@@ -121,7 +121,7 @@ public class NdiScriptOptions implements Cloneable {
         return c;
     }
 
-    public Path resolveNutsApiJarPath() {
+    public NutsPath resolveNutsApiJarPath() {
         if (nutsApiJarPath == null) {
             NutsId nid = resolveNutsApiId();
             if (getLauncher().getSwitchWorkspaceLocation() == null) {
@@ -130,34 +130,36 @@ public class NdiScriptOptions implements Cloneable {
                 nutsApiJarPath = apiDef.getPath();
             } else {
                 NutsWorkspaceBootConfig bootConfig = loadSwitchWorkspaceLocationConfig(getLauncher().getSwitchWorkspaceLocation());
-                nutsApiJarPath = Paths.get(bootConfig.getStoreLocation(nid, NutsStoreLocation.LIB),
-                        session.locations().getDefaultIdFilename(nid));
+                nutsApiJarPath = NutsPath.of(bootConfig.getStoreLocation(nid, NutsStoreLocation.LIB),session);
+                session.locations().getDefaultIdFilename(nid);
             }
         }
         return nutsApiJarPath;
     }
 
-    public Path resolveBinFolder() {
+    public NutsPath resolveBinFolder() {
         return resolveNutsAppsFolder().resolve("bin");
     }
 
-    public Path resolveIncFolder() {
+    public NutsPath resolveIncFolder() {
         return resolveNutsAppsFolder().resolve("inc");
     }
 
-    public Path resolveNutsAppsFolder() {
+    public NutsPath resolveNutsAppsFolder() {
         NutsSession ws = session;
         NutsWorkspaceBootConfig bootConfig = null;
         NutsId apiId = session.getWorkspace().getApiId();
         if (getLauncher().getSwitchWorkspaceLocation() != null) {
             bootConfig = loadSwitchWorkspaceLocationConfig(getLauncher().getSwitchWorkspaceLocation());
-            return Paths.get(bootConfig.getStoreLocation(apiId, NutsStoreLocation.APPS));
+            return NutsPath.of(
+                    bootConfig.getStoreLocation(apiId, NutsStoreLocation.APPS),session
+            );
         } else {
-            return Paths.get(ws.locations().getStoreLocation(apiId, NutsStoreLocation.APPS));
+            return ws.locations().getStoreLocation(apiId, NutsStoreLocation.APPS);
         }
     }
 
-    public Path resolveNutsApiAppsFolder() {
+    public NutsPath resolveNutsApiAppsFolder() {
         NutsSession ws = session;
         NutsWorkspaceBootConfig bootConfig = null;
         NutsId apiId = ws.getWorkspace().getApiId().builder().setVersion(nutsVersion).build();
@@ -166,9 +168,9 @@ public class NdiScriptOptions implements Cloneable {
                 .getResultDefinitions().singleton().getId();
         if (getLauncher().getSwitchWorkspaceLocation() != null) {
             bootConfig = loadSwitchWorkspaceLocationConfig(getLauncher().getSwitchWorkspaceLocation());
-            return Paths.get(bootConfig.getStoreLocation(apiId, NutsStoreLocation.APPS));
+            return NutsPath.of(bootConfig.getStoreLocation(apiId, NutsStoreLocation.APPS),session);
         } else {
-            return Paths.get(ws.locations().getStoreLocation(apiId, NutsStoreLocation.APPS));
+            return ws.locations().getStoreLocation(apiId, NutsStoreLocation.APPS);
         }
     }
 

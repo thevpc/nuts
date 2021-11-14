@@ -65,18 +65,58 @@ public class FilePath implements NutsPathSPI {
     }
 
     @Override
-    public NutsPath resolve(String[] others, boolean trailingSeparator) {
-        if (others.length > 0) {
-            Path value2 = value;
-            for (String s : others) {
-                value2 = value2.resolve(s);
-            }
-            return NutsPath.of(value2, getSession());
+    public NutsPath resolve(String path) {
+        if (NutsBlankable.isBlank(path)) {
+            return NutsPath.of(value, getSession());
         }
-        return toNutsPathInstance();
+        try {
+            return NutsPath.of(value.resolve(path), getSession());
+        } catch (Exception ex) {
+            //always return an instance if if invalid
+            return NutsPath.of(value + "/" + path, getSession());
+        }
     }
 
-//    @Override
+    @Override
+    public NutsPath resolve(NutsPath path) {
+        if (path == null) {
+            return NutsPath.of(value, getSession());
+        }
+        if (path.toString().isEmpty()) {
+            return NutsPath.of(value, getSession());
+        }
+        Path f = path.asFile();
+        if (f != null) {
+            return NutsPath.of(value.resolve(f), getSession());
+        }
+        return resolve(path.toString());
+    }
+
+    @Override
+    public NutsPath resolveSibling(String path) {
+        if (path == null) {
+            return getParent();
+        }
+        if (path.isEmpty()) {
+            return getParent();
+        }
+        return NutsPath.of(value.resolveSibling(path), getSession());
+    }
+
+    @Override
+    public NutsPath resolveSibling(NutsPath path) {
+        if (path == null) {
+            return getParent();
+        }
+        return resolveSibling(path.toString());
+    }
+
+    @Override
+    public NutsPath toCompressedForm() {
+        return null;
+    }
+
+    //    @Override
 //    public NutsPath resolve(String other) {
 //        String[] others = Arrays.stream(NutsUtilStrings.trim(other).split("[/\\\\]"))
 //                .filter(x -> x.length() > 0).toArray(String[]::new);
@@ -428,6 +468,21 @@ public class FilePath implements NutsPathSPI {
     }
 
     @Override
+    public NutsPath subpath(int beginIndex, int endIndex) {
+        return NutsPath.of(value.subpath(beginIndex, endIndex), getSession());
+    }
+
+    @Override
+    public String[] getItems() {
+        int nameCount = value.getNameCount();
+        String[] names = new String[nameCount];
+        for (int i = 0; i < nameCount; i++) {
+            names[i] = value.getName(i).toString();
+        }
+        return names;
+    }
+
+    @Override
     public int hashCode() {
         return Objects.hash(value);
     }
@@ -584,10 +639,4 @@ public class FilePath implements NutsPathSPI {
             return false;
         }
     }
-
-    @Override
-    public NutsPath toCompressedForm() {
-        return null;
-    }
-    
 }

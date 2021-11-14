@@ -183,23 +183,19 @@ public class DerbyService {
             currentDerbyVersion = best.getVersion().toString();
         }
 
-        Path derbyDataHome = null;
+        NutsPath derbyDataHome = null;
         if (options.derbyDataHomeReplace != null) {
-            derbyDataHome = Paths.get(appContext.getSharedVarFolder());
+            derbyDataHome = appContext.getSharedVarFolder();
         } else {
             if (options.derbyDataHomeRoot != null && options.derbyDataHomeRoot.trim().length() > 0) {
-                derbyDataHome = Paths.get(getAbsoluteFile(options.derbyDataHomeRoot, appContext.getSharedVarFolder().toString()));
+                derbyDataHome = NutsPath.of(options.derbyDataHomeRoot,session).toAbsolute(appContext.getSharedVarFolder());
             } else {
-                derbyDataHome = Paths.get(appContext.getSharedVarFolder()).resolve("derby-db");
+                derbyDataHome = appContext.getSharedVarFolder().resolve("derby-db");
             }
         }
-        Path derbyDataHomeRoot = derbyDataHome.getParent();
-        try {
-            Files.createDirectories(derbyDataHomeRoot);
-        } catch (IOException ex) {
-            throw new NutsExecutionException(appContext.getSession(),NutsMessage.cstyle("failed to create directory %s",derbyDataHomeRoot), 1);
-        }
-        Path derbyBinHome = Paths.get(session.locations().getStoreLocation(appContext.getAppId(), NutsStoreLocation.APPS)).resolve(currentDerbyVersion);
+        NutsPath derbyDataHomeRoot = derbyDataHome.getParent();
+        derbyDataHome.mkdirs();
+        Path derbyBinHome = session.locations().getStoreLocation(appContext.getAppId(), NutsStoreLocation.APPS).resolve(currentDerbyVersion).toFile();
         Path derbyLibHome = derbyBinHome.resolve("lib");
         Path derby = download("org.apache.derby:derby#" + currentDerbyVersion, derbyLibHome, false);
         Path derbynet = download("org.apache.derby:derbynet#" + currentDerbyVersion, derbyLibHome, false);

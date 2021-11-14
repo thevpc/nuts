@@ -25,9 +25,8 @@
  */
 package net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.ndi;
 
+import net.thevpc.nuts.NutsPath;
 import net.thevpc.nuts.runtime.standalone.wscommands.settings.PathInfo;
-
-import java.nio.file.Path;
 
 /**
  *
@@ -35,7 +34,7 @@ import java.nio.file.Path;
  */
 public interface NdiScriptInfo {
 
-    Path path();
+    NutsPath path();
 
     PathInfo create();
 }

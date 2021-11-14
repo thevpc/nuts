@@ -2,6 +2,7 @@ package net.thevpc.nuts.toolbox.ntomcat.remote;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.toolbox.ntomcat.NTomcatConfigVersions;
+import net.thevpc.nuts.toolbox.ntomcat.local.LocalTomcatConfigService;
 import net.thevpc.nuts.toolbox.ntomcat.remote.config.RemoteTomcatConfig;
 import net.thevpc.nuts.toolbox.ntomcat.util.TomcatUtils;
 
@@ -18,12 +19,12 @@ public class RemoteTomcat {
 
     public NutsApplicationContext context;
     public NutsCommandLine cmdLine;
-    public Path sharedConfigFolder;
+    public NutsPath sharedConfigFolder;
 
     public RemoteTomcat(NutsApplicationContext applicationContext, NutsCommandLine cmdLine) {
         this.setContext(applicationContext);
         this.cmdLine = cmdLine;
-        sharedConfigFolder = Paths.get(applicationContext.getVersionFolderFolder(NutsStoreLocation.CONFIG, NTomcatConfigVersions.CURRENT));
+        sharedConfigFolder = applicationContext.getVersionFolder(NutsStoreLocation.CONFIG, NTomcatConfigVersions.CURRENT);
     }
 
     public void runArgs() {
@@ -341,23 +342,13 @@ public class RemoteTomcat {
     }
 
     public RemoteTomcatConfigService[] listConfig() {
-        List<RemoteTomcatConfigService> all = new ArrayList<>();
-        if (Files.isDirectory(sharedConfigFolder)) {
-            try (DirectoryStream<Path> pp = Files.newDirectoryStream(sharedConfigFolder,
-                    (Path entry) -> entry.getFileName().toString().endsWith(RemoteTomcatConfigService.REMOTE_CONFIG_EXT))) {
-                for (Path entry : pp) {
-                    try {
-                        RemoteTomcatConfigService c = loadTomcatConfig(entry);
-                        all.add(c);
-                    } catch (Exception ex) {
-                        //ignore
-                    }
-                }
-            } catch (IOException ex) {
-                throw new UncheckedIOException(ex);
-            }
-        }
-        return all.toArray(new RemoteTomcatConfigService[0]);
+        return
+                sharedConfigFolder.list().filter(
+                                pathname -> pathname.isRegularFile() &&  pathname.getName().toString().endsWith(RemoteTomcatConfigService.REMOTE_CONFIG_EXT)
+                        )
+                        .mapUnsafe(x->loadTomcatConfig(x),null)
+                        .filterNonNull()
+                        .toArray(RemoteTomcatConfigService[]::new);
     }
 
     public void show(NutsCommandLine args) {
@@ -397,7 +388,7 @@ public class RemoteTomcat {
         return t;
     }
 
-    public RemoteTomcatConfigService loadTomcatConfig(Path name) {
+    public RemoteTomcatConfigService loadTomcatConfig(NutsPath name) {
         RemoteTomcatConfigService t = new RemoteTomcatConfigService(name, this);
         t.loadConfig();
         return t;

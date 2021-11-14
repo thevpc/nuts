@@ -41,19 +41,19 @@ import java.util.Objects;
  */
 public class NutsDefaultContent implements NutsContent {
 
-    private final NutsPath location;
+    private final NutsPath path;
     private final boolean cached;
     private final boolean temporary;
 
     /**
      * Default Content implementation constructor
      *
-     * @param location  content file path
+     * @param path  content file path
      * @param cached    true if the file is cached (may be not up to date)
      * @param temporary true if file is temporary (should be deleted later)
      */
-    public NutsDefaultContent(NutsPath location, boolean cached, boolean temporary) {
-        this.location = location;
+    public NutsDefaultContent(NutsPath path, boolean cached, boolean temporary) {
+        this.path = path;
         this.cached = cached;
         this.temporary = temporary;
     }
@@ -65,22 +65,17 @@ public class NutsDefaultContent implements NutsContent {
      */
     @Override
     public Path getFile() {
-        return location == null ? null : Paths.get(location.toString());
+        return path == null ? null : path.toFile();
     }
 
     @Override
     public NutsPath getPath() {
-        return location;
+        return path;
     }
 
     @Override
     public URL getURL() {
-        return location == null ? null : getPath().toURL();
-    }
-
-    @Override
-    public NutsPath getLocation() {
-        return location;
+        return path == null ? null : getPath().toURL();
     }
 
     /**
@@ -105,7 +100,7 @@ public class NutsDefaultContent implements NutsContent {
 
     @Override
     public int hashCode() {
-        return Objects.hash(location, cached, temporary);
+        return Objects.hash(path, cached, temporary);
     }
 
     @Override
@@ -115,11 +110,11 @@ public class NutsDefaultContent implements NutsContent {
         NutsDefaultContent that = (NutsDefaultContent) o;
         return cached == that.cached &&
                 temporary == that.temporary &&
-                Objects.equals(location, that.location);
+                Objects.equals(path, that.path);
     }
 
     @Override
     public String toString() {
-        return "Content{" + "file=" + location + ", cached=" + cached + ", temporary=" + temporary + '}';
+        return "Content{" + "file=" + path + ", cached=" + cached + ", temporary=" + temporary + '}';
     }
 }

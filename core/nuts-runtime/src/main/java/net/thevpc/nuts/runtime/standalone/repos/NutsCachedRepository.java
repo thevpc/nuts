@@ -55,8 +55,8 @@ public class NutsCachedRepository extends AbstractNutsRepositoryBase {
 
     public NutsCachedRepository(NutsAddRepositoryOptions options, NutsSession session, NutsRepository parent, NutsSpeedQualifier speed, boolean supportedMirroring, String repositoryType) {
         super(options, session, parent, speed, supportedMirroring, repositoryType);
-        cache = new NutsRepositoryFolderHelper(this, session, Paths.get(config().setSession(session).getStoreLocation(NutsStoreLocation.CACHE)), true);
-        lib = new NutsRepositoryFolderHelper(this, session, Paths.get(config().setSession(session).getStoreLocation(NutsStoreLocation.LIB)), false);
+        cache = new NutsRepositoryFolderHelper(this, session, config().setSession(session).getStoreLocation(NutsStoreLocation.CACHE), true);
+        lib = new NutsRepositoryFolderHelper(this, session, config().setSession(session).getStoreLocation(NutsStoreLocation.LIB), false);
         mirroring = new NutsRepositoryMirroringHelper(this, cache);
     }
 
@@ -143,9 +143,10 @@ public class NutsCachedRepository extends AbstractNutsRepositoryBase {
         List<Iterator<? extends NutsId>> li = new ArrayList<>();
         List<String> rootStrings = new ArrayList<>();
         for (CommonRootsHelper.PathBase root : roots) {
-            li.add(lib.findInFolder(Paths.get(root.getName()), filter, root.isDeep() ? Integer.MAX_VALUE : 2, session));
+            NutsPath np = NutsPath.of(root.getName(), session);
+            li.add(lib.findInFolder(np, filter, root.isDeep() ? Integer.MAX_VALUE : 2, session));
             if (cache.isReadEnabled() && session.isCached()) {
-                li.add(cache.findInFolder(Paths.get(root.getName()), filter, root.isDeep() ? Integer.MAX_VALUE : 2, session));
+                li.add(cache.findInFolder(np, filter, root.isDeep() ? Integer.MAX_VALUE : 2, session));
             }
             if (root.isDeep()) {
                 rootStrings.add(root.getName() + "/*");
@@ -188,7 +189,7 @@ public class NutsCachedRepository extends AbstractNutsRepositoryBase {
         NutsContent c = null;
         SuccessFailResult<NutsContent, RuntimeException> res = NutsLocks.of(session).setSource(id.builder().setFaceContent().build()).call(() -> {
             if (cache.isWriteEnabled()) {
-                Path cachePath = cache.getLongIdLocalFile(id, session);
+                NutsPath cachePath = cache.getLongIdLocalFile(id, session);
                 NutsContent c2 = fetchContentCore(id, descriptor, cachePath.toString(), fetchMode, session);
                 if (c2 != null) {
                     String localPath2 = localPath;

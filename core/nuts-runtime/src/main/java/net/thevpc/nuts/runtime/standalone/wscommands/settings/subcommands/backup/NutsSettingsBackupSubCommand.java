@@ -42,8 +42,8 @@ public class NutsSettingsBackupSubCommand extends AbstractNutsSettingsSubCommand
                         .resolve("nuts-workspace.json").toString()
                 );
                 for (NutsStoreLocation value : NutsStoreLocation.values()) {
-                    Path r = Paths.get(session.locations().getStoreLocation(value));
-                    if (Files.isDirectory(r)) {
+                    NutsPath r = session.locations().getStoreLocation(value);
+                    if (r.isDirectory()) {
                         all.add(r.toString());
                     }
                 }

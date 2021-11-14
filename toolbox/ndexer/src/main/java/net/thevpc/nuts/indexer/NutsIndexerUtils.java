@@ -35,7 +35,7 @@ public class NutsIndexerUtils {
         Map<String, String> entity = new HashMap<>();
         entity.put("name", repository.getName());
         entity.put("type", repository.getRepositoryType());
-        entity.put("location", repository.config().getLocation(false));
+        entity.put("location", repository.config().getLocation(false).toString());
         entity.put("enabled", String.valueOf(repository.config().isEnabled()));
         entity.put("speed", String.valueOf(repository.config().getSpeed()));
         NutsWorkspace ws = repository.getWorkspace();

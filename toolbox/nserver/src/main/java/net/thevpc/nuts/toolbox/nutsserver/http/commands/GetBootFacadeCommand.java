@@ -32,7 +32,7 @@ public class GetBootFacadeCommand extends AbstractFacadeCommand {
             NutsDefinition def = context.getSession().search().addId(NutsConstants.Ids.NUTS_API).setLatest(true).setContent(true).getResultDefinitions().first();
             if (def != null) {
                 context.addResponseHeader("content-disposition", "attachment; filename=\"nuts-" + def.getId().getVersion().toString() + ".jar\"");
-                context.sendResponseFile(200, def.getPath());
+                context.sendResponseFile(200, def.getFile());
             } else {
                 context.sendError(404, "File Note Found");
             }
@@ -40,7 +40,7 @@ public class GetBootFacadeCommand extends AbstractFacadeCommand {
             NutsDefinition def = context.getSession().fetch().setId(NutsConstants.Ids.NUTS_API + "#" + version).setContent(true).getResultDefinition();
             if (def != null) {
                 context.addResponseHeader("content-disposition", "attachment; filename=\"nuts-" + def.getId().getVersion().toString() + ".jar\"");
-                context.sendResponseFile(200, def.getPath());
+                context.sendResponseFile(200, def.getFile());
             } else {
                 context.sendError(404, "File Note Found");
             }

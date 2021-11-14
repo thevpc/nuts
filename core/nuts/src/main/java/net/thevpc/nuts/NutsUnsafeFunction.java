@@ -26,41 +26,11 @@
  */
 package net.thevpc.nuts;
 
-import java.io.Serializable;
-import java.net.URL;
-import java.nio.file.Path;
-
 /**
- * Content describes a artifact file location and its characteristics.
- *
- * @author thevpc
- * @app.category Descriptor
- * @since 0.5.4
+ * Unsafe function is a function that can throw any arbitrary exception
+ * @param <T>
+ * @param <R>
  */
-public interface NutsContent extends Serializable {
-
-    /**
-     * artifact local path
-     *
-     * @return artifact local path
-     */
-    Path getFile();
-
-    NutsPath getPath();
-
-    URL getURL();
-
-    /**
-     * when true, the content was retrieved from cache rather then from remote location.
-     *
-     * @return true if content is cached
-     */
-    boolean isCached();
-
-    /**
-     * when true, the path location is temporary and should be deleted after usage
-     *
-     * @return true if content temporary
-     */
-    boolean isTemporary();
+public interface NutsUnsafeFunction<T, R> {
+    R apply(T t) throws Exception;
 }

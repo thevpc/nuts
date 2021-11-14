@@ -87,7 +87,7 @@ public abstract class AbstractNutsRepositoryBase extends AbstractNutsRepository 
         String loc = c.getModel().getLocation();
         String impl = getClass().getSimpleName();
         if (c != null) {
-            storePath = Paths.get(c.getModel().getStoreLocation()).toAbsolutePath().toString();
+            storePath = c.getModel().getStoreLocation().toAbsolute().toString();
         }
         LinkedHashMap<String, String> a = new LinkedHashMap<>();
         if (name != null) {
@@ -170,16 +170,16 @@ public abstract class AbstractNutsRepositoryBase extends AbstractNutsRepository 
     }
 
     @Override
-    public String getIdBasedir(NutsId id, NutsSession session) {
+    public NutsPath getIdBasedir(NutsId id, NutsSession session) {
         return session.locations().setSession(session).getDefaultIdBasedir(id);
     }
 
-    protected String getIdRemotePath(NutsId id, NutsSession session) {
-        return CoreIOUtils.buildUrl(config().setSession(session).getLocation(true), getIdRelativePath(id, session));
+    protected NutsPath getIdRemotePath(NutsId id, NutsSession session) {
+        return config().setSession(session).getLocation(true).resolve(getIdRelativePath(id, session));
     }
 
-    protected String getIdRelativePath(NutsId id, NutsSession session) {
-        return getIdBasedir(id, session) + "/" + getIdFilename(id, session);
+    protected NutsPath getIdRelativePath(NutsId id, NutsSession session) {
+        return getIdBasedir(id, session).resolve(getIdFilename(id, session));
     }
 
     @Override

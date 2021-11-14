@@ -624,8 +624,9 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
         URL[] allURLs = new URL[nutsDefinitions.size()];
         NutsId[] allIds = new NutsId[nutsDefinitions.size()];
         for (int i = 0; i < allURLs.length; i++) {
-            allURLs[i] = nutsDefinitions.get(i).getURL();
-            allIds[i] = nutsDefinitions.get(i).getId();
+            NutsDefinition d = nutsDefinitions.get(i);
+            allURLs[i] = d.getPath()==null?null:d.getPath().toURL();
+            allIds[i] = d.getId();
         }
         DefaultNutsClassLoader cl = ((DefaultNutsWorkspaceExtensionManager) getSession().extensions())
                 .getModel().getNutsURLClassLoader("SEARCH-" + UUID.randomUUID(), parent, getSession());
@@ -646,11 +647,11 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
         Iterator<NutsDefinition> it = getResultDefinitionIteratorBase(true, isEffective());
         while (it.hasNext()) {
             NutsDefinition nutsDefinition = it.next();
-            if (nutsDefinition.getPath() != null) {
+            if (nutsDefinition.getFile() != null) {
                 if (sb.length() > 0) {
                     sb.append(File.pathSeparator);
                 }
-                sb.append(nutsDefinition.getPath());
+                sb.append(nutsDefinition.getFile());
             }
         }
         return sb.toString();
@@ -706,14 +707,14 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
     }
 
     @Override
-    public NutsStream<String> getResultInstallFolders() {
+    public NutsStream<NutsPath> getResultInstallFolders() {
         return postProcessResult(IteratorBuilder.of(getResultDefinitionIteratorBase(isContent(), isEffective()))
                 .map(x -> (x.getInstallInformation() == null) ? null : x.getInstallInformation().getInstallFolder())
                 .notNull());
     }
 
     @Override
-    public NutsStream<String> getResultStoreLocations(NutsStoreLocation location) {
+    public NutsStream<NutsPath> getResultStoreLocations(NutsStoreLocation location) {
         checkSession();
         return postProcessResult(IteratorBuilder.of(getResultDefinitionIteratorBase(isContent(), isEffective()))
                 .map(x -> getSession().locations().getStoreLocation(x.getId(), location))

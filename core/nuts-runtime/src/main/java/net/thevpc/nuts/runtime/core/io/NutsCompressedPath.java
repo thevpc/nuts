@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Function;
 
 public class NutsCompressedPath extends NutsPathBase {
 
@@ -228,11 +229,6 @@ public class NutsCompressedPath extends NutsPathBase {
     }
 
     @Override
-    public NutsPathBuilder builder() {
-        return base.builder();
-    }
-
-    @Override
     public NutsPath getParent() {
         return base.getParent();
     }
@@ -363,4 +359,63 @@ public class NutsCompressedPath extends NutsPathBase {
         return base.resolve(other).toCompressedForm();
     }
 
+    @Override
+    public NutsPath resolveSibling(String other) {
+        return base.resolveSibling(other).toCompressedForm();
+    }
+
+    @Override
+    public NutsPath resolveSibling(NutsPath other) {
+        return base.resolveSibling(other).toCompressedForm();
+    }
+
+    @Override
+    public byte[] readAllBytes() {
+        return base.readAllBytes();
+    }
+
+    @Override
+    public NutsPath writeBytes(byte[] bytes) {
+        return base.writeBytes(bytes);
+    }
+
+    @Override
+    public NutsPath deleteTree() {
+        return base.deleteTree();
+    }
+
+    @Override
+    public NutsPath mkParentDirs() {
+        return base.mkParentDirs();
+    }
+
+    @Override
+    public NutsPath subpath(int beginIndex, int endIndex) {
+        return base.subpath(beginIndex,endIndex).toCompressedForm();
+    }
+
+    @Override
+    public String getItem(int index) {
+        return base.getItem(index);
+    }
+
+    @Override
+    public NutsPath mkdirs() {
+        return base.mkdirs();
+    }
+
+    @Override
+    public String[] getItems() {
+        return base.getItems();
+    }
+
+    @Override
+    public NutsPath mkdir() {
+        return base.mkdir();
+    }
+
+    @Override
+    public NutsPath expandPath(Function<String, String> resolver) {
+        return base.expandPath(resolver).toCompressedForm();
+    }
 }

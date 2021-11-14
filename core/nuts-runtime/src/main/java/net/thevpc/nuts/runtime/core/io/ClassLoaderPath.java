@@ -6,6 +6,8 @@ import net.thevpc.nuts.NutsPath;
 import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
 
+import java.util.Objects;
+
 public class ClassLoaderPath extends URLPath {
     private final String path;
     private final ClassLoader loader;
@@ -45,5 +47,20 @@ public class ClassLoaderPath extends URLPath {
 
     protected NutsPath rebuildURLPath(String other) {
         return new NutsPathFromSPI(new ClassLoaderPath(other, loader, getSession()));
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+//        if (!super.equals(o)) return false;
+        ClassLoaderPath that = (ClassLoaderPath) o;
+        return Objects.equals(path, that.path) && Objects.equals(loader, that.loader);
+    }
+
+    @Override
+    public int hashCode() {
+//        return Objects.hash(super.hashCode(), path, loader);
+        return Objects.hash(path, loader);
     }
 }

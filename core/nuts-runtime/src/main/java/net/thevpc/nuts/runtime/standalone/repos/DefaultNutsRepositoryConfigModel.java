@@ -28,7 +28,7 @@ public class DefaultNutsRepositoryConfigModel implements NutsRepositoryConfigMod
 
     private final NutsRepository repository;
     private final NutsSpeedQualifier speed;
-    private final String storeLocation;
+    private final NutsPath storeLocation;
     private NutsRepositoryConfig config;
     private final Map<String, NutsUserConfig> configUsers = new LinkedHashMap<>();
     private boolean configurationChanged = false;
@@ -81,7 +81,7 @@ public class DefaultNutsRepositoryConfigModel implements NutsRepositoryConfigMod
         this.repository = repository;
         this.repositoryName = repositoryName;
         this.globalName = globalName;
-        this.storeLocation = storeLocation;
+        this.storeLocation = NutsPath.of(storeLocation,session);
         this.speed = speed;
         this.deployWeight = options.getDeployWeight();
         this.temporary = options.isTemporary();
@@ -207,16 +207,16 @@ public class DefaultNutsRepositoryConfigModel implements NutsRepositoryConfigMod
     }
 
     @Override
-    public String getLocation(boolean expand,NutsSession session) {
+    public NutsPath getLocation(boolean expand,NutsSession session) {
         String s = config.getLocation();
         if (s != null && expand) {
-            s = NutsPath.of(s,session).builder().withWorkspaceBaseDir().build().toString();
+            return NutsPath.of(s,session).toAbsolute(session.locations().getWorkspaceLocation());
         }
-        return s;
+        return s==null?null:NutsPath.of(s,session);
     }
 
     @Override
-    public String getStoreLocation() {
+    public NutsPath getStoreLocation() {
         return storeLocation;
     }
 
@@ -230,7 +230,7 @@ public class DefaultNutsRepositoryConfigModel implements NutsRepositoryConfigMod
     }
 
     @Override
-    public String getStoreLocation(NutsStoreLocation folderType,NutsSession session) {
+    public NutsPath getStoreLocation(NutsStoreLocation folderType,NutsSession session) {
         NutsStoreLocationsMap hlm = new NutsStoreLocationsMap(config.getStoreLocations());
 
 //        String n = CoreNutsUtils.getArrItem(config.getStoreLocations(), folderType.ordinal());
@@ -240,7 +240,7 @@ public class DefaultNutsRepositoryConfigModel implements NutsRepositoryConfigMod
                 n = folderType.toString().toLowerCase();
                 n = n.trim();
             }
-            return Paths.get(getStoreLocation()).resolve(n).toString();
+            return getStoreLocation().resolve(n);
         } else {
             switch (getStoreLocationStrategy(session)) {
                 case STANDALONE: {
@@ -248,12 +248,12 @@ public class DefaultNutsRepositoryConfigModel implements NutsRepositoryConfigMod
                         n = folderType.toString().toLowerCase();
                     }
                     n = n.trim();
-                    return Paths.get(getStoreLocation()).resolve(n).toString();
+                    return getStoreLocation().resolve(n);
                 }
                 case EXPLODED: {
-                    Path storeLocation = Paths.get(session.locations().getStoreLocation(folderType));
+                    NutsPath storeLocation = session.locations().getStoreLocation(folderType);
                     //uuid is added as
-                    return storeLocation.resolve(NutsConstants.Folders.REPOSITORIES).resolve(getName()).resolve(getUuid()).toString();
+                    return storeLocation.resolve(NutsConstants.Folders.REPOSITORIES).resolve(getName()).resolve(getUuid());
 
                 }
                 default: {
@@ -415,12 +415,12 @@ public class DefaultNutsRepositoryConfigModel implements NutsRepositoryConfigMod
         if (force || (!session.config().isReadOnly() && isConfigurationChanged())) {
             NutsWorkspaceUtils.of(session).checkReadOnly();
             repository.security().setSession(session).checkAllowed(NutsConstants.Permissions.SAVE, "save");
-            Path file = Paths.get(getStoreLocation()).resolve(NutsConstants.Files.REPOSITORY_CONFIG_FILE_NAME);
+            NutsPath file = getStoreLocation().resolve(NutsConstants.Files.REPOSITORY_CONFIG_FILE_NAME);
             boolean created = false;
-            if (!Files.exists(file)) {
+            if (!file.exists()) {
                 created = true;
             }
-            CoreIOUtils.mkdirs(Paths.get(getStoreLocation()),session);
+            getStoreLocation().mkdirs();
             config.setConfigVersion(DefaultNutsWorkspace.VERSION_REPOSITORY_CONFIG);
             if (config.getEnv() != null && config.getEnv().isEmpty()) {
                 config.setEnv(null);
@@ -440,13 +440,13 @@ public class DefaultNutsRepositoryConfigModel implements NutsRepositoryConfigMod
                             .log(NutsMessage.jstyle(
                                     "{0} created repository {1} at {2}",
                                     CoreStringUtils.alignLeft(repository.getName(), 20) , repository.getName() ,
-                                    NutsTexts.of(session).ofStyled(getStoreLocation(),NutsTextStyle.path())
+                                    getStoreLocation()
                                     ));
                 } else {
                     _LOGOP(session).level(Level.CONFIG).verb(NutsLogVerb.SUCCESS).log(NutsMessage.jstyle(
                             "{0} updated repository {1} at {2}",
                             CoreStringUtils.alignLeft(repository.getName(), 20) , repository.getName() ,
-                            NutsTexts.of(session).ofStyled(getStoreLocation(),NutsTextStyle.path())
+                            getStoreLocation()
                     ));
                 }
             }
@@ -676,13 +676,13 @@ public class DefaultNutsRepositoryConfigModel implements NutsRepositoryConfigMod
     }
 
     @Override
-    public Path getTempMirrorsRoot(NutsSession session) {
-        return Paths.get(getStoreLocation()).resolve(NutsConstants.Folders.REPOSITORIES);
+    public NutsPath getTempMirrorsRoot(NutsSession session) {
+        return getStoreLocation().resolve(NutsConstants.Folders.REPOSITORIES);
     }
 
     @Override
-    public Path getMirrorsRoot(NutsSession session) {
-        return Paths.get(getStoreLocation()).resolve(NutsConstants.Folders.REPOSITORIES);
+    public NutsPath getMirrorsRoot(NutsSession session) {
+        return getStoreLocation().resolve(NutsConstants.Folders.REPOSITORIES);
     }
 
     public NutsRepositoryConfig getStoredConfig(NutsSession session) {

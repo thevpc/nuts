@@ -20,16 +20,16 @@ import java.util.stream.Collectors;
 
 public class WindowFreeDesktopEntryWriter extends AbstractFreeDesktopEntryWriter {
     private final NutsSession session;
-    private final Path desktopPath;
+    private final NutsPath desktopPath;
 
-    public WindowFreeDesktopEntryWriter(Path desktopPath, NutsSession session) {
+    public WindowFreeDesktopEntryWriter(NutsPath desktopPath, NutsSession session) {
         this.session = session;
         this.desktopPath = desktopPath;
     }
 
     @Override
-    public PathInfo[] writeShortcut(FreeDesktopEntry descriptor, Path path, boolean doOverride, NutsId id) {
-        path = Paths.get(ensureName(path == null ? null : path.toString(), descriptor.getOrCreateDesktopEntry().getName(), "lnk"));
+    public PathInfo[] writeShortcut(FreeDesktopEntry descriptor, NutsPath path, boolean doOverride, NutsId id) {
+        path = NutsPath.of(ensureName(path == null ? null : path.toString(), descriptor.getOrCreateDesktopEntry().getName(), "lnk"),session);
         FreeDesktopEntry.Group g = descriptor.getOrCreateDesktopEntry();
         if (g == null || g.getType() != FreeDesktopEntry.Type.APPLICATION) {
             throw new IllegalArgumentException("invalid entry");
@@ -38,20 +38,20 @@ public class WindowFreeDesktopEntryWriter extends AbstractFreeDesktopEntryWriter
         if (wd == null) {
             wd = System.getProperty("user.home");
         }
-        File q = path.toFile();
+        NutsPath q = path;
         boolean alreadyExists = q.exists();
         if (alreadyExists && !doOverride) {
-            return new PathInfo[]{new PathInfo("desktop-shortcut", id, q.toPath(), PathInfo.Status.DISCARDED)};
+            return new PathInfo[]{new PathInfo("desktop-shortcut", id, q, PathInfo.Status.DISCARDED)};
         }
         PathInfo.Status newStatus = new OptionalMsLinkHelper(g.getExec(), wd, g.getIcon(), q.toString(), session).write();
-        return new PathInfo[]{new PathInfo("desktop-shortcut", id, q.toPath(), newStatus)};
+        return new PathInfo[]{new PathInfo("desktop-shortcut", id, q, newStatus)};
     }
 
     @Override
     public PathInfo[] writeDesktop(FreeDesktopEntry descriptor, String fileName, boolean doOverride, NutsId id) {
         fileName = Paths.get(ensureName(fileName, descriptor.getOrCreateDesktopEntry().getName(), "lnk")).getFileName().toString();
-        File q = desktopPath.resolve(fileName).toFile();
-        return writeShortcut(descriptor, q.toPath(), doOverride, id);
+        NutsPath q = desktopPath.resolve(fileName);
+        return writeShortcut(descriptor, q, doOverride, id);
     }
 
     @Override
@@ -73,22 +73,22 @@ public class WindowFreeDesktopEntryWriter extends AbstractFreeDesktopEntryWriter
         for (String category : categories) {
             List<String> part = Arrays.stream((category == null ? "" : category).split("/")).filter(x -> !x.isEmpty()).collect(Collectors.toList());
 
-            File m = new File(System.getProperty("user.home") + "\\AppData\\Roaming\\Microsoft\\Windows\\Start Menu\\Programs");
+            NutsPath m = NutsPath.of(System.getProperty("user.home"),session).resolve("AppData\\Roaming\\Microsoft\\Windows\\Start Menu\\Programs");
             if (!part.isEmpty() && part.get(0).equals("Applications")) {
                 part.remove(0);
             }
             if (part.size() > 0) {
-                m = new File(m, String.join("\\", part));
+                m = m.resolve(String.join("\\", part));
                 m.mkdirs();
             }
 
-            File q = new File(m, descriptor.getOrCreateDesktopEntry().getName() + ".lnk");
+            NutsPath q = m.resolve(descriptor.getOrCreateDesktopEntry().getName() + ".lnk");
             boolean alreadyExists = q.exists();
             if (alreadyExists && !doOverride) {
-                result.add(new PathInfo("desktop-menu", id, q.toPath(), PathInfo.Status.DISCARDED));
+                result.add(new PathInfo("desktop-menu", id, q, PathInfo.Status.DISCARDED));
             } else {
-                PathInfo.Status newStatus = new OptionalMsLinkHelper(root.getExec(), wd, root.getIcon(), q.getPath(), session).write();
-                result.add(new PathInfo("desktop-menu", id, q.toPath(), newStatus));
+                PathInfo.Status newStatus = new OptionalMsLinkHelper(root.getExec(), wd, root.getIcon(), q.toString(), session).write();
+                result.add(new PathInfo("desktop-menu", id, q, newStatus));
             }
 
         }

@@ -20,14 +20,14 @@ public class LocalTomcatAppConfigService extends LocalTomcatServiceBase {
     private LocalTomcatAppConfig config;
     private LocalTomcatConfigService tomcat;
     private NutsApplicationContext context;
-    private Path sharedConfigFolder;
+    private NutsPath sharedConfigFolder;
 
     public LocalTomcatAppConfigService(String name, LocalTomcatAppConfig config, LocalTomcatConfigService tomcat) {
         this.name = name;
         this.config = config;
         this.tomcat = tomcat;
         this.context = tomcat.getTomcatServer().getContext();
-        sharedConfigFolder = Paths.get(tomcat.getContext().getVersionFolderFolder(NutsStoreLocation.CONFIG, NTomcatConfigVersions.CURRENT));
+        sharedConfigFolder = tomcat.getContext().getVersionFolder(NutsStoreLocation.CONFIG, NTomcatConfigVersions.CURRENT);
     }
 
     @Override
@@ -42,76 +42,74 @@ public class LocalTomcatAppConfigService extends LocalTomcatServiceBase {
     public Path getArchiveFile(String version) {
         String runningFolder = tomcat.getConfig().getArchiveFolder();
         if (runningFolder == null || runningFolder.trim().isEmpty()) {
-            runningFolder = Paths.get(context.getSharedConfigFolder()).resolve("archive").toString();
+            runningFolder = context.getSharedConfigFolder().resolve("archive").toString();
         }
         String packaging = "war";
         return Paths.get(runningFolder).resolve(name + "-" + version + "." + packaging);
     }
 
-    public Path getRunningFile() {
+    public NutsPath getRunningFile() {
         String s = getConfig().getSourceFilePath();
         if (!NutsBlankable.isBlank(s)) {
-            return Paths.get(s);
+            return NutsPath.of(s,getSession());
         }
         String _runningFolder = tomcat.getConfig().getRunningFolder();
-        Path runningFolder = (_runningFolder == null || _runningFolder.trim().isEmpty()) ? null : Paths.get(_runningFolder);
+        NutsPath runningFolder = (_runningFolder == null || _runningFolder.trim().isEmpty()) ? null : NutsPath.of(_runningFolder, getSession());
         if (runningFolder == null) {
-            runningFolder = Paths.get(context.getSharedConfigFolder()).resolve("running");
+            runningFolder = context.getSharedConfigFolder().resolve("running");
         }
         String packaging = "war";
         return runningFolder.resolve(name + "." + packaging);
     }
 
-    public Path getVersionFile() {
+    private NutsSession getSession() {
+        return context.getSession();
+    }
+
+    public NutsPath getVersionFile() {
         return sharedConfigFolder.resolve(name + ".version");
     }
 
     public String getCurrentVersion() {
-        Path f = getVersionFile();
-        if (Files.exists(f)) {
-            try {
-                return new String(Files.readAllBytes(f));
-            } catch (IOException ex) {
-                throw new UncheckedIOException(ex);
-            }
+        NutsPath f = getVersionFile();
+        if (f.exists()) {
+            return new String(f.readAllBytes());
         }
         return null;
     }
     public NutsString getFormattedPath(String str) {
-        return NutsTexts.of(context.getSession()).ofStyled(str,NutsTextStyle.path());
+        return NutsTexts.of(getSession()).ofStyled(str,NutsTextStyle.path());
     }
     public NutsString getFormattedVersion(String str) {
-        return NutsTexts.of(context.getSession()).ofStyled(str,NutsTextStyle.version());
+        return NutsTexts.of(getSession()).ofStyled(str,NutsTextStyle.version());
     }
     public NutsString getFormattedPrefix(String str) {
-        return NutsTexts.of(context.getSession()).builder()
+        return NutsTexts.of(getSession()).builder()
                 .append("[")
                 .append(str,NutsTextStyle.primary5())
                 .append("]");
     }
 
     public LocalTomcatAppConfigService setCurrentVersion(String version) {
-        try {
-            if (version == null || version.trim().isEmpty()) {
-                context.getSession().out().printf("%s unset version.\n", getFormattedPrefix(getFullName()));
-                Files.delete(getVersionFile());
-                context.getSession().out().printf("%s [LOG] delete version file %s.\n", getFormattedPrefix(getFullName()), getFormattedPath(getVersionFile().toString()));
-                Files.delete(getRunningFile());
-                context.getSession().out().printf("%s [LOG] delete running file %s.\n", getFormattedPrefix(getFullName()), getFormattedPath(getRunningFile().toString()));
-            } else {
-                context.getSession().out().printf("%s set version %s.\n", getFullName(), getFormattedVersion(version));
-                context.getSession().out().printf("%s [LOG] updating version file %s to %s.\n", getFormattedPrefix(getFullName()), getFormattedVersion(_StringUtils.coalesce(version, "<DEFAULT>")), getFormattedPath(getVersionFile().toString()));
-                Files.write(getVersionFile(), version.getBytes());
-                context.getSession().out().printf("%s [LOG] updating archive file %s -> %s.\n", getFormattedPrefix(getFullName()), getFormattedPath(getArchiveFile(version).toString()), getFormattedPath(getRunningFile().toString()));
-                Files.copy(getArchiveFile(version), getRunningFile());
-            }
-        } catch (IOException ex) {
-            throw new UncheckedIOException(ex);
+        if (version == null || version.trim().isEmpty()) {
+            getSession().out().printf("%s unset version.\n", getFormattedPrefix(getFullName()));
+            getVersionFile().delete();
+            getSession().out().printf("%s [LOG] delete version file %s.\n", getFormattedPrefix(getFullName()), getFormattedPath(getVersionFile().toString()));
+            getRunningFile().delete();
+            getSession().out().printf("%s [LOG] delete running file %s.\n", getFormattedPrefix(getFullName()), getFormattedPath(getRunningFile().toString()));
+        } else {
+            getSession().out().printf("%s set version %s.\n", getFullName(), getFormattedVersion(version));
+            getSession().out().printf("%s [LOG] updating version file %s to %s.\n", getFormattedPrefix(getFullName()), getFormattedVersion(_StringUtils.coalesce(version, "<DEFAULT>")), getFormattedPath(getVersionFile().toString()));
+            getVersionFile().writeBytes(version.getBytes());
+            getSession().out().printf("%s [LOG] updating archive file %s -> %s.\n", getFormattedPrefix(getFullName()), getFormattedPath(getArchiveFile(version).toString()), getFormattedPath(getRunningFile().toString()));
+            NutsCp.of(getSession()).from(getArchiveFile(version))
+                    .to(getRunningFile())
+                    .run();
         }
         return this;
     }
 
-    public Path getDeployFile() {
+    public NutsPath getDeployFile() {
         LocalTomcatDomainConfigService d = tomcat.getDomain(getConfig().getDomain(), NutsOpenMode.OPEN_OR_ERROR);
         String deployName = getConfig().getDeployName();
         if (NutsBlankable.isBlank(deployName)) {
@@ -123,22 +121,18 @@ public class LocalTomcatAppConfigService extends LocalTomcatServiceBase {
         return d.getDomainDeployPath().resolve(deployName);
     }
 
-    public Path getDeployFolder() {
-        Path f = getDeployFile();
-        String fn = f.getFileName().toString();
+    public NutsPath getDeployFolder() {
+        NutsPath f = getDeployFile();
+        String fn = f.getName().toString();
         return f.resolveSibling(fn.substring(0, fn.length() - ".war".length()));
     }
 
     public LocalTomcatAppConfigService resetDeployment() {
-        Path deployFile = getDeployFile();
-        Path deployFolder = getDeployFolder();
-        context.getSession().out().printf("%s reset deployment (delete %s ).\n", getFormattedPrefix(getFullName()), getFormattedPath(deployFile.toString()));
-        try {
-            Files.delete(deployFile);
-            Files.delete(deployFolder);
-        } catch (IOException ex) {
-            throw new UncheckedIOException(ex);
-        }
+        NutsPath deployFile = getDeployFile();
+        NutsPath deployFolder = getDeployFolder();
+        getSession().out().printf("%s reset deployment (delete %s ).\n", getFormattedPrefix(getFullName()), getFormattedPath(deployFile.toString()));
+        deployFile.delete();
+        deployFolder.delete();
         return this;
     }
 
@@ -146,16 +140,16 @@ public class LocalTomcatAppConfigService extends LocalTomcatServiceBase {
         if (NutsBlankable.isBlank(version)) {
             version = getCurrentVersion();
         }
-        Path runningFile = getRunningFile();
-        Path deployFile = getDeployFile();
-        context.getSession().out().printf("%s deploy %s as file %s to %s.\n",
+        NutsPath runningFile = getRunningFile();
+        NutsPath deployFile = getDeployFile();
+        getSession().out().printf("%s deploy %s as file %s to %s.\n",
                 getFormattedPrefix(getFullName()), getFormattedVersion(_StringUtils.coalesce(version, "<DEFAULT>")),
                 getFormattedPath(runningFile.toString()), getFormattedPath(deployFile.toString()));
-        try {
-            Files.copy(runningFile, deployFile, StandardCopyOption.REPLACE_EXISTING);
-        } catch (IOException ex) {
-            throw new UncheckedIOException(ex);
-        }
+        NutsCp.of(getSession())
+                .from(runningFile)
+                .to(deployFile)
+                .setReplaceExisting(true)
+                .run();
         return this;
     }
 
@@ -170,7 +164,7 @@ public class LocalTomcatAppConfigService extends LocalTomcatServiceBase {
             }
             Path domainDeployPath = getArchiveFile(version);
             Files.createDirectories(domainDeployPath.getParent());
-            context.getSession().out().printf("%s install version %s : %s->%s.\n",
+            getSession().out().printf("%s install version %s : %s->%s.\n",
                     getFormattedPrefix(getFullName()), getFormattedVersion(version), getFormattedPath(f.toString()), getFormattedPath(domainDeployPath.toString()));
             Files.copy(f, domainDeployPath);
             if (setVersion) {
@@ -195,7 +189,7 @@ public class LocalTomcatAppConfigService extends LocalTomcatServiceBase {
     @Override
     public LocalTomcatAppConfigService remove() {
         tomcat.getConfig().getApps().remove(name);
-        context.getSession().out().printf("%s app removed.\n", getFormattedPrefix(getFullName()));
+        getSession().out().printf("%s app removed.\n", getFormattedPrefix(getFullName()));
         return this;
     }
 
@@ -218,7 +212,7 @@ public class LocalTomcatAppConfigService extends LocalTomcatServiceBase {
         result.put("deployfolder", getDeployFolder());
         result.put("runningfolder", getRunningFile());
         result.put("versionFolder", getVersionFile());
-        NutsSession session = context.getSession();
+        NutsSession session = getSession();
         NutsElements.of(session).json().setValue(result).print(out);
         return this;
     }

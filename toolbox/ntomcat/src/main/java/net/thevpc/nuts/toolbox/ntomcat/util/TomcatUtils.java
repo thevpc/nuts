@@ -91,36 +91,36 @@ public class TomcatUtils {
         return false;
     }
 
-    public static boolean copyDir(Path src, Path dest, boolean force) {
-        boolean[] ref = new boolean[1];
-        try {
-            if (!Files.exists(dest)) {
-                ref[0] = true;
-                Files.createDirectories(dest);
-            }
-            Files.walk(src)
-                    .forEach(source -> {
-                        try {
-                            Path to = dest.resolve(src.relativize(source));
-                            if (force || !Files.exists(to)) {
-                                ref[0] = true;
-                                Files.copy(source, to,
-                                        StandardCopyOption.REPLACE_EXISTING);
-                            }
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    });
-        } catch (IOException e) {
-            throw new UncheckedIOException(e);
-        }
-        return ref[0];
-    }
+//    public static boolean copyDir(Path src, Path dest, boolean force) {
+//        boolean[] ref = new boolean[1];
+//        try {
+//            if (!Files.exists(dest)) {
+//                ref[0] = true;
+//                Files.createDirectories(dest);
+//            }
+//            Files.walk(src)
+//                    .forEach(source -> {
+//                        try {
+//                            Path to = dest.resolve(src.relativize(source));
+//                            if (force || !Files.exists(to)) {
+//                                ref[0] = true;
+//                                Files.copy(source, to,
+//                                        StandardCopyOption.REPLACE_EXISTING);
+//                            }
+//                        } catch (IOException e) {
+//                            e.printStackTrace();
+//                        }
+//                    });
+//        } catch (IOException e) {
+//            throw new UncheckedIOException(e);
+//        }
+//        return ref[0];
+//    }
 
-    public static String getFolderCatalinaHomeVersion(Path h) {
-        File file = new File(h.toFile(), "RELEASE-NOTES");
+    public static String getFolderCatalinaHomeVersion(NutsPath h) {
+        NutsPath file = h.resolve("RELEASE-NOTES");
         if (file.exists()) {
-            try (BufferedReader r = new BufferedReader(new FileReader(file))) {
+            try (BufferedReader r = new BufferedReader(file.getReader())) {
                 String line = null;
                 while ((line = r.readLine()) != null) {
                     line = line.trim();

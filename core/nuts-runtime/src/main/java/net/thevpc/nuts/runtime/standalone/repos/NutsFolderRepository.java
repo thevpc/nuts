@@ -26,8 +26,6 @@ package net.thevpc.nuts.runtime.standalone.repos;
 import net.thevpc.nuts.*;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.*;
 
 /**
@@ -50,14 +48,14 @@ public class NutsFolderRepository extends NutsCachedRepository {
     @Override
     protected boolean isAvailableImpl() {
         try {
-            if(Files.isDirectory(lib.getStoreLocation())){
+            if(lib.getStoreLocation().isDirectory()){
                 return true;
             }
         } catch (Exception e) {
             //
         }
         try {
-            if(Files.isDirectory(cache.getStoreLocation())){
+            if(cache.getStoreLocation().isDirectory()){
                 return true;
             }
         } catch (Exception e) {

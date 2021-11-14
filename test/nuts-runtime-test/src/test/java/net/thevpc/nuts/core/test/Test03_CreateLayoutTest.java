@@ -190,7 +190,7 @@ public class Test03_CreateLayoutTest {
             }
             Assertions.assertTrue(nshId.getVersion().getValue().startsWith(TestUtils.NUTS_VERSION + "."));
         }
-        String c = s.locations().getStoreLocation(NutsStoreLocation.CONFIG);
+        NutsPath c = s.locations().getStoreLocation(NutsStoreLocation.CONFIG);
         TestUtils.println(c);
         TestUtils.println(new File(base, "config").getPath());
         for (NutsStoreLocation value : NutsStoreLocation.values()) {
@@ -249,35 +249,35 @@ public class Test03_CreateLayoutTest {
         TestUtils.println(new File(base, "system.apps").getPath());
         TestUtils.println(w.locations().getStoreLocation(NutsStoreLocation.APPS));
         Assertions.assertEquals(
-                new File(base, "system.apps").getPath(),
+                NutsPath.of(new File(base, "system.apps"),w),
                 w.locations().getStoreLocation(NutsStoreLocation.APPS)
         );
         Assertions.assertEquals(
-                new File(base, "system.config").getPath(),
+                NutsPath.of(new File(base, "system.config"),w),
                 w.locations().getStoreLocation(NutsStoreLocation.CONFIG)
         );
         Assertions.assertEquals(
-                new File(base, "system.var").getPath(),
+                NutsPath.of(new File(base, "system.var"),w),
                 w.locations().getStoreLocation(NutsStoreLocation.VAR)
         );
         Assertions.assertEquals(
-                new File(base, "system.log").getPath(),
+                NutsPath.of(new File(base, "system.log"),w),
                 w.locations().getStoreLocation(NutsStoreLocation.LOG)
         );
         Assertions.assertEquals(
-                new File(base, "system.temp").getPath(),
+                NutsPath.of(new File(base, "system.temp"),w),
                 w.locations().getStoreLocation(NutsStoreLocation.TEMP)
         );
         Assertions.assertEquals(
-                new File(base, "system.cache").getPath(),
+                NutsPath.of(new File(base, "system.cache"),w),
                 w.locations().getStoreLocation(NutsStoreLocation.CACHE)
         );
         Assertions.assertEquals(
-                new File(base, "system.lib").getPath(),
+                NutsPath.of(new File(base, "system.lib"),w),
                 w.locations().getStoreLocation(NutsStoreLocation.LIB)
         );
         Assertions.assertEquals(
-                new File(base, "system.run").getPath(),
+                NutsPath.of(new File(base, "system.run"),w),
                 w.locations().getStoreLocation(NutsStoreLocation.RUN)
         );
 
@@ -286,35 +286,35 @@ public class Test03_CreateLayoutTest {
                 "info");
         TestUtils.println(w.locations().getStoreLocation(NutsStoreLocation.APPS));
         Assertions.assertEquals(
-                new File(base, "apps").getPath(),
+                NutsPath.of(new File(base, "apps"),w),
                 w.locations().getStoreLocation(NutsStoreLocation.APPS)
         );
         Assertions.assertEquals(
-                new File(base, "config").getPath(),
+                NutsPath.of(new File(base, "config"),w),
                 w.locations().getStoreLocation(NutsStoreLocation.CONFIG)
         );
         Assertions.assertEquals(
-                new File(base, "var").getPath(),
+                NutsPath.of(new File(base, "var"),w),
                 w.locations().getStoreLocation(NutsStoreLocation.VAR)
         );
         Assertions.assertEquals(
-                new File(base, "log").getPath(),
+                NutsPath.of(new File(base, "log"),w),
                 w.locations().getStoreLocation(NutsStoreLocation.LOG)
         );
         Assertions.assertEquals(
-                new File(base, "temp").getPath(),
+                NutsPath.of(new File(base, "temp"),w),
                 w.locations().getStoreLocation(NutsStoreLocation.TEMP)
         );
         Assertions.assertEquals(
-                new File(base, "cache").getPath(),
+                NutsPath.of(new File(base, "cache"),w),
                 w.locations().getStoreLocation(NutsStoreLocation.CACHE)
         );
         Assertions.assertEquals(
-                new File(base, "lib").getPath(),
+                NutsPath.of(new File(base, "lib"),w),
                 w.locations().getStoreLocation(NutsStoreLocation.LIB)
         );
         Assertions.assertEquals(
-                new File(base, "run").getPath(),
+                NutsPath.of(new File(base, "run"),w),
                 w.locations().getStoreLocation(NutsStoreLocation.RUN)
         );
     }

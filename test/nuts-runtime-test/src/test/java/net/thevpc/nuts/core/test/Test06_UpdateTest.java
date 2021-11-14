@@ -14,7 +14,6 @@ import org.junit.jupiter.api.*;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
-import java.io.UncheckedIOException;
 import java.nio.file.*;
 import java.util.List;
 import java.util.Map;
@@ -97,13 +96,13 @@ public class Test06_UpdateTest {
 
         if (!fromToAPI.isIdentity()) {
             uws.deploy()
-                    .setContent(replaceAPIJar(api.getPath(), fromToAPI, uws))
+                    .setContent(replaceAPIJar(api.getFile(), fromToAPI, uws))
                     .setDescriptor(api.getDescriptor().builder().setId(api.getId().builder().setVersion(apiv2).build()).build())
                     //                        .setRepository("local")
                     .run();
         }
         uws.deploy()
-                .setContent(replaceRuntimeJar(rt.getPath(), fromToAPI, fromToImpl, uws))
+                .setContent(replaceRuntimeJar(rt.getFile(), fromToAPI, fromToImpl, uws))
                 .setDescriptor(
                         rt.getDescriptor()
                                 .builder()
@@ -126,6 +125,7 @@ public class Test06_UpdateTest {
         TestUtils.println(nws.repos().getRepository("temp").config().getStoreLocationStrategy());
         TestUtils.println(nws.repos().getRepository("temp").config().getStoreLocation());
         TestUtils.println(nws.repos().getRepository("temp").config().getStoreLocation(NutsStoreLocation.LIB));
+        TestUtils.println(uws.repos().getRepository("local").config().getStoreLocation(NutsStoreLocation.LIB));
         Assertions.assertEquals(
                 uws.repos().getRepository("local").config().getStoreLocation(NutsStoreLocation.LIB),
                 nws.repos().getRepository("temp").config().getStoreLocation(NutsStoreLocation.LIB));
@@ -159,9 +159,9 @@ public class Test06_UpdateTest {
         final String newRuntimeVersion = foundUpdates.getResult().getRuntime().getAvailable().getId().getVersion().toString();
 //        Path bootFolder=Paths.get(workspacePath).resolve(NutsConstants.Folders.BOOT);
 //        Path bootCompFolder=Paths.get(workspacePath).resolve(NutsConstants.Folders.BOOT);
-        Path bootCacheFolder = Paths.get(nws.locations().getStoreLocation(NutsStoreLocation.CACHE)).resolve(NutsConstants.Folders.ID);
-        Path libFolder = Paths.get(nws.locations().getStoreLocation(NutsStoreLocation.LIB)).resolve(NutsConstants.Folders.ID);
-        Path configFolder = Paths.get(nws.locations().getStoreLocation(NutsStoreLocation.CONFIG)).resolve(NutsConstants.Folders.ID);
+        Path bootCacheFolder = (nws.locations().getStoreLocation(NutsStoreLocation.CACHE)).resolve(NutsConstants.Folders.ID).toFile();
+        Path libFolder = (nws.locations().getStoreLocation(NutsStoreLocation.LIB)).resolve(NutsConstants.Folders.ID).toFile();
+        Path configFolder = (nws.locations().getStoreLocation(NutsStoreLocation.CONFIG)).resolve(NutsConstants.Folders.ID).toFile();
         Assertions.assertTrue(Files.exists(libFolder.resolve("net/thevpc/nuts/nuts/").resolve(newApiVersion)
                 .resolve("nuts-" + newApiVersion + ".jar")
         ));

@@ -67,10 +67,7 @@ public class NutsCommandHistoryImpl implements NutsCommandHistory {
         if (path == null) {
             throw new NutsIllegalArgumentException(session, NutsMessage.plain("missing path"));
         }
-        NutsPath p = path.getParent();
-        if (p != null) {
-            p.mkdir(true);
-        }
+        path.mkParentDirs();
         try (OutputStream out = path.getOutputStream()) {
             save(out);
         } catch (IOException ex) {

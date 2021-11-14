@@ -235,6 +235,16 @@ public abstract class AbstractNutsStream<T> implements NutsStream<T> {
     }
 
     @Override
+    public NutsStream<T> filterNonNull() {
+        return filter(Objects::nonNull);
+    }
+
+    @Override
+    public NutsStream<T> filterNonBlank() {
+        return filter(x-> !NutsBlankable.isBlank(x));
+    }
+
+    @Override
     public NutsStream<T> coalesce(Iterator<? extends T> other) {
         return new AbstractNutsStream<T>(session, nutsBase) {
             @Override
@@ -371,6 +381,14 @@ public abstract class AbstractNutsStream<T> implements NutsStream<T> {
     }
 
 
-
-
+    @Override
+    public <R> NutsStream<R> mapUnsafe(NutsUnsafeFunction<? super T, ? extends R> mapper, Function<Exception, ? extends R> onError) {
+        return map(t -> {
+            try {
+                return mapper.apply(t);
+            } catch (Exception e) {
+                return onError==null?null:onError.apply(e);
+            }
+        });
+    }
 }

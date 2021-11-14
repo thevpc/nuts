@@ -156,7 +156,7 @@ public class DefaultNutsArtifactPathExecutable extends AbstractNutsExecutableCom
                 if (c.descriptor != null) {
                     if ("zip".equals(c.descriptor.getPackaging())) {
                         Path zipFilePath = NutsPath.of(fileSource+ ".zip",session)
-                                .builder().withAppBaseDir().build().toFile();
+                                .toAbsolute().toFile();
                         ZipUtils.zip(session, fileSource.toString(), new ZipOptions(), zipFilePath.toString());
                         c.contentFile = zipFilePath;
                         c.addTemp(zipFilePath);

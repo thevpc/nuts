@@ -21,7 +21,7 @@ public class NutsVersionCompat507 extends AbstractNutsVersionCompat {
 
     @Override
     public NutsWorkspaceConfigApi parseApiConfig(NutsSession session) {
-        Path path = Paths.get(session.locations().getStoreLocation(session.getWorkspace().getApiId(), NutsStoreLocation.CONFIG))
+        NutsPath path = session.locations().getStoreLocation(session.getWorkspace().getApiId(), NutsStoreLocation.CONFIG)
                 .resolve(NutsConstants.Files.WORKSPACE_API_CONFIG_FILE_NAME);
         byte[] bytes = CompatUtils.readAllBytes(path,session);
         NutsWorkspaceConfigApi c = bytes==null?null:NutsElements.of(session)
@@ -35,7 +35,7 @@ public class NutsVersionCompat507 extends AbstractNutsVersionCompat {
 
     @Override
     public NutsWorkspaceConfigRuntime parseRuntimeConfig(NutsSession session) {
-        Path path = Paths.get(session.locations().getStoreLocation(session.getWorkspace().getRuntimeId(), NutsStoreLocation.CONFIG))
+        NutsPath path = session.locations().getStoreLocation(session.getWorkspace().getRuntimeId(), NutsStoreLocation.CONFIG)
                 .resolve(NutsConstants.Files.WORKSPACE_RUNTIME_CONFIG_FILE_NAME);
         byte[] bytes = CompatUtils.readAllBytes(path,session);
         NutsWorkspaceConfigRuntime c = bytes==null?null:NutsElements.of(session)
@@ -46,8 +46,8 @@ public class NutsVersionCompat507 extends AbstractNutsVersionCompat {
 
     @Override
     public NutsWorkspaceConfigSecurity parseSecurityConfig(NutsSession session) {
-        Path path = Paths.get(session.locations().getStoreLocation(session.getWorkspace().getApiId()
-                .builder().setVersion(NutsConstants.Versions.RELEASE).build(), NutsStoreLocation.CONFIG))
+        NutsPath path = session.locations().getStoreLocation(session.getWorkspace().getApiId()
+                .builder().setVersion(NutsConstants.Versions.RELEASE).build(), NutsStoreLocation.CONFIG)
                 .resolve(CoreNutsConstants.Files.WORKSPACE_SECURITY_CONFIG_FILE_NAME);
         byte[] bytes = CompatUtils.readAllBytes(path,session);
         NutsWorkspaceConfigSecurity c = bytes==null?null:NutsElements.of(session)
@@ -58,10 +58,10 @@ public class NutsVersionCompat507 extends AbstractNutsVersionCompat {
 
     @Override
     public NutsWorkspaceConfigMain parseMainConfig(NutsSession session) {
-        Path path = Paths.get(session.locations().getStoreLocation(session.getWorkspace().getApiId()
+        NutsPath path = session.locations().getStoreLocation(session.getWorkspace().getApiId()
                 .builder().setVersion(NutsConstants.Versions.RELEASE)
                 .build()
-                , NutsStoreLocation.CONFIG))
+                , NutsStoreLocation.CONFIG)
                 .resolve(CoreNutsConstants.Files.WORKSPACE_MAIN_CONFIG_FILE_NAME);
         byte[] bytes = CompatUtils.readAllBytes(path,session);
         NutsWorkspaceConfigMain507 c = bytes==null?null:NutsElements.of(session)

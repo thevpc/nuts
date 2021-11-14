@@ -126,7 +126,7 @@ public class HistoryCommand extends SimpleJShellBuiltin {
 
                         shistory.save();
                     } else {
-                        shistory.save(NutsPath.of(options.sval, session).builder().withWorkspaceBaseDir().build());
+                        shistory.save(NutsPath.of(options.sval, session).toAbsolute(session.locations().getWorkspaceLocation()));
                     }
                 } catch (IOException ex) {
                     throw new NutsExecutionException(session, NutsMessage.cstyle("%s", ex), ex, 100);
@@ -139,7 +139,7 @@ public class HistoryCommand extends SimpleJShellBuiltin {
                         shistory.clear();
                         shistory.load();
                     } else {
-                        shistory.load(NutsPath.of(options.sval, session).builder().withWorkspaceBaseDir().build());
+                        shistory.load(NutsPath.of(options.sval, session).toAbsolute(session.locations().getWorkspaceLocation()));
                     }
                 } catch (IOException ex) {
                     throw new NutsExecutionException(session, NutsMessage.cstyle("%s", ex), ex, 100);

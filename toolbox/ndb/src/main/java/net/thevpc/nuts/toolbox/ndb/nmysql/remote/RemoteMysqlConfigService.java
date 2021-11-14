@@ -6,12 +6,8 @@ import net.thevpc.nuts.toolbox.ndb.nmysql.remote.config.RemoteMysqlConfig;
 import net.thevpc.nuts.toolbox.ndb.nmysql.remote.config.RemoteMysqlDatabaseConfig;
 import net.thevpc.nuts.toolbox.ndb.nmysql.util.MysqlUtils;
 
-import java.io.IOException;
 import java.io.PrintStream;
-import java.io.UncheckedIOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -21,13 +17,13 @@ public class RemoteMysqlConfigService {
     public static final String CLIENT_CONFIG_EXT = ".remote-config";
     RemoteMysqlConfig config;
     NutsApplicationContext context;
-    Path sharedConfigFolder;
+    NutsPath sharedConfigFolder;
     private String name;
 
     public RemoteMysqlConfigService(String name, NutsApplicationContext context) {
         setName(name);
         this.context = context;
-        sharedConfigFolder = Paths.get(context.getVersionFolderFolder(NutsStoreLocation.CONFIG, NMySqlConfigVersions.CURRENT));
+        sharedConfigFolder = context.getVersionFolder(NutsStoreLocation.CONFIG, NMySqlConfigVersions.CURRENT);
     }
 
     public String getName() {
@@ -52,20 +48,20 @@ public class RemoteMysqlConfigService {
     }
 
     public RemoteMysqlConfigService saveConfig() {
-        Path f = getConfigPath();
+        NutsPath f = getConfigPath();
         NutsSession session = context.getSession();
         NutsElements.of(session).json().setValue(config)
                 .setNtf(false).print(f);
         return this;
     }
 
-    private Path getConfigPath() {
+    private NutsPath getConfigPath() {
         return sharedConfigFolder.resolve(name + CLIENT_CONFIG_EXT);
     }
 
     public boolean existsConfig() {
-        Path f = getConfigPath();
-        return (Files.exists(f));
+        NutsPath f = getConfigPath();
+        return (f.exists());
     }
 
     public RemoteMysqlConfigService loadConfig() {
@@ -73,8 +69,8 @@ public class RemoteMysqlConfigService {
         if (name == null) {
             throw new NutsExecutionException(session, NutsMessage.cstyle("missing config name"), 2);
         }
-        Path f = getConfigPath();
-        if (Files.exists(f)) {
+        NutsPath f = getConfigPath();
+        if (f.exists()) {
             config = NutsElements.of(session).json()
                     .setNtf(false)
                     .parse(f, RemoteMysqlConfig.class);
@@ -84,12 +80,8 @@ public class RemoteMysqlConfigService {
     }
 
     public RemoteMysqlConfigService removeConfig() {
-        Path f = getConfigPath();
-        try {
-            Files.delete(f);
-        } catch (IOException ex) {
-            throw new UncheckedIOException(ex);
-        }
+        NutsPath f = getConfigPath();
+        f.delete();
         return this;
     }
 
@@ -118,7 +110,7 @@ public class RemoteMysqlConfigService {
                 case OPEN_OR_NULL:
                     return null;
                 case OPEN_OR_ERROR:
-                    throw new NutsIllegalArgumentException(context.getSession(), NutsMessage.cstyle("remote instance not found: %s@%s" ,dbName, getName()));
+                    throw new NutsIllegalArgumentException(context.getSession(), NutsMessage.cstyle("remote instance not found: %s@%s", dbName, getName()));
                 case CREATE_OR_ERROR:
                 case OPEN_OR_CREATE: {
                     a = new RemoteMysqlDatabaseConfig();
@@ -132,7 +124,7 @@ public class RemoteMysqlConfigService {
         }
         switch (action) {
             case CREATE_OR_ERROR: {
-                throw new NutsIllegalArgumentException(context.getSession(), NutsMessage.cstyle("remote instance not found: %s@%s"  ,dbName,getName()));
+                throw new NutsIllegalArgumentException(context.getSession(), NutsMessage.cstyle("remote instance not found: %s@%s", dbName, getName()));
             }
             case OPEN_OR_ERROR:
             case OPEN_OR_NULL:

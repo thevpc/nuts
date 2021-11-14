@@ -59,7 +59,7 @@ public class NutsHttpSrvRepository extends NutsCachedRepository {
     }
 
     public String getUrl(String path) {
-        return CoreIOUtils.buildUrl(config().getLocation(true), path);
+        return config().getLocation(true).resolve(path).toString();
     }
 
     public NutsId getRemoteId(NutsSession session) {
@@ -85,13 +85,13 @@ public class NutsHttpSrvRepository extends NutsCachedRepository {
         NutsWorkspaceUtils.checkSession(getWorkspace(), session);
         ByteArrayOutputStream descStream = new ByteArrayOutputStream();
         desc.formatter().setSession(session).print(new OutputStreamWriter(descStream));
-        httpUpload(CoreIOUtils.buildUrl(config().getLocation(true), "/deploy?" + resolveAuthURLPart(session)),
+        httpUpload(CoreIOUtils.buildUrl(config().getLocation(true).toString(), "/deploy?" + resolveAuthURLPart(session)),
                 session,
                 new NutsTransportParamBinaryStreamPart("descriptor", "Project.nuts",
                         new ByteArrayInputStream(descStream.toByteArray())),
                 new NutsTransportParamBinaryFilePart("content", content.getPath().getName(), content.getFile()),
                 new NutsTransportParamParamPart("descriptor-hash", NutsHash.of(session).sha1().setSource(desc).computeString()),
-                new NutsTransportParamParamPart("content-hash", CoreIOUtils.evalSHA1Hex(content.getFile(),session)),
+                new NutsTransportParamParamPart("content-hash", CoreIOUtils.evalSHA1Hex(content.getPath(),session)),
                 new NutsTransportParamParamPart("force", String.valueOf(session.isYes()))
         );
     }
@@ -196,7 +196,7 @@ public class NutsHttpSrvRepository extends NutsCachedRepository {
             String location = getUrl("/fetch?id=" + CoreIOUtils.urlEncodeString(id.toString(),session) + (transitive ? ("&transitive") : "") + "&" + resolveAuthURLPart(session));
             NutsCp.of(session).from(location).to(localPath).setSafe(true).setLogProgress(true).run();
             String rhash = httpGetString(getUrl("/fetch-hash?id=" + CoreIOUtils.urlEncodeString(id.toString(),session) + (transitive ? ("&transitive") : "") + "&" + resolveAuthURLPart(session)), session);
-            String lhash = CoreIOUtils.evalSHA1Hex(Paths.get(localPath),session);
+            String lhash = CoreIOUtils.evalSHA1Hex(NutsPath.of(localPath,session),session);
             if (rhash.equalsIgnoreCase(lhash)) {
                 return new NutsDefaultContent(
                         NutsPath.of(localPath,session)

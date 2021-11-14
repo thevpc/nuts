@@ -31,12 +31,12 @@ package net.thevpc.nuts;
  */
 public interface NutsAppStoreLocationResolver {
     /**
-     * used in {@link NutsApplicationContext#getVersionFolderFolder(NutsStoreLocation, String)}
+     * used in {@link NutsApplicationContext#getVersionFolder(NutsStoreLocation, String)}
      * to resolve folder for the given version
      *
      * @param id         nuts id
      * @param folderType folder type
      * @return valid location, or null for default with resolves to {@code workspace.locations().getStoreLocation(id,folderType)}
      */
-    String getStoreLocation(NutsId id, NutsStoreLocation folderType);
+    NutsPath getStoreLocation(NutsId id, NutsStoreLocation folderType);
 }

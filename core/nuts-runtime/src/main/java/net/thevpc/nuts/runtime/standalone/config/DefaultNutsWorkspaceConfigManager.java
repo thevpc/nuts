@@ -131,7 +131,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
     }
 
     @Override
-    public String resolveRepositoryPath(String repositoryLocation) {
+    public NutsPath resolveRepositoryPath(String repositoryLocation) {
         checkSession();
         return model.resolveRepositoryPath(NutsPath.of(repositoryLocation,session), session);
     }

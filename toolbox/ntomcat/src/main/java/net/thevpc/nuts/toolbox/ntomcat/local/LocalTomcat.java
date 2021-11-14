@@ -19,12 +19,12 @@ public class LocalTomcat {
 
     private NutsApplicationContext context;
     private NutsCommandLine cmdLine;
-    private Path sharedConfigFolder;
+    private NutsPath sharedConfigFolder;
 
     public LocalTomcat(NutsApplicationContext applicationContext, NutsCommandLine cmdLine) {
         this.setContext(applicationContext);
         this.cmdLine = cmdLine;
-        sharedConfigFolder = Paths.get(applicationContext.getVersionFolderFolder(NutsStoreLocation.CONFIG, NTomcatConfigVersions.CURRENT));
+        sharedConfigFolder = applicationContext.getVersionFolder(NutsStoreLocation.CONFIG, NTomcatConfigVersions.CURRENT);
     }
 
     public void runArgs() {
@@ -205,7 +205,7 @@ public class LocalTomcat {
                         case "long": {
                             out.printf("%s v%s HOME: %s BASE: %s ==CMD:== %s\n",
                                     factory.ofStyled(jpsResult.getPid(), NutsTextStyle.primary1()),
-                                    jpsResult.getHome() == null ? null : TomcatUtils.getFolderCatalinaHomeVersion(Paths.get(jpsResult.getHome())),
+                                    jpsResult.getHome() == null ? null : TomcatUtils.getFolderCatalinaHomeVersion(jpsResult.getHome()),
                                     jpsResult.getHome(),
                                     jpsResult.getBase(),
                                     context.getCommandLine().parseLine(jpsResult.getArgsLine())
@@ -215,7 +215,7 @@ public class LocalTomcat {
                         default: {
                             out.printf("%s ==v==%s ==BASE:== %s\n",
                                     factory.ofStyled(jpsResult.getPid(), NutsTextStyle.primary1()),
-                                    jpsResult.getHome() == null ? null : TomcatUtils.getFolderCatalinaHomeVersion(Paths.get(jpsResult.getHome())),
+                                    jpsResult.getHome() == null ? null : TomcatUtils.getFolderCatalinaHomeVersion(jpsResult.getHome()),
                                     jpsResult.getBase()
                             );
                             break;
@@ -774,7 +774,7 @@ public class LocalTomcat {
             throw new NutsExecutionException(context.getSession(), NutsMessage.cstyle("tomcat deploy: Missing File"), 2);
         }
         LocalTomcatConfigService c = openTomcatConfig(instance, NutsOpenMode.OPEN_OR_ERROR);
-        c.deployFile(Paths.get(file), contextName, domain);
+        c.deployFile(NutsPath.of(file,getContext().getSession()), contextName, domain);
     }
 
     public void deployApp(NutsCommandLine args) {
@@ -863,23 +863,13 @@ public class LocalTomcat {
     }
 
     public LocalTomcatConfigService[] listConfig() {
-        List<LocalTomcatConfigService> all = new ArrayList<>();
-        if (Files.isDirectory(sharedConfigFolder)) {
-            try (DirectoryStream<Path> pp = Files.newDirectoryStream(sharedConfigFolder,
-                    (Path entry) -> entry.getFileName().toString().endsWith(LocalTomcatConfigService.LOCAL_CONFIG_EXT))) {
-                for (Path entry : pp) {
-                    try {
-                        LocalTomcatConfigService c = openTomcatConfig(entry, NutsOpenMode.OPEN_OR_ERROR);
-                        all.add(c);
-                    } catch (Exception ex) {
-                        //ignore
-                    }
-                }
-            } catch (IOException ex) {
-                throw new UncheckedIOException(ex);
-            }
-        }
-        return all.toArray(new LocalTomcatConfigService[0]);
+        return
+                sharedConfigFolder.list().filter(
+                                pathname -> pathname.isRegularFile() &&  pathname.getName().toString().endsWith(LocalTomcatConfigService.LOCAL_CONFIG_EXT)
+                        )
+                        .mapUnsafe(x->openTomcatConfig(x, NutsOpenMode.OPEN_OR_ERROR),null)
+                        .filterNonNull()
+                        .toArray(LocalTomcatConfigService[]::new);
     }
 
     public LocalTomcatConfigService openTomcatConfig(String name, NutsOpenMode autoCreate) {
@@ -895,7 +885,7 @@ public class LocalTomcat {
         return t;
     }
 
-    public LocalTomcatConfigService openTomcatConfig(Path file, NutsOpenMode autoCreate) {
+    public LocalTomcatConfigService openTomcatConfig(NutsPath file, NutsOpenMode autoCreate) {
         LocalTomcatConfigService t = new LocalTomcatConfigService(file, this);
         if (autoCreate == null) {
             if (!t.existsConfig()) {

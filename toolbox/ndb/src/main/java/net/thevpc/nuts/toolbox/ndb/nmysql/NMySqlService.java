@@ -2,11 +2,9 @@ package net.thevpc.nuts.toolbox.ndb.nmysql;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.toolbox.ndb.nmysql.local.LocalMysqlConfigService;
-import net.thevpc.nuts.toolbox.ndb.nmysql.local.LocalMysqlDatabaseConfigService;
 import net.thevpc.nuts.toolbox.ndb.nmysql.local.config.LocalMysqlConfig;
 import net.thevpc.nuts.toolbox.ndb.nmysql.remote.RemoteMysqlConfigService;
 import net.thevpc.nuts.toolbox.ndb.nmysql.remote.config.RemoteMysqlConfig;
-import net.thevpc.nuts.toolbox.ndb.nmysql.util.MysqlUtils;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
@@ -22,32 +20,21 @@ import java.util.logging.Logger;
 public class NMySqlService {
     private static final Logger LOG = Logger.getLogger(NMySqlService.class.getName());
     private NutsApplicationContext context;
-    private Path sharedConfigFolder;
+    private NutsPath sharedConfigFolder;
 
     public NMySqlService(NutsApplicationContext context) {
         this.context=context;
-        sharedConfigFolder = Paths.get(context.getVersionFolderFolder(NutsStoreLocation.CONFIG, NMySqlConfigVersions.CURRENT));
+        sharedConfigFolder = context.getVersionFolder(NutsStoreLocation.CONFIG, NMySqlConfigVersions.CURRENT);
     }
 
     public LocalMysqlConfigService[] listLocalConfig() {
-        List<LocalMysqlConfigService> all = new ArrayList<>();
-        if (Files.isDirectory(sharedConfigFolder)) {
-            try (DirectoryStream<Path> configFiles = Files.newDirectoryStream(sharedConfigFolder, pathname -> pathname.getFileName().toString().endsWith(LocalMysqlConfigService.SERVER_CONFIG_EXT))) {
-                for (Path file1 : configFiles) {
-                    try {
-                        LocalMysqlConfigService c = loadLocalMysqlConfig(file1);
-                        all.add(c);
-                    } catch (Exception ex) {
-                        LOG.log(Level.FINE, "Error loading config url : " + file1, ex);//e.printStackTrace();
-                        //ignore
-                    }
-                }
-
-            } catch (IOException ex) {
-                throw new UncheckedIOException(ex);
-            }
-        }
-        return all.toArray(new LocalMysqlConfigService[0]);
+        return
+                sharedConfigFolder.list().filter(
+                        pathname -> pathname.isRegularFile() &&  pathname.getName().toString().endsWith(LocalMysqlConfigService.SERVER_CONFIG_EXT)
+                )
+                        .mapUnsafe(x->loadLocalMysqlConfig(x),null)
+                        .filterNonNull()
+                        .toArray(LocalMysqlConfigService[]::new);
     }
 
     public LocalMysqlConfigService loadLocalMysqlConfig(String name, NutsOpenMode action) {
@@ -104,7 +91,7 @@ public class NMySqlService {
         return t;
     }
 
-    public LocalMysqlConfigService loadLocalMysqlConfig(Path file) {
+    public LocalMysqlConfigService loadLocalMysqlConfig(NutsPath file) {
         LocalMysqlConfigService t = new LocalMysqlConfigService(file, context);
         t.loadConfig();
         return t;
@@ -121,22 +108,16 @@ public class NMySqlService {
     }
 
     public RemoteMysqlConfigService[] listRemoteConfig() {
-        List<RemoteMysqlConfigService> all = new ArrayList<>();
-        if(Files.isDirectory(sharedConfigFolder)) {
-            try (DirectoryStream<Path> configFiles = Files.newDirectoryStream(sharedConfigFolder, x -> x.getFileName().toString().endsWith(RemoteMysqlConfigService.CLIENT_CONFIG_EXT))) {
-                for (Path file1 : configFiles) {
-                    try {
-                        String nn = file1.getFileName().toString();
-                        RemoteMysqlConfigService c = loadRemoteMysqlConfig(nn.substring(0, nn.length() - RemoteMysqlConfigService.CLIENT_CONFIG_EXT.length()));
-                        all.add(c);
-                    } catch (Exception ex) {
-                        //ignore
-                    }
-                }
-            } catch (IOException ex) {
-                throw new UncheckedIOException(ex);
-            }
-        }
-        return all.toArray(new RemoteMysqlConfigService[0]);
+        return
+                sharedConfigFolder.list().filter(
+                                pathname -> pathname.isRegularFile() &&  pathname.getName().toString().endsWith(LocalMysqlConfigService.SERVER_CONFIG_EXT)
+                        )
+                        .mapUnsafe(x->{
+                                    String nn = x.getName();
+                                    return loadRemoteMysqlConfig(nn.substring(0, nn.length() - RemoteMysqlConfigService.CLIENT_CONFIG_EXT.length()));
+                                }
+                                ,null)
+                        .filterNonNull()
+                        .toArray(RemoteMysqlConfigService[]::new);
     }
 }

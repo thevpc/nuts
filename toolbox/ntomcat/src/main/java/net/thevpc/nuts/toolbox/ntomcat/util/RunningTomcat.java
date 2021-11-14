@@ -6,7 +6,7 @@ import java.util.Objects;
 
 public class RunningTomcat {
     private String pid;
-    private String home;
+    private NutsPath home;
     private String base;
     private String argsLine;
 
@@ -17,7 +17,7 @@ public class RunningTomcat {
         NutsArgument a=null;
         while(cmdline.hasNext()){
             if((a=cmdline.nextString("-Dcatalina.home"))!=null) {
-                home = a.getValue().getString();
+                home = NutsPath.of(a.getValue().getString(),session);
             }else if((a=cmdline.nextString("-Dcatalina.base"))!=null){
                 base=a.getValue().getString();
             }else{
@@ -31,7 +31,7 @@ public class RunningTomcat {
         return pid;
     }
 
-    public String getHome() {
+    public NutsPath getHome() {
         return home;
     }
 

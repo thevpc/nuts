@@ -137,35 +137,46 @@ public class NutsResourcePath implements NutsPathSPI {
     }
 
     @Override
-    public NutsPath resolve(String[] others, boolean trailingSeparator) {
-        if (others.length > 0) {
-            StringBuilder loc = new StringBuilder(location);
-            if (loc.length() == 0 || loc.charAt(loc.length() - 1) != '/') {
-                loc.append('/');
-            }
-            loc.append(String.join("/", others));
-            if (trailingSeparator) {
-                loc.append('/');
-            }
-            return new NutsPathFromSPI(new NutsResourcePath(loc.toString(), getSession()));
-        }
-        return new NutsPathFromSPI(this);
+    public NutsPath resolve(String path) {
+        return new NutsPathFromSPI(new NutsResourcePath(rebuildURL(
+                NutsPath.of(location,session).resolve(path).toString()
+                ,ids.toArray(new NutsId[0])), getSession()));
     }
 
-//    @Override
-//    public NutsPath resolve(String path) {
-//        String[] others = Arrays.stream(NutsUtilStrings.trim(path).split("[/\\\\]"))
-//                .filter(x -> x.length() > 0).toArray(String[]::new);
-//        if (others.length > 0) {
-//            StringBuilder loc = new StringBuilder(location);
-//            if (loc.length() == 0 || loc.charAt(loc.length() - 1) != '/') {
-//                loc.append('/');
-//            }
-//            loc.append(String.join("/", others));
-//            return new NutsPathFromSPI(new NutsResourcePath(loc.toString(), getSession()));
-//        }
-//        return new NutsPathFromSPI(this);
-//    }
+    @Override
+    public NutsPath resolve(NutsPath path) {
+        return new NutsPathFromSPI(new NutsResourcePath(rebuildURL(
+                NutsPath.of(location,session).resolve(path).toString()
+                ,ids.toArray(new NutsId[0])), getSession()));
+    }
+
+    @Override
+    public NutsPath resolveSibling(String path) {
+        return new NutsPathFromSPI(new NutsResourcePath(rebuildURL(
+                NutsPath.of(location,session).resolveSibling(path).toString()
+                ,ids.toArray(new NutsId[0])), getSession()));
+    }
+
+    @Override
+    public NutsPath resolveSibling(NutsPath path) {
+        return new NutsPathFromSPI(new NutsResourcePath(rebuildURL(
+                NutsPath.of(location,session).resolveSibling(path).toString()
+                ,ids.toArray(new NutsId[0])), getSession()));
+    }
+
+
+    @Override
+    public NutsPath subpath(int beginIndex, int endIndex) {
+        return new NutsPathFromSPI(new NutsResourcePath(rebuildURL(
+                NutsPath.of(location,getSession()).subpath(beginIndex,endIndex).toString()
+                ,ids.toArray(new NutsId[0])), getSession()));
+    }
+
+    @Override
+    public String[] getItems() {
+        return NutsPath.of(location,getSession()).getItems();
+    }
+
     @Override
     public URL toURL() {
         NutsPath up = toURLPath();

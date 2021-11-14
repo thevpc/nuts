@@ -57,7 +57,7 @@ public class AnyNixNdi extends BaseSystemNdi {
                         ,
                         factory.builder().appendJoined(", ",
                                 Arrays.stream(updatedPaths).map(x ->
-                                        factory.ofStyled(x.getPath().getFileName().toString(), NutsTextStyle.path())).collect(Collectors.toList())),
+                                        factory.ofStyled(x.getPath().getName(), NutsTextStyle.path())).collect(Collectors.toList())),
                         session.locations().getWorkspaceLocation()
                 );
             }
@@ -117,7 +117,7 @@ public class AnyNixNdi extends BaseSystemNdi {
     @Override
     protected FreeDesktopEntryWriter createFreeDesktopEntryWriter() {
         return new UnixFreeDesktopEntryWriter(session,
-                session.env().getDesktopPath()
+                session.env().getDesktopPath()==null?null:NutsPath.of(session.env().getDesktopPath(),getSession())
         );
     }
 
@@ -182,7 +182,7 @@ public class AnyNixNdi extends BaseSystemNdi {
             {
                 return new NdiScriptInfo() {
                     @Override
-                    public Path path() {
+                    public NutsPath path() {
                         return options.resolveBinFolder().resolve(getExecFileName("nuts-term"));
                     }
 
@@ -198,7 +198,7 @@ public class AnyNixNdi extends BaseSystemNdi {
             {
                 return new NdiScriptInfo() {
                     @Override
-                    public Path path() {
+                    public NutsPath path() {
                         return options.resolveBinFolder().resolve(getExecFileName("nuts-term"));
                     }
 
@@ -223,7 +223,7 @@ public class AnyNixNdi extends BaseSystemNdi {
             case ZSH: {
                 return new NdiScriptInfo() {
                     @Override
-                    public Path path() {
+                    public NutsPath path() {
                         return options.resolveIncFolder().resolve(".nuts-env.sh");
                     }
 
@@ -238,7 +238,7 @@ public class AnyNixNdi extends BaseSystemNdi {
             case FISH: {
                 return new NdiScriptInfo() {
                     @Override
-                    public Path path() {
+                    public NutsPath path() {
                         return options.resolveIncFolder().resolve(".nuts-env.fish");
                     }
 
@@ -259,7 +259,7 @@ public class AnyNixNdi extends BaseSystemNdi {
                 return
                         new NdiScriptInfo() {
                             @Override
-                            public Path path() {
+                            public NutsPath path() {
                                 return options.resolveIncFolder().resolve(".nuts-term-init.fish");
                             }
 
@@ -280,7 +280,7 @@ public class AnyNixNdi extends BaseSystemNdi {
                 return
                         new NdiScriptInfo() {
                             @Override
-                            public Path path() {
+                            public NutsPath path() {
                                 return options.resolveIncFolder().resolve(".nuts-term-init.sh");
                             }
 
@@ -306,13 +306,13 @@ public class AnyNixNdi extends BaseSystemNdi {
             case ZSH: {
                 return new NdiScriptInfo() {
                     @Override
-                    public Path path() {
+                    public NutsPath path() {
                         return options.resolveIncFolder().resolve(".nuts-init.sh");
                     }
 
                     @Override
                     public PathInfo create() {
-                        Path apiConfigFile = path();
+                        NutsPath apiConfigFile = path();
                         return scriptBuilderTemplate("nuts-init", NutsShellFamily.SH, "nuts-init", options.resolveNutsApiId(), options)
                                 .setPath(apiConfigFile)
                                 .buildAddLine(AnyNixNdi.this);
@@ -322,13 +322,13 @@ public class AnyNixNdi extends BaseSystemNdi {
             case FISH: {
                 return new NdiScriptInfo() {
                     @Override
-                    public Path path() {
+                    public NutsPath path() {
                         return options.resolveIncFolder().resolve(".nuts-init.fish");
                     }
 
                     @Override
                     public PathInfo create() {
-                        Path apiConfigFile = path();
+                        NutsPath apiConfigFile = path();
                         return scriptBuilderTemplate("nuts-init", NutsShellFamily.FISH, "nuts-init", options.resolveNutsApiId(), options)
                                 .setPath(apiConfigFile)
                                 .buildAddLine(AnyNixNdi.this);

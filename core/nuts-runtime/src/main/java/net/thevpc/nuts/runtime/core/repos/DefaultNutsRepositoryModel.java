@@ -203,8 +203,8 @@ public class DefaultNutsRepositoryModel {
                         : cc.getModel().getRepositoriesRoot(session).toFile();
             } else {
                 NutsRepositoryConfigManagerExt cc = NutsRepositoryConfigManagerExt.of(parentRepository.config());
-                rootFolder = options.isTemporary() ? cc.getModel().getTempMirrorsRoot(session)
-                        : cc.getModel().getMirrorsRoot(session);
+                rootFolder = (options.isTemporary() ? cc.getModel().getTempMirrorsRoot(session)
+                        : cc.getModel().getMirrorsRoot(session)).toFile();
             }
         }
         if (repoModel != null) {
@@ -241,7 +241,7 @@ public class DefaultNutsRepositoryModel {
                 options.setEnabled(true);
             } else if (conf == null) {
                 options.setLocation(CoreIOUtils.resolveRepositoryPath(options, rootFolder, session));
-                conf = loadRepository(Paths.get(options.getLocation(), NutsConstants.Files.REPOSITORY_CONFIG_FILE_NAME), options.getName(), session);
+                conf = loadRepository(NutsPath.of(options.getLocation(),session).resolve(NutsConstants.Files.REPOSITORY_CONFIG_FILE_NAME), options.getName(), session);
                 if (conf == null) {
                     if (options.isFailSafe()) {
                         return null;
@@ -324,15 +324,10 @@ public class DefaultNutsRepositoryModel {
         return addRepository(options, session);
     }
 
-    public NutsRepositoryConfig loadRepository(Path file, String name, NutsSession session) {
+    public NutsRepositoryConfig loadRepository(NutsPath file, String name, NutsSession session) {
         NutsRepositoryConfig conf = null;
-        if (Files.isRegularFile(file) && Files.isReadable(file)) {
-            byte[] bytes;
-            try {
-                bytes = Files.readAllBytes(file);
-            } catch (IOException ex) {
-                throw new NutsIOException(session, ex);
-            }
+        if (file.isRegularFile() && file.getPermissions().contains(NutsPathPermission.CAN_READ)) {
+            byte[] bytes= file.readAllBytes();
             try {
                 NutsElements elem = NutsElements.of(session);
                 Map<String, Object> a_config0 = elem.json().parse(bytes, Map.class);
@@ -360,7 +355,7 @@ public class DefaultNutsRepositoryModel {
         return (NutsRepositorySPI) repo;
     }
 
-    private void onLoadRepositoryError(Path file, String name, String uuid, Throwable ex, NutsSession session) {
+    private void onLoadRepositoryError(NutsPath file, String name, String uuid, Throwable ex, NutsSession session) {
         NutsWorkspaceConfigManager wconfig = session.config().setSession(session);
         NutsBootManager wboot = session.boot().setSession(session);
         NutsWorkspaceEnvManager wenv = session.env().setSession(session);
@@ -370,23 +365,23 @@ public class DefaultNutsRepositoryModel {
         String fileName = "nuts-repository" + (name == null ? "" : ("-") + name) + (uuid == null ? "" : ("-") + uuid) + "-" + Instant.now().toString();
         LOG.with().session(session).level(Level.SEVERE).verb(NutsLogVerb.FAIL).log(
                 NutsMessage.jstyle("erroneous repository config file. Unable to load file {0} : {1}", file, ex));
-        Path logError = Paths.get(session.locations().getStoreLocation(getWorkspace().getApiId(), NutsStoreLocation.LOG))
+        NutsPath logError = session.locations().getStoreLocation(getWorkspace().getApiId(), NutsStoreLocation.LOG)
                 .resolve("invalid-config");
         try {
-            CoreIOUtils.mkdirs(logError, session);
+            logError.mkParentDirs();
         } catch (Exception ex1) {
             throw new NutsIOException(session, NutsMessage.cstyle("unable to log repository error while loading config file %s : %s", file, ex1), ex);
         }
-        Path newfile = logError.resolve(fileName + ".json");
+        NutsPath newfile = logError.resolve(fileName + ".json");
         LOG.with().session(session).level(Level.SEVERE).verb(NutsLogVerb.FAIL)
                 .log(NutsMessage.jstyle("erroneous repository config file will be replaced by a fresh one. Old config is copied to {0}", newfile));
         try {
-            Files.move(file, newfile);
+            Files.move(file.toFile(), newfile.toFile());
         } catch (IOException e) {
             throw new NutsIOException(session, NutsMessage.cstyle("nable to load and re-create repository config file %s : %s", file, e), ex);
         }
 
-        try (PrintStream o = new PrintStream(logError.resolve(fileName + ".error").toFile())) {
+        try (PrintStream o = new PrintStream(logError.resolve(fileName + ".error").getOutputStream())) {
             o.printf("workspace.path:%s%n", session.locations().getWorkspaceLocation());
             o.printf("repository.path:%s%n", file);
             o.printf("workspace.options:%s%n", wboot.getBootOptions().formatter().setCompact(false).setRuntime(true).setInit(true).setExported(true).getBootCommandLine());

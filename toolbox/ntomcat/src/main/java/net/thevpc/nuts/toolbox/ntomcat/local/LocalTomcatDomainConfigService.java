@@ -32,16 +32,20 @@ public class LocalTomcatDomainConfigService extends LocalTomcatServiceBase {
         return name;
     }
 
-    public Path getDomainDeployPath() {
-        Path b = tomcat.getCatalinaBase();
+    public NutsPath getDomainDeployPath() {
+        NutsPath b = tomcat.getCatalinaBase();
         if (b == null) {
             b = tomcat.getCatalinaHome();
         }
-        Path p = config.getDeployPath()==null ?null:Paths.get(config.getDeployPath());
+        NutsPath p = config.getDeployPath()==null ?null:NutsPath.of(config.getDeployPath(), getSession());
         if (p == null) {
             p = tomcat.getDefaulDeployFolder(name);
         }
         return b.resolve(b);
+    }
+
+    private NutsSession getSession() {
+        return context.getSession();
     }
 
     public LocalTomcatDomainConfigService remove() {
@@ -51,18 +55,18 @@ public class LocalTomcatDomainConfigService extends LocalTomcatServiceBase {
                 aa.remove();
             }
         }
-        context.getSession().out().printf("%s domain removed.\n", getBracketsPrefix(name));
+        getSession().out().printf("%s domain removed.\n", getBracketsPrefix(name));
         return this;
     }
     public NutsString getBracketsPrefix(String str) {
-        return NutsTexts.of(context.getSession()).builder()
+        return NutsTexts.of(getSession()).builder()
                 .append("[")
                 .append(str, NutsTextStyle.primary5())
                 .append("]");
     }
 
     public LocalTomcatDomainConfigService print(NutsPrintStream out) {
-        NutsSession session = context.getSession();
+        NutsSession session = getSession();
         NutsElements.of(session).json().setValue(getConfig()).print(out);
         return this;
     }

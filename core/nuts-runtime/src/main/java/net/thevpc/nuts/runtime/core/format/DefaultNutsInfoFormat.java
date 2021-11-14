@@ -389,9 +389,9 @@ public class DefaultNutsInfoFormat extends DefaultFormatBase<NutsInfoFormat> imp
         }
         props.put(key(prefix, "deploy-order"), (repo.config().getDeployWeight()));
         props.put(key(prefix, "store-location-strategy"), (repo.config().getStoreLocationStrategy()));
-        props.put(key(prefix, "store-location"), NutsPath.of(repo.config().getStoreLocation(),getSession()));
+        props.put(key(prefix, "store-location"), repo.config().getStoreLocation());
         for (NutsStoreLocation value : NutsStoreLocation.values()) {
-            props.put(key(prefix, "store-location-" + value.id()), NutsPath.of(repo.config().getStoreLocation(value),getSession()));
+            props.put(key(prefix, "store-location-" + value.id()), repo.config().getStoreLocation(value));
         }
         props.put(key(prefix, "supported-mirroring"), (repo.config().isSupportedMirroring()));
         if (repo.config().isSupportedMirroring()) {

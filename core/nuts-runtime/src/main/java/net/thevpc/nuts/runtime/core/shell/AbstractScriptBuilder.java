@@ -1,9 +1,6 @@
 package net.thevpc.nuts.runtime.core.shell;
 
-import net.thevpc.nuts.NutsDefinition;
-import net.thevpc.nuts.NutsId;
-import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.NutsShellFamily;
+import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.wscommands.settings.PathInfo;
 import net.thevpc.nuts.runtime.standalone.wscommands.settings.subcommands.ndi.NameBuilder;
@@ -51,6 +48,12 @@ public abstract class AbstractScriptBuilder implements ScriptBuilder {
         return this;
     }
 
+    public AbstractScriptBuilder setPath(NutsPath path) {
+        this.path = path == null ? null : path.toString();
+        return this;
+    }
+
+
     public AbstractScriptBuilder setPath(String preferredName) {
         this.path = preferredName;
         return this;
@@ -59,7 +62,7 @@ public abstract class AbstractScriptBuilder implements ScriptBuilder {
     public PathInfo buildAddLine(BaseSystemNdi ndi) {
         return ndi.addFileLine(type,
                 anyId,
-                Paths.get(path), ndi.getCommentLineConfigHeader(),buildString(),NutsShellHelper.of(getShellFamily()).getShebanSh(), shellFamily);
+                NutsPath.of(path,session), ndi.getCommentLineConfigHeader(),buildString(),NutsShellHelper.of(getShellFamily()).getShebanSh(), shellFamily);
     }
 
     public PathInfo build() {
@@ -68,11 +71,11 @@ public abstract class AbstractScriptBuilder implements ScriptBuilder {
         NutsId anyId = anyIdDef.getId();
         String path = NameBuilder.id(anyId,
                 this.path,"%n", anyIdDef.getDescriptor(),session).buildName();
-        Path script = Paths.get(path);
+        NutsPath script = NutsPath.of(path,session);
         String newContent = buildString();
 //        PathInfo.Status update0 = NdiUtils.tryWriteStatus(newContent.getBytes(), script,session);
         PathInfo.Status update = CoreIOUtils.tryWrite(newContent.getBytes(), script,session);
-        CoreIOUtils.setExecutable(script,session);
+        script.addPermissions(NutsPathPermission.CAN_EXECUTE);
         return new PathInfo(type, anyId, script, update);
     }
 }

@@ -127,9 +127,8 @@ public class JShell {
         _rootContext.builtins().set(allCommand.toArray(new JShellBuiltin[0]));
         _rootContext.getUserProperties().put(JShellContext.class.getName(), _rootContext);
         try {
-            histFile = NutsPath.of(
-                    Paths.get(ws.locations().getStoreLocation(this.appId,
-                            NutsStoreLocation.VAR)).resolve(serviceName + ".history").toFile(), ws);
+            histFile = ws.locations().getStoreLocation(this.appId,
+                            NutsStoreLocation.VAR).resolve(serviceName + ".history");
             hist.setHistoryFile(histFile);
             if (histFile.exists()) {
                 hist.load(histFile);
@@ -569,7 +568,7 @@ public class JShell {
                 .setCommandAutoCompleteResolver(new NshAutoCompleter())
                 .setCommandHistory(
                         NutsCommandHistory.of(session)
-                                .setPath(Paths.get(appContext.getVarFolder()).resolve("nsh-history.hist"))
+                                .setPath(appContext.getVarFolder().resolve("nsh-history.hist"))
                 );
         prepareContext(getRootContext());
         printHeader(context.out());

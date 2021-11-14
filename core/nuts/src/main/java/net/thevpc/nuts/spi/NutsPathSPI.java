@@ -45,7 +45,13 @@ public interface NutsPathSPI {
 
     String getProtocol();
 
-    NutsPath resolve(String[] pathItems, boolean trailingSeparator);
+    NutsPath resolve(String path);
+
+    NutsPath resolve(NutsPath path);
+
+    NutsPath resolveSibling(String path);
+
+    NutsPath resolveSibling(NutsPath path);
 
     NutsPath toCompressedForm();
 
@@ -145,4 +151,8 @@ public interface NutsPathSPI {
      * tree rooted at a given starting file
      */
     NutsStream<NutsPath> walk(int maxDepth, NutsPathVisitOption[] options);
+
+    NutsPath subpath(int beginIndex, int endIndex);
+
+    String[] getItems();
 }

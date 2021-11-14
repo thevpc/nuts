@@ -199,7 +199,7 @@ public class ApacheTomcatRepositoryModel implements NutsRepositoryModel {
     }
 
     public String getIdLocalFile(NutsId id, NutsFetchMode fetchMode, NutsRepository repository, NutsSession session) {
-        return Paths.get(repository.config().getStoreLocation())
+        return repository.config().getStoreLocation()
                 .resolve(session.locations().getDefaultIdBasedir(id))
                 .resolve(session.locations().getDefaultIdFilename(id))
                 .toString();

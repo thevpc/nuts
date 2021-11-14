@@ -12,7 +12,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.Writer;
-import java.nio.file.Files;
 import java.nio.file.Path;
 
 /**
@@ -23,6 +22,7 @@ public abstract class DefaultFormatBase<T extends NutsFormat> extends DefaultFor
     public DefaultFormatBase(NutsWorkspace ws, String name) {
         super(ws, name);
     }
+
     public DefaultFormatBase(NutsSession session, String name) {
         super(session, name);
     }
@@ -101,7 +101,7 @@ public abstract class DefaultFormatBase<T extends NutsFormat> extends DefaultFor
             print(pout);
             pout.flush();
         } else {
-            NutsPrintStream pout = NutsPrintStream.of(out,getSession());
+            NutsPrintStream pout = NutsPrintStream.of(out, getSession());
             print(pout);
             pout.flush();
         }
@@ -112,7 +112,7 @@ public abstract class DefaultFormatBase<T extends NutsFormat> extends DefaultFor
         checkSession();
         NutsPrintStream p =
                 out == null ? getValidPrintStream() :
-                        NutsPrintStream.of(out,getSession());
+                        NutsPrintStream.of(out, getSession());
         print(p);
         p.flush();
     }
@@ -120,8 +120,14 @@ public abstract class DefaultFormatBase<T extends NutsFormat> extends DefaultFor
     @Override
     public void print(Path path) {
         checkSession();
-        CoreIOUtils.mkdirs(path.getParent(), getSession());
-        try (Writer w = Files.newBufferedWriter(path)) {
+        print(NutsPath.of(path, getSession()));
+    }
+
+    @Override
+    public void print(NutsPath path) {
+        checkSession();
+        path.mkParentDirs();
+        try (Writer w = path.getWriter()) {
             print(w);
         } catch (IOException ex) {
             throw new NutsIOException(getSession(), ex);
@@ -130,7 +136,7 @@ public abstract class DefaultFormatBase<T extends NutsFormat> extends DefaultFor
 
     @Override
     public void print(File file) {
-        print(file.toPath());
+        print(NutsPath.of(file,getSession()));
     }
 
     @Override
@@ -147,7 +153,7 @@ public abstract class DefaultFormatBase<T extends NutsFormat> extends DefaultFor
             println(pout);
             pout.flush();
         } else {
-            NutsPrintStream pout = NutsPrintStream.of(w,getSession());
+            NutsPrintStream pout = NutsPrintStream.of(w, getSession());
             println(pout);
             pout.flush();
         }
@@ -170,7 +176,7 @@ public abstract class DefaultFormatBase<T extends NutsFormat> extends DefaultFor
             println(pout);
             pout.flush();
         } else {
-            NutsPrintStream pout = NutsPrintStream.of(out,getSession());
+            NutsPrintStream pout = NutsPrintStream.of(out, getSession());
             println(pout);
             pout.flush();
         }
@@ -179,8 +185,14 @@ public abstract class DefaultFormatBase<T extends NutsFormat> extends DefaultFor
     @Override
     public void println(Path path) {
         checkSession();
-        CoreIOUtils.mkdirs(path.getParent(), getSession());
-        try (Writer w = Files.newBufferedWriter(path)) {
+        println(NutsPath.of(path,getSession()));
+    }
+
+    @Override
+    public void println(NutsPath out) {
+        checkSession();
+        out.mkParentDirs();
+        try (Writer w = out.getWriter()) {
             println(w);
         } catch (IOException ex) {
             throw new NutsIOException(getSession(), ex);

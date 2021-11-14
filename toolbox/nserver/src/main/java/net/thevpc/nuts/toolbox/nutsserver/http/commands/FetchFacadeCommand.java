@@ -27,8 +27,8 @@ public class FetchFacadeCommand extends AbstractFacadeCommand {
         } catch (Exception exc) {
             //
         }
-        if (fetch != null && fetch.getPath() != null && Files.exists(fetch.getPath())) {
-            context.sendResponseFile(200, fetch.getPath());
+        if (fetch != null && fetch.getFile() != null && Files.exists(fetch.getFile())) {
+            context.sendResponseFile(200, fetch.getFile());
         } else {
             context.sendError(404, "File Not Found");
         }

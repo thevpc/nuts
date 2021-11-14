@@ -182,6 +182,8 @@ public interface NutsStream<T> extends Iterable<T> {
      */
     <R> NutsStream<R> map(Function<? super T, ? extends R> mapper);
 
+    <R> NutsStream<R> mapUnsafe(NutsUnsafeFunction<? super T, ? extends R> mapper, Function<Exception, ? extends R> onError);
+
     NutsStream<T> sorted();
 
     NutsStream<T> sorted(Comparator<T> comp);
@@ -195,6 +197,10 @@ public interface NutsStream<T> extends Iterable<T> {
     NutsStream<T> nonBlank();
 
     NutsStream<T> filter(Predicate<? super T> predicate);
+
+    NutsStream<T> filterNonNull();
+
+    NutsStream<T> filterNonBlank();
 
     NutsStream<T> coalesce(Iterator<? extends T> other);
 

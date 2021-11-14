@@ -104,7 +104,7 @@ public class NVersionMain implements NutsApplication {
                 Set<VersionDescriptor> value = null;
                 try {
                     processed++;
-                    value = detectVersions(NutsPath.of(arg, session).builder().withAppBaseDir().build().toString(), context);
+                    value = detectVersions(NutsPath.of(arg, session).toAbsolute().toString(), context);
                 } catch (IOException e) {
                     throw new NutsExecutionException(session,NutsMessage.cstyle("nversion: unable to detect version for %s",arg), e, 2);
                 }
@@ -142,7 +142,7 @@ public class NVersionMain implements NutsApplication {
                 }
                 if (error) {
                     for (String t : unsupportedFileTypes) {
-                        File f = new File(NutsPath.of(t,session).builder().withAppBaseDir().build().toString());
+                        File f = new File(NutsPath.of(t,session).toAbsolute().toString());
                         if (f.isFile()) {
                             pp.setProperty(t, text.builder().append("<<ERROR>>", NutsTextStyle.error()).append(" unsupported file type").toString());
                         } else if (f.isDirectory()) {
@@ -187,7 +187,7 @@ public class NVersionMain implements NutsApplication {
                 if (error) {
                     if (!unsupportedFileTypes.isEmpty()) {
                         for (String t : unsupportedFileTypes) {
-                            File f = NutsPath.of(t,session).builder().withAppBaseDir().build().toFile().toFile();
+                            File f = NutsPath.of(t,session).toAbsolute().toFile().toFile();
                             if (f.isFile()) {
                                 err.printf("%s : unsupported file type%n", t);
                             } else if (f.isDirectory()) {

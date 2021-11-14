@@ -55,13 +55,13 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
             case ZSH: {
                 return new NdiScriptInfo() {
                     @Override
-                    public Path path() {
+                    public NutsPath path() {
                         return options.resolveIncFolder().resolve(".nuts-init.sh");
                     }
 
                     @Override
                     public PathInfo create() {
-                        Path apiConfigFile = path();
+                        NutsPath apiConfigFile = path();
                         return scriptBuilderTemplate("nuts-init", NutsShellFamily.SH, "nuts-init", options.resolveNutsApiId(), options)
                                 .setPath(apiConfigFile)
                                 .buildAddLine(BaseSystemNdi.this);
@@ -71,13 +71,13 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
             case FISH: {
                 return new NdiScriptInfo() {
                     @Override
-                    public Path path() {
+                    public NutsPath path() {
                         return options.resolveIncFolder().resolve(".nuts-init.fish");
                     }
 
                     @Override
                     public PathInfo create() {
-                        Path apiConfigFile = path();
+                        NutsPath apiConfigFile = path();
                         return scriptBuilderTemplate("nuts-init", NutsShellFamily.FISH, "nuts-init", options.resolveNutsApiId(), options)
                                 .setPath(apiConfigFile)
                                 .buildAddLine(BaseSystemNdi.this);
@@ -129,7 +129,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
     public NdiScriptInfo getNutsStart(NdiScriptOptions options) {
         return new NdiScriptInfo() {
             @Override
-            public Path path() {
+            public NutsPath path() {
                 return options.resolveBinFolder().resolve(getExecFileName("nuts"));
             }
 
@@ -144,11 +144,12 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
     //ws.getApiId().getVersion()
 
 
-    public Path getBinScriptFile(String name, NdiScriptOptions options) {
-        if (CoreIOUtils.isPath(name)) {
-            return Paths.get(name).toAbsolutePath();
+    public NutsPath getBinScriptFile(String name, NdiScriptOptions options) {
+        NutsPath pp = NutsPath.of(name, options.getSession());
+        if (!pp.isName()) {
+            return pp.toAbsolute();
         }
-        return options.resolveBinFolder().resolve(getExecFileName(name)).toAbsolutePath();
+        return options.resolveBinFolder().resolve(getExecFileName(name)).toAbsolute();
 //        Path bin =
 //                Paths.get(context.getAppsFolder());
 //        return bin.resolve(getExecFileName(name)).toAbsolutePath();
@@ -178,7 +179,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
                 //nutsId=fetched.getId().getLongNameId();
             }
             String n = nid.getArtifactId();
-            Path ff = getBinScriptFile(n, options);
+            NutsPath ff = getBinScriptFile(n, options);
             {
                 String s = options.getLauncher().getCustomScriptPath();
                 if (NutsBlankable.isBlank(s)) {
@@ -217,9 +218,9 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
         NdiScriptOptions options = new NdiScriptOptions().setSession(session);
         options.getLauncher().setSwitchWorkspaceLocation(switchWorkspaceLocation);
         NutsId nid = NutsId.of(id, session);
-        Path f = getBinScriptFile(nid.getArtifactId(), options);
+        NutsPath f = getBinScriptFile(nid.getArtifactId(), options);
         NutsTexts factory = NutsTexts.of(this.session);
-        if (Files.isRegularFile(f)) {
+        if (f.isRegularFile()) {
             if (session.getTerminal().ask()
                     .resetLine()
                     .forBoolean("tool %s will be removed. Confirm?",
@@ -228,11 +229,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
                     .setDefaultValue(true)
                     .setSession(session)
                     .getBooleanValue()) {
-                try {
-                    Files.delete(f);
-                } catch (IOException ex) {
-                    throw new NutsIOException(session, ex);
-                }
+                f.delete();
                 if (session.isPlainTrace()) {
                     session.out().printf("tool %s removed.%n", factory.ofStyled(CoreIOUtils.betterPath(f.toString()), NutsTextStyle.path()));
                 }
@@ -481,24 +478,19 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
 
     public PathInfo addFileLine(String type,
                                 NutsId id,
-                                Path filePath,
+                                NutsPath filePath,
                                 ReplaceString commentLine,
                                 String contentToAdd,
                                 ReplaceString header, NutsShellFamily shellFamily) {
 //        Pattern commentLineConditionPattern = Pattern.compile(commentLineConditionRegexp);
-        filePath = filePath.toAbsolutePath();
+        filePath = filePath.toAbsolute();
         List<String> contentToAddRows = splitLines(contentToAdd);
         boolean found = false;
         List<String> newFileContentRows = new ArrayList<>();
         List<String> oldFileContentRows = null;
         NutsShellHelper sh = NutsShellHelper.of(shellFamily);
-        if (Files.isRegularFile(filePath)) {
-            String fileContentString = null;
-            try {
-                fileContentString = new String(Files.readAllBytes(filePath));
-            } catch (IOException ex) {
-                throw new NutsIOException(session, ex);
-            }
+        if (filePath.isRegularFile()) {
+            String fileContentString = new String(filePath.readAllBytes());
             oldFileContentRows = splitLines(fileContentString);
             //trim lines
             while (!oldFileContentRows.isEmpty()) {
@@ -577,41 +569,38 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
         return new PathInfo(type, id, filePath, CoreIOUtils.tryWrite(newContent, filePath, session));
     }
 
-    public PathInfo removeFileCommented2Lines(String type, NutsId id, Path filePath, String commentLine, boolean force, NutsShellFamily shellFamily) {
-        filePath = filePath.toAbsolutePath();
-        boolean alreadyExists = Files.exists(filePath);
+    public PathInfo removeFileCommented2Lines(String type, NutsId id, NutsPath filePath, String commentLine, boolean force, NutsShellFamily shellFamily) {
+        filePath = filePath.toAbsolute();
+        boolean alreadyExists = filePath.exists();
         boolean found = false;
         boolean updatedFile = false;
         NutsShellHelper sh = NutsShellHelper.of(shellFamily);
-        try {
-            List<String> lines = new ArrayList<>();
-            if (Files.isRegularFile(filePath)) {
-                String fileContent = new String(Files.readAllBytes(filePath));
-                String[] fileRows = fileContent.split("[\n\r]");
-                for (int i = 0; i < fileRows.length; i++) {
-                    String row = fileRows[i];
-                    if (row.trim().equals(sh.toCommentLine(commentLine))) {
-                        found = true;
-                        i += 2;
-                        for (; i < fileRows.length; i++) {
-                            lines.add(fileRows[i]);
-                        }
-                    } else {
-                        lines.add(row);
+
+        List<String> lines = new ArrayList<>();
+        if (filePath.isRegularFile()) {
+            String fileContent = new String(filePath.readAllBytes());
+            String[] fileRows = fileContent.split("[\n\r]");
+            for (int i = 0; i < fileRows.length; i++) {
+                String row = fileRows[i];
+                if (row.trim().equals(sh.toCommentLine(commentLine))) {
+                    found = true;
+                    i += 2;
+                    for (; i < fileRows.length; i++) {
+                        lines.add(fileRows[i]);
                     }
+                } else {
+                    lines.add(row);
                 }
             }
-            if (found) {
-                updatedFile = true;
-            }
-            if (force || updatedFile) {
-                Files.createDirectories(filePath.getParent());
-                Files.write(filePath, (String.join(sh.newlineString(), lines) + sh.newlineString()).getBytes());
-            }
-            return new PathInfo(type, id, filePath, updatedFile ? alreadyExists ? PathInfo.Status.OVERRIDDEN : PathInfo.Status.CREATED : PathInfo.Status.DISCARDED);
-        } catch (IOException ex) {
-            throw new NutsIOException(session, ex);
         }
+        if (found) {
+            updatedFile = true;
+        }
+        if (force || updatedFile) {
+            filePath.mkParentDirs();
+            filePath.writeBytes((String.join(sh.newlineString(), lines) + sh.newlineString()).getBytes());
+        }
+        return new PathInfo(type, id, filePath, updatedFile ? alreadyExists ? PathInfo.Status.OVERRIDDEN : PathInfo.Status.CREATED : PathInfo.Status.DISCARDED);
     }
 
     protected abstract String getExecFileName(String name);
@@ -626,7 +615,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
         } else if (nutsDesktopIntegrationItem == NutsDesktopIntegrationItem.MENU) {
             results.addAll(Arrays.asList(ww.writeMenu(shortcut, path, true, id)));
         } else if (nutsDesktopIntegrationItem == NutsDesktopIntegrationItem.SHORTCUT) {
-            results.addAll(Arrays.asList(ww.writeShortcut(shortcut, path == null ? null : Paths.get(path), true, id)));
+            results.addAll(Arrays.asList(ww.writeShortcut(shortcut, path == null ? null : NutsPath.of(path,session), true, id)));
         } else {
             throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("unsupported"));
         }
@@ -708,7 +697,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
                                 "nuts-resource://" + rid.getLongName() + "/net/thevpc/nuts/runtime/nuts.png",
                                 "nuts-resource://" + rid.getLongName() + "/net/thevpc/nuts/runtime/nuts.ico"
                         );
-            }else if (appDef.getId().getGroupId().startsWith("net.thevpc.nuts")) {
+            } else if (appDef.getId().getGroupId().startsWith("net.thevpc.nuts")) {
                 //get default icon
                 NutsId rid = session.getWorkspace().getRuntimeId();
                 descAppIcon =
@@ -729,10 +718,10 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
                 descAppIcon = "nuts-resource://" + appDef.getId().getLongName() + "" + descAppIcon.substring("classpath://".length() - 1);
             }
             String bestName = descAppIconDigest + "." + p0.getLastExtension();
-            Path localIconPath = Paths.get(session.locations().getStoreLocation(appDef.getId(), NutsStoreLocation.CACHE))
+            NutsPath localIconPath = session.locations().getStoreLocation(appDef.getId(), NutsStoreLocation.CACHE)
                     .resolve("icons")
                     .resolve(bestName);
-            if (Files.isRegularFile(localIconPath)) {
+            if (localIconPath.isRegularFile()) {
                 iconPath = localIconPath.toString();
             } else {
                 NutsPath p = NutsPath.of(descAppIcon, session);
@@ -941,16 +930,16 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
         }
 
         @Override
-        public Path path() {
+        public NutsPath path() {
             if (bashrcName == null) {
                 return null;
             }
-            return Paths.get(System.getProperty("user.home")).resolve(bashrcName);
+            return NutsPath.of(System.getProperty("user.home"), session).resolve(bashrcName);
         }
 
         @Override
         public PathInfo create() {
-            Path apiConfigFile = path();
+            NutsPath apiConfigFile = path();
             if (apiConfigFile == null) {
                 return null;
             }

@@ -93,7 +93,7 @@ public class NutsHttpFolderRepository extends NutsCachedRepository {
         return openStream(url, id, "artifact descriptor", session);
     }
 
-    protected String getPath(NutsId id, NutsSession session) {
+    protected NutsPath getPath(NutsId id, NutsSession session) {
         return getIdRemotePath(id, session);
     }
 
@@ -101,7 +101,7 @@ public class NutsHttpFolderRepository extends NutsCachedRepository {
         String groupId = id.getGroupId();
         String artifactId = id.getArtifactId();
         String version = id.getVersion().getValue();
-        return (CoreIOUtils.buildUrl(config().getLocation(true), groupId.replace('.', '/') + "/" + artifactId + "/" + version + "/"
+        return (CoreIOUtils.buildUrl(config().getLocation(true).toString(), groupId.replace('.', '/') + "/" + artifactId + "/" + version + "/"
                 + NutsConstants.Files.DESCRIPTOR_FILE_NAME
         ));
     }
@@ -115,8 +115,8 @@ public class NutsHttpFolderRepository extends NutsCachedRepository {
     }
 
     public Iterator<NutsId> findVersionsImplGithub(NutsId id, NutsIdFilter idFilter, NutsSession session) {
-        String location = config().getLocation(true);
-        String[] all = location.split("/+");
+        NutsPath location = config().getLocation(true);
+        String[] all = location.getItems();
         String userName = all[2];
         String repo = all[3];
         String apiUrlBase = "https://api.github.com/repos/" + userName + "/" + repo + "/contents";
@@ -170,7 +170,7 @@ public class NutsHttpFolderRepository extends NutsCachedRepository {
         String groupId = id.getGroupId();
         String artifactId = id.getArtifactId();
         try {
-            String artifactUrl = CoreIOUtils.buildUrl(config().getLocation(true), groupId.replace('.', '/') + "/" + artifactId);
+            String artifactUrl = CoreIOUtils.buildUrl(config().getLocation(true).toString(), groupId.replace('.', '/') + "/" + artifactId);
             FilesFoldersApi.Item[] all = FilesFoldersApi.getDirItems(true, false, versionApi, artifactUrl, session);
             List<NutsId> n = new ArrayList<>();
             for (FilesFoldersApi.Item s : all) {
@@ -212,7 +212,7 @@ public class NutsHttpFolderRepository extends NutsCachedRepository {
             String groupId = id.getGroupId();
             String artifactId = id.getArtifactId();
             List<NutsId> ret = new ArrayList<>();
-            String metadataURL = CoreIOUtils.buildUrl(config().getLocation(true), groupId.replace('.', '/') + "/" + artifactId + "/" + id.getVersion().toString() + "/"
+            String metadataURL = CoreIOUtils.buildUrl(config().getLocation(true).toString(), groupId.replace('.', '/') + "/" + artifactId + "/" + id.getVersion().toString() + "/"
                     + getIdFilename(id.builder().setFaceDescriptor().build(), session)
             );
 
@@ -283,7 +283,7 @@ public class NutsHttpFolderRepository extends NutsCachedRepository {
             throw new NutsNotFoundException(session, id, new NutsFetchModeNotSupportedException(session, this, fetchMode, id.toString(), null));
         }
         if (descriptor.getLocations().length == 0) {
-            String path = getPath(id, session);
+            NutsPath path = getPath(id, session);
             NutsCp.of(session).from(path).to(localFile).setSafe(true).setLogProgress(true).run();
             return new NutsDefaultContent(
                     NutsPath.of(localFile, session), false, false);
@@ -318,9 +318,9 @@ public class NutsHttpFolderRepository extends NutsCachedRepository {
                 for (String root : roots) {
                     if (root.endsWith("/*")) {
                         String name = root.substring(0, root.length() - 2);
-                        li.add(FilesFoldersApi.createIterator(session, this, config().getLocation(true), name, filter, RemoteRepoApi.DIR_TEXT, session, Integer.MAX_VALUE, findModel));
+                        li.add(FilesFoldersApi.createIterator(session, this, config().getLocation(true).toString(), name, filter, RemoteRepoApi.DIR_TEXT, session, Integer.MAX_VALUE, findModel));
                     } else {
-                        li.add(FilesFoldersApi.createIterator(session, this, config().getLocation(true), root, filter, RemoteRepoApi.DIR_TEXT, session, 2, findModel));
+                        li.add(FilesFoldersApi.createIterator(session, this, config().getLocation(true).toString(), root, filter, RemoteRepoApi.DIR_TEXT, session, 2, findModel));
                     }
                 }
                 return IteratorUtils.concat(li);
@@ -330,9 +330,9 @@ public class NutsHttpFolderRepository extends NutsCachedRepository {
                 for (String root : roots) {
                     if (root.endsWith("/*")) {
                         String name = root.substring(0, root.length() - 2);
-                        li.add(FilesFoldersApi.createIterator(session, this, config().getLocation(true), name, filter, RemoteRepoApi.DIR_LIST, session, Integer.MAX_VALUE, findModel));
+                        li.add(FilesFoldersApi.createIterator(session, this, config().getLocation(true).toString(), name, filter, RemoteRepoApi.DIR_LIST, session, Integer.MAX_VALUE, findModel));
                     } else {
-                        li.add(FilesFoldersApi.createIterator(session, this, config().getLocation(true), root, filter, RemoteRepoApi.DIR_LIST, session, 2, findModel));
+                        li.add(FilesFoldersApi.createIterator(session, this, config().getLocation(true).toString(), root, filter, RemoteRepoApi.DIR_LIST, session, 2, findModel));
                     }
                 }
                 return IteratorUtils.concat(li);

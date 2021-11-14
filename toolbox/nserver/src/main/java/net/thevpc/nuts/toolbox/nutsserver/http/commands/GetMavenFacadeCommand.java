@@ -115,7 +115,7 @@ public class GetMavenFacadeCommand extends AbstractFacadeCommand {
                     context.sendResponseHeaders(200,-1);
                     return;
                 }
-                context.sendResponseFile(200, fetch.getPath());
+                context.sendResponseFile(200, fetch.getFile());
             } else {
                 context.sendError(404, "File Note Found");
             }

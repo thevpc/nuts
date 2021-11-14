@@ -368,21 +368,22 @@ public final class DefaultNutsWorkspaceCurrentConfig {
         return this;
     }
 
-    public String getStoreLocation(NutsStoreLocation folderType) {
+    public NutsPath getStoreLocation(NutsStoreLocation folderType,NutsSession session) {
         Path p = effStoreLocationPath[folderType.ordinal()];
-        return p==null?null:p.toString();
+        return p==null?null:NutsPath.of(p,session);
     }
 
-    public String getHomeLocation(NutsHomeLocation location) {
-        return new NutsHomeLocationsMap(homeLocations).get(location);
+    public NutsPath getHomeLocation(NutsHomeLocation location,NutsSession session) {
+        String s = new NutsHomeLocationsMap(homeLocations).get(location);
+        return s==null?null:NutsPath.of(s,session);
     }
 
-    public String getHomeLocation(NutsStoreLocation folderType) {
-        return Paths.get(NutsUtilPlatforms.getPlatformHomeFolder(getStoreLocationLayout(),
+    public NutsPath getHomeLocation(NutsStoreLocation folderType,NutsSession session) {
+        return NutsPath.of(Paths.get(NutsUtilPlatforms.getPlatformHomeFolder(getStoreLocationLayout(),
                 folderType, getHomeLocations(),
                 isGlobal(),
                 getName()
-        )).toString();
+        )),session);
     }
 
     public NutsOsFamily getStoreLocationLayout() {
@@ -413,108 +414,23 @@ public final class DefaultNutsWorkspaceCurrentConfig {
     }
 
 
-//    public NutsId getArch() {
-//        if (arch == null) {
-//            arch = ws.id().parser().parse(CorePlatformUtils.getPlatformArch());
-//        }
-//        return arch;
-//    }
 
-
-//    private static NutsOsFamily getPlatformOsFamily0() {
-//        String property = System.getProperty("os.name").toLowerCase(Locale.ENGLISH);
-//        if (property.startsWith("linux")) {
-//            return NutsOsFamily.LINUX;
-//        }
-//        if (property.startsWith("win")) {
-//            return NutsOsFamily.WINDOWS;
-//        }
-//        if (property.startsWith("mac")) {
-//            return NutsOsFamily.MACOS;
-//        }
-//        if (property.startsWith("sunos")) {
-//            return NutsOsFamily.UNIX;
-//        }
-//        if (property.startsWith("freebsd")) {
-//            return NutsOsFamily.UNIX;
-//        }
-//        return NutsOsFamily.UNKNOWN;
-//    }
-
-//    public NutsOsFamily getOsFamily() {
-//        if (osFamily == null) {
-//            osFamily = getPlatformOsFamily0();
-//        }
-//        return osFamily;
-//    }
-//
-//
-//    public NutsId getOs() {
-//        if (os == null) {
-//            os = ws.id().parser().parse(CorePlatformUtils.getPlatformOs(ws));
-//        }
-//        return os;
-//    }
-//
-//    public NutsId getPlatform() {
-//        if (platform == null) {
-//            platform = NutsWorkspaceConfigManagerExt.of(ws.config())
-//                    .createSdkId("java", System.getProperty("java.version"));
-//        }
-//        return platform;
-//    }
-//
-//
-//    public NutsId getOsDist() {
-//        if (osdist == null) {
-//            osdist = ws.id().parser().parse(CorePlatformUtils.getPlatformOsDist(ws));
-//        }
-//        return osdist;
-//    }
-
-    //
-    public String getStoreLocation(String id, NutsStoreLocation folderType, NutsSession session) {
+    public NutsPath getStoreLocation(String id, NutsStoreLocation folderType, NutsSession session) {
         return getStoreLocation(NutsId.of(id,session), folderType, session);
     }
 
-    //
-    public String getStoreLocation(NutsId id, NutsStoreLocation folderType, NutsSession session) {
-        String storeLocation = getStoreLocation(folderType);
+    public NutsPath getStoreLocation(NutsId id, NutsStoreLocation folderType, NutsSession session) {
+        NutsPath storeLocation = getStoreLocation(folderType,session);
         if (storeLocation == null) {
             return null;
         }
         switch (folderType) {
             case CACHE:
-                return Paths.get(storeLocation).resolve(NutsConstants.Folders.ID).resolve(session.locations().getDefaultIdBasedir(id)).toString();
+                return storeLocation.resolve(NutsConstants.Folders.ID).resolve(session.locations().getDefaultIdBasedir(id));
             case CONFIG:
-                return Paths.get(storeLocation).resolve(NutsConstants.Folders.ID).resolve(session.locations().getDefaultIdBasedir(id)).toString();
+                return storeLocation.resolve(NutsConstants.Folders.ID).resolve(session.locations().getDefaultIdBasedir(id));
         }
-        return Paths.get(storeLocation).resolve(session.locations().getDefaultIdBasedir(id)).toString();
+        return storeLocation.resolve(session.locations().getDefaultIdBasedir(id));
     }
-
-//    
-//    public Path getStoreLocation(NutsStoreLocation folderType) {
-//        String s=effStoreLocations.get(folderType.id());
-//        return s==null?null:Paths.get(s);
-////        String n = CoreNutsUtils.getArrItem(getStoreLocations(), folderType.ordinal());
-////        switch (getStoreLocationStrategy()) {
-////            case STANDALONE: {
-////                if (NutsBlankable.isBlank(n)) {
-////                    n = folderType.toString().toLowerCase();
-////                }
-////                n = n.trim();
-////                return getStoreLocation().resolve(n);
-////            }
-////            case EXPLODED: {
-////                Path storeLocation = repository.getWorkspace().config().getStoreLocation(folderType);
-////                //uuid is added as
-////                return storeLocation.resolve(NutsConstants.Folders.REPOSITORIES).resolve(getName()).resolve(getUuid());
-////
-////            }
-////            default: {
-////                throw new NutsIllegalArgumentException(repository.getWorkspace(), "Unsupported strategy type " + getStoreLocation());
-////            }
-////        }
-//    }
 
 }

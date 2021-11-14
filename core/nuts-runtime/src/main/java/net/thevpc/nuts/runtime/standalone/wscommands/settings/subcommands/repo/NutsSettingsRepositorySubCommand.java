@@ -362,11 +362,11 @@ public class NutsSettingsRepositorySubCommand extends AbstractNutsSettingsSubCom
 
         String name;
         String type;
-        String location;
+        NutsPath location;
         RepoStatus enabled;
         RepoInfo[] mirrors;
 
-        public RepoInfo(String name, String type, String location, RepoStatus enabled, RepoInfo[] mirrors) {
+        public RepoInfo(String name, String type, NutsPath location, RepoStatus enabled, RepoInfo[] mirrors) {
             this.name = name;
             this.type = type;
             this.location = location;
@@ -397,11 +397,11 @@ public class NutsSettingsRepositorySubCommand extends AbstractNutsSettingsSubCom
             this.type = type;
         }
 
-        public String getLocation() {
+        public NutsPath getLocation() {
             return location;
         }
 
-        public void setLocation(String location) {
+        public void setLocation(NutsPath location) {
             this.location = location;
         }
 

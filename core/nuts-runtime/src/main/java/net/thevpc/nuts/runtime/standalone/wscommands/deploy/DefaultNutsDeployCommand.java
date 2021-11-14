@@ -60,7 +60,7 @@ public class DefaultNutsDeployCommand extends AbstractNutsDeployCommand {
                 }
                 if (c.descriptor != null) {
                     if ("zip".equals(c.descriptor.getPackaging())) {
-                        Path zipFilePath = Paths.get(NutsPath.of(c.baseFile.toString() + ".zip",session).builder().withAppBaseDir().build().toString());
+                        Path zipFilePath = Paths.get(NutsPath.of(c.baseFile.toString() + ".zip",session).toAbsolute().toString());
                         ZipUtils.zip(session, c.baseFile.toString(), new ZipOptions(), zipFilePath.toString());
                         c.contentStreamOrPath = NutsStreamOrPath.of(NutsPath.of(zipFilePath,session));
                         c.addTemp(zipFilePath);
@@ -70,7 +70,8 @@ public class DefaultNutsDeployCommand extends AbstractNutsDeployCommand {
                 }
             } else if (Files.isRegularFile(c.baseFile)) {
                 if (c.descriptor == null) {
-                    File ext = new File(NutsPath.of(c.baseFile.toString() + "." + NutsConstants.Files.DESCRIPTOR_FILE_NAME,session).builder().withAppBaseDir().build().toString());
+                    NutsPath ext = NutsPath.of(c.baseFile.toString() + "." + NutsConstants.Files.DESCRIPTOR_FILE_NAME,session)
+                            .toAbsolute();
                     if (ext.exists()) {
                         c.descriptor = NutsDescriptorParser.of(session).parse(ext);
                     } else {
@@ -98,9 +99,9 @@ public class DefaultNutsDeployCommand extends AbstractNutsDeployCommand {
             for (NutsId nutsId : session.search().setSession(getSession())
                     .addIds(ids.toArray(new NutsId[0])).setLatest(true).setRepository(fromRepository).getResultIds()) {
                 NutsDefinition fetched = session.fetch().setContent(true).setId(nutsId).setSession(getSession()).getResultDefinition();
-                if (fetched.getPath() != null) {
+                if (fetched.getFile() != null) {
                     runDeployFile(NutsStreamOrPath.of(
-                           NutsPath.of(fetched.getPath(),session)
+                           NutsPath.of(fetched.getFile(),session)
                     ), fetched.getDescriptor(), null);
                 }
             }
@@ -188,7 +189,8 @@ public class DefaultNutsDeployCommand extends AbstractNutsDeployCommand {
                     }
                     if (descriptor != null) {
                         if ("zip".equals(descriptor.getPackaging())) {
-                            Path zipFilePath = Paths.get(NutsPath.of(contentFile.toString() + ".zip", this.session).builder().withAppBaseDir().build().toString());
+                            Path zipFilePath = Paths.get(NutsPath.of(contentFile.toString() + ".zip", this.session)
+                                    .toAbsolute().toString());
                             try {
                                 ZipUtils.zip(session, contentFile.toString(), new ZipOptions(), zipFilePath.toString());
                             } catch (IOException ex) {

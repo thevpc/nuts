@@ -19,7 +19,6 @@ import net.thevpc.nuts.spi.NutsRepositorySPI;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.*;
 import java.util.logging.Level;
 
@@ -66,7 +65,7 @@ public class DefaultNutsFetchCommand extends AbstractNutsFetchCommand {
         try {
             checkSession();
             NutsSession ws = getSession();
-            Path f = getResultDefinition().getPath();
+            Path f = getResultDefinition().getFile();
             return NutsHash.of(ws).setSource(f).computeString();
         } catch (NutsNotFoundException ex) {
             if (!isFailFast()) {
@@ -133,7 +132,7 @@ public class DefaultNutsFetchCommand extends AbstractNutsFetchCommand {
     public Path getResultPath() {
         try {
             NutsDefinition def = fetchDefinition(getId(), copy().setContent(true).setEffective(false), true, false);
-            Path p = def.getPath();
+            Path p = def.getFile();
             if (getLocation() != null) {
                 return getLocation();
             }
@@ -417,7 +416,7 @@ public class DefaultNutsFetchCommand extends AbstractNutsFetchCommand {
         boolean nutsApp = nutsDescriptor.isApplication();
         NutsSession session = getSession();
         if (jar.getFileName().toString().toLowerCase().endsWith(".jar") && Files.isRegularFile(jar)) {
-            Path cachePath = Paths.get(session.locations().getStoreLocation(nutsDescriptor.getId(), NutsStoreLocation.CACHE))
+            NutsPath cachePath = session.locations().getStoreLocation(nutsDescriptor.getId(), NutsStoreLocation.CACHE)
                     .resolve(session.locations().getDefaultIdFilename(nutsDescriptor.getId()
                                     .builder()
                                     .setFace("info.cache")
@@ -427,7 +426,7 @@ public class DefaultNutsFetchCommand extends AbstractNutsFetchCommand {
             Map<String, String> map = null;
             NutsElements elem = NutsElements.of(session);
             try {
-                if (Files.isRegularFile(cachePath)) {
+                if (cachePath.isRegularFile()) {
                     map = elem.setSession(this.session)
                             .json().parse(cachePath, Map.class);
                 }
@@ -476,17 +475,17 @@ public class DefaultNutsFetchCommand extends AbstractNutsFetchCommand {
         NutsWorkspaceUtils.checkSession(this.ws, session);
         NutsWorkspaceExt dws = NutsWorkspaceExt.of(session);
         boolean withCache = !(repo instanceof DefaultNutsInstalledRepository);
-        Path cachePath = null;
+        NutsPath cachePath = null;
         NutsWorkspaceUtils wu = NutsWorkspaceUtils.of(session);
         NutsElements elem = NutsElements.of(getSession());
         if (withCache) {
-            cachePath = Paths.get(session.locations().getStoreLocation(id, NutsStoreLocation.CACHE, repo.getUuid()))
+            cachePath = session.locations().getStoreLocation(id, NutsStoreLocation.CACHE, repo.getUuid())
                     .resolve(session.locations().getDefaultIdFilename(id.builder().setFace("def.cache").build()));
-            if (Files.isRegularFile(cachePath)) {
+            if (cachePath.isRegularFile()) {
                 try {
-                    if (CoreIOUtils.isObsoleteInstant(session, Files.getLastModifiedTime(cachePath).toInstant())) {
+                    if (CoreIOUtils.isObsoletePath(session, cachePath)) {
                         //this is invalid cache!
-                        Files.delete(cachePath);
+                        cachePath.delete();
                     } else {
                         DefaultNutsDefinition d = elem.setSession(session)
                                 .json().parse(cachePath, DefaultNutsDefinition.class);
@@ -496,7 +495,7 @@ public class DefaultNutsFetchCommand extends AbstractNutsFetchCommand {
                             NutsRepository repositoryByName = rr.findRepositoryByName(d.getRepositoryName());
                             if (repositoryById == null || repositoryByName == null) {
                                 //this is invalid cache!
-                                Files.delete(cachePath);
+                                cachePath.delete();
                             } else {
                                 wu.traceMessage(nutsFetchModes, id.getLongId(), NutsLogVerb.CACHE, "fetch definition", 0);
                                 return d;

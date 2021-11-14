@@ -32,15 +32,15 @@ import java.util.Map;
  */
 public interface NutsWorkspaceLocationManager {
 
-    String getHomeLocation(NutsStoreLocation folderType);
+    NutsPath getHomeLocation(NutsStoreLocation folderType);
 
-    String getStoreLocation(NutsStoreLocation folderType);
+    NutsPath getStoreLocation(NutsStoreLocation folderType);
 
-    String getStoreLocation(NutsId id, NutsStoreLocation folderType);
+    NutsPath getStoreLocation(NutsId id, NutsStoreLocation folderType);
 
-    String getStoreLocation(NutsStoreLocation folderType, String repositoryIdOrName);
+    NutsPath getStoreLocation(NutsStoreLocation folderType, String repositoryIdOrName);
 
-    String getStoreLocation(NutsId id, NutsStoreLocation folderType, String repositoryIdOrName);
+    NutsPath getStoreLocation(NutsId id, NutsStoreLocation folderType, String repositoryIdOrName);
 
     NutsStoreLocationStrategy getStoreLocationStrategy();
 
@@ -62,7 +62,7 @@ public interface NutsWorkspaceLocationManager {
 
     String getDefaultIdFilename(NutsId id);
 
-    String getDefaultIdBasedir(NutsId id);
+    NutsPath getDefaultIdBasedir(NutsId id);
 
     String getDefaultIdContentExtension(String packaging);
 
@@ -76,7 +76,7 @@ public interface NutsWorkspaceLocationManager {
      */
     Map<NutsHomeLocation, String> getHomeLocations();
 
-    String getHomeLocation(NutsHomeLocation location);
+    NutsPath getHomeLocation(NutsHomeLocation location);
 
     NutsPath getWorkspaceLocation();
 

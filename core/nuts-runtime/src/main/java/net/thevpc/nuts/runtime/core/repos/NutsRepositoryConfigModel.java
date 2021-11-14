@@ -56,7 +56,7 @@ public interface NutsRepositoryConfigModel {
 
     String getGroups(NutsSession session);
 
-    String getLocation(boolean expand, NutsSession session);
+    NutsPath getLocation(boolean expand, NutsSession session);
 
     NutsRepository getMirror(String repositoryIdOrName, NutsSession session);
 
@@ -68,9 +68,9 @@ public interface NutsRepositoryConfigModel {
 
     NutsSpeedQualifier getSpeed(NutsSession session);
 
-    String getStoreLocation();
+    NutsPath getStoreLocation();
 
-    String getStoreLocation(NutsStoreLocation folderType, NutsSession session);
+    NutsPath getStoreLocation(NutsStoreLocation folderType, NutsSession session);
 
     //        @Override
     //        public int getSupportLevel(NutsRepositorySupportedAction supportedAction, NutsId id, NutsFetchMode fetchMode, boolean transitive) {
@@ -112,9 +112,9 @@ public interface NutsRepositoryConfigModel {
 
     void unsubscribeIndex(NutsSession session);
 
-    Path getTempMirrorsRoot(NutsSession session);
+    NutsPath getTempMirrorsRoot(NutsSession session);
 
-    Path getMirrorsRoot(NutsSession session);
+    NutsPath getMirrorsRoot(NutsSession session);
 
     NutsUserConfig[] getUsers(NutsSession session);
 

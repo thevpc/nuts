@@ -2,39 +2,35 @@ package net.thevpc.nuts.toolbox.ndb.nmysql.remote;
 
 import net.thevpc.nuts.*;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 
 public class CachedMapFile {
-    private NutsApplicationContext context;
+    private final NutsApplicationContext context;
     private Map<String, String> map;
     private boolean enabled;
-    private Path path;
+    private final NutsPath path;
     private boolean loaded;
 
     public CachedMapFile(NutsApplicationContext context, String name) {
-        this(context,name,true);
+        this(context, name, true);
     }
 
     public CachedMapFile(NutsApplicationContext context, String name, boolean enabled) {
         this.context = context;
         this.enabled = enabled;
         NutsId appId = context.getAppId();
-        path = Paths.get(context.getTempFolder())
+        path = context.getTempFolder()
                 .resolve(appId.getGroupId() + "-" + appId.getArtifactId() + "-" + appId.getVersion())
                 .resolve(name + ".json");
         if (enabled) {
-            if (Files.isRegularFile(path)) {
+            if (path.isRegularFile()) {
                 try {
                     NutsSession session = context.getSession();
                     map = NutsElements.of(session)
                             .json()
                             .parse(path, Map.class);
-                    loaded=true;
+                    loaded = true;
                 } catch (Exception ex) {
                     //
                 }
@@ -42,17 +38,17 @@ public class CachedMapFile {
         }
     }
 
-    public CachedMapFile setEnabled(boolean enabled) {
-        this.enabled = enabled;
-        return this;
-    }
-
-    public boolean exists(){
+    public boolean exists() {
         return loaded;
     }
 
     public boolean isEnabled() {
         return enabled;
+    }
+
+    public CachedMapFile setEnabled(boolean enabled) {
+        this.enabled = enabled;
+        return this;
     }
 
     public boolean contains(String k) {
@@ -62,7 +58,7 @@ public class CachedMapFile {
         if (map == null) {
             return false;
         }
-        return map.get(k)!=null;
+        return map.get(k) != null;
     }
 
     public String get(String k) {
@@ -103,16 +99,12 @@ public class CachedMapFile {
 
     public void reset() {
         dispose();
-        map=null;
+        map = null;
     }
 
     public void dispose() {
         if (path != null) {
-            try {
-                Files.delete(path);
-            } catch (IOException e) {
-                //
-            }
+            path.delete();
         }
     }
 }

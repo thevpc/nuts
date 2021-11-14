@@ -29,6 +29,7 @@ package net.thevpc.nuts.boot;
 import net.thevpc.nuts.*;
 
 import java.io.PrintStream;
+import java.lang.reflect.Array;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.function.Supplier;
@@ -46,6 +47,25 @@ public class NutsApiUtils {
 
     public static boolean isBlank(CharSequence s) {
         return s == null || isBlank(s.toString().toCharArray());
+    }
+
+    public static boolean isBlank(Object any) {
+        if (any == null) {
+            return true;
+        }
+        if (any instanceof NutsBlankable) {
+            return ((NutsBlankable) any).isBlank();
+        }
+        if (any instanceof CharSequence) {
+            return isBlank((CharSequence) any);
+        }
+        if (any instanceof char[]) {
+            return isBlank((char[]) any);
+        }
+        if (any.getClass().isArray()) {
+            return Array.getLength(any) == 0;
+        }
+        return false;
     }
 
     public static boolean isBlank(char[] string) {

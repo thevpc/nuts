@@ -67,7 +67,7 @@ public class ProcessExecutorComponent implements NutsExecutorComponent {
 
     public IProcessExecHelper execHelper(NutsExecutionContext executionContext) {
         NutsDefinition nutMainFile = executionContext.getDefinition();
-        String storeFolder = nutMainFile.getInstallInformation().getInstallFolder();
+        NutsPath storeFolder = nutMainFile.getInstallInformation().getInstallFolder();
         String[] execArgs = executionContext.getExecutorArguments();
         String[] appArgs = executionContext.getArguments();
 
@@ -98,7 +98,7 @@ public class ProcessExecutorComponent implements NutsExecutorComponent {
             }
         }
         String directory = NutsBlankable.isBlank(dir) ? null :
-                NutsPath.of(dir,executionContext.getSession()).builder().withAppBaseDir().build().toString();
+                NutsPath.of(dir,executionContext.getSession()).toAbsolute().toString();
         return ProcessExecHelper.ofDefinition(nutMainFile,
                 app.toArray(new String[0]), osEnv, directory, executionContext.getExecutorProperties(), showCommand, true, executionContext.getSleepMillis(), false, false, null, null, executionContext.getRunAs(), executionContext.getSession(),
                 executionContext.getExecSession()

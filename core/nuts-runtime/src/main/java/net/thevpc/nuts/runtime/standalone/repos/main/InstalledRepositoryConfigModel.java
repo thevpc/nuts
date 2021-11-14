@@ -73,7 +73,7 @@ class InstalledRepositoryConfigModel implements NutsRepositoryConfigModel {
     }
 
     @Override
-    public String getLocation(boolean expand, NutsSession session) {
+    public NutsPath getLocation(boolean expand, NutsSession session) {
         return null;
     }
 
@@ -103,33 +103,20 @@ class InstalledRepositoryConfigModel implements NutsRepositoryConfigModel {
     }
 
     @Override
-    public String getStoreLocation() {
+    public NutsPath getStoreLocation() {
         return null;
     }
 
     @Override
-    public String getStoreLocation(NutsStoreLocation folderType, NutsSession session) {
+    public NutsPath getStoreLocation(NutsStoreLocation folderType, NutsSession session) {
         return null;
     }
 
-    //        @Override
-//        public int getSupportLevel(NutsRepositorySupportedAction supportedAction, NutsId id, NutsFetchMode fetchMode, boolean transitive) {
-//            return 0;
-//        }
     @Override
     public NutsStoreLocationStrategy getStoreLocationStrategy(NutsSession session) {
         return session.locations().getRepositoryStoreLocationStrategy();
     }
 
-    //        @Override
-//        public Map<String, String> getEnv() {
-//            return Collections.emptyMap();
-//        }
-//
-//        @Override
-//        public String getEnv(String property, String defaultValue) {
-//            return null;
-//        }
     @Override
     public String getType(NutsSession session) {
         return DefaultNutsInstalledRepository.INSTALLED_REPO_UUID;
@@ -214,12 +201,12 @@ class InstalledRepositoryConfigModel implements NutsRepositoryConfigModel {
     }
 
     @Override
-    public Path getTempMirrorsRoot(NutsSession session) {
+    public NutsPath getTempMirrorsRoot(NutsSession session) {
         return null;
     }
 
     @Override
-    public Path getMirrorsRoot(NutsSession session) {
+    public NutsPath getMirrorsRoot(NutsSession session) {
         return null;
     }
 

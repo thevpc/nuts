@@ -990,7 +990,7 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
      *
      * @return query result
      */
-    NutsStream<String> getResultInstallFolders();
+    NutsStream<NutsPath> getResultInstallFolders();
 
     /**
      * execute query and return store location path
@@ -998,7 +998,7 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
      * @param location location type to return
      * @return query result
      */
-    NutsStream<String> getResultStoreLocations(NutsStoreLocation location);
+    NutsStream<NutsPath> getResultStoreLocations(NutsStoreLocation location);
 
     /**
      * execute query and return the selected columns. Supported columns are :

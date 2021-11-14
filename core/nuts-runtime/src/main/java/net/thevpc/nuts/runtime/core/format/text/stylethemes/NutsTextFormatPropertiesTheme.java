@@ -7,9 +7,6 @@ import net.thevpc.nuts.runtime.core.util.CoreNumberUtils;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Properties;
 import java.util.UUID;
 
@@ -46,12 +43,12 @@ public class NutsTextFormatPropertiesTheme implements NutsTextFormatTheme {
                     throw new NutsIOException(session, e);
                 }
             } else {
-                Path themeFile = Paths.get(session.locations().getStoreLocation(
+                NutsPath themeFile = session.locations().getStoreLocation(
                         NutsId.of("net.thevpc.nuts:nuts-runtime#SHARED", session),
                         NutsStoreLocation.CONFIG
-                )).resolve("themes").resolve(name);
-                if (Files.isRegularFile(themeFile)) {
-                    try (InputStream inStream = Files.newInputStream(themeFile)) {
+                ).resolve("themes").resolve(name);
+                if (themeFile.isRegularFile()) {
+                    try (InputStream inStream = themeFile.getInputStream()) {
                         props.load(inStream);
                     } catch (IOException e) {
                         throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("invalid theme: %s", name), e);

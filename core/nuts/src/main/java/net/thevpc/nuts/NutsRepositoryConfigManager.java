@@ -60,11 +60,11 @@ public interface NutsRepositoryConfigManager {
      *               be expanded)
      * @return repository location
      */
-    String getLocation(boolean expand);
+    NutsPath getLocation(boolean expand);
 
-    String getStoreLocation();
+    NutsPath getStoreLocation();
 
-    String getStoreLocation(NutsStoreLocation folderType);
+    NutsPath getStoreLocation(NutsStoreLocation folderType);
 
     boolean isIndexEnabled();
 

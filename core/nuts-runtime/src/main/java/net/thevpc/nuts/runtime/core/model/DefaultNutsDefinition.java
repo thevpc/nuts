@@ -23,7 +23,6 @@
  */
 package net.thevpc.nuts.runtime.core.model;
 
-import java.io.UncheckedIOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Path;
@@ -133,28 +132,15 @@ public class DefaultNutsDefinition implements NutsDefinition {
     }
 
     @Override
-    public Path getPath() {
+    public Path getFile() {
         NutsContent c = getContent();
         return c == null ? null : c.getFile();
     }
 
     @Override
-    public NutsPath getLocation() {
+    public NutsPath getPath() {
         NutsContent c = getContent();
-        return c == null ? null : c.getLocation();
-    }
-
-    @Override
-    public URL getURL() {
-        Path p = getPath();
-        if (p != null) {
-            try {
-                return p.toUri().toURL();
-            } catch (MalformedURLException e) {
-                throw new NutsIOException(session,e);
-            }
-        }
-        return null;
+        return c == null ? null : c.getPath();
     }
 
     @Override

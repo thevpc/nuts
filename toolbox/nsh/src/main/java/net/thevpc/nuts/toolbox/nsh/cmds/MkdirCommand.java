@@ -76,7 +76,11 @@ public class MkdirCommand extends SimpleJShellBuiltin {
 //            if (v instanceof SshXFile) {
 //                ((SshXFile) v).setListener(listener);
 //            }
-            v.mkdir(options.p);
+            if(options.p) {
+                v.mkdirs();
+            }else{
+                v.mkdir();
+            }
         }
     }
 

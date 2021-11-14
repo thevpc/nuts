@@ -9,7 +9,6 @@ import net.thevpc.nuts.runtime.standalone.config.DefaultNutsWorkspaceConfigModel
 import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 import net.thevpc.nuts.spi.NutsRepositorySPI;
 
-import java.nio.file.Paths;
 import java.util.Map;
 
 public class DefaultNutsWorkspaceLocationModel {
@@ -48,16 +47,17 @@ public class DefaultNutsWorkspaceLocationModel {
     }
 
 
-    public String getHomeLocation(NutsStoreLocation folderType, NutsSession session) {
-        return cfg().current().getHomeLocation(folderType);
+    public NutsPath getHomeLocation(NutsStoreLocation folderType, NutsSession session) {
+        return cfg().current().getHomeLocation(folderType,session);
     }
 
 
-    public String getStoreLocation(NutsStoreLocation folderType, NutsSession session) {
+    public NutsPath getStoreLocation(NutsStoreLocation folderType, NutsSession session) {
         try {
-            return cfg().current().getStoreLocation(folderType);
+            return cfg().current().getStoreLocation(folderType,session);
         } catch (IllegalStateException stillInitializing) {
-            return info.getStoreLocation(folderType);
+            String h = info.getStoreLocation(folderType);
+            return h==null?null:NutsPath.of(h,session);
         }
     }
 
@@ -92,7 +92,7 @@ public class DefaultNutsWorkspaceLocationModel {
     }
 
 
-    public String getStoreLocation(NutsStoreLocation folderType, String repositoryIdOrName, NutsSession session) {
+    public NutsPath getStoreLocation(NutsStoreLocation folderType, String repositoryIdOrName, NutsSession session) {
         if (repositoryIdOrName == null) {
             return getStoreLocation(folderType, session);
         }
@@ -102,21 +102,21 @@ public class DefaultNutsWorkspaceLocationModel {
     }
 
 
-    public String getStoreLocation(NutsId id, NutsStoreLocation folderType, String repositoryIdOrName, NutsSession session) {
+    public NutsPath getStoreLocation(NutsId id, NutsStoreLocation folderType, String repositoryIdOrName, NutsSession session) {
         if (repositoryIdOrName == null) {
             return getStoreLocation(id, folderType, session);
         }
-        String storeLocation = getStoreLocation(folderType, repositoryIdOrName, session);
-        return Paths.get(storeLocation).resolve(NutsConstants.Folders.ID).resolve(getDefaultIdBasedir(id, session)).toString();
+        NutsPath storeLocation = getStoreLocation(folderType, repositoryIdOrName, session);
+        return storeLocation.resolve(NutsConstants.Folders.ID).resolve(getDefaultIdBasedir(id, session));
     }
 
 
-    public String getStoreLocation(NutsId id, NutsStoreLocation folderType, NutsSession session) {
-        String storeLocation = getStoreLocation(folderType, session);
+    public NutsPath getStoreLocation(NutsId id, NutsStoreLocation folderType, NutsSession session) {
+        NutsPath storeLocation = getStoreLocation(folderType, session);
         if (storeLocation == null) {
             return null;
         }
-        return Paths.get(storeLocation).resolve(NutsConstants.Folders.ID).resolve(getDefaultIdBasedir(id, session)).toString();
+        return storeLocation.resolve(NutsConstants.Folders.ID).resolve(getDefaultIdBasedir(id, session));
 //        switch (folderType) {
 //            case CACHE:
 //                return storeLocation.resolve(NutsConstants.Folders.ID).resolve(getDefaultIdBasedir(id));
@@ -151,18 +151,18 @@ public class DefaultNutsWorkspaceLocationModel {
     }
 
 
-    public String getHomeLocation(NutsHomeLocation location, NutsSession session) {
-        return cfg().current().getHomeLocation(location);
+    public NutsPath getHomeLocation(NutsHomeLocation location, NutsSession session) {
+        return cfg().current().getHomeLocation(location,session);
     }
 
 
-    public String getDefaultIdBasedir(NutsId id, NutsSession session) {
+    public NutsPath getDefaultIdBasedir(NutsId id, NutsSession session) {
         NutsWorkspaceUtils.of(session).checkShortId(id);
         String groupId = id.getGroupId();
         String artifactId = id.getArtifactId();
         String plainIdPath = groupId.replace('.', '/') + "/" + artifactId;
         if (id.getVersion().isBlank()) {
-            return plainIdPath;
+            return NutsPath.of(plainIdPath,session);
         }
         String version = id.getVersion().getValue();
 //        String a = CoreNutsUtils.trimToNullAlternative(id.getAlternative());
@@ -170,7 +170,7 @@ public class DefaultNutsWorkspaceLocationModel {
 //        if (a != null) {
 //            x += "/" + a;
 //        }
-        return x;
+        return NutsPath.of(x,session);
     }
 
 

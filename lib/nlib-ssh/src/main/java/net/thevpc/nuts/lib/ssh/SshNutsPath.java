@@ -10,10 +10,7 @@ import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.Instant;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.EnumSet;
-import java.util.Set;
+import java.util.*;
 
 class SshNutsPath implements NutsPathSPI {
 
@@ -178,28 +175,75 @@ class SshNutsPath implements NutsPathSPI {
     }
 
     @Override
-    public NutsPath resolve(String[] others, boolean trailingSeparator) {
-        if (others.length > 0) {
-            StringBuilder loc = new StringBuilder(this.path.getPath());
-            if (loc.length() == 0 || loc.charAt(loc.length() - 1) != '/') {
-                loc.append('/');
-            }
-            loc.append(String.join("/", others));
-            if (trailingSeparator) {
-                loc.append('/');
-            }
-            return NutsPath.of(
-                    SshPath.toString(
-                            this.path.getHost(),
-                            this.path.getPort(),
-                            loc.toString(),
-                            this.path.getUser(),
-                            this.path.getPassword(),
-                            this.path.getKeyFile()
-                    ), getSession());
-        }
-        return NutsPath.of(toString(), getSession());
+    public NutsPath resolve(String path) {
+        return NutsPath.of(
+                SshPath.toString(
+                        this.path.getHost(),
+                        this.path.getPort(),
+                        NutsPath.of(this.path.getPath(),session).resolve(path).toString(),
+                        this.path.getUser(),
+                        this.path.getPassword(),
+                        this.path.getKeyFile()
+                ), getSession());
     }
+
+    @Override
+    public NutsPath resolve(NutsPath path) {
+        return NutsPath.of(
+                SshPath.toString(
+                        this.path.getHost(),
+                        this.path.getPort(),
+                        NutsPath.of(this.path.getPath(),session).resolve(path).toString(),
+                        this.path.getUser(),
+                        this.path.getPassword(),
+                        this.path.getKeyFile()
+                ), getSession());
+    }
+
+    @Override
+    public NutsPath resolveSibling(NutsPath path) {
+        return NutsPath.of(
+                SshPath.toString(
+                        this.path.getHost(),
+                        this.path.getPort(),
+                        NutsPath.of(this.path.getPath(),session).resolveSibling(path).toString(),
+                        this.path.getUser(),
+                        this.path.getPassword(),
+                        this.path.getKeyFile()
+                ), getSession());
+    }
+
+    @Override
+    public NutsPath resolveSibling(String path) {
+        return NutsPath.of(
+                SshPath.toString(
+                        this.path.getHost(),
+                        this.path.getPort(),
+                        NutsPath.of(this.path.getPath(),session).resolveSibling(path).toString(),
+                        this.path.getUser(),
+                        this.path.getPassword(),
+                        this.path.getKeyFile()
+                ), getSession());
+    }
+
+    @Override
+    public NutsPath subpath(int beginIndex, int endIndex) {
+        return NutsPath.of(
+                SshPath.toString(
+                        this.path.getHost(),
+                        this.path.getPort(),
+                        NutsPath.of(getLocation(),getSession()).subpath(beginIndex,endIndex).toString(),
+                        this.path.getUser(),
+                        this.path.getPassword(),
+                        this.path.getKeyFile()
+                ), getSession());
+    }
+
+    @Override
+    public String[] getItems() {
+        return NutsPath.of(getLocation(),getSession()).getItems();
+    }
+
 
 //    @Override
 //    public NutsPath resolve(String path) {
@@ -451,4 +495,16 @@ class SshNutsPath implements NutsPathSPI {
         throw new NutsIOException(getSession(), NutsMessage.cstyle("unable to resolve file from %s", toString()));
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        SshNutsPath that = (SshNutsPath) o;
+        return Objects.equals(path, that.path);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(path);
+    }
 }

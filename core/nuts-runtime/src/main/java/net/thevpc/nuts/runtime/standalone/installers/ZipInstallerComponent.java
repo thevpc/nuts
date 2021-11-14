@@ -25,10 +25,7 @@
 */
 package net.thevpc.nuts.runtime.standalone.installers;
 
-import net.thevpc.nuts.NutsDefinition;
-import net.thevpc.nuts.NutsExecutionContext;
-import net.thevpc.nuts.NutsIOException;
-import net.thevpc.nuts.NutsStoreLocation;
+import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.bundles.io.UnzipOptions;
 import net.thevpc.nuts.runtime.bundles.io.ZipUtils;
 import net.thevpc.nuts.runtime.core.NutsWorkspaceExt;
@@ -62,12 +59,12 @@ public class ZipInstallerComponent implements NutsInstallerComponent {
     @Override
     public void install(NutsExecutionContext executionContext) {
         DefaultNutsDefinition nutsDefinition = (DefaultNutsDefinition) executionContext.getDefinition();
-        String installFolder = executionContext.getSession().locations().getStoreLocation(nutsDefinition.getId(), NutsStoreLocation.APPS);
+        NutsPath installFolder = executionContext.getSession().locations().getStoreLocation(nutsDefinition.getId(), NutsStoreLocation.APPS);
 
         String skipRoot = (String) executionContext.getExecutorProperties().get("unzip-skip-root");
         try {
-            ZipUtils.unzip(executionContext.getSession(),nutsDefinition.getPath().toString(),
-                    installFolder,
+            ZipUtils.unzip(executionContext.getSession(),nutsDefinition.getFile().toString(),
+                    installFolder.toString(),
                     new UnzipOptions().setSkipRoot("true".equalsIgnoreCase(skipRoot))
             );
         } catch (IOException ex) {

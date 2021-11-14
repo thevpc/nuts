@@ -59,7 +59,7 @@ public class DefaultNutsUpdateStatisticsCommand extends AbstractNutsUpdateStatis
                     || x.getName().equals("project-summary.html")
             );
             if (mavenRepoRootFiles != null && mavenRepoRootFiles.length > 3) {
-                new MavenRepositoryFolderHelper(null, getSession(), repositoryPath).reindexFolder(getSession());
+                new MavenRepositoryFolderHelper(null, getSession(), NutsPath.of(repositoryPath,session)).reindexFolder(getSession());
                 if (session.isPlainTrace()) {
                     session.getTerminal().out().resetLine().printf("[%s] updated maven index %s%n", getSession().locations().getWorkspaceLocation(), repositoryPath);
                 }
@@ -68,7 +68,7 @@ public class DefaultNutsUpdateStatisticsCommand extends AbstractNutsUpdateStatis
                         -> x.getName().equals("nuts-repository.json")
                 );
                 if (nutsRepoRootFiles != null && nutsRepoRootFiles.length > 0) {
-                    new NutsRepositoryFolderHelper(null, session, repositoryPath, false).reindexFolder(session);
+                    new NutsRepositoryFolderHelper(null, session, NutsPath.of(repositoryPath,session), false).reindexFolder(session);
                 } else {
                     throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("unsupported repository folder"));
                 }

@@ -12,7 +12,6 @@ import java.nio.file.Paths;
 import java.util.*;
 
 import net.thevpc.nuts.toolbox.ndb.nmysql.util.MysqlUtils;
-import net.thevpc.nuts.toolbox.ndb.util.NdbUtils;
 
 public class LocalMysqlConfigService {
 
@@ -22,11 +21,11 @@ public class LocalMysqlConfigService {
     private NutsApplicationContext context;
     private NutsDefinition catalinaNutsDefinition;
     private String catalinaVersion;
-    private Path sharedConfigFolder;
+    private NutsPath sharedConfigFolder;
 
-    public LocalMysqlConfigService(Path file, NutsApplicationContext context) {
+    public LocalMysqlConfigService(NutsPath file, NutsApplicationContext context) {
         this(
-                file.getFileName().toString().substring(0, file.getFileName().toString().length() - LocalMysqlConfigService.SERVER_CONFIG_EXT.length()),
+                file.getName().toString().substring(0, file.getName().length() - LocalMysqlConfigService.SERVER_CONFIG_EXT.length()),
                 context
         );
         loadConfig();
@@ -35,7 +34,7 @@ public class LocalMysqlConfigService {
     public LocalMysqlConfigService(String name, NutsApplicationContext context) {
         setName(name);
         this.context = context;
-        sharedConfigFolder = Paths.get(getContext().getVersionFolderFolder(NutsStoreLocation.CONFIG, NMySqlConfigVersions.CURRENT));
+        sharedConfigFolder = getContext().getVersionFolder(NutsStoreLocation.CONFIG, NMySqlConfigVersions.CURRENT);
     }
 
     public LocalMysqlConfigService setName(String name) {
@@ -55,17 +54,17 @@ public class LocalMysqlConfigService {
     }
 
     public LocalMysqlConfigService saveConfig() {
-        Path f = getServerConfigPath();
+        NutsPath f = getServerConfigPath();
         NutsElements.of(context.getSession()).setNtf(false).json().setValue(config).print(f);
         return this;
     }
 
     public boolean existsConfig() {
-        Path f = getServerConfigPath();
-        return Files.exists(f);
+        NutsPath f = getServerConfigPath();
+        return f.exists();
     }
 
-    private Path getServerConfigPath() {
+    private NutsPath getServerConfigPath() {
         return sharedConfigFolder.resolve(getName() + SERVER_CONFIG_EXT);
     }
 
@@ -87,9 +86,9 @@ public class LocalMysqlConfigService {
 
     public LocalMysqlConfigService loadConfig() {
         String name = getName();
-        Path f = getServerConfigPath();
+        NutsPath f = getServerConfigPath();
         NutsSession session = context.getSession();
-        if (Files.exists(f)) {
+        if (f.exists()) {
             config = NutsElements.of(session).json().parse(f, LocalMysqlConfig.class);
             return this;
         } else if ("default".equals(name)) {
@@ -102,11 +101,7 @@ public class LocalMysqlConfigService {
     }
 
     public LocalMysqlConfigService removeConfig() {
-        try {
-            Files.delete(getServerConfigPath());
-        } catch (IOException ex) {
-            throw new UncheckedIOException(ex);
-        }
+        getServerConfigPath().delete();
         return this;
     }
 

@@ -109,7 +109,7 @@ public class CoreIOUtils {
         return s;
     }
 
-//    public static NutsPrintStream toPrintStream(Writer writer, NutsSession session) {
+    //    public static NutsPrintStream toPrintStream(Writer writer, NutsSession session) {
 //        if (writer == null) {
 //            return null;
 //        }
@@ -162,7 +162,7 @@ public class CoreIOUtils {
         }
     }
 
-//    public static void clearMonitor(NutsPrintStream out, NutsWorkspace ws) {
+    //    public static void clearMonitor(NutsPrintStream out, NutsWorkspace ws) {
 //        NutsTerminalMode terminalMode = ws.boot().getBootOptions().getTerminalMode();
 //        boolean bot = ws.boot().getBootOptions().isBot();
 //        if (terminalMode == null) {
@@ -514,9 +514,8 @@ public class CoreIOUtils {
                 }
             }
         }
-        return NutsPath.of(loc, session).builder().setBaseDir(
-                NutsPath.of(rootFolder, session))
-                .build().toString();
+        return NutsPath.of(loc, session).toAbsolute(rootFolder.toString())
+                .toString();
     }
 
     public static String trimSlashes(String repositoryIdPath) {
@@ -543,10 +542,10 @@ public class CoreIOUtils {
     }
 
     /**
-     * @param localPath localPath
+     * @param localPath    localPath
      * @param parseOptions may include --all-mains to force lookup of all main
-     * classes if available
-     * @param session session
+     *                     classes if available
+     * @param session      session
      * @return descriptor
      */
     public static NutsDescriptor resolveNutsDescriptorFromFileContent(Path localPath, String[] parseOptions, NutsSession session) {
@@ -652,7 +651,7 @@ public class CoreIOUtils {
     /**
      * copy input to output
      *
-     * @param in entree
+     * @param in  entree
      * @param out sortie
      */
     public static void copy(Reader in, Writer out, NutsSession session) {
@@ -662,7 +661,7 @@ public class CoreIOUtils {
     /**
      * copy input to output
      *
-     * @param in entree
+     * @param in  entree
      * @param out sortie
      * @return size copied
      */
@@ -673,8 +672,8 @@ public class CoreIOUtils {
     /**
      * copy input stream to output stream using the buffer size in bytes
      *
-     * @param in entree
-     * @param out sortie
+     * @param in         entree
+     * @param out        sortie
      * @param bufferSize bufferSize
      * @return size copied
      */
@@ -696,8 +695,8 @@ public class CoreIOUtils {
     /**
      * copy input stream to output stream using the buffer size in bytes
      *
-     * @param in entree
-     * @param out sortie
+     * @param in         entree
+     * @param out        sortie
      * @param bufferSize bufferSize
      */
     public static void copy(Reader in, Writer out, int bufferSize, NutsSession session) {
@@ -865,7 +864,7 @@ public class CoreIOUtils {
         return monitor(
                 NutsWorkspaceUtils.of(session).openURL(from),
                 from, NutsTexts.of(session).ofStyled(getURLName(from), NutsTextStyle.path()),
-                 NutsPath.of(from, session).getContentLength(), monitor, session);
+                NutsPath.of(from, session).getContentLength(), monitor, session);
     }
 
     public static java.io.InputStream monitor(java.io.InputStream from, Object source, NutsString sourceName, long length, NutsProgressMonitor monitor, NutsSession session) {
@@ -1047,7 +1046,7 @@ public class CoreIOUtils {
         return name;
     }
 
-//    public static CoreInput createInputSource(byte[] source, String name, NutsString formattedString, String typeName, NutsSession session) {
+    //    public static CoreInput createInputSource(byte[] source, String name, NutsString formattedString, String typeName, NutsSession session) {
 //        if (source == null) {
 //            return null;
 //        }
@@ -1265,9 +1264,11 @@ public class CoreIOUtils {
         }
     }
 
-    public static String evalSHA1Hex(Path file, NutsSession session) {
+    public static String evalSHA1Hex(NutsPath file, NutsSession session) {
         try {
-            return evalSHA1Hex(Files.newInputStream(file), true, session);
+            try (InputStream is = file.getInputStream()) {
+                return evalSHA1Hex(is, true, session);
+            }
         } catch (IOException e) {
             throw new NutsIOException(session, e);
         }
@@ -1355,8 +1356,8 @@ public class CoreIOUtils {
     }
 
     public static InputStream getCachedUrlWithSHA1(String path, String sourceTypeName, boolean ignoreSha1NotFound, NutsSession session) {
-        final Path cacheBasePath = Paths.get(session.locations().getStoreLocation(session.getWorkspace().getRuntimeId(), NutsStoreLocation.CACHE));
-        final Path urlContent = cacheBasePath.resolve("urls-content");
+        final NutsPath cacheBasePath = session.locations().getStoreLocation(session.getWorkspace().getRuntimeId(), NutsStoreLocation.CACHE);
+        final NutsPath urlContent = cacheBasePath.resolve("urls-content");
         String sha1 = null;
         try {
             ByteArrayOutputStream t = new ByteArrayOutputStream();
@@ -1371,9 +1372,9 @@ public class CoreIOUtils {
         NanoDB cachedDB = CacheDB.of(session);
         NanoDBTableFile<CachedURL> cacheTable
                 = cachedDB.tableBuilder(CachedURL.class, session).setNullable(false)
-                        .addAllFields()
-                        .addIndices("url")
-                        .getOrCreate();
+                .addAllFields()
+                .addIndices("url")
+                .getOrCreate();
 
 //        final PersistentMap<String, String> cu=getCachedUrls(session);
         CachedURL old = cacheTable.findByIndex("url", path, session).findFirst().orElse(null);
@@ -1384,103 +1385,78 @@ public class CoreIOUtils {
             if (old != null && sha1.equalsIgnoreCase(old.sha1)) {
                 String cachedID = old.path;
                 if (cachedID != null) {
-                    Path p = urlContent.resolve(cachedID);
-                    if (Files.exists(p)) {
-                        return NutsPath.of(p, session).getInputStream();
+                    NutsPath p = urlContent.resolve(cachedID);
+                    if (p.exists()) {
+                        return p.getInputStream();
                     }
                 }
             }
         }
+
+        NutsPath header = null;
+        long size = -1;
+        long lastModified = -1;
+        NutsTransportConnection f = CoreIOUtils.getHttpClientFacade(session, path);
         try {
-            NutsPath header = null;
-            long size = -1;
-            long lastModified = -1;
-            NutsTransportConnection f = CoreIOUtils.getHttpClientFacade(session, path);
-            try {
 
-                header = f.getPath();
-                size = header.getContentLength();
-                Instant lastModifiedInstant = header.getLastModifiedInstant();
-                if (lastModifiedInstant != null) {
-                    lastModified = lastModifiedInstant.toEpochMilli();
-                }
-            } catch (Exception ex) {
-                //ignore error
+            header = f.getPath();
+            size = header.getContentLength();
+            Instant lastModifiedInstant = header.getLastModifiedInstant();
+            if (lastModifiedInstant != null) {
+                lastModified = lastModifiedInstant.toEpochMilli();
             }
+        } catch (Exception ex) {
+            //ignore error
+        }
 
-            //when sha1 was not resolved check size and last modification
-            if (sha1 == null) {
-                if (old != null && old.lastModified != -1 && old.lastModified == lastModified) {
-                    if (old != null && old.size == size) {
-                        String cachedID = old.path;
-                        if (cachedID != null) {
-                            Path p = urlContent.resolve(cachedID);
-                            if (Files.exists(p)) {
-                                return NutsPath.of(p, session).getInputStream();
-                            }
+        //when sha1 was not resolved check size and last modification
+        if (sha1 == null) {
+            if (old != null && old.lastModified != -1 && old.lastModified == lastModified) {
+                if (old != null && old.size == size) {
+                    String cachedID = old.path;
+                    if (cachedID != null) {
+                        NutsPath p = urlContent.resolve(cachedID);
+                        if (p.exists()) {
+                            return p.getInputStream();
                         }
                     }
                 }
             }
-
-            final String s = UUID.randomUUID().toString();
-            final Path outPath = urlContent.resolve(s + "~");
-            CoreIOUtils.mkdirs(urlContent, session);
-            final OutputStream p = Files.newOutputStream(outPath);
-
-            long finalLastModified = lastModified;
-            InputStreamTee ist = new InputStreamTee(f.open(), p, () -> {
-                if (Files.exists(outPath)) {
-                    CachedURL ccu = new CachedURL();
-                    ccu.url = path;
-                    ccu.path = s;
-                    ccu.sha1 = evalSHA1Hex(outPath, session);
-                    long newSize = -1;
-                    try {
-                        newSize = Files.size(outPath);
-                    } catch (Exception ex) {
-                        //
-                    }
-                    ccu.size = newSize;
-                    ccu.lastModified = finalLastModified;
-                    Path newLocalPath = urlContent.resolve(s);
-                    try {
-                        Files.move(outPath, newLocalPath, StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE);
-                    } catch (IOException ex) {
-                        throw new NutsIOException(session, ex);
-                    }
-                    cacheTable.add(ccu, session);
-                    cacheTable.flush(session);
-                }
-            });
-            return InputStreamMetadataAwareImpl.of(ist, new NutsDefaultInputStreamMetadata(
-                    path,
-                    NutsTexts.of(session).ofStyled(path, NutsTextStyle.path()),
-                    size, NutsPath.of(path, session).getContentType(), sourceTypeName
-            )
-            );
-//                    session.io().input()
-//                    .setName(NutsTexts.of(session).forStyled(path, NutsTextStyle.path()))
-//                    .setTypeName(sourceTypeName)
-//                    .of();
-        } catch (IOException ex) {
-            throw new NutsIOException(session, ex);
         }
+
+        final String s = UUID.randomUUID().toString();
+        final NutsPath outPath = urlContent.resolve(s + "~");
+        urlContent.mkdirs();
+        OutputStream p = outPath.getOutputStream();
+        long finalLastModified = lastModified;
+        InputStreamTee ist = new InputStreamTee(f.open(), p, () -> {
+            if (outPath.exists()) {
+                CachedURL ccu = new CachedURL();
+                ccu.url = path;
+                ccu.path = s;
+                ccu.sha1 = evalSHA1Hex(outPath, session);
+                long newSize = outPath.getContentLength();
+                ccu.size = newSize;
+                ccu.lastModified = finalLastModified;
+                NutsPath newLocalPath = urlContent.resolve(s);
+                try {
+                    Files.move(outPath.toFile(), newLocalPath.toFile(), StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE);
+                } catch (IOException ex) {
+                    throw new NutsIOException(session, ex);
+                }
+                cacheTable.add(ccu, session);
+                cacheTable.flush(session);
+            }
+        });
+        return InputStreamMetadataAwareImpl.of(ist, new NutsDefaultInputStreamMetadata(
+                        path,
+                        NutsTexts.of(session).ofStyled(path, NutsTextStyle.path()),
+                        size, NutsPath.of(path, session).getContentType(), sourceTypeName
+                )
+        );
+
     }
 
-    //    public static PersistentMap<String, String> getCachedUrls(NutsWorkspace session) {
-//        final String k = PersistentMap.class.getName() + ":getCachedUrls";
-//        PersistentMap<String, String> m = (PersistentMap<String, String>) session.env().getProperty(k);
-//        if (m == null) {
-//            m = new DefaultPersistentMap<String, String>(String.class, String.class,
-//                    Paths.get(
-//                    session.locations().getStoreLocation(
-//                    session.getRuntimeId(),
-//                    NutsStoreLocation.CACHE)).resolve("urls-db").toFile(),session);
-//            session.env().setProperty(k, m,new NutsUpdateOptions(session.createSession()));
-//        }
-//        return m;
-//    }
     public static void storeProperties(Map<String, String> props, OutputStream out, boolean sort, NutsSession session) {
         storeProperties(props, new OutputStreamWriter(out), sort, session);
     }
@@ -1512,7 +1488,7 @@ public class CoreIOUtils {
      * is private but we need call it handle special properties files
      */
     public static String escapePropsString(String theString,
-            boolean escapeSpace) {
+                                           boolean escapeSpace) {
         if (theString == null) {
             theString = "";
         }
@@ -1727,6 +1703,18 @@ public class CoreIOUtils {
         }
     }
 
+    public static boolean isObsoletePath(NutsSession session, NutsPath path) {
+        try {
+            Instant i = path.getLastModifiedInstant();
+            if (i == null) {
+                return false;
+            }
+            return isObsoleteInstant(session, i);
+        } catch (Exception e) {
+            return true;
+        }
+    }
+
     //    public static PrintStream createFormattedPrintStream(OutputStream out, NutsWorkspace session) {
 //        PrintStream supported = (PrintStream) session.setExtension(true).createSupported(
 //                NutsFormattedPrintStream.class,
@@ -1886,7 +1874,7 @@ public class CoreIOUtils {
         return false;
     }
 
-//    public static List<String> headFrom(NutsInput input, int count) {
+    //    public static List<String> headFrom(NutsInput input, int count) {
 //        return input.lines().limit(count).collect(Collectors.toList());
 //    }
 //
@@ -1998,7 +1986,7 @@ public class CoreIOUtils {
         return all.toArray(new Path[0]);
     }
 
-//    public static class DefaultMultiReadItem implements MultiInput {
+    //    public static class DefaultMultiReadItem implements MultiInput {
 //
 //        private CoreInput base;
 //        private byte[] content;
@@ -2545,7 +2533,7 @@ public class CoreIOUtils {
     }
 
     public static boolean Arrays_equals(byte[] a, int aFromIndex, int aToIndex,
-            byte[] b, int bFromIndex, int bToIndex) {
+                                        byte[] b, int bFromIndex, int bToIndex) {
         //method added in JDK 9
         int aLength = aToIndex - aFromIndex;
         int bLength = bToIndex - bFromIndex;
@@ -2599,7 +2587,7 @@ public class CoreIOUtils {
     public static InputStream createBytesStream(byte[] bytes, NutsMessage message, String contentType, String kind, NutsSession session) {
         return InputStreamMetadataAwareImpl.of(
                 new ByteArrayInputStream(bytes),
-                 new NutsDefaultInputStreamMetadata(
+                new NutsDefaultInputStreamMetadata(
                         message,
                         bytes.length,
                         contentType,
@@ -2681,10 +2669,10 @@ public class CoreIOUtils {
         return path1.substring(0, latestSlash + 1);
     }
 
-    public static byte[] loadFile(Path out) {
-        if (Files.isRegularFile(out)) {
+    public static byte[] loadFile(NutsPath out) {
+        if (out.isRegularFile()) {
             try {
-                return Files.readAllBytes(out);
+                return out.readAllBytes();
             } catch (Exception ex) {
                 //ignore
             }
@@ -2692,15 +2680,15 @@ public class CoreIOUtils {
         return null;
     }
 
-    public static PathInfo.Status tryWriteStatus(byte[] content, Path out, NutsSession session) {
+    public static PathInfo.Status tryWriteStatus(byte[] content, NutsPath out, NutsSession session) {
         return tryWrite(content, out, DoWhenExist.IGNORE, DoWhenNotExists.IGNORE, session);
     }
 
-    public static PathInfo.Status tryWrite(byte[] content, Path out, NutsSession session) {
+    public static PathInfo.Status tryWrite(byte[] content, NutsPath out, NutsSession session) {
         return tryWrite(content, out, DoWhenExist.ASK, DoWhenNotExists.CREATE, session);
     }
 
-    public static PathInfo.Status tryWrite(byte[] content, Path out, /*boolean doNotWrite*/ DoWhenExist doWhenExist, DoWhenNotExists doWhenNotExist, NutsSession session) {
+    public static PathInfo.Status tryWrite(byte[] content, NutsPath out, /*boolean doNotWrite*/ DoWhenExist doWhenExist, DoWhenNotExists doWhenNotExist, NutsSession session) {
         if (doWhenExist == null) {
             throw new NutsIllegalArgumentException(session, NutsMessage.plain("missing doWhenExist"));
         }
@@ -2708,7 +2696,7 @@ public class CoreIOUtils {
             throw new NutsIllegalArgumentException(session, NutsMessage.plain("missing doWhenNotExist"));
         }
 //        System.err.println("[DEBUG] try write "+out);
-        out = out.toAbsolutePath().normalize();
+        out = out.toAbsolute().normalize();
         byte[] old = loadFile(out);
         if (old == null) {
             switch (doWhenNotExist) {
@@ -2716,16 +2704,10 @@ public class CoreIOUtils {
                     return PathInfo.Status.DISCARDED;
                 }
                 case CREATE: {
-                    try {
-                        if (out.getParent() != null) {
-                            Files.createDirectories(out.getParent());
-                        }
-                        Files.write(out, content);
-                        if (session.isPlainTrace()) {
-                            session.out().resetLine().printf("create file %s%n", NutsPath.of(out, session));
-                        }
-                    } catch (IOException e) {
-                        throw new NutsIOException(session, e);
+                    out.mkParentDirs();
+                    out.writeBytes(content);
+                    if (session.isPlainTrace()) {
+                        session.out().resetLine().printf("create file %s%n", out);
                     }
                     return PathInfo.Status.CREATED;
                 }
@@ -2738,16 +2720,10 @@ public class CoreIOUtils {
                                             betterPath(out.toString()), NutsTextStyle.path()
                                     )
                             ).getBooleanValue()) {
-                        try {
-                            if (out.getParent() != null) {
-                                Files.createDirectories(out.getParent());
-                            }
-                            Files.write(out, content);
-                            if (session.isPlainTrace()) {
-                                session.out().resetLine().printf("create file %s%n", NutsPath.of(out, session));
-                            }
-                        } catch (IOException e) {
-                            throw new NutsIOException(session, e);
+                        out.mkParentDirs();
+                        out.writeBytes(content);
+                        if (session.isPlainTrace()) {
+                            session.out().resetLine().printf("create file %s%n", out);
                         }
                         return PathInfo.Status.CREATED;
                     } else {
@@ -2767,13 +2743,9 @@ public class CoreIOUtils {
                     return PathInfo.Status.DISCARDED;
                 }
                 case OVERRIDE: {
-                    try {
-                        Files.write(out, content);
-                    } catch (IOException e) {
-                        throw new NutsIOException(session, e);
-                    }
+                    out.writeBytes(content);
                     if (session.isPlainTrace()) {
-                        session.out().resetLine().printf("update file %s%n", NutsPath.of(out, session));
+                        session.out().resetLine().printf("update file %s%n", out);
                     }
                     return PathInfo.Status.OVERRIDDEN;
                 }
@@ -2786,18 +2758,9 @@ public class CoreIOUtils {
                                             betterPath(out.toString()), NutsTextStyle.path()
                                     )
                             ).getBooleanValue()) {
-                        try {
-                            try {
-                                Files.write(out, content);
-                            } catch (IOException e) {
-                                throw new NutsIOException(session, e);
-                            }
-                            Files.write(out, content);
-                        } catch (IOException e) {
-                            throw new NutsIOException(session, e);
-                        }
+                        out.writeBytes(content);
                         if (session.isPlainTrace()) {
-                            session.out().resetLine().printf("update file %s%n", NutsPath.of(out, session));
+                            session.out().resetLine().printf("update file %s%n", out);
                         }
                         return PathInfo.Status.OVERRIDDEN;
                     } else {
@@ -2811,7 +2774,7 @@ public class CoreIOUtils {
         }
     }
 
-//    public static boolean isFileExistsAndIsWritable(Path file) {
+    //    public static boolean isFileExistsAndIsWritable(Path file) {
 //        if(!Files.exists(file)){
 //            return false;
 //        }

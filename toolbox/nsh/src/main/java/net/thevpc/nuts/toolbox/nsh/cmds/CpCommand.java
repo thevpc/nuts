@@ -81,7 +81,7 @@ public class CpCommand extends SimpleJShellBuiltin {
                 throw new NutsExecutionException(session, NutsMessage.cstyle("empty file path"), 2);
             }
             options.xfiles.add(NutsPath.of((value.contains("://") ? value :
-                    NutsPath.of(value, session).builder().withWorkspaceBaseDir().build().toString()
+                    NutsPath.of(value, session).toAbsolute(session.locations().getWorkspaceLocation()).toString()
             ), session));
         }
         if (options.xfiles.size() < 2) {

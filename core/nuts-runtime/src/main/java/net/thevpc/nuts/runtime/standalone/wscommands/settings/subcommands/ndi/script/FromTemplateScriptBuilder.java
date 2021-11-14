@@ -99,6 +99,10 @@ public class FromTemplateScriptBuilder extends AbstractScriptBuilder {
         return this;
     }
 
+    private String str(NutsPath path){
+        return path==null?null:path.toString();
+    }
+
     public String buildString() {
         try {
             //Path script = getScriptFile(name);
@@ -154,25 +158,25 @@ public class FromTemplateScriptBuilder extends AbstractScriptBuilder {
                                     case "NUTS_WORKSPACE":
                                         return getSession().locations().getWorkspaceLocation().toString();
                                     case "NUTS_WORKSPACE_APPS":
-                                        return getSession().locations().getStoreLocation(NutsStoreLocation.APPS);
+                                        return str(getSession().locations().getStoreLocation(NutsStoreLocation.APPS));
                                     case "NUTS_WORKSPACE_CONFIG":
-                                        return getSession().locations().getStoreLocation(NutsStoreLocation.CONFIG);
+                                        return str(getSession().locations().getStoreLocation(NutsStoreLocation.CONFIG));
                                     case "NUTS_WORKSPACE_CACHE":
-                                        return getSession().locations().getStoreLocation(NutsStoreLocation.CACHE);
+                                        return str(getSession().locations().getStoreLocation(NutsStoreLocation.CACHE));
                                     case "NUTS_WORKSPACE_LIB":
-                                        return getSession().locations().getStoreLocation(NutsStoreLocation.LIB);
+                                        return str(getSession().locations().getStoreLocation(NutsStoreLocation.LIB));
                                     case "NUTS_WORKSPACE_LOG":
-                                        return getSession().locations().getStoreLocation(NutsStoreLocation.LOG);
+                                        return str(getSession().locations().getStoreLocation(NutsStoreLocation.LOG));
                                     case "NUTS_WORKSPACE_RUN":
-                                        return getSession().locations().getStoreLocation(NutsStoreLocation.RUN);
+                                        return str(getSession().locations().getStoreLocation(NutsStoreLocation.RUN));
                                     case "NUTS_WORKSPACE_TEMP":
-                                        return getSession().locations().getStoreLocation(NutsStoreLocation.TEMP);
+                                        return str(getSession().locations().getStoreLocation(NutsStoreLocation.TEMP));
                                     case "NUTS_WORKSPACE_VAR":
-                                        return getSession().locations().getStoreLocation(NutsStoreLocation.VAR);
+                                        return str(getSession().locations().getStoreLocation(NutsStoreLocation.VAR));
                                     case "NUTS_JAR_EXPR": {
                                         String NUTS_JAR_PATH = options.resolveNutsApiJarPath().toString();
-                                        if (NUTS_JAR_PATH.startsWith(getSession().locations().getStoreLocation(NutsStoreLocation.LIB))) {
-                                            String pp = NUTS_JAR_PATH.substring(getSession().locations().getStoreLocation(NutsStoreLocation.LIB).length());
+                                        if (NUTS_JAR_PATH.startsWith(getSession().locations().getStoreLocation(NutsStoreLocation.LIB).toString())) {
+                                            String pp = NUTS_JAR_PATH.substring(getSession().locations().getStoreLocation(NutsStoreLocation.LIB).toString().length());
                                             return NutsShellHelper.of(getShellFamily()).varRef("NUTS_WORKSPACE_LIB") + pp;
                                         } else {
                                             return NUTS_JAR_PATH;
@@ -181,7 +185,7 @@ public class FromTemplateScriptBuilder extends AbstractScriptBuilder {
                                     case "NUTS_WORKSPACE_BINDIR_EXPR": {
                                         //="${NUTS_WORKSPACE_APPS}/id/net/thevpc/nuts/nuts/0.8.2/bin"
                                         return NutsShellHelper.of(getShellFamily()).varRef("NUTS_WORKSPACE_APPS") + options.resolveBinFolder().toString().substring(
-                                                getSession().locations().getStoreLocation(NutsStoreLocation.APPS).length()
+                                                getSession().locations().getStoreLocation(NutsStoreLocation.APPS).toString().length()
                                         );
                                     }
                                     default: {
@@ -203,6 +207,10 @@ public class FromTemplateScriptBuilder extends AbstractScriptBuilder {
     }
 
     public FromTemplateScriptBuilder setPath(Path path) {
+        return (FromTemplateScriptBuilder) super.setPath(path);
+    }
+
+    public FromTemplateScriptBuilder setPath(NutsPath path) {
         return (FromTemplateScriptBuilder) super.setPath(path);
     }
 
