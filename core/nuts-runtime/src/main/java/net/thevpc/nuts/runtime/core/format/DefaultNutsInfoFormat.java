@@ -255,6 +255,7 @@ public class DefaultNutsInfoFormat extends DefaultFormatBase<NutsInfoFormat> imp
 //        NutsIdFormat idFormat = ws.id().formatter();
         props.put("nuts-api-id", ws.getWorkspace().getApiId());
         props.put("nuts-runtime-id", ws.getWorkspace().getRuntimeId());
+        props.put("nuts-app-id", ws.getAppId());
         URL[] cl = ws.boot().getBootClassWorldURLs();
         List<NutsPath> runtimeClassPath = new ArrayList<>();
         if (cl != null) {

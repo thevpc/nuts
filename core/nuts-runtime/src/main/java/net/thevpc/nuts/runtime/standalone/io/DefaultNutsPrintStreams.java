@@ -29,32 +29,10 @@ public class DefaultNutsPrintStreams implements NutsPrintStreams {
         return getConfigModel().nullPrintStream();
     }
 
-
     @Override
-    public NutsPrintStream create(OutputStream out) {
+    public NutsMemoryPrintStream createInMemory() {
         checkSession();
-        return new NutsPrintStreamRaw(out, null, null, session, new NutsPrintStreamBase.Bindings());
-    }
-
-    @Override
-    public NutsPrintStream create(Writer out) {
-        checkSession();
-        return create(out, NutsTerminalMode.INHERITED);
-    }
-
-    public NutsPrintStream create(Writer out, NutsTerminalMode mode) {
-        checkSession();
-        if(mode ==null){
-            mode =NutsTerminalMode.INHERITED;
-        }
-        if (out == null) {
-            return null;
-        }
-        if (out instanceof NutsPrintStreamAdapter) {
-            return ((NutsPrintStreamAdapter) out).getBasePrintStream().setMode(mode);
-        }
-        SimpleWriterOutputStream w = new SimpleWriterOutputStream(out, session);
-        return create(w, mode);
+        return new NutsByteArrayPrintStream(getSession());
     }
 
     @Override
@@ -90,26 +68,30 @@ public class DefaultNutsPrintStreams implements NutsPrintStreams {
     }
 
     @Override
-    public NutsMemoryPrintStream createInMemory() {
+    public NutsPrintStream create(OutputStream out) {
         checkSession();
-        return new NutsByteArrayPrintStream(getSession());
+        return new NutsPrintStreamRaw(out, null, null, session, new NutsPrintStreamBase.Bindings());
     }
 
-    public NutsSession getSession() {
-        return session;
+    public NutsPrintStream create(Writer out, NutsTerminalMode mode) {
+        checkSession();
+        if (mode == null) {
+            mode = NutsTerminalMode.INHERITED;
+        }
+        if (out == null) {
+            return null;
+        }
+        if (out instanceof NutsPrintStreamAdapter) {
+            return ((NutsPrintStreamAdapter) out).getBasePrintStream().setMode(mode);
+        }
+        SimpleWriterOutputStream w = new SimpleWriterOutputStream(out, session);
+        return create(w, mode);
     }
 
-    private void checkSession() {
-        //NutsWorkspaceUtils.checkSession(model.getWorkspace(), getSession());
-    }
-//    private DefaultNutsIOModel getIoModel(){
-//        return ((DefaultNutsIOManager)session.io()).getModel();
-//    }
-    private DefaultNutsWorkspaceConfigModel getConfigModel(){
-        return ((DefaultNutsWorkspaceConfigManager)session.config()).getModel();
-    }
-    private NutsBootModel getBootModel(){
-        return ((DefaultNutsBootManager)session.boot()).getModel();
+    @Override
+    public NutsPrintStream create(Writer out) {
+        checkSession();
+        return create(out, NutsTerminalMode.INHERITED);
     }
 
     @Override
@@ -126,7 +108,7 @@ public class DefaultNutsPrintStreams implements NutsPrintStreams {
         if (out instanceof NutsPrintStreamRendered) {
             return isStdout(((NutsPrintStreamRendered) out).getBase());
         }
-        return false;
+        return out instanceof NutsPrintStreamSystem;
     }
 
     @Override
@@ -134,16 +116,16 @@ public class DefaultNutsPrintStreams implements NutsPrintStreams {
         if (out == null) {
             return false;
         }
-        if (out == getBootModel().stderr()) {
+        if (out == getConfigModel().stderr()) {
             return true;
         }
         if (out == getBootModel().stderr()) {
             return true;
         }
         if (out instanceof NutsPrintStreamRendered) {
-            return isStdout(((NutsPrintStreamRendered) out).getBase());
+            return isStderr(((NutsPrintStreamRendered) out).getBase());
         }
-        return false;
+        return out instanceof NutsPrintStreamSystem;
     }
 
     @Override
@@ -154,6 +136,25 @@ public class DefaultNutsPrintStreams implements NutsPrintStreams {
     @Override
     public NutsPrintStream stderr() {
         return getConfigModel().stderr();
+    }
+
+    public NutsSession getSession() {
+        return session;
+    }
+
+    private void checkSession() {
+        //NutsWorkspaceUtils.checkSession(model.getWorkspace(), getSession());
+    }
+
+    //    private DefaultNutsIOModel getIoModel(){
+//        return ((DefaultNutsIOManager)session.io()).getModel();
+//    }
+    private DefaultNutsWorkspaceConfigModel getConfigModel() {
+        return ((DefaultNutsWorkspaceConfigManager) session.config()).getModel();
+    }
+
+    private NutsBootModel getBootModel() {
+        return ((DefaultNutsBootManager) session.boot()).getModel();
     }
 
 }

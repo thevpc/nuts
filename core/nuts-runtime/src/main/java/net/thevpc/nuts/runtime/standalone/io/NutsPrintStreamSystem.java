@@ -9,7 +9,7 @@ import java.io.OutputStream;
 import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
 
-public class NutsPrintStreamSystem extends NutsPrintStreamBase {
+public class NutsPrintStreamSystem extends NutsPrintStreamBase{
     private final OutputStream out;
     private PrintStream base;
     private CachedValue<Integer> tput_cols;
@@ -23,6 +23,10 @@ public class NutsPrintStreamSystem extends NutsPrintStreamBase {
         super(autoFlush == null || autoFlush.booleanValue(), mode/*resolveMode(out,ansi, session)*/, session, bindings);
         this.out = out;
         this.base = base;
+    }
+
+    public PrintStream getBase() {
+        return base;
     }
 
     public NutsPrintStreamSystem(OutputStream out, Boolean autoFlush, String encoding, Boolean ansi, NutsSession session, Bindings bindings) {
