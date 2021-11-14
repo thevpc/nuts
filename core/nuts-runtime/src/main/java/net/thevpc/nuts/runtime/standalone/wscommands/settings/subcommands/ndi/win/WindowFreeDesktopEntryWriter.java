@@ -40,7 +40,7 @@ public class WindowFreeDesktopEntryWriter extends AbstractFreeDesktopEntryWriter
         }
         File q = path.toFile();
         boolean alreadyExists = q.exists();
-        if (alreadyExists && doOverride) {
+        if (alreadyExists && !doOverride) {
             return new PathInfo[]{new PathInfo("desktop-shortcut", id, q.toPath(), PathInfo.Status.DISCARDED)};
         }
         new OptionalMsLinkHelper(g.getExec(), wd, g.getIcon(), q.toString(), session).write();
