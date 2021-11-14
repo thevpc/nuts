@@ -43,9 +43,8 @@ public class WindowFreeDesktopEntryWriter extends AbstractFreeDesktopEntryWriter
         if (alreadyExists && !doOverride) {
             return new PathInfo[]{new PathInfo("desktop-shortcut", id, q.toPath(), PathInfo.Status.DISCARDED)};
         }
-        new OptionalMsLinkHelper(g.getExec(), wd, g.getIcon(), q.toString(), session).write();
-
-        return new PathInfo[]{new PathInfo("desktop-shortcut", id, q.toPath(), alreadyExists ? PathInfo.Status.OVERRIDDEN : PathInfo.Status.CREATED)};
+        PathInfo.Status newStatus = new OptionalMsLinkHelper(g.getExec(), wd, g.getIcon(), q.toString(), session).write();
+        return new PathInfo[]{new PathInfo("desktop-shortcut", id, q.toPath(), newStatus)};
     }
 
     @Override
@@ -85,11 +84,11 @@ public class WindowFreeDesktopEntryWriter extends AbstractFreeDesktopEntryWriter
 
             File q = new File(m, descriptor.getOrCreateDesktopEntry().getName() + ".lnk");
             boolean alreadyExists = q.exists();
-            if (alreadyExists && doOverride) {
+            if (alreadyExists && !doOverride) {
                 result.add(new PathInfo("desktop-menu", id, q.toPath(), PathInfo.Status.DISCARDED));
             } else {
-                new OptionalMsLinkHelper(root.getExec(), wd, root.getIcon(), q.getPath(), session).write();
-                result.add(new PathInfo("desktop-menu", id, q.toPath(), alreadyExists ? PathInfo.Status.OVERRIDDEN : PathInfo.Status.CREATED));
+                PathInfo.Status newStatus = new OptionalMsLinkHelper(root.getExec(), wd, root.getIcon(), q.getPath(), session).write();
+                result.add(new PathInfo("desktop-menu", id, q.toPath(), newStatus));
             }
 
         }

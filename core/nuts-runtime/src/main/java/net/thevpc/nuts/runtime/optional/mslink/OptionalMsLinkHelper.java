@@ -2,9 +2,11 @@ package net.thevpc.nuts.runtime.optional.mslink;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
+import net.thevpc.nuts.runtime.standalone.wscommands.settings.PathInfo;
 
 import java.io.IOException;
 import java.nio.file.FileSystems;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
@@ -45,7 +47,15 @@ public class OptionalMsLinkHelper {
         return false;
     }
 
-    public void write() {
+    public PathInfo.Status write() {
+        boolean alreadyExists = false;
+        Path outputFile = Paths.get(filePath);
+        try{
+            alreadyExists=Files.isRegularFile(outputFile);
+        }catch (Exception ex){
+            //
+        }
+        byte[] oldContent=CoreIOUtils.loadFileContentLenient(outputFile);
         String[] cmd = NutsCommandLine.of(command,session).toStringArray();
         mslinks.ShellLink se = mslinks.ShellLink.createLink(cmd[0])
                 .setWorkingDir(wd)
@@ -64,10 +74,19 @@ public class OptionalMsLinkHelper {
         try {
             //.setFontSize(16)
             //.setTextColor(5)
-            CoreIOUtils.mkdirs(Paths.get(filePath).getParent(),session);
+            CoreIOUtils.mkdirs(outputFile.getParent(),session);
             se.saveTo(filePath);
         } catch (IOException ex) {
             throw new NutsIOException(session,ex);
+        }
+        if(alreadyExists) {
+            byte[] newContent = CoreIOUtils.loadFileContentLenient(outputFile);
+            if(Arrays.equals(oldContent, newContent)){
+                return PathInfo.Status.DISCARDED;
+            }
+            return PathInfo.Status.OVERRIDDEN;
+        }else{
+            return PathInfo.Status.CREATED;
         }
     }
 }
