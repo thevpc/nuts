@@ -70,4 +70,9 @@ public class DefaultNutsTextAnchor extends NutsTextSpecialBase implements NutsTe
     public int hashCode() {
         return Objects.hash(super.hashCode(), value);
     }
+
+    @Override
+    public String filteredText() {
+        return "";
+    }
 }

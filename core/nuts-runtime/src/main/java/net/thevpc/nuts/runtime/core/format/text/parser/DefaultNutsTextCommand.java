@@ -85,4 +85,9 @@ public class DefaultNutsTextCommand extends NutsTextSpecialBase implements NutsT
     public int hashCode() {
         return Objects.hash(super.hashCode(), command);
     }
+
+    @Override
+    public String filteredText() {
+        return "";
+    }
 }

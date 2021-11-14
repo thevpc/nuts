@@ -36,18 +36,23 @@ import java.util.List;
 import java.util.Map;
 
 /**
- *
  * @author thevpc
  */
-public class DefaultNutsObjectFormat extends DefaultFormatBase<NutsObjectFormat> implements NutsObjectFormat{
+public class DefaultNutsObjectFormat extends DefaultFormatBase<NutsObjectFormat> implements NutsObjectFormat {
 
     private Object value;
 
+    private boolean compact;
     private NutsContentType outputFormat;
 //    private NutsObjectFormat base;
 
     public DefaultNutsObjectFormat(NutsSession session) {
         super(session, "object-format");
+    }
+
+    @Override
+    public Object getValue() {
+        return value;
     }
 
     @Override
@@ -57,29 +62,15 @@ public class DefaultNutsObjectFormat extends DefaultFormatBase<NutsObjectFormat>
     }
 
     @Override
-    public Object getValue() {
-        return value;
+    public boolean isCompact() {
+        return compact;
     }
 
-
-//    public NutsContentType getOutputFormat() {
-//        checkSession();
-//        NutsContentType t = getSession().getOutputFormat();
-//        t=t == null ? NutsContentType.PLAIN : t;
-//        if(getSession().isBot()){
-//            switch(t){
-//                case PLAIN:{
-//                    return NutsContentType.PROPS;
-//                }
-//                case TREE:
-//                case TABLE:
-//                {
-//                    return NutsContentType.JSON;
-//                }
-//            }
-//        }
-//        return t;
-//    }
+    @Override
+    public DefaultNutsObjectFormat setCompact(boolean compact) {
+        this.compact = compact;
+        return this;
+    }
 
     public NutsContentTypeFormat getBase() {
         checkSession();
@@ -94,39 +85,18 @@ public class DefaultNutsObjectFormat extends DefaultFormatBase<NutsObjectFormat>
     public NutsContentTypeFormat createObjectFormat() {
         checkSession();
         NutsSession session = getSession();
-        NutsContentType t = getSession().getOutputFormat();
         Object value = getValue();
-        if (t == null) {
-            t = NutsContentType.PLAIN;
-            Object vv = NutsElements.of(getSession()).destruct(value);
-            if (vv instanceof Map || vv instanceof List) {
-                t = NutsContentType.JSON;
-            }
-//        }else {
-//            t = t == null ? NutsContentType.PLAIN : t;
-//            if (getSession().isBot()) {
-//                switch (t) {
-//                    case PLAIN: {
-//                        t = NutsContentType.PROPS;
-//                        break;
-//                    }
-//                    case TREE:
-//                    case TABLE: {
-//                        t = NutsContentType.JSON;
-//                        break;
-//                    }
-//                }
-//            }
-        }
-        switch (t) {
+        switch (getSession().getOutputFormat()) {
             //structured formats!
             case XML:
             case JSON:
             case TSON:
             case YAML: {
-                NutsElements ee = NutsElements.of(session).setNtf(isNtf()).setContentType(t);
+                NutsElements ee = NutsElements.of(session).setNtf(isNtf())
+                        .setCompact(isCompact())
+                        .setContentType(getSession().getOutputFormat());
                 if (value instanceof NutsString) {
-                    NutsTextBuilder builder = ((NutsString)value).builder();
+                    NutsTextBuilder builder = ((NutsString) value).builder();
                     Object[] r = builder.lines().map(x -> {
                         if (true) {
                             return x.filteredText();
@@ -140,9 +110,9 @@ public class DefaultNutsObjectFormat extends DefaultFormatBase<NutsObjectFormat>
                 return ee;
             }
             case PROPS: {
-                NutsPropertiesFormat ee = NutsPropertiesFormat.of(session);
+                NutsPropertiesFormat ee = NutsPropertiesFormat.of(session).setNtf(isNtf());
                 if (value instanceof NutsString) {
-                    NutsTextBuilder builder = ((NutsString)value).builder();
+                    NutsTextBuilder builder = ((NutsString) value).builder();
                     Object[] r = builder.lines().toArray(Object[]::new);
                     ee.setValue(r);
                 } else {
@@ -151,9 +121,9 @@ public class DefaultNutsObjectFormat extends DefaultFormatBase<NutsObjectFormat>
                 return ee;
             }
             case TREE: {
-                NutsTreeFormat ee = NutsTreeFormat.of(session);
+                NutsTreeFormat ee = NutsTreeFormat.of(session).setNtf(isNtf());
                 if (value instanceof NutsString) {
-                    NutsTextBuilder builder = ((NutsString)value).builder();
+                    NutsTextBuilder builder = ((NutsString) value).builder();
                     Object[] r = builder.lines().toArray(Object[]::new);
                     ee.setValue(r);
                 } else {
@@ -162,9 +132,9 @@ public class DefaultNutsObjectFormat extends DefaultFormatBase<NutsObjectFormat>
                 return ee;
             }
             case TABLE: {
-                NutsTableFormat ee = NutsTableFormat.of(session);
+                NutsTableFormat ee = NutsTableFormat.of(session).setNtf(isNtf());
                 if (value instanceof NutsString) {
-                    NutsTextBuilder builder = ((NutsString)value).builder();
+                    NutsTextBuilder builder = ((NutsString) value).builder();
                     Object[] r = builder.lines().toArray(Object[]::new);
                     ee.setValue(r);
                 } else {
@@ -173,12 +143,12 @@ public class DefaultNutsObjectFormat extends DefaultFormatBase<NutsObjectFormat>
                 return ee;
             }
             case PLAIN: {
-                NutsFormatPlain ee = new NutsFormatPlain(session);
+                NutsFormatPlain ee = new NutsFormatPlain(session).setCompact(isCompact()).setNtf(isNtf());
                 ee.setValue(value);
                 return ee;
             }
         }
-        throw new NutsUnsupportedEnumException(getSession(), t);
+        throw new NutsUnsupportedEnumException(getSession(), getSession().getOutputFormat());
     }
 
 //    @Override

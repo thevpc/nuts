@@ -71,4 +71,9 @@ public class DefaultNutsTextPlain extends AbstractNutsText implements NutsTextPl
     public int hashCode() {
         return Objects.hash(text);
     }
+
+    @Override
+    public String filteredText() {
+        return text==null?"":text;
+    }
 }

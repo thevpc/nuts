@@ -971,4 +971,26 @@ public class Test04_NTFTest {
         Assertions.assertEquals("##:_,success:re-install##\u001E",str.toString());
     }
 
+    @Test
+    public void test12() {
+        NutsSession session = TestUtils.openNewTestWorkspace(
+                "--standalone",
+                "--skip-companions");
+        NutsTexts text = NutsTexts.of(session);
+        String str="```system \"C:\\U\\v\" ```";
+        NutsText t = text.parse(str);
+        Assertions.assertEquals("\"C:\\U\\v\" ",t.filteredText());
+    }
+
+    @Test
+    public void test13() {
+        NutsSession session = TestUtils.openNewTestWorkspace(
+                "--standalone",
+                "--skip-companions");
+        NutsTexts text = NutsTexts.of(session);
+        String str="```system \\``````";
+        NutsText t = text.parse(str);
+        Assertions.assertEquals("```",t.filteredText());
+    }
+
 }

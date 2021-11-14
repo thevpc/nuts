@@ -71,4 +71,9 @@ public class DefaultNutsTextLink extends NutsTextSpecialBase implements NutsText
     public int hashCode() {
         return Objects.hash(super.hashCode(), value);
     }
+
+    @Override
+    public String filteredText() {
+        return value.filteredText();
+    }
 }

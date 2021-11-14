@@ -126,4 +126,13 @@ public class DefaultNutsTextList extends AbstractNutsText implements NutsTextLis
         DefaultNutsTextList nutsTexts = (DefaultNutsTextList) o;
         return Objects.equals(children, nutsTexts.children);
     }
+
+    @Override
+    public String filteredText() {
+        StringBuilder sb=new StringBuilder();
+        for (NutsText child : children) {
+            sb.append(child.filteredText());
+        }
+        return sb.toString();
+    }
 }

@@ -365,17 +365,18 @@ public class DefaultNutsTextNodeBuilder implements NutsTextBuilder {
         return NutsStream.of(
                 new Iterator<NutsTextBuilder>() {
                     NutsTextBuilder n;
+
                     @Override
                     public boolean hasNext() {
-                        n=z.readLine();
-                        return n!=null;
+                        n = z.readLine();
+                        return n != null;
                     }
 
                     @Override
                     public NutsTextBuilder next() {
                         return n;
                     }
-                },session
+                }, session
         );
     }
 
@@ -490,7 +491,11 @@ public class DefaultNutsTextNodeBuilder implements NutsTextBuilder {
 
     @Override
     public String filteredText() {
-        return immutable().filteredText();
+        StringBuilder sb = new StringBuilder();
+        for (NutsText child : children) {
+            sb.append(child.filteredText());
+        }
+        return sb.toString();
     }
 
     @Override

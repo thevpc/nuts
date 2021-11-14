@@ -187,7 +187,7 @@ public class NutsTextNodeWriterStringer extends AbstractNutsTextNodeWriter {
         char[] cc = rawString.toCharArray();
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < cc.length; i++) {
-            if (cc[i] == '\\' || (i < cc.length - 3 && cc[i] == '`' && cc[i + 1] == '`' && cc[i + 2] == '`')) {
+            if (i <= cc.length - 3 && cc[i] == '`' && cc[i + 1] == '`' && cc[i + 2] == '`') {
                 sb.append('\\');
             }
             sb.append(cc[i]);

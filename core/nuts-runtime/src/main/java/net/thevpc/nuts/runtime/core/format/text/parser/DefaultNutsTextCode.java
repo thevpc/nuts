@@ -84,4 +84,9 @@ public class DefaultNutsTextCode extends NutsTextSpecialBase implements NutsText
     public int hashCode() {
         return Objects.hash(super.hashCode(), text);
     }
+
+    @Override
+    public String filteredText() {
+        return text==null?"":text;
+    }
 }

@@ -14,10 +14,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import javax.xml.transform.stream.StreamResult;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author thevpc
@@ -28,20 +25,21 @@ public class NutsFormatPlain extends DefaultFormatBase<NutsContentTypeFormat> im
     private final List<String> extraConfig = new ArrayList<>();
     private final Map<String, String> multilineProperties = new HashMap<>();
     private Object value;
+    private boolean compact;
 
     public NutsFormatPlain(NutsSession session) {
         super(session, NutsContentType.PLAIN.id() + "-format");
     }
 
     @Override
-    public NutsContentTypeFormat setValue(Object value) {
-        this.value = value;
-        return this;
+    public Object getValue() {
+        return value;
     }
 
     @Override
-    public Object getValue() {
-        return value;
+    public NutsContentTypeFormat setValue(Object value) {
+        this.value = value;
+        return this;
     }
 
     @Override
@@ -86,11 +84,15 @@ public class NutsFormatPlain extends DefaultFormatBase<NutsContentTypeFormat> im
         Object value = getValue();
         NutsSession session = getSession();
         if (value instanceof NutsTableModel) {
-            NutsTableFormat.of(session).setValue(value).configure(true, extraConfig.toArray(new String[0])).print(w);
+            NutsTableFormat.of(session).setValue(value).setNtf(isNtf()).configure(true, extraConfig.toArray(new String[0])).print(w);
         } else if (value instanceof NutsTreeModel) {
-            NutsTreeFormat.of(session).setValue(value).configure(true, extraConfig.toArray(new String[0])).print(w);
-//        } else if (value instanceof Map) {
-//            ws.props().setModel(((Map) value)).configure(true, extraConfig.toArray(new String[0])).print(w);
+            NutsTreeFormat.of(session).setValue(value).setNtf(isNtf()).configure(true, extraConfig.toArray(new String[0])).print(w);
+        } else if (value instanceof Properties) {
+            NutsPropertiesFormat.of(session).setValue(value).setNtf(isNtf()).configure(true, extraConfig.toArray(new String[0])).print(w);
+        } else if (value instanceof NutsElement) {
+            NutsElements.of(session).setValue(value).setNtf(isNtf())
+                    .setCompact(isCompact())
+                    .configure(true, extraConfig.toArray(new String[0])).print(w);
         } else if (value instanceof org.w3c.dom.Document) {
             NutsXmlUtils.writeDocument((org.w3c.dom.Document) value, new StreamResult(w.asPrintStream()), false, true, getSession());
         } else if (value instanceof org.w3c.dom.Element) {
@@ -100,80 +102,100 @@ public class NutsFormatPlain extends DefaultFormatBase<NutsContentTypeFormat> im
             NutsXmlUtils.writeDocument(doc, new StreamResult(w.asPrintStream()), false, false, getSession());
         } else {
             NutsElements element = NutsElements.of(session);
-            element
-                    .setNtf(true)
-                    .setDestructTypeFilter(NutsElements.DEFAULT_FORMAT_DESTRUCTOR);
-            printElement(w, element
-                    .destruct(value));
+            Object newVal = element.setNtf(true).setDestructTypeFilter(NutsElements.DEFAULT_FORMAT_DESTRUCTOR).destruct(value);
+            Flags f=new Flags();
+            collectFlags(newVal,f,300);
+            if(f.map){
+                if(f.msg || f.formattable){
+                    NutsTreeFormat.of(session).setValue(value).setNtf(isNtf()).configure(true, extraConfig.toArray(new String[0])).print(w);
+                }else if(f.elems){
+                    NutsElements.of(session).setValue(value).setNtf(isNtf()).configure(true, extraConfig.toArray(new String[0])).print(w);
+                }else {
+                    //defaults to elements
+                    NutsElements.of(session).setValue(value).setNtf(isNtf()).configure(true, extraConfig.toArray(new String[0])).print(w);
+                }
+            }else if(f.list){
+                if(f.msg || f.formattable){
+                    NutsTableFormat.of(session).setValue(value).setNtf(isNtf()).configure(true, extraConfig.toArray(new String[0])).print(w);
+                    //table.configure(true, "--no-header", "--border=spaces");
+                }else if(f.elems){
+                    NutsElements.of(session).setValue(value).setNtf(isNtf()).configure(true, extraConfig.toArray(new String[0])).print(w);
+                }else {
+                    //defaults to elements
+                    NutsElements.of(session).setValue(value).setNtf(isNtf()).configure(true, extraConfig.toArray(new String[0])).print(w);
+                }
+            }else{
+                NutsPrintStream out = getValidPrintStream(w);
+                out.printf("%s", value);
+                out.flush();
+            }
         }
     }
 
-    public void printElement(NutsPrintStream w, Object value) {
-        NutsPrintStream out = getValidPrintStream(w);
-        NutsSession ws = getSession();
+    public void collectFlags(Object value, Flags flags, int depth) {
+        if (depth < 0) {
+            return;
+        }
         if (value instanceof Map) {
-            NutsTreeFormat tree = NutsTreeFormat.of(ws);
-            tree.configure(true, extraConfig.toArray(new String[0]));
-            tree.setValue(value).print(w);
+            flags.map = true;
+            for (Map.Entry<?, ?> entry : ((Map<?, ?>) value).entrySet()) {
+                collectFlags(entry.getKey(), flags, depth - 1);
+                collectFlags(entry.getValue(), flags, depth - 1);
+            }
         } else if (value instanceof List) {
-            NutsTableFormat table = NutsTableFormat.of(ws);
-            table.configure(true, "--no-header", "--border=spaces");
-            table.setValue(value).print(w);
+            flags.list = true;
+            Flags f2=new Flags();
+            for (Object entry : ((List) value)) {
+                collectFlags(entry, f2, depth - 1);
+            }
+            if(f2.list || f2.map){
+                flags.map=true;
+            }
+            flags.elems|=f2.elems;
+            flags.msg|=f2.msg;
+            flags.primitives|=f2.primitives;
+            flags.formattable|=f2.formattable;
+        } else if (value instanceof Formattable) {
+            flags.formattable = true;
+        } else if (value instanceof NutsElement) {
+            flags.elems = true;
+            if(value instanceof NutsObjectElement){
+                flags.map = true;
+            }else if(value instanceof NutsArrayElement){
+                flags.list = true;
+            }
+        } else if (value instanceof NutsMessage) {
+            flags.msg = true;
         } else {
-            out.printf("%s", value);
-            out.flush();
+            flags.primitives = true;
         }
-//        switch (value.type()) {
-////            case NUTS_STRING:
-//            case STRING:
-//            {
-//                out.print(value.asPrimitive().getString());
-//                out.flush();
-//                break;
-//            }
-//            case BOOLEAN: {
-//                out.print(value.asPrimitive().getBoolean());
-//                out.flush();
-//                break;
-//            }
-//            case INTEGER:
-//            case FLOAT: {
-//                out.print(value.asPrimitive().getNumber());
-//                out.flush();
-//                break;
-//            }
-//            case INSTANT: {
-//                out.print(ws.text().forPlain(value.asPrimitive().getInstant().toString()).toString());
-//                out.flush();
-//                break;
-//            }
-//            case NULL: {
-//                break;
-//            }
-//            case ARRAY: {
-//                NutsTableFormat table = ws.formats().table();
-//                table.configure(true, "--no-header", "--border=spaces");
-//                table.setValue(value).print(w);
-//                break;
-//            }
-//            case OBJECT: {
-//                NutsTreeFormat tree = ws.formats().tree();
-//                tree.configure(true, extraConfig.toArray(new String[0]));
-//                tree.setValue(value).print(w);
-//                break;
-//            }
-//            default: {
-//                throw new NutsUnsupportedArgumentException(getSession(), value.type().toString());
-//            }
-//        }
     }
 
-    //    private String formatObject(Object any) {
-//        return CoreCommonUtils.stringValueFormatted(any, false, getValidSession());
-//    }
     @Override
     public int getSupportLevel(NutsSupportLevelContext context) {
         return DEFAULT_SUPPORT;
     }
 
+    @Override
+    public NutsFormatPlain setNtf(boolean ntf) {
+        return (NutsFormatPlain) super.setNtf(ntf);
+    }
+
+    public boolean isCompact() {
+        return compact;
+    }
+
+    public NutsFormatPlain setCompact(boolean compact) {
+        this.compact = compact;
+        return this;
+    }
+
+    private static class Flags {
+        boolean elems;
+        boolean list;
+        boolean map;
+        boolean primitives;
+        boolean msg;
+        boolean formattable;
+    }
 }

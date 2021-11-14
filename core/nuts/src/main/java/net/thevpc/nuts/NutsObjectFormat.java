@@ -79,5 +79,21 @@ public interface NutsObjectFormat extends NutsContentTypeFormat {
     @Override
     NutsObjectFormat configure(boolean skipUnsupported, String... args);
 
+    /**
+     * true is compact json flag is armed
+     *
+     * @return true is compact json flag is armed
+     */
+    boolean isCompact();
+
+    /**
+     * enable compact json
+     *
+     * @param compact true to enable compact mode
+     * @return {@code this} instance
+     */
+    NutsObjectFormat setCompact(boolean compact);
+
+
     NutsObjectFormat setNtf(boolean ntf);
 }

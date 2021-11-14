@@ -97,4 +97,10 @@ public class DefaultNutsTextStyled extends AbstractNutsText implements NutsTextS
     public int hashCode() {
         return Objects.hash(start, end, child, textStyles, completed);
     }
+
+    @Override
+    public String filteredText() {
+        return child.filteredText();
+    }
+
 }
