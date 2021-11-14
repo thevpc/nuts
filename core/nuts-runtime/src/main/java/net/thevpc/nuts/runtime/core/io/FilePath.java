@@ -133,7 +133,7 @@ public class FilePath implements NutsPathSPI {
         try {
             return Files.size(value);
         } catch (IOException e) {
-            throw new NutsIOException(session, e);
+            return -1;
         }
     }
 

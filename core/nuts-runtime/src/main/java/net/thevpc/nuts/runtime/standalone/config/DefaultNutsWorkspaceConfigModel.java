@@ -75,6 +75,7 @@ import java.util.function.Function;
 import java.util.logging.Level;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * @author thevpc
@@ -93,6 +94,7 @@ public class DefaultNutsWorkspaceConfigModel {
     private final Function<String, String> pathExpansionConverter;
     private final WorkspaceSystemTerminalAdapter workspaceSystemTerminalAdapter;
     private final List<NutsPathFactory> pathFactories = new ArrayList<>();
+    private final NutsPathFactory invalidPathFactory;
     private final DefaultNutsBootModel bootModel;
     protected NutsWorkspaceConfigBoot storeModelBoot = new NutsWorkspaceConfigBoot();
     protected NutsWorkspaceConfigApi storeModelApi = new NutsWorkspaceConfigApi();
@@ -140,7 +142,7 @@ public class DefaultNutsWorkspaceConfigModel {
         addPathFactory(new ClasspathNutsPathFactory());
         addPathFactory(new URLPathFactory());
         addPathFactory(new NutsResourcePathFactory());
-
+        invalidPathFactory=new InvalidFilePathFactory();
         //        this.excludedRepositoriesSet = this.options.getExcludedRepositories() == null ? null : new HashSet<>(CoreStringUtils.split(Arrays.asList(this.options.getExcludedRepositories()), " ,;"));
     }
 
@@ -1643,7 +1645,10 @@ public class DefaultNutsWorkspaceConfigModel {
     }
 
     public NutsPathFactory[] getPathFactories() {
-        return pathFactories.toArray(new NutsPathFactory[0]);
+        List<NutsPathFactory> all=new ArrayList<>(pathFactories.size()+1);
+        all.addAll(pathFactories);
+        all.add(invalidPathFactory);
+        return all.toArray(new NutsPathFactory[0]);
     }
 
     public DefaultNutsBootModel getBootModel() {
@@ -1817,6 +1822,19 @@ public class DefaultNutsWorkspaceConfigModel {
                 }
                 Path value = Paths.get(path);
                 return NutsSupported.of(1,()->new FilePath(value, session));
+            } catch (Exception ex) {
+                //ignore
+            }
+            return null;
+        }
+    }
+
+    private class InvalidFilePathFactory implements NutsPathFactory {
+        @Override
+        public NutsSupported<NutsPathSPI> createPath(String path, NutsSession session, ClassLoader classLoader) {
+            NutsWorkspaceUtils.checkSession(getWorkspace(), session);
+            try {
+                return NutsSupported.of(1,()->new InvalidFilePath(path, session));
             } catch (Exception ex) {
                 //ignore
             }
