@@ -32,17 +32,17 @@ public class NutsPathFromSPI extends NutsPathBase {
 
     @Override
     public String getContentEncoding() {
-        return base.getContentEncoding();
+        return base.getContentEncoding(this);
     }
 
     @Override
     public String getContentType() {
-        return base.getContentType();
+        return base.getContentType(this);
     }
 
     @Override
     public String getName() {
-        String n = base.getName();
+        String n = base.getName(this);
         if (n == null) {
             String loc = getLocation();
             return loc == null ? "" : CoreIOUtils.getURLName(loc);
@@ -52,7 +52,7 @@ public class NutsPathFromSPI extends NutsPathBase {
 
     @Override
     public String getLocation() {
-        return base.getLocation();
+        return base.getLocation(this);
     }
 
     @Override
@@ -60,7 +60,7 @@ public class NutsPathFromSPI extends NutsPathBase {
         if (NutsBlankable.isBlank(other)) {
             return this;
         }
-        return base.resolve(other);
+        return base.resolve(this, other);
     }
 
     @Override
@@ -68,17 +68,17 @@ public class NutsPathFromSPI extends NutsPathBase {
         if (NutsBlankable.isBlank(other)) {
             return getParent();
         }
-        return base.resolveSibling(other);
+        return base.resolveSibling(this, other);
     }
 
     @Override
     public NutsPath resolve(NutsPath other) {
-        return base.resolve(other);
+        return base.resolve(this, other);
     }
 
     @Override
     public NutsPath resolveSibling(NutsPath other) {
-        return base.resolveSibling(other);
+        return base.resolveSibling(this, other);
     }
 
     @Override
@@ -135,7 +135,7 @@ public class NutsPathFromSPI extends NutsPathBase {
 
     @Override
     public String getProtocol() {
-        String n = base.getProtocol();
+        String n = base.getProtocol(this);
         if (n == null) {
             String ts = base.toString();
             int i = ts.indexOf(':');
@@ -149,7 +149,7 @@ public class NutsPathFromSPI extends NutsPathBase {
 
     @Override
     public NutsPath toCompressedForm() {
-        NutsPath n = base.toCompressedForm();
+        NutsPath n = base.toCompressedForm(this);
         if (n == null) {
             return new NutsCompressedPath(this);
         }
@@ -158,18 +158,18 @@ public class NutsPathFromSPI extends NutsPathBase {
 
     @Override
     public URL toURL() {
-        return base.toURL();
+        return base.toURL(this);
     }
 
     @Override
     public Path toFile() {
-        return base.toFile();
+        return base.toFile(this);
     }
 
     @Override
     public NutsStream<NutsPath> list() {
         try {
-            NutsStream<NutsPath> p = base.list();
+            NutsStream<NutsPath> p = base.list(this);
             if (p != null) {
                 return p;
             }
@@ -187,25 +187,25 @@ public class NutsPathFromSPI extends NutsPathBase {
 
     @Override
     public InputStream getInputStream() {
-        return InputStreamMetadataAwareImpl.of(base.getInputStream(),
+        return InputStreamMetadataAwareImpl.of(base.getInputStream(this),
                 new NutsPathInputStreamMetadata(this)
         );
     }
 
     @Override
     public OutputStream getOutputStream() {
-        return base.getOutputStream();
+        return base.getOutputStream(this);
     }
 
     @Override
     public NutsPath delete(boolean recurse) {
-        base.delete(recurse);
+        base.delete(this, recurse);
         return this;
     }
 
     @Override
     public NutsPath mkdir(boolean parents) {
-        base.mkdir(parents);
+        base.mkdir(parents, this);
         return this;
     }
 
@@ -220,62 +220,62 @@ public class NutsPathFromSPI extends NutsPathBase {
 
     @Override
     public boolean isOther() {
-        return base.isOther();
+        return base.isOther(this);
     }
 
     @Override
     public boolean isSymbolicLink() {
-        return base.isSymbolicLink();
+        return base.isSymbolicLink(this);
     }
 
     @Override
     public boolean isDirectory() {
-        return base.isDirectory();
+        return base.isDirectory(this);
     }
 
     @Override
     public boolean isRegularFile() {
-        return base.isRegularFile();
+        return base.isRegularFile(this);
     }
 
     @Override
     public boolean exists() {
-        return base.exists();
+        return base.exists(this);
     }
 
     @Override
     public long getContentLength() {
-        return base.getContentLength();
+        return base.getContentLength(this);
     }
 
     @Override
     public Instant getLastModifiedInstant() {
-        return base.getLastModifiedInstant();
+        return base.getLastModifiedInstant(this);
     }
 
     @Override
     public Instant getLastAccessInstant() {
-        return base.getLastAccessInstant();
+        return base.getLastAccessInstant(this);
     }
 
     @Override
     public Instant getCreationInstant() {
-        return base.getCreationInstant();
+        return base.getCreationInstant(this);
     }
 
     @Override
     public NutsPath getParent() {
-        return base.getParent();
+        return base.getParent(this);
     }
 
     @Override
     public boolean isAbsolute() {
-        return base.isAbsolute();
+        return base.isAbsolute(this);
     }
 
     @Override
     public NutsPath normalize() {
-        return base.normalize();
+        return base.normalize(this);
     }
 
     @Override
@@ -284,79 +284,79 @@ public class NutsPathFromSPI extends NutsPathBase {
     }
 
     @Override
-    public NutsPath toAbsolute(String basePath) {
-        return toAbsolute(basePath == null ? null : NutsPath.of(basePath, getSession()));
+    public NutsPath toAbsolute(String rootPath) {
+        return toAbsolute(rootPath == null ? null : NutsPath.of(rootPath, getSession()));
     }
 
     @Override
-    public NutsPath toAbsolute(NutsPath basePath) {
-        if (base.isAbsolute()) {
+    public NutsPath toAbsolute(NutsPath rootPath) {
+        if (base.isAbsolute(this)) {
             return this;
         }
-        return base.toAbsolute(basePath);
+        return base.toAbsolute(this, rootPath);
     }
 
     @Override
     public String owner() {
-        return base.owner();
+        return base.owner(this);
     }
 
     @Override
     public String group() {
-        return base.group();
+        return base.group(this);
     }
 
     @Override
     public Set<NutsPathPermission> getPermissions() {
-        return base.permissions();
+        return base.permissions(this);
     }
 
     @Override
     public NutsPath setPermissions(NutsPathPermission... permissions) {
-        base.setPermissions(permissions);
+        base.setPermissions(this, permissions);
         return this;
     }
 
     @Override
     public NutsPath addPermissions(NutsPathPermission... permissions) {
-        base.addPermissions(permissions);
+        base.addPermissions(this, permissions);
         return this;
     }
 
     @Override
     public NutsPath removePermissions(NutsPathPermission... permissions) {
-        base.removePermissions(permissions);
+        base.removePermissions(this, permissions);
         return this;
     }
 
     @Override
     public boolean isName() {
-        return base.isName();
+        return base.isName(this);
     }
 
     @Override
     public int getPathCount() {
-        return base.getPathCount();
+        return base.getPathCount(this);
     }
 
     @Override
     public boolean isRoot() {
-        return base.isRoot();
+        return base.isRoot(this);
     }
 
     @Override
-    public NutsStream<NutsPath> walk(int maxDepth, NutsPathVisitOption[] options) {
-        return base.walk(maxDepth <= 0 ? Integer.MAX_VALUE : maxDepth,
-                options == null ? new NutsPathVisitOption[0]
+    public NutsStream<NutsPath> walk(int maxDepth, NutsPathOption[] options) {
+        return base.walk(this, maxDepth <= 0 ? Integer.MAX_VALUE : maxDepth,
+                options == null ? new NutsPathOption[0]
                         : Arrays.stream(options).filter(Objects::isNull)
                         .distinct()
-                        .toArray(NutsPathVisitOption[]::new)
+                        .toArray(NutsPathOption[]::new)
         );
     }
 
     @Override
     public NutsFormat formatter() {
-        NutsFormatSPI fspi = base.getFormatterSPI();
+        NutsFormatSPI fspi = base.getFormatterSPI(this);
         if (fspi != null) {
             return new DefaultFormatBase<NutsFormat>(getSession(), "path") {
                 @Override
@@ -385,13 +385,13 @@ public class NutsPathFromSPI extends NutsPathBase {
 
     @Override
     public NutsPath deleteTree() {
-        base.delete(true);
+        base.delete(this, true);
         return this;
     }
 
     @Override
     public NutsPath subpath(int beginIndex, int endIndex) {
-        return base.subpath(beginIndex,endIndex);
+        return base.subpath(this, beginIndex,endIndex);
     }
 
     @Override
@@ -402,20 +402,20 @@ public class NutsPathFromSPI extends NutsPathBase {
     @Override
     public String[] getItems() {
         if(items==null){
-            items=base.getItems();
+            items=base.getItems(this);
         }
         return items==null?new String[0]:items;
     }
 
     @Override
     public NutsPath mkdirs() {
-        base.mkdir(true);
+        base.mkdir(true, this);
         return this;
     }
 
     @Override
     public NutsPath mkdir() {
-        base.mkdir(false);
+        base.mkdir(false, this);
         return this;
     }
 
@@ -479,5 +479,34 @@ public class NutsPathFromSPI extends NutsPathBase {
     @Override
     public int hashCode() {
         return Objects.hash(super.hashCode(), base);
+    }
+
+    @Override
+    public void moveTo(NutsPath other, NutsPathOption... options) {
+        base.moveTo(this, other);
+    }
+
+    @Override
+    public void copyTo(NutsPath other, NutsPathOption... options) {
+        base.copyTo(this, other, options);
+    }
+
+    @Override
+    public NutsPath getRoot() {
+        return base.getRoot(this);
+    }
+
+    @Override
+    public NutsPath walkDfs(NutsTreeVisitor<NutsPath> visitor, NutsPathOption... options) {
+        return walkDfs(visitor,Integer.MAX_VALUE,options);
+    }
+
+    @Override
+    public NutsPath walkDfs(NutsTreeVisitor<NutsPath> visitor, int maxDepth, NutsPathOption... options) {
+        if(maxDepth<=0){
+            maxDepth=Integer.MAX_VALUE;
+        }
+        base.walkDfs(this, visitor,maxDepth,options);
+        return this;
     }
 }

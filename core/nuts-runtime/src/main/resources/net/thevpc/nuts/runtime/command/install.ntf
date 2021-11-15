@@ -25,7 +25,7 @@ install ```sh nuts``` package <nuts-artifact>
     ```sh nuts install netbeans-launcher```
         install netbeans-launcher
 
-    ```sh nuts -Zy -w test ---jdb install pnote```
+    ```sh nuts --debug -Zy -w test install pnote```
         install pnote in debug mode
 
     ```sh nuts -Zyb -w test --verbose install netbeans-launcher```

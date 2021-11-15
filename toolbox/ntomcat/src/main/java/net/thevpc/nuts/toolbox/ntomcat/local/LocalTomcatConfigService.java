@@ -335,7 +335,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
                 NutsCp.of(getSession())
                         .from(catalinaHome.resolve("webapps").resolve("host-manager"))
                         .to(catalinaBase.resolve("webapps").resolve("host-manager"))
-                        .setReplaceExisting(false)
+                        .removeOptions(NutsPathOption.REPLACE_EXISTING)
                         .run();
                 catalinaBaseUpdated = true;
             }
@@ -343,7 +343,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
                 NutsCp.of(getSession())
                         .from(catalinaHome.resolve("webapps").resolve("manager"))
                         .to(catalinaBase.resolve("webapps").resolve("manager"))
-                        .setReplaceExisting(false)
+                        .removeOptions(NutsPathOption.REPLACE_EXISTING)
                         .run();
                 catalinaBaseUpdated = true;
             }

@@ -289,7 +289,7 @@ public interface NutsPath extends NutsFormattable {
      * @param maxDepth max depth
      * @return a Stream that is lazily populated with Path by walking the file tree rooted at a given starting file
      */
-    NutsStream<NutsPath> walk(int maxDepth, NutsPathVisitOption[] options);
+    NutsStream<NutsPath> walk(int maxDepth, NutsPathOption[] options);
 
     /**
      * Return a Stream that is lazily populated with Path by walking the file tree rooted at a given starting file.
@@ -298,7 +298,7 @@ public interface NutsPath extends NutsFormattable {
      * @param options options
      * @return a Stream that is lazily populated with Path by walking the file tree rooted at a given starting file
      */
-    NutsStream<NutsPath> walk(NutsPathVisitOption... options);
+    NutsStream<NutsPath> walk(NutsPathOption... options);
 
     /**
      * Return a Stream that is lazily populated with Path by walking the file tree rooted at a given starting file.
@@ -320,5 +320,16 @@ public interface NutsPath extends NutsFormattable {
     NutsPath subpath(int beginIndex, int endIndex);
 
     String getItem(int index);
+
     String[] getItems();
+
+    void moveTo(NutsPath other, NutsPathOption... options);
+
+    void copyTo(NutsPath other, NutsPathOption... options);
+
+    NutsPath getRoot();
+
+    NutsPath walkDfs(NutsTreeVisitor<NutsPath> visitor, NutsPathOption... options);
+
+    NutsPath walkDfs(NutsTreeVisitor<NutsPath> visitor,int maxDepth, NutsPathOption... options);
 }

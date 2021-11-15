@@ -33,7 +33,6 @@ import java.util.Objects;
  * @author thevpc
  * @app.category Config
  * @since 0.5.4
- * @since 0.8.3 added type
  */
 public class NutsPlatformLocation extends NutsConfigItem {
 

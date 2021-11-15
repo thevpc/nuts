@@ -245,9 +245,9 @@ public final class CoreNutsWorkspaceOptions implements Serializable, Cloneable, 
     private Boolean commandHelp;
 
     /**
-     * option-type : runtime (available only for the current workspace instance)
+     * option-type : runtime / exported (depending on the value)
      */
-    private Boolean debug;
+    private String debug;
 
     /**
      * option-type : runtime (available only for the current workspace instance)
@@ -889,12 +889,7 @@ public final class CoreNutsWorkspaceOptions implements Serializable, Cloneable, 
     }
 
     @Override
-    public boolean isDebug() {
-        return debug != null && debug;
-    }
-
-    @Override
-    public Boolean getDebug() {
+    public String getDebug() {
         return debug;
     }
 
@@ -905,7 +900,7 @@ public final class CoreNutsWorkspaceOptions implements Serializable, Cloneable, 
      * @return {@code this} instance
      */
     @Override
-    public NutsWorkspaceOptionsBuilder setDebug(Boolean debug) {
+    public NutsWorkspaceOptionsBuilder setDebug(String debug) {
         this.debug = debug;
         return this;
     }

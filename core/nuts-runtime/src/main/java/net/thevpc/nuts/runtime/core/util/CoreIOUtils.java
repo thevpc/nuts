@@ -86,6 +86,40 @@ public class CoreIOUtils {
     };
     public static String newLineString = null;
 
+    public static boolean isFreeTcpPort(int port) {
+        try (ServerSocket s = new ServerSocket(port)) {
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    public static int detectRandomFreeTcpPort(int from, int to) {
+        Set<Integer> tested = new HashSet<>();
+        int interval = to - from;
+        if (interval > 0) {
+            while (tested.size() < interval) {
+                int x = from + (int) (Math.random() * interval);
+                if (!tested.contains(x)) {
+                    tested.add(x);
+                    if (isFreeTcpPort(x)) {
+                        return x;
+                    }
+                }
+            }
+        }
+        return -1;
+    }
+
+    public static int detectFirstFreeTcpPort(int from, int to) {
+        for (int i = from; i < to; i++) {
+            if (isFreeTcpPort(i)) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
     public static PrintWriter toPrintWriter(Writer writer, NutsSession session) {
         if (writer == null) {
             return null;
@@ -1557,7 +1591,7 @@ public class CoreIOUtils {
         }
         Path temp = NutsTmp.of(session)
                 .createTempFile(getURLName(is.getName())).toFile();
-        NutsCp a = NutsCp.of(session).setSafe(false);
+        NutsCp a = NutsCp.of(session).removeOptions(NutsPathOption.SAFE);
         if (is.isPath()) {
             a.from(is.getPath());
         } else {
@@ -2772,6 +2806,28 @@ public class CoreIOUtils {
                 }
             }
         }
+    }
+
+    public static Set<CopyOption> asCopyOptions(Set<NutsPathOption> noptions) {
+        Set<CopyOption> joptions = new HashSet<>();
+
+        for (NutsPathOption option : noptions) {
+            switch (option) {
+                case REPLACE_EXISTING: {
+                    joptions.add(StandardCopyOption.REPLACE_EXISTING);
+                    break;
+                }
+                case ATOMIC: {
+                    joptions.add(StandardCopyOption.ATOMIC_MOVE);
+                    break;
+                }
+                case COPY_ATTRIBUTES: {
+                    joptions.add(StandardCopyOption.COPY_ATTRIBUTES);
+                    break;
+                }
+            }
+        }
+        return joptions;
     }
 
     //    public static boolean isFileExistsAndIsWritable(Path file) {

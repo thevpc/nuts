@@ -554,11 +554,9 @@ public interface NutsSession extends NutsCommandLineConfigurable {
 
     NutsSession setExecutionType(NutsExecutionType executionType);
 
-    boolean isDebug();
+    String getDebug();
 
-    Boolean getDebug();
-
-    NutsSession setDebug(Boolean debug);
+    NutsSession setDebug(String debug);
 
     String getLocale();
 

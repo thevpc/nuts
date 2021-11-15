@@ -211,7 +211,7 @@ final class PrivateBootWorkspaceOptions implements Serializable, Cloneable, Nuts
     /**
      * option-type : runtime (available only for the current workspace instance)
      */
-    private Boolean debug;
+    private String debug;
     /**
      * option-type : runtime (available only for the current workspace instance)
      */
@@ -830,12 +830,7 @@ final class PrivateBootWorkspaceOptions implements Serializable, Cloneable, Nuts
     }
 
     @Override
-    public boolean isDebug() {
-        return debug != null && debug;
-    }
-
-    @Override
-    public Boolean getDebug() {
+    public String getDebug() {
         return debug;
     }
 
@@ -846,7 +841,7 @@ final class PrivateBootWorkspaceOptions implements Serializable, Cloneable, Nuts
      * @return {@code this} instance
      */
     @Override
-    public NutsWorkspaceOptionsBuilder setDebug(Boolean debug) {
+    public NutsWorkspaceOptionsBuilder setDebug(String debug) {
         this.debug = debug;
         return this;
     }

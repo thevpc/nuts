@@ -256,7 +256,7 @@ public class MavenRemoteRepository extends NutsCachedRepository {
                             .setRepositoryId(getUuid())
                             .createTempFile(content.getName()).toString();
                     NutsCp.of(session)
-                            .from(content).to(tempFile).setSafe(true).run();
+                            .from(content).to(tempFile).addOptions(NutsPathOption.SAFE).run();
                     return new NutsDefaultContent(
                             NutsPath.of(tempFile, session), true, false);
                 }
@@ -288,7 +288,7 @@ public class MavenRemoteRepository extends NutsCachedRepository {
                                         id.builder().setFace(NutsConstants.QueryFaces.CONTENT_HASH).build(),
                                         in, "artifact binaries", session
                                 )
-                        ).setLogProgress(true)
+                        ).addOptions(NutsPathOption.LOG)
                         .run();
             } catch (UncheckedIOException | NutsIOException ex) {
                 throw new NutsNotFoundException(session, id, null, ex);

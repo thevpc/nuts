@@ -414,7 +414,7 @@ public class NutsRepositoryFolderHelper {
                                             session
                                     )
                             )
-                    ).to(descFile.resolveSibling(descFile.getName() + ".sha1")).setSafe(true).run();
+                    ).to(descFile.resolveSibling(descFile.getName() + ".sha1")).addOptions(NutsPathOption.SAFE).run();
             return descFile;
         });
     }
@@ -446,7 +446,7 @@ public class NutsRepositoryFolderHelper {
         }
         return NutsLocks.of(session).setSource(pckFile).call(() -> {
             (content.isPath() ? NutsCp.of(session).from(content.getPath()) : NutsCp.of(session).from(content.getInputStream()))
-                    .to(pckFile).setSafe(true).run();
+                    .to(pckFile).addOptions(NutsPathOption.SAFE).run();
             NutsCp.of(session).from(
                     CoreIOUtils.createBytesStream(CoreIOUtils.evalSHA1Hex(pckFile,session).getBytes(),
                             NutsMessage.cstyle("sha1://%s", id),
@@ -454,7 +454,7 @@ public class NutsRepositoryFolderHelper {
                             null,
                             session
                     )
-            ).to(pckFile.resolveSibling(pckFile.getName() + ".sha1")).setSafe(true).run();
+            ).to(pckFile.resolveSibling(pckFile.getName() + ".sha1")).addOptions(NutsPathOption.SAFE).run();
             return pckFile;
         });
     }

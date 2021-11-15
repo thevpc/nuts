@@ -18,9 +18,7 @@ import java.io.*;
 import java.net.URL;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.logging.Level;
 
 /**
@@ -32,19 +30,16 @@ public class DefaultNutsCp implements NutsCp {
 
     private NutsIOCopyValidator checker;
     private boolean skipRoot = false;
-    private boolean safe = true;
-    private boolean logProgress = false;
     private NutsStreamOrPath source;
     private NutsStreamOrPath target;
     private NutsSession session;
     private NutsProgressFactory progressMonitorFactory;
-    private boolean interruptible;
     private boolean interrupted;
     private boolean recursive;
     private boolean mkdirs;
     private Interruptible interruptibleInstance;
     private final NutsWorkspace ws;
-    private boolean replaceExisting =true;
+    private Set<NutsPathOption> options=new LinkedHashSet<>();
 
     public DefaultNutsCp(NutsSession session) {
         this.session = session;
@@ -282,17 +277,6 @@ public class DefaultNutsCp implements NutsCp {
     }
 
     @Override
-    public boolean isSafe() {
-        return safe;
-    }
-
-    @Override
-    public DefaultNutsCp setSafe(boolean value) {
-        this.safe = value;
-        return this;
-    }
-
-    @Override
     public NutsSession getSession() {
         return session;
     }
@@ -307,7 +291,7 @@ public class DefaultNutsCp implements NutsCp {
     public byte[] getByteArrayResult() {
         ByteArrayOutputStream b = new ByteArrayOutputStream();
         to(b);
-        setSafe(false);
+        removeOptions(NutsPathOption.SAFE);
         run();
         return b.toByteArray();
     }
@@ -330,7 +314,7 @@ public class DefaultNutsCp implements NutsCp {
             Path fromPath = _source.getPath().toFile();
             Path toPath = target.getPath().toFile();
             CopyData cd = new CopyData();
-            if (isLogProgress() || getProgressMonitorFactory() != null) {
+            if (options.contains(NutsPathOption.LOG) || getProgressMonitorFactory() != null) {
                 prepareCopyFolder(fromPath, cd);
                 copyFolderWithMonitor(fromPath, toPath, cd);
             } else {
@@ -339,17 +323,6 @@ public class DefaultNutsCp implements NutsCp {
             return this;
         }
         copyStream();
-        return this;
-    }
-
-    @Override
-    public boolean isLogProgress() {
-        return logProgress;
-    }
-
-    @Override
-    public DefaultNutsCp setLogProgress(boolean value) {
-        this.logProgress = value;
         return this;
     }
 
@@ -398,15 +371,6 @@ public class DefaultNutsCp implements NutsCp {
     @Override
     public NutsCp setSkipRoot(boolean skipRoot) {
         this.skipRoot = skipRoot;
-        return this;
-    }
-
-    public boolean isInterruptible() {
-        return interruptible;
-    }
-
-    public NutsCp setInterruptible(boolean interruptible) {
-        this.interruptible = interruptible;
         return this;
     }
 
@@ -460,14 +424,9 @@ public class DefaultNutsCp implements NutsCp {
 
     private void copyFolderWithMonitor(Path srcBase, Path targetBase, CopyData f) {
         checkSession();
-        List<CopyOption> a=new ArrayList<>();
-        if(isReplaceExisting()){
-            a.add(StandardCopyOption.REPLACE_EXISTING);
-        }
-        CopyOption[] options = a.toArray(new CopyOption[0]);
         NutsSession session = getSession();
         long start = System.currentTimeMillis();
-        NutsProgressMonitor m = CoreIOUtils.createProgressMonitor(CoreIOUtils.MonitorType.DEFAULT, srcBase, srcBase, session, isLogProgress(), getProgressMonitorFactory());
+        NutsProgressMonitor m = CoreIOUtils.createProgressMonitor(CoreIOUtils.MonitorType.DEFAULT, srcBase, srcBase, session, options.contains(NutsPathOption.LOG), getProgressMonitorFactory());
         NutsText srcBaseMessage = NutsTexts.of(session).toText(srcBase);
         m.onStart(new DefaultNutsProgressEvent(srcBase,
                 srcBaseMessage
@@ -512,10 +471,10 @@ public class DefaultNutsCp implements NutsCp {
         }
     }
 
-    public Path copy(Path source, Path target, CopyOption... options) throws IOException {
-        if (interruptible) {
+    public Path copy(Path source, Path target, Set<NutsPathOption> options) throws IOException {
+        if (options.contains(NutsPathOption.INTERRUPTIBLE)) {
             if(Files.exists(target)){
-                if(!isReplaceExisting()){
+                if(!options.contains(NutsPathOption.REPLACE_EXISTING)){
                     return null;
                 }
             }
@@ -527,24 +486,24 @@ public class DefaultNutsCp implements NutsCp {
             }
             return target;
         }
-        return Files.copy(source, target, options);
+        return Files.copy(source, target, CoreIOUtils.asCopyOptions(options).toArray(new CopyOption[0]));
     }
 
-    public long copy(InputStream in, Path target, CopyOption... options)
+    public long copy(InputStream in, Path target, Set<NutsPathOption> options)
             throws IOException {
-        if (interruptible) {
+        if (options.contains(NutsPathOption.INTERRUPTIBLE)) {
             in = CoreIOUtils.interruptible(in);
             interruptibleInstance = (Interruptible) in;
             try (OutputStream out = Files.newOutputStream(target)) {
                 return transferTo(in, out);
             }
         }
-        return Files.copy(in, target, options);
+        return Files.copy(in, target, CoreIOUtils.asCopyOptions(options).toArray(new CopyOption[0]));
     }
 
-    public long copy(InputStream in, OutputStream out, CopyOption... options)
+    public long copy(InputStream in, OutputStream out, Set<NutsPathOption> options)
             throws IOException {
-        if (interruptible) {
+        if (options.contains(NutsPathOption.INTERRUPTIBLE)) {
             in = CoreIOUtils.interruptible(in);
             interruptibleInstance = (Interruptible) in;
             return transferTo(in, out);
@@ -553,7 +512,7 @@ public class DefaultNutsCp implements NutsCp {
     }
 
     public long copy(Path source, OutputStream out) throws IOException {
-        if (interruptible) {
+        if (options.contains(NutsPathOption.INTERRUPTIBLE)) {
             try (InputStream in = CoreIOUtils.interruptible(Files.newInputStream(source))) {
                 interruptibleInstance = (Interruptible) in;
                 return transferTo(in, out);
@@ -578,11 +537,6 @@ public class DefaultNutsCp implements NutsCp {
 
     private void copyFolderNoMonitor(Path srcBase, Path targetBase, CopyData f) {
         try {
-            List<CopyOption> a=new ArrayList<>();
-            if(isReplaceExisting()){
-                a.add(StandardCopyOption.REPLACE_EXISTING);
-            }
-            CopyOption[] options = a.toArray(new CopyOption[0]);
             Files.walkFileTree(srcBase, new FileVisitor<Path>() {
                 @Override
                 public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
@@ -621,10 +575,11 @@ public class DefaultNutsCp implements NutsCp {
         checkSession();
         NutsStreamOrPath _source = source;
         boolean _target_isPath = target.isPath() && target.getPath().isFile();
+        boolean safe=options.contains(NutsPathOption.SAFE);
         if (checker != null && !_target_isPath && !safe) {
             throw new NutsIllegalArgumentException(getSession(), NutsMessage.formatted("unsupported validation if neither safeCopy is armed nor path is defined"));
         }
-        if (isLogProgress() || getProgressMonitorFactory() != null) {
+        if (options.contains(NutsPathOption.LOG) || getProgressMonitorFactory() != null) {
             NutsInputStreamMonitor monitor = NutsInputStreamMonitor.of(session);
             if (_source.isInputStream()) {
                 monitor.setSource(_source.getInputStream());
@@ -633,7 +588,7 @@ public class DefaultNutsCp implements NutsCp {
             }
             _source = NutsStreamOrPath.of(monitor
                     .setProgressFactory(getProgressMonitorFactory())
-                    .setLogProgress(isLogProgress())
+                    .setLogProgress(options.contains(NutsPathOption.LOG))
                     .create());
         }
         _LOGOP(session).level(Level.FINEST).verb(NutsLogVerb.START).log(NutsMessage.jstyle("copy {0} to {1}",
@@ -652,10 +607,10 @@ public class DefaultNutsCp implements NutsCp {
                 }
                 try {
                     if (_source.isPath() && _source.getPath().isFile()) {
-                        copy(_source.getPath().toFile(), temp, StandardCopyOption.REPLACE_EXISTING);
+                        copy(_source.getPath().toFile(), temp, new HashSet<>(Arrays.asList(NutsPathOption.REPLACE_EXISTING)));
                     } else {
                         try (InputStream ins = _source.getInputStream()) {
-                            copy(ins, temp, StandardCopyOption.REPLACE_EXISTING);
+                            copy(ins, temp, new HashSet<>(Arrays.asList(NutsPathOption.REPLACE_EXISTING)));
                         }
                     }
                     _validate(temp);
@@ -688,10 +643,10 @@ public class DefaultNutsCp implements NutsCp {
                     Path to = target.getPath().toFile();
                     CoreIOUtils.mkdirs(to.getParent(), session);
                     if (_source.isPath() && _source.getPath().isFile()) {
-                        copy(_source.getPath().toFile(), to, StandardCopyOption.REPLACE_EXISTING);
+                        copy(_source.getPath().toFile(), to, new HashSet<>(Arrays.asList(NutsPathOption.REPLACE_EXISTING)));
                     } else {
                         try (InputStream ins = _source.getInputStream()) {
-                            copy(ins, to, StandardCopyOption.REPLACE_EXISTING);
+                            copy(ins, to, new HashSet<>(Arrays.asList(NutsPathOption.REPLACE_EXISTING)));
                         }
                     }
                     _validate(to);
@@ -703,11 +658,11 @@ public class DefaultNutsCp implements NutsCp {
                             copy(_source.getPath().toFile(), bos);
                         } else {
                             try (InputStream ins = _source.getInputStream()) {
-                                copy(ins, bos);
+                                copy(ins, bos,options);
                             }
                         }
                         try (OutputStream ops = target.getOutputStream()) {
-                            copy(new ByteArrayInputStream(bos.toByteArray()), ops);
+                            copy(new ByteArrayInputStream(bos.toByteArray()), ops,options);
                         }
                         _validate(bos.toByteArray());
                     } else {
@@ -718,7 +673,7 @@ public class DefaultNutsCp implements NutsCp {
                         } else {
                             try (InputStream ins = _source.getInputStream()) {
                                 try (OutputStream ops = target.getOutputStream()) {
-                                    copy(ins, ops);
+                                    copy(ins, ops,options);
                                 }
                             }
                         }
@@ -766,13 +721,31 @@ public class DefaultNutsCp implements NutsCp {
     }
 
     @Override
-    public NutsCp setReplaceExisting(boolean replaceExisting) {
-        this.replaceExisting =replaceExisting;
+    public NutsCp addOptions(NutsPathOption... pathOptions) {
+        if(pathOptions!=null){
+            for (NutsPathOption o : pathOptions) {
+                if(o!=null){
+                    options.add(o);
+                }
+            }
+        }
         return this;
     }
 
     @Override
-    public boolean isReplaceExisting() {
-        return replaceExisting;
+    public NutsCp removeOptions(NutsPathOption... pathOptions) {
+        if(pathOptions!=null){
+            for (NutsPathOption o : pathOptions) {
+                if(o!=null){
+                    options.remove(o);
+                }
+            }
+        }
+        return this;
+    }
+
+    @Override
+    public Set<NutsPathOption> getOptions() {
+        return new LinkedHashSet<>(options);
     }
 }

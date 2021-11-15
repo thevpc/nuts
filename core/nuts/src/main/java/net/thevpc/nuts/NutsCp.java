@@ -33,6 +33,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
 import java.nio.file.Path;
+import java.util.Set;
 
 /**
  * I/O Action that help monitored copy of one or multiple resource types.
@@ -310,6 +311,12 @@ public interface NutsCp extends NutsComponent {
      */
     NutsCp to(NutsPath target);
 
+    NutsCp addOptions(NutsPathOption ...pathOptions);
+
+    NutsCp removeOptions(NutsPathOption ...pathOptions);
+
+    Set<NutsPathOption> getOptions();
+
     /**
      * return validator
      *
@@ -332,21 +339,6 @@ public interface NutsCp extends NutsComponent {
     boolean isMkdirs();
 
     NutsCp setMkdirs(boolean mkdirs);
-
-    /**
-     * return true if safe copy flag is armed
-     *
-     * @return true if safe copy flag is armed
-     */
-    boolean isSafe();
-
-    /**
-     * switch safe copy flag to {@code value}
-     *
-     * @param value value
-     * @return {@code this} instance
-     */
-    NutsCp setSafe(boolean value);
 
     /**
      * return current session
@@ -376,22 +368,6 @@ public interface NutsCp extends NutsComponent {
      * @return {@code this} instance
      */
     NutsCp run();
-
-
-    /**
-     * true if log progress flag is armed
-     *
-     * @return true if log progress flag is armed
-     */
-    boolean isLogProgress();
-
-    /**
-     * switch log progress flag to {@code value}.
-     *
-     * @param value value
-     * @return {@code this} instance
-     */
-    NutsCp setLogProgress(boolean value);
 
     /**
      * return progress factory responsible of creating progress monitor
@@ -437,28 +413,9 @@ public interface NutsCp extends NutsComponent {
     NutsCp setSkipRoot(boolean value);
 
     /**
-     * return true created stream should be marked as interruptible
-     *
-     * @return {@code this} instance
-     */
-    boolean isInterruptible();
-
-    /**
-     * mark created stream as interruptible so that one can call {@link #interrupt()}
-     *
-     * @param interruptible new value
-     * @return {@code this} instance
-     */
-    NutsCp setInterruptible(boolean interruptible);
-
-    /**
      * interrupt last created stream. An exception is throws when the stream is read.
      *
      * @return {@code this} instance
      */
     NutsCp interrupt();
-
-    NutsCp setReplaceExisting(boolean replaceExisting);
-
-    boolean isReplaceExisting();
 }

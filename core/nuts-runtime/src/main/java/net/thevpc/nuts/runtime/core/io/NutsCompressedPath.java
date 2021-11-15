@@ -127,6 +127,31 @@ public class NutsCompressedPath extends NutsPathBase {
     }
 
     @Override
+    public NutsPath resolve(NutsPath other) {
+        return base.resolve(other).toCompressedForm();
+    }
+
+    @Override
+    public NutsPath resolveSibling(String other) {
+        return base.resolveSibling(other).toCompressedForm();
+    }
+
+    @Override
+    public NutsPath resolveSibling(NutsPath other) {
+        return base.resolveSibling(other).toCompressedForm();
+    }
+
+    @Override
+    public byte[] readAllBytes() {
+        return base.readAllBytes();
+    }
+
+    @Override
+    public NutsPath writeBytes(byte[] bytes) {
+        return base.writeBytes(bytes);
+    }
+
+    @Override
     public String getProtocol() {
         return base.getProtocol();
     }
@@ -159,7 +184,7 @@ public class NutsCompressedPath extends NutsPathBase {
         return InputStreamMetadataAwareImpl.of(is, m2);
     }
 
-//    @Override
+    //    @Override
 //    public NutsInput input() {
 //        return base.input();
 //    }
@@ -174,6 +199,11 @@ public class NutsCompressedPath extends NutsPathBase {
     }
 
     @Override
+    public NutsPath deleteTree() {
+        return base.deleteTree();
+    }
+
+    @Override
     public NutsPath delete(boolean recurse) {
         return base.delete(recurse);
     }
@@ -181,6 +211,26 @@ public class NutsCompressedPath extends NutsPathBase {
     @Override
     public NutsPath mkdir(boolean parents) {
         return base.mkdir(parents);
+    }
+
+    @Override
+    public NutsPath mkdirs() {
+        return base.mkdirs();
+    }
+
+    @Override
+    public NutsPath mkdir() {
+        return base.mkdir();
+    }
+
+    @Override
+    public NutsPath expandPath(Function<String, String> resolver) {
+        return base.expandPath(resolver).toCompressedForm();
+    }
+
+    @Override
+    public NutsPath mkParentDirs() {
+        return base.mkParentDirs();
     }
 
     @Override
@@ -310,8 +360,50 @@ public class NutsCompressedPath extends NutsPathBase {
     }
 
     @Override
-    public NutsStream<NutsPath> walk(int maxDepth, NutsPathVisitOption[] options) {
+    public NutsStream<NutsPath> walk(int maxDepth, NutsPathOption[] options) {
         return base.walk(maxDepth, options);
+    }
+
+    @Override
+    public NutsPath subpath(int beginIndex, int endIndex) {
+        return base.subpath(beginIndex, endIndex).toCompressedForm();
+    }
+
+    @Override
+    public String getItem(int index) {
+        return base.getItem(index);
+    }
+
+    @Override
+    public String[] getItems() {
+        return base.getItems();
+    }
+
+    @Override
+    public void moveTo(NutsPath other, NutsPathOption... options) {
+        base.moveTo(other);
+    }
+
+    @Override
+    public void copyTo(NutsPath other, NutsPathOption... options) {
+        base.copyTo(other);
+    }
+
+    @Override
+    public NutsPath getRoot() {
+        return base.getRoot();
+    }
+
+    @Override
+    public NutsPath walkDfs(NutsTreeVisitor<NutsPath> visitor, NutsPathOption... options) {
+        base.walkDfs(visitor, options);
+        return this;
+    }
+
+    @Override
+    public NutsPath walkDfs(NutsTreeVisitor<NutsPath> visitor, int maxDepth, NutsPathOption... options) {
+        base.walkDfs(visitor, maxDepth, options);
+        return this;
     }
 
     @Override
@@ -352,70 +444,5 @@ public class NutsCompressedPath extends NutsPathBase {
         public int getSupportLevel(NutsSupportLevelContext context) {
             return DEFAULT_SUPPORT;
         }
-    }
-
-    @Override
-    public NutsPath resolve(NutsPath other) {
-        return base.resolve(other).toCompressedForm();
-    }
-
-    @Override
-    public NutsPath resolveSibling(String other) {
-        return base.resolveSibling(other).toCompressedForm();
-    }
-
-    @Override
-    public NutsPath resolveSibling(NutsPath other) {
-        return base.resolveSibling(other).toCompressedForm();
-    }
-
-    @Override
-    public byte[] readAllBytes() {
-        return base.readAllBytes();
-    }
-
-    @Override
-    public NutsPath writeBytes(byte[] bytes) {
-        return base.writeBytes(bytes);
-    }
-
-    @Override
-    public NutsPath deleteTree() {
-        return base.deleteTree();
-    }
-
-    @Override
-    public NutsPath mkParentDirs() {
-        return base.mkParentDirs();
-    }
-
-    @Override
-    public NutsPath subpath(int beginIndex, int endIndex) {
-        return base.subpath(beginIndex,endIndex).toCompressedForm();
-    }
-
-    @Override
-    public String getItem(int index) {
-        return base.getItem(index);
-    }
-
-    @Override
-    public NutsPath mkdirs() {
-        return base.mkdirs();
-    }
-
-    @Override
-    public String[] getItems() {
-        return base.getItems();
-    }
-
-    @Override
-    public NutsPath mkdir() {
-        return base.mkdir();
-    }
-
-    @Override
-    public NutsPath expandPath(Function<String, String> resolver) {
-        return base.expandPath(resolver).toCompressedForm();
     }
 }

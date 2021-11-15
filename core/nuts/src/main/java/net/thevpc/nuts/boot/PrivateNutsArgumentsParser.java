@@ -534,9 +534,9 @@ final class PrivateNutsArgumentsParser {
                     }
 
                     case "--debug": {
-                        a = cmdLine.nextBoolean();
+                        a = cmdLine.next();
                         if (enabled) {
-                            options.setDebug(a.getValue().getBoolean());
+                            options.setDebug(a.getValue().getString());
                         }
                         break;
                     }

@@ -284,14 +284,14 @@ public class NutsHttpFolderRepository extends NutsCachedRepository {
         }
         if (descriptor.getLocations().length == 0) {
             NutsPath path = getPath(id, session);
-            NutsCp.of(session).from(path).to(localFile).setSafe(true).setLogProgress(true).run();
+            NutsCp.of(session).from(path).to(localFile).addOptions(NutsPathOption.SAFE,NutsPathOption.LOG).run();
             return new NutsDefaultContent(
                     NutsPath.of(localFile, session), false, false);
         } else {
             for (NutsIdLocation location : descriptor.getLocations()) {
                 if (CoreNutsUtils.acceptClassifier(location, id.getClassifier())) {
                     try {
-                        NutsCp.of(session).from(location.getUrl()).to(localFile).setSafe(true).setLogProgress(true).run();
+                        NutsCp.of(session).from(location.getUrl()).to(localFile).addOptions(NutsPathOption.SAFE,NutsPathOption.LOG).run();
                         return new NutsDefaultContent(
                                 NutsPath.of(localFile, session), false, false);
                     } catch (Exception ex) {

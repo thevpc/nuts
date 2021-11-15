@@ -28,20 +28,20 @@ public class ClassLoaderPath extends URLPath {
         return path;
     }
 
-    public String getName() {
+    public String getName(NutsPath basePath) {
         return CoreIOUtils.getURLName(path);
     }
 
     @Override
-    public String getLocation() {
+    public String getLocation(NutsPath basePath) {
         if (url != null) {
-            return super.getLocation();
+            return super.getLocation(basePath);
         }
         return path.substring("classpath:/".length());
     }
 
     @Override
-    public String getProtocol() {
+    public String getProtocol(NutsPath basePath) {
         return "classpath";
     }
 

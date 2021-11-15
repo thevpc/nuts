@@ -148,7 +148,7 @@ public class MavenFolderRepository extends NutsCachedRepository {
         } else {
             NutsCp.of(session)
                     .setSession(session)
-                    .from(f).to(localPath).setSafe(true).run();
+                    .from(f).to(localPath).addOptions(NutsPathOption.SAFE).run();
             return new NutsDefaultContent(
                     NutsPath.of(localPath,session), true, false);
         }

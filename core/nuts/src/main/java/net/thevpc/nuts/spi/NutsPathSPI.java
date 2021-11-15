@@ -37,107 +37,118 @@ import java.util.Set;
 
 public interface NutsPathSPI {
 
-    NutsStream<NutsPath> list();
+    NutsStream<NutsPath> list(NutsPath basePath);
 
-    NutsFormatSPI getFormatterSPI();
+    NutsFormatSPI getFormatterSPI(NutsPath basePath);
 
-    String getName();
+    String getName(NutsPath basePath);
 
-    String getProtocol();
+    String getProtocol(NutsPath basePath);
 
-    NutsPath resolve(String path);
+    NutsPath resolve(NutsPath basePath, String path);
 
-    NutsPath resolve(NutsPath path);
+    NutsPath resolve(NutsPath basePath, NutsPath path);
 
-    NutsPath resolveSibling(String path);
+    NutsPath resolveSibling(NutsPath basePath, String path);
 
-    NutsPath resolveSibling(NutsPath path);
+    NutsPath resolveSibling(NutsPath basePath, NutsPath path);
 
-    NutsPath toCompressedForm();
+    NutsPath toCompressedForm(NutsPath basePath);
 
-    URL toURL();
+    URL toURL(NutsPath basePath);
 
-    Path toFile();
+    Path toFile(NutsPath basePath);
 
-    boolean isSymbolicLink();
+    boolean isSymbolicLink(NutsPath basePath);
 
-    boolean isOther();
+    boolean isOther(NutsPath basePath);
 
-    boolean isDirectory();
+    boolean isDirectory(NutsPath basePath);
 
-    boolean isRegularFile();
+    boolean isRegularFile(NutsPath basePath);
 
-    boolean exists();
+    boolean exists(NutsPath basePath);
 
-    long getContentLength();
+    long getContentLength(NutsPath basePath);
 
-    String getContentEncoding();
+    String getContentEncoding(NutsPath basePath);
 
-    String getContentType();
+    String getContentType(NutsPath basePath);
 
     String toString();
 
-    String getLocation();
+    String getLocation(NutsPath basePath);
 
-    InputStream getInputStream();
+    InputStream getInputStream(NutsPath basePath);
 
-    OutputStream getOutputStream();
+    OutputStream getOutputStream(NutsPath basePath);
 
     NutsSession getSession();
 
-    void delete(boolean recurse);
+    void delete(NutsPath basePath, boolean recurse);
 
-    void mkdir(boolean parents);
+    void mkdir(boolean parents, NutsPath basePath);
 
-    Instant getLastModifiedInstant();
+    Instant getLastModifiedInstant(NutsPath basePath);
 
-    Instant getLastAccessInstant();
+    Instant getLastAccessInstant(NutsPath basePath);
 
-    Instant getCreationInstant();
+    Instant getCreationInstant(NutsPath basePath);
 
-    NutsPath getParent();
+    NutsPath getParent(NutsPath basePath);
 
-    NutsPath toAbsolute(NutsPath basePath);
+    NutsPath toAbsolute(NutsPath basePath, NutsPath rootPath);
 
-    NutsPath normalize();
+    NutsPath normalize(NutsPath basePath);
 
-    boolean isAbsolute();
+    boolean isAbsolute(NutsPath basePath);
 
-    String owner();
+    String owner(NutsPath basePath);
 
-    String group();
+    String group(NutsPath basePath);
 
-    Set<NutsPathPermission> permissions();
+    Set<NutsPathPermission> permissions(NutsPath basePath);
 
-    void setPermissions(NutsPathPermission... permissions);
+    void setPermissions(NutsPath basePath, NutsPathPermission... permissions);
 
-    void addPermissions(NutsPathPermission... permissions);
+    void addPermissions(NutsPath basePath, NutsPathPermission... permissions);
 
-    void removePermissions(NutsPathPermission... permissions);
+    void removePermissions(NutsPath basePath, NutsPathPermission... permissions);
 
     /**
      * return true if this path is a simple name that do not contain '/' or
      * equivalent
      *
+     * @param basePath basePath
      * @return true if this path is a simple name that do not contain '/' or
      * equivalent
      */
-    boolean isName();
+    boolean isName(NutsPath basePath);
 
     /**
      * return path items count
      *
+     * @param basePath basePath
      * @return path items count
      */
-    int getPathCount();
+    int getPathCount(NutsPath basePath);
 
     /**
      * true if this is the root of the path file system. good examples are: '/'
      * , 'C:\' and 'http://myserver/'
      *
+     * @param basePath basePath
      * @return true if this is the root of the path file system
      */
-    boolean isRoot();
+    boolean isRoot(NutsPath basePath);
+
+    /**
+     * return the root associated to this path
+     *
+     * @param basePath basePath
+     * @return root or this
+     */
+    NutsPath getRoot(NutsPath basePath);
 
     /**
      * Return a Stream that is lazily populated with Path by walking the file
@@ -145,14 +156,22 @@ public interface NutsPathSPI {
      * depth-first, the elements in the stream are Path objects that are
      * obtained as if by resolving the relative path against start.
      *
-     * @param options  options
+     * @param basePath basePath
      * @param maxDepth max depth
+     * @param options  options
      * @return a Stream that is lazily populated with Path by walking the file
      * tree rooted at a given starting file
      */
-    NutsStream<NutsPath> walk(int maxDepth, NutsPathVisitOption[] options);
+    NutsStream<NutsPath> walk(NutsPath basePath, int maxDepth, NutsPathOption[] options);
 
-    NutsPath subpath(int beginIndex, int endIndex);
+    NutsPath subpath(NutsPath basePath, int beginIndex, int endIndex);
 
-    String[] getItems();
+    String[] getItems(NutsPath basePath);
+
+    void moveTo(NutsPath basePath, NutsPath other, NutsPathOption... options);
+
+    void copyTo(NutsPath basePath, NutsPath other, NutsPathOption... options);
+
+    void walkDfs(NutsPath basePath, NutsTreeVisitor<NutsPath> visitor, int maxDepth, NutsPathOption... options);
+
 }

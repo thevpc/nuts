@@ -76,7 +76,7 @@ public class PrivateNutsUtilApplication {
 
         boolean bot = bo.isBot();
         boolean gui = bo.isGui();
-        boolean showTrace = bo.isDebug();
+        boolean showTrace = bo.getDebug()!=null;
         showTrace |= (bo.getLogConfig() != null
                 && bo.getLogConfig().getLogTermLevel() != null
                 && bo.getLogConfig().getLogTermLevel().intValue() < Level.INFO.intValue());

@@ -35,8 +35,44 @@ if set -q _java
     end
 end
 
+
+if [ x"$1" = x"--debug" ]
+  NUTS_DEBUG_ARG="-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=5005"
+else if [[ x"$1" = x"--debug="* ]]
+  sub=${1:8}
+  sub="${sub},"
+  d_port=5005
+  d_enable="true"
+  d_suspend="y"
+  subArray=$(echo $sub | tr "," "\n")
+
+  for curr in $subArray
+    if [ ! -z "${curr##*[!0-9]*}" ]
+         d_port=$curr
+      else if [ x"$curr" = 'xno' ]
+         d_enable="false"
+      else if [ x"$curr" = 'xsuspend' ]
+         d_suspend="y"
+      else if [ x"$curr" = 'x!suspend' ]
+         d_suspend="n"
+      else if [ x"$curr" = 'xs' ]
+         d_suspend="y"
+      else if [ x"$curr" = 'x!s' ]
+         d_suspend="n"
+      else
+        echo $curr is unsupported
+      end
+  end
+
+  if [ x$d_enable = x'true' ]
+    NUTS_DEBUG_ARG="-agentlib:jdwp=transport=dt_socket,server=y,suspend=$d_suspend,address=$d_port"
+  end
+  #echo $sub
+end
+
+
 set _NUTS_JAVA_OPTIONS `echo "$NUTS_JAVA_OPTIONS -jar" | xargs`
 
 
-$_java $_NUTS_JAVA_OPTIONS "$$NUTS_JAR$$" -w "$NUTS_WORKSPACE" $argv
+$_java $NUTS_DEBUG_ARG $_NUTS_JAVA_OPTIONS "$$NUTS_JAR$$" -w "$NUTS_WORKSPACE" $argv
 # END-COMMAND

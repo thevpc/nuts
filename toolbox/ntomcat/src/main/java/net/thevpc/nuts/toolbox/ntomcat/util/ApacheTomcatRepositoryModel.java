@@ -191,7 +191,7 @@ public class ApacheTomcatRepositoryModel implements NutsRepositoryModel {
             if (localPath == null) {
                 localPath = getIdLocalFile(id.builder().setFaceContent().build(), fetchMode, repository, session);
             }
-            NutsCp.of(session).from(r).to(localPath).setSafe(true).setLogProgress(true).run();
+            NutsCp.of(session).from(r).to(localPath).addOptions(NutsPathOption.SAFE,NutsPathOption.LOG).run();
             return new NutsDefaultContent(
                     NutsPath.of(localPath,session), false, false);
         }
@@ -210,7 +210,7 @@ public class ApacheTomcatRepositoryModel implements NutsRepositoryModel {
         List<String> all = new ArrayList<>();
         try {
             //NutsWorkspace ws = session.getWorkspace();
-            byte[] bytes = NutsCp.of(session).from(url).setLogProgress(true).getByteArrayResult();
+            byte[] bytes = NutsCp.of(session).from(url).addOptions(NutsPathOption.LOG).getByteArrayResult();
             Document doc = null;
             try {
                 doc = Jsoup.parse(new ByteArrayInputStream(bytes), "UTF-8", url);

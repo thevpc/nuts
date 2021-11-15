@@ -106,59 +106,64 @@ public class NutsResourcePath implements NutsPathSPI {
     }
 
     @Override
-    public NutsPath normalize() {
+    public NutsPath normalize(NutsPath basePath) {
         return new NutsPathFromSPI(this);
     }
 
     @Override
-    public NutsStream<NutsPath> list() {
+    public NutsStream<NutsPath> list(NutsPath basePath) {
         return toURLPath().list();
     }
 
     @Override
-    public NutsStream<NutsPath> walk(int maxDepth, NutsPathVisitOption[] options) {
+    public NutsStream<NutsPath> walk(NutsPath basePath, int maxDepth, NutsPathOption[] options) {
         return toURLPath().walk(maxDepth, options);
     }
 
     @Override
-    public NutsFormatSPI getFormatterSPI() {
+    public void walkDfs(NutsPath basePath, NutsTreeVisitor<NutsPath> visitor, int maxDepth, NutsPathOption... options) {
+        toURLPath().walkDfs(visitor,maxDepth, options);
+    }
+
+    @Override
+    public NutsFormatSPI getFormatterSPI(NutsPath basePath) {
         return new MyPathFormat(this);
     }
 
     @Override
-    public String getName() {
-        String loc = getLocation();
+    public String getName(NutsPath basePath) {
+        String loc = getLocation(basePath);
         return loc == null ? "" : Paths.get(loc).getFileName().toString();
     }
 
     @Override
-    public String getProtocol() {
+    public String getProtocol(NutsPath basePath) {
         return "nuts-resource";
     }
 
     @Override
-    public NutsPath resolve(String path) {
+    public NutsPath resolve(NutsPath basePath, String path) {
         return new NutsPathFromSPI(new NutsResourcePath(rebuildURL(
                 NutsPath.of(location,session).resolve(path).toString()
                 ,ids.toArray(new NutsId[0])), getSession()));
     }
 
     @Override
-    public NutsPath resolve(NutsPath path) {
+    public NutsPath resolve(NutsPath basePath, NutsPath path) {
         return new NutsPathFromSPI(new NutsResourcePath(rebuildURL(
                 NutsPath.of(location,session).resolve(path).toString()
                 ,ids.toArray(new NutsId[0])), getSession()));
     }
 
     @Override
-    public NutsPath resolveSibling(String path) {
+    public NutsPath resolveSibling(NutsPath basePath, String path) {
         return new NutsPathFromSPI(new NutsResourcePath(rebuildURL(
                 NutsPath.of(location,session).resolveSibling(path).toString()
                 ,ids.toArray(new NutsId[0])), getSession()));
     }
 
     @Override
-    public NutsPath resolveSibling(NutsPath path) {
+    public NutsPath resolveSibling(NutsPath basePath, NutsPath path) {
         return new NutsPathFromSPI(new NutsResourcePath(rebuildURL(
                 NutsPath.of(location,session).resolveSibling(path).toString()
                 ,ids.toArray(new NutsId[0])), getSession()));
@@ -166,19 +171,19 @@ public class NutsResourcePath implements NutsPathSPI {
 
 
     @Override
-    public NutsPath subpath(int beginIndex, int endIndex) {
+    public NutsPath subpath(NutsPath basePath, int beginIndex, int endIndex) {
         return new NutsPathFromSPI(new NutsResourcePath(rebuildURL(
                 NutsPath.of(location,getSession()).subpath(beginIndex,endIndex).toString()
                 ,ids.toArray(new NutsId[0])), getSession()));
     }
 
     @Override
-    public String[] getItems() {
+    public String[] getItems(NutsPath basePath) {
         return NutsPath.of(location,getSession()).getItems();
     }
 
     @Override
-    public URL toURL() {
+    public URL toURL(NutsPath basePath) {
         NutsPath up = toURLPath();
         if (up != null) {
             return up.toURL();
@@ -187,7 +192,7 @@ public class NutsResourcePath implements NutsPathSPI {
     }
 
     @Override
-    public Path toFile() {
+    public Path toFile(NutsPath basePath) {
         NutsPath up = toURLPath();
         if (up != null) {
             return up.toFile();
@@ -196,61 +201,61 @@ public class NutsResourcePath implements NutsPathSPI {
     }
 
     @Override
-    public boolean isDirectory() {
+    public boolean isDirectory(NutsPath basePath) {
         NutsPath up = toURLPath();
         return up != null && up.isDirectory();
     }
 
     @Override
-    public boolean isRegularFile() {
+    public boolean isRegularFile(NutsPath basePath) {
         NutsPath up = toURLPath();
         return up != null && up.isRegularFile();
     }
 
     @Override
-    public boolean isSymbolicLink() {
+    public boolean isSymbolicLink(NutsPath basePath) {
         NutsPath up = toURLPath();
         return up != null && up.isSymbolicLink();
     }
 
     @Override
-    public boolean isOther() {
+    public boolean isOther(NutsPath basePath) {
         NutsPath up = toURLPath();
         return up != null && up.isOther();
     }
 
     @Override
-    public Instant getLastAccessInstant() {
+    public Instant getLastAccessInstant(NutsPath basePath) {
         NutsPath up = toURLPath();
         return up != null ? up.getLastAccessInstant() : null;
     }
 
     @Override
-    public Instant getCreationInstant() {
+    public Instant getCreationInstant(NutsPath basePath) {
         NutsPath up = toURLPath();
         return up != null ? up.getCreationInstant() : null;
     }
 
     @Override
-    public String owner() {
+    public String owner(NutsPath basePath) {
         NutsPath up = toURLPath();
         return up != null ? up.owner() : null;
     }
 
     @Override
-    public String group() {
+    public String group(NutsPath basePath) {
         NutsPath up = toURLPath();
         return up != null ? up.group() : null;
     }
 
     @Override
-    public Set<NutsPathPermission> permissions() {
+    public Set<NutsPathPermission> permissions(NutsPath basePath) {
         NutsPath up = toURLPath();
         return up != null ? up.getPermissions() : new LinkedHashSet<>();
     }
 
     @Override
-    public boolean exists() {
+    public boolean exists(NutsPath basePath) {
         NutsPath up = toURLPath();
         if (up == null) {
             return false;
@@ -259,7 +264,7 @@ public class NutsResourcePath implements NutsPathSPI {
     }
 
     @Override
-    public long getContentLength() {
+    public long getContentLength(NutsPath basePath) {
         NutsPath up = toURLPath();
         if (up == null) {
             return -1;
@@ -268,7 +273,7 @@ public class NutsResourcePath implements NutsPathSPI {
     }
 
     @Override
-    public String getContentEncoding() {
+    public String getContentEncoding(NutsPath basePath) {
         NutsPath up = toURLPath();
         if (up != null) {
             return up.getContentEncoding();
@@ -277,7 +282,7 @@ public class NutsResourcePath implements NutsPathSPI {
     }
 
     @Override
-    public String getContentType() {
+    public String getContentType(NutsPath basePath) {
         NutsPath up = toURLPath();
         if (up != null) {
             return up.getContentType();
@@ -286,12 +291,12 @@ public class NutsResourcePath implements NutsPathSPI {
     }
 
     @Override
-    public String getLocation() {
+    public String getLocation(NutsPath basePath) {
         return location;
     }
 
     @Override
-    public NutsPath getParent() {
+    public NutsPath getParent(NutsPath basePath) {
         String ppath = CoreIOUtils.getURLParentPath(location);
         if (ppath == null) {
             return null;
@@ -300,7 +305,7 @@ public class NutsResourcePath implements NutsPathSPI {
     }
 
     @Override
-    public InputStream getInputStream() {
+    public InputStream getInputStream(NutsPath basePath) {
         NutsPath up = toURLPath();
         if (up == null) {
             throw new NutsIOException(getSession(), NutsMessage.cstyle("unable to resolve input stream %s", toString()));
@@ -309,7 +314,7 @@ public class NutsResourcePath implements NutsPathSPI {
     }
 
     @Override
-    public OutputStream getOutputStream() {
+    public OutputStream getOutputStream(NutsPath basePath) {
         NutsPath up = toURLPath();
         if (up == null) {
             throw new NutsIOException(getSession(), NutsMessage.cstyle("unable to resolve output stream %s", toString()));
@@ -323,7 +328,7 @@ public class NutsResourcePath implements NutsPathSPI {
     }
 
     @Override
-    public void delete(boolean recurse) {
+    public void delete(NutsPath basePath, boolean recurse) {
         NutsPath up = toURLPath();
         if (up == null) {
             throw new NutsIOException(getSession(), NutsMessage.cstyle("unable to delete %s", toString()));
@@ -332,7 +337,7 @@ public class NutsResourcePath implements NutsPathSPI {
     }
 
     @Override
-    public void mkdir(boolean parents) {
+    public void mkdir(boolean parents, NutsPath basePath) {
         NutsPath up = toURLPath();
         if (up == null) {
             throw new NutsIOException(getSession(), NutsMessage.cstyle("unable to mkdir %s", toString()));
@@ -341,7 +346,7 @@ public class NutsResourcePath implements NutsPathSPI {
     }
 
     @Override
-    public Instant getLastModifiedInstant() {
+    public Instant getLastModifiedInstant(NutsPath basePath) {
         NutsPath up = toURLPath();
         if (up == null) {
             return null;
@@ -440,35 +445,35 @@ public class NutsResourcePath implements NutsPathSPI {
     }
 
     @Override
-    public NutsPath toAbsolute(NutsPath basePath) {
-        return new NutsPathFromSPI(this);
+    public NutsPath toAbsolute(NutsPath basePath, NutsPath rootPath) {
+        return basePath;
     }
 
     @Override
-    public boolean isAbsolute() {
+    public boolean isAbsolute(NutsPath basePath) {
         return true;
     }
 
     @Override
-    public void setPermissions(NutsPathPermission... permissions) {
+    public void setPermissions(NutsPath basePath, NutsPathPermission... permissions) {
     }
 
     @Override
-    public void addPermissions(NutsPathPermission... permissions) {
+    public void addPermissions(NutsPath basePath, NutsPathPermission... permissions) {
     }
 
     @Override
-    public void removePermissions(NutsPathPermission... permissions) {
+    public void removePermissions(NutsPath basePath, NutsPathPermission... permissions) {
     }
 
     @Override
-    public boolean isName() {
+    public boolean isName(NutsPath basePath) {
         return false;
     }
 
     @Override
-    public int getPathCount() {
-        String location = getLocation();
+    public int getPathCount(NutsPath basePath) {
+        String location = getLocation(basePath);
         if (NutsBlankable.isBlank(location)) {
             return 0;
         }
@@ -476,8 +481,8 @@ public class NutsResourcePath implements NutsPathSPI {
     }
 
     @Override
-    public boolean isRoot() {
-        String loc = getLocation();
+    public boolean isRoot(NutsPath basePath) {
+        String loc = getLocation(basePath);
         if (NutsBlankable.isBlank(loc)) {
             return false;
         }
@@ -490,7 +495,26 @@ public class NutsResourcePath implements NutsPathSPI {
     }
 
     @Override
-    public NutsPath toCompressedForm() {
+    public NutsPath toCompressedForm(NutsPath basePath) {
         return null;
     }
+
+    @Override
+    public void moveTo(NutsPath basePath, NutsPath other, NutsPathOption... options) {
+        throw new NutsIOException(session,NutsMessage.cstyle("unable to move %s",this));
+    }
+
+    @Override
+    public void copyTo(NutsPath basePath, NutsPath other, NutsPathOption... options) {
+        NutsCp.of(session).from(basePath).to(other).run();
+    }
+
+    @Override
+    public NutsPath getRoot(NutsPath basePath) {
+        if(isRoot(basePath)){
+            return basePath;
+        }
+        return basePath.getParent().getRoot();
+    }
+
 }

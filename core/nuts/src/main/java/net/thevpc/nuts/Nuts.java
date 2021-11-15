@@ -109,7 +109,7 @@ public final class Nuts {
 
             boolean bot = bo.isBot();
             boolean gui = !bot && bo.isGui();
-            boolean showTrace = bo.isDebug();
+            boolean showTrace = bo.getDebug()!=null;
             showTrace |= (bo.getLogConfig() != null
                     && bo.getLogConfig().getLogTermLevel() != null
                     && bo.getLogConfig().getLogTermLevel().intValue() < Level.INFO.intValue());

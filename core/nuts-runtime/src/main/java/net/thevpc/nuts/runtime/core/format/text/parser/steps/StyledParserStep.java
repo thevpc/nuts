@@ -6,6 +6,7 @@ import net.thevpc.nuts.runtime.bundles.string.StringBuilder2;
 import net.thevpc.nuts.runtime.core.format.text.parser.DefaultNutsTextNodeParser;
 import net.thevpc.nuts.runtime.core.format.text.parser.DefaultNutsTextPlain;
 import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
+import net.thevpc.nuts.runtime.core.util.NutsDebugString;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -650,7 +651,7 @@ public class StyledParserStep extends ParserStep {
     }
 
     private void logErr(String s) {
-        if(session.boot().getBootOptions().isDebug()) {
+        if(NutsDebugString.of(session.boot().getBootOptions().getDebug(),session).isEnabled()) {
             System.err.println(s);
         }
     }

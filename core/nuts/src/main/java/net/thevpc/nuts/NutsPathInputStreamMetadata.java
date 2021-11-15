@@ -16,11 +16,6 @@ public class NutsPathInputStreamMetadata implements NutsInputStreamMetadata {
 
     public NutsPathInputStreamMetadata(NutsPath path) {
         this.path = path;
-//        this(path.getName(),
-//                path.getFormattedName(),
-//                path.getContentLength(),
-//                path.getContentType(),
-//                path.getUserKind());
     }
 
     @Override

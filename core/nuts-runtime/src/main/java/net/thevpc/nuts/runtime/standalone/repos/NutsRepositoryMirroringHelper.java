@@ -82,7 +82,7 @@ public class NutsRepositoryMirroringHelper {
                     if (c != null) {
                         if (localPath != null) {
                             NutsCp.of(session)
-                                    .from(c.getFile()).to(localPath).setSafe(true).run();
+                                    .from(c.getFile()).to(localPath).addOptions(NutsPathOption.SAFE).run();
                         } else {
                             return c;
                         }

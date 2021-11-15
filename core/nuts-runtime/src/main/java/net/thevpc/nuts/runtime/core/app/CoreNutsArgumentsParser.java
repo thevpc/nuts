@@ -556,7 +556,7 @@ public final class CoreNutsArgumentsParser {
                     case "--debug": {
                         a = cmdLine.nextBoolean();
                         if (enabled) {
-                            options.setDebug(a.getValue().getBoolean());
+                            options.setDebug(a.getValue().getString());
                         }
                         break;
                     }

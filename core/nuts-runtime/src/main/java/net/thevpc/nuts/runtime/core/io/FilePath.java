@@ -12,9 +12,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.nio.file.FileVisitOption;
-import java.nio.file.Files;
-import java.nio.file.Path;
+import java.nio.file.*;
 import java.nio.file.attribute.*;
 import java.time.Instant;
 import java.util.*;
@@ -37,7 +35,7 @@ public class FilePath implements NutsPathSPI {
     }
 
     @Override
-    public NutsStream<NutsPath> list() {
+    public NutsStream<NutsPath> list(NutsPath basePath) {
         if (Files.isDirectory(value)) {
             try {
                 return NutsStream.of(Files.list(value).map(x -> NutsPath.of(x, getSession())),
@@ -50,22 +48,22 @@ public class FilePath implements NutsPathSPI {
     }
 
     @Override
-    public NutsFormatSPI getFormatterSPI() {
+    public NutsFormatSPI getFormatterSPI(NutsPath basePath) {
         return new MyPathFormat(this);
     }
 
     @Override
-    public String getName() {
+    public String getName(NutsPath basePath) {
         return value.getFileName().toString();
     }
 
     @Override
-    public String getProtocol() {
+    public String getProtocol(NutsPath basePath) {
         return "";
     }
 
     @Override
-    public NutsPath resolve(String path) {
+    public NutsPath resolve(NutsPath basePath, String path) {
         if (NutsBlankable.isBlank(path)) {
             return NutsPath.of(value, getSession());
         }
@@ -78,7 +76,7 @@ public class FilePath implements NutsPathSPI {
     }
 
     @Override
-    public NutsPath resolve(NutsPath path) {
+    public NutsPath resolve(NutsPath basePath, NutsPath path) {
         if (path == null) {
             return NutsPath.of(value, getSession());
         }
@@ -89,30 +87,30 @@ public class FilePath implements NutsPathSPI {
         if (f != null) {
             return NutsPath.of(value.resolve(f), getSession());
         }
-        return resolve(path.toString());
+        return resolve(basePath, path.toString());
     }
 
     @Override
-    public NutsPath resolveSibling(String path) {
+    public NutsPath resolveSibling(NutsPath basePath, String path) {
         if (path == null) {
-            return getParent();
+            return getParent(basePath);
         }
         if (path.isEmpty()) {
-            return getParent();
+            return getParent(basePath);
         }
         return NutsPath.of(value.resolveSibling(path), getSession());
     }
 
     @Override
-    public NutsPath resolveSibling(NutsPath path) {
+    public NutsPath resolveSibling(NutsPath basePath, NutsPath path) {
         if (path == null) {
-            return getParent();
+            return getParent(basePath);
         }
-        return resolveSibling(path.toString());
+        return resolveSibling(basePath, path.toString());
     }
 
     @Override
-    public NutsPath toCompressedForm() {
+    public NutsPath toCompressedForm(NutsPath basePath) {
         return null;
     }
 
@@ -130,7 +128,7 @@ public class FilePath implements NutsPathSPI {
 //        return toNutsPathInstance();
 //    }
     @Override
-    public URL toURL() {
+    public URL toURL(NutsPath basePath) {
         try {
             return value.toUri().toURL();
         } catch (MalformedURLException e) {
@@ -139,37 +137,37 @@ public class FilePath implements NutsPathSPI {
     }
 
     @Override
-    public Path toFile() {
+    public Path toFile(NutsPath basePath) {
         return value;
     }
 
     @Override
-    public boolean isSymbolicLink() {
+    public boolean isSymbolicLink(NutsPath basePath) {
         PosixFileAttributes a = getUattr();
         return a != null && a.isSymbolicLink();
     }
 
     @Override
-    public boolean isOther() {
+    public boolean isOther(NutsPath basePath) {
         PosixFileAttributes a = getUattr();
         return a != null && a.isOther();
     }
 
     @Override
-    public boolean isDirectory() {
+    public boolean isDirectory(NutsPath basePath) {
         return Files.isDirectory(value);
     }
 
     @Override
-    public boolean isRegularFile() {
+    public boolean isRegularFile(NutsPath basePath) {
         return Files.isRegularFile(value);
     }
 
-    public boolean exists() {
+    public boolean exists(NutsPath basePath) {
         return Files.exists(value);
     }
 
-    public long getContentLength() {
+    public long getContentLength(NutsPath basePath) {
         try {
             return Files.size(value);
         } catch (IOException e) {
@@ -178,21 +176,21 @@ public class FilePath implements NutsPathSPI {
     }
 
     @Override
-    public String getContentEncoding() {
+    public String getContentEncoding(NutsPath basePath) {
         return null;
     }
 
     @Override
-    public String getContentType() {
+    public String getContentType(NutsPath basePath) {
         return NutsContentTypes.of(session).probeContentType(value);
     }
 
     @Override
-    public String getLocation() {
+    public String getLocation(NutsPath basePath) {
         return value.toString();
     }
 
-    public InputStream getInputStream() {
+    public InputStream getInputStream(NutsPath basePath) {
         try {
             return InputStreamMetadataAwareImpl.of(Files.newInputStream(value),
                     new NutsPathInputStreamMetadata(toNutsPathInstance())
@@ -202,7 +200,7 @@ public class FilePath implements NutsPathSPI {
         }
     }
 
-    public OutputStream getOutputStream() {
+    public OutputStream getOutputStream(NutsPath basePath) {
         try {
             return Files.newOutputStream(value);
         } catch (IOException e) {
@@ -216,7 +214,7 @@ public class FilePath implements NutsPathSPI {
     }
 
     @Override
-    public void delete(boolean recurse) {
+    public void delete(NutsPath basePath, boolean recurse) {
         if (Files.isRegularFile(value)) {
             try {
                 Files.delete(value);
@@ -239,7 +237,7 @@ public class FilePath implements NutsPathSPI {
     }
 
     @Override
-    public void mkdir(boolean parents) {
+    public void mkdir(boolean parents, NutsPath basePath) {
         if (Files.isRegularFile(value)) {
             throw new NutsIOException(getSession(), NutsMessage.cstyle("unable to create folder out of regular file %s", value));
         } else if (Files.isDirectory(value)) {
@@ -254,7 +252,7 @@ public class FilePath implements NutsPathSPI {
     }
 
     @Override
-    public Instant getLastModifiedInstant() {
+    public Instant getLastModifiedInstant(NutsPath basePath) {
         FileTime r = null;
         try {
             r = Files.getLastModifiedTime(value);
@@ -268,7 +266,7 @@ public class FilePath implements NutsPathSPI {
     }
 
     @Override
-    public Instant getLastAccessInstant() {
+    public Instant getLastAccessInstant(NutsPath basePath) {
         BasicFileAttributes a = getBattr();
         if (a != null) {
             FileTime t = a.lastAccessTime();
@@ -278,7 +276,7 @@ public class FilePath implements NutsPathSPI {
     }
 
     @Override
-    public Instant getCreationInstant() {
+    public Instant getCreationInstant(NutsPath basePath) {
         BasicFileAttributes a = getBattr();
         if (a != null) {
             FileTime t = a.creationTime();
@@ -288,7 +286,7 @@ public class FilePath implements NutsPathSPI {
     }
 
     @Override
-    public NutsPath getParent() {
+    public NutsPath getParent(NutsPath basePath) {
         Path p = value.getParent();
         if (p == null) {
             return null;
@@ -297,30 +295,30 @@ public class FilePath implements NutsPathSPI {
     }
 
     @Override
-    public NutsPath toAbsolute(NutsPath basePath) {
-        if (isAbsolute()) {
-            return new NutsPathFromSPI(this);
+    public NutsPath toAbsolute(NutsPath basePath, NutsPath rootPath) {
+        if (isAbsolute(basePath)) {
+            return basePath;
         }
-        if (basePath == null) {
+        if (rootPath == null) {
             return new NutsPathFromSPI(new FilePath(
                     value.normalize().toAbsolutePath(), session
             ));
         }
-        return basePath.toAbsolute().resolve(toString());
+        return rootPath.toAbsolute().resolve(toString());
     }
 
     @Override
-    public NutsPath normalize() {
+    public NutsPath normalize(NutsPath basePath) {
         return new NutsPathFromSPI(new FilePath(value.normalize(), session));
     }
 
     @Override
-    public boolean isAbsolute() {
+    public boolean isAbsolute(NutsPath basePath) {
         return value.isAbsolute();
     }
 
     @Override
-    public String owner() {
+    public String owner(NutsPath basePath) {
         PosixFileAttributes a = getUattr();
         if (a != null) {
             UserPrincipal o = a.owner();
@@ -330,7 +328,7 @@ public class FilePath implements NutsPathSPI {
     }
 
     @Override
-    public String group() {
+    public String group(NutsPath basePath) {
         PosixFileAttributes a = getUattr();
         if (a != null) {
             GroupPrincipal o = a.group();
@@ -340,7 +338,7 @@ public class FilePath implements NutsPathSPI {
     }
 
     @Override
-    public Set<NutsPathPermission> permissions() {
+    public Set<NutsPathPermission> permissions(NutsPath basePath) {
         Set<NutsPathPermission> p = new LinkedHashSet<>();
         PosixFileAttributes a = getUattr();
         File file = value.toFile();
@@ -390,7 +388,7 @@ public class FilePath implements NutsPathSPI {
     }
 
     @Override
-    public void setPermissions(NutsPathPermission... permissions) {
+    public void setPermissions(NutsPath basePath, NutsPathPermission... permissions) {
         Set<NutsPathPermission> add = new LinkedHashSet<>(Arrays.asList(permissions));
         Set<NutsPathPermission> remove = new LinkedHashSet<>(EnumSet.allOf(NutsPathPermission.class));
         remove.addAll(add);
@@ -399,17 +397,17 @@ public class FilePath implements NutsPathSPI {
     }
 
     @Override
-    public void addPermissions(NutsPathPermission... permissions) {
+    public void addPermissions(NutsPath basePath, NutsPathPermission... permissions) {
         setPermissions(permissions, true);
     }
 
     @Override
-    public void removePermissions(NutsPathPermission... permissions) {
+    public void removePermissions(NutsPath basePath, NutsPathPermission... permissions) {
         //
     }
 
     @Override
-    public boolean isName() {
+    public boolean isName(NutsPath basePath) {
         if (value.getNameCount() > 1) {
             return false;
         }
@@ -434,17 +432,25 @@ public class FilePath implements NutsPathSPI {
     }
 
     @Override
-    public int getPathCount() {
+    public int getPathCount(NutsPath basePath) {
         return value.getNameCount();
     }
 
     @Override
-    public boolean isRoot() {
+    public boolean isRoot(NutsPath basePath) {
         return value.getNameCount() == 0;
     }
 
     @Override
-    public NutsStream<NutsPath> walk(int maxDepth, NutsPathVisitOption[] options) {
+    public NutsPath getRoot(NutsPath basePath) {
+        if (isRoot(basePath)) {
+            return basePath;
+        }
+        return basePath.getParent().getRoot();
+    }
+
+    @Override
+    public NutsStream<NutsPath> walk(NutsPath basePath, int maxDepth, NutsPathOption[] options) {
         FileVisitOption[] fileOptions = Arrays.stream(options)
                 .map(x -> {
                     if (x == null) {
@@ -468,18 +474,92 @@ public class FilePath implements NutsPathSPI {
     }
 
     @Override
-    public NutsPath subpath(int beginIndex, int endIndex) {
+    public NutsPath subpath(NutsPath basePath, int beginIndex, int endIndex) {
         return NutsPath.of(value.subpath(beginIndex, endIndex), getSession());
     }
 
     @Override
-    public String[] getItems() {
+    public String[] getItems(NutsPath basePath) {
         int nameCount = value.getNameCount();
         String[] names = new String[nameCount];
         for (int i = 0; i < nameCount; i++) {
             names[i] = value.getName(i).toString();
         }
         return names;
+    }
+
+    @Override
+    public void moveTo(NutsPath basePath, NutsPath other, NutsPathOption... options) {
+        Path f = other.asFile();
+        if (f != null) {
+            try {
+                Files.move(value, f,StandardCopyOption.REPLACE_EXISTING);
+            } catch (IOException e) {
+                throw new NutsIOException(session, e);
+            }
+        } else {
+            copyTo(basePath, other, options);
+            delete(basePath, true);
+        }
+    }
+
+    @Override
+    public void copyTo(NutsPath basePath, NutsPath other, NutsPathOption... options) {
+        NutsCp.of(session).from(NutsPath.of(value, session)).to(other).run();
+    }
+
+    @Override
+    public void walkDfs(NutsPath basePath, NutsTreeVisitor<NutsPath> visitor, int maxDepth, NutsPathOption... options) {
+        Set<FileVisitOption> foptions = new HashSet<>();
+        for (NutsPathOption option : options) {
+            switch (option){
+                case FOLLOW_LINKS:{
+                    foptions.add(FileVisitOption.FOLLOW_LINKS);
+                    break;
+                }
+            }
+        }
+        try {
+            Files.walkFileTree(value, foptions, maxDepth, new FileVisitor<Path>() {
+                @Override
+                public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
+                    return fileVisitResult(visitor.preVisitDirectory(NutsPath.of(dir, session), session));
+                }
+
+                @Override
+                public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+                    return fileVisitResult(visitor.visitFile(NutsPath.of(file, session), session));
+                }
+
+                @Override
+                public FileVisitResult visitFileFailed(Path file, IOException exc) throws IOException {
+                    return fileVisitResult(visitor.visitFileFailed(NutsPath.of(file, session), exc, session));
+                }
+
+                @Override
+                public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
+                    return fileVisitResult(visitor.postVisitDirectory(NutsPath.of(dir, session), exc, session));
+                }
+
+                private FileVisitResult fileVisitResult(NutsTreeVisitResult z) {
+                    if (z != null) {
+                        switch (z) {
+                            case CONTINUE:
+                                return FileVisitResult.CONTINUE;
+                            case TERMINATE:
+                                return FileVisitResult.TERMINATE;
+                            case SKIP_SUBTREE:
+                                return FileVisitResult.SKIP_SUBTREE;
+                            case SKIP_SIBLINGS:
+                                return FileVisitResult.SKIP_SIBLINGS;
+                        }
+                    }
+                    return FileVisitResult.CONTINUE;
+                }
+            });
+        } catch (IOException e) {
+            throw new NutsIOException(getSession(), e);
+        }
     }
 
     @Override

@@ -27,7 +27,9 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.bundles.collections.StringKeyValueList;
 import net.thevpc.nuts.runtime.bundles.io.IProcessExecHelper;
 import net.thevpc.nuts.runtime.core.DefaultNutsClassLoader;
+import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.core.util.CoreNumberUtils;
+import net.thevpc.nuts.runtime.core.util.NutsDebugString;
 import net.thevpc.nuts.runtime.core.util.ProcessExecHelper;
 import net.thevpc.nuts.runtime.standalone.ext.DefaultNutsWorkspaceExtensionManager;
 import net.thevpc.nuts.spi.NutsComponentScope;
@@ -136,7 +138,7 @@ public class JavaExecutorComponent implements NutsExecutorComponent {
                 options.setGui(execSession.isGui());
                 options.setOutLinePrefix(execSession.getOutLinePrefix());
                 options.setErrLinePrefix(execSession.getErrLinePrefix());
-                options.setDebug(execSession.isDebug());
+                options.setDebug(execSession.getDebug());
                 options.setTrace(execSession.isTrace());
                 options.setBot(execSession.isBot());
                 options.setCached(execSession.isCached());
@@ -273,35 +275,21 @@ public class JavaExecutorComponent implements NutsExecutorComponent {
 //                    xargs.add(Dnuts_boot_args);
 //                    args.add(Dnuts_boot_args);
 //                }
-                String jdb = session.boot().getCustomBootOption("jdb").getString();
-                if (jdb != null) {
-                    boolean suspend = true;
-                    int port = 5005;
-                    for (String arg : jdb.split("[ ,]")) {
-                        arg = arg.trim();
-                        if (arg.length() > 0) {
-                            if (arg.matches("[0-9]+")) {
-                                port = CoreNumberUtils.convertToInteger(arg, port);
-                            } else {
-                                NutsArgument a = NutsArgument.of(arg, session);
-                                switch (a.getKey().getString()) {
-                                    case "suspend": {
-                                        boolean b = a.getValue().getBoolean();
-                                        if (a.isNegated()) {
-                                            b = !b;
-                                        }
-                                        suspend = b;
-                                        break;
-                                    }
-                                    case "port": {
-                                        port = a.getValue().getInt();
-                                        break;
-                                    }
-                                }
-                            }
-                        }
+                NutsDebugString jdb = NutsDebugString.of(session.getDebug(), session);
+                if (jdb.isEnabled()) {
+                    int port = jdb.getPort();
+                    if (port <= 0) {
+                        port = 5005;
                     }
-                    String ds = "-agentlib:jdwp=transport=dt_socket,server=y,suspend=" + (suspend ? 'y' : 'n') + ",address=" + port;
+                    int maxPort = jdb.getMaxPort();
+                    if (maxPort < port) {
+                        maxPort = port + 1000;
+                    }
+                    port = CoreIOUtils.detectRandomFreeTcpPort(port, maxPort + 1);
+                    if (port < 0) {
+                        throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("unable to resolve valid debug port %d-%d", port, port + 1000));
+                    }
+                    String ds = "-agentlib:jdwp=transport=dt_socket,server=y,suspend=" + (jdb.isSuspend() ? 'y' : 'n') + ",address=" + port;
                     xargs.add(txt.ofPlain(ds));
                     args.add(ds);
                 }

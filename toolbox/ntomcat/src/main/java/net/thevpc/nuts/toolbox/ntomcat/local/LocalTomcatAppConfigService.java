@@ -148,7 +148,7 @@ public class LocalTomcatAppConfigService extends LocalTomcatServiceBase {
         NutsCp.of(getSession())
                 .from(runningFile)
                 .to(deployFile)
-                .setReplaceExisting(true)
+                .addOptions(NutsPathOption.REPLACE_EXISTING)
                 .run();
         return this;
     }

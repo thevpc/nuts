@@ -90,7 +90,7 @@ public class WgetCommand extends SimpleJShellBuiltin {
         Path file = Paths.get(context.getShellContext().getAbsolutePath(NutsBlankable.isBlank(output2) ? urlName : output2));
         NutsCp.of(session)
                 .from(path).to(file).setSession(session)
-                .setLogProgress(true).run();
+                .addOptions(NutsPathOption.LOG).run();
     }
 
     private static class Options {

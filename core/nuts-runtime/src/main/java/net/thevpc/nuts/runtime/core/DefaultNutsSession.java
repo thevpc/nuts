@@ -54,7 +54,7 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
     private String dependencySolver;
     private Boolean trace;
     private Boolean bot;
-    private Boolean debug;
+    private String debug;
     private NutsRunAs runAs;
 
     private NutsExecutionType executionType;
@@ -729,7 +729,7 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
     public NutsSession copyFrom(NutsWorkspaceOptions options) {
         if (options != null) {
             this.trace = options.isTrace();
-            this.debug = options.isDebug();
+            this.debug = options.getDebug();
             this.progressOptions = options.getProgressOptions();
             this.dry = options.isDry();
             this.cached = options.isCached();
@@ -1303,20 +1303,15 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
     }
 
     @Override
-    public boolean isDebug() {
+    public String getDebug() {
         if (debug == null) {
-            return boot().getBootOptions().isDebug();
+            return boot().getBootOptions().getDebug();
         }
         return debug;
     }
 
     @Override
-    public Boolean getDebug() {
-        return debug;
-    }
-
-    @Override
-    public NutsSession setDebug(Boolean debug) {
+    public NutsSession setDebug(String debug) {
         this.debug = debug;
         return this;
     }

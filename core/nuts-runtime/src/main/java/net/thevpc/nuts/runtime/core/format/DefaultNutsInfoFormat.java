@@ -12,6 +12,7 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
+import net.thevpc.nuts.runtime.core.util.NutsDebugString;
 import net.thevpc.nuts.runtime.standalone.solvers.NutsDependencySolverUtils;
 import net.thevpc.nuts.runtime.standalone.util.NutsJavaSdkUtils;
 import net.thevpc.nuts.runtime.core.util.CoreCommonUtils;
@@ -291,7 +292,7 @@ public class DefaultNutsInfoFormat extends DefaultFormatBase<NutsInfoFormat> imp
         props.put("nuts-inherited", options.isInherited());
         props.put("nuts-recover", options.isRecover());
         props.put("nuts-reset", options.isReset());
-        props.put("nuts-debug", options.isDebug());
+        props.put("nuts-debug", NutsDebugString.of(options.getDebug(),getSession()));
         props.put("nuts-trace", options.isTrace());
         props.put("nuts-read-only", (options.isReadOnly()));
         props.put("nuts-skip-companions", options.isSkipCompanions());

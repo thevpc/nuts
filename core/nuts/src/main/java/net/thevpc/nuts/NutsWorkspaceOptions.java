@@ -350,17 +350,7 @@ public interface NutsWorkspaceOptions extends Serializable {
      */
     String getWorkspace();
 
-    /**
-     * if true, extra debug information is written to standard output.
-     * Particularly, exception stack traces are displayed instead of simpler messages.
-     * <br>
-     * <strong>option-type :</strong> runtime (available only for the current workspace instance)
-     *
-     * @return if true, extra debug information is written to standard output.
-     */
-    boolean isDebug();
-
-    Boolean getDebug();
+    String getDebug();
 
     /**
      * if true consider global/system repository

@@ -221,12 +221,7 @@ public class ReadOnlyNutsWorkspaceOptions implements NutsWorkspaceOptions {
     }
 
     @Override
-    public boolean isDebug() {
-        return options.isDebug();
-    }
-
-    @Override
-    public Boolean getDebug() {
+    public String getDebug() {
         return options.getDebug();
     }
 

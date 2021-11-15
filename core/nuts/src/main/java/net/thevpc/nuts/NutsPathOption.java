@@ -34,27 +34,62 @@ import net.thevpc.nuts.boot.NutsApiUtils;
  * @app.category Base
  * @since 0.8.3
  */
-public enum NutsPathVisitOption implements NutsEnum {
-    FOLLOW_LINKS;
+public enum NutsPathOption implements NutsEnum {
+    /**
+     * follow links
+     */
+    FOLLOW_LINKS,
+
+    /**
+     * replace existing file
+     */
+    REPLACE_EXISTING,
+
+    /**
+     * copy attributes to the new file.
+     */
+    COPY_ATTRIBUTES,
+
+    /**
+     * move the file as an atomic file system operation.
+     */
+    ATOMIC,
+
+    /**
+     * operations involving the path should be interruptible.
+     * @see NutsCp#interrupt()
+     */
+    INTERRUPTIBLE,
+
+    /**
+     * operations are implemented in two passes. copy/move will use a temporary file
+     */
+    SAFE,
+
+    /**
+     * log the copy/move progress
+     */
+    LOG
+    ;
 
     /**
      * lower-cased identifier for the enum entry
      */
     private final String id;
 
-    NutsPathVisitOption() {
+    NutsPathOption() {
         this.id = name().toLowerCase().replace('_', '-');
     }
 
-    public static NutsPathVisitOption parseLenient(String value) {
+    public static NutsPathOption parseLenient(String value) {
         return parseLenient(value, null);
     }
 
-    public static NutsPathVisitOption parseLenient(String value, NutsPathVisitOption emptyOrErrorValue) {
+    public static NutsPathOption parseLenient(String value, NutsPathOption emptyOrErrorValue) {
         return parseLenient(value, emptyOrErrorValue, emptyOrErrorValue);
     }
 
-    public static NutsPathVisitOption parseLenient(String value, NutsPathVisitOption emptyValue, NutsPathVisitOption errorValue) {
+    public static NutsPathOption parseLenient(String value, NutsPathOption emptyValue, NutsPathOption errorValue) {
         if (value == null) {
             value = "";
         } else {
@@ -64,19 +99,19 @@ public enum NutsPathVisitOption implements NutsEnum {
             return emptyValue;
         }
         try {
-            return NutsPathVisitOption.valueOf(value.toUpperCase());
+            return NutsPathOption.valueOf(value.toUpperCase());
         } catch (Exception notFound) {
             return errorValue;
         }
     }
 
-    public static NutsPathVisitOption parse(String value, NutsSession session) {
+    public static NutsPathOption parse(String value, NutsSession session) {
         return parse(value, null, session);
     }
 
-    public static NutsPathVisitOption parse(String value, NutsPathVisitOption emptyValue, NutsSession session) {
-        NutsPathVisitOption v = parseLenient(value, emptyValue, null);
-        NutsApiUtils.checkNonNullEnum(v, value, NutsPathVisitOption.class, session);
+    public static NutsPathOption parse(String value, NutsPathOption emptyValue, NutsSession session) {
+        NutsPathOption v = parseLenient(value, emptyValue, null);
+        NutsApiUtils.checkNonNullEnum(v, value, NutsPathOption.class, session);
         return v;
     }
 

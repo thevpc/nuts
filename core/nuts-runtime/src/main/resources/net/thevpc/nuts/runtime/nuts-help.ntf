@@ -602,6 +602,13 @@ Boot Runtime Version: ###${nuts.workspace-runtime.version}###
         - ##grass##   used as default on windows
         - any file path or url   : define your customized theme
 
+```sh ---debug=port,(suspend|!suspend)``` this option enables running child processes with debug mode.
+   It defaults to ```string "-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=5005" ```
+   Hence it runs by default in server mode, and using socket transport. If the port is not defined, it defaults to ```number 5005```.
+   It the suspend mode is not defined it defaults to ```boolean true```.
+   If this option is encountered as the very first argument, the root jvm process is also run in debug mode.
+   ```sh nuts``` wil  use the first port available starting from the given port number.
+
 ###) NUTS NON STANDARD OPTIONS:
 
 ```sh nuts``` provides extra, non standards options (aka susceptible to change in later versions).
@@ -623,10 +630,6 @@ Non standard options can be used by ```sh nuts``` or any ```sh nuts``` applicati
    It defines the support mode for creating a custom application shortcut for the desktop environment.
 
 
-```sh ---jdb=port,(suspend|!suspend)``` this option enables running child processes with debug mode.
-   It defaults to ```string "-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=5005" ```
-   Hence it runs by default in server mode, and using socket transport. If the port is not defined, it defaults to ```number 5005```.
-   It the suspend mode is not defined it defaults to ```boolean true```
 
 ###) SPECIAL OPTIONS:
 ```sh --version  [<-options>]...```
