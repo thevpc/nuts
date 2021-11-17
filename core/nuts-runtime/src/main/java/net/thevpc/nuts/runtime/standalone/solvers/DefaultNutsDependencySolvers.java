@@ -1,8 +1,8 @@
 package net.thevpc.nuts.runtime.standalone.solvers;
 
 import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.runtime.standalone.config.DefaultNutsWorkspaceConfigManager;
-import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
+import net.thevpc.nuts.runtime.standalone.workspace.config.DefaultNutsWorkspaceConfigManager;
+import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
 import net.thevpc.nuts.spi.NutsDependencySolvers;
 import net.thevpc.nuts.NutsWorkspace;
 import net.thevpc.nuts.spi.NutsDependencySolver;

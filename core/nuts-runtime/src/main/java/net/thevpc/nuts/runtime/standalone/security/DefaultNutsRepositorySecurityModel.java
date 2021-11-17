@@ -9,13 +9,13 @@ import net.thevpc.nuts.*;
 
 import java.util.*;
 
-import net.thevpc.nuts.runtime.core.config.NutsRepositoryConfigManagerExt;
-import net.thevpc.nuts.runtime.core.config.NutsWorkspaceConfigManagerExt;
-import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
-import net.thevpc.nuts.runtime.standalone.wscommands.settings.DefaultNutsAddUserCommand;
-import net.thevpc.nuts.runtime.standalone.wscommands.settings.DefaultNutsRemoveUserCommand;
-import net.thevpc.nuts.runtime.standalone.wscommands.settings.DefaultNutsUpdateUserCommand;
-import net.thevpc.nuts.runtime.standalone.repos.DefaultNutsRepoConfigManager;
+import net.thevpc.nuts.runtime.standalone.workspace.config.NutsRepositoryConfigManagerExt;
+import net.thevpc.nuts.runtime.standalone.workspace.config.NutsWorkspaceConfigManagerExt;
+import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
+import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.user.DefaultNutsAddUserCommand;
+import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.user.DefaultNutsRemoveUserCommand;
+import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.user.DefaultNutsUpdateUserCommand;
+import net.thevpc.nuts.runtime.standalone.repository.config.DefaultNutsRepoConfigManager;
 import net.thevpc.nuts.spi.NutsAuthenticationAgent;
 
 /**

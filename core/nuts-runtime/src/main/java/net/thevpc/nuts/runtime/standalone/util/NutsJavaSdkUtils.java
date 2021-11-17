@@ -1,8 +1,9 @@
 package net.thevpc.nuts.runtime.standalone.util;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.standalone.DefaultNutsWorkspace;
-import net.thevpc.nuts.runtime.standalone.config.NutsSdkLocationComparator;
+import net.thevpc.nuts.runtime.standalone.workspace.DefaultNutsWorkspace;
+import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
+import net.thevpc.nuts.runtime.standalone.workspace.config.NutsSdkLocationComparator;
 
 import java.io.File;
 import java.io.IOException;

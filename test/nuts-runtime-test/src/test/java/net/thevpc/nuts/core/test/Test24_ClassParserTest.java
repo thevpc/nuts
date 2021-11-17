@@ -18,10 +18,10 @@ import java.util.Arrays;
 
 import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.core.test.utils.TestUtils;
-import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
-import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
+import net.thevpc.nuts.runtime.standalone.util.CoreIOUtils;
+import net.thevpc.nuts.runtime.standalone.util.CoreTimeUtils;
+import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
 import net.thevpc.nuts.runtime.bundles.io.SimpleClassStream;
-import net.thevpc.nuts.runtime.core.util.CoreTimeUtils;
 import org.junit.jupiter.api.*;
 
 /**

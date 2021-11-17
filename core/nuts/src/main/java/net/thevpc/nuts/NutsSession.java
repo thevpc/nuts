@@ -631,6 +631,24 @@ public interface NutsSession extends NutsCommandLineConfigurable {
     NutsUpdateStatisticsCommand updateStatistics();
 
     /**
+     * create info format instance
+     *
+     * @return info format
+     * @since 0.8.3
+     */
+    NutsInfoCommand info();
+
+    ////////////////////////////////////
+    /// CONFIG
+    ////////////////////////////////////
+
+    /**
+     * @return new alias/custom command manager instance
+     * @since 0.8.3
+     */
+    NutsCustomCommandManager commands();
+
+    /**
      * @return new extension manager instance
      * @since 0.8.3
      */
@@ -661,13 +679,6 @@ public interface NutsSession extends NutsCommandLineConfigurable {
 
     NutsWorkspaceEventManager events();
 
-    /**
-     * create info format instance
-     *
-     * @return info format
-     * @since 0.8.3
-     */
-    NutsInfoFormat info();
 
     /**
      * @return new import manager instance
@@ -675,11 +686,6 @@ public interface NutsSession extends NutsCommandLineConfigurable {
      */
     NutsImportManager imports();
 
-    /**
-     * @return new alias command manager instance
-     * @since 0.8.3
-     */
-    NutsCustomCommandManager commands();
 
     /**
      * @return new location manager instance

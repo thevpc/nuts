@@ -28,6 +28,7 @@ package net.thevpc.nuts;
 
 import net.thevpc.nuts.boot.NutsApiUtils;
 import net.thevpc.nuts.spi.NutsPathFactory;
+import net.thevpc.nuts.spi.NutsPathSPI;
 import net.thevpc.nuts.spi.NutsPaths;
 
 import java.io.*;
@@ -69,6 +70,12 @@ public interface NutsPath extends NutsFormattable {
     }
 
     static NutsPath of(String path, NutsSession session) {
+        return NutsApiUtils
+                .createSessionCachedType(NutsPaths.class, session, () -> NutsPaths.of(session))
+                .createPath(path, session);
+    }
+
+    static NutsPath of(NutsPathSPI path, NutsSession session) {
         return NutsApiUtils
                 .createSessionCachedType(NutsPaths.class, session, () -> NutsPaths.of(session))
                 .createPath(path, session);
@@ -212,6 +219,10 @@ public interface NutsPath extends NutsFormattable {
     boolean isDirectory();
 
     boolean isRegularFile();
+
+    boolean isRemote();
+
+    boolean isLocal();
 
     boolean exists();
 

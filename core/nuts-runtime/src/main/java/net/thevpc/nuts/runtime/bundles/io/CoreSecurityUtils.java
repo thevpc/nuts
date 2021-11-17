@@ -24,7 +24,7 @@
 package net.thevpc.nuts.runtime.bundles.io;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
+import net.thevpc.nuts.runtime.standalone.util.CoreIOUtils;
 
 import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;

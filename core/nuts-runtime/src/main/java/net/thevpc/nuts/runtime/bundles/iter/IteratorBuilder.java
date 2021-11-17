@@ -14,7 +14,7 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 
 import net.thevpc.nuts.runtime.bundles.io.FileDepthFirstIterator;
-import net.thevpc.nuts.runtime.core.util.CoreCollectionUtils;
+import net.thevpc.nuts.runtime.standalone.util.CoreCollectionUtils;
 
 /**
  *

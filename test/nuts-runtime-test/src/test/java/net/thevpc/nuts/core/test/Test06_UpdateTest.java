@@ -8,7 +8,7 @@ package net.thevpc.nuts.core.test;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.boot.NutsBootWorkspace;
 import net.thevpc.nuts.core.test.utils.TestUtils;
-import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
+import net.thevpc.nuts.runtime.standalone.util.CoreIOUtils;
 import org.junit.jupiter.api.*;
 
 import java.io.ByteArrayInputStream;
@@ -34,7 +34,7 @@ public class Test06_UpdateTest {
     }
 
     @AfterAll
-    public static void tearUpClass() throws IOException {
+    public static void tearUpClass(){
         //CoreIOUtils.delete(null,new File(baseFolder));
     }
 

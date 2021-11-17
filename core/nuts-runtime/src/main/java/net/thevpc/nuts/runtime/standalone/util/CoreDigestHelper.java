@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.util;
 
 import net.thevpc.nuts.NutsUtilStrings;
-import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
+import net.thevpc.nuts.runtime.standalone.util.CoreIOUtils;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;

@@ -5,7 +5,6 @@
  */
 package net.thevpc.nuts.runtime.bundles.io;
 
-import java.io.File;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -16,9 +15,9 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 import net.thevpc.nuts.NutsIdFilter;
-import net.thevpc.nuts.runtime.core.filters.NutsPatternIdFilter;
-import net.thevpc.nuts.runtime.core.filters.id.NutsIdFilterAnd;
-import net.thevpc.nuts.runtime.core.filters.id.NutsIdFilterOr;
+import net.thevpc.nuts.runtime.standalone.id.filter.NutsIdFilterAnd;
+import net.thevpc.nuts.runtime.standalone.id.filter.NutsIdFilterOr;
+import net.thevpc.nuts.runtime.standalone.id.filter.NutsPatternIdFilter;
 
 /**
  *

@@ -39,7 +39,7 @@ public interface NutsPathSPI {
 
     NutsStream<NutsPath> list(NutsPath basePath);
 
-    NutsFormatSPI getFormatterSPI(NutsPath basePath);
+    NutsFormatSPI formatter(NutsPath basePath);
 
     String getName(NutsPath basePath);
 
@@ -64,6 +64,8 @@ public interface NutsPathSPI {
     boolean isOther(NutsPath basePath);
 
     boolean isDirectory(NutsPath basePath);
+
+    boolean isLocal(NutsPath basePath);
 
     boolean isRegularFile(NutsPath basePath);
 
@@ -107,7 +109,7 @@ public interface NutsPathSPI {
 
     String group(NutsPath basePath);
 
-    Set<NutsPathPermission> permissions(NutsPath basePath);
+    Set<NutsPathPermission> getPermissions(NutsPath basePath);
 
     void setPermissions(NutsPath basePath, NutsPathPermission... permissions);
 

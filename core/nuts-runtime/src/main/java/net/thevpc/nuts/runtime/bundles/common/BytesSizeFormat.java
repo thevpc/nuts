@@ -3,7 +3,7 @@ package net.thevpc.nuts.runtime.bundles.common;
 import net.thevpc.nuts.NutsIllegalArgumentException;
 import net.thevpc.nuts.NutsMessage;
 import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
+import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 
 /**
  * Created by vpc on 3/20/17.

@@ -2,14 +2,13 @@ package net.thevpc.nuts.runtime.standalone.io.progress;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.bundles.common.CorePlatformUtils;
-import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
-import net.thevpc.nuts.runtime.core.format.text.FPrintCommands;
+import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
+import net.thevpc.nuts.runtime.standalone.text.FPrintCommands;
 
 import java.util.Calendar;
-import java.util.Set;
 
-import net.thevpc.nuts.runtime.core.util.CoreNutsUtils;
-import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
+import net.thevpc.nuts.runtime.standalone.util.CoreNutsUtils;
+import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
 
 /**
  *

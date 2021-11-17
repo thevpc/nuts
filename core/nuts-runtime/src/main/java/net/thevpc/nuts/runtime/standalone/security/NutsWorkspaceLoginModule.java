@@ -27,9 +27,8 @@ package net.thevpc.nuts.runtime.standalone.security;
 
 import net.thevpc.nuts.NutsConstants;
 import net.thevpc.nuts.NutsUserConfig;
-import net.thevpc.nuts.NutsWorkspace;
-import net.thevpc.nuts.runtime.core.config.NutsWorkspaceConfigManagerExt;
-import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
+import net.thevpc.nuts.runtime.standalone.workspace.config.NutsWorkspaceConfigManagerExt;
+import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import com.sun.security.auth.UserPrincipal;
 
 import javax.security.auth.Subject;
@@ -40,7 +39,6 @@ import javax.security.auth.spi.LoginModule;
 import java.io.IOException;
 import java.util.Map;
 import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
 
 public class NutsWorkspaceLoginModule implements LoginModule {
 

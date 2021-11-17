@@ -48,6 +48,46 @@ final class PrivateNutsUtils {
 
     private static final Pattern DOLLAR_PLACE_HOLDER_PATTERN = Pattern.compile("[$][{](?<name>([a-zA-Z]+))[}]");
 
+    public static String compressString(String s){
+        StringBuilder sb=new StringBuilder(s.length());
+        for (char c : s.toCharArray()) {
+            switch (c){
+                case '\0':{
+                    sb.append("\\0");
+                    break;
+                }
+                case '\n':{
+                    sb.append("\\n");
+                    break;
+                }
+                case '\r':{
+                    sb.append("\\r");
+                    break;
+                }
+                case '\t':{
+                    sb.append("\\t");
+                    break;
+                }
+                case '\f':{
+                    sb.append("\\f");
+                    break;
+                }
+                default:{
+                    sb.append(c);
+                }
+            }
+        }
+        return sb.toString();
+    }
+    public static String leftAlign(String s,int size){
+        int len = s.length();
+        StringBuilder sb=new StringBuilder(Math.max(len,size));
+        sb.append(s);
+        for (int i = len; i < size; i++) {
+            sb.append(' ');
+        }
+        return sb.toString();
+    }
     public static boolean isValidWorkspaceName(String workspace) {
         if (NutsBlankable.isBlank(workspace)) {
             return true;

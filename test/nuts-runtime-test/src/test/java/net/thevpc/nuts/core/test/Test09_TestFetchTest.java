@@ -13,15 +13,15 @@ public class Test09_TestFetchTest {
                 .setDependencies(true)
                 .setContent(true)
                 .getResultDefinition();
-        System.out.println("-----------------");
+        TestUtils.println("-----------------");
         for (NutsDependency dependency : resultDefinition.getDescriptor().getDependencies()) {
-            System.out.println(dependency);
+            TestUtils.println(dependency);
         }
-        System.out.println("-----------------");
+        TestUtils.println("-----------------");
         for (NutsDependency dependency : resultDefinition.getDependencies()) {
-            System.out.println(dependency);
+            TestUtils.println(dependency);
         }
-        System.out.println("-----------------");
+        TestUtils.println("-----------------");
         show(resultDefinition.getDependencies().nodes().toArray(new NutsDependencyTreeNode[0]), "");
     }
 
@@ -46,7 +46,7 @@ public class Test09_TestFetchTest {
     }
 
     public void show(NutsDependencyTreeNode n,String prefix){
-        System.out.println(prefix+n.getDependency()+(n.isPartial()?" (partial)":""));
+        TestUtils.println(prefix+n.getDependency()+(n.isPartial()?" (partial)":""));
         for (NutsDependencyTreeNode child : n.getChildren()) {
             show(child,prefix+"    ");
         }

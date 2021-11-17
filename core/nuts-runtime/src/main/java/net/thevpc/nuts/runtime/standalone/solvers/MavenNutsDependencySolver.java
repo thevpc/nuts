@@ -1,9 +1,9 @@
 package net.thevpc.nuts.runtime.standalone.solvers;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.core.filters.CoreFilterUtils;
-import net.thevpc.nuts.runtime.core.model.DefaultNutsDependencies;
-import net.thevpc.nuts.runtime.core.model.DefaultNutsDependencyTreeNode;
+import net.thevpc.nuts.runtime.standalone.util.filters.CoreFilterUtils;
+import net.thevpc.nuts.runtime.standalone.dependency.DefaultNutsDependencies;
+import net.thevpc.nuts.runtime.standalone.dependency.DefaultNutsDependencyTreeNode;
 import net.thevpc.nuts.spi.NutsDependencySolver;
 
 import java.util.*;

@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.bundles.mvn;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.core.format.xml.NutsXmlUtils;
+import net.thevpc.nuts.runtime.standalone.format.xml.NutsXmlUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;

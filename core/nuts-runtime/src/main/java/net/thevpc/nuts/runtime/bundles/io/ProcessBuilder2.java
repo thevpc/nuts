@@ -24,11 +24,11 @@
 package net.thevpc.nuts.runtime.bundles.io;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.core.app.DefaultNutsArgument;
-import net.thevpc.nuts.runtime.core.app.NutsCommandLineShellOptions;
-import net.thevpc.nuts.runtime.core.shell.NutsShellHelper;
-import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
-import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
+import net.thevpc.nuts.runtime.standalone.app.cmdline.DefaultNutsArgument;
+import net.thevpc.nuts.runtime.standalone.app.cmdline.NutsCommandLineShellOptions;
+import net.thevpc.nuts.runtime.standalone.shell.NutsShellHelper;
+import net.thevpc.nuts.runtime.standalone.util.CoreIOUtils;
+import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 
 import java.io.*;
 import java.lang.reflect.Field;

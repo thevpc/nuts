@@ -100,17 +100,5 @@ public interface NutsWorkspaceExtensionManager {
 
     NutsWorkspaceExtensionManager setSession(NutsSession session);
 
-    /**
-     * create an instance of a supported Nuts Type
-     *
-     * @param type     type interface
-     * @param name     constructor type, null for 'default'
-     * @param argTypes argument types
-     * @param args     argument instances
-     * @param <T>      type interface
-     * @return new instance of T or error
-     */
-    <T> T create(Class<T> type, String name, Class[] argTypes, Object[] args);
-
 
 }

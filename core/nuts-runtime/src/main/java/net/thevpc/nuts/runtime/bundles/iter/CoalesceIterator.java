@@ -8,7 +8,7 @@ package net.thevpc.nuts.runtime.bundles.iter;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Queue;
-import net.thevpc.nuts.runtime.core.util.CoreCommonUtils;
+import net.thevpc.nuts.runtime.standalone.util.CoreCommonUtils;
 
 /**
  *

@@ -24,9 +24,9 @@
 package net.thevpc.nuts.runtime.standalone.installers;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.standalone.DefaultNutsInstallInfo;
-import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
-import net.thevpc.nuts.runtime.core.model.DefaultNutsDefinition;
+import net.thevpc.nuts.runtime.standalone.definition.DefaultNutsInstallInfo;
+import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
+import net.thevpc.nuts.runtime.standalone.definition.DefaultNutsDefinition;
 import net.thevpc.nuts.spi.NutsInstallerComponent;
 import net.thevpc.nuts.spi.NutsSupportLevelContext;
 

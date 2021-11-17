@@ -5,7 +5,7 @@ import java.util.Map;
 import java.util.function.Function;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
+import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
 import net.thevpc.nuts.spi.NutsAuthenticationAgent;
 
 class WrapperNutsAuthenticationAgent {

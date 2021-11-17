@@ -120,7 +120,6 @@ public interface NutsLogger {
      * set terminal logger level
      *
      * @param level new level
-     * @return this
      */
     static void setTermLevel(Level level, NutsSession session) {
         NutsLogManager.of(session).setTermLevel(level, session);

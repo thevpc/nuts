@@ -296,6 +296,14 @@ public interface NutsElements extends NutsContentTypeFormat {
     NutsElement parse(File file);
 
     /**
+     * parse file as a valid object of the given type
+     *
+     * @param file source URL
+     * @return element
+     */
+    NutsElement parse(NutsPath file);
+
+    /**
      * convert element to the specified object if applicable or throw an
      * exception.
      *

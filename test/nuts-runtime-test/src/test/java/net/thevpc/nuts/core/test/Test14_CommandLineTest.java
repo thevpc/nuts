@@ -7,7 +7,7 @@ package net.thevpc.nuts.core.test;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.core.test.utils.TestUtils;
-import net.thevpc.nuts.runtime.core.app.DefaultNutsArgument;
+import net.thevpc.nuts.runtime.standalone.app.cmdline.DefaultNutsArgument;
 import org.junit.jupiter.api.*;
 
 import java.io.IOException;

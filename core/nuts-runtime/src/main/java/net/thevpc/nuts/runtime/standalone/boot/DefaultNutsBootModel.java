@@ -25,13 +25,13 @@ package net.thevpc.nuts.runtime.standalone.boot;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.bundles.common.CorePlatformUtils;
-import net.thevpc.nuts.runtime.core.DefaultNutsSession;
-import net.thevpc.nuts.runtime.core.app.DefaultNutsArgument;
-import net.thevpc.nuts.runtime.core.terminals.DefaultNutsSessionTerminalFromSystem;
-import net.thevpc.nuts.runtime.core.terminals.DefaultNutsSystemTerminalBaseBoot;
-import net.thevpc.nuts.runtime.core.terminals.DefaultSystemTerminal;
+import net.thevpc.nuts.runtime.standalone.session.DefaultNutsSession;
+import net.thevpc.nuts.runtime.standalone.app.cmdline.DefaultNutsArgument;
+import net.thevpc.nuts.runtime.standalone.io.terminals.DefaultNutsSessionTerminalFromSystem;
+import net.thevpc.nuts.runtime.standalone.io.terminals.DefaultNutsSystemTerminalBaseBoot;
+import net.thevpc.nuts.runtime.standalone.io.terminals.DefaultSystemTerminal;
 import net.thevpc.nuts.runtime.optional.jansi.OptionalJansi;
-import net.thevpc.nuts.runtime.standalone.io.NutsPrintStreamSystem;
+import net.thevpc.nuts.runtime.standalone.io.printstream.NutsPrintStreamSystem;
 
 import java.io.InputStream;
 import java.util.LinkedHashMap;

@@ -1,5 +1,6 @@
 package net.thevpc.nuts.core.test;
 
+import net.thevpc.nuts.core.test.utils.TestUtils;
 import net.thevpc.nuts.runtime.bundles.collections.EvictingCharQueue;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -9,7 +10,7 @@ public class Test27_CollectionsTest {
     @Test
     public void testEvictingCharQueue1(){
         EvictingCharQueue q=new EvictingCharQueue(1);
-        System.out.println(q);
+        TestUtils.println(q);
 
         q.add('a');
         Assertions.assertEquals("a",q.toString());
@@ -30,7 +31,7 @@ public class Test27_CollectionsTest {
     @Test
     public void testEvictingCharQueue2(){
         EvictingCharQueue q=new EvictingCharQueue(2);
-        System.out.println(q);
+        TestUtils.println(q);
 
         q.add('a');
         Assertions.assertEquals("a",q.toString());
@@ -51,7 +52,7 @@ public class Test27_CollectionsTest {
     @Test
     public void testEvictingCharQueue3(){
         EvictingCharQueue q=new EvictingCharQueue(3);
-        System.out.println(q);
+        TestUtils.println(q);
 
         q.add('a');
         Assertions.assertEquals("a",q.toString());

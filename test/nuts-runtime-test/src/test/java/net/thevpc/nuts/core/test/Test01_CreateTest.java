@@ -49,9 +49,9 @@ public class Test01_CreateTest {
 //        String str="  /\\ _";
 //        String str=" ```underlined prototype``` ";
 
-//        System.out.println("---------------------------------");
-//        System.out.println(str);
-//        System.out.println("---------------------------------");
+//        TestUtils.println("---------------------------------");
+//        TestUtils.println(str);
+//        TestUtils.println("---------------------------------");
 //        session.out().println(str);
 //        NutsLogger _log = session.log().of("example");
 //        _log.with()
@@ -59,11 +59,11 @@ public class Test01_CreateTest {
 //                .log(str);
         String str =
                 "a\n\nb";
-        System.out.println("-----------------------");
-        System.out.println(str);
+        TestUtils.println("-----------------------");
+        TestUtils.println(str);
         NutsText txt = NutsTexts.of(session).parse(str);
-        System.out.println("-----------------------");
-        System.out.println(txt);
+        TestUtils.println("-----------------------");
+        TestUtils.println(txt);
     }
 
     @Test
@@ -353,7 +353,7 @@ public class Test01_CreateTest {
             Assertions.assertNotNull(r);
         }
         {
-            NutsInfoFormat r = NutsInfoFormat.of(s);
+            NutsInfoCommand r = NutsInfoCommand.of(s);
             Assertions.assertNotNull(r);
         }
         {

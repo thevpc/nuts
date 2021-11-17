@@ -377,6 +377,38 @@ public final class NutsBootWorkspace {
             preparedWorkspace = true;
             if (LOG.isLoggable(Level.CONFIG)) {
                 LOG.log(Level.CONFIG, NutsLogVerb.START, NutsMessage.jstyle("bootstrap Nuts version {0} - digest {1}...", Nuts.getVersion(), getApiDigest()));
+                LOG.log(Level.CONFIG, NutsLogVerb.START, NutsMessage.jstyle("boot-class-path:"));
+                for (String s : System.getProperty("java.class.path").split(File.pathSeparator)) {
+                    LOG.log(Level.CONFIG, NutsLogVerb.START, NutsMessage.jstyle("                  {0}", s));
+                }
+                ClassLoader thisClassClassLoader = getClass().getClassLoader();
+                LOG.log(Level.CONFIG, NutsLogVerb.START, NutsMessage.jstyle("class-loader: {0}", thisClassClassLoader));
+                for (URL url : PrivateNutsUtilClassLoader.resolveClasspathURLs(thisClassClassLoader, false)) {
+                    LOG.log(Level.CONFIG, NutsLogVerb.START, NutsMessage.jstyle("                 {0}", url));
+                }
+                ClassLoader tctxloader = Thread.currentThread().getContextClassLoader();
+                if (tctxloader != thisClassClassLoader) {
+                    LOG.log(Level.CONFIG, NutsLogVerb.START, NutsMessage.jstyle("thread-class-loader: {0}", tctxloader));
+                    for (URL url : PrivateNutsUtilClassLoader.resolveClasspathURLs(tctxloader, false)) {
+                        LOG.log(Level.CONFIG, NutsLogVerb.START, NutsMessage.jstyle("                 {0}", url));
+                    }
+                }
+                ClassLoader contextClassLoader = getContextClassLoader();
+                LOG.log(Level.CONFIG, NutsLogVerb.START, NutsMessage.jstyle("ctx-class-loader: {0}", contextClassLoader));
+                if (contextClassLoader != null) {
+                    for (URL url : PrivateNutsUtilClassLoader.resolveClasspathURLs(contextClassLoader, false)) {
+                        LOG.log(Level.CONFIG, NutsLogVerb.START, NutsMessage.jstyle("                 {0}", url));
+                    }
+                }
+                LOG.log(Level.CONFIG, NutsLogVerb.START, NutsMessage.jstyle("system-properties:", contextClassLoader));
+                Map<String, String> m = (Map) System.getProperties();
+                int max = m.keySet().stream().mapToInt(String::length).max().getAsInt();
+                for (Map.Entry<String, String> e : m.entrySet()) {
+                    LOG.log(Level.CONFIG, NutsLogVerb.START, NutsMessage.jstyle("    {0} = {1}",
+                            PrivateNutsUtils.leftAlign(e.getKey(), max),
+                            PrivateNutsUtils.compressString(e.getValue())
+                    ));
+                }
             }
             workspaceInformation = new PrivateNutsWorkspaceInitInformation();
             workspaceInformation.setOptions(options);

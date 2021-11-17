@@ -26,7 +26,7 @@
 package net.thevpc.nuts.runtime.bundles.io;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.standalone.repos.main.DefaultNutsInstalledRepository;
+import net.thevpc.nuts.runtime.standalone.repository.impl.main.DefaultNutsInstalledRepository;
 
 import java.io.IOException;
 import java.util.Iterator;

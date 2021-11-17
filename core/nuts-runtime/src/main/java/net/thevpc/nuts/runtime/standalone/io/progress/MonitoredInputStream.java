@@ -29,7 +29,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.NutsInputStreamMetadataAware;
 import net.thevpc.nuts.runtime.bundles.io.InterruptException;
 import net.thevpc.nuts.runtime.bundles.io.Interruptible;
-import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
+import net.thevpc.nuts.runtime.standalone.util.CoreIOUtils;
 
 import java.io.IOException;
 import java.io.InputStream;

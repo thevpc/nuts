@@ -7,13 +7,8 @@ package net.thevpc.nuts.core.test;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.core.test.utils.TestUtils;
-import java.io.File;
-import java.io.IOException;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
 import org.junit.jupiter.api.*;
 
 /**
@@ -56,13 +51,10 @@ public class Test05_FindTest {
 
     @Test()
     public void find3() throws Exception {
-        //should throw NutsNotFoundException because
-        //would not be able to install nsh and other companions
         NutsSession s = TestUtils.openNewTestWorkspace(
                 "--archetype", "default",
                 "--skip-companions");
 
-        int count = 0;
         NutsStream<NutsId> result = s.search()
                 .setSession(s.setFetchStrategy(NutsFetchStrategy.REMOTE))
                 .setLatest(true).addId(NutsConstants.Ids.NUTS_API).getResultIds();

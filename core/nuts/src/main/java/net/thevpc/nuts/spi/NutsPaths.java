@@ -30,6 +30,7 @@ public interface NutsPaths extends NutsComponent {
     NutsPath createPath(URL path, NutsSession session);
 
     NutsPath createPath(String path, ClassLoader classLoader, NutsSession session);
+    NutsPath createPath(NutsPathSPI path, NutsSession session);
 
     NutsPaths addPathFactory(NutsPathFactory pathFactory, NutsSession session);
 

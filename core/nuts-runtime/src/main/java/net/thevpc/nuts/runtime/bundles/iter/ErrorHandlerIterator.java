@@ -5,7 +5,7 @@
  */
 package net.thevpc.nuts.runtime.bundles.iter;
 
-import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
+import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 
 import java.util.Iterator;
 import java.util.logging.Level;

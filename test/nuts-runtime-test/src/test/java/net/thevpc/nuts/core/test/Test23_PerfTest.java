@@ -30,14 +30,13 @@ import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.core.test.utils.TestUtils;
 import net.thevpc.nuts.runtime.bundles.nanodb.NanoDB;
 import net.thevpc.nuts.runtime.bundles.nanodb.NanoDBTableFile;
-import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
+import net.thevpc.nuts.runtime.standalone.util.CoreIOUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
 
 /**
- *
  * @author thevpc
  */
 public class Test23_PerfTest {
@@ -54,49 +53,49 @@ public class Test23_PerfTest {
 
     public static class Test26_NanoDBTest {
         @Test
-        public void test1(){
+        public void test1() {
             NutsSession session = TestUtils.openNewTestWorkspace();
             for (String s : new String[]{"", "a", "ab", "abc"}) {
-                System.out.println("getUTFLength(\""+s+"\")="+ NanoDBTableFile.getUTFLength(s,session));
+                TestUtils.println("getUTFLength(\"" + s + "\")=" + NanoDBTableFile.getUTFLength(s, session));
             }
-            System.out.println("getUTFLength(\"Hammadi\")="+ NanoDBTableFile.getUTFLength("Hammadi",session));
-            NanoDB db=new NanoDB(TestUtils.initFolder(".test-bd").toFile());
-            NanoDBTableFile<Person> test=db.tableBuilder(Person.class,session).setNullable(false).addAllFields().addIndices("id").create();
-            test.add(new Person(1,"Hammadi"),session);
-            test.add(new Person(2,"Hammadi"),session);
-            test.add(new Person(1,"Hammadi"),session);
-            test.add(new Person(4,"Hammadi"),session);
-            System.out.println("getFileLength="+test.getFileLength());
-            test.findByIndex("id",1,session).forEach(x->{
-                System.out.println(x);
+            TestUtils.println("getUTFLength(\"Hammadi\")=" + NanoDBTableFile.getUTFLength("Hammadi", session));
+            NanoDB db = new NanoDB(TestUtils.initFolder(".test-bd").toFile());
+            NanoDBTableFile<Person> test = db.tableBuilder(Person.class, session).setNullable(false).addAllFields().addIndices("id").create();
+            test.add(new Person(1, "Hammadi"), session);
+            test.add(new Person(2, "Hammadi"), session);
+            test.add(new Person(1, "Hammadi"), session);
+            test.add(new Person(4, "Hammadi"), session);
+            TestUtils.println("getFileLength=" + test.getFileLength());
+            test.findByIndex("id", 1, session).forEach(x -> {
+                TestUtils.println(x);
             });
-            test.findIndexValues("id",session).forEach(x->{
-                System.out.println(x);
+            test.findIndexValues("id", session).forEach(x -> {
+                TestUtils.println(x);
             });
         }
 
         @Test
-        public void testPerf(){
-            NutsSession session = TestUtils.openExistingTestWorkspace();
+        public void testPerf() {
+            NutsSession session = TestUtils.openExistingTestWorkspace("-Zy", "--verbose");
             File dir = TestUtils.initFolder(".test-db-perf").toFile();
             long from = System.currentTimeMillis();
-            CoreIOUtils.delete(null,dir);
-            try(NanoDB db=new NanoDB(dir)) {
-                NanoDBTableFile<Person> test=db.tableBuilder(Person.class,session).setNullable(false).addIndices("id").create();
+            CoreIOUtils.delete(null, dir);
+            try (NanoDB db = new NanoDB(dir)) {
+                NanoDBTableFile<Person> test = db.tableBuilder(Person.class, session).setNullable(false).addIndices("id").create();
                 int c = 1000;
                 for (int i = 0; i < c * 10; i++) {
-                    test.add(new Person(i % 10, "Hammadi"),session);
+                    test.add(new Person(i % 10, "Hammadi"), session);
                 }
                 long to = System.currentTimeMillis();
-                System.out.println(to - from);
+                TestUtils.println(to - from);
                 from = System.currentTimeMillis();
-                System.out.println(test.findByIndex("id", 1,session).count());
+                TestUtils.println(test.findByIndex("id", 1, session).count());
                 to = System.currentTimeMillis();
-                System.out.println(to - from);
+                TestUtils.println(to - from);
             }
         }
 
-        public static class Person{
+        public static class Person {
             private int id;
             private String name;
 

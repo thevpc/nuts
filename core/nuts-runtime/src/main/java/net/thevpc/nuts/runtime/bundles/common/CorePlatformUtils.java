@@ -27,8 +27,8 @@ package net.thevpc.nuts.runtime.bundles.common;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.bundles.io.SimpleClassStream;
-import net.thevpc.nuts.runtime.core.filters.CoreFilterUtils;
-import net.thevpc.nuts.runtime.core.util.CoreStringUtils;
+import net.thevpc.nuts.runtime.standalone.util.filters.CoreFilterUtils;
+import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 
 import java.io.*;
 import java.lang.reflect.Modifier;

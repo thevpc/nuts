@@ -60,8 +60,10 @@ public interface NutsWorkspace extends NutsComponent {
 
     String getLocation();
 
-    ///////////////////// factory
+    ///////////////////// create new session
     NutsSession createSession();
+
+    ///////////////////// Commands
 
     NutsSearchCommand search();
 
@@ -83,6 +85,13 @@ public interface NutsWorkspace extends NutsComponent {
 
     NutsUpdateStatisticsCommand updateStatistics();
 
+    /**
+     * create info command instance
+     *
+     * @return info format
+     * @since 0.5.5
+     */
+    NutsInfoCommand info();
 
     ///////////////////// sub system
     NutsWorkspaceExtensionManager extensions();
@@ -94,14 +103,6 @@ public interface NutsWorkspace extends NutsComponent {
     NutsWorkspaceSecurityManager security();
 
     NutsWorkspaceEventManager events();
-
-    /**
-     * create info format instance
-     *
-     * @return info format
-     * @since 0.5.5
-     */
-    NutsInfoFormat info();
 
     NutsImportManager imports();
 

@@ -26,7 +26,7 @@ package net.thevpc.nuts.runtime.standalone.security;
 import net.thevpc.nuts.*;
 
 import javax.security.auth.callback.*;
-import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
+import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
 import net.thevpc.nuts.spi.NutsAuthenticationAgent;
 
 /**

@@ -68,7 +68,7 @@ class SshNutsPath implements NutsPathSPI {
     }
 
     @Override
-    public NutsFormatSPI getFormatterSPI(NutsPath basePath) {
+    public NutsFormatSPI formatter(NutsPath basePath) {
         return new NutsFormatSPI() {
             @Override
             public void print(NutsPrintStream out) {
@@ -394,7 +394,7 @@ class SshNutsPath implements NutsPathSPI {
     }
 
     @Override
-    public Set<NutsPathPermission> permissions(NutsPath basePath) {
+    public Set<NutsPathPermission> getPermissions(NutsPath basePath) {
         return Collections.emptySet();
     }
 
@@ -577,5 +577,10 @@ class SshNutsPath implements NutsPathSPI {
         if (o == null || getClass() != o.getClass()) return false;
         SshNutsPath that = (SshNutsPath) o;
         return Objects.equals(path, that.path);
+    }
+
+    @Override
+    public boolean isLocal(NutsPath basePath) {
+        return false;
     }
 }

@@ -2,8 +2,8 @@ package net.thevpc.nuts.core.test;
 
 import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.core.test.utils.TestUtils;
-import net.thevpc.nuts.runtime.standalone.bridges.maven.LuceneIndexImporter;
-import net.thevpc.nuts.runtime.standalone.index.ArtifactsIndexDB;
+import net.thevpc.nuts.runtime.standalone.repository.impl.maven.util.LuceneIndexImporter;
+import net.thevpc.nuts.runtime.standalone.repository.index.ArtifactsIndexDB;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -18,7 +18,7 @@ public class Test25_LuceneTest {
                 ), "maven-central", session
         );
         long countRead = ArtifactsIndexDB.of(session).findAll(session).count();
-        System.out.println(countWritten);
+        TestUtils.println(countWritten);
         Assertions.assertEquals(countWritten,countRead);
     }
 }

@@ -24,12 +24,10 @@
 package net.thevpc.nuts.runtime.standalone.boot;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.core.NutsWorkspaceExt;
-import net.thevpc.nuts.runtime.core.NutsWorkspaceModel;
-import net.thevpc.nuts.runtime.standalone.DefaultNutsVal;
-import net.thevpc.nuts.runtime.standalone.config.DefaultNutsWorkspaceConfigManager;
-import net.thevpc.nuts.runtime.standalone.config.DefaultNutsWorkspaceConfigModel;
-import net.thevpc.nuts.runtime.standalone.util.NutsWorkspaceUtils;
+import net.thevpc.nuts.runtime.standalone.xtra.vals.DefaultNutsVal;
+import net.thevpc.nuts.runtime.standalone.workspace.config.DefaultNutsWorkspaceConfigManager;
+import net.thevpc.nuts.runtime.standalone.workspace.config.DefaultNutsWorkspaceConfigModel;
+import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
 
 import java.net.URL;
 

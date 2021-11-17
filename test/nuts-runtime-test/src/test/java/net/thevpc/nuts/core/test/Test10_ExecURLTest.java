@@ -8,15 +8,8 @@ package net.thevpc.nuts.core.test;
 import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.NutsVersionFormat;
 import net.thevpc.nuts.core.test.utils.TestUtils;
-import net.thevpc.nuts.NutsOsFamily;
-import net.thevpc.nuts.NutsWorkspace;
-import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
 import org.junit.jupiter.api.*;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  *

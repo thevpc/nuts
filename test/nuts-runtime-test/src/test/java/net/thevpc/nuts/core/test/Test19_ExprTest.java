@@ -26,10 +26,9 @@ package net.thevpc.nuts.core.test;
 import net.thevpc.nuts.NutsExpr;
 import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.core.test.utils.TestUtils;
-import net.thevpc.nuts.runtime.core.expr.StreamTokenizerExt;
+import net.thevpc.nuts.runtime.standalone.xtra.expr.StreamTokenizerExt;
 import org.junit.jupiter.api.*;
 
-import java.io.IOException;
 import java.io.StringReader;
 
 /**
@@ -76,7 +75,7 @@ public class Test19_ExprTest {
         NutsExpr expr = NutsExpr.of(session);
         _retain(expr,"infix:+");
         NutsExpr.Node n = expr.parse("1+2+3");
-        System.out.println(n);
+        TestUtils.println(n);
         Assertions.assertEquals("1 + 2 + 3",n.toString());
     }
 
@@ -86,7 +85,7 @@ public class Test19_ExprTest {
         NutsExpr expr = NutsExpr.of(session);
 //        _retain(expr,"infix:+");
         NutsExpr.Node n = expr.parse("1+2*3");
-        System.out.println(n);
+        TestUtils.println(n);
         Assertions.assertEquals("1 + 2 * 3",n.toString());
     }
 
@@ -102,7 +101,7 @@ public class Test19_ExprTest {
 
         int s;
         while ((s = st.nextToken()) != StreamTokenizerExt.TT_EOF) {
-            System.out.println(st.image);
+            TestUtils.println(st.image);
         }
     }
 }

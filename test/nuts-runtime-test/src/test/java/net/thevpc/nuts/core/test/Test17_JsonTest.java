@@ -54,11 +54,11 @@ public class Test17_JsonTest {
 //                .setNtf(false)
 //                .format();
 
-//        System.out.println(NutsTexts.of(session).forPlain("a@@@"));
-//        System.out.println(NutsTexts.of(session).forPlain("a@@@").filteredText());
+//        TestUtils.println(NutsTexts.of(session).forPlain("a@@@"));
+//        TestUtils.println(NutsTexts.of(session).forPlain("a@@@").filteredText());
 
-        System.out.println(NutsTexts.of(session).ofPlain("a##@"));
-        System.out.println(NutsTexts.of(session).ofPlain("a##@").filteredText());
+        TestUtils.println(NutsTexts.of(session).ofPlain("a##@"));
+        TestUtils.println(NutsTexts.of(session).ofPlain("a##@").filteredText());
 
     }
 
@@ -209,7 +209,7 @@ public class Test17_JsonTest {
                                 "    },\n" +
                                 "}"
                 );
-        System.out.println(a);
+        TestUtils.println(a);
 //        NutsString e = ws.elem()
 //                .setContentType(NutsContentType.JSON)
 //                .setValue("a@@@")
@@ -218,11 +218,11 @@ public class Test17_JsonTest {
 //                .setNtf(false)
 //                .format();
 
-//        System.out.println(NutsTexts.of(session).forPlain("a@@@"));
-//        System.out.println(NutsTexts.of(session).forPlain("a@@@").filteredText());
+//        TestUtils.println(NutsTexts.of(session).forPlain("a@@@"));
+//        TestUtils.println(NutsTexts.of(session).forPlain("a@@@").filteredText());
 
-        System.out.println(NutsTexts.of(ws).ofPlain("a##@"));
-        System.out.println(NutsTexts.of(ws).ofPlain("a##@").filteredText());
+        TestUtils.println(NutsTexts.of(ws).ofPlain("a##@"));
+        TestUtils.println(NutsTexts.of(ws).ofPlain("a##@").filteredText());
 
     }
 

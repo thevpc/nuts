@@ -8,9 +8,8 @@ package net.thevpc.nuts.runtime.standalone.util;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.bundles.io.UnzipOptions;
 import net.thevpc.nuts.runtime.bundles.io.ZipUtils;
-import net.thevpc.nuts.runtime.core.CoreNutsConstants;
-import net.thevpc.nuts.runtime.core.model.DefaultNutsDefinition;
-import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
+import net.thevpc.nuts.runtime.standalone.definition.DefaultNutsDefinition;
+import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
 
 import java.io.IOException;
 import java.nio.file.Files;

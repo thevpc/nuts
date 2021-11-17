@@ -1,8 +1,8 @@
 package net.thevpc.nuts.runtime.bundles.io;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.core.NutsWorkspaceExt;
-import net.thevpc.nuts.runtime.core.filters.id.AbstractIdFilter;
+import net.thevpc.nuts.runtime.standalone.id.filter.AbstractIdFilter;
+import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceExt;
 
 public class NutsInstallStatusIdFilter extends AbstractIdFilter {
     private NutsInstallStatusFilter installStatus;

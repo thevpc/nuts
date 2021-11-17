@@ -7,7 +7,7 @@ package net.thevpc.nuts.runtime.bundles.io;
 
 import net.thevpc.nuts.NutsInputStreamMetadataAware;
 import net.thevpc.nuts.NutsInputStreamMetadata;
-import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
+import net.thevpc.nuts.runtime.standalone.util.CoreIOUtils;
 
 import java.io.IOException;
 import java.io.InputStream;

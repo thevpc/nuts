@@ -17,9 +17,9 @@ public class Test21_SecurityTest {
     public void testEncrypt(){
         NutsSession session = TestUtils.openNewTestWorkspace();
         char[] r = CoreSecurityUtils.defaultEncryptChars("Hello".toCharArray(), "okkay",session);
-        System.out.println(new String(r));
+        TestUtils.println(new String(r));
         char[] i = CoreSecurityUtils.defaultDecryptChars(r, "okkay",session);
-        System.out.println(new String(i));
+        TestUtils.println(new String(i));
     }
 
     private void testHelperRetrievable(NutsAuthenticationAgent a) {

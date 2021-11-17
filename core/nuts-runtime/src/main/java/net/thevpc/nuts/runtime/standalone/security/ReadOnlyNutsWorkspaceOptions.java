@@ -25,7 +25,7 @@ package net.thevpc.nuts.runtime.standalone.security;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.boot.NutsBootTerminal;
-import net.thevpc.nuts.runtime.core.model.CoreNutsWorkspaceOptions;
+import net.thevpc.nuts.runtime.standalone.workspace.CoreNutsWorkspaceOptions;
 
 import java.io.InputStream;
 import java.io.PrintStream;

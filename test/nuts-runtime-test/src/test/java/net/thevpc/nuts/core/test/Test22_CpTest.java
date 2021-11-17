@@ -9,11 +9,9 @@ import java.io.ByteArrayOutputStream;
 
 import net.thevpc.nuts.*;
 
-import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
 
-import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
+import net.thevpc.nuts.runtime.standalone.util.CoreIOUtils;
 import org.junit.jupiter.api.*;
 import net.thevpc.nuts.core.test.utils.*;
 

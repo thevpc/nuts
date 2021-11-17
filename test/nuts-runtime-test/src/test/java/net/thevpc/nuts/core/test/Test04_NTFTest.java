@@ -27,18 +27,13 @@ package net.thevpc.nuts.core.test;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.core.test.utils.*;
-import net.thevpc.nuts.runtime.core.format.text.NutsTextNodeWriter;
-import net.thevpc.nuts.runtime.core.format.text.NutsTextNodeWriterRenderer;
-import net.thevpc.nuts.runtime.core.format.text.parser.DefaultNutsTextNodeParser;
-import net.thevpc.nuts.runtime.core.format.text.renderer.AnsiUnixTermPrintRenderer;
-import net.thevpc.nuts.runtime.core.util.CoreIOUtils;
-import org.junit.jupiter.api.AfterAll;
+import net.thevpc.nuts.runtime.standalone.text.NutsTextNodeWriter;
+import net.thevpc.nuts.runtime.standalone.text.NutsTextNodeWriterRenderer;
+import net.thevpc.nuts.runtime.standalone.text.parser.DefaultNutsTextNodeParser;
+import net.thevpc.nuts.runtime.standalone.text.renderer.AnsiUnixTermPrintRenderer;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import java.io.File;
-import java.io.IOException;
 import java.io.StringReader;
 
 /**
@@ -53,7 +48,7 @@ public class Test04_NTFTest {
                 "--skip-companions");
         NutsTexts txt = NutsTexts.of(session);
         NutsText parsed = txt.parse("##:error0:n#01##");
-        System.out.println(parsed);
+        TestUtils.println(parsed);
     }
 
     @Test
@@ -71,9 +66,9 @@ public class Test04_NTFTest {
         String qs = q.toString();
         NutsText q2 = txt.parse(qs);
         q2 = txt.parse(qs);
-        System.out.println(qs);
+        TestUtils.println(qs);
         NutsText parsed = txt.parse("##:error0:n#01##");
-        System.out.println(parsed);
+        TestUtils.println(parsed);
     }
 
     @Test
@@ -89,9 +84,9 @@ public class Test04_NTFTest {
         String str = "##:p2:╭───╮##\u001E\n##:p3:│##";
         NutsText q = txt.parse(str);
         q = txt.parse(str);
-        System.out.println(q);
+        TestUtils.println(q);
         NutsText parsed = txt.parse("##:error0:n#01##");
-        System.out.println(parsed);
+        TestUtils.println(parsed);
     }
 
     @Test
@@ -107,7 +102,7 @@ public class Test04_NTFTest {
         String str = "##{error0:##{error0:not installed : ##:p1:ntomcat##\u001E}##\u001E}##\u001E";
         NutsText q2 = txt.parse(str);
         String str2 = q2.toString();
-        System.out.println(str2);
+        TestUtils.println(str2);
     }
 
 
@@ -162,7 +157,7 @@ public class Test04_NTFTest {
                 "##:separator0:}##\u001E";
         NutsText q2 = txt.parse(str);
         String str2 = q2.toString();
-        System.out.println(str2);
+        TestUtils.println(str2);
     }
     @Test
     public void test06() {
@@ -215,7 +210,7 @@ public class Test04_NTFTest {
                 "##:separator0:}##\u001E";
         NutsText q2 = txt.parse(str);
         String str2 = q2.toString();
-        System.out.println(str2);
+        TestUtils.println(str2);
     }
 
     @Test
@@ -230,7 +225,7 @@ public class Test04_NTFTest {
         String str = "##{string:a#b}##";
         NutsText q2 = txt.parse(str);
         String str2 = q2.toString();
-        System.out.println(str2);
+        TestUtils.println(str2);
     }
 
 
@@ -243,7 +238,7 @@ public class Test04_NTFTest {
         String str = "##:string:\"a#b\"##";
         NutsText q2 = txt.parse(str);
         String str2 = q2.toString();
-        System.out.println(str2);
+        TestUtils.println(str2);
     }
 
     @Test
@@ -251,7 +246,7 @@ public class Test04_NTFTest {
         NutsSession session = TestUtils.openNewTestWorkspace("-ZSkK");
         NutsTexts text = NutsTexts.of(session);
         NutsTextStyled q = text.ofStyled("re-install", NutsTextStyles.of(NutsTextStyle.success(), NutsTextStyle.underlined()));
-        System.out.println(q.toString());
+        TestUtils.println(q.toString());
     }
 
 
@@ -277,7 +272,7 @@ public class Test04_NTFTest {
 //    }
 
     private static void writeColors(String s) {
-        System.out.println(s);
+        TestUtils.println(s);
         NutsSession ws = TestUtils.openNewTestWorkspace("--verbose","--skip-companions");
         {
             NutsText node = new DefaultNutsTextNodeParser(ws).parse(new StringReader(s));
@@ -289,7 +284,7 @@ public class Test04_NTFTest {
 //            w = new NutsTextNodeWriterRenderer(bout, AnsiUnixTermPrintRenderer.ANSI_RENDERER, ws)
 //                    .setWriteConfiguration(new NutsTextWriteConfiguration().setTitleNumberEnabled(true));
 //            w.writeNode(text);
-//            System.out.println(bout);
+//            TestUtils.println(bout);
 
     }
 
@@ -340,20 +335,20 @@ public class Test04_NTFTest {
 //                "\n#########) njob" +
 //                "\n##########) njob" +
 //                "";
-//        System.out.println(text);
-//        System.out.println("\n--------------------------------");
+//        TestUtils.println(text);
+//        TestUtils.println("\n--------------------------------");
 //        NutsTextNodeParser parser = new DefaultNutsTextNodeParser(ws);
 //        NutsText node = parser.parse(new StringReader(text));
-//        System.out.println(node);
-//        System.out.println("\n--------------------------------");
+//        TestUtils.println(node);
+//        TestUtils.println("\n--------------------------------");
 //        w.writeNode(node);
-//        System.out.println("\n--------------------------------");
+//        TestUtils.println("\n--------------------------------");
 //        w2.writeNode(node, new NutsTextWriteConfiguration().setTitleNumberEnabled(true));
 //
 ////        ByteArrayOutputStream bos = new ByteArrayOutputStream();
 ////        PrintStream out = new PrintStream(new FormatOutputStream(bos));
 ////        out.println("[#tet] hello == \\= me");
-////        System.out.println("as a result :: " + new String(bos.toByteArray()));
+////        TestUtils.println("as a result :: " + new String(bos.toByteArray()));
 //    }
 //
 //    @Test
@@ -395,20 +390,20 @@ public class Test04_NTFTest {
 //                        "\n ##\u001E###hello###me##" +
 //                        "\n ## ###hello### me##" +
 //                        "";
-//        System.out.println(text);
-//        System.out.println("\n--------------------------------");
+//        TestUtils.println(text);
+//        TestUtils.println("\n--------------------------------");
 //        NutsTextNodeParser parser = new DefaultNutsTextNodeParser(ws);
 //        NutsText node = parser.parse(new StringReader(text));
-//        System.out.println(node);
-//        System.out.println("\n--------------------------------");
+//        TestUtils.println(node);
+//        TestUtils.println("\n--------------------------------");
 //        w.writeNode(node);
-//        System.out.println("\n--------------------------------");
+//        TestUtils.println("\n--------------------------------");
 //        w2.writeNode(node, new NutsTextWriteConfiguration().setTitleNumberEnabled(true));
 //
 ////        ByteArrayOutputStream bos = new ByteArrayOutputStream();
 ////        PrintStream out = new PrintStream(new FormatOutputStream(bos));
 ////        out.println("[#tet] hello == \\= me");
-////        System.out.println("as a result :: " + new String(bos.toByteArray()));
+////        TestUtils.println("as a result :: " + new String(bos.toByteArray()));
 //    }
 //
 //    @Test
@@ -422,20 +417,20 @@ public class Test04_NTFTest {
 //        NutsTextNodeWriterStringer w2 = new NutsTextNodeWriterStringer(System.out, ws);
 ////        String text = "[#tet] hello == \\= me\n";
 //        String text = "unable to create system terminal : %s";
-//        System.out.println(text);
-//        System.out.println("\n--------------------------------");
+//        TestUtils.println(text);
+//        TestUtils.println("\n--------------------------------");
 //        NutsTextNodeParser parser = new DefaultNutsTextNodeParser(ws);
 //        NutsText node = parser.parse(new StringReader(text));
-//        System.out.println(node);
-//        System.out.println("\n--------------------------------");
+//        TestUtils.println(node);
+//        TestUtils.println("\n--------------------------------");
 //        w.writeNode(node);
-//        System.out.println("\n--------------------------------");
+//        TestUtils.println("\n--------------------------------");
 //        w2.writeNode(node, new NutsTextWriteConfiguration().setTitleNumberEnabled(true));
 //
 ////        ByteArrayOutputStream bos = new ByteArrayOutputStream();
 ////        PrintStream out = new PrintStream(new FormatOutputStream(bos));
 ////        out.println("[#tet] hello == \\= me");
-////        System.out.println("as a result :: " + new String(bos.toByteArray()));
+////        TestUtils.println("as a result :: " + new String(bos.toByteArray()));
 //    }
 //
 //    @Test
@@ -465,7 +460,7 @@ public class Test04_NTFTest {
 //        {
 //            String t_string = "###\u001E####aa####\u001E###";
 //            NutsText node = new DefaultNutsTextNodeParser(ws).parse(new StringReader(t_string));
-//            System.out.println();
+//            TestUtils.println();
 //            NutsTextNodeWriter w = new NutsTextNodeWriterStringer(System.out, ws)
 //                    .setWriteConfiguration(new NutsTextWriteConfiguration().setTitleNumberEnabled(true));
 //            Assertions.assertTrue(
@@ -709,7 +704,7 @@ public class Test04_NTFTest {
 ////            w = new NutsTextNodeWriterRenderer(bout, AnsiUnixTermPrintRenderer.ANSI_RENDERER, ws)
 ////                    .setWriteConfiguration(new NutsTextWriteConfiguration().setTitleNumberEnabled(true));
 ////            w.writeNode(text);
-////            System.out.println(bout);
+////            TestUtils.println(bout);
 //        }
 //    }
 //
@@ -727,7 +722,7 @@ public class Test04_NTFTest {
 ////            w = new NutsTextNodeWriterRenderer(bout, AnsiUnixTermPrintRenderer.ANSI_RENDERER, ws)
 ////                    .setWriteConfiguration(new NutsTextWriteConfiguration().setTitleNumberEnabled(true));
 ////            w.writeNode(text);
-////            System.out.println(bout);
+////            TestUtils.println(bout);
 //        }
 //    }
 //
@@ -752,10 +747,10 @@ public class Test04_NTFTest {
 //        String s;
 //        s = "##{s12:AA##:12:BB##\u001E##:6:CC##DD}##";
 //        writeColors(s);
-//        System.out.println();
+//        TestUtils.println();
 //        s = "##{s12:AA#}##";
 //        writeColors(s);
-//        System.out.println();
+//        TestUtils.println();
 //    }
 //
 //    @Test
@@ -967,7 +962,7 @@ public class Test04_NTFTest {
                 "--skip-companions");
         NutsTexts text = NutsTexts.of(session);
         NutsText str = text.ofStyled("re-install", NutsTextStyles.of(NutsTextStyle.success(), NutsTextStyle.underlined()));
-        System.out.println(str.toString());
+        TestUtils.println(str.toString());
         Assertions.assertEquals("##:_,success:re-install##\u001E",str.toString());
     }
 
