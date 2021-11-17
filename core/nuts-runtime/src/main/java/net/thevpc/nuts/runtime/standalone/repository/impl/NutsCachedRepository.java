@@ -267,7 +267,7 @@ public class NutsCachedRepository extends AbstractNutsRepositoryBase {
                 if (cache.isReadEnabled()) {
                     all.add(cache.searchVersions(id, idFilter, true, session));
                 }
-                Iterator<NutsId> p = null;
+//                Iterator<NutsId> p = null;
 //                try {
 //                    p = searchVersionsImpl2(id, idFilter, session);
 //                    if (p != null) {

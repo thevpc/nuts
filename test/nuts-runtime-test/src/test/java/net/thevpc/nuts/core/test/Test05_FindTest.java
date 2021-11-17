@@ -34,29 +34,25 @@ public class Test05_FindTest {
     }
 
     @Test()
-    public void find2() throws Exception {
-        //should throw NutsNotFoundException because
-        //would not be able to install nsh and other companions
+    public void find2() {
         NutsSession s = TestUtils.openNewTestWorkspace(
-//                "--archetype", "minimal",
-                "--skip-companions" //            "--verbose"
+                "--archetype", "minimal",
+                "--skip-companions"
         );
 
         NutsStream<NutsId> result = s.search()
-                .setSession(s.setFetchStrategy(NutsFetchStrategy.REMOTE))
                 .setLatest(true).addId(NutsConstants.Ids.NUTS_API).getResultIds();
         //There is one result because nuts id is always installed
-        Assertions.assertEquals(1, result.count());
+        Assertions.assertTrue(result.count()>0);
     }
 
     @Test()
-    public void find3() throws Exception {
+    public void find3() {
         NutsSession s = TestUtils.openNewTestWorkspace(
                 "--archetype", "default",
                 "--skip-companions");
 
         NutsStream<NutsId> result = s.search()
-                .setSession(s.setFetchStrategy(NutsFetchStrategy.REMOTE))
                 .setLatest(true).addId(NutsConstants.Ids.NUTS_API).getResultIds();
         Assertions.assertTrue(result.count() > 0);
     }

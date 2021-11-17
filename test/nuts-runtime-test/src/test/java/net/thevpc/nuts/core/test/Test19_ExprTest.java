@@ -91,7 +91,7 @@ public class Test19_ExprTest {
 
     @Test
     public void testTokenized() {
-        NutsSession session = TestUtils.openExistingTestWorkspace();
+        NutsSession session = TestUtils.openNewTestWorkspace();
         StreamTokenizerExt st = new StreamTokenizerExt(new StringReader("8.0.0"),session);
         st.xmlComments(true);
         st.doNotParseNumbers();

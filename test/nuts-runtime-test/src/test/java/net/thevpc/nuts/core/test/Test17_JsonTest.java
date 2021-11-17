@@ -70,9 +70,9 @@ public class Test17_JsonTest {
         NutsElement a = NutsElements.of(ws).json()
                 .parse(
                         "{\n" +
-                                "    title: 'NCA Coding Standards',\n" +
+                                "    title: 'Some Title',\n" +
                                 "    tagline: 'The official coding standards for main programming languages',\n" +
-                                "    url: 'https://nca.gov.sa',\n" +
+                                "    url: 'https://something.there',\n" +
                                 "    baseUrl: '/',\n" +
                                 "    onBrokenLinks: 'throw',\n" +
                                 "    favicon: 'img/favicon.ico',\n" +
@@ -80,9 +80,9 @@ public class Test17_JsonTest {
                                 "    projectName: 'ksa-nca-coding-standards', // Usually your repo name.\n" +
                                 "    themeConfig: {\n" +
                                 "        navbar: {\n" +
-                                "            title: 'NCA Coding Standards',\n" +
+                                "            title: 'Any Title',\n" +
                                 "            logo: {\n" +
-                                "                alt: 'NCA Logo',\n" +
+                                "                alt: 'Logo',\n" +
                                 "                src: 'img/logo-small.jpeg',\n" +
                                 "            },\n" +
                                 "            items: [\n" +
@@ -94,8 +94,8 @@ public class Test17_JsonTest {
                                 "                }/*,\n" +
                                 "                 {to: 'blog', label: 'Blog', position: 'left'},\n" +
                                 "                 {\n" +
-                                "                 href: 'https://nca.gov.sa.temp',\n" +
-                                "                 label: 'NCA website',\n" +
+                                "                 href: 'https://hello.temp',\n" +
+                                "                 label: 'Jello',\n" +
                                 "                 position: 'right',\n" +
                                 "                 },*/\n" +
                                 "            ],\n" +
@@ -107,7 +107,7 @@ public class Test17_JsonTest {
                                 "                    title: 'Docs',\n" +
                                 "                    items: [\n" +
                                 "                        {\n" +
-                                "                            label: 'Coding Standards Guide',\n" +
+                                "                            label: 'Guide',\n" +
                                 "                            to: 'docs/',\n" +
                                 "                        }\n" +
                                 "                    ],\n" +
@@ -143,7 +143,7 @@ public class Test17_JsonTest {
                                 "//                    ],\n" +
                                 "//                },\n" +
                                 "            ],\n" +
-                                "            copyright: `Copyright © ${new Date().getFullYear()} NCA 2020.`,\n" +
+                                "            copyright: `Copyright © ${new Date().getFullYear()} 2020.`,\n" +
                                 "        },\n" +
                                 "        prism: {\n" +
                                 "            additionalLanguages: ['powershell', 'csharp', 'scala'],\n" +

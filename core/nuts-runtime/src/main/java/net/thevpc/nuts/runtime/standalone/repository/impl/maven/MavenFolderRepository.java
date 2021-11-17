@@ -76,14 +76,10 @@ public class MavenFolderRepository extends NutsCachedRepository {
     protected boolean isAvailableImpl() {
         try {
             NutsPath loc = config().setSession(initSession).getLocation(true);
-            return loc.isDirectory();
+            return loc.exists();
         } catch (Exception e) {
             return false;
         }
-    }
-
-    private NutsPath getLocationAsPath(NutsSession session) {
-        return config().setSession(session).getLocation(true);
     }
 
     @Override
