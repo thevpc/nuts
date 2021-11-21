@@ -69,7 +69,7 @@ public class DefaultNutsArrayElementBuilder implements NutsArrayElementBuilder {
     @Override
     public NutsArrayElementBuilder addAll(NutsArrayElement value) {
         if (value == null) {
-            add(_elements().forNull());
+            add(_elements().ofNull());
         } else {
             for (NutsElement child : value.children()) {
                 add(child);
@@ -89,7 +89,7 @@ public class DefaultNutsArrayElementBuilder implements NutsArrayElementBuilder {
     @Override
     public NutsArrayElementBuilder addAll(NutsArrayElementBuilder value) {
         if (value == null) {
-            add(_elements().forNull());
+            add(_elements().ofNull());
         } else {
             for (NutsElement child : value.children()) {
                 add(child);
@@ -211,47 +211,47 @@ public class DefaultNutsArrayElementBuilder implements NutsArrayElementBuilder {
 
     @Override
     public NutsArrayElementBuilder add(int value) {
-        return add(_elements().forInt(value));
+        return add(_elements().ofInt(value));
     }
 
     @Override
     public NutsArrayElementBuilder add(long value) {
-        return add(_elements().forLong(value));
+        return add(_elements().ofLong(value));
     }
 
     @Override
     public NutsArrayElementBuilder add(double value) {
-        return add(_elements().forDouble(value));
+        return add(_elements().ofDouble(value));
     }
 
     @Override
     public NutsArrayElementBuilder add(float value) {
-        return add(_elements().forFloat(value));
+        return add(_elements().ofFloat(value));
     }
 
     @Override
     public NutsArrayElementBuilder add(byte value) {
-        return add(_elements().forByte(value));
+        return add(_elements().ofByte(value));
     }
 
     @Override
     public NutsArrayElementBuilder add(boolean value) {
-        return add(_elements().forBoolean(value));
+        return add(_elements().ofBoolean(value));
     }
 
     @Override
     public NutsArrayElementBuilder add(char value) {
-        return add(_elements().forString(String.valueOf(value)));
+        return add(_elements().ofString(String.valueOf(value)));
     }
 
     @Override
     public NutsArrayElementBuilder add(Number value) {
-        return add(_elements().forNumber(value));
+        return add(_elements().ofNumber(value));
     }
 
     @Override
     public NutsArrayElementBuilder add(String value) {
-        return add(_elements().forString(value));
+        return add(_elements().ofString(value));
     }
 
     @Override
@@ -266,7 +266,7 @@ public class DefaultNutsArrayElementBuilder implements NutsArrayElementBuilder {
 
     private NutsElement denull(NutsElement e) {
         if (e == null) {
-            return _elements().forNull();
+            return _elements().ofNull();
         }
         return e;
     }

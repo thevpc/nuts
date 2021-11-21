@@ -247,7 +247,7 @@ public class NutsElementFactoryXmlElement implements NutsElementMapper<Node> {
         NutsElements f = NutsElements.of(context.getSession());
         switch (type) {
             case "null": {
-                return f.forNull();
+                return f.ofNull();
             }
             case "number": {
                 return context.objectToElement(value, Number.class);
@@ -256,10 +256,10 @@ public class NutsElementFactoryXmlElement implements NutsElementMapper<Node> {
                 return context.objectToElement(value, Boolean.class);
             }
             case "true": {
-                return f.forTrue();
+                return f.ofTrue();
             }
             case "false": {
-                return f.forTrue();
+                return f.ofTrue();
             }
             case "byte": {
                 return context.objectToElement(value, Byte.class);
@@ -451,21 +451,21 @@ public class NutsElementFactoryXmlElement implements NutsElementMapper<Node> {
         NutsElements elements = NutsElements.of(context.getSession()).setSession(context.getSession());
         if (node instanceof Attr) {
             Attr at = (Attr) node;
-            return elements.forObject().set(at.getName(), context.objectToElement(at.getValue(), String.class)).build();
+            return elements.ofObject().set(at.getName(), context.objectToElement(at.getValue(), String.class)).build();
         }
         if (node instanceof CDATASection) {
             CDATASection d = (CDATASection) node;
-            return elements.forString(d.getWholeText());
+            return elements.ofString(d.getWholeText());
         }
         if (node instanceof Text) {
             Text d = (Text) node;
-            return elements.forString(d.getWholeText());
+            return elements.ofString(d.getWholeText());
         }
         Element element = (Element) node;
         NodeInfo ni = new NodeInfo(element);
         switch (ni.type) {
             case "object": {
-                NutsObjectElementBuilder obj = elements.forObject();
+                NutsObjectElementBuilder obj = elements.ofObject();
                 NamedNodeMap attrs = element.getAttributes();
                 for (int i = 0; i < attrs.getLength(); i++) {
                     Attr n = (Attr) attrs.item(i);
@@ -486,7 +486,7 @@ public class NutsElementFactoryXmlElement implements NutsElementMapper<Node> {
                 return obj.build();
             }
             case "array": {
-                NutsArrayElementBuilder obj = elements.forArray();
+                NutsArrayElementBuilder obj = elements.ofArray();
                 NodeList attrs = element.getChildNodes();
                 for (int i = 0; i < attrs.getLength(); i++) {
                     Node n = (Node) attrs.item(i);

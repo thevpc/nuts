@@ -34,14 +34,14 @@ public class RemoteNutsSearchCommand extends AbstractNutsSearchCommand {
     protected Iterator<NutsId> getResultIdIteratorBase(Boolean forceInlineDependencies) {
         NutsSession session = getSession();
         NutsElements e = NutsElements.of(getSession()).setSession(getSession());
-        NutsObjectElementBuilder eb = e.forObject()
+        NutsObjectElementBuilder eb = e.ofObject()
                 .set("execType", getExecType())
                 .set("defaultVersions", getDefaultVersions())
                 .set("targetApiVersion", getTargetApiVersion().toString())
                 .set("optional", getOptional())
-                .set("arch", e.forArray().addAll(getArch()).build())
-                .set("packaging", e.forArray().addAll(getPackaging()).build())
-                .set("ids", e.forArray().addAll(Arrays.stream(getIds())
+                .set("arch", e.ofArray().addAll(getArch()).build())
+                .set("packaging", e.ofArray().addAll(getPackaging()).build())
+                .set("ids", e.ofArray().addAll(Arrays.stream(getIds())
                         .map(Object::toString).toArray(String[]::new)).build());
         if (getIdFilter() != null) {
             eb.set("idFilter", e.toElement(getIdFilter()));
@@ -50,10 +50,10 @@ public class RemoteNutsSearchCommand extends AbstractNutsSearchCommand {
             eb.set("descriptorFilter", NutsElements.of(getSession()).toElement(getDescriptorFilter()));
         }
         if (getInstallStatus() != null) {
-            eb.set("installStatus", e.forString(getInstallStatus().toString()));
+            eb.set("installStatus", e.ofString(getInstallStatus().toString()));
         }
         if (getRepositoryFilter() != null) {
-            eb.set("repositories", e.forString(getRepositoryFilter().toString()));
+            eb.set("repositories", e.ofString(getRepositoryFilter().toString()));
         }
 
         return getWorkspace().remoteCall(

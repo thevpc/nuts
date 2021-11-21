@@ -13,7 +13,7 @@ public abstract class RemoteNutsWorkspace extends AbstractNutsWorkspace {
     public NutsElement createCall(String commandName, NutsElement body,NutsSession session) {
         try (NTalkClient cli = new NTalkClient()) {
             NutsElements e = NutsElements.of(session).json();
-            NutsObjectElement q = e.forObject()
+            NutsObjectElement q = e.ofObject()
                     .set("cmd", commandName)
                     .set("body", body).build();
             NutsString json = e.setValue(q).format();
@@ -21,10 +21,10 @@ public abstract class RemoteNutsWorkspace extends AbstractNutsWorkspace {
             byte[] result = cli.request("nuts/ws:"+wsURL, json.toString().getBytes());
             NutsObjectElement resultObject = e.parse(result, NutsObjectElement.class);
             NutsElements prv = NutsElements.of(session);
-            boolean success = resultObject.get(prv.forString("success")
+            boolean success = resultObject.get(prv.ofString("success")
                     ).asPrimitive().getBoolean();
             if (success) {
-                return resultObject.get(prv.forString("body"));
+                return resultObject.get(prv.ofString("body"));
             } else {
                 //TODO mush deserialize exception
                 throw new NutsException(session, NutsMessage.cstyle("unable to call %s",
@@ -35,11 +35,11 @@ public abstract class RemoteNutsWorkspace extends AbstractNutsWorkspace {
 
     public NutsElement createCall(String commandName, String callId, NutsElement body,NutsSession session) {
         NutsElements e = NutsElements.of(session);
-        return e.forObject()
+        return e.ofObject()
                 .set(
                         "cmd",
-                        e.forString(commandName))
-                .set("id", e.forString(callId))
+                        e.ofString(commandName))
+                .set("id", e.ofString(callId))
                 .set("body", body).build();
     }
 

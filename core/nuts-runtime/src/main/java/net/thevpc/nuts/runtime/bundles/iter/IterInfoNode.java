@@ -89,10 +89,10 @@ public class IterInfoNode {
     }
 
     public static IterInfoNode resolveOrString(String type, Object o, NutsSession session) {
-        Predicate<Type> destructTypeFilter = NutsElements.of(session).setFormatDestructTypeFilter().getDestructTypeFilter();
+        Predicate<Type> destructTypeFilter = NutsElements.of(session).setIndestructibleFormat().getIndestructibleObjects();
         IterInfoNode a = resolveOrNull(null, o, session);
         if (a == null) {
-            if(o==null || !destructTypeFilter.test(o.getClass())){
+            if(o==null || destructTypeFilter.test(o.getClass())){
                 return ofLiteralType(type,null, null, o);
             }
             return ofLiteralType(type,null, null, String.valueOf(o));

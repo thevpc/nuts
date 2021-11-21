@@ -566,7 +566,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
             a.add(_elems().toElement(o));
             return createTableModel(_elems().toElement(a));
         }
-        o = _elems().setFormatDestructTypeFilter().destruct(o);
+        o = _elems().setIndestructibleFormat().destruct(o);
         if (o instanceof Collection) {
             NutsMutableTableModel model = NutsMutableTableModel.of(getSession());
             LinkedHashSet<String> columns = new LinkedHashSet<>();
@@ -584,7 +584,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
                             for (NutsElementEntry vv : elem2.asObject().children()) {
                                 NutsElement k = vv.getKey();
                                 if (!k.isString()) {
-                                    k = _elems().forString(
+                                    k = _elems().ofString(
                                             k.toString()
                                     );
                                 }
@@ -689,7 +689,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
                             for (NutsElementEntry vv : elem2.asObject().children()) {
                                 NutsElement k = vv.getKey();
                                 if (!k.isString()) {
-                                    k = _elems().forString(
+                                    k = _elems().ofString(
                                             k.toString()
                                     );
                                 }
@@ -732,7 +732,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
                     for (NutsElementEntry nutsNamedValue : value.asObject().children()) {
                         NutsElement k = nutsNamedValue.getKey();
                         if (!k.isString()) {
-                            k = _elems().forString(
+                            k = _elems().ofString(
                                     k.toString()
                             );
                         }

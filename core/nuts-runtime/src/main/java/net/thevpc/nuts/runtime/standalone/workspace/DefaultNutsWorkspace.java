@@ -645,9 +645,9 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                             )
                     );
                 } else {
-                    defaultSession().eout().add(elems.forObject()
+                    defaultSession().eout().add(elems.ofObject()
                             .set("workspace-loaded-in",
-                                    elems.forObject()
+                                    elems.ofObject()
                                             .set("ms", _boot.getCreationFinishTimeMillis() - _boot.getCreationStartTimeMillis())
                                             .set("text", CoreTimeUtils.formatPeriodMilli(_boot.getCreationFinishTimeMillis() - _boot.getCreationStartTimeMillis()))
                                             .build()

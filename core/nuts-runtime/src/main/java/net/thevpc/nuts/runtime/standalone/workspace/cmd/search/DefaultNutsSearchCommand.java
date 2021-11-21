@@ -587,13 +587,19 @@ public class DefaultNutsSearchCommand extends AbstractNutsSearchCommand {
                                 if(repoAndMode.getFetchMode()==fm) {
                                     consideredRepos.add(repoAndMode.getRepository());
                                     NutsRepositorySPI repoSPI = wu.repoSPI(repoAndMode.getRepository());
-                                    idLookup.add(IteratorBuilder.ofLazyNamed("searchVersions("
-                                                    + repoAndMode.getRepository().getName() + ","
-                                                    + repoAndMode.getFetchMode() + "," + sRepositoryFilter + "," + session + ")",
-                                            () -> repoSPI.searchVersions().setId(nutsId1).setFilter(filter)
-                                                    .setSession(session)
-                                                    .setFetchMode(repoAndMode.getFetchMode())
-                                                    .getResult()).safeIgnore().iterator()
+
+                                    idLookup.add(
+
+                                            IteratorBuilder.of(repoSPI.searchVersions().setId(nutsId1).setFilter(filter)
+                                                            .setSession(session)
+                                                            .setFetchMode(repoAndMode.getFetchMode())
+                                                            .getResult())
+                                                            .withDefaultInfo(
+                                                                    IterInfoNode.ofLiteral("searchVersions",null
+                                                                            ,IterInfoNode.resolveOrStringNonNull("repository",repoAndMode.getRepository().getName(),session)
+                                                                            ,IterInfoNode.resolveOrStringNonNull("filter",sRepositoryFilter,session)
+                                                                    ),session
+                                                            ).safeIgnore().iterator()
                                     );
                                 }
                             }

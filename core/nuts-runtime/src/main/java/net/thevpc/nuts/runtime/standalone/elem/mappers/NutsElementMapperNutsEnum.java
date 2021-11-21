@@ -17,7 +17,7 @@ public class NutsElementMapperNutsEnum implements NutsElementMapper<NutsEnum> {
     }
 
     public NutsElement createElement(NutsEnum src, Type typeOfSrc, NutsElementFactoryContext context) {
-        return context.elem().forString(src.id());
+        return context.elem().ofString(src.id());
     }
 
     @Override

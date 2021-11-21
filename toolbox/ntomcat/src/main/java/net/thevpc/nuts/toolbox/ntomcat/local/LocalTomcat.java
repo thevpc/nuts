@@ -6,12 +6,6 @@ import net.thevpc.nuts.toolbox.ntomcat.util.NamedItemNotFoundException;
 import net.thevpc.nuts.toolbox.ntomcat.util.RunningTomcat;
 import net.thevpc.nuts.toolbox.ntomcat.util.TomcatUtils;
 
-import java.io.IOException;
-import java.io.UncheckedIOException;
-import java.nio.file.DirectoryStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -467,7 +461,7 @@ public class LocalTomcat {
                 );
             } else {
                 session.eout().add(
-                        NutsElements.of(session).forObject()
+                        NutsElements.of(session).ofObject()
                                 .set("config-name", name)
                                 .set("status", "not-found")
                                 .build()

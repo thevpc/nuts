@@ -324,67 +324,71 @@ public interface NutsElements extends NutsContentTypeFormat {
 //     */
 //    NutsPrimitiveElementBuilder forPrimitive();
 
+    <T> T fromElement(NutsElement o, Class<T> to);
+
     //    NutsElementEntryBuilder forEntry();
-    NutsElementEntry forEntry(NutsElement key, NutsElement value);
+    NutsElementEntry ofEntry(NutsElement key, NutsElement value);
 
     /**
      * create object element builder (mutable)
      *
      * @return object element
      */
-    NutsObjectElementBuilder forObject();
+    NutsObjectElementBuilder ofObject();
 
     /**
      * create array element builder (mutable)
      *
      * @return array element
      */
-    NutsArrayElementBuilder forArray();
+    NutsArrayElementBuilder ofArray();
 
     //    public NutsPrimitiveElement forNutsString(NutsString str) {
     //        return str == null ? DefaultNutsPrimitiveElementBuilder.NULL : new DefaultNutsPrimitiveElement(NutsElementType.NUTS_STRING, str);
     //    }
-    NutsPrimitiveElement forBoolean(String value);
+    NutsPrimitiveElement ofBoolean(String value);
 
-    NutsPrimitiveElement forBoolean(boolean value);
+    NutsPrimitiveElement ofBoolean(boolean value);
 
-    NutsPrimitiveElement forString(String str);
+    NutsPrimitiveElement ofString(String str);
 
-    NutsPrimitiveElement forTrue();
+    NutsCustomElement ofCustom(Object object);
 
-    NutsPrimitiveElement forFalse();
+    NutsPrimitiveElement ofTrue();
 
-    NutsPrimitiveElement forInstant(Instant instant);
+    NutsPrimitiveElement ofFalse();
 
-    NutsPrimitiveElement forFloat(Float value);
+    NutsPrimitiveElement ofInstant(Instant instant);
 
-    NutsPrimitiveElement forInt(Integer value);
+    NutsPrimitiveElement ofFloat(Float value);
 
-    NutsPrimitiveElement forLong(Long value);
+    NutsPrimitiveElement ofInt(Integer value);
 
-    NutsPrimitiveElement forNull();
+    NutsPrimitiveElement ofLong(Long value);
 
-    NutsPrimitiveElement forNumber(String value);
+    NutsPrimitiveElement ofNull();
 
-    NutsPrimitiveElement forInstant(Date value);
+    NutsPrimitiveElement ofNumber(String value);
 
-    NutsPrimitiveElement forInstant(String value);
+    NutsPrimitiveElement ofInstant(Date value);
 
-    NutsPrimitiveElement forByte(Byte value);
+    NutsPrimitiveElement ofInstant(String value);
 
-    NutsPrimitiveElement forDouble(Double value);
+    NutsPrimitiveElement ofByte(Byte value);
 
-    NutsPrimitiveElement forFloat(Short value);
+    NutsPrimitiveElement ofDouble(Double value);
 
-    NutsPrimitiveElement forNumber(Number value);
+    NutsPrimitiveElement ofFloat(Short value);
 
-    Predicate<Type> getDestructTypeFilter();
+    NutsPrimitiveElement ofNumber(Number value);
 
-    NutsElements setFormatDestructTypeFilter();
+    Predicate<Type> getIndestructibleObjects();
 
-    NutsElements setDestructTypeFilter(Predicate<Type> destructTypeFilter);
+    NutsElements setIndestructibleFormat();
+
+    NutsElements setIndestructibleObjects(Predicate<Type> destructTypeFilter);
 
     NutsIterableFormat iter(NutsPrintStream out);
 
-    void setMapper(Class type, NutsElementMapper mapper);
+    <T> NutsElements setMapper(Class<T> type, NutsElementMapper<T> mapper);
 }

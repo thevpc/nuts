@@ -119,7 +119,7 @@ public class NutsSettingsBackupSubCommand extends AbstractNutsSettingsSubCommand
                 }
                 if (ws == null || ws.isEmpty()) {
                     NutsElements prv = elem.setSession(session);
-                    ws = nutsWorkspaceConfigRef[0].get(prv.forString("name")).asString();
+                    ws = nutsWorkspaceConfigRef[0].get(prv.ofString("name")).asString();
                 }
                 if (ws == null || ws.isEmpty()) {
                     commandLine.required(NutsMessage.cstyle("not a valid file : %s", file));

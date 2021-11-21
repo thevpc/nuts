@@ -31,7 +31,7 @@ public class DefaultNutsElements extends DefaultFormatBase<NutsElements> impleme
     //    public static final NutsPrimitiveElement NULL = new DefaultNutsPrimitiveElement(NutsElementType.NULL, null);
 //    public static final NutsPrimitiveElement TRUE = new DefaultNutsPrimitiveElement(NutsElementType.BOOLEAN, true);
 //    public static final NutsPrimitiveElement FALSE = new DefaultNutsPrimitiveElement(NutsElementType.BOOLEAN, false);
-    private static Predicate<Type> DEFAULT_FORMAT_DESTRUCTOR = new Predicate<Type>() {
+    private static Predicate<Type> DEFAULT_INDESTRUCTIBLE_FORMAT = new Predicate<Type>() {
         @Override
         public boolean test(Type x) {
             if (x instanceof Class) {
@@ -57,15 +57,15 @@ public class DefaultNutsElements extends DefaultFormatBase<NutsElements> impleme
                     case "java.math.BigInteger":
                     case "java.util.Date":
                     case "java.sql.Time":
-                        return false;
+                        return true;
                 }
                 if(Temporal.class.isAssignableFrom(c)){
-                    return false;
+                    return true;
                 }
                 if(java.util.Date.class.isAssignableFrom(c)){
-                    return false;
+                    return true;
                 }
-                return !(
+                return (
                         NutsString.class.isAssignableFrom(c)
                                 || NutsElement.class.isAssignableFrom(c)
                                 || NutsFormattable.class.isAssignableFrom(c)
@@ -79,7 +79,7 @@ public class DefaultNutsElements extends DefaultFormatBase<NutsElements> impleme
     private Object value;
     private NutsContentType contentType = NutsContentType.JSON;
     private boolean compact;
-    private Predicate<Type> destructTypeFilter;
+    private Predicate<Type> indestructibleObjects;
 
     public DefaultNutsElements(NutsSession session) {
         super(session, "element-format");
@@ -267,7 +267,7 @@ public class DefaultNutsElements extends DefaultFormatBase<NutsElements> impleme
     @Override
     public NutsElement parse(String string) {
         if (string == null || string.isEmpty()) {
-            return forNull();
+            return ofNull();
         }
         return parse(string, NutsElement.class);
     }
@@ -339,15 +339,20 @@ public class DefaultNutsElements extends DefaultFormatBase<NutsElements> impleme
         return createFactoryContext().objectToElement(o, null);
     }
 
+    @Override
+    public <T> T fromElement(NutsElement o, Class<T> to) {
+        return convert(o,to);
+    }
+
     //    @Override
 //    public NutsElementEntryBuilder forEntry() {
 //        return new DefaultNutsElementEntryBuilder(getSession());
 //    }
     @Override
-    public NutsElementEntry forEntry(NutsElement key, NutsElement value) {
+    public NutsElementEntry ofEntry(NutsElement key, NutsElement value) {
         return new DefaultNutsElementEntry(
-                key == null ? forNull() : key,
-                value == null ? forNull() : value
+                key == null ? ofNull() : key,
+                value == null ? ofNull() : value
         );
     }
 
@@ -356,25 +361,25 @@ public class DefaultNutsElements extends DefaultFormatBase<NutsElements> impleme
 //        return new DefaultNutsPrimitiveElementBuilder(getSession());
 //    }
     @Override
-    public NutsObjectElementBuilder forObject() {
+    public NutsObjectElementBuilder ofObject() {
         return new DefaultNutsObjectElementBuilder(getSession());
     }
 
     @Override
-    public NutsArrayElementBuilder forArray() {
+    public NutsArrayElementBuilder ofArray() {
         return new DefaultNutsArrayElementBuilder(getSession());
     }
 
     @Override
-    public NutsPrimitiveElement forBoolean(String value) {
-        return forBoolean(NutsUtilStrings.parseBoolean(value, false, false));
+    public NutsPrimitiveElement ofBoolean(String value) {
+        return ofBoolean(NutsUtilStrings.parseBoolean(value, false, false));
     }
 
     //    public NutsPrimitiveElement forNutsString(NutsString str) {
 //        return str == null ? DefaultNutsPrimitiveElementBuilder.NULL : new DefaultNutsPrimitiveElement(NutsElementType.NUTS_STRING, str);
 //    }
     @Override
-    public NutsPrimitiveElement forBoolean(boolean value) {
+    public NutsPrimitiveElement ofBoolean(boolean value) {
         checkSession();
         //TODO: perhaps we can optimize this
         if (value) {
@@ -384,82 +389,91 @@ public class DefaultNutsElements extends DefaultFormatBase<NutsElements> impleme
         }
     }
 
-    public NutsPrimitiveElement forString(String str) {
+    public NutsPrimitiveElement ofString(String str) {
         checkSession();
-        return str == null ? forNull() : new DefaultNutsPrimitiveElement(NutsElementType.STRING, str, getSession());
+        return str == null ? ofNull() : new DefaultNutsPrimitiveElement(NutsElementType.STRING, str, getSession());
     }
 
     @Override
-    public NutsPrimitiveElement forTrue() {
-        return forBoolean(true);
-    }
-
-    @Override
-    public NutsPrimitiveElement forFalse() {
-        return forBoolean(false);
-    }
-
-    @Override
-    public NutsPrimitiveElement forInstant(Instant instant) {
+    public NutsCustomElement ofCustom(Object object) {
         checkSession();
-        return instant == null ? forNull() : new DefaultNutsPrimitiveElement(NutsElementType.INSTANT, instant, getSession());
+        if(object ==null){
+            throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("custom element cannot be null"));
+        }
+        return new DefaultNutsCustomElement(object, getSession());
     }
 
     @Override
-    public NutsPrimitiveElement forFloat(Float value) {
+    public NutsPrimitiveElement ofTrue() {
+        return ofBoolean(true);
+    }
+
+    @Override
+    public NutsPrimitiveElement ofFalse() {
+        return ofBoolean(false);
+    }
+
+    @Override
+    public NutsPrimitiveElement ofInstant(Instant instant) {
         checkSession();
-        return value == null ? forNull() : new DefaultNutsPrimitiveElement(NutsElementType.FLOAT, value, getSession());
+        return instant == null ? ofNull() : new DefaultNutsPrimitiveElement(NutsElementType.INSTANT, instant, getSession());
     }
 
     @Override
-    public NutsPrimitiveElement forInt(Integer value) {
+    public NutsPrimitiveElement ofFloat(Float value) {
         checkSession();
-        return value == null ? forNull() : new DefaultNutsPrimitiveElement(NutsElementType.INTEGER, value, getSession());
+        return value == null ? ofNull() : new DefaultNutsPrimitiveElement(NutsElementType.FLOAT, value, getSession());
     }
 
     @Override
-    public NutsPrimitiveElement forLong(Long value) {
+    public NutsPrimitiveElement ofInt(Integer value) {
         checkSession();
-        return value == null ? forNull() : new DefaultNutsPrimitiveElement(NutsElementType.LONG, value, getSession());
+        return value == null ? ofNull() : new DefaultNutsPrimitiveElement(NutsElementType.INTEGER, value, getSession());
     }
 
     @Override
-    public NutsPrimitiveElement forNull() {
+    public NutsPrimitiveElement ofLong(Long value) {
+        checkSession();
+        return value == null ? ofNull() : new DefaultNutsPrimitiveElement(NutsElementType.LONG, value, getSession());
+    }
+
+    @Override
+    public NutsPrimitiveElement ofNull() {
         checkSession();
         //perhaps we can optimize this?
         return new DefaultNutsPrimitiveElement(NutsElementType.NULL, null, getSession());
     }
 
     @Override
-    public NutsPrimitiveElement forNumber(String value) {
+    public NutsPrimitiveElement ofNumber(String value) {
         checkSession();
         if (value == null) {
-            return forNull();
+            return ofNull();
         }
         if (value.indexOf('.') >= 0) {
             try {
-                return forNumber(Double.parseDouble(value));
+                return ofNumber(Double.parseDouble(value));
             } catch (Exception ex) {
 
             }
             try {
-                return forNumber(new BigDecimal(value));
+                return ofNumber(new BigDecimal(value));
             } catch (Exception ex) {
 
             }
         } else {
             try {
-                return forNumber(Integer.parseInt(value));
+                return ofNumber(Integer.parseInt(value));
             } catch (Exception ex) {
 
             }
             try {
-                return forNumber(Long.parseLong(value));
+                return ofNumber(Long.parseLong(value));
             } catch (Exception ex) {
 
             }
             try {
-                return forNumber(new BigInteger(value));
+                return ofNumber(new BigInteger(value));
             } catch (Exception ex) {
 
             }
@@ -468,46 +482,46 @@ public class DefaultNutsElements extends DefaultFormatBase<NutsElements> impleme
     }
 
     @Override
-    public NutsPrimitiveElement forInstant(Date value) {
+    public NutsPrimitiveElement ofInstant(Date value) {
         checkSession();
         if (value == null) {
-            return forNull();
+            return ofNull();
         }
         return new DefaultNutsPrimitiveElement(NutsElementType.INSTANT, value.toInstant(), getSession());
     }
 
     @Override
-    public NutsPrimitiveElement forInstant(String value) {
+    public NutsPrimitiveElement ofInstant(String value) {
         checkSession();
         if (value == null) {
-            return forNull();
+            return ofNull();
         }
         return new DefaultNutsPrimitiveElement(NutsElementType.INSTANT, DefaultNutsPrimitiveElement.parseDate(value), getSession());
     }
 
     @Override
-    public NutsPrimitiveElement forByte(Byte value) {
+    public NutsPrimitiveElement ofByte(Byte value) {
         checkSession();
-        return value == null ? forNull() : new DefaultNutsPrimitiveElement(NutsElementType.BYTE, value, getSession());
+        return value == null ? ofNull() : new DefaultNutsPrimitiveElement(NutsElementType.BYTE, value, getSession());
     }
 
     @Override
-    public NutsPrimitiveElement forDouble(Double value) {
+    public NutsPrimitiveElement ofDouble(Double value) {
         checkSession();
-        return value == null ? forNull() : new DefaultNutsPrimitiveElement(NutsElementType.DOUBLE, value, getSession());
+        return value == null ? ofNull() : new DefaultNutsPrimitiveElement(NutsElementType.DOUBLE, value, getSession());
     }
 
     @Override
-    public NutsPrimitiveElement forFloat(Short value) {
+    public NutsPrimitiveElement ofFloat(Short value) {
         checkSession();
-        return value == null ? forNull() : new DefaultNutsPrimitiveElement(NutsElementType.SHORT, value, getSession());
+        return value == null ? ofNull() : new DefaultNutsPrimitiveElement(NutsElementType.SHORT, value, getSession());
     }
 
     @Override
-    public NutsPrimitiveElement forNumber(Number value) {
+    public NutsPrimitiveElement ofNumber(Number value) {
         checkSession();
         if (value == null) {
-            return forNull();
+            return ofNull();
         }
         switch (value.getClass().getName()) {
             case "java.lang.Byte":
@@ -531,17 +545,17 @@ public class DefaultNutsElements extends DefaultFormatBase<NutsElements> impleme
         return new DefaultNutsPrimitiveElement(NutsElementType.FLOAT, value, getSession());
     }
 
-    public Predicate<Type> getDestructTypeFilter() {
-        return destructTypeFilter;
+    public Predicate<Type> getIndestructibleObjects() {
+        return indestructibleObjects;
     }
 
     @Override
-    public NutsElements setFormatDestructTypeFilter() {
-        return setDestructTypeFilter(DEFAULT_FORMAT_DESTRUCTOR);
+    public NutsElements setIndestructibleFormat() {
+        return setIndestructibleObjects(DEFAULT_INDESTRUCTIBLE_FORMAT);
     }
 
-    public NutsElements setDestructTypeFilter(Predicate<Type> destructTypeFilter) {
-        this.destructTypeFilter = destructTypeFilter;
+    public NutsElements setIndestructibleObjects(Predicate<Type> destructTypeFilter) {
+        this.indestructibleObjects = destructTypeFilter;
         return this;
     }
 
@@ -565,10 +579,11 @@ public class DefaultNutsElements extends DefaultFormatBase<NutsElements> impleme
     }
 
     @Override
-    public void setMapper(Class type, NutsElementMapper mapper) {
+    public <T> NutsElements setMapper(Class<T> type, NutsElementMapper<T> mapper) {
         checkSession();
         ((DefaultNutsElementFactoryService) getElementFactoryService())
                 .setMapper(type, mapper);
+        return this;
     }
 
     private NutsElementStreamFormat resolveStructuredFormat() {

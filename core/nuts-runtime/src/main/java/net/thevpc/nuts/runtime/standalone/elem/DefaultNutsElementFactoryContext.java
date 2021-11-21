@@ -78,8 +78,8 @@ public class DefaultNutsElementFactoryContext implements NutsElementFactoryConte
     }
 
     @Override
-    public Predicate<Type> getDestructTypeFilter() {
-        return base.getDestructTypeFilter();
+    public Predicate<Type> getIndestructibleObjects() {
+        return base.getIndestructibleObjects();
     }
     
 

@@ -20,7 +20,7 @@ public class NutsElementMapperPath implements NutsElementMapper<Path> {
 //                NutsText n = NutsTexts.of(session).forStyled(o.toString(), NutsTextStyle.path());
 //                return session.elem().forPrimitive().buildNutsString(n);
             NutsText n = NutsTexts.of(session).ofStyled(o.toString(), NutsTextStyle.path());
-            return NutsElements.of(session).forString(n.toString());
+            return NutsElements.of(session).ofString(n.toString());
         } else {
             return context.defaultObjectToElement(o.toString(), null);
         }

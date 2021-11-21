@@ -61,7 +61,7 @@ public class DefaultNutsPropertiesFormat extends DefaultFormatBase<NutsPropertie
     }
 
     public Map buildModel() {
-        Object value = NutsElements.of(getSession()).setFormatDestructTypeFilter().destruct(getValue());
+        Object value = NutsElements.of(getSession()).setIndestructibleFormat().destruct(getValue());
         LinkedHashMap<NutsString, NutsString> map = new LinkedHashMap<>();
         fillMap(NutsString.of((rootName==null?"":rootName),getSession()), value, map);
         return map;

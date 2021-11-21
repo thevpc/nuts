@@ -27,6 +27,6 @@ public class NutsElementMapperNutsPrimitiveElement implements NutsElementMapper<
         if (o.type().isPrimitive()) {
             return o.asPrimitive();
         }
-        return context.elem().forString(o.toString());
+        return context.elem().ofString(o.toString());
     }
 }

@@ -40,7 +40,7 @@ public interface NutsArrayElementBuilder extends NutsElementBuilder {
 
     static NutsArrayElementBuilder of(NutsSession session) {
         NutsApiUtils.checkSession(session);
-        return NutsElements.of(session).forArray();
+        return NutsElements.of(session).ofArray();
     }
 
     /**

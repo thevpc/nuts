@@ -366,33 +366,33 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
             NutsElements e = NutsElements.of(getSession());
 
             if (updates.length == 0 && notInstalled.length==0) {
-                out.printlnf(e.forObject()
+                out.printlnf(e.ofObject()
                         .set("message", "all packages are up-to-date. You are running latest version" + (result.getAllResults().length > 1 ? "s" : "") + ".")
                         .build());
             } else {
-                NutsArrayElementBuilder arrayElementBuilder = e.forArray();
+                NutsArrayElementBuilder arrayElementBuilder = e.ofArray();
                 for (NutsUpdateResult update : all) {
                     if (update.getInstalled() == null) {
-                        arrayElementBuilder.add(e.forObject()
+                        arrayElementBuilder.add(e.ofObject()
                                 .set("package", update.getId().getShortName())
                                 .set("status", "not-installed")
                                 .build());
                     } else if (update.isUpdateVersionAvailable()) {
-                        arrayElementBuilder.add(e.forObject()
+                        arrayElementBuilder.add(e.ofObject()
                                 .set("package", update.getAvailable().getId().getShortName())
                                 .set("status", "update-version-available")
                                 .set("localVersion", update.getInstalled().getId().getVersion().toString())
                                 .set("newVersion", update.getAvailable().getId().getVersion().toString())
                                 .build());
                     } else if (update.isUpdateStatusAvailable()) {
-                        arrayElementBuilder.add(e.forObject()
+                        arrayElementBuilder.add(e.ofObject()
                                 .set("package", update.getAvailable().getId().getShortName())
                                 .set("localVersion", update.getInstalled().getId().getVersion().toString())
                                 .set("status", "update-default-available")
                                 .set("newVersion", "set as default")
                                 .build());
                     }else{
-                        arrayElementBuilder.add(e.forObject()
+                        arrayElementBuilder.add(e.ofObject()
                                 .set("package", update.getId().getShortName())
                                 .set("localVersion", update.getInstalled().getId().getVersion().toString())
                                 .set("status", "up-to-date")

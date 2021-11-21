@@ -1,7 +1,7 @@
 /**
  * ====================================================================
- *            Nuts : Network Updatable Things Service
- *                  (universal package manager)
+ * Nuts : Network Updatable Things Service
+ * (universal package manager)
  * <br>
  * is a new Open Source Package Manager to help install packages and libraries
  * for runtime execution. Nuts is the ultimate companion for maven (and other
@@ -10,7 +10,7 @@
  * other 'things' . Its based on an extensible architecture to help supporting a
  * large range of sub managers / repositories.
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc] Licensed under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -21,52 +21,24 @@
  * governing permissions and limitations under the License.
  * <br> ====================================================================
  */
-package net.thevpc.nuts.runtime.standalone.elem;
+package net.thevpc.nuts;
 
-import net.thevpc.nuts.NutsElement;
-import net.thevpc.nuts.NutsElementEntry;
-
-import java.util.Objects;
+import java.time.Instant;
+import java.util.Collection;
+import java.util.stream.Stream;
 
 /**
+ * A custom element that is not directly supported by JSON for instance
  *
  * @author thevpc
+ * @app.category Elements
+ * @since 0.5.6
  */
-public class DefaultNutsElementEntry implements NutsElementEntry {
+public interface NutsCustomElement extends NutsElement{
 
-    private final NutsElement key;
-    private final NutsElement value;
-
-    public DefaultNutsElementEntry(NutsElement key, NutsElement value) {
-        this.key = key;
-        this.value = value;
-    }
-
-    @Override
-    public NutsElement getKey() {
-        return key;
-    }
-
-    @Override
-    public NutsElement getValue() {
-        return value;
-    }
-
-    @Override
-    public String toString() {
-        return "DefaultNutsNamedElement{" + key + " : " + value + '}';
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        DefaultNutsElementEntry that = (DefaultNutsElementEntry) o;
-        return Objects.equals(key, that.key) && Objects.equals(value, that.value);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(key, value);
-    }
+    /**
+     * return value
+     * @return value
+     */
+    Object getValue();
 }

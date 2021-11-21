@@ -258,23 +258,23 @@ public class DefaultJsonElementFormat implements NutsElementStreamFormat {
                 case 'n': {
                     String n = readStringLiteralUnQuoted();
                     if ("null".equals(n)) {
-                        return builder().forNull();
+                        return builder().ofNull();
                     }
-                    return builder().forString(n);
+                    return builder().ofString(n);
                 }
                 case 't': {
                     String n = readStringLiteralUnQuoted();
                     if ("true".equals(n)) {
-                        return builder().forTrue();
+                        return builder().ofTrue();
                     }
-                    return builder().forString(n);
+                    return builder().ofString(n);
                 }
                 case 'f': {
                     String n = readStringLiteralUnQuoted();
                     if ("false".equals(n)) {
-                        return builder().forFalse();
+                        return builder().ofFalse();
                     }
-                    return builder().forString(n);
+                    return builder().ofString(n);
                 }
                 case '0':
                 case '1':
@@ -311,7 +311,7 @@ public class DefaultJsonElementFormat implements NutsElementStreamFormat {
         }
 
         private NutsElement readJsonArray() {
-            NutsArrayElementBuilder array = builder().forArray();
+            NutsArrayElementBuilder array = builder().ofArray();
             readNext();
             skipWhiteSpaceAndComments();
             if (readChar(']')) {
@@ -334,7 +334,7 @@ public class DefaultJsonElementFormat implements NutsElementStreamFormat {
         }
 
         private NutsElement readJsonObject() {
-            NutsObjectElementBuilder object = builder().forObject();
+            NutsObjectElementBuilder object = builder().ofObject();
             readNext();
             skipWhiteSpaceAndComments();
             if (readChar('}')) {
@@ -387,7 +387,7 @@ public class DefaultJsonElementFormat implements NutsElementStreamFormat {
         }
 
         private NutsElement readJsonString() {
-            return builder().forString(readStringLiteral());
+            return builder().ofString(readStringLiteral());
         }
 
         private String readStringLiteral() {
@@ -673,7 +673,7 @@ public class DefaultJsonElementFormat implements NutsElementStreamFormat {
                     }
                 }
             }
-            return builder().forNumber(sb.toString());
+            return builder().ofNumber(sb.toString());
         }
 
         private boolean readChar(char ch) {

@@ -17,7 +17,7 @@ public class NutsElementMapperUtilDate implements NutsElementMapper<Date> {
 
     @Override
     public NutsElement createElement(Date o, Type typeOfSrc, NutsElementFactoryContext context) {
-        return context.elem().forInstant(o.toInstant());
+        return context.elem().ofInstant(o.toInstant());
     }
 
     @Override

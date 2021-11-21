@@ -305,8 +305,8 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
         if (expectedType == null) {
             expectedType = o.getClass();
         }
-        if (context.getDestructTypeFilter() != null) {
-            if (!context.getDestructTypeFilter().test(o.getClass())) {
+        if (context.getIndestructibleObjects() != null) {
+            if (context.getIndestructibleObjects().test(o.getClass())) {
                 return o;
             }
         }
@@ -325,10 +325,15 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
 
     protected NutsElement createElement(Object o, Type expectedType, NutsElementFactoryContext context, boolean defaultOnly) {
         if (o == null) {
-            return context.elem().forNull();
+            return context.elem().ofNull();
         }
         if (expectedType == null) {
             expectedType = o.getClass();
+        }
+        if (context.getIndestructibleObjects() != null) {
+            if (context.getIndestructibleObjects().test(o.getClass())) {
+                return context.elem().ofCustom(o);
+            }
         }
         return getMapper(expectedType, defaultOnly).createElement(o, expectedType, context);
     }

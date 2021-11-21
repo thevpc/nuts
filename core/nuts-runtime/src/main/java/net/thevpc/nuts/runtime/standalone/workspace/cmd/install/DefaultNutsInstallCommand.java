@@ -491,11 +491,11 @@ public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
                 out.resetLine().println(msg);
             } else {
                 NutsElements elem = NutsElements.of(session);
-                session.eout().add(elem.forObject()
+                session.eout().add(elem.ofObject()
                         .set("command", "warning")
                         .set("artifact-kind", skind)
                         .set("action-warning", saction)
-                        .set("artifacts", elem.forArray().addAll(
+                        .set("artifacts", elem.ofArray().addAll(
                                 all.stream().map(x -> x.toString()).toArray(String[]::new)
                         ).build())
                         .build()

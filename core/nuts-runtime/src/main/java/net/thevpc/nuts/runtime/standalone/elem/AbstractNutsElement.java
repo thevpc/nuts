@@ -63,6 +63,14 @@ public abstract class AbstractNutsElement implements NutsElement {
     }
 
     @Override
+    public NutsCustomElement asCustom() {
+        if (this instanceof NutsCustomElement) {
+            return (NutsCustomElement) this;
+        }
+        throw new IllegalStateException("unable to cast " + type().id() + " to custom: " + this);
+    }
+
+    @Override
     public NutsArrayElement asArray() {
         if (this instanceof NutsArrayElement) {
             return (NutsArrayElement) this;

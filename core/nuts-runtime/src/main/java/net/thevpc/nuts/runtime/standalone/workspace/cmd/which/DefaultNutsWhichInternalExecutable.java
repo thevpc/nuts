@@ -65,7 +65,7 @@ public class DefaultNutsWhichInternalExecutable extends DefaultInternalNutsExecu
 
                         } else {
                             getSession().out().printlnf(
-                                    elem.forObject()
+                                    elem.ofObject()
                                             .set("name", arg)
                                             .set("type", "system-command")
                                             .set("description", p.getDescription())
@@ -84,7 +84,7 @@ public class DefaultNutsWhichInternalExecutable extends DefaultInternalNutsExecu
                             );
                         } else {
                             getSession().out().printlnf(
-                                    elem.forObject()
+                                    elem.ofObject()
                                             .set("name", arg)
                                             .set("type", "alias")
                                             .set("description", p.getDescription())
@@ -111,7 +111,7 @@ public class DefaultNutsWhichInternalExecutable extends DefaultInternalNutsExecu
                             );
                         } else {
                             getSession().out().printlnf(
-                                    elem.forObject()
+                                    elem.ofObject()
                                             .set("name", arg)
                                             .set("type", "artifact")
                                             .set("id", p.getId().toString())
@@ -129,7 +129,7 @@ public class DefaultNutsWhichInternalExecutable extends DefaultInternalNutsExecu
                             );
                         } else {
                             getSession().out().printlnf(
-                                    elem.forObject()
+                                    elem.ofObject()
                                             .set("name", arg)
                                             .set("type", "internal-command")
                                             .set("description", p.getDescription())
@@ -146,7 +146,7 @@ public class DefaultNutsWhichInternalExecutable extends DefaultInternalNutsExecu
                             );
                         } else {
                             getSession().out().printlnf(
-                                    elem.forObject()
+                                    elem.ofObject()
                                             .set("name", arg)
                                             .set("type", "unknown-command")
                                             .build()
@@ -164,7 +164,7 @@ public class DefaultNutsWhichInternalExecutable extends DefaultInternalNutsExecu
                 } else {
                     NutsElements e = elem;
                     getSession().eout().add(
-                            e.forObject()
+                            e.ofObject()
                                     .set("name", arg)
                                     .set("type", "not-found")
                                     .build()

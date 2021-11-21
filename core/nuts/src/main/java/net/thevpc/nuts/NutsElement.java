@@ -58,6 +58,14 @@ public interface NutsElement {
     NutsObjectElement asObject();
 
     /**
+     * cast this element to {@link NutsCustomElement} or throw
+     * ClassCastException
+     *
+     * @return {@link NutsObjectElement}
+     */
+    NutsCustomElement asCustom();
+
+    /**
      * convert this element to {@link NutsArrayElement} or throw
      * ClassCastException
      *

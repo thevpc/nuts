@@ -17,7 +17,7 @@ public class NutsElementMapperNumber implements NutsElementMapper<Number> {
 
     @Override
     public NutsElement createElement(Number o, Type typeOfSrc, NutsElementFactoryContext context) {
-        return context.elem().forNumber((Number) o);
+        return context.elem().ofNumber((Number) o);
     }
 
     @Override

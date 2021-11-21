@@ -39,7 +39,7 @@ public interface NutsObjectElementBuilder extends NutsElementBuilder {
 
     static NutsObjectElementBuilder of(NutsSession session) {
         NutsApiUtils.checkSession(session);
-        return NutsElements.of(session).forObject();
+        return NutsElements.of(session).ofObject();
     }
 
     /**
@@ -134,7 +134,7 @@ public interface NutsObjectElementBuilder extends NutsElementBuilder {
     NutsObjectElementBuilder add(NutsObjectElementBuilder other);
 
     /**
-     * set entry key value binding
+     * add entry key value binding
      *
      * @param entry other entry
      * @return this {@code this} instance
@@ -162,4 +162,12 @@ public interface NutsObjectElementBuilder extends NutsElementBuilder {
     NutsObjectElementBuilder set(NutsElement name, int value);
 
     NutsElement get(NutsElement s);
+
+    /**
+     * add all  key value entries binding
+     *
+     * @param entries other entry
+     * @return this {@code this} instance
+     */
+    NutsObjectElementBuilder addAll(NutsElementEntry... entries);
 }

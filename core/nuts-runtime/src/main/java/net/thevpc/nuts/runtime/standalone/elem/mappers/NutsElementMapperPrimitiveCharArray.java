@@ -20,7 +20,7 @@ public class NutsElementMapperPrimitiveCharArray implements NutsElementMapper<ch
 
     @Override
     public NutsElement createElement(char[] src, Type typeOfSrc, NutsElementFactoryContext context) {
-        return context.elem().forString(new String(src));
+        return context.elem().ofString(new String(src));
     }
 
     @Override

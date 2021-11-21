@@ -179,14 +179,14 @@ public class NutsElementPathFilter {
 
         @Override
         public List<NutsElement> filter(NutsElement element) {
-            NutsArrayElementBuilder aa = builder.forArray();
+            NutsArrayElementBuilder aa = builder.ofArray();
             aa.add(element);
             return aa.children();
         }
 
         @Override
         public List<NutsElement> filter(List<NutsElement> elements) {
-            NutsArrayElementBuilder aa = builder.forArray();
+            NutsArrayElementBuilder aa = builder.ofArray();
             for (NutsElement element : elements) {
                 aa.add(element);
             }

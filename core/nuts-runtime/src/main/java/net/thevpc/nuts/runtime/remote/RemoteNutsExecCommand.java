@@ -19,7 +19,7 @@ public class RemoteNutsExecCommand extends AbstractNutsExecCommand {
         NutsElements e = NutsElements.of(getSession());
         return getWorkspace().remoteCall(
                 getWorkspace().createCall("workspace.which",
-                        e.forObject()
+                        e.ofObject()
                                 .build(), getSession()
                 ),
                 NutsExecutableInformation.class
@@ -32,7 +32,7 @@ public class RemoteNutsExecCommand extends AbstractNutsExecCommand {
         try {
             int r = getWorkspace().remoteCall(
                     getWorkspace().createCall("workspace.exec",
-                            e.forObject()
+                            e.ofObject()
                                     .set("dry", dry)
                                     .set("failFast", failFast)
                                     .build(),

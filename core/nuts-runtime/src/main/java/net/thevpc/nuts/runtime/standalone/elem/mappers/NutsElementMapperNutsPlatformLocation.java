@@ -20,13 +20,13 @@ public class NutsElementMapperNutsPlatformLocation implements NutsElementMapper<
     public NutsPlatformLocation createObject(NutsElement o, Type typeOfResult, NutsElementFactoryContext context) {
         NutsObjectElement obj = o.asObject();
         NutsElements _prm = context.elem();
-        NutsId id = context.elementToObject(obj.get(_prm.forString("id")), NutsId.class);
-        String product = context.elementToObject(obj.get(_prm.forString("product")), String.class);
-        String name = context.elementToObject(obj.get(_prm.forString("name")), String.class);
-        String path = context.elementToObject(obj.get(_prm.forString("path")), String.class);
-        String version = context.elementToObject(obj.get(_prm.forString("version")), String.class);
-        String packaging = context.elementToObject(obj.get(_prm.forString("packaging")), String.class);
-        int priority = context.elementToObject(obj.get(_prm.forString("priority")), int.class);
+        NutsId id = context.elementToObject(obj.get(_prm.ofString("id")), NutsId.class);
+        String product = context.elementToObject(obj.get(_prm.ofString("product")), String.class);
+        String name = context.elementToObject(obj.get(_prm.ofString("name")), String.class);
+        String path = context.elementToObject(obj.get(_prm.ofString("path")), String.class);
+        String version = context.elementToObject(obj.get(_prm.ofString("version")), String.class);
+        String packaging = context.elementToObject(obj.get(_prm.ofString("packaging")), String.class);
+        int priority = context.elementToObject(obj.get(_prm.ofString("priority")), int.class);
         return new NutsPlatformLocation(id, product, name, path, version, packaging, priority);
     }
 

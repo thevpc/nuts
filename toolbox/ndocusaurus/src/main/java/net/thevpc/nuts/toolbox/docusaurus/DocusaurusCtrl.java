@@ -106,7 +106,7 @@ public class DocusaurusCtrl {
         if (genSidebarMenu) {
             DocusaurusFolder root = project.getPhysicalDocsFolder();
             root = new DocusaurusFolder(
-                    "someSidebar", "someSidebar", 0, NutsElements.of(session).forObject().build(), root.getChildren(),
+                    "someSidebar", "someSidebar", 0, NutsElements.of(session).ofObject().build(), root.getChildren(),
                     root.getContent(session),
                     project.getPhysicalDocsFolderBasePath().toString()
             );

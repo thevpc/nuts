@@ -92,7 +92,12 @@ public enum NutsElementType implements NutsEnum {
     /**
      * object (list of key/val) element
      */
-    OBJECT(false, false);
+    OBJECT(false, false),
+    /**
+     * custom object that is not destructed. Cannot be null or primitive
+     */
+    CUSTOM(false, false)
+    ;
 
     /**
      * true if private type

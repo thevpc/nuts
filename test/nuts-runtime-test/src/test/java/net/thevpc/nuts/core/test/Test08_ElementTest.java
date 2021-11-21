@@ -27,7 +27,9 @@ package net.thevpc.nuts.core.test;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.core.test.utils.TestUtils;
@@ -49,43 +51,43 @@ public class Test08_ElementTest {
         NutsSession ws = TestUtils.openNewTestWorkspace();
         NutsElements e = NutsElements.of(ws);
         NutsElement p
-                = e.forArray()
+                = e.ofArray()
                 .add(
-                        e.forObject().set("first",
-                                        e.forObject()
-                                                .set("name", e.forString("first name"))
-                                                .set("valid", e.forTrue())
+                        e.ofObject().set("first",
+                                        e.ofObject()
+                                                .set("name", e.ofString("first name"))
+                                                .set("valid", e.ofTrue())
                                                 .set("children",
-                                                        e.forArray().add(
-                                                                        e.forObject()
-                                                                                .set("path", e.forString("path1"))
-                                                                                .set("color", e.forString("red"))
+                                                        e.ofArray().add(
+                                                                        e.ofObject()
+                                                                                .set("path", e.ofString("path1"))
+                                                                                .set("color", e.ofString("red"))
                                                                                 .build())
                                                                 .add(
-                                                                        e.forObject()
-                                                                                .set("path", e.forString("path2"))
-                                                                                .set("color", e.forString("green"))
+                                                                        e.ofObject()
+                                                                                .set("path", e.ofString("path2"))
+                                                                                .set("color", e.ofString("green"))
                                                                                 .build()
                                                                 ).build()
                                                 )
                                                 .build()
                                 )
                                 .build()
-                ).add(e.forObject().set("second",
-                        e.forObject()
-                                .set("name", e.forString("second name"))
-                                .set("valid", e.forTrue())
+                ).add(e.ofObject().set("second",
+                        e.ofObject()
+                                .set("name", e.ofString("second name"))
+                                .set("valid", e.ofTrue())
                                 .set("children",
-                                        e.forArray().add(
-                                                        e.forObject()
-                                                                .set("path", e.forString("path3"))
-                                                                .set("color", e.forString("yellow"))
+                                        e.ofArray().add(
+                                                        e.ofObject()
+                                                                .set("path", e.ofString("path3"))
+                                                                .set("color", e.ofString("yellow"))
                                                                 .build()
                                                 )
                                                 .add(
-                                                        e.forObject()
-                                                                .set("path", e.forString("path4"))
-                                                                .set("color", e.forString("magenta"))
+                                                        e.ofObject()
+                                                                .set("path", e.ofString("path4"))
+                                                                .set("color", e.ofString("magenta"))
                                                                 .build()
                                                 ).build()
                                 )
@@ -271,6 +273,50 @@ public class Test08_ElementTest {
             NutsString sresult = ss.format().immutable();
             Assertions.assertEquals(sexpected.immutable(), sresult.immutable());
         }
+    }
+
+    @Test
+    public void testIndestructibleObjects() {
+        NutsSession ws = TestUtils.openNewTestWorkspace();
+        NutsTextStyled styledText = NutsTexts.of(ws).ofStyled("Hello", NutsTextStyle.success());
+        NutsElements e = NutsElements.of(ws);
+
+        //create a composite object with a styled element
+        Map<String,Object> h=new HashMap<>();
+        h.put("a","13");
+        h.put("b", styledText);
+
+        //styled element are destructed to strings
+        NutsElement q = e.toElement(h);
+        NutsElement expected=e.ofObject()
+                .set("a","13")
+                .set("b","Hello").build();
+        Assertions.assertEquals(expected,q);
+
+
+        //prevent styled element to be destructed
+        e.setIndestructibleObjects(c->c instanceof Class && NutsTextStyled.class.isAssignableFrom((Class<?>) c));
+        q = e.toElement(h);
+        expected=e.ofObject()
+                .set("a","13")
+                .set("b",
+                        e.ofCustom(NutsTexts.of(ws).ofStyled("Hello", NutsTextStyle.success()))
+                        ).build();
+        Assertions.assertEquals(expected,q);
+
+        //destruct custom elements
+        e.setIndestructibleObjects(null);
+        NutsObjectElement b = e.ofObject()
+                .set("a", "13")
+                .set("b",
+                        e.ofCustom(NutsTexts.of(ws).ofStyled("Hello", NutsTextStyle.success()))
+                ).build();
+
+        q = e.toElement(b);
+        expected=e.ofObject()
+                .set("a","13")
+                .set("b","Hello").build();
+        Assertions.assertEquals(expected,q);
     }
 
 }

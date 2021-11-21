@@ -23,50 +23,68 @@
  */
 package net.thevpc.nuts.runtime.standalone.elem;
 
-import net.thevpc.nuts.NutsElement;
-import net.thevpc.nuts.NutsElementEntry;
+import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 
+import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.format.DateTimeFormatter;
+import java.util.Date;
 import java.util.Objects;
 
 /**
  *
  * @author thevpc
  */
-public class DefaultNutsElementEntry implements NutsElementEntry {
+class DefaultNutsCustomElement extends AbstractNutsElement implements NutsCustomElement {
 
-    private final NutsElement key;
-    private final NutsElement value;
+    private final Object value;
 
-    public DefaultNutsElementEntry(NutsElement key, NutsElement value) {
-        this.key = key;
+    DefaultNutsCustomElement(Object value, NutsSession session) {
+        super(NutsElementType.CUSTOM, session);
         this.value = value;
     }
 
     @Override
-    public NutsElement getKey() {
-        return key;
-    }
-
-    @Override
-    public NutsElement getValue() {
+    public Object getValue() {
         return value;
     }
 
-    @Override
-    public String toString() {
-        return "DefaultNutsNamedElement{" + key + " : " + value + '}';
-    }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        DefaultNutsElementEntry that = (DefaultNutsElementEntry) o;
-        return Objects.equals(key, that.key) && Objects.equals(value, that.value);
+    public boolean isEmpty() {
+        return false;
+    }
+
+    
+    @Override
+    public String toString() {
+        return String.valueOf(value);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(key, value);
+        int hash = 7;
+        hash = 47 * hash + Objects.hashCode(this.value);
+        return hash;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final DefaultNutsCustomElement other = (DefaultNutsCustomElement) obj;
+        if (!Objects.equals(this.value, other.value)) {
+            return false;
+        }
+        return true;
+    }
+
 }

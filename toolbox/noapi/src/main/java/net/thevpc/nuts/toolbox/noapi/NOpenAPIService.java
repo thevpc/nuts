@@ -191,11 +191,11 @@ public class NOpenAPIService {
         );
 
         all.add(MdFactory.title(3, "SERVER LIST"));
-        for (NutsElement srv : entries.getArray(prv.forString("servers"))) {
+        for (NutsElement srv : entries.getArray(prv.ofString("servers"))) {
             NutsObjectElement srvObj = (NutsObjectElement) srv.asObject();
             all.add(MdFactory.title(4, srvObj.getString("url")));
             all.add(MdFactory.text(srvObj.getString("description")));
-            NutsElement vars = srvObj.get(prv.forString("variables"));
+            NutsElement vars = srvObj.get(prv.ofString("variables"));
             if (vars!=null && !vars.isEmpty()) {
                 MdTableBuilder mdTableBuilder = MdFactory.table().addColumns(
                         MdFactory.column().setName("NAME"),
@@ -318,7 +318,7 @@ public class NOpenAPIService {
             }
         }
         all.add(MdFactory.title(2, "API"));
-        for (NutsElementEntry path : entries.get(prv.forString("paths")).asObject()) {
+        for (NutsElementEntry path : entries.get(prv.ofString("paths")).asObject()) {
             String url = path.getKey().asString();
             for (NutsElementEntry ss : path.getValue().asObject()) {
                 String method = ss.getKey().asString();
@@ -330,8 +330,8 @@ public class NOpenAPIService {
                 );
                 all.add(MdFactory.text(call.getString("description")));
                 all.add(MdFactory.title(4, "REQUEST"));
-                List<NutsElement> headerParameters = call.getArray(prv.forString("parameters")).stream().filter(x -> x.asObject().getString("in").equals("header")).collect(Collectors.toList());
-                List<NutsElement> queryParameters = call.getArray(prv.forString("parameters")).stream().filter(x -> x.asObject().getString("in").equals("query")).collect(Collectors.toList());
+                List<NutsElement> headerParameters = call.getArray(prv.ofString("parameters")).stream().filter(x -> x.asObject().getString("in").equals("header")).collect(Collectors.toList());
+                List<NutsElement> queryParameters = call.getArray(prv.ofString("parameters")).stream().filter(x -> x.asObject().getString("in").equals("query")).collect(Collectors.toList());
                 if (!headerParameters.isEmpty()) {
                     all.add(MdFactory.title(5, "HEADER PARAMETERS"));
                     MdTable tab = new MdTable(
@@ -407,7 +407,7 @@ public class NOpenAPIService {
         NutsElements prv = NutsElements.of(session);
         String descSep = " // ";
         if (o.isObject()) {
-            NutsElement a = o.asObject().get(prv.forString("schema"));
+            NutsElement a = o.asObject().get(prv.ofString("schema"));
             if (a!=null && a.isObject()) {
                 NutsObjectElement schema = o.asObject().getObject("schema");
                 String t = schema.getString("type");
@@ -417,36 +417,36 @@ public class NOpenAPIService {
                         sb.append("\n" + indent + "  " + p.getKey() + ": " + toCode(p.getValue(), indent + "  "));
                     }
                     sb.append("\n" + indent + "}");
-                    NutsElement desc = o.asObject().get(prv.forString("description"));
+                    NutsElement desc = o.asObject().get(prv.ofString("description"));
                     if (desc!=null && !desc.asString().isEmpty()) {
                         return sb + descSep + desc.asString();
                     }
                     return sb.toString();
                 }
-            } else if (o.asObject().get(prv.forString("type")).isString()) {
-                String t = o.asObject().get(prv.forString("type")).asString();
+            } else if (o.asObject().get(prv.ofString("type")).isString()) {
+                String t = o.asObject().get(prv.ofString("type")).asString();
                 if (t.equals("object")) {
                     StringBuilder sb = new StringBuilder("{");
                     for (NutsElementEntry p : o.asObject().getObject("properties")) {
                         sb.append("\n" + indent + "  " + p.getKey() + ": " + toCode(p.getValue(), indent + "  "));
                     }
                     sb.append("\n" + indent + "}");
-                    NutsElement desc = o.asObject().get(prv.forString("description"));
+                    NutsElement desc = o.asObject().get(prv.ofString("description"));
                     if (desc!=null && !desc.asString().isEmpty()) {
                         return sb + descSep + desc.asString();
                     }
                     return sb.toString();
                 } else {
-                    NutsElement anEnum = o.asObject().get(prv.forString("enum"));
+                    NutsElement anEnum = o.asObject().get(prv.ofString("enum"));
                     if (t.equals("boolean")) {
-                        NutsElement ee = o.asObject().get(prv.forString("example"));
+                        NutsElement ee = o.asObject().get(prv.ofString("example"));
                         if (ee!=null && !ee.isNull()) {
                             if (ee.isString()) {
                                 return ee.asString();
                             }
                             return ee.asString();
                         }
-                        NutsElement desc = o.asObject().get(prv.forString("description"));
+                        NutsElement desc = o.asObject().get(prv.ofString("description"));
                         NutsArrayElement en = anEnum==null?null:anEnum.asArray();
                         if (en!=null && en.isEmpty()) {
                             String r = "boolean ALLOWED:" + en.stream().map(x -> x.isNull() ? "null" : x.asString()).collect(Collectors.joining(", "));
@@ -461,14 +461,14 @@ public class NOpenAPIService {
                             return "boolean";
                         }
                     } else if (t.equals("string")) {
-                        NutsElement ee = o.asObject().get(prv.forString("example"));
+                        NutsElement ee = o.asObject().get(prv.ofString("example"));
                         if (ee!=null && !ee.isNull()) {
                             if (ee.isString()) {
                                 return "\'" + ee.asString() + "\'";
                             }
                             return "\'" + ee.asString() + "\'";
                         }
-                        NutsElement desc = o.asObject().get(prv.forString("description"));
+                        NutsElement desc = o.asObject().get(prv.ofString("description"));
                         NutsArrayElement en = anEnum==null?null:anEnum.asArray();
                         if (en!=null && !en.isEmpty()) {
                             String r = "string ALLOWED:" + en.stream().map(x -> x.isNull() ? "null" : x.asString()).collect(Collectors.joining(", "));
@@ -483,7 +483,7 @@ public class NOpenAPIService {
                             return "string";
                         }
                     } else if (t.equals("integer")) {
-                        NutsElement desc = o.asObject().get(prv.forString("description"));
+                        NutsElement desc = o.asObject().get(prv.ofString("description"));
                         NutsArrayElement en = anEnum==null?null:anEnum.asArray();
                         if (en!=null && !en.isEmpty()) {
                             String r = "integer ALLOWED:" + en.stream().map(x -> x.isNull() ? "null" : x.asString()).collect(Collectors.joining(", "));
@@ -499,8 +499,8 @@ public class NOpenAPIService {
                         }
                     }
                 }
-            } else if (o.asObject().get(prv.forString("type"))==null || o.asObject().get(prv.forString("type")).isNull()) {
-                NutsElement desc = o.asObject().get(prv.forString("description"));
+            } else if (o.asObject().get(prv.ofString("type"))==null || o.asObject().get(prv.ofString("type")).isNull()) {
+                NutsElement desc = o.asObject().get(prv.ofString("description"));
                 if (desc!=null && !desc.asString().isEmpty()) {
                     return "null" + "\n" + desc.asString();
                 }

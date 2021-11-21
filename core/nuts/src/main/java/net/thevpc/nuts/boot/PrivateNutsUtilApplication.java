@@ -164,14 +164,14 @@ public class PrivateNutsUtilApplication {
                     fout.flush();
                 } else {
                     if (fm != null) {
-                        session.eout().add(NutsElements.of(session).forObject()
+                        session.eout().add(NutsElements.of(session).ofObject()
                                 .set("app-id", session.getAppId() == null ? "" : session.getAppId().toString())
                                 .set("error", fm.filteredText())
                                 .build()
                         );
                         if (showTrace) {
-                            session.eout().add(NutsElements.of(session).forObject().set("errorTrace",
-                                    NutsElements.of(session).forArray().addAll(PrivateNutsUtils.stacktraceToArray(ex)).build()
+                            session.eout().add(NutsElements.of(session).ofObject().set("errorTrace",
+                                    NutsElements.of(session).ofArray().addAll(PrivateNutsUtils.stacktraceToArray(ex)).build()
                             ).build());
                         }
                         NutsArrayElementBuilder e = session.eout();
@@ -181,13 +181,13 @@ public class PrivateNutsUtilApplication {
                         }
                         fout.flush();
                     } else {
-                        session.eout().add(NutsElements.of(session).forObject()
+                        session.eout().add(NutsElements.of(session).ofObject()
                                 .set("app-id", session.getAppId() == null ? "" : session.getAppId().toString())
                                 .set("error", m)
                                 .build());
                         if (showTrace) {
-                            session.eout().add(NutsElements.of(session).forObject().set("errorTrace",
-                                    NutsElements.of(session).forArray().addAll(PrivateNutsUtils.stacktraceToArray(ex)).build()
+                            session.eout().add(NutsElements.of(session).ofObject().set("errorTrace",
+                                    NutsElements.of(session).ofArray().addAll(PrivateNutsUtils.stacktraceToArray(ex)).build()
                             ).build());
                         }
                         NutsArrayElementBuilder e = session.eout();

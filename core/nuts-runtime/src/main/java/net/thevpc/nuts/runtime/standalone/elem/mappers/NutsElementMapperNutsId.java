@@ -22,7 +22,7 @@ public class NutsElementMapperNutsId implements NutsElementMapper<NutsId> {
 //                NutsText n = ws.text().toText(ws.id().formatter(o).setNtf(true).format());
 //                return ws.elem().forPrimitive().buildNutsString(n);
             NutsSession session = context.getSession();
-            return NutsElements.of(session).forString(o.formatter().setNtf(true).format().toString());
+            return NutsElements.of(session).ofString(o.formatter().setNtf(true).format().toString());
         } else {
             return context.defaultObjectToElement(o.toString(), null);
         }

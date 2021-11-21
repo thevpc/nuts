@@ -34,7 +34,7 @@ public interface NutsElementFactoryContext {
 
     NutsSession getSession();
 
-    Predicate<Type> getDestructTypeFilter();
+    Predicate<Type> getIndestructibleObjects();
 
     NutsWorkspace getWorkspace();
 
