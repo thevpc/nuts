@@ -141,9 +141,10 @@ public class XNode {
                     bestElement = me.getValue();
                 }
             }
-            if (bestKeyOrder >= 0) {
-                return format.stringValue(bestElement, session);
-            }
+            //do not use any field as a node title
+//            if (bestKeyOrder >= 0) {
+//                return format.stringValue(bestElement, session);
+//            }
         }
         return null;
     }

@@ -8,6 +8,7 @@ package net.thevpc.nuts.runtime.standalone.repository.impl;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.bundles.io.InputStreamMetadataAwareImpl;
 import net.thevpc.nuts.runtime.bundles.io.NutsStreamOrPath;
+import net.thevpc.nuts.runtime.bundles.iter.IteratorUtils;
 import net.thevpc.nuts.runtime.standalone.repository.NutsIdPathIterator;
 import net.thevpc.nuts.runtime.standalone.repository.NutsIdPathIteratorBase;
 import net.thevpc.nuts.runtime.standalone.repository.NutsRepositoryUtils;

@@ -24,6 +24,7 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.search;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.bundles.iter.IterInfoNode;
 import net.thevpc.nuts.runtime.bundles.iter.IteratorBuilder;
 import net.thevpc.nuts.runtime.bundles.iter.IteratorUtils;
 import net.thevpc.nuts.runtime.standalone.extensions.DefaultNutsClassLoader;
@@ -79,7 +80,7 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
     public NutsSearchCommand addId(String id) {
         checkSession();
         if (!NutsBlankable.isBlank(id)) {
-            ids.add(NutsId.of(id,getSession()));
+            ids.add(NutsId.of(id, getSession()));
         }
         return this;
     }
@@ -98,7 +99,7 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
         if (values != null) {
             for (String s : values) {
                 if (!NutsBlankable.isBlank(s)) {
-                    ids.add(NutsId.of(s,getSession()));
+                    ids.add(NutsId.of(s, getSession()));
                 }
             }
         }
@@ -120,7 +121,7 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
     @Override
     public NutsSearchCommand removeId(String id) {
         checkSession();
-        ids.remove(NutsId.of(id,getSession()));
+        ids.remove(NutsId.of(id, getSession()));
         return this;
     }
 
@@ -252,7 +253,7 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
         if (values != null) {
             for (String s : values) {
                 if (!NutsBlankable.isBlank(s)) {
-                    lockedIds.add(NutsId.of(s,getSession()));
+                    lockedIds.add(NutsId.of(s, getSession()));
                 }
             }
         }
@@ -362,7 +363,7 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
     @Override
     public NutsSearchCommand removeLockedId(String id) {
         checkSession();
-        lockedIds.remove(NutsId.of(id,getSession()));
+        lockedIds.remove(NutsId.of(id, getSession()));
         return this;
     }
 
@@ -370,7 +371,7 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
     public NutsSearchCommand addLockedId(String id) {
         checkSession();
         if (!NutsBlankable.isBlank(id)) {
-            lockedIds.add(NutsId.of(id,getSession()));
+            lockedIds.add(NutsId.of(id, getSession()));
         }
         return this;
     }
@@ -625,7 +626,7 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
         NutsId[] allIds = new NutsId[nutsDefinitions.size()];
         for (int i = 0; i < allURLs.length; i++) {
             NutsDefinition d = nutsDefinitions.get(i);
-            allURLs[i] = d.getPath()==null?null:d.getPath().toURL();
+            allURLs[i] = d.getPath() == null ? null : d.getPath().toURL();
             allIds[i] = d.getId();
         }
         DefaultNutsClassLoader cl = ((DefaultNutsWorkspaceExtensionManager) getSession().extensions())
@@ -953,7 +954,7 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
             case "--api-version": {
                 String val = cmdLine.nextBoolean().getValue().getString();
                 if (enabled) {
-                    this.setTargetApiVersion(NutsVersion.of(val,getSession()));
+                    this.setTargetApiVersion(NutsVersion.of(val, getSession()));
                 }
                 return true;
             }
@@ -1140,19 +1141,26 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
                             .flatMap(x -> x.getDependencies().nodes().iterator())
                             .map(x -> dependenciesToElement(x))
                             .build();
-
-                    it = NutsWorkspaceUtils.of(getSearchSession()).decoratePrint(it, getSearchSession(), getDisplayOptions());
-                    while (it.hasNext()) {
-                        it.next();
+                    if (session.isDry()) {
+                        displayDryQueryPlan(it);
+                    } else {
+                        it = NutsWorkspaceUtils.of(getSearchSession()).decoratePrint(it, getSearchSession(), getDisplayOptions());
+                        while (it.hasNext()) {
+                            it.next();
+                        }
                     }
                     break;
                 }
 
                 default: {
                     NutsStream<NutsDependency> rr = getResultInlineDependencies();
-                    Iterator<NutsDependency> it = NutsWorkspaceUtils.of(getSearchSession()).decoratePrint(rr.iterator(), getSearchSession(), getDisplayOptions());
-                    while (it.hasNext()) {
-                        it.next();
+                    if (session.isDry()) {
+                        displayDryQueryPlan(rr.iterator());
+                    } else {
+                        Iterator<NutsDependency> it = NutsWorkspaceUtils.of(getSearchSession()).decoratePrint(rr.iterator(), getSearchSession(), getDisplayOptions());
+                        while (it.hasNext()) {
+                            it.next();
+                        }
                     }
                     break;
                 }
@@ -1291,12 +1299,28 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
             }
         }
 
-        Iterator it = NutsWorkspaceUtils.of(getSearchSession()).decoratePrint(r.iterator(), getSearchSession(), getDisplayOptions());
-        while (it.hasNext()) {
-            it.next();
+        if (session.isDry()) {
+            displayDryQueryPlan(r.iterator());
+        } else {
+            Iterator it = NutsWorkspaceUtils.of(getSearchSession()).decoratePrint(r.iterator(), getSearchSession(), getDisplayOptions());
+            while (it.hasNext()) {
+                it.next();
+            }
         }
         return this;
     }
+
+    private void displayDryQueryPlan(Iterator it) {
+        IterInfoNode n = IterInfoNode.resolveOrString("result", it, session);
+
+        NutsContentType f = session.getOutputFormat();
+        if(f==NutsContentType.PLAIN){
+            f=NutsContentType.TREE;
+        }
+        NutsSession session2 = session.copy().setOutputFormat(f);
+        session2.out().printlnf(n);
+    }
+
 
     public Iterator<NutsDefinition> getResultDefinitionIteratorBase(boolean content, boolean effective) {
         NutsFetchCommand fetch = toFetch().setContent(content).setEffective(effective);

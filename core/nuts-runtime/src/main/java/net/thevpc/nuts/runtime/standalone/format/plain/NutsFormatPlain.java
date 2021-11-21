@@ -102,7 +102,7 @@ public class NutsFormatPlain extends DefaultFormatBase<NutsContentTypeFormat> im
             NutsXmlUtils.writeDocument(doc, new StreamResult(w.asPrintStream()), false, false, getSession());
         } else {
             NutsElements element = NutsElements.of(session);
-            Object newVal = element.setNtf(true).setDestructTypeFilter(NutsElements.DEFAULT_FORMAT_DESTRUCTOR).destruct(value);
+            Object newVal = element.setNtf(true).setFormatDestructTypeFilter().destruct(value);
             Flags f=new Flags();
             collectFlags(newVal,f,300);
             if(f.map){

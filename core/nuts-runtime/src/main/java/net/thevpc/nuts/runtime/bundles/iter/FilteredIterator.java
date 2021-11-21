@@ -26,13 +26,15 @@
  */
 package net.thevpc.nuts.runtime.bundles.iter;
 
+import net.thevpc.nuts.NutsSession;
+
 import java.util.Iterator;
 import java.util.function.Predicate;
 
 /**
  * Created by vpc on 1/9/17.
  */
-public class FilteredIterator<T> implements Iterator<T> {
+public class FilteredIterator<T> extends IterInfoNodeAware2Base<T> {
 
     private final Iterator<T> base;
     private final Predicate<? super T> filter;
@@ -45,6 +47,14 @@ public class FilteredIterator<T> implements Iterator<T> {
             this.base = base;
         }
         this.filter = filter;
+    }
+
+    @Override
+    public IterInfoNode info(NutsSession session) {
+        return info("Filtered",
+                IterInfoNode.resolveOrNull("base", base, session),
+                IterInfoNode.resolveOrNull("filter", filter, session)
+        );
     }
 
     @Override

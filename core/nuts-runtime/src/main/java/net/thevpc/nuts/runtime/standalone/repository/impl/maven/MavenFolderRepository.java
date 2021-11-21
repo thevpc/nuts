@@ -112,7 +112,7 @@ public class MavenFolderRepository extends NutsCachedRepository {
         if (wrapper == null) {
             wrapper = getWrapper(session);
         }
-        if (wrapper != null && wrapper.get(id, config().getLocation(true).toString(), session)) {
+        if (wrapper != null && wrapper.get(id, config().setSession(session).getLocation(true).toString(), session)) {
             NutsRepository repo = getLocalMavenRepo(session);
             if (repo != null) {
                 NutsRepositorySPI repoSPI = NutsWorkspaceUtils.of(session).repoSPI(repo);
@@ -188,9 +188,9 @@ public class MavenFolderRepository extends NutsCachedRepository {
             session.getTerminal().printProgress("%-8s %s", "browse", NutsPath.of(root, session).toCompressedForm());
             if (root.endsWith("/*")) {
                 String name = root.substring(0, root.length() - 2);
-                list.add(new NutsIdPathIterator(this, config().getLocation(true), name, filter, session, repoIter, Integer.MAX_VALUE));
+                list.add(new NutsIdPathIterator(this, config().setSession(session).getLocation(true), name, filter, session, repoIter, Integer.MAX_VALUE));
             } else {
-                list.add(new NutsIdPathIterator(this, config().getLocation(true), root, filter, session, repoIter, 2));
+                list.add(new NutsIdPathIterator(this, config().setSession(session).getLocation(true), root, filter, session, repoIter, 2));
             }
         }
         return IteratorUtils.concat(list);
@@ -198,7 +198,7 @@ public class MavenFolderRepository extends NutsCachedRepository {
 
     @Override
     public void updateStatistics2(NutsSession session) {
-        config().getLocation(true).walkDfs(new NutsTreeVisitor<NutsPath>() {
+        config().setSession(session).getLocation(true).walkDfs(new NutsTreeVisitor<NutsPath>() {
                                                @Override
                                                public NutsTreeVisitResult preVisitDirectory(NutsPath dir, NutsSession session) {
 

@@ -5,19 +5,28 @@
  */
 package net.thevpc.nuts.runtime.bundles.iter;
 
+import net.thevpc.nuts.NutsSession;
+
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Queue;
-import net.thevpc.nuts.runtime.standalone.util.CoreCommonUtils;
 
 /**
  *
  * @author thevpc
  */
-public class CoalesceIterator<T> implements Iterator<T> {
+public class CoalesceIterator<T> extends IterInfoNodeAware2Base<T> {
 
     private Queue<Iterator<? extends T>> children = new LinkedList<Iterator<? extends T>>();
     private int size = 0;
+
+    @Override
+    public IterInfoNode info(NutsSession session) {
+        return info("Coalesce",
+                children.stream().map(o -> IterInfoNode.resolveOrNull(o, session))
+                        .toArray(IterInfoNode[]::new)
+        );
+    }
 
     public void addNonNull(Iterator<T> child) {
         if (child != null) {

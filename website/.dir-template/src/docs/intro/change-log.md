@@ -12,6 +12,7 @@ Starred releases are most stable ones.
 ## nuts 0.8.3.0 (DEVELOPMENT VERSION)
 - ```2021/XX/XX 	nuts 0.8.3.0 (*)``` not released yet [download nuts-0.8.3.jar](http://thevpc.net/nuts.jar)
 - WARNING : {api}  API has evolved with incompatibilities with previous versions
+- ADDED   : {runtime}  now search --dry displays the search query plan
 - ADDED   : {api}  added command "settings install-log" to display installation logs
 - ADDED   : {api}  added NutsExpr to help parsing simple expressions (used or will be used in almost all commands)
 - CHANGED : {api}  Simplified API

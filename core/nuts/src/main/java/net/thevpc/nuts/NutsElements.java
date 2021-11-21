@@ -45,21 +45,7 @@ import java.util.function.Predicate;
  * @since 0.5.5
  */
 public interface NutsElements extends NutsContentTypeFormat {
-    Predicate<Type> DEFAULT_FORMAT_DESTRUCTOR = new Predicate<Type>() {
-        @Override
-        public boolean test(Type x) {
-            if (x instanceof Class) {
-                Class c = (Class) x;
-                return !(
-                        NutsString.class.isAssignableFrom(c)
-                                || NutsElement.class.isAssignableFrom(c)
-                                || NutsFormattable.class.isAssignableFrom(c)
-                                || NutsMessage.class.isAssignableFrom(c)
-                );
-            }
-            return false;
-        }
-    };
+
 
     static NutsElements of(NutsSession session) {
         NutsApiUtils.checkSession(session);
@@ -393,6 +379,8 @@ public interface NutsElements extends NutsContentTypeFormat {
     NutsPrimitiveElement forNumber(Number value);
 
     Predicate<Type> getDestructTypeFilter();
+
+    NutsElements setFormatDestructTypeFilter();
 
     NutsElements setDestructTypeFilter(Predicate<Type> destructTypeFilter);
 

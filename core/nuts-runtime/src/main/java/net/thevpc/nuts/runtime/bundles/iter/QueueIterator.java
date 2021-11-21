@@ -26,18 +26,28 @@
 */
 package net.thevpc.nuts.runtime.bundles.iter;
 
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.Queue;
-import net.thevpc.nuts.runtime.standalone.util.CoreCommonUtils;
+import net.thevpc.nuts.NutsSession;
+
+import java.util.*;
+import java.util.stream.IntStream;
 
 /**
  * Created by vpc on 1/7/17.
  */
-public class QueueIterator<T> implements Iterator<T> {
+public class QueueIterator<T> extends IterInfoNodeAware2Base<T> {
 
     private Queue<Iterator<? extends T>> children = new LinkedList<Iterator<? extends T>>();
     private int size;
+
+    @Override
+    public IterInfoNode info(NutsSession session) {
+        ArrayList<Iterator<? extends T>> list=new ArrayList<>(children);
+        return info("Queue",
+                IntStream.range(0, list.size()).boxed()
+                        .map(i->IterInfoNode.resolveOrNull("base["+i+"]",list.get(i), session))
+                        .toArray(IterInfoNode[]::new)
+        );
+    }
 
     public void addNonNull(Iterator<? extends T> child) {
         if (child != null) {

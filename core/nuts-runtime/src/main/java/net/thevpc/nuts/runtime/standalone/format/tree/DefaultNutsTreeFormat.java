@@ -107,7 +107,7 @@ public class DefaultNutsTreeFormat extends DefaultFormatBase<NutsTreeFormat> imp
         }
         Object destructredObject = NutsElements.of(getSession())
                 .setNtf(true)
-                .setDestructTypeFilter(NutsElements.DEFAULT_FORMAT_DESTRUCTOR)
+                .setFormatDestructTypeFilter()
                 .destruct(tree);
         return new NutsElementTreeModel(
                 XNode.root(destructredObject, rootName, getSession(), xNodeFormatter)

@@ -13,11 +13,10 @@ import java.util.List;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
-import net.thevpc.nuts.runtime.bundles.io.FileDepthFirstIterator;
+import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.runtime.standalone.util.CoreCollectionUtils;
 
 /**
- *
  * @author thevpc
  */
 public class IteratorBuilder<T> {
@@ -47,7 +46,7 @@ public class IteratorBuilder<T> {
         return new IteratorBuilder<>(t);
     }
 
-    public static <T> IteratorBuilder<T> ofLazyNamed(String name,Iterable<T> t) {
+    public static <T> IteratorBuilder<T> ofLazyNamed(String name, Iterable<T> t) {
         return ofLazy(new NamedIterable<T>(name) {
             @Override
             public Iterator<T> iterator() {
@@ -55,18 +54,29 @@ public class IteratorBuilder<T> {
             }
         });
     }
+
+    public static <T> IteratorBuilder<T> ofNamed(String name, Iterator<T> t) {
+        return of(new NamedIterator<T>(t, name));
+    }
+
+    public static <T> IteratorBuilder<T> ofNodeAware(IterInfoNode info, Iterator<T> t) {
+        return of(
+                new IterInfoNodeAwareAdapter<>(t, info)
+        );
+    }
+
     public static <T> IteratorBuilder<T> ofLazy(Iterable<T> t) {
         return new IteratorBuilder<>(
                 new LazyIterator(t)
         );
     }
 
-    public static IteratorBuilder<File> ofFileDFS(File file) {
-        return of(new FileDepthFirstIterator(file));
-    }
+//    public static IteratorBuilder<File> ofFileDFS(File file) {
+//        return of(new FileDepthFirstIterator(file));
+//    }
 
     public static <T> IteratorBuilder<T> ofArray(T... t) {
-        return of(t == null ? IteratorUtils.<T>emptyIterator() : Arrays.asList(t).iterator());
+        return of(t == null ? IteratorUtils.emptyIterator() : Arrays.asList(t).iterator());
     }
 
     public static IteratorBuilder<File> ofFileList(File file) {
@@ -121,13 +131,38 @@ public class IteratorBuilder<T> {
     public <V> IteratorBuilder<T> distinct() {
         return distinct(null);
     }
-    
+
     public <V> IteratorBuilder<T> distinct(Function<T, V> t) {
         if (t == null) {
             return new IteratorBuilder<>(IteratorUtils.distinct(it));
         } else {
             return new IteratorBuilder<>(IteratorUtils.distinct(it, t));
         }
+    }
+
+    public <V> IteratorBuilder<T> named(String n) {
+        if (n != null) {
+            return new IteratorBuilder<>(IteratorUtils.name(n, it));
+        }
+        return this;
+    }
+
+    public <V> IteratorBuilder<T> withInfo(IterInfoNode nfo) {
+        if (nfo != null) {
+            return new IteratorBuilder<>(new IterInfoNodeAwareAdapter<T>(it, nfo));
+        }
+        return this;
+    }
+
+    public <V> IteratorBuilder<T> withDefaultInfo(IterInfoNode nfo, NutsSession session) {
+        if (nfo != null) {
+            IterInfoNode a = IterInfoNode.resolveOrNull(it, session);
+            if (a != null) {
+                return this;
+            }
+            return withInfo(nfo);
+        }
+        return this;
     }
 
     public IteratorBuilder<T> safe(IteratorErrorHandlerType type) {
@@ -147,7 +182,7 @@ public class IteratorBuilder<T> {
     }
 
     public IteratorBuilder<String> notBlank() {
-        return ((IteratorBuilder<String>) this).filter(IteratorUtils.NON_BLANK);
+        return this.filter(IteratorUtils.NON_BLANK);
     }
 
     public Iterator<T> iterator() {

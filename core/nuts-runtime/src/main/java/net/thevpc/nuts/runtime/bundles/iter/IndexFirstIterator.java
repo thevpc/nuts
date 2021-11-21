@@ -6,6 +6,7 @@
 package net.thevpc.nuts.runtime.bundles.iter;
 
 import net.thevpc.nuts.NutsIndexerNotAccessibleException;
+import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 
 import java.util.Iterator;
@@ -15,9 +16,9 @@ import java.util.logging.Logger;
 /**
  * @author thevpc
  */
-public class IndexFirstIterator<T> implements Iterator<T> {
+public class IndexFirstIterator<T> extends IterInfoNodeAware2Base<T> {
 
-    private static Logger LOG = Logger.getLogger(IndexFirstIterator.class.getName());
+    private static final Logger LOG = Logger.getLogger(IndexFirstIterator.class.getName());
     private Iterator<T> index;
     private Iterator<T> other;
     private long readFromIndex;
@@ -27,6 +28,11 @@ public class IndexFirstIterator<T> implements Iterator<T> {
     public IndexFirstIterator(Iterator<T> index, Iterator<T> other) {
         this.index = index;
         this.other = other;
+    }
+
+    @Override
+    public IterInfoNode info(NutsSession session) {
+        return info("IndexFirst", IterInfoNode.resolveOrNull("base", other, session));
     }
 
     @Override
@@ -79,9 +85,9 @@ public class IndexFirstIterator<T> implements Iterator<T> {
 
     @Override
     public void remove() {
-        if(index!=null){
+        if (index != null) {
             index.remove();
-        }else if(other!=null){
+        } else if (other != null) {
             other.remove();
         }
     }

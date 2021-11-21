@@ -3,23 +3,32 @@ package net.thevpc.nuts.runtime.bundles.mvn;
 import net.thevpc.nuts.NutsIOException;
 import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.runtime.bundles.collections.EvictingIntQueue;
+import net.thevpc.nuts.runtime.bundles.iter.IterInfoNode;
+import net.thevpc.nuts.runtime.bundles.iter.IterInfoNodeAware2Base;
 
 import java.io.*;
-import java.util.Iterator;
 
-public class DirtyLuceneIndexParser implements Iterator<String>, Closeable {
+public class DirtyLuceneIndexParser extends IterInfoNodeAware2Base<String> implements Closeable {
     private PushbackReader reader;
     private String last;
     private EvictingIntQueue whites = new EvictingIntQueue(10);
     private long count = 0;
     private boolean closed=false;
     private NutsSession session;
+    private InputStream source0;
 
     public DirtyLuceneIndexParser(InputStream reader, NutsSession session) {
         this.session = session;
+        this.source0 = reader;
         this.reader = new PushbackReader(new InputStreamReader(reader));
     }
 
+    @Override
+    public IterInfoNode info(NutsSession session) {
+        return info("ScanLucene",
+                IterInfoNode.resolveOrString("source", source0, this.session)
+        );
+    }
 
     public static boolean isVisibleChar(char c) {
         return

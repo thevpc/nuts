@@ -26,6 +26,8 @@
 */
 package net.thevpc.nuts.runtime.bundles.iter;
 
+import net.thevpc.nuts.NutsSession;
+
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -37,7 +39,7 @@ import java.util.function.Function;
  * @param <F> From Type
  * @param <T> To Type
  */
-public class ConvertedToListIterator<F, T> implements Iterator<T> {
+public class ConvertedToListIterator<F, T> extends IterInfoNodeAware2Base<T> {
 
     private final Iterator<F> base;
     private final Function<F, List<T>> converter;
@@ -46,6 +48,14 @@ public class ConvertedToListIterator<F, T> implements Iterator<T> {
     public ConvertedToListIterator(Iterator<F> base, Function<F, List<T>> converter) {
         this.base = base;
         this.converter = converter;
+    }
+
+    @Override
+    public IterInfoNode info(NutsSession session) {
+        return info("ConvertedToList",
+                IterInfoNode.resolveOrNull("base",base, session),
+                IterInfoNode.resolveOrNull("converter",converter, session)
+        );
     }
 
     @Override

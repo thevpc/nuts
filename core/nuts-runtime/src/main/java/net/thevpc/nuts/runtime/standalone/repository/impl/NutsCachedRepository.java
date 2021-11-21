@@ -10,7 +10,7 @@
  * other 'things' . Its based on an extensible architecture to help supporting a
  * large range of sub managers / repositories.
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc] Licensed under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -24,32 +24,33 @@
 package net.thevpc.nuts.runtime.standalone.repository.impl;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.standalone.repository.cmd.NutsRepositorySupportedAction;
-import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceExt;
-import net.thevpc.nuts.runtime.standalone.util.SuccessFailResult;
-import net.thevpc.nuts.runtime.standalone.repository.cmd.updatestats.AbstractNutsUpdateRepositoryStatisticsCommand;
 import net.thevpc.nuts.runtime.bundles.io.CommonRootsHelper;
 import net.thevpc.nuts.runtime.bundles.iter.IteratorBuilder;
 import net.thevpc.nuts.runtime.bundles.iter.IteratorUtils;
+import net.thevpc.nuts.runtime.bundles.string.GlobUtils;
+import net.thevpc.nuts.runtime.standalone.repository.cmd.NutsRepositorySupportedAction;
+import net.thevpc.nuts.runtime.standalone.repository.cmd.updatestats.AbstractNutsUpdateRepositoryStatisticsCommand;
+import net.thevpc.nuts.runtime.standalone.util.SuccessFailResult;
+import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceExt;
 import net.thevpc.nuts.spi.NutsDeployRepositoryCommand;
 import net.thevpc.nuts.spi.NutsPushRepositoryCommand;
 import net.thevpc.nuts.spi.NutsRepositoryUndeployCommand;
 import net.thevpc.nuts.spi.NutsUpdateRepositoryStatisticsCommand;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 import java.util.logging.Level;
-import net.thevpc.nuts.runtime.bundles.string.GlobUtils;
 
 /**
  * Created by vpc on 1/5/17.
  */
 public class NutsCachedRepository extends AbstractNutsRepositoryBase {
 
-    public NutsLogger LOG;
-
     protected final NutsRepositoryFolderHelper lib;
     protected final NutsRepositoryFolderHelper cache;
     private final NutsRepositoryMirroringHelper mirroring;
+    public NutsLogger LOG;
 
     public NutsCachedRepository(NutsAddRepositoryOptions options, NutsSession session, NutsRepository parent, NutsSpeedQualifier speed, boolean supportedMirroring, String repositoryType) {
         super(options, session, parent, speed, supportedMirroring, repositoryType);
@@ -64,9 +65,24 @@ public class NutsCachedRepository extends AbstractNutsRepositoryBase {
 
     protected NutsLogger _LOG(NutsSession session) {
         if (LOG == null) {
-            LOG = NutsLogger.of(NutsCachedRepository.class,session);
+            LOG = NutsLogger.of(NutsCachedRepository.class, session);
         }
         return LOG;
+    }
+
+    @Override
+    public void pushImpl(NutsPushRepositoryCommand command) {
+        mirroring.push(command);
+    }
+
+    @Override
+    public NutsDescriptor deployImpl(NutsDeployRepositoryCommand command) {
+        return lib.deploy(command, command.getSession().getConfirm());
+    }
+
+    @Override
+    public final void undeployImpl(NutsRepositoryUndeployCommand options) {
+        lib.undeploy(options);
     }
 
     @Override
@@ -126,46 +142,61 @@ public class NutsCachedRepository extends AbstractNutsRepositoryBase {
     }
 
     @Override
-    public NutsDescriptor deployImpl(NutsDeployRepositoryCommand command) {
-        return lib.deploy(command, command.getSession().getConfirm());
-    }
+    public final Iterator<NutsId> searchVersionsImpl(NutsId id, NutsIdFilter idFilter, NutsFetchMode fetchMode, NutsSession session) {
 
-    @Override
-    public void pushImpl(NutsPushRepositoryCommand command) {
-        mirroring.push(command);
-    }
-
-    @Override
-    public final Iterator<NutsId> searchImpl(final NutsIdFilter filter, NutsFetchMode fetchMode, NutsSession session) {
-        List<CommonRootsHelper.PathBase> roots = CommonRootsHelper.resolveRootPaths(filter);
-        List<Iterator<? extends NutsId>> li = new ArrayList<>();
-        List<String> rootStrings = new ArrayList<>();
-        for (CommonRootsHelper.PathBase root : roots) {
-            NutsPath np = NutsPath.of(root.getName(), session);
-            li.add(lib.findInFolder(np, filter, root.isDeep() ? Integer.MAX_VALUE : 2, session));
-            if (cache.isReadEnabled() && session.isCached()) {
-                li.add(cache.findInFolder(np, filter, root.isDeep() ? Integer.MAX_VALUE : 2, session));
-            }
-            if (root.isDeep()) {
-                rootStrings.add(root.getName() + "/*");
-            } else {
-                rootStrings.add(root.getName());
+        List<Iterator<? extends NutsId>> all = new ArrayList<>();
+        if (fetchMode != NutsFetchMode.REMOTE) {
+            try {
+                all.add(IteratorUtils.name(
+                        "searchVersionInLib(" + getName() + ")",
+                        lib.searchVersions(id, idFilter, true, session)
+                ));
+                if (cache.isReadEnabled()) {
+                    all.add(
+                            IteratorUtils.name("searchVersionInCache(" + getName() + ")",
+                                    cache.searchVersions(id, idFilter, true, session)
+                            ));
+                }
+//                Iterator<NutsId> p = null;
+//                try {
+//                    p = searchVersionsImpl2(id, idFilter, session);
+//                    if (p != null) {
+//                        all.add(p);
+//                    }
+//                } catch (Exception ex) {
+//                    //ignore....
+//                }
+            } catch (NutsNotFoundException ex) {
+//                errors.append(ex).append(" \n");
             }
         }
-        Iterator<NutsId> p = null;
+
         try {
-            p = searchCore(filter, rootStrings.toArray(new String[0]), fetchMode, session);
+            Iterator<NutsId> p = null;
+            p = searchVersionsCore(id, idFilter, fetchMode, session);
+            if (p != null) {
+                all.add(
+                        IteratorUtils.name(
+                                "searchVersionInCore(" + getName() + ")",
+                                p));
+            }
         } catch (NutsNotFoundException ex) {
-            //ignore....
+            //ignore error
         } catch (Exception ex) {
-            //ignore....
             _LOGOP(session).level(Level.SEVERE).error(ex)
-                    .log(NutsMessage.jstyle("search latest versions error : {0}", ex));
+                    .log(NutsMessage.jstyle("search versions error : {0}", ex));
+            //ignore....
         }
-        if (p != null) {
-            li.add(p);
+        Iterator<NutsId> namedNutIdIterator = IteratorBuilder.ofList(all).distinct(
+                IteratorUtils.namedFunction(NutsId::getLongName,"getLongName")).build();
+
+        if (namedNutIdIterator == null) {
+            namedNutIdIterator = IteratorUtils.emptyIterator();
         }
-        return mirroring.search(IteratorBuilder.ofList(li).distinct(NutsId::getLongName).build(), filter, fetchMode, session);
+        return IteratorUtils.name("searchVersion("+getName()+")",
+                mirroring.searchVersionsImpl_appendMirrors(namedNutIdIterator, id, idFilter, fetchMode, session)
+        );
+
     }
 
     @Override
@@ -200,7 +231,7 @@ public class NutsCachedRepository extends AbstractNutsRepositoryBase {
                         localPath2 = cachePath.toString();
                     }
                     return SuccessFailResult.success(new NutsDefaultContent(
-                            NutsPath.of(localPath2,session), true, false));
+                            NutsPath.of(localPath2, session), true, false));
                 } else {
                     return SuccessFailResult.fail(new NutsNotFoundException(session, id));
                 }
@@ -248,59 +279,75 @@ public class NutsCachedRepository extends AbstractNutsRepositoryBase {
         throw new NutsNotFoundException(session, id);
     }
 
+    @Override
+    public final Iterator<NutsId> searchImpl(final NutsIdFilter filter, NutsFetchMode fetchMode, NutsSession session) {
+        List<CommonRootsHelper.PathBase> roots = CommonRootsHelper.resolveRootPaths(filter);
+        List<Iterator<? extends NutsId>> li = new ArrayList<>();
+        List<String> rootStrings = new ArrayList<>();
+        for (CommonRootsHelper.PathBase root : roots) {
+            NutsPath np = NutsPath.of(root.getName(), session);
+            li.add(lib.findInFolder(np, filter, root.isDeep() ? Integer.MAX_VALUE : 2, session));
+            if (cache.isReadEnabled() && session.isCached()) {
+                li.add(cache.findInFolder(np, filter, root.isDeep() ? Integer.MAX_VALUE : 2, session));
+            }
+            if (root.isDeep()) {
+                rootStrings.add(root.getName() + "/*");
+            } else {
+                rootStrings.add(root.getName());
+            }
+        }
+        Iterator<NutsId> p = null;
+        try {
+            p = searchCore(filter, rootStrings.toArray(new String[0]), fetchMode, session);
+        } catch (NutsNotFoundException ex) {
+            //ignore....
+        } catch (Exception ex) {
+            //ignore....
+            _LOGOP(session).level(Level.SEVERE).error(ex)
+                    .log(NutsMessage.jstyle("search latest versions error : {0}", ex));
+        }
+        if (p != null) {
+            li.add(p);
+        }
+        return mirroring.search(IteratorBuilder.ofList(li).distinct(
+                IteratorUtils.namedFunction(NutsId::getLongName,"getLongName")
+        ).build(), filter, fetchMode, session);
+    }
+
     protected boolean isAllowedOverrideNut(NutsId id) {
         return true;
     }
 
-    @Override
-    public final void undeployImpl(NutsRepositoryUndeployCommand options) {
-        lib.undeploy(options);
+    public Iterator<NutsId> searchVersionsCore(NutsId id, NutsIdFilter idFilter, NutsFetchMode fetchMode, NutsSession session) {
+        return null;
     }
 
-    @Override
-    public final Iterator<NutsId> searchVersionsImpl(NutsId id, NutsIdFilter idFilter, NutsFetchMode fetchMode, NutsSession session) {
+    public NutsId searchLatestVersionCore(NutsId id, NutsIdFilter filter, NutsFetchMode fetchMode, NutsSession session) {
+        return null;
+    }
 
-        List<Iterator<? extends NutsId>> all = new ArrayList<>();
-        if (fetchMode != NutsFetchMode.REMOTE) {
-            try {
-                all.add(lib.searchVersions(id, idFilter, true, session));
-                if (cache.isReadEnabled()) {
-                    all.add(cache.searchVersions(id, idFilter, true, session));
-                }
-//                Iterator<NutsId> p = null;
-//                try {
-//                    p = searchVersionsImpl2(id, idFilter, session);
-//                    if (p != null) {
-//                        all.add(p);
-//                    }
-//                } catch (Exception ex) {
-//                    //ignore....
-//                }
-            } catch (NutsNotFoundException ex) {
-//                errors.append(ex).append(" \n");
-            }
+    public NutsDescriptor fetchDescriptorCore(NutsId id, NutsFetchMode fetchMode, NutsSession session) {
+        return null;
+    }
+
+    public NutsContent fetchContentCore(NutsId id, NutsDescriptor descriptor, String localPath, NutsFetchMode fetchMode, NutsSession session) {
+        return null;
+    }
+
+    public Iterator<NutsId> searchCore(final NutsIdFilter filter, String[] roots, NutsFetchMode fetchMode, NutsSession session) {
+        return null;
+    }
+
+    public void updateStatistics2(NutsSession session) {
+
+    }
+
+    public boolean acceptAction(NutsId id, NutsRepositorySupportedAction supportedAction, NutsFetchMode mode, NutsSession session) {
+        String groups = config().setSession(session).getGroups();
+        if (NutsBlankable.isBlank(groups)) {
+            return true;
         }
-
-        try {
-            Iterator<NutsId> p = null;
-            p = searchVersionsCore(id, idFilter, fetchMode, session);
-            if (p != null) {
-                all.add(p);
-            }
-        } catch (NutsNotFoundException ex) {
-            //ignore error
-        } catch (Exception ex) {
-            _LOGOP(session).level(Level.SEVERE).error(ex)
-                    .log(NutsMessage.jstyle("search versions error : {0}", ex));
-            //ignore....
-        }
-        Iterator<NutsId> namedNutIdIterator = IteratorBuilder.ofList(all).distinct(NutsId::getLongName).build();
-
-        if (namedNutIdIterator == null) {
-            namedNutIdIterator = IteratorUtils.emptyIterator();
-        }
-        return mirroring.searchVersionsImpl_appendMirrors(namedNutIdIterator, id, idFilter, fetchMode, session);
-
+        return GlobUtils.ofExact(groups).matcher(id.getGroupId()).matches();
     }
 
     @Override
@@ -344,38 +391,6 @@ public class NutsCachedRepository extends AbstractNutsRepositoryBase {
                 return this;
             }
         };
-    }
-
-    public Iterator<NutsId> searchVersionsCore(NutsId id, NutsIdFilter idFilter, NutsFetchMode fetchMode, NutsSession session) {
-        return null;
-    }
-
-    public NutsId searchLatestVersionCore(NutsId id, NutsIdFilter filter, NutsFetchMode fetchMode, NutsSession session) {
-        return null;
-    }
-
-    public NutsDescriptor fetchDescriptorCore(NutsId id, NutsFetchMode fetchMode, NutsSession session) {
-        return null;
-    }
-
-    public NutsContent fetchContentCore(NutsId id, NutsDescriptor descriptor, String localPath, NutsFetchMode fetchMode, NutsSession session) {
-        return null;
-    }
-
-    public Iterator<NutsId> searchCore(final NutsIdFilter filter, String[] roots, NutsFetchMode fetchMode, NutsSession session) {
-        return null;
-    }
-
-    public void updateStatistics2(NutsSession session) {
-
-    }
-
-    public boolean acceptAction(NutsId id, NutsRepositorySupportedAction supportedAction, NutsFetchMode mode, NutsSession session) {
-        String groups = config().setSession(session).getGroups();
-        if (NutsBlankable.isBlank(groups)) {
-            return true;
-        }
-        return GlobUtils.ofExact(groups).matcher(id.getGroupId()).matches();
     }
 
     @Override

@@ -5,13 +5,14 @@
  */
 package net.thevpc.nuts.runtime.bundles.iter;
 
+import net.thevpc.nuts.NutsSession;
+
 import java.util.Iterator;
 
 /**
- *
  * @author thevpc
  */
-public class LazyIterator<T> implements Iterator<T> {
+public class LazyIterator<T> extends IterInfoNodeAware2Base<T> {
 
     private Iterable<T> iterable;
     private Iterator<T> iterator;
@@ -21,6 +22,11 @@ public class LazyIterator<T> implements Iterator<T> {
 
     public LazyIterator(Iterable<T> iterable) {
         this.iterable = iterable;
+    }
+
+    @Override
+    public IterInfoNode info(NutsSession session) {
+        return info("Lazy", IterInfoNode.resolveOrString("iterable", iterable, session));
     }
 
     @Override
@@ -43,19 +49,19 @@ public class LazyIterator<T> implements Iterator<T> {
         return iterator.next();
     }
 
-    protected Iterator<T> iterator() {
-        throw new UnsupportedOperationException("no implemented");
-    }
-
     @Override
     public void remove() {
         iterator.remove();
     }
 
+    protected Iterator<T> iterator() {
+        throw new UnsupportedOperationException("no implemented");
+    }
+
     @Override
     public String toString() {
         return "LazyIterator("
-                +(iterator!=null?iterator.toString():iterable!=null?iterable.toString():"null")
-                +")";
+                + (iterator != null ? iterator.toString() : iterable != null ? iterable.toString() : "null")
+                + ")";
     }
 }

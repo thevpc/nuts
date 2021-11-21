@@ -24,6 +24,7 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.search;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.bundles.iter.IterInfoNode;
 import net.thevpc.nuts.runtime.standalone.repository.cmd.NutsRepositorySupportedAction;
 import net.thevpc.nuts.runtime.standalone.id.filter.NutsIdFilterOr;
 import net.thevpc.nuts.runtime.standalone.util.filters.CoreFilterUtils;
@@ -435,7 +436,7 @@ public class DefaultNutsSearchCommand extends AbstractNutsSearchCommand {
 //                List<Iterator<NutsDependency>> it = new ArrayList<>();
 //                Iterator<NutsDependency> a0 = a.iterator();
 //                List<NutsDependency> base = new ArrayList<>();
-//                it.add(new NamedIterator<NutsDependency>("tee(" + a0 + ")") {
+//                it.add(new AbstractNamedIterator<NutsDependency>("tee(" + a0 + ")") {
 //                    @Override
 //                    public boolean hasNext() {
 //                        return a0.hasNext();
@@ -448,7 +449,7 @@ public class DefaultNutsSearchCommand extends AbstractNutsSearchCommand {
 //                        return x;
 //                    }
 //                });
-//                it.add(new NamedIterator<NutsDependency>("ResolveDependencies") {
+//                it.add(new AbstractNamedIterator<NutsDependency>("ResolveDependencies") {
 //                    Iterator<NutsDependency> deps = null;
 //
 //                    @Override
@@ -632,12 +633,18 @@ public class DefaultNutsSearchCommand extends AbstractNutsSearchCommand {
             )) {
                 consideredRepos.add(repoAndMode.getRepository());
                 NutsSession finalSession1 = session;
-                all.add(IteratorBuilder.ofLazyNamed("search(" + repoAndMode.getRepository().getName() + ","
-                        + repoAndMode.getFetchMode() + "," + sRepositoryFilter + "," + session + ")",
-                        () -> wu.repoSPI(repoAndMode.getRepository()).search()
+                all.add(
+                        IteratorBuilder.of(wu.repoSPI(repoAndMode.getRepository()).search()
                                 .setFilter(filter).setSession(finalSession1)
                                 .setFetchMode(repoAndMode.getFetchMode())
-                                .getResult()).safeIgnore().iterator()
+                                .getResult()).safeIgnore()
+                                .withInfo(
+                                        IterInfoNode.ofLiteral("searchRepository",null,null,
+                                                IterInfoNode.resolveOrString("repository",repoAndMode.getRepository().getName(), session),
+                                                IterInfoNode.resolveOrString("fetchMode",repoAndMode.getFetchMode(), session),
+                                                IterInfoNode.resolveOrStringNonNull("filter",sRepositoryFilter, session)
+                                                ))
+                                .iterator()
                 );
             }
             allResults.add(
@@ -654,8 +661,10 @@ public class DefaultNutsSearchCommand extends AbstractNutsSearchCommand {
             if (!isLatest() && !isDistinct()) {
                 //nothing
             } else if (!isLatest() && isDistinct()) {
-                baseIterator = IteratorBuilder.of(baseIterator).distinct((NutsId nutsId) -> nutsId.getLongId()
-                        .toString()).iterator();
+                baseIterator = IteratorBuilder.of(baseIterator).distinct(
+                        IteratorUtils.namedFunction(
+                        (NutsId nutsId) -> nutsId.getLongId()
+                        .toString(),"getLongId")).iterator();
             } else if (isLatest() && isDistinct()) {
                 Iterator<NutsId> curr = baseIterator;
                 String fromName=curr.toString();

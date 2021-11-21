@@ -1,16 +1,34 @@
 package net.thevpc.nuts.runtime.bundles.iter;
 
+import net.thevpc.nuts.NutsSession;
+
 import java.util.Iterator;
 
-public abstract class NamedIterator<T> implements Iterator<T> {
-    private String name;
+public class NamedIterator<T> extends AbstractNamedIterator<T> {
 
-    public NamedIterator(String name) {
-        this.name = name;
+    private final Iterator<T> from;
+
+    public NamedIterator(Iterator<T> from, String name) {
+        super(name);
+        this.from = from;
+
     }
 
     @Override
-    public String toString() {
-        return name;
+    public boolean hasNext() {
+        return from != null && from.hasNext();
+    }
+
+    @Override
+    public T next() {
+        return from.next();
+    }
+
+    @Override
+    public IterInfoNode info(NutsSession session) {
+        return info("Named",
+                IterInfoNode.resolveOrNull("base",from, session),
+                IterInfoNode.resolveOrNull("name",super.name, session)
+        );
     }
 }

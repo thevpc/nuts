@@ -25,12 +25,14 @@
 */
 package net.thevpc.nuts.runtime.bundles.iter;
 
+import net.thevpc.nuts.NutsSession;
+
 import java.util.Iterator;
 
 /**
  * Created by vpc on 3/19/17.
  */
-public class PushBackIterator<T> implements Iterator<T> {
+public class PushBackIterator<T> extends IterInfoNodeAware2Base<T> {
 
     private Iterator<T> base;
     private Boolean lastHasNext;
@@ -39,6 +41,11 @@ public class PushBackIterator<T> implements Iterator<T> {
 
     public PushBackIterator(Iterator<T> base) {
         this.base = base;
+    }
+
+    @Override
+    public IterInfoNode info(NutsSession session) {
+        return info("PushBack",IterInfoNode.resolveOrNull("base",base, session));
     }
 
     public boolean isEmpty() {

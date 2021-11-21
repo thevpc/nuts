@@ -1,11 +1,12 @@
 package net.thevpc.nuts.runtime.bundles.iter;
 
 import net.thevpc.nuts.NutsPredicates;
+import net.thevpc.nuts.NutsSession;
 
 import java.util.HashSet;
 import java.util.function.Function;
 
-class DistinctWithConverterPredicate<F, T> extends NutsPredicates.BasePredicate<F> {
+class DistinctWithConverterPredicate<F, T> extends NutsPredicates.BasePredicate<F> implements IterInfoNodeAware {
     private final Function<F, T> converter;
     HashSet<T> visited;
 
@@ -26,6 +27,14 @@ class DistinctWithConverterPredicate<F, T> extends NutsPredicates.BasePredicate<
 
     @Override
     public String toString() {
-        return "DistinctConverter["+converter+"]";
+        return "DistinctConverter[" + converter + "]";
     }
+
+    @Override
+    public IterInfoNode info(NutsSession session) {
+        return IterInfoNode.ofLiteralType( "DistinctBy", "distinctBy",  null,
+                IterInfoNode.resolveOrNull("converter", converter, session)
+        );
+    }
+
 }

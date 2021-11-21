@@ -566,7 +566,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
             a.add(_elems().toElement(o));
             return createTableModel(_elems().toElement(a));
         }
-        o = _elems().setDestructTypeFilter(NutsElements.DEFAULT_FORMAT_DESTRUCTOR).destruct(o);
+        o = _elems().setFormatDestructTypeFilter().destruct(o);
         if (o instanceof Collection) {
             NutsMutableTableModel model = NutsMutableTableModel.of(getSession());
             LinkedHashSet<String> columns = new LinkedHashSet<>();

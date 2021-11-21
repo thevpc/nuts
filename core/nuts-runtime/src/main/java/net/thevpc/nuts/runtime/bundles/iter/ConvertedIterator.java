@@ -25,6 +25,8 @@
 */
 package net.thevpc.nuts.runtime.bundles.iter;
 
+import net.thevpc.nuts.NutsSession;
+
 import java.util.Iterator;
 import java.util.function.Function;
 
@@ -34,7 +36,7 @@ import java.util.function.Function;
  * @param <F> From Type
  * @param <T> To Type
  */
-public class ConvertedIterator<F, T> implements Iterator<T> {
+public class ConvertedIterator<F, T> extends IterInfoNodeAware2Base<T> {
 
     private final Iterator<F> base;
     private final Function<? super F, ? extends T> converter;
@@ -43,6 +45,15 @@ public class ConvertedIterator<F, T> implements Iterator<T> {
         this.base = base;
         this.converter = converter;
     }
+
+    @Override
+    public IterInfoNode info(NutsSession session) {
+        return info("Converted",
+                IterInfoNode.resolveOrNull("base",base, session),
+                IterInfoNode.resolveOrNull("converter",converter, session)
+        );
+    }
+
 
     @Override
     public boolean hasNext() {

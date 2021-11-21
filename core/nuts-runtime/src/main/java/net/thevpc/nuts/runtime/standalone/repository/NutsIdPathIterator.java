@@ -24,15 +24,16 @@
 package net.thevpc.nuts.runtime.standalone.repository;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.bundles.iter.IterInfoNode;
+import net.thevpc.nuts.runtime.bundles.iter.IterInfoNodeAware2Base;
 
-import java.util.Iterator;
 import java.util.Stack;
 import java.util.logging.Level;
 
 /**
  * Created by vpc on 2/21/17.
  */
-public class NutsIdPathIterator implements Iterator<NutsId> {
+public class NutsIdPathIterator extends IterInfoNodeAware2Base<NutsId> {
 
     private final NutsRepository repository;
     private final Stack<PathAndDepth> stack = new Stack<>();
@@ -40,11 +41,11 @@ public class NutsIdPathIterator implements Iterator<NutsId> {
     private final NutsSession session;
     private final NutsIdPathIteratorModel model;
     private final int maxDepth;
+    private final String basePath;
+    private final NutsPath rootFolder;
     private NutsId last;
     private long visitedFoldersCount;
     private long visitedFilesCount;
-    private final String basePath;
-    private final NutsPath rootFolder;
 
     public NutsIdPathIterator(NutsRepository repository, NutsPath rootFolder, String basePath, NutsIdFilter filter, NutsSession session, NutsIdPathIteratorModel model, int maxDepth) {
         this.repository = repository;
@@ -62,6 +63,17 @@ public class NutsIdPathIterator implements Iterator<NutsId> {
             startUrl = startUrl.resolve(basePath);
         }
         stack.push(new PathAndDepth(startUrl, true, 0));
+    }
+
+    @Override
+    public IterInfoNode info(NutsSession session) {
+        return info("ScanPath",
+                IterInfoNode.resolveOrStringNonNull("repository", repository == null ? null : repository.getName(), this.session),
+                (filter!=null && filter.simplify()!=null) ? IterInfoNode.resolveOrStringNonNull("filter", filter, this.session):null,
+                IterInfoNode.resolveOrString("maxDepth",  maxDepth, this.session),
+                IterInfoNode.resolveOrString("basePath",  basePath, this.session),
+                IterInfoNode.resolveOrStringNonNull("rootFolder",  rootFolder, this.session)
+        );
     }
 
     @Override

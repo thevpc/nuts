@@ -9,6 +9,7 @@ import java.math.BigInteger;
 import java.net.URL;
 import java.nio.file.Path;
 import java.time.Instant;
+import java.time.temporal.Temporal;
 import java.util.Date;
 import java.util.function.Predicate;
 
@@ -27,14 +28,57 @@ import net.thevpc.nuts.spi.NutsSupportLevelContext;
 
 public class DefaultNutsElements extends DefaultFormatBase<NutsElements> implements NutsElements {
 
-//    public static final NutsPrimitiveElement NULL = new DefaultNutsPrimitiveElement(NutsElementType.NULL, null);
+    //    public static final NutsPrimitiveElement NULL = new DefaultNutsPrimitiveElement(NutsElementType.NULL, null);
 //    public static final NutsPrimitiveElement TRUE = new DefaultNutsPrimitiveElement(NutsElementType.BOOLEAN, true);
 //    public static final NutsPrimitiveElement FALSE = new DefaultNutsPrimitiveElement(NutsElementType.BOOLEAN, false);
-
+    private static Predicate<Type> DEFAULT_FORMAT_DESTRUCTOR = new Predicate<Type>() {
+        @Override
+        public boolean test(Type x) {
+            if (x instanceof Class) {
+                Class c = (Class) x;
+                switch (c.getName()) {
+                    case "boolean":
+                    case "byte":
+                    case "short":
+                    case "int":
+                    case "long":
+                    case "float":
+                    case "double":
+                    case "java.lang.String":
+                    case "java.lang.StringBuilder":
+                    case "java.lang.Boolean":
+                    case "java.lang.Byte":
+                    case "java.lang.Short":
+                    case "java.lang.Integer":
+                    case "java.lang.Long":
+                    case "java.lang.Float":
+                    case "java.lang.Double":
+                    case "java.math.BigDecimal":
+                    case "java.math.BigInteger":
+                    case "java.util.Date":
+                    case "java.sql.Time":
+                        return false;
+                }
+                if(Temporal.class.isAssignableFrom(c)){
+                    return false;
+                }
+                if(java.util.Date.class.isAssignableFrom(c)){
+                    return false;
+                }
+                return !(
+                        NutsString.class.isAssignableFrom(c)
+                                || NutsElement.class.isAssignableFrom(c)
+                                || NutsFormattable.class.isAssignableFrom(c)
+                                || NutsMessage.class.isAssignableFrom(c)
+                );
+            }
+            return false;
+        }
+    };
+    private final DefaultNutsTextManagerModel model;
     private Object value;
     private NutsContentType contentType = NutsContentType.JSON;
     private boolean compact;
-    private final DefaultNutsTextManagerModel model;
     private Predicate<Type> destructTypeFilter;
 
     public DefaultNutsElements(NutsSession session) {
@@ -45,11 +89,6 @@ public class DefaultNutsElements extends DefaultFormatBase<NutsElements> impleme
     @Override
     public NutsContentType getContentType() {
         return contentType;
-    }
-
-    @Override
-    public NutsElements json() {
-        return setContentType(NutsContentType.JSON);
     }
 
     @Override
@@ -68,6 +107,28 @@ public class DefaultNutsElements extends DefaultFormatBase<NutsElements> impleme
             this.contentType = contentType;
         }
         return this;
+    }
+
+    @Override
+    public NutsElements json() {
+        return setContentType(NutsContentType.JSON);
+    }
+
+    @Override
+    public Object getValue() {
+        return value;
+    }
+
+    @Override
+    public NutsElements setValue(Object value) {
+        this.value = value;
+        return this;
+    }
+
+    @Override
+    public NutsElementPath compilePath(String pathExpression) {
+        checkSession();
+        return NutsElementPathFilter.compile(pathExpression, getSession());
     }
 
     @Override
@@ -98,14 +159,14 @@ public class DefaultNutsElements extends DefaultFormatBase<NutsElements> impleme
                     } catch (UncheckedIOException ex) {
                         throw new NutsIOException(getSession(), ex);
                     } catch (RuntimeException ex) {
-                        throw new NutsParseException(getSession(), NutsMessage.cstyle("unable to parse url %s" , url), ex);
+                        throw new NutsParseException(getSession(), NutsMessage.cstyle("unable to parse url %s", url), ex);
                     }
                 } catch (IOException ex) {
                     throw new NutsParseException(getSession(), NutsMessage.cstyle("unable to parse url %s", url), ex);
                 }
             }
         }
-        throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("invalid content type %s. Only structured content types are allowed.",contentType));
+        throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("invalid content type %s. Only structured content types are allowed.", contentType));
     }
 
     @Override
@@ -124,14 +185,14 @@ public class DefaultNutsElements extends DefaultFormatBase<NutsElements> impleme
                     } catch (UncheckedIOException ex) {
                         throw new NutsIOException(getSession(), ex);
                     } catch (RuntimeException ex) {
-                        throw new NutsParseException(getSession(), NutsMessage.cstyle("unable to parse path %s" , path), ex);
+                        throw new NutsParseException(getSession(), NutsMessage.cstyle("unable to parse path %s", path), ex);
                     }
                 } catch (IOException ex) {
                     throw new NutsParseException(getSession(), NutsMessage.cstyle("unable to parse path %s", path), ex);
                 }
             }
         }
-        throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("invalid content type %s. Only structured content types are allowed.",contentType));
+        throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("invalid content type %s. Only structured content types are allowed.", contentType));
     }
 
     @Override
@@ -145,7 +206,7 @@ public class DefaultNutsElements extends DefaultFormatBase<NutsElements> impleme
                 return parse(new InputStreamReader(inputStream), clazz);
             }
         }
-        throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("invalid content type %s. Only structured content types are allowed.",contentType));
+        throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("invalid content type %s. Only structured content types are allowed.", contentType));
     }
 
     @Override
@@ -159,7 +220,7 @@ public class DefaultNutsElements extends DefaultFormatBase<NutsElements> impleme
                 return parse(new StringReader(string), clazz);
             }
         }
-        throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("invalid content type %s. Only structured content types are allowed.",contentType));
+        throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("invalid content type %s. Only structured content types are allowed.", contentType));
     }
 
     @Override
@@ -173,26 +234,7 @@ public class DefaultNutsElements extends DefaultFormatBase<NutsElements> impleme
                 return parse(new InputStreamReader(new ByteArrayInputStream(bytes)), clazz);
             }
         }
-        throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("invalid content type %s. Only structured content types are allowed.",contentType));
-    }
-
-    private NutsElementStreamFormat resolveStructuredFormat() {
-        checkSession();
-        switch (contentType) {
-            case JSON: {
-                return model.getJsonMan(getSession());
-            }
-            case YAML: {
-                return model.getYamlMan(getSession());
-            }
-            case XML: {
-                return model.getXmlMan(getSession());
-            }
-            case TSON: {
-                throw new NutsUnsupportedEnumException(getSession(), contentType);
-            }
-        }
-        throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("invalid content type %s. Only structured content types are allowed.",contentType));
+        throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("invalid content type %s. Only structured content types are allowed.", contentType));
     }
 
     @Override
@@ -200,56 +242,62 @@ public class DefaultNutsElements extends DefaultFormatBase<NutsElements> impleme
         return (T) elementToObject(resolveStructuredFormat().parseElement(reader, createFactoryContext()), clazz);
     }
 
-    private DefaultNutsElementFactoryContext createFactoryContext() {
-        DefaultNutsElementFactoryContext c = new DefaultNutsElementFactoryContext(this);
-        switch (getContentType()){
-            case XML:
-            case JSON:
-            case TSON:
-            case YAML:{
-                c.setNtf(false);
-                break;
-            }
-        }
-        return c;
-    }
-
     @Override
     public <T> T parse(Path file, Class<T> clazz) {
         checkSession();
-        return parse(NutsPath.of(file,getSession()),clazz);
+        return parse(NutsPath.of(file, getSession()), clazz);
     }
 
     @Override
     public <T> T parse(File file, Class<T> clazz) {
         checkSession();
-        return parse(NutsPath.of(file,getSession()),clazz);
-    }
-
-
-    @Override
-    public boolean configureFirst(NutsCommandLine cmdLine) {
-        return false;
+        return parse(NutsPath.of(file, getSession()), clazz);
     }
 
     @Override
-    public Object getValue() {
-        return value;
+    public NutsElement parse(URL url) {
+        return parse(url, NutsElement.class);
     }
 
     @Override
-    public NutsElements setValue(Object value) {
-        this.value = value;
-        return this;
+    public NutsElement parse(InputStream inputStream) {
+        return parse(inputStream, NutsElement.class);
     }
 
     @Override
-    public NutsElementPath compilePath(String pathExpression) {
-        checkSession();
-        return NutsElementPathFilter.compile(pathExpression, getSession());
+    public NutsElement parse(String string) {
+        if (string == null || string.isEmpty()) {
+            return forNull();
+        }
+        return parse(string, NutsElement.class);
     }
 
-//    public String getDefaulTagName() {
+    @Override
+    public NutsElement parse(byte[] bytes) {
+        return parse(bytes, NutsElement.class);
+    }
+
+    @Override
+    public NutsElement parse(Reader reader) {
+        return parse(reader, NutsElement.class);
+    }
+
+    @Override
+    public NutsElement parse(Path file) {
+        return parse(file, NutsElement.class);
+    }
+
+    @Override
+    public NutsElement parse(File file) {
+        return parse(file, NutsElement.class);
+    }
+
+    @Override
+    public NutsElement parse(NutsPath file) {
+        return parse(file, NutsElement.class);
+    }
+
+    //    public String getDefaulTagName() {
 //        return defaultName;
 //    }
 //
@@ -277,25 +325,7 @@ public class DefaultNutsElements extends DefaultFormatBase<NutsElements> impleme
         return (T) elementToObject(e, to);
     }
 
-    private void print(NutsPrintStream out, NutsElementStreamFormat format) {
-        checkSession();
-        NutsElement elem = toElement(value);
-        if (out.isNtf()) {
-            NutsPrintStream bos = NutsMemoryPrintStream.of(getSession());
-            format.printElement(elem, bos, compact, createFactoryContext());
-            out.print(NutsTexts.of(getSession()).ofCode(getContentType().id(), bos.toString()));
-        } else {
-            format.printElement(elem, out, compact, createFactoryContext());
-        }
-        out.flush();
-    }
-
-    @Override
-    public void print(NutsPrintStream out) {
-        print(out, resolveStructuredFormat());
-    }
-
-//    @Override
+    //    @Override
 //    public NutsElement objectToElement(Object o) {
 //        return convert(o, NutsElement.class);
 //    }
@@ -309,11 +339,7 @@ public class DefaultNutsElements extends DefaultFormatBase<NutsElements> impleme
         return createFactoryContext().objectToElement(o, null);
     }
 
-    public Object elementToObject(NutsElement o, Type type) {
-        return createFactoryContext().elementToObject(o, type);
-    }
-
-//    @Override
+    //    @Override
 //    public NutsElementEntryBuilder forEntry() {
 //        return new DefaultNutsElementEntryBuilder(getSession());
 //    }
@@ -325,7 +351,7 @@ public class DefaultNutsElements extends DefaultFormatBase<NutsElements> impleme
         );
     }
 
-//    @Override
+    //    @Override
 //    public NutsPrimitiveElementBuilder forPrimitive() {
 //        return new DefaultNutsPrimitiveElementBuilder(getSession());
 //    }
@@ -340,38 +366,27 @@ public class DefaultNutsElements extends DefaultFormatBase<NutsElements> impleme
     }
 
     @Override
-    public void setMapper(Class type, NutsElementMapper mapper) {
-        checkSession();
-        ((DefaultNutsElementFactoryService) getElementFactoryService())
-                .setMapper(type, mapper);
+    public NutsPrimitiveElement forBoolean(String value) {
+        return forBoolean(NutsUtilStrings.parseBoolean(value, false, false));
     }
 
-    public NutsElementFactoryService getElementFactoryService() {
-        return model.getElementFactoryService(getSession());
-    }
-
-    public NutsPrimitiveElement forString(String str) {
-        checkSession();
-        return str == null ? forNull() : new DefaultNutsPrimitiveElement(NutsElementType.STRING, str,getSession());
-    }
-
-//    public NutsPrimitiveElement forNutsString(NutsString str) {
+    //    public NutsPrimitiveElement forNutsString(NutsString str) {
 //        return str == null ? DefaultNutsPrimitiveElementBuilder.NULL : new DefaultNutsPrimitiveElement(NutsElementType.NUTS_STRING, str);
 //    }
     @Override
     public NutsPrimitiveElement forBoolean(boolean value) {
         checkSession();
         //TODO: perhaps we can optimize this
-        if(value) {
-            return new DefaultNutsPrimitiveElement(NutsElementType.BOOLEAN, true,getSession());
-        }else{
-            return new DefaultNutsPrimitiveElement(NutsElementType.BOOLEAN, false,getSession());
+        if (value) {
+            return new DefaultNutsPrimitiveElement(NutsElementType.BOOLEAN, true, getSession());
+        } else {
+            return new DefaultNutsPrimitiveElement(NutsElementType.BOOLEAN, false, getSession());
         }
     }
 
-    @Override
-    public NutsPrimitiveElement forBoolean(String value) {
-        return forBoolean(NutsUtilStrings.parseBoolean(value, false, false));
+    public NutsPrimitiveElement forString(String str) {
+        checkSession();
+        return str == null ? forNull() : new DefaultNutsPrimitiveElement(NutsElementType.STRING, str, getSession());
     }
 
     @Override
@@ -380,94 +395,39 @@ public class DefaultNutsElements extends DefaultFormatBase<NutsElements> impleme
     }
 
     @Override
-    public NutsPrimitiveElement forNull() {
-        checkSession();
-        //perhaps we can optimize this?
-        return new DefaultNutsPrimitiveElement(NutsElementType.NULL, null,getSession());
+    public NutsPrimitiveElement forFalse() {
+        return forBoolean(false);
     }
 
     @Override
     public NutsPrimitiveElement forInstant(Instant instant) {
         checkSession();
-        return instant == null ? forNull() : new DefaultNutsPrimitiveElement(NutsElementType.INSTANT, instant,getSession());
-    }
-
-    @Override
-    public NutsPrimitiveElement forByte(Byte value) {
-        checkSession();
-        return value == null ? forNull() : new DefaultNutsPrimitiveElement(NutsElementType.BYTE, value,getSession());
-    }
-
-    @Override
-    public NutsPrimitiveElement forInt(Integer value) {
-        checkSession();
-        return value == null ? forNull() : new DefaultNutsPrimitiveElement(NutsElementType.INTEGER, value,getSession());
-    }
-
-    @Override
-    public NutsPrimitiveElement forLong(Long value) {
-        checkSession();
-        return value == null ? forNull() : new DefaultNutsPrimitiveElement(NutsElementType.LONG, value,getSession());
-    }
-
-    @Override
-    public NutsPrimitiveElement forDouble(Double value) {
-        checkSession();
-        return value == null ? forNull() : new DefaultNutsPrimitiveElement(NutsElementType.DOUBLE, value,getSession());
+        return instant == null ? forNull() : new DefaultNutsPrimitiveElement(NutsElementType.INSTANT, instant, getSession());
     }
 
     @Override
     public NutsPrimitiveElement forFloat(Float value) {
         checkSession();
-        return value == null ? forNull() : new DefaultNutsPrimitiveElement(NutsElementType.FLOAT, value,getSession());
+        return value == null ? forNull() : new DefaultNutsPrimitiveElement(NutsElementType.FLOAT, value, getSession());
     }
 
     @Override
-    public NutsPrimitiveElement forFloat(Short value) {
+    public NutsPrimitiveElement forInt(Integer value) {
         checkSession();
-        return value == null ? forNull() : new DefaultNutsPrimitiveElement(NutsElementType.SHORT, value,getSession());
+        return value == null ? forNull() : new DefaultNutsPrimitiveElement(NutsElementType.INTEGER, value, getSession());
     }
 
     @Override
-    public NutsPrimitiveElement forNumber(Number value) {
+    public NutsPrimitiveElement forLong(Long value) {
         checkSession();
-        if (value == null) {
-            return forNull();
-        }
-        switch (value.getClass().getName()) {
-            case "java.lang.Byte":
-                return new DefaultNutsPrimitiveElement(NutsElementType.BYTE, value,getSession());
-            case "java.lang.Short":
-                return new DefaultNutsPrimitiveElement(NutsElementType.SHORT, value,getSession());
-            case "java.lang.Integer":
-                return new DefaultNutsPrimitiveElement(NutsElementType.INTEGER, value,getSession());
-            case "java.lang.Long":
-                return new DefaultNutsPrimitiveElement(NutsElementType.LONG, value,getSession());
-            case "java.math.BigInteger":
-                return new DefaultNutsPrimitiveElement(NutsElementType.BIG_INTEGER, value,getSession());
-            case "java.lang.float":
-                return new DefaultNutsPrimitiveElement(NutsElementType.FLOAT, value,getSession());
-            case "java.lang.Double":
-                return new DefaultNutsPrimitiveElement(NutsElementType.DOUBLE, value,getSession());
-            case "java.math.BigDecimal":
-                return new DefaultNutsPrimitiveElement(NutsElementType.BIG_DECIMAL, value,getSession());
-        }
-        // ???
-        return new DefaultNutsPrimitiveElement(NutsElementType.FLOAT, value,getSession());
+        return value == null ? forNull() : new DefaultNutsPrimitiveElement(NutsElementType.LONG, value, getSession());
     }
 
     @Override
-    public NutsPrimitiveElement forFalse() {
-        return forBoolean(false);
-    }
-
-    public Predicate<Type> getDestructTypeFilter() {
-        return destructTypeFilter;
-    }
-
-    public NutsElements setDestructTypeFilter(Predicate<Type> destructTypeFilter) {
-        this.destructTypeFilter = destructTypeFilter;
-        return this;
+    public NutsPrimitiveElement forNull() {
+        checkSession();
+        //perhaps we can optimize this?
+        return new DefaultNutsPrimitiveElement(NutsElementType.NULL, null, getSession());
     }
 
     @Override
@@ -513,7 +473,7 @@ public class DefaultNutsElements extends DefaultFormatBase<NutsElements> impleme
         if (value == null) {
             return forNull();
         }
-        return new DefaultNutsPrimitiveElement(NutsElementType.INSTANT, value.toInstant(),getSession());
+        return new DefaultNutsPrimitiveElement(NutsElementType.INSTANT, value.toInstant(), getSession());
     }
 
     @Override
@@ -522,7 +482,67 @@ public class DefaultNutsElements extends DefaultFormatBase<NutsElements> impleme
         if (value == null) {
             return forNull();
         }
-        return new DefaultNutsPrimitiveElement(NutsElementType.INSTANT, DefaultNutsPrimitiveElement.parseDate(value),getSession());
+        return new DefaultNutsPrimitiveElement(NutsElementType.INSTANT, DefaultNutsPrimitiveElement.parseDate(value), getSession());
+    }
+
+    @Override
+    public NutsPrimitiveElement forByte(Byte value) {
+        checkSession();
+        return value == null ? forNull() : new DefaultNutsPrimitiveElement(NutsElementType.BYTE, value, getSession());
+    }
+
+    @Override
+    public NutsPrimitiveElement forDouble(Double value) {
+        checkSession();
+        return value == null ? forNull() : new DefaultNutsPrimitiveElement(NutsElementType.DOUBLE, value, getSession());
+    }
+
+    @Override
+    public NutsPrimitiveElement forFloat(Short value) {
+        checkSession();
+        return value == null ? forNull() : new DefaultNutsPrimitiveElement(NutsElementType.SHORT, value, getSession());
+    }
+
+    @Override
+    public NutsPrimitiveElement forNumber(Number value) {
+        checkSession();
+        if (value == null) {
+            return forNull();
+        }
+        switch (value.getClass().getName()) {
+            case "java.lang.Byte":
+                return new DefaultNutsPrimitiveElement(NutsElementType.BYTE, value, getSession());
+            case "java.lang.Short":
+                return new DefaultNutsPrimitiveElement(NutsElementType.SHORT, value, getSession());
+            case "java.lang.Integer":
+                return new DefaultNutsPrimitiveElement(NutsElementType.INTEGER, value, getSession());
+            case "java.lang.Long":
+                return new DefaultNutsPrimitiveElement(NutsElementType.LONG, value, getSession());
+            case "java.math.BigInteger":
+                return new DefaultNutsPrimitiveElement(NutsElementType.BIG_INTEGER, value, getSession());
+            case "java.lang.float":
+                return new DefaultNutsPrimitiveElement(NutsElementType.FLOAT, value, getSession());
+            case "java.lang.Double":
+                return new DefaultNutsPrimitiveElement(NutsElementType.DOUBLE, value, getSession());
+            case "java.math.BigDecimal":
+                return new DefaultNutsPrimitiveElement(NutsElementType.BIG_DECIMAL, value, getSession());
+        }
+        // ???
+        return new DefaultNutsPrimitiveElement(NutsElementType.FLOAT, value, getSession());
+    }
+
+    public Predicate<Type> getDestructTypeFilter() {
+        return destructTypeFilter;
+    }
+
+    @Override
+    public NutsElements setFormatDestructTypeFilter() {
+        return setDestructTypeFilter(DEFAULT_FORMAT_DESTRUCTOR);
+    }
+
+    public NutsElements setDestructTypeFilter(Predicate<Type> destructTypeFilter) {
+        this.destructTypeFilter = destructTypeFilter;
+        return this;
     }
 
     @Override
@@ -545,46 +565,74 @@ public class DefaultNutsElements extends DefaultFormatBase<NutsElements> impleme
     }
 
     @Override
-    public NutsElement parse(URL url) {
-        return parse(url,NutsElement.class);
+    public void setMapper(Class type, NutsElementMapper mapper) {
+        checkSession();
+        ((DefaultNutsElementFactoryService) getElementFactoryService())
+                .setMapper(type, mapper);
     }
 
-    @Override
-    public NutsElement parse(InputStream inputStream) {
-        return parse(inputStream,NutsElement.class);
-    }
-
-    @Override
-    public NutsElement parse(String string) {
-        if(string==null || string.isEmpty()){
-            return forNull();
+    private NutsElementStreamFormat resolveStructuredFormat() {
+        checkSession();
+        switch (contentType) {
+            case JSON: {
+                return model.getJsonMan(getSession());
+            }
+            case YAML: {
+                return model.getYamlMan(getSession());
+            }
+            case XML: {
+                return model.getXmlMan(getSession());
+            }
+            case TSON: {
+                throw new NutsUnsupportedEnumException(getSession(), contentType);
+            }
         }
-        return parse(string,NutsElement.class);
+        throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("invalid content type %s. Only structured content types are allowed.", contentType));
+    }
+
+    private DefaultNutsElementFactoryContext createFactoryContext() {
+        DefaultNutsElementFactoryContext c = new DefaultNutsElementFactoryContext(this);
+        switch (getContentType()) {
+            case XML:
+            case JSON:
+            case TSON:
+            case YAML: {
+                c.setNtf(false);
+                break;
+            }
+        }
+        return c;
     }
 
     @Override
-    public NutsElement parse(byte[] bytes) {
-        return parse(bytes,NutsElement.class);
+    public boolean configureFirst(NutsCommandLine cmdLine) {
+        return false;
+    }
+
+    private void print(NutsPrintStream out, NutsElementStreamFormat format) {
+        checkSession();
+        NutsElement elem = toElement(value);
+        if (out.isNtf()) {
+            NutsPrintStream bos = NutsMemoryPrintStream.of(getSession());
+            format.printElement(elem, bos, compact, createFactoryContext());
+            out.print(NutsTexts.of(getSession()).ofCode(getContentType().id(), bos.toString()));
+        } else {
+            format.printElement(elem, out, compact, createFactoryContext());
+        }
+        out.flush();
     }
 
     @Override
-    public NutsElement parse(Reader reader) {
-        return parse(reader,NutsElement.class);
+    public void print(NutsPrintStream out) {
+        print(out, resolveStructuredFormat());
     }
 
-    @Override
-    public NutsElement parse(Path file) {
-        return parse(file,NutsElement.class);
+    public Object elementToObject(NutsElement o, Type type) {
+        return createFactoryContext().elementToObject(o, type);
     }
 
-    @Override
-    public NutsElement parse(File file) {
-        return parse(file,NutsElement.class);
-    }
-
-    @Override
-    public NutsElement parse(NutsPath file) {
-        return parse(file,NutsElement.class);
+    public NutsElementFactoryService getElementFactoryService() {
+        return model.getElementFactoryService(getSession());
     }
 
     @Override

@@ -10,20 +10,22 @@
  * to share shell scripts and other 'things' . Its based on an extensible
  * architecture to help supporting a large range of sub managers / repositories.
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc]
- * Licensed under the Apache License, Version 2.0 (the "License"); you may 
- * not use this file except in compliance with the License. You may obtain a 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may
+ * not use this file except in compliance with the License. You may obtain a
  * copy of the License at http://www.apache.org/licenses/LICENSE-2.0
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an 
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
- * either express or implied. See the License for the specific language 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+ * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  * <br>
  * ====================================================================
-*/
+ */
 package net.thevpc.nuts.runtime.bundles.iter;
+
+import net.thevpc.nuts.NutsSession;
 
 import java.util.Iterator;
 import java.util.function.Function;
@@ -34,7 +36,7 @@ import java.util.function.Function;
  * @param <F> From Type
  * @param <T> To Type
  */
-public class ConvertedNonNullIterator<F, T> implements Iterator<T> {
+public class ConvertedNonNullIterator<F, T> extends IterInfoNodeAware2Base<T> {
 
     private final Iterator<F> base;
     private final Function<F, T> converter;
@@ -51,12 +53,24 @@ public class ConvertedNonNullIterator<F, T> implements Iterator<T> {
     }
 
     @Override
+    public IterInfoNode info(NutsSession session) {
+        IterInfoNode n = IterInfoNode.resolveOrNull("converter", this.converter, session);
+        if (n != null && convertName != null) {
+            n = n.withDescription(convertName);
+        }
+        return info("ConvertedNonNull",
+                IterInfoNode.resolveOrNull("base", base, session),
+                n
+                );
+    }
+
+    @Override
     public boolean hasNext() {
         while (base.hasNext()) {
             F i = base.next();
             if (i != null) {
-                lastVal=converter.apply(i);
-                if(lastVal!=null){
+                lastVal = converter.apply(i);
+                if (lastVal != null) {
                     break;
                 }
             }

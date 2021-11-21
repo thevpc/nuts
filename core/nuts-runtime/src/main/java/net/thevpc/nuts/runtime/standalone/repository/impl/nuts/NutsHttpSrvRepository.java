@@ -24,6 +24,8 @@
 package net.thevpc.nuts.runtime.standalone.repository.impl.nuts;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.bundles.iter.IterInfoNode;
+import net.thevpc.nuts.runtime.bundles.iter.IterInfoNodeAware2Base;
 import net.thevpc.nuts.runtime.standalone.id.filter.NutsExprIdFilter;
 import net.thevpc.nuts.runtime.standalone.repository.impl.NutsCachedRepository;
 import net.thevpc.nuts.runtime.standalone.workspace.config.NutsRepositoryConfigManagerExt;
@@ -279,11 +281,12 @@ public class NutsHttpSrvRepository extends NutsCachedRepository {
 //            throw new NutsNotFoundException(session(), parse);
 //        }
 //    }
-    private class NamedNutIdFromStreamIterator implements Iterator<NutsId> {
+    private class NamedNutIdFromStreamIterator extends IterInfoNodeAware2Base<NutsId> {
 
         private final BufferedReader br;
         private String line;
         private NutsSession session;
+        private InputStream source0;
 
         public NamedNutIdFromStreamIterator(InputStream ret,NutsSession session) {
             br = new BufferedReader(new InputStreamReader(ret));
@@ -291,7 +294,14 @@ public class NutsHttpSrvRepository extends NutsCachedRepository {
             this.session=session;
         }
 
-        @Override
+    @Override
+    public IterInfoNode info(NutsSession session) {
+        return info("ScanStream",
+                IterInfoNode.resolveOrString("source",source0, this.session)
+                );
+    }
+
+    @Override
         public boolean hasNext() {
             while (true) {
                 try {

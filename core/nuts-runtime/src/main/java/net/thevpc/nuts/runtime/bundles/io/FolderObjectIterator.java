@@ -26,10 +26,11 @@
 package net.thevpc.nuts.runtime.bundles.io;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.bundles.iter.IterInfoNode;
+import net.thevpc.nuts.runtime.bundles.iter.IterInfoNodeAware2Base;
 import net.thevpc.nuts.runtime.standalone.repository.impl.main.DefaultNutsInstalledRepository;
 
 import java.io.IOException;
-import java.util.Iterator;
 import java.util.Stack;
 import java.util.function.Predicate;
 import java.util.logging.Level;
@@ -37,7 +38,7 @@ import java.util.logging.Level;
 /**
  * Created by vpc on 2/21/17.
  */
-public class FolderObjectIterator<T> implements Iterator<T> {
+public class FolderObjectIterator<T> extends IterInfoNodeAware2Base<T> {
 //    private static final Logger LOG=Logger.getLogger(FolderNutIdIterator.class.getName());
 
     private T last;
@@ -84,6 +85,15 @@ public class FolderObjectIterator<T> implements Iterator<T> {
     }
 
     @Override
+    public IterInfoNode info(NutsSession session) {
+        return info("ScanPath",
+                IterInfoNode.resolveOrString("maxDepth",maxDepth, this.session),
+                IterInfoNode.resolveOrString("path",folder, this.session),
+                IterInfoNode.resolveOrStringNonNull("filter",filter, this.session)
+                ).withNonNullName(name);
+    }
+
+    @Override
     public boolean hasNext() {
         last = null;
         while (!stack.isEmpty()) {
@@ -100,7 +110,7 @@ public class FolderObjectIterator<T> implements Iterator<T> {
                                         return (deep && pathname.isDirectory()) || model.isObjectFile(pathname);
                                     } catch (Exception ex) {
                                         NutsLoggerOp.of(FolderObjectIterator.class,session).level(Level.FINE).error(ex)
-                                                .log(NutsMessage.jstyle("Unable to test desk file {0}" ,pathname));
+                                                .log(NutsMessage.jstyle("unable to test desk file {0}" ,pathname));
                                         return false;
                                     }
                                 }
