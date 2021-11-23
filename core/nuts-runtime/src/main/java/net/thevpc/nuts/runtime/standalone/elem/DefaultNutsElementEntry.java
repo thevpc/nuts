@@ -54,7 +54,7 @@ public class DefaultNutsElementEntry implements NutsElementEntry {
 
     @Override
     public String toString() {
-        return "DefaultNutsNamedElement{" + key + " : " + value + '}';
+        return "DefaultNutsElementEntry{" + key + " : " + value + '}';
     }
 
     @Override

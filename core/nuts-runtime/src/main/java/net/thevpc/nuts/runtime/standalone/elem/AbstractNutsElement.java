@@ -331,4 +331,8 @@ public abstract class AbstractNutsElement implements NutsElement {
         return asPrimitive().getShort();
     }
 
+    @Override
+    public NutsElement describe(NutsElements elems) {
+        return this;
+    }
 }

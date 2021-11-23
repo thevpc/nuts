@@ -51,14 +51,17 @@ class SshNutsPath implements NutsPathSPI {
             if (i == 0) {
                 String[] s = c.getOutputString().split("[\n|\r]");
                 return NutsStream.of(s, session).map(
-                        x -> {
-                            String cc = path.getPath();
-                            if (!cc.endsWith("/")) {
-                                cc += "/";
-                            }
-                            cc += x;
-                            return NutsPath.of(path.setPath(cc).toString(), getSession());
-                        }
+                        NutsFunction.of(
+                                x -> {
+                                    String cc = path.getPath();
+                                    if (!cc.endsWith("/")) {
+                                        cc += "/";
+                                    }
+                                    cc += x;
+                                    return NutsPath.of(path.setPath(cc).toString(), getSession());
+                                }, "NutsPath::of"
+
+                        )
                 );
             }
         } catch (Exception e) {
@@ -260,6 +263,11 @@ class SshNutsPath implements NutsPathSPI {
         } catch (Exception e) {
             return false;
         }
+    }
+
+    @Override
+    public boolean isLocal(NutsPath basePath) {
+        return false;
     }
 
     @Override
@@ -468,14 +476,17 @@ class SshNutsPath implements NutsPathSPI {
             if (i == 0) {
                 String[] s = c.getOutputString().split("[\n|\r]");
                 return NutsStream.of(s, session).map(
-                        x -> {
-                            String cc = path.getPath();
-                            if (!cc.endsWith("/")) {
-                                cc += "/";
-                            }
-                            cc += x;
-                            return NutsPath.of(path.setPath(cc).toString(), getSession());
-                        }
+                        NutsFunction.of(
+                                x -> {
+                                    String cc = path.getPath();
+                                    if (!cc.endsWith("/")) {
+                                        cc += "/";
+                                    }
+                                    cc += x;
+                                    return NutsPath.of(path.setPath(cc).toString(), getSession());
+                                },
+                                "NutsPath::of"
+                        )
                 );
             }
         } catch (Exception e) {
@@ -577,10 +588,5 @@ class SshNutsPath implements NutsPathSPI {
         if (o == null || getClass() != o.getClass()) return false;
         SshNutsPath that = (SshNutsPath) o;
         return Objects.equals(path, that.path);
-    }
-
-    @Override
-    public boolean isLocal(NutsPath basePath) {
-        return false;
     }
 }

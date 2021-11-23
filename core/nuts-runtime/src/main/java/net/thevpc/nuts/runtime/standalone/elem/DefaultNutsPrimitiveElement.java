@@ -557,4 +557,12 @@ class DefaultNutsPrimitiveElement extends AbstractNutsElement implements NutsPri
         return true;
     }
 
+    @Override
+    public NutsObjectElement toObject() {
+        return NutsElements.of(session)
+                .ofObject()
+                .set("value",this)
+                .build();
+    }
+
 }

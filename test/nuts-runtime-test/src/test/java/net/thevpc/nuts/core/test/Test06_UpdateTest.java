@@ -142,8 +142,8 @@ public class Test06_UpdateTest {
         Assertions.assertTrue(foundRts.stream().map(NutsId::getLongName).collect(Collectors.toSet()).contains(rt.getId().builder().setVersion(rtv2).getLongName()));
 
         TestUtils.println("========================");
-        TestUtils.println(nws.search().addId(api.getId().getShortId()).setRepository("temp").getResultIds().toList());
-        TestUtils.println(nws.search().addId(rt.getId().getShortId()).setRepository("temp").getResultIds().toList());
+        TestUtils.println(nws.search().addId(api.getId().getShortId()).setRepositoryFilter("temp").getResultIds().toList());
+        TestUtils.println(nws.search().addId(rt.getId().getShortId()).setRepositoryFilter("temp").getResultIds().toList());
         TestUtils.println(nws.search().addId(api.getId().getShortId()).getResultIds().toList());
         TestUtils.println(nws.search().addId(rt.getId().getShortId()).getResultIds().toList());
 

@@ -18,45 +18,6 @@ import java.io.IOException;
  */
 public class Test11_LogTest {
 
-    @Test
-    public void execURL() throws Exception {
-        NutsSession ws = TestUtils.openNewTestWorkspace(
-                "--archetype", "default",
-                "--skip-companions");
 
-        TestUtils.println(NutsVersionFormat.of(ws));
-        String result = ws.exec()
-                .addExecutorOption("-Dnuts.args=--bot -w="+ws.locations().getWorkspaceLocation().resolve("temp-ws"))
-                //.addExecutorOption("--main-class=Version")
-                .addCommand(
-                //this is an old link, do not change to 'thevpc'
-                "https://search.maven.org/remotecontent?filepath=net/thevpc/hl/hl/0.1.0/hl-0.1.0.jar",
-//                "https://search.maven.org/remotecontent?filepath=junit/junit/4.12/junit-4.12.jar",
-                "--version"
-        ).setRedirectErrorStream(true).grabOutputString().setFailFast(true).getOutputString();
-        TestUtils.println("Result:");
-        TestUtils.println(result);
-        Assertions.assertFalse(result.contains("[0m"),"Message should not contain terminal format");
-    }
-
-    @BeforeAll
-    public static void setUpClass() throws IOException {
-        TestUtils.println("####### RUNNING TEST @ "+ TestUtils.getCallerClassSimpleName());
-    }
-
-    @AfterAll
-    public static void tearUpClass() throws IOException {
-    }
-
-    @BeforeEach
-    public void startup() throws IOException {
-//        Assumptions.assumeTrue(NutsOsFamily.getCurrent()== NutsOsFamily.LINUX);
-        TestUtils.unsetNutsSystemProperties();
-    }
-
-    @AfterEach
-    public void cleanup() {
-        TestUtils.unsetNutsSystemProperties();
-    }
 
 }

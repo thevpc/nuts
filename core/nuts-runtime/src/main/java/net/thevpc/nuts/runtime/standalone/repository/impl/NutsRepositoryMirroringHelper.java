@@ -6,8 +6,8 @@
 package net.thevpc.nuts.runtime.standalone.repository.impl;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.bundles.iter.IteratorUtils;
-import net.thevpc.nuts.runtime.bundles.iter.LazyIterator;
+import net.thevpc.nuts.runtime.standalone.util.iter.IteratorBuilder;
+import net.thevpc.nuts.runtime.standalone.util.iter.IteratorUtils;
 import net.thevpc.nuts.runtime.standalone.events.DefaultNutsContentEvent;
 import net.thevpc.nuts.runtime.standalone.id.filter.NutsSearchIdByDescriptor;
 import net.thevpc.nuts.runtime.standalone.repository.NutsRepositoryUtils;
@@ -19,7 +19,6 @@ import net.thevpc.nuts.spi.NutsPushRepositoryCommand;
 import net.thevpc.nuts.spi.NutsRepositorySPI;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -28,19 +27,19 @@ import java.util.stream.Collectors;
  */
 public class NutsRepositoryMirroringHelper {
 
-    protected NutsRepositoryFolderHelper cache;
     private final NutsRepository repo;
+    protected NutsRepositoryFolderHelper cache;
 
     public NutsRepositoryMirroringHelper(NutsRepository repo, NutsRepositoryFolderHelper cache) {
         this.repo = repo;
         this.cache = cache;
     }
 
-    protected Iterator<NutsId> searchVersionsImpl_appendMirrors(Iterator<NutsId> namedNutIdIterator, NutsId id, NutsIdFilter idFilter, NutsFetchMode fetchMode, NutsSession session) {
+    protected NutsIterator<NutsId> searchVersionsImpl_appendMirrors(NutsIterator<NutsId> namedNutIdIterator, NutsId id, NutsIdFilter idFilter, NutsFetchMode fetchMode, NutsSession session) {
         if (!session.isTransitive()) {
             return namedNutIdIterator;
         }
-        List<Iterator<? extends NutsId>> list = new ArrayList<>();
+        List<NutsIterator<? extends NutsId>> list = new ArrayList<>();
         list.add(namedNutIdIterator);
         if (repo.config().setSession(session).isSupportedMirroring()) {
             for (NutsRepository repo : repo.config().setSession(session).getMirrors()) {
@@ -53,10 +52,13 @@ public class NutsRepositoryMirroringHelper {
                 if (sup != NutsSpeedQualifier.UNAVAILABLE) {
                     NutsRepositorySPI repoSPI = NutsWorkspaceUtils.of(session).repoSPI(repo);
                     list.add(
-                            IteratorUtils.name("searchInMirror(" + repo.getName() + ")",
-                                    IteratorUtils.safeIgnore(repoSPI.searchVersions().setId(id).setFilter(idFilter).setSession(session)
+                            IteratorBuilder.of(repoSPI.searchVersions().setId(id).setFilter(idFilter).setSession(session)
                                             .setFetchMode(fetchMode)
-                                            .getResult())));
+                                            .getResult())
+                                    .named("searchInMirror(" + repo.getName() + ")")
+                                    .safeIgnore()
+                                    .build()
+                    );
                 }
             }
         }
@@ -128,12 +130,12 @@ public class NutsRepositoryMirroringHelper {
         return null;
     }
 
-    public Iterator<NutsId> search(Iterator<NutsId> li, NutsIdFilter filter, NutsFetchMode fetchMode, NutsSession session) {
+    public NutsIterator<NutsId> search(NutsIterator<NutsId> li, NutsIdFilter filter, NutsFetchMode fetchMode, NutsSession session) {
         NutsRepositoryConfigManager rconfig = repo.config().setSession(session);
         if (!session.isTransitive() || !rconfig.isSupportedMirroring()) {
             return li;
         }
-        List<Iterator<? extends NutsId>> all = new ArrayList<>();
+        List<NutsIterator<? extends NutsId>> all = new ArrayList<>();
         all.add(li);
         for (NutsRepository remote : rconfig.setSession(session).getMirrors()) {
             NutsRepositorySPI repoSPI = NutsWorkspaceUtils.of(session).repoSPI(remote);

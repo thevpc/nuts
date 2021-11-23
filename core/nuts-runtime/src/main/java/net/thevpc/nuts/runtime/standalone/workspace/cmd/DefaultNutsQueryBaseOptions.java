@@ -350,7 +350,7 @@ public abstract class DefaultNutsQueryBaseOptions<T extends NutsWorkspaceCommand
     }
 
 //    @Override
-    public T setRepository(String filter) {
+    public T setRepositoryFilter(String filter) {
         checkSession();
         this.repositoryFilter = getSession().repos().filter().byName(filter);
         return (T) this;

@@ -28,6 +28,7 @@ import net.thevpc.nuts.NutsArrayElementBuilder;
 import net.thevpc.nuts.NutsElement;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -80,8 +81,20 @@ public class DefaultNutsArrayElementBuilder implements NutsArrayElementBuilder {
 
     @Override
     public NutsArrayElementBuilder addAll(NutsElement[] value) {
-        for (NutsElement e : value) {
-            add(e);
+        if(value!=null) {
+            for (NutsElement e : value) {
+                add(e);
+            }
+        }
+        return this;
+    }
+
+    @Override
+    public NutsArrayElementBuilder addAll(Collection<NutsElement> value) {
+        if(value!=null) {
+            for (NutsElement e : value) {
+                add(e);
+            }
         }
         return this;
     }

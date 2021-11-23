@@ -28,6 +28,7 @@ package net.thevpc.nuts;
 import net.thevpc.nuts.boot.NutsApiUtils;
 
 import java.util.Collection;
+import java.util.Map;
 
 /**
  * Builder for manipulating {@link NutsObjectElement} instances
@@ -58,6 +59,8 @@ public interface NutsObjectElementBuilder extends NutsElementBuilder {
     NutsObjectElementBuilder set(String name, double value);
 
     NutsObjectElementBuilder set(String name, String value);
+
+    NutsObjectElementBuilder addAll(Map<NutsElement,NutsElement> other);
 
     /**
      * remove all properties
@@ -170,4 +173,20 @@ public interface NutsObjectElementBuilder extends NutsElementBuilder {
      * @return this {@code this} instance
      */
     NutsObjectElementBuilder addAll(NutsElementEntry... entries);
+
+    /**
+     * add all  key value entries binding
+     *
+     * @param other other entry
+     * @return this {@code this} instance
+     */
+    NutsObjectElementBuilder addAll(NutsObjectElement other);
+
+    /**
+     * add all  key value entries binding
+     *
+     * @param other other entry
+     * @return this {@code this} instance
+     */
+    NutsObjectElementBuilder addAll(NutsObjectElementBuilder other);
 }

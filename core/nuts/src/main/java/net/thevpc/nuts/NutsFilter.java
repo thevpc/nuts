@@ -29,7 +29,7 @@ package net.thevpc.nuts;
  *
  * @app.category Base
  */
-public interface NutsFilter {
+public interface NutsFilter extends NutsDescribable{
 
     NutsFilterOp getFilterOp();
 

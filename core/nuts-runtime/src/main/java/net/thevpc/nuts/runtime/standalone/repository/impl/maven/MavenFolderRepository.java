@@ -24,7 +24,8 @@
 package net.thevpc.nuts.runtime.standalone.repository.impl.maven;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.bundles.iter.IteratorUtils;
+import net.thevpc.nuts.runtime.standalone.util.iter.IteratorBuilder;
+import net.thevpc.nuts.runtime.standalone.util.iter.IteratorUtils;
 import net.thevpc.nuts.runtime.standalone.repository.impl.maven.util.AbstractMavenRepositoryHelper;
 import net.thevpc.nuts.runtime.standalone.repository.impl.maven.util.MavenUtils;
 import net.thevpc.nuts.runtime.standalone.repository.impl.maven.util.MvnClient;
@@ -40,8 +41,8 @@ import java.io.InputStream;
 import java.io.UncheckedIOException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
+import java.util.logging.Level;
 
 /**
  * Created by vpc on 1/15/17.
@@ -74,16 +75,26 @@ public class MavenFolderRepository extends NutsCachedRepository {
 
     @Override
     protected boolean isAvailableImpl() {
+        long now = System.currentTimeMillis();
         try {
             NutsPath loc = config().setSession(initSession).getLocation(true);
-            return loc.exists();
+            try {
+                return loc.exists();
+            }finally {
+                LOG.with().level(Level.FINEST).verb(NutsLogVerb.SUCCESS)
+                        .time(System.currentTimeMillis()-now)
+                        .log(NutsMessage.cstyle("check available %s : success",getName()));
+            }
         } catch (Exception e) {
+            LOG.with().level(Level.FINEST).verb(NutsLogVerb.FAIL)
+                    .time(System.currentTimeMillis()-now)
+                    .log(NutsMessage.cstyle("check available %s : failed",getName()));
             return false;
         }
     }
 
     @Override
-    public Iterator<NutsId> searchVersionsCore(final NutsId id, NutsIdFilter idFilter, NutsFetchMode fetchMode, final NutsSession session) {
+    public NutsIterator<NutsId> searchVersionsCore(final NutsId id, NutsIdFilter idFilter, NutsFetchMode fetchMode, final NutsSession session) {
         if (!acceptedFetchNoCache(fetchMode)) {
             return null;
         }
@@ -179,18 +190,23 @@ public class MavenFolderRepository extends NutsCachedRepository {
     }
 
     @Override
-    public Iterator<NutsId> searchCore(final NutsIdFilter filter, String[] roots, NutsFetchMode fetchMode, NutsSession session) {
+    public NutsIterator<NutsId> searchCore(final NutsIdFilter filter, String[] roots, NutsFetchMode fetchMode, NutsSession session) {
         if (!acceptedFetchNoCache(fetchMode)) {
             return null;
         }
-        List<Iterator<? extends NutsId>> list = new ArrayList<>();
+        List<NutsIterator<? extends NutsId>> list = new ArrayList<>();
         for (String root : roots) {
-            session.getTerminal().printProgress("%-8s %s", "browse", NutsPath.of(root, session).toCompressedForm());
+            list.add(
+                    (NutsIterator) IteratorBuilder.ofRunnable(
+                                    ()->session.getTerminal().printProgress("%-8s %s", "browse", NutsPath.of(root, session).toCompressedForm()),
+                            "Log"
+
+            ).build());
             if (root.endsWith("/*")) {
                 String name = root.substring(0, root.length() - 2);
-                list.add(new NutsIdPathIterator(this, config().setSession(session).getLocation(true), name, filter, session, repoIter, Integer.MAX_VALUE));
+                list.add(new NutsIdPathIterator(this, config().setSession(session).getLocation(true), name, filter, session, repoIter, Integer.MAX_VALUE,null));
             } else {
-                list.add(new NutsIdPathIterator(this, config().setSession(session).getLocation(true), root, filter, session, repoIter, 2));
+                list.add(new NutsIdPathIterator(this, config().setSession(session).getLocation(true), root, filter, session, repoIter, 2,null));
             }
         }
         return IteratorUtils.concat(list);
@@ -237,12 +253,14 @@ public class MavenFolderRepository extends NutsCachedRepository {
         return (fetchMode == NutsFetchMode.REMOTE) == isRemote();
     }
 
-    public Iterator<NutsId> findNonSingleVersionImpl(final NutsId id, NutsIdFilter idFilter, NutsFetchMode fetchMode, final NutsSession session) {
+    public NutsIterator<NutsId> findNonSingleVersionImpl(final NutsId id, NutsIdFilter idFilter, NutsFetchMode fetchMode, final NutsSession session) {
         String groupId = id.getGroupId();
         String artifactId = id.getArtifactId();
         List<NutsId> ret = new ArrayList<>();
         NutsPath foldersFileUrl = config().setSession(session).getLocation(true).resolve(groupId.replace('.', '/') + "/" + artifactId);
-        NutsPath[] all = foldersFileUrl.list().filter(NutsPath::isDirectory).toArray(NutsPath[]::new);
+        NutsPath[] all = foldersFileUrl.list().filter(
+                NutsPath::isDirectory,"isDirectory"
+        ).toArray(NutsPath[]::new);
         for (NutsPath version : all) {
             final NutsId nutsId = id.builder().setVersion(version.getName()).build();
             if (idFilter != null && !idFilter.acceptId(nutsId, session)) {
@@ -250,10 +268,10 @@ public class MavenFolderRepository extends NutsCachedRepository {
             }
             ret.add(NutsIdBuilder.of(session).setGroupId(groupId).setArtifactId(artifactId).setVersion(version.getName()).build());
         }
-        return ret.iterator();
+        return NutsIterator.of(ret.iterator(),"findNonSingleVersion");
     }
 
-    public Iterator<NutsId> findSingleVersionImpl(final NutsId id, NutsIdFilter idFilter, NutsFetchMode fetchMode, final NutsSession session) {
+    public NutsIterator<NutsId> findSingleVersionImpl(final NutsId id, NutsIdFilter idFilter, NutsFetchMode fetchMode, final NutsSession session) {
         if (id.getVersion().isSingleValue()) {
             String groupId = id.getGroupId();
             String artifactId = id.getArtifactId();
@@ -266,7 +284,7 @@ public class MavenFolderRepository extends NutsCachedRepository {
                 // ok found!!
                 ret.add(id);
             }
-            return ret.iterator();
+            return NutsIterator.of(ret.iterator(),"findSingleVersion");
         } else {
             throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("expected single version in %s", id));
         }

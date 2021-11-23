@@ -8,7 +8,7 @@ package net.thevpc.nuts.runtime.standalone.repository.impl;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.bundles.io.InputStreamMetadataAwareImpl;
 import net.thevpc.nuts.runtime.bundles.io.NutsStreamOrPath;
-import net.thevpc.nuts.runtime.bundles.iter.IteratorUtils;
+import net.thevpc.nuts.runtime.standalone.util.iter.IteratorBuilder;
 import net.thevpc.nuts.runtime.standalone.repository.NutsIdPathIterator;
 import net.thevpc.nuts.runtime.standalone.repository.NutsIdPathIteratorBase;
 import net.thevpc.nuts.runtime.standalone.repository.NutsRepositoryUtils;
@@ -33,7 +33,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.TreeSet;
 
@@ -48,10 +47,12 @@ public class NutsRepositoryFolderHelper {
     private NutsLogger LOG;
     private boolean readEnabled = true;
     private boolean writeEnabled = true;
+    private NutsObjectElement extraInfoElements;
 
-    public NutsRepositoryFolderHelper(NutsRepository repo, NutsSession ws, NutsPath rootPath, boolean cacheFolder) {
+    public NutsRepositoryFolderHelper(NutsRepository repo, NutsSession ws, NutsPath rootPath, boolean cacheFolder,NutsObjectElement extraInfoElements) {
         this.repo = repo;
         this.ws = ws;
+        this.extraInfoElements = extraInfoElements;
         if (ws == null && repo == null) {
             throw new IllegalArgumentException("both workspace and repository are null");
         }
@@ -223,19 +224,30 @@ public class NutsRepositoryFolderHelper {
         return groupFolder.resolve(id.getArtifactId());
     }
 
-    public Iterator<NutsId> searchVersions(NutsId id, final NutsIdFilter filter, boolean deep, NutsSession session) {
+    public NutsIterator<NutsId> searchVersions(NutsId id, final NutsIdFilter filter, boolean deep, NutsSession session) {
         if (!isReadEnabled()) {
             return null;
         }
         if (id.getVersion().isSingleValue()) {
-            NutsId id1 = id.builder().setFaceDescriptor().build();
-            NutsPath localFile = getLongIdLocalFile(id1, session);
-            if (localFile != null && localFile.isRegularFile()) {
-                return Collections.singletonList(id.builder().setRepository(repo == null ? null : repo.getName()).build()).iterator();
-            }
-            return null;
+            return IteratorBuilder.ofSupplier(
+                    ()->{
+                        NutsId id1 = id.builder().setFaceDescriptor().build();
+                        NutsPath localFile = getLongIdLocalFile(id1, session);
+                        if (localFile != null && localFile.isRegularFile()) {
+                            return Collections.singletonList(id.builder().setRepository(repo == null ? null : repo.getName()).build()).iterator();
+                        }
+                        return IteratorBuilder.emptyIterator();
+                    },
+                    e->e
+                            .ofObject()
+                            .set("type","searchSingleVersion")
+                            .set("repository",repo==null?null:repo.getName())
+                            .set("id",id.toString())
+                            .set("root",getStoreLocation().toString())
+                            .addAll(extraInfoElements)
+                            .build()
+            ).build();
         }
-        NutsWorkspace ws = session.getWorkspace();
         NutsIdFilter filter2 = NutsIdFilters.of(session).all(filter,
                 NutsIdFilters.of(session).byName(id.getShortName())
         );
@@ -244,14 +256,14 @@ public class NutsRepositoryFolderHelper {
                 session);
     }
 
-    public Iterator<NutsId> searchImpl(NutsIdFilter filter, NutsSession session) {
+    public NutsIterator<NutsId> searchImpl(NutsIdFilter filter, NutsSession session) {
         if (!isReadEnabled()) {
             return null;
         }
         return findInFolder(null, filter, Integer.MAX_VALUE, session);
     }
 
-    public Iterator<NutsId> findInFolder(NutsPath folder, final NutsIdFilter filter, int maxDepth, NutsSession session) {
+    public NutsIterator<NutsId> findInFolder(NutsPath folder, final NutsIdFilter filter, int maxDepth, NutsSession session) {
         if (!isReadEnabled()) {
             return null;
         }
@@ -290,7 +302,7 @@ public class NutsRepositoryFolderHelper {
                     return NutsDescriptorParser.of(session).parse(pathname);
                 }
             }
-        }, maxDepth
+        }, maxDepth, extraInfoElements
         );
     }
 
@@ -305,14 +317,16 @@ public class NutsRepositoryFolderHelper {
         NutsId bestId = null;
         NutsPath file = getLocalGroupAndArtifactFile(id, session);
         if (file.exists()) {
-            NutsPath[] versionFolders = file.list().filter(NutsPath::isDirectory
+            NutsPath[] versionFolders = file.list().filter(NutsPath::isDirectory,"idDirectory"
             ).toArray(NutsPath[]::new);
             if (versionFolders != null) {
                 for (NutsPath versionFolder : versionFolders) {
                     if (pathExists(versionFolder, session)) {
                         NutsId id2 = id.builder().setVersion(versionFolder.getName()).build();
                         if (bestId == null || id2.getVersion().compareTo(bestId.getVersion()) > 0) {
-                            bestId = id2;
+                            if(filter==null || filter.acceptId(id2,session)) {
+                                bestId = id2;
+                            }
                         }
                     } else {
                         versionFolder.deleteTree();

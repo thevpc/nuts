@@ -24,8 +24,8 @@
 package net.thevpc.nuts.runtime.standalone.repository;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.bundles.iter.IterInfoNode;
-import net.thevpc.nuts.runtime.bundles.iter.IterInfoNodeAware2Base;
+import net.thevpc.nuts.runtime.standalone.util.nfo.NutsIteratorBase;
+import net.thevpc.nuts.NutsDescribables;
 
 import java.util.Stack;
 import java.util.logging.Level;
@@ -33,7 +33,7 @@ import java.util.logging.Level;
 /**
  * Created by vpc on 2/21/17.
  */
-public class NutsIdPathIterator extends IterInfoNodeAware2Base<NutsId> {
+public class NutsIdPathIterator extends NutsIteratorBase<NutsId> {
 
     private final NutsRepository repository;
     private final Stack<PathAndDepth> stack = new Stack<>();
@@ -46,9 +46,11 @@ public class NutsIdPathIterator extends IterInfoNodeAware2Base<NutsId> {
     private NutsId last;
     private long visitedFoldersCount;
     private long visitedFilesCount;
+    private NutsObjectElement extraProperties;
 
-    public NutsIdPathIterator(NutsRepository repository, NutsPath rootFolder, String basePath, NutsIdFilter filter, NutsSession session, NutsIdPathIteratorModel model, int maxDepth) {
+    public NutsIdPathIterator(NutsRepository repository, NutsPath rootFolder, String basePath, NutsIdFilter filter, NutsSession session, NutsIdPathIteratorModel model, int maxDepth,NutsObjectElement extraProperties) {
         this.repository = repository;
+        this.extraProperties = extraProperties;
         this.session = session;
         this.filter = filter;
         this.model = model;
@@ -66,14 +68,16 @@ public class NutsIdPathIterator extends IterInfoNodeAware2Base<NutsId> {
     }
 
     @Override
-    public IterInfoNode info(NutsSession session) {
-        return info("ScanPath",
-                IterInfoNode.resolveOrStringNonNull("repository", repository == null ? null : repository.getName(), this.session),
-                (filter!=null && filter.simplify()!=null) ? IterInfoNode.resolveOrStringNonNull("filter", filter, this.session):null,
-                IterInfoNode.resolveOrString("maxDepth",  maxDepth, this.session),
-                IterInfoNode.resolveOrString("basePath",  basePath, this.session),
-                IterInfoNode.resolveOrStringNonNull("rootFolder",  rootFolder, this.session)
-        );
+    public NutsElement describe(NutsElements elems) {
+        return elems.ofObject()
+                .set("type","ScanPath")
+                .set("repository",repository == null ? null : repository.getName())
+                .set("filter", NutsDescribables.resolveOrDestruct(filter,elems))
+                .set("path",elems.toElement(basePath))
+                .set("root",elems.toElement(rootFolder))
+                .set("maxDepth",maxDepth)
+                .addAll(extraProperties)
+                .build();
     }
 
     @Override

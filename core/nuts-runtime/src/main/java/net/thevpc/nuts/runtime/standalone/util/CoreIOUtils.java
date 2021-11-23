@@ -25,8 +25,8 @@ package net.thevpc.nuts.runtime.standalone.util;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.bundles.io.*;
-import net.thevpc.nuts.runtime.bundles.nanodb.NanoDB;
-import net.thevpc.nuts.runtime.bundles.nanodb.NanoDBTableFile;
+import net.thevpc.nuts.runtime.standalone.xtra.nanodb.NanoDB;
+import net.thevpc.nuts.runtime.standalone.xtra.nanodb.NanoDBTableFile;
 import net.thevpc.nuts.runtime.standalone.text.ExtendedFormatAware;
 import net.thevpc.nuts.runtime.standalone.text.ExtendedFormatAwarePrintWriter;
 import net.thevpc.nuts.runtime.standalone.text.RawOutputStream;

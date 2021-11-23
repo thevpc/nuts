@@ -64,4 +64,8 @@ public abstract class AbstractNutsFilter implements NutsFilter {
         return simplify().to(type);
     }
 
+    @Override
+    public NutsElement describe(NutsElements elems) {
+        return elems.ofString(toString());
+    }
 }

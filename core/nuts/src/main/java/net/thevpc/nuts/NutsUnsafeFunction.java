@@ -26,11 +26,24 @@
  */
 package net.thevpc.nuts;
 
+import java.util.function.Function;
+
 /**
  * Unsafe function is a function that can throw any arbitrary exception
  * @param <T>
  * @param <R>
  */
-public interface NutsUnsafeFunction<T, R> {
-    R apply(T t) throws Exception;
+public interface NutsUnsafeFunction<T, R> extends NutsUnsafeFunctionBase<T, R>, NutsDescribable{
+    static <T, V> NutsUnsafeFunction<T, V> of(NutsUnsafeFunctionBase<T, V> o, String descr) {
+        return NutsDescribables.ofUnsafeFunction(o, e -> e.ofString(descr));
+    }
+
+    static <T, V> NutsUnsafeFunction<T, V> of(NutsUnsafeFunctionBase<T, V> o, NutsElement descr) {
+        return NutsDescribables.ofUnsafeFunction(o, e -> descr);
+    }
+
+    static <T, V> NutsUnsafeFunction<T, V> of(NutsUnsafeFunctionBase<T, V> o, Function<NutsElements, NutsElement> descr) {
+        return NutsDescribables.ofUnsafeFunction(o, descr);
+    }
+
 }

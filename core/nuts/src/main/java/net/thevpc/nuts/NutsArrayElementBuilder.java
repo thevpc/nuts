@@ -27,6 +27,7 @@ package net.thevpc.nuts;
 
 import net.thevpc.nuts.boot.NutsApiUtils;
 
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -81,6 +82,14 @@ public interface NutsArrayElementBuilder extends NutsElementBuilder {
      * @return {@code this} instance
      */
     NutsArrayElementBuilder addAll(NutsElement[] value);
+
+    /**
+     * all all elements in the given array
+     *
+     * @param value value
+     * @return {@code this} instance
+     */
+    NutsArrayElementBuilder addAll(Collection<NutsElement> value);
 
     /**
      * all all elements in the given array

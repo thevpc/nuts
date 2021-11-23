@@ -3,7 +3,7 @@ package net.thevpc.nuts.runtime.standalone.text.parser.steps;
 import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.NutsTexts;
 import net.thevpc.nuts.runtime.standalone.text.parser.DefaultNutsTextNodeParser;
-import net.thevpc.nuts.runtime.bundles.string.StringBuilder2;
+import net.thevpc.nuts.runtime.standalone.util.StringBuilder2;
 
 import java.util.function.IntPredicate;
 import net.thevpc.nuts.NutsConstants;

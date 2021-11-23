@@ -201,7 +201,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
         NutsPath u = f.getInstallInformation().getInstallFolder();
         NutsPath[] paths;
         try {
-            paths = u.list().filter(x -> x.isDirectory()).toArray(NutsPath[]::new);
+            paths = u.list().filter(x -> x.isDirectory(),"isDirectory").toArray(NutsPath[]::new);
             if (paths.length == 1 && paths[0].getName().toLowerCase().startsWith("apache-tomcat")) {
                 return paths[0];
             }

@@ -132,4 +132,9 @@ public interface NutsObjectElement extends NutsElement, Iterable<NutsElementEntr
      */
     int size();
 
+    /**
+     * return new builder initialized with this instance
+     * @return new builder initialized with this instance
+     */
+    NutsObjectElementBuilder builder();
 }

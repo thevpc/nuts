@@ -6,7 +6,8 @@
 package net.thevpc.nuts.runtime.standalone.repository.cmd.search;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.bundles.iter.*;
+import net.thevpc.nuts.runtime.standalone.util.iter.*;
+import net.thevpc.nuts.NutsDescribables;
 import net.thevpc.nuts.runtime.standalone.repository.impl.NutsRepositoryExt;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import net.thevpc.nuts.NutsLogVerb;
@@ -42,24 +43,25 @@ public class DefaultNutsSearchRepositoryCommand extends AbstractNutsSearchReposi
     public NutsSearchRepositoryCommand run() {
         NutsSession session = getSession();
         NutsWorkspaceUtils.checkSession(getRepo().getWorkspace(), session);
-        Runnable startRunnable = IterInfoNodeAwareHelper.ofRunnable(
-                IterInfoNode.resolveOrString("CheckAuthorizations", null, session),
+        NutsRunnable startRunnable = NutsRunnable.of(
                 () -> {
                     getRepo().security().setSession(session).checkAllowed(NutsConstants.Permissions.FETCH_DESC, "search");
                     NutsRepositoryExt xrepo = NutsRepositoryExt.of(getRepo());
                     xrepo.checkAllowedFetch(null, session);
                     _LOGOP(session).level(Level.FINEST).verb(NutsLogVerb.START)
                             .log(NutsMessage.jstyle("{0} search packages", CoreStringUtils.alignLeft(getRepo().getName(), 20)));
-                });
-        Runnable endRunnable =
-                IterInfoNodeAwareHelper.ofRunnable(
-                        IterInfoNode.resolveOrString("FinalizeSearch", null, session),
+                }, "CheckAuthorizations"
+        );
+        NutsRunnable endRunnable =
+                NutsRunnable.of(
                         () -> _LOGOP(session).level(Level.FINEST).verb(NutsLogVerb.SUCCESS)
-                                .log(NutsMessage.jstyle("{0} search packages", CoreStringUtils.alignLeft(getRepo().getName(), 20)))
+                                .log(NutsMessage.jstyle("{0} search packages", CoreStringUtils.alignLeft(getRepo().getName(), 20))),
+                        "Log"
                 );
         try {
             NutsRepositoryExt xrepo = NutsRepositoryExt.of(getRepo());
-            boolean processIndexFirst = session.isIndexed() && xrepo.getIndexStore() != null && xrepo.getIndexStore().isEnabled();
+            boolean processIndexFirst =
+                getFetchMode()==NutsFetchMode.REMOTE && session.isIndexed() && xrepo.getIndexStore() != null && xrepo.getIndexStore().isEnabled();
             if (processIndexFirst) {
                 Iterator<NutsId> o = null;
                 try {
@@ -71,19 +73,16 @@ public class DefaultNutsSearchRepositoryCommand extends AbstractNutsSearchReposi
                             .log(NutsMessage.jstyle("error search operation using Indexer for {0} : {1}", getRepo().getName(), ex));
                 }
                 if (o != null) {
-                    result = IteratorUtils.onStartFinish(new IndexFirstIterator<>(o,
+                    result = IteratorBuilder.of(new IndexFirstIterator<>(o,
                             xrepo.searchImpl(filter, getFetchMode(), session)
-                    ), startRunnable, endRunnable);
-                    _LOGOP(session).level(Level.FINEST).verb(NutsLogVerb.SUCCESS)
-                            .log(NutsMessage.jstyle("{0} Search packages (indexer)", CoreStringUtils.alignLeft(getRepo().getName(), 20)));
+                    )).onStart(startRunnable).onFinish(endRunnable).build();
                     return this;
                 }
             }
-            result = IteratorUtils.onStartFinish(
-                    xrepo.searchImpl(filter, getFetchMode(), session),
-                    startRunnable,
-                    endRunnable
-            );
+            result = IteratorBuilder.of(xrepo.searchImpl(filter, getFetchMode(), session))
+                    .onStart(startRunnable)
+                    .onFinish(endRunnable)
+                    .build();
         } catch (NutsNotFoundException | SecurityException ex) {
             _LOGOP(session).level(Level.FINEST).verb(NutsLogVerb.FAIL)
                     .log(NutsMessage.jstyle("{0} search packages", CoreStringUtils.alignLeft(getRepo().getName(), 20)));
@@ -97,7 +96,7 @@ public class DefaultNutsSearchRepositoryCommand extends AbstractNutsSearchReposi
     }
 
     @Override
-    public Iterator<NutsId> getResult() {
+    public NutsIterator<NutsId> getResult() {
         if (result == null) {
             run();
         }

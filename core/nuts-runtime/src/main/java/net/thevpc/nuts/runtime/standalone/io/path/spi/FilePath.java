@@ -32,11 +32,14 @@ public class FilePath implements NutsPathSPI {
         this.session = session;
     }
 
+    private NutsPath fastPath(Path p,NutsSession s){
+        return NutsPath.of(new FilePath(p,s),s);
+    }
     @Override
     public NutsStream<NutsPath> list(NutsPath basePath) {
         if (Files.isDirectory(value)) {
             try {
-                return NutsStream.of(Files.list(value).map(x -> NutsPath.of(x, getSession())),
+                return NutsStream.of(Files.list(value).map(x -> fastPath(x, getSession())),
                         getSession());
             } catch (IOException e) {
                 //
@@ -63,10 +66,10 @@ public class FilePath implements NutsPathSPI {
     @Override
     public NutsPath resolve(NutsPath basePath, String path) {
         if (NutsBlankable.isBlank(path)) {
-            return NutsPath.of(value, getSession());
+            return fastPath(value, getSession());
         }
         try {
-            return NutsPath.of(value.resolve(path), getSession());
+            return fastPath(value.resolve(path), getSession());
         } catch (Exception ex) {
             //always return an instance if if invalid
             return NutsPath.of(value + "/" + path, getSession());
@@ -76,14 +79,14 @@ public class FilePath implements NutsPathSPI {
     @Override
     public NutsPath resolve(NutsPath basePath, NutsPath path) {
         if (path == null) {
-            return NutsPath.of(value, getSession());
+            return fastPath(value, getSession());
         }
         if (path.toString().isEmpty()) {
-            return NutsPath.of(value, getSession());
+            return fastPath(value, getSession());
         }
         Path f = path.asFile();
         if (f != null) {
-            return NutsPath.of(value.resolve(f), getSession());
+            return fastPath(value.resolve(f), getSession());
         }
         return resolve(basePath, path.toString());
     }
@@ -96,7 +99,7 @@ public class FilePath implements NutsPathSPI {
         if (path.isEmpty()) {
             return getParent(basePath);
         }
-        return NutsPath.of(value.resolveSibling(path), getSession());
+        return fastPath(value.resolveSibling(path), getSession());
     }
 
     @Override
@@ -121,7 +124,7 @@ public class FilePath implements NutsPathSPI {
 //            for (String s : others) {
 //                value2 = value2.resolve(s);
 //            }
-//            return NutsPath.of(value2, getSession());
+//            return fastPath(value2, getSession());
 //        }
 //        return toNutsPathInstance();
 //    }
@@ -289,7 +292,7 @@ public class FilePath implements NutsPathSPI {
         if (p == null) {
             return null;
         }
-        return NutsPath.of(p, getSession());
+        return fastPath(p, getSession());
     }
 
     @Override
@@ -298,16 +301,14 @@ public class FilePath implements NutsPathSPI {
             return basePath;
         }
         if (rootPath == null) {
-            return NutsPath.of(new FilePath(
-                    value.normalize().toAbsolutePath(), session
-            ),session);
+            return fastPath(value.normalize().toAbsolutePath(), session);
         }
         return rootPath.toAbsolute().resolve(toString());
     }
 
     @Override
     public NutsPath normalize(NutsPath basePath) {
-        return NutsPath.of(new FilePath(value.normalize(), session),session);
+        return fastPath(value.normalize(), session);
     }
 
     @Override
@@ -462,7 +463,7 @@ public class FilePath implements NutsPathSPI {
                 }).filter(Objects::nonNull).toArray(FileVisitOption[]::new);
         if (Files.isDirectory(value)) {
             try {
-                return NutsStream.of(Files.walk(value, maxDepth, fileOptions).map(x -> NutsPath.of(x, getSession())),
+                return NutsStream.of(Files.walk(value, maxDepth, fileOptions).map(x -> fastPath(x, getSession())),
                         getSession());
             } catch (IOException e) {
                 //
@@ -473,7 +474,7 @@ public class FilePath implements NutsPathSPI {
 
     @Override
     public NutsPath subpath(NutsPath basePath, int beginIndex, int endIndex) {
-        return NutsPath.of(value.subpath(beginIndex, endIndex), getSession());
+        return fastPath(value.subpath(beginIndex, endIndex), getSession());
     }
 
     @Override
@@ -503,7 +504,7 @@ public class FilePath implements NutsPathSPI {
 
     @Override
     public void copyTo(NutsPath basePath, NutsPath other, NutsPathOption... options) {
-        NutsCp.of(session).from(NutsPath.of(value, session)).to(other).run();
+        NutsCp.of(session).from(fastPath(value, session)).to(other).run();
     }
 
     @Override
@@ -521,22 +522,22 @@ public class FilePath implements NutsPathSPI {
             Files.walkFileTree(value, foptions, maxDepth, new FileVisitor<Path>() {
                 @Override
                 public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
-                    return fileVisitResult(visitor.preVisitDirectory(NutsPath.of(dir, session), session));
+                    return fileVisitResult(visitor.preVisitDirectory(fastPath(dir, session), session));
                 }
 
                 @Override
                 public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-                    return fileVisitResult(visitor.visitFile(NutsPath.of(file, session), session));
+                    return fileVisitResult(visitor.visitFile(fastPath(file, session), session));
                 }
 
                 @Override
                 public FileVisitResult visitFileFailed(Path file, IOException exc) throws IOException {
-                    return fileVisitResult(visitor.visitFileFailed(NutsPath.of(file, session), exc, session));
+                    return fileVisitResult(visitor.visitFileFailed(fastPath(file, session), exc, session));
                 }
 
                 @Override
                 public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
-                    return fileVisitResult(visitor.postVisitDirectory(NutsPath.of(dir, session), exc, session));
+                    return fileVisitResult(visitor.postVisitDirectory(fastPath(dir, session), exc, session));
                 }
 
                 private FileVisitResult fileVisitResult(NutsTreeVisitResult z) {

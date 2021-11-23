@@ -2,9 +2,9 @@ package net.thevpc.nuts.runtime.standalone.repository.index;
 
 import net.thevpc.nuts.NutsId;
 import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.runtime.bundles.nanodb.NanoDBInputStream;
-import net.thevpc.nuts.runtime.bundles.nanodb.NanoDBNonNullSerializer;
-import net.thevpc.nuts.runtime.bundles.nanodb.NanoDBOutputStream;
+import net.thevpc.nuts.runtime.standalone.xtra.nanodb.NanoDBInputStream;
+import net.thevpc.nuts.runtime.standalone.xtra.nanodb.NanoDBNonNullSerializer;
+import net.thevpc.nuts.runtime.standalone.xtra.nanodb.NanoDBOutputStream;
 
 public class NanoDBNutsIdSerializer extends NanoDBNonNullSerializer<NutsId>{
     private final NutsSession session;

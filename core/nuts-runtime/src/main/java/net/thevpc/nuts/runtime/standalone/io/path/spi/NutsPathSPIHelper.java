@@ -1,8 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.io.path.spi;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.bundles.iter.IterInfoNode;
-import net.thevpc.nuts.runtime.bundles.iter.IterInfoNodeAware2Base;
+import net.thevpc.nuts.runtime.standalone.util.nfo.NutsIteratorBase;
 
 import java.util.Iterator;
 import java.util.Stack;
@@ -73,7 +72,7 @@ public class NutsPathSPIHelper {
         }
     }
 
-    private static class NutsPathIterator extends IterInfoNodeAware2Base<NutsPath> {
+    private static class NutsPathIterator extends NutsIteratorBase<NutsPath> {
         private final boolean noMax;
         private final int maxDepth;
         private final NutsPath basePath;
@@ -88,10 +87,12 @@ public class NutsPathSPIHelper {
         }
 
         @Override
-        public IterInfoNode info(NutsSession session) {
-            return info("ScanPath",
-                    IterInfoNode.resolveOrString("path",basePath, session)
-            );
+        public NutsElement describe(NutsElements elems) {
+            return elems.ofObject()
+                    .set("type","ScanPath")
+                    .set("path",elems.toElement(basePath))
+                    .set("maxDepth",maxDepth)
+                    .build();
         }
 
         @Override

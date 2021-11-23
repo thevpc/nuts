@@ -102,54 +102,55 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
 
     public DefaultNutsElementFactoryService(NutsWorkspace ws, NutsSession session) {
         typesRepository = NutsWorkspaceUtils.of(session).getReflectRepository();
-        addDefaultFactory(Boolean.class, F_BOOLEANS);
-        addDefaultFactory(boolean.class, F_BOOLEANS);
-        addDefaultFactory(byte.class, F_NUMBERS);
-        addDefaultFactory(short.class, F_NUMBERS);
-        addDefaultFactory(int.class, F_NUMBERS);
-        addDefaultFactory(long.class, F_NUMBERS);
-        addDefaultFactory(float.class, F_NUMBERS);
-        addDefaultFactory(double.class, F_NUMBERS);
-        addDefaultFactory(Number.class, F_NUMBERS);
+        addDefaultMapper(Boolean.class, F_BOOLEANS);
+        addDefaultMapper(boolean.class, F_BOOLEANS);
+        addDefaultMapper(byte.class, F_NUMBERS);
+        addDefaultMapper(short.class, F_NUMBERS);
+        addDefaultMapper(int.class, F_NUMBERS);
+        addDefaultMapper(long.class, F_NUMBERS);
+        addDefaultMapper(float.class, F_NUMBERS);
+        addDefaultMapper(double.class, F_NUMBERS);
+        addDefaultMapper(Number.class, F_NUMBERS);
 
-        addDefaultFactory(char.class, F_CHAR);
-        addDefaultFactory(Character.class, F_CHAR);
+        addDefaultMapper(char.class, F_CHAR);
+        addDefaultMapper(Character.class, F_CHAR);
 
-        addDefaultFactory(Object.class, F_OBJ);
-        addDefaultFactory(String.class, F_STRINGS);
+        addDefaultMapper(Object.class, F_OBJ);
+        addDefaultMapper(String.class, F_STRINGS);
 
-        addDefaultFactory(StringBuilder.class, F_STRINGS);
-        addDefaultFactory(StringBuffer.class, F_STRINGS);
+        addDefaultMapper(StringBuilder.class, F_STRINGS);
+        addDefaultMapper(StringBuffer.class, F_STRINGS);
 
-        addDefaultFactory(Path.class, F_PATH);
-        addDefaultFactory(File.class, F_FILE);
-        addDefaultFactory(java.util.Date.class, F_DATE);
-        addDefaultFactory(java.time.Instant.class, F_INSTANT);
-        addDefaultFactory(Enum.class, F_ENUMS);
-        addDefaultFactory(Collection.class, F_COLLECTION);
-        addDefaultFactory(Iterator.class, F_ITERATOR);
-        addDefaultFactory(Map.class, F_MAP);
-        addDefaultFactory(Map.Entry.class, F_MAPENTRY);
-        addDefaultFactory(org.w3c.dom.Element.class, F_XML_ELEMENT);
-        addDefaultFactory(org.w3c.dom.Document.class, F_XML_DOCUMENT);
-        addDefaultFactory(boolean[].class, new NutsElementMapperPrimitiveBooleanArray());
-        addDefaultFactory(byte[].class, new NutsElementMapperPrimitiveByteArray());
-        addDefaultFactory(short[].class, new NutsElementMapperPrimitiveShortArray());
-        addDefaultFactory(char[].class, new NutsElementMapperPrimitiveCharArray());
-        addDefaultFactory(int[].class, new NutsElementMapperPrimitiveIntArray());
-        addDefaultFactory(long[].class, new NutsElementMapperPrimitiveLongArray());
-        addDefaultFactory(float[].class, new NutsElementMapperFloatArray());
-        addDefaultFactory(double[].class, new NutsElementMapperPrimitiveDoubleArray());
-        addDefaultFactory(Object[].class, new NutsElementMapperObjectArray());
-        addDefaultFactory(NutsPrimitiveElement.class, new NutsElementMapperNutsPrimitiveElement());
-        addDefaultFactory(NutsArrayElement.class, new NutsElementMapperNutsArrayElement());
-        addDefaultFactory(NutsObjectElement.class, new NutsElementMapperNutsObjectElement());
-        addDefaultFactory(NutsElement.class, new NutsElementMapperNutsElement());
-        addDefaultFactory(NutsElementEntry.class, F_NAMED_ELEM);
-        addDefaultFactory(NutsCommandLine.class, new NutsElementMapperCommandLine());
-        addDefaultFactory(NutsString.class, new NutsElementMapperNutsString());
-        addDefaultFactory(NutsText.class, new NutsElementMapperNutsText());
-        addDefaultFactory(NutsPath.class, new NutsElementMapperNutsPath());
+        addDefaultMapper(Path.class, F_PATH);
+        addDefaultMapper(File.class, F_FILE);
+        addDefaultMapper(java.util.Date.class, F_DATE);
+        addDefaultMapper(java.time.Instant.class, F_INSTANT);
+        addDefaultMapper(Enum.class, F_ENUMS);
+        addDefaultMapper(Collection.class, F_COLLECTION);
+        addDefaultMapper(Iterator.class, F_ITERATOR);
+        addDefaultMapper(Map.class, F_MAP);
+        addDefaultMapper(Map.Entry.class, F_MAPENTRY);
+        addDefaultMapper(org.w3c.dom.Element.class, F_XML_ELEMENT);
+        addDefaultMapper(org.w3c.dom.Document.class, F_XML_DOCUMENT);
+        addDefaultMapper(boolean[].class, new NutsElementMapperPrimitiveBooleanArray());
+        addDefaultMapper(byte[].class, new NutsElementMapperPrimitiveByteArray());
+        addDefaultMapper(short[].class, new NutsElementMapperPrimitiveShortArray());
+        addDefaultMapper(char[].class, new NutsElementMapperPrimitiveCharArray());
+        addDefaultMapper(int[].class, new NutsElementMapperPrimitiveIntArray());
+        addDefaultMapper(long[].class, new NutsElementMapperPrimitiveLongArray());
+        addDefaultMapper(float[].class, new NutsElementMapperFloatArray());
+        addDefaultMapper(double[].class, new NutsElementMapperPrimitiveDoubleArray());
+        addDefaultMapper(Object[].class, new NutsElementMapperObjectArray());
+        addDefaultMapper(NutsPrimitiveElement.class, new NutsElementMapperNutsPrimitiveElement());
+        addDefaultMapper(NutsArrayElement.class, new NutsElementMapperNutsArrayElement());
+        addDefaultMapper(NutsObjectElement.class, new NutsElementMapperNutsObjectElement());
+        addDefaultMapper(NutsElement.class, new NutsElementMapperNutsElement());
+        addDefaultMapper(NutsElementEntry.class, F_NAMED_ELEM);
+        addDefaultMapper(NutsCommandLine.class, new NutsElementMapperCommandLine());
+        addDefaultMapper(NutsString.class, new NutsElementMapperNutsString());
+        addDefaultMapper(NutsText.class, new NutsElementMapperNutsText());
+        addDefaultMapper(NutsPath.class, new NutsElementMapperNutsPath());
+        addDefaultMapper(NutsFilter.class, new NutsElementMapperNutsFilter());
 
 //        addHierarchyFactory(JsonElement.class, F_JSONELEMENT);
         setCoreMapper(NutsDefinition.class, F_NUTS_DEF);
@@ -169,7 +170,7 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
         this.session = session;
     }
 
-    public final void addDefaultFactory(Class cls, NutsElementMapper instance) {
+    public final void addDefaultMapper(Class cls, NutsElementMapper instance) {
         defaultMappers.put(cls, instance);
     }
 
@@ -196,6 +197,11 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
             return F_NULL;
         }
         Class cls = ReflectUtils.getRawClass(type);
+        if(NutsSession.class.isAssignableFrom(cls)){
+            throw new NutsIllegalArgumentException(session, NutsMessage.cstyle(
+                    "% is not serializable", type
+            ));
+        }
         if (cls.isArray()) {
             NutsElementMapper f = defaultMappers.getExact(cls);
             if (f != null) {

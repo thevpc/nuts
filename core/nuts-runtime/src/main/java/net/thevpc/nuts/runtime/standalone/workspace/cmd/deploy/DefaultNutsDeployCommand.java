@@ -96,7 +96,7 @@ public class DefaultNutsDeployCommand extends AbstractNutsDeployCommand {
         }
         if (ids.size() > 0) {
             for (NutsId nutsId : session.search().setSession(getSession())
-                    .addIds(ids.toArray(new NutsId[0])).setLatest(true).setRepository(fromRepository).getResultIds()) {
+                    .addIds(ids.toArray(new NutsId[0])).setLatest(true).setRepositoryFilter(fromRepository).getResultIds()) {
                 NutsDefinition fetched = session.fetch().setContent(true).setId(nutsId).setSession(getSession()).getResultDefinition();
                 if (fetched.getFile() != null) {
                     runDeployFile(NutsStreamOrPath.of(

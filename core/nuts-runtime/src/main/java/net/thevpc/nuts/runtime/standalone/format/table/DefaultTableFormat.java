@@ -25,7 +25,7 @@ package net.thevpc.nuts.runtime.standalone.format.table;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.bundles.common.CorePlatformUtils;
-import net.thevpc.nuts.runtime.bundles.string.StringBuilder2;
+import net.thevpc.nuts.runtime.standalone.util.StringBuilder2;
 import net.thevpc.nuts.runtime.standalone.format.DefaultFormatBase;
 import net.thevpc.nuts.runtime.standalone.util.CoreCommonUtils;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;

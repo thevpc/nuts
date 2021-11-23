@@ -6,7 +6,7 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.update;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.bundles.iter.IteratorUtils;
+import net.thevpc.nuts.runtime.standalone.util.iter.IteratorUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.DefaultNutsUpdateResult;
 import net.thevpc.nuts.runtime.standalone.workspace.config.NutsWorkspaceConfigManagerExt;
@@ -28,16 +28,33 @@ import java.util.stream.Collectors;
  */
 public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
 
-    private final Comparator<NutsId> LATEST_VERSION_FIRST = (x, y) -> -x.getVersion().compareTo(y.getVersion());
-    private final Comparator<NutsId> DEFAULT_THEN_LATEST_VERSION_FIRST = (x, y) -> {
-        NutsInstalledRepository rr = NutsWorkspaceExt.of(ws).getInstalledRepository();
-        int xi = rr.isDefaultVersion(x, session) ? 0 : 1;
-        int yi = rr.isDefaultVersion(y, session) ? 0 : 1;
-        int v = Integer.compare(xi, yi);
-        if (v != 0) {
-            return v;
+    private final NutsComparator<NutsId> LATEST_VERSION_FIRST = new NutsComparator<NutsId>() {
+        @Override
+        public int compare(NutsId x, NutsId y) {
+            return -x.getVersion().compareTo(y.getVersion());
         }
-        return -x.getVersion().compareTo(y.getVersion());
+        @Override
+        public NutsElement describe(NutsElements elems) {
+            return elems.ofString("latestVersionFirst");
+        }
+    };
+    private final NutsComparator<NutsId> DEFAULT_THEN_LATEST_VERSION_FIRST = new NutsComparator<NutsId>() {
+        @Override
+        public int compare(NutsId x, NutsId y) {
+            NutsInstalledRepository rr = NutsWorkspaceExt.of(ws).getInstalledRepository();
+            int xi = rr.isDefaultVersion(x, session) ? 0 : 1;
+            int yi = rr.isDefaultVersion(y, session) ? 0 : 1;
+            int v = Integer.compare(xi, yi);
+            if (v != 0) {
+                return v;
+            }
+            return -x.getVersion().compareTo(y.getVersion());
+        }
+
+        @Override
+        public NutsElement describe(NutsElements elems) {
+            return elems.ofString("defaultThenLatestVersionFirst");
+        }
     };
     private boolean checkFixes = false;
     private List<FixAction> resultFixes = null;
@@ -771,7 +788,7 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
         NutsId cnewId = toCanonicalForm(newId);
         NutsId coldId = toCanonicalForm(oldId);
         DefaultNutsUpdateResult defaultNutsUpdateResult = new DefaultNutsUpdateResult(id, oldFile, newFile,
-                newFile == null ? null : newFile.getDependencies().stream().map(NutsDependency::toId).toArray(NutsId[]::new),
+                newFile == null ? null : newFile.getDependencies().all().map(NutsDependency::toId,"toId").toArray(NutsId[]::new),
                 false);
         if (cnewId != null && newFile != null && coldId != null && cnewId.getVersion().compareTo(coldId.getVersion()) > 0) {
             defaultNutsUpdateResult.setUpdateVersionAvailable(true);

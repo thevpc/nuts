@@ -2,9 +2,6 @@ package net.thevpc.nuts.runtime.standalone.repository.impl;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.repository.cmd.NutsRepositorySupportedAction;
-import net.thevpc.nuts.runtime.standalone.repository.impl.NutsCachedRepository;
-
-import java.util.Iterator;
 
 public class NutsSimpleRepositoryWrapper extends NutsCachedRepository {
     private NutsRepositoryModel base;
@@ -24,7 +21,7 @@ public class NutsSimpleRepositoryWrapper extends NutsCachedRepository {
         this.base = base;
     }
     
-    public Iterator<NutsId> searchVersionsCore(NutsId id, NutsIdFilter idFilter, NutsFetchMode fetchMode, NutsSession session) {
+    public NutsIterator<NutsId> searchVersionsCore(NutsId id, NutsIdFilter idFilter, NutsFetchMode fetchMode, NutsSession session) {
         return base.searchVersions(id, idFilter, fetchMode, this, session);
     }
 
@@ -40,7 +37,7 @@ public class NutsSimpleRepositoryWrapper extends NutsCachedRepository {
         return base.fetchContent(id, descriptor, localPath, fetchMode, this, session);
     }
 
-    public Iterator<NutsId> searchCore(final NutsIdFilter filter, String[] roots, NutsFetchMode fetchMode, NutsSession session) {
+    public NutsIterator<NutsId> searchCore(final NutsIdFilter filter, String[] roots, NutsFetchMode fetchMode, NutsSession session) {
         return base.search(filter, roots, fetchMode, this, session);
     }
 

@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.dependency.filter;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.bundles.string.GlobUtils;
+import net.thevpc.nuts.runtime.standalone.xtra.glob.GlobUtils;
 import net.thevpc.nuts.runtime.standalone.util.CoreNutsUtils;
 
 import java.util.Arrays;

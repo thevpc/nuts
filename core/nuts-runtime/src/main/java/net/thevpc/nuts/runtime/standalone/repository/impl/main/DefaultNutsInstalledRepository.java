@@ -27,10 +27,8 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.bundles.collections.LRUMap;
 import net.thevpc.nuts.runtime.bundles.io.FolderObjectIterator;
 import net.thevpc.nuts.runtime.bundles.io.NutsInstallStatusIdFilter;
-import net.thevpc.nuts.runtime.bundles.iter.IterInfoNode;
-import net.thevpc.nuts.runtime.bundles.iter.IteratorBuilder;
-import net.thevpc.nuts.runtime.bundles.iter.IteratorUtils;
-import net.thevpc.nuts.runtime.bundles.iter.LazyIterator;
+import net.thevpc.nuts.runtime.standalone.util.iter.IteratorBuilder;
+import net.thevpc.nuts.NutsDescribables;
 import net.thevpc.nuts.runtime.standalone.definition.DefaultNutsInstallInfo;
 import net.thevpc.nuts.runtime.standalone.repository.cmd.deploy.AbstractNutsDeployRepositoryCommand;
 import net.thevpc.nuts.runtime.standalone.repository.cmd.fetch.AbstractNutsFetchContentRepositoryCommand;
@@ -75,7 +73,8 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
         this.deployments = new NutsRepositoryFolderHelper(this,
                 NutsWorkspaceUtils.defaultSession(ws),
                 NutsPath.of(info.getStoreLocation(NutsStoreLocation.LIB), initSession).resolve(NutsConstants.Folders.ID)
-                , false
+                , false,
+                NutsElements.of(initSession).ofObject().set("repoKind","deployments").build()
         );
         configModel = new InstalledRepositoryConfigModel(workspace, this);
     }
@@ -114,7 +113,7 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
     }
 
     @Override
-    public Iterator<NutsInstallInformation> searchInstallInformation(NutsSession session) {
+    public NutsIterator<NutsInstallInformation> searchInstallInformation(NutsSession session) {
         NutsPath rootFolder = session.locations().getStoreLocation(NutsStoreLocation.CONFIG).resolve(NutsConstants.Folders.ID);
         return new FolderObjectIterator<NutsInstallInformation>("NutsInstallInformation",
                 rootFolder,
@@ -522,7 +521,7 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
         return null;
     }
 
-    public Iterator<InstallInfoConfig> searchInstallConfig(NutsSession session) {
+    public NutsIterator<InstallInfoConfig> searchInstallConfig(NutsSession session) {
         NutsPath rootFolder = session.locations().getStoreLocation(NutsStoreLocation.CONFIG).resolve(NutsConstants.Folders.ID);
         return new FolderObjectIterator<InstallInfoConfig>("InstallInfoConfig",
                 rootFolder,
@@ -777,15 +776,16 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
         return new AbstractNutsSearchRepositoryCommand(this) {
             @Override
             public NutsSearchRepositoryCommand run() {
-                Iterator<InstallInfoConfig> installIter = searchInstallConfig(getSession());
-                Iterator<NutsId> idIter = IteratorUtils.map(installIter, IteratorUtils.namedFunction(InstallInfoConfig::getId, "NutsInstallInformation->Id"));
+                NutsIterator<InstallInfoConfig> installIter = searchInstallConfig(getSession());
+                NutsIterator<NutsId> idIter = IteratorBuilder.of(installIter).map(NutsFunction.of(InstallInfoConfig::getId, "NutsInstallInformation->Id"))
+                        .build();
                 NutsIdFilter ff = getFilter();
                 if (ff != null) {
-                    idIter = IteratorUtils.filter(idIter, new NutsIdFilterToPredicate(ff, getSession()));
+                    idIter = IteratorBuilder.of(idIter).filter(new NutsIdFilterToPredicate(ff, getSession())).build();
                 }
                 result = idIter; //deployments.searchImpl(getFilter(), getSession())
                 if (result == null) {
-                    result = IteratorUtils.emptyIterator();
+                    result = IteratorBuilder.emptyIterator();
                 }
                 return this;
             }
@@ -805,7 +805,7 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
                     if (installFolder.isDirectory()) {
                         final NutsVersionFilter filter0 = getId().getVersion().filter();
                         result = IteratorBuilder.of(installFolder.list().iterator())
-                                .map(IteratorUtils.namedFunction(
+                                .map(NutsFunction.of(
                                         new Function<NutsPath, NutsId>() {
                                             @Override
                                             public NutsId apply(NutsPath folder) {
@@ -826,12 +826,13 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
                                 .notNull().iterator();
                     } else {
                         //ok.sort((a, b) -> CoreVersionUtils.compareVersions(a, b));
-                        result = IteratorUtils.emptyIterator();
+                        result = IteratorBuilder.emptyIterator();
                     }
                 } else {
-                    this.result = IteratorUtils.name("searchVersionsInMain()",
-                            IteratorUtils.nonNull(deployments.searchVersions(getId(), getFilter(), true, getSession()))
-                    );
+                    this.result = IteratorBuilder.of(deployments.searchVersions(getId(), getFilter(), true, getSession()))
+                            .named("searchVersionsInMain()")
+                            .build()
+                    ;
                 }
                 return this;
             }

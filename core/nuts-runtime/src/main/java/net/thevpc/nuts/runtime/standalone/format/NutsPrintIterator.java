@@ -8,15 +8,14 @@ package net.thevpc.nuts.runtime.standalone.format;
 import java.util.Iterator;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.bundles.iter.IterInfoNode;
-import net.thevpc.nuts.runtime.bundles.iter.IterInfoNodeAware2Base;
-//import net.thevpc.nuts.NutsIterableOutput;
+import net.thevpc.nuts.runtime.standalone.util.nfo.NutsIteratorBase;
+import net.thevpc.nuts.NutsDescribables;
 
 /**
  *
  * @author thevpc
  */
-public class NutsPrintIterator<T> extends IterInfoNodeAware2Base<T> {
+public class NutsPrintIterator<T> extends NutsIteratorBase<T> {
 
     Iterator<T> curr;
     NutsWorkspace ws;
@@ -40,11 +39,12 @@ public class NutsPrintIterator<T> extends IterInfoNodeAware2Base<T> {
     }
 
     @Override
-    public IterInfoNode info(NutsSession session) {
-        return info("Print",
-                IterInfoNode.resolveOrNull("base", curr, session),
-                IterInfoNode.resolveOrString("format", listFormat.getOutputFormat().toString(), session)
-        );
+    public NutsElement describe(NutsElements elems) {
+        return NutsDescribables.resolveOrDestruct(curr,elems)
+                .toObject()
+                .builder()
+                .set("print",elems.ofObject().set("format",listFormat.getOutputFormat().id()).build())
+                .build();
     }
 
     @Override

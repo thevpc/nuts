@@ -1,7 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.xtra.glob;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.bundles.string.GlobUtils;
 import net.thevpc.nuts.spi.NutsSupportLevelContext;
 
 import java.io.File;

@@ -3,7 +3,7 @@ package net.thevpc.nuts.runtime.standalone.repository.index;
 import net.thevpc.nuts.NutsId;
 import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.NutsStoreLocation;
-import net.thevpc.nuts.runtime.bundles.nanodb.NanoDB;
+import net.thevpc.nuts.runtime.standalone.xtra.nanodb.NanoDB;
 
 public class CacheDB {
     public static NanoDB of(NutsSession session) {

@@ -112,6 +112,16 @@ public class DefaultNutsObjectElementBuilder implements NutsObjectElementBuilder
     }
 
     @Override
+    public NutsObjectElementBuilder addAll(Map<NutsElement, NutsElement> other) {
+        if(other!=null){
+            for (Map.Entry<NutsElement, NutsElement> e : other.entrySet()) {
+                add(e.getKey(),e.getValue());
+            }
+        }
+        return this;
+    }
+
+    @Override
     public NutsObjectElementBuilder set(NutsElement name, boolean value) {
         return set(name, _elements().ofBoolean(value));
     }
@@ -189,6 +199,26 @@ public class DefaultNutsObjectElementBuilder implements NutsObjectElementBuilder
     public NutsObjectElementBuilder addAll(NutsElementEntry... entries) {
         if(entries!=null){
             for (NutsElementEntry entry : entries) {
+                add(entry);
+            }
+        }
+        return this;
+    }
+
+    @Override
+    public NutsObjectElementBuilder addAll(NutsObjectElement other) {
+        if(other!=null){
+            for (NutsElementEntry entry : other) {
+                add(entry);
+            }
+        }
+        return this;
+    }
+
+    @Override
+    public NutsObjectElementBuilder addAll(NutsObjectElementBuilder other) {
+        if(other!=null){
+            for (NutsElementEntry entry : other.build()) {
                 add(entry);
             }
         }

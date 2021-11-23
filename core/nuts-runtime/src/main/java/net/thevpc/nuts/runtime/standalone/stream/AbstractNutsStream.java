@@ -27,7 +27,9 @@
 package net.thevpc.nuts.runtime.standalone.stream;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.bundles.iter.IteratorUtils;
+import net.thevpc.nuts.runtime.standalone.util.iter.IteratorBuilder;
+import net.thevpc.nuts.runtime.standalone.util.iter.IteratorUtils;
+import net.thevpc.nuts.NutsDescribables;
 
 import java.util.*;
 import java.util.function.*;
@@ -46,6 +48,7 @@ public abstract class AbstractNutsStream<T> implements NutsStream<T> {
         this.session = session;
         this.nutsBase = nutsBase;
     }
+
 
     private static <T> BinaryOperator<T> throwingMerger() {
         return (u, v) -> {
@@ -129,7 +132,7 @@ public abstract class AbstractNutsStream<T> implements NutsStream<T> {
 
     @Override
     public Stream<T> stream() {
-        return StreamSupport.stream(Spliterators.spliteratorUnknownSize((Iterator<T>) iterator(), Spliterator.ORDERED), false);
+        return StreamSupport.stream(Spliterators.spliteratorUnknownSize(iterator(), Spliterator.ORDERED), false);
     }
 
     @Override
@@ -144,33 +147,67 @@ public abstract class AbstractNutsStream<T> implements NutsStream<T> {
     }
 
     @Override
-    public <R> NutsStream<R> map(Function<? super T, ? extends R> mapper) {
+    public <R> NutsStream<R> map(NutsFunction<? super T, ? extends R> mapper) {
         return new AbstractNutsStream<R>(session, nutsBase) {
             @Override
-            public Iterator<R> iterator() {
-                Iterator<T> it = AbstractNutsStream.this.iterator();
-                return IteratorUtils.map(it, mapper);
+            public NutsIterator<R> iterator() {
+                NutsIterator<T> it = AbstractNutsStream.this.iterator();
+                return (NutsIterator) IteratorBuilder.of(it).map(mapper).build();
             }
         };
+    }
+
+    @Override
+    public <R> NutsStream<R> map(Function<? super T, ? extends R> mapper, String name) {
+        return map(NutsFunction.of(mapper, name));
+    }
+
+    @Override
+    public <R> NutsStream<R> map(Function<? super T, ? extends R> mapper, NutsElement name) {
+        return map(NutsFunction.of(mapper, name));
+    }
+
+    @Override
+    public <R> NutsStream<R> map(Function<? super T, ? extends R> mapper, Function<NutsElements, NutsElement> name) {
+        return map(NutsFunction.of(mapper, name));
+    }
+
+    @Override
+    public <R> NutsStream<R> mapUnsafe(NutsUnsafeFunction<? super T, ? extends R> mapper, NutsFunction<Exception, ? extends R> onError) {
+        return map(new NutsFunction<T, R>() {
+            @Override
+            public R apply(T t) {
+                try {
+                    return mapper.apply(t);
+                } catch (Exception e) {
+                    return onError == null ? null : onError.apply(e);
+                }
+            }
+
+            @Override
+            public NutsElement describe(NutsElements elems) {
+                return mapper.describe(elems);
+            }
+        });
     }
 
     @Override
     public NutsStream<T> sorted() {
         return new AbstractNutsStream<T>(session, nutsBase) {
             @Override
-            public Iterator<T> iterator() {
-                Iterator<T> it = AbstractNutsStream.this.iterator();
+            public NutsIterator<T> iterator() {
+                NutsIterator<T> it = AbstractNutsStream.this.iterator();
                 return IteratorUtils.sort(it, null, false);
             }
         };
     }
 
     @Override
-    public NutsStream<T> sorted(Comparator<T> comp) {
+    public NutsStream<T> sorted(NutsComparator<T> comp) {
         return new AbstractNutsStream<T>(session, nutsBase) {
             @Override
-            public Iterator<T> iterator() {
-                Iterator<T> it = AbstractNutsStream.this.iterator();
+            public NutsIterator<T> iterator() {
+                NutsIterator<T> it = AbstractNutsStream.this.iterator();
                 return IteratorUtils.sort(it, comp, false);
             }
         };
@@ -180,19 +217,19 @@ public abstract class AbstractNutsStream<T> implements NutsStream<T> {
     public NutsStream<T> distinct() {
         return new AbstractNutsStream<T>(session, nutsBase) {
             @Override
-            public Iterator<T> iterator() {
-                Iterator<T> it = AbstractNutsStream.this.iterator();
+            public NutsIterator<T> iterator() {
+                NutsIterator<T> it = AbstractNutsStream.this.iterator();
                 return IteratorUtils.distinct(it);
             }
         };
     }
 
     @Override
-    public <R> NutsStream<T> distinctBy(Function<T, R> condition) {
+    public <R> NutsStream<T> distinctBy(NutsFunction<T, R> condition) {
         return new AbstractNutsStream<T>(session, nutsBase) {
             @Override
-            public Iterator<T> iterator() {
-                Iterator<T> it = AbstractNutsStream.this.iterator();
+            public NutsIterator<T> iterator() {
+                NutsIterator<T> it = AbstractNutsStream.this.iterator();
                 return IteratorUtils.distinct(it, condition);
             }
         };
@@ -200,7 +237,7 @@ public abstract class AbstractNutsStream<T> implements NutsStream<T> {
 
     @Override
     public NutsStream<T> nonNull() {
-        return filter(Objects::nonNull);
+        return filter(Objects::nonNull, "nonNull");
     }
 
     @Override
@@ -219,37 +256,60 @@ public abstract class AbstractNutsStream<T> implements NutsStream<T> {
                 return !((NutsBlankable) x).isBlank();
             }
             return true;
-        });
+        }, "nonBlank");
     }
 
     @Override
-    public NutsStream<T> filter(Predicate<? super T> predicate) {
+    public NutsStream<T> filter(NutsPredicate<? super T> predicate) {
+        NutsDescribables.cast(predicate);
         return new AbstractNutsStream<T>(session, nutsBase) {
             @Override
-            public Iterator<T> iterator() {
-                Iterator<T> it = AbstractNutsStream.this.iterator();
-                return IteratorUtils.filter(it, predicate);//,"mapped("+it+")"
+            public NutsIterator<T> iterator() {
+                NutsIterator<T> it = AbstractNutsStream.this.iterator();
+                return IteratorBuilder.of(it).filter(predicate).build();//,"mapped("+it+")"
+            }
+        };
+    }
+
+    @Override
+    public NutsStream<T> filter(Predicate<? super T> predicate, String name) {
+        return filter(predicate, e -> e.ofString(name));
+    }
+
+    @Override
+    public NutsStream<T> filter(Predicate<? super T> predicate, NutsElement name) {
+        return filter(predicate, e -> name);
+    }
+
+    @Override
+    public NutsStream<T> filter(Predicate<? super T> predicate, Function<NutsElements, NutsElement> info) {
+        NutsPredicate<? super T> p = predicate == null ? null : NutsPredicate.of(predicate, info);
+        return new AbstractNutsStream<T>(session, nutsBase) {
+            @Override
+            public NutsIterator<T> iterator() {
+                NutsIterator<T> it = AbstractNutsStream.this.iterator();
+                return IteratorBuilder.of(it).filter(p).build();//,"mapped("+it+")"
             }
         };
     }
 
     @Override
     public NutsStream<T> filterNonNull() {
-        return filter(Objects::nonNull);
+        return filter(Objects::nonNull, "nonNull");
     }
 
     @Override
     public NutsStream<T> filterNonBlank() {
-        return filter(x-> !NutsBlankable.isBlank(x));
+        return filter(x -> !NutsBlankable.isBlank(x), "nonBlank");
     }
 
     @Override
-    public NutsStream<T> coalesce(Iterator<? extends T> other) {
+    public NutsStream<T> coalesce(NutsIterator<? extends T> other) {
         return new AbstractNutsStream<T>(session, nutsBase) {
             @Override
-            public Iterator<T> iterator() {
-                Iterator<T> it = AbstractNutsStream.this.iterator();
-                List<Iterator<? extends T>> iterators = Arrays.asList(it, other);
+            public NutsIterator<T> iterator() {
+                NutsIterator<T> it = AbstractNutsStream.this.iterator();
+                List<NutsIterator<? extends T>> iterators = Arrays.asList(it, other);
                 return IteratorUtils.coalesce(iterators);//,"mapped("+it+")"
             }
         };
@@ -279,62 +339,84 @@ public abstract class AbstractNutsStream<T> implements NutsStream<T> {
     }
 
     @Override
-    public <R> NutsStream<R> flatMapIter(Function<? super T, ? extends Iterator<? extends R>> mapper) {
+    public <R> NutsStream<R> flatMapIter(NutsFunction<? super T, ? extends Iterator<? extends R>> mapper) {
         return new AbstractNutsStream<R>(session, nutsBase) {
             @Override
-            public Iterator<R> iterator() {
-                Iterator<T> it = AbstractNutsStream.this.iterator();
-                return IteratorUtils.flatMap(it, mapper);//,"mapped("+it+")"
+            public NutsIterator<R> iterator() {
+                return IteratorBuilder.of(AbstractNutsStream.this.iterator()).flatMap(mapper).build();
             }
         };
     }
 
     @Override
-    public <R> NutsStream<R> flatMapList(Function<? super T, ? extends List<? extends R>> mapper) {
+    public <R> NutsStream<R> flatMapList(NutsFunction<? super T, ? extends List<? extends R>> mapper) {
         return new AbstractNutsStream<R>(session, nutsBase) {
             @Override
-            public Iterator<R> iterator() {
-                Iterator<T> it = AbstractNutsStream.this.iterator();
-                return IteratorUtils.flatMap(it, t -> mapper.apply(t).iterator());
+            public NutsIterator<R> iterator() {
+                IteratorBuilder<T> r = IteratorBuilder.of(AbstractNutsStream.this.iterator());
+                return (NutsIterator<R>) r.flatMap(
+                        NutsFunction.of(t -> mapper.apply(t).iterator(),mapper::describe)
+                ).build();
             }
         };
     }
 
     @Override
-    public <R> NutsStream<R> flatMapArray(Function<? super T, ? extends R[]> mapper) {
+    public <R> NutsStream<R> flatMapArray(NutsFunction<? super T, ? extends R[]> mapper) {
         return new AbstractNutsStream<R>(session, nutsBase) {
             @Override
-            public Iterator<R> iterator() {
-                Iterator<T> it = AbstractNutsStream.this.iterator();
-                return IteratorUtils.flatMap(it, t -> Arrays.asList(mapper.apply(t))
-                        .iterator());
+            public NutsIterator<R> iterator() {
+                return IteratorBuilder.of(AbstractNutsStream.this.iterator())
+                        .flatMap(
+                                NutsFunction.of(t -> Arrays.asList(mapper.apply(t)).iterator(), mapper::describe)
+                        ).build();
             }
         };
     }
 
     @Override
-    public <R> NutsStream<R> flatMapStream(Function<? super T, ? extends Stream<? extends R>> mapper) {
+    public <R> NutsStream<R> flatMap(NutsFunction<? super T, ? extends Stream<? extends R>> mapper) {
         return new AbstractNutsStream<R>(session, nutsBase) {
             @Override
-            public Iterator<R> iterator() {
-                Iterator<T> it = AbstractNutsStream.this.iterator();
-                return IteratorUtils.flatMap(it, t -> mapper.apply(t).iterator());//,"mapped("+it+")"
+            public NutsIterator<R> iterator() {
+                return (NutsIterator<R>) IteratorBuilder.of(AbstractNutsStream.this.iterator()).flatMap(
+                        NutsFunction.of(t -> mapper.apply(t).iterator(),mapper::describe)
+                ).build();
             }
         };
     }
 
     @Override
-    public <K> Map<K, List<T>> groupBy(Function<? super T, ? extends K> classifier) {
+    public <R> NutsStream<R> flatMapStream(NutsFunction<? super T, ? extends NutsStream<? extends R>> mapper) {
+        return new AbstractNutsStream<R>(session, nutsBase) {
+            @Override
+            public NutsIterator<R> iterator() {
+                return (NutsIterator<R>) IteratorBuilder.of(AbstractNutsStream.this.iterator())
+                        .flatMap(
+                                NutsFunction.of(t -> mapper.apply(t).iterator(),mapper::describe)
+                                ).build();
+            }
+        };
+    }
+
+    @Override
+    public <K> Map<K, List<T>> groupBy(NutsFunction<? super T, ? extends K> classifier) {
         Stream<T> it = AbstractNutsStream.this.stream();
         return it.collect(Collectors.groupingBy(classifier));
     }
 
     @Override
-    public <K> NutsStream<Map.Entry<K, List<T>>> groupedBy(Function<? super T, ? extends K> classifier) {
+    public <K> NutsStream<Map.Entry<K, List<T>>> groupedBy(NutsFunction<? super T, ? extends K> classifier) {
         Stream<T> it = AbstractNutsStream.this.stream();
         Set<Map.Entry<K, List<T>>> entries = (Set) it.collect(Collectors.groupingBy(classifier)).entrySet();
         return new NutsIteratorStream<Map.Entry<K, List<T>>>(
-                session, nutsBase, entries.iterator()
+                session, nutsBase, NutsIterator.of(entries.iterator(),
+                e -> e.ofObject()
+                        .set("type", "GroupBy")
+                        .set("groupBy", classifier.describe(e))
+                        .set("base", iterator().describe(e))
+                        .build()
+        )
         );
     }
 
@@ -349,20 +431,19 @@ public abstract class AbstractNutsStream<T> implements NutsStream<T> {
     }
 
     @Override
-    public DoubleStream flatMapToDouble(Function<? super T, ? extends DoubleStream> mapper) {
+    public DoubleStream flatMapToDouble(NutsFunction<? super T, ? extends DoubleStream> mapper) {
         return stream().flatMapToDouble(mapper);
     }
 
     @Override
-    public IntStream flatMapToInt(Function<? super T, ? extends IntStream> mapper) {
+    public IntStream flatMapToInt(NutsFunction<? super T, ? extends IntStream> mapper) {
         return stream().flatMapToInt(mapper);
     }
 
     @Override
-    public LongStream flatMapToLong(Function<? super T, ? extends LongStream> mapper) {
+    public LongStream flatMapToLong(NutsFunction<? super T, ? extends LongStream> mapper) {
         return stream().flatMapToLong(mapper);
     }
-
 
     @Override
     public boolean allMatch(Predicate<? super T> predicate) {
@@ -376,18 +457,31 @@ public abstract class AbstractNutsStream<T> implements NutsStream<T> {
 
     @Override
     public NutsStream<T> limit(long maxSize) {
-        return NutsStream.of(stream().limit(maxSize),session);
+        return NutsStream.of(stream().limit(maxSize), session);
     }
 
+    @Override
+    public <R> R collect(Supplier<R> supplier, BiConsumer<R, ? super T> accumulator, BiConsumer<R, R> combiner) {
+        return stream().collect(supplier, accumulator, combiner);
+    }
 
     @Override
-    public <R> NutsStream<R> mapUnsafe(NutsUnsafeFunction<? super T, ? extends R> mapper, Function<Exception, ? extends R> onError) {
-        return map(t -> {
-            try {
-                return mapper.apply(t);
-            } catch (Exception e) {
-                return onError==null?null:onError.apply(e);
-            }
-        });
+    public <R, A> R collect(Collector<? super T, A, R> collector) {
+        return stream().collect(collector);
+    }
+
+    @Override
+    public Optional<T> min(Comparator<? super T> comparator) {
+        return stream().min(comparator);
+    }
+
+    @Override
+    public Optional<T> max(Comparator<? super T> comparator) {
+        return stream().max(comparator);
+    }
+
+    @Override
+    public NutsElement describe(NutsElements elems) {
+        return iterator().describe(elems);
     }
 }

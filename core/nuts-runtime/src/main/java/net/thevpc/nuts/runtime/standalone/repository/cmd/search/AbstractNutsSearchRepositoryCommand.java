@@ -9,8 +9,6 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.repository.cmd.NutsRepositoryCommandBase;
 import net.thevpc.nuts.spi.NutsSearchRepositoryCommand;
 
-import java.util.Iterator;
-
 /**
  *
  * @author thevpc
@@ -18,7 +16,7 @@ import java.util.Iterator;
 public abstract class AbstractNutsSearchRepositoryCommand extends NutsRepositoryCommandBase<NutsSearchRepositoryCommand> implements NutsSearchRepositoryCommand {
 
     protected NutsIdFilter filter;
-    protected Iterator<NutsId> result;
+    protected NutsIterator<NutsId> result;
 
     public AbstractNutsSearchRepositoryCommand(NutsRepository repo) {
         super(repo, "search");
@@ -34,7 +32,7 @@ public abstract class AbstractNutsSearchRepositoryCommand extends NutsRepository
 
 
     @Override
-    public Iterator<NutsId> getResult() {
+    public NutsIterator<NutsId> getResult() {
         if (result == null) {
             run();
         }

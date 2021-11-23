@@ -10,24 +10,24 @@
  * to share shell scripts and other 'things' . Its based on an extensible
  * architecture to help supporting a large range of sub managers / repositories.
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc]
- * Licensed under the Apache License, Version 2.0 (the "License"); you may 
- * not use this file except in compliance with the License. You may obtain a 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may
+ * not use this file except in compliance with the License. You may obtain a
  * copy of the License at http://www.apache.org/licenses/LICENSE-2.0
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an 
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
- * either express or implied. See the License for the specific language 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+ * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  * <br>
  * ====================================================================
-*/
+ */
 package net.thevpc.nuts.runtime.bundles.io;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.bundles.iter.IterInfoNode;
-import net.thevpc.nuts.runtime.bundles.iter.IterInfoNodeAware2Base;
+import net.thevpc.nuts.runtime.standalone.util.nfo.NutsIteratorBase;
+import net.thevpc.nuts.NutsDescribables;
 import net.thevpc.nuts.runtime.standalone.repository.impl.main.DefaultNutsInstalledRepository;
 
 import java.io.IOException;
@@ -38,36 +38,22 @@ import java.util.logging.Level;
 /**
  * Created by vpc on 2/21/17.
  */
-public class FolderObjectIterator<T> extends IterInfoNodeAware2Base<T> {
+public class FolderObjectIterator<T> extends NutsIteratorBase<T> {
 //    private static final Logger LOG=Logger.getLogger(FolderNutIdIterator.class.getName());
-
-    private T last;
-    private NutsPath lastPath;
-
-    private static class PathAndDepth {
-
-        private NutsPath path;
-        private int depth;
-
-        public PathAndDepth(NutsPath path, int depth) {
-            this.path = path;
-            this.depth = depth;
-        }
-
-    }
 
     private final Stack<PathAndDepth> stack = new Stack<>();
     private final Predicate<T> filter;
     private final NutsSession session;
     private final FolderIteratorModel<T> model;
-    private long visitedFoldersCount;
-    private long visitedFilesCount;
-    private int maxDepth;
     private final NutsLogger LOG;
     private final String name;
     private final NutsPath folder;
-
-    public FolderObjectIterator(String name,NutsPath folder, Predicate<T> filter, int maxDepth, NutsSession session, FolderIteratorModel<T> model) {
+    private T last;
+    private NutsPath lastPath;
+    private long visitedFoldersCount;
+    private long visitedFilesCount;
+    private final int maxDepth;
+    public FolderObjectIterator(String name, NutsPath folder, Predicate<T> filter, int maxDepth, NutsSession session, FolderIteratorModel<T> model) {
         this.session = session;
         this.filter = filter;
         this.model = model;
@@ -79,18 +65,20 @@ public class FolderObjectIterator<T> extends IterInfoNodeAware2Base<T> {
         if (session == null) {
             throw new NullPointerException("null session");
         }
-        this.folder=folder;
+        this.folder = folder;
         stack.push(new PathAndDepth(folder, 0));
-        LOG = NutsLogger.of(DefaultNutsInstalledRepository.class,session);
+        LOG = NutsLogger.of(DefaultNutsInstalledRepository.class, session);
     }
 
     @Override
-    public IterInfoNode info(NutsSession session) {
-        return info("ScanPath",
-                IterInfoNode.resolveOrString("maxDepth",maxDepth, this.session),
-                IterInfoNode.resolveOrString("path",folder, this.session),
-                IterInfoNode.resolveOrStringNonNull("filter",filter, this.session)
-                ).withNonNullName(name);
+    public NutsElement describe(NutsElements elems) {
+        return elems.ofObject()
+                .set("type", "ScanPath")
+                .set("name", name)
+                .set("path", NutsDescribables.resolveOrDestruct(folder, elems))
+                .set("maxDepth", maxDepth)
+                .set("filter", NutsDescribables.resolveOrDestruct(filter, elems))
+                .build();
     }
 
     @Override
@@ -99,22 +87,22 @@ public class FolderObjectIterator<T> extends IterInfoNodeAware2Base<T> {
         while (!stack.isEmpty()) {
             PathAndDepth file = stack.pop();
             if (file.path.isDirectory()) {
-                session.getTerminal().printProgress("%-8s %s","browse",file.path.toCompressedForm());
+                session.getTerminal().printProgress("%-8s %s", "browse", file.path.toCompressedForm());
                 visitedFoldersCount++;
                 boolean deep = maxDepth < 0 || file.depth < maxDepth;
                 if (file.path.isDirectory()) {
                     try {
                         file.path.list().filter(
-                                pathname->{
+                                pathname -> {
                                     try {
                                         return (deep && pathname.isDirectory()) || model.isObjectFile(pathname);
                                     } catch (Exception ex) {
-                                        NutsLoggerOp.of(FolderObjectIterator.class,session).level(Level.FINE).error(ex)
-                                                .log(NutsMessage.jstyle("unable to test desk file {0}" ,pathname));
+                                        NutsLoggerOp.of(FolderObjectIterator.class, session).level(Level.FINE).error(ex)
+                                                .log(NutsMessage.jstyle("unable to test desk file {0}", pathname));
                                         return false;
                                     }
-                                }
-                        ).forEach(item-> {
+                                },"isDirectory || isObjectFile"
+                        ).forEach(item -> {
                             if (item.isDirectory()) {
                                 if (maxDepth < 0 || file.depth < maxDepth) {
                                     stack.push(new PathAndDepth(item, file.depth + 1));
@@ -125,7 +113,7 @@ public class FolderObjectIterator<T> extends IterInfoNodeAware2Base<T> {
                         });
                     } catch (Exception ex) {
                         LOG.with().error(ex).log(
-                                NutsMessage.jstyle("unable to parse {0}",file.path));
+                                NutsMessage.jstyle("unable to parse {0}", file.path));
                     }
                 }
             } else {
@@ -173,6 +161,11 @@ public class FolderObjectIterator<T> extends IterInfoNodeAware2Base<T> {
         return visitedFilesCount;
     }
 
+    @Override
+    public String toString() {
+        return "FolderIterator<" + name + ">(folder=" + folder + "; depth=" + maxDepth + ')';
+    }
+
     public interface FolderIteratorModel<T> {
 
         default void remove(T object, NutsPath objectPath, NutsSession session) throws NutsExecutionException {
@@ -184,9 +177,16 @@ public class FolderObjectIterator<T> extends IterInfoNodeAware2Base<T> {
         T parseObject(NutsPath pathname, NutsSession session) throws IOException;
     }
 
-    @Override
-    public String toString() {
-        return "FolderIterator<"+name+">(folder="+folder+"; depth="+maxDepth+ ')';
+    private static class PathAndDepth {
+
+        private final NutsPath path;
+        private final int depth;
+
+        public PathAndDepth(NutsPath path, int depth) {
+            this.path = path;
+            this.depth = depth;
+        }
+
     }
-    
+
 }

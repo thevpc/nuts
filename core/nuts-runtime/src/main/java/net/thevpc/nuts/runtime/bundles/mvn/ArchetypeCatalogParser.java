@@ -1,8 +1,8 @@
 package net.thevpc.nuts.runtime.bundles.mvn;
 
-import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.runtime.bundles.iter.IterInfoNode;
-import net.thevpc.nuts.runtime.bundles.iter.IterInfoNodeAware2Base;
+import net.thevpc.nuts.NutsElement;
+import net.thevpc.nuts.NutsElements;
+import net.thevpc.nuts.runtime.standalone.util.nfo.NutsIteratorBase;
 
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLInputFactory;
@@ -38,7 +38,7 @@ public class ArchetypeCatalogParser {
         return true;
     }
 
-    private static class ArchetypeCatalogPomIdIterator extends IterInfoNodeAware2Base<PomId> {
+    private static class ArchetypeCatalogPomIdIterator extends NutsIteratorBase<PomId> {
         private final InputStream stream;
         private final PomIdFilter filter;
         private final boolean autoCloseStream;
@@ -70,10 +70,11 @@ public class ArchetypeCatalogParser {
         }
 
         @Override
-        public IterInfoNode info(NutsSession session) {
-            return info("ScanArchetypeCatalog",
-                    IterInfoNode.resolveOrString("base", stream, session)
-            );
+        public NutsElement describe(NutsElements elems) {
+            return elems.ofObject()
+                    .set("type","ScanArchetypeCatalog")
+                    .set("source",stream.toString())
+                    .build();
         }
 
 

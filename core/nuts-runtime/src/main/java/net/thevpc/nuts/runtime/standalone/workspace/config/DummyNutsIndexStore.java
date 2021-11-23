@@ -1,9 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.workspace.config;
 
 import net.thevpc.nuts.*;
-
-import java.util.Collections;
-import java.util.Iterator;
+import net.thevpc.nuts.runtime.standalone.util.iter.IteratorBuilder;
 
 public class DummyNutsIndexStore extends AbstractNutsIndexStore {
 
@@ -13,13 +11,13 @@ public class DummyNutsIndexStore extends AbstractNutsIndexStore {
     }
 
     @Override
-    public Iterator<NutsId> searchVersions(NutsId id, NutsSession session) {
-        return Collections.emptyIterator();
+    public NutsIterator<NutsId> searchVersions(NutsId id, NutsSession session) {
+        return IteratorBuilder.emptyIterator();
     }
 
     @Override
-    public Iterator<NutsId> search(NutsIdFilter filter, NutsSession session) {
-        return Collections.emptyIterator();
+    public NutsIterator<NutsId> search(NutsIdFilter filter, NutsSession session) {
+        return IteratorBuilder.emptyIterator();
     }
 
     @Override

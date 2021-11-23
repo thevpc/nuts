@@ -46,14 +46,13 @@ public class LsCommand extends SimpleJShellBuiltin {
 
     private static final FileSorter FILE_SORTER = new FileSorter();
     private final HashSet<String> fileTypeArchive = new HashSet<String>(Arrays.asList("jar", "war", "ear", "rar", "zip", "tar", "gz"));
-    ;
     private final HashSet<String> fileTypeExec2 = new HashSet<String>(Arrays.asList("jar", "war", "ear", "rar", "zip", "bin", "exe", "tar", "gz", "class", "sh"));
     private final HashSet<String> fileTypeConfig = new HashSet<String>(Arrays.asList("xml", "config", "cfg", "json", "iml", "ipr"));
-    private DateTimeFormatter SIMPLE_DATE_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
+    private final DateTimeFormatter SIMPLE_DATE_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
             .withZone(ZoneId.systemDefault());
 
     public LsCommand() {
-        super("ls", DEFAULT_SUPPORT,Options.class);
+        super("ls", DEFAULT_SUPPORT, Options.class);
     }
 
     @Override
@@ -95,7 +94,7 @@ public class LsCommand extends SimpleJShellBuiltin {
         }
         NutsSession session = context.getSession();
         for (String path : options.paths) {
-            if(NutsBlankable.isBlank(path)){
+            if (NutsBlankable.isBlank(path)) {
                 if (errors == null) {
                     errors = new ResultError();
                     errors.workingDir = context.getShellContext().getAbsolutePath(".");
@@ -104,7 +103,7 @@ public class LsCommand extends SimpleJShellBuiltin {
                 continue;
             }
             NutsPath file = NutsPath.of(path, session);
-            if(file==null){
+            if (file == null) {
                 if (errors == null) {
                     errors = new ResultError();
                     errors.workingDir = context.getShellContext().getAbsolutePath(".");
@@ -112,7 +111,7 @@ public class LsCommand extends SimpleJShellBuiltin {
                 errors.result.put(path, NutsMessage.cstyle("cannot access '%s': No such file or directory", path));
                 continue;
             }
-            file=file.toAbsolute(NutsPath.of(context.getShellContext().getCwd(), session));
+            file = file.toAbsolute(NutsPath.of(context.getShellContext().getCwd(), session));
             if (!file.exists()) {
                 exitCode = 1;
                 if (errors == null) {
@@ -129,8 +128,11 @@ public class LsCommand extends SimpleJShellBuiltin {
                 } else {
                     g.children = file.list()
                             .sorted(FILE_SORTER)
-                            .map(this::build)
-                            .filter(b -> options.a || !b.hidden)
+                            .map(this::build, "build")
+                            .filter(
+                                    b -> options.a || !b.hidden,
+                                    "all || !hidden"
+                            )
                             .toList();
                 }
             }
@@ -341,7 +343,7 @@ public class LsCommand extends SimpleJShellBuiltin {
         boolean hidden;
     }
 
-    private static class FileSorter implements Comparator<NutsPath> {
+    private static class FileSorter implements NutsComparator<NutsPath> {
 
         boolean foldersFirst = true;
         boolean groupCase = true;
@@ -368,5 +370,9 @@ public class LsCommand extends SimpleJShellBuiltin {
             return x;
         }
 
+        @Override
+        public NutsElement describe(NutsElements elems) {
+            return elems.ofString("foldersFirst");
+        }
     }
 }

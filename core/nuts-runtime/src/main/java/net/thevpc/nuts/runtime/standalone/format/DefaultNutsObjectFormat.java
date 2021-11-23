@@ -95,12 +95,17 @@ public class DefaultNutsObjectFormat extends DefaultFormatBase<NutsObjectFormat>
                         .setContentType(getSession().getOutputFormat());
                 if (value instanceof NutsString) {
                     NutsTextBuilder builder = ((NutsString) value).builder();
-                    Object[] r = builder.lines().map(x -> {
-                        if (true) {
-                            return x.filteredText();
-                        }
-                        return (Object) x.filteredText();
-                    }).toArray(Object[]::new);
+                    Object[] r = builder.lines().map(
+                            NutsFunction.of(
+                                    x -> {
+                                        if (true) {
+                                            return x.filteredText();
+                                        }
+                                        return (Object) x.filteredText();
+                                    },
+                                    "filteredText"
+                            )
+                    ).toArray(Object[]::new);
                     ee.setValue(r);
                 } else {
                     ee.setValue(value);

@@ -26,10 +26,10 @@
  */
 package net.thevpc.nuts.spi;
 
-import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.NutsStream;
+import net.thevpc.nuts.*;
 
 import java.util.Iterator;
+import java.util.function.Function;
 import java.util.stream.Stream;
 
 @NutsComponentScope(NutsComponentScopeType.WORKSPACE)
@@ -38,11 +38,16 @@ public interface NutsStreams extends NutsComponent {
         return session.extensions().createSupported(NutsStreams.class, true, session);
     }
 
-    <T> NutsStream<T> createStream(T[] str, String name);
+    <T> NutsStream<T> createStream(T[] str, Function<NutsElements, NutsElement> name);
 
-    <T> NutsStream<T> createStream(Iterable<T> str, String name);
+    <T> NutsStream<T> createStream(Iterable<T> str, Function<NutsElements, NutsElement> name);
 
-    <T> NutsStream<T> createStream(Iterator<T> str, String name);
+    <T> NutsStream<T> createStream(Iterator<T> str, Function<NutsElements, NutsElement> name);
 
-    <T> NutsStream<T> createStream(Stream<T> str, String name);
+    <T> NutsStream<T> createStream(NutsIterable<T> str);
+    <T> NutsStream<T> createStream(NutsIterator<T> str);
+
+    <T> NutsStream<T> createStream(Stream<T> str, Function<NutsElements, NutsElement> name);
+
+    <T> NutsStream<T> createEmptyStream();
 }

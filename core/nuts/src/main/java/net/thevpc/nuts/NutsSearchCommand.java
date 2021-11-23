@@ -26,7 +26,6 @@ package net.thevpc.nuts;
 import java.nio.file.Path;
 import java.time.Instant;
 import java.util.Collection;
-import java.util.Comparator;
 import java.util.Set;
 
 /**
@@ -390,7 +389,7 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
      * @param filter repository filter
      * @return {@code this} instance
      */
-    NutsSearchCommand setRepository(String filter);
+    NutsSearchCommand setRepositoryFilter(String filter);
 
     /**
      * sort results. Comparator should handle types of the result.
@@ -398,7 +397,7 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
      * @param comparator result comparator
      * @return {@code this}
      */
-    NutsSearchCommand sort(Comparator comparator);
+    NutsSearchCommand sort(NutsComparator comparator);
 
     /**
      * copy content from given {@code other}
@@ -553,8 +552,6 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
      */
     NutsSearchCommand setIdFilter(String filter);
 
-//    String[] getRepositories();
-
     String[] getArch();
 
     String[] getPackaging();
@@ -580,7 +577,7 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
      *
      * @return result comparator
      */
-    Comparator getComparator();
+    NutsComparator getComparator();
 
     /**
      * true if duplicates are skipped
@@ -1137,4 +1134,6 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
      * @return {@code this} instance
      */
     NutsSearchCommand setId(NutsId id);
+
+    NutsElement getResultQueryPlan();
 }

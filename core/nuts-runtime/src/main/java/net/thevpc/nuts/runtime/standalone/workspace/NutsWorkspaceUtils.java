@@ -255,7 +255,7 @@ public class NutsWorkspaceUtils {
 
         for (NutsRepository repository : session.repos().setSession(session).getRepositories()) {
             if (repository.isEnabled()
-                    && (fmode == NutsRepositorySupportedAction.SEARCH ? repository.isAvailable() : repository.isSupportedDeploy())
+                    && (fmode == NutsRepositorySupportedAction.SEARCH ? true/*repository.isAvailable()*/ : repository.isSupportedDeploy())
                     && repoSPI(repository).isAcceptFetchMode(mode, session)
                     && (repositoryFilter == null || repositoryFilter.acceptRepository(repository))) {
                 int d = 0;
@@ -344,7 +344,7 @@ public class NutsWorkspaceUtils {
         return f;
     }
 
-    public <T> Iterator<T> decoratePrint(Iterator<T> it, NutsSession session, NutsFetchDisplayOptions displayOptions) {
+    public <T> NutsIterator<T> decoratePrint(NutsIterator<T> it, NutsSession session, NutsFetchDisplayOptions displayOptions) {
         final NutsPrintStream out = validateSession(session).getTerminal().getOut();
         return new NutsPrintIterator<>(it, ws, out, displayOptions, session);
     }

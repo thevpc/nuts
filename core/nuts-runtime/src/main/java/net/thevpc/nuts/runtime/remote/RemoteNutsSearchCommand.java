@@ -4,7 +4,6 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.search.AbstractNutsSearchCommand;
 
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
 
 public class RemoteNutsSearchCommand extends AbstractNutsSearchCommand {
@@ -31,8 +30,7 @@ public class RemoteNutsSearchCommand extends AbstractNutsSearchCommand {
     }
 
     @Override
-    protected Iterator<NutsId> getResultIdIteratorBase(Boolean forceInlineDependencies) {
-        NutsSession session = getSession();
+    protected NutsIterator<NutsId> getResultIdIteratorBase(Boolean forceInlineDependencies) {
         NutsElements e = NutsElements.of(getSession()).setSession(getSession());
         NutsObjectElementBuilder eb = e.ofObject()
                 .set("execType", getExecType())
@@ -56,13 +54,14 @@ public class RemoteNutsSearchCommand extends AbstractNutsSearchCommand {
             eb.set("repositories", e.ofString(getRepositoryFilter().toString()));
         }
 
-        return getWorkspace().remoteCall(
-                getWorkspace().createCall(
-                        "workspace.searchIds",
-                        eb.build(), getSession()
-                ),
-                List.class
-        ).iterator();
+        return NutsIterator.of(
+                getWorkspace().remoteCall(
+                        getWorkspace().createCall(
+                                "workspace.searchIds",
+                                eb.build(), getSession()
+                        ),
+                        List.class
+                ).iterator(), "searchRemoteIds");
     }
 
 

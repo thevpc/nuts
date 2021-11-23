@@ -1,8 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.xtra.ps;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.bundles.iter.IteratorBuilder;
-import net.thevpc.nuts.runtime.bundles.iter.IteratorUtils;
+import net.thevpc.nuts.runtime.standalone.util.iter.IteratorBuilder;
 
 import java.io.File;
 import java.util.*;
@@ -153,7 +152,7 @@ public class DefaultNutsPs implements NutsPs {
 
     private NutsStream<NutsProcessInfo> getResultListJava(String version) {
         checkSession();
-        Iterator<NutsProcessInfo> it = IteratorBuilder.ofLazy(() -> {
+        NutsIterator<NutsProcessInfo> it = IteratorBuilder.ofSupplier(() -> {
             String cmd = "jps";
             NutsExecCommand b = null;
             boolean mainArgs = true;
@@ -175,8 +174,10 @@ public class DefaultNutsPs implements NutsPs {
                 String[] split = out.split("\n");
                 return Arrays.asList(split).iterator();
             }
-            return IteratorUtils.emptyIterator();
-        }).map(line -> {
+            return IteratorBuilder.emptyIterator();
+        },e->e.ofString("jps")).map(
+                NutsFunction.of(
+                line -> {
             int s1 = line.indexOf(' ');
             int s2 = line.indexOf(' ', s1 + 1);
             String pid = line.substring(0, s1).trim();
@@ -185,7 +186,7 @@ public class DefaultNutsPs implements NutsPs {
             return (NutsProcessInfo) new DefaultNutsProcessInfo(
                     pid, cls, null, args
             );
-        }).build();
-        return new NutsIteratorStream<NutsProcessInfo>(getSession(), "process-" + getType(), it);
+        },"processInfo")).build();
+        return new NutsIteratorStream<>(getSession(), "process-" + getType(), it);
     }
 }

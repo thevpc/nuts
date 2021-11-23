@@ -25,9 +25,9 @@ package net.thevpc.nuts.runtime.standalone.repository.impl;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.bundles.io.CommonRootsHelper;
-import net.thevpc.nuts.runtime.bundles.iter.IteratorBuilder;
-import net.thevpc.nuts.runtime.bundles.iter.IteratorUtils;
-import net.thevpc.nuts.runtime.bundles.string.GlobUtils;
+import net.thevpc.nuts.runtime.standalone.util.iter.IteratorBuilder;
+import net.thevpc.nuts.NutsDescribables;
+import net.thevpc.nuts.runtime.standalone.xtra.glob.GlobUtils;
 import net.thevpc.nuts.runtime.standalone.repository.cmd.NutsRepositorySupportedAction;
 import net.thevpc.nuts.runtime.standalone.repository.cmd.updatestats.AbstractNutsUpdateRepositoryStatisticsCommand;
 import net.thevpc.nuts.runtime.standalone.util.SuccessFailResult;
@@ -38,7 +38,6 @@ import net.thevpc.nuts.spi.NutsRepositoryUndeployCommand;
 import net.thevpc.nuts.spi.NutsUpdateRepositoryStatisticsCommand;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
 
@@ -54,8 +53,12 @@ public class NutsCachedRepository extends AbstractNutsRepositoryBase {
 
     public NutsCachedRepository(NutsAddRepositoryOptions options, NutsSession session, NutsRepository parent, NutsSpeedQualifier speed, boolean supportedMirroring, String repositoryType) {
         super(options, session, parent, speed, supportedMirroring, repositoryType);
-        cache = new NutsRepositoryFolderHelper(this, session, config().setSession(session).getStoreLocation(NutsStoreLocation.CACHE), true);
-        lib = new NutsRepositoryFolderHelper(this, session, config().setSession(session).getStoreLocation(NutsStoreLocation.LIB), false);
+        cache = new NutsRepositoryFolderHelper(this, session, config().setSession(session).getStoreLocation(NutsStoreLocation.CACHE), true,
+                NutsElements.of(session).ofObject().set("repoKind", "cache").build()
+        );
+        lib = new NutsRepositoryFolderHelper(this, session, config().setSession(session).getStoreLocation(NutsStoreLocation.LIB), false,
+                NutsElements.of(session).ofObject().set("repoKind", "lib").build()
+        );
         mirroring = new NutsRepositoryMirroringHelper(this, cache);
     }
 
@@ -142,20 +145,24 @@ public class NutsCachedRepository extends AbstractNutsRepositoryBase {
     }
 
     @Override
-    public final Iterator<NutsId> searchVersionsImpl(NutsId id, NutsIdFilter idFilter, NutsFetchMode fetchMode, NutsSession session) {
+    public final NutsIterator<NutsId> searchVersionsImpl(NutsId id, NutsIdFilter idFilter, NutsFetchMode fetchMode, NutsSession session) {
 
-        List<Iterator<? extends NutsId>> all = new ArrayList<>();
+        List<NutsIterator<? extends NutsId>> all = new ArrayList<>();
+        if (fetchMode != NutsFetchMode.REMOTE) {
+            all.add(IteratorBuilder.of(
+                                    lib.searchVersions(id, idFilter, true, session)
+                            ).named("searchVersionInLib(" + getName() + ")")
+                            .build()
+
+            );
+        }
         if (fetchMode != NutsFetchMode.REMOTE) {
             try {
-                all.add(IteratorUtils.name(
-                        "searchVersionInLib(" + getName() + ")",
-                        lib.searchVersions(id, idFilter, true, session)
-                ));
                 if (cache.isReadEnabled()) {
                     all.add(
-                            IteratorUtils.name("searchVersionInCache(" + getName() + ")",
+                            IteratorBuilder.of(
                                     cache.searchVersions(id, idFilter, true, session)
-                            ));
+                            ).named("searchVersionInCache(" + getName() + ")").build());
                 }
 //                Iterator<NutsId> p = null;
 //                try {
@@ -172,13 +179,11 @@ public class NutsCachedRepository extends AbstractNutsRepositoryBase {
         }
 
         try {
-            Iterator<NutsId> p = null;
+            NutsIterator<NutsId> p = null;
             p = searchVersionsCore(id, idFilter, fetchMode, session);
             if (p != null) {
                 all.add(
-                        IteratorUtils.name(
-                                "searchVersionInCore(" + getName() + ")",
-                                p));
+                        IteratorBuilder.of(p).named("searchVersionInCore(" + getName() + ")").build());
             }
         } catch (NutsNotFoundException ex) {
             //ignore error
@@ -187,15 +192,15 @@ public class NutsCachedRepository extends AbstractNutsRepositoryBase {
                     .log(NutsMessage.jstyle("search versions error : {0}", ex));
             //ignore....
         }
-        Iterator<NutsId> namedNutIdIterator = IteratorBuilder.ofList(all).distinct(
-                IteratorUtils.namedFunction(NutsId::getLongName,"getLongName")).build();
+        NutsIterator<NutsId> namedNutIdIterator = IteratorBuilder.ofConcat(all).distinct(
+                NutsFunction.of(NutsId::getLongName, "getLongName")).build();
 
         if (namedNutIdIterator == null) {
-            namedNutIdIterator = IteratorUtils.emptyIterator();
+            namedNutIdIterator = IteratorBuilder.emptyIterator();
         }
-        return IteratorUtils.name("searchVersion("+getName()+")",
+        return IteratorBuilder.of(
                 mirroring.searchVersionsImpl_appendMirrors(namedNutIdIterator, id, idFilter, fetchMode, session)
-        );
+        ).named("searchVersion(" + getName() + ")").build();
 
     }
 
@@ -206,11 +211,11 @@ public class NutsCachedRepository extends AbstractNutsRepositoryBase {
             if (c != null) {
                 return c;
             }
-            if (cache.isReadEnabled()) {
-                c = cache.fetchContentImpl(id, localPath, session);
-                if (c != null) {
-                    return c;
-                }
+        }
+        if (cache.isReadEnabled() && session.isCached()) {
+            NutsContent c = cache.fetchContentImpl(id, localPath, session);
+            if (c != null) {
+                return c;
             }
         }
 
@@ -280,13 +285,15 @@ public class NutsCachedRepository extends AbstractNutsRepositoryBase {
     }
 
     @Override
-    public final Iterator<NutsId> searchImpl(final NutsIdFilter filter, NutsFetchMode fetchMode, NutsSession session) {
+    public final NutsIterator<NutsId> searchImpl(final NutsIdFilter filter, NutsFetchMode fetchMode, NutsSession session) {
         List<CommonRootsHelper.PathBase> roots = CommonRootsHelper.resolveRootPaths(filter);
-        List<Iterator<? extends NutsId>> li = new ArrayList<>();
+        List<NutsIterator<? extends NutsId>> li = new ArrayList<>();
         List<String> rootStrings = new ArrayList<>();
         for (CommonRootsHelper.PathBase root : roots) {
             NutsPath np = NutsPath.of(root.getName(), session);
-            li.add(lib.findInFolder(np, filter, root.isDeep() ? Integer.MAX_VALUE : 2, session));
+            if (fetchMode != NutsFetchMode.REMOTE) {
+                li.add(lib.findInFolder(np, filter, root.isDeep() ? Integer.MAX_VALUE : 2, session));
+            }
             if (cache.isReadEnabled() && session.isCached()) {
                 li.add(cache.findInFolder(np, filter, root.isDeep() ? Integer.MAX_VALUE : 2, session));
             }
@@ -296,7 +303,7 @@ public class NutsCachedRepository extends AbstractNutsRepositoryBase {
                 rootStrings.add(root.getName());
             }
         }
-        Iterator<NutsId> p = null;
+        NutsIterator<NutsId> p = null;
         try {
             p = searchCore(filter, rootStrings.toArray(new String[0]), fetchMode, session);
         } catch (NutsNotFoundException ex) {
@@ -309,8 +316,8 @@ public class NutsCachedRepository extends AbstractNutsRepositoryBase {
         if (p != null) {
             li.add(p);
         }
-        return mirroring.search(IteratorBuilder.ofList(li).distinct(
-                IteratorUtils.namedFunction(NutsId::getLongName,"getLongName")
+        return mirroring.search(IteratorBuilder.ofConcat(li).distinct(
+                NutsFunction.of(NutsId::getLongName, "getLongName")
         ).build(), filter, fetchMode, session);
     }
 
@@ -318,7 +325,7 @@ public class NutsCachedRepository extends AbstractNutsRepositoryBase {
         return true;
     }
 
-    public Iterator<NutsId> searchVersionsCore(NutsId id, NutsIdFilter idFilter, NutsFetchMode fetchMode, NutsSession session) {
+    public NutsIterator<NutsId> searchVersionsCore(NutsId id, NutsIdFilter idFilter, NutsFetchMode fetchMode, NutsSession session) {
         return null;
     }
 
@@ -334,7 +341,7 @@ public class NutsCachedRepository extends AbstractNutsRepositoryBase {
         return null;
     }
 
-    public Iterator<NutsId> searchCore(final NutsIdFilter filter, String[] roots, NutsFetchMode fetchMode, NutsSession session) {
+    public NutsIterator<NutsId> searchCore(final NutsIdFilter filter, String[] roots, NutsFetchMode fetchMode, NutsSession session) {
         return null;
     }
 

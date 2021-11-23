@@ -78,7 +78,7 @@ public interface NutsRepositoryModel {
         return a;
     }
 
-    default Iterator<NutsId> searchVersions(NutsId id, NutsIdFilter idFilter, NutsFetchMode fetchMode, NutsRepository repository, NutsSession session) {
+    default NutsIterator<NutsId> searchVersions(NutsId id, NutsIdFilter idFilter, NutsFetchMode fetchMode, NutsRepository repository, NutsSession session) {
         return null;
     }
 
@@ -90,7 +90,7 @@ public interface NutsRepositoryModel {
         return null;
     }
 
-    default Iterator<NutsId> search(NutsIdFilter filter, String[] roots, NutsFetchMode fetchMode, NutsRepository repository, NutsSession session) {
+    default NutsIterator<NutsId> search(NutsIdFilter filter, String[] roots, NutsFetchMode fetchMode, NutsRepository repository, NutsSession session) {
         return null;
     }
 

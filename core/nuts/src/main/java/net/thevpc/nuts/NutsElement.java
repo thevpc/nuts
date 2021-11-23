@@ -32,7 +32,7 @@ import java.time.Instant;
  * @app.category Elements
  * @since 0.5.6
  */
-public interface NutsElement {
+public interface NutsElement extends NutsDescribable{
 
     /**
      * element type
@@ -50,12 +50,21 @@ public interface NutsElement {
     NutsPrimitiveElement asPrimitive();
 
     /**
-     * convert this element to {@link NutsObjectElement} or throw
+     * cast this element to {@link NutsObjectElement} or throw
      * ClassCastException
      *
      * @return {@link NutsObjectElement}
      */
     NutsObjectElement asObject();
+
+    /**
+     * convert this element to {@link NutsObjectElement}
+     * doing best effort to create that object.
+     * non object elements will be wrapped to a {"value":value} object.
+     *
+     * @return {@link NutsObjectElement}
+     */
+    NutsObjectElement toObject();
 
     /**
      * cast this element to {@link NutsCustomElement} or throw
@@ -154,6 +163,5 @@ public interface NutsElement {
     long asLong();
 
     short asShort();
-
 
 }

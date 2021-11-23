@@ -344,9 +344,12 @@ public class RemoteTomcat {
     public RemoteTomcatConfigService[] listConfig() {
         return
                 sharedConfigFolder.list().filter(
-                                pathname -> pathname.isRegularFile() &&  pathname.getName().toString().endsWith(RemoteTomcatConfigService.REMOTE_CONFIG_EXT)
+                                pathname -> pathname.isRegularFile() &&  pathname.getName().endsWith(RemoteTomcatConfigService.REMOTE_CONFIG_EXT),
+                                "isRegularFile() && matches(*"+RemoteTomcatConfigService.REMOTE_CONFIG_EXT+")"
                         )
-                        .mapUnsafe(x->loadTomcatConfig(x),null)
+                        .mapUnsafe(
+                                NutsUnsafeFunction.of(x->loadTomcatConfig(x),"loadTomcatConfig")
+                                ,null)
                         .filterNonNull()
                         .toArray(RemoteTomcatConfigService[]::new);
     }

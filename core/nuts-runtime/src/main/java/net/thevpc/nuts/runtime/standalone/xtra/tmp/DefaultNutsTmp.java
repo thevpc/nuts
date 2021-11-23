@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.xtra.tmp;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.bundles.string.StringBuilder2;
+import net.thevpc.nuts.runtime.standalone.util.StringBuilder2;
 import net.thevpc.nuts.runtime.standalone.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
 import net.thevpc.nuts.spi.NutsSupportLevelContext;

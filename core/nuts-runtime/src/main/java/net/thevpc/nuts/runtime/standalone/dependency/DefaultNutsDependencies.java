@@ -3,9 +3,7 @@ package net.thevpc.nuts.runtime.standalone.dependency;
 import net.thevpc.nuts.*;
 
 import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
-import java.util.stream.Stream;
+import java.util.function.Function;
 
 public class DefaultNutsDependencies implements NutsDependencies {
     private NutsId[] sourceIds;
@@ -19,10 +17,14 @@ public class DefaultNutsDependencies implements NutsDependencies {
     
     private NutsDependency[] mergedDependencies;
     private NutsDependencyTreeNode[] mergedNodes;
+    private transient NutsSession session;
+    private transient Function<NutsElements,NutsElement> descr;
 
     public DefaultNutsDependencies(NutsId[] ids, NutsDependencyFilter filter, NutsDependency[] immediateDependencies, 
             NutsDependency[] nonMergedDependencies, NutsDependencyTreeNode[] nonMergedNodes,
-            NutsDependency[] mergedDependencies, NutsDependencyTreeNode[] mergedNodes
+            NutsDependency[] mergedDependencies, NutsDependencyTreeNode[] mergedNodes,
+                                   Function<NutsElements,NutsElement> descr,
+                                   NutsSession session
     ) {
         this.sourceIds = ids;
         this.filter = filter;
@@ -31,16 +33,15 @@ public class DefaultNutsDependencies implements NutsDependencies {
         this.nonMergedNodes = nonMergedNodes;
         this.mergedNodes = mergedNodes;
         this.mergedDependencies = mergedDependencies;
+        this.session = session;
+        this.descr = descr;
     }
 
     @Override
-    public Stream<NutsDependency> stream(){
-        return all().stream();
-    }
-
-    @Override
-    public List<NutsId> sourceIds() {
-        return Arrays.asList(sourceIds);
+    public NutsStream<NutsId> sourceIds() {
+        return  NutsStream.of(
+                NutsIterator.of(Arrays.asList(sourceIds).iterator(),descr)
+                ,session);
     }
 
     @Override
@@ -49,33 +50,47 @@ public class DefaultNutsDependencies implements NutsDependencies {
     }
 
     @Override
-    public List<NutsDependency> immediate() {
-        return Arrays.asList(immediateDependencies);
+    public NutsStream<NutsDependency> immediate() {
+        return  NutsStream.of(
+                NutsIterator.of(Arrays.asList(immediateDependencies).iterator(),descr)
+                ,session);
     }
 
     @Override
-    public List<NutsDependency> all() {
-        return Arrays.asList(nonMergedDependencies);
+    public NutsStream<NutsDependency> all() {
+        return  NutsStream.of(
+                NutsIterator.of(Arrays.asList(nonMergedDependencies).iterator(),descr)
+                ,session);
     }
 
     @Override
-    public List<NutsDependencyTreeNode> nodes() {
-        return Arrays.asList(nonMergedNodes);
+    public NutsStream<NutsDependencyTreeNode> nodes() {
+        return  NutsStream.of(
+                NutsIterator.of(Arrays.asList(nonMergedNodes).iterator(),descr)
+                ,session);
     }
 
     @Override
-    public List<NutsDependency> mergedDependencies() {
-        return  Arrays.asList(mergedDependencies);
+    public NutsStream<NutsDependency> mergedDependencies() {
+        return  NutsStream.of(
+                NutsIterator.of(Arrays.asList(mergedDependencies).iterator(),descr)
+                ,session);
     }
 
     @Override
-    public List<NutsDependencyTreeNode> mergedNodes() {
-        return  Arrays.asList(mergedNodes);
+    public NutsStream<NutsDependencyTreeNode> mergedNodes() {
+        return  NutsStream.of(
+                NutsIterator.of(Arrays.asList(mergedNodes).iterator(),descr)
+                ,session);
     }
 
-
     @Override
-    public Iterator<NutsDependency> iterator() {
+    public NutsIterator<NutsDependency> iterator() {
         return all().iterator();
+    }
+
+    @Override
+    public NutsElement describe(NutsElements elems) {
+        return descr.apply(elems);
     }
 }

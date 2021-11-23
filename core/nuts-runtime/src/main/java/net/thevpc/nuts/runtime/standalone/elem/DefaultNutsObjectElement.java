@@ -251,6 +251,13 @@ public class DefaultNutsObjectElement extends AbstractNutsObjectElement {
     }
 
     @Override
+    public NutsObjectElementBuilder builder() {
+        return NutsElements.of(session)
+                .ofObject()
+                .set(this);
+    }
+
+    @Override
     public boolean isEmpty() {
         return values.isEmpty();
     }
@@ -289,4 +296,8 @@ public class DefaultNutsObjectElement extends AbstractNutsObjectElement {
                 ).collect(Collectors.joining(", ")) + "}";
     }
 
+    @Override
+    public NutsObjectElement toObject() {
+        return this;
+    }
 }

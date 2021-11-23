@@ -13,7 +13,7 @@ import java.util.function.Predicate;
 import java.util.regex.Pattern;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.bundles.string.GlobUtils;
+import net.thevpc.nuts.runtime.standalone.xtra.glob.GlobUtils;
 
 /**
  *

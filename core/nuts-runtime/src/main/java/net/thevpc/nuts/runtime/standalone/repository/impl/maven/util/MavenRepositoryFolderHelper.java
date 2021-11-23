@@ -146,7 +146,7 @@ public class MavenRepositoryFolderHelper {
             public NutsDescriptor parseDescriptor(NutsPath pathname, InputStream in, NutsFetchMode fetchMode, NutsRepository repository, NutsSession session, NutsPath rootURL) throws IOException {
                 return MavenUtils.of(session).parsePomXmlAndResolveParents(pathname, NutsFetchMode.LOCAL, repo);
             }
-        }, maxDepth);
+        }, maxDepth,null);
     }
 
     public NutsPath getStoreLocation() {
@@ -157,7 +157,7 @@ public class MavenRepositoryFolderHelper {
         NutsId bestId = null;
         NutsPath  file = getLocalGroupAndArtifactFile(id, session);
         if (file.exists()) {
-            NutsPath[] versionFolders = file.list().filter(NutsPath::isDirectory).toArray(NutsPath[]::new);
+            NutsPath[] versionFolders = file.list().filter(NutsPath::isDirectory,"isDirectory").toArray(NutsPath[]::new);
             for (NutsPath versionFolder : versionFolders) {
                 NutsId id2 = id.builder().setVersion(versionFolder.getName()).build();
                 if (bestId == null || id2.getVersion().compareTo(bestId.getVersion()) > 0) {

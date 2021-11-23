@@ -2,6 +2,7 @@ package net.thevpc.nuts.toolbox.ntomcat.local;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.toolbox.ntomcat.NTomcatConfigVersions;
+import net.thevpc.nuts.toolbox.ntomcat.remote.RemoteTomcatConfigService;
 import net.thevpc.nuts.toolbox.ntomcat.util.NamedItemNotFoundException;
 import net.thevpc.nuts.toolbox.ntomcat.util.RunningTomcat;
 import net.thevpc.nuts.toolbox.ntomcat.util.TomcatUtils;
@@ -859,9 +860,12 @@ public class LocalTomcat {
     public LocalTomcatConfigService[] listConfig() {
         return
                 sharedConfigFolder.list().filter(
-                                pathname -> pathname.isRegularFile() &&  pathname.getName().toString().endsWith(LocalTomcatConfigService.LOCAL_CONFIG_EXT)
+                                pathname -> pathname.isRegularFile() &&  pathname.getName().toString().endsWith(LocalTomcatConfigService.LOCAL_CONFIG_EXT),
+                                "isRegularFile() && matches(*"+ LocalTomcatConfigService.LOCAL_CONFIG_EXT+")"
                         )
-                        .mapUnsafe(x->openTomcatConfig(x, NutsOpenMode.OPEN_OR_ERROR),null)
+                        .mapUnsafe(
+                                NutsUnsafeFunction.of(x->openTomcatConfig(x, NutsOpenMode.OPEN_OR_ERROR),"openTomcatConfig")
+                                ,null)
                         .filterNonNull()
                         .toArray(LocalTomcatConfigService[]::new);
     }

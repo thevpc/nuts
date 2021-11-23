@@ -403,10 +403,10 @@ public final class NutsBootWorkspace {
                 LOG.log(Level.CONFIG, NutsLogVerb.START, NutsMessage.jstyle("system-properties:", contextClassLoader));
                 Map<String, String> m = (Map) System.getProperties();
                 int max = m.keySet().stream().mapToInt(String::length).max().getAsInt();
-                for (Map.Entry<String, String> e : m.entrySet()) {
+                for (String k : new TreeSet<String>(m.keySet())) {
                     LOG.log(Level.CONFIG, NutsLogVerb.START, NutsMessage.jstyle("    {0} = {1}",
-                            PrivateNutsUtils.leftAlign(e.getKey(), max),
-                            PrivateNutsUtils.compressString(e.getValue())
+                            PrivateNutsUtils.leftAlign(k, max),
+                            PrivateNutsUtils.compressString(m.get(k))
                     ));
                 }
             }

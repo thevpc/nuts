@@ -37,19 +37,19 @@ public class NutsPredicates {
 
     private static final Blank BLANK = new Blank();
 
-    public static <T> Predicate<T> never() {
+    public static <T> NutsPredicate<T> never() {
         return NEVER;
     }
 
-    public static Predicate<String> blank() {
+    public static NutsPredicate<String> blank() {
         return BLANK;
     }
 
-    public static <T> Predicate<T> always() {
+    public static <T> NutsPredicate<T> always() {
         return ALWAYS;
     }
 
-    public static <T> Predicate<T> isNull() {
+    public static <T> NutsPredicate<T> isNull() {
         return NULL;
     }
 
@@ -68,20 +68,25 @@ public class NutsPredicates {
 
     }
 
-    public static abstract class BasePredicate<T> implements Predicate<T> {
+    public static abstract class BasePredicate<T> implements NutsPredicate<T> {
         @Override
-        public Predicate<T> and(Predicate<? super T> other) {
+        public NutsPredicate<T> and(Predicate<? super T> other) {
             return new And<T>(this, other);
         }
 
         @Override
-        public Predicate<T> negate() {
+        public NutsPredicate<T> negate() {
             return new Not<>(this);
         }
 
         @Override
-        public Predicate<T> or(Predicate<? super T> other) {
+        public NutsPredicate<T> or(Predicate<? super T> other) {
             return new Or<T>(this, other);
+        }
+
+        @Override
+        public NutsElement describe(NutsElements elems) {
+            return elems.ofString(toString());
         }
     }
 

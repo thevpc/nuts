@@ -23,7 +23,6 @@
  */
 package net.thevpc.nuts.runtime.standalone.session;
 
-import java.util.Iterator;
 import java.util.Map;
 
 import net.thevpc.nuts.*;
@@ -266,7 +265,7 @@ public class NutsRepositorySessionAwareImpl implements NutsRepository, NutsRepos
     }
 
     @Override
-    public Iterator<NutsId> searchVersionsImpl(NutsId id, NutsIdFilter idFilter, NutsFetchMode fetchMode, NutsSession session) {
+    public NutsIterator<NutsId> searchVersionsImpl(NutsId id, NutsIdFilter idFilter, NutsFetchMode fetchMode, NutsSession session) {
         return repoExt().searchVersionsImpl(id, idFilter, fetchMode, session);
     }
 
@@ -276,7 +275,7 @@ public class NutsRepositorySessionAwareImpl implements NutsRepository, NutsRepos
     }
 
     @Override
-    public Iterator<NutsId> searchImpl(NutsIdFilter filter, NutsFetchMode fetchMode, NutsSession session) {
+    public NutsIterator<NutsId> searchImpl(NutsIdFilter filter, NutsFetchMode fetchMode, NutsSession session) {
         return repoExt().searchImpl(filter, fetchMode, session);
     }
 

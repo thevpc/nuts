@@ -25,39 +25,34 @@
  */
 package net.thevpc.nuts;
 
-import java.util.List;
-import java.util.stream.Stream;
-
 /**
  * Package dependencies representation
  *
  * @author thevpc
  * @since 0.8.2
  */
-public interface NutsDependencies extends Iterable<NutsDependency> {
-    List<NutsId> sourceIds();
+public interface NutsDependencies extends NutsIterable<NutsDependency> {
+    NutsStream<NutsId> sourceIds();
 
     NutsDependencyFilter filter();
 
-    List<NutsDependency> immediate();
+    NutsStream<NutsDependency> immediate();
 
-    List<NutsDependency> all();
-
-    Stream<NutsDependency> stream();
+    NutsStream<NutsDependency> all();
 
     /**
      * return all or some of the transitive dependencies of the current Artifact as Tree result of the search command
      *
      * @return all or some of the transitive dependencies of the current Artifact as Tree result of the search command.
      */
-    List<NutsDependencyTreeNode> nodes();
+    NutsStream<NutsDependencyTreeNode> nodes();
 
     /**
      * dependencies merged with ids, which may constitute a full classpath
      *
      * @return dependencies merged with ids, which may constitute a full classpath
      */
-    List<NutsDependency> mergedDependencies();
+    NutsStream<NutsDependency> mergedDependencies();
 
-    List<NutsDependencyTreeNode> mergedNodes();
+    NutsStream<NutsDependencyTreeNode> mergedNodes();
 }

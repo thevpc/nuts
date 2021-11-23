@@ -32,7 +32,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -45,7 +44,7 @@ public class MavenRemoteXmlRepository extends MavenFolderRepository {
     }
 
     @Override
-    public Iterator<NutsId> findNonSingleVersionImpl(NutsId id, NutsIdFilter idFilter, NutsFetchMode fetchMode, NutsSession session) {
+    public NutsIterator<NutsId> findNonSingleVersionImpl(NutsId id, NutsIdFilter idFilter, NutsFetchMode fetchMode, NutsSession session) {
         if (!acceptedFetchNoCache(fetchMode)) {
             return null;
         }
@@ -87,13 +86,13 @@ public class MavenRemoteXmlRepository extends MavenFolderRepository {
                 }
             }
         }
-        return ret.iterator();
+        return NutsIterator.of(ret.iterator(),"findNonSingleVersion");
 
 
     }
 
     @Override
-    public Iterator<NutsId> searchCore(final NutsIdFilter filter, String[] roots, NutsFetchMode fetchMode, NutsSession session) {
+    public NutsIterator<NutsId> searchCore(final NutsIdFilter filter, String[] roots, NutsFetchMode fetchMode, NutsSession session) {
         //TODO if possible
         return super.searchCore(filter, roots, fetchMode, session);
     }

@@ -3,10 +3,10 @@ package net.thevpc.nuts.runtime.standalone.repository.index;
 import net.thevpc.nuts.NutsId;
 import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.NutsStream;
-import net.thevpc.nuts.runtime.bundles.nanodb.NanoDB;
-import net.thevpc.nuts.runtime.bundles.nanodb.NanoDBDefaultIndexDefinition;
-import net.thevpc.nuts.runtime.bundles.nanodb.NanoDBTableDefinition;
-import net.thevpc.nuts.runtime.bundles.nanodb.NanoDBTableFile;
+import net.thevpc.nuts.runtime.standalone.xtra.nanodb.NanoDB;
+import net.thevpc.nuts.runtime.standalone.xtra.nanodb.NanoDBDefaultIndexDefinition;
+import net.thevpc.nuts.runtime.standalone.xtra.nanodb.NanoDBTableDefinition;
+import net.thevpc.nuts.runtime.standalone.xtra.nanodb.NanoDBTableFile;
 
 public class ArtifactsIndexDB {
     public static final String DEFAULT_ARTIFACT_TABLE_NAME = "Artifacts";

@@ -24,16 +24,14 @@
 package net.thevpc.nuts.runtime.standalone.elem;
 
 import java.time.Instant;
-import net.thevpc.nuts.NutsElement;
+
+import net.thevpc.nuts.*;
 
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import net.thevpc.nuts.NutsArrayElement;
-import net.thevpc.nuts.NutsObjectElement;
-import net.thevpc.nuts.NutsSession;
 
 /**
  *
@@ -166,6 +164,21 @@ public class DefaultNutsArrayElement extends AbstractNutsArrayElement {
             return false;
         }
         return true;
+    }
+
+    @Override
+    public NutsArrayElementBuilder builder() {
+        return NutsElements.of(session)
+                .ofArray()
+                .set(this);
+    }
+
+    @Override
+    public NutsObjectElement toObject() {
+        return NutsElements.of(session)
+                .ofObject()
+                .set("value",this)
+                .build();
     }
 
 }

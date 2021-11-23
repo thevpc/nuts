@@ -26,12 +26,7 @@
  */
 package net.thevpc.nuts.spi;
 
-import net.thevpc.nuts.NutsFetchMode;
-import net.thevpc.nuts.NutsId;
-import net.thevpc.nuts.NutsIdFilter;
-import net.thevpc.nuts.NutsSession;
-
-import java.util.Iterator;
+import net.thevpc.nuts.*;
 
 /**
  * @author thevpc
@@ -77,6 +72,6 @@ public interface NutsSearchRepositoryCommand extends NutsRepositoryCommand {
      *
      * @return {@code this} instance
      */
-    Iterator<NutsId> getResult();
+    NutsIterator<NutsId> getResult();
 
 }

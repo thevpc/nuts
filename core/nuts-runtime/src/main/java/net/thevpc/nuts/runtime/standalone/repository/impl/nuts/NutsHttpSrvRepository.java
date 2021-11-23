@@ -24,8 +24,7 @@
 package net.thevpc.nuts.runtime.standalone.repository.impl.nuts;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.bundles.iter.IterInfoNode;
-import net.thevpc.nuts.runtime.bundles.iter.IterInfoNodeAware2Base;
+import net.thevpc.nuts.runtime.standalone.util.nfo.NutsIteratorBase;
 import net.thevpc.nuts.runtime.standalone.id.filter.NutsExprIdFilter;
 import net.thevpc.nuts.runtime.standalone.repository.impl.NutsCachedRepository;
 import net.thevpc.nuts.runtime.standalone.workspace.config.NutsRepositoryConfigManagerExt;
@@ -36,12 +35,10 @@ import net.thevpc.nuts.runtime.standalone.util.CoreIOUtils;
 
 import java.io.*;
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.logging.Level;
 
 import net.thevpc.nuts.runtime.standalone.util.filters.CoreFilterUtils;
-import net.thevpc.nuts.runtime.bundles.iter.IteratorBuilder;
-import net.thevpc.nuts.runtime.bundles.iter.IteratorUtils;
+import net.thevpc.nuts.runtime.standalone.util.iter.IteratorBuilder;
 import net.thevpc.nuts.spi.*;
 
 public class NutsHttpSrvRepository extends NutsCachedRepository {
@@ -120,7 +117,7 @@ public class NutsHttpSrvRepository extends NutsCachedRepository {
     }
 
     @Override
-    public Iterator<NutsId> searchVersionsCore(NutsId id, NutsIdFilter idFilter, NutsFetchMode fetchMode, NutsSession session) {
+    public NutsIterator<NutsId> searchVersionsCore(NutsId id, NutsIdFilter idFilter, NutsFetchMode fetchMode, NutsSession session) {
         if (fetchMode != NutsFetchMode.REMOTE) {
             throw new NutsNotFoundException(session, id, new NutsFetchModeNotSupportedException(session, this, fetchMode, id.toString(), null));
         }
@@ -130,9 +127,9 @@ public class NutsHttpSrvRepository extends NutsCachedRepository {
             session.getTerminal().printProgress("search version for %s", id.getLongId(), session);
             ret = CoreIOUtils.getHttpClientFacade(session, getUrl("/find-versions?id=" + CoreIOUtils.urlEncodeString(id.toString(),session) + (transitive ? ("&transitive") : "") + "&" + resolveAuthURLPart(session))).open();
         } catch (UncheckedIOException | NutsIOException e) {
-            return IteratorUtils.emptyIterator();
+            return IteratorBuilder.emptyIterator();
         }
-        Iterator<NutsId> it = new NamedNutIdFromStreamIterator(ret,session);
+        NutsIterator<NutsId> it = new NamedNutIdFromStreamIterator(ret,session);
         NutsIdFilter filter2 = NutsIdFilters.of(session).nonnull(idFilter).and(
                 NutsIdFilters.of(session).byName(id.getShortName())
         );
@@ -143,7 +140,7 @@ public class NutsHttpSrvRepository extends NutsCachedRepository {
     }
 
     @Override
-    public Iterator<NutsId> searchCore(final NutsIdFilter filter, String[] roots, NutsFetchMode fetchMode, NutsSession session) {
+    public NutsIterator<NutsId> searchCore(final NutsIdFilter filter, String[] roots, NutsFetchMode fetchMode, NutsSession session) {
         if (fetchMode != NutsFetchMode.REMOTE) {
             return null;
         }
@@ -281,7 +278,7 @@ public class NutsHttpSrvRepository extends NutsCachedRepository {
 //            throw new NutsNotFoundException(session(), parse);
 //        }
 //    }
-    private class NamedNutIdFromStreamIterator extends IterInfoNodeAware2Base<NutsId> {
+    private class NamedNutIdFromStreamIterator extends NutsIteratorBase<NutsId> {
 
         private final BufferedReader br;
         private String line;
@@ -295,11 +292,13 @@ public class NutsHttpSrvRepository extends NutsCachedRepository {
         }
 
     @Override
-    public IterInfoNode info(NutsSession session) {
-        return info("ScanStream",
-                IterInfoNode.resolveOrString("source",source0, this.session)
-                );
+    public NutsElement describe(NutsElements elems) {
+        return elems.ofObject()
+                .set("type","ScanArchetypeCatalog")
+                .set("source",source0.toString())
+                .build();
     }
+
 
     @Override
         public boolean hasNext() {

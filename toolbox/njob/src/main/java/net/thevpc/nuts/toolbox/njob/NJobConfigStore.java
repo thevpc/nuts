@@ -6,15 +6,9 @@ import net.thevpc.nuts.toolbox.njob.model.NJob;
 import net.thevpc.nuts.toolbox.njob.model.NProject;
 import net.thevpc.nuts.toolbox.njob.model.NTask;
 
-import java.io.IOException;
 import java.lang.reflect.Field;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Collections;
 import java.util.UUID;
 import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
 
 public class NJobConfigStore {
     private NutsApplicationContext context;
@@ -64,8 +58,12 @@ public class NJobConfigStore {
 
     public <T> Stream<T> search(Class<T> type) {
         NutsPath f = getFile(getEntityName(type), "any").getParent();
-        return f.list().filter(x -> x.isRegularFile() && x.getName().endsWith(".json"))
-                .mapUnsafe(x -> json.parse(x, type),null)
+        NutsFunction<NutsPath, T> parse = NutsFunction.of(x -> json.parse(x, type), "parse");
+        return f.list().filter(
+                x -> x.isRegularFile() && x.getName().endsWith(".json"),
+                        "isRegularFile() && matches(*.json"+")"
+                )
+                .mapUnsafe((NutsUnsafeFunction) parse,null)
                 .filterNonNull().stream();
     }
 

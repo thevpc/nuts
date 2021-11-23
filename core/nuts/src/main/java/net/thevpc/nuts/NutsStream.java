@@ -29,13 +29,8 @@ package net.thevpc.nuts;
 import net.thevpc.nuts.spi.NutsStreams;
 
 import java.util.*;
-import java.util.function.Function;
-import java.util.function.IntFunction;
-import java.util.function.Predicate;
-import java.util.stream.DoubleStream;
-import java.util.stream.IntStream;
-import java.util.stream.LongStream;
-import java.util.stream.Stream;
+import java.util.function.*;
+import java.util.stream.*;
 
 /**
  * Find Result items from find command
@@ -46,41 +41,49 @@ import java.util.stream.Stream;
  * @see NutsSearchCommand#getResultIds()
  * @since 0.5.4
  */
-public interface NutsStream<T> extends Iterable<T> {
-    static <T> NutsStream<T> of(T[] str, String name, NutsSession session) {
+public interface NutsStream<T> extends NutsIterable<T> {
+    static <T> NutsStream<T> of(T[] str, Function<NutsElements, NutsElement> name, NutsSession session) {
         return NutsStreams.of(session).createStream(str, name);
     }
 
-    static <T> NutsStream<T> of(Iterable<T> str, String name, NutsSession session) {
+    static <T> NutsStream<T> of(Iterable<T> str, Function<NutsElements, NutsElement> name, NutsSession session) {
         return NutsStreams.of(session).createStream(str, name);
     }
 
-    static <T> NutsStream<T> of(Iterator<T> str, String name, NutsSession session) {
+    static <T> NutsStream<T> of(Iterator<T> str, Function<NutsElements, NutsElement> name, NutsSession session) {
         return NutsStreams.of(session).createStream(str, name);
     }
 
-    static <T> NutsStream<T> of(Stream<T> str, String name, NutsSession session) {
+    static <T> NutsStream<T> of(Stream<T> str, Function<NutsElements, NutsElement> name, NutsSession session) {
         return NutsStreams.of(session).createStream(str, name);
     }
 
     static <T> NutsStream<T> of(T[] str, NutsSession session) {
-        return NutsStreams.of(session).createStream(str, null);
+        return NutsStreams.of(session).createStream(str, e->e.ofString("array"));
     }
 
     static <T> NutsStream<T> of(Iterable<T> str, NutsSession session) {
-        return NutsStreams.of(session).createStream(str, null);
+        return NutsStreams.of(session).createStream(str, e->e.ofString("iterable"));
     }
 
     static <T> NutsStream<T> of(Iterator<T> str, NutsSession session) {
-        return NutsStreams.of(session).createStream(str, null);
+        return NutsStreams.of(session).createStream(str, e->e.ofString("iterator"));
     }
 
     static <T> NutsStream<T> of(Stream<T> str, NutsSession session) {
-        return NutsStreams.of(session).createStream(str, null);
+        return NutsStreams.of(session).createStream(str, e->e.ofString("stream"));
+    }
+
+    static <T> NutsStream<T> of(NutsIterable<T> str, NutsSession session) {
+        return NutsStreams.of(session).createStream(str);
+    }
+
+    static <T> NutsStream<T> of(NutsIterator<T> str, NutsSession session) {
+        return NutsStreams.of(session).createStream(str);
     }
 
     static <T> NutsStream<T> ofEmpty(NutsSession session) {
-        return of(Collections.emptyList(), session);
+        return NutsStreams.of(session).createEmptyStream();
     }
 
     static <T> NutsStream<T> ofSingleton(T element, NutsSession session) {
@@ -176,33 +179,45 @@ public interface NutsStream<T> extends Iterable<T> {
     /**
      * return NutsStream a stream consisting of the results of applying the given function to the elements of this stream.
      *
-     * @param mapper mapper
      * @param <R>    to type
+     * @param mapper mapper
      * @return NutsStream a stream consisting of the results of applying the given function to the elements of this stream.
      */
-    <R> NutsStream<R> map(Function<? super T, ? extends R> mapper);
+    <R> NutsStream<R> map(NutsFunction<? super T, ? extends R> mapper);
 
-    <R> NutsStream<R> mapUnsafe(NutsUnsafeFunction<? super T, ? extends R> mapper, Function<Exception, ? extends R> onError);
+    <R> NutsStream<R> map(Function<? super T, ? extends R> mapper, String name);
+
+    <R> NutsStream<R> map(Function<? super T, ? extends R> mapper, NutsElement name);
+
+    <R> NutsStream<R> map(Function<? super T, ? extends R> mapper, Function<NutsElements, NutsElement> name);
+
+    <R> NutsStream<R> mapUnsafe(NutsUnsafeFunction<? super T, ? extends R> mapper, NutsFunction<Exception, ? extends R> onError);
 
     NutsStream<T> sorted();
 
-    NutsStream<T> sorted(Comparator<T> comp);
+    NutsStream<T> sorted(NutsComparator<T> comp);
 
     NutsStream<T> distinct();
 
-    <R> NutsStream<T> distinctBy(Function<T, R> d);
+    <R> NutsStream<T> distinctBy(NutsFunction<T, R> d);
 
     NutsStream<T> nonNull();
 
     NutsStream<T> nonBlank();
 
-    NutsStream<T> filter(Predicate<? super T> predicate);
+    NutsStream<T> filter(NutsPredicate<? super T> predicate);
+
+    NutsStream<T> filter(Predicate<? super T> predicate, String name);
+
+    NutsStream<T> filter(Predicate<? super T> predicate, NutsElement name);
+
+    NutsStream<T> filter(Predicate<? super T> predicate, Function<NutsElements, NutsElement> info);
 
     NutsStream<T> filterNonNull();
 
     NutsStream<T> filterNonBlank();
 
-    NutsStream<T> coalesce(Iterator<? extends T> other);
+    NutsStream<T> coalesce(NutsIterator<? extends T> other);
 
     <A> A[] toArray(IntFunction<A[]> generator);
 
@@ -215,31 +230,45 @@ public interface NutsStream<T> extends Iterable<T> {
     <K, U> Map<K, U> toSortedMap(Function<? super T, ? extends K> keyMapper,
                                  Function<? super T, ? extends U> valueMapper);
 
-    <R> NutsStream<R> flatMapIter(Function<? super T, ? extends Iterator<? extends R>> mapper);
+    <R> NutsStream<R> flatMapIter(NutsFunction<? super T, ? extends Iterator<? extends R>> mapper);
 
-    <R> NutsStream<R> flatMapList(Function<? super T, ? extends List<? extends R>> mapper);
+    <R> NutsStream<R> flatMapList(NutsFunction<? super T, ? extends List<? extends R>> mapper);
 
-    <R> NutsStream<R> flatMapArray(Function<? super T, ? extends R[]> mapper);
+    <R> NutsStream<R> flatMapArray(NutsFunction<? super T, ? extends R[]> mapper);
 
-    <R> NutsStream<R> flatMapStream(Function<? super T, ? extends Stream<? extends R>> mapper);
+    <R> NutsStream<R> flatMap(NutsFunction<? super T, ? extends Stream<? extends R>> mapper);
+    <R> NutsStream<R> flatMapStream(NutsFunction<? super T, ? extends NutsStream<? extends R>> mapper);
 
-    <K> Map<K, List<T>> groupBy(Function<? super T, ? extends K> classifier);
+    <K> Map<K, List<T>> groupBy(NutsFunction<? super T, ? extends K> classifier);
 
-    <K> NutsStream<Map.Entry<K, List<T>>> groupedBy(Function<? super T, ? extends K> classifier);
+    <K> NutsStream<Map.Entry<K, List<T>>> groupedBy(NutsFunction<? super T, ? extends K> classifier);
 
     Optional<T> findAny();
 
     Optional<T> findFirst();
 
-    DoubleStream flatMapToDouble(Function<? super T, ? extends DoubleStream> mapper);
+    DoubleStream flatMapToDouble(NutsFunction<? super T, ? extends DoubleStream> mapper);
 
-    IntStream flatMapToInt(Function<? super T, ? extends IntStream> mapper);
+    IntStream flatMapToInt(NutsFunction<? super T, ? extends IntStream> mapper);
 
-    LongStream flatMapToLong(Function<? super T, ? extends LongStream> mapper);
+    LongStream flatMapToLong(NutsFunction<? super T, ? extends LongStream> mapper);
 
     boolean allMatch(Predicate<? super T> predicate);
 
     boolean noneMatch(Predicate<? super T> predicate);
 
     NutsStream<T> limit(long maxSize);
+
+    NutsIterator<T> iterator();
+
+    <R> R collect(Supplier<R> supplier,
+                  BiConsumer<R, ? super T> accumulator,
+                  BiConsumer<R, R> combiner);
+
+    <R, A> R collect(Collector<? super T, A, R> collector);
+
+    Optional<T> min(Comparator<? super T> comparator);
+
+    Optional<T> max(Comparator<? super T> comparator);
+
 }

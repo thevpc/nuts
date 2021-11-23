@@ -1,15 +1,12 @@
 package net.thevpc.nuts.runtime.standalone.repository.impl.main;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.standalone.repository.impl.main.NutsInstallLogRecord;
-
-import java.util.Iterator;
 
 public interface NutsInstalledRepository extends NutsRepository {
 
     boolean isDefaultVersion(NutsId id, NutsSession session);
 
-    Iterator<NutsInstallInformation> searchInstallInformation(NutsSession session);
+    NutsIterator<NutsInstallInformation> searchInstallInformation(NutsSession session);
 
     String getDefaultVersion(NutsId id, NutsSession session);
 

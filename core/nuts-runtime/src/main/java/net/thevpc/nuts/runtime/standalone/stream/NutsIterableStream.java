@@ -5,6 +5,8 @@
  */
 package net.thevpc.nuts.runtime.standalone.stream;
 
+import net.thevpc.nuts.NutsIterable;
+import net.thevpc.nuts.NutsIterator;
 import net.thevpc.nuts.NutsSession;
 
 import java.util.*;
@@ -17,9 +19,9 @@ import java.util.stream.StreamSupport;
  */
 public class NutsIterableStream<T> extends AbstractNutsStream<T> {
 
-    private final Iterable<T> o;
+    private final NutsIterable<T> o;
 
-    public NutsIterableStream(NutsSession session, String nutsBase, Iterable<T> o) {
+    public NutsIterableStream(NutsSession session, String nutsBase, NutsIterable<T> o) {
         super(session, nutsBase);
         this.o = o;
     }
@@ -38,7 +40,7 @@ public class NutsIterableStream<T> extends AbstractNutsStream<T> {
     }
 
     @Override
-    public Iterator<T> iterator() {
+    public NutsIterator<T> iterator() {
         return o.iterator();
     }
 

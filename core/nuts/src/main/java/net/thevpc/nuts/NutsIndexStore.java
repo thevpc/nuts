@@ -26,8 +26,6 @@
  */
 package net.thevpc.nuts;
 
-import java.util.Iterator;
-
 /**
  * Classes implementations of {@code NutsIndexStore} handle
  * indexing of repositories to enable faster search.
@@ -45,7 +43,7 @@ public interface NutsIndexStore {
      * @param session current session
      * @return all available versions (in the index)
      */
-    Iterator<NutsId> searchVersions(NutsId id, NutsSession session);
+    NutsIterator<NutsId> searchVersions(NutsId id, NutsSession session);
 
     /**
      * search all artifacts matching the given filter
@@ -54,7 +52,7 @@ public interface NutsIndexStore {
      * @param session current session
      * @return all available versions (in the index)
      */
-    Iterator<NutsId> search(NutsIdFilter filter, NutsSession session);
+    NutsIterator<NutsId> search(NutsIdFilter filter, NutsSession session);
 
     /**
      * return true if the index is enabled

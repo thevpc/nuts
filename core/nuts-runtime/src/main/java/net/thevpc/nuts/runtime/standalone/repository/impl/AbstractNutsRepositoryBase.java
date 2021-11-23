@@ -39,7 +39,7 @@ import net.thevpc.nuts.spi.*;
 
 import java.util.*;
 import java.util.logging.Level;
-import net.thevpc.nuts.runtime.bundles.string.GlobUtils;
+import net.thevpc.nuts.runtime.standalone.xtra.glob.GlobUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.config.NutsRepositoryConfigManagerExt;
 
 /**

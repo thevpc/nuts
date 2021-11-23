@@ -17,8 +17,9 @@ public class GithubfsPath extends AbstractPathSPIAdapter {
     //"https://api.github.com/repos/" + userName + "/" + repo + "/contents"
     public static final String PROTOCOL = "githubfs";
     public static final String PREFIX = PROTOCOL + ":";
-    private Info info;
+    private final Info info;
     private Object loaded;
+
     public GithubfsPath(String url, NutsSession session) {
         this(url, null, session);
     }
@@ -44,8 +45,7 @@ public class GithubfsPath extends AbstractPathSPIAdapter {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        if (!super.equals(o)) return false;
-        return true;
+        return super.equals(o);
     }
 
     @Override
@@ -58,10 +58,12 @@ public class GithubfsPath extends AbstractPathSPIAdapter {
         Object q = load();
         if (q instanceof Info[]) {
             return NutsStream.of((Info[]) q, session)
-                    .map(x -> NutsPath.of(new GithubfsPath(
-                            PREFIX + ref.resolve(x.name).toString(),
-                            x, session), session))
-                    ;
+                    .map(NutsFunction.of(
+                            x -> NutsPath.of(new GithubfsPath(
+                                    PREFIX + ref.resolve(x.name).toString(),
+                                    x, session), session)
+                            , "GithubfsPath::of")
+                    );
         }
         return NutsStream.ofEmpty(session);
     }
@@ -102,12 +104,11 @@ public class GithubfsPath extends AbstractPathSPIAdapter {
 
     @Override
     public boolean isOther(NutsPath basePath) {
-        switch (_type()){
+        switch (_type()) {
             case "dir":
             case "file":
             case "symlink":
-            case "":
-            {
+            case "": {
                 return false;
             }
         }
@@ -126,15 +127,68 @@ public class GithubfsPath extends AbstractPathSPIAdapter {
 
     @Override
     public boolean exists(NutsPath basePath) {
-        if(info!=null){
+        if (info != null) {
             return true;
         }
-        return load()!=null;
+        return load() != null;
+    }
+
+    @Override
+    public long getContentLength(NutsPath basePath) {
+        Info o = _fileInfo();
+        if (o != null) {
+            return o.size;
+        }
+        return -1;
+    }
+
+    @Override
+    public String getContentEncoding(NutsPath basePath) {
+        NutsPath p = getDownloadPath();
+        return p == null ? null : p.getContentEncoding();
+    }
+
+    @Override
+    public String getContentType(NutsPath basePath) {
+        NutsPath p = getDownloadPath();
+        return p == null ? null : p.getContentType();
+    }
+
+    @Override
+    public InputStream getInputStream(NutsPath basePath) {
+        NutsPath p = getDownloadPath();
+        if (p != null) {
+            return p.getInputStream();
+        }
+        throw new NutsIOException(session, NutsMessage.cstyle("not a file %s", basePath));
+    }
+
+    @Override
+    public OutputStream getOutputStream(NutsPath basePath) {
+        throw new NutsIOException(session, NutsMessage.cstyle("not writable %s", basePath));
+    }
+
+    @Override
+    public Instant getLastModifiedInstant(NutsPath basePath) {
+        NutsPath p = getDownloadPath();
+        return p == null ? null : p.getLastModifiedInstant();
+    }
+
+    @Override
+    public Instant getLastAccessInstant(NutsPath basePath) {
+        NutsPath p = getDownloadPath();
+        return p == null ? null : p.getLastAccessInstant();
+    }
+
+    @Override
+    public Instant getCreationInstant(NutsPath basePath) {
+        NutsPath p = getDownloadPath();
+        return p == null ? null : p.getCreationInstant();
     }
 
     @Override
     public NutsPath getParent(NutsPath basePath) {
-        if(isRoot(basePath)){
+        if (isRoot(basePath)) {
             return null;
         }
         NutsPath p = ref.getParent();
@@ -163,28 +217,16 @@ public class GithubfsPath extends AbstractPathSPIAdapter {
     }
 
     @Override
-    public NutsPath getRoot(NutsPath basePath) {
-        if (isRoot(basePath)) {
-            return basePath;
-        }
-        return NutsPath.of(PREFIX + ref.getRoot(), session);
-    }
-
-
-    @Override
     public boolean isRoot(NutsPath basePath) {
         Info f = _fileInfo();
-        if(f!=null){
-            if(!"dir".equals(f.type)){
+        if (f != null) {
+            if (!"dir".equals(f.type)) {
                 return false;
             }
-            if(!"".equals(f.path)){
-                return false;
-            }
-            return true;
+            return "".equals(f.path);
         }
         Object a = load();
-        if(a instanceof Info[]){
+        if (a instanceof Info[]) {
             for (Info i : (Info[]) a) {
                 return !i.path.contains("/");
             }
@@ -192,10 +234,28 @@ public class GithubfsPath extends AbstractPathSPIAdapter {
         return false;
     }
 
+    @Override
+    public NutsPath getRoot(NutsPath basePath) {
+        if (isRoot(basePath)) {
+            return basePath;
+        }
+        return NutsPath.of(PREFIX + ref.getRoot(), session);
+    }
+
     @NutsUseDefault
     @Override
     public NutsStream<NutsPath> walk(NutsPath basePath, int maxDepth, NutsPathOption[] options) {
         return null;
+    }
+
+    @Override
+    public void copyTo(NutsPath basePath, NutsPath other, NutsPathOption... options) {
+        NutsPath p = getDownloadPath();
+        if (p != null) {
+            p.copyTo(other, options);
+        } else {
+            NutsCp.of(session).from(basePath).to(other).run();
+        }
     }
 
     @NutsUseDefault
@@ -225,11 +285,11 @@ public class GithubfsPath extends AbstractPathSPIAdapter {
     }
 
     private Info _fileInfo() {
-        if(info!=null){
+        if (info != null) {
             return info;
         }
         Object o = load();
-        if(o instanceof Info){
+        if (o instanceof Info) {
             return (Info) o;
         }
         return null;
@@ -241,18 +301,33 @@ public class GithubfsPath extends AbstractPathSPIAdapter {
         }
         Object a = load();
         if (a != null) {
-            if(a instanceof Info) {
-                return NutsUtilStrings.trim(((Info)a).type);
+            if (a instanceof Info) {
+                return NutsUtilStrings.trim(((Info) a).type);
             }
-            if(a instanceof Info[]) {
+            if (a instanceof Info[]) {
                 return "dir";
             }
         }
         return "";
     }
 
+    private NutsPath getDownloadPath() {
+        Info i = _fileInfo();
+        if (i != null) {
+            if (_type().equals("file")) {
+                return NutsPath.of(i.download_url, session);
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public boolean isLocal(NutsPath basePath) {
+        return ref.isLocal();
+    }
+
     public static class GithubfsFactory implements NutsPathFactory {
-        private NutsWorkspace ws;
+        private final NutsWorkspace ws;
 
         public GithubfsFactory(NutsWorkspace ws) {
             this.ws = ws;
@@ -295,78 +370,6 @@ public class GithubfsPath extends AbstractPathSPIAdapter {
         }
     }
 
-    private NutsPath getDownloadPath(){
-        Info i = _fileInfo();
-        if(i!=null){
-            if(_type().equals("file")){
-                return NutsPath.of(i.download_url,session);
-            }
-        }
-        return null;
-    }
-    @Override
-    public InputStream getInputStream(NutsPath basePath) {
-        NutsPath p = getDownloadPath();
-        if(p!=null){
-            return p.getInputStream();
-        }
-        throw new NutsIOException(session, NutsMessage.cstyle("not a file %s",basePath));
-    }
-
-    @Override
-    public OutputStream getOutputStream(NutsPath basePath) {
-        throw new NutsIOException(session, NutsMessage.cstyle("not writable %s",basePath));
-    }
-
-    @Override
-    public long getContentLength(NutsPath basePath) {
-        Info o = _fileInfo();
-        if(o!=null){
-            return o.size;
-        }
-        return -1;
-    }
-
-    @Override
-    public String getContentEncoding(NutsPath basePath) {
-        NutsPath p = getDownloadPath();
-        return p==null?null:p.getContentEncoding();
-    }
-
-    @Override
-    public String getContentType(NutsPath basePath) {
-        NutsPath p = getDownloadPath();
-        return p==null?null:p.getContentType();
-    }
-
-    @Override
-    public Instant getLastModifiedInstant(NutsPath basePath) {
-        NutsPath p = getDownloadPath();
-        return p==null?null:p.getLastModifiedInstant();
-    }
-
-    @Override
-    public Instant getLastAccessInstant(NutsPath basePath) {
-        NutsPath p = getDownloadPath();
-        return p==null?null:p.getLastAccessInstant();
-    }
-
-    @Override
-    public Instant getCreationInstant(NutsPath basePath) {
-        NutsPath p = getDownloadPath();
-        return p==null?null:p.getCreationInstant();
-    }
-
-    @Override
-    public void copyTo(NutsPath basePath, NutsPath other, NutsPathOption... options) {
-        NutsPath p = getDownloadPath();
-        if(p!=null) {
-            p.copyTo(other, options);
-        }else{
-            NutsCp.of(session).from(basePath).to(other).run();
-        }
-    }
-
     private static class Info {
         String name;
         String path;
@@ -381,10 +384,5 @@ public class GithubfsPath extends AbstractPathSPIAdapter {
         String content;
         String encoding;
         Map<String, String> self;
-    }
-
-    @Override
-    public boolean isLocal(NutsPath basePath) {
-        return ref.isLocal();
     }
 }

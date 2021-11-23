@@ -27,14 +27,14 @@
 package net.thevpc.nuts.runtime.standalone.workspace.config;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.bundles.iter.IteratorUtils;
+import net.thevpc.nuts.runtime.standalone.util.iter.IteratorBuilder;
+import net.thevpc.nuts.NutsDescribables;
 import net.thevpc.nuts.runtime.standalone.util.CoreIOUtils;
 import net.thevpc.nuts.spi.NutsTransportConnection;
 
 import java.io.InputStreamReader;
 import java.io.UncheckedIOException;
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.stream.Collectors;
@@ -47,13 +47,13 @@ public class DefaultNutsIndexStore extends AbstractNutsIndexStore {
     }
 
     @Override
-    public Iterator<NutsId> searchVersions(NutsId id, NutsSession session) {
-        return IteratorUtils.supplier(
+    public NutsIterator<NutsId> searchVersions(NutsId id, NutsSession session) {
+        return IteratorBuilder.ofSupplier(
                 () -> {
                     if (isInaccessible()) {
-                        return IteratorUtils.emptyIterator();
+                        return IteratorBuilder.emptyIterator();
                     }
-                    String URL = "http://localhost:7070/indexer/" + NutsConstants.Folders.ID + "/allVersions"
+                    String URL = getIndexURL(session).resolve( NutsConstants.Folders.ID).resolve( "allVersions")
                             + String.format("?repositoryUuid=%s&name=%s&repo=%s&group=%s"
                                     + "&os=%s&osdist=%s&arch=%s&face=%s&"/*alternative=%s*/,
                             getRepository().getUuid(),
@@ -72,26 +72,31 @@ public class DefaultNutsIndexStore extends AbstractNutsIndexStore {
                                 .collect(Collectors.toList()).iterator();
                     } catch (UncheckedIOException | NutsIOException e) {
                         setInaccessible();
-                        return IteratorUtils.emptyIterator();
+                        return IteratorBuilder.emptyIterator();
                     }
                 },
-                "searchIndex"
-        );
+                e->e
+                        .ofObject()
+                        .set("type","SearchIndexVersions")
+                        .set("source", getIndexURL(session).resolve( NutsConstants.Folders.ID).resolve( "allVersions").toString())
+                        .build()
+        ).build();
     }
 
     @Override
-    public Iterator<NutsId> search(NutsIdFilter filter, NutsSession session) {
-        return IteratorUtils.supplier(
+    public NutsIterator<NutsId> search(NutsIdFilter filter, NutsSession session) {
+        NutsElements elems = NutsElements.of(session);
+        return IteratorBuilder.ofSupplier(
                 () -> {
                     if (isInaccessible()) {
                         throw new NutsIndexerNotAccessibleException(session,NutsMessage.cstyle("index search failed for %s",getRepository().getName()));
 //                        return IteratorUtils.emptyIterator();
                     }
-                    String URL = "http://localhost:7070/indexer/" + NutsConstants.Folders.ID + "?repositoryUuid=" + getRepository().getUuid();
+                    String URL = getIndexURL(session).resolve(NutsConstants.Folders.ID) + "?repositoryUuid=" + getRepository().getUuid();
                     try {
                         NutsTransportConnection clientFacade = CoreIOUtils.getHttpClientFacade(session,
                                 URL);
-                        Map[] array = NutsElements.of(session).json().parse(new InputStreamReader(clientFacade.open()), Map[].class);
+                        Map[] array = elems.json().parse(new InputStreamReader(clientFacade.open()), Map[].class);
                         return Arrays.stream(array)
                                 .map(s -> NutsId.of(s.get("stringId").toString(),session))
                                 .filter(filter != null ? new NutsIdFilterToNutsIdPredicate(filter, session) : NutsPredicates.always())
@@ -102,8 +107,16 @@ public class DefaultNutsIndexStore extends AbstractNutsIndexStore {
 //                        return IteratorUtils.emptyIterator();
                     }
                 },
-                "searchIndex"
-        );
+                e->e
+                        .ofObject().set("type","SearchIndexPackages")
+                        .set("source", getIndexURL(session).resolve(NutsConstants.Folders.ID).toString())
+                        .set("filter", NutsDescribables.resolveOrToString(filter,elems))
+                        .build()
+        ).build();
+    }
+
+    private NutsPath getIndexURL(NutsSession session) {
+        return NutsPath.of("http://localhost:7070/indexer/",session);
     }
 
     @Override
@@ -111,7 +124,7 @@ public class DefaultNutsIndexStore extends AbstractNutsIndexStore {
         if (isInaccessible()) {
             return this;
         }
-        String URL = "http://localhost:7070/indexer/" + NutsConstants.Folders.ID + "/delete"
+        String URL = getIndexURL(session).resolve( NutsConstants.Folders.ID).resolve("delete")
                 + String.format("?repositoryUuid=%s&name=%s&repo=%s&group=%s&version=%s"
                         + "&os=%s&osdist=%s&arch=%s&face=%s"/*&alternative=%s*/, getRepository().getUuid(),
                 NutsUtilStrings.trim(id.getArtifactId()), NutsUtilStrings.trim(id.getRepository()), NutsUtilStrings.trim(id.getGroupId()), NutsUtilStrings.trim(id.getVersion().toString()),
@@ -137,7 +150,7 @@ public class DefaultNutsIndexStore extends AbstractNutsIndexStore {
         if (isInaccessible()) {
             return this;
         }
-        String URL = "http://localhost:7070/indexer/" + NutsConstants.Folders.ID + "/addData"
+        String URL = getIndexURL(session).resolve(NutsConstants.Folders.ID).resolve("addData")
                 + String.format("?repositoryUuid=%s&name=%s&repo=%s&group=%s&version=%s"
                         + "&os=%s&osdist=%s&arch=%s&face=%s"/*&alternative=%s*/, getRepository().getUuid(),
                 NutsUtilStrings.trim(id.getArtifactId()), NutsUtilStrings.trim(id.getRepository()), NutsUtilStrings.trim(id.getGroupId()), NutsUtilStrings.trim(id.getVersion().toString()),

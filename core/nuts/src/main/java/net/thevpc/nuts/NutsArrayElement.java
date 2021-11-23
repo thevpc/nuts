@@ -85,4 +85,9 @@ public interface NutsArrayElement extends NutsElement, Iterable<NutsElement> {
 
     NutsObjectElement getObject(int index);
 
+    /**
+     * return new builder initialized with this instance
+     * @return new builder initialized with this instance
+     */
+    NutsArrayElementBuilder builder();
 }

@@ -301,7 +301,7 @@ public class CoreFilterUtils {
                 ws);
     }
 
-    public static <T> Predicate<NutsId> createFilter(NutsIdFilter t, NutsSession session) {
+    public static <T> NutsPredicate<NutsId> createFilter(NutsIdFilter t, NutsSession session) {
         if (t == null) {
             return null;
         }

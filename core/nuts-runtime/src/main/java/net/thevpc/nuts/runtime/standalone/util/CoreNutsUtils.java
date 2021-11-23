@@ -24,8 +24,8 @@
 package net.thevpc.nuts.runtime.standalone.util;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.bundles.iter.IteratorBuilder;
-import net.thevpc.nuts.runtime.bundles.iter.IteratorUtils;
+import net.thevpc.nuts.runtime.standalone.util.iter.IteratorBuilder;
+import net.thevpc.nuts.NutsDescribables;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.StringMapParser;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.StringPlaceHolderParser;
@@ -866,14 +866,14 @@ public class CoreNutsUtils {
         return monitorable;
     }
 
-    public static Iterator<NutsDependency> itIdToDep(Iterator<NutsId> id) {
-        return IteratorBuilder.of(id).map(IteratorUtils.namedFunction(NutsId::toDependency, "IdToDependency")).build();
+    public static Iterator<NutsDependency> itIdToDep(NutsIterator<NutsId> id) {
+        return IteratorBuilder.of(id).map(NutsFunction.of(NutsId::toDependency, "IdToDependency")).build();
     }
 
-    public static Iterator<NutsDependency> itIdToDep(Iterator<NutsId> id, NutsDependency copyFrom) {
+    public static Iterator<NutsDependency> itIdToDep(NutsIterator<NutsId> id, NutsDependency copyFrom) {
         String _optional = copyFrom.getOptional();
         String _scope = copyFrom.getScope();
-        return IteratorBuilder.of(id).map(IteratorUtils.namedFunction(
+        return IteratorBuilder.of(id).map(NutsFunction.of(
                 x -> x.toDependency().builder().setOptional(_optional).setScope(_scope).build(), "IdToDependency")).build();
     }
 

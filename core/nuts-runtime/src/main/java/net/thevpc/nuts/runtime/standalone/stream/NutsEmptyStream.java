@@ -5,8 +5,9 @@
  */
 package net.thevpc.nuts.runtime.standalone.stream;
 
+import net.thevpc.nuts.NutsIterator;
 import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.runtime.bundles.iter.IteratorUtils;
+import net.thevpc.nuts.runtime.standalone.util.iter.IteratorBuilder;
 
 import java.util.*;
 import java.util.stream.Stream;
@@ -32,8 +33,8 @@ public class NutsEmptyStream<T> extends AbstractNutsStream<T> {
     }
 
     @Override
-    public Iterator<T> iterator() {
-        return IteratorUtils.emptyIterator();
+    public NutsIterator<T> iterator() {
+        return IteratorBuilder.emptyIterator();
     }
 
     @Override

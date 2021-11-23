@@ -1128,7 +1128,10 @@ public class DefaultNutsWorkspaceConfigModel {
                 deps.add(dep.toId());
             }
             m.put("dependencies",
-                    def.getDependencies().stream().map(x -> x.toId().getLongName()).collect(Collectors.joining(";"))
+                    def.getDependencies().all().map(
+                            x -> x.toId().getLongName()
+                            ,"toId().getLongName()"
+                    ).collect(Collectors.joining(";"))
             );
             if (idType == NutsIdType.RUNTIME) {
                 m.put("bootRepositories", def.getDescriptor().getPropertyValue("nuts-runtime-repositories"));

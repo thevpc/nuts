@@ -27,7 +27,6 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.repository.impl.NutsCachedRepository;
 
 import java.io.IOException;
-import java.util.*;
 
 /**
  * Created by vpc on 1/5/17.
@@ -89,7 +88,7 @@ public class NutsFolderRepository extends NutsCachedRepository {
     }
 
     @Override
-    public Iterator<NutsId> searchCore(NutsIdFilter filter, String[] roots, NutsFetchMode fetchMode, NutsSession session) {
+    public NutsIterator<NutsId> searchCore(NutsIdFilter filter, String[] roots, NutsFetchMode fetchMode, NutsSession session) {
         return null;
     }
 
@@ -103,7 +102,7 @@ public class NutsFolderRepository extends NutsCachedRepository {
     }
 
     @Override
-    public Iterator<NutsId> searchVersionsCore(NutsId id, NutsIdFilter idFilter, NutsFetchMode fetchMode, NutsSession session) {
+    public NutsIterator<NutsId> searchVersionsCore(NutsId id, NutsIdFilter idFilter, NutsFetchMode fetchMode, NutsSession session) {
         return null;
     }
 

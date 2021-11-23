@@ -24,7 +24,7 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.install;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.bundles.iter.IteratorUtils;
+import net.thevpc.nuts.runtime.standalone.util.iter.IteratorUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.repository.impl.main.NutsInstalledRepository;
 import net.thevpc.nuts.runtime.standalone.util.CoreNutsDependencyUtils;
@@ -141,7 +141,7 @@ public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
         }
         return new NutsListStream<NutsDefinition>(getSession(),
                 ids.isEmpty() ? null : ids.keySet().toArray()[0].toString(),
-                Arrays.asList(result)
+                Arrays.asList(result),e->e.ofString("InstallResult")
         );
     }
 

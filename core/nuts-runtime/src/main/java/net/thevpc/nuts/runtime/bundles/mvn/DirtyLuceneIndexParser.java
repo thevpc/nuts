@@ -1,14 +1,15 @@
 package net.thevpc.nuts.runtime.bundles.mvn;
 
+import net.thevpc.nuts.NutsElement;
+import net.thevpc.nuts.NutsElements;
 import net.thevpc.nuts.NutsIOException;
 import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.runtime.bundles.collections.EvictingIntQueue;
-import net.thevpc.nuts.runtime.bundles.iter.IterInfoNode;
-import net.thevpc.nuts.runtime.bundles.iter.IterInfoNodeAware2Base;
+import net.thevpc.nuts.runtime.standalone.util.nfo.NutsIteratorBase;
 
 import java.io.*;
 
-public class DirtyLuceneIndexParser extends IterInfoNodeAware2Base<String> implements Closeable {
+public class DirtyLuceneIndexParser extends NutsIteratorBase<String> implements Closeable {
     private PushbackReader reader;
     private String last;
     private EvictingIntQueue whites = new EvictingIntQueue(10);
@@ -24,10 +25,11 @@ public class DirtyLuceneIndexParser extends IterInfoNodeAware2Base<String> imple
     }
 
     @Override
-    public IterInfoNode info(NutsSession session) {
-        return info("ScanLucene",
-                IterInfoNode.resolveOrString("source", source0, this.session)
-        );
+    public NutsElement describe(NutsElements elems) {
+        return elems.ofObject()
+                .set("type","ScanLucene")
+                .set("source",source0.toString())
+                .build();
     }
 
     public static boolean isVisibleChar(char c) {

@@ -1539,7 +1539,8 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
         Map<String, String> a = new LinkedHashMap<>();
         a.put("configVersion", Nuts.getVersion());
         a.put("id", id.getLongName());
-        a.put("dependencies", m.getDependencies().stream().map(NutsDependency::getLongName).collect(Collectors.joining(";")));
+        a.put("dependencies", m.getDependencies().all().map(NutsDependency::getLongName,"getLongName")
+                .collect(Collectors.joining(";")));
         defs.put(m.getId().getLongId(), m);
         if (withDependencies) {
             for (NutsDependency dependency : m.getDependencies()) {
@@ -1573,12 +1574,14 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
 //            pr.put("bootRuntimeId", runtimeUpdate.getAvailable().getId().getLongName());
             pr.put("project.dependencies.compile",
                     String.join(";",
-                            def.getDependencies().stream()
+                            def.getDependencies().all()
                                     .filter(x -> !x.isOptional()
                                             && CoreNutsDependencyUtils.createJavaRunDependencyFilter(session)
-                                            .acceptDependency(def.getId(), x, session))
-                                    .map(x -> x.toId().getLongName())
-                                    .collect(Collectors.toList())
+                                            .acceptDependency(def.getId(), x, session),
+                                            "isOptional && runnable"
+                                            )
+                                    .map(x -> x.toId().getLongName(),"toId.getLongName")
+                                    .toList()
                     )
             );
 
