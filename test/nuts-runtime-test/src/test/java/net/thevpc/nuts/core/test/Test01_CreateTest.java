@@ -30,7 +30,9 @@ public class Test01_CreateTest {
                 "--standalone",
                 "--archetype", "minimal",
                 "--verbose",
-                "--skip-companions");
+                "--skip-companions",
+                "--verbose"
+        );
         Assertions.assertEquals(
                 NutsPath.of(new File(wsPath, "cache"),session),
                 session.locations().getStoreLocation(NutsStoreLocation.CACHE));

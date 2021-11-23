@@ -40,98 +40,52 @@ import java.io.File;
  * @author thevpc
  */
 public class Test23_PerfTest {
-    //@Test
+    int nbr = 20;
+    /**
+     * ROGUEi7-2021-11-24 ) avg: 8155ms 8915ms 9060ms
+     * ROGUEi7-2021-11-24 ) avg: 3035ms? 3681ms 3733,3790ms, 4061ms
+     */
+    @Test
     public void testPerf() {
         long start = System.currentTimeMillis();
-        for (int i = 0; i < 1000; i++) {
-            Nuts.main(new String[]{"--version"});
+        int nbr = 10;
+        for (int i = 0; i < nbr; i++) {
+            TestUtils.openNewTestWorkspace("-Zy","--verbose","-P=%n","version");
         }
         long end = System.currentTimeMillis();
         TestUtils.println("time: " + (end - start) + "ms");
+        TestUtils.println(" avg: " + ((end - start)/nbr) + "ms");
         Assertions.assertTrue(true);
     }
 
-    public static class Test26_NanoDBTest {
-        @Test
-        public void test1() {
-            NutsSession session = TestUtils.openNewTestWorkspace();
-            for (String s : new String[]{"", "a", "ab", "abc"}) {
-                TestUtils.println("getUTFLength(\"" + s + "\")=" + NanoDBTableFile.getUTFLength(s, session));
-            }
-            TestUtils.println("getUTFLength(\"Hammadi\")=" + NanoDBTableFile.getUTFLength("Hammadi", session));
-            NanoDB db = new NanoDB(TestUtils.initFolder(".test-bd").toFile());
-            NanoDBTableFile<Person> test = db.tableBuilder(Person.class, session).setNullable(false).addAllFields().addIndices("id").create();
-            test.add(new Person(1, "Hammadi"), session);
-            test.add(new Person(2, "Hammadi"), session);
-            test.add(new Person(1, "Hammadi"), session);
-            test.add(new Person(4, "Hammadi"), session);
-            TestUtils.println("getFileLength=" + test.getFileLength());
-            test.findByIndex("id", 1, session).forEach(x -> {
-                TestUtils.println(x);
-            });
-            test.findIndexValues("id", session).forEach(x -> {
-                TestUtils.println(x);
-            });
+    /**
+     * ROGUEi7-2021-11-24 ) avg: 2301ms
+     */
+    @Test
+    public void testPerfLocal() {
+        long start = System.currentTimeMillis();
+        for (int i = 0; i < nbr; i++) {
+            TestUtils.openNewTestWorkspace("-Zy","--verbose","-P=%n","-r=-maven-central","version");
         }
-
-        @Test
-        public void testPerf() {
-            NutsSession session = TestUtils.openExistingTestWorkspace("-Zy", "--verbose");
-            File dir = TestUtils.initFolder(".test-db-perf").toFile();
-            long from = System.currentTimeMillis();
-            CoreIOUtils.delete(null, dir);
-            try (NanoDB db = new NanoDB(dir)) {
-                NanoDBTableFile<Person> test = db.tableBuilder(Person.class, session).setNullable(false).addIndices("id").create();
-                int c = 1000;
-                for (int i = 0; i < c * 10; i++) {
-                    test.add(new Person(i % 10, "Hammadi"), session);
-                }
-                long to = System.currentTimeMillis();
-                TestUtils.println(to - from);
-                from = System.currentTimeMillis();
-                TestUtils.println(test.findByIndex("id", 1, session).count());
-                to = System.currentTimeMillis();
-                TestUtils.println(to - from);
-            }
-        }
-
-        public static class Person {
-            private int id;
-            private String name;
-
-            public Person(int id, String name) {
-                this.id = id;
-                this.name = name;
-            }
-
-            public Person() {
-            }
-
-            public int getId() {
-                return id;
-            }
-
-            public Person setId(int id) {
-                this.id = id;
-                return this;
-            }
-
-            public String getName() {
-                return name;
-            }
-
-            public Person setName(String name) {
-                this.name = name;
-                return this;
-            }
-
-            @Override
-            public String toString() {
-                return "Person{" +
-                        "id=" + id +
-                        ", name='" + name + '\'' +
-                        '}';
-            }
-        }
+        long end = System.currentTimeMillis();
+        TestUtils.println("time: " + (end - start) + "ms");
+        TestUtils.println(" avg: " + ((end - start)/nbr) + "ms");
+        Assertions.assertTrue(true);
     }
+
+    /**
+     * ROGUEi7-2021-11-24 ) avg: 2205ms 2456ms
+     */
+    @Test
+    public void testPerfLocalNoSystem() {
+        long start = System.currentTimeMillis();
+        for (int i = 0; i < nbr; i++) {
+            TestUtils.openNewTestWorkspace("-Zy","--verbose","-P=%n","-r=-maven-central,-system","version");
+        }
+        long end = System.currentTimeMillis();
+        TestUtils.println("time: " + (end - start) + "ms");
+        TestUtils.println(" avg: " + ((end - start)/nbr) + "ms");
+        Assertions.assertTrue(true);
+    }
+
 }
