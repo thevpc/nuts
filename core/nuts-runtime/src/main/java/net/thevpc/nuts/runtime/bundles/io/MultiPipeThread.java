@@ -50,7 +50,7 @@ public class MultiPipeThread extends Thread implements StopMonitor {
     private final Object lock = new Object();
     private boolean requestStop = false;
     private boolean stopped = false;
-    private Map<String, PipeInfo> list = new HashMap<>();
+    private final Map<String, PipeInfo> list = new HashMap<>();
     private String[] ids = null;
 
     public MultiPipeThread(String name) {

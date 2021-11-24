@@ -9,8 +9,8 @@ import java.util.function.Function;
  */
 public class ImmutableConvertedList<A, B> extends AbstractList<B> {
 
-    private List<A> base;
-    private Function<A, B> converter;
+    private final List<A> base;
+    private final Function<A, B> converter;
 
     public ImmutableConvertedList(List<A> base, Function<A, B> converter) {
         this.base = base;

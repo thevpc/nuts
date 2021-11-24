@@ -24,8 +24,6 @@
 package net.thevpc.nuts.runtime.optional.jansi;
 
 import net.thevpc.nuts.NutsOsFamily;
-import net.thevpc.nuts.NutsUtilPlatforms;
-import net.thevpc.nuts.runtime.bundles.common.CorePlatformUtils;
 import net.thevpc.nuts.runtime.standalone.boot.StdFd;
 
 /**

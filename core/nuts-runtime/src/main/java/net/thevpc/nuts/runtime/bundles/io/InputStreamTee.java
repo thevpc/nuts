@@ -7,7 +7,6 @@ package net.thevpc.nuts.runtime.bundles.io;
 
 import net.thevpc.nuts.NutsInputStreamMetadataAware;
 import net.thevpc.nuts.NutsInputStreamMetadata;
-import net.thevpc.nuts.runtime.standalone.util.CoreIOUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -19,9 +18,9 @@ import java.io.OutputStream;
  */
 public class InputStreamTee extends InputStream implements NutsInputStreamMetadataAware,Interruptible {
 
-    private InputStream in;
-    private OutputStream out;
-    private Runnable onClose;
+    private final InputStream in;
+    private final OutputStream out;
+    private final Runnable onClose;
     private boolean interrupted;
 
     public InputStreamTee(InputStream in, OutputStream out, Runnable onClose) {

@@ -11,7 +11,6 @@ import net.thevpc.nuts.NutsSession;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.UncheckedIOException;
 import java.util.HashMap;
 import java.util.Map;
 

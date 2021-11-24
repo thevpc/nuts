@@ -5,7 +5,7 @@ import net.thevpc.nuts.runtime.standalone.id.filter.AbstractIdFilter;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceExt;
 
 public class NutsInstallStatusIdFilter extends AbstractIdFilter {
-    private NutsInstallStatusFilter installStatus;
+    private final NutsInstallStatusFilter installStatus;
 
     public NutsInstallStatusIdFilter(NutsSession session, NutsInstallStatusFilter installStatus) {
         super(session, NutsFilterOp.CUSTOM);

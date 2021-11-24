@@ -28,10 +28,8 @@ import net.thevpc.nuts.NutsLoggerOp;
 import net.thevpc.nuts.NutsMessage;
 import net.thevpc.nuts.NutsSession;
 
-import java.io.IOException;
 import java.io.OutputStream;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class PipeThread implements Runnable, StopMonitor {
 

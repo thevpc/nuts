@@ -12,15 +12,18 @@ public class EvictingQueue<T> extends AbstractList<T>{
         this.values=new Object[max];
     }
 
+    @Override
     public void clear() {
         from=0;
         len=0;
     }
 
+    @Override
     public int size() {
         return len;
     }
 
+    @Override
     public T get(int pos) {
         if(pos>=0 && pos<len) {
             int i=(from+pos)%values.length;
@@ -30,6 +33,7 @@ public class EvictingQueue<T> extends AbstractList<T>{
     }
 
 
+    @Override
     public boolean add(T t) {
         int pos=(from+len)%values.length;
         values[pos]=t;

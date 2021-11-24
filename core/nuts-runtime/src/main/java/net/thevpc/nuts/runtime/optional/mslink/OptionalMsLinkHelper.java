@@ -13,11 +13,11 @@ import java.util.Arrays;
 import java.util.Iterator;
 
 public class OptionalMsLinkHelper {
-    private NutsSession session;
-    private String command;
-    private String wd;
-    private String icon;
-    private String filePath;
+    private final NutsSession session;
+    private final String command;
+    private final String wd;
+    private final String icon;
+    private final String filePath;
 
     public OptionalMsLinkHelper(String command, String wd, String icon, String filePath, NutsSession session) {
         this.session = session;
