@@ -63,6 +63,8 @@ public class XNode {
     public XNode(NutsString key, Object destructedObject, NutsString title, NutsSession session, XNodeFormatter format) {
         if (destructedObject instanceof Map && ((Map) destructedObject).size() == 1) {
             value = ((Map) destructedObject).entrySet().toArray()[0];
+        }else if (destructedObject instanceof NutsObjectElement && ((NutsObjectElement) destructedObject).size() == 1) {
+            value = ((NutsObjectElement) destructedObject).children().toArray()[0];
         } else {
             this.value = destructedObject;
         }
@@ -93,7 +95,7 @@ public class XNode {
         if (key == null) {
             return titleOrValueAsElement;
         } else {
-            if (value instanceof List || value instanceof Map) {
+            if (isList(value) || isMap(value)) {
                 return NutsTexts.of(session).builder().append(keyAsElement);
             } else {
                 return NutsTexts.of(session).builder().append(keyAsElement).append("=").append(titleOrValueAsElement);
@@ -105,42 +107,45 @@ public class XNode {
         if (title != null) {
             return title;
         }
-        if (this.value instanceof List) {
+        if (isList(this.value)) {
             return null;
         }
-        if (this.value instanceof Map.Entry) {
-            return format.stringValue(((Map.Entry) value).getKey(), session);
-        }
-        if (this.value instanceof Map) {
-            Object bestElement = null;
-            int bestKeyOrder = -1;
-            for (Map.Entry<Object, Object> me : ((Map<Object, Object>) this.value).entrySet()) {
-                int keyOrder = -1;
-                if (me.getKey() instanceof String) {
-                    switch ((String) me.getKey()) {
-                        case "id": {
-                            keyOrder = 1;
-                            break;
-                        }
-                        case "name": {
-                            keyOrder = 10;
-                            break;
-                        }
-                        case "title": {
-                            keyOrder = 2;
-                            break;
-                        }
-                        case "label": {
-                            keyOrder = 3;
-                            break;
-                        }
-                    }
-                }
-                if (keyOrder > bestKeyOrder) {
-                    bestKeyOrder = keyOrder;
-                    bestElement = me.getValue();
-                }
+        if (isMapEntry(this.value)) {
+            if(value instanceof Map.Entry){
+                return format.stringValue(((Map.Entry) value).getKey(), session);
             }
+            return format.stringValue(((NutsElementEntry) value).getKey(), session);
+        }
+        if (isMap(this.value)) {
+//            Object bestElement = null;
+//            int bestKeyOrder = -1;
+//            for (Map.Entry<Object, Object> me : ((Map<Object, Object>) this.value).entrySet()) {
+//                int keyOrder = -1;
+//                if (me.getKey() instanceof String) {
+//                    switch ((String) me.getKey()) {
+//                        case "id": {
+//                            keyOrder = 1;
+//                            break;
+//                        }
+//                        case "name": {
+//                            keyOrder = 10;
+//                            break;
+//                        }
+//                        case "title": {
+//                            keyOrder = 2;
+//                            break;
+//                        }
+//                        case "label": {
+//                            keyOrder = 3;
+//                            break;
+//                        }
+//                    }
+//                }
+//                if (keyOrder > bestKeyOrder) {
+//                    bestKeyOrder = keyOrder;
+//                    bestElement = me.getValue();
+//                }
+//            }
             //do not use any field as a node title
 //            if (bestKeyOrder >= 0) {
 //                return format.stringValue(bestElement, session);
@@ -154,20 +159,71 @@ public class XNode {
             Object v = ((Map.Entry) value).getValue();
             return getAsList(v);
         }
-        if (value instanceof List || value instanceof Map) {
+        if (value instanceof NutsElementEntry) {
+            Object v = ((NutsElementEntry) value).getValue();
+            return getAsList(v);
+        }
+        if (isList(value) || isMap(value)) {
             return getAsList(value);
         }
         return null;
     }
     
+    private static boolean isList(Object value) {
+        if(value instanceof List){
+            return true;
+        }
+        if(value instanceof NutsArrayElement){
+            return true;
+        }
+        return false;
+    }
+    private static boolean isMapEntry(Object value) {
+        if(value instanceof Map.Entry){
+            return true;
+        }
+        if(value instanceof NutsElementEntry){
+            return true;
+        }
+        return false;
+    }
+
+    private static boolean isMap(Object value) {
+        if(value instanceof Map){
+            return true;
+        }
+        if(value instanceof NutsObjectElement){
+            return true;
+        }
+        return false;
+    }
+
     private List getAsList(Object value) {
         if (value instanceof List) {
             return ((List<Object>) value).stream().map(me -> node(me, session, format)).collect(Collectors.toList());
+        }
+        if (value instanceof NutsArrayElement) {
+            return ((NutsArrayElement) value).stream().map(me -> node(me, session, format)).collect(Collectors.toList());
         }
         if (value instanceof Map) {
             Map<Object, Object> m = (Map<Object, Object>) value;
             List<XNode> all = new ArrayList<>();
             for (Map.Entry<Object, Object> me : m.entrySet()) {
+                NutsString keyStr = format.stringValue(me.getKey(), session);
+                NutsString[] map = format.getMultilineArray(keyStr, me.getValue(), session);
+                if (map == null) {
+                    all.add(entryNode(keyStr, me.getValue(), session, format));
+                } else {
+                    all.add(entryNode(keyStr, NutsElements.of(session)
+                            .toElement(Arrays.asList(map)), session, format));
+                }
+            }
+            return all;
+        }
+        if (value instanceof NutsObjectElement) {
+            NutsObjectElement m = (NutsObjectElement) value;
+            List<XNode> all = new ArrayList<>();
+            for (NutsElementEntry me : m) {
                 NutsString keyStr = format.stringValue(me.getKey(), session);
                 NutsString[] map = format.getMultilineArray(keyStr, me.getValue(), session);
                 if (map == null) {

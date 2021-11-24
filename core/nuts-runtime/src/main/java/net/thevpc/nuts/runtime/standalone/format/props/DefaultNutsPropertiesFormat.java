@@ -68,8 +68,15 @@ public class DefaultNutsPropertiesFormat extends DefaultFormatBase<NutsPropertie
     }
 
     private void fillMap(NutsString entryKey, Object entryValue, Map<NutsString, NutsString> map) {
-        if(entryValue instanceof Map){
-            for (Map.Entry<Object, Object> entry : ((Map<Object,Object>) entryValue).entrySet()) {
+        if(entryValue instanceof Map) {
+            for (Map.Entry<Object, Object> entry : ((Map<Object, Object>) entryValue).entrySet()) {
+                Object k = entry.getKey();
+                NutsString ns = entryKey.isEmpty() ? stringValue(k) : entryKey.builder().append(".").append(stringValue(k));
+                Object v = entry.getValue();
+                fillMap(ns, v, map);
+            }
+        }else if(entryValue instanceof NutsObjectElement){
+            for (NutsElementEntry entry : ((NutsObjectElement) entryValue)) {
                 Object k = entry.getKey();
                 NutsString ns= entryKey.isEmpty()?stringValue(k): entryKey.builder().append(".").append(stringValue(k));
                 Object v = entry.getValue();
@@ -77,6 +84,12 @@ public class DefaultNutsPropertiesFormat extends DefaultFormatBase<NutsPropertie
             }
         }else if(entryValue instanceof List){
             List<Object> objects = (List<Object>) entryValue;
+            for (int i = 0; i < objects.size(); i++) {
+                NutsString ns = entryKey.builder().append("[").append(stringValue(i+1)).append("]");
+                fillMap(ns, objects.get(i), map);
+            }
+        }else if(entryValue instanceof NutsArrayElement){
+            NutsArrayElement objects = (NutsArrayElement) entryValue;
             for (int i = 0; i < objects.size(); i++) {
                 NutsString ns = entryKey.builder().append("[").append(stringValue(i+1)).append("]");
                 fillMap(ns, objects.get(i), map);
@@ -103,22 +116,6 @@ public class DefaultNutsPropertiesFormat extends DefaultFormatBase<NutsPropertie
         return sorted;
     }
 
-//    @Override
-//    public NutsPropertiesFormat table(boolean table) {
-//        return setTable(table);
-//    }
-//    @Override
-//    public NutsPropertiesFormat table() {
-//        return table(true);
-//    }
-//    public boolean isTable() {
-//        return table;
-//    }
-//
-//    public DefaultNutsPropertiesFormat setTable(boolean table) {
-//        this.table = table;
-//        return this;
-//    }
     public String getSeparator() {
         return separator;
     }

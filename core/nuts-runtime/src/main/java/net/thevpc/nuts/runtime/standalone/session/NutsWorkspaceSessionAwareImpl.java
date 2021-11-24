@@ -50,32 +50,32 @@ public class NutsWorkspaceSessionAwareImpl implements NutsWorkspace, NutsWorkspa
 
     @Override
     public String getUuid() {
-        return ws().getUuid();
+        return ws.getUuid();
     }
 
     @Override
     public String getName() {
-        return ws().getName();
+        return ws.getName();
     }
 
     @Override
     public String getHashName() {
-        return ws().getHashName();
+        return ws.getHashName();
     }
 
     @Override
     public NutsVersion getApiVersion() {
-        return ws().getApiVersion();
+        return ws.getApiVersion();
     }
 
     @Override
     public NutsId getApiId() {
-        return ws().getApiId();
+        return ws.getApiId();
     }
 
     @Override
     public NutsId getRuntimeId() {
-        return ws().getRuntimeId();
+        return ws.getRuntimeId();
     }
 
     @Override
@@ -85,112 +85,112 @@ public class NutsWorkspaceSessionAwareImpl implements NutsWorkspace, NutsWorkspa
 
 //    @Override
 //    public Set<NutsId> getCompanionIds(NutsSession session) {
-//        return ws().getCompanionIds(session);
+//        return ws.getCompanionIds(session);
 //    }
 
     @Override
     public NutsSession createSession() {
-        return ws().createSession();
+        return ws.createSession();
     }
 
     @Override
     public NutsSearchCommand search() {
-        return ws().search().setSession(getSession());
+        return ws.search().setSession(getSession());
     }
 
     @Override
     public NutsFetchCommand fetch() {
-        return ws().fetch().setSession(getSession());
+        return ws.fetch().setSession(getSession());
     }
 
     @Override
     public NutsDeployCommand deploy() {
-        return ws().deploy().setSession(getSession());
+        return ws.deploy().setSession(getSession());
     }
 
     @Override
     public NutsUndeployCommand undeploy() {
-        return ws().undeploy().setSession(getSession());
+        return ws.undeploy().setSession(getSession());
     }
 
     @Override
     public NutsExecCommand exec() {
-        return ws().exec().setSession(getSession());
+        return ws.exec().setSession(getSession());
     }
 
     @Override
     public NutsInstallCommand install() {
-        return ws().install().setSession(getSession());
+        return ws.install().setSession(getSession());
     }
 
     @Override
     public NutsUninstallCommand uninstall() {
-        return ws().uninstall().setSession(getSession());
+        return ws.uninstall().setSession(getSession());
     }
 
     @Override
     public NutsUpdateCommand update() {
-        return ws().update().setSession(getSession());
+        return ws.update().setSession(getSession());
     }
 
     @Override
     public NutsPushCommand push() {
-        return ws().push().setSession(getSession());
+        return ws.push().setSession(getSession());
     }
 
     @Override
     public NutsUpdateStatisticsCommand updateStatistics() {
-        return ws().updateStatistics().setSession(getSession());
+        return ws.updateStatistics().setSession(getSession());
     }
 
     @Override
     public NutsWorkspaceExtensionManager extensions() {
-        return ws().extensions().setSession(getSession());
+        return ws.extensions().setSession(getSession());
     }
 
     @Override
     public NutsWorkspaceConfigManager config() {
-        return ws().config().setSession(getSession());
+        return ws.config().setSession(getSession());
     }
 
     @Override
     public NutsRepositoryManager repos() {
-        return ws().repos().setSession(getSession());
+        return ws.repos().setSession(getSession());
     }
 
     @Override
     public NutsWorkspaceSecurityManager security() {
-        return ws().security().setSession(getSession());
+        return ws.security().setSession(getSession());
     }
 
     @Override
     public NutsWorkspaceEventManager events() {
-        return ws().events().setSession(getSession());
+        return ws.events().setSession(getSession());
     }
 
     @Override
     public NutsInfoCommand info() {
-        return ws().info().setSession(getSession());
+        return ws.info().setSession(getSession());
     }
 
     @Override
     public NutsImportManager imports() {
-        return ws().imports().setSession(getSession());
+        return ws.imports().setSession(getSession());
     }
 
     @Override
     public NutsCustomCommandManager commands() {
-        return ws().commands().setSession(getSession());
+        return ws.commands().setSession(getSession());
     }
 
     @Override
     public NutsWorkspaceLocationManager locations() {
-        return ws().locations().setSession(getSession());
+        return ws.locations().setSession(getSession());
     }
 
     @Override
     public NutsWorkspaceEnvManager env() {
-        DefaultNutsWorkspaceEnvManager e = (DefaultNutsWorkspaceEnvManager) ws().env();
+        DefaultNutsWorkspaceEnvManager e = (DefaultNutsWorkspaceEnvManager) ws.env();
         return new DefaultNutsWorkspaceEnvManager(e.getModel()).setSession(getSession());
     }
 
@@ -202,12 +202,9 @@ public class NutsWorkspaceSessionAwareImpl implements NutsWorkspace, NutsWorkspa
 
     @Override
     public int getSupportLevel(NutsSupportLevelContext context) {
-        return ws().getSupportLevel(context);
+        return ws.getSupportLevel(context);
     }
 
-    private NutsWorkspace ws() {
-        return ws;
-    }
 
     public NutsSession getSession() {
         return session;

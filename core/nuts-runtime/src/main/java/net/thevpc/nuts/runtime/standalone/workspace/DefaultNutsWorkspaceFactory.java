@@ -84,11 +84,10 @@ public class DefaultNutsWorkspaceFactory implements NutsWorkspaceFactory {
 
     @Override
     public <T extends NutsComponent> T createSupported(Class<T> type, Object supportCriteria, boolean required, NutsSession session) {
-        List<T> list = createAll(type, session);
         int bestSupportLevel = Integer.MIN_VALUE;
         T bestObj = null;
         NutsSupportLevelContext context = new NutsDefaultSupportLevelContext(session, supportCriteria);
-        for (T t : list) {
+        for (T t : createAll(type, session)) {
             int supportLevel = t.getSupportLevel(context);
             if (supportLevel > 0) {
                 if (bestObj == null || supportLevel > bestSupportLevel) {
@@ -114,30 +113,6 @@ public class DefaultNutsWorkspaceFactory implements NutsWorkspaceFactory {
         }
         return bestObj;
     }
-
-//    @Override
-//    public <T extends NutsComponent<V>, V> T createSupported(Class<T> type, V supportCriteria, Class[] constructorParameterTypes, Object[] constructorParameters, boolean required, NutsSession session) {
-//        List<T> list = createAll(type, constructorParameterTypes, constructorParameters, session);
-//        int bestSupportLevel = Integer.MIN_VALUE;
-//        NutsSupportLevelContext<V> lc = new NutsDefaultSupportLevelContext<V>(session, supportCriteria);
-//        T bestObj = null;
-//        for (T t : list) {
-//            int supportLevel = t.getSupportLevel(lc);
-//            if (supportLevel > 0) {
-//                if (bestObj == null || supportLevel > bestSupportLevel) {
-//                    bestSupportLevel = supportLevel;
-//                    bestObj = t;
-//                }
-//            }
-//        }
-////        if(bestObj==null){
-////            throw new NutsElementNotFoundException("not found implementation for "+type.getName());
-////        }
-//        if (required && bestObj == null) {
-//            throw new NutsElementNotFoundException(session, NutsMessage.cstyle("missing implementation for Extension Point %s with criteria %s", type, supportCriteria));
-//        }
-//        return bestObj;
-//    }
 
     @Override
     public <T extends NutsComponent> List<T> createAllSupported(Class<T> type, Object supportCriteria, NutsSession session) {
@@ -237,14 +212,6 @@ public class DefaultNutsWorkspaceFactory implements NutsWorkspaceFactory {
         return all;
     }
 
-    //    @Override
-//    public Set<Class> getExtensionPoints() {
-//        HashSet<Class> s = new HashSet<>();
-//        for (IdCache c : discoveredCacheById.values()) {
-//            s.addAll(c.getExtensionPoints());
-//        }
-//        return s;
-//    }
     @Override
     public List<Object> getExtensionObjects(Class extensionPoint) {
         return new ArrayList<>(instances.getAll(extensionPoint));
@@ -288,10 +255,7 @@ public class DefaultNutsWorkspaceFactory implements NutsWorkspaceFactory {
             t = new IdCache(source, workspace);
             discoveredCacheById.put(source, t);
         }
-        ClassClassMap y = t.getClassClassMap(NutsComponent.class, true);
-        if (!y.containsExactKey(implementation)) {
-            y.add(implementation);
-        }
+        t.add(NutsComponent.class, implementation);
     }
 
     @Override
@@ -730,6 +694,7 @@ public class DefaultNutsWorkspaceFactory implements NutsWorkspaceFactory {
 
         private final NutsId id;
         private final Map<Class, ClassClassMap> classes = new HashMap<>();
+        private final Map<Class, Set<Class>> cacheExtensionTypes = new HashMap<>();
         private final NutsWorkspace workspace;
         private URL url;
 
@@ -780,6 +745,18 @@ public class DefaultNutsWorkspaceFactory implements NutsWorkspaceFactory {
         }
 
 
+        private void add(Class extensionPoint, Class implementation) {
+            ClassClassMap y = getClassClassMap(extensionPoint, true);
+            if (!y.containsExactKey(implementation)) {
+                y.add(implementation);
+                invalidateCache();
+            }
+        }
+
+        private void invalidateCache() {
+            cacheExtensionTypes.clear();
+        }
+
         private ClassClassMap getClassClassMap(Class extensionPoint, boolean create) {
             ClassClassMap r = classes.get(extensionPoint);
             if (r == null && create) {
@@ -802,13 +779,18 @@ public class DefaultNutsWorkspaceFactory implements NutsWorkspaceFactory {
         }
 
         public Set<Class> getExtensionTypes(Class extensionPoint) {
+            Set<Class> r = cacheExtensionTypes.get(extensionPoint);
+            if (r != null) {
+                return r;
+            }
             LinkedHashSet<Class> all = new LinkedHashSet<>();
-            for (Map.Entry<Class, ClassClassMap> rr : classes.entrySet()) {
+            for (Map.Entry<Class, ClassClassMap> rr : this.classes.entrySet()) {
                 if (rr.getKey().isAssignableFrom(extensionPoint)) {
                     all.addAll(Arrays.asList(rr.getValue().getAll(extensionPoint)));
                 }
             }
-            return all;
+            cacheExtensionTypes.put(extensionPoint, r = Collections.unmodifiableSet(all));
+            return r;
         }
     }
 

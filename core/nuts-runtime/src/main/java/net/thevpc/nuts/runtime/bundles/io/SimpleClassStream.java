@@ -6,13 +6,14 @@
 package net.thevpc.nuts.runtime.bundles.io;
 
 import net.thevpc.nuts.NutsIOException;
+import net.thevpc.nuts.NutsIllegalArgumentException;
+import net.thevpc.nuts.NutsMessage;
 import net.thevpc.nuts.NutsSession;
 
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.HashMap;
-import java.util.Map;
+import java.nio.charset.StandardCharsets;
 
 /**
  * @author thevpc
@@ -35,21 +36,21 @@ public class SimpleClassStream {
     private static final int FLAG_INVOKE_DYNAMIC = 18;
     private static final int FLAG_MODULE = 19;
     private static final int FLAG_PACKAGE = 20;
-    private DataInputStream stream;
-    private NutsSession session;
-    private Visitor visitor;
-    private Map<Integer, Constant> constants = new HashMap<Integer, Constant>();
+    private final DataInputStream stream;
+    private final NutsSession session;
+    private final Visitor visitor;
+    private Constant[] constants = new Constant[32];
 
-    public SimpleClassStream(InputStream stream,NutsSession session) {
-        this(stream, null,session);
+    public SimpleClassStream(InputStream stream, NutsSession session) {
+        this(stream, null, session);
     }
 
-    public SimpleClassStream(DataInputStream stream,NutsSession session) {
-        this(stream, null,session);
+    public SimpleClassStream(DataInputStream stream, NutsSession session) {
+        this(stream, null, session);
     }
 
-    public SimpleClassStream(InputStream stream, Visitor visitor,NutsSession session) {
-        this((stream instanceof DataInputStream) ? ((DataInputStream) stream) : new DataInputStream(stream), visitor,session);
+    public SimpleClassStream(InputStream stream, Visitor visitor, NutsSession session) {
+        this((stream instanceof DataInputStream) ? ((DataInputStream) stream) : new DataInputStream(stream), visitor, session);
     }
 
     public SimpleClassStream(DataInputStream stream, Visitor visitor, NutsSession session) {
@@ -61,7 +62,7 @@ public class SimpleClassStream {
 
             int signature = stream.readInt();
             if (signature != 0xcafebabe) {
-                throw new IllegalArgumentException("Invalid Java signature");
+                throw new NutsIllegalArgumentException(session, NutsMessage.plain("invalid Java signature"));
             }
             int minorVersion = stream.readUnsignedShort();
             int majorVersion = stream.readUnsignedShort();
@@ -95,7 +96,7 @@ public class SimpleClassStream {
                 new ClassAttribute();
             }
         } catch (IOException ex) {
-            throw new NutsIOException(session,ex);
+            throw new NutsIOException(session, ex);
         }
 
     }
@@ -105,24 +106,23 @@ public class SimpleClassStream {
 
 
             int count = stream.readUnsignedShort();
+            ensureConstants(count*2);
             for (int i = 1; i < count; i++) {
                 Constant cst = getConstant(i, true);
-                cst.read();
+                cst.read(stream, this);
                 if ((cst.tag == FLAG_DOUBLE) || (cst.tag == FLAG_LONG)) {
                     i++;
                 }
             }
 
         } catch (IOException ex) {
-            throw new NutsIOException(session,ex);
+            throw new NutsIOException(session, ex);
         }
 
     }
 
     protected void readField() {
         try {
-
-
             int accessFlags = stream.readUnsignedShort();
             int nameIndex = stream.readUnsignedShort();
             String name = SimpleClassStream.this.getConstant(nameIndex).asString();
@@ -135,7 +135,7 @@ public class SimpleClassStream {
             }
             visitField(accessFlags, name, descriptor, attributes);
         } catch (IOException ex) {
-            throw new NutsIOException(session,ex);
+            throw new NutsIOException(session, ex);
         }
 
     }
@@ -154,7 +154,7 @@ public class SimpleClassStream {
             }
             visitMethod(accessFlags, name, descriptor, attributes);
         } catch (IOException ex) {
-            throw new NutsIOException(session,ex);
+            throw new NutsIOException(session, ex);
         }
     }
 
@@ -167,11 +167,15 @@ public class SimpleClassStream {
     }
 
     public Constant getConstant(int index, boolean createNew) throws IOException {
-        Constant cst = this.constants.get(index);
+        boolean tooBig = index >= constants.length;
+        Constant cst = tooBig ? null : this.constants[index];
         if (cst == null) {
             if (createNew) {
                 cst = new Constant(index);
-                this.constants.put(index, cst);
+                if (tooBig) {
+                    ensureConstants(index + 1);
+                }
+                this.constants[index] = cst;
             }
         }
         return cst;
@@ -204,20 +208,30 @@ public class SimpleClassStream {
         }
     }
 
-    public static interface Visitor {
+    private void ensureConstants(int size) {
+        int len = constants.length;
+        if (len < size) {
+            int len2 = size + 32;
+            Constant[] n = new Constant[len2];
+            System.arraycopy(constants, 0, n, 0, len);
+            constants = n;
+        }
+    }
 
-        public default void visitVersion(int major, int minor) {
+    public interface Visitor {
+
+        default void visitVersion(int major, int minor) {
         }
 
-        public default void visitClassDeclaration(int accessFlags, String thisClass, String superClass, String[] interfaces) {
+        default void visitClassDeclaration(int accessFlags, String thisClass, String superClass, String[] interfaces) {
 
         }
 
-        public default void visitField(int accessFlags, String name, String descriptor) {
+        default void visitField(int accessFlags, String name, String descriptor) {
 
         }
 
-        public default void visitMethod(int accessFlags, String name, String descriptor) {
+        default void visitMethod(int accessFlags, String name, String descriptor) {
 
         }
     }
@@ -281,12 +295,12 @@ public class SimpleClassStream {
                 }
                 stream.skipBytes(stream.readInt());
             } catch (IOException ex) {
-                throw new NutsIOException(session,ex);
+                throw new NutsIOException(session, ex);
             }
         }
     }
 
-    public class Constant {
+    public static class Constant {
 
         int index;
         int tag;
@@ -303,19 +317,15 @@ public class SimpleClassStream {
             this.index = entryId;
         }
 
-        void read() {
+        void read(DataInputStream stream,SimpleClassStream s) {
             try {
-
-
                 tag = stream.readUnsignedByte();
                 switch (tag) {
                     case FLAG_UTF: {
-
                         int length = stream.readUnsignedShort();
                         byte[] bytes = new byte[length];
                         stream.readFully(bytes);
-                        this.valString = new String(bytes, "UTF-8");
-//                    this.valString = stream.readUTF();//new String(bytes, "UTF-8");
+                        this.valString = new String(bytes, StandardCharsets.UTF_8);
                         break;
                     }
                     case FLAG_INT: {
@@ -336,28 +346,22 @@ public class SimpleClassStream {
                     }
                     case FLAG_CLASS: {
                         int index = stream.readUnsignedShort();
-                        valRef = getConstant(index, true);
+                        valRef = s.getConstant(index, true);
                         break;
                     }
                     case FLAG_STRING: {
                         int index = stream.readUnsignedShort();
-                        this.valRef = getConstant(index, true);
+                        this.valRef = s.getConstant(index, true);
                         break;
                     }
                     case FLAG_FIELD_REF:
                     case FLAG_METHOD_REF:
-                    case FLAG_INTERFACE_METHOD_REF: {
+                    case FLAG_INTERFACE_METHOD_REF:
+                    case FLAG_NAME_AND_TYPE: {
                         int classIndex = stream.readUnsignedShort();
                         int nameAndTypeIndex = stream.readUnsignedShort();
-                        this.valName = getConstant(classIndex, true);
-                        this.valRef = getConstant(nameAndTypeIndex, true);
-                        break;
-                    }
-                    case FLAG_NAME_AND_TYPE: {
-                        int nameIndex = stream.readUnsignedShort();
-                        int descriptorIndex = stream.readUnsignedShort();
-                        this.valName = getConstant(nameIndex, true);
-                        this.valRef = getConstant(descriptorIndex, true);
+                        this.valName = s.getConstant(classIndex, true);
+                        this.valRef = s.getConstant(nameAndTypeIndex, true);
                         break;
                     }
                     case FLAG_METHOD_HANDLE: {
@@ -365,33 +369,29 @@ public class SimpleClassStream {
                         if (this.valKind < 1 || this.valKind > 9) {
                             throw new IllegalArgumentException("Unsupported");
                         }
-                        this.valRef = getConstant(stream.readUnsignedShort(), true);
+                        this.valRef = s.getConstant(stream.readUnsignedShort(), true);
                         break;
                     }
                     case FLAG_METHOD_TYPE: {
-                        this.valRef = getConstant(stream.readUnsignedShort(), true);
+                        this.valRef = s.getConstant(stream.readUnsignedShort(), true);
                         break;
                     }
                     case FLAG_INVOKE_DYNAMIC: {
                         this.valKind = stream.readUnsignedShort();
-                        this.valRef = getConstant(stream.readUnsignedShort(), true);
+                        this.valRef = s.getConstant(stream.readUnsignedShort(), true);
                         break;
                     }
-                    case FLAG_MODULE: {
-                        this.valName = getConstant(stream.readUnsignedShort(), true);
-                        break;
-                    }
+                    case FLAG_MODULE:
                     case FLAG_PACKAGE: {
-                        this.valName = getConstant(stream.readUnsignedShort(), true);
+                        this.valName = s.getConstant(stream.readUnsignedShort(), true);
                         break;
                     }
                     default:
                         throw new IOException("Unknown constant tag: " + tag);
                 }
             } catch (IOException ex) {
-                throw new NutsIOException(session,ex);
+                throw new NutsIOException(s.session, ex);
             }
-
         }
 
         public String asString() {
@@ -485,6 +485,5 @@ public class SimpleClassStream {
             sb.append('}');
             return sb.toString();
         }
-
     }
 }

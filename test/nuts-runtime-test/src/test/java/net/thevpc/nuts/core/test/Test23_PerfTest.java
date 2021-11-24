@@ -25,12 +25,7 @@
  */
 package net.thevpc.nuts.core.test;
 
-import net.thevpc.nuts.Nuts;
-import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.core.test.utils.TestUtils;
-import net.thevpc.nuts.runtime.standalone.xtra.nanodb.NanoDB;
-import net.thevpc.nuts.runtime.standalone.xtra.nanodb.NanoDBTableFile;
-import net.thevpc.nuts.runtime.standalone.util.CoreIOUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -40,7 +35,8 @@ import java.io.File;
  * @author thevpc
  */
 public class Test23_PerfTest {
-    int nbr = 20;
+    int nbr = 10;
+
     /**
      * ROGUEi7-2021-11-24 ) avg: 8155ms 8915ms 9060ms
      * ROGUEi7-2021-11-24 ) avg: 3035ms? 3681ms 3733,3790ms, 4061ms
