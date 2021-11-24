@@ -116,7 +116,7 @@ public interface NutsArgument {
      * @return option prefix part  ('-' and '--')
      * @since 0.5.7
      */
-    String getOptionPrefix();
+    NutsVal getOptionPrefix();
 
     /**
      * return query value separator

@@ -33,21 +33,26 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.io.UncheckedIOException;
 import java.util.NoSuchElementException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * @author thevpc
  */
-public class DefaultNutsArgument /*extends DefaultNutsTokenFilter*/ implements NutsArgument {
+public class DefaultNutsArgument implements NutsArgument {
+    public static final Pattern PATTERN_OPTION_EQ = Pattern.compile("^((?<optp>[-]+|[+]+)(?<flg>//|!|~)?)?(?<optk>[a-zA-Z-9][a-zA-Z-9_-]*)?(?<opts>=(?<optv>.*))?(?<optr>.*)$");
+    public static final Pattern PATTERN_OPTION_COL = Pattern.compile("^((?<optp>[-]+|[+]+)(?<flg>//|!|~)?)?(?<optk>[a-zA-Z-9][a-zA-Z-9_-]*)?(?<opts>:(?<optv>.*))?(?<optr>.*)$");
     /**
      * equal character
      */
     private final char eq;
+    private final boolean option;
     private final boolean enabled;
     private final boolean negated;
     private final String optionPrefix;
     private final String optionName;
-    private final String keyPart;
-    private final String valuePart;
+    private final String key;
+    private final String value;
     private final String expression;
 
     public DefaultNutsArgument(String expression) {
@@ -62,200 +67,86 @@ public class DefaultNutsArgument /*extends DefaultNutsTokenFilter*/ implements N
      * @param eq         equals
      */
     public DefaultNutsArgument(String expression, char eq) {
-        boolean _enabled = true;
-        boolean _negated = false;
-        this.expression=expression;
-        if (expression == null) {
-            optionPrefix=null;
-            optionName=null;
-            keyPart=null;
-            valuePart=null;
-        } else if (expression.length() == 0) {
-            optionPrefix = "";
-            optionName = "";
-            keyPart = "";
-            valuePart=null;
-        } else if (expression.length() == 1) {
-            switch (expression.charAt(0)) {
-                case '-':
-                case '+': {
-                    optionPrefix = expression;
-                    optionName = "";
-                    keyPart = expression;
-                    valuePart=null;
-                    break;
-                }
-                default: {
-                    optionPrefix = "";
-                    optionName = "";
-                    keyPart = expression;
-                    valuePart=null;
-                }
+        this.eq = (eq == '\0' ? '=' : eq);
+        this.expression = expression;
+        Pattern currOptionsPattern;
+        switch (eq) {
+            case '=': {
+                currOptionsPattern = PATTERN_OPTION_EQ;
+                break;
             }
-        } else {
-            StringReader reader = new StringReader(expression);
-            int r = -1;
-            final int EXPECT_OPTION = 1;
-            final int EXPECT_COMMENT = 2;
-            final int EXPECT_NEG = 3;
-            final int EXPECT_NAME = 4;
-            final int EXPECT_VAL = 5;
-            int status = EXPECT_OPTION;
-            StringBuilder b_option_prefix = new StringBuilder();
-            StringBuilder b_option_name = new StringBuilder();
-            StringBuilder b_key = new StringBuilder();
-            StringBuilder b_val = null;
-            try {
-                while ((r = reader.read()) != -1) {
-                    char c = (char) r;
-                    switch (status) {
-                        case EXPECT_OPTION: {
-                            if (c == '-' || c == '+') {
-                                b_option_prefix.append(c);
-                                b_key.append(c);
-                                if (b_option_prefix.length() >= 2) {
-                                    status = EXPECT_COMMENT;
-                                }
-                            } else if (c == '/') {
-                                reader.mark(1);
-                                r = reader.read();
-                                if (r == '/') {
-                                    _enabled = false;
-                                    status = EXPECT_NEG;
-                                } else {
-                                    if (b_option_prefix.length() > 0) {
-                                        b_option_name.append('/');
-                                    }
-                                    b_key.append('/');
-                                    if (r != -1) {
-                                        reader.reset();
-                                    }
-                                    status = EXPECT_NAME;
-                                }
-                            } else if (c == '!') {
-                                _negated = true;
-                                status = EXPECT_NAME;
-                            } else if (isEq(c, eq)) {
-                                eq = c;
-                                status = EXPECT_VAL;
-                                b_val = new StringBuilder();
-                            } else {
-                                if (b_option_prefix.length() > 0) {
-                                    b_option_name.append(c);
-                                }
-                                b_key.append(c);
-                                status = EXPECT_NAME;
-                            }
-                            break;
-                        }
-                        case EXPECT_COMMENT: {
-                            if (c == '/') {
-                                reader.mark(1);
-                                r = reader.read();
-                                if (r == '/') {
-                                    _enabled = false;
-                                    status = EXPECT_NEG;
-                                } else {
-                                    b_option_name.append('/');
-                                    if (r != -1) {
-                                        reader.reset();
-                                    }
-                                    status = EXPECT_NAME;
-                                }
-                            } else if (c == '!') {
-                                _negated = true;
-                                status = EXPECT_NAME;
-                            } else if (isEq(c, eq)) {
-                                eq = c;
-                                status = EXPECT_VAL;
-                                b_val = new StringBuilder();
-                            } else {
-                                if (b_option_prefix.length() > 0) {
-                                    b_option_name.append(c);
-                                }
-                                b_key.append(c);
-                                status = EXPECT_NAME;
-                            }
-                            break;
-                        }
-                        case EXPECT_NEG: {
-                            if (c == '!') {
-                                _negated = true;
-                                status = EXPECT_NAME;
-                            } else if ((isEq(c, eq))) {
-                                eq = c;
-                                status = EXPECT_VAL;
-                                b_val = new StringBuilder();
-                            } else {
-                                if (b_option_prefix.length() > 0) {
-                                    b_option_name.append(c);
-                                }
-                                b_key.append(c);
-                                status = EXPECT_NAME;
-                            }
-                            break;
-                        }
-                        case EXPECT_NAME: {
-                            if ((isEq(c, eq))) {
-                                eq = c;
-                                status = EXPECT_VAL;
-                                b_val = new StringBuilder();
-                            } else {
-                                if (b_option_prefix.length() > 0) {
-                                    b_option_name.append(c);
-                                }
-                                b_key.append(c);
-                                status = EXPECT_NAME;
-                            }
-                            break;
-                        }
-                        case EXPECT_VAL: {
-                            b_val.append(c);
-                            break;
-                        }
-                        default: {
-                            throw new IllegalStateException("unsupported state");
-                        }
+            case ':': {
+                currOptionsPattern = PATTERN_OPTION_COL;
+                break;
+            }
+            default: {
+                currOptionsPattern = Pattern.compile("^((?<optp>[-]+|[+]+)(?<flg>//|!|~)?)?(?<optk>[a-zA-Z-9][a-zA-Z-9_-]*)?(?<opts>[" + eq + "](?<optv>.*))?(?<optr>.*)$");
+            }
+        }
+        Matcher matcher = currOptionsPattern.matcher(expression == null ? "" : expression);
+        if (matcher.find()) {
+            String optp = matcher.group("optp");
+            String flg = matcher.group("flg");
+            String optk = matcher.group("optk");
+            String opts = matcher.group("opts");
+            String optv = matcher.group("optv");
+            String optr = matcher.group("optr");
+            if (optp != null && optp.length() > 0) {
+                option = true;
+                switch (flg == null ? "" : flg) {
+                    case "//": {
+                        enabled = false;
+                        negated = false;
+                        break;
+                    }
+                    case "!":
+                    case "~": {
+                        enabled = true;
+                        negated = true;
+                        break;
+                    }
+                    default: {
+                        enabled = true;
+                        negated = false;
                     }
                 }
-            } catch (IOException ex) {
-                throw new UncheckedIOException(ex);
-            }
-            optionPrefix = b_option_prefix.toString();
-            optionName = b_option_name.toString();
-            keyPart = b_key.toString();
-            valuePart = b_val == null ? null : b_val.toString();
-        }
-        this.enabled=_enabled;
-        this.negated=_negated;
-        this.eq = (eq == '\0' ? '=' : eq);
-    }
-
-    private static boolean isEq(char found, char expected) {
-        if (expected == '\0') {
-            if (found == '=' || found == ':') {
-                return true;
+                optionPrefix = optp;
+                optionName = (optk==null?"":optk);
+                if (opts!=null && opts.length() > 0) {
+                    key = optp + optionName;
+                    value = optv + optr;
+                } else {
+                    key = optp + optionName + optr;
+                    value = null;
+                }
+            } else {
+                option = false;
+                enabled = true;
+                negated = false;
+                optionPrefix = null;
+                optionName = null;
+                if (opts!=null && opts.length() > 0) {
+                    key = (optk==null?"":optk);
+                    value = optv;
+                } else {
+                    key = (optk==null?"":optk) + optr;
+                    value = null;
+                }
             }
         } else {
-            if (found == expected) {
-                return true;
-            }
+            enabled = true;
+            negated = false;
+            option = false;
+            optionName = null;
+            key = null;
+            value = null;
+            optionPrefix = null;
         }
-        return false;
-    }
-
-    public boolean isUnsupported() {
-        return expression != null
-                && (expression.startsWith("-!!")
-                || expression.startsWith("--!!")
-                || expression.startsWith("---")
-                || expression.startsWith("++")
-                || expression.startsWith("!!"));
     }
 
     @Override
     public boolean isOption() {
-        return optionPrefix != null && optionPrefix.length() > 0;
+        return option;
     }
 
     @Override
@@ -288,12 +179,12 @@ public class DefaultNutsArgument /*extends DefaultNutsTokenFilter*/ implements N
 
     @Override
     public boolean isKeyValue() {
-        return valuePart != null;
+        return value != null;
     }
 
     @Override
     public NutsVal getValue() {
-        return new DefaultNutsVal(valuePart) {
+        return new DefaultNutsVal(value) {
             @Override
             public boolean getBoolean() {
                 return getBoolean(true,false);
@@ -311,7 +202,7 @@ public class DefaultNutsArgument /*extends DefaultNutsTokenFilter*/ implements N
 
     @Override
     public NutsVal getKey() {
-        return new DefaultNutsVal(keyPart);
+        return new DefaultNutsVal(key==null?expression:key);
     }
 
     @Override
@@ -319,8 +210,8 @@ public class DefaultNutsArgument /*extends DefaultNutsTokenFilter*/ implements N
         return new DefaultNutsVal(expression);
     }
 
-    public String getOptionPrefix() {
-        return optionPrefix;
+    public NutsVal getOptionPrefix() {
+        return new DefaultNutsVal(optionPrefix);
     }
 
     @Override

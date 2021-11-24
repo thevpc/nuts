@@ -31,6 +31,7 @@ import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
@@ -233,18 +234,29 @@ public final class NutsBootWorkspace {
     }
 
     /**
-     * repositories used to locale nuts-runtime artifact
+     * repositories used to locale nuts-runtime artifact or its dependencies
      *
+     * @param dependencies when true search for runtime dependencies, when false, search for runtime
      * @return repositories
      */
-    public Set<String> resolveBootRuntimeRepositories() {
-        if (parsedBootRuntimeRepositories != null) {
-            return parsedBootRuntimeRepositories;
+    public Set<String> resolveBootRuntimeRepositories(boolean dependencies) {
+        if (dependencies) {
+            if (parsedBootRuntimeDependenciesRepositories != null) {
+                return parsedBootRuntimeDependenciesRepositories;
+            }
+            LOG.log(Level.FINE, NutsLogVerb.START, NutsMessage.jstyle("resolve boot repositories to load nuts-runtime dependencies from options : {0} and config: {1}",
+                    (options.getRepositories() == null ? "[]" : Arrays.toString(options.getRepositories()))
+                    , NutsBlankable.isBlank(workspaceInformation.getBootRepositories()) ? "[]" : workspaceInformation.getBootRepositories()
+            ));
+        } else {
+            if (parsedBootRuntimeRepositories != null) {
+                return parsedBootRuntimeRepositories;
+            }
+            LOG.log(Level.FINE, NutsLogVerb.START, NutsMessage.jstyle("resolve boot repositories to load nuts-runtime from options : {0} and config: {1}",
+                    (options.getRepositories() == null ? "[]" : Arrays.toString(options.getRepositories()))
+                    , NutsBlankable.isBlank(workspaceInformation.getBootRepositories()) ? "[]" : workspaceInformation.getBootRepositories()
+            ));
         }
-        LOG.log(Level.FINE, NutsLogVerb.START, NutsMessage.jstyle("resolve boot repositories to load nuts-runtime from options : {0} and config: {1}",
-                (options.getRepositories() == null ? "[]" : Arrays.toString(options.getRepositories()))
-                , NutsBlankable.isBlank(workspaceInformation.getBootRepositories()) ? "[]" : workspaceInformation.getBootRepositories()
-        ));
         PrivateNutsRepositorySelectorList bootRepositories = PrivateNutsRepositorySelector.parse(options.getRepositories());
         PrivateNutsRepositorySelector[] old = PrivateNutsRepositorySelector.parse(new String[]{workspaceInformation.getBootRepositories()}).toArray();
         PrivateNutsRepositorySelection[] result = null;
@@ -258,42 +270,25 @@ public final class NutsBootWorkspace {
             result = bootRepositories.resolveSelectors(Arrays.stream(old).map(x -> new PrivateNutsRepositorySelection(x.getName(), x.getUrl()))
                     .toArray(PrivateNutsRepositorySelection[]::new));
         }
-        return parsedBootRuntimeRepositories
-                = Arrays.stream(result)
-                .map(x -> x.getUrl())
-                .collect(Collectors.toSet());
-    }
+        if (!options.isReset() && !options.isRecover()) {
+            String loc = workspaceInformation.getStoreLocation(NutsStoreLocation.LIB);
+            if (loc != null) {
+                if (Files.isDirectory(Paths.get(loc))) {
+                    PrivateNutsRepositorySelection[] result2 = new PrivateNutsRepositorySelection[result.length + 1];
+                    System.arraycopy(result, 0, result2, 1, result.length);
+                    result2[0] = new PrivateNutsRepositorySelection("last-installation", loc);
+                    result = result2;
+                }
+            }
+        }
 
-    /**
-     * repositories used to locale nuts-runtime dependencies nad extensions artifacts
-     *
-     * @return repositories
-     */
-    public Set<String> resolveBootRuntimeDependenciesRepositories() {
-        if (parsedBootRuntimeDependenciesRepositories != null) {
-            return parsedBootRuntimeDependenciesRepositories;
-        }
-        LOG.log(Level.FINE, NutsLogVerb.START, NutsMessage.jstyle("resolve boot repositories to load nuts-runtime dependencies from options : {0} and config: {1}",
-                (options.getRepositories() == null ? "[]" : Arrays.toString(options.getRepositories()))
-                , NutsBlankable.isBlank(workspaceInformation.getBootRepositories()) ? "[]" : workspaceInformation.getBootRepositories()
-        ));
-        PrivateNutsRepositorySelectorList bootRepositories = PrivateNutsRepositorySelector.parse(options.getRepositories());
-        PrivateNutsRepositorySelector[] old = PrivateNutsRepositorySelector.parse(new String[]{workspaceInformation.getBootRepositories()}).toArray();
-        PrivateNutsRepositorySelection[] result = null;
-        if (old.length == 0) {
-            //no previous config, use defaults!
-            result = bootRepositories.resolveSelectors(new PrivateNutsRepositorySelection[]{
-                    new PrivateNutsRepositorySelection("maven-local", null),
-                    new PrivateNutsRepositorySelection("maven-central", null),
-            });
+        Set<String> rr = Arrays.stream(result).map(PrivateNutsRepositorySelection::getUrl).collect(Collectors.toCollection(LinkedHashSet::new));
+        if (dependencies) {
+            parsedBootRuntimeDependenciesRepositories = rr;
         } else {
-            result = bootRepositories.resolveSelectors(Arrays.stream(old).map(x -> new PrivateNutsRepositorySelection(x.getName(), x.getUrl()))
-                    .toArray(PrivateNutsRepositorySelection[]::new));
+            parsedBootRuntimeRepositories = rr;
         }
-        return parsedBootRuntimeDependenciesRepositories
-                = Arrays.stream(result)
-                .map(x -> x.getUrl())
-                .collect(Collectors.toSet());
+        return rr;
     }
 
     public String[] createProcessCommandLine() {
@@ -303,7 +298,7 @@ public final class NutsBootWorkspace {
         String defaultWorkspaceLibFolder = workspaceInformation.getStoreLocation(NutsStoreLocation.LIB);
         List<String> repos = new ArrayList<>();
         repos.add(defaultWorkspaceLibFolder);
-        Collection<String> bootRepositories = resolveBootRuntimeDependenciesRepositories();
+        Collection<String> bootRepositories = resolveBootRuntimeRepositories(true);
         repos.addAll(bootRepositories);
         PrivateNutsErrorInfoList errorList = new PrivateNutsErrorInfoList();
         File file = PrivateNutsUtilMaven.resolveOrDownloadJar(
@@ -548,7 +543,7 @@ public final class NutsBootWorkspace {
                 if (NutsConstants.Versions.LATEST.equalsIgnoreCase(workspaceInformation.getApiVersion())
                         || NutsConstants.Versions.RELEASE.equalsIgnoreCase(workspaceInformation.getApiVersion())
                 ) {
-                    NutsBootId s = PrivateNutsUtilMaven.resolveLatestMavenId(NutsBootId.parse(NutsConstants.Ids.NUTS_API), null, LOG, resolveBootRuntimeDependenciesRepositories());
+                    NutsBootId s = PrivateNutsUtilMaven.resolveLatestMavenId(NutsBootId.parse(NutsConstants.Ids.NUTS_API), null, LOG, resolveBootRuntimeRepositories(true));
                     if (s == null) {
                         throw new NutsBootException(NutsMessage.plain("unable to load latest nuts version"));
                     }
@@ -599,7 +594,7 @@ public final class NutsBootWorkspace {
                 //resolve extension id
                 if (workspaceInformation.getRuntimeId() == null) {
                     String apiVersion = workspaceInformation.getApiId().substring(workspaceInformation.getApiId().indexOf('#') + 1);
-                    NutsBootId runtimeId = PrivateNutsUtilMaven.resolveLatestMavenId(NutsBootId.parse(NutsConstants.Ids.NUTS_RUNTIME), (rtVersion) -> rtVersion.getFrom().startsWith(apiVersion + "."), LOG, resolveBootRuntimeRepositories());
+                    NutsBootId runtimeId = PrivateNutsUtilMaven.resolveLatestMavenId(NutsBootId.parse(NutsConstants.Ids.NUTS_RUNTIME), (rtVersion) -> rtVersion.getFrom().startsWith(apiVersion + "."), LOG, resolveBootRuntimeRepositories(false));
                     if (runtimeId != null) {
                         //LOG.log(Level.FINEST, "[success] Resolved latest runtime-id : {0}", new Object[]{runtimeId});
                     } else {
@@ -648,7 +643,7 @@ public final class NutsBootWorkspace {
 
                         if (!cacheLoaded || loadedDeps == null) {
                             PrivateNutsUtils.Deps depsAndRepos = PrivateNutsUtilMaven.loadDependencies(workspaceInformation.getRuntimeId(),
-                                    LOG, resolveBootRuntimeRepositories());
+                                    LOG, resolveBootRuntimeRepositories(false));
                             if (depsAndRepos != null) {
                                 loadedDeps = depsAndRepos.deps;
                                 extraBootRepositories = String.join(";", depsAndRepos.repos);
@@ -671,7 +666,7 @@ public final class NutsBootWorkspace {
                             Arrays.stream((extraBootRepositories == null ? "" : extraBootRepositories).split(";"))
                                     .map(String::trim).filter(x -> x.length() > 0)
                                     .collect(Collectors.toCollection(LinkedHashSet::new));
-                    bootRepositories.addAll(resolveBootRuntimeRepositories());
+                    bootRepositories.addAll(resolveBootRuntimeRepositories(false));
                     if (LOG.isLoggable(Level.CONFIG)) {
                         if (bootRepositories.size() == 0) {
                             LOG.log(Level.CONFIG, NutsLogVerb.FAIL, NutsMessage.jstyle("workspace bootRepositories could not be resolved"));
@@ -719,7 +714,7 @@ public final class NutsBootWorkspace {
                                     }
                                 }
                                 if (loadedDeps == null) {
-                                    PrivateNutsUtils.Deps depsAndRepos = PrivateNutsUtilMaven.loadDependencies(eid, LOG, resolveBootRuntimeDependenciesRepositories());
+                                    PrivateNutsUtils.Deps depsAndRepos = PrivateNutsUtilMaven.loadDependencies(eid, LOG, resolveBootRuntimeRepositories(true));
                                     if (depsAndRepos != null) {
                                         loadedDeps = depsAndRepos.deps;
                                     }

@@ -32,6 +32,8 @@ import net.thevpc.nuts.NutsUtilStrings;
 import net.thevpc.nuts.NutsVal;
 
 import java.util.NoSuchElementException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * This is a minimal implementation of NutsArgument and hence should not be
@@ -42,12 +44,21 @@ import java.util.NoSuchElementException;
  * @app.category Format
  * @since 0.5.5
  */
-final class PrivateNutsArgumentImpl /*extends PrivateNutsTokenFilter*/ implements NutsArgument {
+final class PrivateNutsArgumentImpl implements NutsArgument {
 
+    public static final Pattern PATTERN_OPTION_EQ = Pattern.compile("^((?<optp>[-]+|[+]+)(?<flg>//|!|~)?)?(?<optk>[a-zA-Z-9][a-zA-Z-9_-]*)?(?<opts>=(?<optv>.*))?(?<optr>.*)$");
+    public static final Pattern PATTERN_OPTION_COL = Pattern.compile("^((?<optp>[-]+|[+]+)(?<flg>//|!|~)?)?(?<optk>[a-zA-Z-9][a-zA-Z-9_-]*)?(?<opts>:(?<optv>.*))?(?<optr>.*)$");
     /**
      * equal character
      */
     private final char eq;
+    private final String key;
+    private final String value;
+    private final String optionPrefix;
+    private final String optionName;
+    private final boolean negated;
+    private final boolean enabled;
+    private final boolean option;
     protected String expression;
 
     /**
@@ -57,23 +68,81 @@ final class PrivateNutsArgumentImpl /*extends PrivateNutsTokenFilter*/ implement
      * @param eq         equals
      */
     public PrivateNutsArgumentImpl(String expression, char eq) {
+        this.eq = (eq == '\0' ? '=' : eq);
         this.expression = expression;
-        this.eq = eq;
-    }
-
-    /**
-     * true if the expression is a an option (starts with '-' or '+') but
-     * cannot not be evaluated.
-     *
-     * @return true if option is not evaluable argument.
-     */
-    public boolean isUnsupported() {
-        return expression != null
-                && (expression.startsWith("-!!")
-                || expression.startsWith("--!!")
-                || expression.startsWith("---")
-                || expression.startsWith("++")
-                || expression.startsWith("!!"));
+        Pattern currOptionsPattern;
+        switch (eq) {
+            case '=': {
+                currOptionsPattern = PATTERN_OPTION_EQ;
+                break;
+            }
+            case ':': {
+                currOptionsPattern = PATTERN_OPTION_COL;
+                break;
+            }
+            default: {
+                currOptionsPattern = Pattern.compile("^((?<optp>[-]+|[+]+)(?<flg>//|!|~)?)?(?<optk>[a-zA-Z-9][a-zA-Z-9_-]*)?(?<opts>[" + eq + "](?<optv>.*))?(?<optr>.*)$");
+            }
+        }
+        Matcher matcher = currOptionsPattern.matcher(expression == null ? "" : expression);
+        if (matcher.find()) {
+            String optp = matcher.group("optp");
+            String flg = matcher.group("flg");
+            String optk = matcher.group("optk");
+            String opts = matcher.group("opts");
+            String optv = matcher.group("optv");
+            String optr = matcher.group("optr");
+            if (optp != null && optp.length() > 0) {
+                option = true;
+                switch (flg == null ? "" : flg) {
+                    case "//": {
+                        enabled = false;
+                        negated = false;
+                        break;
+                    }
+                    case "!":
+                    case "~": {
+                        enabled = true;
+                        negated = true;
+                        break;
+                    }
+                    default: {
+                        enabled = true;
+                        negated = false;
+                    }
+                }
+                optionPrefix = optp;
+                optionName = (optk == null ? "" : optk);
+                if (opts != null && opts.length() > 0) {
+                    key = optp + optionName;
+                    value = optv + optr;
+                } else {
+                    key = optp + optionName + optr;
+                    value = null;
+                }
+            } else {
+                option = false;
+                enabled = true;
+                negated = false;
+                optionPrefix = null;
+                optionName = null;
+                if (opts != null && opts.length() > 0) {
+                    key = (optk == null ? "" : optk);
+                    value = optv;
+                } else {
+                    key = (optk == null ? "" : optk) + optr;
+                    value = null;
+                }
+            }
+        } else {
+            enabled = true;
+            negated = false;
+            option = false;
+            optionName = null;
+            key = null;
+            value = null;
+            optionPrefix = null;
+        }
     }
 
     /**
@@ -83,9 +152,7 @@ final class PrivateNutsArgumentImpl /*extends PrivateNutsTokenFilter*/ implement
      */
     @Override
     public boolean isOption() {
-        return expression != null
-                && expression.length() > 0
-                && (expression.charAt(0) == '-' || expression.charAt(0) == '+');
+        return option;
     }
 
     @Override
@@ -100,67 +167,12 @@ final class PrivateNutsArgumentImpl /*extends PrivateNutsTokenFilter*/ implement
 
     @Override
     public boolean isNegated() {
-        if (expression == null) {
-            return false;
-        }
-        int i = 0;
-        while (i < expression.length()) {
-            switch (expression.charAt(i)) {
-                case '-': {
-                    //ignore leading dashes
-                    break;
-                }
-                case '+': {
-                    //ignore leading dashes
-                    break;
-                }
-                case '!': {
-                    return true;
-                }
-                default: {
-                    return false;
-                }
-            }
-            i++;
-        }
-        return false;
+        return negated;
     }
 
     @Override
     public boolean isEnabled() {
-        if (expression == null) {
-            return true;
-        }
-        int i = 0;
-        boolean opt = false;
-        boolean slash = false;
-        while (i < expression.length()) {
-            switch (expression.charAt(i)) {
-                case '-': {
-                    opt = true;
-                    break;
-                }
-                case '+': {
-                    opt = true;
-                    break;
-                }
-                case '/': {
-                    if (!opt) {
-                        return false;
-                    }
-                    if (slash) {
-                        return false;
-                    }
-                    slash = true;
-                    break;
-                }
-                default: {
-                    return true;
-                }
-            }
-            i++;
-        }
-        return true;
+        return enabled;
     }
 
     @Override
@@ -177,29 +189,8 @@ final class PrivateNutsArgumentImpl /*extends PrivateNutsTokenFilter*/ implement
     }
 
     @Override
-    public String getOptionPrefix() {
-        String k = getArgumentKey();
-        if (k != null) {
-            if (k.startsWith("---")) {
-                return "---";
-            }
-            if (k.startsWith("--")) {
-                return "--";
-            }
-            if (k.startsWith("-")) {
-                return "-";
-            }
-            if (k.startsWith("+++")) {
-                return "+++";
-            }
-            if (k.startsWith("++")) {
-                return "++";
-            }
-            if (k.startsWith("+")) {
-                return "+";
-            }
-        }
-        return null;
+    public NutsVal getOptionPrefix() {
+        return new NutsBootStrValImpl(optionPrefix);
     }
 
     @Override
@@ -209,26 +200,12 @@ final class PrivateNutsArgumentImpl /*extends PrivateNutsTokenFilter*/ implement
 
     @Override
     public NutsVal getOptionName() {
-        String k = getArgumentKey();
-        if (k != null) {
-            String p = getOptionPrefix();
-            if (p != null) {
-                return new NutsBootStrValImpl(k.substring(p.length()));
-            }
-        }
-        return new NutsBootStrValImpl(null);
+        return new NutsBootStrValImpl(optionName);
     }
 
     @Override
     public NutsVal getValue() {
-        String vv = null;
-        if (expression != null) {
-            int x = expression.indexOf(eq);
-            if (x >= 0) {
-                vv = expression.substring(x + 1);
-            }
-        }
-        return new NutsBootStrValImpl(vv) {
+        return new NutsBootStrValImpl(value) {
 
             @Override
             public boolean getBoolean() {
@@ -248,48 +225,12 @@ final class PrivateNutsArgumentImpl /*extends PrivateNutsTokenFilter*/ implement
 
     @Override
     public NutsVal getKey() {
-        return new NutsBootStrValImpl(getArgumentKey());
+        return new NutsBootStrValImpl((key != null) ? key : expression);
     }
 
     @Override
     public NutsVal getAll() {
         return new NutsBootStrValImpl(expression);
-    }
-
-    public String getArgumentKey() {
-        if (expression == null) {
-            return null;
-        }
-        int x = expression.indexOf(eq);
-        String p = expression;
-        if (x >= 0) {
-            p = expression.substring(0, x);
-        }
-        StringBuilder sb = new StringBuilder();
-        int i = 0;
-        while (i < p.length()) {
-            switch (p.charAt(i)) {
-                case '-': {
-                    sb.append(p.charAt(i));
-                    break;
-                }
-                case '!': {
-                    sb.append(p.substring(i + 1));
-                    return sb.toString();
-                }
-                case '/': {
-                    if (sb.length() > 0 && i + 1 < p.length() && p.charAt(i + 1) == '/') {
-                        sb.append(p.substring(i + 2));
-                        return sb.toString();
-                    }
-                }
-                default: {
-                    return p;
-                }
-            }
-            i++;
-        }
-        return p;
     }
 
     public boolean isNull() {
