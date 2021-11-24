@@ -506,8 +506,8 @@ public class CoreIOUtils {
         return isURL(s);
     }
 
-    public static String syspath(String s) {
-        return s.replace('/', File.separatorChar);
+    public static String getNativePath(String path) {
+        return path.replace('/', File.separatorChar);
     }
 
     public static String resolveRepositoryPath(NutsAddRepositoryOptions options, Path rootFolder, NutsSession session) {
@@ -995,9 +995,6 @@ public class CoreIOUtils {
         }
     }
 
-    public static String getNativePath(String path) {
-        return path.replace('/', File.separatorChar);
-    }
 
     public static String getFileExtension(String s) {
         int i = s.lastIndexOf('.');

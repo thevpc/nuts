@@ -24,14 +24,14 @@
 package net.thevpc.nuts.runtime.standalone.repository.impl.maven.util;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.spi.NutsRepositoryURL;
 import net.thevpc.nuts.runtime.bundles.common.MapToFunction;
+import net.thevpc.nuts.runtime.standalone.repository.NutsRepositorySelectorHelper;
 import net.thevpc.nuts.runtime.standalone.util.iter.IteratorBuilder;
 import net.thevpc.nuts.runtime.bundles.mvn.*;
-import net.thevpc.nuts.NutsDescribables;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.StringTokenizerUtils;
 import net.thevpc.nuts.runtime.standalone.util.filters.CoreFilterUtils;
 import net.thevpc.nuts.runtime.standalone.version.DefaultNutsVersion;
-import net.thevpc.nuts.runtime.standalone.repository.NutsRepositorySelector;
 import net.thevpc.nuts.runtime.standalone.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.util.CoreNutsUtils;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
@@ -529,12 +529,12 @@ public class MavenUtils {
         return s;
     }
 
-    public DepsAndRepos loadDependenciesAndRepositoriesFromPomPath(NutsId rid, NutsRepositorySelector.Selection[] bootRepositories, NutsSession session) {
+    public DepsAndRepos loadDependenciesAndRepositoriesFromPomPath(NutsId rid, NutsRepositoryURL[] bootRepositories, NutsSession session) {
         String urlPath = CoreNutsUtils.idToPath(rid) + "/" + rid.getArtifactId() + "-" + rid.getVersion() + ".pom";
         return loadDependenciesAndRepositoriesFromPomPath(urlPath, bootRepositories, session);
     }
 
-    public DepsAndRepos loadDependenciesAndRepositoriesFromPomPath(String urlPath, NutsRepositorySelector.Selection[] bootRepositories, NutsSession session) {
+    public DepsAndRepos loadDependenciesAndRepositoriesFromPomPath(String urlPath, NutsRepositoryURL[] bootRepositories, NutsSession session) {
         NutsWorkspaceUtils.checkSession(this.session.getWorkspace(), session);
         DepsAndRepos depsAndRepos = null;
 //        if (!NO_M2) {
@@ -544,8 +544,8 @@ public class MavenUtils {
         }
 //        }
         if (depsAndRepos == null || depsAndRepos.deps.isEmpty()) {
-            for (NutsRepositorySelector.Selection baseUrl : bootRepositories) {
-                NutsAddRepositoryOptions opt = NutsRepositorySelector.createRepositoryOptions(baseUrl, false, session);
+            for (NutsRepositoryURL baseUrl : bootRepositories) {
+                NutsAddRepositoryOptions opt = NutsRepositorySelectorHelper.createRepositoryOptions(baseUrl, false, session);
                 String location = opt.getConfig() == null ? opt.getLocation() : opt.getConfig().getLocation();
                 depsAndRepos = loadDependenciesAndRepositoriesFromPomUrl(location + "/" + urlPath, session);
                 if (!depsAndRepos.deps.isEmpty()) {

@@ -24,13 +24,12 @@
 package net.thevpc.nuts.runtime.standalone.workspace;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.boot.NutsApiUtils;
-import net.thevpc.nuts.boot.NutsBootDescriptor;
-import net.thevpc.nuts.boot.NutsBootId;
-import net.thevpc.nuts.boot.NutsBootVersion;
+import net.thevpc.nuts.boot.*;
 import net.thevpc.nuts.runtime.bundles.common.MapToFunction;
 import net.thevpc.nuts.runtime.standalone.boot.NutsBootConfig;
 import net.thevpc.nuts.runtime.standalone.extensions.NutsClassLoaderUtils;
+import net.thevpc.nuts.runtime.standalone.repository.DefaultNutsRepositoryDB;
+import net.thevpc.nuts.runtime.standalone.repository.NutsRepositorySelectorHelper;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.DefaultNutsExecutionContextBuilder;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.NutsExecutionContextBuilder;
 import net.thevpc.nuts.runtime.standalone.workspace.config.NutsWorkspaceConfigManagerExt;
@@ -50,7 +49,6 @@ import net.thevpc.nuts.runtime.standalone.version.DefaultNutsVersionParser;
 import net.thevpc.nuts.runtime.standalone.repository.config.DefaultNutsRepositoryManager;
 import net.thevpc.nuts.runtime.standalone.repository.config.DefaultNutsRepositoryModel;
 import net.thevpc.nuts.runtime.standalone.repository.impl.main.NutsInstalledRepository;
-import net.thevpc.nuts.runtime.standalone.repository.NutsRepositorySelector;
 import net.thevpc.nuts.runtime.standalone.boot.DefaultNutsBootManager;
 import net.thevpc.nuts.runtime.standalone.boot.DefaultNutsBootModel;
 import net.thevpc.nuts.runtime.standalone.workspace.config.*;
@@ -581,9 +579,9 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                     justInstalledArchetype = initializeWorkspace(uoptions.getArchetype(), defaultSession());
                 }
                 List<String> transientRepositoriesSet = uoptions.getRepositories() == null ? new ArrayList<>() : new ArrayList<>(Arrays.asList(uoptions.getRepositories()));
-                NutsRepositorySelector.SelectorList expected = NutsRepositorySelector.parse(transientRepositoriesSet.toArray(new String[0]));
-                for (NutsRepositorySelector.Selection loc : expected.resolveSelectors(null)) {
-                    NutsAddRepositoryOptions d = NutsRepositorySelector.createRepositoryOptions(loc, false, defaultSession());
+                NutsRepositorySelectorList expected = NutsRepositorySelectorList.ofAll(transientRepositoriesSet.toArray(new String[0]),DefaultNutsRepositoryDB.INSTANCE,defaultSession());
+                for (NutsRepositoryURL loc : expected.resolveSelectors(null, DefaultNutsRepositoryDB.INSTANCE)) {
+                    NutsAddRepositoryOptions d = NutsRepositorySelectorHelper.createRepositoryOptions(loc, false, defaultSession());
                     String n = d.getName();
                     String ruuid = (NutsBlankable.isBlank(n) ? "temporary" : n) + "_" + UUID.randomUUID().toString().replace("-", "");
                     d.setName(ruuid);
@@ -1567,9 +1565,9 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
             pr.put("project.name", def.getId().getShortId().toString());
             pr.put("project.version", def.getId().getVersion().toString());
             pr.put("repositories", "~/.m2/repository"
-                    + ";" + NutsRepositorySelector.createRepositoryOptions(NutsRepositorySelector.parseSelection("vpc-public-maven"), true, session).getConfig().getLocation()
-                    + ";" + NutsRepositorySelector.createRepositoryOptions(NutsRepositorySelector.parseSelection("maven-central"), true, session).getConfig().getLocation()
-                    + ";" + NutsRepositorySelector.createRepositoryOptions(NutsRepositorySelector.parseSelection("vpc-public-nuts"), true, session).getConfig().getLocation()
+                    + ";" + NutsRepositorySelectorHelper.createRepositoryOptions(NutsRepositoryURL.of("vpc-public-maven",DefaultNutsRepositoryDB.INSTANCE,session), true, session).getConfig().getLocation()
+                    + ";" + NutsRepositorySelectorHelper.createRepositoryOptions(NutsRepositoryURL.of("maven-central",DefaultNutsRepositoryDB.INSTANCE,session), true, session).getConfig().getLocation()
+                    + ";" + NutsRepositorySelectorHelper.createRepositoryOptions(NutsRepositoryURL.of("vpc-public-nuts",DefaultNutsRepositoryDB.INSTANCE,session), true, session).getConfig().getLocation()
             );
 //            pr.put("bootRuntimeId", runtimeUpdate.getAvailable().getId().getLongName());
             pr.put("project.dependencies.compile",

@@ -24,32 +24,32 @@
  * <br>
  * ====================================================================
  */
-package net.thevpc.nuts.boot;
+package net.thevpc.nuts.spi;
 
 import net.thevpc.nuts.NutsBlankable;
 import net.thevpc.nuts.NutsEnum;
 import net.thevpc.nuts.NutsParseEnumException;
 import net.thevpc.nuts.NutsSession;
 
-public enum PrivateNutsRepositorySelectorOp implements NutsEnum {
+public enum NutsSelectorOp implements NutsEnum {
     INCLUDE,
     EXCLUDE,
     EXACT;
     private final String id;
 
-    PrivateNutsRepositorySelectorOp() {
+    NutsSelectorOp() {
         this.id = name().toLowerCase().replace('_', '-');
     }
 
-    public static PrivateNutsRepositorySelectorOp parseLenient(String value) {
+    public static NutsSelectorOp parseLenient(String value) {
         return parseLenient(value, null);
     }
 
-    public static PrivateNutsRepositorySelectorOp parseLenient(String value, PrivateNutsRepositorySelectorOp emptyOrErrorValue) {
+    public static NutsSelectorOp parseLenient(String value, NutsSelectorOp emptyOrErrorValue) {
         return parseLenient(value, emptyOrErrorValue, emptyOrErrorValue);
     }
 
-    public static PrivateNutsRepositorySelectorOp parseLenient(String value, PrivateNutsRepositorySelectorOp emptyValue, PrivateNutsRepositorySelectorOp errorValue) {
+    public static NutsSelectorOp parseLenient(String value, NutsSelectorOp emptyValue, NutsSelectorOp errorValue) {
         if (value == null) {
             value = "";
         } else {
@@ -59,21 +59,21 @@ public enum PrivateNutsRepositorySelectorOp implements NutsEnum {
             return emptyValue;
         }
         try {
-            return PrivateNutsRepositorySelectorOp.valueOf(value.toUpperCase());
+            return NutsSelectorOp.valueOf(value.toUpperCase());
         } catch (Exception notFound) {
             return errorValue;
         }
     }
 
-    public static PrivateNutsRepositorySelectorOp parse(String value, NutsSession session) {
+    public static NutsSelectorOp parse(String value, NutsSession session) {
         return parse(value, null, session);
     }
 
-    public static PrivateNutsRepositorySelectorOp parse(String value, PrivateNutsRepositorySelectorOp emptyValue, NutsSession session) {
-        PrivateNutsRepositorySelectorOp v = parseLenient(value, emptyValue, null);
+    public static NutsSelectorOp parse(String value, NutsSelectorOp emptyValue, NutsSession session) {
+        NutsSelectorOp v = parseLenient(value, emptyValue, null);
         if (v == null) {
             if (!NutsBlankable.isBlank(value)) {
-                throw new NutsParseEnumException(session, value, PrivateNutsRepositorySelectorOp.class);
+                throw new NutsParseEnumException(session, value, NutsSelectorOp.class);
             }
         }
         return v;

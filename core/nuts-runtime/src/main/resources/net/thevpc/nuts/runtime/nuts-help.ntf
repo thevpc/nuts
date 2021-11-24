@@ -461,15 +461,16 @@ Boot Runtime Version: ###${nuts.workspace-runtime.version}###
  ```sh --repos        <repository-path>```
       register one or multiple (comma ',' separated) temporary repositories at the given path
       repositories follow the following pattern
-      [+-=]?(<name>=)?(<repo-type>[+])?<path>
+      [+-=]?(<name>=)?(<repo-type>[+]@)?<path>
       some examples are:
       ```sh --repos=+jcenter ```
       ```sh --repos=-https://jcenter.bintray.com ```
       ```sh --repos=jcenter=https://jcenter.bintray.com ```
-      ```sh --repos=jcenter=maven+https://jcenter.bintray.com ```
+      ```sh --repos=jcenter=maven@https://jcenter.bintray.com ```
+      ```sh --repos==dev=maven@htmlfs:http://thevpc.net/maven ```
 
-      the prefix operator (+,-,=) when specified whether the repository is 
-        to include (+), exclude (-) or replace (=) ie all existing repositories will be 
+      the prefix operator (+,-,=) when specified defines whether the repository is
+        to include (+), to exclude (-) or to replace (=) ie all existing repositories will be
         discarded and replaced with the given list of repositories.
       This list will be used when creating a new workspace. In that conditions, the list may affects the 'archetype' considered.
       For example, the default repositories in "default" archetype are 'local,maven-local,maven-central,system'.
@@ -507,16 +508,17 @@ Boot Runtime Version: ###${nuts.workspace-runtime.version}###
                     ```kw thevpc```         : maven repository at ```path http://thevpc.net/maven```
       The repository types supported are:
                     ```kw maven```          standard maven repository
-                    ```kw maven+dirlist```  traversable maven http repositories containing metadata files ```path .files``` and ```path .folders```
-                                            that list the folder content
-                    ```kw maven+dirtext```  traversable maven http repositories that based on directory html listings of standard servers (tomcat,httpd)
-                    ```kw maven+github```   traversable maven http repositories using github REST API.
-                    ```kw nuts```           traversable nuts repository using standard nuts REST API
-                    ```kw nuts+dirlist```   traversable nuts http repositories containing metadata files ```path .files``` and ```path .folders```
-                                            that list the folder content
-                    ```kw nuts+dirtext```   traversable nuts http repositories that based on directory html listings of standard servers (tomcat,httpd)
-                    ```kw nuts+github```    traversable nuts http repositories using github REST API.
-
+                    ```kw nuts```           standard nuts repository
+      The supported protocols are:
+                    ```kw http```  ```kw https``` for http(s) server access, most likely such repositories are not navigable. i.e, you
+                                            can download an artificat if and only you know its full coordinates
+                    ```kw htmlfs```         for http(s) server access that is navigable by 'scrapping' its html content.
+                                            At boot time, only standard 'Tomcat Http Server' standard directory servlet is supported.
+                                            later on, all nuts filesystem protocols (implemented in NutsPath) including ```kw http```,
+                                            ```kw https```, ```kw htmlfs``` (that supports tomcat and httpd/apache directory listing),
+                                            ```kw dotfilefs```, ```kw ssh``` and ```kw githubfs``` are supported.
+                                            Remember that boot time repos are only used for installing ```sh nuts``` itself (and its
+                                            dependencies).
 
  ```sh --yes | -y | --force```
       disables interactive mode and assumes ```kw yes``` for all questions

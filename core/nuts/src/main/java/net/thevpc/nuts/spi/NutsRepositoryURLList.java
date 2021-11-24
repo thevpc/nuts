@@ -24,25 +24,26 @@
  * <br>
  * ====================================================================
  */
-package net.thevpc.nuts.boot;
+package net.thevpc.nuts.spi;
 
 import net.thevpc.nuts.NutsUtilStrings;
+import net.thevpc.nuts.spi.NutsRepositoryURL;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class PrivateNutsRepositorySelectionList {
-    private final List<PrivateNutsRepositorySelection> all = new ArrayList<>();
+public class NutsRepositoryURLList {
+    private final List<NutsRepositoryURL> all = new ArrayList<>();
 
-    public PrivateNutsRepositorySelectionList(PrivateNutsRepositorySelection[] all) {
+    public NutsRepositoryURLList(NutsRepositoryURL[] all) {
         addAll(all);
     }
 
-    public PrivateNutsRepositorySelectionList() {
+    public NutsRepositoryURLList() {
     }
 
-    public PrivateNutsRepositorySelection[] toArray() {
-        return all.toArray(new PrivateNutsRepositorySelection[0]);
+    public NutsRepositoryURL[] toArray() {
+        return all.toArray(new NutsRepositoryURL[0]);
     }
 
     public boolean containsName(String name) {
@@ -53,7 +54,7 @@ public class PrivateNutsRepositorySelectionList {
         return indexOfURL(url, 0) >= 0;
     }
 
-    public boolean containsSelection(PrivateNutsRepositorySelection s) {
+    public boolean containsSelection(NutsRepositoryURL s) {
         return indexOf(s, 0) >= 0;
     }
 
@@ -70,21 +71,21 @@ public class PrivateNutsRepositorySelectionList {
     public int indexOfURL(String url, int offset) {
         String trimmedName = NutsUtilStrings.trim(url);
         for (int i = offset; i < all.size(); i++) {
-            if (trimmedName.equals(NutsUtilStrings.trim(all.get(i).getUrl()))) {
+            if (trimmedName.equals(NutsUtilStrings.trim(all.get(i).getLocation()))) {
                 return i;
             }
         }
         return -1;
     }
 
-    public int indexOf(PrivateNutsRepositorySelection other, int offset) {
+    public int indexOf(NutsRepositoryURL other, int offset) {
         if (other == null) {
             return -1;
         }
         for (int i = offset; i < all.size(); i++) {
-            PrivateNutsRepositorySelection o = all.get(i);
+            NutsRepositoryURL o = all.get(i);
             if (NutsUtilStrings.trim(other.getName()).equals(NutsUtilStrings.trim(o.getName()))) {
-                if (NutsUtilStrings.trim(other.getUrl()).equals(NutsUtilStrings.trim(o.getUrl()))) {
+                if (NutsUtilStrings.trim(other.getLocation()).equals(NutsUtilStrings.trim(o.getLocation()))) {
                     return i;
                 }
             }
@@ -92,15 +93,15 @@ public class PrivateNutsRepositorySelectionList {
         return -1;
     }
 
-    public void addAll(PrivateNutsRepositorySelection[] all) {
+    public void addAll(NutsRepositoryURL[] all) {
         if (all != null) {
-            for (PrivateNutsRepositorySelection a : all) {
+            for (NutsRepositoryURL a : all) {
                 add(a);
             }
         }
     }
 
-    public void add(PrivateNutsRepositorySelection a) {
+    public void add(NutsRepositoryURL a) {
         if (a != null) {
             String n = NutsUtilStrings.trim(a.getName());
             if (n.isEmpty()) {
@@ -115,7 +116,7 @@ public class PrivateNutsRepositorySelectionList {
         }
     }
 
-    public PrivateNutsRepositorySelection removeAt(int i) {
+    public NutsRepositoryURL removeAt(int i) {
         return all.remove(i);
     }
 }

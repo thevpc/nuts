@@ -24,16 +24,14 @@
 package net.thevpc.nuts.runtime.standalone.workspace.archetypes;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.standalone.repository.NutsRepositorySelector;
+import net.thevpc.nuts.runtime.standalone.repository.DefaultNutsRepositoryDB;
+import net.thevpc.nuts.spi.NutsRepositoryURL;
 import net.thevpc.nuts.runtime.standalone.workspace.config.DefaultNutsWorkspaceConfigManager;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
 import net.thevpc.nuts.spi.NutsComponentScope;
 import net.thevpc.nuts.spi.NutsComponentScopeType;
 import net.thevpc.nuts.spi.NutsSupportLevelContext;
 import net.thevpc.nuts.spi.NutsWorkspaceArchetypeComponent;
-
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Created by vpc on 1/23/17.
@@ -53,11 +51,11 @@ public class MinimalNutsWorkspaceArchetypeComponent implements NutsWorkspaceArch
 //        NutsWorkspace ws = session.getWorkspace();
 
         DefaultNutsWorkspaceConfigManager rm = (DefaultNutsWorkspaceConfigManager) session.config();
-        Map<String, String> defaults = new HashMap<>();
 //        defaults.put(NutsConstants.Names.DEFAULT_REPOSITORY_NAME, null);
-        NutsRepositorySelector.Selection[] br = rm.getModel().resolveBootRepositoriesList().resolveSelectors(defaults);
+        NutsRepositoryURL[] br = rm.getModel().resolveBootRepositoriesList(session).resolveSelectors(
+                new NutsRepositoryURL[0], DefaultNutsRepositoryDB.INSTANCE);
         NutsRepositoryManager repos = session.repos().setSession(session);
-        for (NutsRepositorySelector.Selection s : br) {
+        for (NutsRepositoryURL s : br) {
             repos.addRepository(s.toString());
         }
         //simple rights for minimal utilization

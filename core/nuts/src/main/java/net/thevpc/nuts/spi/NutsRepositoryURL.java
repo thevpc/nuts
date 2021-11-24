@@ -1,7 +1,7 @@
 /**
  * ====================================================================
- *            Nuts : Network Updatable Things Service
- *                  (universal package manager)
+ * Nuts : Network Updatable Things Service
+ * (universal package manager)
  * <br>
  * is a new Open Source Package Manager to help install packages and libraries
  * for runtime execution. Nuts is the ultimate companion for maven (and other
@@ -10,7 +10,7 @@
  * other 'things' . Its based on an extensible architecture to help supporting a
  * large range of sub managers / repositories.
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc] Licensed under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -21,9 +21,11 @@
  * governing permissions and limitations under the License.
  * <br> ====================================================================
  */
-package net.thevpc.nuts.runtime.standalone.repository;
+package net.thevpc.nuts.spi;
 
 import net.thevpc.nuts.NutsBlankable;
+import net.thevpc.nuts.NutsSession;
+import net.thevpc.nuts.boot.NutsApiUtils;
 
 import java.util.Collections;
 import java.util.Set;
@@ -32,7 +34,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- *
  * @author thevpc
  */
 public class NutsRepositoryURL {
@@ -41,13 +42,11 @@ public class NutsRepositoryURL {
 
     private final String name;
     private final String type;
-//    private final String protocol;
-//    private final NutsRepositoryType repositoryType;
     private final Set<String> pathProtocols = new TreeSet<String>();
     private final String location;
 
     private NutsRepositoryURL(String name, String type, String location) {
-        this.name = name==null?"":name;
+        this.name = name == null ? "" : name;
         this.type = type;
         this.location = location;
         this.pathProtocols.addAll(detectedProtocols(location));
@@ -64,24 +63,39 @@ public class NutsRepositoryURL {
             location = nm.group("r");
         } else {
             location = url;
-            name="";
-            type=null;
+            name = "";
+            type = null;
         }
         pathProtocols.addAll(detectedProtocols(location));
     }
-    private static Set<String> detectedProtocols(String location){
+
+    public static NutsRepositoryURL of(String url) {
+        return new NutsRepositoryURL(url);
+    }
+
+    public static NutsRepositoryURL of(String name, String url) {
+        return of(url).changeName(name);
+    }
+
+    public static NutsRepositoryURL of(String expression, NutsRepositoryDB db, NutsSession session) {
+        return NutsApiUtils.parseRepositoryURL(expression, db, session);
+    }
+
+    private static Set<String> detectedProtocols(String location) {
         Set<String> pathProtocols = new TreeSet<String>();
-        int x=0;
-        while (x<location.length()) {
-            if (location.charAt(x) == ':') {
-                break;
-            }
-            int z = location.indexOf(':', x);
-            if (z >= 0) {
-                pathProtocols.add(location.substring(x, z));
-                x = z + 1;
-            } else {
-                break;
+        if (location != null) {
+            int x = 0;
+            while (x < location.length()) {
+                if (location.charAt(x) == ':') {
+                    break;
+                }
+                int z = location.indexOf(':', x);
+                if (z >= 0) {
+                    pathProtocols.add(location.substring(x, z));
+                    x = z + 1;
+                } else {
+                    break;
+                }
             }
         }
         return pathProtocols;
@@ -108,15 +122,15 @@ public class NutsRepositoryURL {
     }
 
     public String getURLString() {
-        if(NutsBlankable.isBlank(type)){
+        if (NutsBlankable.isBlank(type)) {
             return location;
         }
-        return type+"@"+location;
+        return type + "@" + location;
     }
 
     @Override
     public String toString() {
-        return (name==null || name.isEmpty())
+        return (name == null || name.isEmpty())
                 ? getURLString()
                 : getName() + "=" + getURLString();
     }

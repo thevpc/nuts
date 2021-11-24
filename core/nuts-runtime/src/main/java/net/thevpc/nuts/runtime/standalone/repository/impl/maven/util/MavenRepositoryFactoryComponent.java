@@ -24,13 +24,11 @@
 package net.thevpc.nuts.runtime.standalone.repository.impl.maven.util;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.standalone.repository.NutsRepositorySelector;
+import net.thevpc.nuts.runtime.standalone.repository.DefaultNutsRepositoryDB;
+import net.thevpc.nuts.runtime.standalone.repository.NutsRepositorySelectorHelper;
 import net.thevpc.nuts.runtime.standalone.repository.impl.maven.MavenFolderRepository;
 import net.thevpc.nuts.runtime.standalone.repository.impl.maven.MavenRemoteXmlRepository;
-import net.thevpc.nuts.spi.NutsComponentScope;
-import net.thevpc.nuts.spi.NutsComponentScopeType;
-import net.thevpc.nuts.spi.NutsRepositoryFactoryComponent;
-import net.thevpc.nuts.spi.NutsSupportLevelContext;
+import net.thevpc.nuts.spi.*;
 
 /**
  * Created by vpc on 1/15/17.
@@ -41,9 +39,9 @@ public class MavenRepositoryFactoryComponent implements NutsRepositoryFactoryCom
     @Override
     public NutsAddRepositoryOptions[] getDefaultRepositories(NutsSession session) {
         return new NutsAddRepositoryOptions[]{
-                NutsRepositorySelector.createRepositoryOptions(NutsRepositorySelector.parseSelection("maven-local"),
+                NutsRepositorySelectorHelper.createRepositoryOptions(NutsRepositoryURL.of("maven-local", DefaultNutsRepositoryDB.INSTANCE,session),
                         true, session),
-                NutsRepositorySelector.createRepositoryOptions(NutsRepositorySelector.parseSelection("maven-central"),
+                NutsRepositorySelectorHelper.createRepositoryOptions(NutsRepositoryURL.of("maven-central", DefaultNutsRepositoryDB.INSTANCE,session),
                         true, session)
         };
     }

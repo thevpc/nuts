@@ -165,7 +165,7 @@ public class PrivateNutsUtilIO {
         return false;
     }
 
-    public static String syspath(String s) {
+    public static String getNativePath(String s) {
         return s.replace('/', File.separatorChar);
     }
 

@@ -28,10 +28,7 @@ import net.thevpc.nuts.runtime.standalone.repository.impl.nuts.NutsFolderReposit
 import net.thevpc.nuts.runtime.standalone.repository.impl.nuts.NutsHttpFolderRepository;
 import net.thevpc.nuts.runtime.standalone.repository.impl.nuts.NutsHttpSrvRepository;
 import net.thevpc.nuts.runtime.standalone.util.CoreIOUtils;
-import net.thevpc.nuts.spi.NutsComponentScope;
-import net.thevpc.nuts.spi.NutsComponentScopeType;
-import net.thevpc.nuts.spi.NutsRepositoryFactoryComponent;
-import net.thevpc.nuts.spi.NutsSupportLevelContext;
+import net.thevpc.nuts.spi.*;
 
 /**
  * Created by vpc on 1/15/17.
@@ -65,7 +62,7 @@ public class DefaultNutsRepoFactoryComponent implements NutsRepositoryFactoryCom
     public NutsAddRepositoryOptions[] getDefaultRepositories(NutsSession session) {
         if (!session.config().isGlobal()) {
             return new NutsAddRepositoryOptions[]{
-                    NutsRepositorySelector.createRepositoryOptions(NutsRepositorySelector.parseSelection("system"), true, session)
+                    NutsRepositorySelectorHelper.createRepositoryOptions(NutsRepositoryURL.of("system", DefaultNutsRepositoryDB.INSTANCE,session), true, session)
             };
         }
         return new NutsAddRepositoryOptions[0];

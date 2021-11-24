@@ -1,9 +1,11 @@
 package net.thevpc.nuts.runtime.standalone.repository.config;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.standalone.repository.DefaultNutsRepositoryDB;
 import net.thevpc.nuts.runtime.standalone.repository.NutsRepositoryRegistryHelper;
-import net.thevpc.nuts.runtime.standalone.repository.NutsRepositorySelector;
-import net.thevpc.nuts.runtime.standalone.repository.NutsRepositoryURL;
+import net.thevpc.nuts.runtime.standalone.repository.NutsRepositorySelectorHelper;
+import net.thevpc.nuts.spi.NutsRepositorySelectorList;
+import net.thevpc.nuts.spi.NutsRepositoryURL;
 import net.thevpc.nuts.runtime.standalone.repository.impl.NutsSimpleRepositoryWrapper;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.workspace.config.NutsRepositoryConfigManagerExt;
@@ -255,9 +257,12 @@ public class DefaultNutsRepositoryModel {
                 if (options.isEnabled()) {
                     options.setEnabled(
                             session.boot().getBootOptions().getRepositories() == null
-                                    || NutsRepositorySelector.parse(session.boot().getBootOptions().getRepositories()).acceptExisting(
-                                    options.getName(),
-                                    conf.getLocation()
+                                    || NutsRepositorySelectorList.ofAll(
+                                            session.boot().getBootOptions().getRepositories(),
+                                    DefaultNutsRepositoryDB.INSTANCE,session
+                            ).acceptExisting(
+                                    NutsRepositoryURL.of(options.getName(),
+                                            conf.getLocation())
                             ));
                 }
             } else {
@@ -265,9 +270,12 @@ public class DefaultNutsRepositoryModel {
                 if (options.isEnabled()) {
                     options.setEnabled(
                             session.boot().getBootOptions().getRepositories() == null
-                                    || NutsRepositorySelector.parse(session.boot().getBootOptions().getRepositories()).acceptExisting(
-                                    options.getName(),
-                                    conf.getLocation()
+                                    || NutsRepositorySelectorList.ofAll(
+                                            session.boot().getBootOptions().getRepositories(),
+                                    DefaultNutsRepositoryDB.INSTANCE,session
+                            ).acceptExisting(
+                                    NutsRepositoryURL.of(options.getName(),
+                                            conf.getLocation())
                             ));
                 }
                 options.setLocation(CoreIOUtils.resolveRepositoryPath(options, rootFolder, session));
@@ -287,7 +295,7 @@ public class DefaultNutsRepositoryModel {
             String location = conf.getLocation();
             if (NutsBlankable.isBlank(repositoryType)) {
                 if (!NutsBlankable.isBlank(location)) {
-                    NutsRepositoryURL nru = new NutsRepositoryURL(location);
+                    NutsRepositoryURL nru = NutsRepositoryURL.of(location);
                     conf.setType(nru.getType());
                     conf.setLocation(nru.getLocation());
                 }
@@ -326,13 +334,13 @@ public class DefaultNutsRepositoryModel {
 
     public NutsRepository addRepository(String repositoryNamedUrl, NutsSession session) {
         NutsWorkspaceUtils.checkSession(getWorkspace(), session);
-        NutsRepositorySelector.Selection r = null;
+        NutsRepositoryURL r = null;
         try {
-            r = NutsRepositorySelector.parseSelection(repositoryNamedUrl);
+            r = NutsRepositoryURL.of(repositoryNamedUrl,DefaultNutsRepositoryDB.INSTANCE,session);
         } catch (Exception ex) {
             throw new NutsInvalidRepositoryException(session, repositoryNamedUrl, NutsMessage.cstyle("invalid repository definition"));
         }
-        NutsAddRepositoryOptions options = NutsRepositorySelector.createRepositoryOptions(r, true, session);
+        NutsAddRepositoryOptions options = NutsRepositorySelectorHelper.createRepositoryOptions(r, true, session);
         return addRepository(options, session);
     }
 

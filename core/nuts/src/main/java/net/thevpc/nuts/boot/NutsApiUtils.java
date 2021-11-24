@@ -27,6 +27,8 @@
 package net.thevpc.nuts.boot;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.spi.NutsRepositoryDB;
+import net.thevpc.nuts.spi.NutsRepositoryURL;
 
 import java.io.PrintStream;
 import java.lang.reflect.Array;
@@ -34,6 +36,8 @@ import java.net.URL;
 import java.util.Arrays;
 import java.util.function.Supplier;
 import java.util.logging.Level;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * this class implements several utility methods to be used by Nuts API interfaces
@@ -215,5 +219,57 @@ public class NutsApiUtils {
 
     public static <T> T createSessionCachedType(Class<T> t, NutsSession session, Supplier<T> sup) {
         return createSessionCachedType("default", t, session, sup);
+    }
+
+
+    public static NutsRepositoryURL parseRepositoryURL(String expression, NutsRepositoryDB db, NutsSession session) {
+        String name = null;
+        String url = null;
+        if (expression == null) {
+            if(session==null) {
+                throw new IllegalArgumentException("invalid null repository");
+            }else{
+                throw new NutsIllegalArgumentException(session,NutsMessage.plain("invalid null repository"));
+            }
+        }
+        expression = expression.trim();
+        if (expression.startsWith("-")
+                || expression.startsWith("+")
+                || expression.startsWith("=")
+                || expression.indexOf(',') >= 0
+                || expression.indexOf(';') >= 0) {
+            if(session==null) {
+                throw new IllegalArgumentException("invalid selection syntax");
+            }else{
+                throw new NutsIllegalArgumentException(session,NutsMessage.plain("invalid repository syntax"));
+            }
+        }
+        Matcher matcher = Pattern.compile("(?<name>[a-zA-Z-_]+)=(?<value>.+)").matcher(expression);
+        if (matcher.find()) {
+            name = matcher.group("name");
+            url = matcher.group("value");
+        } else {
+            if (expression.matches("[a-zA-Z-_]+")) {
+                name = expression;
+                String u = db.getRepositoryURLByName(name);
+                if (u == null) {
+                    url = name;
+                } else {
+                    url = u;
+                }
+            } else {
+                url = expression;
+                String n = db.getRepositoryNameByURL(url);
+                if (n == null) {
+                    name = url;
+                } else {
+                    name = n;
+                }
+            }
+        }
+        if (url.length() > 0) {
+            return NutsRepositoryURL.of(name, url);
+        }
+        return null;
     }
 }

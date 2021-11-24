@@ -27,6 +27,7 @@
 package net.thevpc.nuts.boot;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.spi.NutsRepositoryURL;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -491,7 +492,9 @@ public final class PrivateNutsUtilMaven {
         NutsBootVersion bestVersion = null;
         String bestPath = null;
         boolean stopOnFirstValidRepo = false;
-        for (String repoUrl : bootRepositories) {
+        for (String repoUrl2 : bootRepositories) {
+            NutsRepositoryURL nru = NutsRepositoryURL.of(repoUrl2);
+            String repoUrl = nru.getLocation();
             boolean found = false;
             if (!repoUrl.contains("://")) {
                 File mavenNutsCoreFolder = new File(repoUrl, path.replace("/", File.separator));
@@ -522,6 +525,10 @@ public final class PrivateNutsUtilMaven {
                     }
                 }
             } else {
+                boolean htmlfs = repoUrl.startsWith("htmlfs:");
+                if (htmlfs) {
+                    repoUrl = repoUrl.substring("htmlfs:".length());
+                }
                 if (!repoUrl.endsWith("/")) {
                     repoUrl = repoUrl + "/";
                 }
@@ -529,23 +536,24 @@ public final class PrivateNutsUtilMaven {
                 if (!basePath.endsWith("/")) {
                     basePath = basePath + "/";
                 }
-                String mavenMetadata = basePath + "maven-metadata.xml";
-                for (NutsBootVersion p : detectVersionsFromMetaData(mavenMetadata, LOG)) {
-                    if (filter == null || filter.test(p)) {
-                        found = true;
-                        if (bestVersion == null || bestVersion.compareTo(p) < 0) {
-                            bestVersion = p;
-                            bestPath = "remote file " + mavenMetadata;
-                        }
-                    }
-                }
-                if (!found) {
-                    for (NutsBootVersion p : detectVersionsFromTomcatDirectoryListing(basePath, LOG)) {
+                if(htmlfs){
+                    for (NutsBootVersion p : detectVersionsFromHtmlfsTomcatDirectoryListing(basePath, LOG)) {
                         if (filter == null || filter.test(p)) {
                             found = true;
                             if (bestVersion == null || bestVersion.compareTo(p) < 0) {
                                 bestVersion = p;
                                 bestPath = "remote file " + basePath;
+                            }
+                        }
+                    }
+                }else {
+                    String mavenMetadata = basePath + "maven-metadata.xml";
+                    for (NutsBootVersion p : detectVersionsFromMetaData(mavenMetadata, LOG)) {
+                        if (filter == null || filter.test(p)) {
+                            found = true;
+                            if (bestVersion == null || bestVersion.compareTo(p) < 0) {
+                                bestVersion = p;
+                                bestPath = "remote file " + mavenMetadata;
                             }
                         }
                     }
@@ -563,10 +571,10 @@ public final class PrivateNutsUtilMaven {
         return iid;
     }
 
-    private static List<NutsBootVersion> detectVersionsFromTomcatDirectoryListing(String basePath, PrivateNutsLog LOG) {
+    private static List<NutsBootVersion> detectVersionsFromHtmlfsTomcatDirectoryListing(String basePath, PrivateNutsLog LOG) {
         List<NutsBootVersion> all = new ArrayList<>();
         try (InputStream in = PrivateNutsUtilIO.openURLStream(new URL(basePath), LOG)) {
-            List<String> p = new SimpleTomcatDirectoryListParser().parse(in);
+            List<String> p = new HtmlfsTomcatDirectoryListParser().parse(in);
             if (p != null) {
                 for (String s : p) {
                     if (s.endsWith("/")) {
@@ -832,7 +840,7 @@ public final class PrivateNutsUtilMaven {
         EXPECT_HREF,
     }
 
-    private static class SimpleTomcatDirectoryListParser {
+    private static class HtmlfsTomcatDirectoryListParser {
 
         public List<String> parse(InputStream html) {
             try {

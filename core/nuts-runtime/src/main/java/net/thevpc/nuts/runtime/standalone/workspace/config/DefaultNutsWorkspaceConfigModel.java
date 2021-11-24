@@ -24,34 +24,29 @@
 package net.thevpc.nuts.runtime.standalone.workspace.config;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.standalone.util.CoreNutsConstants;
-import net.thevpc.nuts.runtime.standalone.definition.DefaultNutsInstallInfo;
-import net.thevpc.nuts.runtime.standalone.workspace.*;
-import net.thevpc.nuts.runtime.standalone.util.TimePeriod;
-import net.thevpc.nuts.runtime.standalone.events.DefaultNutsWorkspaceEvent;
-import net.thevpc.nuts.runtime.standalone.definition.DefaultNutsDefinition;
-import net.thevpc.nuts.runtime.standalone.io.path.*;
-import net.thevpc.nuts.runtime.standalone.io.path.spi.*;
-import net.thevpc.nuts.runtime.standalone.repository.impl.main.NutsInstalledRepository;
-import net.thevpc.nuts.runtime.standalone.repository.NutsRepositorySelector;
-import net.thevpc.nuts.runtime.standalone.io.terminals.*;
-import net.thevpc.nuts.runtime.standalone.util.CoreIOUtils;
-import net.thevpc.nuts.runtime.standalone.util.CoreNutsDependencyUtils;
-import net.thevpc.nuts.runtime.standalone.util.CoreNutsUtils;
 import net.thevpc.nuts.runtime.standalone.boot.DefaultNutsBootManager;
 import net.thevpc.nuts.runtime.standalone.boot.DefaultNutsBootModel;
+import net.thevpc.nuts.runtime.standalone.definition.DefaultNutsDefinition;
+import net.thevpc.nuts.runtime.standalone.definition.DefaultNutsInstallInfo;
+import net.thevpc.nuts.runtime.standalone.events.DefaultNutsWorkspaceEvent;
+import net.thevpc.nuts.runtime.standalone.io.path.NutsPathFromSPI;
+import net.thevpc.nuts.runtime.standalone.io.path.spi.*;
+import net.thevpc.nuts.runtime.standalone.io.printstream.NutsPrintStreamNull;
+import net.thevpc.nuts.runtime.standalone.io.terminals.*;
+import net.thevpc.nuts.runtime.standalone.repository.DefaultNutsRepositoryDB;
+import net.thevpc.nuts.runtime.standalone.repository.NutsRepositorySelectorHelper;
+import net.thevpc.nuts.runtime.standalone.repository.impl.main.NutsInstalledRepository;
 import net.thevpc.nuts.runtime.standalone.repository.impl.maven.util.MavenUtils;
+import net.thevpc.nuts.runtime.standalone.security.ReadOnlyNutsWorkspaceOptions;
+import net.thevpc.nuts.runtime.standalone.solvers.NutsDependencySolverUtils;
+import net.thevpc.nuts.runtime.standalone.util.*;
+import net.thevpc.nuts.runtime.standalone.workspace.*;
 import net.thevpc.nuts.runtime.standalone.workspace.config.compat.CompatUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.config.compat.NutsVersionCompat;
 import net.thevpc.nuts.runtime.standalone.workspace.config.compat.v502.NutsVersionCompat502;
 import net.thevpc.nuts.runtime.standalone.workspace.config.compat.v506.NutsVersionCompat506;
 import net.thevpc.nuts.runtime.standalone.workspace.config.compat.v507.NutsVersionCompat507;
 import net.thevpc.nuts.runtime.standalone.workspace.config.compat.v803.NutsVersionCompat803;
-import net.thevpc.nuts.runtime.standalone.io.printstream.NutsPrintStreamNull;
-import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceVarExpansionFunction;
-import net.thevpc.nuts.runtime.standalone.security.ReadOnlyNutsWorkspaceOptions;
-import net.thevpc.nuts.runtime.standalone.solvers.NutsDependencySolverUtils;
-import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.list.DefaultNutsWorkspaceListManager;
 import net.thevpc.nuts.runtime.standalone.xtra.vals.DefaultNutsVal;
 import net.thevpc.nuts.spi.*;
@@ -110,7 +105,7 @@ public class DefaultNutsWorkspaceConfigModel {
     private NutsIndexStoreFactory indexStoreClientFactory;
     //    private Set<String> excludedRepositoriesSet = new HashSet<>();
     private NutsStoreLocationsMap preUpdateConfigStoreLocations;
-    private NutsRepositorySelector.SelectorList parsedBootRepositoriesList;
+    private NutsRepositorySelectorList parsedBootRepositoriesList;
     //    private NutsRepositorySelector[] parsedBootRepositoriesArr;
     private ExecutorService executorService;
     private NutsSessionTerminal terminal;
@@ -141,7 +136,7 @@ public class DefaultNutsWorkspaceConfigModel {
         addPathFactory(new HtmlfsPath.HtmlfsFactory(ws));
         addPathFactory(new DotfilefsPath.DotfilefsFactory(ws));
         addPathFactory(new GithubfsPath.GithubfsFactory(ws));
-        invalidPathFactory=new InvalidFilePathFactory();
+        invalidPathFactory = new InvalidFilePathFactory();
         //        this.excludedRepositoriesSet = this.options.getExcludedRepositories() == null ? null : new HashSet<>(CoreStringUtils.split(Arrays.asList(this.options.getExcludedRepositories()), " ,;"));
     }
 
@@ -1130,7 +1125,7 @@ public class DefaultNutsWorkspaceConfigModel {
             m.put("dependencies",
                     def.getDependencies().all().map(
                             x -> x.toId().getLongName()
-                            ,"toId().getLongName()"
+                            , "toId().getLongName()"
                     ).collect(Collectors.joining(";"))
             );
             if (idType == NutsIdType.RUNTIME) {
@@ -1174,8 +1169,8 @@ public class DefaultNutsWorkspaceConfigModel {
                 String tmp = null;
                 try {
                     String idFileName = session.locations().getDefaultIdFilename(id.builder().setFaceContent().setPackaging("jar").build());
-                    for (NutsRepositorySelector.Selection pp0 : resolveBootRepositoriesBootSelectionArray(session)) {
-                        NutsAddRepositoryOptions opt = NutsRepositorySelector.createRepositoryOptions(pp0, false, session);
+                    for (NutsRepositoryURL pp0 : resolveBootRepositoriesBootSelectionArray(session)) {
+                        NutsAddRepositoryOptions opt = NutsRepositorySelectorHelper.createRepositoryOptions(pp0, false, session);
                         NutsPath pp = NutsPath.of(opt.getConfig() == null ? opt.getLocation() : opt.getConfig().getLocation(), session);
                         boolean copiedLocally = false;
                         try {
@@ -1282,7 +1277,7 @@ public class DefaultNutsWorkspaceConfigModel {
             if (!oldPath.equals(newPath)) {
                 Path oldPathObj = Paths.get(oldPath);
                 if (Files.exists(oldPathObj)) {
-                    CoreIOUtils.copyFolder(oldPathObj, Paths.get(newPath),session);
+                    CoreIOUtils.copyFolder(oldPathObj, Paths.get(newPath), session);
                 }
             }
         }
@@ -1380,20 +1375,22 @@ public class DefaultNutsWorkspaceConfigModel {
         }
     }
 
-    public NutsRepositorySelector.Selection[] resolveBootRepositoriesBootSelectionArray(NutsSession session) {
-        HashMap<String, String> defaults = new HashMap<>();
+    public NutsRepositoryURL[] resolveBootRepositoriesBootSelectionArray(NutsSession session) {
+        List<NutsRepositoryURL> defaults = new ArrayList<>();
         DefaultNutsWorkspaceConfigManager rm = (DefaultNutsWorkspaceConfigManager) session.config();
         for (NutsAddRepositoryOptions d : rm.getDefaultRepositories()) {
-            defaults.put(d.getName(), null);
+            defaults.add(NutsRepositoryURL.of(d.getName(), null));
         }
-        return resolveBootRepositoriesList().resolveSelectors(defaults);
+        return resolveBootRepositoriesList(session).resolveSelectors(defaults.toArray(new NutsRepositoryURL[0]),
+                DefaultNutsRepositoryDB.INSTANCE
+        );
     }
 
-    public NutsRepositorySelector.SelectorList resolveBootRepositoriesList() {
+    public NutsRepositorySelectorList resolveBootRepositoriesList(NutsSession session) {
         if (parsedBootRepositoriesList != null) {
             return parsedBootRepositoriesList;
         }
-        parsedBootRepositoriesList = NutsRepositorySelector.parse(options.getRepositories());
+        parsedBootRepositoriesList = NutsRepositorySelectorList.ofAll(options.getRepositories(), DefaultNutsRepositoryDB.INSTANCE,session);
         return parsedBootRepositoriesList;
     }
 
@@ -1421,28 +1418,28 @@ public class DefaultNutsWorkspaceConfigModel {
                     if (executorService == null) {
 
                         int minPoolSize = getConfigProperty("nuts.threads.min").getInt(2);
-                        if(minPoolSize<1) {
+                        if (minPoolSize < 1) {
                             minPoolSize = 60;
-                        }else if(minPoolSize>500){
-                            minPoolSize=500;
+                        } else if (minPoolSize > 500) {
+                            minPoolSize = 500;
                         }
                         int maxPoolSize = getConfigProperty("nuts.threads.max").getInt(60);
-                        if(maxPoolSize<1) {
+                        if (maxPoolSize < 1) {
                             maxPoolSize = 60;
-                        }else if(maxPoolSize>500){
-                            maxPoolSize=500;
+                        } else if (maxPoolSize > 500) {
+                            maxPoolSize = 500;
                         }
-                        if(minPoolSize>maxPoolSize){
-                            minPoolSize=maxPoolSize;
+                        if (minPoolSize > maxPoolSize) {
+                            minPoolSize = maxPoolSize;
                         }
                         TimePeriod defaultPeriod = new TimePeriod(3, TimeUnit.SECONDS);
-                        TimePeriod period=TimePeriod.parseLenient(
+                        TimePeriod period = TimePeriod.parseLenient(
                                 getConfigProperty("nuts.threads.keep-alive").getString(),
                                 TimeUnit.SECONDS, defaultPeriod,
                                 defaultPeriod
                         );
-                        if(period.getCount()<0){
-                            period=defaultPeriod;
+                        if (period.getCount() < 0) {
+                            period = defaultPeriod;
                         }
                         ThreadPoolExecutor executorService2 = (ThreadPoolExecutor) Executors.newCachedThreadPool(CoreNutsUtils.nutsDefaultThreadFactory);
                         executorService2.setCorePoolSize(minPoolSize);
@@ -1641,7 +1638,7 @@ public class DefaultNutsWorkspaceConfigModel {
     }
 
     public NutsPathFactory[] getPathFactories() {
-        List<NutsPathFactory> all=new ArrayList<>(pathFactories.size()+1);
+        List<NutsPathFactory> all = new ArrayList<>(pathFactories.size() + 1);
         all.addAll(pathFactories);
         all.add(invalidPathFactory);
         return all.toArray(new NutsPathFactory[0]);
@@ -1654,6 +1651,48 @@ public class DefaultNutsWorkspaceConfigModel {
     public NutsPrintStream nullPrintStream() {
         return nullOut;
         //return createPrintStream(NullOutputStream.INSTANCE, NutsTerminalMode.FILTERED, session);
+    }
+
+    public Map<String, String> getConfigMap() {
+        Map<String, String> p = new LinkedHashMap<>();
+        if (getStoreModelMain().getEnv() != null) {
+            p.putAll(getStoreModelMain().getEnv());
+        }
+//        p.putAll(options);
+        return p;
+    }
+
+    public NutsVal getConfigProperty(String property) {
+        Map<String, String> env = getStoreModelMain().getEnv();
+        if (env != null) {
+            return new DefaultNutsVal(env.get(property));
+        }
+        return new DefaultNutsVal(null);
+    }
+
+    public void setConfigProperty(String property, String value, NutsSession session) {
+        Map<String, String> env = getStoreModelMain().getEnv();
+//        session = CoreNutsUtils.validate(session, workspace);
+        if (NutsBlankable.isBlank(value)) {
+            if (env != null && env.containsKey(property)) {
+                env.remove(property);
+                NutsWorkspaceConfigManagerExt.of(session.config())
+                        .getModel()
+                        .fireConfigurationChanged("env", session, ConfigEventType.MAIN);
+            }
+        } else {
+            if (env == null) {
+                env = new LinkedHashMap<>();
+                getStoreModelMain().setEnv(env);
+            }
+            String old = env.get(property);
+            if (!value.equals(old)) {
+                env.put(property, value);
+                NutsWorkspaceConfigManagerExt.of(session.config())
+                        .getModel()
+                        .fireConfigurationChanged("env", session, ConfigEventType.MAIN);
+            }
+        }
     }
 
     private static class WorkspaceSystemTerminalAdapter extends AbstractSystemTerminalAdapter {
@@ -1763,58 +1802,17 @@ public class DefaultNutsWorkspaceConfigModel {
         }
 
     }
+
     private class InvalidFilePathFactory implements NutsPathFactory {
         @Override
         public NutsSupported<NutsPathSPI> createPath(String path, NutsSession session, ClassLoader classLoader) {
             NutsWorkspaceUtils.checkSession(getWorkspace(), session);
             try {
-                return NutsSupported.of(1,()->new InvalidFilePath(path, session));
+                return NutsSupported.of(1, () -> new InvalidFilePath(path, session));
             } catch (Exception ex) {
                 //ignore
             }
             return null;
-        }
-    }
-
-    public Map<String, String> getConfigMap() {
-        Map<String, String> p = new LinkedHashMap<>();
-        if (getStoreModelMain().getEnv() != null) {
-            p.putAll(getStoreModelMain().getEnv());
-        }
-//        p.putAll(options);
-        return p;
-    }
-
-    public NutsVal getConfigProperty(String property) {
-        Map<String, String> env = getStoreModelMain().getEnv();
-        if (env != null) {
-            return new DefaultNutsVal(env.get(property));
-        }
-        return new DefaultNutsVal(null);
-    }
-
-    public void setConfigProperty(String property, String value, NutsSession session) {
-        Map<String, String> env = getStoreModelMain().getEnv();
-//        session = CoreNutsUtils.validate(session, workspace);
-        if (NutsBlankable.isBlank(value)) {
-            if (env != null && env.containsKey(property)) {
-                env.remove(property);
-                NutsWorkspaceConfigManagerExt.of(session.config())
-                        .getModel()
-                        .fireConfigurationChanged("env", session, ConfigEventType.MAIN);
-            }
-        } else {
-            if (env == null) {
-                env = new LinkedHashMap<>();
-                getStoreModelMain().setEnv(env);
-            }
-            String old = env.get(property);
-            if (!value.equals(old)) {
-                env.put(property, value);
-                NutsWorkspaceConfigManagerExt.of(session.config())
-                        .getModel()
-                        .fireConfigurationChanged("env", session, ConfigEventType.MAIN);
-            }
         }
     }
 

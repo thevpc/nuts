@@ -25,6 +25,9 @@ package net.thevpc.nuts.boot;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.spi.NutsBootWorkspaceFactory;
+import net.thevpc.nuts.spi.NutsRepositorySelector;
+import net.thevpc.nuts.spi.NutsRepositorySelectorList;
+import net.thevpc.nuts.spi.NutsRepositoryURL;
 
 import java.io.File;
 import java.io.IOException;
@@ -257,32 +260,36 @@ public final class NutsBootWorkspace {
                     , NutsBlankable.isBlank(workspaceInformation.getBootRepositories()) ? "[]" : workspaceInformation.getBootRepositories()
             ));
         }
-        PrivateNutsRepositorySelectorList bootRepositories = PrivateNutsRepositorySelector.parse(options.getRepositories());
-        PrivateNutsRepositorySelector[] old = PrivateNutsRepositorySelector.parse(new String[]{workspaceInformation.getBootRepositories()}).toArray();
-        PrivateNutsRepositorySelection[] result = null;
+        NutsRepositorySelectorList bootRepositories = NutsRepositorySelectorList.ofAll(options.getRepositories(),NutsBootRepositoryDB.INSTANCE,null);
+        NutsRepositorySelector[] old = NutsRepositorySelectorList.ofAll(
+                new String[]{workspaceInformation.getBootRepositories()},
+                NutsBootRepositoryDB.INSTANCE,null
+        ).toArray();
+        NutsRepositoryURL[] result = null;
         if (old.length == 0) {
             //no previous config, use defaults!
-            result = bootRepositories.resolveSelectors(new PrivateNutsRepositorySelection[]{
-                    new PrivateNutsRepositorySelection("maven-local", null),
-                    new PrivateNutsRepositorySelection("maven-central", null),
-            });
+            result = bootRepositories.resolveSelectors(new NutsRepositoryURL[]{
+                    NutsRepositoryURL.of("maven-local", null),
+                    NutsRepositoryURL.of("maven-central", null),
+            },NutsBootRepositoryDB.INSTANCE);
         } else {
-            result = bootRepositories.resolveSelectors(Arrays.stream(old).map(x -> new PrivateNutsRepositorySelection(x.getName(), x.getUrl()))
-                    .toArray(PrivateNutsRepositorySelection[]::new));
+            result = bootRepositories.resolveSelectors(Arrays.stream(old).map(x -> NutsRepositoryURL.of(x.getName(), x.getUrl()))
+                    .toArray(NutsRepositoryURL[]::new)
+                    ,NutsBootRepositoryDB.INSTANCE);
         }
         if (!options.isReset() && !options.isRecover()) {
             String loc = workspaceInformation.getStoreLocation(NutsStoreLocation.LIB);
             if (loc != null) {
                 if (Files.isDirectory(Paths.get(loc))) {
-                    PrivateNutsRepositorySelection[] result2 = new PrivateNutsRepositorySelection[result.length + 1];
+                    NutsRepositoryURL[] result2 = new NutsRepositoryURL[result.length + 1];
                     System.arraycopy(result, 0, result2, 1, result.length);
-                    result2[0] = new PrivateNutsRepositorySelection("last-installation", loc);
+                    result2[0] = NutsRepositoryURL.of("last-installation", loc);
                     result = result2;
                 }
             }
         }
 
-        Set<String> rr = Arrays.stream(result).map(PrivateNutsRepositorySelection::getUrl).collect(Collectors.toCollection(LinkedHashSet::new));
+        Set<String> rr = Arrays.stream(result).map(NutsRepositoryURL::getLocation).collect(Collectors.toCollection(LinkedHashSet::new));
         if (dependencies) {
             parsedBootRuntimeDependenciesRepositories = rr;
         } else {

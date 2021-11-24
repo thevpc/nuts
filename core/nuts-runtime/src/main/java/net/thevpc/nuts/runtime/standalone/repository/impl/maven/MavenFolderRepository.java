@@ -154,22 +154,25 @@ public class MavenFolderRepository extends NutsCachedRepository {
         }
         if (localPath == null) {
             NutsPath p = repoHelper.getIdPath(id, session);
-            String tempFile = NutsTmp.of(session)
-                    .setRepositoryId(getUuid())
-                    .createTempFile(p.getName()).toString();
-            try {
-                NutsCp.of(session)
-                        .from(repoHelper.getStream(id, "artifact binaries", "retrieve", session)).to(tempFile).setValidator(new NutsIOCopyValidator() {
-                            @Override
-                            public void validate(InputStream in) throws IOException {
-                                repoHelper.checkSHA1Hash(id.builder().setFace(NutsConstants.QueryFaces.CONTENT_HASH).build(), in, "artifact binaries", session);
-                            }
-                        }).run();
-            } catch (UncheckedIOException | NutsIOException ex) {
-                throw new NutsNotFoundException(session, id, null, ex);
+            if(p.isLocal()){
+                return new NutsDefaultContent(p, false, false);
+            }else {
+                String tempFile = NutsTmp.of(session)
+                        .setRepositoryId(getUuid())
+                        .createTempFile(p.getName()).toString();
+                try {
+                    NutsCp.of(session)
+                            .from(repoHelper.getStream(id, "artifact binaries", "retrieve", session)).to(tempFile).setValidator(new NutsIOCopyValidator() {
+                                @Override
+                                public void validate(InputStream in) throws IOException {
+                                    repoHelper.checkSHA1Hash(id.builder().setFace(NutsConstants.QueryFaces.CONTENT_HASH).build(), in, "artifact binaries", session);
+                                }
+                            }).run();
+                } catch (UncheckedIOException | NutsIOException ex) {
+                    throw new NutsNotFoundException(session, id, null, ex);
+                }
+                return new NutsDefaultContent(NutsPath.of(tempFile, session), true, true);
             }
-            return new NutsDefaultContent(
-                    NutsPath.of(tempFile, session), true, true);
         } else {
             try {
                 NutsCp.of(session)

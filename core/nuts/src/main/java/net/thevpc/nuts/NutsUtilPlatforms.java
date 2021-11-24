@@ -123,7 +123,7 @@ public final class NutsUtilPlatforms {
         if (global) {
             switch (platformOsFamily) {
                 case WINDOWS: {
-                    return getWindowsProgramFiles() + "\\nuts\\" + syspath(workspaceName);
+                    return getWindowsProgramFiles() + "\\nuts\\" + getNativePath(workspaceName);
                 }
                 default: {
                     return "/etc/opt/nuts/" + workspaceName;
@@ -132,7 +132,7 @@ public final class NutsUtilPlatforms {
         } else {
             switch (platformOsFamily) {
                 case WINDOWS: {
-                    return System.getProperty("user.home") + syspath("/AppData/Roaming/nuts/config/" + workspaceName);
+                    return System.getProperty("user.home") + getNativePath("/AppData/Roaming/nuts/config/" + workspaceName);
                 }
                 default: {
                     String val = NutsUtilStrings.trim(System.getenv("XDG_CONFIG_HOME"));
@@ -192,7 +192,7 @@ public final class NutsUtilPlatforms {
                 case APPS: {
                     switch (platformOsFamily) {
                         case WINDOWS: {
-                            return getWindowsProgramFiles() + "\\nuts\\apps\\" + syspath(workspaceName);
+                            return getWindowsProgramFiles() + "\\nuts\\apps\\" + getNativePath(workspaceName);
                         }
                         default: {
                             return "/opt/nuts/apps/" + workspaceName;
@@ -202,7 +202,7 @@ public final class NutsUtilPlatforms {
                 case LIB: {
                     switch (platformOsFamily) {
                         case WINDOWS: {
-                            return getWindowsProgramFiles() + "\\nuts\\lib\\" + syspath(workspaceName);
+                            return getWindowsProgramFiles() + "\\nuts\\lib\\" + getNativePath(workspaceName);
                         }
                         default: {
                             return "/opt/nuts/lib/" + workspaceName;
@@ -212,7 +212,7 @@ public final class NutsUtilPlatforms {
                 case CONFIG: {
                     switch (platformOsFamily) {
                         case WINDOWS: {
-                            return getWindowsProgramFiles() + "\\nuts\\config\\" + syspath(workspaceName);
+                            return getWindowsProgramFiles() + "\\nuts\\config\\" + getNativePath(workspaceName);
                         }
                         default: {
                             return "/etc/opt/nuts/" + workspaceName + "/config";
@@ -222,7 +222,7 @@ public final class NutsUtilPlatforms {
                 case LOG: {
                     switch (platformOsFamily) {
                         case WINDOWS: {
-                            return getWindowsProgramFiles() + "\\nuts\\log\\" + syspath(workspaceName);
+                            return getWindowsProgramFiles() + "\\nuts\\log\\" + getNativePath(workspaceName);
                         }
                         default: {
                             return "/var/log/nuts/" + workspaceName;
@@ -232,7 +232,7 @@ public final class NutsUtilPlatforms {
                 case CACHE: {
                     switch (platformOsFamily) {
                         case WINDOWS: {
-                            return getWindowsProgramFiles() + "\\nuts\\cache\\" + syspath(workspaceName);
+                            return getWindowsProgramFiles() + "\\nuts\\cache\\" + getNativePath(workspaceName);
                         }
                         default: {
                             return "/var/cache/nuts/" + workspaceName;
@@ -242,7 +242,7 @@ public final class NutsUtilPlatforms {
                 case VAR: {
                     switch (platformOsFamily) {
                         case WINDOWS: {
-                            return getWindowsProgramFiles() + "\\nuts\\var\\" + syspath(workspaceName);
+                            return getWindowsProgramFiles() + "\\nuts\\var\\" + getNativePath(workspaceName);
                         }
                         default: {
                             return "/var/opt/nuts/" + workspaceName;
@@ -256,7 +256,7 @@ public final class NutsUtilPlatforms {
                             if (NutsBlankable.isBlank(pf)) {
                                 pf = getWindowsSystemRoot() + "\\TEMP";
                             }
-                            return pf + "\\nuts\\" + syspath(workspaceName);
+                            return pf + "\\nuts\\" + getNativePath(workspaceName);
                         }
                         default: {
                             return "/tmp/nuts/global/" + workspaceName;
@@ -270,7 +270,7 @@ public final class NutsUtilPlatforms {
                             if (NutsBlankable.isBlank(pf)) {
                                 pf = getWindowsSystemRoot() + "\\TEMP";
                             }
-                            return pf + "\\nuts\\run\\" + syspath(workspaceName);
+                            return pf + "\\nuts\\run\\" + getNativePath(workspaceName);
                         }
                         default: {
                             return "/tmp/run/nuts/global/" + workspaceName;
@@ -285,7 +285,7 @@ public final class NutsUtilPlatforms {
                 case LIB: {
                     switch (platformOsFamily) {
                         case WINDOWS: {
-                            return System.getProperty("user.home") + syspath("/AppData/Roaming/nuts/" + locationName + "/" + workspaceName);
+                            return System.getProperty("user.home") + getNativePath("/AppData/Roaming/nuts/" + locationName + "/" + workspaceName);
                         }
                         default: {
                             String val = NutsUtilStrings.trim(System.getenv("XDG_DATA_HOME"));
@@ -299,7 +299,7 @@ public final class NutsUtilPlatforms {
                 case LOG: {
                     switch (platformOsFamily) {
                         case WINDOWS: {
-                            return System.getProperty("user.home") + syspath("/AppData/LocalLow/nuts/" + locationName + "/" + workspaceName);
+                            return System.getProperty("user.home") + getNativePath("/AppData/LocalLow/nuts/" + locationName + "/" + workspaceName);
                         }
                         default: {
                             String val = NutsUtilStrings.trim(System.getenv("XDG_LOG_HOME"));
@@ -313,7 +313,7 @@ public final class NutsUtilPlatforms {
                 case RUN: {
                     switch (platformOsFamily) {
                         case WINDOWS: {
-                            return System.getProperty("user.home") + syspath("/AppData/Local/nuts/" + locationName + "/" + workspaceName);
+                            return System.getProperty("user.home") + getNativePath("/AppData/Local/nuts/" + locationName + "/" + workspaceName);
                         }
                         default: {
                             String val = NutsUtilStrings.trim(System.getenv("XDG_RUNTIME_DIR"));
@@ -330,7 +330,7 @@ public final class NutsUtilPlatforms {
                 case CACHE: {
                     switch (platformOsFamily) {
                         case WINDOWS: {
-                            return System.getProperty("user.home") + syspath("/AppData/Local/nuts/cache/" + workspaceName);
+                            return System.getProperty("user.home") + getNativePath("/AppData/Local/nuts/cache/" + workspaceName);
                         }
                         default: {
                             String val = NutsUtilStrings.trim(System.getenv("XDG_CACHE_HOME"));
@@ -344,10 +344,10 @@ public final class NutsUtilPlatforms {
                 case TEMP: {
                     switch (platformOsFamily) {
                         case WINDOWS:
-                            return System.getProperty("user.home") + syspath("/AppData/Local/nuts/log/" + workspaceName);
+                            return System.getProperty("user.home") + getNativePath("/AppData/Local/nuts/log/" + workspaceName);
                         default:
                             //on macos/unix/linux temp folder is shared. will add user folder as discriminator
-                            return System.getProperty("java.io.tmpdir") + syspath("/" + System.getProperty("user.name") + "/nuts/" + workspaceName);
+                            return System.getProperty("java.io.tmpdir") + getNativePath("/" + System.getProperty("user.name") + "/nuts/" + workspaceName);
                     }
                 }
             }
@@ -413,7 +413,7 @@ public final class NutsUtilPlatforms {
         return null;
     }
 
-    private static String syspath(String s) {
+    private static String getNativePath(String s) {
         return s.replace('/', File.separatorChar);
     }
 
@@ -483,13 +483,13 @@ public final class NutsUtilPlatforms {
                     case STANDALONE: {
                         String c = NutsUtilPlatforms.getCustomPlatformHomeFolder(platformOsFamily, location, homeLocations);
                         storeLocations.put(location, c == null ?
-                                (workspaceLocation + File.separator + location.id() + PrivateNutsUtilIO.syspath("/" + _storeLocation))
+                                (workspaceLocation + File.separator + location.id() + PrivateNutsUtilIO.getNativePath("/" + _storeLocation))
                                 :
-                                (c + PrivateNutsUtilIO.syspath("/" + _storeLocation)));
+                                (c + PrivateNutsUtilIO.getNativePath("/" + _storeLocation)));
                         break;
                     }
                     case EXPLODED: {
-                        storeLocations.put(location, homes[location.ordinal()] + PrivateNutsUtilIO.syspath("/" + _storeLocation));
+                        storeLocations.put(location, homes[location.ordinal()] + PrivateNutsUtilIO.getNativePath("/" + _storeLocation));
                         break;
                     }
                 }
