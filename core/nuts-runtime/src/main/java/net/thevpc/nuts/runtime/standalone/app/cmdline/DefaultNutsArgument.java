@@ -25,13 +25,12 @@
  */
 package net.thevpc.nuts.runtime.standalone.app.cmdline;
 
-import net.thevpc.nuts.*;
+import net.thevpc.nuts.NutsArgument;
+import net.thevpc.nuts.NutsUtilStrings;
+import net.thevpc.nuts.NutsVal;
 import net.thevpc.nuts.boot.NutsBootStrValImpl;
 import net.thevpc.nuts.runtime.standalone.xtra.vals.DefaultNutsVal;
 
-import java.io.IOException;
-import java.io.StringReader;
-import java.io.UncheckedIOException;
 import java.util.NoSuchElementException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -111,8 +110,8 @@ public class DefaultNutsArgument implements NutsArgument {
                     }
                 }
                 optionPrefix = optp;
-                optionName = (optk==null?"":optk);
-                if (opts!=null && opts.length() > 0) {
+                optionName = (optk == null ? "" : optk);
+                if (opts != null && opts.length() > 0) {
                     key = optp + optionName;
                     value = optv + optr;
                 } else {
@@ -125,11 +124,11 @@ public class DefaultNutsArgument implements NutsArgument {
                 negated = false;
                 optionPrefix = null;
                 optionName = null;
-                if (opts!=null && opts.length() > 0) {
-                    key = (optk==null?"":optk);
+                if (opts != null && opts.length() > 0) {
+                    key = (optk == null ? "" : optk);
                     value = optv;
                 } else {
-                    key = (optk==null?"":optk) + optr;
+                    key = expression == null ? null : ((optk == null ? "" : optk) + optr);
                     value = null;
                 }
             }
@@ -182,34 +181,6 @@ public class DefaultNutsArgument implements NutsArgument {
         return value != null;
     }
 
-    @Override
-    public NutsVal getValue() {
-        return new DefaultNutsVal(value) {
-            @Override
-            public boolean getBoolean() {
-                return getBoolean(true,false);
-            }
-            @Override
-            public Boolean getBoolean(Boolean emptyValue, Boolean errorValue) {
-                Boolean b = NutsUtilStrings.parseBoolean(this.getString(), emptyValue, errorValue);
-                if (b!=null && isNegated()) {
-                    return !b;
-                }
-                return b;
-            }
-        };
-    }
-
-    @Override
-    public NutsVal getKey() {
-        return new DefaultNutsVal(key==null?expression:key);
-    }
-
-    @Override
-    public NutsVal getAll() {
-        return new DefaultNutsVal(expression);
-    }
-
     public NutsVal getOptionPrefix() {
         return new DefaultNutsVal(optionPrefix);
     }
@@ -222,6 +193,35 @@ public class DefaultNutsArgument implements NutsArgument {
     @Override
     public NutsVal getOptionName() {
         return new NutsBootStrValImpl(optionName);
+    }
+
+    @Override
+    public NutsVal getValue() {
+        return new DefaultNutsVal(value) {
+            @Override
+            public boolean getBoolean() {
+                return getBoolean(true, false);
+            }
+
+            @Override
+            public Boolean getBoolean(Boolean emptyValue, Boolean errorValue) {
+                Boolean b = NutsUtilStrings.parseBoolean(this.getString(), emptyValue, errorValue);
+                if (b != null && isNegated()) {
+                    return !b;
+                }
+                return b;
+            }
+        };
+    }
+
+    @Override
+    public NutsVal getKey() {
+        return new DefaultNutsVal(key == null ? expression : key);
+    }
+
+    @Override
+    public NutsVal getAll() {
+        return new DefaultNutsVal(expression);
     }
 
     @Override

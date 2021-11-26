@@ -1064,7 +1064,9 @@ final class PrivateNutsArgumentsParser {
                             customOptions.add(a.toString().substring(3));
                         } else {
                             cmdLine.skip();
-                            showError.add(NutsMessage.cstyle("nuts: invalid option %s", a.getString()));
+                            if (a.isEnabled()) {
+                                showError.add(NutsMessage.cstyle("nuts: invalid option %s", a.getString()));
+                            }
                         }
                     }
                 }

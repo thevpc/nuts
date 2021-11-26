@@ -600,13 +600,13 @@ public final class CoreNutsArgumentsParser {
                     case "--log-file-size":
                     case "--log-file-name":
                     case "--log-file-base":
-                    case "--log-file-count":{
+                    case "--log-file-count": {
                         if (enabled) {
                             if (logConfig == null) {
                                 logConfig = new NutsLogConfig();
                             }
                         }
-                        parseLogLevel(logConfig, cmdLine, enabled,session);
+                        parseLogLevel(logConfig, cmdLine, enabled, session);
                         break;
                     }
                     case "-X":
@@ -1080,12 +1080,15 @@ public final class CoreNutsArgumentsParser {
                     case "-l":
                     case "-m":
                     default: {
+
                         if (k.startsWith("---") && k.length() > 3 && k.charAt(3) != '-') {
                             a = cmdLine.next();
                             customOptions.add(a.toString().substring(3));
                         } else {
                             cmdLine.skip();
-                            showError.add(NutsMessage.cstyle("nuts: invalid option %s", a.getString()));
+                            if (a.isEnabled()) {
+                                showError.add(NutsMessage.cstyle("nuts: invalid option %s", a.getString()));
+                            }
                         }
                     }
                 }
@@ -1134,18 +1137,18 @@ public final class CoreNutsArgumentsParser {
                 String v = a.getValue().getString();
                 if (enabled) {
                     Integer fileSize = NutsApiUtils.parseFileSizeInBytes(v, 1024 * 1024, null, null);
-                    if(fileSize==null){
-                        if(NutsBlankable.isBlank(v)){
+                    if (fileSize == null) {
+                        if (NutsBlankable.isBlank(v)) {
                             throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("invalid file size : %s", v));
                         }
-                    }else{
+                    } else {
                         //always in mega
-                        fileSize=fileSize/(1024 * 1024);
-                        if(fileSize<=0){
+                        fileSize = fileSize / (1024 * 1024);
+                        if (fileSize <= 0) {
                             throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("invalid file size : %s < 1Mb", v));
                         }
                     }
-                    if(fileSize!=null) {
+                    if (fileSize != null) {
                         logConfig.setLogFileSize(fileSize);
                     }
                 }
@@ -1244,24 +1247,24 @@ public final class CoreNutsArgumentsParser {
     }
 
     private static NutsStoreLocationStrategy parseNutsStoreLocationStrategy(String s, NutsSession session) {
-        NutsStoreLocationStrategy m=NutsStoreLocationStrategy.parseLenient(s,null,null);
-        if(m==null && !NutsBlankable.isBlank(s)){
+        NutsStoreLocationStrategy m = NutsStoreLocationStrategy.parseLenient(s, null, null);
+        if (m == null && !NutsBlankable.isBlank(s)) {
             throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("unable to parse value for NutsStoreLocationStrategy : %s", s));
         }
         return m;
     }
 
     private static NutsOsFamily parseNutsOsFamily(String s, NutsSession session) {
-        NutsOsFamily m=NutsOsFamily.parseLenient(s,null,null);
-        if(m==null && !NutsBlankable.isBlank(s)){
+        NutsOsFamily m = NutsOsFamily.parseLenient(s, null, null);
+        if (m == null && !NutsBlankable.isBlank(s)) {
             throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("unable to parse value for NutsStoreLocationLayout : %s", s));
         }
         return m;
     }
 
     private static NutsOpenMode parseNutsOpenMode(String s, NutsSession session) {
-        NutsOpenMode m=NutsOpenMode.parseLenient(s,null,null);
-        if(m==null && !NutsBlankable.isBlank(s)){
+        NutsOpenMode m = NutsOpenMode.parseLenient(s, null, null);
+        if (m == null && !NutsBlankable.isBlank(s)) {
             throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("unable to parse value for NutsOpenMode : %s", s));
         }
         return m;
@@ -1269,7 +1272,7 @@ public final class CoreNutsArgumentsParser {
 
     private static Level parseLevel(String s, NutsSession session) {
         Level m = NutsApiUtils.parseLenientLogLevel(s, null, null);
-        if(m==null && !NutsBlankable.isBlank(s)){
+        if (m == null && !NutsBlankable.isBlank(s)) {
             throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("unable to parse value for Level : %s", s));
         }
         return m;

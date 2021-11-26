@@ -127,7 +127,7 @@ final class PrivateNutsArgumentImpl implements NutsArgument {
                 optionPrefix = null;
                 optionName = null;
                 if (opts != null && opts.length() > 0) {
-                    key = (optk == null ? "" : optk);
+                    key = expression == null ? null : (optk == null ? "" : optk);
                     value = optv;
                 } else {
                     key = (optk == null ? "" : optk) + optr;
