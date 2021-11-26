@@ -36,10 +36,10 @@ and other ##:_:container engines##.
 
 ##) COMMON VERBS:
 install,uninstall,update : install/uninstall/update an artifact (using its fetched/deployed installer)
-deploy, undeploy         : manage artifacts on the local repositories
 fetch,push               : download, upload to remote repositories
 search                   : search for existing/installable artifacts
 exec                     : execute an artifact (tool)
+deploy, undeploy         : manage artifacts on the local repositories
 
 ##) SYNOPSIS:
 ```sh
