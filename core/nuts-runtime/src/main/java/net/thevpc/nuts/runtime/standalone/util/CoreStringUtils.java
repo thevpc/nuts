@@ -26,12 +26,12 @@ package net.thevpc.nuts.runtime.standalone.util;
 import net.thevpc.nuts.*;
 
 import java.io.*;
+import java.lang.reflect.Array;
 import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.StringTokenizer;
+import java.time.Instant;
+import java.util.*;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /**
  * Created by vpc on 5/16/17.
@@ -617,5 +617,46 @@ public final class CoreStringUtils {
             sb.setLength(0);
         }
         return tb;
+    }
+
+    public static String stringValue(Object o) {
+        if (o == null) {
+            return ("");
+        }
+        if (o.getClass().isEnum()) {
+            return (CoreEnumUtils.getEnumString((Enum) o));
+        }
+        if (o instanceof Instant) {
+            return (CoreNutsUtils.DEFAULT_DATE_TIME_FORMATTER.format(((Instant) o)));
+        }
+        if (o instanceof Date) {
+            return (CoreNutsUtils.DEFAULT_DATE_TIME_FORMATTER.format(((Date) o).toInstant()));
+        }
+        if (o instanceof Collection) {
+            Collection c = ((Collection) o);
+            Object[] a = c.toArray();
+            if (a.length == 0) {
+                return ("");
+            }
+            if (a.length == 1) {
+                return stringValue(a[0]);
+            }
+            return ("[" + String.join(", ", (List) c.stream().map(x -> stringValue(x)).collect(Collectors.toList())) + "]");
+        }
+        if (o.getClass().isArray()) {
+            int len = Array.getLength(o);
+            if (len == 0) {
+                return ("");
+            }
+            if (len == 1) {
+                return stringValue(Array.get(o, 0));
+            }
+            List<String> all = new ArrayList<>(len);
+            for (int i = 0; i < len; i++) {
+                all.add(stringValue(Array.get(o, i)).toString());
+            }
+            return ("[" + String.join(", ", all) + "]");
+        }
+        return (o.toString());
     }
 }

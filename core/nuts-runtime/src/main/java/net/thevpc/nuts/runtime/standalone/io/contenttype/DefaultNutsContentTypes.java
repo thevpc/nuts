@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.io.contenttype;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.standalone.util.CoreIOUtils;
+import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.spi.NutsContentTypeResolver;
 import net.thevpc.nuts.spi.NutsSupportLevelContext;
 
@@ -9,9 +9,7 @@ import java.io.File;
 import java.io.InputStream;
 import java.net.URL;
 import java.nio.file.Path;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class DefaultNutsContentTypes implements NutsContentTypes {
     private final NutsSession session;

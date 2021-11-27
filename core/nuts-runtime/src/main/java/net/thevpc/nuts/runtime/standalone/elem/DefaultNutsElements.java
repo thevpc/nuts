@@ -145,28 +145,7 @@ public class DefaultNutsElements extends DefaultFormatBase<NutsElements> impleme
     @Override
     public <T> T parse(URL url, Class<T> clazz) {
         checkSession();
-
-        switch (contentType) {
-            case JSON:
-            case YAML:
-            case XML:
-            case TSON: {
-                try {
-                    try (InputStream is = NutsWorkspaceUtils.of(getSession()).openURL(url)) {
-                        return parse(new InputStreamReader(is), clazz);
-                    } catch (NutsException ex) {
-                        throw ex;
-                    } catch (UncheckedIOException ex) {
-                        throw new NutsIOException(getSession(), ex);
-                    } catch (RuntimeException ex) {
-                        throw new NutsParseException(getSession(), NutsMessage.cstyle("unable to parse url %s", url), ex);
-                    }
-                } catch (IOException ex) {
-                    throw new NutsParseException(getSession(), NutsMessage.cstyle("unable to parse url %s", url), ex);
-                }
-            }
-        }
-        throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("invalid content type %s. Only structured content types are allowed.", contentType));
+        return parse(NutsPath.of(url,getSession()),clazz);
     }
 
     @Override
@@ -297,25 +276,6 @@ public class DefaultNutsElements extends DefaultFormatBase<NutsElements> impleme
         return parse(file, NutsElement.class);
     }
 
-    //    public String getDefaulTagName() {
-//        return defaultName;
-//    }
-//
-//    public boolean isIgnoreNullValue() {
-//        return ignoreNullValue;
-//    }
-//
-//    public boolean isAutoResolveType() {
-//        return autoResolveType;
-//    }
-//
-//    public String getAttributePrefix() {
-//        return attributePrefix;
-//    }
-//
-//    public String getTypeAttributeName() {
-//        return typeAttribute;
-//    }
     @Override
     public <T> T convert(Object any, Class<T> to) {
         if (to == null || to.isInstance(any)) {

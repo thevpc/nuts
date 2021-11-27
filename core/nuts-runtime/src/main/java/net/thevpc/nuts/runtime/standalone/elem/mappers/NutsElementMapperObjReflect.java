@@ -1,9 +1,9 @@
 package net.thevpc.nuts.runtime.standalone.elem.mappers;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.bundles.reflect.ReflectProperty;
-import net.thevpc.nuts.runtime.bundles.reflect.ReflectType;
-import net.thevpc.nuts.runtime.bundles.reflect.ReflectUtils;
+import net.thevpc.nuts.runtime.standalone.util.reflect.ReflectProperty;
+import net.thevpc.nuts.runtime.standalone.util.reflect.ReflectType;
+import net.thevpc.nuts.runtime.standalone.util.reflect.ReflectUtils;
 import net.thevpc.nuts.runtime.standalone.elem.DefaultNutsElementFactoryService;
 
 import java.lang.reflect.Modifier;

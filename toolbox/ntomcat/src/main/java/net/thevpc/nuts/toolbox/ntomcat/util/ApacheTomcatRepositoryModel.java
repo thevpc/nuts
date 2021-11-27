@@ -31,7 +31,7 @@ public class ApacheTomcatRepositoryModel implements NutsRepositoryModel {
             return null;
         }
         if ("org.apache.catalina:apache-tomcat".equals(id.getShortName())) {
-            return search(filter, new String[]{"/"}, fetchMode, repository, session);
+            return search(filter, new NutsPath[]{null}, fetchMode, repository, session);
         }
         return null;
     }
@@ -123,7 +123,7 @@ public class ApacheTomcatRepositoryModel implements NutsRepositoryModel {
     }
 
     @Override
-    public NutsIterator<NutsId> search(NutsIdFilter filter, String[] roots, NutsFetchMode fetchMode, NutsRepository repository, NutsSession session) {
+    public NutsIterator<NutsId> search(NutsIdFilter filter, NutsPath[] basePaths, NutsFetchMode fetchMode, NutsRepository repository, NutsSession session) {
         if (fetchMode != NutsFetchMode.REMOTE) {
             return NutsIterator.ofEmpty(session);
         }

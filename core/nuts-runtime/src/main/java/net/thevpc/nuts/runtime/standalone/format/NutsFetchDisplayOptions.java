@@ -149,11 +149,33 @@ public class NutsFetchDisplayOptions {
         switch (a.getKey().getString()) {
             case "-l":
             case "--long": {
-                setDisplayLong(cmdLine.nextBoolean().getValue().getBoolean());
+                a = cmdLine.nextBoolean();
+                if(a.isActive()) {
+                    if(a.getValue().getBoolean()){
+                        setDisplay(DISPLAY_LONG);
+                    }else {
+                        setDisplay(DISPLAY_MIN);
+                    }
+                }
+                return true;
+            }
+            case "--ll":
+            case "--long-long": {
+                a = cmdLine.nextBoolean();
+                if(a.isActive()) {
+                    if(a.getValue().getBoolean()){
+                        setDisplay(DISPLAY_LONG_LONG);
+                    }else {
+                        setDisplay(DISPLAY_MIN);
+                    }
+                }
                 return true;
             }
             case "--display": {
-                setDisplay(parseNutsDisplayProperty(cmdLine));
+                a = cmdLine.nextString();
+                if(a.isActive()) {
+                    setDisplay(parseNutsDisplayProperty(a.getValue().getString()));
+                }
                 return true;
             }
 
@@ -192,10 +214,6 @@ public class NutsFetchDisplayOptions {
             displayOptionsArgs.add("--display=" + String.join(",", Arrays.asList(getDisplayProperties()).stream().map(x -> CoreEnumUtils.getEnumString(x)).collect(Collectors.toList())));
         }
         return displayOptionsArgs.toArray(new String[0]);
-    }
-
-    public static NutsDisplayProperty[] parseNutsDisplayProperty(NutsCommandLine commandLine) {
-        return parseNutsDisplayProperty(commandLine.nextString().getValue().getString());
     }
 
     public static NutsDisplayProperty[] parseNutsDisplayProperty(String str) {

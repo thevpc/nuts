@@ -27,7 +27,6 @@ package net.thevpc.nuts.runtime.standalone.app.cmdline;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.boot.NutsApiUtils;
-import net.thevpc.nuts.runtime.standalone.app.cmdline.DefaultNutsCommandLine;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.util.NutsJavaSdkUtils;
 
@@ -77,7 +76,7 @@ public final class CoreNutsArgumentsParser {
             NutsArgument a = cmdLine.peek();
 
             if (a.isOption()) {
-                boolean enabled = a.isEnabled();
+                boolean enabled = a.isActive();
                 String k = a.getKey().getString();
                 switch (k) {
                     //**********************************
@@ -953,7 +952,7 @@ public final class CoreNutsArgumentsParser {
                     case "--version": {
                         a = cmdLine.nextBoolean();
                         if (enabled) {
-                            options.setCommandVersion(a.isEnabled());
+                            options.setCommandVersion(a.isActive());
                         }
                         break;
                     }
@@ -1086,7 +1085,7 @@ public final class CoreNutsArgumentsParser {
                             customOptions.add(a.toString().substring(3));
                         } else {
                             cmdLine.skip();
-                            if (a.isEnabled()) {
+                            if (a.isActive()) {
                                 showError.add(NutsMessage.cstyle("nuts: invalid option %s", a.getString()));
                             }
                         }

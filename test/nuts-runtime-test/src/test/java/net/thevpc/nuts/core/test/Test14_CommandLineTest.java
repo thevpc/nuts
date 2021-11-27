@@ -192,7 +192,7 @@ public class Test14_CommandLineTest {
             , String eq
     ){
         Assertions.assertEquals(option,a.isOption(),"Option:"+a.getString());
-        Assertions.assertEquals(enabled,a.isEnabled(),"Enabled:"+a.getString());
+        Assertions.assertEquals(enabled,a.isActive(),"Enabled:"+a.getString());
         Assertions.assertEquals(keyValue,a.isKeyValue(),"KeyValue:"+a.getString());
         Assertions.assertEquals(negated,a.isNegated(),"Negated:"+a.getString());
         Assertions.assertEquals(key,a.getKey().getString(),"StringKey:"+a.getString());

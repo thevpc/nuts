@@ -331,7 +331,7 @@ public class DefaultNutsIdFormat extends DefaultFormatBase<NutsIdFormat> impleme
         if (a == null) {
             return false;
         }
-        boolean enabled = a.isEnabled();
+        boolean enabled = a.isActive();
         switch (a.getKey().getString()) {
             case "--omit-env": {
                 boolean val = cmdLine.nextBoolean().getValue().getBoolean();

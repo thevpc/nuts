@@ -1,9 +1,10 @@
 package net.thevpc.nuts.runtime.standalone.io.path.spi;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.bundles.io.InputStreamMetadataAwareImpl;
-import net.thevpc.nuts.runtime.bundles.io.URLBuilder;
-import net.thevpc.nuts.runtime.standalone.util.CoreIOUtils;
+import net.thevpc.nuts.runtime.standalone.io.SimpleHttpClient;
+import net.thevpc.nuts.runtime.standalone.io.util.InputStreamMetadataAwareImpl;
+import net.thevpc.nuts.runtime.standalone.io.util.URLBuilder;
+import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
 import net.thevpc.nuts.spi.NutsFormatSPI;
 import net.thevpc.nuts.spi.NutsPathFactory;
@@ -274,15 +275,12 @@ public class URLPath implements NutsPathSPI {
     }
 
     public InputStream getInputStream(NutsPath basePath) {
-        try {
-            if (url == null) {
-                throw new NutsIOException(getSession(), NutsMessage.cstyle("unable to resolve input stream %s", toString()));
-            }
-            return InputStreamMetadataAwareImpl.of(url.openStream(),
-                    new NutsPathInputStreamMetadata(basePath));
-        } catch (IOException e) {
-            throw new NutsIOException(session, e);
+        if (url == null) {
+            throw new NutsIOException(getSession(), NutsMessage.cstyle("unable to resolve input stream %s", toString()));
         }
+        return InputStreamMetadataAwareImpl.of(
+                new SimpleHttpClient(url, session).openStream(),
+                new NutsPathInputStreamMetadata(basePath));
     }
 
     public OutputStream getOutputStream(NutsPath basePath) {

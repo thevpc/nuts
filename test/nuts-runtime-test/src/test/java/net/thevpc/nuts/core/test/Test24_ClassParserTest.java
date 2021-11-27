@@ -16,12 +16,12 @@ import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Arrays;
 
+import net.thevpc.nuts.NutsExecutionEntries;
 import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.core.test.utils.TestUtils;
-import net.thevpc.nuts.runtime.standalone.util.CoreIOUtils;
+import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.util.CoreTimeUtils;
-import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
-import net.thevpc.nuts.runtime.bundles.io.SimpleClassStream;
+import net.thevpc.nuts.runtime.standalone.io.util.SimpleClassStream;
 import org.junit.jupiter.api.*;
 
 /**
@@ -96,7 +96,10 @@ public class Test24_ClassParserTest {
     private static void parseJarFile(Path file, NutsSession session) throws IOException {
         TestUtils.println("parse jar " + file + " ... ");
         try (InputStream in = Files.newInputStream(file)) {
-            TestUtils.println("parse jar " + file + " :: " + Arrays.asList(NutsWorkspaceUtils.of(session).parseJarExecutionEntries(in, file.toString())));
+            TestUtils.println("parse jar " + file + " :: " + Arrays.asList(
+                    NutsExecutionEntries.of(session)
+                                    .parse(in, "java",file.toString())
+            ));
         }
     }
 

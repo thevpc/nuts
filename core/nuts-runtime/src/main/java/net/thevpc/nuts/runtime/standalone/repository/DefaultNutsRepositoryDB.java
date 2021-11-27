@@ -3,7 +3,7 @@ package net.thevpc.nuts.runtime.standalone.repository;
 import net.thevpc.nuts.NutsConstants;
 import net.thevpc.nuts.NutsStoreLocation;
 import net.thevpc.nuts.NutsUtilPlatforms;
-import net.thevpc.nuts.runtime.standalone.util.CoreIOUtils;
+import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.spi.NutsRepositoryDB;
 import net.thevpc.nuts.spi.NutsRepositoryURL;
 
@@ -63,7 +63,7 @@ public class DefaultNutsRepositoryDB implements NutsRepositoryDB{
     }
 
     @Override
-    public boolean isDefaultRepository(String name) {
+    public boolean isDefaultRepositoryName(String name) {
         return defaultRepositoriesByName.containsKey(name);
     }
     public String getRepositoryURLByName(String name) {

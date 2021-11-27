@@ -33,7 +33,7 @@ import net.thevpc.nuts.runtime.standalone.repository.NutsIdPathIterator;
 import net.thevpc.nuts.runtime.standalone.repository.NutsIdPathIteratorBase;
 import net.thevpc.nuts.runtime.standalone.repository.NutsIdPathIteratorModel;
 import net.thevpc.nuts.runtime.standalone.util.CoreNutsConstants;
-import net.thevpc.nuts.runtime.standalone.util.CoreIOUtils;
+import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.util.CoreNutsUtils;
 
 import java.io.IOException;
@@ -248,20 +248,28 @@ public class NutsHttpFolderRepository extends NutsCachedRepository {
     }
 
     @Override
-    public NutsIterator<NutsId> searchCore(final NutsIdFilter filter, String[] roots, NutsFetchMode fetchMode, NutsSession session) {
+    public NutsIterator<NutsId> searchCore(final NutsIdFilter filter, NutsPath[] basePaths, NutsFetchMode fetchMode, NutsSession session) {
         if (fetchMode != NutsFetchMode.REMOTE) {
             return null;
         }
-        List<NutsIterator<? extends NutsId>> li = new ArrayList<>();
-        for (String root : roots) {
-            if (root.endsWith("/*")) {
-                String name = root.substring(0, root.length() - 2);
-                li.add(new NutsIdPathIterator(this,config().getLocation(true),name,filter,session, findModel,Integer.MAX_VALUE,null));
+        List<NutsIterator<? extends NutsId>> list = new ArrayList<>();
+        NutsPath repoRoot = config().getLocation(true);
+        for (NutsPath basePath : basePaths) {
+            list.add(
+                    (NutsIterator) IteratorBuilder.ofRunnable(
+                            () -> session.getTerminal().printProgress("%-8s %s", "browse",
+                                    (basePath == null ? repoRoot : repoRoot.resolve(basePath)).toCompressedForm()
+                            ),
+                            "Log"
+
+                    ).build());
+            if (basePath.getName().equals("*")) {
+                list.add(new NutsIdPathIterator(this, repoRoot,basePath.getParent(),filter,session, findModel,Integer.MAX_VALUE,null));
             } else {
-                li.add(new NutsIdPathIterator(this,config().getLocation(true),root,filter,session, findModel,2,null));
+                list.add(new NutsIdPathIterator(this, repoRoot,basePath,filter,session, findModel,2,null));
             }
         }
-        return IteratorUtils.concat(li);
+        return IteratorUtils.concat(list);
     }
 
     @Override

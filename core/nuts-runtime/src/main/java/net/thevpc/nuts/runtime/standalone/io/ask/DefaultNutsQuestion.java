@@ -545,7 +545,7 @@ public class DefaultNutsQuestion<T> implements NutsQuestion<T> {
         switch (a.getKey().getString()) {
             case "trace-confirmation": {
                 boolean val = cmd.nextBoolean().getValue().getBoolean();
-                if (a.isEnabled()) {
+                if (a.isActive()) {
                     this.traceConfirmation = val;
                 }
                 break;

@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.deploy;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.bundles.io.NutsStreamOrPath;
+import net.thevpc.nuts.runtime.standalone.io.util.NutsStreamOrPath;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.NutsWorkspaceCommandBase;
 
 import java.io.ByteArrayInputStream;
@@ -312,7 +312,7 @@ public abstract class AbstractNutsDeployCommand extends NutsWorkspaceCommandBase
         if (a == null) {
             return false;
         }
-        boolean enabled = a.isEnabled();
+        boolean enabled = a.isActive();
         switch (a.getKey().getString()) {
             case "-d":
             case "--desc": {

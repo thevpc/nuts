@@ -1,13 +1,13 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.deploy;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.bundles.common.CorePlatformUtils;
-import net.thevpc.nuts.runtime.bundles.io.NutsStreamOrPath;
-import net.thevpc.nuts.runtime.bundles.io.ZipOptions;
-import net.thevpc.nuts.runtime.bundles.io.ZipUtils;
+import net.thevpc.nuts.runtime.standalone.util.CorePlatformUtils;
+import net.thevpc.nuts.runtime.standalone.io.util.NutsStreamOrPath;
+import net.thevpc.nuts.runtime.standalone.io.util.ZipOptions;
+import net.thevpc.nuts.runtime.standalone.io.util.ZipUtils;
 import net.thevpc.nuts.runtime.standalone.util.CoreNutsConstants;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceExt;
-import net.thevpc.nuts.runtime.standalone.util.CoreIOUtils;
+import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
 import net.thevpc.nuts.spi.NutsRepositorySPI;
 

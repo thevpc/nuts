@@ -17,16 +17,16 @@ import java.util.List;
 import java.util.logging.Level;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.bundles.io.NutsStreamOrPath;
+import net.thevpc.nuts.runtime.standalone.io.util.NutsStreamOrPath;
 import net.thevpc.nuts.runtime.standalone.definition.DefaultNutsDefinition;
 import net.thevpc.nuts.runtime.standalone.definition.DefaultNutsInstallInfo;
 import net.thevpc.nuts.NutsLogVerb;
 import net.thevpc.nuts.runtime.standalone.util.CoreNutsUtils;
-import net.thevpc.nuts.runtime.standalone.util.CoreIOUtils;
-import net.thevpc.nuts.runtime.bundles.io.URLBuilder;
-import net.thevpc.nuts.runtime.bundles.io.ZipOptions;
-import net.thevpc.nuts.runtime.bundles.io.ZipUtils;
-import net.thevpc.nuts.runtime.standalone.util.CoreDigestHelper;
+import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
+import net.thevpc.nuts.runtime.standalone.io.util.URLBuilder;
+import net.thevpc.nuts.runtime.standalone.io.util.ZipOptions;
+import net.thevpc.nuts.runtime.standalone.io.util.ZipUtils;
+import net.thevpc.nuts.runtime.standalone.security.util.CoreDigestHelper;
 import net.thevpc.nuts.spi.NutsDependencySolver;
 
 /**

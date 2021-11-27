@@ -58,7 +58,7 @@ public class MavenFolderRepository extends NutsCachedRepository {
         super(options, session, parentRepository,
                 NutsPath.of(options.getConfig().getLocation(), session).isRemote() ? NutsSpeedQualifier.SLOW : NutsSpeedQualifier.FASTER,
                 false, NutsConstants.RepoTypes.MAVEN);
-        LOG = NutsLogger.of(MavenFolderRepository.class, session);
+        LOG = NutsLogger.of(getClass(), session);
         if (!isRemote()) {
             if (options.getConfig().getStoreLocationStrategy() != NutsStoreLocationStrategy.STANDALONE) {
                 cache.setWriteEnabled(false);
@@ -154,9 +154,9 @@ public class MavenFolderRepository extends NutsCachedRepository {
         }
         if (localPath == null) {
             NutsPath p = repoHelper.getIdPath(id, session);
-            if(p.isLocal()){
+            if (p.isLocal()) {
                 return new NutsDefaultContent(p, false, false);
-            }else {
+            } else {
                 String tempFile = NutsTmp.of(session)
                         .setRepositoryId(getUuid())
                         .createTempFile(p.getName()).toString();
@@ -192,23 +192,25 @@ public class MavenFolderRepository extends NutsCachedRepository {
     }
 
     @Override
-    public NutsIterator<NutsId> searchCore(final NutsIdFilter filter, String[] roots, NutsFetchMode fetchMode, NutsSession session) {
+    public NutsIterator<NutsId> searchCore(final NutsIdFilter filter, NutsPath[] basePaths, NutsFetchMode fetchMode, NutsSession session) {
         if (!acceptedFetchNoCache(fetchMode)) {
             return null;
         }
+        NutsPath repoRoot = config().setSession(session).getLocation(true);
         List<NutsIterator<? extends NutsId>> list = new ArrayList<>();
-        for (String root : roots) {
+        for (NutsPath basePath : basePaths) {
             list.add(
                     (NutsIterator) IteratorBuilder.ofRunnable(
-                            () -> session.getTerminal().printProgress("%-8s %s", "browse", NutsPath.of(root, session).toCompressedForm()),
+                            () -> session.getTerminal().printProgress("%-8s %s", "browse",
+                                    (basePath == null ? repoRoot : repoRoot.resolve(basePath)).toCompressedForm()
+                            ),
                             "Log"
 
                     ).build());
-            if (root.endsWith("/*")) {
-                String name = root.substring(0, root.length() - 2);
-                list.add(new NutsIdPathIterator(this, config().setSession(session).getLocation(true), name, filter, session, repoIter, Integer.MAX_VALUE, null));
+            if (basePath.getName().equals("*")) {
+                list.add(new NutsIdPathIterator(this, repoRoot, basePath.getParent(), filter, session, repoIter, Integer.MAX_VALUE, null));
             } else {
-                list.add(new NutsIdPathIterator(this, config().setSession(session).getLocation(true), root, filter, session, repoIter, 2, null));
+                list.add(new NutsIdPathIterator(this, repoRoot, basePath, filter, session, repoIter, 2, null));
             }
         }
         return IteratorUtils.concat(list);
@@ -217,27 +219,27 @@ public class MavenFolderRepository extends NutsCachedRepository {
     @Override
     public void updateStatistics2(NutsSession session) {
         config().setSession(session).getLocation(true).walkDfs(new NutsTreeVisitor<NutsPath>() {
-               @Override
-               public NutsTreeVisitResult preVisitDirectory(NutsPath dir, NutsSession session) {
+                                                                   @Override
+                                                                   public NutsTreeVisitResult preVisitDirectory(NutsPath dir, NutsSession session) {
 
-                   return NutsTreeVisitResult.CONTINUE;
-               }
+                                                                       return NutsTreeVisitResult.CONTINUE;
+                                                                   }
 
-               @Override
-               public NutsTreeVisitResult visitFile(NutsPath file, NutsSession session) {
-                   throw new NutsIOException(session, NutsMessage.cstyle("updateStatistics Not supported."));
-               }
+                                                                   @Override
+                                                                   public NutsTreeVisitResult visitFile(NutsPath file, NutsSession session) {
+                                                                       throw new NutsIOException(session, NutsMessage.cstyle("updateStatistics Not supported."));
+                                                                   }
 
-               @Override
-               public NutsTreeVisitResult visitFileFailed(NutsPath file, Exception exc, NutsSession session) {
-                   throw new NutsIOException(session, NutsMessage.cstyle("updateStatistics Not supported."));
-               }
+                                                                   @Override
+                                                                   public NutsTreeVisitResult visitFileFailed(NutsPath file, Exception exc, NutsSession session) {
+                                                                       throw new NutsIOException(session, NutsMessage.cstyle("updateStatistics Not supported."));
+                                                                   }
 
-               @Override
-               public NutsTreeVisitResult postVisitDirectory(NutsPath dir, Exception exc, NutsSession session) {
-                   throw new NutsIOException(session, NutsMessage.cstyle("updateStatistics Not supported."));
-               }
-           }
+                                                                   @Override
+                                                                   public NutsTreeVisitResult postVisitDirectory(NutsPath dir, Exception exc, NutsSession session) {
+                                                                       throw new NutsIOException(session, NutsMessage.cstyle("updateStatistics Not supported."));
+                                                                   }
+                                                               }
         );
     }
 
@@ -325,7 +327,7 @@ public class MavenFolderRepository extends NutsCachedRepository {
     protected NutsPath getMavenLocalFolderContent(NutsId id, NutsSession session) {
         NutsPath p = getIdRelativePath(id, session);
         if (p != null) {
-            return NutsPath.of(System.getProperty("user.home"), session).resolve(".m2").resolve(p);
+            return NutsPath.ofUserHome(session).resolve(".m2").resolve(p);
         }
         return null;
     }
@@ -367,7 +369,7 @@ public class MavenFolderRepository extends NutsCachedRepository {
             if (fn.endsWith(".pom")) {
                 NutsPath versionFolder = pomFile.getParent();
                 if (versionFolder != null) {
-                    NutsPath vn = versionFolder;
+                    String vn = versionFolder.getName();
                     NutsPath artifactFolder = versionFolder.getParent();
                     if (artifactFolder != null) {
                         String an = artifactFolder.getName();
@@ -387,7 +389,7 @@ public class MavenFolderRepository extends NutsCachedRepository {
                                         NutsIdBuilder.of(session)
                                                 .setGroupId(gn.toString())
                                                 .setArtifactId(an)
-                                                .setVersion(vn.getName())
+                                                .setVersion(vn)
                                                 .build(),
                                         null, pomFile, rootPath, filter, repository, session);
                             }

@@ -1,7 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.repository.impl.maven.util;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.bundles.mvn.DirtyLuceneIndexParser;
 import net.thevpc.nuts.runtime.standalone.repository.index.ArtifactsIndexDB;
 
 import java.io.FileInputStream;

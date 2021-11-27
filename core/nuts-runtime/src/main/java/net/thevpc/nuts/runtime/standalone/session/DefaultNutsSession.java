@@ -28,7 +28,7 @@ import net.thevpc.nuts.runtime.standalone.elem.DefaultNutsArrayElementBuilder;
 import net.thevpc.nuts.runtime.standalone.io.terminals.AbstractNutsSessionTerminal;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.util.NutsConfigurableHelper;
-import net.thevpc.nuts.runtime.standalone.util.NutsPropertiesHolder;
+import net.thevpc.nuts.runtime.standalone.util.collections.NutsPropertiesHolder;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
 
 import java.io.InputStream;
@@ -120,7 +120,7 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
     public boolean configureFirst(NutsCommandLine cmdLine) {
         NutsArgument a = cmdLine.peek();
         if (a != null) {
-            boolean enabled = a.isEnabled();
+            boolean enabled = a.isActive();
             switch (a.getKey().getString()) {
                 case "-T":
                 case "--output-format-option": {

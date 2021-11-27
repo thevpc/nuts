@@ -33,6 +33,7 @@ import net.thevpc.nuts.runtime.standalone.io.path.NutsPathFromSPI;
 import net.thevpc.nuts.runtime.standalone.io.path.spi.*;
 import net.thevpc.nuts.runtime.standalone.io.printstream.NutsPrintStreamNull;
 import net.thevpc.nuts.runtime.standalone.io.terminals.*;
+import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.repository.DefaultNutsRepositoryDB;
 import net.thevpc.nuts.runtime.standalone.repository.NutsRepositorySelectorHelper;
 import net.thevpc.nuts.runtime.standalone.repository.impl.main.NutsInstalledRepository;
@@ -1381,7 +1382,7 @@ public class DefaultNutsWorkspaceConfigModel {
         for (NutsAddRepositoryOptions d : rm.getDefaultRepositories()) {
             defaults.add(NutsRepositoryURL.of(d.getName(), null));
         }
-        return resolveBootRepositoriesList(session).resolveSelectors(defaults.toArray(new NutsRepositoryURL[0]),
+        return resolveBootRepositoriesList(session).resolve(defaults.toArray(new NutsRepositoryURL[0]),
                 DefaultNutsRepositoryDB.INSTANCE
         );
     }

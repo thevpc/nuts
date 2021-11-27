@@ -272,7 +272,7 @@ public abstract class DefaultNutsQueryBaseOptions<T extends NutsWorkspaceCommand
         if (a == null) {
             return false;
         }
-        boolean enabled = a.isEnabled();
+        boolean enabled = a.isActive();
         switch (a.getKey().getString()) {
             case "--failfast": {
                 boolean val = cmdLine.nextBoolean().getValue().getBoolean();
@@ -352,7 +352,11 @@ public abstract class DefaultNutsQueryBaseOptions<T extends NutsWorkspaceCommand
 //    @Override
     public T setRepositoryFilter(String filter) {
         checkSession();
-        this.repositoryFilter = getSession().repos().filter().byName(filter);
+        if(NutsBlankable.isBlank(filter)){
+            this.repositoryFilter = null;
+        }else {
+            this.repositoryFilter = getSession().repos().filter().byName(filter);
+        }
         return (T) this;
     }
 //    @Override

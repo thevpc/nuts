@@ -26,7 +26,7 @@
 package net.thevpc.nuts.runtime.standalone.descriptor;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.standalone.util.CoreArrayUtils;
+import net.thevpc.nuts.runtime.standalone.util.collections.CoreArrayUtils;
 
 import java.util.*;
 

@@ -24,7 +24,7 @@
 package net.thevpc.nuts.runtime.standalone.repository.impl;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.bundles.io.CommonRootsHelper;
+import net.thevpc.nuts.runtime.standalone.io.util.CommonRootsHelper;
 import net.thevpc.nuts.runtime.standalone.util.iter.IteratorBuilder;
 import net.thevpc.nuts.runtime.standalone.xtra.glob.GlobUtils;
 import net.thevpc.nuts.runtime.standalone.repository.cmd.NutsRepositorySupportedAction;
@@ -285,26 +285,27 @@ public class NutsCachedRepository extends AbstractNutsRepositoryBase {
 
     @Override
     public final NutsIterator<NutsId> searchImpl(final NutsIdFilter filter, NutsFetchMode fetchMode, NutsSession session) {
-        List<CommonRootsHelper.PathBase> roots = CommonRootsHelper.resolveRootPaths(filter);
+        List<NutsPath> basePaths = CommonRootsHelper.resolveRootPaths(filter, session);
         List<NutsIterator<? extends NutsId>> li = new ArrayList<>();
-        List<String> rootStrings = new ArrayList<>();
-        for (CommonRootsHelper.PathBase root : roots) {
-            NutsPath np = NutsPath.of(root.getName(), session);
+        for (NutsPath basePath : basePaths) {
             if (fetchMode != NutsFetchMode.REMOTE) {
-                li.add(lib.findInFolder(np, filter, root.isDeep() ? Integer.MAX_VALUE : 2, session));
+                if (basePath.getName().equals("*")) {
+                    li.add(lib.findInFolder(basePath.getParent(), filter, Integer.MAX_VALUE, session));
+                } else {
+                    li.add(lib.findInFolder(basePath, filter, 2, session));
+                }
             }
             if (cache.isReadEnabled() && session.isCached()) {
-                li.add(cache.findInFolder(np, filter, root.isDeep() ? Integer.MAX_VALUE : 2, session));
-            }
-            if (root.isDeep()) {
-                rootStrings.add(root.getName() + "/*");
-            } else {
-                rootStrings.add(root.getName());
+                if (basePath.getName().equals("*")) {
+                    li.add(cache.findInFolder(basePath.getParent(), filter, Integer.MAX_VALUE, session));
+                } else {
+                    li.add(cache.findInFolder(basePath, filter, 2, session));
+                }
             }
         }
         NutsIterator<NutsId> p = null;
         try {
-            p = searchCore(filter, rootStrings.toArray(new String[0]), fetchMode, session);
+            p = searchCore(filter, basePaths.toArray(new NutsPath[0]), fetchMode, session);
         } catch (NutsNotFoundException ex) {
             //ignore....
         } catch (Exception ex) {
@@ -340,7 +341,7 @@ public class NutsCachedRepository extends AbstractNutsRepositoryBase {
         return null;
     }
 
-    public NutsIterator<NutsId> searchCore(final NutsIdFilter filter, String[] roots, NutsFetchMode fetchMode, NutsSession session) {
+    public NutsIterator<NutsId> searchCore(final NutsIdFilter filter, NutsPath[] basePaths, NutsFetchMode fetchMode, NutsSession session) {
         return null;
     }
 

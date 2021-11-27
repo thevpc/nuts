@@ -63,7 +63,7 @@ public class DefaultNutsWorkspaceArchetypeComponent implements NutsWorkspaceArch
             defaults.add(NutsRepositoryURL.of(d.getName(), null));
         }
         defaults.add(NutsRepositoryURL.of(NutsConstants.Names.DEFAULT_REPOSITORY_NAME, null));
-        NutsRepositoryURL[] br = rm.getModel().resolveBootRepositoriesList(session).resolveSelectors(defaults.toArray(new NutsRepositoryURL[0]), DefaultNutsRepositoryDB.INSTANCE);
+        NutsRepositoryURL[] br = rm.getModel().resolveBootRepositoriesList(session).resolve(defaults.toArray(new NutsRepositoryURL[0]), DefaultNutsRepositoryDB.INSTANCE);
         for (NutsRepositoryURL s : br) {
             NutsAddRepositoryOptions oo = NutsRepositorySelectorHelper.createRepositoryOptions(s, false, session);
             String sloc = NutsPath.of(oo.getConfig().getLocation(),session).toAbsolute().toString();

@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.descriptor.parsers;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.bundles.common.CorePlatformUtils;
+import net.thevpc.nuts.runtime.standalone.util.CorePlatformUtils;
 import net.thevpc.nuts.runtime.standalone.descriptor.DefaultNutsArtifactCall;
 import net.thevpc.nuts.runtime.standalone.descriptor.DefaultNutsDescriptorPropertyBuilder;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;

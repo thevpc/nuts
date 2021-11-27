@@ -2,7 +2,7 @@ package net.thevpc.nuts.runtime.standalone.text;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.io.outputstream.BaseTransparentFilterOutputStream;
-import net.thevpc.nuts.runtime.standalone.util.CoreIOUtils;
+import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.io.terminals.NutsTerminalModeOp;
 
 import java.io.IOException;

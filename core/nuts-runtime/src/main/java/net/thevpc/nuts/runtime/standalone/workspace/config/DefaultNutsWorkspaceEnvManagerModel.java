@@ -25,9 +25,9 @@ package net.thevpc.nuts.runtime.standalone.workspace.config;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.xtra.vals.DefaultNutsVal;
-import net.thevpc.nuts.runtime.bundles.common.CorePlatformUtils;
-import net.thevpc.nuts.runtime.standalone.util.DefaultObservableMap;
-import net.thevpc.nuts.runtime.standalone.util.ObservableMap;
+import net.thevpc.nuts.runtime.standalone.util.CorePlatformUtils;
+import net.thevpc.nuts.runtime.standalone.util.collections.DefaultObservableMap;
+import net.thevpc.nuts.runtime.standalone.util.collections.ObservableMap;
 import net.thevpc.nuts.runtime.standalone.id.DefaultNutsIdParser;
 import net.thevpc.nuts.runtime.standalone.app.gui.CoreNutsUtilGui;
 import net.thevpc.nuts.runtime.standalone.util.NutsJavaSdkUtils;

@@ -2,7 +2,7 @@ package net.thevpc.nuts.runtime.standalone.io.path.spi;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.extensions.DefaultNutsClassLoader;
-import net.thevpc.nuts.runtime.standalone.util.CoreIOUtils;
+import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
 import net.thevpc.nuts.spi.NutsFormatSPI;
 import net.thevpc.nuts.spi.NutsPathFactory;
@@ -358,7 +358,7 @@ public class NutsResourcePath implements NutsPathSPI {
 
     @Override
     public int hashCode() {
-        return Objects.hash(path, session);
+        return Objects.hash(path);
     }
 
     @Override
@@ -370,7 +370,7 @@ public class NutsResourcePath implements NutsPathSPI {
             return false;
         }
         NutsResourcePath that = (NutsResourcePath) o;
-        return urlPathLookedUp == that.urlPathLookedUp && Objects.equals(path, that.path) && Objects.equals(ids, that.ids) && Objects.equals(location, that.location) && Objects.equals(urlPath, that.urlPath) && Objects.equals(session, that.session);
+        return urlPathLookedUp == that.urlPathLookedUp && Objects.equals(path, that.path) && Objects.equals(ids, that.ids) && Objects.equals(location, that.location) && Objects.equals(urlPath, that.urlPath);
     }
 
     @Override

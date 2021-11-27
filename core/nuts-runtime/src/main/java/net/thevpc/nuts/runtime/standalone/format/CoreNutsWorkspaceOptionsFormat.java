@@ -25,7 +25,7 @@ package net.thevpc.nuts.runtime.standalone.format;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.boot.NutsBootVersion;
-import net.thevpc.nuts.runtime.standalone.util.CoreIOUtils;
+import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 
 import java.util.*;
 

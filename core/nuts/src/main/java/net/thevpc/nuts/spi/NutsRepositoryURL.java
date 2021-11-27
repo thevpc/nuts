@@ -24,9 +24,11 @@
 package net.thevpc.nuts.spi;
 
 import net.thevpc.nuts.NutsBlankable;
+import net.thevpc.nuts.NutsIllegalArgumentException;
+import net.thevpc.nuts.NutsMessage;
 import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.boot.NutsApiUtils;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Set;
 import java.util.TreeSet;
@@ -52,7 +54,7 @@ public class NutsRepositoryURL {
         this.pathProtocols.addAll(detectedProtocols(location));
     }
 
-    public NutsRepositoryURL(String url) {
+    protected NutsRepositoryURL(String url) {
         if (url == null) {
             url = "";
         }
@@ -74,11 +76,63 @@ public class NutsRepositoryURL {
     }
 
     public static NutsRepositoryURL of(String name, String url) {
-        return of(url).changeName(name);
+        return of(url).setName(name);
     }
 
     public static NutsRepositoryURL of(String expression, NutsRepositoryDB db, NutsSession session) {
-        return NutsApiUtils.parseRepositoryURL(expression, db, session);
+        String name = null;
+        String url = null;
+        if (expression == null) {
+            if(session==null) {
+                throw new IllegalArgumentException("invalid null repository");
+            }else{
+                throw new NutsIllegalArgumentException(session, NutsMessage.plain("invalid null repository"));
+            }
+        }
+        expression = expression.trim();
+        if (expression.startsWith("-")
+                || expression.startsWith("+")
+                || expression.startsWith("=")
+                || expression.indexOf(',') >= 0
+                || expression.indexOf(';') >= 0) {
+            if(session==null) {
+                throw new IllegalArgumentException("invalid selection syntax");
+            }else{
+                throw new NutsIllegalArgumentException(session,NutsMessage.plain("invalid repository syntax"));
+            }
+        }
+        Matcher matcher = Pattern.compile("(?<name>[a-zA-Z-_]+)=(?<value>.+)").matcher(expression);
+        if (matcher.find()) {
+            name = matcher.group("name");
+            url = matcher.group("value");
+        } else {
+            if (expression.matches("[a-zA-Z-_]+")) {
+                name = expression;
+                String u = db.getRepositoryURLByName(name);
+                if (u == null) {
+                    url = name;
+                } else {
+                    url = u;
+                }
+            } else {
+                url = expression;
+                String n = db.getRepositoryNameByURL(url);
+                if (n == null) {
+                    name = url;
+                } else {
+                    name = n;
+                }
+            }
+        }
+        if (url.length() > 0) {
+            return NutsRepositoryURL.of(name, url);
+        }
+        return null;
+    }
+
+    public static NutsRepositoryURL[] ofAll(String expression,NutsRepositoryURL[] input, NutsRepositoryDB db,NutsSession session) {
+        return NutsRepositorySelectorList.of(expression, db, session)
+                .resolve(input, db);
     }
 
     private static Set<String> detectedProtocols(String location) {
@@ -109,10 +163,6 @@ public class NutsRepositoryURL {
         return location;
     }
 
-    public boolean isHttp() {
-        return pathProtocols.contains("http") || pathProtocols.contains("https");
-    }
-
     public String getType() {
         return type;
     }
@@ -135,7 +185,7 @@ public class NutsRepositoryURL {
                 : getName() + "=" + getURLString();
     }
 
-    public NutsRepositoryURL changeName(String s) {
+    public NutsRepositoryURL setName(String s) {
         return new NutsRepositoryURL(s, type, location);
     }
 }

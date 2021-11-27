@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.alias;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.standalone.util.CoreArrayUtils;
+import net.thevpc.nuts.runtime.standalone.util.collections.CoreArrayUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;

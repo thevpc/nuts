@@ -85,6 +85,12 @@ public interface NutsArgument {
     boolean isNegated();
 
     /**
+     * true if not negated
+     * @return true if not negated
+     */
+    boolean isEnabled();
+
+    /**
      * false if option is in one of the following forms :
      * <ul>
      * <li>-//name</li>
@@ -94,7 +100,19 @@ public interface NutsArgument {
      *
      * @return true if the argument is enable and false if it is commented
      */
-    boolean isEnabled();
+    boolean isActive();
+
+    /**
+     * true if option is in one of the following forms :
+     * <ul>
+     * <li>-//name</li>
+     * <li>--//name</li>
+     * </ul>
+     * where name is any valid identifier
+     *
+     * @return true if the argument is enable and false if it is commented
+     */
+    boolean isInactive();
 
     /**
      * Throw an exception if the argument is null

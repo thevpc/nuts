@@ -26,7 +26,7 @@
 //package net.thevpc.nuts.runtime.standalone.executors;
 //
 //import net.thevpc.nuts.*;
-//import net.thevpc.nuts.runtime.standalone.util.CoreCommonUtils;
+//import net.thevpc.nuts.runtime.standalone.util.NutsTextUtils;
 //import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 //import net.thevpc.nuts.NutsExecutorComponent;
 //

@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.text.parser.steps;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.bundles.collections.EvictingCharQueue;
+import net.thevpc.nuts.runtime.standalone.util.collections.EvictingCharQueue;
 import net.thevpc.nuts.runtime.standalone.util.StringBuilder2;
 import net.thevpc.nuts.runtime.standalone.text.parser.DefaultNutsTextNodeParser;
 import net.thevpc.nuts.runtime.standalone.text.parser.DefaultNutsTextPlain;

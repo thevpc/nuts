@@ -51,7 +51,7 @@ public class ServerNutsWorkspaceArchetypeComponent implements NutsWorkspaceArche
     public void initializeWorkspace(NutsSession session) {
         this.LOG = NutsLogger.of(ServerNutsWorkspaceArchetypeComponent.class, session);
         DefaultNutsWorkspaceConfigManager rm = (DefaultNutsWorkspaceConfigManager) session.config();
-        NutsRepositoryURL[] br = rm.getModel().resolveBootRepositoriesList(session).resolveSelectors(
+        NutsRepositoryURL[] br = rm.getModel().resolveBootRepositoriesList(session).resolve(
                 new NutsRepositoryURL[]{
                         NutsRepositoryURL.of("maven-local", null),
                         NutsRepositoryURL.of("maven-central", null),

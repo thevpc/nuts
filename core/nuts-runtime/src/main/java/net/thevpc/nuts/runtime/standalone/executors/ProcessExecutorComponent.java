@@ -26,7 +26,7 @@
 package net.thevpc.nuts.runtime.standalone.executors;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.bundles.io.IProcessExecHelper;
+import net.thevpc.nuts.runtime.standalone.io.util.IProcessExecHelper;
 import net.thevpc.nuts.spi.*;
 
 import java.util.*;

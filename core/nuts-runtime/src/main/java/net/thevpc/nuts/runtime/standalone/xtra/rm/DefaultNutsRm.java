@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.xtra.rm;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.standalone.util.CoreIOUtils;
+import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.spi.NutsSupportLevelContext;
 
 import java.io.FileNotFoundException;

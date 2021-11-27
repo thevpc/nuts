@@ -24,11 +24,10 @@
 package net.thevpc.nuts.runtime.standalone.repository.impl.main;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.bundles.collections.LRUMap;
-import net.thevpc.nuts.runtime.bundles.io.FolderObjectIterator;
-import net.thevpc.nuts.runtime.bundles.io.NutsInstallStatusIdFilter;
+import net.thevpc.nuts.runtime.standalone.util.collections.LRUMap;
+import net.thevpc.nuts.runtime.standalone.io.util.FolderObjectIterator;
+import net.thevpc.nuts.runtime.standalone.io.util.NutsInstallStatusIdFilter;
 import net.thevpc.nuts.runtime.standalone.util.iter.IteratorBuilder;
-import net.thevpc.nuts.NutsDescribables;
 import net.thevpc.nuts.runtime.standalone.definition.DefaultNutsInstallInfo;
 import net.thevpc.nuts.runtime.standalone.repository.cmd.deploy.AbstractNutsDeployRepositoryCommand;
 import net.thevpc.nuts.runtime.standalone.repository.cmd.fetch.AbstractNutsFetchContentRepositoryCommand;
@@ -41,9 +40,9 @@ import net.thevpc.nuts.runtime.standalone.repository.cmd.updatestats.AbstractNut
 import net.thevpc.nuts.runtime.standalone.xtra.expr.StringTokenizerUtils;
 import net.thevpc.nuts.runtime.standalone.repository.impl.AbstractNutsRepository;
 import net.thevpc.nuts.runtime.standalone.repository.impl.NutsRepositoryExt0;
-import net.thevpc.nuts.runtime.standalone.util.CoreCollectionUtils;
+import net.thevpc.nuts.runtime.standalone.util.collections.CoreCollectionUtils;
 import net.thevpc.nuts.runtime.standalone.util.CoreNutsUtils;
-import net.thevpc.nuts.runtime.standalone.util.NutsIdFilterToPredicate;
+import net.thevpc.nuts.runtime.standalone.util.filters.NutsIdFilterToPredicate;
 import net.thevpc.nuts.runtime.standalone.workspace.DefaultNutsWorkspace;
 import net.thevpc.nuts.runtime.standalone.repository.impl.NutsRepositoryFolderHelper;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;

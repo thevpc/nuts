@@ -94,26 +94,26 @@ public class NutsXmlUtils {
 //        // root element
 //        Element elem = document.createElement(createElementName(name));
 //        if(elemIndex>=0){
-//            elem.setAttribute("index",CoreCommonUtils.stringValue(elemIndex));
+//            elem.setAttribute("index",NutsTextUtils.stringValue(elemIndex));
 //        }
 //        NutsElement elem2 = NutsElements.of(session).convert(o,NutsElement.class);
 //        switch (elem2.type()){
 //            case STRING:{
 //                elem.setAttribute("type", "string");
-//                elem.setTextContent(CoreCommonUtils.stringValue(elem2.primitive().getString()));
+//                elem.setTextContent(NutsTextUtils.stringValue(elem2.primitive().getString()));
 //                break;
 //            }
 //            case FLOAT:{
 //                Number n = elem2.primitive().getNumber();
 //                if(n instanceof Double){
 //                    elem.setAttribute("type", "double");
-//                    elem.setTextContent(CoreCommonUtils.stringValue(elem2.primitive().getDouble()));
+//                    elem.setTextContent(NutsTextUtils.stringValue(elem2.primitive().getDouble()));
 //                }else if(n instanceof Float){
 //                    elem.setAttribute("type", "float");
-//                    elem.setTextContent(CoreCommonUtils.stringValue(elem2.primitive().getFloat()));
+//                    elem.setTextContent(NutsTextUtils.stringValue(elem2.primitive().getFloat()));
 //                }else{
 //                    elem.setAttribute("type", "double");
-//                    elem.setTextContent(CoreCommonUtils.stringValue(elem2.primitive().getDouble()));
+//                    elem.setTextContent(NutsTextUtils.stringValue(elem2.primitive().getDouble()));
 //                }
 //                break;
 //            }
@@ -121,24 +121,24 @@ public class NutsXmlUtils {
 //                Number n = elem2.primitive().getNumber();
 //                if(n instanceof Integer){
 //                    elem.setAttribute("type", "int");
-//                    elem.setTextContent(CoreCommonUtils.stringValue(elem2.primitive().getInt()));
+//                    elem.setTextContent(NutsTextUtils.stringValue(elem2.primitive().getInt()));
 //                }else if(n instanceof Long){
 //                    elem.setAttribute("type", "long");
-//                    elem.setTextContent(CoreCommonUtils.stringValue(elem2.primitive().getLong()));
+//                    elem.setTextContent(NutsTextUtils.stringValue(elem2.primitive().getLong()));
 //                }else{
 //                    elem.setAttribute("type", "int");
-//                    elem.setTextContent(CoreCommonUtils.stringValue(elem2.primitive().getInt()));
+//                    elem.setTextContent(NutsTextUtils.stringValue(elem2.primitive().getInt()));
 //                }
 //                break;
 //            }
 //            case BOOLEAN:{
 //                elem.setAttribute("type", "boolean");
-//                elem.setTextContent(CoreCommonUtils.stringValue(elem2.primitive().getBoolean()));
+//                elem.setTextContent(NutsTextUtils.stringValue(elem2.primitive().getBoolean()));
 //                break;
 //            }
 //            case DATE:{
 //                elem.setAttribute("type", "date");
-//                elem.setTextContent(CoreCommonUtils.stringValue(elem2.primitive().getDate()));
+//                elem.setTextContent(NutsTextUtils.stringValue(elem2.primitive().getDate()));
 //                break;
 //            }
 //            case NULL:{

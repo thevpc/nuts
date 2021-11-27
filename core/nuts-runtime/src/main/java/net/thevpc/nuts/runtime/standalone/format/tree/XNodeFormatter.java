@@ -25,7 +25,7 @@ package net.thevpc.nuts.runtime.standalone.format.tree;
 
 import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.NutsString;
-import net.thevpc.nuts.runtime.standalone.util.CoreCommonUtils;
+import net.thevpc.nuts.runtime.standalone.text.util.NutsTextUtils;
 
 /**
  *
@@ -38,7 +38,7 @@ interface XNodeFormatter {
     }
 
     default NutsString stringValue(Object o, NutsSession session) {
-        return CoreCommonUtils.stringValueFormatted(o, false, session);
+        return NutsTextUtils.stringValueFormatted(o, false, session);
     }
     
 }

@@ -3,7 +3,7 @@ package net.thevpc.nuts.runtime.standalone.text;
 import net.thevpc.nuts.NutsIllegalArgumentException;
 import net.thevpc.nuts.NutsMessage;
 import net.thevpc.nuts.NutsUnsupportedEnumException;
-import net.thevpc.nuts.runtime.standalone.util.CoreIOUtils;
+import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.io.terminals.NutsTerminalModeOp;
 
 import java.io.OutputStream;

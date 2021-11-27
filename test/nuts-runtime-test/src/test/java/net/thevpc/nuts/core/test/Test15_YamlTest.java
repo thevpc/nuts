@@ -28,7 +28,7 @@ import java.io.IOException;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.core.test.utils.TestUtils;
-import net.thevpc.nuts.runtime.standalone.util.CoreIOUtils;
+import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;

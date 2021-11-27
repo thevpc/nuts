@@ -7,7 +7,7 @@ package net.thevpc.nuts.runtime.standalone.stream;
 
 import net.thevpc.nuts.NutsIterator;
 import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.runtime.standalone.util.CoreCollectionUtils;
+import net.thevpc.nuts.runtime.standalone.util.collections.CoreCollectionUtils;
 
 import java.util.*;
 import java.util.stream.Stream;

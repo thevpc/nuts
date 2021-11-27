@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.io.printstream;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.bundles.common.CorePlatformUtils;
+import net.thevpc.nuts.runtime.standalone.util.CorePlatformUtils;
 import net.thevpc.nuts.runtime.standalone.text.DefaultAnsiEscapeCommand;
 import net.thevpc.nuts.runtime.standalone.util.CachedValue;
 

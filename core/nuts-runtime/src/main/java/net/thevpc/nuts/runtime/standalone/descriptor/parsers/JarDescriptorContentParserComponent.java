@@ -36,9 +36,9 @@ import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-import net.thevpc.nuts.runtime.bundles.io.InputStreamVisitor;
-import net.thevpc.nuts.runtime.bundles.io.ZipUtils;
-import net.thevpc.nuts.runtime.standalone.util.CoreDigestHelper;
+import net.thevpc.nuts.runtime.standalone.io.util.InputStreamVisitor;
+import net.thevpc.nuts.runtime.standalone.io.util.ZipUtils;
+import net.thevpc.nuts.runtime.standalone.security.util.CoreDigestHelper;
 import net.thevpc.nuts.spi.*;
 
 /**

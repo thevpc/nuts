@@ -58,7 +58,7 @@ public class DateCommand extends SimpleJShellBuiltin {
             case "--date": {
                 if (context.getShell().getOptions().isNsh()) {
                     a = cmdLine.nextString();
-                    if (a.isEnabled()) {
+                    if (a.isActive()) {
                         options.date = a.getValue().getString();
                     }
                 } else {
@@ -71,7 +71,7 @@ public class DateCommand extends SimpleJShellBuiltin {
             case "--file": {
                 if (context.getShell().getOptions().isNsh()) {
                     a = cmdLine.nextString();
-                    if (a.isEnabled()) {
+                    if (a.isActive()) {
                         options.file = a.getValue().getString();
                     }
                 } else {
@@ -83,7 +83,7 @@ public class DateCommand extends SimpleJShellBuiltin {
             case "--rfc-3339": {
                 if (context.getShell().getOptions().isNsh()) {
                     a = cmdLine.next();
-                    if (a.isEnabled()) {
+                    if (a.isActive()) {
                         String s = a.getValue().getString();
                         if (s == null) {
                             s = "";
@@ -103,7 +103,7 @@ public class DateCommand extends SimpleJShellBuiltin {
             case "--iso-8601": {
                 if (context.getShell().getOptions().isNsh()) {
                     a = cmdLine.next();
-                    if (a.isEnabled()) {
+                    if (a.isActive()) {
                         String s = a.getValue().getString();
                         if (s == null) {
                             s = "";
@@ -124,7 +124,7 @@ public class DateCommand extends SimpleJShellBuiltin {
             case "--set": {
                 if (context.getShell().getOptions().isNsh()) {
                     a = cmdLine.next();
-                    if (a.isEnabled()) {
+                    if (a.isActive()) {
                         String s = a.getValue().getString();
                         if (s == null) {
                             s = "";
@@ -152,7 +152,7 @@ public class DateCommand extends SimpleJShellBuiltin {
             case "-Ins": {
                 if (context.getShell().getOptions().isNsh()) {
                     a = cmdLine.next();
-                    if (a.isEnabled()) {
+                    if (a.isActive()) {
                         options.rfc8601 = a.getString().substring(2);
                     }
                 } else {
@@ -164,7 +164,7 @@ public class DateCommand extends SimpleJShellBuiltin {
             case "--debug": {
                 if (context.getShell().getOptions().isNsh()) {
                     a = cmdLine.nextBoolean();
-                    if (a.isEnabled()) {
+                    if (a.isActive()) {
                         options.debug = a.getValue().getBoolean();
                     }
                 } else {
@@ -178,7 +178,7 @@ public class DateCommand extends SimpleJShellBuiltin {
             case "--universal": {
                 if (context.getShell().getOptions().isNsh()) {
                     a = cmdLine.nextBoolean();
-                    if (a.isEnabled()) {
+                    if (a.isActive()) {
                         options.utc = a.getValue().getBoolean();
                     }
                 } else {
@@ -191,7 +191,7 @@ public class DateCommand extends SimpleJShellBuiltin {
             case "--rfc-email": {
                 if (context.getShell().getOptions().isNsh()) {
                     a = cmdLine.nextBoolean();
-                    if (a.isEnabled()) {
+                    if (a.isActive()) {
                         options.rfcMail = a.getValue().getBoolean();
                     }
                 } else {

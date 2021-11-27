@@ -56,8 +56,8 @@ final class PrivateNutsArgumentImpl implements NutsArgument {
     private final String value;
     private final String optionPrefix;
     private final String optionName;
-    private final boolean negated;
     private final boolean enabled;
+    private final boolean active;
     private final boolean option;
     protected String expression;
 
@@ -96,19 +96,19 @@ final class PrivateNutsArgumentImpl implements NutsArgument {
                 option = true;
                 switch (flg == null ? "" : flg) {
                     case "//": {
-                        enabled = false;
-                        negated = false;
+                        active = false;
+                        enabled = true;
                         break;
                     }
                     case "!":
                     case "~": {
-                        enabled = true;
-                        negated = true;
+                        active = true;
+                        enabled = false;
                         break;
                     }
                     default: {
+                        active = true;
                         enabled = true;
-                        negated = false;
                     }
                 }
                 optionPrefix = optp;
@@ -122,8 +122,8 @@ final class PrivateNutsArgumentImpl implements NutsArgument {
                 }
             } else {
                 option = false;
+                active = true;
                 enabled = true;
-                negated = false;
                 optionPrefix = null;
                 optionName = null;
                 if (opts != null && opts.length() > 0) {
@@ -135,8 +135,8 @@ final class PrivateNutsArgumentImpl implements NutsArgument {
                 }
             }
         } else {
+            active = true;
             enabled = true;
-            negated = false;
             option = false;
             optionName = null;
             key = null;
@@ -167,12 +167,22 @@ final class PrivateNutsArgumentImpl implements NutsArgument {
 
     @Override
     public boolean isNegated() {
-        return negated;
+        return !enabled;
     }
 
     @Override
     public boolean isEnabled() {
         return enabled;
+    }
+
+    @Override
+    public boolean isActive() {
+        return active;
+    }
+
+    @Override
+    public boolean isInactive() {
+        return !active;
     }
 
     @Override

@@ -877,65 +877,6 @@ public class CoreNutsUtils {
                 x -> x.toDependency().builder().setOptional(_optional).setScope(_scope).build(), "IdToDependency")).build();
     }
 
-//    private static boolean acceptCondition(NutsId[] curr, String[] expected, NutsSession session) {
-//        if (expected.length > 0) {
-//            boolean accept = false;
-//            for (NutsId v : curr) {
-//                if (acceptCondition(v, expected, session)) {
-//                    accept = true;
-//                    break;
-//                }
-//            }
-//            if (!accept) {
-//                return false;
-//            }
-//        }
-//        return true;
-//    }
-
-//    private static boolean acceptCondition(NutsId curr, String[] expected, NutsSession session) {
-//        if (expected.length != 0) {
-//            boolean accept = false;
-//            NutsId a = curr;
-//            for (String v : expected) {
-//                if (NutsId.of(v, session).filter().acceptId(a, session)) {
-//                    accept = true;
-//                    break;
-//                }
-//            }
-//            if (!accept) {
-//                return false;
-//            }
-//        }
-//        return true;
-//    }
-
-//    public static boolean acceptCondition(NutsEnvCondition condition, boolean allInstalledPlatforms, NutsSession session) {
-//        return CoreFilterUtils.acceptCondition(condition,allInstalledPlatforms, session);
-////        if (condition == null || condition.isBlank()) {
-////            return true;
-////        }
-////        NutsWorkspaceEnvManager env = session.env();
-////        List<NutsId> pfs = new ArrayList<>();
-////        if (allInstalledPlatforms) {
-////            for (String s : Arrays.stream(condition.getPlatform()).collect(Collectors.toSet())) {
-////                pfs.addAll(Arrays.stream(session.env().platforms().findPlatforms(
-////                        NutsPlatformType.parseLenient(s, NutsPlatformType.UNKNOWN, NutsPlatformType.UNKNOWN)
-////                )).map(NutsPlatformLocation::getId).collect(Collectors.toList()));
-////            }
-////        } else {
-////            pfs.add(env.getPlatform());
-////        }
-////        return
-////                acceptCondition(env.getArch(), condition.getArch(), session)
-////                        && acceptCondition(env.getOs(), condition.getOs(), session)
-////                        && acceptCondition(env.getOsDist(), condition.getOsDist(), session)
-////                        && acceptCondition(env.getDesktopEnvironment(), condition.getDesktopEnvironment(), session)
-////                        && acceptCondition(
-////                        pfs.toArray(new NutsId[0])
-////                        , condition.getDesktopEnvironment(), session);
-//    }
-
     public static NutsEnvCondition blankCondition(NutsSession session) {
         return new DefaultNutsEnvCondition(null, null, null, null, null, session);
     }

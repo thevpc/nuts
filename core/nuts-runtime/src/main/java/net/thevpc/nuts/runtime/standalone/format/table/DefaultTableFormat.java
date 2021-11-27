@@ -24,10 +24,10 @@
 package net.thevpc.nuts.runtime.standalone.format.table;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.bundles.common.CorePlatformUtils;
+import net.thevpc.nuts.runtime.standalone.util.CorePlatformUtils;
+import net.thevpc.nuts.runtime.standalone.text.util.NutsTextUtils;
 import net.thevpc.nuts.runtime.standalone.util.StringBuilder2;
 import net.thevpc.nuts.runtime.standalone.format.DefaultFormatBase;
-import net.thevpc.nuts.runtime.standalone.util.CoreCommonUtils;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import net.thevpc.nuts.spi.NutsSupportLevelContext;
 
@@ -780,18 +780,18 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
         NutsArgument a;
         if ((a = cmdLine.nextBoolean("--no-header")) != null) {
             boolean val = a.getValue().getBoolean();
-            if (a.isEnabled()) {
+            if (a.isActive()) {
                 setVisibleHeader(!val);
             }
             return true;
         } else if ((a = cmdLine.nextBoolean("--header")) != null) {
             boolean val = a.getValue().getBoolean();
-            if (a.isEnabled()) {
+            if (a.isActive()) {
                 setVisibleHeader(val);
             }
             return true;
         } else if ((a = cmdLine.nextString("--border")) != null) {
-            if (a.isEnabled()) {
+            if (a.isActive()) {
                 setBorder(a.getValue().getString(""));
             }
             return true;
@@ -808,12 +808,12 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
             NutsArgument a2 = null;
             for (Map.Entry<String, Integer> e : columns.entrySet()) {
                 if ((a2 = cmdLine.next("--" + e.getKey())) != null) {
-                    if (a2.isEnabled()) {
+                    if (a2.isActive()) {
                         setVisibleColumn(e.getValue(), true);
                     }
                     return true;
                 } else if ((a2 = cmdLine.next("--no-" + e.getKey())) != null) {
-                    if (a2.isEnabled()) {
+                    if (a2.isActive()) {
                         setVisibleColumn(e.getValue(), false);
                     }
                     return true;
@@ -825,7 +825,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
 
     private NutsString formatObject(Object any) {
         checkSession();
-        return CoreCommonUtils.stringValueFormatted(any, false, getSession());
+        return NutsTextUtils.stringValueFormatted(any, false, getSession());
     }
 
     @Override

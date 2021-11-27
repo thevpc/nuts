@@ -47,7 +47,7 @@ public class NutsFormatPlain extends DefaultFormatBase<NutsContentTypeFormat> im
         NutsArgument n = commandLine.peek();
         if (n != null) {
             NutsArgument a;
-            boolean enabled = n.isEnabled();
+            boolean enabled = n.isActive();
             if ((a = commandLine.nextString(DefaultNutsPropertiesFormat.OPTION_MULTILINE_PROPERTY)) != null) {
                 if (enabled) {
                     NutsArgument i = NutsArgument.of(a.getValue().getString(), getSession());
@@ -56,7 +56,7 @@ public class NutsFormatPlain extends DefaultFormatBase<NutsContentTypeFormat> im
                 }
             } else {
                 a = commandLine.next();
-                if (!a.isOption() || a.isEnabled()) {
+                if (!a.isOption() || a.isActive()) {
                     extraConfig.add(a.getString());
                 }
             }

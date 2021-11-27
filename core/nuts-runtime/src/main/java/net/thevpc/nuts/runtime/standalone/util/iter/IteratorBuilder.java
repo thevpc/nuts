@@ -12,8 +12,7 @@ import java.util.function.Supplier;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.util.nfo.NutsIteratorAdapter;
-import net.thevpc.nuts.NutsDescribables;
-import net.thevpc.nuts.runtime.standalone.util.CoreCollectionUtils;
+import net.thevpc.nuts.runtime.standalone.util.collections.CoreCollectionUtils;
 
 /**
  * @author thevpc

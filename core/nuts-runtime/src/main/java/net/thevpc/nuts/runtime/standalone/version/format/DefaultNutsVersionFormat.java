@@ -31,7 +31,7 @@ public class DefaultNutsVersionFormat extends DefaultFormatBase<NutsVersionForma
         if (a == null) {
             return false;
         }
-        boolean enabled = a.isEnabled();
+        boolean enabled = a.isActive();
         switch (a.getKey().getString()) {
             case "-a":
             case "--all": {

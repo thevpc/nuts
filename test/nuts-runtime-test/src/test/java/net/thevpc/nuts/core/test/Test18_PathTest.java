@@ -38,34 +38,33 @@ import java.util.Set;
 public class Test18_PathTest {
 
 
-
     @Test
     public void testPathCreation() throws Exception {
         NutsSession session = TestUtils.openNewTestWorkspace();
 
-        TestUtils.println(NutsPath.of("./",session));
-        TestUtils.println(NutsPath.of(".",session));
-        TestUtils.println(NutsPath.of("..",session));
-        TestUtils.println(NutsPath.of("/*",session));
+        TestUtils.println(NutsPath.of("./", session));
+        TestUtils.println(NutsPath.of(".", session));
+        TestUtils.println(NutsPath.of("..", session));
+        TestUtils.println(NutsPath.of("/*", session));
     }
 
     @Test
     public void testPathTypes() throws Exception {
         NutsSession session = TestUtils.openNewTestWorkspace();
-        NutsPath s = NutsPath.of("http://maven.ibiblio.org/maven2/archetype-catalog.xml",session);
+        NutsPath s = NutsPath.of("http://maven.ibiblio.org/maven2/archetype-catalog.xml", session);
 
         //this is a remote file
         Assertions.assertFalse(s.isFile());
         //the file is actually a http url
         Assertions.assertTrue(s.isURL());
 
-        s = NutsPath.of("file://maven.ibiblio.org/maven2/archetype-catalog.xml",session);
+        s = NutsPath.of("file://maven.ibiblio.org/maven2/archetype-catalog.xml", session);
         //the file has an 'authority' (//) so it cannot be converted to a valid file
         Assertions.assertFalse(s.isFile());
         //the file is actually a file url
         Assertions.assertTrue(s.isURL());
 
-        s = NutsPath.of("file:/maven.ibiblio.org/maven2/archetype-catalog.xml",session);
+        s = NutsPath.of("file:/maven.ibiblio.org/maven2/archetype-catalog.xml", session);
         //the file is actually a file url
         Assertions.assertTrue(s.isFile());
         //the file is actually a URL
@@ -74,7 +73,7 @@ public class Test18_PathTest {
 //        s = CoreIOUtils.createInputSource("zip://maven.ibiblio.org/maven2/toto.zip?archetype-catalog.xml");
 //        Assertions.assertFalse(s.isPath());
 //        Assertions.assertTrue(s.isURL());
-        s = NutsPath.of("/maven.ibiblio.org/maven2/archetype-catalog.xml",session);
+        s = NutsPath.of("/maven.ibiblio.org/maven2/archetype-catalog.xml", session);
         //the file is actually a file
         Assertions.assertTrue(s.isFile());
         //the file can be converted to URL
@@ -85,9 +84,9 @@ public class Test18_PathTest {
     @Test
     public void testHtmlfs1() throws Exception {
         NutsSession session = TestUtils.openNewTestWorkspace();
-        NutsPath s = NutsPath.of("htmlfs:http://thevpc.net/maven/net/thevpc/nuts/nuts/",session);
+        NutsPath s = NutsPath.of("htmlfs:http://thevpc.net/maven/net/thevpc/nuts/nuts/", session);
         TestUtils.println("------------ LIST ----------");
-        Set<String> children=new HashSet<>();
+        Set<String> children = new HashSet<>();
         for (NutsPath nutsPath : s.list()) {
             TestUtils.println(nutsPath);
             children.add(nutsPath.toString());
@@ -96,63 +95,65 @@ public class Test18_PathTest {
         Assertions.assertTrue(children.contains("http://thevpc.net/maven/net/thevpc/nuts/nuts/maven-metadata-local.xml"));
         Assertions.assertTrue(children.contains("htmlfs:http://thevpc.net/maven/net/thevpc/nuts/nuts/0.8.2"));
         TestUtils.println("------------ WALK ----------");
-        s.walk().forEach(x->{
+        s.walk().forEach(x -> {
             TestUtils.println(x);
         });
-        long c=s.walk().count();
-        Assertions.assertTrue(c>=12);
+        long c = s.walk().count();
+        Assertions.assertTrue(c >= 12);
     }
 
     @Test
     public void testHtmlfs2() throws Exception {
         NutsSession session = TestUtils.openNewTestWorkspace();
-        NutsPath s = NutsPath.of("htmlfs:"+getClass().getResource("/net/thevpc/nuts/core/test/htmlfs-tomcat-01.html"),session);
+        NutsPath s = NutsPath.of("htmlfs:" + getClass().getResource("/net/thevpc/nuts/core/test/htmlfs-tomcat-01.html"), session);
         TestUtils.println("------------ LIST ----------");
-        Set<String> children=new HashSet<>();
+        Set<String> children = new HashSet<>();
         for (NutsPath nutsPath : s.list()) {
             TestUtils.println(nutsPath);
             children.add(nutsPath.toString());
         }
-        Assertions.assertEquals(3,children.size());
+        Assertions.assertEquals(3, children.size());
         TestUtils.println("------------ WALK ----------");
-        s.walk().forEach(x->{
+        s.walk().forEach(x -> {
             TestUtils.println(x);
         });
-        long c=s.walk().count();
+        long c = s.walk().count();
     }
+
     @Test
     public void testHtmlfs3() throws Exception {
         NutsSession session = TestUtils.openNewTestWorkspace();
-        NutsPath s = NutsPath.of("htmlfs:"+getClass().getResource("/net/thevpc/nuts/core/test/htmlfs-tomcat-02.html"),session);
+        NutsPath s = NutsPath.of("htmlfs:" + getClass().getResource("/net/thevpc/nuts/core/test/htmlfs-tomcat-02.html"), session);
         TestUtils.println("------------ LIST ----------");
-        Set<String> children=new HashSet<>();
+        Set<String> children = new HashSet<>();
         for (NutsPath nutsPath : s.list()) {
             TestUtils.println(nutsPath);
             children.add(nutsPath.toString());
         }
-        Assertions.assertEquals(3,children.size());
+        Assertions.assertEquals(3, children.size());
         TestUtils.println("------------ WALK ----------");
-        s.walk().forEach(x->{
+        s.walk().forEach(x -> {
             TestUtils.println(x);
         });
-        long c=s.walk().count();
+        long c = s.walk().count();
     }
+
     @Test
     public void testHtmlfs4() throws Exception {
         NutsSession session = TestUtils.openNewTestWorkspace();
-        NutsPath s = NutsPath.of("htmlfs:"+getClass().getResource("/net/thevpc/nuts/core/test/htmlfs-archive-apache-01.html"),session);
+        NutsPath s = NutsPath.of("htmlfs:" + getClass().getResource("/net/thevpc/nuts/core/test/htmlfs-archive-apache-01.html"), session);
         TestUtils.println("------------ LIST ----------");
-        Set<String> children=new HashSet<>();
+        Set<String> children = new HashSet<>();
         for (NutsPath nutsPath : s.list()) {
             TestUtils.println(nutsPath);
             children.add(nutsPath.toString());
         }
-        Assertions.assertEquals(3,children.size());
+        Assertions.assertEquals(3, children.size());
         TestUtils.println("------------ WALK ----------");
-        s.walk().forEach(x->{
+        s.walk().forEach(x -> {
             TestUtils.println(x);
         });
-        long c=s.walk().count();
+        long c = s.walk().count();
     }
 
     /**
@@ -162,9 +163,9 @@ public class Test18_PathTest {
     //@Test
     public void testGithubfs() {
         NutsSession session = TestUtils.openNewTestWorkspace();
-        NutsPath s = NutsPath.of("githubfs:https://api.github.com/repos/thevpc/nuts/contents",session);
+        NutsPath s = NutsPath.of("githubfs:https://api.github.com/repos/thevpc/nuts/contents", session);
         TestUtils.println("------------ LIST ----------");
-        Set<String> children=new HashSet<>();
+        Set<String> children = new HashSet<>();
         for (NutsPath nutsPath : s.list()) {
             TestUtils.println(nutsPath);
             children.add(nutsPath.toString());
@@ -173,10 +174,17 @@ public class Test18_PathTest {
 //        Assertions.assertTrue(children.contains("http://thevpc.net/maven/net/thevpc/nuts/nuts/maven-metadata-local.xml"));
 //        Assertions.assertTrue(children.contains("htmlfs:http://thevpc.net/maven/net/thevpc/nuts/nuts/0.8.2"));
         TestUtils.println("------------ WALK ----------");
-        s.walk(1).forEach(x->{
+        s.walk(1).forEach(x -> {
             TestUtils.println(x);
         });
-        long c=s.walk().count();
+        long c = s.walk().count();
 //        Assertions.assertTrue(c>=12);
+    }
+
+    @Test
+    public void testInvalidPath() {
+        NutsSession session = TestUtils.openNewTestWorkspace();
+
+        NutsPath.ofUserHome(session);
     }
 }

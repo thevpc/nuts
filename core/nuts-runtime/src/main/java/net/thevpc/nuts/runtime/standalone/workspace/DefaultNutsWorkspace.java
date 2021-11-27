@@ -25,7 +25,9 @@ package net.thevpc.nuts.runtime.standalone.workspace;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.boot.*;
-import net.thevpc.nuts.runtime.bundles.common.MapToFunction;
+import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
+import net.thevpc.nuts.runtime.standalone.security.util.CoreDigestHelper;
+import net.thevpc.nuts.runtime.standalone.util.MapToFunction;
 import net.thevpc.nuts.runtime.standalone.boot.NutsBootConfig;
 import net.thevpc.nuts.runtime.standalone.extensions.NutsClassLoaderUtils;
 import net.thevpc.nuts.runtime.standalone.repository.DefaultNutsRepositoryDB;
@@ -483,7 +485,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                 for (String customOption : uoptions.getCustomOptions()) {
                     NutsArgument a = NutsArgument.of(customOption, defaultSession());
                     if (a.getKey().getString().startsWith("config.")) {
-                        if (a.isEnabled()) {
+                        if (a.isActive()) {
                             defaultSession().config().setConfigProperty(
                                     a.getKey().getString("").substring("config.".length()),
                                     a.getValue().getString()
@@ -580,7 +582,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                 }
                 List<String> transientRepositoriesSet = uoptions.getRepositories() == null ? new ArrayList<>() : new ArrayList<>(Arrays.asList(uoptions.getRepositories()));
                 NutsRepositorySelectorList expected = NutsRepositorySelectorList.ofAll(transientRepositoriesSet.toArray(new String[0]),DefaultNutsRepositoryDB.INSTANCE,defaultSession());
-                for (NutsRepositoryURL loc : expected.resolveSelectors(null, DefaultNutsRepositoryDB.INSTANCE)) {
+                for (NutsRepositoryURL loc : expected.resolve(null, DefaultNutsRepositoryDB.INSTANCE)) {
                     NutsAddRepositoryOptions d = NutsRepositorySelectorHelper.createRepositoryOptions(loc, false, defaultSession());
                     String n = d.getName();
                     String ruuid = (NutsBlankable.isBlank(n) ? "temporary" : n) + "_" + UUID.randomUUID().toString().replace("-", "");

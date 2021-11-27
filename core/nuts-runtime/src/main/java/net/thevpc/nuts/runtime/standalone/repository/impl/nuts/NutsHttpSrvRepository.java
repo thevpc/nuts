@@ -30,8 +30,8 @@ import net.thevpc.nuts.runtime.standalone.repository.impl.NutsCachedRepository;
 import net.thevpc.nuts.runtime.standalone.workspace.config.NutsRepositoryConfigManagerExt;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
 import net.thevpc.nuts.NutsLogVerb;
-import net.thevpc.nuts.runtime.bundles.io.CoreSecurityUtils;
-import net.thevpc.nuts.runtime.standalone.util.CoreIOUtils;
+import net.thevpc.nuts.runtime.standalone.io.util.CoreSecurityUtils;
+import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 
 import java.io.*;
 import java.util.Arrays;
@@ -140,12 +140,12 @@ public class NutsHttpSrvRepository extends NutsCachedRepository {
     }
 
     @Override
-    public NutsIterator<NutsId> searchCore(final NutsIdFilter filter, String[] roots, NutsFetchMode fetchMode, NutsSession session) {
+    public NutsIterator<NutsId> searchCore(final NutsIdFilter filter, NutsPath[] basePaths, NutsFetchMode fetchMode, NutsSession session) {
         if (fetchMode != NutsFetchMode.REMOTE) {
             return null;
         }
 
-        session.getTerminal().printProgress("search into %s " ,Arrays.toString(roots));
+        session.getTerminal().printProgress("search into %s " ,Arrays.toString(basePaths));
         boolean transitive = session.isTransitive();
         InputStream ret = null;
         String[] ulp = resolveEncryptedAuth(session);

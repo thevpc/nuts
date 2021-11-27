@@ -70,7 +70,7 @@ public class NutsSettingsRepositorySubCommand extends AbstractNutsSettingsSubCom
             String parent = null;
             while (cmdLine.hasNext()) {
                 NutsArgument a = cmdLine.peek();
-                boolean enabled = a.isEnabled();
+                boolean enabled = a.isActive();
                 switch (a.getKey().getString()) {
                     case "-l":
                     case "--location": {
@@ -148,7 +148,7 @@ public class NutsSettingsRepositorySubCommand extends AbstractNutsSettingsSubCom
             String parent = null;
             while (cmdLine.hasNext()) {
                 NutsArgument a = cmdLine.peek();
-                boolean enabled = a.isEnabled();
+                boolean enabled = a.isActive();
                 switch (a.getKey().getString()) {
                     case "--name": {
                         String val = cmdLine.nextString().getValue().getString();
@@ -198,7 +198,7 @@ public class NutsSettingsRepositorySubCommand extends AbstractNutsSettingsSubCom
             while (cmdLine.hasNext()) {
                 while (cmdLine.hasNext()) {
                     NutsArgument a = cmdLine.peek();
-                    boolean enabled = a.isEnabled();
+                    boolean enabled = a.isActive();
                     switch (a.getKey().getString()) {
                         case "--parent": {
                             String val = cmdLine.nextString().getValue().getString();
@@ -321,7 +321,7 @@ public class NutsSettingsRepositorySubCommand extends AbstractNutsSettingsSubCom
         String repositoryName = null;
         while (cmdLine.hasNext()) {
             NutsArgument a = cmdLine.peek();
-            boolean enabled = a.isEnabled();
+            boolean enabled = a.isActive();
             switch (a.getKey().getString()) {
                 case "--name": {
                     String val = cmdLine.nextString().getValue().getString();

@@ -5,10 +5,10 @@ import java.io.PrintWriter;
 import java.util.*;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.bundles.common.CorePlatformUtils;
+import net.thevpc.nuts.runtime.standalone.util.CorePlatformUtils;
 import net.thevpc.nuts.runtime.standalone.format.DefaultFormatBase;
 import net.thevpc.nuts.runtime.standalone.format.props.DefaultNutsPropertiesFormat;
-import net.thevpc.nuts.runtime.standalone.util.CoreCommonUtils;
+import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import net.thevpc.nuts.spi.NutsSupportLevelContext;
 
 public class DefaultNutsTreeFormat extends DefaultFormatBase<NutsTreeFormat> implements NutsTreeFormat {
@@ -234,7 +234,7 @@ public class DefaultNutsTreeFormat extends DefaultFormatBase<NutsTreeFormat> imp
         if (a == null) {
             return false;
         }
-        boolean enabled = a.isEnabled();
+        boolean enabled = a.isActive();
         switch (a.getKey().getString()) {
             case "--border": {
                 a = cmdLine.nextString("--border");
@@ -292,7 +292,7 @@ public class DefaultNutsTreeFormat extends DefaultFormatBase<NutsTreeFormat> imp
         if (sep == null) {
             return null;
         }
-        String[] vv = CoreCommonUtils.stringValue(value).split(sep);
+        String[] vv = CoreStringUtils.stringValue(value).split(sep);
         if (vv.length == 0 || vv.length == 1) {
             return null;
         }

@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.ndi.win;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.standalone.util.CoreIOUtils;
+import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.optional.mslink.OptionalMsLinkHelper;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.util.PathInfo;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.ndi.FreeDesktopEntry;
@@ -73,7 +73,7 @@ public class WindowFreeDesktopEntryWriter extends AbstractFreeDesktopEntryWriter
         for (String category : categories) {
             List<String> part = Arrays.stream((category == null ? "" : category).split("/")).filter(x -> !x.isEmpty()).collect(Collectors.toList());
 
-            NutsPath m = NutsPath.of(System.getProperty("user.home"),session).resolve("AppData\\Roaming\\Microsoft\\Windows\\Start Menu\\Programs");
+            NutsPath m = NutsPath.ofUserHome(session).resolve("AppData\\Roaming\\Microsoft\\Windows\\Start Menu\\Programs");
             if (!part.isEmpty() && part.get(0).equals("Applications")) {
                 part.remove(0);
             }

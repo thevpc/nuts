@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.optional.mslink;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.standalone.util.CoreIOUtils;
+import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.util.PathInfo;
 
 import java.io.IOException;

@@ -862,7 +862,7 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
         if (a == null) {
             return false;
         }
-        boolean enabled = a.isEnabled();
+        boolean enabled = a.isActive();
         switch (a.getKey().getString()) {
             case "--inline-dependencies": {
                 boolean val = cmdLine.nextBoolean().getValue().getBoolean();

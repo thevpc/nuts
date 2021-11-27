@@ -145,7 +145,7 @@ public abstract class AbstractNutsUninstallCommand extends NutsWorkspaceCommandB
         if (a == null) {
             return false;
         }
-        boolean enabled = a.isEnabled();
+        boolean enabled = a.isActive();
         switch (a.getKey().getString()) {
             case "-e":
             case "--erase": {

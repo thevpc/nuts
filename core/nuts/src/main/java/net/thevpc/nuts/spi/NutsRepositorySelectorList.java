@@ -34,7 +34,7 @@ import java.util.List;
 
 public class NutsRepositorySelectorList {
 
-    private final List<NutsRepositorySelector> all = new ArrayList<>();
+    private final List<NutsRepositorySelector> selectors = new ArrayList<>();
 
     public NutsRepositorySelectorList() {
     }
@@ -42,7 +42,7 @@ public class NutsRepositorySelectorList {
     public NutsRepositorySelectorList(NutsRepositorySelector[] a) {
         for (NutsRepositorySelector repoDefString : a) {
             if (repoDefString != null) {
-                all.add(repoDefString);
+                selectors.add(repoDefString);
             }
         }
     }
@@ -50,19 +50,18 @@ public class NutsRepositorySelectorList {
         if (expressions == null) {
             return new NutsRepositorySelectorList();
         }
-        NutsRepositorySelectorList all = new NutsRepositorySelectorList();
+        NutsRepositorySelectorList result = new NutsRepositorySelectorList();
         for (String t : expressions) {
-            all = all.join(of(t,db,session));
+            result = result.merge(of(t,db,session));
         }
-        return all;
+        return result;
     }
 
     public static NutsRepositorySelectorList of(String expression, NutsRepositoryDB db, NutsSession session) {
-
-        if (expression == null || NutsBlankable.isBlank(expression)) {
+        if (NutsBlankable.isBlank(expression)) {
             return new NutsRepositorySelectorList();
         }
-        NutsSelectorOp op = NutsSelectorOp.INCLUDE;
+        NutsSelectorOp op = NutsSelectorOp.EXACT;
         List<NutsRepositorySelector> all = new ArrayList<>();
         for (String s : expression.split("[,;]")) {
             s = s.trim();
@@ -86,20 +85,20 @@ public class NutsRepositorySelectorList {
         return new NutsRepositorySelectorList(all.toArray(new NutsRepositorySelector[0]));
     }
 
-    public NutsRepositorySelectorList join(NutsRepositorySelectorList other) {
-        if (other == null || other.all.isEmpty()) {
+    public NutsRepositorySelectorList merge(NutsRepositorySelectorList other) {
+        if (other == null || other.selectors.isEmpty()) {
             return this;
         }
-        List<NutsRepositorySelector> all2 = new ArrayList<>();
-        all2.addAll(all);
-        all2.addAll(other.all);
-        return new NutsRepositorySelectorList(all2.toArray(new NutsRepositorySelector[0]));
+        List<NutsRepositorySelector> result = new ArrayList<>();
+        result.addAll(selectors);
+        result.addAll(other.selectors);
+        return new NutsRepositorySelectorList(result.toArray(new NutsRepositorySelector[0]));
     }
 
-    public NutsRepositoryURL[] resolveSelectors(NutsRepositoryURL[] existing, NutsRepositoryDB db) {
-        NutsRepositoryURLList existing2 = new NutsRepositoryURLList();
-        if (existing != null) {
-            for (NutsRepositoryURL entry : existing) {
+    public NutsRepositoryURL[] resolve(NutsRepositoryURL[] input, NutsRepositoryDB db) {
+        NutsRepositoryURLList current = new NutsRepositoryURLList();
+        if (input != null) {
+            for (NutsRepositoryURL entry : input) {
                 String k = entry.getName();
                 String v = entry.getLocation();
                 if (NutsBlankable.isBlank(v) && !NutsBlankable.isBlank(k)) {
@@ -115,45 +114,43 @@ public class NutsRepositorySelectorList {
                         k = u2;
                     }
                 }
-                existing2.add(NutsRepositoryURL.of(k, v));
+                current.add(NutsRepositoryURL.of(k, v));
             }
         }
-        List<NutsRepositoryURL> all2 = new ArrayList<>();
-        for (NutsRepositorySelector r : all) {
+        List<NutsRepositoryURL> result = new ArrayList<>();
+        for (NutsRepositorySelector r : selectors) {
             if (r.getOp() != NutsSelectorOp.EXCLUDE) {
-//                    boolean accept = true;
                 if (!NutsBlankable.isBlank(r.getName())) {
                     String u2 = r.getUrl();
-                    int i = existing2.indexOfName(r.getName(), 0);
+                    int i = current.indexOfName(r.getName(), 0);
                     if (i >= 0) {
-                        NutsRepositoryURL ss = existing2.removeAt(i);
+                        NutsRepositoryURL ss = current.removeAt(i);
                         if (ss != null && u2 == null) {
                             u2 = ss.getLocation();
                         }
                     }
-                    all2.add(NutsRepositoryURL.of(r.getName(), u2));
+                    result.add(NutsRepositoryURL.of(r.getName(), u2));
                 } else if (r.getOp() == NutsSelectorOp.EXACT) {
-                    all2.add(NutsRepositoryURL.of(r.getName(), r.getUrl()));
+                    result.add(NutsRepositoryURL.of(r.getName(), r.getUrl()));
                 }
             }
         }
-        for (NutsRepositoryURL e : existing2.toArray()) {
+        for (NutsRepositoryURL e : current.toArray()) {
             if (acceptExisting(e)) {
-                all2.add(e);
+                result.add(e);
             }
         }
-        return all2.toArray(new NutsRepositoryURL[0]);
+        return result.toArray(new NutsRepositoryURL[0]);
     }
 
     public boolean acceptExisting(NutsRepositoryURL ss) {
         String n = ss.getName();
         String url = ss.getLocation();
         boolean includeOthers = true;
-        for (NutsRepositorySelector s : all) {
+        for (NutsRepositorySelector s : selectors) {
             if (s.matches(n, url)) {
                 switch (s.getOp()) {
                     case EXACT:
-                        return true;
                     case INCLUDE:
                         return true;
                     case EXCLUDE:
@@ -168,7 +165,7 @@ public class NutsRepositorySelectorList {
     }
 
     public NutsRepositorySelector[] toArray() {
-        return all.toArray(new NutsRepositorySelector[0]);
+        return selectors.toArray(new NutsRepositorySelector[0]);
     }
 
 

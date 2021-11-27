@@ -31,7 +31,7 @@ import net.thevpc.nuts.runtime.standalone.util.filters.CoreFilterUtils;
 import net.thevpc.nuts.runtime.standalone.id.filter.NutsPatternIdFilter;
 import net.thevpc.nuts.runtime.standalone.util.CoreNutsUtils;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
-import net.thevpc.nuts.runtime.bundles.io.NutsInstallStatusIdFilter;
+import net.thevpc.nuts.runtime.standalone.io.util.NutsInstallStatusIdFilter;
 import net.thevpc.nuts.runtime.standalone.util.iter.IteratorBuilder;
 import net.thevpc.nuts.runtime.standalone.util.iter.IteratorUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceHelper;
@@ -326,7 +326,7 @@ public class DefaultNutsSearchCommand extends AbstractNutsSearchCommand {
 //        if (!print) {
 //            return curr;
 //        }
-//        return CoreCommonUtils.toList(applyPrintDecoratorIterOfNutsId(curr.iterator(), print));
+//        return NutsTextUtils.toList(applyPrintDecoratorIterOfNutsId(curr.iterator(), print));
 //    }
 //    private NutsCollectionStream<NutsId> applyVersionFlagFilters(NutsIterator<NutsId> curr, boolean print) {
 //        if (!isLatest() && !isDistinct()) {

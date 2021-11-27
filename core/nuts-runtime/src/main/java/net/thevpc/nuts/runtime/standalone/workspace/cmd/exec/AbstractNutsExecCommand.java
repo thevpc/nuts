@@ -2,7 +2,7 @@ package net.thevpc.nuts.runtime.standalone.workspace.cmd.exec;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
-import net.thevpc.nuts.runtime.bundles.io.ProcessBuilder2;
+import net.thevpc.nuts.runtime.standalone.io.util.ProcessBuilder2;
 import net.thevpc.nuts.runtime.standalone.io.printstream.NutsByteArrayPrintStream;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.NutsWorkspaceCommandBase;
 
@@ -443,7 +443,7 @@ public abstract class AbstractNutsExecCommand extends NutsWorkspaceCommandBase<N
             command.add(a.getString());
             return true;
         }
-        boolean enabled = a.isEnabled();
+        boolean enabled = a.isActive();
         switch (a.getKey().getString()) {
             case "--external":
             case "--spawn":

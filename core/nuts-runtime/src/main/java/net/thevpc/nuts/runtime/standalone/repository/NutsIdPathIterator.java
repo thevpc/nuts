@@ -41,14 +41,14 @@ public class NutsIdPathIterator extends NutsIteratorBase<NutsId> {
     private final NutsSession session;
     private final NutsIdPathIteratorModel model;
     private final int maxDepth;
-    private final String basePath;
+    private final NutsPath basePath;
     private final NutsPath rootFolder;
     private NutsId last;
     private long visitedFoldersCount;
     private long visitedFilesCount;
     private NutsObjectElement extraProperties;
 
-    public NutsIdPathIterator(NutsRepository repository, NutsPath rootFolder, String basePath, NutsIdFilter filter, NutsSession session, NutsIdPathIteratorModel model, int maxDepth,NutsObjectElement extraProperties) {
+    public NutsIdPathIterator(NutsRepository repository, NutsPath rootFolder, NutsPath basePath, NutsIdFilter filter, NutsSession session, NutsIdPathIteratorModel model, int maxDepth, NutsObjectElement extraProperties) {
         this.repository = repository;
         this.extraProperties = extraProperties;
         this.session = session;
@@ -61,8 +61,12 @@ public class NutsIdPathIterator extends NutsIteratorBase<NutsId> {
         this.basePath = basePath;
         this.rootFolder = rootFolder;
         NutsPath startUrl = rootFolder;
-        if (basePath != null && basePath.length() > 0 && !basePath.equals("/")) {
-            startUrl = startUrl.resolve(basePath);
+        if (basePath != null) {
+            if (basePath.isAbsolute()) {
+                throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("expected relative path : %s", basePath));
+            } else {
+                startUrl = startUrl.resolve(basePath);
+            }
         }
         stack.push(new PathAndDepth(startUrl, true, 0));
     }
@@ -70,12 +74,12 @@ public class NutsIdPathIterator extends NutsIteratorBase<NutsId> {
     @Override
     public NutsElement describe(NutsElements elems) {
         return elems.ofObject()
-                .set("type","ScanPath")
-                .set("repository",repository == null ? null : repository.getName())
-                .set("filter", NutsDescribables.resolveOrDestruct(filter,elems))
-                .set("path",elems.toElement(basePath))
-                .set("root",elems.toElement(rootFolder))
-                .set("maxDepth",maxDepth)
+                .set("type", "ScanPath")
+                .set("repository", repository == null ? null : repository.getName())
+                .set("filter", NutsDescribables.resolveOrDestruct(filter, elems))
+                .set("path", elems.toElement(basePath))
+                .set("root", elems.toElement(rootFolder))
+                .set("maxDepth", maxDepth)
                 .addAll(extraProperties)
                 .build();
     }
@@ -86,17 +90,14 @@ public class NutsIdPathIterator extends NutsIteratorBase<NutsId> {
         while (!stack.isEmpty()) {
             PathAndDepth file = stack.pop();
             if (file.folder) {
-                session.getTerminal().printProgress("%-8s %s", "search", file.path.toCompressedForm());
+                session.getTerminal().printProgress("%-8s %s", "search folder", file.path.toCompressedForm());
                 visitedFoldersCount++;
                 NutsPath[] children = file.path.list().toArray(NutsPath[]::new);
                 boolean deep = file.depth < maxDepth;
                 for (NutsPath child : children) {
                     if (child.isDirectory()) {
                         if (deep) {
-                            //this is a folder
-                            if (file.depth < maxDepth) {
-                                stack.push(new PathAndDepth(child, true, file.depth + 1));
-                            }
+                            stack.push(new PathAndDepth(child, true, file.depth + 1));
                         }
                     } else {
                         if (model.isDescFile(child)) {
@@ -112,7 +113,7 @@ public class NutsIdPathIterator extends NutsIteratorBase<NutsId> {
                     t = model.parseId(file.path, rootFolder, filter, repository, session);
                 } catch (Exception ex) {
                     NutsLoggerOp.of(NutsIdPathIterator.class, session).level(Level.FINE).error(ex)
-                            .log(NutsMessage.jstyle("error parsing url : {0} : {1}", file.path, toString()));//e.printStackTrace();
+                            .log(NutsMessage.jstyle("error parsing : {0} : {1}", file.path, toString()));
                 }
                 if (t != null) {
                     last = t;

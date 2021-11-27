@@ -72,7 +72,7 @@ final class PrivateNutsArgumentsParser {
             NutsArgument a = cmdLine.peek();
 
             if (a.isOption()) {
-                boolean enabled = a.isEnabled();
+                boolean enabled = a.isActive();
                 String k = a.getKey().getString();
                 switch (k) {
                     //**********************************
@@ -932,7 +932,7 @@ final class PrivateNutsArgumentsParser {
                     case "--version": {
                         a = cmdLine.nextBoolean();
                         if (enabled) {
-                            options.setCommandVersion(a.isEnabled());
+                            options.setCommandVersion(a.isActive());
                         }
                         break;
                     }
@@ -1064,7 +1064,7 @@ final class PrivateNutsArgumentsParser {
                             customOptions.add(a.toString().substring(3));
                         } else {
                             cmdLine.skip();
-                            if (a.isEnabled()) {
+                            if (a.isActive()) {
                                 showError.add(NutsMessage.cstyle("nuts: invalid option %s", a.getString()));
                             }
                         }

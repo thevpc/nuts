@@ -1,12 +1,12 @@
 package net.thevpc.nuts.runtime.standalone.io.path;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.bundles.io.InputStreamMetadataAwareImpl;
-import net.thevpc.nuts.runtime.bundles.reflect.NutsUseDefaultUtils;
+import net.thevpc.nuts.runtime.standalone.io.util.InputStreamMetadataAwareImpl;
+import net.thevpc.nuts.runtime.standalone.util.reflect.NutsUseDefaultUtils;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.StringPlaceHolderParser;
 import net.thevpc.nuts.runtime.standalone.format.DefaultFormatBase;
 import net.thevpc.nuts.runtime.standalone.io.path.spi.NutsPathSPIHelper;
-import net.thevpc.nuts.runtime.standalone.util.CoreIOUtils;
+import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceVarExpansionFunction;
 import net.thevpc.nuts.spi.NutsFormatSPI;
 import net.thevpc.nuts.spi.NutsPathSPI;
@@ -242,9 +242,9 @@ public class NutsPathFromSPI extends NutsPathBase {
                     NutsPath nutsHome = locations.getHomeLocation(NutsStoreLocation.CONFIG);
                     return nutsHome.resolve(s.substring(3)).normalize();
                 } else if (s.equals("~")) {
-                    return NutsPath.of(System.getProperty("user.home"), session);
+                    return NutsPath.ofUserHome(session);
                 } else if (s.startsWith("~") && s.length() > 1 && (s.charAt(1) == '/' || s.charAt(1) == '\\')) {
-                    return NutsPath.of(System.getProperty("user.home") + File.separator + s.substring(2), session);
+                    return NutsPath.ofUserHome(session).resolve(s.substring(2));
                 } else {
                     return NutsPath.of(s, session);
                 }

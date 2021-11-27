@@ -4,8 +4,8 @@ import net.thevpc.nuts.NutsElement;
 import net.thevpc.nuts.NutsElementEntry;
 import net.thevpc.nuts.NutsElementFactoryContext;
 import net.thevpc.nuts.NutsElementMapper;
-import net.thevpc.nuts.runtime.bundles.reflect.ReflectUtils;
-import net.thevpc.nuts.runtime.bundles.reflect.SimpleParametrizedType;
+import net.thevpc.nuts.runtime.standalone.util.reflect.ReflectUtils;
+import net.thevpc.nuts.runtime.standalone.util.reflect.SimpleParametrizedType;
 import net.thevpc.nuts.runtime.standalone.elem.DefaultNutsElementEntry;
 
 import java.lang.reflect.ParameterizedType;

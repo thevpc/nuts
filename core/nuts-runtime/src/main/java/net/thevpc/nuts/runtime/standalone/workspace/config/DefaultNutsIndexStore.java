@@ -29,7 +29,7 @@ package net.thevpc.nuts.runtime.standalone.workspace.config;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.util.iter.IteratorBuilder;
 import net.thevpc.nuts.NutsDescribables;
-import net.thevpc.nuts.runtime.standalone.util.CoreIOUtils;
+import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.spi.NutsTransportConnection;
 
 import java.io.InputStreamReader;

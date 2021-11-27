@@ -37,8 +37,8 @@ public class NutsSimpleRepositoryWrapper extends NutsCachedRepository {
         return base.fetchContent(id, descriptor, localPath, fetchMode, this, session);
     }
 
-    public NutsIterator<NutsId> searchCore(final NutsIdFilter filter, String[] roots, NutsFetchMode fetchMode, NutsSession session) {
-        return base.search(filter, roots, fetchMode, this, session);
+    public NutsIterator<NutsId> searchCore(final NutsIdFilter filter, NutsPath[] basePaths, NutsFetchMode fetchMode, NutsSession session) {
+        return base.search(filter, basePaths, fetchMode, this, session);
     }
 
     public void updateStatistics2(NutsSession session) {

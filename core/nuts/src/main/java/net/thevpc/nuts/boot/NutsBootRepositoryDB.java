@@ -76,7 +76,7 @@ public class NutsBootRepositoryDB implements NutsRepositoryDB {
         return defaultRepositoriesByName.get(name);
     }
 
-    public boolean isDefaultRepository(String name) {
+    public boolean isDefaultRepositoryName(String name) {
         return defaultRepositoriesByName.containsKey(name);
     }
 }

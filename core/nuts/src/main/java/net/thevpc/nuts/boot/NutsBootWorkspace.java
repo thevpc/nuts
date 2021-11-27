@@ -268,12 +268,12 @@ public final class NutsBootWorkspace {
         NutsRepositoryURL[] result = null;
         if (old.length == 0) {
             //no previous config, use defaults!
-            result = bootRepositories.resolveSelectors(new NutsRepositoryURL[]{
+            result = bootRepositories.resolve(new NutsRepositoryURL[]{
                     NutsRepositoryURL.of("maven-local", null),
                     NutsRepositoryURL.of("maven-central", null),
             },NutsBootRepositoryDB.INSTANCE);
         } else {
-            result = bootRepositories.resolveSelectors(Arrays.stream(old).map(x -> NutsRepositoryURL.of(x.getName(), x.getUrl()))
+            result = bootRepositories.resolve(Arrays.stream(old).map(x -> NutsRepositoryURL.of(x.getName(), x.getUrl()))
                     .toArray(NutsRepositoryURL[]::new)
                     ,NutsBootRepositoryDB.INSTANCE);
         }

@@ -2,7 +2,7 @@ package net.thevpc.nuts.core.test;
 
 import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.core.test.utils.TestUtils;
-import net.thevpc.nuts.runtime.standalone.util.CoreIOUtils;
+import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.xtra.nanodb.NanoDB;
 import net.thevpc.nuts.runtime.standalone.xtra.nanodb.NanoDBTableFile;
 import org.junit.jupiter.api.Test;

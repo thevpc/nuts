@@ -1,11 +1,11 @@
 package net.thevpc.nuts.runtime.standalone.io.outputstream;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.bundles.common.CorePlatformUtils;
+import net.thevpc.nuts.runtime.standalone.util.CorePlatformUtils;
 import net.thevpc.nuts.runtime.standalone.text.EscapeOutputStream;
 import net.thevpc.nuts.runtime.standalone.text.ExtendedFormatAware;
 import net.thevpc.nuts.runtime.standalone.text.UnescapeOutputStream;
-import net.thevpc.nuts.runtime.standalone.util.CoreIOUtils;
+import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.io.terminals.NutsTerminalModeOp;
 
 import java.io.FilterOutputStream;

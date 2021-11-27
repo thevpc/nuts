@@ -26,7 +26,7 @@ package net.thevpc.nuts.runtime.standalone.executors;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.definition.DefaultNutsDefinition;
-import net.thevpc.nuts.runtime.standalone.util.CoreArrayUtils;
+import net.thevpc.nuts.runtime.standalone.util.collections.CoreArrayUtils;
 import net.thevpc.nuts.spi.NutsComponentScope;
 import net.thevpc.nuts.spi.NutsComponentScopeType;
 import net.thevpc.nuts.spi.NutsExecutorComponent;

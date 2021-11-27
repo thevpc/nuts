@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.elem.mappers;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.bundles.reflect.ReflectUtils;
+import net.thevpc.nuts.runtime.standalone.util.reflect.ReflectUtils;
 
 import java.lang.reflect.Type;
 

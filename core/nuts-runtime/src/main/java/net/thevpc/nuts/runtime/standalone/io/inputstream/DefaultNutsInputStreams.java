@@ -2,7 +2,7 @@ package net.thevpc.nuts.runtime.standalone.io.inputstream;
 
 import net.thevpc.nuts.NutsInputStreams;
 import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.runtime.bundles.io.NullInputStream;
+import net.thevpc.nuts.runtime.standalone.io.util.NullInputStream;
 import net.thevpc.nuts.runtime.standalone.workspace.config.DefaultNutsWorkspaceConfigManager;
 import net.thevpc.nuts.runtime.standalone.workspace.config.DefaultNutsWorkspaceConfigModel;
 import net.thevpc.nuts.spi.NutsSupportLevelContext;

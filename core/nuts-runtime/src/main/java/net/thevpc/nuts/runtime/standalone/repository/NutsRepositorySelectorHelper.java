@@ -3,13 +3,13 @@ package net.thevpc.nuts.runtime.standalone.repository;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.spi.NutsRepositoryDB;
 import net.thevpc.nuts.spi.NutsRepositorySelectorList;
-import net.thevpc.nuts.runtime.standalone.util.CoreIOUtils;
+import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.spi.NutsRepositoryURL;
 
 public class NutsRepositorySelectorHelper {
     public static NutsAddRepositoryOptions createRepositoryOptions(String s, boolean requireName, NutsSession session) {
         NutsRepositorySelectorList r = NutsRepositorySelectorList.of(s,DefaultNutsRepositoryDB.INSTANCE,session);
-        NutsRepositoryURL[] all = r.resolveSelectors(null,DefaultNutsRepositoryDB.INSTANCE);
+        NutsRepositoryURL[] all = r.resolve(null,DefaultNutsRepositoryDB.INSTANCE);
         if (all.length != 1) {
             throw new IllegalArgumentException("unexpected");
         }
@@ -17,10 +17,10 @@ public class NutsRepositorySelectorHelper {
     }
 
     public static NutsAddRepositoryOptions createRepositoryOptions(NutsRepositoryURL s, boolean requireName, NutsSession session) {
-        NutsRepositoryURL nru = NutsRepositoryURL.of(s.getLocation()).changeName(s.getName());
+        NutsRepositoryURL nru = NutsRepositoryURL.of(s.getLocation()).setName(s.getName());
         String defaultName = null;
         NutsRepositoryDB db = DefaultNutsRepositoryDB.INSTANCE;
-        if (db.isDefaultRepository(nru.getName())) {
+        if (db.isDefaultRepositoryName(nru.getName())) {
             defaultName = nru.getName();
         } else {
             String nn = db.getRepositoryNameByURL(nru.getLocation());

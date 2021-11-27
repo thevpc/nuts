@@ -29,8 +29,8 @@ package net.thevpc.nuts.runtime.standalone.descriptor;
 import net.thevpc.nuts.NutsEnvCondition;
 import net.thevpc.nuts.NutsEnvConditionBuilder;
 import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.runtime.bundles.common.MapToFunction;
-import net.thevpc.nuts.runtime.standalone.util.CoreArrayUtils;
+import net.thevpc.nuts.runtime.standalone.util.MapToFunction;
+import net.thevpc.nuts.runtime.standalone.util.collections.CoreArrayUtils;
 import net.thevpc.nuts.runtime.standalone.util.CoreNutsUtils;
 import net.thevpc.nuts.spi.NutsSupportLevelContext;
 

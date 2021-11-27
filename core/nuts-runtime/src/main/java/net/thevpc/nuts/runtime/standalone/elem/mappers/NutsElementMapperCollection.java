@@ -3,8 +3,8 @@ package net.thevpc.nuts.runtime.standalone.elem.mappers;
 import net.thevpc.nuts.NutsElement;
 import net.thevpc.nuts.NutsElementFactoryContext;
 import net.thevpc.nuts.NutsElementMapper;
-import net.thevpc.nuts.runtime.bundles.reflect.ReflectType;
-import net.thevpc.nuts.runtime.bundles.reflect.ReflectUtils;
+import net.thevpc.nuts.runtime.standalone.util.reflect.ReflectType;
+import net.thevpc.nuts.runtime.standalone.util.reflect.ReflectUtils;
 import net.thevpc.nuts.runtime.standalone.elem.DefaultNutsArrayElement;
 import net.thevpc.nuts.runtime.standalone.elem.DefaultNutsElementFactoryService;
 

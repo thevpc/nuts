@@ -2,7 +2,7 @@ package net.thevpc.nuts.runtime.standalone.id.filter;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.util.filters.InternalNutsTypedFilters;
-import net.thevpc.nuts.runtime.bundles.io.NutsInstallStatusIdFilter;
+import net.thevpc.nuts.runtime.standalone.io.util.NutsInstallStatusIdFilter;
 
 import java.util.List;
 

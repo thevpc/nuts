@@ -13,11 +13,8 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import net.thevpc.nuts.runtime.standalone.format.DefaultFormatBase;
-import net.thevpc.nuts.runtime.standalone.util.NutsDebugString;
+import net.thevpc.nuts.runtime.standalone.util.*;
 import net.thevpc.nuts.runtime.standalone.solvers.NutsDependencySolverUtils;
-import net.thevpc.nuts.runtime.standalone.util.NutsJavaSdkUtils;
-import net.thevpc.nuts.runtime.standalone.util.CoreCommonUtils;
-import net.thevpc.nuts.runtime.standalone.util.CoreTimeUtils;
 import net.thevpc.nuts.spi.NutsDependencySolver;
 import net.thevpc.nuts.spi.NutsSupportLevelContext;
 
@@ -133,7 +130,7 @@ public class DefaultNutsInfoCommand extends DefaultFormatBase<NutsInfoCommand> i
         if (a == null) {
             return false;
         }
-        boolean enabled = a.isEnabled();
+        boolean enabled = a.isActive();
         switch (a.getKey().getString()) {
             case "-r":
             case "--repos": {
@@ -342,8 +339,8 @@ public class DefaultNutsInfoCommand extends DefaultFormatBase<NutsInfoCommand> i
         props.put("os-arch", ws.env().getArchFamily());
         props.put("os-shell", ws.env().getShellFamily());
         props.put("user-name", stringValue(System.getProperty("user.name")));
-        props.put("user-home", NutsPath.of(System.getProperty("user.home"),ws));
-        props.put("user-dir", NutsPath.of(System.getProperty("user.dir"),ws));
+        props.put("user-home", NutsPath.ofUserHome(ws));
+        props.put("user-dir", NutsPath.ofUserDirectory(ws));
         props.put("command-line-long",
                 ws.boot().getBootOptions().formatter().setCompact(false).getBootCommandLine()
         );
@@ -419,7 +416,7 @@ public class DefaultNutsInfoCommand extends DefaultFormatBase<NutsInfoCommand> i
     }
 
     private String stringValue(Object s) {
-        return NutsTexts.of(getSession()).builder().append(CoreCommonUtils.stringValue(s)).toString();
+        return NutsTexts.of(getSession()).builder().append(CoreStringUtils.stringValue(s)).toString();
     }
 
     public boolean isLenient() {

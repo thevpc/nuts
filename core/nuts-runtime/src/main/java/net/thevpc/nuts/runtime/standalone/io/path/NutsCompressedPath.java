@@ -1,8 +1,8 @@
 package net.thevpc.nuts.runtime.standalone.io.path;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.bundles.io.InputStreamMetadataAwareImpl;
-import net.thevpc.nuts.runtime.bundles.io.URLBuilder;
+import net.thevpc.nuts.runtime.standalone.io.util.InputStreamMetadataAwareImpl;
+import net.thevpc.nuts.runtime.standalone.io.util.URLBuilder;
 import net.thevpc.nuts.runtime.standalone.format.DefaultFormatBase;
 import net.thevpc.nuts.spi.NutsSupportLevelContext;
 

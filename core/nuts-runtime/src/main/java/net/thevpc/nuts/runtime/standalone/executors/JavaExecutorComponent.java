@@ -24,10 +24,10 @@
 package net.thevpc.nuts.runtime.standalone.executors;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.bundles.collections.StringKeyValueList;
-import net.thevpc.nuts.runtime.bundles.io.IProcessExecHelper;
+import net.thevpc.nuts.runtime.standalone.util.collections.StringKeyValueList;
+import net.thevpc.nuts.runtime.standalone.io.util.IProcessExecHelper;
 import net.thevpc.nuts.runtime.standalone.extensions.DefaultNutsClassLoader;
-import net.thevpc.nuts.runtime.standalone.util.CoreIOUtils;
+import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.util.CoreNumberUtils;
 import net.thevpc.nuts.runtime.standalone.util.NutsDebugString;
 import net.thevpc.nuts.runtime.standalone.extensions.DefaultNutsWorkspaceExtensionManager;
@@ -102,7 +102,7 @@ public class JavaExecutorComponent implements NutsExecutorComponent {
     //@Override
     public IProcessExecHelper execHelper(NutsExecutionContext executionContext) {
         NutsDefinition def = executionContext.getDefinition();//executionContext.getWorkspace().fetch(.getId().toString(), true, false);
-//        boolean inheritSystemIO=CoreCommonUtils.parseBoolean(String.valueOf(executionContext.getExecutorProperties().get("inheritSystemIO")),false);
+//        boolean inheritSystemIO=NutsTextUtils.parseBoolean(String.valueOf(executionContext.getExecutorProperties().get("inheritSystemIO")),false);
 //        final NutsWorkspace ws = executionContext.getWorkspace();
         Path contentFile = def.getFile();
         NutsSession session = executionContext.getSession();

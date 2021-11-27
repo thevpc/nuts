@@ -12,7 +12,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.format.DefaultSearchFormatBase;
 import net.thevpc.nuts.runtime.standalone.format.NutsFetchDisplayOptions;
 import net.thevpc.nuts.runtime.standalone.format.NutsFormatUtils;
-import net.thevpc.nuts.runtime.standalone.util.CoreIOUtils;
+import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 
 /**
  *

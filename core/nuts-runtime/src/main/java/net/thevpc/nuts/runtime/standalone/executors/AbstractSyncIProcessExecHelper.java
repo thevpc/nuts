@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.executors;
 
 import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.runtime.bundles.io.IProcessExecHelper;
+import net.thevpc.nuts.runtime.standalone.io.util.IProcessExecHelper;
 
 import java.util.concurrent.Callable;
 import java.util.concurrent.Future;

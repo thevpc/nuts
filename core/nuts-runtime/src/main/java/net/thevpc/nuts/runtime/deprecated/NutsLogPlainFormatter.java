@@ -3,7 +3,7 @@
 //
 //import net.thevpc.nuts.*;
 //import net.thevpc.nuts.runtime.standalone.util.CoreNutsUtils;
-//import net.thevpc.nuts.runtime.standalone.util.CoreCommonUtils;
+//import net.thevpc.nuts.runtime.standalone.util.NutsTextUtils;
 //
 //import java.text.MessageFormat;
 //import java.time.Instant;

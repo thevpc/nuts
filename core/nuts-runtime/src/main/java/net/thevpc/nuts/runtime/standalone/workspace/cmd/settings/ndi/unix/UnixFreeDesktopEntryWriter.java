@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.ndi.unix;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.standalone.util.CoreIOUtils;
+import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.util.PathInfo;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.ndi.FreeDesktopEntry;
@@ -63,7 +63,7 @@ public class UnixFreeDesktopEntryWriter extends AbstractFreeDesktopEntryWriter {
 
         List<PathInfo> all = new ArrayList<>();
         FreeDesktopEntry.Group root = descriptor.getOrCreateDesktopEntry();
-        NutsPath folder4shortcuts = NutsPath.of(System.getProperty("user.home"),session).resolve(".local/share/applications");
+        NutsPath folder4shortcuts = NutsPath.ofUserHome(session).resolve(".local/share/applications");
         folder4shortcuts.mkdirs();
         NutsPath shortcutFile =folder4shortcuts.resolve(desktopFileName);
         all.add(new PathInfo("desktop-icon", id,
@@ -73,7 +73,7 @@ public class UnixFreeDesktopEntryWriter extends AbstractFreeDesktopEntryWriter {
         if (categories.isEmpty()) {
             categories.add("/");
         }
-        NutsPath folder4menus = NutsPath.of(System.getProperty("user.home"),session).resolve(".config/menus/applications-merged");
+        NutsPath folder4menus = NutsPath.ofUserHome(session).resolve(".config/menus/applications-merged");
         folder4menus.mkdirs();
 
         //menu name must include category

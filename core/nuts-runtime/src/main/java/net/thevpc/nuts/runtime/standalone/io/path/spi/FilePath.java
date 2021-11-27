@@ -1,8 +1,8 @@
 package net.thevpc.nuts.runtime.standalone.io.path.spi;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.bundles.io.InputStreamMetadataAwareImpl;
-import net.thevpc.nuts.runtime.standalone.util.CoreIOUtils;
+import net.thevpc.nuts.runtime.standalone.io.util.InputStreamMetadataAwareImpl;
+import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
 import net.thevpc.nuts.spi.NutsFormatSPI;
 import net.thevpc.nuts.spi.NutsPathFactory;
@@ -32,9 +32,10 @@ public class FilePath implements NutsPathSPI {
         this.session = session;
     }
 
-    private NutsPath fastPath(Path p,NutsSession s){
-        return NutsPath.of(new FilePath(p,s),s);
+    private NutsPath fastPath(Path p, NutsSession s) {
+        return NutsPath.of(new FilePath(p, s), s);
     }
+
     @Override
     public NutsStream<NutsPath> list(NutsPath basePath) {
         if (Files.isDirectory(value)) {
@@ -71,8 +72,8 @@ public class FilePath implements NutsPathSPI {
         try {
             return fastPath(value.resolve(path), getSession());
         } catch (Exception ex) {
-            //always return an instance if if invalid
-            return NutsPath.of(value + "/" + path, getSession());
+            //always return an instance if is invalid
+            return NutsPath.of(value + getSep() + path, getSession());
         }
     }
 
@@ -99,7 +100,15 @@ public class FilePath implements NutsPathSPI {
         if (path.isEmpty()) {
             return getParent(basePath);
         }
-        return fastPath(value.resolveSibling(path), getSession());
+        try {
+            return fastPath(value.resolveSibling(path), getSession());
+        } catch (Exception e) {
+            Path p = value.getParent();
+            if (p == null) {
+                return NutsPath.of(path, session);
+            }
+            return fastPath(p, session).resolve(path);
+        }
     }
 
     @Override
@@ -115,19 +124,6 @@ public class FilePath implements NutsPathSPI {
         return null;
     }
 
-    //    @Override
-//    public NutsPath resolve(String other) {
-//        String[] others = Arrays.stream(NutsUtilStrings.trim(other).split("[/\\\\]"))
-//                .filter(x -> x.length() > 0).toArray(String[]::new);
-//        if (others.length > 0) {
-//            Path value2 = value;
-//            for (String s : others) {
-//                value2 = value2.resolve(s);
-//            }
-//            return fastPath(value2, getSession());
-//        }
-//        return toNutsPathInstance();
-//    }
     @Override
     public URL toURL(NutsPath basePath) {
         try {
@@ -157,6 +153,12 @@ public class FilePath implements NutsPathSPI {
     @Override
     public boolean isDirectory(NutsPath basePath) {
         return Files.isDirectory(value);
+    }
+
+    @Override
+    public boolean isLocal(NutsPath basePath) {
+        //how about NFS?
+        return true;
     }
 
     @Override
@@ -492,7 +494,7 @@ public class FilePath implements NutsPathSPI {
         Path f = other.asFile();
         if (f != null) {
             try {
-                Files.move(value, f,StandardCopyOption.REPLACE_EXISTING);
+                Files.move(value, f, StandardCopyOption.REPLACE_EXISTING);
             } catch (IOException e) {
                 throw new NutsIOException(session, e);
             }
@@ -511,8 +513,8 @@ public class FilePath implements NutsPathSPI {
     public void walkDfs(NutsPath basePath, NutsTreeVisitor<NutsPath> visitor, int maxDepth, NutsPathOption... options) {
         Set<FileVisitOption> foptions = new HashSet<>();
         for (NutsPathOption option : options) {
-            switch (option){
-                case FOLLOW_LINKS:{
+            switch (option) {
+                case FOLLOW_LINKS: {
                     foptions.add(FileVisitOption.FOLLOW_LINKS);
                     break;
                 }
@@ -559,6 +561,18 @@ public class FilePath implements NutsPathSPI {
         } catch (IOException e) {
             throw new NutsIOException(getSession(), e);
         }
+    }
+
+    private String getSep() {
+        for (char c : value.toString().toCharArray()) {
+            switch (c) {
+                case '/':
+                case '\\': {
+                    return String.valueOf(c);
+                }
+            }
+        }
+        return "/";
     }
 
     @Override
@@ -734,17 +748,11 @@ public class FilePath implements NutsPathSPI {
                     return null;
                 }
                 Path value = Paths.get(path);
-                return NutsSupported.of(10,()->new FilePath(value, session));
+                return NutsSupported.of(10, () -> new FilePath(value, session));
             } catch (Exception ex) {
                 //ignore
             }
             return null;
         }
-    }
-
-    @Override
-    public boolean isLocal(NutsPath basePath) {
-        //how about NFS?
-        return true;
     }
 }

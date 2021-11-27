@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.io.progress;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.bundles.common.CorePlatformUtils;
+import net.thevpc.nuts.runtime.standalone.util.CorePlatformUtils;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.text.FPrintCommands;
 
@@ -41,7 +41,7 @@ public class CProgressBar {
     private boolean suffixMoveLineStart = true;
     private boolean prefixMoveLineStart = true;
     private long lastPrint = 0;
-    private long minPeriod = 300;
+    private long minPeriod = 0;
     private IndeterminatePosition indeterminatePosition = DEFAULT_INDETERMINATE_POSITION;
     private boolean optionNewline;
     private Formatter formatter = CorePlatformUtils.SUPPORTS_UTF_ENCODING ?RECTANGLES4:SIMPLE;

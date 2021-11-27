@@ -10,14 +10,14 @@ import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceFactory;
 import net.thevpc.nuts.runtime.standalone.workspace.config.NutsWorkspaceConfigManagerExt;
 import net.thevpc.nuts.runtime.standalone.io.printstream.NutsFormattedPrintStream;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
-import net.thevpc.nuts.runtime.standalone.util.CoreIOUtils;
+import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.config.NutsWorkspaceConfigBoot;
 import net.thevpc.nuts.runtime.standalone.workspace.DefaultNutsWorkspaceFactory;
 import net.thevpc.nuts.runtime.standalone.util.filters.CoreFilterUtils;
 import net.thevpc.nuts.NutsLogVerb;
 import net.thevpc.nuts.runtime.standalone.io.terminals.DefaultNutsSessionTerminalFromSystem;
 import net.thevpc.nuts.runtime.standalone.util.CoreNutsUtils;
-import net.thevpc.nuts.runtime.bundles.collections.ListMap;
+import net.thevpc.nuts.runtime.standalone.util.collections.ListMap;
 import net.thevpc.nuts.spi.*;
 import net.thevpc.nuts.spi.NutsExecutorComponent;
 

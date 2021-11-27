@@ -24,8 +24,8 @@
 package net.thevpc.nuts.runtime.standalone.workspace;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.bundles.collections.ClassClassMap;
-import net.thevpc.nuts.runtime.bundles.collections.ListMap;
+import net.thevpc.nuts.runtime.standalone.util.collections.ClassClassMap;
+import net.thevpc.nuts.runtime.standalone.util.collections.ListMap;
 import net.thevpc.nuts.runtime.standalone.descriptor.DefaultNutsEnvConditionBuilder;
 import net.thevpc.nuts.runtime.standalone.extensions.CoreServiceUtils;
 import net.thevpc.nuts.runtime.standalone.id.DefaultNutsIdBuilder;
@@ -185,7 +185,7 @@ public class DefaultNutsWorkspaceFactory implements NutsWorkspaceFactory {
 //    public Set<Class> discoverTypes(ClassLoader bootClassLoader) {
 //        List<Class> types = discoveredCacheByLoader.get(bootClassLoader);
 //        if (types == null) {
-//            types = CoreCommonUtils.loadServiceClasseNames(NutsComponent.class, bootClassLoader);
+//            types = NutsTextUtils.loadServiceClasseNames(NutsComponent.class, bootClassLoader);
 //            discoveredCacheByLoader.put(bootClassLoader, types);
 //            for (Iterator<Class> it = types.iterator(); it.hasNext();) {
 //                Class type = it.next();

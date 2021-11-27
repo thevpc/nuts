@@ -1,7 +1,7 @@
 package net.thevpc.nuts.core.test;
 
 import net.thevpc.nuts.core.test.utils.TestUtils;
-import net.thevpc.nuts.runtime.bundles.collections.EvictingCharQueue;
+import net.thevpc.nuts.runtime.standalone.util.collections.EvictingCharQueue;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

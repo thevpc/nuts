@@ -34,6 +34,7 @@ import net.thevpc.nuts.spi.NutsPaths;
 import java.io.*;
 import java.net.URL;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.Instant;
 import java.util.List;
 import java.util.Set;
@@ -48,9 +49,7 @@ import java.util.stream.Stream;
  */
 public interface NutsPath extends NutsFormattable {
     static NutsPath of(URL path, NutsSession session) {
-        return NutsApiUtils
-                .createSessionCachedType(NutsPaths.class, session, () -> NutsPaths.of(session))
-                .createPath(path, session);
+        return NutsPaths.of(session).createPath(path, session);
     }
 
     static NutsPath of(String path, ClassLoader classLoader, NutsSession session) {
@@ -58,39 +57,37 @@ public interface NutsPath extends NutsFormattable {
     }
 
     static NutsPath of(File path, NutsSession session) {
-        return NutsApiUtils
-                .createSessionCachedType(NutsPaths.class, session, () -> NutsPaths.of(session))
-                .createPath(path, session);
+        return NutsPaths.of(session).createPath(path, session);
     }
 
     static NutsPath of(Path path, NutsSession session) {
-        return NutsApiUtils
-                .createSessionCachedType(NutsPaths.class, session, () -> NutsPaths.of(session))
-                .createPath(path, session);
+        return NutsPaths.of(session).createPath(path, session);
     }
 
     static NutsPath of(String path, NutsSession session) {
-        return NutsApiUtils
-                .createSessionCachedType(NutsPaths.class, session, () -> NutsPaths.of(session))
-                .createPath(path, session);
+        return NutsPaths.of(session).createPath(path, session);
     }
 
     static NutsPath of(NutsPathSPI path, NutsSession session) {
-        return NutsApiUtils
-                .createSessionCachedType(NutsPaths.class, session, () -> NutsPaths.of(session))
-                .createPath(path, session);
+        return NutsPaths.of(session).createPath(path, session);
     }
 
-    static void addPathFactory(NutsPathFactory pathFactory, NutsSession session) {
-        NutsApiUtils
-                .createSessionCachedType(NutsPaths.class, session, () -> NutsPaths.of(session))
-                .addPathFactory(pathFactory, session);
+    /**
+     * return user home path
+     * @param session session
+     * @return user home path
+     */
+    static NutsPath ofUserHome(NutsSession session) {
+        return NutsPath.of(Paths.get(System.getProperty("user.home")),session);
     }
 
-    static void removePathFactory(NutsPathFactory pathFactory, NutsSession session) {
-        NutsApiUtils
-                .createSessionCachedType(NutsPaths.class, session, () -> NutsPaths.of(session))
-                .removePathFactory(pathFactory, session);
+    /**
+     * return user current directory
+     * @param session session
+     * @return return user current directory
+     */
+    static NutsPath ofUserDirectory(NutsSession session) {
+        return NutsPath.of(Paths.get(System.getProperty("user.dir")),session);
     }
 
     /**

@@ -31,7 +31,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
 
-import net.thevpc.nuts.runtime.standalone.util.CoreIOUtils;
+import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.spi.NutsDescriptorContentParserContext;
 
 /**

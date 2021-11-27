@@ -27,7 +27,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.repository.impl.nuts.NutsFolderRepository;
 import net.thevpc.nuts.runtime.standalone.repository.impl.nuts.NutsHttpFolderRepository;
 import net.thevpc.nuts.runtime.standalone.repository.impl.nuts.NutsHttpSrvRepository;
-import net.thevpc.nuts.runtime.standalone.util.CoreIOUtils;
+import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.spi.*;
 
 /**

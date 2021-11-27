@@ -27,8 +27,8 @@ import net.thevpc.nuts.NutsException;
 import net.thevpc.nuts.NutsIOException;
 import net.thevpc.nuts.NutsMessage;
 import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.runtime.bundles.io.InputStreamVisitor;
-import net.thevpc.nuts.runtime.bundles.io.ZipUtils;
+import net.thevpc.nuts.runtime.standalone.io.util.InputStreamVisitor;
+import net.thevpc.nuts.runtime.standalone.io.util.ZipUtils;
 
 import java.io.*;
 import java.net.URL;

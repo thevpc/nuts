@@ -26,8 +26,8 @@
 package net.thevpc.nuts.runtime.standalone.installers;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.bundles.io.UnzipOptions;
-import net.thevpc.nuts.runtime.bundles.io.ZipUtils;
+import net.thevpc.nuts.runtime.standalone.io.util.UnzipOptions;
+import net.thevpc.nuts.runtime.standalone.io.util.ZipUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.definition.DefaultNutsDefinition;
 import net.thevpc.nuts.spi.NutsComponentScope;

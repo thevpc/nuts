@@ -6,8 +6,8 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.format.DefaultFormatBase;
 import net.thevpc.nuts.runtime.standalone.format.ObjectOutputFormatWriterHelper;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
-import net.thevpc.nuts.runtime.standalone.util.CoreIOUtils;
-import net.thevpc.nuts.runtime.standalone.util.CoreCommonUtils;
+import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
+import net.thevpc.nuts.runtime.standalone.text.util.NutsTextUtils;
 import net.thevpc.nuts.spi.NutsSupportLevelContext;
 
 public class DefaultNutsPropertiesFormat extends DefaultFormatBase<NutsPropertiesFormat> implements NutsPropertiesFormat {
@@ -32,22 +32,22 @@ public class DefaultNutsPropertiesFormat extends DefaultFormatBase<NutsPropertie
         NutsArgument a;
         if ((a = commandLine.nextString(OPTION_MULTILINE_PROPERTY)) != null) {
             NutsArgument i = NutsArgument.of(a.getValue().getString(),getSession());
-            if (i.isEnabled()) {
+            if (i.isActive()) {
                 addMultilineProperty(i.getKey().getString(), i.getValue().getString());
             }
             return true;
         } else if ((a = commandLine.nextBoolean("--compact")) != null) {
-            if (a.isEnabled()) {
+            if (a.isActive()) {
                 this.compact = a.getValue().getBoolean();
             }
             return true;
         } else if ((a = commandLine.nextBoolean("--props")) != null) {
-            if (a.isEnabled()) {
+            if (a.isActive()) {
                 this.javaProps = a.getValue().getBoolean();
             }
             return true;
         } else if ((a = commandLine.nextBoolean("--escape-text")) != null) {
-            if (a.isEnabled()) {
+            if (a.isActive()) {
                 this.escapeText = a.getValue().getBoolean();
             }
             return true;
@@ -260,7 +260,7 @@ public class DefaultNutsPropertiesFormat extends DefaultFormatBase<NutsPropertie
 
     private NutsString stringValue(Object o) {
         if (escapeText) {
-            return CoreCommonUtils.stringValueFormatted(o, escapeText, getSession());
+            return NutsTextUtils.stringValueFormatted(o, escapeText, getSession());
         } else {
             return NutsTexts.of(getSession()).toText(o);
         }

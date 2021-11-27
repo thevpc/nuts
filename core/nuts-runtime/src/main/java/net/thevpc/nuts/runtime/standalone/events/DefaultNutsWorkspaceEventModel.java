@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.events;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.standalone.util.ObservableMap;
+import net.thevpc.nuts.runtime.standalone.util.collections.ObservableMap;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
 
 import java.util.ArrayList;

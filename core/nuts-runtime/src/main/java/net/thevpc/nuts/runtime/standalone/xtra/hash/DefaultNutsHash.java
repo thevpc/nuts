@@ -26,8 +26,8 @@
 package net.thevpc.nuts.runtime.standalone.xtra.hash;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.bundles.io.NutsStreamOrPath;
-import net.thevpc.nuts.runtime.standalone.util.CoreIOUtils;
+import net.thevpc.nuts.runtime.standalone.io.util.NutsStreamOrPath;
+import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
 import net.thevpc.nuts.spi.NutsSupportLevelContext;
 

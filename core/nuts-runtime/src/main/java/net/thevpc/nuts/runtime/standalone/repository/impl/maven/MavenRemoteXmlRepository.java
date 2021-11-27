@@ -24,7 +24,7 @@
 package net.thevpc.nuts.runtime.standalone.repository.impl.maven;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.bundles.mvn.MavenMetadata;
+import net.thevpc.nuts.runtime.standalone.repository.impl.maven.util.MavenMetadata;
 import net.thevpc.nuts.runtime.standalone.repository.impl.maven.util.MavenUtils;
 import net.thevpc.nuts.runtime.standalone.util.CoreNutsConstants;
 import net.thevpc.nuts.runtime.standalone.util.iter.IteratorBuilder;
@@ -45,9 +45,9 @@ public class MavenRemoteXmlRepository extends MavenFolderRepository {
     }
 
     @Override
-    public NutsIterator<NutsId> searchCore(final NutsIdFilter filter, String[] roots, NutsFetchMode fetchMode, NutsSession session) {
+    public NutsIterator<NutsId> searchCore(final NutsIdFilter filter, NutsPath[] basePaths, NutsFetchMode fetchMode, NutsSession session) {
         //TODO if possible
-        return super.searchCore(filter, roots, fetchMode, session);
+        return super.searchCore(filter, basePaths, fetchMode, session);
     }
 
     @Override

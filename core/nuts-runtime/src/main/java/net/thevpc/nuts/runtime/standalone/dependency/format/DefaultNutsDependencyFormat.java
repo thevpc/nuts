@@ -261,7 +261,7 @@ public class DefaultNutsDependencyFormat extends DefaultFormatBase<NutsDependenc
         if (a == null) {
             return false;
         }
-        boolean enabled=a.isEnabled();
+        boolean enabled=a.isActive();
         switch (a.getKey().getString()) {
             case "--omit-env": {
                 boolean val= cmdLine.nextBoolean().getValue().getBoolean();

@@ -42,7 +42,7 @@ public class DefaultNutsSettingsInternalExecutable extends DefaultInternalNutsEx
             if(a==null){
                 break;
             }
-            boolean enabled = a.isEnabled();
+            boolean enabled = a.isActive();
             if(a.isOption() &&
                     (
                             a.getKey().getString().equals("-?")

@@ -26,8 +26,8 @@ package net.thevpc.nuts.runtime.standalone.repository.impl;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.repository.config.DefaultNutsRepoConfigManager;
 import net.thevpc.nuts.runtime.standalone.repository.config.NutsRepositoryConfigModel;
-import net.thevpc.nuts.runtime.standalone.util.DefaultObservableMap;
-import net.thevpc.nuts.runtime.standalone.util.ObservableMap;
+import net.thevpc.nuts.runtime.standalone.util.collections.DefaultObservableMap;
+import net.thevpc.nuts.runtime.standalone.util.collections.ObservableMap;
 import net.thevpc.nuts.spi.NutsRepositorySPI;
 
 import java.util.*;

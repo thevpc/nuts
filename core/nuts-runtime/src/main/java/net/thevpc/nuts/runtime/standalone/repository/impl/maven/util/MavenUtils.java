@@ -25,14 +25,13 @@ package net.thevpc.nuts.runtime.standalone.repository.impl.maven.util;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.spi.NutsRepositoryURL;
-import net.thevpc.nuts.runtime.bundles.common.MapToFunction;
+import net.thevpc.nuts.runtime.standalone.util.MapToFunction;
 import net.thevpc.nuts.runtime.standalone.repository.NutsRepositorySelectorHelper;
 import net.thevpc.nuts.runtime.standalone.util.iter.IteratorBuilder;
-import net.thevpc.nuts.runtime.bundles.mvn.*;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.StringTokenizerUtils;
 import net.thevpc.nuts.runtime.standalone.util.filters.CoreFilterUtils;
 import net.thevpc.nuts.runtime.standalone.version.DefaultNutsVersion;
-import net.thevpc.nuts.runtime.standalone.util.CoreIOUtils;
+import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.util.CoreNutsUtils;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
@@ -79,7 +78,7 @@ public class MavenUtils {
     public static PomIdResolver createPomIdResolver(NutsSession session) {
         PomIdResolver wp = (PomIdResolver) session.env().getProperty(PomIdResolver.class.getName()).getObject();
         if (wp == null) {
-            wp = new PomIdResolver(new NutsPomUrlReader(), new NutsPomLogger(session));
+            wp = new PomIdResolver(new NutsPomLogger(session));
             session.env().setProperty(PomIdResolver.class.getName(), wp);
         }
         return wp;
@@ -242,10 +241,72 @@ public class MavenUtils {
                     if (x instanceof Element) {
                         Element e = (Element) x;
                         if (e.getNodeName().equals("mainClass")) {
-                            return true;
+                            Node p1 = e.getParentNode();
+                            if(p1!=null){
+                                Node p2 = p1.getParentNode();
+                                if(p2!=null) {
+                                    Node p3 = p2.getParentNode();
+                                    if(p3!=null){
+                                        Node p4 = p3.getParentNode();
+                                        if(p4!=null){
+                                            Node p5 = p4.getParentNode();
+                                            if(p5!=null){
+                                                Node p6 = p5.getParentNode();
+                                                if(p6!=null) {
+                                                    if (p6.getNodeName().equals("build")) {
+                                                        if (p5.getNodeName().equals("plugins")) {
+                                                            if (p4.getNodeName().equals("plugin")) {
+                                                                if (p3.getNodeName().equals("configuration")) {
+                                                                    if (p2.getNodeName().equals("archive")) {
+                                                                        if (p1.getNodeName().equals("manifest")) {
+                                                                            return true;
+                                                                        }
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
                         }
                         if (e.getNodeName().equals("goal")) {
-                            return NutsUtilStrings.trim(e.getTextContent()).equals("exec-war-only");
+                            if(NutsUtilStrings.trim(e.getTextContent()).equals("exec-war-only")){
+                                Node p1 = e.getParentNode();
+                                if(p1!=null){
+                                    Node p2 = p1.getParentNode();
+                                    if(p2!=null) {
+                                        Node p3 = p2.getParentNode();
+                                        if(p3!=null){
+                                            Node p4 = p3.getParentNode();
+                                            if(p4!=null){
+                                                Node p5 = p4.getParentNode();
+                                                if(p5!=null){
+                                                    Node p6 = p5.getParentNode();
+                                                    if(p6!=null) {
+                                                        if (p6.getNodeName().equals("build")) {
+                                                            if (p5.getNodeName().equals("plugins")) {
+                                                                if (p4.getNodeName().equals("plugin")) {
+                                                                    if (p3.getNodeName().equals("executions")) {
+                                                                        if (p2.getNodeName().equals("execution")) {
+                                                                            if (p1.getNodeName().equals("goals")) {
+                                                                                return true;
+                                                                            }
+                                                                        }
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
                         }
                     }
                     return false;
@@ -728,15 +789,5 @@ public class MavenUtils {
 
         public LinkedHashSet<String> deps = new LinkedHashSet<>();
         public LinkedHashSet<String> repos = new LinkedHashSet<>();
-    }
-
-    private static class NutsPomUrlReader implements PomUrlReader {
-
-        public NutsPomUrlReader(){}
-
-        @Override
-        public InputStream openStream(URL url,NutsSession session) {
-            return NutsWorkspaceUtils.of(session).openURL(url);
-        }
     }
 }

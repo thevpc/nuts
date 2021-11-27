@@ -18,8 +18,7 @@ import java.util.stream.Stream;
 
 import net.thevpc.nuts.Nuts;
 import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.NutsWorkspace;
-import net.thevpc.nuts.runtime.standalone.util.CoreIOUtils;
+import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 
 /**
  * @author thevpc

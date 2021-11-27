@@ -26,7 +26,7 @@
 package net.thevpc.nuts.runtime.standalone.format;
 
 import java.util.Map;
-import static net.thevpc.nuts.runtime.standalone.util.CoreCommonUtils.stringValue;
+import static net.thevpc.nuts.runtime.standalone.util.CoreStringUtils.stringValue;
 
 import net.thevpc.nuts.NutsBlankable;
 import net.thevpc.nuts.NutsElement;

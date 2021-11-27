@@ -8,7 +8,7 @@
 //import net.thevpc.nuts.*;
 //import net.thevpc.nuts.runtime.core.format.NutsObjectFormatBase;
 //import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
-//import net.thevpc.nuts.runtime.standalone.util.CoreCommonUtils;
+//import net.thevpc.nuts.runtime.standalone.util.NutsTextUtils;
 //
 //import java.io.PrintStream;
 //import java.util.*;
@@ -128,6 +128,6 @@
 //    }
 //
 //    public String stringValue(Object o) {
-//        return CoreCommonUtils.stringValueFormatted(o, escapeText, getValidSession());
+//        return NutsTextUtils.stringValueFormatted(o, escapeText, getValidSession());
 //    }
 //}

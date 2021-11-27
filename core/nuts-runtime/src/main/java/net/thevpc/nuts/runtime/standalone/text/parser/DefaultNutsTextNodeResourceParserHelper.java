@@ -2,7 +2,7 @@ package net.thevpc.nuts.runtime.standalone.text.parser;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.StringPlaceHolderParser;
-import net.thevpc.nuts.runtime.standalone.util.CoreIOUtils;
+import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceVarExpansionFunction;
 
 import java.io.*;

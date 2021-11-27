@@ -6,11 +6,7 @@ import net.thevpc.nuts.boot.NutsApiUtils;
 public interface NutsRepositoryDB {
     String getRepositoryNameByURL(String url);
 
-    boolean isDefaultRepository(String name);
+    boolean isDefaultRepositoryName(String name);
 
     String getRepositoryURLByName(String name);
-
-    default NutsRepositoryURL parseNutsRepositoryURL(String expression, NutsSession session) {
-        return NutsApiUtils.parseRepositoryURL(expression,this,session);
-    }
 }

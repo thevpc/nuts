@@ -27,7 +27,7 @@
 package net.thevpc.nuts.runtime.standalone.descriptor;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.bundles.common.MapToFunction;
+import net.thevpc.nuts.runtime.standalone.util.MapToFunction;
 import net.thevpc.nuts.runtime.standalone.util.CoreNutsUtils;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import net.thevpc.nuts.spi.NutsSupportLevelContext;

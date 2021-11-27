@@ -254,7 +254,7 @@ public abstract class AbstractDefaultNutsPushCommand extends NutsWorkspaceComman
         if (a == null) {
             return false;
         }
-        boolean enabled = a.isEnabled();
+        boolean enabled = a.isActive();
         switch (a.getKey().getString()) {
             case "-o":
             case "--offline": {

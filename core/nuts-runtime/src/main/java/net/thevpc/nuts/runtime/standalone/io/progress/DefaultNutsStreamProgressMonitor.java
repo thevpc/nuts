@@ -12,7 +12,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.io.terminals.CoreTerminalUtils;
 import net.thevpc.nuts.runtime.standalone.util.CoreNutsUtils;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
-import net.thevpc.nuts.runtime.bundles.common.BytesSizeFormat;
+import net.thevpc.nuts.runtime.standalone.util.BytesSizeFormat;
 
 /**
  * @author thevpc

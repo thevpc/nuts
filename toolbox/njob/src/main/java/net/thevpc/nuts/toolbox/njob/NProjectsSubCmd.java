@@ -137,7 +137,7 @@ public class NProjectsSubCmd {
                 }
                 case "--merge-to": {
                     NutsArgument c = cmd.nextString();
-                    if (c.isEnabled()) {
+                    if (!c.isInactive()) {
                         if (mergeTo != null) {
                             cmd.pushBack(c);
                             cmd.unexpectedArgument();

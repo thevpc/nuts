@@ -44,7 +44,7 @@
 //import org.w3c.dom.Element;
 //import net.thevpc.nuts.runtime.core.format.elem.NutsElementFactoryContext;
 //import net.thevpc.nuts.runtime.core.format.json.DefaultNutsJsonFormat;
-//import net.thevpc.nuts.runtime.standalone.util.CoreCommonUtils;
+//import net.thevpc.nuts.runtime.standalone.util.NutsTextUtils;
 //import org.w3c.dom.Node;
 //import org.w3c.dom.NodeList;
 //import org.xml.sax.InputSource;
@@ -185,7 +185,7 @@
 //        String d = element.getAttribute(ta);
 //        NutsElementType elementType = null;
 //        if (d != null) {
-//            elementType = CoreCommonUtils.parseEnumString(d, NutsElementType.class, true);
+//            elementType = NutsTextUtils.parseEnumString(d, NutsElementType.class, true);
 //        }
 //        if (elementType == null) {
 //            //will resolve

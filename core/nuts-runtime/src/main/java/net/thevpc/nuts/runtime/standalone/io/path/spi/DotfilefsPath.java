@@ -3,7 +3,7 @@ package net.thevpc.nuts.runtime.standalone.io.path.spi;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.util.CoreNutsConstants;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.StringTokenizerUtils;
-import net.thevpc.nuts.runtime.standalone.util.CoreIOUtils;
+import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
 import net.thevpc.nuts.spi.NutsFormatSPI;
 import net.thevpc.nuts.spi.NutsPathFactory;
@@ -45,7 +45,7 @@ public class DotfilefsPath extends AbstractPathSPIAdapter {
 
     @Override
     public int hashCode() {
-        return Objects.hash("html", super.hashCode());
+        return Objects.hash(PROTOCOL, super.hashCode());
     }
 
     @Override

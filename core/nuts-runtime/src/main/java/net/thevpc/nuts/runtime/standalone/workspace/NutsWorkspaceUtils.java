@@ -6,33 +6,23 @@
 package net.thevpc.nuts.runtime.standalone.workspace;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.bundles.common.CorePlatformUtils;
-import net.thevpc.nuts.runtime.bundles.http.SimpleHttpClient;
-import net.thevpc.nuts.runtime.bundles.io.InputStreamVisitor;
-import net.thevpc.nuts.runtime.bundles.io.ZipUtils;
-import net.thevpc.nuts.runtime.bundles.reflect.*;
+import net.thevpc.nuts.runtime.standalone.io.SimpleHttpClient;
+import net.thevpc.nuts.runtime.standalone.util.reflect.*;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.util.NutsJavaSdkUtils;
 import net.thevpc.nuts.runtime.standalone.repository.cmd.NutsRepositorySupportedAction;
 import net.thevpc.nuts.runtime.standalone.format.NutsFetchDisplayOptions;
 import net.thevpc.nuts.runtime.standalone.format.NutsPrintIterator;
-import net.thevpc.nuts.runtime.standalone.format.plain.DefaultSearchFormatPlain;
 import net.thevpc.nuts.runtime.standalone.repository.config.DefaultNutsRepositoryManager;
 import net.thevpc.nuts.runtime.standalone.repository.impl.main.NutsInstalledRepository;
 import net.thevpc.nuts.runtime.standalone.repository.NutsRepositoryUtils;
-import net.thevpc.nuts.runtime.standalone.xtra.execentries.DefaultNutsExecutionEntry;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.NutsRepositoryAndFetchMode;
 import net.thevpc.nuts.spi.NutsRepositorySPI;
 import net.thevpc.nuts.spi.NutsSessionAware;
 
-import java.io.BufferedInputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.*;
-import java.util.function.Predicate;
-import java.util.jar.Attributes;
-import java.util.jar.Manifest;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
 
@@ -49,7 +39,6 @@ public class NutsWorkspaceUtils {
     private NutsWorkspaceUtils(NutsSession session) {
         this.session = session;
         this.ws = session.getWorkspace();
-//        LOG = ws.log().of(NutsWorkspaceUtils.class);
     }
 
     public static NutsWorkspaceUtils of(NutsSession session) {
@@ -83,12 +72,6 @@ public class NutsWorkspaceUtils {
                     session.getWorkspace().getLocation(), ws.getLocation(),
                     session.getWorkspace().getUuid(), ws.getUuid()
             ));
-        }
-    }
-
-    public static void checkSessionNullOrValid(NutsWorkspace ws, NutsSession session) {
-        if (!Objects.equals(session.getWorkspace().getUuid(), ws.getUuid())) {
-            throw new NutsIllegalArgumentException(defaultSession(ws), NutsMessage.cstyle("invalid session"));
         }
     }
 
@@ -163,13 +146,6 @@ public class NutsWorkspaceUtils {
         }
     }
 
-    public NutsFetchCommand validateSession(NutsFetchCommand fetch) {
-        if (fetch.getSession() == null) {
-            fetch = fetch.setSession(ws.createSession());
-        }
-        return fetch;
-    }
-
     public NutsSession validateSession(NutsSession session) {
         if (session == null) {
             session = ws.createSession();
@@ -205,27 +181,6 @@ public class NutsWorkspaceUtils {
             return id.builder().setProperties(qm).build();
         }
         return id;
-    }
-
-    public List<NutsRepository> _getEnabledRepositories(NutsRepositoryFilter repositoryFilter) {
-        List<NutsRepository> repos = new ArrayList<>();
-        List<NutsRepository> subrepos = new ArrayList<>();
-        for (NutsRepository repository : session.repos().getRepositories()) {
-            boolean ok = false;
-            if (repository.config().isEnabled()) {
-                if (repositoryFilter == null || repositoryFilter.acceptRepository(repository)) {
-                    repos.add(repository);
-                    ok = true;
-                }
-                if (!ok) {
-                    subrepos.add(repository);
-                }
-            }
-        }
-        for (NutsRepository subrepo : subrepos) {
-            repos.addAll(NutsWorkspaceHelper._getEnabledRepositories(subrepo, repositoryFilter, session));
-        }
-        return repos;
     }
 
     public List<NutsRepository> filterRepositoriesDeploy(NutsId id, NutsRepositoryFilter repositoryFilter) {
@@ -324,26 +279,6 @@ public class NutsWorkspaceUtils {
         }
     }
 
-    public NutsIdFormat getIdFormat() {
-        String k = DefaultSearchFormatPlain.class.getName() + "#NutsIdFormat";
-        NutsIdFormat f = (NutsIdFormat) session.env().getProperty(k).getObject();
-        if (f == null) {
-            f = NutsIdFormat.of(session);
-            session.env().setProperty(k, f);
-        }
-        return f;
-    }
-
-    public NutsDescriptorFormat getDescriptorFormat() {
-        String k = DefaultSearchFormatPlain.class.getName() + "#NutsDescriptorFormat";
-        NutsDescriptorFormat f = (NutsDescriptorFormat) session.env().getProperty(k).getObject();
-        if (f == null) {
-            f = NutsDescriptorFormat.of(session);
-            session.env().setProperty(k, f);
-        }
-        return f;
-    }
-
     public <T> NutsIterator<T> decoratePrint(NutsIterator<T> it, NutsSession session, NutsFetchDisplayOptions displayOptions) {
         final NutsPrintStream out = validateSession(session).getTerminal().getOut();
         return new NutsPrintIterator<>(it, ws, out, displayOptions, session);
@@ -383,84 +318,6 @@ public class NutsWorkspaceUtils {
         }
     }
 
-
-    public NutsExecutionEntry parseClassExecutionEntry(InputStream classStream, String sourceName) {
-        CorePlatformUtils.MainClassType mainClass = null;
-        try {
-            mainClass = CorePlatformUtils.getMainClassType(classStream,session);
-        } catch (Exception ex) {
-            _LOGOP(session).level(Level.FINE).error(ex)
-                    .log(NutsMessage.jstyle("invalid file format {0}", sourceName));
-        }
-        if (mainClass != null) {
-            return new DefaultNutsExecutionEntry(
-                    mainClass.getName(),
-                    false,
-                    mainClass.isApp() && mainClass.isMain()
-            );
-        }
-        return null;
-    }
-
-    public NutsExecutionEntry[] parseJarExecutionEntries(InputStream jarStream, String sourceName) {
-        if (!(jarStream instanceof BufferedInputStream)) {
-            jarStream = new BufferedInputStream(jarStream);
-        }
-        final List<NutsExecutionEntry> classes = new ArrayList<>();
-        final List<String> manifestClass = new ArrayList<>();
-        try {
-            ZipUtils.visitZipStream(jarStream, new Predicate<String>() {
-                @Override
-                public boolean test(String path) {
-                    return path.endsWith(".class")
-                            || path.equals("META-INF/MANIFEST.MF");
-                }
-            }, new InputStreamVisitor() {
-                @Override
-                public boolean visit(String path, InputStream inputStream) throws IOException {
-                    if (path.endsWith(".class")) {
-                        NutsExecutionEntry mainClass = parseClassExecutionEntry(inputStream, path);
-                        if (mainClass != null) {
-                            classes.add(mainClass);
-                        }
-                    } else {
-                        Manifest manifest = new Manifest(inputStream);
-                        Attributes a = manifest.getMainAttributes();
-                        if (a != null && a.containsKey("Main-Class")) {
-                            String v = a.getValue("Main-Class");
-                            if (!NutsBlankable.isBlank(v)) {
-                                manifestClass.add(v);
-                            }
-                        }
-                    }
-                    return true;
-                }
-            });
-        } catch (IOException ex) {
-            throw new NutsIOException(session, ex);
-        }
-        List<NutsExecutionEntry> entries = new ArrayList<>();
-        String defaultEntry = null;
-        if (manifestClass.size() > 0) {
-            defaultEntry = manifestClass.get(0);
-        }
-        boolean defaultFound = false;
-        for (NutsExecutionEntry entry : classes) {
-            if (defaultEntry != null && defaultEntry.equals(entry.getName())) {
-                entries.add(new DefaultNutsExecutionEntry(entry.getName(), true, entry.isApp()));
-                defaultFound = true;
-            } else {
-                entries.add(entry);
-            }
-        }
-        if (defaultEntry != null && !defaultFound) {
-            _LOGOP(session).level(Level.SEVERE).verb(NutsLogVerb.FAIL)
-                    .log(NutsMessage.jstyle("invalid default entry " + defaultEntry + " in " + sourceName));
-//            entries.add(new DefaultNutsExecutionEntry(defaultEntry, true, false));
-        }
-        return entries.toArray(new NutsExecutionEntry[0]);
-    }
-
     public InputStream openURL(String o) {
         return new SimpleHttpClient(o, session).openStream();
     }
@@ -469,33 +326,6 @@ public class NutsWorkspaceUtils {
         return new SimpleHttpClient(o, session).openStream();
     }
 
-    //    public static NutsId parseRequiredNutsId0(String nutFormat) {
-//        NutsId id = CoreNutsUtils.parseNutsId(nutFormat);
-//        if (id == null) {
-//            throw new NutsParseException(null, "invalid Id format : " + nutFormat);
-//        }
-//        return id;
-//    }
-//    public NutsId parseRequiredNutsId(String nutFormat) {
-//        NutsId id = CoreNutsUtils.parseNutsId(nutFormat);
-//        if (id == null) {
-//            throw new NutsParseException(ws, "invalid Id format : " + nutFormat);
-//        }
-//        return id;
-//    }
-//    public NutsId findNutsIdBySimpleNameInStrings(NutsId id, Collection<String> all) {
-//        if (all != null) {
-//            for (String nutsId : all) {
-//                if (nutsId != null) {
-//                    NutsId nutsId2 = parseRequiredNutsId(nutsId);
-//                    if (nutsId2.equalsShortName(id)) {
-//                        return nutsId2;
-//                    }
-//                }
-//            }
-//        }
-//        return null;
-//    }
     private static class RepoAndLevel implements Comparable<RepoAndLevel> {
 
         NutsRepository r;

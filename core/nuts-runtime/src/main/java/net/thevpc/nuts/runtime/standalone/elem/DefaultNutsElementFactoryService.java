@@ -46,9 +46,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import net.thevpc.nuts.runtime.bundles.collections.ClassMap;
-import net.thevpc.nuts.runtime.bundles.reflect.ReflectRepository;
-import net.thevpc.nuts.runtime.bundles.reflect.ReflectUtils;
+import net.thevpc.nuts.runtime.standalone.util.collections.ClassMap;
+import net.thevpc.nuts.runtime.standalone.util.reflect.ReflectRepository;
+import net.thevpc.nuts.runtime.standalone.util.reflect.ReflectUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
 
 /**

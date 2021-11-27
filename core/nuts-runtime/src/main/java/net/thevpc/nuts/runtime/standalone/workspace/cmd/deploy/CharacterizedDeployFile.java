@@ -3,7 +3,7 @@ package net.thevpc.nuts.runtime.standalone.workspace.cmd.deploy;
 import net.thevpc.nuts.NutsDescriptor;
 import net.thevpc.nuts.NutsIOException;
 import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.runtime.bundles.io.NutsStreamOrPath;
+import net.thevpc.nuts.runtime.standalone.io.util.NutsStreamOrPath;
 
 import java.io.IOException;
 import java.nio.file.Files;

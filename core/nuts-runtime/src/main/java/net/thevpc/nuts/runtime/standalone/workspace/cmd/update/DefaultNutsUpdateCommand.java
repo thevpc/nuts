@@ -86,7 +86,7 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
         if (a == null) {
             return false;
         }
-        boolean enabled = a.isEnabled();
+        boolean enabled = a.isActive();
         switch (a.getKey().getString()) {
             case "--check-fixes": {
                 cmdLine.skip();

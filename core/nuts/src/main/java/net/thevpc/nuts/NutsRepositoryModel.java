@@ -90,7 +90,7 @@ public interface NutsRepositoryModel {
         return null;
     }
 
-    default NutsIterator<NutsId> search(NutsIdFilter filter, String[] roots, NutsFetchMode fetchMode, NutsRepository repository, NutsSession session) {
+    default NutsIterator<NutsId> search(NutsIdFilter filter, NutsPath[] basePaths, NutsFetchMode fetchMode, NutsRepository repository, NutsSession session) {
         return null;
     }
 

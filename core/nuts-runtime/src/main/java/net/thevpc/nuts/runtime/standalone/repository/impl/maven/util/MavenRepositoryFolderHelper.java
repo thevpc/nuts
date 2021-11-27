@@ -41,11 +41,9 @@ import java.util.logging.Level;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.repository.impl.NutsRepositoryExt;
-import net.thevpc.nuts.runtime.bundles.mvn.MavenMetadataParser;
 import net.thevpc.nuts.runtime.standalone.util.CoreNutsConstants;
 import net.thevpc.nuts.runtime.standalone.version.DefaultNutsVersion;
-import net.thevpc.nuts.runtime.standalone.util.CoreIOUtils;
-import net.thevpc.nuts.runtime.bundles.mvn.MavenMetadata;
+import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.repository.NutsIdPathIterator;
 import net.thevpc.nuts.runtime.standalone.repository.NutsIdPathIteratorBase;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
@@ -126,12 +124,7 @@ public class MavenRepositoryFolderHelper {
     }
 
     public Iterator<NutsId> searchInFolder(NutsPath folder, final NutsIdFilter filter, int maxDepth, NutsSession session) {
-        folder = rootPath.resolve(folder);
-        if (folder == null || !folder.exists() || !folder.isDirectory()) {
-            //            return IteratorUtils.emptyIterator();
-            return null;
-        }
-        return new NutsIdPathIterator(repo, rootPath, folder.toString(), filter, session, new NutsIdPathIteratorBase() {
+        return new NutsIdPathIterator(repo, rootPath.normalize(), folder, filter, session, new NutsIdPathIteratorBase() {
             @Override
             public void undeploy(NutsId id, NutsSession session) {
                 throw new NutsIllegalArgumentException(session,NutsMessage.cstyle("unsupported undeploy"));
@@ -139,7 +132,7 @@ public class MavenRepositoryFolderHelper {
 
             @Override
             public boolean isDescFile(NutsPath pathname) {
-                return pathname.getName().toString().equals("pom.xml");
+                return pathname.getName().equals("pom.xml");
             }
 
             @Override

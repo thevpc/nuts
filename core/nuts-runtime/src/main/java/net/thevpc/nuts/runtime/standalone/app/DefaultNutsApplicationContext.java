@@ -199,7 +199,7 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
         if (a == null) {
             return false;
         }
-        boolean enabled = a.isEnabled();
+        boolean enabled = a.isActive();
         switch (a.getKey().getString()) {
             case "-?":
             case "-h":

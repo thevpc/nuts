@@ -47,7 +47,7 @@ public class DefaultSearchFormatJson extends DefaultSearchFormatBase {
         if (getDisplayOptions().configureFirst(cmd)) {
             return true;
         }
-        boolean enabled = a.isEnabled();
+        boolean enabled = a.isActive();
         switch (a.getKey().getString()) {
             case "--compact": {
                 boolean val = cmd.nextBoolean().getValue().getBoolean();

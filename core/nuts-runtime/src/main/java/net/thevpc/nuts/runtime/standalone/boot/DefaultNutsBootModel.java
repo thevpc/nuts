@@ -24,7 +24,7 @@
 package net.thevpc.nuts.runtime.standalone.boot;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.bundles.common.CorePlatformUtils;
+import net.thevpc.nuts.runtime.standalone.util.CorePlatformUtils;
 import net.thevpc.nuts.runtime.standalone.session.DefaultNutsSession;
 import net.thevpc.nuts.runtime.standalone.app.cmdline.DefaultNutsArgument;
 import net.thevpc.nuts.runtime.standalone.io.terminals.DefaultNutsSessionTerminalFromSystem;
@@ -84,7 +84,7 @@ public class DefaultNutsBootModel implements NutsBootModel {
             for (String property : properties) {
                 if (property != null) {
                     DefaultNutsArgument a = new DefaultNutsArgument(property);
-                    if(a.isEnabled()) {
+                    if(a.isActive()) {
                         String key = a.getKey().getString();
                         this.customBootOptions.put(key, a.getValue());
                     }

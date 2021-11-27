@@ -8,7 +8,7 @@
 //import net.thevpc.nuts.*;
 //import net.thevpc.nuts.runtime.core.format.NutsObjectFormatBase;
 //import net.thevpc.nuts.runtime.core.format.props.DefaultNutsPropertiesFormat;
-//import net.thevpc.nuts.runtime.standalone.util.CoreCommonUtils;
+//import net.thevpc.nuts.runtime.standalone.util.NutsTextUtils;
 //
 //import java.io.PrintStream;
 //import java.util.*;
@@ -161,6 +161,6 @@
 //    }
 //
 //    private String formatObject(Object any) {
-//        return CoreCommonUtils.stringValueFormatted(any, false, getValidSession());
+//        return NutsTextUtils.stringValueFormatted(any, false, getValidSession());
 //    }
 //}

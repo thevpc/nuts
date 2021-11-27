@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.text.highlighters;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.bundles.collections.EvictingQueue;
+import net.thevpc.nuts.runtime.standalone.util.collections.EvictingQueue;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.StreamTokenizerExt;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.NutsToken;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;

@@ -2,7 +2,7 @@ package net.thevpc.nuts.core.test;
 
 import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.core.test.utils.TestUtils;
-import net.thevpc.nuts.runtime.bundles.io.CoreSecurityUtils;
+import net.thevpc.nuts.runtime.standalone.io.util.CoreSecurityUtils;
 import net.thevpc.nuts.runtime.standalone.security.DefaultNutsAuthenticationAgent;
 import net.thevpc.nuts.runtime.standalone.security.PlainNutsAuthenticationAgent;
 import net.thevpc.nuts.spi.NutsAuthenticationAgent;

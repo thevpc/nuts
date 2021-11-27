@@ -46,8 +46,8 @@ public class DefaultNutsArgument implements NutsArgument {
      */
     private final char eq;
     private final boolean option;
+    private final boolean active;
     private final boolean enabled;
-    private final boolean negated;
     private final String optionPrefix;
     private final String optionName;
     private final String key;
@@ -94,19 +94,19 @@ public class DefaultNutsArgument implements NutsArgument {
                 option = true;
                 switch (flg == null ? "" : flg) {
                     case "//": {
-                        enabled = false;
-                        negated = false;
+                        active = false;
+                        enabled = true;
                         break;
                     }
                     case "!":
                     case "~": {
-                        enabled = true;
-                        negated = true;
+                        active = true;
+                        enabled = false;
                         break;
                     }
                     default: {
+                        active = true;
                         enabled = true;
-                        negated = false;
                     }
                 }
                 optionPrefix = optp;
@@ -120,8 +120,8 @@ public class DefaultNutsArgument implements NutsArgument {
                 }
             } else {
                 option = false;
+                active = true;
                 enabled = true;
-                negated = false;
                 optionPrefix = null;
                 optionName = null;
                 if (opts != null && opts.length() > 0) {
@@ -133,8 +133,8 @@ public class DefaultNutsArgument implements NutsArgument {
                 }
             }
         } else {
+            active = true;
             enabled = true;
-            negated = false;
             option = false;
             optionName = null;
             key = null;
@@ -160,12 +160,22 @@ public class DefaultNutsArgument implements NutsArgument {
 
     @Override
     public boolean isNegated() {
-        return negated;
+        return !enabled;
     }
 
     @Override
     public boolean isEnabled() {
         return enabled;
+    }
+
+    @Override
+    public boolean isActive() {
+        return active;
+    }
+
+    @Override
+    public boolean isInactive() {
+        return !active;
     }
 
     @Override

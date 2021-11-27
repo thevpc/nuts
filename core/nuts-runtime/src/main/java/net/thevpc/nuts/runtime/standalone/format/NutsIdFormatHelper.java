@@ -34,7 +34,7 @@ import net.thevpc.nuts.runtime.standalone.workspace.config.NutsWorkspaceConfigMa
 import net.thevpc.nuts.runtime.standalone.repository.impl.main.NutsInstalledRepository;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.util.CoreNutsUtils;
-import net.thevpc.nuts.runtime.standalone.util.CoreCommonUtils;
+import net.thevpc.nuts.runtime.standalone.text.util.NutsTextUtils;
 import net.thevpc.nuts.runtime.standalone.util.CoreEnumUtils;
 
 /**
@@ -770,6 +770,6 @@ public class NutsIdFormatHelper {
     }
 
     private NutsString stringValue(Object any) {
-        return CoreCommonUtils.stringValueFormatted(any, false, session);
+        return NutsTextUtils.stringValueFormatted(any, false, session);
     }
 }

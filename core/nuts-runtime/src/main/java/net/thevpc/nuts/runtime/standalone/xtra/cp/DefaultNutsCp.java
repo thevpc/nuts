@@ -6,10 +6,10 @@
 package net.thevpc.nuts.runtime.standalone.xtra.cp;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.bundles.io.InterruptException;
-import net.thevpc.nuts.runtime.bundles.io.Interruptible;
-import net.thevpc.nuts.runtime.bundles.io.NutsStreamOrPath;
-import net.thevpc.nuts.runtime.standalone.util.CoreIOUtils;
+import net.thevpc.nuts.runtime.standalone.io.util.InterruptException;
+import net.thevpc.nuts.runtime.standalone.io.util.Interruptible;
+import net.thevpc.nuts.runtime.standalone.io.util.NutsStreamOrPath;
+import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.io.progress.DefaultNutsProgressEvent;
 import net.thevpc.nuts.runtime.standalone.io.progress.SingletonNutsInputStreamProgressFactory;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;

@@ -1,8 +1,8 @@
 package net.thevpc.nuts.runtime.standalone.xtra.idresolver;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.bundles.mvn.PomId;
 import net.thevpc.nuts.runtime.standalone.repository.impl.maven.util.MavenUtils;
+import net.thevpc.nuts.runtime.standalone.repository.impl.maven.util.PomId;
 import net.thevpc.nuts.spi.NutsSupportLevelContext;
 
 public class DefaultNutsIdResolver implements NutsIdResolver {
