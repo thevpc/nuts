@@ -222,6 +222,9 @@ public final class PrivateNutsUtilMaven {
     static PrivateNutsUtils.Deps loadDependencies(String urlPath, PrivateNutsLog LOG, Collection<String> repos) {
         PrivateNutsUtils.Deps depsAndRepos = null;
         for (String baseUrl : repos) {
+            if(baseUrl.startsWith("htmlfs:")){
+                baseUrl=baseUrl.substring("htmlfs:".length());
+            }
             depsAndRepos = loadDependenciesAndRepositoriesFromPomUrl(baseUrl + "/" + urlPath, LOG);
             if (!depsAndRepos.deps.isEmpty()) {
                 break;
@@ -238,7 +241,7 @@ public final class PrivateNutsUtilMaven {
                 URL url1 = new URL(url);
                 try {
                     xml = PrivateNutsUtilIO.openURLStream(url1, LOG);
-                } catch (IOException ex) {
+                } catch (NutsBootException ex) {
                     //do not need to log error
                     return depsAndRepos;
                 }
@@ -249,7 +252,7 @@ public final class PrivateNutsUtilMaven {
                     // was not able to resolve to File
                     try {
                         xml = PrivateNutsUtilIO.openURLStream(url1, LOG);
-                    } catch (IOException ex) {
+                    } catch (NutsBootException ex) {
                         //do not need to log error
                         return depsAndRepos;
                     }
@@ -432,7 +435,7 @@ public final class PrivateNutsUtilMaven {
             InputStream is = null;
             try {
                 is = PrivateNutsUtilIO.openURLStream(runtimeMetadata, LOG);
-            } catch (IOException ex) {
+            } catch (NutsBootException ex) {
                 //do not need to log error
                 //ignore
             }
@@ -657,16 +660,11 @@ public final class PrivateNutsUtilMaven {
             urlPath += path;
             long start = System.currentTimeMillis();
             try {
-                LOG.log(Level.CONFIG, NutsLogVerb.START, NutsMessage.jstyle("load  {0}", urlPath));
                 PrivateNutsUtilIO.copy(new URL(urlPath), to, LOG);
                 errorList.removeErrorsFor(nutsId);
-                long end = System.currentTimeMillis();
-                LOG.log(Level.CONFIG, NutsLogVerb.SUCCESS, NutsMessage.jstyle("load   {0} ({1}ms)", urlPath, end - start));
                 ok = to;
             } catch (IOException ex) {
                 errorList.add(new PrivateNutsErrorInfo(nutsId, repository, urlPath, "unable to load", ex));
-                long end = System.currentTimeMillis();
-                LOG.log(Level.CONFIG, NutsLogVerb.FAIL, NutsMessage.jstyle("load   {0} ({1}ms)", urlPath, end - start));
                 //not found
             }
             return ok;

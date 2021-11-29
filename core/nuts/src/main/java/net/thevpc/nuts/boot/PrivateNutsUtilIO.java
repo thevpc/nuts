@@ -34,6 +34,7 @@ import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.net.URLConnection;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.file.Files;
@@ -49,25 +50,12 @@ public class PrivateNutsUtilIO {
         return new File(path).toPath().toAbsolutePath().normalize().toString();
     }
 
-//    public static String readStringFromURL(URL requestURL) throws IOException {
-//        File f = toFile(requestURL);
-//        if (f != null) {
-//            return new String(Files.readAllBytes(f.toPath()));
-//        }
-//        ByteArrayOutputStream out = new ByteArrayOutputStream();
-//        copy(requestURL.openStream(), out, true, true);
-//        return out.toString();
-//    }
-
     public static String readStringFromFile(File file) throws IOException {
         return new String(Files.readAllBytes(file.toPath()));
     }
 
-    public static InputStream openURLStream(URL url, PrivateNutsLog LOG) throws IOException {
-        if (LOG != null) {
-            LOG.log(Level.FINE, NutsLogVerb.START, NutsMessage.jstyle("[open-stream] {0}", url));
-        }
-        return url.openStream();
+    public static InputStream openURLStream(URL url, PrivateNutsLog LOG) {
+        return PrivateMonitoredURLInputStream.of(url,LOG);
     }
 
     public static Properties loadURLProperties(URL url, File cacheFile, boolean useCache, PrivateNutsLog LOG) {
@@ -104,7 +92,7 @@ public class PrivateNutsUtilIO {
             try {
                 if (url != null) {
                     String urlString = url.toString();
-                    inputStream = url.openStream();
+                    inputStream = openURLStream(url,LOG);
                     if (inputStream != null) {
                         props.load(inputStream);
                         if (cacheFile != null) {
@@ -240,7 +228,7 @@ public class PrivateNutsUtilIO {
 
     public static void copy(URL url, File to, PrivateNutsLog LOG) throws IOException {
         try {
-            InputStream in = url.openStream();
+            InputStream in = openURLStream(url,LOG);
             if (in == null) {
                 throw new IOException("empty Stream " + url);
             }
