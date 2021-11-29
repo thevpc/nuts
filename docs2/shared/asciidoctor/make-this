@@ -1,0 +1,7 @@
+#!/bin/sh 
+asciidoctor_baseDir=$(dirname $0)
+
+for f in $asciidoctor_baseDir/*.adoc
+do
+    asciidoctor-pdf -a "pdf-themesdir=${asciidoctor_baseDir}/resources/themes" -a "pdf-theme=default" -a "pdf-fontsdir=${asciidoctor_baseDir}/resources/fonts/;GEM_FONTS_DIR" "$f"
+done

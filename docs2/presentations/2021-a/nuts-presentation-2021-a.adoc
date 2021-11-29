@@ -1,0 +1,229 @@
+= nuts
+:pdf-page-size: 9in x 6in
+:source-highlighter: pygments
+:icons: font
+:icon-set: pf
+:revnumber: v1.0
+:revdate: 2021-11-23
+//:revremark: Private use only - (Taha BEN SALAH)
+:appendix-caption: Appx
+:sectnums:
+:sectnumlevels: 8
+:stem: latexmath
+//:title-logo-image:./resources/themes/logo2.png[]
+//:front-cover:./resources/themes/logo2.png[]
+
+{zwsp} +
+{zwsp} +
+{zwsp} +
+{zwsp} +
+
+[.text-center]
+The Java Package Manager
+
+[.text-center]
+http://github.com/thevpc/nuts
+
+
+:toc: 
+:toclevels: 4
+
+<<<
+
+**Plan**
+
+1. Why a package manager
+2. `nuts` features
+3. Demo
+
+
+<<<
+
+== Why a Package Manager
+
+* Popularity of a language is proportional to popularity of its PM
+** `Javascript`: `npm`/`npx`/`yarn`
+** `Python`: `pip`, `conda`
+** `Ruby`: `rubygems`
+
+* Newcomer languages already include a PM
+** `golang` package manager (modules)
+
+* `Java` ecosystem already have more that 7M packages deployed
+
+<<<
+
+=== Java Package Manager?
+
+* `maven`, `gradle`
+** Build tools
+** Manage packaging and dependencies
+** Poor deployment management (`maven` 's `deploy` is a build time stage)
+** Lack of deployment lifecycle (install/uninstall/update)
+
+<<<
+
+=== Alternatives for deployment 
+
+* System PM / Installers
+* Portable Installers
+* Custom Deployements
+* Build time Processors (Fat Jars)
+
+<<<
+
+=== System PM / Installers
+
+* `rpm`, `deb`, `dmg`, `msi`
+** Native integration with OS/Env
+** Centralized management
+** Automatable (cmdline)
+** Not portable
+** Multiple deployment packages
+** Problem with installing multiple versions of the same package
+
+<<<
+
+=== Portable Installers
+* `InstallAnywhere`, `GetDown`, `IzPack`, BitRock `InstallBuilder`
+** Good integration with OS/Env
+** No centralized management
+** Disk and network overload of dependencies
+** Graphical! not suitable for automation
+** Still Manual
+
+<<<
+
+=== Custom Deployers
+
+* Custom (tomcat, netbeans) with multiple formats (tarball, zip)
+** Manual
+** No centralized management
+** Difficult to automate
+** Lack of integration with environment
+** Disk and network overload of dependencies
+
+
+<<<
+
+=== Fat Packages: maven-dependency-plugin
+
+* `maven-dependency-plugin`
+** Maven plugin
+** Jars included in the "lib" folder
+** Still need to bundle the jar and the lib folder (zip with `maven-antrun-plugin`)
+
+<<<
+
+
+=== Fat Jars : Uber Jar
+* `maven-assembly-plugin`
+** Jars deflated into the same jar
+** Can rewrite classes/resources
+* `maven-shade-plugin`
+** Jars deflated into thesame jar
+** Rewrites classes/resources
+** Simpler than `maven-assembly-plugin`
+
+<<<
+
+=== Fat Jars : Jar Jar
+* `onejar-maven-plugin`
+** Rewrites jar to include dependencies as jars!
+** Adds bootstrap classes
+** Changes classloader
+* `spring-boot-maven-plugin`
+** Rewrites jar to include dependencies as jars!
+** Adds bootstrap classes
+** Changes classloader
+
+<<<
+
+=== So...
+
+* All alternatives are *poor* and/or *ugly*
+* `pom.xml` polluted with +16-20 lines of code
+* [line-through]#Why do we need a package manager for `Java`#
+* Why don't we already have a package manager for `Java`!
+
+<<<
+
+== nuts Package Manager for Java
+
+Main Idea:
+
+* Open Source
+* Simple but extensible Package Manager for Java
+* Good Integration with Java ecosystem and popupar build/deploy/devops tools
+* Little to no Intrusion and Backward compatibility to support existing apps and repos
+* Solid enough to support multiple platforms
+
+<<<
+
+=== nuts: A Package Manager for Java
+
+Is:
+
+* Centralized package manager for Java Apps and Libs (not only)
+**  `install`,  `uninstall`,  `update` and  `search` for packages
+** Optimized dependency resolution solver
+** Cache for dependencies across installed apps
+* Automation/devops friendly commandline tool
+* Developed in java 
+* Portable across OSes, Architectures, Desktop Environements
+* Libre and Open Source
+
+<<<
+
+=== nuts: A Package Manager for Java
+
+Is Not:
+
+* a replacement for `maven`, `gradle` or any build tool
+* a plugin for `maven`, `gradle` or any build tool
+* a replacement for `spring` framework or any other framework
+* a replacement for `IzPack` or `InstallAnywhere` (but can do pretty much of it)
+* a replacement for `ansible` or `chef` (but is conceptually driven by automation)
+* a mere download tool
+
+<<<
+
+=== nuts: Unique features
+
+* Solid integration with environments
+** Uses OS's File System Layouts (XDG for Linux, ...)
+** Supports cmdline and gui apps (installs scripts, icons, menus, ...)
+** Download/Caches/Installs only relevant dependencies (according to arch ...)
+* Integrates seamlessly with `maven`
+** No required modification of the build process
+** No special `maven`/`gradle` plugin needed
+** Does not alter/rewrite the package
+
+<<<
+
+=== nuts: Unique features
+* Solves at runtime what `maven`/`gradle` solve at build time
+** Supports `maven` and `gradle` dependency resolution algorithms, scopes, ...
+* Supports out of the box 
+** `maven` 's repos (including central, spring, google, ...)
+** Apache repos
+** Powerful toolbox with `props`, `xml`, `json`, `yaml`, `table`, `tree`, ... output formats
+** Bundles a `bash`/`GNU binutils` compatible (still incomplete) but **enhanced** java implementations
+* Is statically built and has (almost) no dependencies
+
+
+<<<
+
+=== 'nuts'... really?
+
+* `N` etwork   `U` pdatable   `T` hings `S`   ervices
+* The `nuts` (fool) companion for the `maven` (sage)
+
+<<<
+
+=== nuts stability
+
+* Tested: 
+** over 100 regression tests with 3500+ lines of test-code in the repository. 
+** `opensuse`, `ubuntu`, `docker`, `windows7`, `windows10`
+** `sh`, `bash`, `csh`, `zsh`, `fish`

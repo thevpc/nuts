@@ -1,0 +1,95 @@
+extends: default
+page:
+  layout: portrait
+  margin: [0.75in, 1in, 0.75in, 1in]
+  size: Letter
+base:
+  font-color: #222222
+  font_family: DIN Text Arabic
+  font-size: 16
+  line-height-length: 17
+  line-height: $base-line-height-length / $base-font-size
+vertical-spacing: $base-line-height-length
+  
+heading:
+  font-color: #008080
+  h1_font_color: #4b4b6e
+  h1_font_size: 20
+  h1_font_style: bold
+  h2_font_color: #4b4b6e
+  h2_font_size: 16
+  h2_font_style: bold
+  h3_font_color: #d19b01
+  h3_font_size: 16
+  h4_font_color: #80bad3
+#  h4_font_color: #d2c4a8
+#  h4_font_color: #d1a980
+  h4_font_size: 16
+  h5_font_color: #d2c4a8
+  h5_font_size: 16
+  font-size: 16
+  font-style: bold
+  line-height: 1.2
+  margin-bottom: $vertical-spacing
+link:
+  font-color: #002FA7
+outline-list:
+  indent: $base-font-size * 1.5
+footer:
+  height: $base-line-height-length * 2.5
+  line-height: 1
+  recto:
+    right:
+      content: '{page-number}'
+  verso:
+    left:
+      content: $footer-recto-right-content 
+  background-image: image:footer.png[width=100%]
+header:
+  border-color: #dddddd 
+  height: 0.75in
+  recto:
+    right:
+      content: image:header-left.png[width=40]
+    center:
+      content: image:logo.png[width=60]
+    left:
+      content: '{document-title}'
+  verso:
+    right:
+      content: image:header-left.png[width=40]
+    center:
+      content: image:logo.png[width=60]
+    left:
+      content: '{document-title}'
+font:
+  catalog:
+    DIN Text Arabic:
+      normal: din-text-next-lt-arabic-light.ttf
+      bold: din-text-next-lt-arabic-light.ttf
+      italic: din-text-next-lt-arabic-light.ttf
+      bold_italic: din-text-next-lt-arabic-light.ttf
+    Noto Serif:
+      normal: notoserif-regular-subset.ttf
+      bold: notoserif-bold-subset.ttf
+      italic: notoserif-italic-subset.ttf
+      bold_italic: notoserif-bold_italic-subset.ttf
+    M+ 1mn:
+      normal: mplus1mn-regular-ascii-conums.ttf
+      bold: mplus1mn-bold-ascii.ttf
+      italic: mplus1mn-italic-ascii.ttf
+      bold_italic: mplus1mn-bold_italic-ascii.ttf
+    M+ 1p Fallback:
+      normal: mplus1p-regular-fallback.ttf
+      bold: mplus1p-regular-fallback.ttf
+      italic: mplus1p-regular-fallback.ttf
+      bold_italic: mplus1p-regular-fallback.ttf
+    Emoji:
+      normal: OpenSansEmoji.ttf
+      bold: OpenSansEmoji.ttf
+      italic: OpenSansEmoji.ttf
+      bold_italic: OpenSansEmoji.ttf
+  fallbacks:
+    - DIN Text Arabic
+    - M+ 1p Fallback
+    - Emoji
