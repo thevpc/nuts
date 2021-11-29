@@ -25,6 +25,7 @@ package net.thevpc.nuts.runtime.standalone.workspace;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.boot.*;
+import net.thevpc.nuts.runtime.standalone.boot.StdFd;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.security.util.CoreDigestHelper;
 import net.thevpc.nuts.runtime.standalone.util.MapToFunction;
@@ -341,11 +342,14 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                         : CoreNutsUtils.desc(text.toText(NutsCommandLine.of(System.getProperty("nuts.args"), NutsShellFamily.SH, defaultSession())), text)
                 ));
                 LOGCRF.log(NutsMessage.jstyle("   option-open-mode               : {0}", CoreNutsUtils.formatLogValue(text, info.getOptions().getOpenMode(), info.getOptions().getOpenMode() == null ? NutsOpenMode.OPEN_OR_CREATE : info.getOptions().getOpenMode())));
+                StdFd b = getModel().bootModel.getBootStdFd();
+                LOGCRF.log(NutsMessage.jstyle("   sys-terminal-ansi              : {0}", b.ansi));
+                LOGCRF.log(NutsMessage.jstyle("   sys-terminal-flags             : {0}", String.join(", ",b.flags)));
+                NutsWorkspaceEnvManager senv = defaultSession().env();
                 LOGCRF.log(NutsMessage.jstyle("   java-home                      : {0}", System.getProperty("java.home")));
                 LOGCRF.log(NutsMessage.jstyle("   java-classpath                 : {0}", System.getProperty("java.class.path")));
                 LOGCRF.log(NutsMessage.jstyle("   java-library-path              : {0}", System.getProperty("java.library.path")));
                 LOGCRF.log(NutsMessage.jstyle("   os-name                        : {0}", System.getProperty("os.name")));
-                NutsWorkspaceEnvManager senv = defaultSession().env();
                 LOGCRF.log(NutsMessage.jstyle("   os-family                      : {0}", senv.getOsFamily()));
                 LOGCRF.log(NutsMessage.jstyle("   os-dist                        : {0}", senv.getOsDist().getArtifactId()));
                 LOGCRF.log(NutsMessage.jstyle("   os-arch                        : {0}", System.getProperty("os.arch")));

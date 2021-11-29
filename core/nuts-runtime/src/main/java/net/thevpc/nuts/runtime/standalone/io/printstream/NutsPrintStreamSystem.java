@@ -1,9 +1,10 @@
 package net.thevpc.nuts.runtime.standalone.io.printstream;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.standalone.util.CorePlatformUtils;
+import net.thevpc.nuts.runtime.standalone.boot.StdFd;
 import net.thevpc.nuts.runtime.standalone.text.DefaultAnsiEscapeCommand;
 import net.thevpc.nuts.runtime.standalone.util.CachedValue;
+import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceExt;
 
 import java.io.OutputStream;
 import java.io.PrintStream;
@@ -73,10 +74,8 @@ public class NutsPrintStreamSystem extends NutsPrintStreamBase{
         if (ansi != null) {
             return ansi ? NutsTerminalMode.ANSI : NutsTerminalMode.INHERITED;
         }
-        NutsSession ws = session;
-        //if(out==System.out || out==System.err){
-        NutsOsFamily os = ws.env().getOsFamily();
-        if (((os == NutsOsFamily.WINDOWS) && (CorePlatformUtils.IS_CYGWIN || CorePlatformUtils.IS_MINGW_XTERM)) || os == NutsOsFamily.LINUX || os == NutsOsFamily.UNIX || os == NutsOsFamily.MACOS) {
+        StdFd b = NutsWorkspaceExt.of(session.getWorkspace()).getModel().bootModel.getBootStdFd();
+        if (b.ansi) {
             return NutsTerminalMode.ANSI;
         } else {
             return NutsTerminalMode.INHERITED;

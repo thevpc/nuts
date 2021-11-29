@@ -26,7 +26,10 @@
 package net.thevpc.nuts.runtime.standalone.util;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.optional.jansi.OptionalJansi;
+import net.thevpc.nuts.runtime.standalone.boot.DefaultNutsBootModel;
 import net.thevpc.nuts.runtime.standalone.util.filters.CoreFilterUtils;
+import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceExt;
 
 import java.io.*;
 import java.util.*;
@@ -83,7 +86,6 @@ public class CorePlatformUtils {
         }
         SUPPORTS_UTF_ENCODING = _e;
     }
-
 
     private static String buildUnixOsNameAndVersion(String name, NutsSession session) {
         Map<String, String> m = getOsDistMap(session);

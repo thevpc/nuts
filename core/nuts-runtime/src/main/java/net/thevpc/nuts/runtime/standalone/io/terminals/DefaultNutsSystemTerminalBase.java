@@ -1,6 +1,8 @@
 package net.thevpc.nuts.runtime.standalone.io.terminals;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.standalone.boot.StdFd;
+import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceExt;
 import net.thevpc.nuts.spi.NutsComponentScope;
 import net.thevpc.nuts.spi.NutsComponentScopeType;
 import net.thevpc.nuts.spi.NutsSupportLevelContext;
@@ -44,7 +46,8 @@ public class DefaultNutsSystemTerminalBase implements NutsSystemTerminalBase {
             NutsWorkspaceOptions options = session.boot().getBootOptions();
             NutsTerminalMode terminalMode = options.getTerminalMode();
             if (terminalMode == null) {
-                if (options.isBot()) {
+                StdFd b = NutsWorkspaceExt.of(session.getWorkspace()).getModel().bootModel.getBootStdFd();
+                if (options.isBot() || !b.ansi) {
                     terminalMode = NutsTerminalMode.FILTERED;
                 } else {
                     terminalMode = NutsTerminalMode.FORMATTED;

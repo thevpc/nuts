@@ -1,12 +1,13 @@
 package net.thevpc.nuts.runtime.standalone.io.outputstream;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.standalone.util.CorePlatformUtils;
+import net.thevpc.nuts.runtime.standalone.boot.StdFd;
 import net.thevpc.nuts.runtime.standalone.text.EscapeOutputStream;
 import net.thevpc.nuts.runtime.standalone.text.ExtendedFormatAware;
 import net.thevpc.nuts.runtime.standalone.text.UnescapeOutputStream;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.io.terminals.NutsTerminalModeOp;
+import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceExt;
 
 import java.io.FilterOutputStream;
 import java.io.IOException;
@@ -15,12 +16,12 @@ import java.io.OutputStream;
 
 public class NutsSystemOutputStream extends BaseTransparentFilterOutputStream implements ExtendedFormatAware {
 
-    private NutsTerminalMode type;
     private final OutputStream base;
     private final OutputStream baseStripped;
     private final OutputStream formatted;
     private final NutsWorkspace ws;
     private final NutsSession session;
+    private NutsTerminalMode type;
 
     public NutsSystemOutputStream(OutputStream base, NutsTerminalMode type, NutsSession session) {
         super(base);
@@ -29,28 +30,16 @@ public class NutsSystemOutputStream extends BaseTransparentFilterOutputStream im
         this.type = type;
         this.base = base;
         this.baseStripped = CoreIOUtils.convertOutputStream(base, NutsTerminalMode.FILTERED, session);
-        /*if (ws.env().getOptionAsBoolean("enableJansi",false) && OptionalJansi.isAvailable()) {
-            OutputStream f = OptionalJansi.preparestream(base);
-            if(f!=null){
-                this.formatted = CoreIOUtils.convertOutputStream(base, NutsTerminalMode.FORMATTED, session);
-                setType(type);
-            }else{
-                this.formatted = baseStripped;
-                setType(NutsTerminalMode.FILTERED);
-            }
-        }else*/
-        {
-            NutsOsFamily os = session.env().getOsFamily();
-            if ((os == NutsOsFamily.WINDOWS && (CorePlatformUtils.IS_CYGWIN || CorePlatformUtils.IS_MINGW_XTERM))
-                    || os == NutsOsFamily.LINUX || os == NutsOsFamily.UNIX || os == NutsOsFamily.MACOS) {
-                FilterOutputStream filterOutputStream = new AnsiResetOnCloseOutputStream(base);
-                this.formatted = CoreIOUtils.convertOutputStream(filterOutputStream, NutsTerminalMode.FORMATTED, session);
-                setType(type);
-            } else {
-                this.formatted = baseStripped;
-                setType(NutsTerminalMode.FILTERED);
-            }
+        StdFd b = NutsWorkspaceExt.of(session.getWorkspace()).getModel().bootModel.getBootStdFd();
+        if (b.ansi) {
+            FilterOutputStream filterOutputStream = new AnsiResetOnCloseOutputStream(base);
+            this.formatted = CoreIOUtils.convertOutputStream(filterOutputStream, NutsTerminalMode.FORMATTED, session);
+            setType(type);
+        } else {
+            this.formatted = baseStripped;
+            setType(NutsTerminalMode.FILTERED);
         }
+
     }
 
     @Override

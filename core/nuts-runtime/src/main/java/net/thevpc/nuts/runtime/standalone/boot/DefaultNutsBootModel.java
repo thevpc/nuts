@@ -34,7 +34,9 @@ import net.thevpc.nuts.runtime.optional.jansi.OptionalJansi;
 import net.thevpc.nuts.runtime.standalone.io.printstream.NutsPrintStreamSystem;
 
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -52,30 +54,31 @@ public class DefaultNutsBootModel implements NutsBootModel {
     private NutsPrintStream stderr;
     private InputStream stdin;
     private Map<String, NutsVal> customBootOptions = new LinkedHashMap<>();
+    private StdFd bootStdFd;
 
     public DefaultNutsBootModel(NutsWorkspace workspace, NutsWorkspaceInitInformation workspaceInitInformation) {
         this.workspace = workspace;
         this.initializing = true;
         this.workspaceInitInformation = workspaceInitInformation;
         this.bootSession = new DefaultNutsSession(workspace, workspaceInitInformation.getOptions());
-        StdFd std = detectAnsiTerminalSupport(NutsOsFamily.getCurrent());
+        bootStdFd = detectAnsiTerminalSupport(NutsOsFamily.getCurrent());
         NutsTerminalMode terminalMode = workspaceInitInformation.getOptions().getTerminalMode();
         if (terminalMode == null) {
             if (workspaceInitInformation.getOptions().isBot()) {
                 terminalMode = NutsTerminalMode.FILTERED;
             } else {
-                if(std.ansiSupport) {
+                if(bootStdFd.ansi) {
                     terminalMode = NutsTerminalMode.FORMATTED;
                 }else{
                     terminalMode = NutsTerminalMode.FILTERED;
                 }
             }
         }
-        stdout =new NutsPrintStreamSystem(std.out,null,null,std.ansiSupport,
+        stdout =new NutsPrintStreamSystem(bootStdFd.out,null,null,bootStdFd.ansi,
                 this.bootSession).setMode(terminalMode);
-        stderr =new NutsPrintStreamSystem(std.err,null,null,std.ansiSupport,
+        stderr =new NutsPrintStreamSystem(bootStdFd.err,null,null,bootStdFd.ansi,
                 this.bootSession).setMode(terminalMode);
-        stdin=System.in;
+        stdin=bootStdFd.in;
         DefaultSystemTerminal sys = new DefaultSystemTerminal(new DefaultNutsSystemTerminalBaseBoot(this));
         bootSession.setTerminal(new DefaultNutsSessionTerminalFromSystem(bootSession,sys));
 
@@ -91,6 +94,10 @@ public class DefaultNutsBootModel implements NutsBootModel {
                 }
             }
         }
+    }
+
+    public StdFd getBootStdFd() {
+        return bootStdFd;
     }
 
     @Override
@@ -149,7 +156,14 @@ public class DefaultNutsBootModel implements NutsBootModel {
                 }
                 case WINDOWS:{
                     if(CorePlatformUtils.IS_CYGWIN || CorePlatformUtils.IS_MINGW_XTERM){
-                        return new StdFd(System.in,System.out,System.err,true);
+                        List<String> flags=new ArrayList<>();
+                        if(CorePlatformUtils.IS_CYGWIN){
+                            flags.add("cygwin");
+                        }
+                        if(CorePlatformUtils.IS_MINGW_XTERM){
+                            flags.add("mingw");
+                        }
+                        return new StdFd(System.in,System.out,System.err,true,flags.toArray(new String[0]));
                     }
                     if(OptionalJansi.isAvailable()){
                         return OptionalJansi.resolveStdFd();

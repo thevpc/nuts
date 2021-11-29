@@ -12,9 +12,11 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
+import net.thevpc.nuts.runtime.standalone.boot.StdFd;
 import net.thevpc.nuts.runtime.standalone.format.DefaultFormatBase;
 import net.thevpc.nuts.runtime.standalone.util.*;
 import net.thevpc.nuts.runtime.standalone.solvers.NutsDependencySolverUtils;
+import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceExt;
 import net.thevpc.nuts.spi.NutsDependencySolver;
 import net.thevpc.nuts.spi.NutsSupportLevelContext;
 
@@ -36,15 +38,11 @@ public class DefaultNutsInfoCommand extends DefaultFormatBase<NutsInfoCommand> i
         super(session, "info");
     }
 
-    @Override
-    public NutsInfoCommand setShowRepositories(boolean enable) {
-        this.showRepositories = true;
-        return this;
-    }
-
-    @Override
-    public boolean isShowRepositories() {
-        return showRepositories;
+    private static String key(String prefix, String key) {
+        if (NutsBlankable.isBlank(prefix)) {
+            return key;
+        }
+        return prefix + "." + key;
     }
 
     @Override
@@ -68,6 +66,17 @@ public class DefaultNutsInfoCommand extends DefaultFormatBase<NutsInfoCommand> i
     }
 
     @Override
+    public boolean isShowRepositories() {
+        return showRepositories;
+    }
+
+    @Override
+    public NutsInfoCommand setShowRepositories(boolean enable) {
+        this.showRepositories = true;
+        return this;
+    }
+
+    @Override
     public boolean isFancy() {
         return fancy;
     }
@@ -76,6 +85,15 @@ public class DefaultNutsInfoCommand extends DefaultFormatBase<NutsInfoCommand> i
     public NutsInfoCommand setFancy(boolean fancy) {
         this.fancy = fancy;
         return this;
+    }
+
+    @Override
+    public NutsInfoCommand copySession() {
+        NutsSession s = getSession();
+        if (s != null) {
+            s = s.copy();
+        }
+        return setSession(s);
     }
 
     @Override
@@ -116,13 +134,13 @@ public class DefaultNutsInfoCommand extends DefaultFormatBase<NutsInfoCommand> i
                     e.put(request, t.get(request));
                 } else {
                     if (!isLenient()) {
-                        throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("property not found : %s",request));
+                        throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("property not found : %s", request));
                     }
                 }
             }
         }
         NutsSession session = getSession().copy();
-        if(session.isPlainOut()){
+        if (session.isPlainOut()) {
             session.setOutputFormat(NutsContentType.PROPS);
         }
         NutsObjectFormat.of(session).setValue(result).configure(true, args.toArray(new String[0])).print(w);
@@ -161,7 +179,7 @@ public class DefaultNutsInfoCommand extends DefaultFormatBase<NutsInfoCommand> i
             }
             case "--add": {
                 NutsVal aa = cmdLine.nextString().getValue();
-                NutsArgument val = NutsArgument.of(aa.getString(),getSession());
+                NutsArgument val = NutsArgument.of(aa.getString(), getSession());
                 if (enabled) {
                     extraProperties.put(val.getKey().getString(), val.getValue().getString());
                 }
@@ -237,13 +255,6 @@ public class DefaultNutsInfoCommand extends DefaultFormatBase<NutsInfoCommand> i
         return false;
     }
 
-    private static String key(String prefix, String key) {
-        if (NutsBlankable.isBlank(prefix)) {
-            return key;
-        }
-        return prefix + "." + key;
-    }
-
     //    @Override
     private Map<String, Object> buildWorkspaceMap(boolean deep) {
         String prefix = null;
@@ -270,16 +281,16 @@ public class DefaultNutsInfoCommand extends DefaultFormatBase<NutsInfoCommand> i
                     } catch (URISyntaxException ex) {
                         s = s.replace(":", "\\:");
                     }
-                    runtimeClassPath.add(NutsPath.of(s,ws));
+                    runtimeClassPath.add(NutsPath.of(s, ws));
                 }
             }
         }
 
         NutsTexts txt = NutsTexts.of(ws);
         props.put("nuts-runtime-classpath",
-                txt.builder().appendJoined(";",runtimeClassPath)
+                txt.builder().appendJoined(";", runtimeClassPath)
         );
-        props.put("nuts-workspace-id", txt.ofStyled(stringValue(ws.getWorkspace().getUuid()),NutsTextStyle.path()));
+        props.put("nuts-workspace-id", txt.ofStyled(stringValue(ws.getWorkspace().getUuid()), NutsTextStyle.path()));
         props.put("nuts-store-layout", ws.locations().getStoreLocationLayout());
         props.put("nuts-store-strategy", ws.locations().getStoreLocationStrategy());
         props.put("nuts-repo-store-strategy", ws.locations().getRepositoryStoreLocationStrategy());
@@ -294,7 +305,7 @@ public class DefaultNutsInfoCommand extends DefaultFormatBase<NutsInfoCommand> i
         props.put("nuts-inherited", options.isInherited());
         props.put("nuts-recover", options.isRecover());
         props.put("nuts-reset", options.isReset());
-        props.put("nuts-debug", NutsDebugString.of(options.getDebug(),getSession()));
+        props.put("nuts-debug", NutsDebugString.of(options.getDebug(), getSession()));
         props.put("nuts-trace", options.isTrace());
         props.put("nuts-read-only", (options.isReadOnly()));
         props.put("nuts-skip-companions", options.isSkipCompanions());
@@ -305,33 +316,36 @@ public class DefaultNutsInfoCommand extends DefaultFormatBase<NutsInfoCommand> i
         props.put("nuts-solver",
                 txt.ofStyled(
                         ds,
-                        Arrays.stream(allDs).map(x-> NutsDependencySolverUtils.resolveSolverName(x))
-                                .anyMatch(x->x.equals(ds))
-                        ?NutsTextStyle.keyword() : NutsTextStyle.error())
-                );
+                        Arrays.stream(allDs).map(x -> NutsDependencySolverUtils.resolveSolverName(x))
+                                .anyMatch(x -> x.equals(ds))
+                                ? NutsTextStyle.keyword() : NutsTextStyle.error())
+        );
         props.put("nuts-solver-list",
                 txt.builder().appendJoined(";",
                         Arrays.stream(allDs)
-                                .map(x-> txt.ofStyled(x,NutsTextStyle.keyword()))
+                                .map(x -> txt.ofStyled(x, NutsTextStyle.keyword()))
                                 .collect(Collectors.toList())
                 )
 
         );
-        props.put("java-version", NutsVersion.of(System.getProperty("java.version"),ws));
+        StdFd b = NutsWorkspaceExt.of(ws.getWorkspace()).getModel().bootModel.getBootStdFd();
+        props.put("sys-terminal-ansi", b.ansi);
+        props.put("sys-terminal-flags", b.flags);
+        props.put("java-version", NutsVersion.of(System.getProperty("java.version"), ws));
         props.put("platform", ws.env().getPlatform());
-        props.put("java-home", NutsPath.of(System.getProperty("java.home"),ws));
-        props.put("java-executable", NutsPath.of(NutsJavaSdkUtils.of(ws).resolveJavaCommandByHome(null, getSession()),ws));
+        props.put("java-home", NutsPath.of(System.getProperty("java.home"), ws));
+        props.put("java-executable", NutsPath.of(NutsJavaSdkUtils.of(ws).resolveJavaCommandByHome(null, getSession()), ws));
         props.put("java-classpath",
                 txt.builder().appendJoined(";",
                         Arrays.stream(System.getProperty("java.class.path").split(File.pathSeparator))
-                                .map(x->NutsPath.of(x,ws))
+                                .map(x -> NutsPath.of(x, ws))
                                 .collect(Collectors.toList())
-                        )
+                )
         );
         props.put("java-library-path",
                 txt.builder().appendJoined(";",
                         Arrays.stream(System.getProperty("java.library.path").split(File.pathSeparator))
-                                .map(x->NutsPath.of(x,ws))
+                                .map(x -> NutsPath.of(x, ws))
                                 .collect(Collectors.toList())
                 )
         );
@@ -351,8 +365,8 @@ public class DefaultNutsInfoCommand extends DefaultFormatBase<NutsInfoCommand> i
         props.put("command-line-short", ws.boot().getBootOptions().formatter().setCompact(true).getBootCommandLine());
         props.put("inherited", ws.boot().getBootOptions().isInherited());
         // nuts-boot-args must always be parsed in bash format
-        props.put("inherited-nuts-boot-args", NutsCommandLine.of(System.getProperty("nuts.boot.args"),NutsShellFamily.SH,ws).format());
-        props.put("inherited-nuts-args", NutsCommandLine.of(System.getProperty("nuts.args"),NutsShellFamily.SH,ws)
+        props.put("inherited-nuts-boot-args", NutsCommandLine.of(System.getProperty("nuts.boot.args"), NutsShellFamily.SH, ws).format());
+        props.put("inherited-nuts-args", NutsCommandLine.of(System.getProperty("nuts.args"), NutsShellFamily.SH, ws)
                 .format()
         );
         props.put("creation-started", Instant.ofEpochMilli(ws.boot().getCreationStartTimeMillis()));
@@ -381,8 +395,8 @@ public class DefaultNutsInfoCommand extends DefaultFormatBase<NutsInfoCommand> i
         props.put(key(prefix, "uuid"), stringValue(repo.getUuid()));
         props.put(key(prefix, "type"),
                 //display as enum
-                NutsTexts.of(ws).ofStyled(repo.config().getType(),NutsTextStyle.option())
-                );
+                NutsTexts.of(ws).ofStyled(repo.config().getType(), NutsTextStyle.option())
+        );
         props.put(key(prefix, "speed"), (repo.config().getSpeed()));
         props.put(key(prefix, "enabled"), (repo.config().isEnabled()));
         props.put(key(prefix, "index-enabled"), (repo.config().isIndexEnabled()));
@@ -402,8 +416,8 @@ public class DefaultNutsInfoCommand extends DefaultFormatBase<NutsInfoCommand> i
             props.put(key(prefix, "mirrors-count"), ((!repo.config()
                     .setSession(getSession())
                     .isSupportedMirroring()) ? 0 : repo.config()
-                                    .setSession(getSession())
-                                    .getMirrors().length));
+                    .setSession(getSession())
+                    .getMirrors().length));
         }
         if (deep) {
             if (repo.config().isSupportedMirroring()) {
@@ -437,7 +451,17 @@ public class DefaultNutsInfoCommand extends DefaultFormatBase<NutsInfoCommand> i
         super.setNtf(ntf);
         return this;
     }
-    
+
+    @Override
+    public int getSupportLevel(NutsSupportLevelContext context) {
+        return DEFAULT_SUPPORT;
+    }
+
+    @Override
+    public NutsWorkspaceCommand run() {
+        println();
+        return this;
+    }
 
     private static class FilteredMap {
 
@@ -471,24 +495,5 @@ public class DefaultNutsInfoCommand extends DefaultFormatBase<NutsInfoCommand> i
         public Map<String, Object> build() {
             return data;
         }
-    }
-    @Override
-    public int getSupportLevel(NutsSupportLevelContext context) {
-        return DEFAULT_SUPPORT;
-    }
-
-    @Override
-    public NutsInfoCommand copySession() {
-        NutsSession s = getSession();
-        if (s != null) {
-            s = s.copy();
-        }
-        return setSession(s);
-    }
-
-    @Override
-    public NutsWorkspaceCommand run() {
-        println();
-        return this;
     }
 }

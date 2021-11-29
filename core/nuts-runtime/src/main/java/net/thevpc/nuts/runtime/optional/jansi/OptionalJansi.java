@@ -51,29 +51,14 @@ public class OptionalJansi {
         if(isAvailable()) {
             if(System.console()!=null) {
                 org.fusesource.jansi.AnsiConsole.systemInstall();
-                return new StdFd(System.in,System.out, System.err, true);
+                return new StdFd(System.in,System.out, System.err, true,"jansi");
             }else{
-                return new StdFd(System.in,System.out, System.err, false);
+                return new StdFd(System.in,System.out, System.err, false,"jansi");
             }
         }
         return new StdFd(System.in,System.out, System.err,false);
     }
 
-    //    public static OutputStream preparestream(OutputStream base) {
-//        if (isAvailable()) {
-//            if (IS_WINDOWS && !IS_CYGWIN && !IS_MINGW_XTERM) {
-//                // On windows we know the console does not interpret ANSI codes..
-//                try {
-//                    return new org.fusesource.jansi.io.WindowsAnsiPrintStream((base instanceof PrintStream) ? ((PrintStream) base) : new PrintStream(base));
-//                } catch (Throwable ignore) {
-//                    return new org.fusesource.jansi.io.AnsiOutputStream(base);
-//                }
-//            } else {
-//                return new ResetOnCloseOutputStream(base);
-//            }
-//        }
-//        return null;
-//    }
 //
 //    private static class ResetOnCloseOutputStream extends BaseTransparentFilterOutputStream {
 //
