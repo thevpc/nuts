@@ -67,6 +67,8 @@ public final class NutsLogVerb {
     public static final NutsLogVerb READ = of("READ");
 
     public static final NutsLogVerb UPDATE = of("UPDATE");
+    public static final NutsLogVerb ADD = of("ADD");
+    public static final NutsLogVerb REMOVE = of("REMOVE");
 
     /**
      * Log verb used for tracing cache related operations

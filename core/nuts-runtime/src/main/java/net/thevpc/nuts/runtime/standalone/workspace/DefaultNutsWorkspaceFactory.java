@@ -234,7 +234,7 @@ public class DefaultNutsWorkspaceFactory implements NutsWorkspaceFactory {
             throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("already registered Extension %s for %s", implementation, extensionPoint.getName()));
         }
         if (LOG.isLoggable(Level.CONFIG)) {
-            LOG.with().session(validLogSession(session)).level(Level.FINEST).verb(NutsLogVerb.UPDATE)
+            LOG.with().session(validLogSession(session)).level(Level.FINEST).verb(NutsLogVerb.ADD)
                     .log(NutsMessage.jstyle("bind    {0} for impl instance {1}", CoreStringUtils.alignLeft(extensionPoint.getSimpleName(), 40), implementation.getClass().getName()));
         }
         instances.add(extensionPoint, implementation);
@@ -247,7 +247,7 @@ public class DefaultNutsWorkspaceFactory implements NutsWorkspaceFactory {
             throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("already registered Extension %s for %s", implementation.getName(), extensionPoint.getName()));
         }
         if (LOG.isLoggable(Level.CONFIG)) {
-            LOG.with().session(validLogSession(session)).level(Level.FINEST).verb(NutsLogVerb.UPDATE)
+            LOG.with().session(validLogSession(session)).level(Level.FINEST).verb(NutsLogVerb.ADD)
                     .log(NutsMessage.jstyle("bind    {0} for impl type {1}", CoreStringUtils.alignLeft(extensionPoint.getSimpleName(), 40), implementation.getName()));
         }
         IdCache t = discoveredCacheById.get(source);

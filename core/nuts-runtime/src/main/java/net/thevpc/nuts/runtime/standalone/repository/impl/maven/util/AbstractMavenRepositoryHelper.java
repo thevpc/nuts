@@ -40,7 +40,7 @@ import java.util.logging.Level;
 public abstract class AbstractMavenRepositoryHelper {
 
     private NutsLogger LOG;
-    private NutsRepository repository;
+    private final NutsRepository repository;
 
     public AbstractMavenRepositoryHelper(NutsRepository repository) {
         this.repository = repository;
@@ -71,7 +71,7 @@ public abstract class AbstractMavenRepositoryHelper {
     }
 
     public void checkSHA1Hash(NutsId id, InputStream stream, String typeName, NutsSession session) throws IOException {
-        if (!isRemoteRepository()) {
+        if (!repository.isRemote()) {
             //do not do any test
             stream.close();
             return;
@@ -117,9 +117,10 @@ public abstract class AbstractMavenRepositoryHelper {
         return hash.split("[ \n\r]")[0];
     }
 
-    public abstract boolean exists(NutsId id, NutsPath path, Object source, String typeName, NutsSession session);
-
-    public abstract InputStream openStream(NutsId id, NutsPath path, Object source, String typeName, String action, NutsSession session);
+    public InputStream openStream(NutsId id, NutsPath path, Object source, String typeName, String action, NutsSession session) {
+        session.getTerminal().printProgress("%-14s %-8s %s",repository.getName(), action, path.toCompressedForm());
+        return NutsInputStreamMonitor.of(session).setSource(path).setOrigin(source).setSourceTypeName(typeName).create();
+    }
 
     private void checkSession(NutsSession session) {
         NutsWorkspaceUtils.checkSession(repository.getWorkspace(), session);
@@ -180,6 +181,4 @@ public abstract class AbstractMavenRepositoryHelper {
             }
         }
     }
-
-    public abstract boolean isRemoteRepository();
 }

@@ -628,6 +628,10 @@ public final class PrivateNutsUtilMaven {
 
     private static File getBootCacheFile(NutsBootId nutsId, String path, String repository, String cacheFolder, boolean useCache, Instant expire, PrivateNutsErrorInfoList errorList, PrivateNutsWorkspaceInitInformation workspaceInformation, Function<String, String> pathExpansionConverter, PrivateNutsLog LOG) {
         boolean cacheLocalFiles = true;//Boolean.getBoolean("nuts.cache.cache-local-files");
+        //we know exactly the file path, so we will trim "htmlfs:" protocol
+        if(repository.startsWith("htmlfs:")){
+            repository=repository.substring("htmlfs:".length());
+        }
         repository = PrivateNutsUtilIO.expandPath(repository, workspaceInformation.getWorkspaceLocation(), pathExpansionConverter);
         File repositoryFolder = null;
         if (PrivateNutsUtilIO.isURL(repository)) {
@@ -653,7 +657,7 @@ public final class PrivateNutsUtilMaven {
             urlPath += path;
             long start = System.currentTimeMillis();
             try {
-                LOG.log(Level.CONFIG, NutsLogVerb.SUCCESS, NutsMessage.jstyle("load  {0}", urlPath));
+                LOG.log(Level.CONFIG, NutsLogVerb.START, NutsMessage.jstyle("load  {0}", urlPath));
                 PrivateNutsUtilIO.copy(new URL(urlPath), to, LOG);
                 errorList.removeErrorsFor(nutsId);
                 long end = System.currentTimeMillis();

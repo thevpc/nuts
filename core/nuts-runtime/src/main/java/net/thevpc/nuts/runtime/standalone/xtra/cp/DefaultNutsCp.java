@@ -592,9 +592,21 @@ public class DefaultNutsCp implements NutsCp {
                     .setLogProgress(options.contains(NutsPathOption.LOG))
                     .create());
         }
-        _LOGOP(session).level(Level.FINEST).verb(NutsLogVerb.START).log(NutsMessage.jstyle("copy {0} to {1}",
-                _source == null ? null : _source.getValue(),
-                target == null ? null : target.getValue()));
+        NutsLoggerOp lop = _LOGOP(session);
+        if(lop.isLoggable(Level.FINEST)) {
+            Object loggedSrc = _source == null ? null : _source.getValue();
+            Object loggedTarget = target == null ? null : target.getValue();
+
+            if(loggedSrc instanceof NutsPath){
+                loggedSrc=((NutsPath) loggedSrc).toCompressedForm();
+            }
+            if(loggedTarget instanceof NutsPath){
+                loggedTarget=((NutsPath) loggedTarget).toCompressedForm();
+            }
+            lop.level(Level.FINEST).verb(NutsLogVerb.START).log(NutsMessage.jstyle("copy {0} to {1}",
+                    loggedSrc,
+                    loggedTarget));
+        }
         try {
             if (safe) {
                 Path temp = null;
@@ -682,7 +694,7 @@ public class DefaultNutsCp implements NutsCp {
                 }
             }
         } catch (IOException ex) {
-            _LOGOP(session).level(Level.CONFIG).verb(NutsLogVerb.FAIL)
+            lop.level(Level.CONFIG).verb(NutsLogVerb.FAIL)
                     .log(NutsMessage.jstyle("error copying {0} to {1} : {2}", _source.getValue(),
                             target.getValue(), ex));
             throw new NutsIOException(session, ex);

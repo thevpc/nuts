@@ -75,21 +75,45 @@ public class HtmlfsPath extends AbstractPathSPIAdapter {
 
     @Override
     public NutsPath resolve(NutsPath basePath, String path) {
+        if(NutsBlankable.isBlank(path)){
+            return basePath;
+        }
+        if(!path.endsWith("/")) {
+            return ref.resolve(path);
+        }
         return NutsPath.of(PREFIX + ref.resolve(path), session);
     }
 
     @Override
     public NutsPath resolve(NutsPath basePath, NutsPath path) {
+        if(NutsBlankable.isBlank(path)){
+            return basePath;
+        }
+        if(!path.toString().endsWith("/")) {
+            return  ref.resolve(path);
+        }
         return NutsPath.of(PREFIX + ref.resolve(path), session);
     }
 
     @Override
     public NutsPath resolveSibling(NutsPath basePath, String path) {
+        if(NutsBlankable.isBlank(path)){
+            return basePath;
+        }
+        if(!path.endsWith("/")) {
+            return ref.resolve(path);
+        }
         return NutsPath.of(PREFIX + ref.resolveSibling(path), session);
     }
 
     @Override
     public NutsPath resolveSibling(NutsPath basePath, NutsPath path) {
+        if(NutsBlankable.isBlank(path)){
+            return basePath;
+        }
+        if(!path.toString().endsWith("/")) {
+            return ref.resolveSibling(path);
+        }
         return NutsPath.of(PREFIX + ref.resolveSibling(path), session);
     }
 

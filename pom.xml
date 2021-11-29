@@ -42,6 +42,7 @@
         <!--##        <module>web-toolbox/nwar</module>-->
         <!--##<module>toolbox/nuts-clown</module>-->
         <!--##        <module>nuts-installer</module>-->
+        <module>docs2/ugly-jar-projects/base-project</module>
     </modules>
     <properties>
     </properties>

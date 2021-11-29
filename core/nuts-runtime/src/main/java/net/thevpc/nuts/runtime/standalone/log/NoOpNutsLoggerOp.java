@@ -44,4 +44,10 @@ public class NoOpNutsLoggerOp implements NutsLoggerOp {
     public NutsLoggerOp session(NutsSession session) {
         return this;
     }
+
+    @Override
+    public boolean isLoggable(Level level) {
+        return false;
+    }
+
 }

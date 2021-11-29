@@ -121,7 +121,11 @@ public class DefaultNutsInfoCommand extends DefaultFormatBase<NutsInfoCommand> i
                 }
             }
         }
-        NutsObjectFormat.of(getSession()).setValue(result).configure(true, args.toArray(new String[0])).print(w);
+        NutsSession session = getSession().copy();
+        if(session.isPlainOut()){
+            session.setOutputFormat(NutsContentType.PROPS);
+        }
+        NutsObjectFormat.of(session).setValue(result).configure(true, args.toArray(new String[0])).print(w);
     }
 
     @Override

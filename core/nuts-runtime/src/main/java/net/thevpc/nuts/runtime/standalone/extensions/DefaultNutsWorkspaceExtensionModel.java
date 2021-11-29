@@ -443,7 +443,7 @@ public class DefaultNutsWorkspaceExtensionModel {
             throw new NutsExtensionAlreadyRegisteredException(session, id, wired.toString());
         }
 
-        _LOGOP(session).level(Level.FINE).verb(NutsLogVerb.UPDATE).log(NutsMessage.jstyle("installing extension {0}", id));
+        _LOGOP(session).level(Level.FINE).verb(NutsLogVerb.ADD).log(NutsMessage.jstyle("installing extension {0}", id));
         NutsDefinition nutsDefinitions = session.search()
                 .copyFrom(options)
                 .addId(id)
@@ -468,7 +468,7 @@ public class DefaultNutsWorkspaceExtensionModel {
 //            }
 //        }
         extensions.put(id, workspaceExtension);
-        _LOGOP(session).level(Level.FINE).verb(NutsLogVerb.UPDATE).log(NutsMessage.jstyle("extension {0} installed successfully", id));
+        _LOGOP(session).level(Level.FINE).verb(NutsLogVerb.ADD).log(NutsMessage.jstyle("extension {0} installed successfully", id));
         NutsTerminalSpec spec = new NutsDefaultTerminalSpec();
         if (session.getTerminal() != null) {
             spec.put("ignoreClass", session.getTerminal().getClass());

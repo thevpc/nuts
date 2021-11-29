@@ -201,7 +201,7 @@ public class MavenFolderRepository extends NutsCachedRepository {
         for (NutsPath basePath : basePaths) {
             list.add(
                     (NutsIterator) IteratorBuilder.ofRunnable(
-                            () -> session.getTerminal().printProgress("%-8s %s", "browse",
+                            () -> session.getTerminal().printProgress("%-14s %-8s %s",getName(), "browse",
                                     (basePath == null ? repoRoot : repoRoot.resolve(basePath)).toCompressedForm()
                             ),
                             "Log"
@@ -218,29 +218,30 @@ public class MavenFolderRepository extends NutsCachedRepository {
 
     @Override
     public void updateStatistics2(NutsSession session) {
-        config().setSession(session).getLocation(true).walkDfs(new NutsTreeVisitor<NutsPath>() {
-                                                                   @Override
-                                                                   public NutsTreeVisitResult preVisitDirectory(NutsPath dir, NutsSession session) {
+        config().setSession(session).getLocation(true)
+                .walkDfs(new NutsTreeVisitor<NutsPath>() {
+                             @Override
+                             public NutsTreeVisitResult preVisitDirectory(NutsPath dir, NutsSession session) {
 
-                                                                       return NutsTreeVisitResult.CONTINUE;
-                                                                   }
+                                 return NutsTreeVisitResult.CONTINUE;
+                             }
 
-                                                                   @Override
-                                                                   public NutsTreeVisitResult visitFile(NutsPath file, NutsSession session) {
-                                                                       throw new NutsIOException(session, NutsMessage.cstyle("updateStatistics Not supported."));
-                                                                   }
+                             @Override
+                             public NutsTreeVisitResult visitFile(NutsPath file, NutsSession session) {
+                                 throw new NutsIOException(session, NutsMessage.cstyle("updateStatistics Not supported."));
+                             }
 
-                                                                   @Override
-                                                                   public NutsTreeVisitResult visitFileFailed(NutsPath file, Exception exc, NutsSession session) {
-                                                                       throw new NutsIOException(session, NutsMessage.cstyle("updateStatistics Not supported."));
-                                                                   }
+                             @Override
+                             public NutsTreeVisitResult visitFileFailed(NutsPath file, Exception exc, NutsSession session) {
+                                 throw new NutsIOException(session, NutsMessage.cstyle("updateStatistics Not supported."));
+                             }
 
-                                                                   @Override
-                                                                   public NutsTreeVisitResult postVisitDirectory(NutsPath dir, Exception exc, NutsSession session) {
-                                                                       throw new NutsIOException(session, NutsMessage.cstyle("updateStatistics Not supported."));
-                                                                   }
-                                                               }
-        );
+                             @Override
+                             public NutsTreeVisitResult postVisitDirectory(NutsPath dir, Exception exc, NutsSession session) {
+                                 throw new NutsIOException(session, NutsMessage.cstyle("updateStatistics Not supported."));
+                             }
+                         }
+                );
     }
 
     @Override
@@ -260,7 +261,7 @@ public class MavenFolderRepository extends NutsCachedRepository {
     public NutsIterator<NutsId> findNonSingleVersionImpl(final NutsId id, NutsIdFilter idFilter, NutsFetchMode fetchMode, final NutsSession session) {
         String groupId = id.getGroupId();
         String artifactId = id.getArtifactId();
-        NutsPath foldersFileUrl = config().setSession(session).getLocation(true).resolve(groupId.replace('.', '/') + "/" + artifactId);
+        NutsPath foldersFileUrl = config().setSession(session).getLocation(true).resolve(groupId.replace('.', '/') + "/" + artifactId + "/");
 
         return IteratorBuilder.ofSupplier(
                 () -> {
@@ -294,7 +295,8 @@ public class MavenFolderRepository extends NutsCachedRepository {
             return IteratorBuilder.ofSupplier(
                     () -> {
                         List<NutsId> ret = new ArrayList<>();
-                        if (repoHelper.exists(id, metadataURL, id.builder().setFace(CoreNutsConstants.QueryFaces.CATALOG).build(), "artifact catalog", session)) {
+                        session.getTerminal().printProgress("%-14s %-8s %s", getName(), "search", metadataURL.toCompressedForm());
+                        if (metadataURL.isRegularFile()) {
                             // ok found!!
                             ret.add(id);
                         }
@@ -399,7 +401,6 @@ public class MavenFolderRepository extends NutsCachedRepository {
             }
             return null;
         }
-
     }
 
     private class RepoHelper extends AbstractMavenRepositoryHelper {
@@ -410,23 +411,6 @@ public class MavenFolderRepository extends NutsCachedRepository {
         @Override
         public NutsPath getIdPath(NutsId id, NutsSession session) {
             return getIdRemotePath(id, session);
-        }
-
-        @Override
-        public boolean exists(NutsId id, NutsPath path, Object source, String typeName, NutsSession session) {
-            session.getTerminal().printProgress("%-8s %s", "search", path.toCompressedForm());
-            return path.isRegularFile();
-        }
-
-        @Override
-        public InputStream openStream(NutsId id, NutsPath path, Object source, String typeName, String action, NutsSession session) {
-            session.getTerminal().printProgress("%-8s %s", action, path.toCompressedForm());
-            return NutsInputStreamMonitor.of(session).setSource(path).setOrigin(source).setSourceTypeName(typeName).create();
-        }
-
-        @Override
-        public boolean isRemoteRepository() {
-            return MavenFolderRepository.this.isRemote();
         }
     }
 }

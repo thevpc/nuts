@@ -367,7 +367,7 @@ public class NutsWorkspaceUtils {
         }
 
         public void fireOnInstall(NutsInstallEvent event) {
-            u._LOGOP(event.getSession()).level(Level.FINEST).verb(NutsLogVerb.UPDATE)
+            u._LOGOP(event.getSession()).level(Level.FINEST).verb(NutsLogVerb.ADD)
                     .log(NutsMessage.jstyle("installed {0}", event.getDefinition().getId()));
             for (NutsInstallListener listener : event.getSession().events().getInstallListeners()) {
                 listener.onInstall(event);
@@ -378,7 +378,7 @@ public class NutsWorkspaceUtils {
         }
 
         public void fireOnRequire(NutsInstallEvent event) {
-            u._LOGOP(event.getSession()).level(Level.FINEST).verb(NutsLogVerb.UPDATE)
+            u._LOGOP(event.getSession()).level(Level.FINEST).verb(NutsLogVerb.ADD)
                     .log(NutsMessage.jstyle("required {0}", event.getDefinition().getId()));
             for (NutsInstallListener listener : event.getSession().events().getInstallListeners()) {
                 listener.onRequire(event);
@@ -410,7 +410,7 @@ public class NutsWorkspaceUtils {
 
         public void fireOnUninstall(NutsInstallEvent event) {
             if (u._LOG(event.getSession()).isLoggable(Level.FINEST)) {
-                u._LOGOP(event.getSession()).level(Level.FINEST).verb(NutsLogVerb.UPDATE)
+                u._LOGOP(event.getSession()).level(Level.FINEST).verb(NutsLogVerb.REMOVE)
                         .log(NutsMessage.jstyle("uninstalled {0}", event.getDefinition().getId()));
             }
             for (NutsInstallListener listener : event.getSession().events().getInstallListeners()) {
@@ -423,7 +423,7 @@ public class NutsWorkspaceUtils {
 
         public void fireOnAddRepository(NutsWorkspaceEvent event) {
             if (u._LOG(event.getSession()).isLoggable(Level.CONFIG)) {
-                u._LOGOP(event.getSession()).level(Level.CONFIG).verb(NutsLogVerb.UPDATE)
+                u._LOGOP(event.getSession()).level(Level.CONFIG).verb(NutsLogVerb.ADD)
                         .log(NutsMessage.jstyle("added repo ##{0}##", event.getRepository().getName()));
             }
 
@@ -437,7 +437,7 @@ public class NutsWorkspaceUtils {
 
         public void fireOnRemoveRepository(NutsWorkspaceEvent event) {
             if (u._LOG(event.getSession()).isLoggable(Level.FINEST)) {
-                u._LOGOP(event.getSession()).level(Level.FINEST).verb(NutsLogVerb.UPDATE)
+                u._LOGOP(event.getSession()).level(Level.FINEST).verb(NutsLogVerb.REMOVE)
                         .log(NutsMessage.jstyle("removed repo ##{0}##", event.getRepository().getName()));
             }
             for (NutsWorkspaceListener listener : event.getSession().events().getWorkspaceListeners()) {

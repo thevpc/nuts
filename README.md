@@ -51,7 +51,7 @@ wget http://thevpc.net/nuts.jar -O nuts.jar
 Then you must run, in a terminal, the following command. This will install or update nuts bootstrap binaries.
 
 ```
-java -jar nuts.jar -r dev -N -y
+java -jar nuts.jar -Zy -r=dev
 ```
 
 That’s it, now you must relaunch the terminal window (close the terminal and start it again).
@@ -78,7 +78,7 @@ wget http://thevpc.net/nuts-stable.jar -O nuts.jar
 Then you must run, in a terminal, the following command. This will install or update nuts bootstrap binaries.
 
 ```
-java -jar nuts.jar -N -y
+java -jar nuts.jar -Zy
 ```
 
 That’s it, now you must relaunch the terminal window (close the terminal and start it again).

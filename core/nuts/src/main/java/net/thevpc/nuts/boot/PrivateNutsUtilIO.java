@@ -156,11 +156,13 @@ public class PrivateNutsUtilIO {
     }
 
     public static boolean isURL(String url) {
-        try {
-            new URL(url);
-            return true;
-        } catch (MalformedURLException e) {
-            //
+        if(url!=null) {
+            try {
+                new URL(url);
+                return true;
+            } catch (MalformedURLException e) {
+                //
+            }
         }
         return false;
     }

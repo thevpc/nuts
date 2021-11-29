@@ -494,6 +494,8 @@ public final class NutsBootWorkspace {
             long countDeleted = 0;
             //now that config information is prepared proceed to any cleanup
             if (options.isReset()) {
+                //force loading version early, it will be used later-on
+                Nuts.getVersion();
                 if (lastWorkspaceInformation != null) {
                     revalidateLocations(lastWorkspaceInformation, workspaceName, immediateLocation);
                     if (options.isDry()) {

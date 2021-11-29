@@ -318,7 +318,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
 //                LOG.log(Level.CONFIG, "\t execution-requirements         : satisfied");
 //            }
                 LOGCRF.log(NutsMessage.jstyle("   nuts-workspace                 : {0}", CoreNutsUtils.formatLogValue(text, info.getOptions().getWorkspace(), info.getWorkspaceLocation())));
-                LOGCRF.log(NutsMessage.jstyle("   nuts-hash-name                 : {0}", CoreNutsUtils.formatLogValue(text, getHashName(), info.getWorkspaceLocation())));
+                LOGCRF.log(NutsMessage.jstyle("   nuts-hash-name                 : {0}", getHashName()));
                 LOGCRF.log(NutsMessage.jstyle("   nuts-store-apps                : {0}", CoreNutsUtils.formatLogValue(text, info.getOptions().getStoreLocation(NutsStoreLocation.APPS), info.getStoreLocation(NutsStoreLocation.APPS))));
                 LOGCRF.log(NutsMessage.jstyle("   nuts-store-config              : {0}", CoreNutsUtils.formatLogValue(text, info.getOptions().getStoreLocation(NutsStoreLocation.CONFIG), info.getStoreLocation(NutsStoreLocation.CONFIG))));
                 LOGCRF.log(NutsMessage.jstyle("   nuts-store-var                 : {0}", CoreNutsUtils.formatLogValue(text, info.getOptions().getStoreLocation(NutsStoreLocation.VAR), info.getStoreLocation(NutsStoreLocation.VAR))));
@@ -436,7 +436,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                 NutsWorkspaceUtils.of(defaultSession()).checkReadOnly();
                 LOG.with().session(defaultSession()).level(Level.CONFIG).verb(NutsLogVerb.SUCCESS)
                         .log(NutsMessage.jstyle("creating {0} workspace at {1}",
-                                text.ofStyled("NEW", NutsTextStyle.info()),
+                                text.ofStyled("new", NutsTextStyle.info()),
                                 defaultSession().locations().getWorkspaceLocation()
                         ));
                 NutsWorkspaceConfigBoot bconfig = new NutsWorkspaceConfigBoot();

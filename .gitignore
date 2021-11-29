@@ -90,3 +90,10 @@
 /core/nuts-runtime/.jpeek/
 /core/.jpeek/
 /.gradle/
+/docs2/ugly-jar-projects/base-project/target/
+/docs2/ugly-jar-projects/maven-assembly-project/target/
+/docs2/ugly-jar-projects/dependency-project/target/
+/docs2/ugly-jar-projects/assembly-project/target/
+/docs2/ugly-jar-projects/onejar-project/target/
+/docs2/ugly-jar-projects/springboot-project/target/
+/docs2/ugly-jar-projects/shade-project/target/

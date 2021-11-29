@@ -86,4 +86,9 @@ public class DefaultNutsLoggerOp implements NutsLoggerOp {
             logger.log(record);
         }
     }
+
+    @Override
+    public boolean isLoggable(Level level) {
+        return logger.isLoggable(level);
+    }
 }

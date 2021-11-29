@@ -43,7 +43,7 @@ public class DefaultNutsWelcomeInternalExecutable extends DefaultInternalNutsExe
             }
         }
 
-        if (!session.isBot() && session.isPlainOut()) {
+        if (session.isPlainOut()) {
             session.out().resetLine().println(NutsWorkspaceExt.of(session.getWorkspace()).getWelcomeText(session));
         } else {
             Map<String, Object> welcome = new LinkedHashMap<>();
