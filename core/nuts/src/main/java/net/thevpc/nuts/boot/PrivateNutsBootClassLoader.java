@@ -25,6 +25,7 @@
 package net.thevpc.nuts.boot;
 
 import net.thevpc.nuts.NutsClassLoaderNode;
+import net.thevpc.nuts.spi.NutsBootId;
 
 import java.net.URL;
 import java.net.URLClassLoader;

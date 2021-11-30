@@ -26,6 +26,7 @@
 package net.thevpc.nuts.boot;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.spi.NutsBootOptions;
 
 import java.io.File;
 import java.io.StringReader;
@@ -41,7 +42,7 @@ import java.util.logging.Level;
  */
 final class PrivateNutsBootConfigLoader {
 
-    static PrivateNutsWorkspaceInitInformation loadBootConfig(String workspaceLocation, PrivateNutsLog LOG) {
+    static NutsBootOptions loadBootConfig(String workspaceLocation, PrivateNutsLog LOG) {
         File bootFile = new File(workspaceLocation, NutsConstants.Files.WORKSPACE_CONFIG_FILE_NAME);
         try {
             if (bootFile.isFile()) {
@@ -60,10 +61,10 @@ final class PrivateNutsBootConfigLoader {
         return null;
     }
 
-    private static PrivateNutsWorkspaceInitInformation loadBootConfigJSON(String json, PrivateNutsLog LOG) {
+    private static NutsBootOptions loadBootConfigJSON(String json, PrivateNutsLog LOG) {
         PrivateNutsJsonParser parser = new PrivateNutsJsonParser(new StringReader(json));
         Map<String, Object> jsonObject = parser.parseObject();
-        PrivateNutsWorkspaceInitInformation c = new PrivateNutsWorkspaceInitInformation();
+        NutsBootOptions c = new NutsBootOptions(LOG);
         String configVersion = (String) jsonObject.get("configVersion");
 
         if (configVersion == null) {
@@ -109,11 +110,11 @@ final class PrivateNutsBootConfigLoader {
      * @param config     config object to fill
      * @param jsonObject config JSON object
      */
-    private static void loadConfigVersion507(PrivateNutsWorkspaceInitInformation config, Map<String, Object> jsonObject, PrivateNutsLog LOG) {
+    private static void loadConfigVersion507(NutsBootOptions config, Map<String, Object> jsonObject, PrivateNutsLog LOG) {
         LOG.log(Level.CONFIG, NutsLogVerb.INFO, NutsMessage.jstyle("config version compatibility : 0.5.7"));
         config.setUuid((String) jsonObject.get("uuid"));
         config.setName((String) jsonObject.get("name"));
-        config.setWorkspaceLocation((String) jsonObject.get("workspace"));
+        config.setWorkspace((String) jsonObject.get("workspace"));
         config.setJavaCommand((String) jsonObject.get("javaCommand"));
         config.setJavaOptions((String) jsonObject.get("javaOptions"));
         config.setHomeLocations(asNutsHomeLocationMap((Map) jsonObject.get("homeLocations")));
@@ -187,14 +188,14 @@ final class PrivateNutsBootConfigLoader {
      * @param config     config object to fill
      * @param jsonObject config JSON object
      */
-    private static void loadConfigVersion506(PrivateNutsWorkspaceInitInformation config, Map<String, Object> jsonObject, PrivateNutsLog LOG) {
+    private static void loadConfigVersion506(NutsBootOptions config, Map<String, Object> jsonObject, PrivateNutsLog LOG) {
         LOG.log(Level.CONFIG, NutsLogVerb.INFO, NutsMessage.jstyle("config version compatibility : 0.5.6"));
         config.setUuid((String) jsonObject.get("uuid"));
         config.setName((String) jsonObject.get("name"));
-        config.setWorkspaceLocation((String) jsonObject.get("workspace"));
+        config.setWorkspace((String) jsonObject.get("workspace"));
         config.setApiVersion((String) jsonObject.get("apiVersion"));
         String runtimeId = (String) jsonObject.get("runtimeId");
-        config.setRuntimeId(runtimeId == null ? null : NutsBootId.parse(runtimeId));
+        config.setRuntimeId(runtimeId);
         config.setJavaCommand((String) jsonObject.get("javaCommand"));
         config.setJavaOptions((String) jsonObject.get("javaOptions"));
         config.setStoreLocations(asNutsStoreLocationMap((Map) jsonObject.get("storeLocations")));
@@ -220,14 +221,14 @@ final class PrivateNutsBootConfigLoader {
      * @param config     config object to fill
      * @param jsonObject config JSON object
      */
-    private static void loadConfigVersion502(PrivateNutsWorkspaceInitInformation config, Map<String, Object> jsonObject, PrivateNutsLog LOG) {
+    private static void loadConfigVersion502(NutsBootOptions config, Map<String, Object> jsonObject, PrivateNutsLog LOG) {
         LOG.log(Level.CONFIG, NutsLogVerb.INFO, NutsMessage.jstyle("config version compatibility : 0.5.2"));
         config.setUuid((String) jsonObject.get("uuid"));
         config.setName((String) jsonObject.get("name"));
-        config.setWorkspaceLocation((String) jsonObject.get("workspace"));
+        config.setWorkspace((String) jsonObject.get("workspace"));
         config.setApiVersion((String) jsonObject.get("bootApiVersion"));
         String runtimeId = (String) jsonObject.get("bootRuntime");
-        config.setRuntimeId(runtimeId == null ? null : NutsBootId.parse(runtimeId));
+        config.setRuntimeId(runtimeId);
         config.setJavaCommand((String) jsonObject.get("bootJavaCommand"));
         config.setJavaOptions((String) jsonObject.get("bootJavaOptions"));
         Map<NutsStoreLocation, String> storeLocations = new LinkedHashMap<>();

@@ -27,6 +27,9 @@
 package net.thevpc.nuts.boot;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.spi.NutsBootId;
+import net.thevpc.nuts.spi.NutsBootVersion;
+import net.thevpc.nuts.spi.NutsBootOptions;
 import net.thevpc.nuts.spi.NutsRepositoryURL;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -599,16 +602,16 @@ public final class PrivateNutsUtilMaven {
         return all;
     }
 
-    static File getBootCacheJar(NutsBootId vid, String[] repositories, String cacheFolder, boolean useCache, String name, Instant expire, PrivateNutsErrorInfoList errorList, PrivateNutsWorkspaceInitInformation workspaceInformation, Function<String, String> pathExpansionConverter, PrivateNutsLog LOG) {
+    static File getBootCacheJar(NutsBootId vid, String[] repositories, String cacheFolder, boolean useCache, String name, Instant expire, PrivateNutsErrorInfoList errorList, NutsBootOptions workspaceInformation, Function<String, String> pathExpansionConverter, PrivateNutsLog LOG) {
         File f = getBootCacheFile(vid, getFileName(vid, "jar"), repositories, cacheFolder, useCache, expire, errorList, workspaceInformation, pathExpansionConverter, LOG);
         if (f == null) {
-            throw new NutsInvalidWorkspaceException(workspaceInformation.getWorkspaceLocation(),
+            throw new NutsInvalidWorkspaceException(workspaceInformation.getWorkspace(),
                     NutsMessage.cstyle("unable to load %s %s from repositories %s", name, vid, Arrays.asList(repositories)));
         }
         return f;
     }
 
-    static File getBootCacheFile(NutsBootId vid, String fileName, String[] repositories, String cacheFolder, boolean useCache, Instant expire, PrivateNutsErrorInfoList errorList, PrivateNutsWorkspaceInitInformation workspaceInformation, Function<String, String> pathExpansionConverter, PrivateNutsLog LOG) {
+    static File getBootCacheFile(NutsBootId vid, String fileName, String[] repositories, String cacheFolder, boolean useCache, Instant expire, PrivateNutsErrorInfoList errorList, NutsBootOptions workspaceInformation, Function<String, String> pathExpansionConverter, PrivateNutsLog LOG) {
         String path = getPathFile(vid, fileName);
         if (useCache && cacheFolder != null) {
 
@@ -629,13 +632,13 @@ public final class PrivateNutsUtilMaven {
         return null;
     }
 
-    private static File getBootCacheFile(NutsBootId nutsId, String path, String repository, String cacheFolder, boolean useCache, Instant expire, PrivateNutsErrorInfoList errorList, PrivateNutsWorkspaceInitInformation workspaceInformation, Function<String, String> pathExpansionConverter, PrivateNutsLog LOG) {
+    private static File getBootCacheFile(NutsBootId nutsId, String path, String repository, String cacheFolder, boolean useCache, Instant expire, PrivateNutsErrorInfoList errorList, NutsBootOptions workspaceInformation, Function<String, String> pathExpansionConverter, PrivateNutsLog LOG) {
         boolean cacheLocalFiles = true;//Boolean.getBoolean("nuts.cache.cache-local-files");
         //we know exactly the file path, so we will trim "htmlfs:" protocol
         if(repository.startsWith("htmlfs:")){
             repository=repository.substring("htmlfs:".length());
         }
-        repository = PrivateNutsUtilIO.expandPath(repository, workspaceInformation.getWorkspaceLocation(), pathExpansionConverter);
+        repository = PrivateNutsUtilIO.expandPath(repository, workspaceInformation.getWorkspace(), pathExpansionConverter);
         File repositoryFolder = null;
         if (PrivateNutsUtilIO.isURL(repository)) {
             try {

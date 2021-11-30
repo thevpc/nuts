@@ -25,8 +25,9 @@
 package net.thevpc.nuts.runtime.standalone.workspace;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.boot.NutsBootDescriptor;
-import net.thevpc.nuts.boot.NutsBootId;
+import net.thevpc.nuts.spi.NutsBootDescriptor;
+import net.thevpc.nuts.spi.NutsBootId;
+import net.thevpc.nuts.spi.NutsBootOptions;
 import net.thevpc.nuts.spi.NutsBootWorkspaceFactory;
 
 import java.io.File;
@@ -40,7 +41,7 @@ import java.util.Set;
  * This class holds information gathered by nuts Boot and passed to Runtime on BootTime
  * @author thevpc
  */
-public final class CoreNutsWorkspaceInitInformation implements NutsWorkspaceInitInformation {
+public final class CoreNutsWorkspaceInitInformation {
 
     private NutsWorkspaceOptions options;
     /**
@@ -141,12 +142,14 @@ public final class CoreNutsWorkspaceInitInformation implements NutsWorkspaceInit
     private NutsSession session;
     private NutsWorkspace ws;
 
-    public CoreNutsWorkspaceInitInformation(NutsWorkspaceInitInformation boot, NutsWorkspace ws,NutsSession session) {
+    public CoreNutsWorkspaceInitInformation(NutsBootOptions boot, NutsWorkspace ws, NutsSession session) {
         this.ws = ws;
         this.session = session;
-        options = new CoreNutsWorkspaceOptions(session).setAll(boot.getOptions()).build();
+        CoreNutsWorkspaceOptions optionsBuilder = new CoreNutsWorkspaceOptions(session);
+        optionsBuilder.setAll(boot);
+        this.options = optionsBuilder.build();
         apiVersion = boot.getApiVersion();
-        runtimeId = boot.getRuntimeId();
+        runtimeId = NutsBootId.parse(boot.getRuntimeId());
         runtimeBootDescriptor = boot.getRuntimeBootDescriptor();
         runtimeBootDependencyNode = boot.getRuntimeBootDependencyNode();
         extensionBootDescriptors = boot.getExtensionBootDescriptors();
@@ -156,7 +159,7 @@ public final class CoreNutsWorkspaceInitInformation implements NutsWorkspaceInit
         workspaceClassLoader = boot.getClassWorldLoader();
         uuid = boot.getUuid();
         name = boot.getName();
-        workspace = boot.getWorkspaceLocation();
+        workspace = boot.getWorkspace();
         extensionsSet = boot.getExtensionsSet() == null ? new LinkedHashSet<>() : new LinkedHashSet<>(boot.getExtensionsSet());
         bootRepositories = boot.getBootRepositories();
         javaCommand = boot.getJavaCommand();
@@ -169,7 +172,7 @@ public final class CoreNutsWorkspaceInitInformation implements NutsWorkspaceInit
         homeLocations = boot.getHomeLocations() == null ? new LinkedHashMap<>() : new LinkedHashMap<>(boot.getHomeLocations());
     }
 
-    @Override
+    
     public NutsWorkspaceOptions getOptions() {
         return options;
     }
@@ -193,12 +196,12 @@ public final class CoreNutsWorkspaceInitInformation implements NutsWorkspaceInit
         return this;
     }
 
-    @Override
+    
     public String getWorkspaceLocation() {
         return workspace;
     }
 
-    @Override
+    
     public String getApiVersion() {
         return apiVersion;
     }
@@ -208,7 +211,7 @@ public final class CoreNutsWorkspaceInitInformation implements NutsWorkspaceInit
         return this;
     }
 
-    @Override
+    
     public NutsBootId getRuntimeId() {
         return runtimeId;
     }
@@ -231,21 +234,21 @@ public final class CoreNutsWorkspaceInitInformation implements NutsWorkspaceInit
         return this;
     }
 
-    //    @Override
+    //    
 //    public String getRuntimeDependencies() {
 //        return String.join(";", getRuntimeDependenciesSet());
 //    }
 //
-//    @Override
+//    
 //    public String getExtensionDependencies() {
 //        return String.join(";", getExtensionDependenciesSet());
 //    }
-    @Override
+    
     public String getBootRepositories() {
         return bootRepositories;
     }
 
-    @Override
+    
     public NutsBootWorkspaceFactory getBootWorkspaceFactory() {
         return bootWorkspaceFactory;
     }
@@ -255,17 +258,17 @@ public final class CoreNutsWorkspaceInitInformation implements NutsWorkspaceInit
         return this;
     }
 
-    @Override
+    
     public URL[] getClassWorldURLs() {
         return bootClassWorldURLs;
     }
 
-    @Override
+    
     public ClassLoader getClassWorldLoader() {
         return workspaceClassLoader;
     }
 
-    @Override
+    
     public String getName() {
         return name;
     }
@@ -274,7 +277,7 @@ public final class CoreNutsWorkspaceInitInformation implements NutsWorkspaceInit
         this.name = name;
     }
 
-    @Override
+    
     public String getUuid() {
         return uuid;
     }
@@ -283,12 +286,12 @@ public final class CoreNutsWorkspaceInitInformation implements NutsWorkspaceInit
         this.uuid = uuid;
     }
 
-    @Override
+    
     public String getApiId() {
         return NutsConstants.Ids.NUTS_API + "#" + apiVersion;
     }
 
-    //    @Override
+    //    
 //    public Set<String> getRuntimeDependenciesSet() {
 //        return runtimeDependenciesSet;
 //    }
@@ -297,7 +300,7 @@ public final class CoreNutsWorkspaceInitInformation implements NutsWorkspaceInit
 //        this.runtimeDependenciesSet = runtimeDependenciesSet == null ? null : new LinkedHashSet<>(runtimeDependenciesSet);
 //        return this;
 //    }
-//    @Override
+//    
 //    public Set<String> getExtensionDependenciesSet() {
 //        return extensionDependenciesSet;
 //    }
@@ -306,7 +309,7 @@ public final class CoreNutsWorkspaceInitInformation implements NutsWorkspaceInit
 //        this.extensionDependenciesSet = extensionDependenciesSet == null ? null : new LinkedHashSet<>(extensionDependenciesSet);
 //        return this;
 //    }
-    @Override
+    
     public String getJavaCommand() {
         return javaCommand;
     }
@@ -316,7 +319,7 @@ public final class CoreNutsWorkspaceInitInformation implements NutsWorkspaceInit
         return this;
     }
 
-    @Override
+    
     public String getJavaOptions() {
         return javaOptions;
     }
@@ -326,7 +329,7 @@ public final class CoreNutsWorkspaceInitInformation implements NutsWorkspaceInit
         return this;
     }
 
-    @Override
+    
     public NutsStoreLocationStrategy getStoreLocationStrategy() {
         return storeLocationStrategy;
     }
@@ -336,7 +339,7 @@ public final class CoreNutsWorkspaceInitInformation implements NutsWorkspaceInit
         return this;
     }
 
-    @Override
+    
     public NutsOsFamily getStoreLocationLayout() {
         return storeLocationLayout;
     }
@@ -346,7 +349,7 @@ public final class CoreNutsWorkspaceInitInformation implements NutsWorkspaceInit
         return this;
     }
 
-    @Override
+    
     public NutsStoreLocationStrategy getRepositoryStoreLocationStrategy() {
         return repositoryStoreLocationStrategy;
     }
@@ -356,7 +359,7 @@ public final class CoreNutsWorkspaceInitInformation implements NutsWorkspaceInit
         return this;
     }
 
-    @Override
+    
     public String getStoreLocation(NutsStoreLocation location) {
         Map<NutsStoreLocation, String> s = storeLocations;
         if (s != null) {
@@ -365,7 +368,7 @@ public final class CoreNutsWorkspaceInitInformation implements NutsWorkspaceInit
         return null;
     }
 
-    @Override
+    
     public Map<NutsStoreLocation, String> getStoreLocations() {
         return storeLocations;
     }
@@ -374,7 +377,7 @@ public final class CoreNutsWorkspaceInitInformation implements NutsWorkspaceInit
         this.storeLocations = storeLocations;
     }
 
-    @Override
+    
     public Map<NutsHomeLocation, String> getHomeLocations() {
         return homeLocations;
     }
@@ -383,12 +386,12 @@ public final class CoreNutsWorkspaceInitInformation implements NutsWorkspaceInit
         this.homeLocations = homeLocations;
     }
 
-    @Override
+    
     public boolean isGlobal() {
         return global;
     }
 
-    @Override
+    
     public Set<String> getExtensionsSet() {
         return extensionsSet;
     }
@@ -397,7 +400,7 @@ public final class CoreNutsWorkspaceInitInformation implements NutsWorkspaceInit
         this.extensionsSet = extensionsSet == null ? new LinkedHashSet<>() : new LinkedHashSet<>(extensionsSet);
     }
 
-    @Override
+    
     public NutsClassLoaderNode getRuntimeBootDependencyNode() {
         return runtimeBootDependencyNode;
     }
@@ -407,7 +410,7 @@ public final class CoreNutsWorkspaceInitInformation implements NutsWorkspaceInit
         return this;
     }
 
-    @Override
+    
     public NutsClassLoaderNode[] getExtensionBootDependencyNodes() {
         return extensionBootDependencyNodes;
     }
@@ -450,7 +453,7 @@ public final class CoreNutsWorkspaceInitInformation implements NutsWorkspaceInit
         return getStoreLocation(NutsStoreLocation.LIB) + File.separator + NutsConstants.Folders.ID;
     }
 
-    @Override
+    
     public String toString() {
         StringBuilder sb = new StringBuilder().append("NutsBootConfig{");
         if (!NutsBlankable.isBlank(apiVersion)) {

@@ -27,6 +27,7 @@ package net.thevpc.nuts;
 
 import net.thevpc.nuts.boot.NutsApiUtils;
 import net.thevpc.nuts.boot.NutsBootTerminal;
+import net.thevpc.nuts.spi.NutsBootOptions;
 
 import java.io.InputStream;
 import java.io.PrintStream;
@@ -43,15 +44,6 @@ import java.util.function.Supplier;
  * @app.category Config
  */
 public interface NutsWorkspaceOptionsBuilder extends Serializable {
-
-    /**
-     * create NutsWorkspaceOptionsBuilder instance for boot time.
-     *
-     * @return new NutsWorkspaceOptionsBuilder instance
-     */
-    static NutsWorkspaceOptionsBuilder of() {
-        return NutsApiUtils.createOptionsBuilder();
-    }
 
     /**
      * create NutsWorkspaceOptionsBuilder instance for the given session (shall not be null).
@@ -936,4 +928,6 @@ public interface NutsWorkspaceOptionsBuilder extends Serializable {
      * @since 0.8.3
      */
     NutsWorkspaceOptionsBuilder setDependencySolver(String dependencySolver);
+
+    NutsBootOptions toBootOptions();
 }

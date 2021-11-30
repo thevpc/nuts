@@ -44,10 +44,10 @@ import java.util.regex.Pattern;
  * @app.category Format
  * @since 0.5.5
  */
-final class PrivateNutsArgumentImpl implements NutsArgument {
+final class PrivateNutsArgumentImpl  {
 
-    public static final Pattern PATTERN_OPTION_EQ = Pattern.compile("^((?<optp>[-]+|[+]+)(?<flg>//|!|~)?)?(?<optk>[a-zA-Z-9][a-zA-Z-9_-]*)?(?<opts>=(?<optv>.*))?(?<optr>.*)$");
-    public static final Pattern PATTERN_OPTION_COL = Pattern.compile("^((?<optp>[-]+|[+]+)(?<flg>//|!|~)?)?(?<optk>[a-zA-Z-9][a-zA-Z-9_-]*)?(?<opts>:(?<optv>.*))?(?<optr>.*)$");
+    public static final Pattern PATTERN_OPTION_EQ = Pattern.compile("^((?<optp>[-]+|[+]+)(?<cmt>//)?(?<flg>[!~])?)?(?<optk>[a-zA-Z][a-zA-Z0-9_-]*)?(?<opts>[=](?<optv>.*))?(?<optr>.*)$");
+    public static final Pattern PATTERN_OPTION_COL = Pattern.compile("^((?<optp>[-]+|[+]+)(?<cmt>//)?(?<flg>[!~])?)?(?<optk>[a-zA-Z][a-zA-Z0-9_-]*)?(?<opts>[:](?<optv>.*))?(?<optr>.*)$");
     /**
      * equal character
      */
@@ -81,12 +81,13 @@ final class PrivateNutsArgumentImpl implements NutsArgument {
                 break;
             }
             default: {
-                currOptionsPattern = Pattern.compile("^((?<optp>[-]+|[+]+)(?<flg>//|!|~)?)?(?<optk>[a-zA-Z-9][a-zA-Z-9_-]*)?(?<opts>[" + eq + "](?<optv>.*))?(?<optr>.*)$");
+                currOptionsPattern = Pattern.compile("^((?<optp>[-]+|[+]+)(?<cmt>//)?(?<flg>[!~])?)?(?<optk>[a-zA-Z][a-zA-Z0-9_-]*)?(?<opts>[" + eq + "](?<optv>.*))?(?<optr>.*)$");
             }
         }
         Matcher matcher = currOptionsPattern.matcher(expression == null ? "" : expression);
         if (matcher.find()) {
             String optp = matcher.group("optp");
+            String cmt = matcher.group("cmt");
             String flg = matcher.group("flg");
             String optk = matcher.group("optk");
             String opts = matcher.group("opts");
@@ -94,31 +95,22 @@ final class PrivateNutsArgumentImpl implements NutsArgument {
             String optr = matcher.group("optr");
             if (optp != null && optp.length() > 0) {
                 option = true;
-                switch (flg == null ? "" : flg) {
-                    case "//": {
-                        active = false;
-                        enabled = true;
-                        break;
-                    }
-                    case "!":
-                    case "~": {
-                        active = true;
-                        enabled = false;
-                        break;
-                    }
-                    default: {
-                        active = true;
-                        enabled = true;
-                    }
-                }
+                active = !(cmt!=null && cmt.length()>0);
+                enabled = !(flg!=null && flg.length()>0);
                 optionPrefix = optp;
-                optionName = (optk == null ? "" : optk);
-                if (opts != null && opts.length() > 0) {
+                if(optr!=null && optr.length()>0){
+                    optionName=(optk == null ? "" : optk)+optr;
                     key = optp + optionName;
-                    value = optv + optr;
-                } else {
-                    key = optp + optionName + optr;
                     value = null;
+                }else {
+                    optionName = (optk == null ? "" : optk);
+                    if (opts != null && opts.length() > 0) {
+                        key = optp + optionName;
+                        value = optv + optr;
+                    } else {
+                        key = optp + optionName;
+                        value = null;
+                    }
                 }
             } else {
                 option = false;
@@ -130,7 +122,7 @@ final class PrivateNutsArgumentImpl implements NutsArgument {
                     key = expression == null ? null : (optk == null ? "" : optk);
                     value = optv;
                 } else {
-                    key = (optk == null ? "" : optk) + optr;
+                    key = expression == null ? null : ((optk == null ? "" : optk) + optr);
                     value = null;
                 }
             }
@@ -150,79 +142,79 @@ final class PrivateNutsArgumentImpl implements NutsArgument {
      *
      * @return true if expression starts with '-' or '+'
      */
-    @Override
+    
     public boolean isOption() {
         return option;
     }
 
-    @Override
+    
     public boolean isNonOption() {
         return !isOption();
     }
 
-    @Override
+    
     public String getString() {
         return expression;
     }
 
-    @Override
+    
     public boolean isNegated() {
         return !enabled;
     }
 
-    @Override
+    
     public boolean isEnabled() {
         return enabled;
     }
 
-    @Override
+    
     public boolean isActive() {
         return active;
     }
 
-    @Override
+    
     public boolean isInactive() {
         return !active;
     }
 
-    @Override
-    public NutsArgument required() {
+    
+    public PrivateNutsArgumentImpl required() {
         if (expression == null) {
             throw new NoSuchElementException("missing value");
         }
         return this;
     }
 
-    @Override
+    
     public boolean isKeyValue() {
-        return expression != null && expression.indexOf(eq) >= 0;
+        return value != null;
     }
 
-    @Override
+    
     public NutsVal getOptionPrefix() {
         return new NutsBootStrValImpl(optionPrefix);
     }
 
-    @Override
+    
     public String getSeparator() {
         return String.valueOf(eq);
     }
 
-    @Override
+    
     public NutsVal getOptionName() {
         return new NutsBootStrValImpl(optionName);
     }
 
-    @Override
+    
     public NutsVal getValue() {
         return new NutsBootStrValImpl(value) {
 
-            @Override
+            
             public boolean getBoolean() {
                 return getBoolean(true, false);
             }
 
-            @Override
+            
             public Boolean getBoolean(Boolean emptyValue, Boolean errorValue) {
                 Boolean b = NutsUtilStrings.parseBoolean(this.getString(), emptyValue, errorValue);
                 if (b != null && isNegated()) {
@@ -233,12 +225,12 @@ final class PrivateNutsArgumentImpl implements NutsArgument {
         };
     }
 
-    @Override
+    
     public NutsVal getKey() {
         return new NutsBootStrValImpl((key != null) ? key : expression);
     }
 
-    @Override
+    
     public NutsVal getAll() {
         return new NutsBootStrValImpl(expression);
     }
@@ -251,7 +243,7 @@ final class PrivateNutsArgumentImpl implements NutsArgument {
         return expression == null || expression.trim().isEmpty();
     }
 
-    @Override
+    
     public String toString() {
         return String.valueOf(expression);
     }

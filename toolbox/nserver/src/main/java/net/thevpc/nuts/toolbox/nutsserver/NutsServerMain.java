@@ -1,6 +1,7 @@
 package net.thevpc.nuts.toolbox.nutsserver;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.spi.NutsBootOptions;
 import net.thevpc.nuts.toolbox.nutsserver.bundled._IOUtils;
 import net.thevpc.nuts.toolbox.nutsserver.http.NutsHttpServerConfig;
 
@@ -169,11 +170,10 @@ public class NutsServerMain implements NutsApplication {
                         nutsSession = server.workspaces.get(wsContext);
                         if (nutsSession == null) {
                             nutsSession = Nuts.openWorkspace(
-                                    NutsWorkspaceOptionsBuilder.of()
+                                    new NutsBootOptions()
                                             .setWorkspace(wsLocation)
                                             .setOpenMode(NutsOpenMode.OPEN_OR_ERROR)
                                             .setReadOnly(server.readOnly)
-                                            .build()
                             );
                             server.workspaces.put(wsContext, nutsSession);
                         }

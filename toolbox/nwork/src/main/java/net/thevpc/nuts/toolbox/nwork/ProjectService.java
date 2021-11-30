@@ -1,6 +1,7 @@
 package net.thevpc.nuts.toolbox.nwork;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.spi.NutsBootOptions;
 import net.thevpc.nuts.toolbox.nwork.config.ProjectConfig;
 import net.thevpc.nuts.toolbox.nwork.config.RepositoryAddress;
 
@@ -8,7 +9,6 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.List;
 
 public class ProjectService {
@@ -211,11 +211,10 @@ public class ProjectService {
                 NutsSession s = null;
                 if (a.getNutsWorkspace() != null && a.getNutsWorkspace().trim().length() > 0 && !a.getNutsWorkspace().equals(session.locations().getWorkspaceLocation().toString())) {
                     s = Nuts.openWorkspace(
-                            NutsWorkspaceOptionsBuilder.of()
+                            new NutsBootOptions()
                                     .setOpenMode(NutsOpenMode.OPEN_OR_ERROR)
                                     .setReadOnly(true)
                                     .setWorkspace(a.getNutsWorkspace())
-                                    .build()
                     );
                     s.copyFrom(session);
                 } else {
@@ -267,7 +266,7 @@ public class ProjectService {
                                             .setOpenMode(NutsOpenMode.OPEN_OR_ERROR)
                                             .setReadOnly(true)
                                             .setWorkspace(a.getNutsWorkspace())
-                                            .build()
+                                            .toBootOptions()
                             );
                             s.copyFrom(session);
                         } else {

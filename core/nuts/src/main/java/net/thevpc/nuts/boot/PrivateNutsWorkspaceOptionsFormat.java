@@ -24,6 +24,8 @@
 package net.thevpc.nuts.boot;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.spi.NutsBootVersion;
+import net.thevpc.nuts.spi.NutsBootOptions;
 
 import java.util.*;
 
@@ -31,10 +33,10 @@ import java.util.*;
  * @author thevpc
  * @app.category Internal
  */
-final class PrivateNutsWorkspaceOptionsFormat implements NutsWorkspaceOptionsFormat {
+final class PrivateNutsWorkspaceOptionsFormat {
 
     private static final long serialVersionUID = 1;
-    private final NutsWorkspaceOptions options;
+    private final NutsBootOptions options;
     private boolean exportedOptions;
     private boolean runtimeOptions;
     private boolean createOptions;
@@ -44,57 +46,57 @@ final class PrivateNutsWorkspaceOptionsFormat implements NutsWorkspaceOptionsFor
     private String apiVersion;
     private NutsBootVersion apiVersionObj;
 
-    public PrivateNutsWorkspaceOptionsFormat(NutsWorkspaceOptions options) {
+    public PrivateNutsWorkspaceOptionsFormat(NutsBootOptions options) {
         this.options = options;
     }
 
-    @Override
+    
     public boolean isInit() {
         return createOptions;
     }
 
-    @Override
-    public NutsWorkspaceOptionsFormat setInit(boolean e) {
+    
+    public PrivateNutsWorkspaceOptionsFormat setInit(boolean e) {
         this.createOptions = true;
         return this;
     }
 
-    @Override
+    
     public boolean isRuntime() {
         return runtimeOptions;
     }
 
-    @Override
-    public NutsWorkspaceOptionsFormat setRuntime(boolean e) {
+    
+    public PrivateNutsWorkspaceOptionsFormat setRuntime(boolean e) {
         this.runtimeOptions = true;
         return this;
     }
 
-    @Override
+    
     public boolean isExported() {
         return exportedOptions;
     }
 
-    @Override
-    public NutsWorkspaceOptionsFormat setExported(boolean e) {
+    
+    public PrivateNutsWorkspaceOptionsFormat setExported(boolean e) {
         this.exportedOptions = true;
         return this;
     }
 
-    @Override
+    
     public String getApiVersion() {
         return apiVersion;
     }
 
-    @Override
-    public NutsWorkspaceOptionsFormat setApiVersion(String apiVersion) {
+    
+    public PrivateNutsWorkspaceOptionsFormat setApiVersion(String apiVersion) {
         this.apiVersion = apiVersion;
         this.apiVersionObj = null;
         return this;
     }
 
-    @Override
-    public NutsCommandLine getBootCommandLine() {
+    
+    public PrivateNutsCommandLine getBootCommandLine() {
         NutsBootVersion apiVersionObj = getApiVersionObj();
         List<String> arguments = new ArrayList<>();
         if (exportedOptions || isImplicitAll()) {
@@ -267,8 +269,8 @@ final class PrivateNutsWorkspaceOptionsFormat implements NutsWorkspaceOptionsFor
         return new PrivateNutsCommandLine(arguments.toArray(new String[0]));
     }
 
-    @Override
-    public NutsWorkspaceOptionsFormat setCompact(boolean compact) {
+    
+    public PrivateNutsWorkspaceOptionsFormat setCompact(boolean compact) {
         if (compact) {
             shortOptions = true;
             singleArgOptions = true;
@@ -575,12 +577,12 @@ final class PrivateNutsWorkspaceOptionsFormat implements NutsWorkspaceOptionsFor
         }
     }
 
-    @Override
+    
     public int hashCode() {
         return Objects.hash(exportedOptions, runtimeOptions, createOptions, shortOptions, singleArgOptions, omitDefaults, options);
     }
 
-    @Override
+    
     public boolean equals(Object o) {
         if (this == o) {
             return true;
@@ -600,7 +602,7 @@ final class PrivateNutsWorkspaceOptionsFormat implements NutsWorkspaceOptionsFor
                 ;
     }
 
-    @Override
+    
     public String toString() {
         return getBootCommandLine().toString();
     }

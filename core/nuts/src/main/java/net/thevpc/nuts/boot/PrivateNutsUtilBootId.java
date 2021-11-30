@@ -27,7 +27,9 @@
 package net.thevpc.nuts.boot;
 
 import net.thevpc.nuts.NutsOsFamily;
-import net.thevpc.nuts.NutsWorkspaceOptions;
+import net.thevpc.nuts.spi.NutsBootId;
+import net.thevpc.nuts.spi.NutsBootVersion;
+import net.thevpc.nuts.spi.NutsBootOptions;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -76,7 +78,7 @@ class PrivateNutsUtilBootId {
         return boots.toArray(new NutsBootId[0]);
     }
 
-    static boolean isAcceptDependency(NutsBootId s, NutsWorkspaceOptions woptions) {
+    static boolean isAcceptDependency(NutsBootId s, NutsBootOptions woptions) {
         boolean bootOptionals = PrivateNutsUtilWorkspaceOptions.isBootOptional(woptions);
 
         //by default ignore optionals

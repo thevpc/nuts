@@ -136,8 +136,8 @@ public class CommonRootsHelper {
             g = "";
         }
         g = g.trim();
-        if (g.isEmpty()) {
-            return new HashSet<>(Collections.singletonList(NutsPath.of(g.replace('.', '/') + "/*", session)));
+        if (g.isEmpty() || g.equals("*")) {
+            return new HashSet<>(Collections.singletonList(NutsPath.of("*", session)));
         }
         int i = g.indexOf("*");
         if (i >= 0) {
@@ -146,7 +146,16 @@ public class CommonRootsHelper {
             if (j >= 0) {
                 g = g.substring(0, j);
             }
-            return new HashSet<>(Collections.singletonList(NutsPath.of(g.replace('.', '/'), session).resolve("*")));
+            if(g.isEmpty()){
+                g="*";
+            }else{
+                g=g.replace('.', '/');
+                if(!g.endsWith("/")){
+                    g+="/";
+                }
+                g+="*";
+            }
+            return new HashSet<>(Collections.singletonList(NutsPath.of(g, session)));
         }
         if (artifactId.length() > 0) {
             if (!artifactId.contains("*")) {

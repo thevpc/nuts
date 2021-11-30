@@ -34,6 +34,7 @@ import net.thevpc.nuts.runtime.standalone.text.stylethemes.NutsTextFormatPropert
 import net.thevpc.nuts.runtime.standalone.text.stylethemes.NutsTextFormatThemeWrapper;
 import net.thevpc.nuts.runtime.standalone.format.xml.DefaultXmlNutsElementStreamFormat;
 import net.thevpc.nuts.runtime.standalone.format.yaml.SimpleYaml;
+import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
 import net.thevpc.nuts.spi.NutsDefaultSupportLevelContext;
 
@@ -49,7 +50,6 @@ import java.util.Map;
  */
 public class DefaultNutsTextManagerModel {
 
-    private final NutsWorkspaceInitInformation info;
     private final NutsWorkspace ws;
     private final Map<String, String> kindToHighlighter = new HashMap<>();
     private final Map<String, NutsCodeHighlighter> highlighters = new HashMap<>();
@@ -62,9 +62,8 @@ public class DefaultNutsTextManagerModel {
     private NutsElementStreamFormat yamlMan;
     private NutsElementStreamFormat xmlMan;
 
-    public DefaultNutsTextManagerModel(NutsWorkspace ws, NutsWorkspaceInitInformation info) {
+    public DefaultNutsTextManagerModel(NutsWorkspace ws) {
         this.ws = ws;
-        this.info = info;
         NutsSession session = NutsWorkspaceUtils.defaultSession(ws);
         List<NutsCodeHighlighter> all = session.extensions().createAllSupported(NutsCodeHighlighter.class, null);
         for (NutsCodeHighlighter h : all) {
@@ -124,7 +123,8 @@ public class DefaultNutsTextManagerModel {
     public NutsTextFormatTheme getTheme(NutsSession session) {
         if (styleTheme == null) {
             if (styleThemeName == null) {
-                styleThemeName = info.getOptions().getTheme();
+                NutsWorkspaceOptions bootOptions = NutsWorkspaceExt.of(this.ws).getModel().bootModel.getBootOptions();
+                styleThemeName = bootOptions.getTheme();
             }
             styleTheme = createTheme(styleThemeName, session);
         }

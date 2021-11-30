@@ -424,7 +424,7 @@ public class JavaExecutorComponent implements NutsExecutorComponent {
         public Object runWithContext() throws Throwable {
             if (cls.getName().equals("net.thevpc.nuts.Nuts")) {
                 NutsWorkspace workspace = session.getWorkspace();
-                NutsWorkspaceOptionsBuilder o = NutsWorkspaceOptionsBuilder.of().parseArguments(
+                NutsWorkspaceOptionsBuilder o = NutsWorkspaceOptionsBuilder.of(session).parseArguments(
                         joptions.getApp().toArray(new String[0])
                 );
                 String[] appArgs;

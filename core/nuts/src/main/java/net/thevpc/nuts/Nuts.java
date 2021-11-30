@@ -23,10 +23,8 @@
  */
 package net.thevpc.nuts;
 
-import net.thevpc.nuts.boot.NutsApiUtils;
-import net.thevpc.nuts.boot.NutsBootTerminal;
-import net.thevpc.nuts.boot.NutsBootWorkspace;
-import net.thevpc.nuts.boot.PrivateNutsLog;
+import net.thevpc.nuts.boot.*;
+import net.thevpc.nuts.spi.NutsBootOptions;
 
 import java.util.logging.Level;
 
@@ -89,14 +87,16 @@ public final class Nuts {
             System.exit(0);
         } catch (Exception ex) {
             NutsSession session = NutsExceptionBase.detectSession(ex);
-            NutsWorkspaceOptionsBuilder bo = null;
+            NutsBootOptions bo = null;
             if (session != null) {
-                bo = session.boot().getBootOptions().builder();
+                bo = session.boot().getBootOptions().builder().toBootOptions();
                 if (!session.env().isGraphicalDesktopEnvironment()) {
                     bo.setGui(false);
                 }
             } else {
-                bo = NutsWorkspaceOptionsBuilder.of().parseArguments(args);
+                PrivateNutsLog log = new PrivateNutsLog(null);
+                bo = new NutsBootOptions(log);
+                NutsApiUtils.parseNutsArguments(args,bo,log);
                 try {
                     if (NutsApiUtils.isGraphicalDesktopEnvironment()) {
                         bo.setGui(false);
@@ -156,15 +156,17 @@ public final class Nuts {
                 NutsUtilStrings.trim(System.getProperty("nuts.boot.args"))
                         + " " + NutsUtilStrings.trim(System.getProperty("nuts.args"))
         );
-        NutsWorkspaceOptionsBuilder options = NutsWorkspaceOptionsBuilder.of();
+        PrivateNutsLog log = new PrivateNutsLog(null);
+        NutsBootOptions options = new NutsBootOptions(log);
         if (!NutsBlankable.isBlank(nutsWorkspaceOptions)) {
-            options.parseCommandLine(nutsWorkspaceOptions);
+            String[] cml = NutsApiUtils.parseCommandLineArray(nutsWorkspaceOptions);
+            NutsApiUtils.parseNutsArguments(cml, options, log);
         }
         options.setApplicationArguments(args);
         options.setInherited(true);
         options.setCreationTime(startTime);
         options.setBootTerminal(term);
-        boot = new NutsBootWorkspace(options.build());
+        boot = new NutsBootWorkspace(options);
         return boot.openWorkspace();// openWorkspace(boot.getOptions());
     }
 
@@ -195,7 +197,7 @@ public final class Nuts {
      * @return new NutsSession instance
      */
     public static NutsSession openWorkspace() {
-        return openWorkspace((NutsWorkspaceOptions) null);
+        return openWorkspace((NutsBootOptions) null);
     }
 
     /**
@@ -204,7 +206,7 @@ public final class Nuts {
      * @param options boot options
      * @return new NutsSession instance
      */
-    public static NutsSession openWorkspace(NutsWorkspaceOptions options) {
+    public static NutsSession openWorkspace(NutsBootOptions options) {
         return new NutsBootWorkspace(options).openWorkspace();
     }
 

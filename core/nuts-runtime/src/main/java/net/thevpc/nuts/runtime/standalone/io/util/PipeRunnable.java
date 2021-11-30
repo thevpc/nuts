@@ -31,9 +31,9 @@ import net.thevpc.nuts.NutsSession;
 import java.io.OutputStream;
 import java.util.logging.Level;
 
-public class PipeThread implements Runnable, StopMonitor {
+public class PipeRunnable implements Runnable, StopMonitor {
 
-//    private static final Set<PipeThread> running = new LinkedHashSet<>();
+//    private static final Set<PipeRunnable> running = new LinkedHashSet<>();
     private final NonBlockingInputStream in;
     private final OutputStream out;
     private final Object lock = new Object();
@@ -47,7 +47,7 @@ public class PipeThread implements Runnable, StopMonitor {
     private final boolean renameThread;
     private byte[] bytesBuffer = new byte[10240];
 
-    public PipeThread(String name, String cmd, String desc, NonBlockingInputStream in, OutputStream out, boolean renameThread, NutsSession session) {
+    public PipeRunnable(String name, String cmd, String desc, NonBlockingInputStream in, OutputStream out, boolean renameThread, NutsSession session) {
         this.name = name;
         this.renameThread = renameThread;
         this.in = in;
@@ -57,19 +57,6 @@ public class PipeThread implements Runnable, StopMonitor {
         this.desc = desc;
     }
 
-//    public static void dump() {
-//        synchronized (running) {
-//            int index = 1;
-//            int max = running.size();
-//            if(max==0){
-//                System.out.println(">>>> NO_PIPE_THREADS_FOUND");
-//            }
-//            for (PipeThread pipeThread : running) {
-//                System.out.println(">>>> "+index + "/" + max + " " + pipeThread.desc + " : " + pipeThread.getCmd());
-//                index++;
-//            }
-//        }
-//    }
     public String getCmd() {
         return cmd;
     }
@@ -85,24 +72,24 @@ public class PipeThread implements Runnable, StopMonitor {
 
     public void requestStop() {
         requestStop = true;
-        if (!stopped) {
-            synchronized (lock) {
-                try {
-                    lock.wait();
-                } catch (InterruptedException e) {
-                    NutsLoggerOp.of(PipeThread.class, session)
-                            .error(e)
-                            .level(Level.FINEST)
-                            .verb(NutsLogVerb.WARNING)
-                            .log(NutsMessage.jstyle("lock-wait interrupted"));
-                }
-            }
-        }
+//        if (!stopped) {
+//            synchronized (lock) {
+//                try {
+//                    lock.wait();
+//                } catch (InterruptedException e) {
+//                    NutsLoggerOp.of(PipeRunnable.class, session)
+//                            .error(e)
+//                            .level(Level.FINEST)
+//                            .verb(NutsLogVerb.WARNING)
+//                            .log(NutsMessage.jstyle("lock-wait interrupted"));
+//                }
+//            }
+//        }
     }
 
     public boolean runOnce() {
         if (this.shouldStop()) {
-            markeAsEffectivelyStopped();
+            markAsEffectivelyStopped();
             return false;
         }
         if (in.hasMoreBytes()) {
@@ -115,26 +102,26 @@ public class PipeThread implements Runnable, StopMonitor {
                 }
                 return true;
             } catch (Exception ex) {
-                NutsLoggerOp.of(PipeThread.class, session)
+                NutsLoggerOp.of(PipeRunnable.class, session)
                         .error(ex)
                         .level(Level.FINEST)
                         .verb(NutsLogVerb.WARNING)
                         .log(NutsMessage.jstyle("pipe-thread exits with error: {0}", ex));
-                markeAsEffectivelyStopped();
+                markAsEffectivelyStopped();
                 return false;
             }
         } else {
-            markeAsEffectivelyStopped();
+            markAsEffectivelyStopped();
             return false;
         }
     }
 
-    private void markeAsEffectivelyStopped() {
+    private void markAsEffectivelyStopped() {
         if (!stopped) {
             stopped = true;
-            synchronized (lock) {
-                lock.notify();
-            }
+//            synchronized (lock) {
+//                lock.notify();
+//            }
         }
     }
 
@@ -147,18 +134,12 @@ public class PipeThread implements Runnable, StopMonitor {
             oldThreadName = currentThread.getName();
             currentThread.setName(name);
         }
-//        synchronized (running) {
-//            running.add(this);
-//        }
         try {
             while (runOnce()) {
                 //
             }
         } finally {
-            markeAsEffectivelyStopped();
-//            synchronized (running) {
-//                running.remove(this);
-//            }
+            markAsEffectivelyStopped();
             if (renameThread && currentThread != null) {
                 currentThread.setName(oldThreadName);
             }

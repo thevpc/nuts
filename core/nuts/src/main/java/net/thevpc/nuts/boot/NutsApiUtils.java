@@ -27,8 +27,9 @@
 package net.thevpc.nuts.boot;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.spi.NutsRepositoryDB;
-import net.thevpc.nuts.spi.NutsRepositoryURL;
+import net.thevpc.nuts.spi.NutsBootId;
+import net.thevpc.nuts.spi.NutsBootVersion;
+import net.thevpc.nuts.spi.NutsBootOptions;
 
 import java.io.PrintStream;
 import java.lang.reflect.Array;
@@ -36,8 +37,6 @@ import java.net.URL;
 import java.util.Arrays;
 import java.util.function.Supplier;
 import java.util.logging.Level;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * this class implements several utility methods to be used by Nuts API interfaces
@@ -152,28 +151,6 @@ public class NutsApiUtils {
         return PrivateNutsUtilClassLoader.findClassLoaderJar(id, urls);
     }
 
-
-    public static NutsWorkspaceOptionsBuilder createOptionsBuilder() {
-        PrivateNutsLog lvl = new PrivateNutsLog(null);
-        PrivateBootWorkspaceOptions o = new PrivateBootWorkspaceOptions(lvl);
-        lvl.setOptions(o);
-        return o;
-    }
-
-//    /**
-//     * creates a string key combining layout and location.
-//     * le key has the form of a concatenated layout and location ids separated by ':'
-//     * where null layout is replaced by 'system' keyword.
-//     * used in {@link NutsWorkspaceOptions#getHomeLocations()}.
-//     *
-//     * @param storeLocationLayout layout
-//     * @param location            location
-//     * @return combination of layout and location separated by ':'.
-//     */
-//    public static String createHomeLocationKey(NutsOsFamily storeLocationLayout, NutsStoreLocation location) {
-//        return (storeLocationLayout == null ? "system" : storeLocationLayout.id()) + ":" + (location == null ? "system" : location.id());
-//    }
-
     public static <T extends NutsEnum> void checkNonNullEnum(T objectValue, String stringValue, Class<T> enumType, NutsSession session) {
         if (objectValue == null) {
             if (!NutsBlankable.isBlank(stringValue)) {
@@ -219,5 +196,13 @@ public class NutsApiUtils {
 
     public static <T> T createSessionCachedType(Class<T> t, NutsSession session, Supplier<T> sup) {
         return createSessionCachedType("default", t, session, sup);
+    }
+
+    public static String defaultToString(NutsBootOptions options) {
+        return new PrivateNutsWorkspaceOptionsFormat(options).toString();
+    }
+
+    public static void parseNutsArguments(String[] args, NutsBootOptions nutsBootOptions, PrivateNutsLog log) {
+        PrivateNutsArgumentsParser.parseNutsArguments(args, nutsBootOptions, log);
     }
 }

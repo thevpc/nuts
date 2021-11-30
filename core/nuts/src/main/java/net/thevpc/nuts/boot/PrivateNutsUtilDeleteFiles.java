@@ -27,6 +27,7 @@
 package net.thevpc.nuts.boot;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.spi.NutsBootOptions;
 
 import java.io.File;
 import java.io.IOException;
@@ -44,7 +45,7 @@ class PrivateNutsUtilDeleteFiles {
     PrivateNutsUtilDeleteFiles() {
     }
 
-    static String getStoreLocationPath(PrivateNutsWorkspaceInitInformation workspaceInformation, NutsStoreLocation value) {
+    static String getStoreLocationPath(NutsBootOptions workspaceInformation, NutsStoreLocation value) {
         Map<NutsStoreLocation, String> storeLocations = workspaceInformation.getStoreLocations();
         if (storeLocations != null) {
             return storeLocations.get(value);
@@ -56,7 +57,7 @@ class PrivateNutsUtilDeleteFiles {
      * @param includeRoot true if include root
      * @param locations   of type NutsStoreLocation, Path of File
      */
-    static long deleteStoreLocations(PrivateNutsWorkspaceInitInformation lastWorkspaceInformation, NutsWorkspaceOptions o, boolean includeRoot, PrivateNutsLog LOG, Object[] locations) {
+    static long deleteStoreLocations(NutsBootOptions lastWorkspaceInformation, NutsBootOptions o, boolean includeRoot, PrivateNutsLog LOG, Object[] locations) {
         if (lastWorkspaceInformation == null) {
             return 0;
         }
@@ -69,7 +70,7 @@ class PrivateNutsUtilDeleteFiles {
                             + "You need to provide default response (-y|-n) for resetting/recovering workspace. "
                             + "You was asked to confirm deleting folders as part as recover/reset option."), 243);
         }
-        LOG.log(Level.FINE, NutsLogVerb.WARNING, NutsMessage.jstyle("delete workspace location(s) at : {0}", lastWorkspaceInformation.getWorkspaceLocation()));
+        LOG.log(Level.FINE, NutsLogVerb.WARNING, NutsMessage.jstyle("delete workspace location(s) at : {0}", lastWorkspaceInformation.getWorkspace()));
         boolean force = false;
         switch (confirm) {
             case ASK: {
@@ -88,7 +89,7 @@ class PrivateNutsUtilDeleteFiles {
         NutsWorkspaceConfigManager conf = null;
         List<File> folders = new ArrayList<>();
         if (includeRoot) {
-            folders.add(new File(lastWorkspaceInformation.getWorkspaceLocation()));
+            folders.add(new File(lastWorkspaceInformation.getWorkspace()));
         }
         for (Object ovalue : locations) {
             if (ovalue != null) {
@@ -107,18 +108,18 @@ class PrivateNutsUtilDeleteFiles {
                 }
             }
         }
-        NutsWorkspaceOptionsBuilder optionsCopy = o.builder();
+        NutsBootOptions optionsCopy = o.copy();
         if (optionsCopy.isBot() || !PrivateNutsUtilGui.isGraphicalDesktopEnvironment()) {
             optionsCopy.setGui(false);
         }
-        return deleteAndConfirmAll(folders.toArray(new File[0]), force, DELETE_FOLDERS_HEADER, null, LOG, optionsCopy.build());
+        return deleteAndConfirmAll(folders.toArray(new File[0]), force, DELETE_FOLDERS_HEADER, null, LOG, optionsCopy);
     }
 
-    public static long deleteAndConfirmAll(File[] folders, boolean force, String header, NutsSession session, PrivateNutsLog LOG, NutsWorkspaceOptions woptions) {
+    public static long deleteAndConfirmAll(File[] folders, boolean force, String header, NutsSession session, PrivateNutsLog LOG, NutsBootOptions woptions) {
         return deleteAndConfirmAll(folders, force, new PrivateNutsDeleteFilesContextImpl(), header, session, LOG, woptions);
     }
 
-    private static long deleteAndConfirmAll(File[] folders, boolean force, PrivateNutsDeleteFilesContext refForceAll, String header, NutsSession session, PrivateNutsLog LOG, NutsWorkspaceOptions woptions) {
+    private static long deleteAndConfirmAll(File[] folders, boolean force, PrivateNutsDeleteFilesContext refForceAll, String header, NutsSession session, PrivateNutsLog LOG, NutsBootOptions woptions) {
         long count = 0;
         boolean headerWritten = false;
         if (folders != null) {
@@ -145,7 +146,7 @@ class PrivateNutsUtilDeleteFiles {
         return count;
     }
 
-    private static long deleteAndConfirm(File directory, boolean force, PrivateNutsDeleteFilesContext refForceAll, NutsSession session, PrivateNutsLog log, NutsWorkspaceOptions woptions) {
+    private static long deleteAndConfirm(File directory, boolean force, PrivateNutsDeleteFilesContext refForceAll, NutsSession session, PrivateNutsLog log, NutsBootOptions woptions) {
         if (directory.exists()) {
             if (!force && !refForceAll.isForce() && refForceAll.accept(directory)) {
                 String line = null;

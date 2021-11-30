@@ -30,7 +30,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.boot.NutsBootDescriptor;
+import net.thevpc.nuts.spi.NutsBootDescriptor;
 import net.thevpc.nuts.runtime.standalone.workspace.config.DefaultNutsWorkspaceCurrentConfig;
 
 /**

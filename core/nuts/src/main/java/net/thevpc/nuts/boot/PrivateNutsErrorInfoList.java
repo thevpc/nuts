@@ -26,6 +26,8 @@
  */
 package net.thevpc.nuts.boot;
 
+import net.thevpc.nuts.spi.NutsBootId;
+
 import java.util.ArrayList;
 import java.util.List;
 

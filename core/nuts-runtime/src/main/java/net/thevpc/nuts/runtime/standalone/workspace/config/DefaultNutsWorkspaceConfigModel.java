@@ -81,8 +81,6 @@ public class DefaultNutsWorkspaceConfigModel {
     private final NutsWorkspaceStoredConfig storedConfig = new NutsWorkspaceStoredConfigImpl();
     private final ClassLoader bootClassLoader;
     private final URL[] bootClassWorldURLs;
-    private final NutsWorkspaceOptions options;
-    private final NutsWorkspaceInitInformation initOptions;
     private final Function<String, String> pathExpansionConverter;
     private final WorkspaceSystemTerminalAdapter workspaceSystemTerminalAdapter;
     private final List<NutsPathFactory> pathFactories = new ArrayList<>();
@@ -116,10 +114,9 @@ public class DefaultNutsWorkspaceConfigModel {
     private NutsPrintStream stdout;
     private NutsPrintStream stderr;
 
-    public DefaultNutsWorkspaceConfigModel(final DefaultNutsWorkspace ws, NutsWorkspaceInitInformation initOptions) {
+    public DefaultNutsWorkspaceConfigModel(final DefaultNutsWorkspace ws) {
         this.ws = ws;
-        this.initOptions = initOptions;
-        this.options = this.initOptions.getOptions();
+        CoreNutsWorkspaceInitInformation initOptions = NutsWorkspaceExt.of(ws).getModel().bootModel.getInitOptions();
         this.bootClassLoader = initOptions.getClassWorldLoader() == null ? Thread.currentThread().getContextClassLoader() : initOptions.getClassWorldLoader();
         this.bootClassWorldURLs = initOptions.getClassWorldURLs() == null ? null : Arrays.copyOf(initOptions.getClassWorldURLs(), initOptions.getClassWorldURLs().length);
         workspaceSystemTerminalAdapter = new WorkspaceSystemTerminalAdapter(ws);
@@ -173,7 +170,8 @@ public class DefaultNutsWorkspaceConfigModel {
     }
 
     public boolean isReadOnly() {
-        return options.isReadOnly();
+        CoreNutsWorkspaceInitInformation initOptions = NutsWorkspaceExt.of(ws).getModel().bootModel.getInitOptions();
+        return initOptions.getOptions().isReadOnly();
     }
 
     public boolean save(boolean force, NutsSession session) {
@@ -389,7 +387,8 @@ public class DefaultNutsWorkspaceConfigModel {
     }
 
     public NutsWorkspaceOptions getOptions(NutsSession session) {
-        return new ReadOnlyNutsWorkspaceOptions(options, session);
+        CoreNutsWorkspaceInitInformation initOptions = NutsWorkspaceExt.of(ws).getModel().bootModel.getInitOptions();
+        return new ReadOnlyNutsWorkspaceOptions(initOptions.getOptions(), session);
     }
 
     public NutsId createContentFaceId(NutsId id, NutsDescriptor desc) {
@@ -671,6 +670,7 @@ public class DefaultNutsWorkspaceConfigModel {
                 return false;
             }
             DefaultNutsWorkspaceCurrentConfig cconfig = new DefaultNutsWorkspaceCurrentConfig(ws).merge(_config, session);
+            CoreNutsWorkspaceInitInformation initOptions = NutsWorkspaceExt.of(ws).getModel().bootModel.getInitOptions();
             if (cconfig.getApiId() == null) {
                 cconfig.setApiId(NutsId.of(NutsConstants.Ids.NUTS_API + "#" + initOptions.getApiVersion(), session));
             }
@@ -701,7 +701,7 @@ public class DefaultNutsWorkspaceConfigModel {
             }
             NutsWorkspaceConfigSecurity sconfig = compat.parseSecurityConfig(session);
             NutsWorkspaceConfigMain mconfig = compat.parseMainConfig(session);
-            if (options.isRecover() || options.isReset()) {
+            if (initOptions.getOptions().isRecover() || initOptions.getOptions().isReset()) {
                 //always reload boot resolved versions!
                 cconfig.setApiId(NutsId.of(NutsConstants.Ids.NUTS_API + "#" + initOptions.getApiVersion(), session));
                 cconfig.setRuntimeId(initOptions.getRuntimeId() == null ? null : initOptions.getRuntimeId().toString(), session);
@@ -1391,7 +1391,8 @@ public class DefaultNutsWorkspaceConfigModel {
         if (parsedBootRepositoriesList != null) {
             return parsedBootRepositoriesList;
         }
-        parsedBootRepositoriesList = NutsRepositorySelectorList.ofAll(options.getRepositories(), DefaultNutsRepositoryDB.INSTANCE,session);
+        CoreNutsWorkspaceInitInformation initOptions = NutsWorkspaceExt.of(ws).getModel().bootModel.getInitOptions();
+        parsedBootRepositoriesList = NutsRepositorySelectorList.ofAll(initOptions.getOptions().getRepositories(), DefaultNutsRepositoryDB.INSTANCE,session);
         return parsedBootRepositoriesList;
     }
 

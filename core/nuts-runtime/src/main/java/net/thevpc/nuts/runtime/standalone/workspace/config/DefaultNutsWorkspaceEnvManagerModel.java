@@ -60,7 +60,7 @@ public class DefaultNutsWorkspaceEnvManagerModel {
     private NutsArchFamily archFamily = NutsArchFamily.getCurrent();
     private final Map<NutsPlatformType, List<NutsPlatformLocation>> configPlatforms = new LinkedHashMap<>();
 
-    public DefaultNutsWorkspaceEnvManagerModel(NutsWorkspace ws, NutsWorkspaceInitInformation info, NutsSession session) {
+    public DefaultNutsWorkspaceEnvManagerModel(NutsWorkspace ws, NutsSession session) {
         this.workspace = ws;
         userProperties = new DefaultObservableMap<>();
 //        String[] properties = info.getOptions().getProperties();

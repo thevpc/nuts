@@ -82,8 +82,8 @@ public class Test14_CommandLineTest {
                 false,
                 "",
                 null,
-                "",
-                "",
+                null,
+                null,
                 "="
         );
         checkDefaultNutsArgument(
@@ -94,8 +94,8 @@ public class Test14_CommandLineTest {
                 false,
                 "hello",
                 null,
-                "",
-                "",
+                null,
+                null,
                 "="
         );
         checkDefaultNutsArgument(
@@ -103,23 +103,23 @@ public class Test14_CommandLineTest {
                 true,
                 false,
                 false,
-                true,
-                "hello",
+                false,
+                "!hello",
                 null,
-                "",
-                "",
+                null,
+                null,
                 "="
         );
         checkDefaultNutsArgument(
                 new DefaultNutsArgument("//!hello"),
-                false,
-                false,
-                false,
                 true,
-                "hello",
+                false,
+                false,
+                false,
+                "//!hello",
                 null,
-                "",
-                "",
+                null,
+                null,
                 "="
         );
         checkDefaultNutsArgument(
@@ -130,20 +130,20 @@ public class Test14_CommandLineTest {
                 false,
                 "/!hello",
                 null,
-                "",
-                "",
+                null,
+                null,
                 "="
         );
         checkDefaultNutsArgument(
                 new DefaultNutsArgument("/!hello=me"),
                 true,
                 false,
-                true,
                 false,
-                "/!hello",
-                "me",
-                "",
-                "",
+                false,
+                "/!hello=me",
+                null,
+                null,
+                null,
                 "="
         );
         checkDefaultNutsArgument(
@@ -184,7 +184,7 @@ public class Test14_CommandLineTest {
         );
     }
 
-    private static void checkDefaultNutsArgument(NutsArgument a, boolean enabled, boolean option, boolean keyValue, boolean negated
+    private static void checkDefaultNutsArgument(NutsArgument a, boolean active, boolean option, boolean keyValue, boolean negated
             , String key
             , String value
             , String optionName
@@ -192,13 +192,13 @@ public class Test14_CommandLineTest {
             , String eq
     ){
         Assertions.assertEquals(option,a.isOption(),"Option:"+a.getString());
-        Assertions.assertEquals(enabled,a.isActive(),"Enabled:"+a.getString());
+        Assertions.assertEquals(active,a.isActive(),"Enabled:"+a.getString());
         Assertions.assertEquals(keyValue,a.isKeyValue(),"KeyValue:"+a.getString());
         Assertions.assertEquals(negated,a.isNegated(),"Negated:"+a.getString());
         Assertions.assertEquals(key,a.getKey().getString(),"StringKey:"+a.getString());
         Assertions.assertEquals(value,a.getValue().getString(),"StringValue:"+a.getString());
         Assertions.assertEquals(optionName,a.getOptionName().getString(),"StringOptionName:"+a.getString());
-        Assertions.assertEquals(optionPrefix,a.getOptionPrefix(),"StringOptionPrefix:"+a.getString());
+        Assertions.assertEquals(optionPrefix,a.getOptionPrefix().getString(),"StringOptionPrefix:"+a.getString());
         Assertions.assertEquals(eq,a.getSeparator(),"KeyValueSeparator:"+a.getString());
         TestUtils.println("OK : "+a.getString());
     }

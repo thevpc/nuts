@@ -32,6 +32,9 @@ import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import java.io.*;
 import java.lang.reflect.Field;
 import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 public class ProcessBuilder2 {
 
@@ -291,25 +294,34 @@ public class ProcessBuilder2 {
             NonBlockingInputStreamAdapter procInput;
             NonBlockingInputStreamAdapter procError;
             NonBlockingInputStreamAdapter termIn = null;
-            List<PipeThread> pipes = new ArrayList<>();
+            List<PipeRunnable> pipesList = new ArrayList<>();
+            ExecutorService pipes = Executors.newCachedThreadPool();
             String procString = NutsPath.of(command.get(0), session).getName()
                     + "-" + (pid < 0 ? ("unknown-pid" + String.valueOf(-pid)) : String.valueOf(pid));
             String cmdStr = String.join(" ", command);
             if (out != null) {
                 procInput = new NonBlockingInputStreamAdapter("pipe-out-proc-" + procString, proc.getInputStream());
-                pipes.add(CoreIOUtils.pipe("pipe-out-proc-" + procString, cmdStr, "out", procInput, out, session));
+                PipeRunnable t = CoreIOUtils.pipe("pipe-out-proc-" + procString, cmdStr, "out", procInput, this.out, session);
+                pipes.submit(t);
+                pipesList.add(t);
             }
             if (err != null) {
                 procError = new NonBlockingInputStreamAdapter("pipe-err-proc-" + procString, proc.getErrorStream());
                 if (base.redirectErrorStream()) {
-                    pipes.add(CoreIOUtils.pipe("pipe-err-proc-" + procString, cmdStr, "err", procError, out, session));
+                    PipeRunnable t = CoreIOUtils.pipe("pipe-err-proc-" + procString, cmdStr, "err", procError, out, session);
+                    pipes.submit(t);
+                    pipesList.add(t);
                 } else {
-                    pipes.add(CoreIOUtils.pipe("pipe-err-proc-" + procString, cmdStr, "err", procError, err, session));
+                    PipeRunnable t = CoreIOUtils.pipe("pipe-err-proc-" + procString, cmdStr, "err", procError, this.err, session);
+                    pipes.submit(t);
+                    pipesList.add(t);
                 }
             }
             if (in != null) {
                 termIn = new NonBlockingInputStreamAdapter("pipe-in-proc-" + procString, in);
-                pipes.add(CoreIOUtils.pipe("pipe-in-proc-" + procString, cmdStr, "in", termIn, proc.getOutputStream(), session));
+                PipeRunnable t = CoreIOUtils.pipe("pipe-in-proc-" + procString, cmdStr, "in", termIn, proc.getOutputStream(), session);
+                pipes.submit(t);
+                pipesList.add(t);
             }
             while (proc.isAlive()) {
                 if (termIn != null) {
@@ -318,7 +330,7 @@ public class ProcessBuilder2 {
                     }
                 }
                 boolean allFinished = true;
-                for (PipeThread pipe : pipes) {
+                for (PipeRunnable pipe : pipesList) {
                     if (!pipe.isStopped()) {
                         allFinished = false;
                     } else {
@@ -340,8 +352,14 @@ public class ProcessBuilder2 {
             proc.getOutputStream().close();
 
             waitFor0();
-            for (PipeThread pipe : pipes) {
+            for (PipeRunnable pipe : pipesList) {
                 pipe.requestStop();
+            }
+            pipes.shutdown();
+            try {
+                pipes.awaitTermination(5, TimeUnit.MINUTES);
+            } catch (InterruptedException e) {
+                throw new NutsUnexpectedException(session,NutsMessage.cstyle("unable to await termination"));
             }
         } else {
             waitFor0();

@@ -24,6 +24,8 @@
 package net.thevpc.nuts.boot;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.spi.NutsBootId;
+import net.thevpc.nuts.spi.NutsBootOptions;
 
 import java.io.*;
 import java.net.URL;
@@ -367,7 +369,7 @@ final class PrivateNutsUtils {
         return false;
     }
 
-    protected static String getHome(NutsStoreLocation storeFolder, PrivateNutsWorkspaceInitInformation workspaceInformation) {
+    protected static String getHome(NutsStoreLocation storeFolder, NutsBootOptions workspaceInformation) {
         return NutsUtilPlatforms.getPlatformHomeFolder(
                 workspaceInformation.getStoreLocationLayout(),
                 storeFolder,

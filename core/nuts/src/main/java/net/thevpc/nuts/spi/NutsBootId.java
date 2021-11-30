@@ -22,10 +22,11 @@
  * governing permissions and limitations under the License.
  * <br> ====================================================================
  */
-package net.thevpc.nuts.boot;
+package net.thevpc.nuts.spi;
 
 import net.thevpc.nuts.NutsConstants;
 import net.thevpc.nuts.NutsUtilStrings;
+import net.thevpc.nuts.boot.PrivateNutsStringMapParser;
 
 import java.io.IOException;
 import java.io.Reader;

@@ -77,11 +77,11 @@ import java.util.*;
  * @app.category Internal
  * @since 0.5.5
  */
-final class PrivateNutsCommandLine implements NutsCommandLine {
+final class PrivateNutsCommandLine  {
 
     private static final String NOT_SUPPORTED = "this a minimal implementation of NutsCommandLine used to bootstrap; this method is not supported.";
     private final LinkedList<String> args = new LinkedList<>();
-    private final List<NutsArgument> lookahead = new ArrayList<>();
+    private final List<PrivateNutsArgumentImpl> lookahead = new ArrayList<>();
     private final Set<String> specialSimpleOptions = new HashSet<>();
     //    private NutsCommandAutoComplete autoComplete;
     private final char eq = '=';
@@ -101,7 +101,7 @@ final class PrivateNutsCommandLine implements NutsCommandLine {
     }
 
     //End Constructors
-    static NutsArgument createArgument0(String argument, char eq) {
+    static PrivateNutsArgumentImpl createArgument0(String argument, char eq) {
         return new PrivateNutsArgumentImpl(argument, eq);
     }
 
@@ -307,31 +307,31 @@ final class PrivateNutsCommandLine implements NutsCommandLine {
         return i;
     }
 
-    @Override
+    
     public NutsCommandAutoComplete getAutoComplete() {
         return null;
         //AUTOCOMPLETE
 //        return autoComplete;
     }
 
-    @Override
-    public NutsCommandLine setAutoComplete(NutsCommandAutoComplete autoComplete) {
+    
+    public PrivateNutsCommandLine setAutoComplete(NutsCommandAutoComplete autoComplete) {
         throw new NutsBootException(NutsMessage.plain(NOT_SUPPORTED));
     }
 
-    @Override
-    public NutsCommandLine unregisterSpecialSimpleOption(String option) {
+    
+    public PrivateNutsCommandLine unregisterSpecialSimpleOption(String option) {
         specialSimpleOptions.remove(option);
         return this;
     }
 
-    @Override
+    
     public String[] getSpecialSimpleOptions() {
         return specialSimpleOptions.toArray(new String[0]);
     }
 
-    @Override
-    public NutsCommandLine registerSpecialSimpleOption(String option) {
+    
+    public PrivateNutsCommandLine registerSpecialSimpleOption(String option) {
         int len = option.length();
         switch (len) {
             case 0: {
@@ -358,7 +358,7 @@ final class PrivateNutsCommandLine implements NutsCommandLine {
         throw new NutsBootException(NutsMessage.cstyle("invalid special option %s", option));
     }
 
-    @Override
+    
     public boolean isSpecialSimpleOption(String option) {
         for (String x : specialSimpleOptions) {
             if (option.equals(x) || option.startsWith(x + eq)) {
@@ -380,62 +380,62 @@ final class PrivateNutsCommandLine implements NutsCommandLine {
         return false;
     }
 
-    @Override
+    
     public int getWordIndex() {
         return wordIndex;
     }
 
-    @Override
+    
     public boolean isExecMode() {
         return false;
         //AUTOCOMPLETE
 //        return autoComplete == null;
     }
 
-    @Override
+    
     public boolean isAutoCompleteMode() {
         return false;
         //AUTOCOMPLETE
 //        return autoComplete != null;
     }
 
-    @Override
+    
     public String getCommandName() {
         return commandName;
     }
 
-    @Override
-    public NutsCommandLine setCommandName(String commandName) {
+    
+    public PrivateNutsCommandLine setCommandName(String commandName) {
         this.commandName = commandName;
         return this;
     }
 
-    @Override
+    
     public boolean isExpandSimpleOptions() {
         return expandSimpleOptions;
     }
 
-    @Override
-    public NutsCommandLine setExpandSimpleOptions(boolean expand) {
+    
+    public PrivateNutsCommandLine setExpandSimpleOptions(boolean expand) {
         this.expandSimpleOptions = expand;
         return this;
     }
 
-    @Override
-    public NutsCommandLine requireNonOption() {
+    
+    public PrivateNutsCommandLine requireNonOption() {
         if (!hasNext() || !peek().isNonOption()) {
             throwError(NutsMessage.formatted("expected value"));
         }
         return this;
     }
 
-    @Override
-    public NutsCommandLine unexpectedArgument(NutsString errorMessage) {
+    
+    public PrivateNutsCommandLine unexpectedArgument(NutsString errorMessage) {
         return unexpectedArgument(NutsMessage.formatted(errorMessage == null ? "" : errorMessage.toString()));
     }
 
-    @Override
-    public NutsCommandLine unexpectedArgument(NutsMessage errorMessage) {
+    
+    public PrivateNutsCommandLine unexpectedArgument(NutsMessage errorMessage) {
         if (!isEmpty()) {
             List<Object> args = new ArrayList<>();
             String m = "unexpected argument %s";
@@ -449,23 +449,23 @@ final class PrivateNutsCommandLine implements NutsCommandLine {
         return this;
     }
 
-    @Override
-    public NutsCommandLine unexpectedArgument() {
+    
+    public PrivateNutsCommandLine unexpectedArgument() {
         return unexpectedArgument((NutsMessage) null);
     }
 
-    @Override
-    public NutsCommandLine required() {
+    
+    public PrivateNutsCommandLine required() {
         return required((NutsMessage) null);
     }
 
-    @Override
-    public NutsCommandLine required(NutsString errorMessage) {
+    
+    public PrivateNutsCommandLine required(NutsString errorMessage) {
         return required(NutsMessage.formatted(errorMessage == null ? "" : errorMessage.toString()));
     }
 
-    @Override
-    public NutsCommandLine required(NutsMessage errorMessage) {
+    
+    public PrivateNutsCommandLine required(NutsMessage errorMessage) {
         if (isEmpty()) {
             //AUTOCOMPLETE
 //            if (autoComplete != null) {
@@ -477,8 +477,8 @@ final class PrivateNutsCommandLine implements NutsCommandLine {
         return this;
     }
 
-    @Override
-    public NutsCommandLine pushBack(NutsArgument arg) {
+    
+    public PrivateNutsCommandLine pushBack(PrivateNutsArgumentImpl arg) {
         if (arg == null) {
             throwError(NutsMessage.cstyle("null argument"));
         }
@@ -486,49 +486,49 @@ final class PrivateNutsCommandLine implements NutsCommandLine {
         return this;
     }
 
-    @Override
-    public NutsArgument next() {
+    
+    public PrivateNutsArgumentImpl next() {
         return next(false, expandSimpleOptions);
     }
 
-    @Override
-    public NutsArgument next(NutsArgumentName name) {
+    
+    public PrivateNutsArgumentImpl next(NutsArgumentName name) {
         return next(name, false, false);
     }
 
-    @Override
-    public NutsArgument peek() {
+    
+    public PrivateNutsArgumentImpl peek() {
         return get(0);
     }
 
-    @Override
+    
     public boolean hasNext() {
         return !lookahead.isEmpty() || !args.isEmpty();
     }
 
-    @Override
-    public NutsArgument nextBoolean(String... names) {
+    
+    public PrivateNutsArgumentImpl nextBoolean(String... names) {
         return next(NutsArgumentType.BOOLEAN, names);
     }
 
-    @Override
-    public NutsArgument nextString(String... names) {
+    
+    public PrivateNutsArgumentImpl nextString(String... names) {
         return next(NutsArgumentType.STRING, names);
     }
 
-    @Override
-    public NutsArgument next(String... names) {
+    
+    public PrivateNutsArgumentImpl next(String... names) {
         return next(NutsArgumentType.ANY, names);
     }
 
-    @Override
-    public NutsArgument next(NutsArgumentType expectValue, String... names) {
+    
+    public PrivateNutsArgumentImpl next(NutsArgumentType expectValue, String... names) {
         if (expectValue == null) {
             expectValue = NutsArgumentType.ANY;
         }
         if (names.length == 0) {
             if (hasNext()) {
-                NutsArgument peeked = peek();
+                PrivateNutsArgumentImpl peeked = peek();
                 names = new String[]{
                         peeked.getKey().getString()
                 };
@@ -548,7 +548,7 @@ final class PrivateNutsCommandLine implements NutsCommandLine {
                 continue;
             }
             String name = nameSeqArray[nameSeqArray.length - 1];
-            NutsArgument p = get(nameSeqArray.length - 1);
+            PrivateNutsArgumentImpl p = get(nameSeqArray.length - 1);
             if (p != null) {
                 if (p.getKey().getString().equals(name)) {
                     switch (expectValue) {
@@ -567,7 +567,7 @@ final class PrivateNutsCommandLine implements NutsCommandLine {
 //                                        autoComplete.addCandidate(createCandidate("<StringValueFor" + p.getKey().getString() + ">"));
 //                                    }
                                 }
-                                NutsArgument r2 = peek();
+                                PrivateNutsArgumentImpl r2 = peek();
                                 if (r2 != null && !r2.isOption()) {
                                     skip();
                                     return createArgument(p.getString() + eq + r2.getString());
@@ -603,25 +603,25 @@ final class PrivateNutsCommandLine implements NutsCommandLine {
         return null;
     }
 
-    @Override
-    public NutsArgument nextRequiredNonOption(NutsArgumentName name) {
+    
+    public PrivateNutsArgumentImpl nextRequiredNonOption(NutsArgumentName name) {
         return next(name, true, true);
     }
 
-    @Override
-    public NutsArgument nextNonOption() {
+    
+    public PrivateNutsArgumentImpl nextNonOption() {
         if (hasNext() && !peek().isOption()) {
             return next();
         }
         return null;
     }
 
-    @Override
-    public NutsArgument nextNonOption(NutsArgumentName name) {
+    
+    public PrivateNutsArgumentImpl nextNonOption(NutsArgumentName name) {
         return next(name, true, false);
     }
 
-    @Override
+    
     public int skipAll() {
         int count = 0;
         while (hasNext()) {
@@ -630,12 +630,12 @@ final class PrivateNutsCommandLine implements NutsCommandLine {
         return count;
     }
 
-    @Override
+    
     public int skip() {
         return skip(1);
     }
 
-    @Override
+    
     public int skip(int count) {
         if (count < 0) {
             count = 0;
@@ -652,15 +652,15 @@ final class PrivateNutsCommandLine implements NutsCommandLine {
         return count;
     }
 
-    @Override
+    
     public boolean accept(String... values) {
         return accept(0, values);
     }
 
-    @Override
+    
     public boolean accept(int index, String... values) {
         for (int i = 0; i < values.length; i++) {
-            NutsArgument argument = get(index + i);
+            PrivateNutsArgumentImpl argument = get(index + i);
             if (argument == null) {
                 return false;
             }
@@ -671,8 +671,8 @@ final class PrivateNutsCommandLine implements NutsCommandLine {
         return true;
     }
 
-    @Override
-    public NutsArgument find(String name) {
+    
+    public PrivateNutsArgumentImpl find(String name) {
         int index = indexOf(name);
         if (index >= 0) {
             return get(index);
@@ -680,8 +680,8 @@ final class PrivateNutsCommandLine implements NutsCommandLine {
         return null;
     }
 
-    @Override
-    public NutsArgument get(int index) {
+    
+    public PrivateNutsArgumentImpl get(int index) {
         if (index < 0) {
             return null;
         }
@@ -699,12 +699,12 @@ final class PrivateNutsCommandLine implements NutsCommandLine {
         return null;
     }
 
-    @Override
+    
     public boolean contains(String name) {
         return indexOf(name) >= 0;
     }
 
-    @Override
+    
     public int indexOf(String name) {
         int i = 0;
         while (i < length()) {
@@ -716,62 +716,62 @@ final class PrivateNutsCommandLine implements NutsCommandLine {
         return -1;
     }
 
-    @Override
+    
     public int length() {
         return lookahead.size() + args.size();
     }
 
-    @Override
+    
     public boolean isEmpty() {
         return !hasNext();
     }
 
-    @Override
+    
     public String[] toStringArray() {
         List<String> all = new ArrayList<>(length());
-        for (NutsArgument nutsArgument : lookahead) {
+        for (PrivateNutsArgumentImpl nutsArgument : lookahead) {
             all.add(nutsArgument.getString());
         }
         all.addAll(args);
         return all.toArray(new String[0]);
     }
 
-    @Override
-    public NutsArgument[] toArgumentArray() {
-        List<NutsArgument> aa = new ArrayList<>();
+    
+    public PrivateNutsArgumentImpl[] toArgumentArray() {
+        List<PrivateNutsArgumentImpl> aa = new ArrayList<>();
         while (hasNext()) {
             aa.add(next());
         }
         lookahead.addAll(aa);
-        return aa.toArray(new NutsArgument[0]);
+        return aa.toArray(new PrivateNutsArgumentImpl[0]);
     }
 
-    @Override
+    
     public boolean isOption(int index) {
-        NutsArgument x = get(index);
+        PrivateNutsArgumentImpl x = get(index);
         return x != null && x.isOption();
     }
 
-    //    @Override
+    //    
 //    public NutsArgumentName createName(String type) {
 //        return createName(type, type);
 //    }
-    @Override
+    
     public boolean isNonOption(int index) {
-        NutsArgument x = get(index);
+        PrivateNutsArgumentImpl x = get(index);
         return x != null && x.isNonOption();
     }
 
-    @Override
-    public NutsCommandLine parseLine(String commandLine) {
+    
+    public PrivateNutsCommandLine parseLine(String commandLine) {
         throw new NutsBootException(NutsMessage.plain("unsupported parseLine"));
     }
 
-    public NutsCommandLine setArguments(List<String> arguments) {
+    public PrivateNutsCommandLine setArguments(List<String> arguments) {
         return setArguments(arguments.toArray(new String[0]));
     }
 
-    public NutsCommandLine setArguments(String... arguments) {
+    public PrivateNutsCommandLine setArguments(String... arguments) {
         this.lookahead.clear();
         this.args.clear();
         if (arguments != null) {
@@ -789,24 +789,24 @@ final class PrivateNutsCommandLine implements NutsCommandLine {
         throw new NutsBootException(NutsMessage.plain(m.toString()));
     }
 
-    @Override
+    
     public void process(NutsCommandLineConfigurable defaultConfigurable, NutsCommandLineProcessor processor) {
         throw new NutsBootException(NutsMessage.plain("not supported operation process(...)"));
     }
 
-    @Override
+    
     public void throwError(NutsString message) {
         throwError(NutsMessage.formatted(message == null ? "" : message.toString()));
     }
 
-    @Override
+    
     public NutsCommandLineFormat formatter() {
         throw new NutsBootException(NutsMessage.plain(NOT_SUPPORTED));
     }
 
     private boolean isPrefixed(String[] nameSeqArray) {
         for (int i = 0; i < nameSeqArray.length - 1; i++) {
-            NutsArgument x = get(i);
+            PrivateNutsArgumentImpl x = get(i);
             if (x == null || !x.getString().equals(nameSeqArray[i])) {
                 return false;
             }
@@ -814,7 +814,7 @@ final class PrivateNutsCommandLine implements NutsCommandLine {
         return true;
     }
 
-    public NutsArgument next(NutsArgumentName name, boolean forceNonOption, boolean error) {
+    public PrivateNutsArgumentImpl next(NutsArgumentName name, boolean forceNonOption, boolean error) {
         if (hasNext() && (!forceNonOption || !peek().isOption())) {
             if (isAutoComplete()) {
                 //AUTOCOMPLETE
@@ -827,7 +827,7 @@ final class PrivateNutsCommandLine implements NutsCommandLine {
 //                    }
 //                }
             }
-            NutsArgument r = peek();
+            PrivateNutsArgumentImpl r = peek();
             skip();
             return r;
         } else {
@@ -857,7 +857,7 @@ final class PrivateNutsCommandLine implements NutsCommandLine {
         return null;
     }
 
-    public NutsArgument next(boolean required, boolean expandSimpleOptions) {
+    public PrivateNutsArgumentImpl next(boolean required, boolean expandSimpleOptions) {
         if (ensureNext(expandSimpleOptions, false)) {
             if (!lookahead.isEmpty()) {
                 return lookahead.remove(0);
@@ -872,12 +872,12 @@ final class PrivateNutsCommandLine implements NutsCommandLine {
         }
     }
 
-    @Override
+    
     public String toString() {
         return escapeArguments(toStringArray());
     }
 
-    //    @Override
+    //    
 //    public NutsArgumentName createName(String type, String label) {
 //        throw new NutsBootException(NOT_SUPPORTED);
 //    }
@@ -977,8 +977,8 @@ final class PrivateNutsCommandLine implements NutsCommandLine {
 //        return autoComplete != null && getWordIndex() == autoComplete.getCurrentWordIndex();
     }
 
-    //    @Override
-    public NutsArgument createArgument(String argument) {
+    //    
+    public PrivateNutsArgumentImpl createArgument(String argument) {
         return createArgument0(argument, eq);
     }
 
@@ -993,7 +993,7 @@ final class PrivateNutsCommandLine implements NutsCommandLine {
                 && t != Character.TITLECASE_LETTER;
     }
 
-//    @Override
+//    
 //    public NutsArgumentCandidate createCandidate(String value, String label) {
 //        throw new NutsBootException(NOT_SUPPORTED);
 //        //AUTOCOMPLETE
@@ -1014,19 +1014,19 @@ final class PrivateNutsCommandLine implements NutsCommandLine {
 //            this.display = display;
 //        }
 //
-//        @Override
+//        
 //        public String getDisplay() {
 //            return display;
 //        }
 //
-//        @Override
+//        
 //        public String getValue() {
 //            return value;
 //        }
 //    }
 
-    @Override
-    public Iterator<NutsArgument> iterator() {
+    
+    public Iterator<PrivateNutsArgumentImpl> iterator() {
         return Arrays.asList(toArgumentArray()).iterator();
     }
 

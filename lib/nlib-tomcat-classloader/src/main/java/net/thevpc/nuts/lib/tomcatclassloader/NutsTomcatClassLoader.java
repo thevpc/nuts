@@ -3,7 +3,7 @@ package net.thevpc.nuts.lib.tomcatclassloader;
 import net.thevpc.nuts.Nuts;
 import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.NutsOpenMode;
-import net.thevpc.nuts.NutsWorkspaceOptionsBuilder;
+import net.thevpc.nuts.spi.NutsBootOptions;
 import org.apache.catalina.WebResource;
 import org.apache.catalina.WebResourceRoot;
 import org.apache.catalina.loader.WebappClassLoader;
@@ -128,7 +128,7 @@ public class NutsTomcatClassLoader extends WebappClassLoader {
         if (nutsWorkspace == null) {
             nutsWorkspace
                     = Nuts.openWorkspace(
-                        NutsWorkspaceOptionsBuilder.of()
+                        new NutsBootOptions()
                                     .setRuntimeId(getWorkspaceBootRuntime())
                                     .setClassLoaderSupplier(this::getParent)
                                     .setOpenMode(NutsOpenMode.OPEN_OR_CREATE)
@@ -136,7 +136,6 @@ public class NutsTomcatClassLoader extends WebappClassLoader {
                                     .setArchetype(getWorkspaceArchetype())
 //                                    .setExcludedRepositories(splitString(getWorkspaceExcludedRepositories(), ";"))
                                     .setExcludedExtensions(splitString(getWorkspaceExcludedExtensions(), " ;"))
-                                    .build()
                     );
         }
         return nutsWorkspace;

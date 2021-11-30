@@ -28,7 +28,7 @@ package net.thevpc.nuts.boot;
 
 import net.thevpc.nuts.NutsLogVerb;
 import net.thevpc.nuts.NutsMessage;
-import net.thevpc.nuts.NutsWorkspaceOptions;
+import net.thevpc.nuts.spi.NutsBootOptions;
 
 import java.io.InputStream;
 import java.io.PrintStream;
@@ -50,7 +50,7 @@ public class PrivateNutsLog {
     public static final DateTimeFormatter DEFAULT_DATE_TIME_FORMATTER
             = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS")
             .withZone(ZoneId.systemDefault());
-    private NutsWorkspaceOptions options;
+    private NutsBootOptions options;
     private final NutsBootTerminal bootTerminal;
     private Scanner inScanner;
 
@@ -89,7 +89,7 @@ public class PrivateNutsLog {
         return lvl.intValue() >= options.getLogConfig().getLogTermLevel().intValue();
     }
 
-    public void setOptions(NutsWorkspaceOptions options) {
+    public void setOptions(NutsBootOptions options) {
         this.options = options;
     }
 

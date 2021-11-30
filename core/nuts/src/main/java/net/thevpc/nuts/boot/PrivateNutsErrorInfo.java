@@ -26,6 +26,8 @@
  */
 package net.thevpc.nuts.boot;
 
+import net.thevpc.nuts.spi.NutsBootId;
+
 class PrivateNutsErrorInfo {
     private final NutsBootId nutsId;
     private final String repository;

@@ -6,6 +6,7 @@
 package net.thevpc.nuts.runtime.standalone.extensions;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.standalone.workspace.CoreNutsWorkspaceInitInformation;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceFactory;
 import net.thevpc.nuts.runtime.standalone.workspace.config.NutsWorkspaceConfigManagerExt;
 import net.thevpc.nuts.runtime.standalone.io.printstream.NutsFormattedPrintStream;
@@ -168,7 +169,7 @@ public class DefaultNutsWorkspaceExtensionModel {
         return a;
     }
 
-    public void onInitializeWorkspace(NutsWorkspaceInitInformation info, ClassLoader bootClassLoader, NutsSession session) {
+    public void onInitializeWorkspace(CoreNutsWorkspaceInitInformation info, ClassLoader bootClassLoader, NutsSession session) {
         objectFactory.discoverTypes(
                 NutsId.of(info.getRuntimeBootDependencyNode().getId(),session),
                 info.getRuntimeBootDependencyNode().getURL(),

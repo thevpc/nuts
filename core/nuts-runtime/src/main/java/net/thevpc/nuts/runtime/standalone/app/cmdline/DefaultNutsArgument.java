@@ -39,23 +39,23 @@ import java.util.regex.Pattern;
  * @author thevpc
  */
 public class DefaultNutsArgument implements NutsArgument {
-    public static final Pattern PATTERN_OPTION_EQ = Pattern.compile("^((?<optp>[-]+|[+]+)(?<flg>//|!|~)?)?(?<optk>[a-zA-Z-9][a-zA-Z-9_-]*)?(?<opts>=(?<optv>.*))?(?<optr>.*)$");
-    public static final Pattern PATTERN_OPTION_COL = Pattern.compile("^((?<optp>[-]+|[+]+)(?<flg>//|!|~)?)?(?<optk>[a-zA-Z-9][a-zA-Z-9_-]*)?(?<opts>:(?<optv>.*))?(?<optr>.*)$");
+    public static final Pattern PATTERN_OPTION_EQ = Pattern.compile("^((?<optp>[-]+|[+]+)(?<cmt>//)?(?<flg>[!~])?)?(?<optk>[a-zA-Z][a-zA-Z0-9_-]*)?(?<opts>[=](?<optv>.*))?(?<optr>.*)$");
+    public static final Pattern PATTERN_OPTION_COL = Pattern.compile("^((?<optp>[-]+|[+]+)(?<cmt>//)?(?<flg>[!~])?)?(?<optk>[a-zA-Z][a-zA-Z0-9_-]*)?(?<opts>[:](?<optv>.*))?(?<optr>.*)$");
     /**
      * equal character
      */
     private final char eq;
-    private final boolean option;
-    private final boolean active;
-    private final boolean enabled;
-    private final String optionPrefix;
-    private final String optionName;
     private final String key;
     private final String value;
+    private final String optionPrefix;
+    private final String optionName;
+    private final boolean enabled;
+    private final boolean active;
+    private final boolean option;
     private final String expression;
 
     public DefaultNutsArgument(String expression) {
-        this(expression, '\0');
+        this(expression, '=');
     }
 
 
@@ -79,12 +79,13 @@ public class DefaultNutsArgument implements NutsArgument {
                 break;
             }
             default: {
-                currOptionsPattern = Pattern.compile("^((?<optp>[-]+|[+]+)(?<flg>//|!|~)?)?(?<optk>[a-zA-Z-9][a-zA-Z-9_-]*)?(?<opts>[" + eq + "](?<optv>.*))?(?<optr>.*)$");
+                currOptionsPattern = Pattern.compile("^((?<optp>[-]+|[+]+)(?<cmt>//)?(?<flg>[!~])?)?(?<optk>[a-zA-Z][a-zA-Z0-9_-]*)?(?<opts>[" + eq + "](?<optv>.*))?(?<optr>.*)$");
             }
         }
         Matcher matcher = currOptionsPattern.matcher(expression == null ? "" : expression);
         if (matcher.find()) {
             String optp = matcher.group("optp");
+            String cmt = matcher.group("cmt");
             String flg = matcher.group("flg");
             String optk = matcher.group("optk");
             String opts = matcher.group("opts");
@@ -92,31 +93,22 @@ public class DefaultNutsArgument implements NutsArgument {
             String optr = matcher.group("optr");
             if (optp != null && optp.length() > 0) {
                 option = true;
-                switch (flg == null ? "" : flg) {
-                    case "//": {
-                        active = false;
-                        enabled = true;
-                        break;
-                    }
-                    case "!":
-                    case "~": {
-                        active = true;
-                        enabled = false;
-                        break;
-                    }
-                    default: {
-                        active = true;
-                        enabled = true;
-                    }
-                }
+                active = !(cmt!=null && cmt.length()>0);
+                enabled = !(flg!=null && flg.length()>0);
                 optionPrefix = optp;
-                optionName = (optk == null ? "" : optk);
-                if (opts != null && opts.length() > 0) {
+                if(optr!=null && optr.length()>0){
+                    optionName=(optk == null ? "" : optk)+optr;
                     key = optp + optionName;
-                    value = optv + optr;
-                } else {
-                    key = optp + optionName + optr;
                     value = null;
+                }else {
+                    optionName = (optk == null ? "" : optk);
+                    if (opts != null && opts.length() > 0) {
+                        key = optp + optionName;
+                        value = optv + optr;
+                    } else {
+                        key = optp + optionName;
+                        value = null;
+                    }
                 }
             } else {
                 option = false;
@@ -125,7 +117,7 @@ public class DefaultNutsArgument implements NutsArgument {
                 optionPrefix = null;
                 optionName = null;
                 if (opts != null && opts.length() > 0) {
-                    key = (optk == null ? "" : optk);
+                    key = expression == null ? null : (optk == null ? "" : optk);
                     value = optv;
                 } else {
                     key = expression == null ? null : ((optk == null ? "" : optk) + optr);
@@ -143,6 +135,11 @@ public class DefaultNutsArgument implements NutsArgument {
         }
     }
 
+    /**
+     * true if expression starts with '-' or '+'
+     *
+     * @return true if expression starts with '-' or '+'
+     */
     @Override
     public boolean isOption() {
         return option;

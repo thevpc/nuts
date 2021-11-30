@@ -1,8 +1,8 @@
 package net.thevpc.nuts.runtime.standalone.workspace.config;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.boot.NutsBootDescriptor;
-import net.thevpc.nuts.boot.NutsBootId;
+import net.thevpc.nuts.spi.NutsBootDescriptor;
+import net.thevpc.nuts.spi.NutsBootId;
 import net.thevpc.nuts.runtime.standalone.boot.NutsBootConfig;
 
 import java.nio.file.Path;

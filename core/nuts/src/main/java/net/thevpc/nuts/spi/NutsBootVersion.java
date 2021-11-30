@@ -24,11 +24,12 @@
  * <br>
  * ====================================================================
  */
-package net.thevpc.nuts.boot;
+package net.thevpc.nuts.spi;
 
 import net.thevpc.nuts.NutsBootException;
 import net.thevpc.nuts.NutsConstants;
 import net.thevpc.nuts.NutsMessage;
+import net.thevpc.nuts.boot.NutsApiUtils;
 
 import java.math.BigInteger;
 import java.util.ArrayList;

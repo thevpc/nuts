@@ -37,6 +37,7 @@ import net.thevpc.nuts.runtime.standalone.repository.cmd.search.AbstractNutsSear
 import net.thevpc.nuts.runtime.standalone.repository.cmd.search.AbstractNutsSearchVersionsRepositoryCommand;
 import net.thevpc.nuts.runtime.standalone.repository.cmd.undeploy.AbstractNutsRepositoryUndeployCommand;
 import net.thevpc.nuts.runtime.standalone.repository.cmd.updatestats.AbstractNutsUpdateRepositoryStatisticsCommand;
+import net.thevpc.nuts.runtime.standalone.workspace.CoreNutsWorkspaceInitInformation;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.StringTokenizerUtils;
 import net.thevpc.nuts.runtime.standalone.repository.impl.AbstractNutsRepository;
 import net.thevpc.nuts.runtime.standalone.repository.impl.NutsRepositoryExt0;
@@ -66,7 +67,7 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
     private final Map<NutsId, String> cachedDefaultVersions = new LRUMap<>(200);
     private NutsLogger LOG;
 
-    public DefaultNutsInstalledRepository(NutsWorkspace ws, NutsWorkspaceInitInformation info) {
+    public DefaultNutsInstalledRepository(NutsWorkspace ws, CoreNutsWorkspaceInitInformation info) {
         this.workspace = ws;
         this.initSession = NutsWorkspaceUtils.defaultSession(ws);
         this.deployments = new NutsRepositoryFolderHelper(this,

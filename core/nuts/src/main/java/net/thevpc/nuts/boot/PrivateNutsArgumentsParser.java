@@ -26,6 +26,7 @@
 package net.thevpc.nuts.boot;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.spi.NutsBootOptions;
 
 import java.time.Instant;
 import java.util.*;
@@ -55,7 +56,7 @@ final class PrivateNutsArgumentsParser {
      * @param bootArguments input arguments to parse
      * @param options       options instance to fill
      */
-    public static void parseNutsArguments(String[] bootArguments, NutsWorkspaceOptionsBuilder options, PrivateNutsLog log) {
+    public static void parseNutsArguments(String[] bootArguments, NutsBootOptions options, PrivateNutsLog log) {
         List<NutsMessage> showError = new ArrayList<>();
         HashSet<String> excludedExtensions = new HashSet<>();
         HashSet<String> repositories = new HashSet<>();
@@ -63,13 +64,13 @@ final class PrivateNutsArgumentsParser {
         List<String> executorOptions = new ArrayList<>();
         NutsLogConfig logConfig = null;
         List<String> applicationArguments = new ArrayList<>();
-        NutsCommandLine cmdLine = new PrivateNutsCommandLine(bootArguments)
+        PrivateNutsCommandLine cmdLine = new PrivateNutsCommandLine(bootArguments)
                 .setCommandName("nuts")
                 .setExpandSimpleOptions(true)
                 .registerSpecialSimpleOption("-version");
         boolean explicitConfirm = false;
         while (cmdLine.hasNext()) {
-            NutsArgument a = cmdLine.peek();
+            PrivateNutsArgumentImpl a = cmdLine.peek();
 
             if (a.isOption()) {
                 boolean enabled = a.isActive();
@@ -1107,8 +1108,8 @@ final class PrivateNutsArgumentsParser {
         }
     }
 
-    private static void parseLogLevel(NutsLogConfig logConfig, NutsCommandLine cmdLine, boolean enabled) {
-        NutsArgument a = cmdLine.peek();
+    private static void parseLogLevel(NutsLogConfig logConfig, PrivateNutsCommandLine cmdLine, boolean enabled) {
+        PrivateNutsArgumentImpl a = cmdLine.peek();
         switch (a.getKey().getString()) {
             case "--log-file-size": {
                 a = cmdLine.nextString();

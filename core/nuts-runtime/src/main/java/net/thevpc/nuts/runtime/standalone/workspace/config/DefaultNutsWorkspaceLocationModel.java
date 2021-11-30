@@ -3,6 +3,7 @@ package net.thevpc.nuts.runtime.standalone.workspace.config;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.util.CoreNutsConstants;
 import net.thevpc.nuts.runtime.standalone.workspace.DefaultNutsWorkspace;
+import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
 import net.thevpc.nuts.spi.NutsRepositorySPI;
 
@@ -11,11 +12,9 @@ import java.util.Map;
 public class DefaultNutsWorkspaceLocationModel {
     private final NutsWorkspace ws;
     private final NutsPath workspaceLocation;
-    private final NutsWorkspaceInitInformation info;
 
-    public DefaultNutsWorkspaceLocationModel(NutsWorkspace ws, NutsWorkspaceInitInformation info, String workspaceLocation) {
+    public DefaultNutsWorkspaceLocationModel(NutsWorkspace ws, String workspaceLocation) {
         this.ws = ws;
-        this.info = info;
         this.workspaceLocation = NutsPath.of(workspaceLocation, NutsWorkspaceUtils.defaultSession(ws));
     }
 
@@ -53,6 +52,7 @@ public class DefaultNutsWorkspaceLocationModel {
         try {
             return cfg().current().getStoreLocation(folderType,session);
         } catch (IllegalStateException stillInitializing) {
+            NutsWorkspaceOptions info = NutsWorkspaceExt.of(ws).getModel().bootModel.getBootOptions();
             String h = info.getStoreLocation(folderType);
             return h==null?null:NutsPath.of(h,session);
         }

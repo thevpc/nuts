@@ -25,6 +25,7 @@ package net.thevpc.nuts.runtime.standalone.workspace;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.boot.NutsBootTerminal;
+import net.thevpc.nuts.spi.NutsBootOptions;
 import net.thevpc.nuts.runtime.standalone.app.cmdline.CoreNutsArgumentsParser;
 import net.thevpc.nuts.runtime.standalone.format.CoreNutsWorkspaceOptionsFormat;
 
@@ -1398,6 +1399,76 @@ public final class CoreNutsWorkspaceOptions implements Serializable, Cloneable, 
         return this;
     }
 
+    public NutsWorkspaceOptionsBuilder setAll(NutsBootOptions other) {
+        this.setApiVersion(other.getApiVersion());
+        this.setRuntimeId(other.getRuntimeId());
+        this.setJavaCommand(other.getJavaCommand());
+        this.setJavaOptions(other.getJavaOptions());
+        this.setWorkspace(other.getWorkspace());
+        this.setName(other.getName());
+        this.setSkipCompanions(other.getSkipCompanions());
+        this.setSkipWelcome(other.getSkipWelcome());
+        this.setSkipBoot(other.getSkipBoot());
+        this.setGlobal(other.getGlobal());
+        this.setGui(other.getGui());
+        this.setUsername(other.getUserName());
+        this.setCredentials(other.getCredentials());
+        this.setTerminalMode(other.getTerminalMode());
+        this.setReadOnly(other.getReadOnly());
+        this.setTrace(other.getTrace());
+        this.setProgressOptions(other.getProgressOptions());
+        this.setLogConfig(other.getLogConfig() == null ? null : new NutsLogConfig(other.getLogConfig())); //TODO
+        this.setConfirm(other.getConfirm());
+        this.setConfirm(other.getConfirm());
+        this.setOutputFormat(other.getOutputFormat());
+        this.setOutputFormatOptions(other.getOutputFormatOptions());
+        this.setOpenMode(other.getOpenMode());
+        this.setCreationTime(other.getCreationTime());
+        this.setDry(other.getDry());
+        this.setClassLoaderSupplier(other.getClassLoaderSupplier());
+        this.setExecutorOptions(other.getExecutorOptions());
+        this.setRecover(other.getRecover());
+        this.setReset(other.getReset());
+        this.setCommandVersion(other.getCommandVersion());
+        this.setCommandHelp(other.getCommandHelp());
+        this.setDebug(other.getDebug());
+        this.setInherited(other.getInherited());
+        this.setExecutionType(other.getExecutionType());
+        this.setRunAs(other.getRunAs());
+        this.setArchetype(other.getArchetype());
+        this.setStoreLocationStrategy(other.getStoreLocationStrategy());
+        this.setHomeLocations(other.getHomeLocations());
+        this.setStoreLocations(other.getStoreLocations());
+        this.setStoreLocationLayout(other.getStoreLocationLayout());
+        this.setStoreLocationStrategy(other.getStoreLocationStrategy());
+        this.setRepositoryStoreLocationStrategy(other.getRepositoryStoreLocationStrategy());
+        this.setFetchStrategy(other.getFetchStrategy());
+        this.setCached(other.getCached());
+        this.setIndexed(other.getIndexed());
+        this.setTransitive(other.getTransitive());
+        this.setBot(other.getBot());
+        this.setStdin(other.getStdin());
+        this.setStdout(other.getStdout());
+        this.setStderr(other.getStderr());
+        this.setExecutorService(other.getExecutorService());
+//        this.setBootRepositories(other.getBootRepositories());
+
+        this.setExcludedExtensions(other.getExcludedExtensions() == null ? null : Arrays.copyOf(other.getExcludedExtensions(), other.getExcludedExtensions().length));
+//        this.setExcludedRepositories(other.getExcludedRepositories() == null ? null : Arrays.copyOf(other.getExcludedRepositories(), other.getExcludedRepositories().length));
+        this.setRepositories(other.getRepositories() == null ? null : Arrays.copyOf(other.getRepositories(), other.getRepositories().length));
+        this.setApplicationArguments(other.getApplicationArguments() == null ? null : Arrays.copyOf(other.getApplicationArguments(), other.getApplicationArguments().length));
+        this.setCustomOptions(other.getCustomOptions() == null ? null : Arrays.copyOf(other.getCustomOptions(), other.getCustomOptions().length));
+        this.setExpireTime(other.getExpireTime());
+        this.setErrors(other.getErrors());
+        this.setSkipErrors(other.getSkipErrors());
+        this.setSwitchWorkspace(other.getSwitchWorkspace());
+        this.setLocale(other.getLocale());
+        this.setTheme(other.getTheme());
+        this.setBootTerminal(other.getBootTerminal());
+        this.setDependencySolver(other.getDependencySolver());
+        return this;
+    }
+
     @Override
     public NutsWorkspaceOptionsBuilder setAll(NutsWorkspaceOptions other) {
         this.setApiVersion(other.getApiVersion());
@@ -1585,5 +1656,77 @@ public final class CoreNutsWorkspaceOptions implements Serializable, Cloneable, 
     @Override
     public NutsWorkspaceOptionsBuilder builder() {
         return new CoreNutsWorkspaceOptions(session).setAll(this);
+    }
+
+    @Override
+    public NutsBootOptions toBootOptions() {
+        NutsBootOptions b=new NutsBootOptions();
+        b.setApiVersion(this.getApiVersion());
+        b.setRuntimeId(this.getRuntimeId());
+        b.setJavaCommand(this.getJavaCommand());
+        b.setJavaOptions(this.getJavaOptions());
+        b.setWorkspace(this.getWorkspace());
+        b.setName(this.getName());
+        b.setSkipCompanions(this.getSkipCompanions());
+        b.setSkipWelcome(this.getSkipWelcome());
+        b.setSkipBoot(this.getSkipBoot());
+        b.setGlobal(this.getGlobal());
+        b.setGui(this.getGui());
+        b.setUsername(this.getUserName());
+        b.setCredentials(this.getCredentials());
+        b.setTerminalMode(this.getTerminalMode());
+        b.setReadOnly(this.getReadOnly());
+        b.setTrace(this.getTrace());
+        b.setProgressOptions(this.getProgressOptions());
+        b.setLogConfig(this.getLogConfig() == null ? null : new NutsLogConfig(this.getLogConfig())); //TODO
+        b.setConfirm(this.getConfirm());
+        b.setConfirm(this.getConfirm());
+        b.setOutputFormat(this.getOutputFormat());
+        b.setOutputFormatOptions(this.getOutputFormatOptions());
+        b.setOpenMode(this.getOpenMode());
+        b.setCreationTime(this.getCreationTime());
+        b.setDry(this.getDry());
+        b.setClassLoaderSupplier(this.getClassLoaderSupplier());
+        b.setExecutorOptions(this.getExecutorOptions());
+        b.setRecover(this.getRecover());
+        b.setReset(this.getReset());
+        b.setCommandVersion(this.getCommandVersion());
+        b.setCommandHelp(this.getCommandHelp());
+        b.setDebug(this.getDebug());
+        b.setInherited(this.getInherited());
+        b.setExecutionType(this.getExecutionType());
+        b.setRunAs(this.getRunAs());
+        b.setArchetype(this.getArchetype());
+        b.setStoreLocationStrategy(this.getStoreLocationStrategy());
+        b.setHomeLocations(this.getHomeLocations());
+        b.setStoreLocations(this.getStoreLocations());
+        b.setStoreLocationLayout(this.getStoreLocationLayout());
+        b.setStoreLocationStrategy(this.getStoreLocationStrategy());
+        b.setRepositoryStoreLocationStrategy(this.getRepositoryStoreLocationStrategy());
+        b.setFetchStrategy(this.getFetchStrategy());
+        b.setCached(this.getCached());
+        b.setIndexed(this.getIndexed());
+        b.setTransitive(this.getTransitive());
+        b.setBot(this.getBot());
+        b.setStdin(this.getStdin());
+        b.setStdout(this.getStdout());
+        b.setStderr(this.getStderr());
+        b.setExecutorService(this.getExecutorService());
+//        b.setBootRepositories(this.getBootRepositories());
+
+        b.setExcludedExtensions(this.getExcludedExtensions() == null ? null : Arrays.copyOf(this.getExcludedExtensions(), this.getExcludedExtensions().length));
+//        b.setExcludedRepositories(this.getExcludedRepositories() == null ? null : Arrays.copyOf(this.getExcludedRepositories(), this.getExcludedRepositories().length));
+        b.setRepositories(this.getRepositories() == null ? null : Arrays.copyOf(this.getRepositories(), this.getRepositories().length));
+        b.setApplicationArguments(this.getApplicationArguments() == null ? null : Arrays.copyOf(this.getApplicationArguments(), this.getApplicationArguments().length));
+        b.setCustomOptions(this.getCustomOptions() == null ? null : Arrays.copyOf(this.getCustomOptions(), this.getCustomOptions().length));
+        b.setExpireTime(this.getExpireTime());
+        b.setErrors(this.getErrors());
+        b.setSkipErrors(this.getSkipErrors());
+        b.setSwitchWorkspace(this.getSwitchWorkspace());
+        b.setLocale(this.getLocale());
+        b.setTheme(this.getTheme());
+        b.setBootTerminal(this.getBootTerminal());
+        b.setDependencySolver(this.getDependencySolver());
+        return b;
     }
 }

@@ -1979,10 +1979,14 @@ public class CoreIOUtils {
         return new byte[0];
     }
 
-    public static PipeThread pipe(String name, String cmd, String desc, final NonBlockingInputStream in, final OutputStream out, NutsSession session) {
-        PipeThread p = new PipeThread(name, cmd, desc, in, out, true, session);
-        session.config().executorService().submit(p);
-        return p;
+//    public static PipeRunnable pipeOld(String name, String cmd, String desc, final NonBlockingInputStream in, final OutputStream out, NutsSession session) {
+//        PipeRunnable p = new PipeRunnable(name, cmd, desc, in, out, true, session);
+//        session.config().executorService().submit(p);
+//        return p;
+//    }
+
+    public static PipeRunnable pipe(String name, String cmd, String desc, final NonBlockingInputStream in, final OutputStream out, NutsSession session) {
+        return new PipeRunnable(name, cmd, desc, in, out, true, session);
     }
 
     public static Path sysWhich(String commandName) {

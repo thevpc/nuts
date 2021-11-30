@@ -32,6 +32,7 @@ import net.thevpc.nuts.runtime.standalone.io.terminals.DefaultNutsSystemTerminal
 import net.thevpc.nuts.runtime.standalone.io.terminals.DefaultSystemTerminal;
 import net.thevpc.nuts.runtime.optional.jansi.OptionalJansi;
 import net.thevpc.nuts.runtime.standalone.io.printstream.NutsPrintStreamSystem;
+import net.thevpc.nuts.runtime.standalone.workspace.CoreNutsWorkspaceInitInformation;
 
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -48,7 +49,7 @@ public class DefaultNutsBootModel implements NutsBootModel {
     protected NutsWorkspace workspace;
     protected boolean firstBoot;
     protected boolean initializing;
-    protected NutsWorkspaceInitInformation workspaceInitInformation;
+    protected CoreNutsWorkspaceInitInformation workspaceInitInformation;
     protected NutsSession bootSession;
     private NutsPrintStream stdout;
     private NutsPrintStream stderr;
@@ -56,11 +57,11 @@ public class DefaultNutsBootModel implements NutsBootModel {
     private Map<String, NutsVal> customBootOptions = new LinkedHashMap<>();
     private StdFd bootStdFd;
 
-    public DefaultNutsBootModel(NutsWorkspace workspace, NutsWorkspaceInitInformation workspaceInitInformation) {
+    public DefaultNutsBootModel(NutsWorkspace workspace, CoreNutsWorkspaceInitInformation workspaceInitInformation) {
         this.workspace = workspace;
         this.initializing = true;
         this.workspaceInitInformation = workspaceInitInformation;
-        this.bootSession = new DefaultNutsSession(workspace, workspaceInitInformation.getOptions());
+        this.bootSession = new DefaultNutsSession(workspace, this.workspaceInitInformation.getOptions());
         bootStdFd = detectAnsiTerminalSupport(NutsOsFamily.getCurrent());
         NutsTerminalMode terminalMode = workspaceInitInformation.getOptions().getTerminalMode();
         if (terminalMode == null) {
@@ -94,6 +95,14 @@ public class DefaultNutsBootModel implements NutsBootModel {
                 }
             }
         }
+    }
+
+    public CoreNutsWorkspaceInitInformation getInitOptions() {
+        return workspaceInitInformation;
+    }
+
+    public NutsWorkspaceOptions getBootOptions() {
+        return workspaceInitInformation.getOptions();
     }
 
     public StdFd getBootStdFd() {
@@ -140,10 +149,6 @@ public class DefaultNutsBootModel implements NutsBootModel {
 
     public NutsWorkspace getWorkspace() {
         return workspace;
-    }
-
-    public NutsWorkspaceInitInformation getWorkspaceInitInformation() {
-        return workspaceInitInformation;
     }
 
     public static StdFd detectAnsiTerminalSupport(NutsOsFamily os) {
