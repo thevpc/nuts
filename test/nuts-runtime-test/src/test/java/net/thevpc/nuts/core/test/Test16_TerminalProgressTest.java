@@ -27,20 +27,23 @@ import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.core.test.utils.TestUtils;
 import net.thevpc.nuts.runtime.standalone.io.progress.CProgressBar;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 /**
  * @author thevpc
  */
 public class Test16_TerminalProgressTest {
+    static NutsSession session;
+
+    @BeforeAll
+    public static void init() {
+        session = TestUtils.openNewMinTestWorkspace();
+    }
 
 
     @Test
     public void test1() throws Exception {
-        NutsSession session = TestUtils.openNewTestWorkspace(
-                "-byZSKk"
-        );
-
         for (int i = 0; i < 100; i++) {
             Thread.sleep(100);
             session.getTerminal().printProgress((i / 100f), "message %s", i);
@@ -83,7 +86,6 @@ public class Test16_TerminalProgressTest {
 
     @Test
     public void test3() {
-        NutsSession session = TestUtils.openNewTestWorkspace("-k");
         CProgressBar rr = new CProgressBar(session);
         rr.setFormatter(CProgressBar.CIRCLES2);
         rr.setMinPeriod(-1);

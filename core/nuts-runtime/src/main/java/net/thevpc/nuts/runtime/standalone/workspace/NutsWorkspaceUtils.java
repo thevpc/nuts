@@ -113,8 +113,8 @@ public class NutsWorkspaceUtils {
 
     public ReflectRepository getReflectRepository() {
         NutsWorkspaceEnvManager env = session.env();
-        NutsElement e = env.getProperty(ReflectRepository.class.getName());
-        ReflectRepository o = (ReflectRepository) (e.isCustom() ?e.asCustom().getValue():null);
+        //do not call env.getProperty(...). It will end up with a stack overflow
+        ReflectRepository o = (ReflectRepository) (env.getProperties().get(ReflectRepository.class.getName()));
         if (o == null) {
             o = new DefaultReflectRepository(ReflectConfigurationBuilder.create()
                     .setPropertyAccessStrategy(ReflectPropertyAccessStrategy.FIELD)

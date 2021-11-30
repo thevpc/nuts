@@ -67,6 +67,7 @@ public interface NutsPrimitiveElement extends NutsElement {
     boolean getBoolean();
 
     Boolean getBoolean(Boolean emptyValue, Boolean errorValue);
+
     Boolean getBoolean(Boolean emptyOrErrorValue);
 
     /**

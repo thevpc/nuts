@@ -19,17 +19,16 @@ import java.util.stream.Collectors;
  * @author thevpc
  */
 public class Test14_CommandLineTest {
+    static NutsSession session;
+
+    @BeforeAll
+    public static void init() {
+        session = TestUtils.openNewMinTestWorkspace();
+    }
 
 
     @Test
     public void test1() throws Exception {
-        NutsSession session = TestUtils.openNewTestWorkspace(
-                "--archetype", "default",
-                "--log-info",
-                "--skip-companions",
-                "--skip-welcome"
-        );
-
         NutsArgument[] cmd = NutsCommandLine.of("-ad+ +ad--",session).toArgumentArray();
         Set<String> set = Arrays.stream(cmd).map(x -> x.toString()).collect(Collectors.toSet());
         Set<String> expectedSet = new HashSet<>(Arrays.asList(
@@ -41,8 +40,7 @@ public class Test14_CommandLineTest {
 
 
     @Test
-    public void testArgument() {
-        NutsSession session = TestUtils.openNewMinTestWorkspace();
+    public void testArgument01() {
         NutsElements elems = NutsElements.of(session);
         checkDefaultNutsArgument(
                 new DefaultNutsArgument(null,elems),
@@ -56,6 +54,11 @@ public class Test14_CommandLineTest {
                 null,
                 "="
         );
+    }
+
+    @Test
+    public void testArgument02() {
+        NutsElements elems = NutsElements.of(session);
         checkDefaultNutsArgument(
                 new DefaultNutsArgument("",elems),
                 true,
@@ -68,6 +71,11 @@ public class Test14_CommandLineTest {
                 null,
                 "="
         );
+    }
+
+    @Test
+    public void testArgument03() {
+        NutsElements elems = NutsElements.of(session);
         checkDefaultNutsArgument(
                 new DefaultNutsArgument("hello",elems),
                 true,
@@ -80,6 +88,11 @@ public class Test14_CommandLineTest {
                 null,
                 "="
         );
+    }
+
+    @Test
+    public void testArgument04() {
+        NutsElements elems = NutsElements.of(session);
         checkDefaultNutsArgument(
                 new DefaultNutsArgument("!hello",elems),
                 true,
@@ -92,6 +105,11 @@ public class Test14_CommandLineTest {
                 null,
                 "="
         );
+    }
+
+    @Test
+    public void testArgument05() {
+        NutsElements elems = NutsElements.of(session);
         checkDefaultNutsArgument(
                 new DefaultNutsArgument("//!hello",elems),
                 true,
@@ -104,6 +122,11 @@ public class Test14_CommandLineTest {
                 null,
                 "="
         );
+    }
+
+    @Test
+    public void testArgument06() {
+        NutsElements elems = NutsElements.of(session);
         checkDefaultNutsArgument(
                 new DefaultNutsArgument("/!hello",elems),
                 true,
@@ -116,6 +139,11 @@ public class Test14_CommandLineTest {
                 null,
                 "="
         );
+    }
+
+    @Test
+    public void testArgument07() {
+        NutsElements elems = NutsElements.of(session);
         checkDefaultNutsArgument(
                 new DefaultNutsArgument("/!hello=me",elems),
                 true,
@@ -128,6 +156,11 @@ public class Test14_CommandLineTest {
                 null,
                 "="
         );
+    }
+
+    @Test
+    public void testArgument08() {
+        NutsElements elems = NutsElements.of(session);
         checkDefaultNutsArgument(
                 new DefaultNutsArgument("--!hello=me",elems),
                 true,
@@ -140,6 +173,11 @@ public class Test14_CommandLineTest {
                 "--",
                 "="
         );
+    }
+
+    @Test
+    public void testArgument09() {
+        NutsElements elems = NutsElements.of(session);
         checkDefaultNutsArgument(
                 new DefaultNutsArgument("--//!hello=me",elems),
                 false,
@@ -152,6 +190,12 @@ public class Test14_CommandLineTest {
                 "--",
                 "="
         );
+    }
+
+
+    @Test
+    public void testArgument10() {
+        NutsElements elems = NutsElements.of(session);
         checkDefaultNutsArgument(
                 new DefaultNutsArgument("--//=",elems),
                 false,

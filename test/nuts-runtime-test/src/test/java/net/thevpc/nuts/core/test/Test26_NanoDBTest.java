@@ -5,14 +5,21 @@ import net.thevpc.nuts.core.test.utils.TestUtils;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.xtra.nanodb.NanoDB;
 import net.thevpc.nuts.runtime.standalone.xtra.nanodb.NanoDBTableFile;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
 
 public class Test26_NanoDBTest {
+    static NutsSession session;
+
+    @BeforeAll
+    public static void init() {
+        session = TestUtils.openNewMinTestWorkspace();
+    }
+
     @Test
     public void test1() {
-        NutsSession session = TestUtils.openNewTestWorkspace();
         for (String s : new String[]{"", "a", "ab", "abc"}) {
             TestUtils.println("getUTFLength(\"" + s + "\")=" + NanoDBTableFile.getUTFLength(s, session));
         }
@@ -34,7 +41,6 @@ public class Test26_NanoDBTest {
 
     @Test
     public void testPerf() {
-        NutsSession session = TestUtils.openExistingTestWorkspace("-Zy", "--verbose");
         File dir = TestUtils.initFolder(".test-db-perf").toFile();
         long from = System.currentTimeMillis();
         CoreIOUtils.delete(null, dir);

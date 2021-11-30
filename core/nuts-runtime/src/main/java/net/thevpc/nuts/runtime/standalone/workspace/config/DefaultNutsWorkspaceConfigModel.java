@@ -1164,8 +1164,21 @@ public class DefaultNutsWorkspaceConfigModel {
         // and hence there is no repository to look from.
         // In that case we look in default repos on "first boot"
         if (isFirstBoot()) {
-            boolean deployFromDefaultRepos = false;
+            NutsClassLoaderNode n = searchBootNode(id, session);
+            if (n != null) {
+                if (deployToInstalledRepository(
+                        NutsPath.of(n.getURL(), session).toFile()
+                        , session)) {
+                    for (NutsClassLoaderNode d : n.getDependencies()) {
+                        NutsId depId = NutsId.of(d.getId(), session);
+                        downloadId(depId, session);
+                    }
+                    return;
+                }
+            }
+            boolean deployFromDefaultRepos = true;
             if (deployFromDefaultRepos) {
+                NutsTmp tmps = NutsTmp.of(session);
                 String tmp = null;
                 try {
                     String idFileName = session.locations().getDefaultIdFilename(id.builder().setFaceContent().setPackaging("jar").build());
@@ -1175,7 +1188,7 @@ public class DefaultNutsWorkspaceConfigModel {
                         boolean copiedLocally = false;
                         try {
                             if (tmp == null) {
-                                tmp = NutsTmp.of(session).createTempFile(idFileName).toString();
+                                tmp = tmps.createTempFile(idFileName).toString();
                             }
                             NutsPath srcPath = pp
                                     .resolve(session.locations().getDefaultIdBasedir(id))
@@ -1200,18 +1213,6 @@ public class DefaultNutsWorkspaceConfigModel {
                             tp.delete();
                         }
                     }
-                }
-            }
-            NutsClassLoaderNode n = searchBootNode(id, session);
-            if (n != null) {
-                if (deployToInstalledRepository(
-                        NutsPath.of(n.getURL(), session).toFile()
-                        , session)) {
-                    for (NutsClassLoaderNode d : n.getDependencies()) {
-                        NutsId depId = NutsId.of(d.getId(), session);
-                        downloadId(depId, session);
-                    }
-                    return;
                 }
             }
         }

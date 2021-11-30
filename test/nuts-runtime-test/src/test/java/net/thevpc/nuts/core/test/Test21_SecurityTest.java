@@ -7,15 +7,22 @@ import net.thevpc.nuts.runtime.standalone.security.DefaultNutsAuthenticationAgen
 import net.thevpc.nuts.runtime.standalone.security.PlainNutsAuthenticationAgent;
 import net.thevpc.nuts.spi.NutsAuthenticationAgent;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class Test21_SecurityTest {
+    static NutsSession session;
+
+    @BeforeAll
+    public static void init() {
+        session = TestUtils.openNewMinTestWorkspace();
+    }
+
     @Test
     public void testEncrypt(){
-        NutsSession session = TestUtils.openNewTestWorkspace();
         char[] r = CoreSecurityUtils.defaultEncryptChars("Hello".toCharArray(), "okkay",session);
         TestUtils.println(new String(r));
         char[] i = CoreSecurityUtils.defaultDecryptChars(r, "okkay",session);

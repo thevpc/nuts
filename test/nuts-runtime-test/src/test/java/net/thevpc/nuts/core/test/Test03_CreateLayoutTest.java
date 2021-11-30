@@ -27,7 +27,7 @@ public class Test03_CreateLayoutTest {
 //        CoreIOUtils.delete(null, base);
 //        TestUtils.resetLinuxFolders();
         File testBaseFolder = TestUtils.getTestBaseFolder();
-        NutsSession s = TestUtils.openNewTestWorkspace(
+        NutsSession sessionOne = TestUtils.openNewTestWorkspace(
                 TestUtils.sarr(
                         TestUtils.createSysDirs(testBaseFolder),
                         //            "--verbose",
@@ -36,10 +36,10 @@ public class Test03_CreateLayoutTest {
                 )
         );
         for (NutsStoreLocation value : NutsStoreLocation.values()) {
-            s.out().printf("%s %s%n", value, s.locations().getStoreLocation(value));
+            sessionOne.out().printf("%s %s%n", value, sessionOne.locations().getStoreLocation(value));
         }
 
-        NutsSession wsAgain = TestUtils.openExistingTestWorkspace(
+        NutsSession sessionAgain = TestUtils.openExistingTestWorkspace(
                 TestUtils.sarr(
                         TestUtils.createSysDirs(testBaseFolder),
                         //            "--verbose",
@@ -48,49 +48,12 @@ public class Test03_CreateLayoutTest {
                         "info"
                 ));
 
-        if (NDI_COMPANIONS > 0) {
-            NutsId ndiId = s.search().setInstallStatus(NutsInstallStatusFilters.of(s).byInstalled(true)).addId("nsh")
-                    .setDistinct(true)
-                    .getResultIds().singleton();
-            Assertions.assertTrue(ndiId.getVersion().getValue().startsWith(TestUtils.NUTS_VERSION + "."));
+        for (NutsStoreLocation value : NutsStoreLocation.values()) {
+            Assertions.assertEquals(
+                    sessionOne.locations().getStoreLocation(value),
+                    sessionAgain.locations().getStoreLocation(value)
+            );
         }
-
-        Assertions.assertEquals(
-                (NDI_COMPANIONS > 0) ? TestUtils.createNamesSet("nsh") : TestUtils.createNamesSet(),
-                TestUtils.listNamesSet(
-                        testBaseFolder.toPath().resolve("system.config").resolve(NutsConstants.Folders.ID).resolve("net/thevpc/nuts/toolbox").toFile()
-                        , File::isDirectory)
-        );
-        Assertions.assertEquals(
-                NSH_BUILTINS,
-                TestUtils.listNamesSet(
-                        testBaseFolder.toPath().resolve("system.apps").resolve(NutsConstants.Folders.ID)
-                                .resolve("net/thevpc/nuts/nuts/" + TestUtils.NUTS_VERSION + "/cmd")
-                                .toFile()
-                        , x -> x.getName().endsWith(NutsConstants.Files.NUTS_COMMAND_FILE_EXTENSION)).size()
-        );
-        Assertions.assertEquals(
-                (NDI_COMPANIONS > 0) ? (NDI_COMPANIONS + 2) : 0,
-                TestUtils.listNamesSet(
-                        testBaseFolder.toPath().resolve("system.apps").resolve(NutsConstants.Folders.ID)
-                                .resolve("net/thevpc/nuts/nuts/" + TestUtils.NUTS_VERSION + "/bin")
-                                .toFile()
-                        , x -> x.isFile() && !x.getName().startsWith(".")).size()
-        );
-        Assertions.assertEquals(
-                3,
-                TestUtils.listNamesSet(
-                        testBaseFolder.toPath().resolve("system.cache").resolve(NutsConstants.Folders.ID)
-                                .toFile()
-                        , x -> x.isDirectory()).size()
-        );
-//        for (String f : TestUtils.NUTS_STD_FOLDERS) {
-//            Assertions.assertFalse(new File(f).exists());
-//        }
-//        Assertions.assertEquals(
-//                false,
-//                new File(base, "repositories/system/repositories/system-ref/system-ref").exists()
-//        );
     }
 
 //    @Test
@@ -122,103 +85,36 @@ public class Test03_CreateLayoutTest {
 ////        );
 //    }
 
-    @Test
-    public void customLayout_use_export() throws Exception {
-        String test_id = TestUtils.getCallerMethodId();
-        File base = new File("./runtime/test/" + test_id).getCanonicalFile();
-        NutsWorkspace ws1 = TestUtils.openNewTestWorkspace(
-                TestUtils.sarr(
-                        TestUtils.createSysDirs(base),
-                        //            "--verbose",
-                        "--trace",
-                        "info")).getWorkspace();
-
-        NutsSession s2 = TestUtils.openNewTestWorkspace(TestUtils.sarr(
-                TestUtils.createSysDirs(base),
-                //            "--verbose",
-                "--trace",
-                "info"));
-
-        if (NDI_COMPANIONS > 0) {
-            NutsId ndiId = s2.search().setInstallStatus(NutsInstallStatusFilters.of(s2).byInstalled(true)).addId("nsh")
-                    .setDistinct(true).getResultIds().singleton();
-            Assertions.assertTrue(ndiId.getVersion().getValue().startsWith(TestUtils.NUTS_VERSION + "."));
-        }
-
-        Assertions.assertEquals(
-                (NDI_COMPANIONS > 0) ? TestUtils.createNamesSet("nsh") : TestUtils.createNamesSet(),
-                TestUtils.listNamesSet(new File(base, "system.config/" + NutsConstants.Folders.ID + "/net/thevpc/nuts/toolbox"), File::isDirectory)
-        );
-        Assertions.assertEquals(
-                NSH_BUILTINS,
-                TestUtils.listNamesSet(new File(base, "system.apps/" + NutsConstants.Folders.ID + "/net/thevpc/nuts/nuts/" + TestUtils.NUTS_VERSION + "/cmd"), x -> x.getName().endsWith(NutsConstants.Files.NUTS_COMMAND_FILE_EXTENSION)).size()
-        );
-        Assertions.assertEquals(
-                (NDI_COMPANIONS > 0) ? (NDI_COMPANIONS + 2) : 0,
-                TestUtils.listNamesSet(new File(base, "system.apps/" + NutsConstants.Folders.ID + "/net/thevpc/nuts/nuts/" + TestUtils.NUTS_VERSION + "/bin"), x -> x.isFile() && !x.getName().startsWith(".")).size()
-        );
-        Assertions.assertEquals(
-                3,
-                TestUtils.listNamesSet(new File(base, "system.cache/" + NutsConstants.Folders.ID), x -> x.isDirectory()).size()
-        );
-//        for (String f : TestUtils.NUTS_STD_FOLDERS) {
-//            Assertions.assertFalse(new File(f).exists());
-//        }
-//        Assertions.assertEquals(
-//                false,
-//                new File(base, "repositories/system/repositories/system-ref/system-ref").exists()
-//        );
-    }
 
     @Test
-    public void customLayout_use_standalone() throws Exception {
-        String test_id = TestUtils.getCallerMethodId();
-        File base = new File("./runtime/test/" + test_id).getCanonicalFile();
-//        Assumptions.assumeTrue(NutsOsFamily.getCurrent() == NutsOsFamily.LINUX);
-        TestUtils.println("Deleting " + base);
-        CoreIOUtils.delete(null, base);
-        NutsSession s = TestUtils.openNewTestWorkspace("--embedded");
+    public void customLayout_use_standalone() {
+        NutsSession session = TestUtils.openNewTestWorkspace("--embedded", "--standalone");
         if (NDI_COMPANIONS > 0) {
             NutsId nshId = null;
             try {
-                nshId = s.search().setInstallStatus(NutsInstallStatusFilters.of(s).byInstalled(true)).addId("nsh")
+                nshId = session.search().setInstallStatus(NutsInstallStatusFilters.of(session).byInstalled(true)).addId("nsh")
                         .setDistinct(true).getResultIds().singleton();
             } catch (Exception ex) {
-                nshId = s.search().setInstallStatus(NutsInstallStatusFilters.of(s).byInstalled(true)).addId("nsh")
+                nshId = session.search().setInstallStatus(NutsInstallStatusFilters.of(session).byInstalled(true)).addId("nsh")
                         .setDistinct(true).getResultIds().singleton();
             }
             Assertions.assertTrue(nshId.getVersion().getValue().startsWith(TestUtils.NUTS_VERSION + "."));
         }
-        NutsPath c = s.locations().getStoreLocation(NutsStoreLocation.CONFIG);
+        NutsPath c = session.locations().getStoreLocation(NutsStoreLocation.CONFIG);
         TestUtils.println(c);
+        File base = session.getWorkspace().getLocation().toFile().toFile();
         TestUtils.println(new File(base, "config").getPath());
         for (NutsStoreLocation value : NutsStoreLocation.values()) {
-            s.out().printf("%s %s%n", value, s.locations().getStoreLocation(value));
+            session.out().printf("%s %s%n", value, session.locations().getStoreLocation(value));
         }
-
         Assertions.assertEquals(
-                (NDI_COMPANIONS > 0) ? TestUtils.createNamesSet("nsh") : TestUtils.createNamesSet(),
-                TestUtils.listNamesSet(new File(base, "/config/" + NutsConstants.Folders.ID + "/net/thevpc/nuts/toolbox"), File::isDirectory)
+                NutsPath.of(base, session).resolve("apps"),
+                session.locations().getStoreLocation(NutsStoreLocation.APPS)
         );
         Assertions.assertEquals(
-                NSH_BUILTINS,
-                TestUtils.listNamesSet(new File(base, "apps/" + NutsConstants.Folders.ID + "/net/thevpc/nuts/nuts/" + TestUtils.NUTS_VERSION + "/cmd"), x -> x.getName().endsWith(NutsConstants.Files.NUTS_COMMAND_FILE_EXTENSION)).size()
+                NutsPath.of(base, session).resolve("cache"),
+                session.locations().getStoreLocation(NutsStoreLocation.CACHE)
         );
-        Assertions.assertEquals(
-                (NDI_COMPANIONS > 0) ? (NDI_COMPANIONS + 2) : 0, //2=nuts and nuts-term
-                TestUtils.listNamesSet(new File(base, "apps/" + NutsConstants.Folders.ID + "/net/thevpc/nuts/nuts/" + TestUtils.NUTS_VERSION + "/bin"), x -> x.isFile() && !x.getName().startsWith(".")).size()
-        );
-        Assertions.assertEquals(
-                TestUtils.createNamesSet("com", "net", "org"),
-                TestUtils.listNamesSet(new File(base, "cache/" + NutsConstants.Folders.ID), x -> x.isDirectory())
-        );
-//        for (String f : TestUtils.NUTS_STD_FOLDERS) {
-//            Assertions.assertFalse(f + " should not exist", new File(f).exists());
-//        }
-//        Assertions.assertEquals(
-//                false,
-//                new File(base, "repositories/system/repositories/system-ref/system-ref").exists()
-//        );
     }
 
     @Test
@@ -248,35 +144,35 @@ public class Test03_CreateLayoutTest {
         TestUtils.println(new File(base, "system.apps").getPath());
         TestUtils.println(w.locations().getStoreLocation(NutsStoreLocation.APPS));
         Assertions.assertEquals(
-                NutsPath.of(new File(base, "system.apps"),w),
+                NutsPath.of(new File(base, "system.apps"), w),
                 w.locations().getStoreLocation(NutsStoreLocation.APPS)
         );
         Assertions.assertEquals(
-                NutsPath.of(new File(base, "system.config"),w),
+                NutsPath.of(new File(base, "system.config"), w),
                 w.locations().getStoreLocation(NutsStoreLocation.CONFIG)
         );
         Assertions.assertEquals(
-                NutsPath.of(new File(base, "system.var"),w),
+                NutsPath.of(new File(base, "system.var"), w),
                 w.locations().getStoreLocation(NutsStoreLocation.VAR)
         );
         Assertions.assertEquals(
-                NutsPath.of(new File(base, "system.log"),w),
+                NutsPath.of(new File(base, "system.log"), w),
                 w.locations().getStoreLocation(NutsStoreLocation.LOG)
         );
         Assertions.assertEquals(
-                NutsPath.of(new File(base, "system.temp"),w),
+                NutsPath.of(new File(base, "system.temp"), w),
                 w.locations().getStoreLocation(NutsStoreLocation.TEMP)
         );
         Assertions.assertEquals(
-                NutsPath.of(new File(base, "system.cache"),w),
+                NutsPath.of(new File(base, "system.cache"), w),
                 w.locations().getStoreLocation(NutsStoreLocation.CACHE)
         );
         Assertions.assertEquals(
-                NutsPath.of(new File(base, "system.lib"),w),
+                NutsPath.of(new File(base, "system.lib"), w),
                 w.locations().getStoreLocation(NutsStoreLocation.LIB)
         );
         Assertions.assertEquals(
-                NutsPath.of(new File(base, "system.run"),w),
+                NutsPath.of(new File(base, "system.run"), w),
                 w.locations().getStoreLocation(NutsStoreLocation.RUN)
         );
 
@@ -285,35 +181,35 @@ public class Test03_CreateLayoutTest {
                 "info");
         TestUtils.println(w.locations().getStoreLocation(NutsStoreLocation.APPS));
         Assertions.assertEquals(
-                NutsPath.of(new File(base, "apps"),w),
+                NutsPath.of(new File(base, "apps"), w),
                 w.locations().getStoreLocation(NutsStoreLocation.APPS)
         );
         Assertions.assertEquals(
-                NutsPath.of(new File(base, "config"),w),
+                NutsPath.of(new File(base, "config"), w),
                 w.locations().getStoreLocation(NutsStoreLocation.CONFIG)
         );
         Assertions.assertEquals(
-                NutsPath.of(new File(base, "var"),w),
+                NutsPath.of(new File(base, "var"), w),
                 w.locations().getStoreLocation(NutsStoreLocation.VAR)
         );
         Assertions.assertEquals(
-                NutsPath.of(new File(base, "log"),w),
+                NutsPath.of(new File(base, "log"), w),
                 w.locations().getStoreLocation(NutsStoreLocation.LOG)
         );
         Assertions.assertEquals(
-                NutsPath.of(new File(base, "temp"),w),
+                NutsPath.of(new File(base, "temp"), w),
                 w.locations().getStoreLocation(NutsStoreLocation.TEMP)
         );
         Assertions.assertEquals(
-                NutsPath.of(new File(base, "cache"),w),
+                NutsPath.of(new File(base, "cache"), w),
                 w.locations().getStoreLocation(NutsStoreLocation.CACHE)
         );
         Assertions.assertEquals(
-                NutsPath.of(new File(base, "lib"),w),
+                NutsPath.of(new File(base, "lib"), w),
                 w.locations().getStoreLocation(NutsStoreLocation.LIB)
         );
         Assertions.assertEquals(
-                NutsPath.of(new File(base, "run"),w),
+                NutsPath.of(new File(base, "run"), w),
                 w.locations().getStoreLocation(NutsStoreLocation.RUN)
         );
     }

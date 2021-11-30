@@ -160,7 +160,7 @@ final class PrivateNutsWorkspaceOptionsFormat {
             }
             fillOption("--skip-companions", "-k", options.isSkipCompanions(), false, arguments, false);
             fillOption("--skip-welcome", "-K", options.isSkipWelcome(), false, arguments, false);
-            fillOption("--out-line-prefix", null, options.isSkipWelcome(), false, arguments, false);
+            fillOption("--out-line-prefix", null, options.getOutLinePrefix(), arguments, false);
             fillOption("--skip-boot", "-Q", options.isSkipBoot(), false, arguments, false);
             fillOption("--cached", null, options.isCached(), true, arguments, false);
             fillOption("--indexed", null, options.isIndexed(), true, arguments, false);
@@ -260,9 +260,7 @@ final class PrivateNutsWorkspaceOptionsFormat {
         if (true || isImplicitAll()) {
             if (apiVersionObj == null || apiVersionObj.compareTo("0.8.1") >= 0) {
                 if (options.getCustomOptions() != null) {
-                    for (String property : options.getCustomOptions()) {
-                        arguments.add("---" + property);
-                    }
+                    arguments.addAll(Arrays.asList(options.getCustomOptions()));
                 }
             }
         }

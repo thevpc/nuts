@@ -1561,8 +1561,8 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
     }
 
     @Override
-    public String getLocation() {
-        return wsModel.location;
+    public NutsPath getLocation() {
+        return NutsPath.of(wsModel.location,wsModel.bootModel.bootSession());
     }
 
     @Override

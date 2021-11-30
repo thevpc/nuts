@@ -58,7 +58,7 @@ public interface NutsWorkspace extends NutsComponent {
 
     NutsId getRuntimeId();
 
-    String getLocation();
+    NutsPath getLocation();
 
     ///////////////////// create new session
     NutsSession createSession();

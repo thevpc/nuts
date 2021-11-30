@@ -43,8 +43,6 @@ public class CoreNutsWorkspaceOptionsFormat implements NutsWorkspaceOptionsForma
     private boolean shortOptions;
     private boolean singleArgOptions;
     private boolean omitDefaults;
-    private String apiVersion;
-    private NutsVersion apiVersionObj;
 
     public CoreNutsWorkspaceOptionsFormat(NutsSession session, NutsWorkspaceOptions options) {
         this.options = options;
@@ -85,23 +83,11 @@ public class CoreNutsWorkspaceOptionsFormat implements NutsWorkspaceOptionsForma
     }
 
     @Override
-    public String getApiVersion() {
-        return apiVersion;
-    }
-
-    @Override
-    public NutsWorkspaceOptionsFormat setApiVersion(String apiVersion) {
-        this.apiVersion = apiVersion;
-        this.apiVersionObj = null;
-        return this;
-    }
-
-    @Override
     public NutsCommandLine getBootCommandLine() {
-        NutsVersion apiVersionObj = getApiVersionObj();
+        String apiVersion=options.getApiVersion();
+        NutsVersion apiVersionObj = NutsBlankable.isBlank(apiVersion)?null:NutsVersion.of(apiVersion,session);
         List<String> arguments = new ArrayList<>();
         if (exportedOptions || isImplicitAll()) {
-            fillOption("--boot-runtime", null, options.getRuntimeId(), arguments, false);
             fillOption("--java", "-j", options.getJavaCommand(), arguments, false);
             fillOption("--java-options", "-O", options.getJavaOptions(), arguments, false);
             String wsString = options.getWorkspace();
@@ -118,6 +104,8 @@ public class CoreNutsWorkspaceOptionsFormat implements NutsWorkspaceOptionsForma
             fillOption("--user", "-u", options.getUserName(), arguments, false);
             fillOption("--password", "-p", options.getCredentials(), arguments, false);
             fillOption("--boot-version", "-V", options.getApiVersion(), arguments, false);
+            fillOption("--boot-runtime", null, options.getRuntimeId(), arguments, false);
+
             if (!(omitDefaults && options.getTerminalMode() == null)) {
                 fillOption("--color", "-c", options.getTerminalMode(), NutsTerminalMode.class, arguments, true);
             }
@@ -161,7 +149,7 @@ public class CoreNutsWorkspaceOptionsFormat implements NutsWorkspaceOptionsForma
             }
             fillOption("--skip-companions", "-k", options.isSkipCompanions(), false, arguments, false);
             fillOption("--skip-welcome", "-K", options.isSkipWelcome(), false, arguments, false);
-            fillOption("--out-line-prefix", null, options.isSkipWelcome(), false, arguments, false);
+            fillOption("--out-line-prefix", null, options.getOutLinePrefix(), arguments, false);
             fillOption("--skip-boot", "-Q", options.isSkipBoot(), false, arguments, false);
             fillOption("--cached", null, options.isCached(), true, arguments, false);
             fillOption("--indexed", null, options.isIndexed(), true, arguments, false);
@@ -261,9 +249,7 @@ public class CoreNutsWorkspaceOptionsFormat implements NutsWorkspaceOptionsForma
         if (true || isImplicitAll()) {
             if (apiVersionObj == null || apiVersionObj.compareTo("0.8.1") >= 0) {
                 if (options.getCustomOptions() != null) {
-                    for (String property : options.getCustomOptions()) {
-                        arguments.add("---" + property);
-                    }
+                    arguments.addAll(Arrays.asList(options.getCustomOptions()));
                 }
             }
         }
@@ -392,6 +378,7 @@ public class CoreNutsWorkspaceOptionsFormat implements NutsWorkspaceOptionsForma
     }
 
     private boolean fillOption(NutsRunAs value, List<String> arguments) {
+        String apiVersion=options.getApiVersion();
         switch (value.getMode()) {
             case CURRENT_USER: {
                 if (!NutsBlankable.isBlank(apiVersion) &&
@@ -442,6 +429,7 @@ public class CoreNutsWorkspaceOptionsFormat implements NutsWorkspaceOptionsForma
     }
 
     private boolean tryFillOptionShort(Enum value, List<String> arguments, boolean forceSingle) {
+        String apiVersion=options.getApiVersion();
         if (value != null) {
             if (shortOptions) {
                 if (value instanceof NutsOpenMode) {
@@ -598,7 +586,6 @@ public class CoreNutsWorkspaceOptionsFormat implements NutsWorkspaceOptionsForma
                 && shortOptions == that.shortOptions
                 && singleArgOptions == that.singleArgOptions
                 && omitDefaults == that.omitDefaults
-                && Objects.equals(apiVersion, that.apiVersion)
                 && Objects.equals(options, that.options)
                 ;
     }
@@ -608,12 +595,5 @@ public class CoreNutsWorkspaceOptionsFormat implements NutsWorkspaceOptionsForma
         return getBootCommandLine().toString();
     }
 
-    public NutsVersion getApiVersionObj() {
-        if (apiVersionObj == null) {
-            if (apiVersion != null) {
-                apiVersionObj = NutsVersion.of(apiVersion,session);
-            }
-        }
-        return apiVersionObj;
-    }
+
 }

@@ -34,17 +34,15 @@ import java.io.IOException;
  * @author thevpc
  */
 public class Test17_JsonTest {
+    static NutsSession session;
 
     @BeforeAll
-    public static void setUpClass() throws IOException {
-        TestUtils.println("####### RUNNING TEST @ " + TestUtils.getCallerClassSimpleName());
+    public static void init() {
+        session = TestUtils.openNewTestWorkspace("-byZSKk");
     }
 
     @Test
     public void test1() throws Exception {
-        NutsSession session = TestUtils.openNewTestWorkspace(
-                "-byZSKk"
-        );
 
 //        NutsString e = ws.elem()
 //                .setContentType(NutsContentType.JSON)
@@ -64,10 +62,7 @@ public class Test17_JsonTest {
 
     @Test
     public void test2()  {
-        NutsSession ws = TestUtils.openNewTestWorkspace(
-                "-byZSKk"
-        );
-        NutsElement a = NutsElements.of(ws).json()
+        NutsElement a = NutsElements.of(session).json()
                 .parse(
                         "{\n" +
                                 "    title: 'Some Title',\n" +
@@ -221,24 +216,9 @@ public class Test17_JsonTest {
 //        TestUtils.println(NutsTexts.of(session).forPlain("a@@@"));
 //        TestUtils.println(NutsTexts.of(session).forPlain("a@@@").filteredText());
 
-        TestUtils.println(NutsTexts.of(ws).ofPlain("a##@"));
-        TestUtils.println(NutsTexts.of(ws).ofPlain("a##@").filteredText());
+        TestUtils.println(NutsTexts.of(session).ofPlain("a##@"));
+        TestUtils.println(NutsTexts.of(session).ofPlain("a##@").filteredText());
 
     }
 
-    @AfterAll
-    public static void tearUpClass() throws IOException {
-        //CoreIOUtils.delete(null,new File(baseFolder));
-    }
-
-    @BeforeEach
-    public void startup() throws IOException {
-//        Assumptions.assumeTrue(NutsOsFamily.getCurrent() == NutsOsFamily.LINUX);
-        TestUtils.unsetNutsSystemProperties();
-    }
-
-    @AfterEach
-    public void cleanup() {
-        TestUtils.unsetNutsSystemProperties();
-    }
 }

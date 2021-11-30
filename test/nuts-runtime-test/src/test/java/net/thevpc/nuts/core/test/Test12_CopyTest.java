@@ -21,14 +21,16 @@ import java.nio.file.Paths;
  * @author thevpc
  */
 public class Test12_CopyTest {
+    static NutsSession session;
+
+    @BeforeAll
+    public static void init() {
+        session = TestUtils.openNewMinTestWorkspace();
+    }
 
 
     @Test
     public void copy01() throws Exception {
-        NutsSession session = TestUtils.openNewTestWorkspace(
-                "--archetype", "default",
-                "--log-info",
-                "--skip-companions");
         NutsPath from = NutsTmp.of(session)
                 .createTempFolder("source");
         NutsPath to = NutsTmp.of(session)
@@ -72,27 +74,6 @@ public class Test12_CopyTest {
                 return true;
             }
         }).run();
-    }
-
-    @BeforeAll
-    public static void setUpClass() throws IOException {
-        TestUtils.println("####### RUNNING TEST @ "+ TestUtils.getCallerClassSimpleName());
-    }
-
-    @AfterAll
-    public static void tearUpClass() throws IOException {
-        //CoreIOUtils.delete(null,new File(baseFolder));
-    }
-
-    @BeforeEach
-    public void startup() throws IOException {
-//        Assumptions.assumeTrue(NutsOsFamily.getCurrent()== NutsOsFamily.LINUX);
-        TestUtils.unsetNutsSystemProperties();
-    }
-
-    @AfterEach
-    public void cleanup() {
-        TestUtils.unsetNutsSystemProperties();
     }
 
 }

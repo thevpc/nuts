@@ -63,11 +63,11 @@ public class Test06_UpdateTest {
                 "--verbose"
         );
         NutsRepository updateRepo1 = uws.repos().addRepository("local");
-        uws.config().save();
+//        uws.config().save();
         //NutsRepository updateRepo1 = uws.config().getRepository("local", session);
         String updateRepoPath = updateRepo1.config().getStoreLocation().toString();
         TestUtils.println(updateRepo1.config().getStoreLocationStrategy());
-        uws.info().println();
+        uws.info().configure(false,"--repos").println();
         TestUtils.println("\n------------------------------------------");
         NutsSession nws = TestUtils.openNewTestWorkspace(
                 "--workspace", workspacePath,
@@ -80,7 +80,7 @@ public class Test06_UpdateTest {
         nws.repos().addRepository(new NutsAddRepositoryOptions().setTemporary(true).setName("temp").setLocation(updateRepoPath)
                 .setConfig(new NutsRepositoryConfig().setStoreLocationStrategy(NutsStoreLocationStrategy.STANDALONE))
         );
-        nws.info().setShowRepositories(true).println();
+        nws.info().configure(false,"--repos").setShowRepositories(true).println();
         TestUtils.println("\n------------------------------------------");
 
         NutsRepository r = nws.repos().getRepository("temp");
@@ -191,9 +191,17 @@ public class Test06_UpdateTest {
         );
         TestUtils.println(NutsCommandLine.of(b.createProcessCommandLine(), uws).toString());
 
-        String ss = uws.exec().setExecutionType(NutsExecutionType.SYSTEM).addCommand(b.createProcessCommandLine()).grabOutputString().run().getOutputString();
+        NutsExecCommand ee = uws.exec().setExecutionType(NutsExecutionType.SYSTEM)
+                .addCommand(b.createProcessCommandLine())
+                .setFailFast(true)
+                .grabOutputString()
+                .grabErrorString()
+//                .setSleepMillis(1000)
+                .run();
+        String ss = ee.getOutputString();
         TestUtils.println("================");
         TestUtils.println(ss);
+        TestUtils.println(ee.getErrorString());
         Map m = NutsElements.of(uws).json().parse(ss, Map.class);
         Assertions.assertEquals(newApiVersion, m.get("nuts-api-version"));
         Assertions.assertEquals(newRuntimeVersion, m.get("nuts-runtime-version"));

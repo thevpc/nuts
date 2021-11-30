@@ -51,7 +51,7 @@ class DefaultNutsPrimitiveElement extends AbstractNutsElement implements NutsPri
         this.value = value;
     }
 
-    public static Instant parseDate(String s) {
+    public static Instant parseInstant(String s) {
         try {
             return DateTimeFormatter.ISO_INSTANT.parse(s, Instant::from);
         } catch (Exception ex) {

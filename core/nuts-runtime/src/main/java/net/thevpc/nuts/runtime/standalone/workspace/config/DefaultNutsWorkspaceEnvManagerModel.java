@@ -35,6 +35,7 @@ import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.Instant;
 import java.util.*;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -323,7 +324,11 @@ public class DefaultNutsWorkspaceEnvManagerModel {
 
     public NutsElement getProperty(String property, NutsSession session) {
         return NutsElements.of(session)
-                .setIndestructibleObjects(x -> true)
+                .setIndestructibleObjects(x -> !x.isPrimitive()
+                        && !Number.class.isAssignableFrom(x)
+                        && !Boolean.class.isAssignableFrom(x)
+                        && !String.class.isAssignableFrom(x)
+                        && !Instant.class.isAssignableFrom(x))
                 .toElement(property);
     }
 

@@ -20,13 +20,15 @@ import net.thevpc.nuts.core.test.utils.*;
  * @author thevpc
  */
 public class Test22_CpTest {
+    static NutsSession session;
+
+    @BeforeAll
+    public static void init() {
+        session = TestUtils.openNewMinTestWorkspace();
+    }
+
     @Test
     public void minimal1() throws Exception {
-        NutsSession session = TestUtils.openNewTestWorkspace(
-                "--standalone",
-                "--archetype", "minimal",
-                //            "--verbose",
-                "--skip-companions");
         final String url = "https://repo.maven.apache.org/maven2/archetype-catalog.xml";
         InputStream j1 = CoreIOUtils.getCachedUrlWithSHA1(url, "archetype-catalog", true,session);
         //just to consume the stream

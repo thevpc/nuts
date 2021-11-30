@@ -45,10 +45,6 @@ public interface NutsWorkspaceOptionsFormat extends Serializable {
 
     NutsWorkspaceOptionsFormat setExported(boolean e);
 
-    String getApiVersion();
-
-    NutsWorkspaceOptionsFormat setApiVersion(String apiVersion);
-
     NutsCommandLine getBootCommandLine();
 
     NutsWorkspaceOptionsFormat setCompact(boolean compact);

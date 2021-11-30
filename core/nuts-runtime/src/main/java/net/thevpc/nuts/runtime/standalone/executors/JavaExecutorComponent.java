@@ -161,25 +161,32 @@ public class JavaExecutorComponent implements NutsExecutorComponent {
                     }
                 }
                 NutsVersion nutsDependencyVersion = null;
-                for (String s : joptions.getClassPathNidStrings()) {
-                    if (s.startsWith("net.thevpc.nuts:nuts#")) {
-                        String v = s.substring("net.thevpc.nuts:nuts#".length());
-                        nutsDependencyVersion = NutsVersion.of(v, session);
-                    } else {
-                        Pattern pp = Pattern.compile(".*[/\\\\]nuts-(?<v>[0-9.]+)[.]jar");
-                        Matcher mm = pp.matcher(s);
-                        if (mm.find()) {
-                            String v = mm.group("v");
-                            nutsDependencyVersion = NutsVersion.of(v, session);
+                for (NutsDependency d : executionContext.getDefinition().getDependencies().mergedDependencies()) {
+                    if(d.toId().getShortName().equals("net.thevpc.nuts:nuts")){
+                        nutsDependencyVersion = NutsVersion.of(d.getVersion().toString(), session);
+                        if(nutsDependencyVersion!=null){
                             break;
                         }
                     }
                 }
-//                List<String> validBootCommand = new ArrayList<>();
-//                options.setTrace(execSession.isTrace());
+                if(nutsDependencyVersion==null) {
+                    //what if nuts is added as raw classpath jar?!
+                    for (String s : joptions.getClassPathNidStrings()) {
+                        if (s.startsWith("net.thevpc.nuts:nuts#")) {
+                            String v = s.substring("net.thevpc.nuts:nuts#".length());
+                            nutsDependencyVersion = NutsVersion.of(v, session);
+                        } else {
+                            Pattern pp = Pattern.compile(".*[/\\\\]nuts-(?<v>[0-9.]+)[.]jar");
+                            Matcher mm = pp.matcher(s);
+                            if (mm.find()) {
+                                String v = mm.group("v");
+                                nutsDependencyVersion = NutsVersion.of(v, session);
+                                break;
+                            }
+                        }
+                    }
+                }
                 options.setExpireTime(execSession.getExpireTime());
-//                options.setOutputFormat(execSession.getOutputFormat());
-//                options.setConfirm(execSession.getConfirm());
 
                 Filter logFileFilter = execSession.getLogFileFilter();
                 Filter logTermFilter = execSession.getLogTermFilter();
@@ -205,28 +212,15 @@ public class JavaExecutorComponent implements NutsExecutorComponent {
                         lc.setLogFileFilter(logFileFilter);
                     }
                 }
-//                options.setConfirm(execSession.getConfirm());
-
-                String bootArgumentsString = options.formatter()
+                NutsWorkspaceOptionsBuilder options2 = options.copy();
+                if(nutsDependencyVersion!=null){
+                    options2.setApiVersion(nutsDependencyVersion.toString());
+                    options2.setRuntimeId(null);
+                }
+                String bootArgumentsString = options2.formatter()
                         .setExported(true)
-                        .setApiVersion(nutsDependencyVersion == null ? null : nutsDependencyVersion.toString())
                         .setCompact(true)
                         .getBootCommandLine().formatter().setShellFamily(NutsShellFamily.SH).setNtf(false).toString();
-//                if(nutsDependencyVersion!=null && nutsDependencyVersion.compareTo(executionContext.getWorkspace().getApiVersion())<0){
-//                    if(nutsDependencyVersion.compareTo("0.8.0")<0){
-//                        for (String s : bootCommand) {
-//                            if(s.startsWith("-N=") || s.startsWith("--expire=")){
-//                                //ignore..
-//                            }else{
-//                                validBootCommand.add(s);
-//                            }
-//                        }
-//                    }else{
-//                validBootCommand.addAll(Arrays.asList(bootCommand));
-//                    }
-//                }
-//                String bootArgumentsString = executionContext.getWorkspace().commandLine().create(bootCommand)
-//                        .toString();
                 if (!NutsBlankable.isBlank(bootArgumentsString)) {
                     osEnv.put("nuts_boot_args", bootArgumentsString);
                     joptions.getJvmArgs().add("-Dnuts.boot.args=" + bootArgumentsString);

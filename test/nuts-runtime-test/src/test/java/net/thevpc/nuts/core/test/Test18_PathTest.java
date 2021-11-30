@@ -1,7 +1,7 @@
 /**
  * ====================================================================
- *            Nuts : Network Updatable Things Service
- *                  (universal package manager)
+ * Nuts : Network Updatable Things Service
+ * (universal package manager)
  * <br>
  * is a new Open Source Package Manager to help install packages and libraries
  * for runtime execution. Nuts is the ultimate companion for maven (and other
@@ -10,7 +10,7 @@
  * other 'things' . Its based on an extensible architecture to help supporting a
  * large range of sub managers / repositories.
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc] Licensed under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -37,52 +37,71 @@ import java.util.Set;
  */
 public class Test18_PathTest {
 
+    static NutsSession session;
+
+    @BeforeAll
+    public static void init() {
+        session = TestUtils.openNewTestWorkspace();
+    }
+
 
     @Test
-    public void testPathCreation() throws Exception {
-        NutsSession session = TestUtils.openNewTestWorkspace();
+    public void testPathCreation() {
 
         TestUtils.println(NutsPath.of("./", session));
         TestUtils.println(NutsPath.of(".", session));
         TestUtils.println(NutsPath.of("..", session));
         TestUtils.println(NutsPath.of("/*", session));
+        Assertions.assertTrue(true);
     }
 
     @Test
-    public void testPathTypes() throws Exception {
-        NutsSession session = TestUtils.openNewTestWorkspace();
+    public void testPathTypes1() {
         NutsPath s = NutsPath.of("http://maven.ibiblio.org/maven2/archetype-catalog.xml", session);
 
         //this is a remote file
         Assertions.assertFalse(s.isFile());
         //the file is actually a http url
         Assertions.assertTrue(s.isURL());
+    }
 
-        s = NutsPath.of("file://maven.ibiblio.org/maven2/archetype-catalog.xml", session);
+    @Test
+    public void testPathTypes2() {
+
+        NutsPath s = NutsPath.of("file://maven.ibiblio.org/maven2/archetype-catalog.xml", session);
         //the file has an 'authority' (//) so it cannot be converted to a valid file
         Assertions.assertFalse(s.isFile());
         //the file is actually a file url
         Assertions.assertTrue(s.isURL());
 
-        s = NutsPath.of("file:/maven.ibiblio.org/maven2/archetype-catalog.xml", session);
+    }
+
+    @Test
+    public void testPathTypes3() {
+
+        NutsPath s = NutsPath.of("file:/maven.ibiblio.org/maven2/archetype-catalog.xml", session);
         //the file is actually a file url
         Assertions.assertTrue(s.isFile());
         //the file is actually a URL
         Assertions.assertTrue(s.isURL());
 
+    }
+
+    @Test
+    public void testPathTypes4() {
+
 //        s = CoreIOUtils.createInputSource("zip://maven.ibiblio.org/maven2/toto.zip?archetype-catalog.xml");
 //        Assertions.assertFalse(s.isPath());
 //        Assertions.assertTrue(s.isURL());
-        s = NutsPath.of("/maven.ibiblio.org/maven2/archetype-catalog.xml", session);
+        NutsPath s = NutsPath.of("/maven.ibiblio.org/maven2/archetype-catalog.xml", session);
         //the file is actually a file
         Assertions.assertTrue(s.isFile());
         //the file can be converted to URL
         Assertions.assertTrue(s.isURL());
-
     }
 
     @Test
-    public void testHtmlfs1() throws Exception {
+    public void testHtmlfs1() {
         NutsSession session = TestUtils.openNewTestWorkspace();
         NutsPath s = NutsPath.of("htmlfs:http://thevpc.net/maven/net/thevpc/nuts/nuts/", session);
         TestUtils.println("------------ LIST ----------");
@@ -103,8 +122,7 @@ public class Test18_PathTest {
     }
 
     @Test
-    public void testHtmlfs2() throws Exception {
-        NutsSession session = TestUtils.openNewTestWorkspace();
+    public void testHtmlfs2() {
         NutsPath s = NutsPath.of("htmlfs:" + getClass().getResource("/net/thevpc/nuts/core/test/htmlfs-tomcat-01.html"), session);
         TestUtils.println("------------ LIST ----------");
         Set<String> children = new HashSet<>();
@@ -121,8 +139,7 @@ public class Test18_PathTest {
     }
 
     @Test
-    public void testHtmlfs3() throws Exception {
-        NutsSession session = TestUtils.openNewTestWorkspace();
+    public void testHtmlfs3() {
         NutsPath s = NutsPath.of("htmlfs:" + getClass().getResource("/net/thevpc/nuts/core/test/htmlfs-tomcat-02.html"), session);
         TestUtils.println("------------ LIST ----------");
         Set<String> children = new HashSet<>();
@@ -139,8 +156,7 @@ public class Test18_PathTest {
     }
 
     @Test
-    public void testHtmlfs4() throws Exception {
-        NutsSession session = TestUtils.openNewTestWorkspace();
+    public void testHtmlfs4() {
         NutsPath s = NutsPath.of("htmlfs:" + getClass().getResource("/net/thevpc/nuts/core/test/htmlfs-archive-apache-01.html"), session);
         TestUtils.println("------------ LIST ----------");
         Set<String> children = new HashSet<>();
@@ -159,7 +175,6 @@ public class Test18_PathTest {
 
     @Test
     public void testHtmlfs5() {
-        NutsSession session = TestUtils.openNewTestWorkspace();
         NutsPath s = NutsPath.of("htmlfs:" + getClass().getResource("/net/thevpc/nuts/core/test/htmlfs-maven-central-01.html"), session);
         TestUtils.println("------------ LIST ----------");
         Set<String> children = new HashSet<>();
@@ -177,7 +192,6 @@ public class Test18_PathTest {
 
     @Test
     public void testHtmlfs6() {
-        NutsSession session = TestUtils.openNewTestWorkspace();
         NutsPath s = NutsPath.of("htmlfs:" + getClass().getResource("/net/thevpc/nuts/core/test/htmlfs-jetty-01.html"), session);
         TestUtils.println("------------ LIST ----------");
         Set<String> children = new HashSet<>();
@@ -199,7 +213,6 @@ public class Test18_PathTest {
      */
     //@Test
     public void testGithubfs() {
-        NutsSession session = TestUtils.openNewTestWorkspace();
         NutsPath s = NutsPath.of("githubfs:https://api.github.com/repos/thevpc/nuts/contents", session);
         TestUtils.println("------------ LIST ----------");
         Set<String> children = new HashSet<>();
@@ -220,8 +233,6 @@ public class Test18_PathTest {
 
     @Test
     public void testInvalidPath() {
-        NutsSession session = TestUtils.openNewTestWorkspace();
-
-        NutsPath.ofUserHome(session);
+        Assertions.assertEquals(System.getProperty("user.home"), NutsPath.ofUserHome(session).toString());
     }
 }

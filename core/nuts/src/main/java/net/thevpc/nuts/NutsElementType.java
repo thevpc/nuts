@@ -72,10 +72,6 @@ public enum NutsElementType implements NutsEnum {
      * string element
      */
     STRING(true, false),
-    //    /**
-    //     * nuts string element
-    //     */
-    //    NUTS_STRING(true,false),
 
     /**
      * date element

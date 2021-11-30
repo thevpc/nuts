@@ -30,14 +30,18 @@ import org.junit.jupiter.api.*;
  */
 public class Test24_ClassParserTest {
 
-    private static String baseFolder;
+    static NutsSession session;
+
+    @BeforeAll
+    public static void init() {
+        session = TestUtils.openNewMinTestWorkspace();
+    }
 
     private static final java.util.logging.Logger log = java.util.logging.Logger.getLogger(Test24_ClassParserTest.class.getName());
     private static long max = 0;
 
     @Test
     public void test1() throws Exception {
-        NutsSession session = TestUtils.openNewTestWorkspace( );
         Path path = Paths.get(System.getProperty("user.home")).resolve(".m2/repository/org/ow2/asm/asm-commons/7.0/asm-commons-7.0.jar");
         if (Files.exists(path)) {
             parseAnyFile(path, session);
@@ -128,12 +132,5 @@ public class Test24_ClassParserTest {
 
         },session
         );
-    }
-
-    @BeforeAll
-    public static void setUpClass() throws IOException {
-        baseFolder = new File("./runtime/test/" + TestUtils.getCallerClassSimpleName()).getCanonicalFile().getPath();
-        CoreIOUtils.delete(null, new File(baseFolder));
-        TestUtils.println("####### RUNNING TEST @ " + TestUtils.getCallerClassSimpleName());
     }
 }

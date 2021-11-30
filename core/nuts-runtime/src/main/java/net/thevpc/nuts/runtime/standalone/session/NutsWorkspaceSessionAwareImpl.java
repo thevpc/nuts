@@ -79,7 +79,7 @@ public class NutsWorkspaceSessionAwareImpl implements NutsWorkspace, NutsWorkspa
     }
 
     @Override
-    public String getLocation() {
+    public NutsPath getLocation() {
         return ws.getLocation();
     }
 

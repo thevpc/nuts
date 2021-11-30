@@ -309,7 +309,7 @@ public final class CoreNutsArgumentsParser {
                         a = cmdLine.nextString();
                         String v = a.getValue().getString();
                         if (active) {
-                            NutsStoreLocation m = NutsStoreLocation.valueOf(k.substring(2, k.indexOf('-')).toUpperCase());
+                            NutsStoreLocation m = NutsStoreLocation.valueOf(k.substring(2, k.indexOf('-',2)).toUpperCase());
                             options.setStoreLocation(m, v);
                         }
                         break;
@@ -1082,7 +1082,7 @@ public final class CoreNutsArgumentsParser {
 
                         if (k.startsWith("---") && k.length() > 3 && k.charAt(3) != '-') {
                             a = cmdLine.next();
-                            customOptions.add(a.toString().substring(3));
+                            customOptions.add(a.toString());
                         } else {
                             cmdLine.skip();
                             if (a.isActive()) {

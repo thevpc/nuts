@@ -40,16 +40,16 @@ import org.junit.jupiter.api.*;
  * @author thevpc
  */
 public class Test08_ElementTest {
+    static NutsSession session;
 
     @BeforeAll
-    public static void setUpClass() throws IOException {
-        TestUtils.println("####### RUNNING TEST @ " + TestUtils.getCallerClassSimpleName());
+    public static void init() {
+        session = TestUtils.openNewMinTestWorkspace();
     }
 
     @Test
     public void test1() {
-        NutsSession ws = TestUtils.openNewTestWorkspace();
-        NutsElements e = NutsElements.of(ws);
+        NutsElements e = NutsElements.of(session);
         NutsElement p
                 = e.ofArray()
                 .add(
@@ -94,7 +94,7 @@ public class Test08_ElementTest {
                                 .build()
                 ).build())
                 .build();
-        NutsObjectFormat ss = NutsObjectFormat.of(ws).setValue(p);
+        NutsObjectFormat ss = NutsObjectFormat.of(session).setValue(p);
         ss.println();
         String json = ss.format().toString();
         Assertions.assertEquals("[\n"
@@ -277,9 +277,8 @@ public class Test08_ElementTest {
 
     @Test
     public void testIndestructibleObjects() {
-        NutsSession ws = TestUtils.openNewTestWorkspace();
-        NutsTextStyled styledText = NutsTexts.of(ws).ofStyled("Hello", NutsTextStyle.success());
-        NutsElements e = NutsElements.of(ws);
+        NutsTextStyled styledText = NutsTexts.of(session).ofStyled("Hello", NutsTextStyle.success());
+        NutsElements e = NutsElements.of(session);
 
         //create a composite object with a styled element
         Map<String,Object> h=new HashMap<>();
@@ -300,7 +299,7 @@ public class Test08_ElementTest {
         expected=e.ofObject()
                 .set("a","13")
                 .set("b",
-                        e.ofCustom(NutsTexts.of(ws).ofStyled("Hello", NutsTextStyle.success()))
+                        e.ofCustom(NutsTexts.of(session).ofStyled("Hello", NutsTextStyle.success()))
                         ).build();
         Assertions.assertEquals(expected,q);
 
@@ -309,7 +308,7 @@ public class Test08_ElementTest {
         NutsObjectElement b = e.ofObject()
                 .set("a", "13")
                 .set("b",
-                        e.ofCustom(NutsTexts.of(ws).ofStyled("Hello", NutsTextStyle.success()))
+                        e.ofCustom(NutsTexts.of(session).ofStyled("Hello", NutsTextStyle.success()))
                 ).build();
 
         q = e.toElement(b);

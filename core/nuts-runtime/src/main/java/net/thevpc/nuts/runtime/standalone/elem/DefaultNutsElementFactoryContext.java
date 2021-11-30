@@ -52,7 +52,7 @@ public class DefaultNutsElementFactoryContext implements NutsElementFactoryConte
     }
 
     @Override
-    public Predicate<Type> getIndestructibleObjects() {
+    public Predicate<Class> getIndestructibleObjects() {
         return base.getIndestructibleObjects();
     }
 

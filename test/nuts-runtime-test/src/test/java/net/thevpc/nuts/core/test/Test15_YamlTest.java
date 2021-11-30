@@ -41,20 +41,18 @@ import org.junit.jupiter.api.Test;
  */
 public class Test15_YamlTest {
 
-    private static String baseFolder;
+    static NutsSession session;
 
     @BeforeAll
-    public static void setUpClass() throws IOException {
-        baseFolder = new File("./runtime/test/" + TestUtils.getCallerClassSimpleName()).getCanonicalFile().getPath();
-        CoreIOUtils.delete(null, new File(baseFolder));
-        TestUtils.println("####### RUNNING TEST @ " + TestUtils.getCallerClassSimpleName());
+    public static void init() {
+        session = TestUtils.openNewMinTestWorkspace();
     }
+
 
     @Test
     public void test1() throws Exception {
-        NutsSession ws = TestUtils.openNewTestWorkspace("-byZSKk");
         String path = "net/thevpc/nuts/core/test/blackbox/yaml1.yml";
-        NutsElements elem = NutsElements.of(ws);
+        NutsElements elem = NutsElements.of(session);
         NutsElement e = elem.setContentType(NutsContentType.YAML)
                 .parse(getClass().getClassLoader().getResource(path), NutsElement.class);
         elem.json().setValue(e)
@@ -62,19 +60,4 @@ public class Test15_YamlTest {
                 .println();
     }
 
-    @AfterAll
-    public static void tearUpClass() throws IOException {
-        //CoreIOUtils.delete(null,new File(baseFolder));
-    }
-
-    @BeforeEach
-    public void startup() throws IOException {
-//        Assumptions.assumeTrue(NutsOsFamily.getCurrent() == NutsOsFamily.LINUX);
-        TestUtils.unsetNutsSystemProperties();
-    }
-
-    @AfterEach
-    public void cleanup() {
-        TestUtils.unsetNutsSystemProperties();
-    }
 }

@@ -219,6 +219,14 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
         }
     }
 
+    @Override
+    public String getWorkspaceHashName(NutsPath path) {
+        if (path == null) {
+            return getWorkspaceHashName("");
+        }
+        return getWorkspaceHashName(path.toString());
+    }
+
     protected void checkSession() {
         NutsWorkspaceUtils.checkSession(model.getWorkspace(), session);
     }

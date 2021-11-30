@@ -45,8 +45,8 @@ public class DefaultNutsBootWorkspaceFactory implements NutsBootWorkspaceFactory
     }
 
     @Override
-    public NutsWorkspace createWorkspace(NutsBootOptions information) {
-        String workspaceLocation = information.getWorkspace();
+    public NutsWorkspace createWorkspace(NutsBootOptions bOptions) {
+        String workspaceLocation = bOptions.getWorkspace();
         if(workspaceLocation!=null && workspaceLocation.matches("[a-z-]+://.*")){
             String protocol=workspaceLocation.substring(0,workspaceLocation.indexOf("://"));
             switch (protocol){
@@ -56,7 +56,7 @@ public class DefaultNutsBootWorkspaceFactory implements NutsBootWorkspaceFactory
             }
             return null;
         }
-        return new DefaultNutsWorkspace(information);
+        return new DefaultNutsWorkspace(bOptions);
     }
 
     @Override

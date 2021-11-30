@@ -35,7 +35,7 @@ import net.thevpc.nuts.spi.NutsComponent;
  * @app.category Toolkit
  * @since 0.5.8
  */
-public interface NutsPs extends NutsComponent {
+    public interface NutsPs extends NutsComponent {
     static NutsPs of(NutsSession session) {
         NutsApiUtils.checkSession(session);
         return session.extensions().createSupported(NutsPs.class, true, null);

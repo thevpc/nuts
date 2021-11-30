@@ -36,6 +36,12 @@ import java.io.StringReader;
  * @author thevpc
  */
 public class Test19_ExprTest {
+    static NutsSession session;
+
+    @BeforeAll
+    public static void init() {
+        session = TestUtils.openNewTestWorkspace();
+    }
 
     private void _retain(NutsExpr expr,String... patterns){
         for (NutsExpr.OpType opt : NutsExpr.OpType.values()) {
@@ -71,7 +77,6 @@ public class Test19_ExprTest {
 
     @Test
     public void test1() throws Exception {
-        NutsSession session = TestUtils.openNewTestWorkspace();
         NutsExpr expr = NutsExpr.of(session);
         _retain(expr,"infix:+");
         NutsExpr.Node n = expr.parse("1+2+3");
@@ -81,7 +86,6 @@ public class Test19_ExprTest {
 
     @Test
     public void test2() throws Exception {
-        NutsSession session = TestUtils.openNewTestWorkspace();
         NutsExpr expr = NutsExpr.of(session);
 //        _retain(expr,"infix:+");
         NutsExpr.Node n = expr.parse("1+2*3");
@@ -91,7 +95,6 @@ public class Test19_ExprTest {
 
     @Test
     public void testTokenized() {
-        NutsSession session = TestUtils.openNewTestWorkspace();
         StreamTokenizerExt st = new StreamTokenizerExt(new StringReader("8.0.0"),session);
         st.xmlComments(true);
         st.doNotParseNumbers();

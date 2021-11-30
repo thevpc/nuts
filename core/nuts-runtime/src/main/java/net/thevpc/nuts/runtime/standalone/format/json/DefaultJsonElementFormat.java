@@ -573,7 +573,7 @@ public class DefaultJsonElementFormat implements NutsElementStreamFormat {
                 sb.append(skipWhiteSpaceAndComments());
                 sb.append(readStringLiteralUnQuoted());
             }
-            if(current!=-1){
+            if (current != -1) {
                 readNext();
             }
             return sb.toString();
@@ -748,7 +748,7 @@ public class DefaultJsonElementFormat implements NutsElementStreamFormat {
                         reader.reset();
                     }
                 } catch (IOException ex) {
-                    throw new NutsIOException(context.getSession(),ex);
+                    throw new NutsIOException(context.getSession(), ex);
                 }
             }
             return sb.toString();
@@ -779,7 +779,7 @@ public class DefaultJsonElementFormat implements NutsElementStreamFormat {
                     }
                 }
             } catch (IOException ex) {
-                throw new NutsIOException(context.getSession(),ex);
+                throw new NutsIOException(context.getSession(), ex);
             }
         }
 
@@ -795,7 +795,7 @@ public class DefaultJsonElementFormat implements NutsElementStreamFormat {
         }
 
         private RuntimeException error(String message) {
-            return new RuntimeException(message + ":" + getLocation().toString());
+            return new NutsParseException(context.getSession(), NutsMessage.cstyle("%s : %s", message, getLocation().toString()));
         }
 
         private boolean isHexDigit() {

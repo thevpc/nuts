@@ -5,13 +5,19 @@ import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.core.test.utils.TestUtils;
 import net.thevpc.nuts.runtime.standalone.app.cmdline.DefaultNutsArgument;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 public class Test28_DefaultNutsArgument {
+    static NutsSession session;
+
+    @BeforeAll
+    public static void init() {
+        session = TestUtils.openNewMinTestWorkspace();
+    }
 
     @Test
     public void test01() {
-        NutsSession  session= TestUtils.openNewMinTestWorkspace();
         DefaultNutsArgument a = new DefaultNutsArgument("-a=2", '=',NutsElements.of(session));
         Assertions.assertTrue(a.isOption());
         Assertions.assertTrue(a.isActive());
@@ -25,7 +31,6 @@ public class Test28_DefaultNutsArgument {
 
     @Test
     public void test02() {
-        NutsSession  session= TestUtils.openNewMinTestWorkspace();
         DefaultNutsArgument a = new DefaultNutsArgument("-//a=2", '=',NutsElements.of(session));
         Assertions.assertTrue(a.isOption());
         Assertions.assertFalse(a.isActive());
@@ -39,7 +44,6 @@ public class Test28_DefaultNutsArgument {
 
     @Test
     public void test03() {
-        NutsSession  session= TestUtils.openNewMinTestWorkspace();
         DefaultNutsArgument a = new DefaultNutsArgument("-!a=2", '=',NutsElements.of(session));
         Assertions.assertTrue(a.isOption());
         Assertions.assertTrue(a.isActive());
@@ -53,7 +57,6 @@ public class Test28_DefaultNutsArgument {
 
     @Test
     public void test04() {
-        NutsSession  session= TestUtils.openNewMinTestWorkspace();
         DefaultNutsArgument a = new DefaultNutsArgument("-!a", '=',NutsElements.of(session));
         Assertions.assertTrue(a.isOption());
         Assertions.assertTrue(a.isActive());
@@ -67,7 +70,6 @@ public class Test28_DefaultNutsArgument {
 
     @Test
     public void test05() {
-        NutsSession  session= TestUtils.openNewMinTestWorkspace();
         DefaultNutsArgument a = new DefaultNutsArgument("-!=a", '=',NutsElements.of(session));
         Assertions.assertTrue(a.isOption());
         Assertions.assertTrue(a.isActive());
@@ -95,7 +97,6 @@ public class Test28_DefaultNutsArgument {
 
     @Test
     public void test07() {
-        NutsSession  session= TestUtils.openNewMinTestWorkspace();
         DefaultNutsArgument a = new DefaultNutsArgument("-!", '=',NutsElements.of(session));
         Assertions.assertTrue(a.isOption());
         Assertions.assertTrue(a.isActive());
@@ -109,7 +110,6 @@ public class Test28_DefaultNutsArgument {
 
     @Test
     public void test08() {
-        NutsSession  session= TestUtils.openNewMinTestWorkspace();
         DefaultNutsArgument a = new DefaultNutsArgument("-", '=',NutsElements.of(session));
         Assertions.assertTrue(a.isOption());
         Assertions.assertTrue(a.isActive());
@@ -123,7 +123,6 @@ public class Test28_DefaultNutsArgument {
 
     @Test
     public void test09() {
-        NutsSession  session= TestUtils.openNewMinTestWorkspace();
         DefaultNutsArgument a = new DefaultNutsArgument("", '=',NutsElements.of(session));
         Assertions.assertTrue(a.isNonOption());
         Assertions.assertTrue(a.isActive());
@@ -137,7 +136,6 @@ public class Test28_DefaultNutsArgument {
 
     @Test
     public void test10() {
-        NutsSession  session= TestUtils.openNewMinTestWorkspace();
         DefaultNutsArgument a = new DefaultNutsArgument("c=/a", '=',NutsElements.of(session));
         Assertions.assertTrue(a.isNonOption());
         Assertions.assertTrue(a.isActive());
@@ -151,7 +149,6 @@ public class Test28_DefaultNutsArgument {
 
     @Test
     public void test11() {
-        NutsSession  session= TestUtils.openNewMinTestWorkspace();
         DefaultNutsArgument a = new DefaultNutsArgument("c", '=',NutsElements.of(session));
         Assertions.assertTrue(a.isNonOption());
         Assertions.assertTrue(a.isActive());
@@ -165,7 +162,6 @@ public class Test28_DefaultNutsArgument {
 
     @Test
     public void test12() {
-        NutsSession  session= TestUtils.openNewMinTestWorkspace();
         DefaultNutsArgument a = new DefaultNutsArgument("!//c=30", '=',NutsElements.of(session));
         Assertions.assertTrue(a.isNonOption());
         Assertions.assertTrue(a.isActive());
@@ -179,7 +175,6 @@ public class Test28_DefaultNutsArgument {
 
     @Test
     public void test13() {
-        NutsSession  session= TestUtils.openNewMinTestWorkspace();
         DefaultNutsArgument a = new DefaultNutsArgument("!", '=',NutsElements.of(session));
         Assertions.assertTrue(a.isNonOption());
         Assertions.assertTrue(a.isActive());
@@ -193,7 +188,6 @@ public class Test28_DefaultNutsArgument {
 
     @Test
     public void test14() {
-        NutsSession  session= TestUtils.openNewMinTestWorkspace();
         DefaultNutsArgument a = new DefaultNutsArgument("", '=',NutsElements.of(session));
         Assertions.assertTrue(a.isNonOption());
         Assertions.assertTrue(a.isActive());

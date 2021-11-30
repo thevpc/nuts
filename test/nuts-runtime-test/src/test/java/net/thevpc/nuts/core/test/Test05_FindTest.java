@@ -16,18 +16,19 @@ import org.junit.jupiter.api.*;
  * @author thevpc
  */
 public class Test05_FindTest {
+    static NutsSession session;
+
+    @BeforeAll
+    public static void init() {
+        session = TestUtils.openNewMinTestWorkspace();
+    }
 
     @Test
     public void find1() throws Exception {
-        //should throw NutsNotFoundException because
-        //would not be able to install nsh and other companions
-        NutsSession ws = TestUtils.openNewTestWorkspace(
-                "--archetype", "default",
-                "--skip-companions");
-        List<NutsId> def = ws.search().addId("nuts").setOptional(false).setLatest(true).setFailFast(false)
+        List<NutsId> def = session.search().addId("nuts").setOptional(false).setLatest(true).setFailFast(false)
 //                .repository("maven-local")
                 .setDefaultVersions(true)
-                .setInstallStatus(NutsInstallStatusFilters.of(ws).byDeployed(true))
+                .setInstallStatus(NutsInstallStatusFilters.of(session).byDeployed(true))
                 .getResultIds().toList();
 
         TestUtils.println(def);
@@ -35,12 +36,7 @@ public class Test05_FindTest {
 
     @Test()
     public void find2() {
-        NutsSession s = TestUtils.openNewTestWorkspace(
-                "--archetype", "minimal",
-                "--skip-companions"
-        );
-
-        NutsStream<NutsId> result = s.search()
+        NutsStream<NutsId> result = session.search()
                 .setLatest(true).addId(NutsConstants.Ids.NUTS_API).getResultIds();
         //There is one result because nuts id is always installed
         Assertions.assertTrue(result.count()>0);
@@ -48,25 +44,16 @@ public class Test05_FindTest {
 
     @Test()
     public void find3() {
-        NutsSession s = TestUtils.openNewTestWorkspace(
-                "--archetype", "default",
-                "--skip-companions");
-
-        NutsStream<NutsId> result = s.search()
+        NutsStream<NutsId> result = session.search()
                 .setLatest(true).addId(NutsConstants.Ids.NUTS_API).getResultIds();
         Assertions.assertTrue(result.count() > 0);
     }
 
     @Test()
     public void find4() throws Exception {
-        //should throw NutsNotFoundException because
-        //would not be able to install nsh and other companions
-        NutsSession s = TestUtils.openNewTestWorkspace(
-                "--archetype", "default",
-                "--skip-companions");
 
-        List<NutsId> result1 = s.search().setLatest(true).addId("nuts-runtime").getResultIds().toList();
-        List<NutsId> result2 = s.search().setLatest(false).addId("nuts-runtime").getResultIds().toList();
+        List<NutsId> result1 = session.search().setLatest(true).addId("nuts-runtime").getResultIds().toList();
+        List<NutsId> result2 = session.search().setLatest(false).addId("nuts-runtime").getResultIds().toList();
         TestUtils.println(result1);
         TestUtils.println(result2);
         Assertions.assertTrue(result1.size() > 0);
@@ -74,14 +61,8 @@ public class Test05_FindTest {
 
     @Test()
     public void find5() throws Exception {
-        //should throw NutsNotFoundException because
-        //would not be able to install nsh and other companions
-        NutsSession s = TestUtils.openNewTestWorkspace(
-                "--archetype", "default",
-                "--skip-companions");
-
-        List<NutsId> result1 = s.search().configure(false, "nuts-runtime").getResultIds().toList();
-        List<NutsId> result2 = s.search().configure(false, "--latest", "nuts-runtime").getResultIds().toList();
+        List<NutsId> result1 = session.search().configure(false, "nuts-runtime").getResultIds().toList();
+        List<NutsId> result2 = session.search().configure(false, "--latest", "nuts-runtime").getResultIds().toList();
         TestUtils.println("=====================");
         TestUtils.println(result1);
         TestUtils.println("=====================");
@@ -93,12 +74,6 @@ public class Test05_FindTest {
 
     @Test
     public void find6() throws Exception {
-        //should throw NutsNotFoundException because
-        //would not be able to install nsh and other companions
-        NutsSession session = TestUtils.openNewTestWorkspace(
-                "--archetype", "default",
-                "--skip-companions");
-
         NutsDefinition def = session.search().addId(
                         "net.thevpc.common:thevpc-common-io#1.3.12"
 //                "netbeans-launcher#1.1.0"
@@ -111,13 +86,7 @@ public class Test05_FindTest {
 
     @Test
     public void find7() throws Exception {
-        //should throw NutsNotFoundException because
-        //would not be able to install nsh and other companions
-        NutsSession s = TestUtils.openNewTestWorkspace(
-                "--archetype", "default",
-                "--skip-companions");
-
-        NutsStream<NutsId> resultIds = s.search().setSession(s).addId("net.thevpc.scholar.doovos.kernel:doovos-kernel-core")
+        NutsStream<NutsId> resultIds = session.search().setSession(session).addId("net.thevpc.scholar.doovos.kernel:doovos-kernel-core")
                 .setLatest(true).setInlineDependencies(true).getResultIds();
         TestUtils.println(resultIds.toList());
     }

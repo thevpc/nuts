@@ -23,7 +23,6 @@ import net.thevpc.nuts.runtime.standalone.format.table.DefaultSearchFormatTable;
 import net.thevpc.nuts.runtime.standalone.text.DefaultNutsTextManagerModel;
 import net.thevpc.nuts.runtime.standalone.format.tree.DefaultSearchFormatTree;
 import net.thevpc.nuts.runtime.standalone.format.xml.DefaultSearchFormatXml;
-import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
 import net.thevpc.nuts.spi.NutsSupportLevelContext;
 
 public class DefaultNutsElements extends DefaultFormatBase<NutsElements> implements NutsElements {
@@ -31,55 +30,51 @@ public class DefaultNutsElements extends DefaultFormatBase<NutsElements> impleme
     //    public static final NutsPrimitiveElement NULL = new DefaultNutsPrimitiveElement(NutsElementType.NULL, null);
 //    public static final NutsPrimitiveElement TRUE = new DefaultNutsPrimitiveElement(NutsElementType.BOOLEAN, true);
 //    public static final NutsPrimitiveElement FALSE = new DefaultNutsPrimitiveElement(NutsElementType.BOOLEAN, false);
-    private static Predicate<Type> DEFAULT_INDESTRUCTIBLE_FORMAT = new Predicate<Type>() {
+    private static Predicate<Class> DEFAULT_INDESTRUCTIBLE_FORMAT = new Predicate<Class>() {
         @Override
-        public boolean test(Type x) {
-            if (x instanceof Class) {
-                Class c = (Class) x;
-                switch (c.getName()) {
-                    case "boolean":
-                    case "byte":
-                    case "short":
-                    case "int":
-                    case "long":
-                    case "float":
-                    case "double":
-                    case "java.lang.String":
-                    case "java.lang.StringBuilder":
-                    case "java.lang.Boolean":
-                    case "java.lang.Byte":
-                    case "java.lang.Short":
-                    case "java.lang.Integer":
-                    case "java.lang.Long":
-                    case "java.lang.Float":
-                    case "java.lang.Double":
-                    case "java.math.BigDecimal":
-                    case "java.math.BigInteger":
-                    case "java.util.Date":
-                    case "java.sql.Time":
-                        return true;
-                }
-                if(Temporal.class.isAssignableFrom(c)){
+        public boolean test(Class x) {
+            switch (x.getName()) {
+                case "boolean":
+                case "byte":
+                case "short":
+                case "int":
+                case "long":
+                case "float":
+                case "double":
+                case "java.lang.String":
+                case "java.lang.StringBuilder":
+                case "java.lang.Boolean":
+                case "java.lang.Byte":
+                case "java.lang.Short":
+                case "java.lang.Integer":
+                case "java.lang.Long":
+                case "java.lang.Float":
+                case "java.lang.Double":
+                case "java.math.BigDecimal":
+                case "java.math.BigInteger":
+                case "java.util.Date":
+                case "java.sql.Time":
                     return true;
-                }
-                if(java.util.Date.class.isAssignableFrom(c)){
-                    return true;
-                }
-                return (
-                        NutsString.class.isAssignableFrom(c)
-                                || NutsElement.class.isAssignableFrom(c)
-                                || NutsFormattable.class.isAssignableFrom(c)
-                                || NutsMessage.class.isAssignableFrom(c)
-                );
             }
-            return false;
+            if(Temporal.class.isAssignableFrom(x)){
+                return true;
+            }
+            if(java.util.Date.class.isAssignableFrom(x)){
+                return true;
+            }
+            return (
+                    NutsString.class.isAssignableFrom(x)
+                            || NutsElement.class.isAssignableFrom(x)
+                            || NutsFormattable.class.isAssignableFrom(x)
+                            || NutsMessage.class.isAssignableFrom(x)
+            );
         }
     };
     private final DefaultNutsTextManagerModel model;
     private Object value;
     private NutsContentType contentType = NutsContentType.JSON;
     private boolean compact;
-    private Predicate<Type> indestructibleObjects;
+    private Predicate<Class> indestructibleObjects;
 
     public DefaultNutsElements(NutsSession session) {
         super(session, "element-format");
@@ -456,7 +451,7 @@ public class DefaultNutsElements extends DefaultFormatBase<NutsElements> impleme
         if (value == null) {
             return ofNull();
         }
-        return new DefaultNutsPrimitiveElement(NutsElementType.INSTANT, DefaultNutsPrimitiveElement.parseDate(value), getSession());
+        return new DefaultNutsPrimitiveElement(NutsElementType.INSTANT, DefaultNutsPrimitiveElement.parseInstant(value), getSession());
     }
 
     @Override
@@ -505,7 +500,7 @@ public class DefaultNutsElements extends DefaultFormatBase<NutsElements> impleme
         return new DefaultNutsPrimitiveElement(NutsElementType.FLOAT, value, getSession());
     }
 
-    public Predicate<Type> getIndestructibleObjects() {
+    public Predicate<Class> getIndestructibleObjects() {
         return indestructibleObjects;
     }
 
@@ -514,7 +509,7 @@ public class DefaultNutsElements extends DefaultFormatBase<NutsElements> impleme
         return setIndestructibleObjects(DEFAULT_INDESTRUCTIBLE_FORMAT);
     }
 
-    public NutsElements setIndestructibleObjects(Predicate<Type> destructTypeFilter) {
+    public NutsElements setIndestructibleObjects(Predicate<Class> destructTypeFilter) {
         this.indestructibleObjects = destructTypeFilter;
         return this;
     }

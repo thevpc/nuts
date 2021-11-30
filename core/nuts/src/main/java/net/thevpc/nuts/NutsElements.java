@@ -382,11 +382,11 @@ public interface NutsElements extends NutsContentTypeFormat {
 
     NutsPrimitiveElement ofNumber(Number value);
 
-    Predicate<Type> getIndestructibleObjects();
+    Predicate<Class> getIndestructibleObjects();
 
     NutsElements setIndestructibleFormat();
 
-    NutsElements setIndestructibleObjects(Predicate<Type> destructTypeFilter);
+    NutsElements setIndestructibleObjects(Predicate<Class> destructTypeFilter);
 
     NutsIterableFormat iter(NutsPrintStream out);
 

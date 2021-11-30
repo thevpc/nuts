@@ -14,14 +14,16 @@ import org.junit.jupiter.api.*;
  * @author thevpc
  */
 public class Test13_TerminalModeTest {
+    static NutsSession session;
+
+    @BeforeAll
+    public static void init() {
+        session = TestUtils.openNewMinTestWorkspace();
+    }
 
 
     @Test
     public void test1() throws Exception {
-        NutsSession session = TestUtils.openNewTestWorkspace(
-                "--archetype", "default",
-                "--log-info",
-                "--skip-companions");
 
 //        testMode(session,NutsTerminalMode.INHERITED,NutsTerminalMode.INHERITED,Result.SUCCESS);
 //        testMode(session,NutsTerminalMode.INHERITED,NutsTerminalMode.FORMATTED,Result.SUCCESS);
@@ -110,9 +112,6 @@ public class Test13_TerminalModeTest {
 
     @Test
     public void testBuilder(){
-        NutsSession session = TestUtils.openNewTestWorkspace(
-                "--archetype", "minimal",
-                "--skip-companions");
         NutsText c = NutsTexts.of(session).ofCode("java", "public static void main(String[] args){}")
                 .highlight(session);
         session.out().printlnf(c);

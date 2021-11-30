@@ -5,12 +5,19 @@ import net.thevpc.nuts.core.test.utils.TestUtils;
 import net.thevpc.nuts.runtime.standalone.repository.impl.maven.util.LuceneIndexImporter;
 import net.thevpc.nuts.runtime.standalone.repository.index.ArtifactsIndexDB;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 public class Test25_LuceneTest {
+    static NutsSession session;
+
+    @BeforeAll
+    public static void init() {
+        session = TestUtils.openNewMinTestWorkspace();
+    }
+
     @Test
     public void test() {
-        NutsSession session = TestUtils.openNewTestWorkspace("-ZyKk");
         LuceneIndexImporter lii = new LuceneIndexImporter(session);
         long countWritten = lii.importGzURL(
                 Test25_LuceneTest.class.getResource(

@@ -89,6 +89,8 @@ public interface NutsWorkspaceConfigManager {
 
     String getWorkspaceHashName(String path);
 
+    String getWorkspaceHashName(NutsPath path);
+
     ExecutorService executorService();
 
     /**

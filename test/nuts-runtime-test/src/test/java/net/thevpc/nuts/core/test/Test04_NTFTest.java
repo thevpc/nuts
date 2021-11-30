@@ -32,6 +32,7 @@ import net.thevpc.nuts.runtime.standalone.text.NutsTextNodeWriterRenderer;
 import net.thevpc.nuts.runtime.standalone.text.parser.DefaultNutsTextNodeParser;
 import net.thevpc.nuts.runtime.standalone.text.renderer.AnsiUnixTermPrintRenderer;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.io.StringReader;
@@ -40,12 +41,15 @@ import java.io.StringReader;
  * @author thevpc
  */
 public class Test04_NTFTest {
+    static NutsSession session;
+
+    @BeforeAll
+    public static void init() {
+        session = TestUtils.openNewMinTestWorkspace();
+    }
 
     @Test
     public void test01() {
-        NutsSession session = TestUtils.openNewTestWorkspace(
-                "--standalone",
-                "--skip-companions");
         NutsTexts txt = NutsTexts.of(session);
         NutsText parsed = txt.parse("##:error0:n#01##");
         TestUtils.println(parsed);
@@ -53,11 +57,6 @@ public class Test04_NTFTest {
 
     @Test
     public void test02() {
-        NutsSession session = TestUtils.openNewTestWorkspace(
-                "--standalone",
-                "-Z",
-                "--yes",
-                "--skip-companions");
         NutsTexts txt = NutsTexts.of(session);
 
 //        String str="missing command. try ```sh ndocusaurus pdf | start | build```";
@@ -73,11 +72,6 @@ public class Test04_NTFTest {
 
     @Test
     public void test03() {
-        NutsSession session = TestUtils.openNewTestWorkspace(
-                "--standalone",
-                "-Z",
-                "--yes",
-                "--skip-companions");
         NutsTexts txt = NutsTexts.of(session);
 
 //        String str="missing command. try ```sh ndocusaurus pdf | start | build```";
@@ -91,10 +85,6 @@ public class Test04_NTFTest {
 
     @Test
     public void test04() {
-        NutsSession session = TestUtils.openNewTestWorkspace(
-                "--standalone",
-                "-Z",
-                "--skip-companions");
         NutsTexts txt = NutsTexts.of(session);
 
 //        String str="missing command. try ```sh ndocusaurus pdf | start | build```";
@@ -108,10 +98,6 @@ public class Test04_NTFTest {
 
     @Test
     public void test05() {
-        NutsSession session = TestUtils.openNewTestWorkspace(
-                "--standalone",
-                "-Z",
-                "--skip-companions");
         NutsTexts txt = NutsTexts.of(session);
 
         String str = "##:separator0:{##\u001E\n" +
@@ -161,10 +147,6 @@ public class Test04_NTFTest {
     }
     @Test
     public void test06() {
-        NutsSession session = TestUtils.openNewTestWorkspace(
-                "--standalone",
-                "-Z",
-                "--skip-companions");
         NutsTexts txt = NutsTexts.of(session);
 
         String str = "##:separator0:{##\u001E\n" +
@@ -215,10 +197,6 @@ public class Test04_NTFTest {
 
     @Test
     public void test07() {
-        NutsSession session = TestUtils.openNewTestWorkspace(
-                "--standalone",
-                "-Z",
-                "--skip-companions");
         NutsTexts txt = NutsTexts.of(session);
 
 //        String str = "##{string0:\"<main>://com.github.vatbub:mslinks#1.0.5\"}##";
@@ -231,7 +209,6 @@ public class Test04_NTFTest {
 
     @Test
     public void test08() {
-        NutsSession session = TestUtils.openNewTestWorkspace("-ZSkK");
         NutsTexts txt = NutsTexts.of(session);
 
 //        String str = "##{string0:\"<main>://com.github.vatbub:mslinks#1.0.5\"}##";
@@ -243,7 +220,6 @@ public class Test04_NTFTest {
 
     @Test
     public void test09() {
-        NutsSession session = TestUtils.openNewTestWorkspace("-ZSkK");
         NutsTexts text = NutsTexts.of(session);
         NutsTextStyled q = text.ofStyled("re-install", NutsTextStyles.of(NutsTextStyle.success(), NutsTextStyle.underlined()));
         TestUtils.println(q.toString());
@@ -957,9 +933,6 @@ public class Test04_NTFTest {
 
     @Test
     public void test11() {
-        NutsSession session = TestUtils.openNewTestWorkspace(
-                "--standalone",
-                "--skip-companions");
         NutsTexts text = NutsTexts.of(session);
         NutsText str = text.ofStyled("re-install", NutsTextStyles.of(NutsTextStyle.success(), NutsTextStyle.underlined()));
         TestUtils.println(str.toString());
@@ -968,9 +941,6 @@ public class Test04_NTFTest {
 
     @Test
     public void test12() {
-        NutsSession session = TestUtils.openNewTestWorkspace(
-                "--standalone",
-                "--skip-companions");
         NutsTexts text = NutsTexts.of(session);
         String str="```system \"C:\\U\\v\" ```";
         NutsText t = text.parse(str);
@@ -979,9 +949,6 @@ public class Test04_NTFTest {
 
     @Test
     public void test13() {
-        NutsSession session = TestUtils.openNewTestWorkspace(
-                "--standalone",
-                "--skip-companions");
         NutsTexts text = NutsTexts.of(session);
         String str="```system \\``````";
         NutsText t = text.parse(str);
