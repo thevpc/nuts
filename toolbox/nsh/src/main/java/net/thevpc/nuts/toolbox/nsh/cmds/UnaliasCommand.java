@@ -52,7 +52,7 @@ public class UnaliasCommand extends SimpleJShellBuiltin {
         NutsArgument a = commandLine.peek();
         if (a.isOption()) {
             if (a.getKey().getString().equals("-a")) {
-                options.all = commandLine.nextBoolean().getValue().getBoolean();
+                options.all = commandLine.nextBoolean().getBooleanValue();
                 return true;
             }
         } else {

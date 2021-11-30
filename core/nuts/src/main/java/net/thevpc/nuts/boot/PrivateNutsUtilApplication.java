@@ -56,8 +56,8 @@ public class PrivateNutsUtilApplication {
                 }
             }
         } else {
-            PrivateNutsLog log = new PrivateNutsLog(null);
-            NutsBootOptions options = new NutsBootOptions(log);
+            PrivateNutsBootLog log = new PrivateNutsBootLog(new NutsBootTerminal(null,out,out));
+            NutsBootOptions options = new NutsBootOptions();
             //load inherited
             String nutsArgs = NutsUtilStrings.trim(
                     NutsUtilStrings.trim(System.getProperty("nuts.boot.args"))

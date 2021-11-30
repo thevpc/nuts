@@ -51,7 +51,7 @@ public class UnzipCommand extends SimpleJShellBuiltin {
         Options options = context.getOptions();
         NutsArgument a;
         if ((a = commandLine.nextBoolean("-l")) != null) {
-            options.l = a.getValue().getBoolean();
+            options.l = a.getBooleanValue();
             return true;
         } else if ((a = commandLine.nextString("-d")) != null) {
             options.dir = a.getValue().getString();

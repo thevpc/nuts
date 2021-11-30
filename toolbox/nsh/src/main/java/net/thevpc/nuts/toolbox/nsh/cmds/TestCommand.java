@@ -63,7 +63,7 @@ public class TestCommand extends SimpleJShellBuiltin {
 
     private static int evalInt(Eval a, JShellExecutionContext context) {
         if (a instanceof EvalArg) {
-            return ((EvalArg) a).arg.getAll().getInt();
+            return ((EvalArg) a).arg.toElement().getInt();
         }
         return a.eval(context);
     }

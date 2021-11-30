@@ -30,7 +30,7 @@ public class NWorkMain implements NutsApplication {
                 return;
             } else if ((a = cmdLine.next("status", "t")) != null) {
                 if (a.getValue().isBoolean()) {
-                    service.enableScan(cmdLine, appContext, a.getValue().getBoolean());
+                    service.enableScan(cmdLine, appContext, a.getBooleanValue());
                 } else {
                     service.status(cmdLine, appContext);
                 }

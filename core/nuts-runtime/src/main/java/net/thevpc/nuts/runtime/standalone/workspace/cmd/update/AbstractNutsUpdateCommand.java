@@ -433,7 +433,7 @@ public abstract class AbstractNutsUpdateCommand extends NutsWorkspaceCommandBase
 //            }
             case "-i":
             case "--installed": {
-                boolean val = cmdLine.nextBoolean().getValue().getBoolean();
+                boolean val = cmdLine.nextBoolean().getBooleanValue();
                 if (enabled) {
                     this.setInstalled(val);
                 }
@@ -441,7 +441,7 @@ public abstract class AbstractNutsUpdateCommand extends NutsWorkspaceCommandBase
             }
             case "-r":
             case "--runtime": {
-                boolean val = cmdLine.nextBoolean().getValue().getBoolean();
+                boolean val = cmdLine.nextBoolean().getBooleanValue();
                 if (enabled) {
                     this.setRuntime(val);
                 }
@@ -449,7 +449,7 @@ public abstract class AbstractNutsUpdateCommand extends NutsWorkspaceCommandBase
             }
             case "-A":
             case "--api": {
-                boolean val = cmdLine.nextBoolean().getValue().getBoolean();
+                boolean val = cmdLine.nextBoolean().getBooleanValue();
                 if (enabled) {
                     this.setApi(val);
                 }
@@ -458,7 +458,7 @@ public abstract class AbstractNutsUpdateCommand extends NutsWorkspaceCommandBase
 
             case "-e":
             case "--extensions": {
-                boolean val = cmdLine.nextBoolean().getValue().getBoolean();
+                boolean val = cmdLine.nextBoolean().getBooleanValue();
                 if (enabled) {
                     this.setExtensions(val);
                 }
@@ -466,7 +466,7 @@ public abstract class AbstractNutsUpdateCommand extends NutsWorkspaceCommandBase
             }
             case "-c":
             case "--companions": {
-                boolean val = cmdLine.nextBoolean().getValue().getBoolean();
+                boolean val = cmdLine.nextBoolean().getBooleanValue();
                 if (enabled) {
                     this.setCompanions(val);
                 }

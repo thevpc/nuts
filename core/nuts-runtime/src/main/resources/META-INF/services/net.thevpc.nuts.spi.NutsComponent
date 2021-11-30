@@ -32,7 +32,6 @@ net.thevpc.nuts.runtime.standalone.log.DefaultNutsLogManager
 
 net.thevpc.nuts.runtime.standalone.xtra.expr.DefaultNutsExpr
 net.thevpc.nuts.runtime.standalone.stream.DefaultNutsStreams
-net.thevpc.nuts.runtime.standalone.xtra.vals.DefaultNutsVals
 net.thevpc.nuts.runtime.standalone.xtra.glob.DefaultNutsGlob
 net.thevpc.nuts.runtime.standalone.io.terminals.history.NutsCommandHistoryImpl
 net.thevpc.nuts.runtime.standalone.app.cmdline.DefaultNutsCommandLines

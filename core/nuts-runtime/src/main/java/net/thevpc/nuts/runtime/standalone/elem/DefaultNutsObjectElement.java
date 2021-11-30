@@ -300,4 +300,9 @@ public class DefaultNutsObjectElement extends AbstractNutsObjectElement {
     public NutsObjectElement toObject() {
         return this;
     }
+
+    @Override
+    public boolean isBlank() {
+        return values.isEmpty();
+    }
 }

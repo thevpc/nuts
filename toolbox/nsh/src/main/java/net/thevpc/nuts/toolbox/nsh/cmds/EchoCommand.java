@@ -49,7 +49,7 @@ public class EchoCommand extends SimpleJShellBuiltin {
         Options options = context.getOptions();
         switch (commandLine.peek().getKey().getString()) {
             case "-n": {
-                options.newLine = !commandLine.nextBoolean().getValue().getBoolean();
+                options.newLine = !commandLine.nextBoolean().getBooleanValue();
                 return true;
             }
             case "-p":

@@ -41,9 +41,9 @@ public class DefaultNutsWorkspaceEnvManager implements NutsWorkspaceEnvManager {
     }
 
     @Override
-    public NutsVal getProperty(String property) {
+    public NutsElement getProperty(String property) {
         checkSession();
-        return model.getProperty(property);
+        return model.getProperty(property,getSession());
     }
 
     @Override
@@ -144,20 +144,20 @@ public class DefaultNutsWorkspaceEnvManager implements NutsWorkspaceEnvManager {
         String optionName = null;
         switch (item) {
             case DESKTOP: {
-                optionName = "system-desktop-launcher";
+                optionName = "---system-desktop-launcher";
                 break;
             }
             case MENU: {
-                optionName = "system-menu-launcher";
+                optionName = "---system-menu-launcher";
                 break;
             }
             case SHORTCUT: {
-                optionName = "system-custom-launcher";
+                optionName = "---system-custom-launcher";
                 break;
             }
         }
         if (optionName != null) {
-            String o = session.boot().getCustomBootOption(optionName).getString();
+            String o = session.boot().getBootCustomArgument(optionName).getString();
             if (!NutsBlankable.isBlank(o)) {
                 NutsSupportMode q = NutsSupportMode.parseLenient(o, null, null);
                 if (q != null) {

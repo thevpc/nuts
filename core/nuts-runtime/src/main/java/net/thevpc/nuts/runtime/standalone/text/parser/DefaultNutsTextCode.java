@@ -56,10 +56,11 @@ public class DefaultNutsTextCode extends NutsTextSpecialBase implements NutsText
 
     @Override
     public NutsText highlight(NutsSession session) {
-        NutsCodeHighlighter t = ((DefaultNutsTexts) NutsTexts.of(session))
+        NutsTexts txt = NutsTexts.of(session);
+        NutsCodeHighlighter t = ((DefaultNutsTexts) txt)
                 .setSession(session)
                 .resolveCodeHighlighter(getKind());
-        return t.stringToText(text, session);
+        return t.stringToText(text, txt, session);
     }
 
     @Override

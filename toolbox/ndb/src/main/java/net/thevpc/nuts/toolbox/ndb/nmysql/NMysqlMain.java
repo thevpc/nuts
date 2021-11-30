@@ -306,7 +306,7 @@ public class NMysqlMain implements NdbSupport {
                         } else if (expectedRemote) {
                             commandLine.unexpectedArgument();
                         }
-                        c_kill = commandLine.nextBoolean().getValue().getBoolean();
+                        c_kill = commandLine.nextBoolean().getBooleanValue();
                         break;
                     }
                     case "--user": {
@@ -333,7 +333,7 @@ public class NMysqlMain implements NdbSupport {
                         } else if (expectedRemote) {
                             commandLine.unexpectedArgument();
                         }
-                        askPassword = commandLine.nextBoolean().getValue().getBoolean();
+                        askPassword = commandLine.nextBoolean().getBooleanValue();
                         break;
                     }
                     case "--db": {

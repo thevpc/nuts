@@ -204,9 +204,9 @@ public class WorkspaceService {
         List<File> toScan = new ArrayList<>();
         while (cmdLine.hasNext()) {
             if ((a = cmdLine.nextBoolean("-i", "--interactive")) != null) {
-                interactive = a.getValue().getBoolean();
+                interactive = a.getBooleanValue();
             } else if ((a = cmdLine.nextBoolean("-r", "--reset")) != null) {
-                reset = a.getValue().getBoolean();
+                reset = a.getBooleanValue();
             } else if (cmdLine.peek().isNonOption()) {
                 String folder = cmdLine.nextNonOption(NutsArgumentName.of("Folder", session)).getString();
                 run = true;
@@ -272,21 +272,21 @@ public class WorkspaceService {
 //            } else if (tf.configureFirst(cmd)) {
                 //consumed
             } else if ((a = cmd.nextBoolean("-c", "--commitable", "--changed")) != null) {
-                commitable = a.getValue().getBoolean();
+                commitable = a.getBooleanValue();
             } else if ((a = cmd.nextBoolean("-d", "--dirty")) != null) {
-                dirty = a.getValue().getBoolean();
+                dirty = a.getBooleanValue();
             } else if ((a = cmd.nextBoolean("-w", "--new")) != null) {
-                newP = a.getValue().getBoolean();
+                newP = a.getBooleanValue();
             } else if ((a = cmd.nextBoolean("-o", "--old")) != null) {
-                old = a.getValue().getBoolean();
+                old = a.getBooleanValue();
             } else if ((a = cmd.nextBoolean("-0", "--ok", "--uptodate")) != null) {
-                uptodate = a.getValue().getBoolean();
+                uptodate = a.getBooleanValue();
             } else if ((a = cmd.nextBoolean("-e", "--invalid", "--error")) != null) {
-                invalid = a.getValue().getBoolean();
+                invalid = a.getBooleanValue();
             } else if ((a = cmd.nextBoolean("-p", "--progress")) != null) {
-                progress = a.getValue().getBoolean();
+                progress = a.getBooleanValue();
             } else if ((a = cmd.nextBoolean("-v", "--verbose")) != null) {
-                verbose = a.getValue().getBoolean();
+                verbose = a.getBooleanValue();
             } else if (cmd.peek().isOption()) {
                 cmd.setCommandName("nwork check").unexpectedArgument();
             } else {

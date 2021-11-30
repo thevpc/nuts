@@ -59,7 +59,7 @@ public class BaseNameCommand extends SimpleJShellBuiltin {
             case "-a":
             case "--all":
             case "--multi": {
-                options.multi = cmdLine.nextBoolean().getValue().getBoolean();
+                options.multi = cmdLine.nextBoolean().getBooleanValue();
                 return true;
             }
             case "-s":

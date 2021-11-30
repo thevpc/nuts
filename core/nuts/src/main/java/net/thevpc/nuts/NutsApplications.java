@@ -147,12 +147,11 @@ public final class NutsApplications {
 
     /**
      * run application with given life cycle.
-     *
-     * @param applicationInstance application
-     * @param args                application arguments
+     *  @param applicationInstance application
      * @param session             session
+     * @param args                application arguments
      */
-    public static void runApplication(NutsApplication applicationInstance, String[] args, NutsSession session) {
+    public static void runApplication(NutsApplication applicationInstance, NutsSession session, String[] args) {
         NutsApplicationContext applicationContext = createApplicationContext(applicationInstance, args, session);
         session = applicationContext.getSession();
         boolean inherited = session.boot().getBootOptions().isInherited();
@@ -164,10 +163,8 @@ public final class NutsApplications {
                         )
                 );
         switch (applicationContext.getMode()) {
-            /**
-             * both RUN and AUTO_COMPLETE execute the save branch. Later
-             * applicationContext.isExecMode()
-             */
+            //both RUN and AUTO_COMPLETE execute the run branch. Later
+            //applicationContext.isExecMode()
             case RUN:
             case AUTO_COMPLETE: {
                 applicationInstance.run(applicationContext);

@@ -151,7 +151,7 @@ public class NutsFetchDisplayOptions {
             case "--long": {
                 a = cmdLine.nextBoolean();
                 if(a.isActive()) {
-                    if(a.getValue().getBoolean()){
+                    if(a.getBooleanValue()){
                         setDisplay(DISPLAY_LONG);
                     }else {
                         setDisplay(DISPLAY_MIN);
@@ -163,7 +163,7 @@ public class NutsFetchDisplayOptions {
             case "--long-long": {
                 a = cmdLine.nextBoolean();
                 if(a.isActive()) {
-                    if(a.getValue().getBoolean()){
+                    if(a.getBooleanValue()){
                         setDisplay(DISPLAY_LONG_LONG);
                     }else {
                         setDisplay(DISPLAY_MIN);

@@ -36,7 +36,7 @@ public final class JavaExecutorOptions {
 
     public JavaExecutorOptions(NutsDefinition def, boolean tempId, String[] args, String[] executorOptions, String dir, NutsSession session) {
         this.session = session;
-        showCommand=getSession().boot().getCustomBootOption("show-command").getBoolean(false);
+        showCommand=getSession().boot().getBootCustomArgument("---show-command").getBooleanValue(false);
         NutsId id = def.getId();
         NutsDescriptor descriptor = null;
         if (tempId) {
@@ -108,22 +108,22 @@ public final class JavaExecutorOptions {
                 }
                 case "--win":
                 case "--javaw": {
-                    this.javaw = cmdLine.nextBoolean().getValue().getBoolean();
+                    this.javaw = cmdLine.nextBoolean().getBooleanValue();
                     break;
                 }
                 case "--jar":
                 case "-jar": {
-                    this.jar = cmdLine.nextBoolean().getValue().getBoolean();
+                    this.jar = cmdLine.nextBoolean().getBooleanValue();
                     break;
                 }
                 case "--show-command":
                 case "-show-command": {
-                    this.showCommand = cmdLine.nextBoolean().getValue().getBoolean();
+                    this.showCommand = cmdLine.nextBoolean().getBooleanValue();
                     break;
                 }
                 case "--exclude-base":
                 case "-exclude-base": {
-                    this.excludeBase = cmdLine.nextBoolean().getValue().getBoolean();
+                    this.excludeBase = cmdLine.nextBoolean().getBooleanValue();
                     break;
                 }
                 default: {

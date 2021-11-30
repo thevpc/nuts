@@ -32,7 +32,7 @@ import java.time.Instant;
  * @app.category Elements
  * @since 0.5.6
  */
-public interface NutsElement extends NutsDescribable{
+public interface NutsElement extends NutsDescribable, NutsBlankable {
 
     /**
      * element type
@@ -73,6 +73,8 @@ public interface NutsElement extends NutsDescribable{
      * @return {@link NutsObjectElement}
      */
     NutsCustomElement asCustom();
+
+    boolean isCustom();
 
     /**
      * convert this element to {@link NutsArrayElement} or throw

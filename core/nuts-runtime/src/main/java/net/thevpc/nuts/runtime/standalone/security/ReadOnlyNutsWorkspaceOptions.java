@@ -24,7 +24,7 @@
 package net.thevpc.nuts.runtime.standalone.security;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.boot.NutsBootTerminal;
+import net.thevpc.nuts.NutsBootTerminal;
 import net.thevpc.nuts.runtime.standalone.workspace.CoreNutsWorkspaceOptions;
 
 import java.io.InputStream;
@@ -47,6 +47,10 @@ public class ReadOnlyNutsWorkspaceOptions implements NutsWorkspaceOptions {
     public ReadOnlyNutsWorkspaceOptions(NutsWorkspaceOptions options, NutsSession session) {
         this.options = options;
         this.session = session;
+    }
+
+    public NutsWorkspaceOptions getBase() {
+        return options;
     }
 
     @Override

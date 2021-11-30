@@ -149,7 +149,7 @@ public abstract class AbstractNutsUninstallCommand extends NutsWorkspaceCommandB
         switch (a.getKey().getString()) {
             case "-e":
             case "--erase": {
-                boolean val = cmdLine.nextBoolean().getValue().getBoolean();
+                boolean val = cmdLine.nextBoolean().getBooleanValue();
                 if (enabled) {
                     this.setErase(val);
                 }

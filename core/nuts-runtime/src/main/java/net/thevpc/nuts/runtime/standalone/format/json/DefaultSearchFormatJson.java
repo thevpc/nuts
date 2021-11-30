@@ -17,24 +17,24 @@ public class DefaultSearchFormatJson extends DefaultSearchFormatBase {
 
     private boolean compact;
 
-    NutsTexts factory;
+    NutsTexts txt;
     private NutsCodeHighlighter codeFormat;
 
     public DefaultSearchFormatJson(NutsSession session, NutsPrintStream writer, NutsFetchDisplayOptions options) {
         super(session, writer, NutsContentType.JSON, options);
-        factory = NutsTexts.of(session);
+        txt = NutsTexts.of(session);
         codeFormat = NutsTexts.of(session).setSession(session).getCodeHighlighter("json");
     }
 
     @Override
     public void start() {
-        getWriter().println(codeFormat.tokenToText("[", "separator", getSession()));
+        getWriter().println(codeFormat.tokenToText("[", "separator", txt, getSession()));
         getWriter().flush();
     }
 
     @Override
     public void complete(long count) {
-        getWriter().println(codeFormat.tokenToText("]", "separator", getSession()));
+        getWriter().println(codeFormat.tokenToText("]", "separator", txt, getSession()));
         getWriter().flush();
     }
 
@@ -50,7 +50,7 @@ public class DefaultSearchFormatJson extends DefaultSearchFormatBase {
         boolean enabled = a.isActive();
         switch (a.getKey().getString()) {
             case "--compact": {
-                boolean val = cmd.nextBoolean().getValue().getBoolean();
+                boolean val = cmd.nextBoolean().getBooleanValue();
                 if (enabled) {
                     this.compact = val;
                 }
@@ -72,7 +72,7 @@ public class DefaultSearchFormatJson extends DefaultSearchFormatBase {
                 .format()
                 .filteredText()
                 ;
-        NutsText ee = codeFormat.stringToText(json, getSession());
+        NutsText ee = codeFormat.stringToText(json, txt, getSession());
         getWriter().printf("%s%n", ee);
         getWriter().flush();
     }

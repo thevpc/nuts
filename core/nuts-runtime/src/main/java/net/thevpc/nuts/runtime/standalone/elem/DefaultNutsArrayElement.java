@@ -1,7 +1,7 @@
 /**
  * ====================================================================
- *            Nuts : Network Updatable Things Service
- *                  (universal package manager)
+ * Nuts : Network Updatable Things Service
+ * (universal package manager)
  * <br>
  * is a new Open Source Package Manager to help install packages and libraries
  * for runtime execution. Nuts is the ultimate companion for maven (and other
@@ -10,7 +10,7 @@
  * other 'things' . Its based on an extensible architecture to help supporting a
  * large range of sub managers / repositories.
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc] Licensed under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -46,7 +46,7 @@ public class DefaultNutsArrayElement extends AbstractNutsArrayElement {
         this.values = values.toArray(new NutsElement[0]);
     }
 
-    public DefaultNutsArrayElement(NutsElement[] values,NutsSession session) {
+    public DefaultNutsArrayElement(NutsElement[] values, NutsSession session) {
         super(session);
         this.values = Arrays.copyOf(values, values.length);
     }
@@ -57,23 +57,13 @@ public class DefaultNutsArrayElement extends AbstractNutsArrayElement {
     }
 
     @Override
-    public Iterator<NutsElement> iterator() {
-        return Arrays.asList(values).iterator();
-    }
-
-    @Override
-    public boolean isEmpty() {
-        return values.length == 0;
+    public int size() {
+        return values.length;
     }
 
     @Override
     public Stream<NutsElement> stream() {
         return Arrays.asList(values).stream();
-    }
-
-    @Override
-    public int size() {
-        return values.length;
     }
 
     @Override
@@ -137,6 +127,18 @@ public class DefaultNutsArrayElement extends AbstractNutsArrayElement {
     }
 
     @Override
+    public NutsArrayElementBuilder builder() {
+        return NutsElements.of(session)
+                .ofArray()
+                .set(this);
+    }
+
+    @Override
+    public Iterator<NutsElement> iterator() {
+        return Arrays.asList(values).iterator();
+    }
+
+    @Override
     public String toString() {
         return "[" + children().stream().map(Object::toString).collect(Collectors.joining(", ")) + "]";
     }
@@ -167,18 +169,20 @@ public class DefaultNutsArrayElement extends AbstractNutsArrayElement {
     }
 
     @Override
-    public NutsArrayElementBuilder builder() {
-        return NutsElements.of(session)
-                .ofArray()
-                .set(this);
-    }
-
-    @Override
     public NutsObjectElement toObject() {
         return NutsElements.of(session)
                 .ofObject()
-                .set("value",this)
+                .set("value", this)
                 .build();
     }
 
+    @Override
+    public boolean isEmpty() {
+        return values.length == 0;
+    }
+
+    @Override
+    public boolean isBlank() {
+        return values.length == 0;
+    }
 }

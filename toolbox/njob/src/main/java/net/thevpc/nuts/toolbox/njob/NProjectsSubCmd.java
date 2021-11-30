@@ -37,9 +37,9 @@ public class NProjectsSubCmd {
         while (cmd.hasNext()) {
             NutsArgument a = cmd.peek();
             if (a.getKey().getString().equals("--list") || a.getKey().getString().equals("-l")) {
-                list = cmd.nextBoolean().getValue().getBoolean();
+                list = cmd.nextBoolean().getBooleanValue();
             } else if (a.getKey().getString().equals("--show") || a.getKey().getString().equals("-s")) {
-                show = cmd.nextBoolean().getValue().getBoolean();
+                show = cmd.nextBoolean().getBooleanValue();
             } else if (a.getKey().getString().equals("-t") || a.getKey().getString().equals("--start") || a.getKey().getString().equals("--on")) {
                 t.setStartTime(new TimeParser().parseInstant(cmd.nextString().getValue().getString(), false));
             } else if (a.getKey().getString().equals("--at")) {
@@ -90,12 +90,12 @@ public class NProjectsSubCmd {
             switch (a.getKey().getString()) {
                 case "-l":
                 case "--list": {
-                    list = cmd.nextBoolean().getValue().getBoolean();
+                    list = cmd.nextBoolean().getBooleanValue();
                     break;
                 }
                 case "-s":
                 case "--show": {
-                    show = cmd.nextBoolean().getValue().getBoolean();
+                    show = cmd.nextBoolean().getBooleanValue();
                     break;
                 }
                 case "--on":
@@ -243,7 +243,7 @@ public class NProjectsSubCmd {
                     break;
                 }
                 case "--unused": {
-                    boolean unused = cmd.nextBoolean().getValue().getBoolean();
+                    boolean unused = cmd.nextBoolean().getBooleanValue();
                     Predicate<NProject> t = x -> service.projects().isUsedProject(x.getId()) != unused;
                     whereFilter = parent.appendPredicate(whereFilter, t);
                     break;

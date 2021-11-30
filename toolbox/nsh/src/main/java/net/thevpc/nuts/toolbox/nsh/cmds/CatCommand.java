@@ -59,13 +59,13 @@ public class CatCommand extends SimpleJShellBuiltin {
             options.files.add(null);
             return true;
         } else if ((a = commandLine.nextBoolean("-n", "--number")) != null) {
-            options.n = a.getValue().getBoolean();
+            options.n = a.getBooleanValue();
             return true;
         } else if ((a = commandLine.nextBoolean("-t", "--show-tabs")) != null) {
-            options.T = a.getValue().getBoolean();
+            options.T = a.getBooleanValue();
             return true;
         } else if ((a = commandLine.nextBoolean("-E", "--show-ends")) != null) {
-            options.E = a.getValue().getBoolean();
+            options.E = a.getBooleanValue();
             return true;
         } else if ((a = commandLine.next("-H", "--highlight", "--highlighter")) != null) {
             options.highlighter = NutsUtilStrings.trim(a.getValue().getString());

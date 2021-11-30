@@ -28,7 +28,7 @@ package net.thevpc.nuts.toolbox.nsh.cmds;
 
 import net.thevpc.nuts.NutsArgument;
 import net.thevpc.nuts.NutsCommandLine;
-import net.thevpc.nuts.NutsVal;
+import net.thevpc.nuts.NutsPrimitiveElement;
 import net.thevpc.nuts.spi.NutsComponentScope;
 import net.thevpc.nuts.spi.NutsComponentScopeType;
 import net.thevpc.nuts.toolbox.nsh.SimpleJShellBuiltin;
@@ -52,7 +52,7 @@ public class ExitCommand extends SimpleJShellBuiltin {
         if (a.isOption()) {
             return false;
         } else {
-            NutsVal raw = a.getAll();
+            NutsPrimitiveElement raw = a.toElement();
             if (raw.isInt() && raw.getInt() > 0) {
                 options.code = raw.getInt();
                 return true;

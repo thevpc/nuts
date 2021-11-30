@@ -289,9 +289,9 @@ public class RemoteTomcat {
         NutsArgument a;
         while (args.hasNext()) {
             if ((a = args.nextBoolean("--deleteLog")) != null) {
-                deleteLog = a.getValue().getBoolean();
+                deleteLog = a.getBooleanValue();
             } else if ((a = args.nextBoolean("--install")) != null) {
-                install = a.getValue().getBoolean();
+                install = a.getBooleanValue();
             } else if ((a = args.nextString("--name")) != null) {
                 instance = a.getValue().getString();
             } else if ((a = args.nextString("--deploy")) != null) {
@@ -376,7 +376,7 @@ public class RemoteTomcat {
         args.setCommandName("tomcat --remote show");
         while (args.hasNext()) {
             if ((a = args.nextBoolean("--json")) != null) {
-                h.json = a.getValue().getBoolean();
+                h.json = a.getBooleanValue();
             } else if ((s = readBaseServiceArg(args)) != null) {
                 h.show(s);
             } else {

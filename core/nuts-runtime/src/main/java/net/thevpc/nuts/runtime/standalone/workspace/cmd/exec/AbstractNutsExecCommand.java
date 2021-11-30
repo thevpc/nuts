@@ -516,13 +516,13 @@ public abstract class AbstractNutsExecCommand extends NutsWorkspaceCommandBase<N
             case "--inherit-system-io": {
                 NutsArgument val = cmdLine.nextBoolean();
                 if (enabled) {
-                    setInheritSystemIO(val.getValue().getBoolean());
+                    setInheritSystemIO(val.getBooleanValue());
                 }
                 return true;
             }
             case "-dry":
             case "-d": {
-                boolean val = cmdLine.nextBoolean().getValue().getBoolean();
+                boolean val = cmdLine.nextBoolean().getBooleanValue();
                 if (enabled) {
                     setDry(val);
                 }

@@ -93,7 +93,7 @@ public class DefaultNutsCommandLines implements NutsCommandLines {
     public static class Factory {
 
         public static NutsArgument createArgument0(NutsSession ws, String argument, char eq) {
-            return new DefaultNutsArgument(argument, eq);
+            return new DefaultNutsArgument(argument, eq,NutsElements.of(ws));
         }
 
         public static NutsArgumentName createName0(NutsSession session, String type, String label) {

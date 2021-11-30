@@ -23,6 +23,8 @@
  */
 package net.thevpc.nuts;
 
+import net.thevpc.nuts.boot.NutsApiUtils;
+
 import java.net.URL;
 
 /**
@@ -30,15 +32,20 @@ import java.net.URL;
  */
 public interface NutsBootManager {
 
+    static NutsBootManager of(NutsSession session){
+        NutsApiUtils.checkSession(session);
+        return session.boot();
+    }
+
     NutsSession getSession();
 
     NutsBootManager setSession(NutsSession session);
 
     boolean isFirstBoot();
 
-    NutsVal getCustomBootOption(String name);
+    NutsArgument getBootCustomArgument(String name);
 
-    NutsVal getCustomBootOption(String... names);
+    NutsArgument getBootCustomArgument(String... names);
 
     NutsWorkspaceOptions getBootOptions();
 

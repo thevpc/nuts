@@ -84,7 +84,7 @@ public class ProcessExecutorComponent implements NutsExecutorComponent {
                 .formatter().setExported(true).setCompact(true).getBootCommandLine().toString();
         osEnv.put("nuts_boot_args", bootArgumentsString);
         String dir = null;
-        boolean showCommand = executionContext.getSession().boot().getCustomBootOption("show-command").getBoolean( false);
+        boolean showCommand = executionContext.getSession().boot().getBootCustomArgument("---show-command").getBooleanValue( false);
         for (int i = 0; i < execArgs.length; i++) {
             String arg = execArgs[i];
             if (arg.equals("--show-command") || arg.equals("-show-command")) {

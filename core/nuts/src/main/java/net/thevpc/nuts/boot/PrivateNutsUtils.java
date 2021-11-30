@@ -289,7 +289,7 @@ final class PrivateNutsUtils {
                         .collect(Collectors.toCollection(LinkedHashSet::new));
     }
 
-    public static boolean isFileAccessible(Path path, Instant expireTime, PrivateNutsLog LOG) {
+    public static boolean isFileAccessible(Path path, Instant expireTime, PrivateNutsBootLog bLog) {
         boolean proceed = Files.isRegularFile(path);
         if (proceed) {
             try {
@@ -300,7 +300,7 @@ final class PrivateNutsUtils {
                     }
                 }
             } catch (Exception ex0) {
-                LOG.log(Level.FINEST, NutsLogVerb.FAIL, NutsMessage.jstyle("unable to get LastModifiedTime for file : {0}", path.toString(), ex0.toString()));
+                bLog.log(Level.FINEST, NutsLogVerb.FAIL, NutsMessage.jstyle("unable to get LastModifiedTime for file : {0}", path.toString(), ex0.toString()));
             }
         }
         return proceed;
@@ -369,13 +369,13 @@ final class PrivateNutsUtils {
         return false;
     }
 
-    protected static String getHome(NutsStoreLocation storeFolder, NutsBootOptions workspaceInformation) {
+    public static String getHome(NutsStoreLocation storeFolder, NutsBootOptions bOptions) {
         return NutsUtilPlatforms.getPlatformHomeFolder(
-                workspaceInformation.getStoreLocationLayout(),
+                bOptions.getStoreLocationLayout(),
                 storeFolder,
-                workspaceInformation.getHomeLocations(),
-                workspaceInformation.isGlobal(),
-                workspaceInformation.getName()
+                bOptions.getHomeLocations(),
+                bOptions.isGlobal(),
+                bOptions.getName()
         );
     }
 

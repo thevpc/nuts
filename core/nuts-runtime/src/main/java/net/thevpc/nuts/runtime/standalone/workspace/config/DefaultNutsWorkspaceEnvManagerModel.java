@@ -24,7 +24,6 @@
 package net.thevpc.nuts.runtime.standalone.workspace.config;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.standalone.xtra.vals.DefaultNutsVal;
 import net.thevpc.nuts.runtime.standalone.util.CorePlatformUtils;
 import net.thevpc.nuts.runtime.standalone.util.collections.DefaultObservableMap;
 import net.thevpc.nuts.runtime.standalone.util.collections.ObservableMap;
@@ -45,6 +44,7 @@ import java.util.stream.Collectors;
  */
 public class DefaultNutsWorkspaceEnvManagerModel {
 
+    private final Map<NutsPlatformType, List<NutsPlatformLocation>> configPlatforms = new LinkedHashMap<>();
     //    private Map<String, String> options = new LinkedHashMap<>();
     protected ObservableMap<String, Object> userProperties;
     private NutsWorkspace workspace;
@@ -58,7 +58,6 @@ public class DefaultNutsWorkspaceEnvManagerModel {
     private NutsId arch;
     private NutsId osDist;
     private NutsArchFamily archFamily = NutsArchFamily.getCurrent();
-    private final Map<NutsPlatformType, List<NutsPlatformLocation>> configPlatforms = new LinkedHashMap<>();
 
     public DefaultNutsWorkspaceEnvManagerModel(NutsWorkspace ws, NutsSession session) {
         this.workspace = ws;
@@ -82,7 +81,7 @@ public class DefaultNutsWorkspaceEnvManagerModel {
         }
         osDist = nip.parse(platformOsDist);
         platform = NutsJavaSdkUtils.of(session).createJdkId(System.getProperty("java.version"), session);
-        arch = NutsId.of(System.getProperty("os.arch"),session);
+        arch = NutsId.of(System.getProperty("os.arch"), session);
 
     }
 
@@ -138,7 +137,7 @@ public class DefaultNutsWorkspaceEnvManagerModel {
                         NutsShellFamily.FISH
                 };
                 for (NutsShellFamily f : all) {
-                    if(f!=null) {
+                    if (f != null) {
                         Path path = Paths.get("/bin").resolve(f.id());
                         if (Files.exists(path)) {
                             families.add(f);
@@ -322,17 +321,19 @@ public class DefaultNutsWorkspaceEnvManagerModel {
         return userProperties;
     }
 
-    public NutsVal getProperty(String property) {
-        return new DefaultNutsVal(userProperties.get(property));
+    public NutsElement getProperty(String property, NutsSession session) {
+        return NutsElements.of(session)
+                .setIndestructibleObjects(x -> true)
+                .toElement(property);
     }
 
-    public <T> T getOrCreateProperty(Class<T> property, Supplier<T> supplier) {
-        return getOrCreateProperty(property.getName(), supplier);
+    public <T> T getOrCreateProperty(Class<T> property, Supplier<T> supplier, NutsSession session) {
+        return getOrCreateProperty(property.getName(), supplier, session);
     }
 
-    public <T> T getOrCreateProperty(String property, Supplier<T> supplier) {
-        NutsVal a = getProperty(property);
-        T o = (T) a.getObject();
+    public <T> T getOrCreateProperty(String property, Supplier<T> supplier, NutsSession session) {
+        NutsElement a = getProperty(property, session);
+        T o = a.isCustom() ? (T) a.asCustom().getValue() : (T) a.asPrimitive().getValue();
         if (o != null) {
             return o;
         }

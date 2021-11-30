@@ -40,7 +40,7 @@ public class DefaultNutsHelpInternalExecutable extends DefaultInternalNutsExecut
                     case "--ntf": {
                         NutsArgument c = cmdLine.nextBoolean();
                         if (c.isActive()) {
-                            helpColors = c.getValue().getBoolean();
+                            helpColors = c.getBooleanValue();
                         }
                         break;
                     }

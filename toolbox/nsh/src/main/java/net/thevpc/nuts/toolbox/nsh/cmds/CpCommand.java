@@ -53,13 +53,13 @@ public class CpCommand extends SimpleJShellBuiltin {
         NutsArgument a;
         switch (commandLine.peek().getKey().getString()) {
             case "--mkdir": {
-                options.mkdir = commandLine.nextBoolean().getValue().getBoolean();
+                options.mkdir = commandLine.nextBoolean().getBooleanValue();
                 return true;
             }
             case "-r":
             case "-R":
             case "--recursive": {
-                options.recursive = commandLine.nextBoolean().getValue().getBoolean();
+                options.recursive = commandLine.nextBoolean().getBooleanValue();
                 return true;
             }
             default: {

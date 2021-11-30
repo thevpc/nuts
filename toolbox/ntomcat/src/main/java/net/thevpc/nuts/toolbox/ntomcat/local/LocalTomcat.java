@@ -2,7 +2,6 @@ package net.thevpc.nuts.toolbox.ntomcat.local;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.toolbox.ntomcat.NTomcatConfigVersions;
-import net.thevpc.nuts.toolbox.ntomcat.remote.RemoteTomcatConfigService;
 import net.thevpc.nuts.toolbox.ntomcat.util.NamedItemNotFoundException;
 import net.thevpc.nuts.toolbox.ntomcat.util.RunningTomcat;
 import net.thevpc.nuts.toolbox.ntomcat.util.TomcatUtils;
@@ -152,11 +151,11 @@ public class LocalTomcat {
         Helper x = new Helper();
         while (args.hasNext()) {
             if ((a = args.nextBoolean("-a", "--apps")) != null) {
-                x.apps = a.getValue().getBoolean();
+                x.apps = a.getBooleanValue();
             } else if ((a = args.nextBoolean("-d", "--domains")) != null) {
-                x.domains = a.getValue().getBoolean();
+                x.domains = a.getBooleanValue();
             } else if ((a = args.nextBoolean("-i", "--instances")) != null) {
-                x.instances = a.getValue().getBoolean();
+                x.instances = a.getBooleanValue();
             } else {
                 context.configureLast(cmdLine);
             }
@@ -328,7 +327,7 @@ public class LocalTomcat {
                 if (c == null) {
                     c = openTomcatConfig("", NutsOpenMode.OPEN_OR_ERROR);
                 }
-                c.getConfig().setDev(a.getValue().getBoolean());
+                c.getConfig().setDev(a.getBooleanValue());
             } else {
                 context.configureLast(args);
             }
@@ -531,7 +530,7 @@ public class LocalTomcat {
         args.setCommandName("tomcat --local delete-log");
         while (args.hasNext()) {
             if ((a = args.nextBoolean("-a", "--all")) != null) {
-                all = a.getValue().getBoolean();
+                all = a.getBooleanValue();
             } else if ((s = readBaseServiceArg(args, NutsOpenMode.OPEN_OR_ERROR)) != null) {
                 LocalTomcatConfigService c = toLocalTomcatConfigService(s);
                 if (all) {
@@ -646,7 +645,7 @@ public class LocalTomcat {
         List<Runnable> runnables = new ArrayList<>();
         while (args.hasNext()) {
             if ((a = args.nextBoolean("--redirect")) != null) {
-                redirect = a.getValue().getBoolean();
+                redirect = a.getBooleanValue();
             } else if ((a = args.nextBoolean("--shutdown")) != null) {
                 type = "shutdown";
             } else if ((a = args.nextBoolean("--ajp")) != null) {
@@ -806,7 +805,7 @@ public class LocalTomcat {
         while (args.hasNext()) {
             NutsArgument a = null;
             if ((a = args.nextBoolean("--delete-out-log")) != null) {
-                deleteLog = a.getValue().getBoolean();
+                deleteLog = a.getBooleanValue();
             } else if ((a = args.nextString("--deploy")) != null) {
                 apps.add(a.getValue().getString());
             } else if ((a = args.nextString("--port")) != null) {
@@ -1003,7 +1002,7 @@ public class LocalTomcat {
         } else if ((a = args.nextString("--domain")) != null) {
             return (loadDomain(a.getValue().getString(), autoCreate));
             //TODO: should remove this line?
-        } else if (args.hasNext() && args.peek().isOption() && args.peek().getAll().isDouble()) {
+        } else if (args.hasNext() && args.peek().isOption() && args.peek().toElement().isDouble()) {
             return null;
         } else if (args.hasNext() && args.peek().isOption()) {
             return null;

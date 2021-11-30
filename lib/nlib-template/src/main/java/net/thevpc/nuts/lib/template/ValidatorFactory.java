@@ -125,7 +125,7 @@ public class ValidatorFactory {
     public final StringValidator BOOLEAN = new StringValidator() {
         @Override
         public String validate(String value) {
-            Boolean b = NutsArgument.of(value,session).getAll().getBoolean(null);
+            Boolean b = NutsArgument.of(value,session).toElement().getBoolean(null);
             if (b == null) {
                 throw new IllegalArgumentException("Invalid boolean");
             }

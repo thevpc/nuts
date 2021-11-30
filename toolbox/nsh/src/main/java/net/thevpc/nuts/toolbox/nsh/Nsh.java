@@ -102,15 +102,15 @@ public class Nsh implements NutsApplication {
             }
         }
         cfg.save(false);
-        NutsVal initScripts = session.boot().getCustomBootOption("init-scripts","nuts.init-scripts");
-        if(initScripts.getBoolean(true)) {
-            NutsVal initLaunchers = session.boot().getCustomBootOption("init-launchers","nuts.init-launchers");
+        NutsArgument initScripts = session.boot().getBootCustomArgument("init-scripts","nuts.init-scripts");
+        if(initScripts.getBooleanValue(true)) {
+            NutsArgument initLaunchers = session.boot().getBootCustomArgument("init-launchers","nuts.init-launchers");
                 session.env().addLauncher(
                         new NutsLauncherOptions()
                                 .setId(session.getAppId())
                                 .setCreateScript(true)
-                                .setCreateDesktopShortcut(initLaunchers.getBoolean(true)?NutsSupportCondition.PREFERRED:NutsSupportCondition.NEVER)
-                                .setCreateMenuShortcut(initLaunchers.getBoolean(true)?NutsSupportCondition.SUPPORTED:NutsSupportCondition.NEVER)
+                                .setCreateDesktopShortcut(initLaunchers.getBooleanValue(true)?NutsSupportCondition.PREFERRED:NutsSupportCondition.NEVER)
+                                .setCreateMenuShortcut(initLaunchers.getBooleanValue(true)?NutsSupportCondition.SUPPORTED:NutsSupportCondition.NEVER)
                                 .setOpenTerminal(true)
                 );
         }

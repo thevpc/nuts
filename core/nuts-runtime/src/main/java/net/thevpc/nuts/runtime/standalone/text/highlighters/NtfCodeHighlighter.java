@@ -34,12 +34,12 @@ public class NtfCodeHighlighter implements NutsCodeHighlighter {
     }
 
     @Override
-    public NutsText stringToText(String text, NutsSession session) {
-        return NutsTexts.of(session).parse(text);
+    public NutsText stringToText(String text, NutsTexts txt, NutsSession session) {
+        return txt.parse(text);
     }
 
     @Override
-    public NutsText tokenToText(String text, String tokenType, NutsSession session) {
-        return NutsTexts.of(session).parse(text);
+    public NutsText tokenToText(String text, String tokenType, NutsTexts txt, NutsSession session) {
+        return txt.parse(text);
     }
 }

@@ -43,26 +43,28 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 class PrivateNutsUtilClassLoader {
-    private static void fillBootDependencyNodes(NutsClassLoaderNode node, Set<URL> urls, Set<String> visitedIds, PrivateNutsLog LOG) {
+    private static void fillBootDependencyNodes(NutsClassLoaderNode node, Set<URL> urls, Set<String> visitedIds,
+                                                PrivateNutsBootLog bLog) {
         String shortName = NutsBootId.parse(node.getId()).getShortName();
         if (!visitedIds.contains(shortName)) {
             visitedIds.add(shortName);
             if (!node.isIncludedInClasspath()) {
                 urls.add(node.getURL());
             } else {
-                LOG.log(Level.WARNING, NutsLogVerb.CACHE, NutsMessage.jstyle("url will not be loaded (already in classloader) : {0}", node.getURL()));
+                bLog.log(Level.WARNING, NutsLogVerb.CACHE, NutsMessage.jstyle("url will not be loaded (already in classloader) : {0}", node.getURL()));
             }
             for (NutsClassLoaderNode dependency : node.getDependencies()) {
-                fillBootDependencyNodes(dependency, urls, visitedIds, LOG);
+                fillBootDependencyNodes(dependency, urls, visitedIds, bLog);
             }
         }
     }
 
-    static URL[] resolveClassWorldURLs(NutsClassLoaderNode[] nodes, ClassLoader contextClassLoader, PrivateNutsLog LOG) {
+    static URL[] resolveClassWorldURLs(NutsClassLoaderNode[] nodes, ClassLoader contextClassLoader,
+                                       PrivateNutsBootLog bLog) {
         LinkedHashSet<URL> urls = new LinkedHashSet<>();
         Set<String> visitedIds = new HashSet<>();
         for (NutsClassLoaderNode info : nodes) {
-            fillBootDependencyNodes(info, urls, visitedIds, LOG);
+            fillBootDependencyNodes(info, urls, visitedIds, bLog);
         }
         return urls.toArray(new URL[0]);
     }
@@ -133,7 +135,8 @@ class PrivateNutsUtilClassLoader {
         return all.toArray(new URL[0]);
     }
 
-    public static boolean isLoadedClassPath(URL url, ClassLoader contextClassLoader, PrivateNutsLog LOG) {
+    public static boolean isLoadedClassPath(URL url, ClassLoader contextClassLoader,
+                                            PrivateNutsBootLog bLog) {
         try {
             if (url != null) {
                 if (contextClassLoader == null) {
@@ -152,17 +155,17 @@ class PrivateNutsUtilClassLoader {
                         ZipEntry zipEntry = entries.nextElement();
                         String zname = zipEntry.getName();
                         if (!zname.endsWith("/") && zname.endsWith(".class") && !zname.contains("$")) {
-                            if (PrivateNutsUtils.isInfiniteLoopThread(NutsBootWorkspace.class.getName(), "isLoadedClassPath")) {
+                            if (PrivateNutsUtils.isInfiniteLoopThread(PrivateNutsUtilClassLoader.class.getName(), "isLoadedClassPath")) {
                                 return false;
                             }
                             URL incp = contextClassLoader.getResource(zname);
                             String clz = zname.substring(0, zname.length() - 6).replace('/', '.');
                             if (incp != null) {
-                                LOG.log(Level.FINEST, NutsLogVerb.SUCCESS, NutsMessage.jstyle("url {0} is already in classpath. checked class {1} successfully",
+                                bLog.log(Level.FINEST, NutsLogVerb.SUCCESS, NutsMessage.jstyle("url {0} is already in classpath. checked class {1} successfully",
                                         url, clz));
                                 return true;
                             } else {
-                                LOG.log(Level.FINEST, NutsLogVerb.INFO, NutsMessage.jstyle("url {0} is not in classpath. failed to check class {1}",
+                                bLog.log(Level.FINEST, NutsLogVerb.INFO, NutsMessage.jstyle("url {0} is not in classpath. failed to check class {1}",
                                         url, clz));
                                 return false;
                             }
@@ -182,7 +185,7 @@ class PrivateNutsUtilClassLoader {
         } catch (IOException e) {
             //
         }
-        LOG.log(Level.FINEST, NutsLogVerb.FAIL, NutsMessage.jstyle("url {0} is not in classpath. no class found to check", url));
+        bLog.log(Level.FINEST, NutsLogVerb.FAIL, NutsMessage.jstyle("url {0} is not in classpath. no class found to check", url));
         return false;
     }
 }

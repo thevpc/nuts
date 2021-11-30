@@ -14,11 +14,9 @@ import net.thevpc.nuts.spi.NutsSupportLevelContext;
 
 public class JsonCodeHighlighter implements NutsCodeHighlighter {
     private NutsWorkspace ws;
-    private NutsTexts factory;
 
     public JsonCodeHighlighter(NutsWorkspace ws) {
         this.ws = ws;
-        factory = NutsTexts.of(NutsWorkspaceUtils.defaultSession(ws));
     }
 
     @Override
@@ -27,9 +25,8 @@ public class JsonCodeHighlighter implements NutsCodeHighlighter {
     }
 
     @Override
-    public NutsText tokenToText(String text, String nodeType,NutsSession session) {
-        factory.setSession(session);
-        return factory.ofPlain(text);
+    public NutsText tokenToText(String text, String nodeType, NutsTexts txt, NutsSession session) {
+        return txt.ofPlain(text);
     }
 
     @Override
@@ -50,8 +47,7 @@ public class JsonCodeHighlighter implements NutsCodeHighlighter {
     }
 
     @Override
-    public NutsText stringToText(String text, NutsSession session) {
-        factory.setSession(session);
+    public NutsText stringToText(String text, NutsTexts txt, NutsSession session) {
         List<NutsText> all = new ArrayList<>();
         StringReaderExt ar = new StringReaderExt(text);
         while (ar.hasNext()) {
@@ -59,7 +55,7 @@ public class JsonCodeHighlighter implements NutsCodeHighlighter {
                 case '{':
                 case '}':
                 case ':': {
-                    all.add(factory.ofStyled(String.valueOf(ar.nextChar()), NutsTextStyle.separator()));
+                    all.add(txt.ofStyled(String.valueOf(ar.nextChar()), NutsTextStyle.separator()));
                     break;
                 }
                 case '\'': {
@@ -89,7 +85,7 @@ public class JsonCodeHighlighter implements NutsCodeHighlighter {
                     if(d!=null) {
                         all.addAll(Arrays.asList(d));
                     }else{
-                        all.add(factory.ofStyled(String.valueOf(ar.nextChar()), NutsTextStyle.separator()));
+                        all.add(txt.ofStyled(String.valueOf(ar.nextChar()), NutsTextStyle.separator()));
                     }
                     break;
                 }
@@ -99,7 +95,7 @@ public class JsonCodeHighlighter implements NutsCodeHighlighter {
                     }else if(ar.peekChars("/*")){
                         all.addAll(Arrays.asList(StringReaderExtUtils.readSlashStarComments(session,ar)));
                     }else{
-                        all.add(factory.ofStyled(String.valueOf(ar.nextChar()), NutsTextStyle.separator()));
+                        all.add(txt.ofStyled(String.valueOf(ar.nextChar()), NutsTextStyle.separator()));
                     }
                     break;
                 }
@@ -110,24 +106,24 @@ public class JsonCodeHighlighter implements NutsCodeHighlighter {
                         NutsText[] d = StringReaderExtUtils.readJSIdentifier(session, ar);
                         if (d != null) {
                             if (d.length == 1 && d[0].getType() == NutsTextType.PLAIN) {
-                                String txt = ((NutsTextPlain) d[0]).getText();
-                                switch (txt) {
+                                String txt2 = ((NutsTextPlain) d[0]).getText();
+                                switch (txt2) {
                                     case "true":
                                     case "false": {
-                                        d[0] = factory.applyStyles(d[0], NutsTextStyle.bool());
+                                        d[0] = txt.applyStyles(d[0], NutsTextStyle.bool());
                                         break;
                                     }
                                 }
                             }
                             all.addAll(Arrays.asList(d));
                         } else {
-                            all.add(factory.ofStyled(String.valueOf(ar.nextChar()), NutsTextStyle.separator()));
+                            all.add(txt.ofStyled(String.valueOf(ar.nextChar()), NutsTextStyle.separator()));
                         }
                     }
                     break;
                 }
             }
         }
-        return factory.ofList(all.toArray(new NutsText[0]));
+        return txt.ofList(all.toArray(new NutsText[0]));
     }
 }

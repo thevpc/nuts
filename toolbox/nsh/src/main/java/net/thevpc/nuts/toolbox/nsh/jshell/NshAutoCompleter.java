@@ -11,7 +11,8 @@ class NshAutoCompleter implements NutsCommandAutoCompleteResolver {
     @Override
     public List<NutsArgumentCandidate> resolveCandidates(NutsCommandLine commandline, int wordIndex, NutsSession session) {
         List<NutsArgumentCandidate> candidates = new ArrayList<>();
-        JShellContext fileContext = (JShellContext) session.env().getProperty(JShellContext.class.getName()).getObject();
+        NutsElement e = session.env().getProperty(JShellContext.class.getName());
+        JShellContext fileContext = (JShellContext) (e.isCustom()?e.asCustom().getValue():null);
 
         if (wordIndex == 0) {
             for (JShellBuiltin command : fileContext.builtins().getAll()) {

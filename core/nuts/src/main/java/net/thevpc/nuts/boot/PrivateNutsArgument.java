@@ -26,10 +26,8 @@
  */
 package net.thevpc.nuts.boot;
 
-import net.thevpc.nuts.NutsArgument;
 import net.thevpc.nuts.NutsCommandLines;
 import net.thevpc.nuts.NutsUtilStrings;
-import net.thevpc.nuts.NutsVal;
 
 import java.util.NoSuchElementException;
 import java.util.regex.Matcher;
@@ -44,7 +42,7 @@ import java.util.regex.Pattern;
  * @app.category Format
  * @since 0.5.5
  */
-final class PrivateNutsArgumentImpl  {
+final class PrivateNutsArgument {
 
     public static final Pattern PATTERN_OPTION_EQ = Pattern.compile("^((?<optp>[-]+|[+]+)(?<cmt>//)?(?<flg>[!~])?)?(?<optk>[a-zA-Z][a-zA-Z0-9_-]*)?(?<opts>[=](?<optv>.*))?(?<optr>.*)$");
     public static final Pattern PATTERN_OPTION_COL = Pattern.compile("^((?<optp>[-]+|[+]+)(?<cmt>//)?(?<flg>[!~])?)?(?<optk>[a-zA-Z][a-zA-Z0-9_-]*)?(?<opts>[:](?<optv>.*))?(?<optr>.*)$");
@@ -67,7 +65,7 @@ final class PrivateNutsArgumentImpl  {
      * @param expression expression
      * @param eq         equals
      */
-    public PrivateNutsArgumentImpl(String expression, char eq) {
+    public PrivateNutsArgument(String expression, char eq) {
         this.eq = (eq == '\0' ? '=' : eq);
         this.expression = expression;
         Pattern currOptionsPattern;
@@ -178,7 +176,7 @@ final class PrivateNutsArgumentImpl  {
     }
 
     
-    public PrivateNutsArgumentImpl required() {
+    public PrivateNutsArgument required() {
         if (expression == null) {
             throw new NoSuchElementException("missing value");
         }
@@ -191,8 +189,8 @@ final class PrivateNutsArgumentImpl  {
     }
 
     
-    public NutsVal getOptionPrefix() {
-        return new NutsBootStrValImpl(optionPrefix);
+    public PrivateNutsBootVal getOptionPrefix() {
+        return new PrivateNutsBootVal(optionPrefix);
     }
 
     
@@ -201,13 +199,13 @@ final class PrivateNutsArgumentImpl  {
     }
 
     
-    public NutsVal getOptionName() {
-        return new NutsBootStrValImpl(optionName);
+    public PrivateNutsBootVal getOptionName() {
+        return new PrivateNutsBootVal(optionName);
     }
 
     
-    public NutsVal getValue() {
-        return new NutsBootStrValImpl(value) {
+    public PrivateNutsBootVal getValue() {
+        return new PrivateNutsBootVal(value) {
 
             
             public boolean getBoolean() {
@@ -226,13 +224,13 @@ final class PrivateNutsArgumentImpl  {
     }
 
     
-    public NutsVal getKey() {
-        return new NutsBootStrValImpl((key != null) ? key : expression);
+    public PrivateNutsBootVal getKey() {
+        return new PrivateNutsBootVal((key != null) ? key : expression);
     }
 
     
-    public NutsVal getAll() {
-        return new NutsBootStrValImpl(expression);
+    public PrivateNutsBootVal getAll() {
+        return new PrivateNutsBootVal(expression);
     }
 
     public boolean isNull() {

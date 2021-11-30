@@ -52,10 +52,10 @@ public class UnsetCommand extends SimpleJShellBuiltin {
         NutsArgument a = commandLine.peek();
         if (a.isOption()) {
             if (a.getKey().getString().equals("-v")) {
-                options.fct = !commandLine.nextBoolean().getValue().getBoolean();
+                options.fct = !commandLine.nextBoolean().getBooleanValue();
                 return true;
             } else if (a.getKey().getString().equals("-f")) {
-                options.fct = commandLine.nextBoolean().getValue().getBoolean();
+                options.fct = commandLine.nextBoolean().getBooleanValue();
                 return true;
             }
         } else {

@@ -36,7 +36,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 import java.util.function.Function;
-import java.util.function.Supplier;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
 
@@ -59,17 +58,15 @@ public final class NutsBootWorkspace {
 
     private static String apiDigest;
     private final long creationTime = System.currentTimeMillis();
-    private final NutsBootOptions options;
-    private final PrivateNutsLog LOG;
-    private Supplier<ClassLoader> contextClassLoaderSupplier;
-    private int newInstanceRequirements;
-    private NutsBootOptions workspaceInformation;
+    private final NutsBootOptions userOptions;
+    private final PrivateNutsBootLog bLog;
+    private final NutsBootOptions computedOptions;
     private final Function<String, String> pathExpansionConverter = new Function<String, String>() {
         @Override
         public String apply(String from) {
             switch (from) {
                 case "workspace":
-                    return workspaceInformation.getWorkspace();
+                    return computedOptions.getWorkspace();
                 case "user.home":
                     return System.getProperty("user.home");
                 case "home.apps":
@@ -80,7 +77,7 @@ public final class NutsBootWorkspace {
                 case "home.cache":
                 case "home.run":
                 case "home.log":
-                    return PrivateNutsUtils.getHome(NutsStoreLocation.valueOf(from.substring("home.".length()).toUpperCase()), workspaceInformation);
+                    return PrivateNutsUtils.getHome(NutsStoreLocation.valueOf(from.substring("home.".length()).toUpperCase()), computedOptions);
                 case "apps":
                 case "config":
                 case "lib":
@@ -89,74 +86,76 @@ public final class NutsBootWorkspace {
                 case "temp":
                 case "log":
                 case "var": {
-                    Map<NutsStoreLocation, String> s = workspaceInformation.getStoreLocations();
-                    if (s == null) {
+                    Map<NutsStoreLocation, String> s = computedOptions.getStoreLocations();
+                    String v = s.get(NutsStoreLocation.parseLenient(from));
+                    if (v == null) {
                         return "${" + from + "}";
                     }
-                    return s.get(NutsStoreLocation.parseLenient(from));
+                    return v;
                 }
             }
             return "${" + from + "}";
         }
     };
-    private NutsBootOptions lastWorkspaceInformation;
+    private int newInstanceRequirements;
+    private NutsBootOptions lastWorkspaceOptions;
     private Set<String> parsedBootRuntimeDependenciesRepositories;
     private Set<String> parsedBootRuntimeRepositories;
     private boolean preparedWorkspace;
-    private NutsLogger LOG2;
-    private NutsSession LOG2_SESSION;
+    private NutsLogger nLog;
+    private NutsSession nLogSession;
 
     public NutsBootWorkspace(NutsBootTerminal bootTerminal, String... args) {
-        LOG = new PrivateNutsLog(bootTerminal);
-        NutsBootOptions bb = new NutsBootOptions(LOG)
+        this.bLog = new PrivateNutsBootLog(bootTerminal);
+        NutsBootOptions o = new NutsBootOptions()
                 .setBootTerminal(bootTerminal)
                 .setCreationTime(creationTime);
-        NutsApiUtils.parseNutsArguments(args,bb, LOG);
-        this.options = bb;
-        LOG.setOptions(this.options);
-        newInstanceRequirements = 0;
+        NutsApiUtils.parseNutsArguments(args, o, bLog);
+        this.userOptions = o;
+        this.computedOptions = new NutsBootOptions();
+        this.computedOptions.setAll(this.userOptions);
+        this.bLog.setOptions(this.computedOptions);
+        this.newInstanceRequirements = 0;
     }
 
-    public NutsBootWorkspace(NutsBootOptions options) {
-        if (options == null) {
-            LOG = new PrivateNutsLog(null);
-            this.options = new NutsBootOptions(LOG).setCreationTime(creationTime);
-            LOG.setOptions(this.options);
+    public NutsBootWorkspace(NutsBootOptions userOptions) {
+        if (userOptions == null) {
+            this.bLog = new PrivateNutsBootLog(null);
+            this.userOptions = new NutsBootOptions().setCreationTime(creationTime);
+            this.computedOptions = new NutsBootOptions();
+            this.computedOptions.setAll(this.userOptions);
         } else {
-            LOG = new PrivateNutsLog(options.getBootTerminal());
-            LOG.setOptions(options);
-            if (options.getCreationTime() == 0) {
-                NutsBootOptions copy = options.copy();
-                copy.setCreationTime(creationTime);
-                this.options = copy;
-                LOG.setOptions(this.options);
-            } else {
-                this.options = options;
+            bLog = new PrivateNutsBootLog(userOptions.getBootTerminal());
+            this.userOptions = userOptions;
+            this.computedOptions = new NutsBootOptions();
+            this.computedOptions.setAll(userOptions);
+            if (userOptions.getCreationTime() == 0) {
+                computedOptions.setCreationTime(creationTime);
             }
         }
-        newInstanceRequirements = 0;
+        this.bLog.setOptions(this.computedOptions);
+        this.newInstanceRequirements = 0;
     }
 
-    private static void revalidateLocations(NutsBootOptions workspaceInformation, String workspaceName, boolean immediateLocation) {
-        if (NutsBlankable.isBlank(workspaceInformation.getName())) {
-            workspaceInformation.setName(workspaceName);
+    private static void revalidateLocations(NutsBootOptions options, String workspaceName, boolean immediateLocation) {
+        if (NutsBlankable.isBlank(options.getName())) {
+            options.setName(workspaceName);
         }
-        if (workspaceInformation.getStoreLocationStrategy() == null) {
-            workspaceInformation.setStoreLocationStrategy(
+        if (options.getStoreLocationStrategy() == null) {
+            options.setStoreLocationStrategy(
                     immediateLocation ? NutsStoreLocationStrategy.EXPLODED : NutsStoreLocationStrategy.STANDALONE
             );
         }
-        if (workspaceInformation.getRepositoryStoreLocationStrategy() == null) {
-            workspaceInformation.setRepositoryStoreLocationStrategy(NutsStoreLocationStrategy.EXPLODED);
+        if (options.getRepositoryStoreLocationStrategy() == null) {
+            options.setRepositoryStoreLocationStrategy(NutsStoreLocationStrategy.EXPLODED);
         }
         Map<NutsStoreLocation, String> storeLocations = NutsUtilPlatforms.buildLocations(
-                workspaceInformation.getStoreLocationLayout(), workspaceInformation.getStoreLocationStrategy(),
-                workspaceInformation.getStoreLocations(), workspaceInformation.getHomeLocations(),
-                workspaceInformation.isGlobal(),
-                workspaceInformation.getWorkspace(),//workspaceInformation.getName(),
+                options.getStoreLocationLayout(), options.getStoreLocationStrategy(),
+                options.getStoreLocations(), options.getHomeLocations(),
+                options.isGlobal(),
+                options.getWorkspace(),
                 null//no session!
         );
-
         if (new HashSet<>(storeLocations.values()).size() != storeLocations.size()) {
             Map<String, List<NutsStoreLocation>> conflicts = new LinkedHashMap<>();
             for (Map.Entry<NutsStoreLocation, String> e : storeLocations.entrySet()) {
@@ -183,7 +182,7 @@ public final class NutsBootWorkspace {
                     NutsMessage.cstyle(error.toString(), errorParams)
             );
         }
-        workspaceInformation.setStoreLocations(storeLocations);
+        options.setStoreLocations(storeLocations);
     }
 
     /**
@@ -211,18 +210,18 @@ public final class NutsBootWorkspace {
         String[] processCommandLine = createProcessCommandLine();
         int result;
         try {
-            if (LOG2 != null) {
-                LOG2.with().session(LOG2_SESSION).level(Level.FINE).verb(NutsLogVerb.START)
+            if (nLog != null) {
+                nLog.with().session(nLogSession).level(Level.FINE).verb(NutsLogVerb.START)
                         .log(
                                 NutsMessage.jstyle("start new process : {0}",
-                                        NutsCommandLine.of(processCommandLine,LOG2_SESSION)
+                                        NutsCommandLine.of(processCommandLine, nLogSession)
                                 )
                         );
             } else {
-                LOG.log(Level.FINE,
+                bLog.log(Level.FINE,
                         NutsLogVerb.START,
                         NutsMessage.jstyle("start new process : {0}",
-                                NutsCommandLine.of(processCommandLine,LOG2_SESSION))
+                                NutsCommandLine.of(processCommandLine, nLogSession))
                 );
             }
             result = new ProcessBuilder(processCommandLine).inheritIO().start().waitFor();
@@ -245,23 +244,23 @@ public final class NutsBootWorkspace {
             if (parsedBootRuntimeDependenciesRepositories != null) {
                 return parsedBootRuntimeDependenciesRepositories;
             }
-            LOG.log(Level.FINE, NutsLogVerb.START, NutsMessage.jstyle("resolve boot repositories to load nuts-runtime dependencies from options : {0} and config: {1}",
-                    (options.getRepositories() == null ? "[]" : Arrays.toString(options.getRepositories()))
-                    , NutsBlankable.isBlank(workspaceInformation.getBootRepositories()) ? "[]" : workspaceInformation.getBootRepositories()
+            bLog.log(Level.FINE, NutsLogVerb.START, NutsMessage.jstyle("resolve boot repositories to load nuts-runtime dependencies from options : {0} and config: {1}",
+                    (computedOptions.getRepositories() == null ? "[]" : Arrays.toString(computedOptions.getRepositories()))
+                    , NutsBlankable.isBlank(computedOptions.getBootRepositories()) ? "[]" : computedOptions.getBootRepositories()
             ));
         } else {
             if (parsedBootRuntimeRepositories != null) {
                 return parsedBootRuntimeRepositories;
             }
-            LOG.log(Level.FINE, NutsLogVerb.START, NutsMessage.jstyle("resolve boot repositories to load nuts-runtime from options : {0} and config: {1}",
-                    (options.getRepositories() == null ? "[]" : Arrays.toString(options.getRepositories()))
-                    , NutsBlankable.isBlank(workspaceInformation.getBootRepositories()) ? "[]" : workspaceInformation.getBootRepositories()
+            bLog.log(Level.FINE, NutsLogVerb.START, NutsMessage.jstyle("resolve boot repositories to load nuts-runtime from options : {0} and config: {1}",
+                    (computedOptions.getRepositories() == null ? "[]" : Arrays.toString(computedOptions.getRepositories()))
+                    , NutsBlankable.isBlank(computedOptions.getBootRepositories()) ? "[]" : computedOptions.getBootRepositories()
             ));
         }
-        NutsRepositorySelectorList bootRepositories = NutsRepositorySelectorList.ofAll(options.getRepositories(),NutsBootRepositoryDB.INSTANCE,null);
+        NutsRepositorySelectorList bootRepositories = NutsRepositorySelectorList.ofAll(computedOptions.getRepositories(), PrivateNutsBootRepositoryDB.INSTANCE, null);
         NutsRepositorySelector[] old = NutsRepositorySelectorList.ofAll(
-                new String[]{workspaceInformation.getBootRepositories()},
-                NutsBootRepositoryDB.INSTANCE,null
+                new String[]{computedOptions.getBootRepositories()},
+                PrivateNutsBootRepositoryDB.INSTANCE, null
         ).toArray();
         NutsRepositoryURL[] result = null;
         if (old.length == 0) {
@@ -269,14 +268,14 @@ public final class NutsBootWorkspace {
             result = bootRepositories.resolve(new NutsRepositoryURL[]{
                     NutsRepositoryURL.of("maven-local", null),
                     NutsRepositoryURL.of("maven-central", null),
-            },NutsBootRepositoryDB.INSTANCE);
+            }, PrivateNutsBootRepositoryDB.INSTANCE);
         } else {
             result = bootRepositories.resolve(Arrays.stream(old).map(x -> NutsRepositoryURL.of(x.getName(), x.getUrl()))
-                    .toArray(NutsRepositoryURL[]::new)
-                    ,NutsBootRepositoryDB.INSTANCE);
+                            .toArray(NutsRepositoryURL[]::new)
+                    , PrivateNutsBootRepositoryDB.INSTANCE);
         }
-        if (!options.isReset() && !options.isRecover()) {
-            String loc = workspaceInformation.getStoreLocation(NutsStoreLocation.LIB);
+        if (!computedOptions.isReset() && !computedOptions.isRecover()) {
+            String loc = computedOptions.getStoreLocation(NutsStoreLocation.LIB);
             if (loc != null) {
                 if (Files.isDirectory(Paths.get(loc))) {
                     NutsRepositoryURL[] result2 = new NutsRepositoryURL[result.length + 1];
@@ -298,46 +297,45 @@ public final class NutsBootWorkspace {
 
     public String[] createProcessCommandLine() {
         prepareWorkspace();
-        LOG.log(Level.FINE, NutsLogVerb.START, NutsMessage.jstyle("running version {0}.  {1}", workspaceInformation.getApiVersion(), getRequirementsHelpString(true)));
+        bLog.log(Level.FINE, NutsLogVerb.START, NutsMessage.jstyle("running version {0}.  {1}", computedOptions.getApiVersion(), getRequirementsHelpString(true)));
         StringBuilder errors = new StringBuilder();
-        String defaultWorkspaceLibFolder = workspaceInformation.getStoreLocation(NutsStoreLocation.LIB);
+        String defaultWorkspaceLibFolder = computedOptions.getStoreLocation(NutsStoreLocation.LIB);
         List<String> repos = new ArrayList<>();
         repos.add(defaultWorkspaceLibFolder);
         Collection<String> bootRepositories = resolveBootRuntimeRepositories(true);
         repos.addAll(bootRepositories);
         PrivateNutsErrorInfoList errorList = new PrivateNutsErrorInfoList();
         File file = PrivateNutsUtilMaven.resolveOrDownloadJar(
-                new NutsBootId("net.thevpc.nuts", "nuts", NutsBootVersion.parse(workspaceInformation.getApiVersion())),
+                new NutsBootId("net.thevpc.nuts", "nuts", NutsBootVersion.parse(computedOptions.getApiVersion())),
                 repos.toArray(new String[0]),
-                workspaceInformation.getStoreLocation(NutsStoreLocation.LIB) + File.separator + NutsConstants.Folders.ID
-                , LOG,
+                computedOptions.getStoreLocation(NutsStoreLocation.LIB) + File.separator + NutsConstants.Folders.ID
+                , bLog,
                 false,
-                options.getExpireTime(),
+                computedOptions.getExpireTime(),
                 errorList
         );
         if (file == null) {
-            errors.append("unable to load nuts ").append(workspaceInformation.getApiVersion()).append("\n");
+            errors.append("unable to load nuts ").append(computedOptions.getApiVersion()).append("\n");
             for (PrivateNutsErrorInfo errorInfo : errorList.list()) {
                 errors.append(errorInfo.toString()).append("\n");
             }
-            showError(workspaceInformation,
-                    options.getWorkspace(), null,
+            showError(null,
                     errors.toString(),
                     errorList
             );
             throw new NutsBootException(
-                    NutsMessage.cstyle("unable to load %s#%s", NutsConstants.Ids.NUTS_API, workspaceInformation.getApiVersion())
+                    NutsMessage.cstyle("unable to load %s#%s", NutsConstants.Ids.NUTS_API, computedOptions.getApiVersion())
             );
         }
 
         List<String> cmd = new ArrayList<>();
-        String jc = workspaceInformation.getJavaCommand();
+        String jc = computedOptions.getJavaCommand();
         if (jc == null || jc.trim().isEmpty()) {
             jc = PrivateNutsUtils.resolveJavaCommand(null);
         }
         cmd.add(jc);
         boolean showCommand = false;
-        for (String c : PrivateNutsCommandLine.parseCommandLineArray(options.getJavaOptions())) {
+        for (String c : PrivateNutsCommandLine.parseCommandLineArray(computedOptions.getJavaOptions())) {
             if (!c.isEmpty()) {
                 if (c.equals("--show-command")) {
                     showCommand = true;
@@ -346,14 +344,14 @@ public final class NutsBootWorkspace {
                 }
             }
         }
-        if (workspaceInformation.getJavaOptions() != null) {
-            Collections.addAll(cmd, PrivateNutsCommandLine.parseCommandLineArray(workspaceInformation.getJavaOptions()));
+        if (computedOptions.getJavaOptions() != null) {
+            Collections.addAll(cmd, PrivateNutsCommandLine.parseCommandLineArray(computedOptions.getJavaOptions()));
         }
         cmd.add("-jar");
         cmd.add(file.getPath());
         cmd.addAll(Arrays.asList(
-                new PrivateNutsWorkspaceOptionsFormat(options)
-                .setCompact(true).setApiVersion(workspaceInformation.getApiVersion()).getBootCommandLine()
+                new PrivateNutsWorkspaceOptionsFormat(computedOptions)
+                        .setCompact(true).setApiVersion(computedOptions.getApiVersion()).getBootCommandLine()
                         .toStringArray()
         ));
         if (showCommand) {
@@ -365,56 +363,54 @@ public final class NutsBootWorkspace {
                 }
                 sb.append(s);
             }
-            LOG.log(Level.FINE, NutsLogVerb.START, NutsMessage.jstyle("[exec] {0}", sb));
+            bLog.log(Level.FINE, NutsLogVerb.START, NutsMessage.jstyle("[exec] {0}", sb));
         }
         return cmd.toArray(new String[0]);
     }
 
     public NutsBootOptions getOptions() {
-        return options;
+        return computedOptions;
     }
 
     private boolean prepareWorkspace() {
         if (!preparedWorkspace) {
             preparedWorkspace = true;
-            if (LOG.isLoggable(Level.CONFIG)) {
-                LOG.log(Level.CONFIG, NutsLogVerb.START, NutsMessage.jstyle("bootstrap Nuts version {0} - digest {1}...", Nuts.getVersion(), getApiDigest()));
-                LOG.log(Level.CONFIG, NutsLogVerb.START, NutsMessage.jstyle("boot-class-path:"));
+            if (bLog.isLoggable(Level.CONFIG)) {
+                bLog.log(Level.CONFIG, NutsLogVerb.START, NutsMessage.jstyle("bootstrap Nuts version {0} - digest {1}...", Nuts.getVersion(), getApiDigest()));
+                bLog.log(Level.CONFIG, NutsLogVerb.START, NutsMessage.jstyle("boot-class-path:"));
                 for (String s : System.getProperty("java.class.path").split(File.pathSeparator)) {
-                    LOG.log(Level.CONFIG, NutsLogVerb.START, NutsMessage.jstyle("                  {0}", s));
+                    bLog.log(Level.CONFIG, NutsLogVerb.START, NutsMessage.jstyle("                  {0}", s));
                 }
                 ClassLoader thisClassClassLoader = getClass().getClassLoader();
-                LOG.log(Level.CONFIG, NutsLogVerb.START, NutsMessage.jstyle("class-loader: {0}", thisClassClassLoader));
+                bLog.log(Level.CONFIG, NutsLogVerb.START, NutsMessage.jstyle("class-loader: {0}", thisClassClassLoader));
                 for (URL url : PrivateNutsUtilClassLoader.resolveClasspathURLs(thisClassClassLoader, false)) {
-                    LOG.log(Level.CONFIG, NutsLogVerb.START, NutsMessage.jstyle("                 {0}", url));
+                    bLog.log(Level.CONFIG, NutsLogVerb.START, NutsMessage.jstyle("                 {0}", url));
                 }
                 ClassLoader tctxloader = Thread.currentThread().getContextClassLoader();
                 if (tctxloader != thisClassClassLoader) {
-                    LOG.log(Level.CONFIG, NutsLogVerb.START, NutsMessage.jstyle("thread-class-loader: {0}", tctxloader));
+                    bLog.log(Level.CONFIG, NutsLogVerb.START, NutsMessage.jstyle("thread-class-loader: {0}", tctxloader));
                     for (URL url : PrivateNutsUtilClassLoader.resolveClasspathURLs(tctxloader, false)) {
-                        LOG.log(Level.CONFIG, NutsLogVerb.START, NutsMessage.jstyle("                 {0}", url));
+                        bLog.log(Level.CONFIG, NutsLogVerb.START, NutsMessage.jstyle("                 {0}", url));
                     }
                 }
                 ClassLoader contextClassLoader = getContextClassLoader();
-                LOG.log(Level.CONFIG, NutsLogVerb.START, NutsMessage.jstyle("ctx-class-loader: {0}", contextClassLoader));
+                bLog.log(Level.CONFIG, NutsLogVerb.START, NutsMessage.jstyle("ctx-class-loader: {0}", contextClassLoader));
                 if (contextClassLoader != null) {
                     for (URL url : PrivateNutsUtilClassLoader.resolveClasspathURLs(contextClassLoader, false)) {
-                        LOG.log(Level.CONFIG, NutsLogVerb.START, NutsMessage.jstyle("                 {0}", url));
+                        bLog.log(Level.CONFIG, NutsLogVerb.START, NutsMessage.jstyle("                 {0}", url));
                     }
                 }
-                LOG.log(Level.CONFIG, NutsLogVerb.START, NutsMessage.jstyle("system-properties:", contextClassLoader));
+                bLog.log(Level.CONFIG, NutsLogVerb.START, NutsMessage.jstyle("system-properties:", contextClassLoader));
                 Map<String, String> m = (Map) System.getProperties();
                 int max = m.keySet().stream().mapToInt(String::length).max().getAsInt();
                 for (String k : new TreeSet<String>(m.keySet())) {
-                    LOG.log(Level.CONFIG, NutsLogVerb.START, NutsMessage.jstyle("    {0} = {1}",
+                    bLog.log(Level.CONFIG, NutsLogVerb.START, NutsMessage.jstyle("    {0} = {1}",
                             PrivateNutsUtils.leftAlign(k, max),
                             PrivateNutsUtils.compressString(m.get(k))
                     ));
                 }
             }
-            workspaceInformation = createInit();
-
-            String _ws = options.getWorkspace();
+            String _ws = computedOptions.getWorkspace();
             String workspaceName;
             String lastNutsWorkspaceJsonConfigPath = null;
             boolean immediateLocation = false;
@@ -424,9 +420,9 @@ public final class NutsBootWorkspace {
                 //String protocol=ws.substring(0,ws.indexOf("://"));
                 workspaceName = "remote-bootstrap";
                 lastNutsWorkspaceJsonConfigPath = NutsUtilPlatforms.getWorkspaceLocation(null,
-                        workspaceInformation.isGlobal(),
+                        computedOptions.isGlobal(),
                         PrivateNutsUtils.resolveValidWorkspaceName(workspaceName));
-                lastConfigLoaded = PrivateNutsBootConfigLoader.loadBootConfig(lastNutsWorkspaceJsonConfigPath, LOG);
+                lastConfigLoaded = PrivateNutsBootConfigLoader.loadBootConfig(lastNutsWorkspaceJsonConfigPath, bLog);
                 immediateLocation = true;
 
             } else {
@@ -437,11 +433,11 @@ public final class NutsBootWorkspace {
                             = PrivateNutsUtils.isValidWorkspaceName(_ws)
                             ? NutsUtilPlatforms.getWorkspaceLocation(
                             null,
-                            workspaceInformation.isGlobal(),
+                            computedOptions.isGlobal(),
                             PrivateNutsUtils.resolveValidWorkspaceName(_ws)
                     ) : PrivateNutsUtilIO.getAbsolutePath(_ws);
 
-                    NutsBootOptions configLoaded = PrivateNutsBootConfigLoader.loadBootConfig(lastNutsWorkspaceJsonConfigPath, LOG);
+                    NutsBootOptions configLoaded = PrivateNutsBootConfigLoader.loadBootConfig(lastNutsWorkspaceJsonConfigPath, bLog);
                     if (configLoaded == null) {
                         //not loaded
                         break;
@@ -455,221 +451,220 @@ public final class NutsBootWorkspace {
                         throw new NutsBootException(NutsMessage.cstyle("cyclic workspace resolution"));
                     }
                 }
-                workspaceName = PrivateNutsUtils.resolveValidWorkspaceName(options.getWorkspace());
+                workspaceName = PrivateNutsUtils.resolveValidWorkspaceName(computedOptions.getWorkspace());
             }
-            workspaceInformation.setWorkspace(lastNutsWorkspaceJsonConfigPath);
+            computedOptions.setWorkspace(lastNutsWorkspaceJsonConfigPath);
             if (lastConfigLoaded != null) {
-                workspaceInformation.setWorkspace(lastNutsWorkspaceJsonConfigPath);
-                workspaceInformation.setName(lastConfigLoaded.getName());
-                workspaceInformation.setUuid(lastConfigLoaded.getUuid());
-                if (!options.isReset()) {
-                    workspaceInformation.setBootRepositories(lastConfigLoaded.getBootRepositories());
-                    workspaceInformation.setJavaCommand(lastConfigLoaded.getJavaCommand());
-                    workspaceInformation.setJavaOptions(lastConfigLoaded.getJavaOptions());
-                    workspaceInformation.setExtensionsSet(PrivateNutsUtils.copy(lastConfigLoaded.getExtensionsSet()));
-                    workspaceInformation.setStoreLocationStrategy(lastConfigLoaded.getStoreLocationStrategy());
-                    workspaceInformation.setRepositoryStoreLocationStrategy(lastConfigLoaded.getRepositoryStoreLocationStrategy());
-                    workspaceInformation.setStoreLocationLayout(lastConfigLoaded.getStoreLocationLayout());
-                    workspaceInformation.setStoreLocations(PrivateNutsUtils.copy(lastConfigLoaded.getStoreLocations()));
-                    workspaceInformation.setHomeLocations(PrivateNutsUtils.copy(lastConfigLoaded.getHomeLocations()));
+                computedOptions.setWorkspace(lastNutsWorkspaceJsonConfigPath);
+                computedOptions.setName(lastConfigLoaded.getName());
+                computedOptions.setUuid(lastConfigLoaded.getUuid());
+                if (!computedOptions.isReset()) {
+                    computedOptions.setBootRepositories(lastConfigLoaded.getBootRepositories());
+                    computedOptions.setJavaCommand(lastConfigLoaded.getJavaCommand());
+                    computedOptions.setJavaOptions(lastConfigLoaded.getJavaOptions());
+                    computedOptions.setExtensionsSet(PrivateNutsUtils.copy(lastConfigLoaded.getExtensionsSet()));
+                    computedOptions.setStoreLocationStrategy(lastConfigLoaded.getStoreLocationStrategy());
+                    computedOptions.setRepositoryStoreLocationStrategy(lastConfigLoaded.getRepositoryStoreLocationStrategy());
+                    computedOptions.setStoreLocationLayout(lastConfigLoaded.getStoreLocationLayout());
+                    computedOptions.setStoreLocations(PrivateNutsUtils.copy(lastConfigLoaded.getStoreLocations()));
+                    computedOptions.setHomeLocations(PrivateNutsUtils.copy(lastConfigLoaded.getHomeLocations()));
                 } else {
-                    lastWorkspaceInformation = new NutsBootOptions(LOG);
-                    lastWorkspaceInformation.setWorkspace(lastNutsWorkspaceJsonConfigPath);
-                    lastWorkspaceInformation.setName(lastConfigLoaded.getName());
-                    lastWorkspaceInformation.setUuid(lastConfigLoaded.getUuid());
-                    lastWorkspaceInformation.setBootRepositories(lastConfigLoaded.getBootRepositories());
-                    lastWorkspaceInformation.setJavaCommand(lastConfigLoaded.getJavaCommand());
-                    lastWorkspaceInformation.setJavaOptions(lastConfigLoaded.getJavaOptions());
-                    lastWorkspaceInformation.setExtensionsSet(PrivateNutsUtils.copy(lastConfigLoaded.getExtensionsSet()));
-                    lastWorkspaceInformation.setStoreLocationStrategy(lastConfigLoaded.getStoreLocationStrategy());
-                    lastWorkspaceInformation.setRepositoryStoreLocationStrategy(lastConfigLoaded.getRepositoryStoreLocationStrategy());
-                    lastWorkspaceInformation.setStoreLocationLayout(lastConfigLoaded.getStoreLocationLayout());
-                    lastWorkspaceInformation.setStoreLocations(PrivateNutsUtils.copy(lastConfigLoaded.getStoreLocations()));
-                    lastWorkspaceInformation.setHomeLocations(PrivateNutsUtils.copy(lastConfigLoaded.getHomeLocations()));
+                    lastWorkspaceOptions = new NutsBootOptions();
+                    lastWorkspaceOptions.setWorkspace(lastNutsWorkspaceJsonConfigPath);
+                    lastWorkspaceOptions.setName(lastConfigLoaded.getName());
+                    lastWorkspaceOptions.setUuid(lastConfigLoaded.getUuid());
+                    lastWorkspaceOptions.setBootRepositories(lastConfigLoaded.getBootRepositories());
+                    lastWorkspaceOptions.setJavaCommand(lastConfigLoaded.getJavaCommand());
+                    lastWorkspaceOptions.setJavaOptions(lastConfigLoaded.getJavaOptions());
+                    lastWorkspaceOptions.setExtensionsSet(PrivateNutsUtils.copy(lastConfigLoaded.getExtensionsSet()));
+                    lastWorkspaceOptions.setStoreLocationStrategy(lastConfigLoaded.getStoreLocationStrategy());
+                    lastWorkspaceOptions.setRepositoryStoreLocationStrategy(lastConfigLoaded.getRepositoryStoreLocationStrategy());
+                    lastWorkspaceOptions.setStoreLocationLayout(lastConfigLoaded.getStoreLocationLayout());
+                    lastWorkspaceOptions.setStoreLocations(PrivateNutsUtils.copy(lastConfigLoaded.getStoreLocations()));
+                    lastWorkspaceOptions.setHomeLocations(PrivateNutsUtils.copy(lastConfigLoaded.getHomeLocations()));
                 }
             }
-            revalidateLocations(workspaceInformation, workspaceName, immediateLocation);
-            workspaceInformation.setApiVersion(options.getApiVersion());
+            revalidateLocations(computedOptions, workspaceName, immediateLocation);
             long countDeleted = 0;
-            //now that config information is prepared proceed to any cleanup
-            if (options.isReset()) {
+            //now that config is prepared proceed to any cleanup
+            if (computedOptions.isReset()) {
                 //force loading version early, it will be used later-on
                 Nuts.getVersion();
-                if (lastWorkspaceInformation != null) {
-                    revalidateLocations(lastWorkspaceInformation, workspaceName, immediateLocation);
-                    if (options.isDry()) {
-                        LOG.log(Level.INFO, NutsLogVerb.DEBUG, NutsMessage.jstyle("[dry] [reset] delete ALL workspace folders and configurations"));
+                if (lastWorkspaceOptions != null) {
+                    revalidateLocations(lastWorkspaceOptions, workspaceName, immediateLocation);
+                    if (computedOptions.isDry()) {
+                        bLog.log(Level.INFO, NutsLogVerb.DEBUG, NutsMessage.jstyle("[dry] [reset] delete ALL workspace folders and configurations"));
                     } else {
-                        LOG.log(Level.CONFIG, NutsLogVerb.WARNING, NutsMessage.jstyle("reset workspace"));
-                        countDeleted = PrivateNutsUtilDeleteFiles.deleteStoreLocations(lastWorkspaceInformation, getOptions(), true, LOG, NutsStoreLocation.values());
-                        PrivateNutsUtilLauncher.ndiUndo(LOG);
+                        bLog.log(Level.CONFIG, NutsLogVerb.WARNING, NutsMessage.jstyle("reset workspace"));
+                        countDeleted = PrivateNutsUtilDeleteFiles.deleteStoreLocations(lastWorkspaceOptions, getOptions(), true, bLog, NutsStoreLocation.values());
+                        PrivateNutsUtilLauncher.ndiUndo(bLog);
                     }
                 } else {
-                    if (options.isDry()) {
-                        LOG.log(Level.INFO, NutsLogVerb.DEBUG, NutsMessage.jstyle("[dry] [reset] delete ALL workspace folders and configurations"));
+                    if (computedOptions.isDry()) {
+                        bLog.log(Level.INFO, NutsLogVerb.DEBUG, NutsMessage.jstyle("[dry] [reset] delete ALL workspace folders and configurations"));
                     } else {
-                        LOG.log(Level.CONFIG, NutsLogVerb.WARNING, NutsMessage.jstyle("reset workspace"));
-                        countDeleted = PrivateNutsUtilDeleteFiles.deleteStoreLocations(workspaceInformation, getOptions(), true, LOG, NutsStoreLocation.values());
-                        PrivateNutsUtilLauncher.ndiUndo(LOG);
+                        bLog.log(Level.CONFIG, NutsLogVerb.WARNING, NutsMessage.jstyle("reset workspace"));
+                        countDeleted = PrivateNutsUtilDeleteFiles.deleteStoreLocations(computedOptions, getOptions(), true, bLog, NutsStoreLocation.values());
+                        PrivateNutsUtilLauncher.ndiUndo(bLog);
                     }
                 }
-            } else if (options.isRecover()) {
-                if (options.isDry()) {
-                    LOG.log(Level.INFO, NutsLogVerb.DEBUG, NutsMessage.jstyle("[dry] [recover] delete CACHE/TEMP workspace folders"));
+            } else if (computedOptions.isRecover()) {
+                if (computedOptions.isDry()) {
+                    bLog.log(Level.INFO, NutsLogVerb.DEBUG, NutsMessage.jstyle("[dry] [recover] delete CACHE/TEMP workspace folders"));
                 } else {
-                    LOG.log(Level.CONFIG, NutsLogVerb.WARNING, NutsMessage.jstyle("recover workspace."));
+                    bLog.log(Level.CONFIG, NutsLogVerb.WARNING, NutsMessage.jstyle("recover workspace."));
                     List<Object> folders = new ArrayList<>();
                     folders.add(NutsStoreLocation.CACHE);
                     folders.add(NutsStoreLocation.TEMP);
                     //delete nuts.jar and nuts-runtime.jar in the lib folder. They will be re-downloaded.
-                    String p = PrivateNutsUtilDeleteFiles.getStoreLocationPath(workspaceInformation, NutsStoreLocation.LIB);
+                    String p = PrivateNutsUtilDeleteFiles.getStoreLocationPath(computedOptions, NutsStoreLocation.LIB);
                     if (p != null) {
                         folders.add(new File(p, "id/net/thevpc/nuts/nuts"));
                         folders.add(new File(p, "id/net/thevpc/nuts/nuts-runtime"));
                     }
-                    countDeleted = PrivateNutsUtilDeleteFiles.deleteStoreLocations(workspaceInformation, getOptions(), false, LOG, folders.toArray());
+                    countDeleted = PrivateNutsUtilDeleteFiles.deleteStoreLocations(computedOptions, getOptions(), false, bLog, folders.toArray());
                 }
             }
             //if recover or reset mode with -Q option (SkipBoot)
             //as long as there are no applications to run, will exit before creating workspace
-            if (options.getApplicationArguments().length == 0 && options.isSkipBoot()
-                    && (options.isRecover() || options.isReset())) {
+            if (computedOptions.getApplicationArguments().length == 0 && computedOptions.isSkipBoot()
+                    && (computedOptions.isRecover() || computedOptions.isReset())) {
                 if (isPlainTrace()) {
                     if (countDeleted > 0) {
-                        LOG.log(Level.WARNING, NutsLogVerb.WARNING, NutsMessage.jstyle("workspace erased : {0}", workspaceInformation.getWorkspace()));
+                        bLog.log(Level.WARNING, NutsLogVerb.WARNING, NutsMessage.jstyle("workspace erased : {0}", computedOptions.getWorkspace()));
                     } else {
-                        LOG.log(Level.WARNING, NutsLogVerb.WARNING, NutsMessage.jstyle("workspace is not erased because it does not exist : {0}", workspaceInformation.getWorkspace()));
+                        bLog.log(Level.WARNING, NutsLogVerb.WARNING, NutsMessage.jstyle("workspace is not erased because it does not exist : {0}", computedOptions.getWorkspace()));
                     }
                 }
                 throw new NutsBootException(NutsMessage.cstyle(""), 0);
             }
             //after eventual clean up
-            if (options.isInherited()) {
+            if (computedOptions.isInherited()) {
                 //when Inherited, always use the current Api version!
-                workspaceInformation.setApiVersion(Nuts.getVersion());
+                computedOptions.setApiVersion(Nuts.getVersion());
             } else {
-                if (NutsConstants.Versions.LATEST.equalsIgnoreCase(workspaceInformation.getApiVersion())
-                        || NutsConstants.Versions.RELEASE.equalsIgnoreCase(workspaceInformation.getApiVersion())
+                if (NutsConstants.Versions.LATEST.equalsIgnoreCase(computedOptions.getApiVersion())
+                        || NutsConstants.Versions.RELEASE.equalsIgnoreCase(computedOptions.getApiVersion())
                 ) {
-                    NutsBootId s = PrivateNutsUtilMaven.resolveLatestMavenId(NutsBootId.parse(NutsConstants.Ids.NUTS_API), null, LOG, resolveBootRuntimeRepositories(true));
+                    NutsBootId s = PrivateNutsUtilMaven.resolveLatestMavenId(NutsBootId.parse(NutsConstants.Ids.NUTS_API), null, bLog, resolveBootRuntimeRepositories(true));
                     if (s == null) {
                         throw new NutsBootException(NutsMessage.plain("unable to load latest nuts version"));
                     }
-                    workspaceInformation.setApiVersion(s.getVersion().toString());
+                    computedOptions.setApiVersion(s.getVersion().toString());
                 }
-                if (NutsBlankable.isBlank(workspaceInformation.getApiVersion())) {
-                    workspaceInformation.setApiVersion(Nuts.getVersion());
+                if (NutsBlankable.isBlank(computedOptions.getApiVersion())) {
+                    computedOptions.setApiVersion(Nuts.getVersion());
                 }
             }
 
-            String confStoreLocationString = workspaceInformation.getStoreLocation(NutsStoreLocation.CONFIG);
+            String confStoreLocationString = computedOptions.getStoreLocation(NutsStoreLocation.CONFIG);
             Path nutsApiConfigJsonPath = confStoreLocationString == null ? null : Paths.get(confStoreLocationString)
                     .resolve(NutsConstants.Folders.ID)
-                    .resolve("net/thevpc/nuts/nuts").resolve(workspaceInformation.getApiVersion()).resolve(NutsConstants.Files.WORKSPACE_API_CONFIG_FILE_NAME);
+                    .resolve("net/thevpc/nuts/nuts").resolve(computedOptions.getApiVersion()).resolve(NutsConstants.Files.WORKSPACE_API_CONFIG_FILE_NAME);
             boolean loadedApiConfig = false;
 
             //This is not cache, but still, if recover or reset, config will be ignored!
-            if (isLoadFromCache() && PrivateNutsUtils.isFileAccessible(nutsApiConfigJsonPath, options.getExpireTime(), LOG)) {
+            if (isLoadFromCache() && PrivateNutsUtils.isFileAccessible(nutsApiConfigJsonPath, computedOptions.getExpireTime(), bLog)) {
                 try {
                     Map<String, Object> obj = PrivateNutsJsonParser.parse(nutsApiConfigJsonPath);
-                    LOG.log(Level.CONFIG, NutsLogVerb.READ, NutsMessage.jstyle("loaded {0} file : {1}", NutsConstants.Files.WORKSPACE_API_CONFIG_FILE_NAME, nutsApiConfigJsonPath.toString()));
+                    bLog.log(Level.CONFIG, NutsLogVerb.READ, NutsMessage.jstyle("loaded {0} file : {1}", NutsConstants.Files.WORKSPACE_API_CONFIG_FILE_NAME, nutsApiConfigJsonPath.toString()));
                     loadedApiConfig = true;
-                    if (workspaceInformation.getRuntimeId() == null) {
+                    if (computedOptions.getRuntimeId() == null) {
                         String runtimeId = (String) obj.get("runtimeId");
                         if (NutsBlankable.isBlank(runtimeId)) {
-                            LOG.log(Level.CONFIG, NutsLogVerb.FAIL, NutsMessage.jstyle("{0} does not contain runtime-id", NutsConstants.Files.WORKSPACE_API_CONFIG_FILE_NAME));
+                            bLog.log(Level.CONFIG, NutsLogVerb.FAIL, NutsMessage.jstyle("{0} does not contain runtime-id", NutsConstants.Files.WORKSPACE_API_CONFIG_FILE_NAME));
                         }
-                        workspaceInformation.setRuntimeId(runtimeId);
+                        computedOptions.setRuntimeId(runtimeId);
                     }
-                    if (workspaceInformation.getBootRepositories() == null) {
-                        workspaceInformation.setBootRepositories((String) obj.get("bootRepositories"));
+                    if (computedOptions.getBootRepositories() == null) {
+                        computedOptions.setBootRepositories((String) obj.get("bootRepositories"));
                     }
-                    if (workspaceInformation.getJavaCommand() == null) {
-                        workspaceInformation.setJavaCommand((String) obj.get("javaCommand"));
+                    if (computedOptions.getJavaCommand() == null) {
+                        computedOptions.setJavaCommand((String) obj.get("javaCommand"));
                     }
-                    if (workspaceInformation.getJavaOptions() == null) {
-                        workspaceInformation.setJavaOptions((String) obj.get("javaOptions"));
+                    if (computedOptions.getJavaOptions() == null) {
+                        computedOptions.setJavaOptions((String) obj.get("javaOptions"));
                     }
                 } catch (UncheckedIOException | NutsIOException e) {
-                    LOG.log(Level.CONFIG, NutsLogVerb.READ, NutsMessage.jstyle("unable to read {0}", nutsApiConfigJsonPath));
+                    bLog.log(Level.CONFIG, NutsLogVerb.READ, NutsMessage.jstyle("unable to read {0}", nutsApiConfigJsonPath));
                 }
             }
-            if (!loadedApiConfig || workspaceInformation.getRuntimeId() == null
-                    || workspaceInformation.getRuntimeBootDescriptor() == null
-                    || workspaceInformation.getExtensionBootDescriptors() == null
-                    || workspaceInformation.getBootRepositories() == null) {
+            if (!loadedApiConfig || computedOptions.getRuntimeId() == null
+                    || computedOptions.getRuntimeBootDescriptor() == null
+                    || computedOptions.getExtensionBootDescriptors() == null
+                    || computedOptions.getBootRepositories() == null) {
 
                 //resolve extension id
-                if (workspaceInformation.getRuntimeId() == null) {
-                    String apiVersion = workspaceInformation.getApiVersion();
-                    NutsBootId runtimeId = PrivateNutsUtilMaven.resolveLatestMavenId(NutsBootId.parse(NutsConstants.Ids.NUTS_RUNTIME), (rtVersion) -> rtVersion.getFrom().startsWith(apiVersion + "."), LOG, resolveBootRuntimeRepositories(false));
+                if (computedOptions.getRuntimeId() == null) {
+                    String apiVersion = computedOptions.getApiVersion();
+                    NutsBootId runtimeId = PrivateNutsUtilMaven.resolveLatestMavenId(NutsBootId.parse(NutsConstants.Ids.NUTS_RUNTIME), (rtVersion) -> rtVersion.getFrom().startsWith(apiVersion + "."), bLog, resolveBootRuntimeRepositories(false));
                     if (runtimeId != null) {
                         //LOG.log(Level.FINEST, "[success] Resolved latest runtime-id : {0}", new Object[]{runtimeId});
                     } else {
-                        LOG.log(Level.FINEST, NutsLogVerb.FAIL, NutsMessage.jstyle("unable to resolve latest runtime-id version (is connection ok?)"));
+                        bLog.log(Level.FINEST, NutsLogVerb.FAIL, NutsMessage.jstyle("unable to resolve latest runtime-id version (is connection ok?)"));
                     }
-                    workspaceInformation.setRuntimeId(runtimeId.toString());
-                    workspaceInformation.setRuntimeBootDescriptor(null);
-                    workspaceInformation.setBootRepositories(null);
+                    computedOptions.setRuntimeId(runtimeId == null ? null : runtimeId.toString());
+                    computedOptions.setRuntimeBootDescriptor(null);
+                    computedOptions.setBootRepositories(null);
                 }
-                if (workspaceInformation.getRuntimeId() == null) {
-                    workspaceInformation.setRuntimeId(
+                if (computedOptions.getRuntimeId() == null) {
+                    computedOptions.setRuntimeId(
                             new NutsBootId("net.thevpc.nuts", "nuts-runtime",
-                                    NutsBootVersion.parse(workspaceInformation.getApiVersion() + ".0")
+                                    NutsBootVersion.parse(computedOptions.getApiVersion() + ".0")
                             ).toString()
                     );
-                    LOG.log(Level.CONFIG, NutsLogVerb.READ, NutsMessage.jstyle("consider default runtime-id : {0}", workspaceInformation.getRuntimeId()));
+                    bLog.log(Level.CONFIG, NutsLogVerb.READ, NutsMessage.jstyle("consider default runtime-id : {0}", computedOptions.getRuntimeId()));
                 }
-                NutsBootId runtimeIdObject = NutsBootId.parse(workspaceInformation.getRuntimeId());
+                NutsBootId runtimeIdObject = NutsBootId.parse(computedOptions.getRuntimeId());
                 if (runtimeIdObject.getVersion().isBlank()) {
-                    workspaceInformation.setRuntimeId(
+                    computedOptions.setRuntimeId(
                             new NutsBootId(runtimeIdObject.getGroupId(), runtimeIdObject.getArtifactId(),
-                                    NutsBootVersion.parse(workspaceInformation.getApiVersion() + ".0"))
+                                    NutsBootVersion.parse(computedOptions.getApiVersion() + ".0"))
                                     .toString()
                     );
                 }
 
                 //resolve runtime libraries
-                if (workspaceInformation.getRuntimeBootDescriptor() == null) {
+                if (computedOptions.getRuntimeBootDescriptor() == null) {
                     Set<NutsBootId> loadedDeps = null;
                     String extraBootRepositories = null;
-                    NutsBootId rid = NutsBootId.parse(workspaceInformation.getRuntimeId());
+                    NutsBootId rid = NutsBootId.parse(computedOptions.getRuntimeId());
                     try {
-                        Path nutsRuntimeCacheConfigPath = Paths.get(workspaceInformation.getStoreLocation(NutsStoreLocation.CACHE) + File.separator + NutsConstants.Folders.ID)
+                        Path nutsRuntimeCacheConfigPath = Paths.get(computedOptions.getStoreLocation(NutsStoreLocation.CACHE) + File.separator + NutsConstants.Folders.ID)
                                 .resolve(PrivateNutsUtils.idToPath(rid)).resolve(NutsConstants.Files.WORKSPACE_RUNTIME_CACHE_FILE_NAME);
                         boolean cacheLoaded = false;
-                        if (isLoadFromCache() && PrivateNutsUtils.isFileAccessible(nutsRuntimeCacheConfigPath, options.getExpireTime(), LOG)) {
+                        if (isLoadFromCache() && PrivateNutsUtils.isFileAccessible(nutsRuntimeCacheConfigPath, computedOptions.getExpireTime(), bLog)) {
                             try {
                                 Map<String, Object> obj = PrivateNutsJsonParser.parse(nutsRuntimeCacheConfigPath);
-                                LOG.log(Level.CONFIG, NutsLogVerb.READ, NutsMessage.jstyle("loaded {0} file : {1}", NutsConstants.Files.WORKSPACE_RUNTIME_CACHE_FILE_NAME, nutsRuntimeCacheConfigPath.toString()));
+                                bLog.log(Level.CONFIG, NutsLogVerb.READ, NutsMessage.jstyle("loaded {0} file : {1}", NutsConstants.Files.WORKSPACE_RUNTIME_CACHE_FILE_NAME, nutsRuntimeCacheConfigPath.toString()));
                                 loadedDeps = PrivateNutsUtils.parseDependencies((String) obj.get("dependencies"));
                                 extraBootRepositories = (String) obj.get("bootRepositories");
                             } catch (Exception ex) {
-                                LOG.log(Level.FINEST, NutsLogVerb.FAIL, NutsMessage.jstyle("unable to load {0} file : {1} : {2}", NutsConstants.Files.WORKSPACE_RUNTIME_CACHE_FILE_NAME, nutsRuntimeCacheConfigPath.toString(), ex.toString()));
+                                bLog.log(Level.FINEST, NutsLogVerb.FAIL, NutsMessage.jstyle("unable to load {0} file : {1} : {2}", NutsConstants.Files.WORKSPACE_RUNTIME_CACHE_FILE_NAME, nutsRuntimeCacheConfigPath.toString(), ex.toString()));
                                 //ignore...
                             }
                             cacheLoaded = true;
                         }
 
                         if (!cacheLoaded || loadedDeps == null) {
-                            PrivateNutsUtils.Deps depsAndRepos = PrivateNutsUtilMaven.loadDependencies(workspaceInformation.getRuntimeId(),
-                                    LOG, resolveBootRuntimeRepositories(false));
+                            PrivateNutsUtils.Deps depsAndRepos = PrivateNutsUtilMaven.loadDependencies(computedOptions.getRuntimeId(),
+                                    bLog, resolveBootRuntimeRepositories(false));
                             if (depsAndRepos != null) {
                                 loadedDeps = depsAndRepos.deps;
                                 extraBootRepositories = String.join(";", depsAndRepos.repos);
-                                LOG.log(Level.CONFIG, NutsLogVerb.SUCCESS, NutsMessage.jstyle("detect runtime dependencies : {0}", depsAndRepos.deps));
-                                LOG.log(Level.CONFIG, NutsLogVerb.SUCCESS, NutsMessage.jstyle("detect runtime repos        : {0}", depsAndRepos.repos));
+                                bLog.log(Level.CONFIG, NutsLogVerb.SUCCESS, NutsMessage.jstyle("detect runtime dependencies : {0}", depsAndRepos.deps));
+                                bLog.log(Level.CONFIG, NutsLogVerb.SUCCESS, NutsMessage.jstyle("detect runtime repos        : {0}", depsAndRepos.repos));
                             }
                         }
                     } catch (Exception ex) {
-                        LOG.log(Level.FINEST, NutsLogVerb.FAIL, NutsMessage.jstyle("unable to load {0} file : {1}", NutsConstants.Files.WORKSPACE_RUNTIME_CACHE_FILE_NAME, ex.toString()));
+                        bLog.log(Level.FINEST, NutsLogVerb.FAIL, NutsMessage.jstyle("unable to load {0} file : {1}", NutsConstants.Files.WORKSPACE_RUNTIME_CACHE_FILE_NAME, ex.toString()));
                         //
                     }
                     if (loadedDeps == null) {
                         throw new NutsBootException(NutsMessage.cstyle("unable to load dependencies for %s", rid));
                     }
-                    workspaceInformation.setRuntimeBootDescriptor(new NutsBootDescriptor(
-                            NutsBootId.parse(workspaceInformation.getRuntimeId()),
+                    computedOptions.setRuntimeBootDescriptor(new NutsBootDescriptor(
+                            NutsBootId.parse(computedOptions.getRuntimeId()),
                             loadedDeps.toArray(new NutsBootId[0])
                     ));
                     LinkedHashSet<String> bootRepositories =
@@ -677,27 +672,26 @@ public final class NutsBootWorkspace {
                                     .map(String::trim).filter(x -> x.length() > 0)
                                     .collect(Collectors.toCollection(LinkedHashSet::new));
                     bootRepositories.addAll(resolveBootRuntimeRepositories(false));
-                    if (LOG.isLoggable(Level.CONFIG)) {
+                    if (bLog.isLoggable(Level.CONFIG)) {
                         if (bootRepositories.size() == 0) {
-                            LOG.log(Level.CONFIG, NutsLogVerb.FAIL, NutsMessage.jstyle("workspace bootRepositories could not be resolved"));
+                            bLog.log(Level.CONFIG, NutsLogVerb.FAIL, NutsMessage.jstyle("workspace bootRepositories could not be resolved"));
                         } else if (bootRepositories.size() == 1) {
-                            LOG.log(Level.CONFIG, NutsLogVerb.INFO, NutsMessage.jstyle("workspace bootRepositories resolved to : {0}", bootRepositories.toArray()[0]));
+                            bLog.log(Level.CONFIG, NutsLogVerb.INFO, NutsMessage.jstyle("workspace bootRepositories resolved to : {0}", bootRepositories.toArray()[0]));
                         } else {
-                            LOG.log(Level.CONFIG, NutsLogVerb.INFO, NutsMessage.jstyle("workspace bootRepositories resolved to : "));
+                            bLog.log(Level.CONFIG, NutsLogVerb.INFO, NutsMessage.jstyle("workspace bootRepositories resolved to : "));
                             for (String repository : bootRepositories) {
-                                LOG.log(Level.CONFIG, NutsLogVerb.INFO, NutsMessage.jstyle("    {0}", repository));
+                                bLog.log(Level.CONFIG, NutsLogVerb.INFO, NutsMessage.jstyle("    {0}", repository));
                             }
                         }
                     }
-                    workspaceInformation.setBootRepositories(String.join(";", bootRepositories));
+                    computedOptions.setBootRepositories(String.join(";", bootRepositories));
                 }
 
                 //resolve extension libraries
-                if (workspaceInformation.getExtensionBootDescriptors() == null) {
-//                    LinkedHashSet<String> allExtDependencies = new LinkedHashSet<>();
+                if (computedOptions.getExtensionBootDescriptors() == null) {
                     LinkedHashSet<String> excludedExtensions = new LinkedHashSet<>();
-                    if (options.getExcludedExtensions() != null) {
-                        for (String excludedExtensionGroup : options.getExcludedExtensions()) {
+                    if (computedOptions.getExcludedExtensions() != null) {
+                        for (String excludedExtensionGroup : computedOptions.getExcludedExtensions()) {
                             for (String excludedExtension : excludedExtensionGroup.split("[;, ]")) {
                                 if (excludedExtension.length() > 0) {
                                     excludedExtensions.add(NutsBootId.parse(excludedExtension).getShortName());
@@ -705,26 +699,26 @@ public final class NutsBootWorkspace {
                             }
                         }
                     }
-                    if (workspaceInformation.getExtensionsSet() != null) {
+                    if (computedOptions.getExtensionsSet() != null) {
                         List<NutsBootDescriptor> all = new ArrayList<>();
-                        for (String extension : workspaceInformation.getExtensionsSet()) {
+                        for (String extension : computedOptions.getExtensionsSet()) {
                             NutsBootId eid = NutsBootId.parse(extension);
                             if (!excludedExtensions.contains(eid.getShortName()) && !excludedExtensions.contains(eid.getArtifactId())) {
-                                Path extensionFile = Paths.get(workspaceInformation.getStoreLocation(NutsStoreLocation.CACHE) + File.separator + NutsConstants.Folders.ID)
+                                Path extensionFile = Paths.get(computedOptions.getStoreLocation(NutsStoreLocation.CACHE) + File.separator + NutsConstants.Folders.ID)
                                         .resolve(PrivateNutsUtils.idToPath(eid)).resolve(NutsConstants.Files.WORKSPACE_EXTENSION_CACHE_FILE_NAME);
                                 Set<NutsBootId> loadedDeps = null;
-                                if (isLoadFromCache() && PrivateNutsUtils.isFileAccessible(extensionFile, options.getExpireTime(), LOG)) {
+                                if (isLoadFromCache() && PrivateNutsUtils.isFileAccessible(extensionFile, computedOptions.getExpireTime(), bLog)) {
                                     try {
                                         Map<String, Object> obj = PrivateNutsJsonParser.parse(nutsApiConfigJsonPath);
-                                        LOG.log(Level.CONFIG, NutsLogVerb.READ, NutsMessage.jstyle("loaded {0} file : {1}", NutsConstants.Files.WORKSPACE_EXTENSION_CACHE_FILE_NAME, extensionFile.toString()));
+                                        bLog.log(Level.CONFIG, NutsLogVerb.READ, NutsMessage.jstyle("loaded {0} file : {1}", NutsConstants.Files.WORKSPACE_EXTENSION_CACHE_FILE_NAME, extensionFile.toString()));
                                         loadedDeps = PrivateNutsUtils.parseDependencies((String) obj.get("dependencies"));
                                     } catch (Exception ex) {
-                                        LOG.log(Level.CONFIG, NutsLogVerb.FAIL, NutsMessage.jstyle("unable to load {0} file : {1} : {2}", NutsConstants.Files.WORKSPACE_EXTENSION_CACHE_FILE_NAME, extensionFile.toString(), ex.toString()));
+                                        bLog.log(Level.CONFIG, NutsLogVerb.FAIL, NutsMessage.jstyle("unable to load {0} file : {1} : {2}", NutsConstants.Files.WORKSPACE_EXTENSION_CACHE_FILE_NAME, extensionFile.toString(), ex.toString()));
                                         //ignore
                                     }
                                 }
                                 if (loadedDeps == null) {
-                                    PrivateNutsUtils.Deps depsAndRepos = PrivateNutsUtilMaven.loadDependencies(eid, LOG, resolveBootRuntimeRepositories(true));
+                                    PrivateNutsUtils.Deps depsAndRepos = PrivateNutsUtilMaven.loadDependencies(eid, bLog, resolveBootRuntimeRepositories(true));
                                     if (depsAndRepos != null) {
                                         loadedDeps = depsAndRepos.deps;
                                     }
@@ -736,43 +730,33 @@ public final class NutsBootWorkspace {
                                 }
                             }
                         }
-                        workspaceInformation.setExtensionBootDescriptors(all.toArray(new NutsBootDescriptor[0]));
+                        computedOptions.setExtensionBootDescriptors(all.toArray(new NutsBootDescriptor[0]));
                     } else {
-                        workspaceInformation.setExtensionBootDescriptors(new NutsBootDescriptor[0]);
+                        computedOptions.setExtensionBootDescriptors(new NutsBootDescriptor[0]);
                     }
                 }
             }
 
             newInstanceRequirements = checkRequirements(true);
             if (newInstanceRequirements == 0) {
-                workspaceInformation.setJavaCommand(null);
-                workspaceInformation.setJavaOptions(null);
+                computedOptions.setJavaCommand(null);
+                computedOptions.setJavaOptions(null);
             }
-            this.contextClassLoaderSupplier = options.getClassLoaderSupplier() == null ? () -> Thread.currentThread().getContextClassLoader()
-                    : options.getClassLoaderSupplier();
             return true;
         }
         return false;
     }
 
-    private NutsBootOptions createInit() {
-        NutsBootOptions workspaceInformation = new NutsBootOptions(LOG);
-        if (options != null) {
-            workspaceInformation.setAll(options);
-        }
-        return workspaceInformation;
-    }
-
     private boolean isPlainTrace() {
-        return options.isTrace() && !options.isBot()
-                && (options.getOutputFormat() == NutsContentType.PLAIN
-                || options.getOutputFormat() == null
+        return computedOptions.isTrace() && !computedOptions.isBot()
+                && (computedOptions.getOutputFormat() == NutsContentType.PLAIN
+                || computedOptions.getOutputFormat() == null
         );
     }
 
 
     private boolean isLoadFromCache() {
-        return !options.isRecover() && !options.isReset();
+        return !computedOptions.isRecover() && !computedOptions.isReset();
     }
 
     public NutsSession openWorkspace() {
@@ -785,10 +769,10 @@ public final class NutsBootWorkspace {
         }
         //if recover or reset mode with -K option (SkipWelcome)
         //as long as there are no applications to run, will exit before creating workspace
-        if (options.getApplicationArguments().length == 0 && options.isSkipBoot()
-                && (options.isRecover() || options.isReset())) {
+        if (computedOptions.getApplicationArguments().length == 0 && computedOptions.isSkipBoot()
+                && (computedOptions.isRecover() || computedOptions.isReset())) {
             if (isPlainTrace()) {
-                LOG.log(Level.WARNING, NutsLogVerb.WARNING, NutsMessage.jstyle("workspace erased : {0}", workspaceInformation.getWorkspace()));
+                bLog.log(Level.WARNING, NutsLogVerb.WARNING, NutsMessage.jstyle("workspace erased : {0}", computedOptions.getWorkspace()));
             }
             throw new NutsBootException(null, 0);
         }
@@ -797,80 +781,80 @@ public final class NutsBootWorkspace {
         NutsWorkspace nutsWorkspace = null;
         PrivateNutsErrorInfoList errorList = new PrivateNutsErrorInfoList();
         try {
-            if (options.getOpenMode() == NutsOpenMode.OPEN_OR_ERROR) {
+            if (computedOptions.getOpenMode() == NutsOpenMode.OPEN_OR_ERROR) {
                 //add fail fast test!!
-                if (!new File(workspaceInformation.getWorkspace(), NutsConstants.Files.WORKSPACE_CONFIG_FILE_NAME).isFile()) {
-                    throw new NutsWorkspaceNotFoundException(workspaceInformation.getWorkspace());
+                if (!new File(computedOptions.getWorkspace(), NutsConstants.Files.WORKSPACE_CONFIG_FILE_NAME).isFile()) {
+                    throw new NutsWorkspaceNotFoundException(computedOptions.getWorkspace());
                 }
-            } else if (options.getOpenMode() == NutsOpenMode.CREATE_OR_ERROR) {
-                if (new File(workspaceInformation.getWorkspace(), NutsConstants.Files.WORKSPACE_CONFIG_FILE_NAME).exists()) {
-                    throw new NutsWorkspaceAlreadyExistsException(workspaceInformation.getWorkspace());
+            } else if (computedOptions.getOpenMode() == NutsOpenMode.CREATE_OR_ERROR) {
+                if (new File(computedOptions.getWorkspace(), NutsConstants.Files.WORKSPACE_CONFIG_FILE_NAME).exists()) {
+                    throw new NutsWorkspaceAlreadyExistsException(computedOptions.getWorkspace());
                 }
             }
-            if (NutsBlankable.isBlank(NutsConstants.Ids.NUTS_API + "#" + workspaceInformation.getApiVersion())
-                    || workspaceInformation.getRuntimeId() == null
-                    || NutsBlankable.isBlank(workspaceInformation.getBootRepositories())
-                    || workspaceInformation.getRuntimeBootDescriptor() == null
-                    || workspaceInformation.getExtensionBootDescriptors() == null) {
+            if (NutsBlankable.isBlank(NutsConstants.Ids.NUTS_API + "#" + computedOptions.getApiVersion())
+                    || computedOptions.getRuntimeId() == null
+                    || NutsBlankable.isBlank(computedOptions.getBootRepositories())
+                    || computedOptions.getRuntimeBootDescriptor() == null
+                    || computedOptions.getExtensionBootDescriptors() == null) {
                 throw new NutsBootException(NutsMessage.plain("invalid workspace state"));
             }
-            boolean recover = options.isRecover() || options.isReset();
+            boolean recover = computedOptions.isRecover() || computedOptions.isReset();
 
             List<NutsClassLoaderNode> deps = new ArrayList<>();
 
-            String workspaceBootLibFolder = workspaceInformation.getStoreLocation(NutsStoreLocation.LIB) + File.separator + NutsConstants.Folders.ID;
+            String workspaceBootLibFolder = computedOptions.getStoreLocation(NutsStoreLocation.LIB) + File.separator + NutsConstants.Folders.ID;
 
             String[] repositories =
-                    Arrays.stream((workspaceInformation.getBootRepositories() == null ? "" : workspaceInformation.getBootRepositories())
+                    Arrays.stream((computedOptions.getBootRepositories() == null ? "" : computedOptions.getBootRepositories())
                             .split("[\n;]")
                     ).map(String::trim).filter(x -> x.length() > 0).toArray(String[]::new);
 
-            workspaceInformation.setRuntimeBootDependencyNode(
-                    createClassLoaderNode(workspaceInformation.getRuntimeBootDescriptor(),
+            computedOptions.setRuntimeBootDependencyNode(
+                    createClassLoaderNode(computedOptions.getRuntimeBootDescriptor(),
                             repositories, workspaceBootLibFolder, recover, errorList, true));
 
-            for (NutsBootDescriptor nutsBootDescriptor : workspaceInformation.getExtensionBootDescriptors()) {
+            for (NutsBootDescriptor nutsBootDescriptor : computedOptions.getExtensionBootDescriptors()) {
                 deps.add(createClassLoaderNode(nutsBootDescriptor, repositories, workspaceBootLibFolder, recover,
                         errorList, false));
             }
-            workspaceInformation.setExtensionBootDependencyNodes(deps.toArray(new NutsClassLoaderNode[0]));
-            deps.add(0, workspaceInformation.getRuntimeBootDependencyNode());
+            computedOptions.setExtensionBootDependencyNodes(deps.toArray(new NutsClassLoaderNode[0]));
+            deps.add(0, computedOptions.getRuntimeBootDependencyNode());
 
-            bootClassWorldURLs = PrivateNutsUtilClassLoader.resolveClassWorldURLs(deps.toArray(new NutsClassLoaderNode[0]), getContextClassLoader(), LOG);
+            bootClassWorldURLs = PrivateNutsUtilClassLoader.resolveClassWorldURLs(deps.toArray(new NutsClassLoaderNode[0]), getContextClassLoader(), bLog);
             workspaceClassLoader = /*bootClassWorldURLs.length == 0 ? getContextClassLoader() : */
                     new PrivateNutsBootClassLoader(deps.toArray(new NutsClassLoaderNode[0]), getContextClassLoader());
-            workspaceInformation.setClassWorldLoader(workspaceClassLoader);
-            if (LOG.isLoggable(Level.CONFIG)) {
+            computedOptions.setClassWorldLoader(workspaceClassLoader);
+            if (bLog.isLoggable(Level.CONFIG)) {
                 if (bootClassWorldURLs.length == 0) {
-                    LOG.log(Level.CONFIG, NutsLogVerb.SUCCESS, NutsMessage.jstyle("empty nuts class world. All dependencies are already loaded in classpath, most likely"));
+                    bLog.log(Level.CONFIG, NutsLogVerb.SUCCESS, NutsMessage.jstyle("empty nuts class world. All dependencies are already loaded in classpath, most likely"));
                 } else if (bootClassWorldURLs.length == 1) {
-                    LOG.log(Level.CONFIG, NutsLogVerb.SUCCESS, NutsMessage.jstyle("resolve nuts class world to : {0} {1}",
-                            PrivateNutsUtilDigest.getURLDigest(bootClassWorldURLs[0], LOG), bootClassWorldURLs[0]));
+                    bLog.log(Level.CONFIG, NutsLogVerb.SUCCESS, NutsMessage.jstyle("resolve nuts class world to : {0} {1}",
+                            PrivateNutsUtilDigest.getURLDigest(bootClassWorldURLs[0], bLog), bootClassWorldURLs[0]));
                 } else {
-                    LOG.log(Level.CONFIG, NutsLogVerb.SUCCESS, NutsMessage.jstyle("resolve nuts class world is to : "));
+                    bLog.log(Level.CONFIG, NutsLogVerb.SUCCESS, NutsMessage.jstyle("resolve nuts class world is to : "));
                     for (URL u : bootClassWorldURLs) {
-                        LOG.log(Level.CONFIG, NutsLogVerb.SUCCESS, NutsMessage.jstyle("    {0} : {1}",
-                                PrivateNutsUtilDigest.getURLDigest(u, LOG), u));
+                        bLog.log(Level.CONFIG, NutsLogVerb.SUCCESS, NutsMessage.jstyle("    {0} : {1}",
+                                PrivateNutsUtilDigest.getURLDigest(u, bLog), u));
                     }
                 }
             }
-            workspaceInformation.setClassWorldURLs(bootClassWorldURLs);
-            LOG.log(Level.CONFIG, NutsLogVerb.INFO, NutsMessage.jstyle("search for NutsBootWorkspaceFactory service implementations"));
+            computedOptions.setClassWorldURLs(bootClassWorldURLs);
+            bLog.log(Level.CONFIG, NutsLogVerb.INFO, NutsMessage.jstyle("search for NutsBootWorkspaceFactory service implementations"));
             ServiceLoader<NutsBootWorkspaceFactory> serviceLoader = ServiceLoader.load(NutsBootWorkspaceFactory.class, workspaceClassLoader);
             List<NutsBootWorkspaceFactory> factories = new ArrayList<>(5);
             for (NutsBootWorkspaceFactory a : serviceLoader) {
                 factories.add(a);
             }
-            factories.sort(new PrivateNutsBootWorkspaceFactoryComparator(options));
-            if (LOG.isLoggable(Level.CONFIG)) {
+            factories.sort(new PrivateNutsBootWorkspaceFactoryComparator(computedOptions));
+            if (bLog.isLoggable(Level.CONFIG)) {
                 if (factories.isEmpty()) {
-                    LOG.log(Level.CONFIG, NutsLogVerb.SUCCESS, NutsMessage.jstyle("unable to detect NutsBootWorkspaceFactory service implementations"));
+                    bLog.log(Level.CONFIG, NutsLogVerb.SUCCESS, NutsMessage.jstyle("unable to detect NutsBootWorkspaceFactory service implementations"));
                 } else if (factories.size() == 1) {
-                    LOG.log(Level.CONFIG, NutsLogVerb.SUCCESS, NutsMessage.jstyle("detect NutsBootWorkspaceFactory service implementation : {0}", factories.get(0).getClass().getName()));
+                    bLog.log(Level.CONFIG, NutsLogVerb.SUCCESS, NutsMessage.jstyle("detect NutsBootWorkspaceFactory service implementation : {0}", factories.get(0).getClass().getName()));
                 } else {
-                    LOG.log(Level.CONFIG, NutsLogVerb.SUCCESS, NutsMessage.jstyle("detect NutsBootWorkspaceFactory service implementations are :"));
+                    bLog.log(Level.CONFIG, NutsLogVerb.SUCCESS, NutsMessage.jstyle("detect NutsBootWorkspaceFactory service implementations are :"));
                     for (NutsBootWorkspaceFactory u : factories) {
-                        LOG.log(Level.CONFIG, NutsLogVerb.SUCCESS, NutsMessage.jstyle("    {0}",
+                        bLog.log(Level.CONFIG, NutsLogVerb.SUCCESS, NutsMessage.jstyle("    {0}",
                                 u.getClass().getName()));
                     }
                 }
@@ -880,14 +864,14 @@ public final class NutsBootWorkspace {
             for (NutsBootWorkspaceFactory a : factories) {
                 factoryInstance = a;
                 try {
-                    if (LOG.isLoggable(Level.CONFIG)) {
-                        LOG.log(Level.CONFIG, NutsLogVerb.INFO, NutsMessage.jstyle("create workspace using {0}", factoryInstance.getClass().getName()));
+                    if (bLog.isLoggable(Level.CONFIG)) {
+                        bLog.log(Level.CONFIG, NutsLogVerb.INFO, NutsMessage.jstyle("create workspace using {0}", factoryInstance.getClass().getName()));
                     }
-                    workspaceInformation.setBootWorkspaceFactory(factoryInstance);
-                    nutsWorkspace = a.createWorkspace(workspaceInformation);
+                    computedOptions.setBootWorkspaceFactory(factoryInstance);
+                    nutsWorkspace = a.createWorkspace(computedOptions);
                 } catch (UnsatisfiedLinkError | Exception ex) {
                     exceptions.add(ex);
-                    LOG.log(Level.SEVERE, NutsMessage.jstyle("unable to create workspace using factory {0}", a), ex);
+                    bLog.log(Level.SEVERE, NutsMessage.jstyle("unable to create workspace using factory {0}", a), ex);
                 }
                 if (nutsWorkspace != null) {
                     break;
@@ -895,26 +879,21 @@ public final class NutsBootWorkspace {
             }
             if (nutsWorkspace == null) {
                 //should never happen
-                LOG.log(Level.SEVERE, NutsLogVerb.FAIL, NutsMessage.jstyle("unable to load Workspace \"{0}\" from ClassPath :", workspaceInformation.getName()));
+                bLog.log(Level.SEVERE, NutsLogVerb.FAIL, NutsMessage.jstyle("unable to load Workspace \"{0}\" from ClassPath :", computedOptions.getName()));
                 for (URL url : bootClassWorldURLs) {
-                    LOG.log(Level.SEVERE, NutsLogVerb.FAIL, NutsMessage.jstyle("\t {0}", PrivateNutsUtils.formatURL(url)));
+                    bLog.log(Level.SEVERE, NutsLogVerb.FAIL, NutsMessage.jstyle("\t {0}", PrivateNutsUtils.formatURL(url)));
                 }
                 for (Throwable exception : exceptions) {
-                    LOG.log(Level.SEVERE, NutsMessage.jstyle("{0}", exception), exception);
+                    bLog.log(Level.SEVERE, NutsMessage.jstyle("{0}", exception), exception);
                 }
-                LOG.log(Level.SEVERE, NutsLogVerb.FAIL, NutsMessage.jstyle("unable to load Workspace Component from ClassPath : {0}", Arrays.asList(bootClassWorldURLs)));
-                throw new NutsInvalidWorkspaceException(this.workspaceInformation.getWorkspace(),
+                bLog.log(Level.SEVERE, NutsLogVerb.FAIL, NutsMessage.jstyle("unable to load Workspace Component from ClassPath : {0}", Arrays.asList(bootClassWorldURLs)));
+                throw new NutsInvalidWorkspaceException(this.computedOptions.getWorkspace(),
                         NutsMessage.cstyle("unable to load Workspace Component from ClassPath : %s%n  caused by:%n\t%s"
                                 , Arrays.asList(bootClassWorldURLs),
                                 exceptions.stream().map(Throwable::toString).collect(Collectors.joining("\n\t"))
                         )
                 );
             }
-//            LOG2 = nutsWorkspace.log().of(NutsBootWorkspace.class);
-//            if (LOG2.isLoggable(Level.FINE)) {
-//                LOG2.with().session(nutsWorkspace.createSession())
-//                        .level(Level.FINE).verb(NutsLogVerb.SUCCESS).log("end initialize workspace");
-//            }
             return nutsWorkspace.createSession();
         } catch (NutsReadOnlyException | NutsUserCancelException | PrivateNutsBootCancelException ex) {
             throw ex;
@@ -927,9 +906,7 @@ public final class NutsBootWorkspace {
             for (PrivateNutsErrorInfo errorInfo : errorList.list()) {
                 errors.append(errorInfo.toString()).append("\n");
             }
-            showError(workspaceInformation,
-                    options.getWorkspace(),
-                    bootClassWorldURLs,
+            showError(bootClassWorldURLs,
                     errors.toString(),
                     errorList
             );
@@ -947,19 +924,18 @@ public final class NutsBootWorkspace {
     }
 
 
-    private Supplier<ClassLoader> getContextClassLoaderSupplier() {
-        return contextClassLoaderSupplier;
-    }
-
-    protected ClassLoader getContextClassLoader() {
-        Supplier<ClassLoader> currentContextClassLoaderProvider = getContextClassLoaderSupplier();
-        if (currentContextClassLoaderProvider == null) {
-            return null;
+    private ClassLoader getContextClassLoader() {
+        ClassLoader cl = null;
+        if (computedOptions.getClassLoaderSupplier() != null) {
+            cl = computedOptions.getClassLoaderSupplier().get();
         }
-        return currentContextClassLoaderProvider.get();
+        if (cl == null) {
+            cl = Thread.currentThread().getContextClassLoader();
+        }
+        return cl;
     }
 
-    private String getWorkspaceRunModeString() {
+    private String getRunModeString() {
         if (this.getOptions().isReset()) {
             return "reset";
         } else if (this.getOptions().isRecover()) {
@@ -970,170 +946,165 @@ public final class NutsBootWorkspace {
     }
 
     private void runCommandHelp() {
-        NutsContentType f = options.getOutputFormat();
+        NutsContentType f = computedOptions.getOutputFormat();
         if (f == null) {
             f = NutsContentType.PLAIN;
         }
-        if (options.isDry()) {
+        if (computedOptions.isDry()) {
             printDryCommand("help");
         } else {
             String msg = "nuts is an open source package manager mainly for java applications. Type 'nuts help' or visit https://github.com/thevpc/nuts for more help.";
             switch (f) {
                 case JSON: {
-                    LOG.outln("{");
-                    LOG.outln("  \"help\": \"%s\"", msg);
-                    LOG.outln("}");
+                    bLog.outln("{");
+                    bLog.outln("  \"help\": \"%s\"", msg);
+                    bLog.outln("}");
                     return;
                 }
                 case TSON: {
-                    LOG.outln("{");
-                    LOG.outln("  help: \"%s\"", msg);
-                    LOG.outln("}");
+                    bLog.outln("{");
+                    bLog.outln("  help: \"%s\"", msg);
+                    bLog.outln("}");
                     return;
                 }
                 case YAML: {
-                    LOG.outln("help: %s", msg);
+                    bLog.outln("help: %s", msg);
                     return;
                 }
                 case TREE: {
-                    LOG.outln("- help: %s", msg);
+                    bLog.outln("- help: %s", msg);
                     return;
                 }
                 case TABLE: {
-                    LOG.outln("help  %s", msg);
+                    bLog.outln("help  %s", msg);
                     return;
                 }
                 case XML: {
-                    LOG.outln("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>");
-                    LOG.outln("<string>");
-                    LOG.outln(" %s", msg);
-                    LOG.outln("</string>");
+                    bLog.outln("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>");
+                    bLog.outln("<string>");
+                    bLog.outln(" %s", msg);
+                    bLog.outln("</string>");
                     return;
                 }
                 case PROPS: {
-                    LOG.outln("help=%s", msg);
+                    bLog.outln("help=%s", msg);
                     return;
                 }
             }
-            LOG.outln("%s", msg);
+            bLog.outln("%s", msg);
         }
     }
 
     private void printDryCommand(String cmd) {
-        NutsContentType f = options.getOutputFormat();
+        NutsContentType f = computedOptions.getOutputFormat();
         if (f == null) {
             f = NutsContentType.PLAIN;
         }
-        if (options.isDry()) {
+        if (computedOptions.isDry()) {
             switch (f) {
                 case JSON: {
-                    LOG.outln("{");
-                    LOG.outln("  \"dryCommand\": \"%s\"", cmd);
-                    LOG.outln("}");
+                    bLog.outln("{");
+                    bLog.outln("  \"dryCommand\": \"%s\"", cmd);
+                    bLog.outln("}");
                     return;
                 }
                 case TSON: {
-                    LOG.outln("{");
-                    LOG.outln("  dryCommand: \"%s\"", cmd);
-                    LOG.outln("}");
+                    bLog.outln("{");
+                    bLog.outln("  dryCommand: \"%s\"", cmd);
+                    bLog.outln("}");
                     return;
                 }
                 case YAML: {
-                    LOG.outln("dryCommand: %s", cmd);
+                    bLog.outln("dryCommand: %s", cmd);
                     return;
                 }
                 case TREE: {
-                    LOG.outln("- dryCommand: %s", cmd);
+                    bLog.outln("- dryCommand: %s", cmd);
                     return;
                 }
                 case TABLE: {
-                    LOG.outln("dryCommand  %s", cmd);
+                    bLog.outln("dryCommand  %s", cmd);
                     return;
                 }
                 case XML: {
-                    LOG.outln("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>");
-                    LOG.outln("<object>");
-                    LOG.outln("  <string key=\"%s\" value=\"%s\"/>", "dryCommand", cmd);
-                    LOG.outln("</object>");
+                    bLog.outln("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>");
+                    bLog.outln("<object>");
+                    bLog.outln("  <string key=\"%s\" value=\"%s\"/>", "dryCommand", cmd);
+                    bLog.outln("</object>");
                     return;
                 }
                 case PROPS: {
-                    LOG.outln("dryCommand=%s", cmd);
+                    bLog.outln("dryCommand=%s", cmd);
                     return;
                 }
             }
-            LOG.outln("[Dry] %s", Nuts.getVersion());
+            bLog.outln("[Dry] %s", Nuts.getVersion());
         }
     }
 
     private void runCommandVersion() {
-//        if (options.isDry()) {
-//            session.out().println("[boot-internal-command] show-version");
-//        } else {
-//            session.out().println("nuts-version :" + Nuts.getVersion());
-//        }
-        NutsContentType f = options.getOutputFormat();
+        NutsContentType f = computedOptions.getOutputFormat();
         if (f == null) {
             f = NutsContentType.PLAIN;
         }
-        if (options.isDry()) {
+        if (computedOptions.isDry()) {
             printDryCommand("version");
             return;
         }
         switch (f) {
             case JSON: {
-                LOG.outln("{");
-                LOG.outln("  \"version\": \"%s\",", Nuts.getVersion());
-                LOG.outln("  \"digest\": \"%s\"", getApiDigest());
-                LOG.outln("}");
+                bLog.outln("{");
+                bLog.outln("  \"version\": \"%s\",", Nuts.getVersion());
+                bLog.outln("  \"digest\": \"%s\"", getApiDigest());
+                bLog.outln("}");
                 return;
             }
             case TSON: {
-                LOG.outln("{");
-                LOG.outln("  version: \"%s\",", Nuts.getVersion());
-                LOG.outln("  digest: \"%s\"", getApiDigest());
-                LOG.outln("}");
+                bLog.outln("{");
+                bLog.outln("  version: \"%s\",", Nuts.getVersion());
+                bLog.outln("  digest: \"%s\"", getApiDigest());
+                bLog.outln("}");
                 return;
             }
             case YAML: {
-                LOG.outln("version: %s", Nuts.getVersion());
-                LOG.outln("digest: %s", getApiDigest());
+                bLog.outln("version: %s", Nuts.getVersion());
+                bLog.outln("digest: %s", getApiDigest());
                 return;
             }
             case TREE: {
-                LOG.outln("- version: %s", Nuts.getVersion());
-                LOG.outln("- digest: %s", getApiDigest());
+                bLog.outln("- version: %s", Nuts.getVersion());
+                bLog.outln("- digest: %s", getApiDigest());
                 return;
             }
             case TABLE: {
-                LOG.outln("version      %s", Nuts.getVersion());
-                LOG.outln("digest  %s", getApiDigest());
+                bLog.outln("version      %s", Nuts.getVersion());
+                bLog.outln("digest  %s", getApiDigest());
                 return;
             }
             case XML: {
-                LOG.outln("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>");
-                LOG.outln("<object>");
-                LOG.outln("  <string key=\"%s\" value=\"%s\"/>", "version", Nuts.getVersion());
-                LOG.outln("  <string key=\"%s\" value=\"%s\"/>", "digest", getApiDigest());
-                LOG.outln("</object>");
+                bLog.outln("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>");
+                bLog.outln("<object>");
+                bLog.outln("  <string key=\"%s\" value=\"%s\"/>", "version", Nuts.getVersion());
+                bLog.outln("  <string key=\"%s\" value=\"%s\"/>", "digest", getApiDigest());
+                bLog.outln("</object>");
                 return;
             }
             case PROPS: {
-                LOG.outln("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>");
-                LOG.outln("version=%s", Nuts.getVersion());
-                LOG.outln("digest=%s", getApiDigest());
-                LOG.outln("</object>");
+                bLog.outln("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>");
+                bLog.outln("version=%s", Nuts.getVersion());
+                bLog.outln("digest=%s", getApiDigest());
+                bLog.outln("</object>");
                 return;
             }
         }
-        LOG.outln("%s", Nuts.getVersion());
+        bLog.outln("%s", Nuts.getVersion());
     }
 
     public NutsSession runWorkspace() {
-        if (options.isCommandHelp()) {
+        if (computedOptions.isCommandHelp()) {
             runCommandHelp();
             return null;
-        } else if (options.isCommandVersion()) {
+        } else if (computedOptions.isCommandVersion()) {
             runCommandVersion();
             return null;
         }
@@ -1149,19 +1120,19 @@ public final class NutsBootWorkspace {
             fallbackInstallActionUnavailable(message);
             throw new NutsBootException(
                     NutsMessage.cstyle("workspace not available to run : %s",
-                            NutsCommandLine.of(o.getApplicationArguments(),session)
+                            NutsCommandLine.of(o.getApplicationArguments(), session)
                     )
             );
         }
 
         session.setAppId(workspace.getApiId());
-        if (LOG2 == null) {
-            LOG2 = NutsLogger.of(NutsBootWorkspace.class, session);
-            LOG2_SESSION = session;
+        if (nLog == null) {
+            nLog = NutsLogger.of(NutsBootWorkspace.class, session);
+            nLogSession = session;
         }
-        NutsLoggerOp logOp = LOG2.with().session(session).level(Level.CONFIG);
+        NutsLoggerOp logOp = nLog.with().session(session).level(Level.CONFIG);
         logOp.verb(NutsLogVerb.SUCCESS).log(
-                NutsMessage.jstyle("running workspace in {0} mode", getWorkspaceRunModeString())
+                NutsMessage.jstyle("running workspace in {0} mode", getRunModeString())
         );
         if (workspace == null && o.getApplicationArguments().length > 0) {
             switch (o.getApplicationArguments()[0]) {
@@ -1184,7 +1155,7 @@ public final class NutsBootWorkspace {
                     .addExecutorOptions(o.getExecutorOptions())
                     .setExecutionType(o.getExecutionType())
                     .setFailFast(true)
-                    .setDry(options.isDry())
+                    .setDry(computedOptions.isDry())
                     .run();
         } else {
             session.exec()
@@ -1192,94 +1163,91 @@ public final class NutsBootWorkspace {
                     .addExecutorOptions(o.getExecutorOptions())
                     .setExecutionType(o.getExecutionType())
                     .setFailFast(true)
-                    .setDry(options.isDry())
+                    .setDry(computedOptions.isDry())
                     .run();
         }
         return session;
     }
 
     private void fallbackInstallActionUnavailable(String message) {
-        //term.outln("%s", message);
-        LOG.log(Level.SEVERE, NutsLogVerb.FAIL, NutsMessage.jstyle(message));
+        bLog.log(Level.SEVERE, NutsLogVerb.FAIL, NutsMessage.jstyle(message));
     }
 
-    private void showError(NutsBootOptions actualBootConfig, String workspace, URL[] bootClassWorldURLs, String extraMessage, PrivateNutsErrorInfoList ths) {
-        Map<NutsStoreLocation, String> rbc_locations = actualBootConfig.getStoreLocations();
-        if (rbc_locations == null) {
-            rbc_locations = Collections.emptyMap();
-        }
-        LOG.log(Level.SEVERE, NutsLogVerb.FAIL, NutsMessage.jstyle("unable to bootstrap nuts (hash {0}):", getApiDigest()));
-        LOG.log(Level.SEVERE, NutsLogVerb.FAIL, NutsMessage.jstyle("{0}", extraMessage));
-        LOG.log(Level.SEVERE, NutsLogVerb.FAIL, NutsMessage.jstyle("here after current environment info:"));
-        LOG.log(Level.SEVERE, NutsLogVerb.FAIL, NutsMessage.jstyle("  nuts-boot-api-version            : {0}", PrivateNutsUtils.coalesce(actualBootConfig.getApiVersion(), "<?> Not Found!")));
-        LOG.log(Level.SEVERE, NutsLogVerb.FAIL, NutsMessage.jstyle("  nuts-boot-runtime                : {0}", PrivateNutsUtils.coalesce(actualBootConfig.getRuntimeId(), "<?> Not Found!")));
-        LOG.log(Level.SEVERE, NutsLogVerb.FAIL, NutsMessage.jstyle("  nuts-boot-repositories           : {0}", PrivateNutsUtils.coalesce(actualBootConfig.getBootRepositories(), "<?> Not Found!")));
-        LOG.log(Level.SEVERE, NutsLogVerb.FAIL, NutsMessage.jstyle("  workspace-location               : {0}", PrivateNutsUtils.coalesce(workspace, "<default-location>")));
-        LOG.log(Level.SEVERE, NutsLogVerb.FAIL, NutsMessage.jstyle("  nuts-store-apps                  : {0}", rbc_locations.get(NutsStoreLocation.APPS)));
-        LOG.log(Level.SEVERE, NutsLogVerb.FAIL, NutsMessage.jstyle("  nuts-store-config                : {0}", rbc_locations.get(NutsStoreLocation.CONFIG)));
-        LOG.log(Level.SEVERE, NutsLogVerb.FAIL, NutsMessage.jstyle("  nuts-store-var                   : {0}", rbc_locations.get(NutsStoreLocation.VAR)));
-        LOG.log(Level.SEVERE, NutsLogVerb.FAIL, NutsMessage.jstyle("  nuts-store-log                   : {0}", rbc_locations.get(NutsStoreLocation.LOG)));
-        LOG.log(Level.SEVERE, NutsLogVerb.FAIL, NutsMessage.jstyle("  nuts-store-temp                  : {0}", rbc_locations.get(NutsStoreLocation.TEMP)));
-        LOG.log(Level.SEVERE, NutsLogVerb.FAIL, NutsMessage.jstyle("  nuts-store-cache                 : {0}", rbc_locations.get(NutsStoreLocation.CACHE)));
-        LOG.log(Level.SEVERE, NutsLogVerb.FAIL, NutsMessage.jstyle("  nuts-store-run                   : {0}", rbc_locations.get(NutsStoreLocation.RUN)));
-        LOG.log(Level.SEVERE, NutsLogVerb.FAIL, NutsMessage.jstyle("  nuts-store-lib                   : {0}", rbc_locations.get(NutsStoreLocation.LIB)));
-        LOG.log(Level.SEVERE, NutsLogVerb.FAIL, NutsMessage.jstyle("  nuts-store-strategy              : {0}", PrivateNutsUtils.desc(actualBootConfig.getStoreLocationStrategy())));
-        LOG.log(Level.SEVERE, NutsLogVerb.FAIL, NutsMessage.jstyle("  nuts-store-layout                : {0}", PrivateNutsUtils.desc(actualBootConfig.getStoreLocationLayout())));
-        LOG.log(Level.SEVERE, NutsLogVerb.FAIL, NutsMessage.jstyle("  nuts-boot-args                   : {0}", new PrivateNutsWorkspaceOptionsFormat(options).getBootCommandLine()));
-        LOG.log(Level.SEVERE, NutsLogVerb.FAIL, NutsMessage.jstyle("  nuts-app-args                    : {0}", Arrays.toString(options.getApplicationArguments())));
-        LOG.log(Level.SEVERE, NutsLogVerb.FAIL, NutsMessage.jstyle("  option-read-only                 : {0}", options.isReadOnly()));
-        LOG.log(Level.SEVERE, NutsLogVerb.FAIL, NutsMessage.jstyle("  option-trace                     : {0}", options.isTrace()));
-        LOG.log(Level.SEVERE, NutsLogVerb.FAIL, NutsMessage.jstyle("  option-progress                  : {0}", PrivateNutsUtils.desc(options.getProgressOptions())));
-        LOG.log(Level.SEVERE, NutsLogVerb.FAIL, NutsMessage.jstyle("  option-open-mode                 : {0}", PrivateNutsUtils.desc(options.getOpenMode() == null ? NutsOpenMode.OPEN_OR_CREATE : options.getOpenMode())));
+    private void showError(URL[] bootClassWorldURLs, String extraMessage, PrivateNutsErrorInfoList ths) {
+        String workspace = computedOptions.getWorkspace();
+        Map<NutsStoreLocation, String> rbc_locations = computedOptions.getStoreLocations();
+        bLog.log(Level.SEVERE, NutsLogVerb.FAIL, NutsMessage.jstyle("unable to bootstrap nuts (digest {0}):", getApiDigest()));
+        bLog.log(Level.SEVERE, NutsLogVerb.FAIL, NutsMessage.jstyle("{0}", extraMessage));
+        bLog.log(Level.SEVERE, NutsLogVerb.FAIL, NutsMessage.jstyle("here after current environment info:"));
+        bLog.log(Level.SEVERE, NutsLogVerb.FAIL, NutsMessage.jstyle("  nuts-boot-api-version            : {0}", PrivateNutsUtils.coalesce(computedOptions.getApiVersion(), "<?> Not Found!")));
+        bLog.log(Level.SEVERE, NutsLogVerb.FAIL, NutsMessage.jstyle("  nuts-boot-runtime                : {0}", PrivateNutsUtils.coalesce(computedOptions.getRuntimeId(), "<?> Not Found!")));
+        bLog.log(Level.SEVERE, NutsLogVerb.FAIL, NutsMessage.jstyle("  nuts-boot-repositories           : {0}", PrivateNutsUtils.coalesce(computedOptions.getBootRepositories(), "<?> Not Found!")));
+        bLog.log(Level.SEVERE, NutsLogVerb.FAIL, NutsMessage.jstyle("  workspace-location               : {0}", PrivateNutsUtils.coalesce(workspace, "<default-location>")));
+        bLog.log(Level.SEVERE, NutsLogVerb.FAIL, NutsMessage.jstyle("  nuts-store-apps                  : {0}", rbc_locations.get(NutsStoreLocation.APPS)));
+        bLog.log(Level.SEVERE, NutsLogVerb.FAIL, NutsMessage.jstyle("  nuts-store-config                : {0}", rbc_locations.get(NutsStoreLocation.CONFIG)));
+        bLog.log(Level.SEVERE, NutsLogVerb.FAIL, NutsMessage.jstyle("  nuts-store-var                   : {0}", rbc_locations.get(NutsStoreLocation.VAR)));
+        bLog.log(Level.SEVERE, NutsLogVerb.FAIL, NutsMessage.jstyle("  nuts-store-log                   : {0}", rbc_locations.get(NutsStoreLocation.LOG)));
+        bLog.log(Level.SEVERE, NutsLogVerb.FAIL, NutsMessage.jstyle("  nuts-store-temp                  : {0}", rbc_locations.get(NutsStoreLocation.TEMP)));
+        bLog.log(Level.SEVERE, NutsLogVerb.FAIL, NutsMessage.jstyle("  nuts-store-cache                 : {0}", rbc_locations.get(NutsStoreLocation.CACHE)));
+        bLog.log(Level.SEVERE, NutsLogVerb.FAIL, NutsMessage.jstyle("  nuts-store-run                   : {0}", rbc_locations.get(NutsStoreLocation.RUN)));
+        bLog.log(Level.SEVERE, NutsLogVerb.FAIL, NutsMessage.jstyle("  nuts-store-lib                   : {0}", rbc_locations.get(NutsStoreLocation.LIB)));
+        bLog.log(Level.SEVERE, NutsLogVerb.FAIL, NutsMessage.jstyle("  nuts-store-strategy              : {0}", PrivateNutsUtils.desc(computedOptions.getStoreLocationStrategy())));
+        bLog.log(Level.SEVERE, NutsLogVerb.FAIL, NutsMessage.jstyle("  nuts-store-layout                : {0}", PrivateNutsUtils.desc(computedOptions.getStoreLocationLayout())));
+        bLog.log(Level.SEVERE, NutsLogVerb.FAIL, NutsMessage.jstyle("  nuts-boot-args                   : {0}", new PrivateNutsWorkspaceOptionsFormat(this.computedOptions).getBootCommandLine()));
+        bLog.log(Level.SEVERE, NutsLogVerb.FAIL, NutsMessage.jstyle("  nuts-app-args                    : {0}", Arrays.toString(this.computedOptions.getApplicationArguments())));
+        bLog.log(Level.SEVERE, NutsLogVerb.FAIL, NutsMessage.jstyle("  option-read-only                 : {0}", this.computedOptions.isReadOnly()));
+        bLog.log(Level.SEVERE, NutsLogVerb.FAIL, NutsMessage.jstyle("  option-trace                     : {0}", this.computedOptions.isTrace()));
+        bLog.log(Level.SEVERE, NutsLogVerb.FAIL, NutsMessage.jstyle("  option-progress                  : {0}", PrivateNutsUtils.desc(this.computedOptions.getProgressOptions())));
+        bLog.log(Level.SEVERE, NutsLogVerb.FAIL, NutsMessage.jstyle("  option-open-mode                 : {0}", PrivateNutsUtils.desc(this.computedOptions.getOpenMode() == null ? NutsOpenMode.OPEN_OR_CREATE : this.computedOptions.getOpenMode())));
 
-        NutsClassLoaderNode rtn = workspaceInformation.getRuntimeBootDependencyNode();
+        NutsClassLoaderNode rtn = this.computedOptions.getRuntimeBootDependencyNode();
         String rtHash = "";
         if (rtn != null) {
-            rtHash = PrivateNutsUtilDigest.getURLDigest(rtn.getURL(), LOG);
+            rtHash = PrivateNutsUtilDigest.getURLDigest(rtn.getURL(), bLog);
         }
-        LOG.log(Level.SEVERE, NutsLogVerb.FAIL, NutsMessage.jstyle("  nuts-runtime-digest                : {0}", rtHash));
+        bLog.log(Level.SEVERE, NutsLogVerb.FAIL, NutsMessage.jstyle("  nuts-runtime-digest                : {0}", rtHash));
 
         if (bootClassWorldURLs == null || bootClassWorldURLs.length == 0) {
-            LOG.log(Level.SEVERE, NutsLogVerb.FAIL, NutsMessage.jstyle("  nuts-runtime-classpath           : {0}", "<none>"));
+            bLog.log(Level.SEVERE, NutsLogVerb.FAIL, NutsMessage.jstyle("  nuts-runtime-classpath           : {0}", "<none>"));
         } else {
-            LOG.log(Level.SEVERE, NutsLogVerb.FAIL, NutsMessage.jstyle("  nuts-runtime-hash                : {0}", "<none>"));
+            bLog.log(Level.SEVERE, NutsLogVerb.FAIL, NutsMessage.jstyle("  nuts-runtime-hash                : {0}", "<none>"));
             for (int i = 0; i < bootClassWorldURLs.length; i++) {
                 URL bootClassWorldURL = bootClassWorldURLs[i];
                 if (i == 0) {
-                    LOG.log(Level.SEVERE, NutsLogVerb.FAIL, NutsMessage.jstyle("  nuts-runtime-classpath           : {0}", PrivateNutsUtils.formatURL(bootClassWorldURL)));
+                    bLog.log(Level.SEVERE, NutsLogVerb.FAIL, NutsMessage.jstyle("  nuts-runtime-classpath           : {0}", PrivateNutsUtils.formatURL(bootClassWorldURL)));
                 } else {
-                    LOG.log(Level.SEVERE, NutsLogVerb.FAIL, NutsMessage.jstyle("                                     {0}", PrivateNutsUtils.formatURL(bootClassWorldURL)));
+                    bLog.log(Level.SEVERE, NutsLogVerb.FAIL, NutsMessage.jstyle("                                     {0}", PrivateNutsUtils.formatURL(bootClassWorldURL)));
                 }
             }
         }
-        LOG.log(Level.SEVERE, NutsLogVerb.FAIL, NutsMessage.jstyle("  java-version                     : {0}", System.getProperty("java.version")));
-        LOG.log(Level.SEVERE, NutsLogVerb.FAIL, NutsMessage.jstyle("  java-executable                  : {0}", PrivateNutsUtils.resolveJavaCommand(null)));
-        LOG.log(Level.SEVERE, NutsLogVerb.FAIL, NutsMessage.jstyle("  java-class-path                  : {0}", System.getProperty("java.class.path")));
-        LOG.log(Level.SEVERE, NutsLogVerb.FAIL, NutsMessage.jstyle("  java-library-path                : {0}", System.getProperty("java.library.path")));
-        LOG.log(Level.SEVERE, NutsLogVerb.FAIL, NutsMessage.jstyle("  os-name                          : {0}", System.getProperty("os.name")));
-        LOG.log(Level.SEVERE, NutsLogVerb.FAIL, NutsMessage.jstyle("  os-arch                          : {0}", System.getProperty("os.arch")));
-        LOG.log(Level.SEVERE, NutsLogVerb.FAIL, NutsMessage.jstyle("  os-version                       : {0}", System.getProperty("os.version")));
-        LOG.log(Level.SEVERE, NutsLogVerb.FAIL, NutsMessage.jstyle("  user-name                        : {0}", System.getProperty("user.name")));
-        LOG.log(Level.SEVERE, NutsLogVerb.FAIL, NutsMessage.jstyle("  user-home                        : {0}", System.getProperty("user.home")));
-        LOG.log(Level.SEVERE, NutsLogVerb.FAIL, NutsMessage.jstyle("  user-dir                         : {0}", System.getProperty("user.dir")));
-        LOG.log(Level.SEVERE, NutsLogVerb.FAIL, NutsMessage.jstyle(""));
-        if (options.getLogConfig() == null
-                || options.getLogConfig().getLogTermLevel() == null
-                || options.getLogConfig().getLogFileLevel().intValue() > Level.FINEST.intValue()) {
-            LOG.log(Level.SEVERE, NutsLogVerb.FAIL, NutsMessage.jstyle("If the problem persists you may want to get more debug info by adding '--verbose' arguments."));
+        bLog.log(Level.SEVERE, NutsLogVerb.FAIL, NutsMessage.jstyle("  java-version                     : {0}", System.getProperty("java.version")));
+        bLog.log(Level.SEVERE, NutsLogVerb.FAIL, NutsMessage.jstyle("  java-executable                  : {0}", PrivateNutsUtils.resolveJavaCommand(null)));
+        bLog.log(Level.SEVERE, NutsLogVerb.FAIL, NutsMessage.jstyle("  java-class-path                  : {0}", System.getProperty("java.class.path")));
+        bLog.log(Level.SEVERE, NutsLogVerb.FAIL, NutsMessage.jstyle("  java-library-path                : {0}", System.getProperty("java.library.path")));
+        bLog.log(Level.SEVERE, NutsLogVerb.FAIL, NutsMessage.jstyle("  os-name                          : {0}", System.getProperty("os.name")));
+        bLog.log(Level.SEVERE, NutsLogVerb.FAIL, NutsMessage.jstyle("  os-arch                          : {0}", System.getProperty("os.arch")));
+        bLog.log(Level.SEVERE, NutsLogVerb.FAIL, NutsMessage.jstyle("  os-version                       : {0}", System.getProperty("os.version")));
+        bLog.log(Level.SEVERE, NutsLogVerb.FAIL, NutsMessage.jstyle("  user-name                        : {0}", System.getProperty("user.name")));
+        bLog.log(Level.SEVERE, NutsLogVerb.FAIL, NutsMessage.jstyle("  user-home                        : {0}", System.getProperty("user.home")));
+        bLog.log(Level.SEVERE, NutsLogVerb.FAIL, NutsMessage.jstyle("  user-dir                         : {0}", System.getProperty("user.dir")));
+        bLog.log(Level.SEVERE, NutsLogVerb.FAIL, NutsMessage.jstyle(""));
+        if (this.computedOptions.getLogConfig() == null
+                || this.computedOptions.getLogConfig().getLogTermLevel() == null
+                || this.computedOptions.getLogConfig().getLogFileLevel().intValue() > Level.FINEST.intValue()) {
+            bLog.log(Level.SEVERE, NutsLogVerb.FAIL, NutsMessage.jstyle("If the problem persists you may want to get more debug info by adding '--verbose' arguments."));
         }
-        if (!options.isReset() && !options.isRecover() && options.getExpireTime() == null) {
-            LOG.log(Level.SEVERE, NutsLogVerb.FAIL, NutsMessage.jstyle("You may also enable recover mode to ignore existing cache info with '--recover' and '--expire' arguments."));
-            LOG.log(Level.SEVERE, NutsLogVerb.FAIL, NutsMessage.jstyle("Here is the proper command : "));
-            LOG.log(Level.SEVERE, NutsLogVerb.FAIL, NutsMessage.jstyle("  java -jar nuts.jar --verbose --recover --expire [...]"));
-        } else if (!options.isReset() && options.isRecover() && options.getExpireTime() != null) {
-            LOG.log(Level.SEVERE, NutsLogVerb.FAIL, NutsMessage.jstyle("You may also enable full reset mode to ignore existing configuration with '--reset' argument."));
-            LOG.log(Level.SEVERE, NutsLogVerb.FAIL, NutsMessage.jstyle("ATTENTION: this will delete all your nuts configuration. Use it at your own risk."));
-            LOG.log(Level.SEVERE, NutsLogVerb.FAIL, NutsMessage.jstyle("Here is the proper command : "));
-            LOG.log(Level.SEVERE, NutsLogVerb.FAIL, NutsMessage.jstyle("  java -jar nuts.jar --verbose --reset [...]"));
+        if (!this.computedOptions.isReset() && !this.computedOptions.isRecover() && this.computedOptions.getExpireTime() == null) {
+            bLog.log(Level.SEVERE, NutsLogVerb.FAIL, NutsMessage.jstyle("You may also enable recover mode to ignore existing cache info with '--recover' and '--expire' arguments."));
+            bLog.log(Level.SEVERE, NutsLogVerb.FAIL, NutsMessage.jstyle("Here is the proper command : "));
+            bLog.log(Level.SEVERE, NutsLogVerb.FAIL, NutsMessage.jstyle("  java -jar nuts.jar --verbose --recover --expire [...]"));
+        } else if (!this.computedOptions.isReset() && this.computedOptions.isRecover() && this.computedOptions.getExpireTime() != null) {
+            bLog.log(Level.SEVERE, NutsLogVerb.FAIL, NutsMessage.jstyle("You may also enable full reset mode to ignore existing configuration with '--reset' argument."));
+            bLog.log(Level.SEVERE, NutsLogVerb.FAIL, NutsMessage.jstyle("ATTENTION: this will delete all your nuts configuration. Use it at your own risk."));
+            bLog.log(Level.SEVERE, NutsLogVerb.FAIL, NutsMessage.jstyle("Here is the proper command : "));
+            bLog.log(Level.SEVERE, NutsLogVerb.FAIL, NutsMessage.jstyle("  java -jar nuts.jar --verbose --reset [...]"));
         }
         if (!ths.list().isEmpty()) {
-            LOG.log(Level.SEVERE, NutsLogVerb.FAIL, NutsMessage.jstyle("error stack trace is:"));
+            bLog.log(Level.SEVERE, NutsLogVerb.FAIL, NutsMessage.jstyle("error stack trace is:"));
             for (PrivateNutsErrorInfo th : ths.list()) {
                 StringBuilder msg = new StringBuilder();
                 List<Object> msgParams = new ArrayList<>();
@@ -1309,13 +1277,13 @@ public final class NutsBootWorkspace {
                     index++;
                     msgParams.add("unexpected error");
                 }
-                LOG.log(Level.SEVERE, NutsLogVerb.FAIL, NutsMessage.jstyle(msg.toString(), msgParams.toArray()));
-                LOG.log(Level.SEVERE, NutsMessage.jstyle(th.toString()), th.getThrowable());
+                bLog.log(Level.SEVERE, NutsLogVerb.FAIL, NutsMessage.jstyle(msg.toString(), msgParams.toArray()));
+                bLog.log(Level.SEVERE, NutsMessage.jstyle(th.toString()), th.getThrowable());
             }
         } else {
-            LOG.log(Level.SEVERE, NutsLogVerb.FAIL, NutsMessage.jstyle("no stack trace is available."));
+            bLog.log(Level.SEVERE, NutsLogVerb.FAIL, NutsMessage.jstyle("no stack trace is available."));
         }
-        LOG.log(Level.SEVERE, NutsLogVerb.FAIL, NutsMessage.jstyle("now exiting nuts, Bye!"));
+        bLog.log(Level.SEVERE, NutsLogVerb.FAIL, NutsMessage.jstyle("now exiting nuts, Bye!"));
     }
 
     /**
@@ -1326,15 +1294,15 @@ public final class NutsBootWorkspace {
      */
     private int checkRequirements(boolean unsatisfiedOnly) {
         int req = 0;
-        if (!NutsBlankable.isBlank(workspaceInformation.getApiVersion())) {
-            if (!unsatisfiedOnly || !workspaceInformation.getApiVersion().equals(Nuts.getVersion())) {
+        if (!NutsBlankable.isBlank(computedOptions.getApiVersion())) {
+            if (!unsatisfiedOnly || !computedOptions.getApiVersion().equals(Nuts.getVersion())) {
                 req += 1;
             }
         }
-        if (!unsatisfiedOnly || !PrivateNutsUtils.isActualJavaCommand(workspaceInformation.getJavaCommand())) {
+        if (!unsatisfiedOnly || !PrivateNutsUtils.isActualJavaCommand(computedOptions.getJavaCommand())) {
             req += 2;
         }
-        if (!unsatisfiedOnly || !PrivateNutsUtils.isActualJavaOptions(workspaceInformation.getJavaOptions())) {
+        if (!unsatisfiedOnly || !PrivateNutsUtils.isActualJavaOptions(computedOptions.getJavaOptions())) {
             req += 4;
         }
         return req;
@@ -1350,21 +1318,19 @@ public final class NutsBootWorkspace {
         int req = unsatisfiedOnly ? newInstanceRequirements : checkRequirements(false);
         StringBuilder sb = new StringBuilder();
         if ((req & 1) != 0) {
-            sb.append("nuts version ").append(
-                    NutsConstants.Ids.NUTS_API + "#" + workspaceInformation.getApiVersion()
-            );
+            sb.append("nuts version ").append(NutsConstants.Ids.NUTS_API + "#").append(computedOptions.getApiVersion());
         }
         if ((req & 2) != 0) {
             if (sb.length() > 0) {
                 sb.append(" and ");
             }
-            sb.append("java command ").append(workspaceInformation.getJavaCommand());
+            sb.append("java command ").append(computedOptions.getJavaCommand());
         }
         if ((req & 4) != 0) {
             if (sb.length() > 0) {
                 sb.append(" and ");
             }
-            sb.append("java options ").append(workspaceInformation.getJavaOptions());
+            sb.append("java options ").append(computedOptions.getJavaOptions());
         }
         if (sb.length() > 0) {
             sb.insert(0, "required ");
@@ -1382,37 +1348,38 @@ public final class NutsBootWorkspace {
         NutsClassLoaderNodeBuilder rt = new NutsClassLoaderNodeBuilder();
         String name = runtimeDep ? "runtime" : ("extension " + id.toString());
         File file = PrivateNutsUtilMaven.getBootCacheJar(
-                NutsBootId.parse(workspaceInformation.getRuntimeId()), repositories, workspaceBootLibFolder,
-                !recover, name, options.getExpireTime(), errorList,
-                workspaceInformation, pathExpansionConverter, LOG);
+                NutsBootId.parse(computedOptions.getRuntimeId()), repositories, workspaceBootLibFolder,
+                !recover, name, computedOptions.getExpireTime(), errorList,
+                computedOptions, pathExpansionConverter, bLog);
         rt.setId(id.toString());
         rt.setUrl(file.toURI().toURL());
         rt.setIncludedInClasspath(
                 PrivateNutsUtilClassLoader.isLoadedClassPath(
-                        rt.getURL(), getContextClassLoader(), LOG));
+                        rt.getURL(), getContextClassLoader(), bLog));
 
-        if (LOG.isLoggable(Level.CONFIG)) {
+        if (bLog.isLoggable(Level.CONFIG)) {
             String rtHash = "";
-            if (workspaceInformation.getRuntimeId() != null) {
+            if (computedOptions.getRuntimeId() != null) {
                 rtHash = PrivateNutsUtilDigest.getFileOrDirectoryDigest(file.toPath());
                 if (rtHash == null) {
                     rtHash = "";
                 }
             }
-            LOG.log(Level.CONFIG, NutsLogVerb.INFO, NutsMessage.jstyle("detect " + name + " version {0} - digest {1} from {2}", id.toString(), rtHash, file));
+            bLog.log(Level.CONFIG, NutsLogVerb.INFO, NutsMessage.jstyle("detect {0} version {1} - digest {2} from {3}",
+                    name, id.toString(), rtHash, file));
         }
 
         for (NutsBootId s : deps) {
             NutsClassLoaderNodeBuilder x = new NutsClassLoaderNodeBuilder();
-            if (PrivateNutsUtilBootId.isAcceptDependency(s, options)) {
+            if (PrivateNutsUtilBootId.isAcceptDependency(s, computedOptions)) {
                 x.setId(s.toString())
                         .setUrl(PrivateNutsUtilMaven.getBootCacheJar(s, repositories, workspaceBootLibFolder, !recover,
                                         name + " dependency",
-                                        options.getExpireTime(), errorList, workspaceInformation, pathExpansionConverter, LOG)
+                                        computedOptions.getExpireTime(), errorList, computedOptions, pathExpansionConverter, bLog)
                                 .toURI().toURL()
                         );
                 x.setIncludedInClasspath(PrivateNutsUtilClassLoader.isLoadedClassPath(
-                        x.getURL(), getContextClassLoader(), LOG));
+                        x.getURL(), getContextClassLoader(), bLog));
                 rt.addDependency(x.build());
             }
         }

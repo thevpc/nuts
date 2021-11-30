@@ -25,7 +25,6 @@ package net.thevpc.nuts.runtime.standalone.util;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.util.iter.IteratorBuilder;
-import net.thevpc.nuts.NutsDescribables;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.StringMapParser;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.StringPlaceHolderParser;
@@ -515,7 +514,7 @@ public class CoreNutsUtils {
     }
 
     public static boolean processHelpOptions(String[] args, NutsSession session) {
-        if(isIncludesHelpOption(args)) {
+        if (isIncludesHelpOption(args)) {
             NutsCommandLine cmdLine = NutsCommandLine.of(args, session);
             while (cmdLine.hasNext()) {
                 NutsArgument a = cmdLine.peek();
@@ -810,6 +809,7 @@ public class CoreNutsUtils {
         boolean enabledVisited = false;
         StringMapParser p = new StringMapParser("=", ",; ");
         Map<String, String> m = p.parseMap(session.getProgressOptions(), session);
+        NutsElements elems = NutsElements.of(session);
         for (Map.Entry<String, String> e : m.entrySet()) {
             String k = e.getKey();
             String v = e.getValue();
@@ -820,11 +820,11 @@ public class CoreNutsUtils {
                         o.enabled = a;
                         enabledVisited = true;
                     } else {
-                        o.vals.put(k, NutsVal.of(v, session));
+                        o.vals.put(k, elems.ofString(v));
                     }
                 }
             } else {
-                o.vals.put(k, NutsVal.of(v, session));
+                o.vals.put(k, elems.ofString(v));
             }
         }
         return o;
@@ -849,13 +849,13 @@ public class CoreNutsUtils {
         Object o = session.getProperty("monitor-allowed");
         NutsWorkspace ws = session.getWorkspace();
         if (o != null) {
-            o = NutsCommandLine.of(new String[]{String.valueOf(o)}, session).next().getAll().getBoolean();
+            o = NutsCommandLine.of(new String[]{String.valueOf(o)}, session).next().toElement().getBoolean();
         }
         boolean monitorable = true;
         if (o instanceof Boolean) {
             monitorable = ((Boolean) o).booleanValue();
         }
-        if (!session.boot().getCustomBootOption("monitor.enabled").getBoolean(true)) {
+        if (!session.boot().getBootCustomArgument("---monitor.enabled").getBooleanValue(true)) {
             monitorable = false;
         }
         if (ws instanceof DefaultNutsWorkspace) {
@@ -934,7 +934,7 @@ public class CoreNutsUtils {
     }
 
     public static class ProgressOptions {
-        private final Map<String, NutsVal> vals = new LinkedHashMap<>();
+        private final Map<String, NutsPrimitiveElement> vals = new LinkedHashMap<>();
         private boolean enabled = true;
 
         public boolean isEnabled() {
@@ -946,7 +946,7 @@ public class CoreNutsUtils {
         }
 
         public boolean isArmed(String k) {
-            NutsVal q = vals.get(k);
+            NutsPrimitiveElement q = vals.get(k);
             if (q == null) {
                 return false;
             }

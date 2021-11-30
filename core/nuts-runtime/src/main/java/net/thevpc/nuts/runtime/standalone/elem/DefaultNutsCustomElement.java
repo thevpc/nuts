@@ -94,4 +94,9 @@ class DefaultNutsCustomElement extends AbstractNutsElement implements NutsCustom
                 .set("value",this)
                 .build();
     }
+
+    @Override
+    public boolean isBlank() {
+        return false;
+    }
 }

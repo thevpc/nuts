@@ -78,12 +78,12 @@ class PrivateNutsUtilBootId {
         return boots.toArray(new NutsBootId[0]);
     }
 
-    static boolean isAcceptDependency(NutsBootId s, NutsBootOptions woptions) {
-        boolean bootOptionals = PrivateNutsUtilWorkspaceOptions.isBootOptional(woptions);
+    static boolean isAcceptDependency(NutsBootId s, NutsBootOptions bOptions) {
+        boolean bootOptionals = PrivateNutsUtilWorkspaceOptions.isBootOptional(bOptions);
 
         //by default ignore optionals
         if (s.isOptional()) {
-            if (!bootOptionals && !PrivateNutsUtilWorkspaceOptions.isBootOptional(s.getArtifactId(), woptions)) {
+            if (!bootOptionals && !PrivateNutsUtilWorkspaceOptions.isBootOptional(s.getArtifactId(), bOptions)) {
                 return false;
             }
         }

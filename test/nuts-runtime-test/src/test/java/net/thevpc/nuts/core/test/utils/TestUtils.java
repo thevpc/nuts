@@ -163,6 +163,13 @@ public class TestUtils {
         }
     }
 
+    public static NutsSession openNewMinTestWorkspace(String... args) {
+        List<String> a=new ArrayList<>();
+        a.addAll(Arrays.asList());
+        a.addAll(Arrays.asList(args));
+        return openOrReOpenTestWorkspace(true,false,a.toArray(new String[0]));
+    }
+
     public static NutsSession openNewTestWorkspace(String... args) {
         return openOrReOpenTestWorkspace(true,false,args);
     }

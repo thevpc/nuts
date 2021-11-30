@@ -26,6 +26,7 @@
  */
 package net.thevpc.nuts.boot;
 
+import net.thevpc.nuts.NutsBootTerminal;
 import net.thevpc.nuts.NutsLogVerb;
 import net.thevpc.nuts.NutsMessage;
 import net.thevpc.nuts.NutsBootOptions;
@@ -42,7 +43,7 @@ import java.util.logging.Level;
  * @author thevpc
  * @app.category Internal
  */
-public class PrivateNutsLog {
+public class PrivateNutsBootLog {
 
     /**
      * Universal Data and time format "yyyy-MM-dd HH:mm:ss.SSS"
@@ -54,7 +55,7 @@ public class PrivateNutsLog {
     private final NutsBootTerminal bootTerminal;
     private Scanner inScanner;
 
-    public PrivateNutsLog(NutsBootTerminal bootTerminal) {
+    public PrivateNutsBootLog(NutsBootTerminal bootTerminal) {
         InputStream in = (bootTerminal == null || bootTerminal.getIn() == null) ? System.in : bootTerminal.getIn();
         PrintStream out = (bootTerminal == null || bootTerminal.getOut() == null) ? System.out : bootTerminal.getOut();
         PrintStream err = (bootTerminal == null || bootTerminal.getErr() == null) ? out : bootTerminal.getErr();

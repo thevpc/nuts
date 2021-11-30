@@ -44,7 +44,7 @@ public interface NutsWorkspaceEnvManager {
      * @return property value
      * @since 0.8.1
      */
-    NutsVal getProperty(String property);
+    NutsElement getProperty(String property);
 
     /**
      * @param property property

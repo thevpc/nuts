@@ -35,12 +35,12 @@ public class NJobsSubCmd {
             switch (a.getKey().getString()) {
                 case "--list":
                 case "-l": {
-                    list = cmd.nextBoolean().getValue().getBoolean();
+                    list = cmd.nextBoolean().getBooleanValue();
                     break;
                 }
                 case "--show":
                 case "-s": {
-                    show = cmd.nextBoolean().getValue().getBoolean();
+                    show = cmd.nextBoolean().getBooleanValue();
                     break;
                 }
                 case "--time":
@@ -110,12 +110,12 @@ public class NJobsSubCmd {
             switch (a.getKey().getString()) {
                 case "--list":
                 case "-l": {
-                    list = cmd.nextBoolean().getValue().getBoolean();
+                    list = cmd.nextBoolean().getBooleanValue();
                     break;
                 }
                 case "--show":
                 case "-s": {
-                    show = cmd.nextBoolean().getValue().getBoolean();
+                    show = cmd.nextBoolean().getBooleanValue();
                     break;
                 }
                 case "--start": {

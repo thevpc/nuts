@@ -132,7 +132,7 @@ public class DefaultNutsInputStreamMonitor implements NutsInputStreamMonitor {
         }
         NutsProgressMonitor monitor = CoreIOUtils.createProgressMonitor(CoreIOUtils.MonitorType.STREAM, source.getValue(), sourceOrigin, session, isLogProgress(), getProgressFactory());
         boolean verboseMode
-                = getSession().boot().getCustomBootOption("monitor.start").getBoolean( false);
+                = getSession().boot().getBootCustomArgument("---monitor.start").getBooleanValue( false);
         long size = -1;
         try {
             if (verboseMode && monitor != null) {

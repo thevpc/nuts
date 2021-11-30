@@ -54,7 +54,7 @@ public class MkdirCommand extends SimpleJShellBuiltin {
         Options options = context.getOptions();
         NutsArgument a;
         if ((a = commandLine.nextBoolean("--parent", "-p")) != null) {
-            options.p = a.getValue().getBoolean();
+            options.p = a.getBooleanValue();
             return true;
         } else if (commandLine.peek().isNonOption()) {
             options.files.addAll(Arrays.asList(commandLine.toStringArray()));

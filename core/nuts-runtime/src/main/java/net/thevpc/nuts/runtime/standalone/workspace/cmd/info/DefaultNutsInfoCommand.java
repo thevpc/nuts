@@ -156,14 +156,14 @@ public class DefaultNutsInfoCommand extends DefaultFormatBase<NutsInfoCommand> i
         switch (a.getKey().getString()) {
             case "-r":
             case "--repos": {
-                boolean val = cmdLine.nextBoolean().getValue().getBoolean();
+                boolean val = cmdLine.nextBoolean().getBooleanValue();
                 if (enabled) {
                     this.setShowRepositories(val);
                 }
                 return true;
             }
             case "--fancy": {
-                boolean val = cmdLine.nextBoolean().getValue().getBoolean();
+                boolean val = cmdLine.nextBoolean().getBooleanValue();
                 if (enabled) {
                     this.setFancy(val);
                 }
@@ -171,14 +171,14 @@ public class DefaultNutsInfoCommand extends DefaultFormatBase<NutsInfoCommand> i
             }
             case "-l":
             case "--lenient": {
-                boolean val = cmdLine.nextBoolean().getValue().getBoolean();
+                boolean val = cmdLine.nextBoolean().getBooleanValue();
                 if (enabled) {
                     this.setLenient(val);
                 }
                 return true;
             }
             case "--add": {
-                NutsVal aa = cmdLine.nextString().getValue();
+                NutsPrimitiveElement aa = cmdLine.nextString().getValue();
                 NutsArgument val = NutsArgument.of(aa.getString(), getSession());
                 if (enabled) {
                     extraProperties.put(val.getKey().getString(), val.getValue().getString());

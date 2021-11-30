@@ -51,7 +51,6 @@ public final class NutsBootOptions implements Serializable, Cloneable {
      * option-type : exported (inherited in child workspaces)
      */
     private final List<String> outputFormatOptions = new ArrayList<>();
-    private final PrivateNutsLog log;
     private String[] customOptions;
     /**
      * nuts api version to boot option-type : exported (inherited in child
@@ -323,18 +322,8 @@ public final class NutsBootOptions implements Serializable, Cloneable {
     private NutsBootTerminal bootTerminal;
 
     public NutsBootOptions() {
-        this.log = new PrivateNutsLog(null);
-        log.setOptions(this);
     }
 
-    public NutsBootOptions(PrivateNutsLog log) {
-        this.log = log;
-        if(log!=null) {
-            log.setOptions(this);
-        }
-    }
-
-    
     public NutsBootOptions copy() {
         try {
             NutsBootOptions t = (NutsBootOptions) clone();
@@ -727,7 +716,7 @@ public final class NutsBootOptions implements Serializable, Cloneable {
 
     
     public String getStoreLocation(NutsStoreLocation folder) {
-        return storeLocations.get(folder.id());
+        return storeLocations.get(folder);
     }
 
     

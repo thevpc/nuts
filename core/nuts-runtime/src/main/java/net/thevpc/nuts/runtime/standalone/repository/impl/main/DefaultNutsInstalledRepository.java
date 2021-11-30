@@ -37,7 +37,7 @@ import net.thevpc.nuts.runtime.standalone.repository.cmd.search.AbstractNutsSear
 import net.thevpc.nuts.runtime.standalone.repository.cmd.search.AbstractNutsSearchVersionsRepositoryCommand;
 import net.thevpc.nuts.runtime.standalone.repository.cmd.undeploy.AbstractNutsRepositoryUndeployCommand;
 import net.thevpc.nuts.runtime.standalone.repository.cmd.updatestats.AbstractNutsUpdateRepositoryStatisticsCommand;
-import net.thevpc.nuts.runtime.standalone.workspace.CoreNutsWorkspaceInitInformation;
+import net.thevpc.nuts.runtime.standalone.workspace.CoreNutsBootOptions;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.StringTokenizerUtils;
 import net.thevpc.nuts.runtime.standalone.repository.impl.AbstractNutsRepository;
 import net.thevpc.nuts.runtime.standalone.repository.impl.NutsRepositoryExt0;
@@ -67,12 +67,12 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
     private final Map<NutsId, String> cachedDefaultVersions = new LRUMap<>(200);
     private NutsLogger LOG;
 
-    public DefaultNutsInstalledRepository(NutsWorkspace ws, CoreNutsWorkspaceInitInformation info) {
+    public DefaultNutsInstalledRepository(NutsWorkspace ws, CoreNutsBootOptions bOptions) {
         this.workspace = ws;
         this.initSession = NutsWorkspaceUtils.defaultSession(ws);
         this.deployments = new NutsRepositoryFolderHelper(this,
                 NutsWorkspaceUtils.defaultSession(ws),
-                NutsPath.of(info.getStoreLocation(NutsStoreLocation.LIB), initSession).resolve(NutsConstants.Folders.ID)
+                NutsPath.of(bOptions.getStoreLocation(NutsStoreLocation.LIB), initSession).resolve(NutsConstants.Folders.ID)
                 , false,
                 NutsElements.of(initSession).ofObject().set("repoKind","deployments").build()
         );

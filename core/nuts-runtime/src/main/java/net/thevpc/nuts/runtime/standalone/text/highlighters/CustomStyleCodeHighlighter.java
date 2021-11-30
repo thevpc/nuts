@@ -9,12 +9,10 @@ public class CustomStyleCodeHighlighter implements NutsCodeHighlighter {
 
     private NutsSession session;
     private NutsTextStyle style;
-    private NutsTexts factory;
 
     public CustomStyleCodeHighlighter(NutsTextStyle style, NutsSession session) {
         this.session = session;
         this.style = style;
-        factory = NutsTexts.of(session);
     }
 
     @Override
@@ -23,13 +21,13 @@ public class CustomStyleCodeHighlighter implements NutsCodeHighlighter {
     }
 
     @Override
-    public NutsText stringToText(String text, NutsSession session) {
-        return factory.setSession(session).applyStyles(factory.setSession(session).ofPlain(text), style);
+    public NutsText stringToText(String text, NutsTexts txt, NutsSession session) {
+        return txt.applyStyles(txt.ofPlain(text), style);
     }
 
     @Override
-    public NutsText tokenToText(String text, String nodeType, NutsSession session) {
-        return factory.setSession(session).ofPlain(text);
+    public NutsText tokenToText(String text, String nodeType, NutsTexts txt, NutsSession session) {
+        return txt.ofPlain(text);
     }
 
     @Override

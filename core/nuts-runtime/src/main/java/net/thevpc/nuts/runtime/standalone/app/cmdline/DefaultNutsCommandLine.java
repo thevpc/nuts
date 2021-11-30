@@ -364,7 +364,7 @@ public class DefaultNutsCommandLine implements NutsCommandLine {
                             if (p.isNegated()) {
                                 if (p.isKeyValue()) {
                                     //should not happen
-                                    boolean x = p.getValue().getBoolean();
+                                    boolean x = p.getBooleanValue();
                                     return createArgument(p.getKey().getString() + eq + (!x));
                                 } else {
                                     return createArgument(p.getKey().getString() + eq + (false));

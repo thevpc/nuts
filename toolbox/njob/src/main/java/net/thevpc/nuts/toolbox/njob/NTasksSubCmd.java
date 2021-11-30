@@ -38,9 +38,9 @@ public class NTasksSubCmd {
         List<Consumer<NTask>> runLater = new ArrayList<>();
         while (cmd.hasNext()) {
             if ((a = cmd.nextBoolean("--list", "-l")) != null) {
-                list = a.getValue().getBoolean();
+                list = a.getBooleanValue();
             } else if ((a = cmd.nextBoolean("--show", "-s")) != null) {
-                show = a.getValue().getBoolean();
+                show = a.getBooleanValue();
             } else if ((a = cmd.nextString("--on", "--due", "-t")) != null) {
                 String s = a.getValue().getString();
                 runLater.add(t -> t.setDueTime(new TimeParser().parseInstant(s, false)));
@@ -181,12 +181,12 @@ public class NTasksSubCmd {
             switch (a.getKey().getString()) {
                 case "--list":
                 case "-l": {
-                    list = cmd.nextBoolean().getValue().getBoolean();
+                    list = cmd.nextBoolean().getBooleanValue();
                     break;
                 }
                 case "--show":
                 case "-s": {
-                    show = cmd.nextBoolean().getValue().getBoolean();
+                    show = cmd.nextBoolean().getBooleanValue();
                     break;
                 }
                 case "--start": {

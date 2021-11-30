@@ -9,11 +9,9 @@ import net.thevpc.nuts.NutsTexts;
 public class PlainCodeHighlighter implements NutsCodeHighlighter {
 
     NutsWorkspace ws;
-    private NutsTexts factory;
 
     public PlainCodeHighlighter(NutsWorkspace ws) {
         this.ws = ws;
-        factory = NutsTexts.of(NutsWorkspaceUtils.defaultSession(ws));
     }
 
     @Override
@@ -22,15 +20,13 @@ public class PlainCodeHighlighter implements NutsCodeHighlighter {
     }
 
     @Override
-    public NutsText tokenToText(String text, String nodeType, NutsSession session) {
-        factory.setSession(session);
-        return factory.ofPlain(text);
+    public NutsText tokenToText(String text, String nodeType, NutsTexts txt, NutsSession session) {
+        return txt.ofPlain(text);
     }
 
     @Override
-    public NutsText stringToText(String text, NutsSession session) {
-        factory.setSession(session);
-        return factory.ofPlain(text);
+    public NutsText stringToText(String text, NutsTexts txt, NutsSession session) {
+        return txt.ofPlain(text);
     }
 
     @Override

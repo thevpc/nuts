@@ -334,56 +334,56 @@ public class DefaultNutsIdFormat extends DefaultFormatBase<NutsIdFormat> impleme
         boolean enabled = a.isActive();
         switch (a.getKey().getString()) {
             case "--omit-env": {
-                boolean val = cmdLine.nextBoolean().getValue().getBoolean();
+                boolean val = cmdLine.nextBoolean().getBooleanValue();
                 if (enabled) {
                     setOmitOtherProperties(val);
                 }
                 return true;
             }
             case "--omit-face": {
-                boolean val = cmdLine.nextBoolean().getValue().getBoolean();
+                boolean val = cmdLine.nextBoolean().getBooleanValue();
                 if (enabled) {
                     setOmitFace(val);
                 }
                 return true;
             }
             case "--omit-group": {
-                boolean val = cmdLine.nextBoolean().getValue().getBoolean();
+                boolean val = cmdLine.nextBoolean().getBooleanValue();
                 if (enabled) {
                     setOmitGroupId(val);
                 }
                 return true;
             }
             case "--omit-imported-group": {
-                boolean val = cmdLine.nextBoolean().getValue().getBoolean();
+                boolean val = cmdLine.nextBoolean().getBooleanValue();
                 if (enabled) {
                     setOmitImportedGroupId(val);
                 }
                 return true;
             }
             case "--omit-repo": {
-                boolean val = cmdLine.nextBoolean().getValue().getBoolean();
+                boolean val = cmdLine.nextBoolean().getBooleanValue();
                 if (enabled) {
                     setOmitRepository(val);
                 }
                 return true;
             }
             case "--highlight-imported-group": {
-                boolean val = cmdLine.nextBoolean().getValue().getBoolean();
+                boolean val = cmdLine.nextBoolean().getBooleanValue();
                 if (enabled) {
                     setHighlightImportedGroupId(val);
                 }
                 return true;
             }
             case "--highlight-optional": {
-                boolean val = cmdLine.nextBoolean().getValue().getBoolean();
+                boolean val = cmdLine.nextBoolean().getBooleanValue();
                 if (enabled) {
                     setHighlightOptional(val);
                 }
                 return true;
             }
             case "--highlight-scope": {
-                boolean val = cmdLine.nextBoolean().getValue().getBoolean();
+                boolean val = cmdLine.nextBoolean().getBooleanValue();
                 if (enabled) {
                     setHighlightScope(val);
                 }

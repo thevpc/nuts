@@ -18,6 +18,13 @@ public class DefaultNutsLogger implements NutsLogger {
     private int suspendedMax = 100;
     private boolean suspendTerminalMode = false;
 
+    public DefaultNutsLogger(NutsWorkspace workspace, NutsSession session,Class log,boolean suspended) {
+        this(workspace,session, log.getName());
+        if(suspended){
+            suspendTerminal();
+        }
+    }
+
     public DefaultNutsLogger(NutsWorkspace workspace, NutsSession session,Class log) {
         this(workspace,session, log.getName());
     }

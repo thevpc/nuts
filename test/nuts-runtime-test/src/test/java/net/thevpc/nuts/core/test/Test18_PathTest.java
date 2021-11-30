@@ -156,6 +156,43 @@ public class Test18_PathTest {
         long c = s.walk().count();
     }
 
+
+    @Test
+    public void testHtmlfs5() {
+        NutsSession session = TestUtils.openNewTestWorkspace();
+        NutsPath s = NutsPath.of("htmlfs:" + getClass().getResource("/net/thevpc/nuts/core/test/htmlfs-maven-central-01.html"), session);
+        TestUtils.println("------------ LIST ----------");
+        Set<String> children = new HashSet<>();
+        for (NutsPath nutsPath : s.list()) {
+            TestUtils.println(nutsPath);
+            children.add(nutsPath.toString());
+        }
+        Assertions.assertEquals(3, children.size());
+        TestUtils.println("------------ WALK ----------");
+        s.walk().forEach(x -> {
+            TestUtils.println(x);
+        });
+        long c = s.walk().count();
+    }
+
+    @Test
+    public void testHtmlfs6() {
+        NutsSession session = TestUtils.openNewTestWorkspace();
+        NutsPath s = NutsPath.of("htmlfs:" + getClass().getResource("/net/thevpc/nuts/core/test/htmlfs-jetty-01.html"), session);
+        TestUtils.println("------------ LIST ----------");
+        Set<String> children = new HashSet<>();
+        for (NutsPath nutsPath : s.list()) {
+            TestUtils.println(nutsPath);
+            children.add(nutsPath.toString());
+        }
+        Assertions.assertEquals(3, children.size());
+        TestUtils.println("------------ WALK ----------");
+        s.walk().forEach(x -> {
+            TestUtils.println(x);
+        });
+        long c = s.walk().count();
+    }
+
     /**
      * cannot test because of rate limit
      * {"message":"API rate limit exceeded for 196.235.210.26. (But here's the good news: Authenticated requests get a higher rate limit. Check out the documentation for more details.)","documentation_url":"https://docs.github.com/rest/overview/resources-in-the-rest-api#rate-limiting"}

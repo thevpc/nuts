@@ -29,9 +29,9 @@ package net.thevpc.nuts.boot;
 import net.thevpc.nuts.NutsBootOptions;
 
 class PrivateNutsUtilWorkspaceOptions {
-    static boolean isBootOptional(String name, NutsBootOptions woptions) {
-        for (String property : woptions.getCustomOptions()) {
-            PrivateNutsArgumentImpl a = new PrivateNutsArgumentImpl(property, '=');
+    static boolean isBootOptional(String name, NutsBootOptions bOptions) {
+        for (String property : bOptions.getCustomOptions()) {
+            PrivateNutsArgument a = new PrivateNutsArgument(property, '=');
             if (a.getKey().getString().equals("boot-" + name)) {
                 return true;
             }
@@ -39,9 +39,9 @@ class PrivateNutsUtilWorkspaceOptions {
         return false;
     }
 
-    static boolean isBootOptional(NutsBootOptions woptions) {
-        for (String property : woptions.getCustomOptions()) {
-            PrivateNutsArgumentImpl a = new PrivateNutsArgumentImpl(property, '=');
+    static boolean isBootOptional(NutsBootOptions bOptions) {
+        for (String property : bOptions.getCustomOptions()) {
+            PrivateNutsArgument a = new PrivateNutsArgument(property, '=');
             if (a.getKey().getString().equals("boot-optional")) {
                 return true;
             }

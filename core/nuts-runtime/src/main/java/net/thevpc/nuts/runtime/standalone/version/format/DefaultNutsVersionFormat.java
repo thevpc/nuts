@@ -35,7 +35,7 @@ public class DefaultNutsVersionFormat extends DefaultFormatBase<NutsVersionForma
         switch (a.getKey().getString()) {
             case "-a":
             case "--all": {
-                boolean val = cmdLine.nextBoolean().getValue().getBoolean();
+                boolean val = cmdLine.nextBoolean().getBooleanValue();
                 if (enabled) {
                     this.all = val;
                 }

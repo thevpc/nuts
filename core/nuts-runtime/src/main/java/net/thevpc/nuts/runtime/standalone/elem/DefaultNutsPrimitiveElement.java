@@ -1,7 +1,7 @@
 /**
  * ====================================================================
- *            Nuts : Network Updatable Things Service
- *                  (universal package manager)
+ * Nuts : Network Updatable Things Service
+ * (universal package manager)
  * <br>
  * is a new Open Source Package Manager to help install packages and libraries
  * for runtime execution. Nuts is the ultimate companion for maven (and other
@@ -10,7 +10,7 @@
  * other 'things' . Its based on an extensible architecture to help supporting a
  * large range of sub managers / repositories.
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc] Licensed under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -34,27 +34,37 @@ import java.util.Objects;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 
 /**
- *
  * @author thevpc
  */
 class DefaultNutsPrimitiveElement extends AbstractNutsElement implements NutsPrimitiveElement {
 
     public static final String[] DATE_FORMATS = {
-        "yyyy-MM-dd HH:mm:ss.SSS",
-        "yyyy-MM-dd HH:mm:ss",
-        "yyyy-MM-dd'T'HH:mm:ss.SSSX"
+            "yyyy-MM-dd HH:mm:ss.SSS",
+            "yyyy-MM-dd HH:mm:ss",
+            "yyyy-MM-dd'T'HH:mm:ss.SSSX"
     };
 
     private final Object value;
 
     DefaultNutsPrimitiveElement(NutsElementType type, Object value, NutsSession session) {
-        super(type,session);
+        super(type, session);
         this.value = value;
     }
 
-    @Override
-    public Object getValue() {
-        return value;
+    public static Instant parseDate(String s) {
+        try {
+            return DateTimeFormatter.ISO_INSTANT.parse(s, Instant::from);
+        } catch (Exception ex) {
+            //
+        }
+        for (String f : DATE_FORMATS) {
+            try {
+                return new SimpleDateFormat(f).parse(s).toInstant();
+            } catch (Exception ex) {
+                //
+            }
+        }
+        throw new IllegalArgumentException("invalid date " + s);
     }
 
 //    @Override
@@ -62,28 +72,48 @@ class DefaultNutsPrimitiveElement extends AbstractNutsElement implements NutsPri
 //        return (NutsString)value;
 //    }
 
-    
     @Override
-    public String getString() {
-        return value == null ? null : value.toString();
+    public Object getValue() {
+        return value;
     }
 
     @Override
-    public boolean isEmpty() {
-        switch (type()) {
-            case NULL: {
-                return true;
-            }
-            case STRING:
-//            case NUTS_STRING: 
-            {
-                return toString().isEmpty();
+    public Instant getInstant() {
+        if (value == null || value instanceof Boolean) {
+            return Instant.MIN;
+        }
+        if (value instanceof Number) {
+            return Instant.ofEpochMilli(((Number) value).longValue());
+        }
+        if (value instanceof Date) {
+            return ((Date) value).toInstant();
+        }
+        if (value instanceof Instant) {
+            return ((Instant) value);
+        }
+        String s = String.valueOf(value);
+        try {
+            return DateTimeFormatter.ISO_INSTANT.parse(s, Instant::from);
+        } catch (Exception ex) {
+            //
+        }
+        for (String f : DATE_FORMATS) {
+            try {
+                return new SimpleDateFormat(f).parse(s).toInstant();
+            } catch (Exception ex) {
+                //
             }
         }
-        return false;
+        if (isLong()) {
+            try {
+                return Instant.ofEpochMilli(getLong());
+            } catch (Exception ex) {
+                //
+            }
+        }
+        return Instant.MIN;
     }
 
-    
     @Override
     public Number getNumber() {
         if (value == null) {
@@ -136,6 +166,256 @@ class DefaultNutsPrimitiveElement extends AbstractNutsElement implements NutsPri
     }
 
     @Override
+    public Boolean getBoolean(Boolean emptyValue, Boolean errorValue) {
+        if (value == null) {
+            return emptyValue;
+        }
+        if (value instanceof Boolean) {
+            return (Boolean) value;
+        }
+        if (value instanceof Number) {
+            return ((Number) value).doubleValue() != 0;
+        }
+        return NutsUtilStrings.parseBoolean(String.valueOf(value), emptyValue, errorValue);
+    }
+
+    @Override
+    public Boolean getBoolean(Boolean emptyValue) {
+        return getBoolean(emptyValue, emptyValue);
+    }
+
+    @Override
+    public double getDouble() {
+        return getDouble(0.0,0.0);
+    }
+
+    @Override
+    public Double getDouble(Double emptyValue, Double errorValue) {
+        if (value == null) {
+            return 0.0;
+        }
+        if (value instanceof Boolean) {
+            return ((Boolean) value) ? 1.0 : 0.0;
+        }
+        if (value instanceof Number) {
+            return ((Number) value).doubleValue();
+        }
+        String s = String.valueOf(value);
+        if(NutsBlankable.isBlank(s)){
+            return emptyValue;
+        }
+        try {
+            return Double.parseDouble(s);
+        } catch (NumberFormatException ex) {
+            return errorValue;
+        }
+    }
+
+    @Override
+    public float getFloat() {
+        return getFloat(0f,0f);
+    }
+
+    @Override
+    public int getInt() {
+        return getInt(0, 0);
+    }
+
+    @Override
+    public Integer getInt(Integer emptyOrErrorValue) {
+        return getInt(emptyOrErrorValue,emptyOrErrorValue);
+    }
+
+    @Override
+    public Long getLong(Long emptyOrErrorValue) {
+        return getLong(emptyOrErrorValue,emptyOrErrorValue);
+    }
+
+    @Override
+    public Short getShort(Short emptyOrErrorValue) {
+        return getShort(emptyOrErrorValue,emptyOrErrorValue);
+    }
+
+    @Override
+    public Byte getByte(Byte emptyOrErrorValue) {
+        return getByte(emptyOrErrorValue,emptyOrErrorValue);
+    }
+
+    @Override
+    public Float getFloat(Float emptyOrErrorValue) {
+        return getFloat(emptyOrErrorValue,emptyOrErrorValue);
+    }
+
+    @Override
+    public Double getDouble(Double emptyOrErrorValue) {
+        return getDouble(emptyOrErrorValue,emptyOrErrorValue);
+    }
+
+    @Override
+    public Integer getInt(Integer emptyValue, Integer errorValue) {
+        Long r = getLong(
+                emptyValue == null ? null : emptyValue.longValue(),
+                errorValue == null ? null : errorValue.longValue()
+        );
+        if (r == null) {
+            return null;
+        }
+        int x = r.intValue();
+        if ((long) x == r) {
+            return x;
+        }
+        return errorValue;
+    }
+
+    @Override
+    public Float getFloat(Float emptyValue, Float errorValue) {
+        Double r = getDouble(
+                emptyValue == null ? null : emptyValue.doubleValue(),
+                errorValue == null ? null : errorValue.doubleValue()
+        );
+        if (r == null) {
+            return null;
+        }
+        float x = r.floatValue();
+        if ((double) x == r) {
+            return x;
+        }
+        return errorValue;
+    }
+
+    @Override
+    public Long getLong(Long emptyValue, Long errorValue) {
+        if (isBlank()) {
+            return emptyValue;
+        }
+        if (value instanceof Number) {
+            return ((Number) value).longValue();
+        }
+        if (value instanceof CharSequence) {
+            String s = value.toString();
+            if (s.indexOf('.') >= 0) {
+                try {
+                    double a = Double.parseDouble(s);
+                    if (a == (long) a) {
+                        return (long) a;
+                    }
+                    return errorValue;
+                } catch (NumberFormatException ex) {
+                    return errorValue;
+                }
+            } else {
+                try {
+                    return Long.parseLong(s);
+                } catch (NumberFormatException ex) {
+                    return errorValue;
+                }
+            }
+        }
+        if (value instanceof Boolean) {
+            return ((Boolean) value) ? 1L : 0L;
+        }
+        return errorValue;
+    }
+
+    @Override
+    public byte getByte() {
+        return getByte((byte) 0, (byte) 0);
+    }
+
+    @Override
+    public short getShort() {
+        return getShort((short) 0, (short) 0);
+    }
+
+    @Override
+    public long getLong() {
+        if (value == null) {
+            return 0;
+        }
+        if (value instanceof Boolean) {
+            return ((Boolean) value) ? 1 : 0;
+        }
+        if (value instanceof Number) {
+            return ((Number) value).longValue();
+        }
+        if (value instanceof Date) {
+            return (int) ((Date) value).getTime();
+        }
+        String s = String.valueOf(value);
+        if (s.indexOf('.') >= 0) {
+            try {
+                return (long) Double.parseDouble(s);
+            } catch (NumberFormatException ex) {
+                return 0;
+            }
+        } else {
+            try {
+                return Integer.parseInt(s);
+            } catch (NumberFormatException ex) {
+                try {
+                    return Long.parseLong(s);
+                } catch (NumberFormatException ex2) {
+                    return 0;
+                }
+            }
+        }
+    }
+
+    @Override
+    public String getString() {
+        return value == null ? null : value.toString();
+    }
+
+    @Override
+    public String getString(String defaultValue) {
+        return value == null ? defaultValue : value.toString();
+    }
+
+    @Override
+    public boolean isBoolean() {
+        return !isBlank() && getBoolean(null, null) != null;
+    }
+
+    public Byte getByte(Byte emptyValue, Byte errorValue) {
+        Long r = getLong(
+                emptyValue == null ? null : emptyValue.longValue(),
+                errorValue == null ? null : errorValue.longValue()
+        );
+        if (r == null) {
+            return null;
+        }
+        byte x = r.byteValue();
+        if ((long) x == r) {
+            return x;
+        }
+        return errorValue;
+    }
+
+    public Short getShort(Short emptyValue, Short errorValue) {
+        Long r = getLong(
+                emptyValue == null ? null : emptyValue.longValue(),
+                errorValue == null ? null : errorValue.longValue()
+        );
+        if (r == null) {
+            return null;
+        }
+        short x = r.shortValue();
+        if ((long) x == r) {
+            return x;
+        }
+        return errorValue;
+    }
+
+    public boolean isBlank() {
+        return NutsBlankable.isBlank(value);
+    }
+
+    @Override
+    public boolean isNull() {
+        return value == null;
+    }
+
+    @Override
     public boolean isByte() {
         if (value == null) {
             return false;
@@ -148,28 +428,6 @@ class DefaultNutsPrimitiveElement extends AbstractNutsElement implements NutsPri
         } else if (value instanceof String) {
             try {
                 Byte.parseByte(value.toString());
-                return true;
-            } catch (Exception ex) {
-                //
-            }
-        }
-        return false;
-    }
-
-    @Override
-    public boolean isShort() {
-        if (value == null) {
-            return false;
-        } else if (value instanceof Number) {
-            switch (value.getClass().getName()) {
-                case "java.lang.Byte":
-                case "java.lang.Short": {
-                    return true;
-                }
-            }
-        } else if (value instanceof String) {
-            try {
-                Short.parseShort(value.toString());
                 return true;
             } catch (Exception ex) {
                 //
@@ -226,23 +484,20 @@ class DefaultNutsPrimitiveElement extends AbstractNutsElement implements NutsPri
     }
 
     @Override
-    public boolean isDouble() {
+    public boolean isShort() {
         if (value == null) {
             return false;
         } else if (value instanceof Number) {
             switch (value.getClass().getName()) {
                 case "java.lang.Byte":
-                case "java.lang.Short":
-                case "java.lang.Integer":
-                case "java.lang.Long":
-                case "java.lang.Float":
-                case "java.lang.Double": {
+                case "java.lang.Short": {
                     return true;
                 }
             }
         } else if (value instanceof String) {
             try {
-                Double.parseDouble(value.toString());
+                Short.parseShort(value.toString());
+                return true;
             } catch (Exception ex) {
                 //
             }
@@ -275,261 +530,28 @@ class DefaultNutsPrimitiveElement extends AbstractNutsElement implements NutsPri
     }
 
     @Override
-    public byte getByte() {
+    public boolean isDouble() {
         if (value == null) {
-            return 0;
-        }
-        if (value instanceof Boolean) {
-            return (byte) (((Boolean) value) ? 1 : 0);
-        }
-        if (value instanceof Number) {
-            return ((Number) value).byteValue();
-        }
-        if (value instanceof Date) {
-            return (byte) ((Date) value).getTime();
-        }
-        String s = String.valueOf(value);
-        if (s.indexOf('.') >= 0) {
-            try {
-                return (byte) Double.parseDouble(s);
-            } catch (NumberFormatException ex) {
-                return 0;
-            }
-        } else {
-            try {
-                return Byte.parseByte(s);
-            } catch (NumberFormatException ex) {
-                try {
-                    return (byte) Long.parseLong(s);
-                } catch (NumberFormatException ex2) {
-                    return 0;
+            return false;
+        } else if (value instanceof Number) {
+            switch (value.getClass().getName()) {
+                case "java.lang.Byte":
+                case "java.lang.Short":
+                case "java.lang.Integer":
+                case "java.lang.Long":
+                case "java.lang.Float":
+                case "java.lang.Double": {
+                    return true;
                 }
             }
-        }
-    }
-
-    @Override
-    public short getShort() {
-        if (value == null) {
-            return 0;
-        }
-        if (value instanceof Boolean) {
-            return (short) (((Boolean) value) ? 1 : 0);
-        }
-        if (value instanceof Number) {
-            return ((Number) value).shortValue();
-        }
-        if (value instanceof Date) {
-            return (short) ((Date) value).getTime();
-        }
-        String s = String.valueOf(value);
-        if (s.indexOf('.') >= 0) {
+        } else if (value instanceof String) {
             try {
-                return (short) Double.parseDouble(s);
-            } catch (NumberFormatException ex) {
-                return 0;
-            }
-        } else {
-            try {
-                return Short.parseShort(s);
-            } catch (NumberFormatException ex) {
-                try {
-                    return (short) Long.parseLong(s);
-                } catch (NumberFormatException ex2) {
-                    return 0;
-                }
-            }
-        }
-    }
-
-    @Override
-    public int getInt() {
-        if (value == null) {
-            return 0;
-        }
-        if (value instanceof Boolean) {
-            return ((Boolean) value) ? 1 : 0;
-        }
-        if (value instanceof Number) {
-            return ((Number) value).intValue();
-        }
-        if (value instanceof Date) {
-            return (int) ((Date) value).getTime();
-        }
-        String s = String.valueOf(value);
-        if (s.indexOf('.') >= 0) {
-            try {
-                return (int) Double.parseDouble(s);
-            } catch (NumberFormatException ex) {
-                return 0;
-            }
-        } else {
-            try {
-                return Integer.parseInt(s);
-            } catch (NumberFormatException ex) {
-                try {
-                    return (int) Long.parseLong(s);
-                } catch (NumberFormatException ex2) {
-                    return 0;
-                }
-            }
-        }
-    }
-
-    @Override
-    public long getLong() {
-        if (value == null) {
-            return 0;
-        }
-        if (value instanceof Boolean) {
-            return ((Boolean) value) ? 1 : 0;
-        }
-        if (value instanceof Number) {
-            return ((Number) value).longValue();
-        }
-        if (value instanceof Date) {
-            return (int) ((Date) value).getTime();
-        }
-        String s = String.valueOf(value);
-        if (s.indexOf('.') >= 0) {
-            try {
-                return (long) Double.parseDouble(s);
-            } catch (NumberFormatException ex) {
-                return 0;
-            }
-        } else {
-            try {
-                return Integer.parseInt(s);
-            } catch (NumberFormatException ex) {
-                try {
-                    return Long.parseLong(s);
-                } catch (NumberFormatException ex2) {
-                    return 0;
-                }
-            }
-        }
-    }
-
-    @Override
-    public double getDouble() {
-        if (value == null) {
-            return 0;
-        }
-        if (value instanceof Boolean) {
-            return ((Boolean) value) ? 1 : 0;
-        }
-        if (value instanceof Number) {
-            return ((Number) value).doubleValue();
-        }
-        if (value instanceof Date) {
-            return (double) ((Date) value).getTime();
-        }
-        String s = String.valueOf(value);
-        try {
-            return Double.parseDouble(s);
-        } catch (NumberFormatException ex) {
-            return 0;
-        }
-    }
-
-    @Override
-    public float getFloat() {
-        if (value == null) {
-            return 0;
-        }
-        if (value instanceof Boolean) {
-            return ((Boolean) value) ? 1 : 0;
-        }
-        if (value instanceof Number) {
-            return ((Number) value).floatValue();
-        }
-        if (value instanceof Date) {
-            return (float) ((Date) value).getTime();
-        }
-        String s = String.valueOf(value);
-        try {
-            return Float.parseFloat(s);
-        } catch (NumberFormatException ex) {
-            return 0;
-        }
-    }
-
-    @Override
-    public Instant getInstant() {
-        if (value == null || value instanceof Boolean) {
-            return Instant.MIN;
-        }
-        if (value instanceof Number) {
-            return Instant.ofEpochMilli(((Number) value).longValue());
-        }
-        if (value instanceof Date) {
-            return ((Date) value).toInstant();
-        }
-        if (value instanceof Instant) {
-            return ((Instant) value);
-        }
-        String s = String.valueOf(value);
-        try {
-            return DateTimeFormatter.ISO_INSTANT.parse(s, Instant::from);
-        } catch (Exception ex) {
-            //
-        }
-        for (String f : DATE_FORMATS) {
-            try {
-                return new SimpleDateFormat(f).parse(s).toInstant();
+                Double.parseDouble(value.toString());
             } catch (Exception ex) {
                 //
             }
         }
-        if (isLong()) {
-            try {
-                return Instant.ofEpochMilli(getLong());
-            } catch (Exception ex) {
-                //
-            }
-        }
-        return Instant.MIN;
-    }
-
-    @Override
-    public boolean isNull() {
-        return value == null;
-    }
-
-    public static Instant parseDate(String s) {
-        try {
-            return DateTimeFormatter.ISO_INSTANT.parse(s, Instant::from);
-        } catch (Exception ex) {
-            //
-        }
-        for (String f : DATE_FORMATS) {
-            try {
-                return new SimpleDateFormat(f).parse(s).toInstant();
-            } catch (Exception ex) {
-                //
-            }
-        }
-        throw new IllegalArgumentException("invalid date " + s);
-    }
-
-    @Override
-    public String toString() {
-        switch (type()) {
-            case NULL:
-                return "null";
-            case STRING:
-                return CoreStringUtils.dblQuote(getString());
-//            case NUTS_STRING:
-//                return CoreStringUtils.dblQuote(getNutsString().toString());
-            case BOOLEAN:
-                return String.valueOf(getBoolean());
-            case INTEGER:
-            case FLOAT:
-                return String.valueOf(getNumber());
-            case INSTANT:
-                return CoreStringUtils.dblQuote(getInstant().toString());
-        }
-        return getString();
+        return false;
     }
 
     @Override
@@ -558,11 +580,46 @@ class DefaultNutsPrimitiveElement extends AbstractNutsElement implements NutsPri
     }
 
     @Override
+    public String toString() {
+        switch (type()) {
+            case NULL:
+                return "null";
+            case STRING:
+                return CoreStringUtils.dblQuote(getString());
+//            case NUTS_STRING:
+//                return CoreStringUtils.dblQuote(getNutsString().toString());
+            case BOOLEAN:
+                return String.valueOf(getBoolean());
+            case INTEGER:
+            case FLOAT:
+                return String.valueOf(getNumber());
+            case INSTANT:
+                return CoreStringUtils.dblQuote(getInstant().toString());
+        }
+        return getString();
+    }
+
+    @Override
     public NutsObjectElement toObject() {
         return NutsElements.of(session)
                 .ofObject()
-                .set("value",this)
+                .set("value", this)
                 .build();
+    }
+
+    @Override
+    public boolean isEmpty() {
+        switch (type()) {
+            case NULL: {
+                return true;
+            }
+            case STRING:
+//            case NUTS_STRING:
+            {
+                return toString().isEmpty();
+            }
+        }
+        return false;
     }
 
 }

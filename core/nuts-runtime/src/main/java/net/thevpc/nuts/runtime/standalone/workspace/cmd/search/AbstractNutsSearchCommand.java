@@ -865,7 +865,7 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
         boolean enabled = a.isActive();
         switch (a.getKey().getString()) {
             case "--inline-dependencies": {
-                boolean val = cmdLine.nextBoolean().getValue().getBoolean();
+                boolean val = cmdLine.nextBoolean().getBooleanValue();
                 if (enabled) {
                     this.setInlineDependencies(val);
                 }
@@ -881,7 +881,7 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
                 return true;
             }
             case "--distinct": {
-                boolean val = cmdLine.nextBoolean().getValue().getBoolean();
+                boolean val = cmdLine.nextBoolean().getBooleanValue();
                 if (enabled) {
                     this.setDistinct(val);
                 }
@@ -889,14 +889,14 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
             }
             case "--default":
             case "--default-versions": {
-                Boolean val = cmdLine.nextBoolean().getValue().getBoolean(null);
+                Boolean val = cmdLine.nextBoolean().getBooleanValue(null,false);
                 if (enabled) {
                     this.setDefaultVersions(val);
                 }
                 return true;
             }
             case "--duplicates": {
-                boolean val = !cmdLine.nextBoolean().getValue().getBoolean();
+                boolean val = !cmdLine.nextBoolean().getBooleanValue();
                 if (enabled) {
                     this.setDistinct(val);
                 }
@@ -904,14 +904,14 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
             }
             case "-s":
             case "--sort": {
-                boolean val = cmdLine.nextBoolean().getValue().getBoolean();
+                boolean val = cmdLine.nextBoolean().getBooleanValue();
                 if (enabled) {
                     this.setSorted(val);
                 }
                 return true;
             }
             case "--base": {
-                boolean val = cmdLine.nextBoolean().getValue().getBoolean();
+                boolean val = cmdLine.nextBoolean().getBooleanValue();
                 if (enabled) {
                     this.includeBasePackage = val;
                 }
@@ -919,7 +919,7 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
             }
             case "--lib":
             case "--libs": {
-                boolean val = cmdLine.nextBoolean().getValue().getBoolean();
+                boolean val = cmdLine.nextBoolean().getBooleanValue();
                 if (enabled) {
                     this.setLib(val);
                 }
@@ -927,7 +927,7 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
             }
             case "--app":
             case "--apps": {
-                boolean val = cmdLine.nextBoolean().getValue().getBoolean();
+                boolean val = cmdLine.nextBoolean().getBooleanValue();
                 if (enabled) {
                     this.setExec(val);
                 }
@@ -935,7 +935,7 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
             }
             case "--companion":
             case "--companions": {
-                boolean val = cmdLine.nextBoolean().getValue().getBoolean();
+                boolean val = cmdLine.nextBoolean().getBooleanValue();
                 if (enabled) {
                     this.setCompanion(val);
                 }
@@ -943,14 +943,14 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
             }
             case "--extension":
             case "--extensions": {
-                boolean val = cmdLine.nextBoolean().getValue().getBoolean();
+                boolean val = cmdLine.nextBoolean().getBooleanValue();
                 if (enabled) {
                     this.setExtension(val);
                 }
                 return true;
             }
             case "--runtime": {
-                boolean val = cmdLine.nextBoolean().getValue().getBoolean();
+                boolean val = cmdLine.nextBoolean().getBooleanValue();
                 if (enabled) {
                     this.setRuntime(val);
                 }
@@ -965,7 +965,7 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
             }
             case "--nuts-app":
             case "--nuts-apps": {
-                boolean val = cmdLine.nextBoolean().getValue().getBoolean();
+                boolean val = cmdLine.nextBoolean().getBooleanValue();
                 if (enabled) {
                     this.setApplication(val);
                 }
@@ -1014,7 +1014,7 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
                 return true;
             }
             case "--print": {
-                boolean val = cmdLine.nextBoolean().getValue().getBoolean();
+                boolean val = cmdLine.nextBoolean().getBooleanValue();
                 if (enabled) {
                     this.setPrintResult(val);
                 }
@@ -1024,7 +1024,7 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
                 NutsArgument b = cmdLine.nextBoolean();
                 if (enabled) {
                     checkSession();
-                    this.setInstallStatus(NutsInstallStatusFilters.of(session).byDeployed(b.getValue().getBoolean()));
+                    this.setInstallStatus(NutsInstallStatusFilters.of(session).byDeployed(b.getBooleanValue()));
                 }
                 return true;
             }
@@ -1034,7 +1034,7 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
                 if (enabled) {
                     checkSession();
                     this.setInstallStatus(
-                            NutsInstallStatusFilters.of(session).byInstalled(b.getValue().getBoolean())
+                            NutsInstallStatusFilters.of(session).byInstalled(b.getBooleanValue())
                     );
                 }
                 return true;
@@ -1043,7 +1043,7 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
                 NutsArgument b = cmdLine.nextBoolean();
                 if (enabled) {
                     checkSession();
-                    this.setInstallStatus(NutsInstallStatusFilters.of(session).byRequired(b.getValue().getBoolean()));
+                    this.setInstallStatus(NutsInstallStatusFilters.of(session).byRequired(b.getBooleanValue()));
                 }
                 return true;
             }
@@ -1051,7 +1051,7 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
                 NutsArgument b = cmdLine.nextBoolean();
                 if (enabled) {
                     checkSession();
-                    this.setInstallStatus(NutsInstallStatusFilters.of(session).byObsolete(b.getValue().getBoolean()));
+                    this.setInstallStatus(NutsInstallStatusFilters.of(session).byObsolete(b.getBooleanValue()));
                 }
                 return true;
             }

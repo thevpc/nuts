@@ -66,12 +66,17 @@ public interface NutsPrimitiveElement extends NutsElement {
      */
     boolean getBoolean();
 
+    Boolean getBoolean(Boolean emptyValue, Boolean errorValue);
+    Boolean getBoolean(Boolean emptyOrErrorValue);
+
     /**
      * value as any java Double. Best effort is applied to convert to this type.
      *
      * @return value as java double
      */
     double getDouble();
+
+    Double getDouble(Double emptyValue, Double errorValue);
 
     /**
      * value as any java Float. Best effort is applied to convert to this type.
@@ -87,6 +92,24 @@ public interface NutsPrimitiveElement extends NutsElement {
      * @return value as java integer
      */
     int getInt();
+
+    Integer getInt(Integer emptyOrErrorValue);
+
+    Long getLong(Long emptyOrErrorValue);
+
+    Short getShort(Short emptyOrErrorValue);
+
+    Byte getByte(Byte emptyOrErrorValue);
+
+    Float getFloat(Float emptyOrErrorValue);
+
+    Double getDouble(Double emptyOrErrorValue);
+
+    Integer getInt(Integer emptyValue, Integer errorValue);
+
+    Float getFloat(Float emptyValue, Float errorValue);
+
+    Long getLong(Long emptyValue, Long errorValue);
 
     /**
      * value as any java Integer. Best effort is applied to convert to this
@@ -117,6 +140,8 @@ public interface NutsPrimitiveElement extends NutsElement {
      * @return value as java string
      */
     String getString();
+
+    String getString(String defaultValue);
 
     /**
      * true if the value is null (in which case, the type should be NULL)
@@ -167,4 +192,5 @@ public interface NutsPrimitiveElement extends NutsElement {
      */
     boolean isDouble();
 
+    boolean isBoolean();
 }

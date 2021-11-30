@@ -32,7 +32,9 @@ import net.thevpc.nuts.runtime.standalone.io.terminals.DefaultNutsSystemTerminal
 import net.thevpc.nuts.runtime.standalone.io.terminals.DefaultSystemTerminal;
 import net.thevpc.nuts.runtime.optional.jansi.OptionalJansi;
 import net.thevpc.nuts.runtime.standalone.io.printstream.NutsPrintStreamSystem;
-import net.thevpc.nuts.runtime.standalone.workspace.CoreNutsWorkspaceInitInformation;
+import net.thevpc.nuts.runtime.standalone.workspace.CoreNutsBootOptions;
+import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceExt;
+import net.thevpc.nuts.runtime.standalone.workspace.config.NutsWorkspaceModel;
 
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -49,23 +51,25 @@ public class DefaultNutsBootModel implements NutsBootModel {
     protected NutsWorkspace workspace;
     protected boolean firstBoot;
     protected boolean initializing;
-    protected CoreNutsWorkspaceInitInformation workspaceInitInformation;
+    protected CoreNutsBootOptions bOptions;
     protected NutsSession bootSession;
     private NutsPrintStream stdout;
     private NutsPrintStream stderr;
     private InputStream stdin;
-    private Map<String, NutsVal> customBootOptions = new LinkedHashMap<>();
+    private Map<String, NutsArgument> customBootOptions;
     private StdFd bootStdFd;
 
-    public DefaultNutsBootModel(NutsWorkspace workspace, CoreNutsWorkspaceInitInformation workspaceInitInformation) {
+    public DefaultNutsBootModel(NutsWorkspace workspace, NutsBootOptions bOption0) {
         this.workspace = workspace;
         this.initializing = true;
-        this.workspaceInitInformation = workspaceInitInformation;
-        this.bootSession = new DefaultNutsSession(workspace, this.workspaceInitInformation.getOptions());
+        NutsWorkspaceModel _model = NutsWorkspaceExt.of(workspace).getModel();
+        this.bootSession = new DefaultNutsSession(workspace, bOption0);
+        this.bOptions = new CoreNutsBootOptions(bOption0, workspace, this.bootSession);
+        _model.uuid = bOptions.getUuid();
         bootStdFd = detectAnsiTerminalSupport(NutsOsFamily.getCurrent());
-        NutsTerminalMode terminalMode = workspaceInitInformation.getOptions().getTerminalMode();
+        NutsTerminalMode terminalMode = bOptions.getOptions().getTerminalMode();
         if (terminalMode == null) {
-            if (workspaceInitInformation.getOptions().isBot()) {
+            if (bOptions.getOptions().isBot()) {
                 terminalMode = NutsTerminalMode.FILTERED;
             } else {
                 if(bootStdFd.ansi) {
@@ -82,27 +86,14 @@ public class DefaultNutsBootModel implements NutsBootModel {
         stdin=bootStdFd.in;
         DefaultSystemTerminal sys = new DefaultSystemTerminal(new DefaultNutsSystemTerminalBaseBoot(this));
         bootSession.setTerminal(new DefaultNutsSessionTerminalFromSystem(bootSession,sys));
-
-        String[] properties = workspaceInitInformation.getOptions().getCustomOptions();
-        if (properties != null) {
-            for (String property : properties) {
-                if (property != null) {
-                    DefaultNutsArgument a = new DefaultNutsArgument(property);
-                    if(a.isActive()) {
-                        String key = a.getKey().getString();
-                        this.customBootOptions.put(key, a.getValue());
-                    }
-                }
-            }
-        }
     }
 
-    public CoreNutsWorkspaceInitInformation getInitOptions() {
-        return workspaceInitInformation;
+    public CoreNutsBootOptions getCoreBootOptions() {
+        return bOptions;
     }
 
     public NutsWorkspaceOptions getBootOptions() {
-        return workspaceInitInformation.getOptions();
+        return bOptions.getOptions();
     }
 
     public StdFd getBootStdFd() {
@@ -186,7 +177,23 @@ public class DefaultNutsBootModel implements NutsBootModel {
         return new StdFd(System.in,System.out,System.err,false);
     }
 
-    public Map<String, NutsVal> getCustomBootOptions() {
+    public Map<String, NutsArgument> getCustomBootOptions() {
+        if(customBootOptions==null){
+            customBootOptions=new LinkedHashMap<>();
+            String[] properties = bOptions.getOptions().getCustomOptions();
+            NutsElements elems = NutsElements.of(bootSession);
+            if (properties != null) {
+                for (String property : properties) {
+                    if (property != null) {
+                        DefaultNutsArgument a = new DefaultNutsArgument(property,elems);
+                        if(a.isActive()) {
+                            String key = a.getKey().getString();
+                            this.customBootOptions.put(key, a);
+                        }
+                    }
+                }
+            }
+        }
         return customBootOptions;
     }
 }

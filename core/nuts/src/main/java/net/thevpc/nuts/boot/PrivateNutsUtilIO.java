@@ -34,7 +34,6 @@ import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.net.URLConnection;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.file.Files;
@@ -54,11 +53,11 @@ public class PrivateNutsUtilIO {
         return new String(Files.readAllBytes(file.toPath()));
     }
 
-    public static InputStream openURLStream(URL url, PrivateNutsLog LOG) {
-        return PrivateMonitoredURLInputStream.of(url,LOG);
+    public static InputStream openURLStream(URL url, PrivateNutsBootLog bLog) {
+        return PrivateNutsMonitoredURLInputStream.of(url,bLog);
     }
 
-    public static Properties loadURLProperties(URL url, File cacheFile, boolean useCache, PrivateNutsLog LOG) {
+    public static Properties loadURLProperties(URL url, File cacheFile, boolean useCache, PrivateNutsBootLog bLog) {
         long startTime = System.currentTimeMillis();
         Properties props = new Properties();
         InputStream inputStream = null;
@@ -70,17 +69,17 @@ public class PrivateNutsUtilIO {
                         inputStream = new FileInputStream(cacheFile);
                         props.load(inputStream);
                         long time = System.currentTimeMillis() - startTime;
-                        LOG.log(Level.CONFIG, NutsLogVerb.SUCCESS, NutsMessage.jstyle("load cached file from  {0}" + ((time > 0) ? " (time {1})" : ""), cacheFile.getPath(), PrivateNutsUtils.formatPeriodMilli(time)));
+                        bLog.log(Level.CONFIG, NutsLogVerb.SUCCESS, NutsMessage.jstyle("load cached file from  {0}" + ((time > 0) ? " (time {1})" : ""), cacheFile.getPath(), PrivateNutsUtils.formatPeriodMilli(time)));
                         return props;
                     } catch (IOException ex) {
-                        LOG.log(Level.CONFIG, NutsLogVerb.FAIL, NutsMessage.jstyle("invalid cache. Ignored {0} : {1}", cacheFile.getPath(), ex.toString()));
+                        bLog.log(Level.CONFIG, NutsLogVerb.FAIL, NutsMessage.jstyle("invalid cache. Ignored {0} : {1}", cacheFile.getPath(), ex.toString()));
                     } finally {
                         if (inputStream != null) {
                             try {
                                 inputStream.close();
                             } catch (Exception ex) {
-                                if (LOG != null) {
-                                    LOG.log(Level.FINE, NutsMessage.jstyle("unable to close stream"), ex);
+                                if (bLog != null) {
+                                    bLog.log(Level.FINE, NutsMessage.jstyle("unable to close stream"), ex);
                                 }
                                 //
                             }
@@ -92,7 +91,7 @@ public class PrivateNutsUtilIO {
             try {
                 if (url != null) {
                     String urlString = url.toString();
-                    inputStream = openURLStream(url,LOG);
+                    inputStream = openURLStream(url,bLog);
                     if (inputStream != null) {
                         props.load(inputStream);
                         if (cacheFile != null) {
@@ -110,24 +109,24 @@ public class PrivateNutsUtilIO {
                                 }
                                 boolean cachedRecovered = cacheFile.isFile();
                                 if (urlFile != null) {
-                                    copy(urlFile, cacheFile, LOG);
+                                    copy(urlFile, cacheFile, bLog);
                                 } else {
-                                    copy(url, cacheFile, LOG);
+                                    copy(url, cacheFile, bLog);
                                 }
                                 long time = System.currentTimeMillis() - startTime;
                                 if (cachedRecovered) {
-                                    LOG.log(Level.CONFIG, NutsLogVerb.CACHE, NutsMessage.jstyle("recover cached prp file {0} (from {1})" + ((time > 0) ? " (time {2})" : ""), cacheFile.getPath(), urlString, PrivateNutsUtils.formatPeriodMilli(time)));
+                                    bLog.log(Level.CONFIG, NutsLogVerb.CACHE, NutsMessage.jstyle("recover cached prp file {0} (from {1})" + ((time > 0) ? " (time {2})" : ""), cacheFile.getPath(), urlString, PrivateNutsUtils.formatPeriodMilli(time)));
                                 } else {
-                                    LOG.log(Level.CONFIG, NutsLogVerb.CACHE, NutsMessage.jstyle("cache prp file {0} (from {1})" + ((time > 0) ? " (time {2})" : ""), cacheFile.getPath(), urlString, PrivateNutsUtils.formatPeriodMilli(time)));
+                                    bLog.log(Level.CONFIG, NutsLogVerb.CACHE, NutsMessage.jstyle("cache prp file {0} (from {1})" + ((time > 0) ? " (time {2})" : ""), cacheFile.getPath(), urlString, PrivateNutsUtils.formatPeriodMilli(time)));
                                 }
                                 return props;
                             }
                         }
                         long time = System.currentTimeMillis() - startTime;
-                        LOG.log(Level.CONFIG, NutsLogVerb.SUCCESS, NutsMessage.jstyle("load props file from  {0}" + ((time > 0) ? " (time {1})" : ""), urlString, PrivateNutsUtils.formatPeriodMilli(time)));
+                        bLog.log(Level.CONFIG, NutsLogVerb.SUCCESS, NutsMessage.jstyle("load props file from  {0}" + ((time > 0) ? " (time {1})" : ""), urlString, PrivateNutsUtils.formatPeriodMilli(time)));
                     } else {
                         long time = System.currentTimeMillis() - startTime;
-                        LOG.log(Level.CONFIG, NutsLogVerb.FAIL, NutsMessage.jstyle("load props file from  {0}" + ((time > 0) ? " (time {1})" : ""), urlString, PrivateNutsUtils.formatPeriodMilli(time)));
+                        bLog.log(Level.CONFIG, NutsLogVerb.FAIL, NutsMessage.jstyle("load props file from  {0}" + ((time > 0) ? " (time {1})" : ""), urlString, PrivateNutsUtils.formatPeriodMilli(time)));
                     }
                 }
             } finally {
@@ -137,7 +136,7 @@ public class PrivateNutsUtilIO {
             }
         } catch (Exception e) {
             long time = System.currentTimeMillis() - startTime;
-            LOG.log(Level.CONFIG, NutsLogVerb.FAIL, NutsMessage.jstyle("load props file from  {0}" + ((time > 0) ? " (time {1})" : ""), String.valueOf(url),
+            bLog.log(Level.CONFIG, NutsLogVerb.FAIL, NutsMessage.jstyle("load props file from  {0}" + ((time > 0) ? " (time {1})" : ""), String.valueOf(url),
                     PrivateNutsUtils.formatPeriodMilli(time)));
         }
         return props;
@@ -210,25 +209,25 @@ public class PrivateNutsUtilIO {
         }
     }
 
-    public static void copy(File ff, File to, PrivateNutsLog LOG) throws IOException {
+    public static void copy(File ff, File to, PrivateNutsBootLog bLog) throws IOException {
         if (to.getParentFile() != null) {
             to.getParentFile().mkdirs();
         }
         if (ff == null || !ff.exists()) {
-            LOG.log(Level.CONFIG, NutsLogVerb.FAIL, NutsMessage.jstyle("not found {0}", ff));
+            bLog.log(Level.CONFIG, NutsLogVerb.FAIL, NutsMessage.jstyle("not found {0}", ff));
             throw new FileNotFoundException(ff == null ? "" : ff.getPath());
         }
         try {
             Files.copy(ff.toPath(), to.toPath(), StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException ex) {
-            LOG.log(Level.CONFIG, NutsLogVerb.FAIL, NutsMessage.jstyle("error copying {0} to {1} : {2}", ff, to, ex.toString()));
+            bLog.log(Level.CONFIG, NutsLogVerb.FAIL, NutsMessage.jstyle("error copying {0} to {1} : {2}", ff, to, ex.toString()));
             throw ex;
         }
     }
 
-    public static void copy(URL url, File to, PrivateNutsLog LOG) throws IOException {
+    public static void copy(URL url, File to, PrivateNutsBootLog bLog) throws IOException {
         try {
-            InputStream in = openURLStream(url,LOG);
+            InputStream in = openURLStream(url,bLog);
             if (in == null) {
                 throw new IOException("empty Stream " + url);
             }
@@ -236,7 +235,7 @@ public class PrivateNutsUtilIO {
                 if (!to.getParentFile().isDirectory()) {
                     boolean mkdirs = to.getParentFile().mkdirs();
                     if (!mkdirs) {
-                        LOG.log(Level.CONFIG, NutsLogVerb.FAIL, NutsMessage.jstyle("error creating folder {0}", url));
+                        bLog.log(Level.CONFIG, NutsLogVerb.FAIL, NutsMessage.jstyle("error creating folder {0}", url));
                     }
                 }
             }
@@ -244,10 +243,10 @@ public class PrivateNutsUtilIO {
             FileOutputStream fos = new FileOutputStream(to);
             fos.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE);
         } catch (FileNotFoundException ex) {
-            LOG.log(Level.CONFIG, NutsLogVerb.FAIL, NutsMessage.jstyle("not found {0}", url));
+            bLog.log(Level.CONFIG, NutsLogVerb.FAIL, NutsMessage.jstyle("not found {0}", url));
             throw ex;
         } catch (IOException ex) {
-            LOG.log(Level.CONFIG, NutsLogVerb.FAIL, NutsMessage.jstyle("error copying {0} to {1} : {2}", url, to, ex.toString()));
+            bLog.log(Level.CONFIG, NutsLogVerb.FAIL, NutsMessage.jstyle("error copying {0} to {1} : {2}", url, to, ex.toString()));
             throw ex;
         }
     }

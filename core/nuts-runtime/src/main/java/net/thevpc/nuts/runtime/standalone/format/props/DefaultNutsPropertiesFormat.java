@@ -38,17 +38,17 @@ public class DefaultNutsPropertiesFormat extends DefaultFormatBase<NutsPropertie
             return true;
         } else if ((a = commandLine.nextBoolean("--compact")) != null) {
             if (a.isActive()) {
-                this.compact = a.getValue().getBoolean();
+                this.compact = a.getBooleanValue();
             }
             return true;
         } else if ((a = commandLine.nextBoolean("--props")) != null) {
             if (a.isActive()) {
-                this.javaProps = a.getValue().getBoolean();
+                this.javaProps = a.getBooleanValue();
             }
             return true;
         } else if ((a = commandLine.nextBoolean("--escape-text")) != null) {
             if (a.isActive()) {
-                this.escapeText = a.getValue().getBoolean();
+                this.escapeText = a.getBooleanValue();
             }
             return true;
         }

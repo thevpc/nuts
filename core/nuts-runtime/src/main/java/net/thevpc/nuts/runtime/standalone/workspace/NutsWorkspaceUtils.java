@@ -113,7 +113,8 @@ public class NutsWorkspaceUtils {
 
     public ReflectRepository getReflectRepository() {
         NutsWorkspaceEnvManager env = session.env();
-        ReflectRepository o = (ReflectRepository) env.getProperty(ReflectRepository.class.getName()).getObject();
+        NutsElement e = env.getProperty(ReflectRepository.class.getName());
+        ReflectRepository o = (ReflectRepository) (e.isCustom() ?e.asCustom().getValue():null);
         if (o == null) {
             o = new DefaultReflectRepository(ReflectConfigurationBuilder.create()
                     .setPropertyAccessStrategy(ReflectPropertyAccessStrategy.FIELD)

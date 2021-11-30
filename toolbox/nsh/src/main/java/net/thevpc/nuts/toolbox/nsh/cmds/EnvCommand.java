@@ -51,7 +51,7 @@ public class EnvCommand extends SimpleJShellBuiltin {
             case 0: {
                 switch (a.getKey().getString()) {
                     case "--sort": {
-                        options.sort = (commandLine.nextBoolean().getValue().getBoolean());
+                        options.sort = (commandLine.nextBoolean().getBooleanValue());
                         return true;
                     }
                     case "--external":
@@ -104,7 +104,7 @@ public class EnvCommand extends SimpleJShellBuiltin {
                     }
                     case "-i":
                     case "--ignore-environment": {
-                        options.ignoreEnvironment = (commandLine.nextBoolean().getValue().getBoolean());
+                        options.ignoreEnvironment = (commandLine.nextBoolean().getBooleanValue());
                         return true;
                     }
                     case "-": {

@@ -563,7 +563,7 @@ public class JavaExecutorComponent implements NutsExecutorComponent {
         }
 
         private ProcessExecHelper preExec() {
-            if (joptions.isShowCommand() || getSession().boot().getCustomBootOption("show-command").getBoolean(false)) {
+            if (joptions.isShowCommand() || getSession().boot().getBootCustomArgument("---show-command").getBooleanValue(false)) {
                 NutsPrintStream out = execSession.out();
                 out.printf("%s %n", NutsTexts.of(ws).ofStyled("nuts-exec", NutsTextStyle.primary1()));
                 for (int i = 0; i < xargs.size(); i++) {

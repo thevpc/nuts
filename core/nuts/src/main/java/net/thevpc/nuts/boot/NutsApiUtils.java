@@ -109,8 +109,8 @@ public class NutsApiUtils {
         return PrivateNutsUtils.getSysBoolNutsProperty(property, defaultValue);
     }
 
-    public static String resolveNutsVersionFromClassPath(PrivateNutsLog LOG) {
-        return PrivateNutsUtilMaven.resolveNutsApiVersionFromClassPath(LOG);
+    public static String resolveNutsVersionFromClassPath(PrivateNutsBootLog bLog) {
+        return PrivateNutsUtilMaven.resolveNutsApiVersionFromClassPath(bLog);
     }
 
     public static String resolveNutsIdDigestOrError() {
@@ -202,7 +202,7 @@ public class NutsApiUtils {
         return new PrivateNutsWorkspaceOptionsFormat(options).toString();
     }
 
-    public static void parseNutsArguments(String[] args, NutsBootOptions nutsBootOptions, PrivateNutsLog log) {
+    public static void parseNutsArguments(String[] args, NutsBootOptions nutsBootOptions, PrivateNutsBootLog log) {
         PrivateNutsArgumentsParser.parseNutsArguments(args, nutsBootOptions, log);
     }
 }

@@ -253,14 +253,14 @@ public class DefaultNutsTreeFormat extends DefaultFormatBase<NutsTreeFormat> imp
                 return true;
             }
             case "--omit-root": {
-                boolean val = cmdLine.nextBoolean().getValue().getBoolean();
+                boolean val = cmdLine.nextBoolean().getBooleanValue();
                 if (enabled) {
                     setOmitRoot(val);
                 }
                 return true;
             }
             case "--infinite": {
-                boolean val = cmdLine.nextBoolean().getValue().getBoolean();
+                boolean val = cmdLine.nextBoolean().getBooleanValue();
                 if (enabled) {
                     this.infinite = val;
                 }

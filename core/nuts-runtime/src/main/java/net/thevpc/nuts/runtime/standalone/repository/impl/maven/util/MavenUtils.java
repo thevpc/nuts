@@ -67,7 +67,8 @@ public class MavenUtils {
     }
 
     public static MavenUtils of(NutsSession session) {
-        MavenUtils wp = (MavenUtils) session.env().getProperty(MavenUtils.class.getName()).getObject();
+        NutsElement e = session.env().getProperty(MavenUtils.class.getName());
+        MavenUtils wp = (MavenUtils) (e.isCustom()?e.asCustom().getValue():null);
         if (wp == null) {
             wp = new MavenUtils(session);
             session.env().setProperty(MavenUtils.class.getName(), wp);
@@ -76,7 +77,8 @@ public class MavenUtils {
     }
 
     public static PomIdResolver createPomIdResolver(NutsSession session) {
-        PomIdResolver wp = (PomIdResolver) session.env().getProperty(PomIdResolver.class.getName()).getObject();
+        NutsElement e = session.env().getProperty(PomIdResolver.class.getName());
+        PomIdResolver wp = (PomIdResolver) (e.isCustom()?e.asCustom().getValue():null);
         if (wp == null) {
             wp = new PomIdResolver(new NutsPomLogger(session));
             session.env().setProperty(PomIdResolver.class.getName(), wp);

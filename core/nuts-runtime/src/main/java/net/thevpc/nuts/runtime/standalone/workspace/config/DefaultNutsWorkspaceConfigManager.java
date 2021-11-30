@@ -311,9 +311,9 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
     }
 
     @Override
-    public NutsVal getConfigProperty(String property) {
+    public NutsPrimitiveElement getConfigProperty(String property) {
         checkSession();
-        return model.getConfigProperty(property);
+        return model.getConfigProperty(property,getSession());
     }
 
     @Override

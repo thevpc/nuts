@@ -42,7 +42,7 @@ public class DefaultNutsOpenExecutable extends AbstractNutsExecutableCommand {
             NutsArgument a = cmdLine.peek();
             switch (a.getKey().getString()) {
                 case "--show-command": {
-                    showCommand = cmdLine.nextBoolean().getValue().getBoolean();
+                    showCommand = cmdLine.nextBoolean().getBooleanValue();
                     break;
                 }
                 default: {

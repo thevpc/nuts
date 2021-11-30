@@ -42,7 +42,8 @@ import java.util.List;
 import java.util.logging.Level;
 
 class PrivateNutsUtilLauncher {
-    private static boolean ndiAddFileLine(Path filePath, String commentLine, String goodLine, boolean force, String ensureHeader, String headerReplace, PrivateNutsLog LOG) {
+    private static boolean ndiAddFileLine(Path filePath, String commentLine, String goodLine, boolean force,
+                                          String ensureHeader, String headerReplace, PrivateNutsBootLog bLog) {
         boolean found = false;
         boolean updatedFile = false;
         List<String> lines = new ArrayList<>();
@@ -100,7 +101,7 @@ class PrivateNutsUtilLauncher {
         return updatedFile;
     }
 
-    static boolean ndiRemoveFileCommented2Lines(Path filePath, String commentLine, boolean force, PrivateNutsLog LOG) {
+    static boolean ndiRemoveFileCommented2Lines(Path filePath, String commentLine, boolean force, PrivateNutsBootLog bLog) {
         boolean found = false;
         boolean updatedFile = false;
         try {
@@ -130,12 +131,12 @@ class PrivateNutsUtilLauncher {
             }
             return updatedFile;
         } catch (IOException ex) {
-            LOG.log(Level.WARNING, NutsMessage.jstyle("unable to update update " + filePath), ex);
+            bLog.log(Level.WARNING, NutsMessage.jstyle("unable to update update " + filePath), ex);
             return false;
         }
     }
 
-    static void ndiUndo(PrivateNutsLog LOG) {
+    static void ndiUndo(PrivateNutsBootLog bLog) {
         //need to unset settings configuration.
         //what is the safest way to do so?
         NutsOsFamily os = NutsOsFamily.getCurrent();
@@ -146,11 +147,11 @@ class PrivateNutsUtilLauncher {
             if (Files.exists(sysrcFile)) {
 
                 //these two lines will remove older versions of nuts ( before 0.8.0)
-                ndiRemoveFileCommented2Lines(sysrcFile, "net.vpc.app.nuts.toolbox.ndi configuration", true, LOG);
-                ndiRemoveFileCommented2Lines(sysrcFile, "net.vpc.app.nuts configuration", true, LOG);
+                ndiRemoveFileCommented2Lines(sysrcFile, "net.vpc.app.nuts.toolbox.ndi configuration", true, bLog);
+                ndiRemoveFileCommented2Lines(sysrcFile, "net.vpc.app.nuts configuration", true, bLog);
 
                 //this line will remove 0.8.0+ versions of nuts
-                ndiRemoveFileCommented2Lines(sysrcFile, "net.thevpc.nuts configuration", true, LOG);
+                ndiRemoveFileCommented2Lines(sysrcFile, "net.thevpc.nuts configuration", true, bLog);
             }
 
             // if we have deleted a non default workspace, we will fall back to the default one
@@ -169,11 +170,11 @@ class PrivateNutsUtilLauncher {
                 if (latestDefaultVersion != null) {
                     ndiAddFileLine(sysrcFile, "net.thevpc.nuts configuration",
                             "source " + nbase.resolve(latestDefaultVersion).resolve(".nuts-bashrc"),
-                            true, "#!.*", "#!/bin/sh", LOG);
+                            true, "#!.*", "#!/bin/sh", bLog);
                 }
             } catch (Exception e) {
                 //ignore
-                LOG.log(Level.FINEST, NutsLogVerb.FAIL, NutsMessage.jstyle("unable to undo NDI : {0}", e.toString()));
+                bLog.log(Level.FINEST, NutsLogVerb.FAIL, NutsMessage.jstyle("unable to undo NDI : {0}", e.toString()));
             }
         }
     }

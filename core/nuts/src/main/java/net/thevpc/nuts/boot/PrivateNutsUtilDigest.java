@@ -38,7 +38,7 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.security.MessageDigest;
 
 class PrivateNutsUtilDigest {
-    public static String getURLDigest(URL url, PrivateNutsLog LOG) {
+    public static String getURLDigest(URL url, PrivateNutsBootLog bLog) {
         if (url != null) {
             File ff = PrivateNutsUtilIO.toFile(url);
             if (ff != null) {
@@ -46,7 +46,7 @@ class PrivateNutsUtilDigest {
             }
             InputStream is = null;
             try {
-                is = PrivateNutsUtilIO.openURLStream(url, LOG);
+                is = PrivateNutsUtilIO.openURLStream(url, bLog);
                 if (is != null) {
                     return getStreamDigest(is);
                 }

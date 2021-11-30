@@ -258,7 +258,7 @@ public abstract class AbstractDefaultNutsPushCommand extends NutsWorkspaceComman
         switch (a.getKey().getString()) {
             case "-o":
             case "--offline": {
-                boolean val = cmdLine.nextBoolean().getValue().getBoolean();
+                boolean val = cmdLine.nextBoolean().getBooleanValue();
                 if (enabled) {
                     setOffline(val);
                 }
@@ -299,7 +299,7 @@ public abstract class AbstractDefaultNutsPushCommand extends NutsWorkspaceComman
                     cmdLine.unexpectedArgument();
                 } else {
                     cmdLine.skip();
-                    addId(a.getAll().getString());
+                    addId(a.toElement().getString());
                     return true;
                 }
             }

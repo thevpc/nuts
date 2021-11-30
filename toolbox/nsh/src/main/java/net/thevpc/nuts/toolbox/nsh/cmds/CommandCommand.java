@@ -55,7 +55,7 @@ public class CommandCommand extends SimpleJShellBuiltin {
         if (context.configureFirst(commandLine)) {
             return true;
         } else if ((a = commandLine.nextBoolean("-p")) != null) {
-            options.p = a.getValue().getBoolean();
+            options.p = a.getBooleanValue();
         } else if (!commandLine.peek().isOption()) {
             if (options.commandName == null) {
                 options.commandName = commandLine.next().getString();

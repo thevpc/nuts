@@ -36,15 +36,15 @@ public class NDocusaurusMain implements NutsApplication {
             public boolean onNextNonOption(NutsArgument nonOption, NutsCommandLine commandline) {
                 switch (nonOption.getString()) {
                     case "start": {
-                        start = commandline.nextBoolean().getValue().getBoolean();
+                        start = commandline.nextBoolean().getBooleanValue();
                         return true;
                     }
                     case "build": {
-                        build = commandline.nextBoolean().getValue().getBoolean();
+                        build = commandline.nextBoolean().getBooleanValue();
                         return true;
                     }
                     case "pdf": {
-                        buildPdf = commandline.nextBoolean().getValue().getBoolean();
+                        buildPdf = commandline.nextBoolean().getBooleanValue();
                         return true;
                     }
                 }

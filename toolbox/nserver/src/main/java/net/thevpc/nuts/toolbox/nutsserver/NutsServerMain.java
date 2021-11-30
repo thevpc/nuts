@@ -105,7 +105,7 @@ public class NutsServerMain implements NutsApplication {
             } else if (commandLine.next("--admin") != null) {
                 servers.add().serverType = "admin";
             } else if ((a = commandLine.nextBoolean("-R", "--read-only")) != null) {
-                servers.current().readOnly = a.getValue().getBoolean();
+                servers.current().readOnly = a.getBooleanValue();
             } else if ((a = commandLine.nextString("-n", "--name")) != null) {
                 servers.current().name = a.getValue().getString();
             } else if ((a = commandLine.nextString("-a", "--address")) != null) {

@@ -275,7 +275,7 @@ public abstract class DefaultNutsQueryBaseOptions<T extends NutsWorkspaceCommand
         boolean enabled = a.isActive();
         switch (a.getKey().getString()) {
             case "--failfast": {
-                boolean val = cmdLine.nextBoolean().getValue().getBoolean();
+                boolean val = cmdLine.nextBoolean().getBooleanValue();
                 if (enabled) {
                     this.setFailFast(val);
                 }
@@ -290,7 +290,7 @@ public abstract class DefaultNutsQueryBaseOptions<T extends NutsWorkspaceCommand
                 return true;
             }
             case "--dependencies": {
-                boolean val = cmdLine.nextBoolean().getValue().getBoolean();
+                boolean val = cmdLine.nextBoolean().getBooleanValue();
                 if (enabled) {
                     this.setDependencies(val);
                 }
@@ -320,14 +320,14 @@ public abstract class DefaultNutsQueryBaseOptions<T extends NutsWorkspaceCommand
                 return true;
             }
             case "--effective": {
-                boolean val = cmdLine.nextBoolean().getValue().getBoolean();
+                boolean val = cmdLine.nextBoolean().getBooleanValue();
                 if (enabled) {
                     this.setEffective(val);
                 }
                 return true;
             }
             case "--content": {
-                boolean val = cmdLine.nextBoolean().getValue().getBoolean();
+                boolean val = cmdLine.nextBoolean().getBooleanValue();
                 if (enabled) {
                     this.setContent(val);
                 }

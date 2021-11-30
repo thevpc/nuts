@@ -45,7 +45,7 @@ public interface NutsCodeHighlighter extends NutsComponent {
      */
     int getSupportLevel(NutsSupportLevelContext context);
 
-    NutsText stringToText(String text, NutsSession session);
+    NutsText stringToText(String text, NutsTexts txt, NutsSession session);
 
-    NutsText tokenToText(String text, String tokenType, NutsSession session);
+    NutsText tokenToText(String text, String tokenType, NutsTexts txt, NutsSession session);
 }

@@ -58,7 +58,7 @@ public class ProcessBuilder2 {
     }
 
     private static String formatArg(String s, NutsSession session) {
-        DefaultNutsArgument a = new DefaultNutsArgument(s);
+        DefaultNutsArgument a = new DefaultNutsArgument(s,'=',NutsElements.of(session));
         StringBuilder sb = new StringBuilder();
         NutsTexts factory = NutsTexts.of(session);
         if (a.isKeyValue()) {

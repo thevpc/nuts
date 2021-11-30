@@ -11,18 +11,18 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.logging.Level;
 
-public class PrivateMonitoredURLInputStream extends FilterInputStream {
+public class PrivateNutsMonitoredURLInputStream extends FilterInputStream {
     public static final int M = 1024 * 1024;
     private final long startTime;
     private final long contentLength;
-    private final PrivateNutsLog log;
+    private final PrivateNutsBootLog log;
     private final URL url;
     long endTime;
     long lastSec = -1;
     long readCount = 0;
     boolean preDestroyed = false;
 
-    private PrivateMonitoredURLInputStream(InputStream in, URL url, long startTime, long contentLength, PrivateNutsLog log) {
+    private PrivateNutsMonitoredURLInputStream(InputStream in, URL url, long startTime, long contentLength, PrivateNutsBootLog log) {
         super(in);
         this.startTime = startTime;
         this.url = url;
@@ -30,7 +30,7 @@ public class PrivateMonitoredURLInputStream extends FilterInputStream {
         this.log = log;
     }
 
-    public static PrivateMonitoredURLInputStream of(URL url, PrivateNutsLog log) {
+    public static PrivateNutsMonitoredURLInputStream of(URL url, PrivateNutsBootLog log) {
         if (log != null) {
             log.log(Level.FINE, NutsLogVerb.START, NutsMessage.jstyle("download {0}", url));
         }
@@ -46,7 +46,7 @@ public class PrivateMonitoredURLInputStream extends FilterInputStream {
         }
         long contentLength = c.getContentLengthLong();
         try {
-            return new PrivateMonitoredURLInputStream(c.getInputStream(), url, startTime, contentLength, log);
+            return new PrivateNutsMonitoredURLInputStream(c.getInputStream(), url, startTime, contentLength, log);
         } catch (IOException ex) {
             if (log != null) {
                 log.log(Level.FINE, NutsLogVerb.FAIL, NutsMessage.jstyle("failed to download {0}", url));

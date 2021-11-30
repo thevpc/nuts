@@ -27,6 +27,7 @@ package net.thevpc.nuts.runtime.standalone.text;
 import java.util.Objects;
 import java.util.function.Supplier;
 
+import net.thevpc.nuts.NutsElement;
 import net.thevpc.nuts.NutsExecutionType;
 import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.NutsTerminalCommand;
@@ -134,10 +135,11 @@ public class DefaultAnsiEscapeCommand extends AnsiEscapeCommand implements AnsiS
                 return old.addCommand("\u001b[" + 1 + "K");
             }
             case NutsTerminalCommand.Ids.LATER_RESET_LINE: {
-                int tputCallTimeout = session.boot().getCustomBootOption("nuts.term.tput.call.timeout").getInt( 60);
-                Integer w = session.boot().getCustomBootOption("nuts.term.width").getInt( null);
+                int tputCallTimeout = session.boot().getBootCustomArgument("---nuts.term.tput.call.timeout").getValue().getInt( 60);
+                Integer w = session.boot().getBootCustomArgument("---nuts.term.width").getValue().getInt( null);
                 if (w == null) {
-                    CachedValue<Integer> tput_cols = (CachedValue) session.env().getProperty("nuts.term.tput.call.instance").getObject();
+                    NutsElement e = session.env().getProperty("nuts.term.tput.call.instance");
+                    CachedValue<Integer> tput_cols = (CachedValue) (e.isCustom()?e.asCustom().getValue():null);
                     if (tput_cols == null) {
                         tput_cols = new CachedValue<>(new TputEvaluator(session), tputCallTimeout);
                         session.env().setProperty("nuts.term.tput.call.instance", tput_cols);

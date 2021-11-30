@@ -82,9 +82,9 @@ public class HistoryCommand extends SimpleJShellBuiltin {
             commandLine.setCommandName(getName()).unexpectedArgument();
             return true;
         } else {
-            if (commandLine.peek().getAll().getInt(0) != 0) {
+            if (commandLine.peek().toElement().getInt(0) != 0) {
                 options.action = Action.PRINT;
-                options.ival = Math.abs(commandLine.next().getAll().getInt());
+                options.ival = Math.abs(commandLine.next().toElement().getInt());
                 return true;
             }
         }

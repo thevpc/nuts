@@ -3,11 +3,11 @@ package net.thevpc.nuts.boot;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class TestPrivateNutsArgumentImpl {
+public class TestPrivateNutsArgument {
 
     @Test
     public void test01() {
-        PrivateNutsArgumentImpl a = new PrivateNutsArgumentImpl("-a=2", '=');
+        PrivateNutsArgument a = new PrivateNutsArgument("-a=2", '=');
         Assertions.assertTrue(a.isOption());
         Assertions.assertTrue(a.isActive());
         Assertions.assertFalse(a.isNegated());
@@ -20,7 +20,7 @@ public class TestPrivateNutsArgumentImpl {
 
     @Test
     public void test02() {
-        PrivateNutsArgumentImpl a = new PrivateNutsArgumentImpl("-//a=2", '=');
+        PrivateNutsArgument a = new PrivateNutsArgument("-//a=2", '=');
         Assertions.assertTrue(a.isOption());
         Assertions.assertFalse(a.isActive());
         Assertions.assertFalse(a.isNegated());
@@ -33,7 +33,7 @@ public class TestPrivateNutsArgumentImpl {
 
     @Test
     public void test03() {
-        PrivateNutsArgumentImpl a = new PrivateNutsArgumentImpl("-!a=2", '=');
+        PrivateNutsArgument a = new PrivateNutsArgument("-!a=2", '=');
         Assertions.assertTrue(a.isOption());
         Assertions.assertTrue(a.isActive());
         Assertions.assertTrue(a.isNegated());
@@ -46,7 +46,7 @@ public class TestPrivateNutsArgumentImpl {
 
     @Test
     public void test04() {
-        PrivateNutsArgumentImpl a = new PrivateNutsArgumentImpl("-!a", '=');
+        PrivateNutsArgument a = new PrivateNutsArgument("-!a", '=');
         Assertions.assertTrue(a.isOption());
         Assertions.assertTrue(a.isActive());
         Assertions.assertTrue(a.isNegated());
@@ -59,7 +59,7 @@ public class TestPrivateNutsArgumentImpl {
 
     @Test
     public void test05() {
-        PrivateNutsArgumentImpl a = new PrivateNutsArgumentImpl("-!=a", '=');
+        PrivateNutsArgument a = new PrivateNutsArgument("-!=a", '=');
         Assertions.assertTrue(a.isOption());
         Assertions.assertTrue(a.isActive());
         Assertions.assertTrue(a.isNegated());
@@ -72,7 +72,7 @@ public class TestPrivateNutsArgumentImpl {
 
     @Test
     public void test06() {
-        PrivateNutsArgumentImpl a = new PrivateNutsArgumentImpl("-!=", '=');
+        PrivateNutsArgument a = new PrivateNutsArgument("-!=", '=');
         Assertions.assertTrue(a.isOption());
         Assertions.assertTrue(a.isActive());
         Assertions.assertTrue(a.isNegated());
@@ -85,7 +85,7 @@ public class TestPrivateNutsArgumentImpl {
 
     @Test
     public void test07() {
-        PrivateNutsArgumentImpl a = new PrivateNutsArgumentImpl("-!", '=');
+        PrivateNutsArgument a = new PrivateNutsArgument("-!", '=');
         Assertions.assertTrue(a.isOption());
         Assertions.assertTrue(a.isActive());
         Assertions.assertTrue(a.isNegated());
@@ -98,7 +98,7 @@ public class TestPrivateNutsArgumentImpl {
 
     @Test
     public void test08() {
-        PrivateNutsArgumentImpl a = new PrivateNutsArgumentImpl("-", '=');
+        PrivateNutsArgument a = new PrivateNutsArgument("-", '=');
         Assertions.assertTrue(a.isOption());
         Assertions.assertTrue(a.isActive());
         Assertions.assertFalse(a.isNegated());
@@ -111,7 +111,7 @@ public class TestPrivateNutsArgumentImpl {
 
     @Test
     public void test09() {
-        PrivateNutsArgumentImpl a = new PrivateNutsArgumentImpl("", '=');
+        PrivateNutsArgument a = new PrivateNutsArgument("", '=');
         Assertions.assertTrue(a.isNonOption());
         Assertions.assertTrue(a.isActive());
         Assertions.assertFalse(a.isNegated());
@@ -124,7 +124,7 @@ public class TestPrivateNutsArgumentImpl {
 
     @Test
     public void test10() {
-        PrivateNutsArgumentImpl a = new PrivateNutsArgumentImpl("c=/a", '=');
+        PrivateNutsArgument a = new PrivateNutsArgument("c=/a", '=');
         Assertions.assertTrue(a.isNonOption());
         Assertions.assertTrue(a.isActive());
         Assertions.assertFalse(a.isNegated());
@@ -137,7 +137,7 @@ public class TestPrivateNutsArgumentImpl {
 
     @Test
     public void test11() {
-        PrivateNutsArgumentImpl a = new PrivateNutsArgumentImpl("c", '=');
+        PrivateNutsArgument a = new PrivateNutsArgument("c", '=');
         Assertions.assertTrue(a.isNonOption());
         Assertions.assertTrue(a.isActive());
         Assertions.assertFalse(a.isNegated());
@@ -150,7 +150,7 @@ public class TestPrivateNutsArgumentImpl {
 
     @Test
     public void test12() {
-        PrivateNutsArgumentImpl a = new PrivateNutsArgumentImpl("!//c=30", '=');
+        PrivateNutsArgument a = new PrivateNutsArgument("!//c=30", '=');
         Assertions.assertTrue(a.isNonOption());
         Assertions.assertTrue(a.isActive());
         Assertions.assertFalse(a.isNegated());
@@ -163,7 +163,7 @@ public class TestPrivateNutsArgumentImpl {
 
     @Test
     public void test13() {
-        PrivateNutsArgumentImpl a = new PrivateNutsArgumentImpl("!", '=');
+        PrivateNutsArgument a = new PrivateNutsArgument("!", '=');
         Assertions.assertTrue(a.isNonOption());
         Assertions.assertTrue(a.isActive());
         Assertions.assertFalse(a.isNegated());
@@ -176,7 +176,7 @@ public class TestPrivateNutsArgumentImpl {
 
     @Test
     public void test14() {
-        PrivateNutsArgumentImpl a = new PrivateNutsArgumentImpl("", '=');
+        PrivateNutsArgument a = new PrivateNutsArgument("", '=');
         Assertions.assertTrue(a.isNonOption());
         Assertions.assertTrue(a.isActive());
         Assertions.assertFalse(a.isNegated());

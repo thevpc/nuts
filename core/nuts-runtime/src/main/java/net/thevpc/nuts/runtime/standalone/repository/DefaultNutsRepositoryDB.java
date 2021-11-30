@@ -29,9 +29,10 @@ public class DefaultNutsRepositoryDB implements NutsRepositoryDB{
         defaultRepositoriesByName.put(".m2", defaultRepositoriesByName.get("maven-local"));
         defaultRepositoriesByName.put("m2", defaultRepositoriesByName.get("maven-local"));
         //
-        defaultRepositoriesByName.put("maven-central", "https://repo.maven.apache.org/maven2");
-        defaultRepositoriesByName.put("m2", defaultRepositoriesByName.get("maven-central"));
+        defaultRepositoriesByName.put("maven-central", "htmlfs:https://repo.maven.apache.org/maven2");
         defaultRepositoriesByName.put("central", defaultRepositoriesByName.get("maven-central"));
+        defaultRepositoriesByName.put("maven", defaultRepositoriesByName.get("maven-central"));
+        defaultRepositoriesByName.put("mvn", defaultRepositoriesByName.get("maven-central"));
         //
         defaultRepositoriesByName.put("jcenter", "https://jcenter.bintray.com");
         //

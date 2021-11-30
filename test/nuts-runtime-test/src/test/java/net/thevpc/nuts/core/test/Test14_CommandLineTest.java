@@ -39,31 +39,13 @@ public class Test14_CommandLineTest {
     }
 
 
-    @BeforeAll
-    public static void setUpClass() throws IOException {
-        TestUtils.println("####### RUNNING TEST @ "+ TestUtils.getCallerClassSimpleName());
-    }
-
-    @AfterAll
-    public static void tearUpClass() throws IOException {
-        //CoreIOUtils.delete(null,new File(baseFolder));
-    }
-
-    @BeforeEach
-    public void startup() throws IOException {
-//        Assumptions.assumeTrue(NutsOsFamily.getCurrent()== NutsOsFamily.LINUX);
-        TestUtils.unsetNutsSystemProperties();
-    }
-
-    @AfterEach
-    public void cleanup() {
-        TestUtils.unsetNutsSystemProperties();
-    }
 
     @Test
     public void testArgument() {
+        NutsSession session = TestUtils.openNewMinTestWorkspace();
+        NutsElements elems = NutsElements.of(session);
         checkDefaultNutsArgument(
-                new DefaultNutsArgument(null),
+                new DefaultNutsArgument(null,elems),
                 true,
                 false,
                 false,
@@ -75,7 +57,7 @@ public class Test14_CommandLineTest {
                 "="
         );
         checkDefaultNutsArgument(
-                new DefaultNutsArgument(""),
+                new DefaultNutsArgument("",elems),
                 true,
                 false,
                 false,
@@ -87,7 +69,7 @@ public class Test14_CommandLineTest {
                 "="
         );
         checkDefaultNutsArgument(
-                new DefaultNutsArgument("hello"),
+                new DefaultNutsArgument("hello",elems),
                 true,
                 false,
                 false,
@@ -99,7 +81,7 @@ public class Test14_CommandLineTest {
                 "="
         );
         checkDefaultNutsArgument(
-                new DefaultNutsArgument("!hello"),
+                new DefaultNutsArgument("!hello",elems),
                 true,
                 false,
                 false,
@@ -111,7 +93,7 @@ public class Test14_CommandLineTest {
                 "="
         );
         checkDefaultNutsArgument(
-                new DefaultNutsArgument("//!hello"),
+                new DefaultNutsArgument("//!hello",elems),
                 true,
                 false,
                 false,
@@ -123,7 +105,7 @@ public class Test14_CommandLineTest {
                 "="
         );
         checkDefaultNutsArgument(
-                new DefaultNutsArgument("/!hello"),
+                new DefaultNutsArgument("/!hello",elems),
                 true,
                 false,
                 false,
@@ -135,7 +117,7 @@ public class Test14_CommandLineTest {
                 "="
         );
         checkDefaultNutsArgument(
-                new DefaultNutsArgument("/!hello=me"),
+                new DefaultNutsArgument("/!hello=me",elems),
                 true,
                 false,
                 false,
@@ -147,7 +129,7 @@ public class Test14_CommandLineTest {
                 "="
         );
         checkDefaultNutsArgument(
-                new DefaultNutsArgument("--!hello=me"),
+                new DefaultNutsArgument("--!hello=me",elems),
                 true,
                 true,
                 true,
@@ -159,7 +141,7 @@ public class Test14_CommandLineTest {
                 "="
         );
         checkDefaultNutsArgument(
-                new DefaultNutsArgument("--//!hello=me"),
+                new DefaultNutsArgument("--//!hello=me",elems),
                 false,
                 true,
                 true,
@@ -171,7 +153,7 @@ public class Test14_CommandLineTest {
                 "="
         );
         checkDefaultNutsArgument(
-                new DefaultNutsArgument("--//="),
+                new DefaultNutsArgument("--//=",elems),
                 false,
                 true,
                 true,

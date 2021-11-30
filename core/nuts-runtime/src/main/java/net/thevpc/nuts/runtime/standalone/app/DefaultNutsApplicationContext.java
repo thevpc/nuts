@@ -72,7 +72,7 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
                     case "auto-complete": {
                         mode = NutsApplicationMode.AUTO_COMPLETE;
                         if (execModeCommand.hasNext()) {
-                            wordIndex = execModeCommand.next().getAll().getInt();
+                            wordIndex = execModeCommand.next().toElement().getInt();
                         }
                         modeArgs = execModeCommand.toStringArray();
                         execModeCommand.skipAll();

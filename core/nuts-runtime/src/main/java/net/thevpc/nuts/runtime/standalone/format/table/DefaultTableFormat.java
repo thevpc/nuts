@@ -779,13 +779,13 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
     public boolean configureFirst(NutsCommandLine cmdLine) {
         NutsArgument a;
         if ((a = cmdLine.nextBoolean("--no-header")) != null) {
-            boolean val = a.getValue().getBoolean();
+            boolean val = a.getBooleanValue();
             if (a.isActive()) {
                 setVisibleHeader(!val);
             }
             return true;
         } else if ((a = cmdLine.nextBoolean("--header")) != null) {
-            boolean val = a.getValue().getBoolean();
+            boolean val = a.getBooleanValue();
             if (a.isActive()) {
                 setVisibleHeader(val);
             }

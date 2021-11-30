@@ -22,9 +22,11 @@ public class DefaultSearchFormatXml extends DefaultSearchFormatBase {
     private boolean compact;
     private String rootName = "root";
     private NutsCodeHighlighter codeFormat;
+    NutsTexts txt;
 
     public DefaultSearchFormatXml(NutsSession session, NutsPrintStream writer, NutsFetchDisplayOptions options) {
         super(session, writer, NutsContentType.XML, options);
+        txt = NutsTexts.of(session);
         codeFormat = NutsTexts.of(session).setSession(session).getCodeHighlighter("xml");
     }
 
@@ -37,23 +39,23 @@ public class DefaultSearchFormatXml extends DefaultSearchFormatBase {
         NutsTextBuilder builder = NutsTexts.of(getSession()).builder();
         NutsSession session = getSession();
 
-        builder.append(codeFormat.tokenToText("<?", "separator", session));
-        builder.append(codeFormat.tokenToText("xml", "name", session));
+        builder.append(codeFormat.tokenToText("<?", "separator", txt, session));
+        builder.append(codeFormat.tokenToText("xml", "name", txt, session));
 
         builder.append(" ");
-        builder.append(codeFormat.tokenToText("version", "attribute", session));
-        builder.append(codeFormat.tokenToText("=", "separator", session));
-        builder.append(codeFormat.tokenToText("\"1.0\"", "string", session));
+        builder.append(codeFormat.tokenToText("version", "attribute", txt, session));
+        builder.append(codeFormat.tokenToText("=", "separator", txt, session));
+        builder.append(codeFormat.tokenToText("\"1.0\"", "string", txt, session));
 
         builder.append(" ");
-        builder.append(codeFormat.tokenToText("encoding", "attribute", session));
-        builder.append(codeFormat.tokenToText("=", "separator", session));
-        builder.append(codeFormat.tokenToText("?>", "separator", session));
+        builder.append(codeFormat.tokenToText("encoding", "attribute", txt, session));
+        builder.append(codeFormat.tokenToText("=", "separator", txt, session));
+        builder.append(codeFormat.tokenToText("?>", "separator", txt, session));
         builder.append("\n");
 
-        builder.append(codeFormat.tokenToText("<", "separator", session));
-        builder.append(codeFormat.tokenToText(rootName, "name", session));
-        builder.append(codeFormat.tokenToText(">", "separator", session));
+        builder.append(codeFormat.tokenToText("<", "separator", txt, session));
+        builder.append(codeFormat.tokenToText(rootName, "name", txt, session));
+        builder.append(codeFormat.tokenToText(">", "separator", txt, session));
 
         getWriter().println(builder.toString());
     }
@@ -70,7 +72,7 @@ public class DefaultSearchFormatXml extends DefaultSearchFormatBase {
         doc.appendChild(xmlElement);
         NutsXmlUtils.writeDocument(doc, new javax.xml.transform.stream.StreamResult(pw), compact, false, getSession());
         pw.flush();
-        getWriter().print(codeFormat.stringToText(bos.toString(), getSession()));
+        getWriter().print(codeFormat.stringToText(bos.toString(), txt, getSession()));
     }
 
     @Override
@@ -78,9 +80,9 @@ public class DefaultSearchFormatXml extends DefaultSearchFormatBase {
         NutsTextBuilder builder = NutsTexts.of(getSession()).builder();
 
         NutsSession session = getSession();
-        builder.append(codeFormat.tokenToText("</", "separator", session));
-        builder.append(codeFormat.tokenToText(rootName, "name", session));
-        builder.append(codeFormat.tokenToText(">", "separator", session));
+        builder.append(codeFormat.tokenToText("</", "separator", txt, session));
+        builder.append(codeFormat.tokenToText(rootName, "name", txt, session));
+        builder.append(codeFormat.tokenToText(">", "separator", txt, session));
 
         getWriter().println(builder.toString());
         getWriter().flush();
@@ -98,7 +100,7 @@ public class DefaultSearchFormatXml extends DefaultSearchFormatBase {
         boolean enabled = a.isActive();
         switch (a.getKey().getString()) {
             case "--compact": {
-                boolean val = cmd.nextBoolean().getValue().getBoolean();
+                boolean val = cmd.nextBoolean().getBooleanValue();
                 if (enabled) {
                     this.compact = val;
                 }

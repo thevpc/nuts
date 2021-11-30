@@ -57,7 +57,7 @@ public final class Nuts {
         if (version == null) {
             synchronized (Nuts.class) {
                 if (version == null) {
-                    String v = NutsApiUtils.resolveNutsVersionFromClassPath(new PrivateNutsLog(null));
+                    String v = NutsApiUtils.resolveNutsVersionFromClassPath(new PrivateNutsBootLog(null));
                     if (v == null) {
                         throw new NutsBootException(
                                 NutsMessage.plain(
@@ -93,8 +93,8 @@ public final class Nuts {
                     bo.setGui(false);
                 }
             } else {
-                PrivateNutsLog log = new PrivateNutsLog(null);
-                bo = new NutsBootOptions(log);
+                PrivateNutsBootLog log = new PrivateNutsBootLog(null);
+                bo = new NutsBootOptions();
                 NutsApiUtils.parseNutsArguments(args,bo,log);
                 try {
                     if (NutsApiUtils.isGraphicalDesktopEnvironment()) {
@@ -150,13 +150,12 @@ public final class Nuts {
      */
     public static NutsSession openInheritedWorkspace(NutsBootTerminal term, String... args) throws NutsUnsatisfiedRequirementsException {
         long startTime = System.currentTimeMillis();
-        NutsBootWorkspace boot;
         String nutsWorkspaceOptions = NutsUtilStrings.trim(
                 NutsUtilStrings.trim(System.getProperty("nuts.boot.args"))
                         + " " + NutsUtilStrings.trim(System.getProperty("nuts.args"))
         );
-        PrivateNutsLog log = new PrivateNutsLog(null);
-        NutsBootOptions options = new NutsBootOptions(log);
+        PrivateNutsBootLog log = new PrivateNutsBootLog(term);
+        NutsBootOptions options = new NutsBootOptions();
         if (!NutsBlankable.isBlank(nutsWorkspaceOptions)) {
             String[] cml = NutsApiUtils.parseCommandLineArray(nutsWorkspaceOptions);
             NutsApiUtils.parseNutsArguments(cml, options, log);
@@ -165,8 +164,7 @@ public final class Nuts {
         options.setInherited(true);
         options.setCreationTime(startTime);
         options.setBootTerminal(term);
-        boot = new NutsBootWorkspace(options);
-        return boot.openWorkspace();// openWorkspace(boot.getOptions());
+        return new NutsBootWorkspace(options).openWorkspace();
     }
 
     /**

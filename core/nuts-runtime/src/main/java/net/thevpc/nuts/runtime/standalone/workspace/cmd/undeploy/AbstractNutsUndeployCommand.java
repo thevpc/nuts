@@ -124,7 +124,7 @@ public abstract class AbstractNutsUndeployCommand extends NutsWorkspaceCommandBa
         boolean enabled = a.isActive();
         switch (a.getKey().getString()) {
             case "--offline": {
-                boolean val = cmdLine.nextBoolean().getValue().getBoolean();
+                boolean val = cmdLine.nextBoolean().getBooleanValue();
                 if (enabled) {
                     setOffline(val);
                 }

@@ -24,7 +24,7 @@
 package net.thevpc.nuts.runtime.standalone.boot;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.standalone.xtra.vals.DefaultNutsVal;
+import net.thevpc.nuts.runtime.standalone.app.cmdline.DefaultNutsArgument;
 import net.thevpc.nuts.runtime.standalone.workspace.config.DefaultNutsWorkspaceConfigManager;
 import net.thevpc.nuts.runtime.standalone.workspace.config.DefaultNutsWorkspaceConfigModel;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
@@ -59,10 +59,10 @@ public class DefaultNutsBootManager implements NutsBootManager {
     }
 
     public NutsClassLoaderNode getBootRuntimeClassLoaderNode(){
-        return model.workspaceInitInformation.getRuntimeBootDependencyNode();
+        return model.bOptions.getRuntimeBootDependencyNode();
     }
     public NutsClassLoaderNode[] getBootExtensionClassLoaderNode(){
-        return model.workspaceInitInformation.getExtensionBootDependencyNodes();
+        return model.bOptions.getExtensionBootDependencyNodes();
     }
     @Override
     public NutsBootManager setSession(NutsSession session) {
@@ -71,25 +71,25 @@ public class DefaultNutsBootManager implements NutsBootManager {
     }
 
     @Override
-    public NutsVal getCustomBootOption(String name) {
+    public NutsArgument getBootCustomArgument(String name) {
         checkSession();
-        NutsVal q = model.getCustomBootOptions().get(name);
+        NutsArgument q = model.getCustomBootOptions().get(name);
         if(q!=null){
             return q;
         }
-        return new DefaultNutsVal(null);
+        return new DefaultNutsArgument(null,NutsElements.of(getSession()));
     }
 
     @Override
-    public NutsVal getCustomBootOption(String ... names) {
+    public NutsArgument getBootCustomArgument(String ... names) {
         checkSession();
         for (String name : names) {
-            NutsVal q = model.getCustomBootOptions().get(name);
+            NutsArgument q = model.getCustomBootOptions().get(name);
             if(q!=null){
                 return q;
             }
         }
-        return new DefaultNutsVal(null);
+        return new DefaultNutsArgument(null,NutsElements.of(getSession()));
     }
 
     @Override

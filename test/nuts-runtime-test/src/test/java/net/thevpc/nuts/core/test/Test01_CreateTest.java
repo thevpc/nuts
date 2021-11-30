@@ -173,11 +173,6 @@ public class Test01_CreateTest {
         }
 
         {
-            NutsVal v = NutsVal.of("a", s);
-            Assertions.assertNotNull(v);
-        }
-
-        {
             Pattern g = NutsGlob.of(s).toPattern("a.*");
             Assertions.assertNotNull(g);
         }

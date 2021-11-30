@@ -295,7 +295,7 @@ public abstract class AbstractNutsInstallCommand extends NutsWorkspaceCommandBas
         switch (a.getKey().getString()) {
             case "-c":
             case "--companions": {
-                boolean val = cmdLine.nextBoolean().getValue().getBoolean();
+                boolean val = cmdLine.nextBoolean().getBooleanValue();
                 if (enabled) {
                     this.setCompanions(val);
                 }
@@ -303,7 +303,7 @@ public abstract class AbstractNutsInstallCommand extends NutsWorkspaceCommandBas
             }
             case "-i":
             case "--installed": {
-                boolean val = cmdLine.nextBoolean().getValue().getBoolean();
+                boolean val = cmdLine.nextBoolean().getBooleanValue();
                 if (enabled) {
                     this.setInstalled(val);
                 }

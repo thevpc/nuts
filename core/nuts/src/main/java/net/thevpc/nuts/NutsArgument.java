@@ -134,7 +134,7 @@ public interface NutsArgument {
      * @return option prefix part  ('-' and '--')
      * @since 0.5.7
      */
-    NutsVal getOptionPrefix();
+    NutsPrimitiveElement getOptionPrefix();
 
     /**
      * return query value separator
@@ -150,7 +150,7 @@ public interface NutsArgument {
      * @return option key part excluding prefix ('-' and '--')
      * @since 0.5.7
      */
-    NutsVal getOptionName();
+    NutsPrimitiveElement getOptionName();
 
     /**
      * return new instance (never null) of the value part of the argument (after
@@ -173,7 +173,12 @@ public interface NutsArgument {
      * @return new instance (never null) of the value part of the argument
      * (after =)
      */
-    NutsVal getValue();
+    NutsPrimitiveElement getValue();
+
+    boolean getBooleanValue();
+
+    Boolean getBooleanValue(Boolean emptyValue,Boolean errValue);
+    Boolean getBooleanValue(Boolean emptyOrValue);
 
 
     /**
@@ -196,9 +201,9 @@ public interface NutsArgument {
      *
      * @return string key
      */
-    NutsVal getKey();
+    NutsPrimitiveElement getKey();
 
-    NutsVal getAll();
+    NutsPrimitiveElement toElement();
 
 
 }

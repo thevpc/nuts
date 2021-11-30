@@ -21,7 +21,7 @@
  * governing permissions and limitations under the License.
  * <br> ====================================================================
  */
-package net.thevpc.nuts.boot;
+package net.thevpc.nuts;
 
 import java.io.InputStream;
 import java.io.PrintStream;

@@ -76,7 +76,7 @@ public final class CoreNutsArgumentsParser {
             NutsArgument a = cmdLine.peek();
 
             if (a.isOption()) {
-                boolean enabled = a.isActive();
+                boolean active = a.isActive();
                 String k = a.getKey().getString();
                 switch (k) {
                     //**********************************
@@ -93,7 +93,7 @@ public final class CoreNutsArgumentsParser {
 //                    case "--boot-repos": {
 //                        a = cmdLine.nextString();
 //                        String bootRepos = a.getStringValue("");
-//                        if (enabled) {
+//                        if (active) {
 //                            options.setBootRepositories(bootRepos);
 //                        }
 //                        break;
@@ -102,7 +102,7 @@ public final class CoreNutsArgumentsParser {
                     case "--workspace": {
                         a = cmdLine.nextString();
                         String file = a.getValue().getString("");
-                        if (enabled) {
+                        if (active) {
                             options.setWorkspace(file);
                         }
                         break;
@@ -111,7 +111,7 @@ public final class CoreNutsArgumentsParser {
                     case "-u": {
                         a = cmdLine.nextString();
                         String v = a.getValue().getString("");
-                        if (enabled) {
+                        if (active) {
                             options.setUsername(v);
                         }
                         break;
@@ -120,7 +120,7 @@ public final class CoreNutsArgumentsParser {
                     case "-p": {
                         a = cmdLine.nextString();
                         String v = a.getValue().getString("");
-                        if (enabled) {
+                        if (active) {
                             options.setCredentials(v.toCharArray());
                         }
                         break;
@@ -130,7 +130,7 @@ public final class CoreNutsArgumentsParser {
                     case "--boot-api-version": {
                         a = cmdLine.nextString();
                         String v = a.getValue().getString();
-                        if (enabled) {
+                        if (active) {
                             options.setApiVersion(v);
                         }
                         break;
@@ -138,7 +138,7 @@ public final class CoreNutsArgumentsParser {
                     case "--boot-runtime": {
                         a = cmdLine.nextString();
                         String br = a.getValue().getString("");
-                        if (enabled) {
+                        if (active) {
                             if (br.indexOf("#") > 0) {
                                 //this is a full id
                             } else {
@@ -153,7 +153,7 @@ public final class CoreNutsArgumentsParser {
                     case "-j": {
                         a = cmdLine.nextString();
                         String v = a.getValue().getString("");
-                        if (enabled) {
+                        if (active) {
                             options.setJavaCommand(v);
                         }
                         break;
@@ -162,7 +162,7 @@ public final class CoreNutsArgumentsParser {
                     case "--boot-java-home": {
                         a = cmdLine.nextString();
                         String v = a.getValue().getString();
-                        if (enabled) {
+                        if (active) {
                             options.setJavaCommand(NutsJavaSdkUtils.of(session).resolveJavaCommandByHome(v, session));
                         }
                         break;
@@ -172,7 +172,7 @@ public final class CoreNutsArgumentsParser {
                     case "-J": {
                         a = cmdLine.nextString();
                         String v = a.getValue().getString("");
-                        if (enabled) {
+                        if (active) {
                             options.setJavaOptions(v);
                         }
                         break;
@@ -190,7 +190,7 @@ public final class CoreNutsArgumentsParser {
                     case "--name": {
                         a = cmdLine.nextString();
                         String v = a.getValue().getString();
-                        if (enabled) {
+                        if (active) {
                             options.setName(v);
                         }
                         break;
@@ -199,7 +199,7 @@ public final class CoreNutsArgumentsParser {
                     case "-A": {
                         a = cmdLine.nextString();
                         String v = a.getValue().getString();
-                        if (enabled) {
+                        if (active) {
                             options.setArchetype(v);
                         }
                         break;
@@ -207,7 +207,7 @@ public final class CoreNutsArgumentsParser {
                     case "--store-strategy": {
                         a = cmdLine.nextString();
                         String v = a.getValue().getString("");
-                        if (enabled) {
+                        if (active) {
                             options.setStoreLocationStrategy(parseNutsStoreLocationStrategy(v, session));
                         }
                         break;
@@ -216,7 +216,7 @@ public final class CoreNutsArgumentsParser {
                     case "--standalone":
                     case "--standalone-workspace": {
                         a = cmdLine.nextBoolean();
-                        if (enabled && a.getValue().getBoolean()) {
+                        if (active && a.getBooleanValue()) {
                             options.setStoreLocationStrategy(NutsStoreLocationStrategy.STANDALONE);
 //                            options.setRepositoryStoreLocationStrategy(NutsStoreLocationStrategy.STANDALONE);
                         }
@@ -227,7 +227,7 @@ public final class CoreNutsArgumentsParser {
                     case "--exploded":
                     case "--exploded-workspace": {
                         a = cmdLine.nextBoolean();
-                        if (enabled && a.getValue().getBoolean()) {
+                        if (active && a.getBooleanValue()) {
                             options.setStoreLocationStrategy(NutsStoreLocationStrategy.EXPLODED);
 //                            options.setRepositoryStoreLocationStrategy(NutsStoreLocationStrategy.EXPLODED);
                         }
@@ -237,21 +237,21 @@ public final class CoreNutsArgumentsParser {
                     case "--repo-store-strategy": {
                         a = cmdLine.nextString();
                         String v = a.getValue().getString();
-                        if (enabled) {
+                        if (active) {
                             options.setRepositoryStoreLocationStrategy(parseNutsStoreLocationStrategy(v, session));
                         }
                         break;
                     }
                     case "--exploded-repositories": {
                         a = cmdLine.nextBoolean();
-                        if (enabled && a.getValue().getBoolean()) {
+                        if (active && a.getBooleanValue()) {
                             options.setRepositoryStoreLocationStrategy(NutsStoreLocationStrategy.EXPLODED);
                         }
                         break;
                     }
                     case "--standalone-repositories": {
                         a = cmdLine.nextBoolean();
-                        if (enabled && a.getValue().getBoolean()) {
+                        if (active && a.getBooleanValue()) {
                             options.setRepositoryStoreLocationStrategy(NutsStoreLocationStrategy.STANDALONE);
                         }
                         break;
@@ -259,42 +259,42 @@ public final class CoreNutsArgumentsParser {
                     case "--store-layout": {
                         a = cmdLine.nextString();
                         String v = a.getValue().getString();
-                        if (enabled) {
+                        if (active) {
                             options.setStoreLocationLayout(parseNutsOsFamily(v, session));
                         }
                         break;
                     }
                     case "--system-layout": {
                         a = cmdLine.nextBoolean();
-                        if (enabled && a.getValue().getBoolean()) {
+                        if (active && a.getBooleanValue()) {
                             options.setStoreLocationLayout(null);
                         }
                         break;
                     }
                     case "--windows-layout": {
                         a = cmdLine.nextBoolean();
-                        if (enabled && a.getValue().getBoolean()) {
+                        if (active && a.getBooleanValue()) {
                             options.setStoreLocationLayout(NutsOsFamily.WINDOWS);
                         }
                         break;
                     }
                     case "--macos-layout": {
                         a = cmdLine.nextBoolean();
-                        if (enabled && a.getValue().getBoolean()) {
+                        if (active && a.getBooleanValue()) {
                             options.setStoreLocationLayout(NutsOsFamily.MACOS);
                         }
                         break;
                     }
                     case "--linux-layout": {
                         a = cmdLine.nextBoolean();
-                        if (enabled && a.getValue().getBoolean()) {
+                        if (active && a.getBooleanValue()) {
                             options.setStoreLocationLayout(NutsOsFamily.LINUX);
                         }
                         break;
                     }
                     case "--unix-layout": {
                         a = cmdLine.nextBoolean();
-                        if (enabled && a.getValue().getBoolean()) {
+                        if (active && a.getBooleanValue()) {
                             options.setStoreLocationLayout(NutsOsFamily.UNIX);
                         }
                         break;
@@ -308,7 +308,7 @@ public final class CoreNutsArgumentsParser {
                     case "--lib-location": {
                         a = cmdLine.nextString();
                         String v = a.getValue().getString();
-                        if (enabled) {
+                        if (active) {
                             NutsStoreLocation m = NutsStoreLocation.valueOf(k.substring(2, k.indexOf('-')).toUpperCase());
                             options.setStoreLocation(m, v);
                         }
@@ -326,7 +326,7 @@ public final class CoreNutsArgumentsParser {
                         String v = a.getValue().getString();
                         NutsStoreLocation folder = NutsStoreLocation.valueOf(
                                 k.substring(3 + "system".length(), k.indexOf('-', 3 + "system".length())).toUpperCase());
-                        if (enabled) {
+                        if (active) {
                             options.setHomeLocation(NutsHomeLocation.of(null, folder), v);
                         }
                         break;
@@ -367,7 +367,7 @@ public final class CoreNutsArgumentsParser {
                         String v = a.getValue().getString();
                         NutsOsFamily layout = NutsOsFamily.valueOf(k.substring(2, k.indexOf('-', 2)).toUpperCase());
                         NutsStoreLocation folder = NutsStoreLocation.valueOf(k.substring(3 + layout.toString().length(), k.indexOf('-', 3 + layout.toString().length())).toUpperCase());
-                        if (enabled) {
+                        if (active) {
                             options.setHomeLocation(NutsHomeLocation.of(layout, folder), v);
                         }
                         break;
@@ -375,31 +375,31 @@ public final class CoreNutsArgumentsParser {
                     case "--skip-companions":
                     case "-k": {
                         a = cmdLine.nextBoolean();
-                        if (enabled) {
-                            options.setSkipCompanions(a.getValue().getBoolean());
+                        if (active) {
+                            options.setSkipCompanions(a.getBooleanValue());
                         }
                         break;
                     }
                     case "--skip-welcome":
                     case "-K": {
                         a = cmdLine.nextBoolean();
-                        if (enabled) {
-                            options.setSkipWelcome(a.getValue().getBoolean());
+                        if (active) {
+                            options.setSkipWelcome(a.getBooleanValue());
                         }
                         break;
                     }
                     case "--skip-boot":
                     case "-Q": {
                         a = cmdLine.nextBoolean();
-                        if (enabled) {
-                            options.setSkipBoot(a.getValue().getBoolean());
+                        if (active) {
+                            options.setSkipBoot(a.getBooleanValue());
                         }
                         break;
                     }
                     case "--switch": {
                         a = cmdLine.nextBoolean();
-                        if (enabled) {
-                            options.setSwitchWorkspace(a.getValue().getBoolean(true));
+                        if (active) {
+                            options.setSwitchWorkspace(a.getBooleanValue());
                         }
                         break;
                     }
@@ -417,16 +417,16 @@ public final class CoreNutsArgumentsParser {
                     case "-g":
                     case "--global": {
                         a = cmdLine.nextBoolean();
-                        if (enabled) {
-                            options.setGlobal(a.getValue().getBoolean());
+                        if (active) {
+                            options.setGlobal(a.getBooleanValue());
                         }
                         break;
                     }
 
                     case "--gui": {
                         a = cmdLine.nextBoolean();
-                        if (enabled) {
-                            options.setGui(a.getValue().getBoolean());
+                        if (active) {
+                            options.setGui(a.getBooleanValue());
                         }
                         break;
                     }
@@ -435,7 +435,7 @@ public final class CoreNutsArgumentsParser {
                     case "-c": {
                         //if the value is not immediately attached with '=' don't consider
                         a = cmdLine.next();
-                        if (enabled) {
+                        if (active) {
                             String v = a.getValue().getString("");
                             if (a.isNegated()) {
                                 if (v.isEmpty()) {
@@ -494,31 +494,31 @@ public final class CoreNutsArgumentsParser {
                     case "-B":
                     case "--bot": {
                         a = cmdLine.nextBoolean();
-                        if (enabled) {
-                            options.setBot(a.getValue().getBoolean());
+                        if (active) {
+                            options.setBot(a.getBooleanValue());
                         }
                         break;
                     }
                     case "-R":
                     case "--read-only": {
                         a = cmdLine.nextBoolean();
-                        if (enabled && a.getValue().getBoolean()) {
-                            options.setReadOnly(a.getValue().getBoolean());
+                        if (active && a.getBooleanValue()) {
+                            options.setReadOnly(a.getBooleanValue());
                         }
                         break;
                     }
                     case "-t":
                     case "--trace": {
                         a = cmdLine.nextBoolean();
-                        if (enabled) {
-                            options.setTrace(a.getValue().getBoolean());
+                        if (active) {
+                            options.setTrace(a.getBooleanValue());
                         }
                         break;
                     }
                     case "-P":
                     case "--progress": {
                         a = cmdLine.nextString();
-                        if (enabled) {
+                        if (active) {
                             String s = a.getValue().getString();
                             if (a.isNegated()) {
                                 Boolean q = NutsUtilStrings.parseBoolean(s, true, null);
@@ -538,7 +538,7 @@ public final class CoreNutsArgumentsParser {
                     }
                     case "--solver": {
                         a = cmdLine.nextString();
-                        if (enabled) {
+                        if (active) {
                             String s = a.getValue().getString();
                             options.setDependencySolver(s);
                         }
@@ -547,15 +547,15 @@ public final class CoreNutsArgumentsParser {
                     case "--dry":
                     case "-D": {
                         a = cmdLine.nextBoolean();
-                        if (enabled) {
-                            options.setDry(a.getValue().getBoolean());
+                        if (active) {
+                            options.setDry(a.getBooleanValue());
                         }
                         break;
                     }
 
                     case "--debug": {
                         a = cmdLine.nextBoolean();
-                        if (enabled) {
+                        if (active) {
                             options.setDebug(a.getValue().getString());
                         }
                         break;
@@ -600,19 +600,19 @@ public final class CoreNutsArgumentsParser {
                     case "--log-file-name":
                     case "--log-file-base":
                     case "--log-file-count": {
-                        if (enabled) {
+                        if (active) {
                             if (logConfig == null) {
                                 logConfig = new NutsLogConfig();
                             }
                         }
-                        parseLogLevel(logConfig, cmdLine, enabled, session);
+                        parseLogLevel(logConfig, cmdLine, active, session);
                         break;
                     }
                     case "-X":
                     case "--exclude-extension": {
                         a = cmdLine.nextString();
                         String v = a.getValue().getString();
-                        if (enabled) {
+                        if (active) {
                             excludedExtensions.add(v);
                         }
                         break;
@@ -625,7 +625,7 @@ public final class CoreNutsArgumentsParser {
                     case "-r": {
                         a = cmdLine.nextString();
                         String v = a.getValue().getString();
-                        if (enabled) {
+                        if (active) {
                             repositories.add(v);
                         }
                         break;
@@ -633,7 +633,7 @@ public final class CoreNutsArgumentsParser {
 
                     case "--output-format-option":
                     case "-T":
-                        if (enabled) {
+                        if (active) {
                             options.addOutputFormatOptions(cmdLine.nextString().getValue().getString());
                         } else {
                             cmdLine.skip();
@@ -642,7 +642,7 @@ public final class CoreNutsArgumentsParser {
                     case "-O":
                     case "--output-format":
                         a = cmdLine.nextString();
-                        if (enabled) {
+                        if (active) {
                             String t = a.getValue().getString("");
                             int i = CoreStringUtils.firstIndexOf(t, new char[]{' ', ';', ':', '='});
                             if (i > 0) {
@@ -656,56 +656,56 @@ public final class CoreNutsArgumentsParser {
                         break;
                     case "--tson":
                         a = cmdLine.next();
-                        if (enabled) {
+                        if (active) {
                             options.setOutputFormat(NutsContentType.TSON);
                             options.addOutputFormatOptions(a.getValue().getString(""));
                         }
                         break;
                     case "--yaml":
                         a = cmdLine.next();
-                        if (enabled) {
+                        if (active) {
                             options.setOutputFormat(NutsContentType.YAML);
                             options.addOutputFormatOptions(a.getValue().getString(""));
                         }
                         break;
                     case "--json":
                         a = cmdLine.next();
-                        if (enabled) {
+                        if (active) {
                             options.setOutputFormat(NutsContentType.JSON);
                             options.addOutputFormatOptions(a.getValue().getString(""));
                         }
                         break;
                     case "--plain":
                         a = cmdLine.next();
-                        if (enabled) {
+                        if (active) {
                             options.setOutputFormat(NutsContentType.PLAIN);
                             options.addOutputFormatOptions(a.getValue().getString(""));
                         }
                         break;
                     case "--xml":
                         a = cmdLine.next();
-                        if (enabled) {
+                        if (active) {
                             options.setOutputFormat(NutsContentType.XML);
                             options.addOutputFormatOptions(a.getValue().getString(""));
                         }
                         break;
                     case "--table":
                         a = cmdLine.next();
-                        if (enabled) {
+                        if (active) {
                             options.setOutputFormat(NutsContentType.TABLE);
                             options.addOutputFormatOptions(a.getValue().getString(""));
                         }
                         break;
                     case "--tree":
                         a = cmdLine.next();
-                        if (enabled) {
+                        if (active) {
                             options.setOutputFormat(NutsContentType.TREE);
                             options.addOutputFormatOptions(a.getValue().getString(""));
                         }
                         break;
                     case "--props":
                         a = cmdLine.next();
-                        if (enabled) {
+                        if (active) {
                             options.setOutputFormat(NutsContentType.PROPS);
                             options.addOutputFormatOptions(a.getValue().getString(""));
                         }
@@ -713,7 +713,7 @@ public final class CoreNutsArgumentsParser {
                     case "--yes":
                     case "-y": {
                         a = cmdLine.nextBoolean();
-                        if (enabled && a.getValue().getBoolean()) {
+                        if (active && a.getBooleanValue()) {
                             explicitConfirm = true;
                             options.setConfirm(NutsConfirmationMode.YES);
                         }
@@ -722,7 +722,7 @@ public final class CoreNutsArgumentsParser {
                     case "--no":
                     case "-n": {
                         a = cmdLine.nextBoolean();
-                        if (enabled && a.getValue().getBoolean()) {
+                        if (active && a.getBooleanValue()) {
                             explicitConfirm = true;
                             options.setConfirm(NutsConfirmationMode.NO);
                         }
@@ -730,7 +730,7 @@ public final class CoreNutsArgumentsParser {
                     }
                     case "--error": {
                         a = cmdLine.nextBoolean();
-                        if (enabled && a.getValue().getBoolean()) {
+                        if (active && a.getBooleanValue()) {
                             explicitConfirm = true;
                             options.setConfirm(NutsConfirmationMode.ERROR);
                         }
@@ -738,7 +738,7 @@ public final class CoreNutsArgumentsParser {
                     }
                     case "--ask": {
                         a = cmdLine.nextBoolean();
-                        if (enabled && a.getValue().getBoolean()) {
+                        if (active && a.getBooleanValue()) {
                             explicitConfirm = true;
                             options.setConfirm(NutsConfirmationMode.ASK);
                         }
@@ -746,29 +746,29 @@ public final class CoreNutsArgumentsParser {
                     }
                     case "--cached": {
                         a = cmdLine.nextBoolean();
-                        if (enabled && a.getValue().getBoolean()) {
-                            options.setCached(a.getValue().getBoolean());
+                        if (active && a.getBooleanValue()) {
+                            options.setCached(a.getBooleanValue());
                         }
                         break;
                     }
                     case "--indexed": {
                         a = cmdLine.nextBoolean();
-                        if (enabled && a.getValue().getBoolean()) {
-                            options.setIndexed(a.getValue().getBoolean());
+                        if (active && a.getBooleanValue()) {
+                            options.setIndexed(a.getBooleanValue());
                         }
                         break;
                     }
                     case "--transitive": {
                         a = cmdLine.nextBoolean();
-                        if (enabled && a.getValue().getBoolean()) {
-                            options.setTransitive(a.getValue().getBoolean());
+                        if (active && a.getBooleanValue()) {
+                            options.setTransitive(a.getBooleanValue());
                         }
                         break;
                     }
                     case "-f":
                     case "--fetch": {
                         a = cmdLine.nextString();
-                        if (enabled) {
+                        if (active) {
                             options.setFetchStrategy(NutsFetchStrategy.valueOf(a.getValue().getString().toUpperCase().replace("-", "_")));
                         }
                         break;
@@ -776,7 +776,7 @@ public final class CoreNutsArgumentsParser {
                     case "-a":
                     case "--anywhere": {
                         a = cmdLine.nextBoolean();
-                        if (enabled && a.getValue().getBoolean()) {
+                        if (active && a.getBooleanValue()) {
                             options.setFetchStrategy(NutsFetchStrategy.ANYWHERE);
                         }
                         break;
@@ -785,7 +785,7 @@ public final class CoreNutsArgumentsParser {
 //                    case "--installed":
 //                    {
 //                        a = cmdLine.nextBoolean();
-//                        if (enabled && a.getValue().getBoolean()) {
+//                        if (active && a.getBooleanValue()) {
 //                            options.setFetchStrategy(NutsFetchStrategy.INSTALLED);
 //                        }
 //                        break;
@@ -793,21 +793,21 @@ public final class CoreNutsArgumentsParser {
                     case "-F":
                     case "--offline": {
                         a = cmdLine.nextBoolean();
-                        if (enabled && a.getValue().getBoolean()) {
+                        if (active && a.getBooleanValue()) {
                             options.setFetchStrategy(NutsFetchStrategy.OFFLINE);
                         }
                         break;
                     }
                     case "--online": {
                         a = cmdLine.nextBoolean();
-                        if (enabled && a.getValue().getBoolean()) {
+                        if (active && a.getBooleanValue()) {
                             options.setFetchStrategy(NutsFetchStrategy.ONLINE);
                         }
                         break;
                     }
                     case "--remote": {
                         a = cmdLine.nextBoolean();
-                        if (enabled && a.getValue().getBoolean()) {
+                        if (active && a.getBooleanValue()) {
                             options.setFetchStrategy(NutsFetchStrategy.REMOTE);
                         }
                         break;
@@ -827,7 +827,7 @@ public final class CoreNutsArgumentsParser {
                     case "--embedded":
                     case "-b": {
                         a = cmdLine.nextBoolean();
-                        if (enabled && a.getValue().getBoolean()) {
+                        if (active && a.getBooleanValue()) {
                             options.setExecutionType(NutsExecutionType.EMBEDDED);
                         }
                         //ignore
@@ -835,7 +835,7 @@ public final class CoreNutsArgumentsParser {
                     }
                     case "--open-file": {
                         a = cmdLine.nextBoolean();
-                        if (enabled && a.getValue().getBoolean()) {
+                        if (active && a.getBooleanValue()) {
                             options.setExecutionType(NutsExecutionType.OPEN);
                         }
                         //ignore
@@ -845,7 +845,7 @@ public final class CoreNutsArgumentsParser {
                     case "--spawn":
                     case "-x": {
                         a = cmdLine.nextBoolean();
-                        if (enabled && a.getValue().getBoolean()) {
+                        if (active && a.getBooleanValue()) {
                             options.setExecutionType(NutsExecutionType.SPAWN);
                         }
                         break;
@@ -853,7 +853,7 @@ public final class CoreNutsArgumentsParser {
                     case "--user-cmd"://deprecated since 0.8.1
                     case "--system": {
                         a = cmdLine.nextBoolean();
-                        if (enabled && a.getValue().getBoolean()) {
+                        if (active && a.getBooleanValue()) {
                             options.setExecutionType(NutsExecutionType.SYSTEM);
                         }
                         break;
@@ -861,21 +861,21 @@ public final class CoreNutsArgumentsParser {
                     case "--root-cmd": //deprecated since 0.8.1
                     case "--as-root": {
                         a = cmdLine.nextBoolean();
-                        if (enabled && a.getValue().getBoolean()) {
+                        if (active && a.getBooleanValue()) {
                             options.setRunAs(NutsRunAs.root());
                         }
                         break;
                     }
                     case "--current-user": {
                         a = cmdLine.nextBoolean();
-                        if (enabled && a.getValue().getBoolean()) {
+                        if (active && a.getBooleanValue()) {
                             options.setRunAs(NutsRunAs.currentUser());
                         }
                         break;
                     }
                     case "--run-as": {
                         a = cmdLine.nextString();
-                        if (enabled) {
+                        if (active) {
                             if (NutsBlankable.isBlank(a.getValue().getString())) {
                                 throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("missing user name"));
                             }
@@ -887,7 +887,7 @@ public final class CoreNutsArgumentsParser {
                     case "--open-mode": {
                         a = cmdLine.nextString();
                         String v = a.getValue().getString();
-                        if (enabled) {
+                        if (active) {
                             options.setOpenMode(parseNutsOpenMode(v, session));
                         }
                         break;
@@ -895,7 +895,7 @@ public final class CoreNutsArgumentsParser {
                     case "--open-or-error":
                     case "--open": {
                         a = cmdLine.nextBoolean();
-                        if (enabled && a.getValue().getBoolean()) {
+                        if (active && a.getBooleanValue()) {
                             options.setOpenMode(NutsOpenMode.OPEN_OR_ERROR);
                         }
                         break;
@@ -903,21 +903,21 @@ public final class CoreNutsArgumentsParser {
                     case "--create-or-error":
                     case "--create": {
                         a = cmdLine.nextBoolean();
-                        if (enabled && a.getValue().getBoolean()) {
+                        if (active && a.getBooleanValue()) {
                             options.setOpenMode(NutsOpenMode.CREATE_OR_ERROR);
                         }
                         break;
                     }
                     case "--open-or-create": {
                         a = cmdLine.nextBoolean();
-                        if (enabled && a.getValue().getBoolean()) {
+                        if (active && a.getBooleanValue()) {
                             options.setOpenMode(NutsOpenMode.OPEN_OR_CREATE);
                         }
                         break;
                     }
                     case "--open-or-null": {
                         a = cmdLine.nextBoolean();
-                        if (enabled && a.getValue().getBoolean()) {
+                        if (active && a.getBooleanValue()) {
                             options.setOpenMode(NutsOpenMode.OPEN_OR_NULL);
                         }
                         break;
@@ -930,7 +930,7 @@ public final class CoreNutsArgumentsParser {
                     //**********************************
                     case "-": {
                         cmdLine.skip();
-                        if (enabled) {
+                        if (active) {
                             if (!a.getValue().isNull()) {
                                 throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("invalid argument for workspace: %s", a.getString()));
                             }
@@ -951,7 +951,7 @@ public final class CoreNutsArgumentsParser {
                     case "-v":
                     case "--version": {
                         a = cmdLine.nextBoolean();
-                        if (enabled) {
+                        if (active) {
                             options.setCommandVersion(a.isActive());
                         }
                         break;
@@ -959,8 +959,8 @@ public final class CoreNutsArgumentsParser {
                     case "-Z":
                     case "--reset": {
                         a = cmdLine.nextBoolean();
-                        if (enabled) {
-                            if (a.getValue().getBoolean()) {
+                        if (active) {
+                            if (a.getBooleanValue()) {
                                 options.setReset(true);
                                 options.setRecover(false);
                             }
@@ -972,8 +972,8 @@ public final class CoreNutsArgumentsParser {
                     case "-z":
                     case "--recover": {
                         a = cmdLine.nextBoolean();
-                        if (enabled) {
-                            if (a.getValue().getBoolean()) {
+                        if (active) {
+                            if (a.getBooleanValue()) {
                                 options.setReset(false);
                                 options.setRecover(true);
                             }
@@ -983,7 +983,7 @@ public final class CoreNutsArgumentsParser {
                     case "-N":
                     case "--expire": {
                         a = cmdLine.next();
-                        if (enabled) {
+                        if (active) {
                             if (!NutsBlankable.isBlank(a.getValue().getString())) {
                                 options.setExpireTime(Instant.parse(a.getValue().getString()));
                             } else {
@@ -994,21 +994,21 @@ public final class CoreNutsArgumentsParser {
                     }
                     case "--out-line-prefix": {
                         a = cmdLine.nextString();
-                        if (enabled) {
+                        if (active) {
                             options.setOutLinePrefix(a.getValue().getString());
                         }
                         break;
                     }
                     case "--err-line-prefix": {
                         a = cmdLine.nextString();
-                        if (enabled) {
+                        if (active) {
                             options.setErrLinePrefix(a.getValue().getString());
                         }
                         break;
                     }
                     case "--line-prefix": {
                         a = cmdLine.nextString();
-                        if (enabled) {
+                        if (active) {
                             options.setOutLinePrefix(a.getValue().getString());
                             options.setErrLinePrefix(a.getValue().getString());
                         }
@@ -1017,7 +1017,7 @@ public final class CoreNutsArgumentsParser {
                     case "-e":
                     case "--exec": {
                         a = cmdLine.nextBoolean();
-                        if (enabled && a.getValue().getBoolean()) {
+                        if (active && a.getBooleanValue()) {
                             while ((a = cmdLine.next()) != null) {
                                 if (a.isOption()) {
                                     executorOptions.add(a.getString());
@@ -1036,29 +1036,29 @@ public final class CoreNutsArgumentsParser {
                     case "--help":
                     case "-h": {
                         a = cmdLine.nextBoolean();
-                        if (enabled && a.getValue().getBoolean()) {
-                            options.setCommandHelp(a.getValue().getBoolean());
+                        if (active && a.getBooleanValue()) {
+                            options.setCommandHelp(a.getBooleanValue());
                         }
                         break;
                     }
                     case "--skip-errors": {
                         a = cmdLine.nextBoolean();
-                        if (enabled) {
-                            options.setSkipErrors(a.getValue().getBoolean());
+                        if (active) {
+                            options.setSkipErrors(a.getBooleanValue());
                         }
                         break;
                     }
                     case "-L":
                     case "--locale": {
                         a = cmdLine.nextString();
-                        if (enabled) {
+                        if (active) {
                             options.setLocale(a.getValue().getString());
                         }
                         break;
                     }
                     case "--theme": {
                         a = cmdLine.nextString();
-                        if (enabled) {
+                        if (active) {
                             options.setTheme(a.getValue().getString());
                         }
                         break;
@@ -1217,7 +1217,7 @@ public final class CoreNutsArgumentsParser {
 
             case "--verbose": {
                 cmdLine.skip();
-                if (enabled && a.getValue().getBoolean(true)) {
+                if (enabled && a.getBooleanValue()) {
                     logConfig.setLogTermLevel(Level.FINEST);
                     logConfig.setLogFileLevel(Level.FINEST);
                 }

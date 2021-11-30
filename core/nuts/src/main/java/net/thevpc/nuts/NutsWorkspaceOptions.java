@@ -25,8 +25,6 @@
  */
 package net.thevpc.nuts;
 
-import net.thevpc.nuts.boot.NutsBootTerminal;
-
 import java.io.InputStream;
 import java.io.PrintStream;
 import java.io.Serializable;

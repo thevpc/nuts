@@ -60,7 +60,7 @@ public class NutsSettingsNdiSubCommand extends AbstractNutsSettingsSubCommand {
         commandLine.setCommandName("settings add launcher");
         while (commandLine.hasNext()) {
             if ((a = commandLine.nextBoolean("-t", "--fetch")) != null) {
-                options.setFetch(a.getValue().getBoolean());
+                options.setFetch(a.getBooleanValue());
             } else if ((a = commandLine.nextString("-d", "--workdir")) != null) {
                 if (a.isActive()) {
                     options.getLauncher().setWorkingDirectory(a.getValue().getString());
@@ -115,33 +115,33 @@ public class NutsSettingsNdiSubCommand extends AbstractNutsSettingsSubCommand {
                     }
                 }
             } else if ((a = commandLine.nextBoolean("-x", "--external", "--spawn")) != null) {
-                if (a.getValue().getBoolean()) {
+                if (a.getBooleanValue()) {
                     options.getLauncher().getNutsOptions().add("--spawn");
                 }
             } else if ((a = commandLine.nextBoolean("-b", "--embedded")) != null) {
-                if (a.getValue().getBoolean()) {
+                if (a.getBooleanValue()) {
                     options.getLauncher().getNutsOptions().add("--embedded");
                 }
             } else if ((a = commandLine.nextBoolean("--terminal")) != null) {
                 if (a.isActive()) {
-                    options.getLauncher().setOpenTerminal(a.getValue().getBoolean());
+                    options.getLauncher().setOpenTerminal(a.getBooleanValue());
                 }
             } else if ((a = commandLine.nextBoolean("-e", "--env")) != null) {
-                options.setIncludeEnv(a.getValue().getBoolean());
+                options.setIncludeEnv(a.getBooleanValue());
             } else if ((a = commandLine.nextBoolean("--system")) != null) {
-                if (a.getValue().getBoolean()) {
+                if (a.getBooleanValue()) {
                     options.getLauncher().getNutsOptions().add("--system");
                 }
             } else if ((a = commandLine.nextBoolean("--current-user")) != null) {
-                if (a.getValue().getBoolean()) {
+                if (a.getBooleanValue()) {
                     options.getLauncher().getNutsOptions().add("--current-user");
                 }
             } else if ((a = commandLine.nextBoolean("--as-root")) != null) {
-                if (a.isActive() && a.getValue().getBoolean()) {
+                if (a.isActive() && a.getBooleanValue()) {
                     options.getLauncher().getNutsOptions().add("--as-root");
                 }
             } else if ((a = commandLine.nextBoolean("--sudo")) != null) {
-                if (a.isActive() && a.getValue().getBoolean()) {
+                if (a.isActive() && a.getBooleanValue()) {
                     options.getLauncher().getNutsOptions().add("--sudo");
                 }
             } else if ((a = commandLine.nextString("--run-as")) != null) {
@@ -165,13 +165,12 @@ public class NutsSettingsNdiSubCommand extends AbstractNutsSettingsSubCommand {
                     missingAnyArgument = false;
                 }
             } else if ((a = commandLine.nextString("--switch")) != null) {
-                Boolean booleanValue = a.getValue().getBoolean(null);
-                if (booleanValue != null) {
-                    options.getLauncher().setSystemWideConfig(booleanValue);
+                if(a.isActive()) {
+                    options.getLauncher().setSystemWideConfig(a.getBooleanValue());
                 }
             } else if ((a = commandLine.nextString("--ignore-unsupported-os")) != null) {
                 if (a.isActive()) {
-                    ignoreUnsupportedOs = a.getValue().getBoolean();
+                    ignoreUnsupportedOs = a.getBooleanValue();
                 }
             } else if (commandLine.peek().getKey().getString().equals("-w") || commandLine.peek().getKey().getString().equals("--workspace")) {
                 a = commandLine.nextString();
@@ -225,7 +224,7 @@ public class NutsSettingsNdiSubCommand extends AbstractNutsSettingsSubCommand {
                 return NutsSupportCondition.PREFERRED;
             }
             default: {
-                if (a.getValue().getBoolean()) {
+                if (a.getBooleanValue()) {
                     return NutsSupportCondition.PREFERRED;
                 } else {
                     return NutsSupportCondition.NEVER;
@@ -243,7 +242,7 @@ public class NutsSettingsNdiSubCommand extends AbstractNutsSettingsSubCommand {
         while (commandLine.hasNext()) {
             if ((a = commandLine.nextString("--ignore-unsupported-os")) != null) {
                 if (a.isActive()) {
-                    ignoreUnsupportedOs = a.getValue().getBoolean();
+                    ignoreUnsupportedOs = a.getBooleanValue();
                 }
             } else if (commandLine.peek().isOption()) {
                 session.configureLast(commandLine);
@@ -298,7 +297,7 @@ public class NutsSettingsNdiSubCommand extends AbstractNutsSettingsSubCommand {
         while (commandLine.hasNext()) {
             if ((a = commandLine.nextString("--ignore-unsupported-os")) != null) {
                 if (a.isActive()) {
-                    ignoreUnsupportedOs = a.getValue().getBoolean();
+                    ignoreUnsupportedOs = a.getBooleanValue();
                 }
             } else if (commandLine.peek().getKey().getString().equals("-w") || commandLine.peek().getKey().getString().equals("--workspace")) {
                 switchWorkspaceLocation = commandLine.nextString().getValue().getString();

@@ -50,7 +50,7 @@ public class RmCommand extends SimpleJShellBuiltin {
         Options options = context.getOptions();
         NutsArgument a;
         if ((a = commandLine.nextBoolean("-R")) != null) {
-            options.R = a.getValue().getBoolean();
+            options.R = a.getBooleanValue();
             return true;
         } else if (commandLine.peek().isNonOption()) {
             options.files.add(ShellHelper.xfileOf(commandLine.next().getString(), context.getShellContext().getCwd(), context.getSession()));

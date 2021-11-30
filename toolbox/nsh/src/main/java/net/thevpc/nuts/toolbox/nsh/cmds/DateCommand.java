@@ -165,7 +165,7 @@ public class DateCommand extends SimpleJShellBuiltin {
                 if (context.getShell().getOptions().isNsh()) {
                     a = cmdLine.nextBoolean();
                     if (a.isActive()) {
-                        options.debug = a.getValue().getBoolean();
+                        options.debug = a.getBooleanValue();
                     }
                 } else {
                     a = cmdLine.next();
@@ -179,7 +179,7 @@ public class DateCommand extends SimpleJShellBuiltin {
                 if (context.getShell().getOptions().isNsh()) {
                     a = cmdLine.nextBoolean();
                     if (a.isActive()) {
-                        options.utc = a.getValue().getBoolean();
+                        options.utc = a.getBooleanValue();
                     }
                 } else {
                     a = cmdLine.next();
@@ -192,7 +192,7 @@ public class DateCommand extends SimpleJShellBuiltin {
                 if (context.getShell().getOptions().isNsh()) {
                     a = cmdLine.nextBoolean();
                     if (a.isActive()) {
-                        options.rfcMail = a.getValue().getBoolean();
+                        options.rfcMail = a.getBooleanValue();
                     }
                 } else {
                     a = cmdLine.next();
