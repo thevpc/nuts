@@ -23,10 +23,11 @@
  * <br>
  * ====================================================================
  */
-package net.thevpc.nuts.spi;
+package net.thevpc.nuts;
 
-import net.thevpc.nuts.*;
 import net.thevpc.nuts.boot.*;
+import net.thevpc.nuts.spi.NutsBootDescriptor;
+import net.thevpc.nuts.spi.NutsBootWorkspaceFactory;
 
 import java.io.InputStream;
 import java.io.PrintStream;

@@ -27,7 +27,7 @@
 package net.thevpc.nuts.boot;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.spi.NutsBootOptions;
+import net.thevpc.nuts.NutsBootOptions;
 
 import java.io.File;
 import java.io.IOException;

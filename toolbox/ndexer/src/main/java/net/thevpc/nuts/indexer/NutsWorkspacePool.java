@@ -6,7 +6,7 @@ import net.thevpc.nuts.NutsSession;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import net.thevpc.nuts.spi.NutsBootOptions;
+import net.thevpc.nuts.NutsBootOptions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

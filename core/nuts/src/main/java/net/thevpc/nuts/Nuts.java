@@ -24,7 +24,6 @@
 package net.thevpc.nuts;
 
 import net.thevpc.nuts.boot.*;
-import net.thevpc.nuts.spi.NutsBootOptions;
 
 import java.util.logging.Level;
 

@@ -28,7 +28,7 @@ package net.thevpc.nuts.boot;
 
 import net.thevpc.nuts.NutsLogVerb;
 import net.thevpc.nuts.NutsMessage;
-import net.thevpc.nuts.spi.NutsBootOptions;
+import net.thevpc.nuts.NutsBootOptions;
 
 import java.io.InputStream;
 import java.io.PrintStream;

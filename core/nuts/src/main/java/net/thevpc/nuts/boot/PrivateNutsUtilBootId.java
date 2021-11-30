@@ -29,7 +29,7 @@ package net.thevpc.nuts.boot;
 import net.thevpc.nuts.NutsOsFamily;
 import net.thevpc.nuts.spi.NutsBootId;
 import net.thevpc.nuts.spi.NutsBootVersion;
-import net.thevpc.nuts.spi.NutsBootOptions;
+import net.thevpc.nuts.NutsBootOptions;
 
 import java.util.ArrayList;
 import java.util.List;

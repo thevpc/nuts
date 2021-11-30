@@ -1,7 +1,7 @@
 package net.thevpc.nuts.toolbox.nutsserver;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.spi.NutsBootOptions;
+import net.thevpc.nuts.NutsBootOptions;
 import net.thevpc.nuts.toolbox.nutsserver.bundled._IOUtils;
 import net.thevpc.nuts.toolbox.nutsserver.http.NutsHttpServerConfig;
 

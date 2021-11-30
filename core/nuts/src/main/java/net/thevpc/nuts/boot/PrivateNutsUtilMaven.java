@@ -29,7 +29,7 @@ package net.thevpc.nuts.boot;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.spi.NutsBootId;
 import net.thevpc.nuts.spi.NutsBootVersion;
-import net.thevpc.nuts.spi.NutsBootOptions;
+import net.thevpc.nuts.NutsBootOptions;
 import net.thevpc.nuts.spi.NutsRepositoryURL;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;

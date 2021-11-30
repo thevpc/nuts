@@ -27,7 +27,7 @@
 package net.thevpc.nuts.boot;
 
 import net.thevpc.nuts.spi.NutsBootWorkspaceFactory;
-import net.thevpc.nuts.spi.NutsBootOptions;
+import net.thevpc.nuts.NutsBootOptions;
 
 import java.util.Comparator;
 

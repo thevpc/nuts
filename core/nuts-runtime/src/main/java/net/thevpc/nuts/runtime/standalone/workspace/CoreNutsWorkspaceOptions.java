@@ -25,7 +25,7 @@ package net.thevpc.nuts.runtime.standalone.workspace;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.boot.NutsBootTerminal;
-import net.thevpc.nuts.spi.NutsBootOptions;
+import net.thevpc.nuts.NutsBootOptions;
 import net.thevpc.nuts.runtime.standalone.app.cmdline.CoreNutsArgumentsParser;
 import net.thevpc.nuts.runtime.standalone.format.CoreNutsWorkspaceOptionsFormat;
 

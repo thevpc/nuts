@@ -26,6 +26,7 @@
  */
 package net.thevpc.nuts.spi;
 
+import net.thevpc.nuts.NutsBootOptions;
 import net.thevpc.nuts.NutsWorkspace;
 
 /**

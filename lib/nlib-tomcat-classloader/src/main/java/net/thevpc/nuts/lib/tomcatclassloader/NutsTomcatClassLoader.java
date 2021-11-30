@@ -3,7 +3,7 @@ package net.thevpc.nuts.lib.tomcatclassloader;
 import net.thevpc.nuts.Nuts;
 import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.NutsOpenMode;
-import net.thevpc.nuts.spi.NutsBootOptions;
+import net.thevpc.nuts.NutsBootOptions;
 import org.apache.catalina.WebResource;
 import org.apache.catalina.WebResourceRoot;
 import org.apache.catalina.loader.WebappClassLoader;

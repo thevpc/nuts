@@ -27,7 +27,7 @@ package net.thevpc.nuts.runtime.standalone.workspace;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.spi.NutsBootDescriptor;
 import net.thevpc.nuts.spi.NutsBootId;
-import net.thevpc.nuts.spi.NutsBootOptions;
+import net.thevpc.nuts.NutsBootOptions;
 import net.thevpc.nuts.spi.NutsBootWorkspaceFactory;
 
 import java.io.File;

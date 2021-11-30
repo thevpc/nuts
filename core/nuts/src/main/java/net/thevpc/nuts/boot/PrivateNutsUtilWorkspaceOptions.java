@@ -26,7 +26,7 @@
  */
 package net.thevpc.nuts.boot;
 
-import net.thevpc.nuts.spi.NutsBootOptions;
+import net.thevpc.nuts.NutsBootOptions;
 
 class PrivateNutsUtilWorkspaceOptions {
     static boolean isBootOptional(String name, NutsBootOptions woptions) {
