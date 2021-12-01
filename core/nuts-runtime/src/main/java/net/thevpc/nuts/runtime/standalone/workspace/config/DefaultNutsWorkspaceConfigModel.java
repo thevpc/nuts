@@ -31,6 +31,7 @@ import net.thevpc.nuts.runtime.standalone.definition.DefaultNutsInstallInfo;
 import net.thevpc.nuts.runtime.standalone.events.DefaultNutsWorkspaceEvent;
 import net.thevpc.nuts.runtime.standalone.io.path.NutsPathFromSPI;
 import net.thevpc.nuts.runtime.standalone.io.path.spi.*;
+import net.thevpc.nuts.runtime.standalone.io.path.spi.htmlfs.HtmlfsPath;
 import net.thevpc.nuts.runtime.standalone.io.printstream.NutsPrintStreamNull;
 import net.thevpc.nuts.runtime.standalone.io.terminals.*;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;

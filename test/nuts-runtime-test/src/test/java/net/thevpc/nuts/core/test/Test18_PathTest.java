@@ -182,7 +182,7 @@ public class Test18_PathTest {
             TestUtils.println(nutsPath);
             children.add(nutsPath.toString());
         }
-        Assertions.assertEquals(3, children.size());
+        Assertions.assertEquals(13, children.size());
         TestUtils.println("------------ WALK ----------");
         s.walk().forEach(x -> {
             TestUtils.println(x);
@@ -199,7 +199,7 @@ public class Test18_PathTest {
             TestUtils.println(nutsPath);
             children.add(nutsPath.toString());
         }
-        Assertions.assertEquals(3, children.size());
+        Assertions.assertEquals(2, children.size());
         TestUtils.println("------------ WALK ----------");
         s.walk().forEach(x -> {
             TestUtils.println(x);

@@ -26,6 +26,7 @@
  */
 package net.thevpc.nuts;
 
+import java.util.List;
 import java.util.function.Supplier;
 
 public interface NutsSupported<T> {
@@ -41,6 +42,10 @@ public interface NutsSupported<T> {
 
     static <T> NutsSupported<T> invalid() {
         return NutsDefaultSupported.INVALID;
+    }
+
+    static <T> boolean isValid(NutsSupported<T> s) {
+        return s!=null && s.isValid();
     }
 
     T getValue();
