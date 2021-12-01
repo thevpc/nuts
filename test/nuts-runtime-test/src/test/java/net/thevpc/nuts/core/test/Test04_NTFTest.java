@@ -27,10 +27,6 @@ package net.thevpc.nuts.core.test;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.core.test.utils.*;
-import net.thevpc.nuts.runtime.standalone.text.NutsTextNodeWriter;
-import net.thevpc.nuts.runtime.standalone.text.NutsTextNodeWriterRenderer;
-import net.thevpc.nuts.runtime.standalone.text.parser.DefaultNutsTextNodeParser;
-import net.thevpc.nuts.runtime.standalone.text.renderer.AnsiUnixTermPrintRenderer;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -251,17 +247,8 @@ public class Test04_NTFTest {
         TestUtils.println(s);
         NutsSession ws = TestUtils.openNewTestWorkspace("--verbose","--skip-companions");
         {
-            NutsText node = new DefaultNutsTextNodeParser(ws).parse(new StringReader(s));
-            NutsTextNodeWriter w = new NutsTextNodeWriterRenderer(NutsPrintStreams.of(ws).stdout(), AnsiUnixTermPrintRenderer.ANSI_RENDERER, ws)
-                    .setWriteConfiguration(new NutsTextWriteConfiguration().setTitleNumberEnabled(true));
-            w.writeNode(node);
+            ws.out().println(s);
         }
-        //            ByteArrayOutputStream bout=new ByteArrayOutputStream();
-//            w = new NutsTextNodeWriterRenderer(bout, AnsiUnixTermPrintRenderer.ANSI_RENDERER, ws)
-//                    .setWriteConfiguration(new NutsTextWriteConfiguration().setTitleNumberEnabled(true));
-//            w.writeNode(text);
-//            TestUtils.println(bout);
-
     }
 
 //    @Test

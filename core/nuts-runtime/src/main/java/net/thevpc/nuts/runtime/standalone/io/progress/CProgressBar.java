@@ -3,7 +3,6 @@ package net.thevpc.nuts.runtime.standalone.io.progress;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.util.CorePlatformUtils;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
-import net.thevpc.nuts.runtime.standalone.text.FPrintCommands;
 
 import java.util.Calendar;
 
@@ -515,14 +514,15 @@ public class CProgressBar {
             if (msg == null) {
                 msg = "";
             }
-            s2 = session == null ? msg.length() : NutsTexts.of(session).builder().append(msg).textLength();
+            NutsTexts txts = NutsTexts.of(session);
+            s2 = session == null ? msg.length() : txts.builder().append(msg).textLength();
             if (isPrefixMoveLineStart()) {
                 if (optionNewline) {
                     if (!isSuffixMoveLineStart()) {
                         sb.append("\n");
                     }
                 } else {
-                    FPrintCommands.runMoveLineStart(sb);
+                    sb.append(txts.ofCommand(NutsTerminalCommand.MOVE_LINE_START));
                 }
             }
             String p = progress(percent);
@@ -543,7 +543,7 @@ public class CProgressBar {
                 if (optionNewline) {
                     sb.append("\n");
                 } else {
-                    FPrintCommands.runLaterResetLine(sb);
+                    //FPrintCommands.runLaterResetLine(sb);
                 }
             }
         } else {

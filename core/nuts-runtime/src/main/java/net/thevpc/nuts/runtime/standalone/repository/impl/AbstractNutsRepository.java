@@ -26,13 +26,13 @@ package net.thevpc.nuts.runtime.standalone.repository.impl;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.repository.config.DefaultNutsRepoConfigManager;
 import net.thevpc.nuts.runtime.standalone.repository.config.NutsRepositoryConfigModel;
+import net.thevpc.nuts.runtime.standalone.util.NutsCachedValue;
 import net.thevpc.nuts.runtime.standalone.util.collections.DefaultObservableMap;
 import net.thevpc.nuts.runtime.standalone.util.collections.ObservableMap;
 import net.thevpc.nuts.spi.NutsRepositorySPI;
 
 import java.util.*;
 import net.thevpc.nuts.runtime.standalone.workspace.config.NutsRepositoryConfigManagerExt;
-import net.thevpc.nuts.runtime.standalone.util.CachedValue;
 import net.thevpc.nuts.runtime.standalone.security.DefaultNutsRepositorySecurityManager;
 import net.thevpc.nuts.runtime.standalone.security.DefaultNutsRepositorySecurityModel;
 
@@ -52,8 +52,8 @@ public abstract class AbstractNutsRepository implements NutsRepository, NutsRepo
     protected ObservableMap<String, Object> userProperties;
     protected boolean enabled = true;
     protected NutsSession initSession;
-    protected CachedValue<Boolean> available = new CachedValue<>(() -> isAvailableImpl(), 0);
-    protected CachedValue<Boolean> supportedDeploy = new CachedValue<>(() -> isSupportedDeployImpl(), 0);
+    protected NutsCachedValue<Boolean> available = new NutsCachedValue<>(this::isAvailableImpl, 0);
+    protected NutsCachedValue<Boolean> supportedDeploy = new NutsCachedValue<>(this::isSupportedDeployImpl, 0);
 
     public AbstractNutsRepository() {
         userProperties = new DefaultObservableMap<>();
@@ -61,36 +61,36 @@ public abstract class AbstractNutsRepository implements NutsRepository, NutsRepo
     }
 
     @Override
-    public boolean isAvailable() {
-        return isAvailable(false);
+    public boolean isAvailable(NutsSession session) {
+        return isAvailable(false, session);
     }
 
     @Override
-    public boolean isAvailable(boolean force) {
+    public boolean isAvailable(boolean force, NutsSession session) {
         if (force) {
-            return available.update();
+            return available.update(session);
         }
-        return available.getValue();
+        return available.getValue(session);
     }
 
     @Override
-    public boolean isSupportedDeploy() {
-        return isSupportedDeploy(false);
+    public boolean isSupportedDeploy(NutsSession session) {
+        return isSupportedDeploy(false, session);
     }
 
     @Override
-    public boolean isSupportedDeploy(boolean force) {
+    public boolean isSupportedDeploy(boolean force, NutsSession session) {
         if (force) {
-            return supportedDeploy.update();
+            return supportedDeploy.update(session);
         }
-        return supportedDeploy.getValue();
+        return supportedDeploy.getValue(session);
     }
 
-    protected boolean isSupportedDeployImpl() {
+    protected boolean isSupportedDeployImpl(NutsSession session) {
         return true;
     }
 
-    protected boolean isAvailableImpl() {
+    protected boolean isAvailableImpl(NutsSession session) {
         return true;
     }
 

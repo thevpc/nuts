@@ -1,12 +1,10 @@
 package net.thevpc.nuts.runtime.standalone.io.printstream;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.standalone.text.renderer.StripperFormattedPrintStreamRenderer;
 
 public class NutsPrintStreamFiltered extends NutsPrintStreamRendered {
     public NutsPrintStreamFiltered(NutsPrintStreamBase base, NutsSession session, Bindings bindings) {
-        super(base, session,NutsTerminalMode.FILTERED,
-                new StripperFormattedPrintStreamRenderer(),
+        super(base, session, NutsTerminalMode.FILTERED,
                 bindings);
         if (bindings.filtered != null) {
             throw new IllegalArgumentException("already bound ansi");
@@ -34,7 +32,7 @@ public class NutsPrintStreamFiltered extends NutsPrintStreamRendered {
     }
 
     @Override
-    public NutsPrintStream run(NutsTerminalCommand command) {
+    public NutsPrintStream run(NutsTerminalCommand command, NutsSession session) {
         //do nothing!!
         return this;
     }

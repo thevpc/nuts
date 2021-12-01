@@ -211,7 +211,7 @@ public class NutsWorkspaceUtils {
 
         for (NutsRepository repository : session.repos().setSession(session).getRepositories()) {
             if (repository.isEnabled()
-                    && (fmode == NutsRepositorySupportedAction.SEARCH ? true/*repository.isAvailable()*/ : repository.isSupportedDeploy())
+                    && (fmode == NutsRepositorySupportedAction.SEARCH ? true/*repository.isAvailable()*/ : repository.isSupportedDeploy(session))
                     && repoSPI(repository).isAcceptFetchMode(mode, session)
                     && (repositoryFilter == null || repositoryFilter.acceptRepository(repository))) {
                 int d = 0;

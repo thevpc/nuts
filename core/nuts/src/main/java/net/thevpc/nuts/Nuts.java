@@ -86,40 +86,12 @@ public final class Nuts {
             System.exit(0);
         } catch (Exception ex) {
             NutsSession session = NutsExceptionBase.detectSession(ex);
-            NutsBootOptions bo = null;
             if (session != null) {
-                bo = session.boot().getBootOptions().builder().toBootOptions();
-                if (!session.env().isGraphicalDesktopEnvironment()) {
-                    bo.setGui(false);
-                }
+                System.exit(NutsApplicationExceptionHandler.of(session)
+                        .processThrowable(args, ex, session));
             } else {
-                PrivateNutsBootLog log = new PrivateNutsBootLog(null);
-                bo = new NutsBootOptions();
-                NutsApiUtils.parseNutsArguments(args,bo,log);
-                try {
-                    if (NutsApiUtils.isGraphicalDesktopEnvironment()) {
-                        bo.setGui(false);
-                    }
-                } catch (Exception e) {
-                    //exception may occur if the sdk is build without awt package for instance!
-                    bo.setGui(false);
-                }
+                System.exit(NutsApiUtils.processThrowable(ex, args));
             }
-
-            boolean bot = bo.isBot();
-            boolean gui = !bot && bo.isGui();
-            boolean showTrace = bo.getDebug()!=null;
-            showTrace |= (bo.getLogConfig() != null
-                    && bo.getLogConfig().getLogTermLevel() != null
-                    && bo.getLogConfig().getLogTermLevel().intValue() < Level.INFO.intValue());
-            if (!showTrace) {
-                showTrace = NutsApiUtils.getSysBoolNutsProperty("debug", false);
-            }
-            if (bot) {
-                showTrace = false;
-                gui = false;
-            }
-            System.exit(NutsApiUtils.processThrowable(ex, null, true, showTrace, gui));
         }
     }
 
@@ -163,7 +135,11 @@ public final class Nuts {
         options.setApplicationArguments(args);
         options.setInherited(true);
         options.setCreationTime(startTime);
-        options.setBootTerminal(term);
+        if(term!=null) {
+            options.setStdin(term.getIn());
+            options.setStdout(term.getOut());
+            options.setStderr(term.getErr());
+        }
         return new NutsBootWorkspace(options).openWorkspace();
     }
 
@@ -180,7 +156,7 @@ public final class Nuts {
     /**
      * open a workspace. Nuts Boot arguments are passed in <code>args</code>
      *
-     * @param term boot temrinal or null for null
+     * @param term boot terminal or null for null
      * @param args nuts boot arguments
      * @return new NutsSession instance
      */

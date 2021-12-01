@@ -4,6 +4,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.io.terminals.NutsTerminalModeOp;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
 import net.thevpc.nuts.spi.NutsSessionAware;
+import net.thevpc.nuts.spi.NutsSystemTerminalBase;
 
 import java.io.OutputStream;
 import java.io.PrintWriter;
@@ -11,36 +12,41 @@ import java.io.Writer;
 import java.util.Locale;
 
 public class ExtendedFormatAwarePrintWriter extends PrintWriter implements ExtendedFormatAware, NutsSessionAware {
-    private NutsWorkspace ws;
+    private final NutsWorkspace ws;
     private NutsSession session;
+    private final NutsSystemTerminalBase term;
     private Object base = null;
 
-    public ExtendedFormatAwarePrintWriter(Writer out,NutsSession session) {
+    public ExtendedFormatAwarePrintWriter(Writer out, NutsSystemTerminalBase term, NutsSession session) {
         super(out);
         base = out;
-        this.session=session;
-        this.ws=session.getWorkspace();
+        this.session = session;
+        this.term = term;
+        this.ws = session.getWorkspace();
     }
 
-    public ExtendedFormatAwarePrintWriter(Writer out, boolean autoFlush,NutsSession session) {
+    public ExtendedFormatAwarePrintWriter(Writer out, boolean autoFlush, NutsSystemTerminalBase term, NutsSession session) {
         super(out, autoFlush);
         base = out;
-        this.session=session;
-        this.ws=session.getWorkspace();
+        this.session = session;
+        this.term = term;
+        this.ws = session.getWorkspace();
     }
 
-    public ExtendedFormatAwarePrintWriter(OutputStream out,NutsSession session) {
+    public ExtendedFormatAwarePrintWriter(OutputStream out, NutsSystemTerminalBase term, NutsSession session) {
         super(out);
         base = out;
-        this.session=session;
-        this.ws=session.getWorkspace();
+        this.session = session;
+        this.term = term;
+        this.ws = session.getWorkspace();
     }
 
-    public ExtendedFormatAwarePrintWriter(OutputStream out, boolean autoFlush,NutsSession session) {
+    public ExtendedFormatAwarePrintWriter(OutputStream out, boolean autoFlush, NutsSystemTerminalBase term, NutsSession session) {
         super(out, autoFlush);
         base = out;
-        this.session=session;
-        this.ws=session.getWorkspace();
+        this.session = session;
+        this.term = term;
+        this.ws = session.getWorkspace();
     }
 
     @Override
@@ -71,16 +77,16 @@ public class ExtendedFormatAwarePrintWriter extends PrintWriter implements Exten
                 return this;
             }
             case FORMAT: {
-                return new FormatOutputStream(new SimpleWriterOutputStream(this, session), session);
+                return new FormatOutputStream(new SimpleWriterOutputStream(this, term, session), term, session);
             }
             case FILTER: {
-                return new FilterFormatOutputStream(new SimpleWriterOutputStream(this, session), session);
+                return new FilterFormatOutputStream(new SimpleWriterOutputStream(this, term, session), term, session);
             }
             case ESCAPE: {
-                return new EscapeOutputStream(new SimpleWriterOutputStream(this, session), session);
+                return new EscapeOutputStream(new SimpleWriterOutputStream(this, term, session), term, session);
             }
             case UNESCAPE: {
-                return new EscapeOutputStream(new SimpleWriterOutputStream(this, session), session);
+                return new EscapeOutputStream(new SimpleWriterOutputStream(this, term, session), term, session);
             }
         }
         throw new NutsUnsupportedEnumException(session, other);
@@ -93,18 +99,18 @@ public class ExtendedFormatAwarePrintWriter extends PrintWriter implements Exten
 
     @Override
     public PrintWriter format(String format, Object... args) {
-        return format(null,format,args);
+        return format(null, format, args);
     }
 
     @Override
     public ExtendedFormatAwarePrintWriter format(Locale l, String format, Object... args) {
-        if(l==null){
+        if (l == null) {
             print(NutsTexts.of(session).setSession(session).toText(
                     NutsMessage.cstyle(
                             format, args
                     )
             ));
-        }else{
+        } else {
             NutsSession s2 = this.session.copy().setLocale(l.toString());
             print(
                     NutsTexts.of(s2).toText(

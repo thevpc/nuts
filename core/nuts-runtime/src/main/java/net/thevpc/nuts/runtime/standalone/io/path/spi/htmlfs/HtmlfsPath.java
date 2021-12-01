@@ -22,12 +22,14 @@ public class HtmlfsPath extends AbstractPathSPIAdapter {
             new TomcatWebServerHtmlfsParser(),
             new JettyWebServerHtmlfsParser(),
     };
+    private String url;
 
     public HtmlfsPath(String url, NutsSession session) {
         super(NutsPath.of(url.substring(PREFIX.length()), session), session);
         if (!url.startsWith(PREFIX)) {
-            throw new NutsUnsupportedArgumentException(session, NutsMessage.cstyle("expected prefix '" + PREFIX + "'"));
+            throw new NutsUnsupportedArgumentException(session, NutsMessage.cstyle("expected prefix '%s'", PREFIX));
         }
+        this.url = url;
     }
 
     @Override
@@ -57,7 +59,11 @@ public class HtmlfsPath extends AbstractPathSPIAdapter {
             return NutsStream.of(parseHtml(q).stream().map(
                     x -> {
                         if (x.endsWith("/")) {
-                            return NutsPath.of(PREFIX + ref.resolve(x), session);
+                            String a = PREFIX + ref.resolve(x);
+                            if (!a.endsWith("/")) {
+                                a += "/";
+                            }
+                            return NutsPath.of(new HtmlfsPath(a, session), session);
                         }
                         return ref.resolve(x);
                     }), session);
@@ -84,7 +90,11 @@ public class HtmlfsPath extends AbstractPathSPIAdapter {
         if (!path.endsWith("/")) {
             return ref.resolve(path);
         }
-        return NutsPath.of(PREFIX + ref.resolve(path), session);
+        String a = PREFIX + ref.resolve(path);
+        if(!a.endsWith("/")){
+            a+="/";
+        }
+        return NutsPath.of(new HtmlfsPath(a,session), session);
     }
 
     @Override
@@ -106,7 +116,11 @@ public class HtmlfsPath extends AbstractPathSPIAdapter {
         if (!path.endsWith("/")) {
             return ref.resolve(path);
         }
-        return NutsPath.of(PREFIX + ref.resolveSibling(path), session);
+        String a = PREFIX + ref.resolveSibling(path);
+        if(!a.endsWith("/")){
+            a+="/";
+        }
+        return NutsPath.of(new HtmlfsPath(a,session), session);
     }
 
     @Override
@@ -131,7 +145,9 @@ public class HtmlfsPath extends AbstractPathSPIAdapter {
 
     @Override
     public boolean isDirectory(NutsPath basePath) {
-        if (NutsBlankable.isBlank(basePath.getLocation()) || basePath.getLocation().endsWith("/")) {
+        if (NutsBlankable.isBlank(basePath.getLocation()) || basePath.getLocation().endsWith("/")
+                || this.url.endsWith("/")
+        ) {
             return true;
         }
         String t = getContentType(basePath);

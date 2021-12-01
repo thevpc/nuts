@@ -1,6 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.io.printstream;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.spi.NutsSystemTerminalBase;
 
 import java.io.OutputStream;
 import java.io.PrintStream;
@@ -13,14 +14,14 @@ public class NutsPrintStreamRaw extends NutsPrintStreamBase {
     protected OutputStream out;
     private PrintStream base;
 
-    protected NutsPrintStreamRaw(OutputStream out, PrintStream base, Boolean autoFlush, NutsTerminalMode mode, NutsSession session, Bindings bindings) {
-        super(autoFlush == null ? true : autoFlush, mode, session, bindings);
+    protected NutsPrintStreamRaw(OutputStream out, PrintStream base, Boolean autoFlush, NutsTerminalMode mode, NutsSession session, Bindings bindings, NutsSystemTerminalBase term) {
+        super(autoFlush == null ? true : autoFlush, mode, session, bindings,term);
         this.out = out;
         this.base = base;
     }
 
-    public NutsPrintStreamRaw(OutputStream out, Boolean autoFlush, String encoding, NutsSession session, Bindings bindings) {
-        super(true, NutsTerminalMode.INHERITED, session, bindings);
+    public NutsPrintStreamRaw(OutputStream out, Boolean autoFlush, String encoding, NutsSession session, Bindings bindings,NutsSystemTerminalBase term) {
+        super(true, NutsTerminalMode.INHERITED, session, bindings,term);
         this.out = out;
         if (out instanceof PrintStream) {
             PrintStream ps = (PrintStream) out;
@@ -112,17 +113,12 @@ public class NutsPrintStreamRaw extends NutsPrintStreamBase {
         if (session == null || session == this.session) {
             return this;
         }
-        return new NutsPrintStreamRaw(out, base, autoFlash, mode(), session, new Bindings());
+        return new NutsPrintStreamRaw(out, base, autoFlash, mode(), session, new Bindings(),getTerminal());
     }
 
     @Override
-    public NutsPrintStream run(NutsTerminalCommand command) {
+    public NutsPrintStream run(NutsTerminalCommand command, NutsSession session) {
         return this;
-    }
-
-    @Override
-    public int getColumns() {
-        return -1;
     }
 
     @Override

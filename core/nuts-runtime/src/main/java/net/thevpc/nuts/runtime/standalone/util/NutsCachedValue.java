@@ -5,20 +5,22 @@
  */
 package net.thevpc.nuts.runtime.standalone.util;
 
-import java.util.function.Supplier;
+import net.thevpc.nuts.NutsSession;
+
+import java.util.function.Function;
 
 /**
  * @author thevpc
  */
-public class CachedValue<T> {
+public class NutsCachedValue<T> {
 
-    private final Supplier<T> supplier;
+    private final Function<NutsSession,T> supplier;
     private T lastValue;
     private long lastDate;
     private long timeoutSeconds;
     private boolean updating = false;
 
-    public CachedValue(Supplier<T> callable, long timeoutSeconds) {
+    public NutsCachedValue(Function<NutsSession,T> callable, long timeoutSeconds) {
         this.supplier = callable;
         this.timeoutSeconds = timeoutSeconds;
     }
@@ -49,45 +51,48 @@ public class CachedValue<T> {
         return false;
     }
 
-    public void updateAsync() {
+    public void updateAsync(NutsSession session) {
         if (!updating) {
             new Thread() {
                 @Override
                 public void run() {
-                    update();
+                    update(session);
                 }
             }.start();
         }
     }
 
-    public T update() {
+    public T update(NutsSession session) {
         updating = true;
         try {
             long now = System.currentTimeMillis();
             try {
-                lastValue = supplier.get();
+                lastValue = supplier.apply(session);
             } catch (RuntimeException ex) {
                 throw ex;
             } catch (Exception ex) {
                 throw new RuntimeException(ex);
             }
-            lastDate = now;
+            if(lastValue!=null) {
+                //only if not failing!
+                lastDate = now;
+            }
         } finally {
             updating = false;
         }
         return lastValue;
     }
 
-    public boolean tryUpdate() {
+    public boolean tryUpdate(NutsSession session) {
         if (isInvalid()) {
-            update();
+            update(session);
             return true;
         }
         return false;
     }
 
-    public T getValue() {
-        tryUpdate();
+    public T getValue(NutsSession session) {
+        tryUpdate(session);
         return lastValue;
     }
 

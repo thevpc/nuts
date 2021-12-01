@@ -24,6 +24,7 @@
 package net.thevpc.nuts.runtime.standalone.boot;
 
 import net.thevpc.nuts.NutsPrintStream;
+import net.thevpc.nuts.NutsSystemTerminal;
 
 import java.io.InputStream;
 
@@ -36,9 +37,7 @@ public interface NutsBootModel {
     boolean isInitializing();
     boolean isFirstBoot();
 
-    NutsPrintStream stdout();
+    NutsPrintStream nullPrintStream();
 
-    NutsPrintStream stderr();
-
-    InputStream stdin();
+    NutsSystemTerminal getSystemTerminal();
 }

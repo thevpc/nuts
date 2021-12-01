@@ -23,8 +23,11 @@
  */
 package net.thevpc.nuts.runtime.optional.jansi;
 
+import net.thevpc.nuts.NutsBootTerminal;
 import net.thevpc.nuts.NutsOsFamily;
-import net.thevpc.nuts.runtime.standalone.boot.StdFd;
+import net.thevpc.nuts.NutsSession;
+
+import java.util.List;
 
 /**
  *
@@ -44,19 +47,24 @@ public class OptionalJansi {
         return false;
     }
 
-    public static StdFd resolveStdFd() {
-//        if (DefaultNutsWorkspaceEnvManagerModel.getPlatformOsFamily0() != NutsOsFamily.WINDOWS) {
-//            throw new IllegalArgumentException("");
-//        }
+    public static NutsBootTerminal resolveStdFd(NutsSession session,List<String> flags) {
+        boolean tty=flags.contains("tty");
         if(isAvailable()) {
+            flags.add("jansi");
             if(System.console()!=null) {
                 org.fusesource.jansi.AnsiConsole.systemInstall();
-                return new StdFd(System.in,System.out, System.err, true,"jansi");
+                flags.add("ansi");
+                return new NutsBootTerminal(System.in,System.out, System.err, flags.toArray(new String[0]));
             }else{
-                return new StdFd(System.in,System.out, System.err, false,"jansi");
+                if(tty){
+                    flags.add("ansi");
+                }else{
+                    flags.add("raw");
+                }
+                return new NutsBootTerminal(System.in,System.out, System.err, flags.toArray(new String[0]));
             }
         }
-        return new StdFd(System.in,System.out, System.err,false);
+        return null;
     }
 
 //

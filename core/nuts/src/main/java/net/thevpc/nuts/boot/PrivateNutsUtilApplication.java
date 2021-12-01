@@ -146,7 +146,7 @@ public class PrivateNutsUtilApplication {
             }
         } else {
             if (session != null) {
-                fout = NutsPrintStream.of(out, NutsTerminalMode.FORMATTED, session);
+                fout = NutsPrintStream.of(out, NutsTerminalMode.FORMATTED,null, session);
             } else {
                 fout = null;
             }

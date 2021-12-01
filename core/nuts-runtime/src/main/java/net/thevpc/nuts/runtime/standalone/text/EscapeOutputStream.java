@@ -5,6 +5,7 @@ import net.thevpc.nuts.runtime.standalone.text.parser.DefaultNutsTextNodeParser;
 import net.thevpc.nuts.runtime.standalone.io.outputstream.BaseTransparentFilterOutputStream;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.io.terminals.NutsTerminalModeOp;
+import net.thevpc.nuts.spi.NutsSystemTerminalBase;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -13,10 +14,12 @@ public class EscapeOutputStream extends BaseTransparentFilterOutputStream implem
 
     NutsWorkspace ws;
     NutsSession session;
+    NutsSystemTerminalBase term;
 
-    public EscapeOutputStream(OutputStream out, NutsSession session) {
+    public EscapeOutputStream(OutputStream out, NutsSystemTerminalBase term,NutsSession session) {
         super(out);
         this.session = session;
+        this.term = term;
         this.ws = session.getWorkspace();
         NutsTerminalModeOp t = CoreIOUtils.resolveNutsTerminalModeOp(out);
         if (t.in() != NutsTerminalMode.FORMATTED && t.in() != NutsTerminalMode.FILTERED) {
@@ -56,13 +59,13 @@ public class EscapeOutputStream extends BaseTransparentFilterOutputStream implem
                 if (out instanceof ExtendedFormatAware) {
                     return ((ExtendedFormatAware) out).convert(NutsTerminalModeOp.NOP);
                 }
-                return new RawOutputStream(out, session);
+                return new RawOutputStream(out, term,session);
             }
             case FORMAT: {
                 if (out instanceof ExtendedFormatAware) {
                     return ((ExtendedFormatAware) out).convert(NutsTerminalModeOp.FORMAT);
                 }
-                return new FormatOutputStream(out, session);
+                return new FormatOutputStream(out, term,session);
             }
             case FILTER: {
                 if (out instanceof ExtendedFormatAware) {

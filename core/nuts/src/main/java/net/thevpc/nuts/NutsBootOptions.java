@@ -319,7 +319,6 @@ public final class NutsBootOptions implements Serializable, Cloneable {
      * option-type : exported (inherited in child workspaces)
      */
     private String theme;
-    private NutsBootTerminal bootTerminal;
 
     public NutsBootOptions() {
     }
@@ -1197,40 +1196,40 @@ public final class NutsBootOptions implements Serializable, Cloneable {
         return this;
     }
 
-    
+
     public InputStream getStdin() {
         return stdin;
     }
 
-    
+
     public NutsBootOptions setStdin(InputStream stdin) {
         this.stdin = stdin;
         return this;
     }
 
-    
+
     public PrintStream getStdout() {
         return stdout;
     }
 
-    
+
     public NutsBootOptions setStdout(PrintStream stdout) {
         this.stdout = stdout;
         return this;
     }
 
-    
+
     public PrintStream getStderr() {
         return stderr;
     }
 
-    
+
     public NutsBootOptions setStderr(PrintStream stderr) {
         this.stderr = stderr;
         return this;
     }
 
-    
+
     public ExecutorService getExecutorService() {
         return executorService;
     }
@@ -1328,12 +1327,6 @@ public final class NutsBootOptions implements Serializable, Cloneable {
     }
 
     
-    public NutsBootOptions setBootTerminal(NutsBootTerminal bootTerminal) {
-        this.bootTerminal = bootTerminal;
-        return this;
-    }
-
-    
     public NutsBootOptions setAll(NutsBootOptions other) {
         this.setApiVersion(other.getApiVersion());
         this.setRuntimeId(other.getRuntimeId());
@@ -1386,10 +1379,7 @@ public final class NutsBootOptions implements Serializable, Cloneable {
         this.setStdout(other.getStdout());
         this.setStderr(other.getStderr());
         this.setExecutorService(other.getExecutorService());
-//        this.setBootRepositories(other.getBootRepositories());
-
         this.setExcludedExtensions(other.getExcludedExtensions() == null ? null : Arrays.copyOf(other.getExcludedExtensions(), other.getExcludedExtensions().length));
-//        this.setExcludedRepositories(other.getExcludedRepositories() == null ? null : Arrays.copyOf(other.getExcludedRepositories(), other.getExcludedRepositories().length));
         this.setRepositories(other.getRepositories() == null ? null : Arrays.copyOf(other.getRepositories(), other.getRepositories().length));
         this.setApplicationArguments(other.getApplicationArguments() == null ? null : Arrays.copyOf(other.getApplicationArguments(), other.getApplicationArguments().length));
         this.setCustomOptions(other.getCustomOptions() == null ? null : Arrays.copyOf(other.getCustomOptions(), other.getCustomOptions().length));
@@ -1399,7 +1389,6 @@ public final class NutsBootOptions implements Serializable, Cloneable {
         this.setSwitchWorkspace(other.getSwitchWorkspace());
         this.setLocale(other.getLocale());
         this.setTheme(other.getTheme());
-        this.setBootTerminal(other.getBootTerminal());
         return this;
     }
 
@@ -1482,10 +1471,6 @@ public final class NutsBootOptions implements Serializable, Cloneable {
     }
 
     
-    public NutsBootTerminal getBootTerminal() {
-        return bootTerminal;
-    }
-
     public String toString() {
         return NutsApiUtils.defaultToString(this);
     }

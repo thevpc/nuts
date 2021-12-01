@@ -52,7 +52,7 @@ public class NshEvaluator extends DefaultJShellEvaluator {
         final JavaShellNonBlockingInputStream in2;
         try {
             out = new PipedOutputStream();
-            nout = NutsPrintStream.of(out, NutsTerminalMode.FORMATTED, context.getSession());
+            nout = NutsPrintStream.of(out, NutsTerminalMode.FORMATTED,null, context.getSession());
             in = new PipedInputStream(out, 1024);
             in2 = (in instanceof JavaShellNonBlockingInputStream) ? (JavaShellNonBlockingInputStream) in : new JavaShellNonBlockingInputStreamAdapter("jpipe-" + right.toString(), in);
         } catch (IOException ex) {

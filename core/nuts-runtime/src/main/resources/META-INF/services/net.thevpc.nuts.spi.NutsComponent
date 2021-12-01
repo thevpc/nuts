@@ -106,6 +106,8 @@ net.thevpc.nuts.runtime.standalone.util.filters.DefaultNutsFilters
 
 net.thevpc.nuts.runtime.standalone.solvers.DefaultNutsDependencySolvers
 
+net.thevpc.nuts.runtime.standalone.xtra.throwables.DefaultNutsApplicationExceptionHandler
+
 ##################### Settings Subcommands!
 
 net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.archetype.NutsSettingsArchetypeSubCommand
@@ -120,3 +122,5 @@ net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.index.NutsSettingsInde
 net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.connect.NutsSettingsConnectSubCommand
 net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.alias.NutsSettingsAliasSubCommand
 net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.ndi.NutsSettingsNdiSubCommand
+
+

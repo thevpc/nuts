@@ -27,6 +27,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.workspace.CoreNutsWorkspaceOptions;
 import net.thevpc.nuts.runtime.standalone.util.CoreNutsUtils;
 import net.thevpc.nuts.runtime.standalone.solvers.NutsDependencySolverUtils;
+import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
 import net.thevpc.nuts.spi.NutsDependencySolver;
 import net.thevpc.nuts.spi.NutsDependencySolverFactory;
@@ -289,13 +290,13 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
     @Override
     public NutsSystemTerminal getSystemTerminal() {
         checkSession();
-        return model.getSystemTerminal();
+        return NutsWorkspaceExt.of(session).getModel().bootModel.getSystemTerminal();
     }
 
     @Override
     public NutsWorkspaceConfigManager setSystemTerminal(NutsSystemTerminalBase terminal) {
         checkSession();
-        model.setSystemTerminal(terminal, session);
+        NutsWorkspaceExt.of(session).getModel().bootModel.setSystemTerminal(terminal,getSession());
         return this;
     }
 

@@ -1,15 +1,13 @@
 package net.thevpc.nuts.runtime.standalone.io.printstream;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.standalone.text.renderer.AnsiUnixTermPrintRenderer;
 
 public class NutsPrintStreamFormatted extends NutsPrintStreamRendered {
     public NutsPrintStreamFormatted(NutsPrintStreamBase base, NutsSession session, Bindings bindings) {
         super(base,session,NutsTerminalMode.FORMATTED,
-                new AnsiUnixTermPrintRenderer(),
                 bindings);
         if(bindings.formatted!=null){
-            throw new IllegalArgumentException("formatted already bound");
+            throw new NutsIllegalArgumentException(session,NutsMessage.plain("formatted already bound"));
         }
         bindings.formatted=this;
     }
@@ -33,9 +31,11 @@ public class NutsPrintStreamFormatted extends NutsPrintStreamRendered {
     }
 
     @Override
-    public NutsPrintStream run(NutsTerminalCommand command) {
-        printf("%s", NutsTexts.of(session).ofCommand(command));
+    public NutsPrintStream run(NutsTerminalCommand command, NutsSession session) {
+        flush();
+        printf("%s", NutsTexts.of(this.session).ofCommand(command));
         flush();
         return this;
     }
+
 }

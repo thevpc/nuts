@@ -64,6 +64,12 @@ public class DefaultNutsBootManager implements NutsBootManager {
     public NutsClassLoaderNode[] getBootExtensionClassLoaderNode(){
         return model.bOptions.getExtensionBootDependencyNodes();
     }
+
+    @Override
+    public NutsBootTerminal getBootTerminal() {
+        return model.getBootTerminal();
+    }
+
     @Override
     public NutsBootManager setSession(NutsSession session) {
         this.session = NutsWorkspaceUtils.bindSession(model.getWorkspace(), session);

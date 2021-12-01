@@ -7,13 +7,16 @@ import net.thevpc.nuts.runtime.standalone.io.terminals.NutsTerminalModeOp;
 
 import java.io.OutputStream;
 import net.thevpc.nuts.NutsSession;
+import net.thevpc.nuts.spi.NutsSystemTerminalBase;
 
 public class RawOutputStream extends BaseTransparentFilterOutputStream implements ExtendedFormatAware {
     private NutsSession session;
     private NutsWorkspace ws;
-    public RawOutputStream(OutputStream out,NutsSession session) {
+    private NutsSystemTerminalBase term;
+    public RawOutputStream(OutputStream out, NutsSystemTerminalBase term, NutsSession session) {
         super(out);
         this.session=session;
+        this.term=term;
         this.ws=session.getWorkspace();
     }
 
@@ -32,16 +35,16 @@ public class RawOutputStream extends BaseTransparentFilterOutputStream implement
                 return this;
             }
             case FORMAT: {
-                return new FormatOutputStream(out,session);
+                return new FormatOutputStream(out,term,session);
             }
             case FILTER: {
-                return new FilterFormatOutputStream(out,session);
+                return new FilterFormatOutputStream(out,term, session);
             }
             case ESCAPE: {
-                return new EscapeOutputStream(this,session);
+                return new EscapeOutputStream(this,term,session);
             }
             case UNESCAPE: {
-                return new UnescapeOutputStream(this,session);
+                return new UnescapeOutputStream(this,term,session);
             }
         }
         throw new NutsUnsupportedEnumException(session, other);

@@ -4,6 +4,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.io.outputstream.BaseTransparentFilterOutputStream;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.io.terminals.NutsTerminalModeOp;
+import net.thevpc.nuts.spi.NutsSystemTerminalBase;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -11,10 +12,12 @@ import java.io.OutputStream;
 public class UnescapeOutputStream extends BaseTransparentFilterOutputStream implements ExtendedFormatAware {
 
     private NutsSession session;
+    private NutsSystemTerminalBase term;
 
-    public UnescapeOutputStream(OutputStream out, NutsSession session) {
+    public UnescapeOutputStream(OutputStream out, NutsSystemTerminalBase term,NutsSession session) {
         super(out);
         this.session = session;
+        this.term = term;
         NutsTerminalModeOp t = CoreIOUtils.resolveNutsTerminalModeOp(out);
         if (t.in() != NutsTerminalMode.FORMATTED && t.in() != NutsTerminalMode.FILTERED) {
             throw new IllegalArgumentException("Illegal Formatted");
@@ -60,13 +63,13 @@ public class UnescapeOutputStream extends BaseTransparentFilterOutputStream impl
                 if (out instanceof ExtendedFormatAware) {
                     return ((ExtendedFormatAware) out).convert(NutsTerminalModeOp.NOP);
                 }
-                return new RawOutputStream(out, session);
+                return new RawOutputStream(out, term,session);
             }
             case FORMAT: {
                 if (out instanceof ExtendedFormatAware) {
                     return ((ExtendedFormatAware) out).convert(NutsTerminalModeOp.FORMAT);
                 }
-                return new FormatOutputStream(out, session);
+                return new FormatOutputStream(out, term,session);
             }
             case FILTER: {
                 if (out instanceof ExtendedFormatAware) {

@@ -1,6 +1,8 @@
 package net.thevpc.nuts.runtime.standalone.io.terminals;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.standalone.boot.DefaultNutsBootModel;
+import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.workspace.config.DefaultNutsWorkspaceConfigManager;
 import net.thevpc.nuts.runtime.standalone.workspace.config.DefaultNutsWorkspaceConfigModel;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
@@ -12,26 +14,28 @@ import java.io.InputStream;
 
 public class DefaultNutsTerminals implements NutsTerminals {
 
-    public DefaultNutsWorkspaceConfigModel model;
+    public DefaultNutsWorkspaceConfigModel cmodel;
     public NutsWorkspace ws;
+    public DefaultNutsBootModel bootModel;
 
     public DefaultNutsTerminals(NutsSession session) {
         this.ws = session.getWorkspace();
-        this.model = ((DefaultNutsWorkspaceConfigManager) session.config()).getModel();
+        this.cmodel = ((DefaultNutsWorkspaceConfigManager) session.config()).getModel();
+        bootModel = NutsWorkspaceExt.of(session.getWorkspace()).getModel().bootModel;
     }
 
     public DefaultNutsWorkspaceConfigModel getModel() {
-        return model;
+        return cmodel;
     }
 
     private void checkSession(NutsSession session) {
-        NutsWorkspaceUtils.checkSession(model.getWorkspace(), session);
+        NutsWorkspaceUtils.checkSession(cmodel.getWorkspace(), session);
     }
 
     @Override
     public NutsTerminals enableRichTerm(NutsSession session) {
         checkSession(session);
-        model.enableRichTerm(session);
+        bootModel.enableRichTerm(session);
         return this;
     }
 
@@ -39,13 +43,13 @@ public class DefaultNutsTerminals implements NutsTerminals {
     @Override
     public NutsSessionTerminal createTerminal(NutsSession session) {
         checkSession(session);
-        return model.createTerminal(session);
+        return cmodel.createTerminal(session);
     }
 
     @Override
     public NutsSessionTerminal createTerminal(InputStream in, NutsPrintStream out, NutsPrintStream err, NutsSession session) {
         checkSession(session);
-        return model.createTerminal(in, out, err, session);
+        return cmodel.createTerminal(in, out, err, session);
     }
 
     @Override

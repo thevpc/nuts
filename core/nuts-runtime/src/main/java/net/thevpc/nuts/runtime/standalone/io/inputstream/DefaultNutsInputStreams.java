@@ -2,7 +2,10 @@ package net.thevpc.nuts.runtime.standalone.io.inputstream;
 
 import net.thevpc.nuts.NutsInputStreams;
 import net.thevpc.nuts.NutsSession;
+import net.thevpc.nuts.NutsWorkspace;
+import net.thevpc.nuts.runtime.standalone.boot.DefaultNutsBootModel;
 import net.thevpc.nuts.runtime.standalone.io.util.NullInputStream;
+import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.workspace.config.DefaultNutsWorkspaceConfigManager;
 import net.thevpc.nuts.runtime.standalone.workspace.config.DefaultNutsWorkspaceConfigModel;
 import net.thevpc.nuts.spi.NutsSupportLevelContext;
@@ -23,12 +26,12 @@ public class DefaultNutsInputStreams implements NutsInputStreams {
 
     @Override
     public boolean isStdin(InputStream in) {
-        return in == getModel().stdin();
+        return in == stdin();
     }
 
     @Override
     public InputStream stdin() {
-        return getModel().stdin();
+        return getBootModel().getSystemTerminal().in();
     }
 
     @Override
@@ -36,7 +39,7 @@ public class DefaultNutsInputStreams implements NutsInputStreams {
         return DEFAULT_SUPPORT;
     }
 
-    private DefaultNutsWorkspaceConfigModel getModel() {
-        return ((DefaultNutsWorkspaceConfigManager) session.config()).getModel();
+    private DefaultNutsBootModel getBootModel() {
+        return NutsWorkspaceExt.of(session).getModel().bootModel;
     }
 }

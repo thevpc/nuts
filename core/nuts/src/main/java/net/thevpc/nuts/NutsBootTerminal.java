@@ -25,7 +25,7 @@ package net.thevpc.nuts;
 
 import java.io.InputStream;
 import java.io.PrintStream;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * Boot Terminal allows usage of custom stdin/out/err when calling nuts
@@ -36,11 +36,17 @@ public final class NutsBootTerminal {
     private final InputStream in;
     private final PrintStream out;
     private final PrintStream err;
+    private final Set<String> flags;
 
-    public NutsBootTerminal(InputStream in, PrintStream out, PrintStream err) {
+    public NutsBootTerminal(InputStream in, PrintStream out, PrintStream err, String... flags) {
         this.in = in;
         this.out = out;
         this.err = err;
+        this.flags = Collections.unmodifiableSet(new LinkedHashSet<>(Arrays.asList(flags)));
+    }
+
+    public Set<String> getFlags() {
+        return flags;
     }
 
     public InputStream getIn() {

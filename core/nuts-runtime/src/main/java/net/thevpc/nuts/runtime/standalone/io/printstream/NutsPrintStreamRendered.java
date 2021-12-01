@@ -2,17 +2,14 @@ package net.thevpc.nuts.runtime.standalone.io.printstream;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.text.FormatOutputStreamSupport;
-import net.thevpc.nuts.runtime.standalone.text.FormattedPrintStreamRenderer;
 
 public abstract class NutsPrintStreamRendered extends NutsPrintStreamBase {
     protected FormatOutputStreamSupport support;
     protected NutsPrintStreamBase base;
-    protected FormattedPrintStreamRenderer renderer;
-
-    public NutsPrintStreamRendered(NutsPrintStreamBase base, NutsSession session, NutsTerminalMode mode, FormattedPrintStreamRenderer renderer, Bindings bindings) {
-        super(true, mode, session, bindings);
+    public NutsPrintStreamRendered(NutsPrintStreamBase base, NutsSession session, NutsTerminalMode mode, Bindings bindings) {
+        super(true, mode, session, bindings,base.getTerminal());
         this.base=base;
-        this.support =new FormatOutputStreamSupport(new NutsPrintStreamHelper(base),renderer,session);
+        this.support =new FormatOutputStreamSupport(new NutsPrintStreamHelper(base),session,base.getTerminal());
     }
 
     public NutsPrintStreamBase getBase() {
@@ -59,11 +56,6 @@ public abstract class NutsPrintStreamRendered extends NutsPrintStreamBase {
             write(s.toCharArray());
         }
         return this;
-    }
-
-    @Override
-    public int getColumns() {
-        return setMode(NutsTerminalMode.INHERITED).getColumns();
     }
 
     @Override

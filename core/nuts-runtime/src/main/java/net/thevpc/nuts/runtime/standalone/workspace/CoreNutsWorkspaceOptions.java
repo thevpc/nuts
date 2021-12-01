@@ -24,7 +24,6 @@
 package net.thevpc.nuts.runtime.standalone.workspace;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.NutsBootTerminal;
 import net.thevpc.nuts.NutsBootOptions;
 import net.thevpc.nuts.runtime.standalone.app.cmdline.CoreNutsArgumentsParser;
 import net.thevpc.nuts.runtime.standalone.format.CoreNutsWorkspaceOptionsFormat;
@@ -376,7 +375,6 @@ public final class CoreNutsWorkspaceOptions implements Serializable, Cloneable, 
      * option-type : exported (inherited in child workspaces)
      */
     private String theme;
-    private NutsBootTerminal bootTerminal;
 
     private NutsSession session;
 
@@ -1393,12 +1391,6 @@ public final class CoreNutsWorkspaceOptions implements Serializable, Cloneable, 
         return this;
     }
 
-    @Override
-    public NutsWorkspaceOptionsBuilder setBootTerminal(NutsBootTerminal bootTerminal) {
-        this.bootTerminal = bootTerminal;
-        return this;
-    }
-
     public NutsWorkspaceOptionsBuilder setAll(NutsBootOptions other) {
         this.setApiVersion(other.getApiVersion());
         this.setRuntimeId(other.getRuntimeId());
@@ -1464,7 +1456,6 @@ public final class CoreNutsWorkspaceOptions implements Serializable, Cloneable, 
         this.setSwitchWorkspace(other.getSwitchWorkspace());
         this.setLocale(other.getLocale());
         this.setTheme(other.getTheme());
-        this.setBootTerminal(other.getBootTerminal());
         this.setDependencySolver(other.getDependencySolver());
         return this;
     }
@@ -1535,7 +1526,6 @@ public final class CoreNutsWorkspaceOptions implements Serializable, Cloneable, 
         this.setSwitchWorkspace(other.getSwitchWorkspace());
         this.setLocale(other.getLocale());
         this.setTheme(other.getTheme());
-        this.setBootTerminal(other.getBootTerminal());
         this.setDependencySolver(other.getDependencySolver());
         return this;
     }
@@ -1649,11 +1639,6 @@ public final class CoreNutsWorkspaceOptions implements Serializable, Cloneable, 
     }
 
     @Override
-    public NutsBootTerminal getBootTerminal() {
-        return bootTerminal;
-    }
-
-    @Override
     public NutsWorkspaceOptionsBuilder builder() {
         return new CoreNutsWorkspaceOptions(session).setAll(this);
     }
@@ -1725,7 +1710,6 @@ public final class CoreNutsWorkspaceOptions implements Serializable, Cloneable, 
         b.setSwitchWorkspace(this.getSwitchWorkspace());
         b.setLocale(this.getLocale());
         b.setTheme(this.getTheme());
-        b.setBootTerminal(this.getBootTerminal());
         b.setDependencySolver(this.getDependencySolver());
         return b;
     }

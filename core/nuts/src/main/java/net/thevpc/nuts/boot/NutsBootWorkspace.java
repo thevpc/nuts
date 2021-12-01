@@ -108,8 +108,12 @@ public final class NutsBootWorkspace {
     public NutsBootWorkspace(NutsBootTerminal bootTerminal, String... args) {
         this.bLog = new PrivateNutsBootLog(bootTerminal);
         NutsBootOptions o = new NutsBootOptions()
-                .setBootTerminal(bootTerminal)
                 .setCreationTime(creationTime);
+        if(bootTerminal!=null) {
+            o.setStdin(bootTerminal.getIn());
+            o.setStdout(bootTerminal.getOut());
+            o.setStderr(bootTerminal.getErr());
+        }
         NutsApiUtils.parseNutsArguments(args, o, bLog);
         this.userOptions = o;
         this.computedOptions = new NutsBootOptions();
@@ -125,7 +129,13 @@ public final class NutsBootWorkspace {
             this.computedOptions = new NutsBootOptions();
             this.computedOptions.setAll(this.userOptions);
         } else {
-            bLog = new PrivateNutsBootLog(userOptions.getBootTerminal());
+            bLog = new PrivateNutsBootLog(
+                    new NutsBootTerminal(
+                            userOptions.getStdin(),
+                            userOptions.getStdout(),
+                            userOptions.getStderr()
+                    )
+            );
             this.userOptions = userOptions;
             this.computedOptions = new NutsBootOptions();
             this.computedOptions.setAll(userOptions);

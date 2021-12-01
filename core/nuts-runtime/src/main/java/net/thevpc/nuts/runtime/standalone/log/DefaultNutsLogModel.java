@@ -71,7 +71,7 @@ public class DefaultNutsLogModel {
             logConfig.setLogFileBase(lc.getLogFileBase());
             logConfig.setLogFileSize(lc.getLogFileSize());
         }
-        out = (((DefaultNutsBootManager)(ws.boot()))).getModel().stderr();
+        out = (((DefaultNutsBootManager)(ws.boot()))).getModel().getSystemTerminal().err();
     }
 
     public NutsSession getDefaultSession() {

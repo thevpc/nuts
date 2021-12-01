@@ -119,7 +119,7 @@ public class AdminServerRunnable implements NutsServer, Runnable {
                             try {
                                 try {
                                     PrintStream out = new PrintStream(finalAccept.getOutputStream());
-                                    NutsPrintStream eout = NutsPrintStream.of(out, NutsTerminalMode.FORMATTED, invokerSession);
+                                    NutsPrintStream eout = NutsPrintStream.of(out, NutsTerminalMode.FORMATTED, null,invokerSession);
                                     NutsSession session = invokerSession;
                                     session.setTerminal(
                                             NutsSessionTerminal.of(

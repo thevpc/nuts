@@ -30,8 +30,6 @@ import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.NutsTerminalCommand;
 import net.thevpc.nuts.NutsTextCommand;
 import net.thevpc.nuts.NutsTextType;
-import net.thevpc.nuts.runtime.standalone.text.AnsiEscapeCommand;
-import net.thevpc.nuts.runtime.standalone.text.DefaultAnsiEscapeCommand;
 
 import java.util.Objects;
 
@@ -51,14 +49,6 @@ public class DefaultNutsTextCommand extends NutsTextSpecialBase implements NutsT
     @Override
     public boolean isEmpty() {
         return command==null;
-    }
-
-    public static AnsiEscapeCommand parseAnsiEscapeCommand(NutsTerminalCommand v, NutsSession ws) {
-        //this might be a command !!
-        if(v==null){
-            return null;
-        }
-        return new DefaultAnsiEscapeCommand(v);
     }
 
     @Override

@@ -44,10 +44,7 @@ import net.thevpc.nuts.runtime.standalone.io.progress.DefaultNutsProgressFactory
 import net.thevpc.nuts.runtime.standalone.io.progress.MonitoredInputStream;
 import net.thevpc.nuts.runtime.standalone.io.progress.NutsProgressMonitorList;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.util.PathInfo;
-import net.thevpc.nuts.spi.NutsDescriptorContentParserComponent;
-import net.thevpc.nuts.spi.NutsDescriptorContentParserContext;
-import net.thevpc.nuts.spi.NutsTransportComponent;
-import net.thevpc.nuts.spi.NutsTransportConnection;
+import net.thevpc.nuts.spi.*;
 
 import java.io.*;
 import java.net.*;
@@ -71,20 +68,6 @@ public class CoreIOUtils {
 
     public static final int DEFAULT_BUFFER_SIZE = 1024;
     public static final String MIME_TYPE_SHA1 = "text/sha-1";
-    //    public static final NutsPrintStream out=new NutsPrintStreamRaw(System.out,null,null,null,);
-//    public static final NutsPrintStream err=new NutsPrintStreamRaw(System.err);
-    //    private static final Logger LOG = Logger.getLogger(CoreIOUtils.class.getName());
-    public static final DirectoryStream.Filter<Path> DIR_FILTER = new DirectoryStream.Filter<Path>() {
-        @Override
-        public boolean accept(Path pathname) {
-            try {
-                return Files.isDirectory(pathname);
-            } catch (Exception e) {
-                //ignore
-                return false;
-            }
-        }
-    };
     public static String newLineString = null;
 
     public static boolean isFreeTcpPort(int port) {
@@ -112,6 +95,7 @@ public class CoreIOUtils {
         return -1;
     }
 
+    @Deprecated
     public static int detectFirstFreeTcpPort(int from, int to) {
         for (int i = from; i < to; i++) {
             if (isFreeTcpPort(i)) {
@@ -121,7 +105,8 @@ public class CoreIOUtils {
         return -1;
     }
 
-    public static PrintWriter toPrintWriter(Writer writer, NutsSession session) {
+    @Deprecated
+    public static PrintWriter toPrintWriter(Writer writer, NutsSystemTerminalBase term, NutsSession session) {
         if (writer == null) {
             return null;
         }
@@ -130,48 +115,29 @@ public class CoreIOUtils {
                 return (PrintWriter) writer;
             }
         }
-        ExtendedFormatAwarePrintWriter s = new ExtendedFormatAwarePrintWriter(writer, session);
+        ExtendedFormatAwarePrintWriter s = new ExtendedFormatAwarePrintWriter(writer, term, session);
         NutsWorkspaceUtils.setSession(s, session);
         return s;
     }
 
-    public static PrintWriter toPrintWriter(OutputStream writer, NutsSession session) {
+    @Deprecated
+    public static PrintWriter toPrintWriter(OutputStream writer, NutsSystemTerminalBase term, NutsSession session) {
         if (writer == null) {
             return null;
         }
-        ExtendedFormatAwarePrintWriter s = new ExtendedFormatAwarePrintWriter(writer, session);
+        ExtendedFormatAwarePrintWriter s = new ExtendedFormatAwarePrintWriter(writer, term, session);
         NutsWorkspaceUtils.setSession(s, session);
         return s;
     }
 
-    //    public static NutsPrintStream toPrintStream(Writer writer, NutsSession session) {
-//        if (writer == null) {
-//            return null;
-//        }
-//        SimpleWriterOutputStream s = new SimpleWriterOutputStream(writer, session);
-//        NutsWorkspaceUtils.setSession(s, session);
-//        return toPrintStream(s, session);
-//    }
-//
-//    public static NutsPrintStream toPrintStream(OutputStream os, NutsSession session) {
-//        if (os == null) {
-//            return null;
-//        }
-//        if (os instanceof NutsPrintStream) {
-//            NutsPrintStream y = (NutsPrintStream) os;
-//            NutsWorkspaceUtils.setSession(y, session);
-//            return y;
-//        }
-//        PrintStreamExt s = new PrintStreamExt(os, false);
-//        NutsWorkspaceUtils.setSession(s, session);
-//        return s;
-//    }
-    public static OutputStream convertOutputStream(OutputStream out, NutsTerminalMode expected, NutsSession session) {
-        ExtendedFormatAware a = convertOutputStreamToExtendedFormatAware(out, expected, session);
+    @Deprecated
+    public static OutputStream convertOutputStream(OutputStream out, NutsTerminalMode expected, NutsSystemTerminalBase term, NutsSession session) {
+        ExtendedFormatAware a = convertOutputStreamToExtendedFormatAware(out, expected, term, session);
         return (OutputStream) a;
     }
 
-    public static ExtendedFormatAware convertOutputStreamToExtendedFormatAware(OutputStream out, NutsTerminalMode expected, NutsSession session) {
+    @Deprecated
+    public static ExtendedFormatAware convertOutputStreamToExtendedFormatAware(OutputStream out, NutsTerminalMode expected, NutsSystemTerminalBase term, NutsSession session) {
         if (out == null) {
             return null;
         }
@@ -179,7 +145,7 @@ public class CoreIOUtils {
         if (out instanceof ExtendedFormatAware) {
             aw = (ExtendedFormatAware) out;
         } else {
-            aw = new RawOutputStream(out, session);
+            aw = new RawOutputStream(out, term, session);
         }
         switch (expected) {
             case INHERITED: {

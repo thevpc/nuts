@@ -29,7 +29,6 @@ import net.thevpc.nuts.runtime.standalone.util.iter.IteratorUtils;
 import net.thevpc.nuts.runtime.standalone.repository.impl.maven.util.AbstractMavenRepositoryHelper;
 import net.thevpc.nuts.runtime.standalone.repository.impl.maven.util.MavenUtils;
 import net.thevpc.nuts.runtime.standalone.repository.impl.maven.util.MvnClient;
-import net.thevpc.nuts.runtime.standalone.util.CoreNutsConstants;
 import net.thevpc.nuts.runtime.standalone.repository.impl.NutsCachedRepository;
 import net.thevpc.nuts.runtime.standalone.repository.NutsIdPathIterator;
 import net.thevpc.nuts.runtime.standalone.repository.NutsIdPathIteratorBase;
@@ -68,12 +67,12 @@ public class MavenFolderRepository extends NutsCachedRepository {
     }
 
     @Override
-    protected boolean isSupportedDeployImpl() {
+    protected boolean isSupportedDeployImpl(NutsSession session) {
         return false;
     }
 
     @Override
-    protected boolean isAvailableImpl() {
+    protected boolean isAvailableImpl(NutsSession session) {
         long now = System.currentTimeMillis();
         try {
             NutsPath loc = config().setSession(initSession).getLocation(true);

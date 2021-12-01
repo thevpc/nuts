@@ -8,10 +8,10 @@ import java.io.ByteArrayOutputStream;
 
 public class NutsByteArrayPrintStream extends NutsPrintStreamRaw implements NutsMemoryPrintStream {
     public NutsByteArrayPrintStream(NutsSession session) {
-        super(new ByteArrayOutputStream(), null, null, session, new Bindings());
+        super(new ByteArrayOutputStream(), null, null, session, new Bindings(),null);
     }
     protected NutsByteArrayPrintStream(ByteArrayOutputStream bos,NutsSession session) {
-        super(bos, null, null, session, new Bindings());
+        super(bos, null, null, session, new Bindings(),null);
     }
 
     @Override

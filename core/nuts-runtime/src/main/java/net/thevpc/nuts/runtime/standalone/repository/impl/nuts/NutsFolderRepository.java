@@ -42,11 +42,11 @@ public class NutsFolderRepository extends NutsCachedRepository {
     }
 
     @Override
-    protected boolean isSupportedDeployImpl() {
+    protected boolean isSupportedDeployImpl(NutsSession session) {
         return true;
     }
     @Override
-    protected boolean isAvailableImpl() {
+    protected boolean isAvailableImpl(NutsSession session) {
         try {
             if(lib.getStoreLocation().isDirectory()){
                 return true;

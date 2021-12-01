@@ -26,6 +26,8 @@
  */
 package net.thevpc.nuts;
 
+import net.thevpc.nuts.spi.NutsSystemTerminalBase;
+
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.io.Writer;
@@ -58,11 +60,12 @@ public interface NutsPrintStream {
      *
      * @param out     stream to wrap
      * @param mode    mode to support
+     * @param terminal terminal
      * @param session session
      * @return {@code mode} supporting PrintStream
      */
-    static NutsPrintStream of(OutputStream out, NutsTerminalMode mode, NutsSession session) {
-        return NutsPrintStreams.of(session).create(out, mode);
+    static NutsPrintStream of(OutputStream out, NutsTerminalMode mode, NutsSystemTerminalBase terminal, NutsSession session) {
+        return NutsPrintStreams.of(session).create(out, mode,terminal);
     }
 
     static NutsPrintStream of(Writer out, NutsSession session) {
@@ -181,9 +184,7 @@ public interface NutsPrintStream {
      */
     NutsPrintStream setMode(NutsTerminalMode other);
 
-    NutsPrintStream run(NutsTerminalCommand command);
-
-    int getColumns();
+    NutsPrintStream run(NutsTerminalCommand command, NutsSession session);
 
     OutputStream asOutputStream();
 
@@ -192,4 +193,6 @@ public interface NutsPrintStream {
     Writer asWriter();
 
     boolean isNtf();
+
+    NutsSystemTerminalBase getTerminal();
 }

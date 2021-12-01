@@ -7,6 +7,7 @@ import net.thevpc.nuts.runtime.standalone.boot.NutsBootModel;
 import net.thevpc.nuts.runtime.standalone.workspace.config.DefaultNutsWorkspaceConfigManager;
 import net.thevpc.nuts.runtime.standalone.workspace.config.DefaultNutsWorkspaceConfigModel;
 import net.thevpc.nuts.spi.NutsSupportLevelContext;
+import net.thevpc.nuts.spi.NutsSystemTerminalBase;
 
 import java.io.OutputStream;
 import java.io.Writer;
@@ -26,7 +27,7 @@ public class DefaultNutsPrintStreams implements NutsPrintStreams {
     @Override
     public NutsPrintStream createNull() {
         checkSession();
-        return getConfigModel().nullPrintStream();
+        return getBootModel().nullPrintStream();
     }
 
     @Override
@@ -36,7 +37,7 @@ public class DefaultNutsPrintStreams implements NutsPrintStreams {
     }
 
     @Override
-    public NutsPrintStream create(OutputStream out, NutsTerminalMode expectedMode) {
+    public NutsPrintStream create(OutputStream out, NutsTerminalMode expectedMode, NutsSystemTerminalBase term) {
         if (out == null) {
             return null;
         }
@@ -62,7 +63,7 @@ public class DefaultNutsPrintStreams implements NutsPrintStreams {
             return ((NutsPrintStreamAdapter) out).getBasePrintStream().setMode(expectedMode);
         }
         return
-                new NutsPrintStreamRaw(out, null, null, session, new NutsPrintStreamBase.Bindings())
+                new NutsPrintStreamRaw(out, null, null, session, new NutsPrintStreamBase.Bindings(), term)
                         .setMode(expectedMode)
                 ;
     }
@@ -70,10 +71,10 @@ public class DefaultNutsPrintStreams implements NutsPrintStreams {
     @Override
     public NutsPrintStream create(OutputStream out) {
         checkSession();
-        return new NutsPrintStreamRaw(out, null, null, session, new NutsPrintStreamBase.Bindings());
+        return new NutsPrintStreamRaw(out, null, null, session, new NutsPrintStreamBase.Bindings(), null);
     }
 
-    public NutsPrintStream create(Writer out, NutsTerminalMode mode) {
+    public NutsPrintStream create(Writer out, NutsTerminalMode mode, NutsSystemTerminalBase terminal) {
         checkSession();
         if (mode == null) {
             mode = NutsTerminalMode.INHERITED;
@@ -84,14 +85,14 @@ public class DefaultNutsPrintStreams implements NutsPrintStreams {
         if (out instanceof NutsPrintStreamAdapter) {
             return ((NutsPrintStreamAdapter) out).getBasePrintStream().setMode(mode);
         }
-        SimpleWriterOutputStream w = new SimpleWriterOutputStream(out, session);
-        return create(w, mode);
+        SimpleWriterOutputStream w = new SimpleWriterOutputStream(out, terminal, session);
+        return create(w, mode, terminal);
     }
 
     @Override
     public NutsPrintStream create(Writer out) {
         checkSession();
-        return create(out, NutsTerminalMode.INHERITED);
+        return create(out, NutsTerminalMode.INHERITED, null);
     }
 
     @Override
@@ -99,10 +100,8 @@ public class DefaultNutsPrintStreams implements NutsPrintStreams {
         if (out == null) {
             return false;
         }
-        if (out == getConfigModel().stdout()) {
-            return true;
-        }
-        if (out == getConfigModel().getBootModel().stdout()) {
+        NutsSystemTerminal st = getBootModel().getSystemTerminal();
+        if (out == st.out()) {
             return true;
         }
         if (out instanceof NutsPrintStreamRendered) {
@@ -116,10 +115,8 @@ public class DefaultNutsPrintStreams implements NutsPrintStreams {
         if (out == null) {
             return false;
         }
-        if (out == getConfigModel().stderr()) {
-            return true;
-        }
-        if (out == getBootModel().stderr()) {
+        NutsSystemTerminal st = getBootModel().getSystemTerminal();
+        if (out == st.err()) {
             return true;
         }
         if (out instanceof NutsPrintStreamRendered) {
@@ -130,12 +127,12 @@ public class DefaultNutsPrintStreams implements NutsPrintStreams {
 
     @Override
     public NutsPrintStream stdout() {
-        return getConfigModel().stdout();
+        return getBootModel().getSystemTerminal().out();
     }
 
     @Override
     public NutsPrintStream stderr() {
-        return getConfigModel().stderr();
+        return getBootModel().getSystemTerminal().err();
     }
 
     public NutsSession getSession() {
@@ -146,9 +143,6 @@ public class DefaultNutsPrintStreams implements NutsPrintStreams {
         //NutsWorkspaceUtils.checkSession(model.getWorkspace(), getSession());
     }
 
-    //    private DefaultNutsIOModel getIoModel(){
-//        return ((DefaultNutsIOManager)session.io()).getModel();
-//    }
     private DefaultNutsWorkspaceConfigModel getConfigModel() {
         return ((DefaultNutsWorkspaceConfigManager) session.config()).getModel();
     }

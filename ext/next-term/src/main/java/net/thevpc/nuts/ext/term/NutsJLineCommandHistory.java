@@ -106,7 +106,7 @@ public class NutsJLineCommandHistory implements NutsCommandHistory {
     public int getSupportLevel(NutsSupportLevelContext context) {
         NutsSystemTerminal st = context.getSession().config().getSystemTerminal();
         boolean jline=false;
-        NutsSystemTerminalBase b = st.getParent();
+        NutsSystemTerminalBase b = st.getBase();
         if(b!=null){
             if (b instanceof NutsJLineTerminal){
                 jline=true;

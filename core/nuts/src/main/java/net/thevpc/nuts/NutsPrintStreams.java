@@ -28,6 +28,7 @@ package net.thevpc.nuts;
 
 import net.thevpc.nuts.boot.NutsApiUtils;
 import net.thevpc.nuts.spi.NutsComponent;
+import net.thevpc.nuts.spi.NutsSystemTerminalBase;
 
 import java.io.OutputStream;
 import java.io.Writer;
@@ -50,13 +51,14 @@ public interface NutsPrintStreams extends NutsComponent {
      *
      * @param out  stream to wrap
      * @param mode mode to support
+     * @param terminal terminal
      * @return {@code mode} supporting PrintStream
      */
-    NutsPrintStream create(OutputStream out, NutsTerminalMode mode);
+    NutsPrintStream create(OutputStream out, NutsTerminalMode mode, NutsSystemTerminalBase terminal);
 
     NutsPrintStream create(OutputStream out);
 
-    NutsPrintStream create(Writer out, NutsTerminalMode mode);
+    NutsPrintStream create(Writer out, NutsTerminalMode mode, NutsSystemTerminalBase terminal);
 
     NutsPrintStream create(Writer out);
 

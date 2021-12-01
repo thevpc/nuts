@@ -96,5 +96,5 @@ public interface NutsSystemTerminal extends NutsSystemTerminalBase {
      */
     NutsSystemTerminal printProgress(float progress, NutsMessage message, NutsSession session);
 
-    NutsSystemTerminalBase getParent();
+    NutsSystemTerminalBase getBase();
 }

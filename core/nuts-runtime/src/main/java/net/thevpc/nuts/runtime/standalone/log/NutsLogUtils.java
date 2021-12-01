@@ -3,9 +3,13 @@ package net.thevpc.nuts.runtime.standalone.log;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceExt;
 
+import java.io.BufferedReader;
 import java.io.PrintWriter;
+import java.io.StringReader;
 import java.io.StringWriter;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
@@ -151,6 +155,25 @@ public class NutsLogUtils {
             classNameCache.put(className, v);
         }
         return v;
+    }
+
+    public static String[] stacktraceToArray(Throwable th) {
+        try {
+            StringWriter sw = new StringWriter();
+            try (PrintWriter pw = new PrintWriter(sw)) {
+                th.printStackTrace(pw);
+            }
+            BufferedReader br = new BufferedReader(new StringReader(sw.toString()));
+            List<String> s = new ArrayList<>();
+            String line = null;
+            while ((line = br.readLine()) != null) {
+                s.add(line);
+            }
+            return s.toArray(new String[0]);
+        } catch (Exception ex) {
+            // ignore
+        }
+        return new String[0];
     }
 
     public static String stacktrace(Throwable th){

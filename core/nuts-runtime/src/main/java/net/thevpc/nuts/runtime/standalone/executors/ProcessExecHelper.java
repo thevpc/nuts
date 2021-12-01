@@ -64,7 +64,7 @@ public class ProcessExecHelper implements IProcessExecHelper {
                 err = null;
             }
             if (out != null) {
-                out.run(NutsTerminalCommand.MOVE_LINE_START);
+                out.run(NutsTerminalCommand.MOVE_LINE_START, session);
             }
         }
         if (out == null && err == null && in == null && inputFile == null && outputFile == null) {
@@ -454,7 +454,7 @@ public class ProcessExecHelper implements IProcessExecHelper {
     public Future<Integer> execAsync() {
         try {
             if (out != null) {
-                out.run(NutsTerminalCommand.MOVE_LINE_START);
+                out.run(NutsTerminalCommand.MOVE_LINE_START, session);
             }
             ProcessBuilder2 p = pb.start();
             return new FutureTask<Integer>(() -> p.waitFor().getResult());

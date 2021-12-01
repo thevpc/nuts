@@ -4,6 +4,7 @@ import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.NutsUnsupportedEnumException;
 import net.thevpc.nuts.NutsWorkspace;
 import net.thevpc.nuts.runtime.standalone.io.terminals.NutsTerminalModeOp;
+import net.thevpc.nuts.spi.NutsSystemTerminalBase;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -28,43 +29,45 @@ public class SimpleWriterOutputStream extends OutputStream implements ExtendedFo
     private final CharBuffer decoderOut;
     private final NutsWorkspace ws;
     private final NutsSession session;
-    public SimpleWriterOutputStream(Writer writer, CharsetDecoder decoder,NutsSession session) {
-        this(writer, decoder, DEFAULT_BUFFER_SIZE, false,session);
+    private final NutsSystemTerminalBase term;
+    public SimpleWriterOutputStream(Writer writer, CharsetDecoder decoder,NutsSystemTerminalBase term,NutsSession session) {
+        this(writer, decoder, DEFAULT_BUFFER_SIZE, false,term,session);
     }
 
-    public SimpleWriterOutputStream(Writer writer, CharsetDecoder decoder, int bufferSize, boolean writeImmediately,NutsSession session) {
+    public SimpleWriterOutputStream(Writer writer, CharsetDecoder decoder, int bufferSize, boolean writeImmediately,NutsSystemTerminalBase term,NutsSession session) {
         this.session = session;
         this.ws = session.getWorkspace();
         this.writer = writer;
         this.decoder = decoder;
+        this.term = term;
         this.writeImmediately = writeImmediately;
         decoderOut = CharBuffer.allocate(bufferSize);
     }
 
-    public SimpleWriterOutputStream(Writer writer, Charset charset, int bufferSize, boolean writeImmediately,NutsSession session) {
+    public SimpleWriterOutputStream(Writer writer, Charset charset, int bufferSize, boolean writeImmediately,NutsSystemTerminalBase term,NutsSession session) {
         this(writer,
                 charset.newDecoder()
                         .onMalformedInput(CodingErrorAction.REPLACE)
                         .onUnmappableCharacter(CodingErrorAction.REPLACE)
                         .replaceWith("?"),
                 bufferSize,
-                writeImmediately,session);
+                writeImmediately,term,session);
     }
 
-    public SimpleWriterOutputStream(Writer writer, Charset charset,NutsSession session) {
-        this(writer, charset, DEFAULT_BUFFER_SIZE, false,session);
+    public SimpleWriterOutputStream(Writer writer, Charset charset,NutsSystemTerminalBase term,NutsSession session) {
+        this(writer, charset, DEFAULT_BUFFER_SIZE, false,term,session);
     }
 
-    public SimpleWriterOutputStream(Writer writer, String charsetName, int bufferSize, boolean writeImmediately,NutsSession session) {
-        this(writer, Charset.forName(charsetName), bufferSize, writeImmediately,session);
+    public SimpleWriterOutputStream(Writer writer, String charsetName, int bufferSize, boolean writeImmediately,NutsSystemTerminalBase term,NutsSession session) {
+        this(writer, Charset.forName(charsetName), bufferSize, writeImmediately,term,session);
     }
 
-    public SimpleWriterOutputStream(Writer writer, String charsetName,NutsSession session) {
-        this(writer, charsetName, DEFAULT_BUFFER_SIZE, false,session);
+    public SimpleWriterOutputStream(Writer writer, String charsetName,NutsSystemTerminalBase term,NutsSession session) {
+        this(writer, charsetName, DEFAULT_BUFFER_SIZE, false,term,session);
     }
 
-    public SimpleWriterOutputStream(Writer writer,NutsSession session) {
-        this(writer, Charset.defaultCharset(), DEFAULT_BUFFER_SIZE, false,session);
+    public SimpleWriterOutputStream(Writer writer,NutsSystemTerminalBase term,NutsSession session) {
+        this(writer, Charset.defaultCharset(), DEFAULT_BUFFER_SIZE, false,term,session);
     }
 
     @Override
@@ -148,16 +151,16 @@ public class SimpleWriterOutputStream extends OutputStream implements ExtendedFo
                 return this;
             }
             case FORMAT:{
-                return new FormatOutputStream(this,session);
+                return new FormatOutputStream(this,term,session);
             }
             case FILTER:{
-                return new FilterFormatOutputStream(this,session);
+                return new FilterFormatOutputStream(this,term,session);
             }
             case ESCAPE:{
-                return new EscapeOutputStream(this,session);
+                return new EscapeOutputStream(this,term,session);
             }
             case UNESCAPE:{
-                return new EscapeOutputStream(this,session);
+                return new EscapeOutputStream(this,term,session);
             }
         }
         throw new NutsUnsupportedEnumException(session, other);

@@ -65,4 +65,6 @@ public interface NutsBootManager {
     NutsClassLoaderNode getBootRuntimeClassLoaderNode();
 
     NutsClassLoaderNode[] getBootExtensionClassLoaderNode();
+
+    NutsBootTerminal getBootTerminal();
 }

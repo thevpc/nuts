@@ -143,7 +143,7 @@ public class NutsRepositorySelectorHelper {
                         .setOrder(NutsAddRepositoryOptions.ORDER_USER_REMOTE)
                         .setConfig(
                                 new NutsRepositoryConfig()
-                                        .setLocation("https://repo.maven.apache.org/maven2")
+                                        .setLocation("htmlfs:https://repo.maven.apache.org/maven2")
                                         .setType("maven")
                         );
             }

@@ -26,6 +26,8 @@ package net.thevpc.nuts.spi;
 import net.thevpc.nuts.*;
 
 import java.io.InputStream;
+import java.io.Serializable;
+import java.util.Objects;
 
 /**
  * System Terminal defines all low level term interaction
@@ -89,5 +91,100 @@ public interface NutsSystemTerminalBase extends NutsComponent {
      */
     NutsSystemTerminalBase setCommandHighlighter(String commandHighlighter);
 
+    Object run(NutsTerminalCommand command, NutsSession session);
+
+    Cursor getTerminalCursor(NutsSession session);
+
+    Size getTerminalSize(NutsSession session);
+
+    NutsSystemTerminalBase resetLine(NutsSession session) ;
+
+    NutsSystemTerminalBase clearScreen(NutsSession session) ;
+
+    void setStyles(NutsTextStyles styles, NutsSession session);
+
+    class Cursor implements Serializable {
+        private int x;
+        private int y;
+
+        private Cursor() {
+            // for serialization purposes
+        }
+        public Cursor(int x, int y) {
+            this.x = x;
+            this.y = y;
+        }
+
+        public int getX() {
+            return x;
+        }
+
+        public int getY() {
+            return y;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            Cursor cursor = (Cursor) o;
+            return x == cursor.x && y == cursor.y;
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(x, y);
+        }
+
+        @Override
+        public String toString() {
+            return "Cursor{" +
+                    "x=" + x +
+                    ", y=" + y +
+                    '}';
+        }
+    }
+
+    class Size implements Serializable {
+        private int columns;
+        private int rows;
+
+        private Size() {
+            // for serialization purposes
+        }
+        public Size(int columns, int rows) {
+            this.columns = columns;
+            this.rows = rows;
+        }
+
+        public int getColumns() {
+            return columns;
+        }
+
+        public int getRows() {
+            return rows;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            Cursor cursor = (Cursor) o;
+            return columns == cursor.x && rows == cursor.y;
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(columns, rows);
+        }
+
+        @Override
+        public String toString() {
+            return "Cursor{" +
+                    "x=" + columns +
+                    ", y=" + rows +
+                    '}';
+        }
+    }
 
 }

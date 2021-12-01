@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.runtime.standalone.io.outputstream.OutputStreamHelper;
+import net.thevpc.nuts.spi.NutsSystemTerminalBase;
 
 public class RenderedOutputStream extends OutputStream implements NutsOutputStreamTransparentAdapter {
 
@@ -14,14 +15,20 @@ public class RenderedOutputStream extends OutputStream implements NutsOutputStre
     OutputStream out;
     NutsSession session;
     NutsWorkspace ws;
+    NutsSystemTerminalBase terminal;
 
-    public RenderedOutputStream(OutputStream out, FormattedPrintStreamRenderer renderer, NutsSession session) {
+    public RenderedOutputStream(OutputStream out, NutsSystemTerminalBase terminal,NutsSession session) {
         this.out = out;
         this.session = session;
         this.ws = session.getWorkspace();
+        this.terminal=terminal;
         h = new FormatOutputStreamSupport(
                 new OutputStreamHelper(out,session)
-                , renderer, session);
+                , session,terminal);
+    }
+
+    public NutsSystemTerminalBase getTerminal() {
+        return terminal;
     }
 
     @Override

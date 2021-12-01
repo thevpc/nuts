@@ -221,13 +221,13 @@ public class NutsRepositorySessionAwareImpl implements NutsRepository, NutsRepos
     }
 
     @Override
-    public boolean isSupportedDeploy() {
-        return repo.isSupportedDeploy();
+    public boolean isSupportedDeploy(NutsSession session) {
+        return repo.isSupportedDeploy(session);
     }
 
     @Override
-    public boolean isSupportedDeploy(boolean force) {
-        return repo.isSupportedDeploy(force);
+    public boolean isSupportedDeploy(boolean force, NutsSession session) {
+        return repo.isSupportedDeploy(force, session);
     }
 
     private NutsRepositoryExt repoExt() {
@@ -300,13 +300,13 @@ public class NutsRepositorySessionAwareImpl implements NutsRepository, NutsRepos
     }
 
     @Override
-    public boolean isAvailable() {
-        return repo.isAvailable();
+    public boolean isAvailable(NutsSession session) {
+        return repo.isAvailable(session);
     }
 
     @Override
-    public boolean isAvailable(boolean force) {
-        return repo.isAvailable(force);
+    public boolean isAvailable(boolean force, NutsSession session) {
+        return repo.isAvailable(force, session);
     }
 
     @Override

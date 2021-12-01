@@ -97,6 +97,33 @@ public class NutsApiUtils {
         return PrivateNutsUtilApplication.processThrowable(ex, out);
     }
 
+    public static int processThrowable(Throwable ex,String[] args) {
+        PrivateNutsBootLog log = new PrivateNutsBootLog(null);
+        NutsBootOptions bo = new NutsBootOptions();
+        NutsApiUtils.parseNutsArguments(args,bo,log);
+        try {
+            if (NutsApiUtils.isGraphicalDesktopEnvironment()) {
+                bo.setGui(false);
+            }
+        } catch (Exception e) {
+            //exception may occur if the sdk is build without awt package for instance!
+            bo.setGui(false);
+        }
+        boolean bot = bo.isBot();
+        boolean gui = !bot && bo.isGui();
+        boolean showTrace = bo.getDebug()!=null;
+        showTrace |= (bo.getLogConfig() != null
+                && bo.getLogConfig().getLogTermLevel() != null
+                && bo.getLogConfig().getLogTermLevel().intValue() < Level.INFO.intValue());
+        if (!showTrace) {
+            showTrace = NutsApiUtils.getSysBoolNutsProperty("debug", false);
+        }
+        if (bot) {
+            showTrace = false;
+        }
+        return processThrowable(ex, null,true,showTrace,gui);
+    }
+
     public static int processThrowable(Throwable ex, PrintStream out, boolean showMessage, boolean showTrace, boolean showGui) {
         return PrivateNutsUtilApplication.processThrowable(ex, out, showMessage, showTrace, showGui);
     }

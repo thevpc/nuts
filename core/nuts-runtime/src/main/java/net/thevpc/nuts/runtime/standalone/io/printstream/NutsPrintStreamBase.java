@@ -1,6 +1,8 @@
 package net.thevpc.nuts.runtime.standalone.io.printstream;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
+import net.thevpc.nuts.spi.NutsSystemTerminalBase;
 
 import java.io.OutputStream;
 import java.io.PrintStream;
@@ -18,8 +20,9 @@ public abstract class NutsPrintStreamBase implements NutsPrintStream {
     protected boolean autoFlash;
     private NutsTerminalMode mode;
     private boolean trouble = false;
+    private NutsSystemTerminalBase term;
 
-    public NutsPrintStreamBase(boolean autoFlash, NutsTerminalMode mode, NutsSession session, Bindings bindings) {
+    public NutsPrintStreamBase(boolean autoFlash, NutsTerminalMode mode, NutsSession session, Bindings bindings,NutsSystemTerminalBase term) {
         if (mode == null) {
             throw new IllegalArgumentException("null mode");
         }
@@ -30,6 +33,7 @@ public abstract class NutsPrintStreamBase implements NutsPrintStream {
         this.autoFlash = autoFlash;
         this.mode = mode;
         this.session = session;
+        this.term = term;
     }
 
     public NutsSession getSession() {
@@ -198,8 +202,8 @@ public abstract class NutsPrintStreamBase implements NutsPrintStream {
 
     @Override
     public NutsPrintStream resetLine() {
-        run(NutsTerminalCommand.CLEAR_LINE);
-        run(NutsTerminalCommand.MOVE_LINE_START);
+        run(NutsTerminalCommand.CLEAR_LINE, session);
+        run(NutsTerminalCommand.MOVE_LINE_START, session);
         return this;
     }
 
@@ -377,5 +381,9 @@ public abstract class NutsPrintStreamBase implements NutsPrintStream {
         protected NutsPrintStreamBase ansi;
         protected NutsPrintStreamBase inherited;
         protected NutsPrintStreamBase formatted;
+    }
+
+    public NutsSystemTerminalBase getTerminal() {
+        return term;
     }
 }

@@ -7,7 +7,7 @@ import net.thevpc.nuts.NutsTerminalMode;
 
 public class NutsPrintStreamNull extends NutsPrintStreamBase {
     public NutsPrintStreamNull(NutsSession session) {
-        super(false, NutsTerminalMode.INHERITED, session, new Bindings());
+        super(false, NutsTerminalMode.INHERITED, session, new Bindings(),null);
     }
     @Override
     public NutsPrintStream setSession(NutsSession session) {
@@ -53,12 +53,7 @@ public class NutsPrintStreamNull extends NutsPrintStreamBase {
     }
 
     @Override
-    public NutsPrintStream run(NutsTerminalCommand command) {
+    public NutsPrintStream run(NutsTerminalCommand command, NutsSession session) {
         return this;
-    }
-
-    @Override
-    public int getColumns() {
-        return -1;
     }
 }

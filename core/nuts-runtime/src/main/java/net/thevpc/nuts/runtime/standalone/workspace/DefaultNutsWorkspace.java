@@ -25,7 +25,6 @@ package net.thevpc.nuts.runtime.standalone.workspace;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.boot.*;
-import net.thevpc.nuts.runtime.standalone.boot.StdFd;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.security.util.CoreDigestHelper;
 import net.thevpc.nuts.runtime.standalone.util.MapToFunction;
@@ -61,7 +60,6 @@ import net.thevpc.nuts.runtime.standalone.installers.CommandForIdNutsInstallerCo
 import net.thevpc.nuts.runtime.standalone.repository.impl.main.DefaultNutsInstalledRepository;
 import net.thevpc.nuts.runtime.standalone.security.DefaultNutsWorkspaceSecurityManager;
 import net.thevpc.nuts.runtime.standalone.security.DefaultNutsWorkspaceSecurityModel;
-import net.thevpc.nuts.runtime.standalone.security.ReadOnlyNutsWorkspaceOptions;
 import net.thevpc.nuts.runtime.standalone.util.*;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.deploy.DefaultNutsDeployCommand;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.DefaultNutsExecCommand;
@@ -198,10 +196,8 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
 
             this.wsModel.extensionModel = new DefaultNutsWorkspaceExtensionModel(this, bootFactory, options.getExcludedExtensions(), defaultSession());
             this.wsModel.extensionModel.onInitializeWorkspace(bOptions, bootClassLoader, defaultSession());
-
             this.wsModel.logModel = new DefaultNutsLogModel(this, bOptions);
             this.wsModel.logModel.setDefaultSession(defaultSession());
-            this.wsModel.name = Paths.get(bOptions.getWorkspaceLocation()).getFileName().toString();
             this.wsModel.filtersModel = new DefaultNutsFilterModel(this);
             this.wsModel.installedRepository = new DefaultNutsInstalledRepository(this, bOptions);
             this.wsModel.repositoryModel = new DefaultNutsRepositoryModel(this);
@@ -222,6 +218,16 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                     null,
                     (Map<String, String>) null,
                     defaultSession());
+            this.wsModel.bootModel.onInitializeWorkspace();
+
+            NutsSystemTerminalBase termb = defaultSession().extensions()
+                    .createSupported(NutsSystemTerminalBase.class, true, null);
+            defaultSession().config()
+                    .setSystemTerminal(termb)
+                    .setDefaultTerminal(NutsSessionTerminal.of(defaultSession())
+                    );
+            wsModel.bootModel.bootSession().setTerminal(NutsSessionTerminal.of(wsModel.bootModel.bootSession()));
+            ((DefaultNutsLogger) LOG).resumeTerminal(defaultSession());
 
             NutsTexts text = NutsTexts.of(defaultSession());
             try {
@@ -324,9 +330,10 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                         : CoreNutsUtils.desc(text.toText(NutsCommandLine.of(System.getProperty("nuts.args"), NutsShellFamily.SH, defaultSession())), text)
                 ));
                 LOGCRF.log(NutsMessage.jstyle("   option-open-mode               : {0}", CoreNutsUtils.formatLogValue(text, options.getOpenMode(), options.getOpenMode() == null ? NutsOpenMode.OPEN_OR_CREATE : options.getOpenMode())));
-                StdFd b = getModel().bootModel.getBootStdFd();
-                LOGCRF.log(NutsMessage.jstyle("   sys-terminal-ansi              : {0}", b.ansi));
-                LOGCRF.log(NutsMessage.jstyle("   sys-terminal-flags             : {0}", String.join(", ",b.flags)));
+                NutsBootTerminal b = getModel().bootModel.getBootTerminal();
+                LOGCRF.log(NutsMessage.jstyle("   sys-terminal-flags             : {0}", String.join(", ",b.getFlags())));
+                NutsTerminalMode terminalMode = wsModel.bootModel.getBootOptions().getTerminalMode();
+                LOGCRF.log(NutsMessage.jstyle("   sys-terminal-mode              : {0}", terminalMode==null?"default":terminalMode));
                 NutsWorkspaceEnvManager senv = defaultSession().env();
                 LOGCRF.log(NutsMessage.jstyle("   java-home                      : {0}", System.getProperty("java.home")));
                 LOGCRF.log(NutsMessage.jstyle("   java-classpath                 : {0}", System.getProperty("java.class.path")));
@@ -369,14 +376,6 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                 }
             }
 
-            NutsSystemTerminalBase termb = defaultSession().extensions()
-                    .createSupported(NutsSystemTerminalBase.class, true, null);
-            defaultSession().config()
-                    .setSystemTerminal(termb)
-                    .setDefaultTerminal(NutsSessionTerminal.of(defaultSession())
-                    );
-            wsModel.bootModel.bootSession().setTerminal(NutsSessionTerminal.of(wsModel.bootModel.bootSession()));
-            ((DefaultNutsLogger) LOG).resumeTerminal(defaultSession());
 
             wsModel.configModel.onExtensionsPrepared(defaultSession());
             boolean justInstalled = false;

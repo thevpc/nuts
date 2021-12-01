@@ -8,11 +8,12 @@ import net.thevpc.nuts.runtime.standalone.io.terminals.NutsTerminalModeOp;
 
 import java.io.OutputStream;
 import net.thevpc.nuts.NutsSession;
+import net.thevpc.nuts.spi.NutsSystemTerminalBase;
 
 public class FormatOutputStream extends RenderedOutputStream implements ExtendedFormatAware {
 
-    public FormatOutputStream(OutputStream out, NutsSession session) {
-        super(out, FPrint.RENDERER_ANSI, session);
+    public FormatOutputStream(OutputStream out, NutsSystemTerminalBase term,NutsSession session) {
+        super(out, term, session);
         NutsTerminalModeOp op = CoreIOUtils.resolveNutsTerminalModeOp(out);
         if (op != NutsTerminalModeOp.NOP) {
             throw new NutsIllegalArgumentException(session, NutsMessage.plain("expected Raw"));
@@ -34,19 +35,19 @@ public class FormatOutputStream extends RenderedOutputStream implements Extended
                 if (out instanceof ExtendedFormatAware) {
                     return (ExtendedFormatAware) out;
                 }
-                return new RawOutputStream(out, session);
+                return new RawOutputStream(out, getTerminal(),session);
             }
             case FORMAT: {
                 return this;
             }
             case FILTER: {
-                return new FilterFormatOutputStream(out, session);
+                return new FilterFormatOutputStream(out, getTerminal(), session);
             }
             case ESCAPE: {
-                return new EscapeOutputStream(this, session);
+                return new EscapeOutputStream(this,getTerminal(), session);
             }
             case UNESCAPE: {
-                return new UnescapeOutputStream(this, session);
+                return new UnescapeOutputStream(this, getTerminal(),session);
             }
         }
         throw new NutsUnsupportedEnumException(session, other);

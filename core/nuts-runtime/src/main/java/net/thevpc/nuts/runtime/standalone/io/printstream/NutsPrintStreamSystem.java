@@ -1,10 +1,8 @@
 package net.thevpc.nuts.runtime.standalone.io.printstream;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.standalone.boot.StdFd;
-import net.thevpc.nuts.runtime.standalone.text.DefaultAnsiEscapeCommand;
-import net.thevpc.nuts.runtime.standalone.util.CachedValue;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceExt;
+import net.thevpc.nuts.spi.NutsSystemTerminalBase;
 
 import java.io.OutputStream;
 import java.io.PrintStream;
@@ -13,15 +11,14 @@ import java.io.UnsupportedEncodingException;
 public class NutsPrintStreamSystem extends NutsPrintStreamBase{
     private final OutputStream out;
     private PrintStream base;
-    private CachedValue<Integer> tput_cols;
 
-    public NutsPrintStreamSystem(OutputStream out, Boolean autoFlush, String encoding, Boolean ansi, NutsSession session) {
-        this(out, autoFlush, encoding, ansi, session, new Bindings());
+    public NutsPrintStreamSystem(OutputStream out, Boolean autoFlush, String encoding, Boolean ansi, NutsSession session, NutsSystemTerminalBase term) {
+        this(out, autoFlush, encoding, ansi, session, new Bindings(),term);
     }
 
-    protected NutsPrintStreamSystem(OutputStream out, PrintStream base, CachedValue<Integer> tput_cols, Boolean autoFlush,
-                                    NutsTerminalMode mode, NutsSession session, Bindings bindings) {
-        super(autoFlush == null || autoFlush.booleanValue(), mode/*resolveMode(out,ansi, session)*/, session, bindings);
+    protected NutsPrintStreamSystem(OutputStream out, PrintStream base, Boolean autoFlush,
+                                    NutsTerminalMode mode, NutsSession session, Bindings bindings, NutsSystemTerminalBase term) {
+        super(autoFlush == null || autoFlush.booleanValue(), mode/*resolveMode(out,ansi, session)*/, session, bindings,term);
         this.out = out;
         this.base = base;
     }
@@ -30,8 +27,8 @@ public class NutsPrintStreamSystem extends NutsPrintStreamBase{
         return base;
     }
 
-    public NutsPrintStreamSystem(OutputStream out, Boolean autoFlush, String encoding, Boolean ansi, NutsSession session, Bindings bindings) {
-        super(true, resolveMode(out, ansi, session), session, bindings);
+    public NutsPrintStreamSystem(OutputStream out, Boolean autoFlush, String encoding, Boolean ansi, NutsSession session, Bindings bindings,NutsSystemTerminalBase term) {
+        super(true, resolveMode(out, ansi, session), session, bindings,term);
         this.out = out;
         if (out instanceof PrintStream) {
             PrintStream ps = (PrintStream) out;
@@ -74,8 +71,8 @@ public class NutsPrintStreamSystem extends NutsPrintStreamBase{
         if (ansi != null) {
             return ansi ? NutsTerminalMode.ANSI : NutsTerminalMode.INHERITED;
         }
-        StdFd b = NutsWorkspaceExt.of(session.getWorkspace()).getModel().bootModel.getBootStdFd();
-        if (b.ansi) {
+        NutsBootTerminal b = session.boot().getBootTerminal();
+        if (b.getFlags().contains("ansi")) {
             return NutsTerminalMode.ANSI;
         } else {
             return NutsTerminalMode.INHERITED;
@@ -172,43 +169,7 @@ public class NutsPrintStreamSystem extends NutsPrintStreamBase{
         if (session == null || session == this.session) {
             return this;
         }
-        return new NutsPrintStreamSystem(out, base, tput_cols, autoFlash, mode(), session, new Bindings());
-    }
-
-    @Override
-    public NutsPrintStream run(NutsTerminalCommand command) {
-        if (mode() == NutsTerminalMode.ANSI) {
-            // TODO!!
-            //should re-implement this!!
-            switch (command.getName()) {
-                case NutsTerminalCommand.Ids
-                        .CLEAR_LINE: {
-                    //printf("%s", NutsTexts.of(session).forCommand(command));
-                    break;
-                }
-                case NutsTerminalCommand.Ids
-                        .CLEAR_LINE_FROM_CURSOR: {
-                    //printf("%s", NutsTexts.of(session).forCommand(command));
-                    break;
-                }
-            }
-            flush();
-        }
-        return this;
-    }
-
-    @Override
-    public int getColumns() {
-        int tputCallTimeout = session.boot().getBootCustomArgument("---nuts.term.tput.call.timeout").getValue().getInt(60);
-        Integer w = session.boot().getBootCustomArgument("---nuts.term.width").getValue().getInt(null);
-        if (w == null) {
-            if (tput_cols == null) {
-                tput_cols = new CachedValue<>(new DefaultAnsiEscapeCommand.TputEvaluator(session), tputCallTimeout);
-            }
-            Integer v = tput_cols.getValue();
-            return v == null ? -1 : v;
-        }
-        return -1;
+        return new NutsPrintStreamSystem(out, base, autoFlash, mode(), session, new Bindings(),getTerminal());
     }
 
     @Override
@@ -230,20 +191,13 @@ public class NutsPrintStreamSystem extends NutsPrintStreamBase{
         throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("unsupported %s -> %s", mode(), other));
     }
 
-//
-//    protected void baseWriteChars(char[] chars) {
-//        switch (mode) {
-//            case FILTERED: {
-//                try {
-//                    //ESCAPE
-//                    base.write(
-//                            DefaultNutsTextNodeParser.escapeText0(new String(chars)).getBytes()
-//                    );
-//                } catch (IOException e) {
-//                    trouble = true;
-//                }
-//                break;
-//            }
-//        }
-//    }
+    @Override
+    public NutsPrintStream run(NutsTerminalCommand command, NutsSession session) {
+        switch (command.getName()){
+            case NutsTerminalCommand.Ids.GET_SIZE:{
+                break;
+            }
+        }
+        return null;
+    }
 }

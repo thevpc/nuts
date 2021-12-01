@@ -142,31 +142,35 @@ public interface NutsRepository {
      * available if local and the folder exists or remote and could ping the repository
      *
      * @return true if config is enabled and runtime is enabled
+     * @param session
      */
-    boolean isAvailable();
+    boolean isAvailable(NutsSession session);
 
     /**
      * available if local and the folder exists or remote and could ping the repository
      *
      * @param force when force, check immediate availability and do not rely on cache
+     * @param session
      * @return true if config is enabled and runtime is enabled
      */
-    boolean isAvailable(boolean force);
+    boolean isAvailable(boolean force, NutsSession session);
 
     /**
      * available if local or remote repo exists and could deploy to
      *
      * @return true if config is enabled and runtime is enabled
+     * @param session
      */
-    boolean isSupportedDeploy();
+    boolean isSupportedDeploy(NutsSession session);
 
     /**
      * available if local or remote repo exists and could deploy to
      *
      * @param force when force, check immediate availability and do not rely on cache
+     * @param session
      * @return true if config is enabled and runtime is enabled
      */
-    boolean isSupportedDeploy(boolean force);
+    boolean isSupportedDeploy(boolean force, NutsSession session);
 
     /**
      * enabled if config is enabled and runtime is enabled

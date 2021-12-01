@@ -891,8 +891,6 @@ public interface NutsWorkspaceOptionsBuilder extends Serializable {
      */
     NutsWorkspaceOptionsBuilder setTheme(String theme);
 
-    NutsWorkspaceOptionsBuilder setBootTerminal(NutsBootTerminal bootTerminal);
-
     NutsWorkspaceOptionsBuilder setAll(NutsWorkspaceOptions other);
 
     NutsWorkspaceOptionsBuilder parseCommandLine(String commandLine);

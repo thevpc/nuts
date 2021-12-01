@@ -39,6 +39,8 @@ public final class NutsTerminalCommand {
     public static final NutsTerminalCommand CLEAR_LINE = new NutsTerminalCommand(Ids.CLEAR_LINE);
     public static final NutsTerminalCommand CLEAR_LINE_TO_CURSOR = new NutsTerminalCommand(Ids.CLEAR_LINE_FROM_CURSOR);
     public static final NutsTerminalCommand CLEAR_LINE_FROM_CURSOR = new NutsTerminalCommand(Ids.CLEAR_LINE_FROM_CURSOR);
+    public static final NutsTerminalCommand GET_SIZE = new NutsTerminalCommand(Ids.GET_SIZE);
+    public static final NutsTerminalCommand GET_CURSOR = new NutsTerminalCommand(Ids.GET_CURSOR);
     public static final NutsTerminalCommand MOVE_UP = MOVE_UP(1);
     public static final NutsTerminalCommand MOVE_DOWN = MOVE_DOWN(1);
     public static final NutsTerminalCommand MOVE_LEFT = MOVE_LEFT(1);
@@ -173,6 +175,8 @@ public final class NutsTerminalCommand {
         public static final String CLEAR_LINE = ("clear-line");
         public static final String CLEAR_LINE_TO_CURSOR = ("clear-line-to-cursor");
         public static final String CLEAR_LINE_FROM_CURSOR = ("clear-line-from-cursor");
+        public static final String GET_SIZE = ("get-size");
+        public static final String GET_CURSOR = ("get-cursor");
 
         private Ids() {
         }

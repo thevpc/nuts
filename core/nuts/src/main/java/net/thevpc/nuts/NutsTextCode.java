@@ -37,4 +37,10 @@ public interface NutsTextCode extends NutsText {
      * @return return
      */
     NutsText highlight(NutsSession session);
+
+    /**
+     * text
+     * @return text
+     */
+    String getText();
 }

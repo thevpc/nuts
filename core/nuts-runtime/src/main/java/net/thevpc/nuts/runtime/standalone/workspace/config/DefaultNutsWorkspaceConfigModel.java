@@ -75,7 +75,6 @@ import java.util.stream.Collectors;
  */
 public class DefaultNutsWorkspaceConfigModel {
 
-    public final NutsPrintStream nullOut;
     private final DefaultNutsWorkspace ws;
     private final Map<String, NutsUserConfig> configUsers = new LinkedHashMap<>();
     private final NutsWorkspaceStoredConfig storedConfig = new NutsWorkspaceStoredConfigImpl();
@@ -108,11 +107,7 @@ public class DefaultNutsWorkspaceConfigModel {
     //    private NutsRepositorySelector[] parsedBootRepositoriesArr;
     private ExecutorService executorService;
     private NutsSessionTerminal terminal;
-    private NutsSystemTerminal systemTerminal;
     //    private final NutsLogger LOG;
-    private InputStream stdin = null;
-    private NutsPrintStream stdout;
-    private NutsPrintStream stderr;
 
     public DefaultNutsWorkspaceConfigModel(final DefaultNutsWorkspace ws) {
         this.ws = ws;
@@ -123,10 +118,6 @@ public class DefaultNutsWorkspaceConfigModel {
 
         this.pathExpansionConverter = new NutsWorkspaceVarExpansionFunction(NutsWorkspaceUtils.defaultSession(ws));
         this.bootModel = (DefaultNutsBootModel) ((DefaultNutsBootManager) ws.boot()).getModel();
-        this.stdout = bootModel.stdout();
-        this.stderr = bootModel.stderr();
-        this.stdin = bootModel.stdin();
-        this.nullOut = new NutsPrintStreamNull(bootModel.bootSession());
         addPathFactory(new FilePath.FilePathFactory(ws));
         addPathFactory(new ClassLoaderPath.ClasspathFactory(ws));
         addPathFactory(new URLPath.URLPathFactory(ws));
@@ -1393,7 +1384,7 @@ public class DefaultNutsWorkspaceConfigModel {
             return parsedBootRepositoriesList;
         }
         CoreNutsBootOptions bOptions = NutsWorkspaceExt.of(ws).getModel().bootModel.getCoreBootOptions();
-        parsedBootRepositoriesList = NutsRepositorySelectorList.ofAll(bOptions.getOptions().getRepositories(), DefaultNutsRepositoryDB.INSTANCE,session);
+        parsedBootRepositoriesList = NutsRepositorySelectorList.ofAll(bOptions.getOptions().getRepositories(), DefaultNutsRepositoryDB.INSTANCE, session);
         return parsedBootRepositoriesList;
     }
 
@@ -1420,13 +1411,13 @@ public class DefaultNutsWorkspaceConfigModel {
                     executorService = session.boot().getBootOptions().getExecutorService();
                     if (executorService == null) {
 
-                        int minPoolSize = getConfigProperty("nuts.threads.min",session).getInt(2);
+                        int minPoolSize = getConfigProperty("nuts.threads.min", session).getInt(2);
                         if (minPoolSize < 1) {
                             minPoolSize = 60;
                         } else if (minPoolSize > 500) {
                             minPoolSize = 500;
                         }
-                        int maxPoolSize = getConfigProperty("nuts.threads.max",session).getInt(60);
+                        int maxPoolSize = getConfigProperty("nuts.threads.max", session).getInt(60);
                         if (maxPoolSize < 1) {
                             maxPoolSize = 60;
                         } else if (maxPoolSize > 500) {
@@ -1437,7 +1428,7 @@ public class DefaultNutsWorkspaceConfigModel {
                         }
                         TimePeriod defaultPeriod = new TimePeriod(3, TimeUnit.SECONDS);
                         TimePeriod period = TimePeriod.parseLenient(
-                                getConfigProperty("nuts.threads.keep-alive",session).getString(),
+                                getConfigProperty("nuts.threads.keep-alive", session).getString(),
                                 TimeUnit.SECONDS, defaultPeriod,
                                 defaultPeriod
                         );
@@ -1456,45 +1447,6 @@ public class DefaultNutsWorkspaceConfigModel {
         return executorService;
     }
 
-    public NutsSystemTerminal createSystemTerminal(NutsTerminalSpec spec, NutsSession session) {
-        NutsSystemTerminalBase termb = session.extensions()
-                .setSession(session)
-                .createSupported(NutsSystemTerminalBase.class, true, spec);
-        return NutsSystemTerminal_of_NutsSystemTerminalBase(termb, session);
-    }
-
-    public void enableRichTerm(NutsSession session) {
-        NutsSystemTerminal st = getSystemTerminal();
-        if (st.isAutoCompleteSupported()) {
-            //that's ok
-        } else {
-            NutsId extId = NutsId.of("net.thevpc.nuts.ext:next-term#" + session.getWorkspace().getApiVersion(), session);
-            if (!session.config().isExcludedExtension(extId.toString(), session.boot().getBootOptions())) {
-                NutsWorkspaceExtensionManager extensions = session.extensions();
-                extensions.setSession(session).loadExtension(extId);
-                NutsSystemTerminal systemTerminal = createSystemTerminal(
-                        new NutsDefaultTerminalSpec()
-                                .setAutoComplete(true),
-                        session
-                );
-                setSystemTerminal(systemTerminal, session);
-                if (getSystemTerminal().isAutoCompleteSupported()) {
-                    _LOGOP(session).level(Level.FINE).verb(NutsLogVerb.SUCCESS)
-                            .log(NutsMessage.jstyle("enable rich terminal"));
-                } else {
-                    _LOGOP(session).level(Level.FINE).verb(NutsLogVerb.FAIL)
-                            .log(NutsMessage.jstyle("unable to enable rich terminal"));
-                }
-            } else {
-                _LOGOP(session).level(Level.FINE).verb(NutsLogVerb.WARNING)
-                        .log(NutsMessage.jstyle("enableRichTerm discarded; next-term is excluded."));
-            }
-        }
-    }
-
-    public NutsSystemTerminal getSystemTerminal() {
-        return systemTerminal;
-    }
 
     public NutsSessionTerminal getTerminal() {
         return terminal;
@@ -1530,76 +1482,6 @@ public class DefaultNutsWorkspaceConfigModel {
                 session, workspaceSystemTerminalAdapter
         );
 //        return createTerminal(null, session);
-    }
-
-    private NutsSystemTerminal NutsSystemTerminal_of_NutsSystemTerminalBase(NutsSystemTerminalBase terminal, NutsSession session) {
-        if (terminal == null) {
-            throw new NutsExtensionNotFoundException(session, NutsSystemTerminalBase.class, "SystemTerminalBase");
-        }
-        NutsSystemTerminal syst;
-        if ((terminal instanceof NutsSystemTerminal)) {
-            syst = (NutsSystemTerminal) terminal;
-        } else {
-            try {
-                syst = new DefaultSystemTerminal(terminal);
-                NutsWorkspaceUtils.setSession(syst, session);
-            } catch (Exception ex) {
-                _LOGOP(session).level(Level.FINEST).verb(NutsLogVerb.WARNING)
-                        .log(NutsMessage.jstyle("unable to create system terminal : {0}", ex));
-                DefaultNutsSystemTerminalBase b = new DefaultNutsSystemTerminalBase();
-                NutsWorkspaceUtils.setSession(b, session);
-                syst = new DefaultSystemTerminal(b);
-                NutsWorkspaceUtils.setSession(syst, session);
-            }
-        }
-        return syst;
-    }
-
-    public void setSystemTerminal(NutsSystemTerminalBase terminal, NutsSession session) {
-        if (terminal == null) {
-            throw new NutsExtensionNotFoundException(session, NutsSystemTerminalBase.class, null);
-        }
-        NutsSystemTerminal syst = NutsSystemTerminal_of_NutsSystemTerminalBase(terminal, session);
-        NutsSystemTerminal old = this.systemTerminal;
-        this.systemTerminal = syst;
-
-        if (old != this.systemTerminal) {
-            NutsWorkspaceEvent event = null;
-            if (session != null) {
-                for (NutsWorkspaceListener workspaceListener : session.events().getWorkspaceListeners()) {
-                    if (event == null) {
-                        event = new DefaultNutsWorkspaceEvent(session, null, "systemTerminal", old, this.systemTerminal);
-                    }
-                    workspaceListener.onUpdateProperty(event);
-                }
-            }
-        }
-    }
-
-    public InputStream stdin() {
-        return stdin == null ? bootModel.stdin() : stdin;
-    }
-
-    public void setStdin(InputStream stdin) {
-        this.stdin = stdin;
-    }
-
-    public NutsPrintStream stdout() {
-        return stdout;
-    }
-
-    public void setStdout(NutsPrintStream stdout) {
-        this.stdout = stdout == null ?
-
-                bootModel.stdout() : stdout;
-    }
-
-    public NutsPrintStream stderr() {
-        return stderr;
-    }
-
-    public void setStderr(NutsPrintStream stderr) {
-        this.stderr = stderr == null ? bootModel.stderr() : stderr;
     }
 
     public void addPathFactory(NutsPathFactory f) {
@@ -1651,10 +1533,6 @@ public class DefaultNutsWorkspaceConfigModel {
         return bootModel;
     }
 
-    public NutsPrintStream nullPrintStream() {
-        return nullOut;
-        //return createPrintStream(NullOutputStream.INSTANCE, NutsTerminalMode.FILTERED, session);
-    }
 
     public Map<String, String> getConfigMap() {
         Map<String, String> p = new LinkedHashMap<>();
@@ -1665,7 +1543,7 @@ public class DefaultNutsWorkspaceConfigModel {
         return p;
     }
 
-    public NutsPrimitiveElement getConfigProperty(String property,NutsSession session) {
+    public NutsPrimitiveElement getConfigProperty(String property, NutsSession session) {
         Map<String, String> env = getStoreModelMain().getEnv();
         if (env != null) {
             return NutsElements.of(session).ofString(env.get(property));
@@ -1706,7 +1584,7 @@ public class DefaultNutsWorkspaceConfigModel {
             this.workspace = workspace;
         }
 
-        public NutsSystemTerminalBase getParent() {
+        public NutsSystemTerminalBase getBase() {
             return NutsWorkspaceUtils.defaultSession(workspace).config()
                     .getSystemTerminal();
         }

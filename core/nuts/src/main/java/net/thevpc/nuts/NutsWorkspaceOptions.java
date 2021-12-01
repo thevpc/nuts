@@ -655,7 +655,5 @@ public interface NutsWorkspaceOptions extends Serializable {
      */
     String getTheme();
 
-    NutsBootTerminal getBootTerminal();
-
     NutsWorkspaceOptionsBuilder builder();
 }
