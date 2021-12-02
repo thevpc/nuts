@@ -87,31 +87,65 @@ public class URLPath implements NutsPathSPI {
 
     @Override
     public NutsPath resolve(NutsPath basePath, String path) {
-        return rebuildURLPath(rebuildURLString(url.getProtocol(), url.getAuthority(),
-                NutsPath.of(url.getFile(),getSession()).resolve(path).toString()
-                , url.getRef()));
+        String u=url.getFile();
+        if(!u.endsWith("/") && !path.startsWith("/")){
+            u+="/";
+        }
+        u+=path;
+        return rebuildURLPath(rebuildURLString(url.getProtocol(), url.getAuthority(),u, url.getRef()));
+    }
+    private String _parent(String p){
+        while (p.endsWith("/") || p.endsWith("\\")){
+            p=p.substring(0,p.length()-1);
+        }
+        if(p.isEmpty()){
+            return null;
+        }
+        int x=p.lastIndexOf('/');
+        int y=p.lastIndexOf('\\');
+        if(x<0){
+            x=y;
+        }else if(y>=0){
+            if(y>x){
+                x=y;
+            }
+        }
+        if(x<0){
+            return "";
+        }
+        return p.substring(0,x);
     }
 
     @Override
     public NutsPath resolve(NutsPath basePath, NutsPath path) {
-        return rebuildURLPath(rebuildURLString(url.getProtocol(), url.getAuthority(),
-                NutsPath.of(url.getFile(),getSession()).resolve(path).toString()
-                , url.getRef()));
+        String spath=path.toString().replace("\\","/");
+        String u=url.getFile();
+        if(!u.endsWith("/") && !spath.startsWith("/")){
+            u+="/";
+        }
+        u+=spath;
+        return rebuildURLPath(rebuildURLString(url.getProtocol(), url.getAuthority(),u, url.getRef()));
     }
 
 
     @Override
     public NutsPath resolveSibling(NutsPath basePath, String path) {
-        return rebuildURLPath(rebuildURLString(url.getProtocol(), url.getAuthority(),
-                NutsPath.of(url.getFile(),getSession()).resolveSibling(path).toString()
-                , url.getRef()));
+        String u = _parent(url.getFile());
+        String spath=path.replace("\\","/");
+        if(u==null || u.isEmpty()){
+            u=spath;
+        }else {
+            if(!u.endsWith("/") && !spath.startsWith("/")){
+                u+="/";
+            }
+            u+=spath;
+        }
+        return rebuildURLPath(rebuildURLString(url.getProtocol(), url.getAuthority(),u, url.getRef()));
     }
 
     @Override
     public NutsPath resolveSibling(NutsPath basePath, NutsPath path) {
-        return rebuildURLPath(rebuildURLString(url.getProtocol(), url.getAuthority(),
-                NutsPath.of(url.getFile(),getSession()).resolveSibling(path).toString()
-                , url.getRef()));
+        return resolveSibling(basePath,path.toString());
     }
 
 
