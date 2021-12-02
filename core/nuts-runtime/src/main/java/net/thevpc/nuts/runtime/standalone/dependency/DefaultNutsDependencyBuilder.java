@@ -25,7 +25,6 @@ package net.thevpc.nuts.runtime.standalone.dependency;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.descriptor.DefaultNutsEnvConditionBuilder;
-import net.thevpc.nuts.runtime.standalone.util.NutsDependencyScopes;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.QueryStringParser;
 
 import java.util.*;

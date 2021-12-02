@@ -28,7 +28,7 @@ import net.thevpc.nuts.NutsElementMapper;
 import java.io.File;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.standalone.elem.mappers.*;
+import net.thevpc.nuts.runtime.standalone.elem.mapper.*;
 import net.thevpc.nuts.runtime.standalone.format.xml.NutsElementFactoryXmlDocument;
 import net.thevpc.nuts.runtime.standalone.format.xml.NutsElementFactoryXmlElement;
 import java.lang.reflect.Array;

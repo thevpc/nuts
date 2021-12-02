@@ -16,7 +16,7 @@ import net.thevpc.nuts.runtime.standalone.workspace.config.NutsWorkspaceConfigBo
 import net.thevpc.nuts.runtime.standalone.workspace.DefaultNutsWorkspaceFactory;
 import net.thevpc.nuts.runtime.standalone.util.filters.CoreFilterUtils;
 import net.thevpc.nuts.NutsLogVerb;
-import net.thevpc.nuts.runtime.standalone.io.terminals.DefaultNutsSessionTerminalFromSystem;
+import net.thevpc.nuts.runtime.standalone.io.terminal.DefaultNutsSessionTerminalFromSystem;
 import net.thevpc.nuts.runtime.standalone.util.CoreNutsUtils;
 import net.thevpc.nuts.runtime.standalone.util.collections.ListMap;
 import net.thevpc.nuts.spi.*;

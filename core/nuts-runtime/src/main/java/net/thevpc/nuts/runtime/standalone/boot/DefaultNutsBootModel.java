@@ -24,9 +24,9 @@
 package net.thevpc.nuts.runtime.standalone.boot;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.standalone.events.DefaultNutsWorkspaceEvent;
+import net.thevpc.nuts.runtime.standalone.event.DefaultNutsWorkspaceEvent;
 import net.thevpc.nuts.runtime.standalone.io.printstream.NutsPrintStreamNull;
-import net.thevpc.nuts.runtime.standalone.io.terminals.*;
+import net.thevpc.nuts.runtime.standalone.io.terminal.*;
 import net.thevpc.nuts.runtime.standalone.util.CorePlatformUtils;
 import net.thevpc.nuts.runtime.standalone.session.DefaultNutsSession;
 import net.thevpc.nuts.runtime.standalone.app.cmdline.DefaultNutsArgument;

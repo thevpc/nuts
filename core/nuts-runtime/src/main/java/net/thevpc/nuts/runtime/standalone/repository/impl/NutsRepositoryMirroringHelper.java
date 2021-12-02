@@ -8,7 +8,7 @@ package net.thevpc.nuts.runtime.standalone.repository.impl;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.util.iter.IteratorBuilder;
 import net.thevpc.nuts.runtime.standalone.util.iter.IteratorUtils;
-import net.thevpc.nuts.runtime.standalone.events.DefaultNutsContentEvent;
+import net.thevpc.nuts.runtime.standalone.event.DefaultNutsContentEvent;
 import net.thevpc.nuts.runtime.standalone.id.filter.NutsSearchIdByDescriptor;
 import net.thevpc.nuts.runtime.standalone.repository.NutsRepositoryUtils;
 import net.thevpc.nuts.runtime.standalone.repository.cmd.NutsRepositorySupportedAction;

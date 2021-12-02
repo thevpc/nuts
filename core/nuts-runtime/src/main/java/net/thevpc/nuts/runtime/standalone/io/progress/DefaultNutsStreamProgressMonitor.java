@@ -9,7 +9,7 @@ import java.text.DecimalFormat;
 
 import net.thevpc.nuts.*;
 
-import net.thevpc.nuts.runtime.standalone.io.terminals.CoreTerminalUtils;
+import net.thevpc.nuts.runtime.standalone.io.terminal.CoreTerminalUtils;
 import net.thevpc.nuts.runtime.standalone.util.CoreNutsUtils;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.util.BytesSizeFormat;

@@ -4,7 +4,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.text.parser.DefaultNutsTextNodeParser;
 import net.thevpc.nuts.runtime.standalone.io.outputstream.BaseTransparentFilterOutputStream;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
-import net.thevpc.nuts.runtime.standalone.io.terminals.NutsTerminalModeOp;
+import net.thevpc.nuts.runtime.standalone.io.terminal.NutsTerminalModeOp;
 import net.thevpc.nuts.spi.NutsSystemTerminalBase;
 
 import java.io.IOException;

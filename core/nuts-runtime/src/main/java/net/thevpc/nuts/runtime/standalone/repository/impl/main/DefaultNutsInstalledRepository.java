@@ -74,7 +74,7 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
                 NutsWorkspaceUtils.defaultSession(ws),
                 NutsPath.of(bOptions.getStoreLocation(NutsStoreLocation.LIB), initSession).resolve(NutsConstants.Folders.ID)
                 , false,
-                NutsElements.of(initSession).ofObject().set("repoKind","deployments").build()
+                "lib",NutsElements.of(initSession).ofObject().set("repoKind","lib").build()
         );
         configModel = new InstalledRepositoryConfigModel(workspace, this);
     }

@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.io.path.spi;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.standalone.util.nfo.NutsIteratorBase;
+import net.thevpc.nuts.runtime.standalone.util.iter.NutsIteratorBase;
 
 import java.util.Iterator;
 import java.util.Stack;

@@ -1,7 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.util.iter;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.standalone.util.nfo.NutsIteratorBase;
 
 import java.util.Iterator;
 import java.util.function.Function;

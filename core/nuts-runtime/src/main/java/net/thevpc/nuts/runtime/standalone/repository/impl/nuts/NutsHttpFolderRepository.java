@@ -264,9 +264,9 @@ public class NutsHttpFolderRepository extends NutsCachedRepository {
 
                     ).build());
             if (basePath.getName().equals("*")) {
-                list.add(new NutsIdPathIterator(this, repoRoot,basePath.getParent(),filter,session, findModel,Integer.MAX_VALUE,null));
+                list.add(new NutsIdPathIterator(this, repoRoot,basePath.getParent(),filter,session, findModel,Integer.MAX_VALUE, "core",null));
             } else {
-                list.add(new NutsIdPathIterator(this, repoRoot,basePath,filter,session, findModel,2,null));
+                list.add(new NutsIdPathIterator(this, repoRoot,basePath,filter,session, findModel,2, "core",null));
             }
         }
         return IteratorUtils.concat(list);

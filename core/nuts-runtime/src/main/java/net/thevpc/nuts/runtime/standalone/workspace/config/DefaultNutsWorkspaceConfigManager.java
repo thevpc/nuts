@@ -26,7 +26,7 @@ package net.thevpc.nuts.runtime.standalone.workspace.config;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.workspace.CoreNutsWorkspaceOptions;
 import net.thevpc.nuts.runtime.standalone.util.CoreNutsUtils;
-import net.thevpc.nuts.runtime.standalone.solvers.NutsDependencySolverUtils;
+import net.thevpc.nuts.runtime.standalone.dependency.solver.NutsDependencySolverUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
 import net.thevpc.nuts.spi.NutsDependencySolver;

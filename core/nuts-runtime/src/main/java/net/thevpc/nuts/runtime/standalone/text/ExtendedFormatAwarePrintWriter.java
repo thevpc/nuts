@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.text;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.standalone.io.terminals.NutsTerminalModeOp;
+import net.thevpc.nuts.runtime.standalone.io.terminal.NutsTerminalModeOp;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
 import net.thevpc.nuts.spi.NutsSessionAware;
 import net.thevpc.nuts.spi.NutsSystemTerminalBase;

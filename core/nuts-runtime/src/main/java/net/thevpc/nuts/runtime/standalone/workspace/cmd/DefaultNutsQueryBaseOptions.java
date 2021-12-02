@@ -7,7 +7,7 @@ package net.thevpc.nuts.runtime.standalone.workspace.cmd;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.format.NutsFetchDisplayOptions;
-import net.thevpc.nuts.runtime.standalone.util.NutsDependencyScopes;
+import net.thevpc.nuts.runtime.standalone.dependency.NutsDependencyScopes;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
 
 import java.nio.file.Path;

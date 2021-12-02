@@ -8,7 +8,7 @@ import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.util.CoreNutsDependencyUtils;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.DefaultNutsWorkspace;
-import net.thevpc.nuts.runtime.standalone.executors.ArtifactExecutorComponent;
+import net.thevpc.nuts.runtime.standalone.executor.ArtifactExecutorComponent;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.deploy.DefaultNutsDeployInternalExecutable;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.fetch.DefaultNutsFetchInternalExecutable;

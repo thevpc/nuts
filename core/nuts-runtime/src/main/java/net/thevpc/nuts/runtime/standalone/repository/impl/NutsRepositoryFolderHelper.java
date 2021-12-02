@@ -15,9 +15,9 @@ import net.thevpc.nuts.runtime.standalone.repository.NutsRepositoryUtils;
 import net.thevpc.nuts.runtime.standalone.repository.cmd.fetch.DefaultNutsFetchContentRepositoryCommand;
 import net.thevpc.nuts.runtime.standalone.repository.cmd.undeploy.DefaultNutsRepositoryUndeployCommand;
 import net.thevpc.nuts.runtime.standalone.util.CoreNutsConstants;
-import net.thevpc.nuts.runtime.standalone.events.DefaultNutsContentEvent;
+import net.thevpc.nuts.runtime.standalone.event.DefaultNutsContentEvent;
 import net.thevpc.nuts.runtime.standalone.util.filters.CoreFilterUtils;
-import net.thevpc.nuts.runtime.standalone.io.terminals.DefaultWriteTypeProcessor;
+import net.thevpc.nuts.runtime.standalone.io.terminal.DefaultWriteTypeProcessor;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.CharacterizedExecFile;
@@ -47,10 +47,12 @@ public class NutsRepositoryFolderHelper {
     private NutsLogger LOG;
     private boolean readEnabled = true;
     private boolean writeEnabled = true;
-    private NutsObjectElement extraInfoElements;
+    private final String kind;
+    private final NutsObjectElement extraInfoElements;
 
-    public NutsRepositoryFolderHelper(NutsRepository repo, NutsSession ws, NutsPath rootPath, boolean cacheFolder,NutsObjectElement extraInfoElements) {
+    public NutsRepositoryFolderHelper(NutsRepository repo, NutsSession ws, NutsPath rootPath, boolean cacheFolder, String kind, NutsObjectElement extraInfoElements) {
         this.repo = repo;
+        this.kind = kind;
         this.ws = ws;
         this.extraInfoElements = extraInfoElements;
         if (ws == null && repo == null) {
@@ -220,7 +222,7 @@ public class NutsRepositoryFolderHelper {
 
     public NutsPath getRelativeLocalGroupAndArtifactFile(NutsId id, NutsSession session) {
         NutsWorkspaceUtils.of(session).checkShortId(id);
-        NutsPath groupFolder = NutsPath.of(id.getGroupId().replace('.', File.separatorChar),session);
+        NutsPath groupFolder = NutsPath.of(id.getGroupId().replace('.', File.separatorChar), session);
         return groupFolder.resolve(id.getArtifactId());
     }
 
@@ -236,7 +238,7 @@ public class NutsRepositoryFolderHelper {
         }
         if (id.getVersion().isSingleValue()) {
             return IteratorBuilder.ofSupplier(
-                    ()->{
+                    () -> {
                         NutsId id1 = id.builder().setFaceDescriptor().build();
                         NutsPath localFile = getLongIdLocalFile(id1, session);
                         if (localFile != null && localFile.isRegularFile()) {
@@ -244,12 +246,12 @@ public class NutsRepositoryFolderHelper {
                         }
                         return IteratorBuilder.emptyIterator();
                     },
-                    e->e
+                    e -> e
                             .ofObject()
-                            .set("type","searchSingleVersion")
-                            .set("repository",repo==null?null:repo.getName())
-                            .set("id",id.toString())
-                            .set("root",getStoreLocation().toString())
+                            .set("type", "searchSingleVersion")
+                            .set("repository", repo == null ? null : repo.getName())
+                            .set("id", id.toString())
+                            .set("root", getStoreLocation().toString())
                             .addAll(extraInfoElements)
                             .build()
             ).build();
@@ -302,7 +304,7 @@ public class NutsRepositoryFolderHelper {
                     return NutsDescriptorParser.of(session).parse(pathname);
                 }
             }
-        }, maxDepth, extraInfoElements
+        }, maxDepth, kind, extraInfoElements
         );
     }
 
@@ -317,13 +319,13 @@ public class NutsRepositoryFolderHelper {
         NutsId bestId = null;
         NutsPath file = getLocalGroupAndArtifactFile(id, session);
         if (file.exists()) {
-            NutsPath[] versionFolders = file.list().filter(NutsPath::isDirectory,"idDirectory").toArray(NutsPath[]::new);
+            NutsPath[] versionFolders = file.list().filter(NutsPath::isDirectory, "idDirectory").toArray(NutsPath[]::new);
             if (versionFolders != null) {
                 for (NutsPath versionFolder : versionFolders) {
                     if (pathExists(versionFolder, session)) {
                         NutsId id2 = id.builder().setVersion(versionFolder.getName()).build();
                         if (bestId == null || id2.getVersion().compareTo(bestId.getVersion()) > 0) {
-                            if(filter==null || filter.acceptId(id2,session)) {
+                            if (filter == null || filter.acceptId(id2, session)) {
                                 bestId = id2;
                             }
                         }

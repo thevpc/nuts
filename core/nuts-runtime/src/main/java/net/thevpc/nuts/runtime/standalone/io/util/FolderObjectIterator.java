@@ -26,7 +26,7 @@
 package net.thevpc.nuts.runtime.standalone.io.util;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.standalone.util.nfo.NutsIteratorBase;
+import net.thevpc.nuts.runtime.standalone.util.iter.NutsIteratorBase;
 import net.thevpc.nuts.NutsDescribables;
 import net.thevpc.nuts.runtime.standalone.repository.impl.main.DefaultNutsInstalledRepository;
 

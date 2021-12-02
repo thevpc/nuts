@@ -139,7 +139,7 @@ public class MavenRepositoryFolderHelper {
             public NutsDescriptor parseDescriptor(NutsPath pathname, InputStream in, NutsFetchMode fetchMode, NutsRepository repository, NutsSession session, NutsPath rootURL) throws IOException {
                 return MavenUtils.of(session).parsePomXmlAndResolveParents(pathname, NutsFetchMode.LOCAL, repo);
             }
-        }, maxDepth,null);
+        }, maxDepth,"core",null);
     }
 
     public NutsPath getStoreLocation() {

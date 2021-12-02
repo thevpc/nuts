@@ -30,7 +30,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import net.thevpc.nuts.runtime.standalone.util.CoreNutsUtils;
-import net.thevpc.nuts.runtime.standalone.util.NutsDependencyScopes;
 
 /**
  * Created by vpc on 1/5/17.

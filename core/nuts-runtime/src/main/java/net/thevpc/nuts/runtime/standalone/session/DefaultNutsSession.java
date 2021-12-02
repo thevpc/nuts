@@ -25,7 +25,7 @@ package net.thevpc.nuts.runtime.standalone.session;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.elem.DefaultNutsArrayElementBuilder;
-import net.thevpc.nuts.runtime.standalone.io.terminals.AbstractNutsSessionTerminal;
+import net.thevpc.nuts.runtime.standalone.io.terminal.AbstractNutsSessionTerminal;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.util.NutsConfigurableHelper;
 import net.thevpc.nuts.runtime.standalone.util.collections.NutsPropertiesHolder;

@@ -8,7 +8,7 @@ package net.thevpc.nuts.runtime.standalone.format;
 import java.util.Iterator;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.standalone.util.nfo.NutsIteratorBase;
+import net.thevpc.nuts.runtime.standalone.util.iter.NutsIteratorBase;
 import net.thevpc.nuts.NutsDescribables;
 
 /**

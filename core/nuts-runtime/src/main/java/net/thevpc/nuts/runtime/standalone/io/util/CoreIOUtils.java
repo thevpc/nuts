@@ -24,6 +24,7 @@
 package net.thevpc.nuts.runtime.standalone.io.util;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.standalone.executor.system.PipeRunnable;
 import net.thevpc.nuts.runtime.standalone.util.CoreNutsUtils;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.util.DoWhenExist;
@@ -34,7 +35,7 @@ import net.thevpc.nuts.runtime.standalone.text.ExtendedFormatAware;
 import net.thevpc.nuts.runtime.standalone.text.ExtendedFormatAwarePrintWriter;
 import net.thevpc.nuts.runtime.standalone.text.RawOutputStream;
 import net.thevpc.nuts.runtime.standalone.io.printstream.NutsFormattedPrintStream;
-import net.thevpc.nuts.runtime.standalone.io.terminals.NutsTerminalModeOp;
+import net.thevpc.nuts.runtime.standalone.io.terminal.NutsTerminalModeOp;
 import net.thevpc.nuts.runtime.standalone.descriptor.DefaultNutsDescriptorContentParserContext;
 import net.thevpc.nuts.runtime.standalone.repository.index.CacheDB;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;

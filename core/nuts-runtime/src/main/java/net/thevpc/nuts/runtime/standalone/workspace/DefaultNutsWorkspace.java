@@ -35,7 +35,7 @@ import net.thevpc.nuts.runtime.standalone.repository.NutsRepositorySelectorHelpe
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.DefaultNutsExecutionContextBuilder;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.NutsExecutionContextBuilder;
 import net.thevpc.nuts.runtime.standalone.workspace.config.NutsWorkspaceConfigManagerExt;
-import net.thevpc.nuts.runtime.standalone.events.*;
+import net.thevpc.nuts.runtime.standalone.event.*;
 import net.thevpc.nuts.runtime.standalone.extensions.NutsExtensionListHelper;
 import net.thevpc.nuts.runtime.standalone.util.filters.CoreFilterUtils;
 import net.thevpc.nuts.runtime.standalone.util.filters.DefaultNutsFilterModel;
@@ -56,7 +56,7 @@ import net.thevpc.nuts.runtime.standalone.boot.DefaultNutsBootModel;
 import net.thevpc.nuts.runtime.standalone.workspace.config.*;
 import net.thevpc.nuts.runtime.standalone.extensions.DefaultNutsWorkspaceExtensionManager;
 import net.thevpc.nuts.runtime.standalone.extensions.DefaultNutsWorkspaceExtensionModel;
-import net.thevpc.nuts.runtime.standalone.installers.CommandForIdNutsInstallerComponent;
+import net.thevpc.nuts.runtime.standalone.installer.CommandForIdNutsInstallerComponent;
 import net.thevpc.nuts.runtime.standalone.repository.impl.main.DefaultNutsInstalledRepository;
 import net.thevpc.nuts.runtime.standalone.security.DefaultNutsWorkspaceSecurityManager;
 import net.thevpc.nuts.runtime.standalone.security.DefaultNutsWorkspaceSecurityModel;

@@ -5,7 +5,7 @@ import net.thevpc.nuts.NutsElements;
 import net.thevpc.nuts.NutsIOException;
 import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.runtime.standalone.util.collections.EvictingIntQueue;
-import net.thevpc.nuts.runtime.standalone.util.nfo.NutsIteratorBase;
+import net.thevpc.nuts.runtime.standalone.util.iter.NutsIteratorBase;
 
 import java.io.*;
 

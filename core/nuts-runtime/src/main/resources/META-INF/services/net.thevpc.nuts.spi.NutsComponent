@@ -1,27 +1,27 @@
 
 net.thevpc.nuts.runtime.standalone.repository.DefaultNutsRepoFactoryComponent
 
-net.thevpc.nuts.runtime.standalone.solvers.MavenNutsDependencySolverFactory
-net.thevpc.nuts.runtime.standalone.solvers.MavenFirstNutsDependencySolverFactory
-net.thevpc.nuts.runtime.standalone.solvers.GradleNutsDependencySolverFactory
-net.thevpc.nuts.runtime.standalone.solvers.GradleFirstNutsDependencySolverFactory
-net.thevpc.nuts.runtime.standalone.solvers.DescriptorNutsDependencySolverFactory
+net.thevpc.nuts.runtime.standalone.dependency.solver.MavenNutsDependencySolverFactory
+net.thevpc.nuts.runtime.standalone.dependency.solver.MavenFirstNutsDependencySolverFactory
+net.thevpc.nuts.runtime.standalone.dependency.solver.GradleNutsDependencySolverFactory
+net.thevpc.nuts.runtime.standalone.dependency.solver.GradleFirstNutsDependencySolverFactory
+net.thevpc.nuts.runtime.standalone.dependency.solver.DescriptorNutsDependencySolverFactory
 
-net.thevpc.nuts.runtime.standalone.io.terminals.DefaultNutsSystemTerminalBase
+net.thevpc.nuts.runtime.standalone.io.terminal.DefaultNutsSystemTerminalBase
 
-net.thevpc.nuts.runtime.standalone.workspace.archetypes.ServerNutsWorkspaceArchetypeComponent
-net.thevpc.nuts.runtime.standalone.workspace.archetypes.MinimalNutsWorkspaceArchetypeComponent
-net.thevpc.nuts.runtime.standalone.workspace.archetypes.DefaultNutsWorkspaceArchetypeComponent
+net.thevpc.nuts.runtime.standalone.workspace.archetype.ServerNutsWorkspaceArchetypeComponent
+net.thevpc.nuts.runtime.standalone.workspace.archetype.MinimalNutsWorkspaceArchetypeComponent
+net.thevpc.nuts.runtime.standalone.workspace.archetype.DefaultNutsWorkspaceArchetypeComponent
 
-net.thevpc.nuts.runtime.standalone.installers.ZipInstallerComponent
+net.thevpc.nuts.runtime.standalone.installer.ZipInstallerComponent
 
-net.thevpc.nuts.runtime.standalone.descriptor.parsers.ZipDescriptorContentParserComponent
-net.thevpc.nuts.runtime.standalone.descriptor.parsers.JarDescriptorContentParserComponent
-net.thevpc.nuts.runtime.standalone.descriptor.parsers.NshDescriptorContentParserComponent
+net.thevpc.nuts.runtime.standalone.descriptor.parser.ZipDescriptorContentParserComponent
+net.thevpc.nuts.runtime.standalone.descriptor.parser.JarDescriptorContentParserComponent
+net.thevpc.nuts.runtime.standalone.descriptor.parser.NshDescriptorContentParserComponent
 
-net.thevpc.nuts.runtime.standalone.executors.JavaExecutorComponent
-net.thevpc.nuts.runtime.standalone.executors.JavaSourceExecutorComponent
-net.thevpc.nuts.runtime.standalone.executors.ProcessExecutorComponent
+net.thevpc.nuts.runtime.standalone.executor.java.JavaExecutorComponent
+net.thevpc.nuts.runtime.standalone.executor.java.JavaSourceExecutorComponent
+net.thevpc.nuts.runtime.standalone.executor.system.ProcessExecutorComponent
 
 net.thevpc.nuts.runtime.standalone.repository.impl.maven.util.MavenRepositoryFactoryComponent
 net.thevpc.nuts.runtime.standalone.workspace.config.DefaultNutsIndexStoreFactory
@@ -33,7 +33,7 @@ net.thevpc.nuts.runtime.standalone.log.DefaultNutsLogManager
 net.thevpc.nuts.runtime.standalone.xtra.expr.DefaultNutsExpr
 net.thevpc.nuts.runtime.standalone.stream.DefaultNutsStreams
 net.thevpc.nuts.runtime.standalone.xtra.glob.DefaultNutsGlob
-net.thevpc.nuts.runtime.standalone.io.terminals.history.NutsCommandHistoryImpl
+net.thevpc.nuts.runtime.standalone.io.terminal.history.NutsCommandHistoryImpl
 net.thevpc.nuts.runtime.standalone.app.cmdline.DefaultNutsCommandLines
 net.thevpc.nuts.runtime.standalone.app.DefaultDefaultNutsApplicationContexts
 
@@ -52,20 +52,20 @@ net.thevpc.nuts.runtime.standalone.version.format.DefaultNutsVersionFormat
 net.thevpc.nuts.runtime.standalone.dependency.format.DefaultNutsDependencyFormat
 net.thevpc.nuts.runtime.standalone.elem.DefaultNutsElements
 net.thevpc.nuts.runtime.standalone.text.DefaultNutsTexts
-net.thevpc.nuts.runtime.standalone.text.highlighters.JavaCodeHighlighter
-net.thevpc.nuts.runtime.standalone.text.highlighters.BashCodeHighlighter
-net.thevpc.nuts.runtime.standalone.text.highlighters.FishCodeHighlighter
-net.thevpc.nuts.runtime.standalone.text.highlighters.HadraCodeHighlighter
-net.thevpc.nuts.runtime.standalone.text.highlighters.JsonCodeHighlighter
-net.thevpc.nuts.runtime.standalone.text.highlighters.NtfCodeHighlighter
-net.thevpc.nuts.runtime.standalone.text.highlighters.XmlCodeHighlighter
-net.thevpc.nuts.runtime.standalone.text.highlighters.WinCmdBlocTextHighlighter
-net.thevpc.nuts.runtime.standalone.text.highlighters.CppCodeHighlighter
-net.thevpc.nuts.runtime.standalone.text.highlighters.PlainCodeHighlighter
+net.thevpc.nuts.runtime.standalone.text.highlighter.JavaCodeHighlighter
+net.thevpc.nuts.runtime.standalone.text.highlighter.BashCodeHighlighter
+net.thevpc.nuts.runtime.standalone.text.highlighter.FishCodeHighlighter
+net.thevpc.nuts.runtime.standalone.text.highlighter.HadraCodeHighlighter
+net.thevpc.nuts.runtime.standalone.text.highlighter.JsonCodeHighlighter
+net.thevpc.nuts.runtime.standalone.text.highlighter.NtfCodeHighlighter
+net.thevpc.nuts.runtime.standalone.text.highlighter.XmlCodeHighlighter
+net.thevpc.nuts.runtime.standalone.text.highlighter.WinCmdBlocTextHighlighter
+net.thevpc.nuts.runtime.standalone.text.highlighter.CppCodeHighlighter
+net.thevpc.nuts.runtime.standalone.text.highlighter.PlainCodeHighlighter
 
 
-net.thevpc.nuts.runtime.standalone.io.contenttype.DefaultNutsContentTypeResolver
-net.thevpc.nuts.runtime.standalone.io.contenttype.DefaultNutsContentTypes
+net.thevpc.nuts.runtime.standalone.xtra.contenttype.DefaultNutsContentTypeResolver
+net.thevpc.nuts.runtime.standalone.xtra.contenttype.DefaultNutsContentTypes
 net.thevpc.nuts.runtime.standalone.xtra.download.DefaultHttpTransportComponent
 net.thevpc.nuts.runtime.standalone.io.path.DefaultNutsPaths
 net.thevpc.nuts.runtime.standalone.io.inputstream.DefaultNutsInputStreams
@@ -74,7 +74,7 @@ net.thevpc.nuts.runtime.standalone.xtra.execentries.DefaultNutsExecutionEntries
 net.thevpc.nuts.runtime.standalone.xtra.hash.DefaultNutsHash
 net.thevpc.nuts.runtime.standalone.io.progress.DefaultNutsInputStreamMonitor
 net.thevpc.nuts.runtime.standalone.lock.DefaultNutsLocks
-net.thevpc.nuts.runtime.standalone.io.terminals.DefaultNutsTerminals
+net.thevpc.nuts.runtime.standalone.io.terminal.DefaultNutsTerminals
 net.thevpc.nuts.runtime.standalone.xtra.tmp.DefaultNutsTmp
 net.thevpc.nuts.runtime.standalone.xtra.rm.DefaultNutsRm
 net.thevpc.nuts.runtime.standalone.xtra.cp.DefaultNutsCp
@@ -84,7 +84,7 @@ net.thevpc.nuts.runtime.standalone.xtra.uncompress.DefaultNutsUncompress
 net.thevpc.nuts.runtime.standalone.xtra.idresolver.DefaultNutsIdResolver
 
 net.thevpc.nuts.runtime.standalone.id.DefaultNutsIdParser
-net.thevpc.nuts.runtime.standalone.descriptor.parsers.DefaultNutsDescriptorParser
+net.thevpc.nuts.runtime.standalone.descriptor.parser.DefaultNutsDescriptorParser
 net.thevpc.nuts.runtime.standalone.dependency.DefaultNutsDependencyParser
 net.thevpc.nuts.runtime.standalone.version.DefaultNutsVersionParser
 
@@ -104,7 +104,7 @@ net.thevpc.nuts.runtime.standalone.definition.installstatus.filter.InternalNutsI
 net.thevpc.nuts.runtime.standalone.repository.filter.InternalNutsRepositoryFilters
 net.thevpc.nuts.runtime.standalone.util.filters.DefaultNutsFilters
 
-net.thevpc.nuts.runtime.standalone.solvers.DefaultNutsDependencySolvers
+net.thevpc.nuts.runtime.standalone.dependency.solver.DefaultNutsDependencySolvers
 
 net.thevpc.nuts.runtime.standalone.xtra.throwables.DefaultNutsApplicationExceptionHandler
 

@@ -5,7 +5,7 @@
  */
 package net.thevpc.nuts.runtime.standalone.text;
 
-import net.thevpc.nuts.runtime.standalone.io.terminals.NutsTerminalModeOp;
+import net.thevpc.nuts.runtime.standalone.io.terminal.NutsTerminalModeOp;
 
 /**
  *

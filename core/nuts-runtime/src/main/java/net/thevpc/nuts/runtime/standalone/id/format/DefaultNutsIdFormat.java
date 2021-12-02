@@ -2,7 +2,7 @@ package net.thevpc.nuts.runtime.standalone.id.format;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.format.DefaultFormatBase;
-import net.thevpc.nuts.runtime.standalone.util.NutsDependencyScopes;
+import net.thevpc.nuts.runtime.standalone.dependency.NutsDependencyScopes;
 import net.thevpc.nuts.spi.NutsSupportLevelContext;
 
 import java.util.*;

@@ -68,7 +68,7 @@ public class DefaultNutsUpdateStatisticsCommand extends AbstractNutsUpdateStatis
                         -> x.getName().equals("nuts-repository.json")
                 );
                 if (nutsRepoRootFiles != null && nutsRepoRootFiles.length > 0) {
-                    new NutsRepositoryFolderHelper(null, session, NutsPath.of(repositoryPath,session), false,null).reindexFolder(session);
+                    new NutsRepositoryFolderHelper(null, session, NutsPath.of(repositoryPath,session), false,"stats",null).reindexFolder(session);
                 } else {
                     throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("unsupported repository folder"));
                 }

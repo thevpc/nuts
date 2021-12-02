@@ -2,7 +2,7 @@ package net.thevpc.nuts.runtime.remote;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.workspace.AbstractNutsWorkspace;
-import net.thevpc.nuts.runtime.standalone.ntalk.NTalkClient;
+import net.thevpc.nuts.runtime.standalone.xtra.ntalk.NTalkClient;
 
 
 public abstract class RemoteNutsWorkspace extends AbstractNutsWorkspace {

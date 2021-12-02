@@ -2,7 +2,7 @@ package net.thevpc.nuts.runtime.standalone.repository.impl.maven.util;
 
 import net.thevpc.nuts.NutsElement;
 import net.thevpc.nuts.NutsElements;
-import net.thevpc.nuts.runtime.standalone.util.nfo.NutsIteratorBase;
+import net.thevpc.nuts.runtime.standalone.util.iter.NutsIteratorBase;
 
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLInputFactory;

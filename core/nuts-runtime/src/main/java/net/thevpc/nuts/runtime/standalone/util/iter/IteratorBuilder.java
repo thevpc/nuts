@@ -11,7 +11,6 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.standalone.util.nfo.NutsIteratorAdapter;
 import net.thevpc.nuts.runtime.standalone.util.collections.CoreCollectionUtils;
 
 /**

@@ -2,7 +2,6 @@ package net.thevpc.nuts.runtime.standalone.util.iter;
 
 import net.thevpc.nuts.NutsElement;
 import net.thevpc.nuts.NutsElements;
-import net.thevpc.nuts.runtime.standalone.util.nfo.NutsIteratorBase;
 
 import java.util.NoSuchElementException;
 import java.util.Objects;

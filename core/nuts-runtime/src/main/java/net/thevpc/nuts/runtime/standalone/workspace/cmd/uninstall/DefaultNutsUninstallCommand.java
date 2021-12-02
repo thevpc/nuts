@@ -9,7 +9,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.workspace.config.NutsWorkspaceConfigManagerExt;
 import net.thevpc.nuts.runtime.standalone.workspace.config.ConfigEventType;
-import net.thevpc.nuts.runtime.standalone.events.DefaultNutsInstallEvent;
+import net.thevpc.nuts.runtime.standalone.event.DefaultNutsInstallEvent;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.extensions.NutsExtensionListHelper;

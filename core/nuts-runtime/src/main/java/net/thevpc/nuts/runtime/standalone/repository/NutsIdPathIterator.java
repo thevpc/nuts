@@ -24,7 +24,7 @@
 package net.thevpc.nuts.runtime.standalone.repository;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.standalone.util.nfo.NutsIteratorBase;
+import net.thevpc.nuts.runtime.standalone.util.iter.NutsIteratorBase;
 import net.thevpc.nuts.NutsDescribables;
 
 import java.util.Stack;
@@ -47,10 +47,12 @@ public class NutsIdPathIterator extends NutsIteratorBase<NutsId> {
     private long visitedFoldersCount;
     private long visitedFilesCount;
     private NutsObjectElement extraProperties;
+    private String kind;
 
-    public NutsIdPathIterator(NutsRepository repository, NutsPath rootFolder, NutsPath basePath, NutsIdFilter filter, NutsSession session, NutsIdPathIteratorModel model, int maxDepth, NutsObjectElement extraProperties) {
+    public NutsIdPathIterator(NutsRepository repository, NutsPath rootFolder, NutsPath basePath, NutsIdFilter filter, NutsSession session, NutsIdPathIteratorModel model, int maxDepth, String kind,NutsObjectElement extraProperties) {
         this.repository = repository;
         this.extraProperties = extraProperties;
+        this.kind = kind;
         this.session = session;
         this.filter = filter;
         this.model = model;
@@ -90,7 +92,7 @@ public class NutsIdPathIterator extends NutsIteratorBase<NutsId> {
         while (!stack.isEmpty()) {
             PathAndDepth file = stack.pop();
             if (file.folder) {
-                session.getTerminal().printProgress("%-8s %s", "search folder", file.path.toCompressedForm());
+                session.getTerminal().printProgress("%-14s %-8s %-8s %s", repository.getName(),kind,"search folder", file.path.toCompressedForm());
                 visitedFoldersCount++;
                 NutsPath[] children = file.path.list().toArray(NutsPath[]::new);
                 boolean deep = file.depth < maxDepth;

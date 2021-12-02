@@ -47,15 +47,11 @@ import java.util.stream.Collectors;
 public class DefaultNutsWorkspaceFactory implements NutsWorkspaceFactory {
 
     private final NutsLogger LOG;
-    //    private final ListMap<Class, ClassExtension> classes = new ListMap<>();
     private final ListMap<Class, Object> instances = new ListMap<>();
     private final Map<Class, Object> singletons = new HashMap<>();
-    //    private final Map<ClassLoader, List<Class>> discoveredCacheByLoader = new HashMap<>();
-//    private final Map<URL, List<Class>> discoveredCacheByURL = new HashMap<>();
     private final Map<NutsId, IdCache> discoveredCacheById = new HashMap<>();
     private final Map<Class, CachedConstructor> cachedCtrls = new HashMap<>();
     private final HashMap<String, String> _alreadyLogger = new HashMap<>();
-    //    private final ClassClassMap discoveredCacheByClass = new ClassClassMap();
     private final NutsWorkspace workspace;
 
     public DefaultNutsWorkspaceFactory(NutsWorkspace ws) {
@@ -139,15 +135,6 @@ public class DefaultNutsWorkspaceFactory implements NutsWorkspaceFactory {
         }
         return r.stream().sorted(Comparator.comparing(x -> -x.lvl)).map(x -> x.t).collect(Collectors.toList());
     }
-//    @Override
-//    public <T> List<T> discoverInstances(Class<T> type) {
-//        List<Class> types = discoverTypes(type, bootClassLoader);
-//        List<T> valid = new ArrayList<>();
-//        for (Class t : types) {
-//            valid.add((T) instantiate0(t));
-//        }
-//        return valid;
-//    }
 
     @Override
     public <T> List<T> createAll(Class<T> type, NutsSession session) {
@@ -181,28 +168,6 @@ public class DefaultNutsWorkspaceFactory implements NutsWorkspaceFactory {
         return null;
     }
 
-    //    @Override
-//    public Set<Class> discoverTypes(ClassLoader bootClassLoader) {
-//        List<Class> types = discoveredCacheByLoader.get(bootClassLoader);
-//        if (types == null) {
-//            types = NutsTextUtils.loadServiceClasseNames(NutsComponent.class, bootClassLoader);
-//            discoveredCacheByLoader.put(bootClassLoader, types);
-//            for (Iterator<Class> it = types.iterator(); it.hasNext();) {
-//                Class type = it.next();
-//                if (!discoveredCacheByClass.containsExactKey(type)) {
-//                    if (type.isInterface()
-//                            || (type.getModifiers() & Modifier.ABSTRACT) != 0) {
-//                        LOG.with().session(session).level(Level.WARNING).verb( NutsLogVerb.WARNING).formatted()
-//                        .log("abstract type {0} is defined as implementation. Ignored.", type.getName());
-//                        it.remove();
-//                    } else {
-//                        discoveredCacheByClass.add(type);
-//                    }
-//                }
-//            }
-//        }
-//        return Collections.unmodifiableList(types);
-//    }
     @Override
     public Set<Class> getExtensionTypes(Class type, NutsSession session) {
         LinkedHashSet<Class> all = new LinkedHashSet<>();
@@ -638,39 +603,9 @@ public class DefaultNutsWorkspaceFactory implements NutsWorkspaceFactory {
                 all.add(obj);
             }
         }
-//        ServiceLoader serviceLoader = ServiceLoader.load(type);
-//        for (Object object : serviceLoader) {
-//            all.add((T) object);
-//        }
         return all;
     }
 
-    //    public void unregisterType(Class extensionPoint, Class implementation) {
-//        Class registered = findRegisteredType(extensionPoint, implementation.getName());
-//        if (registered != null) {
-//            if (LOG.isLoggable(Level.FINEST)) {
-//                LOG.with().session(session).level(Level.FINEST).verb( NutsLogVerb.UPDATE).formatted()
-//                .log("unbind  {0} for __impl type__ {1}", extensionPoint, registered.getName());
-//            }
-//            ClassExtension found = classes.getAll(extensionPoint).stream().filter(x->x.clazz.equals(registered)).findFirst().orElse(null);
-//            if(found!=null) {
-//                classes.remove(extensionPoint, found);
-//            }
-//        }
-//    }
-//    public void unregisterType(Class extensionPoint, String implementation) {
-//        Class registered = findRegisteredType(extensionPoint, implementation);
-//        if (registered != null) {
-//            if (LOG.isLoggable(Level.FINEST)) {
-//                LOG.with().session(session).level(Level.FINEST).verb( NutsLogVerb.UPDATE).formatted()
-//                .log("unbind  Unregistering {0} for __impl type__ {1}", extensionPoint, registered.getName());
-//            }
-//            ClassExtension found = classes.getAll(extensionPoint).stream().filter(x->x.clazz.equals(registered)).findFirst().orElse(null);
-//            if(found!=null) {
-//                classes.remove(extensionPoint, found);
-//            }
-//        }
-//    }
     private interface CachedConstructor<T> {
         Constructor<T> ctrl();
 

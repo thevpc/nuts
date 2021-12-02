@@ -7,7 +7,7 @@ package net.thevpc.nuts.runtime.standalone.io.progress;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.util.BytesSizeFormat;
-import net.thevpc.nuts.runtime.standalone.io.terminals.CoreTerminalUtils;
+import net.thevpc.nuts.runtime.standalone.io.terminal.CoreTerminalUtils;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 
 import java.text.DecimalFormat;
