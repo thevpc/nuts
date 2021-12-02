@@ -17,14 +17,14 @@ public class RenderedOutputStream extends OutputStream implements NutsOutputStre
     NutsWorkspace ws;
     NutsSystemTerminalBase terminal;
 
-    public RenderedOutputStream(OutputStream out, NutsSystemTerminalBase terminal,NutsSession session) {
+    public RenderedOutputStream(OutputStream out, NutsSystemTerminalBase terminal,boolean filtered, NutsSession session) {
         this.out = out;
         this.session = session;
         this.ws = session.getWorkspace();
         this.terminal=terminal;
         h = new FormatOutputStreamSupport(
                 new OutputStreamHelper(out,session)
-                , session,terminal);
+                , session,terminal,filtered);
     }
 
     public NutsSystemTerminalBase getTerminal() {

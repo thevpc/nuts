@@ -9,7 +9,9 @@ public abstract class NutsPrintStreamRendered extends NutsPrintStreamBase {
     public NutsPrintStreamRendered(NutsPrintStreamBase base, NutsSession session, NutsTerminalMode mode, Bindings bindings) {
         super(true, mode, session, bindings,base.getTerminal());
         this.base=base;
-        this.support =new FormatOutputStreamSupport(new NutsPrintStreamHelper(base),session,base.getTerminal());
+        this.support =new FormatOutputStreamSupport(new NutsPrintStreamHelper(base),session,base.getTerminal(),
+                (mode!=NutsTerminalMode.ANSI && mode!=NutsTerminalMode.FORMATTED)
+                );
     }
 
     public NutsPrintStreamBase getBase() {

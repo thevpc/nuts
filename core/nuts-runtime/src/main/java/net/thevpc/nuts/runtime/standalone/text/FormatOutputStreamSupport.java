@@ -20,12 +20,13 @@ public class FormatOutputStreamSupport {
 
     }
 
-    public FormatOutputStreamSupport(OutputHelper rawOutput, NutsSession session, NutsSystemTerminalBase term) {
+    public FormatOutputStreamSupport(OutputHelper rawOutput, NutsSession session, NutsSystemTerminalBase term,boolean filtered) {
         this.session = session;
         this.ws = session.getWorkspace();
         this.parser = new DefaultNutsTextNodeParser(session);
         this.nodeWriter = new NutsTextNodeWriterRenderer(rawOutput, session, term)
                 .setWriteConfiguration(writeConfiguration.setFiltered(false));
+        this.writeConfiguration.setFiltered(filtered);
     }
 
     public NutsTextParser getParser() {

@@ -1,16 +1,15 @@
 package net.thevpc.nuts.runtime.standalone.text;
 
+import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.NutsUnsupportedEnumException;
 import net.thevpc.nuts.runtime.standalone.io.terminal.NutsTerminalModeOp;
+import net.thevpc.nuts.spi.NutsSystemTerminalBase;
 
 import java.io.OutputStream;
 
-import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.spi.NutsSystemTerminalBase;
-
 public class FilterFormatOutputStream extends RenderedOutputStream implements ExtendedFormatAware {
     public FilterFormatOutputStream(OutputStream out, NutsSystemTerminalBase term, NutsSession session) {
-        super(out, term, session);
+        super(out, term, true, session);
     }
 
 
