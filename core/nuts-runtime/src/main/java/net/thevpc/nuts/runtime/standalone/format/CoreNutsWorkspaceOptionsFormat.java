@@ -140,12 +140,12 @@ public class CoreNutsWorkspaceOptionsFormat implements NutsWorkspaceOptionsForma
             fillOption("--gui", null, options.isGui(), false, arguments, false);
             fillOption("--read-only", "-R", options.isReadOnly(), false, arguments, false);
             fillOption("--trace", "-t", options.isTrace(), true, arguments, false);
-            fillOption("--progress", "-P", options.getProgressOptions(), arguments, false);
+            fillOption("--progress", "-P", options.getProgressOptions(), arguments, true);
             fillOption("--solver", null, options.getDependencySolver(), arguments, false);
             if (apiVersionObj == null || apiVersionObj.compareTo("0.8.3") >= 0) {
-                fillOption("--debug", null, options.getDebug(), arguments, false);
+                fillOption("--debug", null, options.getDebug(), arguments, true);
             }else{
-                fillOption("--debug", null, options.getDebug()!=null, false, arguments, false);
+                fillOption("--debug", null, options.getDebug()!=null, false, arguments, true);
             }
             fillOption("--skip-companions", "-k", options.isSkipCompanions(), false, arguments, false);
             fillOption("--skip-welcome", "-K", options.isSkipWelcome(), false, arguments, false);
