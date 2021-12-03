@@ -554,9 +554,20 @@ public final class CoreNutsArgumentsParser {
                     }
 
                     case "--debug": {
-                        a = cmdLine.nextBoolean();
+                        a = cmdLine.next();
                         if (active) {
-                            options.setDebug(a.getValue().getString());
+                            if(NutsBlankable.isBlank(a.getValue().getString())){
+                                options.setDebug(String.valueOf(a.isEnabled()));
+                            }else {
+                                if(a.isNegated()){
+                                    options.setDebug(
+                                            String.valueOf(!NutsUtilStrings.parseBoolean(a.getValue().getString(),
+                                                    true,false
+                                            )));
+                                }else {
+                                    options.setDebug(a.getValue().getString());
+                                }
+                            }
                         }
                         break;
                     }
