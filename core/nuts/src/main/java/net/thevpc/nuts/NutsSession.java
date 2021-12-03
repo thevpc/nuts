@@ -523,7 +523,7 @@ public interface NutsSession extends NutsCommandLineConfigurable {
 
     Level getLogTermLevel();
 
-    NutsSession setLogLevel(Level level);
+    NutsSession setLogTermLevel(Level level);
 
     Filter getLogTermFilter();
 
