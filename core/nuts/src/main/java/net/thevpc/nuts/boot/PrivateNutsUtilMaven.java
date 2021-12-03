@@ -217,12 +217,8 @@ public final class PrivateNutsUtilMaven {
         return null;
     }
 
-    static PrivateNutsUtils.Deps loadDependencies(NutsBootId rid, PrivateNutsBootLog bLog, Collection<String> repos) {
+    static PrivateNutsUtils.Deps loadDependenciesFromId(NutsBootId rid, PrivateNutsBootLog bLog, Collection<String> repos) {
         String urlPath = PrivateNutsUtils.idToPath(rid) + "/" + rid.getArtifactId() + "-" + rid.getVersion() + ".pom";
-        return loadDependencies(urlPath, bLog, repos);
-    }
-
-    static PrivateNutsUtils.Deps loadDependencies(String urlPath, PrivateNutsBootLog bLog, Collection<String> repos) {
         PrivateNutsUtils.Deps depsAndRepos = null;
         for (String baseUrl : repos) {
             if(baseUrl.startsWith("htmlfs:")){

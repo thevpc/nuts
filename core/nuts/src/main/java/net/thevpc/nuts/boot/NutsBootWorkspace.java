@@ -657,7 +657,7 @@ public final class NutsBootWorkspace {
                         }
 
                         if (!cacheLoaded || loadedDeps == null) {
-                            PrivateNutsUtils.Deps depsAndRepos = PrivateNutsUtilMaven.loadDependencies(NutsBootId.parse(computedOptions.getRuntimeId()),
+                            PrivateNutsUtils.Deps depsAndRepos = PrivateNutsUtilMaven.loadDependenciesFromId(NutsBootId.parse(computedOptions.getRuntimeId()),
                                     bLog, resolveBootRuntimeRepositories(false));
                             if (depsAndRepos != null) {
                                 loadedDeps = depsAndRepos.deps;
@@ -728,7 +728,7 @@ public final class NutsBootWorkspace {
                                     }
                                 }
                                 if (loadedDeps == null) {
-                                    PrivateNutsUtils.Deps depsAndRepos = PrivateNutsUtilMaven.loadDependencies(eid, bLog, resolveBootRuntimeRepositories(true));
+                                    PrivateNutsUtils.Deps depsAndRepos = PrivateNutsUtilMaven.loadDependenciesFromId(eid, bLog, resolveBootRuntimeRepositories(true));
                                     if (depsAndRepos != null) {
                                         loadedDeps = depsAndRepos.deps;
                                     }
