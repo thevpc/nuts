@@ -498,7 +498,7 @@ final class PrivateNutsArgumentsParser {
                     }
                     case "-P":
                     case "--progress": {
-                        a = cmdLine.nextString();
+                        a = cmdLine.next();
                         if (active) {
                             String s = a.getValue().getString();
                             if (a.isNegated()) {
