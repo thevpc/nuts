@@ -24,6 +24,7 @@
 package net.thevpc.nuts.runtime.standalone.session;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.standalone.app.cmdline.CoreNutsArgumentsParser;
 import net.thevpc.nuts.runtime.standalone.elem.DefaultNutsArrayElementBuilder;
 import net.thevpc.nuts.runtime.standalone.io.terminal.AbstractNutsSessionTerminal;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
@@ -515,6 +516,50 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
                     a = cmdLine.nextString();
                     if (active) {
                         setRunAs(NutsRunAs.user(a.getValue().getString()));
+                    }
+                    break;
+                }
+                case "--verbose":
+
+                case "--log-verbose":
+                case "--log-finest":
+                case "--log-finer":
+                case "--log-fine":
+                case "--log-info":
+                case "--log-warning":
+                case "--log-severe":
+                case "--log-config":
+                case "--log-all":
+                case "--log-off":
+
+                case "--log-term-verbose":
+                case "--log-term-finest":
+                case "--log-term-finer":
+                case "--log-term-fine":
+                case "--log-term-info":
+                case "--log-term-warning":
+                case "--log-term-severe":
+                case "--log-term-config":
+                case "--log-term-all":
+                case "--log-term-off":
+
+                case "--log-file-verbose":
+                case "--log-file-finest":
+                case "--log-file-finer":
+                case "--log-file-fine":
+                case "--log-file-info":
+                case "--log-file-warning":
+                case "--log-file-severe":
+                case "--log-file-config":
+                case "--log-file-all":
+                case "--log-file-off":
+
+                case "--log-file-size":
+                case "--log-file-name":
+                case "--log-file-base":
+                case "--log-file-count": {
+                    if (active) {
+                        parseLogLevel(cmdLine, active);
                     }
                     break;
                 }
@@ -1212,7 +1257,7 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
     }
 
     @Override
-    public NutsSession setLogLevel(Level level) {
+    public NutsSession setLogTermLevel(Level level) {
         this.logTermLevel = level;
         return this;
     }
@@ -1522,5 +1567,123 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
     public NutsSession setDependencySolver(String dependencySolver) {
         this.dependencySolver = dependencySolver;
         return this;
+    }
+
+    private void parseLogLevel( NutsCommandLine cmdLine, boolean enabled) {
+        NutsArgument a = cmdLine.peek();
+        switch (a.getKey().getString()) {
+            //these options are just ignored!
+//            case "--log-file-size": {
+//                a = cmdLine.nextString();
+//                String v = a.getValue().getString();
+//                if (enabled) {
+//                    Integer fileSize = NutsApiUtils.parseFileSizeInBytes(v, 1024 * 1024, null, null);
+//                    if (fileSize == null) {
+//                        if (NutsBlankable.isBlank(v)) {
+//                            throw new NutsBootException(NutsMessage.cstyle("invalid file size : %s", v));
+//                        }
+//                    } else {
+//                        //always in mega
+//                        fileSize = fileSize / (1024 * 1024);
+//                        if (fileSize <= 0) {
+//                            throw new NutsBootException(NutsMessage.cstyle("invalid file size : %s < 1Mb", v));
+//                        }
+//                    }
+//                    if (fileSize != null) {
+//                        this.setLogFileSize(fileSize);
+//                    }
+//                }
+//                break;
+//            }
+//
+//            case "--log-file-count": {
+//                a = cmdLine.nextString();
+//                if (enabled) {
+//                    this.setLogFileCount(a.getValue().getInt());
+//                }
+//                break;
+//            }
+//
+//            case "--log-file-name": {
+//                a = cmdLine.nextString();
+//                String v = a.getValue().getString();
+//                if (enabled) {
+//                    this.setLogFileName(v);
+//                }
+//                break;
+//            }
+//
+//            case "--log-file-base": {
+//                a = cmdLine.nextString();
+//                String v = a.getValue().getString();
+//                if (enabled) {
+//                    this.setLogFileBase(v);
+//                }
+//                break;
+//            }
+            case "--log-file-verbose":
+            case "--log-file-finest":
+            case "--log-file-finer":
+            case "--log-file-fine":
+            case "--log-file-info":
+            case "--log-file-warning":
+            case "--log-file-config":
+            case "--log-file-severe":
+            case "--log-file-all":
+            case "--log-file-off": {
+                cmdLine.skip();
+                if (enabled) {
+                    String id = a.getKey().getString();
+                    this.setLogFileLevel(CoreNutsArgumentsParser.parseLevel(id.substring("--log-file-".length()),this));
+                }
+                break;
+            }
+
+            case "--log-term-verbose":
+            case "--log-term-finest":
+            case "--log-term-finer":
+            case "--log-term-fine":
+            case "--log-term-info":
+            case "--log-term-warning":
+            case "--log-term-config":
+            case "--log-term-severe":
+            case "--log-term-all":
+            case "--log-term-off": {
+                cmdLine.skip();
+                if (enabled) {
+                    String id = a.getKey().getString();
+                    this.setLogTermLevel(CoreNutsArgumentsParser.parseLevel(id.substring("--log-term-".length()),this));
+                }
+                break;
+            }
+
+            case "--verbose": {
+                cmdLine.skip();
+                if (enabled && a.getValue().getBoolean(true)) {
+                    this.setLogTermLevel(Level.FINEST);
+                    this.setLogFileLevel(Level.FINEST);
+                }
+                break;
+            }
+            case "--log-verbose":
+            case "--log-finest":
+            case "--log-finer":
+            case "--log-fine":
+            case "--log-info":
+            case "--log-warning":
+            case "--log-config":
+            case "--log-severe":
+            case "--log-all":
+            case "--log-off": {
+                cmdLine.skip();
+                if (enabled) {
+                    String id = a.getKey().getString();
+                    Level lvl = CoreNutsArgumentsParser.parseLevel(id.substring("--log-".length()),this);
+                    this.setLogTermLevel(lvl);
+                    this.setLogFileLevel(lvl);
+                }
+                break;
+            }
+        }
     }
 }

@@ -1280,7 +1280,7 @@ public final class CoreNutsArgumentsParser {
         return m;
     }
 
-    private static Level parseLevel(String s, NutsSession session) {
+    public static Level parseLevel(String s, NutsSession session) {
         Level m = NutsApiUtils.parseLenientLogLevel(s, null, null);
         if (m == null && !NutsBlankable.isBlank(s)) {
             throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("unable to parse value for Level : %s", s));

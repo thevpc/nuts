@@ -103,7 +103,7 @@ public class NshEvaluator extends DefaultJShellEvaluator {
         DefaultJShellContext newCtx = (DefaultJShellContext) context.getShell().createNewContext(context);
         NutsSession session = newCtx.getSession().copy();
         newCtx.setSession(session);
-        session.setLogLevel(Level.OFF);
+        session.setLogTermLevel(Level.OFF);
 
         session.setTerminal(NutsSessionTerminal.ofMem(session));
         context.getShell().evalNode(command, newCtx);
