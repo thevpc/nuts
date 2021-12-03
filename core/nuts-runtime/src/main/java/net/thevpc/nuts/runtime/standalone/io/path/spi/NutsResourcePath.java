@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.io.path.spi;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.standalone.extensions.DefaultNutsClassLoader;
+import net.thevpc.nuts.runtime.standalone.extension.DefaultNutsClassLoader;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
 import net.thevpc.nuts.spi.NutsFormatSPI;

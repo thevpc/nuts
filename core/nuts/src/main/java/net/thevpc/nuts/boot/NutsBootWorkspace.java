@@ -657,7 +657,7 @@ public final class NutsBootWorkspace {
                         }
 
                         if (!cacheLoaded || loadedDeps == null) {
-                            PrivateNutsUtils.Deps depsAndRepos = PrivateNutsUtilMaven.loadDependencies(computedOptions.getRuntimeId(),
+                            PrivateNutsUtils.Deps depsAndRepos = PrivateNutsUtilMaven.loadDependencies(NutsBootId.parse(computedOptions.getRuntimeId()),
                                     bLog, resolveBootRuntimeRepositories(false));
                             if (depsAndRepos != null) {
                                 loadedDeps = depsAndRepos.deps;

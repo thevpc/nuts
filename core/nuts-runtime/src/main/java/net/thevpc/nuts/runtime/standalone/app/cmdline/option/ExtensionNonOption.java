@@ -24,30 +24,28 @@
  * <br>
  * ====================================================================
 */
-package net.thevpc.nuts.runtime.standalone.app.cmdline.options;
+package net.thevpc.nuts.runtime.standalone.app.cmdline.option;
+
+import net.thevpc.nuts.*;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import net.thevpc.nuts.NutsArgumentCandidate;
-import net.thevpc.nuts.NutsCommandAutoComplete;
 
 /**
- *
  * @author thevpc
  */
-public class ValueNonOption extends DefaultNonOption {
+public class ExtensionNonOption extends DefaultNonOption {
 
-    private String[] values;
-
-    public ValueNonOption(String name, String... values) {
+    public ExtensionNonOption(String name, NutsSession session) {
         super(name);
-        this.values = values;
     }
 
     @Override
     public List<NutsArgumentCandidate> getCandidates(NutsCommandAutoComplete context) {
-        return new ArrayList(Arrays.asList(values));
+        List<NutsArgumentCandidate> all = new ArrayList<>();
+        all.add(new NutsArgumentCandidate(NutsConstants.Ids.NUTS_RUNTIME));
+        //should find all nuts with packaging "nuts-extension"
+        return all;
     }
 
 }

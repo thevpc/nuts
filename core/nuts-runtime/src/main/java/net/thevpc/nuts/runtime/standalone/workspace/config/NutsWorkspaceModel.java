@@ -9,7 +9,7 @@ import net.thevpc.nuts.runtime.standalone.util.filters.DefaultNutsFilterModel;
 import net.thevpc.nuts.runtime.standalone.text.DefaultNutsTextManagerModel;
 import net.thevpc.nuts.runtime.standalone.log.DefaultNutsLogModel;
 import net.thevpc.nuts.runtime.standalone.boot.DefaultNutsBootModel;
-import net.thevpc.nuts.runtime.standalone.extensions.DefaultNutsWorkspaceExtensionModel;
+import net.thevpc.nuts.runtime.standalone.extension.DefaultNutsWorkspaceExtensionModel;
 import net.thevpc.nuts.runtime.standalone.repository.config.DefaultNutsRepositoryModel;
 import net.thevpc.nuts.runtime.standalone.repository.impl.main.DefaultNutsInstalledRepository;
 import net.thevpc.nuts.runtime.standalone.security.DefaultNutsWorkspaceSecurityModel;

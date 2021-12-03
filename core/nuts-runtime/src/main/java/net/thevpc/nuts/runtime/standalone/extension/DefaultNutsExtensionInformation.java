@@ -23,7 +23,7 @@
  * <br>
  * ====================================================================
 */
-package net.thevpc.nuts.runtime.standalone.extensions;
+package net.thevpc.nuts.runtime.standalone.extension;
 
 import java.util.Objects;
 import net.thevpc.nuts.NutsExtensionInformation;

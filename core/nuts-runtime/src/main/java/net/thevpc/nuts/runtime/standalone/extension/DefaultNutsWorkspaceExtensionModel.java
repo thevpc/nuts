@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package net.thevpc.nuts.runtime.standalone.extensions;
+package net.thevpc.nuts.runtime.standalone.extension;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.workspace.CoreNutsBootOptions;

@@ -4,7 +4,7 @@ import net.thevpc.nuts.*;
 
 import java.util.List;
 
-import net.thevpc.nuts.runtime.standalone.app.cmdline.options.*;
+import net.thevpc.nuts.runtime.standalone.app.cmdline.option.*;
 import net.thevpc.nuts.runtime.standalone.shell.NutsShellHelper;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
 import net.thevpc.nuts.spi.NutsSupportLevelContext;

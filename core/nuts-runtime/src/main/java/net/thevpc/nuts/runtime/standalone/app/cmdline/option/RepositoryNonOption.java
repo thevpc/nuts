@@ -9,6 +9,7 @@
  * dependencies at runtime. Nuts is not tied to java and is a good choice
  * to share shell scripts and other 'things' . Its based on an extensible
  * architecture to help supporting a large range of sub managers / repositories.
+ *
  * <br>
  *
  * Copyright [2020] [thevpc]
@@ -23,11 +24,9 @@
  * <br>
  * ====================================================================
 */
-package net.thevpc.nuts.runtime.standalone.app.cmdline.options;
+package net.thevpc.nuts.runtime.standalone.app.cmdline.option;
 
-import net.thevpc.nuts.NutsArgumentCandidate;
-import net.thevpc.nuts.NutsArgumentName;
-import net.thevpc.nuts.NutsCommandAutoComplete;
+import net.thevpc.nuts.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,31 +35,31 @@ import java.util.List;
  *
  * @author thevpc
  */
-public class DefaultNonOption implements NutsArgumentName {
+public class RepositoryNonOption extends DefaultNonOption {
 
-    private final String name;
 
-    public DefaultNonOption(String name) {
-        this.name = name;
+    public RepositoryNonOption(String name) {
+        super(name);
     }
 
-
-
-    @Override
-    public String getName() {
-        return name;
-    }
 
     @Override
     public List<NutsArgumentCandidate> getCandidates(NutsCommandAutoComplete context) {
-        List<NutsArgumentCandidate> list = new ArrayList<>();
-        list.add(new NutsArgumentCandidate("<" + getName() + ">"));
-        return list;
-    }
+        List<NutsArgumentCandidate> all = new ArrayList<>();
+        NutsRepository repository=context.get(NutsRepository.class);
+        if(repository!=null){
+            if (repository.config().isSupportedMirroring()) {
+                for (NutsRepository repo : repository.config().setSession(context.getSession()).getMirrors()) {
+                    all.add(new NutsArgumentCandidate(repo.getName()));
+                }
+            }
+        }else{
+            for (NutsRepository repo : context.getSession().repos().setSession(context.getSession()).getRepositories()) {
+                all.add(new NutsArgumentCandidate(repo.getName()));
+            }
 
-    @Override
-    public String toString() {
-        return String.valueOf(name);
+        }
+        return all;
     }
 
 }

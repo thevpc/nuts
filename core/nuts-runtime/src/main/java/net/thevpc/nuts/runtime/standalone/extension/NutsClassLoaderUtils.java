@@ -21,7 +21,7 @@
  * governing permissions and limitations under the License.
  * <br> ====================================================================
  */
-package net.thevpc.nuts.runtime.standalone.extensions;
+package net.thevpc.nuts.runtime.standalone.extension;
 
 import java.io.IOException;
 import java.net.URL;

@@ -9,7 +9,6 @@
  * dependencies at runtime. Nuts is not tied to java and is a good choice
  * to share shell scripts and other 'things' . Its based on an extensible
  * architecture to help supporting a large range of sub managers / repositories.
- *
  * <br>
  *
  * Copyright [2020] [thevpc]
@@ -24,41 +23,44 @@
  * <br>
  * ====================================================================
 */
-package net.thevpc.nuts.runtime.standalone.extensions;
+package net.thevpc.nuts.runtime.standalone.app.cmdline.option;
 
-import net.thevpc.nuts.NutsId;
-import net.thevpc.nuts.NutsWorkspaceExtension;
-import net.thevpc.nuts.runtime.standalone.util.collections.ListMap;
+import net.thevpc.nuts.NutsArgumentCandidate;
+import net.thevpc.nuts.NutsArgumentName;
+import net.thevpc.nuts.NutsCommandAutoComplete;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
- * Created by vpc on 1/15/17.
+ *
+ * @author thevpc
  */
-public class DefaultNutsWorkspaceExtension implements NutsWorkspaceExtension {
+public class DefaultNonOption implements NutsArgumentName {
 
-    private NutsId id;
-    private NutsId wiredId;
-    private ClassLoader classLoader;
-    private ListMap<String, String> wiredComponents = new ListMap<>();
+    private final String name;
 
-    public DefaultNutsWorkspaceExtension(NutsId id, NutsId wiredId, ClassLoader classLoader) {
-        this.id = id;
-        this.wiredId = wiredId;
-        this.classLoader = classLoader;
+    public DefaultNonOption(String name) {
+        this.name = name;
     }
 
-    public NutsId getWiredId() {
-        return wiredId;
+
+
+    @Override
+    public String getName() {
+        return name;
     }
 
-    public ClassLoader getClassLoader() {
-        return classLoader;
+    @Override
+    public List<NutsArgumentCandidate> getCandidates(NutsCommandAutoComplete context) {
+        List<NutsArgumentCandidate> list = new ArrayList<>();
+        list.add(new NutsArgumentCandidate("<" + getName() + ">"));
+        return list;
     }
 
-    public NutsId getId() {
-        return id;
+    @Override
+    public String toString() {
+        return String.valueOf(name);
     }
 
-    public ListMap<String, String> getWiredComponents() {
-        return wiredComponents;
-    }
 }

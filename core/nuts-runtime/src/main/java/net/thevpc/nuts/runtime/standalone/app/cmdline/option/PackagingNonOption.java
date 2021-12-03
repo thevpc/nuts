@@ -24,9 +24,10 @@
  * <br>
  * ====================================================================
 */
-package net.thevpc.nuts.runtime.standalone.app.cmdline.options;
+package net.thevpc.nuts.runtime.standalone.app.cmdline.option;
 
-import net.thevpc.nuts.*;
+import net.thevpc.nuts.NutsArgumentCandidate;
+import net.thevpc.nuts.NutsCommandAutoComplete;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,10 +36,8 @@ import java.util.List;
  *
  * @author thevpc
  */
-public class RepositoryNonOption extends DefaultNonOption {
-
-
-    public RepositoryNonOption(String name) {
+public class PackagingNonOption extends DefaultNonOption {
+    public PackagingNonOption(String name) {
         super(name);
     }
 
@@ -46,19 +45,14 @@ public class RepositoryNonOption extends DefaultNonOption {
     @Override
     public List<NutsArgumentCandidate> getCandidates(NutsCommandAutoComplete context) {
         List<NutsArgumentCandidate> all = new ArrayList<>();
-        NutsRepository repository=context.get(NutsRepository.class);
-        if(repository!=null){
-            if (repository.config().isSupportedMirroring()) {
-                for (NutsRepository repo : repository.config().setSession(context.getSession()).getMirrors()) {
-                    all.add(new NutsArgumentCandidate(repo.getName()));
-                }
-            }
-        }else{
-            for (NutsRepository repo : context.getSession().repos().setSession(context.getSession()).getRepositories()) {
-                all.add(new NutsArgumentCandidate(repo.getName()));
-            }
-
-        }
+        all.add(new NutsArgumentCandidate("jar"));
+        all.add(new NutsArgumentCandidate("war"));
+        all.add(new NutsArgumentCandidate("war"));
+        all.add(new NutsArgumentCandidate("ear"));
+        all.add(new NutsArgumentCandidate("nuts-extension"));
+        all.add(new NutsArgumentCandidate("elf"));
+        all.add(new NutsArgumentCandidate("pe"));
+        all.add(new NutsArgumentCandidate("bin"));
         return all;
     }
 

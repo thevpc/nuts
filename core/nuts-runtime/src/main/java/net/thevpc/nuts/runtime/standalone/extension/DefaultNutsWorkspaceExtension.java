@@ -24,36 +24,41 @@
  * <br>
  * ====================================================================
 */
-package net.thevpc.nuts.runtime.standalone.app.cmdline.options;
+package net.thevpc.nuts.runtime.standalone.extension;
 
-import net.thevpc.nuts.NutsArgumentCandidate;
-import net.thevpc.nuts.NutsCommandAutoComplete;
-
-import java.util.ArrayList;
-import java.util.List;
+import net.thevpc.nuts.NutsId;
+import net.thevpc.nuts.NutsWorkspaceExtension;
+import net.thevpc.nuts.runtime.standalone.util.collections.ListMap;
 
 /**
- *
- * @author thevpc
+ * Created by vpc on 1/15/17.
  */
-public class PackagingNonOption extends DefaultNonOption {
-    public PackagingNonOption(String name) {
-        super(name);
+public class DefaultNutsWorkspaceExtension implements NutsWorkspaceExtension {
+
+    private NutsId id;
+    private NutsId wiredId;
+    private ClassLoader classLoader;
+    private ListMap<String, String> wiredComponents = new ListMap<>();
+
+    public DefaultNutsWorkspaceExtension(NutsId id, NutsId wiredId, ClassLoader classLoader) {
+        this.id = id;
+        this.wiredId = wiredId;
+        this.classLoader = classLoader;
     }
 
-
-    @Override
-    public List<NutsArgumentCandidate> getCandidates(NutsCommandAutoComplete context) {
-        List<NutsArgumentCandidate> all = new ArrayList<>();
-        all.add(new NutsArgumentCandidate("jar"));
-        all.add(new NutsArgumentCandidate("war"));
-        all.add(new NutsArgumentCandidate("war"));
-        all.add(new NutsArgumentCandidate("ear"));
-        all.add(new NutsArgumentCandidate("nuts-extension"));
-        all.add(new NutsArgumentCandidate("elf"));
-        all.add(new NutsArgumentCandidate("pe"));
-        all.add(new NutsArgumentCandidate("bin"));
-        return all;
+    public NutsId getWiredId() {
+        return wiredId;
     }
 
+    public ClassLoader getClassLoader() {
+        return classLoader;
+    }
+
+    public NutsId getId() {
+        return id;
+    }
+
+    public ListMap<String, String> getWiredComponents() {
+        return wiredComponents;
+    }
 }

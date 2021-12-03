@@ -27,7 +27,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.util.collections.ClassClassMap;
 import net.thevpc.nuts.runtime.standalone.util.collections.ListMap;
 import net.thevpc.nuts.runtime.standalone.descriptor.DefaultNutsEnvConditionBuilder;
-import net.thevpc.nuts.runtime.standalone.extensions.CoreServiceUtils;
+import net.thevpc.nuts.runtime.standalone.extension.CoreServiceUtils;
 import net.thevpc.nuts.runtime.standalone.id.DefaultNutsIdBuilder;
 import net.thevpc.nuts.runtime.standalone.id.DefaultNutsIdParser;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;

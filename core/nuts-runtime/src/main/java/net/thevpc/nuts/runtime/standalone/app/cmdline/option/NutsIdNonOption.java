@@ -24,39 +24,16 @@
  * <br>
  * ====================================================================
 */
-package net.thevpc.nuts.runtime.standalone.app.cmdline.options;
-
-import net.thevpc.nuts.*;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.TreeSet;
+package net.thevpc.nuts.runtime.standalone.app.cmdline.option;
 
 /**
  *
  * @author thevpc
  */
-public class RepositoryTypeNonOption extends DefaultNonOption {
+public class NutsIdNonOption extends DefaultNonOption {
 
-    public RepositoryTypeNonOption(String name) {
+    public NutsIdNonOption(String name) {
         super(name);
     }
 
-    @Override
-    public List<NutsArgumentCandidate> getCandidates(NutsCommandAutoComplete context) {
-        TreeSet<String> allValid = new TreeSet<>();
-        allValid.add("nuts");
-        for (NutsAddRepositoryOptions repo : context.getSession().config()
-                .setSession(context.getSession())
-                .getDefaultRepositories()) {
-            if(repo.getConfig()!=null && repo.getConfig().getType()!=null) {
-                allValid.add(repo.getConfig().getType());
-            }
-        }
-        List<NutsArgumentCandidate> all = new ArrayList<>();
-        for (String v : allValid) {
-            all.add(new NutsArgumentCandidate(v));
-        }
-        return all;
-    }
 }

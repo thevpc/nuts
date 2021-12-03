@@ -29,11 +29,11 @@ import net.thevpc.nuts.runtime.standalone.executor.embedded.ClassloaderAwareRunn
 import net.thevpc.nuts.runtime.standalone.executor.system.ProcessExecHelper;
 import net.thevpc.nuts.runtime.standalone.util.collections.StringKeyValueList;
 import net.thevpc.nuts.runtime.standalone.io.util.IProcessExecHelper;
-import net.thevpc.nuts.runtime.standalone.extensions.DefaultNutsClassLoader;
+import net.thevpc.nuts.runtime.standalone.extension.DefaultNutsClassLoader;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.util.CoreNumberUtils;
 import net.thevpc.nuts.runtime.standalone.util.NutsDebugString;
-import net.thevpc.nuts.runtime.standalone.extensions.DefaultNutsWorkspaceExtensionManager;
+import net.thevpc.nuts.runtime.standalone.extension.DefaultNutsWorkspaceExtensionManager;
 import net.thevpc.nuts.spi.NutsComponentScope;
 import net.thevpc.nuts.spi.NutsComponentScopeType;
 import net.thevpc.nuts.spi.NutsExecutorComponent;

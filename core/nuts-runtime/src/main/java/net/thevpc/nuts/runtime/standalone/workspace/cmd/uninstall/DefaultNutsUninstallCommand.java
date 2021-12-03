@@ -12,7 +12,7 @@ import net.thevpc.nuts.runtime.standalone.workspace.config.ConfigEventType;
 import net.thevpc.nuts.runtime.standalone.event.DefaultNutsInstallEvent;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
-import net.thevpc.nuts.runtime.standalone.extensions.NutsExtensionListHelper;
+import net.thevpc.nuts.runtime.standalone.extension.NutsExtensionListHelper;
 import net.thevpc.nuts.spi.NutsInstallerComponent;
 
 import java.util.ArrayList;

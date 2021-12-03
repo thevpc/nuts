@@ -21,7 +21,7 @@
  * governing permissions and limitations under the License.
  * <br> ====================================================================
  */
-package net.thevpc.nuts.runtime.standalone.app.cmdline.options;
+package net.thevpc.nuts.runtime.standalone.app.cmdline.option;
 
 import net.thevpc.nuts.*;
 

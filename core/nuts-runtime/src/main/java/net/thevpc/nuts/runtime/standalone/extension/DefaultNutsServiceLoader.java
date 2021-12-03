@@ -1,4 +1,4 @@
-package net.thevpc.nuts.runtime.standalone.extensions;
+package net.thevpc.nuts.runtime.standalone.extension;
 
 import net.thevpc.nuts.spi.NutsComponent;
 import net.thevpc.nuts.NutsServiceLoader;

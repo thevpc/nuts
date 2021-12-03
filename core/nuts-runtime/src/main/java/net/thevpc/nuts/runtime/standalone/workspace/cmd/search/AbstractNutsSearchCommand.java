@@ -26,13 +26,13 @@ package net.thevpc.nuts.runtime.standalone.workspace.cmd.search;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.NutsDescribables;
 import net.thevpc.nuts.runtime.standalone.util.iter.IteratorBuilder;
-import net.thevpc.nuts.runtime.standalone.extensions.DefaultNutsClassLoader;
+import net.thevpc.nuts.runtime.standalone.extension.DefaultNutsClassLoader;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.DefaultNutsQueryBaseOptions;
 import net.thevpc.nuts.runtime.standalone.format.NutsDisplayProperty;
 import net.thevpc.nuts.runtime.standalone.format.NutsFetchDisplayOptions;
 import net.thevpc.nuts.runtime.standalone.format.NutsIdFormatHelper;
-import net.thevpc.nuts.runtime.standalone.extensions.DefaultNutsWorkspaceExtensionManager;
-import net.thevpc.nuts.runtime.standalone.extensions.NutsClassLoaderUtils;
+import net.thevpc.nuts.runtime.standalone.extension.DefaultNutsWorkspaceExtensionManager;
+import net.thevpc.nuts.runtime.standalone.extension.NutsClassLoaderUtils;
 import net.thevpc.nuts.runtime.standalone.stream.NutsIteratorStream;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
 

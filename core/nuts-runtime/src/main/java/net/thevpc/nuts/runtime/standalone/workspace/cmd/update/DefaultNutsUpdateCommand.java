@@ -12,7 +12,7 @@ import net.thevpc.nuts.runtime.standalone.workspace.cmd.DefaultNutsUpdateResult;
 import net.thevpc.nuts.runtime.standalone.workspace.config.NutsWorkspaceConfigManagerExt;
 import net.thevpc.nuts.runtime.standalone.repository.impl.main.NutsInstalledRepository;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
-import net.thevpc.nuts.runtime.standalone.extensions.NutsExtensionListHelper;
+import net.thevpc.nuts.runtime.standalone.extension.NutsExtensionListHelper;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
 
 import java.time.Instant;

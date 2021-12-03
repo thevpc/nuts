@@ -23,11 +23,10 @@
  * <br>
  * ====================================================================
 */
-package net.thevpc.nuts.runtime.standalone.app.cmdline.options;
+package net.thevpc.nuts.runtime.standalone.app.cmdline.option;
 
 import net.thevpc.nuts.NutsArgumentCandidate;
 import net.thevpc.nuts.NutsCommandAutoComplete;
-import net.thevpc.nuts.runtime.standalone.app.cmdline.options.DefaultNonOption;
 
 import java.util.ArrayList;
 import java.util.List;
