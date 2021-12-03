@@ -151,12 +151,11 @@ public class NutsIdFormatHelper {
     }
 
     private static FormatHelper getFormatHelper(NutsSession session) {
-        NutsElement e = session.env().getProperty(FormatHelper.class.getName());
-        FormatHelper h = (FormatHelper) (e.isCustom()?e.asCustom().getValue():null);
+        FormatHelper h = (FormatHelper) session.env().getProperties().get(FormatHelper.class.getName());
         if (h != null) {
             return h;
         }
-        NutsElement e2 = session.env().getProperty(FormatHelperResetListener.class.getName());
+        NutsElement e2 = session.env().getPropertyElement(FormatHelperResetListener.class.getName());
         FormatHelperResetListener h2 = (FormatHelperResetListener) (e2.isCustom()?e2.asCustom().getValue():null);
         if (h2 == null) {
             h2 = new FormatHelperResetListener();

@@ -41,7 +41,13 @@ public class DefaultNutsWorkspaceEnvManager implements NutsWorkspaceEnvManager {
     }
 
     @Override
-    public NutsElement getProperty(String property) {
+    public NutsElement getPropertyElement(String property) {
+        checkSession();
+        return model.getPropertyElement(property,getSession());
+    }
+
+    @Override
+    public Object getProperty(String property) {
         checkSession();
         return model.getProperty(property,getSession());
     }

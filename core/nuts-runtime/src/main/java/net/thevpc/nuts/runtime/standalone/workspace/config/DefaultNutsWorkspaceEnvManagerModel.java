@@ -48,17 +48,17 @@ public class DefaultNutsWorkspaceEnvManagerModel {
     private final Map<NutsPlatformType, List<NutsPlatformLocation>> configPlatforms = new LinkedHashMap<>();
     //    private Map<String, String> options = new LinkedHashMap<>();
     protected ObservableMap<String, Object> userProperties;
-    private NutsWorkspace workspace;
-    private NutsId platform;
-    private NutsId os;
+    private final NutsWorkspace workspace;
+    private final NutsId platform;
+    private final NutsId os;
     private NutsOsFamily osFamily;
     private NutsShellFamily shellFamily;
     private NutsId[] desktopEnvironments;
     private NutsDesktopEnvironmentFamily[] osDesktopEnvironmentFamilies;
     private NutsDesktopEnvironmentFamily osDesktopEnvironmentFamily;
-    private NutsId arch;
-    private NutsId osDist;
-    private NutsArchFamily archFamily = NutsArchFamily.getCurrent();
+    private final NutsId arch;
+    private final NutsId osDist;
+    private final NutsArchFamily archFamily = NutsArchFamily.getCurrent();
 
     public DefaultNutsWorkspaceEnvManagerModel(NutsWorkspace ws, NutsSession session) {
         this.workspace = ws;
@@ -322,14 +322,18 @@ public class DefaultNutsWorkspaceEnvManagerModel {
         return userProperties;
     }
 
-    public NutsElement getProperty(String property, NutsSession session) {
+    public Object getProperty(String property, NutsSession session) {
+        return userProperties.get(property);
+    }
+
+    public NutsElement getPropertyElement(String property, NutsSession session) {
         return NutsElements.of(session)
                 .setIndestructibleObjects(x -> !x.isPrimitive()
                         && !Number.class.isAssignableFrom(x)
                         && !Boolean.class.isAssignableFrom(x)
                         && !String.class.isAssignableFrom(x)
                         && !Instant.class.isAssignableFrom(x))
-                .toElement(property);
+                .toElement(getProperty(property, session));
     }
 
     public <T> T getOrCreateProperty(Class<T> property, Supplier<T> supplier, NutsSession session) {
@@ -337,7 +341,7 @@ public class DefaultNutsWorkspaceEnvManagerModel {
     }
 
     public <T> T getOrCreateProperty(String property, Supplier<T> supplier, NutsSession session) {
-        NutsElement a = getProperty(property, session);
+        NutsElement a = getPropertyElement(property, session);
         T o = a.isCustom() ? (T) a.asCustom().getValue() : (T) a.asPrimitive().getValue();
         if (o != null) {
             return o;

@@ -40,11 +40,20 @@ public interface NutsWorkspaceEnvManager {
     Map<String, Object> getProperties();
 
     /**
+     * return property value as element object
      * @param property property name
-     * @return property value
+     * @return property value as element object
      * @since 0.8.1
      */
-    NutsElement getProperty(String property);
+    NutsElement getPropertyElement(String property);
+
+    /**
+     * return property raw value
+     * @param property property name
+     * @return property raw value
+     * @since 0.8.1
+     */
+    Object getProperty(String property);
 
     /**
      * @param property property
