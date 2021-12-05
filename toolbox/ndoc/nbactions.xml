@@ -11,7 +11,7 @@
         </goals>
         <properties>
             <exec.args>-Dnuts.debug=true -classpath %classpath net.thevpc.nuts.toolbox.ndoc.NDocMain -s
-                /data/public/git/nuts/nuts -t /data/public/git/nuts/website/nuts/docs/javadocs</exec.args>
+                /data/public/git/nuts/nuts -t /data/public/git/nuts/documentation/website/nuts/docs/javadocs</exec.args>
             <exec.executable>java</exec.executable>
             <exec.workingdir>/data/public/git/nuts/nuts</exec.workingdir>
         </properties>
@@ -28,7 +28,7 @@
         <properties>
             <exec.args>-agentlib:jdwp=transport=dt_socket,server=n,address=${jpda.address} -Dnuts.debug=true -classpath
                 %classpath net.thevpc.nuts.toolbox.ndoc.NDocMain -s /data/public/git/nuts/nuts -t
-                /data/public/git/nuts/website/nuts/docs/javadocs</exec.args>
+                /data/public/git/nuts/documentation/website/nuts/docs/javadocs</exec.args>
             <exec.executable>java</exec.executable>
             <jpda.listen>true</jpda.listen>
             <exec.workingdir>/data/public/git/nuts/nuts</exec.workingdir>
@@ -45,7 +45,7 @@
         </goals>
         <properties>
             <exec.args>-Dnuts.debug=true -classpath %classpath net.thevpc.nuts.toolbox.ndoc.NDocMain -s
-                /data/public/git/nuts/nuts -t /data/public/git/nuts/website/nuts/docs/javadocs</exec.args>
+                /data/public/git/nuts/nuts -t /data/public/git/nuts/documentation/website/nuts/docs/javadocs</exec.args>
             <exec.executable>java</exec.executable>
             <exec.workingdir>/data/public/git/nuts/nuts</exec.workingdir>
         </properties>

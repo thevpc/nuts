@@ -760,7 +760,7 @@ nuts -ZQ -w=test --json
             reset workspace test and show result in json format
 
 ```sh
-nuts -ZySb -w=test --theme=/data/git/nuts/website/static/theme-examples/min2.ntf-theme
+nuts -ZySb -w=test --theme=documentation/website/static/theme-examples/min2.ntf-theme
 ```
             run nuts with a custom theme file.
             Examples of theme files are available under ```sh $nuts_github/website/static/theme-examples/```

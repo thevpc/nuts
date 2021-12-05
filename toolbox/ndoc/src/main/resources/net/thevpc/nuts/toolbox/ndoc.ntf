@@ -3,5 +3,5 @@
 ##) SYNOPSIS:
 
 
-```nuts -Zy -w test ndoc --progress=none --skip-errors -bZKy ndoc --backend=docusaurus --source /data/git/nuts/core/nuts --target /data/git/nuts/website/docs/javadocs```
+```nuts -Zy -w test ndoc --progress=none --skip-errors -bZKy ndoc --backend=docusaurus --source /data/git/nuts/core/nuts --target /data/git/nuts/documentation/website/docs/javadocs```
     generate javadoc

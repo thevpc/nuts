@@ -10,6 +10,8 @@ import org.junit.jupiter.api.Test;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.StringReader;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 public class TestDocusaurusParser {
     @Test
@@ -70,19 +72,18 @@ public class TestDocusaurusParser {
         System.out.println(e);
     }
 
-    @Test
+//    @Test
     public void test04() {
-//        String file="/data/git/nuts/website/.dir-template/src/docs/intro/installation.md";
-//        String file="/data/git/nuts/website/.dir-template/src/docs/cmd/install.md";
-        String file = "/data/git/nuts/website/.dir-template/src/docs/intro/nuts-and-maven.md";
-//        String file="/data/git/nuts/website/.dir-template/src/docs/info/faq.md";
-        try (FileReader fr = new FileReader(file)) {
+        if(Files.exists(Paths.get("documentation/website/.dir-template"))) {
+            String file = "documentation/website/.dir-template/src/docs/intro/nuts-and-maven.md";
+            try (FileReader fr = new FileReader(file)) {
 
-            MdParser parser = new DocusaurusMdParser(fr);
-            MdElement e = parser.parse();
-            dump(e);
-        } catch (IOException ex) {
-            throw new IllegalArgumentException(ex);
+                MdParser parser = new DocusaurusMdParser(fr);
+                MdElement e = parser.parse();
+                dump(e);
+            } catch (IOException ex) {
+                throw new IllegalArgumentException(ex);
+            }
         }
     }
 
