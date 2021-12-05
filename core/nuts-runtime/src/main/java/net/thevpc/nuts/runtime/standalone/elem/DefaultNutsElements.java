@@ -451,7 +451,7 @@ public class DefaultNutsElements extends DefaultFormatBase<NutsElements> impleme
         if (value == null) {
             return ofNull();
         }
-        return new DefaultNutsPrimitiveElement(NutsElementType.INSTANT, DefaultNutsPrimitiveElement.parseInstant(value), getSession());
+        return new DefaultNutsPrimitiveElement(NutsElementType.INSTANT, DefaultNutsPrimitiveElement.parseInstant(value,getSession()), getSession());
     }
 
     @Override

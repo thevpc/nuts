@@ -41,7 +41,7 @@ public class NutsPrintIterator<T> extends NutsIteratorBase<T> {
     @Override
     public NutsElement describe(NutsElements elems) {
         return NutsDescribables.resolveOrDestruct(curr,elems)
-                .toObject()
+                .asSafeObject(true)
                 .builder()
                 .set("print",elems.ofObject().set("format",listFormat.getOutputFormat().id()).build())
                 .build();

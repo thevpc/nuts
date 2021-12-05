@@ -155,8 +155,7 @@ public class NutsIdFormatHelper {
         if (h != null) {
             return h;
         }
-        NutsElement e2 = session.env().getPropertyElement(FormatHelperResetListener.class.getName());
-        FormatHelperResetListener h2 = (FormatHelperResetListener) (e2.isCustom()?e2.asCustom().getValue():null);
+        FormatHelperResetListener h2 = (FormatHelperResetListener) session.env().getProperty(FormatHelperResetListener.class.getName());
         if (h2 == null) {
             h2 = new FormatHelperResetListener();
             session.events().addWorkspaceListener(h2);

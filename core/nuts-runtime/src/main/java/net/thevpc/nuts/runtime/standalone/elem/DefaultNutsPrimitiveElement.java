@@ -24,14 +24,16 @@
 package net.thevpc.nuts.runtime.standalone.elem;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 
+import java.lang.reflect.Constructor;
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.Objects;
-
-import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 
 /**
  * @author thevpc
@@ -51,7 +53,7 @@ class DefaultNutsPrimitiveElement extends AbstractNutsElement implements NutsPri
         this.value = value;
     }
 
-    public static Instant parseInstant(String s) {
+    public static Instant parseInstant(String s, NutsSession session) {
         try {
             return DateTimeFormatter.ISO_INSTANT.parse(s, Instant::from);
         } catch (Exception ex) {
@@ -64,13 +66,71 @@ class DefaultNutsPrimitiveElement extends AbstractNutsElement implements NutsPri
                 //
             }
         }
-        throw new IllegalArgumentException("invalid date " + s);
+        throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("invalid date %s", s));
     }
 
-//    @Override
-//    public NutsString getNutsString() {
-//        return (NutsString)value;
-//    }
+    private static Number convertByInstance(Number from, Object... to) {
+        for (Object t : to) {
+            if (t != null) {
+                return convert(from, to.getClass());
+            }
+        }
+        return from;
+    }
+
+    private static Number convert(Number from, Class to) {
+        if (to.isInstance(from)) {
+            return from;
+        }
+        switch (to.toString()) {
+            case "byte":
+            case "java.lang.Byte": {
+                return from.byteValue();
+            }
+            case "short":
+            case "java.lang.Short": {
+                return from.shortValue();
+            }
+            case "int":
+            case "java.lang.Integer": {
+                return from.intValue();
+            }
+            case "long":
+            case "java.lang.Long": {
+                return from.longValue();
+            }
+            case "float":
+            case "java.lang.Float": {
+                return from.floatValue();
+            }
+            case "double":
+            case "java.lang.Double": {
+                return from.doubleValue();
+            }
+            case "java.math.BigInteger": {
+                return new BigInteger(from.toString());
+            }
+            case "java.math.BigDecimal": {
+                return new BigDecimal(from.toString());
+            }
+            default: {
+                Constructor c = null;
+                try {
+                    c = to.getConstructor(Number.class);
+                    if (c != null) {
+                        return (Number) c.newInstance(from);
+                    }
+                    c = to.getConstructor(String.class);
+                    if (c != null) {
+                        return (Number) c.newInstance(from.toString());
+                    }
+                } catch (Exception e) {
+                    // just ignore!
+                }
+            }
+        }
+        return from;
+    }
 
     @Override
     public Object getValue() {
@@ -79,8 +139,16 @@ class DefaultNutsPrimitiveElement extends AbstractNutsElement implements NutsPri
 
     @Override
     public Instant getInstant() {
-        if (value == null || value instanceof Boolean) {
-            return Instant.MIN;
+        return getInstant(Instant.MIN, Instant.MIN);
+    }
+
+    @Override
+    public Instant getInstant(Instant emptyValue, Instant errorValue) {
+        if (value == null) {
+            return emptyValue;
+        }
+        if (value instanceof Boolean) {
+            return errorValue;
         }
         if (value instanceof Number) {
             return Instant.ofEpochMilli(((Number) value).longValue());
@@ -92,6 +160,9 @@ class DefaultNutsPrimitiveElement extends AbstractNutsElement implements NutsPri
             return ((Instant) value);
         }
         String s = String.valueOf(value);
+        if (s.trim().isEmpty()) {
+            return emptyValue;
+        }
         try {
             return DateTimeFormatter.ISO_INSTANT.parse(s, Instant::from);
         } catch (Exception ex) {
@@ -111,16 +182,31 @@ class DefaultNutsPrimitiveElement extends AbstractNutsElement implements NutsPri
                 //
             }
         }
-        return Instant.MIN;
+        return errorValue;
+    }
+
+    @Override
+    public Instant getInstant(Instant emptyOrErrorValue) {
+        return getInstant(emptyOrErrorValue, emptyOrErrorValue);
     }
 
     @Override
     public Number getNumber() {
+        return getNumber(0, 0);
+    }
+
+    @Override
+    public Number getNumber(Number emptyOrErrorValue) {
+        return getNumber(emptyOrErrorValue, emptyOrErrorValue);
+    }
+
+    @Override
+    public Number getNumber(Number emptyValue, Number errorValue) {
         if (value == null) {
-            return 0;
+            return emptyValue;
         }
         if (value instanceof Boolean) {
-            return ((Boolean) value) ? 1 : 0;
+            return convertByInstance(((Boolean) value) ? 1 : 0, emptyValue, errorValue);
         }
         if (value instanceof Number) {
             return ((Number) value);
@@ -132,23 +218,35 @@ class DefaultNutsPrimitiveElement extends AbstractNutsElement implements NutsPri
             return ((Instant) value).toEpochMilli();
         }
         String s = String.valueOf(value);
-        if (s.indexOf('.') >= 0) {
+        if (s.indexOf('.') >= 0 || s.toLowerCase().indexOf('e') >= 0) {
             try {
                 return Double.parseDouble(s);
             } catch (NumberFormatException ex) {
-                return 0;
+                //just ignore!
+            }
+            try {
+                return new BigDecimal(s);
+            } catch (NumberFormatException ex) {
+                //just ignore!
             }
         } else {
             try {
                 return Integer.parseInt(s);
             } catch (NumberFormatException ex) {
-                try {
-                    return Long.parseLong(s);
-                } catch (NumberFormatException ex2) {
-                    return 0;
-                }
+                //just ignore!
+            }
+            try {
+                return Long.parseLong(s);
+            } catch (NumberFormatException ex) {
+                //just ignore!
+            }
+            try {
+                return new BigInteger(s);
+            } catch (NumberFormatException ex) {
+                //just ignore!
             }
         }
+        return errorValue;
     }
 
     @Override
@@ -186,7 +284,7 @@ class DefaultNutsPrimitiveElement extends AbstractNutsElement implements NutsPri
 
     @Override
     public double getDouble() {
-        return getDouble(0.0,0.0);
+        return getDouble(0.0, 0.0);
     }
 
     @Override
@@ -201,7 +299,7 @@ class DefaultNutsPrimitiveElement extends AbstractNutsElement implements NutsPri
             return ((Number) value).doubleValue();
         }
         String s = String.valueOf(value);
-        if(NutsBlankable.isBlank(s)){
+        if (NutsBlankable.isBlank(s)) {
             return emptyValue;
         }
         try {
@@ -213,7 +311,7 @@ class DefaultNutsPrimitiveElement extends AbstractNutsElement implements NutsPri
 
     @Override
     public float getFloat() {
-        return getFloat(0f,0f);
+        return getFloat(0f, 0f);
     }
 
     @Override
@@ -223,32 +321,32 @@ class DefaultNutsPrimitiveElement extends AbstractNutsElement implements NutsPri
 
     @Override
     public Integer getInt(Integer emptyOrErrorValue) {
-        return getInt(emptyOrErrorValue,emptyOrErrorValue);
+        return getInt(emptyOrErrorValue, emptyOrErrorValue);
     }
 
     @Override
     public Long getLong(Long emptyOrErrorValue) {
-        return getLong(emptyOrErrorValue,emptyOrErrorValue);
+        return getLong(emptyOrErrorValue, emptyOrErrorValue);
     }
 
     @Override
     public Short getShort(Short emptyOrErrorValue) {
-        return getShort(emptyOrErrorValue,emptyOrErrorValue);
+        return getShort(emptyOrErrorValue, emptyOrErrorValue);
     }
 
     @Override
     public Byte getByte(Byte emptyOrErrorValue) {
-        return getByte(emptyOrErrorValue,emptyOrErrorValue);
+        return getByte(emptyOrErrorValue, emptyOrErrorValue);
     }
 
     @Override
     public Float getFloat(Float emptyOrErrorValue) {
-        return getFloat(emptyOrErrorValue,emptyOrErrorValue);
+        return getFloat(emptyOrErrorValue, emptyOrErrorValue);
     }
 
     @Override
     public Double getDouble(Double emptyOrErrorValue) {
-        return getDouble(emptyOrErrorValue,emptyOrErrorValue);
+        return getDouble(emptyOrErrorValue, emptyOrErrorValue);
     }
 
     @Override
@@ -406,10 +504,6 @@ class DefaultNutsPrimitiveElement extends AbstractNutsElement implements NutsPri
         return errorValue;
     }
 
-    public boolean isBlank() {
-        return NutsBlankable.isBlank(value);
-    }
-
     @Override
     public boolean isNull() {
         return value == null;
@@ -547,6 +641,35 @@ class DefaultNutsPrimitiveElement extends AbstractNutsElement implements NutsPri
         } else if (value instanceof String) {
             try {
                 Double.parseDouble(value.toString());
+                return true;
+            } catch (Exception ex) {
+                //
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public boolean isInstant() {
+        if (value == null) {
+            return false;
+        }
+        if (value instanceof Date
+                || value instanceof Instant
+        ) {
+            return true;
+        }
+        String s = String.valueOf(value);
+        try {
+            DateTimeFormatter.ISO_INSTANT.parse(s, Instant::from);
+            return true;
+        } catch (Exception ex) {
+            //
+        }
+        for (String f : DATE_FORMATS) {
+            try {
+                new SimpleDateFormat(f).parse(s).toInstant();
+                return true;
             } catch (Exception ex) {
                 //
             }
@@ -600,26 +723,20 @@ class DefaultNutsPrimitiveElement extends AbstractNutsElement implements NutsPri
     }
 
     @Override
-    public NutsObjectElement toObject() {
-        return NutsElements.of(session)
-                .ofObject()
-                .set("value", this)
-                .build();
-    }
-
-    @Override
     public boolean isEmpty() {
         switch (type()) {
             case NULL: {
                 return true;
             }
-            case STRING:
-//            case NUTS_STRING:
-            {
+            case STRING: {
                 return toString().isEmpty();
             }
         }
         return false;
+    }
+
+    public boolean isBlank() {
+        return NutsBlankable.isBlank(value);
     }
 
 }

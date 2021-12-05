@@ -88,14 +88,6 @@ class DefaultNutsCustomElement extends AbstractNutsElement implements NutsCustom
     }
 
     @Override
-    public NutsObjectElement toObject() {
-        return NutsElements.of(session)
-                .ofObject()
-                .set("value",this)
-                .build();
-    }
-
-    @Override
     public boolean isBlank() {
         return false;
     }

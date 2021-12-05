@@ -20,7 +20,7 @@ class OnStartIterator<T> extends NutsIteratorBase<T> {
     @Override
     public NutsElement describe(NutsElements elems) {
         return NutsDescribables.resolveOrDestruct(base,elems)
-                .toObject().builder()
+                .asSafeObject(true).builder()
                 .set("onStart", NutsDescribables.resolveOrToString(r,elems))
                 .build()
                 ;

@@ -148,7 +148,7 @@ public final class NutsDescribables {
         @Override
         public NutsElement describe(NutsElements elems) {
             NutsObjectElement b = NutsDescribables.resolveOr(base, elems, () -> elems.ofObject().build())
-                    .toObject();
+                    .asSafeObject(true);
             NutsElement a = nfo.apply(elems);
             if (b.isEmpty()) {
                 return a;
@@ -194,7 +194,7 @@ public final class NutsDescribables {
         @Override
         public NutsElement describe(NutsElements elems) {
             NutsObjectElement b = NutsDescribables.resolveOr(base, elems, () -> elems.ofObject().build())
-                    .toObject();
+                    .asSafeObject(true);
             NutsElement a = nfo.apply(elems);
             if (b.isEmpty()) {
                 return a;
@@ -235,7 +235,7 @@ public final class NutsDescribables {
         @Override
         public NutsElement describe(NutsElements elems) {
             NutsObjectElement b = NutsDescribables.resolveOr(base, elems, () -> elems.ofObject().build())
-                    .toObject();
+                    .asSafeObject(true);
             NutsElement a = nfo.apply(elems);
             if (b.isEmpty()) {
                 return a;
@@ -276,7 +276,7 @@ public final class NutsDescribables {
         @Override
         public NutsElement describe(NutsElements elems) {
             NutsObjectElement b = NutsDescribables.resolveOrDestruct(base, elems)
-                    .toObject();
+                    .asSafeObject(true);
             NutsElement a = nfo.apply(elems);
             if (b.isEmpty()) {
                 return a;
@@ -317,7 +317,7 @@ public final class NutsDescribables {
         @Override
         public NutsElement describe(NutsElements elems) {
             NutsObjectElement b = NutsDescribables.resolveOrDestruct(base, elems)
-                    .toObject();
+                    .asSafeObject(true);
             NutsElement a = nfo.apply(elems);
             if (b.isEmpty()) {
                 return a;
@@ -358,7 +358,7 @@ public final class NutsDescribables {
         @Override
         public NutsElement describe(NutsElements elems) {
             NutsObjectElement b = NutsDescribables.resolveOrDestruct(base, elems)
-                    .toObject();
+                    .asSafeObject(true);
             NutsElement a = nfo.apply(elems);
             if (b.isEmpty()) {
                 return a;

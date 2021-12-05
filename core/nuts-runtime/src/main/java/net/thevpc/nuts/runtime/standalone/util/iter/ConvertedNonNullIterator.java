@@ -60,7 +60,7 @@ public class ConvertedNonNullIterator<F, T> extends NutsIteratorBase<T> {
                 .set("type", "Map")
                 .set("accept", "isNotNull")
                 .set("mapper", NutsDescribables.resolveOrDestruct(converter, elems)
-                        .toObject().builder()
+                        .asSafeObject(true).builder()
                         .set("name", convertName)
                         .build()
                 )

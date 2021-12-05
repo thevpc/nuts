@@ -103,7 +103,7 @@ public class DocusaurusProject {
     }
 
     public NutsObjectElement getSidebars() {
-        return loadModuleExportsFile("sidebars.js").asSafeObject();
+        return loadModuleExportsFile("sidebars.js").asSafeObject(false);
     }
 
     public String getTitle() {
@@ -115,7 +115,7 @@ public class DocusaurusProject {
     }
 
     public NutsObjectElement getConfig() {
-        return loadModuleExportsFile("docusaurus.config.js").asSafeObject();
+        return loadModuleExportsFile("docusaurus.config.js").asSafeObject(false);
     }
 
     private String resolvePath(String path) {

@@ -46,7 +46,7 @@ public class DefaultNutsObjectElement extends AbstractNutsObjectElement {
 
     @Override
     public Integer getSafeInt(String key) {
-        return getSafe(key).asSafeInt();
+        return getSafe(key).asSafeInt(null);
     }
 
     @Override
@@ -73,22 +73,22 @@ public class DefaultNutsObjectElement extends AbstractNutsObjectElement {
 
     @Override
     public NutsArrayElement getSafeArray(String key) {
-        return getSafe(key).asSafeArray();
+        return getSafe(key).asSafeArray(false);
     }
 
     @Override
     public NutsArrayElement getSafeArray(NutsElement key) {
-        return getSafe(key).asSafeArray();
+        return getSafe(key).asSafeArray(false);
     }
 
     @Override
     public NutsObjectElement getSafeObject(String key) {
-        return getSafe(key).asSafeObject();
+        return getSafe(key).asSafeObject(false);
     }
 
     @Override
     public NutsObjectElement getSafeObject(NutsElement key) {
-        return getSafe(key).asSafeObject();
+        return getSafe(key).asSafeObject(false);
     }
 
     @Override
@@ -294,11 +294,6 @@ public class DefaultNutsObjectElement extends AbstractNutsObjectElement {
                 + ":"
                 + x.getValue().toString()
                 ).collect(Collectors.joining(", ")) + "}";
-    }
-
-    @Override
-    public NutsObjectElement toObject() {
-        return this;
     }
 
     @Override

@@ -689,7 +689,7 @@ public class DefaultNutsSearchCommand extends AbstractNutsSearchCommand {
                             }
                             return visited.values().iterator();
                         }, e->NutsDescribables.resolveOrDestruct(curr,elems)
-                                .toObject().builder()
+                                .asSafeObject(true).builder()
                                 .set("latest", true)
                                 .set("distinct", true)
                                 .build()
@@ -711,7 +711,7 @@ public class DefaultNutsSearchCommand extends AbstractNutsSearchCommand {
                             }
                             return IteratorBuilder.ofFlatMap(NutsIterator.of(visited.values().iterator(), "visited")).build();
                         }, e -> NutsDescribables.resolveOrDestruct(curr,elems)
-                                .toObject().builder()
+                                .asSafeObject(true).builder()
                                 .set("latest", true)
                                 .set("duplicates", true)
                                 .build()
@@ -755,7 +755,7 @@ public class DefaultNutsSearchCommand extends AbstractNutsSearchCommand {
                         return visited.values().iterator();
                     },
                     e -> NutsDescribables.resolveOrDestruct(curr,elems)
-                            .toObject().builder()
+                            .asSafeObject(true).builder()
                             .set("latest", true)
                             .set("distinct", true)
                             .build()).build();
@@ -777,7 +777,7 @@ public class DefaultNutsSearchCommand extends AbstractNutsSearchCommand {
                         return IteratorBuilder.ofFlatMap(NutsIterator.of(visited.values().iterator(), "visited")).build();
                     },
                     e -> NutsDescribables.resolveOrDestruct(curr,elems)
-                            .toObject().builder()
+                            .asSafeObject(true).builder()
                             .set("latest", true)
                             .set("duplicates", true)
                             .build()

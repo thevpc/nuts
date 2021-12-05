@@ -26,7 +26,6 @@ package net.thevpc.nuts.runtime.standalone.elem;
 import net.thevpc.nuts.*;
 
 import java.time.Instant;
-import java.util.LinkedHashMap;
 
 /**
  * @author thevpc
@@ -75,6 +74,16 @@ public abstract class AbstractNutsElement implements NutsElement {
     }
 
     @Override
+    public NutsObjectElement asSafeObject() {
+        return asSafeObject(false);
+    }
+
+    @Override
+    public NutsArrayElement asSafeArray() {
+        return asSafeArray(false);
+    }
+
+    @Override
     public NutsArrayElement asArray() {
         if (this instanceof NutsArrayElement) {
             return (NutsArrayElement) this;
@@ -83,25 +92,44 @@ public abstract class AbstractNutsElement implements NutsElement {
     }
 
     @Override
-    public NutsObjectElement asSafeObject() {
+    public NutsObjectElement asSafeObject(boolean embed) {
         if (this instanceof NutsObjectElement) {
             return (NutsObjectElement) this;
         }
-        return new DefaultNutsObjectElement(new LinkedHashMap<>(), session);
+        if(embed && type()!=NutsElementType.NULL){
+            return NutsElements.of(session)
+                    .ofObject()
+                    .set("value", this)
+                    .build();
+        }
+        return NutsElements.of(session)
+                .ofObject()
+                .build();
     }
 
     @Override
-    public NutsArrayElement asSafeArray() {
+    public NutsArrayElement asSafeArray(boolean embed) {
         if (this instanceof NutsArrayElement) {
             return (NutsArrayElement) this;
         }
-        return new DefaultNutsArrayElement(new NutsElement[0], session);
+        if(embed && type()!=NutsElementType.NULL){
+            return NutsElements.of(session)
+                    .ofArray()
+                    .add(this)
+                    .build();
+        }
+        return NutsElements.of(session)
+                .ofArray()
+                .build();
     }
 
     @Override
     public boolean isPrimitive() {
         NutsElementType t = type();
-        return t != NutsElementType.ARRAY && t != NutsElementType.OBJECT;
+        return t != NutsElementType.ARRAY
+                && t != NutsElementType.OBJECT
+                && t != NutsElementType.CUSTOM
+                ;
     }
 
     @Override
@@ -194,12 +222,6 @@ public abstract class AbstractNutsElement implements NutsElement {
         return asPrimitive().getBoolean();
     }
 
-//    @Override
-//    public boolean isNutsString() {
-//        NutsElementType t = type();
-//        return t == NutsElementType.NUTS_STRING;
-//    }
-
     @Override
     public byte asByte() {
         return asPrimitive().getByte();
@@ -220,104 +242,74 @@ public abstract class AbstractNutsElement implements NutsElement {
         return asPrimitive().getInstant();
     }
 
-    @Override
-    public Integer asSafeInt() {
-        if (isNumber()) {
-            return asInt();
-        }
-        return null;
-    }
+
 
     @Override
-    public int asSafeInt(int def) {
-        Integer i = asSafeInt();
-        return i == null ? def : i;
-    }
-
-    @Override
-    public Long asSafeLong() {
-        if (isNumber()) {
-            return asLong();
-        }
-        return null;
-    }
-
-    @Override
-    public long asSafeLong(long def) {
-        Long i = asSafeLong();
-        return i == null ? def : i;
-    }
-
-    @Override
-    public Double asSafeDouble() {
-        if (isNumber()) {
-            return asDouble();
-        }
-        return null;
-    }
-
-    @Override
-    public short asSafeShort(short def) {
-        Short i = asSafeShort();
-        return i == null ? def : i;
-    }
-
-    @Override
-    public Short asSafeShort() {
-        if (isNumber()) {
-            return asShort();
-        }
-        return null;
-    }
-
-    @Override
-    public byte asSafeByte(byte def) {
-        Byte i = asSafeByte();
-        return i == null ? def : i;
-    }
-
-    @Override
-    public Byte asSafeByte() {
-        if (isNumber()) {
-            return asByte();
-        }
-        return null;
-    }
-
-    @Override
-    public double asSafeDouble(double def) {
-        Double i = asSafeDouble();
-        return i == null ? def : i;
-    }
-
-    @Override
-    public Float asSafeFloat() {
-        if (isNumber()) {
-            return asFloat();
-        }
-        return null;
-    }
-
-    @Override
-    public float asSafeFloat(float def) {
-        Float i = asSafeFloat();
-        return i == null ? def : i;
-    }
-
-    @Override
-    public String asSafeString(String def) {
-        if(isString()){
-            return asPrimitive().getString();
-        }
-        return def;
-    }
-
-    @Override
-    public String asSafeString() {
+    public Integer asSafeInt(Integer defaultValue) {
         if(isPrimitive()){
-            return asPrimitive().getString();
+            return asPrimitive().getInt(defaultValue);
         }
-        return null;
+        return defaultValue;
+    }
+
+    @Override
+    public Instant asSafeInstant(Instant defaultValue) {
+        if(isPrimitive()){
+            return asPrimitive().getInstant(defaultValue);
+        }
+        return defaultValue;
+    }
+
+    @Override
+    public Long asSafeLong(Long defaultValue) {
+        if(isPrimitive()){
+            return asPrimitive().getLong(defaultValue);
+        }
+        return defaultValue;
+    }
+
+    @Override
+    public Short asSafeShort(Short defaultValue) {
+        if(isPrimitive()){
+            return asPrimitive().getShort(defaultValue);
+        }
+        return defaultValue;
+    }
+
+
+
+    @Override
+    public Byte asSafeByte(Byte defaultValue) {
+        if(isPrimitive()){
+            return asPrimitive().getByte(defaultValue);
+        }
+        return defaultValue;
+    }
+
+
+    @Override
+    public Double asSafeDouble(Double defaultValue) {
+        if(isPrimitive()){
+            return asPrimitive().getDouble(defaultValue);
+        }
+        return defaultValue;
+    }
+
+
+    @Override
+    public Float asSafeFloat(Float defaultValue) {
+        if(isPrimitive()){
+            return asPrimitive().getFloat(defaultValue);
+        }
+        return defaultValue;
+    }
+
+    @Override
+    public String asSafeString(String defaultValue) {
+        if(isPrimitive()){
+            return asPrimitive().getString(defaultValue);
+        }
+        return defaultValue;
     }
 
     @Override

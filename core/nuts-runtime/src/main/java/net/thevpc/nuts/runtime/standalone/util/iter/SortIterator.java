@@ -22,7 +22,7 @@ class SortIterator<T> extends NutsIteratorBase<T> {
     @Override
     public NutsElement describe(NutsElements elems) {
         return NutsDescribables.resolveOrDestruct(base,elems)
-                .toObject().builder()
+                .asSafeObject(true).builder()
                 .set("sort",
                         elems.ofObject()
                                 .set("comparator", NutsDescribables.resolveOrDestruct(c,elems))

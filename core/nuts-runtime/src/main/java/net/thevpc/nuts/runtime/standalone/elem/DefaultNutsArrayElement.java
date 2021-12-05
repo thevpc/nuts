@@ -169,14 +169,6 @@ public class DefaultNutsArrayElement extends AbstractNutsArrayElement {
     }
 
     @Override
-    public NutsObjectElement toObject() {
-        return NutsElements.of(session)
-                .ofObject()
-                .set("value", this)
-                .build();
-    }
-
-    @Override
     public boolean isEmpty() {
         return values.length == 0;
     }

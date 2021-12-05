@@ -399,12 +399,12 @@ public class DocusaurusCtrl {
                             || "doc".equals(config.getSafeString("name"))
             ) {
                 String[] sources = config.asSafeObject().getSafeArray("sources")
-                        .stream().map(NutsElement::asSafeString).filter(Objects::nonNull).toArray(String[]::new);
+                        .stream().map(x->x.asSafeString(null)).filter(Objects::nonNull).toArray(String[]::new);
                 if (sources.length == 0) {
                     throw new IllegalArgumentException("missing doc sources in " + source);
                 }
                 String[] packages = config.asSafeObject().getSafeArray("packages").stream().
-                        map(NutsElement::asSafeString).filter(Objects::nonNull).toArray(String[]::new);
+                        map(x->x.asSafeString(null)).filter(Objects::nonNull).toArray(String[]::new);
                 String target = context.getPathTranslator().translatePath(source.getParent().toString());
                 if (target == null) {
                     throw new IllegalArgumentException("invalid source " + source.getParent());

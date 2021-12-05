@@ -45,18 +45,57 @@ public interface NutsPrimitiveElement extends NutsElement {
     Object getValue();
 
     /**
-     * value as any java date. Best effort is applied to convert to this type.
+     * value as any java Instant. Best effort is applied to convert to this type.
+     * equivalent to {@code getInstant(Instant.MIN)}
      *
-     * @return value as java Date
+     * @return value as java Instant
      */
     Instant getInstant();
 
     /**
+     * value as any java Instant. Best effort is applied to convert to this type.
+     *
+     * @param emptyValue value when null or empty
+     * @param errorValue value when unable to parse
+     * @return value as java Instant
+     */
+    Instant getInstant(Instant emptyValue,Instant errorValue);
+
+    /**
+     * value as any java Instant. Best effort is applied to convert to this type.
+     * equivalent to {@code getInstant(emptyOrErrorValue,emptyOrErrorValue)}
+*
+     * @param emptyOrErrorValue value when null or empty
+     * @return value as java Instant
+     */
+    Instant getInstant(Instant emptyOrErrorValue);
+
+    /**
      * value as any java Number. Best effort is applied to convert to this type.
      *
+     * equivalent to {@code getNumber((int)0)}
+
      * @return value as java Number
      */
     Number getNumber();
+
+    /**
+     * value as any java Number. Best effort is applied to convert to this type.
+     *
+     * equivalent to {@code getNumber(emptyOrErrorValue,emptyOrErrorValue)}
+     * @param  emptyOrErrorValue returned value when empty or error
+     * @return value as java Number
+     */
+    Number getNumber(Number emptyOrErrorValue);
+
+    /**
+     * value as any java Number. Best effort is applied to convert to this type.
+     *
+     * @param emptyValue returned value when empty
+     * @param errorValue returned value when error (unable to parse)
+     * @return value as java Number
+     */
+    Number getNumber(Number emptyValue,Number errorValue);
 
     /**
      * value as any java Boolean. Best effort is applied to convert to this
@@ -193,5 +232,10 @@ public interface NutsPrimitiveElement extends NutsElement {
      */
     boolean isDouble();
 
+    /**
+     * true if the value is or can be converted to boolean
+     *
+     * @return true if the value is or can be converted to boolean
+     */
     boolean isBoolean();
 }

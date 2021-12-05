@@ -18,7 +18,7 @@ public class NutsElementMapperNutsFilter implements NutsElementMapper<NutsFilter
 
     @Override
     public NutsFilter createObject(NutsElement o, Type to, NutsElementFactoryContext context) {
-        String s = o.asSafeString();
+        String s = o.asSafeString(null);
         if(s==null || s.trim().isEmpty()){
             s="true";
         }

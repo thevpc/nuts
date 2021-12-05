@@ -33,7 +33,7 @@ public class NutsIteratorAdapter<T> extends NutsIteratorBase<T> {
             a=elems.ofObject().set("name",a).build();
         }
         return NutsDescribables.resolveOrDestruct(base,elems)
-                        .toObject().builder()
+                        .asSafeObject(true).builder()
                         .addAll(a.asObject()).build();
     }
 }
