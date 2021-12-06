@@ -5,7 +5,6 @@ import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.NutsExecutableInformationExt;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.NutsExecutionContextBuilder;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
-import net.thevpc.nuts.runtime.standalone.util.CoreNutsDependencyUtils;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.DefaultNutsWorkspace;
 import net.thevpc.nuts.runtime.standalone.executor.ArtifactExecutorComponent;
@@ -425,7 +424,7 @@ public class DefaultNutsExecCommand extends AbstractNutsExecCommand {
                 //
                 .setOptional(false)
                 .addScope(NutsDependencyScopePattern.RUN)
-                .setDependencyFilter(CoreNutsDependencyUtils.createJavaRunDependencyFilter(session))
+                .setDependencyFilter(NutsDependencyFilters.of(session).byRunnable())
                 //
                 .getResultDefinition();
         return ws_execDef(def, commandName, appArgs, executorOptions, env, directory, failFast, executionType, runAs, session, execSession);

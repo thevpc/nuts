@@ -71,7 +71,7 @@ class PrivateNutsUtilClassLoader {
 
     public static URL findClassLoaderJar(NutsBootId id, URL[] urls) {
         for (URL url : urls) {
-            NutsBootId[] nutsBootIds = PrivateNutsUtilMaven.resolveJarIds(url);
+            NutsBootId[] nutsBootIds = PrivateNutsUtilMavenRepos.resolveJarIds(url);
             for (NutsBootId i : nutsBootIds) {
                 if (NutsBlankable.isBlank(id.getGroupId()) || i.getGroupId().equals(id.getGroupId())) {
                     if (NutsBlankable.isBlank(id.getArtifactId()) || i.getArtifactId().equals(id.getArtifactId())) {

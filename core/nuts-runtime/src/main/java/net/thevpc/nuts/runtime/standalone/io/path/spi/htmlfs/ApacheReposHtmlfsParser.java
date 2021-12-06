@@ -1,6 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.io.path.spi.htmlfs;
 
-import net.thevpc.nuts.*;
+import net.thevpc.nuts.NutsSession;
+import net.thevpc.nuts.NutsSupported;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
@@ -10,7 +11,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class ApacheReposHtmlfsParser implements HtmlfsParser {
+public class ApacheReposHtmlfsParser extends AbstractHtmlfsParser {
     @Override
     public NutsSupported<List<String>> parseHtmlTomcat(byte[] bytes, NutsSession session) {
         int expected = 0;
@@ -29,7 +30,7 @@ public class ApacheReposHtmlfsParser implements HtmlfsParser {
             //ignore
         }
         if (expected < 2) {
-            return toSupported(null);
+            return NutsSupported.invalid();
         }
         List<String> found = new ArrayList<>();
         Pattern pattern = Pattern.compile("<img src=\"/icons/[a-z.]+\" alt=\"\\[[a-zA-Z ]+]\"> +<a href=\"(?<href>[^\"]+)\">(?<hname>[^>]+)</a> +(?<d>[^ ]+) (?<h>[^ ]+) +(?<s>[^ ]+)");
@@ -44,13 +45,7 @@ public class ApacheReposHtmlfsParser implements HtmlfsParser {
         } catch (Exception e) {
             //ignore
         }
-        return toSupported(found);
+        return toSupported(1, found);
     }
 
-    private NutsSupported<List<String>> toSupported(List<String> li) {
-        if (li == null || li.isEmpty()) {
-            return NutsSupported.invalid();
-        }
-        return NutsSupported.of(1, () -> li);
-    }
 }

@@ -32,7 +32,7 @@ import net.thevpc.nuts.boot.NutsApiUtils;
  * @app.category Base
  * @since 0.8.1
  */
-public enum NutsPlatformType implements NutsEnum {
+public enum NutsPlatformFamily implements NutsEnum {
     JAVA,
     DOTNET,
     PYTHON,
@@ -44,7 +44,7 @@ public enum NutsPlatformType implements NutsEnum {
      */
     private final String id;
 
-    NutsPlatformType() {
+    NutsPlatformFamily() {
         this.id = name().toLowerCase();//.replace('_', '-');
     }
 
@@ -55,7 +55,7 @@ public enum NutsPlatformType implements NutsEnum {
      * @param value value to parse
      * @return parsed instance or null
      */
-    public static NutsPlatformType parseLenient(String value) {
+    public static NutsPlatformFamily parseLenient(String value) {
         return parseLenient(value, null);
     }
 
@@ -66,7 +66,7 @@ public enum NutsPlatformType implements NutsEnum {
      * @param emptyOrErrorValue emptyOrErrorValue
      * @return parsed instance or {@code emptyOrErrorValue}
      */
-    public static NutsPlatformType parseLenient(String value, NutsPlatformType emptyOrErrorValue) {
+    public static NutsPlatformFamily parseLenient(String value, NutsPlatformFamily emptyOrErrorValue) {
         return parseLenient(value, emptyOrErrorValue, emptyOrErrorValue);
     }
 
@@ -78,7 +78,7 @@ public enum NutsPlatformType implements NutsEnum {
      * @param errorValue value when the value cannot be parsed
      * @return parsed value
      */
-    public static NutsPlatformType parseLenient(String value, NutsPlatformType emptyValue, NutsPlatformType errorValue) {
+    public static NutsPlatformFamily parseLenient(String value, NutsPlatformFamily emptyValue, NutsPlatformFamily errorValue) {
         value = value == null ? "" : value.toLowerCase().replace('-', '_').trim();
         switch (value) {
             case "java":
@@ -108,13 +108,13 @@ public enum NutsPlatformType implements NutsEnum {
         }
     }
 
-    public static NutsPlatformType parse(String value, NutsSession session) {
+    public static NutsPlatformFamily parse(String value, NutsSession session) {
         return parse(value, null, session);
     }
 
-    public static NutsPlatformType parse(String value, NutsPlatformType emptyValue, NutsSession session) {
-        NutsPlatformType v = parseLenient(value, emptyValue, null);
-        NutsApiUtils.checkNonNullEnum(v, value, NutsPlatformType.class, session);
+    public static NutsPlatformFamily parse(String value, NutsPlatformFamily emptyValue, NutsSession session) {
+        NutsPlatformFamily v = parseLenient(value, emptyValue, null);
+        NutsApiUtils.checkNonNullEnum(v, value, NutsPlatformFamily.class, session);
         return v;
     }
 

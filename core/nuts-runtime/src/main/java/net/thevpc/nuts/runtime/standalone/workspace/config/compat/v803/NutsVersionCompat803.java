@@ -19,7 +19,7 @@ public class NutsVersionCompat803 extends AbstractNutsVersionCompat {
     @Override
     public NutsWorkspaceConfigApi parseApiConfig(NutsSession session) {
         NutsPath path = (session.locations().getStoreLocation(session.getWorkspace().getApiId(), NutsStoreLocation.CONFIG))
-                .resolve(NutsConstants.Files.WORKSPACE_API_CONFIG_FILE_NAME);
+                .resolve(CoreNutsConstants.Files.WORKSPACE_API_CONFIG_FILE_NAME);
         byte[] bytes = CompatUtils.readAllBytes(path,session);
         NutsWorkspaceConfigApi c = bytes==null?null:NutsElements.of(session)
                 .setSession(session)
@@ -33,7 +33,7 @@ public class NutsVersionCompat803 extends AbstractNutsVersionCompat {
     @Override
     public NutsWorkspaceConfigRuntime parseRuntimeConfig(NutsSession session) {
         NutsPath path = session.locations().getStoreLocation(session.getWorkspace().getRuntimeId(), NutsStoreLocation.CONFIG)
-                .resolve(NutsConstants.Files.WORKSPACE_RUNTIME_CONFIG_FILE_NAME);
+                .resolve(CoreNutsConstants.Files.WORKSPACE_RUNTIME_CONFIG_FILE_NAME);
         byte[] bytes = CompatUtils.readAllBytes(path,session);
         NutsWorkspaceConfigRuntime c = bytes==null?null:NutsElements.of(session)
                 .setSession(session)

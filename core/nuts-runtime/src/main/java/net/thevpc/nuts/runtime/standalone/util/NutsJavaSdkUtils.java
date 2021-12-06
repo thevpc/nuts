@@ -58,7 +58,7 @@ public class NutsJavaSdkUtils {
     public NutsPlatformLocation resolveJdkLocation(String requestedJavaVersion, NutsSession session) {
         requestedJavaVersion = NutsUtilStrings.trim(requestedJavaVersion);
         NutsPlatformLocation bestJava = session.env().platforms()
-                .findPlatformByVersion(NutsPlatformType.JAVA,
+                .findPlatformByVersion(NutsPlatformFamily.JAVA,
                         NutsVersionFilters.of(session).byValue(requestedJavaVersion)
                 );
         if (bestJava == null) {

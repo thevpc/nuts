@@ -61,6 +61,7 @@ import java.security.NoSuchAlgorithmException;
 import java.time.Instant;
 import java.util.*;
 import java.util.logging.Level;
+import java.util.regex.Matcher;
 
 /**
  * Created by vpc on 5/16/17.
@@ -2821,6 +2822,38 @@ public class CoreIOUtils {
 //        }
 //        return writable;
 //    }
+
+    public static NutsStream<String> safeLines(byte[] bytes,NutsSession session) {
+        return NutsStream.of(
+                new Iterator<String>() {
+                    BufferedReader br;
+                    String line;
+                    @Override
+                    public boolean hasNext() {
+                        if(br==null){
+                            br=CoreIOUtils.bufferedReaderOf(bytes);
+                        }
+                        try {
+                            line=null;
+                            line = br.readLine();
+                        } catch (IOException e) {
+                            //
+                        }
+                        return line!=null;
+                    }
+
+                    @Override
+                    public String next() {
+                        return line;
+                    }
+                },session
+        );
+    }
+
+    public static BufferedReader bufferedReaderOf(byte[] bytes) {
+        return new BufferedReader(new InputStreamReader(new ByteArrayInputStream(bytes)));
+    }
+
     public enum MonitorType {
         STREAM,
         DEFAULT,

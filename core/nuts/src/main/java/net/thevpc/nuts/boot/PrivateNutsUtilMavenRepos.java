@@ -29,7 +29,6 @@ package net.thevpc.nuts.boot;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.spi.NutsBootId;
 import net.thevpc.nuts.spi.NutsBootVersion;
-import net.thevpc.nuts.NutsBootOptions;
 import net.thevpc.nuts.spi.NutsRepositoryURL;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -54,13 +53,13 @@ import java.util.zip.ZipFile;
 /**
  * @app.category Internal
  */
-public final class PrivateNutsUtilMaven {
+public final class PrivateNutsUtilMavenRepos {
     public static final Pattern JAR_POM_PATH = Pattern.compile("META-INF/maven/(?<g>[a-zA-Z0-9_.]+)/(?<a>[a-zA-Z0-9_]+)/pom.xml");
     public static final Pattern JAR_NUTS_JSON_POM_PATH = Pattern.compile("META-INF/nuts/(?<g>[a-zA-Z0-9_.]+)/(?<a>[a-zA-Z0-9_]+)/nuts.json");
     public static final Pattern NUTS_OS_ARCH_DEPS_PATTERN = Pattern.compile("^nuts([.](?<os>[a-zA-Z0-9-_]+)-os)?([.](?<arch>[a-zA-Z0-9-_]+)-arch)?-dependencies$");
     public static final Pattern PATTERN_TARGET_CLASSES = Pattern.compile("(?<src>.*)[/\\\\]+target[/\\\\]+classes[/\\\\]*");
 
-    public PrivateNutsUtilMaven() {
+    public PrivateNutsUtilMavenRepos() {
     }
 
     /**
@@ -221,8 +220,8 @@ public final class PrivateNutsUtilMaven {
         String urlPath = PrivateNutsUtils.idToPath(rid) + "/" + rid.getArtifactId() + "-" + rid.getVersion() + ".pom";
         PrivateNutsUtils.Deps depsAndRepos = null;
         for (String baseUrl : repos) {
-            if(baseUrl.startsWith("htmlfs:")){
-                baseUrl=baseUrl.substring("htmlfs:".length());
+            if (baseUrl.startsWith("htmlfs:")) {
+                baseUrl = baseUrl.substring("htmlfs:".length());
             }
             depsAndRepos = loadDependenciesAndRepositoriesFromPomUrl(baseUrl + "/" + urlPath, bLog);
             if (!depsAndRepos.deps.isEmpty()) {
@@ -471,6 +470,96 @@ public final class PrivateNutsUtilMaven {
         return all;
     }
 
+    static VersionAndPath resolveLatestMavenId(NutsBootId zId, String path, Predicate<NutsBootVersion> filter,
+                                               PrivateNutsBootLog bLog, String repoUrl2, boolean stopFirst) {
+        NutsRepositoryURL nru = NutsRepositoryURL.of(repoUrl2);
+        NutsDescriptorStyle descType=NutsDescriptorStyle.MAVEN;
+        if(NutsConstants.RepoTypes.NUTS.equalsIgnoreCase(nru.getType())){
+            descType=NutsDescriptorStyle.NUTS;
+        }
+        String repoUrl = nru.getLocation();
+        boolean found = false;
+        NutsBootVersion bestVersion = null;
+        String bestPath = null;
+        if (!repoUrl.contains("://")) {
+            File mavenNutsCoreFolder = new File(repoUrl, path.replace("/", File.separator));
+            FilenameFilter filenameFilter =
+                    descType == NutsDescriptorStyle.NUTS ? (dir, name) -> name.endsWith(".nuts")
+                            :(dir, name) -> name.endsWith(".pom");
+            if (mavenNutsCoreFolder.isDirectory()) {
+                File[] children = mavenNutsCoreFolder.listFiles();
+                if (children != null) {
+                    for (File file : children) {
+                        if (file.isDirectory()) {
+                            String[] goodChildren = file.list(filenameFilter);
+                            if (goodChildren != null && goodChildren.length > 0) {
+                                NutsBootVersion p = NutsBootVersion.parse(file.getName());//folder name is version name
+                                if (filter == null || filter.test(p)) {
+                                    found = true;
+                                    if (bestVersion == null || bestVersion.compareTo(p) < 0) {
+                                        //we will ignore artifact classifier to simplify search
+                                        Path jarPath = file.toPath().resolve(
+                                                getFileName(new NutsBootId(zId.getGroupId(), zId.getArtifactId(), p), "jar")
+                                        );
+                                        if (Files.isRegularFile(jarPath)) {
+                                            bestVersion = p;
+                                            bestPath = "local location : " + jarPath;
+                                            if (stopFirst) {
+                                                break;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            return new VersionAndPath(bestVersion, bestPath);
+        } else {
+            boolean htmlfs = repoUrl.startsWith("htmlfs:");
+            if (htmlfs) {
+                repoUrl = repoUrl.substring("htmlfs:".length());
+            }
+            if (!repoUrl.endsWith("/")) {
+                repoUrl = repoUrl + "/";
+            }
+            String basePath = repoUrl + path;
+            if (!basePath.endsWith("/")) {
+                basePath = basePath + "/";
+            }
+            if (htmlfs) {
+                for (NutsBootVersion p : detectVersionsFromHtmlfsTomcatDirectoryListing(basePath, bLog)) {
+                    if (filter == null || filter.test(p)) {
+                        found = true;
+                        if (bestVersion == null || bestVersion.compareTo(p) < 0) {
+                            bestVersion = p;
+                            bestPath = "remote file " + basePath;
+                            if (stopFirst) {
+                                break;
+                            }
+                        }
+                    }
+                }
+            } else {
+                String mavenMetadata = basePath + "maven-metadata.xml";
+                for (NutsBootVersion p : detectVersionsFromMetaData(mavenMetadata, bLog)) {
+                    if (filter == null || filter.test(p)) {
+                        found = true;
+                        if (bestVersion == null || bestVersion.compareTo(p) < 0) {
+                            bestVersion = p;
+                            bestPath = "remote file " + mavenMetadata;
+                            if (stopFirst) {
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+            return new VersionAndPath(bestVersion, bestPath);
+        }
+    }
+
     /**
      * find latest maven artifact
      *
@@ -496,81 +585,22 @@ public final class PrivateNutsUtilMaven {
         String bestPath = null;
         boolean stopOnFirstValidRepo = false;
         for (String repoUrl2 : bootRepositories) {
-            NutsRepositoryURL nru = NutsRepositoryURL.of(repoUrl2);
-            String repoUrl = nru.getLocation();
-            boolean found = false;
-            if (!repoUrl.contains("://")) {
-                File mavenNutsCoreFolder = new File(repoUrl, path.replace("/", File.separator));
-                if (mavenNutsCoreFolder.isDirectory()) {
-                    File[] children = mavenNutsCoreFolder.listFiles();
-                    if (children != null) {
-                        for (File file : children) {
-                            if (file.isDirectory()) {
-                                String[] goodChildren = file.list((dir, name) -> name.endsWith(".pom"));
-                                if (goodChildren != null && goodChildren.length > 0) {
-                                    NutsBootVersion p = NutsBootVersion.parse(file.getName());//folder name is version name
-                                    if (filter == null || filter.test(p)) {
-                                        found = true;
-                                        if (bestVersion == null || bestVersion.compareTo(p) < 0) {
-                                            //we will ignore artifact classifier to simplify search
-                                            Path jarPath = file.toPath().resolve(
-                                                    getFileName(new NutsBootId(zId.getGroupId(), zId.getArtifactId(), p), "jar")
-                                            );
-                                            if (Files.isRegularFile(jarPath)) {
-                                                bestVersion = p;
-                                                bestPath = "local location : " + jarPath;
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
+            VersionAndPath r = resolveLatestMavenId(zId, path, filter, bLog, repoUrl2, false);
+            if (r.version != null) {
+                if (bestVersion == null || bestVersion.compareTo(r.version) < 0) {
+                    bestVersion = r.version;
+                    bestPath = r.path;
+                    if (stopOnFirstValidRepo) {
+                        break;
                     }
                 }
-            } else {
-                boolean htmlfs = repoUrl.startsWith("htmlfs:");
-                if (htmlfs) {
-                    repoUrl = repoUrl.substring("htmlfs:".length());
-                }
-                if (!repoUrl.endsWith("/")) {
-                    repoUrl = repoUrl + "/";
-                }
-                String basePath = repoUrl + path;
-                if (!basePath.endsWith("/")) {
-                    basePath = basePath + "/";
-                }
-                if(htmlfs){
-                    for (NutsBootVersion p : detectVersionsFromHtmlfsTomcatDirectoryListing(basePath, bLog)) {
-                        if (filter == null || filter.test(p)) {
-                            found = true;
-                            if (bestVersion == null || bestVersion.compareTo(p) < 0) {
-                                bestVersion = p;
-                                bestPath = "remote file " + basePath;
-                            }
-                        }
-                    }
-                }else {
-                    String mavenMetadata = basePath + "maven-metadata.xml";
-                    for (NutsBootVersion p : detectVersionsFromMetaData(mavenMetadata, bLog)) {
-                        if (filter == null || filter.test(p)) {
-                            found = true;
-                            if (bestVersion == null || bestVersion.compareTo(p) < 0) {
-                                bestVersion = p;
-                                bestPath = "remote file " + mavenMetadata;
-                            }
-                        }
-                    }
-                }
-            }
-            if (stopOnFirstValidRepo && found) {
-                break;
             }
         }
         if (bestVersion == null) {
             return null;
         }
         NutsBootId iid = new NutsBootId(zId.getGroupId(), zId.getArtifactId(), bestVersion);
-        bLog.log(Level.FINEST, NutsLogVerb.SUCCESS, NutsMessage.jstyle("resolve {0} from {0}", iid, bestPath));
+        bLog.log(Level.FINEST, NutsLogVerb.SUCCESS, NutsMessage.jstyle("resolve {0} from {1}", iid, bestPath));
         return iid;
     }
 
@@ -640,8 +670,8 @@ public final class PrivateNutsUtilMaven {
                                          PrivateNutsBootLog bLog) {
         boolean cacheLocalFiles = true;//Boolean.getBoolean("nuts.cache.cache-local-files");
         //we know exactly the file path, so we will trim "htmlfs:" protocol
-        if(repository.startsWith("htmlfs:")){
-            repository=repository.substring("htmlfs:".length());
+        if (repository.startsWith("htmlfs:")) {
+            repository = repository.substring("htmlfs:".length());
         }
         repository = PrivateNutsUtilIO.expandPath(repository, bOptions.getWorkspace(), pathExpansionConverter);
         File repositoryFolder = null;
@@ -842,12 +872,21 @@ public final class PrivateNutsUtilMaven {
         return map;
     }
 
-
     private enum SimpleTomcatDirectoryListParserState {
         EXPECT_DOCTYPE,
         EXPECT_BODY,
         EXPECT_PRE,
         EXPECT_HREF,
+    }
+
+    private static class VersionAndPath {
+        NutsBootVersion version;
+        String path;
+
+        public VersionAndPath(NutsBootVersion version, String path) {
+            this.version = version;
+            this.path = path;
+        }
     }
 
     private static class HtmlfsTomcatDirectoryListParser {

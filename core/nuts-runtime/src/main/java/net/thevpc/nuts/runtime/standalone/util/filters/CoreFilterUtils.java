@@ -29,7 +29,6 @@ import net.thevpc.nuts.*;
 
 import java.lang.reflect.Array;
 import java.util.*;
-import java.util.function.Predicate;
 
 /**
  * @author thevpc
@@ -360,33 +359,33 @@ public class CoreFilterUtils {
         NutsWorkspaceEnvManager env = session.env();
         if(!matchesArch(
                 env.getArch().toString(),
-                envCond, session
+                envCond.getArch(), session
         )){
             return false;
         }
         if(!matchesOs(
                 env.getOs().toString(),
-                envCond, session
+                envCond.getOs(), session
         )){
             return false;
         }
         if(!matchesOsDist(
                 env.getOsDist().toString(),
-                envCond, session
+                envCond.getOsDist(), session
         )){
             return false;
         }
         if(currentVMOnLy){
             if(!matchesPlatform(
                     env.getPlatform().toString(),
-                    envCond, session
+                    envCond.getPlatform(), session
             )){
                 return false;
             }
         }else{
             if(!matchesPlatform(
                     env.platforms().findPlatforms(),
-                    envCond, session
+                    envCond.getPlatform(), session
             )){
                 return false;
             }
@@ -394,20 +393,19 @@ public class CoreFilterUtils {
 
         if(!matchesDesktopEnvironment(
                 env.getDesktopEnvironments(),
-                envCond, session
+                envCond.getDesktopEnvironment(), session
         )){
             return false;
         }
         return true;
     }
 
-    public static boolean matchesArch(String current, NutsEnvCondition envCond, NutsSession session) {
+    public static boolean matchesArch(String current, String[] allConds, NutsSession session) {
         if (NutsBlankable.isBlank(current)) {
             return true;
         }
         NutsIdParser parser = NutsIdParser.of(session);
         NutsId currentId = parser.parse(current);
-        String[] allConds = envCond.getArch();
         if (allConds != null && allConds.length > 0) {
             for (String cond : allConds) {
                 if (NutsBlankable.isBlank(cond)) {
@@ -430,13 +428,12 @@ public class CoreFilterUtils {
         }
     }
 
-    public static boolean matchesOs(String os, NutsEnvCondition envCond, NutsSession session) {
+    public static boolean matchesOs(String os, String[] allConds, NutsSession session) {
         if (NutsBlankable.isBlank(os)) {
             return true;
         }
         NutsIdParser parser = NutsIdParser.of(session);
         NutsId currentId = parser.parse(os);
-        String[] allConds = envCond.getOs();
         if (allConds != null && allConds.length > 0) {
             for (String cond : allConds) {
                 if (NutsBlankable.isBlank(cond)) {
@@ -455,13 +452,12 @@ public class CoreFilterUtils {
         }
     }
 
-    public static boolean matchesOsDist(String current, NutsEnvCondition envCond, NutsSession session) {
+    public static boolean matchesOsDist(String current, String[] allConds, NutsSession session) {
         if (NutsBlankable.isBlank(current)) {
             return true;
         }
         NutsIdParser parser = NutsIdParser.of(session);
         NutsId currentId = parser.parse(current);
-        String[] allConds = envCond.getOsDist();
         if (allConds != null && allConds.length > 0) {
             for (String cond : allConds) {
                 if (NutsBlankable.isBlank(cond)) {
@@ -477,11 +473,11 @@ public class CoreFilterUtils {
 
     }
 
-    public static boolean matchesPlatform(NutsPlatformLocation[] platforms, NutsEnvCondition envCond, NutsSession session) {
+    public static boolean matchesPlatform(NutsPlatformLocation[] platforms, String[] allCond, NutsSession session) {
         for (NutsPlatformLocation platform : platforms) {
             NutsId id = platform.getId();
             if(id!=null){
-                if(matchesPlatform(id.toString(),envCond, session)){
+                if(matchesPlatform(id.toString(),allCond, session)){
                     return true;
                 }
             }
@@ -489,20 +485,19 @@ public class CoreFilterUtils {
         return false;
     }
 
-    public static boolean matchesPlatform(String current, NutsEnvCondition envCond, NutsSession session) {
+    public static boolean matchesPlatform(String current, String[] allConds, NutsSession session) {
         if (NutsBlankable.isBlank(current)) {
             return true;
         }
         NutsIdParser parser = NutsIdParser.of(session);
         NutsId currentId = parser.parse(current);
-        String[] allConds = envCond.getPlatform();
         if (allConds != null && allConds.length > 0) {
             for (String cond : allConds) {
                 if (NutsBlankable.isBlank(cond)) {
                     return true;
                 }
                 NutsId idCond = parser.setLenient(false).parse(cond);
-                NutsPlatformType w = NutsPlatformType.parseLenient(idCond.getArtifactId(), null, null);
+                NutsPlatformFamily w = NutsPlatformFamily.parseLenient(idCond.getArtifactId(), null, null);
                 if(w!=null){
                     idCond=idCond.builder().setArtifactId(w.id()).build();
                 }
@@ -514,22 +509,21 @@ public class CoreFilterUtils {
         }
     }
 
-    public static boolean matchesDesktopEnvironment(NutsId[] platforms, NutsEnvCondition envCond, NutsSession session) {
+    public static boolean matchesDesktopEnvironment(NutsId[] platforms, String[] allConds, NutsSession session) {
         for (NutsId platform : platforms) {
-            if(matchesDesktopEnvironment(platform.toString(),envCond,session)){
+            if(matchesDesktopEnvironment(platform.toString(),allConds,session)){
                 return true;
             }
         }
         return false;
     }
 
-    public static boolean matchesDesktopEnvironment(String current, NutsEnvCondition envCond, NutsSession session) {
+    public static boolean matchesDesktopEnvironment(String current, String[] allConds, NutsSession session) {
         if (NutsBlankable.isBlank(current)) {
             return true;
         }
         NutsIdParser parser = NutsIdParser.of(session);
         NutsId currentId = parser.parse(current);
-        String[] allConds = envCond.getDesktopEnvironment();
         if (allConds != null && allConds.length > 0) {
             for (String cond : allConds) {
                 if (NutsBlankable.isBlank(cond)) {
@@ -550,19 +544,19 @@ public class CoreFilterUtils {
 
     public static boolean matchesEnv(String arch, String os, String dist, String platform, String de, NutsEnvCondition
             desc, NutsSession session) {
-        if (!matchesArch(arch, desc, session)) {
+        if (!matchesArch(arch, desc.getArch(), session)) {
             return false;
         }
-        if (!matchesOs(os, desc, session)) {
+        if (!matchesOs(os, desc.getOs(), session)) {
             return false;
         }
-        if (!matchesOsDist(dist, desc, session)) {
+        if (!matchesOsDist(dist, desc.getOsDist(), session)) {
             return false;
         }
-        if (!matchesPlatform(platform, desc, session)) {
+        if (!matchesPlatform(platform, desc.getPlatform(), session)) {
             return false;
         }
-        if (!matchesDesktopEnvironment(de, desc, session)) {
+        if (!matchesDesktopEnvironment(de, desc.getDesktopEnvironment(), session)) {
             return false;
         }
         return true;

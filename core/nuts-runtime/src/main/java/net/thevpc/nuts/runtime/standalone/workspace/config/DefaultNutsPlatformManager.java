@@ -51,19 +51,19 @@ public class DefaultNutsPlatformManager implements NutsPlatformManager {
     }
 
     @Override
-    public NutsPlatformLocation findPlatformByName(NutsPlatformType platformType, String locationName) {
+    public NutsPlatformLocation findPlatformByName(NutsPlatformFamily platformType, String locationName) {
         checkSession();
         return model.findPlatformByName(platformType, locationName, session);
     }
 
     @Override
-    public NutsPlatformLocation findPlatformByPath(NutsPlatformType platformType, String path) {
+    public NutsPlatformLocation findPlatformByPath(NutsPlatformFamily platformType, String path) {
         checkSession();
         return model.findPlatformByPath(platformType, path, session);
     }
 
     @Override
-    public NutsPlatformLocation findPlatformByVersion(NutsPlatformType platformType, String version) {
+    public NutsPlatformLocation findPlatformByVersion(NutsPlatformFamily platformType, String version) {
         checkSession();
         return model.findPlatformByVersion(platformType, version, session);
     }
@@ -75,37 +75,37 @@ public class DefaultNutsPlatformManager implements NutsPlatformManager {
     }
 
     @Override
-    public NutsPlatformLocation findPlatformByVersion(NutsPlatformType platformType, NutsVersionFilter requestedVersion) {
+    public NutsPlatformLocation findPlatformByVersion(NutsPlatformFamily platformType, NutsVersionFilter requestedVersion) {
         checkSession();
         return model.findPlatformByVersion(platformType, requestedVersion, session);
     }
 
     @Override
-    public NutsPlatformLocation[] searchSystemPlatforms(NutsPlatformType platformType) {
+    public NutsPlatformLocation[] searchSystemPlatforms(NutsPlatformFamily platformType) {
         checkSession();
         return model.searchSystemPlatforms(platformType, session);
     }
 
     @Override
-    public NutsPlatformLocation[] searchSystemPlatforms(NutsPlatformType platformType, String path) {
+    public NutsPlatformLocation[] searchSystemPlatforms(NutsPlatformFamily platformType, String path) {
         checkSession();
         return model.searchSystemPlatforms(platformType, path, session);
     }
 
     @Override
-    public NutsPlatformLocation resolvePlatform(NutsPlatformType platformType, String path, String preferredName) {
+    public NutsPlatformLocation resolvePlatform(NutsPlatformFamily platformType, String path, String preferredName) {
         checkSession();
         return model.resolvePlatform(platformType, path, preferredName, session);
     }
 
     @Override
-    public NutsPlatformLocation findPlatform(NutsPlatformType type, Predicate<NutsPlatformLocation> filter) {
+    public NutsPlatformLocation findPlatform(NutsPlatformFamily type, Predicate<NutsPlatformLocation> filter) {
         checkSession();
         return model.findOnePlatform(type, filter, session);
     }
 
     @Override
-    public NutsPlatformLocation[] findPlatforms(NutsPlatformType type, Predicate<NutsPlatformLocation> filter) {
+    public NutsPlatformLocation[] findPlatforms(NutsPlatformFamily type, Predicate<NutsPlatformLocation> filter) {
         checkSession();
         return model.findPlatforms(type, filter, session);
     }
@@ -116,7 +116,7 @@ public class DefaultNutsPlatformManager implements NutsPlatformManager {
     }
 
     @Override
-    public NutsPlatformLocation[] findPlatforms(NutsPlatformType type) {
+    public NutsPlatformLocation[] findPlatforms(NutsPlatformFamily type) {
         checkSession();
         return model.findPlatforms(type, null, session);
     }

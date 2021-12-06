@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class JettyWebServerHtmlfsParser implements HtmlfsParser {
+public class JettyWebServerHtmlfsParser extends AbstractHtmlfsParser {
     @Override
     public NutsSupported<List<String>> parseHtmlTomcat(byte[] bytes, NutsSession session) {
         List<String> found = new ArrayList<>();
@@ -35,12 +35,6 @@ public class JettyWebServerHtmlfsParser implements HtmlfsParser {
         } catch (Exception e) {
             //ignore
         }
-        return toSupported(found);
-    }
-    private NutsSupported<List<String>> toSupported(List<String> li){
-        if(li==null || li.isEmpty()){
-            return NutsSupported.invalid();
-        }
-        return NutsSupported.of(1,()->li);
+        return toSupported(1,found);
     }
 }

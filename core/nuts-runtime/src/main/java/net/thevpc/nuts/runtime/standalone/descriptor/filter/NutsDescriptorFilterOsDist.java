@@ -48,7 +48,7 @@ public class NutsDescriptorFilterOsDist extends AbstractDescriptorFilter  {
 
     @Override
     public boolean acceptDescriptor(NutsDescriptor descriptor, NutsSession session) {
-        return CoreFilterUtils.matchesOsDist(osDist, descriptor.getCondition(), session);
+        return CoreFilterUtils.matchesOsDist(osDist, descriptor.getCondition().getOsDist(), session);
     }
 
     /**

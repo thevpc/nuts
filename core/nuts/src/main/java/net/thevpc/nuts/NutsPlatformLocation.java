@@ -38,7 +38,7 @@ public class NutsPlatformLocation extends NutsConfigItem {
 
     public static final long serialVersionUID = 3;
     private final NutsId id;
-    private final NutsPlatformType platformType;
+    private final NutsPlatformFamily platformType;
     private final String name;
     private final String packaging;
     private final String product;
@@ -59,8 +59,8 @@ public class NutsPlatformLocation extends NutsConfigItem {
      */
     public NutsPlatformLocation(NutsId id, String product, String name, String path, String version, String packaging, int priority) {
         this.id = id;
-        this.platformType = (id == null || NutsBlankable.isBlank(id.getArtifactId())) ? NutsPlatformType.JAVA :
-                NutsPlatformType.parseLenient(id.getArtifactId(), NutsPlatformType.UNKNOWN, NutsPlatformType.UNKNOWN);
+        this.platformType = (id == null || NutsBlankable.isBlank(id.getArtifactId())) ? NutsPlatformFamily.JAVA :
+                NutsPlatformFamily.parseLenient(id.getArtifactId(), NutsPlatformFamily.UNKNOWN, NutsPlatformFamily.UNKNOWN);
         this.product = product;
         this.name = name;
         this.path = path;
@@ -81,7 +81,7 @@ public class NutsPlatformLocation extends NutsConfigItem {
         return id;
     }
 
-    public NutsPlatformType getPlatformType() {
+    public NutsPlatformFamily getPlatformType() {
         return platformType;
     }
 

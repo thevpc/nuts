@@ -144,12 +144,14 @@ public class DefaultNutsDependency implements NutsDependency {
             }
             m.put(NutsConstants.IdProperties.EXCLUSIONS, String.join(",", ex));
         }
-        return NutsIdBuilder.of(session)
+        NutsId ii = NutsIdBuilder.of(session)
                 .setGroupId(getGroupId())
                 .setArtifactId(getArtifactId())
                 .setVersion(getVersion())
                 .setCondition(getCondition())
                 .setProperties(m).build();
+        String ss=ii.toString();
+        return ii;
     }
 
     @Override

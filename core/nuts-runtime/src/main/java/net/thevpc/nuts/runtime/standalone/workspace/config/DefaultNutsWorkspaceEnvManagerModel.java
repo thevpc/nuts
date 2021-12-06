@@ -45,7 +45,7 @@ import java.util.stream.Collectors;
  */
 public class DefaultNutsWorkspaceEnvManagerModel {
 
-    private final Map<NutsPlatformType, List<NutsPlatformLocation>> configPlatforms = new LinkedHashMap<>();
+    private final Map<NutsPlatformFamily, List<NutsPlatformLocation>> configPlatforms = new LinkedHashMap<>();
     //    private Map<String, String> options = new LinkedHashMap<>();
     protected ObservableMap<String, Object> userProperties;
     private final NutsWorkspace workspace;
@@ -363,7 +363,7 @@ public class DefaultNutsWorkspaceEnvManagerModel {
         return workspace;
     }
 
-    public Map<NutsPlatformType, List<NutsPlatformLocation>> getConfigPlatforms() {
+    public Map<NutsPlatformFamily, List<NutsPlatformLocation>> getConfigPlatforms() {
         return configPlatforms;
     }
 }

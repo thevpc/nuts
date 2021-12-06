@@ -34,7 +34,6 @@ import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.StringTokenizerUtils;
-import net.thevpc.nuts.runtime.standalone.util.CoreNutsDependencyUtils;
 
 /**
  * @author thevpc
@@ -366,8 +365,7 @@ public class DefaultNutsWorkspaceExtensionModel {
                             .addId(extension).setTargetApiVersion(ws.getApiVersion())
                             .setContent(true)
                             .setDependencies(true)
-                            .setDependencyFilter(CoreNutsDependencyUtils.createJavaRunDependencyFilter(session)
-                            )
+                            .setDependencyFilter(NutsDependencyFilters.of(session).byRunnable())
                             .setLatest(true)
                             .getResultDefinitions().required();
                     if (def == null || def.getContent() == null) {
@@ -401,7 +399,7 @@ public class DefaultNutsWorkspaceExtensionModel {
                 .setSession(session)
                 .setContent(true)
                 .setDependencies(true)
-                .setDependencyFilter(CoreNutsDependencyUtils.createJavaRunDependencyFilter(session))
+                .setDependencyFilter(NutsDependencyFilters.of(session).byRunnable())
                 .setLatest(true)
                 .getResultDefinitions().toList()) {
             loadedExtensionURLs.add(def.getContent().getURL());
@@ -450,7 +448,7 @@ public class DefaultNutsWorkspaceExtensionModel {
                 .addId(id)
                 .setOptional(false)
                 .addScope(NutsDependencyScopePattern.RUN)
-                .setDependencyFilter(CoreNutsDependencyUtils.createJavaRunDependencyFilter(session))
+                .setDependencyFilter(NutsDependencyFilters.of(session).byRunnable())
                 //
                 .setDependencies(true)
                 .setLatest(true)

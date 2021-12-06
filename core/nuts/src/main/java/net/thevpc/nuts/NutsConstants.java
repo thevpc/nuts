@@ -456,25 +456,6 @@ public final class NutsConstants {
         public static final String WORKSPACE_CONFIG_FILE_NAME = "nuts-workspace.json";
 
         /**
-         * workspace boot config file name for a particular nuts-api version
-         */
-        public static final String WORKSPACE_API_CONFIG_FILE_NAME = "nuts-api-config.json";
-
-        /**
-         * workspace boot config file name for a particular nuts-runtime version
-         */
-        public static final String WORKSPACE_RUNTIME_CONFIG_FILE_NAME = "nuts-runtime-config.json";
-
-        /**
-         * workspace boot config file name for a particular nuts-extension version
-         */
-        public static final String WORKSPACE_EXTENSION_CACHE_FILE_NAME = "nuts-extension-cache.json";
-        /**
-         * workspace boot config file name for a particular nuts-extension version
-         */
-        public static final String WORKSPACE_RUNTIME_CACHE_FILE_NAME = "nuts-runtime-cache.json";
-
-        /**
          * repository config file name
          */
         public static final String REPOSITORY_CONFIG_FILE_NAME = "nuts-repository.json";

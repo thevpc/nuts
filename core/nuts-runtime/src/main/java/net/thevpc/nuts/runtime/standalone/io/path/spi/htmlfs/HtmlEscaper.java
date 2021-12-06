@@ -18,6 +18,7 @@ public class HtmlEscaper {
                 }
             }
         }
+        m.appendTail(sb);
         return sb.toString();
     }
 }

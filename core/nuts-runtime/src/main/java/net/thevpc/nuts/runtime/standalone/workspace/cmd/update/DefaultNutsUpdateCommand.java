@@ -580,7 +580,7 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
         NutsId finalApiId = apiUpdateAvailable ? apiUpdate.getAvailable().getId() : ws.getApiId();
         NutsId finalRuntimeId = runtimeUpdateApplicable ? runtimeUpdate.getAvailable().getId() : ws.getRuntimeId();
         if (apiUpdateApplicable || runtimeUpdateApplicable) {
-            wcfg.getModel().prepareBootApi(finalApiId, finalRuntimeId, true, validWorkspaceSession);
+            //wcfg.getModel().prepareBootApi(finalApiId, finalRuntimeId, true, validWorkspaceSession);
         }
         if (apiUpdateApplicable) {
             applyRegularUpdate(((DefaultNutsUpdateResult) apiUpdate));
@@ -588,14 +588,15 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
             traceSingleUpdate(apiUpdate);
         }
         if (runtimeUpdateApplicable) {
-            wcfg.getModel().prepareBootRuntime(finalRuntimeId, true, validWorkspaceSession);
+//            wcfg.getModel().prepareBootRuntime(finalRuntimeId, true, validWorkspaceSession);
+
             applyRegularUpdate(((DefaultNutsUpdateResult) runtimeUpdate));
             ((DefaultNutsUpdateResult) runtimeUpdate).setUpdateApplied(true);
             traceSingleUpdate(runtimeUpdate);
         }
         for (NutsUpdateResult extension : result.getExtensions()) {
             NutsId finalExtensionId = extension.getAvailable() == null ? extension.getInstalled().getId() : extension.getAvailable().getId();
-            wcfg.getModel().prepareBootExtension(finalExtensionId, true, validWorkspaceSession);
+//            wcfg.getModel().prepareBootExtension(finalExtensionId, true, validWorkspaceSession);
         }
         NutsExtensionListHelper h = new NutsExtensionListHelper(wcfg.getModel().getStoredConfigBoot().getExtensions())
                 .save();

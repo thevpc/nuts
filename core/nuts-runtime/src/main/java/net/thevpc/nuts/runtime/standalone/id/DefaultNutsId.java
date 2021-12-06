@@ -26,10 +26,13 @@
 package net.thevpc.nuts.runtime.standalone.id;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.standalone.descriptor.DefaultNutsEnvCondition;
 import net.thevpc.nuts.runtime.standalone.id.filter.NutsIdIdFilter;
+import net.thevpc.nuts.runtime.standalone.util.CoreNutsUtils;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.QueryStringParser;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 
 /**
@@ -42,9 +45,10 @@ public class DefaultNutsId implements NutsId {
     private final String classifier;
     private final NutsVersion version;
     private final String properties;
+    private final NutsEnvCondition condition;
     private transient NutsSession session;
 
-    public DefaultNutsId(String groupId, String artifactId, NutsVersion version, String classifier,Map<String, String> properties,NutsSession session) {
+    public DefaultNutsId(String groupId, String artifactId, NutsVersion version, String classifier,Map<String, String> properties,NutsEnvCondition condition,NutsSession session) {
         this.session = session;
         this.groupId = NutsUtilStrings.trimToNull(groupId);
         this.artifactId = NutsUtilStrings.trimToNull(artifactId);
@@ -60,11 +64,15 @@ public class DefaultNutsId implements NutsId {
             }
         }
         this.classifier = c0;
+        if(condition==null){
+            throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("condition cannot be null"));
+        }
+        this.condition = condition;
         this.properties = QueryStringParser.formatSortedPropertiesQuery(properties,session);
     }
 
-    public DefaultNutsId(String groupId, String artifactId, NutsVersion version, String classifier,String properties, NutsSession session) {
-        this(groupId, artifactId, version, classifier,new QueryStringParser(true,null).setProperties(properties,session).getProperties(), session);
+    public DefaultNutsId(String groupId, String artifactId, NutsVersion version, String classifier,String properties, NutsEnvCondition condition,NutsSession session) {
+        this(groupId, artifactId, version, classifier,new QueryStringParser(true,null).setProperties(properties,session).getProperties(), condition,session);
     }
 
 //    public DefaultNutsId(String groupId, String artifactId, String version,NutsSession session) {
@@ -257,35 +265,7 @@ public class DefaultNutsId implements NutsId {
 
     @Override
     public NutsEnvCondition getCondition() {
-        NutsEnvConditionBuilder c = NutsEnvConditionBuilder.of(session);
-        Map<String, String> properties = getProperties();
-        c.setOs(
-                Arrays.stream(
-                        NutsUtilStrings.trim(properties.get(NutsConstants.IdProperties.OS)).split(",")
-                ).map(String::trim).filter(x -> x.length() > 0).distinct().toArray(String[]::new)
-        );
-        c.setOsDist(
-                Arrays.stream(
-                        NutsUtilStrings.trim(properties.get(NutsConstants.IdProperties.OS_DIST)).split(",")
-                ).map(String::trim).filter(x -> x.length() > 0).distinct().toArray(String[]::new)
-        );
-        c.setPlatform(
-                Arrays.stream(
-                        NutsUtilStrings.trim(properties.get(NutsConstants.IdProperties.PLATFORM)).split(",")
-                ).map(String::trim).filter(x -> x.length() > 0).distinct().toArray(String[]::new)
-        );
-        c.setArch(
-                Arrays.stream(
-                        NutsUtilStrings.trim(properties.get(NutsConstants.IdProperties.ARCH)).split(",")
-                ).map(String::trim).filter(x -> x.length() > 0).distinct().toArray(String[]::new)
-        );
-        c.setDesktopEnvironment(
-                Arrays.stream(
-                        NutsUtilStrings.trim(properties.get(NutsConstants.IdProperties.DESKTOP_ENVIRONMENT)).split(",")
-                ).map(String::trim).filter(x -> x.length() > 0).distinct().toArray(String[]::new)
-        );
-
-        return c.build();
+        return condition;
     }
 
     @Override
@@ -311,12 +291,14 @@ public class DefaultNutsId implements NutsId {
 
     @Override
     public NutsId getShortId() {
-        return new DefaultNutsId( groupId, artifactId, (NutsVersion) null,null, "",session);
+        return new DefaultNutsId( groupId, artifactId, (NutsVersion) null,null, "",
+                NutsEnvConditionBuilder.of(session).build(),
+                session);
     }
 
     @Override
     public NutsId getLongId() {
-        return new DefaultNutsId( groupId, artifactId, version, classifier,"", session);
+        return new DefaultNutsId( groupId, artifactId, version, classifier,"", NutsEnvConditionBuilder.of(session).build(),session);
     }
 
     @Override
@@ -374,19 +356,18 @@ public class DefaultNutsId implements NutsId {
             sb.append("#");
             sb.append(v);
         }
+        LinkedHashMap<String,String> m=new LinkedHashMap<>();
         if(!NutsBlankable.isBlank(classifier)){
-            sb.append("?");
-            sb.append("classifier=");
-            sb.append(classifier);
-            if (!NutsBlankable.isBlank(properties)) {
-                sb.append("&");
-                sb.append(properties);
+            m.put(NutsConstants.IdProperties.CLASSIFIER,classifier);
+        }
+        m.putAll(CoreNutsUtils.toMap(condition));
+        for (Map.Entry<String, String> e : QueryStringParser.parseMap(properties,session).entrySet()) {
+            if(!m.containsKey(e.getKey())){
+                m.put(e.getKey(),e.getValue());
             }
-        }else{
-            if (!NutsBlankable.isBlank(properties)) {
-                sb.append("?");
-                sb.append(properties);
-            }
+        }
+        if(!m.isEmpty()){
+            sb.append("?").append(QueryStringParser.formatPropertiesQuery(m));
         }
         return sb.toString();
     }

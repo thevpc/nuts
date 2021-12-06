@@ -25,12 +25,12 @@ package net.thevpc.nuts.boot;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.spi.NutsBootId;
-import net.thevpc.nuts.NutsBootOptions;
 
 import java.io.*;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.nio.file.attribute.FileTime;
 import java.time.Instant;
 import java.util.*;
@@ -50,46 +50,48 @@ final class PrivateNutsUtils {
 
     private static final Pattern DOLLAR_PLACE_HOLDER_PATTERN = Pattern.compile("[$][{](?<name>([a-zA-Z]+))[}]");
 
-    public static String compressString(String s){
-        StringBuilder sb=new StringBuilder(s.length());
+    public static String compressString(String s) {
+        StringBuilder sb = new StringBuilder(s.length());
         for (char c : s.toCharArray()) {
-            switch (c){
-                case '\0':{
+            switch (c) {
+                case '\0': {
                     sb.append("\\0");
                     break;
                 }
-                case '\n':{
+                case '\n': {
                     sb.append("\\n");
                     break;
                 }
-                case '\r':{
+                case '\r': {
                     sb.append("\\r");
                     break;
                 }
-                case '\t':{
+                case '\t': {
                     sb.append("\\t");
                     break;
                 }
-                case '\f':{
+                case '\f': {
                     sb.append("\\f");
                     break;
                 }
-                default:{
+                default: {
                     sb.append(c);
                 }
             }
         }
         return sb.toString();
     }
-    public static String leftAlign(String s,int size){
+
+    public static String leftAlign(String s, int size) {
         int len = s.length();
-        StringBuilder sb=new StringBuilder(Math.max(len,size));
+        StringBuilder sb = new StringBuilder(Math.max(len, size));
         sb.append(s);
         for (int i = len; i < size; i++) {
             sb.append(' ');
         }
         return sb.toString();
     }
+
     public static boolean isValidWorkspaceName(String workspace) {
         if (NutsBlankable.isBlank(workspace)) {
             return true;
@@ -512,6 +514,14 @@ final class PrivateNutsUtils {
             }
         }
         return errorValue;
+    }
+
+    public static Path getBootConfFile(NutsBootId id, NutsBootOptions computedOptions, PrivateNutsBootLog bLog) {
+        String cFileName = id.getArtifactId() + "-" + id.getVersionString() + ".nuts-boot-props";
+        return Paths.get(computedOptions.getStoreLocation(NutsStoreLocation.LIB) + File.separator + NutsConstants.Folders.ID)
+                .resolve(PrivateNutsUtils.idToPath(id)).resolve(
+                        cFileName
+                );
     }
 
     /**

@@ -38,20 +38,20 @@ public interface NutsPlatformManager {
 
     boolean removePlatform(NutsPlatformLocation location);
 
-    NutsPlatformLocation findPlatformByName(NutsPlatformType platformType, String locationName);
+    NutsPlatformLocation findPlatformByName(NutsPlatformFamily platformType, String locationName);
 
-    NutsPlatformLocation findPlatformByPath(NutsPlatformType platformType, String path);
+    NutsPlatformLocation findPlatformByPath(NutsPlatformFamily platformType, String path);
 
-    NutsPlatformLocation findPlatformByVersion(NutsPlatformType platformType, String version);
+    NutsPlatformLocation findPlatformByVersion(NutsPlatformFamily platformType, String version);
 
     NutsPlatformLocation findPlatform(NutsPlatformLocation location);
 
-    NutsPlatformLocation findPlatformByVersion(NutsPlatformType platformType, NutsVersionFilter requestedVersion);
+    NutsPlatformLocation findPlatformByVersion(NutsPlatformFamily platformType, NutsVersionFilter requestedVersion);
 
 
-    NutsPlatformLocation[] searchSystemPlatforms(NutsPlatformType platformType);
+    NutsPlatformLocation[] searchSystemPlatforms(NutsPlatformFamily platformType);
 
-    NutsPlatformLocation[] searchSystemPlatforms(NutsPlatformType platformType, String path);
+    NutsPlatformLocation[] searchSystemPlatforms(NutsPlatformFamily platformType, String path);
 
     /**
      * verify if the path is a valid platform path and return null if not
@@ -61,15 +61,15 @@ public interface NutsPlatformManager {
      * @param preferredName preferredName
      * @return null if not a valid jdk path
      */
-    NutsPlatformLocation resolvePlatform(NutsPlatformType platformType, String path, String preferredName);
+    NutsPlatformLocation resolvePlatform(NutsPlatformFamily platformType, String path, String preferredName);
 
-    NutsPlatformLocation findPlatform(NutsPlatformType type, Predicate<NutsPlatformLocation> filter);
+    NutsPlatformLocation findPlatform(NutsPlatformFamily type, Predicate<NutsPlatformLocation> filter);
 
-    NutsPlatformLocation[] findPlatforms(NutsPlatformType type, Predicate<NutsPlatformLocation> filter);
+    NutsPlatformLocation[] findPlatforms(NutsPlatformFamily type, Predicate<NutsPlatformLocation> filter);
 
     NutsPlatformLocation[] findPlatforms();
 
-    NutsPlatformLocation[] findPlatforms(NutsPlatformType type);
+    NutsPlatformLocation[] findPlatforms(NutsPlatformFamily type);
 
     NutsSession getSession();
 

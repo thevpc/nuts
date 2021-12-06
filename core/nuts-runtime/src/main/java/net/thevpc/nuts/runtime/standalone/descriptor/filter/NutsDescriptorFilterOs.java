@@ -50,7 +50,7 @@ public class NutsDescriptorFilterOs extends AbstractDescriptorFilter {
 
     @Override
     public boolean acceptDescriptor(NutsDescriptor descriptor, NutsSession session) {
-        return CoreFilterUtils.matchesOs(os, descriptor.getCondition(), session);
+        return CoreFilterUtils.matchesOs(os, descriptor.getCondition().getOs(), session);
     }
 
     /**

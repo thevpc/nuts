@@ -49,7 +49,7 @@ public class NutsDescriptorFilterDesktopEnvironment extends AbstractDescriptorFi
 
     @Override
     public boolean acceptDescriptor(NutsDescriptor descriptor, NutsSession session) {
-        return CoreFilterUtils.matchesDesktopEnvironment(desktopEnvironment, descriptor.getCondition(), session);
+        return CoreFilterUtils.matchesDesktopEnvironment(desktopEnvironment, descriptor.getCondition().getDesktopEnvironment(), session);
     }
 
     /**

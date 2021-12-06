@@ -168,7 +168,7 @@ public final class JavaExecutorOptions {
                     //
                     .setOptional(false)
                     .addScope(NutsDependencyScopePattern.RUN)
-                    .setDependencyFilter(CoreNutsDependencyUtils.createJavaRunDependencyFilter(session))
+                    .setDependencyFilter(NutsDependencyFilters.of(session).byRunnable())
                     //
                     .getResultDefinitions().toList()
             );

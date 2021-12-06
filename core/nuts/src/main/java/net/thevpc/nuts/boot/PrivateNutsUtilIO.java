@@ -37,6 +37,7 @@ import java.net.URL;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.Properties;
@@ -55,6 +56,18 @@ public class PrivateNutsUtilIO {
 
     public static InputStream openURLStream(URL url, PrivateNutsBootLog bLog) {
         return PrivateNutsMonitoredURLInputStream.of(url,bLog);
+    }
+
+    public static Properties loadURLProperties(Path path, PrivateNutsBootLog bLog) {
+        Properties props = new Properties();
+        if(Files.isRegularFile(path)) {
+            try (InputStream is = Files.newInputStream(path)) {
+                props.load(is);
+            } catch (IOException ex) {
+                return new Properties();
+            }
+        }
+        return props;
     }
 
     public static Properties loadURLProperties(URL url, File cacheFile, boolean useCache, PrivateNutsBootLog bLog) {

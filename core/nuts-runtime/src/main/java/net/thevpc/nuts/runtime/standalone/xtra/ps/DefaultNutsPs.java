@@ -104,7 +104,7 @@ public class DefaultNutsPs implements NutsPs {
             return v;
         }
         NutsVersionFilter nvf = NutsBlankable.isBlank(version) ? null : NutsVersion.of(version,session).filter();
-        NutsPlatformLocation[] availableJava = session.env().platforms().setSession(session).findPlatforms(NutsPlatformType.JAVA,
+        NutsPlatformLocation[] availableJava = session.env().platforms().setSession(session).findPlatforms(NutsPlatformFamily.JAVA,
                 java -> "jdk".equals(java.getPackaging()) && (nvf == null || nvf.acceptVersion(NutsVersion.of(java.getVersion(),session), session))
         );
         for (NutsPlatformLocation java : availableJava) {

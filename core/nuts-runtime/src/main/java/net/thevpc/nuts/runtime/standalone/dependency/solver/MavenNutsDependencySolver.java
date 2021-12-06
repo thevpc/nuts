@@ -68,13 +68,9 @@ public class MavenNutsDependencySolver implements NutsDependencySolver {
         NutsDependencyFilter effDependencyFilter = null;
         NutsDependencyFilters filter = NutsDependencyFilters.of(session);
         if (dependencyFilter == null) {
-            effDependencyFilter = filter.byOs(session.env().getOsFamily())
-                    .and(filter.byArch(session.env().getArchFamily()));
+            effDependencyFilter = filter.always();
         } else {
-            effDependencyFilter
-                    = dependencyFilter
-                    .and(filter.byOs(session.env().getOsFamily()))
-                    .and(filter.byArch(session.env().getArchFamily()));
+            effDependencyFilter = dependencyFilter;
         }
         for (NutsDependencyTreeNodeBuild currentNode : defs) {
             NutsId id = currentNode.getEffectiveId();

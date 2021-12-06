@@ -34,18 +34,4 @@ public class CoreNutsDependencyUtils {
     public static String normalizeDependencyType(String s1) {
         return NutsUtilStrings.trimToNull(s1);
     }
-
-    public static NutsDependencyFilter createJavaRunDependencyFilter(NutsSession session) {
-        NutsDependencyFilters d = NutsDependencyFilters.of(session);
-        return d
-                .byScope(NutsDependencyScopePattern.RUN)
-                .and(d.byOptional(false))
-                .and(
-                        d.byType(null)
-                                .or(
-                                        d.byType("jar")
-                                )
-                ).and(d.byOs(session.env().getOsFamily()))
-                .and(d.byArch(session.env().getArchFamily()));
-    }
 }

@@ -9,6 +9,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.boot.NutsBootWorkspace;
 import net.thevpc.nuts.core.test.utils.TestUtils;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
+import net.thevpc.nuts.runtime.standalone.util.CoreNutsConstants;
 import org.junit.jupiter.api.*;
 
 import java.io.ByteArrayInputStream;
@@ -165,20 +166,6 @@ public class Test06_UpdateTest {
         Assertions.assertTrue(Files.exists(libFolder.resolve("net/thevpc/nuts/nuts/").resolve(newApiVersion)
                 .resolve("nuts-" + newApiVersion + ".jar")
         ));
-        Assertions.assertTrue(Files.exists(configFolder.resolve("net/thevpc/nuts/nuts/").resolve(newApiVersion)
-                .resolve(NutsConstants.Files.WORKSPACE_API_CONFIG_FILE_NAME)
-        ));
-
-        Assertions.assertTrue(Files.exists(bootCacheFolder.resolve("net/thevpc/nuts/nuts-runtime/").resolve(newRuntimeVersion)
-                .resolve(NutsConstants.Files.WORKSPACE_RUNTIME_CACHE_FILE_NAME)
-        ));
-//        try {
-//            NutsWorkspace updatedws = TestUtils.openNewTestWorkspace(new String[]{
-//                "--workspace", workspacePath});
-//            Assertions.assertFalse(true);
-//        } catch (NutsUnsatisfiedRequirementsException e) {
-//            Assertions.assertTrue(true);
-//        }
 
         NutsBootWorkspace b = new NutsBootWorkspace(null,
                 "--workspace", workspacePath,
@@ -196,7 +183,7 @@ public class Test06_UpdateTest {
                 .setFailFast(true)
                 .grabOutputString()
                 .grabErrorString()
-//                .setSleepMillis(1000)
+                .setSleepMillis(1000)
                 .run();
         String ss = ee.getOutputString();
         TestUtils.println("================");

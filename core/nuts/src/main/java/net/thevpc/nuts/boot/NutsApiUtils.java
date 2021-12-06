@@ -137,7 +137,7 @@ public class NutsApiUtils {
     }
 
     public static String resolveNutsVersionFromClassPath(PrivateNutsBootLog bLog) {
-        return PrivateNutsUtilMaven.resolveNutsApiVersionFromClassPath(bLog);
+        return PrivateNutsUtilMavenRepos.resolveNutsApiVersionFromClassPath(bLog);
     }
 
     public static String resolveNutsIdDigestOrError() {

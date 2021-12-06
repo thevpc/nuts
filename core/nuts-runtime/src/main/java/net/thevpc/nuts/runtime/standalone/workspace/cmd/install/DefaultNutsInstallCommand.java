@@ -27,7 +27,6 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.util.iter.IteratorUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.repository.impl.main.NutsInstalledRepository;
-import net.thevpc.nuts.runtime.standalone.util.CoreNutsDependencyUtils;
 import net.thevpc.nuts.runtime.standalone.stream.NutsListStream;
 
 import java.util.*;
@@ -83,7 +82,7 @@ public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
                 //
                 .setOptional(false)
                 .addScope(NutsDependencyScopePattern.RUN)
-                .setDependencyFilter(CoreNutsDependencyUtils.createJavaRunDependencyFilter(session))
+                .setDependencyFilter(NutsDependencyFilters.of(session).byRunnable())
                 //
                 .getResultDefinition();
         def.doRequire = true;

@@ -3,9 +3,11 @@ package net.thevpc.nuts.runtime.standalone.id.format;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.format.DefaultFormatBase;
 import net.thevpc.nuts.runtime.standalone.dependency.NutsDependencyScopes;
+import net.thevpc.nuts.runtime.standalone.util.CoreNutsUtils;
 import net.thevpc.nuts.spi.NutsSupportLevelContext;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class DefaultNutsIdFormat extends DefaultFormatBase<NutsIdFormat> implements NutsIdFormat {
 
@@ -270,7 +272,24 @@ public class DefaultNutsIdFormat extends DefaultFormatBase<NutsIdFormat> impleme
                 sb.append(id.getRepository(), NutsTextStyle.pale());
             }
         }
-
+        for (Map.Entry<String, String> e : CoreNutsUtils.toMap(id.getCondition()).entrySet()) {
+            String kk=e.getKey();
+            String kv=e.getValue();
+            if (firstQ) {
+                sb.append("?", NutsTextStyle.separator());
+                firstQ = false;
+            } else {
+                sb.append("&", NutsTextStyle.separator());
+            }
+            sb.append(kk, NutsTextStyle.keyword(2)).append("=", NutsTextStyle.separator());
+            String[] v = kv.split(",");
+            for (int i = 0; i < v.length; i++) {
+                if(i>0){
+                    sb.append(",", NutsTextStyle.separator());
+                }
+                sb.append(v[i]);
+            }
+        }
         if (!NutsBlankable.isBlank(exclusions)) {
             if (firstQ) {
                 sb.append("?", NutsTextStyle.separator());
@@ -284,8 +303,8 @@ public class DefaultNutsIdFormat extends DefaultFormatBase<NutsIdFormat> impleme
         if (!NutsBlankable.isBlank(id.getPropertiesQuery())) {
             Set<String> otherKeys = new TreeSet<>(queryMap.keySet());
             for (String k : otherKeys) {
-                String v = queryMap.get(k);
-                if (v != null) {
+                String v2 = queryMap.get(k);
+                if (v2 != null) {
                     if (firstQ) {
                         sb.append("?", NutsTextStyle.separator());
                         firstQ = false;
@@ -294,7 +313,7 @@ public class DefaultNutsIdFormat extends DefaultFormatBase<NutsIdFormat> impleme
                     }
                     sb.append(k, NutsTextStyle.pale());
                     sb.append("=", NutsTextStyle.separator());
-                    sb.append(v);
+                    sb.append(v2);
                 }
             }
         }

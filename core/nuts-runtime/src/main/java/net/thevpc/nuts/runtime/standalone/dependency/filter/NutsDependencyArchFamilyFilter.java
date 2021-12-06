@@ -8,20 +8,20 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 
-public class NutsDependencyArchFilter extends AbstractDependencyFilter {
+public class NutsDependencyArchFamilyFilter extends AbstractDependencyFilter {
 
     private Set<NutsArchFamily> archs = EnumSet.noneOf(NutsArchFamily.class);
 
-    public NutsDependencyArchFilter(NutsSession session) {
+    public NutsDependencyArchFamilyFilter(NutsSession session) {
         super(session, NutsFilterOp.CUSTOM);
     }
 
-    private NutsDependencyArchFilter(NutsSession session, Collection<NutsArchFamily> os) {
+    private NutsDependencyArchFamilyFilter(NutsSession session, Collection<NutsArchFamily> os) {
         super(session, NutsFilterOp.CUSTOM);
         this.archs = EnumSet.copyOf(os);
     }
 
-    public NutsDependencyArchFilter(NutsSession session, String os) {
+    public NutsDependencyArchFamilyFilter(NutsSession session, String os) {
         super(session, NutsFilterOp.CUSTOM);
         this.archs = EnumSet.noneOf(NutsArchFamily.class);
         for (String e : os.split("[,; ]")) {
@@ -31,10 +31,10 @@ public class NutsDependencyArchFilter extends AbstractDependencyFilter {
         }
     }
 
-    public NutsDependencyArchFilter add(Collection<NutsArchFamily> os) {
+    public NutsDependencyArchFamilyFilter add(Collection<NutsArchFamily> os) {
         EnumSet<NutsArchFamily> s2 = EnumSet.copyOf(this.archs);
         s2.addAll(os);
-        return new NutsDependencyArchFilter(getSession(), s2);
+        return new NutsDependencyArchFamilyFilter(getSession(), s2);
     }
 
     @Override

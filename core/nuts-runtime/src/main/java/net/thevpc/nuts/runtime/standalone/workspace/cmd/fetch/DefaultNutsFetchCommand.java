@@ -170,7 +170,7 @@ public class DefaultNutsFetchCommand extends AbstractNutsFetchCommand {
         checkSession();
         NutsWorkspaceUtils wu = NutsWorkspaceUtils.of(session);
         wu.checkLongId(id, session);
-        checkSession();
+//        checkSession();
         NutsSession _ws = getSession();
         NutsWorkspaceUtils.checkSession(this.ws, options.getSession());
         NutsWorkspaceExt dws = NutsWorkspaceExt.of(_ws);

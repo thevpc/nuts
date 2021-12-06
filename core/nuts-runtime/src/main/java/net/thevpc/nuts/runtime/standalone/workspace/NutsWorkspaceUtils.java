@@ -459,7 +459,7 @@ public class NutsWorkspaceUtils {
                 session.out().resetLine().println("looking for java installations in default locations...");
             }
             NutsPlatformLocation[] found = env.platforms()
-                    .searchSystemPlatforms(NutsPlatformType.JAVA);
+                    .searchSystemPlatforms(NutsPlatformFamily.JAVA);
             int someAdded = 0;
             for (NutsPlatformLocation java : found) {
                 if (env.platforms().addPlatform(java)) {
@@ -499,7 +499,7 @@ public class NutsWorkspaceUtils {
                 session.out().resetLine().println("adding current JVM...");
             }
             NutsPlatformLocation found0 = env.platforms()
-                    .resolvePlatform(NutsPlatformType.JAVA, System.getProperty("java.home"), null);
+                    .resolvePlatform(NutsPlatformFamily.JAVA, System.getProperty("java.home"), null);
             NutsPlatformLocation[] found = found0 == null ? new NutsPlatformLocation[0] : new NutsPlatformLocation[]{found0};
             int someAdded = 0;
             for (NutsPlatformLocation java : found) {

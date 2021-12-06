@@ -43,6 +43,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.logging.Level;
+import java.util.stream.Collectors;
 
 /**
  * Created by vpc on 5/16/17.
@@ -983,5 +984,36 @@ public class CoreNutsUtils {
             }
             return t;
         }
+    }
+
+    public static Map<String,String> toMap(NutsEnvCondition condition){
+        LinkedHashMap<String,String> m=new LinkedHashMap<>();
+        String s= Arrays.stream(condition.getArch()).map(String::trim).filter(x->!x.isEmpty()).collect(Collectors.joining(","));
+        if (!NutsBlankable.isBlank(s)) {
+            m.put(NutsConstants.IdProperties.ARCH,s);
+        }
+        s= Arrays.stream(condition.getOs()).map(String::trim).filter(x->!x.isEmpty()).collect(Collectors.joining(","));
+        if (!NutsBlankable.isBlank(s)) {
+            m.put(NutsConstants.IdProperties.OS,s);
+        }
+        s= Arrays.stream(condition.getOsDist()).map(String::trim).filter(x->!x.isEmpty()).collect(Collectors.joining(","));
+        if (!NutsBlankable.isBlank(s)) {
+            m.put(NutsConstants.IdProperties.OS_DIST,s);
+        }
+        s= Arrays.stream(condition.getPlatform()).map(String::trim).filter(x->!x.isEmpty()).collect(Collectors.joining(","));
+        if (!NutsBlankable.isBlank(s)) {
+            m.put(NutsConstants.IdProperties.PLATFORM,s);
+        }
+        s= Arrays.stream(condition.getDesktopEnvironment()).map(String::trim).filter(x->!x.isEmpty()).collect(Collectors.joining(","));
+        if (!NutsBlankable.isBlank(s)) {
+            m.put(NutsConstants.IdProperties.DESKTOP_ENVIRONMENT,s);
+        }
+        return m;
+    }
+    public static NutsPath resolveBootFile(NutsId id,NutsSession session){
+        return session.locations().getStoreLocation(NutsStoreLocation.LIB)
+                .resolve(NutsConstants.Folders.ID).resolve(session.locations().getDefaultIdBasedir(id)).resolve(
+                        id.getArtifactId() + "-" + id.getVersion() + ".nuts-boot-props"
+                );
     }
 }
