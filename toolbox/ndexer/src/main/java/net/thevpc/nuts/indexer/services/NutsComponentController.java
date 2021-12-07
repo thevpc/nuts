@@ -115,7 +115,7 @@ public class NutsComponentController {
                                                                     @RequestParam("osdist") String osdist,
                                                                     @RequestParam("arch") String arch,
                                                                     @RequestParam("platform") String platform,
-                                                                    @RequestParam("de") String desktopEnvironment,
+                                                                    @RequestParam("desktop") String desktopEnvironment,
                                                                     @RequestParam("face") String face
 //            ,@RequestParam(NutsConstants.IdProperties.ALTERNATIVE) String alternative
     ) {
@@ -158,7 +158,7 @@ public class NutsComponentController {
                                                    @RequestParam("os") String os,
                                                    @RequestParam("osdist") String osdist,
                                                    @RequestParam("platform") String platform,
-                                                   @RequestParam("de") String desktopEnvironment,
+                                                   @RequestParam("desktop") String desktopEnvironment,
                                                    @RequestParam("arch") String arch,
                                                    @RequestParam("face") String face
 //            ,@RequestParam(NutsConstants.IdProperties.ALTERNATIVE) String alternative
@@ -204,7 +204,7 @@ public class NutsComponentController {
                                                @RequestParam("os") String os,
                                                @RequestParam("osdist") String osdist,
                                                @RequestParam("platform") String platform,
-                                               @RequestParam("de") String desktopEnvironment,
+                                               @RequestParam("desktop") String desktopEnvironment,
                                                @RequestParam("arch") String arch,
                                                @RequestParam("face") String face
 //            ,@RequestParam(NutsConstants.IdProperties.ALTERNATIVE) String alternative

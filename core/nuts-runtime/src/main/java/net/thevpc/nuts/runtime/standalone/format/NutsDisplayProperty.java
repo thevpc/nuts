@@ -94,10 +94,14 @@ public enum NutsDisplayProperty  implements NutsEnum {
             //
         }
         switch (value){
-            case "de":return DESKTOP_ENVIRONMENT;
+            case "de":
+            case "desktop":
+                return DESKTOP_ENVIRONMENT;
             case "osdist":return OSDIST;
             case "repo":return REPOSITORY;
-            case "repo_id":return REPOSITORY_ID;
+            case "repo_id":
+            case "repoid":
+                return REPOSITORY_ID;
         }
         return errorValue;
     }

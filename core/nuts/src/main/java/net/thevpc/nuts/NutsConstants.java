@@ -232,7 +232,7 @@ public final class NutsConstants {
          */
         public static final String OS_DIST = "osdist";
 
-        public static final String DESKTOP_ENVIRONMENT = "de";
+        public static final String DESKTOP_ENVIRONMENT = "desktop";
 
         /**
          * id supported architecture. standard values are :
