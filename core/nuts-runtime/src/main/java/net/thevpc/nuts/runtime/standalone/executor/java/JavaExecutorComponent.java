@@ -27,6 +27,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.executor.AbstractSyncIProcessExecHelper;
 import net.thevpc.nuts.runtime.standalone.executor.embedded.ClassloaderAwareRunnable;
 import net.thevpc.nuts.runtime.standalone.executor.system.ProcessExecHelper;
+import net.thevpc.nuts.runtime.standalone.util.CoreNutsUtils;
 import net.thevpc.nuts.runtime.standalone.util.collections.StringKeyValueList;
 import net.thevpc.nuts.runtime.standalone.io.util.IProcessExecHelper;
 import net.thevpc.nuts.runtime.standalone.extension.DefaultNutsClassLoader;
@@ -164,12 +165,10 @@ public class JavaExecutorComponent implements NutsExecutorComponent {
                     }
                 }
                 NutsVersion nutsDependencyVersion = null;
-                for (NutsDependency d : executionContext.getDefinition().getDependencies().mergedDependencies()) {
-                    if(d.toId().getShortName().equals("net.thevpc.nuts:nuts")){
-                        nutsDependencyVersion = NutsVersion.of(d.getVersion().toString(), session);
-                        if(nutsDependencyVersion!=null){
-                            break;
-                        }
+                for (NutsId d : CoreNutsUtils.resolveNutsApiIds(executionContext.getDefinition(), session)) {
+                    nutsDependencyVersion = d.getVersion();
+                    if(nutsDependencyVersion!=null){
+                        break;
                     }
                 }
                 if(nutsDependencyVersion==null) {

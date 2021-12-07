@@ -10,26 +10,25 @@
  * to share shell scripts and other 'things' . Its based on an extensible
  * architecture to help supporting a large range of sub managers / repositories.
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc]
- * Licensed under the Apache License, Version 2.0 (the "License"); you may 
- * not use this file except in compliance with the License. You may obtain a 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may
+ * not use this file except in compliance with the License. You may obtain a
  * copy of the License at http://www.apache.org/licenses/LICENSE-2.0
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an 
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
- * either express or implied. See the License for the specific language 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+ * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  * <br>
  * ====================================================================
-*/
+ */
 package net.thevpc.nuts.runtime.standalone.extension;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
+import java.util.stream.Collectors;
 
+import net.thevpc.nuts.NutsDependency;
 import net.thevpc.nuts.NutsId;
 import net.thevpc.nuts.runtime.standalone.workspace.config.NutsWorkspaceConfigBoot;
 
@@ -41,8 +40,10 @@ public class NutsExtensionListHelper {
 
     private List<NutsWorkspaceConfigBoot.ExtensionConfig> initial = new ArrayList<>();
     private List<NutsWorkspaceConfigBoot.ExtensionConfig> list = new ArrayList<>();
+    private NutsId apiId;
 
-    public NutsExtensionListHelper(List<NutsWorkspaceConfigBoot.ExtensionConfig> old) {
+    public NutsExtensionListHelper(NutsId apiId,List<NutsWorkspaceConfigBoot.ExtensionConfig> old) {
+        this.apiId=apiId;
         if (old != null) {
             for (NutsWorkspaceConfigBoot.ExtensionConfig a : old) {
                 if (a != null) {
@@ -63,14 +64,14 @@ public class NutsExtensionListHelper {
     }
 
     public NutsExtensionListHelper copy() {
-        return new NutsExtensionListHelper(list);
+        return new NutsExtensionListHelper(apiId,list);
     }
 
     public NutsExtensionListHelper compress() {
         LinkedHashMap<String, NutsWorkspaceConfigBoot.ExtensionConfig> m = new LinkedHashMap<>();
         for (NutsWorkspaceConfigBoot.ExtensionConfig id : list) {
             m.put(id.getId().getShortName(),
-                    new NutsWorkspaceConfigBoot.ExtensionConfig(id.getId().getLongId(), id.isEnabled())
+                    new NutsWorkspaceConfigBoot.ExtensionConfig(id.getId().getLongId(), id.getDependencies(), id.isEnabled())
             );
         }
         list.clear();
@@ -78,26 +79,34 @@ public class NutsExtensionListHelper {
         return this;
     }
 
-    public NutsExtensionListHelper add(NutsId id) {
+    public boolean add(NutsId id, NutsDependency[] dependencies) {
+        String dependenciesString= Arrays.stream(dependencies)
+                .map(Object::toString).collect(Collectors.joining(";"));
         for (int i = 0; i < list.size(); i++) {
             NutsWorkspaceConfigBoot.ExtensionConfig a = list.get(i);
             if (a.getId().getShortName().equals(id.getShortName())) {
-                list.set(i, new NutsWorkspaceConfigBoot.ExtensionConfig(id,true));
-                return this;
+                NutsWorkspaceConfigBoot.ExtensionConfig o=list.get(i);
+                NutsWorkspaceConfigBoot.ExtensionConfig z = new NutsWorkspaceConfigBoot.ExtensionConfig(id, dependenciesString, true);
+                if(!Objects.equals(o,z)){
+                    list.set(i, z);
+                    return true;
+                }
             }
         }
-        return this;
+        NutsWorkspaceConfigBoot.ExtensionConfig z = new NutsWorkspaceConfigBoot.ExtensionConfig(id, dependenciesString, true);
+        list.add(z);
+        return true;
     }
 
-    public NutsExtensionListHelper remove(NutsId id) {
+    public boolean remove(NutsId id) {
         for (int i = 0; i < list.size(); i++) {
             NutsWorkspaceConfigBoot.ExtensionConfig a = list.get(i);
             if (a.getId().getShortName().equals(id.getShortName())) {
                 list.remove(i);
-                return this;
+                return true;
             }
         }
-        return this;
+        return false;
     }
 
     @Override
@@ -126,7 +135,7 @@ public class NutsExtensionListHelper {
     }
 
     public List<NutsId> getIds() {
-        List<NutsId> ids=new ArrayList<>();
+        List<NutsId> ids = new ArrayList<>();
         for (NutsWorkspaceConfigBoot.ExtensionConfig i : list) {
             ids.add(i.getId());
         }
@@ -134,9 +143,9 @@ public class NutsExtensionListHelper {
     }
 
     public List<NutsWorkspaceConfigBoot.ExtensionConfig> getConfs() {
-        List<NutsWorkspaceConfigBoot.ExtensionConfig> copy=new ArrayList<>();
+        List<NutsWorkspaceConfigBoot.ExtensionConfig> copy = new ArrayList<>();
         for (NutsWorkspaceConfigBoot.ExtensionConfig i : list) {
-            copy.add(new NutsWorkspaceConfigBoot.ExtensionConfig(i.getId(),i.isEnabled()));
+            copy.add(new NutsWorkspaceConfigBoot.ExtensionConfig(i.getId(), i.getDependencies(), i.isEnabled()));
         }
         return copy;
     }

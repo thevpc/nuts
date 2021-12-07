@@ -6,7 +6,7 @@ import net.thevpc.nuts.NutsId;
 
 import java.util.Objects;
 
-public class InstallDepConfig extends NutsConfigItem {
+public class InstallDepConfig extends NutsConfigItem implements Cloneable {
     private NutsId id;
     private NutsDependencyScope scope;
 
@@ -47,5 +47,13 @@ public class InstallDepConfig extends NutsConfigItem {
         if (o == null || getClass() != o.getClass()) return false;
         InstallDepConfig that = (InstallDepConfig) o;
         return Objects.equals(id, that.id) && scope == that.scope;
+    }
+
+    public InstallDepConfig copy() {
+        try {
+            return (InstallDepConfig) clone();
+        } catch (CloneNotSupportedException e) {
+            throw new IllegalArgumentException(e);
+        }
     }
 }

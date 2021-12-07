@@ -87,11 +87,11 @@ public class NutsResourcePath implements NutsPathSPI {
                 ).setLatest(true).setContent(true).setDependencies(true)
                         .setDependencyFilter(
                                 NutsDependencyFilters.of(getSession())
-                                        .byScope(NutsDependencyScopePattern.RUN)
+                                        .byRunnable()
                         )
                         .setOptional(false).getResultClassLoader();
                 urls = ((DefaultNutsClassLoader) resultClassLoader).getURLs();
-                //class loader do not expect
+                //class loader do not expect leading '/'
                 if (loc.length() > 1 && loc.startsWith("/")) {
                     loc = loc.substring(1);
                 }

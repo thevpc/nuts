@@ -516,23 +516,6 @@ final class PrivateNutsUtils {
         return errorValue;
     }
 
-    public static Path getBootConfFile(NutsBootId id, NutsBootOptions computedOptions, PrivateNutsBootLog bLog) {
-        String cFileName = id.getArtifactId() + "-" + id.getVersionString() + ".nuts-boot-props";
-        return Paths.get(computedOptions.getStoreLocation(NutsStoreLocation.LIB) + File.separator + NutsConstants.Folders.ID)
-                .resolve(PrivateNutsUtils.idToPath(id)).resolve(
-                        cFileName
-                );
-    }
-
-    /**
-     * @app.category Internal
-     */
-    public static class Deps {
-
-        LinkedHashSet<NutsBootId> deps = new LinkedHashSet<>();
-        LinkedHashSet<String> repos = new LinkedHashSet<>();
-    }
-
     private static class CustomLogLevel extends Level {
         public CustomLogLevel(String name, int value) {
             super(name, value);

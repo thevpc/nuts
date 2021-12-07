@@ -1142,7 +1142,7 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
                 case YAML:
                 case TREE: {
                     return (NutsIterator) IteratorBuilder.of(getResultDefinitionIteratorBase(isContent(), isEffective()))
-                            .flatMap(NutsFunction.of(x -> x.getDependencies().nodes().iterator(), "getDependencies"))
+                            .flatMap(NutsFunction.of(x -> x.getDependencies().transitiveNodes().iterator(), "getDependencies"))
                             .map(NutsFunction.of(x -> dependenciesToElement(x), "dependenciesToElement"))
                             .build();
                 }

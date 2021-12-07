@@ -205,7 +205,7 @@ public class NdiScriptOptions implements Cloneable {
                             .filter(
                                     f
                                             -> NutsVersion.of(f.getFileName().toString(), session).getLong(0, -1) == -1
-                                            && Files.exists(f.resolve("nuts-api-config.json"))
+                                            && Files.exists(f.resolve(NutsConstants.Files.API_BOOT_CONFIG_FILE_NAME))
                             ).map(
                                     f -> NutsVersion.of(f.getFileName().toString(), session)
                             ).sorted(Comparator.reverseOrder()).findFirst().orElse(null);

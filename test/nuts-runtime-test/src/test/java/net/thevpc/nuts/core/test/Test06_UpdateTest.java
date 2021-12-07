@@ -9,7 +9,6 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.boot.NutsBootWorkspace;
 import net.thevpc.nuts.core.test.utils.TestUtils;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
-import net.thevpc.nuts.runtime.standalone.util.CoreNutsConstants;
 import org.junit.jupiter.api.*;
 
 import java.io.ByteArrayInputStream;
@@ -49,12 +48,27 @@ public class Test06_UpdateTest {
         testUpdate(true, TestUtils.getCallerMethodName());
     }
 
-    private void testUpdate(boolean implOnly, String callerName) throws Exception {
-        CoreIOUtils.delete(null, new File(baseFolder));
-        final String workspacePath = baseFolder + "/" + callerName;
+    private static class Data{
+        String updateRepoPath;
+        NutsDefinition apiDef;
+        NutsId apiId1;
+        NutsId apiId2;
+        NutsId rtId1;
+        NutsId rtId2;
+        NutsDefinition rtDef;
 
+        NutsVersion apiVersion1;
+        NutsVersion apiVersion2;
+        FromTo fromToAPI;
+
+        NutsVersion rtVersion1;
+        NutsVersion rtVersion2;
+        FromTo fromToImpl;
+    }
+
+    private NutsSession prepareCustomUpdateRepository(boolean implOnly, Data data){
+        TestUtils.println("\n------------------------------------------");
         NutsSession uws = TestUtils.openNewTestWorkspace(
-                "--workspace", workspacePath + "-update",
                 "--archetype", "minimal",
                 "--standalone",
                 "--standalone-repositories",
@@ -66,87 +80,113 @@ public class Test06_UpdateTest {
         NutsRepository updateRepo1 = uws.repos().addRepository("local");
 //        uws.config().save();
         //NutsRepository updateRepo1 = uws.config().getRepository("local", session);
-        String updateRepoPath = updateRepo1.config().getStoreLocation().toString();
+        data.updateRepoPath = updateRepo1.config().getStoreLocation().toString();
         TestUtils.println(updateRepo1.config().getStoreLocationStrategy());
         uws.info().configure(false,"--repos").println();
+
+        data.apiDef = uws.fetch().setContent(true).setNutsApi().getResultDefinition();
+        data.rtDef = uws.fetch().setContent(true).setNutsRuntime().getResultDefinition();
+        data.apiVersion1 = data.apiDef.getId().getVersion();
+        data.rtVersion1 = data.rtDef.getId().getVersion();
+        data.apiId1 = data.apiDef.getId().builder().setVersion(data.apiVersion1).build();
+
+        data.apiVersion2 = implOnly ? data.apiVersion1 : data.apiVersion1.inc(-1, 10);
+        data.apiId2 = data.apiDef.getId().builder().setVersion(data.apiVersion2).build();
+
+        data.fromToAPI = new FromTo(data.apiVersion1.toString(), data.apiVersion2.toString());
+
+        data.rtVersion2 = data.rtDef.getId().getVersion().inc(-2, 10);
+        data.rtId1 = data.rtDef.getId().builder().setVersion(data.rtVersion1).build();
+        data.rtId2 = data.rtDef.getId().builder().setVersion(data.rtVersion2).build();
+
+        data.fromToImpl = new FromTo(data.rtDef.getId().getVersion().toString(), data.rtVersion2.toString());
+
+        if (!data.fromToAPI.isIdentity()) {
+            uws.deploy()
+                    .setContent(replaceAPIJar(data.apiDef.getFile(), data.fromToAPI, uws))
+                    .setDescriptor(data.apiDef.getDescriptor().builder().setId(data.apiDef.getId().builder().setVersion(data.apiVersion2).build()).build())
+                    //                        .setRepository("local")
+                    .run();
+        }
+        uws.deploy()
+                .setContent(replaceRuntimeJar(data.rtDef.getFile(), data.fromToAPI, data.fromToImpl, uws))
+                .setDescriptor(
+                        data.rtDef.getDescriptor()
+                                .builder()
+                                .setId(data.rtDef.getId().builder().setVersion(data.rtVersion2).build())
+                                .replaceDependency(
+                                        x -> x.getSimpleName().equals(data.apiDef.getId().getShortName()),
+                                        x -> x.builder().setVersion(data.apiVersion2).build()
+                                )
+                                .build()
+                )
+                .run();
+        TestUtils.println(uws.repos().getRepository("local").config().getStoreLocationStrategy());
+        TestUtils.println(uws.repos().getRepository("local").config().getStoreLocation());
+        TestUtils.println(uws.repos().getRepository("local").config().getStoreLocation(NutsStoreLocation.LIB));
+
+        String api="net.thevpc.nuts:nuts";
+        String rt="net.thevpc.nuts:nuts-runtime";
+        TestUtils.println(uws.search().addId(api).getResultIds().toList());
+        TestUtils.println(uws.search().addId(rt).getResultIds().toList());
+        List<NutsId> foundApis = uws.search().addId(api).getResultIds().toList();
+        List<NutsId> foundRts = uws.search().addId(rt).getResultIds().toList();
+        Assertions.assertTrue(foundApis.stream().map(NutsId::getLongName).collect(Collectors.toSet()).contains(data.apiId1.getLongName()));
+        if (!implOnly) {
+            Assertions.assertTrue(foundApis.stream().map(NutsId::getLongName).collect(Collectors.toSet()).contains(data.apiId2.getLongName()));
+        }
+
+        return uws;
+    }
+
+    private NutsSession prepareWorkspaceToUpdate(boolean implOnly,Data d){
         TestUtils.println("\n------------------------------------------");
         NutsSession nws = TestUtils.openNewTestWorkspace(
-                "--workspace", workspacePath,
                 "--standalone",
                 "--standalone-repositories",
                 "--progress=newline",
                 "--yes",
                 "--skip-companions"
         );
-        nws.repos().addRepository(new NutsAddRepositoryOptions().setTemporary(true).setName("temp").setLocation(updateRepoPath)
+        nws.repos().addRepository(new NutsAddRepositoryOptions().setTemporary(true).setName("temp").setLocation(d.updateRepoPath)
                 .setConfig(new NutsRepositoryConfig().setStoreLocationStrategy(NutsStoreLocationStrategy.STANDALONE))
         );
-        nws.info().configure(false,"--repos").setShowRepositories(true).println();
-        TestUtils.println("\n------------------------------------------");
-
-        NutsRepository r = nws.repos().getRepository("temp");
-        NutsDefinition api = nws.fetch().setContent(true).setNutsApi().getResultDefinition();
-        NutsDefinition rt = nws.fetch().setContent(true).setNutsRuntime().getResultDefinition();
-
-        NutsVersion apiv1 = api.getId().getVersion();
-        NutsVersion apiv2 = implOnly ? apiv1 : apiv1.inc(-1, 10);
-        FromTo fromToAPI = new FromTo(apiv1.toString(), apiv2.toString());
-
-        NutsVersion rtv2 = rt.getId().getVersion().inc(-2, 10);
-        FromTo fromToImpl = new FromTo(rt.getId().getVersion().toString(), rtv2.toString());
-
-        if (!fromToAPI.isIdentity()) {
-            uws.deploy()
-                    .setContent(replaceAPIJar(api.getFile(), fromToAPI, uws))
-                    .setDescriptor(api.getDescriptor().builder().setId(api.getId().builder().setVersion(apiv2).build()).build())
-                    //                        .setRepository("local")
-                    .run();
-        }
-        uws.deploy()
-                .setContent(replaceRuntimeJar(rt.getFile(), fromToAPI, fromToImpl, uws))
-                .setDescriptor(
-                        rt.getDescriptor()
-                                .builder()
-                                .setId(rt.getId().builder().setVersion(rtv2).build())
-                                .replaceDependency(
-                                        x -> x.getSimpleName().equals(api.getId().getShortName()),
-                                        x -> x.builder().setVersion(apiv2).build()
-                                )
-                                .build()
-                )
-                .run();
-
-        TestUtils.println("[LOCAL]");
-
-        TestUtils.println(uws.repos().getRepository("local").config().getStoreLocationStrategy());
-        TestUtils.println(uws.repos().getRepository("local").config().getStoreLocation());
-        TestUtils.println(uws.repos().getRepository("local").config().getStoreLocation(NutsStoreLocation.LIB));
-
-        TestUtils.println("[TEMP]");
         TestUtils.println(nws.repos().getRepository("temp").config().getStoreLocationStrategy());
         TestUtils.println(nws.repos().getRepository("temp").config().getStoreLocation());
         TestUtils.println(nws.repos().getRepository("temp").config().getStoreLocation(NutsStoreLocation.LIB));
-        TestUtils.println(uws.repos().getRepository("local").config().getStoreLocation(NutsStoreLocation.LIB));
-        Assertions.assertEquals(
-                uws.repos().getRepository("local").config().getStoreLocation(NutsStoreLocation.LIB),
-                nws.repos().getRepository("temp").config().getStoreLocation(NutsStoreLocation.LIB));
+        nws.info().configure(false,"--repos").setShowRepositories(true).println();
 
-        TestUtils.println(uws.search().addId(api.getId().getShortId()).getResultIds().toList());
-        TestUtils.println(uws.search().addId(rt.getId().getShortId()).getResultIds().toList());
-        List<NutsId> foundApis = uws.search().addId(api.getId().getShortId()).getResultIds().toList();
-        List<NutsId> foundRts = uws.search().addId(rt.getId().getShortId()).getResultIds().toList();
-        Assertions.assertTrue(foundApis.stream().map(NutsId::getLongName).collect(Collectors.toSet()).contains(api.getId().builder().setVersion(apiv1).getLongName()));
+        Assertions.assertEquals(d.updateRepoPath,
+                nws.repos().getRepository("temp").config().getLocation(true).toString()
+        );
+        String api="net.thevpc.nuts:nuts";
+        String rt="net.thevpc.nuts:nuts-runtime";
+        TestUtils.println(nws.search().addId(api).getResultIds().toList());
+        TestUtils.println(nws.search().addId(rt).getResultIds().toList());
+        List<NutsId> foundApis = nws.search().addId(api).getResultIds().toList();
+        List<NutsId> foundRts = nws.search().addId(rt).getResultIds().toList();
+        Assertions.assertTrue(foundApis.stream().map(NutsId::getLongName).collect(Collectors.toSet()).contains(d.apiId1.getLongName()));
         if (!implOnly) {
-            Assertions.assertTrue(foundApis.stream().map(NutsId::getLongName).collect(Collectors.toSet()).contains(api.getId().builder().setVersion(apiv2).getLongName()));
+            Assertions.assertTrue(foundApis.stream().map(NutsId::getLongName).collect(Collectors.toSet()).contains(d.apiId2.getLongName()));
         }
-        Assertions.assertTrue(foundRts.stream().map(NutsId::getLongName).collect(Collectors.toSet()).contains(rt.getId().builder().setVersion(rt.getId().getVersion()).getLongName()));
-        Assertions.assertTrue(foundRts.stream().map(NutsId::getLongName).collect(Collectors.toSet()).contains(rt.getId().builder().setVersion(rtv2).getLongName()));
+        Assertions.assertTrue(foundRts.stream().map(NutsId::getLongName).collect(Collectors.toSet()).contains(d.rtId1.getLongName()));
+        Assertions.assertTrue(foundRts.stream().map(NutsId::getLongName).collect(Collectors.toSet()).contains(d.rtId2.getLongName()));
 
+        TestUtils.println(nws.search().addId(api).setRepositoryFilter("temp").getResultIds().toList());
+        TestUtils.println(nws.search().addId(rt).setRepositoryFilter("temp").getResultIds().toList());
+        TestUtils.println(nws.search().addId(api).getResultIds().toList());
+        TestUtils.println(nws.search().addId(rt).getResultIds().toList());
         TestUtils.println("========================");
-        TestUtils.println(nws.search().addId(api.getId().getShortId()).setRepositoryFilter("temp").getResultIds().toList());
-        TestUtils.println(nws.search().addId(rt.getId().getShortId()).setRepositoryFilter("temp").getResultIds().toList());
-        TestUtils.println(nws.search().addId(api.getId().getShortId()).getResultIds().toList());
-        TestUtils.println(nws.search().addId(rt.getId().getShortId()).getResultIds().toList());
+
+        return  nws;
+    }
+
+    private void testUpdate(boolean implOnly, String callerName) throws Exception {
+//        CoreIOUtils.delete(null, new File(baseFolder));
+//        final String workspacePath = baseFolder + "/" + callerName;
+        Data d=new Data();
+        NutsSession uws = prepareCustomUpdateRepository(implOnly,d);
+        NutsSession nws = prepareWorkspaceToUpdate(implOnly,d);
 
         //check updates!
         NutsUpdateCommand foundUpdates = nws.update().setAll().checkUpdates();
@@ -168,7 +208,7 @@ public class Test06_UpdateTest {
         ));
 
         NutsBootWorkspace b = new NutsBootWorkspace(null,
-                "--workspace", workspacePath,
+                "--workspace", nws.getWorkspace().getLocation().toString(),
                 "--boot-version=" + newApiVersion,
                 "--bot",
                 "--color=never",

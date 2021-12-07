@@ -1010,10 +1010,32 @@ public class CoreNutsUtils {
         }
         return m;
     }
-    public static NutsPath resolveBootFile(NutsId id,NutsSession session){
-        return session.locations().getStoreLocation(NutsStoreLocation.LIB)
-                .resolve(NutsConstants.Folders.ID).resolve(session.locations().getDefaultIdBasedir(id)).resolve(
-                        id.getArtifactId() + "-" + id.getVersion() + ".nuts-boot-props"
-                );
+
+    public static List<NutsId> resolveNutsApiIds(NutsId id,NutsSession session){
+        List<NutsDependency> deps = session.fetch().setId(id).setDependencies(true).getResultDefinition().getDependencies().transitive().toList();
+        return resolveNutsApiIds(deps.toArray(new NutsDependency[0]),session);
     }
+
+
+    public static List<NutsId> resolveNutsApiIds(NutsDefinition def,NutsSession session){
+        return resolveNutsApiIds(def.getDependencies(),session);
+    }
+
+    public static List<NutsId> resolveNutsApiIds(NutsDependencies deps,NutsSession session){
+        return resolveNutsApiIds(deps.transitiveWithSource().toArray(NutsDependency[]::new),session);
+    }
+
+    public static List<NutsId> resolveNutsApiIds(NutsDependency[] deps,NutsSession session){
+        return Arrays.stream(deps)
+                .map(NutsDependency::toId)
+                .filter(x -> x.getShortName().equals("net.thevpc.nuts:nuts"))
+                .distinct().collect(Collectors.toList());
+    }
+
+    public static List<NutsId> resolveNutsApiIds(NutsId[] deps,NutsSession session){
+        return Arrays.stream(deps)
+                .filter(x -> x.getShortName().equals("net.thevpc.nuts:nuts"))
+                .distinct().collect(Collectors.toList());
+    }
+
 }

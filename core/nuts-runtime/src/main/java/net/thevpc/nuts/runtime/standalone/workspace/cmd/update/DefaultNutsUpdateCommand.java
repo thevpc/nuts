@@ -6,13 +6,14 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.update;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.standalone.util.CoreNutsUtils;
 import net.thevpc.nuts.runtime.standalone.util.iter.IteratorUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.DefaultNutsUpdateResult;
+import net.thevpc.nuts.runtime.standalone.workspace.config.DefaultNutsWorkspaceConfigModel;
 import net.thevpc.nuts.runtime.standalone.workspace.config.NutsWorkspaceConfigManagerExt;
 import net.thevpc.nuts.runtime.standalone.repository.impl.main.NutsInstalledRepository;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
-import net.thevpc.nuts.runtime.standalone.extension.NutsExtensionListHelper;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
 
 import java.time.Instant;
@@ -33,6 +34,7 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
         public int compare(NutsId x, NutsId y) {
             return -x.getVersion().compareTo(y.getVersion());
         }
+
         @Override
         public NutsElement describe(NutsElements elems) {
             return elems.ofString("latestVersionFirst");
@@ -311,58 +313,59 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
         NutsUpdateResult[] all = result.getAllResults();
         NutsUpdateResult[] updates = result.getUpdatable();
         NutsUpdateResult[] notInstalled = Arrays.stream(result.getAllResults())
-                .filter(x->!x.isInstalled()).toArray(NutsUpdateResult[]::new);
+                .filter(x -> !x.isInstalled()).toArray(NutsUpdateResult[]::new);
         Arrays.sort(all, new Comparator<NutsUpdateResult>() {
-            private int itemOrder(NutsUpdateResult o){
-                if(!o.isInstalled()){
+            private int itemOrder(NutsUpdateResult o) {
+                if (!o.isInstalled()) {
                     return 1;
                 }
-                if(!o.isUpdateVersionAvailable()){
+                if (!o.isUpdateVersionAvailable()) {
                     return 2;
                 }
-                if(!o.isUpdateStatusAvailable()){
+                if (!o.isUpdateStatusAvailable()) {
                     return 3;
                 }
                 return 4;
             }
+
             @Override
             public int compare(NutsUpdateResult o1, NutsUpdateResult o2) {
                 return Integer.compare(itemOrder(o1), itemOrder(o2));
             }
         });
         if (getSession().isPlainTrace()) {
-            if (notInstalled.length==0 && updates.length == 0) {
+            if (notInstalled.length == 0 && updates.length == 0) {
                 out.resetLine().printf("all packages are %s. You are running latest version%s.%n",
                         NutsTexts.of(session).ofStyled("up-to-date", NutsTextStyle.success()),
                         result.getAllResults().length > 1 ? "s" : "");
             } else {
-                if(updates.length>0 && notInstalled.length>0){
+                if (updates.length > 0 && notInstalled.length > 0) {
                     out.resetLine().printf("workspace has %s package%s not installed and %s package%s to update.%n",
                             NutsTexts.of(session).ofStyled("" + notInstalled.length, NutsTextStyle.primary1()),
                             (notInstalled.length > 1 ? "s" : ""),
                             NutsTexts.of(session).ofStyled("" + updates.length, NutsTextStyle.primary1()),
                             (updates.length > 1 ? "s" : "")
                     );
-                }else if(updates.length>0){
+                } else if (updates.length > 0) {
                     out.resetLine().printf("workspace has %s package%s to update.%n", NutsTexts.of(session).ofStyled("" + updates.length, NutsTextStyle.primary1()),
                             (updates.length > 1 ? "s" : ""));
-                }else if(notInstalled.length>0){
+                } else if (notInstalled.length > 0) {
                     out.resetLine().printf("workspace has %s package%s not installed.%n", NutsTexts.of(session).ofStyled("" + notInstalled.length, NutsTextStyle.primary1()),
                             (notInstalled.length > 1 ? "s" : ""));
                 }
                 int widthCol1 = 2;
                 int widthCol2 = 2;
                 for (NutsUpdateResult update : all) {
-                    widthCol1 = Math.max(widthCol1, update.getAvailable()==null?0:update.getAvailable().getId().getShortName().length());
-                    widthCol2 = Math.max(widthCol2, update.getInstalled()==null?0:update.getInstalled().getId().getVersion().toString().length());
+                    widthCol1 = Math.max(widthCol1, update.getAvailable() == null ? 0 : update.getAvailable().getId().getShortName().length());
+                    widthCol2 = Math.max(widthCol2, update.getInstalled() == null ? 0 : update.getInstalled().getId().getVersion().toString().length());
                 }
                 NutsTexts factory = NutsTexts.of(session);
                 for (NutsUpdateResult update : all) {
                     if (update.getInstalled() == null) {
                         out.printf("%s  : %s%n",
                                 factory.ofStyled(CoreStringUtils.alignLeft(update.getId().toString(), widthCol2), NutsTextStyle.primary6()),
-                                factory.ofStyled("not installed",NutsTextStyle.error()));
-                    }else if (update.isUpdateVersionAvailable()) {
+                                factory.ofStyled("not installed", NutsTextStyle.error()));
+                    } else if (update.isUpdateVersionAvailable()) {
                         out.printf("%s  : %s => %s%n",
                                 factory.ofStyled(CoreStringUtils.alignLeft(update.getInstalled().getId().getVersion().toString(), widthCol2), NutsTextStyle.primary6()),
                                 CoreStringUtils.alignLeft(update.getAvailable().getId().getShortName(), widthCol1),
@@ -372,17 +375,17 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
                                 factory.ofStyled(CoreStringUtils.alignLeft(update.getInstalled().getId().getVersion().toString(), widthCol2), NutsTextStyle.primary6()),
                                 CoreStringUtils.alignLeft(update.getAvailable().getId().getShortName(), widthCol1),
                                 factory.ofStyled("set as default", NutsTextStyle.primary4()));
-                    }else {
+                    } else {
                         out.printf("%s  : %s%n",
                                 factory.ofStyled(CoreStringUtils.alignLeft(update.getInstalled().getId().getVersion().toString(), widthCol2), NutsTextStyle.primary6()),
-                                factory.ofStyled("up-to-date",NutsTextStyle.warn()));
+                                factory.ofStyled("up-to-date", NutsTextStyle.warn()));
                     }
                 }
             }
         } else {
             NutsElements e = NutsElements.of(getSession());
 
-            if (updates.length == 0 && notInstalled.length==0) {
+            if (updates.length == 0 && notInstalled.length == 0) {
                 out.printlnf(e.ofObject()
                         .set("message", "all packages are up-to-date. You are running latest version" + (result.getAllResults().length > 1 ? "s" : "") + ".")
                         .build());
@@ -408,7 +411,7 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
                                 .set("status", "update-default-available")
                                 .set("newVersion", "set as default")
                                 .build());
-                    }else{
+                    } else {
                         arrayElementBuilder.add(e.ofObject()
                                 .set("package", update.getId().getShortName())
                                 .set("localVersion", update.getInstalled().getId().getVersion().toString())
@@ -592,25 +595,33 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
 
             applyRegularUpdate(((DefaultNutsUpdateResult) runtimeUpdate));
             ((DefaultNutsUpdateResult) runtimeUpdate).setUpdateApplied(true);
+            List<NutsId> baseApiIds = CoreNutsUtils.resolveNutsApiIds(runtimeUpdate.getDependencies(), session);
+            DefaultNutsWorkspaceConfigModel configModel = NutsWorkspaceExt.of(session).getModel().configModel;
+            for (NutsId newApi : baseApiIds) {
+                configModel.setExtraBootRuntimeId(
+                        newApi,
+                        runtimeUpdate.getAvailable().getId(),
+                        runtimeUpdate.getAvailable().getDependencies().transitive().toArray(NutsDependency[]::new),
+                        session);
+            }
             traceSingleUpdate(runtimeUpdate);
         }
-        for (NutsUpdateResult extension : result.getExtensions()) {
-            NutsId finalExtensionId = extension.getAvailable() == null ? extension.getInstalled().getId() : extension.getAvailable().getId();
-//            wcfg.getModel().prepareBootExtension(finalExtensionId, true, validWorkspaceSession);
-        }
-        NutsExtensionListHelper h = new NutsExtensionListHelper(wcfg.getModel().getStoredConfigBoot().getExtensions())
-                .save();
         for (NutsUpdateResult extension : result.getExtensions()) {
             if (!extension.isUpdateApplied()) {
                 if (extension.getAvailable() != null) {
                     applyRegularUpdate(((DefaultNutsUpdateResult) extension));
-                    h.add(extension.getAvailable().getId());
-                    if (h.hasChanged()) {
-                        NutsWorkspaceExt.of(ws).deployBoot(validWorkspaceSession, extension.getAvailable().getId(), true);
+                    List<NutsId> baseApiIds = CoreNutsUtils.resolveNutsApiIds(extension.getDependencies(), session);
+                    DefaultNutsWorkspaceConfigModel configModel = NutsWorkspaceExt.of(session).getModel().configModel;
+                    for (NutsId newApi : baseApiIds) {
+                        configModel.setExtraBootExtensionId(
+                                newApi,
+                                extension.getAvailable().getId(),
+                                extension.getAvailable().getDependencies().transitive().toArray(NutsDependency[]::new),
+                                session);
                     }
+                    ((DefaultNutsUpdateResult) extension).setUpdateApplied(true);
+                    traceSingleUpdate(extension);
                 }
-                ((DefaultNutsUpdateResult) extension).setUpdateApplied(true);
-                traceSingleUpdate(extension);
             }
         }
         for (NutsUpdateResult component : result.getArtifacts()) {
@@ -789,7 +800,7 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
         NutsId cnewId = toCanonicalForm(newId);
         NutsId coldId = toCanonicalForm(oldId);
         DefaultNutsUpdateResult defaultNutsUpdateResult = new DefaultNutsUpdateResult(id, oldFile, newFile,
-                newFile == null ? null : newFile.getDependencies().all().map(NutsDependency::toId,"toId").toArray(NutsId[]::new),
+                newFile == null ? null : newFile.getDependencies().transitive().map(NutsDependency::toId, "toId").toArray(NutsId[]::new),
                 false);
         if (cnewId != null && newFile != null && coldId != null && cnewId.getVersion().compareTo(coldId.getVersion()) > 0) {
             defaultNutsUpdateResult.setUpdateVersionAvailable(true);

@@ -1,7 +1,7 @@
 /**
  * ====================================================================
- *            Nuts : Network Updatable Things Service
- *                  (universal package manager)
+ * Nuts : Network Updatable Things Service
+ * (universal package manager)
  * <br>
  * is a new Open Source Package Manager to help install packages and libraries
  * for runtime execution. Nuts is the ultimate companion for maven (and other
@@ -10,7 +10,7 @@
  * other 'things' . Its based on an extensible architecture to help supporting a
  * large range of sub managers / repositories.
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc] Licensed under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -25,30 +25,17 @@ package net.thevpc.nuts.runtime.standalone.util.reflect;
 
 import net.thevpc.nuts.NutsSession;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.lang.reflect.*;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- *
  * @author thevpc
  */
 public class ClassReflectType implements ReflectType {
 
-    private static final Pattern GETTER_SETTER = Pattern.compile("(?<prefix>(get|set|is))(?<suffix>([A-Z][a-zA-Z_]*))");
+    private static final Pattern GETTER_SETTER = Pattern.compile("(?<prefix>(get|set|is))(?<suffix>([A-Z].*))");
 
     private Type type;
     private Class clazz;
@@ -63,9 +50,9 @@ public class ClassReflectType implements ReflectType {
     private Constructor sessionConstr;
 
     public ClassReflectType(Type type,
-            ReflectPropertyAccessStrategy propertyAccessStrategy,
-            ReflectPropertyDefaultValueStrategy propertyDefaultValueStrategy,
-            ReflectRepository repo) {
+                            ReflectPropertyAccessStrategy propertyAccessStrategy,
+                            ReflectPropertyDefaultValueStrategy propertyDefaultValueStrategy,
+                            ReflectRepository repo) {
         this.type = type;
         this.repo = repo;
         this.propertyAccessStrategy = propertyAccessStrategy;
@@ -73,12 +60,35 @@ public class ClassReflectType implements ReflectType {
         clazz = ReflectUtils.getRawClass(type);
     }
 
+    public ReflectPropertyAccessStrategy getAccessStrategy() {
+        return propertyAccessStrategy;
+    }
+
     public ReflectPropertyDefaultValueStrategy getDefaultValueStrategy() {
         return propertyDefaultValueStrategy;
     }
 
-    public ReflectPropertyAccessStrategy getAccessStrategy() {
-        return propertyAccessStrategy;
+    /**
+     * @return direct declared properties
+     */
+    @Override
+    public List<ReflectProperty> getDeclaredProperties() {
+        build();
+        return directList;
+    }
+
+    @Override
+    public String getName() {
+        return clazz.getName();
+    }
+
+    /**
+     * @return all (including inherited) declared properties
+     */
+    @Override
+    public List<ReflectProperty> getProperties() {
+        build();
+        return allList;
     }
 
     @Override
@@ -159,36 +169,48 @@ public class ClassReflectType implements ReflectType {
 
     private void build() {
         if (direct == null) {
-            Object cleanInstance=null;
-            try{
+            Object cleanInstance = null;
+            try {
                 cleanInstance = newInstance();
-            }catch(Exception ex){
+            } catch (Exception ex) {
                 //ignore any error...
             }
-            LinkedHashMap<String, ReflectProperty> declaredProperties = new LinkedHashMap<>();
-            LinkedHashMap<String, ReflectProperty> fieldAllProperties = new LinkedHashMap<>();
+            LinkedHashMap<String, IndexedItem<ReflectProperty>> declaredProperties = new LinkedHashMap<>();
+            LinkedHashMap<String, IndexedItem<ReflectProperty>> fieldAllProperties = new LinkedHashMap<>();
             Set<String> ambiguousWrites = new HashSet<>();
-            fillFields(clazz, declaredProperties, cleanInstance, ambiguousWrites, propertyAccessStrategy, propertyDefaultValueStrategy);
+            int hierarchyIndex = 0;
+            fillProperties(hierarchyIndex, clazz, declaredProperties, cleanInstance, ambiguousWrites, propertyAccessStrategy, propertyDefaultValueStrategy);
             fieldAllProperties.putAll(declaredProperties);
             Class parent = clazz.getSuperclass();
             while (parent != null) {
+                hierarchyIndex++;
                 //must reeavliuate for parent classes
                 ReflectPropertyAccessStrategy _propertyAccessStrategy = repo.getConfiguration().getAccessStrategy(parent);
                 ReflectPropertyDefaultValueStrategy _propertyDefaultValueStrategy = repo.getConfiguration().getDefaultValueStrategy(parent);
-                fillFields(parent, fieldAllProperties, cleanInstance, ambiguousWrites, _propertyAccessStrategy, _propertyDefaultValueStrategy);
+                fillProperties(hierarchyIndex, parent, fieldAllProperties, cleanInstance, ambiguousWrites, _propertyAccessStrategy, _propertyDefaultValueStrategy);
                 parent = parent.getSuperclass();
             }
-            this.direct = declaredProperties;
-            this.all = fieldAllProperties;
+            this.direct = reorder(declaredProperties);
+            this.all = reorder(fieldAllProperties);
             this.directList = Collections.unmodifiableList(new ArrayList<>(direct.values()));
             this.allList = Collections.unmodifiableList(new ArrayList<>(all.values()));
 
         }
     }
 
-    private void fillFields(Class clazz, LinkedHashMap<String, ReflectProperty> declaredProperties, Object cleanInstance, Set<String> ambiguousWrites,
-            ReflectPropertyAccessStrategy propertyAccessStrategy,
-            ReflectPropertyDefaultValueStrategy propertyDefaultValueStrategy
+    private LinkedHashMap<String, ReflectProperty> reorder(LinkedHashMap<String, IndexedItem<ReflectProperty>> fieldAllProperties) {
+        Map.Entry<String, IndexedItem<ReflectProperty>>[] ee = fieldAllProperties.entrySet().toArray(new Map.Entry[0]);
+        Arrays.sort(ee, (o1, o2) -> Integer.compare(o2.getValue().index, o1.getValue().index));
+        LinkedHashMap<String, ReflectProperty> r = new LinkedHashMap<>();
+        for (Map.Entry<String, IndexedItem<ReflectProperty>> entry : ee) {
+            r.put(entry.getKey(), entry.getValue().item);
+        }
+        return r;
+    }
+
+    private void fillProperties(int hierarchyIndex, Class clazz, LinkedHashMap<String, IndexedItem<ReflectProperty>> declaredProperties, Object cleanInstance, Set<String> ambiguousWrites,
+                                ReflectPropertyAccessStrategy propertyAccessStrategy,
+                                ReflectPropertyDefaultValueStrategy propertyDefaultValueStrategy
     ) {
         if (propertyAccessStrategy == ReflectPropertyAccessStrategy.METHOD || propertyAccessStrategy == ReflectPropertyAccessStrategy.BOTH) {
             LinkedHashMap<String, Method> methodGetters = new LinkedHashMap<>();
@@ -234,8 +256,7 @@ public class ClassReflectType implements ReflectType {
                     }
                 }
             }
-            for (Iterator<Map.Entry<String, Method>> it = methodGetters.entrySet().iterator(); it.hasNext();) {
-                Map.Entry<String, Method> entry = it.next();
+            for (Map.Entry<String, Method> entry : methodGetters.entrySet()) {
                 String propName = entry.getKey();
                 if (!declaredProperties.containsKey(propName)) {
                     Method readMethod = entry.getValue();
@@ -243,10 +264,10 @@ public class ClassReflectType implements ReflectType {
                     Field writeField = null;
                     List<Method> possibleSetters = methodSetters.get(propName);
                     if (possibleSetters != null) {
-                        for (Method posibleSetter : possibleSetters) {
-                            Class ps = posibleSetter.getParameterTypes()[0];
+                        for (Method possibleSetter : possibleSetters) {
+                            Class ps = possibleSetter.getParameterTypes()[0];
                             if (ps.equals(readMethod.getReturnType())) {
-                                writeMethod = posibleSetter;
+                                writeMethod = possibleSetter;
                                 methodSetters.remove(propName);
                                 break;
                             }
@@ -268,11 +289,23 @@ public class ClassReflectType implements ReflectType {
                         }
                     }
                     if (writeMethod != null) {
-                        declaredProperties.put(propName, new MethodReflectProperty1(propName, readMethod, writeMethod, cleanInstance, this, propertyDefaultValueStrategy));
+                        declaredProperties.put(propName,
+                                new IndexedItem<>(hierarchyIndex,
+                                        new MethodReflectProperty1(propName, readMethod, writeMethod, cleanInstance, this, propertyDefaultValueStrategy)
+                                )
+                        );
                     } else if (writeField != null) {
-                        declaredProperties.put(propName, new MethodReflectProperty2(propName, readMethod, writeField, cleanInstance, this, propertyDefaultValueStrategy));
+                        declaredProperties.put(propName,
+                                new IndexedItem<>(hierarchyIndex,
+                                        new MethodReflectProperty2(propName, readMethod, writeField, cleanInstance, this, propertyDefaultValueStrategy)
+                                )
+                        );
                     } else {
-                        declaredProperties.put(propName, new MethodReflectProperty1(propName, readMethod, null, cleanInstance, this, propertyDefaultValueStrategy));
+                        declaredProperties.put(propName,
+                                new IndexedItem<>(hierarchyIndex,
+                                        new MethodReflectProperty1(propName, readMethod, null, cleanInstance, this, propertyDefaultValueStrategy)
+                                )
+                        );
                     }
                 }
             }
@@ -288,7 +321,11 @@ public class ClassReflectType implements ReflectType {
                             //
                         }
                         if (readField != null && !Modifier.isStatic(readField.getModifiers()) && readField.getType().equals(writeMethod.getParameterTypes()[0])) {
-                            declaredProperties.put(propName, new MethodReflectProperty3(propName, readField, writeMethod, cleanInstance, this, propertyDefaultValueStrategy));
+                            declaredProperties.put(propName,
+                                    new IndexedItem<>(hierarchyIndex,
+                                            new MethodReflectProperty3(propName, readField, writeMethod, cleanInstance, this, propertyDefaultValueStrategy)
+                                    )
+                            );
                         }
                     }
                 } else if (entry2.getValue().size() > 0) {
@@ -302,35 +339,20 @@ public class ClassReflectType implements ReflectType {
                 if (!declaredProperties.containsKey(f.getName())) {
                     if (!Modifier.isStatic(f.getModifiers()) && !Modifier.isTransient(f.getModifiers())) {
                         FieldReflectProperty p = new FieldReflectProperty(f, cleanInstance, this, propertyDefaultValueStrategy);
-                        declaredProperties.put(p.getName(), p);
+                        declaredProperties.put(p.getName(), new IndexedItem<>(hierarchyIndex, p));
                     }
                 }
             }
         }
     }
 
-    /**
-     *
-     * @return direct declared properties
-     */
-    @Override
-    public List<ReflectProperty> getDeclaredProperties() {
-        build();
-        return directList;
-    }
+    private static class IndexedItem<T> {
+        int index;
+        T item;
 
-    /**
-     *
-     * @return all (including inherited) declared properties
-     */
-    @Override
-    public List<ReflectProperty> getProperties() {
-        build();
-        return allList;
-    }
-
-    @Override
-    public String getName() {
-        return clazz.getName();
+        public IndexedItem(int index, T item) {
+            this.index = index;
+            this.item = item;
+        }
     }
 }

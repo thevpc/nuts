@@ -40,13 +40,13 @@ public class Test10_ExecURLTest {
                 .setDependencies(true)
                 .getResultDependencies().toList();
         for (NutsDependencies ds : allDeps) {
-            for (NutsDependency d : ds.mergedDependencies()) {
+            for (NutsDependency d : ds.transitiveWithSource()) {
                 TestUtils.println(d);
             }
         }
         TestUtils.println("=============");
         for (NutsDependencies ds : allDeps) {
-            for (NutsDependencyTreeNode d : ds.nodes()) {
+            for (NutsDependencyTreeNode d : ds.transitiveNodes()) {
                 printlnNode(d,"");
             }
         }

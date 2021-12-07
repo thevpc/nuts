@@ -32,27 +32,54 @@ package net.thevpc.nuts;
  * @since 0.8.2
  */
 public interface NutsDependencies extends NutsIterable<NutsDependency> {
+    /**
+     * sources of this dependencies
+     * @return sources of this dependencies
+     */
     NutsStream<NutsId> sourceIds();
 
+    /**
+     * solver name used to compute the dependencies
+     * @return solver name used to compute the dependencies
+     */
+    String solver();
+
+    /**
+     * filter used to compute the dependencies
+     * @return filter used to compute the dependencies
+     */
     NutsDependencyFilter filter();
 
+    /**
+     * return immediate dependencies (not including sources)
+     * @return immediate dependencies
+     */
     NutsStream<NutsDependency> immediate();
 
-    NutsStream<NutsDependency> all();
+    /**
+     * return transitive (all but sources) dependencies
+     * @return transitive (all but sources) dependencies
+     */
+
+    NutsStream<NutsDependency> transitive();
+
+    /**
+     * transitive dependencies merged with ids, which may constitute a full classpath
+     *
+     * @return transitive dependencies merged with ids, which may constitute a full classpath
+     */
+    NutsStream<NutsDependency> transitiveWithSource();
 
     /**
      * return all or some of the transitive dependencies of the current Artifact as Tree result of the search command
      *
      * @return all or some of the transitive dependencies of the current Artifact as Tree result of the search command.
      */
-    NutsStream<NutsDependencyTreeNode> nodes();
+    NutsStream<NutsDependencyTreeNode> transitiveNodes();
 
     /**
-     * dependencies merged with ids, which may constitute a full classpath
-     *
-     * @return dependencies merged with ids, which may constitute a full classpath
+     * return source Nodes tree including sources and their immediate dependencies at each Node level
+     * @return source Nodes tree including sources and their immediate dependencies at each Node level
      */
-    NutsStream<NutsDependency> mergedDependencies();
-
-    NutsStream<NutsDependencyTreeNode> mergedNodes();
+    NutsStream<NutsDependencyTreeNode> sourceNodes();
 }

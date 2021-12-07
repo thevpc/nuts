@@ -22,7 +22,7 @@ public class Test09_TestFetchTest {
             TestUtils.println(dependency);
         }
         TestUtils.println("-----------------");
-        show(resultDefinition.getDependencies().nodes().toArray(NutsDependencyTreeNode[]::new), "");
+        show(resultDefinition.getDependencies().transitiveNodes().toArray(NutsDependencyTreeNode[]::new), "");
     }
 
     // disable test because, for some reason it fails on Gitlab CI with

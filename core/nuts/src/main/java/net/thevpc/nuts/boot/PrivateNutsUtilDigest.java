@@ -46,7 +46,7 @@ class PrivateNutsUtilDigest {
             }
             InputStream is = null;
             try {
-                is = PrivateNutsUtilIO.openURLStream(url, bLog);
+                is = PrivateNutsUtilIO.openStream(url, bLog);
                 if (is != null) {
                     return getStreamDigest(is);
                 }

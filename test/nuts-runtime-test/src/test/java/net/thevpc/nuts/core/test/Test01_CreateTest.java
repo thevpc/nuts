@@ -70,21 +70,21 @@ public class Test01_CreateTest {
 
     @Test
     public void minimal2()  {
-        NutsWorkspace ws = TestUtils.openNewTestWorkspace(
+        TestUtils.openNewTestWorkspace(
                 "--standalone",
                 "--archetype", "minimal",
                 "--verbose",
-                "--skip-companions").getWorkspace();
+                "--skip-companions");
     }
 
     @Test
     public void minimal3()  {
-        NutsWorkspace ws = TestUtils.openNewTestWorkspace(
+        TestUtils.openNewTestWorkspace(
                 "--reset", // required for exploded repos
                 "--exploded",
                 "--archetype", "minimal",
                 "--verbose",
-                "--skip-companions").getWorkspace();
+                "--skip-companions");
     }
 
     @Test
@@ -125,22 +125,22 @@ public class Test01_CreateTest {
 
     @Test
     public void default2() throws Exception {
-        NutsWorkspace ws = TestUtils.openNewTestWorkspace(
+        TestUtils.openNewTestWorkspace(
                 "--reset", // required for exploded repos
                 "--exploded",
                 "--archetype", "minimal",
                 "--verbose",
-                "--skip-companions").getWorkspace();
+                "--skip-companions");
     }
 
     @Test
     public void default3() throws Exception {
-        NutsWorkspace ws = TestUtils.openNewTestWorkspace(
+        TestUtils.openNewTestWorkspace(
                 "--reset", // required for exploded repos
                 "--exploded",
                 "--archetype", "minimal",
                 "--verbose",
-                "--skip-companions").getWorkspace();
+                "--skip-companions");
     }
 
     @Test

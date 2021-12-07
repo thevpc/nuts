@@ -10,19 +10,19 @@
  * other 'things' . Its based on an extensible architecture to help supporting a
  * large range of sub managers / repositories.
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc]
- * Licensed under the Apache License, Version 2.0 (the "License"); you may 
- * not use this file except in compliance with the License. You may obtain a 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may
+ * not use this file except in compliance with the License. You may obtain a
  * copy of the License at http://www.apache.org/licenses/LICENSE-2.0
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an 
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
- * either express or implied. See the License for the specific language 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+ * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  * <br>
  * ====================================================================
-*/
+ */
 package net.thevpc.nuts.runtime.standalone.workspace.config;
 
 import net.thevpc.nuts.*;
@@ -35,7 +35,7 @@ import java.util.*;
  */
 public final class NutsWorkspaceConfigBoot extends NutsConfigItem {
 
-    private static final long serialVersionUID = 600;
+    private static final long serialVersionUID = 830;
     private String uuid = null;
     private boolean global;
     private String name = null;
@@ -95,13 +95,13 @@ public final class NutsWorkspaceConfigBoot extends NutsConfigItem {
         return this;
     }
 
+    public Map<NutsStoreLocation, String> getStoreLocations() {
+        return storeLocations;
+    }
+
     public NutsWorkspaceConfigBoot setStoreLocations(Map<NutsStoreLocation, String> storeLocations) {
         this.storeLocations = storeLocations;
         return this;
-    }
-
-    public Map<NutsStoreLocation, String> getStoreLocations() {
-        return storeLocations;
     }
 
     public Map<NutsHomeLocation, String> getHomeLocations() {
@@ -158,16 +158,26 @@ public final class NutsWorkspaceConfigBoot extends NutsConfigItem {
         return this;
     }
 
-    public static class ExtensionConfig extends NutsConfigItem{
+    public static class ExtensionConfig extends NutsConfigItem {
         private NutsId id;
         private boolean enabled;
+        private String dependencies;
 
         public ExtensionConfig() {
         }
 
-        public ExtensionConfig(NutsId id, boolean enabled) {
+        public ExtensionConfig(NutsId id, String dependencies, boolean enabled) {
             this.id = id;
             this.enabled = enabled;
+            this.dependencies = dependencies;
+        }
+
+        public String getDependencies() {
+            return dependencies;
+        }
+
+        public void setDependencies(String dependencies) {
+            this.dependencies = dependencies;
         }
 
         public NutsId getId() {
@@ -187,17 +197,19 @@ public final class NutsWorkspaceConfigBoot extends NutsConfigItem {
         }
 
         @Override
+        public int hashCode() {
+            return Objects.hash(id, dependencies, enabled);
+        }
+
+        @Override
         public boolean equals(Object o) {
             if (this == o) return true;
             if (o == null || getClass() != o.getClass()) return false;
             ExtensionConfig that = (ExtensionConfig) o;
-            return enabled == that.enabled &&
-                    Objects.equals(id, that.id);
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(id, enabled);
+            return enabled == that.enabled
+                    && Objects.equals(id, that.id)
+                    && Objects.equals(dependencies, that.dependencies)
+                    ;
         }
     }
 }

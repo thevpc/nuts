@@ -46,7 +46,6 @@ import java.util.function.Predicate;
 import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -216,32 +215,35 @@ public final class PrivateNutsUtilMavenRepos {
         return null;
     }
 
-    static PrivateNutsUtils.Deps loadDependenciesFromId(NutsBootId rid, PrivateNutsBootLog bLog, Collection<String> repos) {
+    static Set<NutsBootId> loadDependenciesFromId(NutsBootId rid, PrivateNutsBootLog bLog, Collection<String> repos) {
         String urlPath = PrivateNutsUtils.idToPath(rid) + "/" + rid.getArtifactId() + "-" + rid.getVersion() + ".pom";
-        PrivateNutsUtils.Deps depsAndRepos = null;
+        Set<NutsBootId> deps = null;
         for (String baseUrl : repos) {
             if (baseUrl.startsWith("htmlfs:")) {
                 baseUrl = baseUrl.substring("htmlfs:".length());
             }
-            depsAndRepos = loadDependenciesAndRepositoriesFromPomUrl(baseUrl + "/" + urlPath, bLog);
-            if (!depsAndRepos.deps.isEmpty()) {
+            deps = loadDependenciesFromPomUrl(baseUrl + "/" + urlPath, bLog);
+            if (!deps.isEmpty()) {
                 break;
             }
         }
-        return depsAndRepos;
+        if(deps==null){
+            deps=new LinkedHashSet<>();
+        }
+        return deps;
     }
 
-    static PrivateNutsUtils.Deps loadDependenciesAndRepositoriesFromPomUrl(String url, PrivateNutsBootLog bLog) {
-        PrivateNutsUtils.Deps depsAndRepos = new PrivateNutsUtils.Deps();
+    static Set<NutsBootId> loadDependenciesFromPomUrl(String url, PrivateNutsBootLog bLog) {
+        LinkedHashSet<NutsBootId> depsSet = new LinkedHashSet<>();
         InputStream xml = null;
         try {
             if (url.startsWith("http://") || url.startsWith("https://")) {
                 URL url1 = new URL(url);
                 try {
-                    xml = PrivateNutsUtilIO.openURLStream(url1, bLog);
+                    xml = PrivateNutsUtilIO.openStream(url1, bLog);
                 } catch (NutsBootException ex) {
                     //do not need to log error
-                    return depsAndRepos;
+                    return depsSet;
                 }
             } else if (url.startsWith("file://")) {
                 URL url1 = new URL(url);
@@ -249,22 +251,22 @@ public final class PrivateNutsUtilMavenRepos {
                 if (file == null) {
                     // was not able to resolve to File
                     try {
-                        xml = PrivateNutsUtilIO.openURLStream(url1, bLog);
+                        xml = PrivateNutsUtilIO.openStream(url1, bLog);
                     } catch (NutsBootException ex) {
                         //do not need to log error
-                        return depsAndRepos;
+                        return depsSet;
                     }
                 } else if (file.isFile()) {
                     xml = Files.newInputStream(file.toPath());
                 } else {
-                    return depsAndRepos;
+                    return depsSet;
                 }
             } else {
                 File file = new File(url);
                 if (file.isFile()) {
                     xml = Files.newInputStream(file.toPath());
                 } else {
-                    return depsAndRepos;
+                    return depsSet;
                 }
             }
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
@@ -328,7 +330,7 @@ public final class PrivateNutsUtilMavenRepos {
                             }
                             //this is maven dependency, using "compile"
                             if (NutsBlankable.isBlank(scope) || scope.equals("compile")) {
-                                depsAndRepos.deps.add(
+                                depsSet.add(
                                         new NutsBootId(
                                                 groupId, artifactId, NutsBootVersion.parse(version), NutsUtilStrings.parseBoolean(optional, false, false),
                                                 osMap.get(groupId + ":" + artifactId),
@@ -347,18 +349,6 @@ public final class PrivateNutsUtilMavenRepos {
                             Element c3 = (Element) c2.getChildNodes().item(j);
                             String nodeName = c3.getNodeName();
                             switch (nodeName) {
-                                case "nuts-runtime-repositories": {
-                                    String t = c3.getTextContent().trim();
-                                    if (t.length() > 0) {
-                                        depsAndRepos.repos.addAll(
-                                                Arrays.stream(t.split(";"))
-                                                        .map(String::trim)
-                                                        .filter(x -> x.length() > 0)
-                                                        .collect(Collectors.toList())
-                                        );
-                                    }
-                                    break;
-                                }
                                 default: {
                                     Matcher m = NUTS_OS_ARCH_DEPS_PATTERN.matcher(nodeName);
                                     if (m.find()) {
@@ -386,7 +376,7 @@ public final class PrivateNutsUtilMavenRepos {
                 }
             }
             List<NutsBootId> ok = new ArrayList<>();
-            for (NutsBootId dep : depsAndRepos.deps) {
+            for (NutsBootId dep : depsSet) {
                 String arch = archMap.get(dep.getShortName());
                 String os = archMap.get(dep.getShortName());
                 boolean replace = false;
@@ -405,8 +395,8 @@ public final class PrivateNutsUtilMavenRepos {
                     ok.add(dep);
                 }
             }
-            depsAndRepos.deps.clear();
-            depsAndRepos.deps.addAll(ok);
+            depsSet.clear();
+            depsSet.addAll(ok);
 
         } catch (Exception ex) {
             bLog.log(Level.FINE, NutsMessage.jstyle("unable to loadDependenciesAndRepositoriesFromPomUrl {0}", url), ex);
@@ -420,7 +410,7 @@ public final class PrivateNutsUtilMavenRepos {
             }
         }
 
-        return depsAndRepos;
+        return depsSet;
     }
 
     static List<NutsBootVersion> detectVersionsFromMetaData(String mavenMetadata, PrivateNutsBootLog bLog) {
@@ -432,7 +422,7 @@ public final class PrivateNutsUtilMavenRepos {
             DocumentBuilder builder = factory.newDocumentBuilder();
             InputStream is = null;
             try {
-                is = PrivateNutsUtilIO.openURLStream(runtimeMetadata, bLog);
+                is = PrivateNutsUtilIO.preloadStream(PrivateNutsUtilIO.openStream(runtimeMetadata, bLog), bLog);
             } catch (NutsBootException ex) {
                 //do not need to log error
                 //ignore
@@ -606,7 +596,7 @@ public final class PrivateNutsUtilMavenRepos {
 
     private static List<NutsBootVersion> detectVersionsFromHtmlfsTomcatDirectoryListing(String basePath, PrivateNutsBootLog bLog) {
         List<NutsBootVersion> all = new ArrayList<>();
-        try (InputStream in = PrivateNutsUtilIO.openURLStream(new URL(basePath), bLog)) {
+        try (InputStream in = PrivateNutsUtilIO.openStream(new URL(basePath), bLog)) {
             List<String> p = new HtmlfsTomcatDirectoryListParser().parse(in);
             if (p != null) {
                 for (String s : p) {
@@ -787,7 +777,7 @@ public final class PrivateNutsUtilMavenRepos {
         }
         URL pomXml = Nuts.class.getResource("/META-INF/maven/net.thevpc.nuts/nuts/pom.xml");
         if (pomXml != null) {
-            try (InputStream is = PrivateNutsUtilIO.openURLStream(pomXml, bLog)) {
+            try (InputStream is = PrivateNutsUtilIO.openStream(pomXml, bLog)) {
                 propValue = resolvePomTagValues(new String[]{propName}, is).get(propName);
             } catch (Exception ex) {
                 //

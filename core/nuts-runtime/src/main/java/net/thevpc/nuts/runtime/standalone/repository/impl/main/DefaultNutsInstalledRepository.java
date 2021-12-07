@@ -24,11 +24,9 @@
 package net.thevpc.nuts.runtime.standalone.repository.impl.main;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.standalone.util.collections.LRUMap;
+import net.thevpc.nuts.runtime.standalone.definition.DefaultNutsInstallInfo;
 import net.thevpc.nuts.runtime.standalone.io.util.FolderObjectIterator;
 import net.thevpc.nuts.runtime.standalone.io.util.NutsInstallStatusIdFilter;
-import net.thevpc.nuts.runtime.standalone.util.iter.IteratorBuilder;
-import net.thevpc.nuts.runtime.standalone.definition.DefaultNutsInstallInfo;
 import net.thevpc.nuts.runtime.standalone.repository.cmd.deploy.AbstractNutsDeployRepositoryCommand;
 import net.thevpc.nuts.runtime.standalone.repository.cmd.fetch.AbstractNutsFetchContentRepositoryCommand;
 import net.thevpc.nuts.runtime.standalone.repository.cmd.fetch.AbstractNutsFetchDescriptorRepositoryCommand;
@@ -37,16 +35,18 @@ import net.thevpc.nuts.runtime.standalone.repository.cmd.search.AbstractNutsSear
 import net.thevpc.nuts.runtime.standalone.repository.cmd.search.AbstractNutsSearchVersionsRepositoryCommand;
 import net.thevpc.nuts.runtime.standalone.repository.cmd.undeploy.AbstractNutsRepositoryUndeployCommand;
 import net.thevpc.nuts.runtime.standalone.repository.cmd.updatestats.AbstractNutsUpdateRepositoryStatisticsCommand;
-import net.thevpc.nuts.runtime.standalone.workspace.CoreNutsBootOptions;
-import net.thevpc.nuts.runtime.standalone.xtra.expr.StringTokenizerUtils;
 import net.thevpc.nuts.runtime.standalone.repository.impl.AbstractNutsRepository;
 import net.thevpc.nuts.runtime.standalone.repository.impl.NutsRepositoryExt0;
-import net.thevpc.nuts.runtime.standalone.util.collections.CoreCollectionUtils;
-import net.thevpc.nuts.runtime.standalone.util.CoreNutsUtils;
-import net.thevpc.nuts.runtime.standalone.util.filters.NutsIdFilterToPredicate;
-import net.thevpc.nuts.runtime.standalone.workspace.DefaultNutsWorkspace;
 import net.thevpc.nuts.runtime.standalone.repository.impl.NutsRepositoryFolderHelper;
+import net.thevpc.nuts.runtime.standalone.util.CoreNutsUtils;
+import net.thevpc.nuts.runtime.standalone.util.collections.CoreCollectionUtils;
+import net.thevpc.nuts.runtime.standalone.util.collections.LRUMap;
+import net.thevpc.nuts.runtime.standalone.util.filters.NutsIdFilterToPredicate;
+import net.thevpc.nuts.runtime.standalone.util.iter.IteratorBuilder;
+import net.thevpc.nuts.runtime.standalone.workspace.CoreNutsBootOptions;
+import net.thevpc.nuts.runtime.standalone.workspace.DefaultNutsWorkspace;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
+import net.thevpc.nuts.runtime.standalone.xtra.expr.StringTokenizerUtils;
 import net.thevpc.nuts.spi.*;
 
 import java.io.IOException;
@@ -74,7 +74,7 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
                 NutsWorkspaceUtils.defaultSession(ws),
                 NutsPath.of(bOptions.getStoreLocation(NutsStoreLocation.LIB), initSession).resolve(NutsConstants.Folders.ID)
                 , false,
-                "lib",NutsElements.of(initSession).ofObject().set("repoKind","lib").build()
+                "lib", NutsElements.of(initSession).ofObject().set("repoKind", "lib").build()
         );
         configModel = new InstalledRepositoryConfigModel(workspace, this);
     }
@@ -206,8 +206,6 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
     @Override
     public void install(NutsId id, NutsSession session, NutsId forId) {
         boolean succeeded = false;
-        Instant now = Instant.now();
-        String user = session.security().getCurrentUsername();
         NutsWorkspaceUtils.of(session).checkReadOnly();
         InstallInfoConfig ii = getInstallInfoConfig(id, null, session);
         try {
@@ -215,17 +213,24 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
             NutsRepository r = session.repos().findRepository(repository);
             if (ii == null) {
                 ii = new InstallInfoConfig();
+                ii.setId(id);
+                ii.setInstalled(forId == null);
+                if (r != null) {
+                    ii.setSourceRepoName(r.getName());
+                    ii.setSourceRepoUUID(r.getUuid());
+                }
+                saveCreate(ii,session);
+            } else {
+                InstallInfoConfig ii0 = ii.copy();
+                ii.setId(id);
+                ii.setInstalled(forId == null);
+                if (r != null) {
+                    ii.setSourceRepoName(r.getName());
+                    ii.setSourceRepoUUID(r.getUuid());
+                }
+                saveUpdate(ii,ii0,session);
             }
-            ii.setConfigVersion(DefaultNutsWorkspace.VERSION_INSTALL_INFO_CONFIG);
-            ii.setId(id);
-            ii.setCreatedDate(now);
-            ii.setInstallUser(user);
-            ii.setInstalled(forId == null);
-            if (r != null) {
-                ii.setSourceRepoName(r.getName());
-                ii.setSourceRepoUUID(r.getUuid());
-            }
-            printJson(id, NUTS_INSTALL_FILE, ii, session);
+
             succeeded = true;
         } catch (UncheckedIOException | NutsIOException ex) {
             throw new NutsNotInstallableException(session, id,
@@ -291,6 +296,8 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
 
     @Override
     public NutsInstallInformation require(NutsDefinition def, boolean deploy, NutsId[] forIds, NutsDependencyScope scope, NutsSession session) {
+        Instant now = Instant.now();
+        String user = session.security().getCurrentUsername();
         boolean succeeded = false;
         NutsId requiredId = def.getId();
         NutsInstallInformation nutsInstallInformation = updateInstallInformation(def, null, true, deploy, session);
@@ -305,13 +312,14 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
                         //remove repository requiredId id!
                         requiredId = requiredId.builder().setRepository(null).build();
 
-                        NutsRef<Boolean> save = new NutsRef<>(false);
 
                         InstallInfoConfig fi = getInstallInfoConfig(requiredId, null, session);
                         if (fi == null) {
                             throw new NutsInstallException(session, requiredId);
                         }
+                        InstallInfoConfig fi0 = fi.copy();
                         InstallInfoConfig ti = getInstallInfoConfig(requestorId, null, session);
+                        InstallInfoConfig ti0 = ti == null ? null : ti.copy();
                         //there is no need to check for the target dependency (the reason why the 'requiredId' needs to be installed)
 //        InstallInfoConfig ft = getInstallInfoConfig(to, null, session);
 //        if (ft == null) {
@@ -319,22 +327,17 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
 //        }
                         if (!fi.isRequired()) {
                             fi.setRequired(true);
-                            save.set(true);
+                            fi.setRequiredBy(addDistinct(fi.getRequiredBy(), new InstallDepConfig(requestorId, scope)));
                         }
-                        fi.setRequiredBy(addDistinct(fi.getRequiredBy(), new InstallDepConfig(requestorId, scope), save));
-                        if (save.get()) {
-                            printJson(requiredId, NUTS_INSTALL_FILE, fi, session);
-                        }
-                        save.set(false);
+                        saveUpdate(fi,fi0,session);
                         if (ti == null) {
                             ti = new InstallInfoConfig();
-                            ti.setConfigVersion(DefaultNutsWorkspace.VERSION_INSTALL_INFO_CONFIG);
                             ti.setId(requestorId);
-                            save.set(true);
-                        }
-                        ti.setRequires(addDistinct(ti.getRequires(), new InstallDepConfig(requiredId, scope), save));
-                        if (save.get()) {
-                            printJson(requestorId, NUTS_INSTALL_FILE, ti, session);
+                            ti.setRequires(addDistinct(ti.getRequires(), new InstallDepConfig(requiredId, scope)));
+                            saveCreate(ti,session);
+                        } else {
+                            ti.setRequires(addDistinct(ti.getRequires(), new InstallDepConfig(requiredId, scope)));
+                            saveUpdate(ti,ti0,session);
                         }
                         succeeded = true;
                     } finally {
@@ -348,6 +351,8 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
 
     @Override
     public void unrequire(NutsId requiredId, NutsId requestorId, NutsDependencyScope scope, NutsSession session) {
+        Instant now = Instant.now();
+        String user = session.security().getCurrentUsername();
         boolean succeeded = false;
         try {
             if (scope == null) {
@@ -361,21 +366,16 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
             if (ti == null) {
                 throw new NutsInstallException(session, requestorId);
             }
-            NutsRef<Boolean> save = new NutsRef<>(false);
+            InstallInfoConfig fi0 = fi.copy();
+            InstallInfoConfig ti0 = ti.copy();
 
-            fi.setRequiredBy(removeDistinct(fi.getRequiredBy(), new InstallDepConfig(requestorId, scope), save));
+            fi.setRequiredBy(removeDistinct(fi.getRequiredBy(), new InstallDepConfig(requestorId, scope)));
+            ti.setRequires(removeDistinct(ti.getRequires(), new InstallDepConfig(requiredId, scope)));
             if (fi.isRequired() != fi.getRequiredBy().size() > 0) {
                 fi.setRequired(fi.getRequiredBy().size() > 0);
-                save.set(true);
             }
-            if (save.get()) {
-                printJson(requiredId, NUTS_INSTALL_FILE, fi, session);
-            }
-            save.set(false);
-            ti.setRequires(removeDistinct(ti.getRequires(), new InstallDepConfig(requiredId, scope), save));
-            if (save.get()) {
-                printJson(requestorId, NUTS_INSTALL_FILE, ti, session);
-            }
+            saveUpdate(fi,fi0,session);
+            saveUpdate(ti,ti0,session);
             succeeded = true;
         } finally {
             addLog(NutsInstallLogAction.UNREQUIRE, requiredId, requestorId, null, succeeded, session);
@@ -400,65 +400,26 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
         return null;
     }
 
-//    public Path getDepsPath(NutsId id, boolean from, NutsDependencyScope scope, NutsSession session) {
-//        if (from) {
-//            return getPath(id, "nuts-deps-from-" + scope.id() + ".json", session);
-//        } else {
-//            return getPath(id, "nuts-deps-to-" + scope.id() + ".json", session);
-//        }
-//    }
-
-    public void updateInstallInfoConfigInstallDate(NutsId id, Instant instant, NutsSession session) {
-        NutsPath path = getPath(id, NUTS_INSTALL_FILE, session);
-        InstallInfoConfig ii = getInstallInfoConfig(id, path, session);
-        if (ii == null) {
-            throw new NutsNotFoundException(session, id);
-        }
-        ii.setCreatedDate(instant);
-        try {
-            printJson(id, NUTS_INSTALL_FILE, ii, session);
-        } catch (UncheckedIOException | NutsIOException ex) {
-            throw new NutsNotInstallableException(session, id,
-                    NutsMessage.cstyle("failed to install %s : %s", id, ex), ex);
-        }
-    }
-
-    private <A> List<A> addDistinct(List<A> old, A v, NutsRef<Boolean> updated) {
+    private <A> List<A> addDistinct(List<A> old, A v) {
         LinkedHashSet<A> s = new LinkedHashSet<>();
         if (old != null) {
             s.addAll(old);
-        } else {
-            updated.set(true);
         }
         if (v != null) {
             s.add(v);
         }
-        List<A> li = new ArrayList<>(s);
-        if (old == null || !li.equals(old)) {
-            updated.set(true);
-        } else {
-            updated.set(false);
-        }
-        return li;
+        return new ArrayList<>(s);
     }
 
-    private <A> List<A> removeDistinct(List<A> old, A v, NutsRef<Boolean> updated) {
+    private <A> List<A> removeDistinct(List<A> old, A v) {
         LinkedHashSet<A> s = new LinkedHashSet<>();
         if (old != null) {
             s.addAll(old);
-        } else {
-            updated.set(true);
         }
         if (v != null) {
             s.remove(v);
         }
-        List<A> li = new ArrayList<>(s);
-        if (old == null || !li.equals(old)) {
-            updated.set(true);
-        } else {
-            updated.set(false);
-        }
-        return li;
+        return new ArrayList<>(s);
     }
 
 
@@ -555,9 +516,9 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
         }
         if (session.getExpireTime() != null && (ii.isInstalled() || ii.isRequired())) {
             if (ii.isInstalled() || ii.isRequired()) {
-                Instant lastModifiedDate = ii.getLastModifiedDate();
+                Instant lastModifiedDate = ii.getLastModificationDate();
                 if (lastModifiedDate == null) {
-                    lastModifiedDate = ii.getCreatedDate();
+                    lastModifiedDate = ii.getCreationDate();
                 }
                 if (lastModifiedDate == null || lastModifiedDate.isBefore(session.getExpireTime())) {
                     obsolete = true;
@@ -568,9 +529,9 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
         return new DefaultNutsInstallInfo(ii.getId(),
                 s,
                 session.locations().getStoreLocation(ii.getId(), NutsStoreLocation.APPS),
-                ii.getCreatedDate(),
-                ii.getLastModifiedDate(),
-                ii.getInstallUser(),
+                ii.getCreationDate(),
+                ii.getLastModificationDate(),
+                ii.getCreationUser(),
                 ii.getSourceRepoName(),
                 ii.getSourceRepoUUID(),
                 false, false //will be processed later!
@@ -578,6 +539,8 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
     }
 
     private NutsInstallInformation updateInstallInformation(NutsDefinition def, Boolean install, Boolean require, boolean deploy, NutsSession session) {
+        Instant now = Instant.now();
+        String user = session.security().getCurrentUsername();
         NutsId id1 = def.getId();
         InstallInfoConfig ii = getInstallInfoConfig(id1, null, session);
         boolean wasInstalled = false;
@@ -591,7 +554,6 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
                     .setDescriptor(def.getDescriptor())
                     .run();
         }
-        Instant now = Instant.now();
         if (ii == null) {
 //            for (NutsDependency dependency : def.getDependencies()) {
 //                Iterator<NutsId> it = searchVersions().setId(dependency.getId()).setSession(NutsWorkspaceHelper.createRepositorySession(session, this, NutsFetchMode.DEPLOYED)).getResult();
@@ -600,7 +562,6 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
 //                }
 //            }
             NutsId id = id1;
-            String user = session.security().setSession(session).getCurrentUsername();
             NutsWorkspaceUtils.of(session).checkReadOnly();
             try {
                 boolean _install = false;
@@ -621,12 +582,9 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
                 ii = new InstallInfoConfig();
                 ii.setConfigVersion(DefaultNutsWorkspace.VERSION_INSTALL_INFO_CONFIG);
                 ii.setId(id);
-                ii.setCreatedDate(now);
-                ii.setLastModifiedDate(now);
-                ii.setInstallUser(user);
                 ii.setInstalled(_install);
                 ii.setRequired(_require);
-                printJson(id, NUTS_INSTALL_FILE, ii, session);
+                saveCreate(ii,session);
             } catch (UncheckedIOException | NutsIOException ex) {
                 throw new NutsNotInstallableException(session, id, NutsMessage.cstyle("failed to install %s : %s", id, ex), ex);
             }
@@ -637,12 +595,15 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
             uu.setJustRequired(require != null && require);
             return uu;
         } else {
+            InstallInfoConfig ii0 = ii.copy();
             wasInstalled = ii.isInstalled();
             wasRequired = ii.isRequired();
-            if (ii.getCreatedDate() == null) {
-                ii.setCreatedDate(now);
+            if (ii.getCreationDate() == null) {
+                ii.setCreationDate(now);
             }
-            ii.setLastModifiedDate(now);
+            if (ii.getCreationDate() == null) {
+                ii.setCreationDate(now);
+            }
             boolean _install = wasInstalled;
             boolean _require = wasRequired;
             if (install != null) {
@@ -653,13 +614,43 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
             }
             ii.setInstalled(_install);
             ii.setRequired(_require);
-            printJson(ii.getId(), NUTS_INSTALL_FILE, ii, session);
+            saveUpdate(ii,ii0,session);
             DefaultNutsInstallInfo uu = (DefaultNutsInstallInfo) getInstallInformation(ii, session);
             uu.setWasInstalled(wasInstalled);
             uu.setWasRequired(wasRequired);
             uu.setJustInstalled(install != null && install);
             uu.setJustRequired(require != null && require);
             return uu;
+        }
+    }
+
+    private void saveCreate(InstallInfoConfig ii, NutsSession session) {
+        Instant now = Instant.now();
+        String user = session.security().getCurrentUsername();
+        if (ii.getCreationUser() == null) {
+            ii.setCreationUser(user);
+        }
+        if (ii.getCreationDate() == null) {
+            ii.setCreationDate(now);
+        }
+        ii.setConfigVersion(DefaultNutsWorkspace.VERSION_INSTALL_INFO_CONFIG);
+        printJson(ii.getId(), NUTS_INSTALL_FILE, ii, session);
+    }
+
+    private void saveUpdate(InstallInfoConfig ii, InstallInfoConfig ii0, NutsSession session) {
+        Instant now = Instant.now();
+        String user = session.security().getCurrentUsername();
+        if (ii.getCreationUser() == null) {
+            ii.setCreationUser(user);
+        }
+        if (ii.getCreationDate() == null) {
+            ii.setCreationDate(now);
+        }
+        if (!ii.equals(ii0)) {
+            ii.setLastModificationDate(now);
+            ii.setLastModificationUser(user);
+            ii.setConfigVersion(DefaultNutsWorkspace.VERSION_INSTALL_INFO_CONFIG);
+            printJson(ii.getId(), NUTS_INSTALL_FILE, ii, session);
         }
     }
 

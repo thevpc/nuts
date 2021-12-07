@@ -474,6 +474,18 @@ public final class NutsConstants {
          * artifact descriptor file extension
          */
         public static final String DESCRIPTOR_FILE_EXTENSION = ".nuts";
+        /**
+         * workspace boot config file name for a particular nuts-api version
+         */
+        public static final String API_BOOT_CONFIG_FILE_NAME = "nuts-api-boot-config.json";
+        /**
+         * workspace boot config file name for a particular nuts-runtime version
+         */
+        public static final String RUNTIME_BOOT_CONFIG_FILE_NAME = "nuts-runtime-boot-config.json";
+        /**
+         * workspace boot config file name for a particular nuts-extension version
+         */
+        public static final String EXTENSION_BOOT_CONFIG_FILE_NAME = "nuts-extension-boot-config.json";
 
         /**
          * private constructor

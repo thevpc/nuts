@@ -726,7 +726,7 @@ public class DefaultNutsSearchCommand extends AbstractNutsSearchCommand {
                             NutsFunction.of(
                                     x -> IteratorBuilder.of(
                                             toFetch().setId(x).setContent(false)
-                                                    .setDependencies(true).getResultDefinition().getDependencies().mergedDependencies().iterator()
+                                                    .setDependencies(true).getResultDefinition().getDependencies().transitiveWithSource().iterator()
                                     ).build(), "getDependencies")
                     ).map(NutsFunction.of(NutsDependency::toId, "DependencyToId"))
                     .build();

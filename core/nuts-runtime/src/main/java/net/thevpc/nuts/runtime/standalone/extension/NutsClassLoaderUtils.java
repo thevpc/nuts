@@ -50,7 +50,7 @@ public final class NutsClassLoaderUtils {
                 def.getContent().getURL(),
                 true,
                 true,
-                def.getDependencies().nodes().stream().map(x -> toClassLoaderNode(x, session))
+                def.getDependencies().transitiveNodes().stream().map(x -> toClassLoaderNode(x, session))
                         .filter(Objects::nonNull)
                         .toArray(NutsClassLoaderNode[]::new)
         );

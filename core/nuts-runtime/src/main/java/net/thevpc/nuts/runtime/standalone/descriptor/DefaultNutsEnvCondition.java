@@ -61,6 +61,10 @@ public class DefaultNutsEnvCondition implements NutsEnvCondition {
         );
     }
 
+    public DefaultNutsEnvCondition(NutsSession session){
+        this(null,null,null,null,null,session);
+    }
+
     public DefaultNutsEnvCondition(String[] arch, String[] os, String[] osDist,
                                    String[] platform,
                                    String[] desktopEnvironment,

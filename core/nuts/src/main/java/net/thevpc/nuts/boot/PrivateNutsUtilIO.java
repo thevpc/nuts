@@ -54,8 +54,18 @@ public class PrivateNutsUtilIO {
         return new String(Files.readAllBytes(file.toPath()));
     }
 
-    public static InputStream openURLStream(URL url, PrivateNutsBootLog bLog) {
+    public static InputStream openStream(URL url, PrivateNutsBootLog bLog) {
         return PrivateNutsMonitoredURLInputStream.of(url,bLog);
+    }
+
+    public static byte[] loadStream(InputStream stream, PrivateNutsBootLog bLog) throws IOException{
+        ByteArrayOutputStream bos=new ByteArrayOutputStream();
+        copy(stream,bos,true, true);
+        return bos.toByteArray();
+    }
+
+    public static ByteArrayInputStream preloadStream(InputStream stream, PrivateNutsBootLog bLog) throws IOException{
+        return new ByteArrayInputStream(loadStream(stream,bLog));
     }
 
     public static Properties loadURLProperties(Path path, PrivateNutsBootLog bLog) {
@@ -104,7 +114,7 @@ public class PrivateNutsUtilIO {
             try {
                 if (url != null) {
                     String urlString = url.toString();
-                    inputStream = openURLStream(url,bLog);
+                    inputStream = openStream(url,bLog);
                     if (inputStream != null) {
                         props.load(inputStream);
                         if (cacheFile != null) {
@@ -240,7 +250,7 @@ public class PrivateNutsUtilIO {
 
     public static void copy(URL url, File to, PrivateNutsBootLog bLog) throws IOException {
         try {
-            InputStream in = openURLStream(url,bLog);
+            InputStream in = openStream(url,bLog);
             if (in == null) {
                 throw new IOException("empty Stream " + url);
             }

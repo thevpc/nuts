@@ -4,18 +4,20 @@ import net.thevpc.nuts.NutsConfigItem;
 import net.thevpc.nuts.NutsId;
 
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class InstallInfoConfig extends NutsConfigItem {
+public class InstallInfoConfig extends NutsConfigItem implements Cloneable{
 
     private static final long serialVersionUID = 3;
     private NutsId id;
     private boolean installed;
     private boolean required;
-    private Instant createdDate;
-    private Instant lastModifiedDate;
-    private String installUser;
+    private Instant creationDate;
+    private Instant lastModificationDate;
+    private String creationUser;
+    private String lastModificationUser;
     private String sourceRepoName;
     private String sourceRepoUUID;
     private List<InstallDepConfig> requiredBy;
@@ -80,25 +82,25 @@ public class InstallInfoConfig extends NutsConfigItem {
         this.id = id;
     }
 
-    public String getInstallUser() {
-        return installUser;
+    public String getCreationUser() {
+        return creationUser;
     }
 
-    public void setInstallUser(String installUser) {
-        this.installUser = installUser;
+    public void setCreationUser(String creationUser) {
+        this.creationUser = creationUser;
     }
 
-    public Instant getCreatedDate() {
-        return createdDate;
+    public Instant getCreationDate() {
+        return creationDate;
     }
 
-    public void setCreatedDate(Instant createdDate) {
-        this.createdDate = createdDate;
+    public void setCreationDate(Instant creationDate) {
+        this.creationDate = creationDate;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, createdDate, installUser);
+        return Objects.hash(id, creationDate, creationUser, lastModificationUser);
     }
 
     @Override
@@ -111,9 +113,11 @@ public class InstallInfoConfig extends NutsConfigItem {
         }
         InstallInfoConfig that = (InstallInfoConfig) o;
         return Objects.equals(id, that.id)
-                && Objects.equals(createdDate, that.createdDate)
-                && Objects.equals(lastModifiedDate, that.lastModifiedDate)
-                && Objects.equals(installUser, that.installUser);
+                && Objects.equals(creationDate, that.creationDate)
+                && Objects.equals(lastModificationDate, that.lastModificationDate)
+                && Objects.equals(creationUser, that.creationUser)
+                && Objects.equals(lastModificationUser, that.lastModificationUser)
+                ;
     }
 
     @Override
@@ -122,18 +126,50 @@ public class InstallInfoConfig extends NutsConfigItem {
                 + "id=" + id
                 + ", installed=" + installed
                 + ", required=" + required
-                + ", installDate=" + createdDate
-                + ", lastModifiedDate=" + lastModifiedDate
-                + ", installUser='" + installUser + '\''
+                + ", installDate=" + creationDate
+                + ", lastModifiedUser=" + lastModificationUser
+                + ", lastModifiedDate=" + lastModificationDate
+                + ", installUser='" + creationUser + '\''
                 + '}';
     }
 
-    public Instant getLastModifiedDate() {
-        return lastModifiedDate;
+    public Instant getLastModificationDate() {
+        return lastModificationDate;
     }
 
-    public InstallInfoConfig setLastModifiedDate(Instant lastModifiedDate) {
-        this.lastModifiedDate = lastModifiedDate;
+    public InstallInfoConfig setLastModificationDate(Instant lastModificationDate) {
+        this.lastModificationDate = lastModificationDate;
         return this;
+    }
+
+    public String getLastModificationUser() {
+        return lastModificationUser;
+    }
+
+    public InstallInfoConfig setLastModificationUser(String lastModificationUser) {
+        this.lastModificationUser = lastModificationUser;
+        return this;
+    }
+
+    public InstallInfoConfig copy() {
+        InstallInfoConfig cloned = null;
+        try {
+            cloned = (InstallInfoConfig) clone();
+        } catch (CloneNotSupportedException e) {
+            throw new IllegalArgumentException(e);
+        }
+        if(requiredBy!=null) {
+            cloned.requiredBy = new ArrayList<>();
+            for (InstallDepConfig installDepConfig : requiredBy) {
+                cloned.requiredBy.add(installDepConfig.copy());
+            }
+        }
+        if(requires!=null) {
+            cloned.requires = new ArrayList<>();
+            for (InstallDepConfig installDepConfig : requires) {
+                cloned.requires.add(installDepConfig.copy());
+            }
+        }
+        return cloned;
     }
 }

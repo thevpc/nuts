@@ -165,6 +165,7 @@ public class MavenNutsDependencySolver implements NutsDependencySolver {
         final NutsDependency[] nonMergedDepsList = nonMergedVisitedSet.visitedSet.values().stream().map(NutsDependencyInfo::getDependency)
                 .toArray(NutsDependency[]::new);
         return new DefaultNutsDependencies(
+                getName(),
                 sourceIds.toArray(new NutsId[0]), effDependencyFilter,
                 immediates.toArray(new NutsDependency[0]),
                 nonMergedDepsList,
