@@ -99,25 +99,16 @@ public class InstallInfoConfig extends NutsConfigItem implements Cloneable{
     }
 
     @Override
-    public int hashCode() {
-        return Objects.hash(id, creationDate, creationUser, lastModificationUser);
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        InstallInfoConfig that = (InstallInfoConfig) o;
+        return installed == that.installed && required == that.required && Objects.equals(id, that.id) && Objects.equals(creationDate, that.creationDate) && Objects.equals(lastModificationDate, that.lastModificationDate) && Objects.equals(creationUser, that.creationUser) && Objects.equals(lastModificationUser, that.lastModificationUser) && Objects.equals(sourceRepoName, that.sourceRepoName) && Objects.equals(sourceRepoUUID, that.sourceRepoUUID) && Objects.equals(requiredBy, that.requiredBy) && Objects.equals(requires, that.requires);
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        InstallInfoConfig that = (InstallInfoConfig) o;
-        return Objects.equals(id, that.id)
-                && Objects.equals(creationDate, that.creationDate)
-                && Objects.equals(lastModificationDate, that.lastModificationDate)
-                && Objects.equals(creationUser, that.creationUser)
-                && Objects.equals(lastModificationUser, that.lastModificationUser)
-                ;
+    public int hashCode() {
+        return Objects.hash(id, installed, required, creationDate, lastModificationDate, creationUser, lastModificationUser, sourceRepoName, sourceRepoUUID, requiredBy, requires);
     }
 
     @Override

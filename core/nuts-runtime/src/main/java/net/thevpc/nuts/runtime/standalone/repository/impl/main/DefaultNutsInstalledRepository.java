@@ -296,8 +296,6 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
 
     @Override
     public NutsInstallInformation require(NutsDefinition def, boolean deploy, NutsId[] forIds, NutsDependencyScope scope, NutsSession session) {
-        Instant now = Instant.now();
-        String user = session.security().getCurrentUsername();
         boolean succeeded = false;
         NutsId requiredId = def.getId();
         NutsInstallInformation nutsInstallInformation = updateInstallInformation(def, null, true, deploy, session);
@@ -321,13 +319,10 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
                         InstallInfoConfig ti = getInstallInfoConfig(requestorId, null, session);
                         InstallInfoConfig ti0 = ti == null ? null : ti.copy();
                         //there is no need to check for the target dependency (the reason why the 'requiredId' needs to be installed)
-//        InstallInfoConfig ft = getInstallInfoConfig(to, null, session);
-//        if (ft == null) {
-//            throw new NutsInstallException(session, to);
-//        }
                         if (!fi.isRequired()) {
                             fi.setRequired(true);
                             fi.setRequiredBy(addDistinct(fi.getRequiredBy(), new InstallDepConfig(requestorId, scope)));
+                            saveUpdate(fi,fi0,session);
                         }
                         saveUpdate(fi,fi0,session);
                         if (ti == null) {
@@ -539,8 +534,6 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
     }
 
     private NutsInstallInformation updateInstallInformation(NutsDefinition def, Boolean install, Boolean require, boolean deploy, NutsSession session) {
-        Instant now = Instant.now();
-        String user = session.security().getCurrentUsername();
         NutsId id1 = def.getId();
         InstallInfoConfig ii = getInstallInfoConfig(id1, null, session);
         boolean wasInstalled = false;
@@ -598,12 +591,6 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
             InstallInfoConfig ii0 = ii.copy();
             wasInstalled = ii.isInstalled();
             wasRequired = ii.isRequired();
-            if (ii.getCreationDate() == null) {
-                ii.setCreationDate(now);
-            }
-            if (ii.getCreationDate() == null) {
-                ii.setCreationDate(now);
-            }
             boolean _install = wasInstalled;
             boolean _require = wasRequired;
             if (install != null) {
