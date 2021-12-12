@@ -21,17 +21,12 @@ public class DefaultNutsWorkspaceEnvManager implements NutsWorkspaceEnvManager {
 
     public static final Pattern UNIX_USER_DIRS_PATTERN = Pattern.compile("^\\s*(?<k>[A-Z_]+)\\s*=\\s*(?<v>.*)$");
     private final DefaultNutsWorkspaceEnvManagerModel model;
-    private NutsSession session;
     protected DefaultNutsPlatformModel sdkModel;
+    private NutsSession session;
 
     public DefaultNutsWorkspaceEnvManager(DefaultNutsWorkspaceEnvManagerModel model) {
         this.model = model;
         this.sdkModel = new DefaultNutsPlatformModel(model);
-    }
-
-    @Override
-    public NutsPlatformManager platforms() {
-        return new DefaultNutsPlatformManager(sdkModel).setSession(getSession());
     }
 
     @Override
@@ -43,13 +38,13 @@ public class DefaultNutsWorkspaceEnvManager implements NutsWorkspaceEnvManager {
     @Override
     public NutsElement getPropertyElement(String property) {
         checkSession();
-        return model.getPropertyElement(property,getSession());
+        return model.getPropertyElement(property, getSession());
     }
 
     @Override
     public Object getProperty(String property) {
         checkSession();
-        return model.getProperty(property,getSession());
+        return model.getProperty(property, getSession());
     }
 
     @Override
@@ -93,6 +88,11 @@ public class DefaultNutsWorkspaceEnvManager implements NutsWorkspaceEnvManager {
     @Override
     public NutsDesktopEnvironmentFamily[] getDesktopEnvironmentFamilies() {
         return model.getDesktopEnvironmentFamilies(session);
+    }
+
+    @Override
+    public NutsPlatformManager platforms() {
+        return new DefaultNutsPlatformManager(sdkModel).setSession(getSession());
     }
 
     @Override
@@ -163,7 +163,8 @@ public class DefaultNutsWorkspaceEnvManager implements NutsWorkspaceEnvManager {
             }
         }
         if (optionName != null) {
-            String o = session.boot().getBootCustomArgument(optionName).getString();
+            NutsArgument bootCustomArgument = session.boot().getBootCustomArgument(optionName);
+            String o = bootCustomArgument == null ? null : bootCustomArgument.getString();
             if (!NutsBlankable.isBlank(o)) {
                 NutsSupportMode q = NutsSupportMode.parseLenient(o, null, null);
                 if (q != null) {

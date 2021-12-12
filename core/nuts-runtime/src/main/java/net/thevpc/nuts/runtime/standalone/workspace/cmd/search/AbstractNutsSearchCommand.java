@@ -62,7 +62,6 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
     protected Boolean defaultVersions = null;
     protected String execType = null;
     protected NutsVersion targetApiVersion = null;
-    protected boolean printResult = false;
     protected NutsInstallStatusFilter installStatus;
 
     public AbstractNutsSearchCommand(NutsWorkspace ws) {
@@ -408,7 +407,6 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
             this.scripts.addAll(Arrays.asList(o.getScripts()));
             this.packaging.clear();
             this.packaging.addAll(Arrays.asList(o.getPackaging()));
-            this.printResult = o.isPrintResult();
             this.installStatus = other.getInstallStatus();
         }
         return this;
@@ -450,17 +448,6 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
         return this;
     }
 
-    //    public NutsQuery setDependencyFilter(TypedObject filter) {
-//        if (filter == null) {
-//            this.dependencyFilter = null;
-//        } else if (NutsDependencyFilter.class.equals(filter.getType()) || String.class.equals(filter.getType())) {
-//            this.dependencyFilter = filter;
-//        } else {
-//            throw new IllegalArgumentException("Invalid Object");
-//        }
-//        return this;
-//    }
-//
     @Override
     public NutsDescriptorFilter getDescriptorFilter() {
         return descriptorFilter;
@@ -808,17 +795,6 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
     }
 
     @Override
-    public boolean isPrintResult() {
-        return printResult;
-    }
-
-    @Override
-    public NutsSearchCommand setPrintResult(boolean printResult) {
-        this.printResult = printResult;
-        return this;
-    }
-
-    @Override
     public NutsInstallStatusFilter getInstallStatus() {
         return installStatus;
     }
@@ -843,15 +819,6 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
         return this;
     }
 
-    //    @Override
-//    public NutsSearchCommand printResult() {
-//        return printResult(true);
-//    }
-//
-//    @Override
-//    public NutsSearchCommand printResult(boolean printResult) {
-//        return setPrintResult(printResult);
-//    }
     public String getExecType() {
         return execType;
     }
@@ -1010,13 +977,6 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
                 String val = cmdLine.nextString().getValue().getString();
                 if (enabled) {
                     this.addLockedId(val);
-                }
-                return true;
-            }
-            case "--print": {
-                boolean val = cmdLine.nextBoolean().getBooleanValue();
-                if (enabled) {
-                    this.setPrintResult(val);
                 }
                 return true;
             }

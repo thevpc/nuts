@@ -7,7 +7,7 @@ import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import java.util.*;
 
 public class QueryStringParser {
-    private static final StringMapParser QPARSER = new StringMapParser("=", "&");
+    public static final StringMapParser QPARSER = new StringMapParser("=", "&");
     public interface Processor {
         boolean process(String name, String value);
     }

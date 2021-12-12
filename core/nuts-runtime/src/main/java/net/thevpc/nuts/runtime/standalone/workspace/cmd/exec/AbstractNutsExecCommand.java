@@ -1,9 +1,9 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.exec;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.executor.system.ProcessBuilder2;
 import net.thevpc.nuts.runtime.standalone.io.printstream.NutsByteArrayPrintStream;
+import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.NutsWorkspaceCommandBase;
 
 import java.io.ByteArrayOutputStream;
@@ -35,6 +35,7 @@ public abstract class AbstractNutsExecCommand extends NutsWorkspaceCommandBase<N
     private boolean inheritSystemIO;
     private String redirectOutputFile;
     private String redirectInputFile;
+    private int sleepMillis = 1000;
 
     public AbstractNutsExecCommand(NutsWorkspace ws) {
         super(ws, "exec");
@@ -46,9 +47,8 @@ public abstract class AbstractNutsExecCommand extends NutsWorkspaceCommandBase<N
     }
 
     @Override
-    public NutsExecCommand setFailFast(boolean failFast) {
-        this.failFast = failFast;
-        return this;
+    public NutsString format() {
+        return formatter().format();
     }
 
     @Override
@@ -57,20 +57,14 @@ public abstract class AbstractNutsExecCommand extends NutsWorkspaceCommandBase<N
     }
 
     @Override
-    public String[] getCommand() {
-        return command == null ? new String[0] : command.toArray(new String[0]);
+    public NutsExecCommand setFailFast(boolean failFast) {
+        this.failFast = failFast;
+        return this;
     }
 
     @Override
-    public NutsExecCommand setCommand(NutsDefinition definition) {
-        this.commandDefinition = definition;
-        if (this.commandDefinition != null) {
-            this.commandDefinition.getContent();
-            this.commandDefinition.getDependencies();
-            this.commandDefinition.getEffectiveDescriptor();
-            this.commandDefinition.getInstallInformation();
-        }
-        return this;
+    public String[] getCommand() {
+        return command == null ? new String[0] : command.toArray(new String[0]);
     }
 
     @Override
@@ -86,6 +80,18 @@ public abstract class AbstractNutsExecCommand extends NutsWorkspaceCommandBase<N
     }
 
     @Override
+    public NutsExecCommand setCommand(NutsDefinition definition) {
+        this.commandDefinition = definition;
+        if (this.commandDefinition != null) {
+            this.commandDefinition.getContent();
+            this.commandDefinition.getDependencies();
+            this.commandDefinition.getEffectiveDescriptor();
+            this.commandDefinition.getInstallInformation();
+        }
+        return this;
+    }
+
+    @Override
     public NutsExecCommand addCommand(String... command) {
         if (this.command == null) {
             this.command = new ArrayList<>();
@@ -95,17 +101,17 @@ public abstract class AbstractNutsExecCommand extends NutsWorkspaceCommandBase<N
     }
 
     @Override
-    public NutsExecCommand clearCommand() {
-        this.command = null;
-        return this;
-    }
-
-    @Override
     public NutsExecCommand addCommand(Collection<String> command) {
         if (this.command == null) {
             this.command = new ArrayList<>();
         }
         this.command.addAll(command);
+        return this;
+    }
+
+    @Override
+    public NutsExecCommand clearCommand() {
+        this.command = null;
         return this;
     }
 
@@ -152,6 +158,13 @@ public abstract class AbstractNutsExecCommand extends NutsWorkspaceCommandBase<N
     }
 
     @Override
+    public NutsExecCommand setEnv(Map<String, String> env) {
+        clearEnv();
+        addEnv(env);
+        return this;
+    }
+
+    @Override
     public NutsExecCommand addEnv(Map<String, String> env) {
         if (env != null) {
             for (Map.Entry<String, String> entry : env.entrySet()) {
@@ -177,13 +190,6 @@ public abstract class AbstractNutsExecCommand extends NutsWorkspaceCommandBase<N
     }
 
     @Override
-    public NutsExecCommand setEnv(Map<String, String> env) {
-        clearEnv();
-        addEnv(env);
-        return this;
-    }
-
-    @Override
     public NutsExecCommand clearEnv() {
         this.env = null;
         return this;
@@ -205,18 +211,7 @@ public abstract class AbstractNutsExecCommand extends NutsWorkspaceCommandBase<N
         return in;
     }
 
-    @Override
-    public boolean isInheritSystemIO() {
-        return inheritSystemIO;
-    }
-
-    @Override
-    public NutsExecCommand setInheritSystemIO(boolean inheritSystemIO) {
-        this.inheritSystemIO = inheritSystemIO;
-        return this;
-    }
-
-//    @Override
+    //    @Override
 //    public InputStream in() {
 //        return getIn();
 //    }
@@ -234,6 +229,18 @@ public abstract class AbstractNutsExecCommand extends NutsWorkspaceCommandBase<N
     @Override
     public NutsPrintStream getOut() {
         return out;
+    }
+
+    //    @Override
+//    public NutsExecCommand out(PrintStream out) {
+//        return setOut(out);
+//    }
+    @Override
+    public NutsExecCommand setOut(NutsPrintStream out) {
+        checkSession();
+        NutsWorkspace ws = getSession().getWorkspace();
+        this.out = out;
+        return this;
     }
 //
 //    @Override
@@ -270,15 +277,6 @@ public abstract class AbstractNutsExecCommand extends NutsWorkspaceCommandBase<N
         throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("no buffer was configured; should call grabOutputString"));
     }
 
-    public String getOutputString0() {
-        checkSession();
-        NutsPrintStream o = getOut();
-        if (o instanceof SPrintStream) {
-            return o.toString();
-        }
-        throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("no buffer was configured; should call grabOutputString"));
-    }
-
     @Override
     public String getErrorString() {
         checkSession();
@@ -295,19 +293,12 @@ public abstract class AbstractNutsExecCommand extends NutsWorkspaceCommandBase<N
         throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("no buffer was configured; should call grabErrorString"));
     }
 
-//    @Override
-//    public NutsExecCommand out(PrintStream out) {
-//        return setOut(out);
-//    }
     @Override
-    public NutsExecCommand setOut(NutsPrintStream out) {
-        checkSession();
-        NutsWorkspace ws = getSession().getWorkspace();
-        this.out = out;
-        return this;
+    public NutsPrintStream getErr() {
+        return err;
     }
 
-//    @Override
+    //    @Override
 //    public NutsExecCommand err(PrintStream err) {
 //        return setErr(err);
 //    }
@@ -320,19 +311,20 @@ public abstract class AbstractNutsExecCommand extends NutsWorkspaceCommandBase<N
     }
 
     @Override
-    public NutsPrintStream getErr() {
-        return err;
+    public NutsExecutionType getExecutionType() {
+        return executionType;
+    }
+
+    @Override
+    public NutsExecCommand setExecutionType(NutsExecutionType executionType) {
+        this.executionType = executionType;
+        return this;
     }
 //
 //    @Override
 //    public PrintStream err() {
 //        return getErr();
 //    }
-
-    @Override
-    public NutsExecutionType getExecutionType() {
-        return executionType;
-    }
 
     @Override
     public boolean isRedirectErrorStream() {
@@ -346,19 +338,24 @@ public abstract class AbstractNutsExecCommand extends NutsWorkspaceCommandBase<N
     }
 
     @Override
-    public NutsExecCommand setExecutionType(NutsExecutionType executionType) {
-        this.executionType = executionType;
-        return this;
-    }
-
-    @Override
     public NutsRunAs getRunAs() {
         return runAs;
     }
 
     @Override
     public NutsExecCommand setRunAs(NutsRunAs runAs) {
-        this.runAs = runAs==null?NutsRunAs.currentUser() : runAs;
+        this.runAs = runAs == null ? NutsRunAs.currentUser() : runAs;
+        return this;
+    }
+
+    @Override
+    public boolean isDry() {
+        return dry;
+    }
+
+    @Override
+    public NutsExecCommand setDry(boolean value) {
+        this.dry = value;
         return this;
     }
 
@@ -414,6 +411,53 @@ public abstract class AbstractNutsExecCommand extends NutsWorkspaceCommandBase<N
         return result;
     }
 
+    public int getSleepMillis() {
+        return sleepMillis;
+    }
+
+    public NutsExecCommand setSleepMillis(int sleepMillis) {
+        this.sleepMillis = sleepMillis;
+        return this;
+    }
+
+    @Override
+    public boolean isInheritSystemIO() {
+        return inheritSystemIO;
+    }
+
+    @Override
+    public NutsExecCommand setInheritSystemIO(boolean inheritSystemIO) {
+        this.inheritSystemIO = inheritSystemIO;
+        return this;
+    }
+
+    public String getRedirectOutputFile() {
+        return redirectOutputFile;
+    }
+
+    public NutsExecCommand setRedirectOutputFile(String redirectOutputFile) {
+        this.redirectOutputFile = redirectOutputFile;
+        return this;
+    }
+
+    public String getRedirectInputFile() {
+        return redirectInputFile;
+    }
+
+    public NutsExecCommand setRedirectInputFile(String redirectInpuFile) {
+        this.redirectInputFile = redirectInpuFile;
+        return this;
+    }
+
+    public String getOutputString0() {
+        checkSession();
+        NutsPrintStream o = getOut();
+        if (o instanceof SPrintStream) {
+            return o.toString();
+        }
+        throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("no buffer was configured; should call grabOutputString"));
+    }
+
     protected String getExtraErrorMessage() {
         if (isRedirectErrorStream()) {
             if (isGrabOutputString()) {
@@ -462,7 +506,7 @@ public abstract class AbstractNutsExecCommand extends NutsWorkspaceCommandBase<N
                 }
                 return true;
             }
-            case "--open-file":{
+            case "--open-file": {
                 cmdLine.skip();
                 if (enabled) {
                     setExecutionType(NutsExecutionType.OPEN);
@@ -470,43 +514,38 @@ public abstract class AbstractNutsExecCommand extends NutsWorkspaceCommandBase<N
                 return true;
             }
             case "--user-cmd":
-            case "--system":
-            {
+            case "--system": {
                 cmdLine.skip();
                 if (enabled) {
                     setExecutionType(NutsExecutionType.SYSTEM);
                 }
                 return true;
             }
-            case "--current-user":
-            {
+            case "--current-user": {
                 cmdLine.skip();
                 if (enabled) {
                     setRunAs(NutsRunAs.currentUser());
                 }
                 return true;
             }
-            case "--as-root":
-            {
+            case "--as-root": {
                 cmdLine.skip();
                 if (enabled) {
                     setRunAs(NutsRunAs.ROOT);
                 }
                 return true;
             }
-            case "--run-as":
-            {
+            case "--run-as": {
                 NutsArgument s = cmdLine.nextString();
                 if (enabled) {
-                    if(NutsBlankable.isBlank(s.getValue().getString())){
-                        throw new NutsIllegalArgumentException(getSession(),NutsMessage.cstyle("missing user name"));
+                    if (NutsBlankable.isBlank(s.getValue().getString())) {
+                        throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("missing user name"));
                     }
                     setRunAs(NutsRunAs.user(s.getValue().getString()));
                 }
                 return true;
             }
-            case "--sudo":
-            {
+            case "--sudo": {
                 cmdLine.skip();
                 if (enabled) {
                     setRunAs(NutsRunAs.sudo());
@@ -545,42 +584,12 @@ public abstract class AbstractNutsExecCommand extends NutsWorkspaceCommandBase<N
         }
     }
 
-    @Override
-    public boolean isDry() {
-        return dry;
-    }
-
-    @Override
-    public NutsExecCommand setDry(boolean value) {
-        this.dry = value;
-        return this;
-    }
-
     public boolean isGrabOutputString() {
         return out instanceof SPrintStream;
     }
 
     public boolean isGrabErrorString() {
         return err instanceof SPrintStream;
-    }
-
-    protected static class SPrintStream extends NutsByteArrayPrintStream {
-
-        public SPrintStream(NutsSession session) {
-            super(session);
-        }
-
-        protected SPrintStream(ByteArrayOutputStream bos, NutsSession session) {
-            super(bos, session);
-        }
-
-        @Override
-        public NutsPrintStream setSession(NutsSession session) {
-            if(session==null || session==this.session){
-                return this;
-            }
-            return new SPrintStream((ByteArrayOutputStream) out,session);
-        }
     }
 
     public String getCommandString() {
@@ -752,33 +761,23 @@ public abstract class AbstractNutsExecCommand extends NutsWorkspaceCommandBase<N
         return getCommandString();
     }
 
-    private int sleepMillis = 1000;
+    protected static class SPrintStream extends NutsByteArrayPrintStream {
 
-    public int getSleepMillis() {
-        return sleepMillis;
-    }
+        public SPrintStream(NutsSession session) {
+            super(session);
+        }
 
-    public NutsExecCommand setSleepMillis(int sleepMillis) {
-        this.sleepMillis = sleepMillis;
-        return this;
-    }
+        protected SPrintStream(ByteArrayOutputStream bos, NutsSession session) {
+            super(bos, session);
+        }
 
-    public String getRedirectOutputFile() {
-        return redirectOutputFile;
-    }
-
-    public NutsExecCommand setRedirectOutputFile(String redirectOutputFile) {
-        this.redirectOutputFile = redirectOutputFile;
-        return this;
-    }
-
-    public String getRedirectInputFile() {
-        return redirectInputFile;
-    }
-
-    public NutsExecCommand setRedirectInputFile(String redirectInpuFile) {
-        this.redirectInputFile = redirectInpuFile;
-        return this;
+        @Override
+        public NutsPrintStream setSession(NutsSession session) {
+            if (session == null || session == this.session) {
+                return this;
+            }
+            return new SPrintStream((ByteArrayOutputStream) out, session);
+        }
     }
 
 }

@@ -16,8 +16,6 @@ public class DefaultNutsDependencyFormat extends DefaultFormatBase<NutsDependenc
     private boolean omitQuery = false;
     //    private boolean omitFace = true;
     private boolean highlightImportedGroup;
-    private boolean highlightScope;
-    private boolean highlightOptional;
     private NutsDependency value;
     private Set<String> queryPropertiesOmitted = new HashSet<>();
 
@@ -97,28 +95,6 @@ public class DefaultNutsDependencyFormat extends DefaultFormatBase<NutsDependenc
     }
 
     @Override
-    public boolean isHighlightScope() {
-        return highlightScope;
-    }
-
-    @Override
-    public NutsDependencyFormat setHighlightScope(boolean highlightScope) {
-        this.highlightScope = highlightScope;
-        return this;
-    }
-
-    @Override
-    public boolean isHighlightOptional() {
-        return highlightOptional;
-    }
-
-    @Override
-    public NutsDependencyFormat setHighlightOptional(boolean highlightOptional) {
-        this.highlightOptional = highlightOptional;
-        return this;
-    }
-
-    @Override
     public NutsString format() {
         NutsIdBuilder id = value.toId().builder();
         Map<String, String> q = id.getProperties();
@@ -147,8 +123,6 @@ public class DefaultNutsDependencyFormat extends DefaultFormatBase<NutsDependenc
                 .setSession(getSession())
                 .setValue(id.build())
                 .setHighlightImportedGroupId(isHighlightImportedGroup())
-                .setHighlightOptional(isHighlightOptional())
-                .setHighlightScope(isHighlightScope())
                 .setOmitOtherProperties(false)
                 .setOmitGroupId(isOmitGroupId())
                 .setOmitImportedGroupId(isOmitImportedGroupId())
@@ -209,25 +183,6 @@ public class DefaultNutsDependencyFormat extends DefaultFormatBase<NutsDependenc
         return setOmitQueryProperty(NutsConstants.IdProperties.SCOPE, value);
     }
 
-//    @Override
-//    public boolean isOmitAlternative() {
-//        return isOmitQueryProperty(NutsConstants.IdProperties.ALTERNATIVE);
-//    }
-//
-//    @Override
-//    public NutsDependencyFormat setOmitAlternative(boolean value) {
-//        return setOmitQueryProperty(NutsConstants.IdProperties.ALTERNATIVE,value);
-//    }
-//
-//    @Override
-//    public NutsDependencyFormat omitAlternative(boolean value) {
-//        return setOmitAlternative(value);
-//    }
-//
-//    @Override
-//    public NutsDependencyFormat omitAlternative() {
-//        return omitAlternative(true);
-//    }
 
     @Override
     public String[] getOmitQueryProperties() {
@@ -299,20 +254,6 @@ public class DefaultNutsDependencyFormat extends DefaultFormatBase<NutsDependenc
                 boolean val = cmdLine.nextBoolean().getBooleanValue();
                 if(enabled) {
                     setHighlightImportedGroup(val);
-                }
-                return true;
-            }
-            case "--highlight-optional": {
-                boolean val = cmdLine.nextBoolean().getBooleanValue();
-                if(enabled) {
-                    setHighlightOptional(val);
-                }
-                return true;
-            }
-            case "--highlight-scope": {
-                boolean val = cmdLine.nextBoolean().getBooleanValue();
-                if(enabled) {
-                    setHighlightScope(val);
                 }
                 return true;
             }

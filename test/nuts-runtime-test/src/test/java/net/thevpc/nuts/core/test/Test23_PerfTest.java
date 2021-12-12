@@ -56,6 +56,7 @@ public class Test23_PerfTest {
 
     /**
      * ROGUEi7-2021-11-24 ) avg: 2301ms
+     * ROGUEi7-2021-12-11 ) avg: 3201ms
      */
     @Test
     public void testPerfLocal() {

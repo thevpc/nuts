@@ -25,7 +25,6 @@ package net.thevpc.nuts.runtime.standalone.repository;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.util.iter.NutsIteratorBase;
-import net.thevpc.nuts.NutsDescribables;
 
 import java.util.Stack;
 import java.util.logging.Level;
@@ -46,10 +45,10 @@ public class NutsIdPathIterator extends NutsIteratorBase<NutsId> {
     private NutsId last;
     private long visitedFoldersCount;
     private long visitedFilesCount;
-    private NutsObjectElement extraProperties;
-    private String kind;
+    private final NutsObjectElement extraProperties;
+    private final String kind;
 
-    public NutsIdPathIterator(NutsRepository repository, NutsPath rootFolder, NutsPath basePath, NutsIdFilter filter, NutsSession session, NutsIdPathIteratorModel model, int maxDepth, String kind,NutsObjectElement extraProperties) {
+    public NutsIdPathIterator(NutsRepository repository, NutsPath rootFolder, NutsPath basePath, NutsIdFilter filter, NutsSession session, NutsIdPathIteratorModel model, int maxDepth, String kind, NutsObjectElement extraProperties) {
         this.repository = repository;
         this.extraProperties = extraProperties;
         this.kind = kind;
@@ -92,9 +91,21 @@ public class NutsIdPathIterator extends NutsIteratorBase<NutsId> {
         while (!stack.isEmpty()) {
             PathAndDepth file = stack.pop();
             if (file.folder) {
-                session.getTerminal().printProgress("%-14s %-8s %-8s %s", repository.getName(),kind,"search folder", file.path.toCompressedForm());
+                session.getTerminal().printProgress("%-14s %-8s %-8s %s", repository.getName(), kind, "search folder", file.path.toCompressedForm());
                 visitedFoldersCount++;
-                NutsPath[] children = file.path.list().toArray(NutsPath[]::new);
+                NutsPath[] children = new NutsPath[0];
+                try {
+                    children = file.path.list().toArray(NutsPath[]::new);
+                } catch (NutsIOException ex) {
+                    //just log without stack trace!
+                    session.getTerminal().printProgress("%-14s %-8s %-8s %s %s", repository.getName(), kind, "search folder", file.path.toCompressedForm(), NutsTexts.of(session).ofStyled("failed!", NutsTextStyle.error()));
+                    NutsLoggerOp.of(NutsIdPathIterator.class, session).level(Level.FINE)//.error(ex)
+                            .log(NutsMessage.jstyle("error listing : {0} : {1} : {2}", file.path, toString(), ex.toString()));
+                } catch (Exception ex) {
+                    session.getTerminal().printProgress("%-14s %-8s %-8s %s %s", repository.getName(), kind, "search folder", file.path.toCompressedForm(), NutsTexts.of(session).ofStyled("failed!", NutsTextStyle.error()));
+                    NutsLoggerOp.of(NutsIdPathIterator.class, session).level(Level.FINE).error(ex)
+                            .log(NutsMessage.jstyle("error listing : {0} : {1}", file.path, toString()));
+                }
                 boolean deep = file.depth < maxDepth;
                 for (NutsPath child : children) {
                     if (child.isDirectory()) {

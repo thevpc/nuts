@@ -856,7 +856,7 @@ public class CoreNutsUtils {
         if (o instanceof Boolean) {
             monitorable = ((Boolean) o).booleanValue();
         }
-        if (!session.boot().getBootCustomArgument("---monitor.enabled").getBooleanValue(true)) {
+        if (!session.boot().getBootCustomBoolArgument(false,false,false,"---monitor.enabled")) {
             monitorable = false;
         }
         if (ws instanceof DefaultNutsWorkspace) {

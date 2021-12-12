@@ -37,7 +37,17 @@ import java.util.Map;
  */
 public interface NutsExecCommand extends NutsWorkspaceCommand {
 
+    /**
+     * create a prefilled command format
+     * @return a prefilled command format
+     */
     NutsExecCommandFormat formatter();
+
+    /**
+     * shorthand for {@code formatter().format()}
+     * @return formatted string of the command
+     */
+    NutsString format();;
 
     /**
      * if true, an exception is thrown whenever the command returns non zero

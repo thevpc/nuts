@@ -212,7 +212,7 @@ public class DefaultNutsArgument implements NutsArgument {
 
     @Override
     public Boolean getBooleanValue(Boolean emptyValue, Boolean errValue) {
-        boolean a = NutsUtilStrings.parseBoolean(value, emptyValue, errValue);
+        Boolean a = NutsUtilStrings.parseBoolean(value, emptyValue, errValue);
         return isNegated() != a;
     }
 

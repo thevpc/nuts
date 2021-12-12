@@ -36,7 +36,7 @@ public final class JavaExecutorOptions {
 
     public JavaExecutorOptions(NutsDefinition def, boolean tempId, String[] args, String[] executorOptions, String dir, NutsSession session) {
         this.session = session;
-        showCommand=getSession().boot().getBootCustomArgument("---show-command").getBooleanValue(false);
+        showCommand=getSession().boot().getBootCustomBoolArgument(false,false,false,"---show-command");
         NutsId id = def.getId();
         NutsDescriptor descriptor = null;
         if (tempId) {

@@ -1090,21 +1090,6 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
     NutsStream<String> getResultArch();
 
     /**
-     * true when print result
-     *
-     * @return lib filter
-     */
-    boolean isPrintResult();
-
-    /**
-     * enable print search result
-     *
-     * @param enable lib filter
-     * @return {@code this} instance
-     */
-    NutsSearchCommand setPrintResult(boolean enable);
-
-    /**
      * return the defined installStatus
      *
      * @return {@code this} instance

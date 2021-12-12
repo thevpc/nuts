@@ -137,36 +137,6 @@ public interface NutsIdFormat extends NutsFormat, NutsComponent {
     NutsIdFormat setHighlightImportedGroupId(boolean value);
 
     /**
-     * return true when the scope should be highlighted in formatted instance
-     *
-     * @return return true when the scope should be highlighted in formatted instance
-     */
-    boolean isHighlightScope();
-
-    /**
-     * update highlightScope
-     *
-     * @param value value
-     * @return {@code this} instance
-     */
-    NutsIdFormat setHighlightScope(boolean value);
-
-    /**
-     * return true when the optional should be highlighted in formatted instance
-     *
-     * @return return true when the optional should be highlighted in formatted instance
-     */
-    boolean isHighlightOptional();
-
-    /**
-     * update highlightOptional
-     *
-     * @param value value
-     * @return {@code this} instance
-     */
-    NutsIdFormat setHighlightOptional(boolean value);
-
-    /**
      * return true if omit scope
      *
      * @return true if omit scope

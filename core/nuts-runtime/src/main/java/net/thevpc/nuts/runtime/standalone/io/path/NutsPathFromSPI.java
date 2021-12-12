@@ -169,20 +169,10 @@ public class NutsPathFromSPI extends NutsPathBase {
 
     @Override
     public NutsStream<NutsPath> list() {
-        try {
             NutsStream<NutsPath> p = base.list(this);
             if (p != null) {
                 return p;
             }
-        } catch (Exception ex) {
-            NutsLoggerOp.of(NutsPathFromSPI.class, getSession())
-                    .verb(NutsLogVerb.WARNING)
-                    .level(Level.WARNING)
-                    .error(ex)
-                    .log(
-                            NutsMessage.jstyle("error execution {0}.list()", base.getClass().getName())
-                    );
-        }
         return NutsStream.ofEmpty(getSession());
     }
 

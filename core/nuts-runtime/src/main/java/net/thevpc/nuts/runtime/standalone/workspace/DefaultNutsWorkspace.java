@@ -565,7 +565,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                                     CoreTimeUtils.formatPeriodMilli(_boot.getCreationFinishTimeMillis() - _boot.getCreationStartTimeMillis())
                             )
                     );
-            if (defaultSession().boot().getBootCustomArgument("---perf").getBooleanValue(false)) {
+            if (defaultSession().boot().getBootCustomBoolArgument(false,false,false,"---perf")) {
                 if (defaultSession().isPlainOut()) {
                     defaultSession().out().printf("```sh nuts``` workspace loaded in %s%n",
                             text.ofStyled(CoreTimeUtils.formatPeriodMilli(_boot.getCreationFinishTimeMillis() - _boot.getCreationStartTimeMillis()),

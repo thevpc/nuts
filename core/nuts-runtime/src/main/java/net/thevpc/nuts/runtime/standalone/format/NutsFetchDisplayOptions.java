@@ -189,12 +189,6 @@ public class NutsFetchDisplayOptions {
             if (this.getIdFormat().isHighlightImportedGroupId()) {
                 displayOptionsArgs.add("--highlight-imported-group");
             }
-            if (this.getIdFormat().isHighlightOptional()) {
-                displayOptionsArgs.add("--highlight-optional");
-            }
-            if (this.getIdFormat().isHighlightScope()) {
-                displayOptionsArgs.add("--highlight-scope");
-            }
             if (this.getIdFormat().isOmitOtherProperties()) {
                 displayOptionsArgs.add("--omit-env");
             }

@@ -1,10 +1,10 @@
 package net.thevpc.nuts.toolbox.nsh;
 
+import net.thevpc.nuts.*;
 import net.thevpc.nuts.toolbox.nsh.jshell.DefaultJShellOptionsParser;
 import net.thevpc.nuts.toolbox.nsh.jshell.JShell;
 import net.thevpc.nuts.toolbox.nsh.jshell.JShellBuiltin;
 import net.thevpc.nuts.toolbox.nsh.jshell.JShellOptions;
-import net.thevpc.nuts.*;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -52,7 +52,7 @@ public class Nsh implements NutsApplication {
 //        );
 //        applicationContext.getWorkspace().io().term().enableRichTerm(session);
 
-        JShell c = new JShell(applicationContext,null);
+        JShell c = new JShell(applicationContext, null);
         JShellBuiltin[] commands = c.getRootContext().builtins().getAll();
         Set<String> reinstalled = new TreeSet<>();
         Set<String> firstInstalled = new TreeSet<>();
@@ -68,7 +68,7 @@ public class Nsh implements NutsApplication {
                                 .setCommand(nshIdStr, "-c", command.getName())
                                 .setOwner(applicationContext.getAppId())
                                 .setHelpCommand(nshIdStr, "-c", "help", "--ntf", command.getName())
-                )) {
+                        )) {
                     reinstalled.add(command.getName());
                 } else {
                     firstInstalled.add(command.getName());
@@ -90,29 +90,28 @@ public class Nsh implements NutsApplication {
             NutsTexts factory = NutsTexts.of(session);
             if (firstInstalled.size() > 0) {
                 session.out().printf("registered %s nsh commands : %s \n",
-                        factory.ofStyled(""+firstInstalled.size(),NutsTextStyle.primary3())
-                        ,factory.ofStyled(String.join(", ", firstInstalled),NutsTextStyle.primary3())
+                        factory.ofStyled("" + firstInstalled.size(), NutsTextStyle.primary3())
+                        , factory.ofStyled(String.join(", ", firstInstalled), NutsTextStyle.primary3())
                 );
             }
             if (reinstalled.size() > 0) {
                 session.out().printf("re-registered %s nsh commands : %s \n",
-                        factory.ofStyled(""+reinstalled.size(),NutsTextStyle.primary3())
-                        ,factory.ofStyled(String.join(", ", reinstalled),NutsTextStyle.primary3())
+                        factory.ofStyled("" + reinstalled.size(), NutsTextStyle.primary3())
+                        , factory.ofStyled(String.join(", ", reinstalled), NutsTextStyle.primary3())
                 );
             }
         }
         cfg.save(false);
-        NutsArgument initScripts = session.boot().getBootCustomArgument("init-scripts","nuts.init-scripts");
-        if(initScripts.getBooleanValue(true)) {
-            NutsArgument initLaunchers = session.boot().getBootCustomArgument("init-launchers","nuts.init-launchers");
-                session.env().addLauncher(
-                        new NutsLauncherOptions()
-                                .setId(session.getAppId())
-                                .setCreateScript(true)
-                                .setCreateDesktopShortcut(initLaunchers.getBooleanValue(true)?NutsSupportCondition.PREFERRED:NutsSupportCondition.NEVER)
-                                .setCreateMenuShortcut(initLaunchers.getBooleanValue(true)?NutsSupportCondition.SUPPORTED:NutsSupportCondition.NEVER)
-                                .setOpenTerminal(true)
-                );
+        if (session.boot().getBootCustomBoolArgument(true, true, false, "---init-scripts")) {
+            boolean initLaunchers = session.boot().getBootCustomBoolArgument(true, true, false, "---init-launchers");
+            session.env().addLauncher(
+                    new NutsLauncherOptions()
+                            .setId(session.getAppId())
+                            .setCreateScript(true)
+                            .setCreateDesktopShortcut(initLaunchers ? NutsSupportCondition.PREFERRED : NutsSupportCondition.NEVER)
+                            .setCreateMenuShortcut(initLaunchers ? NutsSupportCondition.SUPPORTED : NutsSupportCondition.NEVER)
+                            .setOpenTerminal(true)
+            );
         }
     }
 
@@ -141,7 +140,7 @@ public class Nsh implements NutsApplication {
                     if (applicationContext.getSession().isPlainTrace()) {
                         NutsTexts factory = NutsTexts.of(session);
                         applicationContext.getSession().err().printf("unable to uninstall %s.\n",
-                                factory.ofStyled(command.getName(),NutsTextStyle.primary3())
+                                factory.ofStyled(command.getName(), NutsTextStyle.primary3())
                         );
                     }
                 }

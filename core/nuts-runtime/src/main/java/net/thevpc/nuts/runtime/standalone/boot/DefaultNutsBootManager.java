@@ -25,14 +25,13 @@ package net.thevpc.nuts.runtime.standalone.boot;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.app.cmdline.DefaultNutsArgument;
+import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.config.DefaultNutsWorkspaceConfigManager;
 import net.thevpc.nuts.runtime.standalone.workspace.config.DefaultNutsWorkspaceConfigModel;
-import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
 
 import java.net.URL;
 
 /**
- *
  * @author thevpc
  */
 public class DefaultNutsBootManager implements NutsBootManager {
@@ -49,25 +48,8 @@ public class DefaultNutsBootManager implements NutsBootManager {
     }
 
     @Override
-    public boolean isFirstBoot() {
-        return model.isFirstBoot();
-    }
-
-    @Override
     public NutsSession getSession() {
         return session;
-    }
-
-    public NutsClassLoaderNode getBootRuntimeClassLoaderNode(){
-        return model.bOptions.getRuntimeBootDependencyNode();
-    }
-    public NutsClassLoaderNode[] getBootExtensionClassLoaderNode(){
-        return model.bOptions.getExtensionBootDependencyNodes();
-    }
-
-    @Override
-    public NutsBootTerminal getBootTerminal() {
-        return model.getBootTerminal();
     }
 
     @Override
@@ -77,25 +59,32 @@ public class DefaultNutsBootManager implements NutsBootManager {
     }
 
     @Override
-    public NutsArgument getBootCustomArgument(String name) {
-        checkSession();
-        NutsArgument q = model.getCustomBootOptions().get(name);
-        if(q!=null){
-            return q;
-        }
-        return new DefaultNutsArgument(null,NutsElements.of(getSession()));
+    public boolean isFirstBoot() {
+        return model.isFirstBoot();
     }
 
     @Override
-    public NutsArgument getBootCustomArgument(String ... names) {
+    public Boolean getBootCustomBoolArgument(Boolean undefinedValue, Boolean emptyValue, Boolean errValue, String... names) {
         checkSession();
         for (String name : names) {
             NutsArgument q = model.getCustomBootOptions().get(name);
-            if(q!=null){
+            if (q != null) {
+                return q.getBooleanValue(emptyValue, errValue);
+            }
+        }
+        return undefinedValue;
+    }
+
+    @Override
+    public NutsArgument getBootCustomArgument(String... names) {
+        checkSession();
+        for (String name : names) {
+            NutsArgument q = model.getCustomBootOptions().get(name);
+            if (q != null) {
                 return q;
             }
         }
-        return new DefaultNutsArgument(null,NutsElements.of(getSession()));
+        return null;
     }
 
     @Override
@@ -103,17 +92,6 @@ public class DefaultNutsBootManager implements NutsBootManager {
         checkSession();
         return _configModel().getOptions(getSession());
     }
-
-    private DefaultNutsWorkspaceConfigModel _configModel() {
-        DefaultNutsWorkspaceConfigManager config = (DefaultNutsWorkspaceConfigManager) session.config();
-        DefaultNutsWorkspaceConfigModel configModel = config.getModel();
-        return configModel;
-    }
-
-    private void checkSession() {
-        NutsWorkspaceUtils.checkSession(model.getWorkspace(), session);
-    }
-
 
     @Override
     public ClassLoader getBootClassLoader() {
@@ -126,12 +104,6 @@ public class DefaultNutsBootManager implements NutsBootManager {
         checkSession();
         return _configModel().getBootClassWorldURLs();
     }
-
-//    public ee(){
-//        NutsWorkspaceModel wsModel = ((NutsWorkspaceExt) session.getWorkspace()).getModel();
-//        wsModel.bootModel.getWorkspaceInitInformation().getOptions();
-//
-//    }
 
     @Override
     public String getBootRepositories() {
@@ -155,6 +127,35 @@ public class DefaultNutsBootManager implements NutsBootManager {
     public long getCreationTimeMillis() {
         checkSession();
         return _configModel().getCreationTimeMillis();
+    }
+
+    public NutsClassLoaderNode getBootRuntimeClassLoaderNode() {
+        return model.bOptions.getRuntimeBootDependencyNode();
+    }
+
+//    public ee(){
+//        NutsWorkspaceModel wsModel = ((NutsWorkspaceExt) session.getWorkspace()).getModel();
+//        wsModel.bootModel.getWorkspaceInitInformation().getOptions();
+//
+//    }
+
+    public NutsClassLoaderNode[] getBootExtensionClassLoaderNode() {
+        return model.bOptions.getExtensionBootDependencyNodes();
+    }
+
+    @Override
+    public NutsBootTerminal getBootTerminal() {
+        return model.getBootTerminal();
+    }
+
+    private DefaultNutsWorkspaceConfigModel _configModel() {
+        DefaultNutsWorkspaceConfigManager config = (DefaultNutsWorkspaceConfigManager) session.config();
+        DefaultNutsWorkspaceConfigModel configModel = config.getModel();
+        return configModel;
+    }
+
+    private void checkSession() {
+        NutsWorkspaceUtils.checkSession(model.getWorkspace(), session);
     }
 
 }

@@ -97,7 +97,7 @@ public class ProcessExecHelper implements IProcessExecHelper {
                             pb.getCommandString()
                     )));
         }
-        if (showCommand || session.boot().getBootCustomArgument("---show-command").getBooleanValue( false)) {
+        if (showCommand || session.boot().getBootCustomBoolArgument(false,false,false,"---show-command")) {
             if (prepareTerminal.out().mode() == NutsTerminalMode.FORMATTED) {
                 prepareTerminal.out().printf("%s ", NutsTexts.of(session).ofStyled("[exec]", NutsTextStyle.primary4()));
                 prepareTerminal.out().println(NutsTexts.of(session).ofCode("system", pb.getCommandString()));

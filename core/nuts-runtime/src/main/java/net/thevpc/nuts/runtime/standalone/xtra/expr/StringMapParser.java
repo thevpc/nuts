@@ -33,7 +33,6 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
- *
  * @author thevpc
  */
 public class StringMapParser {
@@ -41,8 +40,7 @@ public class StringMapParser {
     private final String entrySeparators;
 
     /**
-     *
-     * @param eqSeparators equality separators, example '='
+     * @param eqSeparators    equality separators, example '='
      * @param entrySeparators entry separators, example ','
      */
     public StringMapParser(String eqSeparators, String entrySeparators) {
@@ -53,9 +51,9 @@ public class StringMapParser {
     /**
      * copied from StringUtils (in order to remove dependency)
      *
-     * @param reader reader
+     * @param reader     reader
      * @param stopTokens stopTokens
-     * @param result result
+     * @param result     result
      * @return next token
      * @throws IOException IOException
      */
@@ -104,6 +102,30 @@ public class StringMapParser {
                 }
             } else {
                 char cr = (char) r;
+                if (cr == '\\') {
+                    r = reader.read();
+                    if (r == -1) {
+                        result.append(cr);
+                        return -1;
+                    }
+                    switch ((char) r) {
+                        case 'n': {
+                            result.append('\n');
+                            break;
+                        }
+                        case 'r': {
+                            result.append('\r');
+                            break;
+                        }
+                        case 'f': {
+                            result.append('\f');
+                            break;
+                        }
+                        default: {
+                            result.append((char) r);
+                        }
+                    }
+                }
                 if (stopTokens != null && stopTokens.indexOf(cr) >= 0) {
                     return cr;
                 }
@@ -118,7 +140,7 @@ public class StringMapParser {
      * @param text text to parse
      * @return parsed map
      */
-    public Map<String, String> parseMap(String text,NutsSession session) {
+    public Map<String, String> parseMap(String text, NutsSession session) {
         Map<String, String> m = new LinkedHashMap<>();
         StringReader reader = new StringReader(text == null ? "" : text);
         while (true) {
@@ -154,6 +176,92 @@ public class StringMapParser {
             }
         }
         return m;
+    }
+
+    public String encode(String str, boolean forceQuote, QuoteType quoteType) {
+        if(str==null){
+            str="";
+        }
+        if (quoteType == null) {
+            quoteType = QuoteType.SIMPLE;
+        }
+        StringBuilder sb = new StringBuilder();
+        for (char c : str.toCharArray()) {
+            if (c < 32) {
+                switch (c) {
+                    case '\n': {
+                        sb.append("\\n");
+                        break;
+                    }
+                    case '\r': {
+                        sb.append("\\r");
+                        break;
+                    }
+                    case '\f': {
+                        sb.append("\\f");
+                        break;
+                    }
+                }
+            } else if (c == '\'') {
+                if (forceQuote) {
+                    if (quoteType == QuoteType.SIMPLE) {
+                        sb.append('\'');
+                    } else {
+                        sb.append(c);
+                    }
+                } else {
+                    if (sb.length() == 0) {
+                        forceQuote = true;
+                    }
+                    sb.append('\'');
+                }
+            } else if (c == '\"') {
+                if (forceQuote) {
+                    if (quoteType == QuoteType.DOUBLE) {
+                        sb.append('\"');
+                    } else {
+                        sb.append(c);
+                    }
+                } else {
+                    if (sb.length() == 0) {
+                        forceQuote = true;
+                    }
+                    sb.append('\"');
+                }
+            } else if (c == '\\') {
+                sb.append('\\').append(c);
+            } else if (eqSeparators.indexOf(c) >= 0 || entrySeparators.indexOf(c) >= 0) {
+                if (forceQuote) {
+                    sb.append(c);
+                } else {
+                    sb.append('\\');
+                    sb.append(c);
+                }
+            } else {
+                sb.append(c);
+            }
+        }
+        if (forceQuote) {
+            if (quoteType == QuoteType.DOUBLE) {
+                sb.insert(0, '\"');
+                sb.append('\"');
+            } else {
+                sb.insert(0, '\'');
+                sb.append('\'');
+            }
+        }
+        return sb.toString();
+    }
+
+    public enum QuoteType {
+        DOUBLE,
+        SIMPLE,
+    }
+
+    public enum When {
+        QUOTE_ALWAYS,
+        QUOTE_REQUIRED,
+        QUOTE_NEVER,
     }
 
 }

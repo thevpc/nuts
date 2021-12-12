@@ -242,38 +242,6 @@ public interface NutsDependencyFormat extends NutsFormat, NutsComponent {
     NutsDependencyFormat setHighlightImportedGroup(boolean highlightImportedGroup);
 
     /**
-     * return true if scope is highlighted
-     *
-     * @return true if scope is highlighted
-     */
-    boolean isHighlightScope();
-
-    /**
-     * if true omit (do not include) name space when formatting the value
-     * set using {@link #setValue(NutsDependency)} .
-     *
-     * @param highlightScope new value
-     * @return {@code this} instance
-     */
-    NutsDependencyFormat setHighlightScope(boolean highlightScope);
-
-    /**
-     * return true if optional is highlighted
-     *
-     * @return true if optional is highlighted
-     */
-    boolean isHighlightOptional();
-
-    /**
-     * if true omit (do not include) name space when formatting the value
-     * set using {@link #setValue(NutsDependency)} .
-     *
-     * @param highlightOptional new value
-     * @return {@code this} instance
-     */
-    NutsDependencyFormat setHighlightOptional(boolean highlightOptional);
-
-    /**
      * return current value to format
      *
      * @return current value to format

@@ -6,7 +6,6 @@
 package net.thevpc.nuts.core.test;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.boot.NutsBootWorkspace;
 import net.thevpc.nuts.core.test.utils.TestUtils;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import org.junit.jupiter.api.*;
@@ -207,24 +206,24 @@ public class Test06_UpdateTest {
                 .resolve("nuts-" + newApiVersion + ".jar")
         ));
 
-        NutsBootWorkspace b = new NutsBootWorkspace(null,
-                "--workspace", nws.getWorkspace().getLocation().toString(),
-                "--boot-version=" + newApiVersion,
-                "--bot",
-                "--color=never",
-                "--skip-companions",
-                "--json",
-                "version"
-        );
-        TestUtils.println(NutsCommandLine.of(b.createProcessCommandLine(), uws).toString());
-
-        NutsExecCommand ee = uws.exec().setExecutionType(NutsExecutionType.SYSTEM)
-                .addCommand(b.createProcessCommandLine())
+        NutsExecCommand ee = uws.exec().setExecutionType(NutsExecutionType.SPAWN)
+                .addCommand(
+                        "nuts#"+newApiVersion,
+                        "--workspace", nws.getWorkspace().getLocation().toString(),
+                        "--boot-version=" + newApiVersion,
+                        "--bot",
+                        "--color=never",
+                        "--skip-companions",
+                        "--json",
+                        "version"
+                )
                 .setFailFast(true)
                 .grabOutputString()
                 .grabErrorString()
-                .setSleepMillis(1000)
-                .run();
+                .setSleepMillis(1000);
+        TestUtils.println(ee.formatter().format().filteredText());
+        ee.run();
+
         String ss = ee.getOutputString();
         TestUtils.println("================");
         TestUtils.println(ss);

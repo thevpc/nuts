@@ -556,7 +556,7 @@ public final class NutsBootWorkspace {
 
             NutsBootId bootApiId = new NutsBootId("net.thevpc.nuts", "nuts", NutsBootVersion.parse(computedOptions.getApiVersion()));
             Path nutsApiConfigBootPath =
-                    Paths.get(computedOptions.getStoreLocation(NutsStoreLocation.LIB) + File.separator + NutsConstants.Folders.ID)
+                    Paths.get(computedOptions.getStoreLocation(NutsStoreLocation.CONFIG) + File.separator + NutsConstants.Folders.ID)
                             .resolve(PrivateNutsUtils.idToPath(bootApiId)).resolve(NutsConstants.Files.API_BOOT_CONFIG_FILE_NAME);
             boolean loadedApiConfig = false;
 
@@ -637,7 +637,7 @@ public final class NutsBootWorkspace {
                     Set<NutsBootId> loadedDeps = null;
                     NutsBootId rid = NutsBootId.parse(computedOptions.getRuntimeId());
                     Path nutsRuntimeCacheConfigPath =
-                            Paths.get(computedOptions.getStoreLocation(NutsStoreLocation.LIB) + File.separator + NutsConstants.Folders.ID)
+                            Paths.get(computedOptions.getStoreLocation(NutsStoreLocation.CONFIG) + File.separator + NutsConstants.Folders.ID)
                                     .resolve(PrivateNutsUtils.idToPath(bootApiId)).resolve(NutsConstants.Files.RUNTIME_BOOT_CONFIG_FILE_NAME);
                     try {
                         boolean cacheLoaded = false;
@@ -703,7 +703,7 @@ public final class NutsBootWorkspace {
                             NutsBootId eid = NutsBootId.parse(extension);
                             if (!excludedExtensions.contains(eid.getShortName()) && !excludedExtensions.contains(eid.getArtifactId())) {
                                 Path extensionFile =
-                                        Paths.get(computedOptions.getStoreLocation(NutsStoreLocation.LIB) + File.separator + NutsConstants.Folders.ID)
+                                        Paths.get(computedOptions.getStoreLocation(NutsStoreLocation.CONFIG) + File.separator + NutsConstants.Folders.ID)
                                                 .resolve(PrivateNutsUtils.idToPath(bootApiId)).resolve(NutsConstants.Files.EXTENSION_BOOT_CONFIG_FILE_NAME);
                                 Set<NutsBootId> loadedDeps = null;
                                 if (isLoadFromCache() && PrivateNutsUtils.isFileAccessible(extensionFile, computedOptions.getExpireTime(), bLog)) {
