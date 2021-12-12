@@ -98,12 +98,14 @@ public class DefaultNutsUncompress implements NutsUncompress {
 
     @Override
     public NutsUncompress setSource(InputStream source) {
-        this.source = source==null?null:NutsStreamOrPath.of(source);
+        checkSession();
+        this.source = source==null?null:NutsStreamOrPath.of(source,getSession());
         return this;
     }
 
     @Override
     public NutsUncompress setSource(NutsPath source) {
+        checkSession();
         this.source = source==null?null:NutsStreamOrPath.of(source);
         return this;
     }
@@ -268,9 +270,10 @@ public class DefaultNutsUncompress implements NutsUncompress {
             }else{
                 m.setSource(_source.getPath());
             }
-            _source = NutsStreamOrPath.of(m.setProgressFactory(getProgressMonitorFactory())
+            _source = NutsStreamOrPath.of
+                    (m.setProgressFactory(getProgressMonitorFactory())
                     .setLogProgress(isLogProgress())
-                    .create());
+                    .create(),session);
         }
         //boolean _source_isPath = _source.isPath();
 //        if (!path.toLowerCase().startsWith("file://")) {
@@ -324,7 +327,7 @@ public class DefaultNutsUncompress implements NutsUncompress {
             _source = NutsStreamOrPath.of(m
                     .setProgressFactory(getProgressMonitorFactory())
                     .setLogProgress(isLogProgress())
-                    .create());
+                    .create(),session);
         }
         //boolean _source_isPath = _source.isPath();
 //        if (!path.toLowerCase().startsWith("file://")) {

@@ -5,8 +5,8 @@
  */
 package net.thevpc.nuts.runtime.standalone.io.util;
 
-import net.thevpc.nuts.NutsInputStreamMetadataAware;
-import net.thevpc.nuts.NutsInputStreamMetadata;
+import net.thevpc.nuts.NutsStreamMetadataAware;
+import net.thevpc.nuts.NutsStreamMetadata;
 
 import java.io.FilterInputStream;
 import java.io.InputStream;
@@ -15,12 +15,12 @@ import java.io.InputStream;
  *
  * @author thevpc
  */
-public class InputStreamMetadataAwareImpl extends FilterInputStream implements NutsInputStreamMetadataAware {
+public class InputStreamMetadataAwareImpl extends FilterInputStream implements NutsStreamMetadataAware {
 
-    private NutsInputStreamMetadata metadata;
+    private NutsStreamMetadata metadata;
 
 
-    public static InputStreamMetadataAwareImpl of(InputStream in, NutsInputStreamMetadata metadata) {
+    public static InputStreamMetadataAwareImpl of(InputStream in, NutsStreamMetadata metadata) {
         if(in instanceof InputStreamMetadataAwareImpl){
             return new InputStreamMetadataAwareImpl(((InputStreamMetadataAwareImpl) in).in,metadata);
         }else{
@@ -28,19 +28,19 @@ public class InputStreamMetadataAwareImpl extends FilterInputStream implements N
         }
     }
 
-    public InputStreamMetadataAwareImpl(InputStream in, NutsInputStreamMetadata metadata) {
+    public InputStreamMetadataAwareImpl(InputStream in, NutsStreamMetadata metadata) {
         super(in);
         this.metadata = metadata;
     }
 
     @Override
-    public NutsInputStreamMetadata getInputStreamMetadata() {
+    public NutsStreamMetadata getStreamMetadata() {
         return metadata;
     }
 
     @Override
     public String toString() {
-        NutsInputStreamMetadata md = getInputStreamMetadata();
+        NutsStreamMetadata md = getStreamMetadata();
         if(md!=null) {
             String n = md.getName();
             if (n != null) {

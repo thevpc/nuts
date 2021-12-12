@@ -38,28 +38,6 @@ import java.util.logging.Logger;
  */
 public class NutsDependencyScopes {
 
-    private static final Logger LOG = Logger.getLogger(NutsDependencyScopes.class.getName());
-
-//    public static final NutsDependencyFilter SCOPE_RUN(NutsWorkspace ws) {
-//        return (NutsDependencyFilter) ws.dependency().filter().byScope(NutsDependencyScopePattern.RUN).and(
-//                ws.dependency().filter().byOptional(false)
-//        );
-//    }
-//    public static final NutsDependencyFilter SCOPE_TEST = CoreFilterUtils.And(new ScopeNutsDependencyFilter(NutsDependencyScopePattern.TEST), CoreNutsUtils.NON_OPTIONAL);
-
-//    public static int compareScopes(String s1, String s2) {
-//        int x = getScopesPriority(s1);
-//        int y = getScopesPriority(s2);
-//        int c = Integer.compare(x, y);
-//        if (c != 0) {
-//            return x;
-//        }
-//        if (x == -1) {
-//            return normalizeScope(s1).compareTo(normalizeScope(s2));
-//        }
-//        return 0;
-//    }
-
     public static boolean isDefaultScope(String s1) {
         return NutsDependencyScope.parseLenient(s1, NutsDependencyScope.API, NutsDependencyScope.API) == NutsDependencyScope.API;
     }

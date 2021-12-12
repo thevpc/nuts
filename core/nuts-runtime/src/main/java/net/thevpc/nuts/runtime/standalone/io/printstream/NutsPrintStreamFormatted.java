@@ -1,6 +1,8 @@
 package net.thevpc.nuts.runtime.standalone.io.printstream;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.standalone.text.parser.DefaultNutsTextPlain;
+import net.thevpc.nuts.runtime.standalone.text.parser.DefaultNutsTextStyled;
 
 public class NutsPrintStreamFormatted extends NutsPrintStreamRendered {
     public NutsPrintStreamFormatted(NutsPrintStreamBase base, NutsSession session, Bindings bindings) {
@@ -9,6 +11,7 @@ public class NutsPrintStreamFormatted extends NutsPrintStreamRendered {
         if(bindings.formatted!=null){
             throw new NutsIllegalArgumentException(session,NutsMessage.plain("formatted already bound"));
         }
+        setFormattedName(new DefaultNutsTextStyled(session,new DefaultNutsTextPlain(session,"<formatted-stream>" ),NutsTextStyles.of(NutsTextStyle.path())));
         bindings.formatted=this;
     }
 

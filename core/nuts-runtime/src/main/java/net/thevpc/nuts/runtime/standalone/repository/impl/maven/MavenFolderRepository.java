@@ -203,9 +203,9 @@ public class MavenFolderRepository extends NutsCachedRepository {
                             () -> session.getTerminal().printProgress("%-14s %-8s %s",getName(), "browse",
                                     (basePath == null ? repoRoot : repoRoot.resolve(basePath)).toCompressedForm()
                             ),
-                            "Log"
+                            "Log",
 
-                    ).build());
+                            session).build());
             if (basePath.getName().equals("*")) {
                 list.add(new NutsIdPathIterator(this, repoRoot, basePath.getParent(), filter, session, repoIter, Integer.MAX_VALUE, "core",null));
             } else {
@@ -265,6 +265,7 @@ public class MavenFolderRepository extends NutsCachedRepository {
         return IteratorBuilder.ofSupplier(
                 () -> {
                     List<NutsId> ret = new ArrayList<>();
+                    session.getTerminal().printProgress("looking for versions of %s at %s", id,foldersFileUrl.toCompressedForm());
                     NutsPath[] all = foldersFileUrl.list().filter(
                             NutsPath::isDirectory, "isDirectory"
                     ).toArray(NutsPath[]::new);
@@ -280,8 +281,8 @@ public class MavenFolderRepository extends NutsCachedRepository {
                 , e -> e.ofObject()
                         .set("type", "NonSingleVersion")
                         .set("path", foldersFileUrl.toString())
-                        .build()
-        ).build();
+                        .build(),
+                session).build();
     }
 
     public NutsIterator<NutsId> findSingleVersionImpl(final NutsId id, NutsIdFilter idFilter, NutsFetchMode fetchMode, final NutsSession session) {
@@ -304,8 +305,8 @@ public class MavenFolderRepository extends NutsCachedRepository {
                     , e -> e.ofObject()
                             .set("type", "SingleVersion")
                             .set("path", metadataURL.toString())
-                            .build()
-            ).build();
+                            .build(),
+                    session).build();
         } else {
             throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("expected single version in %s", id));
         }

@@ -137,7 +137,7 @@ public abstract class AbstractMavenRepositoryHelper {
             try {
                 stream = getStream(idDesc, "artifact descriptor", "retrieve", session);
                 bytes = CoreIOUtils.loadByteArray(stream, true, session);
-                name = NutsInputStreamMetadata.of(stream).getName();
+                name = NutsStreamMetadata.of(stream).getName();
                 nutsDescriptor = MavenUtils.of(session).parsePomXmlAndResolveParents(
                         CoreIOUtils.createBytesStream(bytes, name == null ? null : NutsMessage.formatted(name), "text/xml", "pom.xml", session)
                         , fetchMode, getIdPath(id, session).toString(), repository);

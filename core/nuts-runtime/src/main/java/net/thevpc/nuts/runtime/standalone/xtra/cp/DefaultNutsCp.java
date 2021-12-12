@@ -6,10 +6,7 @@
 package net.thevpc.nuts.runtime.standalone.xtra.cp;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.standalone.io.util.InterruptException;
-import net.thevpc.nuts.runtime.standalone.io.util.Interruptible;
-import net.thevpc.nuts.runtime.standalone.io.util.NutsStreamOrPath;
-import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
+import net.thevpc.nuts.runtime.standalone.io.util.*;
 import net.thevpc.nuts.runtime.standalone.io.progress.DefaultNutsProgressEvent;
 import net.thevpc.nuts.runtime.standalone.io.progress.SingletonNutsInputStreamProgressFactory;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
@@ -86,11 +83,6 @@ public class DefaultNutsCp implements NutsCp {
         return source;
     }
 
-//    public DefaultNutsCp setSource(Object source) {
-//        this.source = _input().of(source);
-//        return this;
-//    }
-
     @Override
     public NutsCp setSource(NutsPath source) {
         this.source = source == null ? null : NutsStreamOrPath.of(source);
@@ -99,12 +91,14 @@ public class DefaultNutsCp implements NutsCp {
 
     @Override
     public NutsCp setSource(InputStream source) {
-        this.source = source == null ? null : NutsStreamOrPath.of(source);
+        checkSession();
+        this.source = source == null ? null : NutsStreamOrPath.of(source,session);
         return this;
     }
 
     @Override
     public NutsCp setSource(File source) {
+        checkSession();
         this.source = source == null ? null : NutsStreamOrPath.of(NutsPath.of(source, session));
         return this;
     }
@@ -166,7 +160,8 @@ public class DefaultNutsCp implements NutsCp {
 
     @Override
     public NutsCp setSource(byte[] source) {
-        this.source = source == null ? null : NutsStreamOrPath.of(new ByteArrayInputStream(source));
+        checkSession();
+        this.source = source == null ? null : NutsStreamOrPath.of(new ByteArrayInputStream(source),session);
         return this;
     }
 
@@ -177,13 +172,14 @@ public class DefaultNutsCp implements NutsCp {
 
     @Override
     public NutsCp setTarget(OutputStream target) {
-        this.target = target == null ? null : NutsStreamOrPath.of(target);
+        checkSession();
+        this.target = target == null ? null : NutsStreamOrPath.ofAnyOutputOrErr(target,session);
         return this;
     }
 
     @Override
     public NutsCp setTarget(NutsPrintStream target) {
-        this.target = target == null ? null : NutsStreamOrPath.of(target);
+        this.target = target == null ? null : NutsStreamOrPath.ofAnyOutputOrErr(target,session);
         return this;
     }
 
@@ -218,14 +214,12 @@ public class DefaultNutsCp implements NutsCp {
 
     @Override
     public NutsCp to(NutsPrintStream target) {
-        this.target = target == null ? null : NutsStreamOrPath.of(target);
-        return this;
+        return setTarget(target);
     }
 
     @Override
     public NutsCp to(String target) {
-        this.target = target == null ? null : NutsStreamOrPath.of(target, session);
-        return this;
+        return setTarget(target);
     }
 
     @Override
@@ -290,11 +284,12 @@ public class DefaultNutsCp implements NutsCp {
 
     @Override
     public byte[] getByteArrayResult() {
-        ByteArrayOutputStream b = new ByteArrayOutputStream();
+        checkSession();
+        NutsMemoryPrintStream b = NutsPrintStream.ofInMemory(session);
         to(b);
         removeOptions(NutsPathOption.SAFE);
         run();
-        return b.toByteArray();
+        return b.getBytes();
     }
 
     @Override
@@ -582,27 +577,23 @@ public class DefaultNutsCp implements NutsCp {
         }
         if (options.contains(NutsPathOption.LOG) || getProgressMonitorFactory() != null) {
             NutsInputStreamMonitor monitor = NutsInputStreamMonitor.of(session);
+            NutsString name =null;
             if (_source.isInputStream()) {
-                monitor.setSource(_source.getInputStream());
+                InputStream inputStream = _source.getInputStream();
+                monitor.setSource(inputStream);
             } else {
                 monitor.setSource(_source.getPath());
             }
-            _source = NutsStreamOrPath.of(monitor
+            _source = NutsStreamOrPath.ofAnyInputOrErr(
+                    monitor
                     .setProgressFactory(getProgressMonitorFactory())
                     .setLogProgress(options.contains(NutsPathOption.LOG))
-                    .create());
+                    .create(),session);
         }
         NutsLoggerOp lop = _LOGOP(session);
         if(lop.isLoggable(Level.FINEST)) {
-            Object loggedSrc = _source == null ? null : _source.getValue();
-            Object loggedTarget = target == null ? null : target.getValue();
-
-            if(loggedSrc instanceof NutsPath){
-                loggedSrc=((NutsPath) loggedSrc).toCompressedForm();
-            }
-            if(loggedTarget instanceof NutsPath){
-                loggedTarget=((NutsPath) loggedTarget).toCompressedForm();
-            }
+            NutsString loggedSrc = _source == null ? null : _source.getStreamMetaData().getFormattedPath();
+            NutsString loggedTarget = target == null ? null : target.getStreamMetaData().getFormattedPath();
             lop.level(Level.FINEST).verb(NutsLogVerb.START).log(NutsMessage.jstyle("copy {0} to {1}",
                     loggedSrc,
                     loggedTarget));

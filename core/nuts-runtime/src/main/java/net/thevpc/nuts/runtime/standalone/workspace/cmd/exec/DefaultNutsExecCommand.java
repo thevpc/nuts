@@ -328,20 +328,11 @@ public class DefaultNutsExecCommand extends AbstractNutsExecCommand {
         if (nid == null) {
             return null;
         }
-        NutsSession noProgressSession = traceSession.copy().setProgressOptions("none");
-        List<NutsId> ff = traceSession.search().addId(nid).setSession(noProgressSession).setOptional(false).setLatest(true).setFailFast(false)
+        List<NutsId> ff = traceSession.search().addId(nid).setOptional(false).setLatest(true).setFailFast(false)
                 .setInstallStatus(NutsInstallStatusFilters.of(session).byDeployed(true))
                 .getResultDefinitions().stream()
                 .sorted(Comparator.comparing(x -> !x.getInstallInformation().isDefaultVersion())) // default first
                 .map(NutsDefinition::getId).collect(Collectors.toList());
-//        if (ff.isEmpty()) {
-//            //retest without checking if the parseVersion is default or not
-//            // this help recovering from "invalid default parseVersion" issue
-//            ff = ws.search().addId(nid).setSession(noProgressSession).setOptional(false).setLatest(true).setFailFast(false)
-//                    .setInstallStatus(ws.filters().installStatus().byDeployed(true))
-//                    .setSession(noProgressSession)
-//                    .getResultIds().list();
-//        }
         if (ff.isEmpty()) {
             if (!forceInstalled) {
                 if (ignoreIfUserCommand && isUserCommand(nid.toString())) {
@@ -356,7 +347,7 @@ public class DefaultNutsExecCommand extends AbstractNutsExecCommand {
                     );
                     traceSession.out().flush();
                 }
-                ff = traceSession.search().addId(nid).setSession(noProgressSession.copy().setFetchStrategy(NutsFetchStrategy.ONLINE))
+                ff = traceSession.search().addId(nid).setSession(traceSession.copy().setFetchStrategy(NutsFetchStrategy.ONLINE))
                         .setOptional(false).setFailFast(false)
                         .setLatest(true)
                         //                        .configure(true,"--trace-monitor")
@@ -366,7 +357,7 @@ public class DefaultNutsExecCommand extends AbstractNutsExecCommand {
         if (ff.isEmpty()) {
             return null;
         } else {
-            List<NutsVersion> versions = ff.stream().map(x -> x.getVersion()).distinct().collect(Collectors.toList());
+            List<NutsVersion> versions = ff.stream().map(NutsId::getVersion).distinct().collect(Collectors.toList());
             if (versions.size() > 1) {
                 throw new NutsTooManyElementsException(getSession(),
                         NutsMessage.cstyle("%s can be resolved to all (%d) of %s", nid, ff.size(), ff)
@@ -414,9 +405,7 @@ public class DefaultNutsExecCommand extends AbstractNutsExecCommand {
     protected NutsExecutableInformationExt ws_execId(NutsId goodId, String commandName, String[] appArgs, String[] executorOptions,
                                                      NutsExecutionType executionType, NutsRunAs runAs,
                                                      NutsSession session, NutsSession execSession) {
-        NutsSession noProgressSession = session.copy().setProgressOptions("none");
         NutsDefinition def = session.fetch().setId(goodId)
-                .setSession(noProgressSession)
                 .setDependencies(true)
                 .setFailFast(true)
                 .setEffective(true)

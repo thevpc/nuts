@@ -266,18 +266,18 @@ public class DefaultNutsCompress implements NutsCompress {
 
     @Override
     public NutsCompress addSource(InputStream source) {
+        checkSession();
         if (source == null) {
-            checkSession();
             throw new NutsIllegalArgumentException(session, NutsMessage.plain("null source"));
         }
-        this.sources.add(NutsStreamOrPath.of(source));
+        this.sources.add(NutsStreamOrPath.of(source,session));
         return this;
     }
 
     @Override
     public NutsCompress addSource(File source) {
+        checkSession();
         if (source == null) {
-            checkSession();
             throw new NutsIllegalArgumentException(session, NutsMessage.plain("null source"));
         }
         this.sources.add(NutsStreamOrPath.of(NutsPath.of(source,session)));
@@ -322,7 +322,8 @@ public class DefaultNutsCompress implements NutsCompress {
         if (target == null) {
             this.target = null;
         } else {
-            this.target = NutsStreamOrPath.of(target);
+            checkSession();
+            this.target = NutsStreamOrPath.of(target,session);
         }
         return this;
     }

@@ -137,7 +137,7 @@ public class DefaultNutsTexts implements NutsTexts {
             return ((NutsString) t).toText();
         }
         if (t instanceof InputStream) {
-            String q = NutsInputStreamMetadata.of((InputStream) t).getName();
+            String q = NutsStreamMetadata.of((InputStream) t).getName();
             if (q == null) {
                 q = t.toString();
             }

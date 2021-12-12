@@ -179,8 +179,8 @@ public class NutsCompressedPath extends NutsPathBase {
     @Override
     public InputStream getInputStream() {
         InputStream is = base.getInputStream();
-        NutsInputStreamMetadata m = NutsInputStreamMetadata.of(is);
-        NutsInputStreamMetadata m2 = new NutsDefaultInputStreamMetadata(m).setUserKind(getUserKind());
+        NutsStreamMetadata m = NutsStreamMetadata.of(is);
+        NutsStreamMetadata m2 = new NutsDefaultStreamMetadata(m).setUserKind(getUserKind());
         return InputStreamMetadataAwareImpl.of(is, m2);
     }
 
@@ -425,6 +425,11 @@ public class NutsCompressedPath extends NutsPathBase {
     public NutsFormat formatter() {
         return new MyPathFormat(this)
                 .setSession(getSession());
+    }
+
+    @Override
+    public NutsStreamMetadata getStreamMetadata() {
+        return base.getStreamMetadata();
     }
 
     private static class MyPathFormat extends DefaultFormatBase<NutsFormat> {

@@ -101,7 +101,7 @@ public abstract class AbstractNutsDeployRepositoryCommand extends NutsRepository
     @Override
     public NutsDeployRepositoryCommand setContent(InputStream content) {
         checkSession();
-        this.content = content==null?null:NutsStreamOrPath.of(content);
+        this.content = content==null?null:NutsStreamOrPath.of(content,getSession());
         return this;
     }
 

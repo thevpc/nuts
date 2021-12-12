@@ -8,7 +8,7 @@ package net.thevpc.nuts;
 /**
  * @author thevpc
  */
-public interface NutsInputStreamMetadataAware {
+public interface NutsStreamMetadataAware {
 
-    NutsInputStreamMetadata getInputStreamMetadata();
+    NutsStreamMetadata getStreamMetadata();
 }

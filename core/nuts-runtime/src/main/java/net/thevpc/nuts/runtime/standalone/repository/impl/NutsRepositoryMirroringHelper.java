@@ -6,12 +6,12 @@
 package net.thevpc.nuts.runtime.standalone.repository.impl;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.standalone.util.iter.IteratorBuilder;
-import net.thevpc.nuts.runtime.standalone.util.iter.IteratorUtils;
 import net.thevpc.nuts.runtime.standalone.event.DefaultNutsContentEvent;
 import net.thevpc.nuts.runtime.standalone.id.filter.NutsSearchIdByDescriptor;
 import net.thevpc.nuts.runtime.standalone.repository.NutsRepositoryUtils;
 import net.thevpc.nuts.runtime.standalone.repository.cmd.NutsRepositorySupportedAction;
+import net.thevpc.nuts.runtime.standalone.util.iter.IteratorBuilder;
+import net.thevpc.nuts.runtime.standalone.util.iter.IteratorUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
 import net.thevpc.nuts.spi.NutsDeployRepositoryCommand;
@@ -54,7 +54,7 @@ public class NutsRepositoryMirroringHelper {
                     list.add(
                             IteratorBuilder.of(repoSPI.searchVersions().setId(id).setFilter(idFilter).setSession(session)
                                             .setFetchMode(fetchMode)
-                                            .getResult())
+                                            .getResult(), session)
                                     .named("searchInMirror(" + repo.getName() + ")")
                                     .safeIgnore()
                                     .build()
@@ -140,7 +140,7 @@ public class NutsRepositoryMirroringHelper {
         for (NutsRepository remote : rconfig.setSession(session).getMirrors()) {
             NutsRepositorySPI repoSPI = NutsWorkspaceUtils.of(session).repoSPI(remote);
             all.add(IteratorUtils.safeIgnore(
-                    repoSPI.search().setFilter(filter).setSession(session).setFetchMode(fetchMode).getResult()
+                    repoSPI.search().setFilter(filter).setSession(session).setFetchMode(fetchMode).getResult(), session
             ));
         }
         return IteratorUtils.concat(all);

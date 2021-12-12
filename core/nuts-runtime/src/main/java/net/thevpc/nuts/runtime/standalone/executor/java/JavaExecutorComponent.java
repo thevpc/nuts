@@ -116,7 +116,7 @@ public class JavaExecutorComponent implements NutsExecutorComponent {
                 executionContext.getArguments(),
                 executionContext.getExecutorArguments(),
                 NutsBlankable.isBlank(executionContext.getCwd()) ? System.getProperty("user.dir") : executionContext.getCwd(),
-                session/*.copy().setProgressOptions("none")*/);
+                session);
         final NutsSession execSession = executionContext.getExecSession();
         switch (executionContext.getExecutionType()) {
             case EMBEDDED: {

@@ -7,7 +7,6 @@ package net.thevpc.nuts.runtime.standalone.repository.cmd.search;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.util.iter.*;
-import net.thevpc.nuts.NutsDescribables;
 import net.thevpc.nuts.runtime.standalone.repository.impl.NutsRepositoryExt;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import net.thevpc.nuts.NutsLogVerb;
@@ -74,12 +73,12 @@ public class DefaultNutsSearchRepositoryCommand extends AbstractNutsSearchReposi
                 }
                 if (o != null) {
                     result = IteratorBuilder.of(new IndexFirstIterator<>(o,
-                            xrepo.searchImpl(filter, getFetchMode(), session)
-                    )).onStart(startRunnable).onFinish(endRunnable).build();
+                            xrepo.searchImpl(filter, getFetchMode(), session),session
+                    ), session).onStart(startRunnable).onFinish(endRunnable).build();
                     return this;
                 }
             }
-            result = IteratorBuilder.of(xrepo.searchImpl(filter, getFetchMode(), session))
+            result = IteratorBuilder.of(xrepo.searchImpl(filter, getFetchMode(), session), session)
                     .onStart(startRunnable)
                     .onFinish(endRunnable)
                     .build();

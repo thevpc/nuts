@@ -33,7 +33,8 @@ import java.io.PrintStream;
 import java.io.Writer;
 import java.util.Locale;
 
-public interface NutsPrintStream {
+public interface NutsPrintStream extends NutsStreamMetadataAware {
+
     static NutsPrintStream ofNull(NutsSession session) {
         return NutsPrintStreams.of(session).createNull();
     }
@@ -58,19 +59,23 @@ public interface NutsPrintStream {
      * {@code out} is a PrintStream that supports {@code mode}, it should be
      * returned without modification.
      *
-     * @param out     stream to wrap
-     * @param mode    mode to support
+     * @param out      stream to wrap
+     * @param mode     mode to support
      * @param terminal terminal
-     * @param session session
+     * @param session  session
      * @return {@code mode} supporting PrintStream
      */
     static NutsPrintStream of(OutputStream out, NutsTerminalMode mode, NutsSystemTerminalBase terminal, NutsSession session) {
-        return NutsPrintStreams.of(session).create(out, mode,terminal);
+        return NutsPrintStreams.of(session).create(out, mode, terminal);
     }
 
     static NutsPrintStream of(Writer out, NutsSession session) {
         return NutsPrintStreams.of(session).create(out);
     }
+
+    NutsString getFormattedName();
+
+    NutsPrintStream setFormattedName(NutsString name);
 
     NutsSession getSession();
 

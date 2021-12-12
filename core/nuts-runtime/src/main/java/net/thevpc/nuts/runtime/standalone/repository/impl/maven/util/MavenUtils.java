@@ -78,7 +78,7 @@ public class MavenUtils {
     public static PomIdResolver createPomIdResolver(NutsSession session) {
         PomIdResolver wp = (PomIdResolver) session.env().getProperties().get(PomIdResolver.class.getName());
         if (wp == null) {
-            wp = new PomIdResolver(new NutsPomLogger(session));
+            wp = new PomIdResolver(session);
             session.env().setProperty(PomIdResolver.class.getName(), wp);
         }
         return wp;
@@ -572,8 +572,8 @@ public class MavenUtils {
             }
         }, autoClose);
         return IteratorBuilder.of(
-                NutsIterator.of(it,stream.toString())
-                ).map(NutsFunction.of(this::toNutsId, "PomId->NutsId")).build();
+                NutsIterator.of(it,stream.toString()),
+                session).map(NutsFunction.of(this::toNutsId, "PomId->NutsId")).build();
     }
 
     public MavenMetadata parseMavenMetaData(InputStream metadataStream, NutsSession session) {

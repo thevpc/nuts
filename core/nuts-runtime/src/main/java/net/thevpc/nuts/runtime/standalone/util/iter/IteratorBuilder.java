@@ -5,13 +5,16 @@
  */
 package net.thevpc.nuts.runtime.standalone.util.iter;
 
-import java.util.*;
+import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.standalone.util.collections.CoreCollectionUtils;
+
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
-
-import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.standalone.util.collections.CoreCollectionUtils;
 
 /**
  * @author thevpc
@@ -22,93 +25,96 @@ public class IteratorBuilder<T> {
     public static final NutsPredicate NON_BLANK = NutsPredicates.blank().negate();
     static final EmptyIterator EMPTY_ITERATOR = new EmptyIterator<>();
     private final NutsIterator<T> it;
+    private final NutsSession session;
 
-    private IteratorBuilder(NutsIterator<T> it) {
+    private IteratorBuilder(NutsIterator<T> it, NutsSession session) {
         if (it == null) {
             it = emptyIterator();
         }
         this.it = it;
+        this.session = session;
     }
 
-    public static <T> IteratorBuilder<T> ofCoalesce(List<NutsIterator<? extends T>> t) {
+    public static <T> IteratorBuilder<T> ofCoalesce(List<NutsIterator<? extends T>> t, NutsSession session) {
         return new IteratorBuilder<>(
-                IteratorUtils.coalesce(t)
-        );
+                IteratorUtils.coalesce(t),
+                session);
     }
 
-    public static <T> IteratorBuilder<T> ofConcat(List<NutsIterator<? extends T>> t) {
+    public static <T> IteratorBuilder<T> ofConcat(List<NutsIterator<? extends T>> t, NutsSession session) {
         return new IteratorBuilder<>(
-                IteratorUtils.concat(t)
-        );
+                IteratorUtils.concat(t),
+                session);
     }
 
-    public static <T> IteratorBuilder<T> of(NutsIterator<T> t) {
-        return new IteratorBuilder<>(t);
+    public static <T> IteratorBuilder<T> of(NutsIterator<T> t, NutsSession session) {
+        return new IteratorBuilder<>(t, session);
     }
 
-    public static <T> IteratorBuilder<T> ofRunnable(NutsRunnable t) {
+    public static <T> IteratorBuilder<T> ofRunnable(NutsRunnable t, NutsSession session) {
         return (IteratorBuilder) of(
-                emptyIterator()
-        ).onStart(t);
+                emptyIterator(),
+                session).onStart(t);
     }
 
-    public static <T> IteratorBuilder<T> ofRunnable(Runnable t, NutsElement n) {
-        return ofRunnable(NutsRunnable.of(t, n));
+    public static <T> IteratorBuilder<T> ofRunnable(Runnable t, NutsElement n, NutsSession session) {
+        return ofRunnable(NutsRunnable.of(t, n), session);
     }
 
-    public static <T> IteratorBuilder<T> ofRunnable(Runnable t, String n) {
-        return ofRunnable(NutsRunnable.of(t, n));
+    public static <T> IteratorBuilder<T> ofRunnable(Runnable t, String n, NutsSession session) {
+        return ofRunnable(NutsRunnable.of(t, n), session);
     }
 //
 //    public static <T> IteratorBuilder<T> ofSupplier(Supplier<NutsIterator<T>> from) {
 //        return of(new SupplierIterator<T>(from, null));
 //    }
 
-    public static <T> IteratorBuilder<T> ofSupplier(Supplier<Iterator<T>> from , Function<NutsElements,NutsElement> name) {
-        return of(new SupplierIterator2<T>(from, name));
+    public static <T> IteratorBuilder<T> ofSupplier(Supplier<Iterator<T>> from, Function<NutsElements, NutsElement> name, NutsSession session) {
+        return of(new SupplierIterator2<T>(from, name), session);
     }
 
-    public static <T> IteratorBuilder<T> ofArrayValues(T[] t, NutsElement n) {
-        return ofArrayValues(t,e->n);
-    }
-    public static <T> IteratorBuilder<T> ofArrayValues(T[] t, String n) {
-        return ofArrayValues(t,e->e.ofString(n));
+    public static <T> IteratorBuilder<T> ofArrayValues(T[] t, NutsElement n, NutsSession session) {
+        return ofArrayValues(t, e -> n, session);
     }
 
-    public static <T> IteratorBuilder<T> ofArrayValues(T[] t, Function<NutsElements,NutsElement> n) {
+    public static <T> IteratorBuilder<T> ofArrayValues(T[] t, String n, NutsSession session) {
+        return ofArrayValues(t, e -> e.ofString(n), session);
+    }
+
+    public static <T> IteratorBuilder<T> ofArrayValues(T[] t, Function<NutsElements, NutsElement> n, NutsSession session) {
         return of(t == null ? emptyIterator() :
-                        new NutsIteratorAdapter<T>(
-                                Arrays.asList(t).iterator(), n)
-                );
+                new NutsIteratorAdapter<T>(
+                        Arrays.asList(t).iterator(), n),
+                session);
     }
 
     public static <T> NutsIterator<T> emptyIterator() {
         return EMPTY_ITERATOR;
     }
 
-    public static <T> IteratorBuilder<T> emptyBuilder() {
-        return of(EMPTY_ITERATOR);
+    public static <T> IteratorBuilder<T> emptyBuilder(NutsSession session) {
+        return of(EMPTY_ITERATOR, session);
     }
 
-    public static <T> IteratorBuilder<T> ofFlatMap(NutsIterator<? extends Collection<T>> from) {
+    public static <T> IteratorBuilder<T> ofFlatMap(NutsIterator<? extends Collection<T>> from, NutsSession session) {
         if (from == null) {
-            return emptyBuilder();
+            return emptyBuilder(session);
         }
-        return of(new FlatMapIterator<>(from, Collection::iterator));
+        return of(new FlatMapIterator<>(from, Collection::iterator), session);
     }
 
-    public IteratorBuilder<T> filter(Predicate<? super T> t,Function<NutsElements,NutsElement> e) {
+    public IteratorBuilder<T> filter(Predicate<? super T> t, Function<NutsElements, NutsElement> e) {
         if (t == null) {
             return this;
         }
-        return of(new FilteredIterator<>(it, NutsPredicate.of(t,e)));
+        return of(new FilteredIterator<>(it, NutsPredicate.of(t, e)), session);
     }
 
     public IteratorBuilder<T> filter(NutsPredicate<? super T> t) {
         if (t == null) {
             return this;
         }
-        return new IteratorBuilder<>(new FilteredIterator<>(it, t));
+        return new IteratorBuilder<>(new FilteredIterator<>(it, t), session);
     }
 
     public IteratorBuilder<T> concat(IteratorBuilder<T> t) {
@@ -119,26 +125,26 @@ public class IteratorBuilder<T> {
         if (t == null) {
             return this;
         }
-        return new IteratorBuilder<>(IteratorUtils.concat(Arrays.asList(it, t)));
+        return new IteratorBuilder<>(IteratorUtils.concat(Arrays.asList(it, t)), session);
     }
 
     public <V> IteratorBuilder<V> map(NutsFunction<? super T, ? extends V> t) {
-        return new IteratorBuilder<>(new ConvertedIterator<>(it, t));
+        return new IteratorBuilder<>(new ConvertedIterator<>(it, t), session);
     }
 
 
     public <V> IteratorBuilder<V> flatMap(NutsFunction<? super T, ? extends Iterator<? extends V>> fun) {
-        return of(new FlatMapIterator<T, V>(it, fun));
+        return of(new FlatMapIterator<T, V>(it, fun), session);
     }
 
     public <V> IteratorBuilder<V> mapMulti(NutsFunction<T, List<V>> mapper) {
         return new IteratorBuilder<>(
-                new FlatMapIterator<>(it, t -> mapper.apply(t).iterator())
-        );
+                new FlatMapIterator<>(it, t -> mapper.apply(t).iterator()),
+                session);
     }
 
     public <V> IteratorBuilder<T> sort(NutsComparator<T> t, boolean removeDuplicates) {
-        return new IteratorBuilder<>(IteratorUtils.sort(it, t, removeDuplicates));
+        return new IteratorBuilder<>(IteratorUtils.sort(it, t, removeDuplicates), session);
     }
 
     public <V> IteratorBuilder<T> distinct() {
@@ -147,30 +153,30 @@ public class IteratorBuilder<T> {
 
     public <V> IteratorBuilder<T> distinct(NutsFunction<T, V> t) {
         if (t == null) {
-            return new IteratorBuilder<>(IteratorUtils.distinct(it));
+            return new IteratorBuilder<>(IteratorUtils.distinct(it), session);
         } else {
-            return new IteratorBuilder<>(IteratorUtils.distinct(it, t));
+            return new IteratorBuilder<>(IteratorUtils.distinct(it, t), session);
         }
     }
 
     public <V> IteratorBuilder<T> named(String n) {
         if (n != null) {
             return new IteratorBuilder<>(new NutsIteratorAdapter<T>(
-                    it, e -> e.ofString(n)));
+                    it, e -> e.ofString(n)), session);
         }
         return this;
     }
 
     public <V> IteratorBuilder<T> named(NutsObjectElement nfo) {
         if (nfo != null) {
-            return new IteratorBuilder<>(new NutsIteratorAdapter<T>(it, e -> nfo));
+            return new IteratorBuilder<>(new NutsIteratorAdapter<T>(it, e -> nfo), session);
         }
         return this;
     }
 
 
     public IteratorBuilder<T> safe(IteratorErrorHandlerType type) {
-        return new IteratorBuilder<>(new ErrorHandlerIterator(type, it));
+        return new IteratorBuilder<>(new ErrorHandlerIterator(type, it,session), session);
     }
 
     public IteratorBuilder<T> safeIgnore() {
@@ -209,7 +215,7 @@ public class IteratorBuilder<T> {
         if (r == null) {
             return this;
         }
-        return of(new OnFinishIterator<>(it, r));
+        return of(new OnFinishIterator<>(it, r), session);
     }
 
 
@@ -217,6 +223,6 @@ public class IteratorBuilder<T> {
         if (r == null) {
             return this;
         }
-        return of(new OnStartIterator<>(it, r));
+        return of(new OnStartIterator<>(it, r), session);
     }
 }

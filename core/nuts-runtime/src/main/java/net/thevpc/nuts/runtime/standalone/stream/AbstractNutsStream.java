@@ -152,7 +152,7 @@ public abstract class AbstractNutsStream<T> implements NutsStream<T> {
             @Override
             public NutsIterator<R> iterator() {
                 NutsIterator<T> it = AbstractNutsStream.this.iterator();
-                return (NutsIterator) IteratorBuilder.of(it).map(mapper).build();
+                return (NutsIterator) IteratorBuilder.of(it, session).map(mapper).build();
             }
         };
     }
@@ -266,7 +266,7 @@ public abstract class AbstractNutsStream<T> implements NutsStream<T> {
             @Override
             public NutsIterator<T> iterator() {
                 NutsIterator<T> it = AbstractNutsStream.this.iterator();
-                return IteratorBuilder.of(it).filter(predicate).build();//,"mapped("+it+")"
+                return IteratorBuilder.of(it, session).filter(predicate).build();//,"mapped("+it+")"
             }
         };
     }
@@ -288,7 +288,7 @@ public abstract class AbstractNutsStream<T> implements NutsStream<T> {
             @Override
             public NutsIterator<T> iterator() {
                 NutsIterator<T> it = AbstractNutsStream.this.iterator();
-                return IteratorBuilder.of(it).filter(p).build();//,"mapped("+it+")"
+                return IteratorBuilder.of(it, session).filter(p).build();//,"mapped("+it+")"
             }
         };
     }
@@ -343,7 +343,7 @@ public abstract class AbstractNutsStream<T> implements NutsStream<T> {
         return new AbstractNutsStream<R>(session, nutsBase) {
             @Override
             public NutsIterator<R> iterator() {
-                return IteratorBuilder.of(AbstractNutsStream.this.iterator()).flatMap(mapper).build();
+                return IteratorBuilder.of(AbstractNutsStream.this.iterator(), session).flatMap(mapper).build();
             }
         };
     }
@@ -353,7 +353,7 @@ public abstract class AbstractNutsStream<T> implements NutsStream<T> {
         return new AbstractNutsStream<R>(session, nutsBase) {
             @Override
             public NutsIterator<R> iterator() {
-                IteratorBuilder<T> r = IteratorBuilder.of(AbstractNutsStream.this.iterator());
+                IteratorBuilder<T> r = IteratorBuilder.of(AbstractNutsStream.this.iterator(), session);
                 return (NutsIterator<R>) r.flatMap(
                         NutsFunction.of(t -> mapper.apply(t).iterator(),mapper::describe)
                 ).build();
@@ -366,7 +366,7 @@ public abstract class AbstractNutsStream<T> implements NutsStream<T> {
         return new AbstractNutsStream<R>(session, nutsBase) {
             @Override
             public NutsIterator<R> iterator() {
-                return IteratorBuilder.of(AbstractNutsStream.this.iterator())
+                return IteratorBuilder.of(AbstractNutsStream.this.iterator(), session)
                         .flatMap(
                                 NutsFunction.of(t -> Arrays.asList(mapper.apply(t)).iterator(), mapper::describe)
                         ).build();
@@ -379,7 +379,7 @@ public abstract class AbstractNutsStream<T> implements NutsStream<T> {
         return new AbstractNutsStream<R>(session, nutsBase) {
             @Override
             public NutsIterator<R> iterator() {
-                return (NutsIterator<R>) IteratorBuilder.of(AbstractNutsStream.this.iterator()).flatMap(
+                return (NutsIterator<R>) IteratorBuilder.of(AbstractNutsStream.this.iterator(), session).flatMap(
                         NutsFunction.of(t -> mapper.apply(t).iterator(),mapper::describe)
                 ).build();
             }
@@ -391,7 +391,7 @@ public abstract class AbstractNutsStream<T> implements NutsStream<T> {
         return new AbstractNutsStream<R>(session, nutsBase) {
             @Override
             public NutsIterator<R> iterator() {
-                return (NutsIterator<R>) IteratorBuilder.of(AbstractNutsStream.this.iterator())
+                return (NutsIterator<R>) IteratorBuilder.of(AbstractNutsStream.this.iterator(), session)
                         .flatMap(
                                 NutsFunction.of(t -> mapper.apply(t).iterator(),mapper::describe)
                                 ).build();

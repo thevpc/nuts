@@ -575,7 +575,7 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
 
     @Override
     public NutsStream<NutsDependencies> getResultDependencies() {
-        return postProcessResult(IteratorBuilder.of(getResultDefinitionIteratorBase(true, isEffective()))
+        return postProcessResult(IteratorBuilder.of(getResultDefinitionIteratorBase(true, isEffective()), session)
                 .map(NutsFunction.of(NutsDefinition::getDependencies, "getDependencies"))
         );
     }
@@ -583,7 +583,7 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
     @Override
     public NutsStream<NutsDependency> getResultInlineDependencies() {
         return buildCollectionResult(
-                IteratorBuilder.of(getResultIdIteratorBase(true)).map(
+                IteratorBuilder.of(getResultIdIteratorBase(true), session).map(
                                 NutsFunction.of(NutsId::toDependency, "Id->Dependency"))
                         .build()
         );
@@ -666,7 +666,7 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
 
     @Override
     public NutsStream<String> getResultPaths() {
-        return postProcessResult(IteratorBuilder.of(getResultDefinitionIteratorBase(true, isEffective()))
+        return postProcessResult(IteratorBuilder.of(getResultDefinitionIteratorBase(true, isEffective()), session)
                 .map(
                         NutsFunction.of(x -> (x.getContent() == null || x.getContent().getPath() == null) ? null : x.getContent().getPath().toString(), "getPath")
                 )
@@ -676,28 +676,28 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
 
     @Override
     public NutsStream<String> getResultPathNames() {
-        return postProcessResult(IteratorBuilder.of(getResultDefinitionIteratorBase(true, isEffective()))
+        return postProcessResult(IteratorBuilder.of(getResultDefinitionIteratorBase(true, isEffective()), session)
                 .map(NutsFunction.of(x -> (x.getContent() == null || x.getContent().getPath() == null) ? null : x.getContent().getPath().getName(), "getName"))
                 .notBlank());
     }
 
     @Override
     public NutsStream<Instant> getResultInstallDates() {
-        return postProcessResult(IteratorBuilder.of(getResultDefinitionIteratorBase(isContent(), isEffective()))
+        return postProcessResult(IteratorBuilder.of(getResultDefinitionIteratorBase(isContent(), isEffective()), session)
                 .map(NutsFunction.of(x -> (x.getInstallInformation() == null) ? null : x.getInstallInformation().getCreatedInstant(), "getCreatedInstant"))
                 .notNull());
     }
 
     @Override
     public NutsStream<String> getResultInstallUsers() {
-        return postProcessResult(IteratorBuilder.of(getResultDefinitionIteratorBase(isContent(), isEffective()))
+        return postProcessResult(IteratorBuilder.of(getResultDefinitionIteratorBase(isContent(), isEffective()), session)
                 .map(NutsFunction.of(x -> (x.getInstallInformation() == null) ? null : x.getInstallInformation().getInstallUser(), "getInstallUser"))
                 .notBlank());
     }
 
     @Override
     public NutsStream<NutsPath> getResultInstallFolders() {
-        return postProcessResult(IteratorBuilder.of(getResultDefinitionIteratorBase(isContent(), isEffective()))
+        return postProcessResult(IteratorBuilder.of(getResultDefinitionIteratorBase(isContent(), isEffective()), session)
                 .map(NutsFunction.of(x -> (x.getInstallInformation() == null) ? null : x.getInstallInformation().getInstallFolder(), "getInstallFolder"))
                 .notNull());
     }
@@ -705,7 +705,7 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
     @Override
     public NutsStream<NutsPath> getResultStoreLocations(NutsStoreLocation location) {
         checkSession();
-        return postProcessResult(IteratorBuilder.of(getResultDefinitionIteratorBase(isContent(), isEffective()))
+        return postProcessResult(IteratorBuilder.of(getResultDefinitionIteratorBase(isContent(), isEffective()), session)
                 .map(NutsFunction.of(x -> getSession().locations().getStoreLocation(x.getId(), location), "getStoreLocation(" + location.id() + ")"))
                 .notNull());
     }
@@ -715,7 +715,7 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
         NutsFetchDisplayOptions oo = new NutsFetchDisplayOptions(getSession());
         oo.addDisplay(columns);
         oo.setIdFormat(getDisplayOptions().getIdFormat());
-        return postProcessResult(IteratorBuilder.of(getResultDefinitionIteratorBase(isContent(), isEffective()))
+        return postProcessResult(IteratorBuilder.of(getResultDefinitionIteratorBase(isContent(), isEffective()), session)
                 .map(NutsFunction.of(x
                                 -> NutsIdFormatHelper.of(x, getSearchSession())
                                 .buildLong().getMultiColumnRowStrings(oo),
@@ -725,14 +725,14 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
 
     @Override
     public NutsStream<String> getResultNames() {
-        return postProcessResult(IteratorBuilder.of(getResultDefinitionIteratorBase(isContent(), isEffective()))
+        return postProcessResult(IteratorBuilder.of(getResultDefinitionIteratorBase(isContent(), isEffective()), session)
                 .mapMulti(NutsFunction.of(x -> Arrays.asList(x.getDescriptor().getName()), "getDescriptorName"))
                 .notBlank());
     }
 
     @Override
     public NutsStream<String> getResultOs() {
-        return postProcessResult(IteratorBuilder.of(getResultDefinitionIteratorBase(isContent(), isEffective()))
+        return postProcessResult(IteratorBuilder.of(getResultDefinitionIteratorBase(isContent(), isEffective()), session)
                 .mapMulti(NutsFunction.of(x -> Arrays.asList(x.getDescriptor().getCondition().getOs()), "getOs"))
                 .notBlank()
                 .distinct()
@@ -742,7 +742,7 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
     @Override
     public NutsStream<NutsExecutionEntry> getResultExecutionEntries() {
         checkSession();
-        return postProcessResult(IteratorBuilder.of(getResultDefinitionIteratorBase(isContent(), isEffective()))
+        return postProcessResult(IteratorBuilder.of(getResultDefinitionIteratorBase(isContent(), isEffective()), session)
                 .mapMulti(
                         NutsFunction.of(
                                 x -> (x.getContent() == null || x.getContent().getFile() == null) ? Collections.emptyList()
@@ -753,7 +753,7 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
 
     @Override
     public NutsStream<String> getResultOsDist() {
-        return postProcessResult(IteratorBuilder.of(getResultDefinitionIteratorBase(isContent(), isEffective()))
+        return postProcessResult(IteratorBuilder.of(getResultDefinitionIteratorBase(isContent(), isEffective()), session)
                 .mapMulti(NutsFunction.of(x -> Arrays.asList(x.getDescriptor().getCondition().getOsDist()), "getOsDist"))
                 .notBlank()
                 .distinct()
@@ -762,7 +762,7 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
 
     @Override
     public NutsStream<String> getResultPackaging() {
-        return postProcessResult(IteratorBuilder.of(getResultDefinitionIteratorBase(isContent(), isEffective()))
+        return postProcessResult(IteratorBuilder.of(getResultDefinitionIteratorBase(isContent(), isEffective()), session)
                 .mapMulti(NutsFunction.of(x -> Arrays.asList(x.getDescriptor().getPackaging()), "getPackaging"))
                 .notBlank()
                 .distinct()
@@ -771,7 +771,7 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
 
     @Override
     public NutsStream<String> getResultPlatform() {
-        return postProcessResult(IteratorBuilder.of(getResultDefinitionIteratorBase(isContent(), isEffective()))
+        return postProcessResult(IteratorBuilder.of(getResultDefinitionIteratorBase(isContent(), isEffective()), session)
                 .mapMulti(NutsFunction.of(x -> Arrays.asList(x.getDescriptor().getCondition().getPlatform()), "getPlatform"))
                 .notBlank()
                 .distinct()
@@ -780,7 +780,7 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
 
     @Override
     public NutsStream<String> getResultDesktopEnvironment() {
-        return postProcessResult(IteratorBuilder.of(getResultDefinitionIteratorBase(isContent(), isEffective()))
+        return postProcessResult(IteratorBuilder.of(getResultDefinitionIteratorBase(isContent(), isEffective()), session)
                 .mapMulti(NutsFunction.of(x -> Arrays.asList(x.getDescriptor().getCondition().getDesktopEnvironment()), "getDesktopEnvironment"))
                 .notBlank()
                 .distinct()
@@ -789,7 +789,7 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
 
     @Override
     public NutsStream<String> getResultArch() {
-        return postProcessResult(IteratorBuilder.of(getResultDefinitionIteratorBase(isContent(), isEffective()))
+        return postProcessResult(IteratorBuilder.of(getResultDefinitionIteratorBase(isContent(), isEffective()), session)
                 .mapMulti(NutsFunction.of(x -> Arrays.asList(x.getDescriptor().getCondition().getArch()), "getArch"))
                 .notBlank());
     }
@@ -1101,7 +1101,7 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
                 case XML:
                 case YAML:
                 case TREE: {
-                    return (NutsIterator) IteratorBuilder.of(getResultDefinitionIteratorBase(isContent(), isEffective()))
+                    return (NutsIterator) IteratorBuilder.of(getResultDefinitionIteratorBase(isContent(), isEffective()), session)
                             .flatMap(NutsFunction.of(x -> x.getDependencies().transitiveNodes().iterator(), "getDependencies"))
                             .map(NutsFunction.of(x -> dependenciesToElement(x), "dependenciesToElement"))
                             .build();
@@ -1291,7 +1291,7 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
         final boolean hasRemote = getSession().getFetchStrategy() == null
                 || Arrays.stream(getSession().getFetchStrategy().modes())
                 .anyMatch(x -> x == NutsFetchMode.REMOTE);
-        return IteratorBuilder.of(getResultIdIteratorBase(null))
+        return IteratorBuilder.of(getResultIdIteratorBase(null), session)
                 .map(NutsFunction.of(next -> {
 //                    NutsDefinition d = null;
 //                    if (isContent()) {
@@ -1329,7 +1329,7 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
     }
 
     public NutsStream<String> getResultStatuses() {
-        return postProcessResult(IteratorBuilder.of(getResultDefinitionIteratorBase(isContent(), isEffective()))
+        return postProcessResult(IteratorBuilder.of(getResultDefinitionIteratorBase(isContent(), isEffective()), session)
                 .map(NutsFunction.of(
                         x -> NutsIdFormatHelper.of(x, getSearchSession())
                                 .buildLong().getStatusString(),

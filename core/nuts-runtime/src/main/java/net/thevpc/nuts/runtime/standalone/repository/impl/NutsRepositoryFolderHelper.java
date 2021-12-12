@@ -253,8 +253,8 @@ public class NutsRepositoryFolderHelper {
                             .set("id", id.toString())
                             .set("root", getStoreLocation().toString())
                             .addAll(extraInfoElements)
-                            .build()
-            ).build();
+                            .build(),
+                    session).build();
         }
         NutsIdFilter filter2 = NutsIdFilters.of(session).all(filter,
                 NutsIdFilters.of(session).byName(id.getShortName())
@@ -426,7 +426,7 @@ public class NutsRepositoryFolderHelper {
                     .from(
                             InputStreamMetadataAwareImpl.of(
                                     new ByteArrayInputStream(bytes)
-                                    , new NutsDefaultInputStreamMetadata(
+                                    , new NutsDefaultStreamMetadata(
                                             NutsMessage.cstyle("sha1://%s", desc.getId()),
                                             bytes.length,
                                             CoreIOUtils.MIME_TYPE_SHA1,

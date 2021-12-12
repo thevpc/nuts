@@ -2,6 +2,7 @@ package net.thevpc.nuts.runtime.standalone.io.path.spi.htmlfs;
 
 import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.NutsSupported;
+import net.thevpc.nuts.runtime.standalone.util.XmlEscaper;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
@@ -29,7 +30,7 @@ public class JettyWebServerHtmlfsParser extends AbstractHtmlfsParser {
                 }
                 Matcher m = pattern.matcher(line);
                 if(m.find()){
-                    found.add(HtmlEscaper.escape(m.group("title").trim()).trim());
+                    found.add(XmlEscaper.escapeToUnicode(m.group("title").trim(),session).trim());
                 }
             }
         } catch (Exception e) {

@@ -5,9 +5,7 @@
  */
 package net.thevpc.nuts.runtime.standalone.util.iter;
 
-import net.thevpc.nuts.NutsElement;
-import net.thevpc.nuts.NutsElements;
-import net.thevpc.nuts.NutsDescribables;
+import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 
 import java.util.Iterator;
@@ -20,14 +18,15 @@ import java.util.logging.Logger;
  */
 public class ErrorHandlerIterator<T> extends NutsIteratorBase<T> {
 
-    private static Logger LOG = Logger.getLogger(ErrorHandlerIterator.class.getName());
     private IteratorErrorHandlerType type;
     private Iterator<T> base;
     private RuntimeException ex;
+    private NutsSession session;
 
-    public ErrorHandlerIterator(IteratorErrorHandlerType type, Iterator<T> base) {
+    public ErrorHandlerIterator(IteratorErrorHandlerType type, Iterator<T> base,NutsSession session) {
         this.base = base;
         this.type = type;
+        this.session = session;
     }
 
     @Override
@@ -47,7 +46,10 @@ public class ErrorHandlerIterator<T> extends NutsIteratorBase<T> {
             ex = null;
             return v;
         } catch (RuntimeException ex) {
-            LOG.log(Level.SEVERE, "error evaluating Iterator 'hasNext()' : " + CoreStringUtils.exceptionToString(ex), ex);
+            NutsLoggerOp.of(IndexFirstIterator.class,session)
+                    .verb(NutsLogVerb.WARNING)
+                    .level(Level.FINEST)
+                    .log(NutsMessage.cstyle("error evaluating Iterator 'hasNext()' : %s", ex));
             switch (type) {
                 case IGNORE: {
                     // do nothing

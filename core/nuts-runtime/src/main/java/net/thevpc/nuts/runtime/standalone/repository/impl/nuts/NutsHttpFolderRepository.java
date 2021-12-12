@@ -145,8 +145,8 @@ public class NutsHttpFolderRepository extends NutsCachedRepository {
                             }
                         }
                         return n.iterator();
-                    },e->e.ofString("findVersionsImplFilesFolders")
-            ).build();
+                    },e->e.ofString("findVersionsImplFilesFolders"),
+                    session).build();
         } catch (Exception ex) {
             LOG.with().session(session).level(Level.SEVERE).error(ex)
                     .log(NutsMessage.jstyle("error find versions : {0}", ex));
@@ -182,8 +182,8 @@ public class NutsHttpFolderRepository extends NutsCachedRepository {
                     , e-> e.ofObject()
                             .set("type","ScanURL")
                             .set("url",metadataURL)
-                            .build()
-            ).build();
+                            .build(),
+                    session).build();
         } else {
             NutsIdFilter filter2 = NutsIdFilters.of(session).nonnull(idFilter).and(
                     NutsIdFilters.of(session).byName(id.getShortName())
@@ -260,9 +260,9 @@ public class NutsHttpFolderRepository extends NutsCachedRepository {
                             () -> session.getTerminal().printProgress("%-8s %s", "browse",
                                     (basePath == null ? repoRoot : repoRoot.resolve(basePath)).toCompressedForm()
                             ),
-                            "Log"
+                            "Log",
 
-                    ).build());
+                            session).build());
             if (basePath.getName().equals("*")) {
                 list.add(new NutsIdPathIterator(this, repoRoot,basePath.getParent(),filter,session, findModel,Integer.MAX_VALUE, "core",null));
             } else {

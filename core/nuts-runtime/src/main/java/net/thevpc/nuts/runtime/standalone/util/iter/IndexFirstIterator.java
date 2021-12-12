@@ -5,10 +5,7 @@
  */
 package net.thevpc.nuts.runtime.standalone.util.iter;
 
-import net.thevpc.nuts.NutsElement;
-import net.thevpc.nuts.NutsElements;
-import net.thevpc.nuts.NutsIndexerNotAccessibleException;
-import net.thevpc.nuts.NutsDescribables;
+import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 
 import java.util.Iterator;
@@ -20,16 +17,17 @@ import java.util.logging.Logger;
  */
 public class IndexFirstIterator<T> extends NutsIteratorBase<T> {
 
-    private static final Logger LOG = Logger.getLogger(IndexFirstIterator.class.getName());
     private Iterator<T> index;
     private Iterator<T> other;
     private long readFromIndex;
     private T nextItem;
     private boolean hasNextItem;
+    private NutsSession session;
 
-    public IndexFirstIterator(Iterator<T> index, Iterator<T> other) {
+    public IndexFirstIterator(Iterator<T> index, Iterator<T> other,NutsSession session) {
         this.index = index;
         this.other = other;
+        this.session = session;
     }
 
     @Override
@@ -65,7 +63,10 @@ public class IndexFirstIterator<T> extends NutsIteratorBase<T> {
                     }
                     index = null;
                 } catch (NutsIndexerNotAccessibleException ex) {
-                    LOG.log(Level.SEVERE, "error evaluating Iterator 'hasNext()' : " + CoreStringUtils.exceptionToString(ex), ex);
+                    NutsLoggerOp.of(IndexFirstIterator.class,session)
+                            .verb(NutsLogVerb.WARNING)
+                            .level(Level.FINEST)
+                            .log(NutsMessage.cstyle("error evaluating Iterator 'hasNext()' : %s", ex));
                     other = null;
                     return false;
                 }

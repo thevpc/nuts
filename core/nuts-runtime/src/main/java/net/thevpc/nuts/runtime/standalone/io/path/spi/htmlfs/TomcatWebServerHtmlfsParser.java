@@ -1,14 +1,13 @@
 package net.thevpc.nuts.runtime.standalone.io.path.spi.htmlfs;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.standalone.util.XmlEscaper;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -38,7 +37,7 @@ public class TomcatWebServerHtmlfsParser extends AbstractHtmlfsParser {
                 line = line.trim();
                 Matcher m = pattern.matcher(line);
                 if (m.find()) {
-                    found.add(HtmlEscaper.escape(m.group("title")));
+                    found.add(XmlEscaper.escapeToUnicode(m.group("title"),session));
                 }
             }
         } catch (Exception e) {

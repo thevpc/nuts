@@ -5,27 +5,22 @@
  */
 package net.thevpc.nuts.runtime.standalone.text.parser;
 
-import net.thevpc.nuts.NutsTextWriteConfiguration;
+import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.text.AbstractNutsTextNodeParser;
 import net.thevpc.nuts.runtime.standalone.text.NutsTextNodeWriterStringer;
 import net.thevpc.nuts.runtime.standalone.text.parser.steps.*;
+import net.thevpc.nuts.runtime.standalone.util.iter.IndexFirstIterator;
 
 import java.io.ByteArrayOutputStream;
 import java.io.StringReader;
 import java.util.Stack;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import net.thevpc.nuts.NutsConstants;
-import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.NutsText;
-import net.thevpc.nuts.NutsTextVisitor;
 
 /**
  * @author thevpc
  */
 public class DefaultNutsTextNodeParser extends AbstractNutsTextNodeParser {
-
-    private static final Logger LOG = Logger.getLogger(DefaultNutsTextNodeParser.class.getName());
 
     private State state = new State();
 
@@ -264,7 +259,10 @@ public class DefaultNutsTextNodeParser extends AbstractNutsTextNodeParser {
             s.flush();
             return out.toString();
         } catch (Exception ex) {
-            LOG.log(Level.FINEST, "error parsing : \n" + text, ex);
+            NutsLoggerOp.of(DefaultNutsTextNodeParser.class,session)
+                    .verb(NutsLogVerb.WARNING)
+                    .level(Level.FINEST)
+                    .log(NutsMessage.cstyle("error parsing : %s", text));
             return text;
         }
     }

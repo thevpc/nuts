@@ -290,10 +290,11 @@ public class DefaultNutsDeployCommand extends AbstractNutsDeployCommand {
             }
             return mdescriptor;
         } else {
+            InputStream inputStream = (InputStream) descriptor;
             NutsStreamOrPath nutsStreamOrPath = NutsStreamOrPath.ofAnyInputOrNull(descriptor, this.session);
             if(nutsStreamOrPath!=null) {
                 NutsStreamOrPath d = nutsStreamOrPath.isInputStream()?
-                        NutsStreamOrPath.of((InputStream) descriptor).toDisposable(this.session)
+                        NutsStreamOrPath.of(inputStream,session).toDisposable(this.session)
                         :nutsStreamOrPath
                         ;
                 try {

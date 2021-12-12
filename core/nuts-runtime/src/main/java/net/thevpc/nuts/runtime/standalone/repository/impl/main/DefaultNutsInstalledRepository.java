@@ -755,11 +755,11 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
             @Override
             public NutsSearchRepositoryCommand run() {
                 NutsIterator<InstallInfoConfig> installIter = searchInstallConfig(getSession());
-                NutsIterator<NutsId> idIter = IteratorBuilder.of(installIter).map(NutsFunction.of(InstallInfoConfig::getId, "NutsInstallInformation->Id"))
+                NutsIterator<NutsId> idIter = IteratorBuilder.of(installIter, getSession()).map(NutsFunction.of(InstallInfoConfig::getId, "NutsInstallInformation->Id"))
                         .build();
                 NutsIdFilter ff = getFilter();
                 if (ff != null) {
-                    idIter = IteratorBuilder.of(idIter).filter(new NutsIdFilterToPredicate(ff, getSession())).build();
+                    idIter = IteratorBuilder.of(idIter, getSession()).filter(new NutsIdFilterToPredicate(ff, getSession())).build();
                 }
                 result = idIter; //deployments.searchImpl(getFilter(), getSession())
                 if (result == null) {
@@ -782,7 +782,7 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
                             .builder().setVersion("ANY").build(), NutsStoreLocation.CONFIG).getParent();
                     if (installFolder.isDirectory()) {
                         final NutsVersionFilter filter0 = getId().getVersion().filter();
-                        result = IteratorBuilder.of(installFolder.list().iterator())
+                        result = IteratorBuilder.of(installFolder.list().iterator(), getSession())
                                 .map(NutsFunction.of(
                                         new Function<NutsPath, NutsId>() {
                                             @Override
@@ -807,7 +807,7 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
                         result = IteratorBuilder.emptyIterator();
                     }
                 } else {
-                    this.result = IteratorBuilder.of(deployments.searchVersions(getId(), getFilter(), true, getSession()))
+                    this.result = IteratorBuilder.of(deployments.searchVersions(getId(), getFilter(), true, getSession()), getSession())
                             .named("searchVersionsInMain()")
                             .build()
                     ;

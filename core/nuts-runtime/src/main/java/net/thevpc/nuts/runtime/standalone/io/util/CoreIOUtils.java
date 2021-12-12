@@ -61,7 +61,6 @@ import java.security.NoSuchAlgorithmException;
 import java.time.Instant;
 import java.util.*;
 import java.util.logging.Level;
-import java.util.regex.Matcher;
 
 /**
  * Created by vpc on 5/16/17.
@@ -877,7 +876,7 @@ public class CoreIOUtils {
     public static java.io.InputStream monitor(java.io.InputStream from, Object source, NutsProgressMonitor monitor, NutsSession session) {
         NutsString sourceName = null;
         long length = -1;
-        NutsInputStreamMetadata m = NutsInputStreamMetadata.resolve(from);
+        NutsStreamMetadata m = NutsStreamMetadata.resolve(from);
         if (m != null) {
             sourceName = NutsTexts.of(session).toText(m.getName());
             length = m.getContentLength();
@@ -1448,7 +1447,7 @@ public class CoreIOUtils {
                 cacheTable.flush(session);
             }
         });
-        return InputStreamMetadataAwareImpl.of(ist, new NutsDefaultInputStreamMetadata(
+        return InputStreamMetadataAwareImpl.of(ist, new NutsDefaultStreamMetadata(
                         path,
                         NutsTexts.of(session).ofStyled(path, NutsTextStyle.path()),
                         size, NutsPath.of(path, session).getContentType(), sourceTypeName
@@ -2229,7 +2228,7 @@ public class CoreIOUtils {
 //        @Override
 //        public java.io.InputStream open() {
 //            byte[] bytes = (byte[]) this.getSource();
-//            return new InputStreamMetadataAwareImpl(new NamedByteArrayInputStream(bytes, name), new NutsDefaultInputStreamMetadata(name, bytes.length));
+//            return new InputStreamMetadataAwareImpl(new NamedByteArrayInputStream(bytes, name), new NutsDefaultStreamMetadata(name, bytes.length));
 //        }
 //
 //        @Override
@@ -2275,7 +2274,7 @@ public class CoreIOUtils {
 //                        NutsPath uh = getPath();
 //                        return new InputStreamMetadataAwareImpl(
 //                                NutsWorkspaceUtils.of(session).openURL(u),
-//                                new NutsDefaultInputStreamMetadata(u.toString(), uh == null ? -1 : uh.getContentLength()));
+//                                new NutsDefaultStreamMetadata(u.toString(), uh == null ? -1 : uh.getContentLength()));
 //                    } catch (Exception ex) {
 //                        //ignore
 //                    }
@@ -2382,7 +2381,7 @@ public class CoreIOUtils {
 //        public java.io.InputStream open() {
 //            try {
 //                Path p = this.getFilePath();
-//                return new InputStreamMetadataAwareImpl(Files.newInputStream(p), new NutsDefaultInputStreamMetadata(p.toString(),
+//                return new InputStreamMetadataAwareImpl(Files.newInputStream(p), new NutsDefaultStreamMetadata(p.toString(),
 //                        Files.size(p)));
 //            } catch (IOException ex) {
 //                throw createOpenError(ex);
@@ -2591,7 +2590,7 @@ public class CoreIOUtils {
     public static InputStream createBytesStream(byte[] bytes, NutsMessage message, String contentType, String kind, NutsSession session) {
         return InputStreamMetadataAwareImpl.of(
                 new ByteArrayInputStream(bytes),
-                new NutsDefaultInputStreamMetadata(
+                new NutsDefaultStreamMetadata(
                         message,
                         bytes.length,
                         contentType,

@@ -47,7 +47,7 @@ import java.util.stream.Stream;
  *
  * @app.category Input Output
  */
-public interface NutsPath extends NutsFormattable {
+public interface NutsPath extends NutsFormattable,NutsStreamMetadataAware {
     static NutsPath of(URL path, NutsSession session) {
         return NutsPaths.of(session).createPath(path, session);
     }
@@ -105,8 +105,6 @@ public interface NutsPath extends NutsFormattable {
      * @return content type if explicitly defined (from HTTP headers for instance) or probe for content type.
      */
     String getContentType();
-
-    NutsString getFormattedName();
 
     String getBaseName();
 

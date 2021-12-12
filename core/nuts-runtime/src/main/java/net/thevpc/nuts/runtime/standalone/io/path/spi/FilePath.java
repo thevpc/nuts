@@ -196,7 +196,7 @@ public class FilePath implements NutsPathSPI {
     public InputStream getInputStream(NutsPath basePath) {
         try {
             return InputStreamMetadataAwareImpl.of(Files.newInputStream(value),
-                    new NutsPathInputStreamMetadata(basePath)
+                    basePath.getStreamMetadata()
             );
         } catch (IOException e) {
             throw new NutsIOException(session, e);

@@ -1,17 +1,17 @@
 package net.thevpc.nuts.runtime.standalone.io.printstream;
 
-import net.thevpc.nuts.NutsMemoryPrintStream;
-import net.thevpc.nuts.NutsPrintStream;
-import net.thevpc.nuts.NutsSession;
+import net.thevpc.nuts.*;
 
 import java.io.ByteArrayOutputStream;
 
 public class NutsByteArrayPrintStream extends NutsPrintStreamRaw implements NutsMemoryPrintStream {
     public NutsByteArrayPrintStream(NutsSession session) {
         super(new ByteArrayOutputStream(), null, null, session, new Bindings(),null);
+        setFormattedName(NutsTexts.of(session).ofStyled("<memory-buffer>", NutsTextStyle.path()));
     }
     protected NutsByteArrayPrintStream(ByteArrayOutputStream bos,NutsSession session) {
         super(bos, null, null, session, new Bindings(),null);
+        setFormattedName(NutsTexts.of(session).ofStyled("<memory-buffer>", NutsTextStyle.path()));
     }
 
     @Override

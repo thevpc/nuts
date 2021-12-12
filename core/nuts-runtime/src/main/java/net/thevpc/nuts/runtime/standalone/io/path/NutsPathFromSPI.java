@@ -1,18 +1,21 @@
 package net.thevpc.nuts.runtime.standalone.io.path;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.standalone.io.util.InputStreamMetadataAwareImpl;
-import net.thevpc.nuts.runtime.standalone.util.reflect.NutsUseDefaultUtils;
-import net.thevpc.nuts.runtime.standalone.xtra.expr.StringPlaceHolderParser;
 import net.thevpc.nuts.runtime.standalone.format.DefaultFormatBase;
 import net.thevpc.nuts.runtime.standalone.io.path.spi.NutsPathSPIHelper;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
+import net.thevpc.nuts.runtime.standalone.io.util.InputStreamMetadataAwareImpl;
+import net.thevpc.nuts.runtime.standalone.util.reflect.NutsUseDefaultUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceVarExpansionFunction;
+import net.thevpc.nuts.runtime.standalone.xtra.expr.StringPlaceHolderParser;
 import net.thevpc.nuts.spi.NutsFormatSPI;
 import net.thevpc.nuts.spi.NutsPathSPI;
 import net.thevpc.nuts.spi.NutsSupportLevelContext;
 
-import java.io.*;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.URL;
 import java.nio.file.Path;
 import java.time.Instant;
@@ -20,7 +23,6 @@ import java.util.Arrays;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.Function;
-import java.util.logging.Level;
 
 public class NutsPathFromSPI extends NutsPathBase {
     private final NutsPathSPI base;
@@ -169,18 +171,20 @@ public class NutsPathFromSPI extends NutsPathBase {
 
     @Override
     public NutsStream<NutsPath> list() {
-            NutsStream<NutsPath> p = base.list(this);
-            if (p != null) {
-                return p;
-            }
+        NutsStream<NutsPath> p = base.list(this);
+        if (p != null) {
+            return p;
+        }
         return NutsStream.ofEmpty(getSession());
     }
 
     @Override
     public InputStream getInputStream() {
-        return InputStreamMetadataAwareImpl.of(base.getInputStream(this),
-                new NutsPathInputStreamMetadata(this)
-        );
+        return InputStreamMetadataAwareImpl.of(base.getInputStream(this),getStreamMetadata());
+    }
+
+    public NutsStreamMetadata getStreamMetadata(){
+        return new NutsPathStreamMetadata(this);
     }
 
     @Override
@@ -459,7 +463,7 @@ public class NutsPathFromSPI extends NutsPathBase {
 
     @Override
     public NutsFormat formatter() {
-        NutsFormatSPI fspi=null;
+        NutsFormatSPI fspi = null;
         if (NutsUseDefaultUtils.isUseDefault(base.getClass(), "formatter",
                 NutsPath.class)) {
         } else {

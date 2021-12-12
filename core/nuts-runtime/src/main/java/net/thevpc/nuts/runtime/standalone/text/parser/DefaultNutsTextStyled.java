@@ -41,6 +41,10 @@ public class DefaultNutsTextStyled extends AbstractNutsText implements NutsTextS
     private NutsTextStyles textStyles;
     private boolean completed;
 
+    public DefaultNutsTextStyled(NutsSession session,NutsText child, NutsTextStyles textStyle) {
+        this(session,"##" ,"##",child,true,textStyle);
+    }
+
     public DefaultNutsTextStyled(NutsSession session, String start, String end, NutsText child, boolean completed, NutsTextStyles textStyle) {
         super(session);
         this.start = start;

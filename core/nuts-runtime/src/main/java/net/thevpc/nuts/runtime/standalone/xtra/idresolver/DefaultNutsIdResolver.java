@@ -15,7 +15,7 @@ public class DefaultNutsIdResolver implements NutsIdResolver {
 
     @Override
     public NutsId resolveId(Class clazz) {
-        PomId u = MavenUtils.createPomIdResolver(session).resolvePomId(clazz, null, session);
+        PomId u = MavenUtils.createPomIdResolver(session).resolvePomId(clazz, null);
         if (u == null) {
             return null;
         }
@@ -24,7 +24,7 @@ public class DefaultNutsIdResolver implements NutsIdResolver {
 
     @Override
     public NutsId[] resolveIds(Class clazz) {
-        PomId[] u = MavenUtils.createPomIdResolver(session).resolvePomIds(clazz, session);
+        PomId[] u = MavenUtils.createPomIdResolver(session).resolvePomIds(clazz);
         NutsId[] all = new NutsId[u.length];
         NutsIdParser parser = NutsIdParser.of(session);
         for (int i = 0; i < all.length; i++) {

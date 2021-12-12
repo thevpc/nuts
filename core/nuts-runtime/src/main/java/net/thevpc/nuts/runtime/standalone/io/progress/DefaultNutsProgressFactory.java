@@ -8,8 +8,6 @@ import net.thevpc.nuts.runtime.standalone.util.CoreNutsUtils;
 import java.util.logging.Logger;
 
 public class DefaultNutsProgressFactory implements NutsProgressFactory {
-    private static final Logger LOG = Logger.getLogger(DefaultNutsProgressFactory.class.getName());
-
     @Override
     public NutsProgressMonitor create(Object source, Object sourceOrigin, NutsSession session) {
         if (!acceptMonitoring(source, sourceOrigin, session)) {

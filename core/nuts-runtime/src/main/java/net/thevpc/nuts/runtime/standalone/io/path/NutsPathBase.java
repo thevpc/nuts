@@ -25,11 +25,6 @@ public abstract class NutsPathBase implements NutsPath {
     }
 
     @Override
-    public NutsString getFormattedName() {
-        return NutsTexts.of(getSession()).ofStyled(getName(), NutsTextStyle.path());
-    }
-
-    @Override
     public String getBaseName() {
         String n = getName();
         int i = n.indexOf('.');

@@ -867,14 +867,14 @@ public class CoreNutsUtils {
         return monitorable;
     }
 
-    public static Iterator<NutsDependency> itIdToDep(NutsIterator<NutsId> id) {
-        return IteratorBuilder.of(id).map(NutsFunction.of(NutsId::toDependency, "IdToDependency")).build();
+    public static Iterator<NutsDependency> itIdToDep(NutsIterator<NutsId> id, NutsSession session) {
+        return IteratorBuilder.of(id, session).map(NutsFunction.of(NutsId::toDependency, "IdToDependency")).build();
     }
 
-    public static Iterator<NutsDependency> itIdToDep(NutsIterator<NutsId> id, NutsDependency copyFrom) {
+    public static Iterator<NutsDependency> itIdToDep(NutsIterator<NutsId> id, NutsDependency copyFrom, NutsSession session) {
         String _optional = copyFrom.getOptional();
         String _scope = copyFrom.getScope();
-        return IteratorBuilder.of(id).map(NutsFunction.of(
+        return IteratorBuilder.of(id, session).map(NutsFunction.of(
                 x -> x.toDependency().builder().setOptional(_optional).setScope(_scope).build(), "IdToDependency")).build();
     }
 

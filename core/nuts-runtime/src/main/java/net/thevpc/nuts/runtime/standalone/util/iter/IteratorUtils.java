@@ -7,6 +7,7 @@ package net.thevpc.nuts.runtime.standalone.util.iter;
 
 import net.thevpc.nuts.NutsComparator;
 import net.thevpc.nuts.NutsIterator;
+import net.thevpc.nuts.NutsSession;
 
 import java.util.*;
 import java.util.function.Function;
@@ -21,16 +22,16 @@ public class IteratorUtils {
 //        return new FileDepthFirstIterator(file);
 //    }
 
-    public static <T> NutsIterator<T> safe(IteratorErrorHandlerType type, NutsIterator<T> t) {
-        return new ErrorHandlerIterator(type, t);
+    public static <T> NutsIterator<T> safe(IteratorErrorHandlerType type, NutsIterator<T> t, NutsSession session) {
+        return new ErrorHandlerIterator(type, t,session);
     }
 
-    public static <T> NutsIterator<T> safeIgnore(NutsIterator<T> t) {
-        return new ErrorHandlerIterator(IteratorErrorHandlerType.IGNORE, t);
+    public static <T> NutsIterator<T> safeIgnore(NutsIterator<T> t,NutsSession session) {
+        return new ErrorHandlerIterator(IteratorErrorHandlerType.IGNORE, t,session);
     }
 
-    public static <T> NutsIterator<T> safePospone(NutsIterator<T> t) {
-        return new ErrorHandlerIterator(IteratorErrorHandlerType.POSTPONE, t);
+    public static <T> NutsIterator<T> safePospone(NutsIterator<T> t,NutsSession session) {
+        return new ErrorHandlerIterator(IteratorErrorHandlerType.POSTPONE, t,session);
     }
 
     public static <T> boolean isNullOrEmpty(Iterator<T> t) {

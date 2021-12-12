@@ -26,7 +26,7 @@
 package net.thevpc.nuts.runtime.standalone.io.progress;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.NutsInputStreamMetadataAware;
+import net.thevpc.nuts.NutsStreamMetadataAware;
 import net.thevpc.nuts.runtime.standalone.io.util.InterruptException;
 import net.thevpc.nuts.runtime.standalone.io.util.Interruptible;
 
@@ -36,7 +36,7 @@ import java.io.InputStream;
 /**
  * @author thevpc
  */
-public class MonitoredInputStream extends InputStream implements NutsInputStreamMetadataAware, Interruptible {
+public class MonitoredInputStream extends InputStream implements NutsStreamMetadataAware, Interruptible {
 
     private final InputStream base;
     private final long length;
@@ -208,9 +208,9 @@ public class MonitoredInputStream extends InputStream implements NutsInputStream
     }
 
     @Override
-    public NutsInputStreamMetadata getInputStreamMetadata() {
-        NutsInputStreamMetadata md = NutsInputStreamMetadata.of(base);
-        return new NutsDefaultInputStreamMetadata(sourceName, length, md.getContentType(),
+    public NutsStreamMetadata getStreamMetadata() {
+        NutsStreamMetadata md = NutsStreamMetadata.of(base);
+        return new NutsDefaultStreamMetadata(sourceName, length, md.getContentType(),
                 md.getUserKind()
         );
     }

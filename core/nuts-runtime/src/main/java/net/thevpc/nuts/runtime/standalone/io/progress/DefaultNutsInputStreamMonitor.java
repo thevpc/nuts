@@ -97,19 +97,22 @@ public class DefaultNutsInputStreamMonitor implements NutsInputStreamMonitor {
 
     @Override
     public NutsInputStreamMonitor setSource(Path path) {
+        checkSession();
         this.source = path == null ? null : NutsStreamOrPath.of(path,session);
         return this;
     }
 
     @Override
     public NutsInputStreamMonitor setSource(File path) {
+        checkSession();
         this.source = path == null ? null : NutsStreamOrPath.of(path,session);
         return this;
     }
 
     @Override
     public NutsInputStreamMonitor setSource(InputStream path) {
-        this.source = path == null ? null : NutsStreamOrPath.of(path);
+        checkSession();
+        this.source = path == null ? null : NutsStreamOrPath.of(path,session);
         return this;
     }
 
@@ -157,14 +160,14 @@ public class DefaultNutsInputStreamMonitor implements NutsInputStreamMonitor {
         }
         String sourceTypeName = getSourceTypeName();
         if (sourceTypeName == null) {
-            sourceTypeName = source.getInputStreamMetaData().getUserKind();
+            sourceTypeName = source.getStreamMetaData().getUserKind();
         }
         if (sourceTypeName == null) {
             sourceTypeName = "nuts-Path";//inputSource.getTypeName();
         }
         return InputStreamMetadataAwareImpl.of(
                 CoreIOUtils.monitor(openedStream, source, sourceName, size, new SilentStartNutsInputStreamProgressMonitorAdapter(monitor, sourceName.filteredText()), session),
-                new NutsDefaultInputStreamMetadata(source.getInputStreamMetaData())
+                new NutsDefaultStreamMetadata(source.getStreamMetaData())
                         .setUserKind(sourceTypeName)
         );
     }

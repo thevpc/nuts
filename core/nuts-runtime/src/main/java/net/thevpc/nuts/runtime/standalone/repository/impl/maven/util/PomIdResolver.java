@@ -1,7 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.repository.impl.maven.util;
 
-import net.thevpc.nuts.NutsPath;
-import net.thevpc.nuts.NutsSession;
+import net.thevpc.nuts.*;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -14,13 +13,10 @@ import java.util.zip.ZipInputStream;
 public class PomIdResolver {
 
     //    private NutsWorkspace ws;
-    private PomLogger logger;
+    private NutsSession session;
 
-    public PomIdResolver(PomLogger logger) {
-        this.logger = logger;
-        if (this.logger == null) {
-            this.logger = PomLogger.DEFAULT;
-        }
+    public PomIdResolver(NutsSession session) {
+        this.session = session;
     }
 
     public PomId[] resolvePomId(NutsPath baseUrl, String referenceResourcePath, NutsSession session) {
@@ -61,9 +57,12 @@ public class PomIdResolver {
                 String s2 = basePath.substring(0, basePath.length() - "/target/classes/".length()) + "/pom.xml";
                 //this is most likely to be a maven project
                 try {
-                    all.add(new PomXmlParser(logger).parse(new URL(s2), session).getPomId());
+                    all.add(new PomXmlParser(session).parse(new URL(s2), session).getPomId());
                 } catch (Exception ex) {
-                    logger.log(Level.SEVERE, "failed to parse pom file {0} : {1}", s2, ex);
+                    NutsLoggerOp.of(PomXmlParser.class,session)
+                            .verb(NutsLogVerb.WARNING)
+                            .level(Level.FINEST)
+                            .log(NutsMessage.cstyle("failed to parse pom file %s : %s", s2, ex));
                 }
             }
         }
@@ -75,10 +74,9 @@ public class PomIdResolver {
      * loaded <code>clazz</code>
      *
      * @param clazz class
-     * @param session session
      * @return artifacts array in the form groupId:artfcatId#version
      */
-    public PomId[] resolvePomIds(Class clazz, NutsSession session) {
+    public PomId[] resolvePomIds(Class clazz) {
         List<PomId> all = new ArrayList<PomId>();
         try {
             final String n = clazz.getName().replace('.', '/').concat(".class");
@@ -88,21 +86,28 @@ public class PomIdResolver {
                         NutsPath.of(url,session), n, session)));
             }
         } catch (IOException ex) {
-            logger.log(Level.FINE, "error : {0}", ex);
+            NutsLoggerOp.of(PomXmlParser.class,session)
+                    .verb(NutsLogVerb.WARNING)
+                    .level(Level.FINEST)
+                    .log(NutsMessage.cstyle("failed to parse class %s : %s", clazz.getName(), ex));
         }
         return all.toArray(new PomId[0]);
     }
 
-    public PomId resolvePomId(Class clazz, NutsSession session) {
-        return resolvePomId(clazz, new PomId("dev", "dev", "dev"), session);
+    public PomId resolvePomId(Class clazz) {
+        return resolvePomId(clazz, new PomId("dev", "dev", "dev"));
     }
 
-    public PomId resolvePomId(Class clazz, PomId defaultValue, NutsSession session) {
-        PomId[] pomIds = resolvePomIds(clazz, session);
+    public PomId resolvePomId(Class clazz, PomId defaultValue) {
+        PomId[] pomIds = resolvePomIds(clazz);
         if (pomIds.length > 1) {
-            if (logger != null) {
-                logger.log(Level.INFO, "multiple ids found : "+Arrays.asList(pomIds)+" for class "+clazz+" and id "+defaultValue);
-            }
+            NutsLoggerOp.of(PomXmlParser.class,session)
+                    .verb(NutsLogVerb.WARNING)
+                    .level(Level.FINEST)
+                    .log(NutsMessage.cstyle(
+                            "multiple ids found : %s for class %s and id %s",
+                            Arrays.asList(pomIds),clazz,defaultValue
+                    ));
         }
         for (PomId v : pomIds) {
             return v;

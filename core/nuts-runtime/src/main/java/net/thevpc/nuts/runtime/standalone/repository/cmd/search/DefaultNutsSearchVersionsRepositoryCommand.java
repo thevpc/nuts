@@ -63,7 +63,7 @@ public class DefaultNutsSearchVersionsRepositoryCommand extends AbstractNutsSear
                     }
                     if (d != null && filter != null) {
                         resultList.add(
-                                IteratorBuilder.of(d).filter(
+                                IteratorBuilder.of(d, session).filter(
                                         x -> filter.acceptId(x, session),
                                         e -> NutsDescribables.resolveOrToString(filter, e)
                                 ).safeIgnore().iterator()

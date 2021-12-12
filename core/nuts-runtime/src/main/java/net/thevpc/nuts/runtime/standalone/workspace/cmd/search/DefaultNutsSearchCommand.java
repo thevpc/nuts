@@ -595,7 +595,7 @@ public class DefaultNutsSearchCommand extends AbstractNutsSearchCommand {
                                             IteratorBuilder.of(repoSPI.searchVersions().setId(nutsId1).setFilter(filter)
                                                             .setSession(session)
                                                             .setFetchMode(repoAndMode.getFetchMode())
-                                                            .getResult())
+                                                            .getResult(), session)
                                                     .named(
                                                             elems.ofObject()
                                                                     .set("description", "searchVersions")
@@ -646,7 +646,7 @@ public class DefaultNutsSearchCommand extends AbstractNutsSearchCommand {
                         IteratorBuilder.of(wu.repoSPI(repoAndMode.getRepository()).search()
                                         .setFilter(filter).setSession(finalSession1)
                                         .setFetchMode(repoAndMode.getFetchMode())
-                                        .getResult()).safeIgnore()
+                                        .getResult(), session).safeIgnore()
                                 .named(
                                         elems.ofObject()
                                                 .set("description", "searchRepository")
@@ -671,7 +671,7 @@ public class DefaultNutsSearchCommand extends AbstractNutsSearchCommand {
             if (!isLatest() && !isDistinct()) {
                 //nothing
             } else if (!isLatest() && isDistinct()) {
-                baseIterator = IteratorBuilder.of(baseIterator).distinct(
+                baseIterator = IteratorBuilder.of(baseIterator, session).distinct(
                         NutsFunction.of(
                                 (NutsId nutsId) -> nutsId.getLongId()
                                         .toString(), "getLongId")).iterator();
@@ -692,8 +692,8 @@ public class DefaultNutsSearchCommand extends AbstractNutsSearchCommand {
                                 .asSafeObject(true).builder()
                                 .set("latest", true)
                                 .set("distinct", true)
-                                .build()
-                ).build();
+                                .build(),
+                        session).build();
             } else if (isLatest() && !isDistinct()) {
                 NutsIterator<NutsId> curr = baseIterator;
                 baseIterator = IteratorBuilder.ofSupplier(() -> {
@@ -709,25 +709,25 @@ public class DefaultNutsSearchCommand extends AbstractNutsSearchCommand {
                                     oldList.add(nutsId);
                                 }
                             }
-                            return IteratorBuilder.ofFlatMap(NutsIterator.of(visited.values().iterator(), "visited")).build();
+                            return IteratorBuilder.ofFlatMap(NutsIterator.of(visited.values().iterator(), "visited"), session).build();
                         }, e -> NutsDescribables.resolveOrDestruct(curr,elems)
                                 .asSafeObject(true).builder()
                                 .set("latest", true)
                                 .set("duplicates", true)
-                                .build()
-                        )
+                                .build(),
+                                session)
                         .build();
             }
 
             //now include dependencies
             NutsIterator<NutsId> curr = baseIterator;
-            baseIterator = IteratorBuilder.of(curr)
+            baseIterator = IteratorBuilder.of(curr, session)
                     .flatMap(
                             NutsFunction.of(
                                     x -> IteratorBuilder.of(
                                             toFetch().setId(x).setContent(false)
-                                                    .setDependencies(true).getResultDefinition().getDependencies().transitiveWithSource().iterator()
-                                    ).build(), "getDependencies")
+                                                    .setDependencies(true).getResultDefinition().getDependencies().transitiveWithSource().iterator(),
+                                            session).build(), "getDependencies")
                     ).map(NutsFunction.of(NutsDependency::toId, "DependencyToId"))
                     .build();
         }
@@ -735,7 +735,7 @@ public class DefaultNutsSearchCommand extends AbstractNutsSearchCommand {
         if (!isLatest() && !isDistinct()) {
             //nothing
         } else if (!isLatest() && isDistinct()) {
-            baseIterator = IteratorBuilder.of(baseIterator).distinct(
+            baseIterator = IteratorBuilder.of(baseIterator, session).distinct(
                     NutsFunction.of((NutsId nutsId) -> nutsId.getLongId()
                             .toString(), "getLongId()")
             ).iterator();
@@ -758,7 +758,7 @@ public class DefaultNutsSearchCommand extends AbstractNutsSearchCommand {
                             .asSafeObject(true).builder()
                             .set("latest", true)
                             .set("distinct", true)
-                            .build()).build();
+                            .build(), session).build();
         } else if (isLatest() && !isDistinct()) {
             NutsIterator<NutsId> curr = baseIterator;
             baseIterator = IteratorBuilder.ofSupplier(() -> {
@@ -774,14 +774,14 @@ public class DefaultNutsSearchCommand extends AbstractNutsSearchCommand {
                                 oldList.add(nutsId);
                             }
                         }
-                        return IteratorBuilder.ofFlatMap(NutsIterator.of(visited.values().iterator(), "visited")).build();
+                        return IteratorBuilder.ofFlatMap(NutsIterator.of(visited.values().iterator(), "visited"), session).build();
                     },
                     e -> NutsDescribables.resolveOrDestruct(curr,elems)
                             .asSafeObject(true).builder()
                             .set("latest", true)
                             .set("duplicates", true)
-                            .build()
-            ).build();
+                            .build(),
+                    session).build();
         }
 
         if (isSorted()) {

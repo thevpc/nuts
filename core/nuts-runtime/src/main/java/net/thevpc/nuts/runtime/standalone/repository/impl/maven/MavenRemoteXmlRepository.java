@@ -63,6 +63,7 @@ public class MavenRemoteXmlRepository extends MavenFolderRepository {
                 () -> {
                     List<NutsId> ret = new ArrayList<>();
                     InputStream metadataStream = null;
+                    session.getTerminal().printProgress("looking for versions of %s at %s", id,metadataURL.toCompressedForm());
                     try {
                         try {
                             metadataStream = repoHelper.openStream(id, metadataURL, id.builder().setFace(CoreNutsConstants.QueryFaces.CATALOG).build(), "artifact catalog", "retrieve", session);
@@ -100,8 +101,8 @@ public class MavenRemoteXmlRepository extends MavenFolderRepository {
                 , e -> e.ofObject()
                         .set("type", "ScanMavenMetadataXml")
                         .set("path", metadataURL.toString())
-                        .build()
-        ).build();
+                        .build(),
+                session).build();
 
 
     }

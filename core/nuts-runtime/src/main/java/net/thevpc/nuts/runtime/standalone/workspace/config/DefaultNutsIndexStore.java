@@ -79,8 +79,8 @@ public class DefaultNutsIndexStore extends AbstractNutsIndexStore {
                         .ofObject()
                         .set("type","SearchIndexVersions")
                         .set("source", getIndexURL(session).resolve( NutsConstants.Folders.ID).resolve( "allVersions").toString())
-                        .build()
-        ).build();
+                        .build(),
+                session).build();
     }
 
     @Override
@@ -111,8 +111,8 @@ public class DefaultNutsIndexStore extends AbstractNutsIndexStore {
                         .ofObject().set("type","SearchIndexPackages")
                         .set("source", getIndexURL(session).resolve(NutsConstants.Folders.ID).toString())
                         .set("filter", NutsDescribables.resolveOrToString(filter,elems))
-                        .build()
-        ).build();
+                        .build(),
+                session).build();
     }
 
     private NutsPath getIndexURL(NutsSession session) {

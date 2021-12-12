@@ -16,12 +16,14 @@ public class NutsPrintStreamRaw extends NutsPrintStreamBase {
 
     protected NutsPrintStreamRaw(OutputStream out, PrintStream base, Boolean autoFlush, NutsTerminalMode mode, NutsSession session, Bindings bindings, NutsSystemTerminalBase term) {
         super(autoFlush == null ? true : autoFlush, mode, session, bindings,term);
+        setFormattedName(NutsTexts.of(session).ofStyled("<raw-stream>", NutsTextStyle.path()));
         this.out = out;
         this.base = base;
     }
 
     public NutsPrintStreamRaw(OutputStream out, Boolean autoFlush, String encoding, NutsSession session, Bindings bindings,NutsSystemTerminalBase term) {
         super(true, NutsTerminalMode.INHERITED, session, bindings,term);
+        setFormattedName(NutsTexts.of(session).ofStyled("<raw-stream>", NutsTextStyle.path()));
         this.out = out;
         if (out instanceof PrintStream) {
             PrintStream ps = (PrintStream) out;

@@ -9,12 +9,12 @@ package net.thevpc.nuts;
 /**
  * @author thevpc
  */
-public class NutsPathInputStreamMetadata implements NutsInputStreamMetadata {
+public class NutsPathStreamMetadata implements NutsStreamMetadata {
 
     private String userKind;
     private final NutsPath path;
 
-    public NutsPathInputStreamMetadata(NutsPath path) {
+    public NutsPathStreamMetadata(NutsPath path) {
         this.path = path;
     }
 
@@ -24,8 +24,8 @@ public class NutsPathInputStreamMetadata implements NutsInputStreamMetadata {
     }
 
     @Override
-    public NutsString getFormattedName() {
-        return path.getFormattedName();
+    public NutsString getFormattedPath() {
+        return path.format();
     }
 
     @Override
@@ -42,7 +42,7 @@ public class NutsPathInputStreamMetadata implements NutsInputStreamMetadata {
         return userKind;
     }
 
-    public NutsInputStreamMetadata setUserKind(String userKind) {
+    public NutsStreamMetadata setUserKind(String userKind) {
         this.userKind = userKind;
         return this;
     }

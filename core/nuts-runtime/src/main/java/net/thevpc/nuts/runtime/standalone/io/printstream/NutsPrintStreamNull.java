@@ -1,13 +1,13 @@
 package net.thevpc.nuts.runtime.standalone.io.printstream;
 
-import net.thevpc.nuts.NutsPrintStream;
-import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.NutsTerminalCommand;
-import net.thevpc.nuts.NutsTerminalMode;
+import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.standalone.text.parser.DefaultNutsTextPlain;
+import net.thevpc.nuts.runtime.standalone.text.parser.DefaultNutsTextStyled;
 
 public class NutsPrintStreamNull extends NutsPrintStreamBase {
     public NutsPrintStreamNull(NutsSession session) {
         super(false, NutsTerminalMode.INHERITED, session, new Bindings(),null);
+        setFormattedName(new DefaultNutsTextStyled(session,new DefaultNutsTextPlain(session,"<null-stream>" ),NutsTextStyles.of(NutsTextStyle.path())));
     }
     @Override
     public NutsPrintStream setSession(NutsSession session) {

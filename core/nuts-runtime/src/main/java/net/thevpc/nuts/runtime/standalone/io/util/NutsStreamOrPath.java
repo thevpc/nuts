@@ -11,15 +11,13 @@ public class NutsStreamOrPath {
     private final Object value;
     private final Type type;
     private final boolean disposable;
+    private final NutsSession session;
 
-    public static NutsStreamOrPath ofSpecial(Object value, Type type) {
-        return new NutsStreamOrPath(value,type,false);
-    }
-
-    private NutsStreamOrPath(Object value, Type type, boolean disposable) {
+    private NutsStreamOrPath(Object value, Type type, boolean disposable, NutsSession session) {
         this.value = value;
         this.type = type;
         this.disposable = disposable;
+        this.session = session;
         if (disposable) {
             if (value instanceof NutsPath) {
                 if (((NutsPath) value).isFile()) {
@@ -30,68 +28,125 @@ public class NutsStreamOrPath {
         }
     }
 
+    public static NutsStreamOrPath ofSpecial(Object value, Type type, NutsSession session) {
+        return new NutsStreamOrPath(value, type, false, session);
+    }
+
     public static NutsStreamOrPath ofDisposable(NutsPath value) {
-        return new NutsStreamOrPath(value, Type.PATH, true);
+        return new NutsStreamOrPath(value, Type.PATH, true, value.getSession());
     }
 
-    public static NutsStreamOrPath of(File value,NutsSession session) {
-        return of(NutsPath.of(value,session));
+    public static NutsStreamOrPath of(File value, NutsSession session) {
+        return of(NutsPath.of(value, session));
     }
 
-    public static NutsStreamOrPath of(URL value,NutsSession session) {
-        return of(NutsPath.of(value,session));
+    public static NutsStreamOrPath of(URL value, NutsSession session) {
+        return of(NutsPath.of(value, session));
     }
 
-    public static NutsStreamOrPath of(Path value,NutsSession session) {
-        return of(NutsPath.of(value,session));
+    public static NutsStreamOrPath of(Path value, NutsSession session) {
+        return of(NutsPath.of(value, session));
     }
 
-    public static NutsStreamOrPath of(String value,NutsSession session) {
-        return of(NutsPath.of(value,session));
+    public static NutsStreamOrPath of(String value, NutsSession session) {
+        return of(NutsPath.of(value, session));
     }
 
     public static NutsStreamOrPath of(NutsPath value) {
-        return new NutsStreamOrPath(value, Type.PATH, false);
+        return new NutsStreamOrPath(value, Type.PATH, false, value.getSession());
     }
 
     public static NutsStreamOrPath of(NutsPrintStream value) {
-        return new NutsStreamOrPath(value, Type.NUTS_PRINT_STREAM, false);
+        return new NutsStreamOrPath(value, Type.NUTS_PRINT_STREAM, false, value.getSession());
+    }
+
+    public static NutsStreamOrPath ofAnyOutputOrErr(Object value, NutsSession session) {
+        NutsStreamOrPath a = ofAnyOutputOrNull(value, session);
+        if (a != null) {
+            return a;
+        }
+        throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("unsupported output from type %s", value.getClass().getName()));
+    }
+
+    public static NutsStreamOrPath ofAnyInputOrErr(Object value, NutsSession session) {
+        NutsStreamOrPath a = ofAnyInputOrNull(value, session);
+        if (a != null) {
+            return a;
+        }
+        throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("unsupported input from type %s", value.getClass().getName()));
+    }
+
+    public static NutsStreamOrPath ofAnyOutputOrNull(Object value, NutsSession session) {
+        if (value == null) {
+            return null;
+        }
+        if (value instanceof ByteArrayOutputStream) {
+            return of((ByteArrayOutputStream) value,session);
+        }
+        if (value instanceof byte[]) {
+            ByteArrayOutputStream b = new ByteArrayOutputStream();
+            try {
+                b.write((byte[]) value);
+            } catch (IOException e) {
+                //ignore!
+            }
+            return of(b, session);
+        }
+        if (value instanceof NutsPrintStream) {
+            return of((NutsPrintStream) value);
+        }
+        if (value instanceof OutputStream) {
+            return of((OutputStream) value, session);
+        }
+        if (value instanceof NutsPath) {
+            return of((NutsPath) value);
+        }
+        if (value instanceof File) {
+            return of((File) value, session);
+        }
+        if (value instanceof URL) {
+            return of((URL) value, session);
+        }
+        if (value instanceof Path) {
+            return of((Path) value, session);
+        }
+        return null;
     }
 
     public static NutsStreamOrPath ofAnyInputOrNull(Object value, NutsSession session) {
         if (value == null) {
             return null;
         }
-        if (value instanceof InputStream) {
-            return of((InputStream) value);
-        }
         if (value instanceof byte[]) {
-            return of(new ByteArrayInputStream((byte[]) value));
+            return of(new ByteArrayInputStream((byte[]) value), session);
+        }
+        if (value instanceof InputStream) {
+            return of((InputStream) value, session);
         }
         if (value instanceof NutsPath) {
             return of((NutsPath) value);
         }
         if (value instanceof File) {
-            return of((File) value,session);
+            return of((File) value, session);
         }
         if (value instanceof URL) {
-            return of((URL) value,session);
+            return of((URL) value, session);
         }
         if (value instanceof Path) {
-            return of((Path) value,session);
+            return of((Path) value, session);
         }
         if (value instanceof String) {
-            return of((String) value,session);
+            return of((String) value, session);
         }
         return null;
     }
 
-    public static NutsStreamOrPath of(InputStream value) {
-        return new NutsStreamOrPath(value, Type.INPUT_STREAM, false);
+    public static NutsStreamOrPath of(InputStream value, NutsSession session) {
+        return new NutsStreamOrPath(value, Type.INPUT_STREAM, false, session);
     }
 
-    public static NutsStreamOrPath of(OutputStream value) {
-        return new NutsStreamOrPath(value, Type.OUTPUT_STREAM, false);
+    public static NutsStreamOrPath of(OutputStream value, NutsSession session) {
+        return new NutsStreamOrPath(value, Type.OUTPUT_STREAM, false, session);
     }
 
     public boolean dispose() {
@@ -139,18 +194,23 @@ public class NutsStreamOrPath {
     }
 
     public InputStream getInputStream() {
-        switch (type){
-            case PATH:return getPath().getInputStream();
-            case INPUT_STREAM:return (InputStream) value;
+        switch (type) {
+            case PATH:
+                return getPath().getInputStream();
+            case INPUT_STREAM:
+                return (InputStream) value;
         }
         throw new IllegalArgumentException("no an input stream");
     }
 
     public OutputStream getOutputStream() {
-        switch (type){
-            case PATH:return getPath().getOutputStream();
-            case OUTPUT_STREAM:return (OutputStream) value;
-            case NUTS_PRINT_STREAM:return ((NutsPrintStream) value).asOutputStream();
+        switch (type) {
+            case PATH:
+                return getPath().getOutputStream();
+            case OUTPUT_STREAM:
+                return (OutputStream) value;
+            case NUTS_PRINT_STREAM:
+                return ((NutsPrintStream) value).asOutputStream();
         }
         throw new IllegalArgumentException("no an output stream");
     }
@@ -163,8 +223,52 @@ public class NutsStreamOrPath {
         return getType() == Type.PATH;
     }
 
-    public NutsInputStreamMetadata getInputStreamMetaData() {
-        return NutsInputStreamMetadata.of(getInputStream());
+    public NutsStreamMetadata getStreamMetaData() {
+        switch (type) {
+            case PATH:
+                return getPath().getStreamMetadata();
+            case INPUT_STREAM:
+            case OUTPUT_STREAM: {
+                NutsStreamMetadata q = NutsStreamMetadata.resolve(value);
+                if (q == null) {
+                    NutsString str = null;
+                    if (value instanceof ByteArrayInputStream) {
+                        str = NutsTexts.of(session).ofStyled("<memory-buffer>", NutsTextStyle.path());
+                    } else if (value instanceof ByteArrayOutputStream) {
+                        str = NutsTexts.of(session).ofStyled("<memory-buffer>", NutsTextStyle.path());
+                    } else if (value instanceof byte[]) {
+                        str = NutsTexts.of(session).ofStyled("<memory-buffer>", NutsTextStyle.path());
+                    } else {
+                        str = NutsTexts.of(session).ofStyled(value.toString(), NutsTextStyle.path());
+                    }
+                    q = new NutsDefaultStreamMetadata(str.filteredText(),str,-1,null, null);
+                }
+                return q;
+            }
+            case NUTS_PRINT_STREAM: {
+                NutsPrintStream q = (NutsPrintStream) value;
+                return q.getStreamMetadata();
+            }
+            case DESCRIPTOR:{
+                NutsDescriptor q = (NutsDescriptor) value;
+                NutsId id = q.getId();
+                NutsString str;
+                if(id!=null){
+                    str=id.format();
+                }else{
+                    str = NutsTexts.of(session).ofStyled("<empty-descriptor>", NutsTextStyle.path());
+                }
+                return new NutsDefaultStreamMetadata(str.filteredText(),str,-1,null, null);
+            }
+            default: {
+                return new NutsDefaultStreamMetadata(
+                        value.toString(),
+                        NutsTexts.of(session).ofStyled(value.toString(), NutsTextStyle.path()),
+                        -1,
+                        null, null
+                );
+            }
+        }
     }
 
     public boolean isInputStream() {
@@ -180,7 +284,7 @@ public class NutsStreamOrPath {
             return getPath().getName();
         }
         if (value instanceof InputStream) {
-            return NutsInputStreamMetadata.of((InputStream) value).getName();
+            return NutsStreamMetadata.of((InputStream) value).getName();
         }
         return value.toString();
     }
@@ -192,7 +296,7 @@ public class NutsStreamOrPath {
     public NutsStreamOrPath[] list() {
         if (isPath()) {
             NutsPath p = getPath();
-            return p.list().map(NutsFunction.of(NutsStreamOrPath::of,"NutsStreamOrPath::of"))
+            return p.list().map(NutsFunction.of(NutsStreamOrPath::of, "NutsStreamOrPath::of"))
                     .toArray(NutsStreamOrPath[]::new);
         }
         return new NutsStreamOrPath[0];
@@ -206,16 +310,22 @@ public class NutsStreamOrPath {
         if (isPath()) {
             return getPath().getContentLength();
         }
-        return getInputStreamMetaData().getContentLength();
+        return getStreamMetaData().getContentLength();
     }
 
     public NutsStreamOrPath setKindType(String s) {
-        if(isPath()){
+        if (isPath()) {
             return of(getPath().setUserKind(s));
-        }else if(isInputStream()){
-            return of(InputStreamMetadataAwareImpl.of((InputStream) value,new NutsDefaultInputStreamMetadata(getInputStreamMetaData()).setUserKind(s)));
+        } else if (isInputStream()) {
+            NutsStreamMetadata md = getStreamMetaData();
+            md.setUserKind(s);
+            return this;
         }
         return this;
+    }
+
+    public String toString() {
+        return String.valueOf(value);
     }
 
     public enum Type {
@@ -225,11 +335,6 @@ public class NutsStreamOrPath {
         NUTS_PRINT_STREAM,
         DESCRIPTOR,
         ;
-    }
-
-    @Override
-    public String toString() {
-        return String.valueOf(value);
     }
 
 }

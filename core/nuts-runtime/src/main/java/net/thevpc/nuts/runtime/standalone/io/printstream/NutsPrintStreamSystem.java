@@ -1,6 +1,8 @@
 package net.thevpc.nuts.runtime.standalone.io.printstream;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.standalone.text.parser.DefaultNutsTextPlain;
+import net.thevpc.nuts.runtime.standalone.text.parser.DefaultNutsTextStyled;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceExt;
 import net.thevpc.nuts.spi.NutsSystemTerminalBase;
 
@@ -19,6 +21,8 @@ public class NutsPrintStreamSystem extends NutsPrintStreamBase{
     protected NutsPrintStreamSystem(OutputStream out, PrintStream base, Boolean autoFlush,
                                     NutsTerminalMode mode, NutsSession session, Bindings bindings, NutsSystemTerminalBase term) {
         super(autoFlush == null || autoFlush.booleanValue(), mode/*resolveMode(out,ansi, session)*/, session, bindings,term);
+        //Do not use NutsTexts, not yet initialized!
+        setFormattedName(new DefaultNutsTextStyled(session,new DefaultNutsTextPlain(session,"<system-stream>" ),NutsTextStyles.of(NutsTextStyle.path())));
         this.out = out;
         this.base = base;
     }
@@ -29,6 +33,8 @@ public class NutsPrintStreamSystem extends NutsPrintStreamBase{
 
     public NutsPrintStreamSystem(OutputStream out, Boolean autoFlush, String encoding, Boolean ansi, NutsSession session, Bindings bindings,NutsSystemTerminalBase term) {
         super(true, resolveMode(out, ansi, session), session, bindings,term);
+        //Do not use NutsTexts, not yet initialized!
+        setFormattedName(new DefaultNutsTextStyled(session,new DefaultNutsTextPlain(session,"<system-stream>" ),NutsTextStyles.of(NutsTextStyle.path())));
         this.out = out;
         if (out instanceof PrintStream) {
             PrintStream ps = (PrintStream) out;
@@ -77,54 +83,15 @@ public class NutsPrintStreamSystem extends NutsPrintStreamBase{
         } else {
             return NutsTerminalMode.INHERITED;
         }
-        //}
-//        return NutsTerminalMode.INHERITED;
     }
 
 
-//    public PrintStreamExtRaw(OutputStream out, NutsTerminalMode mode, NutsSession session) {
-//        this(out, true, null, mode, session);
-//    }
-//
-//    public PrintStreamExtRaw(String fileName, NutsTerminalMode mode, NutsSession session) throws FileNotFoundException {
-//        this(new FileOutputStream(fileName), false, null, mode, session);
-//    }
-//
-//    public PrintStreamExtRaw(String fileName, String csn, NutsTerminalMode mode, NutsSession session) throws FileNotFoundException, UnsupportedEncodingException {
-//        this(new FileOutputStream(fileName), false, csn, mode, session);
-//    }
-//
-//    public PrintStreamExtRaw(File file, NutsTerminalMode mode, NutsSession session) throws FileNotFoundException {
-//        this(new FileOutputStream(file), null, null, mode, session);
-//    }
-//
-//    public PrintStreamExtRaw(File file, String csn, NutsTerminalMode mode, NutsSession session) throws FileNotFoundException, UnsupportedEncodingException {
-//        this(new FileOutputStream(file), null, csn, mode, session);
-//    }
-
-    //    @Override
-//    public void setSession(NutsSession session) {
-//        this.session = session;
-////        this.ws=session==null?null:session.getWorkspace();
-//    }
-//
     @Override
     public NutsPrintStream flush() {
         base.flush();
         return this;
     }
 
-
-//    @Override
-//    public ExtendedFormatAware convert(NutsTerminalModeOp other) {
-//        if (other == null || other == getModeOp()) {
-//            return this;
-//        }
-//        if (out instanceof ExtendedFormatAware) {
-//            return ((ExtendedFormatAware) out).convert(other);
-//        }
-//        return new RawOutputStream(out, session).convert(other);
-//    }
 
     @Override
     public NutsPrintStream close() {

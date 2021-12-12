@@ -314,7 +314,7 @@ public class URLPath implements NutsPathSPI {
         }
         return InputStreamMetadataAwareImpl.of(
                 new SimpleHttpClient(url, session).openStream(),
-                new NutsPathInputStreamMetadata(basePath));
+                basePath.getStreamMetadata());
     }
 
     public OutputStream getOutputStream(NutsPath basePath) {

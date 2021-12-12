@@ -175,7 +175,7 @@ public class DefaultNutsPs implements NutsPs {
                 return Arrays.asList(split).iterator();
             }
             return IteratorBuilder.emptyIterator();
-        },e->e.ofString("jps")).map(
+        },e->e.ofString("jps"), session).map(
                 NutsFunction.of(
                 line -> {
             int s1 = line.indexOf(' ');

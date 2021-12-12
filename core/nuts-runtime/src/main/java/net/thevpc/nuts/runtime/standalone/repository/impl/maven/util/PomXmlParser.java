@@ -2,6 +2,7 @@ package net.thevpc.nuts.runtime.standalone.repository.impl.maven.util;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.format.xml.NutsXmlUtils;
+import net.thevpc.nuts.runtime.standalone.util.XmlEscaper;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -15,45 +16,17 @@ import java.io.*;
 import java.net.URI;
 import java.net.URL;
 import java.util.*;
-import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class PomXmlParser {
     public static final Pattern NUTS_OS_ARCH_DEPS_PATTERN = Pattern.compile("^nuts([.](?<os>[a-zA-Z0-9-_]+)-os)?([.](?<arch>[a-zA-Z0-9-_]+)-arch)?-dependencies$");
 
-    private static Map<String, String> map = new HashMap<>();
-    private static Pattern ENTITY_PATTERN = Pattern.compile("&[a-zA-Z]+;");
 
-    static {
-        map.put("&Oslash;", "&#216;");
-        map.put("&oslash;", "&#248;");
-        map.put("&AElig;", "&#198;");
-        map.put("&aelig;", "&#230;");
-        map.put("&Auml;", "&#196;");
-        map.put("&auml;", "&#228;");
-        map.put("&OElig;", "&#338;");
-        map.put("&oelig;", "&#339;");
-        map.put("&lt;", "&#60;");
-        map.put("&gt;", "&#62;");
-        map.put("&amp;", "&#38;");
-        map.put("&quot;", "&#34;");
-        map.put("&euro;", "&#8364;");
-        map.put("&circ;", "&#710;");
-        map.put("&tilde;", "&#732;");
-        map.put("&ndash;", "&#45;");
-        map.put("&copy;", "&#169;");
-        map.put("&nbsp;", "&#32;");
-        map.put("&apos;", "&#39;");
-    }
-
-    private PomLogger logger;
+    private NutsSession session;
 
     public PomXmlParser(NutsSession session) {
-        this(new NutsPomLogger(session));
-    }
-    public PomXmlParser(PomLogger logger) {
-        this.logger = logger == null ? PomLogger.DEFAULT : logger;
+        this.session=session;
     }
 
     private static String elemToStr(Element ex) {
@@ -714,21 +687,7 @@ public class PomXmlParser {
             skip++;
         }
         String x = new String(bytes0, skip, bytes0.length - skip);
-        StringBuffer sb = new StringBuffer();
-        Matcher m = ENTITY_PATTERN.matcher(x);
-        while (m.find()) {
-            String key = m.group();
-            String v = map.get(key);
-            if (v != null) {
-                m.appendReplacement(sb, v);
-            } else {
-                logger.log(Level.WARNING, "[PomXmlParser] unsupported  xml entity declaration : {0}", key);
-                m.appendReplacement(sb, key);
-            }
-        }
-        m.appendTail(sb);
-
-        return new ByteArrayInputStream(sb.toString().getBytes());
+        return new ByteArrayInputStream(XmlEscaper.escapeToCode(x,session).getBytes());
     }
 
     public Pom parse(Document doc,NutsSession session) {

@@ -58,7 +58,8 @@ public abstract class AbstractNutsDeployCommand extends NutsWorkspaceCommandBase
 
     @Override
     public NutsDeployCommand setContent(InputStream stream) {
-        content = stream==null?null:NutsStreamOrPath.of(stream);
+        checkSession();
+        content = stream==null?null:NutsStreamOrPath.of(stream,getSession());
         return this;
     }
 
@@ -76,7 +77,7 @@ public abstract class AbstractNutsDeployCommand extends NutsWorkspaceCommandBase
 
     @Override
     public NutsDeployCommand setContent(byte[] content) {
-        this.content = content ==null?null:NutsStreamOrPath.of(new ByteArrayInputStream(content));
+        this.content = content ==null?null:NutsStreamOrPath.of(new ByteArrayInputStream(content),getSession());
         return this;
     }
 
