@@ -21,7 +21,7 @@
  * governing permissions and limitations under the License.
  * <br> ====================================================================
  */
-package net.thevpc.nuts.runtime.standalone.extension;
+package net.thevpc.nuts.runtime.standalone.dependency.util;
 
 import java.io.IOException;
 import java.net.URL;
@@ -57,7 +57,16 @@ public final class NutsClassLoaderUtils {
     }
 
     private static NutsClassLoaderNode toClassLoaderNode(NutsDependencyTreeNode d, NutsSession session) {
+        return toClassLoaderNodeWithOptional(d,false,session);
+    }
+
+    private static NutsClassLoaderNode toClassLoaderNodeWithOptional(NutsDependencyTreeNode d, boolean isOptional,NutsSession session) {
         NutsContent cc=null;
+        if(!isOptional) {
+            if(!NutsDependencyUtils.isRequiredDependency(d.getDependency())){
+                isOptional=true;
+            }
+        }
         try {
             cc = session.fetch().setId(d.getDependency().toId())
                     .setSession(session)
@@ -65,23 +74,26 @@ public final class NutsClassLoaderUtils {
         }catch (NutsNotFoundException ex){
             //
         }
-        if (cc == null) {
-            if(d.getDependency().isOptional()){
-                return null;
+        if (cc != null) {
+            URL url = cc.getURL();
+            if (url != null) {
+                List<NutsClassLoaderNode> aa=new ArrayList<>();
+                for (NutsDependencyTreeNode child : d.getChildren()) {
+                    NutsClassLoaderNode q = toClassLoaderNodeWithOptional(child, isOptional, session);
+                    if(q!=null){
+                        aa.add(q);
+                    }
+                }
+                return new NutsClassLoaderNode(
+                        d.getDependency().toId().toString(), url, true, true,
+                        aa.toArray(new NutsClassLoaderNode[0])
+                );
             }
-            throw new NutsNotFoundException(session, d.getDependency().toId());
         }
-        URL url = cc.getURL();
-        if (url == null) {
-            if(d.getDependency().isOptional()){
-                return null;
-            }
-            throw new NutsNotFoundException(session, d.getDependency().toId());
+        if(isOptional){
+            return null;
         }
-        return new NutsClassLoaderNode(
-                d.getDependency().toId().toString(), url, true, true,
-                Arrays.stream(d.getChildren()).map(x -> toClassLoaderNode(x, session)).toArray(NutsClassLoaderNode[]::new)
-        );
+        throw new NutsNotFoundException(session, d.getDependency().toId());
     }
 
     public static URL[] resolveClasspathURLs(ClassLoader contextClassLoader) {

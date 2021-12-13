@@ -6,7 +6,6 @@ import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 
 import java.util.Calendar;
 
-import net.thevpc.nuts.runtime.standalone.util.CoreNutsUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
 
 /**
@@ -50,7 +49,7 @@ public class CProgressBar {
         this.session = session;
         formatted = session != null;
         if (session != null) {
-            optionNewline = CoreNutsUtils.parseProgressOptions(session).isArmedNewline();
+            optionNewline = NutsProgressUtils.parseProgressOptions(session).isArmedNewline();
             ws=session.getWorkspace();
         }
     }

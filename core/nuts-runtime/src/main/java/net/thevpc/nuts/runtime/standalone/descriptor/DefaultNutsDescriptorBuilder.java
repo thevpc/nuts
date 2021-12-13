@@ -27,6 +27,7 @@
 package net.thevpc.nuts.runtime.standalone.descriptor;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.standalone.descriptor.util.NutsDescriptorUtils;
 import net.thevpc.nuts.runtime.standalone.util.MapToFunction;
 import net.thevpc.nuts.runtime.standalone.util.CoreNutsUtils;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
@@ -485,7 +486,7 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
     @Override
     public NutsDescriptorBuilder applyProperties() {
         return applyProperties(
-                CoreNutsUtils.getPropertiesMap(getProperties(), session)
+                NutsDescriptorUtils.getPropertiesMap(getProperties(), session)
 
         );
     }
@@ -881,6 +882,7 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
                 .setOs(CoreNutsUtils.applyStringProperties(child.getOs(), properties))
                 .setOsDist(CoreNutsUtils.applyStringProperties(child.getOsDist(), properties))
                 .setPlatform(CoreNutsUtils.applyStringProperties(child.getPlatform(), properties))
+                .setProfile(CoreNutsUtils.applyStringProperties(child.getProfile(), properties))
                 .setDesktopEnvironment(CoreNutsUtils.applyStringProperties(child.getDesktopEnvironment(), properties))
                 .setArch(CoreNutsUtils.applyStringProperties(child.getArch(), properties))
                 .build();

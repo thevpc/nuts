@@ -27,16 +27,15 @@ package net.thevpc.nuts.runtime.standalone.id;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.util.CoreNutsUtils;
+import net.thevpc.nuts.runtime.standalone.util.filters.CoreFilterUtils;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.QueryStringParser;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import net.thevpc.nuts.spi.NutsSupportLevelContext;
 
-import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 /**
  * Created by vpc on 1/5/17.
@@ -253,12 +252,14 @@ public class DefaultNutsIdBuilder implements NutsIdBuilder {
             setProperty(NutsConstants.IdProperties.ARCH, null);
             setProperty(NutsConstants.IdProperties.PLATFORM, null);
             setProperty(NutsConstants.IdProperties.DESKTOP_ENVIRONMENT, null);
+            setProperty(NutsConstants.IdProperties.PROFILE, null);
         }else{
             setProperty(NutsConstants.IdProperties.OS, CoreStringUtils.joinAndTrimToNull(c.getOs()));
             setProperty(NutsConstants.IdProperties.OS_DIST, CoreStringUtils.joinAndTrimToNull(c.getOsDist()));
             setProperty(NutsConstants.IdProperties.ARCH, CoreStringUtils.joinAndTrimToNull(c.getArch()));
             setProperty(NutsConstants.IdProperties.PLATFORM, CoreStringUtils.joinAndTrimToNull(c.getPlatform()));
             setProperty(NutsConstants.IdProperties.DESKTOP_ENVIRONMENT, CoreStringUtils.joinAndTrimToNull(c.getDesktopEnvironment()));
+            setProperty(NutsConstants.IdProperties.PROFILE, CoreStringUtils.joinAndTrimToNull(c.getProfile()));
 
         }
         return this;
@@ -451,7 +452,7 @@ public class DefaultNutsIdBuilder implements NutsIdBuilder {
         if(!NutsBlankable.isBlank(classifier)){
             m.put(NutsConstants.IdProperties.CLASSIFIER,classifier);
         }
-        m.putAll(CoreNutsUtils.toMap(condition.build()));
+        m.putAll(CoreFilterUtils.toMap(condition.build()));
         for (Map.Entry<String, String> e : propertiesQuery.getProperties().entrySet()) {
             if(!m.containsKey(e.getKey())){
                 m.put(e.getKey(),e.getValue());

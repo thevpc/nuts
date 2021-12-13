@@ -1,8 +1,8 @@
 package net.thevpc.nuts.runtime.standalone.id.filter;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.standalone.util.CoreNutsUtils;
 import net.thevpc.nuts.runtime.standalone.util.Simplifiable;
+import net.thevpc.nuts.runtime.standalone.util.filters.CoreFilterUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -45,7 +45,7 @@ public class NutsIdFilterNone extends AbstractIdFilter implements NutsIdFilter, 
 
     @Override
     public NutsIdFilter simplify() {
-        return CoreNutsUtils.simplifyFilterNone(getSession(),NutsIdFilter.class,this,children);
+        return CoreFilterUtils.simplifyFilterNone(getSession(),NutsIdFilter.class,this,children);
     }
 
     @Override

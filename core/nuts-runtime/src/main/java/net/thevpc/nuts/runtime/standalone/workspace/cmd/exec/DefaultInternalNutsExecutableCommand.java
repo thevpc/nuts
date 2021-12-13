@@ -6,7 +6,7 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.exec;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.standalone.util.CoreNutsUtils;
+import net.thevpc.nuts.runtime.standalone.app.util.NutsAppUtils;
 
 /**
  * @author thevpc
@@ -51,7 +51,7 @@ public abstract class DefaultInternalNutsExecutableCommand extends AbstractNutsE
     @Override
     public void dryExecute() {
         NutsSession session = getSession();
-        if (CoreNutsUtils.processHelpOptions(args, getSession())) {
+        if (NutsAppUtils.processHelpOptions(args, getSession())) {
             if (getSession().isPlainOut()) {
                 session.out().println("[dry] ==show-help==");
             } else {

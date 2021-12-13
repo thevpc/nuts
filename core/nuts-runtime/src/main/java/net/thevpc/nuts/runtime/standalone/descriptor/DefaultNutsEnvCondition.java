@@ -45,6 +45,7 @@ public class DefaultNutsEnvCondition implements NutsEnvCondition {
     }
 
     private String[] arch;
+    private String[] profiles;
     private String[] os;
     private String[] osDist;
     private String[] platform;
@@ -57,17 +58,19 @@ public class DefaultNutsEnvCondition implements NutsEnvCondition {
                 d.getOsDist(),
                 d.getPlatform(),
                 d.getDesktopEnvironment(),
+                d.getProfile(),
                 session
         );
     }
 
     public DefaultNutsEnvCondition(NutsSession session){
-        this(null,null,null,null,null,session);
+        this(null,null,null,null,null,null,session);
     }
 
     public DefaultNutsEnvCondition(String[] arch, String[] os, String[] osDist,
                                    String[] platform,
                                    String[] desktopEnvironment,
+                                   String[] profiles,
                                    NutsSession session) {
         this.session=session;
         this.arch = CoreArrayUtils.toDistinctTrimmedNonEmptyArray(arch);
@@ -75,6 +78,7 @@ public class DefaultNutsEnvCondition implements NutsEnvCondition {
         this.osDist = CoreArrayUtils.toDistinctTrimmedNonEmptyArray(osDist);
         this.platform = CoreArrayUtils.toDistinctTrimmedNonEmptyArray(platform);
         this.desktopEnvironment = CoreArrayUtils.toDistinctTrimmedNonEmptyArray(desktopEnvironment);
+        this.profiles = CoreArrayUtils.toDistinctTrimmedNonEmptyArray(profiles);
     }
 
     @Override
@@ -104,7 +108,17 @@ public class DefaultNutsEnvCondition implements NutsEnvCondition {
                 return false;
             }
         }
+        for (String s : profiles) {
+            if(!NutsBlankable.isBlank(s)){
+                return false;
+            }
+        }
         return true;
+    }
+
+    @Override
+    public String[] getProfile() {
+        return profiles;
     }
 
     @Override

@@ -6,8 +6,8 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.welcome;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.standalone.app.util.NutsAppUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceExt;
-import net.thevpc.nuts.runtime.standalone.util.CoreNutsUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.DefaultInternalNutsExecutableCommand;
 
 import java.util.LinkedHashMap;
@@ -24,7 +24,7 @@ public class DefaultNutsWelcomeInternalExecutable extends DefaultInternalNutsExe
 
     @Override
     public void execute() {
-        if (CoreNutsUtils.processHelpOptions(args, getSession())) {
+        if (NutsAppUtils.processHelpOptions(args, getSession())) {
             showDefaultHelp();
             return;
         }

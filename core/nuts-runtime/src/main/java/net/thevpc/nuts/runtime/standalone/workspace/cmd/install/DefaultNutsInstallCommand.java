@@ -24,6 +24,7 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.install;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.standalone.dependency.util.NutsDependencyUtils;
 import net.thevpc.nuts.runtime.standalone.util.iter.IteratorUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.repository.impl.main.NutsInstalledRepository;
@@ -74,17 +75,25 @@ public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
         }
         NutsSession ss = session.copy();
         checkSession();
-        def.definition = ss.fetch().setId(id).setSession(ss)
-                .setContent(true)
-                .setEffective(true)
-                .setDependencies(includeDeps)
-                .setFailFast(true)
-                //
-                .setOptional(false)
-                .addScope(NutsDependencyScopePattern.RUN)
-                .setDependencyFilter(NutsDependencyFilters.of(session).byRunnable())
-                //
-                .getResultDefinition();
+        try {
+            def.definition = ss.fetch().setId(id).setSession(ss)
+                    .setContent(true)
+                    .setEffective(true)
+                    .setDependencies(includeDeps)
+                    .setFailFast(true)
+                    //
+                    .setOptional(false)
+                    .addScope(NutsDependencyScopePattern.RUN)
+                    .setDependencyFilter(NutsDependencyFilters.of(session).byRunnable())
+                    //
+                    .getResultDefinition();
+        }catch (NutsNotFoundException ee){
+            if(!NutsDependencyUtils.isRequiredDependency(id.toDependency())) {
+                includeDeps=false;
+            }else{
+                throw ee;
+            }
+        }
         def.doRequire = true;
         if (includeDeps) {
             for (NutsDependency dependency : def.definition.getDependencies()) {

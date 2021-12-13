@@ -7,7 +7,6 @@ import net.thevpc.nuts.runtime.standalone.workspace.config.NutsRepositoryConfigM
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.config.NutsStoreLocationsMap;
 import net.thevpc.nuts.NutsLogVerb;
-import net.thevpc.nuts.runtime.standalone.util.CoreNutsUtils;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -48,7 +47,7 @@ public class DefaultNutsRepositoryConfigModel implements NutsRepositoryConfigMod
         if (options.getConfig() == null) {
             throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("missing repository options config"));
         }
-        this.repositoryRef = CoreNutsUtils.optionsToRef(options);
+        this.repositoryRef = net.thevpc.nuts.runtime.standalone.repository.util.NutsRepositoryUtils.optionsToRef(options);
 //        NutsSession session = options.getSession();
         String storeLocation = options.getLocation();
         NutsRepositoryConfig config = options.getConfig();
@@ -304,7 +303,7 @@ public class DefaultNutsRepositoryConfigModel implements NutsRepositoryConfigMod
                 NutsRepository r = ((DefaultNutsRepositoryManager) session.repos())
                         .getModel()
                         .createRepository(
-                                CoreNutsUtils.refToOptions(ref),
+                                net.thevpc.nuts.runtime.standalone.repository.util.NutsRepositoryUtils.refToOptions(ref),
                                 repository, session
                         );
                 addMirror(r, session);

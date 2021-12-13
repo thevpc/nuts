@@ -72,6 +72,7 @@ public class NutsIndexerUtils {
         _condPut(entity, NutsConstants.IdProperties.OS_DIST, String.join(",",id.getCondition().getOsDist()));
         _condPut(entity, NutsConstants.IdProperties.ARCH, String.join(",",id.getCondition().getArch()));
         _condPut(entity, NutsConstants.IdProperties.PLATFORM, String.join(",",id.getCondition().getPlatform()));
+        _condPut(entity, NutsConstants.IdProperties.PROFILE, String.join(",",id.getCondition().getProfile()));
         _condPut(entity, NutsConstants.IdProperties.DESKTOP_ENVIRONMENT, String.join(",",id.getCondition().getDesktopEnvironment()));
         _condPut(entity, NutsConstants.IdProperties.CLASSIFIER, id.getClassifier());
 //        _condPut(entity, NutsConstants.IdProperties.ALTERNATIVE, id.getAlternative());
@@ -94,6 +95,7 @@ public class NutsIndexerUtils {
         _condPut(entity, NutsConstants.IdProperties.OS_DIST, String.join(",",id2.getCondition().getOsDist()));
         _condPut(entity, NutsConstants.IdProperties.ARCH, String.join(",",id2.getCondition().getArch()));
         _condPut(entity, NutsConstants.IdProperties.PLATFORM, String.join(",",id2.getCondition().getPlatform()));
+        _condPut(entity, NutsConstants.IdProperties.PROFILE, String.join(",",id2.getCondition().getProfile()));
         _condPut(entity, NutsConstants.IdProperties.DESKTOP_ENVIRONMENT, String.join(",",id2.getCondition().getDesktopEnvironment()));
         _condPut(entity, NutsConstants.IdProperties.CLASSIFIER, id2.getClassifier());
 

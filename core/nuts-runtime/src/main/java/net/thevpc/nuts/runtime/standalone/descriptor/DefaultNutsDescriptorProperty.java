@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.descriptor;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.standalone.util.CoreNutsUtils;
+import net.thevpc.nuts.runtime.standalone.util.filters.CoreFilterUtils;
 
 import java.util.Objects;
 
@@ -14,7 +14,7 @@ class DefaultNutsDescriptorProperty implements NutsDescriptorProperty {
     public DefaultNutsDescriptorProperty(String name, String value, NutsEnvCondition condition, NutsSession session) {
         this.name = name;
         this.value = value;
-        this.condition = CoreNutsUtils.trimToBlank(condition, session);
+        this.condition = CoreFilterUtils.trimToBlank(condition, session);
         this.session = session;
     }
 

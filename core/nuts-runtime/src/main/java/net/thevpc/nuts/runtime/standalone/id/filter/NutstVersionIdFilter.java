@@ -9,8 +9,8 @@ import net.thevpc.nuts.*;
 
 import java.util.Objects;
 
-import net.thevpc.nuts.runtime.standalone.util.CoreNutsUtils;
 import net.thevpc.nuts.runtime.standalone.util.Simplifiable;
+import net.thevpc.nuts.runtime.standalone.util.filters.CoreFilterUtils;
 
 /**
  *
@@ -65,7 +65,7 @@ public class NutstVersionIdFilter extends AbstractIdFilter implements NutsIdFilt
 
     @Override
     public NutsIdFilter simplify() {
-        NutsVersionFilter f2 = CoreNutsUtils.simplify(filter);
+        NutsVersionFilter f2 = CoreFilterUtils.simplify(filter);
         if (f2 == null) {
             return null;
         }

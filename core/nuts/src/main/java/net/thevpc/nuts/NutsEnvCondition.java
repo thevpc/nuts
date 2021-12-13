@@ -33,6 +33,13 @@ package net.thevpc.nuts;
  */
 public interface NutsEnvCondition extends NutsBlankable {
     /**
+     * supported profiles (such as maven profiles)
+     *
+     * @return supported supported profiles
+     */
+    String[] getProfile();
+
+    /**
      * supported arch list. if empty, all arch are supported (for example for java, all arch are supported).
      *
      * @return supported arch list

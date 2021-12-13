@@ -46,6 +46,7 @@ public enum NutsDisplayProperty  implements NutsEnum {
     ARCH,
     PACKAGING,
     PLATFORM,
+    PROFILE,
     DESKTOP_ENVIRONMENT,
     OS,
     OSDIST,

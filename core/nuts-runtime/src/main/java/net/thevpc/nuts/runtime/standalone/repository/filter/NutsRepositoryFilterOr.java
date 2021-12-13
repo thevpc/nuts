@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.repository.filter;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.standalone.util.CoreNutsUtils;
+import net.thevpc.nuts.runtime.standalone.util.filters.CoreFilterUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -40,7 +40,7 @@ public class NutsRepositoryFilterOr extends AbstractRepositoryFilter{
 
     @Override
     public NutsRepositoryFilter simplify() {
-        return CoreNutsUtils.simplifyFilterOr(getSession(), NutsRepositoryFilter.class,this,all);
+        return CoreFilterUtils.simplifyFilterOr(getSession(), NutsRepositoryFilter.class,this,all);
     }
 
     @Override

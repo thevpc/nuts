@@ -117,8 +117,9 @@ public class MavenSolrSearchCommand {
                                         NutsObjectElement d = arr.getObject(index);
                                         String g = d.getSafeString("g");
                                         String a = d.getSafeString("a");
+                                        String v = d.getSafeString("v");
                                         index++;
-                                        return NutsIdBuilder.of(session).setGroupId(g).setArtifactId(a).build();
+                                        return NutsIdBuilder.of(session).setGroupId(g).setArtifactId(a).setVersion(v).build();
                                     }
                                 }
                                 return null;

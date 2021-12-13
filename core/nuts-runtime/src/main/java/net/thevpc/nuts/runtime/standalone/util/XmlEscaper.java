@@ -4,7 +4,7 @@ import net.thevpc.nuts.NutsLogVerb;
 import net.thevpc.nuts.NutsLoggerOp;
 import net.thevpc.nuts.NutsMessage;
 import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.runtime.standalone.repository.impl.maven.util.PomXmlParser;
+import net.thevpc.nuts.runtime.standalone.repository.impl.maven.pom.PomXmlParser;
 
 import java.util.HashMap;
 import java.util.Map;

@@ -1,10 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.io.progress;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.standalone.util.CoreNutsUtils;
 import net.thevpc.nuts.runtime.standalone.util.CoreNutsConstants;
-
-import java.util.logging.Logger;
 
 public class DefaultNutsInputStreamProgressFactory implements NutsProgressFactory {
 
@@ -17,7 +14,7 @@ public class DefaultNutsInputStreamProgressFactory implements NutsProgressFactor
     }
 
     public boolean acceptMonitoring(Object source, Object sourceOrigin, NutsSession session) {
-        if (!CoreNutsUtils.acceptMonitoring(session)) {
+        if (!NutsProgressUtils.acceptMonitoring(session)) {
             return false;
         }
         if (sourceOrigin instanceof NutsId) {

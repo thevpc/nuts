@@ -24,13 +24,13 @@
  * <br>
  * ====================================================================
 */
-package net.thevpc.nuts.runtime.standalone.repository.impl.maven.util;
+package net.thevpc.nuts.runtime.standalone.repository.impl.maven.pom;
 
 /**
  *
  * @author thevpc
  */
-class URLPart {
+public class URLPart {
 
     private String type;
     private String path;

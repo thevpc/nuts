@@ -24,7 +24,7 @@
  * <br>
  * ====================================================================
 */
-package net.thevpc.nuts.runtime.standalone.repository.impl.maven.util;
+package net.thevpc.nuts.runtime.standalone.repository.impl.maven.pom;
 
 import java.net.URL;
 
@@ -32,7 +32,7 @@ import java.net.URL;
  *
  * @author thevpc
  */
-interface URLFilter {
+public interface URLFilter {
 
     public boolean accept(URL path);
 

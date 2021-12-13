@@ -24,7 +24,7 @@
  * <br>
  * ====================================================================
 */
-package net.thevpc.nuts.runtime.standalone.repository.impl.maven.util;
+package net.thevpc.nuts.runtime.standalone.repository.impl.maven.pom;
 
 import java.io.*;
 import java.net.JarURLConnection;
@@ -41,7 +41,7 @@ import java.util.jar.JarFile;
  *
  * @author thevpc
  */
-class URLParts {
+public class URLParts {
 
     URLPart[] values;
 

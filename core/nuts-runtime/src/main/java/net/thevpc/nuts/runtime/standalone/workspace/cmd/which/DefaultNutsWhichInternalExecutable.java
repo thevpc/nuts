@@ -6,7 +6,7 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.which;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.standalone.util.CoreNutsUtils;
+import net.thevpc.nuts.runtime.standalone.app.util.NutsAppUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.DefaultInternalNutsExecutableCommand;
 
 import java.util.ArrayList;
@@ -27,7 +27,7 @@ public class DefaultNutsWhichInternalExecutable extends DefaultInternalNutsExecu
 
     @Override
     public void execute() {
-        if (CoreNutsUtils.processHelpOptions(args, getSession())) {
+        if (NutsAppUtils.processHelpOptions(args, getSession())) {
             showDefaultHelp();
             return;
         }

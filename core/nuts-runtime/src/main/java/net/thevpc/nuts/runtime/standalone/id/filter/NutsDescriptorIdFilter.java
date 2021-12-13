@@ -9,6 +9,7 @@ import java.util.Objects;
 import java.util.logging.Level;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.standalone.util.filters.CoreFilterUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.repository.impl.maven.util.MavenRepositoryFolderHelper;
 import net.thevpc.nuts.NutsLogVerb;
@@ -102,7 +103,7 @@ public class NutsDescriptorIdFilter extends AbstractIdFilter implements NutsIdFi
 
     @Override
     public NutsIdFilter simplify() {
-        NutsDescriptorFilter f2 = CoreNutsUtils.simplify(filter);
+        NutsDescriptorFilter f2 = CoreFilterUtils.simplify(filter);
         if (f2 == null) {
             return null;
         }

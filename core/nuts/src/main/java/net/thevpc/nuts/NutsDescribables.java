@@ -275,23 +275,24 @@ public final class NutsDescribables {
 
         @Override
         public NutsElement describe(NutsElements elems) {
-            NutsObjectElement b = NutsDescribables.resolveOrDestruct(base, elems)
-                    .asSafeObject(true);
-            NutsElement a = nfo.apply(elems);
-            if (b.isEmpty()) {
-                return a;
-            }
-            if (a.isObject()) {
-                return b.builder()
-                        .addAll(a.asObject())
-                        .build()
-                        ;
-            } else {
-                return b.builder()
-                        .set("name", a)
-                        .build()
-                        ;
-            }
+            return nfo.apply(elems);
+//            NutsObjectElement b = NutsDescribables.resolveOrDestruct(base, elems)
+//                    .asSafeObject(true);
+//            NutsElement a = nfo.apply(elems);
+//            if (b.isEmpty()) {
+//                return a;
+//            }
+//            if (a.isObject()) {
+//                return b.builder()
+//                        .addAll(a.asObject())
+//                        .build()
+//                        ;
+//            } else {
+//                return b.builder()
+//                        .set("name", a)
+//                        .build()
+//                        ;
+//            }
         }
     }
 

@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.io.terminal;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.standalone.util.CoreNutsUtils;
+import net.thevpc.nuts.runtime.standalone.io.progress.NutsProgressUtils;
 import net.thevpc.nuts.runtime.standalone.io.progress.CProgressBar;
 import net.thevpc.nuts.spi.NutsSupportLevelContext;
 import net.thevpc.nuts.spi.NutsSystemTerminalBase;
@@ -129,7 +129,7 @@ public abstract class AbstractSystemTerminalAdapter extends NutsSystemTerminalBa
 
     @Override
     public NutsSystemTerminal printProgress(float progress, NutsMessage message,NutsSession session) {
-        if (CoreNutsUtils.acceptProgress(session)) {
+        if (NutsProgressUtils.acceptProgress(session)) {
             if (getBase() instanceof NutsSystemTerminal) {
                 ((NutsSystemTerminal) getBase()).printProgress(progress, message,session);
             } else {

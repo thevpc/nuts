@@ -7,7 +7,7 @@ package net.thevpc.nuts.runtime.standalone.workspace.cmd.exec;
 
 import net.thevpc.nuts.NutsExecCommand;
 import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.runtime.standalone.util.CoreNutsUtils;
+import net.thevpc.nuts.runtime.standalone.app.util.NutsAppUtils;
 
 /**
  *
@@ -24,7 +24,7 @@ public class DefaultNutsExecInternalExecutable extends DefaultInternalNutsExecut
 
     @Override
     public void execute() {
-        if (CoreNutsUtils.processHelpOptions(args, getSession())) {
+        if (NutsAppUtils.processHelpOptions(args, getSession())) {
             showDefaultHelp();
             return;
         }
@@ -33,7 +33,7 @@ public class DefaultNutsExecInternalExecutable extends DefaultInternalNutsExecut
 
     @Override
     public void dryExecute() {
-        if (CoreNutsUtils.processHelpOptions(args, getSession())) {
+        if (NutsAppUtils.processHelpOptions(args, getSession())) {
             getSession().out().println("[dry] ==show-help==");
             return;
         }

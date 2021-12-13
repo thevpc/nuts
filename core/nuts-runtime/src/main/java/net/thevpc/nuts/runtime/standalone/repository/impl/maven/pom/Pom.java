@@ -1,4 +1,4 @@
-package net.thevpc.nuts.runtime.standalone.repository.impl.maven.util;
+package net.thevpc.nuts.runtime.standalone.repository.impl.maven.pom;
 
 import java.util.Map;
 import org.w3c.dom.Document;

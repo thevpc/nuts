@@ -1075,6 +1075,13 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
     NutsStream<String> getResultPlatform();
 
     /**
+     * return result as profiles
+     *
+     * @return result as profiles
+     */
+    NutsStream<String> getResultProfile();
+
+    /**
      * return result as desktop environments
      *
      * @return result as desktop environments

@@ -157,6 +157,11 @@ public final class NutsConstants {
         public static final String PLATFORM = "platform";
 
         /**
+         * id profile. a profile is mostly defined by the build tool (maven or gradle).
+         */
+        public static final String PROFILE = "profile";
+
+        /**
          * id supported operating system. standard values are :
          * <ul>
          * <li>linux</li>

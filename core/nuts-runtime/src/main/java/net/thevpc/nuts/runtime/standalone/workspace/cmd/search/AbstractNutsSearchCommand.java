@@ -32,7 +32,7 @@ import net.thevpc.nuts.runtime.standalone.format.NutsDisplayProperty;
 import net.thevpc.nuts.runtime.standalone.format.NutsFetchDisplayOptions;
 import net.thevpc.nuts.runtime.standalone.format.NutsIdFormatHelper;
 import net.thevpc.nuts.runtime.standalone.extension.DefaultNutsWorkspaceExtensionManager;
-import net.thevpc.nuts.runtime.standalone.extension.NutsClassLoaderUtils;
+import net.thevpc.nuts.runtime.standalone.dependency.util.NutsClassLoaderUtils;
 import net.thevpc.nuts.runtime.standalone.stream.NutsIteratorStream;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
 
@@ -773,6 +773,15 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
     public NutsStream<String> getResultPlatform() {
         return postProcessResult(IteratorBuilder.of(getResultDefinitionIteratorBase(isContent(), isEffective()), session)
                 .mapMulti(NutsFunction.of(x -> Arrays.asList(x.getDescriptor().getCondition().getPlatform()), "getPlatform"))
+                .notBlank()
+                .distinct()
+        );
+    }
+
+    @Override
+    public NutsStream<String> getResultProfile() {
+        return postProcessResult(IteratorBuilder.of(getResultDefinitionIteratorBase(isContent(), isEffective()), session)
+                .mapMulti(NutsFunction.of(x -> Arrays.asList(x.getDescriptor().getCondition().getProfile()), "getProfile"))
                 .notBlank()
                 .distinct()
         );

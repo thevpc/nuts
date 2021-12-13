@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.definition.installstatus.filter;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.standalone.util.CoreNutsUtils;
+import net.thevpc.nuts.runtime.standalone.util.filters.CoreFilterUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -40,7 +40,7 @@ public class NutsInstallStatusFilterAnd extends AbstractInstallStatusFilter{
 
     @Override
     public NutsInstallStatusFilter simplify() {
-        return CoreNutsUtils.simplifyFilterAnd(getSession(),NutsInstallStatusFilter.class,this,all);
+        return CoreFilterUtils.simplifyFilterAnd(getSession(),NutsInstallStatusFilter.class,this,all);
     }
 
 

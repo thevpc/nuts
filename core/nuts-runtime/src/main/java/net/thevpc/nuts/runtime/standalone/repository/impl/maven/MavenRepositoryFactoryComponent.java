@@ -21,7 +21,7 @@
  * governing permissions and limitations under the License.
  * <br> ====================================================================
  */
-package net.thevpc.nuts.runtime.standalone.repository.impl.maven.util;
+package net.thevpc.nuts.runtime.standalone.repository.impl.maven;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.repository.DefaultNutsRepositoryDB;

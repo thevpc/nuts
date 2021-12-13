@@ -1,12 +1,12 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.fetch;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.standalone.dependency.util.NutsDependencyUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.repository.cmd.NutsRepositorySupportedAction;
 import net.thevpc.nuts.runtime.standalone.definition.DefaultNutsDefinition;
 import net.thevpc.nuts.runtime.standalone.repository.impl.main.NutsInstalledRepository;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
-import net.thevpc.nuts.runtime.standalone.util.CoreNutsUtils;
 import net.thevpc.nuts.runtime.standalone.definition.DefaultNutsInstallInfo;
 import net.thevpc.nuts.runtime.standalone.repository.impl.main.DefaultNutsInstalledRepository;
 import net.thevpc.nuts.runtime.standalone.dependency.NutsDependencyScopes;
@@ -527,7 +527,7 @@ public class DefaultNutsFetchCommand extends AbstractNutsFetchCommand {
             if (!NutsDependencyScopes.isDefaultScope(q.get(NutsConstants.IdProperties.SCOPE))) {
                 newIdBuilder.setProperty(NutsConstants.IdProperties.SCOPE, q.get(NutsConstants.IdProperties.SCOPE));
             }
-            if (!CoreNutsUtils.isDefaultOptional(q.get(NutsConstants.IdProperties.OPTIONAL))) {
+            if (!NutsDependencyUtils.isDefaultOptional(q.get(NutsConstants.IdProperties.OPTIONAL))) {
                 newIdBuilder.setProperty(NutsConstants.IdProperties.OPTIONAL, q.get(NutsConstants.IdProperties.OPTIONAL));
             }
             NutsId newId = newIdBuilder.build();

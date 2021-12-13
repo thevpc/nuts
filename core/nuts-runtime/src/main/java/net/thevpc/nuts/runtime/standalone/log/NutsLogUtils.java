@@ -1,6 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.log;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceExt;
 
 import java.io.BufferedReader;
@@ -209,5 +210,27 @@ public class NutsLogUtils {
             session=defSession;
         }
         return session;
+    }
+
+    public static void traceMessage(NutsLogger log, Level lvl, String name, NutsSession session, NutsFetchMode fetchMode, NutsId id, NutsLogVerb tracePhase, String title, long startTime, NutsMessage extraMsg) {
+        if (!log.isLoggable(lvl)) {
+            return;
+        }
+        String sep;
+        if (extraMsg == null) {
+            sep = "";
+            extraMsg = NutsMessage.formatted("");
+        } else {
+            sep = " : ";
+        }
+        long time = (startTime != 0) ? (System.currentTimeMillis() - startTime) : 0;
+        String modeString = CoreStringUtils.alignLeft(fetchMode.id(), 7);
+        log.with().session(session).level(lvl).verb(tracePhase).time(time)
+                .log(NutsMessage.jstyle("[{0}] {1} {2} {3} {4}",
+                        modeString,
+                        CoreStringUtils.alignLeft(name, 20),
+                        CoreStringUtils.alignLeft(title, 18),
+                        (id == null ? "" : id),
+                        extraMsg));
     }
 }

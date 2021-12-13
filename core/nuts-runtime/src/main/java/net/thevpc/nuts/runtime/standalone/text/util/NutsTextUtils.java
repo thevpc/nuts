@@ -198,4 +198,25 @@ public class NutsTextUtils {
         return txt.toText(o);
     }
 
+    public static NutsString formatLogValue(NutsTexts text, Object unresolved, Object resolved) {
+        NutsString a = desc(unresolved, text);
+        NutsString b = desc(resolved, text);
+        if (a.equals(b)) {
+            return a;
+        } else {
+            return
+                    text.builder()
+                            .append(a)
+                            .append(" => ")
+                            .append(b)
+                    ;
+        }
+    }
+
+    public static NutsString desc(Object s, NutsTexts text) {
+        if (s == null || (s instanceof String && ((String) s).isEmpty())) {
+            return text.ofStyled("<EMPTY>", NutsTextStyle.option());
+        }
+        return text.toText(s);
+    }
 }

@@ -31,7 +31,7 @@ public class NutsDependencyOsDistIdFilter extends AbstractDependencyFilter  {
 
     @Override
     public boolean acceptDependency(NutsId from, NutsDependency dependency, NutsSession session) {
-        String[] current = NutsStream.of(dependency.getCondition().getPlatform(),session).filterNonBlank().toArray(String[]::new);
+        String[] current = NutsStream.of(dependency.getCondition().getOsDist(),session).filterNonBlank().toArray(String[]::new);
         if(current.length==0 || accepted.isEmpty()){
             return true;
         }

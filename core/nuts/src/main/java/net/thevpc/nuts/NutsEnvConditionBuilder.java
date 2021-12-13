@@ -59,6 +59,23 @@ public interface NutsEnvConditionBuilder extends Serializable, NutsComponent {
      */
     NutsEnvConditionBuilder setArch(String... archs);
 
+
+    /**
+     * supported profiles
+     *
+     * @return supported profiles
+     */
+    String[] getProfile();
+
+
+    /**
+     * set profiles
+     *
+     * @param profiles value to set
+     * @return {@code this} instance
+     */
+    NutsEnvConditionBuilder setProfile(String... profiles);
+
     /**
      * supported operating systems. if empty, all oses are supported (for example for java, all arch are supported).
      *
@@ -127,6 +144,14 @@ public interface NutsEnvConditionBuilder extends Serializable, NutsComponent {
      * @return {@code this} instance
      */
     NutsEnvConditionBuilder addOs(String os);
+
+    /**
+     * add profile
+     *
+     * @param profile new value to add
+     * @return {@code this} instance
+     */
+    NutsEnvConditionBuilder addProfile(String profile);
 
     /**
      * add os dist

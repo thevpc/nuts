@@ -2,7 +2,7 @@ package net.thevpc.nuts.runtime.standalone.dependency.filter;
 
 import java.util.Objects;
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.standalone.util.CoreNutsDependencyUtils;
+import net.thevpc.nuts.runtime.standalone.dependency.util.NutsDependencyUtils;
 
 
 public class NutsDependencyTypeFilter extends AbstractDependencyFilter {
@@ -16,8 +16,8 @@ public class NutsDependencyTypeFilter extends AbstractDependencyFilter {
 
     @Override
     public boolean acceptDependency(NutsId from, NutsDependency dependency, NutsSession session) {
-        String curr = CoreNutsDependencyUtils.normalizeDependencyType(dependency.getType());
-        String toCheck = CoreNutsDependencyUtils.normalizeDependencyType(type);
+        String curr = NutsDependencyUtils.normalizeDependencyType(dependency.getType());
+        String toCheck = NutsDependencyUtils.normalizeDependencyType(type);
         return Objects.equals(curr, toCheck);
     }
 

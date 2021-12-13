@@ -49,6 +49,7 @@ public class DefaultNutsEnvConditionBuilder implements NutsEnvConditionBuilder {
     private List<String> osDist = new ArrayList<>(); //defaults to empty;
     private List<String> platform = new ArrayList<>(); //defaults to empty;
     private List<String> desktopEnvironment = new ArrayList<>(); //defaults to empty;
+    private List<String> profiles = new ArrayList<>(); //defaults to empty;
     private transient NutsSession session;
 
     public DefaultNutsEnvConditionBuilder() {
@@ -116,6 +117,24 @@ public class DefaultNutsEnvConditionBuilder implements NutsEnvConditionBuilder {
 
     public NutsEnvConditionBuilder setDesktopEnvironment(String[] desktopEnvironment) {
         this.desktopEnvironment = new ArrayList<>(Arrays.asList(CoreArrayUtils.toDistinctTrimmedNonEmptyArray(desktopEnvironment)));
+        return this;
+    }
+
+    public String[] getProfile() {
+        return CoreArrayUtils.toDistinctTrimmedNonEmptyArray(profiles.toArray(new String[0]));
+    }
+
+    public NutsEnvConditionBuilder setProfile(String[] profiles) {
+        this.profiles = new ArrayList<>(Arrays.asList(CoreArrayUtils.toDistinctTrimmedNonEmptyArray(profiles)));
+        return this;
+    }
+
+    @Override
+    public NutsEnvConditionBuilder addProfile(String profile) {
+        if (this.profiles == null) {
+            this.profiles = new ArrayList<>();
+        }
+        this.profiles.add(profile);
         return this;
     }
 
@@ -201,6 +220,7 @@ public class DefaultNutsEnvConditionBuilder implements NutsEnvConditionBuilder {
             setOsDist(other.getOsDist());
             setPlatform(other.getPlatform());
             setDesktopEnvironment(other.getDesktopEnvironment());
+            setProfile(other.getProfile());
         } else {
             clear();
         }
@@ -215,6 +235,7 @@ public class DefaultNutsEnvConditionBuilder implements NutsEnvConditionBuilder {
             setOsDist(other.getOsDist());
             setPlatform(other.getPlatform());
             setDesktopEnvironment(other.getDesktopEnvironment());
+            setProfile(other.getProfile());
         } else {
             clear();
         }
@@ -229,6 +250,7 @@ public class DefaultNutsEnvConditionBuilder implements NutsEnvConditionBuilder {
             setOsDist(CoreArrayUtils.toDistinctTrimmedNonEmptyArray(getOsDist(), other.getOsDist()));
             setPlatform(CoreArrayUtils.toDistinctTrimmedNonEmptyArray(getPlatform(), other.getPlatform()));
             setDesktopEnvironment(CoreArrayUtils.toDistinctTrimmedNonEmptyArray(getDesktopEnvironment(), other.getDesktopEnvironment()));
+            setProfile(CoreArrayUtils.toDistinctTrimmedNonEmptyArray(getProfile(), other.getProfile()));
         }
         return this;
     }
@@ -241,6 +263,7 @@ public class DefaultNutsEnvConditionBuilder implements NutsEnvConditionBuilder {
             setOsDist(CoreArrayUtils.toDistinctTrimmedNonEmptyArray(getOsDist(), other.getOsDist()));
             setPlatform(CoreArrayUtils.toDistinctTrimmedNonEmptyArray(getPlatform(), other.getPlatform()));
             setDesktopEnvironment(CoreArrayUtils.toDistinctTrimmedNonEmptyArray(getDesktopEnvironment(), other.getDesktopEnvironment()));
+            setProfile(CoreArrayUtils.toDistinctTrimmedNonEmptyArray(getProfile(), other.getProfile()));
         }
         return this;
     }
@@ -252,6 +275,7 @@ public class DefaultNutsEnvConditionBuilder implements NutsEnvConditionBuilder {
         setOsDist(null);
         setPlatform(null);
         setDesktopEnvironment(null);
+        setProfile(null);
         return this;
     }
 
@@ -268,6 +292,7 @@ public class DefaultNutsEnvConditionBuilder implements NutsEnvConditionBuilder {
         return new DefaultNutsEnvCondition(
                 getArch(), getOs(), getOsDist(), getPlatform(),
                 getDesktopEnvironment(),
+                getProfile(),
                 session
         );
     }
@@ -286,6 +311,7 @@ public class DefaultNutsEnvConditionBuilder implements NutsEnvConditionBuilder {
         this.setOsDist(CoreNutsUtils.applyStringProperties(getOsDist(), map));
         this.setPlatform(CoreNutsUtils.applyStringProperties(getPlatform(), map));
         this.setDesktopEnvironment(CoreNutsUtils.applyStringProperties(getDesktopEnvironment(), map));
+        this.setProfile(CoreNutsUtils.applyStringProperties(getProfile(), map));
         return this;
     }
 
@@ -297,7 +323,8 @@ public class DefaultNutsEnvConditionBuilder implements NutsEnvConditionBuilder {
                                 ts("os", os.toArray(new String[0])),
                                 ts("osDist", osDist.toArray(new String[0])),
                                 ts("platform", platform.toArray(new String[0])),
-                                ts("desktopEnvironment", desktopEnvironment.toArray(new String[0]))
+                                ts("desktopEnvironment", desktopEnvironment.toArray(new String[0])),
+                                ts("profiles", profiles.toArray(new String[0]))
                         })
                         .filter(x -> x.length() > 0)
                         .toArray(String[]::new)

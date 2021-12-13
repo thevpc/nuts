@@ -24,6 +24,7 @@
 package net.thevpc.nuts.runtime.standalone.repository.impl;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.standalone.log.NutsLogUtils;
 import net.thevpc.nuts.runtime.standalone.repository.cmd.NutsRepositorySupportedAction;
 import net.thevpc.nuts.runtime.standalone.repository.cmd.deploy.DefaultNutsDeployRepositoryCommand;
 import net.thevpc.nuts.runtime.standalone.repository.cmd.fetch.DefaultNutsFetchContentRepositoryCommand;
@@ -34,7 +35,6 @@ import net.thevpc.nuts.runtime.standalone.repository.cmd.search.DefaultNutsSearc
 import net.thevpc.nuts.runtime.standalone.repository.cmd.undeploy.DefaultNutsRepositoryUndeployCommand;
 import net.thevpc.nuts.runtime.standalone.repository.cmd.updatestats.AbstractNutsUpdateRepositoryStatisticsCommand;
 import net.thevpc.nuts.runtime.standalone.repository.config.DefaultNutsRepositoryConfigModel;
-import net.thevpc.nuts.runtime.standalone.util.CoreNutsUtils;
 import net.thevpc.nuts.spi.*;
 
 import java.util.*;
@@ -129,7 +129,7 @@ public abstract class AbstractNutsRepositoryBase extends AbstractNutsRepository 
     }
 
     protected void traceMessage(NutsSession session, NutsFetchMode fetchMode, Level lvl, NutsId id, NutsLogVerb tracePhase, String title, long startTime, NutsMessage extraMessage) {
-        CoreNutsUtils.traceMessage(LOG, lvl, getName(), session, fetchMode, id, tracePhase, title, startTime, extraMessage);
+        NutsLogUtils.traceMessage(LOG, lvl, getName(), session, fetchMode, id, tracePhase, title, startTime, extraMessage);
     }
 
     @Override

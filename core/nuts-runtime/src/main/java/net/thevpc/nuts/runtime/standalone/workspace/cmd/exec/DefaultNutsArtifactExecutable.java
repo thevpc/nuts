@@ -90,7 +90,7 @@ public class DefaultNutsArtifactExecutable extends AbstractNutsExecutableCommand
             session.install().setSession(session).addId(def.getId()).run();
         }
 //        LinkedHashSet<NutsDependency> reinstall = new LinkedHashSet<>();
-//        NutsDependencyFilter depFilter = CoreNutsDependencyUtils.createJavaRunDependencyFilter(traceSession);
+//        NutsDependencyFilter depFilter = NutsDependencyUtils.createJavaRunDependencyFilter(traceSession);
 //        for (NutsDependency dependency : def.getDependencies()) {
 //            if (depFilter.acceptDependency(def.getId(), dependency, traceSession)) {
 //                NutsInstallStatus st = tracesession.fetch()

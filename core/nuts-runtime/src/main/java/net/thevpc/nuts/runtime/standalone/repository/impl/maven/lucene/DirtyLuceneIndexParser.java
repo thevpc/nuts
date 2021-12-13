@@ -1,4 +1,4 @@
-package net.thevpc.nuts.runtime.standalone.repository.impl.maven.util;
+package net.thevpc.nuts.runtime.standalone.repository.impl.maven.lucene;
 
 import net.thevpc.nuts.NutsElement;
 import net.thevpc.nuts.NutsElements;

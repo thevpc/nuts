@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.io.terminal;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.standalone.util.CoreNutsUtils;
+import net.thevpc.nuts.runtime.standalone.io.progress.NutsProgressUtils;
 import net.thevpc.nuts.runtime.standalone.io.progress.CProgressBar;
 
 import java.io.InputStream;
@@ -128,7 +128,7 @@ public class UnmodifiableSessionTerminal extends AbstractNutsSessionTerminal {
 
     @Override
     public NutsSessionTerminal printProgress(float progress, NutsMessage message) {
-        if (CoreNutsUtils.acceptProgress(session)) {
+        if (NutsProgressUtils.acceptProgress(session)) {
             if (getBase() != null) {
                 getBase().printProgress(progress, message);
             } else {

@@ -26,9 +26,13 @@
 package net.thevpc.nuts.runtime.standalone.util.filters;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.standalone.descriptor.DefaultNutsEnvCondition;
+import net.thevpc.nuts.runtime.standalone.util.Simplifiable;
 
 import java.lang.reflect.Array;
 import java.util.*;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 /**
  * @author thevpc
@@ -574,6 +578,256 @@ public class CoreFilterUtils {
             }
         }
         return r.toArray(new NutsDependency[0]);
+    }
+
+    public static boolean matchesSimpleNameStaticVersion(NutsId id, NutsId pattern) {
+        if (pattern == null) {
+            return id == null;
+        }
+        if (id == null) {
+            return false;
+        }
+        if (pattern.getVersion().isBlank()) {
+            return pattern.getShortName().equals(id.getShortName());
+        }
+        return pattern.getLongName().equals(id.getLongName());
+    }
+
+    public static boolean acceptClassifier(NutsIdLocation location, String classifier) {
+        if (location == null) {
+            return false;
+        }
+        String c0 = NutsUtilStrings.trim(classifier);
+        String c1 = NutsUtilStrings.trim(location.getClassifier());
+        return c0.equals(c1);
+    }
+
+    public static NutsEnvCondition blankCondition(NutsSession session) {
+        return new DefaultNutsEnvCondition(session);
+    }
+
+    public static NutsEnvCondition trimToNull(NutsEnvCondition c, NutsSession session) {
+        if (c == null || c.isBlank()) {
+            return null;
+        }
+        return c;
+    }
+
+    public static NutsEnvCondition trimToBlank(NutsEnvCondition c, NutsSession session) {
+        if (c == null) {
+            return blankCondition(session);
+        }
+        return c;
+    }
+
+    public static Map<String, String> toMap(NutsEnvCondition condition) {
+        LinkedHashMap<String, String> m = new LinkedHashMap<>();
+        String s = Arrays.stream(condition.getArch()).map(String::trim).filter(x -> !x.isEmpty()).collect(Collectors.joining(","));
+        if (!NutsBlankable.isBlank(s)) {
+            m.put(NutsConstants.IdProperties.ARCH, s);
+        }
+        s = Arrays.stream(condition.getOs()).map(String::trim).filter(x -> !x.isEmpty()).collect(Collectors.joining(","));
+        if (!NutsBlankable.isBlank(s)) {
+            m.put(NutsConstants.IdProperties.OS, s);
+        }
+        s = Arrays.stream(condition.getOsDist()).map(String::trim).filter(x -> !x.isEmpty()).collect(Collectors.joining(","));
+        if (!NutsBlankable.isBlank(s)) {
+            m.put(NutsConstants.IdProperties.OS_DIST, s);
+        }
+        s = Arrays.stream(condition.getPlatform()).map(String::trim).filter(x -> !x.isEmpty()).collect(Collectors.joining(","));
+        if (!NutsBlankable.isBlank(s)) {
+            m.put(NutsConstants.IdProperties.PLATFORM, s);
+        }
+        s = Arrays.stream(condition.getDesktopEnvironment()).map(String::trim).filter(x -> !x.isEmpty()).collect(Collectors.joining(","));
+        if (!NutsBlankable.isBlank(s)) {
+            m.put(NutsConstants.IdProperties.DESKTOP_ENVIRONMENT, s);
+        }
+        s = Arrays.stream(condition.getProfile()).map(String::trim).filter(x -> !x.isEmpty()).collect(Collectors.joining(","));
+        if (!NutsBlankable.isBlank(s)) {
+            m.put(NutsConstants.IdProperties.PROFILE, s);
+        }
+        return m;
+    }
+
+    public static <T extends NutsFilter> T simplifyFilterOr(NutsSession ws, Class<T> cls, T base, NutsFilter... all) {
+        if (all.length == 0) {
+            return NutsFilters.of(ws).always(cls);
+        }
+        if (all.length == 1) {
+            return (T) all[0].simplify();
+        }
+        List<T> all2 = new ArrayList<>();
+        boolean updates = false;
+        boolean someFalse = false;
+        for (NutsFilter t : all) {
+            T t2 = t == null ? null : (T) t.simplify();
+            if (t2 != null) {
+                switch (t2.getFilterOp()) {
+                    case TRUE: {
+                        return NutsFilters.of(ws).always(cls);
+                    }
+                    case FALSE: {
+                        someFalse = true;
+                        break;
+                    }
+                    default: {
+                        if (t2 != t) {
+                            updates = true;
+                        }
+                        all2.add(t2);
+                    }
+                }
+            } else {
+                updates = true;
+            }
+        }
+        if (all2.isEmpty()) {
+            if (someFalse) {
+                return NutsFilters.of(ws).never(cls);
+            }
+            return NutsFilters.of(ws).always(cls);
+        }
+        if (all2.size() == 1) {
+            return all2.get(0);
+        }
+        if (!updates) {
+            return base;
+        }
+        return NutsFilters.of(ws).any(cls, all2.toArray((T[]) Array.newInstance(cls, 0)));
+    }
+
+    public static <T extends NutsFilter> T simplifyFilterAnd(NutsSession ws, Class<T> cls, T base, NutsFilter... all) {
+        if (all.length == 0) {
+            return NutsFilters.of(ws).always(cls);
+        }
+        if (all.length == 1) {
+            return (T) all[0].simplify();
+        }
+        List<T> all2 = new ArrayList<>();
+        boolean updates = false;
+        for (NutsFilter t : all) {
+            T t2 = t == null ? null : (T) t.simplify();
+            if (t2 != null) {
+                switch (t2.getFilterOp()) {
+                    case FALSE: {
+                        return NutsFilters.of(ws).never(cls);
+                    }
+                    case TRUE: {
+                        updates = true;
+                        break;
+                    }
+                    default: {
+                        if (t2 != t) {
+                            updates = true;
+                        }
+                        all2.add(t2);
+                    }
+                }
+            } else {
+                updates = true;
+            }
+        }
+        if (all2.size() == 0) {
+            return NutsFilters.of(ws).always(cls);
+        }
+        if (all2.size() == 1) {
+            return all2.get(0);
+        }
+        if (!updates) {
+            return base;
+        }
+        return NutsFilters.of(ws).all(cls, all2.toArray((T[]) Array.newInstance(cls, 0)));
+    }
+
+    public static <T extends NutsFilter> T simplifyFilterNone(NutsSession ws, Class<T> cls, T base, NutsFilter... all) {
+        if (all.length == 0) {
+            return NutsFilters.of(ws).always(cls);
+        }
+        List<T> all2 = new ArrayList<>();
+        boolean updates = false;
+        for (NutsFilter t : all) {
+            T t2 = t == null ? null : (T) t.simplify();
+            if (t2 != null) {
+                switch (t2.getFilterOp()) {
+                    case TRUE: {
+                        return NutsFilters.of(ws).never(cls);
+                    }
+                    case FALSE: {
+                        updates = true;
+                        break;
+                    }
+                    default: {
+                        if (t2 != t) {
+                            updates = true;
+                        }
+                        all2.add(t2);
+                    }
+                }
+            } else {
+                updates = true;
+            }
+        }
+        if (all2.size() == 0) {
+            return NutsFilters.of(ws).always(cls);
+        }
+        if (!updates) {
+            return base;
+        }
+        return NutsFilters.of(ws).none(cls, all2.toArray((T[]) Array.newInstance(cls, 0)));
+    }
+
+    public static <T> T simplify(T any) {
+        if (any == null) {
+            return null;
+        }
+        if (any instanceof Simplifiable) {
+            return ((Simplifiable<T>) any).simplify();
+        }
+        return any;
+    }
+
+    public static <T> T[] simplifyAndShrink(Class<T> cls, T... any) {
+        List<T> all = new ArrayList<>();
+        boolean updates = false;
+        for (T t : any) {
+            T t2 = simplify(t);
+            if (t2 != null) {
+                if (t2 != t) {
+                    updates = true;
+                }
+                all.add(t2);
+            } else {
+                updates = true;
+            }
+        }
+        if (!updates) {
+            return null;
+        }
+        return all.toArray((T[]) Array.newInstance(cls, 0));
+    }
+
+    public static <T extends NutsFilter> T[] simplifyAndShrinkFilters(Class<T> cls, Predicate<T> onRemove, T... any) {
+        List<T> all = new ArrayList<>();
+        boolean updates = false;
+        for (T t : any) {
+            T t2 = t == null ? null : (T) t.simplify();
+            if (t2 != null) {
+                if (onRemove != null && onRemove.test(t2)) {
+                    updates = true;
+                } else {
+                    if (t2 != t) {
+                        updates = true;
+                    }
+                    all.add(t2);
+                }
+            } else {
+                updates = true;
+            }
+        }
+        if (!updates) {
+            return null;
+        }
+        return all.toArray((T[]) Array.newInstance(cls, 0));
     }
 
     private static class NutsIdFilterToPredicate extends NutsPredicates.BasePredicate<NutsId> {

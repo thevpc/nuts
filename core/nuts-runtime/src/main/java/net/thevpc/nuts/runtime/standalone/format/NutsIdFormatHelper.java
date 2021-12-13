@@ -401,6 +401,12 @@ public class NutsIdFormatHelper {
                 }
                 return text.ofStyled("missing-platform", NutsTextStyle.error());
             }
+            case PROFILE: {
+                if (desc != null && desc.getCondition().getProfile().length>0) {
+                    return keywordArr1(desc.getCondition().getProfile());
+                }
+                return text.ofStyled("no-profile", NutsTextStyle.error());
+            }
             case DESKTOP_ENVIRONMENT: {
                 if (desc != null && desc.getCondition().getDesktopEnvironment().length>0) {
                     return keywordArr1(desc.getCondition().getDesktopEnvironment());

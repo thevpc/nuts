@@ -6,7 +6,7 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.version;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.standalone.util.CoreNutsUtils;
+import net.thevpc.nuts.runtime.standalone.app.util.NutsAppUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.DefaultInternalNutsExecutableCommand;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.DefaultNutsExecCommand;
 
@@ -25,7 +25,7 @@ public class DefaultNutsVersionInternalExecutable extends DefaultInternalNutsExe
 
     @Override
     public void execute() {
-        if (CoreNutsUtils.processHelpOptions(args, getSession())) {
+        if (NutsAppUtils.processHelpOptions(args, getSession())) {
             showDefaultHelp();
             return;
         }

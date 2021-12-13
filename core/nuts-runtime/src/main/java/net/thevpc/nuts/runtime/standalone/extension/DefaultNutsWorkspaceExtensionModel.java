@@ -6,6 +6,7 @@
 package net.thevpc.nuts.runtime.standalone.extension;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.standalone.dependency.util.NutsClassLoaderUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.CoreNutsBootOptions;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceFactory;
 import net.thevpc.nuts.runtime.standalone.workspace.config.NutsWorkspaceConfigManagerExt;

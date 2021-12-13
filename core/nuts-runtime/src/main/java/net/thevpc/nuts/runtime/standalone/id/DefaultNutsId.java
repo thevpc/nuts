@@ -26,13 +26,11 @@
 package net.thevpc.nuts.runtime.standalone.id;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.standalone.descriptor.DefaultNutsEnvCondition;
 import net.thevpc.nuts.runtime.standalone.id.filter.NutsIdIdFilter;
-import net.thevpc.nuts.runtime.standalone.util.CoreNutsUtils;
+import net.thevpc.nuts.runtime.standalone.util.filters.CoreFilterUtils;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.QueryStringParser;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 
 /**
@@ -360,7 +358,7 @@ public class DefaultNutsId implements NutsId {
         if(!NutsBlankable.isBlank(classifier)){
             m.put(NutsConstants.IdProperties.CLASSIFIER,classifier);
         }
-        m.putAll(CoreNutsUtils.toMap(condition));
+        m.putAll(CoreFilterUtils.toMap(condition));
         for (Map.Entry<String, String> e : QueryStringParser.parseMap(properties,session).entrySet()) {
             if(!m.containsKey(e.getKey())){
                 m.put(e.getKey(),e.getValue());

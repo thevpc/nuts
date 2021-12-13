@@ -24,16 +24,11 @@
 package net.thevpc.nuts.runtime.standalone.util;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.standalone.util.iter.IteratorBuilder;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
-import net.thevpc.nuts.runtime.standalone.xtra.expr.StringMapParser;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.StringPlaceHolderParser;
-import net.thevpc.nuts.runtime.standalone.descriptor.DefaultNutsEnvCondition;
-import net.thevpc.nuts.runtime.standalone.workspace.DefaultNutsWorkspace;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Array;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -41,8 +36,6 @@ import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
-import java.util.function.Predicate;
-import java.util.logging.Level;
 import java.util.stream.Collectors;
 
 /**
@@ -220,187 +213,6 @@ public class CoreNutsUtils {
         return child;
     }
 
-    public static <T> T simplify(T any) {
-        if (any == null) {
-            return null;
-        }
-        if (any instanceof Simplifiable) {
-            return ((Simplifiable<T>) any).simplify();
-        }
-        return any;
-    }
-
-    public static <T extends NutsFilter> T simplifyFilterOr(NutsSession ws, Class<T> cls, T base, NutsFilter... all) {
-        if (all.length == 0) {
-            return NutsFilters.of(ws).always(cls);
-        }
-        if (all.length == 1) {
-            return (T) all[0].simplify();
-        }
-        List<T> all2 = new ArrayList<>();
-        boolean updates = false;
-        boolean someFalse = false;
-        for (NutsFilter t : all) {
-            T t2 = t == null ? null : (T) t.simplify();
-            if (t2 != null) {
-                switch (t2.getFilterOp()) {
-                    case TRUE: {
-                        return NutsFilters.of(ws).always(cls);
-                    }
-                    case FALSE: {
-                        someFalse = true;
-                        break;
-                    }
-                    default: {
-                        if (t2 != t) {
-                            updates = true;
-                        }
-                        all2.add(t2);
-                    }
-                }
-            } else {
-                updates = true;
-            }
-        }
-        if (all2.isEmpty()) {
-            if (someFalse) {
-                return NutsFilters.of(ws).never(cls);
-            }
-            return NutsFilters.of(ws).always(cls);
-        }
-        if (all2.size() == 1) {
-            return all2.get(0);
-        }
-        if (!updates) {
-            return base;
-        }
-        return NutsFilters.of(ws).any(cls, all2.toArray((T[]) Array.newInstance(cls, 0)));
-    }
-
-    public static <T extends NutsFilter> T simplifyFilterAnd(NutsSession ws, Class<T> cls, T base, NutsFilter... all) {
-        if (all.length == 0) {
-            return NutsFilters.of(ws).always(cls);
-        }
-        if (all.length == 1) {
-            return (T) all[0].simplify();
-        }
-        List<T> all2 = new ArrayList<>();
-        boolean updates = false;
-        for (NutsFilter t : all) {
-            T t2 = t == null ? null : (T) t.simplify();
-            if (t2 != null) {
-                switch (t2.getFilterOp()) {
-                    case FALSE: {
-                        return NutsFilters.of(ws).never(cls);
-                    }
-                    case TRUE: {
-                        updates = true;
-                        break;
-                    }
-                    default: {
-                        if (t2 != t) {
-                            updates = true;
-                        }
-                        all2.add(t2);
-                    }
-                }
-            } else {
-                updates = true;
-            }
-        }
-        if (all2.size() == 0) {
-            return NutsFilters.of(ws).always(cls);
-        }
-        if (all2.size() == 1) {
-            return all2.get(0);
-        }
-        if (!updates) {
-            return base;
-        }
-        return NutsFilters.of(ws).all(cls, all2.toArray((T[]) Array.newInstance(cls, 0)));
-    }
-
-    public static <T extends NutsFilter> T simplifyFilterNone(NutsSession ws, Class<T> cls, T base, NutsFilter... all) {
-        if (all.length == 0) {
-            return NutsFilters.of(ws).always(cls);
-        }
-        List<T> all2 = new ArrayList<>();
-        boolean updates = false;
-        for (NutsFilter t : all) {
-            T t2 = t == null ? null : (T) t.simplify();
-            if (t2 != null) {
-                switch (t2.getFilterOp()) {
-                    case TRUE: {
-                        return NutsFilters.of(ws).never(cls);
-                    }
-                    case FALSE: {
-                        updates = true;
-                        break;
-                    }
-                    default: {
-                        if (t2 != t) {
-                            updates = true;
-                        }
-                        all2.add(t2);
-                    }
-                }
-            } else {
-                updates = true;
-            }
-        }
-        if (all2.size() == 0) {
-            return NutsFilters.of(ws).always(cls);
-        }
-        if (!updates) {
-            return base;
-        }
-        return NutsFilters.of(ws).none(cls, all2.toArray((T[]) Array.newInstance(cls, 0)));
-    }
-
-    public static <T> T[] simplifyAndShrink(Class<T> cls, T... any) {
-        List<T> all = new ArrayList<>();
-        boolean updates = false;
-        for (T t : any) {
-            T t2 = simplify(t);
-            if (t2 != null) {
-                if (t2 != t) {
-                    updates = true;
-                }
-                all.add(t2);
-            } else {
-                updates = true;
-            }
-        }
-        if (!updates) {
-            return null;
-        }
-        return all.toArray((T[]) Array.newInstance(cls, 0));
-    }
-
-    public static <T extends NutsFilter> T[] simplifyAndShrinkFilters(Class<T> cls, Predicate<T> onRemove, T... any) {
-        List<T> all = new ArrayList<>();
-        boolean updates = false;
-        for (T t : any) {
-            T t2 = t == null ? null : (T) t.simplify();
-            if (t2 != null) {
-                if (onRemove != null && onRemove.test(t2)) {
-                    updates = true;
-                } else {
-                    if (t2 != t) {
-                        updates = true;
-                    }
-                    all.add(t2);
-                }
-            } else {
-                updates = true;
-            }
-        }
-        if (!updates) {
-            return null;
-        }
-        return all.toArray((T[]) Array.newInstance(cls, 0));
-    }
-
     public static NutsId applyNutsIdInheritance(NutsId child, NutsId parent, NutsSession ws) {
         if (parent != null) {
             boolean modified = false;
@@ -441,11 +253,6 @@ public class CoreNutsUtils {
         return child;
     }
 
-    public static boolean isDefaultOptional(String s1) {
-        s1 = NutsUtilStrings.trim(s1);
-        return s1.isEmpty() || s1.equals("false");
-    }
-
     public static boolean isValidIdentifier(String s) {
         if (s == null || s.length() == 0) {
             return false;
@@ -461,25 +268,6 @@ public class CoreNutsUtils {
         }
 
         return true;
-    }
-
-    public static NutsRepositoryRef optionsToRef(NutsAddRepositoryOptions options) {
-        return new NutsRepositoryRef()
-                .setEnabled(options.isEnabled())
-                .setFailSafe(options.isFailSafe())
-                .setName(options.getName())
-                .setLocation(options.getLocation())
-                .setDeployWeight(options.getDeployWeight());
-    }
-
-    public static NutsAddRepositoryOptions refToOptions(NutsRepositoryRef ref) {
-        return new NutsAddRepositoryOptions()
-                .setEnabled(ref.isEnabled())
-                .setFailSafe(ref.isFailSafe())
-                .setName(ref.getName())
-                .setLocation(ref.getLocation())
-                .setDeployWeight(ref.getDeployWeight())
-                .setTemporary(false);
     }
 
     public static Map<String, Object> traceJsonNutsDefinition(NutsSession session, NutsDefinition def) {
@@ -514,68 +302,7 @@ public class CoreNutsUtils {
         return x;
     }
 
-    public static boolean processHelpOptions(String[] args, NutsSession session) {
-        if (isIncludesHelpOption(args)) {
-            NutsCommandLine cmdLine = NutsCommandLine.of(args, session);
-            while (cmdLine.hasNext()) {
-                NutsArgument a = cmdLine.peek();
-                if (a.isOption()) {
-                    switch (a.getKey().getString()) {
-                        case "--help": {
-                            cmdLine.skip();
-                            break;
-                        }
-                        default: {
-                            session.configureLast(cmdLine);
-                        }
-                    }
-                } else {
-                    cmdLine.skip();
-                    cmdLine.skipAll();
-                }
-            }
-            return true;
-        }
-        return false;
-    }
-
-    public static boolean isIncludesHelpOption(String[] cmd) {
-        if (cmd != null) {
-            for (String c : cmd) {
-                if (!c.startsWith("-")) {
-                    break;
-                }
-                if ("--help".equals(c)) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
-    public static void traceMessage(NutsLogger log, Level lvl, String name, NutsSession session, NutsFetchMode fetchMode, NutsId id, NutsLogVerb tracePhase, String title, long startTime, NutsMessage extraMsg) {
-        if (!log.isLoggable(lvl)) {
-            return;
-        }
-        String sep;
-        if (extraMsg == null) {
-            sep = "";
-            extraMsg = NutsMessage.formatted("");
-        } else {
-            sep = " : ";
-        }
-        long time = (startTime != 0) ? (System.currentTimeMillis() - startTime) : 0;
-        String modeString = CoreStringUtils.alignLeft(fetchMode.id(), 7);
-        log.with().session(session).level(lvl).verb(tracePhase).time(time)
-                .log(NutsMessage.jstyle("[{0}] {1} {2} {3} {4}",
-                        modeString,
-                        CoreStringUtils.alignLeft(name, 20),
-                        CoreStringUtils.alignLeft(title, 18),
-                        (id == null ? "" : id),
-                        extraMsg));
-    }
-
-//    public static NutsContentType readOptionOutputFormat(NutsCommandLine cmdLine) {
+    //    public static NutsContentType readOptionOutputFormat(NutsCommandLine cmdLine) {
 //        NutsArgument a = cmdLine.peek();
 //        switch (a.getKey().getString()) {
 //            case "--output-format": {
@@ -617,19 +344,6 @@ public class CoreNutsUtils {
 //        }
 //        return null;
 //    }
-
-    public static boolean matchesSimpleNameStaticVersion(NutsId id, NutsId pattern) {
-        if (pattern == null) {
-            return id == null;
-        }
-        if (id == null) {
-            return false;
-        }
-        if (pattern.getVersion().isBlank()) {
-            return pattern.getShortName().equals(id.getShortName());
-        }
-        return pattern.getLongName().equals(id.getLongName());
-    }
 
     public static String[] nullArray_Locations(String[] a) {
         return nullArray(a, NutsStoreLocation.values().length);
@@ -760,37 +474,6 @@ public class CoreNutsUtils {
         return p2;
     }
 
-    public static boolean acceptClassifier(NutsIdLocation location, String classifier) {
-        if (location == null) {
-            return false;
-        }
-        String c0 = NutsUtilStrings.trim(classifier);
-        String c1 = NutsUtilStrings.trim(location.getClassifier());
-        return c0.equals(c1);
-    }
-
-    public static NutsString formatLogValue(NutsTexts text, Object unresolved, Object resolved) {
-        NutsString a = desc(unresolved, text);
-        NutsString b = desc(resolved, text);
-        if (a.equals(b)) {
-            return a;
-        } else {
-            return
-                    text.builder()
-                            .append(a)
-                            .append(" => ")
-                            .append(b)
-                    ;
-        }
-    }
-
-    public static NutsString desc(Object s, NutsTexts text) {
-        if (s == null || (s instanceof String && ((String) s).isEmpty())) {
-            return text.ofStyled("<EMPTY>", NutsTextStyle.option());
-        }
-        return text.toText(s);
-    }
-
     public static boolean isUnsupportedFetchModeException(Throwable ex) {
         String msg = null;
         if (ex instanceof NutsFetchModeNotSupportedException) {
@@ -805,110 +488,6 @@ public class CoreNutsUtils {
         return false;
     }
 
-    public static ProgressOptions parseProgressOptions(NutsSession session) {
-        ProgressOptions o = new ProgressOptions();
-        boolean enabledVisited = false;
-        StringMapParser p = new StringMapParser("=", ",; ");
-        Map<String, String> m = p.parseMap(session.getProgressOptions(), session);
-        NutsElements elems = NutsElements.of(session);
-        for (Map.Entry<String, String> e : m.entrySet()) {
-            String k = e.getKey();
-            String v = e.getValue();
-            if (!enabledVisited) {
-                if (v == null) {
-                    Boolean a = NutsUtilStrings.parseBoolean(k, null, null);
-                    if (a != null) {
-                        o.enabled = a;
-                        enabledVisited = true;
-                    } else {
-                        o.vals.put(k, elems.ofString(v));
-                    }
-                }
-            } else {
-                o.vals.put(k, elems.ofString(v));
-            }
-        }
-        return o;
-    }
-
-    public static boolean acceptProgress(NutsSession session) {
-        if (!session.isPlainOut()) {
-            return false;
-        }
-        return !session.isBot() && parseProgressOptions(session).isEnabled();
-    }
-
-    public static boolean acceptMonitoring(NutsSession session) {
-        // DefaultNutsStreamProgressMonitor is enable only if plain output
-        // so it is disable in json, xml, table, ...
-        if (!session.isPlainOut()) {
-            return false;
-        }
-        if (!acceptProgress(session)) {
-            return false;
-        }
-        Object o = session.getProperty("monitor-allowed");
-        NutsWorkspace ws = session.getWorkspace();
-        if (o != null) {
-            o = NutsCommandLine.of(new String[]{String.valueOf(o)}, session).next().toElement().getBoolean();
-        }
-        boolean monitorable = true;
-        if (o instanceof Boolean) {
-            monitorable = ((Boolean) o).booleanValue();
-        }
-        if (!session.boot().getBootCustomBoolArgument(false,false,false,"---monitor.enabled")) {
-            monitorable = false;
-        }
-        if (ws instanceof DefaultNutsWorkspace) {
-            if (!((DefaultNutsWorkspace) ws).LOG.isLoggable(Level.INFO)) {
-                monitorable = false;
-            }
-        }
-        return monitorable;
-    }
-
-    public static Iterator<NutsDependency> itIdToDep(NutsIterator<NutsId> id, NutsSession session) {
-        return IteratorBuilder.of(id, session).map(NutsFunction.of(NutsId::toDependency, "IdToDependency")).build();
-    }
-
-    public static Iterator<NutsDependency> itIdToDep(NutsIterator<NutsId> id, NutsDependency copyFrom, NutsSession session) {
-        String _optional = copyFrom.getOptional();
-        String _scope = copyFrom.getScope();
-        return IteratorBuilder.of(id, session).map(NutsFunction.of(
-                x -> x.toDependency().builder().setOptional(_optional).setScope(_scope).build(), "IdToDependency")).build();
-    }
-
-    public static NutsEnvCondition blankCondition(NutsSession session) {
-        return new DefaultNutsEnvCondition(null, null, null, null, null, session);
-    }
-
-    public static NutsEnvCondition trimToNull(NutsEnvCondition c, NutsSession session) {
-        if (c == null || c.isBlank()) {
-            return null;
-        }
-        return c;
-    }
-
-    public static NutsEnvCondition trimToBlank(NutsEnvCondition c, NutsSession session) {
-        if (c == null) {
-            return blankCondition(session);
-        }
-        return c;
-    }
-
-    public static Map<String, String> getPropertiesMap(NutsDescriptorProperty[] list, NutsSession session) {
-        Map<String, String> m = new LinkedHashMap<>();
-        if (list != null) {
-            for (NutsDescriptorProperty property : list) {
-                if (property.getCondition() == null || property.getCondition().isBlank()) {
-                    m.put(property.getName(), property.getValue());
-                } else {
-                    throw new NutsIllegalArgumentException(session, NutsMessage.plain("unexpected properties with conditions. probably a bug"));
-                }
-            }
-        }
-        return m;
-    }
 
     public static NutsIdType detectIdType(NutsId depId, NutsSession session) {
         switch (depId.getShortName()) {
@@ -934,25 +513,30 @@ public class CoreNutsUtils {
         }
     }
 
-    public static class ProgressOptions {
-        private final Map<String, NutsPrimitiveElement> vals = new LinkedHashMap<>();
-        private boolean enabled = true;
+    public static List<NutsId> resolveNutsApiIds(NutsId id, NutsSession session) {
+        List<NutsDependency> deps = session.fetch().setId(id).setDependencies(true).getResultDefinition().getDependencies().transitive().toList();
+        return resolveNutsApiIds(deps.toArray(new NutsDependency[0]), session);
+    }
 
-        public boolean isEnabled() {
-            return enabled;
-        }
+    public static List<NutsId> resolveNutsApiIds(NutsDefinition def, NutsSession session) {
+        return resolveNutsApiIds(def.getDependencies(), session);
+    }
 
-        public boolean isArmedNewline() {
-            return isArmed("newline") || isArmed("%n");
-        }
+    public static List<NutsId> resolveNutsApiIds(NutsDependencies deps, NutsSession session) {
+        return resolveNutsApiIds(deps.transitiveWithSource().toArray(NutsDependency[]::new), session);
+    }
 
-        public boolean isArmed(String k) {
-            NutsPrimitiveElement q = vals.get(k);
-            if (q == null) {
-                return false;
-            }
-            return q.getBoolean(true);
-        }
+    public static List<NutsId> resolveNutsApiIds(NutsDependency[] deps, NutsSession session) {
+        return Arrays.stream(deps)
+                .map(NutsDependency::toId)
+                .filter(x -> x.getShortName().equals("net.thevpc.nuts:nuts"))
+                .distinct().collect(Collectors.toList());
+    }
+
+    public static List<NutsId> resolveNutsApiIds(NutsId[] deps, NutsSession session) {
+        return Arrays.stream(deps)
+                .filter(x -> x.getShortName().equals("net.thevpc.nuts:nuts"))
+                .distinct().collect(Collectors.toList());
     }
 
     public static class NutsDefaultThreadFactory implements ThreadFactory {
@@ -984,58 +568,6 @@ public class CoreNutsUtils {
             }
             return t;
         }
-    }
-
-    public static Map<String,String> toMap(NutsEnvCondition condition){
-        LinkedHashMap<String,String> m=new LinkedHashMap<>();
-        String s= Arrays.stream(condition.getArch()).map(String::trim).filter(x->!x.isEmpty()).collect(Collectors.joining(","));
-        if (!NutsBlankable.isBlank(s)) {
-            m.put(NutsConstants.IdProperties.ARCH,s);
-        }
-        s= Arrays.stream(condition.getOs()).map(String::trim).filter(x->!x.isEmpty()).collect(Collectors.joining(","));
-        if (!NutsBlankable.isBlank(s)) {
-            m.put(NutsConstants.IdProperties.OS,s);
-        }
-        s= Arrays.stream(condition.getOsDist()).map(String::trim).filter(x->!x.isEmpty()).collect(Collectors.joining(","));
-        if (!NutsBlankable.isBlank(s)) {
-            m.put(NutsConstants.IdProperties.OS_DIST,s);
-        }
-        s= Arrays.stream(condition.getPlatform()).map(String::trim).filter(x->!x.isEmpty()).collect(Collectors.joining(","));
-        if (!NutsBlankable.isBlank(s)) {
-            m.put(NutsConstants.IdProperties.PLATFORM,s);
-        }
-        s= Arrays.stream(condition.getDesktopEnvironment()).map(String::trim).filter(x->!x.isEmpty()).collect(Collectors.joining(","));
-        if (!NutsBlankable.isBlank(s)) {
-            m.put(NutsConstants.IdProperties.DESKTOP_ENVIRONMENT,s);
-        }
-        return m;
-    }
-
-    public static List<NutsId> resolveNutsApiIds(NutsId id,NutsSession session){
-        List<NutsDependency> deps = session.fetch().setId(id).setDependencies(true).getResultDefinition().getDependencies().transitive().toList();
-        return resolveNutsApiIds(deps.toArray(new NutsDependency[0]),session);
-    }
-
-
-    public static List<NutsId> resolveNutsApiIds(NutsDefinition def,NutsSession session){
-        return resolveNutsApiIds(def.getDependencies(),session);
-    }
-
-    public static List<NutsId> resolveNutsApiIds(NutsDependencies deps,NutsSession session){
-        return resolveNutsApiIds(deps.transitiveWithSource().toArray(NutsDependency[]::new),session);
-    }
-
-    public static List<NutsId> resolveNutsApiIds(NutsDependency[] deps,NutsSession session){
-        return Arrays.stream(deps)
-                .map(NutsDependency::toId)
-                .filter(x -> x.getShortName().equals("net.thevpc.nuts:nuts"))
-                .distinct().collect(Collectors.toList());
-    }
-
-    public static List<NutsId> resolveNutsApiIds(NutsId[] deps,NutsSession session){
-        return Arrays.stream(deps)
-                .filter(x -> x.getShortName().equals("net.thevpc.nuts:nuts"))
-                .distinct().collect(Collectors.toList());
     }
 
 }

@@ -24,12 +24,12 @@
 package net.thevpc.nuts.runtime.standalone.dependency;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.standalone.dependency.util.NutsDependencyUtils;
 import net.thevpc.nuts.runtime.standalone.descriptor.DefaultNutsEnvConditionBuilder;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.QueryStringParser;
 
 import java.util.*;
 
-import net.thevpc.nuts.runtime.standalone.util.CoreNutsDependencyUtils;
 import net.thevpc.nuts.spi.NutsSupportLevelContext;
 
 /**
@@ -207,7 +207,7 @@ public class DefaultNutsDependencyBuilder implements NutsDependencyBuilder {
 
     @Override
     public NutsDependencyBuilder setType(String type) {
-        this.type = CoreNutsDependencyUtils.normalizeDependencyType(type);
+        this.type = NutsDependencyUtils.normalizeDependencyType(type);
         return this;
     }
 

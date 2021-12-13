@@ -3,13 +3,12 @@ package net.thevpc.nuts.runtime.standalone.id.format;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.format.DefaultFormatBase;
 import net.thevpc.nuts.runtime.standalone.dependency.NutsDependencyScopes;
-import net.thevpc.nuts.runtime.standalone.util.CoreNutsUtils;
+import net.thevpc.nuts.runtime.standalone.util.filters.CoreFilterUtils;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.QueryStringParser;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.StringMapParser;
 import net.thevpc.nuts.spi.NutsSupportLevelContext;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class DefaultNutsIdFormat extends DefaultFormatBase<NutsIdFormat> implements NutsIdFormat {
 
@@ -231,7 +230,7 @@ public class DefaultNutsIdFormat extends DefaultFormatBase<NutsIdFormat> impleme
                 sb.append(_encode(id.getRepository()), NutsTextStyle.pale());
             }
         }
-        for (Map.Entry<String, String> e : CoreNutsUtils.toMap(id.getCondition()).entrySet()) {
+        for (Map.Entry<String, String> e : CoreFilterUtils.toMap(id.getCondition()).entrySet()) {
             String kk=e.getKey();
             String kv=e.getValue();
             if (firstQ) {

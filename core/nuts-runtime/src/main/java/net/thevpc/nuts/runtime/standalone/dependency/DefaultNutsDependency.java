@@ -24,12 +24,11 @@
 package net.thevpc.nuts.runtime.standalone.dependency;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.standalone.util.filters.CoreFilterUtils;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.QueryStringParser;
 
 import java.util.*;
 import java.util.stream.Collectors;
-
-import net.thevpc.nuts.runtime.standalone.util.CoreNutsUtils;
 
 /**
  * Created by vpc on 1/5/17.
@@ -79,7 +78,7 @@ public class DefaultNutsDependency implements NutsDependency {
                 throw new NullPointerException();
             }
         }
-        this.condition = CoreNutsUtils.trimToBlank(condition,session);
+        this.condition = CoreFilterUtils.trimToBlank(condition,session);
         this.type = NutsUtilStrings.trimToNull(type);
         this.properties = QueryStringParser.formatSortedPropertiesQuery(properties,session);
         this.session = session;
@@ -263,6 +262,9 @@ public class DefaultNutsDependency implements NutsDependency {
             }
             if(condition.getPlatform().length>0) {
                 p.put(NutsConstants.IdProperties.PLATFORM, String.join(",",condition.getPlatform()));
+            }
+            if(condition.getProfile().length>0) {
+                p.put(NutsConstants.IdProperties.PROFILE, String.join(",",condition.getProfile()));
             }
         }
         if (exclusions.length>0) {

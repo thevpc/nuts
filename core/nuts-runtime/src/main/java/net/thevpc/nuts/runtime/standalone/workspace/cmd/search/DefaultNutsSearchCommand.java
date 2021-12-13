@@ -29,7 +29,6 @@ import net.thevpc.nuts.runtime.standalone.repository.cmd.NutsRepositorySupported
 import net.thevpc.nuts.runtime.standalone.id.filter.NutsIdFilterOr;
 import net.thevpc.nuts.runtime.standalone.util.filters.CoreFilterUtils;
 import net.thevpc.nuts.runtime.standalone.id.filter.NutsPatternIdFilter;
-import net.thevpc.nuts.runtime.standalone.util.CoreNutsUtils;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.io.util.NutsInstallStatusIdFilter;
 import net.thevpc.nuts.runtime.standalone.util.iter.IteratorBuilder;
@@ -575,7 +574,7 @@ public class DefaultNutsSearchCommand extends AbstractNutsSearchCommand {
                         NutsIdFilter idFilter2 = NutsFilters.of(session).all(sIdFilter,
                                 NutsIdFilters.of(session).byName(nutsId1.getFullName())
                         );
-                        NutsIdFilter filter = CoreNutsUtils.simplify(CoreFilterUtils.idFilterOf(nutsId1.getProperties(),
+                        NutsIdFilter filter = CoreFilterUtils.simplify(CoreFilterUtils.idFilterOf(nutsId1.getProperties(),
                                 idFilter2, sDescriptorFilter, session));
                         List<NutsRepositoryAndFetchMode> repositoryAndFetchModes = wu.filterRepositoryAndFetchModes(
                                 NutsRepositorySupportedAction.SEARCH, nutsId1, sRepositoryFilter, fetchMode, session
@@ -633,7 +632,7 @@ public class DefaultNutsSearchCommand extends AbstractNutsSearchCommand {
                 }
             }
         } else {
-            NutsIdFilter filter = CoreNutsUtils.simplify(CoreFilterUtils.idFilterOf(null, sIdFilter, sDescriptorFilter, session));
+            NutsIdFilter filter = CoreFilterUtils.simplify(CoreFilterUtils.idFilterOf(null, sIdFilter, sDescriptorFilter, session));
 
             List<NutsIterator<? extends NutsId>> all = new ArrayList<>();
             for (NutsRepositoryAndFetchMode repoAndMode : wu.filterRepositoryAndFetchModes(

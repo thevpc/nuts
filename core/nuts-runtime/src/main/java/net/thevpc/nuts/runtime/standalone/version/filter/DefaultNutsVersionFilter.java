@@ -28,9 +28,9 @@ package net.thevpc.nuts.runtime.standalone.version.filter;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.id.filter.NutsExprIdFilter;
+import net.thevpc.nuts.runtime.standalone.util.filters.CoreFilterUtils;
 import net.thevpc.nuts.runtime.standalone.version.DefaultNutsVersion;
 import net.thevpc.nuts.runtime.standalone.version.DefaultNutsVersionInterval;
-import net.thevpc.nuts.runtime.standalone.util.CoreNutsUtils;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.util.Simplifiable;
 
@@ -122,7 +122,7 @@ public class DefaultNutsVersionFilter extends AbstractVersionFilter implements N
         List<NutsVersionInterval> intervals2 = new ArrayList<>();
         boolean updates = false;
         for (NutsVersionInterval interval : intervals) {
-            NutsVersionInterval _interval = CoreNutsUtils.simplify(interval);
+            NutsVersionInterval _interval = CoreFilterUtils.simplify(interval);
             if (_interval != null) {
                 if (_interval.getLowerBound() == null && _interval.getUpperBound() == null) {
                     return null;

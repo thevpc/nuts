@@ -25,7 +25,7 @@ The Java Package Manager
 http://github.com/thevpc/nuts
 
 
-:toc: 
+:toc:
 :toclevels: 4
 
 <<<
@@ -63,11 +63,61 @@ http://github.com/thevpc/nuts
 
 <<<
 
-=== Alternatives for deployment 
+=== Example
+
+```java
+package net.thevpc.nuts.doc.baseproject;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+public class Main {
+private static final Logger LOG = LoggerFactory.getLogger(Main.class);
+    public static void main(String[] args) {
+        LOG.debug("A simple app with dependencies. Won't work out of the box!, unless...");
+    }
+}
+
+```
+<<<
+
+=== pom.xml
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?><project xmlns="..."><modelVersion>4.0.0</modelVersion>
+<groupId>net.thevpc.nuts.doc</groupId><artifactId>base-project</artifactId>
+<version>1.0-SNAPSHOT</version>
+<dependencies><dependency>
+        <groupId>org.apache.logging.log4j</groupId>
+        <artifactId>log4j-api</artifactId><version>2.7</version>
+    </dependency>
+    <dependency>
+        <groupId>org.apache.logging.log4j</groupId>
+        <artifactId>log4j-core</artifactId><version>2.7</version>
+    </dependency>
+    <dependency>
+        <groupId>org.apache.logging.log4j</groupId>
+        <artifactId>log4j-slf4j-impl</artifactId><version>2.7</version>
+    </dependency></dependencies>
+</project>
+```
+<<<
+
+=== Example
+* With a minimal `pom.xml` we cannot execute unless we add the `dependencies` to the classpath
+* We also need to adjust the pom.xml to include the main class too!
+
+image::images/java-error.png[]
+
+<<<
+
+
+
+=== Alternatives for deployment
 
 * System PM / Installers
 * Portable Installers
-* Custom Deployements
+* Custom Deployments
 * Build time Processors (Fat Jars)
 
 <<<
@@ -113,6 +163,10 @@ http://github.com/thevpc/nuts
 ** Jars included in the "lib" folder
 ** Still need to bundle the jar and the lib folder (zip with `maven-antrun-plugin`)
 
+image::images/maven-dependencies-xml.png[]
+image::images/maven-dependencies-jar.png[]
+
+
 <<<
 
 
@@ -125,6 +179,10 @@ http://github.com/thevpc/nuts
 ** Rewrites classes/resources
 ** Simpler than `maven-assembly-plugin`
 
+image::images/assembly-xml.png[]
+image::images/assembly-jar.png[]
+
+
 <<<
 
 === Fat Jars : Jar Jar
@@ -136,6 +194,9 @@ http://github.com/thevpc/nuts
 ** Rewrites jar to include dependencies as jars!
 ** Adds bootstrap classes
 ** Changes classloader
+
+image::images/spring-boot-xml.png[]
+image::images/spring-boot-jar.png[]
 
 <<<
 
@@ -154,7 +215,7 @@ Main Idea:
 
 * Open Source
 * Simple but extensible Package Manager for Java
-* Good Integration with Java ecosystem and popupar build/deploy/devops tools
+* Good Integration with Java ecosystem and popular build/deploy/devops tools
 * Little to no Intrusion and Backward compatibility to support existing apps and repos
 * Solid enough to support multiple platforms
 
@@ -165,12 +226,12 @@ Main Idea:
 Is:
 
 * Centralized package manager for Java Apps and Libs (not only)
-**  `install`,  `uninstall`,  `update` and  `search` for packages
+**  `install`,  `uninstall`,  `update` `search` and `exec` for packages
 ** Optimized dependency resolution solver
 ** Cache for dependencies across installed apps
 * Automation/devops friendly commandline tool
-* Developed in java 
-* Portable across OSes, Architectures, Desktop Environements
+* Developed in java
+* Portable across OSes, Architectures, Desktop Environments
 * Libre and Open Source
 
 <<<
@@ -204,7 +265,7 @@ Is Not:
 === nuts: Unique features
 * Solves at runtime what `maven`/`gradle` solve at build time
 ** Supports `maven` and `gradle` dependency resolution algorithms, scopes, ...
-* Supports out of the box 
+* Supports out of the box
 ** `maven` 's repos (including central, spring, google, ...)
 ** Apache repos
 ** Powerful toolbox with `props`, `xml`, `json`, `yaml`, `table`, `tree`, ... output formats
@@ -223,7 +284,58 @@ Is Not:
 
 === nuts stability
 
-* Tested: 
-** over 100 regression tests with 3500+ lines of test-code in the repository. 
+* Tested:
+** over 140 regression tests with 3500+ lines of test-code in the repository.
 ** `opensuse`, `ubuntu`, `docker`, `windows7`, `windows10`
 ** `sh`, `bash`, `csh`, `zsh`, `fish`
+
+<<<
+
+== Demonstration
+
+=== Run the app
+
+* We can just run the app, with no modification
+
+image::images/nuts-simple-run.png[]
+
+<<<
+
+=== Demonstration : Install Application
+
+* Or we can install the app (and its `required` dependencies)
+
+image::images/nuts-simple-install.png[]
+
+<<<
+
+=== Install Gui App
+
+image::images/nuts-install-pnote.png[]
+image::images/nuts-install-pnote-icon.png[scaledwidth=40%]
+
+<<<
+
+=== Search for available applications
+
+image::images/nuts-search.png[]
+
+<<<
+
+=== Integration And Formats
+
+image::images/nuts-simple-format.png[]
+
+<<<
+
+=== Companions
+
+image::images/nsh-example.png[]
+
+<<<
+
+=== Bot Mot
+
+image::images/nuts-bot.png[scaledwidth=70%]
+
+

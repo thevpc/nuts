@@ -41,6 +41,7 @@ import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.repository.DefaultNutsRepositoryDB;
 import net.thevpc.nuts.runtime.standalone.repository.impl.main.NutsInstalledRepository;
 import net.thevpc.nuts.runtime.standalone.repository.impl.maven.util.MavenUtils;
+import net.thevpc.nuts.runtime.standalone.repository.util.NutsRepositoryUtils;
 import net.thevpc.nuts.runtime.standalone.security.ReadOnlyNutsWorkspaceOptions;
 import net.thevpc.nuts.runtime.standalone.util.CoreNutsConstants;
 import net.thevpc.nuts.runtime.standalone.util.CoreNutsUtils;
@@ -1082,7 +1083,7 @@ public class DefaultNutsWorkspaceConfigModel {
             for (NutsRepositoryRef ref : this.storeModelMain.getRepositories()) {
                 repos
                         .addRepository(
-                                CoreNutsUtils.refToOptions(ref)
+                                NutsRepositoryUtils.refToOptions(ref)
                         );
             }
         }

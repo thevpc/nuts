@@ -2,6 +2,8 @@ package net.thevpc.nuts.runtime.standalone.repository.impl.maven.util;
 
 import net.thevpc.nuts.NutsElement;
 import net.thevpc.nuts.NutsElements;
+import net.thevpc.nuts.runtime.standalone.repository.impl.maven.pom.PomId;
+import net.thevpc.nuts.runtime.standalone.repository.impl.maven.pom.PomIdFilter;
 import net.thevpc.nuts.runtime.standalone.util.iter.NutsIteratorBase;
 
 import javax.xml.stream.XMLEventReader;

@@ -27,7 +27,7 @@ package net.thevpc.nuts.runtime.standalone.descriptor;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.util.collections.CoreArrayUtils;
-import net.thevpc.nuts.runtime.standalone.util.CoreNutsUtils;
+import net.thevpc.nuts.runtime.standalone.util.filters.CoreFilterUtils;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -120,7 +120,7 @@ public class DefaultNutsDescriptor extends AbstractNutsDescriptor {
                         .toArray(String[]::new);
         this.executor = executor;
         this.installer = installer;
-        this.condition = CoreNutsUtils.trimToBlank(condition, session);
+        this.condition = CoreFilterUtils.trimToBlank(condition, session);
         this.locations = CoreArrayUtils.toArraySet(locations);
         this.dependencies = dependencies == null ? new NutsDependency[0] : new NutsDependency[dependencies.length];
         for (int i = 0; i < this.dependencies.length; i++) {

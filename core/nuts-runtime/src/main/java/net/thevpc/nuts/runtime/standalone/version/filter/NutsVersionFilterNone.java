@@ -3,7 +3,7 @@ package net.thevpc.nuts.runtime.standalone.version.filter;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.id.filter.NutsExprIdFilter;
 import net.thevpc.nuts.runtime.standalone.util.Simplifiable;
-import net.thevpc.nuts.runtime.standalone.util.CoreNutsUtils;
+import net.thevpc.nuts.runtime.standalone.util.filters.CoreFilterUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -42,7 +42,7 @@ public class NutsVersionFilterNone extends AbstractVersionFilter implements Nuts
 
     @Override
     public NutsVersionFilter simplify() {
-        return CoreNutsUtils.simplifyFilterNone(getSession(),NutsVersionFilter.class,this,all);
+        return CoreFilterUtils.simplifyFilterNone(getSession(),NutsVersionFilter.class,this,all);
     }
 
     public String toExpr() {

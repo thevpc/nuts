@@ -5,12 +5,9 @@
  */
 package net.thevpc.nuts.runtime.standalone.format.plain;
 
-import net.thevpc.nuts.NutsCommandLine;
-import net.thevpc.nuts.NutsPrintStream;
+import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.format.NutsFetchDisplayOptions;
 import net.thevpc.nuts.runtime.standalone.format.NutsIdFormatHelper;
-import net.thevpc.nuts.NutsContentType;
-import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.runtime.standalone.format.DefaultSearchFormatBase;
 
 /**
@@ -54,8 +51,9 @@ public class DefaultSearchFormatPlain extends DefaultSearchFormatBase {
     }
 
     private void formatElement(NutsIdFormatHelper id, long index) {
+        NutsString s = id.getSingleColumnRow(getDisplayOptions());
         getWriter().resetLine();
-        getWriter().printf("%s",id.getSingleColumnRow(getDisplayOptions()));
+        getWriter().printf("%s", s);
         getWriter().println();
         getWriter().flush();
     }

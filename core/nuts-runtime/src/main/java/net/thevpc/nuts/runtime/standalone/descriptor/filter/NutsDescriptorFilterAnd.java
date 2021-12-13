@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.descriptor.filter;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.standalone.util.CoreNutsUtils;
+import net.thevpc.nuts.runtime.standalone.util.filters.CoreFilterUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -40,7 +40,7 @@ public class NutsDescriptorFilterAnd extends AbstractDescriptorFilter{
 
     @Override
     public NutsDescriptorFilter simplify() {
-        return CoreNutsUtils.simplifyFilterAnd(getSession(),NutsDescriptorFilter.class,this,all);
+        return CoreFilterUtils.simplifyFilterAnd(getSession(),NutsDescriptorFilter.class,this,all);
     }
 
 

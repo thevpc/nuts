@@ -1,8 +1,8 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.settings;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.standalone.util.filters.CoreFilterUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.config.NutsWorkspaceConfigManagerExt;
-import net.thevpc.nuts.runtime.standalone.util.CoreNutsUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.config.ConfigEventType;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
 
@@ -99,7 +99,7 @@ public class ConfigNutsWorkspaceCommandFactory implements NutsWorkspaceCommandFa
     }
 
     public List<NutsCommandConfig> findCommands(NutsId id, NutsSession session) {
-        return findCommands(value -> CoreNutsUtils.matchesSimpleNameStaticVersion(value.getOwner(), id), session);
+        return findCommands(value -> CoreFilterUtils.matchesSimpleNameStaticVersion(value.getOwner(), id), session);
     }
 
     public List<NutsCommandConfig> findCommands(Predicate<NutsCommandConfig> filter, NutsSession session) {

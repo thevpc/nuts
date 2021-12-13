@@ -21,12 +21,12 @@ import net.thevpc.nuts.runtime.standalone.io.util.NutsStreamOrPath;
 import net.thevpc.nuts.runtime.standalone.definition.DefaultNutsDefinition;
 import net.thevpc.nuts.runtime.standalone.definition.DefaultNutsInstallInfo;
 import net.thevpc.nuts.NutsLogVerb;
-import net.thevpc.nuts.runtime.standalone.util.CoreNutsUtils;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.io.util.URLBuilder;
 import net.thevpc.nuts.runtime.standalone.io.util.ZipOptions;
 import net.thevpc.nuts.runtime.standalone.io.util.ZipUtils;
 import net.thevpc.nuts.runtime.standalone.security.util.CoreDigestHelper;
+import net.thevpc.nuts.runtime.standalone.util.filters.CoreFilterUtils;
 import net.thevpc.nuts.spi.NutsDependencySolver;
 
 /**
@@ -184,7 +184,7 @@ public class DefaultNutsArtifactPathExecutable extends AbstractNutsExecutableCom
                     }
                     if (c.contentFile == null) {
                         for (NutsIdLocation location0 : c.descriptor.getLocations()) {
-                            if (CoreNutsUtils.acceptClassifier(location0, classifier)) {
+                            if (CoreFilterUtils.acceptClassifier(location0, classifier)) {
                                 String location = location0.getUrl();
                                 if (CoreIOUtils.isPathHttp(location)) {
                                     try {

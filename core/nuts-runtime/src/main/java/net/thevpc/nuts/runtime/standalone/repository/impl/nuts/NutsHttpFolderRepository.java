@@ -26,6 +26,7 @@
 package net.thevpc.nuts.runtime.standalone.repository.impl.nuts;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.standalone.util.filters.CoreFilterUtils;
 import net.thevpc.nuts.runtime.standalone.util.iter.IteratorBuilder;
 import net.thevpc.nuts.runtime.standalone.util.iter.IteratorUtils;
 import net.thevpc.nuts.runtime.standalone.repository.impl.NutsCachedRepository;
@@ -34,7 +35,6 @@ import net.thevpc.nuts.runtime.standalone.repository.NutsIdPathIteratorBase;
 import net.thevpc.nuts.runtime.standalone.repository.NutsIdPathIteratorModel;
 import net.thevpc.nuts.runtime.standalone.util.CoreNutsConstants;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
-import net.thevpc.nuts.runtime.standalone.util.CoreNutsUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -232,7 +232,7 @@ public class NutsHttpFolderRepository extends NutsCachedRepository {
                     NutsPath.of(localFile, session), false, false);
         } else {
             for (NutsIdLocation location : descriptor.getLocations()) {
-                if (CoreNutsUtils.acceptClassifier(location, id.getClassifier())) {
+                if (CoreFilterUtils.acceptClassifier(location, id.getClassifier())) {
                     try {
                         NutsCp.of(session).from(location.getUrl()).to(localFile).addOptions(NutsPathOption.SAFE,NutsPathOption.LOG).run();
                         return new NutsDefaultContent(
