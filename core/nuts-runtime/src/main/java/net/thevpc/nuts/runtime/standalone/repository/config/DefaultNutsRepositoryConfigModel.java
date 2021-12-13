@@ -736,7 +736,7 @@ public class DefaultNutsRepositoryConfigModel implements NutsRepositoryConfigMod
         NutsRepositoryConfig config = model.getConfig(session);
         String t = null;
         if (config.getEnv() != null) {
-            t = config.getEnv().get(defaultValue);
+            t = config.getEnv().get(key);
         }
         if (!NutsBlankable.isBlank(t)) {
             return t;

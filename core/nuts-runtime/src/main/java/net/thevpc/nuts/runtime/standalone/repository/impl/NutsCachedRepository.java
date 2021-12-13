@@ -24,7 +24,8 @@
 package net.thevpc.nuts.runtime.standalone.repository.impl;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.standalone.io.util.CommonRootsHelper;
+import net.thevpc.nuts.runtime.standalone.repository.impl.util.CommonRootsByPathHelper;
+import net.thevpc.nuts.runtime.standalone.repository.impl.util.CommonRootsByIdHelper;
 import net.thevpc.nuts.runtime.standalone.util.iter.IteratorBuilder;
 import net.thevpc.nuts.runtime.standalone.xtra.glob.GlobUtils;
 import net.thevpc.nuts.runtime.standalone.repository.cmd.NutsRepositorySupportedAction;
@@ -285,7 +286,8 @@ public class NutsCachedRepository extends AbstractNutsRepositoryBase {
 
     @Override
     public final NutsIterator<NutsId> searchImpl(final NutsIdFilter filter, NutsFetchMode fetchMode, NutsSession session) {
-        List<NutsPath> basePaths = CommonRootsHelper.resolveRootPaths(filter, session);
+        List<NutsPath> basePaths = CommonRootsByPathHelper.resolveRootPaths(filter, session);
+        List<NutsId> baseIds = CommonRootsByIdHelper.resolveRootPaths(filter, session);
         List<NutsIterator<? extends NutsId>> li = new ArrayList<>();
         for (NutsPath basePath : basePaths) {
             if (fetchMode != NutsFetchMode.REMOTE) {
@@ -305,7 +307,7 @@ public class NutsCachedRepository extends AbstractNutsRepositoryBase {
         }
         NutsIterator<NutsId> p = null;
         try {
-            p = searchCore(filter, basePaths.toArray(new NutsPath[0]), fetchMode, session);
+            p = searchCore(filter, basePaths.toArray(new NutsPath[0]), baseIds.toArray(new NutsId[0]), fetchMode, session);
         } catch (NutsNotFoundException ex) {
             //ignore....
         } catch (Exception ex) {
@@ -341,7 +343,7 @@ public class NutsCachedRepository extends AbstractNutsRepositoryBase {
         return null;
     }
 
-    public NutsIterator<NutsId> searchCore(final NutsIdFilter filter, NutsPath[] basePaths, NutsFetchMode fetchMode, NutsSession session) {
+    public NutsIterator<NutsId> searchCore(final NutsIdFilter filter, NutsPath[] basePaths, NutsId[] baseIds, NutsFetchMode fetchMode, NutsSession session) {
         return null;
     }
 

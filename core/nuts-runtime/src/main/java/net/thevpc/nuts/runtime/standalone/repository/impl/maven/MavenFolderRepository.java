@@ -24,14 +24,15 @@
 package net.thevpc.nuts.runtime.standalone.repository.impl.maven;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.standalone.util.iter.IteratorBuilder;
-import net.thevpc.nuts.runtime.standalone.util.iter.IteratorUtils;
+import net.thevpc.nuts.runtime.standalone.repository.NutsIdPathIterator;
+import net.thevpc.nuts.runtime.standalone.repository.NutsIdPathIteratorBase;
+import net.thevpc.nuts.runtime.standalone.repository.impl.NutsCachedRepository;
+import net.thevpc.nuts.runtime.standalone.repository.impl.maven.solrsearch.MavenSolrSearchCommand;
 import net.thevpc.nuts.runtime.standalone.repository.impl.maven.util.AbstractMavenRepositoryHelper;
 import net.thevpc.nuts.runtime.standalone.repository.impl.maven.util.MavenUtils;
 import net.thevpc.nuts.runtime.standalone.repository.impl.maven.util.MvnClient;
-import net.thevpc.nuts.runtime.standalone.repository.impl.NutsCachedRepository;
-import net.thevpc.nuts.runtime.standalone.repository.NutsIdPathIterator;
-import net.thevpc.nuts.runtime.standalone.repository.NutsIdPathIteratorBase;
+import net.thevpc.nuts.runtime.standalone.util.iter.IteratorBuilder;
+import net.thevpc.nuts.runtime.standalone.util.iter.IteratorUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
 import net.thevpc.nuts.spi.NutsRepositorySPI;
 
@@ -118,96 +119,39 @@ public class MavenFolderRepository extends NutsCachedRepository {
         if (!acceptedFetchNoCache(fetchMode)) {
             throw new NutsNotFoundException(session, id, new NutsFetchModeNotSupportedException(session, this, fetchMode, id.toString(), null));
         }
-        if (wrapper == null) {
-            wrapper = getWrapper(session);
+        NutsContent cc = fetchContentCoreUsingWrapper(id, descriptor, localPath, fetchMode, session);
+        if (cc != null) {
+            return cc;
         }
-        if (wrapper != null && wrapper.get(id, config().setSession(session).getLocation(true).toString(), session)) {
-            NutsRepository repo = getLocalMavenRepo(session);
-            if (repo != null) {
-                NutsRepositorySPI repoSPI = NutsWorkspaceUtils.of(session).repoSPI(repo);
-                return repoSPI.fetchContent()
-                        .setId(id)
-                        .setDescriptor(descriptor)
-                        .setLocalPath(localPath)
-                        .setSession(session)
-                        .setFetchMode(NutsFetchMode.LOCAL)
-                        .run()
-                        .getResult();
-            }
-            //should be already downloaded to m2 folder
-            NutsPath content = getMavenLocalFolderContent(id, session);
-            if (content != null && content.exists()) {
-                if (localPath == null) {
-                    return new NutsDefaultContent(
-                            content, true, false);
-                } else {
-                    String tempFile = NutsTmp.of(session)
-                            .setRepositoryId(getUuid())
-                            .createTempFile(content.getName()).toString();
-                    NutsCp.of(session)
-                            .from(content).to(tempFile).addOptions(NutsPathOption.SAFE).run();
-                    return new NutsDefaultContent(
-                            NutsPath.of(tempFile, session), true, false);
-                }
-            }
-        }
-        if (localPath == null) {
-            NutsPath p = repoHelper.getIdPath(id, session);
-            if (p.isLocal()) {
-                return new NutsDefaultContent(p, false, false);
-            } else {
-                String tempFile = NutsTmp.of(session)
-                        .setRepositoryId(getUuid())
-                        .createTempFile(p.getName()).toString();
-                try {
-                    NutsCp.of(session)
-                            .from(repoHelper.getStream(id, "artifact binaries", "retrieve", session)).to(tempFile).setValidator(new NutsIOCopyValidator() {
-                                @Override
-                                public void validate(InputStream in) throws IOException {
-                                    repoHelper.checkSHA1Hash(id.builder().setFace(NutsConstants.QueryFaces.CONTENT_HASH).build(), in, "artifact binaries", session);
-                                }
-                            }).run();
-                } catch (UncheckedIOException | NutsIOException ex) {
-                    throw new NutsNotFoundException(session, id, null, ex);
-                }
-                return new NutsDefaultContent(NutsPath.of(tempFile, session), true, true);
-            }
-        } else {
-            try {
-                NutsCp.of(session)
-                        .from(repoHelper.getStream(id, "artifact content", "retrieve", session)).to(localPath)
-                        .setValidator(in -> repoHelper.checkSHA1Hash(
-                                        id.builder().setFace(NutsConstants.QueryFaces.CONTENT_HASH).build(),
-                                        in, "artifact binaries", session
-                                )
-                        ).addOptions(NutsPathOption.LOG)
-                        .run();
-            } catch (UncheckedIOException | NutsIOException ex) {
-                throw new NutsNotFoundException(session, id, null, ex);
-            }
-            return new NutsDefaultContent(
-                    NutsPath.of(localPath, session), true, false);
-        }
+        return fetchContentCoreUsingRepoHelper(id, descriptor, localPath, fetchMode, session);
     }
 
     @Override
-    public NutsIterator<NutsId> searchCore(final NutsIdFilter filter, NutsPath[] basePaths, NutsFetchMode fetchMode, NutsSession session) {
+    public NutsIterator<NutsId> searchCore(final NutsIdFilter filter, NutsPath[] basePaths, NutsId[] baseIds, NutsFetchMode fetchMode, NutsSession session) {
         if (!acceptedFetchNoCache(fetchMode)) {
             return null;
         }
         NutsPath repoRoot = config().setSession(session).getLocation(true);
+        MavenSolrSearchCommand cmd=new MavenSolrSearchCommand(this);
+        NutsIterator<NutsId> aa=cmd.search(filter, baseIds, fetchMode, session);
+        if(aa!=null){
+            return aa;
+        }
+
         List<NutsIterator<? extends NutsId>> list = new ArrayList<>();
         for (NutsPath basePath : basePaths) {
+            //,"https://search.maven.org/solrsearch",
+            //                                                "maven.solrsearch.enable","true"
             list.add(
                     (NutsIterator) IteratorBuilder.ofRunnable(
-                            () -> session.getTerminal().printProgress("%-14s %-8s %s",getName(), "browse",
+                            () -> session.getTerminal().printProgress("%-14s %-8s %s", getName(), "browse",
                                     (basePath == null ? repoRoot : repoRoot.resolve(basePath)).toCompressedForm()
                             ),
                             "Log",
 
                             session).build());
             if (basePath.getName().equals("*")) {
-                list.add(new NutsIdPathIterator(this, repoRoot, basePath.getParent(), filter, session, repoIter, Integer.MAX_VALUE, "core",null));
+                list.add(new NutsIdPathIterator(this, repoRoot, basePath.getParent(), filter, session, repoIter, Integer.MAX_VALUE, "core", null));
             } else {
                 list.add(new NutsIdPathIterator(this, repoRoot, basePath, filter, session, repoIter, 2, "core", null));
             }
@@ -253,6 +197,83 @@ public class MavenFolderRepository extends NutsCachedRepository {
         return config().setSession(initSession).getLocation(true).isRemote();
     }
 
+    public NutsContent fetchContentCoreUsingWrapper(NutsId id, NutsDescriptor descriptor, String localPath, NutsFetchMode fetchMode, NutsSession session) {
+        if (wrapper == null) {
+            wrapper = getWrapper(session);
+        }
+        if (wrapper != null && wrapper.get(id, config().setSession(session).getLocation(true).toString(), session)) {
+            NutsRepository repo = getLocalMavenRepo(session);
+            if (repo != null) {
+                NutsRepositorySPI repoSPI = NutsWorkspaceUtils.of(session).repoSPI(repo);
+                return repoSPI.fetchContent()
+                        .setId(id)
+                        .setDescriptor(descriptor)
+                        .setLocalPath(localPath)
+                        .setSession(session)
+                        .setFetchMode(NutsFetchMode.LOCAL)
+                        .run()
+                        .getResult();
+            }
+            //should be already downloaded to m2 folder
+            NutsPath content = getMavenLocalFolderContent(id, session);
+            if (content != null && content.exists()) {
+                if (localPath == null) {
+                    return new NutsDefaultContent(
+                            content, true, false);
+                } else {
+                    String tempFile = NutsTmp.of(session)
+                            .setRepositoryId(getUuid())
+                            .createTempFile(content.getName()).toString();
+                    NutsCp.of(session)
+                            .from(content).to(tempFile).addOptions(NutsPathOption.SAFE).run();
+                    return new NutsDefaultContent(
+                            NutsPath.of(tempFile, session), true, false);
+                }
+            }
+        }
+        return null;
+    }
+
+    public NutsContent fetchContentCoreUsingRepoHelper(NutsId id, NutsDescriptor descriptor, String localPath, NutsFetchMode fetchMode, NutsSession session) {
+        if (localPath == null) {
+            NutsPath p = repoHelper.getIdPath(id, session);
+            if (p.isLocal()) {
+                return new NutsDefaultContent(p, false, false);
+            } else {
+                String tempFile = NutsTmp.of(session)
+                        .setRepositoryId(getUuid())
+                        .createTempFile(p.getName()).toString();
+                try {
+                    NutsCp.of(session)
+                            .from(repoHelper.getStream(id, "artifact binaries", "retrieve", session)).to(tempFile).setValidator(new NutsIOCopyValidator() {
+                                @Override
+                                public void validate(InputStream in) throws IOException {
+                                    repoHelper.checkSHA1Hash(id.builder().setFace(NutsConstants.QueryFaces.CONTENT_HASH).build(), in, "artifact binaries", session);
+                                }
+                            }).run();
+                } catch (UncheckedIOException | NutsIOException ex) {
+                    throw new NutsNotFoundException(session, id, null, ex);
+                }
+                return new NutsDefaultContent(NutsPath.of(tempFile, session), true, true);
+            }
+        } else {
+            try {
+                NutsCp.of(session)
+                        .from(repoHelper.getStream(id, "artifact content", "retrieve", session)).to(localPath)
+                        .setValidator(in -> repoHelper.checkSHA1Hash(
+                                        id.builder().setFace(NutsConstants.QueryFaces.CONTENT_HASH).build(),
+                                        in, "artifact binaries", session
+                                )
+                        ).addOptions(NutsPathOption.LOG)
+                        .run();
+            } catch (UncheckedIOException | NutsIOException ex) {
+                throw new NutsNotFoundException(session, id, null, ex);
+            }
+            return new NutsDefaultContent(
+                    NutsPath.of(localPath, session), true, false);
+        }
+    }
+
     protected boolean acceptedFetchNoCache(NutsFetchMode fetchMode) {
         return (fetchMode == NutsFetchMode.REMOTE) == isRemote();
     }
@@ -262,10 +283,16 @@ public class MavenFolderRepository extends NutsCachedRepository {
         String artifactId = id.getArtifactId();
         NutsPath foldersFileUrl = config().setSession(session).getLocation(true).resolve(groupId.replace('.', '/') + "/" + artifactId + "/");
 
+        MavenSolrSearchCommand cmd=new MavenSolrSearchCommand(this);
+        NutsIterator<NutsId> aa=cmd.search(idFilter, new NutsId[]{id}, fetchMode, session);
+        if(aa!=null){
+            return aa;
+        }
+
         return IteratorBuilder.ofSupplier(
                 () -> {
                     List<NutsId> ret = new ArrayList<>();
-                    session.getTerminal().printProgress("looking for versions of %s at %s", id,foldersFileUrl.toCompressedForm());
+                    session.getTerminal().printProgress("looking for versions of %s at %s", id, foldersFileUrl.toCompressedForm());
                     NutsPath[] all = foldersFileUrl.list().filter(
                             NutsPath::isDirectory, "isDirectory"
                     ).toArray(NutsPath[]::new);

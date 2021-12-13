@@ -14,7 +14,9 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLConnection;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.Instant;
@@ -244,7 +246,18 @@ public class URLPath implements NutsPathSPI {
             return f.exists();
         }
         try {
-            url.openConnection().getContentLengthLong();
+            URLConnection c = url.openConnection();
+            if(c instanceof HttpURLConnection){
+                HttpURLConnection hc = (HttpURLConnection) c;
+                hc.setRequestMethod("HEAD");
+                int r = hc.getResponseCode();
+                return r>=200 && r<300;
+            }
+            return true;
+        } catch (IOException e) {
+            //return false;
+        }
+        try (InputStream is=url.openStream()){
             return true;
         } catch (IOException e) {
             return false;

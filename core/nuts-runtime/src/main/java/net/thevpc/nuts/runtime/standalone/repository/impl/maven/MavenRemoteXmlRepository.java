@@ -45,9 +45,9 @@ public class MavenRemoteXmlRepository extends MavenFolderRepository {
     }
 
     @Override
-    public NutsIterator<NutsId> searchCore(final NutsIdFilter filter, NutsPath[] basePaths, NutsFetchMode fetchMode, NutsSession session) {
+    public NutsIterator<NutsId> searchCore(final NutsIdFilter filter, NutsPath[] basePaths, NutsId[] baseIds, NutsFetchMode fetchMode, NutsSession session) {
         //TODO if possible
-        return super.searchCore(filter, basePaths, fetchMode, session);
+        return super.searchCore(filter, basePaths, baseIds, fetchMode, session);
     }
 
     @Override

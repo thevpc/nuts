@@ -118,12 +118,12 @@ public class DefaultNutsArrayElement extends AbstractNutsArrayElement {
 
     @Override
     public NutsArrayElement getArray(int index) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return get(index).asArray();
     }
 
     @Override
     public NutsObjectElement getObject(int index) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return get(index).asObject();
     }
 
     @Override

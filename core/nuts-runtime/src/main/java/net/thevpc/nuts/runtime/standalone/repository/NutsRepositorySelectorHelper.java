@@ -1,10 +1,13 @@
 package net.thevpc.nuts.runtime.standalone.repository;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.standalone.util.collections.CoreCollectionUtils;
 import net.thevpc.nuts.spi.NutsRepositoryDB;
 import net.thevpc.nuts.spi.NutsRepositorySelectorList;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.spi.NutsRepositoryURL;
+
+import java.util.HashMap;
 
 public class NutsRepositorySelectorHelper {
     public static NutsAddRepositoryOptions createRepositoryOptions(String s, boolean requireName, NutsSession session) {
@@ -145,6 +148,10 @@ public class NutsRepositorySelectorHelper {
                                 new NutsRepositoryConfig()
                                         .setLocation("htmlfs:https://repo.maven.apache.org/maven2")
                                         .setType("maven")
+                                        .setEnv(CoreCollectionUtils.fill(new HashMap<>(),
+                                                "maven.solrsearch.url","https://search.maven.org/solrsearch/select",
+                                                "maven.solrsearch.enable","true"
+                                        ))
                         );
             }
             case "jcenter": {

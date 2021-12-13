@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package net.thevpc.nuts.runtime.standalone.io.util;
+package net.thevpc.nuts.runtime.standalone.repository.impl.util;
 
 import java.util.*;
 
@@ -17,7 +17,7 @@ import net.thevpc.nuts.runtime.standalone.id.filter.NutsPatternIdFilter;
 /**
  * @author thevpc
  */
-public class CommonRootsHelper {
+public class CommonRootsByPathHelper {
 
     private static Set<NutsPath> resolveRootIdAnd(Set<NutsPath> a, Set<NutsPath> b, NutsSession session) {
         if (a == null) {
@@ -170,7 +170,7 @@ public class CommonRootsHelper {
     }
 
     public static List<NutsPath> resolveRootPaths(NutsIdFilter filter, NutsSession session) {
-        return new ArrayList<>(CommonRootsHelper.resolveRootIds(filter, session));
+        return new ArrayList<>(CommonRootsByPathHelper.resolveRootIds(filter, session));
     }
 
     public static Set<NutsPath> resolveRootIds(NutsIdFilter filter, NutsSession session) {

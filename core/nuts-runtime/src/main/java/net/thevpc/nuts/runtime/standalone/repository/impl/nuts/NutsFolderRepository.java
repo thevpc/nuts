@@ -88,7 +88,7 @@ public class NutsFolderRepository extends NutsCachedRepository {
     }
 
     @Override
-    public NutsIterator<NutsId> searchCore(NutsIdFilter filter, NutsPath[] basePaths, NutsFetchMode fetchMode, NutsSession session) {
+    public NutsIterator<NutsId> searchCore(NutsIdFilter filter, NutsPath[] basePaths, NutsId[] baseIds, NutsFetchMode fetchMode, NutsSession session) {
         return null;
     }
 
