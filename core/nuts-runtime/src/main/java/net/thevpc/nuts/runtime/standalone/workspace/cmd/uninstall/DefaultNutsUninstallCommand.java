@@ -95,11 +95,19 @@ public class DefaultNutsUninstallCommand extends AbstractNutsUninstallCommand {
 
             dws.getInstalledRepository().uninstall(def, session);
             NutsId id = def.getId();
-            session.locations().getStoreLocation(id, NutsStoreLocation.APPS).deleteTree();
-            session.locations().getStoreLocation(id, NutsStoreLocation.LOG).deleteTree();
+            if(session.locations().getStoreLocation(id, NutsStoreLocation.APPS).exists()) {
+                session.locations().getStoreLocation(id, NutsStoreLocation.APPS).deleteTree();
+            }
+            if(session.locations().getStoreLocation(id, NutsStoreLocation.LOG).exists()) {
+                session.locations().getStoreLocation(id, NutsStoreLocation.LOG).deleteTree();
+            }
             if (this.isErase()) {
-                session.locations().getStoreLocation(id, NutsStoreLocation.VAR).deleteTree();
-                session.locations().getStoreLocation(id, NutsStoreLocation.CONFIG).deleteTree();
+                if(session.locations().getStoreLocation(id, NutsStoreLocation.VAR).exists()) {
+                    session.locations().getStoreLocation(id, NutsStoreLocation.VAR).deleteTree();
+                }
+                if(session.locations().getStoreLocation(id, NutsStoreLocation.CONFIG).exists()) {
+                    session.locations().getStoreLocation(id, NutsStoreLocation.CONFIG).deleteTree();
+                }
             }
 
             if (def.getDescriptor().getIdType() == NutsIdType.EXTENSION) {
