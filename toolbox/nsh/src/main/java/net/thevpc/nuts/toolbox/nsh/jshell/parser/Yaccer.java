@@ -1,9 +1,7 @@
 package net.thevpc.nuts.toolbox.nsh.jshell.parser;
 
-import net.thevpc.nuts.NutsIllegalArgumentException;
-import net.thevpc.nuts.NutsMessage;
+import net.thevpc.nuts.*;
 import net.thevpc.nuts.toolbox.nsh.jshell.*;
-import net.thevpc.nuts.toolbox.nsh.jshell.util.DirectoryScanner;
 
 import java.util.*;
 
@@ -653,6 +651,7 @@ public class Yaccer {
     }
 
     public static String evalTokenString(Token token, JShellContext context) {
+        NutsGlob g = NutsGlob.of(context.getSession());
         switch (token.type) {
             case "WORD": {
                 return token.value.toString();
@@ -661,7 +660,7 @@ public class Yaccer {
                 String s = (String) token.value;
                 switch (s) {
                     case "0": {
-                        return DirectoryScanner.escape(context.getServiceName());
+                        return g.escape(context.getServiceName());
                     }
                     case "1":
                     case "2":
@@ -672,14 +671,14 @@ public class Yaccer {
                     case "7":
                     case "8":
                     case "9": {
-                        return DirectoryScanner.escape(context.getArg(Integer.parseInt(s) - 1));
+                        return g.escape(context.getArg(Integer.parseInt(s) - 1));
                     }
                     case "?": {
-                        return DirectoryScanner.escape(String.valueOf(context.getArgsCount()));
+                        return g.escape(String.valueOf(context.getArgsCount()));
                     }
                     default: {
                         String y = context.vars().get(s,"");
-                        return DirectoryScanner.escape(y);
+                        return g.escape(y);
                     }
                 }
             }
@@ -695,7 +694,7 @@ public class Yaccer {
                     //all are comments perhaps!
                     return "";
                 }
-                return DirectoryScanner.escape(context.getShell().getEvaluator().evalCommandAndReturnString(subCommand, context));
+                return g.escape(context.getShell().getEvaluator().evalCommandAndReturnString(subCommand, context));
             }
             case "\"": {
                 List<Token> s = (List<Token>) token.value;
@@ -707,11 +706,11 @@ public class Yaccer {
             }
             case "'": {
                 if (token.value instanceof String) {
-                    return DirectoryScanner.escape((String) token.value);
+                    return g.escape((String) token.value);
                 }
                 StringBuilder sb = new StringBuilder();
                 for (Token t : ((List<Token>) token.value)) {
-                    sb.append(DirectoryScanner.escape(evalTokenString(t, context)));
+                    sb.append(g.escape(evalTokenString(t, context)));
                 }
                 return sb.toString();
             }
@@ -735,7 +734,7 @@ public class Yaccer {
                 }else{
                     throw new IllegalArgumentException("bad substitution");
                 }
-                sb.append(DirectoryScanner.escape(varVal));
+                sb.append(g.escape(varVal));
                 return sb.toString();
             }
             default: {
@@ -1122,7 +1121,6 @@ public class Yaccer {
 
     public static class Argument implements JShellArgumentNode {
         List<JShellNode> nodes;
-
         public Argument(List<JShellNode> nodes) {
             this.nodes = nodes;
         }
@@ -1175,11 +1173,11 @@ public class Yaccer {
                 }
             }
             if (applyWildCard) {
-                DirectoryScanner d = new DirectoryScanner(
-                        DirectoryScanner.PATH_FILE_SYSTEM.isAbsolute(value) ? value :
-                                DirectoryScanner.PATH_FILE_SYSTEM.resolve(context.getCwd(), value)
-                );
-                String[] r = d.toArray();
+                NutsPath pp=NutsPath.of(value,context.getSession());
+                if(!pp.isAbsolute()){
+                    pp=pp.toAbsolute(context.getCwd());
+                }
+                String[] r = pp.walkGlob().map(NutsPath::toString,"toString").toArray(String[]::new);
                 if(r.length>0){
                     return r;
                 }

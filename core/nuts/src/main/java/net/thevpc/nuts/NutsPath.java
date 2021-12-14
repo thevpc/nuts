@@ -26,8 +26,6 @@
  */
 package net.thevpc.nuts;
 
-import net.thevpc.nuts.boot.NutsApiUtils;
-import net.thevpc.nuts.spi.NutsPathFactory;
 import net.thevpc.nuts.spi.NutsPathSPI;
 import net.thevpc.nuts.spi.NutsPaths;
 
@@ -251,6 +249,8 @@ public interface NutsPath extends NutsFormattable,NutsStreamMetadataAware {
 
     NutsPath toAbsolute(NutsPath basePath);
 
+    NutsPath toRelativePath(NutsPath basePath);
+
     String owner();
 
     String group();
@@ -338,4 +338,7 @@ public interface NutsPath extends NutsFormattable,NutsStreamMetadataAware {
     NutsPath walkDfs(NutsTreeVisitor<NutsPath> visitor, NutsPathOption... options);
 
     NutsPath walkDfs(NutsTreeVisitor<NutsPath> visitor,int maxDepth, NutsPathOption... options);
+
+    NutsStream<NutsPath> walkGlob(NutsPathOption... options);
+
 }

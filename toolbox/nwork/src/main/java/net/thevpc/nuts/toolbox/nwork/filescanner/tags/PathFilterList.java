@@ -105,7 +105,7 @@ class PathFilterList {
                 line = line.substring(1);
             }
             String a = (line.isEmpty() ? root : root.resolve(line)).toString();
-            NutsGlob glob = NutsGlob.of(session).setSeparator('/');
+            NutsGlob glob = NutsGlob.of(session).setSeparator("/\\");
             if (glob.isGlob(a)) {
                 patterns.add(glob.toPattern(a));
             } else {

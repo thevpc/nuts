@@ -237,6 +237,7 @@ public interface NutsStream<T> extends NutsIterable<T> {
     <R> NutsStream<R> flatMapArray(NutsFunction<? super T, ? extends R[]> mapper);
 
     <R> NutsStream<R> flatMap(NutsFunction<? super T, ? extends Stream<? extends R>> mapper);
+
     <R> NutsStream<R> flatMapStream(NutsFunction<? super T, ? extends NutsStream<? extends R>> mapper);
 
     <K> Map<K, List<T>> groupBy(NutsFunction<? super T, ? extends K> classifier);

@@ -180,11 +180,7 @@ public class NutsPathFromSPI extends NutsPathBase {
 
     @Override
     public InputStream getInputStream() {
-        return InputStreamMetadataAwareImpl.of(base.getInputStream(this),getStreamMetadata());
-    }
-
-    public NutsStreamMetadata getStreamMetadata(){
-        return new NutsPathStreamMetadata(this);
+        return InputStreamMetadataAwareImpl.of(base.getInputStream(this), getStreamMetadata());
     }
 
     @Override
@@ -345,6 +341,11 @@ public class NutsPathFromSPI extends NutsPathBase {
     }
 
     @Override
+    public NutsPath toRelativePath(NutsPath parentPath) {
+        return base.toRelativePath(this, parentPath);
+    }
+
+    @Override
     public String owner() {
         return base.owner(this);
     }
@@ -459,6 +460,15 @@ public class NutsPathFromSPI extends NutsPathBase {
             base.walkDfs(this, visitor, maxDepth, options);
         }
         return this;
+    }
+
+    @Override
+    public NutsStream<NutsPath> walkGlob(NutsPathOption... options) {
+        return new DirectoryScanner(this, getSession()).stream();
+    }
+
+    public NutsStreamMetadata getStreamMetadata() {
+        return new NutsPathStreamMetadata(this);
     }
 
     @Override

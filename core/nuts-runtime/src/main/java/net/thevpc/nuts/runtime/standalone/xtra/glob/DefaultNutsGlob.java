@@ -8,21 +8,21 @@ import java.util.regex.Pattern;
 
 public class DefaultNutsGlob implements NutsGlob {
     private final NutsSession session;
-    private char separator;
+    private String separator;
 
 
     public DefaultNutsGlob(NutsSession session) {
         this.session = session;
-        separator= File.separatorChar;
+        separator= File.separator;
     }
 
     @Override
-    public char getSeparator() {
+    public String getSeparator() {
         return separator;
     }
 
     @Override
-    public NutsGlob setSeparator(char separator) {
+    public NutsGlob setSeparator(String separator) {
         this.separator = separator;
         return this;
     }
@@ -56,5 +56,24 @@ public class DefaultNutsGlob implements NutsGlob {
     @Override
     public int getSupportLevel(NutsSupportLevelContext context) {
         return DEFAULT_SUPPORT;
+    }
+
+    public String escape(String s){
+        StringBuilder sb=new StringBuilder();
+        for (char c : s.toCharArray()) {
+            switch (c){
+                case '\\':
+                case '*':
+                case '?':{
+                    sb.append('\\').append(c);
+                    break;
+                }
+                default:{
+                    sb.append(c);
+                    break;
+                }
+            }
+        }
+        return sb.toString();
     }
 }

@@ -176,4 +176,5 @@ public interface NutsPathSPI {
 
     void walkDfs(NutsPath basePath, NutsTreeVisitor<NutsPath> visitor, int maxDepth, NutsPathOption... options);
 
+    NutsPath toRelativePath(NutsPath basePath, NutsPath parentPath);
 }

@@ -4,11 +4,13 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.spi.NutsFormatSPI;
 import net.thevpc.nuts.spi.NutsPathSPI;
 
-import java.io.*;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.URL;
 import java.nio.file.Path;
 import java.time.Instant;
-import java.util.*;
+import java.util.Objects;
+import java.util.Set;
 
 public abstract class AbstractPathSPIAdapter implements NutsPathSPI {
 
@@ -184,7 +186,7 @@ public abstract class AbstractPathSPIAdapter implements NutsPathSPI {
 
     @Override
     public NutsPath toAbsolute(NutsPath basePath, NutsPath rootPath) {
-        if(isAbsolute(basePath)){
+        if (isAbsolute(basePath)) {
             return basePath;
         }
         return basePath.toAbsolute();
@@ -255,7 +257,7 @@ public abstract class AbstractPathSPIAdapter implements NutsPathSPI {
 
     @Override
     public NutsStream<NutsPath> walk(NutsPath basePath, int maxDepth, NutsPathOption[] options) {
-        return ref.walk(maxDepth,options);
+        return ref.walk(maxDepth, options);
     }
 
     @Override
@@ -280,7 +282,21 @@ public abstract class AbstractPathSPIAdapter implements NutsPathSPI {
 
     @Override
     public void walkDfs(NutsPath basePath, NutsTreeVisitor<NutsPath> visitor, int maxDepth, NutsPathOption... options) {
-        ref.walkDfs(visitor,maxDepth,options);
+        ref.walkDfs(visitor, maxDepth, options);
+    }
+
+    @Override
+    public NutsPath toRelativePath(NutsPath basePath, NutsPath parentPath) {
+        String child = basePath.getLocation();
+        String parent = parentPath.getLocation();
+        if (child.startsWith(parent)) {
+            child = child.substring(parent.length());
+            if (child.startsWith("/") || child.startsWith("\\")) {
+                child = child.substring(1);
+            }
+            return NutsPath.of(child, session);
+        }
+        return null;
     }
 
     private static class MyPathFormat implements NutsFormatSPI {

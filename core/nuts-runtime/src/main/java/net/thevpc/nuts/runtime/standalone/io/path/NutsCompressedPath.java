@@ -1,9 +1,9 @@
 package net.thevpc.nuts.runtime.standalone.io.path;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.standalone.format.DefaultFormatBase;
 import net.thevpc.nuts.runtime.standalone.io.util.InputStreamMetadataAwareImpl;
 import net.thevpc.nuts.runtime.standalone.io.util.URLBuilder;
-import net.thevpc.nuts.runtime.standalone.format.DefaultFormatBase;
 import net.thevpc.nuts.spi.NutsSupportLevelContext;
 
 import java.io.File;
@@ -322,6 +322,11 @@ public class NutsCompressedPath extends NutsPathBase {
     }
 
     @Override
+    public NutsPath toRelativePath(NutsPath basePath) {
+        return base.toRelativePath(basePath);
+    }
+
+    @Override
     public String owner() {
         return base.owner();
     }
@@ -414,6 +419,11 @@ public class NutsCompressedPath extends NutsPathBase {
     public NutsPath walkDfs(NutsTreeVisitor<NutsPath> visitor, int maxDepth, NutsPathOption... options) {
         base.walkDfs(visitor, maxDepth, options);
         return this;
+    }
+
+    @Override
+    public NutsStream<NutsPath> walkGlob(NutsPathOption... options) {
+        return base.walkGlob(options);
     }
 
     @Override

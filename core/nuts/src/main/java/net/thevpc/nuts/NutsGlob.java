@@ -35,11 +35,13 @@ public interface NutsGlob extends NutsComponent {
         return session.extensions().createSupported(NutsGlob.class, true, session);
     }
 
-    char getSeparator();
+    String getSeparator();
 
-    NutsGlob setSeparator(char c);
+    NutsGlob setSeparator(String c);
 
     boolean isGlob(String pattern);
 
     Pattern toPattern(String pattern);
+
+    String escape(String s);
 }

@@ -544,4 +544,18 @@ public class NutsResourcePath implements NutsPathSPI {
     public boolean isLocal(NutsPath basePath) {
         return toURLPath().isLocal();
     }
+
+    @Override
+    public NutsPath toRelativePath(NutsPath basePath, NutsPath parentPath) {
+        String child=basePath.getLocation();
+        String parent=parentPath.getLocation();
+        if (child.startsWith(parent)) {
+            child = child.substring(parent.length());
+            if (child.startsWith("/") || child.startsWith("\\")) {
+                child = child.substring(1);
+            }
+            return NutsPath.of(child,session);
+        }
+        return null;
+    }
 }

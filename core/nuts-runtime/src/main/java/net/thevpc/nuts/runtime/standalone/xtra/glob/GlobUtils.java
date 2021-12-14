@@ -112,19 +112,25 @@ public class GlobUtils {
     }
 
 
-    public static Pattern glob(String o,char s) {
-        switch (s){
-            case '{':
-            case '}':
-            case '(':
-            case ')':
-            case '<':
-            case '>':
-            case '*':
-            case '?':{
-                throw new IllegalArgumentException("unsupported glob separator "+s);
+    public static Pattern glob(String o,String separators) {
+        if(separators==null || separators.length()==0){
+            separators="/";
+        }
+        for (char s : separators.toCharArray()) {
+            switch (s){
+                case '{':
+                case '}':
+                case '(':
+                case ')':
+                case '<':
+                case '>':
+                case '*':
+                case '?':{
+                    throw new IllegalArgumentException("unsupported glob separator "+s);
+                }
             }
         }
+        char s=separators.charAt(0);
         while (true) {
             if (o.endsWith(s+"**"+s+"*")) {
                 o = o.substring(0, o.length() - 5);
@@ -141,6 +147,7 @@ public class GlobUtils {
         }
         StringBuilder sb = new StringBuilder();
         char[] chars = o.toCharArray();
+        String escapedSeparators = escapeSeparators(separators);
         for (int i = 0; i < chars.length; i++) {
             char c = chars[i];
             switch (c) {
@@ -158,7 +165,7 @@ public class GlobUtils {
                         if (i + 2 < chars.length && chars[i + 2] == s) {
                             i++;
                             if (i + 3 < chars.length) {
-                                sb.append(".*["+s+"]");
+                                sb.append(".*["+ escapedSeparators +"]");
                             } else {
                                 sb.append(".*");
                             }
@@ -167,12 +174,12 @@ public class GlobUtils {
                             sb.append(".*");
                         }
                     } else {
-                        sb.append("[^"+s+"]*");
+                        sb.append("[^"+ escapedSeparators +"]*");
                     }
                     break;
                 }
                 case '?': {
-                    sb.append("[^").append(s).append("]?");
+                    sb.append("[^").append(escapedSeparators).append("]?");
                     break;
                 }
                 default: {
@@ -181,5 +188,21 @@ public class GlobUtils {
             }
         }
         return Pattern.compile(sb.toString());
+    }
+    private static String escapeSeparators(String s){
+        StringBuilder sb=new StringBuilder();
+        for (char c : s.toCharArray()) {
+            switch (c){
+                case '\\':{
+                    sb.append('\\');
+                    sb.append(c);
+                    break;
+                }
+                default:{
+                    sb.append(c);
+                }
+            }
+        }
+        return sb.toString();
     }
 }

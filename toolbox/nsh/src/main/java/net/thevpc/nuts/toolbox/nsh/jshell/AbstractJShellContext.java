@@ -1,9 +1,11 @@
 package net.thevpc.nuts.toolbox.nsh.jshell;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.toolbox.nsh.jshell.util.DirectoryScanner;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -14,9 +16,9 @@ import java.util.List;
 public abstract class AbstractJShellContext implements JShellContext {
 
 
+    private final List<String> args = new ArrayList<>();
     private NutsSession session;
     private String serviceName;
-    private final List<String> args = new ArrayList<>();
 
     @Override
     public InputStream in() {
@@ -91,7 +93,7 @@ public abstract class AbstractJShellContext implements JShellContext {
     @Override
     public JShellContext setOut(PrintStream out) {
         getSession().getTerminal().setOut(
-                NutsPrintStream.of(out,getSession())
+                NutsPrintStream.of(out, getSession())
         );
 //        commandContext.getTerminal().setOut(workspace.createPrintStream(out,
 //                true//formatted
@@ -101,7 +103,7 @@ public abstract class AbstractJShellContext implements JShellContext {
 
     public JShellContext setErr(PrintStream err) {
         getSession().getTerminal().setErr(
-                NutsPrintStream.of(err,getSession())
+                NutsPrintStream.of(err, getSession())
         );
         return this;
     }
@@ -165,7 +167,7 @@ public abstract class AbstractJShellContext implements JShellContext {
                             if (s.length() > 0) {
                                 if (s.startsWith(NutsApplicationContext.AUTO_COMPLETE_CANDIDATE_PREFIX)) {
                                     s = s.substring(NutsApplicationContext.AUTO_COMPLETE_CANDIDATE_PREFIX.length()).trim();
-                                    NutsCommandLine args = NutsCommandLine.of(s,session);
+                                    NutsCommandLine args = NutsCommandLine.of(s, session);
                                     String value = null;
                                     String display = null;
                                     if (args.hasNext()) {
@@ -204,15 +206,15 @@ public abstract class AbstractJShellContext implements JShellContext {
 
     @Override
     public String getAbsolutePath(String path) {
-        if (NutsPath.of(path,getSession()).isAbsolute()) {
-            return getFileSystem().getAbsolutePath(path,getSession());
+        if (NutsPath.of(path, getSession()).isAbsolute()) {
+            return getFileSystem().getAbsolutePath(path, getSession());
         }
-        return getFileSystem().getAbsolutePath(getCwd() + "/" + path,getSession());
+        return getFileSystem().getAbsolutePath(getCwd() + "/" + path, getSession());
     }
 
     @Override
     public String[] expandPaths(String path) {
-        return new DirectoryScanner(path).toArray();
+        return NutsPath.of(path, getSession()).walkGlob().map(NutsFunction.of(NutsPath::toString, "toString")).toArray(String[]::new);
     }
 
     @Override
