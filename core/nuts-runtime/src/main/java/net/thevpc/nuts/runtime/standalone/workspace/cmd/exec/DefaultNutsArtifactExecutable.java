@@ -87,7 +87,9 @@ public class DefaultNutsArtifactExecutable extends AbstractNutsExecutableCommand
                 throw new NutsUnexpectedException(execSession, NutsMessage.cstyle("you must install %s to be able to run it",def.getId()));
             }
         } else if (installStatus.isObsolete()) {
-            session.install().setSession(session).addId(def.getId()).run();
+            if(autoInstall) {
+                session.install().setSession(session).addId(def.getId()).run();
+            }
         }
 //        LinkedHashSet<NutsDependency> reinstall = new LinkedHashSet<>();
 //        NutsDependencyFilter depFilter = NutsDependencyUtils.createJavaRunDependencyFilter(traceSession);

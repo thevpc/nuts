@@ -16,7 +16,6 @@
 ## In the case you are debugging an application called by nuts
 ## you can simply call 'nuts ---jdb your-application' (Please note the 3 dashes preceding jdb)
 ##
-#set -x;
 NUTS_VERSION=0.8.3
 NUTS_JAR=~/.m2/repository/net/thevpc/nuts/nuts/$NUTS_VERSION/nuts-$NUTS_VERSION.jar
 
@@ -76,5 +75,4 @@ elif [ x"${JAVA_HOME}" != "x" ] ; then
     JAVA_CMD="${JAVA_HOME}/bin/java";
 fi
 
-echo $JAVA_CMD $NUTS_DEBUG_ARG -jar "$NUTS_JAR" -w development $*
 $JAVA_CMD $NUTS_DEBUG_ARG -jar "$NUTS_JAR" -w development $*

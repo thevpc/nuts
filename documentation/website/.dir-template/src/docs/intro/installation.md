@@ -87,19 +87,22 @@ wget http://thevpc.net/nuts.jar -qO nuts.jar && java -jar nuts.jar -zyN -r dev &
 
 __for production (using wget):__
 This will reset/delete any previous nuts installation before installing the latest version.
-Removing the `-Z` flag if you do not want to reset the workspace.
+Removing the `Z` modifier (replace `-Zy` by `-y`) flag if you do not want to reset the workspace.
 ```
-NVER=${{stableApiVersion}} && wget https://repo.maven.apache.org/maven2\
-/net/thevpc/nuts/nuts/$NVER/nuts-$NVER.jar && java -jar \
-      nuts-$NVER.jar -Zy && . ~/.bashrc
+$ wget https://repo.maven.apache.org/maven2/net/thevpc/nuts/nuts/\
+    ${{stableApiVersion}}/nuts-${{stableApiVersion}}.jar - qO nuts.jar
+$ java -jar nuts.jar -Zy
+$ exit
 ```
 
 __for production (using curl):__
 This will reset/delete any previous nuts installation before installing the latest version.
-Removing the `-Z` flag if you do not want to reset the workspace.
+Removing the `Z` modifier (replace `-Zy` by `-y`) flag if you do not want to reset the workspace.
 ```
-NVER=${{stableApiVersion}} && curl -sOL https://repo.maven.apache.org/maven2/net/thevpc/nuts/nuts/$NVER/nuts-$NVER.jar \
-      && java -jar nuts-$NVER.jar -Zy && . ~/.bashrc
+$ curl -sOL https://repo.maven.apache.org/maven2/net/thevpc/nuts/nuts/\
+    ${{stableApiVersion}}/nuts-$NVER.jar -o nuts-$NVER.jar
+$ java -jar nuts-$NVER.jar -Zy
+$ exit
 ```
 
 Linux Systems installation is based on bash shell. First launch will configure "~/.bashrc" so that **nuts** and other companion tool commands will be available in any future terminal instances.
@@ -118,8 +121,10 @@ Any bash terminal application is a nuts-aware terminal.
 <TabItem value="macos">
 
 ```
-NVER=${{stableApiVersion}} && curl -sOL https://repo.maven.apache.org/maven2/net/thevpc/nuts/nuts/$NVER/nuts-$NVER.jar \
-      && java -jar nuts-$NVER.jar -Zy
+$ curl -sOL https://repo.maven.apache.org/maven2/net/thevpc/nuts/nuts/\
+    ${{stableApiVersion}}/nuts-$NVER.jar -o nuts-$NVER.jar
+$ java -jar nuts-$NVER.jar -Zy
+$ exit
 ```
 
 MacOS Systems installation is based on **bash** shell. First launch will configure "~/.bashrc" so that **nuts** and other companion tool commands will be available in any future terminal instances.
@@ -151,9 +156,10 @@ Any bash terminal application is a nuts-aware terminal.
 <TabItem value="curl">
 
 ```
-NVER=${{stableApiVersion}} && wget https://repo.maven.apache.org/maven2\
-/net/thevpc/nuts/nuts/$NVER/nuts-$NVER.jar && java -jar \
-      nuts-$NVER.jar -Zy && . ~/.bashrc
+$ curl -sOL https://repo.maven.apache.org/maven2/net/thevpc/nuts/nuts/\
+    ${{stableApiVersion}}/nuts-$NVER.jar -o nuts-$NVER.jar
+$ java -jar nuts-$NVER.jar -Zy
+$ exit
 ```
 :::tip
 

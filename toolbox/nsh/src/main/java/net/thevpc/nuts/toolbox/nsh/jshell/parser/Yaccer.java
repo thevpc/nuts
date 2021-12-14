@@ -1142,6 +1142,12 @@ public class Yaccer {
                 sb.append(evalNodeString(node, context));
             }
             String value = sb.toString();
+            if(value.equals("~")){
+                value=context.getCwd();
+            }else if(value.startsWith("~/") || value.startsWith("~\\")){
+                String c = context.getCwd();
+                value = c + value.substring(1);
+            }
             boolean wasAntiSlash = false;
             boolean applyWildCard = false;
             StringBuilder sb2 = new StringBuilder();

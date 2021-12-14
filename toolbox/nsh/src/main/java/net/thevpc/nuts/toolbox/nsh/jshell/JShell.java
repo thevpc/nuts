@@ -75,7 +75,7 @@ public class JShell {
     private NutsId appId = null;
 
     public JShell(NutsApplicationContext appContext, String[] args) {
-        this(appContext, null, null, args);
+        this(appContext, appContext.getAppId(), appContext.getAppId().getArtifactId(), args);
     }
 
     public JShell(NutsSession session, String[] args) {
@@ -83,7 +83,7 @@ public class JShell {
     }
 
     public JShell(NutsSession session, NutsId appId, String[] args) {
-        this(NutsApplicationContext.of(new String[]{}, 0, Nsh.class, null, session), appId, null, args);
+        this(NutsApplicationContext.of(new String[]{}, 0, Nsh.class, null, session), appId, appId==null?null:appId.getArtifactId(), args);
     }
 
     public JShell(NutsSession session, NutsId appId, String serviceName, String[] args) {
@@ -128,7 +128,7 @@ public class JShell {
         _rootContext.getUserProperties().put(JShellContext.class.getName(), _rootContext);
         try {
             histFile = ws.locations().getStoreLocation(this.appId,
-                            NutsStoreLocation.VAR).resolve(serviceName + ".history");
+                            NutsStoreLocation.VAR).resolve((serviceName==null?"":serviceName) + ".history");
             hist.setHistoryFile(histFile);
             if (histFile.exists()) {
                 hist.load(histFile);

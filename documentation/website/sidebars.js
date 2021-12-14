@@ -4,6 +4,7 @@ module.exports = {
          'intro/introduction',
          'intro/nutsAndMaven',
          'intro/installation',
+         'intro/tutorial',
          'intro/license',
          'intro/changelog',
       ],

@@ -38,7 +38,6 @@ It should show a result in the format : nuts-api-version/nuts-impl-version
 
 ## Installing Nuts (Development, recommended for testing)
 
-The very same procedure applies whether you already have an existing version of nuts installed or not.
 If you want to install (or update from existing rolling version) you just need to do the following.
 Please that nuts rolling version (which is the most recent version) is quite stable and you can use it for personal usage, for development or for testing but we recommend you consider official versions for production systems.
 
@@ -48,10 +47,10 @@ First you need to download nuts.jar
 wget http://thevpc.net/nuts.jar -O nuts.jar
 ```
 
-Then you must run, in a terminal, the following command. This will install or update nuts bootstrap binaries.
+Then you must run, in a terminal, the following command.
 
 ```
-java -jar nuts.jar -Zy -r=dev
+java -jar nuts.jar -Zy -r=dev 
 ```
 
 That’s it, now you must relaunch the terminal window (close the terminal and start it again).
@@ -75,15 +74,25 @@ wget http://thevpc.net/nuts-stable.jar -O nuts.jar
 ```
 
 
-Then you must run, in a terminal, the following command. This will install or update nuts bootstrap binaries.
+Then you must run, in a terminal, one of the the following commands. 
 
+Run this command to reset the configuration or when you are installing the very first time
 ```
 java -jar nuts.jar -Zy
+```
+
+Or run this command when you want to reinstall nuts from scratch without resetting the configuration
+```
+java -jar nuts.jar -Ny
 ```
 
 That’s it, now you must relaunch the terminal window (close the terminal and start it again).
 
 The following command should show you the actual version
+
+```
+nuts version
+```
 
 ## Updating from previously installed version
 

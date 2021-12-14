@@ -15,7 +15,6 @@ import java.util.logging.Logger;
 
 public class Nsh implements NutsApplication {
 
-    public static final Logger LOG = Logger.getLogger(Nsh.class.getName());
     private static final HashSet<String> CONTEXTUAL_BUILTINS = new HashSet<>(Arrays.asList(
             "showerr", "cd", "set", "unset", "enable",
             "login", "logout", "help", "version", "alias",
@@ -28,13 +27,14 @@ public class Nsh implements NutsApplication {
 
     @Override
     public void onInstallApplication(NutsApplicationContext applicationContext) {
-        LOG.log(Level.FINER, "[nsh] Installation...");
+        NutsLoggerOp log = NutsLoggerOp.of(Nsh.class, applicationContext.getSession());
+        log.level(Level.CONFIG).verb(NutsLogVerb.START).log(NutsMessage.plain("[nsh] Installation..."));
         NutsCommandLine cmd = applicationContext.getCommandLine()
                 .setCommandName("nsh --nuts-exec-mode=install");
         NutsSession session = applicationContext.getSession();
         cmd.process(session, NutsCommandLineProcessor.NOP);
         if (session.isTrace() || session.isYes()) {
-            LOG.log(Level.FINER, "[nsh] activating options trace={0} yes={1}", new Object[]{session.isTrace(), session.isYes()});
+            log.level(Level.CONFIG).verb(NutsLogVerb.INFO).log(NutsMessage.jstyle("[nsh] activating options trace={0} yes={1}", session.isTrace(), session.isYes()));
         }
         //id will not include version or
         String nshIdStr = applicationContext.getAppId().getShortName();
@@ -77,14 +77,12 @@ public class Nsh implements NutsApplication {
         }
 
         if (firstInstalled.size() > 0) {
-            LOG.log(Level.FINER, "[nsh] registered {0} nsh commands : {1}", new Object[]{firstInstalled.size(),
-                    String.join(", ", firstInstalled)
-            });
+            log.level(Level.CONFIG).verb(NutsLogVerb.INFO).log(NutsMessage.jstyle("[nsh] registered {0} nsh commands : {1}", firstInstalled.size(),
+                    String.join(", ", firstInstalled)));
         }
         if (reinstalled.size() > 0) {
-            LOG.log(Level.FINER, "[nsh] re-registered {0} nsh commands : {1}", new Object[]{reinstalled.size(),
-                    String.join(", ", reinstalled)
-            });
+            log.level(Level.CONFIG).verb(NutsLogVerb.INFO).log(NutsMessage.jstyle("[nsh] re-registered {0} nsh commands : {1}", reinstalled.size(),
+                    String.join(", ", reinstalled)));
         }
         if (session.isPlainTrace()) {
             NutsTexts factory = NutsTexts.of(session);
@@ -117,7 +115,8 @@ public class Nsh implements NutsApplication {
 
     @Override
     public void onUpdateApplication(NutsApplicationContext applicationContext) {
-        LOG.log(Level.FINER, "[nsh] update...");
+        NutsLoggerOp log = NutsLoggerOp.of(Nsh.class, applicationContext.getSession());
+        log.level(Level.CONFIG).verb(NutsLogVerb.INFO).log(NutsMessage.jstyle("[nsh] update..."));
         NutsVersion currentVersion = applicationContext.getAppVersion();
         NutsVersion previousVersion = applicationContext.getAppPreviousVersion();
         onInstallApplication(applicationContext);
@@ -125,7 +124,8 @@ public class Nsh implements NutsApplication {
 
     @Override
     public void onUninstallApplication(NutsApplicationContext applicationContext) {
-        LOG.log(Level.FINER, "[nsh] uninstallation...");
+        NutsLoggerOp log = NutsLoggerOp.of(Nsh.class, applicationContext.getSession());
+        log.level(Level.CONFIG).verb(NutsLogVerb.INFO).log(NutsMessage.jstyle("[nsh] uninstallation..."));
         try {
             NutsSession session = applicationContext.getSession();
             try {
