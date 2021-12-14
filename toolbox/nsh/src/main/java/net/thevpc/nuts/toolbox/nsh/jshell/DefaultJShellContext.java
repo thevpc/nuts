@@ -166,6 +166,11 @@ public class DefaultJShellContext extends AbstractJShellContext {
     }
 
     @Override
+    public String getHome() {
+        return System.getProperty("user.home");
+    }
+
+    @Override
     public void setCwd(String cwd) {
         JShellFileSystem fs = getFileSystem();
         if (cwd == null || cwd.isEmpty()) {

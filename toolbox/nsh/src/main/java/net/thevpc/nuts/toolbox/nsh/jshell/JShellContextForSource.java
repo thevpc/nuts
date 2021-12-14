@@ -81,6 +81,11 @@ public class JShellContextForSource extends AbstractJShellContext{
     }
 
     @Override
+    public String getHome() {
+        return other.getHome();
+    }
+
+    @Override
     public void setCwd(String cwd) {
         other.setCwd(cwd);
     }

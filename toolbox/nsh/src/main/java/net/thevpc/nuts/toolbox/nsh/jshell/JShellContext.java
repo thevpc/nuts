@@ -56,6 +56,8 @@ public interface JShellContext {
 
     String getCwd();
 
+    String getHome();
+
     void setCwd(String cwd);
 
     JShellFileSystem getFileSystem();

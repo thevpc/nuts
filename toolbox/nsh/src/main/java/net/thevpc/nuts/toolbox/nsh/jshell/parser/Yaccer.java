@@ -1143,9 +1143,9 @@ public class Yaccer {
             }
             String value = sb.toString();
             if(value.equals("~")){
-                value=context.getCwd();
+                value=context.getHome();
             }else if(value.startsWith("~/") || value.startsWith("~\\")){
-                String c = context.getCwd();
+                String c = context.getHome();
                 value = c + value.substring(1);
             }
             boolean wasAntiSlash = false;
