@@ -1,4 +1,4 @@
-= nuts
+= nuts, the Java Package Manager
 :pdf-page-size: 9in x 6in
 :source-highlighter: pygments
 :icons: font
@@ -19,11 +19,13 @@
 {zwsp} +
 
 [.text-center]
-The Java Package Manager
+https://github.com/thevpc/nuts (git repo)
 
 [.text-center]
-http://github.com/thevpc/nuts
+https://thevpc.github.io/nuts  (website)
 
+[.text-center]
+thevpc, 2021-12-13
 
 :toc:
 :toclevels: 4
@@ -179,8 +181,8 @@ image::images/maven-dependencies-jar.png[]
 ** Rewrites classes/resources
 ** Simpler than `maven-assembly-plugin`
 
-image::images/assembly-xml.png[]
-image::images/assembly-jar.png[]
+image::images/assembly-xml.png[scaledwidth=80%]
+image::images/assembly-jar.png[scaledwidth=80%]
 
 
 <<<
@@ -195,8 +197,8 @@ image::images/assembly-jar.png[]
 ** Adds bootstrap classes
 ** Changes classloader
 
-image::images/spring-boot-xml.png[]
-image::images/spring-boot-jar.png[]
+image::images/spring-boot-xml.png[scaledwidth=80%]
+image::images/spring-boot-jar.png[scaledwidth=80%]
 
 <<<
 
@@ -223,16 +225,13 @@ Main Idea:
 
 === nuts: A Package Manager for Java
 
-Is:
-
 * Centralized package manager for Java Apps and Libs (not only)
-**  `install`,  `uninstall`,  `update` `search` and `exec` for packages
+**  `install`,  `uninstall`,  `update`, `search` and `exec` for packages
 ** Optimized dependency resolution solver
 ** Cache for dependencies across installed apps
 * Automation/devops friendly commandline tool
-* Developed in java
-* Portable across OSes, Architectures, Desktop Environments
-* Libre and Open Source
+* Portable across Architectures, OSes,  OS Distibs, Desktop Environments, Platforms (Java versions)
+* Libre and Open Source, developed in java
 
 <<<
 
@@ -240,8 +239,8 @@ Is:
 
 Is Not:
 
-* a replacement for `maven`, `gradle` or any build tool
-* a plugin for `maven`, `gradle` or any build tool
+* a replacement for `maven`, `gradle` or any build tool (used at deploy time)
+* a plugin for `maven`, `gradle` or any build tool (do not change the build process)
 * a replacement for `spring` framework or any other framework
 * a replacement for `IzPack` or `InstallAnywhere` (but can do pretty much of it)
 * a replacement for `ansible` or `chef` (but is conceptually driven by automation)
@@ -249,40 +248,81 @@ Is Not:
 
 <<<
 
-=== nuts: Unique features
+=== nuts: Maven & Gradle
+
+* Integrates seamlessly with `maven`
+** No required modification of the build process
+** Does not alter/rewrite the package
+** No special `maven`/`gradle` plugin needed
+* Supports local Jars, public packages (maven central), and private packages (local .m2, nexus repos,...)
+* Solves at runtime what `maven`/`gradle` solve at build time
+** Supports `maven` and `gradle` dependency resolution algorithms, scopes, ...
+
+<<<
+
+=== nuts: Dependency Optimization
+
+* Downloads, Caches and Installs only relevant dependencies according to
+** `arch` (hardware architecture: x86, x64, relevant for native dependencies)
+** `os` (operating system: Win/Linux/Mac, relevant for specific tasks)
+** `osDist` (operating distribution : Ubuntu/OpenSuse,...)
+** `desktop` (desktop environment, relevant for icon/shortcut creation and environment integration)
+** `platform` (java SE versions installed to know what dependencies to use)
+
+<<<
+
+=== nuts: Integration
 
 * Solid integration with environments
 ** Uses OS's File System Layouts (XDG for Linux, ...)
+*** separate folders per app
+*** separate folders for log, config, lib, cache, etc.
+*** portable across OSes (~/.config versus ~/AppData)
 ** Supports cmdline and gui apps (installs scripts, icons, menus, ...)
-** Download/Caches/Installs only relevant dependencies (according to arch ...)
-* Integrates seamlessly with `maven`
-** No required modification of the build process
-** No special `maven`/`gradle` plugin needed
-** Does not alter/rewrite the package
+** Supports `jar` and `zip` based apps
+** Supports KDE/Gnome
+
+<<<
+
+=== nuts: Toolbox
+
+** Terminal Coloring on Linux/Windows
+** Supports Windows `cmd`/`PowerShell` and *NIX `sh`, `bash`, `csh`, `zsh` and `fish` and their relative `rcfiles`
+** Bundles a `bash`/`GNU binutils` compatible (still incomplete) but **enhanced** java implementations
+*** ls, cp, touch, mkdir, rmdir, ...
+*** works on windows
+*** adds some extra goodies (ssh, json, support ...)
+
+<<<
+
+=== nuts: Existing Apps
+
+* Supports out of the box
+** `maven` 's repos (including central, spring, google, ...), more than 7M dependencies
+** Apache repos (`netbeans`, `tomcat`, `derby`, etc...)
+
+<<<
+
+=== nuts: Automation
+* Powerful toolbox with customizable output formats
+** `props`
+** `xml`
+** `json`
+** `yaml`
+** `table`
+** `tree`
+* *enhanced* shell with `json`  (and other) support (`nsh`)
 
 <<<
 
 === nuts: Unique features
-* Solves at runtime what `maven`/`gradle` solve at build time
-** Supports `maven` and `gradle` dependency resolution algorithms, scopes, ...
-* Supports out of the box
-** `maven` 's repos (including central, spring, google, ...)
-** Apache repos
-** Powerful toolbox with `props`, `xml`, `json`, `yaml`, `table`, `tree`, ... output formats
-** Bundles a `bash`/`GNU binutils` compatible (still incomplete) but **enhanced** java implementations
 * Is statically built and has (almost) no dependencies
-
-
-<<<
-
-=== 'nuts'... really?
-
-* `N` etwork   `U` pdatable   `T` hings `S`   ervices
-* The `nuts` (fool) companion for the `maven` (sage)
+* Can be used as a library to support transitive classPath resolver
+* Has a clean and rich API
 
 <<<
 
-=== nuts stability
+=== nuts: Stability
 
 * Tested:
 ** over 140 regression tests with 3500+ lines of test-code in the repository.
@@ -291,11 +331,47 @@ Is Not:
 
 <<<
 
+=== 'nuts'... really?
+
+* `N` etwork   `U` pdatable   `T` hings `S`   ervices
+* The `nuts` (fool) companion for the `maven` (sage)
+
+
+<<<
+
 == Demonstration
+
+=== Install Nuts
+
+1. Download `nuts.jar`
+2. run `java -jar nuts.jar -Zy`
+3. restart your terminal
+
+<<<
+
+=== Install Nuts (Linux)
+
+* Install for Test/Evaluation, most `recent`
+
+```sh
+wget https://thevpc.net/nuts.jar -o nuts.jar && java -jar nuts.jar -Zy
+```
+
+* Install for Production (one line!), most `stable`
+
+```sh
+wget https://repo.maven.apache.org/maven2/net/thevpc/nuts/nuts/0.8.3/nuts-0.8.3.jar \
+-O nuts.jar && java -jar nuts.jar -Zy
+```
+
+* In all cases, do not forget to `restart` your terminal
+
+<<<
 
 === Run the app
 
-* We can just run the app, with no modification
+* We just run the app, with no modification
+* We use the built (by maven) jar
 
 image::images/nuts-simple-run.png[]
 
@@ -304,6 +380,7 @@ image::images/nuts-simple-run.png[]
 === Demonstration : Install Application
 
 * Or we can install the app (and its `required` dependencies)
+* And then we run it
 
 image::images/nuts-simple-install.png[]
 
@@ -311,31 +388,77 @@ image::images/nuts-simple-install.png[]
 
 === Install Gui App
 
-image::images/nuts-install-pnote.png[]
-image::images/nuts-install-pnote-icon.png[scaledwidth=40%]
+* We can run a gui app of course, and create a shortcut for it:
+
+image::images/nuts-install-pnote.png[scaledwidth=100%]
 
 <<<
 
 === Search for available applications
+* We can search for installed or available (local/remote) apps
+* We can search for apps and/or libs
 
-image::images/nuts-search.png[]
+image::images/nuts-search.png[scaledwidth=80%]
 
 <<<
 
-=== Integration And Formats
+=== Repositories
+* We can configure Repositories used to install/update packages
+* We can list Repositories used to install/update packages
 
-image::images/nuts-simple-format.png[]
+image::images/nuts-list-repos.png[scaledwidth=60%]
+
+<<<
+
+=== Integration and Formats
+* using `--json`,  `--xml`, `--props`, `--props` , `--table`  , `--tree` for any command will customize output
+
+image::images/nuts-simple-format.png[scaledwidth=80%]
 
 <<<
 
 === Companions
+* We can use `nsh` instead of `bash` / `cmd` and make usage of `json` support out of the box
 
-image::images/nsh-example.png[]
+image::images/nsh-example.png[scaledwidth=70%]
 
 <<<
 
-=== Bot Mot
+=== Bot Mode
+* Running with `--bot` will disable all interaction and terminal coloring
 
-image::images/nuts-bot.png[scaledwidth=70%]
+image::images/nuts-bot.png[scaledwidth=80%]
 
+<<<
 
+=== Help
+* An extensive help is available from within the command line
+
+image::images/nuts-help.png[scaledwidth=80%]
+
+<<<
+
+=== Conclusion
+
+* `nuts` tries to be for `java` what `npm` is for javascript
+* `nuts` is a versatile toolbox
+* `nuts` is `2800+` classes, `600ko+` boot jar
+* I invite you to
+** Take a shot, try to use it and give feedback
+** Spread the word
+** `Star(*)` the repository https://github.com/thevpc/nuts
+** Join the Core Team to enhance `nuts`
+
+<<<
+
+[.text-center]
+Thank you
+
+[.text-center]
+https://github.com/thevpc/nuts (git repo)
+
+[.text-center]
+https://thevpc.github.io/nuts  (website)
+
+[.text-center]
+contact me (thevpc) taha.bensalah@gmail.com
