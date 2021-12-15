@@ -121,7 +121,7 @@ module.exports = {
     ],
   ],
     customFields: {
-        copyBuildPath:'../docs',
+        copyBuildPath:'../../docs',
         docusaurus: {
             generateSidebarMenu: true
         },
