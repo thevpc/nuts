@@ -549,7 +549,7 @@ public class JShell {
                 .appendCode("sh", "nuts")
                 .append(" shell ")
                 .append("v" + getRootContext().getWorkspace().getRuntimeId().getVersion().toString(), NutsTextStyle.version())
-                .append(" (c) thevpc 2020"));
+                .append(" (c) thevpc 2019-2021"));
     }
 
     protected void executeHelp(JShellContext context) {
@@ -756,9 +756,9 @@ public class JShell {
         if (ws != null) {
             login = ws.security().getCurrentUsername();
         }
-        String prompt = ((login != null && login.length() > 0 && !"anonymous".equals(login)) ? (login + "@") : "");//+ wss;
+        String prompt = ((login != null && login.length() > 0 && !"anonymous".equals(login)) ? (login + "@") : "");
         if (!NutsBlankable.isBlank(getRootContext().getServiceName())) {
-            prompt = prompt + "@" + getRootContext().getServiceName();
+            prompt = prompt + getRootContext().getServiceName();
         }
         prompt += "> ";
         return prompt;

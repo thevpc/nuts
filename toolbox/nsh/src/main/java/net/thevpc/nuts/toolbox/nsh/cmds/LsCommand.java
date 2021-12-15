@@ -37,6 +37,7 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Created by vpc on 1/7/17.
@@ -93,6 +94,8 @@ public class LsCommand extends SimpleJShellBuiltin {
             options.paths.add(context.getShellContext().getAbsolutePath("."));
         }
         NutsSession session = context.getSession();
+        LinkedHashMap<NutsPath, ResultGroup> filesTodos = new LinkedHashMap<>();
+        LinkedHashMap<NutsPath, ResultGroup> foldersTodos = new LinkedHashMap<>();
         for (String path : options.paths) {
             if (NutsBlankable.isBlank(path)) {
                 if (errors == null) {
@@ -121,21 +124,32 @@ public class LsCommand extends SimpleJShellBuiltin {
                 errors.result.put(path, NutsMessage.cstyle("cannot access '%s': No such file or directory", file));
             } else {
                 ResultGroup g = new ResultGroup();
-                success.result.add(g);
                 g.name = path;
                 if (!file.isDirectory() || options.d) {
-                    g.file = build(file);
+                    filesTodos.put(file, g);
                 } else {
-                    g.children = file.list()
-                            .sorted(FILE_SORTER)
-                            .map(this::build, "build")
-                            .filter(
-                                    b -> options.a || !b.hidden,
-                                    "all || !hidden"
-                            )
-                            .toList();
+                    foldersTodos.put(file, g);
                 }
             }
+        }
+        for (Map.Entry<NutsPath, ResultGroup> e : filesTodos.entrySet()) {
+            NutsPath file = e.getKey();
+            ResultGroup g = e.getValue();
+            g.file = build(file);
+            success.result.add(g);
+        }
+        for (Map.Entry<NutsPath, ResultGroup> e : foldersTodos.entrySet()) {
+            NutsPath file = e.getKey();
+            ResultGroup g = e.getValue();
+            g.children = file.list()
+                    .sorted(FILE_SORTER)
+                    .map(this::build, "build")
+                    .filter(
+                            b -> options.a || !b.hidden,
+                            "all || !hidden"
+                    )
+                    .toList();
+            success.result.add(g);
         }
         if (success != null) {
             NutsPrintStream out = session.out();
@@ -155,20 +169,29 @@ public class LsCommand extends SimpleJShellBuiltin {
                 case TABLE: {
                     out.printlnf(success.result.stream()
                             .flatMap(x ->
-                                    x.children.stream().map(y -> {
-                                        Map m = (Map) NutsElements.of(session).destruct(y);
-                                        m.put("group", x.name);
-                                        return m;
-                                    })).collect(Collectors.toList()));
+                                    x.children == null ? Stream.empty() :
+                                            x.children.stream().map(y -> {
+                                                Map m = (Map) NutsElements.of(session).destruct(y);
+                                                m.put("group", x.name);
+                                                return m;
+                                            })).collect(Collectors.toList()));
                     break;
                 }
                 case PLAIN: {
-                    List<ResultItem> s = success.result.stream().flatMap(x -> x.children.stream()).collect(Collectors.toList());
+                    List<ResultItem> s = success.result.stream()
+                            .flatMap(x -> x.children == null ? Stream.empty() : x.children.stream())
+                            .collect(Collectors.toList());
+                    boolean first = true;
                     for (ResultGroup resultGroup : success.result) {
+                        boolean wasFirst = first;
+                        first = false;
                         if (resultGroup.children != null) {
-                            if (s.size() > 1) {
-                                out.printf("%s:\n", resultGroup.name);
+                            if (!wasFirst) {
+                                out.println();
                             }
+                            //if (s.size() > 1) {
+                            out.printf("%s:\n", resultGroup.name);
+                            //}
                             for (ResultItem resultItem : resultGroup.children) {
                                 printPlain(resultItem, options, out, session);
                             }
@@ -197,23 +220,11 @@ public class LsCommand extends SimpleJShellBuiltin {
 
     private void printPlain(ResultItem item, Options options, NutsPrintStream out, NutsSession session) {
         if (options.l) {
-            out.print(item.type);
-            out.print(item.uperms != null ? item.uperms : item.jperms);
-            out.print(" ");
-            out.print(" ");
-
-            out.printf("%s", item.owner);
-            out.print(" ");
-            out.printf("%s", item.group);
-            out.print(" ");
-            if (options.h) {
-                out.printf("%s", options.byteFormat.format(item.length));
-            } else {
-                out.printf("%s", String.format("%9d", item.length));
-            }
-            out.print(" ");
-            out.printf("%s", SIMPLE_DATE_FORMAT.format(item.modified));
-            out.print(" ");
+            out.printf("%s%s  %s %s %s %s ",
+                    item.type, item.uperms != null ? item.uperms : item.jperms, item.owner, item.group,
+                    options.h ? options.byteFormat.format(item.length) : String.format("%9d", item.length),
+                    item.modified == null ? "" : SIMPLE_DATE_FORMAT.format(item.modified)
+            );
         }
         String name = NutsPath.of(item.path, session).getName();
         NutsTexts text = NutsTexts.of(session);
