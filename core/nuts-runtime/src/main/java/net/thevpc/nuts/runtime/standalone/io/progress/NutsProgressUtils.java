@@ -42,7 +42,7 @@ public class NutsProgressUtils {
     }
 
     public static boolean acceptMonitoring(NutsSession session) {
-        // DefaultNutsStreamProgressMonitor is enable only if plain output
+        // DefaultNutsStreamProgressMonitor is enabled only if plain output
         // so it is disable in json, xml, table, ...
         if (!session.isPlainOut()) {
             return false;
@@ -53,13 +53,13 @@ public class NutsProgressUtils {
         Object o = session.getProperty("monitor-allowed");
         NutsWorkspace ws = session.getWorkspace();
         if (o != null) {
-            o = NutsCommandLine.of(new String[]{String.valueOf(o)}, session).next().toElement().getBoolean();
+            o = NutsUtilStrings.parseBoolean(String.valueOf(o),null,null);
         }
         boolean monitorable = true;
         if (o instanceof Boolean) {
             monitorable = ((Boolean) o).booleanValue();
         }
-        if (!session.boot().getBootCustomBoolArgument(false, false, false, "---monitor.enabled")) {
+        if (!session.boot().getBootCustomBoolArgument(false, false, false, "---monitor")) {
             monitorable = false;
         }
         if (ws instanceof DefaultNutsWorkspace) {
