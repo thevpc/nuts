@@ -413,15 +413,6 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
                     }
                     return true;
                 }
-                case "-C":
-                case "--no-color": {
-                    a = cmdLine.nextBoolean();
-                    if (active) {
-                        getTerminal().setOut(getTerminal().out().setMode(NutsTerminalMode.FILTERED));
-                        getTerminal().setErr(getTerminal().err().setMode(NutsTerminalMode.FILTERED));
-                    }
-                    return true;
-                }
                 case "-B":
                 case "--bot": {
                     a = cmdLine.nextBoolean();
