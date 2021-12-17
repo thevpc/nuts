@@ -178,9 +178,6 @@ public class LsCommand extends SimpleJShellBuiltin {
                     break;
                 }
                 case PLAIN: {
-                    List<ResultItem> s = success.result.stream()
-                            .flatMap(x -> x.children == null ? Stream.empty() : x.children.stream())
-                            .collect(Collectors.toList());
                     boolean first = true;
                     for (ResultGroup resultGroup : success.result) {
                         boolean wasFirst = first;
@@ -189,9 +186,9 @@ public class LsCommand extends SimpleJShellBuiltin {
                             if (!wasFirst) {
                                 out.println();
                             }
-                            //if (s.size() > 1) {
-                            out.printf("%s:\n", resultGroup.name);
-                            //}
+                            if (options.paths.size() > 1) {
+                                out.printf("%s:\n", resultGroup.name);
+                            }
                             for (ResultItem resultItem : resultGroup.children) {
                                 printPlain(resultItem, options, out, session);
                             }
@@ -221,7 +218,7 @@ public class LsCommand extends SimpleJShellBuiltin {
     private void printPlain(ResultItem item, Options options, NutsPrintStream out, NutsSession session) {
         if (options.l) {
             out.printf("%s%s  %s %s %s %s ",
-                    item.type, item.uperms != null ? item.uperms : item.jperms, item.owner, item.group,
+                    item.type, item.uperms != null ? item.uperms : item.jperms, NutsUtilStrings.trim(item.owner), NutsUtilStrings.trim(item.group),
                     options.h ? options.byteFormat.format(item.length) : String.format("%9d", item.length),
                     item.modified == null ? "" : SIMPLE_DATE_FORMAT.format(item.modified)
             );
