@@ -10,7 +10,7 @@
  * to share shell scripts and other 'things' . Its based on an extensible
  * architecture to help supporting a large range of sub managers / repositories.
  * <br>
- * Copyright (C) 2016-2020 thevpc
+ * Copyright (C) 2016-2022 thevpc
  * <br>
  *
  * Copyright [2020] [thevpc]
