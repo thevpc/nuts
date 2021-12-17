@@ -185,6 +185,9 @@ public class CoreNutsWorkspaceOptionsFormat implements NutsWorkspaceOptionsForma
             if (apiVersionObj == null || apiVersionObj.compareTo("0.8.1") >= 0) {
                 fillOption("--theme", null, options.getTheme(), arguments, false);
             }
+            if (apiVersionObj == null || apiVersionObj.compareTo("0.8.1") >= 0) {
+                fillOption("--locale", "-L", options.getLocale(), arguments, false);
+            }
         }
 
         if (createOptions || isImplicitAll()) {
@@ -237,9 +240,6 @@ public class CoreNutsWorkspaceOptionsFormat implements NutsWorkspaceOptionsForma
             fillOption("--reset", "-Z", options.isReset(), false, arguments, false);
             fillOption("--recover", "-z", options.isRecover(), false, arguments, false);
             fillOption("--dry", "-D", options.isDry(), false, arguments, false);
-            if (apiVersionObj == null || apiVersionObj.compareTo("0.8.1") >= 0) {
-                fillOption("--locale", "-L", options.getLocale(), arguments, false);
-            }
             if (!omitDefaults || options.getExecutorOptions().length > 0) {
                 arguments.add(selectOptionName("--exec", "-e"));
             }
