@@ -40,33 +40,4 @@ public class NutsProgressUtils {
         }
         return !session.isBot() && parseProgressOptions(session).isEnabled();
     }
-
-    public static boolean acceptMonitoring(NutsSession session) {
-        // DefaultNutsStreamProgressMonitor is enabled only if plain output
-        // so it is disable in json, xml, table, ...
-        if (!session.isPlainOut()) {
-            return false;
-        }
-        if (!acceptProgress(session)) {
-            return false;
-        }
-        Object o = session.getProperty("monitor-allowed");
-        NutsWorkspace ws = session.getWorkspace();
-        if (o != null) {
-            o = NutsUtilStrings.parseBoolean(String.valueOf(o),null,null);
-        }
-        boolean monitorable = true;
-        if (o instanceof Boolean) {
-            monitorable = ((Boolean) o).booleanValue();
-        }
-        if (!session.boot().getBootCustomBoolArgument(false, false, false, "---monitor")) {
-            monitorable = false;
-        }
-        if (ws instanceof DefaultNutsWorkspace) {
-            if (!((DefaultNutsWorkspace) ws).LOG.isLoggable(Level.INFO)) {
-                monitorable = false;
-            }
-        }
-        return monitorable;
-    }
 }

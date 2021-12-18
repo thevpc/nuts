@@ -14,7 +14,7 @@ public class DefaultNutsInputStreamProgressFactory implements NutsProgressFactor
     }
 
     public boolean acceptMonitoring(Object source, Object sourceOrigin, NutsSession session) {
-        if (!NutsProgressUtils.acceptMonitoring(session)) {
+        if (!NutsProgressUtils.acceptProgress(session)) {
             return false;
         }
         if (sourceOrigin instanceof NutsId) {

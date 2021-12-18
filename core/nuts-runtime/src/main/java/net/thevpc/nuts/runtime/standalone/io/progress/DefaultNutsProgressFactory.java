@@ -14,7 +14,7 @@ public class DefaultNutsProgressFactory implements NutsProgressFactory {
     }
 
     public boolean acceptMonitoring(Object source, Object sourceOrigin, NutsSession session) {
-        if (!NutsProgressUtils.acceptMonitoring(session)) {
+        if (!NutsProgressUtils.acceptProgress(session)) {
             return false;
         }
         return true;
