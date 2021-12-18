@@ -59,8 +59,8 @@ thevpc, 2021-12-13
 
 * `maven`, `gradle`
 ** Build tools
-** Manage packaging and dependencies
-** Poor deployment management (`maven` 's `deploy` is a build time stage)
+** Dependency-management tools
+** Poor package/deployment management (`maven` 's `deploy` is a build time stage)
 ** Lack of deployment lifecycle (install/uninstall/update)
 
 <<<
@@ -445,8 +445,8 @@ image::images/nuts-help.png[scaledwidth=80%]
 * `nuts` is `2800+` classes, `600ko+` boot jar
 * I invite you to
 ** Take a shot, try to use it and give feedback
-** Spread the word
 ** `Star(*)` the repository https://github.com/thevpc/nuts
+** Spread the word
 ** Join the Core Team to enhance `nuts`
 
 <<<
