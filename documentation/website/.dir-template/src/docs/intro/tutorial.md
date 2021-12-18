@@ -2,7 +2,7 @@
 id: tutorial
 title: Tutorial
 sidebar_label: Tutorial
-order: 3
+order: 5
 ---
 
 import Tabs from '@theme/Tabs';

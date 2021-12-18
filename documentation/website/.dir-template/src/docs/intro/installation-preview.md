@@ -1,7 +1,7 @@
 ---
-id: installation
-title: Installation
-sidebar_label: Installation
+id: installation-preview
+title: Installation (Preview Mode)
+sidebar_label: Installation (Dev Mode)
 order: 3
 ---
 
@@ -10,12 +10,13 @@ import TabItem from '@theme/TabItem';
 
 ${{include($"${resources}/header.md")}}
 
+Installation of `nuts` for preview/test/evaluation or simply for personal use is based on a rolling `nuts` binaries version that is released a faster pace than the production version (generally a semi-monthly schedule). Versions are not rock solid but still they are "very" usable and more importantly they include all latest features. Preview releases are deployed to a development repository and hence are made accessible using a repository swith option.
 
 ## System Requirements
 
 Here are all **```nuts```** requirements :
 
-- **Java** : **```nuts```** requires a valid Java Runtime Environment (JRE) or Java Development Kit (JDK) version **8** or above to execute.
+- **Java** : **```nuts```** requires a valid Java Runtime Environment (JRE) or Java Development Kit (JDK) version **8** or above to execute. Please note that you need to update your 1.8 version to the latest update (update 150+)
 - **System Memory**: **```nuts```** memory footprint is very little and has no minimum RAM requirements.
 - **Disk**: 2.5Mo on the disk are required for the **```nuts```** installation itself. In addition to that, additional disk space will be used for your local Nuts workspace. The size of your local workspace will vary depending on usage but expect at least 500MB.
 - **Operating System**: **```nuts```** is able to run on any java enabled Operating System including all recent versions of Windows, Linux and MacOS.
@@ -75,40 +76,22 @@ Any of the created shortcuts for windows is a nuts-aware terminal.
 <TabItem value="linux">
 
 __for testing or development (using wget):__
-When you are using **nuts** for the first time or you want to reset any previous installation:
-```
-wget http://thevpc.net/nuts.jar -qO nuts.jar && java -jar nuts.jar -Zy -r==dev,maven-central && . ~/.bashrc
-```
-
-When you are re-using a previous **nuts** workspace:
-```
-wget http://thevpc.net/nuts.jar -qO nuts.jar && java -jar nuts.jar -zyN -r dev && . ~/.bashrc
-```
-
-__for production (using wget):__
 This will reset/delete any previous nuts installation before installing the latest version.
 Removing the `Z` modifier (replace `-Zy` by `-y`) flag if you do not want to reset the workspace.
+
 ```
-$ wget https://repo.maven.apache.org/maven2/net/thevpc/nuts/nuts/\
-    ${{stableApiVersion}}/nuts-${{stableApiVersion}}.jar - qO nuts.jar
-$ java -jar nuts.jar -Zy
+$ wget http://thevpc.net/nuts.jar -qO nuts.jar
+$ java -jar nuts.jar -r=dev,maven-central -Zy
 $ exit
 ```
 
-__for production (using curl):__
-This will reset/delete any previous nuts installation before installing the latest version.
-Removing the `Z` modifier (replace `-Zy` by `-y`) flag if you do not want to reset the workspace.
-```
-$ curl -sOL https://repo.maven.apache.org/maven2/net/thevpc/nuts/nuts/\
-    ${{stableApiVersion}}/nuts-$NVER.jar -o nuts-$NVER.jar
-$ java -jar nuts-$NVER.jar -Zy
-$ exit
-```
+Note that `-r=dev` is sufficient for nuts installation, however, most of the time, you will need
+`maven-central` later when you try to install other java applications.
 
 Linux Systems installation is based on bash shell. First launch will configure "~/.bashrc" so that **nuts** and other companion tool commands will be available in any future terminal instances.
 Using **```nuts```** on unix-like system should be seamless. A simple bash terminal (Gnome Terminal, KDE Konsole,...) is already a nuts-aware terminal.
 
-All Linux versions and distributions should work with or without XWindow (or equivalent). Graphical system is required only if you plan to run a gui application using **nuts**.
+All Linux versions and distributions should work with or without X Window (or equivalent). Graphical system is required only if you plan to run a gui application using **nuts**.
 All tests where performed on OpenSuse Tumbleweed.
 
 :::tip
@@ -121,9 +104,8 @@ Any bash terminal application is a nuts-aware terminal.
 <TabItem value="macos">
 
 ```
-$ curl -sOL https://repo.maven.apache.org/maven2/net/thevpc/nuts/nuts/\
-    ${{stableApiVersion}}/nuts-$NVER.jar -o nuts-$NVER.jar
-$ java -jar nuts-$NVER.jar -Zy
+$ curl -sOL http://thevpc.net/nuts.jar -o nuts.jar
+$ java -jar nuts.jar -Zy
 $ exit
 ```
 
@@ -140,9 +122,9 @@ Any bash terminal application is a nuts-aware terminal.
 <TabItem value="wget">
 
 ```
-  NVER=${{apiVersion}} && rm -f nuts-$NVER.jar && wget https://github.com/thevpc/\
-vpc-public-maven/raw/master/net/vpc/app/nuts/nuts/$NVER/nuts-$NVER.jar &&\
-    java -jar nuts-$NVER.jar -y
+$ wget http://thevpc.net/nuts.jar -qO nuts.jar
+$ java -jar nuts.jar -r=dev,maven-central -Zy
+$ exit
 ```
 
 :::tip
@@ -156,11 +138,11 @@ Any bash terminal application is a nuts-aware terminal.
 <TabItem value="curl">
 
 ```
-$ curl -sOL https://repo.maven.apache.org/maven2/net/thevpc/nuts/nuts/\
-    ${{stableApiVersion}}/nuts-$NVER.jar -o nuts-$NVER.jar
-$ java -jar nuts-$NVER.jar -Zy
+$ curl -sOL http://thevpc.net/nuts.jar -o nuts.jar
+$ java -jar nuts.jar -Zy
 $ exit
 ```
+
 :::tip
 
 Any bash terminal application is a nuts-aware terminal.

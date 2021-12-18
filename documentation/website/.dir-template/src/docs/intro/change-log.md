@@ -44,7 +44,6 @@ Starred releases are most stable ones.
 - WARNING: API has evolved with multiple incompatibilities with previous versions  
 - FIXED: Fixed problem that requires reinstalling nuts each time we have a new version
 - FIXED: Fixed some Documentation issues (still fixing)
-- 
 
 ## nuts 0.8.1.0 (PUBLISHED VERSION)
 - ```2021/08/24 	nuts 0.8.1.0 (*)``` released [download nuts-0.8.1.jar](https://repo.maven.apache.org/maven2/net/thevpc/nuts/nuts/0.8.1/nuts-0.8.1.jar)

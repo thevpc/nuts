@@ -4,7 +4,7 @@
 :icons: font
 :icon-set: pf
 :revnumber: v1.0
-:revdate: 2021-11-23
+:revdate: 2021-12-18
 //:revremark: Private use only - (Taha BEN SALAH)
 :appendix-caption: Appx
 :sectnums:
@@ -25,7 +25,7 @@ https://github.com/thevpc/nuts (git repo)
 https://thevpc.github.io/nuts  (website)
 
 [.text-center]
-thevpc, 2021-12-13
+thevpc, 2021-12-18
 
 :toc:
 :toclevels: 4
@@ -215,11 +215,11 @@ image::images/spring-boot-jar.png[scaledwidth=80%]
 
 Main Idea:
 
-* Open Source
-* Simple but extensible Package Manager for Java
-* Good Integration with Java ecosystem and popular build/deploy/devops tools
 * Little to no Intrusion and Backward compatibility to support existing apps and repos
+* Good Integration with Java ecosystem and popular build/deploy/devops tools
 * Solid enough to support multiple platforms
+* Simple but extensible
+* Open Source
 
 <<<
 
@@ -280,7 +280,6 @@ Is Not:
 *** portable across OSes (~/.config versus ~/AppData)
 ** Supports cmdline and gui apps (installs scripts, icons, menus, ...)
 ** Supports `jar` and `zip` based apps
-** Supports KDE/Gnome
 
 <<<
 
@@ -311,7 +310,6 @@ Is Not:
 ** `yaml`
 ** `table`
 ** `tree`
-* *enhanced* shell with `json`  (and other) support (`nsh`)
 
 <<<
 
@@ -351,17 +349,20 @@ Is Not:
 
 === Install Nuts (Linux)
 
-* Install for Test/Evaluation, most `recent`
+* Install for Preview/Evaluation, most `recent`
 
 ```sh
-wget https://thevpc.net/nuts.jar -o nuts.jar && java -jar nuts.jar -Zy
+$ wget https://thevpc.net/nuts.jar -o nuts.jar
+$ java -jar nuts.jar -Zy -r=+dev
+$ exit
 ```
 
-* Install for Production (one line!), most `stable`
+* Install for Production, most `stable`
 
 ```sh
-wget https://repo.maven.apache.org/maven2/net/thevpc/nuts/nuts/0.8.3/nuts-0.8.3.jar \
--O nuts.jar && java -jar nuts.jar -Zy
+$ wget https://repo.maven.apache.org/maven2/net/thevpc/nuts/nuts/0.8.3/nuts-0.8.3.jar -O nuts.jar
+$ java -jar nuts.jar -Zy
+$ exit
 ```
 
 * In all cases, do not forget to `restart` your terminal
@@ -411,7 +412,7 @@ image::images/nuts-list-repos.png[scaledwidth=60%]
 <<<
 
 === Integration and Formats
-* using `--json`,  `--xml`, `--props`, `--props` , `--table`  , `--tree` for any command will customize output
+* using `--json`,  `--xml`, `--props`, `--yaml` , `--table`  , `--tree` for any command will customize output
 
 image::images/nuts-simple-format.png[scaledwidth=80%]
 
@@ -460,5 +461,3 @@ https://github.com/thevpc/nuts (git repo)
 [.text-center]
 https://thevpc.github.io/nuts  (website)
 
-[.text-center]
-contact me (thevpc) taha.bensalah@gmail.com
