@@ -187,7 +187,7 @@ public class DefaultNutsWorkspaceEnvManagerModel {
         List<NutsId> a = new ArrayList<>();
         if (!NutsBlankable.isBlank(_XDG_SESSION_DESKTOP) && !NutsBlankable.isBlank(_XDG_SESSION_DESKTOP)) {
             String[] supportedSessions = new LinkedHashSet<>(
-                    Arrays.stream(_XDG_CURRENT_DESKTOP.trim().split(":"))
+                    Arrays.stream(NutsUtilStrings.trim(_XDG_CURRENT_DESKTOP).split(":"))
                             .map(x -> x.trim().toLowerCase()).filter(x -> x.length() > 0)
                             .collect(Collectors.toList())
             ).toArray(new String[0]);
@@ -210,7 +210,7 @@ public class DefaultNutsWorkspaceEnvManagerModel {
                 if (_XDG_SESSION_TYPE != null) {
                     nb.setProperty("type", _XDG_SESSION_TYPE.trim().toLowerCase());
                 }
-                if (_XDG_SESSION_TYPE != null) {
+                if (_XDG_SESSION_CLASS != null) {
                     nb.setProperty("class", _XDG_SESSION_CLASS.trim().toLowerCase());
                 }
                 a.add(nb.build());
