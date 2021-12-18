@@ -74,11 +74,22 @@ public class DefaultNutsElements extends DefaultFormatBase<NutsElements> impleme
     private Object value;
     private NutsContentType contentType = NutsContentType.JSON;
     private boolean compact;
+    private boolean logProgress;
     private Predicate<Class> indestructibleObjects;
 
     public DefaultNutsElements(NutsSession session) {
         super(session, "element-format");
         this.model = NutsWorkspaceExt.of(session).getModel().textModel;
+    }
+
+
+    public boolean isLogProgress() {
+        return logProgress;
+    }
+
+    public NutsElements setLogProgress(boolean logProgress) {
+        this.logProgress = logProgress;
+        return this;
     }
 
     @Override
@@ -143,6 +154,27 @@ public class DefaultNutsElements extends DefaultFormatBase<NutsElements> impleme
         return parse(NutsPath.of(url,getSession()),clazz);
     }
 
+    private InputStream prepareInputStream(InputStream is,Object origin){
+        if(isLogProgress()){
+            return NutsInputStreamMonitor.of(getSession())
+                    .setSource(is)
+                    .setOrigin(origin)
+                    .setLogProgress(true)
+                    .create();
+        }
+        return is;
+    }
+    private InputStream prepareInputStream(NutsPath path){
+        if(isLogProgress()){
+            return NutsInputStreamMonitor.of(getSession())
+                    .setSource(path)
+                    .setOrigin(path)
+                    .setLogProgress(true)
+                    .create();
+        }
+        return path.getInputStream();
+    }
+
     @Override
     public <T> T parse(NutsPath path, Class<T> clazz) {
         checkSession();
@@ -152,7 +184,7 @@ public class DefaultNutsElements extends DefaultFormatBase<NutsElements> impleme
             case XML:
             case TSON: {
                 try {
-                    try (InputStream is = path.getInputStream()) {
+                    try (InputStream is = prepareInputStream(path)) {
                         return parse(new InputStreamReader(is), clazz);
                     } catch (NutsException ex) {
                         throw ex;
@@ -177,7 +209,7 @@ public class DefaultNutsElements extends DefaultFormatBase<NutsElements> impleme
             case YAML:
             case XML:
             case TSON: {
-                return parse(new InputStreamReader(inputStream), clazz);
+                return parse(new InputStreamReader(prepareInputStream(inputStream,null)), clazz);
             }
         }
         throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("invalid content type %s. Only structured content types are allowed.", contentType));
@@ -205,7 +237,7 @@ public class DefaultNutsElements extends DefaultFormatBase<NutsElements> impleme
             case YAML:
             case XML:
             case TSON: {
-                return parse(new InputStreamReader(new ByteArrayInputStream(bytes)), clazz);
+                return parse(new InputStreamReader(prepareInputStream(new ByteArrayInputStream(bytes),null)), clazz);
             }
         }
         throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("invalid content type %s. Only structured content types are allowed.", contentType));

@@ -37,11 +37,33 @@ public class DefaultNutsCp implements NutsCp {
     private boolean mkdirs;
     private Interruptible interruptibleInstance;
     private final NutsWorkspace ws;
+    private Object sourceOrigin;
+    private String sourceTypeName;
+
+    private NutsMessage actionMessage;
     private Set<NutsPathOption> options=new LinkedHashSet<>();
 
     public DefaultNutsCp(NutsSession session) {
         this.session = session;
         this.ws = session.getWorkspace();
+    }
+
+    public Object getSourceOrigin() {
+        return sourceOrigin;
+    }
+
+    public NutsCp setSourceOrigin(Object sourceOrigin) {
+        this.sourceOrigin = sourceOrigin;
+        return this;
+    }
+
+    public NutsMessage getActionMessage() {
+        return actionMessage;
+    }
+
+    public DefaultNutsCp setActionMessage(NutsMessage actionMessage) {
+        this.actionMessage = actionMessage;
+        return this;
     }
 
     private static Path transformPath(Path f, Path sourceBase, Path targetBase) {
@@ -422,7 +444,8 @@ public class DefaultNutsCp implements NutsCp {
         checkSession();
         NutsSession session = getSession();
         long start = System.currentTimeMillis();
-        NutsProgressMonitor m = CoreIOUtils.createProgressMonitor(CoreIOUtils.MonitorType.DEFAULT, srcBase, srcBase, session, options.contains(NutsPathOption.LOG), getProgressMonitorFactory());
+        Object origin=getSourceOrigin();
+        NutsProgressMonitor m = CoreIOUtils.createProgressMonitor(CoreIOUtils.MonitorType.DEFAULT, srcBase, origin, session, options.contains(NutsPathOption.LOG), getProgressMonitorFactory());
         NutsText srcBaseMessage = NutsTexts.of(session).toText(srcBase);
         m.onStart(new DefaultNutsProgressEvent(srcBase,
                 srcBaseMessage
@@ -575,15 +598,26 @@ public class DefaultNutsCp implements NutsCp {
         if (checker != null && !_target_isPath && !safe) {
             throw new NutsIllegalArgumentException(getSession(), NutsMessage.formatted("unsupported validation if neither safeCopy is armed nor path is defined"));
         }
+        NutsString loggedSrc = _source == null ? null : _source.getStreamMetaData().getFormattedPath();
+        NutsString loggedTarget = target == null ? null : target.getStreamMetaData().getFormattedPath();
+        NutsMessage m = getActionMessage();
+        if(m==null){
+            m=NutsMessage.plain("copy");
+        }
         if (options.contains(NutsPathOption.LOG) || getProgressMonitorFactory() != null) {
+            session.getTerminal().printProgress("%-14s %s to %s",m, loggedSrc,loggedTarget);
+
             NutsInputStreamMonitor monitor = NutsInputStreamMonitor.of(session);
-            NutsString name =null;
-            if (_source.isInputStream()) {
-                InputStream inputStream = _source.getInputStream();
-                monitor.setSource(inputStream);
-            } else {
-                monitor.setSource(_source.getPath());
+            if(_source!=null) {
+                if (_source.isInputStream()) {
+                    InputStream inputStream = _source.getInputStream();
+                    monitor.setSource(inputStream);
+                } else {
+                    monitor.setSource(_source.getPath());
+                }
             }
+            monitor.setOrigin(getSourceOrigin());
+            monitor.setSourceTypeName(getSourceTypeName());
             _source = NutsStreamOrPath.ofAnyInputOrErr(
                     monitor
                     .setProgressFactory(getProgressMonitorFactory())
@@ -592,9 +626,8 @@ public class DefaultNutsCp implements NutsCp {
         }
         NutsLoggerOp lop = _LOGOP(session);
         if(lop.isLoggable(Level.FINEST)) {
-            NutsString loggedSrc = _source == null ? null : _source.getStreamMetaData().getFormattedPath();
-            NutsString loggedTarget = target == null ? null : target.getStreamMetaData().getFormattedPath();
-            lop.level(Level.FINEST).verb(NutsLogVerb.START).log(NutsMessage.jstyle("copy {0} to {1}",
+            lop.level(Level.FINEST).verb(NutsLogVerb.START).log(NutsMessage.jstyle("{0} {1} to {2}",
+                    m,
                     loggedSrc,
                     loggedTarget));
         }
@@ -751,5 +784,14 @@ public class DefaultNutsCp implements NutsCp {
     @Override
     public Set<NutsPathOption> getOptions() {
         return new LinkedHashSet<>(options);
+    }
+
+    public String getSourceTypeName() {
+        return sourceTypeName;
+    }
+
+    public NutsCp setSourceTypeName(String sourceTypeName) {
+        this.sourceTypeName = sourceTypeName;
+        return this;
     }
 }

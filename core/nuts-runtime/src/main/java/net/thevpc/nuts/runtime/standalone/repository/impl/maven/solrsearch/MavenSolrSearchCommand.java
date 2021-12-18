@@ -98,7 +98,9 @@ public class MavenSolrSearchCommand {
                             @Override
                             public boolean hasNext() {
                                 if (arr == null) {
-                                    NutsElement e = NutsElements.of(session).parse(query);
+                                    NutsElement e = NutsElements.of(session)
+                                            .setLogProgress(true)
+                                            .parse(query);
                                     if (e.isObject()) {
                                         NutsObjectElement o = e.asObject();
                                         String status = o.getSafeObject("responseHeader").getSafeString("status");

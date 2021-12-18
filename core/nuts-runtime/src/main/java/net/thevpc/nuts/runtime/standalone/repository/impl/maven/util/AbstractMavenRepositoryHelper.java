@@ -66,8 +66,16 @@ public abstract class AbstractMavenRepositoryHelper {
     }
 
     public String getStreamAsString(NutsId id, String typeName, String action, NutsSession session) {
-        NutsPath url = getIdPath(id, session);
-        return CoreIOUtils.loadString(openStream(id, url, id, typeName, action, session), true, session);
+        byte[] barr = NutsCp.of(session)
+                .addOptions(NutsPathOption.LOG)
+                .from(getIdPath(id, session))
+                .setSourceOrigin(id)
+                .setActionMessage(action==null?null:NutsMessage.plain(action))
+                .setSourceTypeName(action)
+                .getByteArrayResult()
+                ;
+        return new String(barr);
+//        return CoreIOUtils.loadString(openStream(id, url, id, typeName, action, session), true, session);
     }
 
     public void checkSHA1Hash(NutsId id, InputStream stream, String typeName, NutsSession session) throws IOException {

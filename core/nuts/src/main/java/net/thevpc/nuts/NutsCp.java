@@ -418,4 +418,44 @@ public interface NutsCp extends NutsComponent {
      * @return {@code this} instance
      */
     NutsCp interrupt();
+
+    /**
+     * source origin is a hint for logger about the source object for the given "from" source
+     * @return source origin
+     */
+    Object getSourceOrigin() ;
+
+    /**
+     * source origin is a hint for logger about the source object for the given "from" source
+     * @param sourceOrigin sourceOrigin
+     * @return {@code this} instance
+     */
+    NutsCp setSourceOrigin(Object sourceOrigin) ;
+
+    /**
+     * action message
+     * @return action message
+     */
+    NutsMessage getActionMessage() ;
+
+    /**
+     * actionMessage
+     * @param actionMessage actionMessage
+     * @return {@code this} instance
+     */
+    NutsCp setActionMessage(NutsMessage actionMessage) ;
+
+
+    /**
+     * source type name used in logging
+     * @return source type name used in logging
+     */
+    String getSourceTypeName();
+
+    /**
+     * source type name used in logging
+     * @param sourceTypeName sourceTypeName
+     * @return {@code this} instance
+     */
+    NutsCp setSourceTypeName(String sourceTypeName) ;
 }

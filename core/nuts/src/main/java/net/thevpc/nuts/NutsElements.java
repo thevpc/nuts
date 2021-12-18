@@ -391,4 +391,9 @@ public interface NutsElements extends NutsContentTypeFormat {
     NutsIterableFormat iter(NutsPrintStream out);
 
     <T> NutsElements setMapper(Class<T> type, NutsElementMapper<T> mapper);
+
+    boolean isLogProgress() ;
+
+    NutsElements setLogProgress(boolean logProgress);
+
 }
