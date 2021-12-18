@@ -35,41 +35,42 @@ if [ "$_java" ]; then
     fi
 fi
 
-if [ x"$1" = x"--debug" ] ; then
-  NUTS_DEBUG_ARG="-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=5005"
-elif [[ x"$1" = x"--debug="* ]] ; then
-  sub=${1:8}
-  sub="${sub},"
-  d_port=5005
-  d_enable="true"
-  d_suspend="y"
-  subArray=$(echo $sub | tr "," "\n")
+case "$1" in
+  --debug)
+    NUTS_DEBUG_ARG="-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=5005"
+    ;;
+  --debug=*)
+    sub=${1:8}
+    sub="${sub},"
+    d_port=5005
+    d_enable="true"
+    d_suspend="y"
+    subArray=$(echo $sub | tr "," "\n")
 
-  for curr in $subArray
-  do
-    if [ ! -z "${curr##*[!0-9]*}" ] ; then
-         d_port=$curr
-      elif [ x"$curr" = 'xno' ] ; then
-         d_enable="false"
-      elif [ x"$curr" = 'xsuspend' ] ; then
-         d_suspend="y"
-      elif [ x"$curr" = 'x!suspend' ] ; then
-         d_suspend="n"
-      elif [ x"$curr" = 'xs' ] ; then
-         d_suspend="y"
-      elif [ x"$curr" = 'x!s' ] ; then
-         d_suspend="n"
-      else
-        echo $curr is unsupported
-      fi
-  done
+    for curr in $subArray
+    do
+      if [ ! -z "${curr##*[!0-9]*}" ] ; then
+           d_port=$curr
+        elif [ x"$curr" = 'xno' ] ; then
+           d_enable="false"
+        elif [ x"$curr" = 'xsuspend' ] ; then
+           d_suspend="y"
+        elif [ x"$curr" = 'x!suspend' ] ; then
+           d_suspend="n"
+        elif [ x"$curr" = 'xs' ] ; then
+           d_suspend="y"
+        elif [ x"$curr" = 'x!s' ] ; then
+           d_suspend="n"
+        else
+          echo $curr is unsupported
+        fi
+    done
 
-  if [ x$d_enable = x'true' ] ; then
-    NUTS_DEBUG_ARG="-agentlib:jdwp=transport=dt_socket,server=y,suspend=$d_suspend,address=$d_port"
-  fi
-  #echo $sub
-fi
-
+    if [ x$d_enable = x'true' ] ; then
+      NUTS_DEBUG_ARG="-agentlib:jdwp=transport=dt_socket,server=y,suspend=$d_suspend,address=$d_port"
+    fi
+    ;;
+esac
 
 _NUTS_JAVA_OPTIONS=`echo "$NUTS_JAVA_OPTIONS -jar" | xargs`
 
