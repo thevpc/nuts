@@ -362,8 +362,15 @@ public class URLPath implements NutsPathSPI {
             return f.getLastModifiedInstant();
         }
         try {
-            long z = url.openConnection().getLastModified();
-            if (z == -1) {
+            URLConnection h = url.openConnection();
+            if(h instanceof HttpURLConnection){
+                HttpURLConnection h2= (HttpURLConnection)h;
+                // connection.setDoOutput(true);
+                h2.setRequestMethod("HEAD");
+            }
+            h.setDoOutput(false);
+            long z = h.getLastModified();
+            if (z <= 0) {
                 return null;
             }
             return Instant.ofEpochMilli(z);
