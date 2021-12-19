@@ -396,4 +396,11 @@ public interface NutsElements extends NutsContentTypeFormat {
 
     NutsElements setLogProgress(boolean logProgress);
 
+    boolean isTraceProgress() ;
+
+    NutsElements setTraceProgress(boolean traceProgress);
+
+    NutsProgressFactory getProgressFactory();
+
+    NutsElements setProgressFactory(NutsProgressFactory progressFactory);
 }

@@ -31,6 +31,7 @@ public class DefaultNutsInputStreamMonitor implements NutsInputStreamMonitor {
     private long length = -1;
     private NutsSession session;
     private boolean logProgress;
+    private boolean traceProgress;
     private NutsProgressFactory progressFactory;
 
     public DefaultNutsInputStreamMonitor(NutsSession session) {
@@ -133,7 +134,10 @@ public class DefaultNutsInputStreamMonitor implements NutsInputStreamMonitor {
         if (sourceName == null || sourceName.isEmpty()) {
             sourceName = NutsTexts.of(session).toText(String.valueOf(source.getValue()));
         }
-        NutsProgressMonitor monitor = CoreIOUtils.createProgressMonitor(CoreIOUtils.MonitorType.STREAM, source.getValue(), sourceOrigin, session, isLogProgress(), getProgressFactory());
+        NutsProgressMonitor monitor = CoreIOUtils.createProgressMonitor(CoreIOUtils.MonitorType.STREAM, source.getValue(), sourceOrigin, session
+                , isLogProgress()
+                , isTraceProgress()
+                ,getProgressFactory());
         boolean verboseMode
                 = getSession().boot().getBootCustomBoolArgument(false,false,false,"---monitor-start");
         long size = -1;
@@ -166,7 +170,7 @@ public class DefaultNutsInputStreamMonitor implements NutsInputStreamMonitor {
             sourceTypeName = "nuts-Path";//inputSource.getTypeName();
         }
         return InputStreamMetadataAwareImpl.of(
-                CoreIOUtils.monitor(openedStream, source, sourceName, size, new SilentStartNutsInputStreamProgressMonitorAdapter(monitor, sourceName.filteredText()), session),
+                CoreIOUtils.monitor(openedStream, source, sourceName, size, new SilentStartNutsProgressMonitorAdapter(monitor, sourceName.filteredText()), session),
                 new NutsDefaultStreamMetadata(source.getStreamMetaData())
                         .setUserKind(sourceTypeName)
         );
@@ -181,6 +185,11 @@ public class DefaultNutsInputStreamMonitor implements NutsInputStreamMonitor {
     public NutsInputStreamMonitor setSourceTypeName(String sourceType) {
         this.sourceTypeName = sourceType;
         return this;
+    }
+
+    @Override
+    public boolean isTraceProgress() {
+        return traceProgress;
     }
 
     /**
@@ -204,6 +213,11 @@ public class DefaultNutsInputStreamMonitor implements NutsInputStreamMonitor {
     @Override
     public NutsInputStreamMonitor setLogProgress(boolean value) {
         this.logProgress = value;
+        return this;
+    }
+
+    public NutsInputStreamMonitor setTraceProgress(boolean value) {
+        this.traceProgress = value;
         return this;
     }
 

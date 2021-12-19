@@ -16,7 +16,7 @@ import net.thevpc.nuts.runtime.standalone.util.BytesSizeFormat;
 /**
  * @author thevpc
  */
-public class DefaultNutsStreamProgressMonitor implements NutsProgressMonitor/*, NutsOutputStreamTransparentAdapter*/ {
+public class TraceNutsProgressMonitor implements NutsProgressMonitor/*, NutsOutputStreamTransparentAdapter*/ {
     private static DecimalFormat df = new DecimalFormat("##0.00");
 
     private NutsPrintStream out;
@@ -25,7 +25,7 @@ public class DefaultNutsStreamProgressMonitor implements NutsProgressMonitor/*, 
     private boolean optionsProcessed=false;
     private boolean optionNewline=false;
 
-    public DefaultNutsStreamProgressMonitor() {
+    public TraceNutsProgressMonitor() {
 //        this.session = session;
     }
 

@@ -53,7 +53,7 @@ public interface NutsProgressMonitor {
 
     /**
      * called when the action does a step forward and return
-     * true if the progress was handled of false otherwise.
+     * true if the progress was handled or false otherwise.
      *
      * @param event event
      * @return true if the progress was handled. In that case, a

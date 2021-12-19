@@ -19,7 +19,6 @@ public class DefaultNutsCountProgressMonitor implements NutsProgressMonitor/*, N
 
     private NutsPrintStream out;
     private int minLength;
-    private NutsWorkspace ws;
 
     public DefaultNutsCountProgressMonitor() {
     }

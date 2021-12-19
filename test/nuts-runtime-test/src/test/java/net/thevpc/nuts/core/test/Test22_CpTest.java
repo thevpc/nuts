@@ -32,11 +32,11 @@ public class Test22_CpTest {
         final String url = "https://repo.maven.apache.org/maven2/archetype-catalog.xml";
         InputStream j1 = CoreIOUtils.getCachedUrlWithSHA1(url, "archetype-catalog", true,session);
         //just to consume the stream
-        NutsCp.of(session).from(j1).to(new ByteArrayOutputStream()).addOptions(NutsPathOption.LOG).run();
+        NutsCp.of(session).from(j1).to(new ByteArrayOutputStream()).addOptions(NutsPathOption.LOG, NutsPathOption.TRACE).run();
         TestUtils.println(j1);
         InputStream j2 = CoreIOUtils.getCachedUrlWithSHA1(url, "archetype-catalog", true,session);
         //just to consume the stream
-        NutsCp.of(session).from(j2).to(new ByteArrayOutputStream()).addOptions(NutsPathOption.LOG).run();
+        NutsCp.of(session).from(j2).to(new ByteArrayOutputStream()).addOptions(NutsPathOption.LOG, NutsPathOption.TRACE).run();
         TestUtils.println(j2);
     }
 

@@ -18,7 +18,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -32,12 +34,12 @@ public class DefaultNutsCompress implements NutsCompress {
     private final NutsWorkspace ws;
     private NutsLogger LOG;
     private boolean safe = true;
-    private boolean logProgress = false;
     private NutsStreamOrPath target;
     private NutsSession session;
     private boolean skipRoot;
-    private NutsProgressFactory progressMonitorFactory;
+    private NutsProgressFactory progressFactory;
     private String format = "zip";
+    private Set<NutsPathOption> options=new LinkedHashSet<>();
 
     public DefaultNutsCompress(NutsSession session) {
         this.session = session;
@@ -84,9 +86,6 @@ public class DefaultNutsCompress implements NutsCompress {
         if (target == null) {
             throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("missing target"));
         }
-        if (isLogProgress() || getProgressMonitorFactory() != null) {
-            //how to monitor???
-        }
         _LOG(session).with().level(Level.FINEST).verb(NutsLogVerb.START).log(NutsMessage.jstyle("compress {0} to {1}", sources, target));
         try {
             OutputStream fW = null;
@@ -110,7 +109,7 @@ public class DefaultNutsCompress implements NutsCompress {
                         zip = new ZipOutputStream(fW);
                         if (skipRoot) {
                             for (NutsStreamOrPath s : sources) {
-                                Item file1 = new Item(s);
+                                Item file1 = new Item(s,this);
                                 if (file1.isDirectory()) {
                                     for (Item c : file1.list()) {
                                         add("", c, zip);
@@ -121,7 +120,7 @@ public class DefaultNutsCompress implements NutsCompress {
                             }
                         } else {
                             for (NutsStreamOrPath s : sources) {
-                                add("", new Item(s), zip);
+                                add("", new Item(s,this), zip);
                             }
                         }
                     } finally {
@@ -421,17 +420,6 @@ public class DefaultNutsCompress implements NutsCompress {
         return this;
     }
 
-    @Override
-    public boolean isLogProgress() {
-        return logProgress;
-    }
-
-    @Override
-    public DefaultNutsCompress setLogProgress(boolean value) {
-        this.logProgress = value;
-        return this;
-    }
-
     /**
      * return progress factory responsible of creating progress monitor
      *
@@ -439,8 +427,8 @@ public class DefaultNutsCompress implements NutsCompress {
      * @since 0.5.8
      */
     @Override
-    public NutsProgressFactory getProgressMonitorFactory() {
-        return progressMonitorFactory;
+    public NutsProgressFactory getProgressFactory() {
+        return progressFactory;
     }
 
     /**
@@ -451,8 +439,8 @@ public class DefaultNutsCompress implements NutsCompress {
      * @since 0.5.8
      */
     @Override
-    public NutsCompress setProgressMonitorFactory(NutsProgressFactory value) {
-        this.progressMonitorFactory = value;
+    public NutsCompress setProgressFactory(NutsProgressFactory value) {
+        this.progressFactory = value;
         return this;
     }
 
@@ -465,7 +453,7 @@ public class DefaultNutsCompress implements NutsCompress {
      */
     @Override
     public NutsCompress setProgressMonitor(NutsProgressMonitor value) {
-        this.progressMonitorFactory = value == null ? null : new SingletonNutsInputStreamProgressFactory(value);
+        this.progressFactory = value == null ? null : new SingletonNutsInputStreamProgressFactory(value);
         return this;
     }
 
@@ -503,9 +491,11 @@ public class DefaultNutsCompress implements NutsCompress {
     private static class Item {
 
         private final NutsStreamOrPath o;
+        private final DefaultNutsCompress c;
 
-        public Item(NutsStreamOrPath value) {
+        public Item(NutsStreamOrPath value,DefaultNutsCompress c) {
             this.o = value;
+            this.c = c;
         }
 
         public boolean isDirectory() {
@@ -517,7 +507,7 @@ public class DefaultNutsCompress implements NutsCompress {
                 NutsPath p = o.getPath();
                 return p.list().map(
                                 NutsFunction.of(
-                                x -> new Item(NutsStreamOrPath.of(x)),
+                                x -> new Item(NutsStreamOrPath.of(x),c),
                                 "NutsStreamOrPath::of"
                         )
                         )
@@ -527,6 +517,21 @@ public class DefaultNutsCompress implements NutsCompress {
         }
 
         public InputStream open() {
+            if (c.options.contains(NutsPathOption.LOG)
+                    ||c.options.contains(NutsPathOption.TRACE)
+                    || c.getProgressFactory() != null) {
+                NutsInputStreamMonitor monitor = NutsInputStreamMonitor.of(c.session);
+                monitor.setOrigin(o.getValue());
+                monitor.setLogProgress(c.options.contains(NutsPathOption.LOG));
+                monitor.setTraceProgress(c.options.contains(NutsPathOption.TRACE));
+                monitor.setProgressFactory(c.getProgressFactory());
+                if(o.isInputStream()){
+                    monitor.setSource(o.getInputStream());
+                }else{
+                    monitor.setSource(o.getPath());
+                }
+                return monitor.create();
+            }
             if (o.isInputStream()) {
                 return o.getInputStream();
             }
@@ -537,4 +542,40 @@ public class DefaultNutsCompress implements NutsCompress {
             return o.getName();
         }
     }
+
+    @Override
+    public NutsCompress addOptions(NutsPathOption... pathOptions) {
+        if (pathOptions != null) {
+            for (NutsPathOption o : pathOptions) {
+                if (o != null) {
+                    options.add(o);
+                }
+            }
+        }
+        return this;
+    }
+
+    @Override
+    public NutsCompress removeOptions(NutsPathOption... pathOptions) {
+        if (pathOptions != null) {
+            for (NutsPathOption o : pathOptions) {
+                if (o != null) {
+                    options.remove(o);
+                }
+            }
+        }
+        return this;
+    }
+
+    @Override
+    public NutsCompress clearOptions() {
+        options.clear();
+        return this;
+    }
+
+    @Override
+    public Set<NutsPathOption> getOptions() {
+        return new LinkedHashSet<>(options);
+    }
+
 }

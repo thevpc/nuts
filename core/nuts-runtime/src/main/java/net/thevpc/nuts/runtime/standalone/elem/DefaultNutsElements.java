@@ -75,6 +75,8 @@ public class DefaultNutsElements extends DefaultFormatBase<NutsElements> impleme
     private NutsContentType contentType = NutsContentType.JSON;
     private boolean compact;
     private boolean logProgress;
+    private boolean traceProgress;
+    private NutsProgressFactory progressFactory;
     private Predicate<Class> indestructibleObjects;
 
     public DefaultNutsElements(NutsSession session) {
@@ -89,6 +91,15 @@ public class DefaultNutsElements extends DefaultFormatBase<NutsElements> impleme
 
     public NutsElements setLogProgress(boolean logProgress) {
         this.logProgress = logProgress;
+        return this;
+    }
+
+    public boolean isTraceProgress() {
+        return traceProgress;
+    }
+
+    public NutsElements setTraceProgress(boolean traceProgress) {
+        this.traceProgress = traceProgress;
         return this;
     }
 
@@ -155,11 +166,13 @@ public class DefaultNutsElements extends DefaultFormatBase<NutsElements> impleme
     }
 
     private InputStream prepareInputStream(InputStream is,Object origin){
-        if(isLogProgress()){
+        if(isLogProgress() || isTraceProgress()){
             return NutsInputStreamMonitor.of(getSession())
                     .setSource(is)
                     .setOrigin(origin)
-                    .setLogProgress(true)
+                    .setLogProgress(isLogProgress())
+                    .setTraceProgress(isTraceProgress())
+                    .setProgressFactory(getProgressFactory())
                     .create();
         }
         return is;
@@ -169,7 +182,9 @@ public class DefaultNutsElements extends DefaultFormatBase<NutsElements> impleme
             return NutsInputStreamMonitor.of(getSession())
                     .setSource(path)
                     .setOrigin(path)
-                    .setLogProgress(true)
+                    .setLogProgress(isLogProgress())
+                    .setTraceProgress(isTraceProgress())
+                    .setProgressFactory(getProgressFactory())
                     .create();
         }
         return path.getInputStream();
@@ -640,5 +655,16 @@ public class DefaultNutsElements extends DefaultFormatBase<NutsElements> impleme
     @Override
     public int getSupportLevel(NutsSupportLevelContext context) {
         return DEFAULT_SUPPORT;
+    }
+
+    @Override
+    public NutsProgressFactory getProgressFactory() {
+        return progressFactory;
+    }
+
+    @Override
+    public NutsElements setProgressFactory(NutsProgressFactory progressFactory) {
+        this.progressFactory = progressFactory;
+        return this;
     }
 }

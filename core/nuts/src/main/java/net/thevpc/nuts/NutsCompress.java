@@ -34,6 +34,7 @@ import java.io.OutputStream;
 import java.net.URL;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Set;
 
 /**
  * I/O Action that help monitored compress
@@ -253,27 +254,12 @@ public interface NutsCompress extends NutsComponent {
     NutsCompress run();
 
     /**
-     * true if log progress flag is armed
-     *
-     * @return true if log progress flag is armed
-     */
-    boolean isLogProgress();
-
-    /**
-     * switch log progress flag to {@code value}.
-     *
-     * @param value value
-     * @return {@code this} instance
-     */
-    NutsCompress setLogProgress(boolean value);
-
-    /**
      * return progress factory responsible of creating progress monitor
      *
      * @return progress factory responsible of creating progress monitor
      * @since 0.5.8
      */
-    NutsProgressFactory getProgressMonitorFactory();
+    NutsProgressFactory getProgressFactory();
 
     /**
      * set progress factory responsible of creating progress monitor
@@ -282,7 +268,7 @@ public interface NutsCompress extends NutsComponent {
      * @return {@code this} instance
      * @since 0.5.8
      */
-    NutsCompress setProgressMonitorFactory(NutsProgressFactory value);
+    NutsCompress setProgressFactory(NutsProgressFactory value);
 
     /**
      * set progress monitor. Will create a singleton progress monitor factory
@@ -324,4 +310,12 @@ public interface NutsCompress extends NutsComponent {
      * @since 0.5.8
      */
     NutsCompress setSkipRoot(boolean value);
+
+    NutsCompress addOptions(NutsPathOption... pathOptions);
+
+    NutsCompress removeOptions(NutsPathOption... pathOptions);
+
+    NutsCompress clearOptions();
+
+    Set<NutsPathOption> getOptions();
 }

@@ -24,27 +24,24 @@
 package net.thevpc.nuts.runtime.standalone.io.util;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.standalone.descriptor.DefaultNutsDescriptorContentParserContext;
 import net.thevpc.nuts.runtime.standalone.executor.system.PipeRunnable;
+import net.thevpc.nuts.runtime.standalone.io.printstream.NutsFormattedPrintStream;
+import net.thevpc.nuts.runtime.standalone.io.progress.*;
+import net.thevpc.nuts.runtime.standalone.io.terminal.NutsTerminalModeOp;
+import net.thevpc.nuts.runtime.standalone.repository.index.CacheDB;
+import net.thevpc.nuts.runtime.standalone.text.ExtendedFormatAware;
+import net.thevpc.nuts.runtime.standalone.text.ExtendedFormatAwarePrintWriter;
+import net.thevpc.nuts.runtime.standalone.text.RawOutputStream;
 import net.thevpc.nuts.runtime.standalone.util.CoreNutsUtils;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.util.DoWhenExist;
 import net.thevpc.nuts.runtime.standalone.util.DoWhenNotExists;
+import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
+import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.util.PathInfo;
+import net.thevpc.nuts.runtime.standalone.xtra.download.DefaultHttpTransportComponent;
 import net.thevpc.nuts.runtime.standalone.xtra.nanodb.NanoDB;
 import net.thevpc.nuts.runtime.standalone.xtra.nanodb.NanoDBTableFile;
-import net.thevpc.nuts.runtime.standalone.text.ExtendedFormatAware;
-import net.thevpc.nuts.runtime.standalone.text.ExtendedFormatAwarePrintWriter;
-import net.thevpc.nuts.runtime.standalone.text.RawOutputStream;
-import net.thevpc.nuts.runtime.standalone.io.printstream.NutsFormattedPrintStream;
-import net.thevpc.nuts.runtime.standalone.io.terminal.NutsTerminalModeOp;
-import net.thevpc.nuts.runtime.standalone.descriptor.DefaultNutsDescriptorContentParserContext;
-import net.thevpc.nuts.runtime.standalone.repository.index.CacheDB;
-import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
-import net.thevpc.nuts.runtime.standalone.xtra.download.DefaultHttpTransportComponent;
-import net.thevpc.nuts.runtime.standalone.io.progress.DefaultNutsInputStreamProgressFactory;
-import net.thevpc.nuts.runtime.standalone.io.progress.DefaultNutsProgressFactory;
-import net.thevpc.nuts.runtime.standalone.io.progress.MonitoredInputStream;
-import net.thevpc.nuts.runtime.standalone.io.progress.NutsProgressMonitorList;
-import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.util.PathInfo;
 import net.thevpc.nuts.spi.*;
 
 import java.io.*;
@@ -1622,22 +1619,27 @@ public class CoreIOUtils {
         return new DefaultNutsProgressFactory();
     }
 
-    public static NutsProgressMonitor createProgressMonitor(MonitorType mt, Object source, Object sourceOrigin, NutsSession session, boolean logProgress, NutsProgressFactory progressFactory) {
-        NutsProgressMonitor m0 = null;
-        NutsProgressMonitor m1 = null;
+    public static NutsProgressMonitor createProgressMonitor(MonitorType mt, Object source, Object sourceOrigin, NutsSession session,
+                                                            boolean logProgress,
+                                                            boolean traceProgress,
+                                                            NutsProgressFactory progressFactory) {
+        List<NutsProgressMonitor> all = new ArrayList<>();
         if (logProgress) {
-            m0 = createLogProgressMonitorFactory(mt).create(source, sourceOrigin, session);
+            all.add(createLogProgressMonitorFactory(mt).create(source, sourceOrigin, session));
+        }
+        if (traceProgress) {
+            all.add(new TraceNutsProgressMonitor());
         }
         if (progressFactory != null) {
-            m1 = progressFactory.create(source, sourceOrigin, session);
+            all.add(progressFactory.create(source, sourceOrigin, session));
         }
-        if (m1 == null) {
-            return m0;
+        if (all.isEmpty()) {
+            return new SilentNutsProgressMonitor();
         }
-        if (m0 == null) {
-            return m1;
+        if (all.size() == 1) {
+            return all.get(0);
         }
-        return new NutsProgressMonitorList(new NutsProgressMonitor[]{m0, m1});
+        return new NutsProgressMonitorList(all.toArray(new NutsProgressMonitor[0]));
     }
 
     public static Path toPath(String path) {
@@ -2822,30 +2824,31 @@ public class CoreIOUtils {
 //        return writable;
 //    }
 
-    public static NutsStream<String> safeLines(byte[] bytes,NutsSession session) {
+    public static NutsStream<String> safeLines(byte[] bytes, NutsSession session) {
         return NutsStream.of(
                 new Iterator<String>() {
                     BufferedReader br;
                     String line;
+
                     @Override
                     public boolean hasNext() {
-                        if(br==null){
-                            br=CoreIOUtils.bufferedReaderOf(bytes);
+                        if (br == null) {
+                            br = CoreIOUtils.bufferedReaderOf(bytes);
                         }
                         try {
-                            line=null;
+                            line = null;
                             line = br.readLine();
                         } catch (IOException e) {
                             //
                         }
-                        return line!=null;
+                        return line != null;
                     }
 
                     @Override
                     public String next() {
                         return line;
                     }
-                },session
+                }, session
         );
     }
 

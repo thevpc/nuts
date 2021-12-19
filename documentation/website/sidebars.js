@@ -3,7 +3,8 @@ module.exports = {
       'Introduction': [
          'intro/introduction',
          'intro/nutsAndMaven',
-         'intro/installation',
+         'intro/installation-preview',
+         'intro/installation-prod',
          'intro/tutorial',
          'intro/license',
          'intro/changelog',
@@ -41,6 +42,7 @@ module.exports = {
       'API Documentation': [],
       'Contributing': [
          'contributing/building',
+         'contributing/contributing',
          'contributing/projects',
       ],
    }

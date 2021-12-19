@@ -69,7 +69,11 @@ public enum NutsPathOption implements NutsEnum {
     /**
      * log the copy/move progress
      */
-    LOG
+    LOG,
+    /**
+     * log the copy/move progress
+     */
+    TRACE,
     ;
 
     /**

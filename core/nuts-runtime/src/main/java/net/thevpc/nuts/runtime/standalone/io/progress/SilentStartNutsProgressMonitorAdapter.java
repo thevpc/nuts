@@ -4,12 +4,12 @@ import net.thevpc.nuts.*;
 
 import java.util.logging.Level;
 
-class SilentStartNutsInputStreamProgressMonitorAdapter implements NutsProgressMonitor {
+class SilentStartNutsProgressMonitorAdapter implements NutsProgressMonitor {
     private NutsLogger LOG;
     private final NutsProgressMonitor finalMonitor;
     private final String path;
 
-    public SilentStartNutsInputStreamProgressMonitorAdapter(NutsProgressMonitor finalMonitor, String path) {
+    public SilentStartNutsProgressMonitorAdapter(NutsProgressMonitor finalMonitor, String path) {
         this.finalMonitor = finalMonitor;
         this.path = path;
     }
@@ -20,7 +20,7 @@ class SilentStartNutsInputStreamProgressMonitorAdapter implements NutsProgressMo
 
     protected NutsLogger _LOG(NutsSession session) {
         if (LOG == null) {
-            LOG = NutsLogger.of(SilentStartNutsInputStreamProgressMonitorAdapter.class,session);
+            LOG = NutsLogger.of(SilentStartNutsProgressMonitorAdapter.class,session);
         }
         return LOG;
     }

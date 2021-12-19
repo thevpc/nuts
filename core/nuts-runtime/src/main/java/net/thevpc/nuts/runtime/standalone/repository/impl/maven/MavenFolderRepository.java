@@ -264,7 +264,7 @@ public class MavenFolderRepository extends NutsCachedRepository {
                                         id.builder().setFace(NutsConstants.QueryFaces.CONTENT_HASH).build(),
                                         in, "artifact binaries", session
                                 )
-                        ).addOptions(NutsPathOption.LOG)
+                        ).addOptions(NutsPathOption.LOG, NutsPathOption.TRACE)
                         .run();
             } catch (UncheckedIOException | NutsIOException ex) {
                 throw new NutsNotFoundException(session, id, null, ex);

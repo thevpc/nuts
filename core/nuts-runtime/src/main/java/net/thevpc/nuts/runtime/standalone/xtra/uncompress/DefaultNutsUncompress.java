@@ -14,6 +14,8 @@ import java.io.*;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.LinkedHashSet;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.ZipEntry;
@@ -32,13 +34,13 @@ public class DefaultNutsUncompress implements NutsUncompress {
 
     private boolean skipRoot = false;
     private boolean safe = true;
-    private boolean logProgress = false;
     private String format = "zip";
     private NutsWorkspace ws;
     private NutsStreamOrPath source;
     private NutsStreamOrPath target;
     private NutsSession session;
-    private NutsProgressFactory progressMonitorFactory;
+    private NutsProgressFactory progressFactory;
+    private Set<NutsPathOption> options=new LinkedHashSet<>();
 
     public DefaultNutsUncompress(NutsSession session) {
         this.session = session;
@@ -184,17 +186,6 @@ public class DefaultNutsUncompress implements NutsUncompress {
 
 
     @Override
-    public boolean isLogProgress() {
-        return logProgress;
-    }
-
-    @Override
-    public DefaultNutsUncompress setLogProgress(boolean value) {
-        this.logProgress = value;
-        return this;
-    }
-
-    @Override
     public NutsUncompress from(InputStream source) {
         return setSource(source);
     }
@@ -263,17 +254,20 @@ public class DefaultNutsUncompress implements NutsUncompress {
         if (!target.isPath() || !target.getPath().isFile() ) {
             throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("invalid target %s",target.getValue()));
         }
-        if (isLogProgress() || getProgressMonitorFactory() != null) {
-            NutsInputStreamMonitor m = NutsInputStreamMonitor.of(session);
+        if (options.contains(NutsPathOption.LOG)
+                ||options.contains(NutsPathOption.TRACE)
+                || getProgressFactory() != null) {
+            NutsInputStreamMonitor monitor = NutsInputStreamMonitor.of(session);
+            monitor.setOrigin(_source.getValue());
+            monitor.setLogProgress(options.contains(NutsPathOption.LOG));
+            monitor.setTraceProgress(options.contains(NutsPathOption.TRACE));
+            monitor.setProgressFactory(getProgressFactory());
             if(_source.isInputStream()){
-                m.setSource(_source.getInputStream());
+                monitor.setSource(_source.getInputStream());
             }else{
-                m.setSource(_source.getPath());
+                monitor.setSource(_source.getPath());
             }
-            _source = NutsStreamOrPath.of
-                    (m.setProgressFactory(getProgressMonitorFactory())
-                    .setLogProgress(isLogProgress())
-                    .create(),session);
+            _source = NutsStreamOrPath.of(monitor.create(),session);
         }
         //boolean _source_isPath = _source.isPath();
 //        if (!path.toLowerCase().startsWith("file://")) {
@@ -317,22 +311,22 @@ public class DefaultNutsUncompress implements NutsUncompress {
         if (!target.isPath() || !target.getPath().isFile() ) {
             throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("invalid target %s",target.getValue()));
         }
-        if (isLogProgress() || getProgressMonitorFactory() != null) {
-            NutsInputStreamMonitor m = NutsInputStreamMonitor.of(session);
+        if (options.contains(NutsPathOption.LOG)
+                ||options.contains(NutsPathOption.TRACE)
+                || getProgressFactory() != null) {
+            NutsInputStreamMonitor monitor = NutsInputStreamMonitor.of(session);
+            monitor.setOrigin(_source.getValue());
+            monitor.setLogProgress(options.contains(NutsPathOption.LOG));
+            monitor.setTraceProgress(options.contains(NutsPathOption.TRACE));
+            monitor.setProgressFactory(getProgressFactory());
             if(_source.isInputStream()){
-                m.setSource(_source.getInputStream());
+                monitor.setSource(_source.getInputStream());
             }else{
-                m.setSource(_source.getPath());
+                monitor.setSource(_source.getPath());
             }
-            _source = NutsStreamOrPath.of(m
-                    .setProgressFactory(getProgressMonitorFactory())
-                    .setLogProgress(isLogProgress())
-                    .create(),session);
+            _source = NutsStreamOrPath.of(monitor.create(),session);
         }
-        //boolean _source_isPath = _source.isPath();
-//        if (!path.toLowerCase().startsWith("file://")) {
-//            LOG.log(Level.FINE, "downloading url {0} to file {1}", new Object[]{path, file});
-//        } else {
+
         _LOGOP(session).level(Level.FINEST).verb(NutsLogVerb.START)
                 .log(NutsMessage.jstyle("uncompress {0} to {1}", _source, target));
         Path folder = target.getPath().toFile();
@@ -358,11 +352,8 @@ public class DefaultNutsUncompress implements NutsUncompress {
     private void runZip() {
         checkSession();
         NutsStreamOrPath _source = source;
-//        }
         try {
-
             byte[] buffer = new byte[1024];
-
             //create output directory is not exists
             Path folder = target.getPath().toFile();
             //get the zip file content
@@ -427,13 +418,7 @@ public class DefaultNutsUncompress implements NutsUncompress {
     private void visitZip(NutsIOUncompressVisitor visitor) {
         checkSession();
         NutsStreamOrPath _source = source;
-//        }
         try {
-
-            byte[] buffer = new byte[1024];
-
-            //create output directory is not exists
-//            Path folder = target.getPath();
             //get the zip file content
             InputStream _in = _source.getInputStream();
             try {
@@ -598,8 +583,8 @@ public class DefaultNutsUncompress implements NutsUncompress {
      * @since 0.5.8
      */
     @Override
-    public NutsProgressFactory getProgressMonitorFactory() {
-        return progressMonitorFactory;
+    public NutsProgressFactory getProgressFactory() {
+        return progressFactory;
     }
 
     /**
@@ -610,8 +595,8 @@ public class DefaultNutsUncompress implements NutsUncompress {
      * @since 0.5.8
      */
     @Override
-    public NutsUncompress setProgressMonitorFactory(NutsProgressFactory value) {
-        this.progressMonitorFactory = value;
+    public NutsUncompress setProgressFactory(NutsProgressFactory value) {
+        this.progressFactory = value;
         return this;
     }
 
@@ -624,7 +609,7 @@ public class DefaultNutsUncompress implements NutsUncompress {
      */
     @Override
     public NutsUncompress setProgressMonitor(NutsProgressMonitor value) {
-        this.progressMonitorFactory = value == null ? null : new SingletonNutsInputStreamProgressFactory(value);
+        this.progressFactory = value == null ? null : new SingletonNutsInputStreamProgressFactory(value);
         return this;
     }
 
@@ -660,4 +645,40 @@ public class DefaultNutsUncompress implements NutsUncompress {
     public Object getFormatOption(String option) {
         return null;
     }
+
+    @Override
+    public NutsUncompress addOptions(NutsPathOption... pathOptions) {
+        if (pathOptions != null) {
+            for (NutsPathOption o : pathOptions) {
+                if (o != null) {
+                    options.add(o);
+                }
+            }
+        }
+        return this;
+    }
+
+    @Override
+    public NutsUncompress removeOptions(NutsPathOption... pathOptions) {
+        if (pathOptions != null) {
+            for (NutsPathOption o : pathOptions) {
+                if (o != null) {
+                    options.remove(o);
+                }
+            }
+        }
+        return this;
+    }
+
+    @Override
+    public NutsUncompress clearOptions() {
+        options.clear();
+        return this;
+    }
+
+    @Override
+    public Set<NutsPathOption> getOptions() {
+        return new LinkedHashSet<>(options);
+    }
+
 }

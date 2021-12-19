@@ -56,7 +56,7 @@ public class Test12_CopyTest {
         TestUtils.println("start-----------");
 
         NutsCp.of(session).from(from).to(to)
-                .addOptions(NutsPathOption.LOG)
+                .addOptions(NutsPathOption.LOG, NutsPathOption.TRACE)
                 .setProgressMonitor(new NutsProgressMonitor() {
             @Override
             public void onStart(NutsProgressEvent event) {

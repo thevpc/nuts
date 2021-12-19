@@ -112,8 +112,6 @@ public interface NutsInputStreamMonitor extends NutsComponent {
      */
     NutsInputStreamMonitor setSource(String path);
 
-//    NutsInputStreamMonitor setSource(NutsPath inputSource);
-
     NutsInputStreamMonitor setSource(NutsPath inputSource);
 
     /**
@@ -168,6 +166,21 @@ public interface NutsInputStreamMonitor extends NutsComponent {
      */
     NutsInputStreamMonitor setLogProgress(boolean value);
 
+    /**
+     * return true if trace progress on terminal
+     *
+     * @return true if log progress on terminal
+     */
+    boolean isTraceProgress();
+
+    /**
+     * when true, will trace progress
+     *
+     * @param value value
+     * @return {@code this} instance
+     * @since 0.5.8
+     */
+    NutsInputStreamMonitor setTraceProgress(boolean value);
 
     /**
      * return progress factory responsible of creating progress monitor

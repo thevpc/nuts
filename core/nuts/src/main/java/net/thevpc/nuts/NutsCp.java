@@ -121,14 +121,6 @@ public interface NutsCp extends NutsComponent {
 
     /**
      * update source to copy from
-     * @param source source to copy from
-     * @return {@code this} instance
-     * @throws NutsUnsupportedArgumentException if unsupported type
-     */
-//    NutsCp from(NutsPath source);
-
-    /**
-     * update source to copy from
      *
      * @param source source to copy from
      * @return {@code this} instance
@@ -255,12 +247,6 @@ public interface NutsCp extends NutsComponent {
      */
     NutsCp setTarget(File target);
 
-    /**
-     * update target
-     * @param target target
-     * @return {@code this} instance
-     */
-//    NutsCp to(NutsPath target);
 
     /**
      * update target
@@ -314,6 +300,8 @@ public interface NutsCp extends NutsComponent {
     NutsCp addOptions(NutsPathOption ...pathOptions);
 
     NutsCp removeOptions(NutsPathOption ...pathOptions);
+
+    NutsCp clearOptions();
 
     Set<NutsPathOption> getOptions();
 
@@ -375,7 +363,7 @@ public interface NutsCp extends NutsComponent {
      * @return progress factory responsible of creating progress monitor
      * @since 0.5.8
      */
-    NutsProgressFactory getProgressMonitorFactory();
+    NutsProgressFactory getProgressFactory();
 
     /**
      * set progress factory responsible of creating progress monitor
@@ -384,7 +372,7 @@ public interface NutsCp extends NutsComponent {
      * @return {@code this} instance
      * @since 0.5.8
      */
-    NutsCp setProgressMonitorFactory(NutsProgressFactory value);
+    NutsCp setProgressFactory(NutsProgressFactory value);
 
     /**
      * set progress monitor. Will create a singleton progress monitor factory

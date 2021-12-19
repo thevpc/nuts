@@ -32,6 +32,7 @@ import java.io.File;
 import java.io.InputStream;
 import java.net.URL;
 import java.nio.file.Path;
+import java.util.Set;
 
 /**
  * I/O Action that help monitored uncompress of one or multiple resource types.
@@ -257,21 +258,6 @@ public interface NutsUncompress extends NutsComponent {
     NutsUncompress visit(NutsIOUncompressVisitor visitor);
 
     /**
-     * true if log progress flag is armed
-     *
-     * @return true if log progress flag is armed
-     */
-    boolean isLogProgress();
-
-    /**
-     * switch log progress flag to {@code value}.
-     *
-     * @param value value
-     * @return {@code this} instance
-     */
-    NutsUncompress setLogProgress(boolean value);
-
-    /**
      * return true if skip root flag is armed.
      *
      * @return true if skip root flag is armed
@@ -294,7 +280,7 @@ public interface NutsUncompress extends NutsComponent {
      * @return progress factory responsible of creating progress monitor
      * @since 0.5.8
      */
-    NutsProgressFactory getProgressMonitorFactory();
+    NutsProgressFactory getProgressFactory();
 
     /**
      * set progress factory responsible of creating progress monitor
@@ -303,7 +289,7 @@ public interface NutsUncompress extends NutsComponent {
      * @return {@code this} instance
      * @since 0.5.8
      */
-    NutsUncompress setProgressMonitorFactory(NutsProgressFactory value);
+    NutsUncompress setProgressFactory(NutsProgressFactory value);
 
     /**
      * set progress monitor. Will create a singleton progress monitor factory
@@ -337,4 +323,12 @@ public interface NutsUncompress extends NutsComponent {
      * @return {@code this} instance
      */
     NutsUncompress setSafe(boolean value);
+
+    NutsUncompress addOptions(NutsPathOption... pathOptions);
+
+    NutsUncompress removeOptions(NutsPathOption... pathOptions);
+
+    NutsUncompress clearOptions();
+
+    Set<NutsPathOption> getOptions();
 }
