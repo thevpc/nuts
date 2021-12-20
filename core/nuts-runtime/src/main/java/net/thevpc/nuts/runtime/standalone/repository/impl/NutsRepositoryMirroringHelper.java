@@ -8,7 +8,8 @@ package net.thevpc.nuts.runtime.standalone.repository.impl;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.event.DefaultNutsContentEvent;
 import net.thevpc.nuts.runtime.standalone.id.filter.NutsSearchIdByDescriptor;
-import net.thevpc.nuts.runtime.standalone.repository.NutsRepositoryUtils;
+import net.thevpc.nuts.runtime.standalone.id.util.NutsIdUtils;
+import net.thevpc.nuts.runtime.standalone.repository.NutsRepositoryHelper;
 import net.thevpc.nuts.runtime.standalone.repository.cmd.NutsRepositorySupportedAction;
 import net.thevpc.nuts.runtime.standalone.util.iter.IteratorBuilder;
 import net.thevpc.nuts.runtime.standalone.util.iter.IteratorUtils;
@@ -45,7 +46,7 @@ public class NutsRepositoryMirroringHelper {
             for (NutsRepository repo : repo.config().setSession(session).getMirrors()) {
                 NutsSpeedQualifier sup = NutsSpeedQualifier.UNAVAILABLE;
                 try {
-                    sup = NutsRepositoryUtils.getSupportSpeedLevel(repo, NutsRepositorySupportedAction.SEARCH, id, fetchMode, session.isTransitive(), session);
+                    sup = NutsRepositoryHelper.getSupportSpeedLevel(repo, NutsRepositorySupportedAction.SEARCH, id, fetchMode, session.isTransitive(), session);
                 } catch (Exception ex) {
                     //                errors.append(CoreStringUtils.exceptionToString(ex)).append("\n");
                 }
@@ -166,7 +167,7 @@ public class NutsRepositoryMirroringHelper {
         if (NutsBlankable.isBlank(repository)) {
             List<NutsRepository> all = new ArrayList<>();
             for (NutsRepository remote : repo.config().setSession(session).getMirrors()) {
-                NutsSpeedQualifier lvl = NutsRepositoryUtils.getSupportSpeedLevel(remote, NutsRepositorySupportedAction.DEPLOY, id, NutsFetchMode.LOCAL, false, session);
+                NutsSpeedQualifier lvl = NutsRepositoryHelper.getSupportSpeedLevel(remote, NutsRepositorySupportedAction.DEPLOY, id, NutsFetchMode.LOCAL, false, session);
                 if (lvl != NutsSpeedQualifier.UNAVAILABLE) {
                     all.add(remote);
                 }
@@ -187,7 +188,7 @@ public class NutsRepositoryMirroringHelper {
             repo = this.repo.config().setSession(session.copy().setTransitive(false)).getMirror(repository);
         }
         if (repo != null) {
-            NutsId effId = session.config().createContentFaceId(id.builder().setProperties("").build(), desc)
+            NutsId effId = NutsIdUtils.createContentFaceId(id.builder().setProperties("").build(), desc,session)
 //                    .setAlternative(NutsUtilStrings.trim(desc.getAlternative()))
                     ;
             NutsDeployRepositoryCommand dep = repoSPI.deploy()
@@ -198,7 +199,7 @@ public class NutsRepositoryMirroringHelper {
                     //.setFetchMode(NutsFetchMode.LOCAL)
                     .setSession(session)
                     .run();
-            NutsRepositoryUtils.of(repo).events().fireOnPush(new DefaultNutsContentEvent(
+            NutsRepositoryHelper.of(repo).events().fireOnPush(new DefaultNutsContentEvent(
                     local.getPath(), dep, session, repo));
         } else {
             throw new NutsRepositoryNotFoundException(session, repository);

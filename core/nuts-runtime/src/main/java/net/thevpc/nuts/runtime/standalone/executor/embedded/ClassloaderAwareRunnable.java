@@ -25,6 +25,7 @@
 */
 package net.thevpc.nuts.runtime.standalone.executor.embedded;
 
+import net.thevpc.nuts.NutsScheduler;
 import net.thevpc.nuts.NutsSession;
 
 /**
@@ -80,7 +81,7 @@ public abstract class ClassloaderAwareRunnable implements Runnable {
 
     public void runAndWaitFor() throws Throwable {
         try {
-            getSession().config().executorService().submit(this).get();
+            NutsScheduler.of(getSession()).executorService().submit(this).get();
         } catch (InterruptedException ex) {
             setError(ex);
         }

@@ -41,7 +41,6 @@ import net.thevpc.nuts.runtime.standalone.installer.CommandForIdNutsInstallerCom
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.log.DefaultNutsLogModel;
 import net.thevpc.nuts.runtime.standalone.log.DefaultNutsLogger;
-import net.thevpc.nuts.runtime.standalone.repository.DefaultNutsRepositoryDB;
 import net.thevpc.nuts.runtime.standalone.repository.NutsRepositorySelectorHelper;
 import net.thevpc.nuts.runtime.standalone.repository.config.DefaultNutsRepositoryManager;
 import net.thevpc.nuts.runtime.standalone.repository.config.DefaultNutsRepositoryModel;
@@ -283,7 +282,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                 LOGCRF.log(NutsMessage.jstyle("   nuts-boot-repositories         : {0}", NutsTextUtils.desc(bOptions.getBootRepositories(), text)));
                 LOGCRF.log(NutsMessage.jstyle("   nuts-runtime                   : {0}", getRuntimeId()));
                 LOGCRF.log(NutsMessage.jstyle("   nuts-runtime-digest            : {0}",
-                        text.ofStyled(new CoreDigestHelper().append(bOptions.getClassWorldURLs()).getDigest(), NutsTextStyle.version())
+                        text.ofStyled(new CoreDigestHelper(defaultSession()).append(bOptions.getClassWorldURLs()).getDigest(), NutsTextStyle.version())
                 ));
                 LOGCRF.log(NutsMessage.jstyle("   nuts-runtime-dependencies      : {0}",
                         text.builder().appendJoined(text.ofStyled(";", NutsTextStyle.separator()),
@@ -525,8 +524,9 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                     justInstalledArchetype = initializeWorkspace(options.getArchetype(), defaultSession());
                 }
                 List<String> transientRepositoriesSet = options.getRepositories() == null ? new ArrayList<>() : new ArrayList<>(Arrays.asList(options.getRepositories()));
-                NutsRepositorySelectorList expected = NutsRepositorySelectorList.ofAll(transientRepositoriesSet.toArray(new String[0]), DefaultNutsRepositoryDB.INSTANCE, defaultSession());
-                for (NutsRepositoryURL loc : expected.resolve(null, DefaultNutsRepositoryDB.INSTANCE)) {
+                NutsRepositoryDB repoDB = NutsRepositoryDB.of(defaultSession());
+                NutsRepositorySelectorList expected = NutsRepositorySelectorList.ofAll(transientRepositoriesSet.toArray(new String[0]), repoDB, defaultSession());
+                for (NutsRepositoryLocation loc : expected.resolve(null, repoDB)) {
                     NutsAddRepositoryOptions d = NutsRepositorySelectorHelper.createRepositoryOptions(loc, false, defaultSession());
                     String n = d.getName();
                     String ruuid = (NutsBlankable.isBlank(n) ? "temporary" : n) + "_" + UUID.randomUUID().toString().replace("-", "");
@@ -599,7 +599,10 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
     }
 
     private String getApiDigest() {
-        return new CoreDigestHelper().append(getApiURL()).getDigest();
+        if(NutsBlankable.isBlank(wsModel.apiDigest)){
+            wsModel.apiDigest=new CoreDigestHelper(defaultSession()).append(getApiURL()).getDigest();
+        }
+        return wsModel.apiDigest;
     }
 
     protected NutsDescriptor _resolveEffectiveDescriptor(NutsDescriptor descriptor, NutsSession session) {
@@ -1422,6 +1425,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
             //
         }
         NutsDescriptor effectiveDescriptor = _resolveEffectiveDescriptor(descriptor, session);
+        NutsDescriptorUtils.checkValidEffectiveDescriptor(effectiveDescriptor,session);
         if (eff == null) {
             NutsPath l = session.locations().getStoreLocation(effectiveDescriptor.getId(), NutsStoreLocation.CACHE);
             String nn = loc.getDefaultIdFilename(effectiveDescriptor.getId().builder().setFace("eff-nuts.cache").build());
@@ -1504,10 +1508,11 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
             pr.put("project.id", def.getId().getShortId().toString());
             pr.put("project.name", def.getId().getShortId().toString());
             pr.put("project.version", def.getId().getVersion().toString());
+            NutsRepositoryDB repoDB = NutsRepositoryDB.of(session);
             pr.put("repositories", "~/.m2/repository"
-                    + ";" + NutsRepositorySelectorHelper.createRepositoryOptions(NutsRepositoryURL.of("vpc-public-maven", DefaultNutsRepositoryDB.INSTANCE, session), true, session).getConfig().getLocation()
-                    + ";" + NutsRepositorySelectorHelper.createRepositoryOptions(NutsRepositoryURL.of("maven-central", DefaultNutsRepositoryDB.INSTANCE, session), true, session).getConfig().getLocation()
-                    + ";" + NutsRepositorySelectorHelper.createRepositoryOptions(NutsRepositoryURL.of("vpc-public-nuts", DefaultNutsRepositoryDB.INSTANCE, session), true, session).getConfig().getLocation()
+                    + ";" + NutsRepositorySelectorHelper.createRepositoryOptions(NutsRepositoryLocation.of("vpc-public-maven", repoDB, session), true, session).getConfig().getLocation()
+                    + ";" + NutsRepositorySelectorHelper.createRepositoryOptions(NutsRepositoryLocation.of("maven-central", repoDB, session), true, session).getConfig().getLocation()
+                    + ";" + NutsRepositorySelectorHelper.createRepositoryOptions(NutsRepositoryLocation.of("vpc-public-nuts", repoDB, session), true, session).getConfig().getLocation()
             );
             pr.put("project.dependencies.compile",
                     String.join(";",
@@ -1556,7 +1561,10 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
 
     @Override
     public String getHashName() {
-        return defaultSession().config().getHashName(this);
+        if(wsModel.hashName==null){
+            wsModel.hashName=NutsHashName.of(defaultSession()).getHashName(this);
+        }
+        return wsModel.hashName;
     }
 
     @Override

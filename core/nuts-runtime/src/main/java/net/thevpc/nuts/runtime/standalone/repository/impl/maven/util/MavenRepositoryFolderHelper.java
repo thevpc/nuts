@@ -43,10 +43,10 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.repository.impl.NutsRepositoryExt;
 import net.thevpc.nuts.runtime.standalone.util.CoreNutsConstants;
 import net.thevpc.nuts.runtime.standalone.version.DefaultNutsVersion;
-import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.repository.NutsIdPathIterator;
 import net.thevpc.nuts.runtime.standalone.repository.NutsIdPathIteratorBase;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
+import net.thevpc.nuts.runtime.standalone.xtra.digest.NutsDigestUtils;
 
 /**
  *
@@ -250,9 +250,9 @@ public class MavenRepositoryFolderHelper {
                             }
 //                            println(MavenMetadataParser.toXmlString(m));
                             new MavenMetadataParser(session).writeMavenMetaData(m, metadataxml);
-                            String md5 = CoreIOUtils.evalMD5Hex(metadataxml,session).toLowerCase();
+                            String md5 = NutsDigestUtils.evalMD5Hex(metadataxml,session).toLowerCase();
                             Files.write(metadataxml.resolveSibling("maven-metadata.xml.md5"), md5.getBytes());
-                            String sha1 = CoreIOUtils.evalSHA1Hex(NutsPath.of(metadataxml,session),session).toLowerCase();
+                            String sha1 = NutsDigestUtils.evalSHA1Hex(NutsPath.of(metadataxml,session),session).toLowerCase();
                             Files.write(metadataxml.resolveSibling("maven-metadata.xml.sha1"), sha1.getBytes());
                         }
                         if (applyRawNavigation) {

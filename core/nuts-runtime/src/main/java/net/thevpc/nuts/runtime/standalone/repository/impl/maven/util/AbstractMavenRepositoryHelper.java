@@ -27,6 +27,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.util.CoreNutsConstants;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
+import net.thevpc.nuts.runtime.standalone.xtra.digest.NutsDigestUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -103,7 +104,7 @@ public abstract class AbstractMavenRepositoryHelper {
                 //sha is not provided... so do not check anything!
                 return;
             }
-            String lhash = CoreIOUtils.evalSHA1Hex(stream, true, session);
+            String lhash = NutsDigestUtils.evalSHA1Hex(stream, true, session);
             if (!rhash.equalsIgnoreCase(lhash)) {
                 throw new IOException("invalid file hash " + id);
             }

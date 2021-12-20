@@ -1,6 +1,8 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.deploy;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.standalone.descriptor.parser.NutsDescriptorContentResolver;
+import net.thevpc.nuts.runtime.standalone.id.util.NutsIdUtils;
 import net.thevpc.nuts.runtime.standalone.util.CorePlatformUtils;
 import net.thevpc.nuts.runtime.standalone.io.util.NutsStreamOrPath;
 import net.thevpc.nuts.runtime.standalone.io.util.ZipOptions;
@@ -54,7 +56,7 @@ public class DefaultNutsDeployCommand extends AbstractNutsDeployCommand {
                     if (Files.exists(ext)) {
                         c.descriptor = NutsDescriptorParser.of(session).parse(ext);
                     } else {
-                        c.descriptor = CoreIOUtils.resolveNutsDescriptorFromFileContent(c.baseFile, parseOptions, session);
+                        c.descriptor = NutsDescriptorContentResolver.resolveNutsDescriptorFromFileContent(c.baseFile, parseOptions, session);
                     }
                 }
                 if (c.descriptor != null) {
@@ -74,7 +76,7 @@ public class DefaultNutsDeployCommand extends AbstractNutsDeployCommand {
                     if (ext.exists()) {
                         c.descriptor = NutsDescriptorParser.of(session).parse(ext);
                     } else {
-                        c.descriptor = CoreIOUtils.resolveNutsDescriptorFromFileContent(c.baseFile, parseOptions, session);
+                        c.descriptor = NutsDescriptorContentResolver.resolveNutsDescriptorFromFileContent(c.baseFile, parseOptions, session);
                     }
                 }
             } else {
@@ -175,7 +177,7 @@ public class DefaultNutsDeployCommand extends AbstractNutsDeployCommand {
                     if (Files.exists(descFile)) {
                         descriptor2 = NutsDescriptorParser.of(session).parse(descFile);
                     } else {
-                        descriptor2 = CoreIOUtils.resolveNutsDescriptorFromFileContent(
+                        descriptor2 = NutsDescriptorContentResolver.resolveNutsDescriptorFromFileContent(
                                 contentFile,
                                 getParseOptions(), session);
                     }
@@ -203,7 +205,7 @@ public class DefaultNutsDeployCommand extends AbstractNutsDeployCommand {
                     }
                 } else {
                     if (descriptor == null) {
-                        descriptor = CoreIOUtils.resolveNutsDescriptorFromFileContent(
+                        descriptor = NutsDescriptorContentResolver.resolveNutsDescriptorFromFileContent(
                                 contentFile, getParseOptions(), session);
                     }
                 }
@@ -219,8 +221,7 @@ public class DefaultNutsDeployCommand extends AbstractNutsDeployCommand {
                 NutsId effId = dws.resolveEffectiveId(descriptor, session);
                 CorePlatformUtils.checkAcceptCondition(descriptor.getCondition(),false, session);
                 if (NutsBlankable.isBlank(repository)) {
-                    effId = this.session.config().createContentFaceId(effId.builder().setProperties("").build(), descriptor);
-
+                    effId = NutsIdUtils.createContentFaceId(effId.builder().setProperties("").build(), descriptor,session);
                     for (NutsRepository repo : wu.filterRepositoriesDeploy(effId, null)
                             .stream()
                             .filter(x->x.config().getDeployWeight()>0)
@@ -244,7 +245,7 @@ public class DefaultNutsDeployCommand extends AbstractNutsDeployCommand {
                     if (!repo.config().isEnabled()) {
                         throw new NutsRepositoryDisabledException(getSession(), repository);
                     }
-                    effId = this.session.config().createContentFaceId(effId.builder().setProperties("").build(), descriptor);
+                    effId = NutsIdUtils.createContentFaceId(effId.builder().setProperties("").build(), descriptor,session);
                     NutsRepositorySPI repoSPI = wu.repoSPI(repo);
                     repoSPI.deploy()
                             .setSession(session)
@@ -285,7 +286,7 @@ public class DefaultNutsDeployCommand extends AbstractNutsDeployCommand {
         NutsDescriptor mdescriptor = null;
         if (descriptor instanceof NutsDescriptor) {
             mdescriptor = (NutsDescriptor) descriptor;
-            if (descSHA1 != null && !NutsHash.of(session).sha1().setSource(mdescriptor).computeString().equalsIgnoreCase(descSHA1)) {
+            if (descSHA1 != null && !NutsDigest.of(session).sha1().setSource(mdescriptor).computeString().equalsIgnoreCase(descSHA1)) {
                 throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("invalid content Hash"));
             }
             return mdescriptor;
@@ -300,7 +301,7 @@ public class DefaultNutsDeployCommand extends AbstractNutsDeployCommand {
                 try {
                     if (descSHA1 != null) {
                         try (InputStream is = d.getInputStream()) {
-                            if (!NutsHash.of(session).sha1().setSource(is).computeString().equalsIgnoreCase(descSHA1)) {
+                            if (!NutsDigest.of(session).sha1().setSource(is).computeString().equalsIgnoreCase(descSHA1)) {
                                 throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("invalid content Hash"));
                             }
                         } catch (IOException ex) {

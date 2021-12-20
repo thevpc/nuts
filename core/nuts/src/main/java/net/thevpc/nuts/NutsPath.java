@@ -341,4 +341,9 @@ public interface NutsPath extends NutsFormattable,NutsStreamMetadataAware {
 
     NutsStream<NutsPath> walkGlob(NutsPathOption... options);
 
+    /**
+     * return true if this is a valid URL with http or https scheme
+     * @return true if this is a valid URL with http or https scheme
+     */
+    boolean isHttp();
 }

@@ -27,6 +27,8 @@
 package net.thevpc.nuts.runtime.standalone.app.cmdline.option;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.standalone.repository.NutsRepositoryHelper;
+import net.thevpc.nuts.runtime.standalone.repository.util.NutsRepositoryUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,12 +47,16 @@ public class RepositoryTypeNonOption extends DefaultNonOption {
     @Override
     public List<NutsArgumentCandidate> getCandidates(NutsCommandAutoComplete context) {
         TreeSet<String> allValid = new TreeSet<>();
-        allValid.add("nuts");
+        allValid.add(NutsConstants.RepoTypes.NUTS);
+        allValid.add(NutsConstants.RepoTypes.MAVEN);
         for (NutsAddRepositoryOptions repo : context.getSession().config()
                 .setSession(context.getSession())
                 .getDefaultRepositories()) {
-            if(repo.getConfig()!=null && repo.getConfig().getType()!=null) {
-                allValid.add(repo.getConfig().getType());
+            if(repo.getConfig()!=null) {
+                String t = NutsRepositoryUtils.getRepoType(repo.getConfig());
+                if(!NutsBlankable.isBlank(t)){
+                    allValid.add(t.trim());
+                }
             }
         }
         List<NutsArgumentCandidate> all = new ArrayList<>();

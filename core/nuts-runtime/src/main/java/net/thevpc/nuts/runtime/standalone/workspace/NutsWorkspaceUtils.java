@@ -6,22 +6,18 @@
 package net.thevpc.nuts.runtime.standalone.workspace;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.standalone.io.SimpleHttpClient;
 import net.thevpc.nuts.runtime.standalone.util.reflect.*;
-import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.util.NutsJavaSdkUtils;
 import net.thevpc.nuts.runtime.standalone.repository.cmd.NutsRepositorySupportedAction;
 import net.thevpc.nuts.runtime.standalone.format.NutsFetchDisplayOptions;
 import net.thevpc.nuts.runtime.standalone.format.NutsPrintIterator;
 import net.thevpc.nuts.runtime.standalone.repository.config.DefaultNutsRepositoryManager;
 import net.thevpc.nuts.runtime.standalone.repository.impl.main.NutsInstalledRepository;
-import net.thevpc.nuts.runtime.standalone.repository.NutsRepositoryUtils;
+import net.thevpc.nuts.runtime.standalone.repository.NutsRepositoryHelper;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.NutsRepositoryAndFetchMode;
 import net.thevpc.nuts.spi.NutsRepositorySPI;
 import net.thevpc.nuts.spi.NutsSessionAware;
 
-import java.io.InputStream;
-import java.net.URL;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
@@ -217,7 +213,7 @@ public class NutsWorkspaceUtils {
                 int d = 0;
                 if (fmode == NutsRepositorySupportedAction.DEPLOY) {
                     try {
-                        d = NutsRepositoryUtils.getSupportDeployLevel(repository, fmode, id, mode, session.isTransitive(), session);
+                        d = NutsRepositoryHelper.getSupportDeployLevel(repository, fmode, id, mode, session.isTransitive(), session);
                     } catch (Exception ex) {
                         _LOGOP(session).level(Level.FINE).error(ex)
                                 .log(NutsMessage.jstyle("unable to resolve support deploy level for : {0}", repository.getName()));
@@ -225,7 +221,7 @@ public class NutsWorkspaceUtils {
                 }
                 NutsSpeedQualifier t = NutsSpeedQualifier.NORMAL;
                 try {
-                    t = NutsRepositoryUtils.getSupportSpeedLevel(repository, fmode, id, mode, session.isTransitive(), session);
+                    t = NutsRepositoryHelper.getSupportSpeedLevel(repository, fmode, id, mode, session.isTransitive(), session);
                 } catch (Exception ex) {
                     _LOGOP(session).level(Level.FINE).error(ex)
                             .log(NutsMessage.jstyle("unable to resolve support speed level for : {0}", repository.getName()));
@@ -302,29 +298,6 @@ public class NutsWorkspaceUtils {
 
     public Events events() {
         return new Events(this);
-    }
-
-    public void traceMessage(NutsFetchStrategy fetchMode, NutsId id, NutsLogVerb tracePhase, String message, long startTime) {
-        if (_LOG(session).isLoggable(Level.FINEST)) {
-
-            long time = (startTime != 0) ? (System.currentTimeMillis() - startTime) : 0;
-            String fetchString = "[" + CoreStringUtils.alignLeft(fetchMode.id(), 7) + "] ";
-            _LOGOP(session).level(Level.FINEST)
-                    .verb(tracePhase).time(time)
-                    .log(NutsMessage.jstyle("{0}{1} {2}",
-                            fetchString,
-                            id,
-                            CoreStringUtils.alignLeft(message, 18)
-                    ));
-        }
-    }
-
-    public InputStream openURL(String o) {
-        return new SimpleHttpClient(o, session).openStream();
-    }
-
-    public InputStream openURL(URL o) {
-        return new SimpleHttpClient(o, session).openStream();
     }
 
     private static class RepoAndLevel implements Comparable<RepoAndLevel> {

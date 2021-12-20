@@ -7,6 +7,7 @@ package net.thevpc.nuts.runtime.standalone.xtra.cp;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.io.progress.DefaultNutsProgressEvent;
+import net.thevpc.nuts.runtime.standalone.io.progress.NutsProgressUtils;
 import net.thevpc.nuts.runtime.standalone.io.progress.SingletonNutsInputStreamProgressFactory;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.io.util.InterruptException;
@@ -495,8 +496,8 @@ public class DefaultNutsCp implements NutsCp {
         NutsSession session = getSession();
         long start = System.currentTimeMillis();
         Object origin = getSourceOrigin();
-        NutsProgressMonitor m = CoreIOUtils.createProgressMonitor(
-                CoreIOUtils.MonitorType.DEFAULT, srcBase, origin, session,
+        NutsProgressMonitor m = NutsProgressUtils.createProgressMonitor(
+                NutsProgressUtils.MonitorType.DEFAULT, srcBase, origin, session,
                 options.contains(NutsPathOption.LOG),
                 options.contains(NutsPathOption.TRACE),
                 getProgressFactory());
@@ -511,7 +512,7 @@ public class DefaultNutsCp implements NutsCp {
                 public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
                     checkInterrupted();
                     f.doneFolders++;
-                    CoreIOUtils.mkdirs(transformPath(dir, srcBase, targetBase), session);
+                    NutsPath.of(transformPath(dir, srcBase, targetBase),session).mkdirs();
                     m.onProgress(new DefaultNutsProgressEvent(srcBase, srcBaseMessage, f.doneFiles + f.doneFolders, System.currentTimeMillis() - start, 0, 0, f.files + f.folders, null, finalSession, false));
                     return FileVisitResult.CONTINUE;
                 }
@@ -551,7 +552,7 @@ public class DefaultNutsCp implements NutsCp {
                     return null;
                 }
             }
-            try (InputStream in = CoreIOUtils.interruptible(Files.newInputStream(source))) {
+            try (InputStream in = CoreIOUtils.toInterruptible(Files.newInputStream(source))) {
                 interruptibleInstance = (Interruptible) in;
                 try (OutputStream out = Files.newOutputStream(target)) {
                     transferTo(in, out);
@@ -565,7 +566,7 @@ public class DefaultNutsCp implements NutsCp {
     public long copy(InputStream in, Path target, Set<NutsPathOption> options)
             throws IOException {
         if (options.contains(NutsPathOption.INTERRUPTIBLE)) {
-            in = CoreIOUtils.interruptible(in);
+            in = CoreIOUtils.toInterruptible(in);
             interruptibleInstance = (Interruptible) in;
             try (OutputStream out = Files.newOutputStream(target)) {
                 return transferTo(in, out);
@@ -577,7 +578,7 @@ public class DefaultNutsCp implements NutsCp {
     public long copy(InputStream in, OutputStream out, Set<NutsPathOption> options)
             throws IOException {
         if (options.contains(NutsPathOption.INTERRUPTIBLE)) {
-            in = CoreIOUtils.interruptible(in);
+            in = CoreIOUtils.toInterruptible(in);
             interruptibleInstance = (Interruptible) in;
             return transferTo(in, out);
         }
@@ -586,7 +587,7 @@ public class DefaultNutsCp implements NutsCp {
 
     public long copy(Path source, OutputStream out) throws IOException {
         if (options.contains(NutsPathOption.INTERRUPTIBLE)) {
-            try (InputStream in = CoreIOUtils.interruptible(Files.newInputStream(source))) {
+            try (InputStream in = CoreIOUtils.toInterruptible(Files.newInputStream(source))) {
                 interruptibleInstance = (Interruptible) in;
                 return transferTo(in, out);
             }
@@ -615,7 +616,7 @@ public class DefaultNutsCp implements NutsCp {
                 public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
                     checkInterrupted();
                     f.doneFolders++;
-                    CoreIOUtils.mkdirs(transformPath(dir, srcBase, targetBase), session);
+                    NutsPath.of(transformPath(dir, srcBase, targetBase),session).mkdirs();
                     return FileVisitResult.CONTINUE;
                 }
 
@@ -700,7 +701,7 @@ public class DefaultNutsCp implements NutsCp {
                 Path temp = null;
                 if (_target_isPath) {
                     Path to = target.getPath().toFile();
-                    CoreIOUtils.mkdirs(to.getParent(), session);
+                    NutsPath.of(to,session).mkParentDirs();
                     temp = to.resolveSibling(to.getFileName() + "~");
                 } else {
                     temp = NutsTmp.of(getSession())
@@ -742,7 +743,7 @@ public class DefaultNutsCp implements NutsCp {
             } else {
                 if (_target_isPath) {
                     Path to = target.getPath().toFile();
-                    CoreIOUtils.mkdirs(to.getParent(), session);
+                    NutsPath.of(to,session).mkParentDirs();
                     if (_source.isPath() && _source.getPath().isFile()) {
                         copy(_source.getPath().toFile(), to, new HashSet<>(Collections.singletonList(NutsPathOption.REPLACE_EXISTING)));
                     } else {

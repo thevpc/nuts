@@ -23,13 +23,10 @@
  */
 package net.thevpc.nuts.spi;
 
-import net.thevpc.nuts.NutsBlankable;
-import net.thevpc.nuts.NutsIllegalArgumentException;
-import net.thevpc.nuts.NutsMessage;
-import net.thevpc.nuts.NutsSession;
+import net.thevpc.nuts.*;
 
-import java.util.Arrays;
 import java.util.Collections;
+import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.regex.Matcher;
@@ -38,54 +35,58 @@ import java.util.regex.Pattern;
 /**
  * @author thevpc
  */
-public class NutsRepositoryURL {
+public class NutsRepositoryLocation implements Comparable<NutsRepositoryLocation> {
 
-    protected static final Pattern FULL_PATTERN = Pattern.compile("((?<n>[a-z]+)=)?((?<t>[a-z]+)@)?(?<r>.*)");
+    protected static final Pattern FULL_PATTERN = Pattern.compile("((?<n>[a-zA-Z][a-zA-Z0-9_-]*)?=)?((?<t>[a-zA-Z][a-zA-Z0-9_-]*)?@)?(?<r>.*)");
 
     private final String name;
     private final String type;
     private final Set<String> pathProtocols = new TreeSet<String>();
     private final String location;
 
-    private NutsRepositoryURL(String name, String type, String location) {
-        this.name = name == null ? "" : name;
-        this.type = type;
-        this.location = location;
-        this.pathProtocols.addAll(detectedProtocols(location));
+    private NutsRepositoryLocation(String name, String type, String location) {
+        this.name = NutsUtilStrings.trimToNull(name);
+        this.type = NutsUtilStrings.trimToNull(type);
+        this.location = NutsUtilStrings.trimToNull(location);
+        this.pathProtocols.addAll(detectedProtocols(this.location));
     }
 
-    protected NutsRepositoryURL(String url) {
+    protected NutsRepositoryLocation(String url) {
         if (url == null) {
             url = "";
         }
         Matcher nm = FULL_PATTERN.matcher(url);
         if (nm.find()) {
-            name = nm.group("n");
-            type = nm.group("t");
-            location = nm.group("r");
+            name = NutsUtilStrings.trimToNull(nm.group("n"));
+            type = NutsUtilStrings.trimToNull(nm.group("t"));
+            location = NutsUtilStrings.trimToNull(nm.group("r"));
         } else {
-            location = url;
-            name = "";
+            name = null;
             type = null;
+            location = NutsUtilStrings.trimToNull(url);
         }
-        pathProtocols.addAll(detectedProtocols(location));
+        pathProtocols.addAll(detectedProtocols(this.location));
     }
 
-    public static NutsRepositoryURL of(String url) {
-        return new NutsRepositoryURL(url);
+    public static NutsRepositoryLocation of(String url) {
+        return new NutsRepositoryLocation(url);
     }
 
-    public static NutsRepositoryURL of(String name, String url) {
-        return of(url).setName(name);
+    public static NutsRepositoryLocation of(String name, String url) {
+        NutsRepositoryLocation q = of(url);
+        if (name != null) {
+            q = q.setName(name);
+        }
+        return q;
     }
 
-    public static NutsRepositoryURL of(String expression, NutsRepositoryDB db, NutsSession session) {
+    public static NutsRepositoryLocation of(String expression, NutsRepositoryDB db, NutsSession session) {
         String name = null;
         String url = null;
         if (expression == null) {
-            if(session==null) {
+            if (session == null) {
                 throw new IllegalArgumentException("invalid null repository");
-            }else{
+            } else {
                 throw new NutsIllegalArgumentException(session, NutsMessage.plain("invalid null repository"));
             }
         }
@@ -95,10 +96,10 @@ public class NutsRepositoryURL {
                 || expression.startsWith("=")
                 || expression.indexOf(',') >= 0
                 || expression.indexOf(';') >= 0) {
-            if(session==null) {
+            if (session == null) {
                 throw new IllegalArgumentException("invalid selection syntax");
-            }else{
-                throw new NutsIllegalArgumentException(session,NutsMessage.plain("invalid repository syntax"));
+            } else {
+                throw new NutsIllegalArgumentException(session, NutsMessage.plain("invalid repository syntax"));
             }
         }
         Matcher matcher = Pattern.compile("(?<name>[a-zA-Z-_]+)=(?<value>.+)").matcher(expression);
@@ -125,12 +126,12 @@ public class NutsRepositoryURL {
             }
         }
         if (url.length() > 0) {
-            return NutsRepositoryURL.of(name, url);
+            return NutsRepositoryLocation.of(name, url);
         }
         return null;
     }
 
-    public static NutsRepositoryURL[] ofAll(String expression,NutsRepositoryURL[] input, NutsRepositoryDB db,NutsSession session) {
+    public static NutsRepositoryLocation[] ofAll(String expression, NutsRepositoryLocation[] input, NutsRepositoryDB db, NutsSession session) {
         return NutsRepositorySelectorList.of(expression, db, session)
                 .resolve(input, db);
     }
@@ -159,33 +160,63 @@ public class NutsRepositoryURL {
         return name;
     }
 
+    public NutsRepositoryLocation setName(String s) {
+        return new NutsRepositoryLocation(s, type, location);
+    }
+
     public String getLocation() {
         return location;
+    }
+
+    public NutsRepositoryLocation setLocation(String location) {
+        return new NutsRepositoryLocation(name, type, location);
     }
 
     public String getType() {
         return type;
     }
 
+    public NutsRepositoryLocation setType(String type) {
+        return new NutsRepositoryLocation(name, type, location);
+    }
+
     public Set<String> getPathProtocols() {
         return Collections.unmodifiableSet(pathProtocols);
     }
 
-    public String getURLString() {
-        if (NutsBlankable.isBlank(type)) {
-            return location;
-        }
-        return type + "@" + location;
+    @Override
+    public int hashCode() {
+        return toString().hashCode();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        NutsRepositoryLocation that = (NutsRepositoryLocation) o;
+        return Objects.equals(toString(), that.toString());
     }
 
     @Override
     public String toString() {
-        return (name == null || name.isEmpty())
-                ? getURLString()
-                : getName() + "=" + getURLString();
+        StringBuilder sb = new StringBuilder();
+        if (!NutsBlankable.isBlank(name)) {
+            sb.append(name);
+            sb.append("=");
+        }
+        if (!NutsBlankable.isBlank(type)) {
+            sb.append(type);
+            sb.append("@");
+        }
+        sb.append(location);
+        return sb.toString();
     }
 
-    public NutsRepositoryURL setName(String s) {
-        return new NutsRepositoryURL(s, type, location);
+    @Override
+    public int compareTo(NutsRepositoryLocation o) {
+        if (o == null) {
+            return 1;
+        }
+        return toString().compareTo(o.toString());
     }
 }

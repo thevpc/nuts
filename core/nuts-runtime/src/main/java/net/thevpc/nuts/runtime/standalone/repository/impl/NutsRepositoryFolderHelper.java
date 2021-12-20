@@ -11,7 +11,7 @@ import net.thevpc.nuts.runtime.standalone.io.util.NutsStreamOrPath;
 import net.thevpc.nuts.runtime.standalone.util.iter.IteratorBuilder;
 import net.thevpc.nuts.runtime.standalone.repository.NutsIdPathIterator;
 import net.thevpc.nuts.runtime.standalone.repository.NutsIdPathIteratorBase;
-import net.thevpc.nuts.runtime.standalone.repository.NutsRepositoryUtils;
+import net.thevpc.nuts.runtime.standalone.repository.NutsRepositoryHelper;
 import net.thevpc.nuts.runtime.standalone.repository.cmd.fetch.DefaultNutsFetchContentRepositoryCommand;
 import net.thevpc.nuts.runtime.standalone.repository.cmd.undeploy.DefaultNutsRepositoryUndeployCommand;
 import net.thevpc.nuts.runtime.standalone.util.CoreNutsConstants;
@@ -22,6 +22,7 @@ import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.CharacterizedExecFile;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.DefaultNutsArtifactPathExecutable;
+import net.thevpc.nuts.runtime.standalone.xtra.digest.NutsDigestUtils;
 import net.thevpc.nuts.spi.NutsDeployRepositoryCommand;
 import net.thevpc.nuts.spi.NutsRepositorySPI;
 import net.thevpc.nuts.spi.NutsRepositoryUndeployCommand;
@@ -389,7 +390,7 @@ public class NutsRepositoryFolderHelper {
         deployDescriptor(id, descriptor, writeType, session);
         NutsPath pckFile = deployContent(id, inputSource, descriptor, writeType, session);
         if (repo != null) {
-            NutsRepositoryUtils.of(repo).events().fireOnDeploy(new DefaultNutsContentEvent(
+            NutsRepositoryHelper.of(repo).events().fireOnDeploy(new DefaultNutsContentEvent(
                     pckFile, deployment, session, repo));
         }
         return descriptor.builder().setId(id.getLongId()).build();
@@ -421,7 +422,7 @@ public class NutsRepositoryFolderHelper {
         return NutsLocks.of(session).setSource(descFile).call(() -> {
 
             desc.formatter().setSession(session).setNtf(false).print(descFile);
-            byte[] bytes = NutsHash.of(session).sha1().setSource(desc).computeString().getBytes();
+            byte[] bytes = NutsDigest.of(session).sha1().setSource(desc).computeString().getBytes();
             NutsCp.of(session)
                     .from(
                             InputStreamMetadataAwareImpl.of(
@@ -468,7 +469,7 @@ public class NutsRepositoryFolderHelper {
             (content.isPath() ? NutsCp.of(session).from(content.getPath()) : NutsCp.of(session).from(content.getInputStream()))
                     .to(pckFile).addOptions(NutsPathOption.SAFE).run();
             NutsCp.of(session).from(
-                    CoreIOUtils.createBytesStream(CoreIOUtils.evalSHA1Hex(pckFile, session).getBytes(),
+                    CoreIOUtils.createBytesStream(NutsDigestUtils.evalSHA1Hex(pckFile, session).getBytes(),
                             NutsMessage.cstyle("sha1://%s", id),
                             CoreIOUtils.MIME_TYPE_SHA1,
                             null,
@@ -490,7 +491,7 @@ public class NutsRepositoryFolderHelper {
                 return false;
             })) {
                 if (repo != null) {
-                    NutsRepositoryUtils.of(repo).events().fireOnUndeploy(new DefaultNutsContentEvent(
+                    NutsRepositoryHelper.of(repo).events().fireOnUndeploy(new DefaultNutsContentEvent(
                             localFolder, command, command.getSession(), repo));
                     return true;
                 }

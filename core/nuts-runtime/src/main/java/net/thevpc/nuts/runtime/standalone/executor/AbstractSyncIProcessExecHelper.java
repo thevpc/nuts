@@ -1,5 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.executor;
 
+import net.thevpc.nuts.NutsScheduler;
 import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.runtime.standalone.io.util.IProcessExecHelper;
 
@@ -19,11 +20,6 @@ public abstract class AbstractSyncIProcessExecHelper implements IProcessExecHelp
 
     @Override
     public Future<Integer> execAsync() {
-        return session.config().executorService().submit(new Callable<Integer>() {
-            @Override
-            public Integer call() throws Exception {
-                return exec();
-            }
-        });
+        return NutsScheduler.of(getSession()).executorService().submit(this::exec);
     }
 }

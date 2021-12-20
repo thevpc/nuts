@@ -1,9 +1,9 @@
 package net.thevpc.nuts.runtime.standalone.text;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.standalone.io.terminal.NutsTerminalModeOpUtils;
 import net.thevpc.nuts.runtime.standalone.text.parser.DefaultNutsTextNodeParser;
 import net.thevpc.nuts.runtime.standalone.io.outputstream.BaseTransparentFilterOutputStream;
-import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.io.terminal.NutsTerminalModeOp;
 import net.thevpc.nuts.spi.NutsSystemTerminalBase;
 
@@ -21,7 +21,7 @@ public class EscapeOutputStream extends BaseTransparentFilterOutputStream implem
         this.session = session;
         this.term = term;
         this.ws = session.getWorkspace();
-        NutsTerminalModeOp t = CoreIOUtils.resolveNutsTerminalModeOp(out);
+        NutsTerminalModeOp t = NutsTerminalModeOpUtils.resolveNutsTerminalModeOp(out);
         if (t.in() != NutsTerminalMode.FORMATTED && t.in() != NutsTerminalMode.FILTERED) {
             throw new NutsIllegalArgumentException(session, NutsMessage.plain("illegal Formatted"));
         }

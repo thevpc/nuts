@@ -203,7 +203,7 @@ public class Test01_CreateTest {
         }
 
         {
-            NutsHash c = NutsHash.of(s);
+            NutsDigest c = NutsDigest.of(s);
             Assertions.assertNotNull(c);
         }
 

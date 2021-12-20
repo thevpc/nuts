@@ -14,22 +14,22 @@ import java.util.logging.Level;
 import net.thevpc.nuts.runtime.standalone.repository.cmd.NutsRepositorySupportedAction;
 import net.thevpc.nuts.runtime.standalone.util.NutsSpeedQualifiers;
 
-public class NutsRepositoryUtils {
+public class NutsRepositoryHelper {
     private NutsLogger LOG;
 
     private final NutsRepository repo;
 
-    private NutsRepositoryUtils(NutsRepository repo) {
+    private NutsRepositoryHelper(NutsRepository repo) {
         this.repo = repo;
 //        LOG=repo.getWorkspace().log().of(.class);
     }
 
-    public static NutsRepositoryUtils of(NutsRepository repo) {
+    public static NutsRepositoryHelper of(NutsRepository repo) {
         Map<String, Object> up = repo.getUserProperties();
-        NutsRepositoryUtils wp = (NutsRepositoryUtils) up.get(NutsRepositoryUtils.class.getName());
+        NutsRepositoryHelper wp = (NutsRepositoryHelper) up.get(NutsRepositoryHelper.class.getName());
         if (wp == null) {
-            wp = new NutsRepositoryUtils(repo);
-            up.put(NutsRepositoryUtils.class.getName(), wp);
+            wp = new NutsRepositoryHelper(repo);
+            up.put(NutsRepositoryHelper.class.getName(), wp);
         }
         return wp;
     }
@@ -93,7 +93,7 @@ public class NutsRepositoryUtils {
 
     protected NutsLogger _LOG(NutsSession session) {
         if (LOG == null) {
-            LOG = NutsLogger.of(NutsRepositoryUtils.class,session);
+            LOG = NutsLogger.of(NutsRepositoryHelper.class,session);
         }
         return LOG;
     }
@@ -104,9 +104,9 @@ public class NutsRepositoryUtils {
 
     public static class Events {
 
-        private final NutsRepositoryUtils u;
+        private final NutsRepositoryHelper u;
 
-        public Events(NutsRepositoryUtils u) {
+        public Events(NutsRepositoryHelper u) {
             this.u = u;
         }
 

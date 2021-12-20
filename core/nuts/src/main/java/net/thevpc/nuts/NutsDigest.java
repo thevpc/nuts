@@ -41,10 +41,10 @@ import java.security.MessageDigest;
  * @app.category Input Output
  * @since 0.5.5
  */
-public interface NutsHash extends NutsComponent {
-    static NutsHash of(NutsSession session) {
+public interface NutsDigest extends NutsComponent {
+    static NutsDigest of(NutsSession session) {
         NutsApiUtils.checkSession(session);
-        return session.extensions().createSupported(NutsHash.class, true, null);
+        return session.extensions().createSupported(NutsDigest.class, true, null);
     }
 
     /**
@@ -53,7 +53,7 @@ public interface NutsHash extends NutsComponent {
      * @param input source stream to  hash
      * @return {@code this} instance
      */
-    NutsHash setSource(InputStream input);
+    NutsDigest setSource(InputStream input);
 
     /**
      * file to  hash
@@ -61,7 +61,7 @@ public interface NutsHash extends NutsComponent {
      * @param file source file to  hash
      * @return {@code this} instance
      */
-    NutsHash setSource(File file);
+    NutsDigest setSource(File file);
 
     /**
      * file to  hash
@@ -69,7 +69,7 @@ public interface NutsHash extends NutsComponent {
      * @param path source path to  hash
      * @return {@code this} instance
      */
-    NutsHash setSource(Path path);
+    NutsDigest setSource(Path path);
 
     /**
      * file to  hash
@@ -77,7 +77,7 @@ public interface NutsHash extends NutsComponent {
      * @param path source path to  hash
      * @return {@code this} instance
      */
-    NutsHash setSource(NutsPath path);
+    NutsDigest setSource(NutsPath path);
 
     /**
      * file to  hash
@@ -86,7 +86,7 @@ public interface NutsHash extends NutsComponent {
      * @return {@code this} instance
      * @since 0.8.3
      */
-    NutsHash setSource(byte[] path);
+    NutsDigest setSource(byte[] path);
 
     /**
      * source stream to  hash
@@ -94,7 +94,7 @@ public interface NutsHash extends NutsComponent {
      * @param descriptor source descriptor to  hash
      * @return {@code this} instance
      */
-    NutsHash setSource(NutsDescriptor descriptor);
+    NutsDigest setSource(NutsDescriptor descriptor);
 
     /**
      * compute hash digest and return it as hexadecimal string
@@ -116,32 +116,32 @@ public interface NutsHash extends NutsComponent {
      * @param out output stream
      * @return {@code this} instance
      */
-    NutsHash writeHash(OutputStream out);
+    NutsDigest writeHash(OutputStream out);
 
     /**
      * select MD5 hash algorithm
      *
      * @return {@code this} instance
      */
-    NutsHash md5();
+    NutsDigest md5();
 
     NutsSession getSession();
 
-    NutsHash setSession(NutsSession session);
+    NutsDigest setSession(NutsSession session);
 
     /**
      * select SHA1 hash algorithm
      *
      * @return {@code this} instance
      */
-    NutsHash sha1();
+    NutsDigest sha1();
 
     /**
      * select SHA256 hash algorithm
      *
      * @return {@code this} instance
      */
-    NutsHash sha256();
+    NutsDigest sha256();
 
     /**
      * select hash algorithm.
@@ -151,7 +151,7 @@ public interface NutsHash extends NutsComponent {
      *                  including 'MD5' and 'SHA1'
      * @return {@code this} instance
      */
-    NutsHash algorithm(String algorithm);
+    NutsDigest algorithm(String algorithm);
 
     /**
      * @return selected algorithm. default is 'SHA1'
@@ -166,5 +166,5 @@ public interface NutsHash extends NutsComponent {
      *                  including 'MD5' and 'SHA1'
      * @return {@code this} instance
      */
-    NutsHash setAlgorithm(String algorithm);
+    NutsDigest setAlgorithm(String algorithm);
 }

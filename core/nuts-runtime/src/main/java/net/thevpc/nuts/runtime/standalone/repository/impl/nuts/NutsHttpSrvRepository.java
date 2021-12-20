@@ -39,6 +39,7 @@ import java.util.logging.Level;
 
 import net.thevpc.nuts.runtime.standalone.util.filters.CoreFilterUtils;
 import net.thevpc.nuts.runtime.standalone.util.iter.IteratorBuilder;
+import net.thevpc.nuts.runtime.standalone.xtra.digest.NutsDigestUtils;
 import net.thevpc.nuts.spi.*;
 
 public class NutsHttpSrvRepository extends NutsCachedRepository {
@@ -89,8 +90,8 @@ public class NutsHttpSrvRepository extends NutsCachedRepository {
                 new NutsTransportParamBinaryStreamPart("descriptor", "Project.nuts",
                         new ByteArrayInputStream(descStream.toByteArray())),
                 new NutsTransportParamBinaryFilePart("content", content.getPath().getName(), content.getFile()),
-                new NutsTransportParamParamPart("descriptor-hash", NutsHash.of(session).sha1().setSource(desc).computeString()),
-                new NutsTransportParamParamPart("content-hash", CoreIOUtils.evalSHA1Hex(content.getPath(),session)),
+                new NutsTransportParamParamPart("descriptor-hash", NutsDigest.of(session).sha1().setSource(desc).computeString()),
+                new NutsTransportParamParamPart("content-hash", NutsDigestUtils.evalSHA1Hex(content.getPath(),session)),
                 new NutsTransportParamParamPart("force", String.valueOf(session.isYes()))
         );
     }
@@ -102,7 +103,7 @@ public class NutsHttpSrvRepository extends NutsCachedRepository {
         }
         boolean transitive = session.isTransitive();
         session.getTerminal().printProgress("loading descriptor for ", id.getLongId());
-        try (InputStream stream = CoreIOUtils.getHttpClientFacade(session, getUrl("/fetch-descriptor?id=" + CoreIOUtils.urlEncodeString(id.toString(),session) + (transitive ? ("&transitive") : "") + "&" + resolveAuthURLPart(session))).open()) {
+        try (InputStream stream = NutsPath.of(getUrl("/fetch-descriptor?id=" + CoreIOUtils.urlEncodeString(id.toString(),session) + (transitive ? ("&transitive") : "") + "&" + resolveAuthURLPart(session)),session).getInputStream()) {
             NutsDescriptor descriptor = NutsDescriptorParser.of(session).parse(stream);
             if (descriptor != null) {
                 String hash = httpGetString(getUrl("/fetch-descriptor-hash?id=" + CoreIOUtils.urlEncodeString(id.toString(),session) + (transitive ? ("&transitive") : "") + "&" + resolveAuthURLPart(session)), session);
@@ -125,7 +126,7 @@ public class NutsHttpSrvRepository extends NutsCachedRepository {
         InputStream ret = null;
         try {
             session.getTerminal().printProgress("search version for %s", id.getLongId(), session);
-            ret = CoreIOUtils.getHttpClientFacade(session, getUrl("/find-versions?id=" + CoreIOUtils.urlEncodeString(id.toString(),session) + (transitive ? ("&transitive") : "") + "&" + resolveAuthURLPart(session))).open();
+            ret = NutsPath.of(getUrl("/find-versions?id=" + CoreIOUtils.urlEncodeString(id.toString(),session) + (transitive ? ("&transitive") : "") + "&" + resolveAuthURLPart(session)),session).getInputStream();
         } catch (UncheckedIOException | NutsIOException e) {
             return IteratorBuilder.emptyIterator();
         }
@@ -195,7 +196,7 @@ public class NutsHttpSrvRepository extends NutsCachedRepository {
             String location = getUrl("/fetch?id=" + CoreIOUtils.urlEncodeString(id.toString(),session) + (transitive ? ("&transitive") : "") + "&" + resolveAuthURLPart(session));
             NutsCp.of(session).from(location).to(localPath).addOptions(NutsPathOption.SAFE,NutsPathOption.LOG, NutsPathOption.TRACE).run();
             String rhash = httpGetString(getUrl("/fetch-hash?id=" + CoreIOUtils.urlEncodeString(id.toString(),session) + (transitive ? ("&transitive") : "") + "&" + resolveAuthURLPart(session)), session);
-            String lhash = CoreIOUtils.evalSHA1Hex(NutsPath.of(localPath,session),session);
+            String lhash = NutsDigestUtils.evalSHA1Hex(NutsPath.of(localPath,session),session);
             if (rhash.equalsIgnoreCase(lhash)) {
                 return new NutsDefaultContent(
                         NutsPath.of(localPath,session)
@@ -211,7 +212,7 @@ public class NutsHttpSrvRepository extends NutsCachedRepository {
     private String httpGetString(String url, NutsSession session) {
         LOG.with().session(session).level(Level.FINEST).verb(NutsLogVerb.START)
                 .log(NutsMessage.jstyle("get URL{0}", url));
-        return CoreIOUtils.loadString(CoreIOUtils.getHttpClientFacade(session, url).open(), true,session);
+        return CoreIOUtils.loadString(NutsPath.of(url,session).getInputStream(), true,session);
     }
 
     private InputStream httpUpload(String url, NutsSession session, NutsTransportParamPart... parts) {

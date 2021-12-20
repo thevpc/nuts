@@ -574,8 +574,33 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
         return this;
     }
 
+    private Map<String, String> applyPropsToProps(Map<String, String> properties){
+
+        Map<String, String> oldMap=new LinkedHashMap<>(properties);
+        Set<String> updated=new TreeSet<>();
+        for (int i = 0; i < 16; i++) {
+            Function<String, String> fct = new MapToFunction<>(oldMap);
+            Map<String, String> newMap=new LinkedHashMap<>(oldMap.size());
+            updated=new TreeSet<>();
+            for (Map.Entry<String, String> entry : oldMap.entrySet()) {
+                String v0 = entry.getValue();
+                String v1 = CoreNutsUtils.applyStringProperties(v0, fct);
+                if(!Objects.equals(v0,v1)){
+                    updated.add(entry.getKey());
+                }
+                newMap.put(entry.getKey(),v1);
+            }
+            if(updated.isEmpty()){
+                return newMap;
+            }
+            oldMap=newMap;
+        }
+        throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("too many recursion applying properties %s",updated));
+    }
+
     @Override
     public NutsDescriptorBuilder applyProperties(Map<String, String> properties) {
+        properties=applyPropsToProps(properties);
         Function<String, String> map = new MapToFunction<>(properties);
 
         NutsId n_id = getId().builder().apply(map).build();

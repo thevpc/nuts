@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.repository.util;
 
-import net.thevpc.nuts.NutsAddRepositoryOptions;
-import net.thevpc.nuts.NutsRepositoryRef;
+import net.thevpc.nuts.*;
+import net.thevpc.nuts.spi.NutsRepositoryLocation;
 
 public class NutsRepositoryUtils {
     public static NutsRepositoryRef optionsToRef(NutsAddRepositoryOptions options) {
@@ -21,5 +21,15 @@ public class NutsRepositoryUtils {
                 .setLocation(ref.getLocation())
                 .setDeployWeight(ref.getDeployWeight())
                 .setTemporary(false);
+    }
+
+    public static String getRepoType(NutsRepositoryConfig ref) {
+        if(ref!=null){
+            NutsRepositoryLocation loc = NutsRepositoryLocation.of(ref.getLocation());
+            if(!NutsBlankable.isBlank(loc.getType())){
+                return loc.getType();
+            }
+        }
+        return null;
     }
 }

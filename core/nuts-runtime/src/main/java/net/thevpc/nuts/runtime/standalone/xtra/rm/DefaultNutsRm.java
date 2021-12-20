@@ -4,12 +4,10 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.spi.NutsSupportLevelContext;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.nio.file.FileVisitResult;
-import java.nio.file.FileVisitor;
-import java.nio.file.Files;
-import java.nio.file.Path;
+import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.logging.Level;
 
@@ -31,10 +29,20 @@ public class DefaultNutsRm extends AbstractNutsRm {
         return DEFAULT_SUPPORT;
     }
 
+    public static Path _toPath(Object t) {
+        if (t instanceof Path) {
+            return (Path) t;
+        } else if (t instanceof File) {
+            return ((File) t).toPath();
+        } else if (t instanceof String) {
+            return Paths.get((String) t);
+        }
+        return null;
+    }
     @Override
     public NutsRm run() {
         checkSession();
-        Path t = CoreIOUtils.toPath(getTarget());
+        Path t = _toPath(getTarget());
         if (t == null) {
             if (getTarget() == null) {
                 throw new NutsException(getSession(), NutsMessage.formatted("missing target to delete"));

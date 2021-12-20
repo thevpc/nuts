@@ -26,15 +26,10 @@ package net.thevpc.nuts.runtime.standalone.workspace.archetype;
 import java.util.*;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.standalone.repository.DefaultNutsRepositoryDB;
-import net.thevpc.nuts.spi.NutsRepositoryURL;
+import net.thevpc.nuts.spi.*;
 import net.thevpc.nuts.runtime.standalone.repository.NutsRepositorySelectorHelper;
 import net.thevpc.nuts.runtime.standalone.workspace.config.DefaultNutsWorkspaceConfigManager;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
-import net.thevpc.nuts.spi.NutsComponentScope;
-import net.thevpc.nuts.spi.NutsComponentScopeType;
-import net.thevpc.nuts.spi.NutsSupportLevelContext;
-import net.thevpc.nuts.spi.NutsWorkspaceArchetypeComponent;
 
 /**
  * Created by vpc on 1/23/17.
@@ -53,18 +48,18 @@ public class DefaultNutsWorkspaceArchetypeComponent implements NutsWorkspaceArch
         this.LOG = NutsLogger.of(DefaultNutsWorkspaceArchetypeComponent.class,session);
         DefaultNutsWorkspaceConfigManager rm = (DefaultNutsWorkspaceConfigManager) session.config();
         LinkedHashMap<String, NutsAddRepositoryOptions> def = new LinkedHashMap<>();
-        List<NutsRepositoryURL> defaults = new ArrayList<>();
+        List<NutsRepositoryLocation> defaults = new ArrayList<>();
         for (NutsAddRepositoryOptions d : rm.getDefaultRepositories()) {
             if (d.getConfig() != null) {
                 def.put(NutsPath.of(d.getConfig().getLocation(),session).toAbsolute().toString(), d);
             } else {
                 def.put(NutsPath.of(d.getLocation(),session).toAbsolute().toString(), d);
             }
-            defaults.add(NutsRepositoryURL.of(d.getName(), null));
+            defaults.add(NutsRepositoryLocation.of(d.getName(), null));
         }
-        defaults.add(NutsRepositoryURL.of(NutsConstants.Names.DEFAULT_REPOSITORY_NAME, null));
-        NutsRepositoryURL[] br = rm.getModel().resolveBootRepositoriesList(session).resolve(defaults.toArray(new NutsRepositoryURL[0]), DefaultNutsRepositoryDB.INSTANCE);
-        for (NutsRepositoryURL s : br) {
+        defaults.add(NutsRepositoryLocation.of(NutsConstants.Names.DEFAULT_REPOSITORY_NAME, null));
+        NutsRepositoryLocation[] br = rm.getModel().resolveBootRepositoriesList(session).resolve(defaults.toArray(new NutsRepositoryLocation[0]), NutsRepositoryDB.of(session));
+        for (NutsRepositoryLocation s : br) {
             NutsAddRepositoryOptions oo = NutsRepositorySelectorHelper.createRepositoryOptions(s, false, session);
             String sloc = NutsPath.of(oo.getConfig().getLocation(),session).toAbsolute().toString();
             if (def.containsKey(sloc)) {

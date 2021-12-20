@@ -7,12 +7,12 @@ package net.thevpc.nuts.runtime.standalone.extension;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.dependency.util.NutsClassLoaderUtils;
+import net.thevpc.nuts.runtime.standalone.id.util.NutsIdUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.CoreNutsBootOptions;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceFactory;
 import net.thevpc.nuts.runtime.standalone.workspace.config.NutsWorkspaceConfigManagerExt;
 import net.thevpc.nuts.runtime.standalone.io.printstream.NutsFormattedPrintStream;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
-import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.config.NutsWorkspaceConfigBoot;
 import net.thevpc.nuts.runtime.standalone.workspace.DefaultNutsWorkspaceFactory;
 import net.thevpc.nuts.runtime.standalone.util.filters.CoreFilterUtils;
@@ -23,11 +23,9 @@ import net.thevpc.nuts.runtime.standalone.util.collections.ListMap;
 import net.thevpc.nuts.spi.*;
 import net.thevpc.nuts.spi.NutsExecutorComponent;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
 import java.util.logging.Level;
@@ -132,12 +130,12 @@ public class DefaultNutsWorkspaceExtensionModel {
         List<NutsExtensionInformation> ret = new ArrayList<>();
         List<String> allUrls = new ArrayList<>();
         for (String r : getExtensionRepositoryLocations(id)) {
-            String url = r + "/" + CoreIOUtils.getPath(id, "." + extensionType, '/');
+            String url = r + "/" + NutsIdUtils.getPath(id, "." + extensionType, '/');
             allUrls.add(url);
             URL u = expandURL(url, session);
             if (u != null) {
                 NutsExtensionInformation[] s = new NutsExtensionInformation[0];
-                try (Reader rr = new InputStreamReader(NutsWorkspaceUtils.of(session).openURL(u))) {
+                try (Reader rr = new InputStreamReader(NutsPath.of(u,session).getInputStream())) {
                     s = NutsElements.of(session).json().parse(rr, DefaultNutsExtensionInformation[].class);
                 } catch (IOException ex) {
                     _LOGOP(session).level(Level.SEVERE).error(ex)
@@ -573,7 +571,7 @@ public class DefaultNutsWorkspaceExtensionModel {
     public URL[] getExtensionURLLocations(NutsId nutsId, String appId, String extensionType, NutsSession session) {
         List<URL> bootUrls = new ArrayList<>();
         for (String r : getExtensionRepositoryLocations(nutsId)) {
-            String url = r + "/" + CoreIOUtils.getPath(nutsId, "." + extensionType, '/');
+            String url = r + "/" + NutsIdUtils.getPath(nutsId, "." + extensionType, '/');
             URL u = expandURL(url, session);
             bootUrls.add(u);
         }
@@ -598,20 +596,9 @@ public class DefaultNutsWorkspaceExtensionModel {
     }
 
     protected URL expandURL(String url, NutsSession session) {
-        try {
-            url = NutsPath.of(url,session)
-                    .toAbsolute(session.locations().getWorkspaceLocation())
-                    .toString();
-            if (CoreIOUtils.isPathHttp(url)) {
-                return new URL(url);
-            }
-            if (CoreIOUtils.isPathFile(url)) {
-                return CoreIOUtils.toPathFile(url, session).toUri().toURL();
-            }
-            return new File(url).toURI().toURL();
-        } catch (MalformedURLException ex) {
-            return null;
-        }
+        return NutsPath.of(url,session)
+                .toAbsolute(session.locations().getWorkspaceLocation())
+                .toURL();
     }
 
     private NutsWorkspaceConfigManagerExt configExt() {

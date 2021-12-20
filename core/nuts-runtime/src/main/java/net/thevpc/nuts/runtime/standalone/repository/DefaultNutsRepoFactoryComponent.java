@@ -27,8 +27,10 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.repository.impl.nuts.NutsFolderRepository;
 import net.thevpc.nuts.runtime.standalone.repository.impl.nuts.NutsHttpFolderRepository;
 import net.thevpc.nuts.runtime.standalone.repository.impl.nuts.NutsHttpSrvRepository;
-import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
+import net.thevpc.nuts.runtime.standalone.repository.util.NutsRepositoryUtils;
 import net.thevpc.nuts.spi.*;
+
+import java.util.Map;
 
 /**
  * Created by vpc on 1/15/17.
@@ -43,13 +45,14 @@ public class DefaultNutsRepoFactoryComponent implements NutsRepositoryFactoryCom
         }
         NutsRepositoryConfig r = criteria.getConstraints(NutsRepositoryConfig.class);
         if (r != null) {
-            if (NutsConstants.RepoTypes.NUTS.equals(r.getType())) {
+            String type = NutsRepositoryUtils.getRepoType(r);
+            if (NutsConstants.RepoTypes.NUTS.equals(type)) {
                 return DEFAULT_SUPPORT + 10;
             }
-            if (NutsBlankable.isBlank(r.getType())) {
+            if (NutsBlankable.isBlank(type)) {
                 NutsPath rp = NutsPath.of(r.getLocation(), criteria.getSession()).resolve("nuts-repository.json");
                 if (rp.exists()) {
-                    r.setType(NutsConstants.RepoTypes.NUTS);
+                    r.setLocation(NutsRepositoryLocation.of(r.getLocation()).setType(NutsConstants.RepoTypes.NUTS).toString());
                     return DEFAULT_SUPPORT + 10;
                 }
                 return DEFAULT_SUPPORT + 2;
@@ -62,7 +65,7 @@ public class DefaultNutsRepoFactoryComponent implements NutsRepositoryFactoryCom
     public NutsAddRepositoryOptions[] getDefaultRepositories(NutsSession session) {
         if (!session.config().isGlobal()) {
             return new NutsAddRepositoryOptions[]{
-                    NutsRepositorySelectorHelper.createRepositoryOptions(NutsRepositoryURL.of("system", DefaultNutsRepositoryDB.INSTANCE,session), true, session)
+                    NutsRepositorySelectorHelper.createRepositoryOptions(NutsRepositoryLocation.of("system", NutsRepositoryDB.of(session),session), true, session)
             };
         }
         return new NutsAddRepositoryOptions[0];
@@ -71,21 +74,24 @@ public class DefaultNutsRepoFactoryComponent implements NutsRepositoryFactoryCom
     @Override
     public NutsRepository create(NutsAddRepositoryOptions options, NutsSession session, NutsRepository parentRepository) {
         NutsRepositoryConfig config = options.getConfig();
-        if (NutsBlankable.isBlank(config.getType())) {
-            if (NutsBlankable.isBlank(config.getLocation())) {
-                config.setType(NutsConstants.RepoTypes.NUTS);
-            }
+        String type = NutsRepositoryUtils.getRepoType(config);
+        if (NutsBlankable.isBlank(type)) {
+            return null;
         }
-        if (NutsConstants.RepoTypes.NUTS.equals(config.getType())) {
-            if (NutsBlankable.isBlank(config.getLocation()) || CoreIOUtils.isPathFile(config.getLocation())) {
+        if (NutsConstants.RepoTypes.NUTS.equals(type)) {
+            if (NutsBlankable.isBlank(config.getLocation()) ||
+                    NutsPath.of(config.getLocation(), session).isFile()
+            ) {
                 return new NutsFolderRepository(options, session, parentRepository);
-            }
-            if (CoreIOUtils.isPathURL(config.getLocation())) {
+            }else if (NutsPath.of(config.getLocation(), session).isURL()) {
+                Map<String, String> e = config.getEnv();
+                if(e!=null){
+                    if(NutsUtilStrings.parseBoolean(e.get("nuts-api-server"),false,false)){
+                        return (new NutsHttpSrvRepository(options, session, parentRepository));
+                    }
+                }
                 return (new NutsHttpFolderRepository(options, session, parentRepository));
             }
-        }
-        if ("nuts:api".equals(config.getType()) && CoreIOUtils.isPathHttp(config.getLocation())) {
-            return (new NutsHttpSrvRepository(options, session, parentRepository));
         }
         return null;
     }

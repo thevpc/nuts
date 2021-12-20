@@ -24,6 +24,7 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.push;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.standalone.id.util.NutsIdUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
@@ -86,7 +87,7 @@ public class DefaultNutsPushCommand extends AbstractDefaultNutsPushCommand {
                         //
                     }
                     if (descr != null && repo.config().isSupportedMirroring()) {
-                        NutsId id2 = session.config().createContentFaceId(dws.resolveEffectiveId(descr, session), descr);
+                        NutsId id2 = NutsIdUtils.createContentFaceId(dws.resolveEffectiveId(descr, session), descr,session);
                         try {
                             repoSPI.push().setId(id2)
                                     .setOffline(offline)
@@ -116,7 +117,7 @@ public class DefaultNutsPushCommand extends AbstractDefaultNutsPushCommand {
                 if (!repo.config().isEnabled()) {
                     throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("repository %s is disabled", repo.getName()));
                 }
-                NutsId effId = session.config().createContentFaceId(id.builder().setProperties("").build(), file.getDescriptor()) //                        .setAlternative(NutsUtilStrings.trim(file.getDescriptor().getAlternative()))
+                NutsId effId = NutsIdUtils.createContentFaceId(id.builder().setProperties("").build(), file.getDescriptor(),session) //                        .setAlternative(NutsUtilStrings.trim(file.getDescriptor().getAlternative()))
                         ;
                 NutsRepositorySPI repoSPI = wu.repoSPI(repo);
                 repoSPI.deploy().setSession(session)

@@ -6,7 +6,7 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.exec;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
+import net.thevpc.nuts.runtime.standalone.executor.system.NutsSysExecUtils;
 
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -52,17 +52,17 @@ public class DefaultNutsOpenExecutable extends AbstractNutsExecutableCommand {
         }
         switch (session.env().getOsFamily()) {
             case LINUX: {
-                Path execPath = CoreIOUtils.sysWhich("xdg-open");
+                Path execPath = NutsSysExecUtils.sysWhich("xdg-open");
                 if (execPath != null) {
                     effectiveOpenExecutable = new String[]{execPath.toString()};
                     break;
                 }
-                execPath = CoreIOUtils.sysWhich("gnome-open");
+                execPath = NutsSysExecUtils.sysWhich("gnome-open");
                 if (execPath != null) {
                     effectiveOpenExecutable = new String[]{execPath.toString()};
                     break;
                 }
-                execPath = CoreIOUtils.sysWhich("cygstart");
+                execPath = NutsSysExecUtils.sysWhich("cygstart");
                 if (execPath != null) {
                     effectiveOpenExecutable = new String[]{execPath.toString()};
                     break;
@@ -74,7 +74,7 @@ public class DefaultNutsOpenExecutable extends AbstractNutsExecutableCommand {
                 break;
             }
             case MACOS: {
-                Path execPath = CoreIOUtils.sysWhich("open");
+                Path execPath = NutsSysExecUtils.sysWhich("open");
                 if (execPath != null) {
                     effectiveOpenExecutable = new String[]{execPath.toString()};
                 }

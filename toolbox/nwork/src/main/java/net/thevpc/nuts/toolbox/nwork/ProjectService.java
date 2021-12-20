@@ -262,11 +262,10 @@ public class ProjectService {
                         NutsSession s = null;
                         if (a.getNutsWorkspace() != null && a.getNutsWorkspace().trim().length() > 0 && !a.getNutsWorkspace().equals(session.locations().getWorkspaceLocation().toString())) {
                             s = Nuts.openWorkspace(
-                                    session.config().optionsBuilder()
+                                    new NutsBootOptions()
                                             .setOpenMode(NutsOpenMode.OPEN_OR_ERROR)
                                             .setReadOnly(true)
                                             .setWorkspace(a.getNutsWorkspace())
-                                            .toBootOptions()
                             );
                             s.copyFrom(session);
                         } else {
@@ -280,7 +279,7 @@ public class ProjectService {
                             return found.get(0).getVersion().toString();
                         }
                     } catch (Exception e) {
-                        throw new IllegalArgumentException(e);
+                        throw new NutsIllegalArgumentException(session,NutsMessage.cstyle("unable to process %s",f), e);
                     }
                 }
             }

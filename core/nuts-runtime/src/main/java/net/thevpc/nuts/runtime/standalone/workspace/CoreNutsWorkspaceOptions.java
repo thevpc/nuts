@@ -27,6 +27,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.NutsBootOptions;
 import net.thevpc.nuts.runtime.standalone.app.cmdline.CoreNutsArgumentsParser;
 import net.thevpc.nuts.runtime.standalone.format.CoreNutsWorkspaceOptionsFormat;
+import net.thevpc.nuts.spi.NutsSupportLevelContext;
 
 import java.io.InputStream;
 import java.io.PrintStream;
@@ -1712,5 +1713,10 @@ public final class CoreNutsWorkspaceOptions implements Serializable, Cloneable, 
         b.setTheme(this.getTheme());
         b.setDependencySolver(this.getDependencySolver());
         return b;
+    }
+
+    @Override
+    public int getSupportLevel(NutsSupportLevelContext context) {
+        return DEFAULT_SUPPORT;
     }
 }

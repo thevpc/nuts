@@ -2,7 +2,7 @@ package net.thevpc.nuts.runtime.standalone.text;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.io.outputstream.BaseTransparentFilterOutputStream;
-import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
+import net.thevpc.nuts.runtime.standalone.io.terminal.NutsTerminalModeOpUtils;
 import net.thevpc.nuts.runtime.standalone.io.terminal.NutsTerminalModeOp;
 import net.thevpc.nuts.spi.NutsSystemTerminalBase;
 
@@ -18,7 +18,7 @@ public class UnescapeOutputStream extends BaseTransparentFilterOutputStream impl
         super(out);
         this.session = session;
         this.term = term;
-        NutsTerminalModeOp t = CoreIOUtils.resolveNutsTerminalModeOp(out);
+        NutsTerminalModeOp t = NutsTerminalModeOpUtils.resolveNutsTerminalModeOp(out);
         if (t.in() != NutsTerminalMode.FORMATTED && t.in() != NutsTerminalMode.FILTERED) {
             throw new IllegalArgumentException("Illegal Formatted");
         }

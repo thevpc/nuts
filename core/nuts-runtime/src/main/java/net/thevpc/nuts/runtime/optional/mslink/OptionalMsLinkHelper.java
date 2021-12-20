@@ -74,7 +74,7 @@ public class OptionalMsLinkHelper {
         try {
             //.setFontSize(16)
             //.setTextColor(5)
-            CoreIOUtils.mkdirs(outputFile.getParent(),session);
+            NutsPath.of(outputFile,session).mkParentDirs();
             se.saveTo(filePath);
         } catch (IOException ex) {
             throw new NutsIOException(session,ex);

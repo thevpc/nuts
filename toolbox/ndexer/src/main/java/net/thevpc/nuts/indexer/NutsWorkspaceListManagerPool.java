@@ -20,7 +20,7 @@ public class NutsWorkspaceListManagerPool {
         NutsWorkspaceListManager o = pool.get(name);
         if (o == null) {
             NutsSession session = app.getApplicationContext().getSession();
-            o = session.config().createWorkspaceListManager(name);
+            o = NutsWorkspaceListManager.of(session).setName(name);
             pool.put(name, o);
         }
         return o;

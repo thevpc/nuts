@@ -6,8 +6,8 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.connect;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.standalone.executor.system.NutsSysExecUtils;
 import net.thevpc.nuts.runtime.standalone.io.util.NonBlockingInputStreamAdapter;
-import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.executor.system.PipeRunnable;
 import net.thevpc.nuts.runtime.standalone.util.CoreNumberUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.AbstractNutsSettingsSubCommand;
@@ -64,10 +64,10 @@ public class NutsSettingsConnectSubCommand extends AbstractNutsSettingsSubComman
                 try {
                     int validPort = port <= 0 ? DEFAULT_ADMIN_SERVER_PORT : port;
                     socket = new Socket(InetAddress.getByName(server), validPort);
-                    PipeRunnable rr = CoreIOUtils.pipe("pipe-out-socket-" + server + ":" + validPort,
+                    PipeRunnable rr = NutsSysExecUtils.pipe("pipe-out-socket-" + server + ":" + validPort,
                             cmd0, "connect-socket",
                             new NonBlockingInputStreamAdapter("pipe-out-socket-" + server + ":" + validPort, socket.getInputStream()), session.out().asPrintStream(), session);
-                    session.config().executorService().submit(rr);
+                    NutsScheduler.of(session).executorService().submit(rr);
                     PrintStream out = new PrintStream(socket.getOutputStream());
                     if (!NutsBlankable.isBlank(login)) {
                         out.printf("connect ==%s %s== %n", login, new String(password));

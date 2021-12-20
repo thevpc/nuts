@@ -39,7 +39,7 @@ public class NutsRepositoryConfig extends NutsConfigItem {
     private static final long serialVersionUID = 1;
     private String uuid;
     private String name;
-    private String type;
+//    private String type;
     private String location;
     private Map<NutsStoreLocation, String> storeLocations = null;
     private NutsStoreLocationStrategy storeLocationStrategy = null;
@@ -71,14 +71,14 @@ public class NutsRepositoryConfig extends NutsConfigItem {
         return this;
     }
 
-    public String getType() {
-        return type;
-    }
-
-    public NutsRepositoryConfig setType(String type) {
-        this.type = type;
-        return this;
-    }
+//    public String getType() {
+//        return type;
+//    }
+//
+//    public NutsRepositoryConfig setType(String type) {
+//        this.type = type;
+//        return this;
+//    }
 
     public String getLocation() {
         return location;
@@ -166,7 +166,7 @@ public class NutsRepositoryConfig extends NutsConfigItem {
         int hash = 7;
         hash = 53 * hash + Objects.hashCode(this.uuid);
         hash = 53 * hash + Objects.hashCode(this.name);
-        hash = 53 * hash + Objects.hashCode(this.type);
+//        hash = 53 * hash + Objects.hashCode(this.type);
         hash = 53 * hash + Objects.hashCode(this.location);
         hash = 53 * hash + Objects.hashCode(this.storeLocations);
         hash = 53 * hash + Objects.hashCode(this.storeLocationStrategy);
@@ -200,9 +200,9 @@ public class NutsRepositoryConfig extends NutsConfigItem {
         if (!Objects.equals(this.name, other.name)) {
             return false;
         }
-        if (!Objects.equals(this.type, other.type)) {
-            return false;
-        }
+//        if (!Objects.equals(this.type, other.type)) {
+//            return false;
+//        }
         if (!Objects.equals(this.location, other.location)) {
             return false;
         }
@@ -229,7 +229,9 @@ public class NutsRepositoryConfig extends NutsConfigItem {
 
     @Override
     public String toString() {
-        return "NutsRepositoryConfig{" + ", uuid=" + uuid + ", name=" + name + ", type=" + type + ", location=" + location + ", storeLocations=" + (storeLocations == null ? "null" : storeLocations.toString()) + ", storeLocationStrategy=" + storeLocationStrategy + ", groups=" + groups + ", env=" + env + ", mirrors=" + mirrors + ", users=" + users + ", indexEnabled=" + indexEnabled + ", authenticationAgent=" + authenticationAgent + '}';
+        return "NutsRepositoryConfig{" + ", uuid=" + uuid + ", name=" + name
+//                + ", type=" + type
+                + ", location=" + location + ", storeLocations=" + (storeLocations == null ? "null" : storeLocations.toString()) + ", storeLocationStrategy=" + storeLocationStrategy + ", groups=" + groups + ", env=" + env + ", mirrors=" + mirrors + ", users=" + users + ", indexEnabled=" + indexEnabled + ", authenticationAgent=" + authenticationAgent + '}';
     }
 
 }

@@ -30,6 +30,7 @@ import java.util.*;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.workspace.config.NutsStoreLocationsMap;
+import net.thevpc.nuts.spi.NutsRepositoryLocation;
 
 /**
  *
@@ -367,7 +368,7 @@ public class NutsRepositoryConfig502 implements Serializable {
 
     @Override
     public String toString() {
-        return "NutsRepositoryConfig{" + "uuid=" + uuid + ", name=" + name + ", type=" + type + ", location=" + location + ", programsStoreLocation=" + programsStoreLocation + ", configStoreLocation=" + configStoreLocation + ", varStoreLocation=" + varStoreLocation + ", libStoreLocation=" + libStoreLocation + ", logStoreLocation=" + logStoreLocation + ", tempStoreLocation=" + tempStoreLocation + ", cacheStoreLocation=" + cacheStoreLocation + ", runStoreLocation=" + runStoreLocation + ", storeLocationStrategy=" + storeLocationStrategy + ", groups=" + groups + ", env=" + env + ", mirrors=" + mirrors + ", users=" + users + ", indexEnabled=" + indexEnabled + ", authenticationAgent=" + authenticationAgent + '}';
+        return "NutsRepositoryConfig507{" + "uuid=" + uuid + ", name=" + name + ", type=" + type + ", location=" + location + ", programsStoreLocation=" + programsStoreLocation + ", configStoreLocation=" + configStoreLocation + ", varStoreLocation=" + varStoreLocation + ", libStoreLocation=" + libStoreLocation + ", logStoreLocation=" + logStoreLocation + ", tempStoreLocation=" + tempStoreLocation + ", cacheStoreLocation=" + cacheStoreLocation + ", runStoreLocation=" + runStoreLocation + ", storeLocationStrategy=" + storeLocationStrategy + ", groups=" + groups + ", env=" + env + ", mirrors=" + mirrors + ", users=" + users + ", indexEnabled=" + indexEnabled + ", authenticationAgent=" + authenticationAgent + '}';
     }
 
     public NutsRepositoryConfig toRepositoryConfig() {
@@ -377,11 +378,14 @@ public class NutsRepositoryConfig502 implements Serializable {
         c.setEnv(env);
         c.setGroups(groups);
         c.setIndexEnabled(indexEnabled);
-        c.setLocation(location);
         c.setMirrors(mirrors);
         c.setName(name);
         c.setStoreLocationStrategy(storeLocationStrategy);
-        c.setType(type);
+        NutsRepositoryLocation loc = NutsRepositoryLocation.of(location);
+        if(!NutsBlankable.isBlank(type)){
+            loc=loc.setType(type);
+        }
+        c.setLocation(loc.toString());
         c.setStoreLocations(
                 new NutsStoreLocationsMap(null)
                         .set(NutsStoreLocation.APPS, programsStoreLocation)

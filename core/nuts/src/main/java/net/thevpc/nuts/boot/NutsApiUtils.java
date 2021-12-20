@@ -29,7 +29,6 @@ package net.thevpc.nuts.boot;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.spi.NutsBootId;
 import net.thevpc.nuts.spi.NutsBootVersion;
-import net.thevpc.nuts.NutsBootOptions;
 
 import java.io.PrintStream;
 import java.lang.reflect.Array;
@@ -97,10 +96,10 @@ public class NutsApiUtils {
         return PrivateNutsUtilApplication.processThrowable(ex, out);
     }
 
-    public static int processThrowable(Throwable ex,String[] args) {
+    public static int processThrowable(Throwable ex, String[] args) {
         PrivateNutsBootLog log = new PrivateNutsBootLog(null);
         NutsBootOptions bo = new NutsBootOptions();
-        NutsApiUtils.parseNutsArguments(args,bo,log);
+        NutsApiUtils.parseNutsArguments(args, bo, log);
         try {
             if (NutsApiUtils.isGraphicalDesktopEnvironment()) {
                 bo.setGui(false);
@@ -111,7 +110,7 @@ public class NutsApiUtils {
         }
         boolean bot = bo.isBot();
         boolean gui = !bot && bo.isGui();
-        boolean showTrace = bo.getDebug()!=null;
+        boolean showTrace = bo.getDebug() != null;
         showTrace |= (bo.getLogConfig() != null
                 && bo.getLogConfig().getLogTermLevel() != null
                 && bo.getLogConfig().getLogTermLevel().intValue() < Level.INFO.intValue());
@@ -121,7 +120,7 @@ public class NutsApiUtils {
         if (bot) {
             showTrace = false;
         }
-        return processThrowable(ex, null,true,showTrace,gui);
+        return processThrowable(ex, null, true, showTrace, gui);
     }
 
     public static int processThrowable(Throwable ex, PrintStream out, boolean showMessage, boolean showTrace, boolean showGui) {
@@ -211,7 +210,7 @@ public class NutsApiUtils {
         if (NutsBlankable.isBlank(name)) {
             name = "default";
         }
-        String key = t + "." + name + "." + "." + System.identityHashCode(session);
+        String key = t.getName() + "(" + name + "@" + System.identityHashCode(session)+")";
         Object v = session.getProperty(key);
         if (v != null && t.isInstance(v)) {
             return (T) v;

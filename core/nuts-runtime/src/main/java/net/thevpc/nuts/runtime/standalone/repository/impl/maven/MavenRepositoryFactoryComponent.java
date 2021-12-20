@@ -24,10 +24,8 @@
 package net.thevpc.nuts.runtime.standalone.repository.impl.maven;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.standalone.repository.DefaultNutsRepositoryDB;
 import net.thevpc.nuts.runtime.standalone.repository.NutsRepositorySelectorHelper;
-import net.thevpc.nuts.runtime.standalone.repository.impl.maven.MavenFolderRepository;
-import net.thevpc.nuts.runtime.standalone.repository.impl.maven.MavenRemoteXmlRepository;
+import net.thevpc.nuts.runtime.standalone.repository.util.NutsRepositoryUtils;
 import net.thevpc.nuts.spi.*;
 
 /**
@@ -39,9 +37,9 @@ public class MavenRepositoryFactoryComponent implements NutsRepositoryFactoryCom
     @Override
     public NutsAddRepositoryOptions[] getDefaultRepositories(NutsSession session) {
         return new NutsAddRepositoryOptions[]{
-                NutsRepositorySelectorHelper.createRepositoryOptions(NutsRepositoryURL.of("maven-local", DefaultNutsRepositoryDB.INSTANCE,session),
+                NutsRepositorySelectorHelper.createRepositoryOptions(NutsRepositoryLocation.of("maven-local", NutsRepositoryDB.of(session),session),
                         true, session),
-                NutsRepositorySelectorHelper.createRepositoryOptions(NutsRepositoryURL.of("maven-central", DefaultNutsRepositoryDB.INSTANCE,session),
+                NutsRepositorySelectorHelper.createRepositoryOptions(NutsRepositoryLocation.of("maven-central", NutsRepositoryDB.of(session),session),
                         true, session)
         };
     }
@@ -49,8 +47,8 @@ public class MavenRepositoryFactoryComponent implements NutsRepositoryFactoryCom
     @Override
     public NutsRepository create(NutsAddRepositoryOptions options, NutsSession session, NutsRepository parentRepository) {
         final NutsRepositoryConfig config = options.getConfig();
-        String type = config.getType();
-        if (type == null) {
+        String type = NutsRepositoryUtils.getRepoType(config);
+        if (NutsBlankable.isBlank(type)) {
             return null;
         }
         NutsPath p = NutsPath.of(config.getLocation(), session);
@@ -72,10 +70,14 @@ public class MavenRepositoryFactoryComponent implements NutsRepositoryFactoryCom
         }
         NutsRepositoryConfig r = criteria.getConstraints(NutsRepositoryConfig.class);
         if (r != null) {
-            if (NutsConstants.RepoTypes.MAVEN.equals(r.getType())) {
+            String type = NutsRepositoryUtils.getRepoType(r);
+            if (NutsBlankable.isBlank(type)) {
+                return NO_SUPPORT;
+            }
+            if (NutsConstants.RepoTypes.MAVEN.equals(type)) {
                 return DEFAULT_SUPPORT + 10;
             }
-            if (NutsBlankable.isBlank(r.getType())) {
+            if (NutsBlankable.isBlank(type)) {
                 return DEFAULT_SUPPORT + 5;
             }
         }

@@ -233,4 +233,18 @@ public class NutsLogUtils {
                         (id == null ? "" : id),
                         extraMsg));
     }
+    public static void traceMessage(NutsLogger log,NutsFetchStrategy fetchMode, NutsId id, NutsLogVerb tracePhase, String message, long startTime) {
+        if (log.isLoggable(Level.FINEST)) {
+
+            long time = (startTime != 0) ? (System.currentTimeMillis() - startTime) : 0;
+            String fetchString = "[" + CoreStringUtils.alignLeft(fetchMode.id(), 7) + "] ";
+            log.with().level(Level.FINEST)
+                    .verb(tracePhase).time(time)
+                    .log(NutsMessage.jstyle("{0}{1} {2}",
+                            fetchString,
+                            id,
+                            CoreStringUtils.alignLeft(message, 18)
+                    ));
+        }
+    }
 }

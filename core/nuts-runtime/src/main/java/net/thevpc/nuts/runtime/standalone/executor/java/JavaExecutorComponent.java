@@ -27,11 +27,11 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.executor.AbstractSyncIProcessExecHelper;
 import net.thevpc.nuts.runtime.standalone.executor.embedded.ClassloaderAwareRunnable;
 import net.thevpc.nuts.runtime.standalone.executor.system.ProcessExecHelper;
+import net.thevpc.nuts.runtime.standalone.io.net.util.NetUtils;
 import net.thevpc.nuts.runtime.standalone.util.CoreNutsUtils;
 import net.thevpc.nuts.runtime.standalone.util.collections.StringKeyValueList;
 import net.thevpc.nuts.runtime.standalone.io.util.IProcessExecHelper;
 import net.thevpc.nuts.runtime.standalone.extension.DefaultNutsClassLoader;
-import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.util.CoreNumberUtils;
 import net.thevpc.nuts.runtime.standalone.util.NutsDebugString;
 import net.thevpc.nuts.runtime.standalone.extension.DefaultNutsWorkspaceExtensionManager;
@@ -280,7 +280,7 @@ public class JavaExecutorComponent implements NutsExecutorComponent {
                     if (maxPort < port) {
                         maxPort = port + 1000;
                     }
-                    port = CoreIOUtils.detectRandomFreeTcpPort(port, maxPort + 1);
+                    port = NetUtils.detectRandomFreeTcpPort(port, maxPort + 1);
                     if (port < 0) {
                         throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("unable to resolve valid debug port %d-%d", port, port + 1000));
                     }

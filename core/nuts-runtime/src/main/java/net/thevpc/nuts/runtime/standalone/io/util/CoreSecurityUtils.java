@@ -24,6 +24,7 @@
 package net.thevpc.nuts.runtime.standalone.io.util;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.standalone.xtra.digest.NutsDigestUtils;
 
 import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
@@ -54,7 +55,7 @@ public class CoreSecurityUtils {
     }
 
     public static char[] defaultHashChars(char[] data, String passphrase, NutsSession session) {
-        return defaultEncryptChars(CoreIOUtils.evalSHA1(data,session), passphrase,session);
+        return defaultEncryptChars(NutsDigestUtils.evalSHA1(data,session), passphrase,session);
     }
 
 //    public static byte[] httpDecrypt(byte[] data, String passphrase) {

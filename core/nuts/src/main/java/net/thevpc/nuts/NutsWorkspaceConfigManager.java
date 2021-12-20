@@ -56,13 +56,7 @@ public interface NutsWorkspaceConfigManager {
 
     NutsWorkspaceBootConfig loadBootConfig(String path, boolean global, boolean followLinks);
 
-    NutsWorkspaceOptionsBuilder optionsBuilder();
-
     boolean isExcludedExtension(String extensionId, NutsWorkspaceOptions options);
-
-    NutsId createContentFaceId(NutsId id, NutsDescriptor desc);
-
-    NutsWorkspaceListManager createWorkspaceListManager(String name);
 
     boolean isSupportedRepositoryType(String repositoryType);
 
@@ -84,14 +78,6 @@ public interface NutsWorkspaceConfigManager {
 
     NutsWorkspaceConfigManager setSession(NutsSession session);
 
-
-    String getHashName(Object o);
-
-    String getWorkspaceHashName(String path);
-
-    String getWorkspaceHashName(NutsPath path);
-
-    ExecutorService executorService();
 
     /**
      * return workspace system terminal.
@@ -130,7 +116,6 @@ public interface NutsWorkspaceConfigManager {
     /**
      * @param property property
      * @param value    value
-     *                 //     * @param options options
      * @return {@code this} instance
      */
     NutsWorkspaceConfigManager setConfigProperty(String property, String value);

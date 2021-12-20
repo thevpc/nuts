@@ -6,11 +6,10 @@ import net.thevpc.nuts.*;
 
 import java.util.regex.Pattern;
 
-import net.thevpc.nuts.runtime.standalone.repository.DefaultNutsRepositoryDB;
 import net.thevpc.nuts.runtime.standalone.xtra.glob.GlobUtils;
 import net.thevpc.nuts.spi.NutsRepositoryDB;
 import net.thevpc.nuts.spi.NutsRepositorySelectorList;
-import net.thevpc.nuts.spi.NutsRepositoryURL;
+import net.thevpc.nuts.spi.NutsRepositoryLocation;
 
 public class DefaultNutsRepositoryFilter extends AbstractRepositoryFilter{
 
@@ -22,14 +21,14 @@ public class DefaultNutsRepositoryFilter extends AbstractRepositoryFilter{
         this.exactRepos = new HashSet<>();
         this.wildcardRepos = new HashSet<>();
         NutsRepositorySelectorList li=new NutsRepositorySelectorList();
-        NutsRepositoryDB db = DefaultNutsRepositoryDB.INSTANCE;
+        NutsRepositoryDB db = NutsRepositoryDB.of(session);
         for (String exactRepo : exactRepos) {
             li=li.merge(NutsRepositorySelectorList.of(exactRepo, db,session));
         }
-        NutsRepositoryURL[] input = Arrays.stream(session.repos().getRepositories())
-                .map(x -> NutsRepositoryURL.of(x.getName(), x.config().getLocation(true).toString()))
-                .toArray(NutsRepositoryURL[]::new);
-        String[] names = Arrays.stream(li.resolve(input,db)).map(NutsRepositoryURL::getName).toArray(String[]::new);
+        NutsRepositoryLocation[] input = Arrays.stream(session.repos().getRepositories())
+                .map(x -> NutsRepositoryLocation.of(x.getName(), x.config().getLocation(true).toString()))
+                .toArray(NutsRepositoryLocation[]::new);
+        String[] names = Arrays.stream(li.resolve(input,db)).map(NutsRepositoryLocation::getName).toArray(String[]::new);
         for (String repo : names) {
             if (!NutsBlankable.isBlank(repo)) {
                 if(repo.indexOf('*')>0) {

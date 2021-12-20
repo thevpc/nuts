@@ -28,7 +28,6 @@ package net.thevpc.nuts.runtime.standalone.security;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.util.CorePlatformUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.config.NutsWorkspaceConfigManagerExt;
-import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.DefaultNutsWorkspace;
 import net.thevpc.nuts.runtime.standalone.boot.DefaultNutsBootManager;
@@ -39,6 +38,7 @@ import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.user.DefaultNutsAddUserCommand;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.user.DefaultNutsRemoveUserCommand;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.user.DefaultNutsUpdateUserCommand;
+import net.thevpc.nuts.runtime.standalone.xtra.digest.NutsDigestUtils;
 import net.thevpc.nuts.spi.NutsAuthenticationAgent;
 
 import javax.security.auth.Subject;
@@ -124,7 +124,7 @@ public class DefaultNutsWorkspaceSecurityModel {
             NutsWorkspaceConfigManagerExt.of(session.config()).getModel().setUser(u, session);
         }
 
-        char[] credentials = CoreIOUtils.evalSHA1(adminPassword,session);
+        char[] credentials = NutsDigestUtils.evalSHA1(adminPassword,session);
         if (Arrays.equals(credentials, adminPassword)) {
             Arrays.fill(credentials, '\0');
             throw new NutsSecurityException(session, NutsMessage.plain("invalid credentials"));
@@ -143,7 +143,7 @@ public class DefaultNutsWorkspaceSecurityModel {
             adminPassword = new char[0];
         }
         boolean deactivated = false;
-        char[] credentials = CoreIOUtils.evalSHA1(adminPassword,session);
+        char[] credentials = NutsDigestUtils.evalSHA1(adminPassword,session);
         if (Arrays.equals(credentials, adminPassword)) {
             Arrays.fill(credentials, '\0');
             throw new NutsSecurityException(session, NutsMessage.plain("invalid credentials"));

@@ -165,7 +165,7 @@ public class JarDescriptorContentParserComponent implements NutsDescriptorConten
             baseNutsDescriptor = metainf.get();
         }
         if (baseNutsDescriptor == null) {
-            CoreDigestHelper d = new CoreDigestHelper();
+            CoreDigestHelper d = new CoreDigestHelper(session);
             d.append(parserContext.getFullStream());
             String artifactId = d.getDigest();
             baseNutsDescriptor = NutsDescriptorBuilder.of(session)

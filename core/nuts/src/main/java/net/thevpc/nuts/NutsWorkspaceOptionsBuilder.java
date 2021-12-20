@@ -26,6 +26,8 @@
 package net.thevpc.nuts;
 
 import net.thevpc.nuts.boot.NutsApiUtils;
+import net.thevpc.nuts.spi.NutsComponent;
+import net.thevpc.nuts.spi.NutsLogManager;
 
 import java.io.InputStream;
 import java.io.PrintStream;
@@ -41,7 +43,7 @@ import java.util.function.Supplier;
  * @author thevpc
  * @app.category Config
  */
-public interface NutsWorkspaceOptionsBuilder extends Serializable {
+public interface NutsWorkspaceOptionsBuilder extends Serializable, NutsComponent {
 
     /**
      * create NutsWorkspaceOptionsBuilder instance for the given session (shall not be null).
@@ -51,7 +53,7 @@ public interface NutsWorkspaceOptionsBuilder extends Serializable {
      */
     static NutsWorkspaceOptionsBuilder of(NutsSession session) {
         NutsApiUtils.checkSession(session);
-        return session.config().optionsBuilder();
+        return session.extensions().createSupported(NutsWorkspaceOptionsBuilder.class, true, null);
     }
 
     /**

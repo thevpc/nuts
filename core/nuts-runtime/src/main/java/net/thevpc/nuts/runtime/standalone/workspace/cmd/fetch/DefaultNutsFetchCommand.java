@@ -2,6 +2,8 @@ package net.thevpc.nuts.runtime.standalone.workspace.cmd.fetch;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.dependency.util.NutsDependencyUtils;
+import net.thevpc.nuts.runtime.standalone.id.util.NutsIdUtils;
+import net.thevpc.nuts.runtime.standalone.log.NutsLogUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.repository.cmd.NutsRepositorySupportedAction;
 import net.thevpc.nuts.runtime.standalone.definition.DefaultNutsDefinition;
@@ -66,7 +68,7 @@ public class DefaultNutsFetchCommand extends AbstractNutsFetchCommand {
             checkSession();
             NutsSession ws = getSession();
             Path f = getResultDefinition().getFile();
-            return NutsHash.of(ws).setSource(f).computeString();
+            return NutsDigest.of(ws).setSource(f).computeString();
         } catch (NutsNotFoundException ex) {
             if (!isFailFast()) {
                 return null;
@@ -79,7 +81,7 @@ public class DefaultNutsFetchCommand extends AbstractNutsFetchCommand {
     public String getResultDescriptorHash() {
         try {
             checkSession();
-            return NutsHash.of(getSession()).setSource(getResultDescriptor()).computeString();
+            return NutsDigest.of(getSession()).setSource(getResultDescriptor()).computeString();
         } catch (NutsNotFoundException ex) {
             if (!isFailFast()) {
                 return null;
@@ -206,7 +208,7 @@ public class DefaultNutsFetchCommand extends AbstractNutsFetchCommand {
                     _LOGOP(getSession()).error(ex).level(Level.SEVERE)
                             .log(NutsMessage.jstyle("unexpected error while fetching descriptor for {0}", id));
                     if (_LOG(getSession()).isLoggable(Level.FINEST)) {
-                        wu.traceMessage(nutsFetchModes, id.getLongId(), NutsLogVerb.FAIL, "fetch def", startTime);
+                        NutsLogUtils.traceMessage(_LOG(getSession()),nutsFetchModes, id.getLongId(), NutsLogVerb.FAIL, "fetch def", startTime);
                     }
                     descTracker.addFailure(location);
                 }
@@ -238,7 +240,7 @@ public class DefaultNutsFetchCommand extends AbstractNutsFetchCommand {
                     if (includeContent) {
                         boolean loadedFromInstallRepo = DefaultNutsInstalledRepository.INSTALLED_REPO_UUID.equals(successfulDescriptorLocation
                                 .getRepository().getUuid());
-                        NutsId id1 = session.config().createContentFaceId(foundDefinition.getId(), foundDefinition.getDescriptor());
+                        NutsId id1 = NutsIdUtils.createContentFaceId(foundDefinition.getId(), foundDefinition.getDescriptor(),session);
                         Path copyTo = options.getLocation();
                         if (copyTo != null && Files.isDirectory(copyTo)) {
                             copyTo = copyTo.resolve(_ws.locations().getDefaultIdFilename(id1));
@@ -295,7 +297,7 @@ public class DefaultNutsFetchCommand extends AbstractNutsFetchCommand {
                             }
                         }
                         if (!contentSuccessful /*&& includedRemote*/) {
-                            wu.traceMessage(nutsFetchModes, id.getLongId(), NutsLogVerb.FAIL,
+                            NutsLogUtils.traceMessage(_LOG(getSession()),nutsFetchModes, id.getLongId(), NutsLogVerb.FAIL,
                                     "fetched descriptor but failed to fetch artifact binaries", startTime);
                         }
                     }
@@ -313,10 +315,10 @@ public class DefaultNutsFetchCommand extends AbstractNutsFetchCommand {
             }
         } catch (NutsNotFoundException ex) {
             reasons.add(ex);
-            wu.traceMessage(nutsFetchModes, id.getLongId(), NutsLogVerb.FAIL, "fetch definition", startTime);
+            NutsLogUtils.traceMessage(_LOG(getSession()),nutsFetchModes, id.getLongId(), NutsLogVerb.FAIL, "fetch definition", startTime);
             throw ex;
         } catch (RuntimeException ex) {
-            wu.traceMessage(nutsFetchModes, id.getLongId(), NutsLogVerb.FAIL, "[unexpected] fetch definition", startTime);
+            NutsLogUtils.traceMessage(_LOG(getSession()),nutsFetchModes, id.getLongId(), NutsLogVerb.FAIL, "[unexpected] fetch definition", startTime);
             throw ex;
         }
         if (foundDefinition != null) {
@@ -497,7 +499,7 @@ public class DefaultNutsFetchCommand extends AbstractNutsFetchCommand {
                                 //this is invalid cache!
                                 cachePath.delete();
                             } else {
-                                wu.traceMessage(nutsFetchModes, id.getLongId(), NutsLogVerb.CACHE, "fetch definition", 0);
+                                NutsLogUtils.traceMessage(_LOG(getSession()),nutsFetchModes, id.getLongId(), NutsLogVerb.CACHE, "fetch definition", 0);
                                 return d;
                             }
                         }

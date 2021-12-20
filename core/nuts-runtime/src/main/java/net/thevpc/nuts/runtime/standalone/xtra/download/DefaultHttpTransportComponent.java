@@ -27,6 +27,7 @@
 package net.thevpc.nuts.runtime.standalone.xtra.download;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.standalone.io.SimpleHttpClient;
 import net.thevpc.nuts.spi.*;
 
 import java.io.IOException;
@@ -70,11 +71,7 @@ public class DefaultHttpTransportComponent implements NutsTransportComponent {
 
         @Override
         public InputStream open() {
-            try {
-                return url.openStream();
-            } catch (IOException ex) {
-                throw new NutsIOException(session, ex);
-            }
+            return new SimpleHttpClient(url, session).openStream();
         }
 
         @Override

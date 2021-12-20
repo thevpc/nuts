@@ -372,16 +372,7 @@ public final class JavaExecutorOptions {
         } else {
             for (String n : StringTokenizerUtils.split(value, ":")) {
                 if (!NutsBlankable.isBlank(n)) {
-                    File f = CoreIOUtils.toFile(n);
-                    if (f == null) {
-                        throw new IllegalArgumentException("invalid path " + n);
-                    }
-                    URL url = null;
-                    try {
-                        url = f.toURI().toURL();
-                    } catch (MalformedURLException ex) {
-                        throw new IllegalArgumentException("invalid url " + url);
-                    }
+                    URL url = NutsPath.of(n,session).toURL();
                     classPath.add(new NutsClassLoaderNode("", url, true,true));
                 }
             }
@@ -466,7 +457,7 @@ public final class JavaExecutorOptions {
 
     public void fillStrings(NutsClassLoaderNode n, List<String> list) {
         URL f = n.getURL();
-        list.add(CoreIOUtils.toFile(f).getPath());
+        list.add(NutsPath.of(f,getSession()).toFile().toString());
         for (NutsClassLoaderNode d : n.getDependencies()) {
             fillStrings(d, list);
         }
@@ -483,7 +474,7 @@ public final class JavaExecutorOptions {
     public void fillNidStrings(NutsClassLoaderNode n, List<String> list) {
         if (n.getId() == null || n.getId().isEmpty()) {
             URL f = n.getURL();
-            list.add(CoreIOUtils.toFile(f).getPath());
+            list.add(NutsPath.of(f,getSession()).toFile().toString());
         } else {
             list.add(n.getId());
         }

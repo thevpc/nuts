@@ -26,6 +26,9 @@
  */
 package net.thevpc.nuts;
 
+import net.thevpc.nuts.boot.NutsApiUtils;
+import net.thevpc.nuts.spi.NutsComponent;
+
 import java.util.List;
 
 /**
@@ -36,13 +39,20 @@ import java.util.List;
  * @app.category Config
  * @since 0.5.4
  */
-public interface NutsWorkspaceListManager {
+public interface NutsWorkspaceListManager extends NutsComponent {
 
+    static NutsWorkspaceListManager of(NutsSession session) {
+        NutsApiUtils.checkSession(session);
+        return session.extensions().createSupported(NutsWorkspaceListManager.class, true, null);
+    }
     List<NutsWorkspaceLocation> getWorkspaces();
 
     NutsWorkspaceLocation getWorkspaceLocation(String uuid);
 
     NutsWorkspaceListConfig getConfig();
+    String getName();
+
+    NutsWorkspaceListManager setName(String name);
 
     NutsWorkspaceListManager setConfig(NutsWorkspaceListConfig config);
 

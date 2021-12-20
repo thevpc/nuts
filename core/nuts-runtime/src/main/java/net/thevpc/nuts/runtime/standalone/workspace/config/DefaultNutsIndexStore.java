@@ -53,7 +53,7 @@ public class DefaultNutsIndexStore extends AbstractNutsIndexStore {
                     if (isInaccessible()) {
                         return IteratorBuilder.emptyIterator();
                     }
-                    String URL = getIndexURL(session).resolve( NutsConstants.Folders.ID).resolve( "allVersions")
+                    String uu = getIndexURL(session).resolve( NutsConstants.Folders.ID).resolve( "allVersions")
                             + String.format("?repositoryUuid=%s&name=%s&repo=%s&group=%s"
                                     + "&os=%s&osdist=%s&arch=%s&face=%s&"/*alternative=%s*/,
                             getRepository().getUuid(),
@@ -64,9 +64,7 @@ public class DefaultNutsIndexStore extends AbstractNutsIndexStore {
 //                , NutsUtilStrings.trim(id.getAlternative())
                     );
                     try {
-                        NutsTransportConnection clientFacade = CoreIOUtils.getHttpClientFacade(session,
-                                URL);
-                        Map[] array = NutsElements.of(session).json().parse(new InputStreamReader(clientFacade.open()), Map[].class);
+                        Map[] array = NutsElements.of(session).json().parse(new InputStreamReader(NutsPath.of(uu,session).getInputStream()), Map[].class);
                         return Arrays.stream(array)
                                 .map(s -> NutsId.of(s.get("stringId").toString(),session))
                                 .collect(Collectors.toList()).iterator();
@@ -92,11 +90,9 @@ public class DefaultNutsIndexStore extends AbstractNutsIndexStore {
                         throw new NutsIndexerNotAccessibleException(session,NutsMessage.cstyle("index search failed for %s",getRepository().getName()));
 //                        return IteratorUtils.emptyIterator();
                     }
-                    String URL = getIndexURL(session).resolve(NutsConstants.Folders.ID) + "?repositoryUuid=" + getRepository().getUuid();
+                    String uu = getIndexURL(session).resolve(NutsConstants.Folders.ID) + "?repositoryUuid=" + getRepository().getUuid();
                     try {
-                        NutsTransportConnection clientFacade = CoreIOUtils.getHttpClientFacade(session,
-                                URL);
-                        Map[] array = elems.json().parse(new InputStreamReader(clientFacade.open()), Map[].class);
+                        Map[] array = elems.json().parse(new InputStreamReader(NutsPath.of(uu,session).getInputStream()), Map[].class);
                         return Arrays.stream(array)
                                 .map(s -> NutsId.of(s.get("stringId").toString(),session))
                                 .filter(filter != null ? new NutsIdFilterToNutsIdPredicate(filter, session) : NutsPredicates.always())
@@ -124,7 +120,7 @@ public class DefaultNutsIndexStore extends AbstractNutsIndexStore {
         if (isInaccessible()) {
             return this;
         }
-        String URL = getIndexURL(session).resolve( NutsConstants.Folders.ID).resolve("delete")
+        String uu = getIndexURL(session).resolve( NutsConstants.Folders.ID).resolve("delete")
                 + String.format("?repositoryUuid=%s&name=%s&repo=%s&group=%s&version=%s"
                         + "&os=%s&osdist=%s&arch=%s&face=%s"/*&alternative=%s*/, getRepository().getUuid(),
                 NutsUtilStrings.trim(id.getArtifactId()), NutsUtilStrings.trim(id.getRepository()), NutsUtilStrings.trim(id.getGroupId()), NutsUtilStrings.trim(id.getVersion().toString()),
@@ -135,9 +131,7 @@ public class DefaultNutsIndexStore extends AbstractNutsIndexStore {
 //                ,NutsUtilStrings.trim(id.getAlternative())
         );
         try {
-            NutsTransportConnection clientFacade = CoreIOUtils.getHttpClientFacade(session,
-                    URL);
-            clientFacade.open();
+            NutsPath.of(uu,session).getInputStream();
         } catch (UncheckedIOException | NutsIOException e) {
             setInaccessible();
             //
@@ -150,7 +144,7 @@ public class DefaultNutsIndexStore extends AbstractNutsIndexStore {
         if (isInaccessible()) {
             return this;
         }
-        String URL = getIndexURL(session).resolve(NutsConstants.Folders.ID).resolve("addData")
+        String uu = getIndexURL(session).resolve(NutsConstants.Folders.ID).resolve("addData")
                 + String.format("?repositoryUuid=%s&name=%s&repo=%s&group=%s&version=%s"
                         + "&os=%s&osdist=%s&arch=%s&face=%s"/*&alternative=%s*/, getRepository().getUuid(),
                 NutsUtilStrings.trim(id.getArtifactId()), NutsUtilStrings.trim(id.getRepository()), NutsUtilStrings.trim(id.getGroupId()), NutsUtilStrings.trim(id.getVersion().toString()),
@@ -161,9 +155,7 @@ public class DefaultNutsIndexStore extends AbstractNutsIndexStore {
 //                ,NutsUtilStrings.trim(id.getAlternative())
         );
         try {
-            NutsTransportConnection clientFacade = CoreIOUtils.getHttpClientFacade(session,
-                    URL);
-            clientFacade.open();
+            NutsPath.of(uu,session).getInputStream();
         } catch (UncheckedIOException | NutsIOException e) {
             setInaccessible();
             //
@@ -173,13 +165,11 @@ public class DefaultNutsIndexStore extends AbstractNutsIndexStore {
 
     @Override
     public NutsIndexStore subscribe(NutsSession session) {
-        String URL = "http://localhost:7070/indexer/subscription/subscribe?workspaceLocation="
+        String uu = "http://localhost:7070/indexer/subscription/subscribe?workspaceLocation="
                 + CoreIOUtils.urlEncodeString(session.locations().getWorkspaceLocation().toString(),session)
                 + "&repositoryUuid=" + CoreIOUtils.urlEncodeString(getRepository().getUuid(),session);
         try {
-            NutsTransportConnection clientFacade = CoreIOUtils.getHttpClientFacade(session,
-                    URL);
-            clientFacade.open();
+            NutsPath.of(uu,session).getInputStream();
         } catch (UncheckedIOException | NutsIOException e) {
             throw new NutsUnsupportedOperationException(session, NutsMessage.cstyle("unable to subscribe for repository%s", getRepository().getName()), e);
         }
@@ -188,13 +178,11 @@ public class DefaultNutsIndexStore extends AbstractNutsIndexStore {
 
     @Override
     public NutsIndexStore unsubscribe(NutsSession session) {
-        String URL = "http://localhost:7070/indexer/subscription/unsubscribe?workspaceLocation="
+        String uu = "http://localhost:7070/indexer/subscription/unsubscribe?workspaceLocation="
                 + CoreIOUtils.urlEncodeString(session.locations().getWorkspaceLocation().toString(),session)
                 + "&repositoryUuid=" + CoreIOUtils.urlEncodeString(getRepository().getUuid(),session);
         try {
-            NutsTransportConnection clientFacade = CoreIOUtils.getHttpClientFacade(session,
-                    URL);
-            clientFacade.open();
+            NutsPath.of(uu,session).getInputStream();
         } catch (UncheckedIOException | NutsIOException e) {
             throw new NutsUnsupportedOperationException(session, NutsMessage.cstyle("unable to unsubscribe for repository %s", getRepository().getName()), e);
         }
@@ -203,13 +191,11 @@ public class DefaultNutsIndexStore extends AbstractNutsIndexStore {
 
     @Override
     public boolean isSubscribed(NutsSession session) {
-        String URL = "http://localhost:7070/indexer/subscription/isSubscribed?workspaceLocation="
+        String uu = "http://localhost:7070/indexer/subscription/isSubscribed?workspaceLocation="
                 + CoreIOUtils.urlEncodeString(session.locations().getWorkspaceLocation().toString(),session)
                 + "&repositoryUuid=" + CoreIOUtils.urlEncodeString(getRepository().getUuid(),session);
         try {
-            NutsTransportConnection clientFacade = CoreIOUtils.getHttpClientFacade(session,
-                    URL);
-            return new Scanner(clientFacade.open()).nextBoolean();
+            return new Scanner(NutsPath.of(uu,session).getInputStream()).nextBoolean();
         } catch (UncheckedIOException | NutsIOException e) {
             return false;
         }

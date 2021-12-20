@@ -12,6 +12,7 @@ import java.util.Scanner;
 
 @NutsComponentScope(NutsComponentScopeType.PROTOTYPE)
 public class DefaultNutsSystemTerminalBase extends NutsSystemTerminalBaseImpl {
+    public static final int THIRTY_SECONDS = 30000;
     NutsCachedValue<Cursor> termCursor;
     NutsCachedValue<Size> termSize;
 
@@ -54,11 +55,11 @@ public class DefaultNutsSystemTerminalBase extends NutsSystemTerminalBaseImpl {
             }
         }
         if(bootStdFd.getFlags().contains("tty")) {
-            termCursor =new NutsCachedValue<>(CoreAnsiTermHelper::evalCursor, 30);
-            termSize =new NutsCachedValue<>(CoreAnsiTermHelper::evalSize, 30);
+            termCursor =new NutsCachedValue<>(CoreAnsiTermHelper::evalCursor, THIRTY_SECONDS);
+            termSize =new NutsCachedValue<>(CoreAnsiTermHelper::evalSize, THIRTY_SECONDS);
         }else{
-            termCursor =new NutsCachedValue<>(session -> null, 30);
-            termSize =new NutsCachedValue<>(session -> null, 30);
+            termCursor =new NutsCachedValue<>(session -> null, THIRTY_SECONDS);
+            termSize =new NutsCachedValue<>(session -> null, THIRTY_SECONDS);
         }
         this.out = new NutsPrintStreamSystem(bootStdFd.getOut(), null, null, bootStdFd.getFlags().contains("ansi"),
                 session, this).setMode(terminalMode);

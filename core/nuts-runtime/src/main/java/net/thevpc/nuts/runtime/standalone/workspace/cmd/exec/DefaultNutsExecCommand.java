@@ -1,10 +1,10 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.exec;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.standalone.executor.system.NutsSysExecUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.NutsExecutableInformationExt;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.NutsExecutionContextBuilder;
-import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.DefaultNutsWorkspace;
 import net.thevpc.nuts.runtime.standalone.executor.ArtifactExecutorComponent;
@@ -96,7 +96,7 @@ public class DefaultNutsExecCommand extends AbstractNutsExecCommand {
                 }
                 List<String> tsl = new ArrayList<>(Arrays.asList(ts));
                 if (CoreStringUtils.firstIndexOf(ts[0], new char[]{'/', '\\'}) < 0) {
-                    Path p = CoreIOUtils.sysWhich(ts[0]);
+                    Path p = NutsSysExecUtils.sysWhich(ts[0]);
                     if (p != null) {
                         tsl.set(0, p.toString());
                     }
@@ -304,7 +304,7 @@ public class DefaultNutsExecCommand extends AbstractNutsExecCommand {
                         idToExec = findExecId(goodId, prepareSession, forceInstalled, true);
                     }
                     if (idToExec == null) {
-                        Path sw = CoreIOUtils.sysWhich(cmdName);
+                        Path sw = NutsSysExecUtils.sysWhich(cmdName);
                         if (sw != null) {
                             List<String> cmdArr = new ArrayList<>();
                             cmdArr.add(sw.toString());

@@ -26,7 +26,6 @@ package net.thevpc.nuts.runtime.standalone.executor.system;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.app.cmdline.DefaultNutsArgument;
 import net.thevpc.nuts.runtime.standalone.app.cmdline.NutsCommandLineShellOptions;
-import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.io.util.MultiPipeThread;
 import net.thevpc.nuts.runtime.standalone.io.util.NonBlockingInputStreamAdapter;
 import net.thevpc.nuts.runtime.standalone.shell.NutsShellHelper;
@@ -304,25 +303,25 @@ public class ProcessBuilder2 {
             String cmdStr = String.join(" ", command);
             if (out != null) {
                 procInput = new NonBlockingInputStreamAdapter("pipe-out-proc-" + procString, proc.getInputStream());
-                PipeRunnable t = CoreIOUtils.pipe("pipe-out-proc-" + procString, cmdStr, "out", procInput, this.out, session);
+                PipeRunnable t = NutsSysExecUtils.pipe("pipe-out-proc-" + procString, cmdStr, "out", procInput, this.out, session);
                 pipes.submit(t);
                 pipesList.add(t);
             }
             if (err != null) {
                 procError = new NonBlockingInputStreamAdapter("pipe-err-proc-" + procString, proc.getErrorStream());
                 if (base.redirectErrorStream()) {
-                    PipeRunnable t = CoreIOUtils.pipe("pipe-err-proc-" + procString, cmdStr, "err", procError, out, session);
+                    PipeRunnable t = NutsSysExecUtils.pipe("pipe-err-proc-" + procString, cmdStr, "err", procError, out, session);
                     pipes.submit(t);
                     pipesList.add(t);
                 } else {
-                    PipeRunnable t = CoreIOUtils.pipe("pipe-err-proc-" + procString, cmdStr, "err", procError, this.err, session);
+                    PipeRunnable t = NutsSysExecUtils.pipe("pipe-err-proc-" + procString, cmdStr, "err", procError, this.err, session);
                     pipes.submit(t);
                     pipesList.add(t);
                 }
             }
             if (in != null) {
                 termIn = new NonBlockingInputStreamAdapter("pipe-in-proc-" + procString, in);
-                PipeRunnable t = CoreIOUtils.pipe("pipe-in-proc-" + procString, cmdStr, "in", termIn, proc.getOutputStream(), session);
+                PipeRunnable t = NutsSysExecUtils.pipe("pipe-in-proc-" + procString, cmdStr, "in", termIn, proc.getOutputStream(), session);
                 pipes.submit(t);
                 pipesList.add(t);
             }

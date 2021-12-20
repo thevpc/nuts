@@ -63,7 +63,7 @@ public class DefaultNutsSystemExecutable extends AbstractNutsExecutableCommand {
         }
         return ProcessExecHelper.ofArgs(
                 execCommand.getCommand(), e2,
-                CoreIOUtils.toPath(execCommand.getDirectory()),
+                execCommand.getDirectory()==null?null:NutsPath.of(execCommand.getDirectory(),session).toFile(),
                 session.getTerminal(),
                 execSession.getTerminal(), showCommand, true, execCommand.getSleepMillis(),
                 inheritSystemIO,

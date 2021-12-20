@@ -186,13 +186,13 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
                     NutsDefinition appDef = loadIdDefinition(nid);
                     s = NameBuilder.id(appDef.getId(), "%n", null, appDef.getDescriptor(), session).buildName();
                     s = getBinScriptFile(s, options).toString();
-                } else if (CoreIOUtils.isPathFolder(s)) {
-                    NutsDefinition appDef = loadIdDefinition(nid);
-                    s = s + File.separator + NameBuilder.id(appDef.getId(), getExecFileName("%n"), null, appDef.getDescriptor(), session).buildName();
-                } else {
+                } else if (NutsPath.of(s,session).isName()) {
                     NutsDefinition appDef = loadIdDefinition(nid);
                     s = NameBuilder.id(appDef.getId(), s, null, appDef.getDescriptor(), session).buildName();
                     s = getBinScriptFile(s, options).toString();
+                } else {
+                    NutsDefinition appDef = loadIdDefinition(nid);
+                    s = s + File.separator + NameBuilder.id(appDef.getId(), getExecFileName("%n"), null, appDef.getDescriptor(), session).buildName();
                 }
                 NutsShellFamily shellFamily = getShellGroups()[0];
                 r.add(scriptBuilderTemplate("body", shellFamily, "artifact", nid, options)
@@ -711,7 +711,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
         String iconPath = null;
         if (descAppIcon != null) {
             String descAppIcon0 = descAppIcon;
-            String descAppIconDigest = NutsHash.of(session).md5().setSource(new ByteArrayInputStream(descAppIcon0.getBytes())).computeString();
+            String descAppIconDigest = NutsDigest.of(session).md5().setSource(new ByteArrayInputStream(descAppIcon0.getBytes())).computeString();
 //            System.out.println(">>>>>>> "+descAppIconDigest+" :: "+descAppIcon0);
             NutsPath p0 = NutsPath.of(descAppIcon, session);
             if (descAppIcon.startsWith("classpath://")) {

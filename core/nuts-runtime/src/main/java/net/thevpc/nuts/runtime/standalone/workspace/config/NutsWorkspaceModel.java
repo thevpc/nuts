@@ -28,6 +28,7 @@ public class NutsWorkspaceModel {
     public String uuid;
     public String location;
     public String name;
+    public String hashName;
     public NutsVersion apiVersion;
     public NutsId apiId;
     public NutsId runtimeId;
@@ -37,6 +38,7 @@ public class NutsWorkspaceModel {
     public DefaultNutsWorkspaceExtensionModel extensionModel;
     public DefaultCustomCommandsModel aliasesModel;
     public DefaultImportModel importModel;
+    public String apiDigest;
 
     public NutsWorkspaceModel(NutsWorkspace ws) {
         this.ws = ws;

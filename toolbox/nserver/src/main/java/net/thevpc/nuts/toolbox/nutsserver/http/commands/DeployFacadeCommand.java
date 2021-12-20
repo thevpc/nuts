@@ -44,7 +44,7 @@ public class DeployFacadeCommand extends AbstractFacadeCommand {
                     break;
                 case "content-hash":
                     try {
-                        receivedContentHash = NutsHash.of(session).setSource(info.getContent()).computeString();
+                        receivedContentHash = NutsDigest.of(session).setSource(info.getContent()).computeString();
                     } finally {
                         info.getContent().close();
                     }

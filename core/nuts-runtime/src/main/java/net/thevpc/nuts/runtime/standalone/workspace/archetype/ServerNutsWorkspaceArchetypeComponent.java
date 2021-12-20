@@ -26,14 +26,9 @@
 package net.thevpc.nuts.runtime.standalone.workspace.archetype;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.standalone.repository.DefaultNutsRepositoryDB;
-import net.thevpc.nuts.spi.NutsRepositoryURL;
+import net.thevpc.nuts.spi.*;
 import net.thevpc.nuts.runtime.standalone.workspace.config.DefaultNutsWorkspaceConfigManager;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
-import net.thevpc.nuts.spi.NutsComponentScope;
-import net.thevpc.nuts.spi.NutsComponentScopeType;
-import net.thevpc.nuts.spi.NutsSupportLevelContext;
-import net.thevpc.nuts.spi.NutsWorkspaceArchetypeComponent;
 
 /**
  * Created by vpc on 1/23/17.
@@ -51,16 +46,16 @@ public class ServerNutsWorkspaceArchetypeComponent implements NutsWorkspaceArche
     public void initializeWorkspace(NutsSession session) {
         this.LOG = NutsLogger.of(ServerNutsWorkspaceArchetypeComponent.class, session);
         DefaultNutsWorkspaceConfigManager rm = (DefaultNutsWorkspaceConfigManager) session.config();
-        NutsRepositoryURL[] br = rm.getModel().resolveBootRepositoriesList(session).resolve(
-                new NutsRepositoryURL[]{
-                        NutsRepositoryURL.of("maven-local", null),
-                        NutsRepositoryURL.of("maven-central", null),
-                        NutsRepositoryURL.of(NutsConstants.Names.DEFAULT_REPOSITORY_NAME, null),
+        NutsRepositoryLocation[] br = rm.getModel().resolveBootRepositoriesList(session).resolve(
+                new NutsRepositoryLocation[]{
+                        NutsRepositoryLocation.of("maven-local", null),
+                        NutsRepositoryLocation.of("maven-central", null),
+                        NutsRepositoryLocation.of(NutsConstants.Names.DEFAULT_REPOSITORY_NAME, null),
                 },
-                DefaultNutsRepositoryDB.INSTANCE
+                NutsRepositoryDB.of(session)
         );
         NutsRepositoryManager repos = session.repos().setSession(session);
-        for (NutsRepositoryURL s : br) {
+        for (NutsRepositoryLocation s : br) {
             repos.addRepository(s.toString());
         }
         NutsWorkspaceSecurityManager sec = session.security().setSession(session);

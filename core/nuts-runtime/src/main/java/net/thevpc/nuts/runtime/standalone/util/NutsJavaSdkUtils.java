@@ -160,19 +160,16 @@ public class NutsJavaSdkUtils {
         for (String s : conf) {
             all.add(searchJdkLocationsFuture(Paths.get(s), session));
         }
-        return session.config().executorService().submit(new Callable<NutsPlatformLocation[]>() {
-            @Override
-            public NutsPlatformLocation[] call() throws Exception {
-                List<NutsPlatformLocation> locs = new ArrayList<>();
-                for (Future<NutsPlatformLocation[]> nutsSdkLocationFuture : all) {
-                    NutsPlatformLocation[] e = nutsSdkLocationFuture.get();
-                    if (e != null) {
-                        locs.addAll(Arrays.asList(e));
-                    }
+        return NutsScheduler.of(session).executorService().submit(() -> {
+            List<NutsPlatformLocation> locs = new ArrayList<>();
+            for (Future<NutsPlatformLocation[]> nutsSdkLocationFuture : all) {
+                NutsPlatformLocation[] e = nutsSdkLocationFuture.get();
+                if (e != null) {
+                    locs.addAll(Arrays.asList(e));
                 }
-                locs.sort(new NutsSdkLocationComparator(session));
-                return locs.toArray(new NutsPlatformLocation[0]);
             }
+            locs.sort(new NutsSdkLocationComparator(session));
+            return locs.toArray(new NutsPlatformLocation[0]);
         });
     }
 
@@ -210,28 +207,25 @@ public class NutsJavaSdkUtils {
             try (final DirectoryStream<Path> it = Files.newDirectoryStream(s)) {
                 for (Path d : it) {
                     all.add(
-                            session.config().executorService().submit(new Callable<NutsPlatformLocation>() {
-                                @Override
-                                public NutsPlatformLocation call() throws Exception {
-                                    NutsPlatformLocation r = null;
-                                    try {
-                                        r = resolveJdkLocation(d.toString(), null, session);
-                                        if (r != null) {
-                                            if (session.isPlainTrace()) {
-                                                synchronized (session.getWorkspace()) {
-                                                    NutsTexts factory = NutsTexts.of(session);
-                                                    session.out().printf("detected java %s %s at %s%n", r.getPackaging(),
-                                                            factory.ofStyled(r.getVersion(), NutsTextStyle.version()),
-                                                            factory.ofStyled(r.getPath(), NutsTextStyle.path())
-                                                    );
-                                                }
+                            NutsScheduler.of(session).executorService().submit(() -> {
+                                NutsPlatformLocation r = null;
+                                try {
+                                    r = resolveJdkLocation(d.toString(), null, session);
+                                    if (r != null) {
+                                        if (session.isPlainTrace()) {
+                                            synchronized (session.getWorkspace()) {
+                                                NutsTexts factory = NutsTexts.of(session);
+                                                session.out().printf("detected java %s %s at %s%n", r.getPackaging(),
+                                                        factory.ofStyled(r.getVersion(), NutsTextStyle.version()),
+                                                        factory.ofStyled(r.getPath(), NutsTextStyle.path())
+                                                );
                                             }
                                         }
-                                    } catch (Exception ex) {
-                                        ex.printStackTrace();
                                     }
-                                    return r;
+                                } catch (Exception ex) {
+                                    ex.printStackTrace();
                                 }
+                                return r;
                             })
                     );
                 }
@@ -239,18 +233,15 @@ public class NutsJavaSdkUtils {
                 throw new NutsIOException(session, ex);
             }
         }
-        return session.config().executorService().submit(new Callable<NutsPlatformLocation[]>() {
-            @Override
-            public NutsPlatformLocation[] call() throws Exception {
-                List<NutsPlatformLocation> locs = new ArrayList<>();
-                for (Future<NutsPlatformLocation> nutsSdkLocationFuture : all) {
-                    NutsPlatformLocation e = nutsSdkLocationFuture.get();
-                    if (e != null) {
-                        locs.add(e);
-                    }
+        return NutsScheduler.of(session).executorService().submit(() -> {
+            List<NutsPlatformLocation> locs = new ArrayList<>();
+            for (Future<NutsPlatformLocation> nutsSdkLocationFuture : all) {
+                NutsPlatformLocation e = nutsSdkLocationFuture.get();
+                if (e != null) {
+                    locs.add(e);
                 }
-                return locs.toArray(new NutsPlatformLocation[0]);
             }
+            return locs.toArray(new NutsPlatformLocation[0]);
         });
     }
 

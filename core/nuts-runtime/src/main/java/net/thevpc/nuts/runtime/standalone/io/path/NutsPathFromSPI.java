@@ -3,6 +3,7 @@ package net.thevpc.nuts.runtime.standalone.io.path;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.format.DefaultFormatBase;
 import net.thevpc.nuts.runtime.standalone.io.path.spi.NutsPathSPIHelper;
+import net.thevpc.nuts.runtime.standalone.io.path.spi.URLPath;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.io.util.InputStreamMetadataAwareImpl;
 import net.thevpc.nuts.runtime.standalone.util.reflect.NutsUseDefaultUtils;
@@ -48,7 +49,7 @@ public class NutsPathFromSPI extends NutsPathBase {
         String n = base.getName(this);
         if (n == null) {
             String loc = getLocation();
-            return loc == null ? "" : CoreIOUtils.getURLName(loc);
+            return loc == null ? "" : URLPath.getURLName(loc);
         }
         return n;
     }

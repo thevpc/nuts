@@ -2,7 +2,6 @@ package net.thevpc.nuts.runtime.standalone.io.path.spi;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.extension.DefaultNutsClassLoader;
-import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
 import net.thevpc.nuts.spi.NutsFormatSPI;
 import net.thevpc.nuts.spi.NutsPathFactory;
@@ -299,7 +298,7 @@ public class NutsResourcePath implements NutsPathSPI {
 
     @Override
     public NutsPath getParent(NutsPath basePath) {
-        String ppath = CoreIOUtils.getURLParentPath(location);
+        String ppath = URLPath.getURLParentPath(location);
         if (ppath == null) {
             return null;
         }

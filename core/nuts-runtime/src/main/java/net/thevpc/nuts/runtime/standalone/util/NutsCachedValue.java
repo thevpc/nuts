@@ -17,20 +17,20 @@ public class NutsCachedValue<T> {
     private final Function<NutsSession,T> supplier;
     private T lastValue;
     private long lastDate;
-    private long timeoutSeconds;
+    private long timeoutMilliSeconds;
     private boolean updating = false;
 
-    public NutsCachedValue(Function<NutsSession,T> callable, long timeoutSeconds) {
+    public NutsCachedValue(Function<NutsSession,T> callable, long timeoutMilliSeconds) {
         this.supplier = callable;
-        this.timeoutSeconds = timeoutSeconds;
+        this.timeoutMilliSeconds = timeoutMilliSeconds;
     }
 
-    public long getTimeoutSeconds() {
-        return timeoutSeconds;
+    public long getTimeoutMilliSeconds() {
+        return timeoutMilliSeconds;
     }
 
-    public void setTimeoutSeconds(long timeoutSeconds) {
-        this.timeoutSeconds = timeoutSeconds;
+    public void setTimeoutMilliSeconds(long timeoutMilliSeconds) {
+        this.timeoutMilliSeconds = timeoutMilliSeconds;
     }
 
     public boolean isValid() {
@@ -38,14 +38,14 @@ public class NutsCachedValue<T> {
     }
 
     public boolean isInvalid() {
-        if (lastDate == 0 || timeoutSeconds == 0) {
+        if (lastDate == 0 || timeoutMilliSeconds == 0) {
             return true;
         }
-        if (timeoutSeconds < 0) {
-            timeoutSeconds = 10;
+        if (timeoutMilliSeconds < 0) {
+            timeoutMilliSeconds = 1000;
         }
-        long x = (System.currentTimeMillis() - lastDate) / 1000;
-        if (x < 0 || x > timeoutSeconds) {
+        long x = (System.currentTimeMillis() - lastDate);
+        if (x < 0 || x > timeoutMilliSeconds) {
             return true;
         }
         return false;

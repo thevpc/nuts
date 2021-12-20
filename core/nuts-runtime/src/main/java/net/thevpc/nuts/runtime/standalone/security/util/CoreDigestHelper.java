@@ -1,5 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.security.util;
 
+import net.thevpc.nuts.NutsPath;
+import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.NutsUtilStrings;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 
@@ -23,8 +25,10 @@ public class CoreDigestHelper {
     private final MessageDigest md;
     private boolean collected;
     private String collectedString;
+    private NutsSession session;
 
-    public CoreDigestHelper() {
+    public CoreDigestHelper(NutsSession session) {
+        this.session=session;
         try {
             md = MessageDigest.getInstance("MD5");
         } catch (NoSuchAlgorithmException e) {
@@ -47,9 +51,9 @@ public class CoreDigestHelper {
 
     public CoreDigestHelper append(URL url) {
         if (url != null) {
-            File ff = CoreIOUtils.toFile(url);
+            Path ff = NutsPath.of(url,session).asFile();
             if (ff != null) {
-                append(ff.toPath());
+                append(ff);
                 return this;
             }
             InputStream is = null;

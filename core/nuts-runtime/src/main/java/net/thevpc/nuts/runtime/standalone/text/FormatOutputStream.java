@@ -5,7 +5,7 @@ import net.thevpc.nuts.NutsMessage;
 import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.NutsUnsupportedEnumException;
 import net.thevpc.nuts.runtime.standalone.io.terminal.NutsTerminalModeOp;
-import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
+import net.thevpc.nuts.runtime.standalone.io.terminal.NutsTerminalModeOpUtils;
 import net.thevpc.nuts.spi.NutsSystemTerminalBase;
 
 import java.io.OutputStream;
@@ -14,7 +14,7 @@ public class FormatOutputStream extends RenderedOutputStream implements Extended
 
     public FormatOutputStream(OutputStream out, NutsSystemTerminalBase term, NutsSession session) {
         super(out, term, false, session);
-        NutsTerminalModeOp op = CoreIOUtils.resolveNutsTerminalModeOp(out);
+        NutsTerminalModeOp op = NutsTerminalModeOpUtils.resolveNutsTerminalModeOp(out);
         if (op != NutsTerminalModeOp.NOP) {
             throw new NutsIllegalArgumentException(session, NutsMessage.plain("expected Raw"));
         }

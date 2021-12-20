@@ -1,6 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.ndi.unix;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.standalone.executor.system.NutsSysExecUtils;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.util.PathInfo;
@@ -117,7 +118,7 @@ public class UnixFreeDesktopEntryWriter extends AbstractFreeDesktopEntryWriter {
     private void callMeMaye(String... command) {
         List<String> cmdList = new ArrayList<>(Arrays.asList(command));
         String sysCmd = cmdList.remove(0);
-        Path a = CoreIOUtils.sysWhich(sysCmd);
+        Path a = NutsSysExecUtils.sysWhich(sysCmd);
         if (a != null) {
             cmdList.add(0, a.toString());
             String outStr = session.exec()
@@ -201,7 +202,7 @@ public class UnixFreeDesktopEntryWriter extends AbstractFreeDesktopEntryWriter {
     }
 
     public void write(FreeDesktopEntry file, Path out) {
-        CoreIOUtils.mkdirs(out.getParent(), session);
+        NutsPath.of(out,session).mkParentDirs();
         try (PrintStream p = new PrintStream(Files.newOutputStream(out))) {
             write(file, p);
         } catch (IOException ex) {
@@ -225,7 +226,7 @@ public class UnixFreeDesktopEntryWriter extends AbstractFreeDesktopEntryWriter {
 
 
     public void write(FreeDesktopEntry file, File out) {
-        CoreIOUtils.mkdirs(out.toPath().getParent(), session);
+        NutsPath.of(out,session).mkParentDirs();
         try (PrintStream p = new PrintStream(out)) {
             write(file, p);
         } catch (IOException ex) {

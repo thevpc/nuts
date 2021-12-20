@@ -89,27 +89,9 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
     }
 
     @Override
-    public NutsWorkspaceOptionsBuilder optionsBuilder() {
-        checkSession();
-        return new CoreNutsWorkspaceOptions(session);
-    }
-
-    @Override
     public boolean isExcludedExtension(String extensionId, NutsWorkspaceOptions options) {
         checkSession();
         return model.isExcludedExtension(extensionId, options, session);
-    }
-
-    @Override
-    public NutsId createContentFaceId(NutsId id, NutsDescriptor desc) {
-        checkSession();
-        return model.createContentFaceId(id, desc);
-    }
-
-    @Override
-    public NutsWorkspaceListManager createWorkspaceListManager(String name) {
-        checkSession();
-        return model.createWorkspaceListManager(name, session);
     }
 
     @Override
@@ -169,71 +151,8 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
         return this;
     }
 
-    @Override
-    public String getHashName(Object o) {
-        if (o == null) {
-            return "null";
-        }
-        if (o instanceof String && o.toString().isEmpty()) {
-            return "empty";
-        }
-        if (o instanceof NutsWorkspace) {
-            return getWorkspaceHashName(((NutsWorkspace) o).getLocation());
-        }
-        if (o instanceof NutsSession) {
-            return getWorkspaceHashName(((NutsSession) o).getWorkspace().getLocation());
-        }
-        if (o instanceof Integer) {
-            int i = (int) o;
-            return CoreNutsUtils.COLOR_NAMES[Math.abs(i) % CoreNutsUtils.COLOR_NAMES.length];
-        }
-        return getHashName(o.hashCode());
-    }
-
-    @Override
-    public String getWorkspaceHashName(String path) {
-        if (path == null) {
-            path = "";
-        }
-        String n;
-        String p;
-        if (path.contains("\\") || path.contains("/") || path.equals(".") || path.equals("..")) {
-            Path pp = Paths.get(path).toAbsolutePath().normalize();
-            n = pp.getFileName().toString();
-            p = pp.getParent() == null ? null : pp.getParent().toString();
-        } else {
-            n = path;
-            p = "";
-        }
-        if (p == null) {
-            return ("Root " + n).trim();
-        } else {
-            Path root = Paths.get(NutsUtilPlatforms.getWorkspaceLocation(
-                    null,
-                    false,
-                    null
-            )).getParent().getParent();
-            if (p.equals(root.toString())) {
-                return n;
-            }
-            return (getHashName(p) + " " + n).trim();
-        }
-    }
-
-    @Override
-    public String getWorkspaceHashName(NutsPath path) {
-        if (path == null) {
-            return getWorkspaceHashName("");
-        }
-        return getWorkspaceHashName(path.toString());
-    }
-
     protected void checkSession() {
         NutsWorkspaceUtils.checkSession(model.getWorkspace(), session);
-    }
-
-    public String getWorkspaceHashName() {
-        return getHashName(model.getWorkspace());
     }
 
     @Override
@@ -279,12 +198,6 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
     public NutsDependencySolver createDependencySolver(String name) {
         checkSession();
         return model.createDependencySolver(name, getSession());
-    }
-
-    @Override
-    public ExecutorService executorService() {
-        checkSession();
-        return model.executorService(getSession());
     }
 
     @Override

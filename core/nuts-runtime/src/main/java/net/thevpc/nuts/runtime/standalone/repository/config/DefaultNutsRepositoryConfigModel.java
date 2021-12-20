@@ -3,6 +3,7 @@ package net.thevpc.nuts.runtime.standalone.repository.config;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.repository.*;
 import net.thevpc.nuts.runtime.standalone.repository.impl.NutsRepositoryExt;
+import net.thevpc.nuts.runtime.standalone.repository.util.NutsRepositoryUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.config.NutsRepositoryConfigManagerExt;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.config.NutsStoreLocationsMap;
@@ -17,6 +18,7 @@ import java.util.logging.Level;
 import net.thevpc.nuts.runtime.standalone.util.NutsSpeedQualifiers;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.DefaultNutsWorkspace;
+import net.thevpc.nuts.spi.NutsRepositoryLocation;
 
 public class DefaultNutsRepositoryConfigModel implements NutsRepositoryConfigModel {
 
@@ -205,6 +207,7 @@ public class DefaultNutsRepositoryConfigModel implements NutsRepositoryConfigMod
     @Override
     public NutsPath getLocation(boolean expand,NutsSession session) {
         String s = config.getLocation();
+        s=NutsUtilStrings.trimToNull(NutsRepositoryLocation.of(s).getLocation());
         if (s != null && expand) {
             return NutsPath.of(s,session).toAbsolute(session.locations().getWorkspaceLocation());
         }
@@ -281,12 +284,9 @@ public class DefaultNutsRepositoryConfigModel implements NutsRepositoryConfigMod
             fireChange = true;
             this.config.setStoreLocationStrategy(session.locations().getRepositoryStoreLocationStrategy());
         }
-        if (NutsBlankable.isBlank(config.getType())) {
-            fireChange = true;
-            config.setType(repositoryType);
-        } else if (!config.getType().equals(repositoryType)) {
+        if (!Objects.equals(NutsRepositoryUtils.getRepoType(config),repositoryType)) {
             throw new NutsIllegalArgumentException(session,
-                    NutsMessage.cstyle("invalid Repository Type : expected %s, found %s" ,repositoryType, config.getType())
+                    NutsMessage.cstyle("invalid Repository Type : expected %s, found %s" ,repositoryType, NutsRepositoryUtils.getRepoType(config))
                     );
         }
 
@@ -317,7 +317,7 @@ public class DefaultNutsRepositoryConfigModel implements NutsRepositoryConfigMod
     @Override
     public void addMirror(NutsRepository repo, NutsSession session) {
         repositoryRegistryHelper.addRepository(repo, session);
-        NutsRepositoryUtils.of(repository).events().fireOnAddRepository(
+        NutsRepositoryHelper.of(repository).events().fireOnAddRepository(
                 new DefaultNutsRepositoryEvent(session, repository, repo, "mirror", null, repo)
         );
     }
@@ -550,7 +550,7 @@ public class DefaultNutsRepositoryConfigModel implements NutsRepositoryConfigMod
         repository.security().setSession(session).checkAllowed(NutsConstants.Permissions.REMOVE_REPOSITORY, "remove-repository");
         final NutsRepository r = repositoryRegistryHelper.removeRepository(repositoryId);
         if (r != null) {
-            NutsRepositoryUtils.of(repository).events().fireOnRemoveRepository(new DefaultNutsRepositoryEvent(session, repository, r, "mirror", r, null));
+            NutsRepositoryHelper.of(repository).events().fireOnRemoveRepository(new DefaultNutsRepositoryEvent(session, repository, r, "mirror", r, null));
         } else {
             throw new NutsRepositoryNotFoundException(session, repositoryId);
         }

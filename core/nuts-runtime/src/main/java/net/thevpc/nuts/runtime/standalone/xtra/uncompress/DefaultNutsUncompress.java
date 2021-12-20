@@ -276,7 +276,7 @@ public class DefaultNutsUncompress implements NutsUncompress {
         _LOGOP(session).level(Level.FINEST).verb(NutsLogVerb.START)
                 .log(NutsMessage.jstyle("uncompress {0} to {1}", _source, target));
         Path folder = target.getPath().toFile();
-        CoreIOUtils.mkdirs(folder,session);
+        NutsPath.of(folder,session).mkdirs();
 
         switch (format) {
             case "zip": {
@@ -330,7 +330,7 @@ public class DefaultNutsUncompress implements NutsUncompress {
         _LOGOP(session).level(Level.FINEST).verb(NutsLogVerb.START)
                 .log(NutsMessage.jstyle("uncompress {0} to {1}", _source, target));
         Path folder = target.getPath().toFile();
-        CoreIOUtils.mkdirs(folder,session);
+        NutsPath.of(folder,session).mkdirs();
 
         switch (format) {
             case "zip": {
@@ -384,7 +384,7 @@ public class DefaultNutsUncompress implements NutsUncompress {
                         }
                         if (fileName.endsWith("/")) {
                             Path newFile = folder.resolve(fileName);
-                            CoreIOUtils.mkdirs(newFile,session);
+                            NutsPath.of(newFile,session).mkdirs();
                         } else {
                             Path newFile = folder.resolve(fileName);
                             _LOGOP(session).level(Level.FINEST).verb(NutsLogVerb.WARNING)
@@ -392,7 +392,7 @@ public class DefaultNutsUncompress implements NutsUncompress {
                             //create all non exists folders
                             //else you will hit FileNotFoundException for compressed folder
                             if (newFile.getParent() != null) {
-                                CoreIOUtils.mkdirs(newFile.getParent(),session);
+                                NutsPath.of(newFile,session).mkParentDirs();
                             }
                             try (OutputStream fos = Files.newOutputStream(newFile)) {
                                 int len;
@@ -497,7 +497,7 @@ public class DefaultNutsUncompress implements NutsUncompress {
             InputStream _in = _source.getInputStream();
             try {
                 try (GZIPInputStream zis = new GZIPInputStream(_in)) {
-                    String n = CoreIOUtils.getURLName(baseName == null ? "" : baseName);
+                    String n = NutsPath.of(baseName == null ? "" : baseName,session).getName();
                     if (n.endsWith(".gz")) {
                         n = n.substring(0, n.length() - 3);
                     }
@@ -511,7 +511,7 @@ public class DefaultNutsUncompress implements NutsUncompress {
                     //create all non exists folders
                     //else you will hit FileNotFoundException for compressed folder
                     if (newFile.getParent() != null) {
-                        CoreIOUtils.mkdirs(newFile.getParent(),session);
+                        NutsPath.of(newFile,session).mkParentDirs();
                     }
                     try (OutputStream fos = Files.newOutputStream(newFile)) {
                         int len;
@@ -540,7 +540,7 @@ public class DefaultNutsUncompress implements NutsUncompress {
             InputStream _in = _source.getInputStream();
             try {
                 try (GZIPInputStream zis = new GZIPInputStream(_in)) {
-                    String n = CoreIOUtils.getURLName(baseName == null ? "" : baseName);
+                    String n = NutsPath.of(baseName == null ? "" : baseName,session).getName();
                     if (n.endsWith(".gz")) {
                         n = n.substring(0, n.length() - 3);
                     }

@@ -27,23 +27,22 @@
 package net.thevpc.nuts.spi;
 
 import net.thevpc.nuts.NutsUtilStrings;
-import net.thevpc.nuts.spi.NutsRepositoryURL;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class NutsRepositoryURLList {
-    private final List<NutsRepositoryURL> all = new ArrayList<>();
+    private final List<NutsRepositoryLocation> all = new ArrayList<>();
 
-    public NutsRepositoryURLList(NutsRepositoryURL[] all) {
+    public NutsRepositoryURLList(NutsRepositoryLocation[] all) {
         addAll(all);
     }
 
     public NutsRepositoryURLList() {
     }
 
-    public NutsRepositoryURL[] toArray() {
-        return all.toArray(new NutsRepositoryURL[0]);
+    public NutsRepositoryLocation[] toArray() {
+        return all.toArray(new NutsRepositoryLocation[0]);
     }
 
     public boolean containsName(String name) {
@@ -54,7 +53,7 @@ public class NutsRepositoryURLList {
         return indexOfURL(url, 0) >= 0;
     }
 
-    public boolean containsSelection(NutsRepositoryURL s) {
+    public boolean containsSelection(NutsRepositoryLocation s) {
         return indexOf(s, 0) >= 0;
     }
 
@@ -78,12 +77,12 @@ public class NutsRepositoryURLList {
         return -1;
     }
 
-    public int indexOf(NutsRepositoryURL other, int offset) {
+    public int indexOf(NutsRepositoryLocation other, int offset) {
         if (other == null) {
             return -1;
         }
         for (int i = offset; i < all.size(); i++) {
-            NutsRepositoryURL o = all.get(i);
+            NutsRepositoryLocation o = all.get(i);
             if (NutsUtilStrings.trim(other.getName()).equals(NutsUtilStrings.trim(o.getName()))) {
                 if (NutsUtilStrings.trim(other.getLocation()).equals(NutsUtilStrings.trim(o.getLocation()))) {
                     return i;
@@ -93,15 +92,15 @@ public class NutsRepositoryURLList {
         return -1;
     }
 
-    public void addAll(NutsRepositoryURL[] all) {
+    public void addAll(NutsRepositoryLocation[] all) {
         if (all != null) {
-            for (NutsRepositoryURL a : all) {
+            for (NutsRepositoryLocation a : all) {
                 add(a);
             }
         }
     }
 
-    public void add(NutsRepositoryURL a) {
+    public void add(NutsRepositoryLocation a) {
         if (a != null) {
             String n = NutsUtilStrings.trim(a.getName());
             if (n.isEmpty()) {
@@ -116,7 +115,7 @@ public class NutsRepositoryURLList {
         }
     }
 
-    public NutsRepositoryURL removeAt(int i) {
+    public NutsRepositoryLocation removeAt(int i) {
         return all.remove(i);
     }
 }

@@ -26,7 +26,7 @@ package net.thevpc.nuts.runtime.standalone.repository.impl.maven.util;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.descriptor.util.NutsDescriptorUtils;
 import net.thevpc.nuts.runtime.standalone.repository.impl.maven.pom.*;
-import net.thevpc.nuts.spi.NutsRepositoryURL;
+import net.thevpc.nuts.spi.NutsRepositoryLocation;
 import net.thevpc.nuts.runtime.standalone.util.MapToFunction;
 import net.thevpc.nuts.runtime.standalone.repository.NutsRepositorySelectorHelper;
 import net.thevpc.nuts.runtime.standalone.util.iter.IteratorBuilder;
@@ -593,12 +593,12 @@ public class MavenUtils {
         return s;
     }
 
-    public DepsAndRepos loadDependenciesAndRepositoriesFromPomPath(NutsId rid, NutsRepositoryURL[] bootRepositories, NutsSession session) {
+    public DepsAndRepos loadDependenciesAndRepositoriesFromPomPath(NutsId rid, NutsRepositoryLocation[] bootRepositories, NutsSession session) {
         String urlPath = CoreNutsUtils.idToPath(rid) + "/" + rid.getArtifactId() + "-" + rid.getVersion() + ".pom";
         return loadDependenciesAndRepositoriesFromPomPath(urlPath, bootRepositories, session);
     }
 
-    public DepsAndRepos loadDependenciesAndRepositoriesFromPomPath(String urlPath, NutsRepositoryURL[] bootRepositories, NutsSession session) {
+    public DepsAndRepos loadDependenciesAndRepositoriesFromPomPath(String urlPath, NutsRepositoryLocation[] bootRepositories, NutsSession session) {
         NutsWorkspaceUtils.checkSession(this.session.getWorkspace(), session);
         DepsAndRepos depsAndRepos = null;
 //        if (!NO_M2) {
@@ -608,7 +608,7 @@ public class MavenUtils {
         }
 //        }
         if (depsAndRepos == null || depsAndRepos.deps.isEmpty()) {
-            for (NutsRepositoryURL baseUrl : bootRepositories) {
+            for (NutsRepositoryLocation baseUrl : bootRepositories) {
                 NutsAddRepositoryOptions opt = NutsRepositorySelectorHelper.createRepositoryOptions(baseUrl, false, session);
                 String location = opt.getConfig() == null ? opt.getLocation() : opt.getConfig().getLocation();
                 depsAndRepos = loadDependenciesAndRepositoriesFromPomUrl(location + "/" + urlPath, session);
@@ -621,15 +621,16 @@ public class MavenUtils {
     }
 
     public DepsAndRepos loadDependenciesAndRepositoriesFromPomUrl(String url, NutsSession session) {
-        session.getTerminal().printProgress("%-8s %s", "load", NutsPath.of(url,session).toCompressedForm());
+        NutsPath ppath = NutsPath.of(url, session);
+        session.getTerminal().printProgress("%-8s %s", "load", ppath.toCompressedForm());
         DepsAndRepos depsAndRepos = new DepsAndRepos();
 //        String repositories = null;
 //        String dependencies = null;
         InputStream xml = null;
         try {
 
-            if (CoreIOUtils.isPathHttp(url)) {
-                xml = NutsWorkspaceUtils.of(session).openURL(url);
+            if (ppath.isHttp()) {
+                xml = NutsPath.of(url,session).getInputStream();
             } else {
                 File file = new File(url);
                 if (file.isFile()) {
@@ -748,7 +749,7 @@ public class MavenUtils {
                 DocumentBuilderFactory factory
                         = DocumentBuilderFactory.newInstance();
                 DocumentBuilder builder = factory.newDocumentBuilder();
-                Document doc = builder.parse(NutsWorkspaceUtils.of(session).openURL(runtimeMetadata));
+                Document doc = builder.parse(NutsPath.of(runtimeMetadata,session).getInputStream());
                 Element c = doc.getDocumentElement();
                 for (int i = 0; i < c.getChildNodes().getLength(); i++) {
                     if (c.getChildNodes().item(i) instanceof Element && c.getChildNodes().item(i).getNodeName().equals("versioning")) {

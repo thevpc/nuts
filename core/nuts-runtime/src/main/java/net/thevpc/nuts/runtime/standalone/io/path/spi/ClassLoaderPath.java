@@ -29,7 +29,7 @@ public class ClassLoaderPath extends URLPath {
     }
 
     public String getName(NutsPath basePath) {
-        return CoreIOUtils.getURLName(path);
+        return URLPath.getURLName(path);
     }
 
     @Override

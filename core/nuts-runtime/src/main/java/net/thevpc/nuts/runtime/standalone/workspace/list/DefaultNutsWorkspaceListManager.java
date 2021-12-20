@@ -1,6 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.workspace.list;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.spi.NutsSupportLevelContext;
 
 import java.util.*;
 
@@ -13,16 +14,13 @@ import java.util.*;
 public class DefaultNutsWorkspaceListManager implements NutsWorkspaceListManager {
 
     private final NutsSession defaultSession;
-    private final String name;
+    private String name;
     private Map<String, NutsWorkspaceLocation> workspaces = new LinkedHashMap<>();
     private NutsWorkspaceListConfig config;
 
-    public DefaultNutsWorkspaceListManager(NutsSession session, String name) {
+    public DefaultNutsWorkspaceListManager(NutsSession session) {
         this.defaultSession = session;
-        if (NutsBlankable.isBlank(name)) {
-            name = "default";
-        }
-        this.name = name.trim();
+        setName(null);
         NutsPath file = getConfigFile(session);
         if (file.exists()) {
             this.config = NutsElements.of(this.defaultSession).json().parse(file, NutsWorkspaceListConfig.class);
@@ -41,6 +39,18 @@ public class DefaultNutsWorkspaceListManager implements NutsWorkspaceListManager
             );
             this.save(session);
         }
+    }
+
+    public DefaultNutsWorkspaceListManager setName(String name) {
+        if (NutsBlankable.isBlank(name)) {
+            name = "default";
+        }
+        this.name = name.trim();
+        return this;
+    }
+
+    public String getName() {
+        return name;
     }
 
     private NutsPath getConfigFile(NutsSession session) {
@@ -111,11 +121,16 @@ public class DefaultNutsWorkspaceListManager implements NutsWorkspaceListManager
 
     private NutsSession createWorkspace(String path) {
         return Nuts.openWorkspace(
-                this.defaultSession.config().optionsBuilder()
+                NutsWorkspaceOptionsBuilder.of(this.defaultSession)
                         .setWorkspace(path)
                         .setOpenMode(NutsOpenMode.OPEN_OR_CREATE)
                         .setSkipCompanions(true)
                         .toBootOptions()
         );
+    }
+
+    @Override
+    public int getSupportLevel(NutsSupportLevelContext context) {
+        return DEFAULT_SUPPORT;
     }
 }

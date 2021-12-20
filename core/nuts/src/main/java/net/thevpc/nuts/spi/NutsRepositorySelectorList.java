@@ -76,7 +76,7 @@ public class NutsRepositorySelectorList {
                     op = NutsSelectorOp.EXACT;
                     s = s.substring(1);
                 }
-                NutsRepositoryURL z = NutsRepositoryURL.of(s,db,session);
+                NutsRepositoryLocation z = NutsRepositoryLocation.of(s,db,session);
                 if (z != null) {
                     all.add(new NutsRepositorySelector(op, z.getName(), z.getLocation()));
                 }
@@ -95,10 +95,10 @@ public class NutsRepositorySelectorList {
         return new NutsRepositorySelectorList(result.toArray(new NutsRepositorySelector[0]));
     }
 
-    public NutsRepositoryURL[] resolve(NutsRepositoryURL[] input, NutsRepositoryDB db) {
+    public NutsRepositoryLocation[] resolve(NutsRepositoryLocation[] input, NutsRepositoryDB db) {
         NutsRepositoryURLList current = new NutsRepositoryURLList();
         if (input != null) {
-            for (NutsRepositoryURL entry : input) {
+            for (NutsRepositoryLocation entry : input) {
                 String k = entry.getName();
                 String v = entry.getLocation();
                 if (NutsBlankable.isBlank(v) && !NutsBlankable.isBlank(k)) {
@@ -114,36 +114,36 @@ public class NutsRepositorySelectorList {
                         k = u2;
                     }
                 }
-                current.add(NutsRepositoryURL.of(k, v));
+                current.add(NutsRepositoryLocation.of(k, v));
             }
         }
-        List<NutsRepositoryURL> result = new ArrayList<>();
+        List<NutsRepositoryLocation> result = new ArrayList<>();
         for (NutsRepositorySelector r : selectors) {
             if (r.getOp() != NutsSelectorOp.EXCLUDE) {
                 if (!NutsBlankable.isBlank(r.getName())) {
                     String u2 = r.getUrl();
                     int i = current.indexOfName(r.getName(), 0);
                     if (i >= 0) {
-                        NutsRepositoryURL ss = current.removeAt(i);
+                        NutsRepositoryLocation ss = current.removeAt(i);
                         if (ss != null && u2 == null) {
                             u2 = ss.getLocation();
                         }
                     }
-                    result.add(NutsRepositoryURL.of(r.getName(), u2));
+                    result.add(NutsRepositoryLocation.of(r.getName(), u2));
                 } else if (r.getOp() == NutsSelectorOp.EXACT) {
-                    result.add(NutsRepositoryURL.of(r.getName(), r.getUrl()));
+                    result.add(NutsRepositoryLocation.of(r.getName(), r.getUrl()));
                 }
             }
         }
-        for (NutsRepositoryURL e : current.toArray()) {
+        for (NutsRepositoryLocation e : current.toArray()) {
             if (acceptExisting(e)) {
                 result.add(e);
             }
         }
-        return result.toArray(new NutsRepositoryURL[0]);
+        return result.toArray(new NutsRepositoryLocation[0]);
     }
 
-    public boolean acceptExisting(NutsRepositoryURL ss) {
+    public boolean acceptExisting(NutsRepositoryLocation ss) {
         String n = ss.getName();
         String url = ss.getLocation();
         boolean includeOthers = true;

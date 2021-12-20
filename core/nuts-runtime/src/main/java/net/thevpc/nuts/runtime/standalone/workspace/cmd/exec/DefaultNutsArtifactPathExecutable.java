@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.logging.Level;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.standalone.descriptor.parser.NutsDescriptorContentResolver;
 import net.thevpc.nuts.runtime.standalone.io.util.NutsStreamOrPath;
 import net.thevpc.nuts.runtime.standalone.definition.DefaultNutsDefinition;
 import net.thevpc.nuts.runtime.standalone.definition.DefaultNutsInstallInfo;
@@ -150,7 +151,7 @@ public class DefaultNutsArtifactPathExecutable extends AbstractNutsExecutableCom
                 if (Files.exists(ext)) {
                     c.descriptor = NutsDescriptorParser.of(session).parse(ext);
                 } else {
-                    c.descriptor = CoreIOUtils.resolveNutsDescriptorFromFileContent(c.contentFile, execOptions, session);
+                    c.descriptor = NutsDescriptorContentResolver.resolveNutsDescriptorFromFileContent(c.contentFile, execOptions, session);
                 }
                 if (c.descriptor != null) {
                     if ("zip".equals(c.descriptor.getPackaging())) {
@@ -186,7 +187,7 @@ public class DefaultNutsArtifactPathExecutable extends AbstractNutsExecutableCom
                         for (NutsIdLocation location0 : c.descriptor.getLocations()) {
                             if (CoreFilterUtils.acceptClassifier(location0, classifier)) {
                                 String location = location0.getUrl();
-                                if (CoreIOUtils.isPathHttp(location)) {
+                                if (NutsPath.of(location,session).isHttp()) {
                                     try {
                                         c.contentFile = CoreIOUtils.toPathInputSource(
                                                 NutsStreamOrPath.of(new URL(location),session),
@@ -214,9 +215,9 @@ public class DefaultNutsArtifactPathExecutable extends AbstractNutsExecutableCom
                         throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("unable to locale package for %s" , c.streamOrPath));
                     }
                 } else {
-                    c.descriptor = CoreIOUtils.resolveNutsDescriptorFromFileContent(c.contentFile, execOptions, session);
+                    c.descriptor = NutsDescriptorContentResolver.resolveNutsDescriptorFromFileContent(c.contentFile, execOptions, session);
                     if (c.descriptor == null) {
-                        CoreDigestHelper d = new CoreDigestHelper();
+                        CoreDigestHelper d = new CoreDigestHelper(session);
                         d.append(c.contentFile);
                         String artifactId = d.getDigest();
                         c.descriptor = NutsDescriptorBuilder.of(session)

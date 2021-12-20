@@ -1,20 +1,19 @@
 package net.thevpc.nuts.runtime.standalone.io.path.spi;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.standalone.io.SimpleHttpClient;
-import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.io.util.InputStreamMetadataAwareImpl;
 import net.thevpc.nuts.runtime.standalone.io.util.URLBuilder;
+import net.thevpc.nuts.runtime.standalone.util.NutsCachedValue;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
-import net.thevpc.nuts.spi.NutsFormatSPI;
-import net.thevpc.nuts.spi.NutsPathFactory;
-import net.thevpc.nuts.spi.NutsPathSPI;
+import net.thevpc.nuts.runtime.standalone.xtra.download.DefaultHttpTransportComponent;
+import net.thevpc.nuts.spi.*;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.file.Path;
@@ -30,6 +29,10 @@ public class URLPath implements NutsPathSPI {
 
     private final NutsSession session;
     protected URL url;
+    protected NutsCachedValue<CacheInfo> cachedHeader = new NutsCachedValue<>(
+            s -> loadCacheInfo(), 1000
+    );
+
 
     public URLPath(URL url, NutsSession session) {
         this(url, session, false);
@@ -43,6 +46,55 @@ public class URLPath implements NutsPathSPI {
             }
         }
         this.url = url;
+    }
+
+    public static String getURLParentPath(String ppath) {
+        if (ppath == null) {
+            return null;
+        }
+        while (ppath.endsWith("/")) {
+            ppath = ppath.substring(0, ppath.length() - 1);
+        }
+        if (ppath.isEmpty()) {
+            return null;
+        }
+        int i = ppath.lastIndexOf('/');
+        if (i <= 0) {
+            ppath = "/";
+        } else {
+            ppath = ppath.substring(0, i + 1);
+        }
+        return ppath;
+    }
+
+    public static String getURLName(String path) {
+        String name;
+        int index = path.lastIndexOf('/');
+        if (index < 0) {
+            name = path;
+        } else {
+            name = path.substring(index + 1);
+        }
+        index = name.indexOf('?');
+        if (index >= 0) {
+            name = name.substring(0, index);
+        }
+        name = name.trim();
+        return name;
+    }
+
+    private static File _toFile(URL url) {
+        if (url == null) {
+            return null;
+        }
+        if ("file".equals(url.getProtocol())) {
+            try {
+                return Paths.get(url.toURI()).toFile();
+            } catch (URISyntaxException e) {
+                //
+            }
+        }
+        return null;
     }
 
     @Override
@@ -166,7 +218,7 @@ public class URLPath implements NutsPathSPI {
 
     @Override
     public Path toFile(NutsPath basePath) {
-        File f = CoreIOUtils.toFile(toURL(basePath));
+        File f = _toFile(toURL(basePath));
         if (f != null) {
             return f.toPath();
         }
@@ -228,16 +280,13 @@ public class URLPath implements NutsPathSPI {
             return f.exists();
         }
         try {
-            URLConnection c = url.openConnection();
-            if (c instanceof HttpURLConnection) {
-                HttpURLConnection hc = (HttpURLConnection) c;
-                hc.setRequestMethod("HEAD");
-                int r = hc.getResponseCode();
+            CacheInfo a = cachedHeader.getValue(session);
+            if (a != null) {
+                int r = a.responseCode;
                 return r >= 200 && r < 300;
             }
-            return true;
-        } catch (IOException e) {
-            //return false;
+        } catch (Exception e) {
+            //
         }
         try (InputStream is = url.openStream()) {
             return true;
@@ -256,18 +305,26 @@ public class URLPath implements NutsPathSPI {
             return f.getContentLength();
         }
         try {
-            return url.openConnection().getContentLengthLong();
-        } catch (IOException e) {
-            return -1;
+            CacheInfo a = cachedHeader.getValue(session);
+            if (a != null) {
+                return a.contentLength;
+            }
+        } catch (Exception e) {
+            //
         }
+        return -1;
     }
 
     public String getContentEncoding(NutsPath basePath) {
         try {
-            return url.openConnection().getContentEncoding();
-        } catch (IOException e) {
-            return null;
+            CacheInfo a = cachedHeader.getValue(session);
+            if (a != null) {
+                return a.contentEncoding;
+            }
+        } catch (Exception e) {
+            //
         }
+        return null;
     }
 
     //    @Override
@@ -288,11 +345,11 @@ public class URLPath implements NutsPathSPI {
             return f.getContentType();
         }
         try {
-            String c = url.openConnection().getContentType();
-            if (c != null) {
-                return c;
+            CacheInfo a = cachedHeader.getValue(session);
+            if (a != null) {
+                return a.contentType;
             }
-        } catch (IOException e) {
+        } catch (Exception e) {
             //
         }
         return NutsContentTypes.of(session).probeContentType(basePath);
@@ -307,9 +364,13 @@ public class URLPath implements NutsPathSPI {
         if (url == null) {
             throw new NutsIOException(getSession(), NutsMessage.cstyle("unable to resolve input stream %s", toString()));
         }
-        return InputStreamMetadataAwareImpl.of(
-                new SimpleHttpClient(url, session).openStream(),
-                basePath.getStreamMetadata());
+        NutsTransportComponent best = session.extensions()
+                .createSupported(NutsTransportComponent.class, false, url);
+        if (best == null) {
+            best = DefaultHttpTransportComponent.INSTANCE;
+        }
+        NutsTransportConnection uu = best.open(url.toString());
+        return InputStreamMetadataAwareImpl.of(uu.open(), basePath.getStreamMetadata());
     }
 
     public OutputStream getOutputStream(NutsPath basePath) {
@@ -362,21 +423,14 @@ public class URLPath implements NutsPathSPI {
             return f.getLastModifiedInstant();
         }
         try {
-            URLConnection h = url.openConnection();
-            if(h instanceof HttpURLConnection){
-                HttpURLConnection h2= (HttpURLConnection)h;
-                // connection.setDoOutput(true);
-                h2.setRequestMethod("HEAD");
+            CacheInfo a = cachedHeader.getValue(session);
+            if (a != null) {
+                return a.lastModified;
             }
-            h.setDoOutput(false);
-            long z = h.getLastModified();
-            if (z <= 0) {
-                return null;
-            }
-            return Instant.ofEpochMilli(z);
-        } catch (IOException e) {
-            return null;
+        } catch (Exception e) {
+            //
         }
+        return null;
     }
 
     @Override
@@ -401,7 +455,7 @@ public class URLPath implements NutsPathSPI {
             return f.getParent();
         }
         try {
-            String ppath = CoreIOUtils.getURLParentPath(url.getPath());
+            String ppath = getURLParentPath(url.getPath());
             if (ppath == null) {
                 return null;
             }
@@ -584,6 +638,45 @@ public class URLPath implements NutsPathSPI {
         }
     }
 
+    @Override
+    public NutsPath toRelativePath(NutsPath basePath, NutsPath parentPath) {
+        String child = basePath.getLocation();
+        String parent = parentPath.getLocation();
+        if (child.startsWith(parent)) {
+            child = child.substring(parent.length());
+            if (child.startsWith("/") || child.startsWith("\\")) {
+                child = child.substring(1);
+            }
+            return NutsPath.of(child, session);
+        }
+        return null;
+    }
+
+    private CacheInfo loadCacheInfo() {
+        try {
+            URLConnection uu = url.openConnection();
+            uu.setDoOutput(false);
+            CacheInfo cc = new CacheInfo();
+            if (uu instanceof HttpURLConnection) {
+                HttpURLConnection hc = (HttpURLConnection) uu;
+                hc.setRequestMethod("HEAD");
+                cc.responseCode = hc.getResponseCode();
+            }
+            cc.contentLength = uu.getContentLengthLong();
+            cc.contentEncoding = uu.getContentEncoding();
+            cc.contentType = uu.getContentType();
+
+            long z = uu.getLastModified();
+            if (z > 0) {
+                cc.lastModified = Instant.ofEpochMilli(z);
+            }
+            return cc;
+        } catch (Exception ex) {
+            //
+        }
+        return null;
+    }
+
     private String _parent(String p) {
         while (p.endsWith("/") || p.endsWith("\\")) {
             p = p.substring(0, p.length() - 1);
@@ -639,8 +732,16 @@ public class URLPath implements NutsPathSPI {
     }
 
     public NutsPath asFilePath(NutsPath basePath) {
-        File f = CoreIOUtils.toFile(toURL(basePath));
+        File f = _toFile(toURL(basePath));
         return (f != null) ? NutsPath.of(f, getSession()) : null;
+    }
+
+    private static class CacheInfo {
+        long contentLength;
+        String contentEncoding;
+        String contentType;
+        int responseCode;
+        Instant lastModified;
     }
 
     private static class MyPathFormat implements NutsFormatSPI {
@@ -680,7 +781,7 @@ public class URLPath implements NutsPathSPI {
         public NutsSupported<NutsPathSPI> createPath(String path, NutsSession session, ClassLoader classLoader) {
             NutsWorkspaceUtils.checkSession(ws, session);
             try {
-                if (path!=null && path.length()>0) {
+                if (path != null && path.length() > 0) {
                     char s = path.charAt(0);
                     if (Character.isAlphabetic(s)) {
                         URL url = new URL(path);
@@ -692,19 +793,5 @@ public class URLPath implements NutsPathSPI {
             }
             return null;
         }
-    }
-
-    @Override
-    public NutsPath toRelativePath(NutsPath basePath, NutsPath parentPath) {
-        String child=basePath.getLocation();
-        String parent=parentPath.getLocation();
-        if (child.startsWith(parent)) {
-            child = child.substring(parent.length());
-            if (child.startsWith("/") || child.startsWith("\\")) {
-                child = child.substring(1);
-            }
-            return NutsPath.of(child,session);
-        }
-        return null;
     }
 }

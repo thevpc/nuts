@@ -1,65 +1,61 @@
 package net.thevpc.nuts.runtime.standalone.repository;
 
-import net.thevpc.nuts.NutsConstants;
-import net.thevpc.nuts.NutsStoreLocation;
-import net.thevpc.nuts.NutsUtilPlatforms;
-import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
+import net.thevpc.nuts.*;
 import net.thevpc.nuts.spi.NutsRepositoryDB;
-import net.thevpc.nuts.spi.NutsRepositoryURL;
+import net.thevpc.nuts.spi.NutsRepositoryLocation;
+import net.thevpc.nuts.spi.NutsSupportLevelContext;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class DefaultNutsRepositoryDB implements NutsRepositoryDB{
-    public static NutsRepositoryDB INSTANCE=new DefaultNutsRepositoryDB();
-
     private final Map<String, String> defaultRepositoriesByName = new LinkedHashMap<>();
 
-    private DefaultNutsRepositoryDB(){
-        defaultRepositoriesByName.put("system", CoreIOUtils.getNativePath(
+    private DefaultNutsRepositoryDB(NutsSession session){
+        defaultRepositoriesByName.put("system", "nuts@"+NutsPath.of(
                 NutsUtilPlatforms.getDefaultPlatformHomeFolder(null,
-                        NutsStoreLocation.CONFIG,
+                        NutsStoreLocation.LIB,
                         true,
-                        NutsConstants.Names.DEFAULT_WORKSPACE_NAME)
-                        + "/" + NutsConstants.Folders.REPOSITORIES
-                        + "/" + NutsConstants.Names.DEFAULT_REPOSITORY_NAME
-        ));
+                        NutsConstants.Names.DEFAULT_WORKSPACE_NAME),session
+        ).resolve(NutsConstants.Folders.ID).toString());
         //
-        defaultRepositoriesByName.put("maven-local", System.getProperty("user.home") + CoreIOUtils.getNativePath("/.m2/repository"));
+        defaultRepositoriesByName.put("maven-local",
+                "maven@"+NutsPath.ofUserHome(session).resolve(".m2/repository").toString()
+        );
         defaultRepositoriesByName.put(".m2", defaultRepositoriesByName.get("maven-local"));
         defaultRepositoriesByName.put("m2", defaultRepositoriesByName.get("maven-local"));
         //
-        defaultRepositoriesByName.put("maven-central", "htmlfs:https://repo.maven.apache.org/maven2");
+        defaultRepositoriesByName.put("maven-central", "maven@htmlfs:https://repo.maven.apache.org/maven2");
         defaultRepositoriesByName.put("central", defaultRepositoriesByName.get("maven-central"));
         defaultRepositoriesByName.put("maven", defaultRepositoriesByName.get("maven-central"));
         defaultRepositoriesByName.put("mvn", defaultRepositoriesByName.get("maven-central"));
         //
-        defaultRepositoriesByName.put("jcenter", "https://jcenter.bintray.com");
+        defaultRepositoriesByName.put("jcenter", "maven@https://jcenter.bintray.com");
         //
-        defaultRepositoriesByName.put("jboss", "https://repository.jboss.org/nexus/content/repositories/releases");
+        defaultRepositoriesByName.put("jboss", "maven@https://repository.jboss.org/nexus/content/repositories/releases");
         //
-        defaultRepositoriesByName.put("clojars", "https://repo.clojars.org");
+        defaultRepositoriesByName.put("clojars", "maven@https://repo.clojars.org");
         //
-        defaultRepositoriesByName.put("atlassian", "https://packages.atlassian.com/maven/public");
+        defaultRepositoriesByName.put("atlassian", "maven@https://packages.atlassian.com/maven/public");
         //
-        defaultRepositoriesByName.put("atlassian-snapshot", "https://packages.atlassian.com/maven/public-snapshot");
+        defaultRepositoriesByName.put("atlassian-snapshot", "maven@https://packages.atlassian.com/maven/public-snapshot");
         //
-        defaultRepositoriesByName.put("oracle", "https://maven.oracle.com");
+        defaultRepositoriesByName.put("oracle", "maven@https://maven.oracle.com");
         //
-        defaultRepositoriesByName.put("google", "https://maven.google.com");
+        defaultRepositoriesByName.put("google", "maven@https://maven.google.com");
         //
-        defaultRepositoriesByName.put("spring", "https://repo.spring.io/release");
+        defaultRepositoriesByName.put("spring", "maven@https://repo.spring.io/release");
         defaultRepositoriesByName.put("spring-framework", defaultRepositoriesByName.get("spring"));
         //
-        defaultRepositoriesByName.put("maven-thevpc-git", "https://raw.githubusercontent.com/thevpc/vpc-public-maven/master");
+        defaultRepositoriesByName.put("maven-thevpc-git", "maven@https://raw.githubusercontent.com/thevpc/vpc-public-maven/master");
         defaultRepositoriesByName.put("vpc-public-maven", defaultRepositoriesByName.get("maven-thevpc-git"));
         //
-        defaultRepositoriesByName.put("nuts-thevpc-git", "https://raw.githubusercontent.com/thevpc/vpc-public-nuts/master");
+        defaultRepositoriesByName.put("nuts-thevpc-git", "maven@https://raw.githubusercontent.com/thevpc/vpc-public-nuts/master");
         defaultRepositoriesByName.put("vpc-public-nuts", defaultRepositoriesByName.get("nuts-thevpc-git"));
         //
-        defaultRepositoriesByName.put("thevpc", "htmlfs:http://thevpc.net/maven");
+        defaultRepositoriesByName.put("thevpc", "maven@htmlfs:http://thevpc.net/maven");
         defaultRepositoriesByName.put("dev", defaultRepositoriesByName.get("thevpc"));
-        defaultRepositoriesByName.put("local", "local");
+        defaultRepositoriesByName.put("local", "nuts@local");
 
     }
 
@@ -72,14 +68,20 @@ public class DefaultNutsRepositoryDB implements NutsRepositoryDB{
     }
 
     public String getRepositoryNameByURL(String url) {
-        NutsRepositoryURL nru = NutsRepositoryURL.of(url);
+        NutsRepositoryLocation nru = NutsRepositoryLocation.of(url);
         for (Map.Entry<String, String> entry : defaultRepositoriesByName.entrySet()) {
             String v = entry.getValue();
-            if (v.equals(nru.getURLString()) || v.equals(nru.getLocation())) {
+            if (v.equals(nru.toString())
+                    || v.equals(nru.setName(null).toString())
+                    || v.equals(nru.setName(null).setType(null).toString())) {
                 return entry.getKey();
             }
         }
         return null;
     }
 
+    @Override
+    public int getSupportLevel(NutsSupportLevelContext context) {
+        return DEFAULT_SUPPORT;
+    }
 }

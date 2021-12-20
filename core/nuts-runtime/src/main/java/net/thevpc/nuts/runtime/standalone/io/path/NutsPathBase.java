@@ -243,4 +243,13 @@ public abstract class NutsPathBase implements NutsPath {
     public Reader getReader() {
         return new BufferedReader(new InputStreamReader(getInputStream()));
     }
+
+    @Override
+    public boolean isHttp() {
+        if(!isURL()){
+            return false;
+        }
+        String s = toString();
+        return s.startsWith("http://") ||s.startsWith("https://");
+    }
 }

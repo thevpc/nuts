@@ -10,6 +10,8 @@ import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.AbstractNutsSet
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.user.NutsSettingsUserSubCommand;
 
 import java.util.Arrays;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * @author thevpc
@@ -17,8 +19,8 @@ import java.util.Arrays;
 public class NutsSettingsRepositorySubCommand extends AbstractNutsSettingsSubCommand {
 
     public static RepoInfo repoInfo(NutsRepository x, boolean tree, NutsSession session) {
-        return new RepoInfo(x.getName(), x.config().getType(), x.config().getLocation(true), x.config().isEnabled()?RepoStatus.enabled : RepoStatus.disabled,
-                 tree ? Arrays.stream(x.config().setSession(session).getMirrors()).map(e -> repoInfo(e, tree, session)).toArray(RepoInfo[]::new) : null
+        return new RepoInfo(x.getName(), x.config().getType(), x.config().getLocation(true), x.config().isEnabled() ? RepoStatus.enabled : RepoStatus.disabled,
+                tree ? Arrays.stream(x.config().setSession(session).getMirrors()).map(e -> repoInfo(e, tree, session)).toArray(RepoInfo[]::new) : null
         );
     }
 
@@ -49,7 +51,7 @@ public class NutsSettingsRepositorySubCommand extends AbstractNutsSettingsSubCom
 //                                .setName(repositoryName)
 //                                .setLocation(repositoryName)
 //                                .setConfig(
-//                                        new NutsRepositoryConfig()
+//                                        new NutsRepositoryConfig507()
 //                                                .setName(repositoryName)
 //                                                .setLocation(location)
 //                                                .setType(repoType))
@@ -66,8 +68,8 @@ public class NutsSettingsRepositorySubCommand extends AbstractNutsSettingsSubCom
         if (cmdLine.next("add repo", "ar") != null) {
             String location = null;
             String repositoryName = null;
-            String repoType = null;
             String parent = null;
+            Map<String, String> env = new LinkedHashMap<>();
             while (cmdLine.hasNext()) {
                 NutsArgument a = cmdLine.peek();
                 boolean enabled = a.isActive();
@@ -87,17 +89,18 @@ public class NutsSettingsRepositorySubCommand extends AbstractNutsSettingsSubCom
                         }
                         break;
                     }
-                    case "--type": {
-                        String val = cmdLine.nextString().getValue().getString();
-                        if (enabled) {
-                            repoType = val;
-                        }
-                        break;
-                    }
                     case "--parent": {
                         String val = cmdLine.nextString().getValue().getString();
                         if (enabled) {
                             parent = val;
+                        }
+                        break;
+                    }
+                    case "--env": {
+                        String val = cmdLine.nextString().getValue().getString();
+                        if (enabled) {
+                            NutsArgument vv = NutsArgument.of(val, session);
+                            env.put(vv.getKey() == null ? null : vv.getKey().getString(), vv.getValue() == null ? null : vv.getValue().getString());
                         }
                         break;
                     }
@@ -128,9 +131,9 @@ public class NutsSettingsRepositorySubCommand extends AbstractNutsSettingsSubCom
                         .setLocation(repositoryName)
                         .setConfig(
                                 location == null ? null : new NutsRepositoryConfig()
-                                                .setName(repositoryName)
-                                                .setLocation(location)
-                                                .setType(repoType));
+                                        .setName(repositoryName)
+                                        .setLocation(location)
+                                        .setEnv(env));
                 if (parent == null) {
                     repo = session.repos().addRepository(o);
                 } else {
@@ -240,11 +243,10 @@ public class NutsSettingsRepositorySubCommand extends AbstractNutsSettingsSubCom
             enableRepo(cmdLine, autoSave, session, true);
             return true;
         } else if (cmdLine.next("edit repo", "er") != null) {
-            String repoId = cmdLine.required().nextNonOption(NutsArgumentName.of("RepositoryName",session)).getString();
+            String repoId = cmdLine.required().nextNonOption(NutsArgumentName.of("RepositoryName", session)).getString();
             if (cmdLine.next("add repo", "ar") != null) {
-                String repositoryName = cmdLine.required().nextNonOption(NutsArgumentName.of("NewRepositoryName",session)).getString();
-                String location = cmdLine.required().nextNonOption(NutsArgumentName.of("folder",session)).getString();
-                String repoType = cmdLine.nextNonOption(NutsArgumentName.of("repository-type",session)).getString();
+                String repositoryName = cmdLine.required().nextNonOption(NutsArgumentName.of("NewRepositoryName", session)).getString();
+                String location = cmdLine.required().nextNonOption(NutsArgumentName.of("folder", session)).getString();
 
                 NutsRepository editedRepo = session.repos().getRepository(repoId);
                 NutsRepository repo = editedRepo.config().addMirror(
@@ -253,11 +255,11 @@ public class NutsSettingsRepositorySubCommand extends AbstractNutsSettingsSubCom
                                         new NutsRepositoryConfig()
                                                 .setName(repositoryName)
                                                 .setLocation(location)
-                                                .setType(repoType)));
+                                ));
                 session.config().save();
 
             } else if (cmdLine.next("remove repo", "rr") != null) {
-                String location = cmdLine.required().nextNonOption(NutsArgumentName.of("RepositoryName",session)).getString();
+                String location = cmdLine.required().nextNonOption(NutsArgumentName.of("RepositoryName", session)).getString();
                 NutsRepository editedRepo = session.repos().getRepository(repoId);
                 editedRepo.config().removeMirror(location);
                 session.config().save();
@@ -276,7 +278,7 @@ public class NutsSettingsRepositorySubCommand extends AbstractNutsSettingsSubCom
                 NutsRepository[] linkRepositories = editedRepo.config()
                         .setSession(session)
                         .isSupportedMirroring()
-                                ? editedRepo.config().setSession(session).getMirrors() : new NutsRepository[0];
+                        ? editedRepo.config().setSession(session).getMirrors() : new NutsRepository[0];
                 out.printf("%s sub repositories.%n", linkRepositories.length);
                 NutsTableFormat t = NutsTableFormat.of(session);
                 NutsMutableTableModel m = NutsMutableTableModel.of(session);
@@ -291,9 +293,9 @@ public class NutsSettingsRepositorySubCommand extends AbstractNutsSettingsSubCom
                     m.addRow(
                             NutsTexts.of(session).ofStyled(repository.getName(), NutsTextStyle.primary4()),
                             repository.config().isEnabled()
-                            ? repository.isEnabled() ? NutsTexts.of(session).ofStyled("ENABLED", NutsTextStyle.success())
-                            : NutsTexts.of(session).ofStyled("<RT-DISABLED>", NutsTextStyle.error())
-                            : NutsTexts.of(session).ofStyled("<DISABLED>", NutsTextStyle.error()),
+                                    ? repository.isEnabled() ? NutsTexts.of(session).ofStyled("ENABLED", NutsTextStyle.success())
+                                    : NutsTexts.of(session).ofStyled("<RT-DISABLED>", NutsTextStyle.error())
+                                    : NutsTexts.of(session).ofStyled("<DISABLED>", NutsTextStyle.error()),
                             repository.getRepositoryType(),
                             repository.config().getLocation(false)
                     );
@@ -358,6 +360,7 @@ public class NutsSettingsRepositorySubCommand extends AbstractNutsSettingsSubCom
         enabled,
         disabled,
     }
+
     public static class RepoInfo {
 
         String name;

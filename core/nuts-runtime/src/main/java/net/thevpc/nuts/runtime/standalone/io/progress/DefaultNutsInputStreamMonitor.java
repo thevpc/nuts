@@ -8,7 +8,6 @@ package net.thevpc.nuts.runtime.standalone.io.progress;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.io.util.InputStreamMetadataAwareImpl;
 import net.thevpc.nuts.runtime.standalone.io.util.NutsStreamOrPath;
-import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
 import net.thevpc.nuts.spi.NutsSupportLevelContext;
 
@@ -134,7 +133,7 @@ public class DefaultNutsInputStreamMonitor implements NutsInputStreamMonitor {
         if (sourceName == null || sourceName.isEmpty()) {
             sourceName = NutsTexts.of(session).toText(String.valueOf(source.getValue()));
         }
-        NutsProgressMonitor monitor = CoreIOUtils.createProgressMonitor(CoreIOUtils.MonitorType.STREAM, source.getValue(), sourceOrigin, session
+        NutsProgressMonitor monitor = NutsProgressUtils.createProgressMonitor(NutsProgressUtils.MonitorType.STREAM, source.getValue(), sourceOrigin, session
                 , isLogProgress()
                 , isTraceProgress()
                 ,getProgressFactory());
@@ -170,7 +169,7 @@ public class DefaultNutsInputStreamMonitor implements NutsInputStreamMonitor {
             sourceTypeName = "nuts-Path";//inputSource.getTypeName();
         }
         return InputStreamMetadataAwareImpl.of(
-                CoreIOUtils.monitor(openedStream, source, sourceName, size, new SilentStartNutsProgressMonitorAdapter(monitor, sourceName.filteredText()), session),
+                NutsProgressUtils.monitor(openedStream, source, sourceName, size, new SilentStartNutsProgressMonitorAdapter(monitor, sourceName.filteredText()), session),
                 new NutsDefaultStreamMetadata(source.getStreamMetaData())
                         .setUserKind(sourceTypeName)
         );

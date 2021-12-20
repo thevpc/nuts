@@ -2,7 +2,6 @@ package net.thevpc.nuts.runtime.standalone.executor.system;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.io.util.IProcessExecHelper;
-import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.util.NutsJavaSdkUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.StringPlaceHolderParser;
@@ -201,7 +200,7 @@ public class ProcessExecHelper implements IProcessExecHelper {
         Path wsLocation = session.locations().getWorkspaceLocation().toFile();
         Path path = wsLocation.resolve(args[0]).normalize();
         if (Files.exists(path)) {
-            CoreIOUtils.setExecutable(path,session);
+            NutsPath.of(path,session).addPermissions(NutsPathPermission.CAN_EXECUTE);
         }
         Path pdirectory = null;
         if (NutsBlankable.isBlank(directory)) {
@@ -321,8 +320,8 @@ public class ProcessExecHelper implements IProcessExecHelper {
                     case UNIX: {
                         if (runWithGui) {
                             NutsDesktopEnvironmentFamily[] de = session.env().getDesktopEnvironmentFamilies();
-                            Path kdesu = CoreIOUtils.sysWhich("kdesu");
-                            Path gksu = CoreIOUtils.sysWhich("gksu");
+                            Path kdesu = NutsSysExecUtils.sysWhich("kdesu");
+                            Path gksu = NutsSysExecUtils.sysWhich("gksu");
                             String currSu = null;
                             if (Arrays.stream(de).anyMatch(x -> x == NutsDesktopEnvironmentFamily.KDE)) {
                                 if (kdesu != null) {
@@ -349,7 +348,7 @@ public class ProcessExecHelper implements IProcessExecHelper {
                             cc.add(currSu);
                             cc.add(runAsEffective);
                         } else {
-                            Path su = CoreIOUtils.sysWhich("su");
+                            Path su = NutsSysExecUtils.sysWhich("su");
                             if (su == null) {
                                 throw new NutsIllegalArgumentException(session, NutsMessage.plain("unable to resolve su application"));
                             }
@@ -378,8 +377,8 @@ public class ProcessExecHelper implements IProcessExecHelper {
                     case UNIX: {
                         if (runWithGui) {
                             NutsDesktopEnvironmentFamily[] de = session.env().getDesktopEnvironmentFamilies();
-                            Path kdesu = CoreIOUtils.sysWhich("kdesudo");
-                            Path gksu = CoreIOUtils.sysWhich("gksudo");
+                            Path kdesu = NutsSysExecUtils.sysWhich("kdesudo");
+                            Path gksu = NutsSysExecUtils.sysWhich("gksudo");
                             String currSu = null;
                             if (Arrays.stream(de).anyMatch(x -> x == NutsDesktopEnvironmentFamily.KDE)) {
                                 if (kdesu != null) {
@@ -405,7 +404,7 @@ public class ProcessExecHelper implements IProcessExecHelper {
                             }
                             cc.add(currSu);
                         } else {
-                            Path su = CoreIOUtils.sysWhich("sudo");
+                            Path su = NutsSysExecUtils.sysWhich("sudo");
                             if (su == null) {
                                 throw new NutsIllegalArgumentException(session, NutsMessage.plain("unable to resolve su application"));
                             }

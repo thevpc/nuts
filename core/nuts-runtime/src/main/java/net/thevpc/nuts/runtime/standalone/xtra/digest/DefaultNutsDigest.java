@@ -23,10 +23,9 @@
  * <br>
  * ====================================================================
  */
-package net.thevpc.nuts.runtime.standalone.xtra.hash;
+package net.thevpc.nuts.runtime.standalone.xtra.digest;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.io.util.NutsStreamOrPath;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
 import net.thevpc.nuts.spi.NutsSupportLevelContext;
@@ -39,20 +38,20 @@ import java.security.NoSuchAlgorithmException;
 /**
  * @author thevpc
  */
-public class DefaultNutsHash implements NutsHash {
+public class DefaultNutsDigest implements NutsDigest {
 
     private final NutsWorkspace ws;
     private NutsStreamOrPath source;
     private String algorithm;
     private NutsSession session;
 
-    public DefaultNutsHash(NutsSession session) {
+    public DefaultNutsDigest(NutsSession session) {
         this.session = session;
         this.ws = session.getWorkspace();
     }
 
     @Override
-    public NutsHash setSource(InputStream source) {
+    public NutsDigest setSource(InputStream source) {
         if (source == null) {
             this.source = null;
         } else {
@@ -62,32 +61,32 @@ public class DefaultNutsHash implements NutsHash {
     }
 
     @Override
-    public NutsHash setSource(File source) {
+    public NutsDigest setSource(File source) {
         this.source = source == null ? null : NutsStreamOrPath.of(source, getSession());
         return this;
     }
 
     @Override
-    public NutsHash setSource(Path source) {
+    public NutsDigest setSource(Path source) {
         this.source = source == null ? null : NutsStreamOrPath.of(source, getSession());
         return this;
     }
 
     @Override
-    public NutsHash setSource(NutsPath source) {
+    public NutsDigest setSource(NutsPath source) {
         this.source = source == null ? null : NutsStreamOrPath.of(source);
         return this;
     }
 
     @Override
-    public NutsHash setSource(byte[] source) {
+    public NutsDigest setSource(byte[] source) {
         checkSession();
         this.source = source == null ? null : NutsStreamOrPath.ofAnyInputOrNull(new ByteArrayInputStream(source), session);
         return null;
     }
 
     @Override
-    public NutsHash setSource(NutsDescriptor source) {
+    public NutsDigest setSource(NutsDescriptor source) {
         checkSession();
         this.source = source == null ? null : NutsStreamOrPath.ofSpecial(source, NutsStreamOrPath.Type.DESCRIPTOR,
                 session);
@@ -107,11 +106,11 @@ public class DefaultNutsHash implements NutsHash {
         checkSession();
         switch (source.getType()) {
             case INPUT_STREAM: {
-                return CoreIOUtils.evalHash(source.getInputStream(), getValidAlgo(), session);
+                return NutsDigestUtils.evalHash(source.getInputStream(), getValidAlgo(), session);
             }
             case PATH: {
                 try (InputStream is = new BufferedInputStream(source.getInputStream())) {
-                    return CoreIOUtils.evalHash(is, getValidAlgo(), session);
+                    return NutsDigestUtils.evalHash(is, getValidAlgo(), session);
                 } catch (IOException ex) {
                     throw new NutsIOException(session, ex);
                 }
@@ -121,7 +120,7 @@ public class DefaultNutsHash implements NutsHash {
                 ((NutsDescriptor) source.getValue()).formatter().setSession(session)
                         .compact().setSession(session).print(new OutputStreamWriter(o));
                 try (InputStream is = new ByteArrayInputStream(o.toByteArray())) {
-                    return CoreIOUtils.evalHash(is, getValidAlgo(), session);
+                    return NutsDigestUtils.evalHash(is, getValidAlgo(), session);
                 } catch (IOException ex) {
                     throw new NutsIOException(session, ex);
                 }
@@ -133,7 +132,7 @@ public class DefaultNutsHash implements NutsHash {
     }
 
     @Override
-    public NutsHash writeHash(OutputStream out) {
+    public NutsDigest writeHash(OutputStream out) {
         try {
             out.write(computeBytes());
         } catch (IOException ex) {
@@ -143,7 +142,7 @@ public class DefaultNutsHash implements NutsHash {
     }
 
     @Override
-    public NutsHash md5() {
+    public NutsDigest md5() {
         return setAlgorithm("MD5");
     }
 
@@ -153,23 +152,23 @@ public class DefaultNutsHash implements NutsHash {
     }
 
     @Override
-    public NutsHash setSession(NutsSession session) {
+    public NutsDigest setSession(NutsSession session) {
         this.session = NutsWorkspaceUtils.bindSession(ws, session);
         return this;
     }
 
     @Override
-    public NutsHash sha1() {
+    public NutsDigest sha1() {
         return setAlgorithm("SHA1");
     }
 
     @Override
-    public NutsHash sha256() {
+    public NutsDigest sha256() {
         return setAlgorithm("SHA256");
     }
 
     @Override
-    public NutsHash algorithm(String algorithm) {
+    public NutsDigest algorithm(String algorithm) {
         return setAlgorithm(algorithm);
     }
 
@@ -179,7 +178,7 @@ public class DefaultNutsHash implements NutsHash {
     }
 
     @Override
-    public NutsHash setAlgorithm(String algorithm) {
+    public NutsDigest setAlgorithm(String algorithm) {
         if (NutsBlankable.isBlank(algorithm)) {
             algorithm = null;
         }

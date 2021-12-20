@@ -98,8 +98,8 @@ public final class NutsBootWorkspace {
     };
     private int newInstanceRequirements;
     private NutsBootOptions lastWorkspaceOptions;
-    private Set<String> parsedBootRuntimeDependenciesRepositories;
-    private Set<String> parsedBootRuntimeRepositories;
+    private Set<NutsRepositoryLocation> parsedBootRuntimeDependenciesRepositories;
+    private Set<NutsRepositoryLocation> parsedBootRuntimeRepositories;
     private boolean preparedWorkspace;
     private NutsLogger nLog;
     private NutsSession nLogSession;
@@ -248,7 +248,7 @@ public final class NutsBootWorkspace {
      * @param dependencies when true search for runtime dependencies, when false, search for runtime
      * @return repositories
      */
-    public Set<String> resolveBootRuntimeRepositories(boolean dependencies) {
+    public Set<NutsRepositoryLocation> resolveBootRuntimeRepositories(boolean dependencies) {
         if (dependencies) {
             if (parsedBootRuntimeDependenciesRepositories != null) {
                 return parsedBootRuntimeDependenciesRepositories;
@@ -271,19 +271,19 @@ public final class NutsBootWorkspace {
                 new String[]{computedOptions.getBootRepositories()},
                 PrivateNutsBootRepositoryDB.INSTANCE, null
         ).toArray();
-        NutsRepositoryURL[] result = null;
+        NutsRepositoryLocation[] result = null;
         if (old.length == 0) {
             //no previous config, use defaults!
-            result = bootRepositories.resolve(new NutsRepositoryURL[]{
-                    NutsRepositoryURL.of("maven-local", null),
-                    NutsRepositoryURL.of("maven-central", null),
+            result = bootRepositories.resolve(new NutsRepositoryLocation[]{
+                    NutsRepositoryLocation.of("maven-local", null),
+                    NutsRepositoryLocation.of("maven-central", null),
             }, PrivateNutsBootRepositoryDB.INSTANCE);
         } else {
-            result = bootRepositories.resolve(Arrays.stream(old).map(x -> NutsRepositoryURL.of(x.getName(), x.getUrl()))
-                            .toArray(NutsRepositoryURL[]::new)
+            result = bootRepositories.resolve(Arrays.stream(old).map(x -> NutsRepositoryLocation.of(x.getName(), x.getUrl()))
+                            .toArray(NutsRepositoryLocation[]::new)
                     , PrivateNutsBootRepositoryDB.INSTANCE);
         }
-        Set<String> rr = Arrays.stream(result).map(NutsRepositoryURL::getLocation).collect(Collectors.toCollection(LinkedHashSet::new));
+        Set<NutsRepositoryLocation> rr = Arrays.stream(result).collect(Collectors.toCollection(LinkedHashSet::new));
         if (dependencies) {
             parsedBootRuntimeDependenciesRepositories = rr;
         } else {
@@ -297,15 +297,15 @@ public final class NutsBootWorkspace {
         bLog.log(Level.FINE, NutsLogVerb.START, NutsMessage.jstyle("running version {0}.  {1}", computedOptions.getApiVersion(), getRequirementsHelpString(true)));
         StringBuilder errors = new StringBuilder();
         String defaultWorkspaceLibFolder = computedOptions.getStoreLocation(NutsStoreLocation.LIB);
-        List<String> repos = new ArrayList<>();
-        repos.add(defaultWorkspaceLibFolder);
-        Collection<String> bootRepositories = resolveBootRuntimeRepositories(true);
+        List<NutsRepositoryLocation> repos = new ArrayList<>();
+        repos.add(NutsRepositoryLocation.of("nuts@" + defaultWorkspaceLibFolder));
+        Collection<NutsRepositoryLocation> bootRepositories = resolveBootRuntimeRepositories(true);
         repos.addAll(bootRepositories);
         PrivateNutsErrorInfoList errorList = new PrivateNutsErrorInfoList();
         File file = PrivateNutsUtilMavenRepos.resolveOrDownloadJar(
                 new NutsBootId("net.thevpc.nuts", "nuts", NutsBootVersion.parse(computedOptions.getApiVersion())),
-                repos.toArray(new String[0]),
-                computedOptions.getStoreLocation(NutsStoreLocation.LIB) + File.separator + NutsConstants.Folders.ID
+                repos.toArray(new NutsRepositoryLocation[0]),
+                NutsRepositoryLocation.of("nuts@" + computedOptions.getStoreLocation(NutsStoreLocation.LIB) + File.separator + NutsConstants.Folders.ID)
                 , bLog,
                 false,
                 computedOptions.getExpireTime(),
@@ -601,7 +601,9 @@ public final class NutsBootWorkspace {
                         runtimeId = PrivateNutsUtilMavenRepos.resolveLatestMavenId(NutsBootId.parse(NutsConstants.Ids.NUTS_RUNTIME),
                                 (rtVersion) -> rtVersion.getFrom().startsWith(apiVersion + "."), bLog,
                                 Collections.singletonList(
-                                        "nuts@" + computedOptions.getStoreLocation(NutsStoreLocation.LIB) + File.separatorChar + NutsConstants.Folders.ID
+                                        NutsRepositoryLocation.of(
+                                                "nuts@" + computedOptions.getStoreLocation(NutsStoreLocation.LIB) + File.separatorChar + NutsConstants.Folders.ID
+                                        )
                                 )
                         );
                     }
@@ -643,7 +645,7 @@ public final class NutsBootWorkspace {
                         boolean cacheLoaded = false;
                         if (!computedOptions.isRecover() && !computedOptions.isReset() && PrivateNutsUtils.isFileAccessible(nutsRuntimeCacheConfigPath, computedOptions.getExpireTime(), bLog)) {
                             try {
-                                Map<String,Object> obj = PrivateNutsJsonParser.parse(nutsRuntimeCacheConfigPath);
+                                Map<String, Object> obj = PrivateNutsJsonParser.parse(nutsRuntimeCacheConfigPath);
                                 bLog.log(Level.CONFIG, NutsLogVerb.READ, NutsMessage.jstyle("loaded {0} file : {1}", nutsRuntimeCacheConfigPath.getFileName(), nutsRuntimeCacheConfigPath.toString()));
                                 loadedDeps = PrivateNutsUtils.parseDependencies((String) obj.get("dependencies"));
                             } catch (Exception ex) {
@@ -669,7 +671,7 @@ public final class NutsBootWorkspace {
                             NutsBootId.parse(computedOptions.getRuntimeId()),
                             loadedDeps.toArray(new NutsBootId[0])
                     ));
-                    Set<String> bootRepositories = resolveBootRuntimeRepositories(false);
+                    Set<NutsRepositoryLocation> bootRepositories = resolveBootRuntimeRepositories(false);
                     if (bLog.isLoggable(Level.CONFIG)) {
                         if (bootRepositories.size() == 0) {
                             bLog.log(Level.CONFIG, NutsLogVerb.FAIL, NutsMessage.jstyle("workspace bootRepositories could not be resolved"));
@@ -677,12 +679,14 @@ public final class NutsBootWorkspace {
                             bLog.log(Level.CONFIG, NutsLogVerb.INFO, NutsMessage.jstyle("workspace bootRepositories resolved to : {0}", bootRepositories.toArray()[0]));
                         } else {
                             bLog.log(Level.CONFIG, NutsLogVerb.INFO, NutsMessage.jstyle("workspace bootRepositories resolved to : "));
-                            for (String repository : bootRepositories) {
+                            for (NutsRepositoryLocation repository : bootRepositories) {
                                 bLog.log(Level.CONFIG, NutsLogVerb.INFO, NutsMessage.jstyle("    {0}", repository));
                             }
                         }
                     }
-                    computedOptions.setBootRepositories(String.join(";", bootRepositories));
+                    computedOptions.setBootRepositories(
+                            bootRepositories.stream().map(NutsRepositoryLocation::toString).collect(Collectors.joining(";"))
+                    );
                 }
 
                 //resolve extension libraries
@@ -795,17 +799,19 @@ public final class NutsBootWorkspace {
 
             String workspaceBootLibFolder = computedOptions.getStoreLocation(NutsStoreLocation.LIB) + File.separator + NutsConstants.Folders.ID;
 
-            String[] repositories =
+            NutsRepositoryLocation[] repositories =
                     Arrays.stream((computedOptions.getBootRepositories() == null ? "" : computedOptions.getBootRepositories())
                             .split("[\n;]")
-                    ).map(String::trim).filter(x -> x.length() > 0).toArray(String[]::new);
+                    ).map(String::trim).filter(x -> x.length() > 0).map(x->NutsRepositoryLocation.of(x)).toArray(NutsRepositoryLocation[]::new);
 
+            NutsRepositoryLocation workspaceBootLibFolderRepo = NutsRepositoryLocation.of("nuts@" + workspaceBootLibFolder);
             computedOptions.setRuntimeBootDependencyNode(
                     createClassLoaderNode(computedOptions.getRuntimeBootDescriptor(),
-                            repositories, workspaceBootLibFolder, recover, errorList, true));
+                            repositories,
+                            workspaceBootLibFolderRepo, recover, errorList, true));
 
             for (NutsBootDescriptor nutsBootDescriptor : computedOptions.getExtensionBootDescriptors()) {
-                deps.add(createClassLoaderNode(nutsBootDescriptor, repositories, workspaceBootLibFolder, recover,
+                deps.add(createClassLoaderNode(nutsBootDescriptor, repositories, workspaceBootLibFolderRepo, recover,
                         errorList, false));
             }
             computedOptions.setExtensionBootDependencyNodes(deps.toArray(new NutsClassLoaderNode[0]));
@@ -1269,7 +1275,7 @@ public final class NutsBootWorkspace {
                     msgParams.add("unexpected error");
                 }
                 bLog.log(Level.SEVERE, NutsLogVerb.FAIL, NutsMessage.jstyle(msg.toString(), msgParams.toArray()));
-                bLog.log(Level.SEVERE, NutsMessage.jstyle(th.toString()), th.getThrowable());
+                bLog.log(Level.SEVERE, NutsMessage.plain(th.toString()), th.getThrowable());
             }
         } else {
             bLog.log(Level.SEVERE, NutsLogVerb.FAIL, NutsMessage.jstyle("no stack trace is available."));
@@ -1330,8 +1336,8 @@ public final class NutsBootWorkspace {
         return null;
     }
 
-    private NutsClassLoaderNode createClassLoaderNode(NutsBootDescriptor descr, String[] repositories,
-                                                      String workspaceBootLibFolder, boolean recover, PrivateNutsErrorInfoList errorList,
+    private NutsClassLoaderNode createClassLoaderNode(NutsBootDescriptor descr, NutsRepositoryLocation[] repositories,
+                                                      NutsRepositoryLocation workspaceBootLibFolder, boolean recover, PrivateNutsErrorInfoList errorList,
                                                       boolean runtimeDep
     ) throws MalformedURLException {
         NutsBootId id = descr.getId();

@@ -1,11 +1,10 @@
 package net.thevpc.nuts.runtime.standalone.repository.config;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.standalone.repository.DefaultNutsRepositoryDB;
 import net.thevpc.nuts.runtime.standalone.repository.NutsRepositoryRegistryHelper;
 import net.thevpc.nuts.runtime.standalone.repository.NutsRepositorySelectorHelper;
-import net.thevpc.nuts.spi.NutsRepositorySelectorList;
-import net.thevpc.nuts.spi.NutsRepositoryURL;
+import net.thevpc.nuts.runtime.standalone.repository.util.NutsRepositoryUtils;
+import net.thevpc.nuts.spi.*;
 import net.thevpc.nuts.runtime.standalone.repository.impl.NutsSimpleRepositoryWrapper;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.workspace.config.NutsRepositoryConfigManagerExt;
@@ -16,8 +15,6 @@ import net.thevpc.nuts.runtime.standalone.util.CoreNutsUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.config.ConfigEventType;
 import net.thevpc.nuts.runtime.standalone.repository.impl.main.DefaultNutsInstalledRepository;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
-import net.thevpc.nuts.spi.NutsRepositoryFactoryComponent;
-import net.thevpc.nuts.spi.NutsRepositorySPI;
 
 import java.io.IOException;
 import java.io.PrintStream;
@@ -221,7 +218,7 @@ public class DefaultNutsRepositoryModel {
                 uuid = UUID.randomUUID().toString();
             }
             config.setName(name);
-            config.setType("custom");
+            config.setLocation("custom@");
             config.setUuid(uuid);
             config.setStoreLocationStrategy(repoModel.getStoreLocationStrategy());
             NutsAddRepositoryOptions options2 = new NutsAddRepositoryOptions();
@@ -259,9 +256,9 @@ public class DefaultNutsRepositoryModel {
                             session.boot().getBootOptions().getRepositories() == null
                                     || NutsRepositorySelectorList.ofAll(
                                             session.boot().getBootOptions().getRepositories(),
-                                    DefaultNutsRepositoryDB.INSTANCE,session
+                                    NutsRepositoryDB.of(session),session
                             ).acceptExisting(
-                                    NutsRepositoryURL.of(options.getName(),
+                                    NutsRepositoryLocation.of(options.getName(),
                                             conf.getLocation())
                             ));
                 }
@@ -272,9 +269,9 @@ public class DefaultNutsRepositoryModel {
                             session.boot().getBootOptions().getRepositories() == null
                                     || NutsRepositorySelectorList.ofAll(
                                             session.boot().getBootOptions().getRepositories(),
-                                    DefaultNutsRepositoryDB.INSTANCE,session
+                                    NutsRepositoryDB.of(session),session
                             ).acceptExisting(
-                                    NutsRepositoryURL.of(options.getName(),
+                                    NutsRepositoryLocation.of(options.getName(),
                                             conf.getLocation())
                             ));
                 }
@@ -283,24 +280,12 @@ public class DefaultNutsRepositoryModel {
             if (NutsBlankable.isBlank(conf.getName())) {
                 conf.setName(options.getName());
             }
-            if (NutsBlankable.isBlank(conf.getType())
-                    && NutsBlankable.isBlank(conf.getLocation())
+            if (NutsBlankable.isBlank(conf.getLocation())
                     && !NutsBlankable.isBlank(options.getLocation())
                     && NutsPath.of(options.getLocation(), session).isFile()
             ) {
-                conf.setType("nuts");
                 conf.setLocation(options.getLocation());
             }
-            String repositoryType = conf.getType();
-            String location = conf.getLocation();
-            if (NutsBlankable.isBlank(repositoryType)) {
-                if (!NutsBlankable.isBlank(location)) {
-                    NutsRepositoryURL nru = NutsRepositoryURL.of(location);
-                    conf.setType(nru.getType());
-                    conf.setLocation(nru.getLocation());
-                }
-            }
-
 
             NutsRepositoryFactoryComponent factory_ = session.extensions()
                     .setSession(session)
@@ -311,17 +296,18 @@ public class DefaultNutsRepositoryModel {
                     return r;
                 }
             }
+            String repoType = NutsRepositoryUtils.getRepoType(conf);
             if (options.isTemporary()) {
-                if (NutsBlankable.isBlank(conf.getType())) {
+                if (NutsBlankable.isBlank(repoType)) {
                     throw new NutsInvalidRepositoryException(session, options.getName(), NutsMessage.cstyle("unable to detect valid type for temporary repository"));
                 } else {
-                    throw new NutsInvalidRepositoryException(session, options.getName(), NutsMessage.cstyle("invalid repository type %s", conf.getType()));
+                    throw new NutsInvalidRepositoryException(session, options.getName(), NutsMessage.cstyle("invalid repository type %s", repoType));
                 }
             } else {
-                if (NutsBlankable.isBlank(conf.getType())) {
+                if (NutsBlankable.isBlank(repoType)) {
                     throw new NutsInvalidRepositoryException(session, options.getName(), NutsMessage.cstyle("unable to detect valid type for repository %s",options.getName()));
                 } else {
-                    throw new NutsInvalidRepositoryException(session, options.getName(), NutsMessage.cstyle("invalid repository type %s", conf.getType()));
+                    throw new NutsInvalidRepositoryException(session, options.getName(), NutsMessage.cstyle("invalid repository type %s", repoType));
                 }
             }
         } catch (RuntimeException ex) {
@@ -334,9 +320,9 @@ public class DefaultNutsRepositoryModel {
 
     public NutsRepository addRepository(String repositoryNamedUrl, NutsSession session) {
         NutsWorkspaceUtils.checkSession(getWorkspace(), session);
-        NutsRepositoryURL r = null;
+        NutsRepositoryLocation r = null;
         try {
-            r = NutsRepositoryURL.of(repositoryNamedUrl,DefaultNutsRepositoryDB.INSTANCE,session);
+            r = NutsRepositoryLocation.of(repositoryNamedUrl,NutsRepositoryDB.of(session),session);
         } catch (Exception ex) {
             throw new NutsInvalidRepositoryException(session, repositoryNamedUrl, NutsMessage.cstyle("invalid repository definition"));
         }

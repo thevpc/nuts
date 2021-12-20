@@ -193,8 +193,8 @@ public class DefaultFileNutsLock implements NutsLock {
     public boolean tryLockImmediately() {
         try {
             if (!Files.exists(path)) {
-                Path p = path.getParent();
-                CoreIOUtils.mkdirs(p,session);
+                NutsPath p = NutsPath.of(path, session);
+                p.mkParentDirs();
                 Files.createFile(path);
                 return true;
             }
