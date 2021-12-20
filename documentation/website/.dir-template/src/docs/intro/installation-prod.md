@@ -56,7 +56,7 @@ Java HotSpot(TM) 64-Bit Server VM (build 25.211-b12, mixed mode)
 
 download [nuts-${{apiVersion}}.jar](https://github.com/thevpc/vpc-public-maven/raw/master/net/vpc/app/nuts/nuts/0.${{apiVersion}}/nuts-${{apiVersion}}.jar)
 ```
-java -jar -y nuts-${{apiVersion}}.jar
+java -jar nuts-${{apiVersion}}.jar  -Zy
 ```
 
 On Windows systems, first launch will create a new **```nuts```** Menu (under Programs) and a couple of Desktop shortcuts to launch a configured command terminal.
@@ -149,8 +149,8 @@ Any bash terminal application is a nuts-aware terminal.
 
 ```
 $ curl -sOL https://repo.maven.apache.org/maven2/net/thevpc/nuts/nuts/\
-    ${{stableApiVersion}}/nuts-$NVER.jar -o nuts-$NVER.jar
-$ java -jar nuts-$NVER.jar -Zy
+    ${{stableApiVersion}}/nuts-${{stableApiVersion}}.jar -o nuts.jar
+$ java -jar nuts.jar -Zy
 $ exit
 ```
 

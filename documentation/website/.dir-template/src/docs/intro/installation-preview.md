@@ -31,7 +31,7 @@ The result would be equivalent to the following. Just be sure the version is 1.8
 the java version is 1.8.0_211
 
 ```bash
-$> java -version
+$ java -version
 java version "1.8.0_211"
 Java(TM) SE Runtime Environment (build 1.8.0_211-b12)
 Java HotSpot(TM) 64-Bit Server VM (build 25.211-b12, mixed mode)
@@ -53,9 +53,9 @@ Java HotSpot(TM) 64-Bit Server VM (build 25.211-b12, mixed mode)
 }>
 <TabItem value="windows">
 
-download [nuts-${{apiVersion}}.jar](https://github.com/thevpc/vpc-public-maven/raw/master/net/vpc/app/nuts/nuts/0.${{apiVersion}}/nuts-${{apiVersion}}.jar)
+download [nuts.jar](http://thevpc.net/nuts.jar)
 ```
-java -jar -y nuts-${{apiVersion}}.jar
+java -jar nuts.jar -r=+dev -Zy
 ```
 
 On Windows systems, first launch will create a new **```nuts```** Menu (under Programs) and a couple of Desktop shortcuts to launch a configured command terminal.
@@ -81,7 +81,7 @@ Removing the `Z` modifier (replace `-Zy` by `-y`) flag if you do not want to res
 
 ```
 $ wget http://thevpc.net/nuts.jar -qO nuts.jar
-$ java -jar nuts.jar -r=dev,maven-central -Zy
+$ java -jar nuts.jar -r=+dev -Zy
 $ exit
 ```
 
@@ -123,7 +123,7 @@ Any bash terminal application is a nuts-aware terminal.
 
 ```
 $ wget http://thevpc.net/nuts.jar -qO nuts.jar
-$ java -jar nuts.jar -r=dev,maven-central -Zy
+$ java -jar nuts.jar -r=+dev -Zy
 $ exit
 ```
 
@@ -139,7 +139,7 @@ Any bash terminal application is a nuts-aware terminal.
 
 ```
 $ curl -sOL http://thevpc.net/nuts.jar -o nuts.jar
-$ java -jar nuts.jar -Zy
+$ java -jar nuts.jar -r=+dev -Zy
 $ exit
 ```
 
@@ -179,7 +179,7 @@ nuts --version
 It should show a result in the format : nuts-api-version/nuts-impl-version
 
 ```
-${{stableApiVersion}}/${{stableImplVersion}}
+${{latestApiVersion}}/${{latestImplVersion}}
 ```
 
 ## Run a command

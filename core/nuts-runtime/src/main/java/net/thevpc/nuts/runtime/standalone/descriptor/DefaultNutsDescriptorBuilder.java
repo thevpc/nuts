@@ -28,9 +28,9 @@ package net.thevpc.nuts.runtime.standalone.descriptor;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.descriptor.util.NutsDescriptorUtils;
-import net.thevpc.nuts.runtime.standalone.util.MapToFunction;
 import net.thevpc.nuts.runtime.standalone.util.CoreNutsUtils;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
+import net.thevpc.nuts.runtime.standalone.util.MapToFunction;
 import net.thevpc.nuts.spi.NutsSupportLevelContext;
 
 import java.util.*;
@@ -574,33 +574,9 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
         return this;
     }
 
-    private Map<String, String> applyPropsToProps(Map<String, String> properties){
-
-        Map<String, String> oldMap=new LinkedHashMap<>(properties);
-        Set<String> updated=new TreeSet<>();
-        for (int i = 0; i < 16; i++) {
-            Function<String, String> fct = new MapToFunction<>(oldMap);
-            Map<String, String> newMap=new LinkedHashMap<>(oldMap.size());
-            updated=new TreeSet<>();
-            for (Map.Entry<String, String> entry : oldMap.entrySet()) {
-                String v0 = entry.getValue();
-                String v1 = CoreNutsUtils.applyStringProperties(v0, fct);
-                if(!Objects.equals(v0,v1)){
-                    updated.add(entry.getKey());
-                }
-                newMap.put(entry.getKey(),v1);
-            }
-            if(updated.isEmpty()){
-                return newMap;
-            }
-            oldMap=newMap;
-        }
-        throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("too many recursion applying properties %s",updated));
-    }
-
     @Override
     public NutsDescriptorBuilder applyProperties(Map<String, String> properties) {
-        properties=applyPropsToProps(properties);
+        properties = applyPropsToProps(properties);
         Function<String, String> map = new MapToFunction<>(properties);
 
         NutsId n_id = getId().builder().apply(map).build();
@@ -887,6 +863,62 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
     public NutsDescriptorBuilder setIdType(NutsIdType idType) {
         this.idType = idType == null ? NutsIdType.REGULAR : idType;
         return this;
+    }
+
+    private Map<String, String> prepareGlobalProperties() {
+        Map<String, String> global = new LinkedHashMap<>();
+        // try to support both new and deprecated property names
+        // to support ancient built maven packages!
+        global.putAll(((Map) System.getProperties()));
+        NutsId ii = getId();
+        for (String s : new String[]{"project.name", "pom.name"}) {
+            global.put(s, getName());
+        }
+        if (ii != null) {
+            if (ii.getVersion().getValue() != null) {
+                for (String s : new String[]{"project.version", "version", "pom.version"}) {
+                    global.put(s, ii.getVersion().getValue());
+                }
+            }
+            for (String s : new String[]{"project.groupId", "pom.groupId"}) {
+                global.put(s, ii.getGroupId());
+            }
+            for (String s : new String[]{"project.artifactId", "pom.artifactId"}) {
+                global.put(s, ii.getArtifactId());
+            }
+        }
+        return global;
+    }
+
+    private Map<String, String> applyPropsToProps(Map<String, String> properties) {
+
+        Map<String, String> oldMap = new LinkedHashMap<>(properties);
+
+
+        for (Map.Entry<String, String> entry : prepareGlobalProperties().entrySet()) {
+            if (!oldMap.containsKey(entry.getKey())) {
+                oldMap.put(entry.getKey(), entry.getValue());
+            }
+        }
+        Set<String> updated = new TreeSet<>();
+        for (int i = 0; i < 16; i++) {
+            Function<String, String> fct = new MapToFunction<>(oldMap);
+            Map<String, String> newMap = new LinkedHashMap<>(oldMap.size());
+            updated = new TreeSet<>();
+            for (Map.Entry<String, String> entry : oldMap.entrySet()) {
+                String v0 = entry.getValue();
+                String v1 = CoreNutsUtils.applyStringProperties(v0, fct);
+                if (!Objects.equals(v0, v1)) {
+                    updated.add(entry.getKey());
+                }
+                newMap.put(entry.getKey(), v1);
+            }
+            if (updated.isEmpty()) {
+                return newMap;
+            }
+            oldMap = newMap;
+        }
+        throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("too many recursion applying properties %s", updated));
     }
 
     private void _rebuildPropertiesBuilder() {

@@ -134,7 +134,7 @@ module.exports = {
                     ':icon-set: pf',
                     ':doctype: book',
                     ':revnumber: v0.8.3',
-                    ':revdate: Fri Dec 17 01:21:30 PM +0000 2021',
+                    ':revdate: Mon Dec 20 12:48:10 AM +0000 2021',
                     ':toc:',
                     ':toclevels: 4',
                     ':appendix-caption: Appx',
