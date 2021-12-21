@@ -71,6 +71,10 @@ public interface NutsArgument {
      */
     String getString();
 
+    String getStringValue();
+
+    String getStringValue(String defValue);
+
     /**
      * true if option is in one of the following forms :
      * <ul>

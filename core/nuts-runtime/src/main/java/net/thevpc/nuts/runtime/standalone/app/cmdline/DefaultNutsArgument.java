@@ -25,7 +25,10 @@
  */
 package net.thevpc.nuts.runtime.standalone.app.cmdline;
 
-import net.thevpc.nuts.*;
+import net.thevpc.nuts.NutsArgument;
+import net.thevpc.nuts.NutsElements;
+import net.thevpc.nuts.NutsPrimitiveElement;
+import net.thevpc.nuts.NutsUtilStrings;
 
 import java.util.NoSuchElementException;
 import java.util.regex.Matcher;
@@ -51,8 +54,8 @@ public class DefaultNutsArgument implements NutsArgument {
     private final String expression;
     private transient final NutsElements elems;
 
-    public DefaultNutsArgument(String expression,NutsElements elems) {
-        this(expression, '=',elems);
+    public DefaultNutsArgument(String expression, NutsElements elems) {
+        this(expression, '=', elems);
     }
 
 
@@ -62,7 +65,7 @@ public class DefaultNutsArgument implements NutsArgument {
      * @param expression expression
      * @param eq         equals
      */
-    public DefaultNutsArgument(String expression, char eq,NutsElements elems) {
+    public DefaultNutsArgument(String expression, char eq, NutsElements elems) {
         this.elems = elems;
         this.eq = (eq == '\0' ? '=' : eq);
         this.expression = expression;
@@ -91,14 +94,14 @@ public class DefaultNutsArgument implements NutsArgument {
             String optr = matcher.group("optr");
             if (optp != null && optp.length() > 0) {
                 option = true;
-                active = !(cmt!=null && cmt.length()>0);
-                enabled = !(flg!=null && flg.length()>0);
+                active = !(cmt != null && cmt.length() > 0);
+                enabled = !(flg != null && flg.length() > 0);
                 optionPrefix = optp;
-                if(optr!=null && optr.length()>0){
-                    optionName=(optk == null ? "" : optk)+optr;
+                if (optr != null && optr.length() > 0) {
+                    optionName = (optk == null ? "" : optk) + optr;
                     key = optp + optionName;
                     value = null;
-                }else {
+                } else {
                     optionName = (optk == null ? "" : optk);
                     if (opts != null && opts.length() > 0) {
                         key = optp + optionName;
@@ -154,6 +157,20 @@ public class DefaultNutsArgument implements NutsArgument {
     }
 
     @Override
+    public String getStringValue() {
+        return getStringValue(null);
+    }
+
+    @Override
+    public String getStringValue(String defValue) {
+        NutsPrimitiveElement v = getValue();
+        if (v != null) {
+            return v.getString(defValue);
+        }
+        return defValue;
+    }
+
+    @Override
     public boolean isNegated() {
         return !enabled;
     }
@@ -201,13 +218,13 @@ public class DefaultNutsArgument implements NutsArgument {
     }
 
     @Override
-    public boolean getBooleanValue() {
-        return getBooleanValue(true,false);
+    public NutsPrimitiveElement getValue() {
+        return elems.ofString(value);
     }
 
     @Override
-    public Boolean getBooleanValue(Boolean emptyOrValue) {
-        return getBooleanValue(emptyOrValue,emptyOrValue);
+    public boolean getBooleanValue() {
+        return getBooleanValue(true, false);
     }
 
     @Override
@@ -217,8 +234,8 @@ public class DefaultNutsArgument implements NutsArgument {
     }
 
     @Override
-    public NutsPrimitiveElement getValue() {
-        return elems.ofString(value);
+    public Boolean getBooleanValue(Boolean emptyOrValue) {
+        return getBooleanValue(emptyOrValue, emptyOrValue);
     }
 
     @Override
