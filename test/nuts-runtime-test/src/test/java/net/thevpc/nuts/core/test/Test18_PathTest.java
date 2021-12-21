@@ -29,6 +29,7 @@ import org.junit.jupiter.api.*;
 
 import java.io.IOException;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -231,7 +232,14 @@ public class Test18_PathTest {
     }
 
     @Test
-    public void testInvalidPath() {
+    public void testHome() {
         Assertions.assertEquals(System.getProperty("user.home"), NutsPath.ofUserHome(session).toString());
+    }
+
+    @Test
+    public void testInvalidPath02() {
+        NutsPath a = NutsPath.of(System.getProperty("user.home") + "/*", session);
+        List<NutsPath> nutsPaths = a.walkGlob().toList();
+        System.out.println(nutsPaths);
     }
 }

@@ -402,7 +402,11 @@ public class InvalidFilePath implements NutsPathSPI {
         if(isRoot(basePath)){
             return basePath;
         }
-        return basePath.getParent().getRoot();
+        NutsPath r = basePath.getParent();
+        if(r!=null) {
+            return r.getRoot();
+        }
+        return null;
     }
 
     @Override
