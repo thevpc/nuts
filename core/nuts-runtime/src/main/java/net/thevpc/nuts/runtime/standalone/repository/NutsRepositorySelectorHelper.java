@@ -34,8 +34,8 @@ public class NutsRepositorySelectorHelper {
             NutsAddRepositoryOptions u = createDefaultRepositoryOptions(defaultName, session);
             if (u != null
                     && (nru.getLocation().isEmpty()
-                    || nru.getLocation().equals(u.getConfig().getLocation())
-                    || nru.setName(null).toString().equals(u.getConfig().getLocation()))) {
+                    || nru.getLocation().equals(u.getConfig().getLocation().getLocation())
+                    || nru.setName(null).toString().equals(u.getConfig().getLocation().getLocation()))) {
                 //this is acceptable!
                 if (!u.getName().equals(s.getName())) {
                     u.setName(s.getName());
@@ -79,7 +79,7 @@ public class NutsRepositorySelectorHelper {
                         : NutsAddRepositoryOptions.ORDER_USER_REMOTE
                 )
                 .setConfig(new NutsRepositoryConfig()
-                        .setLocation(url)
+                        .setLocation(NutsRepositoryLocation.of(url))
                 );
     }
 
@@ -93,7 +93,7 @@ public class NutsRepositorySelectorHelper {
                         .setCreate(true)
                         .setConfig(
                                 new NutsRepositoryConfig()
-                                        .setLocation("nuts@" + NutsConstants.Names.DEFAULT_REPOSITORY_NAME)
+                                        .setLocation(NutsRepositoryLocation.of("nuts@" + NutsConstants.Names.DEFAULT_REPOSITORY_NAME))
                         );
             }
             case "system": {
@@ -104,13 +104,13 @@ public class NutsRepositorySelectorHelper {
                         .setOrder(NutsAddRepositoryOptions.ORDER_SYSTEM_LOCAL)
                         .setConfig(
                                 new NutsRepositoryConfig()
-                                        .setLocation("nuts@" +
+                                        .setLocation(NutsRepositoryLocation.of("nuts@" +
                                                 NutsPath.of(NutsUtilPlatforms.getPlatformHomeFolder(null,
                                                                 NutsStoreLocation.LIB, session.config().stored().getHomeLocations(),
                                                                 true,
                                                                 NutsConstants.Names.DEFAULT_WORKSPACE_NAME), session)
                                                         .resolve(NutsConstants.Folders.ID)
-                                                        .toString()
+                                                        .toString())
                                         )
                         );
             }
@@ -121,8 +121,9 @@ public class NutsRepositorySelectorHelper {
                         .setFailSafe(false).setCreate(true).setOrder(NutsAddRepositoryOptions.ORDER_USER_LOCAL)
                         .setConfig(
                                 new NutsRepositoryConfig()
-                                        .setLocation("maven@" +
+                                        .setLocation(NutsRepositoryLocation.of("maven@" +
                                                 NutsPath.ofUserHome(session).resolve(".m2/repository").toString()
+                                                )
                                         )
                         );
             }
@@ -135,7 +136,7 @@ public class NutsRepositorySelectorHelper {
                         .setOrder(NutsAddRepositoryOptions.ORDER_USER_REMOTE)
                         .setConfig(
                                 new NutsRepositoryConfig()
-                                        .setLocation("maven@htmlfs:https://repo.maven.apache.org/maven2")
+                                        .setLocation(NutsRepositoryLocation.of("maven@htmlfs:https://repo.maven.apache.org/maven2"))
                                         .setEnv(CoreCollectionUtils.fill(new HashMap<>(),
                                                 "maven.solrsearch.url", "https://search.maven.org/solrsearch/select",
                                                 "maven.solrsearch.enable", "true"
@@ -148,7 +149,7 @@ public class NutsRepositorySelectorHelper {
                         .setOrder(NutsAddRepositoryOptions.ORDER_USER_REMOTE)
                         .setConfig(
                                 new NutsRepositoryConfig()
-                                        .setLocation("maven@https://jcenter.bintray.com")
+                                        .setLocation(NutsRepositoryLocation.of("maven@https://jcenter.bintray.com"))
                         );
             }
             case "jboss": {
@@ -157,7 +158,7 @@ public class NutsRepositorySelectorHelper {
                         .setOrder(NutsAddRepositoryOptions.ORDER_USER_REMOTE)
                         .setConfig(
                                 new NutsRepositoryConfig()
-                                        .setLocation("maven@https://repository.jboss.org/nexus/content/repositories/releases")
+                                        .setLocation(NutsRepositoryLocation.of("maven@https://repository.jboss.org/nexus/content/repositories/releases"))
                         );
             }
             case "clojars": {
@@ -166,7 +167,7 @@ public class NutsRepositorySelectorHelper {
                         .setOrder(NutsAddRepositoryOptions.ORDER_USER_REMOTE)
                         .setConfig(
                                 new NutsRepositoryConfig()
-                                        .setLocation("maven@https://repo.clojars.org")
+                                        .setLocation(NutsRepositoryLocation.of("maven@https://repo.clojars.org"))
                         );
             }
             case "atlassian": {
@@ -175,7 +176,7 @@ public class NutsRepositorySelectorHelper {
                         .setOrder(NutsAddRepositoryOptions.ORDER_USER_REMOTE)
                         .setConfig(
                                 new NutsRepositoryConfig()
-                                        .setLocation("maven@htmlfs:https://packages.atlassian.com/maven/public")
+                                        .setLocation(NutsRepositoryLocation.of("maven@htmlfs:https://packages.atlassian.com/maven/public"))
                         );
             }
             case "atlassian-snapshot": {
@@ -184,7 +185,7 @@ public class NutsRepositorySelectorHelper {
                         .setOrder(NutsAddRepositoryOptions.ORDER_USER_REMOTE)
                         .setConfig(
                                 new NutsRepositoryConfig()
-                                        .setLocation("maven@https://packages.atlassian.com/maven/public-snapshot")
+                                        .setLocation(NutsRepositoryLocation.of("maven@https://packages.atlassian.com/maven/public-snapshot"))
                         );
             }
             case "oracle": {
@@ -193,7 +194,7 @@ public class NutsRepositorySelectorHelper {
                         .setOrder(NutsAddRepositoryOptions.ORDER_USER_REMOTE)
                         .setConfig(
                                 new NutsRepositoryConfig()
-                                        .setLocation("maven@https://maven.oracle.com")
+                                        .setLocation(NutsRepositoryLocation.of("maven@https://maven.oracle.com"))
                         );
             }
             case "google": {
@@ -202,7 +203,7 @@ public class NutsRepositorySelectorHelper {
                         .setOrder(NutsAddRepositoryOptions.ORDER_USER_REMOTE)
                         .setConfig(
                                 new NutsRepositoryConfig()
-                                        .setLocation("maven@https://maven.google.com")
+                                        .setLocation(NutsRepositoryLocation.of("maven@https://maven.google.com"))
                         );
             }
             case "spring":
@@ -212,7 +213,7 @@ public class NutsRepositorySelectorHelper {
                         .setOrder(NutsAddRepositoryOptions.ORDER_USER_REMOTE)
                         .setConfig(
                                 new NutsRepositoryConfig()
-                                        .setLocation("maven@https://repo.spring.io/release")
+                                        .setLocation(NutsRepositoryLocation.of("maven@https://repo.spring.io/release"))
                         );
             }
             case "maven-thevpc-git":
@@ -222,7 +223,7 @@ public class NutsRepositorySelectorHelper {
                         .setOrder(NutsAddRepositoryOptions.ORDER_USER_REMOTE)
                         .setConfig(
                                 new NutsRepositoryConfig()
-                                        .setLocation("maven@dotfilefs:https://raw.githubusercontent.com/thevpc/vpc-public-maven/master")
+                                        .setLocation(NutsRepositoryLocation.of("maven@dotfilefs:https://raw.githubusercontent.com/thevpc/vpc-public-maven/master"))
                         );
             }
             case "nuts-thevpc-git":
@@ -232,7 +233,7 @@ public class NutsRepositorySelectorHelper {
                         .setOrder(NutsAddRepositoryOptions.ORDER_USER_REMOTE)
                         .setConfig(
                                 new NutsRepositoryConfig()
-                                        .setLocation("maven@dotfilefs:https://raw.githubusercontent.com/thevpc/vpc-public-nuts/master")
+                                        .setLocation(NutsRepositoryLocation.of("maven@dotfilefs:https://raw.githubusercontent.com/thevpc/vpc-public-nuts/master"))
                         );
             }
             case "dev":
@@ -243,7 +244,7 @@ public class NutsRepositorySelectorHelper {
                         .setOrder(NutsAddRepositoryOptions.ORDER_USER_REMOTE)
                         .setConfig(
                                 new NutsRepositoryConfig()
-                                        .setLocation("maven@htmlfs:http://thevpc.net/maven")
+                                        .setLocation(NutsRepositoryLocation.of("maven@htmlfs:http://thevpc.net/maven"))
                         );
             }
         }

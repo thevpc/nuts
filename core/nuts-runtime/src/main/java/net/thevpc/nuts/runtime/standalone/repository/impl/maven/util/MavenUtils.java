@@ -610,7 +610,11 @@ public class MavenUtils {
         if (depsAndRepos == null || depsAndRepos.deps.isEmpty()) {
             for (NutsRepositoryLocation baseUrl : bootRepositories) {
                 NutsAddRepositoryOptions opt = NutsRepositorySelectorHelper.createRepositoryOptions(baseUrl, false, session);
-                String location = opt.getConfig() == null ? opt.getLocation() : opt.getConfig().getLocation();
+                String location =
+                        opt.getConfig() == null
+                                || NutsBlankable.isBlank(opt.getConfig().getLocation())
+                                || NutsBlankable.isBlank(opt.getConfig().getLocation().getLocation())
+                                ? opt.getLocation() : opt.getConfig().getLocation().getLocation();
                 depsAndRepos = loadDependenciesAndRepositoriesFromPomUrl(location + "/" + urlPath, session);
                 if (!depsAndRepos.deps.isEmpty()) {
                     break;

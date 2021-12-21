@@ -385,7 +385,7 @@ public class NutsRepositoryConfig502 implements Serializable {
         if(!NutsBlankable.isBlank(type)){
             loc=loc.setType(type);
         }
-        c.setLocation(loc.toString());
+        c.setLocation(NutsRepositoryLocation.of(loc.toString()));
         c.setStoreLocations(
                 new NutsStoreLocationsMap(null)
                         .set(NutsStoreLocation.APPS, programsStoreLocation)

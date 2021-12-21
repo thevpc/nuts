@@ -34,6 +34,7 @@ import net.thevpc.nuts.runtime.standalone.repository.impl.maven.util.MvnClient;
 import net.thevpc.nuts.runtime.standalone.util.iter.IteratorBuilder;
 import net.thevpc.nuts.runtime.standalone.util.iter.IteratorUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
+import net.thevpc.nuts.spi.NutsRepositoryLocation;
 import net.thevpc.nuts.spi.NutsRepositorySPI;
 
 import java.io.IOException;
@@ -56,7 +57,8 @@ public class MavenFolderRepository extends NutsCachedRepository {
 
     public MavenFolderRepository(NutsAddRepositoryOptions options, NutsSession session, NutsRepository parentRepository) {
         super(options, session, parentRepository,
-                NutsPath.of(options.getConfig().getLocation(), session).isRemote() ? NutsSpeedQualifier.SLOW : NutsSpeedQualifier.FASTER,
+                NutsPath.of(options.getConfig().getLocation().getLocation()
+                        , session).isRemote() ? NutsSpeedQualifier.SLOW : NutsSpeedQualifier.FASTER,
                 false, NutsConstants.RepoTypes.MAVEN);
         LOG = NutsLogger.of(getClass(), session);
         if (!isRemote()) {

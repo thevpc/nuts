@@ -19,7 +19,7 @@ public class NutsElementMapperFile implements NutsElementMapper<File> {
 //                NutsText n = ws.text().forStyled(o.toString(), NutsTextStyle.path());
 //                return ws.elem().forPrimitive().buildNutsString(n);
             NutsText n = NutsTexts.of(session).ofStyled(o.toString(), NutsTextStyle.path());
-            return NutsElements.of(session).ofString(n.toString());
+            return context.elem().ofString(n.toString());
         } else {
             return context.defaultObjectToElement(o.toString(), null);
         }

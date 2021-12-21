@@ -206,44 +206,20 @@ public class InvalidFilePath implements NutsPathSPI {
 
     @Override
     public NutsPath toAbsolute(NutsPath basePath, NutsPath rootPath) {
-        if (isAbsolute(basePath)) {
-            return basePath;
-        }
-        if (rootPath == null) {
-            List<String> p = new ArrayList<>();
-            p.addAll(Arrays.asList(asPathArray(System.getProperty("user.dir"))));
-            p.addAll(Arrays.asList(asPathArray(value)));
-            return NutsPath.of(new InvalidFilePath(
-                    "/" + String.join("/", p.toArray(new String[0]))
-                    , session),session);
-        }
-        return rootPath.toAbsolute().resolve(toString());
+        //invalid, always return basePath
+        return basePath;
     }
 
     @Override
     public NutsPath normalize(NutsPath basePath) {
-        if (isAbsolute(basePath)) {
-            return NutsPath.of(new InvalidFilePath(
-                    "/" + String.join("/", normalizePath(asPathArray()))
-                    , session),session);
-        }
-        List<String> p = new ArrayList<>();
-        p.addAll(Arrays.asList(asPathArray(System.getProperty("user.home"))));
-        p.addAll(Arrays.asList(asPathArray(value)));
-        return NutsPath.of(new InvalidFilePath(
-                "/" + String.join("/", normalizePath(p.toArray(new String[0])))
-                , session),session);
+        //invalid, always return basePath
+        return basePath;
     }
 
     @Override
     public boolean isAbsolute(NutsPath basePath) {
-        if (
-                value.startsWith("/")
-                        || value.startsWith("\\")
-        ) {
-            return true;
-        }
-        return URLPath.MOSTLY_URL_PATTERN.matcher(value).matches();
+        //invalid, always return false
+        return false;
     }
 
     @Override
@@ -355,10 +331,12 @@ public class InvalidFilePath implements NutsPathSPI {
     }
 
     private String[] asPathArray(String s) {
-        return Arrays.stream(value.split("[/\\\\]"))
-                .filter(x -> x.length() == 0)
-                .toArray(String[]::new)
-                ;
+        //invalid
+        return new String[]{s};
+//        return Arrays.stream(value.split("[/\\\\]"))
+//                .filter(x -> x.length() == 0)
+//                .toArray(String[]::new)
+//                ;
     }
 
     private String[] asPathArray() {

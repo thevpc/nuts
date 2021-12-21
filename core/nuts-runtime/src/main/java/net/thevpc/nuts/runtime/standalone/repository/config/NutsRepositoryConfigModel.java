@@ -24,6 +24,7 @@
 package net.thevpc.nuts.runtime.standalone.repository.config;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.spi.NutsRepositoryLocation;
 
 import java.util.Map;
 
@@ -81,7 +82,7 @@ public interface NutsRepositoryConfigModel {
 
     String getUuid();
 
-    String getLocation();
+    NutsRepositoryLocation getLocation();
 
     boolean isEnabled(NutsSession session);
 

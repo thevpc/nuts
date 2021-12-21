@@ -218,7 +218,7 @@ public class DefaultNutsRepositoryModel {
                 uuid = UUID.randomUUID().toString();
             }
             config.setName(name);
-            config.setLocation("custom@");
+            config.setLocation(NutsRepositoryLocation.of("custom@"));
             config.setUuid(uuid);
             config.setStoreLocationStrategy(repoModel.getStoreLocationStrategy());
             NutsAddRepositoryOptions options2 = new NutsAddRepositoryOptions();
@@ -258,8 +258,7 @@ public class DefaultNutsRepositoryModel {
                                             session.boot().getBootOptions().getRepositories(),
                                     NutsRepositoryDB.of(session),session
                             ).acceptExisting(
-                                    NutsRepositoryLocation.of(options.getName(),
-                                            conf.getLocation())
+                                    conf.getLocation().setName(options.getName())
                             ));
                 }
             } else {
@@ -271,8 +270,7 @@ public class DefaultNutsRepositoryModel {
                                             session.boot().getBootOptions().getRepositories(),
                                     NutsRepositoryDB.of(session),session
                             ).acceptExisting(
-                                    NutsRepositoryLocation.of(options.getName(),
-                                            conf.getLocation())
+                                    conf.getLocation().setName(options.getName())
                             ));
                 }
                 options.setLocation(CoreIOUtils.resolveRepositoryPath(options, rootFolder, session));
@@ -284,7 +282,7 @@ public class DefaultNutsRepositoryModel {
                     && !NutsBlankable.isBlank(options.getLocation())
                     && NutsPath.of(options.getLocation(), session).isFile()
             ) {
-                conf.setLocation(options.getLocation());
+                conf.setLocation(NutsRepositoryLocation.of(options.getLocation()));
             }
 
             NutsRepositoryFactoryComponent factory_ = session.extensions()

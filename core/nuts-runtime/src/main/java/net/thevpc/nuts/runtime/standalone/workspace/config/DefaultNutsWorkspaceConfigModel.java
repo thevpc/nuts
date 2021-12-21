@@ -384,7 +384,7 @@ public class DefaultNutsWorkspaceConfigModel {
         }
         return session.extensions().createAllSupported(NutsRepositoryFactoryComponent.class,
                 new NutsRepositoryConfig().setLocation(
-                        repositoryType+"@"
+                        NutsRepositoryLocation.of(repositoryType+"@")
                 )).size() > 0;
     }
 

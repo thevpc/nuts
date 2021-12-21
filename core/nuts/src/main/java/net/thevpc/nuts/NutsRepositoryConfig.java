@@ -25,6 +25,8 @@
  */
 package net.thevpc.nuts;
 
+import net.thevpc.nuts.spi.NutsRepositoryLocation;
+
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -39,8 +41,7 @@ public class NutsRepositoryConfig extends NutsConfigItem {
     private static final long serialVersionUID = 1;
     private String uuid;
     private String name;
-//    private String type;
-    private String location;
+    private NutsRepositoryLocation location;
     private Map<NutsStoreLocation, String> storeLocations = null;
     private NutsStoreLocationStrategy storeLocationStrategy = null;
     private String groups;
@@ -80,11 +81,11 @@ public class NutsRepositoryConfig extends NutsConfigItem {
 //        return this;
 //    }
 
-    public String getLocation() {
+    public NutsRepositoryLocation getLocation() {
         return location;
     }
 
-    public NutsRepositoryConfig setLocation(String location) {
+    public NutsRepositoryConfig setLocation(NutsRepositoryLocation location) {
         this.location = location;
         return this;
     }

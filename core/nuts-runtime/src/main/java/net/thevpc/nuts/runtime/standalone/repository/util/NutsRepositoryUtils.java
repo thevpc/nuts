@@ -23,11 +23,13 @@ public class NutsRepositoryUtils {
                 .setTemporary(false);
     }
 
-    public static String getRepoType(NutsRepositoryConfig ref) {
-        if(ref!=null){
-            NutsRepositoryLocation loc = NutsRepositoryLocation.of(ref.getLocation());
-            if(!NutsBlankable.isBlank(loc.getType())){
-                return loc.getType();
+    public static String getRepoType(NutsRepositoryConfig conf) {
+        if(conf!=null){
+            NutsRepositoryLocation loc = conf.getLocation();
+            if(loc!=null) {
+                if (!NutsBlankable.isBlank(loc.getType())) {
+                    return loc.getType();
+                }
             }
         }
         return null;

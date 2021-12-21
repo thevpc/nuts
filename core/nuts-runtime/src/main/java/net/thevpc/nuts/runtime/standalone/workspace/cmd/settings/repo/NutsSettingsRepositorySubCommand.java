@@ -8,6 +8,7 @@ package net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.repo;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.AbstractNutsSettingsSubCommand;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.user.NutsSettingsUserSubCommand;
+import net.thevpc.nuts.spi.NutsRepositoryLocation;
 
 import java.util.Arrays;
 import java.util.LinkedHashMap;
@@ -132,7 +133,7 @@ public class NutsSettingsRepositorySubCommand extends AbstractNutsSettingsSubCom
                         .setConfig(
                                 location == null ? null : new NutsRepositoryConfig()
                                         .setName(repositoryName)
-                                        .setLocation(location)
+                                        .setLocation(NutsRepositoryLocation.of(location))
                                         .setEnv(env));
                 if (parent == null) {
                     repo = session.repos().addRepository(o);
@@ -254,7 +255,7 @@ public class NutsSettingsRepositorySubCommand extends AbstractNutsSettingsSubCom
                                 .setConfig(
                                         new NutsRepositoryConfig()
                                                 .setName(repositoryName)
-                                                .setLocation(location)
+                                                .setLocation(NutsRepositoryLocation.of(location))
                                 ));
                 session.config().save();
 

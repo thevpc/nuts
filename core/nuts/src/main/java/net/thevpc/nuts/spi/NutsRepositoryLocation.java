@@ -35,7 +35,7 @@ import java.util.regex.Pattern;
 /**
  * @author thevpc
  */
-public class NutsRepositoryLocation implements Comparable<NutsRepositoryLocation> {
+public class NutsRepositoryLocation implements Comparable<NutsRepositoryLocation>, NutsBlankable {
 
     protected static final Pattern FULL_PATTERN = Pattern.compile("((?<n>[a-zA-Z][a-zA-Z0-9_-]*)?=)?((?<t>[a-zA-Z][a-zA-Z0-9_-]*)?@)?(?<r>.*)");
 
@@ -213,10 +213,25 @@ public class NutsRepositoryLocation implements Comparable<NutsRepositoryLocation
     }
 
     @Override
+    public boolean isBlank() {
+        if (!NutsBlankable.isBlank(name)) {
+            return false;
+        }
+        if (!NutsBlankable.isBlank(type)) {
+            return false;
+        }
+        if (!NutsBlankable.isBlank(location)) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
     public int compareTo(NutsRepositoryLocation o) {
         if (o == null) {
             return 1;
         }
         return toString().compareTo(o.toString());
     }
+
 }

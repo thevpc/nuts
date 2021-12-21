@@ -206,8 +206,7 @@ public class DefaultNutsRepositoryConfigModel implements NutsRepositoryConfigMod
 
     @Override
     public NutsPath getLocation(boolean expand,NutsSession session) {
-        String s = config.getLocation();
-        s=NutsUtilStrings.trimToNull(NutsRepositoryLocation.of(s).getLocation());
+        String s=NutsUtilStrings.trimToNull(config.getLocation().getLocation());
         if (s != null && expand) {
             return NutsPath.of(s,session).toAbsolute(session.locations().getWorkspaceLocation());
         }
@@ -266,7 +265,7 @@ public class DefaultNutsRepositoryConfigModel implements NutsRepositoryConfigMod
         return config.getUuid();
     }
 
-    public String getLocation() {
+    public NutsRepositoryLocation getLocation() {
         return config.getLocation();
     }
 

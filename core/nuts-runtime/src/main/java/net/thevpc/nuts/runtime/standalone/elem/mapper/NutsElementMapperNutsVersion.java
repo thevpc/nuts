@@ -19,10 +19,7 @@ public class NutsElementMapperNutsVersion implements NutsElementMapper<NutsVersi
     @Override
     public NutsElement createElement(NutsVersion o, Type typeOfSrc, NutsElementFactoryContext context) {
         if (context.isNtf()) {
-            NutsSession session = context.getSession();
-//                NutsText n = ws.text().toText(ws.version().formatter(o).setNtf(true).format());
-//                return ws.elem().forPrimitive().buildNutsString(n);
-            return NutsElements.of(session).ofString(o.formatter().setNtf(true).format().toString());
+            return context.elem().ofString(o.formatter().setNtf(true).format().toString());
         } else {
             return context.defaultObjectToElement(o.toString(), null);
         }

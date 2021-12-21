@@ -2,6 +2,7 @@ package net.thevpc.nuts.runtime.standalone.repository.impl.main;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.repository.config.NutsRepositoryConfigModel;
+import net.thevpc.nuts.spi.NutsRepositoryLocation;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -127,8 +128,8 @@ class InstalledRepositoryConfigModel implements NutsRepositoryConfigModel {
     }
 
     @Override
-    public String getLocation() {
-        return DefaultNutsInstalledRepository.INSTALLED_REPO_UUID;
+    public NutsRepositoryLocation getLocation() {
+        return NutsRepositoryLocation.of(DefaultNutsInstalledRepository.INSTALLED_REPO_UUID);
     }
 
     @Override

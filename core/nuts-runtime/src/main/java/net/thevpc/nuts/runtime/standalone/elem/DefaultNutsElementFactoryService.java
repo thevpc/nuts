@@ -50,6 +50,7 @@ import net.thevpc.nuts.runtime.standalone.util.collections.ClassMap;
 import net.thevpc.nuts.runtime.standalone.util.reflect.ReflectRepository;
 import net.thevpc.nuts.runtime.standalone.util.reflect.ReflectUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
+import net.thevpc.nuts.spi.NutsRepositoryLocation;
 
 /**
  *
@@ -86,6 +87,7 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
     private static final NutsElementMapper F_DESCRIPTOR_PROPERTY = new NutsElementMapperNutsDescriptorProperty();
     private static final NutsElementMapper F_DESCRIPTOR_PROPERTY_BUILDER = new NutsElementMapperNutsDescriptorPropertyBuilder();
     private static final NutsElementMapper F_NUTS_ENUM = new NutsElementMapperNutsEnum();
+    private static final NutsElementMapper F_NUTS_REPO_LOCATION = new NutsElementMapperNutsRepositoryLocation();
 
 //    public static final NutsElementFactory F_JSONELEMENT = new NutsElementFactoryJsonElement();
 
@@ -166,6 +168,7 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
         setCoreMapper(NutsDescriptorProperty.class, F_DESCRIPTOR_PROPERTY);
         setCoreMapper(NutsDescriptorPropertyBuilder.class, F_DESCRIPTOR_PROPERTY_BUILDER);
         setCoreMapper(NutsEnum.class, F_NUTS_ENUM);
+        setCoreMapper(NutsRepositoryLocation.class, F_NUTS_REPO_LOCATION);
         this.ws = ws;
         this.session = session;
     }

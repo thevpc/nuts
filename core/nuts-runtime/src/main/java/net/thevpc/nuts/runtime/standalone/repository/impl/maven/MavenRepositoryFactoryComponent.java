@@ -51,7 +51,7 @@ public class MavenRepositoryFactoryComponent implements NutsRepositoryFactoryCom
         if (NutsBlankable.isBlank(type)) {
             return null;
         }
-        NutsPath p = NutsPath.of(config.getLocation(), session);
+        NutsPath p = NutsPath.of(config.getLocation().getLocation(), session);
         String pr = NutsUtilStrings.trim(p.getProtocol());
         switch (pr) {
             //non traversable!

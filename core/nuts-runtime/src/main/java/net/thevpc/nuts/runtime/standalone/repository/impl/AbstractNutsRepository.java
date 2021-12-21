@@ -29,6 +29,7 @@ import net.thevpc.nuts.runtime.standalone.repository.config.NutsRepositoryConfig
 import net.thevpc.nuts.runtime.standalone.util.NutsCachedValue;
 import net.thevpc.nuts.runtime.standalone.util.collections.DefaultObservableMap;
 import net.thevpc.nuts.runtime.standalone.util.collections.ObservableMap;
+import net.thevpc.nuts.spi.NutsRepositoryLocation;
 import net.thevpc.nuts.spi.NutsRepositorySPI;
 
 import java.util.*;
@@ -185,7 +186,7 @@ public abstract class AbstractNutsRepository implements NutsRepository, NutsRepo
         NutsRepositoryConfigManager c = config();
         String name = getName();
         String storePath = null;
-        String loc = cc.getModel().getLocation();
+        NutsRepositoryLocation loc = cc.getModel().getLocation();
         String impl = getClass().getSimpleName();
         if (c != null) {
             NutsPath storeLocation = cc.getModel().getStoreLocation();
@@ -202,7 +203,7 @@ public abstract class AbstractNutsRepository implements NutsRepository, NutsRepo
             a.put("store", storePath);
         }
         if (loc != null) {
-            a.put("location", loc);
+            a.put("location", loc.toString());
         }
         return a.toString();
     }
