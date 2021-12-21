@@ -26,6 +26,7 @@
  */
 package net.thevpc.nuts.boot;
 
+import net.thevpc.nuts.NutsBlankable;
 import net.thevpc.nuts.spi.NutsBootId;
 
 class PrivateNutsErrorInfo {
@@ -65,7 +66,36 @@ class PrivateNutsErrorInfo {
 
     @Override
     public String toString() {
-        return getMessage() + " " + getNutsId() + " from " + getUrl() + " (repository " + getRepository() + ") : "
-                + (getThrowable() == null ? "" : getThrowable().toString());
+        StringBuilder sb=new StringBuilder();
+        if(!NutsBlankable.isBlank(getMessage())){
+            sb.append(getMessage());
+        }else{
+            sb.append("unexpected error");
+        }
+        if(getNutsId()!=null){
+            if(sb.length()>0){
+               sb.append(" ");
+            }
+            sb.append(" for id ").append(getNutsId());
+        }
+        if(getUrl()!=null){
+            if(sb.length()>0){
+               sb.append(" ");
+            }
+            sb.append(" from ").append(getUrl());
+        }
+        if(getRepository()!=null){
+            if(sb.length()>0){
+               sb.append(" ");
+            }
+            sb.append(" for repository ").append(getRepository());
+        }
+        if(getThrowable()!=null){
+            if(sb.length()>0){
+               sb.append(" ");
+            }
+            sb.append(": ").append(getThrowable().toString());
+        }
+        return sb.toString();
     }
 }

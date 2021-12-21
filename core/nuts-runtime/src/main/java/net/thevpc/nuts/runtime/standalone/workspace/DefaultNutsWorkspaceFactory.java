@@ -34,6 +34,7 @@ import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.version.DefaultNutsVersionParser;
 import net.thevpc.nuts.spi.*;
 
+import java.io.PrintStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
@@ -322,7 +323,7 @@ public class DefaultNutsWorkspaceFactory implements NutsWorkspaceFactory {
         } catch (InstantiationException | InvocationTargetException e) {
             if (isBootstrapLogType(apiType)) {
                 //do not use log. this is a bug that must be resolved fast!
-                safeLog(NutsMessage.cstyle("unable to instantiate %s as %s", apiType, t), e);
+                safeLog(NutsMessage.cstyle("unable to instantiate %s as %s", apiType, t), e,session);
             } else {
                 if (LOG.isLoggable(Level.FINEST)) {
                     LOG.with().session(validLogSession(session)).level(Level.FINEST).verb(NutsLogVerb.FAIL).error(e)
@@ -340,7 +341,7 @@ public class DefaultNutsWorkspaceFactory implements NutsWorkspaceFactory {
         } catch (IllegalAccessException e) {
             if (isBootstrapLogType(apiType)) {
                 //do not use log. this is a bug that must be resolved fast!
-                safeLog(NutsMessage.cstyle("unable to instantiate %s as %s", apiType, t), e);
+                safeLog(NutsMessage.cstyle("unable to instantiate %s as %s", apiType, t), e,session);
             } else {
                 if (LOG.isLoggable(Level.FINEST)) {
                     LOG.with().session(validLogSession(session)).level(Level.FINEST).verb(NutsLogVerb.FAIL).error(e)
@@ -361,7 +362,7 @@ public class DefaultNutsWorkspaceFactory implements NutsWorkspaceFactory {
         } catch (InstantiationException e) {
             if (isBootstrapLogType(apiType)) {
                 //do not use log. this is a bug that must be resolved fast!
-                safeLog(NutsMessage.cstyle("unable to instantiate %s as %s", apiType, t), e);
+                safeLog(NutsMessage.cstyle("unable to instantiate %s as %s", apiType, t), e,session);
             } else {
 
                 if (LOG.isLoggable(Level.FINEST)) {
@@ -380,7 +381,7 @@ public class DefaultNutsWorkspaceFactory implements NutsWorkspaceFactory {
         } catch (Exception e) {
             if (isBootstrapLogType(apiType)) {
                 //do not use log. this is a bug that must be resolved fast!
-                safeLog(NutsMessage.cstyle("unable to instantiate %s as %s", apiType, t), e);
+                safeLog(NutsMessage.cstyle("unable to instantiate %s as %s", apiType, t), e,session);
             } else {
                 if (LOG.isLoggable(Level.FINEST)) {
                     LOG.with().session(validLogSession(session)).level(Level.FINEST).verb(NutsLogVerb.FAIL).error(e)
@@ -473,9 +474,13 @@ public class DefaultNutsWorkspaceFactory implements NutsWorkspaceFactory {
         return scope;
     }
 
-    public void safeLog(NutsMessage msg, Throwable any) {
+    public void safeLog(NutsMessage msg, Throwable any,NutsSession session) {
         //TODO: should we use boot stdio?
-        System.err.println(msg.toString() + ":");
+        PrintStream err = NutsWorkspaceExt.of(session).getModel().bootModel.getBootTerminal().getErr();
+        if(err==null){
+            err=System.err;
+        }
+        err.println(msg.toString() + ":");
         any.printStackTrace();
     }
 

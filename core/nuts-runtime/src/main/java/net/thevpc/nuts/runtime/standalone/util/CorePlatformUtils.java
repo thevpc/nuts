@@ -225,7 +225,7 @@ public class CorePlatformUtils {
                     }
                 }
             } catch (Exception e) {
-                System.err.printf("error: %s%n", CoreStringUtils.exceptionToMessage(e));
+                session.err().printf("error: %s%n", CoreStringUtils.exceptionToMessage(e));
             }
         }
         Map<String, String> m = new HashMap<>();

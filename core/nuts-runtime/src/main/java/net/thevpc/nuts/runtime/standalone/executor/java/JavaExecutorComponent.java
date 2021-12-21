@@ -243,11 +243,11 @@ public class JavaExecutorComponent implements NutsExecutorComponent {
                 int currentDepth = CoreNumberUtils.convertToInteger(sysProperties.getProperty("nuts.export.watchdog.depth"), -1);
                 currentDepth++;
                 if (currentDepth > maxDepth) {
-                    System.err.println("[[Process Stack Overflow Error]]");
-                    System.err.println("it is very likely that you executed an infinite process creation recursion in your program.");
-                    System.err.println("at least " + currentDepth + " (>=" + maxDepth + ") processes were created.");
-                    System.err.println("are you aware of such misconception ?");
-                    System.err.println("sorry but we need to end all of this disgracefully...");
+                    session.err().println("[[Process Stack Overflow Error]]");
+                    session.err().println("it is very likely that you executed an infinite process creation recursion in your program.");
+                    session.err().println("at least " + currentDepth + " (>=" + maxDepth + ") processes were created.");
+                    session.err().println("are you aware of such misconception ?");
+                    session.err().println("sorry but we need to end all of this disgracefully...");
                     System.exit(233);
                 }
 

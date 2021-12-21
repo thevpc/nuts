@@ -71,7 +71,7 @@ public class PrivateNutsBootLog {
     public void log(Level lvl, NutsMessage message, Throwable err) {
         if (isLoggable(lvl)) {
             doLog(lvl, NutsLogVerb.FAIL, message == null ? "" : message.toString());
-            err.printStackTrace(System.err);
+            err.printStackTrace(bootTerminal.getErr());
         }
     }
 

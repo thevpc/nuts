@@ -869,6 +869,9 @@ public final class NutsBootWorkspace {
                 } catch (UnsatisfiedLinkError | Exception ex) {
                     exceptions.add(ex);
                     bLog.log(Level.SEVERE, NutsMessage.jstyle("unable to create workspace using factory {0}", a), ex);
+                    // if the creation generates an error
+                    //just stop
+                    break;
                 }
                 if (nutsWorkspace != null) {
                     break;
