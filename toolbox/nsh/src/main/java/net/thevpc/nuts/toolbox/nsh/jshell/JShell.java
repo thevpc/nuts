@@ -49,23 +49,15 @@ import java.util.regex.Pattern;
 
 public class JShell {
 
-    public static final String APP_TITLE = "JavaShell";
     public static final String APP_VERSION = "0.4";
-    public static final int NEXT_STATEMENT = -2;
     public static final String ENV_PATH = "PATH";
     public static final String ENV_HOME = "HOME";
-    public static final String ENV_EXEC_PACKAGES = "EXEC_PKG";
-    public static final String ENV_EXEC_EXTENSIONS = "EXEC_EXT";
     private static final Logger LOG = Logger.getLogger(JShell.class.getName());
     private final JShellOptions options;
     private final JShellHistory history;
-    private final BufferedReader _in_reader = null;
     private final List<JShellVarListener> listeners = new ArrayList<>();
-    public boolean fallBackToMain = false;
-    public Object shellInterpreter = null;
     protected JShellContext rootContext;
     long boot_startMillis;
-    private String version = "1.0.0";
     private JShellEvaluator evaluator;
     private JShellErrorHandler errorHandler;
     private JShellExternalExecutor externalExecutor;
@@ -73,6 +65,14 @@ public class JShell {
     private NutsApplicationContext appContext;
     private NutsPath histFile = null;
     private NutsId appId = null;
+
+    /**
+     * args are inherited from app context
+     * @param appContext appContext
+     */
+    public JShell(NutsApplicationContext appContext) {
+        this(appContext,null);
+    }
 
     public JShell(NutsApplicationContext appContext, String[] args) {
         this(appContext, appContext.getAppId(), appContext.getAppId().getArtifactId(), args);
@@ -134,7 +134,6 @@ public class JShell {
                 hist.load(histFile);
             }
         } catch (Exception ex) {
-            //ignore
             LOG.log(Level.SEVERE, "error resolving history file", ex);
         }
         ws.env().setProperty(JShellHistory.class.getName(), hist);
@@ -1071,10 +1070,6 @@ public class JShell {
             return "dev";
         }
         return nutsId.getVersion().getValue();
-    }
-
-    protected void setVersion(String version) {
-        this.version = version;
     }
 
     public NutsApplicationContext getAppContext() {

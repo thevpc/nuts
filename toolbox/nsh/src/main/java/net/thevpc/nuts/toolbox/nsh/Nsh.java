@@ -160,9 +160,7 @@ public class Nsh implements NutsApplication {
 //        if (o.isEffectiveInteractive()) {
 //            applicationContext.getWorkspace().io().term().enableRichTerm(applicationContext.getSession());
 //        }
-        new JShell(applicationContext,
-                null/*inherit args from applicationContext*/
-        ).run();
+        new JShell(applicationContext).run();
     }
 
 }
