@@ -7,69 +7,66 @@ import net.thevpc.nuts.spi.NutsRepositoryDB;
 import net.thevpc.nuts.spi.NutsRepositoryLocation;
 import net.thevpc.nuts.spi.NutsSupportLevelContext;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
 
 public class PrivateNutsBootRepositoryDB implements NutsRepositoryDB {
     public static final NutsRepositoryDB INSTANCE = new PrivateNutsBootRepositoryDB();
-
     private final Map<String, String> defaultRepositoriesByName = new LinkedHashMap<>();
+    private final Map<String, String> aliasToBase = new LinkedHashMap<>();
+    private final Map<String, Set<String>> baseToAliases = new LinkedHashMap<>();
 
     {
-        defaultRepositoriesByName.put("system", PrivateNutsUtilIO.getNativePath(
+        reg("system", PrivateNutsUtilIO.getNativePath(
                         NutsUtilPlatforms.getDefaultPlatformHomeFolder(null,
                                 NutsStoreLocation.LIB,
                                 true,
                                 NutsConstants.Names.DEFAULT_WORKSPACE_NAME) + "/" + NutsConstants.Folders.ID
                 )
         );
-        //
-        defaultRepositoriesByName.put("maven-local", "maven@" + System.getProperty("user.home") + PrivateNutsUtilIO.getNativePath("/.m2/repository"));
-        defaultRepositoriesByName.put(".m2", defaultRepositoriesByName.get("maven-local"));
-        defaultRepositoriesByName.put("m2", defaultRepositoriesByName.get("maven-local"));
-        //
-        defaultRepositoriesByName.put("maven-central", "maven@https://repo.maven.apache.org/maven2");
-        defaultRepositoriesByName.put("central", defaultRepositoriesByName.get("maven-central"));
-        defaultRepositoriesByName.put("maven", defaultRepositoriesByName.get("maven-central"));
-        defaultRepositoriesByName.put("mvn", defaultRepositoriesByName.get("maven-central"));
-        //
-        defaultRepositoriesByName.put("jcenter", "maven@https://jcenter.bintray.com");
-        //
-        defaultRepositoriesByName.put("jboss", "maven@https://repository.jboss.org/nexus/content/repositories/releases");
-        //
-        defaultRepositoriesByName.put("clojars", "maven@https://repo.clojars.org");
-        //
-        defaultRepositoriesByName.put("atlassian", "maven@https://packages.atlassian.com/maven/public");
-        //
-        defaultRepositoriesByName.put("atlassian-snapshot", "maven@https://packages.atlassian.com/maven/public-snapshot");
-        //
-        defaultRepositoriesByName.put("oracle", "maven@https://maven.oracle.com");
-        //
-        defaultRepositoriesByName.put("google", "maven@https://maven.google.com");
-        //
-        defaultRepositoriesByName.put("spring", "maven@https://repo.spring.io/release");
-        defaultRepositoriesByName.put("spring-framework", defaultRepositoriesByName.get("spring"));
-        //
-        defaultRepositoriesByName.put("maven-thevpc-git", "maven@https://raw.githubusercontent.com/thevpc/vpc-public-maven/master");
-        defaultRepositoriesByName.put("vpc-public-maven", defaultRepositoriesByName.get("maven-thevpc-git"));
-        //
-        defaultRepositoriesByName.put("nuts-thevpc-git", "maven@https://raw.githubusercontent.com/thevpc/vpc-public-nuts/master");
-        defaultRepositoriesByName.put("vpc-public-nuts", defaultRepositoriesByName.get("nuts-thevpc-git"));
-        //
-        defaultRepositoriesByName.put("thevpc", "maven@htmlfs:http://thevpc.net/maven");
-        defaultRepositoriesByName.put("dev", defaultRepositoriesByName.get("thevpc"));
-        defaultRepositoriesByName.put("preview", defaultRepositoriesByName.get("thevpc"));
+        reg("maven-local", "maven@" + System.getProperty("user.home") + PrivateNutsUtilIO.getNativePath("/.m2/repository"), ".m2", "m2");
+        reg("maven-central", "maven@https://repo.maven.apache.org/maven2", "central", "maven", "mvn");
+        reg("jcenter", "maven@https://jcenter.bintray.com");
+        reg("jboss", "maven@https://repository.jboss.org/nexus/content/repositories/releases");
+        reg("clojars", "maven@https://repo.clojars.org");
+        reg("atlassian", "maven@https://packages.atlassian.com/maven/public");
+        reg("atlassian-snapshot", "maven@https://packages.atlassian.com/maven/public-snapshot");
+        reg("oracle", "maven@https://maven.oracle.com");
+        reg("google", "maven@https://maven.google.com");
+        reg("spring", "maven@https://repo.spring.io/release", "spring-framework");
+        reg("maven-thevpc-git", "maven@https://raw.githubusercontent.com/thevpc/vpc-public-maven/master", "vpc-public-maven");
+        reg("nuts-thevpc-git", "maven@https://raw.githubusercontent.com/thevpc/vpc-public-nuts/master", "vpc-public-nuts");
+        reg("thevpc", "maven@htmlfs:http://thevpc.net/maven", "dev", "preview");
+    }
+
+    @Override
+    public Set<String> getAllNames(String name) {
+        Set<String> a = baseToAliases.get(name);
+        if (a != null) {
+            return Collections.unmodifiableSet(a);
+        }
+        String base = aliasToBase.get(name);
+        if (base != null) {
+            a = baseToAliases.get(base);
+            if (a != null) {
+                return Collections.unmodifiableSet(a);
+            }
+        }
+        return Collections.singleton(name);
     }
 
     @Override
     public String getRepositoryNameByURL(String url) {
-        NutsRepositoryLocation nru = NutsRepositoryLocation.of(url);
+        NutsRepositoryLocation v0 = NutsRepositoryLocation.of(url).setName(null);
         for (Map.Entry<String, String> entry : defaultRepositoriesByName.entrySet()) {
-            String v = entry.getValue();
-            if (v.equals(nru.toString())
-                    || v.equals(nru.setName(null).toString())
-                    || v.equals(nru.setName(null).setType(null).toString())
-            ) {
+            NutsRepositoryLocation v = NutsRepositoryLocation.of(entry.getValue()).setName(null);
+            if (v.equals(v0)) {
+                return entry.getKey();
+            }
+        }
+        v0 = NutsRepositoryLocation.of(url).setName(null).setType(null);
+        for (Map.Entry<String, String> entry : defaultRepositoriesByName.entrySet()) {
+            NutsRepositoryLocation v = NutsRepositoryLocation.of(entry.getValue()).setName(null).setType(null);
+            if (v.equals(v0)) {
                 return entry.getKey();
             }
         }
@@ -77,12 +74,32 @@ public class PrivateNutsBootRepositoryDB implements NutsRepositoryDB {
     }
 
     public boolean isDefaultRepositoryName(String name) {
-        return defaultRepositoriesByName.containsKey(name);
+        return defaultRepositoriesByName.containsKey(name)
+                || aliasToBase.containsKey(name);
     }
 
     @Override
     public String getRepositoryURLByName(String name) {
-        return defaultRepositoriesByName.get(name);
+        String a = defaultRepositoriesByName.get(name);
+        if (a != null) {
+            return a;
+        }
+        String base = aliasToBase.get(name);
+        if (base != null) {
+            return defaultRepositoriesByName.get(base);
+        }
+        return null;
+    }
+
+    private void reg(String name, String url, String... names) {
+        defaultRepositoriesByName.put(name, url);
+        Set<String> all = new LinkedHashSet<>();
+        all.add(name);
+        for (String other : names) {
+            aliasToBase.put(other, name);
+            all.add(other);
+        }
+        baseToAliases.put(name, all);
     }
 
     @Override

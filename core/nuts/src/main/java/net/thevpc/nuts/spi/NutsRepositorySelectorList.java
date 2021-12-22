@@ -29,8 +29,7 @@ package net.thevpc.nuts.spi;
 import net.thevpc.nuts.NutsBlankable;
 import net.thevpc.nuts.NutsSession;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class NutsRepositorySelectorList {
 
@@ -118,29 +117,53 @@ public class NutsRepositorySelectorList {
             }
         }
         List<NutsRepositoryLocation> result = new ArrayList<>();
+        Set<String> visited=new HashSet<>();
         for (NutsRepositorySelector r : selectors) {
+            Set<String> allNames = db.getAllNames(r.getName());
             if (r.getOp() != NutsSelectorOp.EXCLUDE) {
                 if (!NutsBlankable.isBlank(r.getName())) {
                     String u2 = r.getUrl();
-                    int i = current.indexOfName(r.getName(), 0);
+                    int i = current.indexOfNames(allNames.toArray(new String[0]), 0);
                     if (i >= 0) {
                         NutsRepositoryLocation ss = current.removeAt(i);
                         if (ss != null && u2 == null) {
                             u2 = ss.getLocation();
                         }
                     }
-                    result.add(NutsRepositoryLocation.of(r.getName(), u2));
+                    boolean visitedFlag = isVisitedFlag(allNames, visited);
+                    if(!visitedFlag) {
+                        visited.addAll(allNames);
+                        result.add(NutsRepositoryLocation.of(r.getName(), u2));
+                    }
                 } else if (r.getOp() == NutsSelectorOp.EXACT) {
-                    result.add(NutsRepositoryLocation.of(r.getName(), r.getUrl()));
+                    if(!isVisitedFlag(allNames, visited)) {
+                        visited.addAll(allNames);
+                        result.add(NutsRepositoryLocation.of(r.getName(), r.getUrl()));
+                    }
                 }
             }
         }
         for (NutsRepositoryLocation e : current.toArray()) {
             if (acceptExisting(e)) {
-                result.add(e);
+                Set<String> allNames = db.getAllNames(e.getName());
+                if(!isVisitedFlag(allNames, visited)) {
+                    visited.addAll(allNames);
+                    result.add(e);
+                }
             }
         }
         return result.toArray(new NutsRepositoryLocation[0]);
+    }
+
+    private boolean isVisitedFlag(Set<String> allNames, Set<String> visited) {
+        boolean visitedFlag=false;
+        for (String allName : allNames) {
+            if (visited.contains(allName)) {
+                visitedFlag = true;
+                break;
+            }
+        }
+        return visitedFlag;
     }
 
     public boolean acceptExisting(NutsRepositoryLocation ss) {

@@ -66,6 +66,18 @@ public class NutsRepositoryURLList {
         }
         return -1;
     }
+    public int indexOfNames(String[] names, int offset) {
+        for (int i = offset; i < all.size(); i++) {
+            NutsRepositoryLocation loc = all.get(i);
+            for (String name : names) {
+                String trimmedName = NutsUtilStrings.trim(name);
+                if (trimmedName.equals(NutsUtilStrings.trim(loc.getName()))) {
+                    return i;
+                }
+            }
+        }
+        return -1;
+    }
 
     public int indexOfURL(String url, int offset) {
         String trimmedName = NutsUtilStrings.trim(url);
