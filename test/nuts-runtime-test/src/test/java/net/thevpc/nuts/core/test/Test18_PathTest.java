@@ -27,7 +27,9 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.core.test.utils.TestUtils;
 import org.junit.jupiter.api.*;
 
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Paths;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -239,6 +241,31 @@ public class Test18_PathTest {
     @Test
     public void testInvalidPath02() {
         NutsPath a = NutsPath.of(System.getProperty("user.home") + "/*", session);
+        List<NutsPath> found = a.walkGlob().toList();
+        TestUtils.println(found);
+        String[] expected = new File(System.getProperty("user.home")).list();
+        Assertions.assertEquals(expected==null?0:expected.length,found.size());
+    }
+
+    @Test
+    public void testInvalidPath03() {
+        TestUtils.println(Paths.get("c:/").getFileName());
+        TestUtils.println(Paths.get("c:/").getNameCount());
+        TestUtils.println(Paths.get("c:").getFileName());
+        TestUtils.println(Paths.get("c:").getNameCount());
+        TestUtils.println(Paths.get("/").getFileName());
+        TestUtils.println(Paths.get("").getFileName());
+
+        NutsPath a = NutsPath.of("*", session);
+        List<NutsPath> found = a.walkGlob().toList();
+        TestUtils.println(found);
+        String[] expected = new File(".").list();
+        Assertions.assertEquals(expected==null?0:expected.length,found.size());
+    }
+
+    @Test
+    public void testInvalidPath04() {
+        NutsPath a = NutsPath.of("/*", session);
         List<NutsPath> nutsPaths = a.walkGlob().toList();
         System.out.println(nutsPaths);
     }

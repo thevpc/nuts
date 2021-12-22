@@ -26,7 +26,7 @@ public class FilePath implements NutsPathSPI {
 
     public FilePath(Path value, NutsSession session) {
         if (value == null) {
-            throw new IllegalArgumentException("invalid value");
+            throw new NutsIllegalArgumentException(session, NutsMessage.plain("invalid null value"));
         }
         this.value = value;
         this.session = session;
@@ -56,7 +56,8 @@ public class FilePath implements NutsPathSPI {
 
     @Override
     public String getName(NutsPath basePath) {
-        return value.getFileName().toString();
+        Path a = value.getFileName();
+        return a == null ? null : a.toString();
     }
 
     @Override
@@ -447,7 +448,11 @@ public class FilePath implements NutsPathSPI {
         if (isRoot(basePath)) {
             return basePath;
         }
-        return basePath.getParent().getRoot();
+        NutsPath parent = basePath.getParent();
+        if (parent == null) {
+            return null;
+        }
+        return parent.getRoot();
     }
 
     @Override
@@ -758,14 +763,14 @@ public class FilePath implements NutsPathSPI {
 
     @Override
     public NutsPath toRelativePath(NutsPath basePath, NutsPath parentPath) {
-        String child=basePath.getLocation();
-        String parent=parentPath.getLocation();
+        String child = basePath.getLocation();
+        String parent = parentPath.getLocation();
         if (child.startsWith(parent)) {
             child = child.substring(parent.length());
             if (child.startsWith("/") || child.startsWith("\\")) {
                 child = child.substring(1);
             }
-            return NutsPath.of(child,session);
+            return NutsPath.of(child, session);
         }
         return null;
     }

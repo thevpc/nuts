@@ -1,9 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.io.path;
 
-import net.thevpc.nuts.NutsFunction;
-import net.thevpc.nuts.NutsPath;
-import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.NutsStream;
+import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.xtra.glob.GlobUtils;
 
 import java.util.*;
@@ -11,15 +8,15 @@ import java.util.regex.Pattern;
 
 public class DirectoryScanner {
     private NutsPath initialPattern;
-    private String root;
-    private String patternString;
-    private Pattern pattern;
+//    private String root;
+//    private String patternString;
+//    private Pattern pattern;
     private PathPart[] parts;
 //    private DirectoryScannerFS fs;
     private NutsSession session;
 
     public DirectoryScanner(NutsPath pattern,NutsSession session) {
-        this.initialPattern = pattern;
+        this.initialPattern = pattern.toAbsolute().normalize();
         this.session = session;
         parts = buildParts(initialPattern);
     }
@@ -43,46 +40,35 @@ public class DirectoryScanner {
         return sb.toString();
     }
 
+    private static boolean containsWildcard(String name){
+        char[] patternChars = name.toCharArray();
+        for (char c : patternChars) {
+            if (c == '*' || c == '?') {
+                return true;
+            }
+        }
+        return false;
+    }
+
     private static PathPart[] buildParts(NutsPath initialPattern) {
         List<PathPart> parts = new ArrayList<>();
-        char[] patternChars = initialPattern.getLocation().toCharArray();
-        int pos = 0;
-        while (pos < patternChars.length) {
-            int x = pos;
-            boolean someWildCards = false;
-            while (x < patternChars.length && patternChars[x] != '/' && patternChars[x] != '\\') {
-                if (patternChars[x] == '*' || patternChars[x] == '?') {
-                    someWildCards = true;
-                }
-                x++;
-            }
-            if (x >= patternChars.length) {
-                String s = new String(patternChars, pos, patternChars.length - pos);
-                if (someWildCards) {
-                    if (s.contains("**")) {
-                        parts.add(new SubPathWildCardPathPart(s));
-                    } else {
-                        parts.add(new NameWildCardPathPart(s));
-                    }
+        NutsPath h=initialPattern;
+        while(h!=null){
+            String name = h.getName();
+            if (containsWildcard(name)) {
+                if (name.contains("**")) {
+                    parts.add(0,new SubPathWildCardPathPart(name));
                 } else {
-                    parts.add(new PlainPathPart(s));
+                    parts.add(0,new NameWildCardPathPart(name));
                 }
-                pos = x;
-            } else if (x > pos) {
-                String s = new String(patternChars, pos, x - pos);
-                if (someWildCards) {
-                    if (s.contains("**")) {
-                        parts.add(new SubPathWildCardPathPart(s));
-                    } else {
-                        parts.add(new NameWildCardPathPart(s));
-                    }
-                } else {
-                    parts.add(new PlainPathPart(s));
-                }
-                pos = x;
             } else {
-                //ignore
-                pos++;
+                parts.add(0,new PlainPathPart(name));
+            }
+            NutsPath p = h.getParent();
+            if(p==h){
+                h=null;
+            }else{
+                h=p;
             }
         }
         return parts.toArray(new PathPart[0]);
@@ -90,12 +76,7 @@ public class DirectoryScanner {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        for (PathPart part : parts) {
-            sb.append("/");
-            sb.append(part.toString());
-        }
-        return sb.toString();
+        return initialPattern.toString();
     }
 
     public NutsPath[] toArray() {
@@ -106,14 +87,17 @@ public class DirectoryScanner {
         return stream(null, parts, 0);
     }
 
-
     private NutsStream<NutsPath> stream(NutsPath r, PathPart[] parts, int from) {
         for (int i = from; i < parts.length; i++) {
             if (parts[i] instanceof PlainPathPart) {
                 if (r == null) {
                     r = initialPattern.getRoot();
                 }
-                r = r.resolve(((PlainPathPart) parts[i]).value);
+                if (r == null) {
+                    r=NutsPath.of(((PlainPathPart) parts[i]).value,session);
+                }else {
+                    r = r.resolve(((PlainPathPart) parts[i]).value);
+                }
                 if(!r.exists()){
                     return NutsStream.ofEmpty(session);
                 }
@@ -121,6 +105,9 @@ public class DirectoryScanner {
                 NameWildCardPathPart w = (NameWildCardPathPart) parts[i];
                 if (r == null) {
                     r = initialPattern.getRoot();
+                }
+                if (r == null) {
+                    return NutsStream.ofEmpty(session);
                 }
                 NutsStream<NutsPath> t = r.list().filter(x -> w.matchesName(x.getName()),"getName");
                 if (parts.length - i - 1 == 0) {
@@ -146,7 +133,7 @@ public class DirectoryScanner {
                     return t.flatMap((NutsFunction) f).distinct();
                 }
             } else {
-                throw new IllegalArgumentException("Unsupported " + parts[i]);
+                throw new NutsIllegalArgumentException(session,NutsMessage.cstyle("unsupported %s",parts[i]));
             }
         }
         if (r == null) {

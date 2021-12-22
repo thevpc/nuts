@@ -125,6 +125,7 @@ public class DefaultNutsWorkspaceConfigModel {
         addPathFactory(new HtmlfsPath.HtmlfsFactory(ws));
         addPathFactory(new DotfilefsPath.DotfilefsFactory(ws));
         addPathFactory(new GithubfsPath.GithubfsFactory(ws));
+        addPathFactory(new GenericFilePath.GenericPathFactory(ws));
         invalidPathFactory = new InvalidFilePathFactory();
         //        this.excludedRepositoriesSet = this.options.getExcludedRepositories() == null ? null : new HashSet<>(CoreStringUtils.split(Arrays.asList(this.options.getExcludedRepositories()), " ,;"));
     }
