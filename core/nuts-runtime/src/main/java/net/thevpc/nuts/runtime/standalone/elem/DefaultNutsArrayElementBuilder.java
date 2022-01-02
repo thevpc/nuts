@@ -23,18 +23,15 @@
  */
 package net.thevpc.nuts.runtime.standalone.elem;
 
-import net.thevpc.nuts.NutsArrayElement;
-import net.thevpc.nuts.NutsArrayElementBuilder;
-import net.thevpc.nuts.NutsElement;
+import net.thevpc.nuts.*;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
-import net.thevpc.nuts.NutsElements;
 //import net.thevpc.nuts.NutsPrimitiveElementBuilder;
-import net.thevpc.nuts.NutsSession;
+
 
 /**
  *
@@ -43,7 +40,7 @@ import net.thevpc.nuts.NutsSession;
 public class DefaultNutsArrayElementBuilder implements NutsArrayElementBuilder {
 
     private final List<NutsElement> values = new ArrayList<>();
-    private NutsSession session;
+    private transient NutsSession session;
 
     public DefaultNutsArrayElementBuilder(NutsSession session) {
         this.session = session;
@@ -292,4 +289,9 @@ public class DefaultNutsArrayElementBuilder implements NutsArrayElementBuilder {
 //        return _elements().forPrimitive();
 //    }
 
+
+    @Override
+    public NutsElementType type() {
+        return NutsElementType.ARRAY;
+    }
 }

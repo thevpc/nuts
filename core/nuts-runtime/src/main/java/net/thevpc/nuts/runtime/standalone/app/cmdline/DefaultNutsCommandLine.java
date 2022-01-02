@@ -27,6 +27,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.StringTokenizerUtils;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * <pre>
@@ -93,16 +94,16 @@ public class DefaultNutsCommandLine implements NutsCommandLine {
         return session;
     }
 
-    @Override
-    public NutsCommandLine setAutoComplete(NutsCommandAutoComplete autoComplete) {
-        this.autoComplete = autoComplete;
-        return this;
-    }
-
     //End Constructors
     @Override
     public NutsCommandAutoComplete getAutoComplete() {
         return autoComplete;
+    }
+
+    @Override
+    public NutsCommandLine setAutoComplete(NutsCommandAutoComplete autoComplete) {
+        this.autoComplete = autoComplete;
+        return this;
     }
 
     @Override
@@ -150,15 +151,15 @@ public class DefaultNutsCommandLine implements NutsCommandLine {
             if (option.equals(x) || option.startsWith(x + eq)) {
                 return true;
             }
-            if (option.startsWith("-//"+x.substring(1))) {
+            if (option.startsWith("-//" + x.substring(1))) {
                 //disabled option
                 return true;
             }
-            if (option.startsWith("-!"+x.substring(1))) {
+            if (option.startsWith("-!" + x.substring(1))) {
                 //unarmed
                 return true;
             }
-            if (option.startsWith("-~"+x.substring(1))) {
+            if (option.startsWith("-~" + x.substring(1))) {
                 //unarmed
                 return true;
             }
@@ -241,6 +242,56 @@ public class DefaultNutsCommandLine implements NutsCommandLine {
     @Override
     public NutsCommandLine required() {
         return required((NutsMessage) null);
+    }
+
+    @Override
+    public NutsCommandLine requiredOptions(String... options) {
+        NutsTexts texts = NutsTexts.of(session);
+        switch (options.length) {
+            case 0: {
+                return required(NutsMessage.cstyle("missing required options"));
+            }
+            case 1: {
+                return required(NutsMessage.cstyle("missing required option %s", texts
+                        .ofStyled(options[0], NutsTextStyle.option())
+                ));
+            }
+            default: {
+                return required(NutsMessage.cstyle("missing required options %s", texts
+                        .builder()
+                        .appendJoined(",",
+                                Arrays.stream(options)
+                                        .map(x -> texts.ofStyled(x, NutsTextStyle.option()))
+                                        .collect(Collectors.toList())
+                        )
+                ));
+            }
+        }
+    }
+
+    @Override
+    public NutsCommandLine requiredNonOptions(String... nonOptions) {
+        NutsTexts texts = NutsTexts.of(session);
+        switch (nonOptions.length) {
+            case 0: {
+                return required(NutsMessage.cstyle("missing required non options"));
+            }
+            case 1: {
+                return required(NutsMessage.cstyle("missing required %s", texts
+                        .ofStyled(nonOptions[0], NutsTextStyle.option())
+                ));
+            }
+            default: {
+                return required(NutsMessage.cstyle("missing required %s", texts
+                        .builder()
+                        .appendJoined(",",
+                                Arrays.stream(nonOptions)
+                                        .map(x -> texts.ofStyled(x, NutsTextStyle.option()))
+                                        .collect(Collectors.toList())
+                        )
+                ));
+            }
+        }
     }
 
     @Override
@@ -546,7 +597,7 @@ public class DefaultNutsCommandLine implements NutsCommandLine {
 
     public NutsCommandLine parseLine(String commandLine) {
         setArguments(
-                NutsCommandLine.of(commandLine,session).toStringArray()
+                NutsCommandLine.of(commandLine, session).toStringArray()
         );
         return this;
     }
@@ -573,45 +624,6 @@ public class DefaultNutsCommandLine implements NutsCommandLine {
             throw new NutsIllegalArgumentException(session, message);
         }
         throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("%s : %s", commandName, message));
-    }
-
-    public void process(NutsCommandLineConfigurable defaultConfigurable, NutsCommandLineProcessor commandLineProcessor) {
-        NutsArgument a;
-        commandLineProcessor.onInit(this);
-        while (this.hasNext()) {
-            a = this.peek();
-            boolean consumed;
-            if (a.isOption()) {
-                consumed = commandLineProcessor.onNextOption(a, this);
-            } else {
-                consumed = commandLineProcessor.onNextNonOption(a, this);
-            }
-            if (consumed) {
-                NutsArgument next = this.peek();
-                //reference equality!
-                if (next == a) {
-                    //was not consumed!
-                    throw new NutsIllegalArgumentException(session,
-                            NutsMessage.cstyle("%s must consume the option: %s",
-                                    (a.isOption() ? "nextOption" : "nextNonOption"),
-                                    a));
-                }
-            } else {
-                if (!_configureLast(this, defaultConfigurable)) {
-                    this.unexpectedArgument();
-                }
-            }
-        }
-        commandLineProcessor.onPrepare(this);
-
-        // test if application is running in exec mode
-        // (and not in autoComplete mode)
-        if (this.isExecMode()) {
-            //do the good staff here
-            commandLineProcessor.onExec();
-        } else if (this.getAutoComplete() != null) {
-            commandLineProcessor.onAutoComplete(this.getAutoComplete());
-        }
     }
 
     @Override
@@ -903,19 +915,6 @@ public class DefaultNutsCommandLine implements NutsCommandLine {
 
     private NutsString highlightText(String text) {
         return NutsTexts.of(getSession()).ofStyled(text, NutsTextStyle.primary3());
-    }
-
-    private boolean _configureLast(NutsCommandLine commandLine, NutsCommandLineConfigurable configurable) {
-        if (configurable == null) {
-            commandLine.unexpectedArgument();
-            return false;
-        }
-        if (!configurable.configureFirst(commandLine)) {
-            commandLine.unexpectedArgument();
-            return false;
-        } else {
-            return true;
-        }
     }
 
     private boolean isPunctuation(char c) {

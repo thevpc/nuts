@@ -133,11 +133,6 @@ public class Test18_PathTest {
             children.add(nutsPath.toString());
         }
         Assertions.assertEquals(3, children.size());
-        TestUtils.println("------------ WALK ----------");
-        s.walk().forEach(x -> {
-            TestUtils.println(x);
-        });
-        long c = s.walk().count();
     }
 
     @Test
@@ -150,11 +145,6 @@ public class Test18_PathTest {
             children.add(nutsPath.toString());
         }
         Assertions.assertEquals(3, children.size());
-        TestUtils.println("------------ WALK ----------");
-        s.walk().forEach(x -> {
-            TestUtils.println(x);
-        });
-        long c = s.walk().count();
     }
 
     @Test
@@ -168,10 +158,6 @@ public class Test18_PathTest {
         }
         Assertions.assertEquals(3, children.size());
         TestUtils.println("------------ WALK ----------");
-        s.walk().forEach(x -> {
-            TestUtils.println(x);
-        });
-        long c = s.walk().count();
     }
 
 
@@ -185,11 +171,6 @@ public class Test18_PathTest {
             children.add(nutsPath.toString());
         }
         Assertions.assertEquals(13, children.size());
-        TestUtils.println("------------ WALK ----------");
-        s.walk().forEach(x -> {
-            TestUtils.println(x);
-        });
-        long c = s.walk().count();
     }
 
     @Test
@@ -202,18 +183,13 @@ public class Test18_PathTest {
             children.add(nutsPath.toString());
         }
         Assertions.assertEquals(2, children.size());
-        TestUtils.println("------------ WALK ----------");
-        s.walk().forEach(x -> {
-            TestUtils.println(x);
-        });
-        long c = s.walk().count();
     }
 
     /**
      * cannot test because of rate limit
      * {"message":"API rate limit exceeded for 196.235.210.26. (But here's the good news: Authenticated requests get a higher rate limit. Check out the documentation for more details.)","documentation_url":"https://docs.github.com/rest/overview/resources-in-the-rest-api#rate-limiting"}
      */
-    //@Test
+    @Test
     public void testGithubfs() {
         NutsPath s = NutsPath.of("githubfs:https://api.github.com/repos/thevpc/nuts/contents", session);
         TestUtils.println("------------ LIST ----------");
@@ -225,11 +201,11 @@ public class Test18_PathTest {
 //        Assertions.assertTrue(children.contains("htmlfs:http://thevpc.net/maven/net/thevpc/nuts/nuts/0.8.3"));
 //        Assertions.assertTrue(children.contains("http://thevpc.net/maven/net/thevpc/nuts/nuts/maven-metadata-local.xml"));
 //        Assertions.assertTrue(children.contains("htmlfs:http://thevpc.net/maven/net/thevpc/nuts/nuts/0.8.2"));
-        TestUtils.println("------------ WALK ----------");
-        s.walk(1).forEach(x -> {
-            TestUtils.println(x);
-        });
-        long c = s.walk().count();
+//        TestUtils.println("------------ WALK ----------");
+//        s.walk(1).forEach(x -> {
+//            TestUtils.println(x);
+//        });
+//        long c = s.walk().count();
 //        Assertions.assertTrue(c>=12);
     }
 

@@ -146,6 +146,8 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
         addDefaultMapper(NutsPrimitiveElement.class, new NutsElementMapperNutsPrimitiveElement());
         addDefaultMapper(NutsArrayElement.class, new NutsElementMapperNutsArrayElement());
         addDefaultMapper(NutsObjectElement.class, new NutsElementMapperNutsObjectElement());
+        addDefaultMapper(NutsArrayElementBuilder.class, new NutsElementMapperNutsElementBuilder());
+        addDefaultMapper(NutsObjectElementBuilder.class, new NutsElementMapperNutsElementBuilder());
         addDefaultMapper(NutsElement.class, new NutsElementMapperNutsElement());
         addDefaultMapper(NutsElementEntry.class, F_NAMED_ELEM);
         addDefaultMapper(NutsCommandLine.class, new NutsElementMapperCommandLine());
@@ -202,7 +204,7 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
         Class cls = ReflectUtils.getRawClass(type);
         if(NutsSession.class.isAssignableFrom(cls)){
             throw new NutsIllegalArgumentException(session, NutsMessage.cstyle(
-                    "% is not serializable", type
+                    "%s is not serializable", type
             ));
         }
         if (cls.isArray()) {

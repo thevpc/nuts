@@ -15,8 +15,8 @@ ntemplate -p $nbw_here/.dir-template -t $nbw_here
 
 ## update nuts.jar
 echo copy nuts.jar
-echo cp ~/.m2/repository/net/thevpc/nuts/nuts/${apiVersion}/nuts-${apiVersion}.jar $nbw_here/documentation/website/static/nuts.jar
-cp ~/.m2/repository/net/thevpc/nuts/nuts/${apiVersion}/nuts-${apiVersion}.jar $nbw_here/documentation/website/static/nuts.jar
+echo cp ~/.m2/repository/net/thevpc/nuts/nuts/${apiVersion}/nuts-${apiVersion}.jar $nbw_here/documentation/website/static/nuts-preview.jar
+cp ~/.m2/repository/net/thevpc/nuts/nuts/${apiVersion}/nuts-${apiVersion}.jar $nbw_here/documentation/website/static/nuts-preview.jar
 
 
 ## update docusaurus website

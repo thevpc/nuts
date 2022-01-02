@@ -33,7 +33,7 @@
                         <manifest>
                             <addClasspath>true</addClasspath>
                             <classpathPrefix>lib/</classpathPrefix>
-                            <mainClass>net.thevpc.nuts.doc.mvndepproject.Main</mainClass>
+                            <mainClass>net.thevpc.nuts.tutorial.simpleproject.ugly.mvndepproject.Main</mainClass>
                         </manifest>
                     </archive>
                 </configuration>

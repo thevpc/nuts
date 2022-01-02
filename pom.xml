@@ -5,43 +5,19 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>net.thevpc.nuts</groupId>
     <artifactId>nuts-builder</artifactId>
-    <name>net.thevpc.nuts</name>
-    <version>0.8.3.0</version>
+    <name>Nuts Community Build Project</name>
+    <version>0.8.3.0-rc1</version>
     <packaging>pom</packaging>
     <modules>
-        <module>core/nuts</module>
-        <module>core/nuts-runtime</module>
-
-        <module>lib/nlib-ssh</module>
-        <module>ext/next-term</module>
-        <module>toolbox/nsh</module>
+        <module>core</module>
+        <module>lib</module>
+        <module>ext</module>
+        <module>companions</module>
 
         <module>test/nuts-runtime-test</module>
-
-        <module>lib/nlib-talk-agent</module>
-        <module>lib/nlib-md</module>
-        <module>lib/nlib-template</module>
-        <module>lib/nlib-servlet</module>
-        <module>lib/nlib-tomcat-classloader</module>
-
-        <module>toolbox/nserver</module>
-        <module>toolbox/ndiff</module>
-        <module>toolbox/ncode</module>
-        <module>toolbox/ntemplate</module>
-        <module>toolbox/nwork</module>
-        <module>toolbox/njob</module>
-        <module>toolbox/ndoc</module>
-        <module>toolbox/ndocusaurus</module>
-        <module>toolbox/nversion</module>
-        <module>toolbox/ndb</module>
-        <module>toolbox/ntomcat</module>
-        <module>toolbox/nmvn</module>
-        <module>toolbox/ndexer</module>
-        <module>toolbox/noapi</module>
-        <module>toolbox/ntalk-agent</module>
-        <!--##        <module>web-toolbox/nwar</module>-->
-        <!--##<module>toolbox/nuts-clown</module>-->
-        <!--##        <module>nuts-installer</module>-->
+        <module>toolbox</module>
+<!--        <module>web-toolbox</module>-->
+        <module>tutorials</module>
     </modules>
     <properties>
     </properties>

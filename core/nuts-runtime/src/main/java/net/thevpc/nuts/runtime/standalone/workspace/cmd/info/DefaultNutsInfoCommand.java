@@ -353,8 +353,18 @@ public class DefaultNutsInfoCommand extends DefaultFormatBase<NutsInfoCommand> i
         if (session.env().getOsDist() != null) {
             props.put("os-dist", (session.env().getOsDist()));
         }
-        props.put("os-arch", session.env().getArchFamily());
+        props.put("os-arch", session.env().getArch());
+        props.put("os-arch-family", session.env().getArchFamily());
+        props.put("os-desktop", session.env().getDesktopEnvironment());
+        props.put("os-desktops", session.env().getDesktopEnvironments());
+        props.put("os-desktop-family", session.env().getDesktopEnvironmentFamily());
+        props.put("os-desktop-families", session.env().getDesktopEnvironmentFamilies());
+        props.put("os-desktop-path", session.env().getDesktopPath());
+        props.put("os-desktop-integration", session.env().getDesktopIntegrationSupport(NutsDesktopIntegrationItem.DESKTOP));
+        props.put("os-menu-integration", session.env().getDesktopIntegrationSupport(NutsDesktopIntegrationItem.MENU));
+        props.put("os-shortcut-integration", session.env().getDesktopIntegrationSupport(NutsDesktopIntegrationItem.SHORTCUT));
         props.put("os-shell", session.env().getShellFamily());
+        props.put("os-shells", session.env().getShellFamilies());
         props.put("user-name", stringValue(System.getProperty("user.name")));
         props.put("user-home", NutsPath.ofUserHome(session));
         props.put("user-dir", NutsPath.ofUserDirectory(session));

@@ -162,6 +162,11 @@ public class DefaultNutsArgument implements NutsArgument {
     }
 
     @Override
+    public String getStringKey() {
+        return getKey().getString();
+    }
+
+    @Override
     public String getStringValue(String defValue) {
         NutsPrimitiveElement v = getValue();
         if (v != null) {

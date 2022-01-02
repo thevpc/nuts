@@ -1,7 +1,6 @@
 package net.thevpc.nuts.toolbox.ntemplate;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.toolbox.nsh.AbstractJShellBuiltin;
 import net.thevpc.nuts.toolbox.nsh.jshell.*;
 import net.thevpc.nuts.toolbox.ntemplate.filetemplate.ExprEvaluator;
 import net.thevpc.nuts.toolbox.ntemplate.filetemplate.FileTemplater;
@@ -9,11 +8,11 @@ import net.thevpc.nuts.toolbox.ntemplate.filetemplate.ProcessCmd;
 import net.thevpc.nuts.toolbox.ntemplate.filetemplate.TemplateConfig;
 import net.thevpc.nuts.toolbox.ntemplate.filetemplate.util.StringUtils;
 
-import java.io.ByteArrayInputStream;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 
-public class NTemplateMain implements NutsApplication {
+public class NTemplateMain implements NutsApplication, NutsAppCmdProcessor {
+    TemplateConfig config = new TemplateConfig();
+    private FileTemplater fileTemplater;
 
     public static void main(String[] args) {
         NutsApplication.main(NTemplateMain.class, args);
@@ -21,62 +20,57 @@ public class NTemplateMain implements NutsApplication {
 
     @Override
     public void run(NutsApplicationContext appContext) {
-        appContext.processCommandLine(new NutsCommandLineProcessor() {
-            TemplateConfig config = new TemplateConfig();
-            private FileTemplater fileTemplater;
-//            private String mimeType = null;
-
-            @Override
-            public boolean onNextOption(NutsArgument option, NutsCommandLine commandline) {
-                switch (option.getKey().getString()) {
-                    case "-i":
-                    case "--init": {
-                        config.addInitScript(commandline.nextString().getValue().getString());
-                        return true;
-                    }
-                    case "-s":
-                    case "--scriptType": {
-                        config.setScriptType(commandline.nextString().getValue().getString());
-                        return true;
-                    }
-                    case "-t":
-                    case "--to": {
-                        config.setTargetFolder(commandline.nextString().getValue().getString());
-                        return true;
-                    }
-                    case "-p":
-                    case "--project": {
-                        config.setProjectPath(commandline.nextString().getValue().getString());
-                        return true;
-                    }
-
-                }
-                return false;
-            }
-
-            @Override
-            public boolean onNextNonOption(NutsArgument nonOption, NutsCommandLine commandline) {
-                config.addSource(commandline.next().getString());
-                return false;
-            }
-
-            @Override
-            public void onPrepare(NutsCommandLine commandline) {
-                fileTemplater = new NFileTemplater(appContext);
-            }
-
-            @Override
-            public void onExec() {
-                fileTemplater.processProject(config);
-            }
-        });
+        appContext.processCommandLine(this);
     }
 
+    @Override
+    public boolean onCmdNextOption(NutsArgument option, NutsCommandLine commandline, NutsApplicationContext context) {
+        switch (option.getKey().getString()) {
+            case "-i":
+            case "--init": {
+                config.addInitScript(commandline.nextString().getValue().getString());
+                return true;
+            }
+            case "-s":
+            case "--scriptType": {
+                config.setScriptType(commandline.nextString().getValue().getString());
+                return true;
+            }
+            case "-t":
+            case "--to": {
+                config.setTargetFolder(commandline.nextString().getValue().getString());
+                return true;
+            }
+            case "-p":
+            case "--project": {
+                config.setProjectPath(commandline.nextString().getValue().getString());
+                return true;
+            }
+
+        }
+        return false;
+    }
+
+    @Override
+    public boolean onCmdNextNonOption(NutsArgument nonOption, NutsCommandLine commandline, NutsApplicationContext context) {
+        config.addSource(commandline.next().getString());
+        return false;
+    }
+
+    @Override
+    public void onCmdFinishParsing(NutsCommandLine commandline, NutsApplicationContext context) {
+        fileTemplater = new NFileTemplater(context);
+    }
+
+    @Override
+    public void onCmdExec(NutsCommandLine commandline, NutsApplicationContext context) {
+        fileTemplater.processProject(config);
+    }
 
     private static class NshEvaluator implements ExprEvaluator {
-        private NutsApplicationContext appContext;
-        private JShell shell;
-        private FileTemplater fileTemplater;
+        private final NutsApplicationContext appContext;
+        private final JShell shell;
+        private final FileTemplater fileTemplater;
 
         public NshEvaluator(NutsApplicationContext appContext, FileTemplater fileTemplater) {
             this.appContext = appContext;
@@ -114,7 +108,7 @@ public class NTemplateMain implements NutsApplication {
 
         @Override
         public Object eval(String content, FileTemplater context) {
-            JShellContext ctx=shell.createInlineContext(shell.getRootContext(),context.getSourcePath().orElse("nsh"),new String[0]);
+            JShellContext ctx = shell.createInlineContext(shell.getRootContext(), context.getSourcePath().orElse("nsh"), new String[0]);
             NutsSession session = context.getSession().copy();
             session.setTerminal(NutsSessionTerminal.ofMem(session));
             ctx.setSession(session);
@@ -139,4 +133,5 @@ public class NTemplateMain implements NutsApplication {
             executeRegularFile(path, "text/ntemplate-nsh-project");
         }
     }
+
 }

@@ -262,6 +262,22 @@ public interface NutsCommandLine extends Iterable<NutsArgument>, NutsFormattable
      */
     NutsCommandLine required();
 
+
+    /**
+     * throw exception if command line is empty with a formatted message about missing options
+     * @param options missing option names
+     * @return {@code this} instance
+     */
+    NutsCommandLine requiredOptions(String ... options);
+
+    /**
+     * throw exception if command line is empty with a formatted message about missing non options
+     *
+     * @param nonOptions missing non option names
+     * @return {@code this} instance
+     */
+    NutsCommandLine requiredNonOptions(String ... nonOptions);
+
     /**
      * throw exception if command line is empty
      *
@@ -523,14 +539,6 @@ public interface NutsCommandLine extends Iterable<NutsArgument>, NutsFormattable
      * @param message message
      */
     void throwError(NutsMessage message);
-
-    /**
-     * run the processor and fall back to defaultConfigurable
-     *
-     * @param defaultConfigurable default configurable
-     * @param processor           processor
-     */
-    void process(NutsCommandLineConfigurable defaultConfigurable, NutsCommandLineProcessor processor);
 
     /**
      * throw a new command line error

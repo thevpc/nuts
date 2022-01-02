@@ -16,29 +16,26 @@ import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
 public class DefaultNutsApplicationContext implements NutsApplicationContext {
 
     private final Class appClass;
+    private final NutsPath[] folders = new NutsPath[NutsStoreLocation.values().length];
+    private final NutsPath[] sharedFolders = new NutsPath[NutsStoreLocation.values().length];
+    /**
+     * auto complete info for "auto-complete" mode
+     */
+    private final NutsCommandAutoComplete autoComplete;
     private NutsWorkspace workspace;
     private NutsSession session;
-    private NutsPath[] folders = new NutsPath[NutsStoreLocation.values().length];
-    private NutsPath[] sharedFolders = new NutsPath[NutsStoreLocation.values().length];
     private NutsId appId;
     private long startTimeMillis;
     private String[] args;
     private NutsApplicationMode mode = NutsApplicationMode.RUN;
     private NutsAppStoreLocationResolver storeLocationResolver;
-
     /**
      * previous parse for "update" mode
      */
     private NutsVersion appPreviousVersion;
-
-    /**
-     * auto complete info for "auto-complete" mode
-     */
-    private NutsCommandAutoComplete autoComplete;
-
     private String[] modeArgs = new String[0];
 
-//    public DefaultNutsApplicationContext(String[] args, NutsWorkspace workspace, Class appClass, String storeId, long startTimeMillis) {
+    //    public DefaultNutsApplicationContext(String[] args, NutsWorkspace workspace, Class appClass, String storeId, long startTimeMillis) {
 //        this(workspace,
 //                args,
 //                appClass,
@@ -65,7 +62,7 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
         session = this.session;//will be used later
         int wordIndex = -1;
         if (args.length > 0 && args[0].startsWith("--nuts-exec-mode=")) {
-            NutsCommandLine execModeCommand = NutsCommandLine.of(args[0].substring(args[0].indexOf('=') + 1),session);
+            NutsCommandLine execModeCommand = NutsCommandLine.of(args[0].substring(args[0].indexOf('=') + 1), session);
             if (execModeCommand.hasNext()) {
                 NutsArgument a = execModeCommand.next();
                 switch (a.getKey().getString()) {
@@ -93,7 +90,7 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
                     case "update": {
                         mode = NutsApplicationMode.UPDATE;
                         if (execModeCommand.hasNext()) {
-                            appPreviousVersion = NutsVersion.of(execModeCommand.next().getString(),session);
+                            appPreviousVersion = NutsVersion.of(execModeCommand.next().getString(), session);
                         }
                         modeArgs = execModeCommand.toStringArray();
                         execModeCommand.skipAll();
@@ -113,7 +110,7 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
             _appId = NutsIdResolver.of(session).resolveId(appClass);
         }
         if (_appId == null) {
-            throw new NutsExecutionException(session, NutsMessage.cstyle("invalid Nuts Application (%s). Id cannot be resolved",appClass.getName()), 203);
+            throw new NutsExecutionException(session, NutsMessage.cstyle("invalid Nuts Application (%s). Id cannot be resolved", appClass.getName()), 203);
         }
         this.args = (args);
         this.appId = (_appId);
@@ -144,19 +141,9 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
         return mode;
     }
 
-    public NutsApplicationContext setMode(NutsApplicationMode mode) {
-        this.mode = mode;
-        return this;
-    }
-
     @Override
     public String[] getModeArguments() {
         return modeArgs;
-    }
-
-    public NutsApplicationContext setModeArgs(String[] modeArgs) {
-        this.modeArgs = modeArgs;
-        return this;
     }
 
     @Override
@@ -180,12 +167,256 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
         return NutsConfigurableHelper.configure(this, getSession(), skipUnsupported, args, appName);
     }
 
+    @Override
+    public void configureLast(NutsCommandLine commandLine) {
+        if (!configureFirst(commandLine)) {
+            commandLine.unexpectedArgument();
+        }
+    }
+
+    @Override
+    public void printHelp() {
+        String h = NutsWorkspaceExt.of(getWorkspace()).resolveDefaultHelp(getAppClass(), session);
+        if (h == null) {
+            h = "Help is ```error missing```.";
+        }
+        getSession().out().println(h);
+        //need flush if the help is syntactically incorrect
+        getSession().out().flush();
+    }
+
+    @Override
+    public Class getAppClass() {
+        return appClass;
+    }
+
+    @Override
+    public NutsWorkspace getWorkspace() {
+        return workspace;
+    }
+
+    @Override
+    public NutsSession getSession() {
+        return session;
+    }
+
+    @Override
+    public NutsSession createSession() {
+        return getSession().getWorkspace().createSession();
+    }
+
+    @Override
+    public NutsApplicationContext setSession(NutsSession session) {
+        this.session = NutsWorkspaceUtils.bindSession(workspace, session);
+        return this;
+    }
+
+    @Override
+    public NutsPath getAppsFolder() {
+        return getFolder(NutsStoreLocation.APPS);
+    }
+
+    @Override
+    public NutsPath getConfigFolder() {
+        return getFolder(NutsStoreLocation.CONFIG);
+    }
+
+    @Override
+    public NutsPath getLogFolder() {
+        return getFolder(NutsStoreLocation.LOG);
+    }
+
+    @Override
+    public NutsPath getTempFolder() {
+        return getFolder(NutsStoreLocation.TEMP);
+    }
+
+    @Override
+    public NutsPath getVarFolder() {
+        return getFolder(NutsStoreLocation.VAR);
+    }
+
+    @Override
+    public NutsPath getLibFolder() {
+        return getFolder(NutsStoreLocation.LIB);
+    }
+
+    @Override
+    public NutsPath getRunFolder() {
+        return getFolder(NutsStoreLocation.RUN);
+    }
+
+    @Override
+    public NutsPath getCacheFolder() {
+        return getFolder(NutsStoreLocation.CACHE);
+    }
+
+    @Override
+    public NutsPath getVersionFolder(NutsStoreLocation location, String version) {
+        if (version == null
+                || version.isEmpty()
+                || version.equalsIgnoreCase("current")
+                || version.equals(getAppId().getVersion().getValue())) {
+            return getFolder(location);
+        }
+        NutsId newId = this.getAppId().builder().setVersion(version).build();
+        if (storeLocationResolver != null) {
+            NutsPath r = storeLocationResolver.getStoreLocation(newId, location);
+            if (r != null) {
+                return r;
+            }
+        }
+        return session.locations().getStoreLocation(newId, location);
+    }
+
+    @Override
+    public NutsPath getSharedAppsFolder() {
+        return getSharedFolder(NutsStoreLocation.APPS);
+    }
+
+    @Override
+    public NutsPath getSharedConfigFolder() {
+        return getSharedFolder(NutsStoreLocation.CONFIG);
+    }
+
+    @Override
+    public NutsPath getSharedLogFolder() {
+        return getSharedFolder(NutsStoreLocation.LOG);
+    }
+
+    @Override
+    public NutsPath getSharedTempFolder() {
+        return getSharedFolder(NutsStoreLocation.TEMP);
+    }
+
+    @Override
+    public NutsPath getSharedVarFolder() {
+        return getSharedFolder(NutsStoreLocation.VAR);
+    }
+
+    @Override
+    public NutsPath getSharedLibFolder() {
+        return getSharedFolder(NutsStoreLocation.LIB);
+    }
+
+    @Override
+    public NutsPath getSharedRunFolder() {
+        return getSharedFolder(NutsStoreLocation.RUN);
+    }
+
+    @Override
+    public NutsPath getSharedFolder(NutsStoreLocation location) {
+        return sharedFolders[location.ordinal()];
+    }
+
+    @Override
+    public NutsId getAppId() {
+        return appId;
+    }
+
+    @Override
+    public NutsVersion getAppVersion() {
+        return appId == null ? null : appId.getVersion();
+    }
+
+    @Override
+    public String[] getArguments() {
+        return args;
+    }
+
+    @Override
+    public long getStartTimeMillis() {
+        return startTimeMillis;
+    }
+
+    @Override
+    public NutsVersion getAppPreviousVersion() {
+        return appPreviousVersion;
+    }
+
+    @Override
+    public NutsCommandLine getCommandLine() {
+        return NutsCommandLine.of(getArguments(), getSession())
+                .setCommandName(getAppId().getArtifactId())
+                .setAutoComplete(getAutoComplete());
+    }
+
+    @Override
+    public void processCommandLine(NutsAppCmdProcessor commandLineProcessor) {
+        NutsCommandLine cmd = getCommandLine();
+        NutsArgument a;
+        commandLineProcessor.onCmdInitParsing(cmd, this);
+        while (cmd.hasNext()) {
+            a = cmd.peek();
+            boolean consumed;
+            if (a.isOption()) {
+                consumed = commandLineProcessor.onCmdNextOption(a, cmd, this);
+            } else {
+                consumed = commandLineProcessor.onCmdNextNonOption(a, cmd, this);
+            }
+            if (consumed) {
+                NutsArgument next = cmd.peek();
+                //reference equality!
+                if (next == a) {
+                    //was not consumed!
+                    throw new NutsIllegalArgumentException(session,
+                            NutsMessage.cstyle("%s must consume the option: %s",
+                                    (a.isOption() ? "nextOption" : "nextNonOption"),
+                                    a));
+                }
+            } else if (!configureFirst(cmd)) {
+                cmd.unexpectedArgument();
+            }
+        }
+        commandLineProcessor.onCmdFinishParsing(cmd, this);
+
+        // test if application is running in exec mode
+        // (and not in autoComplete mode)
+        if (this.isExecMode()) {
+            //do the good staff here
+            commandLineProcessor.onCmdExec(cmd, this);
+        } else if (this.getAutoComplete() != null) {
+            commandLineProcessor.onCmdAutoComplete(this.getAutoComplete(), this);
+        }
+    }
+
+    @Override
+    public NutsPath getFolder(NutsStoreLocation location) {
+        return folders[location.ordinal()];
+    }
+
+    @Override
+    public boolean isExecMode() {
+        return getAutoComplete() == null;
+    }
+
+    @Override
+    public NutsAppStoreLocationResolver getStoreLocationResolver() {
+        return storeLocationResolver;
+    }
+
+    @Override
+    public NutsApplicationContext setAppVersionStoreLocationSupplier(NutsAppStoreLocationResolver appVersionStoreLocationSupplier) {
+        this.storeLocationResolver = appVersionStoreLocationSupplier;
+        return this;
+    }
+
+    public NutsApplicationContext setMode(NutsApplicationMode mode) {
+        this.mode = mode;
+        return this;
+    }
+
+    public NutsApplicationContext setModeArgs(String[] modeArgs) {
+        this.modeArgs = modeArgs;
+        return this;
+    }
+
     /**
      * configure the current command with the given arguments.
      *
      * @param skipUnsupported when true, all unsupported options are skipped
-     * silently
-     * @param commandLine arguments to configure with
+     *                        silently
+     * @param commandLine     arguments to configure with
      * @return {@code this} instance
      */
     @Override
@@ -247,104 +478,9 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
         return false;
     }
 
-    @Override
-    public void printHelp() {
-        String h = NutsWorkspaceExt.of(getWorkspace()).resolveDefaultHelp(getAppClass(), session);
-        if (h == null) {
-            h = "Help is ```error missing```.";
-        }
-        getSession().out().println(h);
-        //need flush if the help is syntactically incorrect
-        getSession().out().flush();
-    }
-
-    @Override
-    public Class getAppClass() {
-        return appClass;
-    }
-
-    @Override
-    public NutsWorkspace getWorkspace() {
-        return workspace;
-    }
-
     public NutsApplicationContext setWorkspace(NutsWorkspace workspace) {
         this.workspace = workspace;
         return this;
-    }
-
-    @Override
-    public NutsSession getSession() {
-        return session;
-    }
-
-    @Override
-    public NutsApplicationContext setSession(NutsSession session) {
-        this.session = NutsWorkspaceUtils.bindSession(workspace, session);
-        return this;
-    }
-
-    @Override
-    public NutsPath getAppsFolder() {
-        return getFolder(NutsStoreLocation.APPS);
-    }
-
-    @Override
-    public NutsPath getConfigFolder() {
-        return getFolder(NutsStoreLocation.CONFIG);
-    }
-
-    @Override
-    public NutsPath getLogFolder() {
-        return getFolder(NutsStoreLocation.LOG);
-    }
-
-    @Override
-    public NutsPath getTempFolder() {
-        return getFolder(NutsStoreLocation.TEMP);
-    }
-
-    @Override
-    public NutsPath getVarFolder() {
-        return getFolder(NutsStoreLocation.VAR);
-    }
-
-    @Override
-    public NutsPath getLibFolder() {
-        return getFolder(NutsStoreLocation.LIB);
-    }
-
-    @Override
-    public NutsPath getRunFolder() {
-        return getFolder(NutsStoreLocation.RUN);
-    }
-
-    @Override
-    public NutsPath getCacheFolder() {
-        return getFolder(NutsStoreLocation.CACHE);
-    }
-
-    @Override
-    public NutsPath getFolder(NutsStoreLocation location) {
-        return folders[location.ordinal()];
-    }
-
-    @Override
-    public NutsPath getVersionFolder(NutsStoreLocation location, String version) {
-        if (version == null
-                || version.isEmpty()
-                || version.equalsIgnoreCase("current")
-                || version.equals(getAppId().getVersion().getValue())) {
-            return getFolder(location);
-        }
-        NutsId newId = this.getAppId().builder().setVersion(version).build();
-        if (storeLocationResolver != null) {
-            NutsPath r = storeLocationResolver.getStoreLocation(newId, location);
-            if (r != null) {
-                return r;
-            }
-        }
-        return session.locations().getStoreLocation(newId,location);
     }
 
     public NutsApplicationContext setFolder(NutsStoreLocation location, NutsPath folder) {
@@ -357,83 +493,16 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
         return this;
     }
 
-    @Override
-    public NutsPath getSharedAppsFolder() {
-        return getSharedFolder(NutsStoreLocation.APPS);
-    }
-
-    @Override
-    public NutsPath getSharedConfigFolder() {
-        return getSharedFolder(NutsStoreLocation.CONFIG);
-    }
-
-    @Override
-    public NutsPath getSharedLogFolder() {
-        return getSharedFolder(NutsStoreLocation.LOG);
-    }
-
-    @Override
-    public NutsPath getSharedTempFolder() {
-        return getSharedFolder(NutsStoreLocation.TEMP);
-    }
-
-    @Override
-    public NutsPath getSharedVarFolder() {
-        return getSharedFolder(NutsStoreLocation.VAR);
-    }
-
-    @Override
-    public NutsPath getSharedLibFolder() {
-        return getSharedFolder(NutsStoreLocation.LIB);
-    }
-
-    @Override
-    public NutsPath getSharedRunFolder() {
-        return getSharedFolder(NutsStoreLocation.RUN);
-    }
-
-    @Override
-    public NutsPath getSharedFolder(NutsStoreLocation location) {
-        return sharedFolders[location.ordinal()];
-    }
-
-    @Override
-    public NutsId getAppId() {
-        return appId;
-    }
-
-    @Override
-    public NutsVersion getAppVersion() {
-        return appId == null ? null : appId.getVersion();
-    }
-
     //    @Override
     public NutsApplicationContext setAppId(NutsId appId) {
         this.appId = appId;
         return this;
     }
 
-    @Override
-    public String[] getArguments() {
-        return args;
-    }
-
     //    @Override
-    public NutsApplicationContext setArgs(String[] args) {
+    public NutsApplicationContext setArguments(String[] args) {
         this.args = args;
         return this;
-    }
-
-    @Override
-    public NutsCommandLine getCommandLine() {
-        return NutsCommandLine.of(getArguments(),getSession())
-                .setCommandName(getAppId().getArtifactId())
-                .setAutoComplete(getAutoComplete());
-    }
-
-    @Override
-    public long getStartTimeMillis() {
-        return startTimeMillis;
     }
 
     public NutsApplicationContext setStartTimeMillis(long startTimeMillis) {
@@ -441,39 +510,17 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
         return this;
     }
 
-    @Override
-    public NutsVersion getAppPreviousVersion() {
-        return appPreviousVersion;
-    }
-
     public NutsApplicationContext setAppPreviousVersion(NutsVersion previousVersion) {
         this.appPreviousVersion = previousVersion;
         return this;
     }
 
-    @Override
-    public boolean isExecMode() {
-        return getAutoComplete() == null;
-    }
-
-    @Override
-    public void processCommandLine(NutsCommandLineProcessor commandLineProcessor) {
-        getCommandLine().process(this, commandLineProcessor);
-    }
-
-    @Override
-    public void configureLast(NutsCommandLine commandLine) {
-        if (!configureFirst(commandLine)) {
-            commandLine.unexpectedArgument();
-        }
-    }
-
     private static class AppCommandAutoComplete extends NutsCommandAutoCompleteBase {
 
         private final ArrayList<String> words;
-        private int wordIndex;
         private final NutsPrintStream out0;
         private final NutsSession session;
+        private final int wordIndex;
 
         public AppCommandAutoComplete(NutsSession session, String[] args, int wordIndex, NutsPrintStream out0) {
             this.session = session;
@@ -485,6 +532,21 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
         @Override
         public NutsSession getSession() {
             return session;
+        }
+
+        @Override
+        public String getLine() {
+            return new DefaultNutsCommandLine(getSession()).setArguments(getWords()).toString();
+        }
+
+        @Override
+        public List<String> getWords() {
+            return words;
+        }
+
+        @Override
+        public int getCurrentWordIndex() {
+            return wordIndex;
         }
 
         @Override
@@ -502,31 +564,5 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
             }
             return c;
         }
-
-        @Override
-        public String getLine() {
-            return new DefaultNutsCommandLine(getSession()).setArguments(getWords()).toString();
-        }
-
-        @Override
-        public List<String> getWords() {
-            return words;
-        }
-
-        @Override
-        public int getCurrentWordIndex() {
-            return wordIndex;
-        }
-    }
-
-    @Override
-    public NutsAppStoreLocationResolver getStoreLocationResolver() {
-        return storeLocationResolver;
-    }
-
-    @Override
-    public NutsApplicationContext setAppVersionStoreLocationSupplier(NutsAppStoreLocationResolver appVersionStoreLocationSupplier) {
-        this.storeLocationResolver = appVersionStoreLocationSupplier;
-        return this;
     }
 }

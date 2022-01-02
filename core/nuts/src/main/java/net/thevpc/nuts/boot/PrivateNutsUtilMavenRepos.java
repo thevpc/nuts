@@ -183,7 +183,7 @@ public final class PrivateNutsUtilMavenRepos {
     public static File resolveOrDownloadJar(NutsBootId nutsId, NutsRepositoryLocation[] repositories, NutsRepositoryLocation cacheFolder, PrivateNutsBootLog bLog, boolean includeDesc, Instant expire, PrivateNutsErrorInfoList errors) {
         File cachedJarFile = new File(resolveMavenFullPath(cacheFolder, nutsId, "jar"));
         if (cachedJarFile.isFile()) {
-            if (PrivateNutsUtils.isFileAccessible(cachedJarFile.toPath(), expire, bLog)) {
+            if (PrivateNutsUtilIO.isFileAccessible(cachedJarFile.toPath(), expire, bLog)) {
                 return cachedJarFile;
             }
         }
@@ -649,7 +649,7 @@ public final class PrivateNutsUtilMavenRepos {
         if (useCache && cacheFolder != null) {
 
             File f = new File(cacheFolder.getLocation(), path.replace('/', File.separatorChar));
-            if (PrivateNutsUtils.isFileAccessible(f.toPath(), expire, bLog)) {
+            if (PrivateNutsUtilIO.isFileAccessible(f.toPath(), expire, bLog)) {
                 return f;
             }
         }

@@ -29,6 +29,7 @@ package net.thevpc.nuts;
 import net.thevpc.nuts.boot.NutsApiUtils;
 
 public enum NutsDesktopEnvironmentFamily implements NutsEnum {
+    HEADLESS,
     WINDOWS_SHELL,
     MACOS_AQUA,
     KDE,

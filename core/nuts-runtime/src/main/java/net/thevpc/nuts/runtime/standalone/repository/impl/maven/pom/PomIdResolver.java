@@ -91,6 +91,14 @@ public class PomIdResolver {
                     .level(Level.FINEST)
                     .log(NutsMessage.cstyle("failed to parse class %s : %s", clazz.getName(), ex));
         }
+        if(all.isEmpty() && clazz.getSimpleName().contains("$$EnhancerBySpringCGLIB$$")
+                ||clazz.getSimpleName().contains("$$CGLIB$$")
+                ){
+            Class s = clazz.getSuperclass();
+            if(s!=null){
+                return resolvePomIds(s);
+            }
+        }
         return all.toArray(new PomId[0]);
     }
 

@@ -25,6 +25,9 @@ https://github.com/thevpc/nuts (git repo)
 https://thevpc.github.io/nuts  (website)
 
 [.text-center]
+nuts.packagemanager@gmail.com
+
+[.text-center]
 thevpc, 2021-12-18
 
 :toc:
@@ -103,6 +106,7 @@ private static final Logger LOG = LoggerFactory.getLogger(Main.class);
     </dependency></dependencies>
 </project>
 ```
+
 <<<
 
 === Example
@@ -117,10 +121,22 @@ image::images/java-error.png[]
 
 === Alternatives for deployment
 
+* Java Web Start
 * System PM / Installers
 * Portable Installers
 * Custom Deployments
 * Build time Processors (Fat Jars)
+
+<<<
+
+=== Java Web start
+
+* Run Remote App using `jnlp` file (with all of it dependencies)
+* Special packaging
+* Execution Sandbox
+* Deprecated!! since Java9
+* No Shared Dependencies / Centralize Dep Mgt
+* What about `trivrost`, `OpenJNLP` ?
 
 <<<
 
@@ -352,7 +368,7 @@ Is Not:
 * Install for Preview/Evaluation, most `recent`
 
 ```sh
-$ wget https://thevpc.net/nuts.jar -o nuts.jar
+$ wget https://thevpc.net/nuts-preview.jar -o nuts.jar
 $ java -jar nuts.jar -Zy -r=+dev
 $ exit
 ```
@@ -461,3 +477,5 @@ https://github.com/thevpc/nuts (git repo)
 [.text-center]
 https://thevpc.github.io/nuts  (website)
 
+[.text-center]
+nuts.packagemanager@gmail.com

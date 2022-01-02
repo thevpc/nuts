@@ -4,9 +4,9 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>net.thevpc.nuts.toolbox</groupId>
     <artifactId>nwork</artifactId>
-    <version>0.8.3.0</version>
+    <version>0.8.3.0-rc1</version>
     <packaging>jar</packaging>
-    <name>net.thevpc.nuts.toolbox.nwork</name>
+    <name>Nuts Community Toolbox NWork</name>
     <url>https://github.com/thevpc/nuts</url>
     <description>Nuts Development Toolbox Command</description>
     <properties>
@@ -63,12 +63,12 @@
         <dependency>
             <groupId>net.thevpc.nuts</groupId>
             <artifactId>nuts</artifactId>
-            <version>0.8.3</version>
+            <version>0.8.3-rc1</version>
         </dependency>
         <dependency>
             <groupId>net.thevpc.nuts.toolbox</groupId>
             <artifactId>ndiff</artifactId>
-            <version>0.8.3.0</version>
+            <version>0.8.3.0-rc1</version>
         </dependency>
     </dependencies>
     <distributionManagement>

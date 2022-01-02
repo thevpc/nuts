@@ -44,7 +44,7 @@ Please that nuts rolling version (which is the most recent version) is quite sta
 First you need to download nuts.jar
 
 ```
-wget http://thevpc.net/nuts.jar -O nuts.jar
+wget http://thevpc.net/nuts-preview.jar -O nuts.jar
 ```
 
 Then you must run, in a terminal, the following command.

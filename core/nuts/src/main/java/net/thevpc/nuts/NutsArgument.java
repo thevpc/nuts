@@ -73,6 +73,8 @@ public interface NutsArgument {
 
     String getStringValue();
 
+    String getStringKey();
+
     String getStringValue(String defValue);
 
     /**

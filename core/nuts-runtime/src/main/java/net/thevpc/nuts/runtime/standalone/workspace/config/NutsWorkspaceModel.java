@@ -13,6 +13,11 @@ import net.thevpc.nuts.runtime.standalone.extension.DefaultNutsWorkspaceExtensio
 import net.thevpc.nuts.runtime.standalone.repository.config.DefaultNutsRepositoryModel;
 import net.thevpc.nuts.runtime.standalone.repository.impl.main.DefaultNutsInstalledRepository;
 import net.thevpc.nuts.runtime.standalone.security.DefaultNutsWorkspaceSecurityModel;
+import net.thevpc.nuts.runtime.standalone.workspace.cmd.recom.SafeRecommendationConnector;
+import net.thevpc.nuts.runtime.standalone.workspace.cmd.recom.SimpleRecommendationConnector;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class NutsWorkspaceModel {
     public NutsWorkspace ws;
@@ -39,6 +44,8 @@ public class NutsWorkspaceModel {
     public DefaultCustomCommandsModel aliasesModel;
     public DefaultImportModel importModel;
     public String apiDigest;
+    public SafeRecommendationConnector recomm =new SafeRecommendationConnector(new SimpleRecommendationConnector());
+    public List<String> recommendedCompanions=new ArrayList<>();
 
     public NutsWorkspaceModel(NutsWorkspace ws) {
         this.ws = ws;

@@ -408,6 +408,10 @@ public class CoreNutsUtils {
 
     public static int getApiVersionOrdinalNumber(String s) {
         try {
+            int qualifierIndex = s.indexOf('-');
+            if(qualifierIndex>=0){
+                s=s.substring(0,qualifierIndex);
+            }
             int a = 0;
             for (String part : s.split("\\.")) {
                 a = a * 100 + CoreNumberUtils.convertToInteger(part, 0);

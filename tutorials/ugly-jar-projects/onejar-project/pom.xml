@@ -33,7 +33,7 @@
                 <executions>
                     <execution>
                         <configuration>
-                            <mainClass>net.thevpc.nuts.doc.onejarproject.Main</mainClass>
+                            <mainClass>net.thevpc.nuts.tutorial.simpleproject.ugly.onejarproject.Main</mainClass>
                             <attachToBuild>true</attachToBuild>
                             <!-- https://code.google.com/p/onejar-maven-plugin/issues/detail?id=8 -->
                             <!--classifier>onejar</classifier-->

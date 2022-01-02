@@ -4,9 +4,9 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>net.thevpc.nuts.toolbox</groupId>
     <artifactId>nversion</artifactId>
-    <version>0.8.3.0</version>
+    <version>0.8.3.0-rc1</version>
     <packaging>jar</packaging>
-    <name>net.thevpc.nuts.toolbox.nversion</name>
+    <name>Nuts Community Toolbox NVersion</name>
     <url>https://github.com/thevpc/nuts</url>
     <description>File Version Parser Command</description>
     <properties>
@@ -63,7 +63,7 @@
         <dependency>
             <groupId>net.thevpc.nuts</groupId>
             <artifactId>nuts</artifactId>
-            <version>0.8.3</version>
+            <version>0.8.3-rc1</version>
         </dependency>
         <dependency>
             <groupId>org.whitesource</groupId>

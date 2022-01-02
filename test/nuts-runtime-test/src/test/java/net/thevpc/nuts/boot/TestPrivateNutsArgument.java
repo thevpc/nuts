@@ -112,7 +112,7 @@ public class TestPrivateNutsArgument {
     @Test
     public void test09() {
         PrivateNutsArgument a = new PrivateNutsArgument("", '=');
-        Assertions.assertTrue(a.isNonOption());
+        Assertions.assertTrue(!a.isOption());
         Assertions.assertTrue(a.isActive());
         Assertions.assertFalse(a.isNegated());
         Assertions.assertEquals("", a.getKey().getString());
@@ -125,7 +125,7 @@ public class TestPrivateNutsArgument {
     @Test
     public void test10() {
         PrivateNutsArgument a = new PrivateNutsArgument("c=/a", '=');
-        Assertions.assertTrue(a.isNonOption());
+        Assertions.assertTrue(!a.isOption());
         Assertions.assertTrue(a.isActive());
         Assertions.assertFalse(a.isNegated());
         Assertions.assertEquals("c", a.getKey().getString());
@@ -138,7 +138,7 @@ public class TestPrivateNutsArgument {
     @Test
     public void test11() {
         PrivateNutsArgument a = new PrivateNutsArgument("c", '=');
-        Assertions.assertTrue(a.isNonOption());
+        Assertions.assertTrue(!a.isOption());
         Assertions.assertTrue(a.isActive());
         Assertions.assertFalse(a.isNegated());
         Assertions.assertEquals("c", a.getKey().getString());
@@ -151,7 +151,7 @@ public class TestPrivateNutsArgument {
     @Test
     public void test12() {
         PrivateNutsArgument a = new PrivateNutsArgument("!//c=30", '=');
-        Assertions.assertTrue(a.isNonOption());
+        Assertions.assertTrue(!a.isOption());
         Assertions.assertTrue(a.isActive());
         Assertions.assertFalse(a.isNegated());
         Assertions.assertEquals("!//c=30", a.getKey().getString());
@@ -164,7 +164,7 @@ public class TestPrivateNutsArgument {
     @Test
     public void test13() {
         PrivateNutsArgument a = new PrivateNutsArgument("!", '=');
-        Assertions.assertTrue(a.isNonOption());
+        Assertions.assertTrue(!a.isOption());
         Assertions.assertTrue(a.isActive());
         Assertions.assertFalse(a.isNegated());
         Assertions.assertEquals("!", a.getKey().getString());
@@ -177,7 +177,7 @@ public class TestPrivateNutsArgument {
     @Test
     public void test14() {
         PrivateNutsArgument a = new PrivateNutsArgument("", '=');
-        Assertions.assertTrue(a.isNonOption());
+        Assertions.assertTrue(!a.isOption());
         Assertions.assertTrue(a.isActive());
         Assertions.assertFalse(a.isNegated());
         Assertions.assertEquals("", a.getKey().getString());

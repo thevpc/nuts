@@ -40,6 +40,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.nio.file.attribute.FileTime;
+import java.time.Instant;
 import java.util.Properties;
 import java.util.function.Function;
 import java.util.logging.Level;
@@ -119,7 +121,7 @@ public class PrivateNutsUtilIO {
                         props.load(inputStream);
                         if (cacheFile != null) {
                             boolean copy = true;
-                            //dont override self!
+                            //do not override self!
                             if (urlFile != null) {
                                 if (getAbsolutePath(urlFile.getPath()).equals(getAbsolutePath(cacheFile.getPath()))) {
                                     copy = false;
@@ -276,7 +278,7 @@ public class PrivateNutsUtilIO {
 
     static File createFile(String parent, String child) {
         String userHome = System.getProperty("user.home");
-        if (child.startsWith("~/")) {
+        if (child.startsWith("~/")|| child.startsWith("~\\")) {
             child = new File(userHome, child.substring(2)).getPath();
         }
         if ((child.startsWith("/") || child.startsWith("\\") || new File(child).isAbsolute())) {
@@ -307,5 +309,22 @@ public class PrivateNutsUtilIO {
             return path;
         }
         return base + File.separator + path;
+    }
+
+    public static boolean isFileAccessible(Path path, Instant expireTime, PrivateNutsBootLog bLog) {
+        boolean proceed = Files.isRegularFile(path);
+        if (proceed) {
+            try {
+                if (expireTime != null) {
+                    FileTime lastModifiedTime = Files.getLastModifiedTime(path);
+                    if (lastModifiedTime.toInstant().compareTo(expireTime) < 0) {
+                        return false;
+                    }
+                }
+            } catch (Exception ex0) {
+                bLog.log(Level.FINEST, NutsLogVerb.FAIL, NutsMessage.jstyle("unable to get LastModifiedTime for file : {0}", path.toString(), ex0.toString()));
+            }
+        }
+        return proceed;
     }
 }

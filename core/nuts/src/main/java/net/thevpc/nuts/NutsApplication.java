@@ -90,7 +90,7 @@ package net.thevpc.nuts;
  *
  *         &#64;Override
  *         public void run(NutsApplicationContext applicationContext) {
- *             applicationContext.processCommandLine(new NutsCommandLineProcessor() {
+ *             applicationContext.processCommandLine(new NutsAppCmdProcessor() {
  *                 HLCWithOptions hl = new HL().withOptions();
  *                 boolean noMoreOptions=false;
  *                 &#64;Override

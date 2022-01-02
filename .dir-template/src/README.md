@@ -36,15 +36,15 @@ It should show a result in the format : nuts-api-version/nuts-impl-version
 ${{apiVersion}}/${{implVersion}}
 ```
 
-## Installing Nuts (Development, recommended for testing)
+## Installing Nuts Preview (Development, recommended for testing)
 
 If you want to install (or update from existing rolling version) you just need to do the following.
 Please that nuts rolling version (which is the most recent version) is quite stable and you can use it for personal usage, for development or for testing but we recommend you consider official versions for production systems.
 
-First you need to download nuts.jar
+First you need to download nuts-preview.jar
 
 ```
-wget http://thevpc.net/nuts.jar -O nuts.jar
+wget http://thevpc.net/nuts-preview.jar -O nuts.jar
 ```
 
 Then you must run, in a terminal, the following command.
@@ -62,7 +62,7 @@ The following command should show you the actual version
 
 The very same procedure applies whether you already have an existing version of nuts installed or not.
 
-First you need to download nuts.jar
+First you need to download nuts-stable.jar
 
 ```
 wget wget https://repo1.maven.org/maven2/net/thevpc/nuts/nuts/${{stableApiVersion}}/nuts-${{stableApiVersion}}.jar -O nuts.jar

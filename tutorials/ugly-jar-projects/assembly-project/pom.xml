@@ -38,7 +38,7 @@
                         <configuration>
                             <archive>
                                 <manifest>
-                                    <mainClass>net.thevpc.nuts.doc.mvnassproject.Main</mainClass>
+                                    <mainClass>net.thevpc.nuts.tutorial.simpleproject.ugly.mvnassemblyproject.Main</mainClass>
                                 </manifest>
                             </archive>
                             <descriptorRefs>

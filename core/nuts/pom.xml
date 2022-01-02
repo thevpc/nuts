@@ -4,9 +4,9 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>net.thevpc.nuts</groupId>
     <artifactId>nuts</artifactId>
-    <version>0.8.3</version>
+    <version>0.8.3-rc1</version>
     <packaging>jar</packaging>
-    <name>Nuts Package Manager</name>
+    <name>Nuts Community Package Manager</name>
     <url>https://github.com/thevpc/nuts</url>
     <description>Nuts Package Manager Bootstrap</description>
     <properties>

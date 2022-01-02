@@ -129,6 +129,13 @@ public interface NutsApplicationContext extends NutsCommandLineConfigurable {
     NutsSession getSession();
 
     /**
+     * create a new session
+     *
+     * @return create a new session
+     */
+    NutsSession createSession();
+
+    /**
      * update session
      *
      * @param session new session
@@ -262,37 +269,50 @@ public interface NutsApplicationContext extends NutsCommandLineConfigurable {
      * create new NutsCommandLine and consume it with the given processor.
      * This method is equivalent to the following code
      * <pre>
-     *         NutsCommandLine cmdLine=getCommandLine();
+     *         NutsCommandLine cmd = getCommandLine();
      *         NutsArgument a;
-     *         while (cmdLine.hasNext()) {
-     *             if (!this.configureFirst(cmdLine)) {
-     *                 a = cmdLine.peek();
-     *                 if(a.isOption()){
-     *                     if(!commandLineProcessor.processOption(a,cmdLine)){
-     *                         cmdLine.unexpectedArgument();
-     *                     }
-     *                 }else{
-     *                     if(!commandLineProcessor.processNonOption(a,cmdLine)){
-     *                         cmdLine.unexpectedArgument();
-     *                     }
+     *         commandLineProcessor.onCmdInitParsing(cmd, this);
+     *         while (cmd.hasNext()) {
+     *             a = cmd.peek();
+     *             boolean consumed;
+     *             if (a.isOption()) {
+     *                 consumed = commandLineProcessor.onCmdNextOption(a, cmd, this);
+     *             } else {
+     *                 consumed = commandLineProcessor.onCmdNextNonOption(a, cmd, this);
+     *             }
+     *             if (consumed) {
+     *                 NutsArgument next = cmd.peek();
+     *                 //reference equality!
+     *                 if (next == a) {
+     *                     //was not consumed!
+     *                     throw new NutsIllegalArgumentException(session,
+     *                             NutsMessage.cstyle("%s must consume the option: %s",
+     *                                     (a.isOption() ? "nextOption" : "nextNonOption"),
+     *                                     a));
      *                 }
+     *             } else if (!configureFirst(cmd)) {
+     *                 cmd.unexpectedArgument();
      *             }
      *         }
+     *         commandLineProcessor.onCmdFinishParsing(cmd, this);
+     *
      *         // test if application is running in exec mode
      *         // (and not in autoComplete mode)
-     *         if (cmdLine.isExecMode()) {
+     *         if (this.isExecMode()) {
      *             //do the good staff here
-     *             commandLineProcessor.exec();
+     *             commandLineProcessor.onCmdExec(cmd, this);
+     *         } else if (this.getAutoComplete() != null) {
+     *             commandLineProcessor.onCmdAutoComplete(this.getAutoComplete(), this);
      *         }
      * </pre>
      * <p>
-     * This as an example of its usage
+     * This is an example of its usage
      * <pre>
-     *     applicationContext.processCommandLine(new NutsCommandLineProcessor() {
+     *     applicationContext.processCommandLine(new NutsAppCmdProcessor() {
      *             HLCWithOptions hl = new HL().withOptions();
      *             boolean noMoreOptions=false;
      *             &#64;Override
-     *             public boolean processOption(NutsArgument argument, NutsCommandLine cmdLine) {
+     *             public boolean onCmdNextOption(NutsArgument argument, NutsCommandLine cmdLine, NutsApplicationContext context) {
      *                 if(!noMoreOptions){
      *                     return false;
      *                 }
@@ -316,7 +336,7 @@ public interface NutsApplicationContext extends NutsCommandLineConfigurable {
      *             }
      *
      *             &#64;Override
-     *             public boolean processNonOption(NutsArgument argument, NutsCommandLine cmdLine) {
+     *             public boolean onCmdNextNonOption(NutsArgument argument, NutsCommandLine cmdLine, NutsApplicationContext context) {
      *                 String s = argument.getString();
      *                 if(isURL(s)){
      *                     hl.includeFileURL(s);
@@ -336,7 +356,7 @@ public interface NutsApplicationContext extends NutsCommandLineConfigurable {
      *             }
      *
      *             &#64;Override
-     *             public void exec() {
+     *             public void onCmdExec(NutsCommandLine cmdLine, NutsApplicationContext context) {
      *                 hl.compile();
      *             }
      *         });
@@ -346,7 +366,7 @@ public interface NutsApplicationContext extends NutsCommandLineConfigurable {
      * @throws NullPointerException if the commandLineProcessor is null
      * @since 0.7.0
      */
-    void processCommandLine(NutsCommandLineProcessor commandLineProcessor);
+    void processCommandLine(NutsAppCmdProcessor commandLineProcessor);
 
     /**
      * application store folder path for the given {@code location}

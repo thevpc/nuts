@@ -33,7 +33,7 @@ public class DefaultNutsStreams implements NutsStreams {
         if (str == null) {
             return new NutsEmptyStream<T>(getSession(), name);
         }
-        return createStream((Iterable<T>) Arrays.asList(descr),descr);
+        return createStream((Iterable<T>) Arrays.asList(str),descr);
     }
 
     @Override

@@ -62,6 +62,9 @@ public class NutsVersionCompat507 extends AbstractNutsVersionCompat {
         NutsWorkspaceConfigMain507 c = bytes==null?null:NutsElements.of(session)
                 .setSession(session)
                 .json().parse(bytes, NutsWorkspaceConfigMain507.class);
+        if(c==null){
+            return null;
+        }
         NutsWorkspaceConfigMain m=new NutsWorkspaceConfigMain();
         m.setEnv(c.getEnv());
         m.setCommandFactories(c.getCommandFactories());

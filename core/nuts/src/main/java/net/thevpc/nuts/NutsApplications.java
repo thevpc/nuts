@@ -147,19 +147,23 @@ public final class NutsApplications {
 
     /**
      * run application with given life cycle.
-     *  @param applicationInstance application
+     *
+     * @param applicationInstance application
      * @param session             session
      * @param args                application arguments
      */
     public static void runApplication(NutsApplication applicationInstance, NutsSession session, String[] args) {
-        NutsApplicationContext applicationContext = createApplicationContext(applicationInstance, args, session);
-        session = applicationContext.getSession();
+        runApplication(applicationInstance, createApplicationContext(applicationInstance, args, session));
+    }
+
+    public static void runApplication(NutsApplication applicationInstance, NutsApplicationContext applicationContext) {
+        NutsSession session = applicationContext.getSession();
         boolean inherited = session.boot().getBootOptions().isInherited();
         NutsLogger.of(NutsApplications.class, session).with().level(Level.FINE).verb(NutsLogVerb.START)
                 .log(
                         NutsMessage.jstyle(
                                 "running application {0}: {1} {2}", inherited ? "(inherited)" : "",
-                                applicationInstance.getClass().getName(), NutsCommandLine.of(args, session)
+                                applicationInstance.getClass().getName(), applicationContext.getCommandLine()
                         )
                 );
         switch (applicationContext.getMode()) {

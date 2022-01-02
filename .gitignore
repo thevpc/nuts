@@ -48,6 +48,8 @@
 /toolbox/nserver/target/
 /toolbox/nsh/nsh.iml
 /toolbox/nsh/target/
+/companions/nsh/nsh.iml
+/companions/nsh/target/
 /toolbox/nsh/runtime
 /toolbox/ntalk-agent/target/
 /toolbox/ntasks/target/
@@ -110,3 +112,4 @@
 /tutorials/ugly-jar-projects/onejar-project/target/
 /tutorials/ugly-jar-projects/shade-project/target/
 /tutorials/ugly-jar-projects/springboot-project/target/
+/tutorials/simple-project/target/

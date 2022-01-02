@@ -222,7 +222,7 @@ public class DefaultNutsWorkspaceEnvManagerModel {
     protected NutsId[] getDesktopEnvironments0(NutsSession session) {
         if (!isGraphicalDesktopEnvironment()) {
             return new NutsId[]{
-                    NutsIdBuilder.of(session).setArtifactId(NutsDesktopEnvironmentFamily.WINDOWS_SHELL.id()).build()
+                    NutsIdBuilder.of(session).setArtifactId(NutsDesktopEnvironmentFamily.HEADLESS.id()).build()
             };
         }
         switch (session.env().getOsFamily()) {
@@ -280,10 +280,15 @@ public class DefaultNutsWorkspaceEnvManagerModel {
         }
         boolean unknown = false;
         boolean none = false;
+        boolean headless = false;
         for (NutsDesktopEnvironmentFamily f : all) {
             switch (f) {
                 case UNKNOWN: {
                     unknown = true;
+                    break;
+                }
+                case HEADLESS: {
+                    headless = true;
                     break;
                 }
                 case NONE: {
@@ -295,8 +300,14 @@ public class DefaultNutsWorkspaceEnvManagerModel {
                 }
             }
         }
+        if (headless) {
+            return NutsDesktopEnvironmentFamily.HEADLESS;
+        }
         if (none) {
             return NutsDesktopEnvironmentFamily.NONE;
+        }
+        if (unknown) {
+            return NutsDesktopEnvironmentFamily.UNKNOWN;
         }
         return NutsDesktopEnvironmentFamily.UNKNOWN;
     }

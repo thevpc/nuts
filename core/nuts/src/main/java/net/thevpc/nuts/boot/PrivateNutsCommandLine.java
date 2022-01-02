@@ -407,7 +407,7 @@ final class PrivateNutsCommandLine  {
 
     
     public PrivateNutsCommandLine requireNonOption() {
-        if (!hasNext() || !peek().isNonOption()) {
+        if (!hasNext() || peek().isOption()) {
             throwError(NutsMessage.formatted("expected value"));
         }
         return this;
@@ -735,7 +735,7 @@ final class PrivateNutsCommandLine  {
     
     public boolean isNonOption(int index) {
         PrivateNutsArgument x = get(index);
-        return x != null && x.isNonOption();
+        return x != null && !x.isOption();
     }
 
     

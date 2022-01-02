@@ -27,6 +27,7 @@ package net.thevpc.nuts.core.test;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.core.test.utils.TestUtils;
+import net.thevpc.nuts.runtime.standalone.version.DefaultNutsVersion;
 import net.thevpc.nuts.runtime.standalone.version.filter.DefaultNutsVersionFilter;
 import org.junit.jupiter.api.*;
 
@@ -43,45 +44,45 @@ public class Test20_VersionTest {
 
     @Test
     public void test1() {
-        check("1.0", "[1.0]", session);
+        checkEq("1.0", "[1.0]", session);
     }
 
     @Test
     public void test2() {
-        check("[1.0]", "[1.0]", session);
+        checkEq("[1.0]", "[1.0]", session);
     }
 
     @Test
     public void test3() {
-        check("[1.0,[", "[1.0,[", session);
+        checkEq("[1.0,[", "[1.0,[", session);
     }
 
     @Test
     public void test4() {
-        check("[1.0[", "[1.0,1.0[", session);
+        checkEq("[1.0[", "[1.0,1.0[", session);
     }
 
     @Test
     public void test5() {
-        check("]1.0[", "]1.0,1.0[", session);
+        checkEq("]1.0[", "]1.0,1.0[", session);
     }
 
     @Test
     public void test6() {
-        check("[,1.0[", "],1.0[", session);
+        checkEq("[,1.0[", "],1.0[", session);
     }
 
     @Test
     public void test7() {
-        check("[,[", "],[", session);
+        checkEq("[,[", "],[", session);
     }
 
     @Test
     public void test8() {
-        check("[1,2[  ,  [1,3]", "[1,2[, [1,3]", session);
+        checkEq("[1,2[  ,  [1,3]", "[1,2[, [1,3]", session);
     }
 
-    private void check(String a, String b, NutsSession session) {
+    private void checkEq(String a, String b, NutsSession session) {
         NutsVersionFilter u = DefaultNutsVersionFilter.parse(a, session);
         String b2 = u.toString();
         Assertions.assertEquals(b, b2);
@@ -93,5 +94,30 @@ public class Test20_VersionTest {
         String value = NutsVersion.of("", session).inc(-1).getValue();
         TestUtils.println(value);
         Assertions.assertEquals("1", value);
+    }
+
+    @Test
+    public void test10() {
+        NutsVersion v1 = NutsVersion.of("1.2-preview", session);
+        NutsVersion v2 = NutsVersion.of("1.2", session);
+        Assertions.assertTrue(v1.compareTo(v2)<0);
+    }
+
+    @Test
+    public void test11() {
+        NutsVersion v1 = NutsVersion.of("1.2-preview", session);
+        NutsVersion v2 = NutsVersion.of("1.2.1", session);
+        Assertions.assertTrue(v1.compareTo(v2)<0);
+    }
+
+    @Test
+    public void test12() {
+        Assertions.assertTrue(DefaultNutsVersion.compareVersions("1.2-preview","1.2.1")<0);
+        Assertions.assertTrue(DefaultNutsVersion.compareVersions("1.2","1.2.1")<0);
+        Assertions.assertTrue(DefaultNutsVersion.compareVersions("1.2-preview","1.2-rc")>0);
+        Assertions.assertTrue(DefaultNutsVersion.compareVersions("1.2-alpha","1.2-beta")<0);
+        Assertions.assertTrue(DefaultNutsVersion.compareVersions("1.2-rc","1.2-ga")<0);
+        Assertions.assertTrue(DefaultNutsVersion.compareVersions("1.2-gamma","1.2-Gamma")==0);
+        Assertions.assertTrue(DefaultNutsVersion.compareVersions("1.2-gamma","1.2-hecta")<0);
     }
 }

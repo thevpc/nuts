@@ -27,5 +27,6 @@ package net.thevpc.nuts;
  * @author thevpc
  */
 public interface NutsElementBuilder {
-
+    NutsElementType type();
+    NutsElement build();
 }

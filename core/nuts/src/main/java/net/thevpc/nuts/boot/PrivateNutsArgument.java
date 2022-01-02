@@ -146,9 +146,9 @@ final class PrivateNutsArgument {
     }
 
     
-    public boolean isNonOption() {
-        return !isOption();
-    }
+//    public boolean isNonOption() {
+//        return !isOption();
+//    }
 
     
     public String getString() {
@@ -171,17 +171,17 @@ final class PrivateNutsArgument {
     }
 
     
-    public boolean isInactive() {
-        return !active;
-    }
+//    public boolean isInactive() {
+//        return !active;
+//    }
 
     
-    public PrivateNutsArgument required() {
-        if (expression == null) {
-            throw new NoSuchElementException("missing value");
-        }
-        return this;
-    }
+//    public PrivateNutsArgument required() {
+//        if (expression == null) {
+//            throw new NoSuchElementException("missing value");
+//        }
+//        return this;
+//    }
 
     
     public boolean isKeyValue() {
@@ -229,9 +229,9 @@ final class PrivateNutsArgument {
     }
 
     
-    public PrivateNutsBootVal getAll() {
-        return new PrivateNutsBootVal(expression);
-    }
+//    public PrivateNutsBootVal getAll() {
+//        return new PrivateNutsBootVal(expression);
+//    }
 
     public boolean isNull() {
         return expression == null;

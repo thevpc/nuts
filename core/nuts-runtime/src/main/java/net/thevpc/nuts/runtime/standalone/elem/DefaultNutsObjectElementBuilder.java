@@ -37,7 +37,7 @@ public class DefaultNutsObjectElementBuilder implements NutsObjectElementBuilder
 
     private final Map<NutsElement, NutsElement> values = new LinkedHashMap<NutsElement, NutsElement>();
 
-    private NutsSession session;
+    private transient NutsSession session;
 
     public DefaultNutsObjectElementBuilder(NutsSession session) {
         if(session==null){
@@ -248,5 +248,10 @@ public class DefaultNutsObjectElementBuilder implements NutsObjectElementBuilder
 
     private NutsElements _elements() {
         return NutsElements.of(session).setSession(session);
+    }
+
+    @Override
+    public NutsElementType type() {
+        return NutsElementType.OBJECT;
     }
 }

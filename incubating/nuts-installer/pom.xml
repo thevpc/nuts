@@ -6,7 +6,7 @@
 
     <groupId>net.thevpc.nuts</groupId>
     <artifactId>nuts-installer</artifactId>
-    <version>0.8.3</version>
+    <version>0.8.3-rc1</version>
     <name>net.thevpc.nuts.nuts-installer</name>
     <packaging>jar</packaging>
     <description>

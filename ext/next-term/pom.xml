@@ -4,9 +4,9 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>net.thevpc.nuts.ext</groupId>
     <artifactId>next-term</artifactId>
-    <version>0.8.3.0</version>
+    <version>0.8.3.0-rc1</version>
     <packaging>jar</packaging>
-    <name>net.thevpc.nuts.ext.next-term</name>
+    <name>Nuts Community Extension for Terminal</name>
     <url>https://github.com/thevpc/nuts/wiki</url>
     <description>Nuts Terminal Extension</description>
     <properties>
@@ -57,7 +57,7 @@
         <dependency>
             <groupId>net.thevpc.nuts</groupId>
             <artifactId>nuts</artifactId>
-            <version>0.8.3</version>
+            <version>0.8.3-rc1</version>
         </dependency>
         <dependency>
             <groupId>org.jline</groupId>

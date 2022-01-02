@@ -28,11 +28,6 @@ import net.thevpc.nuts.spi.NutsBootId;
 
 import java.io.*;
 import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.attribute.FileTime;
-import java.time.Instant;
 import java.util.*;
 import java.util.function.Function;
 import java.util.logging.Level;
@@ -289,23 +284,6 @@ final class PrivateNutsUtils {
                         .filter(x -> x.length() > 0)
                         .map(NutsBootId::parse)
                         .collect(Collectors.toCollection(LinkedHashSet::new));
-    }
-
-    public static boolean isFileAccessible(Path path, Instant expireTime, PrivateNutsBootLog bLog) {
-        boolean proceed = Files.isRegularFile(path);
-        if (proceed) {
-            try {
-                if (expireTime != null) {
-                    FileTime lastModifiedTime = Files.getLastModifiedTime(path);
-                    if (lastModifiedTime.toInstant().compareTo(expireTime) < 0) {
-                        return false;
-                    }
-                }
-            } catch (Exception ex0) {
-                bLog.log(Level.FINEST, NutsLogVerb.FAIL, NutsMessage.jstyle("unable to get LastModifiedTime for file : {0}", path.toString(), ex0.toString()));
-            }
-        }
-        return proceed;
     }
 
     public static int firstIndexOf(String string, char[] chars) {
