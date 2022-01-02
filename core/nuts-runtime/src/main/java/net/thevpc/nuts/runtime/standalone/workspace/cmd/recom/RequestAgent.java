@@ -1,20 +1,39 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.recom;
 
 public class RequestAgent {
+
     private String apiVersion;
     private String runtimeId;
-    private String shell;
     private String registeredUser;
     private String registeredUserToken;
+    private String userLocale;
+    private String userTimeZone;
+    private String userDigest;
+    private String arch;
     private String os;
     private String osDist;
     private String desktop;
     private String platform;
-    private String arch;
-    private String userDigest;
+    private String shell;
+
+    public String getUserLocale() {
+        return userLocale;
+    }
+
+    public void setUserLocale(String userLocale) {
+        this.userLocale = userLocale;
+    }
 
     public String getApiVersion() {
         return apiVersion;
+    }
+
+    public String getUserTimeZone() {
+        return userTimeZone;
+    }
+
+    public void setUserTimeZone(String userTimeZone) {
+        this.userTimeZone = userTimeZone;
     }
 
     public RequestAgent setApiVersion(String apiVersion) {

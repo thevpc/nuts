@@ -51,7 +51,7 @@ public class DefaultNutsWorkspaceArchetypeComponent implements NutsWorkspaceArch
         List<NutsRepositoryLocation> defaults = new ArrayList<>();
         for (NutsAddRepositoryOptions d : rm.getDefaultRepositories()) {
             if (d.getConfig() != null) {
-                def.put(NutsPath.of(d.getConfig().getLocation().getLocation(),session).toAbsolute().toString(), d);
+                def.put(NutsPath.of(d.getConfig().getLocation().getPath(),session).toAbsolute().toString(), d);
             } else {
                 def.put(NutsPath.of(d.getLocation(),session).toAbsolute().toString(), d);
             }
@@ -61,9 +61,13 @@ public class DefaultNutsWorkspaceArchetypeComponent implements NutsWorkspaceArch
         NutsRepositoryLocation[] br = rm.getModel().resolveBootRepositoriesList(session).resolve(defaults.toArray(new NutsRepositoryLocation[0]), NutsRepositoryDB.of(session));
         for (NutsRepositoryLocation s : br) {
             NutsAddRepositoryOptions oo = NutsRepositorySelectorHelper.createRepositoryOptions(s, false, session);
-            String sloc = NutsPath.of(oo.getConfig().getLocation().getLocation(),session).toAbsolute().toString();
+            String sloc = NutsPath.of(oo.getConfig().getLocation().getPath(),session).toAbsolute().toString();
             if (def.containsKey(sloc)) {
-                session.repos().addRepository(def.get(sloc));
+                NutsAddRepositoryOptions r = def.get(sloc).copy();
+                if(!NutsBlankable.isBlank(s.getName())){
+                    r.setName(oo.getName());
+                }
+                session.repos().addRepository(r);
                 def.remove(sloc);
             } else {
                 session.repos().addRepository(oo

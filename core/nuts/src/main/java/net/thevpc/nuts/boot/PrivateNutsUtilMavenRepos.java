@@ -164,7 +164,7 @@ public final class PrivateNutsUtilMavenRepos {
 
     public static String resolveMavenFullPath(NutsRepositoryLocation repo, NutsBootId nutsId, String ext) {
         String jarPath = toMavenPath(nutsId) + "/" + getFileName(nutsId, ext);
-        String mvnUrl = repo.getLocation();
+        String mvnUrl = repo.getPath();
         String sep = "/";
         if (!PrivateNutsUtilIO.isURL(mvnUrl)) {
             sep = File.separator;
@@ -219,7 +219,7 @@ public final class PrivateNutsUtilMavenRepos {
         String urlPath = PrivateNutsUtils.idToPath(rid) + "/" + rid.getArtifactId() + "-" + rid.getVersion() + ".pom";
         Set<NutsBootId> deps = null;
         for (NutsRepositoryLocation baseUrl : repos) {
-            String loc = baseUrl.getLocation();
+            String loc = baseUrl.getPath();
             if (loc != null) {
                 if (loc.startsWith("htmlfs:")) {
                     loc = loc.substring("htmlfs:".length());
@@ -466,10 +466,10 @@ public final class PrivateNutsUtilMavenRepos {
     static VersionAndPath resolveLatestMavenId(NutsBootId zId, String path, Predicate<NutsBootVersion> filter,
                                                PrivateNutsBootLog bLog, NutsRepositoryLocation repoUrl2, boolean stopFirst) {
         NutsDescriptorStyle descType = NutsDescriptorStyle.MAVEN;
-        if (NutsConstants.RepoTypes.NUTS.equalsIgnoreCase(repoUrl2.getType())) {
+        if (NutsConstants.RepoTypes.NUTS.equalsIgnoreCase(repoUrl2.getLocationType())) {
             descType = NutsDescriptorStyle.NUTS;
         }
-        String repoUrl = repoUrl2.getLocation();
+        String repoUrl = repoUrl2.getPath();
         boolean found = false;
         NutsBootVersion bestVersion = null;
         String bestPath = null;
@@ -648,7 +648,7 @@ public final class PrivateNutsUtilMavenRepos {
         String path = getPathFile(vid, fileName);
         if (useCache && cacheFolder != null) {
 
-            File f = new File(cacheFolder.getLocation(), path.replace('/', File.separatorChar));
+            File f = new File(cacheFolder.getPath(), path.replace('/', File.separatorChar));
             if (PrivateNutsUtilIO.isFileAccessible(f.toPath(), expire, bLog)) {
                 return f;
             }
@@ -670,7 +670,7 @@ public final class PrivateNutsUtilMavenRepos {
                                          NutsBootOptions bOptions, Function<String, String> pathExpansionConverter,
                                          PrivateNutsBootLog bLog) {
         boolean cacheLocalFiles = true;//Boolean.getBoolean("nuts.cache.cache-local-files");
-        String repository=repository0.getLocation();
+        String repository=repository0.getPath();
         //we know exactly the file path, so we will trim "htmlfs:" protocol
         if (repository.startsWith("htmlfs:")) {
             repository = repository.substring("htmlfs:".length());
@@ -692,7 +692,7 @@ public final class PrivateNutsUtilMavenRepos {
                 return null;
             }
             File ok = null;
-            File to = new File(cacheFolder.getLocation(), path);
+            File to = new File(cacheFolder.getPath(), path);
             String urlPath = repository;
             if (!urlPath.endsWith("/")) {
                 urlPath += "/";
@@ -728,7 +728,7 @@ public final class PrivateNutsUtilMavenRepos {
 
         if (ff != null) {
             if (cacheFolder != null && cacheLocalFiles) {
-                File to = new File(cacheFolder.getLocation(), path);
+                File to = new File(cacheFolder.getPath(), path);
                 String toc = PrivateNutsUtilIO.getAbsolutePath(to.getPath());
                 String ffc = PrivateNutsUtilIO.getAbsolutePath(ff.getPath());
                 if (ffc.equals(toc)) {

@@ -3,7 +3,7 @@
 ## to build repository documentation and website
 ## N.B.:  please make sure to replace '0.8.3' with the actual nuts version
 
-NUTS_VERSION=0.8.3
+NUTS_VERSION=0.8.3-rc1
 NUTS_JAR=~/.m2/repository/net/thevpc/nuts/nuts/$NUTS_VERSION/nuts-$NUTS_VERSION.jar
 
 ## Please update this path to point to your valid java 8 home, but

@@ -34,7 +34,6 @@ import net.thevpc.nuts.runtime.standalone.repository.impl.maven.util.MvnClient;
 import net.thevpc.nuts.runtime.standalone.util.iter.IteratorBuilder;
 import net.thevpc.nuts.runtime.standalone.util.iter.IteratorUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
-import net.thevpc.nuts.spi.NutsRepositoryLocation;
 import net.thevpc.nuts.spi.NutsRepositorySPI;
 
 import java.io.IOException;
@@ -57,7 +56,7 @@ public class MavenFolderRepository extends NutsCachedRepository {
 
     public MavenFolderRepository(NutsAddRepositoryOptions options, NutsSession session, NutsRepository parentRepository) {
         super(options, session, parentRepository,
-                NutsPath.of(options.getConfig().getLocation().getLocation()
+                NutsPath.of(options.getConfig().getLocation().getPath()
                         , session).isRemote() ? NutsSpeedQualifier.SLOW : NutsSpeedQualifier.FASTER,
                 false, NutsConstants.RepoTypes.MAVEN);
         LOG = NutsLogger.of(getClass(), session);
@@ -78,7 +77,7 @@ public class MavenFolderRepository extends NutsCachedRepository {
     protected boolean isAvailableImpl(NutsSession session) {
         long now = System.currentTimeMillis();
         try {
-            NutsPath loc = config().setSession(initSession).getLocation(true);
+            NutsPath loc = config().setSession(initSession).getLocationPath();
             try {
                 return loc.exists();
             } finally {
@@ -133,7 +132,7 @@ public class MavenFolderRepository extends NutsCachedRepository {
         if (!acceptedFetchNoCache(fetchMode)) {
             return null;
         }
-        NutsPath repoRoot = config().setSession(session).getLocation(true);
+        NutsPath repoRoot = config().setSession(session).getLocationPath();
         MavenSolrSearchCommand cmd=new MavenSolrSearchCommand(this);
         NutsIterator<NutsId> aa=cmd.search(filter, baseIds, fetchMode, session);
         if(aa!=null){
@@ -163,7 +162,7 @@ public class MavenFolderRepository extends NutsCachedRepository {
 
     @Override
     public void updateStatistics2(NutsSession session) {
-        config().setSession(session).getLocation(true)
+        config().setSession(session).getLocationPath()
                 .walkDfs(new NutsTreeVisitor<NutsPath>() {
                              @Override
                              public NutsTreeVisitResult preVisitDirectory(NutsPath dir, NutsSession session) {
@@ -196,14 +195,14 @@ public class MavenFolderRepository extends NutsCachedRepository {
 
     @Override
     public boolean isRemote() {
-        return config().setSession(initSession).getLocation(true).isRemote();
+        return config().setSession(initSession).getLocationPath().isRemote();
     }
 
     public NutsContent fetchContentCoreUsingWrapper(NutsId id, NutsDescriptor descriptor, String localPath, NutsFetchMode fetchMode, NutsSession session) {
         if (wrapper == null) {
             wrapper = getWrapper(session);
         }
-        if (wrapper != null && wrapper.get(id, config().setSession(session).getLocation(true).toString(), session)) {
+        if (wrapper != null && wrapper.get(id, config().setSession(session).getLocationPath().toString(), session)) {
             NutsRepository repo = getLocalMavenRepo(session);
             if (repo != null) {
                 NutsRepositorySPI repoSPI = NutsWorkspaceUtils.of(session).repoSPI(repo);
@@ -283,7 +282,7 @@ public class MavenFolderRepository extends NutsCachedRepository {
     public NutsIterator<NutsId> findNonSingleVersionImpl(final NutsId id, NutsIdFilter idFilter, NutsFetchMode fetchMode, final NutsSession session) {
         String groupId = id.getGroupId();
         String artifactId = id.getArtifactId();
-        NutsPath foldersFileUrl = config().setSession(session).getLocation(true).resolve(groupId.replace('.', '/') + "/" + artifactId + "/");
+        NutsPath foldersFileUrl = config().setSession(session).getLocationPath().resolve(groupId.replace('.', '/') + "/" + artifactId + "/");
 
         MavenSolrSearchCommand cmd=new MavenSolrSearchCommand(this);
         NutsIterator<NutsId> aa=cmd.search(idFilter, new NutsId[]{id}, fetchMode, session);
@@ -318,7 +317,7 @@ public class MavenFolderRepository extends NutsCachedRepository {
         if (id.getVersion().isSingleValue()) {
             String groupId = id.getGroupId();
             String artifactId = id.getArtifactId();
-            NutsPath metadataURL = config().setSession(session).getLocation(true).resolve(groupId.replace('.', '/') + "/" + artifactId + "/" + id.getVersion().toString() + "/"
+            NutsPath metadataURL = config().setSession(session).getLocationPath().resolve(groupId.replace('.', '/') + "/" + artifactId + "/" + id.getVersion().toString() + "/"
                     + getIdFilename(id.builder().setFaceDescriptor().build(), session)
             );
             return IteratorBuilder.ofSupplier(
@@ -344,8 +343,8 @@ public class MavenFolderRepository extends NutsCachedRepository {
     private NutsRepository getLocalMavenRepo(NutsSession session) {
         for (NutsRepository nutsRepository : session.repos().setSession(session).getRepositories()) {
             if (nutsRepository.getRepositoryType().equals(NutsConstants.RepoTypes.MAVEN)
-                    && nutsRepository.config().getLocation(true) != null
-                    && nutsRepository.config().getLocation(true).toString()
+                    && nutsRepository.config().getLocationPath() != null
+                    && nutsRepository.config().getLocationPath().toString()
                     .equals(
                             Paths.get(NutsPath.of("~/.m2", session).toAbsolute(session.locations().getWorkspaceLocation()).toString()).toString()
                     )) {

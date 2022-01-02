@@ -11,6 +11,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
+import java.util.Locale;
 import net.thevpc.nuts.NutsIOException;
 
 public class SimpleRecommendationConnector extends AbstractRecommendationConnector {
@@ -25,6 +26,11 @@ public class SimpleRecommendationConnector extends AbstractRecommendationConnect
             http.setDoOutput(true);
             http.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
             http.setRequestProperty("Accept", "*/*");
+            String loc = session.getLocale();
+            if(loc==null){
+                loc=Locale.getDefault().toString();
+            }
+            http.setRequestProperty("Accept-Language",loc);
             NutsElements elems = NutsElements.of(session);
             String out = elems.setValue(ri.q).json().setNtf(false).format().filteredText();
             int length = out.length();

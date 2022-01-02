@@ -14,7 +14,7 @@ public class SettingsRepoUtils {
         } else {
             out.print("```error " + repository.getName() + disabledString + "```");
         }
-        out.print(" : " + repository.getRepositoryType() + " " + repository.config().getLocation(false));
+        out.print(" : " + repository.getRepositoryType() + " " + repository.config().getLocation());
         out.println();
 
     }

@@ -57,7 +57,7 @@ public class MavenRemoteXmlRepository extends MavenFolderRepository {
         }
         String groupId = id.getGroupId();
         String artifactId = id.getArtifactId();
-        NutsPath metadataURL = config().setSession(session).getLocation(true).resolve(groupId.replace('.', '/') + "/" + artifactId + "/maven-metadata.xml");
+        NutsPath metadataURL = config().setSession(session).getLocationPath().resolve(groupId.replace('.', '/') + "/" + artifactId + "/maven-metadata.xml");
 
         return IteratorBuilder.ofSupplier(
                 () -> {

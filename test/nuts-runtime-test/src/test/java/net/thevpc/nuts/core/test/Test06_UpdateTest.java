@@ -156,7 +156,7 @@ public class Test06_UpdateTest {
         nws.info().configure(false,"--repos").setShowRepositories(true).println();
 
         Assertions.assertEquals(d.updateRepoPath,
-                nws.repos().getRepository("temp").config().getLocation(true).toString()
+                nws.repos().getRepository("temp").config().getLocationPath().toString()
         );
         String api="net.thevpc.nuts:nuts";
         String rt="net.thevpc.nuts:nuts-runtime";

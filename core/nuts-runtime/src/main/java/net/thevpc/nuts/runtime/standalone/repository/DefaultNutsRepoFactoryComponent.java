@@ -50,9 +50,9 @@ public class DefaultNutsRepoFactoryComponent implements NutsRepositoryFactoryCom
                 return DEFAULT_SUPPORT + 10;
             }
             if (NutsBlankable.isBlank(type)) {
-                NutsPath rp = NutsPath.of(r.getLocation().getLocation(), criteria.getSession()).resolve("nuts-repository.json");
+                NutsPath rp = NutsPath.of(r.getLocation().getPath(), criteria.getSession()).resolve("nuts-repository.json");
                 if (rp.exists()) {
-                    r.setLocation(r.getLocation().setType(NutsConstants.RepoTypes.NUTS));
+                    r.setLocation(r.getLocation().setLocationType(NutsConstants.RepoTypes.NUTS));
                     return DEFAULT_SUPPORT + 10;
                 }
                 return DEFAULT_SUPPORT + 2;
@@ -80,10 +80,10 @@ public class DefaultNutsRepoFactoryComponent implements NutsRepositoryFactoryCom
         }
         if (NutsConstants.RepoTypes.NUTS.equals(type)) {
             if (NutsBlankable.isBlank(config.getLocation()) ||
-                    NutsPath.of(config.getLocation().getLocation(), session).isFile()
+                    NutsPath.of(config.getLocation().getPath(), session).isFile()
             ) {
                 return new NutsFolderRepository(options, session, parentRepository);
-            }else if (NutsPath.of(config.getLocation().getLocation(), session).isURL()) {
+            }else if (NutsPath.of(config.getLocation().getPath(), session).isURL()) {
                 Map<String, String> e = config.getEnv();
                 if(e!=null){
                     if(NutsUtilStrings.parseBoolean(e.get("nuts-api-server"),false,false)){

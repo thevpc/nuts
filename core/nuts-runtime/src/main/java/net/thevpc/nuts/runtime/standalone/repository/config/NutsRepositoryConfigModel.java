@@ -58,6 +58,10 @@ public interface NutsRepositoryConfigModel {
 
     NutsPath getLocation(boolean expand, NutsSession session);
 
+    NutsPath getLocationPath(NutsSession session);
+
+    NutsRepositoryLocation getLocation(NutsSession session);
+
     NutsRepository getMirror(String repositoryIdOrName, NutsSession session);
 
     NutsRepository[] getMirrors(NutsSession session);

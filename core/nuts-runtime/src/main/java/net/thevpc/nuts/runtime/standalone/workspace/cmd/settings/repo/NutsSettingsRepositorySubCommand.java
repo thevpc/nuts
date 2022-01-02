@@ -20,7 +20,7 @@ import java.util.Map;
 public class NutsSettingsRepositorySubCommand extends AbstractNutsSettingsSubCommand {
 
     public static RepoInfo repoInfo(NutsRepository x, boolean tree, NutsSession session) {
-        return new RepoInfo(x.getName(), x.config().getType(), x.config().getLocation(true), x.config().isEnabled() ? RepoStatus.enabled : RepoStatus.disabled,
+        return new RepoInfo(x.getName(), x.config().getType(), x.config().getLocationPath(), x.config().isEnabled() ? RepoStatus.enabled : RepoStatus.disabled,
                 tree ? Arrays.stream(x.config().setSession(session).getMirrors()).map(e -> repoInfo(e, tree, session)).toArray(RepoInfo[]::new) : null
         );
     }
@@ -55,7 +55,7 @@ public class NutsSettingsRepositorySubCommand extends AbstractNutsSettingsSubCom
 //                                        new NutsRepositoryConfig507()
 //                                                .setName(repositoryName)
 //                                                .setLocation(location)
-//                                                .setType(repoType))
+//                                                .setLocationType(repoType))
 //                );
 //                if (repository == null) {
 //                    throw new NutsIllegalArgumentException(context.getWorkspace(), "unable to configure repository : " + repositoryName);
@@ -298,7 +298,7 @@ public class NutsSettingsRepositorySubCommand extends AbstractNutsSettingsSubCom
                                     : NutsTexts.of(session).ofStyled("<RT-DISABLED>", NutsTextStyle.error())
                                     : NutsTexts.of(session).ofStyled("<DISABLED>", NutsTextStyle.error()),
                             repository.getRepositoryType(),
-                            repository.config().getLocation(false)
+                            repository.config().getLocation().toString()
                     );
                 }
                 out.printf(t.toString());

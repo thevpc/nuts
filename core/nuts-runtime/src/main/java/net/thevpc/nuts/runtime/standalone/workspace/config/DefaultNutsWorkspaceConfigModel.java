@@ -1080,7 +1080,7 @@ public class DefaultNutsWorkspaceConfigModel {
                 NutsPath pp = null;
                 for (String repo : dd.repos) {
                     NutsRepositoryLocation r = NutsRepositoryLocation.of(repo);
-                    NutsPath base = NutsPath.of(r.getLocation(), session);
+                    NutsPath base = NutsPath.of(r.getPath(), session);
                     if (base.isLocal() && base.isDirectory()) {
                         NutsPath a = base.resolve(contentPath + ".jar");
                         if (a.isRegularFile()) {

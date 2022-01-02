@@ -59,7 +59,7 @@ public class NutsHttpSrvRepository extends NutsCachedRepository {
     }
 
     public String getUrl(String path) {
-        return config().getLocation(true).resolve(path).toString();
+        return config().getLocationPath().resolve(path).toString();
     }
 
     public NutsId getRemoteId(NutsSession session) {
@@ -68,7 +68,7 @@ public class NutsHttpSrvRepository extends NutsCachedRepository {
                 remoteId = NutsId.of(httpGetString(getUrl("/version"), session),session);
             } catch (Exception ex) {
                 LOG.with().session(session).level(Level.WARNING).verb(NutsLogVerb.FAIL)
-                        .log(NutsMessage.jstyle("unable to resolve Repository NutsId for remote repository {0}", config().getLocation(false)));
+                        .log(NutsMessage.jstyle("unable to resolve Repository NutsId for remote repository {0}", config().getLocation()));
             }
         }
         return remoteId;
@@ -85,7 +85,7 @@ public class NutsHttpSrvRepository extends NutsCachedRepository {
         NutsWorkspaceUtils.checkSession(getWorkspace(), session);
         ByteArrayOutputStream descStream = new ByteArrayOutputStream();
         desc.formatter().setSession(session).print(new OutputStreamWriter(descStream));
-        httpUpload(CoreIOUtils.buildUrl(config().getLocation(true).toString(), "/deploy?" + resolveAuthURLPart(session)),
+        httpUpload(CoreIOUtils.buildUrl(config().getLocationPath().toString(), "/deploy?" + resolveAuthURLPart(session)),
                 session,
                 new NutsTransportParamBinaryStreamPart("descriptor", "Project.nuts",
                         new ByteArrayInputStream(descStream.toByteArray())),

@@ -410,10 +410,7 @@ public class DefaultNutsInfoCommand extends DefaultFormatBase<NutsInfoCommand> i
         props.put(key(prefix, "enabled"), (repo.config().isEnabled()));
         props.put(key(prefix, "index-enabled"), (repo.config().isIndexEnabled()));
         props.put(key(prefix, "index-subscribed"), (repo.config().setSession(getSession()).isIndexSubscribed()));
-        props.put(key(prefix, "location"), repo.config().getLocation(false));
-        if (repo.config().getLocation(false) != null) {
-            props.put(key(prefix, "location-expanded"), repo.config().getLocation(true));
-        }
+        props.put(key(prefix, "location"), repo.config().getLocation());
         props.put(key(prefix, "deploy-order"), (repo.config().getDeployWeight()));
         props.put(key(prefix, "store-location-strategy"), (repo.config().getStoreLocationStrategy()));
         props.put(key(prefix, "store-location"), repo.config().getStoreLocation());

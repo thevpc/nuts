@@ -102,7 +102,7 @@ public class NutsHttpFolderRepository extends NutsCachedRepository {
         String groupId = id.getGroupId();
         String artifactId = id.getArtifactId();
         String version = id.getVersion().getValue();
-        return (CoreIOUtils.buildUrl(config().getLocation(true).toString(), groupId.replace('.', '/') + "/" + artifactId + "/" + version + "/"
+        return (CoreIOUtils.buildUrl(config().getLocationPath().toString(), groupId.replace('.', '/') + "/" + artifactId + "/" + version + "/"
                 + NutsConstants.Files.DESCRIPTOR_FILE_NAME
         ));
     }
@@ -122,7 +122,7 @@ public class NutsHttpFolderRepository extends NutsCachedRepository {
         try {
             return IteratorBuilder.ofSupplier(
                     ()-> {
-                        NutsPath artifactUrl = config().getLocation(true).resolve(groupId.replace('.', '/') + "/" + artifactId);
+                        NutsPath artifactUrl = config().getLocationPath().resolve(groupId.replace('.', '/') + "/" + artifactId);
                         NutsPath[] all = artifactUrl.list().toArray(NutsPath[]::new);
                         List<NutsId> n = new ArrayList<>();
                         for (NutsPath versionFilesUrl : all) {
@@ -165,7 +165,11 @@ public class NutsHttpFolderRepository extends NutsCachedRepository {
             String groupId = id.getGroupId();
             String artifactId = id.getArtifactId();
             List<NutsId> ret = new ArrayList<>();
-            String metadataURL = CoreIOUtils.buildUrl(config().getLocation(true).toString(), groupId.replace('.', '/') + "/" + artifactId + "/" + id.getVersion().toString() + "/"
+            NutsPath locationPath = config().getLocationPath();
+            if(locationPath==null){
+                return IteratorBuilder.emptyIterator();
+            }
+            String metadataURL = CoreIOUtils.buildUrl(locationPath.toString(), groupId.replace('.', '/') + "/" + artifactId + "/" + id.getVersion().toString() + "/"
                     + getIdFilename(id.builder().setFaceDescriptor().build(), session)
             );
             return IteratorBuilder.ofSupplier(
@@ -253,7 +257,10 @@ public class NutsHttpFolderRepository extends NutsCachedRepository {
             return null;
         }
         List<NutsIterator<? extends NutsId>> list = new ArrayList<>();
-        NutsPath repoRoot = config().getLocation(true);
+        NutsPath repoRoot = config().getLocationPath();
+        if(repoRoot==null){
+            return IteratorBuilder.emptyIterator();
+        }
         for (NutsPath basePath : basePaths) {
             list.add(
                     (NutsIterator) IteratorBuilder.ofRunnable(

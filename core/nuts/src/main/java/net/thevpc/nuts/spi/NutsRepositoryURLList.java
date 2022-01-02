@@ -82,7 +82,7 @@ public class NutsRepositoryURLList {
     public int indexOfURL(String url, int offset) {
         String trimmedName = NutsUtilStrings.trim(url);
         for (int i = offset; i < all.size(); i++) {
-            if (trimmedName.equals(NutsUtilStrings.trim(all.get(i).getLocation()))) {
+            if (trimmedName.equals(NutsUtilStrings.trim(all.get(i).getPath()))) {
                 return i;
             }
         }
@@ -96,7 +96,7 @@ public class NutsRepositoryURLList {
         for (int i = offset; i < all.size(); i++) {
             NutsRepositoryLocation o = all.get(i);
             if (NutsUtilStrings.trim(other.getName()).equals(NutsUtilStrings.trim(o.getName()))) {
-                if (NutsUtilStrings.trim(other.getLocation()).equals(NutsUtilStrings.trim(o.getLocation()))) {
+                if (NutsUtilStrings.trim(other.getPath()).equals(NutsUtilStrings.trim(o.getPath()))) {
                     return i;
                 }
             }

@@ -6,10 +6,13 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.LinkedHashMap;
+import java.util.Locale;
 import java.util.Map;
+import java.util.TimeZone;
 import java.util.UUID;
 
 public abstract class AbstractRecommendationConnector implements RecommendationConnector {
+
     private String localUserUUID;
 
     public AbstractRecommendationConnector() {
@@ -30,7 +33,8 @@ public abstract class AbstractRecommendationConnector implements RecommendationC
         if (Files.exists(userConfig)) {
             try {
                 m = elems.json().parse(userConfig, Map.class);
-            } catch (Exception ex) {/*IGNORE*/}
+            } catch (Exception ex) {/*IGNORE*/
+            }
             if (m != null) {
                 _uuid = NutsUtilStrings.trimToNull(m.get("user") == null ? null : String.valueOf(m.get("user")));
             }
@@ -174,6 +178,16 @@ public abstract class AbstractRecommendationConnector implements RecommendationC
         }
         if (agent.getUserDigest() == null) {
             agent.setUserDigest(getLocalUserUUID(session));
+        }
+        if (agent.getUserLocale() == null) {
+            String loc = session.getLocale();
+            if (loc == null) {
+                loc = Locale.getDefault().toString();
+            }
+            agent.setUserLocale(loc);
+        }
+        if (agent.getUserTimeZone() == null) {
+            agent.setUserTimeZone(TimeZone.getDefault().getDisplayName());
         }
     }
 

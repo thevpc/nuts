@@ -63,9 +63,9 @@ public class PrivateNutsBootRepositoryDB implements NutsRepositoryDB {
                 return entry.getKey();
             }
         }
-        v0 = NutsRepositoryLocation.of(url).setName(null).setType(null);
+        v0 = NutsRepositoryLocation.of(url).setName(null).setLocationType(null);
         for (Map.Entry<String, String> entry : defaultRepositoriesByName.entrySet()) {
-            NutsRepositoryLocation v = NutsRepositoryLocation.of(entry.getValue()).setName(null).setType(null);
+            NutsRepositoryLocation v = NutsRepositoryLocation.of(entry.getValue()).setName(null).setLocationType(null);
             if (v.equals(v0)) {
                 return entry.getKey();
             }

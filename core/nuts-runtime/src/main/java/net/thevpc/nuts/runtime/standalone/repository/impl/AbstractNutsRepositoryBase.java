@@ -176,7 +176,7 @@ public abstract class AbstractNutsRepositoryBase extends AbstractNutsRepository 
     }
 
     protected NutsPath getIdRemotePath(NutsId id, NutsSession session) {
-        return config().setSession(session).getLocation(true).resolve(getIdRelativePath(id, session));
+        return config().setSession(session).getLocationPath().resolve(getIdRelativePath(id, session));
     }
 
     protected NutsPath getIdRelativePath(NutsId id, NutsSession session) {

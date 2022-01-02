@@ -613,8 +613,8 @@ public class MavenUtils {
                 String location =
                         opt.getConfig() == null
                                 || NutsBlankable.isBlank(opt.getConfig().getLocation())
-                                || NutsBlankable.isBlank(opt.getConfig().getLocation().getLocation())
-                                ? opt.getLocation() : opt.getConfig().getLocation().getLocation();
+                                || NutsBlankable.isBlank(opt.getConfig().getLocation().getPath())
+                                ? opt.getLocation() : opt.getConfig().getLocation().getPath();
                 depsAndRepos = loadDependenciesAndRepositoriesFromPomUrl(location + "/" + urlPath, session);
                 if (!depsAndRepos.deps.isEmpty()) {
                     break;

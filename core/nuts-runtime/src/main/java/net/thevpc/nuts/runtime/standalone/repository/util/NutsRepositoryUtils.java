@@ -27,8 +27,8 @@ public class NutsRepositoryUtils {
         if(conf!=null){
             NutsRepositoryLocation loc = conf.getLocation();
             if(loc!=null) {
-                if (!NutsBlankable.isBlank(loc.getType())) {
-                    return loc.getType();
+                if (!NutsBlankable.isBlank(loc.getLocationType())) {
+                    return loc.getLocationType();
                 }
             }
         }

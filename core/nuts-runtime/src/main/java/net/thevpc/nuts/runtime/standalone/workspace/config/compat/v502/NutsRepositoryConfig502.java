@@ -383,7 +383,7 @@ public class NutsRepositoryConfig502 implements Serializable {
         c.setStoreLocationStrategy(storeLocationStrategy);
         NutsRepositoryLocation loc = NutsRepositoryLocation.of(location);
         if(!NutsBlankable.isBlank(type)){
-            loc=loc.setType(type);
+            loc=loc.setLocationType(type);
         }
         c.setLocation(NutsRepositoryLocation.of(loc.toString()));
         c.setStoreLocations(

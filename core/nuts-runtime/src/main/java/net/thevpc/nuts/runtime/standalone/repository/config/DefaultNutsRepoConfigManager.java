@@ -3,6 +3,7 @@ package net.thevpc.nuts.runtime.standalone.repository.config;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.workspace.config.NutsRepositoryConfigManagerExt;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
+import net.thevpc.nuts.spi.NutsRepositoryLocation;
 
 import java.util.Map;
 
@@ -74,9 +75,15 @@ public class DefaultNutsRepoConfigManager implements NutsRepositoryConfigManager
     }
 
     @Override
-    public NutsPath getLocation(boolean expand) {
+    public NutsRepositoryLocation getLocation() {
         checkSession();
-        return getModel().getLocation(expand, session);
+        return getModel().getLocation(session);
+    }
+
+    @Override
+    public NutsPath getLocationPath() {
+        checkSession();
+        return getModel().getLocationPath(session);
     }
 
     @Override
@@ -84,12 +91,6 @@ public class DefaultNutsRepoConfigManager implements NutsRepositoryConfigManager
         checkSession();
         return getModel().getStoreLocation();
     }
-
-//    @Override
-//    public String getUuid() {
-////        checkSession();
-//        return getModel().getUuid();
-//    }
 
     @Override
     public NutsPath getStoreLocation(NutsStoreLocation folderType) {

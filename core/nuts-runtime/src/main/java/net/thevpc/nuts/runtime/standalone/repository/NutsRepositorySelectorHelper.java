@@ -7,8 +7,10 @@ import net.thevpc.nuts.spi.NutsRepositoryLocation;
 import net.thevpc.nuts.spi.NutsRepositorySelectorList;
 
 import java.util.HashMap;
+import java.util.Objects;
 
 public class NutsRepositorySelectorHelper {
+
     public static NutsAddRepositoryOptions createRepositoryOptions(String s, boolean requireName, NutsSession session) {
         NutsRepositorySelectorList r = NutsRepositorySelectorList.of(s, NutsRepositoryDB.of(session), session);
         NutsRepositoryLocation[] all = r.resolve(null, NutsRepositoryDB.of(session));
@@ -18,14 +20,13 @@ public class NutsRepositorySelectorHelper {
         return createRepositoryOptions(all[0], requireName, session);
     }
 
-    public static NutsAddRepositoryOptions createRepositoryOptions(NutsRepositoryLocation s, boolean requireName, NutsSession session) {
-        NutsRepositoryLocation nru = NutsRepositoryLocation.of(s.getLocation()).setName(s.getName());
+    public static NutsAddRepositoryOptions createRepositoryOptions(NutsRepositoryLocation loc, boolean requireName, NutsSession session) {
         String defaultName = null;
         NutsRepositoryDB db = NutsRepositoryDB.of(session);
-        if (db.isDefaultRepositoryName(nru.getName())) {
-            defaultName = nru.getName();
+        if (db.isDefaultRepositoryName(loc.getName())) {
+            defaultName = loc.getName();
         } else {
-            String nn = db.getRepositoryNameByURL(nru.getLocation());
+            String nn = db.getRepositoryNameByURL(loc.getPath());
             if (nn != null) {
                 defaultName = nn;
             }
@@ -33,19 +34,19 @@ public class NutsRepositorySelectorHelper {
         if (defaultName != null) {
             NutsAddRepositoryOptions u = createDefaultRepositoryOptions(defaultName, session);
             if (u != null
-                    && (nru.getLocation().isEmpty()
-                    || nru.getLocation().equals(u.getConfig().getLocation().getLocation())
-                    || nru.setName(null).toString().equals(u.getConfig().getLocation().getLocation()))) {
+                    && (loc.getPath().isEmpty()
+                    || Objects.equals(loc.getPath(), u.getConfig().getLocation().getPath())
+                    || Objects.equals(loc.getFullLocation(), u.getConfig().getLocation().getFullLocation()))) {
                 //this is acceptable!
-                if (!u.getName().equals(s.getName())) {
-                    u.setName(s.getName());
+                if (!u.getName().equals(loc.getName())) {
+                    u.setName(loc.getName());
                 }
             }
             if (u != null) {
                 return u;
             }
         }
-        return createCustomRepositoryOptions(nru.getName(), nru.setName(null).toString(), requireName, session);
+        return createCustomRepositoryOptions(loc.getName(), loc.getFullLocation(), requireName, session);
     }
 
     public static NutsAddRepositoryOptions createCustomRepositoryOptions(String name, String url, boolean requireName, NutsSession session) {
@@ -104,11 +105,11 @@ public class NutsRepositorySelectorHelper {
                         .setOrder(NutsAddRepositoryOptions.ORDER_SYSTEM_LOCAL)
                         .setConfig(
                                 new NutsRepositoryConfig()
-                                        .setLocation(NutsRepositoryLocation.of("nuts@" +
-                                                NutsPath.of(NutsUtilPlatforms.getPlatformHomeFolder(null,
-                                                                NutsStoreLocation.LIB, session.config().stored().getHomeLocations(),
-                                                                true,
-                                                                NutsConstants.Names.DEFAULT_WORKSPACE_NAME), session)
+                                        .setLocation(NutsRepositoryLocation.of("nuts@"
+                                                + NutsPath.of(NutsUtilPlatforms.getPlatformHomeFolder(null,
+                                                        NutsStoreLocation.LIB, session.config().stored().getHomeLocations(),
+                                                        true,
+                                                        NutsConstants.Names.DEFAULT_WORKSPACE_NAME), session)
                                                         .resolve(NutsConstants.Folders.ID)
                                                         .toString())
                                         )
@@ -121,9 +122,9 @@ public class NutsRepositorySelectorHelper {
                         .setFailSafe(false).setCreate(true).setOrder(NutsAddRepositoryOptions.ORDER_USER_LOCAL)
                         .setConfig(
                                 new NutsRepositoryConfig()
-                                        .setLocation(NutsRepositoryLocation.of("maven@" +
-                                                NutsPath.ofUserHome(session).resolve(".m2/repository").toString()
-                                                )
+                                        .setLocation(NutsRepositoryLocation.of("maven@"
+                                                + NutsPath.ofUserHome(session).resolve(".m2/repository").toString()
+                                        )
                                         )
                         );
             }
@@ -250,6 +251,5 @@ public class NutsRepositorySelectorHelper {
         }
         return null;
     }
-
 
 }

@@ -77,7 +77,7 @@ public class NutsRepositorySelectorList {
                 }
                 NutsRepositoryLocation z = NutsRepositoryLocation.of(s,db,session);
                 if (z != null) {
-                    all.add(new NutsRepositorySelector(op, z.getName(), z.getLocation()));
+                    all.add(new NutsRepositorySelector(op, z.getName(), z.getFullLocation()));
                 }
             }
         }
@@ -94,12 +94,12 @@ public class NutsRepositorySelectorList {
         return new NutsRepositorySelectorList(result.toArray(new NutsRepositorySelector[0]));
     }
 
-    public NutsRepositoryLocation[] resolve(NutsRepositoryLocation[] input, NutsRepositoryDB db) {
+    public NutsRepositoryLocation[] resolve(NutsRepositoryLocation[] available, NutsRepositoryDB db) {
         NutsRepositoryURLList current = new NutsRepositoryURLList();
-        if (input != null) {
-            for (NutsRepositoryLocation entry : input) {
+        if (available != null) {
+            for (NutsRepositoryLocation entry : available) {
                 String k = entry.getName();
-                String v = entry.getLocation();
+                String v = entry.getFullLocation();
                 if (NutsBlankable.isBlank(v) && !NutsBlankable.isBlank(k)) {
                     String u2 = db.getRepositoryURLByName(k);
                     if (u2 != null) {
@@ -127,7 +127,7 @@ public class NutsRepositorySelectorList {
                     if (i >= 0) {
                         NutsRepositoryLocation ss = current.removeAt(i);
                         if (ss != null && u2 == null) {
-                            u2 = ss.getLocation();
+                            u2 = ss.getPath();
                         }
                     }
                     boolean visitedFlag = isVisitedFlag(allNames, visited);
@@ -166,12 +166,12 @@ public class NutsRepositorySelectorList {
         return visitedFlag;
     }
 
-    public boolean acceptExisting(NutsRepositoryLocation ss) {
-        String n = ss.getName();
-        String url = ss.getLocation();
+    public boolean acceptExisting(NutsRepositoryLocation location) {
+        String n = location.getName();
+        String path = location.getPath();
         boolean includeOthers = true;
         for (NutsRepositorySelector s : selectors) {
-            if (s.matches(n, url)) {
+            if (s.matches(n, path)) {
                 switch (s.getOp()) {
                     case EXACT:
                     case INCLUDE:

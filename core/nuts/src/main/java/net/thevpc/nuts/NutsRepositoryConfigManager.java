@@ -23,6 +23,8 @@
  */
 package net.thevpc.nuts;
 
+import net.thevpc.nuts.spi.NutsRepositoryLocation;
+
 import java.util.Map;
 
 /**
@@ -53,15 +55,15 @@ public interface NutsRepositoryConfigManager {
 
     boolean isIndexSubscribed();
 
+
+    NutsRepositoryLocation getLocation();
+    NutsPath getLocationPath();
+
     /**
      * return repository configured location as string
      *
-     * @param expand when true, location will be expanded (~ and $ params will
-     *               be expanded)
-     * @return repository location
+     * @return repository location path
      */
-    NutsPath getLocation(boolean expand);
-
     NutsPath getStoreLocation();
 
     NutsPath getStoreLocation(NutsStoreLocation folderType);
