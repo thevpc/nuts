@@ -113,3 +113,5 @@
 /tutorials/ugly-jar-projects/shade-project/target/
 /tutorials/ugly-jar-projects/springboot-project/target/
 /tutorials/simple-project/target/
+/companions/nsh/runtime/
+/tutorials/nsh/custom-shell-project/target/
