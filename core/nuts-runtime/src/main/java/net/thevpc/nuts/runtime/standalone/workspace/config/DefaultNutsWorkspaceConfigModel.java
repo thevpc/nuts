@@ -385,7 +385,7 @@ public class DefaultNutsWorkspaceConfigModel {
         }
         return session.extensions().createAllSupported(NutsRepositoryFactoryComponent.class,
                 new NutsRepositoryConfig().setLocation(
-                        NutsRepositoryLocation.of(repositoryType+"@")
+                        NutsRepositoryLocation.of(repositoryType + "@")
                 )).size() > 0;
     }
 
@@ -611,7 +611,7 @@ public class DefaultNutsWorkspaceConfigModel {
 
     public void setExtraBootExtensionId(NutsId apiId, NutsId extensionId, NutsDependency[] deps, NutsSession session) {
         String newDeps = Arrays.stream(deps).map(Object::toString).collect(Collectors.joining(";"));
-        NutsWorkspaceConfigBoot.ExtensionConfig cc=new NutsWorkspaceConfigBoot.ExtensionConfig();
+        NutsWorkspaceConfigBoot.ExtensionConfig cc = new NutsWorkspaceConfigBoot.ExtensionConfig();
         cc.setId(apiId);
         cc.setDependencies(newDeps);
         cc.setEnabled(true);
@@ -1054,7 +1054,7 @@ public class DefaultNutsWorkspaceConfigModel {
                 .setFailFast(false).getResultDefinition();
         if (nd != null) {
             return new NutsBootDef(nd.getId(), nd.getDependencies().transitive().toList().toArray(new NutsDependency[0]),
-                    content?nd.getContent().getPath():null);
+                    (content && nd.getContent() != null) ? nd.getContent().getPath() : null);
         }
         if (isFirstBoot()) {
             NutsClassLoaderNode n = searchBootNode(id, session);
@@ -1113,14 +1113,14 @@ public class DefaultNutsWorkspaceConfigModel {
                 return;
             }
             case RUNTIME: {
-                NutsBootDef d = fetchBootDef(id, false,session);
+                NutsBootDef d = fetchBootDef(id, false, session);
                 for (NutsId apiId : CoreNutsUtils.resolveNutsApiIds(d.deps, session)) {
                     setExtraBootRuntimeId(apiId, d.id, d.deps, session);
                 }
                 break;
             }
             case EXTENSION: {
-                NutsBootDef d = fetchBootDef(id, false,session);
+                NutsBootDef d = fetchBootDef(id, false, session);
                 for (NutsId apiId : CoreNutsUtils.resolveNutsApiIds(d.deps, session)) {
                     setExtraBootRuntimeId(apiId, d.id, d.deps, session);
                 }
@@ -1129,7 +1129,7 @@ public class DefaultNutsWorkspaceConfigModel {
     }
 
     public void prepareBootClassPathJar(NutsId id, NutsId forId, NutsId forceRuntimeId, boolean processDependencies, NutsSession session) {
-        NutsBootDef d = fetchBootDef(id, true,session);
+        NutsBootDef d = fetchBootDef(id, true, session);
         if (deployToInstalledRepository(d.content.toFile(), session)) {
             if (processDependencies) {
                 for (NutsDependency dep : d.deps) {
