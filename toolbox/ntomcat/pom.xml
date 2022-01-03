@@ -30,7 +30,7 @@
 
     <organization>
         <name>vpc open source initiative</name>
-        <url>http://thevpc.net</url>
+        <url>https://thevpc.net</url>
     </organization>
 
     <developers>
@@ -38,9 +38,9 @@
             <id>vpc</id>
             <name>Taha Ben Salah</name>
             <email>taha.bensalah@gmail.com</email>
-            <url>http://tahabensalah.net</url>
+            <url>https://tahabensalah.net</url>
             <organization>thevpc open source initiative</organization>
-            <organizationUrl>http://thevpc.net</organizationUrl>
+            <organizationUrl>https://thevpc.net</organizationUrl>
             <roles>
                 <role>architect</role>
                 <role>developer</role>

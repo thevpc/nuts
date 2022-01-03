@@ -73,9 +73,15 @@ class InstalledRepositoryConfigModel implements NutsRepositoryConfigModel {
     }
 
     @Override
-    public NutsPath getLocation(boolean expand, NutsSession session) {
+    public NutsPath getLocationPath(NutsSession session) {
         return null;
     }
+
+    @Override
+    public NutsRepositoryLocation getLocation(NutsSession session) {
+        return null;
+    }
+    
 
     @Override
     public NutsRepository getMirror(String repositoryIdOrName, NutsSession session) {

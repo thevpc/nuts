@@ -5,7 +5,7 @@ vars_here=$(dirname $0)
 
 latestApiVersion=`nuts -ybB nversion $vars_here/../core/nuts`;
 latestImplVersion=`nuts -ybB nversion $vars_here/../core/nuts-runtime`;
-latestJarLocation="http://thevpc.net/maven/net/thevpc/nuts/nuts/${latestApiVersion}/nuts-${latestApiVersion}.jar";
+latestJarLocation="https://thevpc.net/maven/net/thevpc/nuts/nuts/${latestApiVersion}/nuts-${latestApiVersion}.jar";
 
 stableApiVersion=0.8.2;
 stableImplVersion=0.8.2.1;

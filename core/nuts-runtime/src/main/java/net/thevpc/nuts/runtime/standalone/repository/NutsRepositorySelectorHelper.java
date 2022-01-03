@@ -245,7 +245,7 @@ public class NutsRepositorySelectorHelper {
                         .setOrder(NutsAddRepositoryOptions.ORDER_USER_REMOTE)
                         .setConfig(
                                 new NutsRepositoryConfig()
-                                        .setLocation(NutsRepositoryLocation.of("maven@htmlfs:http://thevpc.net/maven"))
+                                        .setLocation(NutsRepositoryLocation.of("maven@htmlfs:https://thevpc.net/maven"))
                         );
             }
         }

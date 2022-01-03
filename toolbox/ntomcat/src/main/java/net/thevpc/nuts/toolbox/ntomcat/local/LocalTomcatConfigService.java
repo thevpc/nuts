@@ -201,7 +201,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
         NutsPath u = f.getInstallInformation().getInstallFolder();
         NutsPath[] paths;
         try {
-            paths = u.list().filter(x -> x.isDirectory(),"isDirectory").toArray(NutsPath[]::new);
+            paths = u.list().filter(x -> x.isDirectory(), "isDirectory").toArray(NutsPath[]::new);
             if (paths.length == 1 && paths[0].getName().toLowerCase().startsWith("apache-tomcat")) {
                 return paths[0];
             }
@@ -227,13 +227,11 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
     }
 
     public NutsString getFormattedError(String str) {
-        return NutsTexts.of(getSession()).ofStyled(str, NutsTextStyle.error())
-                ;
+        return NutsTexts.of(getSession()).ofStyled(str, NutsTextStyle.error());
     }
 
     public NutsString getFormattedSuccess(String str) {
-        return NutsTexts.of(getSession()).ofStyled(str, NutsTextStyle.success())
-                ;
+        return NutsTexts.of(getSession()).ofStyled(str, NutsTextStyle.success());
     }
 
     public NutsString getFormattedPrefix(String str) {
@@ -313,7 +311,6 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
         catalinaBaseUpdated |= checkExec(catalinaHome.resolve("bin").resolve("catalina." + ext));
         LocalTomcatConfig c = getConfig();
         catalinaBaseUpdated |= mkdirs(catalinaBase.resolve("logs"));
-        catalinaBaseUpdated |= mkdirs(catalinaBase.resolve("logs"));
         catalinaBaseUpdated |= mkdirs(catalinaBase.resolve("temp"));
         catalinaBaseUpdated |= mkdirs(catalinaBase.resolve("conf"));
         if (catalinaHome.resolve("conf").isDirectory()) {
@@ -345,8 +342,12 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
                 catalinaBaseUpdated = true;
             }
         } else {
-            catalinaBase.resolve("webapps").resolve("host-manager").deleteTree();
-            catalinaBase.resolve("webapps").resolve("manager").deleteTree();
+            if (catalinaBase.resolve("webapps").resolve("host-manager").isDirectory()) {
+                catalinaBase.resolve("webapps").resolve("host-manager").deleteTree();
+            }
+            if (catalinaBase.resolve("webapps").resolve("manager").isDirectory()) {
+                catalinaBase.resolve("webapps").resolve("manager").deleteTree();
+            }
             catalinaBaseUpdated = true;
         }
         if (catalinaBaseUpdated) {
@@ -435,8 +436,8 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
     }
 
     private boolean mkdirs(NutsPath catalinaBase) {
-        if (!catalinaBase.resolve("logs").isDirectory()) {
-            catalinaBase.resolve("logs").mkdirs();
+        if (!catalinaBase.isDirectory()) {
+            catalinaBase.mkdirs();
             return true;
         }
         return false;
@@ -504,8 +505,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
             }
         }
         if (catalinaNutsDefinition == null || !Objects.equals(catalinaVersion, this.catalinaVersion)
-                || !catalinaNutsDefinition.getInstallInformation().getInstallStatus().isInstalled()
-        ) {
+                || !catalinaNutsDefinition.getInstallInformation().getInstallStatus().isInstalled()) {
             this.catalinaVersion = catalinaVersion;
             String cv = catalinaVersion;
             if (!cv.startsWith("[") && !cv.startsWith("]")) {
@@ -583,7 +583,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
         NutsPath catalinaBase = getCatalinaBase();
         return Arrays.stream(TomcatUtils.getRunningInstances(context))
                 .filter(p -> (catalinaBase == null
-                        || catalinaBase.toString().equals(p.getBase())))
+                || catalinaBase.toString().equals(p.getBase())))
                 .findFirst().orElse(null);
     }
 
@@ -1257,6 +1257,5 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
             //
         }
     }
-
 
 }

@@ -56,8 +56,6 @@ public interface NutsRepositoryConfigModel {
 
     String getGroups(NutsSession session);
 
-    NutsPath getLocation(boolean expand, NutsSession session);
-
     NutsPath getLocationPath(NutsSession session);
 
     NutsRepositoryLocation getLocation(NutsSession session);

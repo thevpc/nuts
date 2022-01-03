@@ -38,8 +38,8 @@ import java.util.regex.Pattern;
  * @author thevpc
  */
 public class DefaultNutsArgument implements NutsArgument {
-    public static final Pattern PATTERN_OPTION_EQ = Pattern.compile("^((?<optp>[-]+|[+]+)(?<cmt>//)?(?<flg>[!~])?)?(?<optk>[a-zA-Z][a-zA-Z0-9_-]*)?(?<opts>[=](?<optv>.*))?(?<optr>.*)$");
-    public static final Pattern PATTERN_OPTION_COL = Pattern.compile("^((?<optp>[-]+|[+]+)(?<cmt>//)?(?<flg>[!~])?)?(?<optk>[a-zA-Z][a-zA-Z0-9_-]*)?(?<opts>[:](?<optv>.*))?(?<optr>.*)$");
+    public static final Pattern PATTERN_OPTION_EQ = Pattern.compile("^((?<optp>[-]+|[+]+)(?<cmt>//)?(?<flg>[!~])?)?(?<optk>[a-zA-Z][a-zA-Z0-9_.-]*)?(?<opts>[=](?<optv>.*))?(?<optr>.*)$");
+    public static final Pattern PATTERN_OPTION_COL = Pattern.compile("^((?<optp>[-]+|[+]+)(?<cmt>//)?(?<flg>[!~])?)?(?<optk>[a-zA-Z][a-zA-Z0-9_.-]*)?(?<opts>[:](?<optv>.*))?(?<optr>.*)$");
     /**
      * equal character
      */
@@ -80,7 +80,7 @@ public class DefaultNutsArgument implements NutsArgument {
                 break;
             }
             default: {
-                currOptionsPattern = Pattern.compile("^((?<optp>[-]+|[+]+)(?<cmt>//)?(?<flg>[!~])?)?(?<optk>[a-zA-Z][a-zA-Z0-9_-]*)?(?<opts>[" + eq + "](?<optv>.*))?(?<optr>.*)$");
+                currOptionsPattern = Pattern.compile("^((?<optp>[-]+|[+]+)(?<cmt>//)?(?<flg>[!~])?)?(?<optk>[a-zA-Z][a-zA-Z0-9_.-]*)?(?<opts>[" + eq + "](?<optv>.*))?(?<optr>.*)$");
             }
         }
         Matcher matcher = currOptionsPattern.matcher(expression == null ? "" : expression);

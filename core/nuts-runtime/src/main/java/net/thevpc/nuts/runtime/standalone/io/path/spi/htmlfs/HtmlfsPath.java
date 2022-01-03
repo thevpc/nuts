@@ -250,8 +250,8 @@ public class HtmlfsPath extends AbstractPathSPIAdapter {
 
 //    public static void main(String[] args) {
 //        try {
-//            System.out.println(new WebHtmlListParser().parse(new URL("http://thevpc.net/maven/net/thevpc/nuts/nuts/").openStream()));
-////            System.out.println(new WebHtmlListParser().parse(new URL("http://thevpc.net/maven/net/thevpc/nuts/nuts/0.8.1/").openStream()));
+//            System.out.println(new WebHtmlListParser().parse(new URL("https://thevpc.net/maven/net/thevpc/nuts/nuts/").openStream()));
+////            System.out.println(new WebHtmlListParser().parse(new URL("https://thevpc.net/maven/net/thevpc/nuts/nuts/0.8.1/").openStream()));
 //        } catch (Exception e) {
 //            e.printStackTrace();
 //        }

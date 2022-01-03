@@ -105,16 +105,16 @@ public class Test18_PathTest {
 
     @Test
     public void testHtmlfs1() {
-        NutsPath s = NutsPath.of("htmlfs:http://thevpc.net/maven/net/thevpc/nuts/nuts/", session);
+        NutsPath s = NutsPath.of("htmlfs:https://thevpc.net/maven/net/thevpc/nuts/nuts/", session);
         TestUtils.println("------------ LIST ----------");
         Set<String> children = new HashSet<>();
         for (NutsPath nutsPath : s.list()) {
             TestUtils.println(nutsPath);
             children.add(nutsPath.toString());
         }
-        Assertions.assertTrue(children.contains("htmlfs:http://thevpc.net/maven/net/thevpc/nuts/nuts/0.8.3/"));
-        Assertions.assertTrue(children.contains("http://thevpc.net/maven/net/thevpc/nuts/nuts/maven-metadata-local.xml"));
-        Assertions.assertTrue(children.contains("htmlfs:http://thevpc.net/maven/net/thevpc/nuts/nuts/0.8.2/"));
+        Assertions.assertTrue(children.contains("htmlfs:https://thevpc.net/maven/net/thevpc/nuts/nuts/0.8.3/"));
+        Assertions.assertTrue(children.contains("https://thevpc.net/maven/net/thevpc/nuts/nuts/maven-metadata-local.xml"));
+        Assertions.assertTrue(children.contains("htmlfs:https://thevpc.net/maven/net/thevpc/nuts/nuts/0.8.2/"));
         TestUtils.println("------------ WALK ----------");
         s.walk().forEach(x -> {
             TestUtils.println(x);
@@ -198,9 +198,9 @@ public class Test18_PathTest {
             TestUtils.println(nutsPath);
             children.add(nutsPath.toString());
         }
-//        Assertions.assertTrue(children.contains("htmlfs:http://thevpc.net/maven/net/thevpc/nuts/nuts/0.8.3"));
-//        Assertions.assertTrue(children.contains("http://thevpc.net/maven/net/thevpc/nuts/nuts/maven-metadata-local.xml"));
-//        Assertions.assertTrue(children.contains("htmlfs:http://thevpc.net/maven/net/thevpc/nuts/nuts/0.8.2"));
+//        Assertions.assertTrue(children.contains("htmlfs:https://thevpc.net/maven/net/thevpc/nuts/nuts/0.8.3"));
+//        Assertions.assertTrue(children.contains("https://thevpc.net/maven/net/thevpc/nuts/nuts/maven-metadata-local.xml"));
+//        Assertions.assertTrue(children.contains("htmlfs:https://thevpc.net/maven/net/thevpc/nuts/nuts/0.8.2"));
 //        TestUtils.println("------------ WALK ----------");
 //        s.walk(1).forEach(x -> {
 //            TestUtils.println(x);

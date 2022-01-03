@@ -22,7 +22,7 @@ Unlike maven which resolves dependencies at compile time, ```nuts``` solves depe
 
 This is just enough info to get you up and running ```nuts``` .
 Much more info is available in [nuts documentation website](https://thevpc.github.io/nuts).
-You can have some information also browsing [thevpc.net](http://thevpc.net/nuts/)
+You can have some information also browsing [thevpc.net](https://thevpc.net/nuts/)
 Even more information will is available via ```nuts help``` once it's installed.
 
 To check current nuts version
@@ -44,7 +44,7 @@ Please that nuts rolling version (which is the most recent version) is quite sta
 First you need to download nuts-preview.jar
 
 ```
-wget http://thevpc.net/nuts-preview.jar -O nuts.jar
+wget https://thevpc.net/nuts-preview.jar -O nuts.jar
 ```
 
 Then you must run, in a terminal, the following command.
@@ -70,7 +70,7 @@ wget wget https://repo1.maven.org/maven2/net/thevpc/nuts/nuts/${{stableApiVersio
 
 If you want a shorter link, use this one!
 ```
-wget http://thevpc.net/nuts-stable.jar -O nuts.jar
+wget https://thevpc.net/nuts-stable.jar -O nuts.jar
 ```
 
 
