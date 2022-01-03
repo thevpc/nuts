@@ -1,10 +1,8 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.ndi;
 
-import net.thevpc.nuts.NutsConstants;
-import net.thevpc.nuts.NutsDescriptor;
-import net.thevpc.nuts.NutsId;
-import net.thevpc.nuts.NutsSession;
+import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
+import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
 
 public class NameBuilder {
     private NutsId id;
@@ -25,9 +23,9 @@ public class NameBuilder {
         }
         defaultName = defaultName.trim();
         if (defaultName.isEmpty()) {
-            if(preferId) {
+            if (preferId) {
                 defaultName = "%n%s%v%s%h";
-            }else{
+            } else {
                 defaultName = "%N%s%v%s%h";
             }
         }
@@ -112,9 +110,8 @@ public class NameBuilder {
         if (s.isEmpty()) {
             s = defaultName;
         }
-        StringBuilder sb = new StringBuilder();
+        BuildAccumulator h = new BuildAccumulator();
         char[] charArray = s.toCharArray();
-        boolean wasSep = false;
         for (int i = 0; i < charArray.length; i++) {
             char c = charArray[i];
             if (c == '%' && i + 1 < charArray.length) {
@@ -122,36 +119,15 @@ public class NameBuilder {
                 char cc = charArray[i];
                 switch (cc) {
                     case 'v': {
-                        String str = id.getVersion().toString();
-                        if (wasSep) {
-                            if (!str.isEmpty()) {
-                                sb.append(toValidChar(' '));
-                            }
-                            wasSep = false;
-                        }
-                        sb.append(toValidString(str));
+                        h.append(id.getVersion().toString());
                         break;
                     }
                     case 'g': {
-                        String str = id.getGroupId();
-                        if (wasSep) {
-                            if (!str.isEmpty()) {
-                                sb.append(toValidChar(' '));
-                            }
-                            wasSep = false;
-                        }
-                        sb.append(toValidString(str));
+                        h.append(id.getGroupId());
                         break;
                     }
                     case 'n': {
-                        String str = id.getArtifactId();
-                        if (wasSep) {
-                            if (!str.isEmpty()) {
-                                sb.append(toValidChar(' '));
-                            }
-                            wasSep = false;
-                        }
-                        sb.append(toValidString(str));
+                        h.append(id.getArtifactId());
                         break;
                     }
                     case 'N': {
@@ -163,61 +139,81 @@ public class NameBuilder {
                         if (str.isEmpty()) {
                             str = id.getArtifactId();
                         }
-                        if (wasSep) {
-                            if (!str.isEmpty()) {
-                                sb.append(toValidChar(' '));
-                            }
-                            wasSep = false;
-                        }
-                        sb.append(toValidString(str));
+                        h.append(str);
                         break;
                     }
                     case 'h': {
-                        String str = session.getWorkspace().getHashName().trim();
-                        if (str.equalsIgnoreCase(NutsConstants.Names.DEFAULT_WORKSPACE_NAME)) {
-                            str = "";
+                        if (!NutsWorkspaceUtils.isUserDefaultWorkspace(session)) {
+                            h.append(session.getWorkspace().getHashName());
                         }
-                        if (wasSep) {
-                            if (!str.isEmpty()) {
-                                sb.append(toValidChar(' '));
-                            }
-                            wasSep = false;
-                        }
-                        sb.append(toValidString(str));
                         break;
                     }
                     case 'a': {
-                        String str = toValidString(CoreStringUtils.joinAndTrimToNull(id.getCondition().getArch()));
-                        if (wasSep) {
-                            if (!str.isEmpty()) {
-                                sb.append(toValidChar(' '));
-                            }
-                            wasSep = false;
-                        }
-                        sb.append(str);
+                        h.appendValid(CoreStringUtils.joinAndTrimToNull(id.getCondition().getArch()));
                         break;
                     }
                     case 's': {
-                        wasSep = true;
+                        h.sep();
                         break;
                     }
                     default: {
-                        wasSep = false;
-                        sb.append(c);
+                        h.append(c);
                     }
                 }
             } else if (c == '%') {
                 //
             } else if (c == '/' || c == '\\') {
-                sb.append(c);
+                h.append(c);
             } else {
-                sb.append(toValidChar(c));
+                h.appendValid(c);
             }
         }
-        String sbs = sb.toString();
-        if (sbs.isEmpty()) {
-            sb.append(toValidString(id.getArtifactId()));
+        if (h.isEmpty()) {
+            h.appendValid(id.getArtifactId());
         }
-        return sb.toString();
+        return h.toString();
     }
+
+    class BuildAccumulator {
+        StringBuilder sb = new StringBuilder();
+        boolean wasSep = false;
+
+        boolean isEmpty() {
+            return sb.length()==0;
+        }
+
+        void sep() {
+            wasSep=true;
+        }
+        void appendValid(char c) {
+            append(toValidChar(c));
+        }
+
+        void append(char c) {
+            wasSep=false;
+            sb.append(c);
+        }
+
+        void appendValid(String str) {
+            append(toValidString(str));
+        }
+
+        void append(String str) {
+            if(str!=null) {
+                if (!str.isEmpty()) {
+                    if (wasSep) {
+                        sb.append(toValidChar(' '));
+                        wasSep = false;
+                    }
+                    sb.append(toValidString(str));
+                }
+            }
+        }
+
+        @Override
+        public String toString() {
+            return sb.toString();
+        }
+    }
+
 }

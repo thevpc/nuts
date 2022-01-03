@@ -350,11 +350,11 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                 LOGCRF.log(NutsMessage.jstyle("   os-dist                        : {0}", senv.getOsDist().getArtifactId()));
                 LOGCRF.log(NutsMessage.jstyle("   os-arch                        : {0}", System.getProperty("os.arch")));
                 LOGCRF.log(NutsMessage.jstyle("   os-shell                       : {0}", senv.getShellFamily()));
-                LOGCRF.log(NutsMessage.jstyle("   os-shells                      : {0}", (Object) senv.getShellFamilies()));
+                LOGCRF.log(NutsMessage.jstyle("   os-shells                      : {0}", text.builder().appendJoined(",",Arrays.asList(senv.getShellFamilies()))));
                 LOGCRF.log(NutsMessage.jstyle("   os-desktop                     : {0}", senv.getDesktopEnvironment()));
                 LOGCRF.log(NutsMessage.jstyle("   os-desktop-family              : {0}", senv.getDesktopEnvironmentFamily()));
-                LOGCRF.log(NutsMessage.jstyle("   os-desktops                    : {0}", (Object) senv.getDesktopEnvironments()));
-                LOGCRF.log(NutsMessage.jstyle("   os-desktop-families            : {0}", (Object) senv.getDesktopEnvironmentFamilies()));
+                LOGCRF.log(NutsMessage.jstyle("   os-desktops                    : {0}", text.builder().appendJoined(",",Arrays.asList(senv.getDesktopEnvironments()))));
+                LOGCRF.log(NutsMessage.jstyle("   os-desktop-families            : {0}", text.builder().appendJoined(",",Arrays.asList(senv.getDesktopEnvironmentFamilies()))));
                 LOGCRF.log(NutsMessage.jstyle("   os-desktop-path                : {0}", senv.getDesktopPath()));
                 LOGCRF.log(NutsMessage.jstyle("   os-desktop-integration         : {0}", senv.getDesktopIntegrationSupport(NutsDesktopIntegrationItem.DESKTOP)));
                 LOGCRF.log(NutsMessage.jstyle("   os-menu-integration            : {0}", senv.getDesktopIntegrationSupport(NutsDesktopIntegrationItem.MENU)));
@@ -363,6 +363,8 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                 LOGCRF.log(NutsMessage.jstyle("   user-name                      : {0}", System.getProperty("user.name")));
                 LOGCRF.log(NutsMessage.jstyle("   user-dir                       : {0}", NutsPath.of(System.getProperty("user.dir"), defaultSession())));
                 LOGCRF.log(NutsMessage.jstyle("   user-home                      : {0}", NutsPath.of(System.getProperty("user.home"), defaultSession())));
+                LOGCRF.log(NutsMessage.jstyle("   user-locale                    : {0}", Locale.getDefault()));
+                LOGCRF.log(NutsMessage.jstyle("   user-time-zone                 : {0}", TimeZone.getDefault()));
             }
             wsModel.securityModel = new DefaultNutsWorkspaceSecurityModel(this);
 
@@ -421,7 +423,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                 NutsWorkspaceConfigRuntime rconfig = new NutsWorkspaceConfigRuntime();
                 rconfig.setDependencies(
                         Arrays.stream(bOptions.getRuntimeBootDescriptor().getDependencies())
-                                .map(x -> x.toString())
+                                .map(NutsBootId::toString)
                                 .collect(Collectors.joining(";"))
                 );
                 rconfig.setId(runtimeId == null ? null : runtimeId.toString());
@@ -482,16 +484,26 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                             txt.parser().createLoader(getClass().getClassLoader())
                     );
                     out.println(n == null ? "no help found" : n.toString().trim());
-                    out.println(
-                            txt.builder()
-                                    .append("location", NutsTextStyle.underlined())
-                                    .append(":")
-                                    .append(defaultSession().locations().getWorkspaceLocation())
-                                    .append(" ")
-                                    .append(" (")
-                                    .append(getHashName())
-                                    .append(")")
-                    );
+                    if (NutsWorkspaceUtils.isUserDefaultWorkspace(defaultSession())) {
+                        out.println(
+                                txt.builder()
+                                        .append("location", NutsTextStyle.underlined())
+                                        .append(":")
+                                        .append(defaultSession().locations().getWorkspaceLocation())
+                                        .append(" ")
+                        );
+                    } else {
+                        out.println(
+                                txt.builder()
+                                        .append("location", NutsTextStyle.underlined())
+                                        .append(":")
+                                        .append(defaultSession().locations().getWorkspaceLocation())
+                                        .append(" ")
+                                        .append(" (")
+                                        .append(getHashName())
+                                        .append(")")
+                        );
+                    }
 
                     NutsTableFormat.of(defaultSession()).setValue(
                             NutsTableModel.of(defaultSession())
@@ -558,9 +570,9 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
             wsModel.configModel.setEndCreateTimeMillis(System.currentTimeMillis());
             if (justInstalled) {
                 try {
-                    Map rec =wsModel.recomm.askCompanionsRecommendations(new RequestQueryInfo(null, ""), defaultSession());
-                    if(rec!=null) {
-                        if(rec.get("companions") instanceof List) {
+                    Map rec = wsModel.recomm.askCompanionsRecommendations(new RequestQueryInfo(null, ""), defaultSession());
+                    if (rec != null) {
+                        if (rec.get("companions") instanceof List) {
                             List<String> recommendedCompanions = (List<String>) rec.get("companions");
                             if (recommendedCompanions != null) {
                                 wsModel.recommendedCompanions.addAll(recommendedCompanions);
@@ -628,8 +640,8 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
 
     private void displayRecommendations(Object r, NutsSession s) {
         if (s != null) {
-            Map<String,Object> a=new HashMap<>();
-            a.put("recommendations",r);
+            Map<String, Object> a = new HashMap<>();
+            a.put("recommendations", r);
             s.out().printlnf(a);
         }
     }
@@ -820,12 +832,12 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
             return;
         }
         try {
-            Map rec =null;
-            if(strategy0==InstallStrategy0.INSTALL) {
+            Map rec = null;
+            if (strategy0 == InstallStrategy0.INSTALL) {
                 rec = wsModel.recomm.askInstallRecommendations(new RequestQueryInfo(def.getId().toString(), ""), session);
-            }else if(strategy0==InstallStrategy0.UPDATE){
+            } else if (strategy0 == InstallStrategy0.UPDATE) {
                 rec = wsModel.recomm.askUpdateRecommendations(new RequestQueryInfo(def.getId().toString(), ""), session);
-            }else{
+            } else {
                 //just ignore any dependencies. recommendations are related to main artifacts
             }
             //TODO: should check here for any security issue!
@@ -1035,12 +1047,12 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                                     .log(NutsMessage.jstyle("failed to uninstall  {0}", executionContext.getDefinition().getId()));
                             //ignore if we could not uninstall
                             try {
-                                Map rec =null;
-                                if(strategy0==InstallStrategy0.INSTALL) {
+                                Map rec = null;
+                                if (strategy0 == InstallStrategy0.INSTALL) {
                                     rec = wsModel.recomm.askInstallFailureRecommendations(new RequestQueryInfo(def.getId().toString(), ""), session);
-                                }else if(strategy0==InstallStrategy0.UPDATE){
+                                } else if (strategy0 == InstallStrategy0.UPDATE) {
                                     rec = wsModel.recomm.askUpdateFailureRecommendations(new RequestQueryInfo(def.getId().toString(), ""), session);
-                                }else{
+                                } else {
                                     //just ignore any dependencies. recommendations are related to main artifacts
                                 }
                                 //TODO: should check here for any security issue!

@@ -529,6 +529,11 @@ public class NutsWorkspaceUtils {
         }
     }
 
+    public static boolean isUserDefaultWorkspace(NutsSession session) {
+        String defaultWorkspaceLocation = NutsUtilPlatforms.getWorkspaceLocation(null, false, null);
+        return defaultWorkspaceLocation.equals(session.getWorkspace().getLocation().toString());
+    }
+
     public void installCompanions() {
         NutsTexts text = NutsTexts.of(session);
         Set<NutsId> companionIds = session.extensions().getCompanionIds();
