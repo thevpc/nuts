@@ -260,12 +260,13 @@ public class MavenFolderRepository extends NutsCachedRepository {
         } else {
             try {
                 NutsCp.of(session)
-                        .from(repoHelper.getStream(id, "artifact content", "retrieve", session)).to(localPath)
+                        .from(repoHelper.getIdPath(id, session))
+                        .to(localPath)
                         .setValidator(in -> repoHelper.checkSHA1Hash(
                                         id.builder().setFace(NutsConstants.QueryFaces.CONTENT_HASH).build(),
                                         in, "artifact binaries", session
                                 )
-                        ).addOptions(NutsPathOption.LOG, NutsPathOption.TRACE)
+                        ).addOptions(NutsPathOption.LOG, NutsPathOption.TRACE, NutsPathOption.SAFE)
                         .run();
             } catch (UncheckedIOException | NutsIOException ex) {
                 throw new NutsNotFoundException(session, id, null, ex);

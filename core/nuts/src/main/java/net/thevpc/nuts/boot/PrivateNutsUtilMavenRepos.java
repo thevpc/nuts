@@ -32,6 +32,7 @@ import net.thevpc.nuts.spi.NutsBootVersion;
 import net.thevpc.nuts.spi.NutsRepositoryLocation;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.xml.sax.SAXParseException;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -274,7 +275,13 @@ public final class PrivateNutsUtilMavenRepos {
             }
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             DocumentBuilder builder = factory.newDocumentBuilder();
-            Document doc = builder.parse(xml);
+
+            Document doc = null;
+            try {
+                doc = builder.parse(xml);
+            } catch (SAXParseException ex) {
+                throw ex;
+            }
             Element c = doc.getDocumentElement();
             Map<String, String> osMap = new HashMap<>();
             Map<String, String> archMap = new HashMap<>();
@@ -496,8 +503,8 @@ public final class PrivateNutsUtilMavenRepos {
                                         if (Files.isRegularFile(jarPath)) {
                                             bestVersion = p;
                                             bestPath = "local location : " + jarPath;
-                                            if(bLog!=null){
-                                                bLog.log(Level.FINEST, NutsLogVerb.SUCCESS, NutsMessage.jstyle("{0}#{1} found in {2} as {3}", zId,bestVersion,repoUrl2,bestPath));
+                                            if (bLog != null) {
+                                                bLog.log(Level.FINEST, NutsLogVerb.SUCCESS, NutsMessage.jstyle("{0}#{1} found in {2} as {3}", zId, bestVersion, repoUrl2, bestPath));
                                             }
                                             if (stopFirst) {
                                                 break;
@@ -530,8 +537,8 @@ public final class PrivateNutsUtilMavenRepos {
                         if (bestVersion == null || bestVersion.compareTo(p) < 0) {
                             bestVersion = p;
                             bestPath = "remote file " + basePath;
-                            if(bLog!=null){
-                                bLog.log(Level.FINEST, NutsLogVerb.SUCCESS, NutsMessage.jstyle("{0}#{1} found in {2} as {3}", zId,bestVersion,repoUrl2,bestPath));
+                            if (bLog != null) {
+                                bLog.log(Level.FINEST, NutsLogVerb.SUCCESS, NutsMessage.jstyle("{0}#{1} found in {2} as {3}", zId, bestVersion, repoUrl2, bestPath));
                             }
                             if (stopFirst) {
                                 break;
@@ -547,8 +554,8 @@ public final class PrivateNutsUtilMavenRepos {
                         if (bestVersion == null || bestVersion.compareTo(p) < 0) {
                             bestVersion = p;
                             bestPath = "remote file " + mavenMetadata;
-                            if(bLog!=null){
-                                bLog.log(Level.FINEST, NutsLogVerb.SUCCESS, NutsMessage.jstyle("{0}#{1} found in {2} as {3}", zId,bestVersion,repoUrl2,bestPath));
+                            if (bLog != null) {
+                                bLog.log(Level.FINEST, NutsLogVerb.SUCCESS, NutsMessage.jstyle("{0}#{1} found in {2} as {3}", zId, bestVersion, repoUrl2, bestPath));
                             }
                             if (stopFirst) {
                                 break;
@@ -670,7 +677,7 @@ public final class PrivateNutsUtilMavenRepos {
                                          NutsBootOptions bOptions, Function<String, String> pathExpansionConverter,
                                          PrivateNutsBootLog bLog) {
         boolean cacheLocalFiles = true;//Boolean.getBoolean("nuts.cache.cache-local-files");
-        String repository=repository0.getPath();
+        String repository = repository0.getPath();
         //we know exactly the file path, so we will trim "htmlfs:" protocol
         if (repository.startsWith("htmlfs:")) {
             repository = repository.substring("htmlfs:".length());

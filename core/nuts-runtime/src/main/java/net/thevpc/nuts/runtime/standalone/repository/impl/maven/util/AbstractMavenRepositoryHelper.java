@@ -68,7 +68,7 @@ public abstract class AbstractMavenRepositoryHelper {
 
     public String getStreamAsString(NutsId id, String typeName, String action, NutsSession session) {
         byte[] barr = NutsCp.of(session)
-                .addOptions(NutsPathOption.LOG, NutsPathOption.TRACE)
+                .addOptions(NutsPathOption.LOG, NutsPathOption.TRACE, NutsPathOption.SAFE)
                 .from(getIdPath(id, session))
                 .setSourceOrigin(id)
                 .setActionMessage(action==null?null:NutsMessage.plain(action))

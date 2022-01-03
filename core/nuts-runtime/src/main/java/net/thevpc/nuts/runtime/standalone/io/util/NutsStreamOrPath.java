@@ -164,6 +164,10 @@ public class NutsStreamOrPath {
         return false;
     }
 
+    public boolean isMultiRead() {
+        return value instanceof NutsPath;
+    }
+
     public NutsStreamOrPath toMultiRead(NutsSession session) {
         if (value instanceof NutsPath) {
             return this;

@@ -17,6 +17,8 @@ import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
 import net.thevpc.nuts.spi.NutsSupportLevelContext;
 
 import java.io.*;
+import java.net.SocketException;
+import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
@@ -32,6 +34,7 @@ public class DefaultNutsCp implements NutsCp {
     private NutsLogger LOG;
     private NutsIOCopyValidator checker;
     private boolean skipRoot = false;
+    private int maxRepeatCount=3;
     private NutsStreamOrPath source;
     private NutsStreamOrPath target;
     private NutsSession session;
@@ -589,11 +592,16 @@ public class DefaultNutsCp implements NutsCp {
         if (options.contains(NutsPathOption.INTERRUPTIBLE)) {
             try (InputStream in = CoreIOUtils.toInterruptible(Files.newInputStream(source))) {
                 interruptibleInstance = (Interruptible) in;
-                return transferTo(in, out);
+                try {
+                    return transferTo(in, out);
+                }catch (IOException ex){
+                    throw new MiddleTransferException(ex);
+                }
             }
         }
         return Files.copy(source, out);
     }
+
 
     private long transferTo(InputStream in, OutputStream out) throws IOException {
         int DEFAULT_BUFFER_SIZE = 8192;
@@ -647,6 +655,61 @@ public class DefaultNutsCp implements NutsCp {
 
     private void copyStream() {
         checkSession();
+        NutsStreamOrPath _source = source;
+        if (_source == null) {
+            throw new NutsIllegalArgumentException(getSession(), NutsMessage.plain("missing source"));
+        }
+        if (target == null) {
+            throw new NutsIllegalArgumentException(getSession(), NutsMessage.plain("missing target"));
+        }
+        boolean safe = options.contains(NutsPathOption.SAFE);
+        if(safe){
+            copyStreamSafe(source,target);
+        }else{
+            copyStreamOnce(source,target);
+        }
+    }
+
+    private void copyStreamSafe(NutsStreamOrPath source,NutsStreamOrPath target) {
+        if(source.isMultiRead()){
+            copyStreamMulti(source, target);
+        }else{
+            copyStreamOnce(source, target);
+        }
+    }
+
+    private void copyStreamMulti(NutsStreamOrPath source,NutsStreamOrPath target) {
+        int repeatCount=1;
+        int maxRepeatCount=this.maxRepeatCount;
+        if(maxRepeatCount<1){
+            maxRepeatCount=3;
+        }
+        for (int i = repeatCount; i <= maxRepeatCount; i++) {
+            try{
+                NutsLoggerOp lop = _LOGOP(session);
+                if (i>1 && lop.isLoggable(Level.FINEST)) {
+                    lop.level(Level.FINEST).verb(NutsLogVerb.START).log(NutsMessage.jstyle("repeat download #{0} {1}",
+                            i,
+                            source));
+                }
+                copyStreamOnce(source,target);
+                return;
+            }catch (NutsIOException ex){
+                Throwable cause = ex.getCause();
+                if(
+                        cause instanceof SocketException
+                        || cause instanceof SocketTimeoutException
+                        || cause instanceof MiddleTransferException
+                ){
+                    //ignore;
+                }else{
+                    throw ex;
+                }
+            }
+        }
+    }
+
+    private void copyStreamOnce(NutsStreamOrPath source,NutsStreamOrPath target) {
         NutsStreamOrPath _source = source;
         if (_source == null) {
             throw new NutsIllegalArgumentException(getSession(), NutsMessage.plain("missing source"));

@@ -1053,6 +1053,10 @@ public class DefaultNutsWorkspaceConfigModel {
                 .setDependencyFilter(NutsDependencyFilters.of(session).byRunnable())
                 .setFailFast(false).getResultDefinition();
         if (nd != null) {
+            if(content && nd.getContent()==null){
+                //this is an unexpected behaviour, fail fast
+                throw new NutsNotFoundException(session, id);
+            }
             return new NutsBootDef(nd.getId(), nd.getDependencies().transitive().toList().toArray(new NutsDependency[0]),
                     (content && nd.getContent() != null) ? nd.getContent().getPath() : null);
         }
