@@ -7,6 +7,7 @@ import java.io.InputStream;
 
 public class DefaultJShellExecutionContext implements JShellExecutionContext {
     private JShellContext shellContext;
+    private NutsSession session;
     private JShellBuiltin builtin;
     private NutsTerminalMode terminalMode = null;
     private boolean askHelp;
@@ -15,6 +16,8 @@ public class DefaultJShellExecutionContext implements JShellExecutionContext {
 
     public DefaultJShellExecutionContext(JShellContext shellContext, JShellBuiltin command) {
         this.shellContext = shellContext;
+        //each execution has its very own session!
+        this.session = shellContext.getSession().copy();
         this.builtin = command;
     }
 
@@ -26,7 +29,7 @@ public class DefaultJShellExecutionContext implements JShellExecutionContext {
 
     @Override
     public NutsSession getSession() {
-        return shellContext.getSession();
+        return session;
     }
 
 
@@ -37,17 +40,17 @@ public class DefaultJShellExecutionContext implements JShellExecutionContext {
 
     @Override
     public NutsPrintStream out() {
-        return shellContext.out();
+        return getSession().out();
     }
 
     @Override
     public NutsPrintStream err() {
-        return shellContext.err();
+        return getSession().err();
     }
 
     @Override
     public InputStream in() {
-        return shellContext.in();
+        return getSession().in();
     }
 
 

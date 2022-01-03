@@ -37,7 +37,7 @@ import net.thevpc.nuts.toolbox.nsh.jshell.JShellExecutionContext;
 public class VersionCommand extends SimpleJShellBuiltin {
 
     public VersionCommand() {
-        super("version", DEFAULT_SUPPORT, null);
+        super("version", DEFAULT_SUPPORT, Options.class);
     }
 
     @Override
@@ -56,10 +56,14 @@ public class VersionCommand extends SimpleJShellBuiltin {
         if (options.version == null) {
             options.version = NutsVersionFormat.of(context.getSession());
         }
-        options.version
-                .setSession(session)
-                .addProperty("nsh-version", context.getAppContext().getAppId().getVersion().getValue())
-                .println(context.out());
+        if(context.getSession().isPlainOut()){
+            context.out().printlnf( context.getAppContext().getAppId().getVersion().getValue());
+        }else {
+            options.version
+                    .setSession(session)
+                    .addProperty("nsh-version", context.getAppContext().getAppId().getVersion().getValue())
+                    .println(context.out());
+        }
     }
 
     private static class Options {
