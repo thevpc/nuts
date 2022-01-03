@@ -13,7 +13,7 @@ This command does absolutely nothing but showing this message
   /  |/ / / / / __/ ___/   The Open Source Package Manager for Java (TM)
  / /|  / /_/ / /_(__  )    and other Things ... by vpc
 /_/ |_/\__,_/\__/____/     http://github.com/thevpc/nuts
-    version 0.5.7.0
+    version ${{latestImplVersion}}
 
 
 SYNOPSIS:

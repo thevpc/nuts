@@ -10,10 +10,10 @@ ${{include($"${resources}/header.md")}}
 ```
 me@linux:~> nuts info
 name                     = default-workspace
-nuts-api-version         = 0.5.7
-nuts-api-id              = net.vpc.app.nuts:nuts#0.5.7
-nuts-runtime-id          = net.vpc.app.nuts:nuts-core#0.5.7.0
-nuts-runtime-path        = ~/.cache/nuts/default-workspace/boot/net/vpc/app/nuts/nuts-core/0.5.7.0/nuts-core-0.5.7.0.jar;~/.cache/nuts/default-workspace/boot/net/vpc/app/nuts/nuts/0.5.7/nuts-0.5.7.jar;~/.cache/nuts/default-workspace/boot/com/google/code/gson/gson/2.8.5/gson-2.8.5.jar;~/.cache/nuts/default-workspace/boot/org/fusesource/jansi/jansi/1.17.1/jansi-1.17.1.jar
+nuts-api-version         = ${{latestApiVersion}}
+nuts-api-id              = net.vpc.app.nuts:nuts#${{latestApiVersion}}
+nuts-runtime-id          = net.vpc.app.nuts:nuts-core#${{latestImplVersion}}
+nuts-runtime-path        = ~/.cache/nuts/default-workspace/boot/net/vpc/app/nuts/nuts-core/${{latestImplVersion}}/nuts-core-${{latestImplVersion}}.jar;~/.cache/nuts/default-workspace/boot/net/vpc/app/nuts/nuts/${{latestApiVersion}}/nuts-${{latestApiVersion}}.jar;~/.cache/nuts/default-workspace/boot/com/google/code/gson/gson/2.8.5/gson-2.8.5.jar;~/.cache/nuts/default-workspace/boot/org/fusesource/jansi/jansi/1.17.1/jansi-1.17.1.jar
 nuts-workspace-id        = 99b73002-804d-4e4c-9a13-f57ac1f40b3d
 nuts-store-layout        = linux
 nuts-store-strategy      = exploded
@@ -43,7 +43,7 @@ java-version             = 1.8.0_222
 platform                 = java#1.8.0_222
 java-home                = /usr/lib64/jvm/java-1.8.0-openjdk-1.8.0/jre
 java-executable          = /usr/lib64/jvm/java-1.8.0-openjdk-1.8.0/jre/bin/java
-java-classpath           = ~/.m2/repository/net/vpc/app/nuts/nuts/0.5.7/nuts-0.5.7.jar
+java-classpath           = ~/.m2/repository/net/vpc/app/nuts/nuts/${{latestApiVersion}}/nuts-${{latestApiVersion}}.jar
 java-library-path        = /usr/java/packages/lib/amd64:/usr/lib64:/lib64:/lib:/usr/lib
 os-name                  = linux#4.12.14-lp151.28.13-default
 os-family                = linux

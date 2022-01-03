@@ -220,14 +220,15 @@ public class Test06_UpdateTest {
                 .setFailFast(true)
                 .grabOutputString()
                 .grabErrorString()
-                .setSleepMillis(1000);
+                .setSleepMillis(5000);
         TestUtils.println(ee.formatter().format().filteredText());
         ee.run();
 
         String ss = ee.getOutputString();
         TestUtils.println("================");
-        TestUtils.println(ss);
-        TestUtils.println(ee.getErrorString());
+        TestUtils.println("OUT ="+ss);
+        TestUtils.println("ERR ="+ee.getErrorString());
+        TestUtils.println("CODE="+ee.getResult());
         Map m = NutsElements.of(uws).json().parse(ss, Map.class);
         Assertions.assertEquals(newApiVersion, m.get("nuts-api-version"));
         Assertions.assertEquals(newRuntimeVersion, m.get("nuts-runtime-version"));

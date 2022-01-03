@@ -70,7 +70,7 @@ public class GrepCommand extends SimpleJShellBuiltin {
         } else if (commandLine.next("-i", "--ignore-case") != null) {
             options.ignoreCase = true;
             return true;
-        } else if ((a = commandLine.next("-H", "--highlighter")) != null) {
+        } else if ((a = commandLine.next("-H", "--highlight", "--highlighter")) != null) {
             options.highlighter = NutsUtilStrings.trim(a.getValue().getString());
             return true;
         } else if ((a = commandLine.next("-S", "--selection-style")) != null) {

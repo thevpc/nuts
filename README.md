@@ -4,7 +4,7 @@ Network Updatable Things Services
      __        __    
   /\ \ \ _  __/ /______
  /  \/ / / / / __/ ___/
-/ /\  / /_/ / /_(__  )   dev version 0.8.3.0 (accessible on thevpc.net)
+/ /\  / /_/ / /_(__  )   dev version 0.8.3.0-rc1 (accessible on thevpc.net)
 \_\ \/\__,_/\__/____/    production version 0.8.2.1 (accessible on maven central)
 </pre>
 
@@ -33,15 +33,15 @@ nuts --version
 It should show a result in the format : nuts-api-version/nuts-impl-version
 
 ```
-0.8.3/0.8.3.0
+0.8.3-rc1/0.8.3.0-rc1
 ```
 
-## Installing Nuts (Development, recommended for testing)
+## Installing Nuts Preview (Development, recommended for testing)
 
 If you want to install (or update from existing rolling version) you just need to do the following.
 Please that nuts rolling version (which is the most recent version) is quite stable and you can use it for personal usage, for development or for testing but we recommend you consider official versions for production systems.
 
-First you need to download nuts.jar
+First you need to download nuts-preview.jar
 
 ```
 wget https://thevpc.net/nuts-preview.jar -O nuts.jar
@@ -62,7 +62,7 @@ The following command should show you the actual version
 
 The very same procedure applies whether you already have an existing version of nuts installed or not.
 
-First you need to download nuts.jar
+First you need to download nuts-stable.jar
 
 ```
 wget wget https://repo1.maven.org/maven2/net/thevpc/nuts/nuts/0.8.2/nuts-0.8.2.jar -O nuts.jar

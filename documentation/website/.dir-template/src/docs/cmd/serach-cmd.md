@@ -50,9 +50,7 @@ You can also change the output layout using --long (or -l) flag
 ```
 me@linux:~> nuts search -i -l
 I-X 2019-08-26 09:53:53.141 anonymous vpc-public-maven net.vpc.app:netbeans-launcher#1.2.1
-IcX 2019-08-24 11:05:49.591 admin     maven-local      net.vpc.app.nuts.toolbox:nsh#0.5.7.0
-IcX 2019-08-24 11:05:58.143 admin     maven-local      net.vpc.app.nuts.toolbox:ndi#0.5.7.0
-IcX 2019-08-24 11:05:49.927 admin     maven-local      net.vpc.app.nuts.toolbox:nadmin#0.5.7.0
+IcX 2019-08-24 11:05:49.591 admin     maven-local      net.vpc.app.nuts.toolbox:nsh#${{latestImplVersion}}
 I-x 2019-08-26 09:50:03.423 anonymous vpc-public-maven net.vpc.app:kifkif#1.3.3
 ```
 you can even change the output format

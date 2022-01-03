@@ -168,7 +168,7 @@ WARNING: this version is not deployed to maven-central
 - ADDED    : I/O Lock action
 - ADDED    : I/O Compress and Uncompress actions
 - CHANGE   : now if a command to execute ends with '!', we will force searching in installed only.
-- CHANGE   : removed install/uninstall in Terminal, replaced by NutsWarkspaceAware
+- CHANGE   : removed install/uninstall in Terminal, replaced by NutsWorkspaceAware
 
 ## nuts 0.5.7.0
 WARNING: this version is not deployed to maven-central

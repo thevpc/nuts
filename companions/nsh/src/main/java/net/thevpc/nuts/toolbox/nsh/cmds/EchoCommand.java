@@ -58,7 +58,9 @@ public class EchoCommand extends SimpleJShellBuiltin {
                 return true;
             }
             case "-H":
-            case "--highlighter": {
+            case "--highlight":
+            case "--highlighter":
+            {
                 options.highlighter = NutsUtilStrings.trim(commandLine.next().getValue().getString());
                 return true;
             }
