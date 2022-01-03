@@ -661,6 +661,8 @@ public class URLPath implements NutsPathSPI {
                 HttpURLConnection hc = (HttpURLConnection) uu;
                 hc.setRequestMethod("HEAD");
                 cc.responseCode = hc.getResponseCode();
+            }else{
+                cc.responseCode = 200;
             }
             cc.contentLength = uu.getContentLengthLong();
             cc.contentEncoding = uu.getContentEncoding();

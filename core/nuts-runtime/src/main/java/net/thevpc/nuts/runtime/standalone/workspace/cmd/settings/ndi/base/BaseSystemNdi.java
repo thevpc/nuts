@@ -1,6 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.ndi.base;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.standalone.id.util.NutsIdUtils;
 import net.thevpc.nuts.runtime.standalone.shell.NutsShellHelper;
 import net.thevpc.nuts.runtime.standalone.shell.ReplaceString;
 import net.thevpc.nuts.runtime.standalone.shell.ScriptBuilder;
@@ -186,7 +187,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
                     NutsDefinition appDef = loadIdDefinition(nid);
                     s = NameBuilder.id(appDef.getId(), "%n", null, appDef.getDescriptor(), session).buildName();
                     s = getBinScriptFile(s, options).toString();
-                } else if (NutsPath.of(s,session).isName()) {
+                } else if (NutsPath.of(s, session).isName()) {
                     NutsDefinition appDef = loadIdDefinition(nid);
                     s = NameBuilder.id(appDef.getId(), s, null, appDef.getDescriptor(), session).buildName();
                     s = getBinScriptFile(s, options).toString();
@@ -615,7 +616,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
         } else if (nutsDesktopIntegrationItem == NutsDesktopIntegrationItem.MENU) {
             results.addAll(Arrays.asList(ww.writeMenu(shortcut, path, true, id)));
         } else if (nutsDesktopIntegrationItem == NutsDesktopIntegrationItem.SHORTCUT) {
-            results.addAll(Arrays.asList(ww.writeShortcut(shortcut, path == null ? null : NutsPath.of(path,session), true, id)));
+            results.addAll(Arrays.asList(ww.writeShortcut(shortcut, path == null ? null : NutsPath.of(path, session), true, id)));
         } else {
             throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("unsupported"));
         }
@@ -660,7 +661,8 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
         return compareIconExtensions(n1, n2);
     }
 
-    protected String resolveBestIcon(String... iconPaths) {
+    protected String resolveBestIcon(NutsId appId,String... iconPaths) {
+        iconPaths=toAbsoluteIconPaths(appId,iconPaths);
         if (iconPaths != null) {
             List<String> all = Arrays.stream(iconPaths).map(x -> (x == null) ? "" : x.trim())
                     .filter(x -> !x.isEmpty())
@@ -676,23 +678,49 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
     }
 
     public String resolveIcon(String iconPath, NutsId appId) {
-        if (iconPath != null && iconPath.length() > 0) {
+        if (!NutsBlankable.isBlank(iconPath)) {
             return iconPath;
         }
         return getPreferredIconPath(appId);
     }
 
+    public String[] toAbsoluteIconPaths(NutsId appId, String[] iconPaths) {
+        if(iconPaths==null){
+            return null;
+        }
+        return Arrays.stream(iconPaths).map(x->toAbsoluteIconPath(appId,x)).toArray(String[]::new);
+    }
+
+    public String toAbsoluteIconPath(NutsId appId, String iconPath) {
+        if (NutsBlankable.isBlank(iconPath)) {
+            return iconPath;
+        }
+        if (iconPath.startsWith("classpath://")) {
+            return "nuts-resource://" + appId.getLongName() + "" + iconPath.substring("classpath://".length() - 1);
+        }
+        return iconPath;
+    }
+
     public String getPreferredIconPath(NutsId appId) {
+        if (NutsIdUtils.isApiId(appId)) {
+            //apiId does not define any icon, will load icon from the runtime
+            NutsId rt = NutsIdUtils.findRuntimeForApi(appId.getVersion().getValue(), getSession());
+            if (rt == null) {
+                rt = session.getWorkspace().getRuntimeId();
+            }
+            return getPreferredIconPath(rt);
+        }
         NutsDefinition appDef = session.search().addId(appId).setLatest(true).setEffective(true).setDistinct(true).getResultDefinitions().singleton();
-        String descAppIcon = resolveBestIcon(appDef.getDescriptor().getIcons());
+        String descAppIcon = resolveBestIcon(appDef.getId(),appDef.getDescriptor().getIcons());
         if (descAppIcon == null) {
             if (isNutsBootId(appDef.getId())
-                    || appDef.getId().getGroupId().startsWith("net.thevpc.nuts")
+                    || appDef.getId().getGroupId().equals("net.thevpc.nuts")
+                    || appDef.getId().getGroupId().startsWith("net.thevpc.nuts.")
             ) {
                 //get default icon
                 NutsId rid = session.getWorkspace().getRuntimeId();
                 descAppIcon =
-                        resolveBestIcon(
+                        resolveBestIcon(rid,
                                 "nuts-resource://" + rid.getLongName() + "/net/thevpc/nuts/runtime/nuts.svg",
                                 "nuts-resource://" + rid.getLongName() + "/net/thevpc/nuts/runtime/nuts.png",
                                 "nuts-resource://" + rid.getLongName() + "/net/thevpc/nuts/runtime/nuts.ico"
@@ -701,7 +729,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
                 //get default icon
                 NutsId rid = session.getWorkspace().getRuntimeId();
                 descAppIcon =
-                        resolveBestIcon(
+                        resolveBestIcon(rid,
                                 "nuts-resource://" + rid.getLongName() + "/net/thevpc/nuts/runtime/nuts-app.svg",
                                 "nuts-resource://" + rid.getLongName() + "/net/thevpc/nuts/runtime/nuts-app.png",
                                 "nuts-resource://" + rid.getLongName() + "/net/thevpc/nuts/runtime/nuts-app.ico"
@@ -714,9 +742,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
             String descAppIconDigest = NutsDigest.of(session).md5().setSource(new ByteArrayInputStream(descAppIcon0.getBytes())).computeString();
 //            System.out.println(">>>>>>> "+descAppIconDigest+" :: "+descAppIcon0);
             NutsPath p0 = NutsPath.of(descAppIcon, session);
-            if (descAppIcon.startsWith("classpath://")) {
-                descAppIcon = "nuts-resource://" + appDef.getId().getLongName() + "" + descAppIcon.substring("classpath://".length() - 1);
-            }
+            descAppIcon=toAbsoluteIconPath(appId, descAppIcon);
             String bestName = descAppIconDigest + "." + p0.getLastExtension();
             NutsPath localIconPath = session.locations().getStoreLocation(appDef.getId(), NutsStoreLocation.CACHE)
                     .resolve("icons")
@@ -728,7 +754,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
                 if (p.exists()) {
                     NutsCp.of(session)
                             .from(p)
-                            .to(localIconPath)
+                            .to(localIconPath).addOptions(NutsPathOption.SAFE,NutsPathOption.LOG,NutsPathOption.TRACE)
                             .run();
                     iconPath = localIconPath.toString();
                 }

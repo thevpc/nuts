@@ -3,8 +3,9 @@ package net.thevpc.nuts.runtime.standalone.shell;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
-public class WinPowerShellNutsShellHelper extends AbstractWinNutsShellHelper{
-    public static final NutsShellHelper WIN_POWER_SHELL =new WinPowerShellNutsShellHelper();
+public class WinPowerShellNutsShellHelper extends AbstractWinNutsShellHelper {
+    public static final NutsShellHelper WIN_POWER_SHELL = new WinPowerShellNutsShellHelper();
+
     @Override
     public String getExportCommand(String[] names) {
         return null;
@@ -21,33 +22,33 @@ public class WinPowerShellNutsShellHelper extends AbstractWinNutsShellHelper{
 
     @Override
     public String toCommentLine(String line) {
-        return ":: " + line;
+        return "# " + line;
     }
 
 
     @Override
     public String getSetVarCommand(String name, String value) {
-        return "SET \"" + name + "=" + value + "\"";
+        return "$" + name + "=\"" + value + "\"";
     }
 
     @Override
     public String getSetVarStaticCommand(String name, String value) {
-        return "SET \"" + name + "=" + value + "\"";
+        return "$" + name + "=\"" + value + "\"";
     }
 
     @Override
     public String getCallScriptCommand(String path, String... args) {
-        return "@CALL \"" + path + "\"" + " " + Arrays.stream(args).map(a -> dblQte(a)).collect(Collectors.joining(" "));
+        return "\"" + path + "\"" + " " + Arrays.stream(args).map(a -> dblQte(a)).collect(Collectors.joining(" "));
     }
 
     @Override
     public boolean isComments(String line) {
-        return line.startsWith(":: ");
+        return line.startsWith("# ");
     }
 
     @Override
     public String trimComments(String line) {
-        if (line.startsWith(":: ")) {
+        if (line.startsWith("# ")) {
             return line.substring(2).trim();
         }
         throw new IllegalArgumentException("not a comment");
@@ -60,7 +61,7 @@ public class WinPowerShellNutsShellHelper extends AbstractWinNutsShellHelper{
 
     @Override
     public String varRef(String v) {
-        return "%" + v + "%";
+        return "$" + v;
     }
 
     @Override
