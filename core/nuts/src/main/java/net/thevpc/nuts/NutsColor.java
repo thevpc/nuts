@@ -27,8 +27,8 @@ package net.thevpc.nuts;
  * Color Model
  */
 public class NutsColor {
-    private int type;
-    private int color;
+    private final int type;
+    private final int color;
 
     public NutsColor(int type, int color) {
         this.type = type;
