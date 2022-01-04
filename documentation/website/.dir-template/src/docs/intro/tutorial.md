@@ -53,23 +53,23 @@ $> nuts search
 
 $> nuts search 'net.thevpc.nuts.toolbox:*' --anywhere
  
-        net.thevpc.nuts.toolbox:nsh#0.8.3.0
-        net.thevpc.nuts.toolbox:ndoc#0.8.3.0
-        net.thevpc.nuts.toolbox:ndexer#0.8.3.0
-        net.thevpc.nuts.toolbox:njob#0.8.3.0
-        net.thevpc.nuts.toolbox:nmvn#0.8.3.0
-        net.thevpc.nuts.toolbox:nwork#0.8.3.0
-        net.thevpc.nuts.toolbox:nsh#0.8.3.0
-        net.thevpc.nuts.toolbox:ntomcat#0.8.3.0
-        net.thevpc.nuts.toolbox:ntalk-agent#0.8.3.0
-        net.thevpc.nuts.toolbox:ndiff#0.8.3.0
-        net.thevpc.nuts.toolbox:nserver#0.8.3.0
-        net.thevpc.nuts.toolbox:ndb#0.8.3.0
-        net.thevpc.nuts.toolbox:nversion#0.8.3.0
-        net.thevpc.nuts.toolbox:ntemplate#0.8.3.0
-        net.thevpc.nuts.toolbox:ncode#0.8.3.0
-        net.thevpc.nuts.toolbox:ndocusaurus#0.8.3.0
-        net.thevpc.nuts.toolbox:noapi#0.8.3.0
+        net.thevpc.nuts.toolbox:nsh#${{latestImplVersion}}
+        net.thevpc.nuts.toolbox:ndoc#${{latestImplVersion}}
+        net.thevpc.nuts.toolbox:ndexer#${{latestImplVersion}}
+        net.thevpc.nuts.toolbox:njob#${{latestImplVersion}}
+        net.thevpc.nuts.toolbox:nmvn#${{latestImplVersion}}
+        net.thevpc.nuts.toolbox:nwork#${{latestImplVersion}}
+        net.thevpc.nuts.toolbox:nsh#${{latestImplVersion}}
+        net.thevpc.nuts.toolbox:ntomcat#${{latestImplVersion}}
+        net.thevpc.nuts.toolbox:ntalk-agent#${{latestImplVersion}}
+        net.thevpc.nuts.toolbox:ndiff#${{latestImplVersion}}
+        net.thevpc.nuts.toolbox:nserver#${{latestImplVersion}}
+        net.thevpc.nuts.toolbox:ndb#${{latestImplVersion}}
+        net.thevpc.nuts.toolbox:nversion#${{latestImplVersion}}
+        net.thevpc.nuts.toolbox:ntemplate#${{latestImplVersion}}
+        net.thevpc.nuts.toolbox:ncode#${{latestImplVersion}}
+        net.thevpc.nuts.toolbox:ndocusaurus#${{latestImplVersion}}
+        net.thevpc.nuts.toolbox:noapi#${{latestImplVersion}}
 
 $> nuts install njob
 

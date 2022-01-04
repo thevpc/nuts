@@ -5,6 +5,7 @@ import net.thevpc.nuts.runtime.standalone.id.util.NutsIdUtils;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.logging.Level;
 
 public class NutsDescriptorUtils {
     public static Map<String, String> getPropertiesMap(NutsDescriptorProperty[] list, NutsSession session) {
@@ -85,7 +86,21 @@ public class NutsDescriptorUtils {
                 NutsIdUtils.checkValidEffectiveId(dependency.toId(),session);
             }
             for (NutsDependency dependency : effectiveDescriptor.getStandardDependencies()) {
-                NutsIdUtils.checkValidEffectiveId(dependency.toId(),session);
+                //NutsIdUtils.checkValidEffectiveId(dependency.toId(),session);
+                // replace direct call to checkValidEffectiveId with the following...
+                if (dependency == null) {
+                    throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("unable to evaluate effective null id"));
+                }
+                if (dependency.toString().contains("${")) {
+                    // some times the variable is defined later in the pom that uses this POM standard Dependencies
+                    // so just log a warning, this is not an error but a very bad practice from the dependency maintainer!
+                    NutsLoggerOp.of(NutsDescriptorUtils.class,session)
+                            .verb(NutsLogVerb.WARNING).level(Level.FINE)
+                            .log(NutsMessage.jstyle("{0} is using {1} which defines an unresolved variable. This is a potential bug.",
+                                    effectiveDescriptor.getId(),
+                                    dependency
+                            ));
+                }
             }
         }catch (Exception ex) {
             throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("unable to evaluate effective descriptor for %s", effectiveDescriptor.getId()),ex);

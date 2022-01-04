@@ -26,7 +26,7 @@
 package net.thevpc.nuts;
 
 /**
- * This class handles formatting of iterable items in Search.
+ * This interface handles formatting of iterable items in Search.
  *
  * @author thevpc
  * @app.category Format

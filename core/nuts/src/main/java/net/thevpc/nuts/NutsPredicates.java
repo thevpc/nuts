@@ -30,6 +30,9 @@ import java.io.Serializable;
 import java.util.Objects;
 import java.util.function.Predicate;
 
+/**
+ * NutsPredicate Helper Class
+ */
 public class NutsPredicates {
     private static final Never NEVER = new Never();
     private static final Always ALWAYS = new Always();

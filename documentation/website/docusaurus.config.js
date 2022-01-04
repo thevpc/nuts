@@ -1,5 +1,5 @@
 module.exports = {
-  title: 'Nuts, the Java Package Manager',
+  title: 'Nuts',
   tagline: 'The Java Package Manager',
   url: 'https://thevpc.github.io/nuts',
   baseUrl: '/nuts/',
@@ -134,7 +134,7 @@ module.exports = {
                     ':icon-set: pf',
                     ':doctype: book',
                     ':revnumber: v0.8.3-rc1',
-                    ':revdate: Mon Jan 3 06:51:07 PM +0000 2022',
+                    ':revdate: Tue Jan 4 09:09:59 PM +0000 2022',
                     ':toc:',
                     ':toclevels: 4',
                     ':appendix-caption: Appx',

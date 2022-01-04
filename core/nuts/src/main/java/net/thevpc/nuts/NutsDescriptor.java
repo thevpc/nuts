@@ -105,6 +105,10 @@ public interface NutsDescriptor extends Serializable, NutsBlankable {
      */
     String getSolver();
 
+    /**
+     * Descriptor Condition
+     * @return Descriptor Condition
+     */
     NutsEnvCondition getCondition();
 
     /**

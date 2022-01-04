@@ -1,5 +1,5 @@
 module.exports = {
-  title: 'Nuts, the Java Package Manager',
+  title: 'Nuts',
   tagline: 'The Java Package Manager',
   url: 'https://thevpc.github.io/nuts',
   baseUrl: '/nuts/',

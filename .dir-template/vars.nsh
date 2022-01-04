@@ -15,7 +15,7 @@ jarLocation="${latestJarLocation}";
 apiVersion="${latestApiVersion}";
 implVersion="${latestImplVersion}";
 
-echo --highligher detected "latestApiVersion  ##$latestApiVersion##"
-echo --highligher detected "latestImplVersion ##$latestImplVersion##"
-echo --highligher detected "stableApiVersion  ##$stableApiVersion##"
-echo --highligher detected "stableImplVersion ##$stableImplVersion##"
+echo --highlighter detected "latestApiVersion  ##$latestApiVersion##"
+echo --highlighter detected "latestImplVersion ##$latestImplVersion##"
+echo --highlighter detected "stableApiVersion  ##$stableApiVersion##"
+echo --highlighter detected "stableImplVersion ##$stableImplVersion##"

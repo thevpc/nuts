@@ -1,3 +1,26 @@
+/**
+ * ====================================================================
+ * Nuts : Network Updatable Things Service
+ * (universal package manager)
+ * <br>
+ * is a new Open Source Package Manager to help install packages and libraries
+ * for runtime execution. Nuts is the ultimate companion for maven (and other
+ * build managers) as it helps installing all package dependencies at runtime.
+ * Nuts is not tied to java and is a good choice to share shell scripts and
+ * other 'things' . Its based on an extensible architecture to help supporting a
+ * large range of sub managers / repositories.
+ * <br>
+ * <p>
+ * Copyright [2020] [thevpc] Licensed under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0 Unless required by applicable law
+ * or agreed to in writing, software distributed under the License is
+ * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the specific language
+ * governing permissions and limitations under the License.
+ * <br> ====================================================================
+ */
 package net.thevpc.nuts;
 
 import java.util.Comparator;
@@ -6,6 +29,9 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
+/**
+ * {@code NutsDescribable} Helper Class
+ */
 public final class NutsDescribables {
 
     private NutsDescribables() {
@@ -58,29 +84,9 @@ public final class NutsDescribables {
         return new NamedRunnable(runnable, nfo);
     }
 
-//    public static NutsRunnable ofRunnable(Runnable runnable, NutsElement n) {
-//        return new NamedRunnable(runnable, e -> n);
-//    }
-
-//    public static NutsRunnable ofRunnable(Runnable runnable, String n) {
-//        return new NamedRunnable(runnable, e -> e.ofString(n));
-//    }
-
-//    public static <F, T> NutsFunction<F, T> ofFunction(Function<F, T> fun, String name) {
-//        return new NamedFunction<>(fun, e -> e.ofString(name));
-//    }
-
     public static <F, T> NutsUnsafeFunction<F, T> ofUnsafeFunction(NutsUnsafeFunctionBase<F, T> fun, Function<NutsElements, NutsElement> nfo) {
         return new NamedUnsafeFunction<>(fun, nfo);
     }
-
-//    public static <F, T> NutsUnsafeFunction<F, T> ofUnsafeFunction(NutsUnsafeFunctionBase<F, T> fun, String name) {
-//        return new NamedUnsafeFunction<>(fun, e -> e.ofString(name));
-//    }
-
-//    public static <F, T> NutsFunction<F, T> ofFunction(Function<F, T> fun, NutsElement name) {
-//        return new NamedFunction<>(fun, e -> name);
-//    }
 
     public static <F, T> NutsFunction<F, T> ofFunction(Function<F, T> fun, Function<NutsElements, NutsElement> name) {
         return new NamedFunction<>(fun, name);
@@ -94,37 +100,13 @@ public final class NutsDescribables {
         return new NamedPredicate<>(fun, nfo);
     }
 
-//    public static <T> NutsPredicate<T> ofPredicate(Predicate<T> fun, NutsElement name) {
-//        return new NamedPredicate<>(fun, e -> name);
-//    }
-
-//    public static <T> NutsPredicate<T> ofPredicate(Predicate<T> fun, String name) {
-//        return new NamedPredicate<>(fun, e -> e.ofString(name));
-//    }
-
     public static <T> NutsIterator<T> ofIterator(Iterator<T> fun, Function<NutsElements, NutsElement> nfo) {
         return new NamedIterator<>(fun, nfo);
     }
 
-//    public static <T> NutsIterator<T> ofIterator(Iterator<T> fun, NutsElement name) {
-//        return new NamedIterator<>(fun, e -> name);
-//    }
-
-//    public static <T> NutsIterator<T> ofIterator(Iterator<T> fun, String name) {
-//        return new NamedIterator<>(fun, e -> e.ofString(name));
-//    }
-
     public static <T> NutsIterable<T> ofIterable(Iterable<T> fun, Function<NutsElements, NutsElement> nfo) {
         return new NamedIterable<>(fun, nfo);
     }
-
-//    public static <T> NutsIterable<T> ofIterable(Iterable<T> fun, NutsElement name) {
-//        return new NamedIterable<>(fun, e -> name);
-//    }
-
-//    public static <T> NutsIterable<T> ofIterable(Iterable<T> fun, String name) {
-//        return new NamedIterable<>(fun, e -> e.ofString(name));
-//    }
 
     private static class NamedPredicate<T> extends NutsPredicates.BasePredicate<T> {
         private final Predicate<T> base;
@@ -276,23 +258,6 @@ public final class NutsDescribables {
         @Override
         public NutsElement describe(NutsElements elems) {
             return nfo.apply(elems);
-//            NutsObjectElement b = NutsDescribables.resolveOrDestruct(base, elems)
-//                    .asSafeObject(true);
-//            NutsElement a = nfo.apply(elems);
-//            if (b.isEmpty()) {
-//                return a;
-//            }
-//            if (a.isObject()) {
-//                return b.builder()
-//                        .addAll(a.asObject())
-//                        .build()
-//                        ;
-//            } else {
-//                return b.builder()
-//                        .set("name", a)
-//                        .build()
-//                        ;
-//            }
         }
     }
 

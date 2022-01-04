@@ -1,3 +1,4 @@
+// THIS FILE IS GENERATED
 import React from 'react';
 import clsx from 'clsx';
 import Layout from '@theme/Layout';
@@ -7,26 +8,28 @@ import useBaseUrl from '@docusaurus/useBaseUrl';
 import styles from './styles.module.css';
         const features = [
         {
-        title: <>Open Source</>,
-imageUrl: 'img/oss.png',
+        title: <>No Fat Jar</>,
+imageUrl: 'img/slim-jar.png',
 description: (
 <>
-Nuts Package manager is an Open Source package manager for the Java © ecosystem. Nuts is your best companion for your maven built applications.
+Developers, forget about big jars, uber jars and fats jars hassle.
+You do not need to bother about packaging your dependencies along with your application.
 </>
 ),
 },
 {
                 title: <>Any application, All applications</>,
-imageUrl: 'img/install.png',
+imageUrl: 'img/package.png',
 description: (
 <>
-install, run and manage all the versions of your applications in parallel.
+install any java application with a simple `nuts install your-package`. dependencies are shared across all
+installed applications and you still can install multiple versions of the same application.
 </>
 ),
 },
 {
                 title: <>Automate your operations</>,
-imageUrl: 'img/automate.png',
+imageUrl: 'img/gear.png',
 description: (
 <>
 Take advantage of the Nuts toolbox that offers GNU binutils equivalent tools (bash,ls, cp, and more), and extend them to 
@@ -62,10 +65,11 @@ function Home() {
         <div className="container">
             <h1 className="hero__title">{siteConfig.title}</h1>
             <p className="hero__subtitle">{siteConfig.tagline}</p>
+            <img src="https://thevpc.net/nuts/images/pixel.gif?q=nuts-gsite" alt="" />
             <div className={styles.buttons}>
                 <Link
                     className={clsx(
-                        'button button--outline button--secondary button--lg',
+                        'button b1 button--secondary b1 ',
                         styles.getStarted,
                         )}
                     to={useBaseUrl('docs/')}>
@@ -74,14 +78,26 @@ function Home() {
                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                 <Link
                     className={clsx(
-                        'button button--secondary button--lg',
+                        'button button--secondary--lg b2 ',
                         styles.getStarted,
                         )}
-                    href={'nuts.jar'}
+                    href={'https://thevpc.net/nuts-stable.jar'}
                     target="_blank"
                     >
 
-                Download
+                Download stable 0.8.2
+                </Link>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <Link
+                    className={clsx(
+                        'button button--secondary b3',
+                        styles.getStarted,
+                        )}
+                    href={'https://thevpc.net/nuts-preview.jar'}
+                    target="_blank"
+                    >
+
+                Download preview 0.8.3-rc1
                 </Link>
             </div>
         </div>

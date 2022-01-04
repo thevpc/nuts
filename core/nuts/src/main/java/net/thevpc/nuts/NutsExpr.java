@@ -28,6 +28,9 @@ package net.thevpc.nuts;
 
 import net.thevpc.nuts.spi.NutsComponent;
 
+/**
+ * Simple Expression Parser Module used in multiple syb-systems of nuts (such as search)
+ */
 public interface NutsExpr extends NutsComponent {
     static NutsExpr of(NutsSession session) {
         return session.extensions().createSupported(NutsExpr.class, true, null);
