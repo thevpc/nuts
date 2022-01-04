@@ -4,8 +4,8 @@ Network Updatable Things Services
      __        __    
   /\ \ \ _  __/ /______
  /  \/ / / / / __/ ___/
-/ /\  / /_/ / /_(__  )   dev version 0.8.3.0-rc1 (accessible on thevpc.net)
-\_\ \/\__,_/\__/____/    production version 0.8.2.1 (accessible on maven central)
+/ /\  / /_/ / /_(__  )   dev version 0.8.3.0 (accessible on thevpc.net)
+\_\ \/\__,_/\__/____/    production version 0.8.3.0 (accessible on maven central)
 </pre>
 
 website : [https://thevpc.github.io/nuts](https://thevpc.github.io/nuts)
@@ -33,7 +33,7 @@ nuts --version
 It should show a result in the format : nuts-api-version/nuts-impl-version
 
 ```
-0.8.3-rc1/0.8.3.0-rc1
+0.8.3/0.8.3.0
 ```
 
 ## Installing Nuts Preview (Development, recommended for testing)
@@ -65,7 +65,7 @@ The very same procedure applies whether you already have an existing version of 
 First you need to download nuts-stable.jar
 
 ```
-wget wget https://repo1.maven.org/maven2/net/thevpc/nuts/nuts/0.8.2/nuts-0.8.2.jar -O nuts.jar
+wget wget https://repo1.maven.org/maven2/net/thevpc/nuts/nuts/0.8.3/nuts-0.8.3.jar -O nuts.jar
 ```
 
 If you want a shorter link, use this one!

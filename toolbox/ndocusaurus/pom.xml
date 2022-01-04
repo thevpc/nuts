@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>net.thevpc.nuts.toolbox</groupId>
     <artifactId>ndocusaurus</artifactId>
-    <version>0.8.3.0-rc1</version>
+    <version>0.8.3.0</version>
     <packaging>jar</packaging>
     <name>Nuts Community Toolbox NDocusaurus</name>
     <url>https://github.com/thevpc/nuts</url>
@@ -63,27 +63,27 @@
         <dependency>
             <groupId>net.thevpc.nuts</groupId>
             <artifactId>nuts</artifactId>
-            <version>0.8.3-rc1</version>
+            <version>0.8.3</version>
         </dependency>
         <dependency>
             <groupId>net.thevpc.nuts.lib</groupId>
             <artifactId>nlib-md</artifactId>
-            <version>0.8.3.0-rc1</version>
+            <version>0.8.3.0</version>
         </dependency>
         <dependency>
             <groupId>net.thevpc.nuts.toolbox</groupId>
             <artifactId>ndoc</artifactId>
-            <version>0.8.3.0-rc1</version>
+            <version>0.8.3.0</version>
         </dependency>
         <dependency>
             <groupId>net.thevpc.nuts.toolbox</groupId>
             <artifactId>ntemplate</artifactId>
-            <version>0.8.3.0-rc1</version>
+            <version>0.8.3.0</version>
         </dependency>
         <dependency>
             <groupId>net.thevpc.nuts.toolbox</groupId>
             <artifactId>nsh</artifactId>
-            <version>0.8.3.0-rc1</version>
+            <version>0.8.3.0</version>
         </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>

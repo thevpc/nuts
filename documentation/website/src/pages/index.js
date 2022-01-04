@@ -85,8 +85,9 @@ function Home() {
                     target="_blank"
                     >
 
-                Download stable 0.8.2
+                Download stable 0.8.3
                 </Link>
+                {/* There is no preview for now!
                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                 <Link
                     className={clsx(
@@ -97,8 +98,9 @@ function Home() {
                     target="_blank"
                     >
 
-                Download preview 0.8.3-rc1
+                Download preview 0.8.3
                 </Link>
+                */}
             </div>
         </div>
     </header>

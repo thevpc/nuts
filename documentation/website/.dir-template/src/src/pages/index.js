@@ -87,6 +87,7 @@ function Home() {
 
                 Download stable ${{stableApiVersion}}
                 </Link>
+                {/* There is no preview for now!
                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                 <Link
                     className={clsx(
@@ -99,6 +100,7 @@ function Home() {
 
                 Download preview ${{latestApiVersion}}
                 </Link>
+                */}
             </div>
         </div>
     </header>

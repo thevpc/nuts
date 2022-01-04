@@ -6,7 +6,7 @@
     <groupId>net.thevpc.nuts</groupId>
     <artifactId>nuts-toolbox-build</artifactId>
     <name>Nuts Community Toolbox Build Project</name>
-    <version>0.8.3.0-rc1</version>
+    <version>0.8.3.0</version>
     <packaging>pom</packaging>
     <modules>
         <module>ndb</module>
@@ -22,6 +22,8 @@
         <module>ntomcat</module>
         <module>nversion</module>
         <module>nwork</module>
+        <module>ncode</module>
+        <module>ntalk-agent</module>
     </modules>
     <properties>
     </properties>

@@ -9,8 +9,12 @@ ${{include($"${resources}/header.md")}}
 View Official releases [here](https://github.com/thevpc/nuts/releases) :
 Starred releases are most stable ones.
 
+## nuts 0.8.3.1 (DEVELOPMENT VERSION)
+- ```2022/XX/XX 	nuts 0.8.3.1``` not released yet [download nuts-0.8.3-1.jar](https://thevpc.net/nuts-preview.jar)
+- TODO
+
 ## nuts 0.8.3.0 (DEVELOPMENT VERSION)
-- ```2021/XX/XX 	nuts 0.8.3.0 (*)``` not released yet [download nuts-0.8.3.jar](https://thevpc.net/nuts-preview.jar)
+- ```2021/XX/XX 	nuts 0.8.3.0 (*)``` released [download nuts-0.8.3.jar](https://repo.maven.apache.org/maven2/net/thevpc/nuts/nuts/0.8.3/nuts-0.8.3.jar)
 - WARNING : {api}  API has evolved with incompatibilities with previous versions
 - ADDED   : {runtime}  now search --dry displays the search query plan
 - ADDED   : {api}  added command "settings install-log" to display installation logs

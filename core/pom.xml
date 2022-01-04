@@ -6,7 +6,7 @@
     <groupId>net.thevpc.nuts</groupId>
     <artifactId>nuts-core-builder</artifactId>
     <name>Nuts Community Core Build Project</name>
-    <version>0.8.3.0-rc1</version>
+    <version>0.8.3.0</version>
     <packaging>pom</packaging>
     <modules>
         <module>nuts</module>

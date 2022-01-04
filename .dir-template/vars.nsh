@@ -7,8 +7,8 @@ latestApiVersion=`nuts -ybB nversion $vars_here/../core/nuts`;
 latestImplVersion=`nuts -ybB nversion $vars_here/../core/nuts-runtime`;
 latestJarLocation="https://thevpc.net/maven/net/thevpc/nuts/nuts/${latestApiVersion}/nuts-${latestApiVersion}.jar";
 
-stableApiVersion=0.8.2;
-stableImplVersion=0.8.2.1;
+stableApiVersion=0.8.3;
+stableImplVersion=0.8.3.0;
 stableJarLocation="https://repo.maven.apache.org/maven2/net/thevpc/nuts/nuts/${stableApiVersion}/nuts-${stableApiVersion}.jar";
 
 jarLocation="${latestJarLocation}";

@@ -6,7 +6,7 @@
     <groupId>net.thevpc.nuts</groupId>
     <artifactId>nuts-tutorials</artifactId>
     <name>Nuts Community Tutorials Build Project</name>
-    <version>0.8.3.0-rc1</version>
+    <version>0.8.3.0</version>
     <packaging>pom</packaging>
     <modules>
         <module>nsh/custom-shell-project</module>
