@@ -717,13 +717,21 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
         NutsDependency[] oldDependencies = effectiveDescriptor.getDependencies();
         List<NutsDependency> newDeps = new ArrayList<>();
         boolean someChange = false;
-
+        LinkedHashSet<NutsDependency> effStandardDeps=new LinkedHashSet<>();
+        for (NutsDependency standardDependency : effectiveDescriptor.getStandardDependencies()) {
+            if ("import".equals(standardDependency.getScope())) {
+                NutsDescriptor dd = session.fetch().setId(standardDependency.toId()).setEffective(true).setSession(session).getResultDescriptor();
+                Collections.addAll(effStandardDeps, dd.getStandardDependencies());
+            }else{
+                effStandardDeps.add(standardDependency);
+            }
+        }
         for (NutsDependency d : oldDependencies) {
             if (NutsBlankable.isBlank(d.getScope())
                     || d.getVersion().isBlank()
                     || NutsBlankable.isBlank(d.getOptional())) {
                 NutsDependency standardDependencyOk = null;
-                for (NutsDependency standardDependency : effectiveDescriptor.getStandardDependencies()) {
+                for (NutsDependency standardDependency : effStandardDeps) {
                     if (standardDependency.getSimpleName().equals(d.toId().getShortName())) {
                         standardDependencyOk = standardDependency;
                         break;
@@ -745,6 +753,10 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                         someChange = true;
                         d = d.builder().setVersion(standardDependencyOk.getVersion()).build();
                     }
+                }
+                if (d.getVersion().isBlank()) {
+                    LOG.with().session(session).level(Level.FINE).verb(NutsLogVerb.FAIL)
+                            .log(NutsMessage.jstyle("failed to resolve effective version for {0}", d));
                 }
             }
 

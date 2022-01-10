@@ -11,7 +11,7 @@ Starred releases are most stable ones.
 
 ## nuts 0.8.3.1 (DEVELOPMENT VERSION)
 - ```2022/XX/XX 	nuts 0.8.3.1``` not released yet [download nuts-0.8.3-1.jar](https://thevpc.net/nuts-preview.jar)
-- TODO
+- FIXED   : {runtime} Fixed problem with dependency resolution whit maven's "import" scope
 
 ## nuts 0.8.3.0 (DEVELOPMENT VERSION)
 - ```2021/XX/XX 	nuts 0.8.3.0 (*)``` released [download nuts-0.8.3.jar](https://repo.maven.apache.org/maven2/net/thevpc/nuts/nuts/0.8.3/nuts-0.8.3.jar)
