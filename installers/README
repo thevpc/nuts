@@ -1,0 +1,18 @@
+copyright 2011-2012 Aaron Spear 
+This work is released under the MIT license.  You can do whatever you wish with it, but I am absolutely 
+not responsible for anything evil that may occur.
+
+This code lives on github at:
+https://github.com/aspear/izpack5-example-installer
+
+This project is an example of how to create a working Izpack 5.x installer using maven as the build system.
+I make no claims that it is a GOOD example, but it is an example that works.  I would be quite
+happy to receive any feedback or ideas on how to improve it.
+
+The project is broken into two pieces. The panels directory contains a maven project that builds
+a jar containing the implementation of a custom panel. In this case I just copied the HelloPanel.java that
+is included as a part of IzPack and changed the name to prove the concept. The "installer" sub directory
+contains the build of the installer itself that packages up the custom panel as a part of the installer.
+
+To build:
+mvn clean package

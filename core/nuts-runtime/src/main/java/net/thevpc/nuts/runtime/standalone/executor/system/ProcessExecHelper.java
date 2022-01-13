@@ -2,7 +2,7 @@ package net.thevpc.nuts.runtime.standalone.executor.system;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.io.util.IProcessExecHelper;
-import net.thevpc.nuts.runtime.standalone.util.NutsJavaSdkUtils;
+import net.thevpc.nuts.runtime.standalone.util.jclass.NutsJavaSdkUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.StringPlaceHolderParser;
 
@@ -133,7 +133,9 @@ public class ProcessExecHelper implements IProcessExecHelper {
         map.put("nuts.artifact", id.toString());
         map.put("nuts.file", nutMainFile.getFile().toString());
         String defaultJavaCommand = NutsJavaSdkUtils.of(execSession.getWorkspace()).resolveJavaCommandByVersion("", false, session);
-
+        if(defaultJavaCommand==null){
+            throw new NutsExecutionException(session, NutsMessage.plain("no java version was found"),1);
+        }
         map.put("nuts.java", defaultJavaCommand);
         if (map.containsKey("nuts.jar")) {
             map.put("nuts.cmd", map.get("nuts.java") + " -jar " + map.get("nuts.jar"));
@@ -154,17 +156,25 @@ public class ProcessExecHelper implements IProcessExecHelper {
             @Override
             public String apply(String skey) {
                 if (skey.equals("java") || skey.startsWith("java#")) {
-                    String javaVer = skey.substring(4);
+                    String javaVer = skey.substring(5);
                     if (NutsBlankable.isBlank(javaVer)) {
                         return defaultJavaCommand;
                     }
-                    return NutsJavaSdkUtils.of(execSession.getWorkspace()).resolveJavaCommandByVersion(javaVer, false, session);
+                    String s = NutsJavaSdkUtils.of(execSession.getWorkspace()).resolveJavaCommandByVersion(javaVer, false, session);
+                    if(s==null){
+                        throw new NutsExecutionException(session, NutsMessage.cstyle("no java version %s was found",javaVer),1);
+                    }
+                    return s;
                 } else if (skey.equals("javaw") || skey.startsWith("javaw#")) {
-                    String javaVer = skey.substring(4);
+                    String javaVer = skey.substring(6);
                     if (NutsBlankable.isBlank(javaVer)) {
                         return defaultJavaCommand;
                     }
-                    return NutsJavaSdkUtils.of(execSession.getWorkspace()).resolveJavaCommandByVersion(javaVer, true, session);
+                    String s = NutsJavaSdkUtils.of(execSession.getWorkspace()).resolveJavaCommandByVersion(javaVer, true, session);
+                    if(s==null){
+                        throw new NutsExecutionException(session, NutsMessage.cstyle("no java version %s was found",javaVer),1);
+                    }
+                    return s;
                 } else if (skey.equals("nuts")) {
                     NutsDefinition nutsDefinition;
                     nutsDefinition = session.fetch().setId(NutsConstants.Ids.NUTS_API)

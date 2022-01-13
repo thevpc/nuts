@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.repository.impl.maven.util;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.standalone.format.xml.NutsXmlUtils;
+import net.thevpc.nuts.runtime.standalone.util.xml.XmlUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -53,7 +53,7 @@ public class MavenMetadataParser {
     }
 
     public void writeMavenMetaData(MavenMetadata m, StreamResult writer) throws TransformerException, ParserConfigurationException {
-        Document document = NutsXmlUtils.createDocument(session);
+        Document document = XmlUtils.createDocument(session);
 
         Element metadata = document.createElement("metadata");
         document.appendChild(metadata);
@@ -100,7 +100,7 @@ public class MavenMetadataParser {
             lastUpdated.appendChild(document.createTextNode(new SimpleDateFormat("yyyyMMddHHmmss").format(m.getLastUpdated())));
             versioning.appendChild(lastUpdated);
         }
-        NutsXmlUtils.writeDocument(document, writer, false,true,session);
+        XmlUtils.writeDocument(document, writer, false,true,session);
     }
 
     public MavenMetadata parseMavenMetaData(Path stream) {

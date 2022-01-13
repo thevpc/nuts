@@ -60,7 +60,7 @@ public final class CoreServiceUtils {
                         }
                         return false;
                     }
-                });
+                },session);
             }
         } catch (IOException ex) {
             throw new NutsIOException(session, ex);

@@ -21,7 +21,7 @@ import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.core.test.utils.TestUtils;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.util.CoreTimeUtils;
-import net.thevpc.nuts.runtime.standalone.io.util.SimpleClassStream;
+import net.thevpc.nuts.runtime.standalone.util.jclass.JavaClassByteCode;
 import org.junit.jupiter.api.*;
 
 /**
@@ -110,24 +110,28 @@ public class Test24_ClassParserTest {
     private static void parseClassFile(Path file, NutsSession session) throws IOException {
         TestUtils.println(file);
 
-        SimpleClassStream scs = new SimpleClassStream(Files.newInputStream(file), new SimpleClassStream.Visitor() {
+        JavaClassByteCode scs = new JavaClassByteCode(Files.newInputStream(file), new JavaClassByteCode.Visitor() {
             @Override
-            public void visitVersion(int major, int minor) {
+            public boolean visitVersion(int major, int minor) {
                 TestUtils.println("\t" + major + "." + minor);
+                return true;
             }
 
-            public void visitClassDeclaration(int accessFlags, String thisClass, String superClass, String[] interfaces) {
+            public boolean visitClassDeclaration(int accessFlags, String thisClass, String superClass, String[] interfaces) {
                 TestUtils.println("\tclass " + accessFlags + " " + thisClass + " extends " + superClass + " implements " + Arrays.asList(interfaces));
+                return true;
             }
 
             @Override
-            public void visitMethod(int accessFlags, String name, String descriptor) {
+            public boolean visitMethod(int accessFlags, String name, String descriptor) {
                 TestUtils.println("\t\tmethod " + accessFlags + " " + name + " " + descriptor);
+                return true;
             }
 
             @Override
-            public void visitField(int accessFlags, String name, String descriptor) {
+            public boolean visitField(int accessFlags, String name, String descriptor) {
                 TestUtils.println("\t\tfield " + accessFlags + " " + name + " " + descriptor);
+                return true;
             }
 
         },session

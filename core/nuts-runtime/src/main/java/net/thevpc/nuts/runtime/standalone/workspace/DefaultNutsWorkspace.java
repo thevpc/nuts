@@ -671,7 +671,10 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
             );
         }
         //compute effective!
-        NutsDescriptorBuilder descrWithParents = descriptor.builder().applyParents(parentDescriptors);
+        NutsDescriptorBuilder descrWithParents = descriptor.builder();
+        if(parentDescriptors.length>0){
+            descrWithParents.applyParents(parentDescriptors);
+        }
         //now apply conditions!
         NutsDescriptorProperty[] properties = Arrays.stream(descrWithParents.getProperties()).filter(x -> CoreFilterUtils.acceptCondition(
                 x.getCondition(), false, session)).toArray(NutsDescriptorProperty[]::new);

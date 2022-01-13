@@ -32,4 +32,20 @@ public class Test07_DescriptorTest {
         Assertions.assertTrue(!u.getDescriptor().isApplication());
     }
 
+    @Test
+    public void testSearchDescriptor2() {
+
+        NutsDefinition u = session.fetch().setId("org.openjfx:javafx-controls#17.0.0.1")
+                .setEffective(true).setDependencies(true).getResultDefinition();
+        for (NutsDependency dependency : u.getDescriptor().getDependencies()) {
+            System.out.println(dependency.toString());
+        }
+        TestUtils.println(u.getDescriptor());
+        TestUtils.println(u.getEffectiveDescriptor());
+        TestUtils.println(u.getId()+":"+(u.getDescriptor().isExecutable() ? "executable" : "non-executable"));
+        TestUtils.println(u.getId()+":"+(u.getDescriptor().isApplication() ? "app" : "non-app"));
+        Assertions.assertTrue(!u.getDescriptor().isExecutable());
+        Assertions.assertTrue(!u.getDescriptor().isApplication());
+    }
+
 }

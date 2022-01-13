@@ -1,0 +1,1 @@
+This folder contains companions for third party applications

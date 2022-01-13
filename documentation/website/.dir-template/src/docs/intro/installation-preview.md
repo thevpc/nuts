@@ -18,7 +18,7 @@ Here are all **```nuts```** requirements :
 
 - **Java** : **```nuts```** requires a valid Java Runtime Environment (JRE) or Java Development Kit (JDK) version **8** or above to execute. Please note that you need to update your 1.8 version to the latest update (update 150+)
 - **System Memory**: **```nuts```** memory footprint is very little and has no minimum RAM requirements.
-- **Disk**: 2.5Mo on the disk are required for the **```nuts```** installation itself. In addition to that, additional disk space will be used for your local Nuts workspace. The size of your local workspace will vary depending on usage but expect at least 500MB.
+- **Disk**: 5Mo on the disk are required for the **```nuts```** installation itself. In addition to that, additional disk space will be used for your local Nuts workspace. The size of your local workspace will vary depending on usage but expect at least 500MB.
 - **Operating System**: **```nuts```** is able to run on any java enabled Operating System including all recent versions of Windows, Linux and MacOS.
 
 To check if you have a valid java installation type

@@ -24,8 +24,10 @@
 package net.thevpc.nuts.runtime.standalone.repository.impl.maven.util;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.standalone.descriptor.DefaultNutsEnvConditionBuilder;
 import net.thevpc.nuts.runtime.standalone.descriptor.util.NutsDescriptorUtils;
 import net.thevpc.nuts.runtime.standalone.repository.impl.maven.pom.*;
+import net.thevpc.nuts.runtime.standalone.util.xml.XmlUtils;
 import net.thevpc.nuts.spi.NutsRepositoryLocation;
 import net.thevpc.nuts.runtime.standalone.util.MapToFunction;
 import net.thevpc.nuts.runtime.standalone.repository.NutsRepositorySelectorHelper;
@@ -39,8 +41,6 @@ import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -65,7 +65,7 @@ public class MavenUtils {
 
     private MavenUtils(NutsSession session) {
         this.session = session;
-        LOG = NutsLogger.of(MavenUtils.class,session);
+        LOG = NutsLogger.of(MavenUtils.class, session);
     }
 
     public static MavenUtils of(NutsSession session) {
@@ -94,10 +94,10 @@ public class MavenUtils {
         return a;
     }
 
-    public NutsDependency[] toNutsDependencies(PomDependency[] deps, NutsSession session, Pom pom, PomProfileActivation ac,String profile) {
+    public NutsDependency[] toNutsDependencies(PomDependency[] deps, NutsSession session, Pom pom, PomProfileActivation ac, String profile) {
         NutsDependency[] a = new NutsDependency[deps.length];
         for (int i = 0; i < deps.length; i++) {
-            a[i] = toNutsDependency(deps[i], session, pom, ac,profile);
+            a[i] = toNutsDependency(deps[i], session, pom, ac, profile);
         }
         return a;
     }
@@ -106,7 +106,7 @@ public class MavenUtils {
         return NutsIdBuilder.of(session).setGroupId(d.getGroupId()).setArtifactId(d.getArtifactId()).setVersion(toNutsVersion(d.getVersion())).build();
     }
 
-    public NutsEnvCondition toCondition(NutsSession session, String os0, String arch0, PomProfileActivation a,String profile) {
+    public NutsEnvCondition toCondition(NutsSession session, String os0, String arch0, PomProfileActivation a, String profile) {
 //        if (a == null) {
 //            return null;
 //        }
@@ -114,6 +114,7 @@ public class MavenUtils {
         NutsArchFamily arch = NutsArchFamily.parseLenient(arch0, null, null);
         String osVersion = null;
         String platform = null;
+        Map<String,String> props=new LinkedHashMap<>();
         if (a != null) {
             if (!NutsBlankable.isBlank(a.getOsVersion())) {
                 osVersion = a.getOsVersion();
@@ -135,6 +136,10 @@ public class MavenUtils {
             if (!NutsBlankable.isBlank(a.getJdk())) {
                 platform = "java#" + a.getJdk();
             }
+            if(a.getPropertyName()!=null){
+                props.put(a.getPropertyName(),a.getPropertyValue());
+            }
+
         }
         String oss = null;
         if (os != null) {
@@ -144,15 +149,16 @@ public class MavenUtils {
         if (arch != null) {
             ars = arch.id();
         }
-        return NutsEnvConditionBuilder.of(session)
+        NutsEnvConditionBuilder bb = NutsEnvConditionBuilder.of(session)
                 .setOs(oss == null ? new String[0] : new String[]{oss})
                 .setArch(ars == null ? new String[0] : new String[]{ars})
                 .setPlatform(platform == null ? new String[0] : new String[]{platform})
-                .setProfile(profile == null ? new String[0] : new String[]{profile})
-                .build();
+                .setProfile(profile == null ? new String[0] : new String[]{profile});
+        ((DefaultNutsEnvConditionBuilder)bb).setProperties(props);
+        return bb.build();
     }
 
-    public NutsDependency toNutsDependency(PomDependency d, NutsSession session, Pom pom, PomProfileActivation a,String profile) {
+    public NutsDependency toNutsDependency(PomDependency d, NutsSession session, Pom pom, PomProfileActivation a, String profile) {
         String s = d.getScope();
         if (s == null) {
             s = "";
@@ -201,27 +207,10 @@ public class MavenUtils {
                 .setVersion(toNutsVersion((d.getVersion())))
                 .setOptional(d.getOptional())
                 .setScope(dependencyScope.id())
-                .setCondition(toCondition(session, d.getOs(), d.getArch(), a,profile))
+                .setCondition(toCondition(session, d.getOs(), d.getArch(), a, profile))
                 .setType(d.getType())
                 .setExclusions(toNutsId(d.getExclusions()))
                 .build();
-    }
-
-    private boolean testNode(Node n, Predicate<Node> tst) {
-        if (tst.test(n)) {
-            return true;
-        }
-        if (n instanceof Element) {
-            Element e = (Element) n;
-            final NodeList nl = e.getChildNodes();
-            final int len = nl.getLength();
-            for (int i = 0; i < len; i++) {
-                if (testNode(nl.item(i), tst)) {
-                    return true;
-                }
-            }
-        }
-        return false;
     }
 
     public NutsDescriptor parsePomXml(InputStream stream, NutsFetchMode fetchMode, String urlDesc, NutsRepository repository) {
@@ -230,86 +219,25 @@ public class MavenUtils {
             if (stream == null) {
                 return null;
             }
-            byte[] bytes = CoreIOUtils.loadByteArray(stream,session);
+            byte[] bytes = CoreIOUtils.loadByteArray(stream, session);
             InputStream bytesStream = CoreIOUtils.createBytesStream(bytes,
                     urlDesc == null ? NutsMessage.formatted("pom.xml") : NutsMessage.formatted(urlDesc), "text/xml",
                     urlDesc == null ? "pom.xml" : urlDesc, session);
             Pom pom = new PomXmlParser(session).parse(bytesStream, session);
-            LinkedHashSet<NutsDescriptorFlag> flags=new LinkedHashSet<>();
-            if (NutsUtilStrings.parseBoolean(pom.getProperties().get("nuts.executable"),false,false)) {
+            LinkedHashSet<NutsDescriptorFlag> flags = new LinkedHashSet<>();
+            if (NutsUtilStrings.parseBoolean(pom.getProperties().get("nuts.executable"), false, false)) {
                 flags.add(NutsDescriptorFlag.EXEC);
             } else {
                 final Element ee = pom.getXml().getDocumentElement();
-                if (testNode(ee, x -> {
+                if (XmlUtils.testNode(ee, x -> {
                     if (x instanceof Element) {
                         Element e = (Element) x;
-                        if (e.getNodeName().equals("mainClass")) {
-                            Node p1 = e.getParentNode();
-                            if(p1!=null){
-                                Node p2 = p1.getParentNode();
-                                if(p2!=null) {
-                                    Node p3 = p2.getParentNode();
-                                    if(p3!=null){
-                                        Node p4 = p3.getParentNode();
-                                        if(p4!=null){
-                                            Node p5 = p4.getParentNode();
-                                            if(p5!=null){
-                                                Node p6 = p5.getParentNode();
-                                                if(p6!=null) {
-                                                    if (p6.getNodeName().equals("build")) {
-                                                        if (p5.getNodeName().equals("plugins")) {
-                                                            if (p4.getNodeName().equals("plugin")) {
-                                                                if (p3.getNodeName().equals("configuration")) {
-                                                                    if (p2.getNodeName().equals("archive")) {
-                                                                        if (p1.getNodeName().equals("manifest")) {
-                                                                            return true;
-                                                                        }
-                                                                    }
-                                                                }
-                                                            }
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
+                        if (XmlUtils.isNode(e, "build", "plugins", "plugin", "configuration", "archive", "manifest", "mainClass")) {
+                            return true;
                         }
-                        if (e.getNodeName().equals("goal")) {
-                            if(NutsUtilStrings.trim(e.getTextContent()).equals("exec-war-only")){
-                                Node p1 = e.getParentNode();
-                                if(p1!=null){
-                                    Node p2 = p1.getParentNode();
-                                    if(p2!=null) {
-                                        Node p3 = p2.getParentNode();
-                                        if(p3!=null){
-                                            Node p4 = p3.getParentNode();
-                                            if(p4!=null){
-                                                Node p5 = p4.getParentNode();
-                                                if(p5!=null){
-                                                    Node p6 = p5.getParentNode();
-                                                    if(p6!=null) {
-                                                        if (p6.getNodeName().equals("build")) {
-                                                            if (p5.getNodeName().equals("plugins")) {
-                                                                if (p4.getNodeName().equals("plugin")) {
-                                                                    if (p3.getNodeName().equals("executions")) {
-                                                                        if (p2.getNodeName().equals("execution")) {
-                                                                            if (p1.getNodeName().equals("goals")) {
-                                                                                return true;
-                                                                            }
-                                                                        }
-                                                                    }
-                                                                }
-                                                            }
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
+                        if (NutsUtilStrings.trim(e.getTextContent()).equals("exec-war-only") &&
+                                XmlUtils.isNode(e, "build", "plugins", "plugin", "executions", "execution", "goals", "goal")) {
+                            return true;
                         }
                     }
                     return false;
@@ -317,15 +245,15 @@ public class MavenUtils {
                     flags.add(NutsDescriptorFlag.EXEC);
                 }
             }
-            if (NutsUtilStrings.parseBoolean(pom.getProperties().get("nuts.application"),false,false)) {
+            if (NutsUtilStrings.parseBoolean(pom.getProperties().get("nuts.application"), false, false)) {
                 flags.add(NutsDescriptorFlag.APP);
                 flags.add(NutsDescriptorFlag.EXEC);
             }
-            if (NutsUtilStrings.parseBoolean(pom.getProperties().get("nuts.gui"),false,false)) {
+            if (NutsUtilStrings.parseBoolean(pom.getProperties().get("nuts.gui"), false, false)) {
                 flags.add(NutsDescriptorFlag.GUI);
                 flags.add(NutsDescriptorFlag.EXEC);
             }
-            if (NutsUtilStrings.parseBoolean(pom.getProperties().get("nuts.term"),false,false)) {
+            if (NutsUtilStrings.parseBoolean(pom.getProperties().get("nuts.term"), false, false)) {
                 flags.add(NutsDescriptorFlag.TERM);
                 flags.add(NutsDescriptorFlag.EXEC);
             }
@@ -354,14 +282,14 @@ public class MavenUtils {
             }
             PomProfile[] profiles = pom.getProfiles();//Arrays.stream(pom.getProfiles()).filter(x -> acceptRuntimeActivation(x.getActivation())).toArray(PomProfile[]::new);
             List<NutsDependency> deps = new ArrayList<>(
-                    Arrays.asList(toNutsDependencies(pom.getDependencies(), session, pom, null,null)));
+                    Arrays.asList(toNutsDependencies(pom.getDependencies(), session, pom, null, null)));
             for (PomProfile profile : profiles) {
-                deps.addAll(Arrays.asList(toNutsDependencies(profile.getDependencies(), session, pom, profile.getActivation(),profile.getId())));
+                deps.addAll(Arrays.asList(toNutsDependencies(profile.getDependencies(), session, pom, profile.getActivation(), profile.getId())));
             }
             List<NutsDependency> depsM = new ArrayList<>(
-                    Arrays.asList(toNutsDependencies(pom.getDependenciesManagement(), session, pom, null,null)));
+                    Arrays.asList(toNutsDependencies(pom.getDependenciesManagement(), session, pom, null, null)));
             for (PomProfile profile : profiles) {
-                depsM.addAll(Arrays.asList(toNutsDependencies(profile.getDependenciesManagement(), session, pom, profile.getActivation(),profile.getId())));
+                depsM.addAll(Arrays.asList(toNutsDependencies(profile.getDependenciesManagement(), session, pom, profile.getActivation(), profile.getId())));
             }
             List<NutsDescriptorProperty> props = new ArrayList<>();
             for (Map.Entry<String, String> e : pom.getProperties().entrySet()) {
@@ -373,7 +301,7 @@ public class MavenUtils {
                     props.add(NutsDescriptorPropertyBuilder.of(session)
                             .setName(e.getKey())
                             .setValue(e.getValue())
-                            .setCondition(toCondition(session, null, null, profile.getActivation(),profile.getId()))
+                            .setCondition(toCondition(session, null, null, profile.getActivation(), profile.getId()))
                             .build());
                 }
             }
@@ -525,7 +453,7 @@ public class MavenUtils {
                         done.add(pid.getShortName());
                         if (CoreNutsUtils.containsVars(thisId)) {
                             thisId.builder().apply(new MapToFunction<>(
-                                    NutsDescriptorUtils.getPropertiesMap(d.getProperties(),session)
+                                    NutsDescriptorUtils.getPropertiesMap(d.getProperties(), session)
                             )).build();
                         } else {
                             break;
@@ -575,7 +503,7 @@ public class MavenUtils {
             }
         }, autoClose);
         return IteratorBuilder.of(
-                NutsIterator.of(it,stream.toString()),
+                NutsIterator.of(it, stream.toString()),
                 session).map(NutsFunction.of(this::toNutsId, "PomId->NutsId")).build();
     }
 
@@ -634,7 +562,7 @@ public class MavenUtils {
         try {
 
             if (ppath.isHttp()) {
-                xml = NutsPath.of(url,session).getInputStream();
+                xml = NutsPath.of(url, session).getInputStream();
             } else {
                 File file = new File(url);
                 if (file.isFile()) {
@@ -753,7 +681,7 @@ public class MavenUtils {
                 DocumentBuilderFactory factory
                         = DocumentBuilderFactory.newInstance();
                 DocumentBuilder builder = factory.newDocumentBuilder();
-                Document doc = builder.parse(NutsPath.of(runtimeMetadata,session).getInputStream());
+                Document doc = builder.parse(NutsPath.of(runtimeMetadata, session).getInputStream());
                 Element c = doc.getDocumentElement();
                 for (int i = 0; i < c.getChildNodes().getLength(); i++) {
                     if (c.getChildNodes().item(i) instanceof Element && c.getChildNodes().item(i).getNodeName().equals("versioning")) {

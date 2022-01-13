@@ -5,7 +5,8 @@ import java.util.Objects;
 public class PomProfileActivation {
     private Boolean activeByDefault;
     private String jdk;
-    private String property;
+    private String propertyName;
+    private String propertyValue;
     private String file;
     private String osName;
     private String osArch;
@@ -33,12 +34,21 @@ public class PomProfileActivation {
         return this;
     }
 
-    public String getProperty() {
-        return property;
+    public String getPropertyName() {
+        return propertyName;
     }
 
-    public PomProfileActivation setProperty(String property) {
-        this.property = property;
+    public PomProfileActivation setPropertyName(String propertyName) {
+        this.propertyName = propertyName;
+        return this;
+    }
+
+    public String getPropertyValue() {
+        return propertyValue;
+    }
+
+    public PomProfileActivation setPropertyValue(String propertyValue) {
+        this.propertyValue = propertyValue;
         return this;
     }
 
@@ -92,12 +102,15 @@ public class PomProfileActivation {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         PomProfileActivation that = (PomProfileActivation) o;
-        return Objects.equals(activeByDefault, that.activeByDefault) && Objects.equals(jdk, that.jdk) && Objects.equals(property, that.property) && Objects.equals(file, that.file) && Objects.equals(osName, that.osName) && Objects.equals(osArch, that.osArch) && Objects.equals(osFamily, that.osFamily) && Objects.equals(osVersion, that.osVersion);
+        return Objects.equals(activeByDefault, that.activeByDefault) && Objects.equals(jdk, that.jdk)
+                && Objects.equals(propertyName, that.propertyName)
+                && Objects.equals(propertyValue, that.propertyValue)
+                && Objects.equals(file, that.file) && Objects.equals(osName, that.osName) && Objects.equals(osArch, that.osArch) && Objects.equals(osFamily, that.osFamily) && Objects.equals(osVersion, that.osVersion);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(activeByDefault, jdk, property, file, osName, osArch, osFamily, osVersion);
+        return Objects.hash(activeByDefault, jdk, propertyName,propertyValue, file, osName, osArch, osFamily, osVersion);
     }
 
     @Override
@@ -105,7 +118,8 @@ public class PomProfileActivation {
         return "PomProfileActivation{" +
                 "activeByDefault=" + activeByDefault +
                 ", jdk='" + jdk + '\'' +
-                ", property='" + property + '\'' +
+                ", propertyName='" + propertyName + '\'' +
+                ", propertyValue='" + propertyValue + '\'' +
                 ", file='" + file + '\'' +
                 ", osName='" + osName + '\'' +
                 ", osArch='" + osArch + '\'' +

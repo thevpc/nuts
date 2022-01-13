@@ -28,7 +28,7 @@ package net.thevpc.nuts.runtime.standalone.app.cmdline;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.boot.NutsApiUtils;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
-import net.thevpc.nuts.runtime.standalone.util.NutsJavaSdkUtils;
+import net.thevpc.nuts.runtime.standalone.util.jclass.NutsJavaSdkUtils;
 
 import java.time.Instant;
 import java.util.*;

@@ -9,21 +9,14 @@
     <version>0.8.3.0</version>
     <packaging>pom</packaging>
     <modules>
-        <module>ndb</module>
-        <module>ndexer</module>
         <module>ndiff</module>
         <module>ndoc</module>
-        <module>ndocusaurus</module>
         <module>njob</module>
-        <module>nmvn</module>
         <module>noapi</module>
         <module>nserver</module>
         <module>ntemplate</module>
-        <module>ntomcat</module>
         <module>nversion</module>
-        <module>nwork</module>
         <module>ncode</module>
-        <module>ntalk-agent</module>
     </modules>
     <properties>
     </properties>

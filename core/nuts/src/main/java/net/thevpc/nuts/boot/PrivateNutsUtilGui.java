@@ -51,7 +51,7 @@ final class PrivateNutsUtilGui {
         } catch (UnsatisfiedLinkError e) {
             //exception may occur if the sdk is built in headless mode
             return false;
-        } catch (Exception e) {
+        } catch (Throwable e) {
             //exception may occur if the sdk is built without awt package for instance!
             return false;
         }

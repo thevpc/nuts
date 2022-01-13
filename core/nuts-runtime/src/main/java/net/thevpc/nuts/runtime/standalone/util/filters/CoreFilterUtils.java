@@ -362,13 +362,13 @@ public class CoreFilterUtils {
         }
         NutsWorkspaceEnvManager env = session.env();
         if(!matchesArch(
-                env.getArch().toString(),
+                env.getArchFamily().id(),
                 envCond.getArch(), session
         )){
             return false;
         }
         if(!matchesOs(
-                env.getOs().toString(),
+                env.getOsFamily().id(),
                 envCond.getOs(), session
         )){
             return false;
@@ -401,7 +401,36 @@ public class CoreFilterUtils {
         )){
             return false;
         }
+        if(!matchesProperties(
+                ((DefaultNutsEnvCondition)envCond).getProperties(), session
+        )){
+            return false;
+        }
         return true;
+    }
+
+    private static boolean matchesProperties(Map<String, String> props, NutsSession session) {
+        for (Map.Entry<String, String> kv : props.entrySet()) {
+            if(!matchesProperty(kv.getKey(),kv.getValue(),session)){
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private static boolean matchesProperty(String k, String expected, NutsSession session) {
+        //maven always checks System Props
+        String f = System.getProperty(k);
+        if(expected==null){
+            return f!=null;
+        }
+        expected=NutsUtilStrings.trim(expected);
+        f=NutsUtilStrings.trim(f);
+        if(expected.startsWith("!")){
+            expected=expected.substring(1).trim();
+            return !expected.equals(f);
+        }
+        return expected.equals(f);
     }
 
     public static boolean matchesArch(String current, String[] allConds, NutsSession session) {

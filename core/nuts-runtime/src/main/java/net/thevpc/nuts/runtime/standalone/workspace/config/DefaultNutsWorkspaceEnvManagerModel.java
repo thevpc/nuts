@@ -29,7 +29,7 @@ import net.thevpc.nuts.runtime.standalone.util.collections.DefaultObservableMap;
 import net.thevpc.nuts.runtime.standalone.util.collections.ObservableMap;
 import net.thevpc.nuts.runtime.standalone.id.DefaultNutsIdParser;
 import net.thevpc.nuts.runtime.standalone.app.gui.CoreNutsUtilGui;
-import net.thevpc.nuts.runtime.standalone.util.NutsJavaSdkUtils;
+import net.thevpc.nuts.runtime.standalone.util.jclass.NutsJavaSdkUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
 
 import java.nio.file.Files;

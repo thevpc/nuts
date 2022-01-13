@@ -1,14 +1,14 @@
 package net.thevpc.nuts.runtime.standalone.executor.java;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.util.*;
+import net.thevpc.nuts.runtime.standalone.util.jclass.JavaClassByteCode;
+import net.thevpc.nuts.runtime.standalone.util.jclass.JavaJarUtils;
+import net.thevpc.nuts.runtime.standalone.util.jclass.NutsJavaSdkUtils;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.StringTokenizerUtils;
 import net.thevpc.nuts.runtime.standalone.dependency.util.NutsClassLoaderUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
 
-import java.io.File;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -19,24 +19,32 @@ import java.util.stream.Collectors;
 public final class JavaExecutorOptions {
 
     private String javaVersion = null;//runnerProps.getProperty("java.parseVersion");
+    private String javaEffVersion = null;
+    private boolean java9;
     private String javaCommand = null;//runnerProps.getProperty("java.parseVersion");
     private String mainClass = null;
     private String dir = null;
     private boolean javaw = false;
-    private boolean mainClassApp = false;
+    private final boolean mainClassApp = false;
     private boolean excludeBase = false;
     private boolean showCommand;
     private boolean jar = false;
-    private String[] execArgs;
-    private List<String> jvmArgs = new ArrayList<String>();
-    private List<String> app;
+    private final String[] execArgs;
+    private String splash;
+    private final List<String> jvmArgs = new ArrayList<String>();
+    private final List<String> j9_addModules = new ArrayList<String>();
+    private final List<String> j9_modulePath = new ArrayList<String>();
+    private String j9_module;
+    private final List<String> j9_upgradeModulePath = new ArrayList<String>();
+    private final List<String> app;
     //    private NutsDefinition nutsMainDef;
-    private NutsSession session;
-    private List<NutsClassLoaderNode> classPath = new ArrayList<>();
+    private final NutsSession session;
+    private final List<NutsClassLoaderNode> classPathNodes = new ArrayList<>();
+    private final List<String> classPath = new ArrayList<>();
 
     public JavaExecutorOptions(NutsDefinition def, boolean tempId, String[] args, String[] executorOptions, String dir, NutsSession session) {
         this.session = session;
-        showCommand=getSession().boot().getBootCustomBoolArgument(false,false,false,"---show-command");
+        showCommand = getSession().boot().getBootCustomBoolArgument(false, false, false, "---show-command");
         NutsId id = def.getId();
         NutsDescriptor descriptor = null;
         if (tempId) {
@@ -58,7 +66,7 @@ public final class JavaExecutorOptions {
 //        List<String> classPath0 = new ArrayList<>();
 //        List<NutsClassLoaderNode> extraCp = new ArrayList<>();
         //will accept all -- and - based options!
-        NutsCommandLine cmdLine = NutsCommandLine.of(getExecArgs(),session).setExpandSimpleOptions(false);
+        NutsCommandLine cmdLine = NutsCommandLine.of(getExecArgs(), session).setExpandSimpleOptions(false);
         NutsArgument a;
         List<NutsClassLoaderNode> currentCP = new ArrayList<>();
         while (cmdLine.hasNext()) {
@@ -126,28 +134,34 @@ public final class JavaExecutorOptions {
                     this.excludeBase = cmdLine.nextBoolean().getBooleanValue();
                     break;
                 }
+                case "--add-module": {
+                    this.j9_addModules.add(cmdLine.nextString().getStringValue());
+                    break;
+                }
+                case "-m":
+                case "--module": {
+                    //<module>/<mainclass>
+                    this.j9_module = cmdLine.nextString().getStringValue();
+                    break;
+                }
+                case "--module-path": {
+                    this.j9_modulePath.add(cmdLine.nextString().getStringValue());
+                    break;
+                }
+                case "-splash": {
+                    this.splash = cmdLine.nextString().getStringValue();
+                    break;
+                }
+                case "--upgrade-module-path": {
+                    this.j9_upgradeModulePath.add(cmdLine.nextString().getStringValue());
+                    break;
+                }
                 default: {
                     getJvmArgs().add(cmdLine.next().getString());
                 }
             }
         }
-        if (getJavaCommand() == null) {
-            if (javaw) {
-                if (!NutsBlankable.isBlank(getJavaVersion())) {
-                    javaCommand = "${javaw#" + getJavaVersion() + "}";
-                } else {
-                    javaCommand = "${javaw}";
-                }
-            } else {
-                if (!NutsBlankable.isBlank(getJavaVersion())) {
-                    javaCommand = "${java#" + getJavaVersion() + "}";
-                } else {
-                    javaCommand = "${java}";
-                }
-            }
-        } else {
-            javaCommand = NutsJavaSdkUtils.of(session).resolveJavaCommandByHome(getJavaCommand(), session);
-        }
+
 
         List<NutsDefinition> nutsDefinitions = new ArrayList<>();
         NutsSearchCommand se = session.search().setSession(session);
@@ -196,10 +210,8 @@ public final class JavaExecutorOptions {
                     //check manifest!
                     NutsExecutionEntry[] classes = NutsExecutionEntries.of(session).parse(path);
                     if (classes.length > 0) {
-                        mainClass = String.join(":",
-                                Arrays.stream(classes).map(NutsExecutionEntry::getName)
-                                        .collect(Collectors.toList())
-                        );
+                        mainClass = Arrays.stream(classes).map(NutsExecutionEntry::getName)
+                                .collect(Collectors.joining(":"));
                     }
                 }
             } else if (!mainClass.contains(".")) {
@@ -214,32 +226,98 @@ public final class JavaExecutorOptions {
             if (mainClass == null) {
                 throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("missing Main Class for %s", id));
             }
+            if (path != null && javaVersion == null) {
+                NutsVersion version = JavaJarUtils.parseJarClassVersion(
+                        NutsPath.of(path, session), session
+                );
+                if (version == null) {
+                    throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("unable to detect java version for %s as %s", id, path));
+                }
+                javaVersion = version.toString();
+            }
+            NutsPlatformLocation nutsPlatformLocation = NutsJavaSdkUtils.of(session).resolveJdkLocation(getJavaVersion(), session);
+            if (nutsPlatformLocation == null) {
+                throw new NutsExecutionException(session, NutsMessage.cstyle("no java version %s was found", NutsUtilStrings.trim(getJavaVersion())), 1);
+            }
+            javaEffVersion = nutsPlatformLocation.getVersion();
+            javaCommand = NutsJavaSdkUtils.of(session).resolveJavaCommandByVersion(nutsPlatformLocation, javaw, session);
+            if (javaCommand == null) {
+                throw new NutsExecutionException(session, NutsMessage.cstyle("no java version %s was found", getJavaVersion()), 1);
+            }
+            java9 = NutsVersion.of(javaVersion, session).compareTo("1.8") > 0;
             boolean baseDetected = false;
             for (NutsDefinition nutsDefinition : nutsDefinitions) {
+                NutsClassLoaderNode nn = null;
                 if (nutsDefinition.getFile() != null) {
                     if (id.getLongName().equals(nutsDefinition.getId().getLongName())) {
                         baseDetected = true;
                         if (!isExcludeBase()) {
-                            currentCP.add(NutsClassLoaderUtils.definitionToClassLoaderNode(nutsDefinition, session));
+                            nn = (NutsClassLoaderUtils.definitionToClassLoaderNode(nutsDefinition, session));
 //                            classPath.add(nutsDefinition.getPath().toString());
 //                            nutsPath.add(nutsIdFormat.value(nutsDefinition.getId()).format());
                         }
                     } else {
-                        currentCP.add(NutsClassLoaderUtils.definitionToClassLoaderNode(nutsDefinition, session));
+                        nn = (NutsClassLoaderUtils.definitionToClassLoaderNode(nutsDefinition, session));
 //                        classPath.add(nutsDefinition.getPath().toString());
 //                        nutsPath.add(nutsIdFormat.value(nutsDefinition.getId()).format());
                     }
                 }
+                if (nn != null) {
+                    currentCP.add(nn);
+                }
             }
             if (!isExcludeBase() && !baseDetected) {
                 if (path == null) {
-                    throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("missing path for %s",id));
+                    throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("missing path for %s", id));
                 }
                 currentCP.add(0, NutsClassLoaderUtils.definitionToClassLoaderNode(def, session));
 //                nutsPath.add(0, nutsIdFormat.value(id).format());
 //                classPath.add(0, path.toString());
             }
-            classPath.addAll(currentCP);
+            classPathNodes.addAll(currentCP);
+            List<NutsClassLoaderNode> ln = new ArrayList<>();
+            for (NutsClassLoaderNode n : currentCP) {
+                fillNodes(n, ln);
+            }
+            // give precedence to classifiers
+            ln.sort((a1,a2)->{
+                NutsId b1 = NutsId.of(a1.getId(), session);
+                NutsId b2 = NutsId.of(a2.getId(), session);
+                if(b1.builder().setClassifier(null).build().getLongName().equals(b2.builder().setClassifier(null).build().getLongName())){
+                    String c1 = b1.getClassifier();
+                    String c2 = b2.getClassifier();
+                    return !NutsBlankable.isBlank(c1) ? 1 : (!NutsBlankable.isBlank(c2) ? -1 : 0);
+                }
+                //do not change order
+                return 0;
+            });
+            List<String> li = ln.stream().map(x-> {
+                return NutsPath.of(x.getURL(), getSession()).toFile().toString();
+            }).collect(Collectors.toList());
+            for (NutsClassLoaderNode n : currentCP) {
+                fillStrings(n, li);
+            }
+            for (String s : li) {
+                NutsPath pp = NutsPath.of(s, getSession());
+                JavaClassByteCode.ModuleInfo r = JavaJarUtils.parseModuleInfo(pp, session);
+                if (java9 && r != null && r.module_name != null && r.module_name.startsWith("javafx")) {
+                    if (!r.module_name.endsWith("Empty")) {
+                        j9_addModules.add(r.module_name);
+                    }
+                    j9_modulePath.add(pp.toFile().toString());
+                } else {
+                    String dmn = JavaJarUtils.parseDefaultModuleName(pp, session);
+                    if (java9 && dmn != null && dmn.startsWith("javafx")) {
+                        if (!dmn.endsWith("Empty")) {
+                            j9_addModules.add(dmn);
+                        }
+                        j9_modulePath.add(pp.toFile().toString());
+                    } else {
+                        classPath.add(pp.toFile().toString());
+                    }
+                }
+            }
+
             if (this.mainClass.contains(":")) {
                 List<String> possibleClasses = StringTokenizerUtils.split(getMainClass(), ":");
                 switch (possibleClasses.size()) {
@@ -249,60 +327,61 @@ public final class JavaExecutorOptions {
                         //
                         break;
                     default: {
-                            if (!session.isPlainOut()
-                                    || session.isBot()
+                        if (!session.isPlainOut()
+                                || session.isBot()
 //                                    || !session.isAsk()
-                            ) {
-                                throw new NutsExecutionException(session, NutsMessage.cstyle("multiple runnable classes detected : %s" + possibleClasses), 102);
-                            }
-                            NutsTexts text = NutsTexts.of(session);
-                            NutsTextBuilder msgString = text.builder();
+                        ) {
+                            throw new NutsExecutionException(session, NutsMessage.cstyle("multiple runnable classes detected : %s" + possibleClasses), 102);
+                        }
+                        NutsTexts text = NutsTexts.of(session);
+                        NutsTextBuilder msgString = text.builder();
 
-                            msgString.append("multiple runnable classes detected  - actually ")
-                                    .append(text.ofStyled("" + possibleClasses.size(), NutsTextStyle.primary5()))
-                                    .append(" . Select one :\n");
-                            int x = ((int) Math.log(possibleClasses.size())) + 2;
-                            for (int i = 0; i < possibleClasses.size(); i++) {
-                                StringBuilder clsIndex = new StringBuilder();
-                                clsIndex.append((i + 1));
-                                while (clsIndex.length() < x) {
-                                    clsIndex.append(' ');
-                                }
-                                msgString.append(clsIndex.toString(), NutsTextStyle.primary4());
-                                msgString.append(possibleClasses.get(i), NutsTextStyle.primary4());
-                                msgString.append("\n");
+                        msgString.append("multiple runnable classes detected  - actually ")
+                                .append(text.ofStyled("" + possibleClasses.size(), NutsTextStyle.primary5()))
+                                .append(" . Select one :\n");
+                        int x = ((int) Math.log(possibleClasses.size())) + 2;
+                        for (int i = 0; i < possibleClasses.size(); i++) {
+                            StringBuilder clsIndex = new StringBuilder();
+                            clsIndex.append((i + 1));
+                            while (clsIndex.length() < x) {
+                                clsIndex.append(' ');
                             }
-                            msgString.append("enter class ")
-                                    .append("#", NutsTextStyle.primary5()).append(" or ").append("name", NutsTextStyle.primary5())
-                                    .append(" to run it. type ").append("cancel!", NutsTextStyle.error())
-                                    .append(" to cancel : ");
+                            msgString.append(clsIndex.toString(), NutsTextStyle.primary4());
+                            msgString.append(possibleClasses.get(i), NutsTextStyle.primary4());
+                            msgString.append("\n");
+                        }
+                        msgString.append("enter class ")
+                                .append("#", NutsTextStyle.primary5()).append(" or ").append("name", NutsTextStyle.primary5())
+                                .append(" to run it. type ").append("cancel!", NutsTextStyle.error())
+                                .append(" to cancel : ");
 
-                            mainClass = session.getTerminal()
-                                    .ask()
-                                    .resetLine()
-                                    .setSession(session)
-                                    .forString(msgString.toString())
-                                    .setValidator((value, question) -> {
-                                        Integer anyInt = CoreNumberUtils.convertToInteger(value, null);
-                                        if (anyInt != null) {
-                                            int i = anyInt;
-                                            if (i >= 1 && i <= possibleClasses.size()) {
-                                                return possibleClasses.get(i - 1);
-                                            }
-                                        } else {
-                                            for (String possibleClass : possibleClasses) {
-                                                if (possibleClass.equals(value)) {
-                                                    return possibleClass;
-                                                }
+                        mainClass = session.getTerminal()
+                                .ask()
+                                .resetLine()
+                                .setSession(session)
+                                .forString(msgString.toString())
+                                .setValidator((value, question) -> {
+                                    Integer anyInt = CoreNumberUtils.convertToInteger(value, null);
+                                    if (anyInt != null) {
+                                        int i = anyInt;
+                                        if (i >= 1 && i <= possibleClasses.size()) {
+                                            return possibleClasses.get(i - 1);
+                                        }
+                                    } else {
+                                        for (String possibleClass : possibleClasses) {
+                                            if (possibleClass.equals(value)) {
+                                                return possibleClass;
                                             }
                                         }
-                                        throw new NutsValidationException(session);
-                                    }).getValue();
+                                    }
+                                    throw new NutsValidationException(session);
+                                }).getValue();
                         break;
                     }
                 }
             }
         }
+
 
     }
 
@@ -312,8 +391,8 @@ public final class JavaExecutorOptions {
             if (v != null) {
                 if (v >= 1 && v <= possibleClasses.size()) {
                     return possibleClasses.get(v - 1);
-                }else if(v<0){
-                    int i=possibleClasses.size()+v;
+                } else if (v < 0) {
+                    int i = possibleClasses.size() + v;
                     if (i >= 0 && i < possibleClasses.size()) {
                         return possibleClasses.get(i);
                     }
@@ -322,7 +401,7 @@ public final class JavaExecutorOptions {
                 if (possibleClasses.contains(name)) {
                     return name;
                 } else {
-                    List<String> extraPossibilities=new ArrayList<>();
+                    List<String> extraPossibilities = new ArrayList<>();
                     for (String possibleClass : possibleClasses) {
                         int x = possibleClass.lastIndexOf('.');
                         if (x > 0) {
@@ -331,13 +410,13 @@ public final class JavaExecutorOptions {
                             }
                         }
                     }
-                    if(extraPossibilities.size()==1){
+                    if (extraPossibilities.size() == 1) {
                         return extraPossibilities.get(0);
                     }
-                    if(extraPossibilities.size()>1){
+                    if (extraPossibilities.size() > 1) {
                         throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("ambiguous main-class %s matches all of %s",
-                                name,extraPossibilities.toString()
-                                ));
+                                name, extraPossibilities.toString()
+                        ));
                     }
                     for (String possibleClass : possibleClasses) {
                         int x = possibleClass.lastIndexOf('.');
@@ -347,12 +426,12 @@ public final class JavaExecutorOptions {
                             }
                         }
                     }
-                    if(extraPossibilities.size()==1){
+                    if (extraPossibilities.size() == 1) {
                         return extraPossibilities.get(0);
                     }
-                    if(extraPossibilities.size()>1){
+                    if (extraPossibilities.size() > 1) {
                         throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("ambiguous main-class %s matches all of from %s",
-                                name,extraPossibilities.toString()
+                                name, extraPossibilities.toString()
                         ));
                     }
                 }
@@ -372,8 +451,8 @@ public final class JavaExecutorOptions {
         } else {
             for (String n : StringTokenizerUtils.split(value, ":")) {
                 if (!NutsBlankable.isBlank(n)) {
-                    URL url = NutsPath.of(n,session).toURL();
-                    classPath.add(new NutsClassLoaderNode("", url, true,true));
+                    URL url = NutsPath.of(n, session).toURL();
+                    classPath.add(new NutsClassLoaderNode("", url, true, true));
                 }
             }
         }
@@ -457,24 +536,24 @@ public final class JavaExecutorOptions {
 
     public void fillStrings(NutsClassLoaderNode n, List<String> list) {
         URL f = n.getURL();
-        list.add(NutsPath.of(f,getSession()).toFile().toString());
+        list.add(NutsPath.of(f, getSession()).toFile().toString());
         for (NutsClassLoaderNode d : n.getDependencies()) {
             fillStrings(d, list);
         }
     }
 
-    public List<String> getClassPathStrings() {
-        List<String> li = new ArrayList<>();
-        for (NutsClassLoaderNode n : getClassPath()) {
-            fillStrings(n, li);
+    public void fillNodes(NutsClassLoaderNode n, List<NutsClassLoaderNode> list) {
+        list.add(n);
+        for (NutsClassLoaderNode d : n.getDependencies()) {
+            fillNodes(d, list);
         }
-        return li;
     }
+
 
     public void fillNidStrings(NutsClassLoaderNode n, List<String> list) {
         if (n.getId() == null || n.getId().isEmpty()) {
             URL f = n.getURL();
-            list.add(NutsPath.of(f,getSession()).toFile().toString());
+            list.add(NutsPath.of(f, getSession()).toFile().toString());
         } else {
             list.add(n.getId());
         }
@@ -485,14 +564,49 @@ public final class JavaExecutorOptions {
 
     public List<String> getClassPathNidStrings() {
         List<String> li = new ArrayList<>();
-        for (NutsClassLoaderNode n : getClassPath()) {
+        for (NutsClassLoaderNode n : getClassPathNodes()) {
             fillNidStrings(n, li);
         }
         return li;
     }
 
-    public List<NutsClassLoaderNode> getClassPath() {
-        return classPath;
+    public List<NutsClassLoaderNode> getClassPathNodes() {
+        return classPathNodes;
     }
 
+    public String getJavaEffVersion() {
+        return javaEffVersion;
+    }
+
+    public boolean isJava9() {
+        return java9;
+    }
+
+    public boolean isJavaw() {
+        return javaw;
+    }
+
+    public String getSplash() {
+        return splash;
+    }
+
+    public List<String> getJ9_addModules() {
+        return j9_addModules;
+    }
+
+    public List<String> getJ9_modulePath() {
+        return j9_modulePath;
+    }
+
+    public String getJ9_module() {
+        return j9_module;
+    }
+
+    public List<String> getJ9_upgradeModulePath() {
+        return j9_upgradeModulePath;
+    }
+
+    public List<String> getClassPath() {
+        return classPath;
+    }
 }

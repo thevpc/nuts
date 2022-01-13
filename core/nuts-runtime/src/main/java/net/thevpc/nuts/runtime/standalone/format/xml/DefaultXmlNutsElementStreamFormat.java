@@ -29,6 +29,7 @@ import javax.xml.transform.stream.StreamResult;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.elem.NutsElementStreamFormat;
+import net.thevpc.nuts.runtime.standalone.util.xml.XmlUtils;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -47,7 +48,7 @@ public class DefaultXmlNutsElementStreamFormat implements NutsElementStreamForma
         NutsSession session = context.getSession();
         Document doc = null;
         try {
-            doc = NutsXmlUtils.createDocumentBuilder(false, session).parse(new InputSource(reader));
+            doc = XmlUtils.createDocumentBuilder(false, session).parse(new InputSource(reader));
         } catch (SAXException ex) {
             throw new NutsIOException(session, new IOException(ex));
         } catch (IOException ex) {
@@ -62,10 +63,10 @@ public class DefaultXmlNutsElementStreamFormat implements NutsElementStreamForma
         Document doc = (Document) context.elementToObject(value, Document.class);
         if (out.isNtf()) {
             NutsPrintStream bos = NutsMemoryPrintStream.of(context.getSession());
-            NutsXmlUtils.writeDocument(doc, new StreamResult(bos.asPrintStream()), compact, true, session);
+            XmlUtils.writeDocument(doc, new StreamResult(bos.asPrintStream()), compact, true, session);
             out.print(NutsTexts.of(context.getSession()).ofCode("xml", bos.toString()));
         } else {
-            NutsXmlUtils.writeDocument(doc, new StreamResult(out.asPrintStream()), compact, true, session);
+            XmlUtils.writeDocument(doc, new StreamResult(out.asPrintStream()), compact, true, session);
         }
     }
 

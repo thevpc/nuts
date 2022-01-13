@@ -34,10 +34,7 @@ import net.thevpc.nuts.runtime.standalone.util.collections.CoreArrayUtils;
 import net.thevpc.nuts.runtime.standalone.util.CoreNutsUtils;
 import net.thevpc.nuts.spi.NutsSupportLevelContext;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
 
 public class DefaultNutsEnvConditionBuilder implements NutsEnvConditionBuilder {
@@ -50,6 +47,7 @@ public class DefaultNutsEnvConditionBuilder implements NutsEnvConditionBuilder {
     private List<String> platform = new ArrayList<>(); //defaults to empty;
     private List<String> desktopEnvironment = new ArrayList<>(); //defaults to empty;
     private List<String> profiles = new ArrayList<>(); //defaults to empty;
+    private Map<String,String> properties=new HashMap<>();
     private transient NutsSession session;
 
     public DefaultNutsEnvConditionBuilder() {
@@ -221,6 +219,7 @@ public class DefaultNutsEnvConditionBuilder implements NutsEnvConditionBuilder {
             setPlatform(other.getPlatform());
             setDesktopEnvironment(other.getDesktopEnvironment());
             setProfile(other.getProfile());
+            setProperties(((DefaultNutsEnvConditionBuilder)other).getProperties());
         } else {
             clear();
         }
@@ -236,6 +235,7 @@ public class DefaultNutsEnvConditionBuilder implements NutsEnvConditionBuilder {
             setPlatform(other.getPlatform());
             setDesktopEnvironment(other.getDesktopEnvironment());
             setProfile(other.getProfile());
+            setProperties(((DefaultNutsEnvCondition)other).getProperties());
         } else {
             clear();
         }
@@ -251,6 +251,12 @@ public class DefaultNutsEnvConditionBuilder implements NutsEnvConditionBuilder {
             setPlatform(CoreArrayUtils.toDistinctTrimmedNonEmptyArray(getPlatform(), other.getPlatform()));
             setDesktopEnvironment(CoreArrayUtils.toDistinctTrimmedNonEmptyArray(getDesktopEnvironment(), other.getDesktopEnvironment()));
             setProfile(CoreArrayUtils.toDistinctTrimmedNonEmptyArray(getProfile(), other.getProfile()));
+            Map<String,String> a=new HashMap<>(properties);
+            Map<String, String> b = ((DefaultNutsEnvCondition) other).getProperties();
+            if(b!=null) {
+                a.putAll(b);
+            }
+            setProperties(a);
         }
         return this;
     }
@@ -264,6 +270,12 @@ public class DefaultNutsEnvConditionBuilder implements NutsEnvConditionBuilder {
             setPlatform(CoreArrayUtils.toDistinctTrimmedNonEmptyArray(getPlatform(), other.getPlatform()));
             setDesktopEnvironment(CoreArrayUtils.toDistinctTrimmedNonEmptyArray(getDesktopEnvironment(), other.getDesktopEnvironment()));
             setProfile(CoreArrayUtils.toDistinctTrimmedNonEmptyArray(getProfile(), other.getProfile()));
+            Map<String,String> a=new HashMap<>(properties);
+            Map<String, String> b = ((DefaultNutsEnvConditionBuilder) other).getProperties();
+            if(b!=null) {
+                a.putAll(b);
+            }
+            setProperties(a);
         }
         return this;
     }
@@ -276,6 +288,7 @@ public class DefaultNutsEnvConditionBuilder implements NutsEnvConditionBuilder {
         setPlatform(null);
         setDesktopEnvironment(null);
         setProfile(null);
+        setProperties(null);
         return this;
     }
 
@@ -293,6 +306,7 @@ public class DefaultNutsEnvConditionBuilder implements NutsEnvConditionBuilder {
                 getArch(), getOs(), getOsDist(), getPlatform(),
                 getDesktopEnvironment(),
                 getProfile(),
+                properties,
                 session
         );
     }
@@ -345,5 +359,14 @@ public class DefaultNutsEnvConditionBuilder implements NutsEnvConditionBuilder {
     @Override
     public int getSupportLevel(NutsSupportLevelContext context) {
         return DEFAULT_SUPPORT;
+    }
+
+    public Map<String, String> getProperties() {
+        return properties;
+    }
+
+    public DefaultNutsEnvConditionBuilder setProperties(Map<String, String> properties) {
+        this.properties = properties==null?null:new HashMap<>(properties);
+        return this;
     }
 }

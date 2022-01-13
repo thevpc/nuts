@@ -23,14 +23,14 @@ Unlike maven which resolves dependencies at compile time, ```nuts``` solves depe
 This is just enough info to get you up and running ```nuts``` .
 Much more info is available in [nuts documentation website](https://thevpc.github.io/nuts).
 You can have some information also browsing [thevpc.net](https://thevpc.net/nuts/)
-Even more information will is available via ```nuts help``` once it's installed.
+Even more information is available via ```nuts help``` once it's installed.
 
 To check current nuts version
 ```
 nuts --version
 ```
 
-It should show a result in the format : nuts-api-version/nuts-impl-version
+It should show a result in the format : nuts-api-version/nuts-runtime-version
 
 ```
 ${{apiVersion}}/${{implVersion}}

@@ -10,12 +10,13 @@
     <packaging>pom</packaging>
     <modules>
         <module>core</module>
-        <module>lib</module>
-        <module>ext</module>
+        <module>libraries</module>
+        <module>extensions</module>
         <module>companions</module>
-
-        <module>test/nuts-runtime-test</module>
+        <module>third-party-companions</module>
         <module>toolbox</module>
+        <module>incubating</module>
+        <module>test/nuts-runtime-test</module>
 <!--        <module>web-toolbox</module>-->
         <module>tutorials</module>
     </modules>

@@ -1,0 +1,1 @@
+This folder contains test projects

@@ -50,6 +50,7 @@ public class DefaultNutsEnvCondition implements NutsEnvCondition {
     private String[] osDist;
     private String[] platform;
     private String[] desktopEnvironment;
+    private Map<String,String> properties;
 
     public DefaultNutsEnvCondition(NutsEnvCondition d, NutsSession session) {
         this(
@@ -59,18 +60,20 @@ public class DefaultNutsEnvCondition implements NutsEnvCondition {
                 d.getPlatform(),
                 d.getDesktopEnvironment(),
                 d.getProfile(),
+                ((DefaultNutsEnvCondition)d).getProperties(),
                 session
         );
     }
 
     public DefaultNutsEnvCondition(NutsSession session){
-        this(null,null,null,null,null,null,session);
+        this(null,null,null,null,null,null,null,session);
     }
 
     public DefaultNutsEnvCondition(String[] arch, String[] os, String[] osDist,
                                    String[] platform,
                                    String[] desktopEnvironment,
                                    String[] profiles,
+                                   Map<String,String> properties,
                                    NutsSession session) {
         this.session=session;
         this.arch = CoreArrayUtils.toDistinctTrimmedNonEmptyArray(arch);
@@ -79,6 +82,11 @@ public class DefaultNutsEnvCondition implements NutsEnvCondition {
         this.platform = CoreArrayUtils.toDistinctTrimmedNonEmptyArray(platform);
         this.desktopEnvironment = CoreArrayUtils.toDistinctTrimmedNonEmptyArray(desktopEnvironment);
         this.profiles = CoreArrayUtils.toDistinctTrimmedNonEmptyArray(profiles);
+        this.properties = properties==null?new HashMap<>() : new HashMap<>(properties);
+    }
+
+    public Map<String, String> getProperties() {
+        return Collections.unmodifiableMap(properties);
     }
 
     @Override
@@ -112,6 +120,9 @@ public class DefaultNutsEnvCondition implements NutsEnvCondition {
             if(!NutsBlankable.isBlank(s)){
                 return false;
             }
+        }
+        if(!properties.isEmpty()){
+            return false;
         }
         return true;
     }
@@ -151,12 +162,19 @@ public class DefaultNutsEnvCondition implements NutsEnvCondition {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         DefaultNutsEnvCondition that = (DefaultNutsEnvCondition) o;
-        return Objects.equals(session, that.session) && Arrays.equals(arch, that.arch) && Arrays.equals(os, that.os) && Arrays.equals(osDist, that.osDist) && Arrays.equals(platform, that.platform) && Arrays.equals(desktopEnvironment, that.desktopEnvironment);
+        return Objects.equals(session, that.session)
+                && Objects.equals(properties, that.properties)
+                && Arrays.equals(arch, that.arch)
+                && Arrays.equals(os, that.os)
+                && Arrays.equals(osDist, that.osDist)
+                && Arrays.equals(platform, that.platform)
+                && Arrays.equals(desktopEnvironment, that.desktopEnvironment);
     }
 
     @Override
     public int hashCode() {
         int result = Objects.hash(session);
+        result = 31 * result + Objects.hashCode(properties);
         result = 31 * result + Arrays.hashCode(arch);
         result = 31 * result + Arrays.hashCode(os);
         result = 31 * result + Arrays.hashCode(osDist);
@@ -173,7 +191,8 @@ public class DefaultNutsEnvCondition implements NutsEnvCondition {
                                 ts("os",os),
                                 ts("osDist", osDist),
                                 ts("platform",platform),
-                                ts("desktopEnvironment",desktopEnvironment)
+                                ts("desktopEnvironment",desktopEnvironment),
+                                ("props="+properties.toString())
                         })
                         .filter(x->x.length()>0)
                         .toArray(String[]::new)
@@ -190,4 +209,5 @@ public class DefaultNutsEnvCondition implements NutsEnvCondition {
         }
         return n+"="+String.join(",",vs[0]);
     }
+
 }

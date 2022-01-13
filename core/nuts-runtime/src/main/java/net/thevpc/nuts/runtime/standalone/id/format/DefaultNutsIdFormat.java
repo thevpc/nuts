@@ -150,7 +150,7 @@ public class DefaultNutsIdFormat extends DefaultFormatBase<NutsIdFormat> impleme
         Map<String, String> queryMap = id.getProperties();
         String scope = queryMap.remove(NutsConstants.IdProperties.SCOPE);
         String optional = queryMap.remove(NutsConstants.IdProperties.OPTIONAL);
-        String classifier = queryMap.remove(NutsConstants.IdProperties.CLASSIFIER);
+        String classifier = id.getClassifier();
         String exclusions = queryMap.remove(NutsConstants.IdProperties.EXCLUSIONS);
         String repo = queryMap.remove(NutsConstants.IdProperties.REPO);
         NutsIdBuilder idBuilder = id.builder();

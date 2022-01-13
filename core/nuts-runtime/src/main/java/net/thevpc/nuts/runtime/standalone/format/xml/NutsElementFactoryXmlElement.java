@@ -39,6 +39,7 @@ import java.util.Stack;
 import java.util.function.Supplier;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.standalone.util.xml.XmlUtils;
 import org.w3c.dom.Attr;
 import org.w3c.dom.CDATASection;
 import org.w3c.dom.Document;
@@ -61,7 +62,7 @@ public class NutsElementFactoryXmlElement implements NutsElementMapper<Node> {
             docs = new Stack<>();
             context.getProperties().put(Document.class.getName(), docs);
             try {
-                docs.push(doc != null ? doc : NutsXmlUtils.createDocument(context.getSession()));
+                docs.push(doc != null ? doc : XmlUtils.createDocument(context.getSession()));
                 return impl.get();
             } finally {
                 docs.pop();
@@ -69,7 +70,7 @@ public class NutsElementFactoryXmlElement implements NutsElementMapper<Node> {
         } else {
             if (docs.isEmpty() || doc != null) {
                 try {
-                    docs.push(doc != null ? doc : NutsXmlUtils.createDocument(context.getSession()));
+                    docs.push(doc != null ? doc : XmlUtils.createDocument(context.getSession()));
                     return impl.get();
                 } finally {
                     docs.pop();
@@ -89,7 +90,7 @@ public class NutsElementFactoryXmlElement implements NutsElementMapper<Node> {
             Stack<Document> docs = new Stack<>();
             context.getProperties().put(Document.class.getName(), docs);
             try {
-                docs.push(NutsXmlUtils.createDocument(context.getSession()));
+                docs.push(XmlUtils.createDocument(context.getSession()));
                 return createObject(elem, typeOfResult, context);
             } finally {
                 docs.pop();
@@ -98,7 +99,7 @@ public class NutsElementFactoryXmlElement implements NutsElementMapper<Node> {
             Stack<Document> docs = (Stack<Document>) context.getProperties().get(Document.class.getName());
             if (docs.isEmpty()) {
                 try {
-                    docs.push(NutsXmlUtils.createDocument(context.getSession()));
+                    docs.push(XmlUtils.createDocument(context.getSession()));
                     return createObject(elem, typeOfResult, context);
                 } finally {
                     docs.pop();

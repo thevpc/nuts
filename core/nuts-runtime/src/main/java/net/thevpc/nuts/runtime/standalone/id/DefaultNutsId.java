@@ -251,8 +251,7 @@ public class DefaultNutsId implements NutsId {
 
     @Override
     public String getClassifier() {
-        String s = getProperties().get(NutsConstants.IdProperties.CLASSIFIER);
-        return NutsUtilStrings.trimToNull(s);
+        return NutsUtilStrings.trimToNull(classifier);
     }
 
     @Override

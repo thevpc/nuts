@@ -36,7 +36,6 @@ import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
 /**
- *
  * @author taha.bensalah@gmail.com
  */
 public class ZipUtils {
@@ -165,10 +164,10 @@ public class ZipUtils {
         }
     }
 
-    public static boolean visitZipFile(File zipFile, Predicate<String> possiblePaths, InputStreamVisitor visitor) throws IOException {
+    public static boolean visitZipFile(File zipFile, Predicate<String> possiblePaths, InputStreamVisitor visitor,NutsSession session) throws IOException {
         InputStream is = null;
         try {
-            return visitZipStream(is = new FileInputStream(zipFile), possiblePaths, visitor);
+            return visitZipStream(is = new FileInputStream(zipFile), possiblePaths, visitor,session);
         } finally {
             if (is != null) {
                 is.close();
@@ -179,10 +178,10 @@ public class ZipUtils {
     /**
      * Unzip it
      *
-     * @param session workspace
-     * @param zipFile input zip file
+     * @param session      workspace
+     * @param zipFile      input zip file
      * @param outputFolder zip file output folder
-     * @param options options
+     * @param options      options
      * @throws IOException io exception
      */
     public static void unzip(NutsSession session, String zipFile, String outputFolder, UnzipOptions options) throws IOException {
@@ -312,7 +311,7 @@ public class ZipUtils {
 //            throw new RuntimeIOException(e);
 //        }
 //    }
-    public static boolean visitZipStream(InputStream zipFile, Predicate<String> possiblePaths, InputStreamVisitor visitor) throws IOException {
+    public static boolean visitZipStream(InputStream zipFile, Predicate<String> possiblePaths, InputStreamVisitor visitor, NutsSession session) {
         //byte[] buffer = new byte[4 * 1024];
 
         //get the zip file content
@@ -359,12 +358,17 @@ public class ZipUtils {
                 }
                 ze = zis.getNextEntry();
             }
+        } catch (IOException ex) {
+            throw new NutsIOException(session, ex);
         } finally {
             if (zis != null) {
-                zis.close();
+                try {
+                    zis.close();
+                } catch (IOException ex) {
+                    throw new NutsIOException(session, ex);
+                }
             }
         }
-
         return false;
     }
 }

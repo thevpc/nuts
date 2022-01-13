@@ -307,8 +307,26 @@ public class JavaExecutorComponent implements NutsExecutorComponent {
                             )
                     );
 
-                    args.add("-classpath");
-                    args.add(String.join(File.pathSeparator, joptions.getClassPathStrings()));
+                    if(!joptions.getJ9_modulePath().isEmpty()){
+                        args.add("--module-path");
+                        args.add(joptions.getJ9_modulePath().stream().distinct().collect(Collectors.joining(File.pathSeparator)));
+                    }
+                    if(!joptions.getJ9_upgradeModulePath().isEmpty()){
+                        args.add("--upgradable-module-path");
+                        args.add(joptions.getJ9_upgradeModulePath().stream().distinct().collect(Collectors.joining(",")));
+                    }
+                    if(!joptions.getJ9_addModules().isEmpty()){
+                        args.add("--add-modules");
+                        args.add(joptions.getJ9_addModules().stream().distinct().collect(Collectors.joining(",")));
+                    }
+                    if(!NutsBlankable.isBlank(joptions.getSplash())){
+                        args.add("-splash:"+NutsUtilStrings.trim(joptions.getSplash()));
+                    }
+                    List<String> classPathStrings = joptions.getClassPath();
+                    if(!classPathStrings.isEmpty()) {
+                        args.add("-classpath");
+                        args.add(classPathStrings.stream().distinct().collect(Collectors.joining(File.pathSeparator)));
+                    }
                     args.add(joptions.getMainClass());
                 }
                 xargs.addAll(
@@ -344,7 +362,7 @@ public class JavaExecutorComponent implements NutsExecutorComponent {
             List<String> cmdLine = new ArrayList<>();
             cmdLine.add("embedded-java");
             cmdLine.add("-cp");
-            cmdLine.add(String.join(":", joptions.getClassPathStrings()));
+            cmdLine.add(joptions.getClassPathNodes().stream().map(NutsClassLoaderNode::getId).collect(Collectors.joining(":")));
             cmdLine.add(joptions.getMainClass());
             cmdLine.addAll(joptions.getApp());
 
@@ -373,7 +391,7 @@ public class JavaExecutorComponent implements NutsExecutorComponent {
                         null//getSession().getWorkspace().config().getBootClassLoader()
                         , session
                 );
-                for (NutsClassLoaderNode n : joptions.getClassPath()) {
+                for (NutsClassLoaderNode n : joptions.getClassPathNodes()) {
                     classLoader.add(n);
                 }
                 Class<?> cls = Class.forName(joptions.getMainClass(), true, classLoader);

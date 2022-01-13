@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.repository.impl.maven.pom;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.standalone.format.xml.NutsXmlUtils;
+import net.thevpc.nuts.runtime.standalone.util.xml.XmlUtils;
 import net.thevpc.nuts.runtime.standalone.util.XmlEscaper;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -23,10 +23,10 @@ public class PomXmlParser {
     public static final Pattern NUTS_OS_ARCH_DEPS_PATTERN = Pattern.compile("^nuts([.](?<os>[a-zA-Z0-9-_]+)-os)?([.](?<arch>[a-zA-Z0-9-_]+)-arch)?-dependencies$");
 
 
-    private NutsSession session;
+    private final NutsSession session;
 
     public PomXmlParser(NutsSession session) {
-        this.session=session;
+        this.session = session;
     }
 
     private static String elemToStr(Element ex) {
@@ -73,7 +73,7 @@ public class PomXmlParser {
         return props;
     }
 
-    public static PomDependency parseDependency(Element dependency, OsAndArch props,NutsSession session) {
+    public static PomDependency parseDependency(Element dependency, OsAndArch props, NutsSession session) {
         NodeList dependencyChildList = dependency.getChildNodes();
         String d_groupId = "";
         String d_artifactId = "";
@@ -162,46 +162,6 @@ public class PomXmlParser {
         );
     }
 
-    private static class OsAndArch{
-        Map<String,String> osMap=new HashMap<>();
-        Map<String,String> archMap=new HashMap<>();
-
-        public OsAndArch(Map<String, String> props, NutsSession session) {
-            for (Map.Entry<String, String> entry : props.entrySet()) {
-                Matcher m = NUTS_OS_ARCH_DEPS_PATTERN.matcher(entry.getKey());
-                if(m.find()){
-                    String os = m.group("os");
-                    String arch = m.group("arch");
-                    String txt = entry.getValue().trim();
-                    for (String a : txt.trim().split("[;,\n\t]")) {
-                        a=a.trim();
-                        if(a.startsWith("#")){
-                            //ignore!
-                        }else{
-                            NutsId id = NutsIdParser.of(session).setLenient(true).parse(a);
-                            if(id!=null) {
-                                if (!NutsBlankable.isBlank(os)) {
-                                    osMap.put(id.getShortName(), os);
-                                }
-                                if (!NutsBlankable.isBlank(arch)) {
-                                    archMap.put(id.getShortName(), arch);
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        public String getOs(NutsId id){
-            return osMap.get(id.getShortName());
-        }
-
-        public String getArch(NutsId id){
-            return archMap.get(id.getShortName());
-        }
-    }
-
-
     public static PomRepositoryPolicy parseRepositoryPolicy(Element dependency) {
         NodeList childList = dependency.getChildNodes();
         String enabled = "";
@@ -231,14 +191,15 @@ public class PomXmlParser {
         );
     }
 
-    public static PomProfile parseProfile(Element profile,NutsSession session) {
+
+    public static PomProfile parseProfile(Element profile, NutsSession session) {
         PomProfile pomProfile = new PomProfile();
-        List<PomDependency> dependencies=new ArrayList<>();
-        List<String> modules=new ArrayList<>();
-        List<PomDependency> dependenciesManagement=new ArrayList<>();
-        List<PomRepository> repositories=new ArrayList<>();
-        List<PomRepository> pluginRepositories=new ArrayList<>();
-        Map<String, String> properties=new HashMap<>();
+        List<PomDependency> dependencies = new ArrayList<>();
+        List<String> modules = new ArrayList<>();
+        List<PomDependency> dependenciesManagement = new ArrayList<>();
+        List<PomRepository> repositories = new ArrayList<>();
+        List<PomRepository> pluginRepositories = new ArrayList<>();
+        Map<String, String> properties = new HashMap<>();
 
         for (Element elem1 : getElementChildren(profile)) {
             switch (elem1.getTagName()) {
@@ -256,7 +217,18 @@ public class PomXmlParser {
                                 break;
                             }
                             case "property": {
-                                a.setProperty(elemToStr(cc));
+                                for (Element ccc : getElementChildren(cc)) {
+                                    switch (ccc.getTagName()) {
+                                        case "name": {
+                                            a.setPropertyName(elemToStr(ccc));
+                                            break;
+                                        }
+                                        case "value": {
+                                            a.setPropertyValue(elemToStr(ccc));
+                                            break;
+                                        }
+                                    }
+                                }
                                 break;
                             }
                             case "file": {
@@ -272,19 +244,19 @@ public class PomXmlParser {
                                 for (Element ccc : getElementChildren(cc)) {
                                     switch (ccc.getTagName()) {
                                         case "name": {
-                                            a.setOsName(elemToStr(cc));
+                                            a.setOsName(elemToStr(ccc));
                                             break;
                                         }
                                         case "arch": {
-                                            a.setOsArch(elemToStr(cc));
+                                            a.setOsArch(elemToStr(ccc));
                                             break;
                                         }
                                         case "version": {
-                                            a.setOsVersion(elemToStr(cc));
+                                            a.setOsVersion(elemToStr(ccc));
                                             break;
                                         }
                                         case "family": {
-                                            a.setOsFamily(elemToStr(cc));
+                                            a.setOsFamily(elemToStr(ccc));
                                             break;
                                         }
                                     }
@@ -334,7 +306,7 @@ public class PomXmlParser {
 //                                        visitor.visitStartDependencyManagement(dependency2);
 //                                    }
                                     HashMap<String, String> props = new HashMap<>();
-                                    PomDependency dep = parseDependency(dependency2, new OsAndArch(props,session),session);
+                                    PomDependency dep = parseDependency(dependency2, new OsAndArch(props, session), session);
 //                                    if (visitor != null) {
 //                                        visitor.visitEndDependencyManagement(dependency2, dep);
 //                                    }
@@ -361,7 +333,7 @@ public class PomXmlParser {
 //                                visitor.visitStartDependency(dependencyElem);
 //                            }
                             HashMap<String, String> props = new HashMap<>();
-                            PomDependency dep = parseDependency(dependencyElem, new OsAndArch(props,session), session);
+                            PomDependency dep = parseDependency(dependencyElem, new OsAndArch(props, session), session);
 //                            if (visitor != null) {
 //                                visitor.visitEndDependency(dependencyElem, dep);
 //                            }
@@ -569,10 +541,10 @@ public class PomXmlParser {
     }
 
     public static void writeDocument(Document doc, StreamResult result, NutsSession session) throws TransformerException {
-        NutsXmlUtils.writeDocument(doc, result, false, true, session);
+        XmlUtils.writeDocument(doc, result, false, true, session);
     }
 
-    public static boolean appendOrReplaceDependency(PomDependency dependency, Element dependencyElement, Element dependenciesElement, Map<String, String> props,NutsSession session) {
+    public static boolean appendOrReplaceDependency(PomDependency dependency, Element dependencyElement, Element dependenciesElement, Map<String, String> props, NutsSession session) {
         if (dependencyElement != null && dependenciesElement == null) {
             dependenciesElement = (Element) dependencyElement.getParentNode();
         }
@@ -581,7 +553,7 @@ public class PomXmlParser {
             dependenciesElement.appendChild(createDependencyElement(doc, dependency));
             return true;
         } else {
-            PomDependency old = parseDependency(dependencyElement, new OsAndArch(props,session),session);
+            PomDependency old = parseDependency(dependencyElement, new OsAndArch(props, session), session);
             if (old == null || !old.equals(dependency)) {
                 dependenciesElement.replaceChild(createDependencyElement(doc, dependency), dependencyElement);
                 return true;
@@ -657,44 +629,54 @@ public class PomXmlParser {
 //        return parse(doc, visitor);
     }
 
-    public Pom parse(InputStream stream, NutsSession session) throws IOException, SAXException, ParserConfigurationException {
+    public Pom parse(InputStream stream, NutsSession session) {
         return parse(stream, null, session);
     }
 
-    public Pom parse(InputStream stream, PomDomVisitor visitor, NutsSession session) throws IOException, SAXException, ParserConfigurationException {
-        Document doc = NutsXmlUtils.createDocumentBuilder(true, session).parse(preValidateStream(stream, session));
-        return parse(doc, visitor,session);
+    public Pom parse(InputStream stream, PomDomVisitor visitor, NutsSession session) {
+        try {
+            Document doc = XmlUtils.createDocumentBuilder(true, session).parse(preValidateStream(stream, session));
+            return parse(doc, visitor, session);
+        } catch (IOException ex) {
+            throw new NutsIOException(session, ex);
+        } catch (SAXException ex) {
+            throw new NutsParseException(session, NutsMessage.plain("parse problem"), ex);
+        }
     }
 
-    private byte[] loadAllBytes(InputStream in) throws IOException {
+    private byte[] loadAllBytes(InputStream in) {
         ByteArrayOutputStream o = new ByteArrayOutputStream();
-        int size = in.available();
-        if (size <= 4096) {
-            size = 4096;
+        try {
+            int size = in.available();
+            if (size <= 4096) {
+                size = 4096;
+            }
+            byte[] b = new byte[size];
+            int count;
+            while ((count = in.read(b)) > 0) {
+                o.write(b, 0, count);
+            }
+            return o.toByteArray();
+        } catch (IOException ex) {
+            throw new NutsIOException(session, ex);
         }
-        byte[] b = new byte[size];
-        int count;
-        while ((count = in.read(b)) > 0) {
-            o.write(b, 0, count);
-        }
-        return o.toByteArray();
     }
 
-    private InputStream preValidateStream(InputStream in, NutsSession session) throws IOException {
+    private InputStream preValidateStream(InputStream in, NutsSession session) {
         byte[] bytes0 = loadAllBytes(in);
         int skip = 0;
         while (skip < bytes0.length && Character.isWhitespace(bytes0[skip])) {
             skip++;
         }
         String x = new String(bytes0, skip, bytes0.length - skip);
-        return new ByteArrayInputStream(XmlEscaper.escapeToCode(x,session).getBytes());
+        return new ByteArrayInputStream(XmlEscaper.escapeToCode(x, session).getBytes());
     }
 
-    public Pom parse(Document doc,NutsSession session) {
-        return parse(doc, null,session);
+    public Pom parse(Document doc, NutsSession session) {
+        return parse(doc, null, session);
     }
 
-    public Pom parse(Document doc, PomDomVisitor visitor,NutsSession session) {
+    public Pom parse(Document doc, PomDomVisitor visitor, NutsSession session) {
         List<PomDependency> deps = new ArrayList<>();
         List<PomDependency> depsMan = new ArrayList<>();
         List<PomRepository> repos = new ArrayList<>();
@@ -821,7 +803,7 @@ public class PomXmlParser {
                                         if (visitor != null) {
                                             visitor.visitStartDependencyManagement(dependency2);
                                         }
-                                        PomDependency dep = parseDependency(dependency2, new OsAndArch(props,session), session);
+                                        PomDependency dep = parseDependency(dependency2, new OsAndArch(props, session), session);
                                         if (visitor != null) {
                                             visitor.visitEndDependencyManagement(dependency2, dep);
                                         }
@@ -846,7 +828,7 @@ public class PomXmlParser {
                                 if (visitor != null) {
                                     visitor.visitStartDependency(dependency);
                                 }
-                                PomDependency dep = parseDependency(dependency, new OsAndArch(props,session), session);
+                                PomDependency dep = parseDependency(dependency, new OsAndArch(props, session), session);
                                 if (visitor != null) {
                                     visitor.visitEndDependency(dependency, dep);
                                 }
@@ -915,7 +897,7 @@ public class PomXmlParser {
                                 if (visitor != null) {
                                     visitor.visitStartProfile(profile);
                                 }
-                                PomProfile p = parseProfile(profile,session);
+                                PomProfile p = parseProfile(profile, session);
                                 if (visitor != null) {
                                     visitor.visitEndProfile(profile, p);
                                 }
@@ -949,5 +931,45 @@ public class PomXmlParser {
         }
 
         return pom;
+    }
+
+    private static class OsAndArch {
+        Map<String, String> osMap = new HashMap<>();
+        Map<String, String> archMap = new HashMap<>();
+
+        public OsAndArch(Map<String, String> props, NutsSession session) {
+            for (Map.Entry<String, String> entry : props.entrySet()) {
+                Matcher m = NUTS_OS_ARCH_DEPS_PATTERN.matcher(entry.getKey());
+                if (m.find()) {
+                    String os = m.group("os");
+                    String arch = m.group("arch");
+                    String txt = entry.getValue().trim();
+                    for (String a : txt.trim().split("[;,\n\t]")) {
+                        a = a.trim();
+                        if (a.startsWith("#")) {
+                            //ignore!
+                        } else {
+                            NutsId id = NutsIdParser.of(session).setLenient(true).parse(a);
+                            if (id != null) {
+                                if (!NutsBlankable.isBlank(os)) {
+                                    osMap.put(id.getShortName(), os);
+                                }
+                                if (!NutsBlankable.isBlank(arch)) {
+                                    archMap.put(id.getShortName(), arch);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        public String getOs(NutsId id) {
+            return osMap.get(id.getShortName());
+        }
+
+        public String getArch(NutsId id) {
+            return archMap.get(id.getShortName());
+        }
     }
 }

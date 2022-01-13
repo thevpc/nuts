@@ -26,6 +26,7 @@ package net.thevpc.nuts.runtime.standalone.format.xml;
 import java.lang.reflect.Type;
 import net.thevpc.nuts.NutsElement;
 import net.thevpc.nuts.NutsElementFactoryContext;
+import net.thevpc.nuts.runtime.standalone.util.xml.XmlUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -60,7 +61,7 @@ public class NutsElementFactoryXmlDocument implements NutsElementMapper {
 
     @Override
     public Object createObject(NutsElement o, Type typeOfResult, NutsElementFactoryContext context) {
-        Document doc = NutsXmlUtils.createDocument(context.getSession());
+        Document doc = XmlUtils.createDocument(context.getSession());
         Node source = NutsElementFactoryXmlElement.runWithDoc(
                 context,
                 () -> (Node) context.elementToObject(o, Element.class),

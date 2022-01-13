@@ -8,7 +8,7 @@ package net.thevpc.nuts.runtime.standalone.format.plain;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.format.DefaultFormatBase;
 import net.thevpc.nuts.runtime.standalone.format.props.DefaultNutsPropertiesFormat;
-import net.thevpc.nuts.runtime.standalone.format.xml.NutsXmlUtils;
+import net.thevpc.nuts.runtime.standalone.util.xml.XmlUtils;
 import net.thevpc.nuts.spi.NutsSupportLevelContext;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -94,12 +94,12 @@ public class NutsFormatPlain extends DefaultFormatBase<NutsContentTypeFormat> im
                     .setCompact(isCompact())
                     .configure(true, extraConfig.toArray(new String[0])).print(w);
         } else if (value instanceof org.w3c.dom.Document) {
-            NutsXmlUtils.writeDocument((org.w3c.dom.Document) value, new StreamResult(w.asPrintStream()), false, true, getSession());
+            XmlUtils.writeDocument((org.w3c.dom.Document) value, new StreamResult(w.asPrintStream()), false, true, getSession());
         } else if (value instanceof org.w3c.dom.Element) {
             Element elem = (org.w3c.dom.Element) value;
-            Document doc = NutsXmlUtils.createDocument(getSession());
+            Document doc = XmlUtils.createDocument(getSession());
             doc.appendChild(doc.importNode(elem, true));
-            NutsXmlUtils.writeDocument(doc, new StreamResult(w.asPrintStream()), false, false, getSession());
+            XmlUtils.writeDocument(doc, new StreamResult(w.asPrintStream()), false, false, getSession());
         } else {
             NutsElements element = NutsElements.of(session);
             Object newVal = element.setNtf(true).setIndestructibleFormat().destruct(value);

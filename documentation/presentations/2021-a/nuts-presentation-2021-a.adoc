@@ -3,8 +3,8 @@
 :source-highlighter: pygments
 :icons: font
 :icon-set: pf
-:revnumber: v1.0
-:revdate: 2021-12-18
+:revnumber: v1.1
+:revdate: 2022-01-08
 //:revremark: Private use only - (Taha BEN SALAH)
 :appendix-caption: Appx
 :sectnums:
@@ -28,7 +28,7 @@ https://thevpc.github.io/nuts  (website)
 nuts.packagemanager@gmail.com
 
 [.text-center]
-thevpc, 2021-12-18
+thevpc, 2022-01-08
 
 :toc:
 :toclevels: 4
@@ -54,7 +54,7 @@ thevpc, 2021-12-18
 * Newcomer languages already include a PM
 ** `golang` package manager (modules)
 
-* `Java` ecosystem already have more that 7M packages deployed
+* `Java` ecosystem already have more than 7M packages deployed
 
 <<<
 
@@ -69,6 +69,7 @@ thevpc, 2021-12-18
 <<<
 
 === Example
+Let's take a `hello-world` example with dependencies :
 
 ```java
 package net.thevpc.nuts.doc.baseproject;
@@ -87,6 +88,7 @@ private static final Logger LOG = LoggerFactory.getLogger(Main.class);
 <<<
 
 === pom.xml
+A minimal `pom.xml`  is:
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?><project xmlns="..."><modelVersion>4.0.0</modelVersion>
@@ -109,7 +111,7 @@ private static final Logger LOG = LoggerFactory.getLogger(Main.class);
 * With a minimal `pom.xml` we cannot execute unless we add the transitive  `dependencies` to the classpath
 * We also need to adjust the pom.xml to include the main class too!
 
-image::images/java-error.png[scaledwidth=70%]
+image::images/java-error2.png[scaledwidth=100%]
 
 <<<
 
@@ -129,10 +131,10 @@ image::images/java-error.png[scaledwidth=70%]
 
 * Run Remote App using `jnlp` file (with all of it dependencies)
 * Special packaging
-* Execution Sandbox
+* Execution Sandbox : More Limitations
 * Deprecated!! since Java9
-* No Shared Dependencies / Centralize Dep Mgt
-* What about `trivrost`, `OpenJNLP` ?
+* No Shared Dependencies / Centralized Dep Mgt
+* The same applies to alternatives : `trivrost`, `OpenJNLP`
 
 <<<
 
@@ -143,7 +145,7 @@ image::images/java-error.png[scaledwidth=70%]
 ** Centralized management
 ** Automatable (cmdline)
 ** Not portable
-** Multiple deployment packages
+** Multiple deployment packages for each release
 ** Problem with installing multiple versions of the same package
 
 <<<
@@ -153,7 +155,7 @@ image::images/java-error.png[scaledwidth=70%]
 ** Good integration with OS/Env
 ** No centralized management
 ** Disk and network overload of dependencies
-** Graphical! not suitable for automation
+** Graphical! not suitable for automation (most of the time)
 ** Still Manual
 
 <<<
@@ -327,7 +329,7 @@ Is Not:
 
 === nuts: Unique features
 * Is statically built and has (almost) no dependencies
-* Can be used as a library to support transitive classPath resolver
+* Can be used as a library to support transitive ClassPath resolution
 * Has a clean and rich API
 
 <<<
@@ -354,8 +356,8 @@ Is Not:
 === Install Nuts
 
 1. Download `nuts.jar`
-2. run `java -jar nuts.jar -Zy`
-3. restart your terminal
+2. Run `java -jar nuts.jar -Zy`
+3. Restart your terminal
 
 <<<
 
@@ -383,8 +385,10 @@ $ exit
 
 === Run the app
 
-* We just run the app, with no modification
-* We use the built (by maven) jar
+* We just run the app
+* No modification is required
+* We use the already built (by maven) jar
+* The "artifactId" is (almost) sufficient to resolve the application to install
 
 image::images/nuts-simple-run.png[]
 
@@ -392,7 +396,10 @@ image::images/nuts-simple-run.png[]
 
 === Demonstration : Install Application
 
-* Or we can install the app (and its `required` dependencies)
+* Or we can install the app
+** All `required` dependencies will be resolved and downloaded
+** dependencies are shared across multiple apps
+** multiple versions of the same dependencies can coexists (required by different apps)
 * And then we run it
 
 image::images/nuts-simple-install.png[]
@@ -401,9 +408,12 @@ image::images/nuts-simple-install.png[]
 
 === Install Gui App
 
-* We can run a gui app of course, `nuts` will create a shortcut for it
+* We can run a gui app of course
+* `nuts` will create for it
+** a Desktop Shortcut (Icon)
+** a Menu Item
 
-image::images/nuts-install-nbl.png[scaledwidth=70%]
+image::images/nuts-install-nbl.png[scaledwidth=100%]
 
 <<<
 
@@ -418,29 +428,40 @@ image::images/nuts-search.png[scaledwidth=80%]
 === Repositories
 * We can configure Repositories used to install/update packages
 * We can list Repositories used to install/update packages
+* Supports
+** Standard Maven Repositories
+** Plain Folders
+** Browsable HTTP folders (Parses HTML for common Webserver Directory Lists)
 
-image::images/nuts-list-repos.png[scaledwidth=60%]
+image::images/nuts-list-repos.png[scaledwidth=100%]
 
 <<<
 
 === Integration and Formats
-* using `--json`,  `--xml`, `--props`, `--yaml` , `--table`  , `--tree` for any command will customize output
+* Customize any command's output to use structured/parsable or user friendly output formats
+* All Commands support options!
+** structured (parsable) : `--json`,  `--xml`, `--props`, `--yaml`
+** unstructured : `--plain`, `--table`  , `--tree`
 
-image::images/nuts-simple-format.png[scaledwidth=70%]
+image::images/nuts-simple-format.png[scaledwidth=100%]
 
 <<<
 
 === Companions
-* We can use `nsh` instead of `bash` / `cmd` and make usage of `json` support out of the box
+* We can use `nsh` instead of `bash` / `cmd`
+* Implements common internal bash commands (`cd`,...) and constructs (`pipes`,...)
+* Implements common `binutils` commands (`ls`,`mkdir`,....)
+* All commands support `json` (and `yaml`, ...) out of the box
+* All commands support `ssh` and extended path format (including URLS) out of the box, so that `cp` can be used as a simple alternative to `wget`
 
-image::images/nsh-example.png[scaledwidth=70%]
+image::images/nsh-example.png[scaledwidth=100%]
 
 <<<
 
 === Bot Mode
 * Running with `--bot` will disable all interaction and terminal coloring
 
-image::images/nuts-bot.png[scaledwidth=80%]
+image::images/nuts-bot2.png[scaledwidth=100%]
 
 <<<
 

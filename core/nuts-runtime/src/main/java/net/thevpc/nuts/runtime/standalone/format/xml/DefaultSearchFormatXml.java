@@ -11,6 +11,7 @@ import java.io.PrintWriter;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.format.NutsFetchDisplayOptions;
 import net.thevpc.nuts.runtime.standalone.format.DefaultSearchFormatBase;
+import net.thevpc.nuts.runtime.standalone.util.xml.XmlUtils;
 import org.w3c.dom.Document;
 
 /**
@@ -63,14 +64,14 @@ public class DefaultSearchFormatXml extends DefaultSearchFormatBase {
     @Override
     public void next(Object object, long index) {
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
-//        NutsXmlUtils.print(String.valueOf(index), object, getWriter(), compact, false, getWorkspace());
+//        XmlUtils.print(String.valueOf(index), object, getWriter(), compact, false, getWorkspace());
         PrintWriter pw = new PrintWriter(bos);
         org.w3c.dom.Element xmlElement = NutsElements.of(getSession())
                 .convert(object, org.w3c.dom.Element.class);
-        Document doc = NutsXmlUtils.createDocument(getSession());
+        Document doc = XmlUtils.createDocument(getSession());
         doc.adoptNode(xmlElement);
         doc.appendChild(xmlElement);
-        NutsXmlUtils.writeDocument(doc, new javax.xml.transform.stream.StreamResult(pw), compact, false, getSession());
+        XmlUtils.writeDocument(doc, new javax.xml.transform.stream.StreamResult(pw), compact, false, getSession());
         pw.flush();
         getWriter().print(codeFormat.stringToText(bos.toString(), txt, getSession()));
     }

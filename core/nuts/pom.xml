@@ -5,7 +5,7 @@
     <groupId>net.thevpc.nuts</groupId>
     <artifactId>nuts</artifactId>
     <version>0.8.3</version>
-    <packaging>jar</packaging>
+    <packaging>jar</packaging><!-- small changes, do not require version change, didn't updated the version-->
     <name>Nuts Community Package Manager</name>
     <url>https://github.com/thevpc/nuts</url>
     <description>Nuts Package Manager Bootstrap</description>

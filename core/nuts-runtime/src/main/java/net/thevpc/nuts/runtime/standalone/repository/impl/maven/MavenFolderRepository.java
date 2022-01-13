@@ -239,7 +239,11 @@ public class MavenFolderRepository extends NutsCachedRepository {
         if (localPath == null) {
             NutsPath p = repoHelper.getIdPath(id, session);
             if (p.isLocal()) {
-                return new NutsDefaultContent(p, false, false);
+                if(p.exists()) {
+                    return new NutsDefaultContent(p, false, false);
+                }else{
+                    throw new NutsNotFoundException(session, id);
+                }
             } else {
                 String tempFile = NutsTmp.of(session)
                         .setRepositoryId(getUuid())

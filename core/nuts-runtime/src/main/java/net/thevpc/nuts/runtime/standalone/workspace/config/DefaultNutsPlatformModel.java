@@ -1,7 +1,8 @@
 package net.thevpc.nuts.runtime.standalone.workspace.config;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.standalone.util.NutsJavaSdkUtils;
+import net.thevpc.nuts.runtime.standalone.util.jclass.NutsJavaSdkUtils;
+import net.thevpc.nuts.runtime.standalone.util.jclass.JavaClassUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
 
 import java.util.*;
@@ -185,7 +186,38 @@ public class DefaultNutsPlatformModel {
 
     public NutsPlatformLocation findOnePlatform(NutsPlatformFamily type, Predicate<NutsPlatformLocation> filter, NutsSession session) {
         NutsPlatformLocation[] a = findPlatforms(type, filter, session);
-        return a.length == 0 ? null : a[0];
+        if(a.length == 0){
+            return null;
+        }
+        if(a.length == 1){
+            return a[0];
+        }
+        //find the best minimum version that is applicable!
+        NutsPlatformLocation best=a[0];
+        for (int i = 1; i < a.length; i++) {
+            NutsVersion v1 = NutsVersion.of(best.getVersion(), session);
+            NutsVersion v2 = NutsVersion.of(a[i].getVersion(), session);
+            if(type==NutsPlatformFamily.JAVA) {
+                double d1 = Double.parseDouble(JavaClassUtils.sourceVersionToClassVersion(v1.getValue(), session));
+                double d2 = Double.parseDouble(JavaClassUtils.sourceVersionToClassVersion(v2.getValue(), session));
+                if (d1 == d2) {
+                    //1.8u100 vs 1.8u101, select 1.8u101
+                    if (v1.compareTo(v2) < 0) {
+                        best = a[i];
+                    }
+                } else {
+                    //1.8u100 vs 9u101, select 1.8u100
+                    if (v1.compareTo(v2) > 0) {
+                        best = a[i];
+                    }
+                }
+            }else{
+                if (v1.compareTo(v2) > 0) {
+                    best = a[i];
+                }
+            }
+        }
+        return best;
     }
 
     public NutsPlatformLocation[] findPlatforms(NutsPlatformFamily type, Predicate<NutsPlatformLocation> filter, NutsSession session) {
