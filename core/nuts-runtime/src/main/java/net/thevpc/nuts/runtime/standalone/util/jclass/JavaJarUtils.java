@@ -19,7 +19,6 @@ import java.util.*;
 import java.util.function.Predicate;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
-import java.util.logging.Level;
 
 public class JavaJarUtils {
     public static NutsVersion[] parseJarClassVersions(InputStream jarStream, NutsSession session) {
@@ -98,71 +97,149 @@ public class JavaJarUtils {
                 } else if (path.startsWith("META-INF/maven/") && path.endsWith("/pom.xml")) {
                     Pom pom = new PomXmlParser(session).parse(inputStream, session);
                     final Element ee = pom.getXml().getDocumentElement();
+                    if(pom.getParent()!=null && pom.getParent().getArtifactId().equals("spring-boot-starter-parent")){
+                        String springStartClass = NutsUtilStrings.trim(pom.getProperties().get("start-class"));
+                        if(springStartClass.length()>0){
+                            classes.add(new DefaultNutsExecutionEntry(springStartClass, true, false));
+                        }
+                    }
                     XmlUtils.visitNode(ee, x -> {
                         if (x instanceof Element) {
                             Element e = (Element) x;
                             if (XmlUtils.isNode(e, "build", "plugins", "plugin", "configuration", "archive", "manifest", "mainClass")) {
-                                String s = NutsUtilStrings.trim(e.getTextContent());
-                                if (s.length() > 0) {
-                                    classes.add(new DefaultNutsExecutionEntry(s, true, false));
-                                }
-                            } else if (XmlUtils.isNode(e, "build", "plugins", "plugin", "executions", "execution", "configuration", "mainClass")) {
                                 //              configuration   execution       executions      plugin
                                 Node plugin = e.getParentNode().getParentNode().getParentNode().getParentNode();
-                                NutsIdBuilder ib = NutsIdBuilder.of(session);
-                                for (Node node : XmlUtils.iterable(plugin)) {
-                                    Element ne = XmlUtils.asElement(node);
-                                    if (ne != null) {
-                                        switch (ne.getNodeName()) {
-                                            case "groupId": {
-                                                ib.setGroupId(NutsUtilStrings.trim(ne.getTextContent()));
-                                                break;
-                                            }
-                                            case "artifactId": {
-                                                ib.setArtifactId(NutsUtilStrings.trim(ne.getTextContent()));
-                                                break;
-                                            }
-                                        }
-                                    }
-                                }
-                                if (ib.build().toString().equals("org.openjfx:javafx-maven-plugin")) {
+                                NutsId pluginId = parseMavenPluginElement(plugin, session);
+                                if (
+                                        pluginId.getShortName().equals("org.apache.maven.plugins:maven-assembly-plugin")
+                                                || pluginId.getShortName().equals("org.apache.maven.plugins:maven-jar-plugin")
+                                ) {
                                     String s = NutsUtilStrings.trim(e.getTextContent());
                                     if (s.length() > 0) {
+                                        s=resolveMainClassString(s,pom);
+                                        classes.add(new DefaultNutsExecutionEntry(s, true, false));
+                                    }
+                                }
+                            }else if (XmlUtils.isNode(e, "build", "plugins", "plugin", "executions", "execution", "configuration", "mainClass")) {
+                                //              configuration   execution       executions      plugin
+                                Node plugin = e.getParentNode().getParentNode().getParentNode().getParentNode();
+                                NutsId pluginId = parseMavenPluginElement(plugin, session);
+                                if (
+                                           pluginId.getArtifactId().equals("onejar-maven-plugin")
+                                        || pluginId.getShortName().equals("org.springframework.boot:spring-boot-maven-plugin")
+                                        || pluginId.getShortName().equals("org.openjfx:javafx-maven-plugin")
+                                ) {
+                                    String s = NutsUtilStrings.trim(e.getTextContent());
+                                    if (s.length() > 0) {
+                                        s=resolveMainClassString(s,pom);
+                                        classes.add(new DefaultNutsExecutionEntry(s, true, false));
+                                    }
+                                }else{
+                                    //what else?
+                                }
+                            }else if (XmlUtils.isNode(e, "build", "plugins", "plugin", "configuration", "mainClass")) {
+                                //              configuration   execution       executions      plugin
+                                Node plugin = e.getParentNode().getParentNode();
+                                NutsId pluginId = parseMavenPluginElement(plugin, session);
+                                if (pluginId.getShortName().equals("org.springframework.boot:spring-boot-maven-plugin")) {
+                                    String s = NutsUtilStrings.trim(e.getTextContent());
+                                    if (s.length() > 0) {
+                                        s=resolveMainClassString(s,pom);
+                                        classes.add(new DefaultNutsExecutionEntry(s, true, false));
+                                    }
+                                }
+                            }else if (XmlUtils.isNode(e, "build", "plugins", "plugin","executions","execution", "configuration", "transformers", "transformer", "mainClass")) {
+                                //              configuration   execution       executions      plugin
+                                Node plugin = e.getParentNode().getParentNode().getParentNode().getParentNode().getParentNode().getParentNode();
+                                NutsId pluginId = parseMavenPluginElement(plugin, session);
+                                if (
+                                        pluginId.getShortName().equals("org.apache.maven.plugins:maven-shade-plugin")
+                                ) {
+                                    String s = NutsUtilStrings.trim(e.getTextContent());
+                                    if (s.length() > 0) {
+                                        s=resolveMainClassString(s,pom);
                                         classes.add(new DefaultNutsExecutionEntry(s, true, false));
                                     }
                                 }
                             }
                             return true;
                         }
-                        return false;
+                        return true;
                     });
                 }
                 return true;
             }
         }, session);
 
-        List<NutsExecutionEntry> entries = new ArrayList<>();
-        String defaultEntry = null;
-        if (manifestClass.size() > 0) {
-            defaultEntry = manifestClass.get(0);
-        }
-        boolean defaultFound = false;
+        Map<String,NutsExecutionEntry> found = new LinkedHashMap<>();
         for (NutsExecutionEntry entry : classes) {
-            if (defaultEntry != null && defaultEntry.equals(entry.getName())) {
-                entries.add(new DefaultNutsExecutionEntry(entry.getName(), true, entry.isApp()));
-                defaultFound = true;
-            } else {
-                entries.add(entry);
+            String cn = entry.getName();
+            NutsExecutionEntry a = found.get(cn);
+            if(a==null){
+                found.put(cn,entry);
+            }else{
+                if(a.equals(entry)){
+                    //ignore
+                }else{
+                    NutsExecutionEntry e2=new DefaultNutsExecutionEntry(
+                            cn,entry.isDefaultEntry()||a.isDefaultEntry(),
+                            entry.isApp()||a.isApp()
+                    );
+                    found.put(cn,e2);
+                }
             }
         }
-        if (defaultEntry != null && !defaultFound) {
-            NutsLoggerOp.of(CorePlatformUtils.class, session).level(Level.SEVERE).verb(NutsLogVerb.FAIL)
-                    .log(NutsMessage.jstyle("invalid default entry {0} in {1}", defaultEntry, sourceName));
-//            entries.add(new DefaultNutsExecutionEntry(defaultEntry, true, false));
-        }
-        return entries.toArray(new NutsExecutionEntry[0]);
+        NutsExecutionEntry[] ee = found.values().toArray(new NutsExecutionEntry[0]);
+        Arrays.sort(ee, new Comparator<NutsExecutionEntry>() {
+            @Override
+            public int compare(NutsExecutionEntry o1, NutsExecutionEntry o2) {
+                int x=(o1.isDefaultEntry()?0:1)-(o2.isDefaultEntry()?0:1);
+                if(x!=0){
+                    return x;
+                }
+                x=(o1.isApp()?0:1)-(o2.isApp()?0:1);
+                if(x!=0){
+                    return x;
+                }
+                return o1.getName().compareTo(o2.getName());
+            }
+        });
+        return ee;
     }
 
+    private static String resolveMainClassString(String nameOrVar, Pom pom) {
+        if(nameOrVar.startsWith("${") && nameOrVar.endsWith("}")){
+            String e = pom.getProperties().get(nameOrVar.substring(2, nameOrVar.length() - 1));
+            if(e!=null){
+                return e;
+            }
+        }
+        return nameOrVar;
+    }
+
+    public static NutsId parseMavenPluginElement(Node plugin, NutsSession session) {
+        NutsIdBuilder ib = NutsIdBuilder.of(session);
+        for (Node node : XmlUtils.iterable(plugin)) {
+            Element ne = XmlUtils.asElement(node);
+            if (ne != null) {
+                switch (ne.getNodeName()) {
+                    case "groupId": {
+                        ib.setGroupId(NutsUtilStrings.trim(ne.getTextContent()));
+                        break;
+                    }
+                    case "artifactId": {
+                        ib.setArtifactId(NutsUtilStrings.trim(ne.getTextContent()));
+                        break;
+                    }
+                    case "version": {
+                        ib.setVersion(NutsUtilStrings.trim(ne.getTextContent()));
+                        break;
+                    }
+                }
+            }
+        }
+        return ib.build();
+    }
     public static NutsVersion parseJarClassVersion(NutsPath path, NutsSession session) {
         try (InputStream is = path.getInputStream()) {
             return parseJarClassVersion(is, session);

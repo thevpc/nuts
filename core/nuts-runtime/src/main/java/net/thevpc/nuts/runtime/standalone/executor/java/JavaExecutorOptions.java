@@ -18,6 +18,17 @@ import java.util.stream.Collectors;
 
 public final class JavaExecutorOptions {
 
+    private final boolean mainClassApp = false;
+    private final String[] execArgs;
+    private final List<String> jvmArgs = new ArrayList<String>();
+    private final List<String> j9_addModules = new ArrayList<String>();
+    private final List<String> j9_modulePath = new ArrayList<String>();
+    private final List<String> j9_upgradeModulePath = new ArrayList<String>();
+    private final List<String> app;
+    //    private NutsDefinition nutsMainDef;
+    private final NutsSession session;
+    private final List<NutsClassLoaderNode> classPathNodes = new ArrayList<>();
+    private final List<String> classPath = new ArrayList<>();
     private String javaVersion = null;//runnerProps.getProperty("java.parseVersion");
     private String javaEffVersion = null;
     private boolean java9;
@@ -25,22 +36,11 @@ public final class JavaExecutorOptions {
     private String mainClass = null;
     private String dir = null;
     private boolean javaw = false;
-    private final boolean mainClassApp = false;
     private boolean excludeBase = false;
     private boolean showCommand;
     private boolean jar = false;
-    private final String[] execArgs;
     private String splash;
-    private final List<String> jvmArgs = new ArrayList<String>();
-    private final List<String> j9_addModules = new ArrayList<String>();
-    private final List<String> j9_modulePath = new ArrayList<String>();
     private String j9_module;
-    private final List<String> j9_upgradeModulePath = new ArrayList<String>();
-    private final List<String> app;
-    //    private NutsDefinition nutsMainDef;
-    private final NutsSession session;
-    private final List<NutsClassLoaderNode> classPathNodes = new ArrayList<>();
-    private final List<String> classPath = new ArrayList<>();
 
     public JavaExecutorOptions(NutsDefinition def, boolean tempId, String[] args, String[] executorOptions, String dir, NutsSession session) {
         this.session = session;
@@ -209,7 +209,11 @@ public final class JavaExecutorOptions {
                 if (path != null) {
                     //check manifest!
                     NutsExecutionEntry[] classes = NutsExecutionEntries.of(session).parse(path);
-                    if (classes.length > 0) {
+                    NutsExecutionEntry[] primary = Arrays.stream(classes).filter(NutsExecutionEntry::isDefaultEntry).toArray(NutsExecutionEntry[]::new);
+                    if (primary.length > 0) {
+                        mainClass = Arrays.stream(primary).map(NutsExecutionEntry::getName)
+                                .collect(Collectors.joining(":"));
+                    } else if (classes.length > 0) {
                         mainClass = Arrays.stream(classes).map(NutsExecutionEntry::getName)
                                 .collect(Collectors.joining(":"));
                     }
@@ -280,28 +284,28 @@ public final class JavaExecutorOptions {
                             currentCP.toArray(new NutsClassLoaderNode[0]),
                             java9, session
                     );
-            if(java9){
+            if (java9) {
                 List<NutsClassLoaderNodeExt> ln_javaFx = new ArrayList<>();
                 List<NutsClassLoaderNodeExt> ln_others = new ArrayList<>();
                 for (NutsClassLoaderNodeExt n : ln) {
-                    if(n.jfx){
+                    if (n.jfx) {
                         ln_javaFx.add(n);
-                    }else{
+                    } else {
                         ln_others.add(n);
                     }
                 }
                 ln_javaFx.sort(
-                        (a1,a2)->{
+                        (a1, a2) -> {
                             NutsId b1 = a1.id;
                             NutsId b2 = a2.id;
                             // give precedence to classifiers
                             String c1 = b1.getClassifier();
                             String c2 = b2.getClassifier();
-                            if(b1.builder().setClassifier(null).build().getShortName().equals(b2.builder().setClassifier(null).build().getShortName())){
-                                if(NutsBlankable.isBlank(c1)){
+                            if (b1.builder().setClassifier(null).build().getShortName().equals(b2.builder().setClassifier(null).build().getShortName())) {
+                                if (NutsBlankable.isBlank(c1)) {
                                     return 1;
                                 }
-                                if(NutsBlankable.isBlank(c2)){
+                                if (NutsBlankable.isBlank(c2)) {
                                     return -1;
                                 }
                                 return b1.compareTo(b2);
@@ -547,8 +551,6 @@ public final class JavaExecutorOptions {
             fillStrings(d, list);
         }
     }
-
-
 
 
     public void fillNidStrings(NutsClassLoaderNode n, List<String> list) {
