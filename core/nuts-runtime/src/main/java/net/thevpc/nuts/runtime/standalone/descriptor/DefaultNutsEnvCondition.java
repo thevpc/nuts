@@ -29,6 +29,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.util.collections.CoreArrayUtils;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Created by vpc on 1/5/17.
@@ -45,7 +46,7 @@ public class DefaultNutsEnvCondition implements NutsEnvCondition {
     }
 
     private String[] arch;
-    private String[] profiles;
+    private String[] profile;
     private String[] os;
     private String[] osDist;
     private String[] platform;
@@ -72,7 +73,7 @@ public class DefaultNutsEnvCondition implements NutsEnvCondition {
     public DefaultNutsEnvCondition(String[] arch, String[] os, String[] osDist,
                                    String[] platform,
                                    String[] desktopEnvironment,
-                                   String[] profiles,
+                                   String[] profile,
                                    Map<String,String> properties,
                                    NutsSession session) {
         this.session=session;
@@ -81,7 +82,7 @@ public class DefaultNutsEnvCondition implements NutsEnvCondition {
         this.osDist = CoreArrayUtils.toDistinctTrimmedNonEmptyArray(osDist);
         this.platform = CoreArrayUtils.toDistinctTrimmedNonEmptyArray(platform);
         this.desktopEnvironment = CoreArrayUtils.toDistinctTrimmedNonEmptyArray(desktopEnvironment);
-        this.profiles = CoreArrayUtils.toDistinctTrimmedNonEmptyArray(profiles);
+        this.profile = CoreArrayUtils.toDistinctTrimmedNonEmptyArray(profile);
         this.properties = properties==null?new HashMap<>() : new HashMap<>(properties);
     }
 
@@ -116,7 +117,7 @@ public class DefaultNutsEnvCondition implements NutsEnvCondition {
                 return false;
             }
         }
-        for (String s : profiles) {
+        for (String s : profile) {
             if(!NutsBlankable.isBlank(s)){
                 return false;
             }
@@ -129,7 +130,7 @@ public class DefaultNutsEnvCondition implements NutsEnvCondition {
 
     @Override
     public String[] getProfile() {
-        return profiles;
+        return profile;
     }
 
     @Override
@@ -168,6 +169,7 @@ public class DefaultNutsEnvCondition implements NutsEnvCondition {
                 && Arrays.equals(os, that.os)
                 && Arrays.equals(osDist, that.osDist)
                 && Arrays.equals(platform, that.platform)
+                && Arrays.equals(profile, that.profile)
                 && Arrays.equals(desktopEnvironment, that.desktopEnvironment);
     }
 
@@ -179,6 +181,7 @@ public class DefaultNutsEnvCondition implements NutsEnvCondition {
         result = 31 * result + Arrays.hashCode(os);
         result = 31 * result + Arrays.hashCode(osDist);
         result = 31 * result + Arrays.hashCode(platform);
+        result = 31 * result + Arrays.hashCode(profile);
         result = 31 * result + Arrays.hashCode(desktopEnvironment);
         return result;
     }
@@ -187,12 +190,13 @@ public class DefaultNutsEnvCondition implements NutsEnvCondition {
     public String toString() {
         String s= String.join(" & ",
                 Arrays.stream(new String[]{
+                                ts("profile", profile),
                                 ts("arch",arch),
                                 ts("os",os),
                                 ts("osDist", osDist),
                                 ts("platform",platform),
-                                ts("desktopEnvironment",desktopEnvironment),
-                                ("props="+properties.toString())
+                                ts("desktop",desktopEnvironment),
+                                ts("props",properties)
                         })
                         .filter(x->x.length()>0)
                         .toArray(String[]::new)
@@ -208,6 +212,19 @@ public class DefaultNutsEnvCondition implements NutsEnvCondition {
             return "";
         }
         return n+"="+String.join(",",vs[0]);
+    }
+    private String ts(String n,Map<String,String> properties){
+        if(properties.isEmpty()){
+            return "";
+        }
+        return n+"={"+ properties.entrySet().stream().map(x->{
+            String k = x.getKey();
+            String v = x.getValue();
+            if(v==null){
+                return k;
+            }
+            return k+"="+v;
+        }).collect(Collectors.joining(","))+"}";
     }
 
 }

@@ -409,4 +409,35 @@ public class NutsJavaSdkUtils {
         }
         return javaHome + File.separator + "bin" + File.separator + exe;
     }
+
+    public static List<NutsClassLoaderNodeExt> loadNutsClassLoaderNodeExts(NutsClassLoaderNode[] n, boolean java9,NutsSession session) {
+        List<NutsClassLoaderNodeExt> list=new ArrayList<>();
+        for (NutsClassLoaderNode nn : n) {
+            fillNodes(nn, list, java9, session);
+        }
+        return list;
+    }
+
+    private static void fillNodes(NutsClassLoaderNode n, List<NutsClassLoaderNodeExt> list,boolean java9,NutsSession session) {
+        NutsClassLoaderNodeExt k=new NutsClassLoaderNodeExt();
+        k.node=n;
+        k.id=NutsId.of(n.getId(),session);
+        k.path = NutsPath.of(n.getURL(), session);
+        if(java9){
+            k.moduleInfo= JavaJarUtils.parseModuleInfo(k.path, session);
+            if (k.moduleInfo != null) {
+                k.moduleName=k.moduleInfo.module_name;
+            }else{
+                k.moduleName= JavaJarUtils.parseDefaultModuleName(k.path, session);
+            }
+            k.jfx=k.moduleName!=null && k.moduleName.startsWith("javafx");
+        }else{
+            k.jfx=k.id.getArtifactId().startsWith("javafx") &&
+                    k.id.getGroupId().startsWith("org.openjfx");
+        }
+        list.add(k);
+        for (NutsClassLoaderNode d : n.getDependencies()) {
+            fillNodes(d, list,java9, session);
+        }
+    }
 }

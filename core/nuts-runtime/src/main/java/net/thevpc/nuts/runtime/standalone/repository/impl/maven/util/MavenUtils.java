@@ -323,13 +323,13 @@ public class MavenUtils {
                     .setDependencies(deps.toArray(new NutsDependency[0]))
                     .setStandardDependencies(depsM.toArray(new NutsDependency[0]))
                     .setCategories(
-                            Arrays.stream(categories.split("[\n\r;,]"))
+                            StringTokenizerUtils.splitDefault(categories).stream()
                                     .map(String::trim)
                                     .filter(x -> !x.isEmpty())
                                     .collect(Collectors.toList())
                     )
                     .setIcons(
-                            Arrays.stream(icons.split("[\n\r]"))
+                            StringTokenizerUtils.splitDefault(icons).stream()
                                     .map(String::trim)
                                     .filter(x -> !x.isEmpty())
                                     .collect(Collectors.toList())
@@ -582,7 +582,7 @@ public class MavenUtils {
                 }
             }
             for (NutsDependency dependency : descr.getDependencies()) {
-                if (CoreFilterUtils.acceptCondition(dependency.getCondition(), true, session)) {
+                if (CoreFilterUtils.acceptDependency(dependency, session)) {
                     String groupId = dependency.getGroupId();
                     String version = dependency.getVersion().getValue();
                     String artifactId = dependency.getArtifactId();

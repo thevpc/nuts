@@ -37,6 +37,7 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
+import java.util.logging.Level;
 import java.util.stream.Collectors;
 
 public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
@@ -494,11 +495,8 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
     @Override
     public NutsDescriptorBuilder applyParents(NutsDescriptor[] parentDescriptors) {
         NutsId n_id = getId();
-//        String n_alt = getAlternative();
         String n_packaging = getPackaging();
-        LinkedHashSet<NutsDescriptorFlag> flags = new LinkedHashSet<>();
-//        String n_ext = getExt();
-        flags.addAll(getFlags());
+        LinkedHashSet<NutsDescriptorFlag> flags = new LinkedHashSet<>(getFlags());
         String n_name = getName();
         List<String> n_categories = getCategories();
         if (n_categories == null) {
@@ -516,18 +514,21 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
         String n_desc = getDescription();
         NutsArtifactCall n_executor = getExecutor();
         NutsArtifactCall n_installer = getInstaller();
-        List<NutsDescriptorProperty> n_props = new ArrayList<>();
+        Map<String,NutsDescriptorProperty> n_props = new HashMap<>();
         for (NutsDescriptor parentDescriptor : parentDescriptors) {
-            n_props.addAll(Arrays.asList(parentDescriptor.getProperties()));
+            NutsDescriptorProperty[] properties = parentDescriptor.getProperties();
+            if (properties != null) {
+                n_props.putAll(propsAsMap(properties));
+            }
         }
         NutsDescriptorProperty[] properties = getProperties();
         if (properties != null) {
-            n_props.addAll(Arrays.asList(properties));
+            n_props.putAll(propsAsMap(properties));
         }
         NutsEnvConditionBuilder b = NutsEnvConditionBuilder.of(session);
 
-        LinkedHashSet<NutsDependency> n_deps = new LinkedHashSet<>();
-        LinkedHashSet<NutsDependency> n_sdeps = new LinkedHashSet<>();
+        Map<String, NutsDependency> n_deps = new LinkedHashMap<>();
+        Map<String, NutsDependency> n_sdeps = new LinkedHashMap<>();
         for (NutsDescriptor parentDescriptor : parentDescriptors) {
             n_id = CoreNutsUtils.applyNutsIdInheritance(n_id, parentDescriptor.getId(), session);
             flags.addAll(parentDescriptor.getFlags());
@@ -544,14 +545,14 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
             n_name = CoreNutsUtils.applyStringInheritance(n_name, parentDescriptor.getName());
             n_genericName = CoreNutsUtils.applyStringInheritance(n_genericName, parentDescriptor.getGenericName());
             n_desc = CoreNutsUtils.applyStringInheritance(n_desc, parentDescriptor.getDescription());
-            n_deps.addAll(Arrays.asList(parentDescriptor.getDependencies()));
-            n_sdeps.addAll(Arrays.asList(parentDescriptor.getStandardDependencies()));
+            n_deps.putAll(depsAsMap(parentDescriptor.getDependencies()));
+            n_sdeps.putAll(depsAsMap(parentDescriptor.getStandardDependencies()));
             b.addAll(parentDescriptor.getCondition());
             n_icons.addAll(Arrays.asList(parentDescriptor.getIcons()));
             n_categories.addAll(Arrays.asList(parentDescriptor.getCategories()));
         }
-        n_deps.addAll(Arrays.asList(getDependencies()));
-        n_sdeps.addAll(Arrays.asList(getStandardDependencies()));
+        n_deps.putAll(depsAsMap(getDependencies()));
+        n_sdeps.putAll(depsAsMap(getStandardDependencies()));
         b.addAll(getCondition());
         NutsId[] n_parents = new NutsId[0];
 
@@ -564,13 +565,13 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
         setInstaller(n_installer);
         setName(n_name);
         setGenericName(n_genericName);
-        setCategories(n_categories);
-        setIcons(n_icons);
+        setCategories(new ArrayList<>(new LinkedHashSet<>(n_categories)));
+        setIcons(new ArrayList<>(new LinkedHashSet<>(n_icons)));
         setDescription(n_desc);
         setCondition(b);
-        setDependencies(n_deps.toArray(new NutsDependency[0]));
-        setStandardDependencies(n_sdeps.toArray(new NutsDependency[0]));
-        setProperties(n_props.toArray(new NutsDescriptorProperty[0]));
+        setDependencies(n_deps.values().toArray(new NutsDependency[0]));
+        setStandardDependencies(n_sdeps.values().toArray(new NutsDependency[0]));
+        setProperties(n_props.values().toArray(new NutsDescriptorProperty[0]));
         return this;
     }
 
@@ -863,6 +864,48 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
     public NutsDescriptorBuilder setIdType(NutsIdType idType) {
         this.idType = idType == null ? NutsIdType.REGULAR : idType;
         return this;
+    }
+
+    private Map<String, NutsDescriptorProperty> propsAsMap(NutsDescriptorProperty[] arr) {
+        Map<String, NutsDescriptorProperty> m = new LinkedHashMap<>();
+        for (NutsDescriptorProperty p : arr) {
+            String s = sPropId(p);
+            m.put(s,p);
+        }
+        return m;
+    }
+
+    private Map<String, NutsDependency> depsAsMap(NutsDependency[] arr) {
+        Map<String, NutsDependency> m = new LinkedHashMap<>();
+        //first is Best
+        for (NutsDependency d : arr) {
+            String e = sDepId(d);
+            if (!m.containsKey(e)) {
+                m.put(e, d);
+            } else {
+                NutsDependency a = m.get(e);
+                if (a.equals(d)) {
+                    NutsLoggerOp.of(DefaultNutsDescriptorBuilder.class, session)
+                            .level(Level.FINER)
+                            .verb(NutsLogVerb.WARNING)
+                            .log(NutsMessage.cstyle("dependency %s is duplicated", d));
+                } else {
+                    NutsLoggerOp.of(DefaultNutsDescriptorBuilder.class, session)
+                            .level(Level.FINER)
+                            .verb(NutsLogVerb.WARNING)
+                            .log(NutsMessage.cstyle("dependency %s is overridden by %s", a, d));
+                }
+            }
+        }
+        return m;
+    }
+
+    private String sDepId(NutsDependency d) {
+        return NutsUtilStrings.trim(d.getGroupId()) + ":" + NutsUtilStrings.trim(d.getArtifactId()) + "?" + NutsUtilStrings.trim(d.getClassifier());
+    }
+
+    private String sPropId(NutsDescriptorProperty d) {
+        return NutsUtilStrings.trim(d.getName()) + ":" + d.getCondition().toString();
     }
 
     private Map<String, String> prepareGlobalProperties() {

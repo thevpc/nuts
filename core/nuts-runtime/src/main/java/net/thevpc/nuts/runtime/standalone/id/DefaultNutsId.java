@@ -29,6 +29,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.id.filter.NutsIdIdFilter;
 import net.thevpc.nuts.runtime.standalone.util.filters.CoreFilterUtils;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.QueryStringParser;
+import net.thevpc.nuts.runtime.standalone.xtra.expr.StringTokenizerUtils;
 
 import java.util.*;
 
@@ -415,7 +416,7 @@ public class DefaultNutsId implements NutsId {
             exc="";
         }
         List<NutsId> a=new ArrayList<>();
-        for (String s : exc.split("[;,]")) {
+        for (String s : StringTokenizerUtils.splitDefault(exc)) {
             NutsId n = NutsId.of(s,session);
             if(n!=null){
                 a.add(n);
@@ -430,6 +431,7 @@ public class DefaultNutsId implements NutsId {
                 .setScope(properties.get(NutsConstants.IdProperties.SCOPE))
                 .setOptional(properties.get(NutsConstants.IdProperties.OPTIONAL))
                 .setExclusions(a.toArray(new NutsId[0]))
+                .setCondition(getCondition())
                 .setProperties(properties).build()
         ;
     }
@@ -450,13 +452,15 @@ public class DefaultNutsId implements NutsId {
         if (x != 0) {
             return x;
         }
-        //latest versions first
+        x = NutsUtilStrings.trim(this.getClassifier()).compareTo(NutsUtilStrings.trim(o2.getClassifier()));
+        if (x != 0) {
+            return x;
+        }
         x = this.getVersion().compareTo(o2.getVersion());
         if (x != 0) {
             return x;
         }
-        x = NutsUtilStrings.trim(this.getClassifier()).compareTo(NutsUtilStrings.trim(o2.getClassifier()));
-        return -x;
+        return 0;
     }
 
     @Override

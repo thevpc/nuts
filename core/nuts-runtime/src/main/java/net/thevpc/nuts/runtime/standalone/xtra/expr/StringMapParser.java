@@ -125,11 +125,15 @@ public class StringMapParser {
                             result.append((char) r);
                         }
                     }
+                    if (stopTokens != null && stopTokens.indexOf(cr) >= 0) {
+                        return cr;
+                    }
+                }else{
+                    if (stopTokens != null && stopTokens.indexOf(cr) >= 0) {
+                        return cr;
+                    }
+                    result.append(cr);
                 }
-                if (stopTokens != null && stopTokens.indexOf(cr) >= 0) {
-                    return cr;
-                }
-                result.append(cr);
             }
         }
     }
@@ -171,6 +175,7 @@ public class StringMapParser {
                         break;
                     }
                 } else {
+                    m.put(t, null);
                     //
                 }
             }

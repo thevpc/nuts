@@ -1,6 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.workspace.config;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.standalone.xtra.expr.StringTokenizerUtils;
 import net.thevpc.nuts.spi.NutsBootDescriptor;
 import net.thevpc.nuts.spi.NutsBootId;
 import net.thevpc.nuts.runtime.standalone.boot.NutsBootConfig;
@@ -164,7 +165,7 @@ public final class DefaultNutsWorkspaceCurrentConfig {
         if (c.getDependencies() != null) {
             this.runtimeBootDescriptor = new NutsBootDescriptor(
                     NutsBootId.parse(this.bootRuntime.toString()),
-                    Arrays.stream(c.getDependencies().split(";"))
+                    StringTokenizerUtils.splitSemiColon(c.getDependencies()).stream()
                             .map(NutsBootId::parse).toArray(NutsBootId[]::new)
 
             );

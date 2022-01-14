@@ -26,8 +26,11 @@
 package net.thevpc.nuts.runtime.standalone.id;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.standalone.descriptor.DefaultNutsEnvCondition;
+import net.thevpc.nuts.runtime.standalone.descriptor.DefaultNutsEnvConditionBuilder;
 import net.thevpc.nuts.runtime.standalone.util.CoreNutsUtils;
 import net.thevpc.nuts.runtime.standalone.util.filters.CoreFilterUtils;
+import net.thevpc.nuts.runtime.standalone.xtra.expr.CommaStringParser;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.QueryStringParser;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import net.thevpc.nuts.spi.NutsSupportLevelContext;
@@ -253,6 +256,7 @@ public class DefaultNutsIdBuilder implements NutsIdBuilder {
             setProperty(NutsConstants.IdProperties.PLATFORM, null);
             setProperty(NutsConstants.IdProperties.DESKTOP_ENVIRONMENT, null);
             setProperty(NutsConstants.IdProperties.PROFILE, null);
+            ((DefaultNutsEnvConditionBuilder)condition).setProperties(null);
         }else{
             setProperty(NutsConstants.IdProperties.OS, CoreStringUtils.joinAndTrimToNull(c.getOs()));
             setProperty(NutsConstants.IdProperties.OS_DIST, CoreStringUtils.joinAndTrimToNull(c.getOsDist()));
@@ -260,6 +264,7 @@ public class DefaultNutsIdBuilder implements NutsIdBuilder {
             setProperty(NutsConstants.IdProperties.PLATFORM, CoreStringUtils.joinAndTrimToNull(c.getPlatform()));
             setProperty(NutsConstants.IdProperties.DESKTOP_ENVIRONMENT, CoreStringUtils.joinAndTrimToNull(c.getDesktopEnvironment()));
             setProperty(NutsConstants.IdProperties.PROFILE, CoreStringUtils.joinAndTrimToNull(c.getProfile()));
+            ((DefaultNutsEnvConditionBuilder)condition).setProperties(((DefaultNutsEnvCondition)c).getProperties());
 
         }
         return this;
@@ -267,13 +272,7 @@ public class DefaultNutsIdBuilder implements NutsIdBuilder {
 
     @Override
     public NutsEnvConditionBuilder getCondition() {
-        return NutsEnvConditionBuilder.of(session)
-                .setOs(CoreStringUtils.parseAndTrimToDistinctArray(getProperties().get(NutsConstants.IdProperties.OS)))
-                .setArch(CoreStringUtils.parseAndTrimToDistinctArray(getProperties().get(NutsConstants.IdProperties.ARCH)))
-                .setOsDist(CoreStringUtils.parseAndTrimToDistinctArray(getProperties().get(NutsConstants.IdProperties.OS_DIST)))
-                .setPlatform(CoreStringUtils.parseAndTrimToDistinctArray(getProperties().get(NutsConstants.IdProperties.PLATFORM)))
-                .setDesktopEnvironment(CoreStringUtils.parseAndTrimToDistinctArray(getProperties().get(NutsConstants.IdProperties.DESKTOP_ENVIRONMENT)))
-                ;
+        return condition;
     }
 
     @Override
@@ -307,6 +306,14 @@ public class DefaultNutsIdBuilder implements NutsIdBuilder {
             }
             case NutsConstants.IdProperties.DESKTOP_ENVIRONMENT:{
                 condition.setDesktopEnvironment(CoreStringUtils.parseAndTrimToDistinctArray(value));
+                break;
+            }
+            case NutsConstants.IdProperties.PROFILE:{
+                condition.setProfile(CoreStringUtils.parseAndTrimToDistinctArray(value));
+                break;
+            }
+            case /*NutsConstants.IdProperties.PROPERTIES*/"properties":{
+                ((DefaultNutsEnvConditionBuilder)condition).setProperties(CommaStringParser.parseMap(value, session));
                 break;
             }
             case NutsConstants.IdProperties.CLASSIFIER:{

@@ -205,7 +205,7 @@ public class DotfilefsPath extends AbstractPathSPIAdapter {
         try {
             session.getTerminal().printProgress("%-8s %s", "browse",NutsPath.of(baseUrl,session).toCompressedForm());
             foldersFileStream = NutsInputStreamMonitor.of(session).setSource(dotFilesUrl).create();
-            List<String> splitted = StringTokenizerUtils.split(CoreIOUtils.loadString(foldersFileStream, true,session), "\n\r");
+            List<String> splitted = StringTokenizerUtils.splitNewLine(CoreIOUtils.loadString(foldersFileStream, true,session));
             for (String s : splitted) {
                 s = s.trim();
                 if (s.length() > 0) {
@@ -263,7 +263,7 @@ public class DotfilefsPath extends AbstractPathSPIAdapter {
                 String dotFolderUrl = baseUrl + "/" + CoreNutsConstants.Files.DOT_FOLDERS;
                 try (InputStream stream = NutsInputStreamMonitor.of(session).setSource(dotFolderUrl)
                         .create()) {
-                    foldersFileContent = StringTokenizerUtils.split(CoreIOUtils.loadString(stream, true,session), "\n\r")
+                    foldersFileContent = StringTokenizerUtils.splitNewLine(CoreIOUtils.loadString(stream, true,session))
                             .stream().map(x -> x.trim()).filter(x -> x.length() > 0).toArray(String[]::new);
                 } catch (IOException | UncheckedIOException | NutsIOException ex) {
                     NutsLoggerOp.of(DotfilefsPath.class,session).level(Level.FINE).verb(NutsLogVerb.FAIL)

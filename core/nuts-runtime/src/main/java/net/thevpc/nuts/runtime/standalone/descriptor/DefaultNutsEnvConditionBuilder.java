@@ -36,6 +36,7 @@ import net.thevpc.nuts.spi.NutsSupportLevelContext;
 
 import java.util.*;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 public class DefaultNutsEnvConditionBuilder implements NutsEnvConditionBuilder {
 
@@ -337,8 +338,9 @@ public class DefaultNutsEnvConditionBuilder implements NutsEnvConditionBuilder {
                                 ts("os", os.toArray(new String[0])),
                                 ts("osDist", osDist.toArray(new String[0])),
                                 ts("platform", platform.toArray(new String[0])),
-                                ts("desktopEnvironment", desktopEnvironment.toArray(new String[0])),
-                                ts("profiles", profiles.toArray(new String[0]))
+                                ts("desktop", desktopEnvironment.toArray(new String[0])),
+                                ts("profile", profiles.toArray(new String[0])),
+                                ts("props",properties)
                         })
                         .filter(x -> x.length() > 0)
                         .toArray(String[]::new)
@@ -368,5 +370,18 @@ public class DefaultNutsEnvConditionBuilder implements NutsEnvConditionBuilder {
     public DefaultNutsEnvConditionBuilder setProperties(Map<String, String> properties) {
         this.properties = properties==null?null:new HashMap<>(properties);
         return this;
+    }
+    private String ts(String n,Map<String,String> properties){
+        if(properties.isEmpty()){
+            return "";
+        }
+        return n+"={"+ properties.entrySet().stream().map(x->{
+            String k = x.getKey();
+            String v = x.getValue();
+            if(v==null){
+                return k;
+            }
+            return k+"="+v;
+        }).collect(Collectors.joining(","))+"}";
     }
 }

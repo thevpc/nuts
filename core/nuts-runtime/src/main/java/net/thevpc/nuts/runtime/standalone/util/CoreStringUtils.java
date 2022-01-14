@@ -24,6 +24,7 @@
 package net.thevpc.nuts.runtime.standalone.util;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.standalone.xtra.expr.StringTokenizerUtils;
 
 import java.io.*;
 import java.lang.reflect.Array;
@@ -118,7 +119,7 @@ public final class CoreStringUtils {
                 default: {
                     if (escapedChars != null && escapedChars.indexOf(c) >= 0) {
                         q = true;
-                        sb.append("\\").append(c);
+                        sb/*.append("\\")*/.append(c);
                     } else {
                         sb.append(c);
                     }
@@ -519,7 +520,7 @@ public final class CoreStringUtils {
         if(s==null){
             return  new String[0];
         }
-        return Arrays.stream(s.split("[,;| \t]")).map(String::trim)
+        return StringTokenizerUtils.splitDefault(s).stream().map(String::trim)
                 .filter(x->x.length()>0)
                 .distinct().toArray(String[]::new);
     }

@@ -28,6 +28,7 @@ package net.thevpc.nuts.runtime.standalone.util.filters;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.descriptor.DefaultNutsEnvCondition;
 import net.thevpc.nuts.runtime.standalone.util.Simplifiable;
+import net.thevpc.nuts.runtime.standalone.xtra.expr.CommaStringParser;
 
 import java.lang.reflect.Array;
 import java.util.*;
@@ -356,6 +357,36 @@ public class CoreFilterUtils {
         return false;
     }
 
+    public static boolean acceptDependency(NutsDependency dep, NutsSession session) {
+        if(CoreFilterUtils.acceptCondition(dep.getCondition(), false, session)) {
+            // fast reject jfx dependencies with different environment defined by classifier!
+            if(dep.getGroupId().equals("org.openjfx") && dep.getArtifactId().startsWith("javafx")){
+                String c = NutsUtilStrings.trim(dep.getClassifier());
+                if(c.length()>0){
+                    String[] a = c.split("-");
+                    if(a.length>0){
+                        NutsOsFamily o = NutsOsFamily.parseLenient(a[0], null);
+                        if(o!=null){
+                            if(o!=session.env().getOsFamily()){
+                                return false;
+                            }
+                        }
+                        if(a.length>1){
+                            NutsArchFamily af = NutsArchFamily.parseLenient(a[1], null);
+                            if(af!=null){
+                                if(af!=session.env().getArchFamily()){
+                                    return false;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            return true;
+        }
+        return false;
+    }
+
     public static boolean acceptCondition(NutsEnvCondition envCond, boolean currentVMOnLy, NutsSession session) {
         if(envCond==null || envCond.isBlank()){
             return true;
@@ -674,6 +705,10 @@ public class CoreFilterUtils {
         s = Arrays.stream(condition.getProfile()).map(String::trim).filter(x -> !x.isEmpty()).collect(Collectors.joining(","));
         if (!NutsBlankable.isBlank(s)) {
             m.put(NutsConstants.IdProperties.PROFILE, s);
+        }
+        Map<String, String> properties = ((DefaultNutsEnvCondition) condition).getProperties();
+        if(!properties.isEmpty()){
+            m.put(/*NutsConstants.IdProperties.PROPERTIES*/"properties", CommaStringParser.formatPropertiesQuery(properties));
         }
         return m;
     }

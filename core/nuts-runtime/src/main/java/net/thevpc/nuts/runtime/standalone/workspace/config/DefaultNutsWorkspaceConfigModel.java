@@ -53,6 +53,7 @@ import net.thevpc.nuts.runtime.standalone.workspace.config.compat.v502.NutsVersi
 import net.thevpc.nuts.runtime.standalone.workspace.config.compat.v506.NutsVersionCompat506;
 import net.thevpc.nuts.runtime.standalone.workspace.config.compat.v507.NutsVersionCompat507;
 import net.thevpc.nuts.runtime.standalone.workspace.config.compat.v803.NutsVersionCompat803;
+import net.thevpc.nuts.runtime.standalone.xtra.expr.StringTokenizerUtils;
 import net.thevpc.nuts.spi.*;
 
 import java.io.*;
@@ -362,7 +363,7 @@ public class DefaultNutsWorkspaceConfigModel {
             String shortName = pnid.getShortName();
             String artifactId = pnid.getArtifactId();
             for (String excludedExtensionList : options.getExcludedExtensions()) {
-                for (String s : excludedExtensionList.split("[;, ]")) {
+                for (String s : StringTokenizerUtils.splitDefault(excludedExtensionList)) {
                     if (s.length() > 0) {
                         if (s.equals(shortName) || s.equals(artifactId)) {
                             return true;

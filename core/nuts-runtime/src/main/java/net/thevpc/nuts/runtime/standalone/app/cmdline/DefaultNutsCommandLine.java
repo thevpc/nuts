@@ -380,7 +380,7 @@ public class DefaultNutsCommandLine implements NutsCommandLine {
         }
 
         for (String nameSeq : names) {
-            String[] nameSeqArray = StringTokenizerUtils.split(nameSeq, " ").toArray(new String[0]);
+            String[] nameSeqArray = StringTokenizerUtils.splitSpace(nameSeq).toArray(new String[0]);
             if (nameSeqArray.length == 0) {
                 continue;
             }
@@ -645,7 +645,7 @@ public class DefaultNutsCommandLine implements NutsCommandLine {
         //nameSeqArray
         List<NutsArgumentCandidate> candidates = new ArrayList<>();
         for (String nameSeq : names) {
-            String[] nameSeqArray = StringTokenizerUtils.split(nameSeq, " ").toArray(new String[0]);
+            String[] nameSeqArray = StringTokenizerUtils.splitSpace(nameSeq).toArray(new String[0]);
             if (nameSeqArray.length > 0) {
                 int i = autoCompletecurrentWordIndex < nameSeqArray.length ? autoCompletecurrentWordIndex : nameSeqArray.length - 1;
 //                String rec = null;

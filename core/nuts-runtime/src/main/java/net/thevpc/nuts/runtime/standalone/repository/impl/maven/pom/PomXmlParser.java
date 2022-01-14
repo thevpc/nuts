@@ -3,6 +3,7 @@ package net.thevpc.nuts.runtime.standalone.repository.impl.maven.pom;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.util.xml.XmlUtils;
 import net.thevpc.nuts.runtime.standalone.util.XmlEscaper;
+import net.thevpc.nuts.runtime.standalone.xtra.expr.StringTokenizerUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -944,7 +945,7 @@ public class PomXmlParser {
                     String os = m.group("os");
                     String arch = m.group("arch");
                     String txt = entry.getValue().trim();
-                    for (String a : txt.trim().split("[;,\n\t]")) {
+                    for (String a : StringTokenizerUtils.splitDefault(txt.trim())) {
                         a = a.trim();
                         if (a.startsWith("#")) {
                             //ignore!

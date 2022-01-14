@@ -7,6 +7,7 @@ import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import net.thevpc.nuts.runtime.standalone.workspace.DefaultNutsWorkspace;
+import net.thevpc.nuts.runtime.standalone.xtra.expr.StringTokenizerUtils;
 
 public class DefaultImportModel {
 
@@ -33,7 +34,7 @@ public class DefaultImportModel {
         if (importExpressions != null) {
             for (String importExpression : importExpressions) {
                 if (importExpression != null) {
-                    for (String s : importExpression.split("[,;: ]")) {
+                    for (String s : StringTokenizerUtils.splitDefault(importExpression)) {
                         imports.add(s.trim());
                     }
                 }
@@ -100,7 +101,7 @@ public class DefaultImportModel {
     protected Set<String> parseImports(String importExpression) {
         Set<String> imports = new LinkedHashSet<>();
         if (importExpression != null) {
-            for (String s : importExpression.split("[,;: \t\n]")) {
+            for (String s : StringTokenizerUtils.splitDefault(importExpression)) {
                 if (!s.isEmpty()) {
                     imports.add(s.trim());
                 }

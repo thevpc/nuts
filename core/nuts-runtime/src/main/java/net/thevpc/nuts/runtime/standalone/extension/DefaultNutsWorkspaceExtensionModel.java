@@ -93,7 +93,7 @@ public class DefaultNutsWorkspaceExtensionModel {
         this.exclusions.clear();
         if (excluded != null) {
             for (String ex : excluded) {
-                for (String e : StringTokenizerUtils.split(ex, ",; ")) {
+                for (String e : StringTokenizerUtils.splitDefault(ex)) {
                     NutsId ee = NutsId.of(e,session);
                     if (ee != null) {
                         this.exclusions.add(ee.getShortName());
@@ -587,7 +587,7 @@ public class DefaultNutsWorkspaceExtensionModel {
                 //                + ";" + NutsConstants.BootstrapURLs.REMOTE_NUTS_GIT
                 ;
         List<String> urls = new ArrayList<>();
-        for (String r : StringTokenizerUtils.split(repos, "; ")) {
+        for (String r : StringTokenizerUtils.splitDefault(repos)) {
             if (!NutsBlankable.isBlank(r)) {
                 urls.add(r);
             }

@@ -1,6 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.dependency.filter;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.standalone.xtra.expr.StringTokenizerUtils;
 
 import java.util.Collection;
 import java.util.EnumSet;
@@ -24,7 +25,7 @@ public class NutsDependencyArchFamilyFilter extends AbstractDependencyFilter {
     public NutsDependencyArchFamilyFilter(NutsSession session, String os) {
         super(session, NutsFilterOp.CUSTOM);
         this.archs = EnumSet.noneOf(NutsArchFamily.class);
-        for (String e : os.split("[,; ]")) {
+        for (String e : StringTokenizerUtils.splitDefault( os)) {
             if (!e.isEmpty()) {
                 this.archs.add(NutsArchFamily.parseLenient(e,NutsArchFamily.UNKNOWN));
             }

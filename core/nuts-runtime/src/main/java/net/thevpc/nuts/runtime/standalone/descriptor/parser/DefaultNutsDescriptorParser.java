@@ -7,6 +7,7 @@ import net.thevpc.nuts.runtime.standalone.descriptor.DefaultNutsDescriptorProper
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.repository.impl.maven.util.MavenUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
+import net.thevpc.nuts.runtime.standalone.xtra.expr.StringTokenizerUtils;
 import net.thevpc.nuts.spi.NutsSupportLevelContext;
 
 import java.io.*;
@@ -210,7 +211,7 @@ public class DefaultNutsDescriptorParser implements NutsDescriptorParser {
                             if ("Nuts-Dependencies".equals(attrName.toString())) {
                                 String nutsDependencies = NutsUtilStrings.trimToNull(attrs.getValue(attrName));
                                 deps = nutsDependencies == null ? Collections.emptySet() :
-                                        Arrays.stream(nutsDependencies.split(";"))
+                                        StringTokenizerUtils.splitSemiColon(nutsDependencies).stream()
                                                 .map(String::trim)
                                                 .filter(x -> x.length() > 0)
                                                 .map(NutsDependencyParser.of(session).setLenient(true)
@@ -250,9 +251,9 @@ public class DefaultNutsDescriptorParser implements NutsDescriptorParser {
                                     .setName(nutsName)
                                     .addFlag(NutsBlankable.isBlank(mainClass) ? NutsDescriptorFlag.EXEC : null)
                                     .addFlags(
-                                            Arrays.stream(NutsUtilStrings.trim(
+                                            StringTokenizerUtils.splitDefault(
                                                             all.get("Nuts-Flags")
-                                                    ).split("; ,"))
+                                                    ).stream()
                                                     .map(NutsDescriptorFlag::parseLenient)
                                                     .filter(Objects::nonNull)
                                                     .toArray(NutsDescriptorFlag[]::new)
@@ -262,17 +263,17 @@ public class DefaultNutsDescriptorParser implements NutsDescriptorParser {
                                             "jar"
                                     ))
                                     .setCategories(
-                                            Arrays.stream(NutsUtilStrings.trim(
+                                            StringTokenizerUtils.splitDefault(
                                                             all.get("Nuts-Categories")
-                                                    ).split("; ,"))
+                                                    ).stream()
                                                     .map(NutsUtilStrings::trimToNull)
                                                     .filter(Objects::nonNull)
                                                     .collect(Collectors.toList())
                                     )
                                     .setIcons(
-                                            Arrays.stream(NutsUtilStrings.trim(
+                                            StringTokenizerUtils.splitDefault(
                                                             all.get("Nuts-Icons")
-                                                    ).split("; ,"))
+                                                    ).stream()
                                                     .map(NutsUtilStrings::trimToNull)
                                                     .filter(Objects::nonNull)
                                                     .collect(Collectors.toList())

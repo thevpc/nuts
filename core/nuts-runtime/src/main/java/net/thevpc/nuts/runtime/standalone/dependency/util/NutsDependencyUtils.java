@@ -27,6 +27,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.util.iter.IteratorBuilder;
 
 import java.util.Iterator;
+import java.util.TreeSet;
 
 /**
  *
@@ -36,6 +37,14 @@ public class NutsDependencyUtils {
 
     public static String normalizeDependencyType(String s1) {
         return NutsUtilStrings.trimToNull(s1);
+    }
+
+    public static String toExclusionListString(NutsId[] exclusions){
+        TreeSet<String> ex = new TreeSet<>();
+        for (NutsId exclusion : exclusions) {
+            ex.add(exclusion.getShortName());
+        }
+        return String.join(",", ex);
     }
 
     public static boolean isRequiredDependency(NutsDependency d){

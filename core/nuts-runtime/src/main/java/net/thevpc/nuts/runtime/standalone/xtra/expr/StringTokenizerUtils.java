@@ -23,6 +23,8 @@
  */
 package net.thevpc.nuts.runtime.standalone.xtra.expr;
 
+import net.thevpc.nuts.NutsArrayElement;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -53,6 +55,21 @@ public final class StringTokenizerUtils {
         return result;
     }
 
+    public static List<String> splitDefault(String str) {
+        return split(str," ;,\n\r\t|");
+    }
+
+    public static List<String> splitSpace(String str) {
+        return split(str," ");
+    }
+
+    public static List<String> splitColon(String str) {
+        return split(str," ");
+    }
+    public static List<String> splitNewLine(String str) {
+        return split(str,"\r\n");
+    }
+
     public static List<String> split(String str, String separators) {
         if (str == null) {
             return Collections.EMPTY_LIST;
@@ -63,5 +80,12 @@ public final class StringTokenizerUtils {
             result.add(st.nextToken());
         }
         return result;
+    }
+
+    public static List<String> splitSemiColon(String str) {
+        return split(str,";");
+    }
+    public static List<String> splitFileSlash(String str) {
+        return split(str,"/\\");
     }
 }

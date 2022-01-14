@@ -24,8 +24,12 @@
 package net.thevpc.nuts.runtime.standalone.dependency;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.standalone.dependency.util.NutsDependencyUtils;
+import net.thevpc.nuts.runtime.standalone.descriptor.DefaultNutsEnvCondition;
 import net.thevpc.nuts.runtime.standalone.util.filters.CoreFilterUtils;
+import net.thevpc.nuts.runtime.standalone.xtra.expr.CommaStringParser;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.QueryStringParser;
+import net.thevpc.nuts.runtime.standalone.xtra.expr.StringMapParser;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -73,7 +77,7 @@ public class DefaultNutsDependency implements NutsDependency {
         }
         this.optional = o;
         this.exclusions = exclusions == null ? new NutsId[0] : Arrays.copyOf(exclusions, exclusions.length);
-        for (NutsId exclusion : exclusions) {
+        for (NutsId exclusion : this.exclusions) {
             if (exclusion == null) {
                 throw new NullPointerException();
             }
@@ -127,9 +131,6 @@ public class DefaultNutsDependency implements NutsDependency {
         if (!NutsBlankable.isBlank(optional) && !"false".equals(optional)) {
             m.put(NutsConstants.IdProperties.OPTIONAL, optional);
         }
-        if (!NutsBlankable.isBlank(classifier)) {
-            m.put(NutsConstants.IdProperties.CLASSIFIER, classifier);
-        }
         if (!NutsBlankable.isBlank(type)) {
             m.put(NutsConstants.IdProperties.TYPE, type);
         }
@@ -137,15 +138,12 @@ public class DefaultNutsDependency implements NutsDependency {
             m.put(NutsConstants.IdProperties.REPO, repository);
         }
         if (exclusions.length > 0) {
-            TreeSet<String> ex = new TreeSet<>();
-            for (NutsId exclusion : exclusions) {
-                ex.add(exclusion.getShortName());
-            }
-            m.put(NutsConstants.IdProperties.EXCLUSIONS, String.join(",", ex));
+            m.put(NutsConstants.IdProperties.EXCLUSIONS, NutsDependencyUtils.toExclusionListString(exclusions));
         }
         NutsId ii = NutsIdBuilder.of(session)
                 .setGroupId(getGroupId())
                 .setArtifactId(getArtifactId())
+                .setClassifier(getClassifier())
                 .setVersion(getVersion())
                 .setCondition(getCondition())
                 .setProperties(m).build();
@@ -314,11 +312,15 @@ public class DefaultNutsDependency implements NutsDependency {
             if (condition.getProfile().length > 0) {
                 p.put(NutsConstants.IdProperties.PROFILE, String.join(",", condition.getProfile()));
             }
+            if (!((DefaultNutsEnvCondition)condition).getProperties().isEmpty()) {
+                p.put(/*NutsConstants.IdProperties.PROPERTIES*/"properties",
+                        CommaStringParser.formatPropertiesQuery(((DefaultNutsEnvCondition)condition).getProperties())
+                        );
+            }
         }
         if (exclusions.length > 0) {
-            p.put(NutsConstants.IdProperties.EXCLUSIONS, Arrays.stream(exclusions)
-                    .map(NutsId::getShortName)
-                    .collect(Collectors.joining(","))
+            p.put(NutsConstants.IdProperties.EXCLUSIONS,
+                    NutsDependencyUtils.toExclusionListString(exclusions)
             );
         }
         if (!p.isEmpty()) {

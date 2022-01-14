@@ -2,11 +2,16 @@ package net.thevpc.nuts.runtime.standalone.dependency;
 
 import net.thevpc.nuts.*;
 
+import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import net.thevpc.nuts.runtime.standalone.descriptor.DefaultNutsEnvConditionBuilder;
+import net.thevpc.nuts.runtime.standalone.xtra.expr.CommaStringParser;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.StringMapParser;
+import net.thevpc.nuts.runtime.standalone.xtra.expr.StringTokenizerUtils;
 import net.thevpc.nuts.spi.NutsSupportLevelContext;
 
 public class DefaultNutsDependencyParser implements NutsDependencyParser {
@@ -46,11 +51,62 @@ public class DefaultNutsDependencyParser implements NutsDependencyParser {
                 name = group;
                 group = null;
             }
-            return NutsDependencyBuilder.of(session)
+            NutsDependencyBuilder b = NutsDependencyBuilder.of(session)
                     .setGroupId(group)
                     .setArtifactId(name)
-                    .setVersion(version)
-                    .setProperties(queryMap)
+                    .setVersion(version);
+            DefaultNutsEnvConditionBuilder sb=(DefaultNutsEnvConditionBuilder) NutsEnvConditionBuilder.of(session);
+            Map<String, String> props=new LinkedHashMap<>();
+            for (Iterator<Map.Entry<String, String>> iterator = queryMap.entrySet().iterator(); iterator.hasNext(); ) {
+                Map.Entry<String, String> e = iterator.next();
+                switch (e.getKey()){
+                    case NutsConstants.IdProperties.CLASSIFIER:{
+                        b.setClassifier(e.getValue());
+                        break;
+                    }
+                    case NutsConstants.IdProperties.PROFILE:{
+                        sb.setProfile(StringTokenizerUtils.splitDefault(e.getValue()).toArray(new String[0]));
+                        break;
+                    }
+                    case NutsConstants.IdProperties.PLATFORM:{
+                        sb.setPlatform(StringTokenizerUtils.splitDefault(e.getValue()).toArray(new String[0]));
+                        break;
+                    }
+                    case NutsConstants.IdProperties.OS_DIST:{
+                        sb.setOsDist(StringTokenizerUtils.splitDefault(e.getValue()).toArray(new String[0]));
+                        break;
+                    }
+                    case NutsConstants.IdProperties.ARCH:{
+                        sb.setArch(StringTokenizerUtils.splitDefault(e.getValue()).toArray(new String[0]));
+                        break;
+                    }
+                    case NutsConstants.IdProperties.OS:{
+                        sb.setOs(StringTokenizerUtils.splitDefault(e.getValue()).toArray(new String[0]));
+                        break;
+                    }
+                    case NutsConstants.IdProperties.DESKTOP_ENVIRONMENT:{
+                        sb.setDesktopEnvironment(StringTokenizerUtils.splitDefault(e.getValue()).toArray(new String[0]));
+                        break;
+                    }
+                    case /*NutsConstants.IdProperties.PROPERTIES*/"properties":{
+                        sb.setProperties(CommaStringParser.parseMap(e.getValue(), session));
+                        break;
+                    }
+                    case NutsConstants.IdProperties.EXCLUSIONS:{
+                        b.setExclusions(
+                                StringTokenizerUtils.splitDefault(e.getValue())
+                                        .stream().map(x->NutsId.of(x,session))
+                                        .toArray(NutsId[]::new));
+                        break;
+                    }
+                    default:{
+                        props.put(e.getKey(),e.getValue());
+                    }
+                }
+            }
+            return b
+                    .setCondition(sb)
+                    .setProperties(props)
                     .build();
         }
         if (!isLenient()) {

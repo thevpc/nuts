@@ -6,8 +6,8 @@ import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 
 import java.util.*;
 
-public class QueryStringParser {
-    public static final String SEP = "&";
+public class CommaStringParser {
+    public static final String SEP = ",";
     public static final String EQ = "=";
     public static final StringMapParser QPARSER = new StringMapParser(EQ, SEP);
     public interface Processor {
@@ -17,12 +17,13 @@ public class QueryStringParser {
     private final Map<String, String> properties;
     private final Processor processor;
     private final boolean sorted;
+    private static final boolean nullValueIsKey=true;
 
 //    public QueryStringParser() {
 //        this(null)
 //    }
 
-    public QueryStringParser(boolean sorted, Processor processor) {
+    public CommaStringParser(boolean sorted, Processor processor) {
         this.processor = processor;
         this.sorted = sorted;
         if (sorted) {
@@ -77,7 +78,7 @@ public class QueryStringParser {
         }
     }
 
-    public QueryStringParser setProperties(Map<String, String> queryMap) {
+    public CommaStringParser setProperties(Map<String, String> queryMap) {
         _setProperties(queryMap, false);
         return this;
     }
@@ -86,12 +87,12 @@ public class QueryStringParser {
         _setProperties(queryMap, true);
     }
 
-    public QueryStringParser clear() {
+    public CommaStringParser clear() {
         this.properties.clear();
         return this;
     }
 
-    public QueryStringParser setProperties(String propertiesQuery,NutsSession session) {
+    public CommaStringParser setProperties(String propertiesQuery, NutsSession session) {
         Map<String, String> m2 = parseMap(propertiesQuery,session);
         this.properties.clear();
         for (Map.Entry<String, String> e : m2.entrySet()) {
@@ -119,7 +120,7 @@ public class QueryStringParser {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        QueryStringParser that = (QueryStringParser) o;
+        CommaStringParser that = (CommaStringParser) o;
         return properties.equals(that.properties);
     }
 
@@ -134,14 +135,6 @@ public class QueryStringParser {
             Set<String> sortedKeys = new TreeSet<>(query.keySet());
             for (String k : sortedKeys) {
                 String v = query.get(k);
-//                switch (k) {
-//                    case NutsConstants.IdProperties.ALTERNATIVE: {
-//                        if (CoreNutsUtils.isDefaultAlternative(v)) {
-//                            v = null;
-//                        }
-//                        break;
-//                    }
-//                }
                 if (v != null && v.length() > 0) {
                     if (sb.length() > 0) {
                         sb.append(SEP);
@@ -149,6 +142,8 @@ public class QueryStringParser {
                     sb.append(CoreStringUtils.simpleQuote(k, true, SEP+EQ)).append(EQ).append(
                             CoreStringUtils.simpleQuote(v, true, SEP+EQ)
                     );
+                }else if(v==null && nullValueIsKey){
+                    sb.append(CoreStringUtils.simpleQuote(k, true, SEP+EQ));
                 }
             }
         }
@@ -156,11 +151,11 @@ public class QueryStringParser {
     }
 
     public static String formatSortedPropertiesQuery(String query,NutsSession session){
-        return new QueryStringParser(true,null).setProperties(query,session).getPropertiesQuery();
+        return new CommaStringParser(true,null).setProperties(query,session).getPropertiesQuery();
     }
 
     public static String formatSortedPropertiesQuery(Map<String,String> query,NutsSession session){
-        return new QueryStringParser(true,null).setProperties(query).getPropertiesQuery();
+        return new CommaStringParser(true,null).setProperties(query).getPropertiesQuery();
     }
 
     public static Map<String, String> parseMap(String text, NutsSession session) {

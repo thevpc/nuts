@@ -30,6 +30,7 @@ import net.thevpc.nuts.runtime.standalone.xtra.expr.QueryStringParser;
 
 import java.util.*;
 
+import net.thevpc.nuts.runtime.standalone.xtra.expr.StringTokenizerUtils;
 import net.thevpc.nuts.spi.NutsSupportLevelContext;
 
 /**
@@ -261,11 +262,7 @@ public class DefaultNutsDependencyBuilder implements NutsDependencyBuilder {
             m.put(NutsConstants.IdProperties.TYPE, type);
         }
         if (exclusions.length > 0) {
-            TreeSet<String> ex = new TreeSet<>();
-            for (NutsId exclusion : exclusions) {
-                ex.add(exclusion.getShortName());
-            }
-            m.put(NutsConstants.IdProperties.EXCLUSIONS, String.join(",", ex));
+            m.put(NutsConstants.IdProperties.EXCLUSIONS, NutsDependencyUtils.toExclusionListString(exclusions));
         }
         return NutsIdBuilder.of(session)
                 .setRepository(getRepository())
@@ -437,7 +434,7 @@ public class DefaultNutsDependencyBuilder implements NutsDependencyBuilder {
         }
         List<NutsId> ids = new ArrayList<>();
         NutsIdParser parser = NutsIdParser.of(session);
-        for (String s : exclusions.split("[;,]")) {
+        for (String s : StringTokenizerUtils.splitDefault(exclusions)) {
             NutsId ii = parser.parse(s.trim());
             if (ii != null) {
                 ids.add(ii);

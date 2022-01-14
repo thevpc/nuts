@@ -2,6 +2,7 @@ package net.thevpc.nuts.runtime.standalone.util;
 
 import net.thevpc.nuts.NutsArgument;
 import net.thevpc.nuts.NutsSession;
+import net.thevpc.nuts.runtime.standalone.xtra.expr.StringTokenizerUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,7 +27,7 @@ public class NutsDebugString {
         } else {
             d.setEnabled(true);
             d.setSuspend(true);
-            for (String a : str.split("[ ,;]")) {
+            for (String a : StringTokenizerUtils.splitDefault(str)) {
                 NutsArgument na = NutsArgument.of(a, session);
                 switch (na.getKey().getString("")) {
                     case "s":

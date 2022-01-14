@@ -14,6 +14,7 @@ import java.util.stream.Collectors;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.util.CoreEnumUtils;
+import net.thevpc.nuts.runtime.standalone.xtra.expr.StringTokenizerUtils;
 
 /**
  *
@@ -211,7 +212,7 @@ public class NutsFetchDisplayOptions {
     }
 
     public static NutsDisplayProperty[] parseNutsDisplayProperty(String str) {
-        String[] dispNames = (str == null ? "" : str).split("[,|; ]");
+        String[] dispNames = StringTokenizerUtils.splitDefault(str).toArray(new String[0]);
         //first pass, check is ALL is visited. In that case will be replaced by all non visited types
         Set<NutsDisplayProperty> visited = new HashSet<NutsDisplayProperty>();
         for (int i = 0; i < dispNames.length; i++) {

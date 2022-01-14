@@ -4,6 +4,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.format.DefaultFormatBase;
 import net.thevpc.nuts.runtime.standalone.io.util.InputStreamMetadataAwareImpl;
 import net.thevpc.nuts.runtime.standalone.io.util.URLBuilder;
+import net.thevpc.nuts.runtime.standalone.xtra.expr.StringTokenizerUtils;
 import net.thevpc.nuts.spi.NutsSupportLevelContext;
 
 import java.io.File;
@@ -85,7 +86,7 @@ public class NutsCompressedPath extends NutsPathBase {
             }
             return path.substring(0, x) + compressPath(path.substring(x), 0, right);
         }
-        List<String> a = new ArrayList<>(Arrays.asList(path.split("[\\\\/]")));
+        List<String> a = new ArrayList<>(StringTokenizerUtils.splitFileSlash(path));
         int min = left + right + 1;
         if (a.size() > 0 && a.get(0).equals("")) {
             left += 1;

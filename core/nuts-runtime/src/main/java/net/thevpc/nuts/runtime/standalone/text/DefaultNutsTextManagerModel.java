@@ -36,6 +36,7 @@ import net.thevpc.nuts.runtime.standalone.format.xml.DefaultXmlNutsElementStream
 import net.thevpc.nuts.runtime.standalone.format.yaml.SimpleYaml;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
+import net.thevpc.nuts.runtime.standalone.xtra.expr.StringTokenizerUtils;
 import net.thevpc.nuts.spi.NutsDefaultSupportLevelContext;
 
 import java.io.BufferedReader;
@@ -85,7 +86,7 @@ public class DefaultNutsTextManagerModel {
                         if (line.startsWith("[") && line.endsWith("]")) {
                             group = line.substring(1, line.length() - 1).trim();
                         } else if (group != null) {
-                            for (String s : line.split("[,;]")) {
+                            for (String s : StringTokenizerUtils.splitDefault(line)) {
                                 s = s.trim();
                                 kindToHighlighter.put(s, group);
                             }

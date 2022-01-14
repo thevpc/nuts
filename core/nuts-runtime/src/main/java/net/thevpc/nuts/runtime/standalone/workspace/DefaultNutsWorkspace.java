@@ -658,23 +658,28 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
         return wsModel.apiDigest;
     }
 
-    protected NutsDescriptor _resolveEffectiveDescriptor(NutsDescriptor descriptor, NutsSession session) {
-        LOG.with().session(session).level(Level.FINEST).verb(NutsLogVerb.START)
-                .log(NutsMessage.jstyle("resolve effective {0}", descriptor.getId()));
+    protected NutsDescriptor _applyParentDescriptors(NutsDescriptor descriptor, NutsSession session) {
         checkSession(session);
         NutsId[] parents = descriptor.getParents();
         NutsDescriptor[] parentDescriptors = new NutsDescriptor[parents.length];
         for (int i = 0; i < parentDescriptors.length; i++) {
-            parentDescriptors[i] = resolveEffectiveDescriptor(
-                    session.fetch().setId(parents[i]).setEffective(false).setSession(session).getResultDescriptor(),
+            parentDescriptors[i] = _applyParentDescriptors(
+                    session.fetch().setId(parents[i]).setSession(session).getResultDescriptor(),
                     session
             );
         }
-        //compute effective!
-        NutsDescriptorBuilder descrWithParents = descriptor.builder();
         if(parentDescriptors.length>0){
+            NutsDescriptorBuilder descrWithParents = descriptor.builder();
             descrWithParents.applyParents(parentDescriptors);
+            return descrWithParents.build();
         }
+        return descriptor;
+    }
+    protected NutsDescriptor _resolveEffectiveDescriptor(NutsDescriptor descriptor, NutsSession session) {
+        LOG.with().session(session).level(Level.FINEST).verb(NutsLogVerb.START)
+                .log(NutsMessage.jstyle("resolve effective {0}", descriptor.getId()));
+        checkSession(session);
+        NutsDescriptorBuilder descrWithParents = _applyParentDescriptors(descriptor, session).builder();
         //now apply conditions!
         NutsDescriptorProperty[] properties = Arrays.stream(descrWithParents.getProperties()).filter(x -> CoreFilterUtils.acceptCondition(
                 x.getCondition(), false, session)).toArray(NutsDescriptorProperty[]::new);
@@ -717,16 +722,28 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
         descrWithParents.setProperties(properties);
 
         NutsDescriptor effectiveDescriptor = descrWithParents.applyProperties().build();
-        NutsDependency[] oldDependencies = effectiveDescriptor.getDependencies();
+        List<NutsDependency> oldDependencies = new ArrayList<>();
+        for (NutsDependency d : effectiveDescriptor.getDependencies()) {
+            if(CoreFilterUtils.acceptDependency(d, session)){
+                oldDependencies.add(d.builder().setCondition((NutsEnvCondition) null).build());
+            }
+        }
+
         List<NutsDependency> newDeps = new ArrayList<>();
         boolean someChange = false;
         LinkedHashSet<NutsDependency> effStandardDeps=new LinkedHashSet<>();
         for (NutsDependency standardDependency : effectiveDescriptor.getStandardDependencies()) {
             if ("import".equals(standardDependency.getScope())) {
                 NutsDescriptor dd = session.fetch().setId(standardDependency.toId()).setEffective(true).setSession(session).getResultDescriptor();
-                Collections.addAll(effStandardDeps, dd.getStandardDependencies());
+                for (NutsDependency dependency : dd.getStandardDependencies()) {
+                    if(CoreFilterUtils.acceptDependency(dependency, session)) {
+                        effStandardDeps.add(dependency);
+                    }
+                }
             }else{
-                effStandardDeps.add(standardDependency);
+                if(CoreFilterUtils.acceptDependency(standardDependency, session)) {
+                    effStandardDeps.add(standardDependency);
+                }
             }
         }
         for (NutsDependency d : oldDependencies) {
@@ -770,9 +787,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                 newDeps.add(d);
             }
         }
-        if (someChange) {
             effectiveDescriptor = effectiveDescriptor.builder().setDependencies(newDeps.toArray(new NutsDependency[0])).build();
-        }
         return effectiveDescriptor;
     }
 

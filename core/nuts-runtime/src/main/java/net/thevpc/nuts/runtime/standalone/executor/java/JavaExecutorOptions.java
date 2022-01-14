@@ -2,8 +2,8 @@ package net.thevpc.nuts.runtime.standalone.executor.java;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.util.*;
-import net.thevpc.nuts.runtime.standalone.util.jclass.JavaClassByteCode;
 import net.thevpc.nuts.runtime.standalone.util.jclass.JavaJarUtils;
+import net.thevpc.nuts.runtime.standalone.util.jclass.NutsClassLoaderNodeExt;
 import net.thevpc.nuts.runtime.standalone.util.jclass.NutsJavaSdkUtils;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.StringTokenizerUtils;
 import net.thevpc.nuts.runtime.standalone.dependency.util.NutsClassLoaderUtils;
@@ -275,46 +275,52 @@ public final class JavaExecutorOptions {
 //                classPath.add(0, path.toString());
             }
             classPathNodes.addAll(currentCP);
-            List<NutsClassLoaderNode> ln = new ArrayList<>();
-            for (NutsClassLoaderNode n : currentCP) {
-                fillNodes(n, ln);
-            }
-            // give precedence to classifiers
-            ln.sort((a1,a2)->{
-                NutsId b1 = NutsId.of(a1.getId(), session);
-                NutsId b2 = NutsId.of(a2.getId(), session);
-                if(b1.builder().setClassifier(null).build().getLongName().equals(b2.builder().setClassifier(null).build().getLongName())){
-                    String c1 = b1.getClassifier();
-                    String c2 = b2.getClassifier();
-                    return !NutsBlankable.isBlank(c1) ? 1 : (!NutsBlankable.isBlank(c2) ? -1 : 0);
+            List<NutsClassLoaderNodeExt> ln =
+                    NutsJavaSdkUtils.loadNutsClassLoaderNodeExts(
+                            currentCP.toArray(new NutsClassLoaderNode[0]),
+                            java9, session
+                    );
+            if(java9){
+                List<NutsClassLoaderNodeExt> ln_javaFx = new ArrayList<>();
+                List<NutsClassLoaderNodeExt> ln_others = new ArrayList<>();
+                for (NutsClassLoaderNodeExt n : ln) {
+                    if(n.jfx){
+                        ln_javaFx.add(n);
+                    }else{
+                        ln_others.add(n);
+                    }
                 }
-                //do not change order
-                return 0;
-            });
-            List<String> li = ln.stream().map(x-> {
-                return NutsPath.of(x.getURL(), getSession()).toFile().toString();
-            }).collect(Collectors.toList());
-            for (NutsClassLoaderNode n : currentCP) {
-                fillStrings(n, li);
-            }
-            for (String s : li) {
-                NutsPath pp = NutsPath.of(s, getSession());
-                JavaClassByteCode.ModuleInfo r = JavaJarUtils.parseModuleInfo(pp, session);
-                if (java9 && r != null && r.module_name != null && r.module_name.startsWith("javafx")) {
-                    if (!r.module_name.endsWith("Empty")) {
-                        j9_addModules.add(r.module_name);
-                    }
-                    j9_modulePath.add(pp.toFile().toString());
-                } else {
-                    String dmn = JavaJarUtils.parseDefaultModuleName(pp, session);
-                    if (java9 && dmn != null && dmn.startsWith("javafx")) {
-                        if (!dmn.endsWith("Empty")) {
-                            j9_addModules.add(dmn);
+                ln_javaFx.sort(
+                        (a1,a2)->{
+                            NutsId b1 = a1.id;
+                            NutsId b2 = a2.id;
+                            // give precedence to classifiers
+                            String c1 = b1.getClassifier();
+                            String c2 = b2.getClassifier();
+                            if(b1.builder().setClassifier(null).build().getShortName().equals(b2.builder().setClassifier(null).build().getShortName())){
+                                if(NutsBlankable.isBlank(c1)){
+                                    return 1;
+                                }
+                                if(NutsBlankable.isBlank(c2)){
+                                    return -1;
+                                }
+                                return b1.compareTo(b2);
+                            }
+                            return b1.compareTo(b2);
                         }
-                        j9_modulePath.add(pp.toFile().toString());
-                    } else {
-                        classPath.add(pp.toFile().toString());
+                );
+                ln.clear();
+                ln.addAll(ln_javaFx);
+                ln.addAll(ln_others);
+            }
+            for (NutsClassLoaderNodeExt s : ln) {
+                if (java9 && s.moduleName != null && s.jfx) {
+                    if (!s.moduleName.endsWith("Empty")) {
+                        j9_addModules.add(s.moduleName);
                     }
+                    j9_modulePath.add(s.path.toFile().toString());
+                } else {
+                    classPath.add(s.path.toFile().toString());
                 }
             }
 
@@ -449,7 +455,7 @@ public final class JavaExecutorOptions {
         if (nutsIds && !files) {
             addNp(classPath, value);
         } else {
-            for (String n : StringTokenizerUtils.split(value, ":")) {
+            for (String n : StringTokenizerUtils.splitColon(value)) {
                 if (!NutsBlankable.isBlank(n)) {
                     URL url = NutsPath.of(n, session).toURL();
                     classPath.add(new NutsClassLoaderNode("", url, true, true));
@@ -463,7 +469,7 @@ public final class JavaExecutorOptions {
         NutsSession searchSession = this.session;
         NutsSearchCommand ns = session.search().setLatest(true)
                 .setSession(searchSession);
-        for (String n : StringTokenizerUtils.split(value, ";, ")) {
+        for (String n : StringTokenizerUtils.splitDefault(value)) {
             if (!NutsBlankable.isBlank(n)) {
                 ns.addId(n);
             }
@@ -542,12 +548,7 @@ public final class JavaExecutorOptions {
         }
     }
 
-    public void fillNodes(NutsClassLoaderNode n, List<NutsClassLoaderNode> list) {
-        list.add(n);
-        for (NutsClassLoaderNode d : n.getDependencies()) {
-            fillNodes(d, list);
-        }
-    }
+
 
 
     public void fillNidStrings(NutsClassLoaderNode n, List<String> list) {
@@ -609,4 +610,5 @@ public final class JavaExecutorOptions {
     public List<String> getClassPath() {
         return classPath;
     }
+
 }

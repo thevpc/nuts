@@ -3,6 +3,7 @@ package net.thevpc.nuts.runtime.standalone.io.path.spi;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.extension.DefaultNutsClassLoader;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
+import net.thevpc.nuts.runtime.standalone.xtra.expr.StringTokenizerUtils;
 import net.thevpc.nuts.spi.NutsFormatSPI;
 import net.thevpc.nuts.spi.NutsPathFactory;
 import net.thevpc.nuts.spi.NutsPathSPI;
@@ -50,7 +51,7 @@ public class NutsResourcePath implements NutsPathSPI {
             throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("invalid path %s", path));
         }
         NutsIdParser nutsIdParser = NutsIdParser.of(session);
-        this.ids = Arrays.stream(idsStr.split(";")).map(x -> {
+        this.ids = StringTokenizerUtils.splitSemiColon(idsStr).stream().map(x -> {
             x = x.trim();
             if (x.length() > 0) {
                 return nutsIdParser.parse(x);
@@ -398,7 +399,7 @@ public class NutsResourcePath implements NutsPathSPI {
                     NutsIdParser nutsIdParser = NutsIdParser.of(p.getSession());
                     tb.appendJoined(
                             NutsTexts.of(p.getSession()).ofStyled(";", NutsTextStyle.separator()),
-                            Arrays.stream(idsStr.split(";")).map(xi -> {
+                            StringTokenizerUtils.splitSemiColon(idsStr).stream().map(xi -> {
                                 xi = xi.trim();
                                 if (xi.length() > 0) {
                                     NutsId pp = nutsIdParser.parse(xi);
