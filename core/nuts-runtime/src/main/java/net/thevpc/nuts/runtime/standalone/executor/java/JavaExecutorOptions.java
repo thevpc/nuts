@@ -323,6 +323,11 @@ public final class JavaExecutorOptions {
                         j9_addModules.add(s.moduleName);
                     }
                     j9_modulePath.add(s.path.toFile().toString());
+                    for (String requiredJfx : s.requiredJfx) {
+                        if (!requiredJfx.endsWith("Empty")) {
+                            j9_addModules.add(requiredJfx);
+                        }
+                    }
                 } else {
                     classPath.add(s.path.toFile().toString());
                 }

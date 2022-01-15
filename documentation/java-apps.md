@@ -1,32 +1,49 @@
 # Java Applications
 this is a list of applications that can/could be installed using ```nuts``` 
 
-## Available Applications
-this is a list of applications that can/could be installed using ```nuts```
+## Available Terminal Applications
 
-| Type     | App              | Desc                                          | Id                | Install Command                |
-|----------|------------------|-----------------------------------------------|-------------------|--------------------------------|
-|Terminal  | Nuts shell       | Bash compatble Shell                          | nsh               | nuts install nsh               |
-|Terminal  | Version          | File/Folder/Project veson detector            | nversion          | nuts install nversion          |
-|Terminal  | Nuts Templater   | Folde Templating Tool                         | ntemplate         | nuts install ntemplate         |
-|Terminal  | Nuts Talk Agent  | Client To Client Commncation                  | ntalk-agent       | nuts install ntalk-agent       |
-|Terminal  | Nuts Dev Tool    | Developer Toolbox                             | nwork             | nuts install nwork             |
-|Terminal  | Nuts Repository  | Nuts Repository Server                        | nst               | nuts install nsever            |
-|Terminal  | Docusaurus       | Templater Companion for Facebook's Docusaurus | ndocusaurus       | nuts install ndocusaurus       |
-|Terminal  | Tomcat           | Tomcat Web Sever                              | ntomcat           | nuts install ntomcat           |
-|Terminal  | Nuts Open Api    | Open Api Pdf Generator                        | noapi             | nuts install noapi             |
-|Terminal  | Maven            | Maven Build Tool                              | nmvn              | nuts install nmvn              |
-|Terminal  | Nuts Job         | Task List App                                 | njob              | nuts install njob              |
-|Terminal  | Nuts Diff        | Jar Diff Tool                                 | ndiff             | nuts install ndiff             |
-|Terminal  | Nuts Code Seach  | Code Seach Tool                               | ncode             | nuts install ncode             |
-|Terminal  | Derby DB         | Deby DB Server                                | ndb               | nuts install ndb               |
+This is a list of applications that can/could be installed using ```nuts```
 
+* Nuts shell (Bash compatible Shell)
+```nuts install nsh```
+* Nuts Version (File/Folder/Project veson detector)
+```nuts install nversion```
+* Nuts Templater (Folder Templating Tool)
+```nuts install ntemplate```
+* Nuts Talk Agent (Client To Client Communication)
+```nuts install ntalk-agent```
+* Nuts Dev Tool (Developer Toolbox)
+```nuts install nwork```
+* Nuts Repository (Nuts Repository Server)
+```nuts install nserver```
+* Nuts Open Api (Open Api Pdf Generator)
+```nuts install noapi```
+* Docusaurus (Templater Companion for Facebook's Docusaurus)
+```nuts install ndocusaurus```
+* Tomcat Web Sever
+```nuts install ntomcat```
+* Derby DB
+```nuts install ndb```
+* Maven (Maven Build Tool)
+```nuts install nmvn```
+* Nuts Job (Task List App)
+```nuts install njob```
+* Nuts Diff (Jar Diff Tool)
+```nuts install ndiff```
+* Nuts Code Search (Code Search Tool)
+```nuts install ncode```
 
-| Type     | App              | Desc                                 | Id                | Install Command                |
-|----------|------------------|--------------------------------------|-------------------|--------------------------------|
-|Gaphical  | Netbeans Lancher | Netbeans IDE multi-wokspace Launcher | netbeans-launcher | nuts install netbeans-launcher |
-|Gaphical  | Pangaea Note     | Note Taking Application              | pnote             | nuts install pnote             |
-|Gaphical  | JMeld            | Diff Tool                            | org.jmeld:jmeld   | nuts install org.jmeld:jmeld   |
+## Available GUI Applications
+
+* Netbeans Launcher (Netbeans IDE multi-workspace Launcher)
+  ```nuts install netbeans-launcher```
+* Pangaea Note (Note Taking Application)
+  ```nuts install pnote```
+* JMeld (Diff Tool)
+  ```nuts install org.jmeld:jmeld```
+* Binjr (Time Series Dashboard)
+  ```nuts install eu.binjr:binjr-core```
 
 
 ## Not yet available Applications

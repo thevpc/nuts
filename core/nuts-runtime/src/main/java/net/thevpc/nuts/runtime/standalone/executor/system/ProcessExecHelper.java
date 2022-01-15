@@ -1,6 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.executor.system;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.standalone.executor.AbstractSyncIProcessExecHelper;
 import net.thevpc.nuts.runtime.standalone.io.util.IProcessExecHelper;
 import net.thevpc.nuts.runtime.standalone.util.jclass.NutsJavaSdkUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
@@ -17,15 +18,14 @@ import java.util.concurrent.FutureTask;
 import java.util.function.Function;
 import java.util.logging.Level;
 
-public class ProcessExecHelper implements IProcessExecHelper {
+public class ProcessExecHelper extends AbstractSyncIProcessExecHelper {
 
     ProcessBuilder2 pb;
-    NutsSession session;
     NutsPrintStream out;
 
     public ProcessExecHelper(ProcessBuilder2 pb, NutsSession session, NutsPrintStream out) {
+        super(session);
         this.pb = pb;
-        this.session = session;
         this.out = out;
     }
 
@@ -190,7 +190,7 @@ public class ProcessExecHelper implements IProcessExecHelper {
         for (Map.Entry<String, String> e : map.entrySet()) {
             String k = e.getKey();
             if (!NutsBlankable.isBlank(k)) {
-                k = k.replace('.', '_');
+                k = k.replace('.', '_').toUpperCase();
                 if (!NutsBlankable.isBlank(e.getValue())) {
                     envmap.put(k, e.getValue());
                 }
@@ -440,7 +440,7 @@ public class ProcessExecHelper implements IProcessExecHelper {
     public void dryExec() {
         if (out.mode() == NutsTerminalMode.FORMATTED) {
             out.print("[dry] ==[exec]== ");
-            out.println(pb.getFormattedCommandString(session));
+            out.println(pb.getFormattedCommandString(getSession()));
         } else {
             out.print("[dry] exec ");
             out.printf("%s%n", pb.getCommandString());
@@ -455,19 +455,19 @@ public class ProcessExecHelper implements IProcessExecHelper {
             ProcessBuilder2 p = pb.start();
             return p.waitFor().getResult();
         } catch (IOException ex) {
-            throw new NutsIOException(session,ex);
+            throw new NutsIOException(getSession(),ex);
         }
     }
 
     public Future<Integer> execAsync() {
         try {
             if (out != null) {
-                out.run(NutsTerminalCommand.MOVE_LINE_START, session);
+                out.run(NutsTerminalCommand.MOVE_LINE_START, getSession());
             }
             ProcessBuilder2 p = pb.start();
             return new FutureTask<Integer>(() -> p.waitFor().getResult());
         } catch (IOException ex) {
-            throw new NutsIOException(session,ex);
+            throw new NutsIOException(getSession(),ex);
         }
     }
 }

@@ -237,7 +237,7 @@ public class DefaultNutsArtifactPathExecutable extends AbstractNutsExecutableCom
 
     @Override
     public String toString() {
-        return "NUTS " + cmdName + " " + NutsCommandLine.of(args,execSession).toString();
+        return "nuts " + cmdName + " " + NutsCommandLine.of(args,execSession).toString();
     }
 
 }

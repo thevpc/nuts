@@ -192,10 +192,10 @@ public class NutsJavaSdkUtils {
                         all.add(r);
                         if (session != null && session.isPlainTrace()) {
                             NutsTexts factory = NutsTexts.of(session);
-                            session.out().printf("detected java %s %s at %s%n", r.getPackaging(),
-                                    factory.ofStyled(r.getVersion(), NutsTextStyle.version()),
-                                    factory.ofStyled(r.getPath(), NutsTextStyle.path())
-                            );
+//                            session.out().printf("detected java %s %s at %s%n", r.getPackaging(),
+//                                    factory.ofStyled(r.getVersion(), NutsTextStyle.version()),
+//                                    factory.ofStyled(r.getPath(), NutsTextStyle.path())
+//                            );
                         }
                     }
                 }
@@ -427,10 +427,16 @@ public class NutsJavaSdkUtils {
             k.moduleInfo= JavaJarUtils.parseModuleInfo(k.path, session);
             if (k.moduleInfo != null) {
                 k.moduleName=k.moduleInfo.module_name;
+                for (JavaClassByteCode.ModuleInfoRequired r : k.moduleInfo.required) {
+                    if(r.req_name.startsWith("javafx")){
+                        k.requiredJfx.add(r.req_name);
+                    }
+                }
             }else{
                 k.moduleName= JavaJarUtils.parseDefaultModuleName(k.path, session);
             }
             k.jfx=k.moduleName!=null && k.moduleName.startsWith("javafx");
+
         }else{
             k.jfx=k.id.getArtifactId().startsWith("javafx") &&
                     k.id.getGroupId().startsWith("org.openjfx");

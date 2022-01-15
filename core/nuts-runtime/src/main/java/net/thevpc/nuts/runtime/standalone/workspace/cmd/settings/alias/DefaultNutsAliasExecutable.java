@@ -55,7 +55,7 @@ public class DefaultNutsAliasExecutable extends AbstractNutsExecutableCommand {
 
     @Override
     public String toString() {
-        return "CMD " + command.getName() + " @ " + command.getOwner();
+        return "alias " + command.getName() + " @ " + command.getOwner();
     }
 
 }

@@ -125,9 +125,9 @@ public class DefaultNutsOpenExecutable extends AbstractNutsExecutableCommand {
     @Override
     public String toString() {
         if (effectiveOpenExecutable == null) {
-            return "FAIL TO OPEN " + NutsCommandLine.of(cmd, session).toString();
+            return "open --fail " + NutsCommandLine.of(cmd, session).toString();
         }
-        return "OPEN with " + effectiveOpenExecutable[0] + " : " + NutsCommandLine.of(cmd, session).toString();
+        return "open --with " + effectiveOpenExecutable[0] + " " + NutsCommandLine.of(cmd, session).toString();
     }
 
 }

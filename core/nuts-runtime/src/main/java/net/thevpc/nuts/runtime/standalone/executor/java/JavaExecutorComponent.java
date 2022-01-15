@@ -91,13 +91,13 @@ public class JavaExecutorComponent implements NutsExecutorComponent {
             String shortName = def.getId().getShortName();
             //for executors
             if ("net.thevpc.nuts.exec:exec-java".equals(shortName)) {
-                return DEFAULT_SUPPORT + 1;
+                return DEFAULT_SUPPORT + 10;
             }
             if ("java".equals(shortName)) {
-                return DEFAULT_SUPPORT + 1;
+                return DEFAULT_SUPPORT + 10;
             }
             if ("jar".equals(def.getDescriptor().getPackaging())) {
-                return DEFAULT_SUPPORT + 1;
+                return DEFAULT_SUPPORT + 10;
             }
         }
         return NO_SUPPORT;
@@ -224,7 +224,7 @@ public class JavaExecutorComponent implements NutsExecutorComponent {
                         .setCompact(true)
                         .getBootCommandLine().formatter().setShellFamily(NutsShellFamily.SH).setNtf(false).toString();
                 if (!NutsBlankable.isBlank(bootArgumentsString)) {
-                    osEnv.put("nuts_boot_args", bootArgumentsString);
+                    osEnv.put("NUTS_BOOT_ARGS", bootArgumentsString);
                     joptions.getJvmArgs().add("-Dnuts.boot.args=" + bootArgumentsString);
                 }
                 //nuts.export properties should be propagated!!

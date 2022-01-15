@@ -134,7 +134,7 @@ public class DefaultNutsArtifactExecutable extends AbstractNutsExecutableCommand
 
     @Override
     public String toString() {
-        return "NUTS " + getId().toString() + " " + NutsCommandLine.of(appArgs,execSession).toString();
+        return "nuts " + getId().toString() + " " + NutsCommandLine.of(appArgs,execSession).toString();
     }
 
 }
