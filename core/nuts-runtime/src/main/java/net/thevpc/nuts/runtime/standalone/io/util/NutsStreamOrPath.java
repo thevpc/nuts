@@ -230,7 +230,7 @@ public class NutsStreamOrPath {
     public NutsStreamMetadata getStreamMetaData() {
         switch (type) {
             case PATH:
-                return getPath().getStreamMetadata();
+                return getPath().toCompressedForm().getStreamMetadata();
             case INPUT_STREAM:
             case OUTPUT_STREAM: {
                 NutsStreamMetadata q = NutsStreamMetadata.resolve(value);

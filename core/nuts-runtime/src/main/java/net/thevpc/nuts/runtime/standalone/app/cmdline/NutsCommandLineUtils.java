@@ -8,6 +8,45 @@ import java.util.List;
 import net.thevpc.nuts.NutsSession;
 
 public class NutsCommandLineUtils {
+    public static class OptionsAndArgs {
+        private String[] options;
+        private String[] args;
+
+        public OptionsAndArgs(String[] options, String[] args) {
+            this.options = options;
+            this.args = args;
+        }
+
+        public String[] getOptions() {
+            return options;
+        }
+
+        public String[] getArgs() {
+            return args;
+        }
+    }
+    public static OptionsAndArgs parseOptionsFirst(String[] args) {
+        List<String> options = new ArrayList<>();
+        List<String> nonOptions = new ArrayList<>();
+        int i = 0;
+        while (i < args.length) {
+            if (args[i].startsWith("-")) {
+                options.add(args[i]);
+                i++;
+            } else {
+                break;
+            }
+        }
+        while (i < args.length) {
+            nonOptions.add(args[i]);
+            i++;
+        }
+        return new OptionsAndArgs(
+                options.toArray(new String[0]),
+                nonOptions.toArray(new String[0])
+        );
+    }
+
     public static String escapeArguments(String[] args) {
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < args.length; i++) {

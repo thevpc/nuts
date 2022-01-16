@@ -665,19 +665,15 @@ public class JShell {
             throw new JShellException(session, NutsMessage.cstyle("shell file not found : %s", file), 1);
         }
         context.setServiceName(file);
-        FileInputStream stream = null;
+        InputStream stream = null;
         try {
-            try {
-                stream = new FileInputStream(file);
-                JShellCommandNode ii = parseScript(stream);
-                if (ii == null) {
-                    return 0;
-                }
-                JShellContext c = context.setRootNode(ii);//.setParent(null);
-                return context.getShell().evalNode(ii, c);
-            } catch (IOException ex) {
-                throw new JShellException(session, ex, 1);
+            stream = NutsPath.of(file, session).getInputStream();
+            JShellCommandNode ii = parseScript(stream);
+            if (ii == null) {
+                return 0;
             }
+            JShellContext c = context.setRootNode(ii);//.setParent(null);
+            return context.getShell().evalNode(ii, c);
         } finally {
             try {
                 if (stream != null) {

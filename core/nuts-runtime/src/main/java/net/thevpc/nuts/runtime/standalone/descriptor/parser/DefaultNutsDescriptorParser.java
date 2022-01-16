@@ -1,6 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.descriptor.parser;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.standalone.session.NutsSessionUtils;
 import net.thevpc.nuts.runtime.standalone.util.CorePlatformUtils;
 import net.thevpc.nuts.runtime.standalone.descriptor.DefaultNutsArtifactCall;
 import net.thevpc.nuts.runtime.standalone.descriptor.DefaultNutsDescriptorPropertyBuilder;
@@ -125,7 +126,7 @@ public class DefaultNutsDescriptorParser implements NutsDescriptorParser {
     }
 
     private void checkSession() {
-        NutsWorkspaceUtils.checkSession(getWorkspace(), getSession());
+        NutsSessionUtils.checkSession(getWorkspace(), getSession());
     }
 
     private NutsDescriptor parse(InputStream in, boolean closeStream) {

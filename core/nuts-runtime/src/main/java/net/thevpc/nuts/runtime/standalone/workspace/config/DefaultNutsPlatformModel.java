@@ -1,9 +1,9 @@
 package net.thevpc.nuts.runtime.standalone.workspace.config;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.standalone.session.NutsSessionUtils;
 import net.thevpc.nuts.runtime.standalone.util.jclass.NutsJavaSdkUtils;
 import net.thevpc.nuts.runtime.standalone.util.jclass.JavaClassUtils;
-import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
 
 import java.util.*;
 import java.util.concurrent.ExecutionException;
@@ -149,7 +149,7 @@ public class DefaultNutsPlatformModel {
     }
 
     public NutsPlatformLocation[] searchSystemPlatforms(NutsPlatformFamily platformType, NutsSession session) {
-        NutsWorkspaceUtils.checkSession(workspace, session);
+        NutsSessionUtils.checkSession(workspace, session);
         if (platformType== NutsPlatformFamily.JAVA) {
             try {
                 return NutsJavaSdkUtils.of(session.getWorkspace()).searchJdkLocationsFuture(session).get();
@@ -161,7 +161,7 @@ public class DefaultNutsPlatformModel {
     }
 
     public NutsPlatformLocation[] searchSystemPlatforms(NutsPlatformFamily platformType, String path, NutsSession session) {
-        NutsWorkspaceUtils.checkSession(workspace, session);
+        NutsSessionUtils.checkSession(workspace, session);
         if (platformType== NutsPlatformFamily.JAVA) {
             return NutsJavaSdkUtils.of(session.getWorkspace()).searchJdkLocations(path, session);
         }
@@ -169,7 +169,7 @@ public class DefaultNutsPlatformModel {
     }
 
     public NutsPlatformLocation resolvePlatform(NutsPlatformFamily platformType, String path, String preferredName, NutsSession session) {
-        NutsWorkspaceUtils.checkSession(workspace, session);
+        NutsSessionUtils.checkSession(workspace, session);
         if (platformType== NutsPlatformFamily.JAVA) {
             return NutsJavaSdkUtils.of(session.getWorkspace()).resolveJdkLocation(path, null, session);
         }

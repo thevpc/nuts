@@ -2,9 +2,10 @@ package net.thevpc.nuts.runtime.standalone.io.path.spi;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.io.util.InputStreamMetadataAwareImpl;
+import net.thevpc.nuts.runtime.standalone.io.util.NutsPathParts;
 import net.thevpc.nuts.runtime.standalone.io.util.URLBuilder;
+import net.thevpc.nuts.runtime.standalone.session.NutsSessionUtils;
 import net.thevpc.nuts.runtime.standalone.util.NutsCachedValue;
-import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
 import net.thevpc.nuts.runtime.standalone.xtra.download.DefaultHttpTransportComponent;
 import net.thevpc.nuts.spi.*;
 
@@ -460,13 +461,13 @@ public class URLPath implements NutsPathSPI {
                 return null;
             }
             URL url = new URL(
-                    URLBuilder.buildURLString(
+                    new NutsPathParts(NutsPathParts.Type.URL,
                             this.url.getProtocol(),
                             this.url.getAuthority(),
                             ppath,
                             this.url.getQuery(),
                             this.url.getRef()
-                    )
+                    ).toString()
             );
             return NutsPath.of(url, getSession());
         } catch (IOException e) {
@@ -781,7 +782,7 @@ public class URLPath implements NutsPathSPI {
 
         @Override
         public NutsSupported<NutsPathSPI> createPath(String path, NutsSession session, ClassLoader classLoader) {
-            NutsWorkspaceUtils.checkSession(ws, session);
+            NutsSessionUtils.checkSession(ws, session);
             try {
                 if (path != null && path.length() > 0) {
                     char s = path.charAt(0);

@@ -37,6 +37,7 @@ import net.thevpc.nuts.runtime.standalone.extension.DefaultNutsWorkspaceExtensio
 import net.thevpc.nuts.runtime.standalone.dependency.util.NutsClassLoaderUtils;
 import net.thevpc.nuts.runtime.standalone.extension.NutsExtensionListHelper;
 import net.thevpc.nuts.runtime.standalone.id.DefaultNutsId;
+import net.thevpc.nuts.runtime.standalone.id.util.NutsIdUtils;
 import net.thevpc.nuts.runtime.standalone.installer.CommandForIdNutsInstallerComponent;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.log.DefaultNutsLogModel;
@@ -50,6 +51,7 @@ import net.thevpc.nuts.runtime.standalone.security.DefaultNutsWorkspaceSecurityM
 import net.thevpc.nuts.runtime.standalone.security.DefaultNutsWorkspaceSecurityModel;
 import net.thevpc.nuts.runtime.standalone.security.util.CoreDigestHelper;
 import net.thevpc.nuts.runtime.standalone.session.DefaultNutsSession;
+import net.thevpc.nuts.runtime.standalone.session.NutsSessionUtils;
 import net.thevpc.nuts.runtime.standalone.text.DefaultNutsTextManagerModel;
 import net.thevpc.nuts.runtime.standalone.text.util.NutsTextUtils;
 import net.thevpc.nuts.runtime.standalone.util.*;
@@ -350,11 +352,11 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                 LOGCRF.log(NutsMessage.jstyle("   os-dist                        : {0}", senv.getOsDist().getArtifactId()));
                 LOGCRF.log(NutsMessage.jstyle("   os-arch                        : {0}", System.getProperty("os.arch")));
                 LOGCRF.log(NutsMessage.jstyle("   os-shell                       : {0}", senv.getShellFamily()));
-                LOGCRF.log(NutsMessage.jstyle("   os-shells                      : {0}", text.builder().appendJoined(",",Arrays.asList(senv.getShellFamilies()))));
+                LOGCRF.log(NutsMessage.jstyle("   os-shells                      : {0}", text.builder().appendJoined(",", Arrays.asList(senv.getShellFamilies()))));
                 LOGCRF.log(NutsMessage.jstyle("   os-desktop                     : {0}", senv.getDesktopEnvironment()));
                 LOGCRF.log(NutsMessage.jstyle("   os-desktop-family              : {0}", senv.getDesktopEnvironmentFamily()));
-                LOGCRF.log(NutsMessage.jstyle("   os-desktops                    : {0}", text.builder().appendJoined(",",Arrays.asList(senv.getDesktopEnvironments()))));
-                LOGCRF.log(NutsMessage.jstyle("   os-desktop-families            : {0}", text.builder().appendJoined(",",Arrays.asList(senv.getDesktopEnvironmentFamilies()))));
+                LOGCRF.log(NutsMessage.jstyle("   os-desktops                    : {0}", text.builder().appendJoined(",", Arrays.asList(senv.getDesktopEnvironments()))));
+                LOGCRF.log(NutsMessage.jstyle("   os-desktop-families            : {0}", text.builder().appendJoined(",", Arrays.asList(senv.getDesktopEnvironmentFamilies()))));
                 LOGCRF.log(NutsMessage.jstyle("   os-desktop-path                : {0}", senv.getDesktopPath()));
                 LOGCRF.log(NutsMessage.jstyle("   os-desktop-integration         : {0}", senv.getDesktopIntegrationSupport(NutsDesktopIntegrationItem.DESKTOP)));
                 LOGCRF.log(NutsMessage.jstyle("   os-menu-integration            : {0}", senv.getDesktopIntegrationSupport(NutsDesktopIntegrationItem.MENU)));
@@ -668,13 +670,14 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                     session
             );
         }
-        if(parentDescriptors.length>0){
+        if (parentDescriptors.length > 0) {
             NutsDescriptorBuilder descrWithParents = descriptor.builder();
             descrWithParents.applyParents(parentDescriptors);
             return descrWithParents.build();
         }
         return descriptor;
     }
+
     protected NutsDescriptor _resolveEffectiveDescriptor(NutsDescriptor descriptor, NutsSession session) {
         LOG.with().session(session).level(Level.FINEST).verb(NutsLogVerb.START)
                 .log(NutsMessage.jstyle("resolve effective {0}", descriptor.getId()));
@@ -724,24 +727,24 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
         NutsDescriptor effectiveDescriptor = descrWithParents.applyProperties().build();
         List<NutsDependency> oldDependencies = new ArrayList<>();
         for (NutsDependency d : effectiveDescriptor.getDependencies()) {
-            if(CoreFilterUtils.acceptDependency(d, session)){
+            if (CoreFilterUtils.acceptDependency(d, session)) {
                 oldDependencies.add(d.builder().setCondition((NutsEnvCondition) null).build());
             }
         }
 
         List<NutsDependency> newDeps = new ArrayList<>();
         boolean someChange = false;
-        LinkedHashSet<NutsDependency> effStandardDeps=new LinkedHashSet<>();
+        LinkedHashSet<NutsDependency> effStandardDeps = new LinkedHashSet<>();
         for (NutsDependency standardDependency : effectiveDescriptor.getStandardDependencies()) {
             if ("import".equals(standardDependency.getScope())) {
                 NutsDescriptor dd = session.fetch().setId(standardDependency.toId()).setEffective(true).setSession(session).getResultDescriptor();
                 for (NutsDependency dependency : dd.getStandardDependencies()) {
-                    if(CoreFilterUtils.acceptDependency(dependency, session)) {
+                    if (CoreFilterUtils.acceptDependency(dependency, session)) {
                         effStandardDeps.add(dependency);
                     }
                 }
-            }else{
-                if(CoreFilterUtils.acceptDependency(standardDependency, session)) {
+            } else {
+                if (CoreFilterUtils.acceptDependency(standardDependency, session)) {
                     effStandardDeps.add(standardDependency);
                 }
             }
@@ -787,7 +790,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                 newDeps.add(d);
             }
         }
-            effectiveDescriptor = effectiveDescriptor.builder().setDependencies(newDeps.toArray(new NutsDependency[0])).build();
+        effectiveDescriptor = effectiveDescriptor.builder().setDependencies(newDeps.toArray(new NutsDependency[0])).build();
         return effectiveDescriptor;
     }
 
@@ -834,7 +837,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
     }
 
     private void checkSession(NutsSession session) {
-        NutsWorkspaceUtils.checkSession(this, session);
+        NutsSessionUtils.checkSession(this, session);
     }
 
     private NutsId resolveApiId(NutsId id, Set<NutsId> visited, NutsSession session) {
@@ -1446,29 +1449,36 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
         if (nutToInstall != null && nutToInstall.getFile() != null) {
             NutsDescriptor descriptor = nutToInstall.getDescriptor();
             NutsArtifactCall installerDescriptor = descriptor.getInstaller();
-            NutsDefinition runnerFile = nutToInstall;
-            if (installerDescriptor != null && installerDescriptor.getId() != null) {
-                if (installerDescriptor.getId() != null) {
-                    runnerFile = session.fetch().setId(installerDescriptor.getId())
-                            .setSession(
-                                    session.copy().setTransitive(false)
-                            )
+            NutsDefinition runnerFile = null;
+            if (installerDescriptor != null) {
+                NutsId installerId = installerDescriptor.getId();
+                if (installerId != null) {
+                    // nsh is the only installer that does not need to have groupId!
+                    if (NutsBlankable.isBlank(installerId.getGroupId())
+                            && "nsh".equals(installerId.getArtifactId())
+                    ) {
+                        installerId = installerId.builder().setGroupId("net.thevpc.nuts.toolbox").build();
+                    }
+                    //ensure installer is always well qualified!
+                    NutsIdUtils.checkShortId(installerId, session);
+                    runnerFile = session.search().setId(installerId)
                             .setOptional(false)
                             .setContent(true)
                             .setDependencies(true)
-                            .getResultDefinition();
+                            .setLatest(true)
+                            .setDistinct(true)
+                            .getResultDefinitions().first();
+
                 }
             }
-            if (runnerFile == null) {
-                runnerFile = nutToInstall;
-            }
             NutsInstallerComponent best = session.extensions().setSession(session)
-                    .createSupported(NutsInstallerComponent.class, false, runnerFile);
+                    .createSupported(NutsInstallerComponent.class, false, runnerFile == null?nutToInstall:runnerFile);
             if (best != null) {
                 return best;
             }
+            return new CommandForIdNutsInstallerComponent(runnerFile);
         }
-        return new CommandForIdNutsInstallerComponent();
+        return new CommandForIdNutsInstallerComponent(null);
     }
 
     @Override

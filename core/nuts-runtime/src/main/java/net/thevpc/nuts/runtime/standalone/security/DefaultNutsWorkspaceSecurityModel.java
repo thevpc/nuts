@@ -26,6 +26,7 @@
 package net.thevpc.nuts.runtime.standalone.security;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.standalone.session.NutsSessionUtils;
 import net.thevpc.nuts.runtime.standalone.util.CorePlatformUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.config.NutsWorkspaceConfigManagerExt;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
@@ -34,7 +35,6 @@ import net.thevpc.nuts.runtime.standalone.boot.DefaultNutsBootManager;
 import net.thevpc.nuts.runtime.standalone.workspace.config.ConfigEventType;
 import net.thevpc.nuts.runtime.standalone.workspace.config.DefaultNutsWorkspaceConfigModel;
 import net.thevpc.nuts.runtime.standalone.workspace.config.NutsWorkspaceConfigSecurity;
-import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.user.DefaultNutsAddUserCommand;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.user.DefaultNutsRemoveUserCommand;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.user.DefaultNutsUpdateUserCommand;
@@ -66,7 +66,7 @@ public class DefaultNutsWorkspaceSecurityModel {
     public DefaultNutsWorkspaceSecurityModel(final DefaultNutsWorkspace ws) {
         this.ws = ws;
         this.agent = new WrapperNutsAuthenticationAgent(ws, (session) -> session.config().getConfigMap(), (x, s) -> getAuthenticationAgent(x, s));
-        NutsWorkspaceUtils.defaultSession(ws).events().addWorkspaceListener(new ClearAuthOnWorkspaceChange());
+        NutsSessionUtils.defaultSession(ws).events().addWorkspaceListener(new ClearAuthOnWorkspaceChange());
     }
 
     protected NutsLoggerOp _LOGOP(NutsSession session) {

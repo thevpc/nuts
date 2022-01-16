@@ -9,9 +9,9 @@ import net.thevpc.nuts.*;
 
 import java.util.*;
 
+import net.thevpc.nuts.runtime.standalone.session.NutsSessionUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.config.NutsRepositoryConfigManagerExt;
 import net.thevpc.nuts.runtime.standalone.workspace.config.NutsWorkspaceConfigManagerExt;
-import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.user.DefaultNutsAddUserCommand;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.user.DefaultNutsRemoveUserCommand;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.user.DefaultNutsUpdateUserCommand;
@@ -43,7 +43,7 @@ public class DefaultNutsRepositorySecurityModel {
     }
 
     public void checkAllowed(String right, String operationName, NutsSession session) {
-        NutsWorkspaceUtils.checkSession(repository.getWorkspace(), session);
+        NutsSessionUtils.checkSession(repository.getWorkspace(), session);
         if (!isAllowed(right, session)) {
             if (NutsBlankable.isBlank(operationName)) {
                 throw new NutsSecurityException(session, NutsMessage.cstyle("%s not allowed!",right));

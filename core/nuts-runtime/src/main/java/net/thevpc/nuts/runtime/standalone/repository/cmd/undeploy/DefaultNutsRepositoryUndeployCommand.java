@@ -9,7 +9,7 @@ import java.util.logging.Level;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.repository.impl.NutsRepositoryExt;
-import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
+import net.thevpc.nuts.runtime.standalone.session.NutsSessionUtils;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import net.thevpc.nuts.NutsLogVerb;
 import net.thevpc.nuts.spi.NutsRepositoryUndeployCommand;
@@ -44,7 +44,7 @@ public class DefaultNutsRepositoryUndeployCommand extends AbstractNutsRepository
     @Override
     public NutsRepositoryUndeployCommand run() {
         NutsSession session = getSession();
-        NutsWorkspaceUtils.checkSession(getRepo().getWorkspace(), session);
+        NutsSessionUtils.checkSession(getRepo().getWorkspace(), session);
         getRepo().security().setSession(session).checkAllowed(NutsConstants.Permissions.UNDEPLOY, "undeploy");
         try {
             NutsRepositoryExt xrepo = NutsRepositoryExt.of(getRepo());

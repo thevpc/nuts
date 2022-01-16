@@ -26,6 +26,7 @@ package net.thevpc.nuts.runtime.standalone.repository.cmd.fetch;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.log.NutsLogUtils;
 import net.thevpc.nuts.runtime.standalone.repository.impl.NutsRepositoryExt;
+import net.thevpc.nuts.runtime.standalone.session.NutsSessionUtils;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.util.CoreNutsUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
@@ -61,7 +62,7 @@ public class DefaultNutsFetchContentRepositoryCommand extends AbstractNutsFetchC
     public NutsFetchContentRepositoryCommand run() {
         NutsRepository repo = getRepo();
         NutsSession session = getSession();
-        NutsWorkspaceUtils.checkSession(repo.getWorkspace(), session);
+        NutsSessionUtils.checkSession(repo.getWorkspace(), session);
         NutsDescriptor descriptor0 = descriptor;
         if (descriptor0 == null) {
             NutsRepositorySPI repoSPI = NutsWorkspaceUtils.of(session).repoSPI(repo);

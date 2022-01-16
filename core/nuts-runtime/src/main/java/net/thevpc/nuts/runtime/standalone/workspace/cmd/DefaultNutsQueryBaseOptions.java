@@ -8,7 +8,7 @@ package net.thevpc.nuts.runtime.standalone.workspace.cmd;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.format.NutsFetchDisplayOptions;
 import net.thevpc.nuts.runtime.standalone.dependency.NutsDependencyScopes;
-import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
+import net.thevpc.nuts.runtime.standalone.session.NutsSessionUtils;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -40,7 +40,7 @@ public abstract class DefaultNutsQueryBaseOptions<T extends NutsWorkspaceCommand
     public DefaultNutsQueryBaseOptions(NutsWorkspace ws, String name) {
         super(ws, name);
 //        this.session=ws.createSession();
-        displayOptions = new NutsFetchDisplayOptions(NutsWorkspaceUtils.defaultSession(ws));
+        displayOptions = new NutsFetchDisplayOptions(NutsSessionUtils.defaultSession(ws));
     }
 
     //@Override

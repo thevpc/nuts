@@ -9,6 +9,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.io.util.NutsStreamOrPath;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.io.progress.SingletonNutsInputStreamProgressFactory;
+import net.thevpc.nuts.runtime.standalone.session.NutsSessionUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
 import net.thevpc.nuts.spi.NutsSupportLevelContext;
 
@@ -75,7 +76,7 @@ public class DefaultNutsCompress implements NutsCompress {
     }
 
     private void checkSession() {
-        NutsWorkspaceUtils.checkSession(ws, session);
+        NutsSessionUtils.checkSession(ws, session);
     }
 
     public void runZip() {
@@ -484,7 +485,7 @@ public class DefaultNutsCompress implements NutsCompress {
 
     @Override
     public NutsCompress setSkipRoot(boolean value) {
-        this.skipRoot = true;
+        this.skipRoot = value;
         return this;
     }
 

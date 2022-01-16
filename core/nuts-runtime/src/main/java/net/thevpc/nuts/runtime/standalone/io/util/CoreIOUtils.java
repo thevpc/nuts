@@ -26,6 +26,7 @@ package net.thevpc.nuts.runtime.standalone.io.util;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.io.terminal.NutsTerminalModeOp;
 import net.thevpc.nuts.runtime.standalone.repository.index.CacheDB;
+import net.thevpc.nuts.runtime.standalone.session.NutsSessionUtils;
 import net.thevpc.nuts.runtime.standalone.text.ExtendedFormatAware;
 import net.thevpc.nuts.runtime.standalone.text.ExtendedFormatAwarePrintWriter;
 import net.thevpc.nuts.runtime.standalone.text.RawOutputStream;
@@ -33,7 +34,6 @@ import net.thevpc.nuts.runtime.standalone.util.CoreNutsUtils;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.util.DoWhenExist;
 import net.thevpc.nuts.runtime.standalone.util.DoWhenNotExists;
-import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.util.PathInfo;
 import net.thevpc.nuts.runtime.standalone.xtra.digest.NutsDigestUtils;
 import net.thevpc.nuts.runtime.standalone.xtra.download.DefaultHttpTransportComponent;
@@ -72,7 +72,7 @@ public class CoreIOUtils {
             }
         }
         ExtendedFormatAwarePrintWriter s = new ExtendedFormatAwarePrintWriter(writer, term, session);
-        NutsWorkspaceUtils.setSession(s, session);
+        NutsSessionUtils.setSession(s, session);
         return s;
     }
 
@@ -82,7 +82,7 @@ public class CoreIOUtils {
             return null;
         }
         ExtendedFormatAwarePrintWriter s = new ExtendedFormatAwarePrintWriter(writer, term, session);
-        NutsWorkspaceUtils.setSession(s, session);
+        NutsSessionUtils.setSession(s, session);
         return s;
     }
 

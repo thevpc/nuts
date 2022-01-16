@@ -6,6 +6,7 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.standalone.session.NutsSessionUtils;
 import net.thevpc.nuts.runtime.standalone.util.NutsConfigurableHelper;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
 
@@ -40,7 +41,7 @@ public abstract class NutsWorkspaceCommandBase<T extends NutsWorkspaceCommand> i
     }
 
     protected void checkSession(){
-        NutsWorkspaceUtils.checkSession(ws, getSession());
+        NutsSessionUtils.checkSession(ws, getSession());
     }
 
     public String getCommandName() {

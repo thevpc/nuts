@@ -1,6 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.util.jclass;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.standalone.session.NutsSessionUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.DefaultNutsWorkspace;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.config.NutsSdkLocationComparator;
@@ -41,6 +42,43 @@ public class NutsJavaSdkUtils {
 //            ws.env().setProperty(NutsJavaSdkUtils.class.getName(), wp);
 //        }
 //        return wp;
+    }
+
+    public static List<NutsClassLoaderNodeExt> loadNutsClassLoaderNodeExts(NutsClassLoaderNode[] n, boolean java9, NutsSession session) {
+        List<NutsClassLoaderNodeExt> list = new ArrayList<>();
+        for (NutsClassLoaderNode nn : n) {
+            fillNodes(nn, list, java9, session);
+        }
+        return list;
+    }
+
+    private static void fillNodes(NutsClassLoaderNode n, List<NutsClassLoaderNodeExt> list, boolean java9, NutsSession session) {
+        NutsClassLoaderNodeExt k = new NutsClassLoaderNodeExt();
+        k.node = n;
+        k.id = NutsId.of(n.getId(), session);
+        k.path = NutsPath.of(n.getURL(), session);
+        if (java9) {
+            k.moduleInfo = JavaJarUtils.parseModuleInfo(k.path, session);
+            if (k.moduleInfo != null) {
+                k.moduleName = k.moduleInfo.module_name;
+                for (JavaClassByteCode.ModuleInfoRequired r : k.moduleInfo.required) {
+                    if (r.req_name.startsWith("javafx")) {
+                        k.requiredJfx.add(r.req_name);
+                    }
+                }
+            } else {
+                k.moduleName = JavaJarUtils.parseDefaultModuleName(k.path, session);
+            }
+            k.jfx = k.moduleName != null && k.moduleName.startsWith("javafx");
+
+        } else {
+            k.jfx = k.id.getArtifactId().startsWith("javafx") &&
+                    k.id.getGroupId().startsWith("org.openjfx");
+        }
+        list.add(k);
+        for (NutsClassLoaderNode d : n.getDependencies()) {
+            fillNodes(d, list, java9, session);
+        }
     }
 
     protected NutsLoggerOp _LOGOP(NutsSession session) {
@@ -220,14 +258,13 @@ public class NutsJavaSdkUtils {
                                 try {
                                     r = resolveJdkLocation(d.toString(), null, session);
                                     if (r != null) {
-                                        if (session.isPlainTrace()) {
-                                            synchronized (session.getWorkspace()) {
-                                                NutsTexts factory = NutsTexts.of(session);
-                                                session.out().printf("detected java %s %s at %s%n", r.getPackaging(),
-                                                        factory.ofStyled(r.getVersion(), NutsTextStyle.version()),
-                                                        factory.ofStyled(r.getPath(), NutsTextStyle.path())
-                                                );
-                                            }
+                                        synchronized (session.getWorkspace()) {
+                                            NutsTexts factory = NutsTexts.of(session);
+                                            session.getTerminal().printProgress(
+                                                    NutsMessage.cstyle("detected java %s %s at %s", r.getPackaging(),
+                                                            factory.ofStyled(r.getVersion(), NutsTextStyle.version()),
+                                                            factory.ofStyled(r.getPath(), NutsTextStyle.path()))
+                                            );
                                         }
                                     }
                                 } catch (Exception ex) {
@@ -249,12 +286,14 @@ public class NutsJavaSdkUtils {
                     locs.add(e);
                 }
             }
+            //just reset the line!
+            session.getTerminal().printProgress(NutsMessage.plain(""));
             return locs.toArray(new NutsPlatformLocation[0]);
         });
     }
 
     public NutsPlatformLocation resolveJdkLocation(String path, String preferredName, NutsSession session) {
-        NutsWorkspaceUtils.checkSession(ws, session);
+        NutsSessionUtils.checkSession(ws, session);
         if (path == null) {
             throw new NutsException(session, NutsMessage.formatted("missing path"));
         }
@@ -408,42 +447,5 @@ public class NutsJavaSdkUtils {
             }
         }
         return javaHome + File.separator + "bin" + File.separator + exe;
-    }
-
-    public static List<NutsClassLoaderNodeExt> loadNutsClassLoaderNodeExts(NutsClassLoaderNode[] n, boolean java9,NutsSession session) {
-        List<NutsClassLoaderNodeExt> list=new ArrayList<>();
-        for (NutsClassLoaderNode nn : n) {
-            fillNodes(nn, list, java9, session);
-        }
-        return list;
-    }
-
-    private static void fillNodes(NutsClassLoaderNode n, List<NutsClassLoaderNodeExt> list,boolean java9,NutsSession session) {
-        NutsClassLoaderNodeExt k=new NutsClassLoaderNodeExt();
-        k.node=n;
-        k.id=NutsId.of(n.getId(),session);
-        k.path = NutsPath.of(n.getURL(), session);
-        if(java9){
-            k.moduleInfo= JavaJarUtils.parseModuleInfo(k.path, session);
-            if (k.moduleInfo != null) {
-                k.moduleName=k.moduleInfo.module_name;
-                for (JavaClassByteCode.ModuleInfoRequired r : k.moduleInfo.required) {
-                    if(r.req_name.startsWith("javafx")){
-                        k.requiredJfx.add(r.req_name);
-                    }
-                }
-            }else{
-                k.moduleName= JavaJarUtils.parseDefaultModuleName(k.path, session);
-            }
-            k.jfx=k.moduleName!=null && k.moduleName.startsWith("javafx");
-
-        }else{
-            k.jfx=k.id.getArtifactId().startsWith("javafx") &&
-                    k.id.getGroupId().startsWith("org.openjfx");
-        }
-        list.add(k);
-        for (NutsClassLoaderNode d : n.getDependencies()) {
-            fillNodes(d, list,java9, session);
-        }
     }
 }

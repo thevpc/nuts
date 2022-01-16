@@ -1,8 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.io.path.spi;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
-import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
+import net.thevpc.nuts.runtime.standalone.session.NutsSessionUtils;
 import net.thevpc.nuts.spi.NutsPathFactory;
 import net.thevpc.nuts.spi.NutsPathSPI;
 
@@ -73,7 +72,7 @@ public class ClassLoaderPath extends URLPath {
 
         @Override
         public NutsSupported<NutsPathSPI> createPath(String path, NutsSession session, ClassLoader classLoader) {
-            NutsWorkspaceUtils.checkSession(ws, session);
+            NutsSessionUtils.checkSession(ws, session);
             try {
                 if (path.startsWith("classpath:")) {
                     return NutsSupported.of(10,()->new ClassLoaderPath(path, classLoader, session));

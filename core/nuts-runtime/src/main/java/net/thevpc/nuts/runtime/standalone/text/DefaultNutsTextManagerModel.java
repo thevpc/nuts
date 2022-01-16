@@ -28,6 +28,7 @@ import net.thevpc.nuts.runtime.standalone.elem.DefaultNutsElementFactoryService;
 import net.thevpc.nuts.runtime.standalone.elem.NutsElementFactoryService;
 import net.thevpc.nuts.runtime.standalone.elem.NutsElementStreamFormat;
 import net.thevpc.nuts.runtime.standalone.format.json.DefaultJsonElementFormat;
+import net.thevpc.nuts.runtime.standalone.session.NutsSessionUtils;
 import net.thevpc.nuts.runtime.standalone.text.highlighter.CustomStyleCodeHighlighter;
 import net.thevpc.nuts.runtime.standalone.text.theme.DefaultNutsTextFormatTheme;
 import net.thevpc.nuts.runtime.standalone.text.theme.NutsTextFormatPropertiesTheme;
@@ -35,7 +36,6 @@ import net.thevpc.nuts.runtime.standalone.text.theme.NutsTextFormatThemeWrapper;
 import net.thevpc.nuts.runtime.standalone.format.xml.DefaultXmlNutsElementStreamFormat;
 import net.thevpc.nuts.runtime.standalone.format.yaml.SimpleYaml;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceExt;
-import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.StringTokenizerUtils;
 import net.thevpc.nuts.spi.NutsDefaultSupportLevelContext;
 
@@ -65,7 +65,7 @@ public class DefaultNutsTextManagerModel {
 
     public DefaultNutsTextManagerModel(NutsWorkspace ws) {
         this.ws = ws;
-        NutsSession session = NutsWorkspaceUtils.defaultSession(ws);
+        NutsSession session = NutsSessionUtils.defaultSession(ws);
         List<NutsCodeHighlighter> all = session.extensions().createAllSupported(NutsCodeHighlighter.class, null);
         for (NutsCodeHighlighter h : all) {
             highlighters.put(h.getId().toLowerCase(), h);

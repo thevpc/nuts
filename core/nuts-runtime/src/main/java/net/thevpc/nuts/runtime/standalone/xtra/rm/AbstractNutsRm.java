@@ -4,6 +4,8 @@ import net.thevpc.nuts.*;
 
 import java.io.File;
 import java.nio.file.Path;
+
+import net.thevpc.nuts.runtime.standalone.session.NutsSessionUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
 
 public abstract class AbstractNutsRm implements NutsRm {
@@ -18,7 +20,7 @@ public abstract class AbstractNutsRm implements NutsRm {
     }
 
     protected void checkSession() {
-        NutsWorkspaceUtils.checkSession(ws, session);
+        NutsSessionUtils.checkSession(ws, session);
     }
 
     @Override
@@ -43,7 +45,7 @@ public abstract class AbstractNutsRm implements NutsRm {
 
     @Override
     public NutsRm setTarget(Object target) {
-        NutsWorkspaceUtils.checkSession(ws, session);
+        NutsSessionUtils.checkSession(ws, session);
         if (target == null) {
             this.target = null;
             return this;

@@ -12,8 +12,9 @@ import java.util.logging.Level;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.NutsLogVerb;
 import net.thevpc.nuts.NutsDescribables;
+import net.thevpc.nuts.runtime.standalone.id.util.NutsIdUtils;
 import net.thevpc.nuts.runtime.standalone.repository.impl.NutsRepositoryExt;
-import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
+import net.thevpc.nuts.runtime.standalone.session.NutsSessionUtils;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.util.iter.IteratorBuilder;
 import net.thevpc.nuts.runtime.standalone.util.iter.IteratorUtils;
@@ -44,11 +45,11 @@ public class DefaultNutsSearchVersionsRepositoryCommand extends AbstractNutsSear
     @Override
     public NutsSearchVersionsRepositoryCommand run() {
         NutsSession session = getSession();
-        NutsWorkspaceUtils.checkSession(getRepo().getWorkspace(), session);
+        NutsSessionUtils.checkSession(getRepo().getWorkspace(), session);
         //id = id.builder().setFaceContent().build();
         getRepo().security().setSession(session).checkAllowed(NutsConstants.Permissions.FETCH_DESC, "find-versions");
         NutsRepositoryExt xrepo = NutsRepositoryExt.of(getRepo());
-        NutsWorkspaceUtils.of(session).checkShortId(id);
+        NutsIdUtils.checkShortId(id,session);
         xrepo.checkAllowedFetch(id, session);
         try {
             List<NutsIterator<? extends NutsId>> resultList = new ArrayList<>();

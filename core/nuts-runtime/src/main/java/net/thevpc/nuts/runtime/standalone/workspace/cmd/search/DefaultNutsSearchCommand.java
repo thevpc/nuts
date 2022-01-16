@@ -27,6 +27,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.NutsDescribables;
 import net.thevpc.nuts.runtime.standalone.repository.cmd.NutsRepositorySupportedAction;
 import net.thevpc.nuts.runtime.standalone.id.filter.NutsIdFilterOr;
+import net.thevpc.nuts.runtime.standalone.session.NutsSessionUtils;
 import net.thevpc.nuts.runtime.standalone.util.filters.CoreFilterUtils;
 import net.thevpc.nuts.runtime.standalone.id.filter.NutsPatternIdFilter;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
@@ -523,7 +524,7 @@ public class DefaultNutsSearchCommand extends AbstractNutsSearchCommand {
         List<NutsIterator<? extends NutsId>> allResults = new ArrayList<>();
         checkSession();
         NutsSession session = search.getSession();
-        NutsWorkspaceUtils.checkSession(session.getWorkspace(), session);
+        NutsSessionUtils.checkSession(session.getWorkspace(), session);
         NutsIdFilter sIdFilter = search.getIdFilter();
         NutsRepositoryFilter sRepositoryFilter = search.getRepositoryFilter();
         NutsDescriptorFilter sDescriptorFilter = search.getDescriptorFilter();

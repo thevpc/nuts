@@ -200,7 +200,7 @@ public class ProcessExecHelper extends AbstractSyncIProcessExecHelper {
         for (String arg : args) {
             String s = NutsUtilStrings.trim(StringPlaceHolderParser.replaceDollarPlaceHolders(arg, mapper));
             if (s.startsWith("<::expand::>")) {
-                Collections.addAll(args2, NutsCommandLine.of(s,session).toStringArray());
+                Collections.addAll(args2, NutsCommandLine.of(s,NutsShellFamily.BASH, session).setExpandSimpleOptions(false).toStringArray());
             } else {
                 args2.add(s);
             }

@@ -4,6 +4,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.dependency.util.NutsDependencyUtils;
 import net.thevpc.nuts.runtime.standalone.id.util.NutsIdUtils;
 import net.thevpc.nuts.runtime.standalone.log.NutsLogUtils;
+import net.thevpc.nuts.runtime.standalone.session.NutsSessionUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.repository.cmd.NutsRepositorySupportedAction;
 import net.thevpc.nuts.runtime.standalone.definition.DefaultNutsDefinition;
@@ -171,10 +172,10 @@ public class DefaultNutsFetchCommand extends AbstractNutsFetchCommand {
         long startTime = System.currentTimeMillis();
         checkSession();
         NutsWorkspaceUtils wu = NutsWorkspaceUtils.of(session);
-        wu.checkLongId(id, session);
+        NutsIdUtils.checkLongId(id, session);
 //        checkSession();
         NutsSession _ws = getSession();
-        NutsWorkspaceUtils.checkSession(this.ws, options.getSession());
+        NutsSessionUtils.checkSession(this.ws, options.getSession());
         NutsWorkspaceExt dws = NutsWorkspaceExt.of(_ws);
         NutsFetchStrategy nutsFetchModes = NutsWorkspaceHelper.validate(_ws.getFetchStrategy());
         NutsRepositoryFilter repositoryFilter = this.getRepositoryFilter();
@@ -474,7 +475,7 @@ public class DefaultNutsFetchCommand extends AbstractNutsFetchCommand {
 
     protected DefaultNutsDefinition fetchDescriptorAsDefinition(NutsId id, NutsSession session, NutsFetchStrategy nutsFetchModes, NutsFetchMode mode, NutsRepository repo) {
         checkSession();
-        NutsWorkspaceUtils.checkSession(this.ws, session);
+        NutsSessionUtils.checkSession(this.ws, session);
         NutsWorkspaceExt dws = NutsWorkspaceExt.of(session);
         boolean withCache = !(repo instanceof DefaultNutsInstalledRepository);
         NutsPath cachePath = null;

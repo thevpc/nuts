@@ -26,19 +26,12 @@
  */
 package net.thevpc.nuts.toolbox.nsh.cmds;
 
-import net.thevpc.nuts.NutsArgument;
-import net.thevpc.nuts.NutsCommandLine;
-import net.thevpc.nuts.NutsSession;
+import net.thevpc.nuts.*;
 import net.thevpc.nuts.toolbox.nsh.SimpleJShellBuiltin;
 import net.thevpc.nuts.toolbox.nsh.jshell.JShellExecutionContext;
 
 import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.attribute.BasicFileAttributeView;
-import java.nio.file.attribute.BasicFileAttributes;
-import java.nio.file.attribute.FileTime;
-import java.nio.file.attribute.UserPrincipal;
+import java.time.Instant;
 import java.util.Stack;
 
 /**
@@ -50,8 +43,8 @@ public class TestCommand extends SimpleJShellBuiltin {
         super("test", DEFAULT_SUPPORT, Options.class);
     }
 
-    private static Path evalPath(Eval a, JShellExecutionContext context) {
-        return Paths.get(evalStr(a, context));
+    private static NutsPath evalPath(Eval a, JShellExecutionContext context) {
+        return NutsPath.of(evalStr(a, context),context.getSession());
     }
 
     private static String evalStr(Eval a, JShellExecutionContext context) {
@@ -321,24 +314,24 @@ public class TestCommand extends SimpleJShellBuiltin {
                     return pp.length() > 0 ? 1 : 0;
                 }
                 case "-b": {
-                    Path pp = evalPath(arg, context);
+                    NutsPath pp = evalPath(arg, context);
                     return 1;
                 }
                 case "-c": {
-                    Path pp = evalPath(arg, context);
+                    NutsPath pp = evalPath(arg, context);
                     return 1;
                 }
                 case "-d": {
-                    Path pp = evalPath(arg, context);
-                    return Files.isDirectory(pp) ? 0 : 1;
+                    NutsPath pp = evalPath(arg, context);
+                    return pp.isDirectory() ? 0 : 1;
                 }
                 case "-f": {
-                    Path pp = evalPath(arg, context);
-                    return Files.isRegularFile(pp) ? 0 : 1;
+                    NutsPath pp = evalPath(arg, context);
+                    return pp.isRegularFile() ? 0 : 1;
                 }
                 case "-e": {
-                    Path pp = evalPath(arg, context);
-                    return Files.exists(pp) ? 0 : 1;
+                    NutsPath pp = evalPath(arg, context);
+                    return pp.exists() ? 0 : 1;
                 }
                 case "-g":
                 case "-G":
@@ -350,7 +343,7 @@ public class TestCommand extends SimpleJShellBuiltin {
                 case "-u": {
                     if (arg instanceof EvalArg) {
                         EvalArg a = (EvalArg) arg;
-                        Path pp = evalPath(arg, context);
+                        NutsPath pp = evalPath(arg, context);
                         //FILE exists and is a socket
                         return 1;//Files.exists(Paths.get(path)) ? 0 : 1;
                     }
@@ -358,23 +351,20 @@ public class TestCommand extends SimpleJShellBuiltin {
                 }
                 case "-N": {
                     try {
-                        Path pp = evalPath(arg, context);
-                        BasicFileAttributeView view = Files.getFileAttributeView(pp, BasicFileAttributeView.class);
-                        BasicFileAttributes attributes = view.readAttributes();
-                        // calculate time of modification and creation.
-                        FileTime lastAccessTime = attributes.lastAccessTime();
-                        FileTime lastModifedTime = attributes.lastModifiedTime();
+                        NutsPath pp = evalPath(arg, context);
+                        Instant lastAccessTime = pp.getLastAccessInstant();
+                        Instant lastModifedTime = pp.getLastModifiedInstant();
 //                            FileTime createTime = attributes.creationTime();
-                        return (lastModifedTime.compareTo(lastAccessTime) >= 0) ? 0 : 1;
+                        return lastModifedTime!=null && lastAccessTime!=null && (lastModifedTime.compareTo(lastAccessTime) >= 0) ? 0 : 1;
                     } catch (Exception ex) {
                         return 1;
                     }
                 }
                 case "-O": {
                     try {
-                        Path pp = evalPath(arg, context);
-                        UserPrincipal up = Files.getOwner(pp);
-                        return (up.getName().equals(System.getProperty("user.name"))) ? 0 : 1;
+                        NutsPath pp = evalPath(arg, context);
+                        String up = pp.owner();
+                        return (up!=null && up.equals(System.getProperty("user.name"))) ? 0 : 1;
                     } catch (Exception ex) {
                         return 1;
                     }
@@ -383,32 +373,32 @@ public class TestCommand extends SimpleJShellBuiltin {
                     EvalArg a = (EvalArg) arg;
                     String path = a.arg.getString();
                     try {
-                        Path pp = evalPath(arg, context);
-                        return Files.exists(pp) && Files.isReadable(pp) ? 0 : 1;
+                        NutsPath pp = evalPath(arg, context);
+                        return pp.exists() && pp.getPermissions().contains(NutsPathPermission.CAN_READ) ? 0 : 1;
                     } catch (Exception ex) {
                         return 1;
                     }
                 }
                 case "-w": {
                     try {
-                        Path pp = evalPath(arg, context);
-                        return Files.exists(pp) && Files.isWritable(pp) ? 0 : 1;
+                        NutsPath pp = evalPath(arg, context);
+                        return pp.exists() && pp.getPermissions().contains(NutsPathPermission.CAN_WRITE) ? 0 : 1;
                     } catch (Exception ex) {
                         return 1;
                     }
                 }
                 case "-x": {
                     try {
-                        Path pp = evalPath(arg, context);
-                        return Files.exists(pp) && Files.isExecutable(pp) ? 0 : 1;
+                        NutsPath pp = evalPath(arg, context);
+                        return pp.exists() && pp.getPermissions().contains(NutsPathPermission.CAN_EXECUTE) ? 0 : 1;
                     } catch (Exception ex) {
                         return 1;
                     }
                 }
                 case "-s": {
                     try {
-                        Path pp = evalPath(arg, context);
-                        return Files.isRegularFile(pp) && Files.size(pp) > 0 ? 0 : 1;
+                        NutsPath pp = evalPath(arg, context);
+                        return pp.isRegularFile() && pp.getContentLength() > 0 ? 0 : 1;
                     } catch (Exception ex) {
                         return 1;
                     }
@@ -490,34 +480,34 @@ public class TestCommand extends SimpleJShellBuiltin {
                     return Integer.compare(s1, s2) <= 0 ? 0 : 1;
                 }
                 case "-ef": {
-                    Path s1 = evalPath(arg1, context);
-                    Path s2 = evalPath(arg2, context);
+                    NutsPath s1 = evalPath(arg1, context);
+                    NutsPath s2 = evalPath(arg2, context);
                     try {
-                        Object at1 = Files.getFileAttributeView(s1, BasicFileAttributeView.class).readAttributes().fileKey();
-                        Object at2 = Files.getFileAttributeView(s2, BasicFileAttributeView.class).readAttributes().fileKey();
-                        return (at1 != null && at1.equals(at2)) ? 0 : 1;
+//                        Object at1 = Files.getFileAttributeView(s1, BasicFileAttributeView.class).readAttributes().fileKey();
+//                        Object at2 = Files.getFileAttributeView(s2, BasicFileAttributeView.class).readAttributes().fileKey();
+                        return (s1.normalize().toAbsolute().equals(s2.normalize().toAbsolute())) ? 0 : 1;
                     } catch (Exception ex) {
                         return 1;
                     }
                 }
                 case "-nt": {
-                    Path s1 = evalPath(arg1, context);
-                    Path s2 = evalPath(arg2, context);
+                    NutsPath s1 = evalPath(arg1, context);
+                    NutsPath s2 = evalPath(arg2, context);
                     try {
-                        FileTime at1 = Files.getFileAttributeView(s1, BasicFileAttributeView.class).readAttributes().lastModifiedTime();
-                        FileTime at2 = Files.getFileAttributeView(s2, BasicFileAttributeView.class).readAttributes().lastModifiedTime();
-                        return (at1.compareTo(at2) > 0) ? 0 : 1;
+                        Instant at1 = s1.getLastModifiedInstant();
+                        Instant at2 = s2.getLastModifiedInstant();
+                        return (at1!=null && at1.compareTo(at2) > 0) ? 0 : 1;
                     } catch (Exception ex) {
                         return 1;
                     }
                 }
                 case "-ot": {
-                    Path s1 = evalPath(arg1, context);
-                    Path s2 = evalPath(arg2, context);
+                    NutsPath s1 = evalPath(arg1, context);
+                    NutsPath s2 = evalPath(arg2, context);
                     try {
-                        FileTime at1 = Files.getFileAttributeView(s1, BasicFileAttributeView.class).readAttributes().lastModifiedTime();
-                        FileTime at2 = Files.getFileAttributeView(s2, BasicFileAttributeView.class).readAttributes().lastModifiedTime();
-                        return (at1.compareTo(at2) < 0) ? 0 : 1;
+                        Instant at1 = s1.getLastModifiedInstant();
+                        Instant at2 = s2.getLastModifiedInstant();
+                        return (at1!=null && at1.compareTo(at2) < 0) ? 0 : 1;
                     } catch (Exception ex) {
                         return 1;
                     }

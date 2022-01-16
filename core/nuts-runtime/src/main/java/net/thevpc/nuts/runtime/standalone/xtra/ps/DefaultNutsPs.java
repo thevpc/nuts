@@ -1,6 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.xtra.ps;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.standalone.session.NutsSessionUtils;
 import net.thevpc.nuts.runtime.standalone.util.iter.IteratorBuilder;
 
 import java.io.File;
@@ -29,7 +30,7 @@ public class DefaultNutsPs implements NutsPs {
     }
 
     protected void checkSession() {
-        NutsWorkspaceUtils.checkSession(ws, session);
+        NutsSessionUtils.checkSession(ws, session);
     }
 
     @Override

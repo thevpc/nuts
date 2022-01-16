@@ -53,6 +53,10 @@ public class DefaultNutsArtifactExecutable extends AbstractNutsExecutableCommand
         this.execCommand = execCommand;
 
         List<String> executorOptionsList = new ArrayList<>();
+        NutsArtifactCall exc = def.getDescriptor().getExecutor();
+        if(exc!=null){
+
+        }
         for (String option : executorOptions) {
             NutsArgument a = NutsArgument.of(option, session);
             if (a.getKey().getString().equals("--nuts-auto-install")) {

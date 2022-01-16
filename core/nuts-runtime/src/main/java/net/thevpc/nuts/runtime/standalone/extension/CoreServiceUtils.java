@@ -47,9 +47,8 @@ public final class CoreServiceUtils {
         LinkedHashSet<String> found = new LinkedHashSet<>();
         try (final InputStream jarStream = url.openStream()) {
             if (jarStream != null) {
-                ZipUtils.visitZipStream(jarStream, s -> s.equals("META-INF/services/" + service.getName()), new InputStreamVisitor() {
-                    @Override
-                    public boolean visit(String path, InputStream inputStream) throws IOException {
+                ZipUtils.visitZipStream(jarStream, (path, inputStream) -> {
+                    if(path.equals("META-INF/services/" + service.getName())) {
                         BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
                         String line = null;
                         while ((line = reader.readLine()) != null) {
@@ -60,6 +59,7 @@ public final class CoreServiceUtils {
                         }
                         return false;
                     }
+                    return true;
                 },session);
             }
         } catch (IOException ex) {

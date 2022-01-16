@@ -24,6 +24,7 @@
 package net.thevpc.nuts.runtime.standalone.workspace;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.standalone.session.NutsSessionUtils;
 import net.thevpc.nuts.runtime.standalone.util.collections.ClassClassMap;
 import net.thevpc.nuts.runtime.standalone.util.collections.ListMap;
 import net.thevpc.nuts.runtime.standalone.descriptor.DefaultNutsEnvConditionBuilder;
@@ -239,7 +240,7 @@ public class DefaultNutsWorkspaceFactory implements NutsWorkspaceFactory {
     }
 
     private void checkSession(NutsSession session) {
-        NutsWorkspaceUtils.checkSession(workspace, session);
+        NutsSessionUtils.checkSession(workspace, session);
     }
 
     private Object resolveClassSource(Class implementation) {
@@ -520,11 +521,11 @@ public class DefaultNutsWorkspaceFactory implements NutsWorkspaceFactory {
     private NutsSession validLogSession(NutsSession session) {
         if (session == null) {
             //this is a bug
-            return NutsWorkspaceUtils.defaultSession(workspace);
+            return NutsSessionUtils.defaultSession(workspace);
         }
         if (session.getTerminal() == null) {
             //chances are that we are creating the session or the session's Terminal
-            return NutsWorkspaceUtils.defaultSession(workspace);
+            return NutsSessionUtils.defaultSession(workspace);
         }
         return session;
     }
@@ -675,11 +676,11 @@ public class DefaultNutsWorkspaceFactory implements NutsWorkspaceFactory {
         private NutsSession validLogSession(NutsSession session) {
             if (session == null) {
                 //this is a bug
-                return NutsWorkspaceUtils.defaultSession(workspace);
+                return NutsSessionUtils.defaultSession(workspace);
             }
             if (session.getTerminal() == null) {
                 //chances are that we are creating the session or the session's Terminal
-                return NutsWorkspaceUtils.defaultSession(workspace);
+                return NutsSessionUtils.defaultSession(workspace);
             }
             return session;
         }

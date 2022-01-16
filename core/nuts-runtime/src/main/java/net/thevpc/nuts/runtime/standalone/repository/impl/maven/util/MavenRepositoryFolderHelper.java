@@ -40,6 +40,7 @@ import java.util.TreeSet;
 import java.util.logging.Level;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.standalone.id.util.NutsIdUtils;
 import net.thevpc.nuts.runtime.standalone.repository.impl.NutsRepositoryExt;
 import net.thevpc.nuts.runtime.standalone.util.CoreNutsConstants;
 import net.thevpc.nuts.runtime.standalone.version.DefaultNutsVersion;
@@ -104,7 +105,7 @@ public class MavenRepositoryFolderHelper {
     }
 
     public NutsPath getLocalGroupAndArtifactFile(NutsId id, NutsSession session) {
-        NutsWorkspaceUtils.of(session).checkShortId(id);
+        NutsIdUtils.checkShortId(id,session);
         NutsPath groupFolder = getStoreLocation().resolve(id.getGroupId().replace('.', File.separatorChar));
         return groupFolder.resolve(id.getArtifactId());
     }

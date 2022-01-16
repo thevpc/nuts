@@ -20,9 +20,10 @@ net.thevpc.nuts.runtime.standalone.descriptor.parser.JarDescriptorContentParserC
 net.thevpc.nuts.runtime.standalone.descriptor.parser.NshDescriptorContentParserComponent
 
 net.thevpc.nuts.runtime.standalone.executor.java.JavaExecutorComponent
-net.thevpc.nuts.runtime.standalone.executor.java.PomAndUnsupportedJavaExecutorComponent
-net.thevpc.nuts.runtime.standalone.executor.java.WarExecutorComponent
-net.thevpc.nuts.runtime.standalone.executor.java.JavaSourceExecutorComponent
+net.thevpc.nuts.runtime.standalone.executor.pom.PomAndUnsupportedJavaExecutorComponent
+net.thevpc.nuts.runtime.standalone.executor.war.WarExecutorComponent
+net.thevpc.nuts.runtime.standalone.executor.zip.ZipExecutorComponent
+net.thevpc.nuts.runtime.standalone.executor.javasrc.JavaSourceExecutorComponent
 net.thevpc.nuts.runtime.standalone.executor.system.ProcessExecutorComponent
 
 net.thevpc.nuts.runtime.standalone.repository.impl.maven.MavenRepositoryFactoryComponent

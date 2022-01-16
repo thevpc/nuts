@@ -86,9 +86,6 @@ public class DefaultNutsDependency implements NutsDependency {
         this.type = NutsUtilStrings.trimToNull(type);
         this.properties = QueryStringParser.formatSortedPropertiesQuery(properties, session);
         this.session = session;
-//        if (toString().contains("jai_imageio")) {
-//            System.out.print("");
-//        }
     }
 
     @Override

@@ -11,6 +11,7 @@ import net.thevpc.nuts.runtime.standalone.id.filter.NutsSearchIdByDescriptor;
 import net.thevpc.nuts.runtime.standalone.id.util.NutsIdUtils;
 import net.thevpc.nuts.runtime.standalone.repository.NutsRepositoryHelper;
 import net.thevpc.nuts.runtime.standalone.repository.cmd.NutsRepositorySupportedAction;
+import net.thevpc.nuts.runtime.standalone.session.NutsSessionUtils;
 import net.thevpc.nuts.runtime.standalone.util.iter.IteratorBuilder;
 import net.thevpc.nuts.runtime.standalone.util.iter.IteratorUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceExt;
@@ -150,7 +151,7 @@ public class NutsRepositoryMirroringHelper {
 
     public void push(NutsPushRepositoryCommand cmd) {
         NutsSession session = cmd.getSession();
-        NutsWorkspaceUtils.checkSession(getWorkspace(), session);
+        NutsSessionUtils.checkSession(getWorkspace(), session);
         NutsId id = cmd.getId();
         String repository = cmd.getRepository();
         NutsSession nonTransitiveSession = session.copy().setTransitive(false);

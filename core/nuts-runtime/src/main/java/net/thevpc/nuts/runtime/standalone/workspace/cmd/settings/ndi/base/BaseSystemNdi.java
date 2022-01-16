@@ -2,11 +2,11 @@ package net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.ndi.base;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.id.util.NutsIdUtils;
+import net.thevpc.nuts.runtime.standalone.session.NutsSessionUtils;
 import net.thevpc.nuts.runtime.standalone.shell.NutsShellHelper;
 import net.thevpc.nuts.runtime.standalone.shell.ReplaceString;
 import net.thevpc.nuts.runtime.standalone.shell.ScriptBuilder;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
-import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.util.PathInfo;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.ndi.*;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.ndi.script.FromTemplateScriptBuilder;
@@ -262,7 +262,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
     public PathInfo[] addScript(NdiScriptOptions options, String[] all) {
         List<String> idsToInstall = Arrays.asList(all);
         NutsSession session = options.getSession();
-        NutsWorkspaceUtils.checkSession(getSession().getWorkspace(), options.getSession());
+        NutsSessionUtils.checkSession(getSession().getWorkspace(), options.getSession());
         Path workspaceLocation = session.locations().getWorkspaceLocation().toFile();
         List<PathInfo> result = new ArrayList<>();
         Boolean systemWideConfig = options.getLauncher().getSystemWideConfig();

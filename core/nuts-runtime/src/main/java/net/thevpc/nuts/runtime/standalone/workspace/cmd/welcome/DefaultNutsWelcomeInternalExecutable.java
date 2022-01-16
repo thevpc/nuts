@@ -51,7 +51,7 @@ public class DefaultNutsWelcomeInternalExecutable extends DefaultInternalNutsExe
             welcome.put("name", NutsTexts.of(session).ofStyled("nuts", NutsTextStyle.primary(1)));
             welcome.put("long-name", "Network Updatable Things Services");
             welcome.put("description", "The Free and Open Source Package Manager for Java (TM) and other Things ...");
-            welcome.put("url", NutsPath.of("http://github.com/thevpc/nuts",session));
+            welcome.put("url", NutsPath.of("https://github.com/thevpc/nuts",session));
             welcome.put("author", "thevpc");
             welcome.put("api-id", session.getWorkspace().getApiId().builder().setVersion("").build());
             welcome.put("api-version", session.getWorkspace().getApiVersion());

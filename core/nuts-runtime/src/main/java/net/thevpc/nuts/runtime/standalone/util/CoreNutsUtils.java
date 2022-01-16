@@ -24,6 +24,7 @@
 package net.thevpc.nuts.runtime.standalone.util;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.standalone.descriptor.util.NutsDescriptorUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.StringPlaceHolderParser;
 
@@ -296,7 +297,7 @@ public class CoreNutsUtils {
         }
         if (def.getDescriptor() != null) {
             x.put("descriptor", def.getDescriptor().formatter().setSession(session).format());
-            x.put("effective-descriptor", NutsWorkspaceUtils.of(session).getEffectiveDescriptor(def)
+            x.put("effective-descriptor", NutsDescriptorUtils.getEffectiveDescriptor(def,session)
                     .formatter().setSession(session).format());
         }
         return x;

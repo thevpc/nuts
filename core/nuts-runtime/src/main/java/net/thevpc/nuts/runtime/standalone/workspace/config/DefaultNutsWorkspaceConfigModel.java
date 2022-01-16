@@ -43,6 +43,7 @@ import net.thevpc.nuts.runtime.standalone.repository.impl.main.NutsInstalledRepo
 import net.thevpc.nuts.runtime.standalone.repository.impl.maven.util.MavenUtils;
 import net.thevpc.nuts.runtime.standalone.repository.util.NutsRepositoryUtils;
 import net.thevpc.nuts.runtime.standalone.security.ReadOnlyNutsWorkspaceOptions;
+import net.thevpc.nuts.runtime.standalone.session.NutsSessionUtils;
 import net.thevpc.nuts.runtime.standalone.util.CoreNutsConstants;
 import net.thevpc.nuts.runtime.standalone.util.CoreNutsUtils;
 import net.thevpc.nuts.runtime.standalone.util.TimePeriod;
@@ -117,7 +118,7 @@ public class DefaultNutsWorkspaceConfigModel {
         this.bootClassWorldURLs = bOptions.getClassWorldURLs() == null ? null : Arrays.copyOf(bOptions.getClassWorldURLs(), bOptions.getClassWorldURLs().length);
         workspaceSystemTerminalAdapter = new WorkspaceSystemTerminalAdapter(ws);
 
-        this.pathExpansionConverter = new NutsWorkspaceVarExpansionFunction(NutsWorkspaceUtils.defaultSession(ws));
+        this.pathExpansionConverter = new NutsWorkspaceVarExpansionFunction(NutsSessionUtils.defaultSession(ws));
         this.bootModel = (DefaultNutsBootModel) ((DefaultNutsBootManager) ws.boot()).getModel();
         addPathFactory(new FilePath.FilePathFactory(ws));
         addPathFactory(new ClassLoaderPath.ClasspathFactory(ws));
@@ -172,7 +173,7 @@ public class DefaultNutsWorkspaceConfigModel {
             return false;
         }
         NutsWorkspaceUtils.of(session).checkReadOnly();
-        NutsWorkspaceUtils.checkSession(this.ws, session);
+        NutsSessionUtils.checkSession(this.ws, session);
         boolean ok = false;
         session.security().checkAllowed(NutsConstants.Permissions.SAVE, "save");
         NutsPath apiVersionSpecificLocation = session.locations().getStoreLocation(session.getWorkspace().getApiId(), NutsStoreLocation.CONFIG);
@@ -533,7 +534,7 @@ public class DefaultNutsWorkspaceConfigModel {
 
     public boolean loadWorkspace(NutsSession session) {
         try {
-            NutsWorkspaceUtils.checkSession(ws, session);
+            NutsSessionUtils.checkSession(ws, session);
             NutsWorkspaceConfigBoot _config = parseBootConfig(session);
             if (_config == null) {
                 return false;
@@ -737,7 +738,7 @@ public class DefaultNutsWorkspaceConfigModel {
     }
 
     public NutsUserConfig getUser(String userId, NutsSession session) {
-        NutsWorkspaceUtils.checkSession(ws, session);
+        NutsSessionUtils.checkSession(ws, session);
         NutsUserConfig _config = getSecurity(userId);
         if (_config == null) {
             if (NutsConstants.Users.ADMIN.equals(userId) || NutsConstants.Users.ANONYMOUS.equals(userId)) {
@@ -882,7 +883,7 @@ public class DefaultNutsWorkspaceConfigModel {
         if (supported == null) {
             throw new NutsExtensionNotFoundException(session, NutsAuthenticationAgent.class, authenticationAgent);
         }
-        NutsWorkspaceUtils.setSession(supported, session);
+        NutsSessionUtils.setSession(supported, session);
         return supported;
     }
 
@@ -1034,7 +1035,7 @@ public class DefaultNutsWorkspaceConfigModel {
                 + "workspaceBootId=" + s1
                 + ", workspaceRuntimeId=" + s2
                 + ", workspace=" + ((currentConfig == null) ? "NULL" : ("'"
-                + ((DefaultNutsWorkspaceLocationManager) (NutsWorkspaceUtils.defaultSession(ws))
+                + ((DefaultNutsWorkspaceLocationManager) (NutsSessionUtils.defaultSession(ws))
                 .locations()).getModel().getWorkspaceLocation() + '\''))
                 + '}';
     }
@@ -1398,7 +1399,7 @@ public class DefaultNutsWorkspaceConfigModel {
     }
 
     public void setTerminal(NutsSessionTerminal terminal, NutsSession session) {
-        NutsWorkspaceUtils.checkSession(ws, session);
+        NutsSessionUtils.checkSession(ws, session);
         if (terminal == null) {
             terminal = createTerminal(session);
         }
@@ -1529,7 +1530,7 @@ public class DefaultNutsWorkspaceConfigModel {
         }
 
         public NutsSystemTerminalBase getBase() {
-            return NutsWorkspaceUtils.defaultSession(workspace).config()
+            return NutsSessionUtils.defaultSession(workspace).config()
                     .getSystemTerminal();
         }
     }
@@ -1594,7 +1595,7 @@ public class DefaultNutsWorkspaceConfigModel {
         @Override
         public NutsId getApiId() {
             String v = getStoredConfigApi().getApiVersion();
-            NutsSession ws = NutsWorkspaceUtils.defaultSession(DefaultNutsWorkspaceConfigModel.this.ws);
+            NutsSession ws = NutsSessionUtils.defaultSession(DefaultNutsWorkspaceConfigModel.this.ws);
 
             return v == null ? null
                     : NutsId.of(NutsConstants.Ids.NUTS_API + "#" + v, ws);
@@ -1603,7 +1604,7 @@ public class DefaultNutsWorkspaceConfigModel {
         @Override
         public NutsId getRuntimeId() {
             String v = getStoredConfigApi().getRuntimeId();
-            NutsSession ws = NutsWorkspaceUtils.defaultSession(DefaultNutsWorkspaceConfigModel.this.ws);
+            NutsSession ws = NutsSessionUtils.defaultSession(DefaultNutsWorkspaceConfigModel.this.ws);
             return v == null ? null : v.contains("#")
                     ? NutsId.of(v, ws)
                     : NutsId.of(NutsConstants.Ids.NUTS_RUNTIME + "#" + v, ws);
@@ -1643,7 +1644,7 @@ public class DefaultNutsWorkspaceConfigModel {
     private class InvalidFilePathFactory implements NutsPathFactory {
         @Override
         public NutsSupported<NutsPathSPI> createPath(String path, NutsSession session, ClassLoader classLoader) {
-            NutsWorkspaceUtils.checkSession(getWorkspace(), session);
+            NutsSessionUtils.checkSession(getWorkspace(), session);
             try {
                 return NutsSupported.of(1, () -> new InvalidFilePath(path, session));
             } catch (Exception ex) {

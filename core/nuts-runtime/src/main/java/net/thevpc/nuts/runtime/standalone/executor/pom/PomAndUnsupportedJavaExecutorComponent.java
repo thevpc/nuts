@@ -23,7 +23,7 @@
  * <br>
  * ====================================================================
 */
-package net.thevpc.nuts.runtime.standalone.executor.java;
+package net.thevpc.nuts.runtime.standalone.executor.pom;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.executor.AbstractSyncIProcessExecHelper;
@@ -61,6 +61,7 @@ public class PomAndUnsupportedJavaExecutorComponent implements NutsExecutorCompo
             switch (NutsUtilStrings.trim(def.getDescriptor().getPackaging())){
                 case "jar":
                 case "war":
+                case "zip":
                 {
                     return NO_SUPPORT;
                 }

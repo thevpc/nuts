@@ -27,13 +27,13 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.event.DefaultNutsWorkspaceEvent;
 import net.thevpc.nuts.runtime.standalone.io.printstream.NutsPrintStreamNull;
 import net.thevpc.nuts.runtime.standalone.io.terminal.*;
+import net.thevpc.nuts.runtime.standalone.session.NutsSessionUtils;
 import net.thevpc.nuts.runtime.standalone.util.CorePlatformUtils;
 import net.thevpc.nuts.runtime.standalone.session.DefaultNutsSession;
 import net.thevpc.nuts.runtime.standalone.app.cmdline.DefaultNutsArgument;
 import net.thevpc.nuts.runtime.optional.jansi.OptionalJansi;
 import net.thevpc.nuts.runtime.standalone.workspace.CoreNutsBootOptions;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceExt;
-import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.config.NutsWorkspaceModel;
 import net.thevpc.nuts.spi.NutsDefaultTerminalSpec;
 import net.thevpc.nuts.spi.NutsSystemTerminalBase;
@@ -249,14 +249,14 @@ public class DefaultNutsBootModel implements NutsBootModel {
         } else {
             try {
                 syst = new DefaultSystemTerminal(terminal);
-                NutsWorkspaceUtils.setSession(syst, session);
+                NutsSessionUtils.setSession(syst, session);
             } catch (Exception ex) {
                 _LOGOP(session).level(Level.FINEST).verb(NutsLogVerb.WARNING)
                         .log(NutsMessage.jstyle("unable to create system terminal : {0}", ex));
                 DefaultNutsSystemTerminalBase b = new DefaultNutsSystemTerminalBase();
-                NutsWorkspaceUtils.setSession(b, session);
+                NutsSessionUtils.setSession(b, session);
                 syst = new DefaultSystemTerminal(b);
-                NutsWorkspaceUtils.setSession(syst, session);
+                NutsSessionUtils.setSession(syst, session);
             }
         }
         return syst;

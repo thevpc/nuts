@@ -24,6 +24,7 @@
 package net.thevpc.nuts.runtime.standalone.repository.cmd.deploy;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.standalone.id.util.NutsIdUtils;
 import net.thevpc.nuts.runtime.standalone.io.util.NutsStreamOrPath;
 import net.thevpc.nuts.runtime.standalone.repository.cmd.NutsRepositoryCommandBase;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
@@ -121,7 +122,7 @@ public abstract class AbstractNutsDeployRepositoryCommand extends NutsRepository
         checkSession();
         NutsSession session = getSession();
         getRepo().security().setSession(session).checkAllowed(NutsConstants.Permissions.DEPLOY, "deploy");
-        NutsWorkspaceUtils.of(session).checkNutsId(getId());
+        NutsIdUtils.checkNutsId(getId(),session);
         if (this.getContent() == null) {
             throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("missing Content"));
         }

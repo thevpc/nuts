@@ -2,5 +2,5 @@
 ##:063:  /\ \ \ _  __/ /______ ##  ##N##etwork ##U##pdatable ##T##hings ##S##ervices
 ##:099: /  \/ / / / / __/ ___/ ##  The Free and Open Source Package Manager
 ##:135:/ /\  / /_/ / /_(__  )  ##  for ##:_:Java## and other ##:_:Things## ... by ##thevpc##
-##:171:\_\ \/\__,_/\__/____/   ##  ##:_:http://github.com/thevpc/nuts##
+##:171:\_\ \/\__,_/\__/____/   ##  ##:_:https://github.com/thevpc/nuts##
     version ##:version:${nuts.workspace-runtime.version}##

@@ -155,9 +155,9 @@ public class NutsPathFromSPI extends NutsPathBase {
     public NutsPath toCompressedForm() {
         NutsPath n = base.toCompressedForm(this);
         if (n == null) {
-            return new NutsCompressedPath(this);
+            return new NutsCompressedPath(this,new DefaultNutsCompressedPathHelper());
         }
-        return this;
+        return n;
     }
 
     @Override

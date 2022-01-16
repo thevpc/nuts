@@ -3,9 +3,9 @@ package net.thevpc.nuts.runtime.standalone.io.path;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.io.path.spi.FilePath;
 import net.thevpc.nuts.runtime.standalone.io.path.spi.URLPath;
+import net.thevpc.nuts.runtime.standalone.session.NutsSessionUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.config.DefaultNutsWorkspaceConfigManager;
 import net.thevpc.nuts.runtime.standalone.workspace.config.DefaultNutsWorkspaceConfigModel;
-import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
 import net.thevpc.nuts.spi.NutsPathSPI;
 import net.thevpc.nuts.spi.NutsPaths;
 import net.thevpc.nuts.spi.NutsPathFactory;
@@ -90,7 +90,7 @@ public class DefaultNutsPaths implements NutsPaths {
     }
 
     private void checkSession(NutsSession session) {
-        NutsWorkspaceUtils.checkSession(ws, session);
+        NutsSessionUtils.checkSession(ws, session);
     }
 
     private DefaultNutsWorkspaceConfigModel getModel(NutsSession session) {

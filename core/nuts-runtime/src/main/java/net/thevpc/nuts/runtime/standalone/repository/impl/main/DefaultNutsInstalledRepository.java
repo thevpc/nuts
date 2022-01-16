@@ -25,6 +25,7 @@ package net.thevpc.nuts.runtime.standalone.repository.impl.main;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.definition.DefaultNutsInstallInfo;
+import net.thevpc.nuts.runtime.standalone.id.util.NutsIdUtils;
 import net.thevpc.nuts.runtime.standalone.io.util.FolderObjectIterator;
 import net.thevpc.nuts.runtime.standalone.io.util.NutsInstallStatusIdFilter;
 import net.thevpc.nuts.runtime.standalone.repository.cmd.deploy.AbstractNutsDeployRepositoryCommand;
@@ -38,6 +39,7 @@ import net.thevpc.nuts.runtime.standalone.repository.cmd.updatestats.AbstractNut
 import net.thevpc.nuts.runtime.standalone.repository.impl.AbstractNutsRepository;
 import net.thevpc.nuts.runtime.standalone.repository.impl.NutsRepositoryExt0;
 import net.thevpc.nuts.runtime.standalone.repository.impl.NutsRepositoryFolderHelper;
+import net.thevpc.nuts.runtime.standalone.session.NutsSessionUtils;
 import net.thevpc.nuts.runtime.standalone.util.CoreNutsUtils;
 import net.thevpc.nuts.runtime.standalone.util.collections.CoreCollectionUtils;
 import net.thevpc.nuts.runtime.standalone.util.collections.LRUMap;
@@ -69,9 +71,9 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
 
     public DefaultNutsInstalledRepository(NutsWorkspace ws, CoreNutsBootOptions bOptions) {
         this.workspace = ws;
-        this.initSession = NutsWorkspaceUtils.defaultSession(ws);
+        this.initSession = NutsSessionUtils.defaultSession(ws);
         this.deployments = new NutsRepositoryFolderHelper(this,
-                NutsWorkspaceUtils.defaultSession(ws),
+                NutsSessionUtils.defaultSession(ws),
                 NutsPath.of(bOptions.getStoreLocation(NutsStoreLocation.LIB), initSession).resolve(NutsConstants.Folders.ID)
                 , false,
                 "lib", NutsElements.of(initSession).ofObject().set("repoKind", "lib").build()
@@ -257,7 +259,7 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
     public void uninstall(NutsDefinition def, NutsSession session) {
         boolean succeeded = false;
         NutsWorkspaceUtils.of(session).checkReadOnly();
-        NutsWorkspaceUtils.checkSession(workspace, session);
+        NutsSessionUtils.checkSession(workspace, session);
         NutsId id = def.getId();
         NutsInstallStatus installStatus = getInstallStatus(id, session);
         if (!installStatus.isInstalled()) {
@@ -420,7 +422,7 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
 
     public InstallInfoConfig getInstallInfoConfig(NutsId id, NutsPath path, NutsSession session) {
         if (id == null && path == null) {
-            NutsWorkspaceUtils.of(session).checkShortId(id);
+            NutsIdUtils.checkShortId(id,session);
         }
         if (path == null) {
             path = getPath(id, NUTS_INSTALL_FILE, session);

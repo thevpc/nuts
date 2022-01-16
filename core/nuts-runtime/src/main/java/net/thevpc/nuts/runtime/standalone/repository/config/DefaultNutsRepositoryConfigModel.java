@@ -4,6 +4,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.repository.*;
 import net.thevpc.nuts.runtime.standalone.repository.impl.NutsRepositoryExt;
 import net.thevpc.nuts.runtime.standalone.repository.util.NutsRepositoryUtils;
+import net.thevpc.nuts.runtime.standalone.session.NutsSessionUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.config.NutsRepositoryConfigManagerExt;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.config.NutsStoreLocationsMap;
@@ -415,7 +416,7 @@ public class DefaultNutsRepositoryConfigModel implements NutsRepositoryConfigMod
 //    }
     @Override
     public boolean save(boolean force, NutsSession session) {
-        NutsWorkspaceUtils.checkSession(repository.getWorkspace(), session);
+        NutsSessionUtils.checkSession(repository.getWorkspace(), session);
         boolean ok = false;
         if (force || (!session.config().isReadOnly() && isConfigurationChanged())) {
             NutsWorkspaceUtils.of(session).checkReadOnly();

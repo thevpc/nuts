@@ -102,7 +102,15 @@ public class ShNutsShellHelper extends AbstractNixNutsShellHelper {
             switch (status) {
                 case START: {
                     switch (c) {
-                        case ' ': {
+                        case ' ':
+                        case '\t':
+                        {
+                            //ignore
+                            break;
+                        }
+                        case '\r':
+                        case '\n': //support multiline commands
+                        {
                             //ignore
                             break;
                         }

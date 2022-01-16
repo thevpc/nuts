@@ -8,11 +8,11 @@ package net.thevpc.nuts.runtime.standalone.extension;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.dependency.util.NutsClassLoaderUtils;
 import net.thevpc.nuts.runtime.standalone.id.util.NutsIdUtils;
+import net.thevpc.nuts.runtime.standalone.session.NutsSessionUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.CoreNutsBootOptions;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceFactory;
 import net.thevpc.nuts.runtime.standalone.workspace.config.NutsWorkspaceConfigManagerExt;
 import net.thevpc.nuts.runtime.standalone.io.printstream.NutsFormattedPrintStream;
-import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.config.NutsWorkspaceConfigBoot;
 import net.thevpc.nuts.runtime.standalone.workspace.DefaultNutsWorkspaceFactory;
 import net.thevpc.nuts.runtime.standalone.util.filters.CoreFilterUtils;
@@ -346,7 +346,7 @@ public class DefaultNutsWorkspaceExtensionModel {
     }
 
     public void loadExtensions(NutsSession session, NutsId... extensions) {
-        NutsWorkspaceUtils.checkSession(ws, session);
+        NutsSessionUtils.checkSession(ws, session);
         boolean someUpdates = false;
         for (NutsId extension : extensions) {
             if (extension != null) {
@@ -432,7 +432,7 @@ public class DefaultNutsWorkspaceExtensionModel {
 
     public NutsWorkspaceExtension wireExtension(NutsId id, NutsFetchCommand options) {
         NutsSession session = options.getSession();
-        NutsWorkspaceUtils.checkSession(ws, session);
+        NutsSessionUtils.checkSession(ws, session);
         if (id == null) {
             throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("extension Id could not be null"));
         }
@@ -582,7 +582,7 @@ public class DefaultNutsWorkspaceExtensionModel {
     public String[] getExtensionRepositoryLocations(NutsId appId) {
         //should parse this form config?
         //or should be parse from and extension component?
-        String repos = NutsWorkspaceUtils.defaultSession(ws).config()
+        String repos = NutsSessionUtils.defaultSession(ws).config()
                 .getConfigProperty("nuts.bootstrap-repository-locations").getString( "") + ";" //                + NutsConstants.BootstrapURLs.LOCAL_NUTS_FOLDER
                 //                + ";" + NutsConstants.BootstrapURLs.REMOTE_NUTS_GIT
                 ;
@@ -602,7 +602,7 @@ public class DefaultNutsWorkspaceExtensionModel {
     }
 
     private NutsWorkspaceConfigManagerExt configExt() {
-        return NutsWorkspaceConfigManagerExt.of(NutsWorkspaceUtils.defaultSession(ws).config());
+        return NutsWorkspaceConfigManagerExt.of(NutsSessionUtils.defaultSession(ws).config());
     }
     //    @Override
 //    public boolean addExtension(NutsId extensionId) {

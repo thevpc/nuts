@@ -9,6 +9,7 @@ import java.util.Objects;
 
 import net.thevpc.nuts.runtime.standalone.app.cmdline.DefaultNutsCommandLine;
 import net.thevpc.nuts.runtime.standalone.app.cmdline.NutsCommandLineUtils;
+import net.thevpc.nuts.runtime.standalone.session.NutsSessionUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.util.NutsConfigurableHelper;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
@@ -51,7 +52,7 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
             if (session == null) {
                 this.session = workspace.createSession();
             } else {
-                NutsWorkspaceUtils.checkSession(workspace, session);
+                NutsSessionUtils.checkSession(workspace, session);
                 this.session = session.copy();
             }
             this.workspace = this.session.getWorkspace();

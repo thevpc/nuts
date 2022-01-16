@@ -6,6 +6,8 @@
 package net.thevpc.nuts.runtime.standalone.workspace;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.standalone.id.util.NutsIdUtils;
+import net.thevpc.nuts.runtime.standalone.session.NutsSessionUtils;
 import net.thevpc.nuts.runtime.standalone.util.reflect.*;
 import net.thevpc.nuts.runtime.standalone.util.jclass.NutsJavaSdkUtils;
 import net.thevpc.nuts.runtime.standalone.repository.cmd.NutsRepositorySupportedAction;
@@ -16,7 +18,6 @@ import net.thevpc.nuts.runtime.standalone.repository.impl.main.NutsInstalledRepo
 import net.thevpc.nuts.runtime.standalone.repository.NutsRepositoryHelper;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.NutsRepositoryAndFetchMode;
 import net.thevpc.nuts.spi.NutsRepositorySPI;
-import net.thevpc.nuts.spi.NutsSessionAware;
 
 import java.util.*;
 import java.util.logging.Level;
@@ -27,10 +28,9 @@ import java.util.stream.Collectors;
  */
 public class NutsWorkspaceUtils {
 
-    private NutsLogger LOG;
-
     private final NutsWorkspace ws;
     private final NutsSession session;
+    private NutsLogger LOG;
 
     private NutsWorkspaceUtils(NutsSession session) {
         this.session = session;
@@ -41,16 +41,6 @@ public class NutsWorkspaceUtils {
         return new NutsWorkspaceUtils(session);
     }
 
-    /**
-     * used only for exceptions and logger when a session is not available
-     *
-     * @param ws workspace
-     * @return default session
-     */
-    public static NutsSession defaultSession(NutsWorkspace ws) {
-        return ((NutsWorkspaceExt) ws).defaultSession();
-    }
-
     public static NutsSession bindSession(NutsWorkspace ws, NutsSession session) {
         if (ws != null && session != null && !Objects.equals(session.getWorkspace().getUuid(), ws.getUuid())) {
             return ws.createSession().copyFrom(session);
@@ -58,37 +48,9 @@ public class NutsWorkspaceUtils {
         return session;
     }
 
-    public static void checkSession(NutsWorkspace ws, NutsSession session) {
-        if (session == null) {
-            throw new NutsIllegalArgumentException(defaultSession(ws), NutsMessage.cstyle("missing session"));
-        }
-        if (!Objects.equals(session.getWorkspace().getUuid(), ws.getUuid())) {
-            throw new NutsIllegalArgumentException(defaultSession(ws), NutsMessage.cstyle("invalid session %s != %s ; %s != %s ; %s != %s ; ",
-                    session.getWorkspace().getName(), ws.getName(),
-                    session.getWorkspace().getLocation(), ws.getLocation(),
-                    session.getWorkspace().getUuid(), ws.getUuid()
-            ));
-        }
-    }
-
-    public static void checkNutsIdBase(NutsWorkspace ws, NutsId id) {
-        if (id == null) {
-            throw new NutsIllegalArgumentException(defaultSession(ws), NutsMessage.cstyle("missing id"));
-        }
-        if (NutsBlankable.isBlank(id.getGroupId())) {
-            throw new NutsIllegalArgumentException(defaultSession(ws), NutsMessage.cstyle("missing group for %s", id));
-        }
-        if (NutsBlankable.isBlank(id.getArtifactId())) {
-            throw new NutsIllegalArgumentException(defaultSession(ws), NutsMessage.cstyle("missing name for %s", id));
-        }
-    }
-
-    public static boolean setSession(Object o, NutsSession session) {
-        if (o instanceof NutsSessionAware) {
-            ((NutsSessionAware) o).setSession(session);
-            return true;
-        }
-        return false;
+    public static boolean isUserDefaultWorkspace(NutsSession session) {
+        String defaultWorkspaceLocation = NutsUtilPlatforms.getWorkspaceLocation(null, false, null);
+        return defaultWorkspaceLocation.equals(session.getWorkspace().getLocation().toString());
     }
 
     protected NutsLoggerOp _LOGOP(NutsSession session) {
@@ -97,7 +59,7 @@ public class NutsWorkspaceUtils {
 
     protected NutsLogger _LOG(NutsSession session) {
         if (LOG == null) {
-            LOG = NutsLogger.of(NutsWorkspaceUtils.class,session);
+            LOG = NutsLogger.of(NutsWorkspaceUtils.class, session);
         }
         return LOG;
     }
@@ -206,8 +168,9 @@ public class NutsWorkspaceUtils {
         //        List<Integer> reposLevels = new ArrayList<>();
 
         for (NutsRepository repository : session.repos().setSession(session).getRepositories()) {
+            /*repository.isAvailable()*/
             if (repository.isEnabled()
-                    && (fmode == NutsRepositorySupportedAction.SEARCH ? true/*repository.isAvailable()*/ : repository.isSupportedDeploy(session))
+                    && (fmode == NutsRepositorySupportedAction.SEARCH || repository.isSupportedDeploy(session))
                     && repoSPI(repository).isAcceptFetchMode(mode, session)
                     && (repositoryFilter == null || repositoryFilter.acceptRepository(repository))) {
                 int d = 0;
@@ -226,7 +189,7 @@ public class NutsWorkspaceUtils {
                     _LOGOP(session).level(Level.FINE).error(ex)
                             .log(NutsMessage.jstyle("unable to resolve support speed level for : {0}", repository.getName()));
                 }
-                if (t!=NutsSpeedQualifier.UNAVAILABLE) {
+                if (t != NutsSpeedQualifier.UNAVAILABLE) {
                     repos2.add(new RepoAndLevel(repository, d, t, postComp));
                 }
             }
@@ -248,25 +211,6 @@ public class NutsWorkspaceUtils {
         return ret;
     }
 
-    public void checkShortId(NutsId id) {
-        if (id == null) {
-            throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("missing id"));
-        }
-        if (NutsBlankable.isBlank(id.getGroupId())) {
-            throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("missing groupId for %s", id));
-        }
-        if (NutsBlankable.isBlank(id.getArtifactId())) {
-            throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("missing artifactId for %s", id));
-        }
-    }
-
-    public void checkLongId(NutsId id, NutsSession session) {
-        checkShortId(id);
-        if (NutsBlankable.isBlank(id.getVersion().toString())) {
-            throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("missing version for %s", id));
-        }
-    }
-
     public void validateRepositoryName(String repositoryName, Set<String> registered, NutsSession session) {
         if (!repositoryName.matches("[a-zA-Z][.a-zA-Z0-9_-]*")) {
             throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("invalid repository id %s", repositoryName));
@@ -281,23 +225,151 @@ public class NutsWorkspaceUtils {
         return new NutsPrintIterator<>(it, ws, out, displayOptions, session);
     }
 
-    public NutsDescriptor getEffectiveDescriptor(NutsDefinition def) {
-        final NutsDescriptor d = def.getEffectiveDescriptor();
-        if (d == null) {
-            return NutsWorkspaceExt.of(ws).resolveEffectiveDescriptor(def.getDescriptor(), null);
-        }
-        return d;
-    }
-
-    public void checkNutsId(NutsId id) {
-        checkNutsIdBase(ws, id);
-        if (id.getVersion().isBlank()) {
-            throw new NutsIllegalArgumentException(defaultSession(ws), NutsMessage.cstyle("missing version for %s", id));
-        }
-    }
-
     public Events events() {
         return new Events(this);
+    }
+
+    public void installAllJVM() {
+        NutsWorkspaceEnvManager env = session.env();
+        NutsWorkspaceConfigManager config = session.config();
+        try {
+            if (session.isPlainTrace()) {
+                session.out().resetLine().println("looking for java installations in default locations...");
+            }
+            NutsPlatformLocation[] found = env.platforms()
+                    .searchSystemPlatforms(NutsPlatformFamily.JAVA);
+            int someAdded = 0;
+            for (NutsPlatformLocation java : found) {
+                if (env.platforms().addPlatform(java)) {
+                    someAdded++;
+                }
+            }
+            NutsTexts factory = NutsTexts.of(session);
+            if (session.isPlainTrace()) {
+                if (someAdded == 0) {
+                    session.out().print("```error no new``` java installation locations found...\n");
+                } else if (someAdded == 1) {
+                    session.out().printf("%s new java installation location added...\n", factory.ofStyled("1", NutsTextStyle.primary2()));
+                } else {
+                    session.out().printf("%s new java installation locations added...\n", factory.ofStyled("" + someAdded, NutsTextStyle.primary2()));
+                }
+                session.out().println("you can always add another installation manually using 'nuts settings add java' command.");
+            }
+            if (!config.isReadOnly()) {
+                config.save();
+            }
+        } catch (Exception ex) {
+            _LOG(session).with().session(session).level(Level.FINEST).verb(NutsLogVerb.WARNING).error(ex)
+                    .log(NutsMessage.jstyle("unable to resolve default JRE/JDK locations : {0}", ex));
+            if (session.isPlainTrace()) {
+                NutsPrintStream out = session.out();
+                out.resetLine();
+                out.printf("```unable to resolve default JRE/JDK locations``` :  %s%n", ex);
+            }
+        }
+    }
+
+    public void installCurrentJVM() {
+//at least add current vm
+        NutsWorkspaceEnvManager env = session.env();
+        NutsWorkspaceConfigManager config = session.config();
+        try {
+            if (session.isPlainTrace()) {
+                session.out().resetLine().println("adding current JVM...");
+            }
+            NutsPlatformLocation found0 = env.platforms()
+                    .resolvePlatform(NutsPlatformFamily.JAVA, System.getProperty("java.home"), null);
+            NutsPlatformLocation[] found = found0 == null ? new NutsPlatformLocation[0] : new NutsPlatformLocation[]{found0};
+            int someAdded = 0;
+            for (NutsPlatformLocation java : found) {
+                if (env.platforms().addPlatform(java)) {
+                    someAdded++;
+                }
+            }
+            NutsTexts factory = NutsTexts.of(session);
+            if (session.isPlainTrace()) {
+                if (someAdded == 0) {
+                    session.out().print("```error no new``` java installation locations found...\n");
+                } else if (someAdded == 1) {
+                    session.out().printf("%s new java installation location added...\n", factory.ofStyled("1", NutsTextStyle.primary2()));
+                } else {
+                    session.out().printf("%s new java installation locations added...\n", factory.ofStyled("" + someAdded, NutsTextStyle.primary2()));
+                }
+                session.out().println("you can always add another installation manually using 'nuts settings add java' command.");
+            }
+            if (!config.isReadOnly()) {
+                config.save();
+            }
+        } catch (Exception ex) {
+            _LOG(session).with().session(session).level(Level.FINEST).verb(NutsLogVerb.WARNING).error(ex)
+                    .log(NutsMessage.jstyle("unable to resolve default JRE/JDK locations : {0}", ex));
+            if (session.isPlainTrace()) {
+                NutsPrintStream out = session.out();
+                out.resetLine();
+                out.printf("```unable to resolve default JRE/JDK locations``` :  %s%n", ex);
+            }
+        }
+    }
+
+    public void installLaunchers(boolean gui) {
+        NutsWorkspaceEnvManager env = session.env();
+        try {
+            env.addLauncher(
+                    new NutsLauncherOptions()
+                            .setId(session.getWorkspace().getApiId())
+                            .setCreateScript(true)
+                            .setSystemWideConfig(
+                                    session.boot().getBootOptions().isSwitchWorkspace()
+                            )
+                            .setCreateDesktopShortcut(gui ? NutsSupportCondition.PREFERRED : NutsSupportCondition.NEVER)
+                            .setCreateMenuShortcut(gui ? NutsSupportCondition.SUPPORTED : NutsSupportCondition.NEVER)
+            );
+        } catch (Exception ex) {
+            _LOG(session).with().session(session).level(Level.FINEST).verb(NutsLogVerb.WARNING).error(ex)
+                    .log(NutsMessage.jstyle("unable to install desktop launchers : {0}", ex));
+            if (session.isPlainTrace()) {
+                NutsPrintStream out = session.out();
+                out.resetLine();
+                out.printf("```error unable to install desktop launchers``` :  %s%n", ex);
+            }
+        }
+    }
+
+    public void installCompanions() {
+        NutsTexts text = NutsTexts.of(session);
+        Set<NutsId> companionIds = session.extensions().getCompanionIds();
+        if (companionIds.isEmpty()) {
+            return;
+        }
+        if (session.isPlainTrace()) {
+            NutsPrintStream out = session.out();
+            out.resetLine();
+            out.printf("looking for recommended companion tools to install... detected : %s%n",
+                    text.builder().appendJoined(text.ofPlain(","),
+                            companionIds
+                    )
+            );
+        }
+        try {
+            session.install().companions().setSession(session.copy().setTrace(session.isTrace() && session.isPlainOut()))
+                    .run();
+        } catch (Exception ex) {
+            _LOG(session).with().session(session).level(Level.FINEST).verb(NutsLogVerb.WARNING).error(ex)
+                    .log(NutsMessage.jstyle("unable to install companions : {0}", ex));
+            if (session.isPlainTrace()) {
+                NutsPrintStream out = session.out();
+                out.resetLine();
+                out.printf("```error unable to install companion tools``` :  %s \n"
+                                + "this happens when none of the following repositories are able to locate them : %s\n",
+                        ex,
+                        text.builder().appendJoined(text.ofPlain(", "),
+                                Arrays.stream(session.repos().getRepositories()).map(x
+                                        -> text.builder().append(x.getName(), NutsTextStyle.primary3())
+                                ).collect(Collectors.toList())
+                        )
+                );
+            }
+        }
     }
 
     private static class RepoAndLevel implements Comparable<RepoAndLevel> {
@@ -422,152 +494,5 @@ public class NutsWorkspaceUtils {
             }
         }
 
-    }
-
-    public void installAllJVM() {
-        NutsWorkspaceEnvManager env = session.env();
-        NutsWorkspaceConfigManager config = session.config();
-        try {
-            if (session.isPlainTrace()) {
-                session.out().resetLine().println("looking for java installations in default locations...");
-            }
-            NutsPlatformLocation[] found = env.platforms()
-                    .searchSystemPlatforms(NutsPlatformFamily.JAVA);
-            int someAdded = 0;
-            for (NutsPlatformLocation java : found) {
-                if (env.platforms().addPlatform(java)) {
-                    someAdded++;
-                }
-            }
-            NutsTexts factory = NutsTexts.of(session);
-            if (session.isPlainTrace()) {
-                if (someAdded == 0) {
-                    session.out().print("```error no new``` java installation locations found...\n");
-                } else if (someAdded == 1) {
-                    session.out().printf("%s new java installation location added...\n", factory.ofStyled("1", NutsTextStyle.primary2()));
-                } else {
-                    session.out().printf("%s new java installation locations added...\n", factory.ofStyled("" + someAdded, NutsTextStyle.primary2()));
-                }
-                session.out().println("you can always add another installation manually using 'nuts settings add java' command.");
-            }
-            if (!config.isReadOnly()) {
-                config.save();
-            }
-        } catch (Exception ex) {
-            _LOG(session).with().session(session).level(Level.FINEST).verb(NutsLogVerb.WARNING).error(ex)
-                    .log(NutsMessage.jstyle("unable to resolve default JRE/JDK locations : {0}", ex));
-            if (session.isPlainTrace()) {
-                NutsPrintStream out = session.out();
-                out.resetLine();
-                out.printf("```unable to resolve default JRE/JDK locations``` :  %s%n", ex);
-            }
-        }
-    }
-    public void installCurrentJVM() {
-//at least add current vm
-        NutsWorkspaceEnvManager env = session.env();
-        NutsWorkspaceConfigManager config = session.config();
-        try {
-            if (session.isPlainTrace()) {
-                session.out().resetLine().println("adding current JVM...");
-            }
-            NutsPlatformLocation found0 = env.platforms()
-                    .resolvePlatform(NutsPlatformFamily.JAVA, System.getProperty("java.home"), null);
-            NutsPlatformLocation[] found = found0 == null ? new NutsPlatformLocation[0] : new NutsPlatformLocation[]{found0};
-            int someAdded = 0;
-            for (NutsPlatformLocation java : found) {
-                if (env.platforms().addPlatform(java)) {
-                    someAdded++;
-                }
-            }
-            NutsTexts factory = NutsTexts.of(session);
-            if (session.isPlainTrace()) {
-                if (someAdded == 0) {
-                    session.out().print("```error no new``` java installation locations found...\n");
-                } else if (someAdded == 1) {
-                    session.out().printf("%s new java installation location added...\n", factory.ofStyled("1", NutsTextStyle.primary2()));
-                } else {
-                    session.out().printf("%s new java installation locations added...\n", factory.ofStyled("" + someAdded, NutsTextStyle.primary2()));
-                }
-                session.out().println("you can always add another installation manually using 'nuts settings add java' command.");
-            }
-            if (!config.isReadOnly()) {
-                config.save();
-            }
-        } catch (Exception ex) {
-            _LOG(session).with().session(session).level(Level.FINEST).verb(NutsLogVerb.WARNING).error(ex)
-                    .log(NutsMessage.jstyle("unable to resolve default JRE/JDK locations : {0}", ex));
-            if (session.isPlainTrace()) {
-                NutsPrintStream out = session.out();
-                out.resetLine();
-                out.printf("```unable to resolve default JRE/JDK locations``` :  %s%n", ex);
-            }
-        }
-    }
-
-    public void installLaunchers(boolean gui) {
-        NutsWorkspaceEnvManager env = session.env();
-        try {
-            env.addLauncher(
-                    new NutsLauncherOptions()
-                            .setId(session.getWorkspace().getApiId())
-                            .setCreateScript(true)
-                            .setSystemWideConfig(
-                                    session.boot().getBootOptions().isSwitchWorkspace()
-                            )
-                            .setCreateDesktopShortcut(gui?NutsSupportCondition.PREFERRED:NutsSupportCondition.NEVER)
-                            .setCreateMenuShortcut(gui?NutsSupportCondition.SUPPORTED:NutsSupportCondition.NEVER)
-            );
-        } catch (Exception ex) {
-            _LOG(session).with().session(session).level(Level.FINEST).verb(NutsLogVerb.WARNING).error(ex)
-                    .log(NutsMessage.jstyle("unable to install desktop launchers : {0}", ex));
-            if (session.isPlainTrace()) {
-                NutsPrintStream out = session.out();
-                out.resetLine();
-                out.printf("```error unable to install desktop launchers``` :  %s%n", ex);
-            }
-        }
-    }
-
-    public static boolean isUserDefaultWorkspace(NutsSession session) {
-        String defaultWorkspaceLocation = NutsUtilPlatforms.getWorkspaceLocation(null, false, null);
-        return defaultWorkspaceLocation.equals(session.getWorkspace().getLocation().toString());
-    }
-
-    public void installCompanions() {
-        NutsTexts text = NutsTexts.of(session);
-        Set<NutsId> companionIds = session.extensions().getCompanionIds();
-        if (companionIds.isEmpty()) {
-            return;
-        }
-        if (session.isPlainTrace()) {
-            NutsPrintStream out = session.out();
-            out.resetLine();
-            out.printf("looking for recommended companion tools to install... detected : %s%n",
-                    text.builder().appendJoined(text.ofPlain(","),
-                            companionIds
-                    )
-            );
-        }
-        try {
-            session.install().companions().setSession(session.copy().setTrace(session.isTrace() && session.isPlainOut()))
-                    .run();
-        } catch (Exception ex) {
-            _LOG(session).with().session(session).level(Level.FINEST).verb(NutsLogVerb.WARNING).error(ex)
-                    .log(NutsMessage.jstyle("unable to install companions : {0}", ex));
-            if (session.isPlainTrace()) {
-                NutsPrintStream out = session.out();
-                out.resetLine();
-                out.printf("```error unable to install companion tools``` :  %s \n"
-                                + "this happens when none of the following repositories are able to locate them : %s\n",
-                        ex,
-                        text.builder().appendJoined(text.ofPlain(", "),
-                                Arrays.stream(session.repos().getRepositories()).map(x
-                                        -> text.builder().append(x.getName(), NutsTextStyle.primary3())
-                                ).collect(Collectors.toList())
-                        )
-                );
-            }
-        }
     }
 }

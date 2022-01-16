@@ -1,6 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.repository.config;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.standalone.session.NutsSessionUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.config.NutsRepositoryConfigManagerExt;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
 import net.thevpc.nuts.spi.NutsRepositoryLocation;
@@ -17,7 +18,7 @@ public class DefaultNutsRepoConfigManager implements NutsRepositoryConfigManager
     }
 
     private void checkSession() {
-        NutsWorkspaceUtils.checkSession(getModel().getWorkspace(), session);
+        NutsSessionUtils.checkSession(getModel().getWorkspace(), session);
     }
 
     @Override
@@ -217,31 +218,31 @@ public class DefaultNutsRepoConfigManager implements NutsRepositoryConfigManager
 
     @Override
     public Map<String, String> getConfigMap(boolean inherit) {
-        NutsWorkspaceUtils.checkSession(model.getWorkspace(), session);
+        NutsSessionUtils.checkSession(model.getWorkspace(), session);
         return model.toMap(inherit, getSession());
     }
 
     @Override
     public String getConfigProperty(String key, String defaultValue, boolean inherit) {
-        NutsWorkspaceUtils.checkSession(model.getWorkspace(), session);
+        NutsSessionUtils.checkSession(model.getWorkspace(), session);
         return model.get(key, defaultValue, inherit, getSession());
     }
 
     @Override
     public Map<String, String> getConfigMap() {
-        NutsWorkspaceUtils.checkSession(model.getWorkspace(), session);
+        NutsSessionUtils.checkSession(model.getWorkspace(), session);
         return model.toMap(getSession());
     }
 
     @Override
     public String getConfigProperty(String property, String defaultValue) {
-        NutsWorkspaceUtils.checkSession(model.getWorkspace(), session);
+        NutsSessionUtils.checkSession(model.getWorkspace(), session);
         return model.get(property, defaultValue, getSession());
     }
 
     @Override
     public NutsRepositoryConfigManager setConfigProperty(String property, String value) {
-        NutsWorkspaceUtils.checkSession(model.getWorkspace(), session);
+        NutsSessionUtils.checkSession(model.getWorkspace(), session);
         model.set(property, value, session);
         return this;
     }

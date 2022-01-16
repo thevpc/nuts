@@ -164,17 +164,6 @@ public class ZipUtils {
         }
     }
 
-    public static boolean visitZipFile(File zipFile, Predicate<String> possiblePaths, InputStreamVisitor visitor,NutsSession session) throws IOException {
-        InputStream is = null;
-        try {
-            return visitZipStream(is = new FileInputStream(zipFile), possiblePaths, visitor,session);
-        } finally {
-            if (is != null) {
-                is.close();
-            }
-        }
-    }
-
     /**
      * Unzip it
      *
@@ -212,13 +201,13 @@ public class ZipUtils {
                             ze = zis.getNextEntry();
                             continue;
                         } else {
-                            throw new IOException("tot a single root zip");
+                            throw new IOException("not a single root zip");
                         }
                     }
                     if (fileName.startsWith(root)) {
                         fileName = fileName.substring(root.length());
                     } else {
-                        throw new IOException("tot a single root zip");
+                        throw new IOException("not a single root zip");
                     }
                 }
                 if (fileName.endsWith("/")) {
@@ -311,7 +300,7 @@ public class ZipUtils {
 //            throw new RuntimeIOException(e);
 //        }
 //    }
-    public static boolean visitZipStream(InputStream zipFile, Predicate<String> possiblePaths, InputStreamVisitor visitor, NutsSession session) {
+    public static boolean visitZipStream(InputStream zipFile, InputStreamVisitor visitor, NutsSession session) {
         //byte[] buffer = new byte[4 * 1024];
 
         //get the zip file content
@@ -350,10 +339,8 @@ public class ZipUtils {
                     fileName = fileName.substring(1);
                 }
                 if (!fileName.endsWith("/")) {
-                    if (possiblePaths.test(fileName)) {
-                        if (!visitor.visit(fileName, entryInputStream)) {
-                            break;
-                        }
+                    if (!visitor.visit(fileName, entryInputStream)) {
+                        break;
                     }
                 }
                 ze = zis.getNextEntry();

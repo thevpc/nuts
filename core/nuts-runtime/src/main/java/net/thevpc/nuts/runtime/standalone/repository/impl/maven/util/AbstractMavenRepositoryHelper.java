@@ -24,9 +24,9 @@
 package net.thevpc.nuts.runtime.standalone.repository.impl.maven.util;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.standalone.session.NutsSessionUtils;
 import net.thevpc.nuts.runtime.standalone.util.CoreNutsConstants;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
-import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
 import net.thevpc.nuts.runtime.standalone.xtra.digest.NutsDigestUtils;
 
 import java.io.IOException;
@@ -132,7 +132,7 @@ public abstract class AbstractMavenRepositoryHelper {
     }
 
     private void checkSession(NutsSession session) {
-        NutsWorkspaceUtils.checkSession(repository.getWorkspace(), session);
+        NutsSessionUtils.checkSession(repository.getWorkspace(), session);
     }
 
     public NutsDescriptor fetchDescriptorImpl(NutsId id, NutsFetchMode fetchMode, NutsSession session) {

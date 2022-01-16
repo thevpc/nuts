@@ -25,6 +25,8 @@
 */
 package net.thevpc.nuts.runtime.standalone.io.util;
 
+import net.thevpc.nuts.*;
+
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -32,6 +34,10 @@ import java.net.URL;
 /**
  *
  * @author thevpc
+ */
+@Deprecated
+/**
+ * should use {@link NutsPathParts}
  */
 public class URLBuilder {
 
@@ -80,13 +86,6 @@ public class URLBuilder {
         return getParent().resolve(newName);
     }
 
-//    public URLBuilder removeQuery(String newName) {
-//        throw new IllegalArgumentException("No Parent Implemented");
-//    }
-//
-//    public URLBuilder addQuery(String newName) {
-//        throw new IllegalArgumentException("No Parent Implemented");
-//    }
     public URL toURL() {
         try {
             if (prefix != null) {

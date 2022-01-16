@@ -30,7 +30,6 @@ import net.thevpc.nuts.runtime.standalone.io.terminal.AbstractNutsSessionTermina
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.util.NutsConfigurableHelper;
 import net.thevpc.nuts.runtime.standalone.util.collections.NutsPropertiesHolder;
-import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
 
 import java.io.InputStream;
 import java.lang.reflect.Array;
@@ -82,7 +81,7 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
 
     public DefaultNutsSession(NutsWorkspace ws) {
         this.ws = new NutsWorkspaceSessionAwareImpl(this, ws);
-        copyFrom(NutsWorkspaceUtils.defaultSession(ws).boot().getBootOptions());
+        copyFrom(NutsSessionUtils.defaultSession(ws).boot().getBootOptions());
     }
 
     public DefaultNutsSession(NutsWorkspace ws, NutsWorkspaceOptions options) {

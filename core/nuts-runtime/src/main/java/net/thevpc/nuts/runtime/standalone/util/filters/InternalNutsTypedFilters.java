@@ -7,8 +7,8 @@ import net.thevpc.nuts.NutsWorkspace;
 import java.util.ArrayList;
 import java.util.List;
 import net.thevpc.nuts.NutsSession;
+import net.thevpc.nuts.runtime.standalone.session.NutsSessionUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceExt;
-import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
 
 public abstract class InternalNutsTypedFilters<T extends NutsFilter> implements NutsTypedFilters<T> {
 
@@ -29,7 +29,7 @@ public abstract class InternalNutsTypedFilters<T extends NutsFilter> implements 
     }
 
     protected void checkSession(){
-        NutsWorkspaceUtils.checkSession(ws, session);
+        NutsSessionUtils.checkSession(ws, session);
     }
     
     @Override

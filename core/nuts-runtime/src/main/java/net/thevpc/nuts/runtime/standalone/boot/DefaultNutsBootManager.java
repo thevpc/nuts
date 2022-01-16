@@ -24,7 +24,7 @@
 package net.thevpc.nuts.runtime.standalone.boot;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.standalone.app.cmdline.DefaultNutsArgument;
+import net.thevpc.nuts.runtime.standalone.session.NutsSessionUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.config.DefaultNutsWorkspaceConfigManager;
 import net.thevpc.nuts.runtime.standalone.workspace.config.DefaultNutsWorkspaceConfigModel;
@@ -155,7 +155,7 @@ public class DefaultNutsBootManager implements NutsBootManager {
     }
 
     private void checkSession() {
-        NutsWorkspaceUtils.checkSession(model.getWorkspace(), session);
+        NutsSessionUtils.checkSession(model.getWorkspace(), session);
     }
 
 }

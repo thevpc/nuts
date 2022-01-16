@@ -24,13 +24,13 @@
 package net.thevpc.nuts.runtime.standalone.workspace.config;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.standalone.session.NutsSessionUtils;
 import net.thevpc.nuts.runtime.standalone.util.CorePlatformUtils;
 import net.thevpc.nuts.runtime.standalone.util.collections.DefaultObservableMap;
 import net.thevpc.nuts.runtime.standalone.util.collections.ObservableMap;
 import net.thevpc.nuts.runtime.standalone.id.DefaultNutsIdParser;
 import net.thevpc.nuts.runtime.standalone.app.gui.CoreNutsUtilGui;
 import net.thevpc.nuts.runtime.standalone.util.jclass.NutsJavaSdkUtils;
-import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -75,8 +75,8 @@ public class DefaultNutsWorkspaceEnvManagerModel {
 //            }
 //        }
         DefaultNutsIdParser nip = new DefaultNutsIdParser(session);
-        os = nip.parse(CorePlatformUtils.getPlatformOs(NutsWorkspaceUtils.defaultSession(workspace)));
-        String platformOsDist = CorePlatformUtils.getPlatformOsDist(NutsWorkspaceUtils.defaultSession(workspace));
+        os = nip.parse(CorePlatformUtils.getPlatformOs(NutsSessionUtils.defaultSession(workspace)));
+        String platformOsDist = CorePlatformUtils.getPlatformOsDist(NutsSessionUtils.defaultSession(workspace));
         if (platformOsDist == null) {
             platformOsDist = "default";
         }

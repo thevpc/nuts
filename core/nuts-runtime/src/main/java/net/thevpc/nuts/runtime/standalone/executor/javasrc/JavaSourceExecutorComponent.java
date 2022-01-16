@@ -21,9 +21,10 @@
  * governing permissions and limitations under the License.
  * <br> ====================================================================
  */
-package net.thevpc.nuts.runtime.standalone.executor.java;
+package net.thevpc.nuts.runtime.standalone.executor.javasrc;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.standalone.executor.java.JavaExecutorComponent;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.definition.DefaultNutsDefinition;
 import net.thevpc.nuts.runtime.standalone.util.collections.CoreArrayUtils;

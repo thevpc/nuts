@@ -2,6 +2,8 @@ package net.thevpc.nuts.runtime.standalone.workspace.config;
 
 import net.thevpc.nuts.*;
 import java.util.Set;
+
+import net.thevpc.nuts.runtime.standalone.session.NutsSessionUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
 
 public class DefaultImportManager implements NutsImportManager {
@@ -21,7 +23,7 @@ public class DefaultImportManager implements NutsImportManager {
     }
 
     private void checkSession() {
-        NutsWorkspaceUtils.checkSession(model.getWorkspace(), session);
+        NutsSessionUtils.checkSession(model.getWorkspace(), session);
     }
 
     @Override

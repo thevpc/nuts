@@ -2,7 +2,7 @@ package net.thevpc.nuts.runtime.standalone.io.path.spi.htmlfs;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.io.path.spi.AbstractPathSPIAdapter;
-import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
+import net.thevpc.nuts.runtime.standalone.session.NutsSessionUtils;
 import net.thevpc.nuts.spi.NutsFormatSPI;
 import net.thevpc.nuts.spi.NutsPathFactory;
 import net.thevpc.nuts.spi.NutsPathSPI;
@@ -266,7 +266,7 @@ public class HtmlfsPath extends AbstractPathSPIAdapter {
 
         @Override
         public NutsSupported<NutsPathSPI> createPath(String path, NutsSession session, ClassLoader classLoader) {
-            NutsWorkspaceUtils.checkSession(ws, session);
+            NutsSessionUtils.checkSession(ws, session);
             if (path.startsWith(PREFIX)) {
                 return NutsSupported.of(10, () -> new HtmlfsPath(path, session));
             }

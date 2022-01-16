@@ -2,10 +2,10 @@ package net.thevpc.nuts.runtime.standalone.io.terminal;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.boot.DefaultNutsBootModel;
+import net.thevpc.nuts.runtime.standalone.session.NutsSessionUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.workspace.config.DefaultNutsWorkspaceConfigManager;
 import net.thevpc.nuts.runtime.standalone.workspace.config.DefaultNutsWorkspaceConfigModel;
-import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
 import net.thevpc.nuts.spi.NutsSupportLevelContext;
 import net.thevpc.nuts.spi.NutsTerminals;
 
@@ -29,7 +29,7 @@ public class DefaultNutsTerminals implements NutsTerminals {
     }
 
     private void checkSession(NutsSession session) {
-        NutsWorkspaceUtils.checkSession(cmodel.getWorkspace(), session);
+        NutsSessionUtils.checkSession(cmodel.getWorkspace(), session);
     }
 
     @Override

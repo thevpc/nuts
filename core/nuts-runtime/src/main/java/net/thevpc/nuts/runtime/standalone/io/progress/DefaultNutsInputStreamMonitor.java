@@ -8,6 +8,7 @@ package net.thevpc.nuts.runtime.standalone.io.progress;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.io.util.InputStreamMetadataAwareImpl;
 import net.thevpc.nuts.runtime.standalone.io.util.NutsStreamOrPath;
+import net.thevpc.nuts.runtime.standalone.session.NutsSessionUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
 import net.thevpc.nuts.spi.NutsSupportLevelContext;
 
@@ -259,7 +260,7 @@ public class DefaultNutsInputStreamMonitor implements NutsInputStreamMonitor {
 
 
     protected void checkSession() {
-        NutsWorkspaceUtils.checkSession(ws, session);
+        NutsSessionUtils.checkSession(ws, session);
     }
 
     @Override

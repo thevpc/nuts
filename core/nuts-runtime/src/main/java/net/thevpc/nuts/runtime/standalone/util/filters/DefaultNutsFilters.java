@@ -1,8 +1,8 @@
 package net.thevpc.nuts.runtime.standalone.util.filters;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.standalone.session.NutsSessionUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceExt;
-import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
 import net.thevpc.nuts.spi.NutsSupportLevelContext;
 
 public class DefaultNutsFilters implements NutsFilters {
@@ -24,7 +24,7 @@ public class DefaultNutsFilters implements NutsFilters {
     }
 
     private void checkSession() {
-        NutsWorkspaceUtils.checkSession(model.getWorkspace(),session);
+        NutsSessionUtils.checkSession(model.getWorkspace(),session);
     }
 
     @Override

@@ -175,36 +175,6 @@ public class ShellUtils {
         return new String(a);
     }
 
-    public static String getAbsolutePath(File cwd, String path) {
-        File absoluteFile = getAbsoluteFile(cwd, new File(path));
-        try {
-            return absoluteFile.getCanonicalPath();
-        } catch (IOException e) {
-            return absoluteFile.getAbsolutePath();
-        }
-    }
-
-    public static File getAbsoluteFile(File cwd, File path) {
-        File d = null;
-        if (path.isAbsolute()) {
-            d = path;
-        } else {
-            if (cwd == null) {
-                cwd = new File(".");
-            }
-            d = new File(cwd, path.getPath());
-        }
-        try {
-            return d.getCanonicalFile();
-        } catch (IOException e) {
-            return d.getAbsoluteFile();
-        }
-    }
-
-//    public static String[] expandPath(String path, File cwd) {
-//        return isFilePath(path) ? findFilePaths(path, cwd, null, false) : new String[]{path};
-//    }
-
     public static boolean isFilePath(String path) {
         return path != null && path.indexOf('/') >= 0 && !path.contains("://");
     }
@@ -338,29 +308,6 @@ public class ShellUtils {
             sb.append('$');
         }
         return sb.toString();
-    }
-
-    public static File getAbsoluteFile(File cwd, String path) {
-        return getAbsoluteFile(cwd, new File(path));
-    }
-
-    public static String getAbsolutePath(String path) {
-        try {
-            return getAbsoluteFile(new File(path)).getCanonicalPath();
-        } catch (IOException e) {
-            return getAbsoluteFile(new File(path)).getAbsolutePath();
-        }
-    }
-
-    public static File getAbsoluteFile(File path) {
-        if (path.isAbsolute()) {
-            return path;
-        }
-        try {
-            return path.getCanonicalFile();
-        } catch (IOException e) {
-            return path.getAbsoluteFile();
-        }
     }
 
     public static int readQuotes(char[] chars,int i,StringBuilder v){

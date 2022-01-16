@@ -4,6 +4,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.repository.NutsRepositoryRegistryHelper;
 import net.thevpc.nuts.runtime.standalone.repository.NutsRepositorySelectorHelper;
 import net.thevpc.nuts.runtime.standalone.repository.util.NutsRepositoryUtils;
+import net.thevpc.nuts.runtime.standalone.session.NutsSessionUtils;
 import net.thevpc.nuts.spi.*;
 import net.thevpc.nuts.runtime.standalone.repository.impl.NutsSimpleRepositoryWrapper;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceExt;
@@ -135,7 +136,7 @@ public class DefaultNutsRepositoryModel {
     }
 
     public NutsRepository getRepository(String repositoryIdOrName, NutsSession session) throws NutsRepositoryNotFoundException {
-        NutsWorkspaceUtils.checkSession(getWorkspace(), session);
+        NutsSessionUtils.checkSession(getWorkspace(), session);
         if (DefaultNutsInstalledRepository.INSTALLED_REPO_UUID.equals(repositoryIdOrName)) {
             return NutsWorkspaceExt.of(getWorkspace()).getInstalledRepository();
         }
@@ -317,7 +318,7 @@ public class DefaultNutsRepositoryModel {
     }
 
     public NutsRepository addRepository(String repositoryNamedUrl, NutsSession session) {
-        NutsWorkspaceUtils.checkSession(getWorkspace(), session);
+        NutsSessionUtils.checkSession(getWorkspace(), session);
         NutsRepositoryLocation r = null;
         try {
             r = NutsRepositoryLocation.of(repositoryNamedUrl,NutsRepositoryDB.of(session),session);

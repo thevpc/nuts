@@ -26,7 +26,7 @@ nuts -ZyS -r=+dev
   /\ \ \ _  __/ /______   Network Updatable Things Services
  /  \/ / / / / __/ ___/   The Free and Open Source Package Manager
 / /\  / /_/ / /_(__  )    for Java and other Things ... by thevpc
-\_\ \/\__,_/\__/____/     http://github.com/thevpc/nuts
+\_\ \/\__,_/\__/____/     https://github.com/thevpc/nuts
     version 0.8.3.0-rc1
 location:/home/vpc/.config/nuts/default-workspace  (Wheat default-workspace)
 ╭───────────────────────────────────────────────────────────────────────╮

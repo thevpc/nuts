@@ -8,7 +8,9 @@ package net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.repo;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.AbstractNutsSettingsSubCommand;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.user.NutsSettingsUserSubCommand;
+import net.thevpc.nuts.spi.NutsRepositoryDB;
 import net.thevpc.nuts.spi.NutsRepositoryLocation;
+import net.thevpc.nuts.spi.NutsRepositorySelectorList;
 
 import java.util.Arrays;
 import java.util.LinkedHashMap;
@@ -109,12 +111,19 @@ public class NutsSettingsRepositorySubCommand extends AbstractNutsSettingsSubCom
                         if (!session.configureFirst(cmdLine)) {
                             if (a.isOption()) {
                                 cmdLine.unexpectedArgument();
-                            } else if (repositoryName == null) {
-                                repositoryName = cmdLine.next().getString();
-                            } else if (location == null) {
-                                location = cmdLine.next().getString();
+                            } else if (a.isKeyValue()) {
+                                NutsArgument n = cmdLine.nextString();
+                                repositoryName = n.getStringKey();
+                                location = n.getStringValue();
                             } else {
-                                cmdLine.unexpectedArgument();
+                                location = cmdLine.next().getString();
+                                String loc2 = NutsRepositoryDB.of(session).getRepositoryURLByName(location);
+                                if(loc2!=null){
+                                    repositoryName=location;
+                                    location=loc2;
+                                }else{
+                                    cmdLine.required();
+                                }
                             }
                         }
                         break;
@@ -141,7 +150,7 @@ public class NutsSettingsRepositorySubCommand extends AbstractNutsSettingsSubCom
                     NutsRepository p = session.repos().getRepository(parent);
                     repo = p.config().addMirror(o);
                 }
-                out.printf("repository added successfully%n");
+                out.printlnf("repository %s added successfully",repo.getName());
                 session.config().save();
 
             }

@@ -27,9 +27,10 @@ import java.util.Map;
 import java.util.logging.Level;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.standalone.id.util.NutsIdUtils;
 import net.thevpc.nuts.runtime.standalone.log.NutsLogUtils;
 import net.thevpc.nuts.runtime.standalone.repository.impl.NutsRepositoryExt;
-import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
+import net.thevpc.nuts.runtime.standalone.session.NutsSessionUtils;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.version.DefaultNutsVersion;
 import net.thevpc.nuts.runtime.standalone.util.filters.CoreFilterUtils;
@@ -70,8 +71,8 @@ public class DefaultNutsFetchDescriptorRepositoryCommand extends AbstractNutsFet
     public NutsFetchDescriptorRepositoryCommand run() {
 //        NutsWorkspace ws = getRepo().getWorkspace();
         NutsSession session = getSession();
-        NutsWorkspaceUtils.of(session).checkLongId(id, session);
-        NutsWorkspaceUtils.checkSession(getRepo().getWorkspace(), session);
+        NutsIdUtils.checkLongId(id, session);
+        NutsSessionUtils.checkSession(getRepo().getWorkspace(), session);
         getRepo().security().setSession(getSession()).checkAllowed(NutsConstants.Permissions.FETCH_DESC, "fetch-descriptor");
         Map<String, String> queryMap = id.getProperties();
         queryMap.remove(NutsConstants.IdProperties.OPTIONAL);

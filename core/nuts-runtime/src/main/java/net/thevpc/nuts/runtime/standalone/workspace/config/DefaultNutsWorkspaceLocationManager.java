@@ -2,6 +2,7 @@ package net.thevpc.nuts.runtime.standalone.workspace.config;
 
 import java.util.Map;
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.standalone.session.NutsSessionUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
 
 public class DefaultNutsWorkspaceLocationManager implements NutsWorkspaceLocationManager {
@@ -121,7 +122,7 @@ public class DefaultNutsWorkspaceLocationManager implements NutsWorkspaceLocatio
     }
 
     protected void checkSession() {
-        NutsWorkspaceUtils.checkSession(model.getWorkspace(), session);
+        NutsSessionUtils.checkSession(model.getWorkspace(), session);
     }
 
     @Override

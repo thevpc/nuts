@@ -6,6 +6,7 @@
 package net.thevpc.nuts.runtime.standalone.format;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.standalone.session.NutsSessionUtils;
 import net.thevpc.nuts.runtime.standalone.util.NutsConfigurableHelper;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
 
@@ -31,7 +32,7 @@ public abstract class DefaultFormatBase0<T> implements NutsCommandLineConfigurab
     }
 
     protected void checkSession() {
-        NutsWorkspaceUtils.checkSession(getWorkspace(), getSession());
+        NutsSessionUtils.checkSession(getWorkspace(), getSession());
     }
 
     public NutsWorkspace getWorkspace() {

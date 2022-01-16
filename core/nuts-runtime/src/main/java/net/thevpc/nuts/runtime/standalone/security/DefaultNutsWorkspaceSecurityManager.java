@@ -26,6 +26,8 @@ package net.thevpc.nuts.runtime.standalone.security;
 import net.thevpc.nuts.*;
 
 import javax.security.auth.callback.*;
+
+import net.thevpc.nuts.runtime.standalone.session.NutsSessionUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
 import net.thevpc.nuts.spi.NutsAuthenticationAgent;
 
@@ -61,7 +63,7 @@ public class DefaultNutsWorkspaceSecurityManager implements NutsWorkspaceSecurit
     }
 
     private void checkSession() {
-        NutsWorkspaceUtils.checkSession(model.getWorkspace(), session);
+        NutsSessionUtils.checkSession(model.getWorkspace(), session);
     }
 
     @Override

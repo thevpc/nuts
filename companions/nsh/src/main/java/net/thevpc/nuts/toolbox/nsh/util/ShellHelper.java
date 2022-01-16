@@ -24,7 +24,7 @@ public class ShellHelper {
         if (expression.startsWith("file:") || expression.contains("://")) {
             return NutsPath.of(expression,session);
         }
-        return NutsPath.of(_IOUtils.getAbsoluteFile2(expression, cwd),session);
+        return NutsPath.of(_IOUtils.getAbsoluteFile2(expression, cwd, session),session);
     }
 
     public static String[] splitNameAndValue(String arg) {

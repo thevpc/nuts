@@ -63,9 +63,11 @@ public class Nsh implements NutsApplication {
                 NutsSession sessionCopy = session.copy();
                 for (JShellBuiltin command : commands) {
                     if (!CONTEXTUAL_BUILTINS.contains(command.getName())) {
-                        //avoid recursive definition!
-                        if (session.commands()
-                                .setSession(sessionCopy.setConfirm(NutsConfirmationMode.YES))
+                        // avoid recursive definition!
+                        // disable trace, summary will be traced later!
+                        if (session.copy().setTrace(false)
+                                .setConfirm(NutsConfirmationMode.YES)
+                                .commands()
                                 .addCommand(new NutsCommandConfig()
                                         .setFactoryId("nsh")
                                         .setName(command.getName())

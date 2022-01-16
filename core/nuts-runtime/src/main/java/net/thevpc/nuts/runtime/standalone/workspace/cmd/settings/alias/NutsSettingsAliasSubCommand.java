@@ -16,61 +16,14 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 /**
- *
  * @author thevpc
  */
 public class NutsSettingsAliasSubCommand extends AbstractNutsSettingsSubCommand {
-    public static class AliasInfo {
-
-        public String name;
-        public String command;
-        public String factoryId;
-        public NutsId owner;
-        public String executionOptions;
-
-        public AliasInfo(String name, String command, String factoryId, NutsId owner, String executionOptions) {
-            this.name = name;
-            this.command = command;
-            this.factoryId = factoryId;
-            this.owner = owner;
-            this.executionOptions = executionOptions;
-        }
-
-        public AliasInfo(NutsWorkspaceCustomCommand a, NutsSession ws) {
-            name = a.getName();
-            command = NutsCommandLine.of(a.getCommand(),ws).toString();
-            executionOptions = NutsCommandLine.of(a.getExecutorOptions(),ws).toString();
-            factoryId = a.getFactoryId();
-            owner = a.getOwner();
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public String getCommand() {
-            return command;
-        }
-
-        public String getFactoryId() {
-            return factoryId;
-        }
-
-        public NutsId getOwner() {
-            return owner;
-        }
-
-        public String getExecutionOptions() {
-            return executionOptions;
-        }
-
-    }
-
     @Override
     public boolean exec(NutsCommandLine cmdLine, Boolean autoSave, NutsSession session) {
         if (cmdLine.next("list aliases") != null) {
             cmdLine.setCommandName("settings list aliases");
-            List<String> toList=new ArrayList<>();
+            List<String> toList = new ArrayList<>();
             while (cmdLine.hasNext()) {
                 if (!cmdLine.peek().isOption()) {
                     NutsArgument a = cmdLine.next();
@@ -85,16 +38,16 @@ public class NutsSettingsAliasSubCommand extends AbstractNutsSettingsSubCommand 
                         .filter(new Predicate<NutsWorkspaceCustomCommand>() {
                             @Override
                             public boolean test(NutsWorkspaceCustomCommand nutsWorkspaceCommandAlias) {
-                                if(toList.isEmpty()){
+                                if (toList.isEmpty()) {
                                     return true;
                                 }
                                 for (String s : toList) {
-                                    if(s.contains("*")){
-                                        if(Pattern.compile(s.replace("*",".*")).matcher(nutsWorkspaceCommandAlias.getName()).matches()){
+                                    if (s.contains("*")) {
+                                        if (Pattern.compile(s.replace("*", ".*")).matcher(nutsWorkspaceCommandAlias.getName()).matches()) {
                                             return true;
                                         }
-                                    }else{
-                                        if(s.equals(nutsWorkspaceCommandAlias.getName())){
+                                    } else {
+                                        if (s.equals(nutsWorkspaceCommandAlias.getName())) {
                                             return true;
                                         }
                                     }
@@ -106,17 +59,17 @@ public class NutsSettingsAliasSubCommand extends AbstractNutsSettingsSubCommand 
                         .collect(Collectors.toList());
                 if (session.isPlainOut()) {
                     NutsPropertiesFormat.of(session).setValue(
-                                    r.stream().collect(
-                                            Collectors.toMap(
-                                                    NutsWorkspaceCustomCommand::getName,
-                                                    x -> NutsCommandLine.of(x.getCommand(),session).toString(),
-                                                    (x, y) -> {
-                                                        throw new NutsIllegalArgumentException(session,NutsMessage.cstyle("duplicate %s",x));
-                                                    },
-                                                    //preserve order
-                                                    LinkedHashMap::new
-                                            ))
-                            ).println();
+                            r.stream().collect(
+                                    Collectors.toMap(
+                                            NutsWorkspaceCustomCommand::getName,
+                                            x -> NutsCommandLine.of(x.getCommand(), session).toString(),
+                                            (x, y) -> {
+                                                throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("duplicate %s", x));
+                                            },
+                                            //preserve order
+                                            LinkedHashMap::new
+                                    ))
+                    ).println();
                 } else {
                     session.out().printlnf(
                             r.stream().map(x -> new AliasInfo(x, session)).collect(Collectors.toList())
@@ -144,12 +97,14 @@ public class NutsSettingsAliasSubCommand extends AbstractNutsSettingsSubCommand 
                                 cmdLine.pushBack(a);
                                 cmdLine.unexpectedArgument();
                             }
-                            toAdd.put(a.getKey().getString(), new AliasInfo(a.getKey().getString(), a.getValue().getString(), null, null, null));
+                            String[] cmdAndArgs = splitCmdAndExecArgs(a.getValue().getString(), session);
+                            toAdd.put(a.getKey().getString(), new AliasInfo(a.getKey().getString(), cmdAndArgs[0], null, null, cmdAndArgs[1]));
                         } else {
                             if (n == null) {
                                 n = a.toString();
                             } else {
-                                toAdd.put(n, new AliasInfo(n, a.toString(), null, null, null));
+                                String[] cmdAndArgs = splitCmdAndExecArgs(a.toString(), session);
+                                toAdd.put(n, new AliasInfo(n, cmdAndArgs[0], null, null, cmdAndArgs[1]));
                                 n = null;
                             }
                         }
@@ -163,17 +118,80 @@ public class NutsSettingsAliasSubCommand extends AbstractNutsSettingsSubCommand 
                 for (AliasInfo value : toAdd.values()) {
                     session.commands()
                             .addCommand(
-                            new NutsCommandConfig()
-                                    .setCommand(NutsCommandLine.of(value.command,session).toStringArray())
-                                    .setName(value.name)
-                                    .setExecutorOptions(NutsCommandLine.of(value.executionOptions,session).toStringArray())
-                             );
+                                    new NutsCommandConfig()
+                                            .setCommand(NutsCommandLine.of(value.command,NutsShellFamily.BASH, session).setExpandSimpleOptions(false).toStringArray())
+                                            .setName(value.name)
+                                            .setExecutorOptions(NutsCommandLine.of(value.executionOptions,NutsShellFamily.BASH, session).setExpandSimpleOptions(false).toStringArray())
+                            );
                 }
                 session.config().save();
             }
             return true;
         }
         return false;
+    }
+    private String[] splitCmdAndExecArgs(String aliasValue,NutsSession session){
+        NutsCommandLine cmdLine2 = NutsCommandLine.of(aliasValue, NutsShellFamily.BASH, session).setExpandSimpleOptions(false);
+        List<String> executionOptions = new ArrayList<>();
+        while (cmdLine2.hasNext()) {
+            NutsArgument r = cmdLine2.peek();
+            if (r.isOption()) {
+                executionOptions.add(cmdLine2.next().getString());
+            } else {
+                break;
+            }
+        }
+        if (executionOptions.isEmpty()) {
+            return new String[]{aliasValue,null};
+        } else {
+            return new String[]{cmdLine2.toString(),NutsCommandLine.of(executionOptions.toArray(new String[0]), session).toString()};
+        }
+    }
+
+    public static class AliasInfo {
+
+        public String name;
+        public String command;
+        public String factoryId;
+        public NutsId owner;
+        public String executionOptions;
+
+        public AliasInfo(String name, String command, String factoryId, NutsId owner, String executionOptions) {
+            this.name = name;
+            this.command = command;
+            this.factoryId = factoryId;
+            this.owner = owner;
+            this.executionOptions = executionOptions;
+        }
+
+        public AliasInfo(NutsWorkspaceCustomCommand a, NutsSession ws) {
+            name = a.getName();
+            command = NutsCommandLine.of(a.getCommand(), ws).toString();
+            executionOptions = NutsCommandLine.of(a.getExecutorOptions(), ws).toString();
+            factoryId = a.getFactoryId();
+            owner = a.getOwner();
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public String getCommand() {
+            return command;
+        }
+
+        public String getFactoryId() {
+            return factoryId;
+        }
+
+        public NutsId getOwner() {
+            return owner;
+        }
+
+        public String getExecutionOptions() {
+            return executionOptions;
+        }
+
     }
 
 }

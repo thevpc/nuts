@@ -1,6 +1,8 @@
 package net.thevpc.nuts.runtime.standalone.workspace.config;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.standalone.id.util.NutsIdUtils;
+import net.thevpc.nuts.runtime.standalone.session.NutsSessionUtils;
 import net.thevpc.nuts.runtime.standalone.util.CoreNutsConstants;
 import net.thevpc.nuts.runtime.standalone.workspace.DefaultNutsWorkspace;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceExt;
@@ -15,7 +17,7 @@ public class DefaultNutsWorkspaceLocationModel {
 
     public DefaultNutsWorkspaceLocationModel(NutsWorkspace ws, String workspaceLocation) {
         this.ws = ws;
-        this.workspaceLocation = NutsPath.of(workspaceLocation, NutsWorkspaceUtils.defaultSession(ws));
+        this.workspaceLocation = NutsPath.of(workspaceLocation, NutsSessionUtils.defaultSession(ws));
     }
 
     public NutsWorkspace getWorkspace() {
@@ -154,7 +156,7 @@ public class DefaultNutsWorkspaceLocationModel {
 
 
     public NutsPath getDefaultIdBasedir(NutsId id, NutsSession session) {
-        NutsWorkspaceUtils.of(session).checkShortId(id);
+        NutsIdUtils.checkShortId(id,session);
         String groupId = id.getGroupId();
         String artifactId = id.getArtifactId();
         String plainIdPath = groupId.replace('.', '/') + "/" + artifactId;

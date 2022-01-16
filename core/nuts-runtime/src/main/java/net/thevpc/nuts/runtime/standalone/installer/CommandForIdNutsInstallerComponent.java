@@ -10,7 +10,7 @@
  * other 'things' . Its based on an extensible architecture to help supporting a
  * large range of sub managers / repositories.
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc] Licensed under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -25,108 +25,95 @@ package net.thevpc.nuts.runtime.standalone.installer;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.definition.DefaultNutsInstallInfo;
+import net.thevpc.nuts.runtime.standalone.executor.NutsExecutionContextUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
 import net.thevpc.nuts.runtime.standalone.definition.DefaultNutsDefinition;
+import net.thevpc.nuts.runtime.standalone.xtra.expr.StringPlaceHolderParser;
 import net.thevpc.nuts.spi.NutsInstallerComponent;
 import net.thevpc.nuts.spi.NutsSupportLevelContext;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * @author thevpc
  */
 public class CommandForIdNutsInstallerComponent implements NutsInstallerComponent {
+    NutsDefinition runnerId;
 
-    private String getNutsVersion(NutsExecutionContext executionContext) {
-        NutsDescriptor descriptor = executionContext.getDefinition().getDescriptor();
-        if (descriptor.isApplication()) {
-            for (NutsDependency dependency : descriptor.getDependencies()) {
-                if (dependency.toId().getShortName().equals(NutsConstants.Ids.NUTS_API)) {
-                    return dependency.toId().getVersion().getValue();
-                }
-            }
-        }
-        for (NutsDependency dependency : executionContext.getDefinition().getDependencies()) {
-            if (dependency.toId().getShortName().equals(NutsConstants.Ids.NUTS_API)) {
-                return dependency.toId().getVersion().getValue();
-            }
-        }
-        return null;
+    public CommandForIdNutsInstallerComponent(NutsDefinition runnerId) {
+        this.runnerId = runnerId;
     }
 
     @Override
     public void install(NutsExecutionContext executionContext) {
-        NutsWorkspaceUtils.of(executionContext.getSession()).checkReadOnly();
-//        NutsId id = executionContext.getDefinition().getId();
-        NutsDescriptor descriptor = executionContext.getDefinition().getDescriptor();
-        if (descriptor.isApplication()) {
-            DefaultNutsDefinition def2 = new DefaultNutsDefinition(executionContext.getDefinition(), executionContext.getSession())
-                    .setInstallInformation(
-                            new DefaultNutsInstallInfo(executionContext.getDefinition().getInstallInformation())
-                                    .setInstallStatus(
-                                            executionContext.getDefinition().getInstallInformation().getInstallStatus().withInstalled(true)
-                                    )
-                    );
-            executionContext.getSession().exec()
-                    .setSession(executionContext.getExecSession())
-                    //                    .executionType(NutsExecutionType.EMBEDDED)
-                    .setCommand(def2)
-                    .addCommand("--nuts-exec-mode=install")
-                    .addExecutorOptions("--nuts-auto-install=false")
-                    .addCommand(executionContext.getArguments())
-                    .setExecutionType(executionContext.getSession().boot().getBootOptions().getExecutionType())
-                    .setFailFast(true)
-                    .run();
-        }
+        runMode(executionContext, "install");
     }
 
     @Override
     public void update(NutsExecutionContext executionContext) {
-        NutsWorkspaceUtils.of(executionContext.getSession()).checkReadOnly();
-//        NutsId id = executionContext.getDefinition().getId();
-        NutsDescriptor descriptor = executionContext.getDefinition().getDescriptor();
-        if (descriptor.isApplication()) {
-            DefaultNutsDefinition def2 = new DefaultNutsDefinition(executionContext.getDefinition(), executionContext.getSession())
-                    .setInstallInformation(
-                            new DefaultNutsInstallInfo(executionContext.getDefinition().getInstallInformation())
-                                    .setInstallStatus(
-                                            executionContext.getDefinition().getInstallInformation().getInstallStatus().withInstalled(true)
-                                    )
-                    );
-            executionContext.getSession().exec()
-                    .setCommand(def2)
-                    .addCommand("--nuts-exec-mode=update", "--yes")
-                    //                    .addCommand(id.builder().setRepository(null).build().toString(), "--nuts-exec-mode=update", "--force")
-                    .addExecutorOptions().addCommand(executionContext.getArguments())
-                    .setFailFast(true).run();
-        }
+        runMode(executionContext, "update");
     }
 
     @Override
     public void uninstall(NutsExecutionContext executionContext, boolean deleteData) {
-        NutsSession session = executionContext.getExecSession();
-//        NutsWorkspace ws = executionContext.getWorkspace();
+        runMode(executionContext, "uninstall");
+    }
+
+    public void runMode(NutsExecutionContext executionContext, String mode) {
         NutsWorkspaceUtils.of(executionContext.getSession()).checkReadOnly();
-        NutsId id = executionContext.getDefinition().getId();
-        if ("jar".equals(executionContext.getDefinition().getDescriptor().getPackaging())) {
-            NutsExecutionEntry[] executionEntries = NutsExecutionEntries.of(session).parse(executionContext.getDefinition().getFile());
-            for (NutsExecutionEntry executionEntry : executionEntries) {
-                if (executionEntry.isApp()) {
-                    //
-                    int r = session.exec().addCommand(id.getLongName(), "--nuts-exec-mode=uninstall", "--yes").addCommand(executionContext.getArguments()).getResult();
-                    if (r != 0) {
-                        session.out().printf("installation exited with code : " + r + " %n");
-                    }
-                    return;
+        if (runnerId == null) {
+            NutsDefinition definition = executionContext.getDefinition();
+            NutsDescriptor descriptor = definition.getDescriptor();
+            if (descriptor.isApplication()) {
+                DefaultNutsDefinition def2 = new DefaultNutsDefinition(definition, executionContext.getSession())
+                        .setInstallInformation(
+                                new DefaultNutsInstallInfo(definition.getInstallInformation())
+                                        .setInstallStatus(
+                                                definition.getInstallInformation().getInstallStatus().withInstalled(true)
+                                        )
+                        );
+                NutsExecCommand cmd = executionContext.getSession().exec()
+                        .setSession(executionContext.getExecSession())
+                        .setCommand(def2)
+                        .addCommand("--nuts-exec-mode=" + mode);
+                if (mode.equals("install")) {
+                    cmd.addExecutorOptions("--nuts-auto-install=false");
                 }
+                cmd.addCommand(executionContext.getArguments())
+                        .setExecutionType(executionContext.getSession().boot().getBootOptions().getExecutionType())
+                        .setFailFast(true)
+                        .run();
+            }
+        } else {
+            NutsDefinition definition = runnerId;
+            NutsDescriptor descriptor = definition.getDescriptor();
+            if (descriptor.isApplication()) {
+                DefaultNutsDefinition def2 = new DefaultNutsDefinition(definition, executionContext.getSession())
+                        .setInstallInformation(
+                                new DefaultNutsInstallInfo(definition.getInstallInformation())
+                                        .setInstallStatus(
+                                                definition.getInstallInformation().getInstallStatus().withInstalled(true)
+                                        )
+                        );
+                List<String> eargs = new ArrayList<>();
+                for (String a : executionContext.getExecutorArguments()) {
+                    eargs.add(evalString(a, mode, executionContext));
+                }
+                eargs.addAll(Arrays.asList(executionContext.getArguments()));
+                executionContext.getExecSession().exec()
+                        .setCommand(def2)
+                        .addCommand(eargs)
+                        .setExecutionType(executionContext.getExecSession().boot().getBootOptions().getExecutionType())
+                        .setExecutionType(
+                                "nsh".equals(def2.getId().getArtifactId()) ?
+                                        NutsExecutionType.EMBEDDED : NutsExecutionType.SPAWN
+                        )
+                        .setFailFast(true)
+                        .run();
             }
         }
-        //            NutsId parseId = executionContext.getPrivateStoreNutsDefinition().getId();
-        //            NutsWorkspaceConfigManager cc = executionContext.getWorkspace().getConfigManager();
-        //            for (NutsWorkspaceCommand command : cc.findCommands(parseId)) {
-        //                //install if installed with the very same parseVersion !!
-        //                if (parseId.getLongName().equals(command.getId().getLongName())) {
-        //                    cc.uninstallCommand(command.getName());
-        //                }
-        //            }
     }
 
     @Override
@@ -134,4 +121,15 @@ public class CommandForIdNutsInstallerComponent implements NutsInstallerComponen
         return DEFAULT_SUPPORT;
     }
 
+
+    private String evalString(String s, String mode, NutsExecutionContext executionContext) {
+        return StringPlaceHolderParser.replaceDollarPlaceHolders(s, executionContext, executionContext.getSession(),
+                (key, context, session) -> {
+                    if ("NUTS_MODE".equals(key)) {
+                        return mode;
+                    }
+                    return NutsExecutionContextUtils.EXECUTION_CONTEXT_PLACEHOLDER.get(key, context, session);
+                }
+        );
+    }
 }

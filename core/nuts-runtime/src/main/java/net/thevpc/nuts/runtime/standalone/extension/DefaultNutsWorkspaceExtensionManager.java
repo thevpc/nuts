@@ -6,6 +6,7 @@
 package net.thevpc.nuts.runtime.standalone.extension;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.standalone.session.NutsSessionUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
 import net.thevpc.nuts.spi.NutsComponent;
 
@@ -29,7 +30,7 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
 
     @Override
     public Set<NutsId> getCompanionIds() {
-        NutsWorkspaceUtils.checkSession(model.getWorkspace(),getSession());
+        NutsSessionUtils.checkSession(model.getWorkspace(),getSession());
         NutsIdParser parser = NutsIdParser.of(getSession());
         return Collections.unmodifiableSet(new HashSet<>(
                         Arrays.asList(parser.parse("net.thevpc.nuts.toolbox:nsh"))
@@ -173,7 +174,7 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
     }
 
     private void checkSession() {
-        NutsWorkspaceUtils.checkSession(model.getWorkspace(), session);
+        NutsSessionUtils.checkSession(model.getWorkspace(), session);
     }
 
 }

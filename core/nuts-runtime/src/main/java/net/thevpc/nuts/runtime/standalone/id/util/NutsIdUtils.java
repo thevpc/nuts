@@ -1,12 +1,30 @@
 package net.thevpc.nuts.runtime.standalone.id.util;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.standalone.session.NutsSessionUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.config.NutsWorkspaceConfigApi;
 
 import java.util.Map;
 
 public class NutsIdUtils {
+    public static void checkLongId(NutsId id, NutsSession session) {
+        checkShortId(id,session);
+        if (NutsBlankable.isBlank(id.getVersion().toString())) {
+            throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("missing version for %s", id));
+        }
+    }
 
+    public static void checkShortId(NutsId id, NutsSession session) {
+        if (id == null) {
+            throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("missing id"));
+        }
+        if (NutsBlankable.isBlank(id.getGroupId())) {
+            throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("missing groupId for %s", id));
+        }
+        if (NutsBlankable.isBlank(id.getArtifactId())) {
+            throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("missing artifactId for %s", id));
+        }
+    }
     public static void checkValidEffectiveId(NutsId id, NutsSession session) {
         if (id == null) {
             throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("unable to evaluate effective null id"));
@@ -92,6 +110,42 @@ public class NutsIdUtils {
                     .setSession(session).getResultIds().first();
         }
         return foundRT;
+    }
+
+    public static void checkNutsIdBase(NutsId id, NutsSession session) {
+        if (id == null) {
+            throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("missing id"));
+        }
+        if (NutsBlankable.isBlank(id.getGroupId())) {
+            throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("missing group for %s", id));
+        }
+        if (NutsBlankable.isBlank(id.getArtifactId())) {
+            throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("missing name for %s", id));
+        }
+    }
+
+    public static void checkNutsId(NutsId id,NutsSession session) {
+        NutsIdUtils.checkNutsIdBase(id, session);
+        if (id.getVersion().isBlank()) {
+            throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("missing version for %s", id));
+        }
+    }
+
+    public static String getNutsApiVersion(NutsExecutionContext executionContext) {
+        NutsDescriptor descriptor = executionContext.getDefinition().getDescriptor();
+        if (descriptor.isApplication()) {
+            for (NutsDependency dependency : descriptor.getDependencies()) {
+                if (dependency.toId().getShortName().equals(NutsConstants.Ids.NUTS_API)) {
+                    return dependency.toId().getVersion().getValue();
+                }
+            }
+        }
+        for (NutsDependency dependency : executionContext.getDefinition().getDependencies()) {
+            if (dependency.toId().getShortName().equals(NutsConstants.Ids.NUTS_API)) {
+                return dependency.toId().getVersion().getValue();
+            }
+        }
+        return null;
     }
 }
 

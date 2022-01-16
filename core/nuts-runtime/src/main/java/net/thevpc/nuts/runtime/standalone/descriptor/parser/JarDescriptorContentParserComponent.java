@@ -33,7 +33,6 @@ import net.thevpc.nuts.NutsRef;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import net.thevpc.nuts.runtime.standalone.io.util.InputStreamVisitor;
@@ -82,33 +81,38 @@ public class JarDescriptorContentParserComponent implements NutsDescriptorConten
 //        final NutsRef<String> mainClass = new NutsRef<>();
 
         NutsSession session = parserContext.getSession();
-        ZipUtils.visitZipStream(parserContext.getFullStream(), new Predicate<String>() {
-            @Override
-            public boolean test(String path) {
-                if ("META-INF/MANIFEST.MF".equals(path)) {
-                    return true;
+        ZipUtils.visitZipStream(parserContext.getFullStream(), (path, inputStream) -> {
+            switch (path) {
+                case "META-INF/MANIFEST.MF": {
+                    try {
+                        metainf.set(NutsDescriptorParser.of(session)
+                                .setDescriptorStyle(NutsDescriptorStyle.MANIFEST)
+                                .setLenient(true)
+                                .parse(inputStream));
+                    } finally {
+                        inputStream.close();
+                    }
+                    break;
                 }
-                if (("META-INF/" + NutsConstants.Files.DESCRIPTOR_FILE_NAME).equals(path)) {
-                    return true;
+                case ("META-INF/" + NutsConstants.Files.DESCRIPTOR_FILE_NAME): {
+                    try {
+                        nutsjson.set(NutsDescriptorParser.of(session)
+                                .setDescriptorStyle(NutsDescriptorStyle.NUTS)
+                                .parse(inputStream));
+                    } finally {
+                        inputStream.close();
+                    }
+                    break;
                 }
-                return path.startsWith("META-INF/maven/") && path.endsWith("/pom.xml");
-            }
-        }, new InputStreamVisitor() {
-            @Override
-            public boolean visit(String path, InputStream inputStream) throws IOException {
-                switch (path) {
-                    case "META-INF/MANIFEST.MF": {
+                default: {
+                    if(path.startsWith("META-INF/maven/") && path.endsWith("/pom.xml")) {
                         try {
-                            metainf.set(NutsDescriptorParser.of(session)
-                                    .setDescriptorStyle(NutsDescriptorStyle.MANIFEST)
-                                    .setLenient(true)
-                                    .parse(inputStream));
+                            maven.set(MavenUtils.of(session).parsePomXmlAndResolveParents(inputStream, NutsFetchMode.REMOTE, path, null));
                         } finally {
                             inputStream.close();
                         }
                         break;
-                    }
-                    case ("META-INF/" + NutsConstants.Files.DESCRIPTOR_FILE_NAME): {
+                    }else if(path.startsWith("META-INF/nuts/") && path.endsWith("/nuts.json")){
                         try {
                             nutsjson.set(NutsDescriptorParser.of(session)
                                     .setDescriptorStyle(NutsDescriptorStyle.NUTS)
@@ -116,20 +120,12 @@ public class JarDescriptorContentParserComponent implements NutsDescriptorConten
                         } finally {
                             inputStream.close();
                         }
-                        break;
                     }
-                    default: {
-                        try {
-                            maven.set(MavenUtils.of(session).parsePomXmlAndResolveParents(inputStream, NutsFetchMode.REMOTE, path, null));
-                        } finally {
-                            inputStream.close();
-                        }
-                        break;
-                    }
+                    break;
                 }
-                //continue
-                return !nutsjson.isSet() || (!metainf.isSet() && !maven.isSet());
             }
+            //continue
+            return !nutsjson.isSet() || (!metainf.isSet() && !maven.isSet());
         }, session);
 
         if (nutsjson.isSet()) {
@@ -137,16 +133,18 @@ public class JarDescriptorContentParserComponent implements NutsDescriptorConten
         }
         String mainClassString = null;
         if (metainf.isSet()) {
-            String[] args = metainf.get().getExecutor().getArguments();
-            for (int i = 0; i < args.length; i++) {
-                String arg = args[i];
-                if (arg.startsWith("--main-class=")) {
-                    mainClassString = NutsUtilStrings.trimToNull(arg.substring("--main-class=".length()));
-                    break;
-                } else if (arg.equals("--main-class")) {
-                    i++;
-                    if (i < args.length) {
-                        mainClassString = NutsUtilStrings.trimToNull(args[i]);
+            if(metainf.get().getExecutor()!=null) {
+                String[] args = metainf.get().getExecutor().getArguments();
+                for (int i = 0; i < args.length; i++) {
+                    String arg = args[i];
+                    if (arg.startsWith("--main-class=")) {
+                        mainClassString = NutsUtilStrings.trimToNull(arg.substring("--main-class=".length()));
+                        break;
+                    } else if (arg.equals("--main-class")) {
+                        i++;
+                        if (i < args.length) {
+                            mainClassString = NutsUtilStrings.trimToNull(args[i]);
+                        }
                     }
                 }
             }
@@ -181,22 +179,22 @@ public class JarDescriptorContentParserComponent implements NutsDescriptorConten
                 cmd.skip();
             }
         }
-        if (NutsBlankable.isBlank(mainClassString) || alwaysSelectAllMainClasses) {
-            NutsExecutionEntry[] classes = NutsExecutionEntries.of(session)
-                    .parse(parserContext.getFullStream(), "jar", parserContext.getFullStream().toString());
-            if (classes.length == 0) {
-                return baseNutsDescriptor;
-            } else {
-                return baseNutsDescriptor.builder().setExecutor(new DefaultNutsArtifactCall(JAVA, new String[]{
-                        "--main-class=" + String.join(":",
-                                Arrays.stream(classes)
-                                        .map(x -> x.getName())
-                                        .collect(Collectors.toList())
-                        )}, null)).addFlag(NutsDescriptorFlag.EXEC).build();
-            }
-        } else {
+//        if (NutsBlankable.isBlank(mainClassString) || alwaysSelectAllMainClasses) {
+//            NutsExecutionEntry[] classes = NutsExecutionEntries.of(session)
+//                    .parse(parserContext.getFullStream(), "jar", parserContext.getFullStream().toString());
+//            if (classes.length == 0) {
+//                return baseNutsDescriptor;
+//            } else {
+//                return baseNutsDescriptor.builder().setExecutor(new DefaultNutsArtifactCall(JAVA, new String[]{
+//                        "--main-class=" + String.join(":",
+//                                Arrays.stream(classes)
+//                                        .map(x -> x.getName())
+//                                        .collect(Collectors.toList())
+//                        )}, null)).addFlag(NutsDescriptorFlag.EXEC).build();
+//            }
+//        } else {
             return baseNutsDescriptor;
-        }
+//        }
     }
 
 }

@@ -6,6 +6,8 @@ import net.thevpc.nuts.NutsWorkspace;
 
 import java.io.File;
 import java.nio.file.Path;
+
+import net.thevpc.nuts.runtime.standalone.session.NutsSessionUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
 
 public abstract class AbstractNutsLocks implements NutsLocks {
@@ -20,7 +22,7 @@ public abstract class AbstractNutsLocks implements NutsLocks {
     }
 
     protected void checkSession() {
-        NutsWorkspaceUtils.checkSession(ws, getSession());
+        NutsSessionUtils.checkSession(ws, getSession());
     }
 
     @Override

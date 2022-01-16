@@ -3,6 +3,7 @@ package net.thevpc.nuts.runtime.standalone.repository.config;
 import java.util.Arrays;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.session.NutsRepositorySessionAwareImpl;
+import net.thevpc.nuts.runtime.standalone.session.NutsSessionUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
 
 public class DefaultNutsRepositoryManager implements NutsRepositoryManager {
@@ -91,7 +92,7 @@ public class DefaultNutsRepositoryManager implements NutsRepositoryManager {
     }
 
     private void checkSession() {
-        NutsWorkspaceUtils.checkSession(model.getWorkspace(), session);
+        NutsSessionUtils.checkSession(model.getWorkspace(), session);
     }
 
     public DefaultNutsRepositoryModel getModel() {

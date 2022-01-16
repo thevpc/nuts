@@ -31,10 +31,6 @@ import net.thevpc.nuts.spi.NutsComponentScopeType;
 import net.thevpc.nuts.toolbox.nsh.SimpleJShellBuiltin;
 import net.thevpc.nuts.toolbox.nsh.jshell.JShellExecutionContext;
 
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -76,20 +72,14 @@ public class WgetCommand extends SimpleJShellBuiltin {
 
     protected void download(String path, String output, JShellExecutionContext context) {
         String output2 = output;
-        URL url;
         NutsSession session = context.getSession();
-        try {
-            url = new URL(path);
-        } catch (MalformedURLException ex) {
-            throw new NutsExecutionException(session, NutsMessage.cstyle("%s", ex), ex, 100);
-        }
-        String urlName = NutsPath.of(url,session).getName();
+        String urlName = NutsPath.of(path,session).getName();
         if (!NutsBlankable.isBlank(output2)) {
             output2 = output2.replace("{}", urlName);
         }
-        Path file = Paths.get(context.getShellContext().getAbsolutePath(NutsBlankable.isBlank(output2) ? urlName : output2));
+        NutsPath file = NutsPath.of(context.getShellContext().getAbsolutePath(NutsBlankable.isBlank(output2) ? urlName : output2),session);
         NutsCp.of(session)
-                .from(path).to(file).setSession(session)
+                .from(NutsPath.of(path,session)).to(file).setSession(session)
                 .addOptions(NutsPathOption.LOG, NutsPathOption.TRACE).run();
     }
 

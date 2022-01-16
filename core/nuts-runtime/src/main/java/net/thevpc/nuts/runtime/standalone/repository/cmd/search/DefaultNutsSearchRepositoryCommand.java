@@ -6,11 +6,11 @@
 package net.thevpc.nuts.runtime.standalone.repository.cmd.search;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.standalone.session.NutsSessionUtils;
 import net.thevpc.nuts.runtime.standalone.util.iter.*;
 import net.thevpc.nuts.runtime.standalone.repository.impl.NutsRepositoryExt;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import net.thevpc.nuts.NutsLogVerb;
-import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
 import net.thevpc.nuts.spi.NutsSearchRepositoryCommand;
 
 import java.util.Iterator;
@@ -41,7 +41,7 @@ public class DefaultNutsSearchRepositoryCommand extends AbstractNutsSearchReposi
     @Override
     public NutsSearchRepositoryCommand run() {
         NutsSession session = getSession();
-        NutsWorkspaceUtils.checkSession(getRepo().getWorkspace(), session);
+        NutsSessionUtils.checkSession(getRepo().getWorkspace(), session);
         NutsRunnable startRunnable = NutsRunnable.of(
                 () -> {
                     getRepo().security().setSession(session).checkAllowed(NutsConstants.Permissions.FETCH_DESC, "search");

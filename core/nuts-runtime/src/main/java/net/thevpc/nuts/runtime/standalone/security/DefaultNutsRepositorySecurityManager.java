@@ -7,6 +7,7 @@ package net.thevpc.nuts.runtime.standalone.security;
 
 import net.thevpc.nuts.*;
 
+import net.thevpc.nuts.runtime.standalone.session.NutsSessionUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
 import net.thevpc.nuts.spi.NutsAuthenticationAgent;
 
@@ -46,7 +47,7 @@ public class DefaultNutsRepositorySecurityManager implements NutsRepositorySecur
     }
 
     private void checkSession(NutsSession session1) {
-        NutsWorkspaceUtils.checkSession(model.getWorkspace(), session1);
+        NutsSessionUtils.checkSession(model.getWorkspace(), session1);
     }
 
     @Override

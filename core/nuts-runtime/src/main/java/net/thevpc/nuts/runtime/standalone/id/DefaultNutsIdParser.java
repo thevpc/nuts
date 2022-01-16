@@ -90,7 +90,7 @@ public class DefaultNutsIdParser implements NutsIdParser {
                         break;
                     }
                     case NutsConstants.IdProperties.PLATFORM:{
-                        sb.setPlatform(StringTokenizerUtils.splitDefault(e.getValue()).toArray(new String[0]));
+                        sb.setPlatform(NutsIdListHelper.parseIdListStrings(e.getValue(),session));
                         break;
                     }
                     case NutsConstants.IdProperties.OS_DIST:{

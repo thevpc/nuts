@@ -3,8 +3,8 @@ package net.thevpc.nuts.runtime.standalone.log;
 import net.thevpc.nuts.NutsLogger;
 import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.NutsWorkspace;
+import net.thevpc.nuts.runtime.standalone.session.NutsSessionUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceExt;
-import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
 import net.thevpc.nuts.spi.NutsComponentScope;
 import net.thevpc.nuts.spi.NutsComponentScopeType;
 import net.thevpc.nuts.spi.NutsLogManager;
@@ -95,7 +95,7 @@ public class DefaultNutsLogManager implements NutsLogManager {
     }
 
     private void checkSession(NutsSession session) {
-        NutsWorkspaceUtils.checkSession(model.getWorkspace(), session);
+        NutsSessionUtils.checkSession(model.getWorkspace(), session);
     }
 
     public DefaultNutsLogModel getModel() {

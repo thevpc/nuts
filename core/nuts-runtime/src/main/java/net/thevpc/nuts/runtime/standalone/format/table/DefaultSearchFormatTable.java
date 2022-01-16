@@ -39,7 +39,7 @@ public class DefaultSearchFormatTable extends DefaultSearchFormatBase {
             if (getSession() != null && getSession().getOutputFormatOptions() != null) {
                 for (String outputFormatOption : getSession().getOutputFormatOptions()) {
                     if (outputFormatOption != null) {
-                        table.configure(true, NutsCommandLine.of(outputFormatOption,ws));
+                        table.configure(true, NutsCommandLine.of(outputFormatOption,NutsShellFamily.BASH, ws).setExpandSimpleOptions(false));
                     }
                 }
             }

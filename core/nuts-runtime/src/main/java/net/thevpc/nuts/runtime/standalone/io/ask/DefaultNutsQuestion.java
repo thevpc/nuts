@@ -3,6 +3,7 @@ package net.thevpc.nuts.runtime.standalone.io.ask;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.io.printstream.NutsByteArrayPrintStream;
 import net.thevpc.nuts.runtime.standalone.app.gui.CoreNutsUtilGui;
+import net.thevpc.nuts.runtime.standalone.session.NutsSessionUtils;
 import net.thevpc.nuts.runtime.standalone.util.NutsConfigurableHelper;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
 
@@ -555,6 +556,6 @@ public class DefaultNutsQuestion<T> implements NutsQuestion<T> {
     }
 
     private void checkSession() {
-        NutsWorkspaceUtils.checkSession(ws, session);
+        NutsSessionUtils.checkSession(ws, session);
     }
 }

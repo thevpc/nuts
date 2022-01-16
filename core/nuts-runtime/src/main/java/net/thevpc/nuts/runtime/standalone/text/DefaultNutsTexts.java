@@ -1,6 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.text;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.standalone.session.NutsSessionUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.text.highlighter.CustomStyleCodeHighlighter;
 import net.thevpc.nuts.runtime.standalone.text.parser.*;
@@ -29,7 +30,7 @@ public class DefaultNutsTexts implements NutsTexts {
     }
 
     private void checkSession() {
-        NutsWorkspaceUtils.checkSession(ws, getSession());
+        NutsSessionUtils.checkSession(ws, getSession());
     }
 
     private NutsText _NutsMessage_toString(NutsMessage m) {

@@ -50,29 +50,70 @@ public class UnzipCommand extends SimpleJShellBuiltin {
     protected boolean configureFirst(NutsCommandLine commandLine, JShellExecutionContext context) {
         Options options = context.getOptions();
         NutsArgument a;
-        if ((a = commandLine.nextBoolean("-l")) != null) {
-            options.l = a.getBooleanValue();
-            return true;
-        } else if ((a = commandLine.nextString("-d")) != null) {
-            options.dir = a.getValue().getString();
-            return true;
-        } else if (!commandLine.peek().isOption()) {
-            while (commandLine.hasNext()) {
-                options.files.add(commandLine.next().getString());
+        String mode="zip";
+        while(commandLine.hasNext()){
+            switch (mode){
+                case "zip":{
+                    if ((a = commandLine.nextBoolean("-l")) != null) {
+                        options.l = a.getBooleanValue();
+                    } else if ((a = commandLine.nextString("-d")) != null) {
+                        options.dir = a.getValue().getString();
+                    } else if (!commandLine.peek().isOption()) {
+                        String s = commandLine.next().toString();
+                        if(options.zfiles.isEmpty()||s.toLowerCase().endsWith(".zip")) {
+                            options.zfiles.add(s);
+                        }else{
+                            options.internFiles.add(s);
+                            mode="internFiles";
+                        }
+                    }else{
+                        commandLine.unexpectedArgument();
+                    }
+                    break;
+                }
+                case "internFiles":{
+                    if ((a = commandLine.nextBoolean("-l")) != null) {
+                        options.l = a.getBooleanValue();
+                    } else if ((a = commandLine.nextString("-d")) != null) {
+                        options.dir = a.getValue().getString();
+                    } else if ((a = commandLine.nextString("-x")) != null) {
+                        options.xFiles.add(a.getValue().getString());
+                        mode="xFiles";
+                    } else if (!commandLine.peek().isOption()) {
+                        options.xFiles.add(commandLine.next().toString());
+                    }else{
+                        commandLine.unexpectedArgument();
+                    }
+                    break;
+                }
+                case "xFiles":{
+                    if ((a = commandLine.nextBoolean("-l")) != null) {
+                        options.l = a.getBooleanValue();
+                    } else if ((a = commandLine.nextString("-d")) != null) {
+                        options.dir = a.getValue().getString();
+                    } else if (!commandLine.peek().isOption()) {
+                        options.xFiles.add(commandLine.next().toString());
+                    }else{
+                        commandLine.unexpectedArgument();
+                    }
+                    break;
+                }
+                default:{
+                    commandLine.unexpectedArgument();
+                }
             }
-            return true;
         }
-        return false;
+        return true;
     }
 
     @Override
     protected void execBuiltin(NutsCommandLine commandLine, JShellExecutionContext context) {
         Options options = context.getOptions();
-        if (options.files.isEmpty()) {
+        if (options.zfiles.isEmpty()) {
             commandLine.required();
         }
         NutsSession session = context.getSession();
-        for (String path : options.files) {
+        for (String path : options.zfiles) {
             NutsPath file = NutsPath.of(path, session).toAbsolute(context.getShellContext().getCwd());
             try {
                 if (options.l) {
@@ -113,6 +154,8 @@ public class UnzipCommand extends SimpleJShellBuiltin {
         boolean l = false;
         boolean skipRoot = false;
         String dir = null;
-        List<String> files = new ArrayList<>();
+        List<String> zfiles = new ArrayList<>();
+        List<String> internFiles = new ArrayList<>();
+        List<String> xFiles = new ArrayList<>();
     }
 }

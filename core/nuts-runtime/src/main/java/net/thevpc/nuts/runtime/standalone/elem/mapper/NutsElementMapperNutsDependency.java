@@ -41,10 +41,11 @@ public class NutsElementMapperNutsDependency implements NutsElementMapper<NutsDe
 //                    return ws.elem().forString(ws.dependency().formatter().setNtf(true).setValue(o).format());
 //                } else {
 
-        return context.defaultObjectToElement(
-                o.formatter().setSession(context.getSession())
+        NutsString format = o.formatter().setSession(context.getSession())
                 .setNtf(context.isNtf())
-                .format(), null);
+                .format();
+        return context.defaultObjectToElement(
+                format, null);
 //                }
 //            }
 //            return context.defaultObjectToElement(context.getSession().dependency().builder().set(o), null);

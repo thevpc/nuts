@@ -6,6 +6,7 @@
 package net.thevpc.nuts.runtime.standalone.repository.impl;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.standalone.id.util.NutsIdUtils;
 import net.thevpc.nuts.runtime.standalone.io.util.InputStreamMetadataAwareImpl;
 import net.thevpc.nuts.runtime.standalone.io.util.NutsStreamOrPath;
 import net.thevpc.nuts.runtime.standalone.util.iter.IteratorBuilder;
@@ -80,7 +81,7 @@ public class NutsRepositoryFolderHelper {
     }
 
     public NutsPath getLongIdLocalFolder(NutsId id, NutsSession session) {
-        NutsWorkspaceUtils.of(session).checkNutsId(id);
+        NutsIdUtils.checkNutsId(id,session);
         if (repo == null) {
             return getStoreLocation().resolve(session.locations().setSession(session).getDefaultIdBasedir(id));
         }
@@ -95,7 +96,7 @@ public class NutsRepositoryFolderHelper {
     }
 
     public NutsPath getShortIdLocalFolder(NutsId id, NutsSession session) {
-        NutsWorkspaceUtils.of(session).checkShortId(id);
+        NutsIdUtils.checkShortId(id,session);
         if (repo == null) {
             return getStoreLocation().resolve(session.locations().getDefaultIdBasedir(id.builder().setVersion("").build()));
         }
@@ -222,13 +223,13 @@ public class NutsRepositoryFolderHelper {
     }
 
     public NutsPath getRelativeLocalGroupAndArtifactFile(NutsId id, NutsSession session) {
-        NutsWorkspaceUtils.of(session).checkShortId(id);
+        NutsIdUtils.checkShortId(id,session);
         NutsPath groupFolder = NutsPath.of(id.getGroupId().replace('.', File.separatorChar), session);
         return groupFolder.resolve(id.getArtifactId());
     }
 
     public NutsPath getLocalGroupAndArtifactFile(NutsId id, NutsSession session) {
-        NutsWorkspaceUtils.of(session).checkShortId(id);
+        NutsIdUtils.checkShortId(id,session);
         NutsPath groupFolder = getStoreLocation().resolve(id.getGroupId().replace('.', File.separatorChar));
         return groupFolder.resolve(id.getArtifactId());
     }
@@ -366,7 +367,7 @@ public class NutsRepositoryFolderHelper {
             id = descriptor.getId();
         }
 
-        NutsWorkspaceUtils.of(session).checkNutsId(id);
+        NutsIdUtils.checkNutsId(id,session);
 
         if (isDeployed(id, descriptor, session)) {
             NutsId finalId = id;
@@ -407,7 +408,7 @@ public class NutsRepositoryFolderHelper {
         if (!isWriteEnabled()) {
             throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("read only repository"));
         }
-        NutsWorkspaceUtils.of(session).checkNutsId(id);
+        NutsIdUtils.checkNutsId(id,session);
         NutsPath descFile = getLongIdLocalFile(id.builder().setFaceDescriptor().build(), session);
         if (descFile.exists()) {
             if (!DefaultWriteTypeProcessor
@@ -453,7 +454,7 @@ public class NutsRepositoryFolderHelper {
         if (!isWriteEnabled()) {
             return null;
         }
-        NutsWorkspaceUtils.of(session).checkNutsId(id);
+        NutsIdUtils.checkNutsId(id,session);
         NutsPath pckFile = getLongIdLocalFile(id.builder().setFaceContent().setPackaging(descriptor.getPackaging()).build(), session);
         if (pckFile.exists()) {
             if (!DefaultWriteTypeProcessor

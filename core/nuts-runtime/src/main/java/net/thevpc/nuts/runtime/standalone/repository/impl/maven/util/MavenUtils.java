@@ -24,9 +24,11 @@
 package net.thevpc.nuts.runtime.standalone.repository.impl.maven.util;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.standalone.descriptor.DefaultNutsArtifactCall;
 import net.thevpc.nuts.runtime.standalone.descriptor.DefaultNutsEnvConditionBuilder;
 import net.thevpc.nuts.runtime.standalone.descriptor.util.NutsDescriptorUtils;
 import net.thevpc.nuts.runtime.standalone.repository.impl.maven.pom.*;
+import net.thevpc.nuts.runtime.standalone.session.NutsSessionUtils;
 import net.thevpc.nuts.runtime.standalone.util.xml.XmlUtils;
 import net.thevpc.nuts.spi.NutsRepositoryLocation;
 import net.thevpc.nuts.runtime.standalone.util.MapToFunction;
@@ -38,7 +40,6 @@ import net.thevpc.nuts.runtime.standalone.version.DefaultNutsVersion;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.util.CoreNutsUtils;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
-import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -134,7 +135,7 @@ public class MavenUtils {
                 }
             }
             if (!NutsBlankable.isBlank(a.getJdk())) {
-                platform = "java#" + a.getJdk();
+                platform = "java#" + toNutsVersion(a.getJdk());
             }
             if(a.getPropertyName()!=null){
                 props.put(a.getPropertyName(),a.getPropertyValue());
@@ -311,6 +312,32 @@ public class MavenUtils {
             } else {
                 mavenCompilerTarget = "";
             }
+            NutsArtifactCall installerCall=parseCall(pom.getProperties().get("nuts.installer"),session);
+            NutsArtifactCall executorCall=parseCall(pom.getProperties().get("nuts.executor"),session);
+            String genericName = pom.getProperties().get("nuts.genericName");
+
+            //delete special properties
+            for (Iterator<NutsDescriptorProperty> iterator = props.iterator(); iterator.hasNext(); ) {
+                NutsDescriptorProperty prop = iterator.next();
+                if(prop.getCondition().isBlank()){
+                    String n = prop.getName();
+                    switch (n){
+                        case "nuts.installer":
+                        case "nuts.executor":
+                        case "nuts.categories":
+                        case "nuts.icons":
+                        case "nuts.term":
+                        case "nuts.gui":
+                        case "nuts.application":
+                        case "nuts.executable":
+                        case "nuts.genericName":
+                        {
+                            iterator.remove();
+                            break;
+                        }
+                    }
+                }
+            }
             return NutsDescriptorBuilder.of(session)
                     .setId(toNutsId(pom.getPomId()))
                     .setParents(pom.getParent() == null ? new NutsId[0] : new NutsId[]{toNutsId(pom.getParent())})
@@ -328,13 +355,15 @@ public class MavenUtils {
                                     .filter(x -> !x.isEmpty())
                                     .collect(Collectors.toList())
                     )
+                    .setInstaller(installerCall)
+                    .setExecutor(executorCall)
                     .setIcons(
                             StringTokenizerUtils.splitDefault(icons).stream()
                                     .map(String::trim)
                                     .filter(x -> !x.isEmpty())
                                     .collect(Collectors.toList())
                     )
-                    .setGenericName(pom.getProperties().get("nuts.genericName"))
+                    .setGenericName(genericName)
                     .setProperties(props.toArray(new NutsDescriptorProperty[0]))
                     .build();
         } catch (Exception e) {
@@ -527,7 +556,7 @@ public class MavenUtils {
     }
 
     public DepsAndRepos loadDependenciesAndRepositoriesFromPomPath(String urlPath, NutsRepositoryLocation[] bootRepositories, NutsSession session) {
-        NutsWorkspaceUtils.checkSession(this.session.getWorkspace(), session);
+        NutsSessionUtils.checkSession(this.session.getWorkspace(), session);
         DepsAndRepos depsAndRepos = null;
 //        if (!NO_M2) {
         File mavenNutsCorePom = new File(System.getProperty("user.home"), (".m2/repository/" + urlPath).replace("/", File.separator));
@@ -725,5 +754,37 @@ public class MavenUtils {
 
         public LinkedHashSet<String> deps = new LinkedHashSet<>();
         public LinkedHashSet<String> repos = new LinkedHashSet<>();
+    }
+
+    public NutsArtifactCall parseCall(String callString,NutsSession session){
+        if(callString==null){
+            return null;
+        }
+        NutsCommandLine cl = NutsCommandLine.of(callString,NutsShellFamily.BASH, session).setExpandSimpleOptions(false);
+        NutsId callId=null;
+        Map<String,String> callProps=new LinkedHashMap<>();
+        List<String> callPropsAsArgs=new ArrayList<>();
+        while(cl.hasNext() && cl.peek().isOption()){
+            NutsArgument a = cl.next();
+            callPropsAsArgs.add(a.toString());
+            if(a.isKeyValue()){
+                callProps.put(a.getStringKey(),a.getStringValue());
+            }else{
+                callProps.put(a.toString(),null);
+            }
+        }
+        if(cl.hasNext()){
+            String callIdString=cl.next().toString();
+            callId=NutsIdParser.of(session).setAcceptBlank(true).setLenient(true).parse(callIdString);
+        }
+        String[] callArgs = cl.toStringArray();
+        if(callId!=null){
+            return new DefaultNutsArtifactCall(callId,callArgs,callProps);
+        }
+        //there is no callId, props are considered as args!
+        if(!callPropsAsArgs.isEmpty()){
+            return new DefaultNutsArtifactCall(null,callPropsAsArgs.toArray(new String[0]),null);
+        }
+        return null;
     }
 }

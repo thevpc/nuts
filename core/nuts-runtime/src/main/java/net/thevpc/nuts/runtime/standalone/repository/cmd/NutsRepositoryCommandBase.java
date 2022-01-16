@@ -6,6 +6,7 @@
 package net.thevpc.nuts.runtime.standalone.repository.cmd;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.standalone.session.NutsSessionUtils;
 import net.thevpc.nuts.runtime.standalone.util.NutsConfigurableHelper;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
 import net.thevpc.nuts.spi.NutsRepositoryCommand;
@@ -27,7 +28,7 @@ public abstract class NutsRepositoryCommandBase<T extends NutsRepositoryCommand>
     }
 
     protected void checkSession() {
-        NutsWorkspaceUtils.checkSession(repo.getWorkspace(), getSession());
+        NutsSessionUtils.checkSession(repo.getWorkspace(), getSession());
     }
 
     public String getCommandName() {

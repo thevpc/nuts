@@ -5,6 +5,7 @@ import net.thevpc.nuts.*;
 import java.util.List;
 
 import net.thevpc.nuts.runtime.standalone.app.cmdline.option.*;
+import net.thevpc.nuts.runtime.standalone.session.NutsSessionUtils;
 import net.thevpc.nuts.runtime.standalone.shell.NutsShellHelper;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
 import net.thevpc.nuts.spi.NutsSupportLevelContext;
@@ -57,7 +58,7 @@ public class DefaultNutsCommandLines implements NutsCommandLines {
     }
 
     protected void checkSession() {
-        NutsWorkspaceUtils.checkSession(ws, session);
+        NutsSessionUtils.checkSession(ws, session);
     }
 
     @Override

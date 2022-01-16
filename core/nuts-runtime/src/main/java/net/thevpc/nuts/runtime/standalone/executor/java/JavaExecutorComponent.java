@@ -25,8 +25,7 @@ package net.thevpc.nuts.runtime.standalone.executor.java;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.executor.AbstractSyncIProcessExecHelper;
-import net.thevpc.nuts.runtime.standalone.executor.embedded.ClassloaderAwareRunnable;
-import net.thevpc.nuts.runtime.standalone.executor.system.ProcessExecHelper;
+import net.thevpc.nuts.runtime.standalone.executor.embedded.ClassloaderAwareRunnableImpl;
 import net.thevpc.nuts.runtime.standalone.io.net.util.NetUtils;
 import net.thevpc.nuts.runtime.standalone.util.CoreNutsUtils;
 import net.thevpc.nuts.runtime.standalone.util.collections.StringKeyValueList;
@@ -42,14 +41,9 @@ import net.thevpc.nuts.spi.NutsSupportLevelContext;
 
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Properties;
-import java.util.concurrent.Future;
+import java.util.*;
 import java.util.logging.Filter;
 import java.util.logging.Level;
 import java.util.regex.Matcher;
@@ -105,9 +99,7 @@ public class JavaExecutorComponent implements NutsExecutorComponent {
 
     //@Override
     public IProcessExecHelper execHelper(NutsExecutionContext executionContext) {
-        NutsDefinition def = executionContext.getDefinition();//executionContext.getWorkspace().fetch(.getId().toString(), true, false);
-//        boolean inheritSystemIO=NutsTextUtils.parseBoolean(String.valueOf(executionContext.getExecutorProperties().get("inheritSystemIO")),false);
-//        final NutsWorkspace ws = executionContext.getWorkspace();
+        NutsDefinition def = executionContext.getDefinition();
         Path contentFile = def.getFile();
         NutsSession session = executionContext.getSession();
         final JavaExecutorOptions joptions = new JavaExecutorOptions(
@@ -330,11 +322,11 @@ public class JavaExecutorComponent implements NutsExecutorComponent {
                     args.add(joptions.getMainClass());
                 }
                 xargs.addAll(
-                        joptions.getApp().stream()
+                        joptions.getAppArgs().stream()
                                 .map(txt::ofPlain)
                                 .collect(Collectors.toList())
                 );
-                args.addAll(joptions.getApp());
+                args.addAll(joptions.getAppArgs());
                 return new JavaProcessExecHelper(execSession, execSession, xargs, joptions, session, executionContext, def, args, osEnv);
 
             }
@@ -364,7 +356,7 @@ public class JavaExecutorComponent implements NutsExecutorComponent {
             cmdLine.add("-cp");
             cmdLine.add(joptions.getClassPathNodes().stream().map(NutsClassLoaderNode::getId).collect(Collectors.joining(":")));
             cmdLine.add(joptions.getMainClass());
-            cmdLine.addAll(joptions.getApp());
+            cmdLine.addAll(joptions.getAppArgs());
 
             session.out().printf("[dry] %s%n",
                     text.builder()
@@ -395,7 +387,7 @@ public class JavaExecutorComponent implements NutsExecutorComponent {
                     classLoader.add(n);
                 }
                 Class<?> cls = Class.forName(joptions.getMainClass(), true, classLoader);
-                new ClassloaderAwareRunnableImpl2(def.getId(), classLoader, cls, session, joptions).runAndWaitFor();
+                new ClassloaderAwareRunnableImpl(def.getId(), classLoader, cls, session, joptions).runAndWaitFor();
                 return 0;
             } catch (InvocationTargetException e) {
                 th = e.getTargetException();
@@ -418,189 +410,6 @@ public class JavaExecutorComponent implements NutsExecutorComponent {
                 }
             }
             return 0;
-        }
-    }
-
-    static class ClassloaderAwareRunnableImpl2 extends ClassloaderAwareRunnable {
-
-        private final Class<?> cls;
-        private final JavaExecutorOptions joptions;
-        private final NutsId id;
-
-        public ClassloaderAwareRunnableImpl2(NutsId id, ClassLoader classLoader, Class<?> cls, NutsSession session, JavaExecutorOptions joptions) {
-            super(session.copy(), classLoader);
-            this.id = id;
-            this.cls = cls;
-            this.joptions = joptions;
-        }
-
-        @Override
-        public Object runWithContext() throws Throwable {
-            if (cls.getName().equals("net.thevpc.nuts.Nuts")) {
-                NutsWorkspaceOptionsBuilder o = NutsWorkspaceOptionsBuilder.of(session).parseArguments(
-                        joptions.getApp().toArray(new String[0])
-                );
-                String[] appArgs;
-                if (o.getApplicationArguments().length == 0) {
-                    if (o.isSkipWelcome()) {
-                        return null;
-                    }
-                    appArgs = new String[]{"welcome"};
-                } else {
-                    appArgs = o.getApplicationArguments();
-                }
-                session.configure(o.build());
-                Object oldId = NutsApplications.getSharedMap().get("nuts.embedded.application.id");
-                NutsApplications.getSharedMap().put("nuts.embedded.application.id", id);
-                try {
-                    session.exec()
-                            .addCommand(appArgs)
-                            .addExecutorOptions(o.getExecutorOptions())
-                            .setExecutionType(o.getExecutionType())
-                            .setFailFast(true)
-                            .setDry(session.isDry())
-                            .run();
-                } finally {
-                    NutsApplications.getSharedMap().put("nuts.embedded.application.id", oldId);
-                }
-                return null;
-            }
-            Method mainMethod = null;
-            boolean isNutsApp = false;
-            Object nutsApp = null;
-            try {
-                mainMethod = cls.getMethod("run", NutsSession.class, String[].class);
-                mainMethod.setAccessible(true);
-                for (Class<?> pi : cls.getInterfaces()) {
-                    //this is the old nuts apps (version >= 0.8.1)
-                    if (pi.getName().equals("net.thevpc.nuts.NutsApplication")) {
-                        isNutsApp = true;
-                        break;
-                    }
-                }
-                Class p = cls.getSuperclass();
-                while (!isNutsApp && p != null) {
-                    if (p.getName().equals("net.thevpc.nuts.NutsApplication")
-                            //this is the old nuts apps (version < 0.8.0)
-                            || p.getName().equals("net.vpc.app.nuts.NutsApplication")) {
-                        isNutsApp = true;
-                        break;
-                    }
-                    for (Class<?> pi : cls.getInterfaces()) {
-                        //this is the old nuts apps (version >= 0.8.1)
-                        if (pi.getName().equals("net.thevpc.nuts.NutsApplication")) {
-                            isNutsApp = true;
-                            break;
-                        }
-                    }
-                    p = p.getSuperclass();
-                }
-                if (isNutsApp) {
-                    isNutsApp = false;
-                    nutsApp = cls.getConstructor().newInstance();
-                    isNutsApp = true;
-                }
-            } catch (Exception rr) {
-                //ignore
-
-            }
-            if (isNutsApp) {
-                //NutsWorkspace
-                NutsApplications.getSharedMap().put("nuts.embedded.application.id", id);
-                mainMethod.invoke(nutsApp, getSession().copy(), joptions.getApp().toArray(new String[0]));
-            } else {
-                //NutsWorkspace
-                System.setProperty("nuts.boot.args",
-                        getSession().boot().getBootOptions()
-                                .formatter().setExported(true).setCompact(true).getBootCommandLine()
-                                .formatter().setShellFamily(NutsShellFamily.SH).toString()
-                );
-                mainMethod = cls.getMethod("main", String[].class);
-//                List<String> nargs = new ArrayList<>();
-//                nargs.addAll(joptions.getApp());
-                mainMethod.invoke(null, new Object[]{joptions.getApp().toArray(new String[0])});
-            }
-            return null;
-        }
-
-    }
-
-    private static class JavaProcessExecHelper extends AbstractSyncIProcessExecHelper {
-
-        private final NutsSession execSession;
-        private final List<NutsString> xargs;
-        private final JavaExecutorOptions joptions;
-        private final NutsSession ws;
-        private final NutsExecutionContext executionContext;
-        private final NutsDefinition def;
-        private final List<String> args;
-        private final HashMap<String, String> osEnv;
-
-        public JavaProcessExecHelper(NutsSession ns, NutsSession execSession, List<NutsString> xargs, JavaExecutorOptions joptions, NutsSession ws, NutsExecutionContext executionContext, NutsDefinition def, List<String> args, HashMap<String, String> osEnv) {
-            super(ns);
-            this.execSession = execSession;
-            this.xargs = xargs;
-            this.joptions = joptions;
-            this.ws = ws;
-            this.executionContext = executionContext;
-            this.def = def;
-            this.args = args;
-            this.osEnv = osEnv;
-        }
-
-        @Override
-        public void dryExec() {
-            NutsPrintStream out = execSession.out();
-            out.println("[dry] ==[nuts-exec]== ");
-            for (int i = 0; i < xargs.size(); i++) {
-                NutsString xarg = xargs.get(i);
-//                if (i > 0 && xargs.get(i - 1).equals("--nuts-path")) {
-//                    for (String s : xarg.split(";")) {
-//                        out.println("\t\t\t " + s);
-//                    }
-//                } else {
-                out.println("\t\t " + xarg);
-//                }
-            }
-            String directory = NutsBlankable.isBlank(joptions.getDir()) ? null : NutsPath.of(joptions.getDir(), ws)
-                    .toAbsolute().toString();
-            ProcessExecHelper.ofDefinition(def,
-                    args.toArray(new String[0]), osEnv, directory, executionContext.getExecutorProperties(), joptions.isShowCommand(), true, executionContext.getSleepMillis(), executionContext.isInheritSystemIO(), false, NutsBlankable.isBlank(executionContext.getRedirectOutputFile()) ? null : new File(executionContext.getRedirectOutputFile()), NutsBlankable.isBlank(executionContext.getRedirectInputFile()) ? null : new File(executionContext.getRedirectInputFile()), executionContext.getRunAs(), executionContext.getSession(),
-                    execSession
-            ).dryExec();
-        }
-
-        @Override
-        public int exec() {
-            return preExec().exec();
-        }
-
-        private ProcessExecHelper preExec() {
-            if (joptions.isShowCommand() || getSession().boot().getBootCustomBoolArgument(false,false,false,"---show-command")) {
-                NutsPrintStream out = execSession.out();
-                out.printf("%s %n", NutsTexts.of(ws).ofStyled("nuts-exec", NutsTextStyle.primary1()));
-                for (int i = 0; i < xargs.size(); i++) {
-                    NutsString xarg = xargs.get(i);
-//                    if (i > 0 && xargs.get(i - 1).equals("--nuts-path")) {
-//                        for (String s : xarg.split(";")) {
-//                            out.println("\t\t\t " + s);
-//                        }
-//                    } else {
-                    out.println("\t\t " + xarg);
-//                    }
-                }
-            }
-            String directory = NutsBlankable.isBlank(joptions.getDir()) ? null : NutsPath.of(joptions.getDir(), ws)
-                    .toAbsolute().toString();
-            return ProcessExecHelper.ofDefinition(def,
-                    args.toArray(new String[0]), osEnv, directory, executionContext.getExecutorProperties(), joptions.isShowCommand(), true, executionContext.getSleepMillis(), executionContext.isInheritSystemIO(), false, NutsBlankable.isBlank(executionContext.getRedirectOutputFile()) ? null : new File(executionContext.getRedirectOutputFile()), NutsBlankable.isBlank(executionContext.getRedirectInputFile()) ? null : new File(executionContext.getRedirectInputFile()), executionContext.getRunAs(), executionContext.getSession(),
-                    execSession
-            );
-        }
-
-        @Override
-        public Future<Integer> execAsync() {
-            return preExec().execAsync();
         }
     }
 

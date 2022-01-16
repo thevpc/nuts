@@ -7,7 +7,6 @@ package net.thevpc.nuts.runtime.standalone.xtra.uncompress;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.io.util.NutsStreamOrPath;
-import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.NutsLogVerb;
 
 import java.io.*;
@@ -22,6 +21,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 import net.thevpc.nuts.runtime.standalone.io.progress.SingletonNutsInputStreamProgressFactory;
+import net.thevpc.nuts.runtime.standalone.session.NutsSessionUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
 import net.thevpc.nuts.spi.NutsSupportLevelContext;
 
@@ -95,7 +95,7 @@ public class DefaultNutsUncompress implements NutsUncompress {
     }
 
     protected void checkSession() {
-        NutsWorkspaceUtils.checkSession(ws, session);
+        NutsSessionUtils.checkSession(ws, session);
     }
 
     @Override
@@ -373,13 +373,13 @@ public class DefaultNutsUncompress implements NutsUncompress {
                                     ze = zis.getNextEntry();
                                     continue;
                                 } else {
-                                    throw new IOException("tot a single root zip");
+                                    throw new IOException("not a single root zip");
                                 }
                             }
                             if (fileName.startsWith(root)) {
                                 fileName = fileName.substring(root.length());
                             } else {
-                                throw new IOException("tot a single root zip");
+                                throw new IOException("not a single root zip");
                             }
                         }
                         if (fileName.endsWith("/")) {
@@ -436,13 +436,13 @@ public class DefaultNutsUncompress implements NutsUncompress {
                                     ze = zis.getNextEntry();
                                     continue;
                                 } else {
-                                    throw new IOException("tot a single root zip");
+                                    throw new IOException("not a single root zip");
                                 }
                             }
                             if (fileName.startsWith(root)) {
                                 fileName = fileName.substring(root.length());
                             } else {
-                                throw new IOException("tot a single root zip");
+                                throw new IOException("not a single root zip");
                             }
                         }
                         if (fileName.endsWith("/")) {
@@ -632,7 +632,7 @@ public class DefaultNutsUncompress implements NutsUncompress {
 
     @Override
     public NutsUncompress setSkipRoot(boolean value) {
-        this.skipRoot = true;
+        this.skipRoot = value;
         return this;
     }
 

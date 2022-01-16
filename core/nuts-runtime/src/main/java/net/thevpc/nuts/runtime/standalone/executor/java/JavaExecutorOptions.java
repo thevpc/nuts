@@ -1,13 +1,13 @@
 package net.thevpc.nuts.runtime.standalone.executor.java;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.standalone.descriptor.util.NutsDescriptorUtils;
 import net.thevpc.nuts.runtime.standalone.util.*;
 import net.thevpc.nuts.runtime.standalone.util.jclass.JavaJarUtils;
 import net.thevpc.nuts.runtime.standalone.util.jclass.NutsClassLoaderNodeExt;
 import net.thevpc.nuts.runtime.standalone.util.jclass.NutsJavaSdkUtils;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.StringTokenizerUtils;
 import net.thevpc.nuts.runtime.standalone.dependency.util.NutsClassLoaderUtils;
-import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
 
 import java.net.URL;
 import java.nio.file.Path;
@@ -24,7 +24,9 @@ public final class JavaExecutorOptions {
     private final List<String> j9_addModules = new ArrayList<String>();
     private final List<String> j9_modulePath = new ArrayList<String>();
     private final List<String> j9_upgradeModulePath = new ArrayList<String>();
-    private final List<String> app;
+    private final List<String> prependArgs=new ArrayList<>();
+    private final List<String> appArgs;
+    private final List<String> appendArgs=new ArrayList<>();
     //    private NutsDefinition nutsMainDef;
     private final NutsSession session;
     private final List<NutsClassLoaderNode> classPathNodes = new ArrayList<>();
@@ -54,13 +56,12 @@ public final class JavaExecutorOptions {
 //            }
             id = descriptor.getId();
         } else {
-            descriptor = NutsWorkspaceUtils.of(getSession()).getEffectiveDescriptor(def);
+            descriptor = NutsDescriptorUtils.getEffectiveDescriptor(def,session);
             if (!CoreNutsUtils.isEffectiveId(id)) {
                 id = descriptor.getId();
             }
         }
         Path path = def.getFile();
-        this.app = new ArrayList<>(Arrays.asList(args));
         this.dir = dir;
         this.execArgs = executorOptions;
 //        List<String> classPath0 = new ArrayList<>();
@@ -156,12 +157,33 @@ public final class JavaExecutorOptions {
                     this.j9_upgradeModulePath.add(cmdLine.nextString().getStringValue());
                     break;
                 }
+                case "--prepend-arg": {
+                    prependArgs.add(cmdLine.nextString().getStringValue());
+                    break;
+                }
+                case "--append-arg": {
+                    appendArgs.add(cmdLine.nextString().getStringValue());
+                    break;
+                }
+                case "-s":{
+                    NutsArgument s = cmdLine.next();
+                    getJvmArgs().add("-Dswing.aatext=true");
+                    getJvmArgs().add("-Dawt.useSystemAAFontSettings=on");
+                    getJvmArgs().add("-Dapple.laf.useScreenMenuBar=true");
+                    getJvmArgs().add("-Dapple.awt.graphics.UseQuartz=true");
+//                    getJvmArgs().add("-Dsun.java2d.noddraw=true");
+//                    getJvmArgs().add("-Dsun.java2d.dpiaware=true");
+                    break;
+                }
                 default: {
                     getJvmArgs().add(cmdLine.next().getString());
                 }
             }
         }
-
+        this.appArgs = new ArrayList<>();
+        appArgs.addAll(prependArgs);
+        appArgs.addAll(Arrays.asList(args));
+        appArgs.addAll(appendArgs);
 
         List<NutsDefinition> nutsDefinitions = new ArrayList<>();
         NutsSearchCommand se = session.search().setSession(session);
@@ -541,8 +563,8 @@ public final class JavaExecutorOptions {
         return getSession().getWorkspace();
     }
 
-    public List<String> getApp() {
-        return app;
+    public List<String> getAppArgs() {
+        return appArgs;
     }
 
     public NutsSession getSession() {

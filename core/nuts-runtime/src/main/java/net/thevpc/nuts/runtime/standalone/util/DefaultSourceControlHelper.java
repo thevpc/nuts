@@ -10,7 +10,7 @@ import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.io.util.UnzipOptions;
 import net.thevpc.nuts.runtime.standalone.io.util.ZipUtils;
 import net.thevpc.nuts.runtime.standalone.definition.DefaultNutsDefinition;
-import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
+import net.thevpc.nuts.runtime.standalone.session.NutsSessionUtils;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -42,7 +42,7 @@ public class DefaultSourceControlHelper {
 
     //    @Override
     public NutsId commit(Path folder, NutsSession session) {
-        NutsWorkspaceUtils.checkSession(ws, session);
+        NutsSessionUtils.checkSession(ws, session);
         session.security().setSession(session).checkAllowed(NutsConstants.Permissions.DEPLOY, "commit");
         if (folder == null || !Files.isDirectory(folder)) {
             throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("not a directory %s", folder));
@@ -83,7 +83,7 @@ public class DefaultSourceControlHelper {
 
     //    @Override
     public NutsDefinition checkout(NutsId id, Path folder, NutsSession session) {
-        NutsWorkspaceUtils.checkSession(ws, session);
+        NutsSessionUtils.checkSession(ws, session);
         session.security().checkAllowed(NutsConstants.Permissions.INSTALL, "checkout");
         NutsDefinition nutToInstall = session.fetch().setId(id).setSession(session).setOptional(false).setDependencies(true).getResultDefinition();
         if ("zip".equals(nutToInstall.getDescriptor().getPackaging())) {

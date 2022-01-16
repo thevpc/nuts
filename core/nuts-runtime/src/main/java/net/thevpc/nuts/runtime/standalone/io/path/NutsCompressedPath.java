@@ -3,20 +3,13 @@ package net.thevpc.nuts.runtime.standalone.io.path;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.format.DefaultFormatBase;
 import net.thevpc.nuts.runtime.standalone.io.util.InputStreamMetadataAwareImpl;
-import net.thevpc.nuts.runtime.standalone.io.util.URLBuilder;
-import net.thevpc.nuts.runtime.standalone.xtra.expr.StringTokenizerUtils;
 import net.thevpc.nuts.spi.NutsSupportLevelContext;
 
-import java.io.File;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Path;
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
 
@@ -26,80 +19,11 @@ public class NutsCompressedPath extends NutsPathBase {
     private final NutsString formattedCompressedForm;
     private final NutsPath base;
 
-    public NutsCompressedPath(NutsPath base) {
+    public NutsCompressedPath(NutsPath base,NutsCompressedPathHelper compressedPathHelper) {
         super(base.getSession());
         this.base = base;
-        this.compressedForm = compressUrl(base.toString());
-        this.formattedCompressedForm = NutsTexts.of(base.getSession()).ofStyled(compressedForm, NutsTextStyle.path());
-    }
-
-    public NutsCompressedPath(NutsPath base, String compressedForm, NutsString formattedCompressedForm) {
-        super(base.getSession());
-        this.compressedForm = compressedForm;
-        this.formattedCompressedForm = formattedCompressedForm;
-        this.base = base;
-    }
-
-    public static String compressUrl(String path) {
-        if (path.startsWith("http://")
-                || path.startsWith("https://")) {
-            URL u = null;
-            try {
-                u = new URL(path);
-            } catch (MalformedURLException e) {
-                return path;
-            }
-            return URLBuilder.buildURLString(u.getProtocol(), u.getAuthority(),
-                    u.getPath() != null ? compressPath(u.getPath(), 0, 2) : null,
-                    u.getQuery() != null ? "?..." : null,
-                    u.getRef() != null ? "#..." : null
-            );
-        } else {
-            return compressPath(path);
-        }
-    }
-
-    public static String compressPath(String path) {
-        return compressPath(path, 2, 2);
-    }
-
-    public static String compressPath(String path, int left, int right) {
-        String p = System.getProperty("user.home");
-        if (path.startsWith("http://") || path.startsWith("https://")) {
-            int interr = path.indexOf('?');
-            if (interr > 0) {
-                path = path.substring(0, interr) + "?...";
-            }
-        }
-        if (path.startsWith(p + File.separator)) {
-            path = "~" + path.substring(p.length());
-        } else if (path.startsWith("http://")) {
-            int x = path.indexOf('/', "http://".length() + 1);
-            if (x <= 0) {
-                return path;
-            }
-            return path.substring(0, x) + compressPath(path.substring(x), 0, right);
-        } else if (path.startsWith("https://")) {
-            int x = path.indexOf('/', "https://".length() + 1);
-            if (x <= 0) {
-                return path;
-            }
-            return path.substring(0, x) + compressPath(path.substring(x), 0, right);
-        }
-        List<String> a = new ArrayList<>(StringTokenizerUtils.splitFileSlash(path));
-        int min = left + right + 1;
-        if (a.size() > 0 && a.get(0).equals("")) {
-            left += 1;
-            min += 1;
-        }
-        if (a.size() > min) {
-            a.add(left, "...");
-            int len = a.size() - right - left - 1;
-            for (int i = 0; i < len; i++) {
-                a.remove(left + 1);
-            }
-        }
-        return String.join("/", a);
+        this.formattedCompressedForm = compressedPathHelper.toCompressedString(base,base.getSession());
+        this.compressedForm = this.formattedCompressedForm.filteredText();
     }
 
     @Override
@@ -440,7 +364,7 @@ public class NutsCompressedPath extends NutsPathBase {
 
     @Override
     public NutsStreamMetadata getStreamMetadata() {
-        return base.getStreamMetadata();
+        return new NutsPathStreamMetadata(this);
     }
 
     private static class MyPathFormat extends DefaultFormatBase<NutsFormat> {
@@ -453,7 +377,7 @@ public class NutsCompressedPath extends NutsPathBase {
         }
 
         public NutsString asFormattedString() {
-            return NutsTexts.of(p.base.getSession()).ofStyled(p.compressedForm, NutsTextStyle.path());
+            return p.formattedCompressedForm;
         }
 
         @Override

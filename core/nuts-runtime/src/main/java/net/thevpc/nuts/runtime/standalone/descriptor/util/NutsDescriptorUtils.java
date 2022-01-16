@@ -2,12 +2,21 @@ package net.thevpc.nuts.runtime.standalone.descriptor.util;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.id.util.NutsIdUtils;
+import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceExt;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.logging.Level;
 
 public class NutsDescriptorUtils {
+    public static NutsDescriptor getEffectiveDescriptor(NutsDefinition def,NutsSession session) {
+        final NutsDescriptor d = def.getEffectiveDescriptor();
+        if (d == null) {
+            return NutsWorkspaceExt.of(session).resolveEffectiveDescriptor(def.getDescriptor(), session);
+        }
+        return d;
+    }
+
     public static Map<String, String> getPropertiesMap(NutsDescriptorProperty[] list, NutsSession session) {
         Map<String, String> m = new LinkedHashMap<>();
         if (list != null) {

@@ -3,8 +3,8 @@ package net.thevpc.nuts.runtime.standalone.io.terminal;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.boot.DefaultNutsBootModel;
 import net.thevpc.nuts.runtime.standalone.io.printstream.NutsPrintStreamSystem;
+import net.thevpc.nuts.runtime.standalone.session.NutsSessionUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.CoreNutsBootOptions;
-import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
 import net.thevpc.nuts.spi.*;
 
 import java.io.IOException;
@@ -159,13 +159,13 @@ public class DefaultNutsSystemTerminalBaseBoot extends NutsSystemTerminalBaseImp
 
     @Override
     public Cursor getTerminalCursor(NutsSession session) {
-        NutsWorkspaceUtils.checkSession(session.getWorkspace(), session);
+        NutsSessionUtils.checkSession(session.getWorkspace(), session);
         return (Cursor) run(NutsTerminalCommand.GET_CURSOR, session);
     }
 
     @Override
     public Size getTerminalSize(NutsSession session) {
-        NutsWorkspaceUtils.checkSession(session.getWorkspace(), session);
+        NutsSessionUtils.checkSession(session.getWorkspace(), session);
         return (Size) run(NutsTerminalCommand.GET_SIZE, session);
     }
 

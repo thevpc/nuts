@@ -52,7 +52,7 @@ public class DefaultNutsExecutionEntries implements NutsExecutionEntries {
     @Override
     public NutsExecutionEntry[] parse(InputStream inputStream, String type, String sourceName) {
         if ("jar".equals(type)) {
-            return JavaJarUtils.parseJarExecutionEntries(inputStream, sourceName, session);
+            return JavaJarUtils.parseJarExecutionEntries(inputStream, session);
         } else if ("class".equals(type)) {
             NutsExecutionEntry u = JavaClassUtils.parseClassExecutionEntry(inputStream, sourceName, getSession());
             return u == null ? new NutsExecutionEntry[0] : new NutsExecutionEntry[]{u};

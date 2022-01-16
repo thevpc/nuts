@@ -5,7 +5,7 @@ import java.util.Map;
 import java.util.function.Function;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
+import net.thevpc.nuts.runtime.standalone.session.NutsSessionUtils;
 import net.thevpc.nuts.spi.NutsAuthenticationAgent;
 
 class WrapperNutsAuthenticationAgent {
@@ -22,7 +22,7 @@ class WrapperNutsAuthenticationAgent {
     }
 
     public NutsAuthenticationAgent getCachedAuthenticationAgent(String name,NutsSession session) {
-        NutsWorkspaceUtils.checkSession(ws, session);
+        NutsSessionUtils.checkSession(ws, session);
         name = NutsUtilStrings.trim(name);
         NutsAuthenticationAgent a = cache.get(name);
         if (a == null) {
@@ -36,12 +36,12 @@ class WrapperNutsAuthenticationAgent {
     }
 
     public boolean removeCredentials(char[] credentialsId, NutsSession session) {
-        NutsWorkspaceUtils.checkSession(ws, session);
+        NutsSessionUtils.checkSession(ws, session);
         return getCachedAuthenticationAgent(extractId(credentialsId,session),session).removeCredentials(credentialsId, envProvider.apply(session), session);
     }
 
     public void checkCredentials(char[] credentialsId, char[] password, NutsSession session) {
-        NutsWorkspaceUtils.checkSession(ws, session);
+        NutsSessionUtils.checkSession(ws, session);
         getCachedAuthenticationAgent(extractId(credentialsId,session),session).checkCredentials(credentialsId, password, envProvider.apply(session), session);
     }
 
@@ -64,7 +64,7 @@ class WrapperNutsAuthenticationAgent {
     }
 
     public char[] createCredentials(char[] credentials, boolean allowRetrieve, char[] credentialId, NutsSession session) {
-        NutsWorkspaceUtils.checkSession(ws, session);
+        NutsSessionUtils.checkSession(ws, session);
         if (credentialId != null) {
             return getCachedAuthenticationAgent(extractId(credentialId,session),session).createCredentials(credentials, allowRetrieve, credentialId, envProvider.apply(session), session);
         } else {
