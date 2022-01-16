@@ -56,29 +56,29 @@ public abstract class AbstractRecommendationConnector implements RecommendationC
     }
 
     @Override
-    public Map askInstallRecommendations(RequestQueryInfo ri, NutsSession session) {
+    public Map askInstallRecommendations(RequestQueryInfo ri, boolean failure, NutsSession session) {
         validateRequest(ri, session);
         NutsId id = NutsIdParser.of(session).setLenient(false).setAcceptBlank(false).parse(ri.q.getId());
         String url = "/repo/" + id.getGroupId().replace('.', '/')
                 + '/' + id.getArtifactId()
                 + '/' + id.getVersion()
-                + "/install-recommendations.json";
+                + (failure?"/install-failure-recommendations.json":"/install-recommendations.json");
         return post(url, ri, Map.class, session);
     }
 
     @Override
-    public Map askUpdateRecommendations(RequestQueryInfo ri, NutsSession session) {
+    public Map askUpdateRecommendations(RequestQueryInfo ri, boolean failure, NutsSession session) {
         validateRequest(ri, session);
         NutsId id = NutsIdParser.of(session).setLenient(false).setAcceptBlank(false).parse(ri.q.getId());
         String url = "/repo/" + id.getGroupId().replace('.', '/')
                 + '/' + id.getArtifactId()
                 + '/' + id.getVersion()
-                + "/update-recommendations.json";
+                + (failure?"update-failure-recommendations.json":"/update-recommendations.json");
         return post(url, ri, Map.class, session);
     }
 
     @Override
-    public Map askCompanionsRecommendations(RequestQueryInfo ri, NutsSession session) {
+    public Map askExecRecommendations(RequestQueryInfo ri, boolean failure, NutsSession session) {
         if (ri.q.getId() == null) {
             ri.q.setId(session.getWorkspace().getApiId().toString());
         }
@@ -87,61 +87,31 @@ public abstract class AbstractRecommendationConnector implements RecommendationC
         String url = "/repo/" + id.getGroupId().replace('.', '/')
                 + '/' + id.getArtifactId()
                 + '/' + id.getVersion()
-                + "/companion-recommendations.json";
+                + (failure?"/exec-failure-recommendations.json":"/exec-recommendations.json");
         return post(url, ri, Map.class, session);
     }
 
     @Override
-    public Map askInstallFailureRecommendations(RequestQueryInfo ri, NutsSession session) {
+    public Map askBootstrapRecommendations(RequestQueryInfo ri, boolean failure, NutsSession session) {
+        if (ri.q.getId() == null) {
+            ri.q.setId(session.getWorkspace().getApiId().toString());
+        }
         validateRequest(ri, session);
         NutsId id = NutsIdParser.of(session).setLenient(false).setAcceptBlank(false).parse(ri.q.getId());
         String url = "/repo/" + id.getGroupId().replace('.', '/')
                 + '/' + id.getArtifactId()
                 + '/' + id.getVersion()
-                + "/install-failure-recommendations.json";
+                +(failure?"/bootstrap-failure-recommendations.json": "/bootstrap-recommendations.json");
         return post(url, ri, Map.class, session);
     }
 
-    @Override
-    public Map askUninstallFailureRecommendations(RequestQueryInfo ri, NutsSession session) {
+    public Map askUninstallRecommendations(RequestQueryInfo ri, boolean failure, NutsSession session) {
         validateRequest(ri, session);
         NutsId id = NutsIdParser.of(session).setLenient(false).setAcceptBlank(false).parse(ri.q.getId());
         String url = "/repo/" + id.getGroupId().replace('.', '/')
                 + '/' + id.getArtifactId()
                 + '/' + id.getVersion()
-                + "/uninstall-failure-recommendations.json";
-        return post(url, ri, Map.class, session);
-    }
-
-    @Override
-    public Map askBootstrapFailureRecommendations(RequestQueryInfo ri, NutsSession session) {
-        validateRequest(ri, session);
-        NutsId id = NutsIdParser.of(session).setLenient(false).setAcceptBlank(false).parse(ri.q.getId());
-        String url = "/repo/" + id.getGroupId().replace('.', '/')
-                + '/' + id.getArtifactId()
-                + '/' + id.getVersion()
-                + "/bootstrap-failure-recommendations.json";
-        return post(url, ri, Map.class, session);
-    }
-
-    @Override
-    public Map askUpdateFailureRecommendations(RequestQueryInfo ri, NutsSession session) {
-        validateRequest(ri, session);
-        NutsId id = NutsIdParser.of(session).setLenient(false).setAcceptBlank(false).parse(ri.q.getId());
-        String url = "/repo/" + id.getGroupId().replace('.', '/')
-                + '/' + id.getArtifactId()
-                + '/' + id.getVersion()
-                + "/update-failure-recommendations.json";
-        return post(url, ri, Map.class, session);
-    }
-
-    public Map askUninstallRecommendations(RequestQueryInfo ri, NutsSession session) {
-        validateRequest(ri, session);
-        NutsId id = NutsIdParser.of(session).setLenient(false).setAcceptBlank(false).parse(ri.q.getId());
-        String url = "/repo/" + id.getGroupId().replace('.', '/')
-                + '/' + id.getArtifactId()
-                + '/' + id.getVersion()
-                + "/alternatives.json";
+                + (failure?"uninstall-failure-recommendations.json":"/alternatives.json");
         return post(url, ri, Map.class, session);
     }
 

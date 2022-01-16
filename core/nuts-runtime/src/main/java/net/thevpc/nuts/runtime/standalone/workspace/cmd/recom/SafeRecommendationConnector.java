@@ -12,72 +12,43 @@ public class SafeRecommendationConnector implements RecommendationConnector{
     }
 
     @Override
-    public Map askInstallRecommendations(RequestQueryInfo ri, NutsSession session) {
+    public Map askInstallRecommendations(RequestQueryInfo ri, boolean failure, NutsSession session) {
         try {
-            return c.askInstallRecommendations(ri, session);
+            return c.askInstallRecommendations(ri, failure, session);
         }catch (Exception ex){
             return null;
         }
     }
 
     @Override
-    public Map askUpdateRecommendations(RequestQueryInfo ri, NutsSession session) {
+    public Map askUpdateRecommendations(RequestQueryInfo ri, boolean failure, NutsSession session) {
         try {
-            return c.askUpdateRecommendations(ri, session);
+            return c.askUpdateRecommendations(ri, failure, session);
+        }catch (Exception ex){
+            return null;
+        }
+    }
+    @Override
+    public Map askExecRecommendations(RequestQueryInfo ri, boolean failure, NutsSession session) {
+        try {
+            return c.askExecRecommendations(ri, failure, session);
         }catch (Exception ex){
             return null;
         }
     }
 
     @Override
-    public Map askCompanionsRecommendations(RequestQueryInfo ri, NutsSession session) {
+    public Map askBootstrapRecommendations(RequestQueryInfo ri, boolean failure, NutsSession session) {
         try {
-            return c.askCompanionsRecommendations(ri, session);
+            return c.askBootstrapRecommendations(ri, failure, session);
         }catch (Exception ex){
             return null;
         }
     }
-
     @Override
-    public Map askInstallFailureRecommendations(RequestQueryInfo ri, NutsSession session) {
+    public Map askUninstallRecommendations(RequestQueryInfo ri, boolean failure, NutsSession session) {
         try {
-            return c.askInstallFailureRecommendations(ri, session);
-        }catch (Exception ex){
-            return null;
-        }
-    }
-
-    @Override
-    public Map askUninstallFailureRecommendations(RequestQueryInfo ri, NutsSession session) {
-        try {
-            return c.askUninstallFailureRecommendations(ri, session);
-        }catch (Exception ex){
-            return null;
-        }
-    }
-
-    @Override
-    public Map askBootstrapFailureRecommendations(RequestQueryInfo ri, NutsSession session) {
-        try {
-            return c.askBootstrapFailureRecommendations(ri, session);
-        }catch (Exception ex){
-            return null;
-        }
-    }
-
-    @Override
-    public Map askUpdateFailureRecommendations(RequestQueryInfo ri, NutsSession session) {
-        try {
-            return c.askUpdateFailureRecommendations(ri, session);
-        }catch (Exception ex){
-            return null;
-        }
-    }
-
-    @Override
-    public Map askUninstallRecommendations(RequestQueryInfo ri, NutsSession session) {
-        try {
-            return c.askUninstallRecommendations(ri, session);
+            return c.askUninstallRecommendations(ri, failure, session);
         }catch (Exception ex){
             return null;
         }

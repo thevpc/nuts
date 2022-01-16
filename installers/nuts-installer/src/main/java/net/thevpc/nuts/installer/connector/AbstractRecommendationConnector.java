@@ -152,7 +152,7 @@ public abstract class AbstractRecommendationConnector implements RecommendationC
         String url = "/repo/" + id.getGroupId().replace('.', '/')
                 + '/' + id.getArtifactId()
                 + '/' + id.getVersion()
-                + "/alternatives.json";
+                + "/uninstall-recommendations.json";
         return post(url, ri, Map.class);
     }
 

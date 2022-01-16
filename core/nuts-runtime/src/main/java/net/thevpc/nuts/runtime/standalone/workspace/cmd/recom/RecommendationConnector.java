@@ -5,17 +5,12 @@ import net.thevpc.nuts.NutsSession;
 import java.util.Map;
 
 public interface RecommendationConnector {
-    Map askInstallRecommendations(RequestQueryInfo ri, NutsSession session);
-    Map askUpdateRecommendations(RequestQueryInfo ri, NutsSession session);
-    Map askCompanionsRecommendations(RequestQueryInfo ri, NutsSession session);
+    Map askInstallRecommendations(RequestQueryInfo ri, boolean failure, NutsSession session);
+    Map askUpdateRecommendations(RequestQueryInfo ri, boolean failure, NutsSession session);
 
-    Map askInstallFailureRecommendations(RequestQueryInfo ri, NutsSession session);
+    Map askExecRecommendations(RequestQueryInfo ri, boolean failure, NutsSession session);
 
-    Map askUninstallFailureRecommendations(RequestQueryInfo ri, NutsSession session);
+    Map askBootstrapRecommendations(RequestQueryInfo ri, boolean failure, NutsSession session);
+    Map askUninstallRecommendations(RequestQueryInfo ri, boolean failure, NutsSession session);
 
-    Map askBootstrapFailureRecommendations(RequestQueryInfo ri, NutsSession session);
-
-    Map askUpdateFailureRecommendations(RequestQueryInfo ri, NutsSession session);
-
-    Map askUninstallRecommendations(RequestQueryInfo ri, NutsSession session);
 }

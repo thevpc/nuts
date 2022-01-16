@@ -4,7 +4,9 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.executor.AbstractSyncIProcessExecHelper;
 import net.thevpc.nuts.runtime.standalone.io.util.IProcessExecHelper;
 import net.thevpc.nuts.runtime.standalone.util.jclass.NutsJavaSdkUtils;
+import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
+import net.thevpc.nuts.runtime.standalone.workspace.cmd.recom.RequestQueryInfo;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.StringPlaceHolderParser;
 
 import java.io.File;
@@ -20,16 +22,18 @@ import java.util.logging.Level;
 
 public class ProcessExecHelper extends AbstractSyncIProcessExecHelper {
 
+    NutsDefinition definition;
     ProcessBuilder2 pb;
     NutsPrintStream out;
 
-    public ProcessExecHelper(ProcessBuilder2 pb, NutsSession session, NutsPrintStream out) {
+    public ProcessExecHelper(NutsDefinition definition, ProcessBuilder2 pb, NutsSession session, NutsPrintStream out) {
         super(session);
         this.pb = pb;
         this.out = out;
+        this.definition = definition;
     }
 
-    public static ProcessExecHelper ofArgs(String[] args, Map<String, String> env, Path directory, NutsSessionTerminal prepareTerminal,
+    public static ProcessExecHelper ofArgs(NutsDefinition definition, String[] args, Map<String, String> env, Path directory, NutsSessionTerminal prepareTerminal,
                                            NutsSessionTerminal execTerminal, boolean showCommand, boolean failFast, long sleep,
                                            boolean inheritSystemIO, boolean redirectErr, File outputFile, File inputFile,
                                            NutsRunAs runAs,
@@ -88,15 +92,15 @@ public class ProcessExecHelper extends AbstractSyncIProcessExecHelper {
             }
         }
 
-        NutsLogger _LL = NutsLogger.of(NutsWorkspaceUtils.class,session);
+        NutsLogger _LL = NutsLogger.of(NutsWorkspaceUtils.class, session);
         if (_LL.isLoggable(Level.FINEST)) {
             _LL.with().level(Level.FINE).verb(NutsLogVerb.START).log(
                     NutsMessage.jstyle("[exec] {0}",
                             NutsTexts.of(session).ofCode("system",
-                            pb.getCommandString()
-                    )));
+                                    pb.getCommandString()
+                            )));
         }
-        if (showCommand || session.boot().getBootCustomBoolArgument(false,false,false,"---show-command")) {
+        if (showCommand || session.boot().getBootCustomBoolArgument(false, false, false, "---show-command")) {
             if (prepareTerminal.out().mode() == NutsTerminalMode.FORMATTED) {
                 prepareTerminal.out().printf("%s ", NutsTexts.of(session).ofStyled("[exec]", NutsTextStyle.primary4()));
                 prepareTerminal.out().println(NutsTexts.of(session).ofCode("system", pb.getCommandString()));
@@ -105,7 +109,7 @@ public class ProcessExecHelper extends AbstractSyncIProcessExecHelper {
                 prepareTerminal.out().printf("%s%n", pb.getCommandString());
             }
         }
-        return new ProcessExecHelper(pb, session, out == null ? execTerminal.out() : out);
+        return new ProcessExecHelper(definition,pb, session, out == null ? execTerminal.out() : out);
     }
 
     public static ProcessExecHelper ofDefinition(NutsDefinition nutMainFile,
@@ -114,7 +118,6 @@ public class ProcessExecHelper extends AbstractSyncIProcessExecHelper {
                                                  NutsSession session,
                                                  NutsSession execSession
     ) throws NutsExecutionException {
-        NutsWorkspace workspace = execSession.getWorkspace();
         NutsId id = nutMainFile.getId();
         Path installerFile = nutMainFile.getFile();
         NutsPath storeFolder = nutMainFile.getInstallInformation().getInstallFolder();
@@ -133,8 +136,8 @@ public class ProcessExecHelper extends AbstractSyncIProcessExecHelper {
         map.put("nuts.artifact", id.toString());
         map.put("nuts.file", nutMainFile.getFile().toString());
         String defaultJavaCommand = NutsJavaSdkUtils.of(execSession.getWorkspace()).resolveJavaCommandByVersion("", false, session);
-        if(defaultJavaCommand==null){
-            throw new NutsExecutionException(session, NutsMessage.plain("no java version was found"),1);
+        if (defaultJavaCommand == null) {
+            throw new NutsExecutionException(session, NutsMessage.plain("no java version was found"), 1);
         }
         map.put("nuts.java", defaultJavaCommand);
         if (map.containsKey("nuts.jar")) {
@@ -161,8 +164,8 @@ public class ProcessExecHelper extends AbstractSyncIProcessExecHelper {
                         return defaultJavaCommand;
                     }
                     String s = NutsJavaSdkUtils.of(execSession.getWorkspace()).resolveJavaCommandByVersion(javaVer, false, session);
-                    if(s==null){
-                        throw new NutsExecutionException(session, NutsMessage.cstyle("no java version %s was found",javaVer),1);
+                    if (s == null) {
+                        throw new NutsExecutionException(session, NutsMessage.cstyle("no java version %s was found", javaVer), 1);
                     }
                     return s;
                 } else if (skey.equals("javaw") || skey.startsWith("javaw#")) {
@@ -171,8 +174,8 @@ public class ProcessExecHelper extends AbstractSyncIProcessExecHelper {
                         return defaultJavaCommand;
                     }
                     String s = NutsJavaSdkUtils.of(execSession.getWorkspace()).resolveJavaCommandByVersion(javaVer, true, session);
-                    if(s==null){
-                        throw new NutsExecutionException(session, NutsMessage.cstyle("no java version %s was found",javaVer),1);
+                    if (s == null) {
+                        throw new NutsExecutionException(session, NutsMessage.cstyle("no java version %s was found", javaVer), 1);
                     }
                     return s;
                 } else if (skey.equals("nuts")) {
@@ -200,7 +203,7 @@ public class ProcessExecHelper extends AbstractSyncIProcessExecHelper {
         for (String arg : args) {
             String s = NutsUtilStrings.trim(StringPlaceHolderParser.replaceDollarPlaceHolders(arg, mapper));
             if (s.startsWith("<::expand::>")) {
-                Collections.addAll(args2, NutsCommandLine.of(s,NutsShellFamily.BASH, session).setExpandSimpleOptions(false).toStringArray());
+                Collections.addAll(args2, NutsCommandLine.of(s, NutsShellFamily.BASH, session).setExpandSimpleOptions(false).toStringArray());
             } else {
                 args2.add(s);
             }
@@ -210,7 +213,7 @@ public class ProcessExecHelper extends AbstractSyncIProcessExecHelper {
         Path wsLocation = session.locations().getWorkspaceLocation().toFile();
         Path path = wsLocation.resolve(args[0]).normalize();
         if (Files.exists(path)) {
-            NutsPath.of(path,session).addPermissions(NutsPathPermission.CAN_EXECUTE);
+            NutsPath.of(path, session).addPermissions(NutsPathPermission.CAN_EXECUTE);
         }
         Path pdirectory = null;
         if (NutsBlankable.isBlank(directory)) {
@@ -218,9 +221,9 @@ public class ProcessExecHelper extends AbstractSyncIProcessExecHelper {
         } else {
             pdirectory = wsLocation.resolve(directory);
         }
-        return ofArgs(args, envmap, pdirectory, session.getTerminal(), execSession.getTerminal(), showCommand, failFast,
+        return ofArgs(nutMainFile,args, envmap, pdirectory, session.getTerminal(), execSession.getTerminal(), showCommand, failFast,
                 sleep,
-                inheritSystemIO, redirectErr, inputFile, outputFile,runAs,
+                inheritSystemIO, redirectErr, inputFile, outputFile, runAs,
                 session);
     }
 
@@ -373,7 +376,7 @@ public class ProcessExecHelper extends AbstractSyncIProcessExecHelper {
                         break;
                     }
                     default: {
-                        throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("cannot run as %s on unknown system OS family",runAsEffective));
+                        throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("cannot run as %s on unknown system OS family", runAsEffective));
                     }
                 }
                 cc.addAll(command);
@@ -427,7 +430,7 @@ public class ProcessExecHelper extends AbstractSyncIProcessExecHelper {
                         break;
                     }
                     default: {
-                        throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("cannot run sudo %s on unknown system OS family",currentUserName));
+                        throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("cannot run sudo %s on unknown system OS family", currentUserName));
                     }
                 }
                 cc.addAll(command);
@@ -453,9 +456,9 @@ public class ProcessExecHelper extends AbstractSyncIProcessExecHelper {
                 out.resetLine();//.run(NutsTerminalCommand.MOVE_LINE_START);
             }
             ProcessBuilder2 p = pb.start();
-            return p.waitFor().getResult();
+            return waitResult(p);
         } catch (IOException ex) {
-            throw new NutsIOException(getSession(),ex);
+            throw new NutsIOException(getSession(), ex);
         }
     }
 
@@ -465,9 +468,32 @@ public class ProcessExecHelper extends AbstractSyncIProcessExecHelper {
                 out.run(NutsTerminalCommand.MOVE_LINE_START, getSession());
             }
             ProcessBuilder2 p = pb.start();
-            return new FutureTask<Integer>(() -> p.waitFor().getResult());
+            return new FutureTask<Integer>(() -> waitResult(p));
         } catch (IOException ex) {
-            throw new NutsIOException(getSession(),ex);
+            throw new NutsIOException(getSession(), ex);
+        }
+    }
+
+    private int waitResult(ProcessBuilder2 p) {
+        Exception err = null;
+        try {
+            int a = p.waitFor().getResult();
+            if (a != 0) {
+                err = new NutsExecutionException(getSession(), NutsMessage.cstyle("process returned error code %s", a), err);
+            }
+            return a;
+        } catch (Exception ex) {
+            err = ex;
+            if (ex instanceof RuntimeException) {
+                throw (RuntimeException) err;
+            }
+            throw new NutsExecutionException(getSession(), NutsMessage.cstyle("error executing process"), err);
+        } finally {
+            if (err != null) {
+                if (definition != null) {
+                    NutsWorkspaceExt.of(getSession()).getModel().recomm.askExecRecommendations(new RequestQueryInfo(definition.getId().toString(), err), false, getSession());
+                }
+            }
         }
     }
 }

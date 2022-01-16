@@ -34,6 +34,8 @@ import net.thevpc.nuts.runtime.standalone.extension.DefaultNutsClassLoader;
 import net.thevpc.nuts.runtime.standalone.util.CoreNumberUtils;
 import net.thevpc.nuts.runtime.standalone.util.NutsDebugString;
 import net.thevpc.nuts.runtime.standalone.extension.DefaultNutsWorkspaceExtensionManager;
+import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceExt;
+import net.thevpc.nuts.runtime.standalone.workspace.cmd.recom.RequestQueryInfo;
 import net.thevpc.nuts.spi.NutsComponentScope;
 import net.thevpc.nuts.spi.NutsComponentScopeType;
 import net.thevpc.nuts.spi.NutsExecutorComponent;
@@ -400,12 +402,16 @@ public class JavaExecutorComponent implements NutsExecutorComponent {
             }
             if (th != null) {
                 if (!(th instanceof NutsExecutionException)) {
+                    NutsWorkspaceExt.of(getSession()).getModel().recomm.askExecRecommendations(new RequestQueryInfo(def.getId().toString(), th), false, getSession());
                     throw new NutsExecutionException(session,
                             NutsMessage.cstyle("error executing %s : %s", def.getId(), th)
                             , th);
                 }
                 NutsExecutionException nex = (NutsExecutionException) th;
                 if (nex.getExitCode() != 0) {
+                    if(def!=null) {
+                        NutsWorkspaceExt.of(getSession()).getModel().recomm.askExecRecommendations(new RequestQueryInfo(def.getId().toString(), nex), false, getSession());
+                    }
                     throw new NutsExecutionException(session, NutsMessage.cstyle("error executing %s : %s", def == null ? null : def.getId(), th), th);
                 }
             }

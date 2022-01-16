@@ -572,7 +572,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
             wsModel.configModel.setEndCreateTimeMillis(System.currentTimeMillis());
             if (justInstalled) {
                 try {
-                    Map rec = wsModel.recomm.askCompanionsRecommendations(new RequestQueryInfo(null, ""), defaultSession());
+                    Map rec = wsModel.recomm.askBootstrapRecommendations(new RequestQueryInfo(null, ""), false, defaultSession());
                     if (rec != null) {
                         if (rec.get("companions") instanceof List) {
                             List<String> recommendedCompanions = (List<String>) rec.get("companions");
@@ -627,7 +627,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
             if (wsModel != null && wsModel.recomm != null) {
                 try {
                     NutsSession s = defaultSession();
-                    displayRecommendations(wsModel.recomm.askBootstrapFailureRecommendations(new RequestQueryInfo(null, ex), s), s);
+                    displayRecommendations(wsModel.recomm.askBootstrapRecommendations(new RequestQueryInfo(null, ex), true,s), s);
                 } catch (Exception ex2) {
                     //just ignore
                 }
@@ -867,9 +867,9 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
         try {
             Map rec = null;
             if (strategy0 == InstallStrategy0.INSTALL) {
-                rec = wsModel.recomm.askInstallRecommendations(new RequestQueryInfo(def.getId().toString(), ""), session);
+                rec = wsModel.recomm.askInstallRecommendations(new RequestQueryInfo(def.getId().toString()), false, session);
             } else if (strategy0 == InstallStrategy0.UPDATE) {
-                rec = wsModel.recomm.askUpdateRecommendations(new RequestQueryInfo(def.getId().toString(), ""), session);
+                rec = wsModel.recomm.askUpdateRecommendations(new RequestQueryInfo(def.getId().toString()), false, session);
             } else {
                 //just ignore any dependencies. recommendations are related to main artifacts
             }
@@ -877,271 +877,287 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
         } catch (Exception ex2) {
             //just ignore
         }
-        NutsDependencyFilter ndf = NutsDependencyFilters.of(session).byRunnable();
-        if (!def.isSetEffectiveDescriptor() || def.getContent() == null) {
-            // reload def
-            NutsFetchCommand fetch2 = session.fetch()
-                    .setSession(session)
-                    .setId(def.getId())
-                    .setContent(true)
-                    .setRepositoryFilter(session.repos().filter().installedRepo())
-                    .setFailFast(true);
-            if (def.isSetDependencies()) {
-                fetch2.setDependencyFilter(def.getDependencies().filter());
-                fetch2.setDependencies(true);
+        NutsPrintStream out = session.out();
+        NutsInstallInformation newNutsInstallInformation = null;
+        boolean remoteRepo = true;
+        try {
+            NutsDependencyFilter ndf = NutsDependencyFilters.of(session).byRunnable();
+            if (!def.isSetEffectiveDescriptor() || def.getContent() == null) {
+                // reload def
+                NutsFetchCommand fetch2 = session.fetch()
+                        .setSession(session)
+                        .setId(def.getId())
+                        .setContent(true)
+                        .setRepositoryFilter(session.repos().filter().installedRepo())
+                        .setFailFast(true);
+                if (def.isSetDependencies()) {
+                    fetch2.setDependencyFilter(def.getDependencies().filter());
+                    fetch2.setDependencies(true);
+                }
+                def = fetch2.getResultDefinition();
             }
-            def = fetch2.getResultDefinition();
-        }
 
-        boolean reinstall = false;
-        NutsInstalledRepository installedRepository = getInstalledRepository();
-        NutsWorkspaceUtils wu = NutsWorkspaceUtils.of(session);
+            boolean reinstall = false;
+            NutsInstalledRepository installedRepository = getInstalledRepository();
+            NutsWorkspaceUtils wu = NutsWorkspaceUtils.of(session);
 
-        if (session.isPlainTrace()) {
-            NutsTexts text = NutsTexts.of(session);
-            if (strategy0 == InstallStrategy0.UPDATE) {
-                session.out().resetLine().printf("%s %s ...%n",
-                        text.ofStyled("update", NutsTextStyle.warn()),
-                        def.getId().getLongId()
-                );
-            } else if (strategy0 == InstallStrategy0.REQUIRE) {
-                reinstall = def.getInstallInformation().getInstallStatus().isRequired();
-                if (reinstall) {
-                    //session.out().println("re-requiring  " + id().formatter().set(def.getId().getLongNameId()).format() + " ...");
+            if (session.isPlainTrace()) {
+                NutsTexts text = NutsTexts.of(session);
+                if (strategy0 == InstallStrategy0.UPDATE) {
+                    session.out().resetLine().printf("%s %s ...%n",
+                            text.ofStyled("update", NutsTextStyle.warn()),
+                            def.getId().getLongId()
+                    );
+                } else if (strategy0 == InstallStrategy0.REQUIRE) {
+                    reinstall = def.getInstallInformation().getInstallStatus().isRequired();
+                    if (reinstall) {
+                        //session.out().println("re-requiring  " + id().formatter().set(def.getId().getLongNameId()).format() + " ...");
+                    } else {
+                        //session.out().println("requiring  " + id().formatter().set(def.getId().getLongNameId()).format() + " ...");
+                    }
                 } else {
-                    //session.out().println("requiring  " + id().formatter().set(def.getId().getLongNameId()).format() + " ...");
+                    reinstall = def.getInstallInformation().getInstallStatus().isInstalled();
+                    if (reinstall) {
+                        session.out().resetLine().printf(
+                                "%s %s ...%n",
+                                text.ofStyled("re-install", NutsTextStyles.of(NutsTextStyle.success(), NutsTextStyle.underlined())),
+                                def.getId().getLongId()
+                        );
+                    } else {
+                        session.out().resetLine().printf("%s %s ...%n",
+                                text.ofStyled("install", NutsTextStyle.success()),
+                                def.getId().getLongId()
+                        );
+                    }
+                }
+            }
+            NutsRepositorySPI installedRepositorySPI = wu.repoSPI(installedRepository);
+            if (resolveInstaller) {
+                if (installerComponent == null) {
+                    if (def.getFile() != null) {
+                        installerComponent = getInstaller(def, session);
+                    }
+                }
+            }
+//        checkSession(session);
+            NutsDefinition oldDef = null;
+            if (strategy0 == InstallStrategy0.UPDATE) {
+                switch (def.getDescriptor().getIdType()) {
+                    case API: {
+                        oldDef = session.fetch().setSession(
+                                session.copy().setFetchStrategy(NutsFetchStrategy.ONLINE)
+                        ).setId(NutsConstants.Ids.NUTS_API + "#" + Nuts.getVersion()).setFailFast(false).getResultDefinition();
+                        break;
+                    }
+                    case RUNTIME: {
+                        oldDef = session.fetch().setSession(session.copy().setFetchStrategy(NutsFetchStrategy.ONLINE)).setId(getRuntimeId())
+                                .setFailFast(false).getResultDefinition();
+                        break;
+                    }
+                    default: {
+                        oldDef = session.search().setSession(session).addId(def.getId().getShortId())
+                                .setInstallStatus(NutsInstallStatusFilters.of(session).byDeployed(true))
+                                .setFailFast(false).getResultDefinitions().first();
+                        break;
+                    }
+                }
+            }
+            out.flush();
+            NutsWorkspaceConfigManager config = session.config().setSession(session);
+            if (def.getFile() != null) {
+                if (requireDependencies) {
+                    def.getDependencies();
+                    List<NutsDefinition> requiredDefinitions = new ArrayList<>();
+                    //fetch required
+                    for (NutsDependency dependency : def.getDependencies()) {
+                        if (ndf == null || ndf.acceptDependency(def.getId(), dependency, session)) {
+                            if (!installedRepositorySPI.
+                                    searchVersions().setId(dependency.toId())
+                                    .setFetchMode(NutsFetchMode.LOCAL)
+                                    .setSession(session)
+                                    .getResult()
+                                    .hasNext()) {
+                                NutsDefinition dd = session.search().addId(dependency.toId()).setContent(true).setLatest(true)
+                                        //.setDependencies(true)
+                                        .setEffective(true)
+                                        .getResultDefinitions().first();
+                                if (dd != null) {
+                                    if (dd.getFile() == null) {
+                                        throw new NutsInstallException(session, def.getId(),
+                                                NutsMessage.cstyle("unable to install %s. required dependency content is missing for %s", def.getId(), dependency.toId()),
+                                                null);
+                                    }
+                                    requiredDefinitions.add(dd);
+                                }
+                            }
+                        }
+                    }
+                    //install required
+                    for (NutsDefinition dd : requiredDefinitions) {
+                        requireImpl(dd,
+                                session,
+                                false, //transitive dependencies already evaluated
+                                new NutsId[]{def.getId()});
+                    }
+                }
+
+                //should change def to reflect install location!
+                NutsExecutionContextBuilder cc = createExecutionContext()
+                        .setSession(session.copy())
+                        .setExecSession(session.copy())
+                        .setDefinition(def).setArguments(args).setFailFast(true).setTemporary(false)
+                        .setExecutionType(session.boot().getBootOptions().getExecutionType())
+                        .setRunAs(NutsRunAs.currentUser())// install or update always uses current user
+                        ;
+                NutsArtifactCall installer = def.getDescriptor().getInstaller();
+                if (installer != null) {
+                    cc.addExecutorArguments(installer.getArguments());
+                    cc.addExecutorProperties(installer.getProperties());
+                }
+                cc.setWorkspace(cc.getSession().getWorkspace());
+                NutsExecutionContext executionContext = cc.build();
+
+                if (strategy0 == InstallStrategy0.REQUIRE) {
+                    newNutsInstallInformation = installedRepository.require(executionContext.getDefinition(), true, forIds, scope, session);
+                } else if (strategy0 == InstallStrategy0.UPDATE) {
+                    newNutsInstallInformation = installedRepository.install(executionContext.getDefinition(), session);
+                } else if (strategy0 == InstallStrategy0.INSTALL) {
+                    newNutsInstallInformation = installedRepository.install(executionContext.getDefinition(), session);
+                }
+                if (updateDefaultVersion) {
+                    installedRepository.setDefaultVersion(def.getId(), session);
+                }
+
+                //now should reload definition
+                NutsFetchCommand fetch2 = session.fetch()
+                        .setSession(session)
+                        .setId(executionContext.getDefinition().getId())
+                        .setContent(true)
+                        .setRepositoryFilter(session.repos().filter().installedRepo())
+                        .setFailFast(true);
+                if (def.isSetDependencies()) {
+                    fetch2.setDependencyFilter(def.getDependencies().filter());
+                    fetch2.setDependencies(true);
+                }
+                NutsDefinition def2 = fetch2
+                        .getResultDefinition();
+
+                //update definition in the execution context
+                cc.setDefinition(def2);
+                executionContext = cc.build();
+                NutsRepository rep = session.repos().findRepository(def.getRepositoryUuid());
+                remoteRepo = rep == null || rep.isRemote();
+                if (strategy0 == InstallStrategy0.REQUIRE) {
+                    //
+                } else if (strategy0 == InstallStrategy0.UPDATE) {
+                    if (installerComponent != null) {
+                        try {
+                            installerComponent.update(executionContext);
+                        } catch (NutsReadOnlyException ex) {
+                            throw ex;
+                        } catch (Exception ex) {
+                            if (session.isPlainTrace()) {
+                                out.resetLine().printf("%s ```error failed``` to update : %s.%n", def.getId(), ex);
+                            }
+                            throw new NutsExecutionException(session,
+                                    NutsMessage.cstyle("unable to update %s", def.getId()),
+                                    ex);
+                        }
+                    }
+                } else if (strategy0 == InstallStrategy0.INSTALL) {
+                    if (installerComponent != null) {
+                        try {
+                            installerComponent.install(executionContext);
+                        } catch (NutsReadOnlyException ex) {
+                            throw ex;
+                        } catch (Exception ex) {
+                            if (session.isPlainTrace()) {
+                                out.resetLine().printf("```error error: failed to install``` %s: %s.%n", def.getId(), ex);
+                            }
+                            try {
+                                installedRepository.uninstall(executionContext.getDefinition(), session);
+                            } catch (Exception ex2) {
+                                LOG.with().session(session).level(Level.FINE).error(ex)
+                                        .log(NutsMessage.jstyle("failed to uninstall  {0}", executionContext.getDefinition().getId()));
+                                //ignore if we could not uninstall
+                                try {
+                                    Map rec = null;
+                                    if (strategy0 == InstallStrategy0.INSTALL) {
+                                        rec = wsModel.recomm.askInstallRecommendations(new RequestQueryInfo(def.getId().toString(), ""), true, session);
+                                    } else if (strategy0 == InstallStrategy0.UPDATE) {
+                                        rec = wsModel.recomm.askUpdateRecommendations(new RequestQueryInfo(def.getId().toString(), ""), true, session);
+                                    } else {
+                                        //just ignore any dependencies. recommendations are related to main artifacts
+                                    }
+                                    //TODO: should check here for any security issue!
+                                } catch (Exception ex3) {
+                                    //just ignore
+                                }
+                            }
+                            throw new NutsExecutionException(session, NutsMessage.cstyle("unable to install %s", def.getId()), ex);
+                        }
+                    }
                 }
             } else {
-                reinstall = def.getInstallInformation().getInstallStatus().isInstalled();
-                if (reinstall) {
-                    session.out().resetLine().printf(
-                            "%s %s ...%n",
-                            text.ofStyled("re-install", NutsTextStyles.of(NutsTextStyle.success(), NutsTextStyle.underlined())),
-                            def.getId().getLongId()
-                    );
-                } else {
-                    session.out().resetLine().printf("%s %s ...%n",
-                            text.ofStyled("install", NutsTextStyle.success()),
-                            def.getId().getLongId()
-                    );
-                }
+                throw new NutsExecutionException(session,
+                        NutsMessage.cstyle("unable to install %s: unable to locate content", def.getId()),
+                        101);
             }
-        }
-        NutsRepositorySPI installedRepositorySPI = wu.repoSPI(installedRepository);
-        boolean remoteRepo = true;
-        if (resolveInstaller) {
-            if (installerComponent == null) {
-                if (def.getFile() != null) {
-                    installerComponent = getInstaller(def, session);
-                }
-            }
-        }
-//        checkSession(session);
-        NutsDefinition oldDef = null;
-        if (strategy0 == InstallStrategy0.UPDATE) {
+
+            NutsId forId = (forIds == null || forIds.length == 0) ? null : forIds[0];
             switch (def.getDescriptor().getIdType()) {
                 case API: {
-                    oldDef = session.fetch().setSession(
-                            session.copy().setFetchStrategy(NutsFetchStrategy.ONLINE)
-                    ).setId(NutsConstants.Ids.NUTS_API + "#" + Nuts.getVersion()).setFailFast(false).getResultDefinition();
+                    wsModel.configModel.prepareBootClassPathConf(NutsIdType.API, def.getId(),
+                            forId
+                            , null, true, false, session);
                     break;
                 }
-                case RUNTIME: {
-                    oldDef = session.fetch().setSession(session.copy().setFetchStrategy(NutsFetchStrategy.ONLINE)).setId(getRuntimeId())
-                            .setFailFast(false).getResultDefinition();
+                case RUNTIME:
+                case EXTENSION: {
+                    wsModel.configModel.prepareBootClassPathConf(
+                            def.getDescriptor().getIdType(),
+                            def.getId(),
+                            forId
+                            , null, true, true, session);
                     break;
-                }
-                default: {
-                    oldDef = session.search().setSession(session).addId(def.getId().getShortId())
-                            .setInstallStatus(NutsInstallStatusFilters.of(session).byDeployed(true))
-                            .setFailFast(false).getResultDefinitions().first();
-                    break;
-                }
-            }
-        }
-        NutsPrintStream out = session.out();
-        out.flush();
-        NutsInstallInformation newNutsInstallInformation = null;
-        NutsWorkspaceConfigManager config = session.config().setSession(session);
-        if (def.getFile() != null) {
-            if (requireDependencies) {
-                def.getDependencies();
-                List<NutsDefinition> requiredDefinitions = new ArrayList<>();
-                //fetch required
-                for (NutsDependency dependency : def.getDependencies()) {
-                    if (ndf == null || ndf.acceptDependency(def.getId(), dependency, session)) {
-                        if (!installedRepositorySPI.
-                                searchVersions().setId(dependency.toId())
-                                .setFetchMode(NutsFetchMode.LOCAL)
-                                .setSession(session)
-                                .getResult()
-                                .hasNext()) {
-                            NutsDefinition dd = session.search().addId(dependency.toId()).setContent(true).setLatest(true)
-                                    //.setDependencies(true)
-                                    .setEffective(true)
-                                    .getResultDefinitions().first();
-                            if (dd != null) {
-                                if (dd.getFile() == null) {
-                                    throw new NutsInstallException(session, def.getId(),
-                                            NutsMessage.cstyle("unable to install %s. required dependency content is missing for %s", def.getId(), dependency.toId()),
-                                            null);
-                                }
-                                requiredDefinitions.add(dd);
-                            }
-                        }
-                    }
-                }
-                //install required
-                for (NutsDefinition dd : requiredDefinitions) {
-                    requireImpl(dd,
-                            session,
-                            false, //transitive dependencies already evaluated
-                            new NutsId[]{def.getId()});
                 }
             }
 
-            //should change def to reflect install location!
-            NutsExecutionContextBuilder cc = createExecutionContext()
-                    .setSession(session.copy())
-                    .setExecSession(session.copy())
-                    .setDefinition(def).setArguments(args).setFailFast(true).setTemporary(false)
-                    .setExecutionType(session.boot().getBootOptions().getExecutionType())
-                    .setRunAs(NutsRunAs.currentUser())// install or update always uses current user
-                    ;
-            NutsArtifactCall installer = def.getDescriptor().getInstaller();
-            if (installer != null) {
-                cc.addExecutorArguments(installer.getArguments());
-                cc.addExecutorProperties(installer.getProperties());
-            }
-            cc.setWorkspace(cc.getSession().getWorkspace());
-            NutsExecutionContext executionContext = cc.build();
-
-            if (strategy0 == InstallStrategy0.REQUIRE) {
-                newNutsInstallInformation = installedRepository.require(executionContext.getDefinition(), true, forIds, scope, session);
-            } else if (strategy0 == InstallStrategy0.UPDATE) {
-                newNutsInstallInformation = installedRepository.install(executionContext.getDefinition(), session);
+            if (strategy0 == InstallStrategy0.UPDATE) {
+                wu.events().fireOnUpdate(new DefaultNutsUpdateEvent(oldDef, def, session, reinstall));
+            } else if (strategy0 == InstallStrategy0.REQUIRE) {
+                wu.events().fireOnRequire(new DefaultNutsInstallEvent(def, session, forIds, reinstall));
             } else if (strategy0 == InstallStrategy0.INSTALL) {
-                newNutsInstallInformation = installedRepository.install(executionContext.getDefinition(), session);
-            }
-            if (updateDefaultVersion) {
-                installedRepository.setDefaultVersion(def.getId(), session);
+                wu.events().fireOnInstall(new DefaultNutsInstallEvent(def, session, new NutsId[0], reinstall));
             }
 
-            //now should reload definition
-            NutsFetchCommand fetch2 = session.fetch()
-                    .setSession(session)
-                    .setId(executionContext.getDefinition().getId())
-                    .setContent(true)
-                    .setRepositoryFilter(session.repos().filter().installedRepo())
-                    .setFailFast(true);
-            if (def.isSetDependencies()) {
-                fetch2.setDependencyFilter(def.getDependencies().filter());
-                fetch2.setDependencies(true);
+            if (def.getDescriptor().getIdType() == NutsIdType.EXTENSION) {
+                NutsWorkspaceConfigManagerExt wcfg = NutsWorkspaceConfigManagerExt.of(config);
+                NutsExtensionListHelper h = new NutsExtensionListHelper(
+                        session.getWorkspace().getApiId(),
+                        wcfg.getModel().getStoredConfigBoot().getExtensions())
+                        .save();
+                h.add(def.getId(), def.getDependencies().transitiveWithSource()
+                        .toArray(NutsDependency[]::new));
+                wcfg.getModel().getStoredConfigBoot().setExtensions(h.getConfs());
+                wcfg.getModel().fireConfigurationChanged("extensions", session, ConfigEventType.BOOT);
             }
-            NutsDefinition def2 = fetch2
-                    .getResultDefinition();
-
-            //update definition in the execution context
-            cc.setDefinition(def2);
-            executionContext = cc.build();
-            NutsRepository rep = session.repos().findRepository(def.getRepositoryUuid());
-            remoteRepo = rep == null || rep.isRemote();
-            if (strategy0 == InstallStrategy0.REQUIRE) {
-                //
-            } else if (strategy0 == InstallStrategy0.UPDATE) {
-                if (installerComponent != null) {
-                    try {
-                        installerComponent.update(executionContext);
-                    } catch (NutsReadOnlyException ex) {
-                        throw ex;
-                    } catch (Exception ex) {
-                        if (session.isPlainTrace()) {
-                            out.resetLine().printf("%s ```error failed``` to update : %s.%n", def.getId(), ex);
-                        }
-                        throw new NutsExecutionException(session,
-                                NutsMessage.cstyle("unable to update %s", def.getId()),
-                                ex);
-                    }
+        }catch (RuntimeException ex){
+            try {
+                Map rec = null;
+                if (strategy0 == InstallStrategy0.INSTALL) {
+                    rec = wsModel.recomm.askInstallRecommendations(new RequestQueryInfo(def.getId().toString()), true, session);
+                } else if (strategy0 == InstallStrategy0.UPDATE) {
+                    rec = wsModel.recomm.askUpdateRecommendations(new RequestQueryInfo(def.getId().toString()), true, session);
+                } else {
+                    //just ignore any dependencies. recommendations are related to main artifacts
                 }
-            } else if (strategy0 == InstallStrategy0.INSTALL) {
-                if (installerComponent != null) {
-                    try {
-                        installerComponent.install(executionContext);
-                    } catch (NutsReadOnlyException ex) {
-                        throw ex;
-                    } catch (Exception ex) {
-                        if (session.isPlainTrace()) {
-                            out.resetLine().printf("```error error: failed to install``` %s: %s.%n", def.getId(), ex);
-                        }
-                        try {
-                            installedRepository.uninstall(executionContext.getDefinition(), session);
-                        } catch (Exception ex2) {
-                            LOG.with().session(session).level(Level.FINE).error(ex)
-                                    .log(NutsMessage.jstyle("failed to uninstall  {0}", executionContext.getDefinition().getId()));
-                            //ignore if we could not uninstall
-                            try {
-                                Map rec = null;
-                                if (strategy0 == InstallStrategy0.INSTALL) {
-                                    rec = wsModel.recomm.askInstallFailureRecommendations(new RequestQueryInfo(def.getId().toString(), ""), session);
-                                } else if (strategy0 == InstallStrategy0.UPDATE) {
-                                    rec = wsModel.recomm.askUpdateFailureRecommendations(new RequestQueryInfo(def.getId().toString(), ""), session);
-                                } else {
-                                    //just ignore any dependencies. recommendations are related to main artifacts
-                                }
-                                //TODO: should check here for any security issue!
-                            } catch (Exception ex3) {
-                                //just ignore
-                            }
-                        }
-                        throw new NutsExecutionException(session, NutsMessage.cstyle("unable to install %s", def.getId()), ex);
-                    }
-                }
+                //TODO: should check here for any recommendations to process
+            } catch (Exception ex2) {
+                //just ignore
             }
-        } else {
-            throw new NutsExecutionException(session,
-                    NutsMessage.cstyle("unable to install %s: unable to locate content", def.getId()),
-                    101);
+            throw ex;
         }
-
-        NutsId forId = (forIds == null || forIds.length == 0) ? null : forIds[0];
-        switch (def.getDescriptor().getIdType()) {
-            case API: {
-                wsModel.configModel.prepareBootClassPathConf(NutsIdType.API, def.getId(),
-                        forId
-                        , null, true, false, session);
-                break;
-            }
-            case RUNTIME:
-            case EXTENSION: {
-                wsModel.configModel.prepareBootClassPathConf(
-                        def.getDescriptor().getIdType(),
-                        def.getId(),
-                        forId
-                        , null, true, true, session);
-                break;
-            }
-        }
-
-        if (strategy0 == InstallStrategy0.UPDATE) {
-            wu.events().fireOnUpdate(new DefaultNutsUpdateEvent(oldDef, def, session, reinstall));
-        } else if (strategy0 == InstallStrategy0.REQUIRE) {
-            wu.events().fireOnRequire(new DefaultNutsInstallEvent(def, session, forIds, reinstall));
-        } else if (strategy0 == InstallStrategy0.INSTALL) {
-            wu.events().fireOnInstall(new DefaultNutsInstallEvent(def, session, new NutsId[0], reinstall));
-        }
-
-        if (def.getDescriptor().getIdType() == NutsIdType.EXTENSION) {
-            NutsWorkspaceConfigManagerExt wcfg = NutsWorkspaceConfigManagerExt.of(config);
-            NutsExtensionListHelper h = new NutsExtensionListHelper(
-                    session.getWorkspace().getApiId(),
-                    wcfg.getModel().getStoredConfigBoot().getExtensions())
-                    .save();
-            h.add(def.getId(), def.getDependencies().transitiveWithSource()
-                    .toArray(NutsDependency[]::new));
-            wcfg.getModel().getStoredConfigBoot().setExtensions(h.getConfs());
-            wcfg.getModel().fireConfigurationChanged("extensions", session, ConfigEventType.BOOT);
-        }
-
         if (session.isPlainTrace()) {
             String setAsDefaultString = "";
             NutsTexts text = NutsTexts.of(session);

@@ -61,7 +61,7 @@ public class DefaultNutsSystemExecutable extends AbstractNutsExecutableCommand {
         if (env1 != null) {
             e2 = new HashMap<>((Map) env1);
         }
-        return ProcessExecHelper.ofArgs(
+        return ProcessExecHelper.ofArgs(null,
                 execCommand.getCommand(), e2,
                 execCommand.getDirectory()==null?null:NutsPath.of(execCommand.getDirectory(),session).toFile(),
                 session.getTerminal(),

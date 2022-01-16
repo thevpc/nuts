@@ -6,6 +6,9 @@ public class RequestQueryInfo {
     public String server;
     public RequestQuery q;
 
+    public RequestQueryInfo(String id) {
+        this(id,"");
+    }
     public RequestQueryInfo(String id,String reason) {
         this.q = new RequestQuery();
         q.setId(id);
