@@ -71,7 +71,7 @@ public class DefaultNutsIdBuilder implements NutsIdBuilder {
                     return true;
                 }
                 case NutsConstants.IdProperties.PLATFORM: {
-                    condition.setPlatform(CoreStringUtils.parseAndTrimToDistinctArray(value));
+                    condition.setPlatform(NutsIdListHelper.parseIdListStrings(value,session));
                     return true;
                 }
                 case NutsConstants.IdProperties.OS_DIST: {
@@ -261,7 +261,7 @@ public class DefaultNutsIdBuilder implements NutsIdBuilder {
             setProperty(NutsConstants.IdProperties.OS, CoreStringUtils.joinAndTrimToNull(c.getOs()));
             setProperty(NutsConstants.IdProperties.OS_DIST, CoreStringUtils.joinAndTrimToNull(c.getOsDist()));
             setProperty(NutsConstants.IdProperties.ARCH, CoreStringUtils.joinAndTrimToNull(c.getArch()));
-            setProperty(NutsConstants.IdProperties.PLATFORM, CoreStringUtils.joinAndTrimToNull(c.getPlatform()));
+            setProperty(NutsConstants.IdProperties.PLATFORM, NutsIdListHelper.formatIdList(c.getPlatform(),session));
             setProperty(NutsConstants.IdProperties.DESKTOP_ENVIRONMENT, CoreStringUtils.joinAndTrimToNull(c.getDesktopEnvironment()));
             setProperty(NutsConstants.IdProperties.PROFILE, CoreStringUtils.joinAndTrimToNull(c.getProfile()));
             ((DefaultNutsEnvConditionBuilder)condition).setProperties(((DefaultNutsEnvCondition)c).getProperties());
@@ -301,7 +301,7 @@ public class DefaultNutsIdBuilder implements NutsIdBuilder {
                 break;
             }
             case NutsConstants.IdProperties.PLATFORM:{
-                condition.setPlatform(CoreStringUtils.parseAndTrimToDistinctArray(value));
+                condition.setPlatform(NutsIdListHelper.parseIdListStrings(value,session));
                 break;
             }
             case NutsConstants.IdProperties.DESKTOP_ENVIRONMENT:{
@@ -459,7 +459,7 @@ public class DefaultNutsIdBuilder implements NutsIdBuilder {
         if(!NutsBlankable.isBlank(classifier)){
             m.put(NutsConstants.IdProperties.CLASSIFIER,classifier);
         }
-        m.putAll(CoreFilterUtils.toMap(condition.build()));
+        m.putAll(CoreFilterUtils.toMap(condition.build(),session));
         for (Map.Entry<String, String> e : propertiesQuery.getProperties().entrySet()) {
             if(!m.containsKey(e.getKey())){
                 m.put(e.getKey(),e.getValue());

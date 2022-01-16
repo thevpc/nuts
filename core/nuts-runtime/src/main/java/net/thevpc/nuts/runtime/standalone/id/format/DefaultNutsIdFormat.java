@@ -230,7 +230,7 @@ public class DefaultNutsIdFormat extends DefaultFormatBase<NutsIdFormat> impleme
                 sb.append(_encode(id.getRepository()), NutsTextStyle.pale());
             }
         }
-        for (Map.Entry<String, String> e : CoreFilterUtils.toMap(id.getCondition()).entrySet()) {
+        for (Map.Entry<String, String> e : CoreFilterUtils.toMap(id.getCondition(),getSession()).entrySet()) {
             String kk=e.getKey();
             String kv=e.getValue();
             if (firstQ) {

@@ -26,6 +26,7 @@ package net.thevpc.nuts.runtime.standalone.dependency;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.dependency.util.NutsDependencyUtils;
 import net.thevpc.nuts.runtime.standalone.descriptor.DefaultNutsEnvCondition;
+import net.thevpc.nuts.runtime.standalone.id.NutsIdListHelper;
 import net.thevpc.nuts.runtime.standalone.util.filters.CoreFilterUtils;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.CommaStringParser;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.QueryStringParser;
@@ -304,7 +305,7 @@ public class DefaultNutsDependency implements NutsDependency {
                 p.put(NutsConstants.IdProperties.ARCH, String.join(",", condition.getArch()));
             }
             if (condition.getPlatform().length > 0) {
-                p.put(NutsConstants.IdProperties.PLATFORM, String.join(",", condition.getPlatform()));
+                p.put(NutsConstants.IdProperties.PLATFORM, NutsIdListHelper.formatIdList(condition.getPlatform(),session));
             }
             if (condition.getProfile().length > 0) {
                 p.put(NutsConstants.IdProperties.PROFILE, String.join(",", condition.getProfile()));

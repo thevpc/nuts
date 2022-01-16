@@ -358,7 +358,7 @@ public class DefaultNutsId implements NutsId {
         if(!NutsBlankable.isBlank(classifier)){
             m.put(NutsConstants.IdProperties.CLASSIFIER,classifier);
         }
-        m.putAll(CoreFilterUtils.toMap(condition));
+        m.putAll(CoreFilterUtils.toMap(condition,session));
         for (Map.Entry<String, String> e : QueryStringParser.parseMap(properties,session).entrySet()) {
             if(!m.containsKey(e.getKey())){
                 m.put(e.getKey(),e.getValue());

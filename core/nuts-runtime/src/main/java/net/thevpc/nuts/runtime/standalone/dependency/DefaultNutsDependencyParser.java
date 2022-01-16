@@ -9,6 +9,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import net.thevpc.nuts.runtime.standalone.descriptor.DefaultNutsEnvConditionBuilder;
+import net.thevpc.nuts.runtime.standalone.id.NutsIdListHelper;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.CommaStringParser;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.StringMapParser;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.StringTokenizerUtils;
@@ -69,7 +70,7 @@ public class DefaultNutsDependencyParser implements NutsDependencyParser {
                         break;
                     }
                     case NutsConstants.IdProperties.PLATFORM:{
-                        sb.setPlatform(StringTokenizerUtils.splitDefault(e.getValue()).toArray(new String[0]));
+                        sb.setPlatform(NutsIdListHelper.parseIdListStrings(e.getValue(),session));
                         break;
                     }
                     case NutsConstants.IdProperties.OS_DIST:{

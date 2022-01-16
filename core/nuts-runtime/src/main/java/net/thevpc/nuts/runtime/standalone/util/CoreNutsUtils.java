@@ -100,6 +100,7 @@ public class CoreNutsUtils {
         _QUERY_EMPTY_ENV.put(NutsConstants.IdProperties.OS, null);
         _QUERY_EMPTY_ENV.put(NutsConstants.IdProperties.OS_DIST, null);
         _QUERY_EMPTY_ENV.put(NutsConstants.IdProperties.PLATFORM, null);
+        _QUERY_EMPTY_ENV.put(NutsConstants.IdProperties.DESKTOP_ENVIRONMENT, null);
     }
 
     public static String randomColorName() {

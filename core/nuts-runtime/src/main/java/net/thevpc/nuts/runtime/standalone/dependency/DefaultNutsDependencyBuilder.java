@@ -26,6 +26,7 @@ package net.thevpc.nuts.runtime.standalone.dependency;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.dependency.util.NutsDependencyUtils;
 import net.thevpc.nuts.runtime.standalone.descriptor.DefaultNutsEnvConditionBuilder;
+import net.thevpc.nuts.runtime.standalone.id.NutsIdListHelper;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.QueryStringParser;
 
 import java.util.*;
@@ -85,7 +86,7 @@ public class DefaultNutsDependencyBuilder implements NutsDependencyBuilder {
                     return true;
                 }
                 case NutsConstants.IdProperties.PLATFORM: {
-                    condition.setPlatform(value);
+                    condition.setPlatform(NutsIdListHelper.parseIdListStrings(value,session));
                     return true;
                 }
                 case NutsConstants.IdProperties.OS_DIST: {

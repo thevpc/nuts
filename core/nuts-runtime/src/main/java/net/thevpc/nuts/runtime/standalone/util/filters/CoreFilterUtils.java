@@ -27,6 +27,7 @@ package net.thevpc.nuts.runtime.standalone.util.filters;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.descriptor.DefaultNutsEnvCondition;
+import net.thevpc.nuts.runtime.standalone.id.NutsIdListHelper;
 import net.thevpc.nuts.runtime.standalone.util.Simplifiable;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.CommaStringParser;
 
@@ -680,7 +681,7 @@ public class CoreFilterUtils {
         return c;
     }
 
-    public static Map<String, String> toMap(NutsEnvCondition condition) {
+    public static Map<String, String> toMap(NutsEnvCondition condition,NutsSession session) {
         LinkedHashMap<String, String> m = new LinkedHashMap<>();
         String s = Arrays.stream(condition.getArch()).map(String::trim).filter(x -> !x.isEmpty()).collect(Collectors.joining(","));
         if (!NutsBlankable.isBlank(s)) {
@@ -694,7 +695,7 @@ public class CoreFilterUtils {
         if (!NutsBlankable.isBlank(s)) {
             m.put(NutsConstants.IdProperties.OS_DIST, s);
         }
-        s = Arrays.stream(condition.getPlatform()).map(String::trim).filter(x -> !x.isEmpty()).collect(Collectors.joining(","));
+        s = NutsIdListHelper.formatIdList(condition.getPlatform(),session);
         if (!NutsBlankable.isBlank(s)) {
             m.put(NutsConstants.IdProperties.PLATFORM, s);
         }
