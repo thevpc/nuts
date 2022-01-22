@@ -8,7 +8,7 @@ Network Updatable Things Services
 \_\ \/\__,_/\__/____/    production version 0.8.3.0 (accessible on maven central)
 </pre>
 
-website : [https://thevpc.github.io/nuts](https://thevpc.github.io/nuts)
+Website : [https://thevpc.github.io/nuts](https://thevpc.github.io/nuts)
 
 ```nuts``` is a Java™ Package Manager that helps discover, download, assemble and execute local and remote artifacts (packages) in an easy and straightforward way.
 
