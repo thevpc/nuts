@@ -65,7 +65,6 @@ public abstract class ClassloaderAwareRunnable implements Runnable {
         Thread.currentThread().setContextClassLoader(classLoader);
         try {
             try {
-
                 result = runWithContext();
             } catch (Throwable th) {
                 error = th;

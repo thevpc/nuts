@@ -1,7 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.executor.embedded;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.standalone.executor.embedded.ClassloaderAwareRunnable;
 import net.thevpc.nuts.runtime.standalone.executor.java.JavaExecutorOptions;
 
 import java.lang.reflect.Method;
@@ -51,48 +50,23 @@ public class ClassloaderAwareRunnableImpl extends ClassloaderAwareRunnable {
             return null;
         }
         Method mainMethod = null;
-        boolean isNutsApp = false;
+        String nutsAppVersion = null;
         Object nutsApp = null;
+        NutsSession sessionCopy = getSession().copy();
         try {
-            mainMethod = cls.getMethod("run", NutsSession.class, String[].class);
-            mainMethod.setAccessible(true);
-            for (Class<?> pi : cls.getInterfaces()) {
-                //this is the old nuts apps (version >= 0.8.1)
-                if (pi.getName().equals("net.thevpc.nuts.NutsApplication")) {
-                    isNutsApp = true;
-                    break;
-                }
-            }
-            Class p = cls.getSuperclass();
-            while (!isNutsApp && p != null) {
-                if (p.getName().equals("net.thevpc.nuts.NutsApplication")
-                        //this is the old nuts apps (version < 0.8.0)
-                        || p.getName().equals("net.vpc.app.nuts.NutsApplication")) {
-                    isNutsApp = true;
-                    break;
-                }
-                for (Class<?> pi : cls.getInterfaces()) {
-                    //this is the old nuts apps (version >= 0.8.1)
-                    if (pi.getName().equals("net.thevpc.nuts.NutsApplication")) {
-                        isNutsApp = true;
-                        break;
-                    }
-                }
-                p = p.getSuperclass();
-            }
-            if (isNutsApp) {
-                isNutsApp = false;
-                nutsApp = cls.getConstructor().newInstance();
-                isNutsApp = true;
+            nutsAppVersion = CoreNutsApplications.getNutsAppVersion(cls);
+            if (nutsAppVersion != null) {
+                mainMethod = cls.getMethod("run", NutsSession.class, String[].class);
+                mainMethod.setAccessible(true);
+                nutsApp=CoreNutsApplications.createApplicationInstance(cls,session,joptions.getAppArgs().toArray(new String[0]));
             }
         } catch (Exception rr) {
             //ignore
-
         }
-        if (isNutsApp) {
+        if (nutsAppVersion != null && nutsApp!=null) {
             //NutsWorkspace
             NutsApplications.getSharedMap().put("nuts.embedded.application.id", id);
-            mainMethod.invoke(nutsApp, getSession().copy(), joptions.getAppArgs().toArray(new String[0]));
+            mainMethod.invoke(nutsApp, sessionCopy, joptions.getAppArgs().toArray(new String[0]));
         } else {
             //NutsWorkspace
             System.setProperty("nuts.boot.args",
@@ -101,8 +75,6 @@ public class ClassloaderAwareRunnableImpl extends ClassloaderAwareRunnable {
                             .formatter().setShellFamily(NutsShellFamily.SH).toString()
             );
             mainMethod = cls.getMethod("main", String[].class);
-//                List<String> nargs = new ArrayList<>();
-//                nargs.addAll(joptions.getApp());
             mainMethod.invoke(null, new Object[]{joptions.getAppArgs().toArray(new String[0])});
         }
         return null;
