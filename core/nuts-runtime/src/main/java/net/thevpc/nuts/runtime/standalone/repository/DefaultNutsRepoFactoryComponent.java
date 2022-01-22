@@ -25,12 +25,14 @@ package net.thevpc.nuts.runtime.standalone.repository;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.repository.impl.nuts.NutsFolderRepository;
-import net.thevpc.nuts.runtime.standalone.repository.impl.nuts.NutsHttpFolderRepository;
 import net.thevpc.nuts.runtime.standalone.repository.impl.nuts.NutsHttpSrvRepository;
 import net.thevpc.nuts.runtime.standalone.repository.util.NutsRepositoryUtils;
 import net.thevpc.nuts.spi.*;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * Created by vpc on 1/15/17.
@@ -63,12 +65,19 @@ public class DefaultNutsRepoFactoryComponent implements NutsRepositoryFactoryCom
 
     @Override
     public NutsAddRepositoryOptions[] getDefaultRepositories(NutsSession session) {
+        List<NutsAddRepositoryOptions> all=new ArrayList<>();
         if (!session.config().isGlobal()) {
-            return new NutsAddRepositoryOptions[]{
-                    NutsRepositorySelectorHelper.createRepositoryOptions(NutsRepositoryLocation.of("system", NutsRepositoryDB.of(session),session), true, session)
-            };
+            all.add(NutsRepositorySelectorHelper.createRepositoryOptions(
+                    Objects.requireNonNull(NutsRepositoryLocation.of("system", NutsRepositoryDB.of(session), session)),
+                    true, session));
         }
-        return new NutsAddRepositoryOptions[0];
+        all.add(NutsRepositorySelectorHelper.createRepositoryOptions(
+                Objects.requireNonNull(NutsRepositoryLocation.of("vpc-public-nuts", NutsRepositoryDB.of(session), session)),
+                true, session));
+        all.add(NutsRepositorySelectorHelper.createRepositoryOptions(
+                Objects.requireNonNull(NutsRepositoryLocation.of("goodies", NutsRepositoryDB.of(session), session)),
+                true, session));
+        return all.toArray(new NutsAddRepositoryOptions[0]);
     }
 
     @Override
@@ -83,14 +92,14 @@ public class DefaultNutsRepoFactoryComponent implements NutsRepositoryFactoryCom
                     NutsPath.of(config.getLocation().getPath(), session).isFile()
             ) {
                 return new NutsFolderRepository(options, session, parentRepository);
-            }else if (NutsPath.of(config.getLocation().getPath(), session).isURL()) {
+            } else if (NutsPath.of(config.getLocation().getPath(), session).isURL()) {
                 Map<String, String> e = config.getEnv();
-                if(e!=null){
-                    if(NutsUtilStrings.parseBoolean(e.get("nuts-api-server"),false,false)){
+                if (e != null) {
+                    if (NutsUtilStrings.parseBoolean(e.get("nuts-api-server"), false, false)) {
                         return (new NutsHttpSrvRepository(options, session, parentRepository));
                     }
                 }
-                return (new NutsHttpFolderRepository(options, session, parentRepository));
+                return (new NutsFolderRepository(options, session, parentRepository));
             }
         }
         return null;
