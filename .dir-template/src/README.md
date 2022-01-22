@@ -59,6 +59,10 @@ That’s it, now you must relaunch the terminal window (close the terminal and s
 
 The following command should show you the current version
 
+```
+nuts --version
+```
+
 
 ## Installing Nuts (Stable, recommended for Production)
 
@@ -94,7 +98,7 @@ That’s it, now you must relaunch the terminal window (close the terminal and s
 The following command should show you the current version
 
 ```
-nuts version
+nuts --version
 ```
 
 ## Updating from a previously installed version
