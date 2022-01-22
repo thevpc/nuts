@@ -10,7 +10,7 @@ Network Updatable Things Services
 
 Website : [https://thevpc.github.io/nuts](https://thevpc.github.io/nuts)
 
-```nuts``` is a Java™ Package Manager that helps discover, download, assemble and execute local and remote artifacts (packages) in a very handy way.
+```nuts``` is a Java™ Package Manager that helps discover, download, assemble and execute local and remote artifacts (packages) in an easy and straightforward way.
 
 Unlike Maven which resolves dependencies at compile time, ```nuts``` solves dependencies and builds the classpath at install time and, as a result, saves disk storage and bandwidth by downloading and caching only libraries required for the current environment and share them between multiple installed applications.
 
