@@ -46,10 +46,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Properties;
+import java.util.*;
 import java.util.concurrent.Future;
 import java.util.logging.Filter;
 import java.util.logging.Level;
@@ -110,87 +107,20 @@ public class ZipExecutorComponent implements NutsExecutorComponent {
     public IProcessExecHelper execHelper(NutsExecutionContext executionContext) {
         NutsDefinition def = executionContext.getDefinition();
         NutsSession session = executionContext.getSession();
-        final NutsSession execSession = executionContext.getExecSession();
-        StringKeyValueList runnerProps = new StringKeyValueList();
-        if (executionContext.getExecutorDescriptor() != null) {
-            runnerProps.add(executionContext.getExecutorDescriptor().getProperties());
-        }
-
-        if (executionContext.getEnv() != null) {
-            runnerProps.add(executionContext.getEnv());
-        }
-
         HashMap<String, String> osEnv = new HashMap<>();
-        NutsWorkspaceOptionsBuilder options = ws.boot().getBootOptions().builder();
-
-        //copy session parameters to the newly created workspace
-        options.setDry(execSession.isDry());
-        options.setGui(execSession.isGui());
-        options.setOutLinePrefix(execSession.getOutLinePrefix());
-        options.setErrLinePrefix(execSession.getErrLinePrefix());
-        options.setDebug(execSession.getDebug());
-        options.setTrace(execSession.isTrace());
-        options.setBot(execSession.isBot());
-        options.setCached(execSession.isCached());
-        options.setIndexed(execSession.isIndexed());
-        options.setConfirm(execSession.getConfirm());
-        options.setTransitive(execSession.isTransitive());
-        options.setOutputFormat(execSession.getOutputFormat());
-        if (null == options.getTerminalMode()) {
-            options.setTerminalMode(execSession.getTerminal().out().mode());
-        } else {
-            switch (options.getTerminalMode()) {
-                //retain filtered
-                case FILTERED:
-                    break;
-                //retain inherited
-                case INHERITED:
-                    break;
-                default:
-                    options.setTerminalMode(execSession.getTerminal().out().mode());
-                    break;
-            }
-        }
-        options.setExpireTime(execSession.getExpireTime());
-        Filter logFileFilter = execSession.getLogFileFilter();
-        Filter logTermFilter = execSession.getLogTermFilter();
-        Level logTermLevel = execSession.getLogTermLevel();
-        Level logFileLevel = execSession.getLogFileLevel();
-        if (logFileFilter != null || logTermFilter != null || logTermLevel != null || logFileLevel != null) {
-            NutsLogConfig lc = options.getLogConfig();
-            if (lc == null) {
-                lc = new NutsLogConfig();
-            } else {
-                lc = lc.copy();
-            }
-            if (logTermLevel != null) {
-                lc.setLogTermLevel(logTermLevel);
-            }
-            if (logFileLevel != null) {
-                lc.setLogFileLevel(logFileLevel);
-            }
-            if (logTermFilter != null) {
-                lc.setLogTermFilter(logTermFilter);
-            }
-            if (logFileFilter != null) {
-                lc.setLogFileFilter(logFileFilter);
-            }
-        }
-
         NutsArtifactCall executor = def.getDescriptor().getExecutor();
         if (executor == null) {
             throw new NutsIOException(session, NutsMessage.cstyle("missing executor for %s", def.getId()));
         }
-        String[] execArgs = executionContext.getExecutorArguments();
-        if (executor.getId() == null || executor.getId().toString().equals("exec")) {
-            //accept this
-        } else {
+        List<String> args=new ArrayList<>(Arrays.asList(executionContext.getExecutorArguments()));
+        args.addAll(Arrays.asList(executionContext.getArguments()));
+        if (executor.getId() != null && !executor.getId().toString().equals("exec")) {
+            // TODO: delegate to another executor!
             throw new NutsIOException(session, NutsMessage.cstyle("unsupported executor %s for %s", executor.getId(), def.getId()));
         }
-
         String directory = null;
         return NutsExecHelper.ofDefinition(def,
-                execArgs, osEnv, directory, executionContext.getExecutorProperties(), true, true, executionContext.getSleepMillis(), false, false, null, null, executionContext.getRunAs(), executionContext.getSession(),
+                args.toArray(new String[0]), osEnv, directory, executionContext.getExecutorProperties(), true, true, executionContext.getSleepMillis(), false, false, null, null, executionContext.getRunAs(), executionContext.getSession(),
                 executionContext.getExecSession()
         );
     }
