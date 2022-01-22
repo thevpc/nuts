@@ -41,7 +41,7 @@ ${{apiVersion}}/${{implVersion}}
 
 If you want to install ```nuts``` (or update from an existing rolling version) you just need to do the following. <br />
 <br />
-Please note that nuts rolling version (which is the most recent version) is quite stable and you can use it for personal usage, for development or for testing but we recommend you consider official versions for production systems.
+Please note that ```nuts``` rolling version (which is the most recent version) is quite stable and you can use it for personal usage, for development or for testing but we recommend you consider official versions for production systems.
 
 First you need to download nuts-preview.jar
 
@@ -80,15 +80,16 @@ If you want a shorter link, use this one!
 wget https://thevpc.net/nuts-stable.jar -O nuts.jar
 ```
 
-
 Then you must run, in a terminal, one of the the following commands:
 
 Run this command to reset the configuration or when you are installing the very first time
+
 ```
 java -jar nuts.jar -Zy
 ```
 
 Or run this command when you want to reinstall nuts from scratch without resetting the configuration
+
 ```
 java -jar nuts.jar -Ny
 ```
