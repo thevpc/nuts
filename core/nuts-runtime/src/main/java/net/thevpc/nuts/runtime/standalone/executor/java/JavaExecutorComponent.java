@@ -388,6 +388,13 @@ public class JavaExecutorComponent implements NutsExecutorComponent {
                 for (NutsClassLoaderNode n : joptions.getClassPathNodes()) {
                     classLoader.add(n);
                 }
+                if(joptions.getMainClass()==null){
+                    if(joptions.isJar()) {
+                        throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("jar mode and embedded mode are exclusive for %s",def.getId()));
+                    }else{
+                        throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("unable resolve class name for %s",def.getId()));
+                    }
+                }
                 Class<?> cls = Class.forName(joptions.getMainClass(), true, classLoader);
                 new ClassloaderAwareRunnableImpl(def.getId(), classLoader, cls, session, joptions).runAndWaitFor();
                 return 0;

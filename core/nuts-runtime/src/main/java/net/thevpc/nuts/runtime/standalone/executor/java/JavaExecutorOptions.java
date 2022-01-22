@@ -11,9 +11,7 @@ import net.thevpc.nuts.runtime.standalone.dependency.util.NutsClassLoaderUtils;
 
 import java.net.URL;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public final class JavaExecutorOptions {
@@ -24,9 +22,9 @@ public final class JavaExecutorOptions {
     private final List<String> j9_addModules = new ArrayList<String>();
     private final List<String> j9_modulePath = new ArrayList<String>();
     private final List<String> j9_upgradeModulePath = new ArrayList<String>();
-    private final List<String> prependArgs=new ArrayList<>();
+    private final List<String> prependArgs = new ArrayList<>();
     private final List<String> appArgs;
-    private final List<String> appendArgs=new ArrayList<>();
+    private final List<String> appendArgs = new ArrayList<>();
     //    private NutsDefinition nutsMainDef;
     private final NutsSession session;
     private final List<NutsClassLoaderNode> classPathNodes = new ArrayList<>();
@@ -56,7 +54,7 @@ public final class JavaExecutorOptions {
 //            }
             id = descriptor.getId();
         } else {
-            descriptor = NutsDescriptorUtils.getEffectiveDescriptor(def,session);
+            descriptor = NutsDescriptorUtils.getEffectiveDescriptor(def, session);
             if (!CoreNutsUtils.isEffectiveId(id)) {
                 id = descriptor.getId();
             }
@@ -165,7 +163,7 @@ public final class JavaExecutorOptions {
                     appendArgs.add(cmdLine.nextString().getStringValue());
                     break;
                 }
-                case "-s":{
+                case "-s": {
                     NutsArgument s = cmdLine.next();
                     getJvmArgs().add("-Dswing.aatext=true");
                     getJvmArgs().add("-Dawt.useSystemAAFontSettings=on");
@@ -209,6 +207,32 @@ public final class JavaExecutorOptions {
                     .getResultDefinitions().toList()
             );
         }
+        if (path != null) {
+            NutsVersion binJavaVersion = JavaJarUtils.parseJarClassVersion(
+                    NutsPath.of(path, session), session
+            );
+            if (!NutsBlankable.isBlank(binJavaVersion) && (NutsBlankable.isBlank(javaVersion) || binJavaVersion.compareTo(javaVersion) > 0)) {
+                javaVersion = binJavaVersion.toString();
+            }
+        }
+        NutsVersion explicitJavaVersion = Arrays.stream(def.getDescriptor().getCondition().getPlatform()).map(x -> NutsId.of(x, session))
+                .filter(x -> x.getShortName().equals("java"))
+                .map(NutsId::getVersion)
+                .min(Comparator.naturalOrder())
+                .orElse(null);
+        if (!NutsBlankable.isBlank(explicitJavaVersion)  && (NutsBlankable.isBlank(javaVersion) || explicitJavaVersion.compareTo(javaVersion) > 0)) {
+            javaVersion = explicitJavaVersion.toString();
+        }
+        NutsPlatformLocation nutsPlatformLocation = NutsJavaSdkUtils.of(session).resolveJdkLocation(getJavaVersion(), session);
+        if (nutsPlatformLocation == null) {
+            throw new NutsExecutionException(session, NutsMessage.cstyle("no java version %s was found", NutsUtilStrings.trim(getJavaVersion())), 1);
+        }
+        javaEffVersion = nutsPlatformLocation.getVersion();
+        javaCommand = NutsJavaSdkUtils.of(session).resolveJavaCommandByVersion(nutsPlatformLocation, javaw, session);
+        if (javaCommand == null) {
+            throw new NutsExecutionException(session, NutsMessage.cstyle("no java version %s was found", getJavaVersion()), 1);
+        }
+        java9 = NutsVersion.of(javaVersion, session).compareTo("1.8") > 0;
         if (this.jar) {
             if (this.mainClass != null) {
                 if (session.isPlainOut()) {
@@ -252,25 +276,7 @@ public final class JavaExecutorOptions {
             if (mainClass == null) {
                 throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("missing Main Class for %s", id));
             }
-            if (path != null && javaVersion == null) {
-                NutsVersion version = JavaJarUtils.parseJarClassVersion(
-                        NutsPath.of(path, session), session
-                );
-                if (version == null) {
-                    throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("unable to detect java version for %s as %s", id, path));
-                }
-                javaVersion = version.toString();
-            }
-            NutsPlatformLocation nutsPlatformLocation = NutsJavaSdkUtils.of(session).resolveJdkLocation(getJavaVersion(), session);
-            if (nutsPlatformLocation == null) {
-                throw new NutsExecutionException(session, NutsMessage.cstyle("no java version %s was found", NutsUtilStrings.trim(getJavaVersion())), 1);
-            }
-            javaEffVersion = nutsPlatformLocation.getVersion();
-            javaCommand = NutsJavaSdkUtils.of(session).resolveJavaCommandByVersion(nutsPlatformLocation, javaw, session);
-            if (javaCommand == null) {
-                throw new NutsExecutionException(session, NutsMessage.cstyle("no java version %s was found", getJavaVersion()), 1);
-            }
-            java9 = NutsVersion.of(javaVersion, session).compareTo("1.8") > 0;
+
             boolean baseDetected = false;
             for (NutsDefinition nutsDefinition : nutsDefinitions) {
                 NutsClassLoaderNode nn = null;

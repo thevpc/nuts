@@ -58,7 +58,7 @@ public class JavaClassUtils {
             }
         };
         JavaClassByteCode classReader = new JavaClassByteCode(new BufferedInputStream(stream), cl, session);
-        if (mainClass.isSet() || nutsApp.isSet()) {
+        if (mainClass.isSet()) {
             return new MainClassType(className.get(), mainClass.isSet(), nutsApp.isSet());
         }
         return null;
@@ -76,7 +76,7 @@ public class JavaClassUtils {
             return new DefaultNutsExecutionEntry(
                     mainClass.getName(),
                     false,
-                    mainClass.isApp() && mainClass.isMain()
+                    mainClass.isApp()
             );
         }
         return null;
