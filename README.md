@@ -22,7 +22,7 @@ Unlike Maven which resolves dependencies at compile time, ```nuts``` solves depe
 
 This is just enough info to get you up and running ```nuts``` .
 Much more info is available on [nuts documentation website](https://thevpc.github.io/nuts/docs).
-You can also have more information browsing [thevpc.net](https://thevpc.net/nuts/)
+You can also have more information browsing [thevpc.net](https://thevpc.net/nuts/).
 Even more information is available via ```nuts help``` once it's installed.
 
 To check the current nuts version
