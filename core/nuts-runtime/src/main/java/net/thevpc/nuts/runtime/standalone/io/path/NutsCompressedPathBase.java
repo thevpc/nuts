@@ -23,7 +23,7 @@ public class NutsCompressedPathBase extends NutsPathBase {
     public NutsCompressedPathBase(NutsPath base) {
         super(base.getSession());
         this.base = base;
-        this.compressedForm = compressUrl(base.toString());
+        this.compressedForm = compressUrl(base.toString(),base.getSession());
         this.formattedCompressedForm = NutsTexts.of(base.getSession()).ofStyled(compressedForm, NutsTextStyle.path());
     }
 
@@ -34,8 +34,8 @@ public class NutsCompressedPathBase extends NutsPathBase {
         this.base = base;
     }
 
-    public static String compressUrl(String path) {
-        NutsPathParts p=new NutsPathParts(path);
+    public static String compressUrl(String path,NutsSession session) {
+        NutsPathParts p=new NutsPathParts(path,session);
         switch (p.getType()){
             case URL:{
                 return new NutsPathParts(
@@ -44,7 +44,9 @@ public class NutsCompressedPathBase extends NutsPathBase {
                         p.getAuthority(),
                         NutsPathParts.compressLocalPath(p.getLocation(), 0, 2),
                         p.getQuery().length()>0?"...":"",
-                        p.getRef().length()>0?"...":""
+                        p.getRef().length()>0?"...":"",
+                        session
+
                 ).toString();
             }
             case REF:{

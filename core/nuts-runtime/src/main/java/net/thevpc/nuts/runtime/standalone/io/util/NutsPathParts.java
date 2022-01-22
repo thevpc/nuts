@@ -15,14 +15,14 @@ public class NutsPathParts {
     private final String ref;
     private final String query;
 
-    public NutsPathParts(Type type, String protocol, String authority, String location, String query, String ref) {
+    public NutsPathParts(Type type, String protocol, String authority, String location, String query, String ref,NutsSession session) {
         switch (type){
             case REF:{
                 this.type = type;
                 this.protocol=ensureNull(protocol,"protocol");
                 this.authority=ensureNull(authority,"authority");
                 this.location=ensureNull(location,"location");
-                this.query=ensureNull(location,"query");
+                this.query=ensureNull(query,"query");
                 this.ref=ensureNonNull(ref,"ref");
                 break;
             }
@@ -31,7 +31,7 @@ public class NutsPathParts {
                 this.protocol=ensureNull(protocol,"protocol");
                 this.authority=ensureNull(authority,"authority");
                 this.location=ensureNonNull(location,"location");
-                this.query=ensureNull(location,"query");
+                this.query=ensureNull(query,"query");
                 this.ref=ensureNull(ref,"ref");
                 break;
             }
@@ -40,10 +40,10 @@ public class NutsPathParts {
                     throw new IllegalArgumentException("protocol must not be 'file'");
                 }
                 this.type = type;
-                this.protocol=ensureOk(protocol,"protocol");
+                this.protocol= ensureTrimmed(protocol,"protocol");
                 this.authority=ensureNull(authority,"authority");
                 this.location=ensureNonNull(location,"location");
-                this.query=ensureNull(location,"query");
+                this.query=ensureNull(query,"query");
                 this.ref=ensureNull(ref,"ref");
                 break;
             }
@@ -52,7 +52,7 @@ public class NutsPathParts {
                 this.protocol=ensureNull(protocol,"protocol");
                 this.authority=ensureNull(authority,"authority");
                 this.location=ensureNull(location,"location");
-                this.query=ensureNull(location,"query");
+                this.query=ensureNull(query,"query");
                 this.ref=ensureNull(ref,"ref");
                 break;
             }
@@ -60,28 +60,28 @@ public class NutsPathParts {
                 String p = ensureNonNull(protocol, "protocol");
                 if(p.equals("file")){
                     this.type = Type.FILE_URL;
-                    this.protocol=ensureOk(protocol,"protocol");
+                    this.protocol= ensureTrimmed(protocol,"protocol");
                     this.authority=ensureNull(authority,"authority");
                     this.location=ensureNonNull(location,"location");
-                    this.query=ensureNull(location,"query");
+                    this.query=ensureNull(query,"query");
                     this.ref=ensureNull(ref,"ref");
                 }else {
                     this.type = type;
                     this.protocol = p;
-                    this.authority = ensureNull(authority, "authority");
-                    this.location = ensureNull(location, "location");
-                    this.query = ensureNull(location, "query");
-                    this.ref = ensureNull(ref, "ref");
+                    this.authority = ensureNonNull(authority, "authority");
+                    this.location = ensureOk(location, "location");
+                    this.query = ensureOk(query, "query");
+                    this.ref = ensureOk(ref, "ref");
                 }
                 break;
             }
             default:{
-                throw new IllegalArgumentException("unsupported");
+                throw new NutsIllegalArgumentException(session,NutsMessage.plain("unsupported NutsPathParts"));
             }
         }
     }
 
-    public NutsPathParts(String path) {
+    public NutsPathParts(String path,NutsSession session) {
         if (path == null || path.trim().isEmpty()) {
             type = Type.EMPTY;
             protocol = "";
@@ -304,7 +304,13 @@ public class NutsPathParts {
         return s.trim();
     }
 
-    private static String ensureOk(String s,String name){
+    private static String ensureTrimmed(String s, String name){
+        if(s==null){
+            return "";
+        }
+        return s.trim();
+    }
+    private static String ensureOk(String s, String name){
         if(s==null){
             return "";
         }
@@ -324,7 +330,7 @@ public class NutsPathParts {
 
     public static NutsString compressPath(String path, int left, int right, NutsSession session) {
         NutsTexts txt = NutsTexts.of(session);
-        NutsPathParts p=new NutsPathParts(path);
+        NutsPathParts p=new NutsPathParts(path,session);
         switch (p.getType()){
             case URL:{
                 return NutsPathParts.toNutsString(

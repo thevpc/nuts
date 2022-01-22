@@ -32,7 +32,7 @@ public class DotfilefsPath extends AbstractPathSPIAdapter {
         public NutsSupported<NutsPathSPI> createPath(String path, NutsSession session, ClassLoader classLoader) {
             NutsSessionUtils.checkSession(ws, session);
             if(path.startsWith(PREFIX)) {
-                return NutsSupported.of(10, () -> new HtmlfsPath(path, session));
+                return NutsSupported.of(10, () -> new DotfilefsPath(path, session));
             }
             return null;
         }

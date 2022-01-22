@@ -466,7 +466,8 @@ public class URLPath implements NutsPathSPI {
                             this.url.getAuthority(),
                             ppath,
                             this.url.getQuery(),
-                            this.url.getRef()
+                            this.url.getRef(),
+                            session
                     ).toString()
             );
             return NutsPath.of(url, getSession());
