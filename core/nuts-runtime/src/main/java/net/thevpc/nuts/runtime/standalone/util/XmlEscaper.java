@@ -30,7 +30,7 @@ public class XmlEscaper {
         install("&gt;", "&#62;",">");
         install("&amp;", "&#38;","&");
         install("&quot;", "&#34;","\"");
-        install("&euro;", "&#8364;","	€");
+        install("&euro;", "&#8364;","€");
         install("&circ;", "&#710;","ˆ");
         install("&tilde;", "&#732;","∼");
         install("&ndash;", "&#45;","–");
@@ -40,7 +40,8 @@ public class XmlEscaper {
     }
 
     private static void install(String at, String sharp,String unicode){
-
+        atToSharp.put(at,sharp);
+        atToUnicode.put(at,unicode);
     }
 
 
