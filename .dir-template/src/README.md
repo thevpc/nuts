@@ -14,7 +14,7 @@ Website : [https://thevpc.github.io/nuts](https://thevpc.github.io/nuts)
 
 Unlike Maven which resolves dependencies at compile time, ```nuts``` solves dependencies and builds the classpath at install time and, as a result, saves disk storage and bandwidth by downloading and caching only libraries required for the current environment and share them between multiple installed applications.
 
-```nuts``` is unique in that it reuses Maven and other build tool descriptor formats to solve dependency graphs, and does not, whatsoever, have any requirement on existing maven created packages.
+```nuts``` is unique in that it reuses Maven and other build tool descriptor formats to solve dependency graphs, and does not, whatsoever, have any requirement on existing Maven created packages.
 
 ```nuts``` is the ultimate solution to get rid of the ugly lib jars, fat-jars, uber-jars and one-jars used for deploying java applications.
 
