@@ -41,7 +41,7 @@ It should show a result in the format : nuts-api-version/nuts-runtime-version
 
 If you want to install ```nuts``` (or update from an existing rolling version) you just need to do the following. <br />
 <br />
-Please note that nuts rolling version (which is the most recent version) is quite stable and you can use it for personal use, for development or for testing but we recommend you consider official versions for production systems.
+Please note that nuts rolling version (which is the most recent version) is quite stable and you can use it for personal usage, for development or for testing but we recommend you consider official versions for production systems.
 
 First you need to download nuts-preview.jar
 
