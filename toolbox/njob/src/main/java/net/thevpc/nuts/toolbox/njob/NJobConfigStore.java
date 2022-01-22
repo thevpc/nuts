@@ -63,7 +63,7 @@ public class NJobConfigStore {
                 x -> x.isRegularFile() && x.getName().endsWith(".json"),
                         "isRegularFile() && matches(*.json"+")"
                 )
-                .mapUnsafe((NutsUnsafeFunction) parse,null)
+                .map(parse,elem->elem.ofString("parse"))
                 .filterNonNull().stream();
     }
 
