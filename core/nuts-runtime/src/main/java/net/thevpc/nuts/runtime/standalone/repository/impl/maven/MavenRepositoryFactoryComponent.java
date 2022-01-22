@@ -28,6 +28,8 @@ import net.thevpc.nuts.runtime.standalone.repository.NutsRepositorySelectorHelpe
 import net.thevpc.nuts.runtime.standalone.repository.util.NutsRepositoryUtils;
 import net.thevpc.nuts.spi.*;
 
+import java.util.Objects;
+
 /**
  * Created by vpc on 1/15/17.
  */
@@ -37,9 +39,11 @@ public class MavenRepositoryFactoryComponent implements NutsRepositoryFactoryCom
     @Override
     public NutsAddRepositoryOptions[] getDefaultRepositories(NutsSession session) {
         return new NutsAddRepositoryOptions[]{
-                NutsRepositorySelectorHelper.createRepositoryOptions(NutsRepositoryLocation.of("maven-local", NutsRepositoryDB.of(session),session),
+                NutsRepositorySelectorHelper.createRepositoryOptions(
+                        Objects.requireNonNull(NutsRepositoryLocation.of("maven-local", NutsRepositoryDB.of(session), session)),
                         true, session),
-                NutsRepositorySelectorHelper.createRepositoryOptions(NutsRepositoryLocation.of("maven-central", NutsRepositoryDB.of(session),session),
+                NutsRepositorySelectorHelper.createRepositoryOptions(
+                        Objects.requireNonNull(NutsRepositoryLocation.of("maven-central", NutsRepositoryDB.of(session), session)),
                         true, session)
         };
     }

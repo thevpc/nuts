@@ -52,8 +52,9 @@ public abstract class AbstractNutsRepositoryBase extends AbstractNutsRepository 
 
     private final NutsLogger LOG;
 
-    public AbstractNutsRepositoryBase(NutsAddRepositoryOptions options, NutsSession session, NutsRepository parentRepository, NutsSpeedQualifier speed, boolean supportedMirroring, String repositoryType) {
+    public AbstractNutsRepositoryBase(NutsAddRepositoryOptions options, NutsSession session, NutsRepository parentRepository, NutsSpeedQualifier speed, boolean supportedMirroring, String repositoryType,boolean supportsDeploy) {
         this.initSession=session;
+        this.supportsDeploy=supportsDeploy;
         LOG = NutsLogger.of(AbstractNutsRepositoryBase.class,session);
         init(options, session, parentRepository, speed, supportedMirroring, repositoryType);
     }
@@ -175,7 +176,7 @@ public abstract class AbstractNutsRepositoryBase extends AbstractNutsRepository 
         return session.locations().setSession(session).getDefaultIdBasedir(id);
     }
 
-    protected NutsPath getIdRemotePath(NutsId id, NutsSession session) {
+    public NutsPath getIdRemotePath(NutsId id, NutsSession session) {
         return config().setSession(session).getLocationPath().resolve(getIdRelativePath(id, session));
     }
 

@@ -51,8 +51,8 @@ public class NutsCachedRepository extends AbstractNutsRepositoryBase {
     private final NutsRepositoryMirroringHelper mirroring;
     public NutsLogger LOG;
 
-    public NutsCachedRepository(NutsAddRepositoryOptions options, NutsSession session, NutsRepository parent, NutsSpeedQualifier speed, boolean supportedMirroring, String repositoryType) {
-        super(options, session, parent, speed, supportedMirroring, repositoryType);
+    public NutsCachedRepository(NutsAddRepositoryOptions options, NutsSession session, NutsRepository parent, NutsSpeedQualifier speed, boolean supportedMirroring, String repositoryType,boolean supportsDeploy) {
+        super(options, session, parent, speed, supportedMirroring, repositoryType,supportsDeploy);
         cache = new NutsRepositoryFolderHelper(this, session, config().setSession(session).getStoreLocation(NutsStoreLocation.CACHE), true,
                 "cache",NutsElements.of(session).ofObject().set("repoKind", "cache").build()
         );

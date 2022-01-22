@@ -24,6 +24,7 @@
 package net.thevpc.nuts.runtime.standalone.repository.impl.nuts;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.standalone.repository.util.NutsIdLocationUtils;
 import net.thevpc.nuts.runtime.standalone.session.NutsSessionUtils;
 import net.thevpc.nuts.runtime.standalone.util.iter.NutsIteratorBase;
 import net.thevpc.nuts.runtime.standalone.id.filter.NutsExprIdFilter;
@@ -48,7 +49,7 @@ public class NutsHttpSrvRepository extends NutsCachedRepository {
     private NutsId remoteId;
 
     public NutsHttpSrvRepository(NutsAddRepositoryOptions options, NutsSession session, NutsRepository parentRepository) {
-        super(options, session, parentRepository, NutsSpeedQualifier.SLOW, false, NutsConstants.RepoTypes.NUTS);
+        super(options, session, parentRepository, NutsSpeedQualifier.SLOW, false, NutsConstants.RepoTypes.NUTS,true);
         LOG = NutsLogger.of(NutsHttpSrvRepository.class,session);
         try {
             remoteId = getRemoteId(session);
@@ -181,6 +182,10 @@ public class NutsHttpSrvRepository extends NutsCachedRepository {
     public NutsContent fetchContentCore(NutsId id, NutsDescriptor descriptor, String localPath, NutsFetchMode fetchMode, NutsSession session) {
         if (fetchMode != NutsFetchMode.REMOTE) {
             throw new NutsNotFoundException(session, id, new NutsFetchModeNotSupportedException(session, this, fetchMode, id.toString(), null));
+        }
+        if (NutsIdLocationUtils.fetch(id, descriptor.getLocations(), localPath, session)) {
+            return new NutsDefaultContent(
+                    NutsPath.of(localPath, session), false, false);
         }
         boolean transitive = session.isTransitive();
         boolean temp = false;

@@ -45,12 +45,6 @@ public class MavenRemoteXmlRepository extends MavenFolderRepository {
     }
 
     @Override
-    public NutsIterator<NutsId> searchCore(final NutsIdFilter filter, NutsPath[] basePaths, NutsId[] baseIds, NutsFetchMode fetchMode, NutsSession session) {
-        //TODO if possible
-        return super.searchCore(filter, basePaths, baseIds, fetchMode, session);
-    }
-
-    @Override
     public NutsIterator<NutsId> findNonSingleVersionImpl(NutsId id, NutsIdFilter idFilter, NutsFetchMode fetchMode, NutsSession session) {
         if (!acceptedFetchNoCache(fetchMode)) {
             return IteratorBuilder.emptyIterator();
@@ -66,7 +60,7 @@ public class MavenRemoteXmlRepository extends MavenFolderRepository {
                     session.getTerminal().printProgress("looking for versions of %s at %s", id,metadataURL.toCompressedForm());
                     try {
                         try {
-                            metadataStream = repoHelper.openStream(id, metadataURL, id.builder().setFace(CoreNutsConstants.QueryFaces.CATALOG).build(), "artifact catalog", "retrieve", session);
+                            metadataStream = openStream(id, metadataURL, id.builder().setFace(CoreNutsConstants.QueryFaces.CATALOG).build(), "artifact catalog", "retrieve", session);
                         } catch (UncheckedIOException | NutsIOException ex) {
                             return IteratorBuilder.emptyIterator();
                         }

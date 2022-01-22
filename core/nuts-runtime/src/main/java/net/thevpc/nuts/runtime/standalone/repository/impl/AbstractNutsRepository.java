@@ -26,6 +26,7 @@ package net.thevpc.nuts.runtime.standalone.repository.impl;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.repository.config.DefaultNutsRepoConfigManager;
 import net.thevpc.nuts.runtime.standalone.repository.config.NutsRepositoryConfigModel;
+import net.thevpc.nuts.runtime.standalone.session.NutsSessionUtils;
 import net.thevpc.nuts.runtime.standalone.util.NutsCachedValue;
 import net.thevpc.nuts.runtime.standalone.util.collections.DefaultObservableMap;
 import net.thevpc.nuts.runtime.standalone.util.collections.ObservableMap;
@@ -54,11 +55,15 @@ public abstract class AbstractNutsRepository implements NutsRepository, NutsRepo
     protected boolean enabled = true;
     protected NutsSession initSession;
     protected NutsCachedValue<Boolean> available = new NutsCachedValue<>(this::isAvailableImpl, 0);
-    protected NutsCachedValue<Boolean> supportedDeploy = new NutsCachedValue<>(this::isSupportedDeployImpl, 0);
+    protected boolean supportsDeploy;
 
     public AbstractNutsRepository() {
         userProperties = new DefaultObservableMap<>();
         securityModel = new DefaultNutsRepositorySecurityModel(this);
+    }
+
+    protected void checkSession(NutsSession session) {
+        NutsSessionUtils.checkSession(getWorkspace(), session);
     }
 
     @Override
@@ -81,14 +86,7 @@ public abstract class AbstractNutsRepository implements NutsRepository, NutsRepo
 
     @Override
     public boolean isSupportedDeploy(boolean force, NutsSession session) {
-        if (force) {
-            return supportedDeploy.update(session);
-        }
-        return supportedDeploy.getValue(session);
-    }
-
-    protected boolean isSupportedDeployImpl(NutsSession session) {
-        return true;
+        return supportsDeploy;
     }
 
     protected boolean isAvailableImpl(NutsSession session) {
@@ -217,9 +215,11 @@ public abstract class AbstractNutsRepository implements NutsRepository, NutsRepo
     }
 
     public String getIdFilename(NutsId id, NutsSession session) {
-        //return getWorkspace().locations().getDefaultIdFilename(id);
+        return getIdFilename(id,getIdExtension(id, session),session);
+    }
+
+    public String getIdFilename(NutsId id, String ext,NutsSession session) {
         String classifier = "";
-        String ext = getIdExtension(id, session);
         if (!ext.equals(NutsConstants.Files.DESCRIPTOR_FILE_EXTENSION) && !ext.equals(".pom")) {
             String c = id.getClassifier();
             if (!NutsBlankable.isBlank(c)) {

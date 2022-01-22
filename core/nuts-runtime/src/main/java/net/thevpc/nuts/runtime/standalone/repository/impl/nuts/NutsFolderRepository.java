@@ -24,72 +24,27 @@
 package net.thevpc.nuts.runtime.standalone.repository.impl.nuts;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.standalone.repository.impl.NutsCachedRepository;
+import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
+import net.thevpc.nuts.runtime.standalone.repository.impl.folder.NutsFolderRepositoryBase;
+import net.thevpc.nuts.runtime.standalone.repository.impl.maven.util.MavenUtils;
+import net.thevpc.nuts.runtime.standalone.util.CoreNutsConstants;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.UncheckedIOException;
+import java.util.Map;
 
 /**
  * Created by vpc on 1/5/17.
  */
-public class NutsFolderRepository extends NutsCachedRepository {
+public class NutsFolderRepository extends NutsFolderRepositoryBase {
 
-//    public final NutsLogger LOG;
 
     public NutsFolderRepository(NutsAddRepositoryOptions options, NutsSession session, NutsRepository parentRepository) {
-        super(options, session, parentRepository, NutsSpeedQualifier.FASTER, true, NutsConstants.RepoTypes.NUTS);
+        super(options, session, parentRepository, null, true, NutsConstants.RepoTypes.NUTS,true);
+        repoIter = new NutsRepoIter(this);
 //        LOG = session.log().of(NutsFolderRepository.class);
         extensions.put("src", "-src.zip");
-    }
-
-    @Override
-    protected boolean isSupportedDeployImpl(NutsSession session) {
-        return true;
-    }
-    @Override
-    protected boolean isAvailableImpl(NutsSession session) {
-        try {
-            if(lib.getStoreLocation().isDirectory()){
-                return true;
-            }
-        } catch (Exception e) {
-            //
-        }
-        try {
-            if(cache.getStoreLocation().isDirectory()){
-                return true;
-            }
-        } catch (Exception e) {
-            //
-        }
-        return false;
-    }
-
-    @Override
-    protected boolean isAllowedOverrideNut(NutsId id) {
-        return true;
-    }
-
-    @Override
-    public NutsDescriptor fetchDescriptorCore(NutsId id, NutsFetchMode fetchMode, NutsSession session) {
-        if (fetchMode == NutsFetchMode.REMOTE) {
-            throw new NutsNotFoundException(session, id, new NutsFetchModeNotSupportedException(session, this, fetchMode, id.toString(), null));
-        }
-        NutsId id2 = id.builder().setFaceDescriptor().build();
-        throw new NutsNotFoundException(session, id, new IOException("artifact descriptor not found : " + lib.getGoodPath(id2, session)));
-    }
-
-    @Override
-    public NutsContent fetchContentCore(NutsId id, NutsDescriptor descriptor, String localPath, NutsFetchMode fetchMode, NutsSession session) {
-        if (fetchMode == NutsFetchMode.REMOTE) {
-            throw new NutsNotFoundException(session, id, new NutsFetchModeNotSupportedException(session, this, fetchMode, id.toString(), null));
-        }
-        NutsId id2 = id.builder().setFaceContent().build();
-        throw new NutsNotFoundException(session, id, new IOException("file not found : " + lib.getGoodPath(id2, session)));
-    }
-
-    @Override
-    public NutsIterator<NutsId> searchCore(NutsIdFilter filter, NutsPath[] basePaths, NutsId[] baseIds, NutsFetchMode fetchMode, NutsSession session) {
-        return null;
     }
 
     @Override
@@ -97,22 +52,98 @@ public class NutsFolderRepository extends NutsCachedRepository {
         return null;
     }
 
-    @Override
-    public void updateStatistics2(NutsSession session) {
+    public String getIdExtension(NutsId id, NutsSession session) {
+        checkSession(session);
+        Map<String, String> q = id.getProperties();
+        String f = NutsUtilStrings.trim(q.get(NutsConstants.IdProperties.FACE));
+        switch (f) {
+            case NutsConstants.QueryFaces.DESCRIPTOR: {
+                return ".nuts";
+            }
+            case NutsConstants.QueryFaces.DESCRIPTOR_HASH: {
+                return ".nuts.sha1";
+            }
+            case CoreNutsConstants.QueryFaces.CATALOG: {
+                return ".nuts.catalog";
+            }
+            case NutsConstants.QueryFaces.CONTENT_HASH: {
+                return getIdExtension(id.builder().setFaceContent().build(), session) + ".sha1";
+            }
+            case NutsConstants.QueryFaces.CONTENT: {
+                String packaging = q.get(NutsConstants.IdProperties.PACKAGING);
+                return session.locations().getDefaultIdContentExtension(packaging);
+            }
+            default: {
+                throw new NutsUnsupportedArgumentException(session, NutsMessage.cstyle("unsupported fact %s", f));
+            }
+        }
     }
 
-    @Override
-    public NutsIterator<NutsId> searchVersionsCore(NutsId id, NutsIdFilter idFilter, NutsFetchMode fetchMode, NutsSession session) {
-        return null;
+    public NutsDescriptor fetchDescriptorCore(NutsId id, NutsFetchMode fetchMode, NutsSession session) {
+        checkSession(session);
+        if (!acceptedFetchNoCache(fetchMode)) {
+            throw new NutsNotFoundException(session, id, new NutsFetchModeNotSupportedException(session, this, fetchMode, id.toString(), null));
+        }
+        try {
+            InputStream stream = null;
+            try {
+                NutsDescriptor nutsDescriptor = null;
+                byte[] bytes = null;
+                String name = null;
+                NutsId idDesc = id.builder().setFaceDescriptor().build();
+                try {
+                    stream = getStream(idDesc, "artifact descriptor", "retrieve", session);
+                    bytes = CoreIOUtils.loadByteArray(stream, true, session);
+                    name = NutsStreamMetadata.of(stream).getName();
+                    nutsDescriptor = MavenUtils.of(session).parsePomXmlAndResolveParents(
+                            CoreIOUtils.createBytesStream(bytes, name == null ? null : NutsMessage.formatted(name), "application/json", "nuts.json", session)
+                            , fetchMode, getIdRemotePath(id, session).toString(), this);
+                } finally {
+                    if (stream != null) {
+                        stream.close();
+                    }
+                }
+                checkSHA1Hash(id.builder().setFace(NutsConstants.QueryFaces.DESCRIPTOR_HASH).build(),
+                        CoreIOUtils.createBytesStream(bytes, name == null ? null : NutsMessage.formatted(name), "application/json", "nuts.json", session)
+                        , "artifact descriptor", session);
+                return nutsDescriptor;
+            } catch (IOException | UncheckedIOException | NutsIOException ex) {
+                throw new NutsNotFoundException(session, id, ex);
+            }
+        }catch (NutsNotFoundException e){
+            //ignore
+        }
+        //now try pom file (maven!)
+        checkSession(session);
+        InputStream stream = null;
+        try {
+            NutsDescriptor nutsDescriptor = null;
+            byte[] bytes = null;
+            String name = null;
+            try {
+                NutsPath pomURL =
+                        config().setSession(session).getLocationPath().resolve(
+                                getIdBasedir(id, session).resolve(
+                                        getIdFilename(id,".pom", session)
+                                )
+                        );
+                stream = openStream(id, pomURL, id, "artifact descriptor", "retrieve", session);
+                bytes = CoreIOUtils.loadByteArray(stream, true, session);
+                name = NutsStreamMetadata.of(stream).getName();
+                nutsDescriptor = MavenUtils.of(session).parsePomXmlAndResolveParents(
+                        CoreIOUtils.createBytesStream(bytes, name == null ? null : NutsMessage.formatted(name), "text/xml", "pom.xml", session)
+                        , fetchMode, getIdRemotePath(id, session).toString(), this);
+            } finally {
+                if (stream != null) {
+                    stream.close();
+                }
+            }
+            checkSHA1Hash(id.builder().setFace(NutsConstants.QueryFaces.DESCRIPTOR_HASH).build(),
+                    CoreIOUtils.createBytesStream(bytes, name == null ? null : NutsMessage.formatted(name), "text/xml", "pom.xml", session)
+                    , "artifact descriptor", session);
+            return nutsDescriptor;
+        } catch (IOException | UncheckedIOException | NutsIOException ex) {
+            throw new NutsNotFoundException(session, id, ex);
+        }
     }
-
-    @Override
-    public boolean isAcceptFetchMode(NutsFetchMode mode, NutsSession session) {
-        return mode == NutsFetchMode.LOCAL;
-    }
-    @Override
-    public boolean isRemote() {
-        return false;
-    }
-
 }

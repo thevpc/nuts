@@ -306,15 +306,37 @@ public class MavenUtils {
                             .build());
                 }
             }
-            String mavenCompilerTarget = pom.getProperties().get("maven.compiler.target");
-            if (!NutsBlankable.isBlank(mavenCompilerTarget)) {
-                mavenCompilerTarget = "#" + mavenCompilerTarget.trim();
-            } else {
-                mavenCompilerTarget = "";
+            NutsVersion mavenCompilerTarget=null;
+            for (String v : new String[]{"maven.compiler.target", "project.target.level"}) {
+                String vv = pom.getProperties().get(v);
+                if (!NutsBlankable.isBlank(vv)) {
+                    if(mavenCompilerTarget==null || mavenCompilerTarget.compareTo(vv)<0){
+                        mavenCompilerTarget=NutsVersion.of(vv,session);
+                    }
+                }
             }
+
+            Set<String> toRemoveProps=new LinkedHashSet<>();
             NutsArtifactCall installerCall=parseCall(pom.getProperties().get("nuts.installer"),session);
             NutsArtifactCall executorCall=parseCall(pom.getProperties().get("nuts.executor"),session);
+            LinkedHashSet<NutsIdLocation> idLocations=new LinkedHashSet<>();
+            NutsIdLocation idLocation=parseLocation(pom.getProperties(),"nuts.location",toRemoveProps,session);
+            if(idLocation!=null){
+                idLocations.add(idLocation);
+            }
             String genericName = pom.getProperties().get("nuts.genericName");
+            idLocation=parseLocation(pom.getProperties(),"nuts.location.0",toRemoveProps,session);
+            if(idLocation!=null){
+                idLocations.add(idLocation);
+            }
+            for (int i = 0; i < 32; i++) {
+                idLocation=parseLocation(pom.getProperties(),"nuts.location."+i,toRemoveProps,session);
+                if(idLocation!=null){
+                    idLocations.add(idLocation);
+                }else{
+                    break;
+                }
+            }
 
             //delete special properties
             for (Iterator<NutsDescriptorProperty> iterator = props.iterator(); iterator.hasNext(); ) {
@@ -335,6 +357,11 @@ public class MavenUtils {
                             iterator.remove();
                             break;
                         }
+                        default:{
+                            if(toRemoveProps.contains(n)){
+                                iterator.remove();
+                            }
+                        }
                     }
                 }
             }
@@ -345,8 +372,10 @@ public class MavenUtils {
                     .setFlags(flags)
                     .setName(pom.getName())
                     .setDescription(pom.getDescription())
-                    .setCondition(NutsEnvConditionBuilder.of(session).setPlatform("java"
-                            + mavenCompilerTarget))
+                    .setLocations(idLocations.toArray(new NutsIdLocation[0]))
+                    .setCondition(NutsEnvConditionBuilder.of(session).setPlatform(
+                            mavenCompilerTarget==null?"java":("java#"+mavenCompilerTarget)
+                    ))
                     .setDependencies(deps.toArray(new NutsDependency[0]))
                     .setStandardDependencies(depsM.toArray(new NutsDependency[0]))
                     .setCategories(
@@ -372,6 +401,19 @@ public class MavenUtils {
                     .log(NutsMessage.jstyle("caching pom file {0}", urlDesc));
             throw new NutsParseException(session, NutsMessage.cstyle("error parsing %s", urlDesc), e);
         }
+    }
+
+    private NutsIdLocation parseLocation(Map<String, String> properties, String propName, Set<String> toRemoveProps, NutsSession session) {
+        String url = properties.get(propName + ".url");
+        String region = properties.get(propName + ".region");
+        String classifier = properties.get(propName + ".classifier");
+        if(!NutsBlankable.isBlank(url)){
+            toRemoveProps.add(propName + ".url");
+            toRemoveProps.add(propName + ".region");
+            toRemoveProps.add(propName + ".classifier");
+            return new NutsIdLocation(NutsUtilStrings.trimToNull(url), NutsUtilStrings.trimToNull(region), NutsUtilStrings.trimToNull(classifier));
+        }
+        return null;
     }
 
 //    private boolean acceptRuntimeActivation(PomProfileActivation activation) {

@@ -11,7 +11,7 @@ public class NutsSimpleRepositoryWrapper extends NutsCachedRepository {
         super(options, session, parent,
                 base.getSpeed(),
                 (base.getMode() & NutsRepositoryModel.MIRRORING) != 0,
-                base.getRepositoryType()
+                base.getRepositoryType(),true
         );
         this.mode = base.getMode();
         lib.setReadEnabled((this.mode & NutsRepositoryModel.LIB_READ) != 0);
