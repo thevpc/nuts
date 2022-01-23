@@ -75,4 +75,4 @@ elif [ x"${JAVA_HOME}" != "x" ] ; then
     JAVA_CMD="${JAVA_HOME}/bin/java";
 fi
 
-$JAVA_CMD $NUTS_DEBUG_ARG -jar "$NUTS_JAR" -w development $*
+$JAVA_CMD $NUTS_DEBUG_ARG -jar "$NUTS_JAR" -w development "$@"
