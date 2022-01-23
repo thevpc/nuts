@@ -1,6 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.repository.impl.maven.pom;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.standalone.util.jclass.JavaClassUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -91,10 +92,8 @@ public class PomIdResolver {
                     .level(Level.FINEST)
                     .log(NutsMessage.cstyle("failed to parse class %s : %s", clazz.getName(), ex));
         }
-        if(all.isEmpty() && clazz.getSimpleName().contains("$$EnhancerBySpringCGLIB$$")
-                ||clazz.getSimpleName().contains("$$CGLIB$$")
-                ){
-            Class s = clazz.getSuperclass();
+        if(all.isEmpty() && JavaClassUtils.isCGLib(clazz)){
+            Class s = JavaClassUtils.unwrapCGLib(clazz);
             if(s!=null){
                 return resolvePomIds(s);
             }

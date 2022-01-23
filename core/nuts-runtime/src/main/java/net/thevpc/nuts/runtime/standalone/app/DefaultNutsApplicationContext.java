@@ -10,6 +10,7 @@ import java.util.Objects;
 import net.thevpc.nuts.runtime.standalone.app.cmdline.DefaultNutsCommandLine;
 import net.thevpc.nuts.runtime.standalone.app.cmdline.NutsCommandLineUtils;
 import net.thevpc.nuts.runtime.standalone.session.NutsSessionUtils;
+import net.thevpc.nuts.runtime.standalone.util.jclass.JavaClassUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.util.NutsConfigurableHelper;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
@@ -115,7 +116,7 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
         }
         this.args = (args);
         this.appId = (_appId);
-        this.appClass = appClass;
+        this.appClass = appClass==null?null: JavaClassUtils.unwrapCGLib(appClass);
         //always copy the session to bind to appId
         this.session.setAppId(appId);
 //        NutsWorkspaceConfigManager cfg = workspace.config();

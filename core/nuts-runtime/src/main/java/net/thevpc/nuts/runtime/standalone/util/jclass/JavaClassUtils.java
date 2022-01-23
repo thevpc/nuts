@@ -10,6 +10,21 @@ import java.lang.reflect.Modifier;
 import java.util.logging.Level;
 
 public class JavaClassUtils {
+    public static Class unwrapCGLib(Class clazz) {
+        if(isCGLib(clazz)){
+            return clazz.getSuperclass();
+        }
+        return clazz;
+    }
+
+    public static boolean isCGLib(Class clazz) {
+        if(clazz.getSimpleName().contains("$$EnhancerBySpringCGLIB$$")
+                ||clazz.getSimpleName().contains("$$CGLIB$$")
+        ){
+            return true;
+        }
+        return false;
+    }
 
     /**
      * @param stream stream
