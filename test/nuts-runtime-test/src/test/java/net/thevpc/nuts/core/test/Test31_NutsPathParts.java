@@ -5,6 +5,8 @@
  */
 package net.thevpc.nuts.core.test;
 
+import net.thevpc.nuts.NutsSession;
+import net.thevpc.nuts.core.test.utils.TestUtils;
 import net.thevpc.nuts.runtime.standalone.io.util.NutsPathParts;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -16,13 +18,16 @@ import org.junit.jupiter.api.Test;
  */
 public class Test31_NutsPathParts {
 
+    static NutsSession session;
+
     @BeforeAll
     public static void init() {
+        session = TestUtils.openNewMinTestWorkspace();
     }
 
     @Test
     public void test01() {
-        NutsPathParts h=new NutsPathParts("http://a:password@here.com/a/b/c?a=toz");
+        NutsPathParts h=new NutsPathParts("http://a:password@here.com/a/b/c?a=toz",session);
         Assertions.assertEquals(NutsPathParts.Type.URL,h.getType());
         Assertions.assertEquals("http",h.getProtocol());
         Assertions.assertEquals("a:password@here.com",h.getAuthority());
@@ -32,7 +37,7 @@ public class Test31_NutsPathParts {
     }
     @Test
     public void test02() {
-        NutsPathParts h=new NutsPathParts("http://a:password@here.com:12?a=toz/be");
+        NutsPathParts h=new NutsPathParts("http://a:password@here.com:12?a=toz/be",session);
         Assertions.assertEquals(NutsPathParts.Type.URL,h.getType());
         Assertions.assertEquals("http",h.getProtocol());
         Assertions.assertEquals("a:password@here.com:12",h.getAuthority());
@@ -43,7 +48,7 @@ public class Test31_NutsPathParts {
 
     @Test
     public void test03() {
-        NutsPathParts h=new NutsPathParts("http://a:password@here.com:12/");
+        NutsPathParts h=new NutsPathParts("http://a:password@here.com:12/",session);
         Assertions.assertEquals(NutsPathParts.Type.URL,h.getType());
         Assertions.assertEquals("http",h.getProtocol());
         Assertions.assertEquals("a:password@here.com:12",h.getAuthority());
@@ -54,7 +59,7 @@ public class Test31_NutsPathParts {
 
     @Test
     public void test04() {
-        NutsPathParts h=new NutsPathParts("http://a:password@here.com:12#something");
+        NutsPathParts h=new NutsPathParts("http://a:password@here.com:12#something",session);
         Assertions.assertEquals(NutsPathParts.Type.URL,h.getType());
         Assertions.assertEquals("http",h.getProtocol());
         Assertions.assertEquals("a:password@here.com:12",h.getAuthority());
@@ -65,7 +70,7 @@ public class Test31_NutsPathParts {
 
     @Test
     public void test05() {
-        NutsPathParts h=new NutsPathParts("#something");
+        NutsPathParts h=new NutsPathParts("#something",session);
         Assertions.assertEquals(NutsPathParts.Type.REF,h.getType());
         Assertions.assertEquals("",h.getProtocol());
         Assertions.assertEquals("",h.getAuthority());
