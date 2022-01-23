@@ -92,7 +92,9 @@ public class DefaultNutsArtifactExecutable extends AbstractNutsExecutableCommand
             }
         } else if (installStatus.isObsolete()) {
             if(autoInstall) {
-                session.install().setSession(session).addId(def.getId()).run();
+                session.install()
+                        .configure(true,"--reinstall")
+                        .setSession(session).addId(def.getId()).run();
             }
         }
 //        LinkedHashSet<NutsDependency> reinstall = new LinkedHashSet<>();

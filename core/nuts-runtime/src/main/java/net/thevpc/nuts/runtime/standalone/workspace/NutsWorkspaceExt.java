@@ -38,11 +38,12 @@ public interface NutsWorkspaceExt {
 
     NutsInstallerComponent getInstaller(NutsDefinition nutToInstall, NutsSession session);
 
-    void requireImpl(NutsDefinition def, NutsSession session, boolean withDependencies, NutsId[] forId);
+    void requireImpl(NutsDefinition def, boolean withDependencies, NutsId[] forId, NutsSession session);
 
-    void installImpl(NutsDefinition def, String[] args, NutsInstallerComponent installerComponent, NutsSession session, boolean updateDefaultVersion);
+    void installImpl(NutsDefinition def, String[] args, boolean updateDefaultVersion, NutsSession session);
 
-    void updateImpl(NutsDefinition def, String[] args, NutsInstallerComponent installerComponent, NutsSession session, boolean updateDefaultVersion);
+    void updateImpl(NutsDefinition def, String[] args, boolean updateDefaultVersion, NutsSession session);
+    void uninstallImpl(NutsDefinition def, String[] args, boolean runInstaller, boolean deleteFiles, boolean eraseFiles, boolean traceBeforeEvent, NutsSession session);
 
     /**
      * true when runtime extension is required for running this workspace. A

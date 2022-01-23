@@ -833,7 +833,7 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
         NutsDefinition d1 = r.getAvailable();
         if (d0 == null) {
             getSession().security().checkAllowed(NutsConstants.Permissions.UPDATE, "update");
-            dws.updateImpl(d1, new String[0], null, session, true);
+            dws.updateImpl(d1, new String[0], true, session);
             r.setUpdateApplied(true);
         } else if (d1 == null) {
             //this is very interesting. Why the hell is this happening?
@@ -844,7 +844,7 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
                 //no update needed!
                 if (/*session.isYes() || */r.isUpdateForced()) {
                     getSession().security().checkAllowed(NutsConstants.Permissions.UPDATE, "update");
-                    dws.updateImpl(d1, new String[0], null, session, true);
+                    dws.updateImpl(d1, new String[0], true, session);
                     r.setUpdateApplied(true);
                     r.setUpdateForced(true);
                 } else {
@@ -852,7 +852,7 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
                 }
             } else {
                 getSession().security().checkAllowed(NutsConstants.Permissions.UPDATE, "update");
-                dws.updateImpl(d1, new String[0], null, session, true);
+                dws.updateImpl(d1, new String[0], true, session);
                 r.setUpdateApplied(true);
             }
         }

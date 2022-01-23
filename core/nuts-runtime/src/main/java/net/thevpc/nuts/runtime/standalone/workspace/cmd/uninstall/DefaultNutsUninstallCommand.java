@@ -7,13 +7,7 @@ package net.thevpc.nuts.runtime.standalone.workspace.cmd.uninstall;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceExt;
-import net.thevpc.nuts.runtime.standalone.workspace.config.NutsWorkspaceConfigManagerExt;
-import net.thevpc.nuts.runtime.standalone.workspace.config.ConfigEventType;
-import net.thevpc.nuts.runtime.standalone.event.DefaultNutsInstallEvent;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
-import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
-import net.thevpc.nuts.runtime.standalone.extension.NutsExtensionListHelper;
-import net.thevpc.nuts.spi.NutsInstallerComponent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,23 +37,27 @@ public class DefaultNutsUninstallCommand extends AbstractNutsUninstallCommand {
         if (nutsIds.length == 0) {
             throw new NutsExecutionException(getSession(), NutsMessage.cstyle("missing packages to uninstall"), 1);
         }
+        List<NutsId> installed = new ArrayList<>();
         for (NutsId id : nutsIds) {
             List<NutsDefinition> resultDefinitions = session.search().addId(id)
                     .setInstallStatus(NutsInstallStatusFilters.of(session).byInstalled(true))
                     .setSession(session.copy().setTransitive(false))
                     .setOptional(false).setEffective(true)
                     .setContent(true)//include content so that we can remove it by calling executor
+                    .setDependencies(true)//include dependencies so that we can remove it by calling executor
+                    .addScope(NutsDependencyScopePattern.RUN)
                     .getResultDefinitions().toList();
             resultDefinitions.removeIf(it -> !it.getInstallInformation().isInstalledOrRequired());
             if (resultDefinitions.isEmpty()) {
                 throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("not installed : %s", id));
             }
+            installed.addAll(resultDefinitions.stream().map(NutsDefinition::getId).collect(Collectors.toList()));
             defs.addAll(resultDefinitions);
         }
-
         NutsMemoryPrintStream mout = NutsMemoryPrintStream.of(session);
-        mout.println("should we proceed?");
-        NutsMessage cancelMessage = NutsMessage.cstyle("removal cancelled : %s", defs.stream()
+        printList(mout, "installed", "uninstalled", installed);
+        mout.println("should we proceed uninstalling ?");
+        NutsMessage cancelMessage = NutsMessage.cstyle("uninstall cancelled : %s", defs.stream()
                 .map(NutsDefinition::getId)
                 .map(NutsId::getFullName)
                 .collect(Collectors.joining(", ")));
@@ -74,59 +72,48 @@ public class DefaultNutsUninstallCommand extends AbstractNutsUninstallCommand {
         }
 
         for (NutsDefinition def : defs) {
-//            NutsId id = dws.resolveEffectiveId(def.getDescriptor(), searchSession);
-
-            NutsInstallerComponent ii = dws.getInstaller(def, session);
-            NutsPrintStream out = CoreIOUtils.resolveOut(session);
-            if (ii != null) {
-                NutsExecutionContext executionContext = dws.createExecutionContext()
-                        .setDefinition(def)
-                        .setArguments(getArgs())
-                        .setExecSession(session)
-                        .setSession(session)
-                        .setWorkspace(session.getWorkspace())
-                        .setFailFast(true)
-                        .setTemporary(false)
-                        .setExecutionType(session.boot().getBootOptions().getExecutionType())
-                        .setRunAs(NutsRunAs.currentUser())//uninstall always uses current user
-                        .build();
-                ii.uninstall(executionContext, this.isErase());
-            }
-
-            dws.getInstalledRepository().uninstall(def, session);
-            NutsId id = def.getId();
-            if(session.locations().getStoreLocation(id, NutsStoreLocation.APPS).exists()) {
-                session.locations().getStoreLocation(id, NutsStoreLocation.APPS).deleteTree();
-            }
-            if(session.locations().getStoreLocation(id, NutsStoreLocation.LOG).exists()) {
-                session.locations().getStoreLocation(id, NutsStoreLocation.LOG).deleteTree();
-            }
-            if (this.isErase()) {
-                if(session.locations().getStoreLocation(id, NutsStoreLocation.VAR).exists()) {
-                    session.locations().getStoreLocation(id, NutsStoreLocation.VAR).deleteTree();
-                }
-                if(session.locations().getStoreLocation(id, NutsStoreLocation.CONFIG).exists()) {
-                    session.locations().getStoreLocation(id, NutsStoreLocation.CONFIG).deleteTree();
-                }
-            }
-
-            if (def.getDescriptor().getIdType() == NutsIdType.EXTENSION) {
-                NutsWorkspaceConfigManagerExt wcfg = NutsWorkspaceConfigManagerExt.of(session.config());
-                NutsExtensionListHelper h = new NutsExtensionListHelper(
-                        session.getWorkspace().getApiId(),
-                        wcfg.getModel().getStoredConfigBoot().getExtensions())
-                        .save();
-                h.remove(id);
-                wcfg.getModel().getStoredConfigBoot().setExtensions(h.getConfs());
-                wcfg.getModel().fireConfigurationChanged("extensions", session, ConfigEventType.BOOT);
-            }
-            if (getSession().isPlainTrace()) {
-                out.printf("%s uninstalled %s%n", id, NutsTexts.of(session).ofStyled(
-                        "successfully", NutsTextStyle.success()
-                ));
-            }
-            NutsWorkspaceUtils.of(session).events().fireOnUninstall(new DefaultNutsInstallEvent(def, session, new NutsId[0], isErase()));
+            NutsWorkspaceExt.of(ws).uninstallImpl(def, getArgs(), true, true, isErase(),true, session);
         }
         return this;
+    }
+
+    private void printList(NutsPrintStream out, String skind, String saction, List<NutsId> all) {
+        if (all.size() > 0) {
+            if (session.isPlainOut()) {
+                NutsTexts text = NutsTexts.of(session);
+                NutsText kind = text.ofStyled(skind, NutsTextStyle.primary2());
+                NutsText action =
+                        text.ofStyled(saction,
+                                saction.equals("set as default") ? NutsTextStyle.primary3() :
+                                        saction.equals("ignored") ? NutsTextStyle.pale() :
+                                                NutsTextStyle.primary1()
+                        );
+                NutsSession session = getSession();
+                NutsTextBuilder msg = NutsTexts.of(getSession()).builder();
+                msg.append("the following ")
+                        .append(kind).append(" ").append((all.size() > 1 ? "artifacts are" : "artifact is"))
+                        .append(" going to be ").append(action).append(" : ")
+                        .appendJoined(
+                                NutsTexts.of(session).ofPlain(", "),
+                                all.stream().map(x
+                                                -> NutsTexts.of(session).toText(
+                                                x.builder().omitImportedGroupId().build()
+                                        )
+                                ).collect(Collectors.toList())
+                        );
+                out.resetLine().println(msg);
+            } else {
+                NutsElements elem = NutsElements.of(session);
+                session.eout().add(elem.ofObject()
+                        .set("command", "warning")
+                        .set("artifact-kind", skind)
+                        .set("action-warning", saction)
+                        .set("artifacts", elem.ofArray().addAll(
+                                all.stream().map(x -> x.toString()).toArray(String[]::new)
+                        ).build())
+                        .build()
+                );
+            }
+        }
     }
 }

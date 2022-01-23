@@ -457,6 +457,12 @@ public class NutsRepositoryFolderHelper {
         NutsIdUtils.checkNutsId(id,session);
         NutsPath pckFile = getLongIdLocalFile(id.builder().setFaceContent().setPackaging(descriptor.getPackaging()).build(), session);
         if (pckFile.exists()) {
+            if(content.isPath()){
+                if(content.getPath().equals(pckFile)){
+                    //do nothing
+                    return pckFile;
+                }
+            }
             if (!DefaultWriteTypeProcessor
                     .of(writeType, session)
                     .ask("override content file for %s?", id)

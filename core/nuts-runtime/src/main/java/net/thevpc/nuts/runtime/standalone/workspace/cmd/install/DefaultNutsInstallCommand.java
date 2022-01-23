@@ -125,11 +125,11 @@ public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
                     }
                 }
             }
-            dws.installImpl(info.definition, cmdArgs.toArray(new String[0]), null, session, info.doSwitchVersion);
+            dws.installImpl(info.definition, cmdArgs.toArray(new String[0]), info.doSwitchVersion, session);
             return true;
         } else if (info.doRequire) {
             _loadIdContent(info.id, null, session, true, list, info.strategy);
-            dws.requireImpl(info.definition, session, info.doRequireDependencies, new NutsId[0]);
+            dws.requireImpl(info.definition, info.doRequireDependencies, new NutsId[0], session);
             return true;
         } else if (info.doSwitchVersion) {
             dws.getInstalledRepository().setDefaultVersion(info.id, session);
@@ -384,7 +384,11 @@ public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
                 printList(mout, "installed", "set as default", list_installed_setdefault);
                 printList(mout, "installed", "ignored", installed_ignored);
             }
-            mout.println("should we proceed?");
+            if(!list_required_reinstalled.isEmpty() || !list_required_rerequired.isEmpty()){
+                mout.println("should we proceed re-installation?");
+            }else {
+                mout.println("should we proceed installation?");
+            }
             if (!getSession().config().getDefaultTerminal().ask()
                     .resetLine()
                     .setSession(session)
@@ -529,17 +533,6 @@ public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
         Set<NutsId> forIds = new HashSet<>();
         NutsDefinition definition;
 
-        //        public boolean isOldInstallStatus(NutsInstallStatus o0, NutsInstallStatus... o) {
-//            if (!oldInstallStatus.contains(o0)) {
-//                return false;
-//            }
-//            for (NutsInstallStatus s : o) {
-//                if (!oldInstallStatus.contains(s)) {
-//                    return false;
-//                }
-//            }
-//            return true;
-//        }
         public boolean isAlreadyRequired() {
             return oldInstallStatus.isRequired();
         }

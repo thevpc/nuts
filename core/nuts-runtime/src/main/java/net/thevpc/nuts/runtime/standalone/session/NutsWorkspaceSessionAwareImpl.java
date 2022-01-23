@@ -246,21 +246,26 @@ public class NutsWorkspaceSessionAwareImpl implements NutsWorkspace, NutsWorkspa
     }
 
     @Override
-    public void requireImpl(NutsDefinition def, NutsSession session, boolean withDependencies, NutsId[] forId) {
-        ((NutsWorkspaceExt) ws).requireImpl(def, session, withDependencies, forId);
+    public void requireImpl(NutsDefinition def, boolean withDependencies, NutsId[] forId, NutsSession session) {
+        ((NutsWorkspaceExt) ws).requireImpl(def, withDependencies, forId, session);
     }
 
     @Override
-    public void installImpl(NutsDefinition def, String[] args, NutsInstallerComponent installerComponent, NutsSession session, boolean updateDefaultVersion) {
-        ((NutsWorkspaceExt) ws).installImpl(def, args, installerComponent, session, updateDefaultVersion);
+    public void installImpl(NutsDefinition def, String[] args, boolean updateDefaultVersion, NutsSession session) {
+        ((NutsWorkspaceExt) ws).installImpl(def, args, updateDefaultVersion, session);
     }
 
     @Override
-    public void updateImpl(NutsDefinition def, String[] args, NutsInstallerComponent installerComponent, NutsSession session, boolean updateDefaultVersion) {
-        ((NutsWorkspaceExt) ws).updateImpl(def, args, installerComponent, session, updateDefaultVersion);
+    public void updateImpl(NutsDefinition def, String[] args, boolean updateDefaultVersion, NutsSession session) {
+        ((NutsWorkspaceExt) ws).updateImpl(def, args, updateDefaultVersion, session);
     }
 
-    @Override
+    public void uninstallImpl(NutsDefinition def, String[] args, boolean runInstaller, boolean deleteFiles, boolean eraseFiles, boolean traceBeforeEvent, NutsSession session){
+        ((NutsWorkspaceExt) ws).uninstallImpl(def, args, runInstaller, deleteFiles, eraseFiles,traceBeforeEvent, session);
+    }
+
+
+        @Override
     public boolean requiresRuntimeExtension(NutsSession session) {
         return ((NutsWorkspaceExt) ws).requiresRuntimeExtension(session);
     }

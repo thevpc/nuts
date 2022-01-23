@@ -80,6 +80,8 @@ public class CommandForIdNutsInstallerComponent implements NutsInstallerComponen
                         .addCommand("--nuts-exec-mode=" + mode);
                 if (mode.equals("install")) {
                     cmd.addExecutorOptions("--nuts-auto-install=false");
+                }else if (mode.equals("uninstall")) {
+                    cmd.addExecutorOptions("--nuts-auto-install=false");
                 }
                 cmd.addCommand(executionContext.getArguments())
                         .setExecutionType(executionContext.getSession().boot().getBootOptions().getExecutionType())
