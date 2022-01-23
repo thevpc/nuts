@@ -275,7 +275,7 @@ public final class NutsBootWorkspace {
         if (old.length == 0) {
             //no previous config, use defaults!
             result = bootRepositories.resolve(new NutsRepositoryLocation[]{
-//                NutsRepositoryLocation.of("maven-local", null),
+                NutsRepositoryLocation.of("maven-local", null),
                 NutsRepositoryLocation.of("maven-central", null),}, PrivateNutsBootRepositoryDB.INSTANCE);
         } else {
             result = bootRepositories.resolve(Arrays.stream(old).map(x -> NutsRepositoryLocation.of(x.getName(), x.getUrl()))
