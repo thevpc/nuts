@@ -161,6 +161,32 @@ nuts -w test --debug=5010 my-app
 ./nuts-dev -r=maven-local
 ```
 
+## Some ideas on how to contribute
+* To contribute start by subscribing as contributor in github, fork the repository and push pull-requests 
+* You can contribute by: 
+  * issuing bug reports to github issues, particularly, we are looking for people who can use different environments (operating system, java version, architecture etc...)
+  * providing medias/icons for the website
+  * (or even) reimplement the website
+  * fixing issues that are pushed to github issues
+  * implementing new features in `nuts`
+  * updating the documentation (README and Docusaurus WebSite)
+  * becoming `nuts` module maintainer, here are modules that you can focus on
+    * nsh (a bash compatible tool), basically you will implement new commands and fix existing commands (such as cd, zip etc...) 
+    * ncode  (a tool that searches into  jars for classes)
+    * ndoc  (a tool that generates source documentation from Markdown enabled javadocs)
+    * njob (a task list commandline tool)
+    * noapi (a tool that generated pdf from OpenAPI documentation)
+    * nserver (a tool that runs a `nuts` web repository)
+    * ntemplate  (a tool that generates folders and files from templates)
+    * nversion (a tool that parses jars, zips, pom files and folders to detect versions)
+    * `nuts` Installer (a Swing GUI App)
+  * creating a new application for `nuts`
+  * creating a JavaFX/Swing GUI as a `Store App` to help installation without commandline for dummy users
+  * finding and reporting any interesting application available on maven (or not) that can be (or should be) installable using `nuts`
+  * creating some tutorial projects (source code ) on how to use NAF (nuts application Framework)
+  * building your very own java app and push it to maven central (no constraints)
+
+
 
 --------------------------------
 
