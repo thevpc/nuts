@@ -34,6 +34,12 @@ public class Test32_NutsIdListHelper {
     @Test
     public void test02() {
         String[] s = NutsIdListHelper.parseIdListStrings("java#[11,[ java#[11,[", session);
-        Assertions.assertArrayEquals(new String[]{"java#[11,[" ,"java#[11,["},s);
+        //removed duplicates...
+        Assertions.assertArrayEquals(new String[]{"java#[11,["},s);
+    }
+    @Test
+    public void test03() {
+        String[] s = NutsIdListHelper.parseIdListStrings("java#[11,[ java#[12,[", session);
+        Assertions.assertArrayEquals(new String[]{"java#[11,[" ,"java#[12,["},s);
     }
 }
