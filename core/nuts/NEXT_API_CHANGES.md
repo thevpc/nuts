@@ -13,3 +13,4 @@ TODO in API (planned for 0.8.4):
 ++ NutsText parseResource(String resourceName, Reader reader, NutsTextFormatLoader loader);
 ++ NutsTextFormatLoader createLoader(ClassLoader loader);
 ++ NutsTextFormatLoader createLoader(File root);
+++ NutsStream::sorted must take comparator and descriptor!!
