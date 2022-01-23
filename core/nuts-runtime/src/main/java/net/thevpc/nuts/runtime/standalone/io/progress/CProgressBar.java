@@ -521,6 +521,7 @@ public class CProgressBar {
                         sb.append("\n");
                     }
                 } else {
+                    sb.append(txts.ofCommand(NutsTerminalCommand.CLEAR_LINE));
                     sb.append(txts.ofCommand(NutsTerminalCommand.MOVE_LINE_START));
                 }
             }
