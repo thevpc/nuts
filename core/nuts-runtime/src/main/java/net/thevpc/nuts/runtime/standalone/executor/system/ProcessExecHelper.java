@@ -2,10 +2,10 @@ package net.thevpc.nuts.runtime.standalone.executor.system;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.executor.AbstractSyncIProcessExecHelper;
-import net.thevpc.nuts.runtime.standalone.io.util.IProcessExecHelper;
 import net.thevpc.nuts.runtime.standalone.util.jclass.NutsJavaSdkUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
+import net.thevpc.nuts.runtime.standalone.workspace.cmd.recom.NutsRecommendationPhase;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.recom.RequestQueryInfo;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.StringPlaceHolderParser;
 
@@ -491,7 +491,7 @@ public class ProcessExecHelper extends AbstractSyncIProcessExecHelper {
         } finally {
             if (err != null) {
                 if (definition != null) {
-                    NutsWorkspaceExt.of(getSession()).getModel().recomm.askExecRecommendations(new RequestQueryInfo(definition.getId().toString(), err), false, getSession());
+                    NutsWorkspaceExt.of(getSession()).getModel().recomm.getRecommendations(new RequestQueryInfo(definition.getId().toString(), err), NutsRecommendationPhase.EXEC, false, getSession());
                 }
             }
         }

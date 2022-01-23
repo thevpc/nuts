@@ -35,6 +35,7 @@ import net.thevpc.nuts.runtime.standalone.util.CoreNumberUtils;
 import net.thevpc.nuts.runtime.standalone.util.NutsDebugString;
 import net.thevpc.nuts.runtime.standalone.extension.DefaultNutsWorkspaceExtensionManager;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceExt;
+import net.thevpc.nuts.runtime.standalone.workspace.cmd.recom.NutsRecommendationPhase;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.recom.RequestQueryInfo;
 import net.thevpc.nuts.spi.NutsComponentScope;
 import net.thevpc.nuts.spi.NutsComponentScopeType;
@@ -409,7 +410,7 @@ public class JavaExecutorComponent implements NutsExecutorComponent {
             }
             if (th != null) {
                 if (!(th instanceof NutsExecutionException)) {
-                    NutsWorkspaceExt.of(getSession()).getModel().recomm.askExecRecommendations(new RequestQueryInfo(def.getId().toString(), th), false, getSession());
+                    NutsWorkspaceExt.of(getSession()).getModel().recomm.getRecommendations(new RequestQueryInfo(def.getId().toString(), th), NutsRecommendationPhase.EXEC, false, getSession());
                     throw new NutsExecutionException(session,
                             NutsMessage.cstyle("error executing %s : %s", def.getId(), th)
                             , th);
@@ -417,7 +418,7 @@ public class JavaExecutorComponent implements NutsExecutorComponent {
                 NutsExecutionException nex = (NutsExecutionException) th;
                 if (nex.getExitCode() != 0) {
                     if(def!=null) {
-                        NutsWorkspaceExt.of(getSession()).getModel().recomm.askExecRecommendations(new RequestQueryInfo(def.getId().toString(), nex), false, getSession());
+                        NutsWorkspaceExt.of(getSession()).getModel().recomm.getRecommendations(new RequestQueryInfo(def.getId().toString(), nex), NutsRecommendationPhase.EXEC, false, getSession());
                     }
                     throw new NutsExecutionException(session, NutsMessage.cstyle("error executing %s : %s", def == null ? null : def.getId(), th), th);
                 }

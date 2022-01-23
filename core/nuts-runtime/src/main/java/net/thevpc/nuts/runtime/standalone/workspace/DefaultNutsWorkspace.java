@@ -67,6 +67,7 @@ import net.thevpc.nuts.runtime.standalone.workspace.cmd.fetch.DefaultNutsFetchCo
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.info.DefaultNutsInfoCommand;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.install.DefaultNutsInstallCommand;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.push.DefaultNutsPushCommand;
+import net.thevpc.nuts.runtime.standalone.workspace.cmd.recom.NutsRecommendationPhase;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.recom.RequestQueryInfo;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.search.DefaultNutsSearchCommand;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.updatestats.DefaultNutsUpdateStatisticsCommand;
@@ -572,7 +573,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
             wsModel.configModel.setEndCreateTimeMillis(System.currentTimeMillis());
             if (justInstalled) {
                 try {
-                    Map rec = wsModel.recomm.askBootstrapRecommendations(new RequestQueryInfo(null, ""), false, defaultSession());
+                    Map rec = wsModel.recomm.getRecommendations(new RequestQueryInfo(null, ""), NutsRecommendationPhase.BOOTSTRAP, false, defaultSession());
                     if (rec != null) {
                         if (rec.get("companions") instanceof List) {
                             List<String> recommendedCompanions = (List<String>) rec.get("companions");
@@ -627,7 +628,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
             if (wsModel != null && wsModel.recomm != null) {
                 try {
                     NutsSession s = defaultSession();
-                    displayRecommendations(wsModel.recomm.askBootstrapRecommendations(new RequestQueryInfo(null, ex), true,s), s);
+                    displayRecommendations(wsModel.recomm.getRecommendations(new RequestQueryInfo(null, ex), NutsRecommendationPhase.BOOTSTRAP, true,s), s);
                 } catch (Exception ex2) {
                     //just ignore
                 }
@@ -857,19 +858,86 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
         return null;
     }
 
-    public void installOrUpdateImpl(NutsDefinition def, String[] args, NutsInstallerComponent installerComponent, NutsSession session,
-                                    boolean resolveInstaller, boolean updateDefaultVersion, InstallStrategy0 strategy0, boolean requireDependencies, NutsId[] forIds,
-                                    NutsDependencyScope scope) {
+    public void uninstallImpl(NutsDefinition def, String[] args,
+                              boolean runInstaller,
+                              boolean deleteFiles,
+                              boolean eraseFiles,
+                              boolean traceBeforeEvent,
+                              NutsSession session){
+        NutsPrintStream out = CoreIOUtils.resolveOut(session);
+        if (runInstaller) {
+            NutsInstallerComponent installerComponent = getInstaller(def, session);
+            if(installerComponent != null) {
+                NutsExecutionContext executionContext = createExecutionContext()
+                        .setDefinition(def)
+                        .setArguments(args)
+                        .setExecSession(session)
+                        .setSession(session)
+                        .setWorkspace(session.getWorkspace())
+                        .setFailFast(true)
+                        .setTemporary(false)
+                        .setExecutionType(session.boot().getBootOptions().getExecutionType())
+                        .setRunAs(NutsRunAs.currentUser())//uninstall always uses current user
+                        .build();
+                installerComponent.uninstall(executionContext, eraseFiles);
+            }
+        }
+
+        getInstalledRepository().uninstall(def, session);
+        NutsId id = def.getId();
+        if(deleteFiles) {
+            if (session.locations().getStoreLocation(id, NutsStoreLocation.APPS).exists()) {
+                session.locations().getStoreLocation(id, NutsStoreLocation.APPS).deleteTree();
+            }
+            if (session.locations().getStoreLocation(id, NutsStoreLocation.LIB).exists()) {
+                session.locations().getStoreLocation(id, NutsStoreLocation.LIB).deleteTree();
+            }
+            if (session.locations().getStoreLocation(id, NutsStoreLocation.LOG).exists()) {
+                session.locations().getStoreLocation(id, NutsStoreLocation.LOG).deleteTree();
+            }
+            if (session.locations().getStoreLocation(id, NutsStoreLocation.CACHE).exists()) {
+                session.locations().getStoreLocation(id, NutsStoreLocation.CACHE).deleteTree();
+            }
+            if (eraseFiles) {
+                if (session.locations().getStoreLocation(id, NutsStoreLocation.VAR).exists()) {
+                    session.locations().getStoreLocation(id, NutsStoreLocation.VAR).deleteTree();
+                }
+                if (session.locations().getStoreLocation(id, NutsStoreLocation.CONFIG).exists()) {
+                    session.locations().getStoreLocation(id, NutsStoreLocation.CONFIG).deleteTree();
+                }
+            }
+        }
+
+        if (def.getDescriptor().getIdType() == NutsIdType.EXTENSION) {
+            NutsWorkspaceConfigManagerExt wcfg = NutsWorkspaceConfigManagerExt.of(session.config());
+            NutsExtensionListHelper h = new NutsExtensionListHelper(
+                    session.getWorkspace().getApiId(),
+                    wcfg.getModel().getStoredConfigBoot().getExtensions())
+                    .save();
+            h.remove(id);
+            wcfg.getModel().getStoredConfigBoot().setExtensions(h.getConfs());
+            wcfg.getModel().fireConfigurationChanged("extensions", session, ConfigEventType.BOOT);
+        }
+        if (traceBeforeEvent && session.isPlainTrace()) {
+            out.printf("%s uninstalled %s%n", id, NutsTexts.of(session).ofStyled(
+                    "successfully", NutsTextStyle.success()
+            ));
+        }
+        NutsWorkspaceUtils.of(session).events().fireOnUninstall(new DefaultNutsInstallEvent(def, session, new NutsId[0], eraseFiles));
+    }
+
+    public void installOrUpdateImpl(NutsDefinition def, String[] args, boolean resolveInstaller, boolean updateDefaultVersion, InstallStrategy0 strategy0, boolean requireDependencies, NutsId[] forIds, NutsDependencyScope scope, NutsSession session) {
         checkSession(session);
         if (def == null) {
             return;
         }
+        NutsInstallerComponent installerComponent=null;
         try {
             Map rec = null;
             if (strategy0 == InstallStrategy0.INSTALL) {
-                rec = wsModel.recomm.askInstallRecommendations(new RequestQueryInfo(def.getId().toString()), false, session);
+                rec = wsModel.recomm.getRecommendations(new RequestQueryInfo(def.getId().toString()), NutsRecommendationPhase.INSTALL, false, session);
             } else if (strategy0 == InstallStrategy0.UPDATE) {
-                rec = wsModel.recomm.askUpdateRecommendations(new RequestQueryInfo(def.getId().toString()), false, session);
+                rec = wsModel.recomm.getRecommendations(new RequestQueryInfo(def.getId().toString()), NutsRecommendationPhase.UPDATE,false, session);
             } else {
                 //just ignore any dependencies. recommendations are related to main artifacts
             }
@@ -933,11 +1001,33 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
             }
             NutsRepositorySPI installedRepositorySPI = wu.repoSPI(installedRepository);
             if (resolveInstaller) {
-                if (installerComponent == null) {
-                    if (def.getFile() != null) {
-                        installerComponent = getInstaller(def, session);
-                    }
+                installerComponent = getInstaller(def, session);
+            }
+            if(reinstall){
+                uninstallImpl(def,new String[0],resolveInstaller,true,false,false, session );
+                //must re-fetch def!
+                NutsDefinition d2 = session.fetch().setId(def.getId())
+                        .setContent(true)
+                        .setEffective(true)
+                        .setDependencies(true)
+                        .setFailFast(false)
+                        .setOptional(false)
+                        .addScope(NutsDependencyScopePattern.RUN)
+                        .setDependencyFilter(NutsDependencyFilters.of(session).byRunnable())
+                        .getResultDefinition();
+                if(d2==null){
+                    // perhaps the version does no more exist
+                    // search latest!
+                    d2=session.search().setId(def.getId().getShortId())
+                            .setEffective(true)
+                            .setFailFast(true)
+                            .setLatest(true)
+                            .setOptional(false)
+                            .addScope(NutsDependencyScopePattern.RUN)
+                            .setDependencyFilter(NutsDependencyFilters.of(session).byRunnable())
+                            .getResultDefinitions().required();
                 }
+                def=d2;
             }
 //        checkSession(session);
             NutsDefinition oldDef = null;
@@ -995,9 +1085,9 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                     //install required
                     for (NutsDefinition dd : requiredDefinitions) {
                         requireImpl(dd,
-                                session,
-                                false, //transitive dependencies already evaluated
-                                new NutsId[]{def.getId()});
+                                false, new NutsId[]{def.getId()}, session
+                                //transitive dependencies already evaluated
+                        );
                     }
                 }
 
@@ -1083,9 +1173,9 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                                 try {
                                     Map rec = null;
                                     if (strategy0 == InstallStrategy0.INSTALL) {
-                                        rec = wsModel.recomm.askInstallRecommendations(new RequestQueryInfo(def.getId().toString(), ""), true, session);
+                                        rec = wsModel.recomm.getRecommendations(new RequestQueryInfo(def.getId().toString(), ex2), NutsRecommendationPhase.UPDATE, true, session);
                                     } else if (strategy0 == InstallStrategy0.UPDATE) {
-                                        rec = wsModel.recomm.askUpdateRecommendations(new RequestQueryInfo(def.getId().toString(), ""), true, session);
+                                        rec = wsModel.recomm.getRecommendations(new RequestQueryInfo(def.getId().toString(), ex2), NutsRecommendationPhase.UPDATE, true, session);
                                     } else {
                                         //just ignore any dependencies. recommendations are related to main artifacts
                                     }
@@ -1146,9 +1236,9 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
             try {
                 Map rec = null;
                 if (strategy0 == InstallStrategy0.INSTALL) {
-                    rec = wsModel.recomm.askInstallRecommendations(new RequestQueryInfo(def.getId().toString()), true, session);
+                    rec = wsModel.recomm.getRecommendations(new RequestQueryInfo(def.getId().toString(),ex), NutsRecommendationPhase.INSTALL, true, session);
                 } else if (strategy0 == InstallStrategy0.UPDATE) {
-                    rec = wsModel.recomm.askUpdateRecommendations(new RequestQueryInfo(def.getId().toString()), true, session);
+                    rec = wsModel.recomm.getRecommendations(new RequestQueryInfo(def.getId().toString(),ex), NutsRecommendationPhase.UPDATE, true, session);
                 } else {
                     //just ignore any dependencies. recommendations are related to main artifacts
                 }
@@ -1374,9 +1464,9 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
 
             NutsTexts txt = NutsTexts.of(session);
             NutsText n = txt.parser().parseResource(urlPath,
-                    txt.parser().createLoader(getClass().getClassLoader())
+                    txt.parser().createLoader(clazz.getClassLoader())
             );
-            return (n == null ? "no license found" : n.toString());
+            return (n == null ? ("no default help found at classpath://"+urlPath+" for "+(clazz==null?null:clazz.getName())) : n.toString());
         }
         return null;
     }
@@ -1498,18 +1588,18 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
     }
 
     @Override
-    public void requireImpl(NutsDefinition def, NutsSession session, boolean withDependencies, NutsId[] forId) {
-        installOrUpdateImpl(def, new String[0], null, session, true, false, InstallStrategy0.REQUIRE, withDependencies, forId, null);
+    public void requireImpl(NutsDefinition def, boolean withDependencies, NutsId[] forId, NutsSession session) {
+        installOrUpdateImpl(def, new String[0], true, false, InstallStrategy0.REQUIRE, withDependencies, forId, null, session);
     }
 
     @Override
-    public void installImpl(NutsDefinition def, String[] args, NutsInstallerComponent installerComponent, NutsSession session, boolean updateDefaultVersion) {
-        installOrUpdateImpl(def, args, installerComponent, session, true, updateDefaultVersion, InstallStrategy0.INSTALL, true, null, null);
+    public void installImpl(NutsDefinition def, String[] args, boolean updateDefaultVersion, NutsSession session) {
+        installOrUpdateImpl(def, args, true, updateDefaultVersion, InstallStrategy0.INSTALL, true, null, null, session);
     }
 
     @Override
-    public void updateImpl(NutsDefinition def, String[] args, NutsInstallerComponent installerComponent, NutsSession session, boolean updateDefaultVersion) {
-        installOrUpdateImpl(def, args, installerComponent, session, true, updateDefaultVersion, InstallStrategy0.UPDATE, true, null, null);
+    public void updateImpl(NutsDefinition def, String[] args, boolean updateDefaultVersion, NutsSession session) {
+        installOrUpdateImpl(def, args, true, updateDefaultVersion, InstallStrategy0.UPDATE, true, null, null, session);
     }
 
     /**
