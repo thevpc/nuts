@@ -2,17 +2,14 @@ define or display aliases
 
 ##) SYNOPSIS:
 
-```sh
 ```sh alias [<alias-name>[=string]...]```
-```
 
 define or display aliases
 
 ##) EXAMPLES:
 
-```sh
 ```sh alias```
-```
+
    display all aliases
 
 
