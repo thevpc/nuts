@@ -17,8 +17,8 @@ public class NutsVersionCompat803 extends AbstractNutsVersionCompat {
     }
 
     @Override
-    public NutsWorkspaceConfigApi parseApiConfig(NutsSession session) {
-        NutsPath path = (session.locations().getStoreLocation(session.getWorkspace().getApiId(), NutsStoreLocation.CONFIG))
+    public NutsWorkspaceConfigApi parseApiConfig(NutsId nutsApiId, NutsSession session) {
+        NutsPath path = session.locations().getStoreLocation(nutsApiId, NutsStoreLocation.CONFIG)
                 .resolve(NutsConstants.Files.API_BOOT_CONFIG_FILE_NAME);
         byte[] bytes = CompatUtils.readAllBytes(path,session);
         NutsWorkspaceConfigApi c = bytes==null?null:NutsElements.of(session)
@@ -42,8 +42,8 @@ public class NutsVersionCompat803 extends AbstractNutsVersionCompat {
     }
 
     @Override
-    public NutsWorkspaceConfigSecurity parseSecurityConfig(NutsSession session) {
-        NutsPath path = session.locations().getStoreLocation(session.getWorkspace().getApiId()
+    public NutsWorkspaceConfigSecurity parseSecurityConfig(NutsId nutsApiId, NutsSession session) {
+        NutsPath path = session.locations().getStoreLocation(nutsApiId
                 , NutsStoreLocation.CONFIG)
                 .resolve(CoreNutsConstants.Files.WORKSPACE_SECURITY_CONFIG_FILE_NAME);
         byte[] bytes = CompatUtils.readAllBytes(path,session);
@@ -54,8 +54,8 @@ public class NutsVersionCompat803 extends AbstractNutsVersionCompat {
     }
 
     @Override
-    public NutsWorkspaceConfigMain parseMainConfig(NutsSession session) {
-        NutsPath path = session.locations().getStoreLocation(session.getWorkspace().getApiId()
+    public NutsWorkspaceConfigMain parseMainConfig(NutsId nutsApiId, NutsSession session) {
+        NutsPath path = session.locations().getStoreLocation(nutsApiId
                 , NutsStoreLocation.CONFIG)
                 .resolve(CoreNutsConstants.Files.WORKSPACE_MAIN_CONFIG_FILE_NAME);
         byte[] bytes = CompatUtils.readAllBytes(path,session);

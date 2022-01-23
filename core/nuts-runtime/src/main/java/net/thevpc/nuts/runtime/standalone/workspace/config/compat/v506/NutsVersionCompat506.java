@@ -18,7 +18,7 @@ public class NutsVersionCompat506 extends AbstractNutsVersionCompat {
     }
 
     @Override
-    public NutsWorkspaceConfigApi parseApiConfig(NutsSession session) {
+    public NutsWorkspaceConfigApi parseApiConfig(NutsId nutsApiId, NutsSession session) {
         NutsWorkspaceConfigApi cc = new NutsWorkspaceConfigApi();
         cc.setApiVersion(getApiVersion());
         NutsWorkspaceConfigBoot506 c = parseConfig506(CompatUtils.readAllBytes(
@@ -55,7 +55,7 @@ public class NutsVersionCompat506 extends AbstractNutsVersionCompat {
     }
 
     @Override
-    public NutsWorkspaceConfigSecurity parseSecurityConfig(NutsSession session) {
+    public NutsWorkspaceConfigSecurity parseSecurityConfig(NutsId nutsApiId, NutsSession session) {
         NutsWorkspaceConfigSecurity cc = new NutsWorkspaceConfigSecurity();
         NutsWorkspaceConfigBoot506 c = parseConfig506(CompatUtils.readAllBytes(
                 session.locations().getWorkspaceLocation().toFile()
@@ -71,7 +71,7 @@ public class NutsVersionCompat506 extends AbstractNutsVersionCompat {
     }
 
     @Override
-    public NutsWorkspaceConfigMain parseMainConfig(NutsSession session) {
+    public NutsWorkspaceConfigMain parseMainConfig(NutsId nutsApiId, NutsSession session) {
         NutsWorkspaceConfigMain cc = new NutsWorkspaceConfigMain();
         NutsWorkspaceConfigBoot506 c = parseConfig506(CompatUtils.readAllBytes(
                 session.locations().getWorkspaceLocation().toFile()

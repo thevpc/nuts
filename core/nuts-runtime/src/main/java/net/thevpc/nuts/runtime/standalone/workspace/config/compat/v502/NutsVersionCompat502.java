@@ -18,7 +18,7 @@ public class NutsVersionCompat502 extends AbstractNutsVersionCompat {
     }
 
     @Override
-    public NutsWorkspaceConfigApi parseApiConfig(NutsSession session) {
+    public NutsWorkspaceConfigApi parseApiConfig(NutsId nutsApiId, NutsSession session) {
         NutsWorkspaceConfigApi cc = new NutsWorkspaceConfigApi();
         cc.setApiVersion(getApiVersion());
         NutsWorkspaceConfigBoot502 c = parseConfig502(CompatUtils.readAllBytes(
@@ -48,13 +48,12 @@ public class NutsVersionCompat502 extends AbstractNutsVersionCompat {
     }
 
     @Override
-    public NutsWorkspaceConfigSecurity parseSecurityConfig(NutsSession session) {
+    public NutsWorkspaceConfigSecurity parseSecurityConfig(NutsId nutsApiId, NutsSession session) {
         NutsWorkspaceConfigSecurity cc = new NutsWorkspaceConfigSecurity();
         NutsWorkspaceConfigBoot502 c = parseConfig502(CompatUtils.readAllBytes(
                 session.locations().getWorkspaceLocation().toFile()
                         .resolve(NutsConstants.Files.WORKSPACE_CONFIG_FILE_NAME),session), session);
         if (c != null) {
-//            cc.setConfigVersion(???);
             cc.setSecure(c.isSecure());
             cc.setAuthenticationAgent(c.getAuthenticationAgent());
             List<NutsUserConfig> users = c.getUsers();
@@ -64,7 +63,7 @@ public class NutsVersionCompat502 extends AbstractNutsVersionCompat {
     }
 
     @Override
-    public NutsWorkspaceConfigMain parseMainConfig(NutsSession session) {
+    public NutsWorkspaceConfigMain parseMainConfig(NutsId nutsApiId, NutsSession session) {
         NutsWorkspaceConfigMain cc = new NutsWorkspaceConfigMain();
         NutsWorkspaceConfigBoot502 c = parseConfig502(CompatUtils.readAllBytes(
                 session.locations().getWorkspaceLocation().toFile()

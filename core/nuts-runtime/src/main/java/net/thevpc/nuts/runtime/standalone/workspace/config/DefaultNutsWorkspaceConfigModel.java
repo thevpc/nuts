@@ -561,16 +561,47 @@ public class DefaultNutsWorkspaceConfigModel {
             setCurrentConfig(cConfig.build(session.locations().getWorkspaceLocation(), session));
 
             NutsVersionCompat compat = createNutsVersionCompat(Nuts.getVersion(), session);
-            NutsWorkspaceConfigApi aconfig = compat.parseApiConfig(session);
+            NutsId apiId = session.getWorkspace().getApiId();
+            NutsWorkspaceConfigApi aconfig = compat.parseApiConfig(apiId, session);
+            NutsId toImportOlderId=null;
             if (aconfig != null) {
                 cConfig.merge(aconfig, session);
+            }else{
+                // will try to find older versions
+                List<NutsId> olderIds = findOlderNutsApiIds(session);
+                for (NutsId olderId : olderIds) {
+                    aconfig = compat.parseApiConfig(olderId, session);
+                    if (aconfig != null) {
+                        // ask
+                        if(session.getTerminal().ask().forBoolean(NutsMessage.cstyle("import older config %s",apiId))
+                                .setDefaultValue(true)
+                                .getBooleanValue()
+                        ){
+                            toImportOlderId=olderId;
+                            cConfig.merge(aconfig, session);
+                        }
+                        break;
+                    }
+                }
+
             }
             NutsWorkspaceConfigRuntime rconfig = compat.parseRuntimeConfig(session);
             if (rconfig != null) {
                 cConfig.merge(rconfig, session);
             }
-            NutsWorkspaceConfigSecurity sconfig = compat.parseSecurityConfig(session);
-            NutsWorkspaceConfigMain mconfig = compat.parseMainConfig(session);
+            NutsWorkspaceConfigSecurity sconfig = compat.parseSecurityConfig(apiId, session);
+            if(sconfig==null){
+                if(toImportOlderId!=null){
+                    sconfig=compat.parseSecurityConfig(toImportOlderId, session);
+                }
+            }
+            NutsWorkspaceConfigMain mconfig = compat.parseMainConfig(apiId, session);
+            if(mconfig==null){
+                if(toImportOlderId!=null){
+                    mconfig=compat.parseMainConfig(toImportOlderId, session);
+                }
+            }
+
             if (bOptions.getOptions().isRecover() || bOptions.getOptions().isReset()) {
                 //always reload boot resolved versions!
                 cConfig.setApiId(NutsId.of(NutsConstants.Ids.NUTS_API + "#" + bOptions.getApiVersion(), session));
@@ -601,6 +632,28 @@ public class DefaultNutsWorkspaceConfigModel {
             }
         }
         return false;
+    }
+
+    private List<NutsId> findOlderNutsApiIds(NutsSession session) {
+        NutsId apiId=session.getWorkspace().getApiId();
+        NutsPath path = session.locations().getStoreLocation(apiId, NutsStoreLocation.CONFIG)
+                .getParent();
+        List<NutsId> olderIds= path.list().filter(NutsPath::isDirectory, elems->elems.ofString("isDirectory"))
+                .map(x->NutsVersion.of(x.getName(), session),"toVersion")
+                .filter(x->x.compareTo(apiId.getVersion())<0, elems->elems.ofString("older"))
+                .sorted(new NutsComparator<NutsVersion>() {
+                    @Override
+                    public int compare(NutsVersion o1, NutsVersion o2) {
+                        return Comparator.<NutsVersion>reverseOrder().compare(o1,o2);
+                    }
+
+                    @Override
+                    public NutsElement describe(NutsElements elems) {
+                        return elems.ofString("reverseOrder");
+                    }
+                }).map(x-> apiId.builder().setVersion(x).build(), elems->elems.ofString("toId"))
+                .toList();
+        return olderIds;
     }
 
     public void setBootApiVersion(String value, NutsSession session) {
