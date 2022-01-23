@@ -1,7 +1,7 @@
 check for updates
     check if a newer version of ```sh nuts``` is available in the current workspace without performing updates
 
-##) SYNOPSYS
+##) SYNOPSIS
 
     ```sh nuts check-updates [<-options>]... <ids> ...```
 

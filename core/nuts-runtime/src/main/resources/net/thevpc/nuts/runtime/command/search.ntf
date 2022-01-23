@@ -1,6 +1,6 @@
 search for artifacts
 
-##) SYNOPSYS:
+##) SYNOPSIS:
 
     ```sh nuts search [<-options>]... <ids> ... <args> ...```
         search for <ids>

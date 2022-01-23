@@ -1,6 +1,6 @@
 uninstall ```sh nuts``` package <nuts-artifact>
 
-##) SYNOPSYS:
+##) SYNOPSIS:
 
     ```sh nuts uninstall <nuts-artifact>... <args> ...```
         uninstall one or more ```sh nuts``` from repositories if installed.

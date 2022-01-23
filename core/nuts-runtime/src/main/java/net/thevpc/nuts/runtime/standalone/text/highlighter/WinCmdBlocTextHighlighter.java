@@ -74,19 +74,19 @@ public class WinCmdBlocTextHighlighter implements NutsCodeHighlighter {
         return -1;
     }
 
-    private static boolean isSynopsysOption(String s2) {
-        return ((s2.startsWith("--") && isSynopsysWord(s2.substring(2)))
-                || (s2.startsWith("++") && isSynopsysWord(s2.substring(2)))
-                || (s2.startsWith("-") && isSynopsysWord(s2.substring(1)))
-                || (s2.startsWith("+") && isSynopsysWord(s2.substring(1)))
-                || (s2.startsWith("--!") && isSynopsysWord(s2.substring(3)))
-                || (s2.startsWith("++!") && isSynopsysWord(s2.substring(3)))
-                || (s2.startsWith("-!") && isSynopsysWord(s2.substring(2)))
-                || (s2.startsWith("+!") && isSynopsysWord(s2.substring(2)))
-                || (s2.startsWith("--~") && isSynopsysWord(s2.substring(3)))
-                || (s2.startsWith("++~") && isSynopsysWord(s2.substring(3)))
-                || (s2.startsWith("-~") && isSynopsysWord(s2.substring(2)))
-                || (s2.startsWith("+~") && isSynopsysWord(s2.substring(2))));
+    private static boolean isSynopsisOption(String s2) {
+        return ((s2.startsWith("--") && isSynopsisWord(s2.substring(2)))
+                || (s2.startsWith("++") && isSynopsisWord(s2.substring(2)))
+                || (s2.startsWith("-") && isSynopsisWord(s2.substring(1)))
+                || (s2.startsWith("+") && isSynopsisWord(s2.substring(1)))
+                || (s2.startsWith("--!") && isSynopsisWord(s2.substring(3)))
+                || (s2.startsWith("++!") && isSynopsisWord(s2.substring(3)))
+                || (s2.startsWith("-!") && isSynopsisWord(s2.substring(2)))
+                || (s2.startsWith("+!") && isSynopsisWord(s2.substring(2)))
+                || (s2.startsWith("--~") && isSynopsisWord(s2.substring(3)))
+                || (s2.startsWith("++~") && isSynopsisWord(s2.substring(3)))
+                || (s2.startsWith("-~") && isSynopsisWord(s2.substring(2)))
+                || (s2.startsWith("+~") && isSynopsisWord(s2.substring(2))));
     }
 
     private static boolean isOption(String s2) {
@@ -94,7 +94,7 @@ public class WinCmdBlocTextHighlighter implements NutsCodeHighlighter {
                 || (s2.startsWith("+")));
     }
 
-    private static boolean isSynopsysWord(String s) {
+    private static boolean isSynopsisWord(String s) {
         if (s.length() > 0) {
             if (!Character.isAlphabetic(s.charAt(0))) {
                 return false;
@@ -613,11 +613,11 @@ public class WinCmdBlocTextHighlighter implements NutsCodeHighlighter {
                     if (ok) {
                         String s = ar.nextChars(sb.length());
                         String s0 = s.substring(1, s.length() - 1);
-                        if (isSynopsysOption(s0)) {
+                        if (isSynopsisOption(s0)) {
                             all.add(txt.ofStyled("<", NutsTextStyle.input()));
                             all.add(txt.ofStyled(s0, NutsTextStyle.option()));
                             all.add(txt.ofStyled(">", NutsTextStyle.input()));
-                        } else if (isSynopsysWord(s0)) {
+                        } else if (isSynopsisWord(s0)) {
                             all.add(txt.ofStyled("<", NutsTextStyle.input()));
                             all.add(txt.ofStyled(s0, NutsTextStyle.input()));
                             all.add(txt.ofStyled(">", NutsTextStyle.input()));
