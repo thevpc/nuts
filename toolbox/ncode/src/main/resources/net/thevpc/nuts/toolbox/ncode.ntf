@@ -1,8 +1,22 @@
 ##) ncode:
-generate code documentation (incubating)
+simple file/java class finder (incubating)
 
 ###) SYNOPSIS:
 ```sh
 ncode <path> ...
  ```
-generate code documentation
+
+```sh ncode -[!][i]t name [folder/file-list] ```
+find java type with name 'name' in folder/file list
+
+```sh ncode -[!][i]f name [folder/file-list]```
+find file with path 'name' in folder/file list
+
+###) EXAMPLES:
+```sh ncode -t String . foo.zip```
+search for type which name contains 'String' (case sensitive) in folders . and foo.zip
+```sh ncode -it String . foo.zip```
+search for type which name contains 'String' or 'STRING' (case insensitive) in both folder . and foo.zip
+```sh ncode -t ^java.lang.String$ . foo.zip```
+search for type which exact name 'java.lang.String' in folder . and file foo.zip
+

@@ -4,21 +4,30 @@ import net.thevpc.nuts.toolbox.ncode.Source;
 import net.thevpc.nuts.toolbox.ncode.SourceFilter;
 import net.thevpc.nuts.toolbox.ncode.bundles.strings.StringComparator;
 
+import java.util.List;
+
 public class PathSourceFilter implements SourceFilter {
 
-    private final StringComparator comparator;
+    private final List<StringComparator> files;
 
-    public PathSourceFilter(StringComparator comparator) {
-        this.comparator = comparator;
+    public PathSourceFilter(List<StringComparator> files) {
+        this.files = files;
+    }
+    private boolean matchesFile(String s){
+        if(files.isEmpty()){
+            return true;
+        }
+        for (StringComparator file : files) {
+            if(file.matches(s)){
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override
     public boolean accept(Source source) {
-        if (comparator.matches(source.getExternalPath())) {
-            return true;
-
-        }
-        return false;
+        return matchesFile(source.getExternalPath());
     }
 
     @Override
