@@ -71,4 +71,13 @@ public class NutsLogConsoleHandler extends StreamHandler {
         }
         return true;
     }
+
+    @Override
+    public synchronized void publish(LogRecord record) {
+        if (!isLoggable(record)) {
+            return;
+        }
+        out.resetLine();
+        super.publish(record);
+    }
 }
