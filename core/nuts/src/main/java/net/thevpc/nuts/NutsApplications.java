@@ -26,7 +26,10 @@ package net.thevpc.nuts;
 import net.thevpc.nuts.boot.NutsApiUtils;
 
 import java.io.PrintStream;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.logging.Level;
@@ -69,9 +72,21 @@ public final class NutsApplications {
      * @param application application
      * @param args        arguments
      */
+    @Deprecated
     public static void runApplicationAndExit(NutsApplication application, String[] args) {
+        runApplicationAndExit(application,null,args);
+    }
+
+    /**
+     * run the given application and call System.exit(?)
+     *
+     * @param application application
+     * @param session session
+     * @param args        arguments
+     */
+    public static void runApplicationAndExit(NutsApplication application, NutsSession session,String[] args) {
         try {
-            application.run(args);
+            application.run(session,args);
         } catch (Exception ex) {
             System.exit(NutsApplications.processThrowable(ex));
             return;
@@ -86,11 +101,57 @@ public final class NutsApplications {
      * @param <T>     application type
      * @return new instance
      */
+    @Deprecated
     public static <T extends NutsApplication> T createApplicationInstance(Class<T> appType) {
-        T newInstance;
+        NutsSession session = null;
+        String[] args = null;
+        return createApplicationInstance(appType,session, args);
+    }
+
+    /**
+     * creates application instance by calling
+     *
+     * @param appType application type
+     * @param session session
+     * @param args args
+     * @param <T>     application type
+     * @return new instance
+     */
+    public static <T extends NutsApplication> T createApplicationInstance(Class<T> appType,NutsSession session,String[] args) {
         try {
-            newInstance = appType.getConstructor().newInstance();
-            return newInstance;
+            for (Method declaredMethod : appType.getDeclaredMethods()) {
+                if (Modifier.isStatic(declaredMethod.getModifiers())) {
+                    if (declaredMethod.getName().equals("createApplicationInstance")
+                            && declaredMethod.getParameterCount() == 2
+                            && declaredMethod.getParameterTypes()[0].equals(NutsSession.class)
+                            && declaredMethod.getParameterTypes()[1].equals(String[].class)
+                    ) {
+                        if (appType.isAssignableFrom(declaredMethod.getReturnType())) {
+                            declaredMethod.setAccessible(true);
+                            Object o = declaredMethod.invoke(null, session, args);
+                            if (o != null) {
+                                return appType.cast(o);
+                            }
+                        } else {
+                            throw new NutsBootException(NutsMessage.cstyle("createApplicationInstance must return %s", appType.getName()));
+                        }
+                        break;
+                    }
+                }
+            }
+            Constructor<T> dconstructor=null;
+            for (Constructor<?> constructor : appType.getConstructors()) {
+                if(constructor.getParameterCount() == 2
+                        && constructor.getParameterTypes()[0].equals(NutsSession.class)
+                        && constructor.getParameterTypes()[1].equals(String[].class)){
+                    return (T) constructor.newInstance(session,args);
+                }else if(constructor.getParameterCount()==0){
+                    dconstructor=(Constructor<T>) constructor;
+                }
+            }
+            if(dconstructor!=null){
+                return dconstructor.newInstance();
+            }
         } catch (InstantiationException ex) {
             Throwable c = ex.getCause();
             if (c instanceof RuntimeException) {
@@ -104,9 +165,8 @@ public final class NutsApplications {
             throw new NutsBootException(NutsMessage.cstyle("illegal access to default constructor for %s", appType.getName()), ex);
         } catch (InvocationTargetException ex) {
             throw new NutsBootException(NutsMessage.cstyle("invocation exception for %s", appType.getName()), ex);
-        } catch (NoSuchMethodException ex) {
-            throw new NutsBootException(NutsMessage.cstyle("missing default constructor for %s", appType.getName()), ex);
         }
+        throw new NutsBootException(NutsMessage.cstyle("missing application constructor one of : \n\t static createApplicationInstance(NutsSession,String[])\n\t Constructor(NutsSession,String[])\n\t Constructor()", appType.getName()));
     }
 
     /**
@@ -125,7 +185,6 @@ public final class NutsApplications {
         if (session == null) {
             session = Nuts.openInheritedWorkspace(args);
         }
-        NutsWorkspace ws = session.getWorkspace();
         NutsApplicationContext applicationContext = null;
         applicationContext = applicationInstance.createApplicationContext(session, args, startTimeMillis);
         if (applicationContext == null) {

@@ -160,9 +160,10 @@ public class NutsApiUtils {
     }
 
     public static String resolveNutsIdDigest() {
+        //TODO COMMIT TO 0.8.4
         return resolveNutsIdDigest(
                 new NutsBootId("net.thevpc.nuts", "nuts", NutsBootVersion.parse(Nuts.getVersion())),
-                PrivateNutsUtilClassLoader.resolveClasspathURLs(Thread.currentThread().getContextClassLoader(), true)
+                PrivateNutsUtilClassLoader.resolveClasspathURLs(Nuts.class.getClassLoader(), true)
         );
     }
 

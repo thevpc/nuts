@@ -164,7 +164,7 @@ public interface NutsApplication {
      * @since 0.7.1
      */
     static <T extends NutsApplication> void main(Class<T> appType, String[] args) {
-        NutsApplications.createApplicationInstance(appType).runAndExit(args);
+        NutsApplications.createApplicationInstance(appType,null,args).runAndExit(args);
     }
 
     /**
@@ -173,7 +173,7 @@ public interface NutsApplication {
      * @param args arguments
      */
     default void runAndExit(String[] args) {
-        NutsApplications.runApplicationAndExit(this, args);
+        NutsApplications.runApplicationAndExit(this,null, args);
     }
 
     /**
