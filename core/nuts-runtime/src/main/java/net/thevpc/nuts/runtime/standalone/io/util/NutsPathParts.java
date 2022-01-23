@@ -280,10 +280,11 @@ public class NutsPathParts {
         NutsTexts txt = NutsTexts.of(session);
         NutsTextBuilder result = txt.builder();
         result.append(protocol);
-        result.append(":", NutsTextStyle.separator());
         if (authority != null && authority.textLength() > 0) {
-            result.append("//", NutsTextStyle.separator());
+            result.append("://", NutsTextStyle.path());
             result.append(authority);
+        }else{
+            result.append(":", NutsTextStyle.path());
         }
         if (path != null) {
             result.append(path);
