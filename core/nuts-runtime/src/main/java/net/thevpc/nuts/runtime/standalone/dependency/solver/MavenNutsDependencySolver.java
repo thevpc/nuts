@@ -150,7 +150,9 @@ public class MavenNutsDependencySolver implements NutsDependencySolver {
                                 info.exclusions.add(exclusion.getShortId());
                             }
                             currentNode.children.add(info);
-                            queue.add(info);
+                            if(!mergedVisitedSet.contains(info.key)) {
+                                queue.add(info);
+                            }
                         }
                     }
                 }
@@ -298,7 +300,7 @@ public class MavenNutsDependencySolver implements NutsDependencySolver {
                     return false;
                 }
             }
-            return true;
+            return old.depth<other.depth;
         }
 
         public boolean add(NutsDependencyInfo other) {
@@ -312,6 +314,9 @@ public class MavenNutsDependencySolver implements NutsDependencySolver {
                     visitedSet.put(other.normalized, other);
                     return true;
                 }
+            }else if(old.depth>other.depth){
+                visitedSet.put(other.normalized, other);
+                return true;
             }
             return false;
         }
