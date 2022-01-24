@@ -337,7 +337,7 @@ Is Not:
 === nuts: Stability
 
 * Tested:
-** over 140 regression tests with 3500+ lines of test-code in the repository.
+** over 160 regression tests with 3500+ lines of test-code in the repository.
 ** `opensuse`, `ubuntu`, `docker`, `windows7`, `windows10`
 ** `sh`, `bash`, `csh`, `zsh`, `fish`
 

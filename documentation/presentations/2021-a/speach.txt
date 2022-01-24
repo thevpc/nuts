@@ -1,3 +1,0 @@
-Hello everyone, this presentation is to introduce Nuts, a new open source package manager for Java.
-I guess, if you are a Java developer, you would be intrigued by this presentation.
-And if you are not a java developer, perhaps, you would be even more intrigued, because, Why the hell do we need a new java package manager?

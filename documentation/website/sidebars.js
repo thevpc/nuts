@@ -11,6 +11,7 @@ module.exports = {
       ],
       'Getting Started': [
          'info/running',
+         'info/apps',
          'info/faq',
          'info/troubleshooting',
       ],
