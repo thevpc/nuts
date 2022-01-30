@@ -50,15 +50,47 @@ public abstract class AbstractNutsDeployRepositoryCommand extends NutsRepository
 
     @Override
     public boolean configureFirst(NutsCommandLine cmd) {
-        if (super.configureFirst(cmd)) {
-            return true;
-        }
-        return false;
+        return super.configureFirst(cmd);
     }
 
     @Override
     public Object getContent() {
-        return content.getValue();
+        return content == null ? null : content.getValue();
+    }
+
+    @Override
+    public NutsDeployRepositoryCommand setContent(NutsPath content) {
+        checkSession();
+        this.content = content == null ? null : NutsStreamOrPath.of(content);
+        return this;
+    }
+
+    @Override
+    public NutsDeployRepositoryCommand setContent(Path content) {
+        checkSession();
+        this.content = content == null ? null : NutsStreamOrPath.of(NutsPath.of(content, getSession()));
+        return this;
+    }
+
+    @Override
+    public NutsDeployRepositoryCommand setContent(URL content) {
+        checkSession();
+        this.content = content == null ? null : NutsStreamOrPath.of(NutsPath.of(content, getSession()));
+        return this;
+    }
+
+    @Override
+    public NutsDeployRepositoryCommand setContent(File content) {
+        checkSession();
+        this.content = content == null ? null : NutsStreamOrPath.of(NutsPath.of(content, getSession()));
+        return this;
+    }
+
+    @Override
+    public NutsDeployRepositoryCommand setContent(InputStream content) {
+        checkSession();
+        this.content = content == null ? null : NutsStreamOrPath.of(content, getSession());
+        return this;
     }
 
     @Override
@@ -67,49 +99,14 @@ public abstract class AbstractNutsDeployRepositoryCommand extends NutsRepository
     }
 
     @Override
-    public NutsId getId() {
-        return id;
-    }
-
-    @Override
-    public NutsDeployRepositoryCommand setContent(NutsPath content) {
-        checkSession();
-        this.content = content==null?null:NutsStreamOrPath.of(content);
-        return this;
-    }
-
-    @Override
-    public NutsDeployRepositoryCommand setContent(Path content) {
-        checkSession();
-        this.content = content==null?null:NutsStreamOrPath.of(NutsPath.of(content,getSession()));
-        return this;
-    }
-
-    @Override
-    public NutsDeployRepositoryCommand setContent(URL content) {
-        checkSession();
-        this.content = content==null?null:NutsStreamOrPath.of(NutsPath.of(content,getSession()));
-        return this;
-    }
-
-    @Override
-    public NutsDeployRepositoryCommand setContent(File content) {
-        checkSession();
-        this.content = content==null?null:NutsStreamOrPath.of(NutsPath.of(content,getSession()));
-        return this;
-    }
-
-    @Override
-    public NutsDeployRepositoryCommand setContent(InputStream content) {
-        checkSession();
-        this.content = content==null?null:NutsStreamOrPath.of(content,getSession());
-        return this;
-    }
-
-    @Override
     public NutsDeployRepositoryCommand setDescriptor(NutsDescriptor descriptor) {
         this.descriptor = descriptor;
         return this;
+    }
+
+    @Override
+    public NutsId getId() {
+        return id;
     }
 
     @Override
@@ -122,7 +119,7 @@ public abstract class AbstractNutsDeployRepositoryCommand extends NutsRepository
         checkSession();
         NutsSession session = getSession();
         getRepo().security().setSession(session).checkAllowed(NutsConstants.Permissions.DEPLOY, "deploy");
-        NutsIdUtils.checkNutsId(getId(),session);
+        NutsIdUtils.checkNutsId(getId(), session);
         if (this.getContent() == null) {
             throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("missing Content"));
         }

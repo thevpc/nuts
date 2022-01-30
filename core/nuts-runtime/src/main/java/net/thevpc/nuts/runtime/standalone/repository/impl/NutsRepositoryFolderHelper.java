@@ -6,6 +6,7 @@
 package net.thevpc.nuts.runtime.standalone.repository.impl;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.standalone.descriptor.util.NutsDescriptorUtils;
 import net.thevpc.nuts.runtime.standalone.id.util.NutsIdUtils;
 import net.thevpc.nuts.runtime.standalone.io.util.InputStreamMetadataAwareImpl;
 import net.thevpc.nuts.runtime.standalone.io.util.NutsStreamOrPath;
@@ -345,29 +346,32 @@ public class NutsRepositoryFolderHelper {
         if (!isWriteEnabled()) {
             throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("read-only repository"));
         }
-        if (deployment.getContent() == null) {
-            throw new NutsIllegalArgumentException(session,
-                    NutsMessage.cstyle("invalid deployment; missing content for %s", deployment.getId()));
-        }
         NutsDescriptor descriptor = deployment.getDescriptor();
-        NutsStreamOrPath inputSource = NutsStreamOrPath.ofAnyInputOrNull(deployment.getContent(), session)
-                .toMultiRead(session)
-                .setKindType(("package content"));
-        if (descriptor == null) {
-            try (final CharacterizedExecFile c = DefaultNutsArtifactPathExecutable.characterizeForExec(inputSource, session, null)) {
-                if (c.descriptor == null) {
-                    throw new NutsNotFoundException(session, null,
-                            NutsMessage.cstyle("unable to resolve a valid descriptor for %s", deployment.getContent()), null);
-                }
-                descriptor = c.descriptor;
-            }
-        }
         NutsId id = deployment.getId();
         if (id == null) {
             id = descriptor.getId();
         }
-
         NutsIdUtils.checkNutsId(id,session);
+        NutsStreamOrPath inputSource=null;
+        if (deployment.getContent() == null) {
+            if(!NutsDescriptorUtils.isNoContent(descriptor)) {
+                throw new NutsIllegalArgumentException(session,
+                        NutsMessage.cstyle("invalid deployment; missing content for %s", deployment.getId()));
+            }
+        }else {
+            inputSource = NutsStreamOrPath.ofAnyInputOrNull(deployment.getContent(), session)
+                    .toMultiRead(session)
+                    .setKindType(("package content"));
+            if (descriptor == null) {
+                try (final CharacterizedExecFile c = DefaultNutsArtifactPathExecutable.characterizeForExec(inputSource, session, null)) {
+                    if (c.descriptor == null) {
+                        throw new NutsNotFoundException(session, null,
+                                NutsMessage.cstyle("unable to resolve a valid descriptor for %s", deployment.getContent()), null);
+                    }
+                    descriptor = c.descriptor;
+                }
+            }
+        }
 
         if (isDeployed(id, descriptor, session)) {
             NutsId finalId = id;
@@ -389,7 +393,7 @@ public class NutsRepositoryFolderHelper {
         }
 
         deployDescriptor(id, descriptor, writeType, session);
-        NutsPath pckFile = deployContent(id, inputSource, descriptor, writeType, session);
+        NutsPath pckFile = inputSource==null?null:deployContent(id, inputSource, descriptor, writeType, session);
         if (repo != null) {
             NutsRepositoryHelper.of(repo).events().fireOnDeploy(new DefaultNutsContentEvent(
                     pckFile, deployment, session, repo));

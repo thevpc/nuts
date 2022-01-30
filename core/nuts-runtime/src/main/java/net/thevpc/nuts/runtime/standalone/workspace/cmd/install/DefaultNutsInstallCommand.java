@@ -73,10 +73,8 @@ public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
                 def.forIds.add(forId);
             }
         }
-        NutsSession ss = session.copy();
-        checkSession();
         try {
-            def.definition = ss.fetch().setId(id).setSession(ss)
+            def.definition = session.fetch().setId(id)
                     .setContent(true)
                     .setEffective(true)
                     .setDependencies(includeDeps)
@@ -95,10 +93,18 @@ public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
             }
         }
         def.doRequire = true;
-        if (includeDeps) {
-            for (NutsDependency dependency : def.definition.getDependencies()) {
-                _loadIdContent(dependency.toId(), id, session, false, loaded, NutsInstallStrategy.REQUIRE);
+        if(def.definition!=null) {
+            for (NutsId parent : def.definition.getDescriptor().getParents()) {
+                _loadIdContent(parent, id, session, false, loaded, NutsInstallStrategy.REQUIRE);
             }
+            if (includeDeps) {
+                for (NutsDependency dependency : def.definition.getDependencies()) {
+                    _loadIdContent(dependency.toId(), id, session, false, loaded, NutsInstallStrategy.REQUIRE);
+                }
+            }
+        }else{
+            _LOGOP(session).verb(NutsLogVerb.WARNING).level(Level.FINE)
+                    .log(NutsMessage.jstyle("failed to retrieve {0}", def.id));
         }
         return def.definition;
     }

@@ -9,6 +9,10 @@ import java.util.Map;
 import java.util.logging.Level;
 
 public class NutsDescriptorUtils {
+    public static boolean isNoContent(NutsDescriptor desc) {
+        return desc!=null && "pom".equals(desc.getPackaging());
+    }
+
     public static NutsDescriptor getEffectiveDescriptor(NutsDefinition def,NutsSession session) {
         final NutsDescriptor d = def.getEffectiveDescriptor();
         if (d == null) {

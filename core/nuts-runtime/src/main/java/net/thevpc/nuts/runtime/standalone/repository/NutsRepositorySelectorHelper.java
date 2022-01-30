@@ -234,7 +234,7 @@ public class NutsRepositorySelectorHelper {
                         .setOrder(NutsAddRepositoryOptions.ORDER_USER_REMOTE)
                         .setConfig(
                                 new NutsRepositoryConfig()
-                                        .setLocation(NutsRepositoryLocation.of("maven@dotfilefs:https://raw.githubusercontent.com/thevpc/vpc-public-nuts/master"))
+                                        .setLocation(NutsRepositoryLocation.of("nuts@dotfilefs:https://raw.githubusercontent.com/thevpc/vpc-public-nuts/master"))
                         );
             }
             case "dev":

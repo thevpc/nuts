@@ -573,7 +573,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
             wsModel.configModel.setEndCreateTimeMillis(System.currentTimeMillis());
             if (justInstalled) {
                 try {
-                    Map rec = wsModel.recomm.getRecommendations(new RequestQueryInfo(null, ""), NutsRecommendationPhase.BOOTSTRAP, false, defaultSession());
+                    Map rec = wsModel.recomm.getRecommendations(new RequestQueryInfo(getApiId().toString(), ""), NutsRecommendationPhase.BOOTSTRAP, false, defaultSession());
                     if (rec != null) {
                         if (rec.get("companions") instanceof List) {
                             List<String> recommendedCompanions = (List<String>) rec.get("companions");
@@ -628,7 +628,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
             if (wsModel != null && wsModel.recomm != null) {
                 try {
                     NutsSession s = defaultSession();
-                    displayRecommendations(wsModel.recomm.getRecommendations(new RequestQueryInfo(null, ex), NutsRecommendationPhase.BOOTSTRAP, true,s), s);
+                    displayRecommendations(wsModel.recomm.getRecommendations(new RequestQueryInfo(null, ex), NutsRecommendationPhase.BOOTSTRAP, true, s), s);
                 } catch (Exception ex2) {
                     //just ignore
                 }
@@ -858,86 +858,19 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
         return null;
     }
 
-    public void uninstallImpl(NutsDefinition def, String[] args,
-                              boolean runInstaller,
-                              boolean deleteFiles,
-                              boolean eraseFiles,
-                              boolean traceBeforeEvent,
-                              NutsSession session){
-        NutsPrintStream out = CoreIOUtils.resolveOut(session);
-        if (runInstaller) {
-            NutsInstallerComponent installerComponent = getInstaller(def, session);
-            if(installerComponent != null) {
-                NutsExecutionContext executionContext = createExecutionContext()
-                        .setDefinition(def)
-                        .setArguments(args)
-                        .setExecSession(session)
-                        .setSession(session)
-                        .setWorkspace(session.getWorkspace())
-                        .setFailFast(true)
-                        .setTemporary(false)
-                        .setExecutionType(session.boot().getBootOptions().getExecutionType())
-                        .setRunAs(NutsRunAs.currentUser())//uninstall always uses current user
-                        .build();
-                installerComponent.uninstall(executionContext, eraseFiles);
-            }
-        }
-
-        getInstalledRepository().uninstall(def, session);
-        NutsId id = def.getId();
-        if(deleteFiles) {
-            if (session.locations().getStoreLocation(id, NutsStoreLocation.APPS).exists()) {
-                session.locations().getStoreLocation(id, NutsStoreLocation.APPS).deleteTree();
-            }
-            if (session.locations().getStoreLocation(id, NutsStoreLocation.LIB).exists()) {
-                session.locations().getStoreLocation(id, NutsStoreLocation.LIB).deleteTree();
-            }
-            if (session.locations().getStoreLocation(id, NutsStoreLocation.LOG).exists()) {
-                session.locations().getStoreLocation(id, NutsStoreLocation.LOG).deleteTree();
-            }
-            if (session.locations().getStoreLocation(id, NutsStoreLocation.CACHE).exists()) {
-                session.locations().getStoreLocation(id, NutsStoreLocation.CACHE).deleteTree();
-            }
-            if (eraseFiles) {
-                if (session.locations().getStoreLocation(id, NutsStoreLocation.VAR).exists()) {
-                    session.locations().getStoreLocation(id, NutsStoreLocation.VAR).deleteTree();
-                }
-                if (session.locations().getStoreLocation(id, NutsStoreLocation.CONFIG).exists()) {
-                    session.locations().getStoreLocation(id, NutsStoreLocation.CONFIG).deleteTree();
-                }
-            }
-        }
-
-        if (def.getDescriptor().getIdType() == NutsIdType.EXTENSION) {
-            NutsWorkspaceConfigManagerExt wcfg = NutsWorkspaceConfigManagerExt.of(session.config());
-            NutsExtensionListHelper h = new NutsExtensionListHelper(
-                    session.getWorkspace().getApiId(),
-                    wcfg.getModel().getStoredConfigBoot().getExtensions())
-                    .save();
-            h.remove(id);
-            wcfg.getModel().getStoredConfigBoot().setExtensions(h.getConfs());
-            wcfg.getModel().fireConfigurationChanged("extensions", session, ConfigEventType.BOOT);
-        }
-        if (traceBeforeEvent && session.isPlainTrace()) {
-            out.printf("%s uninstalled %s%n", id, NutsTexts.of(session).ofStyled(
-                    "successfully", NutsTextStyle.success()
-            ));
-        }
-        NutsWorkspaceUtils.of(session).events().fireOnUninstall(new DefaultNutsInstallEvent(def, session, new NutsId[0], eraseFiles));
-    }
-
     public void installOrUpdateImpl(NutsDefinition def, String[] args, boolean resolveInstaller, boolean updateDefaultVersion, InstallStrategy0 strategy0, boolean requireDependencies, NutsId[] forIds, NutsDependencyScope scope, NutsSession session) {
         checkSession(session);
         if (def == null) {
             return;
         }
-        NutsInstallerComponent installerComponent=null;
+        boolean requireParents = true;
+        NutsInstallerComponent installerComponent = null;
         try {
             Map rec = null;
             if (strategy0 == InstallStrategy0.INSTALL) {
                 rec = wsModel.recomm.getRecommendations(new RequestQueryInfo(def.getId().toString()), NutsRecommendationPhase.INSTALL, false, session);
             } else if (strategy0 == InstallStrategy0.UPDATE) {
-                rec = wsModel.recomm.getRecommendations(new RequestQueryInfo(def.getId().toString()), NutsRecommendationPhase.UPDATE,false, session);
+                rec = wsModel.recomm.getRecommendations(new RequestQueryInfo(def.getId().toString()), NutsRecommendationPhase.UPDATE, false, session);
             } else {
                 //just ignore any dependencies. recommendations are related to main artifacts
             }
@@ -950,7 +883,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
         boolean remoteRepo = true;
         try {
             NutsDependencyFilter ndf = NutsDependencyFilters.of(session).byRunnable();
-            if (!def.isSetEffectiveDescriptor() || def.getContent() == null) {
+            if (!def.isSetEffectiveDescriptor() || (!NutsDescriptorUtils.isNoContent(def.getDescriptor()) && def.getContent() == null)) {
                 // reload def
                 NutsFetchCommand fetch2 = session.fetch()
                         .setSession(session)
@@ -1003,8 +936,8 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
             if (resolveInstaller) {
                 installerComponent = getInstaller(def, session);
             }
-            if(reinstall){
-                uninstallImpl(def,new String[0],resolveInstaller,true,false,false, session );
+            if (reinstall) {
+                uninstallImpl(def, new String[0], resolveInstaller, true, false, false, session);
                 //must re-fetch def!
                 NutsDefinition d2 = session.fetch().setId(def.getId())
                         .setContent(true)
@@ -1015,10 +948,10 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                         .addScope(NutsDependencyScopePattern.RUN)
                         .setDependencyFilter(NutsDependencyFilters.of(session).byRunnable())
                         .getResultDefinition();
-                if(d2==null){
+                if (d2 == null) {
                     // perhaps the version does no more exist
                     // search latest!
-                    d2=session.search().setId(def.getId().getShortId())
+                    d2 = session.search().setId(def.getId().getShortId())
                             .setEffective(true)
                             .setFailFast(true)
                             .setLatest(true)
@@ -1027,7 +960,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                             .setDependencyFilter(NutsDependencyFilters.of(session).byRunnable())
                             .getResultDefinitions().required();
                 }
-                def=d2;
+                def = d2;
             }
 //        checkSession(session);
             NutsDefinition oldDef = null;
@@ -1054,7 +987,32 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
             }
             out.flush();
             NutsWorkspaceConfigManager config = session.config().setSession(session);
-            if (def.getFile() != null) {
+            if (def.getFile() != null || NutsDescriptorUtils.isNoContent(def.getDescriptor())) {
+                if (requireParents) {
+                    List<NutsDefinition> requiredDefinitions = new ArrayList<>();
+                    for (NutsId parent : def.getDescriptor().getParents()) {
+                        if (!installedRepositorySPI.
+                                searchVersions().setId(parent)
+                                .setFetchMode(NutsFetchMode.LOCAL)
+                                .setSession(session)
+                                .getResult()
+                                .hasNext()) {
+                            NutsDefinition dd = session.search().addId(parent).setLatest(true)
+                                    .setEffective(true)
+                                    .getResultDefinitions().first();
+                            if (dd != null) {
+                                requiredDefinitions.add(dd);
+                            }
+                        }
+                    }
+                    //install required
+                    for (NutsDefinition dd : requiredDefinitions) {
+                        requireImpl(dd,
+                                false, new NutsId[]{def.getId()}, session
+                                //transitive dependencies already evaluated
+                        );
+                    }
+                }
                 if (requireDependencies) {
                     def.getDependencies();
                     List<NutsDefinition> requiredDefinitions = new ArrayList<>();
@@ -1232,13 +1190,13 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                 wcfg.getModel().getStoredConfigBoot().setExtensions(h.getConfs());
                 wcfg.getModel().fireConfigurationChanged("extensions", session, ConfigEventType.BOOT);
             }
-        }catch (RuntimeException ex){
+        } catch (RuntimeException ex) {
             try {
                 Map rec = null;
                 if (strategy0 == InstallStrategy0.INSTALL) {
-                    rec = wsModel.recomm.getRecommendations(new RequestQueryInfo(def.getId().toString(),ex), NutsRecommendationPhase.INSTALL, true, session);
+                    rec = wsModel.recomm.getRecommendations(new RequestQueryInfo(def.getId().toString(), ex), NutsRecommendationPhase.INSTALL, true, session);
                 } else if (strategy0 == InstallStrategy0.UPDATE) {
-                    rec = wsModel.recomm.getRecommendations(new RequestQueryInfo(def.getId().toString(),ex), NutsRecommendationPhase.UPDATE, true, session);
+                    rec = wsModel.recomm.getRecommendations(new RequestQueryInfo(def.getId().toString(), ex), NutsRecommendationPhase.UPDATE, true, session);
                 } else {
                     //just ignore any dependencies. recommendations are related to main artifacts
                 }
@@ -1271,7 +1229,18 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                 }
                 if (installedString != null) {
                     //(reinstalled ? "re-installed" : "installed")
-                    if (!def.getContent().isCached()) {
+                    if (def.getContent()==null) {
+                        //this happens when deploying a 'pom' artifact
+                        if (session.isPlainTrace()) {
+                            out.resetLine().printf("%s %s from %s repository (%s).%s%n",
+                                    installedString,
+                                    def.getId().getLongId(),
+                                    remoteRepo ? "remote" : "local",
+                                    def.getRepositoryName(),
+                                    text.parse(setAsDefaultString)
+                            );
+                        }
+                    }else if (!def.getContent().isCached()) {
                         if (def.getContent().isTemporary()) {
                             if (session.isPlainTrace()) {
                                 out.resetLine().printf("%s %s from %s repository (%s) temporarily file %s.%s%n",
@@ -1466,7 +1435,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
             NutsText n = txt.parser().parseResource(urlPath,
                     txt.parser().createLoader(clazz.getClassLoader())
             );
-            return (n == null ? ("no default help found at classpath://"+urlPath+" for "+(clazz==null?null:clazz.getName())) : n.toString());
+            return (n == null ? ("no default help found at classpath://" + urlPath + " for " + (clazz == null ? null : clazz.getName())) : n.toString());
         }
         return null;
     }
@@ -1578,7 +1547,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                 }
             }
             NutsInstallerComponent best = session.extensions().setSession(session)
-                    .createSupported(NutsInstallerComponent.class, false, runnerFile == null?nutToInstall:runnerFile);
+                    .createSupported(NutsInstallerComponent.class, false, runnerFile == null ? nutToInstall : runnerFile);
             if (best != null) {
                 return best;
             }
@@ -1600,6 +1569,74 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
     @Override
     public void updateImpl(NutsDefinition def, String[] args, boolean updateDefaultVersion, NutsSession session) {
         installOrUpdateImpl(def, args, true, updateDefaultVersion, InstallStrategy0.UPDATE, true, null, null, session);
+    }
+
+    public void uninstallImpl(NutsDefinition def, String[] args,
+                              boolean runInstaller,
+                              boolean deleteFiles,
+                              boolean eraseFiles,
+                              boolean traceBeforeEvent,
+                              NutsSession session) {
+        NutsPrintStream out = CoreIOUtils.resolveOut(session);
+        if (runInstaller) {
+            NutsInstallerComponent installerComponent = getInstaller(def, session);
+            if (installerComponent != null) {
+                NutsExecutionContext executionContext = createExecutionContext()
+                        .setDefinition(def)
+                        .setArguments(args)
+                        .setExecSession(session)
+                        .setSession(session)
+                        .setWorkspace(session.getWorkspace())
+                        .setFailFast(true)
+                        .setTemporary(false)
+                        .setExecutionType(session.boot().getBootOptions().getExecutionType())
+                        .setRunAs(NutsRunAs.currentUser())//uninstall always uses current user
+                        .build();
+                installerComponent.uninstall(executionContext, eraseFiles);
+            }
+        }
+
+        getInstalledRepository().uninstall(def, session);
+        NutsId id = def.getId();
+        if (deleteFiles) {
+            if (session.locations().getStoreLocation(id, NutsStoreLocation.APPS).exists()) {
+                session.locations().getStoreLocation(id, NutsStoreLocation.APPS).deleteTree();
+            }
+            if (session.locations().getStoreLocation(id, NutsStoreLocation.LIB).exists()) {
+                session.locations().getStoreLocation(id, NutsStoreLocation.LIB).deleteTree();
+            }
+            if (session.locations().getStoreLocation(id, NutsStoreLocation.LOG).exists()) {
+                session.locations().getStoreLocation(id, NutsStoreLocation.LOG).deleteTree();
+            }
+            if (session.locations().getStoreLocation(id, NutsStoreLocation.CACHE).exists()) {
+                session.locations().getStoreLocation(id, NutsStoreLocation.CACHE).deleteTree();
+            }
+            if (eraseFiles) {
+                if (session.locations().getStoreLocation(id, NutsStoreLocation.VAR).exists()) {
+                    session.locations().getStoreLocation(id, NutsStoreLocation.VAR).deleteTree();
+                }
+                if (session.locations().getStoreLocation(id, NutsStoreLocation.CONFIG).exists()) {
+                    session.locations().getStoreLocation(id, NutsStoreLocation.CONFIG).deleteTree();
+                }
+            }
+        }
+
+        if (def.getDescriptor().getIdType() == NutsIdType.EXTENSION) {
+            NutsWorkspaceConfigManagerExt wcfg = NutsWorkspaceConfigManagerExt.of(session.config());
+            NutsExtensionListHelper h = new NutsExtensionListHelper(
+                    session.getWorkspace().getApiId(),
+                    wcfg.getModel().getStoredConfigBoot().getExtensions())
+                    .save();
+            h.remove(id);
+            wcfg.getModel().getStoredConfigBoot().setExtensions(h.getConfs());
+            wcfg.getModel().fireConfigurationChanged("extensions", session, ConfigEventType.BOOT);
+        }
+        if (traceBeforeEvent && session.isPlainTrace()) {
+            out.printf("%s uninstalled %s%n", id, NutsTexts.of(session).ofStyled(
+                    "successfully", NutsTextStyle.success()
+            ));
+        }
+        NutsWorkspaceUtils.of(session).events().fireOnUninstall(new DefaultNutsInstallEvent(def, session, new NutsId[0], eraseFiles));
     }
 
     /**
