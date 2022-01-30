@@ -13,7 +13,7 @@ stableJarLocation="https://repo.maven.apache.org/maven2/net/thevpc/nuts/nuts/${s
 
 jarLocation="${latestJarLocation}";
 apiVersion="${latestApiVersion}";
-RuntimeVersion="${latestRuntimeVersion}";
+runtimeVersion="${latestRuntimeVersion}";
 
 echo --highlighter detected "latestApiVersion  ##$latestApiVersion##"
 echo --highlighter detected "latestRuntimeVersion ##$latestRuntimeVersion##"

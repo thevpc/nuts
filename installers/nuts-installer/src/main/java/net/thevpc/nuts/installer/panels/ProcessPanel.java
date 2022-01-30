@@ -82,8 +82,8 @@ public class ProcessPanel extends AbstractInstallPanel {
             command.add("-w");
             command.add(id.workspace.trim());
         }
-        if (id.otherOptions != null && id.otherOptions.trim().length() > 0) {
-            command.addAll(Arrays.asList(ProcessUtils.parseCommandLine(id.otherOptions)));
+        if (id.otherOptions != null && !id.otherOptions.isEmpty()) {
+            command.addAll(id.otherOptions);
         }
         runNutsCommand(command.toArray(new String[0]));
 

@@ -34,7 +34,7 @@ nuts --version
 It should show a result in the format : nuts-api-version/nuts-runtime-version
 
 ```
-${{apiVersion}}/${{RuntimeVersion}}
+${{apiVersion}}/${{runtimeVersion}}
 ```
 
 ## Installing Nuts Preview (Development, recommended for testing)

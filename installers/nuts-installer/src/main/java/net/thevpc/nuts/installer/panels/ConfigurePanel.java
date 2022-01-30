@@ -1,6 +1,8 @@
 package net.thevpc.nuts.installer.panels;
 
 import net.thevpc.nuts.installer.InstallData;
+import net.thevpc.nuts.installer.util.GridBagConstraints2;
+import net.thevpc.nuts.installer.util.ProcessUtils;
 import net.thevpc.nuts.installer.util.UIHelper;
 
 import javax.swing.*;
@@ -9,16 +11,36 @@ import javax.swing.event.DocumentListener;
 import java.awt.*;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 public class ConfigurePanel extends AbstractInstallPanel{
-    JTextField wsField;
+    JTextField optionWorkspace;
+    JCheckBox optionKskip;
+    JCheckBox optionZReset;
+    JCheckBox optionSStandalone;
+    JLabel customWorkspaceLabel;
+    JLabel otherOptionsLabel;
+    JTextArea otherOptions;
     public ConfigurePanel() {
         super(new BorderLayout());
-        add(UIHelper.titleLabel("Please select installation options"),BorderLayout.PAGE_START);
-        Box vbox = Box.createVerticalBox();
-        vbox.add(Box.createRigidArea(new Dimension(1,30)));
-        JCheckBox optionZReset = new JCheckBox("Reset Workspace (-Z)");
-        JCheckBox optionSStandalone = new JCheckBox("Standalone Mode (-S)");
+
+        optionWorkspace = new JTextField();
+        optionKskip = new JCheckBox("Skip Companions (-k)");
+        optionZReset = new JCheckBox("Reset Workspace (-Z)");
+        optionSStandalone = new JCheckBox("Standalone Mode (-S)");
+        customWorkspaceLabel = new JLabel("Custom Workspace");
+        otherOptionsLabel = new JLabel("Other Options");
+        otherOptions = new JTextArea("");
+
+        optionKskip.setToolTipText("Skip Companions");
+        optionZReset.setToolTipText("Reset Workspace");
+        optionSStandalone.setToolTipText("Standalone Mode");
+        customWorkspaceLabel.setToolTipText("Workspace Name or location");
+        optionWorkspace.setToolTipText("Workspace Name or location");
+        otherOptionsLabel.setToolTipText("Other options");
+        otherOptions.setToolTipText("Other options");
+
         optionZReset.addItemListener(new ItemListener() {
             @Override
             public void itemStateChanged(ItemEvent e) {
@@ -33,40 +55,55 @@ public class ConfigurePanel extends AbstractInstallPanel{
                 InstallData.of(getInstallerContext()).optionS=c.isSelected();
             }
         });
-        vbox.add(optionZReset);
-        vbox.add(Box.createRigidArea(new Dimension(1,30)));
-        vbox.add(optionSStandalone);
-        vbox.add(Box.createRigidArea(new Dimension(1,30)));
-        vbox.add(new JLabel("Custom Workspace"));
-        vbox.add(Box.createRigidArea(new Dimension(1,10)));
-        wsField = new JTextField();
-        vbox.add(wsField);
-        wsField.getDocument().addDocumentListener(new DocumentListener() {
+        optionWorkspace.getDocument().addDocumentListener(new DocumentListener() {
             @Override
             public void insertUpdate(DocumentEvent e) {
-                InstallData.of(getInstallerContext()).workspace=wsField.getText();
+                InstallData.of(getInstallerContext()).workspace= optionWorkspace.getText();
             }
 
             @Override
             public void removeUpdate(DocumentEvent e) {
-                InstallData.of(getInstallerContext()).workspace=wsField.getText();
+                InstallData.of(getInstallerContext()).workspace= optionWorkspace.getText();
             }
 
             @Override
             public void changedUpdate(DocumentEvent e) {
-                InstallData.of(getInstallerContext()).workspace=wsField.getText();
+                InstallData.of(getInstallerContext()).workspace= optionWorkspace.getText();
             }
         });
-        vbox.add(new JLabel("Other Options"));
-        vbox.add(Box.createRigidArea(new Dimension(1,10)));
-        vbox.add(new JScrollPane(new JTextArea("")));
-        vbox.add(Box.createRigidArea(new Dimension(1,30)));
-        add(UIHelper.margins(vbox,10));
+
+        add(UIHelper.titleLabel("Please select installation options"),BorderLayout.PAGE_START);
+        JPanel gbox=new JPanel(new GridBagLayout());
+        GridBagConstraints2 gc=new GridBagConstraints2().setAnchor(GridBagConstraints.NORTHWEST)
+                .setFill(GridBagConstraints.HORIZONTAL)
+                .setInsets(new Insets(5,5,5,5))
+                ;
+        gbox.add(optionZReset,gc.setGrid(0,0));
+        gbox.add(optionKskip,gc.setGrid(0,1));
+        gbox.add(optionSStandalone,gc.setGrid(0,2));
+        gbox.add(customWorkspaceLabel,gc.setGrid(0,3));
+        gbox.add(optionWorkspace,gc.setGrid(0,4));
+        gbox.add(otherOptionsLabel,gc.setGrid(0,5));
+        gbox.add(new JScrollPane(otherOptions),gc.setGrid(0,6).setFill(GridBagConstraints.BOTH).setWeightx(1).setWeighty(1));
+        add(UIHelper.margins(gbox,10));
     }
+
     @Override
     public void onShow() {
         getInstallerContext().getExitButton().setEnabled(false);
         getInstallerContext().getCancelButton().setEnabled(true);
     }
 
+    @Override
+    public void onNext() {
+        InstallData id = InstallData.of(getInstallerContext());
+        id.optionk=optionKskip.isSelected();
+        id.optionZ=optionKskip.isSelected();
+        id.optionS=optionSStandalone.isSelected();
+        if(optionWorkspace.getText().trim().length()>0){
+            id.workspace=optionWorkspace.getText().trim();
+        }
+        id.otherOptions.addAll(Arrays.asList(ProcessUtils.parseCommandLine(otherOptions.getText())));
+        super.onNext();
+    }
 }

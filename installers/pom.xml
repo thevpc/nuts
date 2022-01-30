@@ -12,7 +12,7 @@
     </properties>
 
     <modules>
-        <module>nuts-installer-panels</module>
+<!--        <module>nuts-installer-panels</module>-->
         <module>nuts-installer</module>
     </modules>
 </project>

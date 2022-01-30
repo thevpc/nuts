@@ -2,7 +2,7 @@ package net.thevpc.nuts.installer.connector;
 
 
 public class RequestQueryInfo {
-//    public String url="https://thevpc.net/nuts";
+//    public String url="https://thevpc.net/nu ts";
     public String url="{protocol}://{host}:{port}/{context}";
     public String protocol;
     public String host;

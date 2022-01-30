@@ -19,6 +19,7 @@
         <module>test/nuts-runtime-test</module>
 <!--        <module>web-toolbox</module>-->
         <module>tutorials</module>
+        <module>installers</module>
     </modules>
     <properties>
     </properties>

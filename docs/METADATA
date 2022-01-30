@@ -5,6 +5,6 @@ latestApiVersion=0.8.3
 latestRuntimeVersion=0.8.3.1-alpha1
 latestJarLocation=https://thevpc.net/maven/net/thevpc/nuts/nuts/0.8.3/nuts-0.8.3.jar
 apiVersion=0.8.3
-RuntimeVersion=0.8.3.1-alpha1
+runtimeVersion=0.8.3.1-alpha1
 jarLocation=https://thevpc.net/maven/net/thevpc/nuts/nuts/0.8.3/nuts-0.8.3.jar
 buildTime=Sun Jan 23 03:59:50 PM +0000 2022

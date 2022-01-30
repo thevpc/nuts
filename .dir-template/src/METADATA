@@ -5,6 +5,6 @@ latestApiVersion=${{latestApiVersion}}
 latestRuntimeVersion=${{latestRuntimeVersion}}
 latestJarLocation=${{latestJarLocation}}
 apiVersion=${{apiVersion}}
-RuntimeVersion=${{RuntimeVersion}}
+runtimeVersion=${{runtimeVersion}}
 jarLocation=${{jarLocation}}
 buildTime=${{buildTime}}
