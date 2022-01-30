@@ -9,6 +9,6 @@ This command will show **nuts** version. It is helpful to note that **nuts** has
 api is the **nuts** bootstrap jar (actually nuts-*.jar, ~500Ko of size) that contains only the minimum code to use nuts and to download the full implementation (3Mo of size) : impl component. Usually, the implementation version starts with the api version but this should be no rule.
 ```
 me@linux:~> nuts version
-${{latestApiVersion}}/${{latestImplVersion}}
+${{latestApiVersion}}/${{latestRuntimeVersion}}
 ```
-Here the **version** command show api version (${{latestApiVersion}}) and the impl version (${{latestImplVersion}})
+Here the **version** command show api version (${{latestApiVersion}}) and the impl version (${{latestRuntimeVersion}})

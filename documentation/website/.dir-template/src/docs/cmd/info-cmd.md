@@ -12,8 +12,8 @@ me@linux:~> nuts info
 name                     = default-workspace
 nuts-api-version         = ${{latestApiVersion}}
 nuts-api-id              = net.vpc.app.nuts:nuts#${{latestApiVersion}}
-nuts-runtime-id          = net.vpc.app.nuts:nuts-core#${{latestImplVersion}}
-nuts-runtime-path        = ~/.cache/nuts/default-workspace/boot/net/vpc/app/nuts/nuts-core/${{latestImplVersion}}/nuts-core-${{latestImplVersion}}.jar;~/.cache/nuts/default-workspace/boot/net/vpc/app/nuts/nuts/${{latestApiVersion}}/nuts-${{latestApiVersion}}.jar;~/.cache/nuts/default-workspace/boot/com/google/code/gson/gson/2.8.5/gson-2.8.5.jar;~/.cache/nuts/default-workspace/boot/org/fusesource/jansi/jansi/1.17.1/jansi-1.17.1.jar
+nuts-runtime-id          = net.vpc.app.nuts:nuts-core#${{latestRuntimeVersion}}
+nuts-runtime-path        = ~/.cache/nuts/default-workspace/boot/net/vpc/app/nuts/nuts-core/${{latestRuntimeVersion}}/nuts-core-${{latestRuntimeVersion}}.jar;~/.cache/nuts/default-workspace/boot/net/vpc/app/nuts/nuts/${{latestApiVersion}}/nuts-${{latestApiVersion}}.jar;~/.cache/nuts/default-workspace/boot/com/google/code/gson/gson/2.8.5/gson-2.8.5.jar;~/.cache/nuts/default-workspace/boot/org/fusesource/jansi/jansi/1.17.1/jansi-1.17.1.jar
 nuts-workspace-id        = 99b73002-804d-4e4c-9a13-f57ac1f40b3d
 nuts-store-layout        = linux
 nuts-store-strategy      = exploded

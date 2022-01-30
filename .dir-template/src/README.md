@@ -4,8 +4,8 @@ Network Updatable Things Services
      __        __    
   /\ \ \ _  __/ /______
  /  \/ / / / / __/ ___/
-/ /\  / /_/ / /_(__  )   dev version ${{latestImplVersion}} (accessible on thevpc.net)
-\_\ \/\__,_/\__/____/    production version ${{stableImplVersion}} (accessible on maven central)
+/ /\  / /_/ / /_(__  )   dev version ${{latestRuntimeVersion}} (accessible on thevpc.net)
+\_\ \/\__,_/\__/____/    production version ${{stableRuntimeVersion}} (accessible on maven central)
 </pre>
 
 Website : [https://thevpc.github.io/nuts](https://thevpc.github.io/nuts)
@@ -34,7 +34,7 @@ nuts --version
 It should show a result in the format : nuts-api-version/nuts-runtime-version
 
 ```
-${{apiVersion}}/${{implVersion}}
+${{apiVersion}}/${{RuntimeVersion}}
 ```
 
 ## Installing Nuts Preview (Development, recommended for testing)

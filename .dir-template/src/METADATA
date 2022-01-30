@@ -1,10 +1,10 @@
 stableApiVersion=${{stableApiVersion}}
-stableImplVersion=${{stableImplVersion}}
+stableRuntimeVersion=${{stableRuntimeVersion}}
 stableJarLocation=${{stableJarLocation}}
 latestApiVersion=${{latestApiVersion}}
-latestImplVersion=${{latestImplVersion}}
+latestRuntimeVersion=${{latestRuntimeVersion}}
 latestJarLocation=${{latestJarLocation}}
 apiVersion=${{apiVersion}}
-implVersion=${{implVersion}}
+RuntimeVersion=${{RuntimeVersion}}
 jarLocation=${{jarLocation}}
 buildTime=${{buildTime}}
