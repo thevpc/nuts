@@ -72,7 +72,7 @@ public class DefaultNutsRepoFactoryComponent implements NutsRepositoryFactoryCom
                     true, session));
         }
         all.add(NutsRepositorySelectorHelper.createRepositoryOptions(
-                Objects.requireNonNull(NutsRepositoryLocation.of("vpc-public-nuts", NutsRepositoryDB.of(session), session)),
+                Objects.requireNonNull(NutsRepositoryLocation.of("nuts-public", NutsRepositoryDB.of(session), session)),
                 true, session));
         all.add(NutsRepositorySelectorHelper.createRepositoryOptions(
                 Objects.requireNonNull(NutsRepositoryLocation.of("goodies", NutsRepositoryDB.of(session), session)),

@@ -1773,7 +1773,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
             pr.put("repositories", "~/.m2/repository"
                     + ";" + NutsRepositorySelectorHelper.createRepositoryOptions(NutsRepositoryLocation.of("vpc-public-maven", repoDB, session), true, session).getConfig().getLocation()
                     + ";" + NutsRepositorySelectorHelper.createRepositoryOptions(NutsRepositoryLocation.of("maven-central", repoDB, session), true, session).getConfig().getLocation()
-                    + ";" + NutsRepositorySelectorHelper.createRepositoryOptions(NutsRepositoryLocation.of("vpc-public-nuts", repoDB, session), true, session).getConfig().getLocation()
+                    + ";" + NutsRepositorySelectorHelper.createRepositoryOptions(NutsRepositoryLocation.of("nuts-public", repoDB, session), true, session).getConfig().getLocation()
             );
             pr.put("project.dependencies.compile",
                     String.join(";",

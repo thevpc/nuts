@@ -151,21 +151,18 @@ nuts omegat
 ```
 * G0007- jpass (Password app)
 ```
-  nuts settings add repo --name=goodies
   nuts install jpass:jpass
 # Example of usage
   nuts jpass
 ```
 * G0008- omnigraph (Graph Editor)
 ```
-  nuts settings add repo --name=goodies
   nuts install omnigraph:omnigraph
 # Example of usage
   nuts omnigraph
 ```
 * G0009- jedit (JEdit Text Editor)
 ```
-  nuts settings add repo --name=goodies
   nuts install org.jedit:jedit
 # Example of usage
   nuts jedit

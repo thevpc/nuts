@@ -45,9 +45,9 @@ import java.util.stream.Collectors;
 public class CoreNutsUtils {
 
     /**
-     * vpc-public-nuts local repository at ${home.config}/.vpc-public-nuts
+     * nuts-public local repository at ${home.config}/.nuts-public
      */
-    public static final String LOCAL_NUTS_FOLDER = "${home.config}/.vpc-public-nuts";
+    public static final String LOCAL_NUTS_FOLDER = "${home.config}/.nuts-public";
 
     public static final int DEFAULT_UUID_LENGTH = 25;
     public static final int DEFAULT_DATE_TIME_FORMATTER_LENGTH = 23;

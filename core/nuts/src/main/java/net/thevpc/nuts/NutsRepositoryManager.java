@@ -47,8 +47,8 @@ public interface NutsRepositoryManager {
      * will be named 'local'</li>
      * <li>'maven-git', 'vpc-public-maven': corresponds the remote maven
      * vpc-public-maven git folder repository. will be named 'local'</li>
-     * <li>'maven-git', 'vpc-public-nuts': corresponds the remote nuts
-     * vpc-public-nuts git folder repository. will be named 'local'</li>
+     * <li>'maven-git', 'nuts-public': corresponds the remote nuts
+     * nuts-public git folder repository. will be named 'local'</li>
      * <li>name=uri-or-path : corresponds the given uri. will be named name.
      * Here are some examples:
      * <ul>
