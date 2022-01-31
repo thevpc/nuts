@@ -44,11 +44,6 @@ import java.util.stream.Collectors;
  */
 public class CoreNutsUtils {
 
-    /**
-     * nuts-public local repository at ${home.config}/.nuts-public
-     */
-    public static final String LOCAL_NUTS_FOLDER = "${home.config}/.nuts-public";
-
     public static final int DEFAULT_UUID_LENGTH = 25;
     public static final int DEFAULT_DATE_TIME_FORMATTER_LENGTH = 23;
     public static final DateTimeFormatter DEFAULT_DATE_TIME_FORMATTER

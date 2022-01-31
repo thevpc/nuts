@@ -23,4 +23,3 @@ cp ~/.m2/repository/net/thevpc/nuts/nuts/${apiVersion}/nuts-${apiVersion}.jar $n
 echo run ndocusaurus
 ndocusaurus -d $nbw_here/documentation/website pdf build
 
-

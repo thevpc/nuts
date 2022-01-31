@@ -31,7 +31,8 @@ public class DefaultNutsRepositoryDB implements NutsRepositoryDB {
         reg("spring", "maven@https://repo.spring.io/release", "spring-framework");
         reg("maven-thevpc-git", "maven@https://raw.githubusercontent.com/thevpc/vpc-public-maven/master", "vpc-public-maven");
         reg("nuts-public", "maven@https://raw.githubusercontent.com/thevpc/nuts-public/master", "vpc-public-nuts","nuts-thevpc-git");
-        reg("thevpc", "maven@htmlfs:https://thevpc.net/maven", "dev", "preview");
+        reg("nuts-preview", "maven@https://raw.githubusercontent.com/thevpc/nuts-public/master", "preview");
+        reg("thevpc", "maven@htmlfs:https://thevpc.net/maven", "dev");
         reg("thevpc-goodies", "nuts@htmlfs:https://thevpc.net/maven-goodies", "goodies");
         reg("local", "nuts@local");
     }

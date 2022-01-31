@@ -105,7 +105,7 @@ public class Test18_PathTest {
 
     @Test
     public void testHtmlfs1() {
-        NutsPath s = NutsPath.of("htmlfs:https://thevpc.net/maven/net/thevpc/nuts/nuts/", session);
+        NutsPath s = NutsPath.of("dotfilesfs:https://raw.githubusercontent.com/thevpc/nuts-preview/master/net/thevpc/nuts/nuts/", session);
         TestUtils.println("------------ LIST ----------");
         Set<String> children = new HashSet<>();
         for (NutsPath nutsPath : s.list()) {

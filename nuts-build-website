@@ -44,3 +44,14 @@ done
 
 $JAVA_CMD $NUTS_DEBUG_ARG -jar core/nuts/target/nuts-$NUTS_VERSION.jar -ZSbyK -w development-build $NUTS_VERBOSE $NUTS_TRACE ---!init-platforms ---!init-launchers ./nuts-build-website.nsh
 
+## should move these commands to nuts-build-website.nsh, for that we need to ensure that 'find' command is well implemented in 'nsh'
+base=$(readlink -f $base)
+w_preview=$(readlink -f $base/../nuts-preview)
+mkdir -p "$base/../nuts-preview/net/thevpc/nuts"
+cd ~/.m2/repository/net/thevpc/nuts/
+echo $w_preview
+pwd
+find -iregex '\(.*[.]jar\)\|\(.*[.]asc\)\|\(.*[.]pom\)' -exec cp --parents \{\} $w_preview/net/thevpc/nuts/ \;
+cd $base
+$JAVA_CMD $NUTS_DEBUG_ARG -jar core/nuts/target/nuts-$NUTS_VERSION.jar -w development-build $NUTS_VERBOSE $NUTS_TRACE settings update stats $base/../nuts-preview
+$JAVA_CMD $NUTS_DEBUG_ARG -jar core/nuts/target/nuts-$NUTS_VERSION.jar -w development-build $NUTS_VERBOSE $NUTS_TRACE settings update stats $base/../nuts-public

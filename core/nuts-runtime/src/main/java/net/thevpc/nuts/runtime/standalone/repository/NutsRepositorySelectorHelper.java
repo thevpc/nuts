@@ -238,15 +238,35 @@ public class NutsRepositorySelectorHelper {
                                         .setLocation(NutsRepositoryLocation.of("nuts@dotfilefs:https://raw.githubusercontent.com/thevpc/nuts-public/master"))
                         );
             }
+            case "nuts-preview":
+            {
+                return new NutsAddRepositoryOptions().setName("nuts-preview")
+                        .setFailSafe(false).setCreate(true)
+                        .setOrder(NutsAddRepositoryOptions.ORDER_USER_REMOTE)
+                        .setConfig(
+                                new NutsRepositoryConfig()
+                                        .setLocation(NutsRepositoryLocation.of("nuts@dotfilefs:https://raw.githubusercontent.com/thevpc/nuts-preview/master"))
+                        );
+            }
             case "dev":
-            case "thevpc":
-            case "preview": {
+            case "thevpc":{
                 return new NutsAddRepositoryOptions().setName("thevpc")
                         .setFailSafe(false).setCreate(true)
                         .setOrder(NutsAddRepositoryOptions.ORDER_USER_REMOTE)
                         .setConfig(
                                 new NutsRepositoryConfig()
                                         .setLocation(NutsRepositoryLocation.of("maven@htmlfs:https://thevpc.net/maven"))
+                        );
+            }
+            case "thevpc-goodies":
+            case "goodies":
+            {
+                return new NutsAddRepositoryOptions().setName("thevpc")
+                        .setFailSafe(false).setCreate(true)
+                        .setOrder(NutsAddRepositoryOptions.ORDER_USER_REMOTE)
+                        .setConfig(
+                                new NutsRepositoryConfig()
+                                        .setLocation(NutsRepositoryLocation.of("maven@htmlfs:https://thevpc.net/maven-goodies"))
                         );
             }
         }

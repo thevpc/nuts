@@ -35,7 +35,8 @@ public class PrivateNutsBootRepositoryDB implements NutsRepositoryDB {
         reg("spring", "maven@https://repo.spring.io/release", "spring-framework");
         reg("maven-thevpc-git", "maven@https://raw.githubusercontent.com/thevpc/vpc-public-maven/master", "vpc-public-maven");
         reg("nuts-public", "maven@https://raw.githubusercontent.com/thevpc/nuts-public/master", "vpc-public-nuts");
-        reg("thevpc", "maven@htmlfs:https://thevpc.net/maven", "dev", "preview");
+        reg("nuts-preview", "maven@https://raw.githubusercontent.com/thevpc/nuts-preview/master", "nuts-preview","preview");
+        reg("thevpc", "maven@htmlfs:https://thevpc.net/maven", "dev");
     }
 
     @Override

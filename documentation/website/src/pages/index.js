@@ -81,26 +81,10 @@ function Home() {
                         'button button--secondary--lg b2 ',
                         styles.getStarted,
                         )}
-                    href={'https://thevpc.net/nuts-stable.jar'}
-                    target="_blank"
+                    to={useBaseUrl('download')}
                     >
-
-                Download stable 0.8.3
+                Download
                 </Link>
-                {/* There is no preview for now!
-                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                <Link
-                    className={clsx(
-                        'button button--secondary b3',
-                        styles.getStarted,
-                        )}
-                    href={'https://thevpc.net/nuts-preview.jar'}
-                    target="_blank"
-                    >
-
-                Download preview 0.8.3
-                </Link>
-                */}
             </div>
         </div>
     </header>
