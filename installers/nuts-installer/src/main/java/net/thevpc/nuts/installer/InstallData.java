@@ -17,6 +17,7 @@ public class InstallData {
     public List<String> otherOptions=new ArrayList<>();
     public VerInfo installVersion;
     public String workspace;
+    public String java;
     public Set<App> recommendedIds=new LinkedHashSet<>();
 
     public static InstallData of(InstallerContext context){

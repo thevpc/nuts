@@ -112,15 +112,29 @@ public class ProcessPanel extends AbstractInstallPanel {
         printStdOut("Start installation...\n");
         printStdOut("Download " + id.installVersion.location + "\n");
         nutsJar = Utils.downloadFile(id.installVersion.location, "nuts-" + (id.installVersion.stable ? "stable-" : "preview-"), ".jar", null);
-        runNutsCommand(command.toArray(new String[0]));
+        boolean someError=false;
+        try {
+            if (runNutsCommand(command.toArray(new String[0])) != 0) {
+                someError=true;
+                return;
+            }
 
-        if (!id.recommendedIds.isEmpty()) {
-            for (App recommendedId : id.recommendedIds) {
-                printStdOut("Install "+recommendedId.getId()+"...\n");
-                runNutsCommand("install", recommendedId.getId());
+            if (!id.recommendedIds.isEmpty()) {
+                for (App recommendedId : id.recommendedIds) {
+                    printStdOut("Install " + recommendedId.getId() + "...\n");
+                    if (runNutsCommand("install", recommendedId.getId()) != 0) {
+                        someError=true;
+                        return;
+                    }
+                }
+            }
+        }finally {
+            if(someError) {
+                printStdOut("Installation cancelled.");
+            }else{
+                printStdOut("Installation complete.");
             }
         }
-        printStdOut("Installation complete.");
     }
 
 
@@ -145,15 +159,14 @@ public class ProcessPanel extends AbstractInstallPanel {
     }
 
     private String getJavaCommand() {
-        return "java";
-    }
-
-    private Path getNutsJar() {
-        return Paths.get("/home/vpc/.m2/repository/net/thevpc/nuts/nuts/0.8.3/nuts-0.8.3.jar");
-    }
-
-    private void runNutsCommand(String... command) {
         InstallData id = InstallData.of(getInstallerContext());
+        if (Utils.isBlank(id.java)) {
+            return "java";
+        }
+        return id.java;
+    }
+
+    private int runNutsCommand(String... command) {
         java.util.List<String> newCmd = new ArrayList<>();
         newCmd.add(getJavaCommand());
         newCmd.add("-jar");
@@ -162,10 +175,10 @@ public class ProcessPanel extends AbstractInstallPanel {
         newCmd.add("-P=%n");
         newCmd.add("--color");
         newCmd.addAll(Arrays.asList(command));
-        runCommand(newCmd.toArray(new String[0]));
+        return runCommand(newCmd.toArray(new String[0]));
     }
 
-    private void runCommand(String[] command) {
+    private int runCommand(String[] command) {
         InstallData id = InstallData.of(getInstallerContext());
         printStdOut(String.join(" ", command) + "\n");
         ProcessBuilder sb = new ProcessBuilder();
@@ -179,8 +192,10 @@ public class ProcessPanel extends AbstractInstallPanel {
             outputGobbler.start();
             int e = p.waitFor();
             printStdErr("\nProcess terminated with exit code " + e);
+            return e;
         } catch (Exception e) {
             printStdErr("\n" + e);
+            return -1;
         }
     }
 

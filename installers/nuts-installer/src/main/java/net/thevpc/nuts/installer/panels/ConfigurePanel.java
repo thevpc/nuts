@@ -4,24 +4,31 @@ import net.thevpc.nuts.installer.InstallData;
 import net.thevpc.nuts.installer.util.GridBagConstraints2;
 import net.thevpc.nuts.installer.util.ProcessUtils;
 import net.thevpc.nuts.installer.util.UIHelper;
+import net.thevpc.nuts.installer.util.Utils;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 
 public class ConfigurePanel extends AbstractInstallPanel {
     JTextField optionWorkspace;
+    JLabel javaLabel;
     JCheckBox optionVerbose;
     JCheckBox optionSwitch;
     JCheckBox optionZReset;
     JCheckBox optionSStandalone;
     JLabel customWorkspaceLabel;
     JLabel otherOptionsLabel;
+    JTextField javaPath=new JTextField();
+    JButton javaPathButton=new JButton("...");
     JTextArea otherOptions;
 
     public ConfigurePanel() {
@@ -34,6 +41,7 @@ public class ConfigurePanel extends AbstractInstallPanel {
         optionSwitch = new JCheckBox("Switch Mode (--switch)");
         customWorkspaceLabel = new JLabel("Custom Workspace");
         otherOptionsLabel = new JLabel("Other Options");
+        javaLabel = new JLabel("Java Executable Location");
         otherOptions = new JTextArea("");
 
         optionVerbose.setToolTipText("Verbose Mode enable extra trale/logging messages that could be helpful when something does not run as expected.");
@@ -44,7 +52,22 @@ public class ConfigurePanel extends AbstractInstallPanel {
         optionWorkspace.setToolTipText("Workspace Name or location");
         otherOptionsLabel.setToolTipText("Other options");
         otherOptions.setToolTipText("You can specify here other options that are supported by nuts commandline parser. See documentation for more details.");
-
+        javaPath.setToolTipText("Specify Java command here");
+        javaPathButton.setToolTipText("Specify Java command here");
+        javaLabel.setToolTipText("Specify Java command here");
+        javaPathButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JFileChooser jfc=new JFileChooser();
+                int r = jfc.showOpenDialog(ConfigurePanel.this);
+                if(r==JFileChooser.APPROVE_OPTION){
+                    File f = jfc.getSelectedFile();
+                    if(f!=null){
+                        javaPath.setText(f.getPath());
+                    }
+                }
+            }
+        });
         add(UIHelper.titleLabel("Please select installation options"), BorderLayout.PAGE_START);
         JPanel gbox = new JPanel(new GridBagLayout());
         GridBagConstraints2 gc = new GridBagConstraints2().setAnchor(GridBagConstraints.NORTHWEST)
@@ -58,8 +81,16 @@ public class ConfigurePanel extends AbstractInstallPanel {
         gbox.add(optionWorkspace, gc.setGrid(0, 5));
         gbox.add(otherOptionsLabel, gc.setGrid(0, 6));
         gbox.add(new JScrollPane(otherOptions), gc.setGrid(0, 7).setFill(GridBagConstraints.BOTH).setWeightx(1).setWeighty(1));
+        gbox.add(javaLabel, gc.setGrid(0, 8).setFill(GridBagConstraints.HORIZONTAL).setWeightx(0).setWeighty(0));
+        gbox.add(jPanel(), gc.setGrid(0, 9));
         add(UIHelper.margins(gbox, 10));
         resetDefaults();
+    }
+    private JPanel jPanel(){
+        JPanel p=new JPanel(new BorderLayout());
+        p.add(javaPath,BorderLayout.CENTER);
+        p.add(javaPathButton,BorderLayout.LINE_END);
+        return p;
     }
 
     private void resetDefaults() {
@@ -82,6 +113,7 @@ public class ConfigurePanel extends AbstractInstallPanel {
             id.workspace = optionWorkspace.getText().trim();
         }
         id.otherOptions.addAll(Arrays.asList(ProcessUtils.parseCommandLine(otherOptions.getText())));
+        id.java= Utils.trim(javaPath.getText());
         super.onNext();
     }
 
