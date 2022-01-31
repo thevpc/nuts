@@ -94,7 +94,7 @@ public class ProcessPanel extends AbstractInstallPanel {
             command.add(id.workspace.trim());
         }
         if (!id.installVersion.stable) {
-            command.add("-r=dev");
+            command.add("-r=preview");
         }
         Set<String> extraRepos = id.recommendedIds.stream().map(App::getRepo)
                 .filter(x -> x != null && x.length() > 0)
