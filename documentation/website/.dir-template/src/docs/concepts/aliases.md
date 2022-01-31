@@ -7,7 +7,7 @@ sidebar_label: Aliases, Imports & Launchers
 Aliases, Imports and launchers, are three features in nuts where you can call artifacts with a simple word instead of using the full id. Indeed, usually, artifacts are uniquely identified by groupId, artifactId, version and classifier (whenever applicable). This is kind of cumbersome if most of the cases:
 
 ```bash
-nuts net.thevpc.toolbox.nsh:nsh#${{latestImplVersion}}
+nuts net.thevpc.toolbox.nsh:nsh#${{latestRuntimeVersion}}
 ```
 
 ## Imports
@@ -16,11 +16,11 @@ import 'com.my-company' and as a result any artifact under 'com.mycompany' is re
 Actually 'com.my-company:my-app' and 'com.my-company.my-app:my-app' are
 
 ```bash
-nuts net.thevpc.toolbox.nsh:nsh#${{latestImplVersion}}
+nuts net.thevpc.toolbox.nsh:nsh#${{latestRuntimeVersion}}
 # becomes
 nuts settings add import net.thevpc.toolbox
 # now call it simply with
-nuts nsh#${{latestImplVersion}}
+nuts nsh#${{latestRuntimeVersion}}
 # or even simpler with
 nuts nsh
 ```
@@ -30,9 +30,9 @@ As a matter of fact, there are a couple of imports automatically defined 'net.th
 Aliases help you define your own command by calling existing artifacts and defining some arguments as well. It is very similar to shell aliases where you define `ll` as an alias to `/bin/ls -l` for example.
 
 ```bash
-nuts net.thevpc.toolbox.nsh:nsh#${{latestImplVersion}}
+nuts net.thevpc.toolbox.nsh:nsh#${{latestRuntimeVersion}}
 # becomes
-nuts settings add alias ll='net.thevpc.toolbox.nsh:nsh#${{latestImplVersion}} -c ls -l'
+nuts settings add alias ll='net.thevpc.toolbox.nsh:nsh#${{latestRuntimeVersion}} -c ls -l'
 # now call it simply with
 nuts ll
 ```
@@ -42,8 +42,8 @@ Launchers help you define your own system command by calling nuts with existing 
 
 
 ```bash
-nuts net.thevpc.toolbox.nsh:nsh#${{latestImplVersion}}
+nuts net.thevpc.toolbox.nsh:nsh#${{latestRuntimeVersion}}
 # becomes
-nuts settings add launcher --menu --desktop 'net.thevpc.toolbox.nsh:nsh#${{latestImplVersion}}'
+nuts settings add launcher --menu --desktop 'net.thevpc.toolbox.nsh:nsh#${{latestRuntimeVersion}}'
 # now call it simply click on the desktop icon or open via system menu
 ```

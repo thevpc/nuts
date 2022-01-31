@@ -190,7 +190,7 @@ nuts --version
 It should show a result in the format : nuts-api-version/nuts-impl-version
 
 ```
-${{stableApiVersion}}/${{stableImplVersion}}
+${{stableApiVersion}}/${{stableRuntimeVersion}}
 ```
 
 ## Run a command

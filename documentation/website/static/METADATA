@@ -1,8 +1,8 @@
 stableApiVersion=0.8.3
-stableImplVersion=0.8.3.0
+stableRuntimeVersion=0.8.3.0
 stableJarLocation=https://repo.maven.apache.org/maven2/net/thevpc/nuts/nuts/0.8.3/nuts-0.8.3.jar
 latestApiVersion=0.8.3
-latestImplVersion=0.8.3.1-alpha1
+latestRuntimeVersion=0.8.3.1-alpha1
 latestJarLocation=https://thevpc.net/maven/net/thevpc/nuts/nuts/0.8.3/nuts-0.8.3.jar
 apiVersion=0.8.3
 implVersion=0.8.3.1-alpha1

@@ -53,23 +53,23 @@ $> nuts search
 
 $> nuts search 'net.thevpc.nuts.toolbox:*' --anywhere
  
-        net.thevpc.nuts.toolbox:nsh#${{latestImplVersion}}
-        net.thevpc.nuts.toolbox:ndoc#${{latestImplVersion}}
-        net.thevpc.nuts.toolbox:ndexer#${{latestImplVersion}}
-        net.thevpc.nuts.toolbox:njob#${{latestImplVersion}}
-        net.thevpc.nuts.toolbox:nmvn#${{latestImplVersion}}
-        net.thevpc.nuts.toolbox:nwork#${{latestImplVersion}}
-        net.thevpc.nuts.toolbox:nsh#${{latestImplVersion}}
-        net.thevpc.nuts.toolbox:ntomcat#${{latestImplVersion}}
-        net.thevpc.nuts.toolbox:ntalk-agent#${{latestImplVersion}}
-        net.thevpc.nuts.toolbox:ndiff#${{latestImplVersion}}
-        net.thevpc.nuts.toolbox:nserver#${{latestImplVersion}}
-        net.thevpc.nuts.toolbox:ndb#${{latestImplVersion}}
-        net.thevpc.nuts.toolbox:nversion#${{latestImplVersion}}
-        net.thevpc.nuts.toolbox:ntemplate#${{latestImplVersion}}
-        net.thevpc.nuts.toolbox:ncode#${{latestImplVersion}}
-        net.thevpc.nuts.toolbox:ndocusaurus#${{latestImplVersion}}
-        net.thevpc.nuts.toolbox:noapi#${{latestImplVersion}}
+        net.thevpc.nuts.toolbox:nsh#${{latestRuntimeVersion}}
+        net.thevpc.nuts.toolbox:ndoc#${{latestRuntimeVersion}}
+        net.thevpc.nuts.toolbox:ndexer#${{latestRuntimeVersion}}
+        net.thevpc.nuts.toolbox:njob#${{latestRuntimeVersion}}
+        net.thevpc.nuts.toolbox:nmvn#${{latestRuntimeVersion}}
+        net.thevpc.nuts.toolbox:nwork#${{latestRuntimeVersion}}
+        net.thevpc.nuts.toolbox:nsh#${{latestRuntimeVersion}}
+        net.thevpc.nuts.toolbox:ntomcat#${{latestRuntimeVersion}}
+        net.thevpc.nuts.toolbox:ntalk-agent#${{latestRuntimeVersion}}
+        net.thevpc.nuts.toolbox:ndiff#${{latestRuntimeVersion}}
+        net.thevpc.nuts.toolbox:nserver#${{latestRuntimeVersion}}
+        net.thevpc.nuts.toolbox:ndb#${{latestRuntimeVersion}}
+        net.thevpc.nuts.toolbox:nversion#${{latestRuntimeVersion}}
+        net.thevpc.nuts.toolbox:ntemplate#${{latestRuntimeVersion}}
+        net.thevpc.nuts.toolbox:ncode#${{latestRuntimeVersion}}
+        net.thevpc.nuts.toolbox:ndocusaurus#${{latestRuntimeVersion}}
+        net.thevpc.nuts.toolbox:noapi#${{latestRuntimeVersion}}
 
 $> nuts install njob
 
