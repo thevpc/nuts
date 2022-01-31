@@ -53,106 +53,14 @@ public abstract class AbstractRecommendationConnector implements RecommendationC
     }
 
     @Override
-    public Map askInstallRecommendations(RequestQueryInfo ri) {
+    public Map getRecommendations(RequestQueryInfo ri) {
         validateRequest(ri);
         NutsId id = new NutsId(ri.q.getId());
+        String name="installer-recommendations.json";
         String url = "/repo/" + id.getGroupId().replace('.', '/')
                 + '/' + id.getArtifactId()
                 + '/' + id.getVersion()
-                + "/install-recommendations.json";
-        return post(url, ri, Map.class);
-    }
-
-    @Override
-    public Map askUpdateRecommendations(RequestQueryInfo ri) {
-        validateRequest(ri);
-        NutsId id = new NutsId(ri.q.getId());
-        String url = "/repo/" + id.getGroupId().replace('.', '/')
-                + '/' + id.getArtifactId()
-                + '/' + id.getVersion()
-                + "/update-recommendations.json";
-        return post(url, ri, Map.class);
-    }
-
-    public Map askDescriptor(RequestQueryInfo ri) {
-        validateRequest(ri);
-        NutsId id = new NutsId(ri.q.getId());
-        if(id.getVersion().isEmpty()){
-            String url = "/repo/" + id.getGroupId().replace('.', '/')
-                    + '/' + id.getArtifactId()
-                    + "/descriptor.json";
-            return post(url, ri, Map.class);
-        }else {
-            String url = "/repo/" + id.getGroupId().replace('.', '/')
-                    + '/' + id.getArtifactId()
-                    + '/' + id.getVersion()
-                    + "/descriptor.json";
-            return post(url, ri, Map.class);
-        }
-    }
-
-    @Override
-    public Map askCompanionsRecommendations(RequestQueryInfo ri) {
-        validateRequest(ri);
-        NutsId id = new NutsId(ri.q.getId());
-        String url = "/repo/" + id.getGroupId().replace('.', '/')
-                + '/' + id.getArtifactId()
-                + '/' + id.getVersion()
-                + "/companion-recommendations.json";
-        return post(url, ri, Map.class);
-    }
-
-    @Override
-    public Map askInstallFailureRecommendations(RequestQueryInfo ri) {
-        validateRequest(ri);
-        NutsId id = new NutsId(ri.q.getId());
-        String url = "/repo/" + id.getGroupId().replace('.', '/')
-                + '/' + id.getArtifactId()
-                + '/' + id.getVersion()
-                + "/install-failure-recommendations.json";
-        return post(url, ri, Map.class);
-    }
-
-    @Override
-    public Map askUninstallFailureRecommendations(RequestQueryInfo ri) {
-        validateRequest(ri);
-        NutsId id = new NutsId(ri.q.getId());
-        String url = "/repo/" + id.getGroupId().replace('.', '/')
-                + '/' + id.getArtifactId()
-                + '/' + id.getVersion()
-                + "/uninstall-failure-recommendations.json";
-        return post(url, ri, Map.class);
-    }
-
-    @Override
-    public Map askBootstrapFailureRecommendations(RequestQueryInfo ri) {
-        validateRequest(ri);
-        NutsId id = new NutsId(ri.q.getId());
-        String url = "/repo/" + id.getGroupId().replace('.', '/')
-                + '/' + id.getArtifactId()
-                + '/' + id.getVersion()
-                + "/bootstrap-failure-recommendations.json";
-        return post(url, ri, Map.class);
-    }
-
-    @Override
-    public Map askUpdateFailureRecommendations(RequestQueryInfo ri) {
-        validateRequest(ri);
-        NutsId id = new NutsId(ri.q.getId());
-        String url = "/repo/" + id.getGroupId().replace('.', '/')
-                + '/' + id.getArtifactId()
-                + '/' + id.getVersion()
-                + "/update-failure-recommendations.json";
-        return post(url, ri, Map.class);
-    }
-
-    public Map askUninstallRecommendations(RequestQueryInfo ri) {
-        validateRequest(ri);
-        NutsId id = new NutsId(ri.q.getId());
-        String url = "/repo/" + id.getGroupId().replace('.', '/')
-                + '/' + id.getArtifactId()
-                + '/' + id.getVersion()
-                + "/uninstall-recommendations.json";
+                + '/' + name;
         return post(url, ri, Map.class);
     }
 

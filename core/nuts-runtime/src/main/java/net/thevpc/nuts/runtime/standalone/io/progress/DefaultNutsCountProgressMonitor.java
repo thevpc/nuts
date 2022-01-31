@@ -38,7 +38,7 @@ public class DefaultNutsCountProgressMonitor implements NutsProgressMonitor/*, N
 
     @Override
     public void onStart(NutsProgressEvent event) {
-        this.out = event.getSession().getTerminal().out();
+        this.out = event.getSession().getTerminal().err();
         if (event.getSession().isPlainOut()) {
             onProgress0(event, false);
         }

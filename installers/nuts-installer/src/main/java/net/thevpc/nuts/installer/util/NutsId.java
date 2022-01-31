@@ -10,12 +10,12 @@ public class NutsId {
         if(a>0) {
             int b = id.indexOf('#', a + 1);
             if(b>0){
-                this.artifactId = id.substring(0,a);
-                this.groupId = id.substring(a+1,b);
+                this.groupId = id.substring(0,a);
+                this.artifactId = id.substring(a+1,b);
                 this.version = id.substring(b+1);
             }else{
-                this.artifactId = id.substring(0,a);
-                this.groupId = id.substring(a+1);
+                this.groupId = id.substring(0,a);
+                this.artifactId = id.substring(a+1);
                 this.version = "";
             }
             return;

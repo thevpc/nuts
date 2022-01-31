@@ -24,10 +24,10 @@ public class Utils {
         return url==null ?"": url.trim();
     }
 
-    public static Path downloadFile(String url, String ext, Path to) {
+    public static Path downloadFile(String url, String prefix, String ext, Path to) {
         try {
             if (to == null) {
-                to = Files.createTempFile("temp-", ext);
+                to = Files.createTempFile(prefix, ext);
             } else {
                 Path p = to.getParent();
                 if (p != null) {

@@ -194,7 +194,7 @@ public class NutsInstaller implements InstallerContext {
         addPanel(new IntroductionPanel());
         addPanel(new LicensePanel());
         addPanel(new VersionsPanel());
-//        addPanel(new PackagesPanel());
+        addPanel(new PackagesPanel());
         addPanel(new ConfigurePanel());
         addPanel(new ProcessPanel());
         addPanel(new SummaryPanel());

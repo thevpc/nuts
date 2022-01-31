@@ -10,6 +10,10 @@ public class RequestQueryInfo {
     public int port;
     public RequestQuery q;
 
+    public RequestQueryInfo() {
+      url="http://localhost:8080";
+    }
+
     public String getUrl() {
         return url;
     }

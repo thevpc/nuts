@@ -37,7 +37,7 @@ public class TraceNutsProgressMonitor implements NutsProgressMonitor/*, NutsOutp
     @Override
     public void onStart(NutsProgressEvent event) {
         bar= CoreTerminalUtils.resolveProgressBar(event.getSession());
-        this.out = event.getSession().getTerminal().out();
+        this.out = event.getSession().getTerminal().err();
         if (event.getSession().isPlainOut()) {
             onProgress0(event, false);
         }

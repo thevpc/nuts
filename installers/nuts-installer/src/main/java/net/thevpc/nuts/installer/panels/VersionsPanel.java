@@ -51,7 +51,7 @@ public class VersionsPanel extends AbstractInstallPanel {
         jsp.setMaximumSize(new Dimension(1000, 100));
         jsp.setPreferredSize(new Dimension(100, 100));
         add(UIHelper.margins(jsp, 10), BorderLayout.PAGE_END);
-        jep.setText("<html><body>selection the <strong>stable</strong> version for production</body></html>");
+        jep.setText("<html><body>select the <strong>stable</strong> version for production</body></html>");
     }
 
     private JToggleButton add2(ButtonInfo s) {
@@ -99,16 +99,19 @@ public class VersionsPanel extends AbstractInstallPanel {
         SwingUtilities.invokeLater(() -> {
             getInstallerContext().stopLoading(getPageIndex());
             ButtonInfo ii = (ButtonInfo) (stableButton.getClientProperty("ButtonInfo"));
-            ii.html = "version " + info.stable.runtime;
+            ii.html=("<html><body>Select the <strong>stable</strong> version <strong>"+info.stable.runtime+"</strong> for production</body></html>");
+            stableButton.setText("<html><body><center>Stable<br>version<br><strong>" + info.stable.runtime+"</strong></center></body></html>");
             ii.verInfo = info.stable;
             ButtonInfo jj = (ButtonInfo) (previewButton.getClientProperty("ButtonInfo"));
-            jj.html = "version " + info.preview.runtime;
-            ii.verInfo = info.preview;
-            if (Objects.equals(info.stable.api, info.preview.api)) {
+            jj.html=("<html><body>Select the <strong>preview</strong> version <strong>"+info.preview.runtime+"</strong> to test new features and get latest updates and bug fixes</body></html>");
+            jj.verInfo = info.preview;
+            stableButton.setSelected(true);
+            jep.setText(ii.html);
+            if (Objects.equals(info.stable.runtime, info.preview.runtime)) {
                 previewButton.setEnabled(false);
-                stableButton.setSelected(true);
-                jep.setText(ii.html);
+                previewButton.setText("Preview");
             } else {
+                previewButton.setText("<html><body><center>Preview<br>version<br><strong>" + info.preview.runtime+"</strong></center></body></html>");
                 previewButton.setEnabled(true);
             }
             getInstallerContext().getNextButton().setEnabled(ii.verInfo.valid);
@@ -122,7 +125,6 @@ public class VersionsPanel extends AbstractInstallPanel {
             getInstallerContext().startLoading();
         });
         RequestQueryInfo ri = new RequestQueryInfo();
-//        ri.url="http://localhost:8080";
         RequestQuery q = new RequestQuery();
         q.setId("net.thevpc.nuts:nuts#RELEASE");
         ri.setQ(q);
@@ -130,7 +132,7 @@ public class VersionsPanel extends AbstractInstallPanel {
         Properties metadata  = new Properties();
         try {
             try {
-                Map d = new SimpleRecommendationConnector().askDescriptor(ri);
+                Map d = new SimpleRecommendationConnector().getRecommendations(ri);
                 info = (Map) d.get("info");
             } catch (Exception ex) {
                 //ignore
@@ -173,10 +175,10 @@ public class VersionsPanel extends AbstractInstallPanel {
 //        stableJarLocation=https://repo.maven.apache.org/maven2/net/thevpc/nuts/nuts/0.8.3/nuts-0.8.3.jar
 //        latestApiVersion=0.8.3
 //        latestRuntimeVersion=0.8.3.1-alpha1
-//        latestJarLocation=https://thevpc.net/maven/net/thevpc/nuts/nuts/0.8.3/nuts-0.8.3.jar
+//        latestJarLocation=https://raw.githubusercontent.com/thevpc/nuts-preview/master/net/thevpc/nuts/nuts/0.8.3/nuts-0.8.3.jar
 //        apiVersion=0.8.3
 //        implVersion=0.8.3.1-alpha1
-//        jarLocation=https://thevpc.net/maven/net/thevpc/nuts/nuts/0.8.3/nuts-0.8.3.jar
+//        jarLocation=https://raw.githubusercontent.com/thevpc/nuts-preview/master/net/thevpc/nuts/nuts/0.8.3/nuts-0.8.3.jar
 //        buildTime=Sun Jan 23 03:59:50 PM +0000 2022
         ii.stable.api =metadata.getProperty("stableApiVersion");
         ii.stable.runtime =metadata.getProperty("stableRuntimeVersion");

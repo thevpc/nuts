@@ -1,5 +1,6 @@
 package net.thevpc.nuts.installer.panels;
 
+import net.thevpc.nuts.installer.App;
 import net.thevpc.nuts.installer.InstallData;
 import net.thevpc.nuts.installer.util.*;
 
@@ -10,12 +11,15 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class ProcessPanel extends AbstractInstallPanel {
     AnsiTermPane ansiTermPane;
     boolean processed;
     JLabel logLabel = new JLabel();
     private boolean nl = true;
+    private Path nutsJar;
 
     public ProcessPanel() {
         super(new BorderLayout());
@@ -89,15 +93,34 @@ public class ProcessPanel extends AbstractInstallPanel {
             command.add("-w");
             command.add(id.workspace.trim());
         }
+        if (!id.installVersion.stable) {
+            command.add("-r=dev");
+        }
+        Set<String> extraRepos = id.recommendedIds.stream().map(App::getRepo)
+                .filter(x -> x != null && x.length() > 0)
+                .collect(Collectors.toSet());
+        //add other repos
+        for (String extraRepo : extraRepos) {
+            command.add("-r=" + extraRepo);
+        }
+        command.add("--theme=horizon");
+
         if (id.otherOptions != null && !id.otherOptions.isEmpty()) {
             command.addAll(id.otherOptions);
         }
+
+        printStdOut("Start installation...\n");
+        printStdOut("Download " + id.installVersion.location + "\n");
+        nutsJar = Utils.downloadFile(id.installVersion.location, "nuts-" + (id.installVersion.stable ? "stable-" : "preview-"), ".jar", null);
         runNutsCommand(command.toArray(new String[0]));
 
-        if(!id.recommendedIds.isEmpty()) {
-            java.util.List<String> install = new ArrayList<>(id.recommendedIds);
-            runNutsCommand(install.toArray(new String[0]));
+        if (!id.recommendedIds.isEmpty()) {
+            for (App recommendedId : id.recommendedIds) {
+                printStdOut("Install "+recommendedId.getId()+"...\n");
+                runNutsCommand("install", recommendedId.getId());
+            }
         }
+        printStdOut("Installation complete.");
     }
 
 
@@ -134,20 +157,17 @@ public class ProcessPanel extends AbstractInstallPanel {
         java.util.List<String> newCmd = new ArrayList<>();
         newCmd.add(getJavaCommand());
         newCmd.add("-jar");
-        newCmd.add(Utils.downloadFile(id.installVersion.location,".jar", null).toString());
+        newCmd.add(nutsJar.toString());
         newCmd.add("-y");
         newCmd.add("-P=%n");
         newCmd.add("--color");
-        if(!id.installVersion.stable){
-            newCmd.add("-r=dev");
-        }
         newCmd.addAll(Arrays.asList(command));
         runCommand(newCmd.toArray(new String[0]));
     }
 
     private void runCommand(String[] command) {
-        printStdOut("start process...\n");
-        printStdOut(String.join(" ",command)+"\n");
+        InstallData id = InstallData.of(getInstallerContext());
+        printStdOut(String.join(" ", command) + "\n");
         ProcessBuilder sb = new ProcessBuilder();
         sb.command(Arrays.asList(command));
         Process p = null;
@@ -158,7 +178,7 @@ public class ProcessPanel extends AbstractInstallPanel {
             errorGobbler.start();
             outputGobbler.start();
             int e = p.waitFor();
-            printStdErr("\nprocess terminated with exit code " + e);
+            printStdErr("\nProcess terminated with exit code " + e);
         } catch (Exception e) {
             printStdErr("\n" + e);
         }

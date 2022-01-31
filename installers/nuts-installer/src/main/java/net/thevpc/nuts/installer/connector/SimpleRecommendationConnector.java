@@ -11,6 +11,10 @@ import java.nio.charset.StandardCharsets;
 import java.util.Locale;
 
 public class SimpleRecommendationConnector extends AbstractRecommendationConnector {
+    public SimpleRecommendationConnector() {
+
+    }
+
     @Override
     public <T> T post(String url, RequestQueryInfo ri, Class<T> resultType) {
         validateRequest(ri);

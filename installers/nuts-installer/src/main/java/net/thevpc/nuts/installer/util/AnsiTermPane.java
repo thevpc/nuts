@@ -23,7 +23,7 @@ public class AnsiTermPane extends JTextPane {
     public static final Color B_Blue = Color.getHSBColor(0.667f, 1.000f, 1.000f);
     public static final Color B_Magenta = Color.getHSBColor(0.833f, 1.000f, 1.000f);
     public static final Color B_Green = Color.getHSBColor(0.333f, 1.000f, 1.000f);
-    public static final Color B_Yellow = Color.getHSBColor(0.167f, 1.000f, 1.000f);
+    public static final Color B_Yellow = Color.getHSBColor(0.167f, 1.000f, 1.000f).darker();
     public static final Color B_Cyan = Color.getHSBColor(0.500f, 1.000f, 1.000f);
     public static final Color B_White = Color.getHSBColor(0.000f, 0.000f, 1.000f);
     public static final Color cReset = Color.BLACK;//Color.getHSBColor(0.000f, 0.000f, 1.000f);
@@ -136,18 +136,20 @@ public class AnsiTermPane extends JTextPane {
     }
 
     public void getANSIColor(String ANSIColor) {
-        Pattern p = Pattern.compile("\u001B\\[(?<a>\\d+)(;(?<b>\\d+)(;(?<c>\\d+))?)?m");
+        Pattern p = Pattern.compile("\u001B\\[(?<a>\\d+)(;(?<b>\\d+)(;(?<c>\\d+)(;(?<d>\\d+))?)?)?m");
         Matcher m = p.matcher(ANSIColor);
         if(m.find()){
             int a=Integer.parseInt(m.group("a"));
             int b=m.group("b")==null?-1:Integer.parseInt(m.group("b"));
             int c=m.group("c")==null?-1:Integer.parseInt(m.group("c"));
+            int d=m.group("d")==null?-1:Integer.parseInt(m.group("d"));
             switch (a){
-                case 0:{
+                case 0:
+                case 30:
+                {
                     colorCurrent = cReset;
                     break;
                 }
-                case 30:
                 case 31:
                 case 32:
                 case 33:
@@ -160,115 +162,20 @@ public class AnsiTermPane extends JTextPane {
                     break;
                 }
                 case 38:{
-                    colorCurrent = COLS[c%15];
+                    int i = c % 15;
+                    if(i==0 || i==8){
+                        colorCurrent=cReset;
+                    }else {
+                        colorCurrent = COLS[i];
+                    }
                     break;
                 }
             }
             return;
         }
         switch (ANSIColor) {
-            case "\u001B[30m": {
-                colorCurrent = D_Black;
-                break;
-            }
-            case "\u001B[31m": {
-                colorCurrent = D_Red;
-                break;
-            }
-            case "\u001B[32m": {
-                colorCurrent = D_Green;
-                break;
-            }
-            case "\u001B[33m": {
-                colorCurrent = D_Yellow;
-                break;
-            }
-            case "\u001B[34m": {
-                colorCurrent = D_Blue;
-                break;
-            }
-            case "\u001B[35m": {
-                colorCurrent = D_Magenta;
-                break;
-            }
-            case "\u001B[36m": {
-                colorCurrent = D_Cyan;
-                break;
-            }
-            case "\u001B[37m": {
-                colorCurrent = D_White;
-                break;
-            }
-            case "\u001B[0;30m": {
-                colorCurrent = D_Black;
-                break;
-            }
-            case "\u001B[0;31m": {
-                colorCurrent = D_Red;
-                break;
-            }
-            case "\u001B[0;32m": {
-                colorCurrent = D_Green;
-                break;
-            }
-            case "\u001B[0;33m": {
-                colorCurrent = D_Yellow;
-                break;
-            }
-            case "\u001B[0;34m": {
-                colorCurrent = D_Blue;
-                break;
-            }
-            case "\u001B[0;35m": {
-                colorCurrent = D_Magenta;
-                break;
-            }
-            case "\u001B[0;36m": {
-                colorCurrent = D_Cyan;
-                break;
-            }
-            case "\u001B[0;37m": {
-                colorCurrent = D_White;
-                break;
-            }
-            case "\u001B[1;30m": {
-                colorCurrent = B_Black;
-                break;
-            }
-            case "\u001B[1;31m": {
-                colorCurrent = B_Red;
-                break;
-            }
-            case "\u001B[1;32m": {
-                colorCurrent = B_Green;
-                break;
-            }
-            case "\u001B[1;33m": {
-                colorCurrent = B_Yellow;
-                break;
-            }
-            case "\u001B[1;34m": {
-                colorCurrent = B_Blue;
-                break;
-            }
-            case "\u001B[1;35m": {
-                colorCurrent = B_Magenta;
-                break;
-            }
-            case "\u001B[1;36m": {
-                colorCurrent = B_Cyan;
-                break;
-            }
-            case "\u001B[1;37m": {
-                colorCurrent = B_White;
-                break;
-            }
-            case "\u001B[0m": {
-                colorCurrent = cReset;
-                break;
-            }
             default: {
-                colorCurrent = cReset;
+                //colorCurrent = cReset;
                 break;
             }
         }
