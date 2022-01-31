@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<installation version="5.0">
+    <info>
+        <appname>Nuts Package Manager</appname>
+        <appversion>0.8.3</appversion>
+        <url>https://github.com/thevpc/nuts</url>
+        <authors>
+            <author name="Taha BEN SALAH" email="taha.bensalah@gmail.com"/>
+        </authors>
+    </info>
+
+    <guiprefs height="400" resizable="no" width="640">
+<!--        <modifier key="useButtonIcons" value="yes"/>-->
+<!--        <modifier key="useLabelIcons" value="no"/>-->
+<!--        <modifier key="labelGap" value="2"/>-->
+<!--        <modifier key="layoutAnchor" value="NORTHWEST"/>-->
+<!--        <modifier key="useHeadingPanel" value="no"/>-->
+<!--        <modifier key="headingImageOnLeft" value="yes"/>-->
+<!--        <modifier key="headingLineCount" value="1"/>-->
+<!--        <modifier key="headingFontSize" value="1.5"/>-->
+<!--        <modifier key="headingBackgroundColor" value="0x00ffffff"/>-->
+<!--        <modifier key="headingPanelCounter" value="progressbar"/>-->
+<!--        <modifier key="headingPanelCounterPos" value="inNavigationPanel"/>-->
+    </guiprefs>
+
+    <locale>
+        <langpack iso3="eng"/>
+    </locale>
+
+    <resources>
+        <res id="CustomLangPack.xml_eng" src="CustomLangPack_eng.xml"/>
+        <res id="HTMLHelloPanel.welcome" src="welcome.html"/>
+        <res id="HTMLInfoPanel.welcome" src="welcome.html"/>
+        <res id="InfoPanel.info" src="Readme.txt"/>
+        <res id="Installer.image" src="nuts-left.png"/>
+        <res id="IZPackLogo" src="nuts-logo.png"/>
+        <res id="LicencePanel.licence" src="Licence.txt"/>
+        <res id="TargetPanel.dir.windows" src="TargetDirWindows.txt"/>
+        <res id="TargetPanel.dir.unix" src="TargetDirUnix.txt"/>
+    </resources>
+
+    <variables>
+        <variable name="InstallerFrame.logfilePath" value="Default"/>
+        <variable name="WELCOME_TEXT" value="Nuts Package Manager"/>
+        <variable name="WELCOME_VERSION" value="Version: 0.8.3"/>
+    </variables>
+
+    <!-- pull in the built jar file for our custom panel -->
+    <jar src="custom/nuts-installer-panels.jar" stage="both"/>
+
+    <panels>
+        <!-- FIXME why doesn't HTMLHelloPanel work any more?  it is nice not to have the "Please read the following information" text ... -->
+        <panel classname="HTMLInfoPanel" id="welcome"/>
+
+        <!-- this is our custom panel, loaded from the izpack-panels.jar file -->
+        <panel classname="net.thevpc.nuts.installer.panels.MyHelloPanel" id="myHello"/>
+        <panel classname="LicencePanel" id="licencePanel"/>
+        <panel classname="XInfoPanel" id="xInfoPanel"/>
+
+        <panel classname="TargetPanel" id="install_dir"/>
+        <panel classname="PacksPanel" id="sdk_pack_select"/>
+        <panel classname="InstallPanel" id="install"/>
+        <panel classname="SimpleFinishPanel" id="finish"/>
+    </panels>
+
+    <packs>
+        <pack name="core" required="yes">
+            <description>Core Files</description>
+            <file targetdir="$INSTALL_PATH" src="pack1_content/nuts.jar" />
+            <executable targetfile="$INSTALL_PATH/nuts.jar" class="net.thevpc.nuts.Nuts" type="jar" stage="postinstall" failure ="warn" keep="true" >
+                <args>
+                    <arg value="-ZySb"/>
+                    <arg value="--verbose"/>
+                </args>
+            </executable>
+        </pack>
+    </packs>
+</installation>
