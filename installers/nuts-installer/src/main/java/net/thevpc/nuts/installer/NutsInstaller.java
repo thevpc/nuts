@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class NutsInstaller implements InstallerContext {
+    private JFrame frame;
     private CardLayout cardLayout;
     private JPanel centerPanel;
     private int currentIndex;
@@ -36,6 +37,7 @@ public class NutsInstaller implements InstallerContext {
         NutsInstaller mi = new NutsInstaller();
         final JPanel panel = mi.createMainPanel();
         final JFrame frame = new JFrame("Nuts Package Manager Installer");
+        mi.frame=frame;
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 //        frame.setResizable(false);
         frame.setIconImage(new ImageIcon(NutsInstaller.class.getResource("icon.png")).getImage());
@@ -125,11 +127,12 @@ public class NutsInstaller implements InstallerContext {
     @Override
     public void onCancelButton() {
         panels.get(currentIndex - 1).onCancel();
+        frame.dispose();
     }
 
     @Override
     public void onExitButton() {
-
+        frame.dispose();
     }
 
     @Override
@@ -191,7 +194,7 @@ public class NutsInstaller implements InstallerContext {
         addPanel(new IntroductionPanel());
         addPanel(new LicensePanel());
         addPanel(new VersionsPanel());
-        addPanel(new PackagesPanel());
+//        addPanel(new PackagesPanel());
         addPanel(new ConfigurePanel());
         addPanel(new ProcessPanel());
         addPanel(new SummaryPanel());

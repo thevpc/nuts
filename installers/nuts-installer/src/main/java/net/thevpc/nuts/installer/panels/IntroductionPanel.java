@@ -18,7 +18,7 @@ public class IntroductionPanel extends AbstractInstallPanel{
     }
     @Override
     public void onShow() {
-        jep.setText(Utils.loadString("introduction.html",Utils.toMSS(getInstallerContext().getVars())));
+        jep.setText(Utils.loadString("introduction.html",Utils.getVarsConverter(getInstallerContext())));
         getInstallerContext().getExitButton().setEnabled(false);
         getInstallerContext().getCancelButton().setEnabled(true);
     }

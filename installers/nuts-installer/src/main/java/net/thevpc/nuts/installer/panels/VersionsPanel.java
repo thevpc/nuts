@@ -6,6 +6,7 @@ import net.thevpc.nuts.installer.connector.RequestQueryInfo;
 import net.thevpc.nuts.installer.connector.SimpleRecommendationConnector;
 import net.thevpc.nuts.installer.util.UIHelper;
 import net.thevpc.nuts.installer.util.Utils;
+import net.thevpc.nuts.installer.util.VerInfo;
 
 import javax.swing.*;
 import java.awt.*;
@@ -74,9 +75,12 @@ public class VersionsPanel extends AbstractInstallPanel {
     @Override
     public void onNext() {
         InstallData id = InstallData.of(getInstallerContext());
-        if(stableButton.isSelected()) {
+        if(stableButton.isSelected() || !previewButton.isEnabled()) {
             ButtonInfo jj = (ButtonInfo) (stableButton.getClientProperty("ButtonInfo"));
-            id.installVersion=jj.version;
+            id.installVersion=jj.verInfo;
+        }else{
+            ButtonInfo jj = (ButtonInfo) (previewButton.getClientProperty("ButtonInfo"));
+            id.installVersion=jj.verInfo;
         }
         super.onNext();
     }
@@ -90,24 +94,24 @@ public class VersionsPanel extends AbstractInstallPanel {
     }
 
     protected void updateButtons() {
+        getInstallerContext().getNextButton().setEnabled(false);
         Info info = loadInfo();
         SwingUtilities.invokeLater(() -> {
             getInstallerContext().stopLoading(getPageIndex());
             ButtonInfo ii = (ButtonInfo) (stableButton.getClientProperty("ButtonInfo"));
-            ii.html = "version " + info.stableVersion;
-            ii.version = info.stableVersion;
-            ii.url = info.stableVersionLocation;
+            ii.html = "version " + info.stable.runtime;
+            ii.verInfo = info.stable;
             ButtonInfo jj = (ButtonInfo) (previewButton.getClientProperty("ButtonInfo"));
-            jj.html = "version " + info.previewVersionApi;
-            jj.version = info.previewVersionApi;
-            jj.url = info.previewVersionLocation;
-            if (Objects.equals(info.stableVersion, info.previewVersionApi) || info.previewVersionApi ==null) {
+            jj.html = "version " + info.preview.runtime;
+            ii.verInfo = info.preview;
+            if (Objects.equals(info.stable.api, info.preview.api)) {
                 previewButton.setEnabled(false);
                 stableButton.setSelected(true);
                 jep.setText(ii.html);
             } else {
                 previewButton.setEnabled(true);
             }
+            getInstallerContext().getNextButton().setEnabled(ii.verInfo.valid);
             panel.invalidate();
             panel.revalidate();
         });
@@ -156,46 +160,50 @@ public class VersionsPanel extends AbstractInstallPanel {
          * }
          */
         Info ii=new Info();
-        if(info!=null) {
-            if(info.get("stableVersion") instanceof String) {
-                ii.stableVersion = (String) info.get("stableVersion");
-            }
-            if(info.get("previewVersion") instanceof String) {
-                ii.previewVersionApi = (String) info.get("previewVersion");
-            }
-        }
+//        if(info!=null) {
+//            if(info.get("stableVersion") instanceof String) {
+//                ii.stableVersionRuntime = (String) info.get("stableVersion");
+//            }
+//            if(info.get("previewVersion") instanceof String) {
+//                ii.previewVersionApi = (String) info.get("previewVersion");
+//            }
+//        }
 //        stableApiVersion=0.8.3
-//        stableImplVersion=0.8.3.0
+//        stableRuntimeVersion=0.8.3.0
 //        stableJarLocation=https://repo.maven.apache.org/maven2/net/thevpc/nuts/nuts/0.8.3/nuts-0.8.3.jar
 //        latestApiVersion=0.8.3
-//        latestImplVersion=0.8.3.1-alpha1
+//        latestRuntimeVersion=0.8.3.1-alpha1
 //        latestJarLocation=https://thevpc.net/maven/net/thevpc/nuts/nuts/0.8.3/nuts-0.8.3.jar
 //        apiVersion=0.8.3
 //        implVersion=0.8.3.1-alpha1
 //        jarLocation=https://thevpc.net/maven/net/thevpc/nuts/nuts/0.8.3/nuts-0.8.3.jar
 //        buildTime=Sun Jan 23 03:59:50 PM +0000 2022
-        ii.stableVersion=metadata.getProperty("stableImplVersion");
-        ii.stableVersionLocation=metadata.getProperty("stableJarLocation");
-        ii.previewVersionApi =metadata.getProperty("latestImplVersion");
-        ii.previewVersionLocation=metadata.getProperty("latestJarLocation");
-        if(Objects.equals(ii.previewVersionApi,ii.stableVersion)){
-            ii.previewVersionApi =null;
-            ii.previewVersionLocation=null;
+        ii.stable.api =metadata.getProperty("stableApiVersion");
+        ii.stable.runtime =metadata.getProperty("stableRuntimeVersion");
+        if(ii.stable.runtime==null){
+            ii.stable.runtime =metadata.getProperty("stableImplVersion");
         }
+        ii.stable.location=metadata.getProperty("stableJarLocation");
+        ii.stable.valid=ii.stable.api!=null;
+        ii.preview.api =metadata.getProperty("latestApiVersion");
+        ii.preview.runtime =metadata.getProperty("latestRuntimeVersion");
+        if(ii.preview.runtime==null){
+            ii.preview.runtime =metadata.getProperty("latestImplVersion");
+        }
+        ii.preview.location=metadata.getProperty("latestJarLocation");
+        ii.preview.valid=ii.preview.api!=null;
         return ii;
     }
-    private static class Info {
-        String stableVersion = null;
-        String stableVersionLocation = null;
-        String previewVersionApi = null;
-        String previewVersionImpl = null;
-        String previewVersionLocation = null;
+
+    public static class Info {
+        VerInfo stable = new VerInfo(true);
+        VerInfo preview = new VerInfo(false);
     }
+
     private static class ButtonInfo {
         String text;
         String html;
-        String version;
-        String url;
+        VerInfo verInfo;
         Color bg;
         Color bg2;
 

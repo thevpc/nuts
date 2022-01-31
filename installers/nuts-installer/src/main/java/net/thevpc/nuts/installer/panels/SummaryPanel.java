@@ -22,9 +22,9 @@ public class SummaryPanel extends AbstractInstallPanel {
     @Override
     public void onShow() {
         if (!getInstallerContext().isInstallFailed()) {
-            jep.setText(Utils.loadString("summary-success.html", Utils.toMSS(getInstallerContext().getVars())));
+            jep.setText(Utils.loadString("summary-success.html", Utils.getVarsConverter(getInstallerContext())));
         } else {
-            jep.setText(Utils.loadString("summary-error.html", Utils.toMSS(getInstallerContext().getVars())));
+            jep.setText(Utils.loadString("summary-error.html", Utils.getVarsConverter(getInstallerContext())));
         }
         getInstallerContext().getExitButton().setEnabled(true);
         getInstallerContext().getCancelButton().setEnabled(false);

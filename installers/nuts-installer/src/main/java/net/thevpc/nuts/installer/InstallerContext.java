@@ -2,6 +2,7 @@ package net.thevpc.nuts.installer;
 
 import javax.swing.*;
 import java.util.Map;
+import java.util.function.Function;
 
 public interface InstallerContext {
 
@@ -34,6 +35,8 @@ public interface InstallerContext {
     boolean hasPrevious(int pageIndex);
 
     Map<String, Object> getVars();
+
+
 
     public void startLoading();
 

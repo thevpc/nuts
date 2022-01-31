@@ -1,5 +1,7 @@
 package net.thevpc.nuts.installer.util;
 
+import net.thevpc.nuts.installer.InstallData;
+import net.thevpc.nuts.installer.InstallerContext;
 import net.thevpc.nuts.installer.NutsInstaller;
 
 import java.io.ByteArrayOutputStream;
@@ -75,7 +77,19 @@ public class Utils {
         throw new RuntimeException("cannot download "+url);
     }
 
-    public static String loadString(String url, Map<String, String> convert) {
+    public static Function<String, String> getVarsConverter(InstallerContext context) {
+        return new Function<String, String>() {
+            @Override
+            public String apply(String s) {
+                switch (s){
+                    case "apiVersion": return InstallData.of(context).installVersion.api;
+                }
+                return null;
+            }
+        };
+    }
+
+    public static String loadString(String url,Function<String, String> convert) {
         URL r = NutsInstaller.class.getResource(url);
         if (r == null) {
             throw new NoSuchElementException("not found " + url);
@@ -91,7 +105,7 @@ public class Utils {
 
             String str = buffer.toString();
             if (convert != null) {
-                str = replace(str, convert::get);
+                str = replace(str, convert);
             }
             return str;
         } catch (IOException e) {

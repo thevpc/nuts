@@ -1,5 +1,7 @@
 package net.thevpc.nuts.installer;
 
+import net.thevpc.nuts.installer.util.VerInfo;
+
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -9,9 +11,11 @@ public class InstallData {
     public boolean installStable;
     public boolean optionZ;
     public boolean optionS;
+    public boolean optionVerbose;
     public boolean optionk;
+    public boolean optionSwitch;
     public List<String> otherOptions=new ArrayList<>();
-    public String installVersion;
+    public VerInfo installVersion;
     public String workspace;
     public Set<String> recommendedIds=new LinkedHashSet<>();
 

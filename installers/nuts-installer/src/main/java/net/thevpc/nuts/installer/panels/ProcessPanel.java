@@ -5,6 +5,7 @@ import net.thevpc.nuts.installer.util.*;
 
 import javax.swing.*;
 import java.awt.*;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -78,6 +79,12 @@ public class ProcessPanel extends AbstractInstallPanel {
         if (id.optionk) {
             command.add("-k");
         }
+        if (id.optionVerbose) {
+            command.add("--verbose");
+        }
+        if (id.optionSwitch) {
+            command.add("--switch");
+        }
         if (id.workspace != null && id.workspace.trim().length() > 0) {
             command.add("-w");
             command.add(id.workspace.trim());
@@ -123,19 +130,24 @@ public class ProcessPanel extends AbstractInstallPanel {
     }
 
     private void runNutsCommand(String... command) {
+        InstallData id = InstallData.of(getInstallerContext());
         java.util.List<String> newCmd = new ArrayList<>();
         newCmd.add(getJavaCommand());
         newCmd.add("-jar");
-        newCmd.add(getNutsJar().toString());
+        newCmd.add(Utils.downloadFile(id.installVersion.location,".jar", null).toString());
         newCmd.add("-y");
         newCmd.add("-P=%n");
         newCmd.add("--color");
+        if(!id.installVersion.stable){
+            newCmd.add("-r=dev");
+        }
         newCmd.addAll(Arrays.asList(command));
         runCommand(newCmd.toArray(new String[0]));
     }
 
     private void runCommand(String[] command) {
         printStdOut("start process...\n");
+        printStdOut(String.join(" ",command)+"\n");
         ProcessBuilder sb = new ProcessBuilder();
         sb.command(Arrays.asList(command));
         Process p = null;
