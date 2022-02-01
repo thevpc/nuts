@@ -4,7 +4,7 @@ Network Updatable Things Services
      __        __    
   /\ \ \ _  __/ /______
  /  \/ / / / / __/ ___/
-/ /\  / /_/ / /_(__  )   dev version 0.8.3.1-alpha1 (accessible on thevpc.net)
+/ /\  / /_/ / /_(__  )   dev version 0.8.3.1 (accessible on thevpc.net)
 \_\ \/\__,_/\__/____/    production version 0.8.3.0 (accessible on maven central)
 </pre>
 
@@ -34,7 +34,7 @@ nuts --version
 It should show a result in the format : nuts-api-version/nuts-runtime-version
 
 ```
-0.8.3/0.8.3.1-alpha1
+0.8.3/0.8.3.1
 ```
 
 ## Installing Nuts Preview (Development, recommended for testing)

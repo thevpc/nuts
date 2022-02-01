@@ -157,7 +157,7 @@ nuts omegat
 ```
 * G0008- omnigraph (Graph Editor)
 ```
-  nuts install omnigraph:omnigraph
+  nuts install com.github.todense:omnigraph
 # Example of usage
   nuts omnigraph
 ```
@@ -169,14 +169,12 @@ nuts omegat
 ```
 * G0010- mucommander (File Manager)
 ```
-  nuts settings add repo --name=goodies
   nuts install com.mucommander:mucommander
 # Example of usage
   nuts mucommander
 ```
 * G0011- Java Decompiler GUI (Java Decompiler)
 ```
-  nuts settings add repo --name=goodies
   nuts install org.jd:jd-gui
 # Example of usage
   nuts jd-gui
@@ -198,6 +196,12 @@ nuts omegat
   nuts install com.github.anuken:mindustry-server
 # Example of usage
   nuts mindustry-server
+```
+* G0014- JDiskReport (Disk Usage Utility)
+```
+  nuts install com.jgoodies:jdiskreport
+# Example of usage
+  nuts jdiskreport
 ```
 
 ### Not yet available GUI Applications
