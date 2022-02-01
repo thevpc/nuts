@@ -9,8 +9,12 @@ ${{include($"${resources}/header.md")}}
 View Official releases [here](https://github.com/thevpc/nuts/releases) :
 Starred releases are most stable ones.
 
-## nuts 0.8.3.1 (DEVELOPMENT VERSION)
-- ```2022/XX/XX 	nuts 0.8.3.1``` not released yet nuts-runtime-0.8.3.1-alpha1.jar
+## nuts 0.8.3.2 (DEVELOPMENT VERSION)
+- ```2022/XX/XX 	nuts 0.8.3.2``` not released yet nuts-runtime-0.8.3.2-alpha1.jar
+- 
+## nuts 0.8.3.1 (PUBLISHED VERSION)
+- ```2022/02/01 	nuts 0.8.3.1``` released nuts-runtime-0.8.3.1.jar
+- UPDATED   : move support to reporisoties "nuts-public" and "nuts-preview"
 - FIXED   : Updated README 
 - FIXED   : {runtime} Fixed problem with dependency resolution whit maven's "import" scope
 - ROLLBACK : Rolled back test on maven-local thevpc 3 minutes ago
@@ -29,7 +33,7 @@ Starred releases are most stable ones.
 - FIXED : Call clearLine before Progress thevpc 54 minutes ago
 - FIXED : Call resetLine before Log thevpc 55 minutes ago
 
-## nuts 0.8.3.0 (DEVELOPMENT VERSION)
+## nuts 0.8.3.0 (PUBLISHED VERSION)
 - ```2021/01/05 	nuts 0.8.3.0 (*)``` released [download nuts-0.8.3.jar](https://repo.maven.apache.org/maven2/net/thevpc/nuts/nuts/0.8.3/nuts-0.8.3.jar)
 - WARNING : {api}  API has evolved with incompatibilities with previous versions
 - ADDED   : {runtime}  now search --dry displays the search query plan
