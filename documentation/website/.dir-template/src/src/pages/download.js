@@ -14,7 +14,7 @@ description: (
 <>
 <p>
 Download a graphical installer that will make it simple to install nuts package manager.
-After downloading the installer, just double click the file and follow the installation wizard.
+After downloading the installer, just double click the file and follow the installation wizard instructions.
 A valid java 1.8+ runtime is required.
 </p>
 <Link
@@ -75,8 +75,8 @@ imageUrl: 'img/terminal.png',
 description: (
 <>
 <p>
-Use a one commandline to download and install Nuts package manager using cUrl command.
-Use 'Portable' version for production and 'Preview' for all other cases.
+Use one commandline to download and install Nuts package manager with the help of cUrl command.
+Use 'Portable' version for production and 'Preview' version for all other cases.
 A valid java 1.8+ runtime is required.
 </p>
 <Link
@@ -132,7 +132,7 @@ function Download() {
             <h1 className="hero__title">{siteConfig.title}</h1>
             <p className="hero__subtitle">{siteConfig.tagline}</p>
             <img src="https://thevpc.net/nuts/images/pixel.gif?q=nuts-gsite" alt="" />
-            Select your download format...
+            Choose your download format...
         </div>
     </header>
     <main>
