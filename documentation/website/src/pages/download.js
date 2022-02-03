@@ -48,7 +48,7 @@ Linux x64 Installer
                         'button button--secondary--lg b2 ',
                         styles.getStarted,
                         )}
-                    href={'https://thevpc.net/nuts-installer-windows-x64'}
+                    href={'https://thevpc.net/nuts-installer-windows-x64.exe'}
                     target="_blank"
                     >
 Windows x64 Installer
