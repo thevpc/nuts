@@ -137,8 +137,7 @@ public class URLPath implements NutsPathSPI {
 
     @Override
     public String getName(NutsPath basePath) {
-        String loc = getLocation(basePath);
-        return loc == null ? "" : Paths.get(loc).getFileName().toString();
+        return new NutsPathParts(url.toString(),session).getName();
     }
 
     @Override

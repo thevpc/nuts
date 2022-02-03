@@ -225,6 +225,19 @@ public class NutsPathParts {
         return location;
     }
 
+    public String getName() {
+        if(location==null){
+            return null;
+        }
+        int i1 = location.lastIndexOf('/');
+        int i2 = location.lastIndexOf('\\');
+        int i=Math.max(i1,i2);
+        if(i>=0){
+            return location.substring(i+1);
+        }
+        return location;
+    }
+
     public String getQuery() {
         return query;
     }
