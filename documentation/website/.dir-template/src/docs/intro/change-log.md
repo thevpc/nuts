@@ -14,24 +14,24 @@ Starred releases are most stable ones.
 - 
 ## nuts 0.8.3.1 (PUBLISHED VERSION)
 - ```2022/02/01 	nuts 0.8.3.1``` released nuts-runtime-0.8.3.1.jar
-- UPDATED   : move support to reporisoties "nuts-public" and "nuts-preview"
+- UPDATED   : move support to repositories "nuts-public" and "nuts-preview"
 - FIXED   : Updated README 
 - FIXED   : {runtime} Fixed problem with dependency resolution whit maven's "import" scope
-- ROLLBACK : Rolled back test on maven-local thevpc 3 minutes ago
-- FIXED : Fixed nuts api without changing the version and without breaking the API, changes will be promoted to next version later thevpc 46 minutes ago
-- UPDATED : Updated NEXT API CHANGES thevpc 47 minutes ago
-- UPDATED : Updated .gitignore thevpc 47 minutes ago
-- FIXED : Fixed Help files thevpc 48 minutes ago
-- FIXED : Changed $* by $@ thevpc 49 minutes ago
-- FIXED : Fixed NAF support in ncode thevpc 49 minutes ago
-- UPDATED : Updated TEST thevpc 49 minutes ago
-- FIXED : Fixed display of URL paths thevpc 50 minutes ago
-- PERF : Optimize Maven Dependency Resolver thevpc 50 minutes ago
-- FIXED : Fix reinstall so that it calls uninstaller component thevpc 51 minutes ago
-- FIXED : Fix recommendation connector API thevpc 51 minutes ago
-- FIXED : Fix Class Name resolution when using CGLIB thevpc 52 minutes ago
-- FIXED : Call clearLine before Progress thevpc 54 minutes ago
-- FIXED : Call resetLine before Log thevpc 55 minutes ago
+- ROLLBACK : Rolled back test on maven-local
+- FIXED : Fixed nuts api without changing the version and without breaking the API, changes will be promoted to next version later 
+- UPDATED : Updated NEXT API CHANGES
+- UPDATED : Updated .gitignore
+- FIXED : Fixed Help files
+- FIXED : Changed $* by $@
+- FIXED : Fixed NAF support in ncode
+- UPDATED : Updated TEST
+- FIXED : Fixed display of URL paths
+- PERF : Optimize Maven Dependency Resolver
+- FIXED : Fix reinstall so that it calls uninstaller component
+- FIXED : Fix recommendation connector API
+- FIXED : Fix Class Name resolution when using CGLIB
+- FIXED : Call clearLine before Progress
+- FIXED : Call resetLine before Log
 
 ## nuts 0.8.3.0 (PUBLISHED VERSION)
 - ```2021/01/05 	nuts 0.8.3.0 (*)``` released [download nuts-0.8.3.jar](https://repo.maven.apache.org/maven2/net/thevpc/nuts/nuts/0.8.3/nuts-0.8.3.jar)

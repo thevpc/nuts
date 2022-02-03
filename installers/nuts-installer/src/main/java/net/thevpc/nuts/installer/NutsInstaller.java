@@ -1,17 +1,24 @@
 package net.thevpc.nuts.installer;
 
+import com.formdev.flatlaf.FlatDarkLaf;
 import com.formdev.flatlaf.FlatLightLaf;
 import net.thevpc.nuts.installer.panels.*;
+import net.thevpc.nuts.installer.util.UIHelper;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
 public class NutsInstaller implements InstallerContext {
+    private final static String VERSION="0.8.3.1";
+    private final Map<String, Object> vars = new HashMap<>();
+    private final java.util.List<AbstractInstallPanel> panels = new ArrayList<>();
+    private final LoadingPanel loading = new LoadingPanel();
     private JFrame frame;
     private CardLayout cardLayout;
     private JPanel centerPanel;
@@ -20,12 +27,9 @@ public class NutsInstaller implements InstallerContext {
     private JButton previousButton;
     private JProgressBar progressBar;
     private JButton cancelButton;
+    private JLabel leftComponent;
     private JButton exitButton;
     private boolean installFailed;
-    private final Map<String, Object> vars = new HashMap<>();
-    private final java.util.List<AbstractInstallPanel> panels = new ArrayList<>();
-    private final LoadingPanel loading = new LoadingPanel();
-
 
     public static void main(final String[] args) {
         SwingUtilities.invokeLater(NutsInstaller::createAndShowGUI);
@@ -36,11 +40,11 @@ public class NutsInstaller implements InstallerContext {
 //        FlatDarkLaf.setup();
         NutsInstaller mi = new NutsInstaller();
         final JPanel panel = mi.createMainPanel();
-        final JFrame frame = new JFrame("Nuts Package Manager Installer");
-        mi.frame=frame;
+        final JFrame frame = new JFrame("Nuts Package Manager Installer - "+VERSION);
+        mi.frame = frame;
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 //        frame.setResizable(false);
-        frame.setIconImage(new ImageIcon(NutsInstaller.class.getResource("icon.png")).getImage());
+        frame.setIconImage(new ImageIcon(NutsInstaller.class.getResource("nuts-icon.png")).getImage());
         frame.getContentPane().add(panel);
         frame.pack();
         frame.setLocationRelativeTo(null);
@@ -136,6 +140,11 @@ public class NutsInstaller implements InstallerContext {
     }
 
     @Override
+    public JFrame getFrame() {
+        return frame;
+    }
+
+    @Override
     public JButton getNextButton() {
         return nextButton;
     }
@@ -186,11 +195,23 @@ public class NutsInstaller implements InstallerContext {
         return vars;
     }
 
+    public void startLoading() {
+        cardLayout.show(centerPanel, "loading");
+        loading.onShow();
+    }
+
+    public void stopLoading(int index) {
+        loading.onHide();
+        cardLayout.show(centerPanel, String.valueOf(index));
+    }
+
     private JPanel createCenter() {
         cardLayout = new CardLayout();
         centerPanel = new JPanel(cardLayout);
         centerPanel.add(loading, "loading");
         loading.onAdd(this, 0);
+        addPanel(new DarkModePanel());
+//        addPanel(new TestTermPanel());
         addPanel(new IntroductionPanel());
         addPanel(new LicensePanel());
         addPanel(new VersionsPanel());
@@ -208,15 +229,6 @@ public class NutsInstaller implements InstallerContext {
         return pp;
     }
 
-    public void startLoading() {
-        cardLayout.show(centerPanel, "loading");
-        loading.onShow();
-    }
-
-    public void stopLoading(int index) {
-        loading.onHide();
-        cardLayout.show(centerPanel, String.valueOf(index));
-    }
 
     private void addPanel(AbstractInstallPanel p) {
         int index = getPagesCount() + 1;
@@ -236,11 +248,26 @@ public class NutsInstaller implements InstallerContext {
     }
 
     private JComponent createLeft() {
-        JLabel lab = new JLabel(
-                new ImageIcon(getClass().getResource("nuts-left.png"))
-        );
-        lab.setBorder(BorderFactory.createLoweredBevelBorder());
-        return lab;
+        ImageIcon icon = new ImageIcon(getClass().getResource("nuts-logo.png"));
+        int w = leftComponent.getWidth();
+        if(w<=0){
+            w=220;
+        }
+        Image img2 = UIHelper.getFixedSizeImage(icon.getImage(), w, -1, true);
+        icon=new ImageIcon(img2);
+        leftComponent = new JLabel(icon);
+        leftComponent.setOpaque(true);
+        setDarkMode(false);
+        leftComponent.setBorder(BorderFactory.createLoweredBevelBorder());
+        return leftComponent;
+    }
+
+    public void setDarkMode(boolean darkMode) {
+        if(darkMode){
+            leftComponent.setBackground(new Color(40,40,40));
+        }else{
+            leftComponent.setBackground(Color.WHITE);
+        }
     }
 
     public void setProgressByPageIndex() {

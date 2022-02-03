@@ -15,8 +15,10 @@ description: (
 <p>
 Download a graphical installer that will make it simple to install nuts package manager.
 After downloading the installer, just double click the file and follow the installation wizard instructions.
-A valid java 1.8+ runtime is required.
+A valid <img src="/static/img/java.png" alt=""  width="16"/> java 1.8+ runtime is required.
 </p>
+<ul>
+<li><img src="/static/img/java.png" alt=""  width="32"/> &nbsp;
 <Link
                     className={clsx(
                         'button button--secondary--lg b2 ',
@@ -25,9 +27,47 @@ A valid java 1.8+ runtime is required.
                     href={'https://thevpc.net/nuts-installer.jar'}
                     target="_blank"
                     >
-
 Portable Installer
 </Link>
+</li>
+<li><img src="/static/img/linux.png" alt=""  width="32" /> &nbsp;
+<Link
+                    className={clsx(
+                        'button button--secondary--lg b2 ',
+                        styles.getStarted,
+                        )}
+                    href={'https://thevpc.net/nuts-installer-linux-x64'}
+                    target="_blank"
+                    >
+Linux x64 Installer
+</Link>
+</li>
+<li><img src="/static/img/windows.png" alt=""  width="32"/> &nbsp;
+<Link
+                    className={clsx(
+                        'button button--secondary--lg b2 ',
+                        styles.getStarted,
+                        )}
+                    href={'https://thevpc.net/nuts-installer-windows-x64'}
+                    target="_blank"
+                    >
+Windows x64 Installer
+</Link>
+</li>
+<li><img src="/static/img/macos.png" alt=""  width="32"/> &nbsp;
+<Link
+                    className={clsx(
+                        'button button--secondary--lg b2 ',
+                        styles.getStarted,
+                        )}
+                    href={'https://thevpc.net/nuts-installer-macos-x64'}
+                    target="_blank"
+                    disabled
+                    >
+MacOS x64 Installer
+</Link>
+</li>
+</ul>
 </>
 ),
 },
@@ -40,8 +80,10 @@ description: (
 Download raw jar file to perform installation using your favourite shell.
 After downloading the installer, follow the documentation to install the package manager.
 Use 'Portable' version for production and 'Preview' for all other cases.
-A valid java 1.8+ runtime is required.
+A valid <img src="/static/img/java.png" alt=""  width="16"/> java 1.8+ runtime is required.
 </p>
+<ul>
+<li><img src="/static/img/java.png" alt=""  width="32"/> &nbsp;
 <Link
                     className={clsx(
                         'button button--secondary--lg b2 ',
@@ -53,6 +95,9 @@ A valid java 1.8+ runtime is required.
 
 Stable 0.8.3 Jar
 </Link>
+</li>
+<li><img src="/static/img/java.png" alt=""  width="32"/> &nbsp;
+
     <Link
                         className={clsx(
                             'button button--secondary b3',
@@ -65,6 +110,8 @@ Stable 0.8.3 Jar
                     Preview 0.8.3 Jar
                     </Link>
 
+</li>
+</ul>
 </>
 ),
 },
@@ -77,7 +124,7 @@ description: (
 <p>
 Use one commandline to download and install Nuts package manager with the help of cUrl command.
 Use 'Portable' version for production and 'Preview' version for all other cases.
-A valid java 1.8+ runtime is required.
+A valid <img src="/static/img/java.png" alt=""  width="16"/> java 1.8+ runtime is required.
 </p>
 <Link
                     className={clsx(
@@ -129,7 +176,7 @@ function Download() {
     description="Description will go into a meta tag in <head />">
     <header className={clsx('hero hero--primary', styles.heroBanner)}>
         <div className="container">
-            <h1 className="hero__title">{siteConfig.title}</h1>
+            <h1 className="hero__title"><img src="/static/img/nuts-icon.png" alt=""  width="64"/>{siteConfig.title}</h1>
             <p className="hero__subtitle">{siteConfig.tagline}</p>
             <img src="https://thevpc.net/nuts/images/pixel.gif?q=nuts-gsite" alt="" />
             Choose your download format...

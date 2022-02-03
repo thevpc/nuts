@@ -138,3 +138,6 @@
 /tutorials/naf/nuts-spring-boot-integration/.mvn/wrapper/maven-wrapper.jar
 /tutorials/naf/nuts-spring-boot-integration/.mvn/wrapper/maven-wrapper.jar
 /documentation/presentations/2021-a/images/old/
+/installers/nuts-installer/nuts-installer-0.8.3.1.build_artifacts.txt
+/installers/nuts-installer/dist/nuts-installer-linux-x64-0.8.3.1.build_artifacts.txt
+/installers/nuts-installer/dist/nuts-installer-linux-x64-0.8.3.1.o

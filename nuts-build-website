@@ -10,8 +10,10 @@ NUTS_JAR=~/.m2/repository/net/thevpc/nuts/nuts/$NUTS_VERSION/nuts-$NUTS_VERSION.
 ## DO NOT commit your changes to GIT for this file !!
 #NUTS_JAVA_HOME='';
 NUTS_JAVA_HOME=/usr/lib64/jvm/java-1.8.0-openjdk-1.8.0
+NUTS_GRAALVM_DIR=/data/programs/Development/Building/graalvm-ce-java11-21.3.0/
 
 base=$(dirname $0)
+base=$(readlink -f $base)
 cd $base;
 
 JAVA_CMD='java'
@@ -25,33 +27,143 @@ fi
 
 NUTS_TRACE='--trace=true'
 NUTS_VERBOSE=''
+NUTS_FLAG_NATIVE="true"
+NUTS_FLAG_REPO_STATS="true"
+NUTS_FLAG_IMPLICIT_ALL="true"
 for var in "$@"
 do
-  if [ x"$var" = x"--debug" ] ; then
+  case $var in
+
+    "--debug")
     NUTS_DEBUG_ARG="-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=5005"
-  fi
-  if [ x"$var" = x"--trace=false" ] ; then
+      ;;
+
+    "--trace=false")
     NUTS_TRACE='--trace=false'
-  fi
-  if [ x"$var" = x"--trace" ] ; then
+      ;;
+
+    "--~trace")
+    NUTS_TRACE='--trace=false'
+      ;;
+
+    "--trace")
     NUTS_TRACE='--trace=true'
-  fi
-  if [ x"$var" = x"--verbose" ] ; then
+      ;;
+
+    "--verbose")
     NUTS_VERBOSE="--verbose"
-  fi
+      ;;
+
+    "--all")
+    NUTS_FLAG_IMPLICIT_ALL="false"
+    NUTS_FLAG_NATIVE="true"
+    NUTS_FLAG_REPO_STATS="true"
+    NUTS_FLAG_DOCUSAURUS="true"
+      ;;
+
+    "--native=false")
+    if [ x"$NUTS_FLAG_IMPLICIT_ALL" == x"true" ]; then
+      NUTS_FLAG_IMPLICIT_ALL="false"
+      NUTS_FLAG_NATIVE="false"
+      NUTS_FLAG_REPO_STATS="false"
+      NUTS_FLAG_DOCUSAURUS="false"
+    fi
+    NUTS_FLAG_NATIVE='false'
+
+      ;;
+
+    "--~native")
+    if [ x"$NUTS_FLAG_IMPLICIT_ALL" == x"true" ]; then
+      NUTS_FLAG_IMPLICIT_ALL="false"
+      NUTS_FLAG_NATIVE="false"
+      NUTS_FLAG_REPO_STATS="false"
+      NUTS_FLAG_DOCUSAURUS="false"
+    fi
+    NUTS_FLAG_NATIVE='false'
+      ;;
+
+    "--native")
+    if [ x"$NUTS_FLAG_IMPLICIT_ALL" == x"true" ]; then
+      NUTS_FLAG_IMPLICIT_ALL="false"
+      NUTS_FLAG_NATIVE="false"
+      NUTS_FLAG_REPO_STATS="false"
+      NUTS_FLAG_DOCUSAURUS="false"
+    fi
+    NUTS_FLAG_NATIVE='true'
+      ;;
+
+    "--repo-stats=false")
+    if [ x"$NUTS_FLAG_IMPLICIT_ALL" == x"true" ]; then
+      NUTS_FLAG_IMPLICIT_ALL="false"
+      NUTS_FLAG_NATIVE="false"
+      NUTS_FLAG_REPO_STATS="false"
+      NUTS_FLAG_DOCUSAURUS="false"
+    fi
+    NUTS_FLAG_REPO_STATS='false'
+      ;;
+
+    "--~repo-stats")
+    if [ x"$NUTS_FLAG_IMPLICIT_ALL" == x"true" ]; then
+      NUTS_FLAG_IMPLICIT_ALL="false"
+      NUTS_FLAG_NATIVE="false"
+      NUTS_FLAG_REPO_STATS="false"
+      NUTS_FLAG_DOCUSAURUS="false"
+    fi
+    NUTS_FLAG_REPO_STATS='false'
+      ;;
+
+    "--repo-stats")
+    if [ x"$NUTS_FLAG_IMPLICIT_ALL" == x"true" ]; then
+      NUTS_FLAG_IMPLICIT_ALL="false"
+      NUTS_FLAG_NATIVE="false"
+      NUTS_FLAG_REPO_STATS="false"
+      NUTS_FLAG_DOCUSAURUS="false"
+    fi
+    NUTS_FLAG_REPO_STATS='true'
+      ;;
+
+    "--docusaurus")
+    if [ x"$NUTS_FLAG_IMPLICIT_ALL" == x"true" ]; then
+      NUTS_FLAG_IMPLICIT_ALL="false"
+      NUTS_FLAG_NATIVE="false"
+      NUTS_FLAG_REPO_STATS="false"
+      NUTS_FLAG_DOCUSAURUS="false"
+    fi
+    NUTS_FLAG_DOCUSAURUS='true'
+      ;;
+
+  esac
 done
 
+if [ x"$NUTS_FLAG_IMPLICIT_ALL" == x"true" ]; then
+  NUTS_FLAG_IMPLICIT_ALL="false"
+  NUTS_FLAG_NATIVE="true"
+  NUTS_FLAG_REPO_STATS="true"
+  NUTS_FLAG_DOCUSAURUS="true"
+fi
 
-$JAVA_CMD $NUTS_DEBUG_ARG -jar core/nuts/target/nuts-$NUTS_VERSION.jar -ZSbyK -w development-build $NUTS_VERBOSE $NUTS_TRACE ---!init-platforms ---!init-launchers ./nuts-build-website.nsh
+if [ x"$NUTS_FLAG_DOCUSAURUS" == x"true" ]; then
+  $JAVA_CMD $NUTS_DEBUG_ARG -jar core/nuts/target/nuts-$NUTS_VERSION.jar -ZSbyK -w development-build $NUTS_VERBOSE $NUTS_TRACE ---!init-platforms ---!init-launchers ./nuts-build-website.nsh
+fi
 
 ## should move these commands to nuts-build-website.nsh, for that we need to ensure that 'find' command is well implemented in 'nsh'
-base=$(readlink -f $base)
-w_preview=$(readlink -f $base/../nuts-preview)
-mkdir -p "$base/../nuts-preview/net/thevpc/nuts"
-cd ~/.m2/repository/net/thevpc/nuts/
-echo $w_preview
-pwd
-find -iregex '\(.*[.]jar\)\|\(.*[.]asc\)\|\(.*[.]pom\)' -exec cp --parents \{\} $w_preview/net/thevpc/nuts/ \;
-cd $base
-$JAVA_CMD $NUTS_DEBUG_ARG -jar core/nuts/target/nuts-$NUTS_VERSION.jar -w development-build $NUTS_VERBOSE $NUTS_TRACE settings update stats $base/../nuts-preview
-$JAVA_CMD $NUTS_DEBUG_ARG -jar core/nuts/target/nuts-$NUTS_VERSION.jar -w development-build $NUTS_VERBOSE $NUTS_TRACE settings update stats $base/../nuts-public
+if [ x"$NUTS_FLAG_REPO_STATS" == x"true" ]; then
+  w_preview=$(readlink -f $base/../nuts-preview)
+  mkdir -p "$base/../nuts-preview/net/thevpc/nuts"
+  cd ~/.m2/repository/net/thevpc/nuts/
+  echo $w_preview
+  pwd
+  find -iregex '\(.*[.]jar\)\|\(.*[.]asc\)\|\(.*[.]pom\)' -exec cp --parents \{\} $w_preview/net/thevpc/nuts/ \;
+  cd $base
+  $JAVA_CMD $NUTS_DEBUG_ARG -jar core/nuts/target/nuts-$NUTS_VERSION.jar -w development-build $NUTS_VERBOSE $NUTS_TRACE settings update stats $base/../nuts-preview
+  $JAVA_CMD $NUTS_DEBUG_ARG -jar core/nuts/target/nuts-$NUTS_VERSION.jar -w development-build $NUTS_VERBOSE $NUTS_TRACE settings update stats $base/../nuts-public
+fi
+
+####################################
+## GENERATE NATIVE IMAGE
+if [ x"$NUTS_FLAG_NATIVE" == x"true" ]; then
+  mkdir -p $base/installers/nuts-installer/dist
+  NUTS_INSTALLER_VERSION=0.8.3.1
+  NUTS_INSTALLER_TARGET=linux-x64
+  $NUTS_GRAALVM_DIR/bin/native-image --no-fallback -jar $base/installers/nuts-installer/target/nuts-installer-$NUTS_INSTALLER_VERSION.jar $base/installers/nuts-installer/dist/nuts-installer-$NUTS_INSTALLER_TARGET-$NUTS_INSTALLER_VERSION
+fi

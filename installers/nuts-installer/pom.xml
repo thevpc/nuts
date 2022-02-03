@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>net.thevpc.nuts.installer</groupId>
     <artifactId>nuts-installer</artifactId>
-    <version>0.8.3</version>
+    <version>0.8.3.1</version>
     <packaging>jar</packaging>
     <name>Nuts Installer</name>
     <url>https://github.com/thevpc/nuts</url>

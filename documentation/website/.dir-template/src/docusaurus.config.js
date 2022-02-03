@@ -12,7 +12,7 @@ module.exports = {
       title: 'Nuts Package Manager',
       logo: {
         alt: 'Nuts Package Manager',
-        src: 'img/shuriken.png',
+        src: 'img/nuts-icon.png',
       },
       items: [
         {
@@ -60,10 +60,6 @@ module.exports = {
             {
               label: 'Stack Overflow',
               href: 'https://stackoverflow.com/questions/tagged/nuts',
-            },
-            {
-              label: 'Features Request',
-              href: 'https://github.com/thevpc/nuts/issues',
             },
             {
               label: 'Issues Tracker',

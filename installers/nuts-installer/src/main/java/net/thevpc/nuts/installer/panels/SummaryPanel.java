@@ -1,6 +1,5 @@
 package net.thevpc.nuts.installer.panels;
 
-import net.thevpc.nuts.installer.InstallData;
 import net.thevpc.nuts.installer.util.UIHelper;
 import net.thevpc.nuts.installer.util.Utils;
 

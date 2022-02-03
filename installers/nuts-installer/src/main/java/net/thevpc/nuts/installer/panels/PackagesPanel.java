@@ -1,7 +1,8 @@
 package net.thevpc.nuts.installer.panels;
 
-import net.thevpc.nuts.installer.App;
-import net.thevpc.nuts.installer.InstallData;
+import net.thevpc.nuts.installer.model.App;
+import net.thevpc.nuts.installer.model.ButtonInfo;
+import net.thevpc.nuts.installer.model.InstallData;
 import net.thevpc.nuts.installer.NutsInstaller;
 import net.thevpc.nuts.installer.connector.RequestQuery;
 import net.thevpc.nuts.installer.connector.RequestQueryInfo;
@@ -13,9 +14,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.io.StringReader;
 import java.net.URL;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -57,7 +55,7 @@ public class PackagesPanel extends AbstractInstallPanel {
 //            @Override
 //            public void mouseEntered(MouseEvent e) {
 //                JToggleButton a = (JToggleButton) e.getSource();
-//                ButtonInfo button = (ButtonInfo) a.getClientProperty("buttonInfo");
+//                PackageButtonInfo button = (PackageButtonInfo) a.getClientProperty("buttonInfo");
 //                jep.setText(button.desc);
 //            }
 //        };
@@ -67,7 +65,7 @@ public class PackagesPanel extends AbstractInstallPanel {
         java.util.List<String> selection = new ArrayList<>();
         boolean companionsSelected = false;
         for (JToggleButton a : buttons) {
-            ButtonInfo button = (ButtonInfo) a.getClientProperty("buttonInfo");
+            PackageButtonInfo button = (PackageButtonInfo) a.getClientProperty("buttonInfo");
             if (a.isSelected()) {
                 if (button.app.getId().equals("<companions>")) {
                     companionsSelected = true;
@@ -104,23 +102,23 @@ public class PackagesPanel extends AbstractInstallPanel {
         getInstallerContext().stopLoading(getPageIndex());
     }
 
-    protected ButtonInfo[] getButtons() {
-        java.util.List<ButtonInfo> all = new ArrayList<>();
-        all.add(new ButtonInfo(new App("<companions>"), "Companions", Utils.loadString("package-companions.html", null), false, null, true));
+    protected PackageButtonInfo[] getButtons() {
+        java.util.List<PackageButtonInfo> all = new ArrayList<>();
+        all.add(new PackageButtonInfo(new App("<companions>"), "Companions", Utils.loadString("package-companions.html", null), false, null, true));
         try {
-            ButtonInfo[] onlineButtons = getOnlineButtons();
+            PackageButtonInfo[] onlineButtons = getOnlineButtons();
             if (onlineButtons != null) {
                 all.addAll(Arrays.asList(onlineButtons));
-                return all.toArray(new ButtonInfo[0]);
+                return all.toArray(new PackageButtonInfo[0]);
             }
         } catch (Exception e) {
             //
         }
         all.addAll(Arrays.asList(getDefaultButtons()));
-        return all.toArray(new ButtonInfo[0]);
+        return all.toArray(new PackageButtonInfo[0]);
     }
 
-    protected ButtonInfo[] getOnlineButtons() {
+    protected PackageButtonInfo[] getOnlineButtons() {
         SimpleRecommendationConnector connector = new SimpleRecommendationConnector();
         RequestQueryInfo ri = new RequestQueryInfo();
         RequestQuery q = new RequestQuery();
@@ -151,7 +149,7 @@ public class PackagesPanel extends AbstractInstallPanel {
         }
         return recommendedIds.stream().map(x -> {
             try {
-                ButtonInfo b = new ButtonInfo(
+                PackageButtonInfo b = new PackageButtonInfo(
                         new App(
                                 (String) x.get("id"),
                                 (String) x.get("repos")
@@ -169,22 +167,22 @@ public class PackagesPanel extends AbstractInstallPanel {
             } catch (Exception e) {
                 return null;
             }
-        }).filter(Objects::nonNull).toArray(ButtonInfo[]::new);
+        }).filter(Objects::nonNull).toArray(PackageButtonInfo[]::new);
     }
 
-    protected ButtonInfo[] getDefaultButtons() {
-        java.util.List<ButtonInfo> all = new ArrayList<>();
-        all.add(new ButtonInfo(new App("org.jedit:jedit"), "JEdit", "Text Editor", true,
+    protected PackageButtonInfo[] getDefaultButtons() {
+        java.util.List<PackageButtonInfo> all = new ArrayList<>();
+        all.add(new PackageButtonInfo(new App("org.jedit:jedit"), "JEdit", "Text Editor", true,
                 "https://raw.githubusercontent.com/thevpc/vpc-public-nuts/master/org/jedit/jedit/5.6.0/jedit-icon48.png"
                 , false));
-        all.add(new ButtonInfo(new App("org.jd:jd-gui"), "Java Decompiler", "Java Decompiler", true,
+        all.add(new PackageButtonInfo(new App("org.jd:jd-gui"), "Java Decompiler", "Java Decompiler", true,
                 "http://java-decompiler.github.io/img/Icon_java_64.png"
                 , false));
-        all.add(new ButtonInfo(new App("com.mucommander:mucommander"), "Mu-Commander", "File Explorer", true,
+        all.add(new PackageButtonInfo(new App("com.mucommander:mucommander"), "Mu-Commander", "File Explorer", true,
                 "https://raw.githubusercontent.com/thevpc/vpc-public-nuts/master/com/mucommander/mucommander/0.9.7-1/mucommander-icon.png"
                 , false));
-//        all.add(new ButtonInfo("<companions>", "Pangaea Note", "Note Taking Application", true, null, false));
-        return all.toArray(new ButtonInfo[0]);
+//        all.add(new PackageButtonInfo("<companions>", "Pangaea Note", "Note Taking Application", true, null, false));
+        return all.toArray(new PackageButtonInfo[0]);
     }
 
     protected void updateButtons() {
@@ -193,9 +191,9 @@ public class PackagesPanel extends AbstractInstallPanel {
         });
         buttons.clear();
         try {
-            ButtonInfo[] u = getButtons();
+            PackageButtonInfo[] u = getButtons();
             if (u != null) {
-                for (ButtonInfo b : u) {
+                for (PackageButtonInfo b : u) {
                     if (b != null) {
                         JToggleButton a = new JToggleButton(b.name);
                         a.putClientProperty("buttonInfo", b);
@@ -214,7 +212,7 @@ public class PackagesPanel extends AbstractInstallPanel {
             int col = 0;
             GridBagConstraints c = new GridBagConstraints();
             for (JToggleButton a : buttons) {
-                ButtonInfo button = (ButtonInfo) a.getClientProperty("buttonInfo");
+                PackageButtonInfo button = (PackageButtonInfo) a.getClientProperty("buttonInfo");
                 a.setIcon(gelAppUi(button.icon, button.gui));
                 a.setToolTipText(button.desc);
                 a.setSelected(button.selected);
@@ -266,7 +264,7 @@ public class PackagesPanel extends AbstractInstallPanel {
                 int width = image.getWidth(null);
                 int height = image.getHeight(null);
                 if (width > 0 && height > 0) {
-                    return new ImageIcon(UIHelper.getFixedSizeImage(image, 32, 32));
+                    return new ImageIcon(UIHelper.getFixedSizeImage(image, 32, 32,false));
                 }
             } catch (Exception ex) {
                 //
@@ -274,7 +272,7 @@ public class PackagesPanel extends AbstractInstallPanel {
         }
         URL r = NutsInstaller.class.getResource(gui ? "mouse.png" : "keyboard.png");
         Image image = Toolkit.getDefaultToolkit().getImage(r);
-        return new ImageIcon(UIHelper.getFixedSizeImage(image, 32, 32));
+        return new ImageIcon(UIHelper.getFixedSizeImage(image, 32, 32,false));
     }
 
     @Override
@@ -282,11 +280,13 @@ public class PackagesPanel extends AbstractInstallPanel {
         super.onNext();
         InstallData u = InstallData.of(getInstallerContext());
         for (JToggleButton button : buttons) {
-            ButtonInfo bi = (ButtonInfo) button.getClientProperty("buttonInfo");
+            PackageButtonInfo bi = (PackageButtonInfo) button.getClientProperty("buttonInfo");
             if ("<companions>".equals(bi.app.getId())) {
-                u.optionk = false;
+                u.optionk = !button.isSelected();
             } else {
-                u.recommendedIds.add(bi.app);
+                if(button.isSelected()) {
+                    u.recommendedIds.add(bi.app);
+                }
             }
         }
     }
@@ -298,7 +298,7 @@ public class PackagesPanel extends AbstractInstallPanel {
         new Thread(this::updateButtons).start();
     }
 
-    public class ButtonInfo {
+    public class PackageButtonInfo {
         App app;
         String name;
         String desc;
@@ -306,7 +306,7 @@ public class PackagesPanel extends AbstractInstallPanel {
         boolean gui;
         boolean selected;
 
-        public ButtonInfo(App app, String name, String desc, boolean gui, String icon, boolean selected) {
+        public PackageButtonInfo(App app, String name, String desc, boolean gui, String icon, boolean selected) {
             this.app = app;
             this.name = name;
             this.desc = desc;

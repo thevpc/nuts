@@ -1,14 +1,12 @@
 package net.thevpc.nuts.installer.panels;
 
-import net.thevpc.nuts.installer.App;
-import net.thevpc.nuts.installer.InstallData;
+import net.thevpc.nuts.installer.model.App;
+import net.thevpc.nuts.installer.model.InstallData;
 import net.thevpc.nuts.installer.util.*;
 
 import javax.swing.*;
 import java.awt.*;
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Set;
@@ -24,13 +22,14 @@ public class ProcessPanel extends AbstractInstallPanel {
     public ProcessPanel() {
         super(new BorderLayout());
         add(UIHelper.titleLabel("Please wait unless the installation is complete"), BorderLayout.PAGE_START);
-        ansiTermPane = new AnsiTermPane();
+        ansiTermPane = new AnsiTermPane(false);
 //        ansiTermPane.setEditable(false);
         add(new JScrollPane(ansiTermPane), BorderLayout.CENTER);
         add(logLabel, BorderLayout.PAGE_END);
 
         logLabel.setFont(new Font("Courier New", Font.PLAIN, 12));
     }
+
 
     @Override
     public void onPrevious() {
@@ -40,6 +39,7 @@ public class ProcessPanel extends AbstractInstallPanel {
 
     @Override
     public void onShow() {
+        ansiTermPane.setDarkMode(InstallData.of(getInstallerContext()).darkMode);
         getInstallerContext().getExitButton().setEnabled(false);
         getInstallerContext().getCancelButton().setEnabled(true);
         if (!processed) {

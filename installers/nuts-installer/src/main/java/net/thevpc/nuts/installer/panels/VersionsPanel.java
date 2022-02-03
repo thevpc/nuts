@@ -1,12 +1,14 @@
 package net.thevpc.nuts.installer.panels;
 
-import net.thevpc.nuts.installer.InstallData;
+import net.thevpc.nuts.installer.InstallerContext;
+import net.thevpc.nuts.installer.model.ButtonInfo;
+import net.thevpc.nuts.installer.model.InstallData;
 import net.thevpc.nuts.installer.connector.RequestQuery;
 import net.thevpc.nuts.installer.connector.RequestQueryInfo;
 import net.thevpc.nuts.installer.connector.SimpleRecommendationConnector;
 import net.thevpc.nuts.installer.util.UIHelper;
 import net.thevpc.nuts.installer.util.Utils;
-import net.thevpc.nuts.installer.util.VerInfo;
+import net.thevpc.nuts.installer.model.VerInfo;
 
 import javax.swing.*;
 import java.awt.*;
@@ -26,6 +28,11 @@ public class VersionsPanel extends AbstractInstallPanel {
 
     public VersionsPanel() {
         super(new BorderLayout());
+    }
+
+    @Override
+    public void onAdd(InstallerContext installerContext, int pageIndex) {
+        super.onAdd(installerContext, pageIndex);
         add(UIHelper.titleLabel("Please select the version you want to install locally"), BorderLayout.PAGE_START);
         GridLayout gg = new GridLayout(1, 2);
         gg.setVgap(10);
@@ -51,12 +58,13 @@ public class VersionsPanel extends AbstractInstallPanel {
         jsp.setMaximumSize(new Dimension(1000, 100));
         jsp.setPreferredSize(new Dimension(100, 100));
         add(UIHelper.margins(jsp, 10), BorderLayout.PAGE_END);
-        jep.setText("<html><body>select the <strong>stable</strong> version for production</body></html>");
-    }
+        jep.setText("<html><body>select the <strong>stable</strong> version for production</body></html>");    }
 
     private JToggleButton add2(ButtonInfo s) {
 
+        InstallData id = InstallData.of(getInstallerContext());
         JToggleButton a = new JToggleButton(s.text);
+        a.setForeground(Color.BLACK);
         a.putClientProperty("ButtonInfo", s);
         a.setBackground(s.bg);
 //        a.setPreferredSize(new Dimension(60,60));
@@ -201,26 +209,5 @@ public class VersionsPanel extends AbstractInstallPanel {
         VerInfo stable = new VerInfo(true);
         VerInfo preview = new VerInfo(false);
     }
-
-    private static class ButtonInfo {
-        String text;
-        String html;
-        VerInfo verInfo;
-        Color bg;
-        Color bg2;
-
-        public ButtonInfo(String text, String html, Color bg, Color bg2) {
-            this.text = text;
-            this.html = html;
-            this.bg = bg;
-            this.bg2 = bg2;
-        }
-
-        private void apply(JToggleButton jtb) {
-            JToggleButton a = new JToggleButton(text);
-            a.setBackground(bg);
-        }
-    }
-
 
 }

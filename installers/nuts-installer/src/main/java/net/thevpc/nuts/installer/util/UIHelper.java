@@ -24,14 +24,9 @@ public class UIHelper {
         return c;
     }
 
-    public static Image getFixedSizeImage(Image srcImg, int w, int h) {
+    public static Image getFixedSizeImage(Image srcImg, int w, int h,boolean preserveRatio) {
         if (w <= 0 && h <= 0) {
             return srcImg;
-        }
-        if (w >= 0 && h < 0) {
-            h = w;
-        } else if (h >= 0 && w < 0) {
-            w = h;
         }
         MediaTracker mt=new MediaTracker(new JLabel());
         mt.addImage(srcImg,1);
@@ -42,6 +37,20 @@ public class UIHelper {
         }
         int width = srcImg.getWidth(null);
         int height = srcImg.getHeight(null);
+        if(preserveRatio){
+            if (w <= 0) {
+                w = h*width/height;
+            }else if(h<=0){
+                h = w*height/width;
+            }
+        }else {
+            if (w >= 0 && h < 0) {
+                h = w;
+            } else if (h >= 0 && w < 0) {
+                w = h;
+            }
+        }
+
         if (w <= 0) {
             w = width;
         }
@@ -54,7 +63,7 @@ public class UIHelper {
         BufferedImage resizedImg = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
         Graphics2D g2 = resizedImg.createGraphics();
 
-        g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+        g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
         g2.drawImage(srcImg, 0, 0, w, h, null);
         g2.dispose();
 

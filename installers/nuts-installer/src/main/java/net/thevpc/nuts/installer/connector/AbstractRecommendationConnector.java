@@ -1,10 +1,9 @@
 package net.thevpc.nuts.installer.connector;
 
 import com.google.gson.Gson;
-import net.thevpc.nuts.installer.util.NutsId;
+import net.thevpc.nuts.installer.model.NutsId;
 import net.thevpc.nuts.installer.util.Utils;
 
-import java.io.FileReader;
 import java.io.Reader;
 import java.io.Writer;
 import java.nio.file.Files;

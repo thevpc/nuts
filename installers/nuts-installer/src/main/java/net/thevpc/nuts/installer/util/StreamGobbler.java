@@ -7,22 +7,22 @@ import java.io.InputStreamReader;
 import java.util.function.Consumer;
 
 public class StreamGobbler extends Thread {
-    InputStream is;
-    Consumer<String> cc;
+    private InputStream inputStream;
+    private Consumer<String> consumer;
 
-    public StreamGobbler(InputStream is, Consumer<String> cc) {
-        this.is = is;
-        this.cc = cc;
+    public StreamGobbler(InputStream inputStream, Consumer<String> consumer) {
+        this.inputStream = inputStream;
+        this.consumer = consumer;
     }
 
     public void run() {
         try {
-            InputStreamReader isr = new InputStreamReader(is);
+            InputStreamReader isr = new InputStreamReader(inputStream);
             BufferedReader br = new BufferedReader(isr);
             int r;
             char[] bb = new char[4096];
             while ((r = br.read(bb)) > 0) {
-                cc.accept(new String(bb, 0, r));
+                consumer.accept(new String(bb, 0, r));
             }
         } catch (IOException ioe) {
             ioe.printStackTrace();

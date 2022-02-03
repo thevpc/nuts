@@ -1,6 +1,6 @@
 package net.thevpc.nuts.installer.util;
 
-import net.thevpc.nuts.installer.InstallData;
+import net.thevpc.nuts.installer.model.InstallData;
 import net.thevpc.nuts.installer.InstallerContext;
 import net.thevpc.nuts.installer.NutsInstaller;
 

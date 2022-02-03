@@ -1,21 +1,16 @@
 package net.thevpc.nuts.installer.panels;
 
-import net.thevpc.nuts.installer.InstallData;
-import net.thevpc.nuts.installer.util.GridBagConstraints2;
+import net.thevpc.nuts.installer.model.InstallData;
+import net.thevpc.nuts.installer.util.GBC;
 import net.thevpc.nuts.installer.util.ProcessUtils;
 import net.thevpc.nuts.installer.util.UIHelper;
 import net.thevpc.nuts.installer.util.Utils;
 
 import javax.swing.*;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.io.File;
-import java.util.ArrayList;
 import java.util.Arrays;
 
 public class ConfigurePanel extends AbstractInstallPanel {
@@ -23,12 +18,13 @@ public class ConfigurePanel extends AbstractInstallPanel {
     JLabel javaLabel;
     JCheckBox optionVerbose;
     JCheckBox optionSwitch;
+    JCheckBox optionLogFileVerbose;
     JCheckBox optionZReset;
     JCheckBox optionSStandalone;
     JLabel customWorkspaceLabel;
     JLabel otherOptionsLabel;
-    JTextField javaPath=new JTextField();
-    JButton javaPathButton=new JButton("...");
+    JTextField javaPath = new JTextField();
+    JButton javaPathButton = new JButton("...");
     JTextArea otherOptions;
 
     public ConfigurePanel() {
@@ -36,6 +32,7 @@ public class ConfigurePanel extends AbstractInstallPanel {
 
         optionWorkspace = new JTextField();
         optionVerbose = new JCheckBox("Verbose (--verbose)");
+        optionLogFileVerbose = new JCheckBox("Log File (--log-file-verbose)");
         optionZReset = new JCheckBox("Reset Workspace (-Z)");
         optionSStandalone = new JCheckBox("Standalone Mode (-S)");
         optionSwitch = new JCheckBox("Switch Mode (--switch)");
@@ -45,6 +42,7 @@ public class ConfigurePanel extends AbstractInstallPanel {
         otherOptions = new JTextArea("");
 
         optionVerbose.setToolTipText("Verbose Mode enable extra trale/logging messages that could be helpful when something does not run as expected.");
+        optionLogFileVerbose.setToolTipText("Messages are stored to log file");
         optionZReset.setToolTipText("Reset Workspace will delete any existing installation files.");
         optionSStandalone.setToolTipText("Standalone Mode will force all files to be stored in a single root folder.");
         optionSwitch.setToolTipText("Switch to, as a default workspace.");
@@ -58,11 +56,11 @@ public class ConfigurePanel extends AbstractInstallPanel {
         javaPathButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                JFileChooser jfc=new JFileChooser();
+                JFileChooser jfc = new JFileChooser();
                 int r = jfc.showOpenDialog(ConfigurePanel.this);
-                if(r==JFileChooser.APPROVE_OPTION){
+                if (r == JFileChooser.APPROVE_OPTION) {
                     File f = jfc.getSelectedFile();
-                    if(f!=null){
+                    if (f != null) {
                         javaPath.setText(f.getPath());
                     }
                 }
@@ -70,26 +68,28 @@ public class ConfigurePanel extends AbstractInstallPanel {
         });
         add(UIHelper.titleLabel("Please select installation options"), BorderLayout.PAGE_START);
         JPanel gbox = new JPanel(new GridBagLayout());
-        GridBagConstraints2 gc = new GridBagConstraints2().setAnchor(GridBagConstraints.NORTHWEST)
+        GBC gc = new GBC().setAnchor(GridBagConstraints.NORTHWEST)
                 .setFill(GridBagConstraints.HORIZONTAL)
-                .setInsets(new Insets(5, 5, 5, 5));
+                .setInsets(5, 5, 5, 5);
         gbox.add(optionZReset, gc.setGrid(0, 0));
-        gbox.add(optionSStandalone, gc.setGrid(0, 1));
-        gbox.add(optionSwitch, gc.setGrid(0, 2));
-        gbox.add(optionVerbose, gc.setGrid(0, 3));
-        gbox.add(customWorkspaceLabel, gc.setGrid(0, 4));
-        gbox.add(optionWorkspace, gc.setGrid(0, 5));
-        gbox.add(otherOptionsLabel, gc.setGrid(0, 6));
-        gbox.add(new JScrollPane(otherOptions), gc.setGrid(0, 7).setFill(GridBagConstraints.BOTH).setWeightx(1).setWeighty(1));
-        gbox.add(javaLabel, gc.setGrid(0, 8).setFill(GridBagConstraints.HORIZONTAL).setWeightx(0).setWeighty(0));
-        gbox.add(jPanel(), gc.setGrid(0, 9));
+        gbox.add(optionSStandalone, gc.nextLine());
+        gbox.add(optionSwitch, gc.nextLine());
+        gbox.add(optionVerbose, gc.nextLine());
+        gbox.add(optionLogFileVerbose, gc.nextLine());
+        gbox.add(customWorkspaceLabel, gc.nextLine());
+        gbox.add(optionWorkspace, gc.nextLine());
+        gbox.add(otherOptionsLabel, gc.nextLine());
+        gbox.add(new JScrollPane(otherOptions), gc.nextLine().setFill(GridBagConstraints.BOTH).setWeight(1, 1));
+        gbox.add(javaLabel, gc.nextLine().setFill(GridBagConstraints.HORIZONTAL).setWeight(0, 0));
+        gbox.add(jPanel(), gc.nextLine());
         add(UIHelper.margins(gbox, 10));
         resetDefaults();
     }
-    private JPanel jPanel(){
-        JPanel p=new JPanel(new BorderLayout());
-        p.add(javaPath,BorderLayout.CENTER);
-        p.add(javaPathButton,BorderLayout.LINE_END);
+
+    private JPanel jPanel() {
+        JPanel p = new JPanel(new BorderLayout());
+        p.add(javaPath, BorderLayout.CENTER);
+        p.add(javaPathButton, BorderLayout.LINE_END);
         return p;
     }
 
@@ -113,7 +113,7 @@ public class ConfigurePanel extends AbstractInstallPanel {
             id.workspace = optionWorkspace.getText().trim();
         }
         id.otherOptions.addAll(Arrays.asList(ProcessUtils.parseCommandLine(otherOptions.getText())));
-        id.java= Utils.trim(javaPath.getText());
+        id.java = Utils.trim(javaPath.getText());
         super.onNext();
     }
 

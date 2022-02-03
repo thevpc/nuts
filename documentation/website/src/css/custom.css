@@ -23,6 +23,24 @@
   padding: 0 var(--ifm-pre-padding);
 }
 
+@font-face{
+    font-family: 'ZeroesTwo';
+    src: url("/static/fonts/ZeroesTwo.ttf")  format('truetype');
+}
+
+.zero2{
+    font-family: ZeroesTwo;
+}
+
+.hero__title {
+    font-family: ZeroesTwo;
+    font-size: 3rem;
+  }
+.hero__subtitle {
+    font-family: ZeroesTwo;
+    font-size: 1.5rem;
+}
+
 .b1{
 }
 .b2{
