@@ -249,10 +249,7 @@ public class NutsInstaller implements InstallerContext {
 
     private JComponent createLeft() {
         ImageIcon icon = new ImageIcon(getClass().getResource("nuts-logo.png"));
-        int w = leftComponent.getWidth();
-        if(w<=0){
-            w=220;
-        }
+        int w = 220;
         Image img2 = UIHelper.getFixedSizeImage(icon.getImage(), w, -1, true);
         icon=new ImageIcon(img2);
         leftComponent = new JLabel(icon);

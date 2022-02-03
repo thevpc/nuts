@@ -71,14 +71,16 @@ public class DarkModePanel extends AbstractInstallPanel {
                 ButtonInfo ii = (ButtonInfo) ((JToggleButton) e.getSource()).getClientProperty("ButtonInfo");
                 jep.setText(ii.html);
                 InstallData id = InstallData.of(getInstallerContext());
-                id.darkMode=darkModeButton.isSelected();
-                if(id.darkMode){
+                id.darkMode = darkModeButton.isSelected();
+                if (id.darkMode) {
                     FlatDarkLaf.setup();
-                }else{
+                } else {
                     FlatLightLaf.setup();
                 }
-                JFrame f=getInstallerContext().getFrame();
-                SwingUtilities.updateComponentTreeUI(f);
+                JFrame f = getInstallerContext().getFrame();
+                if(f!=null) {
+                    SwingUtilities.updateComponentTreeUI(f);
+                }
                 getInstallerContext().setDarkMode(id.darkMode);
             }
         });
@@ -88,12 +90,15 @@ public class DarkModePanel extends AbstractInstallPanel {
     @Override
     public void onNext() {
         InstallData id = InstallData.of(getInstallerContext());
-        id.darkMode=darkModeButton.isSelected();
+        id.darkMode = darkModeButton.isSelected();
         super.onNext();
     }
 
     @Override
     public void onShow() {
+        if (!lightModeButton.isSelected() && !darkModeButton.isSelected()) {
+            lightModeButton.setSelected(true);
+        }
         getInstallerContext().getExitButton().setEnabled(false);
         getInstallerContext().getCancelButton().setEnabled(true);
     }
