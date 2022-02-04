@@ -40,7 +40,7 @@ mvn clean install
 and here is how to compile/generate the website and documentation (assuming you are under `nuts` repo root folder)
 
 ```bash
-./nuts-build-website
+./nuts-build-release
 ```
 
 You can now play with your development version of nuts using the generated `nuts-dev` script.

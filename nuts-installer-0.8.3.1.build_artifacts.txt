@@ -1,3 +1,0 @@
-[EXECUTABLE]
-nuts-installer-0.8.3.1
-

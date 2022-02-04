@@ -1,0 +1,214 @@
+#!/bin/sh
+## call this script (you need to be located in nuts github repository root folder)
+## to build repository documentation and website
+## N.B.:  please make sure to replace '0.8.3' with the actual nuts version
+
+NUTS_VERSION=0.8.3
+NUTS_INSTALLER_VERSION=0.8.3.1
+
+NUTS_JAR=~/.m2/repository/net/thevpc/nuts/nuts/$NUTS_VERSION/nuts-$NUTS_VERSION.jar
+
+## Please update this path to point to your valid java 8 and 17 home, but
+## DO NOT commit your changes to GIT for this file !!
+NUTS_JAVA_HOME=/usr/lib64/jvm/java-1.8.0-openjdk-1.8.0
+NUTS_INSTALLER_BUILD_JAVA_HOME=/usr/lib64/jvm/java-17-openjdk
+NUTS_GRAALVM_DIR=/data/programs/Development/Building/graalvm-ce-java11-21.3.0/
+NUTS_INSTALLER_TARGET=linux-x64
+
+NUTS_ROOT_BASE=$(dirname $0)
+NUTS_ROOT_BASE=$(readlink -f $NUTS_ROOT_BASE)
+cd $NUTS_ROOT_BASE;
+
+JAVA_CMD='java'
+
+
+if [ x"$NUTS_JAVA_HOME" != "x" ] ; then
+    JAVA_CMD="$NUTS_JAVA_HOME/bin/java";
+elif [ x"${JAVA_HOME}" != "x" ] ; then
+    JAVA_CMD="${JAVA_HOME}/bin/java";
+fi
+
+NUTS_TRACE='--trace=true'
+NUTS_VERBOSE=''
+NUTS_FLAG_NATIVE="true"
+NUTS_FLAG_REPO_STATS="true"
+NUTS_FLAG_IMPLICIT_ALL="true"
+for var in "$@"
+do
+  case $var in
+
+    "--debug")
+    NUTS_DEBUG_ARG="-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=5005"
+      ;;
+
+    "--trace=false")
+    NUTS_TRACE='--trace=false'
+      ;;
+
+    "--~trace")
+    NUTS_TRACE='--trace=false'
+      ;;
+
+    "--trace")
+    NUTS_TRACE='--trace=true'
+      ;;
+
+    "--verbose")
+    NUTS_VERBOSE="--verbose"
+      ;;
+
+    "--all")
+    NUTS_FLAG_IMPLICIT_ALL="false"
+    NUTS_FLAG_NATIVE="true"
+    NUTS_FLAG_REPO_STATS="true"
+    NUTS_FLAG_SITE="true"
+      ;;
+
+    "--native=false")
+    if [ x"$NUTS_FLAG_IMPLICIT_ALL" == x"true" ]; then
+      NUTS_FLAG_IMPLICIT_ALL="false"
+      NUTS_FLAG_NATIVE="false"
+      NUTS_FLAG_REPO_STATS="false"
+      NUTS_FLAG_SITE="false"
+    fi
+    NUTS_FLAG_NATIVE='false'
+
+      ;;
+
+    "--~native")
+    if [ x"$NUTS_FLAG_IMPLICIT_ALL" == x"true" ]; then
+      NUTS_FLAG_IMPLICIT_ALL="false"
+      NUTS_FLAG_NATIVE="false"
+      NUTS_FLAG_REPO_STATS="false"
+      NUTS_FLAG_SITE="false"
+    fi
+    NUTS_FLAG_NATIVE='false'
+      ;;
+
+    "--native")
+    if [ x"$NUTS_FLAG_IMPLICIT_ALL" == x"true" ]; then
+      NUTS_FLAG_IMPLICIT_ALL="false"
+      NUTS_FLAG_NATIVE="false"
+      NUTS_FLAG_REPO_STATS="false"
+      NUTS_FLAG_SITE="false"
+    fi
+    NUTS_FLAG_NATIVE='true'
+      ;;
+
+    "--repo-stats=false")
+    if [ x"$NUTS_FLAG_IMPLICIT_ALL" == x"true" ]; then
+      NUTS_FLAG_IMPLICIT_ALL="false"
+      NUTS_FLAG_NATIVE="false"
+      NUTS_FLAG_REPO_STATS="false"
+      NUTS_FLAG_SITE="false"
+    fi
+    NUTS_FLAG_REPO_STATS='false'
+      ;;
+
+    "--~repo-stats")
+    if [ x"$NUTS_FLAG_IMPLICIT_ALL" == x"true" ]; then
+      NUTS_FLAG_IMPLICIT_ALL="false"
+      NUTS_FLAG_NATIVE="false"
+      NUTS_FLAG_REPO_STATS="false"
+      NUTS_FLAG_SITE="false"
+    fi
+    NUTS_FLAG_REPO_STATS='false'
+      ;;
+
+    "--repo-stats")
+    if [ x"$NUTS_FLAG_IMPLICIT_ALL" == x"true" ]; then
+      NUTS_FLAG_IMPLICIT_ALL="false"
+      NUTS_FLAG_NATIVE="false"
+      NUTS_FLAG_REPO_STATS="false"
+      NUTS_FLAG_SITE="false"
+    fi
+    NUTS_FLAG_REPO_STATS='true'
+      ;;
+
+    "--site")
+    if [ x"$NUTS_FLAG_IMPLICIT_ALL" == x"true" ]; then
+      NUTS_FLAG_IMPLICIT_ALL="false"
+      NUTS_FLAG_NATIVE="false"
+      NUTS_FLAG_REPO_STATS="false"
+      NUTS_FLAG_SITE="false"
+    fi
+    NUTS_FLAG_SITE='true'
+      ;;
+
+  esac
+done
+
+if [ x"$NUTS_FLAG_IMPLICIT_ALL" == x"true" ]; then
+  NUTS_FLAG_IMPLICIT_ALL="false"
+  NUTS_FLAG_NATIVE="true"
+  NUTS_FLAG_REPO_STATS="true"
+  NUTS_FLAG_SITE="true"
+fi
+
+if [ x"$NUTS_FLAG_SITE" == x"true" ]; then
+  $JAVA_CMD $NUTS_DEBUG_ARG -jar core/nuts/target/nuts-$NUTS_VERSION.jar -ZSbyK -w development-build $NUTS_VERBOSE $NUTS_TRACE ---!init-platforms ---!init-launchers ./nuts-build-release.nsh
+fi
+
+## should move these commands to nuts-build-release.nsh, for that we need to ensure that 'find' command is well implemented in 'nsh'
+if [ x"$NUTS_FLAG_REPO_STATS" == x"true" ]; then
+  w_preview=$(readlink -f $NUTS_ROOT_BASE/../nuts-preview)
+  mkdir -p "$NUTS_ROOT_BASE/../nuts-preview/net/thevpc/nuts"
+  cd ~/.m2/repository/net/thevpc/nuts/
+  echo $w_preview
+  pwd
+  find -iregex '\(.*[.]jar\)\|\(.*[.]asc\)\|\(.*[.]pom\)' -exec cp --parents \{\} $w_preview/net/thevpc/nuts/ \;
+  cd $NUTS_ROOT_BASE
+  $JAVA_CMD $NUTS_DEBUG_ARG -jar core/nuts/target/nuts-$NUTS_VERSION.jar -w development-build $NUTS_VERBOSE $NUTS_TRACE settings update stats $NUTS_ROOT_BASE/../nuts-preview
+  $JAVA_CMD $NUTS_DEBUG_ARG -jar core/nuts/target/nuts-$NUTS_VERSION.jar -w development-build $NUTS_VERBOSE $NUTS_TRACE settings update stats $NUTS_ROOT_BASE/../nuts-public
+fi
+
+####################################
+## GENERATE NATIVE IMAGE
+if [ x"$NUTS_FLAG_NATIVE" == x"true" ]; then
+  cd $NUTS_ROOT_BASE
+  mkdir -p $NUTS_ROOT_BASE/installers/nuts-installer/src/dist
+  mkdir -p $NUTS_ROOT_BASE/installers/nuts-installer/src/dist/META-INF/native-image
+  mkdir -p $NUTS_ROOT_BASE/installers/nuts-installer/dist/portable-jar
+  cp $NUTS_ROOT_BASE/installers/nuts-installer/target/nuts-installer-$NUTS_INSTALLER_VERSION.jar $NUTS_ROOT_BASE/installers/nuts-installer/dist/portable-jar/
+
+  cp $NUTS_ROOT_BASE/installers/nuts-installer/target/nuts-installer-$NUTS_INSTALLER_VERSION.jar $NUTS_ROOT_BASE/installers/nuts-installer/src/dist/
+  NUTS_INSTALLER_JAR=$NUTS_ROOT_BASE/installers/nuts-installer/src/dist/nuts-installer-$NUTS_INSTALLER_VERSION.jar
+  mkdir -p $NUTS_ROOT_BASE/installers/nuts-installer/dist/linux64-bin
+  cd $NUTS_ROOT_BASE/installers/nuts-installer/src/dist
+
+## GENERATE WIN EXE USING LAUNCH4J
+#### TODO
+
+## GENERATE NATIVE CONFIG FILES USING GRAALVM
+  echo $NUTS_GRAALVM_DIR/bin/java -agentlib:native-image-agent=config-output-dir=/data/git/nuts/installers/nuts-installer/src/dist/META-INF/native-image/ -jar $NUTS_INSTALLER_JAR
+  $NUTS_GRAALVM_DIR/bin/java -agentlib:native-image-agent=config-output-dir=/data/git/nuts/installers/nuts-installer/src/dist/META-INF/native-image/ -jar $NUTS_INSTALLER_JAR
+
+  echo $NUTS_GRAALVM_DIR/bin/native-image --no-fallback -Djava.awt.headless=false -jar $NUTS_INSTALLER_JAR $NUTS_ROOT_BASE/installers/nuts-installer/dist/linux64-bin/nuts-installer-$NUTS_INSTALLER_TARGET-$NUTS_INSTALLER_VERSION
+  $NUTS_GRAALVM_DIR/bin/native-image --enable-http --enable-https --enable-https --no-fallback -H:ConfigurationFileDirectories=/data/git/nuts/installers/nuts-installer/src/dist/META-INF/native-image/ -Djava.awt.headless=false -jar $NUTS_INSTALLER_JAR $NUTS_ROOT_BASE/installers/nuts-installer/dist/linux64-bin/nuts-installer-$NUTS_INSTALLER_TARGET-$NUTS_INSTALLER_VERSION
+
+cd $NUTS_ROOT_BASE
+
+## GENERATE RPM, DPKG, ... USING JPACKAGE
+
+  echo $NUTS_INSTALLER_BUILD_JAVA_HOME/bin/jpackage  --name "nuts-installer" --description "Nuts Installer" --vendor "thevpc" --app-version $NUTS_INSTALLER_VERSION --input $NUTS_ROOT_BASE/installers/nuts-installer/src/dist  --main-jar nuts-installer-$NUTS_INSTALLER_VERSION.jar --dest $NUTS_ROOT_BASE/installers/nuts-installer/dist/linux64-rpm
+  $NUTS_INSTALLER_BUILD_JAVA_HOME/bin/jpackage  --name "nuts-installer" --description "Nuts Installer" --vendor "thevpc" --app-version $NUTS_INSTALLER_VERSION --input $NUTS_ROOT_BASE/installers/nuts-installer/src/dist  --main-jar nuts-installer-$NUTS_INSTALLER_VERSION.jar --dest $NUTS_ROOT_BASE/installers/nuts-installer/dist/linux64-rpm
+
+  echo java -jar /data/programs/Development/Building/packr/packr-all-4.0.0.jar --platform linux64 --jdk /data/programs/Development/SDK/Java/openlogic-openjdk-jre-8u262-b10-linux-x64.tar.gz --useZgcIfSupportedOs --executable nuts-installer-$NUTS_INSTALLER_TARGET-$NUTS_INSTALLER_VERSION --classpath $NUTS_INSTALLER_JAR --mainclass net.thevpc.nuts.installer.NutsInstaller --vmargs Xmx1G --output $NUTS_ROOT_BASE/installers/nuts-installer/dist/linux64-with-java
+   rm -Rf $NUTS_ROOT_BASE/installers/nuts-installer/dist/linux64-with-java
+   java -jar /data/programs/Development/Building/packr/packr-all-4.0.0.jar --platform linux64 --jdk /data/programs/Development/SDK/Java/openlogic-openjdk-jre-8u262-b10-linux-x64.tar.gz --useZgcIfSupportedOs --executable nuts-installer-$NUTS_INSTALLER_TARGET-$NUTS_INSTALLER_VERSION --classpath $NUTS_INSTALLER_JAR --mainclass net.thevpc.nuts.installer.NutsInstaller --vmargs Xmx1G --output $NUTS_ROOT_BASE/installers/nuts-installer/dist/linux64-with-java
+
+  echo java -jar /data/programs/Development/Building/packr/packr-all-4.0.0.jar --platform windows64 --jdk /data/programs/Development/SDK/Java/openlogic-openjdk-jre-8u262-b10-windows-x64.zip --useZgcIfSupportedOs --executable nuts-installer-$NUTS_INSTALLER_TARGET-$NUTS_INSTALLER_VERSION --classpath $NUTS_INSTALLER_JAR --mainclass net.thevpc.nuts.installer.NutsInstaller --vmargs Xmx1G --output $NUTS_ROOT_BASE/installers/nuts-installer/dist/windows64-with-java
+   rm -Rf $NUTS_ROOT_BASE/installers/nuts-installer/dist/windows64-with-java
+   java -jar /data/programs/Development/Building/packr/packr-all-4.0.0.jar --platform windows64 --jdk /data/programs/Development/SDK/Java/openlogic-openjdk-jre-8u262-b10-windows-x64.zip --useZgcIfSupportedOs --executable nuts-installer-$NUTS_INSTALLER_TARGET-$NUTS_INSTALLER_VERSION --classpath $NUTS_INSTALLER_JAR --mainclass net.thevpc.nuts.installer.NutsInstaller --vmargs Xmx1G --output $NUTS_ROOT_BASE/installers/nuts-installer/dist/windows64-with-java
+
+  echo java -jar /data/programs/Development/Building/packr/packr-all-4.0.0.jar --platform mac --jdk /data/programs/Development/SDK/Java/openlogic-openjdk-jre-8u262-b10-mac-x64.zip --useZgcIfSupportedOs --executable nuts-installer-$NUTS_INSTALLER_TARGET-$NUTS_INSTALLER_VERSION --classpath $NUTS_INSTALLER_JAR --mainclass net.thevpc.nuts.installer.NutsInstaller --vmargs Xmx1G --output $NUTS_ROOT_BASE/installers/nuts-installer/dist/mac64-with-java
+   rm -Rf $NUTS_ROOT_BASE/installers/nuts-installer/dist/mac64-with-java
+   java -jar /data/programs/Development/Building/packr/packr-all-4.0.0.jar --platform mac --jdk /data/programs/Development/SDK/Java/openlogic-openjdk-jre-8u262-b10-mac-x64.zip --useZgcIfSupportedOs --executable nuts-installer-$NUTS_INSTALLER_TARGET-$NUTS_INSTALLER_VERSION --classpath $NUTS_INSTALLER_JAR --mainclass net.thevpc.nuts.installer.NutsInstaller --vmargs Xmx1G --output $NUTS_ROOT_BASE/installers/nuts-installer/dist/mac64-with-java
+
+## GENERATE MAC BIN USING JAR2APP
+
+  echo jar2app --copyright="(c) 2022 thevpc" --short-version=0.8.3 --version=$NUTS_INSTALLER_VERSION --icon=/data/git/nuts/documentation/media/nuts-icon.icns --bundle-identifier=net.thevpc.nut.nuts-installer --display-name="Nuts Installer" --name=nuts-installer-$NUTS_INSTALLER_TARGET-$NUTS_INSTALLER_VERSION  $NUTS_INSTALLER_JAR $NUTS_ROOT_BASE/installers/nuts-installer/dist/mac64-bin
+   rm -Rf $NUTS_ROOT_BASE/installers/nuts-installer/dist/mac64-bin
+   jar2app --copyright="(c) 2022 thevpc" --short-version=0.8.3 --version=$NUTS_INSTALLER_VERSION --icon=/data/git/nuts/documentation/media/nuts-icon.icns --bundle-identifier=net.thevpc.nut.nuts-installer --display-name="Nuts Installer" --name=nuts-installer-$NUTS_INSTALLER_TARGET-$NUTS_INSTALLER_VERSION  $NUTS_INSTALLER_JAR $NUTS_ROOT_BASE/installers/nuts-installer/dist/mac64-bin
+
+fi

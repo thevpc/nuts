@@ -39,7 +39,19 @@ Portable Installer
                     href={'https://thevpc.net/nuts-installer-linux-x64'}
                     target="_blank"
                     >
-Linux x64 Installer
+Linux x64 Installer (56Mb)
+</Link>
+</li>
+<li><img src="img/linux.png" alt=""  width="32" /> &nbsp;
+<Link
+                    className={clsx(
+                        'button button--secondary--lg b2 ',
+                        styles.getStarted,
+                        )}
+                    href={'https://thevpc.net/nuts-installer-linux-x64-with-java-zip'}
+                    target="_blank"
+                    >
+Linux x64 Installer Bundled with JRE (39Mb)
 </Link>
 </li>
 <li><img src="img/windows.png" alt=""  width="32"/> &nbsp;
@@ -51,7 +63,19 @@ Linux x64 Installer
                     href={'https://thevpc.net/nuts-installer-windows-x64.exe'}
                     target="_blank"
                     >
-Windows x64 Installer
+Windows x64 Installer (1Mb)
+</Link>
+</li>
+<li><img src="img/windows.png" alt=""  width="32"/> &nbsp;
+<Link
+                    className={clsx(
+                        'button button--secondary--lg b2 ',
+                        styles.getStarted,
+                        )}
+                    href={'https://thevpc.net/nuts-installer-windows-x64-with-java.zip'}
+                    target="_blank"
+                    >
+Windows x64 Installer Bundled with JRE  (45Mb)
 </Link>
 </li>
 <li><img src="img/macos.png" alt=""  width="32"/> &nbsp;
@@ -60,11 +84,22 @@ Windows x64 Installer
                         'button button--secondary--lg b2 ',
                         styles.getStarted,
                         )}
-                    href={'https://thevpc.net/nuts-installer-macos-x64'}
+                    href={'https://thevpc.net/nuts-installer-mac64-bin.app.zip'}
                     target="_blank"
-                    disabled
                     >
 MacOS x64 Installer
+</Link>
+</li>
+<li><img src="img/macos.png" alt=""  width="32"/> &nbsp;
+<Link
+                    className={clsx(
+                        'button button--secondary--lg b2 ',
+                        styles.getStarted,
+                        )}
+                    href={'https://thevpc.net/nuts-installer-mac64-bin.app.zip'}
+                    target="_blank"
+                    >
+MacOS x64 Installer Bundled with JRE
 </Link>
 </li>
 </ul>
