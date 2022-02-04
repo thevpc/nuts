@@ -63,7 +63,7 @@ Linux x64 Installer + JRE (39Mb)
                     href={'https://thevpc.net/nuts-installer-windows-x64.exe'}
                     target="_blank"
                     >
-Windows x64 Installer (1Mb)
+Win x64 Installer (1Mb)
 </Link>
 </li>
 <li><img src="img/windows.png" alt=""  width="32"/> &nbsp;
@@ -75,7 +75,7 @@ Windows x64 Installer (1Mb)
                     href={'https://thevpc.net/nuts-installer-windows-x64-with-java.zip'}
                     target="_blank"
                     >
-Windows x64 Installer + JRE  (45Mb)
+Win x64 Installer + JRE  (45Mb)
 </Link>
 </li>
 <li><img src="img/macos.png" alt=""  width="32"/> &nbsp;
@@ -87,7 +87,7 @@ Windows x64 Installer + JRE  (45Mb)
                     href={'https://thevpc.net/nuts-installer-mac64-bin.app.zip'}
                     target="_blank"
                     >
-MacOS x64 Installer
+MacOS x64 Installer (1Mb)
 </Link>
 </li>
 <li><img src="img/macos.png" alt=""  width="32"/> &nbsp;
@@ -99,7 +99,7 @@ MacOS x64 Installer
                     href={'https://thevpc.net/nuts-installer-mac64-bin.app.zip'}
                     target="_blank"
                     >
-MacOS x64 Installer + JRE
+MacOS x64 Installer + JRE (40Mb)
 </Link>
 </li>
 </ul>
