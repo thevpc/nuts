@@ -27,7 +27,7 @@ A valid <img src="img/java.png" alt=""  width="16"/> java 1.8+ runtime is requir
                     href={'https://thevpc.net/nuts-installer.jar'}
                     target="_blank"
                     >
-Portable Installer
+Portable Installer (1Mb)
 </Link>
 </li>
 <li><img src="img/linux.png" alt=""  width="32" /> &nbsp;
@@ -51,7 +51,7 @@ Linux x64 Installer (56Mb)
                     href={'https://thevpc.net/nuts-installer-linux-x64-with-java-zip'}
                     target="_blank"
                     >
-Linux x64 Installer Bundled with JRE (39Mb)
+Linux x64 Installer + JRE (39Mb)
 </Link>
 </li>
 <li><img src="img/windows.png" alt=""  width="32"/> &nbsp;
@@ -75,7 +75,7 @@ Windows x64 Installer (1Mb)
                     href={'https://thevpc.net/nuts-installer-windows-x64-with-java.zip'}
                     target="_blank"
                     >
-Windows x64 Installer Bundled with JRE  (45Mb)
+Windows x64 Installer + JRE  (45Mb)
 </Link>
 </li>
 <li><img src="img/macos.png" alt=""  width="32"/> &nbsp;
@@ -99,7 +99,7 @@ MacOS x64 Installer
                     href={'https://thevpc.net/nuts-installer-mac64-bin.app.zip'}
                     target="_blank"
                     >
-MacOS x64 Installer Bundled with JRE
+MacOS x64 Installer + JRE
 </Link>
 </li>
 </ul>

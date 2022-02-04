@@ -49,15 +49,15 @@ header:
   recto:
     right:
       content: image:header-left.png[width=40]
-#    center:
-#      content: image:logo.png[width=60]
+    center:
+      content: image:nuts-icon.png[width=60]
     left:
       content: '{document-title}'
   verso:
     right:
       content: image:header-left.png[width=40]
-#    center:
-#      content: image:logo.png[width=60]
+    center:
+      content: image:nuts-icon.png[width=60]
     left:
       content: '{document-title}'
 font:

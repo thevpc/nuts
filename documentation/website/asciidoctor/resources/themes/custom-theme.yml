@@ -11,7 +11,7 @@ base:
   line-height: $base-line-height-length / $base-font-size
 vertical-spacing: $base-line-height-length
 title-page:
-  logo-image: image:logo.png[width=120]
+  logo-image: image:nuts-logo.png[width=120]
   
 heading:
   font-color: #145184

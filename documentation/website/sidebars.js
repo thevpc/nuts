@@ -7,6 +7,7 @@ module.exports = {
          'intro/installation-prod',
          'intro/tutorial',
          'intro/license',
+         'intro/other-resources',
          'intro/changelog',
       ],
       'Getting Started': [

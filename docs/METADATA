@@ -7,4 +7,4 @@ latestJarLocation=https://raw.githubusercontent.com/thevpc/nuts-preview/master/n
 apiVersion=0.8.3
 runtimeVersion=0.8.3.2-SNAPSHOT
 jarLocation=https://raw.githubusercontent.com/thevpc/nuts-preview/master/net/thevpc/nuts/nuts/0.8.3/nuts-0.8.3.jar
-buildTime=Fri Feb 4 10:31:41 AM +0000 2022
+buildTime=Fri Feb 4 11:10:02 AM +0000 2022
