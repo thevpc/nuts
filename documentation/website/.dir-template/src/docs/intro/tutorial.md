@@ -2,52 +2,80 @@
 id: tutorial
 title: Tutorial
 sidebar_label: Tutorial
-order: 5
+order: 3
 ---
 
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
 ${{include($"${resources}/header.md")}}
+## GUI Installation
+You can install `nuts` using a gui installer. Multiple targets are available.
+You may select a portable installer (a jar that you can double click as far as you have a valid java+ runtime installed and configured in your environment).
+You may also want to select a native image for the installer, you only need to download and run.
+
+![install-log-example](../../static/img/installer/00.png)
+
+Once you launcher the installer, you will be promped first to select your favourite look : light or dark.
+
+![install-log-example](../../static/img/installer/01-li.png)
+
+Then, a description message is shown.
+![install-log-example](../../static/img/installer/02-li.png)
+
+In the next step, you are asked to accept the OSS licence.
+![install-log-example](../../static/img/installer/03-li.png)
+
+`nuts` comes with a dual version, stable and preview. Stable version is recommended in most cases. But if you want to take advantage of new features not yet released you may want to install the preview version.
+
+![install-log-example](../../static/img/installer/04-li.png)
+
+The installer will even prompt you for selecting extra java application you may want to install along with `nuts`. The only recommended apps are already selected and marked as `Companions`. This includes mostly `nsh`, a bash compatible implementation in Java.
+
+![install-log-example](../../static/img/installer/05-li.png)
+
+Then, you may want to tune some nuts options:
+![install-log-example](../../static/img/installer/06-li.png)
+
+Now the effective installation starts. You will see the progress in a colourful terminal.
+![install-log-example](../../static/img/installer/07-li.png)
+
+And voilà! you now has finished the installation. Click on Finish.
+![install-log-example](../../static/img/installer/08-li.png)
+
+If you check your system menu, you will notice some new icons, including a `nuts aware` terminal. On Linux and MacOs, you do not need such menu to run you favorite nuts command though. The Installer has already configured you shell rc files to include nuts in the execution PATH env variable.
+
+Here is and example when using Enlightenment Desktop Environment on Linux
+![install-log-example](../../static/img/installer/00-menu-e17.png)
+
+## GUI Installation
+
+You may have chosen the Dark mode of course, and you would have crossed the following pages:
+![install-log-example](../../static/img/installer/01-b.png)
+![install-log-example](../../static/img/installer/02-b.png)
+![install-log-example](../../static/img/installer/03-b.png)
+![install-log-example](../../static/img/installer/04-b.png)
+![install-log-example](../../static/img/installer/05-b.png)
+![install-log-example](../../static/img/installer/06-b.png)
+![install-log-example](../../static/img/installer/07-b.png)
+![install-log-example](../../static/img/installer/08-b.png)
+![install-log-example](../../static/img/installer/08-b.png)
 
 ## Tutorial for Windows Users
+
+
+
+
 If you are a Linux/Unix/MaxOS user, scroll down to the appropriate section.
 
 TODO...
 
-## Tutorial for Linux/Unix/MaxOS users
-If you are a Windows user, scroll up to the appropriate section.
-
-TODO...
-
-Check your java version 
+## Your first commands
 
 ```bash
-$> java -version
-
-        java version "1.8.0_211"
-        Java(TM) SE Runtime Environment (build 1.8.0_211-b12)
-        Java HotSpot(TM) 64-Bit Server VM (build 25.211-b12, mixed mode)
-
-$> wget https://repo1.maven.org/maven2/net/thevpc/nuts/nuts/0.8.2/nuts-0.8.2.jar -O nuts.jar
-
-        --2021-11-10 00:53:52--  https://repo1.maven.org/maven2/net/thevpc/nuts/nuts/0.8.2/nuts-0.8.2.jar
-        Resolving repo1.maven.org (repo1.maven.org)... 151.101.240.209
-        Connecting to repo1.maven.org (repo1.maven.org)|151.101.240.209|:443... connected.
-        HTTP request sent, awaiting response... 200 OK
-        Length: 501378 (490K) [application/java-archive]
-        Saving to: ‘nuts.jar’
-        nuts.jar                      100%[==============================================>] 489.63K   734KB/s    in 0.7s    
-        2021-11-10 00:53:53 (734 KB/s) - ‘nuts.jar’ saved [501378/501378]
-        FINISHED --2021-11-10 00:53:53--
-        Total wall clock time: 4.9s
-        Downloaded: 1 files, 490K in 0.7s (734 KB/s)
-
-$> java -jar nuts.jar -zyN -r dev
-
-$> exit # must restart the terminal
-
 $> nuts
+
+$> nuts update
 
 $> nuts search
 
@@ -70,6 +98,10 @@ $> nuts search 'net.thevpc.nuts.toolbox:*' --anywhere
         net.thevpc.nuts.toolbox:ncode#${{latestRuntimeVersion}}
         net.thevpc.nuts.toolbox:ndocusaurus#${{latestRuntimeVersion}}
         net.thevpc.nuts.toolbox:noapi#${{latestRuntimeVersion}}
+
+$> nuts install org.jedit:jedit
+
+$> nuts jedit
 
 $> nuts install njob
 

@@ -3,9 +3,9 @@ module.exports = {
       'Introduction': [
          'intro/introduction',
          'intro/nutsAndMaven',
-         'intro/installation-preview',
-         'intro/installation-prod',
          'intro/tutorial',
+         'intro/installation-prod',
+         'intro/installation-preview',
          'intro/license',
          'intro/other-resources',
          'intro/changelog',

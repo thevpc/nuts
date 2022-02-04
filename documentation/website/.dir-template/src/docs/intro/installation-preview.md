@@ -2,7 +2,7 @@
 id: installation-preview
 title: Installation (Preview Mode)
 sidebar_label: Installation (Dev Mode)
-order: 3
+order: 5
 ---
 
 import Tabs from '@theme/Tabs';
