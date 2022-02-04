@@ -52,7 +52,7 @@ wget https://thevpc.net/nuts-preview.jar -O nuts.jar
 Then you must run, in a terminal, the following command
 
 ```
-java -jar nuts.jar -Zy -r=+dev 
+java -jar nuts.jar -Zy -r=+preview 
 ```
 
 That’s it, now you must relaunch the terminal window (close the terminal and start it again).

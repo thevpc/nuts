@@ -7,6 +7,7 @@ order: 10
 
 ${{include($"${resources}/header.md")}}
 
-* offline documentation is available [https://thevpc.github.io/nuts/pdf/nuts-documentation.pdf]
-* some presentations are available 
-** [https://thevpc.github.io/nuts/pdf/nuts-presentation-001-rationale.pdf]
+* Offline user documentation is available here:
+  * https://thevpc.github.io/nuts/pdf/nuts-documentation.pdf
+* Some presentations are available here:
+  * https://thevpc.github.io/nuts/pdf/nuts-presentation-001-rationale.pdf

@@ -11,7 +11,11 @@ Starred releases are most stable ones.
 
 ## nuts 0.8.3.2 (DEVELOPMENT VERSION)
 - ```2022/XX/XX 	nuts 0.8.3.2``` not released yet nuts-runtime-0.8.3.2-alpha1.jar
-- 
+- FIXED: Fixed maven url parsing on windows platforms that prevented nsh from being installed
+- ADDED: Added native installers for windows, linux and macOS
+- ADDED: Added links to pdf docs in website and offline documentation
+- ADDED: Added new nuts LOGO
+
 ## nuts 0.8.3.1 (PUBLISHED VERSION)
 - ```2022/02/01 	nuts 0.8.3.1``` released nuts-runtime-0.8.3.1.jar
 - UPDATED   : move support to repositories "nuts-public" and "nuts-preview"

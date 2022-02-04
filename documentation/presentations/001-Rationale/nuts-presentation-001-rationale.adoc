@@ -381,7 +381,7 @@ Is Not:
 
 ```sh
 $ wget https://thevpc.net/nuts-preview.jar -o nuts.jar
-$ java -jar nuts.jar -Zy -r=+dev
+$ java -jar nuts.jar -Zy -r=+preview
 $ exit
 ```
 

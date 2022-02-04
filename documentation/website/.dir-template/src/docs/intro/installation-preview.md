@@ -55,7 +55,7 @@ Java HotSpot(TM) 64-Bit Server VM (build 25.211-b12, mixed mode)
 
 download [nuts-preview.jar](https://thevpc.net/nuts-preview.jar)
 ```
-java -jar nuts-preview.jar -r=+dev -Zy
+java -jar nuts-preview.jar -r=+preview -Zy
 ```
 
 On Windows systems, first launch will create a new **```nuts```** Menu (under Programs) and a couple of Desktop shortcuts to launch a configured command terminal.
@@ -81,12 +81,9 @@ Removing the `Z` modifier (replace `-Zy` by `-y`) flag if you do not want to res
 
 ```
 $ wget https://thevpc.net/nuts-preview.jar -qO nuts.jar
-$ java -jar nuts.jar -r=+dev -Zy
+$ java -jar nuts.jar -r=+preview -Zy
 $ exit
 ```
-
-Note that `-r=dev` is sufficient for nuts installation, however, most of the time, you will need
-`maven-central` later when you try to install other java applications.
 
 Linux Systems installation is based on bash shell. First launch will configure "~/.bashrc" so that **nuts** and other companion tool commands will be available in any future terminal instances.
 Using **```nuts```** on unix-like system should be seamless. A simple bash terminal (Gnome Terminal, KDE Konsole,...) is already a nuts-aware terminal.
@@ -123,7 +120,7 @@ Any bash terminal application is a nuts-aware terminal.
 
 ```
 $ wget https://thevpc.net/nuts-preview.jar -qO nuts.jar
-$ java -jar nuts.jar -r=+dev -Zy
+$ java -jar nuts.jar -r=+preview -Zy
 $ exit
 ```
 
@@ -139,7 +136,7 @@ Any bash terminal application is a nuts-aware terminal.
 
 ```
 $ curl -sOL https://thevpc.net/nuts-preview.jar -o nuts.jar
-$ java -jar nuts.jar -r=+dev -Zy
+$ java -jar nuts.jar -r=+preview -Zy
 $ exit
 ```
 

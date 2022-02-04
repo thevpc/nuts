@@ -4,7 +4,7 @@
 
 ```sh
 wget https://thevpc.net/nuts-preview.jar -O nuts.jar
-nuts -ZyS -r=+dev --verbose
+nuts -ZyS -r=+preview --verbose
 ```
 
 ## EXPECTATION
@@ -16,7 +16,7 @@ nuts -ZyS -r=+dev --verbose
 
 ```sh
 wget https://thevpc.net/nuts-preview.jar -O nuts.jar
-nuts -ZyS -r=+dev
+nuts -ZyS -r=+preview
 ```
 
 ## EXPECTATION
