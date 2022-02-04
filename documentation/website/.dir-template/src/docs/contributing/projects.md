@@ -52,9 +52,9 @@ That implementation will handle further download, version dependency etc. Such a
 It focuses on performance an compliance to the **nuts** specifications declared by **nuts-api** interfaces. 
 You are not required to add this dependency to your application if you want to embed **nuts**. 
 The library will be loaded on the wire (if not yet present in the classpath of course).
-**nuts-runtime** is designed to have very few dependencies : **gson** and **jansi**.
+**nuts-runtime** is designed to have very few dependencies : **mslinks** and **jansi**. Both are supports/used only on windows platform. They wont be used on linux or MacOS 
 
-* **gson** trivially is used to support json serialization : the main format used in **nuts** to support configuration and descriptors. 
+* **mslinks** trivially is used to support windows shortcut menus
 * **jansi** is used to support terminal coloring and the "Nuts Text Format" (NTF), a simple text format (markdown like) that helps creating colorful terminal applications.
 
 ## Companion tools projects
