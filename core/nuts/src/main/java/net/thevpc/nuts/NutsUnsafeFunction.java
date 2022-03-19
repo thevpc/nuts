@@ -30,8 +30,8 @@ import java.util.function.Function;
 
 /**
  * Unsafe function is a function that can throw any arbitrary exception
- * @param <T>
- * @param <R>
+ * @param <T> In
+ * @param <R> Out
  */
 public interface NutsUnsafeFunction<T, R> extends NutsUnsafeFunctionBase<T, R>, NutsDescribable{
     static <T, V> NutsUnsafeFunction<T, V> of(NutsUnsafeFunctionBase<T, V> o, String descr) {

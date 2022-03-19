@@ -14,7 +14,7 @@ import java.util.function.Supplier;
  * @author thevpc
  */
 public class NutsDefaultSupported<T> implements NutsSupported<T> {
-    public static final NutsSupported INVALID = new NutsDefaultSupported(null, -1);
+    public static final NutsSupported INVALID = new NutsDefaultSupported<>(null, -1);
     private final Supplier<T> value;
     private final int supportLevel;
 

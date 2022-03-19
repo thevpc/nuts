@@ -66,6 +66,7 @@ public interface NutsTerminals extends NutsComponent {
     /**
      * return new terminal bound to the given session
      *
+     * @param session session
      * @return new terminal
      */
     NutsSessionTerminal createTerminal(NutsSession session);
@@ -76,6 +77,7 @@ public interface NutsTerminals extends NutsComponent {
      * @param in  in
      * @param out out
      * @param err err
+     * @param session session
      * @return new terminal
      */
     NutsSessionTerminal createTerminal(InputStream in, NutsPrintStream out, NutsPrintStream err, NutsSession session);

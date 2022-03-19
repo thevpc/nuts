@@ -10,6 +10,7 @@
     <packaging>pom</packaging>
     <modules>
         <module>nsh</module>
+<!--        <module>nstore</module>-->
     </modules>
     <properties>
     </properties>

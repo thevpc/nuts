@@ -96,10 +96,14 @@ public class PackagesPanel extends AbstractInstallPanel {
 
     private void startWaiting() {
         getInstallerContext().startLoading();
+        getInstallerContext().getNextButton().setEnabled(false);
+        getInstallerContext().getPreviousButton().setEnabled(false);
     }
 
     private void endWaiting() {
         getInstallerContext().stopLoading(getPageIndex());
+        getInstallerContext().getNextButton().setEnabled(true);
+        getInstallerContext().getPreviousButton().setEnabled(true);
     }
 
     protected PackageButtonInfo[] getButtons() {
@@ -129,7 +133,7 @@ public class PackagesPanel extends AbstractInstallPanel {
             try {
                 q.setId("net.thevpc.nuts:nuts#" + InstallData.of(getInstallerContext()).installVersion.api);
                 Map d = connector.getRecommendations(ri);
-                if(d!=null) {
+                if (d != null) {
                     recommendedIds = (java.util.List<Map>) d.get("recommendedIds");
                 }
             } catch (Exception ex) {
@@ -138,7 +142,7 @@ public class PackagesPanel extends AbstractInstallPanel {
             if (recommendedIds == null) {
                 q.setId("net.thevpc.nuts:nuts#RELEASE");
                 Map d = connector.getRecommendations(ri);
-                if(d!=null) {
+                if (d != null) {
                     recommendedIds = (java.util.List<Map>) d.get("recommendedIds");
                 }
             }
@@ -196,6 +200,8 @@ public class PackagesPanel extends AbstractInstallPanel {
                 for (PackageButtonInfo b : u) {
                     if (b != null) {
                         JToggleButton a = new JToggleButton(b.name);
+                        b.imageIcon=gelAppUi(b.icon, b.gui, false);
+                        b.selectedImageIcon=gelAppUi(b.icon, b.gui, true);
                         a.putClientProperty("buttonInfo", b);
                         buttons.add(a);
                     }
@@ -213,7 +219,8 @@ public class PackagesPanel extends AbstractInstallPanel {
             GridBagConstraints c = new GridBagConstraints();
             for (JToggleButton a : buttons) {
                 PackageButtonInfo button = (PackageButtonInfo) a.getClientProperty("buttonInfo");
-                a.setIcon(gelAppUi(button.icon, button.gui));
+                a.setIcon(button.imageIcon);
+                a.setSelectedIcon(button.selectedImageIcon);
                 a.setToolTipText(button.desc);
                 a.setSelected(button.selected);
                 a.addItemListener(buttonInfoItemListener);
@@ -250,29 +257,27 @@ public class PackagesPanel extends AbstractInstallPanel {
         panel.removeAll();
     }
 
-    ImageIcon gelAppUi(String s, boolean gui) {
+    ImageIcon gelAppUi(String s, boolean gui, boolean checked) {
+        Image imageOk = null;
         if (s != null && s.length() > 0) {
             try {
                 Image image = Toolkit.getDefaultToolkit().getImage(new URL(s));
-                MediaTracker mt = new MediaTracker(new JLabel());
-                mt.addImage(image, 1);
-                try {
-                    mt.waitForAll();
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
-                }
+                UIHelper.waitForImages(image);
                 int width = image.getWidth(null);
                 int height = image.getHeight(null);
                 if (width > 0 && height > 0) {
-                    return new ImageIcon(UIHelper.getFixedSizeImage(image, 32, 32,false));
+                    imageOk = image;
                 }
             } catch (Exception ex) {
                 //
             }
         }
-        URL r = NutsInstaller.class.getResource(gui ? "mouse.png" : "keyboard.png");
-        Image image = Toolkit.getDefaultToolkit().getImage(r);
-        return new ImageIcon(UIHelper.getFixedSizeImage(image, 32, 32,false));
+        if (imageOk == null) {
+            URL r = NutsInstaller.class.getResource(gui ? "mouse.png" : "keyboard.png");
+            imageOk = Toolkit.getDefaultToolkit().getImage(r);
+        }
+        imageOk = UIHelper.getFixedSizeImage(imageOk, 32, 32, false);
+        return new ImageIcon(UIHelper.getCheckedImage(imageOk,checked,12));
     }
 
     @Override
@@ -284,7 +289,7 @@ public class PackagesPanel extends AbstractInstallPanel {
             if ("<companions>".equals(bi.app.getId())) {
                 u.optionk = !button.isSelected();
             } else {
-                if(button.isSelected()) {
+                if (button.isSelected()) {
                     u.recommendedIds.add(bi.app);
                 }
             }
@@ -305,6 +310,8 @@ public class PackagesPanel extends AbstractInstallPanel {
         String icon;
         boolean gui;
         boolean selected;
+        ImageIcon imageIcon;
+        ImageIcon selectedImageIcon;
 
         public PackageButtonInfo(App app, String name, String desc, boolean gui, String icon, boolean selected) {
             this.app = app;

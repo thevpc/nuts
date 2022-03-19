@@ -125,6 +125,7 @@ final class PrivateNutsUtils {
                 + id.getArtifactId() + "/" + id.getVersion();
     }
 
+    @SuppressWarnings("unchecked")
     public static List<String> split(String str, String separators) {
         if (str == null) {
             return Collections.EMPTY_LIST;
@@ -234,7 +235,7 @@ final class PrivateNutsUtils {
             return "<EMPTY>";
         }
         String ss
-                = (s instanceof Enum) ? ((Enum) s).name().toLowerCase().replace('_', '-')
+                = (s instanceof Enum) ? ((Enum<?>) s).name().toLowerCase().replace('_', '-')
                 : s.toString().trim();
         return ss.isEmpty() ? "<EMPTY>" : ss;
     }
@@ -289,8 +290,8 @@ final class PrivateNutsUtils {
     public static int firstIndexOf(String string, char[] chars) {
         char[] value = string.toCharArray();
         for (int i = 0; i < value.length; i++) {
-            for (int j = 0; j < chars.length; j++) {
-                if (value[i] == chars[j]) {
+            for (char aChar : chars) {
+                if (value[i] == aChar) {
                     return i;
                 }
             }
@@ -306,7 +307,7 @@ final class PrivateNutsUtils {
             }
             BufferedReader br = new BufferedReader(new StringReader(sw.toString()));
             List<String> s = new ArrayList<>();
-            String line = null;
+            String line;
             while ((line = br.readLine()) != null) {
                 s.add(line);
             }
@@ -367,7 +368,7 @@ final class PrivateNutsUtils {
     }
 
     public static <K> LinkedHashSet<K> copy(Set<K> o) {
-        if (o == null) {
+        if (o != null) {
             return new LinkedHashSet<>(o);
         }
         return new LinkedHashSet<>();

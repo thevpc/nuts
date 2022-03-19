@@ -53,8 +53,9 @@ public interface NutsEnum {
      * @return valid instance by calling {@code T.parseLenient(value)}
      * @since 0.8.3
      */
+    @SuppressWarnings("unchecked")
     static <T extends NutsEnum> T parse(Class<T> type, String value, NutsSession session) {
-        Method m = null;
+        Method m;
         try {
             m = type.getMethod("parse", String.class, NutsSession.class);
         } catch (Exception ex) {
@@ -71,7 +72,7 @@ public interface NutsEnum {
             }
             throw new NutsIllegalArgumentException(session, msg);
         }
-        T r = null;
+        T r;
         try {
             r = (T) m.invoke(null, value, session);
         } catch (Exception ex) {
@@ -93,8 +94,9 @@ public interface NutsEnum {
      * @return valid instance by calling {@code T.parseLenient(value)}
      * @since 0.8.1
      */
+    @SuppressWarnings("unchecked")
     static <T extends NutsEnum> T parseLenient(Class<T> type, String value) {
-        Method m = null;
+        Method m;
         try {
             m = type.getMethod("parseLenient", String.class);
         } catch (Exception ex) {
@@ -111,7 +113,7 @@ public interface NutsEnum {
 //            }
 //            throw new NutsIllegalArgumentException(session, msg);
         }
-        T r = null;
+        T r;
         try {
             r = (T) m.invoke(null, value);
         } catch (Exception ex) {
@@ -135,8 +137,9 @@ public interface NutsEnum {
      * @return valid instance by calling {@code T.parseLenient(value)}
      * @since 0.8.1
      */
+    @SuppressWarnings("unchecked")
     static <T extends NutsEnum> T parseLenient(Class<T> type, String value, T emptyOrErrorValue) {
-        Method m = null;
+        Method m;
         String typeSimpleName = type.getSimpleName();
         try {
             m = type.getMethod("parseLenient", String.class, type);
@@ -146,7 +149,7 @@ public interface NutsEnum {
         if (!Modifier.isStatic(m.getModifiers()) || !Modifier.isPublic(m.getModifiers()) || !m.getReturnType().equals(type)) {
             throw new IllegalArgumentException("NutsEnum classes must implement a public static method parseLenient(String," + typeSimpleName + ")");
         }
-        T r = null;
+        T r;
         try {
             r = (T) m.invoke(null, value, emptyOrErrorValue);
         } catch (Exception ex) {
@@ -170,8 +173,9 @@ public interface NutsEnum {
      * @return valid instance by calling {@code T.parseLenient(value)}
      * @since 0.8.1
      */
+    @SuppressWarnings("unchecked")
     static <T extends NutsEnum> T parse(Class<T> type, String value, T emptyValue, NutsSession session) {
-        Method m = null;
+        Method m;
         String typeSimpleName = type.getSimpleName();
         try {
             m = type.getMethod("parse", String.class, type, NutsSession.class);
@@ -189,7 +193,7 @@ public interface NutsEnum {
             }
             throw new NutsIllegalArgumentException(session, msg);
         }
-        T r = null;
+        T r;
         try {
             r = (T) m.invoke(null, value, emptyValue, session);
         } catch (Exception ex) {
@@ -213,8 +217,9 @@ public interface NutsEnum {
      * @return valid instance by calling {@code T.parseLenient(value)}
      * @since 0.8.1
      */
+    @SuppressWarnings("unchecked")
     static <T extends NutsEnum> T parseLenient(Class<T> type, String value, T emptyValue, T errorOrUnknownValue) {
-        Method m = null;
+        Method m;
         String typeSimpleName = type.getSimpleName();
         try {
             m = type.getMethod("parseLenient", String.class, type, type);
@@ -232,7 +237,7 @@ public interface NutsEnum {
 //            }
 //            throw new NutsIllegalArgumentException(session, msg);
         }
-        T r = null;
+        T r;
         try {
             r = (T) m.invoke(null, value, emptyValue, errorOrUnknownValue);
         } catch (Exception ex) {

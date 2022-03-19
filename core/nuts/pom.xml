@@ -78,7 +78,8 @@
                             <mainClass>net.thevpc.nuts.Nuts</mainClass>
                         </manifest>
                         <manifestEntries>
-                            <Automatic-Module-Name>net.thevpc.nuts.nuts</Automatic-Module-Name>
+<!--                            <Multi-Release>true</Multi-Release>
+                            <Automatic-Module-Name>net.thevpc.nuts</Automatic-Module-Name>-->
                         </manifestEntries>
                     </archive>
                 </configuration>
@@ -158,10 +159,15 @@
                                     <head>Category:</head>
                                 </tag>
                             </tags>
+                            <debug>true</debug>
+                            <jdkToolchain>
+                                <version>1.8</version>
+                            </jdkToolchain>
                         </configuration>
                         <executions>
                             <execution>
                                 <id>attach-javadocs</id>
+                                <phase>compile</phase>
                                 <goals>
                                     <goal>jar</goal>
                                 </goals>
@@ -189,7 +195,8 @@
                         <configuration>
                             <archive>
                                 <manifestEntries>
-                                    <Automatic-Module-Name>net.thevpc.nuts.runtime</Automatic-Module-Name>
+<!--                                    <Multi-Release>true</Multi-Release>
+                                    <Automatic-Module-Name>net.thevpc.nuts</Automatic-Module-Name>-->
                                 </manifestEntries>
                             </archive>
                         </configuration>

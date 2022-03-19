@@ -187,7 +187,7 @@
                         <configuration>
                             <archive>
                                 <manifestEntries>
-                                    <Automatic-Module-Name>net.thevpc.nuts.runtime</Automatic-Module-Name>
+                                    <Automatic-Module-Name>net.thevpc.nuts.lib.ssh</Automatic-Module-Name>
                                 </manifestEntries>
                             </archive>
                         </configuration>

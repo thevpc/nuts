@@ -15,6 +15,7 @@
         <module>nlib-talk-agent</module>
         <module>nlib-template</module>
         <module>nlib-tomcat-classloader</module>
+        <module>nlib-spring-boot</module>
     </modules>
     <properties>
     </properties>

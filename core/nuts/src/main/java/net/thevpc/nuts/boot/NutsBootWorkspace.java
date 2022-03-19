@@ -55,7 +55,6 @@ import java.util.stream.Collectors;
  */
 public final class NutsBootWorkspace {
 
-    private static String apiDigest;
     private final long creationTime = System.currentTimeMillis();
     private final NutsBootOptions userOptions;
     private final PrivateNutsBootLog bLog;
@@ -193,20 +192,17 @@ public final class NutsBootWorkspace {
         options.setStoreLocations(storeLocations);
     }
 
+    private static final class ApiDigestHolder {
+        static final String apiDigest = NutsApiUtils.resolveNutsIdDigestOrError();
+    }
+
     /**
      * current nuts version, loaded from pom file
      *
      * @return current nuts version
      */
     private static String getApiDigest() {
-        if (apiDigest == null) {
-            synchronized (Nuts.class) {
-                if (apiDigest == null) {
-                    apiDigest = NutsApiUtils.resolveNutsIdDigestOrError();
-                }
-            }
-        }
-        return apiDigest;
+        return ApiDigestHolder.apiDigest;
     }
 
     public boolean hasUnsatisfiedRequirements() {
@@ -271,7 +267,7 @@ public final class NutsBootWorkspace {
                 new String[]{computedOptions.getBootRepositories()},
                 PrivateNutsBootRepositoryDB.INSTANCE, null
         ).toArray();
-        NutsRepositoryLocation[] result = null;
+        NutsRepositoryLocation[] result;
         if (old.length == 0) {
             //no previous config, use defaults!
             result = bootRepositories.resolve(new NutsRepositoryLocation[]{
@@ -368,6 +364,7 @@ public final class NutsBootWorkspace {
         return computedOptions;
     }
 
+    @SuppressWarnings("unchecked")
     private boolean prepareWorkspace() {
         if (!preparedWorkspace) {
             preparedWorkspace = true;
@@ -797,7 +794,7 @@ public final class NutsBootWorkspace {
             NutsRepositoryLocation[] repositories
                     = Arrays.stream((computedOptions.getBootRepositories() == null ? "" : computedOptions.getBootRepositories())
                             .split("[\n;]")
-                    ).map(String::trim).filter(x -> x.length() > 0).map(x -> NutsRepositoryLocation.of(x)).toArray(NutsRepositoryLocation[]::new);
+                    ).map(String::trim).filter(x -> x.length() > 0).map(NutsRepositoryLocation::of).toArray(NutsRepositoryLocation[]::new);
 
             NutsRepositoryLocation workspaceBootLibFolderRepo = NutsRepositoryLocation.of("nuts@" + workspaceBootLibFolder);
             computedOptions.setRuntimeBootDependencyNode(
@@ -851,7 +848,7 @@ public final class NutsBootWorkspace {
                     }
                 }
             }
-            NutsBootWorkspaceFactory factoryInstance = null;
+            NutsBootWorkspaceFactory factoryInstance;
             List<Throwable> exceptions = new ArrayList<>();
             for (NutsBootWorkspaceFactory a : factories) {
                 factoryInstance = a;

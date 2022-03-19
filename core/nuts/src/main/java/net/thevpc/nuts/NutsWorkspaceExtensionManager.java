@@ -54,7 +54,7 @@ public interface NutsWorkspaceExtensionManager {
      * @param <T>             extension type class
      * @param <V>             extension context type
      * @param type            extension type
-     * @param required
+     * @param required required
      * @param supportCriteria context
      * @return valid instance or null if no extension implementation was found
      */

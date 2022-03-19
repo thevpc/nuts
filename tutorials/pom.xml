@@ -16,7 +16,8 @@
         <module>ugly-jar-projects/onejar-project</module>
         <module>ugly-jar-projects/shade-project</module>
         <module>ugly-jar-projects/springboot-project</module>
-        <module>naf/nuts-spring-boot-integration</module>
+        <module>naf/nuts-spring-boot-integration-hello-world</module>
+        <module>naf/nuts-spring-boot-integration-hello-world</module>
     </modules>
     <properties>
     </properties>

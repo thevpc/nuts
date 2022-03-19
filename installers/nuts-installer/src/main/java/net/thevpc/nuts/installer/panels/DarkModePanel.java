@@ -58,7 +58,6 @@ public class DarkModePanel extends AbstractInstallPanel {
     }
 
     private JToggleButton add2(ButtonInfo s) {
-
         JToggleButton a = new JToggleButton(s.text);
         a.putClientProperty("ButtonInfo", s);
         a.setBackground(s.bg);
@@ -84,6 +83,8 @@ public class DarkModePanel extends AbstractInstallPanel {
                 getInstallerContext().setDarkMode(id.darkMode);
             }
         });
+        a.setIcon(new ImageIcon(UIHelper.getCheckedImage(false)));
+        a.setSelectedIcon(new ImageIcon(UIHelper.getCheckedImage(true)));
         return a;
     }
 

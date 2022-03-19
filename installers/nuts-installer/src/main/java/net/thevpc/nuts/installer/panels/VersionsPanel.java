@@ -70,13 +70,17 @@ public class VersionsPanel extends AbstractInstallPanel {
 //        a.setPreferredSize(new Dimension(60,60));
         panel.add(a);
         bg.add(a);
+        a.setForeground(Color.BLACK);
         a.addItemListener(new ItemListener() {
             @Override
             public void itemStateChanged(ItemEvent e) {
                 ButtonInfo ii = (ButtonInfo) ((JToggleButton) e.getSource()).getClientProperty("ButtonInfo");
                 jep.setText(ii.html);
+                a.setForeground(Color.BLACK);
             }
         });
+        a.setIcon(new ImageIcon(UIHelper.getCheckedImage(false)));
+        a.setSelectedIcon(new ImageIcon(UIHelper.getCheckedImage(true)));
         return a;
     }
 
@@ -103,12 +107,14 @@ public class VersionsPanel extends AbstractInstallPanel {
 
     protected void updateButtons() {
         getInstallerContext().getNextButton().setEnabled(false);
+        getInstallerContext().getPreviousButton().setEnabled(false);
         Info info = loadInfo();
         SwingUtilities.invokeLater(() -> {
             getInstallerContext().stopLoading(getPageIndex());
             ButtonInfo ii = (ButtonInfo) (stableButton.getClientProperty("ButtonInfo"));
             ii.html=("<html><body>Select the <strong>stable</strong> version <strong>"+info.stable.runtime+"</strong> for production</body></html>");
-            stableButton.setText("<html><body><center>Stable<br>version<br><strong>" + info.stable.runtime+"</strong></center></body></html>");
+//            stableButton.setText("<html><body><center>Stable<br>version<br><strong>" + info.stable.runtime+"</strong></center></body></html>");
+            stableButton.setText("Stable");
             ii.verInfo = info.stable;
             ButtonInfo jj = (ButtonInfo) (previewButton.getClientProperty("ButtonInfo"));
             jj.html=("<html><body>Select the <strong>preview</strong> version <strong>"+info.preview.runtime+"</strong> to test new features and get latest updates and bug fixes</body></html>");
@@ -119,10 +125,14 @@ public class VersionsPanel extends AbstractInstallPanel {
                 previewButton.setEnabled(false);
                 previewButton.setText("Preview");
             } else {
-                previewButton.setText("<html><body><center>Preview<br>version<br><strong>" + info.preview.runtime+"</strong></center></body></html>");
+//                previewButton.setText("<html><body><center>Preview<br>version<br><strong>" + info.preview.runtime+"</strong></center></body></html>");
+                previewButton.setText("Preview");
                 previewButton.setEnabled(true);
             }
+            stableButton.setForeground(Color.BLACK);
+            previewButton.setForeground(Color.BLACK);
             getInstallerContext().getNextButton().setEnabled(ii.verInfo.valid);
+            getInstallerContext().getPreviousButton().setEnabled(true);
             panel.invalidate();
             panel.revalidate();
         });

@@ -100,7 +100,7 @@ public class NutsInstaller implements InstallerContext {
             }
         });
         hb.add(Box.createRigidArea(new Dimension(10, 0)));
-        exitButton = new JButton("Exit");
+        exitButton = new JButton("Finish");
         hb.add(exitButton);
         hb.add(Box.createRigidArea(new Dimension(10, 0)));
         exitButton.addActionListener(new ActionListener() {
@@ -217,6 +217,7 @@ public class NutsInstaller implements InstallerContext {
         addPanel(new VersionsPanel());
         addPanel(new PackagesPanel());
         addPanel(new ConfigurePanel());
+        addPanel(new JavaPanel());
         addPanel(new ProcessPanel());
         addPanel(new SummaryPanel());
         JPanel pp = new JPanel(new BorderLayout());

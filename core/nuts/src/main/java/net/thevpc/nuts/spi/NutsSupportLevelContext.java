@@ -50,6 +50,7 @@ public interface NutsSupportLevelContext {
      * return constraints casted to T, returns null if not compatible
      *
      * @param <T> expected type
+     * @param expected expected
      * @return constraints casted to T, returns null if not compatible
      */
     <T> T getConstraints(Class<T> expected);

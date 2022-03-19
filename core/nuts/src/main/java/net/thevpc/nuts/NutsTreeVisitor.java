@@ -28,7 +28,7 @@ package net.thevpc.nuts;
 
 /**
  * Tree Visitor
- * @param <T>
+ * @param <T> Type
  */
 public interface NutsTreeVisitor<T> {
     NutsTreeVisitResult preVisitDirectory(T dir, NutsSession session);

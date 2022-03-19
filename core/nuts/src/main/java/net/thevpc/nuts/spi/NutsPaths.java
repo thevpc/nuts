@@ -19,6 +19,7 @@ public interface NutsPaths extends NutsComponent {
      * expand path to Workspace Location
      *
      * @param path path to expand
+     * @param session session
      * @return expanded path
      */
     NutsPath createPath(String path, NutsSession session);

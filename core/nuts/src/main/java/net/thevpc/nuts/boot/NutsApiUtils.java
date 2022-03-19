@@ -205,6 +205,7 @@ public class NutsApiUtils {
         return PrivateNutsUtils.parseFileSizeInBytes(value, defaultMultiplier, emptyValue, errorValue);
     }
 
+    @SuppressWarnings("unchecked")
     public static <T> T createSessionCachedType(String name, Class<T> t, NutsSession session, Supplier<T> sup) {
         checkSession(session);
         name = NutsUtilStrings.trim(name);

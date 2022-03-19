@@ -40,6 +40,7 @@ public interface NutsSupported<T> {
                 ;
     }
 
+    @SuppressWarnings("unchecked")
     static <T> NutsSupported<T> invalid() {
         return NutsDefaultSupported.INVALID;
     }

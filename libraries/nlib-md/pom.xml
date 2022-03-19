@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>net.thevpc.nuts.lib</groupId>
     <artifactId>nlib-md</artifactId>
-    <version>0.8.3.0</version>
+    <version>0.8.3.1</version>
     <packaging>jar</packaging>
     <name>Nuts Community Library for Markdown support</name>
     <url>https://github.com/thevpc/nuts</url>
@@ -182,7 +182,7 @@
                         <configuration>
                             <archive>
                                 <manifestEntries>
-                                    <Automatic-Module-Name>net.thevpc.nuts.runtime</Automatic-Module-Name>
+                                    <Automatic-Module-Name>net.thevpc.nuts.lib.md</Automatic-Module-Name>
                                 </manifestEntries>
                             </archive>
                         </configuration>

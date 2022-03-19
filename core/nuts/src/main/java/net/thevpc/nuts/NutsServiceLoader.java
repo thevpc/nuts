@@ -34,7 +34,6 @@ import java.util.List;
  * Component service class loader.
  *
  * @param <T> component type
- * @param <B> component support constraint type
  * @author thevpc
  * @app.category SPI Base
  * @since 0.5.4

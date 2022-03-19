@@ -110,6 +110,7 @@ final class PrivateNutsBootConfigLoader {
      * @param config     config object to fill
      * @param jsonObject config JSON object
      */
+    @SuppressWarnings("unchecked")
     private static void loadConfigVersion507(NutsBootOptions config, Map<String, Object> jsonObject,
                                              PrivateNutsBootLog bLog) {
         bLog.log(Level.CONFIG, NutsLogVerb.INFO, NutsMessage.jstyle("config version compatibility : 0.5.7"));
@@ -118,8 +119,8 @@ final class PrivateNutsBootConfigLoader {
         config.setWorkspace((String) jsonObject.get("workspace"));
         config.setJavaCommand((String) jsonObject.get("javaCommand"));
         config.setJavaOptions((String) jsonObject.get("javaOptions"));
-        config.setHomeLocations(asNutsHomeLocationMap((Map) jsonObject.get("homeLocations")));
-        config.setStoreLocations(asNutsStoreLocationMap((Map) jsonObject.get("storeLocations")));
+        config.setHomeLocations(asNutsHomeLocationMap((Map<Object, String>) jsonObject.get("homeLocations")));
+        config.setStoreLocations(asNutsStoreLocationMap((Map<Object, String>) jsonObject.get("storeLocations")));
         config.setStoreLocationStrategy(NutsStoreLocationStrategy.parseLenient((String) jsonObject.get("storeLocationStrategy"), null, null));
         config.setStoreLocationLayout(NutsOsFamily.parseLenient((String) jsonObject.get("storeLocationLayout"), null, null));
         config.setRepositoryStoreLocationStrategy(NutsStoreLocationStrategy.parseLenient((String) jsonObject.get("repositoryStoreLocationStrategy"), null, null));
@@ -141,10 +142,10 @@ final class PrivateNutsBootConfigLoader {
         }
     }
 
-    private static Map<NutsHomeLocation, String> asNutsHomeLocationMap(Map m) {
+    private static Map<NutsHomeLocation, String> asNutsHomeLocationMap(Map<Object,String> m) {
         Map<NutsHomeLocation, String> a = new LinkedHashMap<>();
         if (m != null) {
-            for (Map.Entry<Object, String> e : ((Map<Object, String>) m).entrySet()) {
+            for (Map.Entry<Object, String> e : m.entrySet()) {
                 Object k = e.getKey();
                 NutsHomeLocation kk;
                 if (k instanceof NutsHomeLocation) {
@@ -160,10 +161,10 @@ final class PrivateNutsBootConfigLoader {
         return a;
     }
 
-    private static Map<NutsStoreLocation, String> asNutsStoreLocationMap(Map m) {
+    private static Map<NutsStoreLocation, String> asNutsStoreLocationMap(Map<Object,String> m) {
         Map<NutsStoreLocation, String> a = new LinkedHashMap<>();
         if (m != null) {
-            for (Map.Entry<Object, String> e : ((Map<Object, String>) m).entrySet()) {
+            for (Map.Entry<Object, String> e : m.entrySet()) {
                 Object k = e.getKey();
                 NutsStoreLocation kk;
                 if (k instanceof NutsStoreLocation) {
@@ -189,6 +190,7 @@ final class PrivateNutsBootConfigLoader {
      * @param config     config object to fill
      * @param jsonObject config JSON object
      */
+    @SuppressWarnings("unchecked")
     private static void loadConfigVersion506(NutsBootOptions config, Map<String, Object> jsonObject,
                                              PrivateNutsBootLog bLog) {
         bLog.log(Level.CONFIG, NutsLogVerb.INFO, NutsMessage.jstyle("config version compatibility : 0.5.6"));
@@ -200,8 +202,8 @@ final class PrivateNutsBootConfigLoader {
         config.setRuntimeId(runtimeId);
         config.setJavaCommand((String) jsonObject.get("javaCommand"));
         config.setJavaOptions((String) jsonObject.get("javaOptions"));
-        config.setStoreLocations(asNutsStoreLocationMap((Map) jsonObject.get("storeLocations")));
-        config.setHomeLocations(asNutsHomeLocationMap((Map) jsonObject.get("homeLocations")));
+        config.setStoreLocations(asNutsStoreLocationMap((Map<Object, String>) jsonObject.get("storeLocations")));
+        config.setHomeLocations(asNutsHomeLocationMap((Map<Object, String>) jsonObject.get("homeLocations")));
         String s = (String) jsonObject.get("storeLocationStrategy");
         if (s != null && s.length() > 0) {
             config.setStoreLocationStrategy(NutsStoreLocationStrategy.valueOf(s.toUpperCase()));

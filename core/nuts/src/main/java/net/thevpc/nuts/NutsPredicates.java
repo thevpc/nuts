@@ -40,22 +40,27 @@ public class NutsPredicates {
 
     private static final Blank BLANK = new Blank();
 
+    @SuppressWarnings("unchecked")
     public static <T> NutsPredicate<T> never() {
         return NEVER;
     }
 
+    @SuppressWarnings("unchecked")
     public static NutsPredicate<String> blank() {
         return BLANK;
     }
 
+    @SuppressWarnings("unchecked")
     public static <T> NutsPredicate<T> always() {
         return ALWAYS;
     }
 
+    @SuppressWarnings("unchecked")
     public static <T> NutsPredicate<T> isNull() {
         return NULL;
     }
 
+    @SuppressWarnings("unchecked")
     public static <T> Predicate<T> nonNull() {
         return NULL.negate();
     }

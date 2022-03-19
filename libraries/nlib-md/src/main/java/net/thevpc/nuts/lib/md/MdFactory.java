@@ -253,6 +253,10 @@ public class MdFactory {
         return MdText.phrase(s);
     }
 
+    public static MdElement endParagraph() {
+        return MdText.paragraph("");
+    }
+
     public static MdElement ul(int depth, MdElement elem) {
         return new MdUnNumberedItem("",depth,elem,new MdElement[0]);
     }

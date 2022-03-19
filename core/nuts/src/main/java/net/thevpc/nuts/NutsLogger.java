@@ -44,6 +44,7 @@ public interface NutsLogger {
      * create an instance of {@link NutsLogger}
      *
      * @param clazz logger clazz
+     * @param session session
      * @return new instance of {@link NutsLogger}
      */
     static NutsLogger of(Class clazz, NutsSession session) {
@@ -54,6 +55,7 @@ public interface NutsLogger {
      * create an instance of {@link NutsLogger}
      *
      * @param name logger name
+     * @param session session
      * @return new instance of {@link NutsLogger}
      */
     static NutsLogger of(String name, NutsSession session) {
@@ -63,6 +65,7 @@ public interface NutsLogger {
     /**
      * Log handler
      *
+     * @param session session
      * @return Log handler
      */
     static Handler[] getHandlers(NutsSession session) {
@@ -73,6 +76,7 @@ public interface NutsLogger {
      * remove the given handler
      *
      * @param handler handler to remove
+     * @param session session
      */
     static void removeHandler(Handler handler, NutsSession session) {
         NutsLogManager.of(session).removeHandler(handler, session);
@@ -82,7 +86,7 @@ public interface NutsLogger {
      * add the given handler
      *
      * @param handler handler to add
-     * @return this
+     * @param session session
      */
     static void addHandler(Handler handler, NutsSession session) {
         NutsLogManager.of(session).addHandler(handler, session);
@@ -91,6 +95,7 @@ public interface NutsLogger {
     /**
      * terminal handler
      *
+     * @param session session
      * @return terminal handler
      */
     static Handler getTermHandler(NutsSession session) {
@@ -100,6 +105,7 @@ public interface NutsLogger {
     /**
      * file handler
      *
+     * @param session session
      * @return file handler
      */
     static Handler getFileHandler(NutsSession session) {
@@ -110,6 +116,7 @@ public interface NutsLogger {
     /**
      * return terminal logger level
      *
+     * @param session session
      * @return terminal logger level
      */
     static Level getTermLevel(NutsSession session) {
@@ -119,6 +126,7 @@ public interface NutsLogger {
     /**
      * set terminal logger level
      *
+     * @param session session
      * @param level new level
      */
     static void setTermLevel(Level level, NutsSession session) {
@@ -128,6 +136,7 @@ public interface NutsLogger {
     /**
      * return file logger level
      *
+     * @param session session
      * @return file logger level
      */
     static Level getFileLevel(NutsSession session) {
@@ -138,7 +147,7 @@ public interface NutsLogger {
      * set file logger level
      *
      * @param level new level
-     * @return this
+     * @param session session
      */
     static void setFileLevel(Level level, NutsSession session) {
         NutsLogManager.of(session).setFileLevel(level, session);

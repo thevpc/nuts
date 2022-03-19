@@ -142,7 +142,7 @@ public interface NutsRepository {
      * available if local and the folder exists or remote and could ping the repository
      *
      * @return true if config is enabled and runtime is enabled
-     * @param session
+     * @param session session
      */
     boolean isAvailable(NutsSession session);
 
@@ -150,7 +150,7 @@ public interface NutsRepository {
      * available if local and the folder exists or remote and could ping the repository
      *
      * @param force when force, check immediate availability and do not rely on cache
-     * @param session
+     * @param session session
      * @return true if config is enabled and runtime is enabled
      */
     boolean isAvailable(boolean force, NutsSession session);
@@ -159,7 +159,7 @@ public interface NutsRepository {
      * available if local or remote repo exists and could deploy to
      *
      * @return true if config is enabled and runtime is enabled
-     * @param session
+     * @param session session
      */
     boolean isSupportedDeploy(NutsSession session);
 
@@ -167,7 +167,7 @@ public interface NutsRepository {
      * available if local or remote repo exists and could deploy to
      *
      * @param force when force, check immediate availability and do not rely on cache
-     * @param session
+     * @param session session
      * @return true if config is enabled and runtime is enabled
      */
     boolean isSupportedDeploy(boolean force, NutsSession session);

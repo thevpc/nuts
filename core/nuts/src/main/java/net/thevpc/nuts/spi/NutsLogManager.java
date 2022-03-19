@@ -48,6 +48,7 @@ public interface NutsLogManager extends NutsComponent {
     /**
      * Log handler
      *
+     * @param session session
      * @return Log handler
      */
     Handler[] getHandlers(NutsSession session);
@@ -56,6 +57,7 @@ public interface NutsLogManager extends NutsComponent {
      * remove the given handler
      *
      * @param handler handler to remove
+     * @param session session
      * @return this
      */
     NutsLogManager removeHandler(Handler handler, NutsSession session);
@@ -64,6 +66,7 @@ public interface NutsLogManager extends NutsComponent {
      * add the given handler
      *
      * @param handler handler to add
+     * @param session session
      * @return this
      */
     NutsLogManager addHandler(Handler handler, NutsSession session);
@@ -71,6 +74,7 @@ public interface NutsLogManager extends NutsComponent {
     /**
      * terminal handler
      *
+     * @param session session
      * @return terminal handler
      */
     Handler getTermHandler(NutsSession session);
@@ -78,6 +82,7 @@ public interface NutsLogManager extends NutsComponent {
     /**
      * file handler
      *
+     * @param session session
      * @return file handler
      */
     Handler getFileHandler(NutsSession session);
@@ -86,6 +91,7 @@ public interface NutsLogManager extends NutsComponent {
      * create an instance of {@link NutsLogger}
      *
      * @param name logger name
+     * @param session session
      * @return new instance of {@link NutsLogger}
      */
     NutsLogger createLogger(String name, NutsSession session);
@@ -94,6 +100,7 @@ public interface NutsLogManager extends NutsComponent {
      * create an instance of {@link NutsLogger}
      *
      * @param clazz logger clazz
+     * @param session session
      * @return new instance of {@link NutsLogger}
      */
     NutsLogger createLogger(Class clazz, NutsSession session);
@@ -101,6 +108,7 @@ public interface NutsLogManager extends NutsComponent {
     /**
      * return terminal logger level
      *
+     * @param session session
      * @return terminal logger level
      */
     Level getTermLevel(NutsSession session);
@@ -109,6 +117,7 @@ public interface NutsLogManager extends NutsComponent {
      * set terminal logger level
      *
      * @param level new level
+     * @param session session
      * @return this
      */
     NutsLogManager setTermLevel(Level level, NutsSession session);
@@ -116,6 +125,7 @@ public interface NutsLogManager extends NutsComponent {
     /**
      * return file logger level
      *
+     * @param session session
      * @return file logger level
      */
     Level getFileLevel(NutsSession session);
@@ -124,6 +134,7 @@ public interface NutsLogManager extends NutsComponent {
      * set file logger level
      *
      * @param level new level
+     * @param session session
      * @return this
      */
     NutsLogManager setFileLevel(Level level, NutsSession session);

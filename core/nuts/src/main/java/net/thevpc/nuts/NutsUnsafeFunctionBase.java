@@ -28,8 +28,8 @@ package net.thevpc.nuts;
 
 /**
  * Unsafe function is a function that can throw any arbitrary exception
- * @param <T>
- * @param <R>
+ * @param <T> In
+ * @param <R> Out
  */
 public interface NutsUnsafeFunctionBase<T, R>{
     R apply(T t) throws Exception;

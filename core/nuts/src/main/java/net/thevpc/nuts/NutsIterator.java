@@ -46,7 +46,8 @@ public interface NutsIterator<T> extends Iterator<T>, NutsDescribable {
         return NutsDescribables.ofIterator(o, descr);
     }
 
+    @SuppressWarnings("unchecked")
     static <T> NutsIterator<T> ofEmpty(NutsSession session) {
-        return (NutsIterator) NutsStream.ofEmpty(session).iterator();
+        return (NutsIterator<T>) NutsStream.ofEmpty(session).iterator();
     }
 }

@@ -117,6 +117,7 @@ public final class NutsApplications {
      * @param <T>     application type
      * @return new instance
      */
+    @SuppressWarnings("unchecked")
     public static <T extends NutsApplication> T createApplicationInstance(Class<T> appType,NutsSession session,String[] args) {
         try {
             for (Method declaredMethod : appType.getDeclaredMethods()) {
@@ -185,7 +186,7 @@ public final class NutsApplications {
         if (session == null) {
             session = Nuts.openInheritedWorkspace(args);
         }
-        NutsApplicationContext applicationContext = null;
+        NutsApplicationContext applicationContext;
         applicationContext = applicationInstance.createApplicationContext(session, args, startTimeMillis);
         if (applicationContext == null) {
             applicationContext = NutsApplicationContext.of(args, startTimeMillis, applicationInstance.getClass(), null, session);

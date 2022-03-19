@@ -393,7 +393,7 @@
                         <configuration>
                             <archive>
                                 <manifestEntries>
-                                    <Automatic-Module-Name>net.thevpc.nuts.runtime</Automatic-Module-Name>
+                                    <Automatic-Module-Name>net.thevpc.nuts.toolbox.nmvn</Automatic-Module-Name>
                                 </manifestEntries>
                             </archive>
                         </configuration>

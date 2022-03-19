@@ -143,3 +143,9 @@
 /installers/nuts-installer/dist/nuts-installer-linux-x64-0.8.3.1.o
 /documentation/media/Thumbs.db
 /documentation/media/Thumbs.db:encryptable
+/core/nuts/target-8+/
+/core/nuts/target-11/
+/companions/nstore/target/
+/libraries/nlib-spring-boot/target/
+/libraries/nlib-spring-boot/.pom.xml.kate-swp
+/core/nuts/module-info.class

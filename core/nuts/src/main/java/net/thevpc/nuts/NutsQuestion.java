@@ -125,6 +125,7 @@ public interface NutsQuestion<T> extends NutsCommandLineConfigurable {
      * ask for message of type enum
      *
      * @param msg message
+     * @param enumType enumType
      * @return ask for message of type enum
      * @since 0.8.3
      */

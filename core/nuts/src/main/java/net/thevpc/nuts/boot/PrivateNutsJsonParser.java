@@ -62,10 +62,12 @@ final class PrivateNutsJsonParser {
         }
     }
 
+    @SuppressWarnings("unchecked")
     public Map<String, Object> parseObject() {
         return (Map<String, Object>) parse();
     }
 
+    @SuppressWarnings("unchecked")
     public List<Object> parseArray() {
         return (List<Object>) parse();
     }
@@ -120,8 +122,7 @@ final class PrivateNutsJsonParser {
 
     private List<Object> nextArray() throws IOException {
         List<Object> arr = new ArrayList<>();
-        int p = -1;
-        p = st.nextToken();
+        int p = st.nextToken();
         if (p != '[') {
             throw new NutsBootException(NutsMessage.cstyle("json syntax error : %s", str(p)));
         }
@@ -167,8 +168,7 @@ final class PrivateNutsJsonParser {
 
     private Map<String, Object> nextObject() throws IOException {
         Map<String, Object> map = new LinkedHashMap<>();
-        int p = -1;
-        p = st.nextToken();
+        int p = st.nextToken();
         if (p != '{') {
             throw new NutsBootException(NutsMessage.cstyle("json syntax error : %s", p));
         }

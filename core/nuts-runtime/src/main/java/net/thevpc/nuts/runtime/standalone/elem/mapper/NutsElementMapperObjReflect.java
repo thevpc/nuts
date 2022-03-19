@@ -8,7 +8,11 @@ import net.thevpc.nuts.runtime.standalone.elem.DefaultNutsElementFactoryService;
 
 import java.lang.reflect.Modifier;
 import java.lang.reflect.Type;
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.time.Instant;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 public class NutsElementMapperObjReflect implements NutsElementMapper<Object> {
@@ -48,6 +52,92 @@ public class NutsElementMapperObjReflect implements NutsElementMapper<Object> {
     @Override
     public Object createObject(NutsElement o, Type typeOfResult, NutsElementFactoryContext context) {
         Class c = ReflectUtils.getRawClass(typeOfResult);
+        switch (o.type()) {
+            case NULL: {
+                return null;
+            }
+            case STRING: {
+                if (c.isAssignableFrom(String.class)) {
+                    return o.asString();
+                }
+                break;
+            }
+            case BOOLEAN: {
+                if (c.isAssignableFrom(Boolean.class)) {
+                    return o.asBoolean();
+                }
+                break;
+            }
+            case DOUBLE: {
+                if (c.isAssignableFrom(Double.class)) {
+                    return o.asDouble();
+                }
+                break;
+            }
+            case FLOAT: {
+                if (c.isAssignableFrom(Float.class)) {
+                    return o.asFloat();
+                }
+                break;
+            }
+            case BYTE: {
+                if (c.isAssignableFrom(Byte.class)) {
+                    return o.asByte();
+                }
+                break;
+            }
+            case BIG_DECIMAL: {
+                if (c.isAssignableFrom(BigDecimal.class)) {
+                    return o.asPrimitive().getNumber();
+                }
+                break;
+            }
+            case BIG_INTEGER: {
+                if (c.isAssignableFrom(BigInteger.class)) {
+                    return o.asPrimitive().getNumber();
+                }
+                break;
+            }
+            case LONG: {
+                if (c.isAssignableFrom(Long.class)) {
+                    return o.asLong();
+                }
+                break;
+            }
+            case SHORT: {
+                if (c.isAssignableFrom(Short.class)) {
+                    return o.asShort();
+                }
+                break;
+            }
+            case INTEGER: {
+                if (c.isAssignableFrom(Integer.class)) {
+                    return o.asInt();
+                }
+                break;
+            }
+            case INSTANT: {
+                if (c.isAssignableFrom(Instant.class)) {
+                    return o.asInstant();
+                }
+                break;
+            }
+            case ARRAY: {
+                if (c.isAssignableFrom(List.class)) {
+                    return context.elementToObject(o,List.class);
+                }
+                break;
+            }
+            case OBJECT: {
+                if (c.equals(Object.class)) {
+                    return context.elementToObject(o,Map.class);
+                }
+                break;
+            }
+            case CUSTOM:{
+                return c.cast(o.asCustom().getValue());
+            }
+        }
         int mod = c.getModifiers();
         if (Modifier.isAbstract(mod)) {
             throw new NutsIllegalArgumentException(context.getSession(), NutsMessage.cstyle("cannot instantiate abstract class %s", typeOfResult));

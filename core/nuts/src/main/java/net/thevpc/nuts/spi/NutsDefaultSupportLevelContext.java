@@ -67,11 +67,13 @@ public class NutsDefaultSupportLevelContext implements NutsSupportLevelContext {
         return ws;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public <T> T getConstraints() {
         return (T) constraints;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public <T> T getConstraints(Class<T> expected) {
         if (constraints == null) {

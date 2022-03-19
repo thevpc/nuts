@@ -13,14 +13,14 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class NOpenAPIService {
 
     private NutsApplicationContext appContext;
-
+    private OpenApiParser openApiParser = new OpenApiParser();
+    private int maxExampleInlineLength=80;
     public NOpenAPIService(NutsApplicationContext appContext) {
         this.appContext = appContext;
     }
@@ -110,7 +110,8 @@ public class NOpenAPIService {
 
     private MdDocument toMarkdown(String source) {
         boolean json = false;
-        try (BufferedReader r = Files.newBufferedReader(Paths.get(source))) {
+        Path sourcePath = Paths.get(source);
+        try (BufferedReader r = Files.newBufferedReader(sourcePath)) {
             String t;
             while ((t = r.readLine()) != null) {
                 t = t.trim();
@@ -124,8 +125,8 @@ public class NOpenAPIService {
         } catch (IOException ex) {
             throw new UncheckedIOException(ex);
         }
-        try (InputStream inputStream = Files.newInputStream(Paths.get(source))) {
-            return toMarkdown(inputStream, json);
+        try (InputStream inputStream = Files.newInputStream(sourcePath)) {
+            return toMarkdown(inputStream, json, sourcePath.getParent().toString());
         } catch (IOException ex) {
             throw new UncheckedIOException(ex);
         }
@@ -142,39 +143,14 @@ public class NOpenAPIService {
         }
     }
 
-    private MdDocument toMarkdown(InputStream inputStream, boolean json) {
-        NutsSession session = appContext.getSession();
-        NutsElements prv = NutsElements.of(session);
-        MdDocumentBuilder doc = new MdDocumentBuilder();
-        doc.setProperty("headers", new String[]{
-            ":source-highlighter: coderay",
-            ":icons: font",
-            ":icon-set: pf",
-            ":doctype: book",
-            ":toc:",
-            ":toclevels: 3",
-            ":appendix-caption: Appx",
-            ":sectnums:",
-            ":chapter-label:"
-        });
-        doc.setDate(LocalDate.now());
-        doc.setSubTitle("RESTRICTED - INTERNAL");
-
-        NutsElement obj = loadElement(inputStream, json);
-        List<MdElement> all = new ArrayList<>();
-        NutsObjectElement entries = obj.asObject();
-        String documentTitle = entries.getObject("info").getString("title");
-        doc.setTitle(documentTitle);
-        String documentVersion = entries.getObject("info").getString("version");
-        doc.setVersion(documentVersion);
-
-        all.add(MdFactory.title(1, documentTitle));
-        all.add(MdFactory.seq(
-                MdFactory.text("API Reference")
-        ));
+    private void _fillIntroduction(NutsObjectElement entries, List<MdElement> all) {
+        all.add(MdFactory.endParagraph());
         all.add(MdFactory.title(2, "INTRODUCTION"));
+        all.add(MdFactory.endParagraph());
         all.add(MdFactory.text(entries.getObject("info").getString("description").trim()));
+        all.add(MdFactory.endParagraph());
         all.add(MdFactory.title(3, "CONTACT"));
+        all.add(MdFactory.endParagraph());
         all.add(MdFactory.table()
                 .addColumns(
                         MdFactory.column().setName("NAME"),
@@ -189,36 +165,15 @@ public class NOpenAPIService {
                         )
                 ).build()
         );
+    }
 
-        all.add(MdFactory.title(3, "SERVER LIST"));
-        for (NutsElement srv : entries.getArray(prv.ofString("servers"))) {
-            NutsObjectElement srvObj = (NutsObjectElement) srv.asObject();
-            all.add(MdFactory.title(4, srvObj.getString("url")));
-            all.add(MdFactory.text(srvObj.getString("description")));
-            NutsElement vars = srvObj.get(prv.ofString("variables"));
-            if (vars!=null && !vars.isEmpty()) {
-                MdTableBuilder mdTableBuilder = MdFactory.table().addColumns(
-                        MdFactory.column().setName("NAME"),
-                        MdFactory.column().setName("SPEC"),
-                        MdFactory.column().setName("DESCRIPTION")
-                );
-                for (NutsElementEntry variables : vars.asObject()) {
-                    mdTableBuilder.addRows(
-                            MdFactory.row().addCells(
-                                    MdFactory.text(variables.getKey().asString()),
-                                    //                                MdFactory.text(variables.getValue().asObject().getString("enum")),
-                                    MdFactory.text(variables.getValue().asObject().getString("default")),
-                                    MdFactory.text(variables.getValue().asObject().getString("description"))
-                            )
-                    );
-                }
-                all.add(mdTableBuilder.build());
-            }
-        }
-
+    private void _fillHeaders(NutsObjectElement entries, List<MdElement> all) {
         if (!entries.getObject("components").getObject("headers").isEmpty()) {
+            all.add(MdFactory.endParagraph());
             all.add(MdFactory.title(3, "HEADERS"));
+            all.add(MdFactory.endParagraph());
             all.add(MdFactory.text("This section includes common Headers to be included in the incoming requests."));
+            all.add(MdFactory.endParagraph());
             MdTableBuilder table = MdFactory.table()
                     .addColumns(
                             MdFactory.column().setName("NAME"),
@@ -239,15 +194,23 @@ public class NOpenAPIService {
             }
             all.add(table.build());
         }
+    }
+
+    private void _fillSecuritySchemes(NutsObjectElement entries, List<MdElement> all) {
         if (!entries.getObject("components").getObject("securitySchemes").isEmpty()) {
+            all.add(MdFactory.endParagraph());
             all.add(MdFactory.title(3, "SECURITY AND AUTHENTICATION"));
+            all.add(MdFactory.endParagraph());
             all.add(MdFactory.text("This section includes security configurations."));
             for (NutsElementEntry ee : entries.getObject("components").getObject("securitySchemes")) {
                 String type = ee.getValue().asObject().getString("type");
                 switch (type) {
                     case "apiKey": {
+                        all.add(MdFactory.endParagraph());
                         all.add(MdFactory.title(4, ee.getKey() + " (Api Key)"));
+                        all.add(MdFactory.endParagraph());
                         all.add(MdFactory.text(ee.getValue().asObject().getString("description")));
+                        all.add(MdFactory.endParagraph());
                         all.add(MdFactory
                                 .table().addColumns(
                                         MdFactory.column().setName("NAME"),
@@ -263,7 +226,9 @@ public class NOpenAPIService {
                         break;
                     }
                     case "http": {
+                        all.add(MdFactory.endParagraph());
                         all.add(MdFactory.title(4, ee.getKey() + " (Http)"));
+                        all.add(MdFactory.endParagraph());
                         all.add(MdFactory.text(ee.getValue().asObject().getString("description")));
                         all.add(MdFactory
                                 .table().addColumns(
@@ -280,7 +245,9 @@ public class NOpenAPIService {
                         break;
                     }
                     case "oauth2": {
+                        all.add(MdFactory.endParagraph());
                         all.add(MdFactory.title(4, ee.getKey() + " (Oauth2)"));
+                        all.add(MdFactory.endParagraph());
                         all.add(MdFactory.text(ee.getValue().asObject().getString("description")));
 //                        all.add(MdFactory
 //                                .table().addColumns(
@@ -296,7 +263,9 @@ public class NOpenAPIService {
                         break;
                     }
                     case "openIdConnect": {
+                        all.add(MdFactory.endParagraph());
                         all.add(MdFactory.title(4, ee.getKey() + " (OpenId Connect)"));
+                        all.add(MdFactory.endParagraph());
                         all.add(MdFactory.text(ee.getValue().asObject().getString("description")));
                         all.add(MdFactory
                                 .table().addColumns(
@@ -311,203 +280,419 @@ public class NOpenAPIService {
                         break;
                     }
                     default: {
+                        all.add(MdFactory.endParagraph());
                         all.add(MdFactory.title(4, ee.getKey() + " (" + type + ")"));
                         all.add(MdFactory.text(ee.getValue().asObject().getString("description")));
                     }
                 }
             }
         }
-        all.add(MdFactory.title(2, "API"));
-        for (NutsElementEntry path : entries.get(prv.ofString("paths")).asObject()) {
-            String url = path.getKey().asString();
-            for (NutsElementEntry ss : path.getValue().asObject()) {
-                String method = ss.getKey().asString();
-                NutsObjectElement call = ss.getValue().asObject();
-                all.add(MdFactory.title(3, method.toUpperCase() + " " + url));
-                all.add(MdFactory.text(call.getString("summary")));
-                all.add(
-                        MdFactory.codeBacktick3("", "[" + method.toUpperCase() + "] " + url)
-                );
-                all.add(MdFactory.text(call.getString("description")));
-                all.add(MdFactory.title(4, "REQUEST"));
-                List<NutsElement> headerParameters = call.getArray(prv.ofString("parameters")).stream().filter(x -> x.asObject().getString("in").equals("header")).collect(Collectors.toList());
-                List<NutsElement> queryParameters = call.getArray(prv.ofString("parameters")).stream().filter(x -> x.asObject().getString("in").equals("query")).collect(Collectors.toList());
-                if (!headerParameters.isEmpty()) {
-                    all.add(MdFactory.title(5, "HEADER PARAMETERS"));
-                    MdTable tab = new MdTable(
-                            new MdColumn[]{new MdColumn(MdFactory.text("NAME"), MdHorizontalAlign.LEFT),
-                                new MdColumn(MdFactory.text("TYPE"), MdHorizontalAlign.LEFT),
-                                new MdColumn(MdFactory.text("REQUIRED"), MdHorizontalAlign.LEFT),
-                                new MdColumn(MdFactory.text("DESCRIPTION"), MdHorizontalAlign.LEFT)},
-                            headerParameters.stream().map(
-                                    headerParameter -> new MdRow(
-                                            new MdElement[]{
-                                                MdFactory.codeBacktick3("", headerParameter.asObject().getString("name")),
-                                                MdFactory.codeBacktick3("", headerParameter.asObject().getString("type")),
-                                                MdFactory.text(headerParameter.asObject().getBoolean("required") ? "required" : ""),
-                                                MdFactory.text(headerParameter.asObject().getString("description"))
-                                            }, false
-                                    )
-                            ).toArray(MdRow[]::new)
-                    );
-                    all.add(tab);
-                }
-                if (!queryParameters.isEmpty()) {
-                    all.add(MdFactory.title(5, "QUERY PARAMETERS"));
-                    MdTable tab = new MdTable(
-                            new MdColumn[]{new MdColumn(MdFactory.text("NAME"), MdHorizontalAlign.LEFT),
-                                new MdColumn(MdFactory.text("TYPE"), MdHorizontalAlign.LEFT),
-                                new MdColumn(MdFactory.text("REQUIRED"), MdHorizontalAlign.LEFT),
-                                new MdColumn(MdFactory.text("DESCRIPTION"), MdHorizontalAlign.LEFT)},
-                            queryParameters.stream().map(
-                                    headerParameter -> new MdRow(
-                                            new MdElement[]{
-                                                MdFactory.codeBacktick3("", headerParameter.asObject().getString("name")),
-                                                MdFactory.codeBacktick3("", headerParameter.asObject().getString("type")),
-                                                MdFactory.text(headerParameter.asObject().getBoolean("required") ? "required" : ""),
-                                                MdFactory.text(headerParameter.asObject().getString("description"))
-                                            }, false
-                                    )
-                            ).toArray(MdRow[]::new)
-                    );
-                    all.add(tab);
-                }
-                NutsObjectElement requestBody = call.getObject("requestBody");
-                if (requestBody!=null && !requestBody.isEmpty()) {
-                    boolean required = requestBody.getBoolean("required");
-                    String desc = requestBody.getString("description");
-                    NutsObjectElement r = requestBody.getObject("content");
-                    for (NutsElementEntry ii : r) {
-                        all.add(MdFactory.title(5, "REQUEST BODY - " + ii.getKey() + (required ? " [required]" : "")));
-                        all.add(MdFactory.text(desc));
-                        all.add(MdFactory.codeBacktick3("javascript", toCode(ii.getValue(), "")));
-                    }
-                }
 
-                all.add(MdFactory.title(4, "RESPONSE"));
-                call.getObject("responses").stream()
-                        .forEach(x -> {
-                            NutsElement s = x.getKey();
-                            NutsElement v = x.getValue();
-                            all.add(MdFactory.title(5, "STATUS CODE - " + s));
-                            all.add(MdFactory.text(v.asObject().getString("description")));
-                            for (NutsElementEntry content : v.asObject().getObject("content")) {
-                                all.add(MdFactory.title(6, "RESPONSE MODEL - " + content.getKey()));
-                                all.add(MdFactory.codeBacktick3("javascript", toCode(content.getValue(), "")));
-                            }
-                        });
+    }
+
+
+    private void _fillSchemaTypes(NutsObjectElement entries, List<MdElement> all) {
+        Map<String, TypeInfo> allTypes = openApiParser.parseTypes(entries);
+        if (allTypes.isEmpty()) {
+            return;
+        }
+        all.add(MdFactory.endParagraph());
+        all.add(MdFactory.title(2, "SCHEMA TYPES"));
+        for (Map.Entry<String, TypeInfo> entry : allTypes.entrySet()) {
+            TypeInfo v = entry.getValue();
+            if ("object".equals(v.type)) {
+                all.add(MdFactory.endParagraph());
+                all.add(MdFactory.title(3, entry.getKey()));
+                String d1 = v.description;
+                String d2 = v.summary;
+                if (!NutsBlankable.isBlank(d1) && !NutsBlankable.isBlank(d2)) {
+                    all.add(MdFactory.text(d1));
+                    all.add(MdFactory.text(". "));
+                    all.add(MdFactory.text(d2));
+                } else if (!NutsBlankable.isBlank(d1)) {
+                    all.add(MdFactory.text(d1));
+                } else if (!NutsBlankable.isBlank(d2)) {
+                    all.add(MdFactory.text(d2));
+                }
+                MdTableBuilder mdTableBuilder = MdFactory.table().addColumns(
+                        MdFactory.column().setName("NAME"),
+                        MdFactory.column().setName("TYPE"),
+                        MdFactory.column().setName("DESCRIPTION"),
+                        MdFactory.column().setName("EXAMPLE")
+                );
+                for (FieldInfo p : v.fields) {
+                    mdTableBuilder.addRows(
+                            MdFactory.row().addCells(
+                                    MdFactory.text(p.name),
+                                    MdFactory.codeBacktick3("", toCode(p.schema, false, "") + (p.required ? " [required]" : " [optional]")),
+                                    MdFactory.text(p.description == null ? "" : p.description.trim()),
+                                    MdFactory.text(p.example == null ? "" : p.example.trim())
+                            )
+                    );
+                }
+                all.add(mdTableBuilder.build());
+            }
+            if (!NutsBlankable.isBlank(v.example)) {
+                all.add(MdFactory.endParagraph());
+                all.add(MdFactory.text("EXAMPLE:"));
+                all.add(MdFactory.endParagraph());
+                all.add(MdFactory.codeBacktick3("", v.example.toString()));
             }
         }
+    }
+
+    private void _fillApiPaths(NutsObjectElement entries, List<MdElement> all) {
+        all.add(MdFactory.endParagraph());
+        all.add(MdFactory.title(2, "API PATHS"));
+        NutsObjectElement schemas = entries.getSafeObject("components").getSafeObject("schemas");
+        NutsElements prv = NutsElements.of(appContext.getSession());
+        for (NutsElementEntry path : entries.get(prv.ofString("paths")).asObject()) {
+            String url = path.getKey().asString();
+            Map<String, NutsObjectElement> calls = new HashMap<>();
+            String dsummary = null;
+            String ddescription = null;
+            NutsArrayElement dparameters = null;
+            for (NutsElementEntry ss : path.getValue().asObject()) {
+                String k = ss.getKey().asString();
+                switch (k) {
+                    case "summary": {
+                        dsummary = ss.getValue().asString();
+                        break;
+                    }
+                    case "description": {
+                        ddescription = ss.getValue().asString();
+                        break;
+                    }
+                    case "parameters": {
+                        dparameters = ss.getValue().asArray();
+                        break;
+                    }
+                    default: {
+                        calls.put(k, ss.getValue().asObject());
+                    }
+                }
+            }
+            for (Map.Entry<String, NutsObjectElement> ee : calls.entrySet()) {
+                _fillApiPathMethod(ee.getKey(), ee.getValue(), all, url, prv, dsummary, ddescription, dparameters, schemas);
+            }
+        }
+    }
+
+    private void _fillServerList(NutsObjectElement entries, List<MdElement> all) {
+        all.add(MdFactory.endParagraph());
+        all.add(MdFactory.title(3, "SERVER LIST"));
+        NutsElements prv = NutsElements.of(appContext.getSession());
+        for (NutsElement srv : entries.getArray(prv.ofString("servers"))) {
+            NutsObjectElement srvObj = (NutsObjectElement) srv.asObject();
+            all.add(MdFactory.title(4, srvObj.getString("url")));
+            all.add(MdFactory.text(srvObj.getString("description")));
+            NutsElement vars = srvObj.get(prv.ofString("variables"));
+            if (vars != null && !vars.isEmpty()) {
+                MdTableBuilder mdTableBuilder = MdFactory.table().addColumns(
+                        MdFactory.column().setName("NAME"),
+                        MdFactory.column().setName("SPEC"),
+                        MdFactory.column().setName("DESCRIPTION")
+                );
+                for (NutsElementEntry variables : vars.asObject()) {
+                    mdTableBuilder.addRows(
+                            MdFactory.row().addCells(
+                                    MdFactory.text(variables.getKey().asString()),
+                                    //                                MdFactory.text(variables.getValue().asObject().getString("enum")),
+                                    MdFactory.text(variables.getValue().asObject().getString("default")),
+                                    MdFactory.text(variables.getValue().asObject().getString("description"))
+                            )
+                    );
+                }
+                all.add(mdTableBuilder.build());
+            }
+        }
+    }
+
+    private MdDocument toMarkdown(InputStream inputStream, boolean json,String folder) {
+        MdDocumentBuilder doc = new MdDocumentBuilder();
+        List<String> options=new ArrayList<>(
+                Arrays.asList(
+                        ":source-highlighter: coderay",
+                        ":icons: font",
+                        ":icon-set: pf",
+                        ":doctype: book",
+                        ":toc:",
+                        ":toclevels: 3",
+                        ":appendix-caption: Appx",
+                        ":sectnums:",
+                        ":chapter-label:"
+                )
+        );
+        if(Files.exists(Paths.get(folder).resolve("logo.png"))){
+            options.add(":title-logo-image: logo.png");
+        }
+        doc.setProperty("headers", options.toArray(new String[0]));
+        doc.setDate(LocalDate.now());
+        doc.setSubTitle("RESTRICTED - INTERNAL");
+
+        NutsElement obj = loadElement(inputStream, json);
+        List<MdElement> all = new ArrayList<>();
+        NutsObjectElement entries = obj.asObject();
+        all.add(MdFactory.endParagraph());
+        String documentTitle = entries.getObject("info").getString("title");
+        doc.setTitle(documentTitle);
+        String documentVersion = entries.getObject("info").getString("version");
+        doc.setVersion(documentVersion);
+
+        all.add(MdFactory.title(1, documentTitle));
+//        all.add(new MdImage(null,null,"Logo, 64,64","./logo.png"));
+//        all.add(MdFactory.endParagraph());
+//        all.add(MdFactory.seq(MdFactory.text("API Reference")));
+        _fillIntroduction(entries, all);
+        _fillServerList(entries, all);
+        _fillHeaders(entries, all);
+        _fillSecuritySchemes(entries, all);
+        _fillApiPaths(entries, all);
+        _fillSchemaTypes(entries, all);
         doc.setContent(MdFactory.seq(all));
         return doc.build();
     }
 
-    private String toCode(NutsElement o, String indent) {
-        NutsSession session = appContext.getSession();
-        NutsElements prv = NutsElements.of(session);
-        String descSep = " // ";
-        if (o.isObject()) {
-            NutsElement a = o.asObject().get(prv.ofString("schema"));
-            if (a!=null && a.isObject()) {
-                NutsObjectElement schema = o.asObject().getObject("schema");
-                String t = schema.getString("type");
-                if (t.equals("object")) {
-                    StringBuilder sb = new StringBuilder("{");
-                    for (NutsElementEntry p : schema.getObject("properties")) {
-                        sb.append("\n" + indent + "  " + p.getKey() + ": " + toCode(p.getValue(), indent + "  "));
+
+    private void _fillApiPathMethodParam(List<NutsElement> headerParameters, List<MdElement> all) {
+        MdTable tab = new MdTable(
+                new MdColumn[]{
+                        new MdColumn(MdFactory.text("NAME"), MdHorizontalAlign.LEFT),
+                        new MdColumn(MdFactory.text("TYPE"), MdHorizontalAlign.LEFT),
+                        new MdColumn(MdFactory.text("DESCRIPTION"), MdHorizontalAlign.LEFT),
+                        new MdColumn(MdFactory.text("EXAMPLE"), MdHorizontalAlign.LEFT)
+                },
+                headerParameters.stream().map(
+                        headerParameter -> {
+                            boolean pdeprecated=Boolean.parseBoolean(headerParameter.asObject().getString("pdeprecated"));
+                            String type = _StringUtils.nvl(headerParameter.asObject().getString("type"), "string")
+                                    + (headerParameter.asObject().getBoolean("required") ? " [required]" : " [optional]")
+                                    ;
+                            return new MdRow(
+                                    new MdElement[]{
+                                            MdFactory.codeBacktick3("", _StringUtils.nvl(headerParameter.asObject().getString("name"),"unknown")
+                                                    + (pdeprecated?" [DEPRECATED]":"")
+                                            ),
+                                            MdFactory.codeBacktick3("", type),
+                                            MdFactory.text(_StringUtils.nvl(headerParameter.asObject().getString("description"),"")),
+                                            MdFactory.text(_StringUtils.nvl(headerParameter.asObject().getString("example"),"")),
+                                    }, false
+                            );
+                        }
+                ).toArray(MdRow[]::new)
+        );
+        all.add(tab);
+    }
+
+    private void _fillApiPathMethod(String method, NutsObjectElement call, List<MdElement> all, String url, NutsElements prv, String dsummary, String ddescription, NutsArrayElement dparameters, NutsObjectElement schemas) {
+        String nsummary = call.getString("summary");
+        if (nsummary == null) {
+            nsummary = dsummary;
+        }
+        String ndescription = call.getString("description");
+        if (ndescription == null) {
+            ndescription = ddescription;
+        }
+        all.add(MdFactory.endParagraph());
+        all.add(MdFactory.title(3, method.toUpperCase() + " " + url));
+        all.add(MdFactory.text(nsummary));
+        all.add(MdFactory.endParagraph());
+        all.add(
+                MdFactory.codeBacktick3("", "[" + method.toUpperCase() + "] " + url)
+        );
+        all.add(MdFactory.endParagraph());
+        if (ndescription != null) {
+            all.add(MdFactory.text(ndescription));
+            all.add(MdFactory.endParagraph());
+        }
+        NutsArrayElement parameters = call.getArray(prv.ofString("parameters"));
+        if (parameters == null) {
+            parameters = dparameters;
+        }
+        if (parameters == null) {
+            parameters = NutsArrayElementBuilder.of(appContext.getSession()).build();
+        }
+        List<NutsElement> headerParameters = parameters.stream().filter(x -> "header".equals(x.asObject().getString("in"))).collect(Collectors.toList());
+        List<NutsElement> queryParameters = parameters.stream().filter(x -> "query".equals(x.asObject().getString("in"))).collect(Collectors.toList());
+        List<NutsElement> pathParameters = parameters.stream().filter(x -> "path".equals(x.asObject().getString("in"))).collect(Collectors.toList());
+        NutsObjectElement requestBody = call.getObject("requestBody");
+        if (
+                !headerParameters.isEmpty()
+                        || !queryParameters.isEmpty()
+                        || !pathParameters.isEmpty()
+                        || (requestBody != null && !requestBody.isEmpty())
+
+        ) {
+            all.add(MdFactory.endParagraph());
+            all.add(MdFactory.title(4, "REQUEST"));
+
+            if (!headerParameters.isEmpty()) {
+                all.add(MdFactory.endParagraph());
+                all.add(MdFactory.title(5, "HEADER PARAMETERS"));
+                _fillApiPathMethodParam(headerParameters, all);
+            }
+            if (!pathParameters.isEmpty()) {
+                all.add(MdFactory.endParagraph());
+                all.add(MdFactory.title(5, "PATH PARAMETERS"));
+                _fillApiPathMethodParam(pathParameters, all);
+            }
+            if (!queryParameters.isEmpty()) {
+                all.add(MdFactory.endParagraph());
+                all.add(MdFactory.title(5, "QUERY PARAMETERS"));
+                _fillApiPathMethodParam(queryParameters, all);
+            }
+            if (requestBody != null && !requestBody.isEmpty()) {
+                boolean required = requestBody.getBoolean("required");
+                String desc = requestBody.getString("description");
+                NutsObjectElement r = requestBody.getObject("content");
+                for (NutsElementEntry ii : r) {
+                    all.add(MdFactory.endParagraph());
+                    all.add(MdFactory.title(5, "REQUEST BODY - " + ii.getKey() + (required ? " [required]" : "[optional]")));
+                    all.add(MdFactory.text(desc));
+                    TypeInfo o = openApiParser.parseOneType(ii.getValue().asObject(), null);
+                    if (o.ref != null) {
+                        all.add(MdFactory.title(5, "REQUEST TYPE - " + o.ref));
+                    } else {
+                        all.add(MdFactory.codeBacktick3("javascript", toCode(o, true, "")));
                     }
-                    sb.append("\n" + indent + "}");
-                    NutsElement desc = o.asObject().get(prv.ofString("description"));
-                    if (desc!=null && !desc.asString().isEmpty()) {
-                        return sb + descSep + desc.asString();
-                    }
-                    return sb.toString();
                 }
-            } else if (o.asObject().get(prv.ofString("type")).isString()) {
-                String t = o.asObject().get(prv.ofString("type")).asString();
-                if (t.equals("object")) {
-                    StringBuilder sb = new StringBuilder("{");
-                    for (NutsElementEntry p : o.asObject().getObject("properties")) {
-                        sb.append("\n" + indent + "  " + p.getKey() + ": " + toCode(p.getValue(), indent + "  "));
-                    }
-                    sb.append("\n" + indent + "}");
-                    NutsElement desc = o.asObject().get(prv.ofString("description"));
-                    if (desc!=null && !desc.asString().isEmpty()) {
-                        return sb + descSep + desc.asString();
-                    }
-                    return sb.toString();
-                } else {
-                    NutsElement anEnum = o.asObject().get(prv.ofString("enum"));
-                    if (t.equals("boolean")) {
-                        NutsElement ee = o.asObject().get(prv.ofString("example"));
-                        if (ee!=null && !ee.isNull()) {
-                            if (ee.isString()) {
-                                return ee.asString();
-                            }
-                            return ee.asString();
-                        }
-                        NutsElement desc = o.asObject().get(prv.ofString("description"));
-                        NutsArrayElement en = anEnum==null?null:anEnum.asArray();
-                        if (en!=null && en.isEmpty()) {
-                            String r = "boolean ALLOWED:" + en.stream().map(x -> x.isNull() ? "null" : x.asString()).collect(Collectors.joining(", "));
-                            if (!desc.asString().isEmpty()) {
-                                return r + descSep + desc.asString();
-                            }
-                            return r;
-                        } else {
-                            if (desc!=null && !desc.asString().isEmpty()) {
-                                return "boolean" + descSep + desc.asString();
-                            }
-                            return "boolean";
-                        }
-                    } else if (t.equals("string")) {
-                        NutsElement ee = o.asObject().get(prv.ofString("example"));
-                        if (ee!=null && !ee.isNull()) {
-                            if (ee.isString()) {
-                                return "\'" + ee.asString() + "\'";
-                            }
-                            return "\'" + ee.asString() + "\'";
-                        }
-                        NutsElement desc = o.asObject().get(prv.ofString("description"));
-                        NutsArrayElement en = anEnum==null?null:anEnum.asArray();
-                        if (en!=null && !en.isEmpty()) {
-                            String r = "string ALLOWED:" + en.stream().map(x -> x.isNull() ? "null" : x.asString()).collect(Collectors.joining(", "));
-                            if (desc!=null && !desc.asString().isEmpty()) {
-                                return r + descSep + desc.asString();
-                            }
-                            return r;
-                        } else {
-                            if (desc!=null && !desc.asString().isEmpty()) {
-                                return "string" + descSep + desc.asString();
-                            }
-                            return "string";
-                        }
-                    } else if (t.equals("integer")) {
-                        NutsElement desc = o.asObject().get(prv.ofString("description"));
-                        NutsArrayElement en = anEnum==null?null:anEnum.asArray();
-                        if (en!=null && !en.isEmpty()) {
-                            String r = "integer ALLOWED:" + en.stream().map(x -> x.isNull() ? "null" : x.asString()).collect(Collectors.joining(", "));
-                            if (!desc.asString().isEmpty()) {
-                                return r + descSep + desc.asString();
-                            }
-                            return r;
-                        } else {
-                            if (desc!=null && !desc.asString().isEmpty()) {
-                                return "integer" + descSep + desc.asString();
-                            }
-                            return "integer";
-                        }
-                    }
-                }
-            } else if (o.asObject().get(prv.ofString("type"))==null || o.asObject().get(prv.ofString("type")).isNull()) {
-                NutsElement desc = o.asObject().get(prv.ofString("description"));
-                if (desc!=null && !desc.asString().isEmpty()) {
-                    return "null" + "\n" + desc.asString();
-                }
-                return "null";
             }
         }
-        return "";
+
+        all.add(MdFactory.endParagraph());
+        all.add(MdFactory.title(4, "RESPONSE"));
+        call.getObject("responses").stream()
+                .forEach(x -> {
+                    NutsElement s = x.getKey();
+                    NutsElement v = x.getValue();
+                    all.add(MdFactory.endParagraph());
+                    all.add(MdFactory.title(5, "STATUS CODE - " + s));
+                    all.add(MdFactory.text(v.asObject().getString("description")));
+                    for (NutsElementEntry content : v.asObject().getObject("content")) {
+                        TypeInfo o = openApiParser.parseOneType(content.getValue().asObject(), null);
+                        if (o.userType.equals("$ref")) {
+                            if(NutsBlankable.isBlank(o.example)) {
+                                all.add(MdFactory.table()
+                                        .addColumns(
+                                                MdFactory.column().setName("RESPONSE MODEL"),
+                                                MdFactory.column().setName("RESPONSE TYPE")
+                                        )
+                                        .addRows(
+                                                MdFactory.row().addCells(
+                                                        MdFactory.text(content.getKey().asString()),
+                                                        MdFactory.text(o.ref)
+                                                )
+                                        ).build()
+                                );
+                            }else if(o.example.toString().trim().length()<=maxExampleInlineLength){
+                                all.add(MdFactory.table()
+                                        .addColumns(
+                                                MdFactory.column().setName("RESPONSE MODEL"),
+                                                MdFactory.column().setName("RESPONSE TYPE"),
+                                                MdFactory.column().setName("EXAMPLE")
+                                        )
+                                        .addRows(
+                                                MdFactory.row().addCells(
+                                                        MdFactory.text(content.getKey().asString()),
+                                                        MdFactory.text(o.ref),
+                                                        NutsBlankable.isBlank(o.example) ? MdFactory.text("") : MdFactory.codeBacktick3("json", o.example.toString())
+                                                )
+                                        ).build()
+                                );
+                            }else{
+                                all.add(MdFactory.table()
+                                        .addColumns(
+                                                MdFactory.column().setName("RESPONSE MODEL"),
+                                                MdFactory.column().setName("RESPONSE TYPE"),
+                                                MdFactory.column().setName("EXAMPLE")
+                                        )
+                                        .addRows(
+                                                MdFactory.row().addCells(
+                                                        MdFactory.text(content.getKey().asString()),
+                                                        MdFactory.text(o.ref),
+                                                        MdFactory.text("SEE BELOW...")
+                                                )
+                                        ).build()
+                                );
+                                all.add(MdFactory.codeBacktick3("json", "\n"+o.example.toString()));
+                            }
+                        } else {
+                            all.add(MdFactory.endParagraph());
+                            all.add(MdFactory.title(6, "RESPONSE MODEL - " + content.getKey()));
+//                        all.add(MdFactory.endParagraph());
+                            if (o.ref != null) {
+                                all.add(MdFactory.title(6, "RESPONSE TYPE - " + o.ref));
+                            } else {
+                                all.add(MdFactory.codeBacktick3("javascript", "\n"+toCode(o, true, "")));
+                            }
+                        }
+                    }
+                });
+    }
+
+    private String toCode(TypeInfo o, boolean includeDesc, String indent) {
+        String descSep = "";
+        if (includeDesc) {
+            if (!NutsBlankable.isBlank(o.description)) {
+                descSep = " // " + o.description;
+            }
+        }
+        if (o.ref != null) {
+            return o.ref + descSep;
+        } else if (o.userType.equals("object")) {
+            StringBuilder sb = new StringBuilder("{");
+            for (FieldInfo p : o.fields) {
+                sb.append("\n").append(indent).append("  ").append(p.name).append(": ").append(toCode(p.schema, includeDesc, indent + "  "));
+            }
+            sb.append("\n").append(indent).append("}");
+            sb.append(descSep);
+            return sb.toString();
+        } else {
+            String type = o.userType;
+            switch (o.userType) {
+                case "string":
+                case "enum":
+                {
+                    if (!NutsBlankable.isBlank(o.minLength) && !NutsBlankable.isBlank(o.maxLength)) {
+                        type += ("[" + o.minLength.trim() + "," + o.maxLength.trim() + "]");
+                    } else if (!NutsBlankable.isBlank(o.minLength)) {
+                        type += (">=" + o.minLength.trim());
+                    } else if (!NutsBlankable.isBlank(o.maxLength)) {
+                        type += ("<=" + o.minLength.trim());
+                    }
+                    if (o.enumValues != null && o.enumValues.size() > 0) {
+                        type += " ALLOWED {";
+                        type += o.enumValues.stream().map(x -> x == null ? "null" : ("'" + x + "'")).collect(Collectors.joining(", "));
+                        type += "}";
+                    }
+                    break;
+                }
+                case "integer":
+                case "number": {
+                    if (!NutsBlankable.isBlank(o.minLength) && !NutsBlankable.isBlank(o.maxLength)) {
+                        type += ("[" + o.minLength.trim() + "," + o.maxLength.trim() + "]");
+                    } else if (!NutsBlankable.isBlank(o.minLength)) {
+                        type += (">=" + o.minLength.trim());
+                    } else if (!NutsBlankable.isBlank(o.maxLength)) {
+                        type += ("<=" + o.minLength.trim());
+                    }
+                    if (o.enumValues != null && o.enumValues.size() > 0) {
+                        type += " ALLOWED {";
+                        type += o.enumValues.stream().map(x -> x == null ? "null" : x).collect(Collectors.joining(", "));
+                        type += "}";
+                    }
+                    break;
+                }
+                case "boolean": {
+                    if (o.enumValues != null && o.enumValues.size() > 0) {
+                        type += " ALLOWED {";
+                        type += o.enumValues.stream().map(x -> x == null ? "null" : x).collect(Collectors.joining(", "));
+                        type += "}";
+                    }
+                }
+            }
+            return type + descSep;
+        }
     }
 
 }

@@ -79,8 +79,8 @@ public interface NutsBlankable {
 
     /**
      * return true if null or, as a supported blankable object, is blankable
-     * @param value
-     * @return
+     * @param value value
+     * @return true if null or, as a supported blankable object, is blankable
      */
     static boolean isBlank(Object value) {
         return NutsApiUtils.isBlank(value);

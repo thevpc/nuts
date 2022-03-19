@@ -93,12 +93,14 @@ public class DefaultNutsObjectElement extends AbstractNutsObjectElement {
 
     @Override
     public NutsArrayElement getArray(String key) {
-        return get(key).asArray();
+        NutsElement e = get(key);
+        return e == null ? null : e.asArray();
     }
 
     @Override
     public NutsArrayElement getArray(NutsElement key) {
-        return get(key).asArray();
+        NutsElement e = get(key);
+        return e == null ? null : e.asArray();
     }
 
     @Override
@@ -291,9 +293,9 @@ public class DefaultNutsObjectElement extends AbstractNutsObjectElement {
     public String toString() {
         return "{" + children().stream().map(x ->
                 x.getKey()
-                + ":"
-                + x.getValue().toString()
-                ).collect(Collectors.joining(", ")) + "}";
+                        + ":"
+                        + x.getValue().toString()
+        ).collect(Collectors.joining(", ")) + "}";
     }
 
     @Override

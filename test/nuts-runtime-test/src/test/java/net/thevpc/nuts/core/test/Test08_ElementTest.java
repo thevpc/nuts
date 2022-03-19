@@ -25,6 +25,7 @@
  */
 package net.thevpc.nuts.core.test;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -316,6 +317,14 @@ public class Test08_ElementTest {
                 .set("a","13")
                 .set("b","Hello").build();
         Assertions.assertEquals(expected,q);
+    }
+
+    @Test
+    public void testError(){
+        NutsElement e = NutsElements.of(session).parse(
+                new File("/data/private/work-local/core-techs-solutions/internal-projects/toolbox/terminal-tools/cv/src/main/resources/com/cts/toolbox/cv/default-data.json")
+        );
+        System.out.println(e);
     }
 
 }

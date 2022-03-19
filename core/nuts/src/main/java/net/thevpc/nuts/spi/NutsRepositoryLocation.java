@@ -233,8 +233,8 @@ public class NutsRepositoryLocation implements Comparable<NutsRepositoryLocation
     /**
      * return a new instance with the updated location type
      *
-     * @param locationType
-     * @return
+     * @param locationType locationType
+     * @return a new instance with the updated location type
      */
     public NutsRepositoryLocation setLocationType(String locationType) {
         return new NutsRepositoryLocation(name, locationType, path);
@@ -243,7 +243,7 @@ public class NutsRepositoryLocation implements Comparable<NutsRepositoryLocation
     /**
      * hashcode based on the string representation
      *
-     * @return
+     * @return hashCode
      */
     @Override
     public int hashCode() {
