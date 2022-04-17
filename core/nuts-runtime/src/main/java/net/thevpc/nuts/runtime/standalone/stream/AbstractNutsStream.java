@@ -421,13 +421,13 @@ public abstract class AbstractNutsStream<T> implements NutsStream<T> {
     }
 
     @Override
-    public Optional<T> findAny() {
-        return stream().findAny();
+    public NutsOptional<T> findAny() {
+        return NutsOptional.ofOptional(session,stream().findAny(),s->NutsMessage.cstyle("missing : %S",nutsBase));
     }
 
     @Override
-    public Optional<T> findFirst() {
-        return stream().findFirst();
+    public NutsOptional<T> findFirst() {
+        return NutsOptional.ofOptional(session,stream().findFirst(),s->NutsMessage.cstyle("missing : %S",nutsBase));
     }
 
     @Override
@@ -471,13 +471,13 @@ public abstract class AbstractNutsStream<T> implements NutsStream<T> {
     }
 
     @Override
-    public Optional<T> min(Comparator<? super T> comparator) {
-        return stream().min(comparator);
+    public NutsOptional<T> min(Comparator<? super T> comparator) {
+        return NutsOptional.ofOptional(session,stream().min(comparator),s->NutsMessage.cstyle("missing : %S",nutsBase));
     }
 
     @Override
-    public Optional<T> max(Comparator<? super T> comparator) {
-        return stream().max(comparator);
+    public NutsOptional<T> max(Comparator<? super T> comparator) {
+        return NutsOptional.ofOptional(session,stream().max(comparator),s->NutsMessage.cstyle("missing : %S",nutsBase));
     }
 
     @Override

@@ -244,9 +244,9 @@ public interface NutsStream<T> extends NutsIterable<T> {
 
     <K> NutsStream<Map.Entry<K, List<T>>> groupedBy(NutsFunction<? super T, ? extends K> classifier);
 
-    Optional<T> findAny();
+    NutsOptional<T> findAny();
 
-    Optional<T> findFirst();
+    NutsOptional<T> findFirst();
 
     DoubleStream flatMapToDouble(NutsFunction<? super T, ? extends DoubleStream> mapper);
 
@@ -268,8 +268,8 @@ public interface NutsStream<T> extends NutsIterable<T> {
 
     <R, A> R collect(Collector<? super T, A, R> collector);
 
-    Optional<T> min(Comparator<? super T> comparator);
+    NutsOptional<T> min(Comparator<? super T> comparator);
 
-    Optional<T> max(Comparator<? super T> comparator);
+    NutsOptional<T> max(Comparator<? super T> comparator);
 
 }

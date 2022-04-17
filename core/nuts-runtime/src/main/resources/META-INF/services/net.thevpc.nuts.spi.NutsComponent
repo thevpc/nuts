@@ -90,6 +90,7 @@ net.thevpc.nuts.runtime.standalone.xtra.compress.DefaultNutsCompress
 net.thevpc.nuts.runtime.standalone.xtra.uncompress.DefaultNutsUncompress
 net.thevpc.nuts.runtime.standalone.xtra.idresolver.DefaultNutsIdResolver
 net.thevpc.nuts.runtime.standalone.xtra.scheduler.DefaultNutsScheduler
+net.thevpc.nuts.runtime.standalone.xtra.optional.NutsOptionalFactoryImpl
 
 net.thevpc.nuts.runtime.standalone.id.DefaultNutsIdParser
 net.thevpc.nuts.runtime.standalone.descriptor.parser.DefaultNutsDescriptorParser

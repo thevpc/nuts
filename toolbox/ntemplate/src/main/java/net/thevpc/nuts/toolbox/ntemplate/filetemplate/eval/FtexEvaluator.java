@@ -36,7 +36,7 @@ public class FtexEvaluator implements ExprEvaluator {
                     throw new IllegalStateException(getName() + " : invalid arguments count");
                 }
                 String varName = String.valueOf(evalNode(args[0], context));
-                return context.getVarRequired(varName);
+                return context.getVar(varName).get();
             }
         });
         addFunction(new AbstractExprEvalEct("set") {

@@ -48,7 +48,7 @@ public class FileTemplater {
     };
 
     static {
-        registerGlobalProcessorByMimeType(DollarVarStreamProcessor.INSTANCE,MimeTypeConstants.PLACEHOLDER_DOLLARS);
+        registerGlobalProcessorByMimeType(DollarVarStreamProcessor.INSTANCE, MimeTypeConstants.PLACEHOLDER_DOLLARS);
         registerGlobalProcessorByMimeType(DollarBracket2VarStreamProcessor.INSTANCE,
                 MimeTypeConstants.ANY_TEXT,
                 "application/x-shellscript",
@@ -102,7 +102,7 @@ public class FileTemplater {
 
             private NutsLoggerOp log() {
                 if (logOp == null) {
-                    logOp = NutsLogger.of(FileTemplater.class,session)
+                    logOp = NutsLogger.of(FileTemplater.class, session)
                             .with()
                     ;
                 }
@@ -389,23 +389,23 @@ public class FileTemplater {
     }
 
     public String getWorkingDirRequired() {
-        return (String) getVarRequired(WORKING_DIR);
+        return (String) getVar(WORKING_DIR).get();
     }
 
     public String getRootDirRequired() {
-        return (String) getVarRequired(ROOT_DIR);
+        return (String) getVar(ROOT_DIR).get();
     }
 
-    public Optional<String> getWorkingDir() {
-        return (Optional) getVar(WORKING_DIR);
+    public NutsOptional<String> getWorkingDir() {
+        return (NutsOptional) getVar(WORKING_DIR);
     }
 
     public FileTemplater setWorkingDir(String workingDir) {
         return setVar(WORKING_DIR, workingDir);
     }
 
-    public Optional<String> getRootDir() {
-        return (Optional) getVar(ROOT_DIR);
+    public NutsOptional<String> getRootDir() {
+        return (NutsOptional) getVar(ROOT_DIR);
     }
 
     public FileTemplater setRootDir(String rootDir) {
@@ -421,11 +421,11 @@ public class FileTemplater {
     }
 
     public String getSourcePathRequired() {
-        return (String) getVarRequired(SOURCE_PATH);
+        return (String) getVar(SOURCE_PATH).get();
     }
 
-    public Optional<String> getSourcePath() {
-        return (Optional) getVar(SOURCE_PATH);
+    public NutsOptional<String> getSourcePath() {
+        return getVar(SOURCE_PATH);
     }
 
     public FileTemplater setSourcePath(String workingDir) {
@@ -499,58 +499,51 @@ public class FileTemplater {
         return getVar(name).orElse(defaultValue);
     }
 
-    public Object getVarRequired(String name) {
-        return getVar(name).orElseThrow(new Supplier<NoSuchElementException>() {
-            @Override
-            public NoSuchElementException get() {
-                String source = getSourcePath().orElse(null);
-                if (source == null) {
-                    return new NoSuchElementException("var not found: " + StringUtils.escapeString(name));
-                } else {
-                    return new NoSuchElementException("var not found: " + StringUtils.escapeString(name) + " in " + source);
-                }
-            }
-        });
-    }
-
-    public Optional<Object> getVar(String name) {
+    public <T> NutsOptional<T> getVar(String name) {
         switch (name) {
             case SOURCE_PATH: {
                 if (this.sourcePath != null) {
-                    return Optional.of(this.sourcePath);
+                    return (NutsOptional<T>) NutsOptional.of(getSession(), this.sourcePath);
                 }
                 break;
             }
             case WORKING_DIR: {
                 if (this.workingDir != null) {
-                    return Optional.of(this.workingDir);
+                    return (NutsOptional<T>) NutsOptional.of(getSession(), this.workingDir);
                 }
                 break;
             }
             case ROOT_DIR: {
                 if (this.rootDir != null) {
-                    return Optional.of(this.rootDir);
+                    return (NutsOptional<T>) NutsOptional.of(getSession(), this.rootDir);
                 }
                 break;
             }
         }
-        Object r = vars.get(name);
+        T r = (T) vars.get(name);
         if (r != null) {
-            return Optional.of(r);
+            return NutsOptional.of(getSession(), r);
         }
         if (vars.containsKey(name)) {
-            return Optional.of(null);
+            return NutsOptional.ofNull(getSession());
         }
         if (customVarEvaluator != null) {
-            r = customVarEvaluator.apply(name);
+            r = (T) customVarEvaluator.apply(name);
             if (r != null) {
-                return Optional.of(r);
+                return NutsOptional.of(getSession(), r);
             }
         }
         if (parent != null) {
             return parent.getVar(name);
         }
-        return Optional.empty();
+        return NutsOptional.ofEmpty(getSession(), session1 -> {
+            String source = getSourcePath().orElse(null);
+            if (source == null) {
+                return NutsMessage.cstyle("not found : %s", StringUtils.escapeString(name));
+            } else {
+                return NutsMessage.cstyle("not found : %s in %s", StringUtils.escapeString(name), source);
+            }
+        });
     }
 
     public void processTree(Path path, Predicate<Path> filter) {

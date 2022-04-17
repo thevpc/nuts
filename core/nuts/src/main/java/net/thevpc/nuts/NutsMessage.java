@@ -27,7 +27,10 @@
 package net.thevpc.nuts;
 
 import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Formatter;
+import java.util.List;
 
 public class NutsMessage {
 
@@ -79,6 +82,39 @@ public class NutsMessage {
 
     public NutsString toNutsString(NutsSession session) {
         return NutsTexts.of(session).toText(this);
+    }
+
+    public NutsMessage concat(NutsSession session, NutsMessage... others) {
+        if (others == null || others.length == 0) {
+            return this;
+        }
+        NutsMessage m = this;
+        for (NutsMessage other : others) {
+            if (other != null && other.getMessage().length() > 0) {
+                if (m.getStyle() == other.getStyle()
+                        && (
+                        //these are non indexed param styles
+                        m.getStyle() == NutsTextFormatStyle.CSTYLE
+                                || m.getStyle() == NutsTextFormatStyle.FORMATTED
+                                || m.getStyle() == NutsTextFormatStyle.PLAIN
+                )
+                ) {
+                    List<Object> allParams = new ArrayList<>(Arrays.asList(m.getParams()));
+                    allParams.addAll(Arrays.asList(other.getParams()));
+                    m = new NutsMessage(
+                            m.getStyle(),
+                            m.getMessage() + other.getMessage(),
+                            allParams.toArray()
+                    );
+                } else {
+                    //need to format
+                    m = NutsMessage.formatted(
+                            NutsTexts.of(session).builder().append(m).append(other).toText().toString()
+                    );
+                }
+            }
+        }
+        return m;
     }
 
     @Override
