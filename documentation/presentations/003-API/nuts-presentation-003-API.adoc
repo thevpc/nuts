@@ -1,0 +1,350 @@
+= nuts, the Java Package Manager
+:pdf-page-size: 9in x 6in
+:source-highlighter: pygments
+:icons: font
+:icon-set: pf
+:revnumber: v1.1
+:revdate: 2022-01-08
+//:revremark: Private use only - (Taha BEN SALAH)
+:appendix-caption: Appx
+:sectnums:
+:sectnumlevels: 8
+:stem: latexmath
+//:title-logo-image:images/nuts-logo.png[]
+//:front-cover:images/nuts-logo.png[]
+
+//{zwsp} +
+//{zwsp} +
+//{zwsp} +
+//{zwsp} +
+
+image::images/nuts-logo.png[scaledwidth=40%,align="center"]
+
+[.text-center]
+https://github.com/thevpc/nuts (git repo)
+
+[.text-center]
+https://thevpc.github.io/nuts  (website)
+
+[.text-center]
+nuts.packagemanager@gmail.com
+
+[.text-center]
+thevpc, 2022-01-08
+
+:toc:
+:toclevels: 4
+
+<<<
+
+**Plan**
+
+1. API
+2. Nuts as Library
+3. Nuts as a Framework
+4. Spring Integration
+
+
+
+<<<
+
+== Main Components
+
+image::images/nuts-components.png[scaledwidth=80%]
+
+== Nuts as A Library
+* Simply add nuts to your dependencies
+* Compatible with java 1.8+
+
+```xml
+<dependency>
+    <groupId>net.thevpc.nuts</groupId>
+    <artifactId>nuts</artifactId>
+    <version>0.8.4</version>
+</dependency>
+```
+
+<<<
+== Nuts as A Library
+
+* You can add runtime to force the runtime version
+
+```xml
+<dependency>
+    <groupId>net.thevpc.nuts</groupId>
+    <artifactId>nuts-runtime</artifactId>
+    <version>0.8.4.0</version>
+</dependency>
+```
+
+<<<
+
+=== Session API
+
+```java
+    NutsSession session=Nuts.openWorkspace("-Z","-S","y","--json");
+    session.setConfirm(NutsConfirmationMode.ASK);
+    session.setOutputFormat(NutsContentType.XML);
+
+    session.out().println("Hello");
+    session.out().printlnf("Hello");
+
+    session.out().println(Arrays.asList("Hello"));
+    session.out().printlnf("Hello");
+```
+
+<<<
+
+=== Std In/Out/Err API
+
+```java
+    NutsSession session=Nuts.openWorkspace("-Z","-S","y","--json");
+
+    session.out().println("Hello");
+    session.out().printlnf("Hello");
+
+    session.out().println(Arrays.asList("Hello"));
+    session.out().printlnf("Hello");
+
+    session.err()....;
+    session.in()....;
+```
+
+<<<
+
+
+=== Find API
+
+```java
+    NutsSession session=...;
+    NutsResult<NutsId> ids=session.search()
+        .addId("org.jedit:jedit")
+        .setLatest(true)
+        .setDistinct(true).getResultIds();
+    for(NutsId id:ids){
+       ...
+    }
+    NutsResult<NutsDefinition> defs=session.search()
+        .addId("org.jedit:jedit")
+        .setLatest(true)
+        .setDistinct(true).getResultDefnintions();
+    for(NutsDefinition d:defs){
+       session.out().println(d.getInstallInformation()
+       .getInstallFolder());
+    }
+```
+
+=== ClassPath API
+
+```java
+    NutsSession session=...;
+    ClassLoader loader=session.search()
+        .addId("org.jedit:jedit")
+        .addId("org.spring.framework:spring-context")
+        .setLatest(true)
+        .setDistinct(true).getResultClassLoader();
+```
+
+<<<
+
+=== NTF API
+
+```java
+    NutsSession session=...;
+    session.out().printlnf("#Hello1# ##Hello2## ##:_:Hello3## ");
+    session.out().printlnf("```java public static class MyClass {}```");
+    session.out().printlnf("```js public static class MyClass {}```");
+    session.out().printlnf("```xml <a>hello</a>```");
+    session.out().printlnf("```json {a:'hello'}```");
+```
+
+<<<
+
+=== Format API
+
+```java
+    NutsSession session=...;
+    class Customer{String id;String name;}
+    Customer customer1,customer2,customer3; ...
+    //
+    session.setOutputFormat(NutsContentType.JSON).out().printlnf(Arrays.asList(customer1,customer2,customer3))
+    session.setOutputFormat(NutsContentType.TREE).out().printlnf(Arrays.asList(customer1,customer2,customer3))
+    session.setOutputFormat(NutsContentType.PLAIN).out().printlnf(Arrays.asList(customer1,customer2,customer3))
+    session.setOutputFormat(NutsContentType.XML).out().printlnf(Arrays.asList(customer1,customer2,customer3))
+    session.setOutputFormat(NutsContentType.PROPS).out().printlnf(Arrays.asList(customer1,customer2,customer3))
+    session.out().printlnf(Arrays.asList(customer1,customer2,customer3))
+```
+
+=== Format API
+
+```java
+    NutsSession session=...;
+    Object a,b,c,d; ...
+    NutsMutableTableModel m = NutsMutableTableModel.of(session);
+    m.newRow().addCells(a,b,c,d);
+    session.out().printlnf(m);
+```
+
+<<<
+
+=== Exec API
+
+```java
+    NutsSession session=Nuts.openWorkspace("-Z","-S");
+    int code=session.exec().addCommand("ls", "-l").getResult();
+    String out=session.exec().addCommand("nsh", "ls","--table")
+        .grabOutputString()
+        .getOutputString();
+```
+
+<<<
+
+
+=== IO API
+
+```java
+    NutsSession session=...;
+    NutsCp.of(session)
+        .from("http://my-server.com/file.pdf")
+        .to("/home/my-file")
+        .setProgressMonitor(true)
+        .setValidator((in)->checkSHA1Hash(in))
+        .run();
+
+    NutsPs ps=NutsPs.of(session)
+    if(ps.isSupportedKillProcess()){
+        ps.killProcess("1234");
+    }
+```
+
+<<<
+
+== Nuts as a Framework
+
+* Nuts Application Framework
+** Add support for Base Directory API
+*** API to manage per application directories (log, cache, config,...)
+** Add support for Base Commandline API
+*** standardized commandline options
+*** inherit common options (--table, --json, ...)
+
+<<<
+
+== Nuts as a Framework
+
+** Add support for Application Lifecycle (Hooks for install, update, uninstall)
+** Add support for auto update
+** Add support for isolated input/output (via session in/out)
+** Add support for Desktop Integration
+*** Add Shortcuts, Menus
+*** Add Aliases
+
+
+<<<
+
+== Nuts Application Framework
+
+* Implement NutsApplication
+* Add Description Properties in pom.xml
+
+<<<
+
+== NAF Example
+
+```java
+public class Main implements NutsApplication {
+    public static void main(String[] args) {
+        new Main.runAndExit(args);
+    }
+    @Override
+    public void run(NutsApplicationContext applicationContext) {
+        NutsCommandLine cmd=applicationContext.commandLine();
+        ...
+    }
+}
+```
+
+<<<
+
+== NAF Example
+
+```java
+public class Main implements NutsApplication {
+    public static void main(String[] args) {new Main.runAndExit(args);}
+    @Override
+    public void run(NutsApplicationContext applicationContext) {
+        NutsCommandLine cmd=applicationContext.commandLine();
+        ...
+    }
+    @Override
+    public void onInstallApplication(NutsApplicationContext applicationContext) {}
+    @Override
+    public void onUpdateApplication(NutsApplicationContext applicationContext) {}
+    @Override
+    public void onUninstallApplication(NutsApplicationContext applicationContext) {}
+}
+```
+
+
+<<<
+
+== NAF + Spring
+
+```java
+@SpringBootApplication
+@Import(NutsSpringBootConfig.class)
+public class AppExample implements NutsApplication {
+    public static void main(String[] args) {
+        SpringApplication.run(AppExample.class, args);
+    }
+
+    @Override
+    public void run(NutsApplicationContext context) {
+        NutsPrintStream out = context.getSession().out();
+        out.println("Hello ##World##");
+    }
+}
+```
+
+```xml
+		<dependency>
+			<groupId>net.thevpc.nuts</groupId>
+			<artifactId>nuts</artifactId>
+			<version>0.8.4</version>
+		</dependency>
+		<dependency>
+			<groupId>net.thevpc.nuts.lib</groupId>
+			<artifactId>nlib-spring-boot</artifactId>
+			<version>0.8.4.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter</artifactId>
+		</dependency>
+```
+
+=== Conclusion
+
+* `nuts` can be used as a library or as a framework
+* Using `nuts` provides many valuable features
+* I invite you to
+** Take a shot, try to use it and give feedback
+** `Star(*)` the repository https://github.com/thevpc/nuts
+** Spread the word
+** Join the Core Team to enhance `nuts`
+
+<<<
+
+[.text-center]
+Thank you
+
+[.text-center]
+please support us by starring our repo at
+[.text-center]
+https://github.com/thevpc/nuts (git repo)
+
+[.text-center]
+https://thevpc.github.io/nuts  (website)
+
+[.text-center]
+nuts.packagemanager@gmail.com
