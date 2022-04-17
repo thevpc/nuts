@@ -256,7 +256,7 @@ public class DefaultNutsIdBuilder implements NutsIdBuilder {
             setProperty(NutsConstants.IdProperties.PLATFORM, null);
             setProperty(NutsConstants.IdProperties.DESKTOP_ENVIRONMENT, null);
             setProperty(NutsConstants.IdProperties.PROFILE, null);
-            ((DefaultNutsEnvConditionBuilder)condition).setProperties(null);
+            condition.setProperties(null);
         }else{
             setProperty(NutsConstants.IdProperties.OS, CoreStringUtils.joinAndTrimToNull(c.getOs()));
             setProperty(NutsConstants.IdProperties.OS_DIST, CoreStringUtils.joinAndTrimToNull(c.getOsDist()));
@@ -264,7 +264,7 @@ public class DefaultNutsIdBuilder implements NutsIdBuilder {
             setProperty(NutsConstants.IdProperties.PLATFORM, NutsIdListHelper.formatIdList(c.getPlatform(),session));
             setProperty(NutsConstants.IdProperties.DESKTOP_ENVIRONMENT, CoreStringUtils.joinAndTrimToNull(c.getDesktopEnvironment()));
             setProperty(NutsConstants.IdProperties.PROFILE, CoreStringUtils.joinAndTrimToNull(c.getProfile()));
-            ((DefaultNutsEnvConditionBuilder)condition).setProperties(((DefaultNutsEnvCondition)c).getProperties());
+            condition.setProperties(c.getProperties());
 
         }
         return this;
@@ -312,8 +312,8 @@ public class DefaultNutsIdBuilder implements NutsIdBuilder {
                 condition.setProfile(CoreStringUtils.parseAndTrimToDistinctArray(value));
                 break;
             }
-            case /*NutsConstants.IdProperties.PROPERTIES*/"properties":{
-                ((DefaultNutsEnvConditionBuilder)condition).setProperties(CommaStringParser.parseMap(value, session));
+            case NutsConstants.IdProperties.PROPERTIES:{
+                condition.setProperties(CommaStringParser.parseMap(value, session));
                 break;
             }
             case NutsConstants.IdProperties.CLASSIFIER:{

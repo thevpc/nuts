@@ -9,12 +9,14 @@ ${{include($"${resources}/header.md")}}
 View Official releases [here](https://github.com/thevpc/nuts/releases) :
 Starred releases are most stable ones.
 
-## nuts 0.8.3.2 (DEVELOPMENT VERSION)
-- ```2022/XX/XX 	nuts 0.8.3.2``` not released yet nuts-runtime-0.8.3.2-alpha1.jar
+## nuts 0.8.4.0 (DEVELOPMENT VERSION)
+- ```2022/XX/XX 	nuts 0.8.4.0``` not released yet nuts-runtime-0.8.4.2-alpha1.jar
 - FIXED: Fixed maven url parsing on windows platforms that prevented nsh from being installed
 - ADDED: Added native installers for windows, linux and macOS
 - ADDED: Added links to pdf docs in website and offline documentation
 - ADDED: Added new nuts LOGO
+- ADDED: Added NutsOptional a feature riche replacement of java's Optional
+- ADDED: Add NutsEnvCondition/NutsEnvConditionBuilder::setProperties/getProperties
 
 ## nuts 0.8.3.1 (PUBLISHED VERSION)
 - ```2022/02/01 	nuts 0.8.3.1``` released nuts-runtime-0.8.3.1.jar

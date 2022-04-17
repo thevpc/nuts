@@ -310,9 +310,9 @@ public class DefaultNutsDependency implements NutsDependency {
             if (condition.getProfile().length > 0) {
                 p.put(NutsConstants.IdProperties.PROFILE, String.join(",", condition.getProfile()));
             }
-            if (!((DefaultNutsEnvCondition)condition).getProperties().isEmpty()) {
-                p.put(/*NutsConstants.IdProperties.PROPERTIES*/"properties",
-                        CommaStringParser.formatPropertiesQuery(((DefaultNutsEnvCondition)condition).getProperties())
+            if (!condition.getProperties().isEmpty()) {
+                p.put(NutsConstants.IdProperties.PROPERTIES,
+                        CommaStringParser.formatPropertiesQuery(condition.getProperties())
                         );
             }
         }

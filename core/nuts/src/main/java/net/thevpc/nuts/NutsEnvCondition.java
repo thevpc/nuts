@@ -25,6 +25,8 @@
  */
 package net.thevpc.nuts;
 
+import java.util.Map;
+
 /**
  * Nuts environment condition, used to check against the current environment
  *
@@ -89,4 +91,11 @@ public interface NutsEnvCondition extends NutsBlankable {
      * @return true if no condition
      */
     boolean isBlank();
+
+    /**
+     * return env properties
+     * @since 0.8.4
+     * @return env properties
+     */
+    Map<String, String> getProperties();
 }

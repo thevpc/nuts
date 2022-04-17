@@ -61,7 +61,7 @@ public class DefaultNutsEnvCondition implements NutsEnvCondition {
                 d.getPlatform(),
                 d.getDesktopEnvironment(),
                 d.getProfile(),
-                ((DefaultNutsEnvCondition)d).getProperties(),
+                d.getProperties(),
                 session
         );
     }

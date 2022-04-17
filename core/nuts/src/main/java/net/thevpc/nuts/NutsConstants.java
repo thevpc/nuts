@@ -257,6 +257,12 @@ public final class NutsConstants {
         public static final String TYPE = "type";
 
         /**
+         * properties
+         * @since 0.8.4
+         */
+        public static final String PROPERTIES = "properties";
+
+        /**
          * private constructor
          */
         private IdProperties() {

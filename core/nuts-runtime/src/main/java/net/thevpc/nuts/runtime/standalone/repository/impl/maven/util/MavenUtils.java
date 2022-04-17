@@ -155,7 +155,7 @@ public class MavenUtils {
                 .setArch(ars == null ? new String[0] : new String[]{ars})
                 .setPlatform(platform == null ? new String[0] : new String[]{platform})
                 .setProfile(profile == null ? new String[0] : new String[]{profile});
-        ((DefaultNutsEnvConditionBuilder)bb).setProperties(props);
+        bb.setProperties(props);
         return bb.build();
     }
 

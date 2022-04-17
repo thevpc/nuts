@@ -89,7 +89,7 @@ public class DefaultNutsDependencyParser implements NutsDependencyParser {
                         sb.setDesktopEnvironment(StringTokenizerUtils.splitDefault(e.getValue()).toArray(new String[0]));
                         break;
                     }
-                    case /*NutsConstants.IdProperties.PROPERTIES*/"properties":{
+                    case NutsConstants.IdProperties.PROPERTIES:{
                         sb.setProperties(CommaStringParser.parseMap(e.getValue(), session));
                         break;
                     }

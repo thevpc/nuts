@@ -220,7 +220,7 @@ public class DefaultNutsEnvConditionBuilder implements NutsEnvConditionBuilder {
             setPlatform(other.getPlatform());
             setDesktopEnvironment(other.getDesktopEnvironment());
             setProfile(other.getProfile());
-            setProperties(((DefaultNutsEnvConditionBuilder)other).getProperties());
+            setProperties(other.getProperties());
         } else {
             clear();
         }
@@ -236,7 +236,7 @@ public class DefaultNutsEnvConditionBuilder implements NutsEnvConditionBuilder {
             setPlatform(other.getPlatform());
             setDesktopEnvironment(other.getDesktopEnvironment());
             setProfile(other.getProfile());
-            setProperties(((DefaultNutsEnvCondition)other).getProperties());
+            setProperties(other.getProperties());
         } else {
             clear();
         }
@@ -253,7 +253,7 @@ public class DefaultNutsEnvConditionBuilder implements NutsEnvConditionBuilder {
             setDesktopEnvironment(CoreArrayUtils.toDistinctTrimmedNonEmptyArray(getDesktopEnvironment(), other.getDesktopEnvironment()));
             setProfile(CoreArrayUtils.toDistinctTrimmedNonEmptyArray(getProfile(), other.getProfile()));
             Map<String,String> a=new HashMap<>(properties);
-            Map<String, String> b = ((DefaultNutsEnvCondition) other).getProperties();
+            Map<String, String> b = other.getProperties();
             if(b!=null) {
                 a.putAll(b);
             }
@@ -272,7 +272,7 @@ public class DefaultNutsEnvConditionBuilder implements NutsEnvConditionBuilder {
             setDesktopEnvironment(CoreArrayUtils.toDistinctTrimmedNonEmptyArray(getDesktopEnvironment(), other.getDesktopEnvironment()));
             setProfile(CoreArrayUtils.toDistinctTrimmedNonEmptyArray(getProfile(), other.getProfile()));
             Map<String,String> a=new HashMap<>(properties);
-            Map<String, String> b = ((DefaultNutsEnvConditionBuilder) other).getProperties();
+            Map<String, String> b = other.getProperties();
             if(b!=null) {
                 a.putAll(b);
             }
@@ -363,11 +363,13 @@ public class DefaultNutsEnvConditionBuilder implements NutsEnvConditionBuilder {
         return DEFAULT_SUPPORT;
     }
 
+    @Override
     public Map<String, String> getProperties() {
         return properties;
     }
 
-    public DefaultNutsEnvConditionBuilder setProperties(Map<String, String> properties) {
+    @Override
+    public NutsEnvConditionBuilder setProperties(Map<String, String> properties) {
         this.properties = properties==null?null:new HashMap<>(properties);
         return this;
     }

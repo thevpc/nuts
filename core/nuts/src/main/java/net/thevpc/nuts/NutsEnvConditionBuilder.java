@@ -260,4 +260,8 @@ public interface NutsEnvConditionBuilder extends Serializable, NutsComponent {
     NutsEnvConditionBuilder copy();
 
     NutsEnvConditionBuilder applyProperties(Map<String, String> properties);
+
+    Map<String, String> getProperties();
+
+    NutsEnvConditionBuilder setProperties(Map<String, String> properties);
 }

@@ -1,5 +1,4 @@
 TODO in API (planned for 0.8.4):
-+ Add NutsEnvCondition/NutsEnvConditionBuilder::setProperties/getProperties
 + Add NutsDescriptor/NutsDescriptorBuilder::setLicenses
 + Add NutsDescriptor/NutsDescriptorBuilder::setDevelopers
 + Rename NutsConstants.IdProperties.DESKTOP_ENVIRONMENT -> NutsConstants.IdProperties.DESKTOP

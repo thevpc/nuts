@@ -109,7 +109,7 @@ public class DefaultNutsIdParser implements NutsIdParser {
                         sb.setDesktopEnvironment(StringTokenizerUtils.splitDefault(e.getValue()).toArray(new String[0]));
                         break;
                     }
-                    case /*NutsConstants.IdProperties.PROPERTIES*/"properties":{
+                    case NutsConstants.IdProperties.PROPERTIES:{
                         Map<String, String> mm = CommaStringParser.parseMap(e.getValue(), session);
                         sb.setProperties(mm);
                         break;

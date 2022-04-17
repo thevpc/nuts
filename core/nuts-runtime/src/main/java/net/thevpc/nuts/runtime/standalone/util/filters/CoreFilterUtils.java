@@ -434,7 +434,7 @@ public class CoreFilterUtils {
             return false;
         }
         if(!matchesProperties(
-                ((DefaultNutsEnvCondition)envCond).getProperties(), session
+                envCond.getProperties(), session
         )){
             return false;
         }
@@ -707,9 +707,9 @@ public class CoreFilterUtils {
         if (!NutsBlankable.isBlank(s)) {
             m.put(NutsConstants.IdProperties.PROFILE, s);
         }
-        Map<String, String> properties = ((DefaultNutsEnvCondition) condition).getProperties();
+        Map<String, String> properties = condition.getProperties();
         if(!properties.isEmpty()){
-            m.put(/*NutsConstants.IdProperties.PROPERTIES*/"properties", CommaStringParser.formatPropertiesQuery(properties));
+            m.put(NutsConstants.IdProperties.PROPERTIES, CommaStringParser.formatPropertiesQuery(properties));
         }
         return m;
     }
