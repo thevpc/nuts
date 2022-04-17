@@ -19,6 +19,4 @@ public class AppExample implements NutsApplication {
         NutsPrintStream out = context.getSession().out();
         out.println("Hello ##World##");
     }
-
-
 }
