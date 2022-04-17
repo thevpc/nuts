@@ -46,7 +46,6 @@ public class TestCommands {
                 + ".\n"
                 + "/\n"
                 + "/", r.out().trim());
-        Assertions.assertEquals("", r.err());
     }
 
     @Test
@@ -58,7 +57,6 @@ public class TestCommands {
                 + "a\n"
                 + "a\n"
                 + "a", r.out().trim());
-        Assertions.assertEquals("", r.err());
     }
 
     @Test
@@ -67,12 +65,10 @@ public class TestCommands {
         {
             MemResult r = c.executeCommand(new String[]{"env"});
             Assertions.assertTrue(r.out().contains("PWD="));
-            Assertions.assertEquals("", r.err());
         }
         {
             MemResult r = c.executeCommand(new String[]{"env", "--json"});
             Assertions.assertTrue(r.out().contains("\"PWD\""));
-            Assertions.assertEquals("", r.err());
         }
     }
 
@@ -81,13 +77,11 @@ public class TestCommands {
         JShell c = new JShell(TestUtils.openNewTestWorkspace(),new String[0]);
         {
             MemResult r = c.executeCommand(new String[]{"test", "1", "-lt", "2"});
-            Assertions.assertEquals("", r.out());
-            Assertions.assertEquals("", r.err());
+            Assertions.assertEquals(0, r.exitCode());
         }
         {
             MemResult r = c.executeCommand(new String[]{"test", "2", "-lt", "1"});
-            Assertions.assertEquals("", r.out());
-            Assertions.assertEquals("", r.err());
+            Assertions.assertEquals(1, r.exitCode());
         }
     }
 }

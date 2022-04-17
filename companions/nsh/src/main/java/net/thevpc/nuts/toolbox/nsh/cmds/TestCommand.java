@@ -238,7 +238,7 @@ public class TestCommand extends SimpleJShellBuiltin {
         }
         int result = options.operands.pop().eval(context);
         if (result != 0) {
-            throwExecutionException("result",result,session);
+            throwExecutionException(String.valueOf(result),result,session);
         }
     }
 

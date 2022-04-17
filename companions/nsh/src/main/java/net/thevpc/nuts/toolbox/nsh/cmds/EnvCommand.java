@@ -163,7 +163,13 @@ public class EnvCommand extends SimpleJShellBuiltin {
         }
         env.putAll(options.newEnv);
         if (options.command.isEmpty()) {
-            context.getSession().out().printlnf(env);
+            if(context.getSession().isPlainOut()){
+                for (Map.Entry<String, String> e : env.entrySet()) {
+                    context.getSession().out().println(e.getKey()+"="+e.getValue());
+                }
+            }else {
+                context.getSession().out().printlnf(env);
+            }
         } else {
             final NutsExecCommand e = context.getSession().exec().addCommand(options.command)
                     .setEnv(env)
