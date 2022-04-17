@@ -6,7 +6,7 @@
     <groupId>net.thevpc.nuts</groupId>
     <artifactId>nuts-tutorials</artifactId>
     <name>Nuts Community Tutorials Build Project</name>
-    <version>0.8.3.0</version>
+    <version>0.8.4.0</version>
     <packaging>pom</packaging>
     <modules>
         <module>nsh/custom-shell-project</module>
@@ -17,7 +17,7 @@
         <module>ugly-jar-projects/shade-project</module>
         <module>ugly-jar-projects/springboot-project</module>
         <module>naf/nuts-spring-boot-integration-hello-world</module>
-        <module>naf/nuts-spring-boot-integration-hello-world</module>
+        <module>naf/nuts-spring-boot-integration-install-events</module>
     </modules>
     <properties>
     </properties>

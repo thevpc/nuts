@@ -9,7 +9,7 @@
         <dependency>
             <groupId>net.thevpc.nuts.toolbox</groupId>
             <artifactId>nsh</artifactId>
-            <version>0.8.3.0</version>
+            <version>0.8.4.0</version>
         </dependency>
     </dependencies>
     <properties>

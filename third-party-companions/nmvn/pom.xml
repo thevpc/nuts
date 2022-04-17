@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>net.thevpc.nuts.toolbox</groupId>
     <artifactId>nmvn</artifactId>
-    <version>0.8.3.0</version>
+    <version>0.8.4.0</version>
     <packaging>jar</packaging>
     <name>Nuts Community Toolbox NMvn</name>
     <url>https://github.com/thevpc/nuts</url>
@@ -67,7 +67,7 @@
         <dependency>
             <groupId>net.thevpc.nuts</groupId>
             <artifactId>nuts</artifactId>
-            <version>0.8.3</version>
+            <version>0.8.4</version>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
@@ -401,7 +401,7 @@
                     <plugin>
                         <groupId>org.jacoco</groupId>
                         <artifactId>jacoco-maven-plugin</artifactId>
-                        <version>0.8.3</version>
+                        <version>0.8.4</version>
                         <executions>
                             <execution>
                                 <goals>

@@ -6,7 +6,7 @@
     <groupId>net.thevpc.nuts</groupId>
     <artifactId>nuts-lib-build</artifactId>
     <name>Nuts Community Libraries Build Project</name>
-    <version>0.8.3.0</version>
+    <version>0.8.4.0</version>
     <packaging>pom</packaging>
     <modules>
         <module>nlib-md</module>
