@@ -56,15 +56,15 @@ public class PrivateNutsBootRepositoryDB implements NutsRepositoryDB {
     }
 
     @Override
-    public String getRepositoryNameByURL(String url) {
-        NutsRepositoryLocation v0 = NutsRepositoryLocation.of(url).setName(null);
+    public String getRepositoryNameByLocation(String location) {
+        NutsRepositoryLocation v0 = NutsRepositoryLocation.of(location).setName(null);
         for (Map.Entry<String, String> entry : defaultRepositoriesByName.entrySet()) {
             NutsRepositoryLocation v = NutsRepositoryLocation.of(entry.getValue()).setName(null);
             if (v.equals(v0)) {
                 return entry.getKey();
             }
         }
-        v0 = NutsRepositoryLocation.of(url).setName(null).setLocationType(null);
+        v0 = NutsRepositoryLocation.of(location).setName(null).setLocationType(null);
         for (Map.Entry<String, String> entry : defaultRepositoriesByName.entrySet()) {
             NutsRepositoryLocation v = NutsRepositoryLocation.of(entry.getValue()).setName(null).setLocationType(null);
             if (v.equals(v0)) {
@@ -80,7 +80,7 @@ public class PrivateNutsBootRepositoryDB implements NutsRepositoryDB {
     }
 
     @Override
-    public String getRepositoryURLByName(String name) {
+    public String getRepositoryLocationByName(String name) {
         String a = defaultRepositoriesByName.get(name);
         if (a != null) {
             return a;

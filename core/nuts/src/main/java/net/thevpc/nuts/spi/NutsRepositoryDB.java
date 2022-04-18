@@ -14,9 +14,9 @@ public interface NutsRepositoryDB extends NutsComponent{
 
     Set<String> getAllNames(String name);
 
-    String getRepositoryNameByURL(String url);
+    String getRepositoryNameByLocation(String location);
 
     boolean isDefaultRepositoryName(String name);
 
-    String getRepositoryURLByName(String name);
+    String getRepositoryLocationByName(String name);
 }

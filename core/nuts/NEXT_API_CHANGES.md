@@ -1,7 +1,4 @@
 TODO in API (planned for 0.8.4):
-+ Add NutsConstants.IdProperties.DESKTOP_ENVIRONMENT -> NutsConstants.IdProperties.PROPERTIES
-+ Rename NutsRepositoryDB::getRepositoryNameByURL -> NutsRepositoryDB::getRepositoryNameByLocation
-+ Rename NutsRepositoryDB::getRepositoryURLByName -> NutsRepositoryDB::getRepositoryLocationByName
 + change type to long in NutsExecCommand::getSleepMillis()/setSleepMillis(int sleepMillis);
 + remove PrivateNutsUtilBootId::parseBootIdList;
 + Refactor NutsTextParser to support NutsPath and remove NutsTextFormatLoader as well as the followings...

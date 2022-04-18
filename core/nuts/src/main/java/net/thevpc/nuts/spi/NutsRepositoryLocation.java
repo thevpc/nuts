@@ -147,7 +147,7 @@ public class NutsRepositoryLocation implements Comparable<NutsRepositoryLocation
         } else {
             if (locationString.matches("[a-zA-Z][a-zA-Z0-9-_]+")) {
                 name = locationString;
-                String u = db.getRepositoryURLByName(name);
+                String u = db.getRepositoryLocationByName(name);
                 if (u == null) {
                     url = name;
                 } else {
@@ -155,7 +155,7 @@ public class NutsRepositoryLocation implements Comparable<NutsRepositoryLocation
                 }
             } else {
                 url = locationString;
-                String n = db.getRepositoryNameByURL(url);
+                String n = db.getRepositoryNameByLocation(url);
                 if (n == null) {
                     name = url;
                 } else {

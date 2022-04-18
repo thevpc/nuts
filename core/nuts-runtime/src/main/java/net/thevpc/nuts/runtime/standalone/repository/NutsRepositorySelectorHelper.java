@@ -26,7 +26,7 @@ public class NutsRepositorySelectorHelper {
         if (db.isDefaultRepositoryName(loc.getName())) {
             defaultName = loc.getName();
         } else {
-            String nn = db.getRepositoryNameByURL(loc.getPath());
+            String nn = db.getRepositoryNameByLocation(loc.getPath());
             if (nn != null) {
                 defaultName = nn;
             }

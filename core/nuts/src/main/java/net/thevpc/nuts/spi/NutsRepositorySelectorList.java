@@ -101,14 +101,14 @@ public class NutsRepositorySelectorList {
                 String k = entry.getName();
                 String v = entry.getFullLocation();
                 if (NutsBlankable.isBlank(v) && !NutsBlankable.isBlank(k)) {
-                    String u2 = db.getRepositoryURLByName(k);
+                    String u2 = db.getRepositoryLocationByName(k);
                     if (u2 != null) {
                         v = u2;
                     } else {
                         v = k;
                     }
                 } else if (!NutsBlankable.isBlank(v) && NutsBlankable.isBlank(k)) {
-                    String u2 = db.getRepositoryNameByURL(k);
+                    String u2 = db.getRepositoryNameByLocation(k);
                     if (u2 != null) {
                         k = u2;
                     }

@@ -10,7 +10,6 @@ import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.AbstractNutsSet
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.user.NutsSettingsUserSubCommand;
 import net.thevpc.nuts.spi.NutsRepositoryDB;
 import net.thevpc.nuts.spi.NutsRepositoryLocation;
-import net.thevpc.nuts.spi.NutsRepositorySelectorList;
 
 import java.util.*;
 
@@ -116,7 +115,7 @@ public class NutsSettingsRepositorySubCommand extends AbstractNutsSettingsSubCom
                                 location = n.getStringValue();
                             } else {
                                 location = cmdLine.next().getString();
-                                String loc2 = NutsRepositoryDB.of(session).getRepositoryURLByName(location);
+                                String loc2 = NutsRepositoryDB.of(session).getRepositoryLocationByName(location);
                                 if(loc2!=null){
                                     repositoryName=location;
                                     location=loc2;
