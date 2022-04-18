@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.elem.mapper;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.standalone.descriptor.DefaultNutsDescriptorBuilder;
+import net.thevpc.nuts.DefaultNutsDescriptorBuilder;
 
 import java.lang.reflect.Type;
 
@@ -11,7 +11,7 @@ public class NutsElementMapperNutsDescriptor implements NutsElementMapper<NutsDe
     public Object destruct(NutsDescriptor src, Type typeOfSrc, NutsElementFactoryContext context) {
         NutsSession session = context.getSession();
         return context.defaultDestruct(
-                NutsDescriptorBuilder.of(session).setAll(src), null
+                new DefaultNutsDescriptorBuilder().setAll(src), null
         );
     }
 
@@ -19,7 +19,7 @@ public class NutsElementMapperNutsDescriptor implements NutsElementMapper<NutsDe
     public NutsElement createElement(NutsDescriptor o, Type typeOfSrc, NutsElementFactoryContext context) {
         NutsSession session = context.getSession();
         return context.defaultObjectToElement(
-                NutsDescriptorBuilder.of(session).setAll(o), null
+                new DefaultNutsDescriptorBuilder().setAll(o), null
         );
     }
 
@@ -27,7 +27,7 @@ public class NutsElementMapperNutsDescriptor implements NutsElementMapper<NutsDe
     public NutsDescriptor createObject(NutsElement o, Type typeOfResult, NutsElementFactoryContext context) {
         DefaultNutsDescriptorBuilder builder = (DefaultNutsDescriptorBuilder) context.defaultElementToObject(o, DefaultNutsDescriptorBuilder.class);
         NutsSession session = context.getSession();
-        return NutsDescriptorBuilder.of(session).setAll(builder).build();
+        return new DefaultNutsDescriptorBuilder().setAll(builder).build();
     }
 
 }

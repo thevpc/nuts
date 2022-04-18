@@ -24,6 +24,7 @@
 package net.thevpc.nuts;
 
 import net.thevpc.nuts.boot.NutsApiUtils;
+import net.thevpc.nuts.spi.NutsComponentScopeType;
 
 /**
  * Element type. this an extension of json element types.
@@ -112,38 +113,8 @@ public enum NutsElementType implements NutsEnum {
         this.nbr = nbr;
     }
 
-    public static NutsElementType parseLenient(String value) {
-        return parseLenient(value, null);
-    }
-
-    public static NutsElementType parseLenient(String value, NutsElementType emptyOrErrorValue) {
-        return parseLenient(value, emptyOrErrorValue, emptyOrErrorValue);
-    }
-
-    public static NutsElementType parseLenient(String value, NutsElementType emptyValue, NutsElementType errorValue) {
-        if (value == null) {
-            value = "";
-        } else {
-            value = value.toUpperCase().trim().replace('-', '_');
-        }
-        if (value.isEmpty()) {
-            return emptyValue;
-        }
-        try {
-            return NutsElementType.valueOf(value.toUpperCase());
-        } catch (Exception notFound) {
-            return errorValue;
-        }
-    }
-
-    public static NutsElementType parse(String value, NutsSession session) {
-        return parse(value, null, session);
-    }
-
-    public static NutsElementType parse(String value, NutsElementType emptyValue, NutsSession session) {
-        NutsElementType v = parseLenient(value, emptyValue, null);
-        NutsApiUtils.checkNonNullEnum(v, value, NutsElementType.class, session);
-        return v;
+    public static NutsOptional<NutsElementType> parse(String value) {
+        return NutsApiUtils.parse(value, NutsElementType.class);
     }
 
     public boolean isNumber() {

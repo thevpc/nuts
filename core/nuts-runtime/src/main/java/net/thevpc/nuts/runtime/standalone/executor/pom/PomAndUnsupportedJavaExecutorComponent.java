@@ -54,7 +54,7 @@ public class PomAndUnsupportedJavaExecutorComponent implements NutsExecutorCompo
     public int getSupportLevel(NutsSupportLevelContext context) {
         this.ws=context.getSession();
         if(ID==null){
-            ID = NutsId.of("net.thevpc.nuts.exec:java-unsupported", ws);
+            ID = NutsId.of("net.thevpc.nuts.exec:java-unsupported").get( ws);
         }
         NutsDefinition def = context.getConstraints(NutsDefinition.class);
         if (def != null) {

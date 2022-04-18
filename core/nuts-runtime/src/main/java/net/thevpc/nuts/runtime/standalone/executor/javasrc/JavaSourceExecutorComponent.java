@@ -37,6 +37,9 @@ import javax.tools.JavaCompiler;
 import javax.tools.ToolProvider;
 import java.io.File;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Created by vpc on 1/7/17.
@@ -45,7 +48,7 @@ import java.nio.file.Path;
 public class JavaSourceExecutorComponent implements NutsExecutorComponent {
 
     public static NutsId ID;
-    NutsSession ws;
+    NutsSession session;
 
     @Override
     public NutsId getId() {
@@ -73,18 +76,16 @@ public class JavaSourceExecutorComponent implements NutsExecutorComponent {
                 true
         ));
         String fileName = javaFile.getFileName().toString();
+        List<String> z = new ArrayList<>(executionContext.getExecutorArguments());
+        z.addAll(Arrays.asList("--main-class",
+                new File(fileName.substring(fileName.length() - ".java".length())).getName(),
+                "--class-path",
+                folder.toString()));
         NutsExecutionContext executionContext2 = NutsWorkspaceExt.of(executionContext.getSession())
                 .createExecutionContext()
                 .setAll(executionContext)
                 .setDefinition(d)
-                .setExecutorArguments(CoreArrayUtils.concatArrays(
-                        executionContext.getExecutorArguments(),
-                        new String[]{
-                                "--main-class",
-                                new File(fileName.substring(fileName.length() - ".java".length())).getName(),
-                                "--class-path",
-                                folder.toString()}
-                ))
+                .setExecutorArguments(z)
                 .setFailFast(true)
                 .setTemporary(true)
                 .build();
@@ -117,19 +118,16 @@ public class JavaSourceExecutorComponent implements NutsExecutorComponent {
                 true
         ));
         String fileName = javaFile.getFileName().toString();
+        List<String> z = new ArrayList<>(executionContext.getExecutorArguments());
+        z.addAll(Arrays.asList("--main-class",
+                new File(fileName.substring(fileName.length() - ".java".length())).getName(),
+                "--class-path",
+                folder.toString()));
         NutsExecutionContext executionContext2 = NutsWorkspaceExt.of(executionContext.getSession())
                 .createExecutionContext()
                 .setAll(executionContext)
                 .setDefinition(d)
-                .setExecutorArguments(CoreArrayUtils.concatArrays(
-                        executionContext.getExecutorArguments(),
-                        new String[]{
-                                "--main-class",
-                                new File(fileName.substring(fileName.length() - ".java".length())).getName(),
-                                "--class-path",
-                                folder.toString()
-                        }
-                ))
+                .setExecutorArguments(z)
                 .setFailFast(true)
                 .setTemporary(true)
                 .build();
@@ -138,9 +136,9 @@ public class JavaSourceExecutorComponent implements NutsExecutorComponent {
 
     @Override
     public int getSupportLevel(NutsSupportLevelContext context) {
-        this.ws = context.getSession();
+        this.session = context.getSession();
         if (ID == null) {
-            ID = NutsId.of("net.thevpc.nuts.exec:exec-java-src", ws);
+            ID = NutsId.of("net.thevpc.nuts.exec:exec-java-src").get(session);
         }
         NutsDefinition def = context.getConstraints(NutsDefinition.class);
         if (def != null) {

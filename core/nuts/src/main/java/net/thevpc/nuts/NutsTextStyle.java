@@ -318,19 +318,12 @@ public class NutsTextStyle implements NutsEnum {
         return of(NutsTextStyleType.BACK_TRUE_COLOR, variant);
     }
 
-    public static NutsTextStyle parseLenient(String value) {
-        return parseLenient(value, null, null);
-    }
-
-    public static NutsTextStyle parseLenient(String value, NutsTextStyle emptyValue) {
-        return parseLenient(value, emptyValue, emptyValue);
-    }
-
-    public static NutsTextStyle parseLenient(String value, NutsTextStyle emptyValue, NutsTextStyle errorValue) {
+    public static NutsOptional<NutsTextStyle> parse(String value) {
         value = value == null ? "" : value.trim();
         if (value.isEmpty()) {
-            return emptyValue;
+            return NutsOptional.ofEmpty(s -> NutsMessage.cstyle(NutsTextStyle.class.getSimpleName() + " is empty"));
         }
+        String finalValue = value;
         int par = value.indexOf('(');
         String nbr = "";
         String key = value;
@@ -369,12 +362,12 @@ public class NutsTextStyle implements NutsEnum {
         if (nbr.isEmpty()) {
             nbr = "0";
         }
-        NutsTextStyleType t = NutsTextStyleType.parseLenient(key, null, null);
+        NutsTextStyleType t = NutsTextStyleType.parse(key).orElse(null);
         if (t == null) {
             if (NutsBlankable.isBlank(key)) {
-                return emptyValue;
+                return NutsOptional.ofEmpty(s -> NutsMessage.cstyle(NutsTextStyle.class.getSimpleName() + " is empty"));
             }
-            return errorValue;
+            return NutsOptional.ofError(s -> NutsMessage.cstyle(NutsTextStyle.class.getSimpleName() + " invalid value : %s", finalValue));
         }
         switch (t) {
             case FORE_TRUE_COLOR:
@@ -384,10 +377,10 @@ public class NutsTextStyle implements NutsEnum {
                     if (NutsBlankable.isBlank(key)) {
                         ii = 0;
                     } else {
-                        return errorValue;
+                        return NutsOptional.ofError(s -> NutsMessage.cstyle(NutsTextStyle.class.getSimpleName() + " invalid value : %s", finalValue));
                     }
                 }
-                return NutsTextStyle.of(t, ii);
+                return NutsOptional.of(NutsTextStyle.of(t, ii));
             }
             default: {
                 Integer ii = NutsApiUtils.parseInt(nbr, null, null);
@@ -395,11 +388,10 @@ public class NutsTextStyle implements NutsEnum {
                     if (NutsBlankable.isBlank(key)) {
                         ii = 0;
                     } else {
-                        return errorValue;
+                        return NutsOptional.ofError(s -> NutsMessage.cstyle(NutsTextStyle.class.getSimpleName() + " invalid value : %s", finalValue));
                     }
                 }
-                return NutsTextStyle.of(t, ii);
-
+                return NutsOptional.of(NutsTextStyle.of(t, ii));
             }
         }
     }

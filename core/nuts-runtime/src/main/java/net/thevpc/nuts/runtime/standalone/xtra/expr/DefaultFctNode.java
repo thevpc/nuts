@@ -5,6 +5,8 @@ import net.thevpc.nuts.NutsMessage;
 import net.thevpc.nuts.NutsExpr;
 
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.stream.Collectors;
 
 public class DefaultFctNode implements NutsExpr.Node {
@@ -22,8 +24,8 @@ public class DefaultFctNode implements NutsExpr.Node {
         return args[index];
     }
 
-    public NutsExpr.Node[] getArgs() {
-        return args;
+    public List<NutsExpr.Node> getArgs() {
+        return Arrays.asList(args);
     }
 
     @Override
@@ -32,8 +34,8 @@ public class DefaultFctNode implements NutsExpr.Node {
     }
 
     @Override
-    public NutsExpr.Node[] getChildren() {
-        return new NutsExpr.Node[0];
+    public List<NutsExpr.Node> getChildren() {
+        return Collections.emptyList();
     }
 
     public String getName() {

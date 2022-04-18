@@ -26,6 +26,8 @@
  */
 package net.thevpc.nuts;
 
+import java.util.List;
+
 /**
  * @author thevpc
  * @app.category Config
@@ -45,9 +47,9 @@ public interface NutsWorkspaceCustomCommand {
 
     String getHelpText(NutsSession session) throws NutsExecutionException;
 
-    String[] getCommand();
+    List<String> getCommand();
 
-    String[] getExecutorOptions();
+    List<String> getExecutorOptions();
 
     NutsCommandConfig toCommandConfig();
 }

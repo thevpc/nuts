@@ -24,10 +24,10 @@ public class DefaultFileNutsLock implements NutsLock {
     }
 
     public TimePeriod getDefaultTimePeriod() {
-        TimePeriod tp = TimePeriod.parseLenient(
+        TimePeriod tp = TimePeriod.parse(
                 session.config().getConfigProperty("nuts.file-lock.timeout").getString(),
                 TimeUnit.SECONDS
-        );
+        ).orElse(null);
         if (tp == null) {
             return FIVE_MINUTES;
         }

@@ -25,6 +25,7 @@ package net.thevpc.nuts;
 
 import java.io.InputStream;
 import java.time.Instant;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Filter;
 import java.util.logging.Level;
@@ -302,14 +303,14 @@ public interface NutsSession extends NutsCommandLineConfigurable {
      * @param type listener type class
      * @return registered listeners
      */
-    <T extends NutsListener> T[] getListeners(Class<T> type);
+    <T extends NutsListener> List<T> getListeners(Class<T> type);
 
     /**
      * return all registered listeners.
      *
      * @return all registered listeners.
      */
-    NutsListener[] getListeners();
+    List<NutsListener> getListeners();
 
     /**
      * set session property
@@ -371,7 +372,7 @@ public interface NutsSession extends NutsCommandLineConfigurable {
      *
      * @return output format options
      */
-    String[] getOutputFormatOptions();
+    List<String> getOutputFormatOptions();
 
     /**
      * set output format options (clear and add)
@@ -380,6 +381,7 @@ public interface NutsSession extends NutsCommandLineConfigurable {
      * @return {@code this} instance
      */
     NutsSession setOutputFormatOptions(String... options);
+    NutsSession setOutputFormatOptions(List<String> options);
 
     /**
      * current output stream

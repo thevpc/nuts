@@ -67,7 +67,8 @@ public class DefaultNutsWorkspaceExtensionModel {
     private Set<URL> loadedExtensionURLs = new LinkedHashSet<>();
     private Set<NutsId> unloadedExtensions = new LinkedHashSet<>();
 
-    public DefaultNutsWorkspaceExtensionModel(NutsWorkspace ws, NutsBootWorkspaceFactory bootFactory, String[] excludedExtensions, NutsSession bootSession) {
+    public DefaultNutsWorkspaceExtensionModel(NutsWorkspace ws, NutsBootWorkspaceFactory bootFactory,
+                                              List<String> excludedExtensions, NutsSession bootSession) {
         this.ws = ws;
         this.objectFactory = new DefaultNutsWorkspaceFactory(ws);
         this.bootFactory = bootFactory;
@@ -89,12 +90,12 @@ public class DefaultNutsWorkspaceExtensionModel {
         return this.exclusions.contains(excluded.getShortName());
     }
 
-    public void setExcludedExtensions(String[] excluded, NutsSession session) {
+    public void setExcludedExtensions(List<String> excluded, NutsSession session) {
         this.exclusions.clear();
         if (excluded != null) {
             for (String ex : excluded) {
                 for (String e : StringTokenizerUtils.splitDefault(ex)) {
-                    NutsId ee = NutsId.of(e,session);
+                    NutsId ee = NutsId.of(e).orElse(null);
                     if (ee != null) {
                         this.exclusions.add(ee.getShortName());
                     }
@@ -119,7 +120,7 @@ public class DefaultNutsWorkspaceExtensionModel {
 
     //@Override
     public List<NutsExtensionInformation> findExtensions(String id, String extensionType, NutsSession session) {
-        return findExtensions(NutsId.of(id,session), extensionType, session);
+        return findExtensions(NutsId.of(id).get(session), extensionType, session);
     }
 
     // @Override
@@ -169,13 +170,13 @@ public class DefaultNutsWorkspaceExtensionModel {
 
     public void onInitializeWorkspace(CoreNutsBootOptions bOptions, ClassLoader bootClassLoader, NutsSession session) {
         objectFactory.discoverTypes(
-                NutsId.of(bOptions.getRuntimeBootDependencyNode().getId(),session),
+                NutsId.of(bOptions.getRuntimeBootDependencyNode().getId()).get(session),
                 bOptions.getRuntimeBootDependencyNode().getURL(),
                 bootClassLoader,
                 session);
         for (NutsClassLoaderNode idurl : bOptions.getExtensionBootDependencyNodes()) {
             objectFactory.discoverTypes(
-                    NutsId.of(idurl.getId(),session),
+                    NutsId.of(idurl.getId()).get(session),
                     idurl.getURL(),
                     bootClassLoader,
                     session);
@@ -482,7 +483,7 @@ public class DefaultNutsWorkspaceExtensionModel {
 
     private boolean isLoadedClassPath(NutsDefinition file, NutsSession session) {
         //session = CoreNutsUtils.validateSession(session,ws);
-        if (file.getId().equalsShortId(NutsId.of(NutsConstants.Ids.NUTS_API,session))) {
+        if (file.getId().equalsShortId(NutsId.of(NutsConstants.Ids.NUTS_API).get(session))) {
             return true;
         }
         try {

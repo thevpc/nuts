@@ -23,6 +23,7 @@
  */
 package net.thevpc.nuts.runtime.standalone.session;
 
+import java.util.List;
 import java.util.Map;
 
 import net.thevpc.nuts.*;
@@ -135,7 +136,7 @@ public class NutsRepositorySessionAwareImpl implements NutsRepository, NutsRepos
     }
 
     @Override
-    public NutsRepositoryListener[] getRepositoryListeners() {
+    public List<NutsRepositoryListener> getRepositoryListeners() {
         return repo.getRepositoryListeners();
     }
 
@@ -157,7 +158,7 @@ public class NutsRepositorySessionAwareImpl implements NutsRepository, NutsRepos
     }
 
     @Override
-    public NutsMapListener<String, Object>[] getUserPropertyListeners() {
+    public List<NutsMapListener<String, Object>> getUserPropertyListeners() {
         return repo.getUserPropertyListeners();
     }
 

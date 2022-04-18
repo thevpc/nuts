@@ -30,6 +30,9 @@ import net.thevpc.nuts.NutsDefinition;
 import net.thevpc.nuts.NutsId;
 import net.thevpc.nuts.NutsUpdateResult;
 
+import java.util.Collections;
+import java.util.List;
+
 /**
  * Created by vpc on 6/23/17.
  */
@@ -38,7 +41,7 @@ public final class DefaultNutsUpdateResult implements NutsUpdateResult {
     private NutsId id;
     private NutsDefinition installed;
     private NutsDefinition available;
-    private NutsId[] dependencies;
+    private List<NutsId> dependencies;
     private boolean runtime;
     private boolean updateApplied;
     private boolean updateForced;
@@ -48,12 +51,12 @@ public final class DefaultNutsUpdateResult implements NutsUpdateResult {
     public DefaultNutsUpdateResult() {
     }
 
-    public DefaultNutsUpdateResult(NutsId id, NutsDefinition installed, NutsDefinition available, NutsId[] dependencies, boolean runtime) {
+    public DefaultNutsUpdateResult(NutsId id, NutsDefinition installed, NutsDefinition available, List<NutsId> dependencies, boolean runtime) {
         this.id = id;
         this.installed = installed;
         this.available = available;
         this.runtime = runtime;
-        this.dependencies = dependencies == null ? new NutsId[0] : dependencies;
+        this.dependencies = dependencies == null ? Collections.emptyList() : dependencies;
     }
 
 
@@ -81,7 +84,7 @@ public final class DefaultNutsUpdateResult implements NutsUpdateResult {
     }
 
     @Override
-    public NutsId[] getDependencies() {
+    public List<NutsId> getDependencies() {
         return dependencies;
     }
 

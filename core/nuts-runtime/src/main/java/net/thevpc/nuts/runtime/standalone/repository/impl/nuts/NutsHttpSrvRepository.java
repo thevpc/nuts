@@ -66,7 +66,7 @@ public class NutsHttpSrvRepository extends NutsCachedRepository {
     public NutsId getRemoteId(NutsSession session) {
         if (remoteId == null) {
             try {
-                remoteId = NutsId.of(httpGetString(getUrl("/version"), session),session);
+                remoteId = NutsId.of(httpGetString(getUrl("/version"),session)).get(session);
             } catch (Exception ex) {
                 LOG.with().session(session).level(Level.WARNING).verb(NutsLogVerb.FAIL)
                         .log(NutsMessage.jstyle("unable to resolve Repository NutsId for remote repository {0}", config().getLocation()));
@@ -85,7 +85,7 @@ public class NutsHttpSrvRepository extends NutsCachedRepository {
         }
         NutsSessionUtils.checkSession(getWorkspace(), session);
         ByteArrayOutputStream descStream = new ByteArrayOutputStream();
-        desc.formatter().setSession(session).print(new OutputStreamWriter(descStream));
+        desc.formatter(session).print(new OutputStreamWriter(descStream));
         httpUpload(CoreIOUtils.buildUrl(config().getLocationPath().toString(), "/deploy?" + resolveAuthURLPart(session)),
                 session,
                 new NutsTransportParamBinaryStreamPart("descriptor", "Project.nuts",
@@ -336,7 +336,7 @@ public class NutsHttpSrvRepository extends NutsCachedRepository {
 
         @Override
         public NutsId next() {
-            NutsId nutsId = NutsId.of(line,session);
+            NutsId nutsId = NutsId.of(line).get(session);
             return nutsId.builder().setRepository(getName()).build();
         }
     }

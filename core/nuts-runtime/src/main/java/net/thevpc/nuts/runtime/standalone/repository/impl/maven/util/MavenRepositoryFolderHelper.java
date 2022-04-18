@@ -43,10 +43,9 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.id.util.NutsIdUtils;
 import net.thevpc.nuts.runtime.standalone.repository.impl.NutsRepositoryExt;
 import net.thevpc.nuts.runtime.standalone.util.CoreNutsConstants;
-import net.thevpc.nuts.runtime.standalone.version.DefaultNutsVersion;
+import net.thevpc.nuts.DefaultNutsVersion;
 import net.thevpc.nuts.runtime.standalone.repository.NutsIdPathIterator;
 import net.thevpc.nuts.runtime.standalone.repository.NutsIdPathIteratorBase;
-import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
 import net.thevpc.nuts.runtime.standalone.xtra.digest.NutsDigestUtils;
 
 /**

@@ -10,6 +10,7 @@ import java.io.OutputStream;
 import java.net.URL;
 import java.nio.file.Path;
 import java.time.Instant;
+import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
 
@@ -109,15 +110,6 @@ public class NutsCompressedPath extends NutsPathBase {
         return InputStreamMetadataAwareImpl.of(is, m2);
     }
 
-    //    @Override
-//    public NutsInput input() {
-//        return base.input();
-//    }
-//
-//    @Override
-//    public NutsOutput output() {
-//        return base.output();
-//    }
     @Override
     public OutputStream getOutputStream() {
         return base.getOutputStream();
@@ -315,7 +307,7 @@ public class NutsCompressedPath extends NutsPathBase {
     }
 
     @Override
-    public String[] getItems() {
+    public List<String> getItems() {
         return base.getItems();
     }
 
@@ -357,7 +349,7 @@ public class NutsCompressedPath extends NutsPathBase {
     }
 
     @Override
-    public NutsFormat formatter() {
+    public NutsFormat formatter(NutsSession session) {
         return new MyPathFormat(this)
                 .setSession(getSession());
     }

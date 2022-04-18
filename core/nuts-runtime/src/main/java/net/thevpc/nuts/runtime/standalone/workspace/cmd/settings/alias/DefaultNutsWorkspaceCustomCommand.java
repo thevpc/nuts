@@ -1,6 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.alias;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.boot.PrivateNutsUtilCollections;
 import net.thevpc.nuts.runtime.standalone.util.collections.CoreArrayUtils;
 
 import java.util.ArrayList;
@@ -14,10 +15,10 @@ public class DefaultNutsWorkspaceCustomCommand implements NutsWorkspaceCustomCom
     private String name;
     private NutsId owner;
     private String factoryId;
-    private String[] command;
-    private String[] helpCommand;
+    private List<String> command;
+    private List<String> helpCommand;
     private String helpText;
-    private String[] executorOptions;
+    private List<String> executorOptions;
     private NutsWorkspace ws;
 
     public DefaultNutsWorkspaceCustomCommand(NutsWorkspace ws) {
@@ -57,9 +58,9 @@ public class DefaultNutsWorkspaceCustomCommand implements NutsWorkspaceCustomCom
 
     @Override
     public void exec(String[] args, NutsCommandExecOptions options, NutsSession session) {
-        String[] executorOptions = options.getExecutorOptions();
-        executorOptions = CoreArrayUtils.concatArrays(this.getExecutorOptions(), executorOptions);
-        List<String> r = new ArrayList<>(Arrays.asList(this.getCommand()));
+        List<String> executorOptions = new ArrayList<>(options.getExecutorOptions());
+        executorOptions.addAll(this.getExecutorOptions());
+        List<String> r = new ArrayList<>(this.getCommand());
         r.addAll(Arrays.asList(args));
         args = r.toArray(new String[0]);
 
@@ -80,9 +81,9 @@ public class DefaultNutsWorkspaceCustomCommand implements NutsWorkspaceCustomCom
 
     @Override
     public void dryExec(String[] args, NutsCommandExecOptions options, NutsSession session) throws NutsExecutionException {
-        String[] executorOptions = options.getExecutorOptions();
-        executorOptions = CoreArrayUtils.concatArrays(this.getExecutorOptions(), executorOptions);
-        List<String> r = new ArrayList<>(Arrays.asList(this.getCommand()));
+        List<String> executorOptions = new ArrayList<>(options.getExecutorOptions());
+        executorOptions.addAll(this.getExecutorOptions());
+        List<String> r = new ArrayList<>(this.getCommand());
         r.addAll(Arrays.asList(args));
         args = r.toArray(new String[0]);
 
@@ -106,7 +107,7 @@ public class DefaultNutsWorkspaceCustomCommand implements NutsWorkspaceCustomCom
         if (!NutsBlankable.isBlank(helpText)) {
             return helpText;
         }
-        if (helpCommand != null && helpCommand.length > 0) {
+        if (helpCommand != null && helpCommand.size() > 0) {
             try {
                 return session.exec()
                         .addCommand(helpCommand)
@@ -124,22 +125,31 @@ public class DefaultNutsWorkspaceCustomCommand implements NutsWorkspaceCustomCom
     }
 
     @Override
-    public String[] getCommand() {
-        return command == null ? new String[0] : Arrays.copyOf(command, command.length);
+    public List<String> getCommand() {
+        return PrivateNutsUtilCollections.unmodifiableList(command);
     }
 
+    public DefaultNutsWorkspaceCustomCommand setCommand(List<String> command) {
+        this.command = PrivateNutsUtilCollections.nonNullList(command);
+        return this;
+    }
     public DefaultNutsWorkspaceCustomCommand setCommand(String[] command) {
-        this.command = command;
+        this.command = PrivateNutsUtilCollections.nonNullListFromArray(command);
         return this;
     }
 
     @Override
-    public String[] getExecutorOptions() {
-        return executorOptions == null ? new String[0] : Arrays.copyOf(executorOptions, command.length);
+    public List<String> getExecutorOptions() {
+        return PrivateNutsUtilCollections.unmodifiableList(executorOptions);
+    }
+
+    public DefaultNutsWorkspaceCustomCommand setExecutorOptions(List<String> executorOptions) {
+        this.executorOptions = PrivateNutsUtilCollections.nonNullList(executorOptions);
+        return this;
     }
 
     public DefaultNutsWorkspaceCustomCommand setExecutorOptions(String[] executorOptions) {
-        this.executorOptions = executorOptions;
+        this.executorOptions = PrivateNutsUtilCollections.nonNullListFromArray(executorOptions);
         return this;
     }
 
@@ -165,7 +175,7 @@ public class DefaultNutsWorkspaceCustomCommand implements NutsWorkspaceCustomCom
         return this;
     }
 
-    public DefaultNutsWorkspaceCustomCommand setHelpCommand(String[] helpCommand) {
+    public DefaultNutsWorkspaceCustomCommand setHelpCommand(List<String> helpCommand) {
         this.helpCommand = helpCommand;
         return this;
     }
@@ -185,6 +195,6 @@ public class DefaultNutsWorkspaceCustomCommand implements NutsWorkspaceCustomCom
 
     @Override
     public String toString() {
-        return "DefaultNutsWorkspaceCommand{" + "name=" + name + ", owner=" + owner + ", factoryId=" + factoryId + ", command=" + Arrays.toString(command) + ", executorOptions=" + Arrays.toString(executorOptions) + '}';
+        return "DefaultNutsWorkspaceCommand{" + "name=" + name + ", owner=" + owner + ", factoryId=" + factoryId + ", command=" + command + ", executorOptions=" + executorOptions + '}';
     }
 }

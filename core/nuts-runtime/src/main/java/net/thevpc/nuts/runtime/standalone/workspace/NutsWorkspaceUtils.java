@@ -6,16 +6,14 @@
 package net.thevpc.nuts.runtime.standalone.workspace;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.standalone.id.util.NutsIdUtils;
-import net.thevpc.nuts.runtime.standalone.session.NutsSessionUtils;
-import net.thevpc.nuts.runtime.standalone.util.reflect.*;
-import net.thevpc.nuts.runtime.standalone.util.jclass.NutsJavaSdkUtils;
-import net.thevpc.nuts.runtime.standalone.repository.cmd.NutsRepositorySupportedAction;
 import net.thevpc.nuts.runtime.standalone.format.NutsFetchDisplayOptions;
 import net.thevpc.nuts.runtime.standalone.format.NutsPrintIterator;
+import net.thevpc.nuts.runtime.standalone.repository.NutsRepositoryHelper;
+import net.thevpc.nuts.runtime.standalone.repository.cmd.NutsRepositorySupportedAction;
 import net.thevpc.nuts.runtime.standalone.repository.config.DefaultNutsRepositoryManager;
 import net.thevpc.nuts.runtime.standalone.repository.impl.main.NutsInstalledRepository;
-import net.thevpc.nuts.runtime.standalone.repository.NutsRepositoryHelper;
+import net.thevpc.nuts.runtime.standalone.util.jclass.NutsJavaSdkUtils;
+import net.thevpc.nuts.runtime.standalone.util.reflect.*;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.NutsRepositoryAndFetchMode;
 import net.thevpc.nuts.spi.NutsRepositorySPI;
 
@@ -93,7 +91,7 @@ public class NutsWorkspaceUtils {
         if ("java".equalsIgnoreCase(type)) {
             return NutsJavaSdkUtils.of(ws).createJdkId(version, session);
         } else {
-            return NutsIdBuilder.of(session).setArtifactId(type)
+            return new DefaultNutsIdBuilder().setArtifactId(type)
                     .setVersion(version)
                     .build();
         }
@@ -236,8 +234,8 @@ public class NutsWorkspaceUtils {
             if (session.isPlainTrace()) {
                 session.out().resetLine().println("looking for java installations in default locations...");
             }
-            NutsPlatformLocation[] found = env.platforms()
-                    .searchSystemPlatforms(NutsPlatformFamily.JAVA);
+            List<NutsPlatformLocation> found = env.platforms()
+                    .searchSystemPlatforms(NutsPlatformFamily.JAVA).toList();
             int someAdded = 0;
             for (NutsPlatformLocation java : found) {
                 if (env.platforms().addPlatform(java)) {
@@ -363,7 +361,7 @@ public class NutsWorkspaceUtils {
                                 + "this happens when none of the following repositories are able to locate them : %s\n",
                         ex,
                         text.builder().appendJoined(text.ofPlain(", "),
-                                Arrays.stream(session.repos().getRepositories()).map(x
+                                session.repos().getRepositories().stream().map(x
                                         -> text.builder().append(x.getName(), NutsTextStyle.primary3())
                                 ).collect(Collectors.toList())
                         )

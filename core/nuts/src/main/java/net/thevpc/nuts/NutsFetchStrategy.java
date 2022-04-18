@@ -29,7 +29,9 @@ package net.thevpc.nuts;
 import net.thevpc.nuts.boot.NutsApiUtils;
 
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Set;
 
 /**
  * Fetch strategy defines modes (see {@link NutsFetchMode}) to use when searching for an artifact.
@@ -89,39 +91,10 @@ public enum NutsFetchStrategy implements Iterable<NutsFetchMode>, NutsEnum {
         this.all = Arrays.copyOf(all, all.length);
     }
 
-    public static NutsFetchStrategy parseLenient(String value) {
-        return parseLenient(value, null);
+    public static NutsOptional<NutsFetchStrategy> parse(String value) {
+        return NutsApiUtils.parse(value, NutsFetchStrategy.class);
     }
 
-    public static NutsFetchStrategy parseLenient(String value, NutsFetchStrategy emptyOrErrorValue) {
-        return parseLenient(value, emptyOrErrorValue, emptyOrErrorValue);
-    }
-
-    public static NutsFetchStrategy parseLenient(String value, NutsFetchStrategy emptyValue, NutsFetchStrategy errorValue) {
-        if (value == null) {
-            value = "";
-        } else {
-            value = value.toUpperCase().trim().replace('-', '_');
-        }
-        if (value.isEmpty()) {
-            return emptyValue;
-        }
-        try {
-            return NutsFetchStrategy.valueOf(value.toUpperCase());
-        } catch (Exception notFound) {
-            return errorValue;
-        }
-    }
-
-    public static NutsFetchStrategy parse(String value, NutsSession session) {
-        return parse(value, null, session);
-    }
-
-    public static NutsFetchStrategy parse(String value, NutsFetchStrategy emptyValue, NutsSession session) {
-        NutsFetchStrategy v = parseLenient(value, emptyValue, null);
-        NutsApiUtils.checkNonNullEnum(v, value, NutsFetchStrategy.class, session);
-        return v;
-    }
 
     /**
      * lower cased identifier.
@@ -146,8 +119,8 @@ public enum NutsFetchStrategy implements Iterable<NutsFetchMode>, NutsEnum {
      *
      * @return ordered fetch modes
      */
-    public NutsFetchMode[] modes() {
-        return Arrays.copyOf(all, all.length);
+    public Set<NutsFetchMode> modes() {
+        return new HashSet<>(Arrays.asList(all));
     }
 
     /**

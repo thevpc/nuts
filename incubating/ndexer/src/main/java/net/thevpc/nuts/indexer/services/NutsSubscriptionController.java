@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("indexer/subscription")
 public class NutsSubscriptionController {
@@ -39,7 +41,7 @@ public class NutsSubscriptionController {
     public ResponseEntity<Void> subscribe(@RequestParam("workspaceLocation") String workspaceLocation,
             @RequestParam("repositoryUuid") String repositoryUuid) {
         NutsSession session = workspacePool.openWorkspace(workspaceLocation);
-        NutsRepository[] repositories = session.repos().getRepositories();
+        List<NutsRepository> repositories = session.repos().getRepositories();
         for (NutsRepository repository : repositories) {
             if (repository.getUuid().equals(repositoryUuid)) {
                 this.subscriberManager.subscribe(repositoryUuid,
@@ -55,7 +57,7 @@ public class NutsSubscriptionController {
     public ResponseEntity<Void> unsubscribe(@RequestParam("workspaceLocation") String workspaceLocation,
             @RequestParam("repositoryUuid") String repositoryUuid) {
         NutsSession session = workspacePool.openWorkspace(workspaceLocation);
-        NutsRepository[] repositories = session.repos().getRepositories();
+        List<NutsRepository> repositories = session.repos().getRepositories();
         for (NutsRepository repository : repositories) {
             if (repository.getUuid().equals(repositoryUuid)) {
                 this.subscriberManager.unsubscribe(repositoryUuid,
@@ -71,7 +73,7 @@ public class NutsSubscriptionController {
             @RequestParam("repositoryUuid") String repositoryUuid) {
         System.out.println(workspaceLocation + " " + repositoryUuid);
         NutsSession session = workspacePool.openWorkspace(workspaceLocation);
-        NutsRepository[] repositories = session.repos().getRepositories();
+        List<NutsRepository> repositories = session.repos().getRepositories();
         for (NutsRepository repository : repositories) {
             if (repository.getUuid().equals(repositoryUuid)) {
                 boolean subscribed = this.subscriberManager.isSubscribed(repositoryUuid,

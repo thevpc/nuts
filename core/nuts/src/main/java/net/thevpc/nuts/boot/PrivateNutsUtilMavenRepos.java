@@ -27,8 +27,6 @@
 package net.thevpc.nuts.boot;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.spi.NutsBootId;
-import net.thevpc.nuts.spi.NutsBootVersion;
 import net.thevpc.nuts.spi.NutsRepositoryLocation;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -72,7 +70,7 @@ public final class PrivateNutsUtilMavenRepos {
      * @param url to look into!
      * @return list of detected urls
      */
-    public static NutsBootId[] resolveJarIds(URL url) {
+    public static NutsId[] resolveJarIds(URL url) {
         File file = PrivateNutsUtilIO.toFile(url);
         if (file != null) {
             if (file.isDirectory()) {
@@ -88,17 +86,17 @@ public final class PrivateNutsUtilMavenRepos {
                         String artifactId = map.get("artifactId");
                         String version = map.get("version");
                         if (groupId != null && artifactId != null && version != null) {
-                            return new NutsBootId[]{new NutsBootId(
-                                    groupId, artifactId, NutsBootVersion.parse(version)
+                            return new NutsId[]{new DefaultNutsId(
+                                    groupId, artifactId, NutsVersion.of(version).get()
                             )};
                         }
                     }
                 }
 
 
-                return new NutsBootId[0];
+                return new NutsId[0];
             } else if (file.isFile()) {
-                List<NutsBootId> all = new ArrayList<>();
+                List<NutsId> all = new ArrayList<>();
                 String fileName = file.getName().toLowerCase();
                 if (fileName.endsWith(".jar") || fileName.endsWith(".zip")) {
                     try (ZipFile zf = new ZipFile(file)) {
@@ -116,7 +114,7 @@ public final class PrivateNutsUtilMavenRepos {
                                     Map<String, String> map = resolvePomTagValues(new String[]{"groupId", "artifactId", "version"}, is);
                                     if (map.containsKey("version")) {
                                         String version = map.get("version");
-                                        all.add(new NutsBootId(groupId, artifactId, NutsBootVersion.parse(version)));
+                                        all.add(new DefaultNutsId(groupId, artifactId, NutsVersion.of(version).get()));
                                     }
                                 }
                             }
@@ -132,7 +130,7 @@ public final class PrivateNutsUtilMavenRepos {
                                             Map<?, ?> map = ((Map<?, ?>) p);
                                             Object v = map.get("version");
                                             if (v instanceof String) {
-                                                all.add(new NutsBootId(groupId, artifactId, NutsBootVersion.parse((String) v)));
+                                                all.add(new DefaultNutsId(groupId, artifactId, NutsVersion.of((String) v).get()));
                                             }
                                         }
                                     }
@@ -143,29 +141,29 @@ public final class PrivateNutsUtilMavenRepos {
                         //
                     }
                 }
-                return all.toArray(new NutsBootId[0]);
+                return all.toArray(new NutsId[0]);
             }
         }
-        return new NutsBootId[0];
+        return new NutsId[0];
     }
 
-    public static String getFileName(NutsBootId id, String ext) {
+    public static String getFileName(NutsId id, String ext) {
         return id.getArtifactId() + "-" + id.getVersion() + "." + ext;
     }
 
-    public static String toMavenPath(NutsBootId nutsId) {
+    public static String toMavenPath(NutsId nutsId) {
         StringBuilder sb = new StringBuilder();
         sb.append(nutsId.getGroupId().replace(".", "/"));
         sb.append("/");
         sb.append(nutsId.getArtifactId());
-        if (nutsId.getVersionString() != null && nutsId.getVersionString().length() > 0) {
+        if (!nutsId.getVersion().isBlank()) {
             sb.append("/");
-            sb.append(nutsId.getVersionString());
+            sb.append(nutsId.getVersion().getValue());
         }
         return sb.toString();
     }
 
-    public static String resolveMavenFullPath(NutsRepositoryLocation repo, NutsBootId nutsId, String ext) {
+    public static String resolveMavenFullPath(NutsRepositoryLocation repo, NutsId nutsId, String ext) {
         String jarPath = toMavenPath(nutsId) + "/" + getFileName(nutsId, ext);
         String mvnUrl = repo.getPath();
         String sep = "/";
@@ -179,11 +177,11 @@ public final class PrivateNutsUtilMavenRepos {
     }
 
 
-    public static String getPathFile(NutsBootId id, String name) {
+    public static String getPathFile(NutsId id, String name) {
         return id.getGroupId().replace('.', '/') + '/' + id.getArtifactId() + '/' + id.getVersion() + "/" + name;
     }
 
-    public static File resolveOrDownloadJar(NutsBootId nutsId, NutsRepositoryLocation[] repositories, NutsRepositoryLocation cacheFolder, PrivateNutsBootLog bLog, boolean includeDesc, Instant expire, PrivateNutsErrorInfoList errors) {
+    public static File resolveOrDownloadJar(NutsId nutsId, NutsRepositoryLocation[] repositories, NutsRepositoryLocation cacheFolder, PrivateNutsBootLog bLog, boolean includeDesc, Instant expire, PrivateNutsErrorInfoList errors) {
         File cachedJarFile = new File(resolveMavenFullPath(cacheFolder, nutsId, "jar"));
         if (cachedJarFile.isFile()) {
             if (PrivateNutsUtilIO.isFileAccessible(cachedJarFile.toPath(), expire, bLog)) {
@@ -218,9 +216,9 @@ public final class PrivateNutsUtilMavenRepos {
         return null;
     }
 
-    static Set<NutsBootId> loadDependenciesFromId(NutsBootId rid, PrivateNutsBootLog bLog, Collection<NutsRepositoryLocation> repos) {
+    static Set<NutsId> loadDependenciesFromId(NutsId rid, PrivateNutsBootLog bLog, Collection<NutsRepositoryLocation> repos) {
         String urlPath = PrivateNutsUtils.idToPath(rid) + "/" + rid.getArtifactId() + "-" + rid.getVersion() + ".pom";
-        Set<NutsBootId> deps = null;
+        Set<NutsId> deps = null;
         for (NutsRepositoryLocation baseUrl : repos) {
             String loc = baseUrl.getPath();
             if (loc != null) {
@@ -239,8 +237,8 @@ public final class PrivateNutsUtilMavenRepos {
         return deps;
     }
 
-    static Set<NutsBootId> loadDependenciesFromPomUrl(String url, PrivateNutsBootLog bLog) {
-        LinkedHashSet<NutsBootId> depsSet = new LinkedHashSet<>();
+    static Set<NutsId> loadDependenciesFromPomUrl(String url, PrivateNutsBootLog bLog) {
+        LinkedHashSet<NutsId> depsSet = new LinkedHashSet<>();
         InputStream xml = null;
         try {
             if (url.startsWith("http://") || url.startsWith("https://")) {
@@ -343,11 +341,17 @@ public final class PrivateNutsUtilMavenRepos {
                             //this is maven dependency, using "compile"
                             if (NutsBlankable.isBlank(scope) || scope.equals("compile")) {
                                 depsSet.add(
-                                        new NutsBootId(
-                                                groupId, artifactId, NutsBootVersion.parse(version), NutsUtilStrings.parseBoolean(optional, false, false),
-                                                osMap.get(groupId + ":" + artifactId),
-                                                archMap.get(groupId + ":" + artifactId)
-                                        )
+                                        new DefaultNutsId(
+                                                groupId,
+                                                artifactId,
+                                                NutsVersion.of(version).get())
+                                                .builder()
+                                                .setProperty(NutsConstants.IdProperties.OPTIONAL, "" + NutsUtilStrings.parseBoolean(optional, false, false))
+                                                .setCondition(
+                                                        new DefaultNutsEnvConditionBuilder()
+                                                                .setOs(Arrays.asList(osMap.get(groupId + ":" + artifactId)))
+                                                                .setArch(Arrays.asList(archMap.get(groupId + ":" + artifactId))))
+                                                .build()
                                 );
                             } else if (version.contains("$")) {
                                 throw new NutsBootException(NutsMessage.cstyle("unexpected maven variable in artifactId=%s", version));
@@ -387,24 +391,32 @@ public final class PrivateNutsUtilMavenRepos {
                     }
                 }
             }
-            List<NutsBootId> ok = new ArrayList<>();
-            for (NutsBootId dep : depsSet) {
-                String arch = archMap.get(dep.getShortName());
-                String os = archMap.get(dep.getShortName());
+            List<NutsId> ok = new ArrayList<>();
+            for (NutsId idep : depsSet) {
+                NutsDependency dep = idep.toDependency();
+                String arch = archMap.get(idep.getShortName());
+                String os = archMap.get(idep.getShortName());
                 boolean replace = false;
                 if (arch != null || os != null) {
-                    if ((dep.getOs().isEmpty() && os != null)
-                            || (dep.getArch().isEmpty() && arch != null)) {
+                    if ((dep.getCondition().getOs().isEmpty() && os != null)
+                            || (dep.getCondition().getArch().isEmpty() && arch != null)) {
                         replace = true;
                     }
                 }
                 if (replace) {
-                    ok.add(new NutsBootId(dep.getGroupId(), dep.getArtifactId(), dep.getVersion(), dep.isOptional(),
-                            os != null ? os : dep.getOs(),
-                            arch != null ? arch : dep.getArch()
-                    ));
+                    ok.add(
+                            dep.builder()
+                                    .setCondition(
+                                            dep.getCondition().builder()
+                                                    .setArch(
+                                                            arch != null ? Arrays.asList(arch) : dep.getCondition().getArch())
+                                                    .setOs(
+                                                            arch != null ? Arrays.asList(arch) : dep.getCondition().getArch())
+                                                    .build()
+                                    ).toId()
+                    );
                 } else {
-                    ok.add(dep);
+                    ok.add(idep);
                 }
             }
             depsSet.clear();
@@ -425,8 +437,8 @@ public final class PrivateNutsUtilMavenRepos {
         return depsSet;
     }
 
-    static List<NutsBootVersion> detectVersionsFromMetaData(String mavenMetadata, PrivateNutsBootLog bLog) {
-        List<NutsBootVersion> all = new ArrayList<>();
+    static List<NutsVersion> detectVersionsFromMetaData(String mavenMetadata, PrivateNutsBootLog bLog) {
+        List<NutsVersion> all = new ArrayList<>();
         try {
             URL runtimeMetadata = new URL(mavenMetadata);
             DocumentBuilderFactory factory
@@ -452,7 +464,7 @@ public final class PrivateNutsUtilMavenRepos {
                                 for (int k = 0; k < c3.getChildNodes().getLength(); k++) {
                                     if (c3.getChildNodes().item(k) instanceof Element && c3.getChildNodes().item(k).getNodeName().equals("version")) {
                                         Element c4 = (Element) c3.getChildNodes().item(k);
-                                        NutsBootVersion p = NutsBootVersion.parse(c4.getTextContent());
+                                        NutsVersion p = NutsVersion.of(c4.getTextContent()).get();
                                         if (!p.isBlank()) {
                                             all.add(p);
                                         }
@@ -472,7 +484,7 @@ public final class PrivateNutsUtilMavenRepos {
         return all;
     }
 
-    static VersionAndPath resolveLatestMavenId(NutsBootId zId, String path, Predicate<NutsBootVersion> filter,
+    static VersionAndPath resolveLatestMavenId(NutsId zId, String path, Predicate<NutsVersion> filter,
                                                PrivateNutsBootLog bLog, NutsRepositoryLocation repoUrl2, boolean stopFirst) {
         NutsDescriptorStyle descType = NutsDescriptorStyle.MAVEN;
         if (NutsConstants.RepoTypes.NUTS.equalsIgnoreCase(repoUrl2.getLocationType())) {
@@ -480,7 +492,7 @@ public final class PrivateNutsUtilMavenRepos {
         }
         String repoUrl = repoUrl2.getPath();
         boolean found = false;
-        NutsBootVersion bestVersion = null;
+        NutsVersion bestVersion = null;
         String bestPath = null;
         if (!repoUrl.contains("://")) {
             File mavenNutsCoreFolder = new File(repoUrl, path.replace("/", File.separator));
@@ -494,13 +506,13 @@ public final class PrivateNutsUtilMavenRepos {
                         if (file.isDirectory()) {
                             String[] goodChildren = file.list(filenameFilter);
                             if (goodChildren != null && goodChildren.length > 0) {
-                                NutsBootVersion p = NutsBootVersion.parse(file.getName());//folder name is version name
+                                NutsVersion p = NutsVersion.of(file.getName()).get();//folder name is version name
                                 if (filter == null || filter.test(p)) {
                                     found = true;
                                     if (bestVersion == null || bestVersion.compareTo(p) < 0) {
                                         //we will ignore artifact classifier to simplify search
                                         Path jarPath = file.toPath().resolve(
-                                                getFileName(new NutsBootId(zId.getGroupId(), zId.getArtifactId(), p), "jar")
+                                                getFileName(new DefaultNutsId(zId.getGroupId(), zId.getArtifactId(), p), "jar")
                                         );
                                         if (Files.isRegularFile(jarPath)) {
                                             bestVersion = p;
@@ -533,7 +545,7 @@ public final class PrivateNutsUtilMavenRepos {
                 basePath = basePath + "/";
             }
             if (htmlfs) {
-                for (NutsBootVersion p : detectVersionsFromHtmlfsTomcatDirectoryListing(basePath, bLog)) {
+                for (NutsVersion p : detectVersionsFromHtmlfsTomcatDirectoryListing(basePath, bLog)) {
                     if (filter == null || filter.test(p)) {
                         found = true;
                         if (bestVersion == null || bestVersion.compareTo(p) < 0) {
@@ -550,7 +562,7 @@ public final class PrivateNutsUtilMavenRepos {
                 }
             } else {
                 String mavenMetadata = basePath + "maven-metadata.xml";
-                for (NutsBootVersion p : detectVersionsFromMetaData(mavenMetadata, bLog)) {
+                for (NutsVersion p : detectVersionsFromMetaData(mavenMetadata, bLog)) {
                     if (filter == null || filter.test(p)) {
                         found = true;
                         if (bestVersion == null || bestVersion.compareTo(p) < 0) {
@@ -576,8 +588,8 @@ public final class PrivateNutsUtilMavenRepos {
      * @param filter filter
      * @return latest runtime version
      */
-    static NutsBootId resolveLatestMavenId(NutsBootId zId, Predicate<NutsBootVersion> filter,
-                                           PrivateNutsBootLog bLog, Collection<NutsRepositoryLocation> bootRepositories) {
+    static NutsId resolveLatestMavenId(NutsId zId, Predicate<NutsVersion> filter,
+                                       PrivateNutsBootLog bLog, Collection<NutsRepositoryLocation> bootRepositories) {
         if (bLog.isLoggable(Level.FINEST)) {
             if (bootRepositories.isEmpty()) {
                 bLog.log(Level.FINEST, NutsLogVerb.START, NutsMessage.jstyle("search for {0} nuts there are no repositories to look into.", zId));
@@ -591,7 +603,7 @@ public final class PrivateNutsUtilMavenRepos {
             }
         }
         String path = zId.getGroupId().replace('.', '/') + '/' + zId.getArtifactId();
-        NutsBootVersion bestVersion = null;
+        NutsVersion bestVersion = null;
         String bestPath = null;
         boolean stopOnFirstValidRepo = false;
         for (NutsRepositoryLocation repoUrl2 : bootRepositories) {
@@ -609,13 +621,13 @@ public final class PrivateNutsUtilMavenRepos {
         if (bestVersion == null) {
             return null;
         }
-        NutsBootId iid = new NutsBootId(zId.getGroupId(), zId.getArtifactId(), bestVersion);
+        NutsId iid = new DefaultNutsId(zId.getGroupId(), zId.getArtifactId(), bestVersion);
         bLog.log(Level.FINEST, NutsLogVerb.SUCCESS, NutsMessage.jstyle("resolve {0} from {1}", iid, bestPath));
         return iid;
     }
 
-    private static List<NutsBootVersion> detectVersionsFromHtmlfsTomcatDirectoryListing(String basePath, PrivateNutsBootLog bLog) {
-        List<NutsBootVersion> all = new ArrayList<>();
+    private static List<NutsVersion> detectVersionsFromHtmlfsTomcatDirectoryListing(String basePath, PrivateNutsBootLog bLog) {
+        List<NutsVersion> all = new ArrayList<>();
         try (InputStream in = PrivateNutsUtilIO.openStream(new URL(basePath), bLog)) {
             List<String> p = new HtmlfsTomcatDirectoryListParser().parse(in);
             if (p != null) {
@@ -625,7 +637,7 @@ public final class PrivateNutsUtilMavenRepos {
                         int a = s.lastIndexOf('/');
                         if (a >= 0) {
                             String n = s.substring(a + 1);
-                            NutsBootVersion v = NutsBootVersion.parse(n);
+                            NutsVersion v = NutsVersion.of(n).get();
                             if (!v.isBlank()) {
                                 all.add(v);
                             }
@@ -639,7 +651,7 @@ public final class PrivateNutsUtilMavenRepos {
         return all;
     }
 
-    static File getBootCacheJar(NutsBootId vid, NutsRepositoryLocation[] repositories, NutsRepositoryLocation cacheFolder, boolean useCache, String name,
+    static File getBootCacheJar(NutsId vid, NutsRepositoryLocation[] repositories, NutsRepositoryLocation cacheFolder, boolean useCache, String name,
                                 Instant expire, PrivateNutsErrorInfoList errorList, NutsBootOptions bOptions,
                                 Function<String, String> pathExpansionConverter, PrivateNutsBootLog bLog) {
         File f = getBootCacheFile(vid, getFileName(vid, "jar"), repositories, cacheFolder, useCache, expire, errorList, bOptions, pathExpansionConverter, bLog);
@@ -650,7 +662,7 @@ public final class PrivateNutsUtilMavenRepos {
         return f;
     }
 
-    static File getBootCacheFile(NutsBootId vid, String fileName, NutsRepositoryLocation[] repositories, NutsRepositoryLocation cacheFolder,
+    static File getBootCacheFile(NutsId vid, String fileName, NutsRepositoryLocation[] repositories, NutsRepositoryLocation cacheFolder,
                                  boolean useCache, Instant expire, PrivateNutsErrorInfoList errorList,
                                  NutsBootOptions bOptions,
                                  Function<String, String> pathExpansionConverter, PrivateNutsBootLog bLog) {
@@ -674,7 +686,7 @@ public final class PrivateNutsUtilMavenRepos {
         return null;
     }
 
-    private static File getBootCacheFile(NutsBootId nutsId, String path, NutsRepositoryLocation repository0, NutsRepositoryLocation cacheFolder,
+    private static File getBootCacheFile(NutsId nutsId, String path, NutsRepositoryLocation repository0, NutsRepositoryLocation cacheFolder,
                                          boolean useCache, Instant expire, PrivateNutsErrorInfoList errorList,
                                          NutsBootOptions bOptions, Function<String, String> pathExpansionConverter,
                                          PrivateNutsBootLog bLog) {
@@ -891,10 +903,10 @@ public final class PrivateNutsUtilMavenRepos {
     }
 
     private static class VersionAndPath {
-        NutsBootVersion version;
+        NutsVersion version;
         String path;
 
-        public VersionAndPath(NutsBootVersion version, String path) {
+        public VersionAndPath(NutsVersion version, String path) {
             this.version = version;
             this.path = path;
         }

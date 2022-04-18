@@ -108,8 +108,8 @@ public class DefaultNutsIdFormat extends DefaultFormatBase<NutsIdFormat> impleme
     }
 
     @Override
-    public String[] getOmitProperties() {
-        return omittedProperties.toArray(new String[0]);
+    public List<String> getOmitProperties() {
+        return new ArrayList<>(omittedProperties);
     }
 
     @Override

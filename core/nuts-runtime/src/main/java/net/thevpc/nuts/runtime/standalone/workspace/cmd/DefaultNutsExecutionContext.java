@@ -24,8 +24,11 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.boot.PrivateNutsUtilCollections;
 
+import java.util.Arrays;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -35,9 +38,9 @@ public class DefaultNutsExecutionContext implements NutsExecutionContext {
 
     private NutsDefinition definition;
     private Map<String, String> env;
-    private String[] executorArguments;
+    private List<String> executorArguments;
     private Map<String, String> executorProperties;
-    private String[] arguments;
+    private List<String> arguments;
     private NutsSession execSession;
     private NutsSession session;
     private NutsWorkspace workspace;
@@ -74,7 +77,7 @@ public class DefaultNutsExecutionContext implements NutsExecutionContext {
 //        this.cwd = cwd;
 //    }
     public DefaultNutsExecutionContext(NutsDefinition definition,
-                                       String[] arguments, String[] executorArgs, Map<String, String> env, Map<String, String> executorProperties,
+                                       List<String> arguments, List<String> executorArgs, Map<String, String> env, Map<String, String> executorProperties,
                                        String cwd, NutsSession session, NutsSession execSession, NutsWorkspace workspace, boolean failFast,
                                        boolean temporary,
                                        NutsExecutionType executionType,
@@ -84,23 +87,14 @@ public class DefaultNutsExecutionContext implements NutsExecutionContext {
                                        String redirectOutputFile,
                                        String redirectInputFile
     ) {
-        if (arguments == null) {
-            arguments = new String[0];
-        }
-        if (executorArgs == null) {
-            executorArgs = new String[0];
-        }
-        if (executorProperties == null) {
-            executorProperties = new LinkedHashMap<>();
-        }
         this.commandName = commandName;
         this.definition = definition;
-        this.arguments = arguments;
+        this.arguments = PrivateNutsUtilCollections.unmodifiableList(arguments);
         this.execSession = execSession;
         this.session = session;
         this.workspace = workspace;
-        this.executorArguments = executorArgs;
-        this.executorProperties = executorProperties;
+        this.executorArguments = PrivateNutsUtilCollections.unmodifiableList(executorArgs);
+        this.executorProperties = PrivateNutsUtilCollections.unmodifiableMap(executorProperties);
         this.sleepMillis = sleepMillis;
         this.cwd = cwd;
         if (env == null) {
@@ -160,7 +154,7 @@ public class DefaultNutsExecutionContext implements NutsExecutionContext {
     }
 
     @Override
-    public String[] getExecutorArguments() {
+    public List<String> getExecutorArguments() {
         return executorArguments;
     }
 
@@ -175,7 +169,7 @@ public class DefaultNutsExecutionContext implements NutsExecutionContext {
     }
 
     @Override
-    public String[] getArguments() {
+    public List<String> getArguments() {
         return arguments;
     }
 
@@ -234,7 +228,7 @@ public class DefaultNutsExecutionContext implements NutsExecutionContext {
     }
 
     public DefaultNutsExecutionContext setExecutorArguments(String[] executorArguments) {
-        this.executorArguments = executorArguments;
+        this.executorArguments = PrivateNutsUtilCollections.unmodifiableList(Arrays.asList(executorArguments));
         return this;
     }
 
@@ -244,7 +238,7 @@ public class DefaultNutsExecutionContext implements NutsExecutionContext {
     }
 
     public DefaultNutsExecutionContext setArguments(String[] arguments) {
-        this.arguments = arguments;
+        this.arguments = PrivateNutsUtilCollections.unmodifiableList(Arrays.asList(arguments));
         return this;
     }
 

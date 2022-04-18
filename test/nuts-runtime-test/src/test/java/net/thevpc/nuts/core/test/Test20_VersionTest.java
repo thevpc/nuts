@@ -27,8 +27,6 @@ package net.thevpc.nuts.core.test;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.core.test.utils.TestUtils;
-import net.thevpc.nuts.runtime.standalone.version.DefaultNutsVersion;
-import net.thevpc.nuts.runtime.standalone.version.filter.DefaultNutsVersionFilter;
 import org.junit.jupiter.api.*;
 
 /**
@@ -83,7 +81,7 @@ public class Test20_VersionTest {
     }
 
     private void checkEq(String a, String b, NutsSession session) {
-        NutsVersionFilter u = DefaultNutsVersionFilter.parse(a, session);
+        NutsVersionFilter u = NutsVersionFilters.of(session).parse(a);
         String b2 = u.toString();
         Assertions.assertEquals(b, b2);
         TestUtils.println(a + " ==> " + b);
@@ -91,22 +89,22 @@ public class Test20_VersionTest {
 
     @Test
     public void test9() {
-        String value = NutsVersion.of("", session).inc(-1).getValue();
+        String value = NutsVersion.BLANK.inc(-1).getValue();
         TestUtils.println(value);
         Assertions.assertEquals("1", value);
     }
 
     @Test
     public void test10() {
-        NutsVersion v1 = NutsVersion.of("1.2-preview", session);
-        NutsVersion v2 = NutsVersion.of("1.2", session);
+        NutsVersion v1 = NutsVersion.of("1.2-preview").get();
+        NutsVersion v2 = NutsVersion.of("1.2").get();
         Assertions.assertTrue(v1.compareTo(v2)<0);
     }
 
     @Test
     public void test11() {
-        NutsVersion v1 = NutsVersion.of("1.2-preview", session);
-        NutsVersion v2 = NutsVersion.of("1.2.1", session);
+        NutsVersion v1 = NutsVersion.of("1.2-preview").get();
+        NutsVersion v2 = NutsVersion.of("1.2.1").get();
         Assertions.assertTrue(v1.compareTo(v2)<0);
     }
 

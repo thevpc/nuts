@@ -26,6 +26,7 @@ package net.thevpc.nuts;
 import net.thevpc.nuts.spi.NutsExecutorComponent;
 import net.thevpc.nuts.spi.NutsInstallerComponent;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -52,7 +53,7 @@ public interface NutsExecutionContext {
      *
      * @return executor options
      */
-    String[] getExecutorArguments();
+    List<String> getExecutorArguments();
 
     /**
      * executor properties
@@ -73,7 +74,7 @@ public interface NutsExecutionContext {
      *
      * @return command arguments
      */
-    String[] getArguments();
+    List<String> getArguments();
 
     /**
      * workspace

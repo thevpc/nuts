@@ -24,6 +24,8 @@
  */
 package net.thevpc.nuts;
 
+import java.util.List;
+
 /**
  * version interval is a version filter that accepts interval ranges of
  * versions.
@@ -84,4 +86,6 @@ public interface NutsVersionFilter extends NutsArtifactFilter {
     NutsVersionFilter and(NutsVersionFilter other);
 
     NutsVersionFilter neg();
+
+    NutsOptional<List<NutsVersionInterval>> intervals();
 }

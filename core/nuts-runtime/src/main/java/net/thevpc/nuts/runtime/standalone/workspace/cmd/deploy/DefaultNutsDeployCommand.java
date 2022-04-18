@@ -18,7 +18,9 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.List;
 import java.util.stream.Collectors;
 
 /**
@@ -30,9 +32,9 @@ public class DefaultNutsDeployCommand extends AbstractNutsDeployCommand {
         super(ws);
     }
 
-    private static CharacterizedDeployFile characterizeForDeploy(NutsStreamOrPath contentFile, NutsFetchCommand options, String[] parseOptions, NutsSession session) {
+    private static CharacterizedDeployFile characterizeForDeploy(NutsStreamOrPath contentFile, NutsFetchCommand options, List<String> parseOptions, NutsSession session) {
         if (parseOptions == null) {
-            parseOptions = new String[0];
+            parseOptions = new ArrayList<>();
         }
         CharacterizedDeployFile c = new CharacterizedDeployFile(session);
         try {
@@ -185,7 +187,7 @@ public class DefaultNutsDeployCommand extends AbstractNutsDeployCommand {
                         descriptor = descriptor2;
                     } else {
                         if (descriptor2 != null && !descriptor2.equals(descriptor)) {
-                            descriptor.formatter().setSession(session).print(descFile);
+                            descriptor.formatter(session).print(descFile);
                         }
                     }
                     if (descriptor != null) {
@@ -329,7 +331,7 @@ public class DefaultNutsDeployCommand extends AbstractNutsDeployCommand {
         if (values != null) {
             for (String s : values) {
                 if (!NutsBlankable.isBlank(s)) {
-                    ids.add(NutsId.of(s,session));
+                    ids.add(NutsId.of(s).get(session));
                 }
             }
         }

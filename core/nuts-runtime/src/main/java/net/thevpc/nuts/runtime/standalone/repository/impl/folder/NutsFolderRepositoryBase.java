@@ -210,7 +210,7 @@ public abstract class NutsFolderRepositoryBase extends NutsCachedRepository {
                         if (idFilter != null && !idFilter.acceptId(nutsId, session)) {
                             continue;
                         }
-                        ret.add(NutsIdBuilder.of(session).setGroupId(groupId).setArtifactId(artifactId).setVersion(version.getName()).build());
+                        ret.add(new DefaultNutsIdBuilder().setGroupId(groupId).setArtifactId(artifactId).setVersion(version.getName()).build());
                     }
                     return NutsIterator.of(ret.iterator(), "findNonSingleVersion");
                 }

@@ -77,38 +77,8 @@ public enum NutsIdType implements NutsEnum {
         this.id = name().toLowerCase().replace('_', '-');
     }
 
-    public static NutsIdType parseLenient(String value) {
-        return parseLenient(value, null);
-    }
-
-    public static NutsIdType parseLenient(String value, NutsIdType emptyOrErrorValue) {
-        return parseLenient(value, emptyOrErrorValue, emptyOrErrorValue);
-    }
-
-    public static NutsIdType parseLenient(String value, NutsIdType emptyValue, NutsIdType errorValue) {
-        if (value == null) {
-            value = "";
-        } else {
-            value = value.toUpperCase().trim().replace('-', '_');
-        }
-        if (value.isEmpty()) {
-            return emptyValue;
-        }
-        try {
-            return NutsIdType.valueOf(value.toUpperCase());
-        } catch (Exception notFound) {
-            return errorValue;
-        }
-    }
-
-    public static NutsIdType parse(String value, NutsSession session) {
-        return parse(value, null, session);
-    }
-
-    public static NutsIdType parse(String value, NutsIdType emptyValue, NutsSession session) {
-        NutsIdType v = parseLenient(value, emptyValue, null);
-        NutsApiUtils.checkNonNullEnum(v, value, NutsIdType.class, session);
-        return v;
+    public static NutsOptional<NutsIdType> parse(String value) {
+        return NutsApiUtils.parse(value, NutsIdType.class);
     }
 
     /**

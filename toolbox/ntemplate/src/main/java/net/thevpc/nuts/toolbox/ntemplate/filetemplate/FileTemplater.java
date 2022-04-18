@@ -503,40 +503,40 @@ public class FileTemplater {
         switch (name) {
             case SOURCE_PATH: {
                 if (this.sourcePath != null) {
-                    return (NutsOptional<T>) NutsOptional.of(getSession(), this.sourcePath);
+                    return (NutsOptional<T>) NutsOptional.of(this.sourcePath);
                 }
                 break;
             }
             case WORKING_DIR: {
                 if (this.workingDir != null) {
-                    return (NutsOptional<T>) NutsOptional.of(getSession(), this.workingDir);
+                    return (NutsOptional<T>) NutsOptional.of(this.workingDir);
                 }
                 break;
             }
             case ROOT_DIR: {
                 if (this.rootDir != null) {
-                    return (NutsOptional<T>) NutsOptional.of(getSession(), this.rootDir);
+                    return (NutsOptional<T>) NutsOptional.of(this.rootDir);
                 }
                 break;
             }
         }
         T r = (T) vars.get(name);
         if (r != null) {
-            return NutsOptional.of(getSession(), r);
+            return NutsOptional.of(r);
         }
         if (vars.containsKey(name)) {
-            return NutsOptional.ofNull(getSession());
+            return NutsOptional.ofNull();
         }
         if (customVarEvaluator != null) {
             r = (T) customVarEvaluator.apply(name);
             if (r != null) {
-                return NutsOptional.of(getSession(), r);
+                return NutsOptional.of(r);
             }
         }
         if (parent != null) {
             return parent.getVar(name);
         }
-        return NutsOptional.ofEmpty(getSession(), session1 -> {
+        return NutsOptional.ofEmpty(session1 -> {
             String source = getSourcePath().orElse(null);
             if (source == null) {
                 return NutsMessage.cstyle("not found : %s", StringUtils.escapeString(name));

@@ -62,31 +62,25 @@ public final class NutsTextStyles implements Iterable<NutsTextStyle>, NutsEnum {
         return new NutsTextStyles(new NutsTextStyle[]{other});
     }
 
-    public static NutsTextStyles parseLenient(String value) {
-        return parseLenient(value, null, null);
-    }
 
-    public static NutsTextStyles parseLenient(String value, NutsTextStyles emptyValue) {
-        return parseLenient(value, emptyValue, emptyValue);
-    }
-
-    public static NutsTextStyles parseLenient(String value, NutsTextStyles emptyValue, NutsTextStyles errorValue) {
+    public static NutsOptional<NutsTextStyles> parse(String value) {
         value = NutsUtilStrings.trim(value);
         if (value.isEmpty()) {
-            return emptyValue;
+            return NutsOptional.ofEmpty(s -> NutsMessage.cstyle(NutsTextStyles.class.getSimpleName() + " is empty"));
         }
         List<NutsTextStyle> all = new ArrayList<>();
         for (String s : value.split(",")) {
             s = s.trim();
             if (s.length() > 0) {
-                NutsTextStyle a = NutsTextStyle.parseLenient(s, null, null);
+                NutsTextStyle a = NutsTextStyle.parse(s).orElse(null);
                 if (a == null) {
-                    return errorValue;
+                    String finalValue = value;
+                    return NutsOptional.ofError(session -> NutsMessage.cstyle(NutsTextStyles.class.getSimpleName() + " invalid value : %s", finalValue));
                 }
                 all.add(a);
             }
         }
-        return of(all.toArray(new NutsTextStyle[0]));
+        return NutsOptional.of(of(all.toArray(new NutsTextStyle[0])));
     }
 
     public NutsTextStyles append(NutsTextStyles other) {

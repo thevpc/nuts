@@ -23,7 +23,7 @@ public class WindowsNdi extends BaseSystemNdi {
     }
 
     protected NutsShellFamily[] getShellGroups() {
-        Set<NutsShellFamily> all=new LinkedHashSet<>(Arrays.asList(session.env().getShellFamilies()));
+        Set<NutsShellFamily> all=new LinkedHashSet<>(session.env().getShellFamilies());
         all.retainAll(Arrays.asList(NutsShellFamily.WIN_CMD,NutsShellFamily.WIN_POWER_SHELL));
         return all.toArray(new NutsShellFamily[0]);
     }

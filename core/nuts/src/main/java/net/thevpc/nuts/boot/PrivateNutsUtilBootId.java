@@ -26,17 +26,14 @@
  */
 package net.thevpc.nuts.boot;
 
-import net.thevpc.nuts.NutsOsFamily;
-import net.thevpc.nuts.spi.NutsBootId;
-import net.thevpc.nuts.spi.NutsBootVersion;
-import net.thevpc.nuts.NutsBootOptions;
+import net.thevpc.nuts.*;
 
 import java.util.ArrayList;
 import java.util.List;
 
 class PrivateNutsUtilBootId {
-    static NutsBootId[] parseBootIdList(String s) {
-        List<NutsBootId> boots = new ArrayList<>();
+    static NutsId[] parseBootIdList(String s) {
+        List<NutsId> boots = new ArrayList<>();
         StringBuilder q = null;
         boolean inBrackets = false;
         for (char c : s.toCharArray()) {
@@ -55,7 +52,7 @@ class PrivateNutsUtilBootId {
                     if (inBrackets) {
                         q.append(c);
                     } else {
-                        boots.add(NutsBootId.parse(q.toString()));
+                        boots.add(NutsId.of(q.toString()).get());
                         q = null;
                         inBrackets = false;
                     }
@@ -73,31 +70,35 @@ class PrivateNutsUtilBootId {
             }
         }
         if (q != null) {
-            boots.add(NutsBootId.parse(q.toString()));
+            boots.add(NutsId.of(q.toString()).get());
         }
-        return boots.toArray(new NutsBootId[0]);
+        return boots.toArray(new NutsId[0]);
     }
 
-    static boolean isAcceptDependency(NutsBootId s, NutsBootOptions bOptions) {
+    static boolean isAcceptDependency(NutsDependency s, NutsBootOptions bOptions) {
         boolean bootOptionals = PrivateNutsUtilWorkspaceOptions.isBootOptional(bOptions);
-
         //by default ignore optionals
-        if (s.isOptional()) {
+        String o = s.getOptional();
+        if(NutsBlankable.isBlank(o) || Boolean.parseBoolean(o)){
             if (!bootOptionals && !PrivateNutsUtilWorkspaceOptions.isBootOptional(s.getArtifactId(), bOptions)) {
                 return false;
             }
         }
-        String os = s.getOs();
-        String arch = s.getArch();
-        if (os.isEmpty() && arch.isEmpty()) {
-            return true;
+        List<String> oss = PrivateNutsUtilCollections.uniqueNonBlankList(s.getCondition().getOs());
+        List<String> archs = PrivateNutsUtilCollections.uniqueNonBlankList(s.getCondition().getArch());
+        if(oss.isEmpty()){
+            oss.add("");
         }
-        if (!os.isEmpty()) {
+        if(archs.isEmpty()){
+            archs.add("");
+        }
+        if (!oss.isEmpty()) {
             NutsOsFamily eos = NutsOsFamily.getCurrent();
             boolean osOk = false;
-            for (NutsBootId e : NutsBootId.parseAll(os)) {
-                if (e.getShortName().equalsIgnoreCase(eos.id())) {
-                    if (e.getVersion().accept(NutsBootVersion.parse(System.getProperty("os.version")))) {
+            for (String e : oss) {
+                NutsId ee = NutsId.of(e).get();
+                if (ee.getShortName().equalsIgnoreCase(eos.id())) {
+                    if (PrivateNutsUtilDescriptors.accept(ee.getVersion(),NutsVersion.of(System.getProperty("os.version")).get())) {
                         osOk = true;
                     }
                     break;
@@ -107,11 +108,11 @@ class PrivateNutsUtilBootId {
                 return false;
             }
         }
-        if (!arch.isEmpty()) {
+        if (!archs.isEmpty()) {
             String earch = System.getProperty("os.arch");
             if (earch != null) {
                 boolean archOk = false;
-                for (String e : arch.split("[,; ]")) {
+                for (String e : archs) {
                     if (!e.isEmpty()) {
                         if (e.equalsIgnoreCase(earch)) {
                             archOk = true;

@@ -23,12 +23,12 @@
  */
 package net.thevpc.nuts.runtime.standalone.version.filter;
 
-import net.thevpc.nuts.NutsVersionFilter;
-import net.thevpc.nuts.NutsFilter;
-import net.thevpc.nuts.NutsFilterOp;
-import net.thevpc.nuts.NutsSession;
+import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.util.filters.AbstractNutsFilter;
 import net.thevpc.nuts.runtime.standalone.util.Simplifiable;
+
+import java.util.Collections;
+import java.util.List;
 
 /**
  *
@@ -54,4 +54,10 @@ public abstract class AbstractVersionFilter extends AbstractNutsFilter implement
     public NutsVersionFilter neg() {
         return super.neg().to(NutsVersionFilter.class);
     }
+
+    @Override
+    public NutsOptional<List<NutsVersionInterval>> intervals() {
+        return NutsOptional.of(Collections.emptyList());
+    }
+
 }

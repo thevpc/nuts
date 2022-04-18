@@ -28,6 +28,7 @@ package net.thevpc.nuts;
 
 import net.thevpc.nuts.spi.NutsLogManager;
 
+import java.util.List;
 import java.util.function.Supplier;
 import java.util.logging.Handler;
 import java.util.logging.Level;
@@ -68,7 +69,7 @@ public interface NutsLogger {
      * @param session session
      * @return Log handler
      */
-    static Handler[] getHandlers(NutsSession session) {
+    static List<Handler> getHandlers(NutsSession session) {
         return NutsLogManager.of(session).getHandlers(session);
     }
 

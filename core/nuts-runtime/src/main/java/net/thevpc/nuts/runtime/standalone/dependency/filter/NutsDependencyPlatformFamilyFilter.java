@@ -1,11 +1,10 @@
 package net.thevpc.nuts.runtime.standalone.dependency.filter;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.standalone.id.NutsIdListHelper;
-import net.thevpc.nuts.runtime.standalone.xtra.expr.StringTokenizerUtils;
 
 import java.util.Collection;
 import java.util.EnumSet;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -26,9 +25,9 @@ public class NutsDependencyPlatformFamilyFilter extends AbstractDependencyFilter
     public NutsDependencyPlatformFamilyFilter(NutsSession session, String accepted) {
         super(session, NutsFilterOp.CUSTOM);
         this.accepted = EnumSet.noneOf(NutsPlatformFamily.class);
-        for (String e : NutsIdListHelper.parseIdListStrings(accepted,session)) {
-            if (!e.isEmpty()) {
-                this.accepted.add(NutsPlatformFamily.parseLenient(e));
+        for (NutsId e : NutsId.ofList(accepted).get(session)) {
+            if (!e.isBlank()) {
+                this.accepted.add(NutsPlatformFamily.parse(e.getArtifactId()).orElse(null));
             }
         }
     }
@@ -41,13 +40,13 @@ public class NutsDependencyPlatformFamilyFilter extends AbstractDependencyFilter
 
     @Override
     public boolean acceptDependency(NutsId from, NutsDependency dependency, NutsSession session) {
-        String[] current = dependency.getCondition().getPlatform();
+        List<String> current = dependency.getCondition().getPlatform();
         boolean empty = true;
         if (current != null) {
             for (String e : current) {
                 if (!e.isEmpty()) {
                     empty = false;
-                    if (accepted.contains(NutsPlatformFamily.parseLenient(e))) {
+                    if (accepted.contains(NutsPlatformFamily.parse(e).orElse(null))) {
                         return true;
                     }
                 }

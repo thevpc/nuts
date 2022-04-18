@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.elem.mapper;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.standalone.dependency.DefaultNutsDependencyBuilder;
+import net.thevpc.nuts.DefaultNutsDependencyBuilder;
 
 import java.lang.reflect.Type;
 
@@ -10,19 +10,19 @@ public class NutsElementMapperNutsDependency implements NutsElementMapper<NutsDe
     @Override
     public Object destruct(NutsDependency o, Type typeOfSrc, NutsElementFactoryContext context) {
         NutsSession session = context.getSession();
-        if (o.getExclusions().length == 0) {
+        if (o.getExclusions().isEmpty()) {
             //use compact form
             if (context.isNtf()) {
                 return NutsDependencyFormat.of(session).setNtf(true).setValue(o).format();
             } else {
 
-                return context.defaultDestruct(o.formatter()
+                return context.defaultDestruct(o.formatter(session)
                                 .setSession(session)
                         .setNtf(context.isNtf())
                         .format(), null);
             }
         }
-        return context.defaultDestruct(NutsDependencyBuilder.of(session).set(o), null);
+        return context.defaultDestruct(new DefaultNutsDependencyBuilder().setAll(o), null);
     }
 
     @Override
@@ -41,7 +41,7 @@ public class NutsElementMapperNutsDependency implements NutsElementMapper<NutsDe
 //                    return ws.elem().forString(ws.dependency().formatter().setNtf(true).setValue(o).format());
 //                } else {
 
-        NutsString format = o.formatter().setSession(context.getSession())
+        NutsString format = o.formatter(context.getSession())
                 .setNtf(context.isNtf())
                 .format();
         return context.defaultObjectToElement(
@@ -55,10 +55,10 @@ public class NutsElementMapperNutsDependency implements NutsElementMapper<NutsDe
     public NutsDependency createObject(NutsElement o, Type typeOfResult, NutsElementFactoryContext context) {
         NutsSession session = context.getSession();
         if (o.type() == NutsElementType.STRING) {
-            return NutsDependencyParser.of(session).setLenient(false).parse(o.asPrimitive().getString());
+            return NutsDependency.of(o.asPrimitive().getString()).get(session);
         }
-        DefaultNutsDependencyBuilder builder = (DefaultNutsDependencyBuilder) context.defaultElementToObject(o, DefaultNutsDependencyBuilder.class);
-        return NutsDependencyBuilder.of(session).set(builder).build();
+        NutsDependencyBuilder builder = context.defaultElementToObject(o, DefaultNutsDependencyBuilder.class);
+        return new DefaultNutsDependencyBuilder(builder).build();
     }
 
 }

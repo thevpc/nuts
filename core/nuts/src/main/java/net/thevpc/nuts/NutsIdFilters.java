@@ -40,6 +40,8 @@ public interface NutsIdFilters extends NutsTypedFilters<NutsIdFilter> {
         return session.extensions().createSupported(NutsIdFilters.class, true, null);
     }
 
+    NutsIdFilter byValue(NutsId id);
+
     NutsIdFilter byDefaultVersion(Boolean defaultVersion);
 
     NutsIdFilter byInstallStatus(NutsInstallStatusFilter installStatus);

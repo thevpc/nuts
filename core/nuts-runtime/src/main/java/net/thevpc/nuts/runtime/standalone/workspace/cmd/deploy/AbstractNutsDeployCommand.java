@@ -13,7 +13,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public abstract class AbstractNutsDeployCommand extends NutsWorkspaceCommandBase<NutsDeployCommand> implements NutsDeployCommand {
 
@@ -24,7 +26,7 @@ public abstract class AbstractNutsDeployCommand extends NutsWorkspaceCommandBase
     protected String descSha1;
     protected String fromRepository;
     protected String toRepository;
-    protected String[] parseOptions;
+    protected List<String> parseOptions;
     protected final List<NutsId> ids = new ArrayList<>();
 
     protected static class Result{
@@ -42,17 +44,17 @@ public abstract class AbstractNutsDeployCommand extends NutsWorkspaceCommandBase
         super(ws, "deploy");
     }
 
-    public String[] getParseOptions() {
+    public List<String> getParseOptions() {
         return parseOptions;
     }
 
     public NutsDeployCommand setParseOptions(String[] parseOptions) {
-        this.parseOptions = parseOptions;
+        this.parseOptions = new ArrayList<>(Arrays.asList(parseOptions));
         return this;
     }
 
     public NutsDeployCommand parseOptions(String[] parseOptions) {
-        this.parseOptions = parseOptions;
+        this.parseOptions = new ArrayList<>(Arrays.asList(parseOptions));
         return this;
     }
 
@@ -210,11 +212,11 @@ public abstract class AbstractNutsDeployCommand extends NutsWorkspaceCommandBase
     }
 
     @Override
-    public NutsId[] getResult() {
+    public List<NutsId> getResult() {
         if (result == null) {
             run();
         }
-        return result.stream().map(x->x.id).toArray(NutsId[]::new);
+        return result.stream().map(x->x.id).collect(Collectors.toList());
     }
 
     @Override
@@ -224,7 +226,6 @@ public abstract class AbstractNutsDeployCommand extends NutsWorkspaceCommandBase
 
     protected void addResult(NutsId nid,String repository,NutsString source) {
         checkSession();
-        NutsWorkspace ws = getSession().getWorkspace();
         if (result == null) {
             result = new ArrayList<>();
         }
@@ -245,7 +246,7 @@ public abstract class AbstractNutsDeployCommand extends NutsWorkspaceCommandBase
         if (values != null) {
             for (String s : values) {
                 if (!NutsBlankable.isBlank(s)) {
-                    ids.add(NutsId.of(s,session));
+                    ids.add(NutsId.of(s).get(session));
                 }
             }
         }
@@ -289,7 +290,7 @@ public abstract class AbstractNutsDeployCommand extends NutsWorkspaceCommandBase
     @Override
     public NutsDeployCommand removeId(String id) {
         checkSession();
-        ids.remove(NutsId.of(id,session));
+        ids.remove(NutsId.of(id).get(session));
         return this;
     }
 
@@ -297,14 +298,14 @@ public abstract class AbstractNutsDeployCommand extends NutsWorkspaceCommandBase
     public NutsDeployCommand addId(String id) {
         checkSession();
         if (!NutsBlankable.isBlank(id)) {
-            ids.add(NutsId.of(id,session));
+            ids.add(NutsId.of(id).get(session));
         }
         return this;
     }
 
     @Override
-    public NutsId[] getIds() {
-        return this.ids.toArray(new NutsId[0]);
+    public List<NutsId> getIds() {
+        return this.ids;
     }
 
     @Override

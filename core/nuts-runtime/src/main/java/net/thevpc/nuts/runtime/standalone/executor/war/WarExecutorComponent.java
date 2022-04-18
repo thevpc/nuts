@@ -54,7 +54,7 @@ public class WarExecutorComponent implements NutsExecutorComponent {
     public int getSupportLevel(NutsSupportLevelContext context) {
         this.ws=context.getSession();
         if(ID==null){
-            ID = NutsId.of("net.thevpc.nuts.exec:war", ws);
+            ID = NutsId.of("net.thevpc.nuts.exec:war").get( ws);
         }
         NutsDefinition def = context.getConstraints(NutsDefinition.class);
         if (def != null) {

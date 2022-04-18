@@ -25,7 +25,10 @@
  */
 package net.thevpc.nuts;
 
+import net.thevpc.nuts.boot.PrivateNutsUtilCollections;
+
 import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -38,8 +41,8 @@ public final class NutsUserConfig extends NutsConfigItem {
     private static final long serialVersionUID = 2;
     private String user;
     private String credentials;
-    private String[] groups;
-    private String[] permissions;
+    private List<String> groups;
+    private List<String> permissions;
     private String remoteIdentity;
     private String remoteCredentials;
 
@@ -51,11 +54,11 @@ public final class NutsUserConfig extends NutsConfigItem {
         this.credentials = other.getCredentials();
         this.remoteIdentity = other.getRemoteIdentity();
         this.remoteCredentials = other.getRemoteCredentials();
-        this.groups = other.getGroups() == null ? null : Arrays.copyOf(other.getGroups(), other.getGroups().length);
-        this.permissions = other.getPermissions() == null ? null : Arrays.copyOf(other.getPermissions(), other.getPermissions().length);
+        setGroups(other.getGroups());
+        setPermissions(other.getPermissions());
     }
 
-    public NutsUserConfig(String user, String credentials, String[] groups, String[] permissions) {
+    public NutsUserConfig(String user, String credentials, List<String> groups, List<String> permissions) {
         this.user = (user);
         this.credentials = (credentials);
         setGroups(groups);
@@ -94,27 +97,25 @@ public final class NutsUserConfig extends NutsConfigItem {
         this.credentials = credentials;
     }
 
-    public String[] getPermissions() {
+    public List<String> getPermissions() {
         return permissions;
     }
 
-    public void setPermissions(String[] permissions) {
-        this.permissions = permissions;
+    public void setPermissions(List<String> permissions) {
+        this.permissions = PrivateNutsUtilCollections.nonNullList(permissions);
     }
 
-    public String[] getGroups() {
+    public List<String> getGroups() {
         return groups;
     }
 
-    public void setGroups(String[] groups) {
-        this.groups = groups;
+    public void setGroups(List<String> groups) {
+        this.groups = PrivateNutsUtilCollections.nonNullList(groups);
     }
 
     @Override
     public int hashCode() {
-        int result = Objects.hash(user, credentials, remoteIdentity, remoteCredentials);
-        result = 31 * result + Arrays.hashCode(groups);
-        result = 31 * result + Arrays.hashCode(permissions);
+        int result = Objects.hash(user, credentials, remoteIdentity, remoteCredentials,groups,permissions);
         return result;
     }
 
@@ -125,8 +126,8 @@ public final class NutsUserConfig extends NutsConfigItem {
         NutsUserConfig that = (NutsUserConfig) o;
         return Objects.equals(user, that.user) &&
                 Objects.equals(credentials, that.credentials) &&
-                Arrays.equals(groups, that.groups) &&
-                Arrays.equals(permissions, that.permissions) &&
+                Objects.equals(groups, that.groups) &&
+                Objects.equals(permissions, that.permissions) &&
                 Objects.equals(remoteIdentity, that.remoteIdentity) &&
                 Objects.equals(remoteCredentials, that.remoteCredentials);
     }
@@ -136,8 +137,8 @@ public final class NutsUserConfig extends NutsConfigItem {
         return "NutsUserConfig{" +
                 "user='" + user + '\'' +
                 ", credentials='" + credentials + '\'' +
-                ", groups=" + Arrays.toString(groups) +
-                ", permissions=" + Arrays.toString(permissions) +
+                ", groups=" + groups +
+                ", permissions=" + permissions +
                 ", remoteIdentity='" + remoteIdentity + '\'' +
                 ", remoteCredentials='" + remoteCredentials + '\'' +
                 '}';

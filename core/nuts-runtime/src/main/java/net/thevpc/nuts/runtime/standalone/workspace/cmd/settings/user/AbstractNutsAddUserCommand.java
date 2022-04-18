@@ -29,10 +29,7 @@ package net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.user;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.NutsWorkspaceCommandBase;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 /**
  *
@@ -202,13 +199,13 @@ public abstract class AbstractNutsAddUserCommand extends NutsWorkspaceCommandBas
     }
 
     @Override
-    public String[] getPermissions() {
-        return permissions.toArray(new String[0]);
+    public List<String> getPermissions() {
+        return new ArrayList<>(permissions);
     }
 
     @Override
-    public String[] getGroups() {
-        return groups.toArray(new String[0]);
+    public List<String> getGroups() {
+        return new ArrayList<>(groups);
     }
 
 

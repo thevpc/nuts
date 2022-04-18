@@ -30,6 +30,7 @@ import net.thevpc.nuts.NutsLogger;
 import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.boot.NutsApiUtils;
 
+import java.util.List;
 import java.util.logging.Handler;
 import java.util.logging.Level;
 
@@ -51,7 +52,7 @@ public interface NutsLogManager extends NutsComponent {
      * @param session session
      * @return Log handler
      */
-    Handler[] getHandlers(NutsSession session);
+    List<Handler> getHandlers(NutsSession session);
 
     /**
      * remove the given handler

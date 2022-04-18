@@ -64,7 +64,7 @@ public class DefaultNutsRepoFactoryComponent implements NutsRepositoryFactoryCom
     }
 
     @Override
-    public NutsAddRepositoryOptions[] getDefaultRepositories(NutsSession session) {
+    public List<NutsAddRepositoryOptions> getDefaultRepositories(NutsSession session) {
         List<NutsAddRepositoryOptions> all=new ArrayList<>();
         if (!session.config().isGlobal()) {
             all.add(NutsRepositorySelectorHelper.createRepositoryOptions(
@@ -74,7 +74,7 @@ public class DefaultNutsRepoFactoryComponent implements NutsRepositoryFactoryCom
         all.add(NutsRepositorySelectorHelper.createRepositoryOptions(
                 Objects.requireNonNull(NutsRepositoryLocation.of("nuts-public", NutsRepositoryDB.of(session), session)),
                 true, session));
-        return all.toArray(new NutsAddRepositoryOptions[0]);
+        return all;
     }
 
     @Override

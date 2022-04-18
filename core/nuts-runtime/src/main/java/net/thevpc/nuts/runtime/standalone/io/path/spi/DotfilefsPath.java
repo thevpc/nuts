@@ -201,7 +201,7 @@ public class DotfilefsPath extends AbstractPathSPIAdapter {
         List<String> all = new ArrayList<>();
         InputStream foldersFileStream = null;
         String dotFilesUrl = baseUrl + "/" + CoreNutsConstants.Files.DOT_FILES;
-        NutsVersion versionString = NutsVersion.of("0.5.5",session);
+        NutsVersion versionString = NutsVersion.of("0.5.5").get(session);
         try {
             session.getTerminal().printProgress("%-8s %s", "browse",NutsPath.of(baseUrl,session).toCompressedForm());
             foldersFileStream = NutsInputStreamMonitor.of(session).setSource(dotFilesUrl).create();
@@ -213,7 +213,7 @@ public class DotfilefsPath extends AbstractPathSPIAdapter {
                         if (all.isEmpty()) {
                             s = s.substring(1).trim();
                             if (s.startsWith("version=")) {
-                                versionString = NutsVersion.of(s.substring("version=".length()).trim(),session);
+                                versionString = NutsVersion.of(s.substring("version=".length()).trim()).get(session);
                             }
                         }
                     } else {

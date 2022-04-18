@@ -105,7 +105,7 @@ public class SyntaxParser {
                     throw new NutsIllegalArgumentException(evaluator.getSession(), NutsMessage.cstyle("expected expression"));
                 }
             }
-            first = new DefaultOpNode(opName(t), NutsExpr.OpType.PREFIX, withCache.precedences[precedenceIndex], new NutsExpr.Node[]{q});
+            first = new DefaultOpNode(opName(t), NutsExpr.OpType.PREFIX, withCache.precedences[precedenceIndex], Arrays.asList(q));
         } else {
             first = nextNonTerminal(precedenceIndex + 1);
         }
@@ -126,7 +126,7 @@ public class SyntaxParser {
             if (q == null) {
                 throw new NutsIllegalArgumentException(evaluator.getSession(), NutsMessage.cstyle("expected expression"));
             }
-            first= new DefaultOpNode(opName(infixOp), NutsExpr.OpType.INFIX, withCache.precedences[precedenceIndex], new NutsExpr.Node[]{first,q});
+            first= new DefaultOpNode(opName(infixOp), NutsExpr.OpType.INFIX, withCache.precedences[precedenceIndex], Arrays.asList(first,q));
             infixOp = tokens.peek();
             while(infixOp!=null && isOp(infixOp, NutsExpr.OpType.INFIX, precedenceIndex)){
                 tokens.next();
@@ -134,13 +134,13 @@ public class SyntaxParser {
                 if (q == null) {
                     throw new NutsIllegalArgumentException(evaluator.getSession(), NutsMessage.cstyle("expected expression"));
                 }
-                first= new DefaultOpNode(opName(infixOp), NutsExpr.OpType.INFIX, withCache.precedences[precedenceIndex], new NutsExpr.Node[]{first,q});
+                first= new DefaultOpNode(opName(infixOp), NutsExpr.OpType.INFIX, withCache.precedences[precedenceIndex], Arrays.asList(first,q));
                 infixOp = tokens.peek();
             }
             return first;
         } else if (isOp(infixOp, NutsExpr.OpType.POSTFIX, precedenceIndex)) {
             tokens.next();
-            return new DefaultOpNode(opName(infixOp), NutsExpr.OpType.POSTFIX, withCache.precedences[precedenceIndex], new NutsExpr.Node[]{first});
+            return new DefaultOpNode(opName(infixOp), NutsExpr.OpType.POSTFIX, withCache.precedences[precedenceIndex], Arrays.asList(first));
         } else {
             return first;
         }

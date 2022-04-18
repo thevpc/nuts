@@ -6,6 +6,7 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.update;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.boot.PrivateNutsUtilCollections;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.NutsWorkspaceCommandBase;
 
 import java.time.Instant;
@@ -39,15 +40,15 @@ public abstract class AbstractNutsUpdateCommand extends NutsWorkspaceCommandBase
     }
 
     @Override
-    public NutsId[] getIds() {
-        return ids == null ? new NutsId[0] : ids.toArray(new NutsId[0]);
+    public List<NutsId> getIds() {
+        return PrivateNutsUtilCollections.unmodifiableList(ids);
     }
 
     @Override
     public NutsUpdateCommand addId(String id) {
         checkSession();
-        NutsSession ws = getSession();
-        return addId(id == null ? null : NutsId.of(id,ws));
+        NutsSession session = getSession();
+        return addId(id == null ? null : NutsId.of(id).get(session));
     }
 
     @Override
@@ -88,8 +89,8 @@ public abstract class AbstractNutsUpdateCommand extends NutsWorkspaceCommandBase
     @Override
     public NutsUpdateCommand removeId(String id) {
         checkSession();
-        NutsSession ws = getSession();
-        return removeId(NutsId.of(id,ws));
+        NutsSession session = getSession();
+        return removeId(NutsId.of(id).get(session));
     }
 
     @Override
@@ -132,8 +133,8 @@ public abstract class AbstractNutsUpdateCommand extends NutsWorkspaceCommandBase
     }
 
     @Override
-    public String[] getArgs() {
-        return args == null ? new String[0] : args.toArray(new String[0]);
+    public List<String> getArgs() {
+        return PrivateNutsUtilCollections.unmodifiableList(args);
     }
 
     @Override
@@ -176,8 +177,8 @@ public abstract class AbstractNutsUpdateCommand extends NutsWorkspaceCommandBase
     }
 
     @Override
-    public NutsId[] getLockedIds() {
-        return lockedIds == null ? new NutsId[0] : lockedIds.toArray(new NutsId[0]);
+    public List<NutsId> getLockedIds() {
+        return PrivateNutsUtilCollections.unmodifiableList(lockedIds);
     }
 
     @Override
@@ -366,9 +367,9 @@ public abstract class AbstractNutsUpdateCommand extends NutsWorkspaceCommandBase
     @Override
     public NutsUpdateCommand addLockedId(String id) {
         checkSession();
-        NutsSession ws = getSession();
+        NutsSession session = getSession();
         if (!NutsBlankable.isBlank(id)) {
-            lockedIds.add(NutsId.of(id,ws));
+            lockedIds.add(NutsId.of(id).get(session));
         }
         return this;
     }
@@ -477,7 +478,7 @@ public abstract class AbstractNutsUpdateCommand extends NutsWorkspaceCommandBase
             case "--to-version": {
                 String val = cmdLine.nextString().getValue().getString();
                 if (enabled) {
-                    this.setApiVersion(NutsVersion.of(val,getSession()));
+                    this.setApiVersion(NutsVersion.of(val).get(getSession()));
                 }
                 return true;
             }

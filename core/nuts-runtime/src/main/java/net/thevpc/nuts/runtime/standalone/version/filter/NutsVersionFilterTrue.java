@@ -4,7 +4,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.id.filter.NutsExprIdFilter;
 import net.thevpc.nuts.runtime.standalone.util.Simplifiable;
 
-public class NutsVersionFilterTrue extends AbstractVersionFilter implements NutsVersionFilter, Simplifiable<NutsVersionFilter>, NutsExprIdFilter {
+public class NutsVersionFilterTrue extends AbstractVersionFilter implements NutsExprIdFilter {
 
     public NutsVersionFilterTrue(NutsSession session) {
         super(session, NutsFilterOp.TRUE);

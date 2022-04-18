@@ -102,38 +102,8 @@ public enum NutsStoreLocation implements NutsEnum {
         this.id = name().toLowerCase().replace('_', '-');
     }
 
-    public static NutsStoreLocation parseLenient(String value) {
-        return parseLenient(value, null);
-    }
-
-    public static NutsStoreLocation parseLenient(String value, NutsStoreLocation emptyOrErrorValue) {
-        return parseLenient(value, emptyOrErrorValue, emptyOrErrorValue);
-    }
-
-    public static NutsStoreLocation parseLenient(String value, NutsStoreLocation emptyValue, NutsStoreLocation errorValue) {
-        if (value == null) {
-            value = "";
-        } else {
-            value = value.toUpperCase().trim().replace('-', '_');
-        }
-        if (value.isEmpty()) {
-            return emptyValue;
-        }
-        try {
-            return NutsStoreLocation.valueOf(value.toUpperCase());
-        } catch (Exception notFound) {
-            return errorValue;
-        }
-    }
-
-    public static NutsStoreLocation parse(String value, NutsSession session) {
-        return parse(value, null, session);
-    }
-
-    public static NutsStoreLocation parse(String value, NutsStoreLocation emptyValue, NutsSession session) {
-        NutsStoreLocation v = parseLenient(value, emptyValue, null);
-        NutsApiUtils.checkNonNullEnum(v, value, NutsStoreLocation.class, session);
-        return v;
+    public static NutsOptional<NutsStoreLocation> parse(String value) {
+        return NutsApiUtils.parse(value, NutsStoreLocation.class);
     }
 
     /**

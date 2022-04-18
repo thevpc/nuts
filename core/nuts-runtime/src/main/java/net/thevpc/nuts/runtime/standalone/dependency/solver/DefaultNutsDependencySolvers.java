@@ -8,6 +8,8 @@ import net.thevpc.nuts.NutsWorkspace;
 import net.thevpc.nuts.spi.NutsDependencySolver;
 import net.thevpc.nuts.spi.NutsSupportLevelContext;
 
+import java.util.List;
+
 public class DefaultNutsDependencySolvers implements NutsDependencySolvers {
     private NutsWorkspace ws;
     public DefaultNutsDependencySolvers(NutsWorkspace ws) {
@@ -28,7 +30,7 @@ public class DefaultNutsDependencySolvers implements NutsDependencySolvers {
     }
 
     @Override
-    public String[] getSolverNames(NutsSession session) {
+    public List<String> getSolverNames(NutsSession session) {
         NutsSessionUtils.checkSession(ws, session);
         DefaultNutsWorkspaceConfigManager config = (DefaultNutsWorkspaceConfigManager)session.config();
         return config.getDependencySolverNames();

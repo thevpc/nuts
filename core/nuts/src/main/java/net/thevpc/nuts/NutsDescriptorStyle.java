@@ -58,38 +58,8 @@ public enum NutsDescriptorStyle implements NutsEnum {
         this.id = name().toLowerCase().replace('_', '-');
     }
 
-    public static NutsDescriptorStyle parseLenient(String value) {
-        return parseLenient(value, null);
-    }
-
-    public static NutsDescriptorStyle parseLenient(String value, NutsDescriptorStyle emptyOrErrorValue) {
-        return parseLenient(value, emptyOrErrorValue, emptyOrErrorValue);
-    }
-
-    public static NutsDescriptorStyle parseLenient(String value, NutsDescriptorStyle emptyValue, NutsDescriptorStyle errorValue) {
-        if (value == null) {
-            value = "";
-        } else {
-            value = value.toUpperCase().trim().replace('-', '_');
-        }
-        if (value.isEmpty()) {
-            return emptyValue;
-        }
-        try {
-            return NutsDescriptorStyle.valueOf(value.toUpperCase());
-        } catch (Exception notFound) {
-            return errorValue;
-        }
-    }
-
-    public static NutsDescriptorStyle parse(String value, NutsSession session) {
-        return parse(value, null, session);
-    }
-
-    public static NutsDescriptorStyle parse(String value, NutsDescriptorStyle emptyValue, NutsSession session) {
-        NutsDescriptorStyle v = parseLenient(value, emptyValue, null);
-        NutsApiUtils.checkNonNullEnum(v, value, NutsDescriptorStyle.class, session);
-        return v;
+    public static NutsOptional<NutsDescriptorStyle> parse(String value) {
+        return NutsApiUtils.parse(value, NutsDescriptorStyle.class);
     }
 
     /**

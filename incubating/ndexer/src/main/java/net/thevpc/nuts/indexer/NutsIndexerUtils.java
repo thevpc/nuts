@@ -41,7 +41,7 @@ public class NutsIndexerUtils {
         NutsWorkspace ws = repository.getWorkspace();
         if (level == 0) {
             entity.put("mirrors", Arrays.toString(
-                    Arrays.stream(repository.config().setSession(session).getMirrors())
+                    repository.config().setSession(session).getMirrors().stream()
                             .map(nutsRepository -> mapToJson(nutsRepositoryToMap(nutsRepository, level + 1, session), session))
                             .toArray()));
             entity.put("parents", mapToJson(nutsRepositoryToMap(repository.getParentRepository(), level + 1, session), session));
@@ -140,19 +140,19 @@ public class NutsIndexerUtils {
     }
 
     public static NutsId mapToNutsId(Map<String, String> map, NutsSession session) {
-        return NutsIdBuilder.of(session)
+        return new DefaultNutsIdBuilder()
                 .setArtifactId(NutsUtilStrings.trim(map.get("name")))
                 .setRepository(NutsUtilStrings.trim(map.get("namespace")))
                 .setGroupId(NutsUtilStrings.trim(map.get("group")))
                 .setVersion(NutsUtilStrings.trim(map.get("version")))
                 .setCondition(
-                        NutsEnvConditionBuilder.of(session)
+                        new DefaultNutsEnvConditionBuilder()
                                 //TODO what if the result is ',' separated array?
-                                .setArch(NutsUtilStrings.trim(map.get(NutsConstants.IdProperties.ARCH)))
-                                .setOs(NutsUtilStrings.trim(map.get(NutsConstants.IdProperties.OS)))
-                                .setOsDist(NutsUtilStrings.trim(map.get(NutsConstants.IdProperties.OS_DIST)))
-                                .setPlatform(NutsUtilStrings.trim(map.get(NutsConstants.IdProperties.PLATFORM)))
-                                .setDesktopEnvironment(NutsUtilStrings.trim(map.get(NutsConstants.IdProperties.DESKTOP_ENVIRONMENT)))
+                                .setArch(Arrays.asList(NutsUtilStrings.trim(map.get(NutsConstants.IdProperties.ARCH))))
+                                .setOs(Arrays.asList(NutsUtilStrings.trim(map.get(NutsConstants.IdProperties.OS))))
+                                .setOsDist(Arrays.asList(NutsUtilStrings.trim(map.get(NutsConstants.IdProperties.OS_DIST))))
+                                .setPlatform(Arrays.asList(NutsUtilStrings.trim(map.get(NutsConstants.IdProperties.PLATFORM))))
+                                .setDesktopEnvironment(Arrays.asList(NutsUtilStrings.trim(map.get(NutsConstants.IdProperties.DESKTOP_ENVIRONMENT))))
                 )
                 .setClassifier(NutsUtilStrings.trim(map.get(NutsConstants.IdProperties.CLASSIFIER)))
 //                .setAlternative(trim(map.get(NutsConstants.IdProperties.ALTERNATIVE)))

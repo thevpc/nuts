@@ -28,8 +28,8 @@ public class NutsDependencyPlatformIdFilter extends AbstractDependencyFilter  {
 
     @Override
     public boolean acceptDependency(NutsId from, NutsDependency dependency, NutsSession session) {
-        String[] current = NutsStream.of(dependency.getCondition().getPlatform(),session).filterNonBlank().toArray(String[]::new);
-        if(current.length==0 || accepted.isEmpty()){
+        List<String> current = NutsStream.of(dependency.getCondition().getPlatform(),session).filterNonBlank().toList();
+        if(current.size()==0 || accepted.isEmpty()){
             return true;
         }
         for (NutsId nutsId : accepted) {

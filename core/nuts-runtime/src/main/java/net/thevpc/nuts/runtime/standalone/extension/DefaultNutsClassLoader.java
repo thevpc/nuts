@@ -34,13 +34,13 @@ import net.thevpc.nuts.NutsSession;
 public class DefaultNutsClassLoader extends URLClassLoader {
 
     private String name;
-    private NutsSession ws;
+    private NutsSession session;
     private LinkedHashMap<String, NutsClassLoaderNode> nodes = new LinkedHashMap<>();
     private LinkedHashMap<String, NutsClassLoaderNode> effective = new LinkedHashMap<>();
-    public DefaultNutsClassLoader(String name, NutsSession ws, ClassLoader parent) {
+    public DefaultNutsClassLoader(String name, NutsSession session, ClassLoader parent) {
         super(new URL[0], parent);
         this.name = name;
-        this.ws = ws;
+        this.session = session;
     }
 
     public String getName() {
@@ -52,7 +52,7 @@ public class DefaultNutsClassLoader extends URLClassLoader {
     }
 
     public NutsClassLoaderNode search(NutsClassLoaderNode node, boolean deep) {
-        NutsId ii = NutsId.of(node.getId(),ws);
+        NutsId ii = NutsId.of(node.getId()).get(session);
         String sn = ii.getShortName();
         NutsClassLoaderNode o = nodes.get(sn);
         if (o != null) {
@@ -72,7 +72,7 @@ public class DefaultNutsClassLoader extends URLClassLoader {
     }
 
     public boolean add(NutsClassLoaderNode node) {
-        NutsId ii = NutsId.of(node.getId(),ws);
+        NutsId ii = NutsId.of(node.getId()).get(session);
         String sn = ii.getShortName();
         if (!nodes.containsKey(sn)) {
             nodes.put(sn, node);
@@ -83,7 +83,7 @@ public class DefaultNutsClassLoader extends URLClassLoader {
 
     protected boolean add(NutsClassLoaderNode node, boolean deep) {
         String s = node.getId();
-        NutsId ii = NutsId.of(s,ws);
+        NutsId ii = NutsId.of(s).get(session);
         String sn = ii.getShortName();
         if (!effective.containsKey(sn)) {
             effective.put(sn, node);

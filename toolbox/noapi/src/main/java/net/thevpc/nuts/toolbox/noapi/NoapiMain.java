@@ -18,7 +18,6 @@ public class NoapiMain implements NutsApplication, NutsAppCmdProcessor {
 
     @Override
     public void run(NutsApplicationContext appContext) {
-        String[] args = appContext.getArguments();
         this.service = new NOpenAPIService(appContext);
         NutsCommandLine cmdLine = appContext.getCommandLine();
         appContext.processCommandLine(this);

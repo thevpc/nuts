@@ -147,10 +147,10 @@ public class DefaultNutsSearchCommand extends AbstractNutsSearchCommand {
         for (NutsId id : this.getIds()) {
             someIds.add(id.toString());
         }
-        if (this.getIds().length == 0 && isCompanion()) {
+        if (this.getIds().size() == 0 && isCompanion()) {
             someIds.addAll(this.session.extensions().getCompanionIds().stream().map(NutsId::getShortName).collect(Collectors.toList()));
         }
-        if (this.getIds().length == 0 && isRuntime()) {
+        if (this.getIds().size() == 0 && isRuntime()) {
             someIds.add(NutsConstants.Ids.NUTS_RUNTIME);
         }
         HashSet<String> goodIds = new HashSet<>();
@@ -539,7 +539,7 @@ public class DefaultNutsSearchCommand extends AbstractNutsSearchCommand {
         NutsElements elems = NutsElements.of(session);
         if (regularIds.length > 0) {
             for (String id : regularIds) {
-                NutsId nutsId = NutsId.of(id, session);
+                NutsId nutsId = NutsId.of(id).get( session);
                 if (nutsId != null) {
                     List<NutsId> nutsId2 = new ArrayList<>();
                     if (NutsBlankable.isBlank(nutsId.getGroupId())) {

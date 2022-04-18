@@ -28,6 +28,7 @@ package net.thevpc.nuts;
 
 import java.io.Serializable;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -44,7 +45,7 @@ public class NutsCommandExecOptions implements Serializable {
     /**
      * execution options
      */
-    private String[] executorOptions;
+    private List<String> executorOptions;
 
     /**
      * execution environment variables
@@ -71,7 +72,7 @@ public class NutsCommandExecOptions implements Serializable {
      *
      * @return execution options
      */
-    public String[] getExecutorOptions() {
+    public List<String> getExecutorOptions() {
         return executorOptions;
     }
 
@@ -81,7 +82,7 @@ public class NutsCommandExecOptions implements Serializable {
      * @param executorOptions new value
      * @return {@code this} instance
      */
-    public NutsCommandExecOptions setExecutorOptions(String[] executorOptions) {
+    public NutsCommandExecOptions setExecutorOptions(List<String> executorOptions) {
         this.executorOptions = executorOptions;
         return this;
     }
@@ -168,8 +169,7 @@ public class NutsCommandExecOptions implements Serializable {
 
     @Override
     public int hashCode() {
-        int result = Objects.hash(env, directory, failFast, executionType);
-        result = 31 * result + Arrays.hashCode(executorOptions);
+        int result = Objects.hash(env, directory, failFast, executionType,executorOptions);
         return result;
     }
 
@@ -179,7 +179,7 @@ public class NutsCommandExecOptions implements Serializable {
         if (o == null || getClass() != o.getClass()) return false;
         NutsCommandExecOptions that = (NutsCommandExecOptions) o;
         return failFast == that.failFast &&
-                Arrays.equals(executorOptions, that.executorOptions) &&
+                Objects.equals(executorOptions, that.executorOptions) &&
                 Objects.equals(env, that.env) &&
                 Objects.equals(directory, that.directory) &&
                 executionType == that.executionType;
@@ -188,7 +188,7 @@ public class NutsCommandExecOptions implements Serializable {
     @Override
     public String toString() {
         return "NutsCommandExecOptions{" +
-                "executorOptions=" + Arrays.toString(executorOptions) +
+                "executorOptions=" + executorOptions +
                 ", env=" + env +
                 ", directory='" + directory + '\'' +
                 ", failFast=" + failFast +

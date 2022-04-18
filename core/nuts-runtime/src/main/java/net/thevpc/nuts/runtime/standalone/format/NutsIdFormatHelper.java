@@ -366,7 +366,7 @@ public class NutsIdFormatHelper {
                 return text.ofStyled("missing-file-name", NutsTextStyle.error());
             }
             case ARCH: {
-                if (desc != null  && desc.getCondition().getArch().length>0) {
+                if (desc != null  && desc.getCondition().getArch().size()>0) {
                     return keywordArr1(desc.getCondition().getArch());
                 }
                 return text.ofStyled("missing-arch", NutsTextStyle.error());
@@ -378,13 +378,13 @@ public class NutsIdFormatHelper {
                 return text.ofStyled("missing-name", NutsTextStyle.error());
             }
             case OS: {
-                if (desc != null  && desc.getCondition().getOs().length>0) {
+                if (desc != null  && desc.getCondition().getOs().size()>0) {
                     return keywordArr2(desc.getCondition().getOs());
                 }
                 return text.ofStyled("missing-os", NutsTextStyle.error());
             }
             case OSDIST: {
-                if (desc != null && desc.getCondition().getOsDist().length>0) {
+                if (desc != null && desc.getCondition().getOsDist().size()>0) {
                     return keywordArr2(desc.getCondition().getOsDist());
                 }
                 return text.ofStyled("missing-osdist", NutsTextStyle.error());
@@ -396,19 +396,19 @@ public class NutsIdFormatHelper {
                 return text.ofStyled("missing-packaging", NutsTextStyle.error());
             }
             case PLATFORM: {
-                if (desc != null && desc.getCondition().getPlatform().length>0) {
+                if (desc != null && desc.getCondition().getPlatform().size()>0) {
                     return keywordArr1(desc.getCondition().getPlatform());
                 }
                 return text.ofStyled("missing-platform", NutsTextStyle.error());
             }
             case PROFILE: {
-                if (desc != null && desc.getCondition().getProfile().length>0) {
+                if (desc != null && desc.getCondition().getProfile().size()>0) {
                     return keywordArr1(desc.getCondition().getProfile());
                 }
                 return text.ofStyled("no-profile", NutsTextStyle.error());
             }
             case DESKTOP_ENVIRONMENT: {
-                if (desc != null && desc.getCondition().getDesktopEnvironment().length>0) {
+                if (desc != null && desc.getCondition().getDesktopEnvironment().size()>0) {
                     return keywordArr1(desc.getCondition().getDesktopEnvironment());
                 }
                 return text.ofStyled("missing-desktop-environment", NutsTextStyle.error());
@@ -507,7 +507,7 @@ public class NutsIdFormatHelper {
             }
             case EXEC_ENTRY: {
                 if (def != null && def.getContent() != null && def.getContent().getPath() != null) {
-                    List<NutsString> results = new ArrayList<NutsString>();
+                    List<NutsString> results = new ArrayList<>();
                     for (NutsExecutionEntry entry : NutsExecutionEntries.of(session).parse(def.getContent().getFile())) {
                         if (entry.isDefaultEntry()) {
                             //should all mark?
@@ -749,28 +749,28 @@ public class NutsIdFormatHelper {
                 + status_e + status_i;
     }
 
-    private NutsString keywordArr1(String[] any) {
+    private NutsString keywordArr1(List<String> any) {
         return keywordArr0(any, NutsTextStyle.primary1());
     }
 
-    private NutsString keywordArr2(String[] any) {
+    private NutsString keywordArr2(List<String> any) {
         return keywordArr0(any, NutsTextStyle.primary3());
     }
 
-    private NutsString keywordArr0(String[] any, NutsTextStyle style) {
+    private NutsString keywordArr0(List<String> any, NutsTextStyle style) {
         NutsTexts txt = NutsTexts.of(session);
-        if (any == null || any.length == 0) {
+        if (any == null || any.size() == 0) {
             return txt.ofBlank();
         }
-        if (any.length == 1) {
-            return txt.builder().append(txt.ofStyled(stringValue(any[0]), style))
+        if (any.size() == 1) {
+            return txt.builder().append(txt.ofStyled(stringValue(any.get(0)), style))
                     .immutable();
         }
         return txt.builder()
                 .append("[")
                 .appendJoined(
                         txt.ofPlain(","),
-                        Arrays.stream(any).map(x -> txt.ofStyled(stringValue(x), style)).collect(Collectors.toList())
+                        any.stream().map(x -> txt.ofStyled(stringValue(x), style)).collect(Collectors.toList())
                 )
                 .append("]").immutable();
     }

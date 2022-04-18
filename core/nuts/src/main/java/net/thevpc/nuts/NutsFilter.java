@@ -24,6 +24,8 @@
  */
 package net.thevpc.nuts;
 
+import java.util.List;
+
 /**
  * Top Level filter
  *
@@ -49,5 +51,5 @@ public interface NutsFilter extends NutsDescribable{
 
     <T extends NutsFilter> T to(Class<T> type);
 
-    NutsFilter[] getSubFilters();
+    List<NutsFilter> getSubFilters();
 }

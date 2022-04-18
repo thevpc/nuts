@@ -30,6 +30,8 @@ import net.thevpc.nuts.runtime.standalone.workspace.config.DefaultNutsWorkspaceC
 import net.thevpc.nuts.runtime.standalone.workspace.config.DefaultNutsWorkspaceConfigModel;
 
 import java.net.URL;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * @author thevpc
@@ -100,9 +102,9 @@ public class DefaultNutsBootManager implements NutsBootManager {
     }
 
     @Override
-    public URL[] getBootClassWorldURLs() {
+    public List<URL> getBootClassWorldURLs() {
         checkSession();
-        return _configModel().getBootClassWorldURLs();
+        return Collections.unmodifiableList(_configModel().getBootClassWorldURLs());
     }
 
     @Override
@@ -139,7 +141,7 @@ public class DefaultNutsBootManager implements NutsBootManager {
 //
 //    }
 
-    public NutsClassLoaderNode[] getBootExtensionClassLoaderNode() {
+    public List<NutsClassLoaderNode> getBootExtensionClassLoaderNode() {
         return model.bOptions.getExtensionBootDependencyNodes();
     }
 

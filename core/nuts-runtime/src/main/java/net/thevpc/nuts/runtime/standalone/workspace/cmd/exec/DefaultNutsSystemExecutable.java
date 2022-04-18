@@ -6,6 +6,7 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.exec;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.boot.PrivateNutsUtilCollections;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.executor.system.ProcessExecHelper;
 
@@ -17,7 +18,7 @@ import java.util.*;
 public class DefaultNutsSystemExecutable extends AbstractNutsExecutableCommand {
 
     String[] cmd;
-    String[] executorOptions;
+    List<String> executorOptions;
     NutsSession session;
     NutsSession execSession;
     NutsExecCommand execCommand;
@@ -25,14 +26,14 @@ public class DefaultNutsSystemExecutable extends AbstractNutsExecutableCommand {
     private final boolean inheritSystemIO;
 
     public DefaultNutsSystemExecutable(String[] cmd,
-                                       String[] executorOptions, NutsSession session, NutsSession execSession, NutsExecCommand execCommand) {
+                                       List<String> executorOptions, NutsSession session, NutsSession execSession, NutsExecCommand execCommand) {
         super(cmd[0],
                 NutsCommandLine.of(cmd, session).toString(),
                 NutsExecutableType.SYSTEM);
         this.inheritSystemIO = execCommand.isInheritSystemIO();
         this.cmd = cmd;
         this.execCommand = execCommand;
-        this.executorOptions = executorOptions == null ? new String[0] : executorOptions;
+        this.executorOptions = PrivateNutsUtilCollections.nonNullList(executorOptions);
         this.session = session;
         this.execSession = execSession;
         NutsCommandLine cmdLine = NutsCommandLine.of(this.executorOptions, session);
@@ -62,7 +63,7 @@ public class DefaultNutsSystemExecutable extends AbstractNutsExecutableCommand {
             e2 = new HashMap<>((Map) env1);
         }
         return ProcessExecHelper.ofArgs(null,
-                execCommand.getCommand(), e2,
+                execCommand.getCommand().toArray(new String[0]), e2,
                 execCommand.getDirectory()==null?null:NutsPath.of(execCommand.getDirectory(),session).toFile(),
                 session.getTerminal(),
                 execSession.getTerminal(), showCommand, true, execCommand.getSleepMillis(),

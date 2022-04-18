@@ -25,6 +25,7 @@ package net.thevpc.nuts.runtime.standalone.workspace;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.NutsBootOptions;
+import net.thevpc.nuts.boot.PrivateNutsUtilCollections;
 import net.thevpc.nuts.runtime.standalone.app.cmdline.CoreNutsArgumentsParser;
 import net.thevpc.nuts.runtime.standalone.format.CoreNutsWorkspaceOptionsFormat;
 import net.thevpc.nuts.spi.NutsSupportLevelContext;
@@ -52,7 +53,7 @@ public final class CoreNutsWorkspaceOptions implements Serializable, Cloneable, 
      */
     private final List<String> outputFormatOptions = new ArrayList<>();
 
-    private String[] customOptions;
+    private List<String> customOptions;
     /**
      * nuts api version to boot option-type : exported (inherited in child
      * workspaces)
@@ -137,12 +138,12 @@ public final class CoreNutsWorkspaceOptions implements Serializable, Cloneable, 
     /**
      * option-type : exported (inherited in child workspaces)
      */
-    private String[] excludedExtensions;
+    private List<String> excludedExtensions;
 
     /**
      * option-type : exported (inherited in child workspaces)
      */
-    private String[] repositories;
+    private List<String> repositories;
 
     /**
      * option-type : exported (inherited in child workspaces)
@@ -197,7 +198,7 @@ public final class CoreNutsWorkspaceOptions implements Serializable, Cloneable, 
     /**
      * option-type : runtime (available only for the current workspace instance)
      */
-    private String[] applicationArguments;
+    private List<String> applicationArguments;
 
     /**
      * option-type : runtime (available only for the current workspace instance)
@@ -223,7 +224,7 @@ public final class CoreNutsWorkspaceOptions implements Serializable, Cloneable, 
     /**
      * option-type : runtime (available only for the current workspace instance)
      */
-    private String[] executorOptions;
+    private List<String> executorOptions;
 
     /**
      * option-type : runtime (available only for the current workspace instance)
@@ -364,7 +365,7 @@ public final class CoreNutsWorkspaceOptions implements Serializable, Cloneable, 
      */
 //    private String bootRepositories = null;
     private Instant expireTime = null;
-    private NutsMessage[] errors = new NutsMessage[0];
+    private List<NutsMessage> errors = new ArrayList<>();
     private Boolean skipErrors;
 
     /**
@@ -390,10 +391,9 @@ public final class CoreNutsWorkspaceOptions implements Serializable, Cloneable, 
             t.logConfig = logConfig == null ? null : t.logConfig;
             t.storeLocations = new LinkedHashMap<>(storeLocations);
             t.homeLocations = new LinkedHashMap<>(homeLocations);
-            t.setExcludedExtensions(t.getExcludedExtensions() == null ? null : Arrays.copyOf(t.getExcludedExtensions(), t.getExcludedExtensions().length));
-//            t.setExcludedRepositories(t.getExcludedRepositories() == null ? null : Arrays.copyOf(t.getExcludedRepositories(), t.getExcludedRepositories().length));
-            t.setRepositories(t.getRepositories() == null ? null : Arrays.copyOf(t.getRepositories(), t.getRepositories().length));
-            t.setApplicationArguments(t.getApplicationArguments() == null ? null : Arrays.copyOf(t.getApplicationArguments(), t.getApplicationArguments().length));
+            t.setExcludedExtensions(PrivateNutsUtilCollections.nonNullList(t.getExcludedExtensions()));
+            t.setRepositories(PrivateNutsUtilCollections.nonNullList(t.getRepositories()));
+            t.setApplicationArguments(PrivateNutsUtilCollections.nonNullList(t.getApplicationArguments()));
             return t;
         } catch (CloneNotSupportedException e) {
             throw new IllegalStateException("should never Happen", e);
@@ -423,8 +423,8 @@ public final class CoreNutsWorkspaceOptions implements Serializable, Cloneable, 
     }
 
     @Override
-    public String[] getApplicationArguments() {
-        return applicationArguments == null ? new String[0] : Arrays.copyOf(applicationArguments, applicationArguments.length);
+    public List<String> getApplicationArguments() {
+        return PrivateNutsUtilCollections.unmodifiableList(applicationArguments);
     }
 
     /**
@@ -434,7 +434,7 @@ public final class CoreNutsWorkspaceOptions implements Serializable, Cloneable, 
      * @return {@code this} instance
      */
     @Override
-    public NutsWorkspaceOptionsBuilder setApplicationArguments(String[] applicationArguments) {
+    public NutsWorkspaceOptionsBuilder setApplicationArguments(List<String> applicationArguments) {
         this.applicationArguments = applicationArguments;
         return this;
     }
@@ -530,8 +530,8 @@ public final class CoreNutsWorkspaceOptions implements Serializable, Cloneable, 
     }
 
     @Override
-    public String[] getExcludedExtensions() {
-        return excludedExtensions;
+    public List<String> getExcludedExtensions() {
+        return PrivateNutsUtilCollections.unmodifiableList(excludedExtensions);
     }
 
     /**
@@ -541,7 +541,7 @@ public final class CoreNutsWorkspaceOptions implements Serializable, Cloneable, 
      * @return {@code this} instance
      */
     @Override
-    public NutsWorkspaceOptionsBuilder setExcludedExtensions(String[] excludedExtensions) {
+    public NutsWorkspaceOptionsBuilder setExcludedExtensions(List<String> excludedExtensions) {
         this.excludedExtensions = excludedExtensions;
         return this;
     }
@@ -580,8 +580,8 @@ public final class CoreNutsWorkspaceOptions implements Serializable, Cloneable, 
     }
 
     @Override
-    public String[] getExecutorOptions() {
-        return executorOptions == null ? new String[0] : executorOptions;
+    public List<String> getExecutorOptions() {
+        return PrivateNutsUtilCollections.unmodifiableList(executorOptions);
     }
 
     /**
@@ -591,8 +591,8 @@ public final class CoreNutsWorkspaceOptions implements Serializable, Cloneable, 
      * @return {@code this} instance
      */
     @Override
-    public NutsWorkspaceOptionsBuilder setExecutorOptions(String[] executorOptions) {
-        this.executorOptions = executorOptions;
+    public NutsWorkspaceOptionsBuilder setExecutorOptions(List<String> executorOptions) {
+        this.executorOptions = PrivateNutsUtilCollections.unmodifiableList(executorOptions);
         return this;
     }
 
@@ -712,8 +712,8 @@ public final class CoreNutsWorkspaceOptions implements Serializable, Cloneable, 
     }
 
     @Override
-    public String[] getOutputFormatOptions() {
-        return outputFormatOptions.toArray(new String[0]);
+    public List<String> getOutputFormatOptions() {
+        return PrivateNutsUtilCollections.unmodifiableList(outputFormatOptions);
     }
 
     /**
@@ -723,6 +723,11 @@ public final class CoreNutsWorkspaceOptions implements Serializable, Cloneable, 
      * @return {@code this} instance
      */
     @Override
+    public NutsWorkspaceOptionsBuilder setOutputFormatOptions(List<String> options) {
+        outputFormatOptions.clear();
+        return addOutputFormatOptions(PrivateNutsUtilCollections.nonNullList(options).toArray(new String[0]));
+    }
+
     public NutsWorkspaceOptionsBuilder setOutputFormatOptions(String... options) {
         outputFormatOptions.clear();
         return addOutputFormatOptions(options);
@@ -850,8 +855,8 @@ public final class CoreNutsWorkspaceOptions implements Serializable, Cloneable, 
     }
 
     @Override
-    public String[] getRepositories() {
-        return repositories == null ? new String[0] : repositories;
+    public List<String> getRepositories() {
+        return PrivateNutsUtilCollections.unmodifiableList(repositories);
     }
 
     /**
@@ -861,8 +866,8 @@ public final class CoreNutsWorkspaceOptions implements Serializable, Cloneable, 
      * @return {@code this} instance
      */
     @Override
-    public NutsWorkspaceOptionsBuilder setRepositories(String[] repositories) {
-        this.repositories = repositories;
+    public NutsWorkspaceOptionsBuilder setRepositories(List<String> repositories) {
+        this.repositories = PrivateNutsUtilCollections.nonNullList(repositories) ;
         return this;
     }
 
@@ -1349,24 +1354,24 @@ public final class CoreNutsWorkspaceOptions implements Serializable, Cloneable, 
     }
 
     @Override
-    public NutsMessage[] getErrors() {
-        return Arrays.copyOf(errors, errors.length);
+    public List<NutsMessage> getErrors() {
+        return PrivateNutsUtilCollections.unmodifiableList(errors);
     }
 
     @Override
-    public NutsWorkspaceOptionsBuilder setErrors(NutsMessage[] errors) {
-        this.errors = errors == null ? new NutsMessage[0] : Arrays.copyOf(errors, errors.length);
+    public NutsWorkspaceOptionsBuilder setErrors(List<NutsMessage> errors) {
+        this.errors = PrivateNutsUtilCollections.unmodifiableList(errors);
         return this;
     }
 
     @Override
-    public String[] getCustomOptions() {
-        return customOptions == null ? new String[0] : customOptions;
+    public List<String> getCustomOptions() {
+        return PrivateNutsUtilCollections.unmodifiableList(customOptions);
     }
 
     @Override
-    public NutsWorkspaceOptionsBuilder setCustomOptions(String[] properties) {
-        this.customOptions = properties == null ? new String[0] : properties;
+    public NutsWorkspaceOptionsBuilder setCustomOptions(List<String> properties) {
+        this.customOptions = PrivateNutsUtilCollections.nonNullList(properties);
         return this;
     }
 
@@ -1446,11 +1451,11 @@ public final class CoreNutsWorkspaceOptions implements Serializable, Cloneable, 
         this.setExecutorService(other.getExecutorService());
 //        this.setBootRepositories(other.getBootRepositories());
 
-        this.setExcludedExtensions(other.getExcludedExtensions() == null ? null : Arrays.copyOf(other.getExcludedExtensions(), other.getExcludedExtensions().length));
+        this.setExcludedExtensions(PrivateNutsUtilCollections.nonNullList(other.getExcludedExtensions()));
 //        this.setExcludedRepositories(other.getExcludedRepositories() == null ? null : Arrays.copyOf(other.getExcludedRepositories(), other.getExcludedRepositories().length));
-        this.setRepositories(other.getRepositories() == null ? null : Arrays.copyOf(other.getRepositories(), other.getRepositories().length));
-        this.setApplicationArguments(other.getApplicationArguments() == null ? null : Arrays.copyOf(other.getApplicationArguments(), other.getApplicationArguments().length));
-        this.setCustomOptions(other.getCustomOptions() == null ? null : Arrays.copyOf(other.getCustomOptions(), other.getCustomOptions().length));
+        this.setRepositories(PrivateNutsUtilCollections.nonNullList(other.getRepositories()));
+        this.setApplicationArguments(PrivateNutsUtilCollections.nonNullList(other.getApplicationArguments()));
+        this.setCustomOptions(PrivateNutsUtilCollections.nonNullList(other.getCustomOptions()));
         this.setExpireTime(other.getExpireTime());
         this.setErrors(other.getErrors());
         this.setSkipErrors(other.getSkipErrors());
@@ -1516,11 +1521,11 @@ public final class CoreNutsWorkspaceOptions implements Serializable, Cloneable, 
         this.setExecutorService(other.getExecutorService());
 //        this.setBootRepositories(other.getBootRepositories());
 
-        this.setExcludedExtensions(other.getExcludedExtensions() == null ? null : Arrays.copyOf(other.getExcludedExtensions(), other.getExcludedExtensions().length));
+        this.setExcludedExtensions(PrivateNutsUtilCollections.nonNullList(other.getExcludedExtensions()));
 //        this.setExcludedRepositories(other.getExcludedRepositories() == null ? null : Arrays.copyOf(other.getExcludedRepositories(), other.getExcludedRepositories().length));
-        this.setRepositories(other.getRepositories() == null ? null : Arrays.copyOf(other.getRepositories(), other.getRepositories().length));
-        this.setApplicationArguments(other.getApplicationArguments() == null ? null : Arrays.copyOf(other.getApplicationArguments(), other.getApplicationArguments().length));
-        this.setCustomOptions(other.getCustomOptions() == null ? null : Arrays.copyOf(other.getCustomOptions(), other.getCustomOptions().length));
+        this.setRepositories(PrivateNutsUtilCollections.nonNullList(other.getRepositories()));
+        this.setApplicationArguments(PrivateNutsUtilCollections.nonNullList(other.getApplicationArguments()));
+        this.setCustomOptions(PrivateNutsUtilCollections.nonNullList(other.getCustomOptions()));
         this.setExpireTime(other.getExpireTime());
         this.setErrors(other.getErrors());
         this.setSkipErrors(other.getSkipErrors());
@@ -1700,11 +1705,11 @@ public final class CoreNutsWorkspaceOptions implements Serializable, Cloneable, 
         b.setExecutorService(this.getExecutorService());
 //        b.setBootRepositories(this.getBootRepositories());
 
-        b.setExcludedExtensions(this.getExcludedExtensions() == null ? null : Arrays.copyOf(this.getExcludedExtensions(), this.getExcludedExtensions().length));
+        b.setExcludedExtensions(PrivateNutsUtilCollections.nonNullList(this.getExcludedExtensions()));
 //        b.setExcludedRepositories(this.getExcludedRepositories() == null ? null : Arrays.copyOf(this.getExcludedRepositories(), this.getExcludedRepositories().length));
-        b.setRepositories(this.getRepositories() == null ? null : Arrays.copyOf(this.getRepositories(), this.getRepositories().length));
-        b.setApplicationArguments(this.getApplicationArguments() == null ? null : Arrays.copyOf(this.getApplicationArguments(), this.getApplicationArguments().length));
-        b.setCustomOptions(this.getCustomOptions() == null ? null : Arrays.copyOf(this.getCustomOptions(), this.getCustomOptions().length));
+        b.setRepositories(PrivateNutsUtilCollections.nonNullList(this.getRepositories()));
+        b.setApplicationArguments(PrivateNutsUtilCollections.nonNullList(this.getApplicationArguments()));
+        b.setCustomOptions(PrivateNutsUtilCollections.nonNullList(this.getCustomOptions()));
         b.setExpireTime(this.getExpireTime());
         b.setErrors(this.getErrors());
         b.setSkipErrors(this.getSkipErrors());

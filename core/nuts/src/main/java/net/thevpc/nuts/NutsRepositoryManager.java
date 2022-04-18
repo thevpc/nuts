@@ -24,6 +24,8 @@
  */
 package net.thevpc.nuts;
 
+import java.util.List;
+
 /**
  * @app.category Base
  */
@@ -86,7 +88,7 @@ public interface NutsRepositoryManager {
 
     NutsRepositoryManager removeRepository(String locationOrRepositoryId);
 
-    NutsRepository[] getRepositories();
+    List<NutsRepository> getRepositories();
 
     ///////////////
     NutsRepositoryManager removeAllRepositories();

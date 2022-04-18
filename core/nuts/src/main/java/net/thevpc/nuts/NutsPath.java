@@ -327,7 +327,7 @@ public interface NutsPath extends NutsFormattable,NutsStreamMetadataAware {
 
     String getItem(int index);
 
-    String[] getItems();
+    List<String> getItems();
 
     void moveTo(NutsPath other, NutsPathOption... options);
 

@@ -27,6 +27,7 @@
 package net.thevpc.nuts;
 
 import net.thevpc.nuts.boot.NutsApiUtils;
+import net.thevpc.nuts.spi.NutsSelectorOp;
 
 public enum NutsDesktopEnvironmentFamily implements NutsEnum {
     HEADLESS,
@@ -65,59 +66,29 @@ public enum NutsDesktopEnvironmentFamily implements NutsEnum {
         this.id = name().toLowerCase().replace('_', '-');
     }
 
-    public static NutsDesktopEnvironmentFamily parseLenient(String e) {
-        return parseLenient(e, UNKNOWN);
-    }
-
-    public static NutsDesktopEnvironmentFamily parseLenient(String e, NutsDesktopEnvironmentFamily emptyOrErrorValue) {
-        return parseLenient(e, emptyOrErrorValue, emptyOrErrorValue);
-    }
-
-    public static NutsDesktopEnvironmentFamily parseLenient(String e, NutsDesktopEnvironmentFamily emptyValue, NutsDesktopEnvironmentFamily errorValue) {
-        if (e == null) {
-            e = "";
-        } else {
-            e = e.toLowerCase().trim().replace("-", "").replace("_", "");
-        }
-        switch (e) {
-            case "":
-                return emptyValue;
-            case "win":
-            case "windows":
-            case "windowsshell":
-                return WINDOWS_SHELL;
-            case "mac":
-            case "macos":
-            case "macaqua":
-            case "macosaqua":
-            case "aqua":
-                return MACOS_AQUA;
-            case "kde":
-            case "plasma":
-                return KDE;
-            case "gnome":
-                return GNOME;
-            case "unknown":
-                return UNKNOWN;
-            default: {
-                try {
-                    return NutsDesktopEnvironmentFamily.valueOf(e.toUpperCase());
-                } catch (Exception ex) {
-                    //ignore error
-                }
+    public static NutsOptional<NutsDesktopEnvironmentFamily> parse(String value) {
+        return NutsApiUtils.parse(value, NutsDesktopEnvironmentFamily.class, s -> {
+            switch (s.toLowerCase()) {
+                case "win":
+                case "windows":
+                case "windowsshell":
+                    return NutsOptional.of(WINDOWS_SHELL);
+                case "mac":
+                case "macos":
+                case "macaqua":
+                case "macosaqua":
+                case "aqua":
+                    return NutsOptional.of(MACOS_AQUA);
+                case "kde":
+                case "plasma":
+                    return NutsOptional.of(KDE);
+                case "gnome":
+                    return NutsOptional.of(GNOME);
+                case "unknown":
+                    return NutsOptional.of(UNKNOWN);
             }
-        }
-        return errorValue;
-    }
-
-    public static NutsDesktopEnvironmentFamily parse(String value, NutsSession session) {
-        return parse(value, null, session);
-    }
-
-    public static NutsDesktopEnvironmentFamily parse(String value, NutsDesktopEnvironmentFamily emptyValue, NutsSession session) {
-        NutsDesktopEnvironmentFamily v = parseLenient(value, emptyValue, null);
-        NutsApiUtils.checkNonNullEnum(v, value, NutsDesktopEnvironmentFamily.class, session);
-        return v;
+            return null;
+        });
     }
 
     /**

@@ -6,13 +6,15 @@
 package net.thevpc.nuts;
 
 
+import java.util.function.Function;
+
 /**
  * @author thevpc
  */
 public class NutsDefaultStreamMetadata implements NutsStreamMetadata {
 
     private final long contentLength;
-    private final NutsString formattedName;
+    private final Function<NutsSession, NutsString> formattedName;
     private final String contentType;
     private final String name;
     private String userKind;
@@ -21,7 +23,7 @@ public class NutsDefaultStreamMetadata implements NutsStreamMetadata {
         if (other != null) {
             this.contentLength = other.getContentLength();
             this.name = other.getName();
-            this.formattedName = other.getFormattedPath();
+            this.formattedName = other::getFormattedPath;
             this.userKind = other.getUserKind();
             this.contentType = other.getContentType();
         } else {
@@ -41,23 +43,24 @@ public class NutsDefaultStreamMetadata implements NutsStreamMetadata {
         this.contentType = null;
     }
 
-    public NutsDefaultStreamMetadata(NutsMessage message, long contentLength, String contentType, String userKind, NutsSession session) {
-        this(message == null ? null : message.toString(), message == null ? null : message.toNutsString(session), contentLength, contentType, userKind);
+    public NutsDefaultStreamMetadata(NutsMessage message, long contentLength, String contentType, String userKind) {
+        this(message == null ? null : message.toString(),
+                session -> message == null ? null : message.toNutsString(session), contentLength, contentType, userKind);
     }
 
     public NutsDefaultStreamMetadata(NutsString message, long contentLength, String contentType, String userKind) {
-        this(message == null ? null : message.toString(), message, contentLength, contentType, userKind);
+        this(message == null ? null : message.toString(), s -> message, contentLength, contentType, userKind);
     }
 
     public NutsDefaultStreamMetadata(NutsPath path) {
         this(path.getName(),
-                path.format(),
+                path::format,
                 path.getContentLength(),
                 path.getContentType(),
                 path.getUserKind());
     }
 
-    public NutsDefaultStreamMetadata(String name, NutsString formattedName, long contentLength, String contentType, String userKind) {
+    public NutsDefaultStreamMetadata(String name, Function<NutsSession, NutsString> formattedName, long contentLength, String contentType, String userKind) {
         this.contentLength = contentLength;
         this.name = name;
         this.formattedName = formattedName;
@@ -71,8 +74,8 @@ public class NutsDefaultStreamMetadata implements NutsStreamMetadata {
     }
 
     @Override
-    public NutsString getFormattedPath() {
-        return formattedName;
+    public NutsString getFormattedPath(NutsSession session) {
+        return formattedName == null ? null : formattedName.apply(session);
     }
 
     @Override

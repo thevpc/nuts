@@ -26,6 +26,7 @@ package net.thevpc.nuts;
 import net.thevpc.nuts.boot.NutsApiUtils;
 
 import java.net.URL;
+import java.util.List;
 
 /**
  * @author thevpc
@@ -69,7 +70,7 @@ public interface NutsBootManager {
 
     ClassLoader getBootClassLoader();
 
-    URL[] getBootClassWorldURLs();
+    List<URL> getBootClassWorldURLs();
 
     String getBootRepositories();
 
@@ -82,7 +83,7 @@ public interface NutsBootManager {
 
     NutsClassLoaderNode getBootRuntimeClassLoaderNode();
 
-    NutsClassLoaderNode[] getBootExtensionClassLoaderNode();
+    List<NutsClassLoaderNode> getBootExtensionClassLoaderNode();
 
     NutsBootTerminal getBootTerminal();
 }

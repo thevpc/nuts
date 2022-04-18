@@ -25,6 +25,7 @@
  */
 package net.thevpc.nuts;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -106,7 +107,7 @@ public interface NutsRepository {
      *
      * @return Repository Listeners
      */
-    NutsRepositoryListener[] getRepositoryListeners();
+    List<NutsRepositoryListener> getRepositoryListeners();
 
     /**
      * return mutable instance of user properties
@@ -136,7 +137,7 @@ public interface NutsRepository {
      *
      * @return array of registered user properties listeners
      */
-    NutsMapListener<String, Object>[] getUserPropertyListeners();
+    List<NutsMapListener<String, Object>> getUserPropertyListeners();
 
     /**
      * available if local and the folder exists or remote and could ping the repository

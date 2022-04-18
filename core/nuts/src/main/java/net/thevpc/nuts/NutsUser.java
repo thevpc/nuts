@@ -26,6 +26,8 @@
  */
 package net.thevpc.nuts;
 
+import java.util.List;
+
 /**
  * Effective (including inherited) user information
  *
@@ -61,19 +63,19 @@ public interface NutsUser {
      *
      * @return user allowed permissions
      */
-    String[] getPermissions();
+    List<String> getPermissions();
 
     /**
      * user inherited allowed permissions
      *
      * @return user inherited allowed permissions
      */
-    String[] getInheritedPermissions();
+    List<String> getInheritedPermissions();
 
     /**
      * user groups
      *
      * @return user groups
      */
-    String[] getGroups();
+    List<String> getGroups();
 }

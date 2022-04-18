@@ -485,13 +485,13 @@ public class FilePath implements NutsPathSPI {
     }
 
     @Override
-    public String[] getItems(NutsPath basePath) {
+    public List<String> getItems(NutsPath basePath) {
         int nameCount = value.getNameCount();
         String[] names = new String[nameCount];
         for (int i = 0; i < nameCount; i++) {
             names[i] = value.getName(i).toString();
         }
-        return names;
+        return Arrays.asList(names);
     }
 
     @Override

@@ -22,7 +22,7 @@ public class ScopeNutsDependencyFilter extends AbstractDependencyFilter{
     @Override
     public boolean acceptDependency(NutsId from, NutsDependency dependency, NutsSession session) {
 
-        NutsDependencyScope d = NutsDependencyScope.parseLenient(dependency.getScope(), NutsDependencyScope.API,NutsDependencyScope.API);
+        NutsDependencyScope d = NutsDependencyScope.parse(dependency.getScope()).orElse(NutsDependencyScope.API);
         return d != null && scopes.contains(d);
     }
 

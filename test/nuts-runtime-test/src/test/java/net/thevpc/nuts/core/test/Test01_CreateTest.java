@@ -36,7 +36,7 @@ public class Test01_CreateTest {
         Assertions.assertEquals(
                 NutsPath.of(new File(wsPath, "cache"),session),
                 session.locations().getStoreLocation(NutsStoreLocation.CACHE));
-        Assertions.assertEquals(0, session.repos().getRepositories().length);
+        Assertions.assertEquals(0, session.repos().getRepositories().size());
 //        Assertions.assertEquals(new File(wsPath,  "cache/" + NutsConstants.Folders.REPOSITORIES + "/" +
 //                        session.repos().getRepositories()[0].getName() +
 //                        "/" + session.repos().getRepositories()[0].getUuid()).getPath(),
@@ -117,10 +117,10 @@ public class Test01_CreateTest {
         Assertions.assertEquals(
                 NutsPath.of(new File(base, new File(wsPath).getName() + "/"
                         + NutsConstants.Folders.REPOSITORIES + "/"
-                        + session.repos().getRepositories()[0].getName()
-                        + "/" + session.repos().getRepositories()[0].getUuid()
+                        + session.repos().getRepositories().get(0).getName()
+                        + "/" + session.repos().getRepositories().get(0).getUuid()
                 ),session),
-                session.repos().getRepositories()[0].config().getStoreLocation(NutsStoreLocation.CACHE));
+                session.repos().getRepositories().get(0).config().getStoreLocation(NutsStoreLocation.CACHE));
     }
 
     @Test
@@ -254,14 +254,6 @@ public class Test01_CreateTest {
             Assertions.assertNotNull(r);
         }
         {
-            NutsIdParser r = NutsIdParser.of(s);
-            Assertions.assertNotNull(r);
-        }
-        {
-            NutsIdBuilder r = NutsIdBuilder.of(s);
-            Assertions.assertNotNull(r);
-        }
-        {
             NutsIdFormat r = NutsIdFormat.of(s);
             Assertions.assertNotNull(r);
         }
@@ -298,18 +290,6 @@ public class Test01_CreateTest {
             Assertions.assertNotNull(r);
         }
         {
-            NutsDescriptorBuilder r = NutsDescriptorBuilder.of(s);
-            Assertions.assertNotNull(r);
-        }
-        {
-            NutsEnvConditionBuilder r = NutsEnvConditionBuilder.of(s);
-            Assertions.assertNotNull(r);
-        }
-        {
-            NutsDescriptorPropertyBuilder r = NutsDescriptorPropertyBuilder.of(s);
-            Assertions.assertNotNull(r);
-        }
-        {
             NutsArtifactCallBuilder r = NutsArtifactCallBuilder.of(s);
             Assertions.assertNotNull(r);
         }
@@ -319,18 +299,6 @@ public class Test01_CreateTest {
         }
         {
             NutsDependencySolver r = NutsDependencySolver.of(s);
-            Assertions.assertNotNull(r);
-        }
-        {
-            NutsDependencyBuilder r = NutsDependencyBuilder.of(s);
-            Assertions.assertNotNull(r);
-        }
-        {
-            NutsDependencyParser r = NutsDependencyParser.of(s);
-            Assertions.assertNotNull(r);
-        }
-        {
-            NutsVersionParser r = NutsVersionParser.of(s);
             Assertions.assertNotNull(r);
         }
         {
@@ -380,29 +348,29 @@ public class Test01_CreateTest {
     public void testHomePath(){
         Assertions.assertEquals(
                 NutsHomeLocation.of(null, NutsStoreLocation.APPS),
-                NutsHomeLocation.parse("system-apps", null)
+                NutsHomeLocation.parse("system-apps").orElse(null)
         );
         Assertions.assertEquals(
                 NutsHomeLocation.of(NutsOsFamily.MACOS, NutsStoreLocation.CACHE),
-                NutsHomeLocation.parse("", NutsHomeLocation.of(NutsOsFamily.MACOS, NutsStoreLocation.CACHE),null )
+                NutsHomeLocation.parse("").orElse(NutsHomeLocation.of(NutsOsFamily.MACOS, NutsStoreLocation.CACHE) )
         );
         Assertions.assertEquals(
                 NutsHomeLocation.of(NutsOsFamily.MACOS, NutsStoreLocation.CACHE),
-                NutsHomeLocation.parseLenient("", NutsHomeLocation.of(NutsOsFamily.MACOS, NutsStoreLocation.CACHE),null )
+                NutsHomeLocation.parse("").orElse( NutsHomeLocation.of(NutsOsFamily.MACOS, NutsStoreLocation.CACHE))
         );
-        Assertions.assertNull(NutsHomeLocation.parseLenient("any error", NutsHomeLocation.of(NutsOsFamily.MACOS, NutsStoreLocation.CACHE), null));
+        Assertions.assertNull(NutsHomeLocation.parse("any error").orElse(NutsHomeLocation.of(NutsOsFamily.MACOS, NutsStoreLocation.CACHE)));
         Assertions.assertEquals(
                 NutsHomeLocation.of(null, NutsStoreLocation.APPS),
-                NutsEnum.parse(NutsHomeLocation.class, "system-apps", null)
+                NutsEnum.parse(NutsHomeLocation.class, "system-apps").orElse(null)
         );
         Assertions.assertEquals(
                 NutsHomeLocation.of(NutsOsFamily.MACOS, NutsStoreLocation.CACHE),
-                NutsEnum.parse(NutsHomeLocation.class,"", NutsHomeLocation.of(NutsOsFamily.MACOS, NutsStoreLocation.CACHE),null )
+                NutsEnum.parse(NutsHomeLocation.class,"").orElse(NutsHomeLocation.of(NutsOsFamily.MACOS, NutsStoreLocation.CACHE))
         );
         Assertions.assertEquals(
                 NutsHomeLocation.of(NutsOsFamily.MACOS, NutsStoreLocation.CACHE),
-                NutsEnum.parseLenient(NutsHomeLocation.class,"", NutsHomeLocation.of(NutsOsFamily.MACOS, NutsStoreLocation.CACHE),null )
+                NutsEnum.parse(NutsHomeLocation.class,"").orElse(NutsHomeLocation.of(NutsOsFamily.MACOS, NutsStoreLocation.CACHE) )
         );
-        Assertions.assertNull(NutsEnum.parseLenient(NutsHomeLocation.class,"any error", NutsHomeLocation.of(NutsOsFamily.MACOS, NutsStoreLocation.CACHE), null));
+        Assertions.assertNull(NutsEnum.parse(NutsHomeLocation.class,"any error").orElse(NutsHomeLocation.of(NutsOsFamily.MACOS, NutsStoreLocation.CACHE)));
     }
 }

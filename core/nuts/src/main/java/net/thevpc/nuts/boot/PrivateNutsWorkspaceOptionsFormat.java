@@ -24,8 +24,6 @@
 package net.thevpc.nuts.boot;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.spi.NutsBootVersion;
-import net.thevpc.nuts.NutsBootOptions;
 
 import java.util.*;
 
@@ -44,7 +42,7 @@ final class PrivateNutsWorkspaceOptionsFormat {
     private boolean singleArgOptions;
     private boolean omitDefaults;
     private String apiVersion;
-    private NutsBootVersion apiVersionObj;
+    private NutsVersion apiVersionObj;
 
     public PrivateNutsWorkspaceOptionsFormat(NutsBootOptions options) {
         this.options = options;
@@ -97,7 +95,7 @@ final class PrivateNutsWorkspaceOptionsFormat {
 
     
     public PrivateNutsCommandLine getBootCommandLine() {
-        NutsBootVersion apiVersionObj = getApiVersionObj();
+        NutsVersion apiVersionObj = getApiVersionObj();
         List<String> arguments = new ArrayList<>();
         if (exportedOptions || isImplicitAll()) {
             fillOption("--boot-runtime", null, options.getRuntimeId(), arguments, false);
@@ -251,16 +249,16 @@ final class PrivateNutsWorkspaceOptionsFormat {
             if (apiVersionObj == null || apiVersionObj.compareTo("0.8.1") >= 0) {
                 fillOption("--locale", "-L", options.getLocale(), arguments, false);
             }
-            if (!omitDefaults || options.getExecutorOptions().length > 0) {
+            if (!omitDefaults || options.getExecutorOptions().size() > 0) {
                 arguments.add(selectOptionName("--exec", "-e"));
             }
-            arguments.addAll(Arrays.asList(options.getExecutorOptions()));
-            arguments.addAll(Arrays.asList(options.getApplicationArguments()));
+            arguments.addAll(options.getExecutorOptions());
+            arguments.addAll(options.getApplicationArguments());
         }
         if (true || isImplicitAll()) {
             if (apiVersionObj == null || apiVersionObj.compareTo("0.8.1") >= 0) {
                 if (options.getCustomOptions() != null) {
-                    arguments.addAll(Arrays.asList(options.getCustomOptions()));
+                    arguments.addAll(options.getCustomOptions());
                 }
             }
         }
@@ -283,6 +281,12 @@ final class PrivateNutsWorkspaceOptionsFormat {
 
     private boolean isImplicitAll() {
         return !exportedOptions && !runtimeOptions && !createOptions;
+    }
+
+    private void fillOption(String longName, String shortName, List<String> values, String sep, List<String> arguments, boolean forceSingle) {
+        if (values != null && values.size() > 0) {
+            fillOption0(selectOptionName(longName, shortName), String.join(sep, values), arguments, forceSingle);
+        }
     }
 
     private void fillOption(String longName, String shortName, String[] values, String sep, List<String> arguments, boolean forceSingle) {
@@ -392,7 +396,7 @@ final class PrivateNutsWorkspaceOptionsFormat {
         switch (value.getMode()) {
             case CURRENT_USER: {
                 if (!NutsBlankable.isBlank(apiVersion) &&
-                        NutsBootVersion.parse(apiVersion).compareTo(NutsBootVersion.parse("0.8.1"))
+                        NutsVersion.of(apiVersion).get().compareTo(NutsVersion.of("0.8.1").get())
                                 < 0) {
                     arguments.add("--user-cmd");
                 } else {
@@ -404,7 +408,7 @@ final class PrivateNutsWorkspaceOptionsFormat {
             }
             case ROOT: {
                 if (!NutsBlankable.isBlank(apiVersion) &&
-                        NutsBootVersion.parse(apiVersion).compareTo(NutsBootVersion.parse("0.8.1"))
+                        NutsVersion.of(apiVersion).get().compareTo(NutsVersion.of("0.8.1").get())
                                 < 0) {
                     arguments.add("--root-cmd");
                 } else {
@@ -414,7 +418,7 @@ final class PrivateNutsWorkspaceOptionsFormat {
             }
             case SUDO: {
                 if (!NutsBlankable.isBlank(apiVersion) &&
-                        NutsBootVersion.parse(apiVersion).compareTo(NutsBootVersion.parse("0.8.1"))
+                        NutsVersion.of(apiVersion).get().compareTo(NutsVersion.of("0.8.1").get())
                                 < 0) {
                     //ignore
                 } else {
@@ -424,7 +428,7 @@ final class PrivateNutsWorkspaceOptionsFormat {
             }
             case USER: {
                 if (!NutsBlankable.isBlank(apiVersion) &&
-                        NutsBootVersion.parse(apiVersion).compareTo(NutsBootVersion.parse("0.8.1"))
+                        NutsVersion.of(apiVersion).get().compareTo(NutsVersion.of("0.8.1").get())
                                 < 0) {
                     //ignore
                 } else {
@@ -467,7 +471,7 @@ final class PrivateNutsWorkspaceOptionsFormat {
                     switch ((NutsExecutionType) value) {
                         case SYSTEM: {
                             if (!NutsBlankable.isBlank(apiVersion) &&
-                                    NutsBootVersion.parse(apiVersion).compareTo(NutsBootVersion.parse("0.8.1"))
+                                    NutsVersion.of(apiVersion).get().compareTo(NutsVersion.of("0.8.1").get())
                                             < 0) {
                                 arguments.add("--user-cmd");
                             } else {
@@ -605,10 +609,10 @@ final class PrivateNutsWorkspaceOptionsFormat {
         return getBootCommandLine().toString();
     }
 
-    public NutsBootVersion getApiVersionObj() {
+    public NutsVersion getApiVersionObj() {
         if (apiVersionObj == null) {
             if (apiVersion != null) {
-                apiVersionObj = NutsBootVersion.parse(apiVersion);
+                apiVersionObj = NutsVersion.of(apiVersion).get();
             }
         }
         return apiVersionObj;

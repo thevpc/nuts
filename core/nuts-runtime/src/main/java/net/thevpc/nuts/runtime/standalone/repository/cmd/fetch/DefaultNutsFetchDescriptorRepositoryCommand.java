@@ -32,7 +32,7 @@ import net.thevpc.nuts.runtime.standalone.log.NutsLogUtils;
 import net.thevpc.nuts.runtime.standalone.repository.impl.NutsRepositoryExt;
 import net.thevpc.nuts.runtime.standalone.session.NutsSessionUtils;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
-import net.thevpc.nuts.runtime.standalone.version.DefaultNutsVersion;
+import net.thevpc.nuts.DefaultNutsVersion;
 import net.thevpc.nuts.runtime.standalone.util.filters.CoreFilterUtils;
 import net.thevpc.nuts.runtime.standalone.util.CoreNutsUtils;
 import net.thevpc.nuts.spi.NutsFetchDescriptorRepositoryCommand;

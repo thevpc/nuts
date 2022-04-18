@@ -6,6 +6,7 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.uninstall;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.boot.PrivateNutsUtilCollections;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.NutsWorkspaceCommandBase;
 
 import java.util.*;
@@ -29,8 +30,8 @@ public abstract class AbstractNutsUninstallCommand extends NutsWorkspaceCommandB
     @Override
     public NutsUninstallCommand addId(String id) {
         checkSession();
-        NutsSession ws = getSession();
-        return addId(id == null ? null : NutsId.of(id,ws));
+        NutsSession session = getSession();
+        return addId(id == null ? null : NutsId.of(id).get(session));
     }
 
     @Override
@@ -71,8 +72,8 @@ public abstract class AbstractNutsUninstallCommand extends NutsWorkspaceCommandB
     @Override
     public NutsUninstallCommand removeId(String id) {
         checkSession();
-        NutsSession ws = getSession();
-        return removeId(NutsId.of(id,ws));
+        NutsSession session = getSession();
+        return removeId(NutsId.of(id).get(session));
     }
 
     @Override
@@ -88,8 +89,8 @@ public abstract class AbstractNutsUninstallCommand extends NutsWorkspaceCommandB
     }
 
     @Override
-    public String[] getArgs() {
-        return args == null ? new String[0] : args.toArray(new String[0]);
+    public List<String> getArgs() {
+        return PrivateNutsUtilCollections.unmodifiableList(args);
     }
 
     @Override
@@ -124,8 +125,8 @@ public abstract class AbstractNutsUninstallCommand extends NutsWorkspaceCommandB
     }
 
     @Override
-    public NutsId[] getIds() {
-        return ids == null ? new NutsId[0] : ids.toArray(new NutsId[0]);
+    public List<NutsId> getIds() {
+        return PrivateNutsUtilCollections.unmodifiableList(ids);
     }
 
     @Override

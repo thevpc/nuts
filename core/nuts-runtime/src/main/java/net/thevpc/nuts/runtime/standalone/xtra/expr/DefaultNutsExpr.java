@@ -7,6 +7,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.RoundingMode;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class DefaultNutsExpr implements NutsExpr {
     final static Map<String, Fct> defaultFunctions = new HashMap<>();
@@ -45,57 +46,57 @@ public class DefaultNutsExpr implements NutsExpr {
         addDefaultOp(new DivFctNode(), "divide", "div", "/");
         addDefaultFct(new Fct() {
             @Override
-            public Object eval(String name, Node[] args, NutsExpr context) {
-                Object o = args[0].eval(context);
+            public Object eval(String name, List<Node> args, NutsExpr context) {
+                Object o = args.get(0).eval(context);
                 return EvalUtils.castToString(o);
             }
         }, "string");
         addDefaultFct(new Fct() {
             @Override
-            public Object eval(String name, Node[] args, NutsExpr context) {
-                Object o = args[0].eval(context);
+            public Object eval(String name, List<Node> args, NutsExpr context) {
+                Object o = args.get(0).eval(context);
                 return EvalUtils.castToBoolean(o);
             }
         }, "boolean");
         addDefaultFct(new Fct() {
             @Override
-            public Object eval(String name, Node[] args, NutsExpr context) {
-                Object o = args[0].eval(context);
+            public Object eval(String name, List<Node> args, NutsExpr context) {
+                Object o = args.get(0).eval(context);
                 return EvalUtils.castToDouble(o);
             }
         }, "double");
         addDefaultFct(new Fct() {
             @Override
-            public Object eval(String name, Node[] args, NutsExpr context) {
-                Object o = args[0].eval(context);
+            public Object eval(String name, List<Node> args, NutsExpr context) {
+                Object o = args.get(0).eval(context);
                 return EvalUtils.castToLong(o);
             }
         }, "long");
         addDefaultFct(new Fct() {
             @Override
-            public Object eval(String name, Node[] args, NutsExpr context) {
-                Object o = args[0].eval(context);
+            public Object eval(String name, List<Node> args, NutsExpr context) {
+                Object o = args.get(0).eval(context);
                 return (int) EvalUtils.castToLong(o);
             }
         }, "int");
         addDefaultFct(new Fct() {
             @Override
-            public Object eval(String name, Node[] args, NutsExpr context) {
-                Object o = args[0].eval(context);
+            public Object eval(String name, List<Node> args, NutsExpr context) {
+                Object o = args.get(0).eval(context);
                 return (float) EvalUtils.castToDouble(o);
             }
         }, "float");
         addDefaultFct(new Fct() {
             @Override
-            public Object eval(String name, Node[] args, NutsExpr context) {
-                Object o = args[0].eval(context);
+            public Object eval(String name, List<Node> args, NutsExpr context) {
+                Object o = args.get(0).eval(context);
                 return EvalUtils.isNumber(o);
             }
         }, "isNumber");
         addDefaultFct(new Fct() {
             @Override
-            public Object eval(String name, Node[] args, NutsExpr context) {
-                Object o = args[0].eval(context);
+            public Object eval(String name, List<Node> args, NutsExpr context) {
+                Object o = args.get(0).eval(context);
                 return EvalUtils.isBoolean(o);
             }
         }, "isBoolean");
@@ -221,7 +222,7 @@ public class DefaultNutsExpr implements NutsExpr {
     }
 
     @Override
-    public String[] getFunctionNames() {
+    public List<String> getFunctionNames() {
         LinkedHashSet<String> all = new LinkedHashSet<>();
         for (Map.Entry<String, NutsExpr.Fct> e : userFunctions.entrySet()) {
             all.add(e.getKey());
@@ -241,7 +242,7 @@ public class DefaultNutsExpr implements NutsExpr {
                 }
             }
         }
-        return all.toArray(new String[0]);
+        return new ArrayList<>(all);
     }
 
     @Override
@@ -250,7 +251,7 @@ public class DefaultNutsExpr implements NutsExpr {
         if (f == null) {
             throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("function not found %s", fctName));
         }
-        return f.eval(fctName, Arrays.stream(args).map(DefaultLiteralNode::new).toArray(NutsExpr.Node[]::new), newChild());
+        return f.eval(fctName, Arrays.stream(args).map(DefaultLiteralNode::new).collect(Collectors.toList()), newChild());
     }
 
     public void setOperator(String name, OpType type, int precedence, boolean rightAssociative, Fct fct) {
@@ -301,13 +302,13 @@ public class DefaultNutsExpr implements NutsExpr {
     }
 
     @Override
-    public String[] getOperatorNames(NutsExpr.OpType type) {
+    public List<String> getOperatorNames(NutsExpr.OpType type) {
         if (type == null) {
             LinkedHashSet<String> all = new LinkedHashSet<>();
             for (OpType value : OpType.values()) {
-                all.addAll(Arrays.asList(getOperatorNames(value)));
+                all.addAll((getOperatorNames(value)));
             }
-            return all.toArray(new String[0]);
+            return new ArrayList<>(all);
         }
         LinkedHashSet<String> all = new LinkedHashSet<>();
         Map<String, NutsExpr.Op> ops = getOps(type);
@@ -334,7 +335,7 @@ public class DefaultNutsExpr implements NutsExpr {
                 }
             }
         }
-        return all.toArray(new String[0]);
+        return new ArrayList<>(all);
     }
 
     @Override
@@ -394,9 +395,9 @@ public class DefaultNutsExpr implements NutsExpr {
         }
 
         @Override
-        public Object eval(String name, Node[] args, NutsExpr e) {
-            Object a = args[0].eval(e);
-            Object b = args[1].eval(e);
+        public Object eval(String name, List<Node> args, NutsExpr e) {
+            Object a = args.get(0).eval(e);
+            Object b = args.get(1).eval(e);
             if (EvalUtils.isNumber(a) && EvalUtils.isNumber(b)) {
                 return compare(EvalUtils.castToNumber(a).doubleValue(), EvalUtils.castToNumber(b).doubleValue());
             }
@@ -451,9 +452,9 @@ public class DefaultNutsExpr implements NutsExpr {
         }
 
         @Override
-        public Object eval(String name, Node[] args, NutsExpr e) {
-            Object a = args[0].eval(e);
-            Object b = args[1].eval(e);
+        public Object eval(String name, List<Node> args, NutsExpr e) {
+            Object a = args.get(0).eval(e);
+            Object b = args.get(1).eval(e);
             if (EvalUtils.isNumber(a) && EvalUtils.isNumber(b)) {
                 return evalAny(EvalUtils.castToNumber(a).doubleValue(), EvalUtils.castToNumber(b).doubleValue());
             }
@@ -530,7 +531,7 @@ public class DefaultNutsExpr implements NutsExpr {
         }
 
         @Override
-        public Object eval(String name, Node[] args, NutsExpr context) {
+        public Object eval(String name, List<Node> args, NutsExpr context) {
             for (Node arg : args) {
                 if (!EvalUtils.castToBoolean(arg.eval(context))) {
                     return false;
@@ -546,7 +547,7 @@ public class DefaultNutsExpr implements NutsExpr {
         }
 
         @Override
-        public Object eval(String name, Node[] args, NutsExpr e) {
+        public Object eval(String name, List<Node> args, NutsExpr e) {
             for (Node arg : args) {
                 if (EvalUtils.castToBoolean(arg.eval(e))) {
                     return true;
@@ -562,8 +563,8 @@ public class DefaultNutsExpr implements NutsExpr {
         }
 
         @Override
-        public Object eval(String name, Node[] args, NutsExpr e) {
-            return !EvalUtils.castToBoolean(args[0].eval(e));
+        public Object eval(String name, List<Node> args, NutsExpr e) {
+            return !EvalUtils.castToBoolean(args.get(0).eval(e));
         }
     }
 

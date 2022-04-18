@@ -91,7 +91,7 @@ public class JarPathVersionResolver implements PathVersionResolver {
                                         && !NutsBlankable.isBlank(Bundle_Name)
                                         && !NutsBlankable.isBlank(Bundle_Version)) {
                                     all.add(new VersionDescriptor(
-                                            NutsIdBuilder.of(session).setGroupId(Bundle_SymbolicName).setArtifactId(Bundle_Name).setVersion(Bundle_Version).build(),
+                                            new DefaultNutsIdBuilder().setGroupId(Bundle_SymbolicName).setArtifactId(Bundle_Name).setVersion(Bundle_Version).build(),
                                             properties
                                     ));
                                 }
@@ -101,7 +101,7 @@ public class JarPathVersionResolver implements PathVersionResolver {
                                     NutsDescriptor d = NutsDescriptorParser.of(session).parse(inputStream);
                                     inputStream.close();
                                     Properties properties = new Properties();
-                                    properties.setProperty("parents", Arrays.stream(d.getParents()).map(Object::toString).collect(Collectors.joining(",")));
+                                    properties.setProperty("parents", d.getParents().stream().map(Object::toString).collect(Collectors.joining(",")));
                                     properties.setProperty("name", d.getId().getArtifactId());
                                     properties.setProperty("face", d.getId().getFace());
                                     properties.setProperty("group", d.getId().getGroupId());
@@ -153,7 +153,7 @@ public class JarPathVersionResolver implements PathVersionResolver {
                                         }
                                     }
                                     all.add(new VersionDescriptor(
-                                            NutsIdBuilder.of(session).setGroupId(d.getId().getGroupId())
+                                            new DefaultNutsIdBuilder().setGroupId(d.getId().getGroupId())
                                                     .setRepository(d.getId().getArtifactId())
                                                     .setVersion(d.getId().getVersion())
                                                     .build(),
@@ -176,7 +176,7 @@ public class JarPathVersionResolver implements PathVersionResolver {
                                     prop.setProperty("nuts.version-provider", "maven");
                                     if (version != null && version.trim().length() != 0) {
                                         all.add(new VersionDescriptor(
-                                                NutsIdBuilder.of(session)
+                                                new DefaultNutsIdBuilder()
                                                         .setGroupId(groupId).setArtifactId(artifactId).setVersion(version)
                                                         .build(),
                                                 prop

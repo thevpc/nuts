@@ -153,7 +153,7 @@ public class PomXmlParser {
         if (d_scope.isEmpty()) {
             d_scope = "compile";
         }
-        NutsId id = NutsIdBuilder.of(session).setGroupId(d_groupId).setArtifactId(d_artifactId).build();
+        NutsId id = new DefaultNutsIdBuilder().setGroupId(d_groupId).setArtifactId(d_artifactId).build();
         return new PomDependency(
                 d_groupId, d_artifactId, d_classifier, d_version, d_scope, d_optional,
                 props == null ? null : props.getOs(id),
@@ -950,7 +950,7 @@ public class PomXmlParser {
                         if (a.startsWith("#")) {
                             //ignore!
                         } else {
-                            NutsId id = NutsIdParser.of(session).setLenient(true).parse(a);
+                            NutsId id = NutsId.of(a).orElse(null);
                             if (id != null) {
                                 if (!NutsBlankable.isBlank(os)) {
                                     osMap.put(id.getShortName(), os);

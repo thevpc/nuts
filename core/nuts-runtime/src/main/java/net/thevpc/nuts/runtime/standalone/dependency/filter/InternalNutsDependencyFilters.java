@@ -154,7 +154,7 @@ public class InternalNutsDependencyFilters extends InternalNutsTypedFilters<Nuts
     @Override
     public NutsDependencyFilter byExclude(NutsDependencyFilter filter, String[] exclusions) {
         checkSession();
-        return new NutsExclusionDependencyFilter(getSession(), filter, Arrays.stream(exclusions).map(x -> NutsId.of(x, getSession())).toArray(NutsId[]::new));
+        return new NutsExclusionDependencyFilter(getSession(), filter, Arrays.stream(exclusions).map(x -> NutsId.of(x).get( getSession())).toArray(NutsId[]::new));
     }
 
     @Override
@@ -283,6 +283,11 @@ public class InternalNutsDependencyFilters extends InternalNutsTypedFilters<Nuts
     }
 
     @Override
+    public NutsDependencyFilter byDesktop(Collection<NutsDesktopEnvironmentFamily> de) {
+        return byDesktop(de.toArray(new NutsDesktopEnvironmentFamily[0]));
+    }
+
+    @Override
     public NutsDependencyFilter byType(String type) {
         return new NutsDependencyTypeFilter(getSession(), type);
     }
@@ -302,7 +307,7 @@ public class InternalNutsDependencyFilters extends InternalNutsTypedFilters<Nuts
         if (osDist == null) {
             return always();
         }
-        return new NutsDependencyOsDistIdFilter(getSession()).add(Collections.singletonList(NutsId.of(osDist, getSession())));
+        return new NutsDependencyOsDistIdFilter(getSession()).add(Collections.singletonList(NutsId.of(osDist).get( getSession())));
     }
 
     @Override
@@ -312,7 +317,7 @@ public class InternalNutsDependencyFilters extends InternalNutsTypedFilters<Nuts
             return always();
         }
         return new NutsDependencyOsDistIdFilter(getSession()).add(
-                Arrays.stream(osDists).map(x->NutsId.of(x,getSession()))
+                Arrays.stream(osDists).map(x->NutsId.of(x).get(getSession()))
                         .collect(Collectors.toList())
         );
     }
@@ -324,7 +329,7 @@ public class InternalNutsDependencyFilters extends InternalNutsTypedFilters<Nuts
             return always();
         }
         return new NutsDependencyOsDistIdFilter(getSession()).add(
-                osDists.stream().map(x->NutsId.of(x,getSession()))
+                osDists.stream().map(x->NutsId.of(x).get(getSession()))
                         .collect(Collectors.toList())
         );
     }
@@ -345,7 +350,7 @@ public class InternalNutsDependencyFilters extends InternalNutsTypedFilters<Nuts
             return always();
         }
         return new NutsDependencyPlatformIdFilter(getSession()).add(
-                Arrays.stream(pf).map(x->NutsId.of(x,getSession()))
+                Arrays.stream(pf).map(x->NutsId.of(x).get(getSession()))
                         .collect(Collectors.toList())
         );
     }

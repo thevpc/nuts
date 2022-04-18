@@ -45,7 +45,7 @@ public class NutsRepositorySelectorList {
             }
         }
     }
-    public static NutsRepositorySelectorList ofAll(String[] expressions, NutsRepositoryDB db, NutsSession session) {
+    public static NutsRepositorySelectorList ofAll(List<String> expressions, NutsRepositoryDB db, NutsSession session) {
         if (expressions == null) {
             return new NutsRepositorySelectorList();
         }

@@ -29,6 +29,7 @@ package net.thevpc.nuts;
 import net.thevpc.nuts.spi.NutsAuthenticationAgent;
 
 import javax.security.auth.callback.CallbackHandler;
+import java.util.List;
 
 /**
  * Workspace Security configuration manager
@@ -114,7 +115,7 @@ public interface NutsWorkspaceSecurityManager {
      *
      * @return all registered users
      */
-    NutsUser[] findUsers();
+    List<NutsUser> findUsers();
 
     /**
      * find user with the given name or null.

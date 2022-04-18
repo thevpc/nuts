@@ -25,7 +25,10 @@
 */
 package net.thevpc.nuts.runtime.standalone.dependency;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
+
 import net.thevpc.nuts.NutsDependency;
 import net.thevpc.nuts.NutsDependencyTreeNode;
 
@@ -37,7 +40,7 @@ public class MutableNutsDependencyTreeNode implements NutsDependencyTreeNode {
 
     public static final long serialVersionUID = 1L;
     private NutsDependency dependency;
-    private NutsDependencyTreeNode[] children;
+    private List<NutsDependencyTreeNode> children;
     private boolean partial;
 
     public MutableNutsDependencyTreeNode() {
@@ -45,8 +48,7 @@ public class MutableNutsDependencyTreeNode implements NutsDependencyTreeNode {
     
     public MutableNutsDependencyTreeNode(NutsDependencyTreeNode n) {
         this.dependency=n.getDependency();
-        NutsDependencyTreeNode[] ch = n.getChildren();
-        this.children=Arrays.copyOf(ch, ch.length);
+        this.children=new ArrayList<>(n.getChildren());
         this.partial=n.isPartial();
     }
     
@@ -55,7 +57,7 @@ public class MutableNutsDependencyTreeNode implements NutsDependencyTreeNode {
         this.dependency = dependency;
     }
 
-    public void setChildren(NutsDependencyTreeNode[] children) {
+    public void setChildren(List<NutsDependencyTreeNode> children) {
         this.children = children;
     }
 
@@ -69,7 +71,7 @@ public class MutableNutsDependencyTreeNode implements NutsDependencyTreeNode {
     }
 
     @Override
-    public NutsDependencyTreeNode[] getChildren() {
+    public List<NutsDependencyTreeNode> getChildren() {
         return children;
     }
 

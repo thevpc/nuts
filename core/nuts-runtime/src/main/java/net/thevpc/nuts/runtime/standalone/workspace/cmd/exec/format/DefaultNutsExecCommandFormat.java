@@ -5,6 +5,7 @@ import net.thevpc.nuts.runtime.standalone.format.DefaultFormatBase;
 import net.thevpc.nuts.spi.NutsSupportLevelContext;
 
 import java.io.*;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -122,7 +123,7 @@ public class DefaultNutsExecCommandFormat extends DefaultFormatBase<NutsExecComm
         NutsPrintStream err = ec.getErr();
         InputStream in = ec.getIn();
         Map<String, String> env = ec.getEnv();
-        String[] command = ec.getCommand();
+        List<String> command = ec.getCommand();
         if (env != null) {
             for (Map.Entry<String, String> e : env.entrySet()) {
                 String k = e.getKey();
@@ -144,8 +145,8 @@ public class DefaultNutsExecCommandFormat extends DefaultFormatBase<NutsExecComm
                 sb.append(enforceDoubleQuote(k)).append("=").append(enforceDoubleQuote(v));
             }
         }
-        for (int i = 0; i < command.length; i++) {
-            String s = command[i];
+        for (int i = 0; i < command.size(); i++) {
+            String s = command.get(i);
             if(s==null){
                 s="";
             }

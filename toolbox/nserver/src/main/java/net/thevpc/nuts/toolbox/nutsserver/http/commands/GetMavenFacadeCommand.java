@@ -28,7 +28,7 @@ public class GetMavenFacadeCommand extends AbstractFacadeCommand {
         NutsSession session = context.getSession();
         if (n.endsWith(".pom")) {
             if (split.size() >= 4) {
-                NutsId id = NutsIdBuilder.of(session).setArtifactId(split.get(split.size() - 3))
+                NutsId id = new DefaultNutsIdBuilder().setArtifactId(split.get(split.size() - 3))
                         .setGroupId(String.join(".", split.subList(0, split.size() - 3)))
                         .setVersion(split.get(split.size() - 2)).build();
                 NutsDefinition fetch = session.fetch().setId(id).setSession(session)
@@ -49,11 +49,11 @@ public class GetMavenFacadeCommand extends AbstractFacadeCommand {
                             .append("description", d.getDescription())
                             .append("packaging", d.getPackaging())
                     ;
-                    if (d.getParents().length > 0) {
+                    if (d.getParents().size() > 0) {
                         xml.push("parent")
-                                .append("groupId", d.getParents()[0].getGroupId())
-                                .append("artifactId", d.getParents()[0].getArtifactId())
-                                .append("version", d.getParents()[0].getVersion().toString())
+                                .append("groupId", d.getParents().get(0).getGroupId())
+                                .append("artifactId", d.getParents().get(0).getArtifactId())
+                                .append("version", d.getParents().get(0).getVersion().toString())
                                 .pop();
                     }
 
@@ -74,14 +74,14 @@ public class GetMavenFacadeCommand extends AbstractFacadeCommand {
 
                     }
                     xml.pop();
-                    if (d.getParents().length > 0) {
+                    if (d.getParents().size() > 0) {
                         xml.push("parent")
-                                .append("groupId", d.getParents()[0].getGroupId())
-                                .append("artifactId", d.getParents()[0].getArtifactId())
-                                .append("version", d.getParents()[0].getVersion().toString())
+                                .append("groupId", d.getParents().get(0).getGroupId())
+                                .append("artifactId", d.getParents().get(0).getArtifactId())
+                                .append("version", d.getParents().get(0).getVersion().toString())
                                 .pop();
                     }
-                    if (d.getStandardDependencies().length > 0) {
+                    if (d.getStandardDependencies().size() > 0) {
                         //dependencyManagement
                         xml.push("dependencyManagement");
                         xml.push("dependencies");
@@ -106,7 +106,7 @@ public class GetMavenFacadeCommand extends AbstractFacadeCommand {
             }
         } else if (n.endsWith(".jar")) {
             if (split.size() >= 4) {
-                NutsId id = NutsIdBuilder.of(session).setArtifactId(split.get(split.size() - 3))
+                NutsId id = new DefaultNutsIdBuilder().setArtifactId(split.get(split.size() - 3))
                         .setGroupId(String.join(".", split.subList(0, split.size() - 3)))
                         .setVersion(split.get(split.size() - 2)).build();
                 NutsDefinition fetch = session.fetch().setId(id).setSession(session)
@@ -121,7 +121,7 @@ public class GetMavenFacadeCommand extends AbstractFacadeCommand {
             }
         } else if (n.equals("maven-metadata.xml")) {
             if (split.size() >= 3) {
-                NutsId id = NutsIdBuilder.of(session).setArtifactId(split.get(split.size() - 2))
+                NutsId id = new DefaultNutsIdBuilder().setArtifactId(split.get(split.size() - 2))
                         .setGroupId(String.join(".", split.subList(0, split.size() - 2))).build();
                 NutsStream<NutsId> resultIds = session.search().addId(id).setDistinct(true).setSorted(true).getResultIds();
                 if(context.isHeadMethod()){

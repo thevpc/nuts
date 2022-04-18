@@ -49,39 +49,10 @@ public enum NutsTreeVisitResult implements NutsEnum {
         this.id = name().toLowerCase().replace('_', '-');
     }
 
-    public static NutsTreeVisitResult parseLenient(String value) {
-        return parseLenient(value, null);
+    public static NutsOptional<NutsTreeVisitResult> parse(String value) {
+        return NutsApiUtils.parse(value, NutsTreeVisitResult.class);
     }
 
-    public static NutsTreeVisitResult parseLenient(String value, NutsTreeVisitResult emptyOrErrorValue) {
-        return parseLenient(value, emptyOrErrorValue, emptyOrErrorValue);
-    }
-
-    public static NutsTreeVisitResult parseLenient(String value, NutsTreeVisitResult emptyValue, NutsTreeVisitResult errorValue) {
-        if (value == null) {
-            value = "";
-        } else {
-            value = value.toUpperCase().trim().replace('-', '_');
-        }
-        if (value.isEmpty()) {
-            return emptyValue;
-        }
-        try {
-            return NutsTreeVisitResult.valueOf(value.toUpperCase());
-        } catch (Exception notFound) {
-            return errorValue;
-        }
-    }
-
-    public static NutsTreeVisitResult parse(String value, NutsSession session) {
-        return parse(value, null, session);
-    }
-
-    public static NutsTreeVisitResult parse(String value, NutsTreeVisitResult emptyValue, NutsSession session) {
-        NutsTreeVisitResult v = parseLenient(value, emptyValue, null);
-        NutsApiUtils.checkNonNullEnum(v, value, NutsTreeVisitResult.class, session);
-        return v;
-    }
 
     /**
      * lower cased identifier.

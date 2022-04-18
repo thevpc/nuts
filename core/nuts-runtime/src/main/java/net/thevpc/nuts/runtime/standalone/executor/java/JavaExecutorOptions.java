@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 public final class JavaExecutorOptions {
 
     private final boolean mainClassApp = false;
-    private final String[] execArgs;
+    private final List<String> execArgs;
     private final List<String> jvmArgs = new ArrayList<String>();
     private final List<String> j9_addModules = new ArrayList<String>();
     private final List<String> j9_modulePath = new ArrayList<String>();
@@ -42,7 +42,8 @@ public final class JavaExecutorOptions {
     private String splash;
     private String j9_module;
 
-    public JavaExecutorOptions(NutsDefinition def, boolean tempId, String[] args, String[] executorOptions, String dir, NutsSession session) {
+    public JavaExecutorOptions(NutsDefinition def, boolean tempId, List<String> args,
+                               List<String> executorOptions, String dir, NutsSession session) {
         this.session = session;
         showCommand = getSession().boot().getBootCustomBoolArgument(false, false, false, "---show-command");
         NutsId id = def.getId();
@@ -180,7 +181,7 @@ public final class JavaExecutorOptions {
         }
         this.appArgs = new ArrayList<>();
         appArgs.addAll(prependArgs);
-        appArgs.addAll(Arrays.asList(args));
+        appArgs.addAll(args);
         appArgs.addAll(appendArgs);
 
         List<NutsDefinition> nutsDefinitions = new ArrayList<>();
@@ -192,7 +193,7 @@ public final class JavaExecutorOptions {
         } else {
             se.addId(id);
         }
-        if (se.getIds().length > 0) {
+        if (se.getIds().size() > 0) {
             nutsDefinitions.addAll(se
                     .setSession(se.getSession().copy().setTransitive(true))
                     .setDistinct(true)
@@ -215,7 +216,7 @@ public final class JavaExecutorOptions {
                 javaVersion = binJavaVersion.toString();
             }
         }
-        NutsVersion explicitJavaVersion = Arrays.stream(def.getDescriptor().getCondition().getPlatform()).map(x -> NutsId.of(x, session))
+        NutsVersion explicitJavaVersion = def.getDescriptor().getCondition().getPlatform().stream().map(x -> NutsId.of(x).get( session))
                 .filter(x -> x.getShortName().equals("java"))
                 .map(NutsId::getVersion)
                 .min(Comparator.naturalOrder())
@@ -232,7 +233,7 @@ public final class JavaExecutorOptions {
         if (javaCommand == null) {
             throw new NutsExecutionException(session, NutsMessage.cstyle("no java version %s was found", getJavaVersion()), 1);
         }
-        java9 = NutsVersion.of(javaVersion, session).compareTo("1.8") > 0;
+        java9 = NutsVersion.of(javaVersion).get(session).compareTo("1.8") > 0;
         if (this.jar) {
             if (this.mainClass != null) {
                 if (session.isPlainOut()) {
@@ -254,19 +255,19 @@ public final class JavaExecutorOptions {
             if (mainClass == null) {
                 if (path != null) {
                     //check manifest!
-                    NutsExecutionEntry[] classes = NutsExecutionEntries.of(session).parse(path);
-                    NutsExecutionEntry[] primary = Arrays.stream(classes).filter(NutsExecutionEntry::isDefaultEntry).toArray(NutsExecutionEntry[]::new);
+                    List<NutsExecutionEntry>classes = NutsExecutionEntries.of(session).parse(path);
+                    NutsExecutionEntry[] primary = classes.stream().filter(NutsExecutionEntry::isDefaultEntry).toArray(NutsExecutionEntry[]::new);
                     if (primary.length > 0) {
                         mainClass = Arrays.stream(primary).map(NutsExecutionEntry::getName)
                                 .collect(Collectors.joining(":"));
-                    } else if (classes.length > 0) {
-                        mainClass = Arrays.stream(classes).map(NutsExecutionEntry::getName)
+                    } else if (classes.size() > 0) {
+                        mainClass = classes.stream().map(NutsExecutionEntry::getName)
                                 .collect(Collectors.joining(":"));
                     }
                 }
             } else if (!mainClass.contains(".")) {
-                NutsExecutionEntry[] classes = NutsExecutionEntries.of(session).parse(path);
-                List<String> possibleClasses = Arrays.stream(classes).map(NutsExecutionEntry::getName)
+                List<NutsExecutionEntry> classes = NutsExecutionEntries.of(session).parse(path);
+                List<String> possibleClasses = classes.stream().map(NutsExecutionEntry::getName)
                         .collect(Collectors.toList());
                 String r = resolveMainClass(mainClass, possibleClasses);
                 if (r != null) {
@@ -557,7 +558,7 @@ public final class JavaExecutorOptions {
 //    public List<String> getNutsPath() {
 //        return nutsPath;
 //    }
-    public String[] getExecArgs() {
+    public List<String> getExecArgs() {
         return execArgs;
     }
 

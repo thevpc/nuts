@@ -27,13 +27,13 @@
 package net.thevpc.nuts.boot;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.spi.NutsBootId;
-import net.thevpc.nuts.spi.NutsBootVersion;
 
 import java.io.PrintStream;
 import java.lang.reflect.Array;
 import java.net.URL;
 import java.util.Arrays;
+import java.util.Map;
+import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.logging.Level;
 
@@ -162,19 +162,19 @@ public class NutsApiUtils {
     public static String resolveNutsIdDigest() {
         //TODO COMMIT TO 0.8.4
         return resolveNutsIdDigest(
-                new NutsBootId("net.thevpc.nuts", "nuts", NutsBootVersion.parse(Nuts.getVersion())),
+                new DefaultNutsId("net.thevpc.nuts", "nuts", NutsVersion.of(Nuts.getVersion()).get()),
                 PrivateNutsUtilClassLoader.resolveClasspathURLs(Nuts.class.getClassLoader(), true)
         );
     }
 
-    public static String resolveNutsIdDigest(NutsBootId id, URL[] urls) {
+    public static String resolveNutsIdDigest(NutsId id, URL[] urls) {
         return PrivateNutsUtilDigest.getURLDigest(
                 PrivateNutsUtilClassLoader.findClassLoaderJar(id, urls),
                 null
         );
     }
 
-    public static URL findClassLoaderJar(NutsBootId id, URL[] urls) {
+    public static URL findClassLoaderJar(NutsId id, URL[] urls) {
         return PrivateNutsUtilClassLoader.findClassLoaderJar(id, urls);
     }
 
@@ -212,7 +212,7 @@ public class NutsApiUtils {
         if (NutsBlankable.isBlank(name)) {
             name = "default";
         }
-        String key = t.getName() + "(" + name + "@" + System.identityHashCode(session)+")";
+        String key = t.getName() + "(" + name + "@" + System.identityHashCode(session) + ")";
         Object v = session.getProperty(key);
         if (v != null && t.isInstance(v)) {
             return (T) v;
@@ -232,5 +232,47 @@ public class NutsApiUtils {
 
     public static void parseNutsArguments(String[] args, NutsBootOptions nutsBootOptions, PrivateNutsBootLog log) {
         PrivateNutsArgumentsParser.parseNutsArguments(args, nutsBootOptions, log);
+    }
+
+    public static <T extends Enum> NutsOptional<T> parse(String value, Class<T> type) {
+        if (value == null) {
+            value = "";
+        } else {
+            value = value.toUpperCase().trim().replace('-', '_');
+        }
+        if (value.isEmpty()) {
+            return NutsOptional.ofEmpty(s -> NutsMessage.cstyle(type.getSimpleName() + " is empty"));
+        }
+        try {
+            return NutsOptional.of((T) Enum.valueOf(type, value.toUpperCase()));
+        } catch (Exception notFound) {
+            String finalValue = value;
+            return NutsOptional.ofError(s -> NutsMessage.cstyle(type.getSimpleName() + " invalid value : %s", finalValue));
+        }
+    }
+
+    public static <T extends Enum> NutsOptional<T> parse(String value, Class<T> type, Function<String, NutsOptional<T>> mapper) {
+        if (value == null) {
+            value = "";
+        } else {
+            value = value.toUpperCase().trim().replace('-', '_');
+        }
+        if (value.isEmpty()) {
+            return NutsOptional.ofEmpty(s -> NutsMessage.cstyle(type.getSimpleName() + " is empty"));
+        }
+        try {
+            NutsOptional<T> o = mapper.apply(value);
+            if (o != null) {
+                return o;
+            }
+        } catch (Exception notFound) {
+            //ignore
+        }
+        try {
+            return NutsOptional.of((T) Enum.valueOf(type, value.toUpperCase()));
+        } catch (Exception notFound) {
+            String finalValue = value;
+            return NutsOptional.ofError(s -> NutsMessage.cstyle(type.getSimpleName() + " invalid value : %s", finalValue));
+        }
     }
 }

@@ -24,8 +24,7 @@
 package net.thevpc.nuts.runtime.standalone.repository.impl.maven.util;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.standalone.descriptor.DefaultNutsArtifactCall;
-import net.thevpc.nuts.runtime.standalone.descriptor.DefaultNutsEnvConditionBuilder;
+import net.thevpc.nuts.DefaultNutsArtifactCall;
 import net.thevpc.nuts.runtime.standalone.descriptor.util.NutsDescriptorUtils;
 import net.thevpc.nuts.runtime.standalone.repository.impl.maven.pom.*;
 import net.thevpc.nuts.runtime.standalone.session.NutsSessionUtils;
@@ -36,7 +35,7 @@ import net.thevpc.nuts.runtime.standalone.repository.NutsRepositorySelectorHelpe
 import net.thevpc.nuts.runtime.standalone.util.iter.IteratorBuilder;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.StringTokenizerUtils;
 import net.thevpc.nuts.runtime.standalone.util.filters.CoreFilterUtils;
-import net.thevpc.nuts.runtime.standalone.version.DefaultNutsVersion;
+import net.thevpc.nuts.DefaultNutsVersion;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.util.CoreNutsUtils;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
@@ -87,12 +86,8 @@ public class MavenUtils {
         return wp;
     }
 
-    public NutsId[] toNutsId(PomId[] ids) {
-        NutsId[] a = new NutsId[ids.length];
-        for (int i = 0; i < ids.length; i++) {
-            a[i] = toNutsId(ids[i]);
-        }
-        return a;
+    public List<NutsId> toNutsId(List<PomId> ids) {
+        return ids.stream().map(this::toNutsId).collect(Collectors.toList());
     }
 
     public NutsDependency[] toNutsDependencies(PomDependency[] deps, NutsSession session, Pom pom, PomProfileActivation ac, String profile) {
@@ -104,15 +99,15 @@ public class MavenUtils {
     }
 
     public NutsId toNutsId(PomId d) {
-        return NutsIdBuilder.of(session).setGroupId(d.getGroupId()).setArtifactId(d.getArtifactId()).setVersion(toNutsVersion(d.getVersion())).build();
+        return new DefaultNutsIdBuilder().setGroupId(d.getGroupId()).setArtifactId(d.getArtifactId()).setVersion(toNutsVersion(d.getVersion())).build();
     }
 
     public NutsEnvCondition toCondition(NutsSession session, String os0, String arch0, PomProfileActivation a, String profile) {
 //        if (a == null) {
 //            return null;
 //        }
-        NutsOsFamily os = NutsOsFamily.parseLenient(os0, null, null);
-        NutsArchFamily arch = NutsArchFamily.parseLenient(arch0, null, null);
+        NutsOsFamily os = NutsOsFamily.parse(os0).orElse(null);
+        NutsArchFamily arch = NutsArchFamily.parse(arch0).orElse(null);
         String osVersion = null;
         String platform = null;
         Map<String,String> props=new LinkedHashMap<>();
@@ -121,15 +116,15 @@ public class MavenUtils {
                 osVersion = a.getOsVersion();
             }
             if (!NutsBlankable.isBlank(a.getOsArch())) {
-                arch = NutsArchFamily.parseLenient(a.getOsArch(), null, null);
+                arch = NutsArchFamily.parse(a.getOsArch()).orElse(null);
             }
             if (!NutsBlankable.isBlank(a.getOsName())) {
-                NutsOsFamily os2 = NutsOsFamily.parseLenient(a.getOsName(), null, null);
+                NutsOsFamily os2 = NutsOsFamily.parse(a.getOsName()).orElse(null);
                 if (os2 != null) {
                     os = os2;
                 }
             } else if (!NutsBlankable.isBlank(a.getOsFamily())) {
-                NutsOsFamily os2 = NutsOsFamily.parseLenient(a.getOsFamily(), null, null);
+                NutsOsFamily os2 = NutsOsFamily.parse(a.getOsFamily()).orElse(null);
                 if (os2 != null) {
                     os = os2;
                 }
@@ -150,11 +145,11 @@ public class MavenUtils {
         if (arch != null) {
             ars = arch.id();
         }
-        NutsEnvConditionBuilder bb = NutsEnvConditionBuilder.of(session)
-                .setOs(oss == null ? new String[0] : new String[]{oss})
-                .setArch(ars == null ? new String[0] : new String[]{ars})
-                .setPlatform(platform == null ? new String[0] : new String[]{platform})
-                .setProfile(profile == null ? new String[0] : new String[]{profile});
+        NutsEnvConditionBuilder bb = new DefaultNutsEnvConditionBuilder()
+                .setOs(oss == null ? null : Arrays.asList(oss))
+                .setArch(ars == null ? null : Arrays.asList(ars))
+                .setPlatform(platform == null ? null : Arrays.asList(platform))
+                .setProfile(profile == null ? null : Arrays.asList(profile));
         bb.setProperties(props);
         return bb.build();
     }
@@ -193,7 +188,7 @@ public class MavenUtils {
                 break;
             }
             default: {
-                dependencyScope = NutsDependencyScope.parseLenient(s, NutsDependencyScope.API, NutsDependencyScope.API);
+                dependencyScope = NutsDependencyScope.parse(s).orElse( NutsDependencyScope.API);
                 if (dependencyScope == null) {
                     LOG.with().session(session).level(Level.FINER).verb(NutsLogVerb.FAIL)
                             .log(NutsMessage.jstyle("unable to parse maven scope {0} for {1}", s, d));
@@ -201,7 +196,7 @@ public class MavenUtils {
                 }
             }
         }
-        return NutsDependencyBuilder.of(session)
+        return new DefaultNutsDependencyBuilder()
                 .setGroupId(d.getGroupId())
                 .setArtifactId(d.getArtifactId())
                 .setClassifier(d.getClassifier())
@@ -210,7 +205,7 @@ public class MavenUtils {
                 .setScope(dependencyScope.id())
                 .setCondition(toCondition(session, d.getOs(), d.getArch(), a, profile))
                 .setType(d.getType())
-                .setExclusions(toNutsId(d.getExclusions()))
+                .setExclusions(toNutsId(Arrays.asList(d.getExclusions())))
                 .build();
     }
 
@@ -294,12 +289,12 @@ public class MavenUtils {
             }
             List<NutsDescriptorProperty> props = new ArrayList<>();
             for (Map.Entry<String, String> e : pom.getProperties().entrySet()) {
-                props.add(NutsDescriptorPropertyBuilder.of(session).setName(e.getKey())
+                props.add(new DefaultNutsDescriptorPropertyBuilder().setName(e.getKey())
                         .setValue(e.getValue()).build());
             }
             for (PomProfile profile : profiles) {
                 for (Map.Entry<String, String> e : profile.getProperties().entrySet()) {
-                    props.add(NutsDescriptorPropertyBuilder.of(session)
+                    props.add(new DefaultNutsDescriptorPropertyBuilder()
                             .setName(e.getKey())
                             .setValue(e.getValue())
                             .setCondition(toCondition(session, null, null, profile.getActivation(), profile.getId()))
@@ -311,7 +306,7 @@ public class MavenUtils {
                 String vv = pom.getProperties().get(v);
                 if (!NutsBlankable.isBlank(vv)) {
                     if(mavenCompilerTarget==null || mavenCompilerTarget.compareTo(vv)<0){
-                        mavenCompilerTarget=NutsVersion.of(vv,session);
+                        mavenCompilerTarget=NutsVersion.of(vv).get();
                     }
                 }
             }
@@ -365,19 +360,19 @@ public class MavenUtils {
                     }
                 }
             }
-            return NutsDescriptorBuilder.of(session)
+            return new DefaultNutsDescriptorBuilder()
                     .setId(toNutsId(pom.getPomId()))
-                    .setParents(pom.getParent() == null ? new NutsId[0] : new NutsId[]{toNutsId(pom.getParent())})
+                    .setParents(pom.getParent() == null ? null : Arrays.asList(toNutsId(pom.getParent())))
                     .setPackaging(pom.getPackaging())
                     .setFlags(flags)
                     .setName(pom.getName())
                     .setDescription(pom.getDescription())
-                    .setLocations(idLocations.toArray(new NutsIdLocation[0]))
-                    .setCondition(NutsEnvConditionBuilder.of(session).setPlatform(
-                            mavenCompilerTarget==null?"java":("java#"+mavenCompilerTarget)
+                    .setLocations(new ArrayList<>(idLocations))
+                    .setCondition(new DefaultNutsEnvConditionBuilder().setPlatform(
+                            Arrays.asList(mavenCompilerTarget==null?"java":("java#"+mavenCompilerTarget))
                     ))
-                    .setDependencies(deps.toArray(new NutsDependency[0]))
-                    .setStandardDependencies(depsM.toArray(new NutsDependency[0]))
+                    .setDependencies(deps)
+                    .setStandardDependencies(depsM)
                     .setCategories(
                             StringTokenizerUtils.splitDefault(categories).stream()
                                     .map(String::trim)
@@ -393,7 +388,7 @@ public class MavenUtils {
                                     .collect(Collectors.toList())
                     )
                     .setGenericName(genericName)
-                    .setProperties(props.toArray(new NutsDescriptorProperty[0]))
+                    .setProperties(props)
                     .build();
         } catch (Exception e) {
             long time = System.currentTimeMillis() - startTime;
@@ -492,7 +487,7 @@ public class MavenUtils {
                     properties.put("project.parent.groupId", parentId.getGroupId());
                     properties.put("project.parent.artifactId", parentId.getArtifactId());
                     properties.put("project.parent.version", parentId.getVersion().getValue());
-                    nutsDescriptor = nutsDescriptor/*.setProperties(properties, true)*/.builder().applyProperties(properties).build();
+                    nutsDescriptor = NutsDescriptorUtils.applyProperties(nutsDescriptor.builder(),properties,session).build();
                 }
                 NutsId thisId = nutsDescriptor.getId();
                 if (!CoreNutsUtils.isEffectiveId(thisId)) {
@@ -523,7 +518,7 @@ public class MavenUtils {
                         }
                         done.add(pid.getShortName());
                         if (CoreNutsUtils.containsVars(thisId)) {
-                            thisId.builder().apply(new MapToFunction<>(
+                            thisId=NutsDescriptorUtils.applyProperties(thisId.builder(),new MapToFunction<>(
                                     NutsDescriptorUtils.getPropertiesMap(d.getProperties(), session)
                             )).build();
                         } else {
@@ -552,7 +547,9 @@ public class MavenUtils {
                 properties.put("project.artifactId", thisId.getArtifactId());
                 properties.put("project.version", thisId.getVersion().getValue());
                 properties.put("version", thisId.getVersion().getValue());
-                nutsDescriptor = nutsDescriptor/*.setProperties(properties, true)*/.builder().applyProperties(properties).build();
+                nutsDescriptor = NutsDescriptorUtils.applyProperties(
+                                nutsDescriptor/*.setProperties(properties, true)*/.builder(),properties,session
+                        ).build();
             } finally {
                 if (stream != null) {
                     stream.close();
@@ -676,7 +673,7 @@ public class MavenUtils {
                     if (!NutsBlankable.isBlank(scope) && groupId.contains("$")) {
                         throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("unexpected maven variable in scope=%s", scope));
                     }
-                    if (NutsDependencyScope.parseLenient(dependency.getScope(), NutsDependencyScope.API, NutsDependencyScope.API)
+                    if (NutsDependencyScope.parse(dependency.getScope()).orElse( NutsDependencyScope.API)
                             == NutsDependencyScope.API) {
                         depsAndRepos.deps.add(groupId + ":" + artifactId + "#" + version);
                     }
@@ -817,15 +814,15 @@ public class MavenUtils {
         }
         if(cl.hasNext()){
             String callIdString=cl.next().toString();
-            callId=NutsIdParser.of(session).setAcceptBlank(true).setLenient(true).parse(callIdString);
+            callId=NutsId.of(callIdString).orElse(null);
         }
-        String[] callArgs = cl.toStringArray();
+        List<String> callArgs = cl.toStringList();
         if(callId!=null){
             return new DefaultNutsArtifactCall(callId,callArgs,callProps);
         }
         //there is no callId, props are considered as args!
         if(!callPropsAsArgs.isEmpty()){
-            return new DefaultNutsArtifactCall(null,callPropsAsArgs.toArray(new String[0]),null);
+            return new DefaultNutsArtifactCall(null,callPropsAsArgs,null);
         }
         return null;
     }

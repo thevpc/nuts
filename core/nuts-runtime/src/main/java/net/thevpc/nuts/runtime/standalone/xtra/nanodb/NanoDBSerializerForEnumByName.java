@@ -22,7 +22,7 @@ class NanoDBSerializerForEnumByName extends NanoDBNonNullSerializer<Enum> {
     public Enum read(NanoDBInputStream in, Class expectedType, NutsSession session) {
         String o = in.readUTF();
         if (NutsEnum.class.isAssignableFrom(expectedType)) {
-            return (Enum) NutsEnum.parse(expectedType, o, session);
+            return (Enum) NutsEnum.parse(expectedType, o).get(session);
         } else {
             return Enum.valueOf(expectedType, o);
         }

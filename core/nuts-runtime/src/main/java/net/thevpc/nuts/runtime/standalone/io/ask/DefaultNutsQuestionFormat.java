@@ -2,6 +2,9 @@ package net.thevpc.nuts.runtime.standalone.io.ask;
 
 import net.thevpc.nuts.*;
 
+import java.util.Arrays;
+import java.util.List;
+
 public class DefaultNutsQuestionFormat<T> implements NutsQuestionFormat<T> {
 
     private NutsSession session;
@@ -11,9 +14,9 @@ public class DefaultNutsQuestionFormat<T> implements NutsQuestionFormat<T> {
     }
 
     @Override
-    public Object[] getDefaultValues(Class type, NutsQuestion<T> question) {
+    public List<Object> getDefaultValues(Class type, NutsQuestion<T> question) {
         if (type.isEnum()) {
-            return type.getEnumConstants();
+            return Arrays.asList(type.getEnumConstants());
         }
         switch (type.getName()) {
             case "java.lang.String": {
@@ -37,7 +40,7 @@ public class DefaultNutsQuestionFormat<T> implements NutsQuestionFormat<T> {
             }
             case "boolean":
             case "java.lang.Boolean": {
-                return new Object[]{true, false};
+                return Arrays.asList(true, false);
             }
             default: {
                 throw new NutsUnsupportedArgumentException(session, NutsMessage.cstyle("unsupported type %s", type.getName()));

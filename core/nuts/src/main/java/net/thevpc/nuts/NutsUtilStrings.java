@@ -26,12 +26,23 @@
  */
 package net.thevpc.nuts;
 
+import net.thevpc.nuts.boot.PrivateNutsUtils;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.StringTokenizer;
+import java.util.function.Function;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 /**
  * @author thevpc
  * @app.category Util
  * @since 0.8.1
  */
 public class NutsUtilStrings {
+    private static final Pattern DOLLAR_PLACE_HOLDER_PATTERN = Pattern.compile("[$][{](?<name>([a-zA-Z]+))[}]");
     private static final char[] BASE16_CHARS = "0123456789ABCDEF".toCharArray();
 
 
@@ -89,4 +100,101 @@ public class NutsUtilStrings {
         return BASE16_CHARS[nibble & 15];
     }
 
+    public static String compressString(String s) {
+        StringBuilder sb = new StringBuilder(s.length());
+        for (char c : s.toCharArray()) {
+            switch (c) {
+                case '\0': {
+                    sb.append("\\0");
+                    break;
+                }
+                case '\n': {
+                    sb.append("\\n");
+                    break;
+                }
+                case '\r': {
+                    sb.append("\\r");
+                    break;
+                }
+                case '\t': {
+                    sb.append("\\t");
+                    break;
+                }
+                case '\f': {
+                    sb.append("\\f");
+                    break;
+                }
+                default: {
+                    sb.append(c);
+                }
+            }
+        }
+        return sb.toString();
+    }
+
+    public static String leftAlign(String s, int size) {
+        int len = s.length();
+        StringBuilder sb = new StringBuilder(Math.max(len, size));
+        sb.append(s);
+        for (int i = len; i < size; i++) {
+            sb.append(' ');
+        }
+        return sb.toString();
+    }
+
+    @SuppressWarnings("unchecked")
+    public static List<String> split(String str, String separators) {
+        if (str == null) {
+            return Collections.EMPTY_LIST;
+        }
+        StringTokenizer st = new StringTokenizer(str, separators);
+        List<String> result = new ArrayList<>();
+        while (st.hasMoreElements()) {
+            result.add(st.nextToken());
+        }
+        return result;
+    }
+
+    public static String replaceDollarString(String path, Function<String, String> m) {
+        Matcher matcher = DOLLAR_PLACE_HOLDER_PATTERN.matcher(path);
+        StringBuffer sb = new StringBuffer();
+        while (matcher.find()) {
+            String x = m.apply(matcher.group("name"));
+            matcher.appendReplacement(sb, Matcher.quoteReplacement(x));
+        }
+        matcher.appendTail(sb);
+        return sb.toString();
+    }
+
+    public static String formatPeriodMilli(long period) {
+        StringBuilder sb = new StringBuilder();
+        boolean started = false;
+        int h = (int) (period / (1000L * 60L * 60L));
+        int mn = (int) ((period % (1000L * 60L * 60L)) / 60000L);
+        int s = (int) ((period % 60000L) / 1000L);
+        int ms = (int) (period % 1000L);
+        if (h > 0) {
+            sb.append(formatRight(String.valueOf(h), 2)).append("h ");
+            started = true;
+        }
+        if (mn > 0 || started) {
+            sb.append(formatRight(String.valueOf(mn), 2)).append("mn ");
+            started = true;
+        }
+        if (s > 0 || started) {
+            sb.append(formatRight(String.valueOf(s), 2)).append("s ");
+            //started=true;
+        }
+        sb.append(formatRight(String.valueOf(ms), 3)).append("ms");
+        return sb.toString();
+    }
+
+    public static String formatRight(String str, int size) {
+        StringBuilder sb = new StringBuilder(size);
+        sb.append(str);
+        while (sb.length() < size) {
+            sb.insert(0, ' ');
+        }
+        return sb.toString();
+    }
 }

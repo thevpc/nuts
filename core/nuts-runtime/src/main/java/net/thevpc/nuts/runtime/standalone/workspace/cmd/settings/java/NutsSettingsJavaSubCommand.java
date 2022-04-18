@@ -90,7 +90,7 @@ public class NutsSettingsJavaSubCommand extends AbstractNutsSettingsSubCommand {
                 }
             }
             if (cmdLine.isExecMode()) {
-                NutsPlatformLocation[] sdks = platforms.findPlatforms(NutsPlatformFamily.JAVA, null);
+                NutsPlatformLocation[] sdks = platforms.findPlatforms(NutsPlatformFamily.JAVA, null).toArray(NutsPlatformLocation[]::new);
                 Arrays.sort(sdks, new Comparator<NutsPlatformLocation>() {
                     @Override
                     public int compare(NutsPlatformLocation o1, NutsPlatformLocation o2) {

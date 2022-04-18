@@ -723,8 +723,8 @@ public class DefaultNutsCp implements NutsCp {
         if (checker != null && !_target_isPath && !safe) {
             throw new NutsIllegalArgumentException(getSession(), NutsMessage.formatted("unsupported validation if neither safeCopy is armed nor path is defined"));
         }
-        NutsString loggedSrc = _source.getStreamMetaData().getFormattedPath();
-        NutsString loggedTarget = target.getStreamMetaData().getFormattedPath();
+        NutsString loggedSrc = _source.getStreamMetaData().getFormattedPath(session);
+        NutsString loggedTarget = target.getStreamMetaData().getFormattedPath(session);
         NutsMessage m = getActionMessage();
         if (m == null) {
             m = NutsMessage.plain("copy");

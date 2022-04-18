@@ -735,7 +735,7 @@ public class CoreIOUtils {
         });
         return InputStreamMetadataAwareImpl.of(ist, new NutsDefaultStreamMetadata(
                         path,
-                        NutsTexts.of(session).ofStyled(path, NutsTextStyle.path()),
+                        ss->NutsTexts.of(session).ofStyled(path, NutsTextStyle.path()),
                         size, NutsPath.of(path, session).getContentType(), sourceTypeName
                 )
         );
@@ -1030,8 +1030,7 @@ public class CoreIOUtils {
                         message,
                         bytes.length,
                         contentType,
-                        kind,
-                        session
+                        kind
                 )
         );
     }

@@ -29,6 +29,7 @@ import net.thevpc.nuts.boot.NutsApiUtils;
 import net.thevpc.nuts.spi.NutsComponent;
 
 import java.io.Serializable;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -65,7 +66,7 @@ public interface NutsArtifactCallBuilder extends Serializable, NutsComponent {
      *
      * @return call arguments
      */
-    String[] getArguments();
+    List<String> getArguments();
 
     /**
      * update arguments
@@ -74,6 +75,8 @@ public interface NutsArtifactCallBuilder extends Serializable, NutsComponent {
      * @return {@code this} instance
      */
     NutsArtifactCallBuilder setArguments(String... value);
+
+    NutsArtifactCallBuilder setArguments(List<String> value);
 
     /**
      * return call properties map

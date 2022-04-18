@@ -71,80 +71,52 @@ public enum NutsOpenMode implements NutsEnum {
         this.id = name().toLowerCase().replace('_', '-');
     }
 
-    public static NutsOpenMode parseLenient(String value) {
-        return parseLenient(value, null);
-    }
-
-    public static NutsOpenMode parseLenient(String value, NutsOpenMode emptyOrErrorValue) {
-        return parseLenient(value, emptyOrErrorValue, emptyOrErrorValue);
-    }
-
-    public static NutsOpenMode parseLenient(String value, NutsOpenMode emptyValue, NutsOpenMode errorValue) {
-        if (value == null) {
-            value = "";
-        } else {
-            value = value.toUpperCase().trim().replace('-', '_');
-        }
-        if (value.isEmpty()) {
-            return emptyValue;
-        }
-        switch (value) {
-            case "R":
-            case "READ":
-            case "O":
-            case "OE":
-            case "O_E":
-            case "OPEN":
-            case "OPEN_ERROR":
-            case "OPEN_OR_ERROR":
-            case "EXISTING": {
-                return NutsOpenMode.OPEN_OR_ERROR;
+    public static NutsOptional<NutsOpenMode> parse(String value) {
+        return NutsApiUtils.parse(value, NutsOpenMode.class,s->{
+            switch (s.toUpperCase()) {
+                case "R":
+                case "READ":
+                case "O":
+                case "OE":
+                case "O_E":
+                case "OPEN":
+                case "OPEN_ERROR":
+                case "OPEN_OR_ERROR":
+                case "EXISTING": {
+                    return NutsOptional.of(NutsOpenMode.OPEN_OR_ERROR);
+                }
+                case "W":
+                case "WRITE":
+                case "C":
+                case "CE":
+                case "C_E":
+                case "CREATE":
+                case "CREATE_ERROR":
+                case "CREATE_OR_ERROR":
+                case "NEW": {
+                    return NutsOptional.of(NutsOpenMode.CREATE_OR_ERROR);
+                }
+                case "RW":
+                case "R_W":
+                case "READ_WRITE":
+                case "OC":
+                case "O_C":
+                case "OPEN_CREATE":
+                case "OPEN_OR_CREATE":
+                case "AUTO":
+                case "AUTO_CREATE": {
+                    return NutsOptional.of(NutsOpenMode.OPEN_OR_CREATE);
+                }
+                case "ON":
+                case "O_N":
+                case "OPEN_NULL":
+                case "OPEN_OR_NULL":
+                case "TRY": {
+                    return NutsOptional.of(NutsOpenMode.OPEN_OR_NULL);
+                }
             }
-            case "W":
-            case "WRITE":
-            case "C":
-            case "CE":
-            case "C_E":
-            case "CREATE":
-            case "CREATE_ERROR":
-            case "CREATE_OR_ERROR":
-            case "NEW": {
-                return NutsOpenMode.CREATE_OR_ERROR;
-            }
-            case "RW":
-            case "R_W":
-            case "READ_WRITE":
-            case "OC":
-            case "O_C":
-            case "OPEN_CREATE":
-            case "OPEN_OR_CREATE":
-            case "AUTO":
-            case "AUTO_CREATE": {
-                return NutsOpenMode.OPEN_OR_CREATE;
-            }
-            case "ON":
-            case "O_N":
-            case "OPEN_NULL":
-            case "OPEN_OR_NULL":
-            case "TRY": {
-                return NutsOpenMode.OPEN_OR_NULL;
-            }
-        }
-        try {
-            return NutsOpenMode.valueOf(value.toUpperCase());
-        } catch (Exception notFound) {
-            return errorValue;
-        }
-    }
-
-    public static NutsOpenMode parse(String value, NutsSession session) {
-        return parse(value, null, session);
-    }
-
-    public static NutsOpenMode parse(String value, NutsOpenMode emptyValue, NutsSession session) {
-        NutsOpenMode v = parseLenient(value, emptyValue, null);
-        NutsApiUtils.checkNonNullEnum(v, value, NutsOpenMode.class, session);
-        return v;
+            return null;
+        });
     }
 
     /**

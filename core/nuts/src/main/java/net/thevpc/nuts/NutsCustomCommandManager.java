@@ -41,7 +41,7 @@ public interface NutsCustomCommandManager {
      *
      * @return registered command factories
      */
-    NutsCommandFactoryConfig[] getCommandFactories();
+    List<NutsCommandFactoryConfig> getCommandFactories();
 
     /**
      * register a new commandFactory. If it already exists, a NutsIllegalArgumentException is thrown

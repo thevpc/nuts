@@ -27,12 +27,8 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.session.NutsSessionUtils;
 import net.thevpc.nuts.runtime.standalone.util.collections.ClassClassMap;
 import net.thevpc.nuts.runtime.standalone.util.collections.ListMap;
-import net.thevpc.nuts.runtime.standalone.descriptor.DefaultNutsEnvConditionBuilder;
 import net.thevpc.nuts.runtime.standalone.extension.CoreServiceUtils;
-import net.thevpc.nuts.runtime.standalone.id.DefaultNutsIdBuilder;
-import net.thevpc.nuts.runtime.standalone.id.DefaultNutsIdParser;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
-import net.thevpc.nuts.runtime.standalone.version.DefaultNutsVersionParser;
 import net.thevpc.nuts.spi.*;
 
 import java.io.PrintStream;
@@ -96,17 +92,6 @@ public class DefaultNutsWorkspaceFactory implements NutsWorkspaceFactory {
         }
         if (required && bestObj == null) {
             //at boot time some types are nor yet available, so fall back to defaults!
-
-            switch (type.getName()) {
-                case "net.thevpc.nuts.NutsIdParser":
-                    return (T) new DefaultNutsIdParser(session);
-                case "net.thevpc.nuts.NutsIdBuilder":
-                    return (T) new DefaultNutsIdBuilder(session);
-                case "net.thevpc.nuts.NutsEnvConditionBuilder":
-                    return (T) new DefaultNutsEnvConditionBuilder(session);
-                case "net.thevpc.nuts.NutsVersionParser":
-                    return (T) new DefaultNutsVersionParser(session);
-            }
             throw new NutsExtensionNotFoundException(session, type, supportCriteria);
         }
         return bestObj;

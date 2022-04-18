@@ -11,6 +11,8 @@ import net.thevpc.nuts.runtime.standalone.session.NutsSessionUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
 import net.thevpc.nuts.spi.NutsAuthenticationAgent;
 
+import java.util.List;
+
 /**
  *
  * @author thevpc
@@ -75,7 +77,7 @@ public class DefaultNutsRepositorySecurityManager implements NutsRepositorySecur
     }
 
     @Override
-    public NutsUser[] findUsers() {
+    public List<NutsUser> findUsers() {
         checkSession(session);
         return model.findUsers(session);
     }

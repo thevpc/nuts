@@ -75,39 +75,10 @@ public enum NutsDescriptorFlag implements NutsEnum {
         this.id = name().toLowerCase().replace('_', '-');
     }
 
-    public static NutsDescriptorFlag parseLenient(String value) {
-        return parseLenient(value, null);
+    public static NutsOptional<NutsDescriptorFlag> parse(String value) {
+        return NutsApiUtils.parse(value, NutsDescriptorFlag.class);
     }
 
-    public static NutsDescriptorFlag parseLenient(String value, NutsDescriptorFlag emptyOrErrorValue) {
-        return parseLenient(value, emptyOrErrorValue, emptyOrErrorValue);
-    }
-
-    public static NutsDescriptorFlag parseLenient(String value, NutsDescriptorFlag emptyValue, NutsDescriptorFlag errorValue) {
-        if (value == null) {
-            value = "";
-        } else {
-            value = value.toUpperCase().trim().replace('-', '_');
-        }
-        if (value.isEmpty()) {
-            return emptyValue;
-        }
-        try {
-            return NutsDescriptorFlag.valueOf(value.toUpperCase());
-        } catch (Exception notFound) {
-            return errorValue;
-        }
-    }
-
-    public static NutsDescriptorFlag parse(String value, NutsSession session) {
-        return parse(value, null, session);
-    }
-
-    public static NutsDescriptorFlag parse(String value, NutsDescriptorFlag emptyValue, NutsSession session) {
-        NutsDescriptorFlag v = parseLenient(value, emptyValue, null);
-        NutsApiUtils.checkNonNullEnum(v, value, NutsDescriptorFlag.class, session);
-        return v;
-    }
 
     /**
      * lower cased identifier.

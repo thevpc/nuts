@@ -6,6 +6,7 @@ import net.thevpc.nuts.runtime.standalone.workspace.config.NutsRepositoryConfigM
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
 import net.thevpc.nuts.spi.NutsRepositoryLocation;
 
+import java.util.List;
 import java.util.Map;
 
 public class DefaultNutsRepoConfigManager implements NutsRepositoryConfigManager, NutsRepositoryConfigManagerExt {
@@ -171,7 +172,7 @@ public class DefaultNutsRepoConfigManager implements NutsRepositoryConfigManager
     }
 
     @Override
-    public NutsRepository[] getMirrors() {
+    public List<NutsRepository> getMirrors() {
         checkSession();
         return getModel().getMirrors(session);
     }

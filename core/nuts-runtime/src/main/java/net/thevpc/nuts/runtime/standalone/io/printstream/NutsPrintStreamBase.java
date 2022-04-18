@@ -416,7 +416,7 @@ public abstract class NutsPrintStreamBase implements NutsPrintStream {
         }
 
         @Override
-        public NutsString getFormattedPath() {
+        public NutsString getFormattedPath(NutsSession session) {
             return b.formattedName;
         }
 

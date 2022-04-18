@@ -43,38 +43,8 @@ public enum NutsTextType implements NutsEnum {
         this.id = name().toLowerCase().replace('_', '-');
     }
 
-    public static NutsTextType parseLenient(String value) {
-        return parseLenient(value, null);
-    }
-
-    public static NutsTextType parseLenient(String value, NutsTextType emptyOrErrorValue) {
-        return parseLenient(value, emptyOrErrorValue, emptyOrErrorValue);
-    }
-
-    public static NutsTextType parseLenient(String value, NutsTextType emptyValue, NutsTextType errorValue) {
-        if (value == null) {
-            value = "";
-        } else {
-            value = value.toUpperCase().trim().replace('-', '_');
-        }
-        if (value.isEmpty()) {
-            return emptyValue;
-        }
-        try {
-            return NutsTextType.valueOf(value.toUpperCase());
-        } catch (Exception notFound) {
-            return errorValue;
-        }
-    }
-
-    public static NutsTextType parse(String value, NutsSession session) {
-        return parse(value, null, session);
-    }
-
-    public static NutsTextType parse(String value, NutsTextType emptyValue, NutsSession session) {
-        NutsTextType v = parseLenient(value, emptyValue, null);
-        NutsApiUtils.checkNonNullEnum(v, value, NutsTextType.class, session);
-        return v;
+    public static NutsOptional<NutsTextType> parse(String value) {
+        return NutsApiUtils.parse(value, NutsTextType.class);
     }
 
     @Override

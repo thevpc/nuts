@@ -26,6 +26,7 @@
 package net.thevpc.nuts;
 
 import java.io.Serializable;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -46,7 +47,7 @@ import java.util.Set;
  * @app.category Descriptor
  * @since 0.1.0
  */
-public interface NutsDescriptor extends Serializable, NutsBlankable {
+public interface NutsDescriptor extends Serializable, NutsBlankable, NutsFormattable {
 
     /**
      * artifact full id (groupId+artifactId+version)
@@ -60,7 +61,7 @@ public interface NutsDescriptor extends Serializable, NutsBlankable {
      *
      * @return descriptor parent list (may be empty)
      */
-    NutsId[] getParents();
+    List<NutsId> getParents();
 
     /**
      * true if the artifact is executable and is considered an application. if not it is a library.
@@ -87,6 +88,7 @@ public interface NutsDescriptor extends Serializable, NutsBlankable {
 
     /**
      * return id type
+     *
      * @return id type
      */
     NutsIdType getIdType();
@@ -107,6 +109,7 @@ public interface NutsDescriptor extends Serializable, NutsBlankable {
 
     /**
      * Descriptor Condition
+     *
      * @return Descriptor Condition
      */
     NutsEnvCondition getCondition();
@@ -123,7 +126,7 @@ public interface NutsDescriptor extends Serializable, NutsBlankable {
      *
      * @return url (external or classpath url) to the application Icon
      */
-    String[] getIcons();
+    List<String> getIcons();
 
     /**
      * Generic Artifact Name (like 'Text Editor', 'Image Processing Application', etc)
@@ -138,7 +141,7 @@ public interface NutsDescriptor extends Serializable, NutsBlankable {
      *
      * @return category path of the artifact
      */
-    String[] getCategories();
+    List<String> getCategories();
 
     /**
      * long description for the artifact
@@ -153,7 +156,7 @@ public interface NutsDescriptor extends Serializable, NutsBlankable {
      *
      * @return list of available mirror locations
      */
-    NutsIdLocation[] getLocations();
+    List<NutsIdLocation> getLocations();
 
 
     /**
@@ -164,14 +167,14 @@ public interface NutsDescriptor extends Serializable, NutsBlankable {
      *
      * @return "standard" dependencies
      */
-    NutsDependency[] getStandardDependencies();
+    List<NutsDependency> getStandardDependencies();
 
     /**
      * list of immediate (non inherited and non transitive dependencies
      *
      * @return list of immediate (non inherited and non transitive dependencies
      */
-    NutsDependency[] getDependencies();
+    List<NutsDependency> getDependencies();
 
     /**
      * descriptor of artifact responsible of running this artifact
@@ -192,7 +195,7 @@ public interface NutsDescriptor extends Serializable, NutsBlankable {
      *
      * @return custom properties that can be used as place holders (int ${name} form) in other fields.
      */
-    NutsDescriptorProperty[] getProperties();
+    List<NutsDescriptorProperty> getProperties();
 
     /**
      * custom property
@@ -219,5 +222,31 @@ public interface NutsDescriptor extends Serializable, NutsBlankable {
      */
     NutsDescriptorBuilder builder();
 
-    NutsDescriptorFormat formatter();
+    NutsDescriptor readOnly();
+
+    /**
+     * @since 0.8.4
+     * @return contributors
+     */
+    List<NutsDescriptorContributor> getContributors();
+
+    /**
+     * @since 0.8.4
+     * @return licenses
+     */
+    List<NutsDescriptorLicense> getLicenses();
+
+    /**
+     * @since 0.8.4
+     * @return mailing lists
+     */
+    List<NutsDescriptorMailingList> getMailingLists();
+
+    /**
+     * @since 0.8.4
+     * @return organization
+     */
+    NutsDescriptorOrganization getOrganization();
+
+    NutsDescriptorFormat formatter(NutsSession session);
 }

@@ -25,7 +25,7 @@ public class DefaultNutsRepositoryFilter extends AbstractRepositoryFilter{
         for (String exactRepo : exactRepos) {
             li=li.merge(NutsRepositorySelectorList.of(exactRepo, db,session));
         }
-        NutsRepositoryLocation[] input = Arrays.stream(session.repos().getRepositories())
+        NutsRepositoryLocation[] input = session.repos().getRepositories().stream()
                 .map(x -> x.config().getLocation().setName(x.getName()))
                 .toArray(NutsRepositoryLocation[]::new);
         String[] names = Arrays.stream(li.resolve(input,db)).map(NutsRepositoryLocation::getName).toArray(String[]::new);

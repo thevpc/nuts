@@ -332,15 +332,15 @@ public class ProcessExecHelper extends AbstractSyncIProcessExecHelper {
                     case MACOS:
                     case UNIX: {
                         if (runWithGui) {
-                            NutsDesktopEnvironmentFamily[] de = session.env().getDesktopEnvironmentFamilies();
+                            Set<NutsDesktopEnvironmentFamily> de = session.env().getDesktopEnvironmentFamilies();
                             Path kdesu = NutsSysExecUtils.sysWhich("kdesu");
                             Path gksu = NutsSysExecUtils.sysWhich("gksu");
                             String currSu = null;
-                            if (Arrays.stream(de).anyMatch(x -> x == NutsDesktopEnvironmentFamily.KDE)) {
+                            if (de.contains(NutsDesktopEnvironmentFamily.KDE)) {
                                 if (kdesu != null) {
                                     currSu = kdesu.toString();
                                 }
-                            } else if (Arrays.stream(de).anyMatch(x -> x == NutsDesktopEnvironmentFamily.KDE)) {
+                            } else if (de.contains(NutsDesktopEnvironmentFamily.GNOME)) {
                                 if (gksu != null) {
                                     currSu = gksu.toString();
                                 }
@@ -389,15 +389,15 @@ public class ProcessExecHelper extends AbstractSyncIProcessExecHelper {
                     case MACOS:
                     case UNIX: {
                         if (runWithGui) {
-                            NutsDesktopEnvironmentFamily[] de = session.env().getDesktopEnvironmentFamilies();
+                            Set<NutsDesktopEnvironmentFamily> de = session.env().getDesktopEnvironmentFamilies();
                             Path kdesu = NutsSysExecUtils.sysWhich("kdesudo");
                             Path gksu = NutsSysExecUtils.sysWhich("gksudo");
                             String currSu = null;
-                            if (Arrays.stream(de).anyMatch(x -> x == NutsDesktopEnvironmentFamily.KDE)) {
+                            if (de.contains(NutsDesktopEnvironmentFamily.KDE)) {
                                 if (kdesu != null) {
                                     currSu = kdesu.toString();
                                 }
-                            } else if (Arrays.stream(de).anyMatch(x -> x == NutsDesktopEnvironmentFamily.KDE)) {
+                            } else if (de.contains(NutsDesktopEnvironmentFamily.GNOME)) {
                                 if (gksu != null) {
                                     currSu = gksu.toString();
                                 }

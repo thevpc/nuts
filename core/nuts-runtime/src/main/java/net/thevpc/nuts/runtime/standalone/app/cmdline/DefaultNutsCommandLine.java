@@ -565,12 +565,17 @@ public class DefaultNutsCommandLine implements NutsCommandLine {
 
     @Override
     public String[] toStringArray() {
+        return toStringList().toArray(new String[0]);
+    }
+
+    @Override
+    public List<String> toStringList() {
         List<String> all = new ArrayList<>(length());
         for (NutsArgument nutsArgument : lookahead) {
             all.add(nutsArgument.getString());
         }
         all.addAll(args);
-        return all.toArray(new String[0]);
+        return all;
     }
 
     @Override
@@ -637,8 +642,8 @@ public class DefaultNutsCommandLine implements NutsCommandLine {
     }
 
     @Override
-    public NutsCommandLineFormat formatter() {
-        return NutsCommandLineFormat.of(session).setValue(this);
+    public NutsCommandLineFormat formatter(NutsSession session) {
+        return NutsCommandLineFormat.of(this.session).setValue(this);
     }
 
     private NutsArgumentCandidate[] resolveRecommendations(NutsArgumentType expectValue, String[] names, int autoCompletecurrentWordIndex) {
@@ -805,7 +810,7 @@ public class DefaultNutsCommandLine implements NutsCommandLine {
 
     @Override
     public String toString() {
-        return formatter().format().filteredText();
+        return formatter(session).format().filteredText();
     }
 
     private boolean isExpandableOption(String v, boolean expandSimpleOptions) {

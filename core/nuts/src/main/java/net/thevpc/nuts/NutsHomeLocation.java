@@ -26,6 +26,8 @@
  */
 package net.thevpc.nuts;
 
+import net.thevpc.nuts.boot.NutsApiUtils;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -63,65 +65,40 @@ public class NutsHomeLocation implements NutsEnum {
         return instance;
     }
 
-    public static NutsHomeLocation parseLenient(String value) {
-        return parseLenient(value, NutsHomeLocation.of(null, null));
-    }
-
-    public static NutsHomeLocation parseLenient(String value, NutsHomeLocation emptyOrErrorValue) {
-        return parseLenient(value, emptyOrErrorValue, emptyOrErrorValue);
-    }
-
-    public static NutsHomeLocation parseLenient(String e, NutsHomeLocation emptyValue, NutsHomeLocation errorValue) {
-        if (e == null) {
-            e = "";
+    public static NutsOptional<NutsHomeLocation> parse(String value) {
+        if (value == null) {
+            value = "";
         } else {
-            e = e.trim().toLowerCase();
+            value = value.trim().toLowerCase();
         }
-        switch (e.toLowerCase()) {
-            case "": {
-                return emptyValue;
-            }
-            default: {
-                e = e.toLowerCase().replace(':', '_').replace('-', '_');
-                int i = e.lastIndexOf('_');
-                if (i >= 0) {
-                    String s1 = e.substring(0, i);
-                    String s2 = e.substring(i + 1);
-                    NutsOsFamily osf = s1.equals("system") ? null : NutsOsFamily.parse(s1, null, null);
-                    NutsStoreLocation loc = s2.equals("system") ? null : NutsStoreLocation.parse(s2, null, null);
-                    if (osf == null) {
-                        if (!s1.equals("system") && s1.length() > 0) {
-                            return errorValue;
-                        }
-                    }
-                    if (loc == null) {
-                        if (!s2.equals("system") && s2.length() > 0) {
-                            return errorValue;
-                        }
-                    }
-                    return of(osf, loc);
+        if(value.isEmpty()){
+            return NutsOptional.ofEmpty(s -> NutsMessage.cstyle(NutsHomeLocation.class.getSimpleName() + " is empty"));
+        }
+        String e = value.replace(':', '_').replace('-', '_');
+        String finalValue = value;
+        int i = e.lastIndexOf('_');
+        if (i >= 0) {
+            String s1 = e.substring(0, i);
+            String s2 = e.substring(i + 1);
+            NutsOsFamily osf = s1.equals("system") ? null : NutsOsFamily.parse(s1).orElse(null);
+            NutsStoreLocation loc = s2.equals("system") ? null : NutsStoreLocation.parse(s2).orElse(null);
+            if (osf == null) {
+                if (!s1.equals("system") && s1.length() > 0) {
+                    return NutsOptional.ofError(s -> NutsMessage.cstyle(NutsHomeLocation.class.getSimpleName() + " invalid value : %s", finalValue));
                 }
-                return errorValue;
             }
+            if (loc == null) {
+                if (!s2.equals("system") && s2.length() > 0) {
+                    return NutsOptional.ofError(s -> NutsMessage.cstyle(NutsHomeLocation.class.getSimpleName() + " invalid value : %s", finalValue));
+                }
+            }
+            return NutsOptional.of(of(osf, loc));
         }
+        return NutsOptional.ofError(s -> NutsMessage.cstyle(NutsHomeLocation.class.getSimpleName() + " invalid value : %s", finalValue));
     }
 
-    public static NutsHomeLocation parse(String value, NutsSession session) {
-        return parse(value, null, session);
-    }
 
-    public static NutsHomeLocation parse(String value, NutsHomeLocation emptyValue, NutsSession session) {
-        NutsHomeLocation v = parseLenient(value, emptyValue, null);
-        if (v == null) {
-            if (!NutsBlankable.isBlank(value)) {
-                if (session == null) {
-                    throw new NutsBootException(NutsMessage.cstyle("invalid value %s of type %s", value, NutsHomeLocation.class.getName()));
-                }
-                throw new NutsParseException(session, NutsMessage.cstyle("invalid value %s of type %s", value, NutsHomeLocation.class.getName()));
-            }
-        }
-        return v;
-    }
+
 
     /**
      * OS family

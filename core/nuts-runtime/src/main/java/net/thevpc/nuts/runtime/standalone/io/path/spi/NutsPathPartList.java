@@ -124,6 +124,10 @@ public class NutsPathPartList implements Iterable<NutsPathPart> {
         return new NutsPathPartList(list.subList(beginIndex, endIndex), session);
     }
 
+    public List<String> toStringList() {
+        return stream().map(NutsPathPart::getName).collect(Collectors.toList());
+    }
+
     public String[] toStringArray() {
         return stream().map(NutsPathPart::getName).toArray(String[]::new);
     }

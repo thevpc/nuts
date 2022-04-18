@@ -26,10 +26,8 @@
 */
 package net.thevpc.nuts.runtime.standalone.repository.cmd;
 
-import net.thevpc.nuts.NutsBlankable;
-import net.thevpc.nuts.NutsEnum;
-import net.thevpc.nuts.NutsParseEnumException;
-import net.thevpc.nuts.NutsSession;
+import net.thevpc.nuts.*;
+import net.thevpc.nuts.boot.NutsApiUtils;
 
 /**
  *
@@ -57,41 +55,8 @@ public enum NutsRepositorySupportedAction  implements NutsEnum {
         return id;
     }
 
-    public static NutsRepositorySupportedAction parseLenient(String value) {
-        return parseLenient(value, null);
+    public static NutsOptional<NutsRepositorySupportedAction> parse(String value) {
+        return NutsApiUtils.parse(value, NutsRepositorySupportedAction.class);
     }
 
-    public static NutsRepositorySupportedAction parseLenient(String value, NutsRepositorySupportedAction emptyOrErrorValue) {
-        return parseLenient(value, emptyOrErrorValue, emptyOrErrorValue);
-    }
-
-    public static NutsRepositorySupportedAction parseLenient(String value, NutsRepositorySupportedAction emptyValue, NutsRepositorySupportedAction errorValue) {
-        if (value == null) {
-            value = "";
-        } else {
-            value = value.toUpperCase().trim().replace('-', '_');
-        }
-        if (value.isEmpty()) {
-            return emptyValue;
-        }
-        try {
-            return NutsRepositorySupportedAction.valueOf(value.toUpperCase());
-        } catch (Exception notFound) {
-            return errorValue;
-        }
-    }
-
-    public static NutsRepositorySupportedAction parse(String value, NutsSession session) {
-        return parse(value, null,session);
-    }
-
-    public static NutsRepositorySupportedAction parse(String value, NutsRepositorySupportedAction emptyValue, NutsSession session) {
-        NutsRepositorySupportedAction v = parseLenient(value, emptyValue, null);
-        if(v==null){
-            if(!NutsBlankable.isBlank(value)){
-                throw new NutsParseEnumException(session,value,NutsRepositorySupportedAction.class);
-            }
-        }
-        return v;
-    }
 }

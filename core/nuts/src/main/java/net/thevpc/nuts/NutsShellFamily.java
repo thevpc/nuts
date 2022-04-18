@@ -90,78 +90,60 @@ public enum NutsShellFamily implements NutsEnum {
             }
             case LINUX:
             case UNIX: {
-                return parseLenient(System.getenv("SHELL"), BASH, BASH);
+                return parse(System.getenv("SHELL")).orElse(BASH);
             }
             case MACOS: {
-                return parseLenient(System.getenv("SHELL"), ZSH, ZSH);
+                return parse(System.getenv("SHELL")).orElse(ZSH);
             }
         }
         return UNKNOWN;
     }
 
-    public static NutsShellFamily parseLenient(String value) {
-        return parseLenient(value, UNKNOWN);
-    }
-
-    public static NutsShellFamily parseLenient(String value, NutsShellFamily emptyOrErrorValue) {
-        return parseLenient(value, emptyOrErrorValue, emptyOrErrorValue);
-    }
-
-    public static NutsShellFamily parseLenient(String e, NutsShellFamily emptyValue, NutsShellFamily errorValue) {
-        if (e == null) {
-            e = "";
-        } else {
-            String[] parts = e.trim().toLowerCase().split("/");
+    public static NutsOptional<NutsShellFamily> parse(String value) {
+        return NutsApiUtils.parse(value, NutsShellFamily.class, s -> {
+            String[] parts = s.trim().toLowerCase().split("/");
             if (parts.length > 0) {
-                e = parts[parts.length - 1];
+                s = parts[parts.length - 1];
             } else {
-                e = "";
+                s = "";
             }
-        }
-        switch (e) {
-            case "":
-                return emptyValue;
-            case "sh":
-                return SH;
-            case "bash":
-                return BASH;
-            case "csh":
-                return CSH;
-            case "ksh":
-                return KSH;
-            case "zsh":
-                return ZSH;
-            case "fish":
-                return FISH;
-            case "windows_cmd":
-            case "win_cmd":
-            case "cmd":
-            case "win":
-                return WIN_CMD;
-            case "windows_power_shell":
-            case "windows_powershell":
-            case "win_power_shell":
-            case "win_powershell":
-            case "power_shell":
-            case "powershell":
-                return WIN_POWER_SHELL;
-        }
-        return errorValue;
+            switch (s) {
+                case "":
+                    return NutsOptional.ofEmpty(session -> NutsMessage.cstyle(NutsShellFamily.class.getSimpleName() + " is empty"));
+                case "sh":
+                    return NutsOptional.of(SH);
+                case "bash":
+                    return NutsOptional.of(BASH);
+                case "csh":
+                    return NutsOptional.of(CSH);
+                case "ksh":
+                    return NutsOptional.of(KSH);
+                case "zsh":
+                    return NutsOptional.of(ZSH);
+                case "fish":
+                    return NutsOptional.of(FISH);
+                case "windows_cmd":
+                case "win_cmd":
+                case "cmd":
+                case "win":
+                    return NutsOptional.of(WIN_CMD);
+                case "windows_power_shell":
+                case "windows_powershell":
+                case "win_power_shell":
+                case "win_powershell":
+                case "power_shell":
+                case "powershell":
+                    return NutsOptional.of(WIN_POWER_SHELL);
+            }
+            return null;
+        });
     }
+
 
     public static NutsShellFamily getCurrent() {
         return _curr;
     }
 
-    public static NutsShellFamily parse(String value, NutsSession session) {
-        return parse(value, null, session);
-    }
-
-    public static NutsShellFamily parse(String value, NutsShellFamily emptyValue, NutsSession session) {
-        NutsShellFamily v = parseLenient(value, emptyValue, null);
-        NutsApiUtils.checkNonNullEnum(v, value, NutsShellFamily.class, session);
-        return v;
-    }
 
     /**
      * lower cased identifier.

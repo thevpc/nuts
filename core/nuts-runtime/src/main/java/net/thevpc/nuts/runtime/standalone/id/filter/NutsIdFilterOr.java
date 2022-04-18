@@ -108,7 +108,7 @@ public class NutsIdFilterOr extends AbstractIdFilter implements NutsIdFilter, Si
         return true;
     }
 
-    public NutsFilter[] getSubFilters() {
-        return children;
+    public List<NutsFilter> getSubFilters() {
+        return Arrays.asList(children);
     }
 }

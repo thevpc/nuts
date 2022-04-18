@@ -1,7 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.elem.mapper;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.standalone.descriptor.DefaultNutsDescriptorPropertyBuilder;
 
 import java.lang.reflect.Type;
 
@@ -9,25 +8,22 @@ public class NutsElementMapperNutsDescriptorProperty implements NutsElementMappe
 
     @Override
     public Object destruct(NutsDescriptorProperty src, Type typeOfSrc, NutsElementFactoryContext context) {
-        NutsSession session = context.getSession();
         return context.defaultDestruct(
-                NutsDescriptorPropertyBuilder.of(session).setAll(src), null
+                new DefaultNutsDescriptorPropertyBuilder(src), null
         );
     }
 
     @Override
     public NutsElement createElement(NutsDescriptorProperty o, Type typeOfSrc, NutsElementFactoryContext context) {
-        NutsSession session = context.getSession();
         return context.defaultObjectToElement(
-                NutsDescriptorPropertyBuilder.of(session).setAll(o), null
+                new DefaultNutsDescriptorPropertyBuilder(o), null
         );
     }
 
     @Override
     public NutsDescriptorProperty createObject(NutsElement o, Type typeOfResult, NutsElementFactoryContext context) {
         DefaultNutsDescriptorPropertyBuilder builder = (DefaultNutsDescriptorPropertyBuilder) context.defaultElementToObject(o, DefaultNutsDescriptorPropertyBuilder.class);
-        NutsSession session = context.getSession();
-        return NutsDescriptorPropertyBuilder.of(session).setAll(builder).build();
+        return new DefaultNutsDescriptorPropertyBuilder(builder).build();
     }
 
 }

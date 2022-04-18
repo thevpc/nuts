@@ -118,7 +118,7 @@ public class DefaultNutsDigest implements NutsDigest {
             }
             case DESCRIPTOR: {
                 ByteArrayOutputStream o = new ByteArrayOutputStream();
-                ((NutsDescriptor) source.getValue()).formatter().setSession(session)
+                ((NutsDescriptor) source.getValue()).formatter(session)
                         .compact().setSession(session).print(new OutputStreamWriter(o));
                 try (InputStream is = new ByteArrayInputStream(o.toByteArray())) {
                     return NutsDigestUtils.evalHash(is, getValidAlgo(), session);

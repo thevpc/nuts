@@ -184,7 +184,7 @@ public class JShell {
         if (args != null) {
             return args;
         }
-        return appContext.getArguments();
+        return appContext.getArguments().toArray(new String[0]);
     }
 
     private static String resolveServiceName(NutsApplicationContext appContext, String serviceName, NutsId appId) {

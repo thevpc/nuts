@@ -2,6 +2,9 @@ package net.thevpc.nuts.runtime.standalone.xtra.expr;
 
 import net.thevpc.nuts.NutsExpr;
 
+import java.util.Collections;
+import java.util.List;
+
 public class DefaultVarNode implements NutsExpr.Node {
     private final String name;
 
@@ -12,8 +15,8 @@ public class DefaultVarNode implements NutsExpr.Node {
 
 
     @Override
-    public NutsExpr.Node[] getChildren() {
-        return new NutsExpr.Node[0];
+    public List<NutsExpr.Node> getChildren() {
+        return Collections.emptyList();
     }
 
     @Override

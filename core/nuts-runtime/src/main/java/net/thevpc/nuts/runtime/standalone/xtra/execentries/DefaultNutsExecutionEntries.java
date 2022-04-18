@@ -11,6 +11,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 public class DefaultNutsExecutionEntries implements NutsExecutionEntries {
     private final NutsWorkspace ws;
@@ -22,12 +25,12 @@ public class DefaultNutsExecutionEntries implements NutsExecutionEntries {
     }
 
     @Override
-    public NutsExecutionEntry[] parse(File file) {
+    public List<NutsExecutionEntry> parse(File file) {
         return parse(file.toPath());
     }
 
     @Override
-    public NutsExecutionEntry[] parse(Path file) {
+    public List<NutsExecutionEntry> parse(Path file) {
         if (file.getFileName().toString().toLowerCase().endsWith(".jar")) {
             try {
                 try (InputStream in = Files.newInputStream(file)) {
@@ -45,19 +48,19 @@ public class DefaultNutsExecutionEntries implements NutsExecutionEntries {
                 throw new NutsIOException(session, ex);
             }
         } else {
-            return new NutsExecutionEntry[0];
+            return Collections.emptyList();
         }
     }
 
     @Override
-    public NutsExecutionEntry[] parse(InputStream inputStream, String type, String sourceName) {
+    public List<NutsExecutionEntry> parse(InputStream inputStream, String type, String sourceName) {
         if ("jar".equals(type)) {
             return JavaJarUtils.parseJarExecutionEntries(inputStream, session);
         } else if ("class".equals(type)) {
             NutsExecutionEntry u = JavaClassUtils.parseClassExecutionEntry(inputStream, sourceName, getSession());
-            return u == null ? new NutsExecutionEntry[0] : new NutsExecutionEntry[]{u};
+            return u == null ? Collections.emptyList() : Arrays.asList(u);
         }
-        return new NutsExecutionEntry[0];
+        return Collections.emptyList();
     }
 
     @Override

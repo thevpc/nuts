@@ -29,6 +29,7 @@ import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.NutsWorkspace;
 
 import java.io.InputStream;
+import java.util.List;
 
 /**
  * context holding useful information for {@link NutsDescriptorContentParserComponent#parse(NutsDescriptorContentParserContext)}
@@ -50,7 +51,7 @@ public interface NutsDescriptorContentParserContext {
      * @return parser options.
      * @since 0.5.8
      */
-    String[] getParseOptions();
+    List<String> getParseOptions();
 
     /**
      * return content header stream.

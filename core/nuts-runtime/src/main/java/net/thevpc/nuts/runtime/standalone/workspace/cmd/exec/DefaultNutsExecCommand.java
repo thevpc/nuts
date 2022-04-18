@@ -90,7 +90,7 @@ public class DefaultNutsExecCommand extends AbstractNutsExecCommand {
                     throw new NutsIllegalArgumentException(traceSession, NutsMessage.plain("missing command"));
                 }
                 String[] ts = command.toArray(new String[0]);
-                exec = new DefaultNutsOpenExecutable(ts, getExecutorOptions(), traceSession, execSession, this);
+                exec = new DefaultNutsOpenExecutable(ts, getExecutorOptions().toArray(new String[0]), traceSession, execSession, this);
                 break;
             }
             case SYSTEM: {
@@ -184,7 +184,7 @@ public class DefaultNutsExecCommand extends AbstractNutsExecCommand {
         return this;
     }
 
-    private NutsExecutableInformationExt execEmbeddedOrExternal(String[] cmd, String[] executorOptions, NutsSession prepareSession, NutsSession execSession) {
+    private NutsExecutableInformationExt execEmbeddedOrExternal(String[] cmd, List<String> executorOptions, NutsSession prepareSession, NutsSession execSession) {
         if (cmd == null || cmd.length == 0) {
             throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("missing command"));
         }
@@ -205,12 +205,12 @@ public class DefaultNutsExecCommand extends AbstractNutsExecCommand {
         String goodKw = null;
         boolean forceInstalled = false;
         if (cmdName.endsWith("!")) {
-            goodId = NutsIdParser.of(session).setLenient(true).parse(cmdName.substring(0, cmdName.length() - 1));
+            goodId = NutsId.of(cmdName.substring(0, cmdName.length() - 1)).orElse(null);
             if (goodId != null) {
                 forceInstalled = true;
             }
         } else {
-            goodId = NutsIdParser.of(session).setLenient(true).parse(cmdName);
+            goodId = NutsId.of(cmdName).orElse(null);
         }
 
         if (cmdName.contains("/") || cmdName.contains("\\")) {
@@ -414,7 +414,7 @@ public class DefaultNutsExecCommand extends AbstractNutsExecCommand {
         return false;
     }
 
-    protected NutsExecutableInformationExt ws_execId(NutsId goodId, String commandName, String[] appArgs, String[] executorOptions,
+    protected NutsExecutableInformationExt ws_execId(NutsId goodId, String commandName, String[] appArgs, List<String> executorOptions,
                                                      NutsExecutionType executionType, NutsRunAs runAs,
                                                      NutsSession session, NutsSession execSession) {
         NutsDefinition def = session.fetch().setId(goodId)
@@ -431,11 +431,11 @@ public class DefaultNutsExecCommand extends AbstractNutsExecCommand {
         return ws_execDef(def, commandName, appArgs, executorOptions, env, directory, failFast, executionType, runAs, session, execSession);
     }
 
-    protected NutsExecutableInformationExt ws_execDef(NutsDefinition def, String commandName, String[] appArgs, String[] executorOptions, Map<String, String> env, String dir, boolean failFast, NutsExecutionType executionType, NutsRunAs runAs, NutsSession traceSession, NutsSession execSession) {
+    protected NutsExecutableInformationExt ws_execDef(NutsDefinition def, String commandName, String[] appArgs, List<String> executorOptions, Map<String, String> env, String dir, boolean failFast, NutsExecutionType executionType, NutsRunAs runAs, NutsSession traceSession, NutsSession execSession) {
         return new DefaultNutsArtifactExecutable(def, commandName, appArgs, executorOptions, env, dir, failFast, traceSession, execSession, executionType, runAs, this);
     }
 
-    public void ws_execId(NutsDefinition def, String commandName, String[] appArgs, String[] executorOptions, Map<String, String> env, String dir, boolean failFast, boolean temporary,
+    public void ws_execId(NutsDefinition def, String commandName, String[] appArgs, List<String> executorOptions, Map<String, String> env, String dir, boolean failFast, boolean temporary,
                           NutsSession session,
                           NutsSession execSession,
                           NutsExecutionType executionType,
@@ -503,7 +503,7 @@ public class DefaultNutsExecCommand extends AbstractNutsExecCommand {
 
             executorArgs.clear();
             executorArgs.addAll(Arrays.asList(optionsAndArgs.getOptions()));
-            executorArgs.addAll(Arrays.asList(executorOptions));
+            executorArgs.addAll(executorOptions);
             executorArgs.addAll(Arrays.asList(optionsAndArgs.getArgs()));
 
             NutsExecutionContextBuilder ecb = NutsWorkspaceExt.of(ws).createExecutionContext();

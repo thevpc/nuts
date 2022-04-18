@@ -77,39 +77,10 @@ public enum NutsInstallStrategy implements NutsEnum {
         this.id = name().toLowerCase().replace('_', '-');
     }
 
-    public static NutsInstallStrategy parseLenient(String value) {
-        return parseLenient(value, null);
+    public static NutsOptional<NutsInstallStrategy> parse(String value) {
+        return NutsApiUtils.parse(value, NutsInstallStrategy.class);
     }
 
-    public static NutsInstallStrategy parseLenient(String value, NutsInstallStrategy emptyOrErrorValue) {
-        return parseLenient(value, emptyOrErrorValue, emptyOrErrorValue);
-    }
-
-    public static NutsInstallStrategy parseLenient(String value, NutsInstallStrategy emptyValue, NutsInstallStrategy errorValue) {
-        if (value == null) {
-            value = "";
-        } else {
-            value = value.toUpperCase().trim().replace('-', '_');
-        }
-        if (value.isEmpty()) {
-            return emptyValue;
-        }
-        try {
-            return NutsInstallStrategy.valueOf(value.toUpperCase());
-        } catch (Exception notFound) {
-            return errorValue;
-        }
-    }
-
-    public static NutsInstallStrategy parse(String value, NutsSession session) {
-        return parse(value, null, session);
-    }
-
-    public static NutsInstallStrategy parse(String value, NutsInstallStrategy emptyValue, NutsSession session) {
-        NutsInstallStrategy v = parseLenient(value, emptyValue, null);
-        NutsApiUtils.checkNonNullEnum(v, value, NutsInstallStrategy.class, session);
-        return v;
-    }
 
     @Override
     public String id() {

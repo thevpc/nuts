@@ -222,7 +222,8 @@ public class DefaultNutsFetchCommand extends AbstractNutsFetchCommand {
                     } catch (NutsNotFoundException ex) {
                         //ignore
                         _LOGOP(getSession()).level(Level.WARNING).verb(NutsLogVerb.WARNING)
-                                .log(NutsMessage.jstyle("artifact descriptor found, but its parent is not: {0} with parent {1}", id.getLongName(), Arrays.toString(foundDefinition.getDescriptor().getParents())));
+                                .log(NutsMessage.jstyle("artifact descriptor found, but its parent is not: {0} with parent {1}", id.getLongName(),
+                                        foundDefinition.getDescriptor().getParents()));
                         foundDefinition = null;
                     }
                 }
@@ -441,10 +442,10 @@ public class DefaultNutsFetchCommand extends AbstractNutsFetchCommand {
                 nutsApp = "true".equals(map.get("nutsApplication"));
             } else {
                 try {
-                    NutsExecutionEntry[] t = NutsExecutionEntries.of(session).setSession(getSession()).parse(jar);
-                    if (t.length > 0) {
+                    List<NutsExecutionEntry> t = NutsExecutionEntries.of(session).setSession(getSession()).parse(jar);
+                    if (t.size() > 0) {
                         executable = true;
-                        if (t[0].isApp()) {
+                        if (t.get(0).isApp()) {
                             nutsApp = true;
                         }
                     }

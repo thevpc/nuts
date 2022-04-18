@@ -26,6 +26,8 @@ package net.thevpc.nuts.runtime.standalone.dependency;
 import net.thevpc.nuts.NutsDependency;
 import net.thevpc.nuts.NutsDependencyTreeNode;
 
+import java.util.List;
+
 /**
  *
  * @author thevpc
@@ -34,10 +36,10 @@ public class DefaultNutsDependencyTreeNode implements NutsDependencyTreeNode {
 
     public static final long serialVersionUID = 1L;
     private final NutsDependency dependency;
-    private final NutsDependencyTreeNode[] children;
+    private final List<NutsDependencyTreeNode> children;
     private final boolean partial;
 
-    public DefaultNutsDependencyTreeNode(NutsDependency dependency, NutsDependencyTreeNode[] children, boolean partial) {
+    public DefaultNutsDependencyTreeNode(NutsDependency dependency, List<NutsDependencyTreeNode> children, boolean partial) {
         this.dependency = dependency;
         this.children = children;
         this.partial = partial;
@@ -49,7 +51,7 @@ public class DefaultNutsDependencyTreeNode implements NutsDependencyTreeNode {
     }
 
     @Override
-    public NutsDependencyTreeNode[] getChildren() {
+    public List<NutsDependencyTreeNode> getChildren() {
         return children;
     }
 
@@ -68,11 +70,11 @@ public class DefaultNutsDependencyTreeNode implements NutsDependencyTreeNode {
                 s.append("?partial=true");
             }
         }
-        if (children.length>0) {
+        if (children.size()>0) {
             if (s.indexOf("?")>=0) {
-                s.append("&children-count=").append(children.length);
+                s.append("&children-count=").append(children.size());
             } else {
-                s.append("?children-count=").append(children.length);
+                s.append("?children-count=").append(children.size());
             }
         }
         return s.toString();

@@ -24,6 +24,7 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.boot.PrivateNutsUtilCollections;
 
 import java.util.*;
 
@@ -34,9 +35,9 @@ public class DefaultNutsExecutionContextBuilder implements NutsExecutionContextB
 
     private NutsDefinition definition;
     private Map<String, String> env;
-    private final List<String> executorArguments = new ArrayList<>();
+    private List<String> executorArguments = new ArrayList<>();
     private Map<String, String> executorProperties = new LinkedHashMap<>();
-    private String[] arguments;
+    private List<String> arguments;
     private NutsSession execSession;
     private NutsSession session;
     private NutsWorkspace workspace;
@@ -77,30 +78,24 @@ public class DefaultNutsExecutionContextBuilder implements NutsExecutionContextB
     }
 
     public DefaultNutsExecutionContextBuilder(NutsDefinition definition,
-                                              String[] arguments, String[] executorArgs, Map<String, String> env, Map<String, String> executorProperties,
+                                              List<String> arguments, List<String> executorArgs, Map<String, String> env, Map<String, String> executorProperties,
                                               String cwd, NutsSession session, NutsSession execSession, NutsWorkspace workspace, boolean failFast,
                                               boolean temporary,
                                               NutsExecutionType executionType,
                                               String commandName,
                                               long sleepMillis
     ) {
-        if (arguments == null) {
-            arguments = new String[0];
-        }
-        if (executorArgs == null) {
-            executorArgs = new String[0];
-        }
         if (executorProperties == null) {
             executorProperties = new LinkedHashMap<>();
         }
         this.commandName = commandName;
         this.definition = definition;
-        this.arguments = arguments;
+        this.arguments = PrivateNutsUtilCollections.nonNullList(arguments);
         this.execSession = execSession;
         this.session = session;
         this.workspace = workspace;
-        this.executorArguments.addAll(Arrays.asList(executorArgs));
-        this.executorProperties.putAll(executorProperties);
+        this.executorArguments = PrivateNutsUtilCollections.nonNullList(executorArgs);
+        this.executorProperties = PrivateNutsUtilCollections.unmodifiableMap(executorProperties);
         this.sleepMillis = sleepMillis;
         this.cwd = cwd;
         if (env == null) {
@@ -116,12 +111,12 @@ public class DefaultNutsExecutionContextBuilder implements NutsExecutionContextB
     public DefaultNutsExecutionContextBuilder(NutsExecutionContext other) {
         this.commandName = other.getCommandName();
         this.definition = other.getDefinition();
-        this.arguments = other.getArguments();
+        this.arguments = PrivateNutsUtilCollections.nonNullList(other.getArguments());
         this.execSession = other.getExecSession();
         this.session = other.getSession();
         this.workspace = other.getWorkspace();
-        this.executorArguments.addAll(Arrays.asList(other.getExecutorArguments()));
-        this.executorProperties.putAll(other.getExecutorProperties());
+        this.executorArguments.addAll(PrivateNutsUtilCollections.nonNullList(other.getExecutorArguments()));
+        this.executorProperties.putAll(PrivateNutsUtilCollections.nonNullMap(other.getExecutorProperties()));
         this.cwd = other.getCwd();
         this.env = other.getEnv();
         this.failFast = other.isFailFast();
@@ -156,7 +151,7 @@ public class DefaultNutsExecutionContextBuilder implements NutsExecutionContextB
     }
 
     @Override
-    public String[] getArguments() {
+    public List<String> getArguments() {
         return arguments;
     }
 
@@ -227,10 +222,25 @@ public class DefaultNutsExecutionContextBuilder implements NutsExecutionContextB
     }
 
     @Override
+    public NutsExecutionContextBuilder setExecutorArguments(List<String> executorOptions) {
+        this.executorArguments.clear();
+        this.executorArguments.addAll(PrivateNutsUtilCollections.nonNullList(executorArguments));
+        return this;
+    }
+
+    @Override
     public NutsExecutionContextBuilder setExecutorArguments(String[] executorArguments) {
         this.executorArguments.clear();
         if (executorArguments != null) {
             this.executorArguments.addAll(Arrays.asList(executorArguments));
+        }
+        return this;
+    }
+
+    @Override
+    public NutsExecutionContextBuilder addExecutorArguments(List<String> executorArguments) {
+        if (executorArguments != null) {
+            this.executorArguments.addAll(executorArguments);
         }
         return this;
     }
@@ -262,7 +272,7 @@ public class DefaultNutsExecutionContextBuilder implements NutsExecutionContextB
 
     @Override
     public NutsExecutionContextBuilder setArguments(String[] arguments) {
-        this.arguments = arguments;
+        this.arguments = PrivateNutsUtilCollections.nonNullList(Arrays.asList(arguments));
         return this;
     }
 
@@ -356,7 +366,7 @@ public class DefaultNutsExecutionContextBuilder implements NutsExecutionContextB
     @Override
     public NutsExecutionContext build() {
         return new DefaultNutsExecutionContext(
-                definition, arguments, executorArguments.toArray(new String[0]), env, executorProperties, cwd, session, execSession,
+                definition, arguments, executorArguments, env, executorProperties, cwd, session, execSession,
                 workspace, failFast, temporary, executionType,
                 commandName, sleepMillis, inheritSystemIO, redirectOuputFile, redirectInpuFile
         );
@@ -370,7 +380,7 @@ public class DefaultNutsExecutionContextBuilder implements NutsExecutionContextB
         this.session = other.getSession();
         this.workspace = other.getWorkspace();
         this.executorArguments.clear();
-        this.executorArguments.addAll(Arrays.asList(other.getExecutorArguments()));
+        this.executorArguments.addAll(other.getExecutorArguments());
         this.executorProperties = other.getExecutorProperties();
         this.cwd = other.getCwd();
         this.env = other.getEnv();

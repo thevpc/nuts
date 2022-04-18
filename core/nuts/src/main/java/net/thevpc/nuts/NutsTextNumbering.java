@@ -26,11 +26,13 @@
  */
 package net.thevpc.nuts;
 
+import java.util.List;
+
 /**
  * @app.category Format
  */
 public interface NutsTextNumbering {
-    NutsTitleNumber[] getPattern();
+    List<NutsTitleNumber> getPattern();
 
     NutsTextNumbering newLevel(int level);
 
@@ -38,7 +40,7 @@ public interface NutsTextNumbering {
 
     int size();
 
-    NutsTitleNumber[] getValue();
+    List<NutsTitleNumber> getValue();
 
     String getSeparator(int index);
 

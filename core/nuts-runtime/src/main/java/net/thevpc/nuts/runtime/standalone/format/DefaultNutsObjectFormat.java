@@ -75,8 +75,8 @@ public class DefaultNutsObjectFormat extends DefaultFormatBase<NutsObjectFormat>
         NutsSession session = getSession();
         NutsContentTypeFormat base = createObjectFormat();
         base.setSession(session);
-        base.configure(true, session.boot().getBootOptions().getOutputFormatOptions());
-        base.configure(true, session.getOutputFormatOptions());
+        base.configure(true, session.boot().getBootOptions().getOutputFormatOptions().toArray(new String[0]));
+        base.configure(true, session.getOutputFormatOptions().toArray(new String[0]));
         return base;
     }
 

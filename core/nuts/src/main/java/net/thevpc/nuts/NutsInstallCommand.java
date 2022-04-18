@@ -27,6 +27,7 @@
 package net.thevpc.nuts;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
 
@@ -117,7 +118,7 @@ public interface NutsInstallCommand extends NutsWorkspaceCommand {
      *
      * @return all ids to install
      */
-    NutsId[] getIds();
+    List<NutsId> getIds();
 
     /**
      * add artifact ids to install
@@ -173,7 +174,7 @@ public interface NutsInstallCommand extends NutsWorkspaceCommand {
      *
      * @return all arguments to pass to the install command
      */
-    String[] getArgs();
+    List<String> getArgs();
 
     /**
      * set default version flag. the installed version will be defined as default.

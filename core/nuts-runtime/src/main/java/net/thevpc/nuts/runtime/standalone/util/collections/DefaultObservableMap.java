@@ -56,8 +56,8 @@ public class DefaultObservableMap<K, V> extends AbstractMap<K, V> implements Obs
         }
     }
 
-    public NutsMapListener<K, V>[] getListeners() {
-        return listeners.toArray(new NutsMapListener[0]);
+    public List<NutsMapListener<K, V>> getListeners() {
+        return listeners;
     }
 
     @Override

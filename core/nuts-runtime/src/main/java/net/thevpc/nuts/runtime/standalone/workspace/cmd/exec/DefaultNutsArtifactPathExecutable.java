@@ -38,14 +38,14 @@ public class DefaultNutsArtifactPathExecutable extends AbstractNutsExecutableCom
     private final NutsLogger LOG;
     String cmdName;
     String[] args;
-    String[] executorOptions;
+    List<String> executorOptions;
     NutsExecutionType executionType;
     NutsRunAs runAs;
     NutsSession session;
     NutsSession execSession;
     DefaultNutsExecCommand execCommand;
 
-    public DefaultNutsArtifactPathExecutable(String cmdName, String[] args, String[] executorOptions, NutsExecutionType executionType, NutsRunAs runAs, NutsSession session, NutsSession execSession, DefaultNutsExecCommand execCommand, boolean inheritSystemIO) {
+    public DefaultNutsArtifactPathExecutable(String cmdName, String[] args, List<String> executorOptions, NutsExecutionType executionType, NutsRunAs runAs, NutsSession session, NutsSession execSession, DefaultNutsExecCommand execCommand, boolean inheritSystemIO) {
         super(cmdName,
                 NutsCommandLine.of(args,execSession).toString(),
                 NutsExecutableType.ARTIFACT);
@@ -70,7 +70,7 @@ public class DefaultNutsArtifactPathExecutable extends AbstractNutsExecutableCom
                 executorOptionsList.add(option);
 //            }
         }
-        this.executorOptions = executorOptionsList.toArray(new String[0]);
+        this.executorOptions = executorOptionsList;
     }
 
     @Override
@@ -136,7 +136,7 @@ public class DefaultNutsArtifactPathExecutable extends AbstractNutsExecutableCom
         }
     }
 
-    public static CharacterizedExecFile characterizeForExec(NutsStreamOrPath contentFile, NutsSession session, String[] execOptions) {
+    public static CharacterizedExecFile characterizeForExec(NutsStreamOrPath contentFile, NutsSession session, List<String> execOptions) {
         String classifier = null;//TODO how to get classifier?
         CharacterizedExecFile c = new CharacterizedExecFile(session);
         try {
@@ -220,7 +220,7 @@ public class DefaultNutsArtifactPathExecutable extends AbstractNutsExecutableCom
                         CoreDigestHelper d = new CoreDigestHelper(session);
                         d.append(c.contentFile);
                         String artifactId = d.getDigest();
-                        c.descriptor = NutsDescriptorBuilder.of(session)
+                        c.descriptor = new DefaultNutsDescriptorBuilder()
                                 .setId("temp:"+artifactId+"#1.0")
                                 .setPackaging(CoreIOUtils.getFileExtension(contentFile.getName()))
                                 .build();

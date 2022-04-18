@@ -87,34 +87,10 @@ public enum NutsPathPermission implements NutsEnum {
         this.id = name().toLowerCase();//.replace('_', '-');
     }
 
-    public static NutsPathPermission parseLenient(String value) {
-        return parseLenient(value, null, null);
+    public static NutsOptional<NutsPathPermission> parse(String value) {
+        return NutsApiUtils.parse(value, NutsPathPermission.class);
     }
 
-    public static NutsPathPermission parseLenient(String arch, NutsPathPermission emptyValue) {
-        return parseLenient(arch, emptyValue, emptyValue);
-    }
-
-    public static NutsPathPermission parseLenient(String value, NutsPathPermission emptyValue, NutsPathPermission errorValue) {
-        value = value == null ? "" : value.toUpperCase().replace('-', '_').trim();
-
-        try {
-            return valueOf(value);
-        } catch (Exception ex) {
-            return errorValue;
-        }
-
-    }
-
-    public static NutsPathPermission parse(String value, NutsSession session) {
-        return parse(value, null, session);
-    }
-
-    public static NutsPathPermission parse(String value, NutsPathPermission emptyValue, NutsSession session) {
-        NutsPathPermission v = parseLenient(value, emptyValue, null);
-        NutsApiUtils.checkNonNullEnum(v, value, NutsPathPermission.class, session);
-        return v;
-    }
 
     /**
      * lower cased identifier.

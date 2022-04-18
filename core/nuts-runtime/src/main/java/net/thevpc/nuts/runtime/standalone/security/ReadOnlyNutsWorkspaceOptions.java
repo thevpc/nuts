@@ -32,6 +32,7 @@ import java.io.PrintStream;
 import java.time.Instant;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.function.Supplier;
@@ -64,7 +65,7 @@ public class ReadOnlyNutsWorkspaceOptions implements NutsWorkspaceOptions {
     }
 
     @Override
-    public String[] getApplicationArguments() {
+    public List<String> getApplicationArguments() {
         return options.getApplicationArguments();
     }
 
@@ -99,7 +100,7 @@ public class ReadOnlyNutsWorkspaceOptions implements NutsWorkspaceOptions {
     }
 
     @Override
-    public String[] getExcludedExtensions() {
+    public List<String> getExcludedExtensions() {
         return options.getExcludedExtensions();
     }
 
@@ -118,9 +119,8 @@ public class ReadOnlyNutsWorkspaceOptions implements NutsWorkspaceOptions {
     }
 
     @Override
-    public String[] getExecutorOptions() {
-        String[] v = options.getExecutorOptions();
-        return v == null ? null : Arrays.copyOf(v, v.length);
+    public List<String> getExecutorOptions() {
+        return options.getExecutorOptions();
     }
 
     @Override
@@ -165,7 +165,7 @@ public class ReadOnlyNutsWorkspaceOptions implements NutsWorkspaceOptions {
     }
 
     @Override
-    public String[] getOutputFormatOptions() {
+    public List<String> getOutputFormatOptions() {
         return options.getOutputFormatOptions();
     }
 
@@ -210,7 +210,7 @@ public class ReadOnlyNutsWorkspaceOptions implements NutsWorkspaceOptions {
     }
 
     @Override
-    public String[] getRepositories() {
+    public List<String> getRepositories() {
         return options.getRepositories();
     }
 
@@ -460,12 +460,12 @@ public class ReadOnlyNutsWorkspaceOptions implements NutsWorkspaceOptions {
     }
 
     @Override
-    public NutsMessage[] getErrors() {
+    public List<NutsMessage> getErrors() {
         return options.getErrors();
     }
 
     @Override
-    public String[] getCustomOptions() {
+    public List<String> getCustomOptions() {
         return options.getCustomOptions();
     }
 

@@ -122,11 +122,11 @@ public class CommonRootsByIdHelper {
                 sb.append(aa[i]);
             }
         }
-        return NutsId.of(sb.toString() + ":*", session);
+        return NutsId.of(sb.toString() + ":*").get( session);
     }
 
     private static Set<NutsId> resolveRootId(String groupId, String artifactId, String version, NutsSession session) {
-        return new HashSet<>(Collections.singletonList(NutsIdBuilder.of(session).setGroupId(
+        return new HashSet<>(Collections.singletonList(new DefaultNutsIdBuilder().setGroupId(
                 NutsBlankable.isBlank(groupId) ? "*" : groupId
         ).setArtifactId(NutsBlankable.isBlank(artifactId) ? "*" : artifactId).build()));
     }
@@ -139,7 +139,7 @@ public class CommonRootsByIdHelper {
         Set<NutsId> v = resolveRootId0(filter, session);
         if (v == null) {
             HashSet<NutsId> s = new HashSet<>();
-            s.add(NutsId.of("*:*", session));
+            s.add(NutsId.of("*:*").get( session));
             return s;
         }
         return v;

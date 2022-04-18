@@ -298,7 +298,7 @@ final class PrivateNutsArgumentsParser {
                         a = cmdLine.nextString();
                         String v = a.getValue().getString();
                         if (active) {
-                            NutsStoreLocation m = NutsStoreLocation.valueOf(k.substring(2, k.indexOf('-',2)).toUpperCase());
+                            NutsStoreLocation m = NutsStoreLocation.valueOf(k.substring(2, k.indexOf('-', 2)).toUpperCase());
                             options.setStoreLocation(m, v);
                         }
                         break;
@@ -537,15 +537,15 @@ final class PrivateNutsArgumentsParser {
                     case "--debug": {
                         a = cmdLine.next();
                         if (active) {
-                            if(NutsBlankable.isBlank(a.getValue().getString())){
+                            if (NutsBlankable.isBlank(a.getValue().getString())) {
                                 options.setDebug(String.valueOf(a.isEnabled()));
-                            }else {
-                                if(a.isNegated()){
+                            } else {
+                                if (a.isNegated()) {
                                     options.setDebug(
-                                        String.valueOf(!NutsUtilStrings.parseBoolean(a.getValue().getString(),
-                                                true,false
-                                        )));
-                                }else {
+                                            String.valueOf(!NutsUtilStrings.parseBoolean(a.getValue().getString(),
+                                                    true, false
+                                            )));
+                                } else {
                                     options.setDebug(a.getValue().getString());
                                 }
                             }
@@ -1088,13 +1088,13 @@ final class PrivateNutsArgumentsParser {
             }
         }
 
-        options.setCustomOptions(customOptions.toArray(new String[0]));
+        options.setCustomOptions(new ArrayList<>(customOptions));
         options.setLogConfig(logConfig);
-        options.setExcludedExtensions(excludedExtensions.toArray(new String[0]));
-        options.setRepositories(repositories.toArray(new String[0]));
+        options.setExcludedExtensions(new ArrayList<>(excludedExtensions));
+        options.setRepositories(new ArrayList<>(repositories));
         options.setApplicationArguments(applicationArguments.toArray(new String[0]));
-        options.setExecutorOptions(executorOptions.toArray(new String[0]));
-        options.setErrors(showError.toArray(new NutsMessage[0]));
+        options.setExecutorOptions(new ArrayList<>(executorOptions));
+        options.setErrors(new ArrayList<>(showError));
         //error only if not asking for help
         if (!(applicationArguments.size() > 0
                 && (
@@ -1237,7 +1237,7 @@ final class PrivateNutsArgumentsParser {
     }
 
     private static NutsStoreLocationStrategy parseNutsStoreLocationStrategy(String s) {
-        NutsStoreLocationStrategy m = NutsStoreLocationStrategy.parseLenient(s, null, null);
+        NutsStoreLocationStrategy m = NutsStoreLocationStrategy.parse(s).orElse(null);
         if (m == null && !NutsBlankable.isBlank(s)) {
             throw new NutsBootException(NutsMessage.cstyle("unable to parse value for NutsStoreLocationStrategy : %s", s));
         }
@@ -1245,7 +1245,7 @@ final class PrivateNutsArgumentsParser {
     }
 
     private static NutsOsFamily parseNutsOsFamily(String s) {
-        NutsOsFamily m = NutsOsFamily.parseLenient(s, null, null);
+        NutsOsFamily m = NutsOsFamily.parse(s).orElse(null);
         if (m == null && !NutsBlankable.isBlank(s)) {
             throw new NutsBootException(NutsMessage.cstyle("unable to parse value for NutsOsFamily : %s", s));
         }
@@ -1253,7 +1253,7 @@ final class PrivateNutsArgumentsParser {
     }
 
     private static NutsOpenMode parseNutsOpenMode(String s) {
-        NutsOpenMode m = NutsOpenMode.parseLenient(s, null, null);
+        NutsOpenMode m = NutsOpenMode.parse(s).orElse(null);
         if (m == null && !NutsBlankable.isBlank(s)) {
             throw new NutsBootException(NutsMessage.cstyle("unable to parse value for NutsOpenMode : %s", s));
         }

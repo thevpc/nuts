@@ -516,6 +516,14 @@ public final class CoreStringUtils {
         return sb.toString();
     }
 
+    public static List<String> parseAndTrimToDistinctReadOnlyList(String s){
+        return Collections.unmodifiableList(parseAndTrimToDistinctList(s));
+    }
+
+    public static List<String> parseAndTrimToDistinctList(String s){
+        return Arrays.asList(parseAndTrimToDistinctArray(s));
+    }
+
     public static String[] parseAndTrimToDistinctArray(String s){
         if(s==null){
             return  new String[0];
@@ -525,7 +533,7 @@ public final class CoreStringUtils {
                 .distinct().toArray(String[]::new);
     }
 
-    public static String joinAndTrimToNull(String[] args){
+    public static String joinAndTrimToNull(List<String> args){
         return NutsUtilStrings.trimToNull(
                 String.join(",",args)
         );

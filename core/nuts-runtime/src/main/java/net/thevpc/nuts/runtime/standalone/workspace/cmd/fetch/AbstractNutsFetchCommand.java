@@ -16,7 +16,7 @@ public abstract class AbstractNutsFetchCommand extends DefaultNutsQueryBaseOptio
     @Override
     public NutsFetchCommand setId(String id) {
         checkSession();
-        this.id = NutsId.of(id,session);
+        this.id = NutsId.of(id).get(session);
         return this;
     }
 

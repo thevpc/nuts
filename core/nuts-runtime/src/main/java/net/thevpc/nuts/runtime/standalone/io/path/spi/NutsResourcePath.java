@@ -54,11 +54,10 @@ public class NutsResourcePath implements NutsPathSPI {
         } else {
             throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("invalid path %s", path));
         }
-        NutsIdParser nutsIdParser = NutsIdParser.of(session);
         this.ids = StringTokenizerUtils.splitSemiColon(idsStr).stream().map(x -> {
             x = x.trim();
             if (x.length() > 0) {
-                return nutsIdParser.parse(x);
+                return NutsId.of(x).get(session);
             }
             return null;
         }).filter(Objects::nonNull).collect(Collectors.toList());
@@ -443,7 +442,7 @@ public class NutsResourcePath implements NutsPathSPI {
     }
 
     @Override
-    public String[] getItems(NutsPath basePath) {
+    public List<String> getItems(NutsPath basePath) {
         return NutsPath.of(location, getSession()).getItems();
     }
 
@@ -516,13 +515,12 @@ public class NutsResourcePath implements NutsPathSPI {
                 int x = path.indexOf(')');
                 if (x > 0) {
                     String idsStr = path.substring("nuts-resource://(".length(), x);
-                    NutsIdParser nutsIdParser = NutsIdParser.of(p.getSession());
                     tb.appendJoined(
                             NutsTexts.of(p.getSession()).ofStyled(";", NutsTextStyle.separator()),
                             StringTokenizerUtils.splitSemiColon(idsStr).stream().map(xi -> {
                                 xi = xi.trim();
                                 if (xi.length() > 0) {
-                                    NutsId pp = nutsIdParser.parse(xi);
+                                    NutsId pp = NutsId.of(xi).get(p.getSession());
                                     if (pp == null) {
                                         return xi;
                                     }
@@ -539,7 +537,7 @@ public class NutsResourcePath implements NutsPathSPI {
                 int x = path.indexOf('/', "nuts-resource://".length());
                 if (x > 0) {
                     String sid = path.substring("nuts-resource://".length(), x);
-                    NutsId ii = NutsId.of(sid, p.getSession());
+                    NutsId ii = NutsId.of(sid).get(p.getSession());
                     if (ii == null) {
                         tb.append(sid);
                     } else {
@@ -591,7 +589,7 @@ public class NutsResourcePath implements NutsPathSPI {
         @Override
         public NutsString toCompressedString(NutsPath base, NutsSession session) {
             return rebuildURL2(NutsPathParts.compressPath(location, session),
-                    ids.stream().map(x -> NutsId.of(x.getArtifactId(), session)).toArray(NutsId[]::new)
+                    ids.stream().map(x -> NutsId.of(x.getArtifactId()).get(session)).toArray(NutsId[]::new)
                     ,session
             );
         }

@@ -389,7 +389,7 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
         String p = path.toString().substring(rootFolder.toString().length());
         List<String> split = StringTokenizerUtils.split(p, "/\\");
         if (split.size() >= 4) {
-            return NutsIdBuilder.of(session).setArtifactId(split.get(split.size() - 3))
+            return new DefaultNutsIdBuilder().setArtifactId(split.get(split.size() - 3))
                     .setGroupId(String.join(".", split.subList(0, split.size() - 3)))
                     .setVersion(split.get(split.size() - 2)).build();
 
@@ -439,7 +439,7 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
             );
             if (c != null) {
                 boolean changeStatus = false;
-                NutsVersion v = NutsVersion.of(c.getConfigVersion(), session);
+                NutsVersion v = NutsVersion.of(c.getConfigVersion()).get(session);
                 if (v.isBlank()) {
                     c.setInstalled(true);
                     c.setConfigVersion("0.5.8"); //last version before 0.6
@@ -783,7 +783,7 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
                             = getSession().locations().getStoreLocation(getId()
                             .builder().setVersion("ANY").build(), NutsStoreLocation.CONFIG).getParent();
                     if (installFolder.isDirectory()) {
-                        final NutsVersionFilter filter0 = getId().getVersion().filter();
+                        final NutsVersionFilter filter0 = getId().getVersion().filter(getSession());
                         result = IteratorBuilder.of(installFolder.list().iterator(), getSession())
                                 .map(NutsFunction.of(
                                         new Function<NutsPath, NutsId>() {
@@ -791,7 +791,7 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
                                             public NutsId apply(NutsPath folder) {
                                                 if (folder.isDirectory()
                                                         && folder.resolve(NUTS_INSTALL_FILE).isRegularFile()) {
-                                                    NutsVersion vv = NutsVersion.of(folder.getName(), getSession());
+                                                    NutsVersion vv = NutsVersion.of(folder.getName()).get(getSession());
                                                     NutsIdFilter filter = getFilter();
                                                     NutsSession session = getSession();
                                                     if (filter0.acceptVersion(vv, session) && (filter == null || filter.acceptId(

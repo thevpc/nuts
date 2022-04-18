@@ -66,12 +66,12 @@ public class DefaultNutsPlatformModel {
             if (notify) {
                 if (session.isPlainTrace()) {
                     session.out().resetLine().printf("%s %s %s (%s) %s at %s%n",
-                            NutsTexts.of(session).ofStyled("install",NutsTextStyles.of(NutsTextStyle.success())),
+                            NutsTexts.of(session).ofStyled("install", NutsTextStyles.of(NutsTextStyle.success())),
                             location.getId().getShortName(),
                             location.getPackaging(),
                             location.getProduct(),
-                            NutsVersion.of(location.getVersion(),session),
-                            NutsPath.of(location.getPath(),session)
+                            NutsVersion.of(location.getVersion()).get(session),
+                            NutsPath.of(location.getPath(), session)
                     );
                 }
                 NutsWorkspaceConfigManagerExt.of(session.config())
@@ -130,7 +130,7 @@ public class DefaultNutsPlatformModel {
             return null;
         }
         String type = location.getId().getArtifactId();
-        NutsPlatformFamily ftype = NutsPlatformFamily.parseLenient(type, NutsPlatformFamily.JAVA, NutsPlatformFamily.UNKNOWN);
+        NutsPlatformFamily ftype = NutsPlatformFamily.parse(type).orElse(NutsPlatformFamily.JAVA);
         List<NutsPlatformLocation> list = getPlatforms().get(ftype);
         if (list != null) {
             for (NutsPlatformLocation location2 : list) {
@@ -144,39 +144,39 @@ public class DefaultNutsPlatformModel {
 
     public NutsPlatformLocation findPlatformByVersion(NutsPlatformFamily type, NutsVersionFilter javaVersionFilter, final NutsSession session) {
         return findOnePlatform(type,
-                location -> javaVersionFilter == null || javaVersionFilter.acceptVersion(NutsVersion.of(location.getVersion(),session), session),
-                 session);
+                location -> javaVersionFilter == null || javaVersionFilter.acceptVersion(NutsVersion.of(location.getVersion()).get(session), session),
+                session);
     }
 
-    public NutsPlatformLocation[] searchSystemPlatforms(NutsPlatformFamily platformType, NutsSession session) {
+    public NutsStream<NutsPlatformLocation> searchSystemPlatforms(NutsPlatformFamily platformType, NutsSession session) {
         NutsSessionUtils.checkSession(workspace, session);
-        if (platformType== NutsPlatformFamily.JAVA) {
+        if (platformType == NutsPlatformFamily.JAVA) {
             try {
-                return NutsJavaSdkUtils.of(session.getWorkspace()).searchJdkLocationsFuture(session).get();
+                return NutsStream.of(NutsJavaSdkUtils.of(session.getWorkspace()).searchJdkLocationsFuture(session).get(), session);
             } catch (InterruptedException | ExecutionException e) {
                 throw new RuntimeException(e);
             }
         }
-        return new NutsPlatformLocation[0];
+        return NutsStream.ofEmpty(session);
     }
 
-    public NutsPlatformLocation[] searchSystemPlatforms(NutsPlatformFamily platformType, String path, NutsSession session) {
+    public NutsStream<NutsPlatformLocation> searchSystemPlatforms(NutsPlatformFamily platformType, String path, NutsSession session) {
         NutsSessionUtils.checkSession(workspace, session);
-        if (platformType== NutsPlatformFamily.JAVA) {
-            return NutsJavaSdkUtils.of(session.getWorkspace()).searchJdkLocations(path, session);
+        if (platformType == NutsPlatformFamily.JAVA) {
+            return NutsStream.of(NutsJavaSdkUtils.of(session.getWorkspace()).searchJdkLocations(path, session), session);
         }
-        return new NutsPlatformLocation[0];
+        return NutsStream.ofEmpty(session);
     }
 
     public NutsPlatformLocation resolvePlatform(NutsPlatformFamily platformType, String path, String preferredName, NutsSession session) {
         NutsSessionUtils.checkSession(workspace, session);
-        if (platformType== NutsPlatformFamily.JAVA) {
+        if (platformType == NutsPlatformFamily.JAVA) {
             return NutsJavaSdkUtils.of(session.getWorkspace()).resolveJdkLocation(path, null, session);
         }
         return null;
     }
 
-//    
+    //
     public void setPlatforms(NutsPlatformLocation[] locations, NutsSession session) {
         model.getConfigPlatforms().clear();
         for (NutsPlatformLocation platform : locations) {
@@ -185,19 +185,19 @@ public class DefaultNutsPlatformModel {
     }
 
     public NutsPlatformLocation findOnePlatform(NutsPlatformFamily type, Predicate<NutsPlatformLocation> filter, NutsSession session) {
-        NutsPlatformLocation[] a = findPlatforms(type, filter, session);
-        if(a.length == 0){
+        NutsPlatformLocation[] a = findPlatforms(type, filter, session).toArray(NutsPlatformLocation[]::new);
+        if (a.length == 0) {
             return null;
         }
-        if(a.length == 1){
+        if (a.length == 1) {
             return a[0];
         }
         //find the best minimum version that is applicable!
-        NutsPlatformLocation best=a[0];
+        NutsPlatformLocation best = a[0];
         for (int i = 1; i < a.length; i++) {
-            NutsVersion v1 = NutsVersion.of(best.getVersion(), session);
-            NutsVersion v2 = NutsVersion.of(a[i].getVersion(), session);
-            if(type==NutsPlatformFamily.JAVA) {
+            NutsVersion v1 = NutsVersion.of(best.getVersion()).get(session);
+            NutsVersion v2 = NutsVersion.of(a[i].getVersion()).get(session);
+            if (type == NutsPlatformFamily.JAVA) {
                 double d1 = Double.parseDouble(JavaClassUtils.sourceVersionToClassVersion(v1.getValue(), session));
                 double d2 = Double.parseDouble(JavaClassUtils.sourceVersionToClassVersion(v2.getValue(), session));
                 if (d1 == d2) {
@@ -211,7 +211,7 @@ public class DefaultNutsPlatformModel {
                         best = a[i];
                     }
                 }
-            }else{
+            } else {
                 if (v1.compareTo(v2) > 0) {
                     best = a[i];
                 }
@@ -220,20 +220,20 @@ public class DefaultNutsPlatformModel {
         return best;
     }
 
-    public NutsPlatformLocation[] findPlatforms(NutsPlatformFamily type, Predicate<NutsPlatformLocation> filter, NutsSession session) {
+    public NutsStream<NutsPlatformLocation> findPlatforms(NutsPlatformFamily type, Predicate<NutsPlatformLocation> filter, NutsSession session) {
         if (filter == null) {
             if (type == null) {
                 List<NutsPlatformLocation> all = new ArrayList<>();
                 for (List<NutsPlatformLocation> value : model.getConfigPlatforms().values()) {
                     all.addAll(value);
                 }
-                return all.toArray(new NutsPlatformLocation[0]);
+                return NutsStream.of(all, session);
             }
             List<NutsPlatformLocation> list = getPlatforms().get(type);
             if (list == null) {
-                return new NutsPlatformLocation[0];
+                return NutsStream.ofEmpty(session);
             }
-            return list.toArray(new NutsPlatformLocation[0]);
+            return NutsStream.of(list, session);
         }
         List<NutsPlatformLocation> ret = new ArrayList<>();
         if (type == null) {
@@ -257,7 +257,7 @@ public class DefaultNutsPlatformModel {
         if (!ret.isEmpty()) {
             ret.sort(new NutsPlatformLocationSelectComparator(session));
         }
-        return ret.toArray(new NutsPlatformLocation[0]);
+        return NutsStream.of(ret, session);
     }
 
 //    private NutsPlatformFamily toValidPlatformName(NutsPlatformFamily type) {

@@ -30,6 +30,7 @@ import net.thevpc.nuts.boot.NutsApiUtils;
 import net.thevpc.nuts.spi.NutsComponent;
 
 import java.util.Collection;
+import java.util.List;
 
 /**
  * @app.category Format
@@ -114,7 +115,7 @@ public interface NutsTexts extends NutsComponent {
 
     NutsTexts removeCodeHighlighter(String id);
 
-    NutsCodeHighlighter[] getCodeHighlighters();
+    List<NutsCodeHighlighter> getCodeHighlighters();
 
     NutsText parse(String t);
 

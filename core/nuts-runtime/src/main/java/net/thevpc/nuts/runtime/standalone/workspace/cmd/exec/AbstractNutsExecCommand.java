@@ -1,6 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.exec;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.boot.PrivateNutsUtilCollections;
 import net.thevpc.nuts.runtime.standalone.executor.system.ProcessBuilder2;
 import net.thevpc.nuts.runtime.standalone.io.printstream.NutsByteArrayPrintStream;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
@@ -63,8 +64,8 @@ public abstract class AbstractNutsExecCommand extends NutsWorkspaceCommandBase<N
     }
 
     @Override
-    public String[] getCommand() {
-        return command == null ? new String[0] : command.toArray(new String[0]);
+    public List<String> getCommand() {
+        return PrivateNutsUtilCollections.unmodifiableList(command);
     }
 
     @Override
@@ -399,8 +400,8 @@ public abstract class AbstractNutsExecCommand extends NutsWorkspaceCommandBase<N
     }
 
     @Override
-    public String[] getExecutorOptions() {
-        return executorOptions == null ? new String[0] : executorOptions.toArray(new String[0]);
+    public List<String> getExecutorOptions() {
+        return PrivateNutsUtilCollections.unmodifiableList(executorOptions);
     }
 
     @Override

@@ -129,7 +129,7 @@ public class DefaultNutsTexts implements NutsTexts {
             return (NutsText) t;
         }
         if (t instanceof NutsFormattable) {
-            return (((NutsFormattable) t).formatter().setSession(getSession()).setNtf(true).format()).toText();
+            return (((NutsFormattable) t).formatter(session).setSession(getSession()).setNtf(true).format()).toText();
         }
         if (t instanceof NutsMessage) {
             return _NutsMessage_toString((NutsMessage) t);
@@ -348,9 +348,9 @@ public class DefaultNutsTexts implements NutsTexts {
     }
 
     @Override
-    public NutsCodeHighlighter[] getCodeHighlighters() {
+    public List<NutsCodeHighlighter> getCodeHighlighters() {
         checkSession();
-        return shared.getCodeHighlighters(getSession());
+        return Arrays.asList(shared.getCodeHighlighters(getSession()));
     }
 
     @Override

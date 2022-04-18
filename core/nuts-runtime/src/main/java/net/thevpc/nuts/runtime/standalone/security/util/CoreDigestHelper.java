@@ -36,6 +36,10 @@ public class CoreDigestHelper {
         }
     }
 
+    public CoreDigestHelper append(List<URL> urls) {
+        return append(urls.toArray(new URL[0]));
+    }
+
     public CoreDigestHelper append(URL... urls) {
         try {
             if (urls != null) {

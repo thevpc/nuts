@@ -237,6 +237,8 @@ public interface NutsDependencyFilters extends NutsTypedFilters<NutsDependencyFi
      */
     NutsDependencyFilter byDesktop(NutsDesktopEnvironmentFamily... de);
 
+    NutsDependencyFilter byDesktop(Collection<NutsDesktopEnvironmentFamily> de);
+
     /**
      * accept only dependencies that match any of the given Platform
      * @param pf accepted Desktop Environment list

@@ -308,8 +308,8 @@ public class PropsCommand extends SimpleJShellBuiltin {
             switch (format) {
                 case AUTO: {
                     NutsObjectFormat f = NutsObjectFormat.of(session).setValue(p);
-                    f.configure(true, session.boot().getBootOptions().getOutputFormatOptions());
-                    f.configure(true, session.getOutputFormatOptions());
+                    f.configure(true, session.boot().getBootOptions().getOutputFormatOptions().toArray(new String[0]));
+                    f.configure(true, session.getOutputFormatOptions().toArray(new String[0]));
                     f.println(session.out());
                     break;
                 }

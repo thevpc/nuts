@@ -33,6 +33,7 @@ import java.io.InputStream;
 import java.io.PrintStream;
 import java.io.Serializable;
 import java.time.Instant;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.function.Supplier;
@@ -89,9 +90,9 @@ public interface NutsWorkspaceOptionsBuilder extends Serializable, NutsComponent
      *
      * @return application arguments.
      */
-    String[] getApplicationArguments();
+    List<String> getApplicationArguments();
 
-    NutsWorkspaceOptionsBuilder setApplicationArguments(String[] applicationArguments);
+    NutsWorkspaceOptionsBuilder setApplicationArguments(List<String> applicationArguments);
 
     /**
      * workspace archetype to consider when creating a new workspace.
@@ -166,9 +167,9 @@ public interface NutsWorkspaceOptionsBuilder extends Serializable, NutsComponent
      *
      * @return extensions to be excluded when opening the workspace.
      */
-    String[] getExcludedExtensions();
+    List<String> getExcludedExtensions();
 
-    NutsWorkspaceOptionsBuilder setExcludedExtensions(String[] excludedExtensions);
+    NutsWorkspaceOptionsBuilder setExcludedExtensions(List<String> excludedExtensions);
 
     /**
      * execution type.
@@ -199,9 +200,9 @@ public interface NutsWorkspaceOptionsBuilder extends Serializable, NutsComponent
      *
      * @return extra executor options.
      */
-    String[] getExecutorOptions();
+    List<String> getExecutorOptions();
 
-    NutsWorkspaceOptionsBuilder setExecutorOptions(String[] executorOptions);
+    NutsWorkspaceOptionsBuilder setExecutorOptions(List<String> executorOptions);
 
     /**
      * return home location.
@@ -309,9 +310,9 @@ public interface NutsWorkspaceOptionsBuilder extends Serializable, NutsComponent
      *
      * @return default output formation options.
      */
-    String[] getOutputFormatOptions();
+    List<String> getOutputFormatOptions();
 
-    NutsWorkspaceOptionsBuilder setOutputFormatOptions(String... options);
+    NutsWorkspaceOptionsBuilder setOutputFormatOptions(List<String> options);
 
     /**
      * credential needed to log into workspace.
@@ -424,9 +425,9 @@ public interface NutsWorkspaceOptionsBuilder extends Serializable, NutsComponent
      *
      * @return repositories to register temporarily when running the workspace.
      */
-    String[] getRepositories();
+    List<String> getRepositories();
 
-    NutsWorkspaceOptionsBuilder setRepositories(String[] transientRepositories);
+    NutsWorkspaceOptionsBuilder setRepositories(List<String> transientRepositories);
 
     /**
      * username to log into when running workspace.
@@ -851,13 +852,13 @@ public interface NutsWorkspaceOptionsBuilder extends Serializable, NutsComponent
 
     NutsWorkspaceOptionsBuilder setSwitchWorkspace(Boolean value);
 
-    NutsMessage[] getErrors();
+    List<NutsMessage> getErrors();
 
-    NutsWorkspaceOptionsBuilder setErrors(NutsMessage[] errors);
+    NutsWorkspaceOptionsBuilder setErrors(List<NutsMessage> errors);
 
-    String[] getCustomOptions();
+    List<String> getCustomOptions();
 
-    NutsWorkspaceOptionsBuilder setCustomOptions(String[] properties);
+    NutsWorkspaceOptionsBuilder setCustomOptions(List<String> properties);
 
     /**
      * locale

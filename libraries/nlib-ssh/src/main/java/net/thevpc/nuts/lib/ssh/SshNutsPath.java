@@ -509,7 +509,7 @@ class SshNutsPath implements NutsPathSPI {
     }
 
     @Override
-    public String[] getItems(NutsPath basePath) {
+    public List<String> getItems(NutsPath basePath) {
         return NutsPath.of(getLocation(basePath), getSession()).getItems();
     }
 

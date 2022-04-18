@@ -426,7 +426,7 @@ public class NutsRepositoryFolderHelper {
         }
         return NutsLocks.of(session).setSource(descFile).call(() -> {
 
-            desc.formatter().setSession(session).setNtf(false).print(descFile);
+            desc.formatter(session).setNtf(false).print(descFile);
             byte[] bytes = NutsDigest.of(session).sha1().setSource(desc).computeString().getBytes();
             NutsCp.of(session)
                     .from(
@@ -436,8 +436,7 @@ public class NutsRepositoryFolderHelper {
                                             NutsMessage.cstyle("sha1://%s", desc.getId()),
                                             bytes.length,
                                             CoreIOUtils.MIME_TYPE_SHA1,
-                                            "descriptor hash",
-                                            session
+                                            "descriptor hash"
                                     )
                             )
                     ).to(descFile.resolveSibling(descFile.getName() + ".sha1")).addOptions(NutsPathOption.SAFE).run();

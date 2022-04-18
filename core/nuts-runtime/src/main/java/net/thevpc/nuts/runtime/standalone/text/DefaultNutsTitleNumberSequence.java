@@ -3,6 +3,7 @@ package net.thevpc.nuts.runtime.standalone.text;
 import net.thevpc.nuts.NutsTitleNumber;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import net.thevpc.nuts.NutsTextNumbering;
 
@@ -53,12 +54,12 @@ public class DefaultNutsTitleNumberSequence implements NutsTextNumbering {
     }
 
     @Override
-    public NutsTitleNumber[] getPattern() {
+    public List<NutsTitleNumber> getPattern() {
         NutsTitleNumber[] pattern = new NutsTitleNumber[value.length];
         for (int i = 0; i < pattern.length; i++) {
             pattern[i] = value[i].none();
         }
-        return pattern;
+        return new ArrayList<>(Arrays.asList(pattern));
     }
 
     public NutsTitleNumber numberAt(int level, NutsTitleNumber[] all0, NutsTitleNumber[] all) {
@@ -125,7 +126,7 @@ public class DefaultNutsTitleNumberSequence implements NutsTextNumbering {
         return value.length;
     }
 
-    public NutsTitleNumber[] getValue() {
+    public List<NutsTitleNumber> getValue() {
         List<NutsTitleNumber> ok = new ArrayList<>();
         for (int i = 0; i < value.length; i++) {
             if (value[i] == null || value[i].isNone()) {
@@ -133,7 +134,7 @@ public class DefaultNutsTitleNumberSequence implements NutsTextNumbering {
             }
             ok.add(value[i]);
         }
-        return ok.toArray(new NutsTitleNumber[0]);
+        return ok;
     }
 
     //        @Override
@@ -157,12 +158,12 @@ public class DefaultNutsTitleNumberSequence implements NutsTextNumbering {
 
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        NutsTitleNumber[] v = getValue();
-        for (int i = 0; i < v.length; i++) {
+        List<NutsTitleNumber> v = getValue();
+        for (int i = 0; i < v.size(); i++) {
             if (i > 0) {
                 sb.append(getSeparator(i - 1));
             }
-            sb.append(v[i].toString());
+            sb.append(v.get(i).toString());
         }
         return sb.toString();
     }

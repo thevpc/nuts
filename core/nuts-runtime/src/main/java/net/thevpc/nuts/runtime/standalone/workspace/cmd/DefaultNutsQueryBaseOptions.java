@@ -299,7 +299,7 @@ public abstract class DefaultNutsQueryBaseOptions<T extends NutsWorkspaceCommand
             case "--scope": {
                 String s = cmdLine.nextString().getValue().getString();
                 if (enabled) {
-                    NutsDependencyScopePattern p = NutsDependencyScopePattern.parseLenient(s,NutsDependencyScopePattern.API,NutsDependencyScopePattern.API);
+                    NutsDependencyScopePattern p = NutsDependencyScopePattern.parse(s).orElse(NutsDependencyScopePattern.API);
                     this.addScope(p);
                 }
                 return true;

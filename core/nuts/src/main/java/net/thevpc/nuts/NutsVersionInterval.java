@@ -26,7 +26,10 @@
  */
 package net.thevpc.nuts;
 
+import net.thevpc.nuts.boot.PrivateNutsVersionIntervalParser;
+
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * @author thevpc
@@ -35,6 +38,22 @@ import java.io.Serializable;
  */
 public interface NutsVersionInterval extends Serializable {
 
+    static NutsOptional<NutsVersionInterval> of(String s){
+        return ofList(s).flatMap(
+                x->{
+                    if(x.isEmpty()){
+                        return NutsOptional.ofEmpty(y->NutsMessage.cstyle("empty interval"));
+                    }
+                    if(x.size()>1){
+                        return NutsOptional.ofError(y->NutsMessage.cstyle("too many intervals"));
+                    }
+                    return NutsOptional.of(x.get(0));
+                }
+        );
+    }
+    static NutsOptional<List<NutsVersionInterval>> ofList(String s){
+        return new PrivateNutsVersionIntervalParser().parse(s);
+    }
     boolean acceptVersion(NutsVersion version);
 
     boolean isFixedValue();

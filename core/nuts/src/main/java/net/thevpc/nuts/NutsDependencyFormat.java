@@ -29,6 +29,8 @@ package net.thevpc.nuts;
 import net.thevpc.nuts.boot.NutsApiUtils;
 import net.thevpc.nuts.spi.NutsComponent;
 
+import java.util.List;
+
 /**
  * Dependency Format Helper
  *
@@ -204,7 +206,7 @@ public interface NutsDependencyFormat extends NutsFormat, NutsComponent {
      *
      * @return list of all omitted query properties
      */
-    String[] getOmitQueryProperties();
+    List<String> getOmitQueryProperties();
 
     /**
      * return true if omit query property named {@code name}

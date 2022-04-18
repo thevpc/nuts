@@ -59,39 +59,10 @@ public enum NutsTextFormatStyle implements NutsEnum {
         this.id = name().toLowerCase().replace('_', '-');
     }
 
-    public static NutsTextFormatStyle parseLenient(String value) {
-        return parseLenient(value, null);
+    public static NutsOptional<NutsTextFormatStyle> parse(String value) {
+        return NutsApiUtils.parse(value, NutsTextFormatStyle.class);
     }
 
-    public static NutsTextFormatStyle parseLenient(String value, NutsTextFormatStyle emptyOrErrorValue) {
-        return parseLenient(value, emptyOrErrorValue, emptyOrErrorValue);
-    }
-
-    public static NutsTextFormatStyle parseLenient(String value, NutsTextFormatStyle emptyValue, NutsTextFormatStyle errorValue) {
-        if (value == null) {
-            value = "";
-        } else {
-            value = value.toUpperCase().trim().replace('-', '_');
-        }
-        if (value.isEmpty()) {
-            return emptyValue;
-        }
-        try {
-            return NutsTextFormatStyle.valueOf(value.toUpperCase());
-        } catch (Exception notFound) {
-            return errorValue;
-        }
-    }
-
-    public static NutsTextFormatStyle parse(String value, NutsSession session) {
-        return parse(value, null, session);
-    }
-
-    public static NutsTextFormatStyle parse(String value, NutsTextFormatStyle emptyValue, NutsSession session) {
-        NutsTextFormatStyle v = parseLenient(value, emptyValue, null);
-        NutsApiUtils.checkNonNullEnum(v, value, NutsTextFormatStyle.class, session);
-        return v;
-    }
 
     @Override
     public String id() {

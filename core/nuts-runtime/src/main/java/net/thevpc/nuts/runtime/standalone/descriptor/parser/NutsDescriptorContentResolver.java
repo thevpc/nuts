@@ -8,6 +8,7 @@ import net.thevpc.nuts.spi.NutsDescriptorContentParserComponent;
 import net.thevpc.nuts.spi.NutsDescriptorContentParserContext;
 
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 
@@ -19,13 +20,14 @@ public class NutsDescriptorContentResolver {
      * @param session      session
      * @return descriptor
      */
-    public static NutsDescriptor resolveNutsDescriptorFromFileContent(Path localPath, String[] parseOptions, NutsSession session) {
+    public static NutsDescriptor resolveNutsDescriptorFromFileContent(Path localPath, List<String> parseOptions, NutsSession session) {
         if (parseOptions == null) {
-            parseOptions = new String[0];
+            parseOptions = new ArrayList<>();
         }
         if (localPath != null) {
             String fileExtension = CoreIOUtils.getFileExtension(localPath.getFileName().toString());
-            NutsDescriptorContentParserContext ctx = new DefaultNutsDescriptorContentParserContext(session, localPath, fileExtension, null, parseOptions);
+            NutsDescriptorContentParserContext ctx = new DefaultNutsDescriptorContentParserContext(session,
+                    localPath, fileExtension, null, parseOptions);
             List<NutsDescriptorContentParserComponent> allParsers = session.extensions()
                     .setSession(session)
                     .createAllSupported(NutsDescriptorContentParserComponent.class, ctx);

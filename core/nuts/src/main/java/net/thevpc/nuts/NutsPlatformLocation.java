@@ -60,7 +60,7 @@ public class NutsPlatformLocation extends NutsConfigItem {
     public NutsPlatformLocation(NutsId id, String product, String name, String path, String version, String packaging, int priority) {
         this.id = id;
         this.platformType = (id == null || NutsBlankable.isBlank(id.getArtifactId())) ? NutsPlatformFamily.JAVA :
-                NutsPlatformFamily.parseLenient(id.getArtifactId(), NutsPlatformFamily.UNKNOWN, NutsPlatformFamily.UNKNOWN);
+                NutsPlatformFamily.parse(id.getArtifactId()).orElse(NutsPlatformFamily.UNKNOWN);
         this.product = product;
         this.name = name;
         this.path = path;

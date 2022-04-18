@@ -2,6 +2,9 @@ package net.thevpc.nuts.runtime.standalone.xtra.expr;
 
 import net.thevpc.nuts.NutsExpr;
 
+import java.util.Collections;
+import java.util.List;
+
 public class DefaultLiteralNode implements NutsExpr.Node {
     private final Object lit;
 
@@ -12,8 +15,8 @@ public class DefaultLiteralNode implements NutsExpr.Node {
 
 
     @Override
-    public NutsExpr.Node[] getChildren() {
-        return new NutsExpr.Node[0];
+    public List<NutsExpr.Node> getChildren() {
+        return Collections.emptyList();
     }
 
     @Override

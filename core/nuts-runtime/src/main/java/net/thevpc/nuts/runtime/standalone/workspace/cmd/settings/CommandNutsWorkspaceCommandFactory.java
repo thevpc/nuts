@@ -98,7 +98,7 @@ public class CommandNutsWorkspaceCommandFactory implements NutsWorkspaceCommandF
             if (r == 0) {
                 return new NutsCommandConfig()
                         .setFactoryId(getFactoryId())
-                        .setOwner(NutsId.of(ec[0],session))
+                        .setOwner(NutsId.of(ec[0]).get(session))
                         .setName(name)
                         .setCommand(Arrays.copyOfRange(ec, 1, ec.length));
             }

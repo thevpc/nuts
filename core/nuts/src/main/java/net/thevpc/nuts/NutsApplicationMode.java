@@ -87,59 +87,8 @@ public enum NutsApplicationMode implements NutsEnum {
         this.id = name().toLowerCase().replace('_', '-');
     }
 
-    /**
-     * parse string and return null if parse fails
-     *
-     * @param value value to parse
-     * @return parsed instance or null
-     */
-    public static NutsApplicationMode parseLenient(String value) {
-        return parseLenient(value, null);
-    }
-
-    /**
-     * parse string and return {@code emptyOrErrorValue} if parse fails
-     *
-     * @param emptyOrErrorValue emptyOrErrorValue
-     * @param value             value to parse
-     * @return parsed instance or {@code emptyOrErrorValue}
-     */
-    public static NutsApplicationMode parseLenient(String value, NutsApplicationMode emptyOrErrorValue) {
-        return parseLenient(value, emptyOrErrorValue, emptyOrErrorValue);
-    }
-
-    /**
-     * parse string and return {@code emptyValue} when null or {@code errorValue} if parse fails
-     *
-     * @param value      value to parse
-     * @param emptyValue value when the value is null or empty
-     * @param errorValue value when the value cannot be parsed
-     * @return parsed value
-     */
-    public static NutsApplicationMode parseLenient(String value, NutsApplicationMode emptyValue, NutsApplicationMode errorValue) {
-        if (value == null) {
-            value = "";
-        } else {
-            value = value.toUpperCase().trim().replace('-', '_');
-        }
-        if (value.isEmpty()) {
-            return emptyValue;
-        }
-        try {
-            return NutsApplicationMode.valueOf(value.toUpperCase());
-        } catch (Exception notFound) {
-            return errorValue;
-        }
-    }
-
-    public static NutsApplicationMode parse(String value, NutsSession session) {
-        return parse(value, null, session);
-    }
-
-    public static NutsApplicationMode parse(String value, NutsApplicationMode emptyValue, NutsSession session) {
-        NutsApplicationMode v = parseLenient(value, emptyValue, null);
-        NutsApiUtils.checkNonNullEnum(v, value, NutsApplicationMode.class, session);
-        return v;
+    public static NutsOptional<NutsApplicationMode> parse(String value) {
+        return NutsApiUtils.parse(value, NutsApplicationMode.class);
     }
 
     /**

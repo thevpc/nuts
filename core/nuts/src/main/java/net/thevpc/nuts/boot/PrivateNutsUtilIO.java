@@ -29,6 +29,7 @@ package net.thevpc.nuts.boot;
 import net.thevpc.nuts.NutsBlankable;
 import net.thevpc.nuts.NutsLogVerb;
 import net.thevpc.nuts.NutsMessage;
+import net.thevpc.nuts.NutsUtilStrings;
 
 import java.io.*;
 import java.net.MalformedURLException;
@@ -94,7 +95,7 @@ public class PrivateNutsUtilIO {
                         inputStream = new FileInputStream(cacheFile);
                         props.load(inputStream);
                         long time = System.currentTimeMillis() - startTime;
-                        bLog.log(Level.CONFIG, NutsLogVerb.SUCCESS, NutsMessage.jstyle("load cached file from  {0}" + ((time > 0) ? " (time {1})" : ""), cacheFile.getPath(), PrivateNutsUtils.formatPeriodMilli(time)));
+                        bLog.log(Level.CONFIG, NutsLogVerb.SUCCESS, NutsMessage.jstyle("load cached file from  {0}" + ((time > 0) ? " (time {1})" : ""), cacheFile.getPath(), NutsUtilStrings.formatPeriodMilli(time)));
                         return props;
                     } catch (IOException ex) {
                         bLog.log(Level.CONFIG, NutsLogVerb.FAIL, NutsMessage.jstyle("invalid cache. Ignored {0} : {1}", cacheFile.getPath(), ex.toString()));
@@ -140,18 +141,18 @@ public class PrivateNutsUtilIO {
                                 }
                                 long time = System.currentTimeMillis() - startTime;
                                 if (cachedRecovered) {
-                                    bLog.log(Level.CONFIG, NutsLogVerb.CACHE, NutsMessage.jstyle("recover cached prp file {0} (from {1})" + ((time > 0) ? " (time {2})" : ""), cacheFile.getPath(), urlString, PrivateNutsUtils.formatPeriodMilli(time)));
+                                    bLog.log(Level.CONFIG, NutsLogVerb.CACHE, NutsMessage.jstyle("recover cached prp file {0} (from {1})" + ((time > 0) ? " (time {2})" : ""), cacheFile.getPath(), urlString, NutsUtilStrings.formatPeriodMilli(time)));
                                 } else {
-                                    bLog.log(Level.CONFIG, NutsLogVerb.CACHE, NutsMessage.jstyle("cache prp file {0} (from {1})" + ((time > 0) ? " (time {2})" : ""), cacheFile.getPath(), urlString, PrivateNutsUtils.formatPeriodMilli(time)));
+                                    bLog.log(Level.CONFIG, NutsLogVerb.CACHE, NutsMessage.jstyle("cache prp file {0} (from {1})" + ((time > 0) ? " (time {2})" : ""), cacheFile.getPath(), urlString, NutsUtilStrings.formatPeriodMilli(time)));
                                 }
                                 return props;
                             }
                         }
                         long time = System.currentTimeMillis() - startTime;
-                        bLog.log(Level.CONFIG, NutsLogVerb.SUCCESS, NutsMessage.jstyle("load props file from  {0}" + ((time > 0) ? " (time {1})" : ""), urlString, PrivateNutsUtils.formatPeriodMilli(time)));
+                        bLog.log(Level.CONFIG, NutsLogVerb.SUCCESS, NutsMessage.jstyle("load props file from  {0}" + ((time > 0) ? " (time {1})" : ""), urlString, NutsUtilStrings.formatPeriodMilli(time)));
                     } else {
                         long time = System.currentTimeMillis() - startTime;
-                        bLog.log(Level.CONFIG, NutsLogVerb.FAIL, NutsMessage.jstyle("load props file from  {0}" + ((time > 0) ? " (time {1})" : ""), urlString, PrivateNutsUtils.formatPeriodMilli(time)));
+                        bLog.log(Level.CONFIG, NutsLogVerb.FAIL, NutsMessage.jstyle("load props file from  {0}" + ((time > 0) ? " (time {1})" : ""), urlString, NutsUtilStrings.formatPeriodMilli(time)));
                     }
                 }
             } finally {
@@ -162,7 +163,7 @@ public class PrivateNutsUtilIO {
         } catch (Exception e) {
             long time = System.currentTimeMillis() - startTime;
             bLog.log(Level.CONFIG, NutsLogVerb.FAIL, NutsMessage.jstyle("load props file from  {0}" + ((time > 0) ? " (time {1})" : ""), String.valueOf(url),
-                    PrivateNutsUtils.formatPeriodMilli(time)));
+                    NutsUtilStrings.formatPeriodMilli(time)));
         }
         return props;
     }
@@ -295,7 +296,7 @@ public class PrivateNutsUtilIO {
     }
 
     protected static String expandPath(String path, String base, Function<String, String> pathExpansionConverter) {
-        path = PrivateNutsUtils.replaceDollarString(path.trim(), pathExpansionConverter);
+        path = NutsUtilStrings.replaceDollarString(path.trim(), pathExpansionConverter);
         if (isURL(path)) {
             return path;
         }

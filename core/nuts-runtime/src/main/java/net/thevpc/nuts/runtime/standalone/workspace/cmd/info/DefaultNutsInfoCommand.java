@@ -269,7 +269,7 @@ public class DefaultNutsInfoCommand extends DefaultFormatBase<NutsInfoCommand> i
         props.put("nuts-api-id", session.getWorkspace().getApiId());
         props.put("nuts-runtime-id", session.getWorkspace().getRuntimeId());
         props.put("nuts-app-id", session.getAppId());
-        URL[] cl = session.boot().getBootClassWorldURLs();
+        List<URL> cl = session.boot().getBootClassWorldURLs();
         List<NutsPath> runtimeClassPath = new ArrayList<>();
         if (cl != null) {
             for (URL url : cl) {
@@ -311,17 +311,17 @@ public class DefaultNutsInfoCommand extends DefaultFormatBase<NutsInfoCommand> i
         props.put("nuts-skip-welcome", options.isSkipWelcome());
         props.put("nuts-skip-boot", options.isSkipBoot());
         String ds = NutsDependencySolverUtils.resolveSolverName(options.getDependencySolver());
-        String[] allDs = NutsDependencySolver.getSolverNames(session);
+        List<String> allDs = NutsDependencySolver.getSolverNames(session);
         props.put("nuts-solver",
                 txt.ofStyled(
                         ds,
-                        Arrays.stream(allDs).map(x -> NutsDependencySolverUtils.resolveSolverName(x))
+                        allDs.stream().map(x -> NutsDependencySolverUtils.resolveSolverName(x))
                                 .anyMatch(x -> x.equals(ds))
                                 ? NutsTextStyle.keyword() : NutsTextStyle.error())
         );
         props.put("nuts-solver-list",
                 txt.builder().appendJoined(";",
-                        Arrays.stream(allDs)
+                        allDs.stream()
                                 .map(x -> txt.ofStyled(x, NutsTextStyle.keyword()))
                                 .collect(Collectors.toList())
                 )
@@ -331,7 +331,7 @@ public class DefaultNutsInfoCommand extends DefaultFormatBase<NutsInfoCommand> i
         props.put("sys-terminal-flags", b.getFlags());
         NutsTerminalMode terminalMode = session.boot().getBootOptions().getTerminalMode();
         props.put("sys-terminal-mode", terminalMode == null ? "default" : terminalMode);
-        props.put("java-version", NutsVersion.of(System.getProperty("java.version"), session));
+        props.put("java-version", NutsVersion.of(System.getProperty("java.version")).get(session));
         props.put("platform", session.env().getPlatform());
         props.put("java-home", NutsPath.of(System.getProperty("java.home"), session));
         props.put("java-executable", NutsPath.of(NutsJavaSdkUtils.of(session).resolveJavaCommandByHome(null, getSession()), session));
@@ -375,14 +375,14 @@ public class DefaultNutsInfoCommand extends DefaultFormatBase<NutsInfoCommand> i
         props.put("command-line-short", session.boot().getBootOptions().formatter().setCompact(true).getBootCommandLine());
         props.put("inherited", session.boot().getBootOptions().isInherited());
         // nuts-boot-args must always be parsed in bash format
-        props.put("inherited-nuts-boot-args", NutsCommandLine.of(System.getProperty("nuts.boot.args"), NutsShellFamily.SH, session).format());
+        props.put("inherited-nuts-boot-args", NutsCommandLine.of(System.getProperty("nuts.boot.args"), NutsShellFamily.SH, session).format(session));
         props.put("inherited-nuts-args", NutsCommandLine.of(System.getProperty("nuts.args"), NutsShellFamily.SH, session)
-                .format()
+                .format(session)
         );
         props.put("creation-started", Instant.ofEpochMilli(session.boot().getCreationStartTimeMillis()));
         props.put("creation-finished", Instant.ofEpochMilli(session.boot().getCreationFinishTimeMillis()));
         props.put("creation-within", CoreTimeUtils.formatPeriodMilli(session.boot().getCreationTimeMillis()).trim());
-        props.put("repositories-count", (session.repos().setSession(getSession()).getRepositories().length));
+        props.put("repositories-count", (session.repos().setSession(getSession()).getRepositories().size()));
         for (String extraKey : extraKeys) {
             props.put(extraKey, extraProperties.get(extraKey));
         }
@@ -424,7 +424,7 @@ public class DefaultNutsInfoCommand extends DefaultFormatBase<NutsInfoCommand> i
                     .setSession(getSession())
                     .isSupportedMirroring()) ? 0 : repo.config()
                     .setSession(getSession())
-                    .getMirrors().length));
+                    .getMirrors().size()));
         }
         if (deep) {
             if (repo.config().isSupportedMirroring()) {

@@ -3,6 +3,8 @@ package net.thevpc.nuts.runtime.standalone.event;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
 
+import java.util.List;
+
 public class DefaultNutsWorkspaceEventManager implements NutsWorkspaceEventManager {
 
     private DefaultNutsWorkspaceEventModel model;
@@ -44,7 +46,7 @@ public class DefaultNutsWorkspaceEventManager implements NutsWorkspaceEventManag
     }
 
     @Override
-    public NutsRepositoryListener[] getRepositoryListeners() {
+    public List<NutsRepositoryListener> getRepositoryListeners() {
         return model.getRepositoryListeners();
     }
 
@@ -61,7 +63,7 @@ public class DefaultNutsWorkspaceEventManager implements NutsWorkspaceEventManag
     }
 
     @Override
-    public NutsMapListener<String, Object>[] getUserPropertyListeners() {
+    public List<NutsMapListener<String, Object>> getUserPropertyListeners() {
         return model.getUserPropertyListeners();
     }
 
@@ -78,7 +80,7 @@ public class DefaultNutsWorkspaceEventManager implements NutsWorkspaceEventManag
     }
 
     @Override
-    public NutsWorkspaceListener[] getWorkspaceListeners() {
+    public List<NutsWorkspaceListener> getWorkspaceListeners() {
         return model.getWorkspaceListeners();
     }
 
@@ -95,7 +97,7 @@ public class DefaultNutsWorkspaceEventManager implements NutsWorkspaceEventManag
     }
 
     @Override
-    public NutsInstallListener[] getInstallListeners() {
+    public List<NutsInstallListener> getInstallListeners() {
         return model.getInstallListeners();
     }
 

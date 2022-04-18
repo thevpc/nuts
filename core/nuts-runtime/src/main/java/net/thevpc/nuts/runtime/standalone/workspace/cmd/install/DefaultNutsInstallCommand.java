@@ -110,7 +110,7 @@ public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
     }
 
     private boolean doThis(NutsId id, InstallIdList list, NutsSession session) {
-        List<String> cmdArgs = new ArrayList<>(Arrays.asList(this.getArgs()));
+        List<String> cmdArgs = new ArrayList<>(this.getArgs());
 //        if (session.isYes()) {
 //            cmdArgs.add(0, "--yes");
 //        }
@@ -502,7 +502,7 @@ public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
                                 NutsTexts.of(session).ofPlain(", "),
                                 all.stream().map(x
                                                 -> NutsTexts.of(session).toText(
-                                                x.builder().omitImportedGroupId().build()
+                                                x.builder().build()
                                         )
                                 ).collect(Collectors.toList())
                         );

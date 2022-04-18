@@ -21,7 +21,7 @@ public class AnyNixNdi extends BaseSystemNdi {
     }
 
     protected NutsShellFamily[] getShellGroups() {
-        Set<NutsShellFamily> all=new LinkedHashSet<>(Arrays.asList(session.env().getShellFamilies()));
+        Set<NutsShellFamily> all=new LinkedHashSet<>(session.env().getShellFamilies());
         all.retainAll(Arrays.asList(NutsShellFamily.SH,NutsShellFamily.FISH));
         return all.toArray(new NutsShellFamily[0]);
     }

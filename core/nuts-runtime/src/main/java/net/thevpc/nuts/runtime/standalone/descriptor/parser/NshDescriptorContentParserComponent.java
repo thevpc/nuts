@@ -27,7 +27,7 @@
 package net.thevpc.nuts.runtime.standalone.descriptor.parser;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.standalone.descriptor.DefaultNutsArtifactCall;
+import net.thevpc.nuts.DefaultNutsArtifactCall;
 import net.thevpc.nuts.runtime.standalone.format.json.JsonStringBuffer;
 import net.thevpc.nuts.spi.*;
 
@@ -64,7 +64,7 @@ public class NshDescriptorContentParserComponent implements NutsDescriptorConten
     public int getSupportLevel(NutsSupportLevelContext criteria) {
         if(NSH==null){
             NutsSession session = criteria.getSession();
-            NSH= NutsId.of("nsh",session);
+            NSH= NutsId.of("nsh").get(session);
         }
         NutsDescriptorContentParserContext ctr=criteria.getConstraints(NutsDescriptorContentParserContext.class);
         if(ctr!=null) {
@@ -150,10 +150,10 @@ public class NshDescriptorContentParserComponent implements NutsDescriptorConten
                 }
             }
             if (comment.toString().trim().isEmpty()) {
-                return NutsDescriptorBuilder.of(session)
-                        .setId(NutsId.of("temp:nsh#1.0",session))
+                return new DefaultNutsDescriptorBuilder()
+                        .setId(NutsId.of("temp:nsh#1.0").get(session))
                         .setPackaging("nsh")
-                        .setExecutor(new DefaultNutsArtifactCall(NutsId.of("net.thevpc.nuts.toolbox:nsh",session)))
+                        .setExecutor(new DefaultNutsArtifactCall(NutsId.of("net.thevpc.nuts.toolbox:nsh").get(session)))
                         .build();
             }
             return NutsDescriptorParser.of(session).parse(comment.getValidString());

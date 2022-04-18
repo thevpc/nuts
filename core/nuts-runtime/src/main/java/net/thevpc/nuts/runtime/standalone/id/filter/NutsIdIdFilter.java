@@ -39,7 +39,7 @@ public class NutsIdIdFilter extends AbstractIdFilter implements NutsIdFilter, Si
             LOG=NutsLogger.of(NutsIdIdFilter.class,session);
         }
         if(id.getShortName().equals(filter.getShortName())){
-            if (!filter.getVersion().filter().acceptVersion(id.getVersion(), session)) {
+            if (!filter.getVersion().filter(session).acceptVersion(id.getVersion(), session)) {
                 return false;
             }
             Map<String, String> e = filter.getProperties();

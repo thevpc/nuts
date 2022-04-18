@@ -5,6 +5,9 @@ import net.thevpc.nuts.runtime.standalone.repository.impl.maven.util.MavenUtils;
 import net.thevpc.nuts.runtime.standalone.repository.impl.maven.pom.PomId;
 import net.thevpc.nuts.spi.NutsSupportLevelContext;
 
+import java.util.Arrays;
+import java.util.List;
+
 public class DefaultNutsIdResolver implements NutsIdResolver {
 
     private NutsSession session;
@@ -19,18 +22,17 @@ public class DefaultNutsIdResolver implements NutsIdResolver {
         if (u == null) {
             return null;
         }
-        return NutsIdParser.of(session).parse(u.getGroupId() + ":" + u.getArtifactId() + "#" + u.getVersion());
+        return NutsId.of(u.getGroupId() + ":" + u.getArtifactId() + "#" + u.getVersion()).get(session);
     }
 
     @Override
-    public NutsId[] resolveIds(Class clazz) {
+    public List<NutsId> resolveIds(Class clazz) {
         PomId[] u = MavenUtils.createPomIdResolver(session).resolvePomIds(clazz);
         NutsId[] all = new NutsId[u.length];
-        NutsIdParser parser = NutsIdParser.of(session);
         for (int i = 0; i < all.length; i++) {
-            all[i] = parser.parse(u[i].getGroupId() + ":" + u[i].getArtifactId() + "#" + u[i].getVersion());
+            all[i] = NutsId.of(u[i].getGroupId() + ":" + u[i].getArtifactId() + "#" + u[i].getVersion()).get(session);
         }
-        return all;
+        return Arrays.asList(all);
     }
 
     @Override

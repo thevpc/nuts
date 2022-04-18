@@ -25,6 +25,7 @@
  */
 package net.thevpc.nuts;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -34,33 +35,34 @@ import java.util.Map;
  * @since 0.8.3
  */
 public interface NutsEnvCondition extends NutsBlankable {
+    NutsEnvCondition BLANK=new DefaultNutsEnvCondition();
     /**
      * supported profiles (such as maven profiles)
      *
      * @return supported supported profiles
      */
-    String[] getProfile();
+    List<String> getProfile();
 
     /**
      * supported arch list. if empty, all arch are supported (for example for java, all arch are supported).
      *
      * @return supported arch list
      */
-    String[] getArch();
+    List<String> getArch();
 
     /**
      * supported operating systems. if empty, all oses are supported (for example for java, all arch are supported).
      *
      * @return supported oses
      */
-    String[] getOs();
+    List<String> getOs();
 
     /**
      * supported operating system distributions (mostly for linux systems). if empty, all distributions are supported.
      *
      * @return supported operating system distributions
      */
-    String[] getOsDist();
+    List<String> getOsDist();
 
     /**
      * supported platforms (java, dotnet, ...). if empty platform is not relevant.
@@ -68,7 +70,7 @@ public interface NutsEnvCondition extends NutsBlankable {
      *
      * @return supported platforms
      */
-    String[] getPlatform();
+    List<String> getPlatform();
 
     /**
      * supported desktop environments (gnome, kde, none, ...). if empty desktop environment is not relevant.
@@ -76,7 +78,7 @@ public interface NutsEnvCondition extends NutsBlankable {
      *
      * @return supported platforms
      */
-    String[] getDesktopEnvironment();
+    List<String> getDesktopEnvironment();
 
     /**
      * create builder from this instance
@@ -84,6 +86,8 @@ public interface NutsEnvCondition extends NutsBlankable {
      * @return builder copy of this instance
      */
     NutsEnvConditionBuilder builder();
+
+    NutsEnvCondition readOnly();
 
     /**
      * true if no condition
@@ -98,4 +102,6 @@ public interface NutsEnvCondition extends NutsBlankable {
      * @return env properties
      */
     Map<String, String> getProperties();
+
+    Map<String, String> toMap();
 }

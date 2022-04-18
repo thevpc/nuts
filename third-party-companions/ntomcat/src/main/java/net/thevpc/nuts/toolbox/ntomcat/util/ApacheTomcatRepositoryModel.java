@@ -5,6 +5,7 @@ import net.thevpc.nuts.*;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Arrays;
 import java.util.UUID;
 import java.util.logging.Logger;
 
@@ -90,12 +91,12 @@ public class ApacheTomcatRepositoryModel implements NutsRepositoryModel {
                     }
                 }
 
-                return NutsDescriptorBuilder.of(session)
+                return new DefaultNutsDescriptorBuilder()
                         .setId(id.getLongId())
                         .setPackaging("zip")
                         .setCondition(
-                                NutsEnvConditionBuilder.of(session)
-                                        .setPlatform("java" + javaVersion)
+                                new DefaultNutsEnvConditionBuilder()
+                                        .setPlatform(Arrays.asList("java" + javaVersion))
                         )
                         .setDescription("Apache Tomcat Official Zip Bundle")
                         .setProperty("dynamic-descriptor", "true")
@@ -129,7 +130,7 @@ public class ApacheTomcatRepositoryModel implements NutsRepositoryModel {
         }
         //List<NutsId> all = new ArrayList<>();
 //        NutsWorkspace ws = session.getWorkspace();
-        NutsIdBuilder idBuilder = NutsIdBuilder.of(session).setGroupId("org.apache.catalina").setArtifactId("apache-tomcat");
+        NutsIdBuilder idBuilder = new DefaultNutsIdBuilder().setGroupId("org.apache.catalina").setArtifactId("apache-tomcat");
         return NutsPath.of("htmlfs:https://archive.apache.org/dist/tomcat/", session)
                 .list()
                 .filter(x -> x.isDirectory() && x.getName().matches("tomcat-[0-9.]+"), "directory && tomcat")
@@ -150,7 +151,7 @@ public class ApacheTomcatRepositoryModel implements NutsRepositoryModel {
                                                 //will ignore all alpha versions
                                                 return NutsStream.ofEmpty(session);
                                             }
-                                            NutsVersion version = NutsVersion.of(s2n.substring(1, s2n.length() - 1), session);
+                                            NutsVersion version = NutsVersion.of(s2n.substring(1, s2n.length() - 1)).get( session);
                                             if (version.compareTo("4.1.32") < 0) {
                                                 prefix = "jakarta-tomcat-";
                                             }
@@ -166,7 +167,7 @@ public class ApacheTomcatRepositoryModel implements NutsRepositoryModel {
                                                         .map(x5 -> {
                                                             String s3 = x5.getName();
                                                             String v0 = s3.substring(finalPrefix.length(), s3.length() - 4);
-                                                            NutsVersion v = NutsVersion.of(v0, session);
+                                                            NutsVersion v = NutsVersion.of(v0).get( session);
                                                             NutsId id2 = idBuilder.setVersion(v).build();
                                                             if (filter == null || filter.acceptId(id2, session)) {
                                                                 return id2;

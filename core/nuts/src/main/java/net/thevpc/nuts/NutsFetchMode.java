@@ -74,39 +74,10 @@ public enum NutsFetchMode implements NutsEnum {
         this.id = name().toLowerCase().replace('_', '-');
     }
 
-    public static NutsFetchMode parseLenient(String value) {
-        return parseLenient(value, null);
+    public static NutsOptional<NutsFetchMode> parse(String value) {
+        return NutsApiUtils.parse(value, NutsFetchMode.class);
     }
 
-    public static NutsFetchMode parseLenient(String value, NutsFetchMode emptyOrErrorValue) {
-        return parseLenient(value, emptyOrErrorValue, emptyOrErrorValue);
-    }
-
-    public static NutsFetchMode parseLenient(String value, NutsFetchMode emptyValue, NutsFetchMode errorValue) {
-        if (value == null) {
-            value = "";
-        } else {
-            value = value.toUpperCase().trim().replace('-', '_');
-        }
-        if (value.isEmpty()) {
-            return emptyValue;
-        }
-        try {
-            return NutsFetchMode.valueOf(value.toUpperCase());
-        } catch (Exception notFound) {
-            return errorValue;
-        }
-    }
-
-    public static NutsFetchMode parse(String value, NutsSession session) {
-        return parse(value, null, session);
-    }
-
-    public static NutsFetchMode parse(String value, NutsFetchMode emptyValue, NutsSession session) {
-        NutsFetchMode v = parseLenient(value, emptyValue, null);
-        NutsApiUtils.checkNonNullEnum(v, value, NutsFetchMode.class, session);
-        return v;
-    }
 
     /**
      * lower cased identifier.

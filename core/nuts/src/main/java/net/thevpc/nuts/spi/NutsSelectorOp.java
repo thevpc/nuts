@@ -26,10 +26,8 @@
  */
 package net.thevpc.nuts.spi;
 
-import net.thevpc.nuts.NutsBlankable;
-import net.thevpc.nuts.NutsEnum;
-import net.thevpc.nuts.NutsParseEnumException;
-import net.thevpc.nuts.NutsSession;
+import net.thevpc.nuts.*;
+import net.thevpc.nuts.boot.NutsApiUtils;
 
 public enum NutsSelectorOp implements NutsEnum {
     INCLUDE,
@@ -41,42 +39,9 @@ public enum NutsSelectorOp implements NutsEnum {
         this.id = name().toLowerCase().replace('_', '-');
     }
 
-    public static NutsSelectorOp parseLenient(String value) {
-        return parseLenient(value, null);
-    }
 
-    public static NutsSelectorOp parseLenient(String value, NutsSelectorOp emptyOrErrorValue) {
-        return parseLenient(value, emptyOrErrorValue, emptyOrErrorValue);
-    }
-
-    public static NutsSelectorOp parseLenient(String value, NutsSelectorOp emptyValue, NutsSelectorOp errorValue) {
-        if (value == null) {
-            value = "";
-        } else {
-            value = value.toUpperCase().trim().replace('-', '_');
-        }
-        if (value.isEmpty()) {
-            return emptyValue;
-        }
-        try {
-            return NutsSelectorOp.valueOf(value.toUpperCase());
-        } catch (Exception notFound) {
-            return errorValue;
-        }
-    }
-
-    public static NutsSelectorOp parse(String value, NutsSession session) {
-        return parse(value, null, session);
-    }
-
-    public static NutsSelectorOp parse(String value, NutsSelectorOp emptyValue, NutsSession session) {
-        NutsSelectorOp v = parseLenient(value, emptyValue, null);
-        if (v == null) {
-            if (!NutsBlankable.isBlank(value)) {
-                throw new NutsParseEnumException(session, value, NutsSelectorOp.class);
-            }
-        }
-        return v;
+    public static NutsOptional<NutsSelectorOp> parse(String value) {
+        return NutsApiUtils.parse(value, NutsSelectorOp.class);
     }
 
     @Override

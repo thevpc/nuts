@@ -8,7 +8,9 @@ import net.thevpc.nuts.runtime.standalone.util.NutsConfigurableHelper;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
 
 import java.io.ByteArrayOutputStream;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public class DefaultNutsQuestion<T> implements NutsQuestion<T> {
 
@@ -17,7 +19,7 @@ public class DefaultNutsQuestion<T> implements NutsQuestion<T> {
     private final NutsWorkspace ws;
     private NutsMessage message;
     private NutsMessage cancelMessage;
-    private Object[] acceptedValues;
+    private List<Object> acceptedValues;
     private NutsMessage hintMessage;
     private T defaultValue;
     private boolean resetLine;
@@ -87,12 +89,12 @@ public class DefaultNutsQuestion<T> implements NutsQuestion<T> {
         if (ff == null) {
             ff = new DefaultNutsQuestionFormat<>(getSession());
         }
-        Object[] _acceptedValues = this.getAcceptedValues();
+        List<Object> _acceptedValues = this.getAcceptedValues();
         if (_acceptedValues == null) {
             _acceptedValues = ff.getDefaultValues(this.getValueType(), this);
         }
         if (_acceptedValues == null) {
-            _acceptedValues = new Object[0];
+            _acceptedValues = new ArrayList<>();
         }
         while (true) {
             NutsPrintStream out = this.out;
@@ -120,7 +122,7 @@ public class DefaultNutsQuestion<T> implements NutsQuestion<T> {
                 out.printf(getHintMessage());
                 out.print(")");
             } else {
-                if (_acceptedValues.length > 0) {
+                if (_acceptedValues.size() > 0) {
                     if (first) {
                         first = false;
                         out.print(" (");
@@ -128,8 +130,8 @@ public class DefaultNutsQuestion<T> implements NutsQuestion<T> {
                         out.print(", ");
                     }
                     StringBuilder sb = new StringBuilder();
-                    for (int i = 0; i < _acceptedValues.length; i++) {
-                        Object acceptedValue = _acceptedValues[i];
+                    for (int i = 0; i < _acceptedValues.size(); i++) {
+                        Object acceptedValue = _acceptedValues.get(i);
                         if (i > 0) {
                             sb.append(", ");
                         }
@@ -375,7 +377,7 @@ public class DefaultNutsQuestion<T> implements NutsQuestion<T> {
         K[] values = enumType.getEnumConstants();
         return ((NutsQuestion<K>) this).setValueType(enumType)
                 .setMessage(msg)
-                .setAcceptedValues(values);
+                .setAcceptedValues(Arrays.asList(values));
     }
 
     @Override
@@ -406,12 +408,12 @@ public class DefaultNutsQuestion<T> implements NutsQuestion<T> {
     }
 
     @Override
-    public Object[] getAcceptedValues() {
+    public List<Object> getAcceptedValues() {
         return acceptedValues;
     }
 
     @Override
-    public NutsQuestion<T> setAcceptedValues(Object[] acceptedValues) {
+    public NutsQuestion<T> setAcceptedValues(List<Object> acceptedValues) {
         this.acceptedValues = acceptedValues;
         return this;
     }

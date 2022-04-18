@@ -279,7 +279,7 @@ public class GrepCommand extends SimpleJShellBuiltin {
         if (NutsBlankable.isBlank(s)) {
             return def;
         }
-        return NutsTextStyles.parseLenient(s, def, def);
+        return NutsTextStyles.parse(s).orElse(def);
     }
 
     private static class Options {

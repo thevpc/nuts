@@ -18,14 +18,14 @@ import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 
 @RestController
-@RequestMapping("indexer/"+NutsConstants.Folders.ID)
+@RequestMapping("indexer/" + NutsConstants.Folders.ID)
 public class NutsComponentController {
 
     @Autowired
     private DataService dataService;
     private static final Logger LOG = LoggerFactory.getLogger(NutsComponentController.class);
 
-        @Autowired
+    @Autowired
     private NutsWorkspaceListManagerPool listManagerPool;
     @Autowired
     private NutsIndexSubscriberListManagerPool indexSubscriberListManagerPool;
@@ -49,7 +49,7 @@ public class NutsComponentController {
             Iterator<NutsWorkspaceLocation> iterator = subscriber.getWorkspaceLocations().values().iterator();
             if (iterator.hasNext()) {
                 NutsWorkspaceLocation workspaceLocation = iterator.next();
-                NutsSession session = Nuts.openWorkspace("--workspace",workspaceLocation.getLocation());
+                NutsSession session = Nuts.openWorkspace("--workspace", workspaceLocation.getLocation());
                 List<Map<String, String>> rows = this.dataService.
                         getAllData(NutsIndexerUtils.getCacheDir(session, subscriber.cacheFolderName()));
                 List<Map<String, Object>> resData = cleanNutsIdMap(session, rows);
@@ -78,17 +78,17 @@ public class NutsComponentController {
             Iterator<NutsWorkspaceLocation> iterator = subscriber.getWorkspaceLocations().values().iterator();
             if (iterator.hasNext()) {
                 NutsWorkspaceLocation workspaceLocation = iterator.next();
-                NutsSession session = Nuts.openWorkspace("--workspace",workspaceLocation.getLocation());
-                NutsId id = NutsIdBuilder.of(session)
+                NutsSession session = Nuts.openWorkspace("--workspace", workspaceLocation.getLocation());
+                NutsId id = new DefaultNutsIdBuilder()
                         .setArtifactId(name)
                         .setRepository(namespace)
                         .setGroupId(group)
                         .setVersion(version)
                         .setCondition(
-                                NutsEnvConditionBuilder.of(session)
-                                        .setArch(arch)
-                                        .setOs(os)
-                                        .setOsDist(osdist).build()
+                                new DefaultNutsEnvConditionBuilder()
+                                        .setArch(Arrays.asList(arch))
+                                        .setOs(Arrays.asList(os))
+                                        .setOsDist(Arrays.asList(osdist)).build()
                         )
                         .setFace(face)
 //                        .setAlternative(alternative)
@@ -125,17 +125,17 @@ public class NutsComponentController {
             Iterator<NutsWorkspaceLocation> iterator = subscriber.getWorkspaceLocations().values().iterator();
             if (iterator.hasNext()) {
                 NutsWorkspaceLocation workspaceLocation = iterator.next();
-                NutsSession session = Nuts.openWorkspace("--workspace",workspaceLocation.getLocation());
-                NutsId id = NutsIdBuilder.of(session)
+                NutsSession session = Nuts.openWorkspace("--workspace", workspaceLocation.getLocation());
+                NutsId id = new DefaultNutsIdBuilder()
                         .setArtifactId(name)
                         .setRepository(namespace)
                         .setGroupId(group)
-                        .setCondition(NutsEnvConditionBuilder.of(session)
-                                .setArch(arch)
-                                .setOs(os)
-                                .setOsDist(osdist)
-                                .setPlatform(platform)
-                                .setDesktopEnvironment(desktopEnvironment)
+                        .setCondition(new DefaultNutsEnvConditionBuilder()
+                                .setArch(Arrays.asList(arch))
+                                .setOs(Arrays.asList(os))
+                                .setOsDist(Arrays.asList(osdist))
+                                .setPlatform(Arrays.asList(platform))
+                                .setDesktopEnvironment(Arrays.asList(desktopEnvironment))
                         )
                         .setFace(face)
 //                        .setAlternative(alternative)
@@ -169,20 +169,20 @@ public class NutsComponentController {
             Iterator<NutsWorkspaceLocation> iterator = subscriber.getWorkspaceLocations().values().iterator();
             if (iterator.hasNext()) {
                 NutsWorkspaceLocation workspaceLocation = iterator.next();
-                NutsSession session = Nuts.openWorkspace("--workspace",workspaceLocation.getLocation());
+                NutsSession session = Nuts.openWorkspace("--workspace", workspaceLocation.getLocation());
                 NutsWorkspace ws = session.getWorkspace();
                 Map<String, String> data = NutsIndexerUtils.nutsIdToMap(
-                        NutsIdBuilder.of(session)
+                        new DefaultNutsIdBuilder()
                                 .setArtifactId(name)
                                 .setRepository(namespace)
                                 .setGroupId(group)
                                 .setVersion(version)
-                                .setCondition(NutsEnvConditionBuilder.of(session)
-                                        .setArch(arch)
-                                        .setOs(os)
-                                        .setOsDist(osdist)
-                                        .setPlatform(platform)
-                                        .setDesktopEnvironment(desktopEnvironment)
+                                .setCondition(new DefaultNutsEnvConditionBuilder()
+                                        .setArch(Arrays.asList(arch))
+                                        .setOs(Arrays.asList(os))
+                                        .setOsDist(Arrays.asList(osdist))
+                                        .setPlatform(Arrays.asList(platform))
+                                        .setDesktopEnvironment(Arrays.asList(desktopEnvironment))
                                 )
                                 .setFace(face)
 //                                .setAlternative(alternative)
@@ -215,18 +215,18 @@ public class NutsComponentController {
             Iterator<NutsWorkspaceLocation> iterator = subscriber.getWorkspaceLocations().values().iterator();
             if (iterator.hasNext()) {
                 NutsWorkspaceLocation workspaceLocation = iterator.next();
-                NutsSession session = Nuts.openWorkspace("--workspace",workspaceLocation.getLocation());
-                NutsId id = NutsIdBuilder.of(session)
+                NutsSession session = Nuts.openWorkspace("--workspace", workspaceLocation.getLocation());
+                NutsId id = new DefaultNutsIdBuilder()
                         .setArtifactId(name)
                         .setRepository(namespace)
                         .setGroupId(group)
                         .setVersion(version)
-                        .setCondition(NutsEnvConditionBuilder.of(session)
-                                .setArch(arch)
-                                .setOs(os)
-                                .setOsDist(osdist)
-                                .setPlatform(platform)
-                                .setDesktopEnvironment(desktopEnvironment)
+                        .setCondition(new DefaultNutsEnvConditionBuilder()
+                                .setArch(Arrays.asList(arch))
+                                .setOs(Arrays.asList(os))
+                                .setOsDist(Arrays.asList(osdist))
+                                .setPlatform(Arrays.asList(platform))
+                                .setDesktopEnvironment(Arrays.asList(desktopEnvironment))
                         )
                         .setFace(face)
 //                        .setAlternative(alternative)
@@ -245,11 +245,11 @@ public class NutsComponentController {
                             .getResultDefinitions().iterator();
                     if (it.hasNext()) {
                         NutsDefinition definition = it.next();
-                        NutsDependency[] directDependencies = definition.getEffectiveDescriptor().getDependencies();
+                        List<NutsDependency> directDependencies = definition.getEffectiveDescriptor().getDependencies();
                         data.put("dependencies", NutsElements.of(session).json()
-                                .setValue(Arrays.stream(directDependencies).map(Object::toString)
+                                .setValue(directDependencies.stream().map(Object::toString)
                                         .collect(Collectors.toList()))
-                                        .setNtf(false)
+                                .setNtf(false)
                                 .format()
                                 .toString()
                         );
@@ -274,7 +274,7 @@ public class NutsComponentController {
                 String[] array = NutsElements.of(session).json().parse(new StringReader(row.get("dependencies")), String[].class);
                 List<Map<String, String>> dependencies = new ArrayList<>();
                 for (String s : array) {
-                    dependencies.add(NutsIndexerUtils.nutsIdToMap(NutsId.of(s,session)));
+                    dependencies.add(NutsIndexerUtils.nutsIdToMap(NutsId.of(s).get(session)));
                 }
                 d.put("dependencies", dependencies);
             }
@@ -282,7 +282,7 @@ public class NutsComponentController {
                 String[] array = NutsElements.of(session).json().parse(new StringReader(row.get("allDependencies")), String[].class);
                 List<Map<String, String>> allDependencies = new ArrayList<>();
                 for (String s : array) {
-                    allDependencies.add(NutsIndexerUtils.nutsIdToMap(NutsId.of(s,session)));
+                    allDependencies.add(NutsIndexerUtils.nutsIdToMap(NutsId.of(s).get(session)));
                 }
                 d.put("allDependencies", allDependencies);
             }

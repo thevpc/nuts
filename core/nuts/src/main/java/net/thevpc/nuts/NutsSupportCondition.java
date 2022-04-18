@@ -40,39 +40,10 @@ public enum NutsSupportCondition implements NutsEnum {
         this.id = name().toLowerCase().replace('_', '-');
     }
 
-    public static NutsSupportCondition parseLenient(String value) {
-        return parseLenient(value, null);
+    public static NutsOptional<NutsSupportCondition> parse(String value) {
+        return NutsApiUtils.parse(value, NutsSupportCondition.class);
     }
 
-    public static NutsSupportCondition parseLenient(String value, NutsSupportCondition emptyOrErrorValue) {
-        return parseLenient(value, emptyOrErrorValue, emptyOrErrorValue);
-    }
-
-    public static NutsSupportCondition parseLenient(String value, NutsSupportCondition emptyValue, NutsSupportCondition errorValue) {
-        if (value == null) {
-            value = "";
-        } else {
-            value = value.toUpperCase().trim().replace('-', '_');
-        }
-        if (value.isEmpty()) {
-            return emptyValue;
-        }
-        try {
-            return NutsSupportCondition.valueOf(value.toUpperCase());
-        } catch (Exception notFound) {
-            return errorValue;
-        }
-    }
-
-    public static NutsSupportCondition parse(String value, NutsSession session) {
-        return parse(value, null, session);
-    }
-
-    public static NutsSupportCondition parse(String value, NutsSupportCondition emptyValue, NutsSession session) {
-        NutsSupportCondition v = parseLenient(value, emptyValue, null);
-        NutsApiUtils.checkNonNullEnum(v, value, NutsSupportCondition.class, session);
-        return v;
-    }
 
     /**
      * lower cased identifier.

@@ -2,9 +2,10 @@ package net.thevpc.nuts.runtime.standalone.elem.mapper;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.util.reflect.ReflectUtils;
-import net.thevpc.nuts.runtime.standalone.descriptor.DefaultNutsArtifactCall;
+import net.thevpc.nuts.DefaultNutsArtifactCall;
 
 import java.lang.reflect.Type;
+import java.util.Arrays;
 import java.util.Map;
 
 public class NutsElementMapperNutsArtifactCall implements NutsElementMapper<NutsArtifactCall> {
@@ -30,6 +31,6 @@ public class NutsElementMapperNutsArtifactCall implements NutsElementMapper<Nuts
                 .elementToObject(object.get(context.elem().
                         ofString("properties")), ReflectUtils.createParametrizedType(Map.class, String.class, String.class));
 
-        return new DefaultNutsArtifactCall(id, arguments, properties);
+        return new DefaultNutsArtifactCall(id, Arrays.asList(arguments), properties);
     }
 }

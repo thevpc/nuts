@@ -26,6 +26,7 @@
 package net.thevpc.nuts.runtime.standalone.security;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.boot.PrivateNutsUtilCollections;
 import net.thevpc.nuts.runtime.standalone.session.NutsSessionUtils;
 import net.thevpc.nuts.runtime.standalone.util.CorePlatformUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.config.NutsWorkspaceConfigManagerExt;
@@ -183,13 +184,13 @@ public class DefaultNutsWorkspaceSecurityModel {
             Stack<String> visited = new Stack<>();
             visited.push(username);
             Stack<String> curr = new Stack<>();
-            curr.addAll(Arrays.asList(security.getGroups()));
+            curr.addAll(security.getGroups());
             while (!curr.empty()) {
                 String s = curr.pop();
                 visited.add(s);
                 NutsUserConfig ss = NutsWorkspaceConfigManagerExt.of(session.config()).getModel().getUser(s, session);
                 if (ss != null) {
-                    inherited.addAll(Arrays.asList(ss.getPermissions()));
+                    inherited.addAll(ss.getPermissions());
                     for (String group : ss.getGroups()) {
                         if (!visited.contains(group)) {
                             curr.push(group);
@@ -198,16 +199,16 @@ public class DefaultNutsWorkspaceSecurityModel {
                 }
             }
         }
-        return security == null ? null : new DefaultNutsUser(security, inherited.toArray(new String[0]));
+        return security == null ? null : new DefaultNutsUser(security, inherited);
     }
 
 
-    public NutsUser[] findUsers(NutsSession session) {
+    public List<NutsUser> findUsers(NutsSession session) {
         List<NutsUser> all = new ArrayList<>();
         for (NutsUserConfig secu : NutsWorkspaceConfigManagerExt.of(session.config()).getModel().getUsers(session)) {
             all.add(findUser(secu.getUser(), session));
         }
-        return all.toArray(new NutsUser[0]);
+        return all;
     }
 
 
@@ -243,8 +244,8 @@ public class DefaultNutsWorkspaceSecurityModel {
         }
         NutsUserConfig s = NutsWorkspaceConfigManagerExt.of(session.config()).getModel().getUser(n, session);
         if (s != null) {
-            String[] rr = s.getPermissions();
-            aa = new NutsAuthorizations(Arrays.asList(rr == null ? new String[0] : rr));
+            List<String> rr = s.getPermissions();
+            aa = new NutsAuthorizations(PrivateNutsUtilCollections.nonNullList(rr));
             authorizations.put(n, aa);
         } else {
             aa = new NutsAuthorizations(Collections.emptyList());

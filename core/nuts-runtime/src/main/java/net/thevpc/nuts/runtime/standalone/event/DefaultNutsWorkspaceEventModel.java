@@ -30,8 +30,8 @@ public class DefaultNutsWorkspaceEventModel {
     }
 
     
-    public NutsRepositoryListener[] getRepositoryListeners() {
-        return repositoryListeners.toArray(new NutsRepositoryListener[0]);
+    public List<NutsRepositoryListener> getRepositoryListeners() {
+        return repositoryListeners;
     }
 
     
@@ -45,7 +45,7 @@ public class DefaultNutsWorkspaceEventModel {
     }
 
     
-    public NutsMapListener<String, Object>[] getUserPropertyListeners() {
+    public List<NutsMapListener<String, Object>> getUserPropertyListeners() {
         return ((ObservableMap<String, Object>) NutsSessionUtils.defaultSession(ws).env().getProperties()).getListeners();
     }
 
@@ -65,8 +65,8 @@ public class DefaultNutsWorkspaceEventModel {
         return ws;
     }
 
-    public NutsWorkspaceListener[] getWorkspaceListeners() {
-        return workspaceListeners.toArray(new NutsWorkspaceListener[0]);
+    public List<NutsWorkspaceListener> getWorkspaceListeners() {
+        return workspaceListeners;
     }
 
     
@@ -82,8 +82,8 @@ public class DefaultNutsWorkspaceEventModel {
     }
 
     
-    public NutsInstallListener[] getInstallListeners() {
-        return installListeners.toArray(new NutsInstallListener[0]);
+    public List<NutsInstallListener> getInstallListeners() {
+        return installListeners;
     }
 
 }

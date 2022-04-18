@@ -29,6 +29,8 @@ package net.thevpc.nuts.spi;
 import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.boot.NutsApiUtils;
 
+import java.util.List;
+
 @NutsComponentScope(NutsComponentScopeType.WORKSPACE)
 public interface NutsDependencySolvers extends NutsComponent {
     static NutsDependencySolvers of(NutsSession session) {
@@ -40,6 +42,6 @@ public interface NutsDependencySolvers extends NutsComponent {
 
     NutsDependencySolver createSolver(String solverName, NutsSession session);
 
-    String[] getSolverNames(NutsSession session);
+    List<String> getSolverNames(NutsSession session);
 
 }

@@ -25,10 +25,7 @@
 */
 package net.thevpc.nuts.runtime.standalone.descriptor;
 
-import net.thevpc.nuts.NutsDescriptor;
-import net.thevpc.nuts.NutsDescriptorBuilder;
-import net.thevpc.nuts.NutsDescriptorFormat;
-import net.thevpc.nuts.NutsSession;
+import net.thevpc.nuts.*;
 
 /**
  * Created by vpc on 2/19/17.
@@ -42,11 +39,11 @@ public abstract class AbstractNutsDescriptor implements NutsDescriptor {
 
     @Override
     public NutsDescriptorBuilder builder() {
-        return NutsDescriptorBuilder.of(session).setAll(this);
+        return new DefaultNutsDescriptorBuilder(this);
     }
 
     @Override
-    public NutsDescriptorFormat formatter() {
+    public NutsDescriptorFormat formatter(NutsSession session) {
         return NutsDescriptorFormat.of(session).setValue(this);
     }
 }

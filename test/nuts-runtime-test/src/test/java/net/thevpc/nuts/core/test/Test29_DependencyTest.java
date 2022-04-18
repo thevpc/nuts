@@ -29,7 +29,7 @@ public class Test29_DependencyTest {
     public void testSearchDescriptor() {
         String t1="net.sourceforge.cobertura:cobertura#${cobertura.version}?exclusions=asm:asm,asm:asm-tree,log4j:log4j,oro:oro&profile=coverage&properties=a,b\\=c";
         String t2="net.sourceforge.cobertura:cobertura#${cobertura.version}?exclusions=asm:asm,asm:asm-tree,log4j:log4j,oro:oro&profile=coverage&properties='a,b=c'";
-        NutsDependency s = NutsDependency.of(t1, session);
+        NutsDependency s = NutsDependency.of(t1).get(session);
         Assertions.assertTrue(
                 t1.equals(s.toString())
                 || t2.equals(s.toString())

@@ -770,7 +770,7 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
         }
         this.iterableOut = other.isIterableOut();
         this.outputFormatOptions.clear();
-        this.outputFormatOptions.addAll(Arrays.asList(other.getOutputFormatOptions()));
+        this.outputFormatOptions.addAll(other.getOutputFormatOptions());
         this.progressOptions = other.getProgressOptions();
         this.logTermLevel = other.getLogTermLevel();
         this.logTermFilter = other.getLogTermFilter();
@@ -798,8 +798,8 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
             this.fetchStrategy = options.getFetchStrategy();
             this.outputFormat = options.getOutputFormat();
             this.outputFormatOptions.clear();
-            this.outputFormatOptions.addAll(Arrays.asList(options.getOutputFormatOptions()));
-            this.outputFormatOptions.addAll(Arrays.asList(options.getOutputFormatOptions()));
+            this.outputFormatOptions.addAll(options.getOutputFormatOptions());
+            this.outputFormatOptions.addAll(options.getOutputFormatOptions());
             NutsLogConfig logConfig = options.getLogConfig();
             if (logConfig != null) {
                 this.logTermLevel = logConfig.getLogTermLevel();
@@ -827,8 +827,8 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
             this.fetchStrategy = options.getFetchStrategy();
             this.outputFormat = options.getOutputFormat();
             this.outputFormatOptions.clear();
-            this.outputFormatOptions.addAll(Arrays.asList(options.getOutputFormatOptions()));
-            this.outputFormatOptions.addAll(Arrays.asList(options.getOutputFormatOptions()));
+            this.outputFormatOptions.addAll(options.getOutputFormatOptions());
+            this.outputFormatOptions.addAll(options.getOutputFormatOptions());
             NutsLogConfig logConfig = options.getLogConfig();
             if (logConfig != null) {
                 this.logTermLevel = logConfig.getLogTermLevel();
@@ -941,26 +941,26 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
     }
 
     @Override
-    public <T extends NutsListener> T[] getListeners(Class<T> type) {
+    public <T extends NutsListener> List<T> getListeners(Class<T> type) {
         if (listeners != null) {
             LinkedHashSet<NutsListener> tt = listeners.get(type);
             if (tt != null) {
-                return tt.toArray((T[]) Array.newInstance(type, 0));
+                return new ArrayList<>((Collection)tt);
             }
         }
-        return (T[]) Array.newInstance(type, 0);
+        return Collections.emptyList();
     }
 
     @Override
-    public NutsListener[] getListeners() {
+    public List<NutsListener> getListeners() {
         if (listeners == null) {
-            return new NutsListener[0];
+            return Collections.emptyList();
         }
         LinkedHashSet<NutsListener> all = new LinkedHashSet<>();
         for (LinkedHashSet<NutsListener> value : listeners.values()) {
             all.addAll(value);
         }
-        return all.toArray(new NutsListener[0]);
+        return new ArrayList<>(all);
     }
 
     @Override
@@ -1059,14 +1059,20 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
     }
 
     @Override
-    public String[] getOutputFormatOptions() {
-        return outputFormatOptions.toArray(new String[0]);
+    public List<String> getOutputFormatOptions() {
+        return outputFormatOptions;
     }
 
     @Override
     public NutsSession setOutputFormatOptions(String... options) {
         outputFormatOptions.clear();
         return addOutputFormatOptions(options);
+    }
+
+    @Override
+    public NutsSession setOutputFormatOptions(List<String> options) {
+        outputFormatOptions.clear();
+        return addOutputFormatOptions(options.toArray(new String[0]));
     }
 
     @Override

@@ -1,6 +1,9 @@
 package net.thevpc.nuts.runtime.standalone.repository.config;
 
 import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.session.NutsRepositorySessionAwareImpl;
 import net.thevpc.nuts.runtime.standalone.session.NutsSessionUtils;
@@ -36,9 +39,9 @@ public class DefaultNutsRepositoryManager implements NutsRepositoryManager {
     }
     
     @Override
-    public NutsRepository[] getRepositories() {
+    public List<NutsRepository> getRepositories() {
         return Arrays.stream(model.getRepositories(session)).map(x -> toSessionAwareRepo(x))
-                .toArray(NutsRepository[]::new);
+                .collect(Collectors.toList());
     }
 
     @Override

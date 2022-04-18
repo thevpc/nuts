@@ -28,6 +28,8 @@ package net.thevpc.nuts;
 import net.thevpc.nuts.boot.NutsApiUtils;
 import net.thevpc.nuts.spi.NutsComponent;
 
+import java.util.List;
+
 /**
  * Id Resolver from classpath
  *
@@ -57,5 +59,5 @@ public interface NutsIdResolver extends NutsComponent {
      * @param clazz to search for
      * @return all nuts ids detected from resources containing the given class
      */
-    NutsId[] resolveIds(Class clazz);
+    List<NutsId> resolveIds(Class clazz);
 }

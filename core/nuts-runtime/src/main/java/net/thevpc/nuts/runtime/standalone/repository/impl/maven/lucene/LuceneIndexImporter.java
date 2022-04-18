@@ -42,12 +42,11 @@ public class LuceneIndexImporter {
 
     public long importFile(String filePath,String repository,NutsSession session) {
         ArtifactsIndexDB adb = ArtifactsIndexDB.of(session);
-        NutsIdParser idParser = NutsIdParser.of(session);
         int addedCount=0;
         int allCount=0;
         try (DirtyLuceneIndexParser p = new DirtyLuceneIndexParser(new FileInputStream(filePath),session)) {
             while (p.hasNext()) {
-                NutsId id = idParser.parse(p.next()).builder().setRepository(repository).build();
+                NutsId id = NutsId.of(p.next()).get(session).builder().setRepository(repository).build();
                 if (!adb.contains(id,session)) {
                     addedCount++;
                     adb.add(id,session);

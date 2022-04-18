@@ -160,7 +160,7 @@ public class DefaultCustomCommandsModel {
                 || command.getName().contains(" ") || command.getName().contains(".")
                 || command.getName().contains("/") || command.getName().contains("\\")
                 || command.getCommand() == null
-                || command.getCommand().length == 0) {
+                || command.getCommand().size() == 0) {
             throw new NutsIllegalArgumentException(session,
                     NutsMessage.cstyle("invalid command %s", (command == null ? "<NULL>" : command.getName()))
             );
@@ -203,7 +203,7 @@ public class DefaultCustomCommandsModel {
                 || command.getName().contains(" ") || command.getName().contains(".")
                 || command.getName().contains("/") || command.getName().contains("\\")
                 || command.getCommand() == null
-                || command.getCommand().length == 0) {
+                || command.getCommand().size() == 0) {
             throw new NutsIllegalArgumentException(session,
                     NutsMessage.cstyle("invalid command %s", (command == null ? "<NULL>" : command.getName()))
             );
@@ -295,7 +295,7 @@ public class DefaultCustomCommandsModel {
     }
 
     private NutsWorkspaceCustomCommand toDefaultNutsWorkspaceCommand(NutsCommandConfig c, NutsSession session) {
-        if (c.getCommand() == null || c.getCommand().length == 0) {
+        if (c.getCommand() == null || c.getCommand().size() == 0) {
 
             _LOGOP(session).level(Level.WARNING).verb(NutsLogVerb.FAIL)
                     .log(NutsMessage.jstyle("invalid command definition ''{0}''. Missing command . Ignored", c.getName()));
@@ -324,8 +324,8 @@ public class DefaultCustomCommandsModel {
 
     public NutsWorkspaceCustomCommand find(String name, NutsId forId, NutsId forOwner, NutsSession session) {
         NutsWorkspaceCustomCommand a = find(name, session);
-        if (a != null && a.getCommand() != null && a.getCommand().length > 0) {
-            NutsId i = NutsId.of(a.getCommand()[0],session);
+        if (a != null && a.getCommand() != null && a.getCommand().size() > 0) {
+            NutsId i = NutsId.of(a.getCommand().get(0)).orElse(null);
             if (i != null
                     && (forId == null
                     || i.getShortName().equals(forId.getArtifactId())

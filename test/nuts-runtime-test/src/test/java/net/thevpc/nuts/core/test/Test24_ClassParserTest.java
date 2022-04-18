@@ -18,6 +18,8 @@ import java.util.Arrays;
 
 import net.thevpc.nuts.NutsExecutionEntries;
 import net.thevpc.nuts.NutsSession;
+import net.thevpc.nuts.NutsUtilStrings;
+import net.thevpc.nuts.boot.PrivateNutsUtilStrings;
 import net.thevpc.nuts.core.test.utils.TestUtils;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.util.CoreTimeUtils;
@@ -68,7 +70,7 @@ public class Test24_ClassParserTest {
         if (max < to - from) {
             max = to - from;
         }
-        TestUtils.println("### TIME [" + file + "] " + CoreTimeUtils.formatPeriodMilli(to - from) + " -- " + max);
+        TestUtils.println("### TIME [" + file + "] " + NutsUtilStrings.formatPeriodMilli(to - from) + " -- " + max);
     }
 
     private static void parseFolder(Path file, NutsSession session) throws IOException {

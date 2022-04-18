@@ -60,7 +60,7 @@ import java.util.stream.Collectors;
 public class JavaExecutorComponent implements NutsExecutorComponent {
 
     public static NutsId ID;
-    NutsSession ws;
+    NutsSession session;
 
     @Override
     public NutsId getId() {
@@ -79,9 +79,9 @@ public class JavaExecutorComponent implements NutsExecutorComponent {
 
     @Override
     public int getSupportLevel(NutsSupportLevelContext ctx) {
-        this.ws = ctx.getSession();
+        this.session = ctx.getSession();
         if (ID == null) {
-            ID = NutsId.of("net.thevpc.nuts.exec:java", ws);
+            ID = NutsId.of("net.thevpc.nuts.exec:java").get(session);
         }
         NutsDefinition def = ctx.getConstraints(NutsDefinition.class);
         if (def != null) {
@@ -129,7 +129,7 @@ public class JavaExecutorComponent implements NutsExecutorComponent {
                 }
 
                 HashMap<String, String> osEnv = new HashMap<>();
-                NutsWorkspaceOptionsBuilder options = ws.boot().getBootOptions().builder();
+                NutsWorkspaceOptionsBuilder options = this.session.boot().getBootOptions().builder();
 
                 //copy session parameters to the newly created workspace
                 options.setDry(execSession.isDry());
@@ -171,13 +171,13 @@ public class JavaExecutorComponent implements NutsExecutorComponent {
                     for (String s : joptions.getClassPathNidStrings()) {
                         if (s.startsWith("net.thevpc.nuts:nuts#")) {
                             String v = s.substring("net.thevpc.nuts:nuts#".length());
-                            nutsDependencyVersion = NutsVersion.of(v, session);
+                            nutsDependencyVersion = NutsVersion.of(v).get( session);
                         } else {
                             Pattern pp = Pattern.compile(".*[/\\\\]nuts-(?<v>[0-9.]+)[.]jar");
                             Matcher mm = pp.matcher(s);
                             if (mm.find()) {
                                 String v = mm.group("v");
-                                nutsDependencyVersion = NutsVersion.of(v, session);
+                                nutsDependencyVersion = NutsVersion.of(v).get( session);
                                 break;
                             }
                         }
@@ -217,7 +217,7 @@ public class JavaExecutorComponent implements NutsExecutorComponent {
                 String bootArgumentsString = options2.formatter()
                         .setExported(true)
                         .setCompact(true)
-                        .getBootCommandLine().formatter().setShellFamily(NutsShellFamily.SH).setNtf(false).toString();
+                        .getBootCommandLine().formatter(session).setShellFamily(NutsShellFamily.SH).setNtf(false).toString();
                 if (!NutsBlankable.isBlank(bootArgumentsString)) {
                     osEnv.put("NUTS_BOOT_ARGS", bootArgumentsString);
                     joptions.getJvmArgs().add("-Dnuts.boot.args=" + bootArgumentsString);
@@ -286,7 +286,7 @@ public class JavaExecutorComponent implements NutsExecutorComponent {
 
                 if (joptions.isJar()) {
                     xargs.add(txt.ofPlain("-jar"));
-                    xargs.add(def.getId().formatter().format());
+                    xargs.add(def.getId().formatter(session).format());
 
                     args.add("-jar");
                     args.add(contentFile.toString());

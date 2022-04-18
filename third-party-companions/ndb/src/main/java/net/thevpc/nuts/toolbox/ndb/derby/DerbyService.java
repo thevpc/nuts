@@ -129,7 +129,7 @@ public class DerbyService {
     }
 
     private Path download(String id, Path folder, boolean optional) {
-        final NutsId iid = NutsId.of(id, appContext.getSession());
+        final NutsId iid = NutsId.of(id).get(appContext.getSession());
 //        Path downloadBaseFolder = folder//.resolve(iid.getVersion().getValue());
         Path targetFile = folder.resolve(iid.getArtifactId() + ".jar");
         if (!Files.exists(targetFile)) {
@@ -153,7 +153,7 @@ public class DerbyService {
         NutsId java = session.env().getPlatform();
         List<String> all = session.search().setSession(appContext.getSession().copy()).addId("org.apache.derby:derbynet").setDistinct(true)
                 .setIdFilter(
-                        (java.getVersion().compareTo("1.9") < 0) ? NutsVersionFilters.of(session).byValue("[,10.15.1.3[").to(NutsIdFilter.class) :
+                        (java.getVersion().compareTo("1.9") < 0) ? NutsVersionFilters.of(session).byValue("[,10.15.1.3[").get().to(NutsIdFilter.class) :
                                 null)
                 .getResultIds().stream().map(x -> x.getVersion().toString()).collect(Collectors.toList());
         TreeSet<String> lastFirst = new TreeSet<>(new Comparator<String>() {
@@ -175,7 +175,7 @@ public class DerbyService {
             NutsId java = session.env().getPlatform();
             NutsId best = session.search().setSession(appContext.getSession().copy()).addId("org.apache.derby:derbynet").setDistinct(true).setLatest(true)
                     .setIdFilter(
-                            (java.getVersion().compareTo("1.9") < 0) ? NutsVersionFilters.of(session).byValue("[,10.15.1.3[").to(NutsIdFilter.class) :
+                            (java.getVersion().compareTo("1.9") < 0) ? NutsVersionFilters.of(session).byValue("[,10.15.1.3[").get().to(NutsIdFilter.class) :
                                     null)
                     .setSession(appContext.getSession().copy())
                     .getResultIds().singleton();

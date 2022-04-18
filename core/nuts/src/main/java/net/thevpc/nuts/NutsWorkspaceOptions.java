@@ -29,6 +29,7 @@ import java.io.InputStream;
 import java.io.PrintStream;
 import java.io.Serializable;
 import java.time.Instant;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.function.Supplier;
@@ -66,7 +67,7 @@ public interface NutsWorkspaceOptions extends Serializable {
      *
      * @return application arguments.
      */
-    String[] getApplicationArguments();
+    List<String> getApplicationArguments();
 
     /**
      * workspace archetype to consider when creating a new workspace.
@@ -123,7 +124,7 @@ public interface NutsWorkspaceOptions extends Serializable {
      *
      * @return extensions to be excluded when opening the workspace.
      */
-    String[] getExcludedExtensions();
+    List<String> getExcludedExtensions();
 
 //    /**
 //     * repository list to be excluded when opening the workspace.
@@ -151,7 +152,7 @@ public interface NutsWorkspaceOptions extends Serializable {
      *
      * @return extra executor options.
      */
-    String[] getExecutorOptions();
+    List<String> getExecutorOptions();
 
     /**
      * return home location.
@@ -236,7 +237,7 @@ public interface NutsWorkspaceOptions extends Serializable {
      *
      * @return default output formation options.
      */
-    String[] getOutputFormatOptions();
+    List<String> getOutputFormatOptions();
 
     /**
      * credential needed to log into workspace.
@@ -327,7 +328,7 @@ public interface NutsWorkspaceOptions extends Serializable {
      *
      * @return repositories to register temporarily when running the workspace.
      */
-    String[] getRepositories();
+    List<String> getRepositories();
 
     /**
      * username to log into when running workspace.
@@ -635,9 +636,9 @@ public interface NutsWorkspaceOptions extends Serializable {
 
     Boolean getSwitchWorkspace();
 
-    NutsMessage[] getErrors();
+    List<NutsMessage> getErrors();
 
-    String[] getCustomOptions();
+    List<String> getCustomOptions();
 
     /**
      * locale

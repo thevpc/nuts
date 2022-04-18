@@ -245,7 +245,8 @@ public class NutsStreamOrPath {
                     } else {
                         str = NutsTexts.of(session).ofStyled(value.toString(), NutsTextStyle.path());
                     }
-                    q = new NutsDefaultStreamMetadata(str.filteredText(),str,-1,null, null);
+                    NutsString finalStr = str;
+                    q = new NutsDefaultStreamMetadata(str.filteredText(), s-> finalStr,-1,null, null);
                 }
                 return q;
             }
@@ -258,16 +259,16 @@ public class NutsStreamOrPath {
                 NutsId id = q.getId();
                 NutsString str;
                 if(id!=null){
-                    str=id.format();
+                    str=id.format(session);
                 }else{
                     str = NutsTexts.of(session).ofStyled("<empty-descriptor>", NutsTextStyle.path());
                 }
-                return new NutsDefaultStreamMetadata(str.filteredText(),str,-1,null, null);
+                return new NutsDefaultStreamMetadata(str.filteredText(),s->str,-1,null, null);
             }
             default: {
                 return new NutsDefaultStreamMetadata(
                         value.toString(),
-                        NutsTexts.of(session).ofStyled(value.toString(), NutsTextStyle.path()),
+                        s->NutsTexts.of(s).ofStyled(value.toString(), NutsTextStyle.path()),
                         -1,
                         null, null
                 );

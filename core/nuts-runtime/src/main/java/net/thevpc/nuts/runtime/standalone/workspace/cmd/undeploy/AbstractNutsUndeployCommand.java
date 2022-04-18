@@ -18,8 +18,8 @@ public abstract class AbstractNutsUndeployCommand extends NutsWorkspaceCommandBa
     }
 
     @Override
-    public NutsId[] getIds() {
-        return ids.toArray(new NutsId[0]);
+    public List<NutsId> getIds() {
+        return ids;
     }
 
     @Override
@@ -34,18 +34,18 @@ public abstract class AbstractNutsUndeployCommand extends NutsWorkspaceCommandBa
     @Override
     public NutsUndeployCommand addId(String id) {
         checkSession();
-        NutsSession ws = getSession();
-        return addId(NutsBlankable.isBlank(id) ? null : NutsId.of(id,ws));
+        NutsSession session = getSession();
+        return addId(NutsBlankable.isBlank(id) ? null : NutsId.of(id).get(session));
     }
 
     @Override
     public NutsUndeployCommand addIds(String... values) {
         checkSession();
-        NutsSession ws = getSession();
+        NutsSession session = getSession();
         if (values != null) {
             for (String s : values) {
                 if (!NutsBlankable.isBlank(s)) {
-                    ids.add(NutsId.of(s,ws));
+                    ids.add(NutsId.of(s).get(session));
                 }
             }
         }

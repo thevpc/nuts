@@ -25,12 +25,8 @@
  */
 package net.thevpc.nuts;
 
-import net.thevpc.nuts.boot.NutsApiUtils;
-import net.thevpc.nuts.spi.NutsComponent;
-
 import java.io.Serializable;
 import java.util.Map;
-import java.util.function.Function;
 
 /**
  * Mutable Artifact id information used to create instance of {@link NutsId}
@@ -39,20 +35,7 @@ import java.util.function.Function;
  * @app.category Descriptor
  * @since 0.5.4
  */
-public interface NutsIdBuilder extends NutsComponent, Serializable {
-    static NutsIdBuilder of(NutsSession session) {
-        NutsApiUtils.checkSession(session);
-        return session.extensions().createSupported(NutsIdBuilder.class, true, null);
-    }
-
-    /**
-     * id face define is a release file type selector of the id.
-     * It helps discriminating content (jar) from descriptor, from other (hash,...)
-     * files released for the very same  artifact.
-     *
-     * @return id face selector
-     */
-    String getFace();
+public interface NutsIdBuilder extends NutsId, Serializable {
 
     /**
      * update id face which defines is a release file type selector
@@ -62,23 +45,9 @@ public interface NutsIdBuilder extends NutsComponent, Serializable {
      */
     NutsIdBuilder setFace(String value);
 
-    /**
-     * os and env supported by the artifact
-     *
-     * @return os supported by the artifact
-     */
-    NutsEnvConditionBuilder getCondition();
-
     NutsIdBuilder setCondition(NutsEnvCondition c);
 
     NutsIdBuilder setCondition(NutsEnvConditionBuilder c);
-
-    /**
-     * tag used to distinguish between different artifacts that were built from the same source code
-     *
-     * @return tag used to distinguish between different artifacts that were built from the same source code
-     */
-    String getClassifier();
 
     /**
      * update classifier
@@ -87,13 +56,6 @@ public interface NutsIdBuilder extends NutsComponent, Serializable {
      * @return {@code this} instance
      */
     NutsIdBuilder setClassifier(String value);
-
-    /**
-     * packaging
-     *
-     * @return packaging
-     */
-    String getPackaging();
 
     /**
      * update packaging
@@ -146,20 +108,6 @@ public interface NutsIdBuilder extends NutsComponent, Serializable {
     NutsIdBuilder addProperties(String query);
 
     /**
-     * properties in the url query form
-     *
-     * @return properties in the url query form.
-     */
-    String getPropertiesQuery();
-
-    /**
-     * properties as map.
-     *
-     * @return properties as map.
-     */
-    Map<String, String> getProperties();
-
-    /**
      * update all properties property.
      *
      * @param queryMap new value
@@ -176,26 +124,12 @@ public interface NutsIdBuilder extends NutsComponent, Serializable {
     NutsIdBuilder setProperties(String query);
 
     /**
-     * artifact repository (usually repository name or id)
-     *
-     * @return artifact repository (usually repository name or id)
-     */
-    String getRepository();
-
-    /**
      * update repository
      *
      * @param value new value
      * @return {@code this} instance
      */
     NutsIdBuilder setRepository(String value);
-
-    /**
-     * artifact group which identifies uniquely projects and group of projects.
-     *
-     * @return artifact group which identifies uniquely projects and group of projects.
-     */
-    String getGroupId();
 
     /**
      * update groupId
@@ -206,54 +140,12 @@ public interface NutsIdBuilder extends NutsComponent, Serializable {
     NutsIdBuilder setGroupId(String value);
 
     /**
-     * return a string concatenation of group, name and version,
-     * ignoring repository, and queryMap values. An example of long name is
-     * <code>my-group:my-artifact#my-version?alt</code>
-     *
-     * @return group id, artifact id and version only Id instance
-     */
-    String getLongName();
-
-    /**
-     * returns a string concatenation of group and name (':' separated) ignoring
-     * version,repository, and queryMap values. In group is empty or null, name
-     * is returned. Ann null values are trimmed to "" An example of simple name
-     * is <code>my-group:my-artifact</code>
-     *
-     * @return group id and artifact id
-     */
-    String getShortName();
-
-    /**
-     * return a string representation of this id. All of group, name, version,
-     * repository, queryMap values are printed. This method is equivalent to
-     * {@link Object#toString()}
-     *
-     * @return string representation of this id
-     */
-    String getFullName();
-
-    /**
-     * return name part of this id
-     *
-     * @return return name part of this id
-     */
-    String getArtifactId();
-
-    /**
      * update artifactId
      *
      * @param value new value
      * @return {@code this} instance
      */
     NutsIdBuilder setArtifactId(String value);
-
-    /**
-     * artifact version (never null)
-     *
-     * @return artifact version (never null)
-     */
-    NutsVersion getVersion();
 
     /**
      * update version
@@ -289,14 +181,6 @@ public interface NutsIdBuilder extends NutsComponent, Serializable {
     NutsIdBuilder setAll(NutsIdBuilder id);
 
     /**
-     * replace dollar based variables with the given properties
-     *
-     * @param properties to replace
-     * @return {@code this} instance
-     */
-    NutsIdBuilder apply(Function<String, String> properties);
-
-    /**
      * clear this instance (set null/default all properties)
      *
      * @return {@code this instance}
@@ -309,6 +193,4 @@ public interface NutsIdBuilder extends NutsComponent, Serializable {
      * @return new instance of {@link NutsId} initialized with this builder values.
      */
     NutsId build();
-
-    NutsIdBuilder omitImportedGroupId();
 }

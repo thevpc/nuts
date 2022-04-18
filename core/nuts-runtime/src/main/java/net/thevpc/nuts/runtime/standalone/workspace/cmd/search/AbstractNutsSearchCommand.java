@@ -78,7 +78,7 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
     public NutsSearchCommand addId(String id) {
         checkSession();
         if (!NutsBlankable.isBlank(id)) {
-            ids.add(NutsId.of(id, getSession()));
+            ids.add(NutsId.of(id).get(getSession()));
         }
         return this;
     }
@@ -97,7 +97,7 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
         if (values != null) {
             for (String s : values) {
                 if (!NutsBlankable.isBlank(s)) {
-                    ids.add(NutsId.of(s, getSession()));
+                    ids.add(NutsId.of(s).get(getSession()));
                 }
             }
         }
@@ -119,7 +119,7 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
     @Override
     public NutsSearchCommand removeId(String id) {
         checkSession();
-        ids.remove(NutsId.of(id, getSession()));
+        ids.remove(NutsId.of(id).get(getSession()));
         return this;
     }
 
@@ -235,8 +235,8 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
     }
 
     @Override
-    public String[] getScripts() {
-        return scripts.toArray(new String[0]);
+    public List<String> getScripts() {
+        return scripts;
     }
 
     @Override
@@ -251,11 +251,16 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
         if (values != null) {
             for (String s : values) {
                 if (!NutsBlankable.isBlank(s)) {
-                    lockedIds.add(NutsId.of(s, getSession()));
+                    lockedIds.add(NutsId.of(s).get(getSession()));
                 }
             }
         }
         return this;
+    }
+
+    @Override
+    public NutsSearchCommand addLockedIds(List<NutsId> values) {
+        return addLockedIds(values.toArray(new NutsId[0]));
     }
 
     @Override
@@ -361,7 +366,7 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
     @Override
     public NutsSearchCommand removeLockedId(String id) {
         checkSession();
-        lockedIds.remove(NutsId.of(id, getSession()));
+        lockedIds.remove(NutsId.of(id).get(getSession()));
         return this;
     }
 
@@ -369,14 +374,14 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
     public NutsSearchCommand addLockedId(String id) {
         checkSession();
         if (!NutsBlankable.isBlank(id)) {
-            lockedIds.add(NutsId.of(id, getSession()));
+            lockedIds.add(NutsId.of(id).get(getSession()));
         }
         return this;
     }
 
     @Override
-    public NutsId[] getLockedIds() {
-        return this.lockedIds.toArray(new NutsId[0]);
+    public List<NutsId> getLockedIds() {
+        return this.lockedIds;
     }
 
 
@@ -400,13 +405,13 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
             this.includeBasePackage = o.isBasePackage();
             this.sorted = o.isSorted();
             this.arch.clear();
-            this.arch.addAll(Arrays.asList(o.getArch()));
+            this.arch.addAll(o.getArch());
             this.ids.clear();
-            this.ids.addAll(Arrays.asList(o.getIds()));
+            this.ids.addAll(o.getIds());
             this.scripts.clear();
-            this.scripts.addAll(Arrays.asList(o.getScripts()));
+            this.scripts.addAll(o.getScripts());
             this.packaging.clear();
-            this.packaging.addAll(Arrays.asList(o.getPackaging()));
+            this.packaging.addAll(o.getPackaging());
             this.installStatus = other.getInstallStatus();
         }
         return this;
@@ -419,8 +424,8 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
     }
 
     @Override
-    public NutsId[] getIds() {
-        return this.ids.toArray(new NutsId[0]);
+    public List<NutsId> getIds() {
+        return this.ids;
     }
 
     @Override
@@ -485,13 +490,13 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
     }
 
     @Override
-    public String[] getArch() {
-        return arch.toArray(new String[0]);
+    public List<String> getArch() {
+        return arch;
     }
 
     @Override
-    public String[] getPackaging() {
-        return this.packaging.toArray(new String[0]);
+    public List<String> getPackaging() {
+        return this.packaging;
     }
 
     @Override
@@ -742,11 +747,12 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
     @Override
     public NutsStream<NutsExecutionEntry> getResultExecutionEntries() {
         checkSession();
-        return postProcessResult(IteratorBuilder.of(getResultDefinitionIteratorBase(isContent(), isEffective()), session)
+        IteratorBuilder<NutsDefinition> defIter = IteratorBuilder.of(getResultDefinitionIteratorBase(isContent(), isEffective()), session);
+        return postProcessResult(defIter
                 .mapMulti(
                         NutsFunction.of(
                                 x -> (x.getContent() == null || x.getContent().getFile() == null) ? Collections.emptyList()
-                                        : Arrays.asList(NutsExecutionEntries.of(getSession()).parse(x.getContent().getFile())),
+                                        : NutsExecutionEntries.of(getSession()).parse(x.getContent().getFile()),
                                 "getFile"
                         )));
     }
@@ -935,7 +941,7 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
             case "--api-version": {
                 String val = cmdLine.nextBoolean().getValue().getString();
                 if (enabled) {
-                    this.setTargetApiVersion(NutsVersion.of(val, getSession()));
+                    this.setTargetApiVersion(NutsVersion.of(val).get( getSession()));
                 }
                 return true;
             }
@@ -1068,11 +1074,11 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
                 + ", distinct=" + isDistinct()
                 + ", includeMain=" + isBasePackage()
                 + ", sorted=" + isSorted()
-                + ", arch=" + Arrays.toString(getArch())
-                + ", ids=" + Arrays.toString(getIds())
-                + ", lockedIds=" + Arrays.toString(getLockedIds())
-                + ", scripts=" + Arrays.toString(getScripts())
-                + ", packaging=" + Arrays.toString(getPackaging())
+                + ", arch=" + getArch()
+                + ", ids=" + getIds()
+                + ", lockedIds=" + getLockedIds()
+                + ", scripts=" + getScripts()
+                + ", packaging=" + getPackaging()
                 + ", defaultVersions=" + getDefaultVersions()
                 + ", execType='" + getExecType() + '\''
                 + ", targetApiVersion='" + getTargetApiVersion() + '\''
@@ -1086,7 +1092,7 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
         if (d.isPartial()) {
             id = id.builder().setProperty("partial", "true").build();
         }
-        List<Object> li = Arrays.asList(d.getChildren()).stream().map(x -> dependenciesToElement(x)).collect(Collectors.toList());
+        List<Object> li = d.getChildren().stream().map(x -> dependenciesToElement(x)).collect(Collectors.toList());
         if (li.isEmpty()) {
             return id;
         }
@@ -1298,7 +1304,7 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
         NutsFetchCommand fetch = toFetch().setContent(content).setEffective(effective);
         NutsFetchCommand ofetch = toFetch().setContent(content).setEffective(effective).setSession(getSession().copy().setFetchStrategy(NutsFetchStrategy.OFFLINE));
         final boolean hasRemote = getSession().getFetchStrategy() == null
-                || Arrays.stream(getSession().getFetchStrategy().modes())
+                || getSession().getFetchStrategy().modes().stream()
                 .anyMatch(x -> x == NutsFetchMode.REMOTE);
         return IteratorBuilder.of(getResultIdIteratorBase(null), session)
                 .map(NutsFunction.of(next -> {

@@ -9,6 +9,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.AbstractNutsSettingsSubCommand;
 
 import java.util.Arrays;
+import java.util.List;
 
 /**
  *
@@ -66,7 +67,7 @@ public class NutsSettingsUserSubCommand extends AbstractNutsSettingsSubCommand {
                     }
                 }
                 if (cmdLine.isExecMode()) {
-                    NutsUser[] security;
+                    List<NutsUser> security;
                     if (repository == null) {
                         security = session.security().findUsers();
                     } else {
@@ -78,8 +79,8 @@ public class NutsSettingsUserSubCommand extends AbstractNutsSettingsSubCommand {
                             out.printf("   Mapper to  : %s%n", u.getRemoteIdentity());
                         }
                         out.printf("   Password   : %s%n", (u.hasCredentials() ? "Set" : "None"));
-                        out.printf("   Groups     : %s%n", (u.getGroups().length == 0 ? "None" : Arrays.asList(u.getGroups())));
-                        out.printf("   Rights     : %s%n", (u.getPermissions().length == 0 ? "None" : Arrays.asList(u.getPermissions())));
+                        out.printf("   Groups     : %s%n", (u.getGroups().size() == 0 ? "None" : u.getGroups()));
+                        out.printf("   Rights     : %s%n", (u.getPermissions().size() == 0 ? "None" : u.getPermissions()));
                     }
                 }
                 return true;

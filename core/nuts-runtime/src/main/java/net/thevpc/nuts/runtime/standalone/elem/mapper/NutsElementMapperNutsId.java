@@ -9,7 +9,7 @@ public class NutsElementMapperNutsId implements NutsElementMapper<NutsId> {
     @Override
     public Object destruct(NutsId o, Type typeOfSrc, NutsElementFactoryContext context) {
         if (context.isNtf()) {
-            return o.formatter().setNtf(true).format();
+            return o.formatter(context.getSession()).setNtf(true).format();
         } else {
             return o.toString();
         }
@@ -22,7 +22,7 @@ public class NutsElementMapperNutsId implements NutsElementMapper<NutsId> {
 //                NutsText n = ws.text().toText(ws.id().formatter(o).setNtf(true).format());
 //                return ws.elem().forPrimitive().buildNutsString(n);
             NutsSession session = context.getSession();
-            return context.elem().ofString(o.formatter().setNtf(true).format().toString());
+            return context.elem().ofString(o.formatter(session).setNtf(true).format().toString());
         } else {
             return context.defaultObjectToElement(o.toString(), null);
         }
@@ -31,7 +31,7 @@ public class NutsElementMapperNutsId implements NutsElementMapper<NutsId> {
     @Override
     public NutsId createObject(NutsElement o, Type typeOfResult, NutsElementFactoryContext context) {
         NutsSession session = context.getSession();
-        return NutsId.of(o.asPrimitive().getString(),session);
+        return NutsId.of(o.asPrimitive().getString()).get(session);
     }
 
 }

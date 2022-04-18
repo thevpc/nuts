@@ -26,7 +26,10 @@
  */
 package net.thevpc.nuts;
 
+import net.thevpc.nuts.boot.NutsApiUtils;
 import net.thevpc.nuts.spi.NutsComponent;
+
+import java.util.List;
 
 /**
  * Simple Expression Parser Module used in multiple syb-systems of nuts (such as search)
@@ -49,7 +52,7 @@ public interface NutsExpr extends NutsComponent {
 
     Fct getFunction(String fctName);
 
-    String[] getFunctionNames();
+    List<String> getFunctionNames();
 
     Object evalFunction(String fctName, Object... args);
 
@@ -59,7 +62,7 @@ public interface NutsExpr extends NutsComponent {
 
     void unsetOperator(String name, OpType type);
 
-    String[] getOperatorNames(OpType type);
+    List<String> getOperatorNames(OpType type);
 
     void setVar(String name, Var fct);
 
@@ -81,57 +84,26 @@ public interface NutsExpr extends NutsComponent {
             this.id = name().toLowerCase().replace('_', '-');
         }
 
-        public static NodeType parse(String value, NutsSession session) {
-            return parse(value, null, session);
-        }
 
-        public static NodeType parse(String value, NodeType emptyValue, NutsSession session) {
-            NodeType v = parseLenient(value, emptyValue, null);
-            if (v == null) {
-                if (!NutsBlankable.isBlank(value)) {
-                    throw new NutsParseEnumException(session, value, NodeType.class);
+        public static NutsOptional<NodeType> parse(String value) {
+            return NutsApiUtils.parse(value, NodeType.class,s->{
+                switch (s.toUpperCase()) {
+                    case "VAR":
+                    case "VARIABLE":
+                        return NutsOptional.of(VARIABLE);
+                    case "FCT":
+                    case "FUN":
+                    case "FUNCTION":
+                        return NutsOptional.of(FUNCTION);
+                    case "OP":
+                    case "OPERATOR":
+                        return NutsOptional.of(OPERATOR);
+                    case "LIT":
+                    case "LITERAL":
+                        return NutsOptional.of(LITERAL);
                 }
-            }
-            return v;
-        }
-
-        public static NodeType parseLenient(String value) {
-            return parseLenient(value, null);
-        }
-
-        public static NodeType parseLenient(String value, NodeType emptyOrErrorValue) {
-            return parseLenient(value, emptyOrErrorValue, emptyOrErrorValue);
-        }
-
-        public static NodeType parseLenient(String value, NodeType emptyValue, NodeType errorValue) {
-            if (value == null) {
-                value = "";
-            } else {
-                value = value.toUpperCase().trim().replace('-', '_');
-            }
-            if (value.isEmpty()) {
-                return emptyValue;
-            }
-            switch (value) {
-                case "VAR":
-                case "VARIABLE":
-                    return VARIABLE;
-                case "FCT":
-                case "FUN":
-                case "FUNCTION":
-                    return FUNCTION;
-                case "OP":
-                case "OPERATOR":
-                    return OPERATOR;
-                case "LIT":
-                case "LITERAL":
-                    return LITERAL;
-            }
-            try {
-                return NodeType.valueOf(value.toUpperCase());
-            } catch (Exception notFound) {
-                return errorValue;
-            }
+                return null;
+            });
         }
 
         @Override
@@ -150,54 +122,22 @@ public interface NutsExpr extends NutsComponent {
             this.id = name().toLowerCase().replace('_', '-');
         }
 
-        public static OpType parse(String value, NutsSession session) {
-            return parse(value, null, session);
-        }
-
-        public static OpType parse(String value, OpType emptyValue, NutsSession session) {
-            OpType v = parseLenient(value, emptyValue, null);
-            if (v == null) {
-                if (!NutsBlankable.isBlank(value)) {
-                    throw new NutsParseEnumException(session, value, OpType.class);
+        public static NutsOptional<OpType> parse(String value) {
+            return NutsApiUtils.parse(value, OpType.class,s->{
+                switch (s.toUpperCase()) {
+                    case "INFIX":
+                        return NutsOptional.of(INFIX);
+                    case "POSTFIX_OPERATOR":
+                    case "POSTFIX_OP":
+                    case "POSTFIX":
+                        return NutsOptional.of(POSTFIX);
+                    case "PREFIX_OPERATOR":
+                    case "PREFIX_OP":
+                    case "PREFIX":
+                        return NutsOptional.of(PREFIX);
                 }
-            }
-            return v;
-        }
-
-        public static OpType parseLenient(String value) {
-            return parseLenient(value, null);
-        }
-
-        public static OpType parseLenient(String value, OpType emptyOrErrorValue) {
-            return parseLenient(value, emptyOrErrorValue, emptyOrErrorValue);
-        }
-
-        public static OpType parseLenient(String value, OpType emptyValue, OpType errorValue) {
-            if (value == null) {
-                value = "";
-            } else {
-                value = value.toUpperCase().trim().replace('-', '_');
-            }
-            if (value.isEmpty()) {
-                return emptyValue;
-            }
-            switch (value) {
-                case "INFIX":
-                    return INFIX;
-                case "POSTFIX_OPERATOR":
-                case "POSTFIX_OP":
-                case "POSTFIX":
-                    return POSTFIX;
-                case "PREFIX_OPERATOR":
-                case "PREFIX_OP":
-                case "PREFIX":
-                    return PREFIX;
-            }
-            try {
-                return OpType.valueOf(value.toUpperCase());
-            } catch (Exception notFound) {
-                return errorValue;
-            }
+                return null;
+            });
         }
 
         @Override
@@ -211,7 +151,7 @@ public interface NutsExpr extends NutsComponent {
 
         NodeType getType();
 
-        Node[] getChildren();
+        List<Node> getChildren();
 
         String getName();
 
@@ -219,7 +159,7 @@ public interface NutsExpr extends NutsComponent {
     }
 
     interface Fct {
-        Object eval(String name, Node[] args, NutsExpr context);
+        Object eval(String name, List<Node> args, NutsExpr context);
     }
 
     interface Op {

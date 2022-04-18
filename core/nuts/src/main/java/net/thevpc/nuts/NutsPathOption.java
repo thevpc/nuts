@@ -85,39 +85,10 @@ public enum NutsPathOption implements NutsEnum {
         this.id = name().toLowerCase().replace('_', '-');
     }
 
-    public static NutsPathOption parseLenient(String value) {
-        return parseLenient(value, null);
+    public static NutsOptional<NutsPathOption> parse(String value) {
+        return NutsApiUtils.parse(value, NutsPathOption.class);
     }
 
-    public static NutsPathOption parseLenient(String value, NutsPathOption emptyOrErrorValue) {
-        return parseLenient(value, emptyOrErrorValue, emptyOrErrorValue);
-    }
-
-    public static NutsPathOption parseLenient(String value, NutsPathOption emptyValue, NutsPathOption errorValue) {
-        if (value == null) {
-            value = "";
-        } else {
-            value = value.toUpperCase().trim().replace('-', '_');
-        }
-        if (value.isEmpty()) {
-            return emptyValue;
-        }
-        try {
-            return NutsPathOption.valueOf(value.toUpperCase());
-        } catch (Exception notFound) {
-            return errorValue;
-        }
-    }
-
-    public static NutsPathOption parse(String value, NutsSession session) {
-        return parse(value, null, session);
-    }
-
-    public static NutsPathOption parse(String value, NutsPathOption emptyValue, NutsSession session) {
-        NutsPathOption v = parseLenient(value, emptyValue, null);
-        NutsApiUtils.checkNonNullEnum(v, value, NutsPathOption.class, session);
-        return v;
-    }
 
     /**
      * lower cased identifier.

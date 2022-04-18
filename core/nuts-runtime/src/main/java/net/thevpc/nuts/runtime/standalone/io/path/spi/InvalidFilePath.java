@@ -35,11 +35,11 @@ public class InvalidFilePath implements NutsPathSPI {
 
     @Override
     public String getName(NutsPath basePath) {
-        String[] pa = asPathArray();
-        if (pa.length == 0) {
+        List<String> pa = asPathArray();
+        if (pa.size() == 0) {
             return "";
         }
-        return pa[pa.length - 1];
+        return pa.get(pa.size() - 1);
     }
 
     @Override
@@ -252,14 +252,14 @@ public class InvalidFilePath implements NutsPathSPI {
 
     @Override
     public boolean isName(NutsPath basePath) {
-        String[] pa = asPathArray();
-        if (pa.length == 0) {
+        List<String> pa = asPathArray();
+        if (pa.size() == 0) {
             return true;
         }
-        if (pa.length > 1) {
+        if (pa.size() > 1) {
             return false;
         }
-        String v = pa[0];
+        String v = pa.get(0);
         switch (v) {
             case "/":
             case "\\":
@@ -281,13 +281,13 @@ public class InvalidFilePath implements NutsPathSPI {
 
     @Override
     public int getPathCount(NutsPath basePath) {
-        String[] pa = asPathArray();
-        return pa.length == 0 ? 1 : pa.length;
+        List<String> pa = asPathArray();
+        return pa.size() == 0 ? 1 : pa.size();
     }
 
     @Override
     public boolean isRoot(NutsPath basePath) {
-        return asPathArray().length == 0 && (value.contains("/") || value.contains("\\"));
+        return asPathArray().size() == 0 && (value.contains("/") || value.contains("\\"));
     }
 
     @Override
@@ -297,12 +297,12 @@ public class InvalidFilePath implements NutsPathSPI {
 
     @Override
     public NutsPath subpath(NutsPath basePath, int beginIndex, int endIndex) {
-        String[] a = asPathArray();
-        return NutsPath.of(String.join("/", Arrays.copyOfRange(a, beginIndex, endIndex)), getSession());
+        List<String> a = asPathArray();
+        return NutsPath.of(String.join("/", a.subList(beginIndex, endIndex)), getSession());
     }
 
     @Override
-    public String[] getItems(NutsPath basePath) {
+    public List<String> getItems(NutsPath basePath) {
         return asPathArray();
     }
 
@@ -330,16 +330,16 @@ public class InvalidFilePath implements NutsPathSPI {
         return p.toArray(new String[0]);
     }
 
-    private String[] asPathArray(String s) {
+    private List<String> asPathArray(String s) {
         //invalid
-        return new String[]{s};
+        return Arrays.asList(s);
 //        return Arrays.stream(value.split("[/\\\\]"))
 //                .filter(x -> x.length() == 0)
 //                .toArray(String[]::new)
 //                ;
     }
 
-    private String[] asPathArray() {
+    private List<String> asPathArray() {
         return asPathArray(value);
     }
 

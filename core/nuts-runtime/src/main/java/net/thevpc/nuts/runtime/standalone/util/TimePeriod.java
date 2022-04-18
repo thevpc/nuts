@@ -1,9 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.util;
 
-import net.thevpc.nuts.NutsBlankable;
-import net.thevpc.nuts.NutsMessage;
-import net.thevpc.nuts.NutsParseException;
-import net.thevpc.nuts.NutsSession;
+import net.thevpc.nuts.*;
 
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
@@ -20,21 +17,9 @@ public class TimePeriod {
         this.unit = unit;
     }
 
-    public static TimePeriod parse(String str, TimeUnit defaultUnit, NutsSession session) {
-        TimePeriod v = parseLenient(str, defaultUnit);
-        if(v==null){
-            throw new NutsParseException(session, NutsMessage.cstyle("invalid Time period %s", str));
-        }
-        return v;
-    }
-
-    public static TimePeriod parseLenient(String str, TimeUnit defaultUnit) {
-        return parseLenient(str, defaultUnit, null,null);
-    }
-
-    public static TimePeriod parseLenient(String str, TimeUnit defaultUnit, TimePeriod emptyValue, TimePeriod errorValue) {
+    public static NutsOptional<TimePeriod> parse(String str, TimeUnit defaultUnit) {
         if (NutsBlankable.isBlank(str)) {
-            return emptyValue;
+            return NutsOptional.ofEmpty(s -> NutsMessage.cstyle(TimePeriod.class.getSimpleName() + " is empty"));
         }
         if (defaultUnit == null) {
             defaultUnit = TimeUnit.MILLISECONDS;
@@ -45,7 +30,7 @@ public class TimePeriod {
             try {
                 unitCount = Long.parseLong(matcher.group("val"));
             } catch (Exception ex) {
-                return errorValue;
+                return NutsOptional.ofError(s -> NutsMessage.cstyle(TimePeriod.class.getSimpleName() + " invalid value : %s", str));
             }
             String u = matcher.group("unit");
             if (u == null) {
@@ -101,9 +86,9 @@ public class TimePeriod {
                     return null;
                 }
             }
-            return new TimePeriod(unitCount, unit);
+            return NutsOptional.of(new TimePeriod(unitCount, unit));
         }
-        return errorValue;
+        return NutsOptional.ofError(s -> NutsMessage.cstyle(TimePeriod.class.getSimpleName() + " invalid value : %s", str));
     }
 
     public long getCount() {

@@ -333,23 +333,23 @@ protected boolean resetPermissions;
     }
 
     @Override
-    public String[] getAddPermissions() {
-        return permissions.toArray(new String[0]);
+    public List<String> getAddPermissions() {
+        return new ArrayList<>(permissions);
     }
 
     @Override
-    public String[] getAddGroups() {
-        return groups.toArray(new String[0]);
+    public List<String> getAddGroups() {
+        return new ArrayList<>(groups);
     }
 
     @Override
-    public String[] getRemovePermissions() {
-        return rm_permissions.toArray(new String[0]);
+    public List<String> getRemovePermissions() {
+        return new ArrayList<>(rm_permissions);
     }
 
     @Override
-    public String[] getRemoveGroups() {
-        return rm_groups.toArray(new String[0]);
+    public List<String> getRemoveGroups() {
+        return new ArrayList<>(rm_groups);
     }
 
     @Override

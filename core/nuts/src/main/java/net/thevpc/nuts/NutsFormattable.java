@@ -30,9 +30,9 @@ package net.thevpc.nuts;
  * @app.category Format
  */
 public interface NutsFormattable {
-    NutsFormat formatter();
+    NutsFormat formatter(NutsSession session);
 
-    default NutsString format() {
-        return formatter().format();
+    default NutsString format(NutsSession session) {
+        return formatter(session).format();
     }
 }

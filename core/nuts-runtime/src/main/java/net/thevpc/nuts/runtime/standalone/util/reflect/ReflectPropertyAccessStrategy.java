@@ -23,10 +23,8 @@
  */
 package net.thevpc.nuts.runtime.standalone.util.reflect;
 
-import net.thevpc.nuts.NutsBlankable;
-import net.thevpc.nuts.NutsEnum;
-import net.thevpc.nuts.NutsParseEnumException;
-import net.thevpc.nuts.NutsSession;
+import net.thevpc.nuts.*;
+import net.thevpc.nuts.boot.NutsApiUtils;
 
 /**
  *
@@ -42,44 +40,9 @@ public enum ReflectPropertyAccessStrategy implements NutsEnum {
         this.id = name().toLowerCase().replace('_', '-');
     }
 
-    public static ReflectPropertyAccessStrategy parseLenient(String value) {
-        return parseLenient(value, null);
+    public static NutsOptional<ReflectPropertyAccessStrategy> parse(String value) {
+        return NutsApiUtils.parse(value, ReflectPropertyAccessStrategy.class);
     }
-
-    public static ReflectPropertyAccessStrategy parseLenient(String value, ReflectPropertyAccessStrategy emptyOrErrorValue) {
-        return parseLenient(value, emptyOrErrorValue, emptyOrErrorValue);
-    }
-
-    public static ReflectPropertyAccessStrategy parseLenient(String value, ReflectPropertyAccessStrategy emptyValue, ReflectPropertyAccessStrategy errorValue) {
-        if (value == null) {
-            value = "";
-        } else {
-            value = value.toUpperCase().trim().replace('-', '_');
-        }
-        if (value.isEmpty()) {
-            return emptyValue;
-        }
-        try {
-            return ReflectPropertyAccessStrategy.valueOf(value.toUpperCase());
-        } catch (Exception notFound) {
-            return errorValue;
-        }
-    }
-
-    public static ReflectPropertyAccessStrategy parse(String value, NutsSession session) {
-        return parse(value, null, session);
-    }
-
-    public static ReflectPropertyAccessStrategy parse(String value, ReflectPropertyAccessStrategy emptyValue, NutsSession session) {
-        ReflectPropertyAccessStrategy v = parseLenient(value, emptyValue, null);
-        if (v == null) {
-            if (!NutsBlankable.isBlank(value)) {
-                throw new NutsParseEnumException(session, value, ReflectPropertyAccessStrategy.class);
-            }
-        }
-        return v;
-    }
-
     @Override
     public String id() {
         return id;

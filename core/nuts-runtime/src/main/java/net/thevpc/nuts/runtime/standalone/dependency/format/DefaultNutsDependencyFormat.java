@@ -1,8 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.dependency.format;
 
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.format.DefaultFormatBase;
@@ -185,8 +183,8 @@ public class DefaultNutsDependencyFormat extends DefaultFormatBase<NutsDependenc
 
 
     @Override
-    public String[] getOmitQueryProperties() {
-        return queryPropertiesOmitted.toArray(new String[0]);
+    public List<String> getOmitQueryProperties() {
+        return new ArrayList<>(queryPropertiesOmitted);
     }
 
     @Override

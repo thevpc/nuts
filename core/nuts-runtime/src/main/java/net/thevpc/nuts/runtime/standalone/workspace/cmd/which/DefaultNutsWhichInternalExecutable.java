@@ -96,7 +96,7 @@ public class DefaultNutsWhichInternalExecutable extends DefaultInternalNutsExecu
                     }
                     case ARTIFACT: {
                         if (p.getId() == null) {
-                            NutsId nid = NutsId.of(arg,getSession());
+                            NutsId nid = NutsId.of(arg).get(getSession());
                             if (nid != null) {
                                 throw new NutsNotFoundException(getSession(), nid);
                             } else {

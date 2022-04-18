@@ -1,20 +1,19 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.update;
 
-import java.util.ArrayList;
 import net.thevpc.nuts.NutsUpdateResult;
 import net.thevpc.nuts.NutsWorkspaceUpdateResult;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 
 public class DefaultNutsWorkspaceUpdateResult implements NutsWorkspaceUpdateResult {
 
     private final NutsUpdateResult api;
     private final NutsUpdateResult runtime;
-    private final NutsUpdateResult[] extensions;
-    private final NutsUpdateResult[] artifacts;
+    private final List<NutsUpdateResult> extensions;
+    private final List<NutsUpdateResult> artifacts;
 
-    public DefaultNutsWorkspaceUpdateResult(NutsUpdateResult api, NutsUpdateResult runtime, NutsUpdateResult[] extensions, NutsUpdateResult[] components) {
+    public DefaultNutsWorkspaceUpdateResult(NutsUpdateResult api, NutsUpdateResult runtime, List<NutsUpdateResult> extensions, List<NutsUpdateResult> components) {
         this.api = api;
         this.runtime = runtime;
         this.extensions = extensions;
@@ -32,13 +31,13 @@ public class DefaultNutsWorkspaceUpdateResult implements NutsWorkspaceUpdateResu
     }
 
     @Override
-    public NutsUpdateResult[] getExtensions() {
-        return Arrays.copyOf(extensions, extensions.length);
+    public List<NutsUpdateResult> getExtensions() {
+        return extensions;
     }
 
     @Override
-    public NutsUpdateResult[] getArtifacts() {
-        return Arrays.copyOf(artifacts, artifacts.length);
+    public List<NutsUpdateResult> getArtifacts() {
+        return artifacts;
     }
 
     @Override
@@ -67,7 +66,7 @@ public class DefaultNutsWorkspaceUpdateResult implements NutsWorkspaceUpdateResu
     }
 
     @Override
-    public NutsUpdateResult[] getUpdatable() {
+    public List<NutsUpdateResult> getUpdatable() {
         List<NutsUpdateResult> all = new ArrayList<>();
         if (api != null && api.isUpdatable()) {
             all.add(api);
@@ -85,11 +84,11 @@ public class DefaultNutsWorkspaceUpdateResult implements NutsWorkspaceUpdateResu
                 all.add(r);
             }
         }
-        return all.toArray(new NutsUpdateResult[0]);
+        return all;
     }
 
     @Override
-    public NutsUpdateResult[] getAllResults() {
+    public List<NutsUpdateResult> getAllResults() {
         List<NutsUpdateResult> all = new ArrayList<>();
         if (api != null) {
             all.add(api);
@@ -97,9 +96,9 @@ public class DefaultNutsWorkspaceUpdateResult implements NutsWorkspaceUpdateResu
         if (runtime != null) {
             all.add(runtime);
         }
-        all.addAll(Arrays.asList(extensions));
-        all.addAll(Arrays.asList(artifacts));
-        return all.toArray(new NutsUpdateResult[0]);
+        all.addAll((extensions));
+        all.addAll((artifacts));
+        return all;
     }
 
     @Override

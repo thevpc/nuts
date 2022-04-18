@@ -33,8 +33,8 @@ public class DefaultNutsUninstallCommand extends AbstractNutsUninstallCommand {
         NutsWorkspaceExt dws = NutsWorkspaceExt.of(session.getWorkspace());
         session.security().setSession(getSession()).checkAllowed(NutsConstants.Permissions.UNINSTALL, "uninstall");
         List<NutsDefinition> defs = new ArrayList<>();
-        NutsId[] nutsIds = this.getIds();
-        if (nutsIds.length == 0) {
+        List<NutsId> nutsIds = this.getIds();
+        if (nutsIds.size() == 0) {
             throw new NutsExecutionException(getSession(), NutsMessage.cstyle("missing packages to uninstall"), 1);
         }
         List<NutsId> installed = new ArrayList<>();
@@ -72,7 +72,7 @@ public class DefaultNutsUninstallCommand extends AbstractNutsUninstallCommand {
         }
 
         for (NutsDefinition def : defs) {
-            NutsWorkspaceExt.of(ws).uninstallImpl(def, getArgs(), true, true, isErase(),true, session);
+            NutsWorkspaceExt.of(ws).uninstallImpl(def, getArgs().toArray(new String[0]), true, true, isErase(),true, session);
         }
         return this;
     }
@@ -97,7 +97,7 @@ public class DefaultNutsUninstallCommand extends AbstractNutsUninstallCommand {
                                 NutsTexts.of(session).ofPlain(", "),
                                 all.stream().map(x
                                                 -> NutsTexts.of(session).toText(
-                                                x.builder().omitImportedGroupId().build()
+                                                x.builder().build()
                                         )
                                 ).collect(Collectors.toList())
                         );

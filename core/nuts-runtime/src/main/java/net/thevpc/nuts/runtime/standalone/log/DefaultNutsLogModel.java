@@ -30,10 +30,7 @@ import net.thevpc.nuts.runtime.standalone.boot.DefaultNutsBootManager;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
@@ -83,11 +80,11 @@ public class DefaultNutsLogModel {
     }
 
 
-    public Handler[] getHandlers() {
+    public List<Handler> getHandlers() {
         if (extraHandlers.isEmpty()) {
-            return EMPTY;
+            return Collections.emptyList();
         }
-        return extraHandlers.toArray(EMPTY);
+        return extraHandlers;
     }
 
 

@@ -403,18 +403,18 @@ public class GenericFilePath implements NutsPathSPI {
     }
 
     @Override
-    public String[] getItems(NutsPath basePath) {
+    public List<String> getItems(NutsPath basePath) {
         NutsPathPartList parts = this.parts;
         if (parts.isEmpty()) {
-            return new String[0];
+            return Collections.emptyList();
         }
         if (parts.size() == 1 && parts.get(0).isTrailingSeparator()) {
-            return new String[]{""};
+            return Arrays.asList("");
         }
         if (parts.get(parts.size() - 1).isTrailingSeparator()) {
-            return parts.subList(0, parts.size() - 1).toStringArray();
+            return parts.subList(0, parts.size() - 1).toStringList();
         }
-        return parts.subList(0, parts.size()).toStringArray();
+        return parts.subList(0, parts.size()).toStringList();
     }
 
     @Override

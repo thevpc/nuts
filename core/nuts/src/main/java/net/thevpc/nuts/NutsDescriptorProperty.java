@@ -61,4 +61,6 @@ public interface NutsDescriptorProperty extends NutsBlankable {
      * @return a populated builder from this instance
      */
     NutsDescriptorPropertyBuilder builder();
+
+    NutsDescriptorProperty readOnly();
 }

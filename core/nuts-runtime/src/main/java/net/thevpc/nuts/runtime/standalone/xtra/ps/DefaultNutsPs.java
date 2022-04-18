@@ -104,10 +104,10 @@ public class DefaultNutsPs implements NutsPs {
         if (v != null) {
             return v;
         }
-        NutsVersionFilter nvf = NutsBlankable.isBlank(version) ? null : NutsVersion.of(version,session).filter();
+        NutsVersionFilter nvf = NutsBlankable.isBlank(version) ? null : NutsVersion.of(version).get(session).filter(session);
         NutsPlatformLocation[] availableJava = session.env().platforms().setSession(session).findPlatforms(NutsPlatformFamily.JAVA,
-                java -> "jdk".equals(java.getPackaging()) && (nvf == null || nvf.acceptVersion(NutsVersion.of(java.getVersion(),session), session))
-        );
+                java -> "jdk".equals(java.getPackaging()) && (nvf == null || nvf.acceptVersion(NutsVersion.of(java.getVersion()).get(session), session))
+        ).toArray(NutsPlatformLocation[]::new);
         for (NutsPlatformLocation java : availableJava) {
             detectedJavaHomes.add(java.getPath());
             v = getJpsJavaHome(java.getPath());
@@ -141,7 +141,7 @@ public class DefaultNutsPs implements NutsPs {
         String processType = NutsUtilStrings.trim(getType());
         if (processType.toLowerCase().startsWith("java#")) {
             return getResultListJava(processType.substring("java#".length()));
-        } else if (processType.toLowerCase().equals("java")) {
+        } else if (processType.equalsIgnoreCase("java")) {
             return getResultListJava("");
         } else {
             if (isFailFast()) {

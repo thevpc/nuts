@@ -4,6 +4,8 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.executor.java.JavaExecutorOptions;
 
 import java.lang.reflect.Method;
+import java.util.Arrays;
+import java.util.List;
 
 public class ClassloaderAwareRunnableImpl extends ClassloaderAwareRunnable {
 
@@ -24,12 +26,12 @@ public class ClassloaderAwareRunnableImpl extends ClassloaderAwareRunnable {
             NutsWorkspaceOptionsBuilder o = NutsWorkspaceOptionsBuilder.of(session).parseArguments(
                     joptions.getAppArgs().toArray(new String[0])
             );
-            String[] appArgs;
-            if (o.getApplicationArguments().length == 0) {
+            List<String> appArgs;
+            if (o.getApplicationArguments().size() == 0) {
                 if (o.isSkipWelcome()) {
                     return null;
                 }
-                appArgs = new String[]{"welcome"};
+                appArgs = Arrays.asList(new String[]{"welcome"});
             } else {
                 appArgs = o.getApplicationArguments();
             }
@@ -72,7 +74,7 @@ public class ClassloaderAwareRunnableImpl extends ClassloaderAwareRunnable {
             System.setProperty("nuts.boot.args",
                     getSession().boot().getBootOptions()
                             .formatter().setExported(true).setCompact(true).getBootCommandLine()
-                            .formatter().setShellFamily(NutsShellFamily.SH).toString()
+                            .formatter(session).setShellFamily(NutsShellFamily.SH).toString()
             );
             mainMethod = cls.getMethod("main", String[].class);
             mainMethod.invoke(null, new Object[]{joptions.getAppArgs().toArray(new String[0])});

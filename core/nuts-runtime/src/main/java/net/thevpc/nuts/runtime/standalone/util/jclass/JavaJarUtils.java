@@ -77,7 +77,7 @@ public class JavaJarUtils {
             }
             return true;
         }, session);
-        return classes.stream().map(x -> NutsVersion.of(x, session)).toArray(NutsVersion[]::new);
+        return classes.stream().map(x -> NutsVersion.of(x).get(session)).toArray(NutsVersion[]::new);
     }
 
     public static NutsVersion parseJarClassVersion(InputStream jarStream, NutsSession session) {
@@ -94,7 +94,7 @@ public class JavaJarUtils {
         return nb;
     }
 
-    public static NutsExecutionEntry[] parseJarExecutionEntries(InputStream jarStream, NutsSession session) {
+    public static List<NutsExecutionEntry> parseJarExecutionEntries(InputStream jarStream, NutsSession session) {
         if (!(jarStream instanceof BufferedInputStream)) {
             jarStream = new BufferedInputStream(jarStream);
         }
@@ -191,16 +191,16 @@ public class JavaJarUtils {
                 NutsDescriptor descriptor = NutsDescriptorParser.of(session).parse(inputStream);
                 NutsArtifactCall executor = descriptor.getExecutor();
                 if(executor!=null){
-                    String[] arguments = executor.getArguments();
-                    for (int i = 0; i < arguments.length; i++) {
-                        String argument = arguments[i];
-                        if (argument != null) {
-                            if (argument.startsWith("--main-class=")) {
-                                classes.add(new DefaultNutsExecutionEntry(argument.substring("--main-class=".length()), true, false));
-                            } else if (argument.equals("--main-class")) {
-                                if(i+1<arguments.length){
+                    List<String> arguments = executor.getArguments();
+                    for (int i = 0; i < arguments.size(); i++) {
+                        String a = arguments.get(i);
+                        if (a != null) {
+                            if (a.startsWith("--main-class=")) {
+                                classes.add(new DefaultNutsExecutionEntry(a.substring("--main-class=".length()), true, false));
+                            } else if (a.equals("--main-class")) {
+                                if(i+1<arguments.size()){
                                     i++;
-                                    classes.add(new DefaultNutsExecutionEntry(arguments[i], true, false));
+                                    classes.add(new DefaultNutsExecutionEntry(a, true, false));
                                 }
                             }
                         }
@@ -236,8 +236,8 @@ public class JavaJarUtils {
                 }
             }
         }
-        NutsExecutionEntry[] ee = found.values().toArray(new NutsExecutionEntry[0]);
-        Arrays.sort(ee, new Comparator<NutsExecutionEntry>() {
+        List<NutsExecutionEntry> ee = new ArrayList<>(found.values());
+        ee.sort(new Comparator<NutsExecutionEntry>() {
             @Override
             public int compare(NutsExecutionEntry o1, NutsExecutionEntry o2) {
                 int x=(o1.isDefaultEntry()?0:1)-(o2.isDefaultEntry()?0:1);
@@ -274,7 +274,7 @@ public class JavaJarUtils {
     }
 
     public static NutsId parseMavenPluginElement(Node plugin, NutsSession session) {
-        NutsIdBuilder ib = NutsIdBuilder.of(session);
+        NutsIdBuilder ib = new DefaultNutsIdBuilder();
         for (Node node : XmlUtils.iterable(plugin)) {
             Element ne = XmlUtils.asElement(node);
             if (ne != null) {

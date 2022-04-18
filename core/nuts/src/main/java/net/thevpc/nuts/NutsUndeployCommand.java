@@ -25,6 +25,8 @@
  */
 package net.thevpc.nuts;
 
+import java.util.List;
+
 /**
  * @author thevpc
  * @app.category Commands
@@ -36,7 +38,7 @@ public interface NutsUndeployCommand extends NutsWorkspaceCommand {
 
     NutsUndeployCommand setRepository(String repository);
 
-    NutsId[] getIds();
+    List<NutsId> getIds();
 
     NutsUndeployCommand addId(NutsId id);
 

@@ -28,14 +28,14 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
     private NutsSession session;
     private NutsId appId;
     private long startTimeMillis;
-    private String[] args;
+    private List<String> args;
     private NutsApplicationMode mode = NutsApplicationMode.RUN;
     private NutsAppStoreLocationResolver storeLocationResolver;
     /**
      * previous parse for "update" mode
      */
     private NutsVersion appPreviousVersion;
-    private String[] modeArgs = new String[0];
+    private List<String> modeArgs = new ArrayList<>();
 
     //    public DefaultNutsApplicationContext(String[] args, NutsWorkspace workspace, Class appClass, String storeId, long startTimeMillis) {
 //        this(workspace,
@@ -45,7 +45,7 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
 //                startTimeMillis
 //        );
 //    }
-    public DefaultNutsApplicationContext(NutsWorkspace workspace, NutsSession session, String[] args, Class appClass, String storeId, long startTimeMillis) {
+    public DefaultNutsApplicationContext(NutsWorkspace workspace, NutsSession session, List<String> args, Class appClass, String storeId, long startTimeMillis) {
         this.startTimeMillis = startTimeMillis <= 0 ? System.currentTimeMillis() : startTimeMillis;
         if (workspace == null && session == null) {
             throw new IllegalArgumentException("missing workpace and/or session");
@@ -63,8 +63,8 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
         }
         session = this.session;//will be used later
         int wordIndex = -1;
-        if (args.length > 0 && args[0].startsWith("--nuts-exec-mode=")) {
-            NutsCommandLine execModeCommand = NutsCommandLine.of(args[0].substring(args[0].indexOf('=') + 1), session);
+        if (args.size() > 0 && args.get(0).startsWith("--nuts-exec-mode=")) {
+            NutsCommandLine execModeCommand = NutsCommandLine.of(args.get(0).substring(args.get(0).indexOf('=') + 1), session);
             if (execModeCommand.hasNext()) {
                 NutsArgument a = execModeCommand.next();
                 switch (a.getKey().getString()) {
@@ -73,37 +73,37 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
                         if (execModeCommand.hasNext()) {
                             wordIndex = execModeCommand.next().toElement().getInt();
                         }
-                        modeArgs = execModeCommand.toStringArray();
+                        modeArgs = execModeCommand.toStringList();
                         execModeCommand.skipAll();
                         break;
                     }
                     case "install": {
                         mode = NutsApplicationMode.INSTALL;
-                        modeArgs = execModeCommand.toStringArray();
+                        modeArgs = execModeCommand.toStringList();
                         execModeCommand.skipAll();
                         break;
                     }
                     case "uninstall": {
                         mode = NutsApplicationMode.UNINSTALL;
-                        modeArgs = execModeCommand.toStringArray();
+                        modeArgs = execModeCommand.toStringList();
                         execModeCommand.skipAll();
                         break;
                     }
                     case "update": {
                         mode = NutsApplicationMode.UPDATE;
                         if (execModeCommand.hasNext()) {
-                            appPreviousVersion = NutsVersion.of(execModeCommand.next().getString(), session);
+                            appPreviousVersion = NutsVersion.of(execModeCommand.next().getString()).get(session);
                         }
-                        modeArgs = execModeCommand.toStringArray();
+                        modeArgs = execModeCommand.toStringList();
                         execModeCommand.skipAll();
                         break;
                     }
                     default: {
-                        throw new NutsExecutionException(session, NutsMessage.cstyle("Unsupported nuts-exec-mode : %s", args[0]), 205);
+                        throw new NutsExecutionException(session, NutsMessage.cstyle("Unsupported nuts-exec-mode : %s", args.get(0)), 205);
                     }
                 }
             }
-            args = Arrays.copyOfRange(args, 1, args.length);
+            args = args.subList(1, args.size());
         }
         NutsId _appId = (NutsId) NutsApplications.getSharedMap().get("nuts.embedded.application.id");
         if (_appId != null) {
@@ -116,7 +116,7 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
         }
         this.args = (args);
         this.appId = (_appId);
-        this.appClass = appClass==null?null: JavaClassUtils.unwrapCGLib(appClass);
+        this.appClass = appClass == null ? null : JavaClassUtils.unwrapCGLib(appClass);
         //always copy the session to bind to appId
         this.session.setAppId(appId);
 //        NutsWorkspaceConfigManager cfg = workspace.config();
@@ -130,7 +130,7 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
 //            this.workspace.term().setSession(session).getSystemTerminal()
 //                    .setMode(NutsTerminalMode.FILTERED);
             if (wordIndex < 0) {
-                wordIndex = args.length;
+                wordIndex = args.size();
             }
             autoComplete = new AppCommandAutoComplete(this.session, args, wordIndex, getSession().out());
         } else {
@@ -144,7 +144,7 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
     }
 
     @Override
-    public String[] getModeArguments() {
+    public List<String> getModeArguments() {
         return modeArgs;
     }
 
@@ -322,7 +322,7 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
     }
 
     @Override
-    public String[] getArguments() {
+    public List<String> getArguments() {
         return args;
     }
 
@@ -408,7 +408,7 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
         return this;
     }
 
-    public NutsApplicationContext setModeArgs(String[] modeArgs) {
+    public NutsApplicationContext setModeArgs(List<String> modeArgs) {
         this.modeArgs = modeArgs;
         return this;
     }
@@ -502,8 +502,13 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
     }
 
     //    @Override
-    public NutsApplicationContext setArguments(String[] args) {
+    public NutsApplicationContext setArguments(List<String> args) {
         this.args = args;
+        return this;
+    }
+
+    public NutsApplicationContext setArguments(String[] args) {
+        this.args = new ArrayList<>(Arrays.asList(args));
         return this;
     }
 
@@ -524,9 +529,9 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
         private final NutsSession session;
         private final int wordIndex;
 
-        public AppCommandAutoComplete(NutsSession session, String[] args, int wordIndex, NutsPrintStream out0) {
+        public AppCommandAutoComplete(NutsSession session, List<String> args, int wordIndex, NutsPrintStream out0) {
             this.session = session;
-            words = new ArrayList<>(Arrays.asList(args));
+            words = new ArrayList<>(args);
             this.wordIndex = wordIndex;
             this.out0 = out0;
         }

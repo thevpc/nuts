@@ -8,7 +8,7 @@ import java.util.Map;
 
 public class NutsIdUtils {
     public static void checkLongId(NutsId id, NutsSession session) {
-        checkShortId(id,session);
+        checkShortId(id, session);
         if (NutsBlankable.isBlank(id.getVersion().toString())) {
             throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("missing version for %s", id));
         }
@@ -25,6 +25,7 @@ public class NutsIdUtils {
             throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("missing artifactId for %s", id));
         }
     }
+
     public static void checkValidEffectiveId(NutsId id, NutsSession session) {
         if (id == null) {
             throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("unable to evaluate effective null id"));
@@ -70,7 +71,7 @@ public class NutsIdUtils {
         if (apiVersion.equals(session.getWorkspace().getApiVersion().toString())) {
             return session.getWorkspace().getApiId();
         }
-        return NutsId.of("net.thevpc.nuts:nuts#" + apiVersion, session);
+        return NutsId.of("net.thevpc.nuts:nuts#" + apiVersion).get(session);
     }
 
     public static NutsId runtimeId(String runtimeVersion, NutsSession session) {
@@ -80,7 +81,7 @@ public class NutsIdUtils {
         if (runtimeVersion.equals(session.getWorkspace().getApiVersion().toString())) {
             return session.getWorkspace().getApiId();
         }
-        return NutsId.of("net.thevpc.nuts:nuts-runtime#" + runtimeVersion, session);
+        return NutsId.of("net.thevpc.nuts:nuts-runtime#" + runtimeVersion).get(session);
     }
 
     public static NutsId findRuntimeForApi(String apiVersion, NutsSession session) {
@@ -96,17 +97,17 @@ public class NutsIdUtils {
                     .setSession(session)
                     .json().parse(apiBoot, NutsWorkspaceConfigApi.class);
             if (!NutsBlankable.isBlank(c.getRuntimeId())) {
-                return NutsId.of(c.getRuntimeId(), session);
+                return NutsId.of(c.getRuntimeId()).get(session);
             }
         }
         NutsId foundRT = session.search().addId("net.thevpc.nuts:nuts-runtime")
                 .setLatest(true)
-                .setTargetApiVersion(NutsVersion.of(apiVersion, session))
+                .setTargetApiVersion(NutsVersion.of(apiVersion).get(session))
                 .setSession(session.copy().setFetchStrategy(NutsFetchStrategy.OFFLINE)).getResultIds().first();
         if (foundRT == null && session.getFetchStrategy() != NutsFetchStrategy.OFFLINE) {
             foundRT = session.search().addId("net.thevpc.nuts:nuts-runtime")
                     .setLatest(true)
-                    .setTargetApiVersion(NutsVersion.of(apiVersion, session))
+                    .setTargetApiVersion(NutsVersion.of(apiVersion).get(session))
                     .setSession(session).getResultIds().first();
         }
         return foundRT;
@@ -124,7 +125,7 @@ public class NutsIdUtils {
         }
     }
 
-    public static void checkNutsId(NutsId id,NutsSession session) {
+    public static void checkNutsId(NutsId id, NutsSession session) {
         NutsIdUtils.checkNutsIdBase(id, session);
         if (id.getVersion().isBlank()) {
             throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("missing version for %s", id));

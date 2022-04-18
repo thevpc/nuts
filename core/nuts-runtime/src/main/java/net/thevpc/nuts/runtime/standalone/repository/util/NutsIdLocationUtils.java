@@ -3,10 +3,11 @@ package net.thevpc.nuts.runtime.standalone.repository.util;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.util.filters.CoreFilterUtils;
 
+import java.util.List;
 import java.util.logging.Level;
 
 public class NutsIdLocationUtils {
-    public static boolean fetch(NutsId id, NutsIdLocation[] locations, String localFile, NutsSession session) {
+    public static boolean fetch(NutsId id, List<NutsIdLocation> locations, String localFile, NutsSession session) {
         for (NutsIdLocation location : locations) {
             if (CoreFilterUtils.acceptClassifier(location, id.getClassifier())) {
                 try {

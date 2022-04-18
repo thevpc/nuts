@@ -3,8 +3,7 @@ package net.thevpc.nuts.runtime.standalone.descriptor.parser;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.session.NutsSessionUtils;
 import net.thevpc.nuts.runtime.standalone.util.CorePlatformUtils;
-import net.thevpc.nuts.runtime.standalone.descriptor.DefaultNutsArtifactCall;
-import net.thevpc.nuts.runtime.standalone.descriptor.DefaultNutsDescriptorPropertyBuilder;
+import net.thevpc.nuts.DefaultNutsArtifactCall;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.repository.impl.maven.util.MavenUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
@@ -207,7 +206,7 @@ public class DefaultNutsDescriptorParser implements NutsDescriptorParser {
                                 implVendorTitle = NutsUtilStrings.trimToNull(attrs.getValue(attrName));
                             }
                             if ("Nuts-Id".equals(attrName.toString())) {
-                                explicitId = NutsIdParser.of(getSession()).setLenient(true).parse(NutsUtilStrings.trimToNull(attrs.getValue(attrName)));
+                                explicitId = NutsId.of(NutsUtilStrings.trimToNull(attrs.getValue(attrName))).orElse(null);
                             }
                             if ("Nuts-Dependencies".equals(attrName.toString())) {
                                 String nutsDependencies = NutsUtilStrings.trimToNull(attrs.getValue(attrName));
@@ -215,8 +214,7 @@ public class DefaultNutsDescriptorParser implements NutsDescriptorParser {
                                         StringTokenizerUtils.splitSemiColon(nutsDependencies).stream()
                                                 .map(String::trim)
                                                 .filter(x -> x.length() > 0)
-                                                .map(NutsDependencyParser.of(session).setLenient(true)
-                                                        ::parse)
+                                                .map(x->NutsDependency.of(x).orElse(null))
                                                 .filter(Objects::nonNull)
                                                 .collect(Collectors.toCollection(LinkedHashSet::new));
                             }
@@ -236,7 +234,7 @@ public class DefaultNutsDescriptorParser implements NutsDescriptorParser {
                             ) {
                                 String groupId = automaticModuleName == null ? "" : CorePlatformUtils.getPackageName(automaticModuleName);
                                 String artifactId = automaticModuleName == null ? "" : CorePlatformUtils.getSimpleClassName(automaticModuleName);
-                                explicitId = NutsIdBuilder.of(session).setGroupId(groupId).setArtifactId(artifactId)
+                                explicitId = new DefaultNutsIdBuilder().setGroupId(groupId).setArtifactId(artifactId)
                                         .setVersion(
                                                 NutsBlankable.isBlank(mainVersion) ? "1.0" : mainVersion.trim()
                                         ).build();
@@ -247,7 +245,7 @@ public class DefaultNutsDescriptorParser implements NutsDescriptorParser {
                             if(nutsName==null){
                                 nutsName=implVendorTitle;
                             }
-                            return NutsDescriptorBuilder.of(getSession())
+                            return new DefaultNutsDescriptorBuilder()
                                     .setId(explicitId)
                                     .setName(nutsName)
                                     .addFlag(NutsBlankable.isBlank(mainClass) ? NutsDescriptorFlag.EXEC : null)
@@ -255,7 +253,7 @@ public class DefaultNutsDescriptorParser implements NutsDescriptorParser {
                                             StringTokenizerUtils.splitDefault(
                                                             all.get("Nuts-Flags")
                                                     ).stream()
-                                                    .map(NutsDescriptorFlag::parseLenient)
+                                                    .map(x->NutsDescriptorFlag.parse(x).orElse(null))
                                                     .filter(Objects::nonNull)
                                                     .toArray(NutsDescriptorFlag[]::new)
                                     )
@@ -284,22 +282,22 @@ public class DefaultNutsDescriptorParser implements NutsDescriptorParser {
                                     .setGenericName(NutsUtilStrings.trimToNull(all.get("Nuts-Generic-Name")))
                                     .setProperties(all.entrySet().stream()
                                             .filter(x -> x.getKey().startsWith("Nuts-Property-"))
-                                            .map(x -> new DefaultNutsDescriptorPropertyBuilder(getSession())
+                                            .map(x -> new DefaultNutsDescriptorPropertyBuilder()
                                                     .setName(x.getKey().substring("Nuts-Property-".length()))
                                                     .setValue(x.getValue())
                                                     //.setCondition()
                                                     .build())
-                                            .toArray(NutsDescriptorProperty[]::new))
+                                            .collect(Collectors.toList()))
                                     //.setCondition()
                                     .setExecutor(new DefaultNutsArtifactCall(
-                                            NutsId.of("java", getSession()),
+                                            NutsId.of("java").get( getSession()),
                                             //new String[]{"-jar"}
-                                            NutsBlankable.isBlank(mainClass) ? new String[0]
-                                                    : new String[]{
+                                            NutsBlankable.isBlank(mainClass) ? Collections.emptyList()
+                                                    :Arrays.asList(
                                                     "--main-class=", mainClass
-                                            }
+                                            )
                                     ))
-                                    .setDependencies(deps.toArray(new NutsDependency[0]))
+                                    .setDependencies(new ArrayList<>(deps))
                                     .build();
                         }
                         throw new NutsParseException(getSession(), NutsMessage.cstyle("unable to parse Descriptor for Manifest from %s", in));

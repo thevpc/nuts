@@ -5,16 +5,17 @@
  */
 package net.thevpc.nuts.core.test;
 
+import net.thevpc.nuts.NutsId;
 import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.core.test.utils.TestUtils;
-import net.thevpc.nuts.runtime.standalone.id.NutsIdListHelper;
-import net.thevpc.nuts.runtime.standalone.io.util.NutsPathParts;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+import java.util.Arrays;
+import java.util.List;
+
 /**
- *
  * @author thevpc
  */
 public class Test32_NutsIdListHelper {
@@ -28,18 +29,23 @@ public class Test32_NutsIdListHelper {
 
     @Test
     public void test01() {
-        String[] s = NutsIdListHelper.parseIdListStrings("java#[11,[", session);
-        Assertions.assertArrayEquals(new String[]{"java#[11,["},s);
+        List<NutsId> s = NutsId.ofList("java#[11,[").get(session);
+        Assertions.assertEquals(Arrays.asList(NutsId.of("java#[11,[").get(session)), s);
     }
+
     @Test
     public void test02() {
-        String[] s = NutsIdListHelper.parseIdListStrings("java#[11,[ java#[11,[", session);
+        List<NutsId> s = NutsId.ofList("java#[11,[ java#[11,[").get(session);
         //removed duplicates...
-        Assertions.assertArrayEquals(new String[]{"java#[11,["},s);
+        Assertions.assertEquals(Arrays.asList(NutsId.of("java#[11,[").get(session)), s);
     }
+
     @Test
     public void test03() {
-        String[] s = NutsIdListHelper.parseIdListStrings("java#[11,[ java#[12,[", session);
-        Assertions.assertArrayEquals(new String[]{"java#[11,[" ,"java#[12,["},s);
+        List<NutsId> s = NutsId.ofList("java#[11,[ java#[12,[").get(session);
+        Assertions.assertEquals(Arrays.asList(
+                NutsId.of("java#[11,[").get(session),
+                NutsId.of("java#[12,[").get(session)
+        ), s);
     }
 }

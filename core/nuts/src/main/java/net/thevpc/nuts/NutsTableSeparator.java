@@ -57,38 +57,8 @@ public enum NutsTableSeparator implements NutsEnum {
         this.id = name().toLowerCase().replace('_', '-');
     }
 
-    public static NutsTableSeparator parseLenient(String value) {
-        return parseLenient(value, null);
-    }
-
-    public static NutsTableSeparator parseLenient(String value, NutsTableSeparator emptyOrErrorValue) {
-        return parseLenient(value, emptyOrErrorValue, emptyOrErrorValue);
-    }
-
-    public static NutsTableSeparator parseLenient(String value, NutsTableSeparator emptyValue, NutsTableSeparator errorValue) {
-        if (value == null) {
-            value = "";
-        } else {
-            value = value.toUpperCase().trim().replace('-', '_');
-        }
-        if (value.isEmpty()) {
-            return emptyValue;
-        }
-        try {
-            return NutsTableSeparator.valueOf(value.toUpperCase());
-        } catch (Exception notFound) {
-            return errorValue;
-        }
-    }
-
-    public static NutsTableSeparator parse(String value, NutsSession session) {
-        return parse(value, null, session);
-    }
-
-    public static NutsTableSeparator parse(String value, NutsTableSeparator emptyValue, NutsSession session) {
-        NutsTableSeparator v = parseLenient(value, emptyValue, null);
-        NutsApiUtils.checkNonNullEnum(v, value, NutsTableSeparator.class, session);
-        return v;
+    public static NutsOptional<NutsTableSeparator> parse(String value) {
+        return NutsApiUtils.parse(value, NutsTableSeparator.class);
     }
 
     /**

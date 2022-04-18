@@ -14,7 +14,7 @@ public class InternalNutsVersionFilters extends InternalNutsTypedFilters<NutsVer
         super(session, NutsVersionFilter.class);
     }
 
-    public NutsVersionFilter byValue(String version) {
+    public NutsOptional<NutsVersionFilter> byValue(String version) {
         checkSession();
         return DefaultNutsVersionFilter.parse(version, getSession());
     }

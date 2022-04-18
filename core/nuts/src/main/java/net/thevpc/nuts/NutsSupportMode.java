@@ -39,49 +39,27 @@ public enum NutsSupportMode implements NutsEnum {
         this.id = name().toLowerCase().replace('_', '-');
     }
 
-
-    public static NutsSupportMode parseLenient(String any) {
-        return parseLenient(any, null);
-    }
-
-    public static NutsSupportMode parseLenient(String any, NutsSupportMode emptyOrErrorValue) {
-        return parseLenient(any, emptyOrErrorValue, emptyOrErrorValue);
-    }
-
-    public static NutsSupportMode parseLenient(String any, NutsSupportMode emptyValue, NutsSupportMode errorValue) {
-        if (any == null) {
-            any = "";
-        }
-        any = any.toLowerCase();
-        switch (any) {
-            case "unsupported":
-                return UNSUPPORTED;
-            case "supported":
-                return SUPPORTED;
-            case "preferred":
-            case "always":
-                return PREFERRED;
-            case "":
-                return emptyValue;
-            default: {
-                Boolean b = NutsUtilStrings.parseBoolean(any, null, null);
-                if (b != null) {
-                    return b ? SUPPORTED : UNSUPPORTED;
+    public static NutsOptional<NutsSupportMode> parse(String value) {
+        return NutsApiUtils.parse(value, NutsSupportMode.class,s->{
+            switch (s.toLowerCase()) {
+                case "unsupported":
+                    return NutsOptional.of(UNSUPPORTED);
+                case "supported":
+                    return NutsOptional.of(SUPPORTED);
+                case "preferred":
+                case "always":
+                    return NutsOptional.of(PREFERRED);
+                default: {
+                    Boolean b = NutsUtilStrings.parseBoolean(s, null, null);
+                    if (b != null) {
+                        return NutsOptional.of(b ? SUPPORTED : UNSUPPORTED);
+                    }
                 }
             }
-        }
-        return errorValue;
+            return null;
+        });
     }
 
-    public static NutsSupportMode parse(String value, NutsSession session) {
-        return parse(value, null, session);
-    }
-
-    public static NutsSupportMode parse(String value, NutsSupportMode emptyValue, NutsSession session) {
-        NutsSupportMode v = parseLenient(value, emptyValue, null);
-        NutsApiUtils.checkNonNullEnum(v, value, NutsSupportMode.class, session);
-        return v;
-    }
 
     public boolean acceptCondition(NutsSupportCondition request, NutsSession session) {
         if (session == null) {

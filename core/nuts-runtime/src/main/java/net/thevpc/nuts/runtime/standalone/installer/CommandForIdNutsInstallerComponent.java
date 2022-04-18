@@ -103,7 +103,7 @@ public class CommandForIdNutsInstallerComponent implements NutsInstallerComponen
                 for (String a : executionContext.getExecutorArguments()) {
                     eargs.add(evalString(a, mode, executionContext));
                 }
-                eargs.addAll(Arrays.asList(executionContext.getArguments()));
+                eargs.addAll(executionContext.getArguments());
                 executionContext.getExecSession().exec()
                         .setCommand(def2)
                         .addCommand(eargs)

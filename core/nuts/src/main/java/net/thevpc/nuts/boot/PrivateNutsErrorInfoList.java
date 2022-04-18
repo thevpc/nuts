@@ -26,7 +26,7 @@
  */
 package net.thevpc.nuts.boot;
 
-import net.thevpc.nuts.spi.NutsBootId;
+import net.thevpc.nuts.NutsId;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,7 +34,7 @@ import java.util.List;
 class PrivateNutsErrorInfoList {
     private final List<PrivateNutsErrorInfo> all = new ArrayList<>();
 
-    public void removeErrorsFor(NutsBootId nutsId) {
+    public void removeErrorsFor(NutsId nutsId) {
         all.removeIf(x -> x.getNutsId().equals(nutsId));
     }
 

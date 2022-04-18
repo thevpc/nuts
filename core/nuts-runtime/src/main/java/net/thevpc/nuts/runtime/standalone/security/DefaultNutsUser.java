@@ -9,9 +9,8 @@ import net.thevpc.nuts.NutsBlankable;
 import net.thevpc.nuts.NutsUser;
 import net.thevpc.nuts.NutsUserConfig;
 
-import java.util.Arrays;
-
-import net.thevpc.nuts.NutsUtilStrings;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
@@ -22,25 +21,22 @@ public class DefaultNutsUser implements NutsUser {
     private final String remoteIdentity;
     private final String user;
     private final boolean credentials;
-    private final String[] permissions;
-    private final String[] inheritedPermissions;
-    private final String[] groups;
+    private final List<String> permissions;
+    private final List<String> inheritedPermissions;
+    private final List<String> groups;
 
-    public DefaultNutsUser(NutsUserConfig config, String[] inheritedPermissions) {
+    public DefaultNutsUser(NutsUserConfig config, List<String> inheritedPermissions) {
         user = config.getUser();
         remoteIdentity = config.getRemoteIdentity();
         credentials = !NutsBlankable.isBlank(config.getCredentials());
 
-        String[] rights0 = config.getPermissions();
-        permissions = Arrays.copyOf(rights0, rights0.length);
-
-        String[] groups0 = config.getGroups();
-        groups = Arrays.copyOf(groups0, groups0.length);
-        this.inheritedPermissions = Arrays.copyOf(inheritedPermissions, inheritedPermissions.length);
+        permissions = new ArrayList<>(config.getPermissions());
+        groups = new ArrayList<>(config.getGroups());
+        this.inheritedPermissions = new ArrayList<>(inheritedPermissions);
     }
 
     @Override
-    public String[] getInheritedPermissions() {
+    public List<String> getInheritedPermissions() {
         return inheritedPermissions;
     }
 
@@ -60,12 +56,12 @@ public class DefaultNutsUser implements NutsUser {
     }
 
     @Override
-    public String[] getPermissions() {
+    public List<String> getPermissions() {
         return permissions;
     }
 
     @Override
-    public String[] getGroups() {
+    public List<String> getGroups() {
         return groups;
     }
 

@@ -152,7 +152,7 @@ public class ProjectService {
 
     public File detectLocalVersionFile(String sid) {
         NutsSession session = appContext.getSession();
-        NutsId id = NutsId.of(sid,session);
+        NutsId id = NutsId.of(sid).get(session);
         if (config.getTechnologies().contains("maven")) {
             File f = new File(System.getProperty("user.home"), ".m2/repository/"
                     + id.getGroupId().replace('.', File.separatorChar)
@@ -194,7 +194,7 @@ public class ProjectService {
 
     public File detectRemoteVersionFile(String sid) {
         NutsSession session = appContext.getSession();
-        NutsId id = NutsId.of(sid,session);
+        NutsId id = NutsId.of(sid).get(session);
         if (config.getTechnologies().contains("maven")) {
             RepositoryAddress a = config.getAddress();
             if (a == null) {

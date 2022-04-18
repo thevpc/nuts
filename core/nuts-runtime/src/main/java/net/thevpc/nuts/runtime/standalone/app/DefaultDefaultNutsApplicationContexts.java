@@ -7,6 +7,9 @@ import net.thevpc.nuts.spi.NutsComponentScope;
 import net.thevpc.nuts.spi.NutsComponentScopeType;
 import net.thevpc.nuts.spi.NutsSupportLevelContext;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 @NutsComponentScope(NutsComponentScopeType.WORKSPACE)
 public class DefaultDefaultNutsApplicationContexts implements NutsApplicationContexts {
     private final NutsSession session;
@@ -20,7 +23,7 @@ public class DefaultDefaultNutsApplicationContexts implements NutsApplicationCon
 //            checkSession(this.session);
 //            session = this.session;
 //        }
-        return new DefaultNutsApplicationContext(session.getWorkspace(), session, args, appClass, storeId, startTimeMillis);
+        return new DefaultNutsApplicationContext(session.getWorkspace(), session, new ArrayList<>(Arrays.asList(args)), appClass, storeId, startTimeMillis);
     }
 
 

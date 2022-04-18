@@ -10,6 +10,7 @@ import net.thevpc.nuts.spi.NutsComponentScopeType;
 import net.thevpc.nuts.spi.NutsLogManager;
 import net.thevpc.nuts.spi.NutsSupportLevelContext;
 
+import java.util.List;
 import java.util.logging.Handler;
 import java.util.logging.Level;
 
@@ -25,7 +26,7 @@ public class DefaultNutsLogManager implements NutsLogManager {
     }
 
     @Override
-    public Handler[] getHandlers(NutsSession session) {
+    public List<Handler> getHandlers(NutsSession session) {
         checkSession(session);
         return model.getHandlers();
     }

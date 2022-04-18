@@ -5,9 +5,9 @@ import net.thevpc.nuts.*;
 import java.util.Comparator;
 
 public class NutsPlatformLocationSelectComparator implements Comparator<NutsPlatformLocation> {
-    private NutsSession ws;
-    public NutsPlatformLocationSelectComparator(NutsSession ws) {
-        this.ws=ws;
+    private NutsSession session;
+    public NutsPlatformLocationSelectComparator(NutsSession session) {
+        this.session = session;
     }
 
     @Override
@@ -20,8 +20,8 @@ public class NutsPlatformLocationSelectComparator implements Comparator<NutsPlat
         if(x!=0){
             return x;
         }
-        NutsVersion v1 = NutsVersion.of(o1.getVersion(),ws);
-        NutsVersion v2 = NutsVersion.of(o2.getVersion(),ws);
+        NutsVersion v1 = NutsVersion.of(o1.getVersion()).get( session);
+        NutsVersion v2 = NutsVersion.of(o2.getVersion()).get(session);
         x = (v1 == null || v2 == null) ? 0 : (v1 != null && v2 != null) ? v2.compareTo(v1) : v2 == null ? -1 : 1;
         if (x != 0) {
             return x;

@@ -33,10 +33,8 @@ import net.thevpc.nuts.spi.NutsDependencySolverFactory;
 import net.thevpc.nuts.spi.NutsIndexStoreFactory;
 import net.thevpc.nuts.spi.NutsSystemTerminalBase;
 
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author thevpc
@@ -97,7 +95,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
     }
 
     @Override
-    public NutsAddRepositoryOptions[] getDefaultRepositories() {
+    public List<NutsAddRepositoryOptions> getDefaultRepositories() {
         checkSession();
         return model.getDefaultRepositories(session);
     }
@@ -166,7 +164,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
                 + '}';
     }
 
-    public String[] getDependencySolverNames() {
+    public List<String> getDependencySolverNames() {
         checkSession();
         // the first element is always the default one,
         // the rest is lexicographically sorter
@@ -187,8 +185,7 @@ public class DefaultNutsWorkspaceConfigManager implements NutsWorkspaceConfigMan
                         return o1.compareTo(o2);
                     }
                 })
-                .toArray(String[]::new)
-                ;
+                .collect(Collectors.toList());
     }
 
     public NutsDependencySolver createDependencySolver(String name) {

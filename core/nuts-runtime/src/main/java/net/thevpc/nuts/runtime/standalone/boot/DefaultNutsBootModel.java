@@ -215,7 +215,7 @@ public class DefaultNutsBootModel implements NutsBootModel {
         if (st.isAutoCompleteSupported()) {
             //that's ok
         } else {
-            NutsId extId = NutsId.of("net.thevpc.nuts.ext:next-term#" + session.getWorkspace().getApiVersion(), session);
+            NutsId extId = NutsId.of("net.thevpc.nuts.ext:next-term#" + session.getWorkspace().getApiVersion()).get(session);
             if (!session.config().isExcludedExtension(extId.toString(), session.boot().getBootOptions())) {
                 NutsWorkspaceExtensionManager extensions = session.extensions();
                 extensions.setSession(session).loadExtension(extId);
@@ -317,7 +317,7 @@ public class DefaultNutsBootModel implements NutsBootModel {
     public Map<String, NutsArgument> getCustomBootOptions() {
         if (customBootOptions == null) {
             customBootOptions = new LinkedHashMap<>();
-            String[] properties = bOptions.getOptions().getCustomOptions();
+            List<String> properties = bOptions.getOptions().getCustomOptions();
             NutsElements elems = NutsElements.of(bootSession);
             if (properties != null) {
                 for (String property : properties) {

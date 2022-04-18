@@ -17,7 +17,7 @@ public class DefaultNutsArtifactExecutable extends AbstractNutsExecutableCommand
     NutsDefinition def;
     String commandName;
     String[] appArgs;
-    String[] executorOptions;
+    List<String> executorOptions;
     Map<String, String> env;
     String dir;
     boolean failFast;
@@ -28,7 +28,7 @@ public class DefaultNutsArtifactExecutable extends AbstractNutsExecutableCommand
     DefaultNutsExecCommand execCommand;
     boolean autoInstall = true;
 
-    public DefaultNutsArtifactExecutable(NutsDefinition def, String commandName, String[] appArgs, String[] executorOptions,
+    public DefaultNutsArtifactExecutable(NutsDefinition def, String commandName, String[] appArgs, List<String> executorOptions,
             Map<String, String> env, String dir, boolean failFast,
             NutsSession session,
             NutsSession execSession,
@@ -69,7 +69,7 @@ public class DefaultNutsArtifactExecutable extends AbstractNutsExecutableCommand
                 executorOptionsList.add(option);
             }
         }
-        this.executorOptions = executorOptionsList.toArray(new String[0]);
+        this.executorOptions = executorOptionsList;
     }
 
     @Override

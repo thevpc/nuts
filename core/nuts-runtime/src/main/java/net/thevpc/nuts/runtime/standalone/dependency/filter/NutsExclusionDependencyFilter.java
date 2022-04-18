@@ -31,7 +31,7 @@ public class NutsExclusionDependencyFilter extends AbstractDependencyFilter{
             if (
                     GlobUtils.ofExact(exclusion.getGroupId()).matcher(NutsUtilStrings.trim(nutsId.getGroupId())).matches()
                     && GlobUtils.ofExact(exclusion.getArtifactId()).matcher(NutsUtilStrings.trim(nutsId.getArtifactId())).matches()
-                    && exclusion.getVersion().filter().acceptVersion(nutsId.getVersion(), session)) {
+                    && exclusion.getVersion().filter(session).acceptVersion(nutsId.getVersion(), session)) {
                 return false;
             }
         }

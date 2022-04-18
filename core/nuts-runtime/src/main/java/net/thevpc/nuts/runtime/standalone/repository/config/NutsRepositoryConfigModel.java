@@ -26,6 +26,7 @@ package net.thevpc.nuts.runtime.standalone.repository.config;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.spi.NutsRepositoryLocation;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -62,7 +63,7 @@ public interface NutsRepositoryConfigModel {
 
     NutsRepository getMirror(String repositoryIdOrName, NutsSession session);
 
-    NutsRepository[] getMirrors(NutsSession session);
+    List<NutsRepository> getMirrors(NutsSession session);
 
     String getName();
 

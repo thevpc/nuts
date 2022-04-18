@@ -28,6 +28,8 @@ package net.thevpc.nuts.runtime.standalone.definition.installstatus.filter;
 
 import net.thevpc.nuts.*;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -163,8 +165,8 @@ public class NutsInstallStatusFilter2 extends AbstractInstallStatusFilter {
    
 
     @Override
-    public NutsFilter[] getSubFilters() {
-        return new NutsFilter[0];
+    public List<NutsFilter> getSubFilters() {
+        return Collections.emptyList();
     }
 
     @Override

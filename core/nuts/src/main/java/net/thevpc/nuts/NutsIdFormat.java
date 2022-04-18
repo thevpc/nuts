@@ -28,6 +28,8 @@ package net.thevpc.nuts;
 import net.thevpc.nuts.boot.NutsApiUtils;
 import net.thevpc.nuts.spi.NutsComponent;
 
+import java.util.List;
+
 /**
  * Class responsible of manipulating  {@link NutsId} instances:
  * <ul>
@@ -157,7 +159,7 @@ public interface NutsIdFormat extends NutsFormat, NutsComponent {
      *
      * @return query properties omitted
      */
-    String[] getOmitProperties();
+    List<String> getOmitProperties();
 
     /**
      * return true if omit query property named {@code name}

@@ -23,10 +23,8 @@
  */
 package net.thevpc.nuts.runtime.standalone.util.reflect;
 
-import net.thevpc.nuts.NutsBlankable;
-import net.thevpc.nuts.NutsEnum;
-import net.thevpc.nuts.NutsParseEnumException;
-import net.thevpc.nuts.NutsSession;
+import net.thevpc.nuts.*;
+import net.thevpc.nuts.boot.NutsApiUtils;
 
 /**
  *
@@ -42,43 +40,10 @@ public enum ReflectPropertyDefaultValueStrategy implements NutsEnum {
         this.id = name().toLowerCase().replace('_', '-');
     }
 
-    public static ReflectPropertyDefaultValueStrategy parseLenient(String value) {
-        return parseLenient(value, null);
+    public static NutsOptional<ReflectPropertyDefaultValueStrategy> parse(String value) {
+        return NutsApiUtils.parse(value, ReflectPropertyDefaultValueStrategy.class);
     }
 
-    public static ReflectPropertyDefaultValueStrategy parseLenient(String value, ReflectPropertyDefaultValueStrategy emptyOrErrorValue) {
-        return parseLenient(value, emptyOrErrorValue, emptyOrErrorValue);
-    }
-
-    public static ReflectPropertyDefaultValueStrategy parseLenient(String value, ReflectPropertyDefaultValueStrategy emptyValue, ReflectPropertyDefaultValueStrategy errorValue) {
-        if (value == null) {
-            value = "";
-        } else {
-            value = value.toUpperCase().trim().replace('-', '_');
-        }
-        if (value.isEmpty()) {
-            return emptyValue;
-        }
-        try {
-            return ReflectPropertyDefaultValueStrategy.valueOf(value.toUpperCase());
-        } catch (Exception notFound) {
-            return errorValue;
-        }
-    }
-
-    public static ReflectPropertyDefaultValueStrategy parse(String value, NutsSession session) {
-        return parse(value, null, session);
-    }
-
-    public static ReflectPropertyDefaultValueStrategy parse(String value, ReflectPropertyDefaultValueStrategy emptyValue, NutsSession session) {
-        ReflectPropertyDefaultValueStrategy v = parseLenient(value, emptyValue, null);
-        if (v == null) {
-            if (!NutsBlankable.isBlank(value)) {
-                throw new NutsParseEnumException(session, value, ReflectPropertyDefaultValueStrategy.class);
-            }
-        }
-        return v;
-    }
 
     @Override
     public String id() {

@@ -2,6 +2,9 @@ package net.thevpc.nuts.runtime.standalone.util.filters;
 
 import net.thevpc.nuts.*;
 
+import java.util.Collections;
+import java.util.List;
+
 public abstract class AbstractNutsFilter implements NutsFilter {
 
     private NutsSession session;
@@ -30,8 +33,8 @@ public abstract class AbstractNutsFilter implements NutsFilter {
     }
 
     @Override
-    public NutsFilter[] getSubFilters() {
-        return new NutsFilter[0];
+    public List<NutsFilter> getSubFilters() {
+        return Collections.emptyList();
     }
 
     @Override

@@ -53,7 +53,7 @@ public class DefaultSourceControlHelper {
         String oldVersion = NutsUtilStrings.trim(d.getId().getVersion().getValue());
         if (oldVersion.endsWith(CoreNutsConstants.Versions.CHECKED_OUT_EXTENSION)) {
             oldVersion = oldVersion.substring(0, oldVersion.length() - CoreNutsConstants.Versions.CHECKED_OUT_EXTENSION.length());
-            String newVersion = NutsVersion.of(oldVersion,session).inc().getValue();
+            String newVersion = NutsVersion.of(oldVersion).get(session).inc().getValue();
             NutsDefinition newVersionFound = null;
             try {
                 newVersionFound = session.fetch().setId(d.getId().builder().setVersion(newVersion).build()).setSession(session).getResultDefinition();
@@ -67,8 +67,8 @@ public class DefaultSourceControlHelper {
             } else {
                 d = d.builder().setId(d.getId().builder().setVersion(oldVersion + ".1").build()).build();
             }
-            NutsId newId = session.deploy().setContent(folder).setDescriptor(d).setSession(session).getResult()[0];
-            d.formatter().setSession(session).print(file);
+            NutsId newId = session.deploy().setContent(folder).setDescriptor(d).setSession(session).getResult().get(0);
+            d.formatter(session).print(file);
             CoreIOUtils.delete(session, folder);
             return newId;
         } else {
@@ -78,7 +78,7 @@ public class DefaultSourceControlHelper {
 
     //    @Override
     public NutsDefinition checkout(String id, Path folder, NutsSession session) {
-        return checkout(NutsId.of(id,session), folder, session);
+        return checkout(NutsId.of(id).get(session), folder, session);
     }
 
     //    @Override
@@ -101,7 +101,7 @@ public class DefaultSourceControlHelper {
             NutsId newId = d.getId().builder().setVersion(oldVersion + CoreNutsConstants.Versions.CHECKED_OUT_EXTENSION).build();
             d = d.builder().setId(newId).build();
 
-            d.formatter().setSession(session).print(file);
+            d.formatter(session).print(file);
 
             return new DefaultNutsDefinition(
                     nutToInstall.getRepositoryUuid(),

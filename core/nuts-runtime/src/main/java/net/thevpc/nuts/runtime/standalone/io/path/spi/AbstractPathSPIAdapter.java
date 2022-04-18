@@ -9,6 +9,7 @@ import java.io.OutputStream;
 import java.net.URL;
 import java.nio.file.Path;
 import java.time.Instant;
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
@@ -266,7 +267,7 @@ public abstract class AbstractPathSPIAdapter implements NutsPathSPI {
     }
 
     @Override
-    public String[] getItems(NutsPath basePath) {
+    public List<String> getItems(NutsPath basePath) {
         return ref.getItems();
     }
 

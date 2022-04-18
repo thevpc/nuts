@@ -44,19 +44,8 @@ import java.util.function.UnaryOperator;
  * @app.category Descriptor
  * @since 0.5.4
  */
-public interface NutsDescriptorBuilder extends Serializable, NutsComponent {
+public interface NutsDescriptorBuilder extends NutsDescriptor{
 
-    static NutsDescriptorBuilder of(NutsSession session) {
-        NutsApiUtils.checkSession(session);
-        return session.extensions().createSupported(NutsDescriptorBuilder.class, true, null);
-    }
-
-    /**
-     * artifact full id (groupId+artifactId+version)
-     *
-     * @return artifact id
-     */
-    NutsId getId();
 
     /**
      * set id
@@ -79,7 +68,7 @@ public interface NutsDescriptorBuilder extends Serializable, NutsComponent {
      *
      * @return descriptor parent list (may be empty)
      */
-    NutsId[] getParents();
+    List<NutsId> getParents();
 
     /**
      * set parents
@@ -87,14 +76,7 @@ public interface NutsDescriptorBuilder extends Serializable, NutsComponent {
      * @param parents value to set
      * @return {@code this} instance
      */
-    NutsDescriptorBuilder setParents(NutsId[] parents);
-
-    /**
-     * return descriptor packaging (used to resolve file extension)
-     *
-     * @return return descriptor packaging (used to resolve file extension)
-     */
-    String getPackaging();
+    NutsDescriptorBuilder setParents(List<NutsId> parents);
 
     /**
      * set packaging
@@ -105,26 +87,12 @@ public interface NutsDescriptorBuilder extends Serializable, NutsComponent {
     NutsDescriptorBuilder setPackaging(String packaging);
 
     /**
-     * user friendly name, a short description for the artifact
-     *
-     * @return user friendly name
-     */
-    String getName();
-
-    /**
      * set name
      *
      * @param name value to set
      * @return {@code this} instance
      */
     NutsDescriptorBuilder setName(String name);
-
-    /**
-     * dependency resolution solver.
-     *
-     * @return dependency resolution solver
-     */
-    String getSolver();
 
     /**
      * update dependency resolution solver
@@ -138,26 +106,13 @@ public interface NutsDescriptorBuilder extends Serializable, NutsComponent {
 
     NutsDescriptorBuilder setGenericName(String name);
 
-    List<String> getIcons();
-
     NutsDescriptorBuilder setIcons(List<String> icons);
 
-    List<String> getCategories();
 
     NutsDescriptorBuilder setCategories(List<String> categories);
 
-    NutsEnvConditionBuilder getCondition();
-
-    NutsDescriptorBuilder setCondition(NutsEnvConditionBuilder condition);
 
     NutsDescriptorBuilder setCondition(NutsEnvCondition condition);
-
-    /**
-     * long description for the artifact
-     *
-     * @return long description for the artifact
-     */
-    String getDescription();
 
     /**
      * set description
@@ -168,30 +123,13 @@ public interface NutsDescriptorBuilder extends Serializable, NutsComponent {
     NutsDescriptorBuilder setDescription(String description);
 
     /**
-     * list of available mirror locations from which nuts can download artifact content.
-     * location can be mapped to a classifier.
-     *
-     * @return list of available mirror locations
-     */
-    NutsIdLocation[] getLocations();
-
-    /**
      * set locations
      *
      * @param locations new value
      * @return {@code this} instance
      */
-    NutsDescriptorBuilder setLocations(NutsIdLocation[] locations);
+    NutsDescriptorBuilder setLocations(List<NutsIdLocation> locations);
 
-    /**
-     * The dependencies specified here are not used until they are referenced in
-     * a POM within the group. This allows the specification of a
-     * &quot;standard&quot; version for a particular. This corresponds to
-     * "dependencyManagement.dependencies" in maven
-     *
-     * @return "standard" dependencies
-     */
-    NutsDependency[] getStandardDependencies();
 
     /**
      * set standard dependencies
@@ -199,14 +137,7 @@ public interface NutsDescriptorBuilder extends Serializable, NutsComponent {
      * @param dependencies value to set
      * @return {@code this} instance
      */
-    NutsDescriptorBuilder setStandardDependencies(NutsDependency[] dependencies);
-
-    /**
-     * list of immediate (non inherited and non transitive dependencies
-     *
-     * @return list of immediate (non inherited and non transitive dependencies
-     */
-    NutsDependency[] getDependencies();
+    NutsDescriptorBuilder setStandardDependencies(List<NutsDependency> dependencies);
 
     /**
      * set dependencies
@@ -214,14 +145,8 @@ public interface NutsDescriptorBuilder extends Serializable, NutsComponent {
      * @param dependencies new value
      * @return {@code this} instance
      */
-    NutsDescriptorBuilder setDependencies(NutsDependency[] dependencies);
+    NutsDescriptorBuilder setDependencies(List<NutsDependency> dependencies);
 
-    /**
-     * descriptor of artifact responsible of running this artifact
-     *
-     * @return descriptor of artifact responsible of running this artifact
-     */
-    NutsArtifactCall getExecutor();
 
     /**
      * set executor flag
@@ -231,12 +156,6 @@ public interface NutsDescriptorBuilder extends Serializable, NutsComponent {
      */
     NutsDescriptorBuilder setExecutor(NutsArtifactCall executor);
 
-    /**
-     * descriptor of artifact responsible of installing this artifact
-     *
-     * @return descriptor of artifact responsible of installing this artifact
-     */
-    NutsArtifactCall getInstaller();
 
     /**
      * set installer
@@ -247,19 +166,12 @@ public interface NutsDescriptorBuilder extends Serializable, NutsComponent {
     NutsDescriptorBuilder setInstaller(NutsArtifactCall installer);
 
     /**
-     * custom properties that can be used as place holders (int ${name} form) in other fields.
-     *
-     * @return custom properties that can be used as place holders (int ${name} form) in other fields.
-     */
-    NutsDescriptorProperty[] getProperties();
-
-    /**
      * set properties
      *
      * @param properties new value
      * @return {@code this} instance
      */
-    NutsDescriptorBuilder setProperties(NutsDescriptorProperty[] properties);
+    NutsDescriptorBuilder setProperties(List<NutsDescriptorProperty> properties);
 
     /**
      * add location
@@ -324,7 +236,7 @@ public interface NutsDescriptorBuilder extends Serializable, NutsComponent {
      * @param dependencies new value to add
      * @return {@code this} instance
      */
-    NutsDescriptorBuilder addDependencies(NutsDependency[] dependencies);
+    NutsDescriptorBuilder addDependencies(List<NutsDependency> dependencies);
 
     /**
      * remove standard dependency
@@ -348,7 +260,7 @@ public interface NutsDescriptorBuilder extends Serializable, NutsComponent {
      * @param dependencies value to add
      * @return {@code this} instance
      */
-    NutsDescriptorBuilder addStandardDependencies(NutsDependency[] dependencies);
+    NutsDescriptorBuilder addStandardDependencies(List<NutsDependency> dependencies);
 
     /**
      * add property
@@ -374,31 +286,7 @@ public interface NutsDescriptorBuilder extends Serializable, NutsComponent {
      * @param properties new value
      * @return {@code this} instance
      */
-    NutsDescriptorBuilder addProperties(NutsDescriptorProperty[] properties);
-
-    /**
-     * replace placeholders with the corresponding property value in properties list
-     *
-     * @return {@code this} instance
-     */
-    NutsDescriptorBuilder applyProperties();
-
-    /**
-     * merge parent and child information (apply inheritance)
-     *
-     * @param parentDescriptors parent descriptors
-     * @return {@code this} instance
-     */
-    NutsDescriptorBuilder applyParents(NutsDescriptor[] parentDescriptors);
-
-    /**
-     * replace placeholders with the corresponding property value in the given properties list and return a new instance.
-     *
-     * @param properties properties
-     * @return {@code this} instance
-     */
-    NutsDescriptorBuilder applyProperties(Map<String, String> properties);
-
+    NutsDescriptorBuilder addProperties(List<NutsDescriptorProperty> properties);
     /**
      * create a new instance of descriptor with added/merged properties
      *
@@ -523,4 +411,13 @@ public interface NutsDescriptorBuilder extends Serializable, NutsComponent {
      */
     NutsDescriptorBuilder setIdType(NutsIdType idType);
 
+    NutsDescriptorBuilder setContributors(List<NutsDescriptorContributor> contributors);
+
+
+    NutsDescriptorBuilder setLicenses(List<NutsDescriptorLicense> licenses);
+
+
+    NutsDescriptorBuilder setMailingLists(List<NutsDescriptorMailingList> mailingLists);
+
+    NutsDescriptorBuilder setOrganization(NutsDescriptorOrganization organization);
 }

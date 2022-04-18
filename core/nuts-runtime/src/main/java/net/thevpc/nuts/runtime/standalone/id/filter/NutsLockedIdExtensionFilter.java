@@ -26,7 +26,7 @@ public class NutsLockedIdExtensionFilter extends AbstractDescriptorFilter {
     public boolean acceptId(NutsId id, NutsSession session) {
         for (NutsId nutsId : lockedIds) {
             if(nutsId.getShortId().equalsShortId(id.getShortId())){
-                return (id.getVersion().filter().acceptVersion(nutsId.getVersion(),session));
+                return (id.getVersion().filter(session).acceptVersion(nutsId.getVersion(),session));
             }
         }
         return true;

@@ -73,167 +73,140 @@ public enum NutsTextStyleType implements NutsEnum {
         this.id = name().toLowerCase().replace('_', '-');
     }
 
-    public static NutsTextStyleType parseLenient(String value) {
-        return parseLenient(value, null);
+    public static NutsOptional<NutsTextStyleType> parse(String value) {
+        return NutsApiUtils.parse(value, NutsTextStyleType.class,s->{
+            switch (s.toLowerCase()) {
+                case "f":
+                case "foreground":
+                case "foregroundcolor": {
+                    return NutsOptional.of(FORE_COLOR);
+                }
+                case "plain": {
+                    return NutsOptional.of(PLAIN);
+                }
+                case "foregroundx":
+                case "foregroundtruecolor": {
+                    return NutsOptional.of(FORE_TRUE_COLOR);
+                }
+                case "b":
+                case "background":
+                case "back_color":
+                case "backcolor":
+                case "backgroundcolor": {
+                    return NutsOptional.of(BACK_COLOR);
+                }
+                case "backtruecolor":
+                case "backgroundx":
+                case "backgroundtruecolor": {
+                    return NutsOptional.of(BACK_TRUE_COLOR);
+
+                }
+
+                case "p":
+                case "primary": {
+                    return NutsOptional.of(PRIMARY);
+                }
+                case "s":
+                case "secondary": {
+                    return NutsOptional.of(SECONDARY);
+                }
+                case "underlined": {
+                    return NutsOptional.of(UNDERLINED);
+                }
+                case "bold": {
+                    return NutsOptional.of(BOLD);
+                }
+                case "boolean":
+                case "bool": {
+                    return NutsOptional.of(BOOLEAN);
+                }
+                case "blink": {
+                    return NutsOptional.of(BLINK);
+                }
+                case "comment":
+                case "comments": {
+                    return NutsOptional.of(COMMENTS);
+                }
+                case "config": {
+                    return NutsOptional.of(CONFIG);
+                }
+                case "danger": {
+                    return NutsOptional.of(DANGER);
+                }
+                case "date": {
+                    return NutsOptional.of(DATE);
+                }
+                case "number": {
+                    return NutsOptional.of(NUMBER);
+                }
+                case "error": {
+                    return NutsOptional.of(ERROR);
+                }
+                case "warning":
+                case "warn": {
+                    return NutsOptional.of(WARN);
+                }
+                case "version": {
+                    return NutsOptional.of(VERSION);
+                }
+                case "var":
+                case "variable": {
+                    return NutsOptional.of(VAR);
+                }
+                case "input": {
+                    return NutsOptional.of(INPUT);
+                }
+                case "title": {
+                    return NutsOptional.of(TITLE);
+                }
+                case "success": {
+                    return NutsOptional.of(SUCCESS);
+                }
+                case "string": {
+                    return NutsOptional.of(STRING);
+                }
+                case "strike":
+                case "striked": {
+                    return NutsOptional.of(STRIKED);
+                }
+                case "sep":
+                case "separator": {
+                    return NutsOptional.of(SEPARATOR);
+                }
+                case "reversed": {
+                    return NutsOptional.of(REVERSED);
+                }
+                case "path": {
+                    return NutsOptional.of(PATH);
+                }
+                case "option": {
+                    return NutsOptional.of(OPTION);
+                }
+                case "pale": {
+                    return NutsOptional.of(PALE);
+                }
+                case "operator": {
+                    return NutsOptional.of(OPERATOR);
+                }
+                case "kw":
+                case "keyword": {
+                    return NutsOptional.of(KEYWORD);
+                }
+                case "italic": {
+                    return NutsOptional.of(ITALIC);
+                }
+                case "information":
+                case "info": {
+                    return NutsOptional.of(INFO);
+                }
+                case "fail": {
+                    return NutsOptional.of(FAIL);
+                }
+            }
+            return null;
+        });
     }
 
-    public static NutsTextStyleType parseLenient(String value, NutsTextStyleType emptyOrErrorValue) {
-        return parseLenient(value, emptyOrErrorValue, emptyOrErrorValue);
-    }
-
-    public static NutsTextStyleType parseLenient(String value, NutsTextStyleType emptyValue, NutsTextStyleType errorValue) {
-        if (value == null) {
-            value = "";
-        } else {
-            value = value.toUpperCase().trim().replace('-', '_').replace("_", "");
-        }
-        if (value.isEmpty()) {
-            return emptyValue;
-        }
-        switch (value.toLowerCase()) {
-            case "f":
-            case "foreground":
-            case "foregroundcolor": {
-                return FORE_COLOR;
-            }
-            case "plain": {
-                return PLAIN;
-            }
-            case "foregroundx":
-            case "foregroundtruecolor": {
-                return FORE_TRUE_COLOR;
-            }
-            case "b":
-            case "background":
-            case "back_color":
-            case "backcolor":
-            case "backgroundcolor": {
-                return BACK_COLOR;
-            }
-            case "backtruecolor":
-            case "backgroundx":
-            case "backgroundtruecolor": {
-                return BACK_TRUE_COLOR;
-
-            }
-
-            case "p":
-            case "primary": {
-                return PRIMARY;
-            }
-            case "s":
-            case "secondary": {
-                return SECONDARY;
-            }
-            case "underlined": {
-                return UNDERLINED;
-            }
-            case "bold": {
-                return BOLD;
-            }
-            case "boolean":
-            case "bool": {
-                return BOOLEAN;
-            }
-            case "blink": {
-                return BLINK;
-            }
-            case "comment":
-            case "comments": {
-                return COMMENTS;
-            }
-            case "config": {
-                return CONFIG;
-            }
-            case "danger": {
-                return DANGER;
-            }
-            case "date": {
-                return DATE;
-            }
-            case "number": {
-                return NUMBER;
-            }
-            case "error": {
-                return ERROR;
-            }
-            case "warning":
-            case "warn": {
-                return WARN;
-            }
-            case "version": {
-                return VERSION;
-            }
-            case "var":
-            case "variable": {
-                return VAR;
-            }
-            case "input": {
-                return INPUT;
-            }
-            case "title": {
-                return TITLE;
-            }
-            case "success": {
-                return SUCCESS;
-            }
-            case "string": {
-                return STRING;
-            }
-            case "strike":
-            case "striked": {
-                return STRIKED;
-            }
-            case "sep":
-            case "separator": {
-                return SEPARATOR;
-            }
-            case "reversed": {
-                return REVERSED;
-            }
-            case "path": {
-                return PATH;
-            }
-            case "option": {
-                return OPTION;
-            }
-            case "pale": {
-                return PALE;
-            }
-            case "operator": {
-                return OPERATOR;
-            }
-            case "kw":
-            case "keyword": {
-                return KEYWORD;
-            }
-            case "italic": {
-                return ITALIC;
-            }
-            case "information":
-            case "info": {
-                return INFO;
-            }
-            case "fail": {
-                return FAIL;
-            }
-        }
-        try {
-            return NutsTextStyleType.valueOf(value.toUpperCase());
-        } catch (Exception notFound) {
-            return errorValue;
-        }
-    }
-
-    public static NutsTextStyleType parse(String value, NutsSession session) {
-        return parse(value, null, session);
-    }
-
-    public static NutsTextStyleType parse(String value, NutsTextStyleType emptyValue, NutsSession session) {
-        NutsTextStyleType v = parseLenient(value, emptyValue, null);
-        NutsApiUtils.checkNonNullEnum(v, value, NutsTextStyleType.class, session);
-        return v;
-    }
 
     @Override
     public String id() {

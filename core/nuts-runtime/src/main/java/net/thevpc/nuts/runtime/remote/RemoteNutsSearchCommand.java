@@ -37,9 +37,9 @@ public class RemoteNutsSearchCommand extends AbstractNutsSearchCommand {
                 .set("defaultVersions", getDefaultVersions())
                 .set("targetApiVersion", getTargetApiVersion().toString())
                 .set("optional", getOptional())
-                .set("arch", e.ofArray().addAll(getArch()).build())
-                .set("packaging", e.ofArray().addAll(getPackaging()).build())
-                .set("ids", e.ofArray().addAll(Arrays.stream(getIds())
+                .set("arch", e.ofArray().addAll(getArch().toArray(new String[0])).build())
+                .set("packaging", e.ofArray().addAll(getPackaging().toArray(new String[0])).build())
+                .set("ids", e.ofArray().addAll(getIds().stream()
                         .map(Object::toString).toArray(String[]::new)).build());
         if (getIdFilter() != null) {
             eb.set("idFilter", e.toElement(getIdFilter()));

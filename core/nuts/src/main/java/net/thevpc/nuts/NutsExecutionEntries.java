@@ -32,6 +32,7 @@ import net.thevpc.nuts.spi.NutsComponent;
 import java.io.File;
 import java.io.InputStream;
 import java.nio.file.Path;
+import java.util.List;
 
 /**
  * @app.category Base
@@ -48,7 +49,7 @@ public interface NutsExecutionEntries extends NutsComponent {
      * @param file jar file
      * @return execution entries (class names with main method)
      */
-    NutsExecutionEntry[] parse(File file);
+    List<NutsExecutionEntry> parse(File file);
 
     /**
      * parse Execution Entries
@@ -56,7 +57,7 @@ public interface NutsExecutionEntries extends NutsComponent {
      * @param file jar file
      * @return execution entries (class names with main method)
      */
-    NutsExecutionEntry[] parse(Path file);
+    List<NutsExecutionEntry> parse(Path file);
 
 //    NutsExecutionEntry[] parse(NutsPath file);
 
@@ -68,7 +69,7 @@ public interface NutsExecutionEntries extends NutsComponent {
      * @param sourceName  stream source name (optional)
      * @return execution entries (class names with main method)
      */
-    NutsExecutionEntry[] parse(InputStream inputStream, String type, String sourceName);
+    List<NutsExecutionEntry> parse(InputStream inputStream, String type, String sourceName);
 
     NutsSession getSession();
 

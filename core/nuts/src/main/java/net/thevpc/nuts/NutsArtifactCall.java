@@ -26,6 +26,7 @@
 package net.thevpc.nuts;
 
 import java.io.Serializable;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -48,7 +49,7 @@ public interface NutsArtifactCall extends Serializable, NutsBlankable {
      *
      * @return execution arguments
      */
-    String[] getArguments();
+    List<String> getArguments();
 
     /**
      * execution properties

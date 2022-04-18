@@ -78,9 +78,10 @@ public class MavenNutsDependencySolver implements NutsDependencySolver {
 //                sourceIds.add(id);
                 if (mergedVisitedSet.add(currentNode.key)) {
                     mergedRootNodeBuilders.add(currentNode);
-                    NutsDependency[] immediate = CoreFilterUtils.filterDependencies(id, currentNode.getEffectiveDescriptor().getDependencies(),
+                    List<NutsDependency> immediate = CoreFilterUtils.filterDependencies(id,
+                            currentNode.getEffectiveDescriptor().getDependencies(),
                             effDependencyFilter, session);
-                    immediates.addAll(Arrays.asList(immediate));
+                    immediates.addAll(immediate);
                     for (NutsDependency dependency : currentNode.def.getEffectiveDescriptor().getDependencies()) {
                         dependency = dependency.builder().setProperty("provided-by", currentNode.id.toString()).build();
 //                        if(dependency.toId().contains("jai_imageio")){
@@ -160,8 +161,8 @@ public class MavenNutsDependencySolver implements NutsDependencySolver {
                 currentNode.alreadyVisited = true;
             }
         }
-        List<NutsDependencyTreeNode> mergedRootNodes = mergedRootNodeBuilders.stream().map(x -> x.build()).collect(Collectors.toList());
-        List<NutsDependencyTreeNode> nonMergedRootNodes = nonMergedRootNodeBuilders.stream().map(x -> x.build()).collect(Collectors.toList());
+        List<NutsDependencyTreeNode> mergedRootNodes = mergedRootNodeBuilders.stream().map(NutsDependencyTreeNodeBuild::build).collect(Collectors.toList());
+        List<NutsDependencyTreeNode> nonMergedRootNodes = nonMergedRootNodeBuilders.stream().map(NutsDependencyTreeNodeBuild::build).collect(Collectors.toList());
         final NutsDependency[] mergedDepsList = mergedVisitedSet.visitedSet.values().stream().map(NutsDependencyInfo::getDependency)
                 .toArray(NutsDependency[]::new);
         final NutsDependency[] nonMergedDepsList = nonMergedVisitedSet.visitedSet.values().stream().map(NutsDependencyInfo::getDependency)
@@ -217,8 +218,8 @@ public class MavenNutsDependencySolver implements NutsDependencySolver {
     }
 
     private NutsDependencyScope combineScopes(String parentScope0, String childScope0) {
-        NutsDependencyScope parentScope = NutsDependencyScope.parseLenient(parentScope0, NutsDependencyScope.API, NutsDependencyScope.API);
-        NutsDependencyScope childScope = NutsDependencyScope.parseLenient(childScope0, NutsDependencyScope.API, NutsDependencyScope.API);
+        NutsDependencyScope parentScope = NutsDependencyScope.parse(parentScope0).orElse( NutsDependencyScope.API);
+        NutsDependencyScope childScope = NutsDependencyScope.parse(childScope0).orElse( NutsDependencyScope.API);
         return combineScopes(parentScope, childScope);
     }
 
@@ -397,7 +398,7 @@ public class MavenNutsDependencySolver implements NutsDependencySolver {
                 nchildren[i] = children.get(i).build();
             }
             return new DefaultNutsDependencyTreeNode(
-                    dependency, nchildren, alreadyVisited
+                    dependency, Arrays.asList(nchildren), alreadyVisited
             );
         }
     }

@@ -51,7 +51,7 @@ public class NutsDependencyUtils {
         if (d.isOptional()) {
             return false;
         }
-        if (NutsDependencyScope.parseLenient(d.getScope(), NutsDependencyScope.API) == NutsDependencyScope.SYSTEM) {
+        if (NutsDependencyScope.parse(d.getScope()).orElse(NutsDependencyScope.API) == NutsDependencyScope.SYSTEM) {
             //NutsEnvCondition c = d.getDependency().getCondition();
             //if(c!=null && c.getProfiles().length>0) {
             //Should add some log!

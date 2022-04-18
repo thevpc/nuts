@@ -66,7 +66,7 @@ public class DefaultNutsIndexStore extends AbstractNutsIndexStore {
                     try {
                         Map[] array = NutsElements.of(session).json().parse(new InputStreamReader(NutsPath.of(uu,session).getInputStream()), Map[].class);
                         return Arrays.stream(array)
-                                .map(s -> NutsId.of(s.get("stringId").toString(),session))
+                                .map(s -> NutsId.of(s.get("stringId").toString()).get(session))
                                 .collect(Collectors.toList()).iterator();
                     } catch (UncheckedIOException | NutsIOException e) {
                         setInaccessible();
@@ -94,7 +94,7 @@ public class DefaultNutsIndexStore extends AbstractNutsIndexStore {
                     try {
                         Map[] array = elems.json().parse(new InputStreamReader(NutsPath.of(uu,session).getInputStream()), Map[].class);
                         return Arrays.stream(array)
-                                .map(s -> NutsId.of(s.get("stringId").toString(),session))
+                                .map(s -> NutsId.of(s.get("stringId").toString()).get(session))
                                 .filter(filter != null ? new NutsIdFilterToNutsIdPredicate(filter, session) : NutsPredicates.always())
                                 .iterator();
                     } catch (UncheckedIOException | NutsIOException e) {

@@ -105,7 +105,7 @@ public abstract class AbstractNutsStream<T> implements NutsStream<T> {
         if (it.hasNext()) {
             return it.next();
         }
-        NutsId n = NutsIdParser.of(session).setLenient(true).parse(nutsBase);
+        NutsId n = NutsId.of(nutsBase).orElse(null);
         if (n != null) {
             throw new NutsNotFoundException(session, n);
         }
@@ -122,7 +122,7 @@ public abstract class AbstractNutsStream<T> implements NutsStream<T> {
             }
             return t;
         } else {
-            NutsId nid = NutsIdParser.of(session).setLenient(true).parse(nutsBase);
+            NutsId nid = NutsId.of(nutsBase).orElse(null);
             if (nid != null) {
                 throw new NutsNotFoundException(session, nid);
             }
@@ -422,12 +422,12 @@ public abstract class AbstractNutsStream<T> implements NutsStream<T> {
 
     @Override
     public NutsOptional<T> findAny() {
-        return NutsOptional.ofOptional(session,stream().findAny(),s->NutsMessage.cstyle("missing : %S",nutsBase));
+        return NutsOptional.ofOptional(stream().findAny(),s->NutsMessage.cstyle("missing : %S",nutsBase));
     }
 
     @Override
     public NutsOptional<T> findFirst() {
-        return NutsOptional.ofOptional(session,stream().findFirst(),s->NutsMessage.cstyle("missing : %S",nutsBase));
+        return NutsOptional.ofOptional(stream().findFirst(),s->NutsMessage.cstyle("missing : %S",nutsBase));
     }
 
     @Override
@@ -472,12 +472,12 @@ public abstract class AbstractNutsStream<T> implements NutsStream<T> {
 
     @Override
     public NutsOptional<T> min(Comparator<? super T> comparator) {
-        return NutsOptional.ofOptional(session,stream().min(comparator),s->NutsMessage.cstyle("missing : %S",nutsBase));
+        return NutsOptional.ofOptional(stream().min(comparator),s->NutsMessage.cstyle("missing : %S",nutsBase));
     }
 
     @Override
     public NutsOptional<T> max(Comparator<? super T> comparator) {
-        return NutsOptional.ofOptional(session,stream().max(comparator),s->NutsMessage.cstyle("missing : %S",nutsBase));
+        return NutsOptional.ofOptional(stream().max(comparator),s->NutsMessage.cstyle("missing : %S",nutsBase));
     }
 
     @Override

@@ -26,6 +26,7 @@
 package net.thevpc.nuts;
 
 import java.util.Collection;
+import java.util.List;
 
 /**
  * Push command
@@ -96,7 +97,7 @@ public interface NutsPushCommand extends NutsWorkspaceCommand {
      *
      * @return ids to push for
      */
-    NutsId[] getIds();
+    List<NutsId> getIds();
 
     /**
      * remove locked ids to prevent them to be updated or the force other ids to use them (the installed version).
@@ -158,7 +159,7 @@ public interface NutsPushCommand extends NutsWorkspaceCommand {
      *
      * @return locked ids
      */
-    NutsId[] getLockedIds();
+    List<NutsId> getLockedIds();
 
     /**
      * add argument to pass to the push command
@@ -204,7 +205,7 @@ public interface NutsPushCommand extends NutsWorkspaceCommand {
      *
      * @return all arguments to pass to the push command
      */
-    String[] getArgs();
+    List<String> getArgs();
 
     /**
      * true when offline mode

@@ -47,40 +47,9 @@ public enum NutsFilterOp implements NutsEnum {
         this.id = name().toLowerCase().replace('_', '-');
     }
 
-    public static NutsFilterOp parseLenient(String value) {
-        return parseLenient(value, null);
+    public static NutsOptional<NutsFilterOp> parse(String value) {
+        return NutsApiUtils.parse(value, NutsFilterOp.class);
     }
-
-    public static NutsFilterOp parseLenient(String value, NutsFilterOp emptyOrErrorValue) {
-        return parseLenient(value, emptyOrErrorValue, emptyOrErrorValue);
-    }
-
-    public static NutsFilterOp parseLenient(String value, NutsFilterOp emptyValue, NutsFilterOp errorValue) {
-        if (value == null) {
-            value = "";
-        } else {
-            value = value.toUpperCase().trim().replace('-', '_');
-        }
-        if (value.isEmpty()) {
-            return emptyValue;
-        }
-        try {
-            return NutsFilterOp.valueOf(value.toUpperCase());
-        } catch (Exception notFound) {
-            return errorValue;
-        }
-    }
-
-    public static NutsFilterOp parse(String value, NutsSession session) {
-        return parse(value, null, session);
-    }
-
-    public static NutsFilterOp parse(String value, NutsFilterOp emptyValue, NutsSession session) {
-        NutsFilterOp v = parseLenient(value, emptyValue, null);
-        NutsApiUtils.checkNonNullEnum(v, value, NutsFilterOp.class, session);
-        return v;
-    }
-
     @Override
     public String id() {
         return id;

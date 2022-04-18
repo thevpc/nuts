@@ -70,39 +70,10 @@ public enum NutsExecutionType implements NutsEnum {
         this.id = name().toLowerCase().replace('_', '-');
     }
 
-    public static NutsExecutionType parseLenient(String value) {
-        return parseLenient(value, null);
+    public static NutsOptional<NutsExecutionType> parse(String value) {
+        return NutsApiUtils.parse(value, NutsExecutionType.class);
     }
 
-    public static NutsExecutionType parseLenient(String value, NutsExecutionType emptyOrErrorValue) {
-        return parseLenient(value, emptyOrErrorValue, emptyOrErrorValue);
-    }
-
-    public static NutsExecutionType parseLenient(String value, NutsExecutionType emptyValue, NutsExecutionType errorValue) {
-        if (value == null) {
-            value = "";
-        } else {
-            value = value.toUpperCase().trim().replace('-', '_');
-        }
-        if (value.isEmpty()) {
-            return emptyValue;
-        }
-        try {
-            return NutsExecutionType.valueOf(value.toUpperCase());
-        } catch (Exception notFound) {
-            return errorValue;
-        }
-    }
-
-    public static NutsExecutionType parse(String value, NutsSession session) {
-        return parse(value, null, session);
-    }
-
-    public static NutsExecutionType parse(String value, NutsExecutionType emptyValue, NutsSession session) {
-        NutsExecutionType v = parseLenient(value, emptyValue, null);
-        NutsApiUtils.checkNonNullEnum(v, value, NutsExecutionType.class, session);
-        return v;
-    }
 
     /**
      * lower cased identifier.

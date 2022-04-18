@@ -65,7 +65,7 @@ public class NutsRepositoryFilterNone extends AbstractRepositoryFilter {
     public NutsFilterOp getFilterOp() {
         return NutsFilterOp.NOT;
     }
-    public NutsFilter[] getSubFilters() {
-        return all;
+    public List<NutsFilter> getSubFilters() {
+        return Arrays.asList(all);
     }
 }

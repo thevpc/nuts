@@ -30,6 +30,7 @@ import net.thevpc.nuts.*;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
+import java.util.List;
 
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.spi.NutsDescriptorContentParserContext;
@@ -44,9 +45,9 @@ public class DefaultNutsDescriptorContentParserContext implements NutsDescriptor
     private final String fileExtension;
     private final String mimeType;
     private byte[] bytes;
-    private final String[] parseOptions;
+    private final List<String> parseOptions;
 
-    public DefaultNutsDescriptorContentParserContext(NutsSession session, Path file, String fileExtension, String mimeType, String[] parseOptions) {
+    public DefaultNutsDescriptorContentParserContext(NutsSession session, Path file, String fileExtension, String mimeType, List<String> parseOptions) {
         this.file = NutsPath.of(file,session);
         this.session = session;
         this.fileExtension = fileExtension;
@@ -65,7 +66,7 @@ public class DefaultNutsDescriptorContentParserContext implements NutsDescriptor
     }
 
     @Override
-    public String[] getParseOptions() {
+    public List<String> getParseOptions() {
         return parseOptions;
     }
 

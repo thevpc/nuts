@@ -1,7 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.elem.mapper;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.standalone.descriptor.DefaultNutsEnvConditionBuilder;
 
 import java.lang.reflect.Type;
 
@@ -11,23 +10,19 @@ public class NutsElementMapperNutsEnvCondition implements NutsElementMapper<Nuts
     public Object destruct(NutsEnvCondition src, Type typeOfSrc, NutsElementFactoryContext context) {
         NutsSession session = context.getSession();
         return context.defaultDestruct(
-                NutsEnvConditionBuilder.of(session).setAll(src), null
+                new DefaultNutsEnvConditionBuilder(src), null
         );
     }
 
     @Override
     public NutsElement createElement(NutsEnvCondition o, Type typeOfSrc, NutsElementFactoryContext context) {
-        NutsSession session = context.getSession();
-        return context.defaultObjectToElement(
-                NutsEnvConditionBuilder.of(session).setAll(o), null
-        );
+        return context.defaultObjectToElement(new DefaultNutsEnvConditionBuilder(o), null);
     }
 
     @Override
     public NutsEnvCondition createObject(NutsElement o, Type typeOfResult, NutsElementFactoryContext context) {
-        DefaultNutsEnvConditionBuilder builder = (DefaultNutsEnvConditionBuilder) context.defaultElementToObject(o, DefaultNutsEnvConditionBuilder.class);
-        NutsSession session = context.getSession();
-        return NutsEnvConditionBuilder.of(session).setAll(builder).build();
+        NutsEnvConditionBuilder builder = context.defaultElementToObject(o, DefaultNutsEnvConditionBuilder.class);
+        return new DefaultNutsEnvConditionBuilder(builder).build();
     }
 
 }

@@ -140,7 +140,7 @@ public class JavaClassUtils {
     }
 
     public static String sourceVersionToClassVersion(String sourceVersion, NutsSession session) {
-        NutsVersion v = NutsVersion.of(sourceVersion, session);
+        NutsVersion v = NutsVersion.of(sourceVersion).get(session);
         int major = v.getInt(0, 0);
         int minor = v.getInt(1, 0);
         if (major < 1) {

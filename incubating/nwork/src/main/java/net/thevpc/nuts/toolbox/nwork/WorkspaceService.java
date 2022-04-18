@@ -315,7 +315,7 @@ public class WorkspaceService {
             String id = projectService.getConfig().getId();
             NutsDescriptor pom = projectService.getPom();
             if (pom != null) {
-                dependencies.put(NutsId.of(id, session).getShortName(), pom);
+                dependencies.put(NutsId.of(id).get( session).getShortName(), pom);
             }
         }
 
@@ -327,16 +327,15 @@ public class WorkspaceService {
         }
 
         int maxSize = 1;
-        NutsVersionParser parser = NutsVersionParser.of(session);
         for (int i = 0; i < all.size(); i++) {
             ProjectService projectService = all.get(i);
             DataRow d = new DataRow();
             d.id = projectService.getConfig().getId();
-            NutsDescriptor pom = dependencies.get(NutsId.of(d.id, session).getShortName());
+            NutsDescriptor pom = dependencies.get(NutsId.of(d.id).get( session).getShortName());
             if (pom != null) {
                 for (NutsDependency dependency : pom.getDependencies()) {
                     String did = dependency.getGroupId() + ":" + dependency.getArtifactId();
-                    NutsDescriptor expectedPom = dependencies.get(NutsId.of(did, session).getShortName());
+                    NutsDescriptor expectedPom = dependencies.get(NutsId.of(did).get( session).getShortName());
                     if (expectedPom != null) {
                         String expectedVersion = expectedPom.getId().getVersion().toString();
                         String currentVersion = dependency.getVersion().toString();
@@ -370,7 +369,7 @@ public class WorkspaceService {
                 d.remote = "";
                 d.status = "new";
             } else {
-                int t = parser.parse(d.local).compareTo(d.remote);
+                int t = NutsVersion.of(d.local).get(session).compareTo(d.remote);
                 if (t > 0) {
                     d.status = "commitable";
                 } else if (t < 0) {
@@ -501,8 +500,8 @@ public class WorkspaceService {
                         session.out().printf(" ; bad-deps:");
                         for (DiffVersion dependency : p2.dependencies) {
                             session.out().printf(" %s : %s <> expected %s", dependency.id,
-                                    parser.parse(dependency.current),
-                                    parser.parse(dependency.expected)
+                                    NutsVersion.of(dependency.current).get(session),
+                                    NutsVersion.of(dependency.expected).get(session)
                             );
                         }
                     }
@@ -528,7 +527,7 @@ public class WorkspaceService {
         boolean accept = filters.isEmpty();
         if (!accept) {
             NutsSession session = appContext.getSession();
-            NutsId nid = NutsId.of(id, session);
+            NutsId nid = NutsId.of(id).get( session);
             for (String filter : filters) {
                 if (id.equals(filter)
                         || id.matches(wildcardToRegex(filter))

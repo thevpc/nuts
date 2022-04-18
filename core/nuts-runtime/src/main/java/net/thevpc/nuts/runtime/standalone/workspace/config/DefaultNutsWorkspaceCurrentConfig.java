@@ -1,17 +1,16 @@
 package net.thevpc.nuts.runtime.standalone.workspace.config;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.standalone.xtra.expr.StringTokenizerUtils;
-import net.thevpc.nuts.spi.NutsBootDescriptor;
-import net.thevpc.nuts.spi.NutsBootId;
 import net.thevpc.nuts.runtime.standalone.boot.NutsBootConfig;
+import net.thevpc.nuts.runtime.standalone.xtra.expr.StringTokenizerUtils;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public final class DefaultNutsWorkspaceCurrentConfig {
 
@@ -23,8 +22,8 @@ public final class DefaultNutsWorkspaceCurrentConfig {
     private String name;
     private NutsId apiId;
     private NutsId bootRuntime;
-    private NutsBootDescriptor runtimeBootDescriptor;
-    private NutsBootDescriptor[] extensionBootDescriptors;
+    private NutsDescriptor runtimeBootDescriptor;
+    private List<NutsDescriptor> extensionBootDescriptors;
     private String bootRepositories;
     private String bootJavaCommand;
     private String bootJavaOptions;
@@ -89,15 +88,15 @@ public final class DefaultNutsWorkspaceCurrentConfig {
 
     public void setRuntimeId(String s, NutsSession session) {
         this.bootRuntime = s.contains("#")
-                ? NutsId.of(s,session)
-                : NutsId.of(NutsConstants.Ids.NUTS_RUNTIME + "#" + s,session);
+                ? NutsId.of(s).get(session)
+                : NutsId.of(NutsConstants.Ids.NUTS_RUNTIME + "#" + s).get(session);
     }
 
     public DefaultNutsWorkspaceCurrentConfig mergeRuntime(NutsWorkspaceOptions c, NutsSession session) {
         if (c.getRuntimeId() != null) {
             this.bootRuntime = c.getRuntimeId().contains("#")
-                    ? NutsId.of(c.getRuntimeId(),session)
-                    : NutsId.of(NutsConstants.Ids.NUTS_RUNTIME + "#" + c.getRuntimeId(),session);
+                    ? NutsId.of(c.getRuntimeId()).get(session)
+                    : NutsId.of(NutsConstants.Ids.NUTS_RUNTIME + "#" + c.getRuntimeId()).get(session);
         }
 //        this.bootRuntimeDependencies = c.getRuntimeDependencies();
 //        this.bootExtensionDependencies = c.getExtensionDependencies();
@@ -128,7 +127,7 @@ public final class DefaultNutsWorkspaceCurrentConfig {
             effStoreLocationPath[i] = Paths.get(effStoreLocationsMap.get(NutsStoreLocation.values()[i]));
         }
         if (apiId == null) {
-            apiId = NutsId.of(NutsConstants.Ids.NUTS_API + "#" + Nuts.getVersion(),session);
+            apiId = NutsId.of(NutsConstants.Ids.NUTS_API + "#" + Nuts.getVersion()).get(session);
         }
         if (storeLocationLayout == null) {
             storeLocationLayout = session.env().getOsFamily();
@@ -137,14 +136,13 @@ public final class DefaultNutsWorkspaceCurrentConfig {
     }
 
     public DefaultNutsWorkspaceCurrentConfig merge(NutsWorkspaceConfigApi c, NutsSession session) {
-        NutsIdParser parser = NutsIdParser.of(session);
         if (c.getApiVersion() != null) {
-            this.apiId = parser.parse(NutsConstants.Ids.NUTS_API + "#" + c.getApiVersion());
+            this.apiId = NutsId.of(NutsConstants.Ids.NUTS_API + "#" + c.getApiVersion()).get(session);
         }
         if (c.getRuntimeId() != null) {
             this.bootRuntime = c.getRuntimeId().contains("#")
-                    ? parser.parse(c.getRuntimeId())
-                    : parser.parse(NutsConstants.Ids.NUTS_RUNTIME + "#" + c.getRuntimeId());
+                    ? NutsId.of(c.getRuntimeId()).get(session)
+                    : NutsId.of(NutsConstants.Ids.NUTS_RUNTIME + "#" + c.getRuntimeId()).get(session);
         }
 //        if (c.getExtensionDependencies() != null) {
 //            this.bootExtensionDependencies = c.getExtensionDependencies();
@@ -160,15 +158,16 @@ public final class DefaultNutsWorkspaceCurrentConfig {
 
     public DefaultNutsWorkspaceCurrentConfig merge(NutsWorkspaceConfigRuntime c, NutsSession session) {
         if (c.getId() != null) {
-            this.bootRuntime = NutsId.of(c.getId(),session);
+            this.bootRuntime = NutsId.of(c.getId()).get(session);
         }
         if (c.getDependencies() != null) {
-            this.runtimeBootDescriptor = new NutsBootDescriptor(
-                    NutsBootId.parse(this.bootRuntime.toString()),
-                    StringTokenizerUtils.splitSemiColon(c.getDependencies()).stream()
-                            .map(NutsBootId::parse).toArray(NutsBootId[]::new)
-
-            );
+            this.runtimeBootDescriptor = new DefaultNutsDescriptorBuilder()
+                    .setId(NutsId.of(this.bootRuntime.toString()).get())
+                    .setDependencies(
+                            StringTokenizerUtils.splitSemiColon(c.getDependencies()).stream()
+                                    .map(x->NutsDependency.of(x).get(session)).collect(Collectors.toList())
+                    ).build()
+            ;
         }
         return this;
     }
@@ -207,14 +206,13 @@ public final class DefaultNutsWorkspaceCurrentConfig {
 
     public DefaultNutsWorkspaceCurrentConfig merge(NutsBootConfig c, NutsSession session) {
         this.name = c.getName();
-        NutsIdParser parser = NutsIdParser.of(session);
         if (c.getApiVersion() != null) {
-            this.apiId = parser.parse(NutsConstants.Ids.NUTS_API + "#" + c.getApiVersion());
+            this.apiId = NutsId.of(NutsConstants.Ids.NUTS_API + "#" + c.getApiVersion()).get(session);
         }
         if (c.getRuntimeId() != null) {
             this.bootRuntime = c.getRuntimeId().contains("#")
-                    ? parser.parse(c.getRuntimeId())
-                    : parser.parse(NutsConstants.Ids.NUTS_RUNTIME + "#" + c.getRuntimeId());
+                    ? NutsId.of(c.getRuntimeId()).get(session)
+                    : NutsId.of(NutsConstants.Ids.NUTS_RUNTIME + "#" + c.getRuntimeId()).get(session);
         }
         if (c.getRuntimeBootDescriptor() != null) {
             this.runtimeBootDescriptor = c.getRuntimeBootDescriptor();
@@ -259,11 +257,11 @@ public final class DefaultNutsWorkspaceCurrentConfig {
     }
 
 
-    public NutsBootDescriptor[] getExtensionBootDescriptors() {
+    public List<NutsDescriptor> getExtensionBootDescriptors() {
         return extensionBootDescriptors;
     }
 
-    public DefaultNutsWorkspaceCurrentConfig setExtensionBootDescriptors(NutsBootDescriptor[] extensionBootDescriptors) {
+    public DefaultNutsWorkspaceCurrentConfig setExtensionBootDescriptors(List<NutsDescriptor> extensionBootDescriptors) {
         this.extensionBootDescriptors = extensionBootDescriptors;
         return this;
     }
@@ -308,11 +306,11 @@ public final class DefaultNutsWorkspaceCurrentConfig {
         return this;
     }
 
-    public NutsBootDescriptor getRuntimeBootDescriptor() {
+    public NutsDescriptor getRuntimeBootDescriptor() {
         return runtimeBootDescriptor;
     }
 
-    public DefaultNutsWorkspaceCurrentConfig setRuntimeBootDescriptor(NutsBootDescriptor runtimeBootDescriptor) {
+    public DefaultNutsWorkspaceCurrentConfig setRuntimeBootDescriptor(NutsDescriptor runtimeBootDescriptor) {
         this.runtimeBootDescriptor = runtimeBootDescriptor;
         return this;
     }
@@ -416,7 +414,7 @@ public final class DefaultNutsWorkspaceCurrentConfig {
 
 
     public NutsPath getStoreLocation(String id, NutsStoreLocation folderType, NutsSession session) {
-        return getStoreLocation(NutsId.of(id,session), folderType, session);
+        return getStoreLocation(NutsId.of(id).get(session), folderType, session);
     }
 
     public NutsPath getStoreLocation(NutsId id, NutsStoreLocation folderType, NutsSession session) {

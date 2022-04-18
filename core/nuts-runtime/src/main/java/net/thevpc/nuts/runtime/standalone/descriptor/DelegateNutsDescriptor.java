@@ -27,6 +27,8 @@ package net.thevpc.nuts.runtime.standalone.descriptor;
 
 import net.thevpc.nuts.*;
 
+import java.util.List;
+
 /**
  * Created by vpc on 1/5/17.
  */
@@ -49,12 +51,12 @@ public abstract class DelegateNutsDescriptor extends AbstractNutsDescriptor {
     }
 
     @Override
-    public NutsDescriptorProperty[] getProperties() {
+    public List<NutsDescriptorProperty> getProperties() {
         return getBase().getProperties();
     }
 
     @Override
-    public NutsId[] getParents() {
+    public List<NutsId> getParents() {
         return getBase().getParents();
     }
 
@@ -98,12 +100,12 @@ public abstract class DelegateNutsDescriptor extends AbstractNutsDescriptor {
     }
 
     @Override
-    public NutsDependency[] getDependencies() {
+    public List<NutsDependency> getDependencies() {
         return getBase().getDependencies();
     }
 
     @Override
-    public NutsDependency[] getStandardDependencies() {
+    public List<NutsDependency> getStandardDependencies() {
         return getBase().getStandardDependencies();
     }
 
@@ -113,12 +115,12 @@ public abstract class DelegateNutsDescriptor extends AbstractNutsDescriptor {
     }
 
     @Override
-    public NutsIdLocation[] getLocations() {
+    public List<NutsIdLocation> getLocations() {
         return getBase().getLocations();
     }
 
     @Override
-    public String[] getIcons() {
+    public List<String> getIcons() {
         return getBase().getIcons();
     }
 
@@ -128,7 +130,7 @@ public abstract class DelegateNutsDescriptor extends AbstractNutsDescriptor {
     }
 
     @Override
-    public String[] getCategories() {
+    public List<String> getCategories() {
         return getBase().getCategories();
     }
 

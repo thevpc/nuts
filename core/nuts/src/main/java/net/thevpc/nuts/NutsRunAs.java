@@ -26,6 +26,8 @@
  */
 package net.thevpc.nuts;
 
+import net.thevpc.nuts.boot.NutsApiUtils;
+
 import java.util.Objects;
 
 public class NutsRunAs {
@@ -106,42 +108,8 @@ public class NutsRunAs {
             this.id = name().toLowerCase().replace('_', '-');
         }
 
-        public static Mode parse(String value, NutsSession session) {
-            return parse(value, null, session);
-        }
-
-        public static Mode parse(String value, Mode emptyValue, NutsSession session) {
-            Mode v = parseLenient(value, emptyValue, null);
-            if (v == null) {
-                if (!NutsBlankable.isBlank(value)) {
-                    throw new NutsParseEnumException(session, value, Mode.class);
-                }
-            }
-            return v;
-        }
-
-        public static Mode parseLenient(String value) {
-            return parseLenient(value, null);
-        }
-
-        public static Mode parseLenient(String value, Mode emptyOrErrorValue) {
-            return parseLenient(value, emptyOrErrorValue, emptyOrErrorValue);
-        }
-
-        public static Mode parseLenient(String value, Mode emptyValue, Mode errorValue) {
-            if (value == null) {
-                value = "";
-            } else {
-                value = value.toUpperCase().trim().replace('-', '_');
-            }
-            if (value.isEmpty()) {
-                return emptyValue;
-            }
-            try {
-                return Mode.valueOf(value.toUpperCase());
-            } catch (Exception notFound) {
-                return errorValue;
-            }
+        public static NutsOptional<Mode> parse(String value) {
+            return NutsApiUtils.parse(value, Mode.class);
         }
 
         @Override

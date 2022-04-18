@@ -26,17 +26,11 @@ package net.thevpc.nuts.runtime.standalone.workspace;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.security.ReadOnlyNutsWorkspaceOptions;
-import net.thevpc.nuts.spi.NutsBootDescriptor;
-import net.thevpc.nuts.spi.NutsBootId;
-import net.thevpc.nuts.NutsBootOptions;
 import net.thevpc.nuts.spi.NutsBootWorkspaceFactory;
 
 import java.io.File;
 import java.net.URL;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * This class holds information gathered by nuts Boot and passed to Runtime on BootTime
@@ -53,15 +47,15 @@ public final class CoreNutsBootOptions {
     /**
      * workspace runtime id (group, name with version)
      */
-    private NutsBootId runtimeId;
-    private NutsBootDescriptor runtimeBootDescriptor;
+    private NutsId runtimeId;
+    private NutsDescriptor runtimeBootDescriptor;
     private NutsClassLoaderNode runtimeBootDependencyNode;
-    private NutsBootDescriptor[] extensionBootDescriptors;
-    private NutsClassLoaderNode[] extensionBootDependencyNodes;
+    private List<NutsDescriptor> extensionBootDescriptors;
+    private List<NutsClassLoaderNode> extensionBootDependencyNodes;
 
     private NutsBootWorkspaceFactory bootWorkspaceFactory;
 
-    private URL[] bootClassWorldURLs;
+    private List<URL> bootClassWorldURLs;
 
     private ClassLoader workspaceClassLoader;
 
@@ -151,7 +145,7 @@ public final class CoreNutsBootOptions {
         optionsBuilder.setAll(boot);
         this.options = new ReadOnlyNutsWorkspaceOptions(optionsBuilder.build(),session);
         apiVersion = boot.getApiVersion();
-        runtimeId = NutsBootId.parse(boot.getRuntimeId());
+        runtimeId = NutsId.of(boot.getRuntimeId()).get(session);
         runtimeBootDescriptor = boot.getRuntimeBootDescriptor();
         runtimeBootDependencyNode = boot.getRuntimeBootDependencyNode();
         extensionBootDescriptors = boot.getExtensionBootDescriptors();
@@ -179,30 +173,6 @@ public final class CoreNutsBootOptions {
         return options;
     }
 
-//    public CoreNutsBootOptions setOptions(NutsWorkspaceOptions options) {
-//        if (options != null) {
-//            this.setWorkspaceLocation(options.getWorkspace());
-//            this.setName(options.getName());
-//            this.setStoreLocationStrategy(options.getStoreLocationStrategy());
-//            this.setRepositoryStoreLocationStrategy(options.getRepositoryStoreLocationStrategy());
-//            this.setStoreLocationLayout(options.getStoreLocationLayout());
-//            this.storeLocations = new LinkedHashMap<>(options.getStoreLocations());
-//            this.homeLocations = new LinkedHashMap<>(options.getHomeLocations());
-//            this.setRuntimeId(options.getRuntimeId() == null ? null : NutsBootId.parse(options.getRuntimeId()));
-//            this.global = options.isGlobal();
-//            this.javaCommand = options.getJavaCommand();
-//            this.javaOptions = options.getJavaOptions();
-//            this.apiVersion = NutsUtilStrings.trimToNull(options.getApiVersion());
-//        }
-//        if (options == null) {
-//            this.options = new ReadOnlyNutsWorkspaceOptions(new CoreNutsWorkspaceOptions(session), session);
-//        } else {
-//            this.options = new ReadOnlyNutsWorkspaceOptions(options.builder().build(), session);
-//        }
-//        return this;
-//    }
-
-
     public String getWorkspaceLocation() {
         return workspace;
     }
@@ -221,20 +191,20 @@ public final class CoreNutsBootOptions {
         return this;
     }
 
-    public NutsBootId getRuntimeId() {
+    public NutsId getRuntimeId() {
         return runtimeId;
     }
 
-    public CoreNutsBootOptions setRuntimeId(NutsBootId runtimeId) {
+    public CoreNutsBootOptions setRuntimeId(NutsId runtimeId) {
         this.runtimeId = runtimeId;
         return this;
     }
 
-    public NutsBootDescriptor getRuntimeBootDescriptor() {
+    public NutsDescriptor getRuntimeBootDescriptor() {
         return runtimeBootDescriptor;
     }
 
-    public CoreNutsBootOptions setRuntimeBootDescriptor(NutsBootDescriptor runtimeBootDescriptor) {
+    public CoreNutsBootOptions setRuntimeBootDescriptor(NutsDescriptor runtimeBootDescriptor) {
         this.runtimeBootDescriptor = runtimeBootDescriptor;
         return this;
     }
@@ -249,11 +219,11 @@ public final class CoreNutsBootOptions {
 //        return String.join(";", getExtensionDependenciesSet());
 //    }
 
-    public NutsBootDescriptor[] getExtensionBootDescriptors() {
+    public List<NutsDescriptor> getExtensionBootDescriptors() {
         return extensionBootDescriptors;
     }
 
-    public CoreNutsBootOptions setExtensionBootDescriptors(NutsBootDescriptor[] extensionBootDescriptors) {
+    public CoreNutsBootOptions setExtensionBootDescriptors(List<NutsDescriptor> extensionBootDescriptors) {
         this.extensionBootDescriptors = extensionBootDescriptors;
         return this;
     }
@@ -276,7 +246,7 @@ public final class CoreNutsBootOptions {
         return this;
     }
 
-    public URL[] getClassWorldURLs() {
+    public List<URL> getClassWorldURLs() {
         return bootClassWorldURLs;
     }
 
@@ -413,16 +383,16 @@ public final class CoreNutsBootOptions {
         return this;
     }
 
-    public NutsClassLoaderNode[] getExtensionBootDependencyNodes() {
+    public List<NutsClassLoaderNode> getExtensionBootDependencyNodes() {
         return extensionBootDependencyNodes;
     }
 
-    public CoreNutsBootOptions setExtensionBootDependencyNodes(NutsClassLoaderNode[] extensionBootDependencyNodes) {
+    public CoreNutsBootOptions setExtensionBootDependencyNodes(List<NutsClassLoaderNode> extensionBootDependencyNodes) {
         this.extensionBootDependencyNodes = extensionBootDependencyNodes;
         return this;
     }
 
-    public CoreNutsBootOptions setBootClassWorldURLs(URL[] bootClassWorldURLs) {
+    public CoreNutsBootOptions setBootClassWorldURLs(List<URL> bootClassWorldURLs) {
         this.bootClassWorldURLs = bootClassWorldURLs;
         return this;
     }

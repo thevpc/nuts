@@ -25,10 +25,8 @@
 */
 package net.thevpc.nuts.runtime.standalone.format;
 
-import net.thevpc.nuts.NutsBlankable;
-import net.thevpc.nuts.NutsEnum;
-import net.thevpc.nuts.NutsParseEnumException;
-import net.thevpc.nuts.NutsSession;
+import net.thevpc.nuts.*;
+import net.thevpc.nuts.boot.NutsApiUtils;
 
 /**
  *
@@ -72,52 +70,19 @@ public enum NutsDisplayProperty  implements NutsEnum {
         return id;
     }
 
-    public static NutsDisplayProperty parseLenient(String value) {
-        return parseLenient(value, null);
-    }
-
-    public static NutsDisplayProperty parseLenient(String value, NutsDisplayProperty emptyOrErrorValue) {
-        return parseLenient(value, emptyOrErrorValue, emptyOrErrorValue);
-    }
-
-    public static NutsDisplayProperty parseLenient(String value, NutsDisplayProperty emptyValue, NutsDisplayProperty errorValue) {
-        if (value == null) {
-            value = "";
-        } else {
-            value = value.toUpperCase().trim().replace('-', '_');
-        }
-        if (value.isEmpty()) {
-            return emptyValue;
-        }
-        try {
-            return NutsDisplayProperty.valueOf(value.toUpperCase());
-        } catch (Exception notFound) {
-            //
-        }
-        switch (value){
-            case "de":
-            case "desktop":
-                return DESKTOP_ENVIRONMENT;
-            case "osdist":return OSDIST;
-            case "repo":return REPOSITORY;
-            case "repo_id":
-            case "repoid":
-                return REPOSITORY_ID;
-        }
-        return errorValue;
-    }
-
-    public static NutsDisplayProperty parse(String value, NutsSession session) {
-        return parse(value, null,session);
-    }
-
-    public static NutsDisplayProperty parse(String value, NutsDisplayProperty emptyValue, NutsSession session) {
-        NutsDisplayProperty v = parseLenient(value, emptyValue, null);
-        if(v==null){
-            if(!NutsBlankable.isBlank(value)){
-                throw new NutsParseEnumException(session,value,NutsDisplayProperty.class);
+    public static NutsOptional<NutsDisplayProperty> parse(String value) {
+        return NutsApiUtils.parse(value, NutsDisplayProperty.class,s->{
+            switch (s.toLowerCase()){
+                case "de":
+                case "desktop":
+                    return NutsOptional.of(DESKTOP_ENVIRONMENT);
+                case "osdist":return NutsOptional.of(OSDIST);
+                case "repo":return NutsOptional.of(REPOSITORY);
+                case "repo_id":
+                case "repoid":
+                    return NutsOptional.of(REPOSITORY_ID);
             }
-        }
-        return v;
+            return null;
+        });
     }
 }

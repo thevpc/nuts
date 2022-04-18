@@ -28,6 +28,8 @@ import net.thevpc.nuts.runtime.standalone.repository.NutsRepositorySelectorHelpe
 import net.thevpc.nuts.runtime.standalone.repository.util.NutsRepositoryUtils;
 import net.thevpc.nuts.spi.*;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -37,15 +39,15 @@ import java.util.Objects;
 public class MavenRepositoryFactoryComponent implements NutsRepositoryFactoryComponent {
 
     @Override
-    public NutsAddRepositoryOptions[] getDefaultRepositories(NutsSession session) {
-        return new NutsAddRepositoryOptions[]{
+    public List<NutsAddRepositoryOptions> getDefaultRepositories(NutsSession session) {
+        return Arrays.asList(
                 NutsRepositorySelectorHelper.createRepositoryOptions(
                         Objects.requireNonNull(NutsRepositoryLocation.of("maven-local", NutsRepositoryDB.of(session), session)),
                         true, session),
                 NutsRepositorySelectorHelper.createRepositoryOptions(
                         Objects.requireNonNull(NutsRepositoryLocation.of("maven-central", NutsRepositoryDB.of(session), session)),
                         true, session)
-        };
+        );
     }
 
     @Override

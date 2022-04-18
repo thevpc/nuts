@@ -28,6 +28,7 @@ package net.thevpc.nuts;
 import net.thevpc.nuts.spi.NutsIndexStoreFactory;
 import net.thevpc.nuts.spi.NutsSystemTerminalBase;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
@@ -60,7 +61,7 @@ public interface NutsWorkspaceConfigManager {
 
     boolean isSupportedRepositoryType(String repositoryType);
 
-    NutsAddRepositoryOptions[] getDefaultRepositories();
+    List<NutsAddRepositoryOptions> getDefaultRepositories();
 
     Set<String> getAvailableArchetypes();
 

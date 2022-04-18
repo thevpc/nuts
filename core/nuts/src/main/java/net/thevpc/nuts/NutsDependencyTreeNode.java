@@ -27,6 +27,7 @@
 package net.thevpc.nuts;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * Dependency tree node
@@ -49,7 +50,7 @@ public interface NutsDependencyTreeNode extends Serializable {
      *
      * @return node children
      */
-    NutsDependencyTreeNode[] getChildren();
+    List<NutsDependencyTreeNode> getChildren();
 
     /**
      * true if the node is partial filled (not all children are considered)

@@ -5,6 +5,7 @@ import net.thevpc.nuts.runtime.standalone.xtra.expr.StringTokenizerUtils;
 
 import java.util.Collection;
 import java.util.EnumSet;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -27,7 +28,7 @@ public class NutsDependencyDEFilter extends AbstractDependencyFilter  {
         this.accepted = EnumSet.noneOf(NutsDesktopEnvironmentFamily.class);
         for (String e : StringTokenizerUtils.splitDefault(accepted)) {
             if (!e.isEmpty()) {
-                this.accepted.add(NutsDesktopEnvironmentFamily.parseLenient(e));
+                this.accepted.add(NutsDesktopEnvironmentFamily.parse(e).orElse(null));
             }
         }
     }
@@ -40,13 +41,13 @@ public class NutsDependencyDEFilter extends AbstractDependencyFilter  {
 
     @Override
     public boolean acceptDependency(NutsId from, NutsDependency dependency, NutsSession session) {
-        String[] current = dependency.getCondition().getDesktopEnvironment();
+        List<String> current = dependency.getCondition().getDesktopEnvironment();
         boolean empty = true;
         if (current != null) {
             for (String e : current) {
                 if (!e.isEmpty()) {
                     empty = false;
-                    if (accepted.contains(NutsDesktopEnvironmentFamily.parseLenient(e))) {
+                    if (accepted.contains(NutsDesktopEnvironmentFamily.parse(e).orElse(null))) {
                         return true;
                     }
                 }

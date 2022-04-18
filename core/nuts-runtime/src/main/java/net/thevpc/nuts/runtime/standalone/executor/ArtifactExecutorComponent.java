@@ -65,13 +65,13 @@ public class ArtifactExecutorComponent implements NutsExecutorComponent {
 
     public void execHelper(NutsExecutionContext executionContext,boolean dry) {
         NutsDefinition nutMainFile = executionContext.getDefinition();
-        String[] execArgs = executionContext.getExecutorArguments();
-        String[] appArgs = executionContext.getArguments();
+        List<String> execArgs = executionContext.getExecutorArguments();
+        List<String> appArgs = executionContext.getArguments();
 
         List<String> app = new ArrayList<>();
         app.add(id.toString());
         app.add(nutMainFile.getFile().toString());
-        app.addAll(Arrays.asList(appArgs));
+        app.addAll(appArgs);
 
 //        File directory = NutsBlankable.isBlank(dir) ? null : new File(executionContext.getWorkspace().io().expandPath(dir));
         executionContext.getSession()

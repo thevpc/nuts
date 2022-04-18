@@ -25,6 +25,7 @@ package net.thevpc.nuts;
 
 import java.io.InputStream;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -73,7 +74,7 @@ public interface NutsExecCommand extends NutsWorkspaceCommand {
      *
      * @return command to execute
      */
-    String[] getCommand();
+    List<String> getCommand();
 
     /**
      * reset command arguments to the given array
@@ -365,7 +366,7 @@ public interface NutsExecCommand extends NutsWorkspaceCommand {
      *
      * @return executor options
      */
-    String[] getExecutorOptions();
+    List<String> getExecutorOptions();
 
     /**
      * return result exception or null

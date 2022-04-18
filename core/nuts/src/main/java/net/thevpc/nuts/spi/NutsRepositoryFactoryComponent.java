@@ -30,6 +30,8 @@ import net.thevpc.nuts.NutsAddRepositoryOptions;
 import net.thevpc.nuts.NutsRepository;
 import net.thevpc.nuts.NutsSession;
 
+import java.util.List;
+
 /**
  * Created by vpc on 1/15/17.
  *
@@ -38,7 +40,7 @@ import net.thevpc.nuts.NutsSession;
  */
 public interface NutsRepositoryFactoryComponent extends NutsComponent {
 
-    NutsAddRepositoryOptions[] getDefaultRepositories(NutsSession session);
+    List<NutsAddRepositoryOptions> getDefaultRepositories(NutsSession session);
 
     NutsRepository create(NutsAddRepositoryOptions options, NutsSession session, NutsRepository parentRepository);
 

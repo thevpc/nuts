@@ -31,9 +31,8 @@ public class DefaultNutsWorkspaceExtensionManager implements NutsWorkspaceExtens
     @Override
     public Set<NutsId> getCompanionIds() {
         NutsSessionUtils.checkSession(model.getWorkspace(),getSession());
-        NutsIdParser parser = NutsIdParser.of(getSession());
         return Collections.unmodifiableSet(new HashSet<>(
-                        Arrays.asList(parser.parse("net.thevpc.nuts.toolbox:nsh"))
+                        Arrays.asList(NutsId.of("net.thevpc.nuts.toolbox:nsh").get())
                 )
         );
     }

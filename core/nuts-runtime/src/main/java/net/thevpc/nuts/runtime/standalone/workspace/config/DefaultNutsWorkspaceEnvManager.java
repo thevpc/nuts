@@ -14,7 +14,9 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -62,7 +64,7 @@ public class DefaultNutsWorkspaceEnvManager implements NutsWorkspaceEnvManager {
     }
 
     @Override
-    public NutsShellFamily[] getShellFamilies() {
+    public Set<NutsShellFamily> getShellFamilies() {
         return model.getShellFamilies();
     }
 
@@ -73,11 +75,11 @@ public class DefaultNutsWorkspaceEnvManager implements NutsWorkspaceEnvManager {
 
     @Override
     public NutsId getDesktopEnvironment() {
-        return getDesktopEnvironments()[0];
+        return getDesktopEnvironments().stream().findFirst().get();
     }
 
     @Override
-    public NutsId[] getDesktopEnvironments() {
+    public Set<NutsId> getDesktopEnvironments() {
         return model.getDesktopEnvironments(session);
     }
 
@@ -87,7 +89,7 @@ public class DefaultNutsWorkspaceEnvManager implements NutsWorkspaceEnvManager {
     }
 
     @Override
-    public NutsDesktopEnvironmentFamily[] getDesktopEnvironmentFamilies() {
+    public Set<NutsDesktopEnvironmentFamily> getDesktopEnvironmentFamilies() {
         return model.getDesktopEnvironmentFamilies(session);
     }
 
@@ -167,7 +169,7 @@ public class DefaultNutsWorkspaceEnvManager implements NutsWorkspaceEnvManager {
             NutsArgument bootCustomArgument = session.boot().getBootCustomArgument(optionName);
             String o = bootCustomArgument == null ? null : bootCustomArgument.getString();
             if (!NutsBlankable.isBlank(o)) {
-                NutsSupportMode q = NutsSupportMode.parseLenient(o, null, null);
+                NutsSupportMode q = NutsSupportMode.parse(o).orElse(null);
                 if (q != null) {
                     return q;
                 }

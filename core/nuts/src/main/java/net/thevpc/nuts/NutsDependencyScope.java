@@ -123,82 +123,53 @@ public enum NutsDependencyScope implements NutsEnum {
         other = id.equals("other") || id.startsWith("other-");
     }
 
-    public static NutsDependencyScope parseLenient(String value) {
-        return parseLenient(value, null);
+    public static NutsOptional<NutsDependencyScope> parse(String value) {
+        return NutsApiUtils.parse(value, NutsDependencyScope.class,s->{
+            switch (s.toLowerCase()) {
+                case "compileonly": //gradle
+                case "compile_only": //gradle
+                case "provided": //gradle
+                    return NutsOptional.of(NutsDependencyScope.PROVIDED);
+                case "test"://maven
+                case "testcompile"://gradle
+                case "test_compile":
+                case "testapi":
+                case "test_api":
+                    return NutsOptional.of(NutsDependencyScope.TEST_API);
+                case "testruntime":
+                case "test_runtime":
+                    return NutsOptional.of(NutsDependencyScope.TEST_RUNTIME);
+                case "testsystem":
+                case "test_system":
+                    return NutsOptional.of(NutsDependencyScope.TEST_SYSTEM);
+                case "testprovided":
+                case "test_provided":
+                case "testcompileonly":
+                case "test_compile_only":
+                    return NutsOptional.of(NutsDependencyScope.TEST_PROVIDED);
+                case "api":
+                case "compile":
+                    return NutsOptional.of(NutsDependencyScope.API);
+                case "impl":
+                case "implementation":
+                    return NutsOptional.of(NutsDependencyScope.IMPLEMENTATION);
+                case "import":
+                    return NutsOptional.of(NutsDependencyScope.IMPORT);
+                case "runtime":
+                    return NutsOptional.of(NutsDependencyScope.RUNTIME);
+                case "test_impl":
+                case "test_implementation":
+                    return NutsOptional.of(NutsDependencyScope.TEST_IMPLEMENTATION);
+                case "test_other":
+                    return NutsOptional.of(NutsDependencyScope.TEST_OTHER);
+                case "other":
+                    return NutsOptional.of(NutsDependencyScope.OTHER);
+                case "system":
+                    return NutsOptional.of(NutsDependencyScope.SYSTEM);
+            }
+            return null;
+        });
     }
-
-    public static NutsDependencyScope parseLenient(String value, NutsDependencyScope emptyOrErrorValue) {
-        return parseLenient(value, emptyOrErrorValue, emptyOrErrorValue);
-    }
-
-    public static NutsDependencyScope parseLenient(String value, NutsDependencyScope emptyValue, NutsDependencyScope errorValue) {
-        if (value == null) {
-            value = "";
-        } else {
-            value = value.toUpperCase().trim().replace('-', '_');
-        }
-        if (value.isEmpty()) {
-            return emptyValue;
-        }
-        switch (value.toLowerCase()) {
-            case "compileonly": //gradle
-            case "compile_only": //gradle
-            case "provided": //gradle
-                return NutsDependencyScope.PROVIDED;
-            case "test"://maven
-            case "testcompile"://gradle
-            case "test_compile":
-            case "testapi":
-            case "test_api":
-                return NutsDependencyScope.TEST_API;
-            case "testruntime":
-            case "test_runtime":
-                return NutsDependencyScope.TEST_RUNTIME;
-            case "testsystem":
-            case "test_system":
-                return NutsDependencyScope.TEST_SYSTEM;
-            case "testprovided":
-            case "test_provided":
-            case "testcompileonly":
-            case "test_compile_only":
-                return NutsDependencyScope.TEST_PROVIDED;
-            case "api":
-            case "compile":
-                return NutsDependencyScope.API;
-            case "impl":
-            case "implementation":
-                return NutsDependencyScope.IMPLEMENTATION;
-            case "import":
-                return NutsDependencyScope.IMPORT;
-            case "runtime":
-                return NutsDependencyScope.RUNTIME;
-            case "test_impl":
-            case "test_implementation":
-                return NutsDependencyScope.TEST_IMPLEMENTATION;
-            case "test_other":
-                return NutsDependencyScope.TEST_OTHER;
-            case "other":
-                return NutsDependencyScope.OTHER;
-            case "system":
-                return NutsDependencyScope.SYSTEM;
-        }
-        try {
-            return NutsDependencyScope.valueOf(value.toUpperCase());
-        } catch (Exception notFound) {
-            return errorValue;
-        }
-    }
-
-    public static NutsDependencyScope parse(String value, NutsSession session) {
-        return parse(value, null, session);
-    }
-
-    public static NutsDependencyScope parse(String value, NutsDependencyScope emptyValue, NutsSession session) {
-        NutsDependencyScope v = parseLenient(value, emptyValue, null);
-        NutsApiUtils.checkNonNullEnum(v, value, NutsDependencyScope.class, session);
-        return v;
-    }
-
     public boolean isCompile() {
         return !test;
     }

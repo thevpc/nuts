@@ -18,10 +18,6 @@ public class QueryStringParser {
     private final Processor processor;
     private final boolean sorted;
 
-//    public QueryStringParser() {
-//        this(null)
-//    }
-
     public QueryStringParser(boolean sorted, Processor processor) {
         this.processor = processor;
         this.sorted = sorted;

@@ -490,6 +490,7 @@ public interface NutsCommandLine extends Iterable<NutsArgument>, NutsFormattable
      * @return returns un-parsed (or partially parsed) available arguments
      */
     String[] toStringArray();
+    List<String> toStringList();
 
     NutsArgument[] toArgumentArray();
 
@@ -547,5 +548,5 @@ public interface NutsCommandLine extends Iterable<NutsArgument>, NutsFormattable
      */
     void throwError(NutsString message);
 
-    NutsCommandLineFormat formatter();
+    NutsCommandLineFormat formatter(NutsSession session);
 }

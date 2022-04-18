@@ -90,19 +90,19 @@ net.thevpc.nuts.runtime.standalone.xtra.compress.DefaultNutsCompress
 net.thevpc.nuts.runtime.standalone.xtra.uncompress.DefaultNutsUncompress
 net.thevpc.nuts.runtime.standalone.xtra.idresolver.DefaultNutsIdResolver
 net.thevpc.nuts.runtime.standalone.xtra.scheduler.DefaultNutsScheduler
-net.thevpc.nuts.runtime.standalone.xtra.optional.NutsOptionalFactoryImpl
+net.thevpc.nuts.boot.NutsOptionalFactoryImpl
 
 net.thevpc.nuts.runtime.standalone.id.DefaultNutsIdParser
 net.thevpc.nuts.runtime.standalone.descriptor.parser.DefaultNutsDescriptorParser
-net.thevpc.nuts.runtime.standalone.dependency.DefaultNutsDependencyParser
+net.thevpc.nuts.boot.DefaultNutsDependencyParser
 net.thevpc.nuts.runtime.standalone.version.DefaultNutsVersionParser
 
-net.thevpc.nuts.runtime.standalone.id.DefaultNutsIdBuilder
-net.thevpc.nuts.runtime.standalone.descriptor.DefaultNutsDescriptorBuilder
-net.thevpc.nuts.runtime.standalone.descriptor.DefaultNutsEnvConditionBuilder
-net.thevpc.nuts.runtime.standalone.descriptor.DefaultNutsDescriptorPropertyBuilder
-net.thevpc.nuts.runtime.standalone.dependency.DefaultNutsDependencyBuilder
-net.thevpc.nuts.runtime.standalone.descriptor.DefaultNutsArtifactCallBuilder
+net.thevpc.nuts.DefaultNutsIdBuilder
+net.thevpc.nuts.DefaultNutsDescriptorBuilder
+net.thevpc.nuts.NutsEnvConditionImpl
+net.thevpc.nuts.DefaultNutsDescriptorPropertyBuilder
+net.thevpc.nuts.DefaultNutsDependencyBuilder
+net.thevpc.nuts.DefaultNutsArtifactCallBuilder
 
 
 net.thevpc.nuts.runtime.standalone.id.filter.InternalNutsIdFilters

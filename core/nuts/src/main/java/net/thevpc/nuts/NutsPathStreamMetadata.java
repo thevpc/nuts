@@ -24,8 +24,8 @@ public class NutsPathStreamMetadata implements NutsStreamMetadata {
     }
 
     @Override
-    public NutsString getFormattedPath() {
-        return path.format();
+    public NutsString getFormattedPath(NutsSession session) {
+        return path.format(session);
     }
 
     @Override

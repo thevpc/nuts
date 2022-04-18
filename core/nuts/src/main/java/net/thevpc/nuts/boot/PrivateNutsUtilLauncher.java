@@ -26,11 +26,7 @@
  */
 package net.thevpc.nuts.boot;
 
-import net.thevpc.nuts.NutsConstants;
-import net.thevpc.nuts.NutsLogVerb;
-import net.thevpc.nuts.NutsMessage;
-import net.thevpc.nuts.NutsOsFamily;
-import net.thevpc.nuts.spi.NutsBootVersion;
+import net.thevpc.nuts.*;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
@@ -163,9 +159,8 @@ class PrivateNutsUtilLauncher {
                 Path nbase = Paths.get(System.getProperty("user.home")).resolve(".local/share/nuts/apps/" + NutsConstants.Names.DEFAULT_WORKSPACE_NAME + "/id/net/thevpc/nuts/nuts");
                 if (Files.isDirectory(nbase)) {
                     latestDefaultVersion = Files.list(nbase).filter(f -> Files.exists(f.resolve(".nuts-bashrc")))
-                            .map(x -> sysrcFile.getFileName().toString())
-                            .sorted((o1, o2) -> NutsBootVersion.parse(o2).compareTo(NutsBootVersion.parse(o1)))
-                            .findFirst().orElse(null);
+                            .map(x -> sysrcFile.getFileName().toString()).min((o1, o2) -> NutsVersion.of(o2).get().compareTo(NutsVersion.of(o1).get()))
+                            .orElse(null);
                 }
                 if (latestDefaultVersion != null) {
                     ndiAddFileLine(sysrcFile, "net.thevpc.nuts configuration",

@@ -185,7 +185,7 @@ public class NDerbyMain implements NdbSupport {
                                     factory.ofPlain("CMD:"),
 
                                     appContext.getCommandLine().parseLine(jpsResult.getArgsLine())
-                                            .format()
+                                            .format(session)
                             );
                             break;
                         }

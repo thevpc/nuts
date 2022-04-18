@@ -124,7 +124,7 @@ public class NutsRepositoryMirroringHelper {
 //                    } else {
 //                        goodFile = versionFolder.resolve(NutsUtilStrings.trim(a)).resolve(idFilename);
 //                    }
-                    nutsDescriptor.formatter().setSession(session).print(goodFile);
+                    nutsDescriptor.formatter(session).print(goodFile);
                     return nutsDescriptor;
                 }
             }
@@ -224,7 +224,7 @@ public class NutsRepositoryMirroringHelper {
                         NutsWorkspaceExt dws = NutsWorkspaceExt.of(getWorkspace());
                         NutsId id2 = dws.resolveEffectiveId(nutsDescriptor, session).builder().setFaceDescriptor().build();
                         NutsPath localNutFile = cache.getLongIdLocalFile(id2, session);
-                        nutsDescriptor.formatter().setSession(session).print(localNutFile);
+                        nutsDescriptor.formatter(session).print(localNutFile);
                         if (bestId == null || id2.getVersion().compareTo(bestId.getVersion()) > 0) {
                             bestId = id2;
                         }

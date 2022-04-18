@@ -9,6 +9,7 @@ import net.thevpc.nuts.*;
 
 import java.util.*;
 
+import net.thevpc.nuts.boot.PrivateNutsUtilCollections;
 import net.thevpc.nuts.runtime.standalone.session.NutsSessionUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.config.NutsRepositoryConfigManagerExt;
 import net.thevpc.nuts.runtime.standalone.workspace.config.NutsWorkspaceConfigManagerExt;
@@ -75,8 +76,10 @@ public class DefaultNutsRepositorySecurityModel {
                 .getModel()
                 .getUser(n, session);
         if (s != null) {
-            String[] rr = s.getPermissions();
-            aa = new NutsAuthorizations(Arrays.asList(rr == null ? new String[0] : rr));
+            List<String> rr = s.getPermissions();
+            aa = new NutsAuthorizations(
+                    PrivateNutsUtilCollections.nonNullList(rr)
+            );
             authorizations.put(n, aa);
         } else {
             aa = new NutsAuthorizations(Collections.emptyList());
@@ -120,14 +123,14 @@ public class DefaultNutsRepositorySecurityModel {
                 .isAllowed(right);
     }
 
-    public NutsUser[] findUsers(NutsSession session) {
+    public List<NutsUser> findUsers(NutsSession session) {
         List<NutsUser> all = new ArrayList<>();
         for (NutsUserConfig secu : NutsRepositoryConfigManagerExt.of(repository.config())
                 .getModel()
                 .getUsers(session)) {
             all.add(getEffectiveUser(secu.getUser(), session));
         }
-        return all.toArray(new NutsUser[0]);
+        return all;
     }
 
     public NutsUser getEffectiveUser(String username, NutsSession session) {
@@ -139,7 +142,7 @@ public class DefaultNutsRepositorySecurityModel {
             Stack<String> visited = new Stack<>();
             visited.push(username);
             Stack<String> curr = new Stack<>();
-            curr.addAll(Arrays.asList(u.getGroups()));
+            curr.addAll(u.getGroups());
             while (!curr.empty()) {
                 String s = curr.pop();
                 visited.add(s);
@@ -147,7 +150,7 @@ public class DefaultNutsRepositorySecurityModel {
                         .getModel()
                         .getUser(s, session);
                 if (ss != null) {
-                    inherited.addAll(Arrays.asList(ss.getPermissions()));
+                    inherited.addAll(ss.getPermissions());
                     for (String group : ss.getGroups()) {
                         if (!visited.contains(group)) {
                             curr.push(group);
@@ -156,7 +159,7 @@ public class DefaultNutsRepositorySecurityModel {
                 }
             }
         }
-        return u == null ? null : new DefaultNutsUser(u, inherited.toArray(new String[0]));
+        return u == null ? null : new DefaultNutsUser(u, inherited);
     }
 
     public NutsAuthenticationAgent getAuthenticationAgent(String id, NutsSession session) {

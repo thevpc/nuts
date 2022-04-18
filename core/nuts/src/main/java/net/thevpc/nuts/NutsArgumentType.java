@@ -65,60 +65,10 @@ public enum NutsArgumentType implements NutsEnum {
         this.id = name().toLowerCase().replace('_', '-');
     }
 
-    /**
-     * parse string and return null if parse fails
-     *
-     * @param value value to parse
-     * @return parsed instance or null
-     */
-    public static NutsArgumentType parseLenient(String value) {
-        return parseLenient(value, null);
+    public static NutsOptional<NutsArgumentType> parse(String value) {
+        return NutsApiUtils.parse(value, NutsArgumentType.class);
     }
 
-    /**
-     * parse string and return {@code emptyOrErrorValue} if parse fails
-     *
-     * @param emptyOrErrorValue emptyOrErrorValue
-     * @param value             value to parse
-     * @return parsed instance or {@code emptyOrErrorValue}
-     */
-    public static NutsArgumentType parseLenient(String value, NutsArgumentType emptyOrErrorValue) {
-        return parseLenient(value, emptyOrErrorValue, emptyOrErrorValue);
-    }
-
-    /**
-     * parse string and return {@code emptyValue} when null or {@code errorValue} if parse fails
-     *
-     * @param value      value to parse
-     * @param emptyValue value when the value is null or empty
-     * @param errorValue value when the value cannot be parsed
-     * @return parsed value
-     */
-    public static NutsArgumentType parseLenient(String value, NutsArgumentType emptyValue, NutsArgumentType errorValue) {
-        if (value == null) {
-            value = "";
-        } else {
-            value = value.toUpperCase().trim().replace('-', '_');
-        }
-        if (value.isEmpty()) {
-            return emptyValue;
-        }
-        try {
-            return NutsArgumentType.valueOf(value.toUpperCase());
-        } catch (Exception notFound) {
-            return errorValue;
-        }
-    }
-
-    public static NutsArgumentType parse(String value, NutsSession session) {
-        return parse(value, null, session);
-    }
-
-    public static NutsArgumentType parse(String value, NutsArgumentType emptyValue, NutsSession session) {
-        NutsArgumentType v = parseLenient(value, emptyValue, null);
-        NutsApiUtils.checkNonNullEnum(v, value, NutsArgumentType.class, session);
-        return v;
-    }
 
     /**
      * lower cased identifier.

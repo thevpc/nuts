@@ -26,6 +26,8 @@ package net.thevpc.nuts;
 
 import net.thevpc.nuts.spi.NutsAuthenticationAgent;
 
+import java.util.List;
+
 /**
  * @author thevpc
  * @app.category Security
@@ -43,7 +45,7 @@ public interface NutsRepositorySecurityManager {
 
     NutsRemoveUserCommand removeUser(String name);
 
-    NutsUser[] findUsers();
+    List<NutsUser> findUsers();
 
     NutsUser getEffectiveUser(String username);
 

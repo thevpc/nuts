@@ -30,6 +30,8 @@ import net.thevpc.nuts.boot.NutsApiUtils;
 import net.thevpc.nuts.spi.NutsComponentScope;
 import net.thevpc.nuts.spi.NutsComponentScopeType;
 
+import java.util.List;
+
 /**
  * Descriptor Filter Factory
  *
@@ -56,6 +58,21 @@ public interface NutsDescriptorFilters extends NutsTypedFilters<NutsDescriptorFi
     NutsDescriptorFilter byDesktopEnvironment(String... values);
 
     NutsDescriptorFilter byFlag(NutsDescriptorFlag... flags);
+
+
+    NutsDescriptorFilter byPackaging(List<String> values);
+
+    NutsDescriptorFilter byArch(List<String> values);
+
+    NutsDescriptorFilter byOs(List<String> values);
+
+    NutsDescriptorFilter byOsDist(List<String> values);
+
+    NutsDescriptorFilter byPlatform(List<String> values);
+
+    NutsDescriptorFilter byDesktopEnvironment(List<String> values);
+
+    NutsDescriptorFilter byFlag(List<NutsDescriptorFlag> flags);
 
     NutsDescriptorFilter byExtension(NutsVersion apiVersion);
 

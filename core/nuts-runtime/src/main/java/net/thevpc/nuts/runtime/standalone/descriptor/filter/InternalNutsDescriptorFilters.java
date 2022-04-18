@@ -142,7 +142,7 @@ public class InternalNutsDescriptorFilters extends InternalNutsTypedFilters<Nuts
     public NutsDescriptorFilter byExtension(NutsVersion targetApiVersion) {
         checkSession();
         return new NutsExecExtensionFilter(getSession(),
-                targetApiVersion == null ? null : NutsId.of(NutsConstants.Ids.NUTS_API,getSession()).builder().setVersion(targetApiVersion).build()
+                targetApiVersion == null ? null : NutsId.of(NutsConstants.Ids.NUTS_API).get(getSession()).builder().setVersion(targetApiVersion).build()
         );
     }
 
@@ -150,7 +150,7 @@ public class InternalNutsDescriptorFilters extends InternalNutsTypedFilters<Nuts
     public NutsDescriptorFilter byRuntime(NutsVersion targetApiVersion) {
         checkSession();
         return new NutsExecRuntimeFilter(getSession(),
-                targetApiVersion == null ? null : NutsId.of(NutsConstants.Ids.NUTS_API,getSession()).builder().setVersion(targetApiVersion).build(),
+                targetApiVersion == null ? null : NutsId.of(NutsConstants.Ids.NUTS_API).get(getSession()).builder().setVersion(targetApiVersion).build(),
                 false
         );
     }
@@ -159,7 +159,7 @@ public class InternalNutsDescriptorFilters extends InternalNutsTypedFilters<Nuts
     public NutsDescriptorFilter byCompanion(NutsVersion targetApiVersion) {
         checkSession();
         return new NutsExecCompanionFilter(getSession(),
-                targetApiVersion == null ? null : NutsId.of(NutsConstants.Ids.NUTS_API,getSession()).builder().setVersion(targetApiVersion).build(),
+                targetApiVersion == null ? null : NutsId.of(NutsConstants.Ids.NUTS_API).get(getSession()).builder().setVersion(targetApiVersion).build(),
                 getSession().extensions().getCompanionIds().stream().map(NutsId::getShortName).toArray(String[]::new)
         );
     }
@@ -172,7 +172,7 @@ public class InternalNutsDescriptorFilters extends InternalNutsTypedFilters<Nuts
         }
         return new BootAPINutsDescriptorFilter(
                 getSession(),
-                NutsId.of(NutsConstants.Ids.NUTS_API,getSession()).builder().setVersion(apiVersion).build().getVersion()
+                NutsId.of(NutsConstants.Ids.NUTS_API).get(getSession()).builder().setVersion(apiVersion).build().getVersion()
         );
     }
 
@@ -180,7 +180,7 @@ public class InternalNutsDescriptorFilters extends InternalNutsTypedFilters<Nuts
     public NutsDescriptorFilter byLockedIds(String... ids) {
         checkSession();
         return new NutsLockedIdExtensionFilter(getSession(),
-                Arrays.stream(ids).map(x -> NutsId.of(x,getSession())).toArray(NutsId[]::new)
+                Arrays.stream(ids).map(x -> NutsId.of(x).get(getSession())).toArray(NutsId[]::new)
         );
     }
 
@@ -254,5 +254,40 @@ public class InternalNutsDescriptorFilters extends InternalNutsTypedFilters<Nuts
     @Override
     public int getSupportLevel(NutsSupportLevelContext context) {
         return DEFAULT_SUPPORT;
+    }
+
+    @Override
+    public NutsDescriptorFilter byPackaging(List<String> values) {
+        return byPackaging(values.toArray(new String[0]));
+    }
+
+    @Override
+    public NutsDescriptorFilter byArch(List<String> values) {
+        return byArch(values.toArray(new String[0]));
+    }
+
+    @Override
+    public NutsDescriptorFilter byOs(List<String> values) {
+        return byOs(values.toArray(new String[0]));
+    }
+
+    @Override
+    public NutsDescriptorFilter byOsDist(List<String> values) {
+        return byOsDist(values.toArray(new String[0]));
+    }
+
+    @Override
+    public NutsDescriptorFilter byPlatform(List<String> values) {
+        return byPlatform(values.toArray(new String[0]));
+    }
+
+    @Override
+    public NutsDescriptorFilter byDesktopEnvironment(List<String> values) {
+        return byDesktopEnvironment(values.toArray(new String[0]));
+    }
+
+    @Override
+    public NutsDescriptorFilter byFlag(List<NutsDescriptorFlag> flags) {
+        return byFlag(flags.toArray(new NutsDescriptorFlag[0]));
     }
 }

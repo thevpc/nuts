@@ -143,8 +143,8 @@ public abstract class AbstractNutsRepository implements NutsRepository, NutsRepo
     }
 
     @Override
-    public NutsRepositoryListener[] getRepositoryListeners() {
-        return repositoryListeners.toArray(new NutsRepositoryListener[0]);
+    public List<NutsRepositoryListener> getRepositoryListeners() {
+        return repositoryListeners;
     }
 
     @Override
@@ -165,7 +165,7 @@ public abstract class AbstractNutsRepository implements NutsRepository, NutsRepo
     }
 
     @Override
-    public NutsMapListener<String, Object>[] getUserPropertyListeners() {
+    public List<NutsMapListener<String, Object>> getUserPropertyListeners() {
         return userProperties.getListeners();
     }
 

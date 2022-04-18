@@ -25,7 +25,9 @@
 package net.thevpc.nuts;
 
 import java.nio.file.Path;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * @author thevpc
@@ -65,17 +67,17 @@ public interface NutsWorkspaceEnvManager {
 
     NutsOsFamily getOsFamily();
 
-    NutsShellFamily[] getShellFamilies();
+    Set<NutsShellFamily> getShellFamilies();
 
     NutsShellFamily getShellFamily();
 
     NutsId getDesktopEnvironment();
 
-    NutsId[] getDesktopEnvironments();
+    Set<NutsId> getDesktopEnvironments();
 
     NutsDesktopEnvironmentFamily getDesktopEnvironmentFamily();
 
-    NutsDesktopEnvironmentFamily[] getDesktopEnvironmentFamilies();
+    Set<NutsDesktopEnvironmentFamily> getDesktopEnvironmentFamilies();
 
     NutsPlatformManager platforms();
 

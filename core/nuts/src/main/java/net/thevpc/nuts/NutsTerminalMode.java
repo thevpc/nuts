@@ -68,38 +68,8 @@ public enum NutsTerminalMode implements NutsEnum {
         this.id = name().toLowerCase().replace('_', '-');
     }
 
-    public static NutsTerminalMode parseLenient(String value) {
-        return parseLenient(value, null);
-    }
-
-    public static NutsTerminalMode parseLenient(String value, NutsTerminalMode emptyOrErrorValue) {
-        return parseLenient(value, emptyOrErrorValue, emptyOrErrorValue);
-    }
-
-    public static NutsTerminalMode parseLenient(String value, NutsTerminalMode emptyValue, NutsTerminalMode errorValue) {
-        if (value == null) {
-            value = "";
-        } else {
-            value = value.toUpperCase().trim().replace('-', '_');
-        }
-        if (value.isEmpty()) {
-            return emptyValue;
-        }
-        try {
-            return NutsTerminalMode.valueOf(value.toUpperCase());
-        } catch (Exception notFound) {
-            return errorValue;
-        }
-    }
-
-    public static NutsTerminalMode parse(String value, NutsSession session) {
-        return parse(value, null, session);
-    }
-
-    public static NutsTerminalMode parse(String value, NutsTerminalMode emptyValue, NutsSession session) {
-        NutsTerminalMode v = parseLenient(value, emptyValue, null);
-        NutsApiUtils.checkNonNullEnum(v, value, NutsTerminalMode.class, session);
-        return v;
+    public static NutsOptional<NutsTerminalMode> parse(String value) {
+        return NutsApiUtils.parse(value, NutsTerminalMode.class);
     }
 
     /**

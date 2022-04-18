@@ -26,7 +26,6 @@
 package net.thevpc.nuts;
 
 import net.thevpc.nuts.boot.*;
-import net.thevpc.nuts.spi.NutsBootDescriptor;
 import net.thevpc.nuts.spi.NutsBootWorkspaceFactory;
 
 import java.io.InputStream;
@@ -51,7 +50,7 @@ public final class NutsBootOptions implements Serializable, Cloneable {
      * option-type : exported (inherited in child workspaces)
      */
     private final List<String> outputFormatOptions = new ArrayList<>();
-    private String[] customOptions;
+    private List<String> customOptions;
     /**
      * nuts api version to boot option-type : exported (inherited in child
      * workspaces)
@@ -124,11 +123,11 @@ public final class NutsBootOptions implements Serializable, Cloneable {
     /**
      * option-type : exported (inherited in child workspaces)
      */
-    private String[] excludedExtensions;
+    private List<String> excludedExtensions;
     /**
      * option-type : exported (inherited in child workspaces)
      */
-    private String[] repositories;
+    private List<String> repositories;
     /**
      * option-type : exported (inherited in child workspaces)
      */
@@ -172,7 +171,7 @@ public final class NutsBootOptions implements Serializable, Cloneable {
     /**
      * option-type : runtime (available only for the current workspace instance)
      */
-    private String[] applicationArguments;
+    private List<String> applicationArguments;
     /**
      * option-type : runtime (available only for the current workspace instance)
      */
@@ -193,7 +192,7 @@ public final class NutsBootOptions implements Serializable, Cloneable {
     /**
      * option-type : runtime (available only for the current workspace instance)
      */
-    private String[] executorOptions;
+    private List<String> executorOptions;
     /**
      * option-type : runtime (available only for the current workspace instance)
      */
@@ -309,7 +308,7 @@ public final class NutsBootOptions implements Serializable, Cloneable {
      * option-type : runtime (available only for the current workspace instance)
      */
     private Instant expireTime = null;
-    private NutsMessage[] errors = new NutsMessage[0];
+    private List<NutsMessage> errors = new ArrayList<>();
     private Boolean skipErrors;
     /**
      * option-type : exported (inherited in child workspaces)
@@ -329,10 +328,10 @@ public final class NutsBootOptions implements Serializable, Cloneable {
             t.logConfig = logConfig == null ? null : t.logConfig;
             t.storeLocations = new LinkedHashMap<>(storeLocations);
             t.homeLocations = new LinkedHashMap<>(homeLocations);
-            t.setExcludedExtensions(t.getExcludedExtensions() == null ? null : Arrays.copyOf(t.getExcludedExtensions(), t.getExcludedExtensions().length));
+            t.setExcludedExtensions(PrivateNutsUtilCollections.nonNullList(t.getExcludedExtensions()));
 //            t.setExcludedRepositories(t.getExcludedRepositories() == null ? null : Arrays.copyOf(t.getExcludedRepositories(), t.getExcludedRepositories().length));
-            t.setRepositories(t.getRepositories() == null ? null : Arrays.copyOf(t.getRepositories(), t.getRepositories().length));
-            t.setApplicationArguments(t.getApplicationArguments() == null ? null : Arrays.copyOf(t.getApplicationArguments(), t.getApplicationArguments().length));
+            t.setRepositories(PrivateNutsUtilCollections.nonNullList(t.getRepositories()));
+            t.setApplicationArguments(PrivateNutsUtilCollections.nonNullList(t.getApplicationArguments()));
             return t;
         } catch (CloneNotSupportedException e) {
             throw new IllegalStateException("should never Happen", e);
@@ -357,8 +356,8 @@ public final class NutsBootOptions implements Serializable, Cloneable {
     }
 
     
-    public String[] getApplicationArguments() {
-        return applicationArguments == null ? new String[0] : Arrays.copyOf(applicationArguments, applicationArguments.length);
+    public List<String> getApplicationArguments() {
+        return PrivateNutsUtilCollections.unmodifiableList(applicationArguments);
     }
 
     /**
@@ -368,8 +367,15 @@ public final class NutsBootOptions implements Serializable, Cloneable {
      * @return {@code this} instance
      */
     
-    public NutsBootOptions setApplicationArguments(String[] applicationArguments) {
-        this.applicationArguments = applicationArguments;
+    public NutsBootOptions setApplicationArguments(String... applicationArguments) {
+        this.applicationArguments = PrivateNutsUtilCollections.nonNullList(
+                Arrays.asList(applicationArguments)
+        );
+        return this;
+    }
+
+    public NutsBootOptions setApplicationArguments(List<String> applicationArguments) {
+        this.applicationArguments = PrivateNutsUtilCollections.nonNullList(applicationArguments);
         return this;
     }
 
@@ -464,7 +470,7 @@ public final class NutsBootOptions implements Serializable, Cloneable {
     }
 
     
-    public String[] getExcludedExtensions() {
+    public List<String> getExcludedExtensions() {
         return excludedExtensions;
     }
 
@@ -475,7 +481,7 @@ public final class NutsBootOptions implements Serializable, Cloneable {
      * @return {@code this} instance
      */
     
-    public NutsBootOptions setExcludedExtensions(String[] excludedExtensions) {
+    public NutsBootOptions setExcludedExtensions(List<String> excludedExtensions) {
         this.excludedExtensions = excludedExtensions;
         return this;
     }
@@ -514,8 +520,8 @@ public final class NutsBootOptions implements Serializable, Cloneable {
     }
 
     
-    public String[] getExecutorOptions() {
-        return executorOptions == null ? new String[0] : executorOptions;
+    public List<String> getExecutorOptions() {
+        return PrivateNutsUtilCollections.unmodifiableList(executorOptions);
     }
 
     /**
@@ -525,7 +531,7 @@ public final class NutsBootOptions implements Serializable, Cloneable {
      * @return {@code this} instance
      */
     
-    public NutsBootOptions setExecutorOptions(String[] executorOptions) {
+    public NutsBootOptions setExecutorOptions(List<String> executorOptions) {
         this.executorOptions = executorOptions;
         return this;
     }
@@ -646,8 +652,8 @@ public final class NutsBootOptions implements Serializable, Cloneable {
     }
 
     
-    public String[] getOutputFormatOptions() {
-        return outputFormatOptions.toArray(new String[0]);
+    public List<String> getOutputFormatOptions() {
+        return outputFormatOptions;
     }
 
     /**
@@ -657,7 +663,7 @@ public final class NutsBootOptions implements Serializable, Cloneable {
      * @return {@code this} instance
      */
     
-    public NutsBootOptions setOutputFormatOptions(String... options) {
+    public NutsBootOptions setOutputFormatOptions(List<String> options) {
         outputFormatOptions.clear();
         return addOutputFormatOptions(options);
     }
@@ -784,8 +790,8 @@ public final class NutsBootOptions implements Serializable, Cloneable {
     }
 
     
-    public String[] getRepositories() {
-        return repositories == null ? new String[0] : repositories;
+    public List<String> getRepositories() {
+        return PrivateNutsUtilCollections.unmodifiableList(repositories);
     }
 
     /**
@@ -795,7 +801,7 @@ public final class NutsBootOptions implements Serializable, Cloneable {
      * @return {@code this} instance
      */
     
-    public NutsBootOptions setRepositories(String[] repositories) {
+    public NutsBootOptions setRepositories(List<String> repositories) {
         this.repositories = repositories;
         return this;
     }
@@ -1283,24 +1289,24 @@ public final class NutsBootOptions implements Serializable, Cloneable {
     }
 
     
-    public NutsMessage[] getErrors() {
-        return Arrays.copyOf(errors, errors.length);
+    public List<NutsMessage> getErrors() {
+        return PrivateNutsUtilCollections.unmodifiableList(errors);
     }
 
     
-    public NutsBootOptions setErrors(NutsMessage[] errors) {
-        this.errors = errors == null ? new NutsMessage[0] : Arrays.copyOf(errors, errors.length);
+    public NutsBootOptions setErrors(List<NutsMessage> errors) {
+        this.errors = PrivateNutsUtilCollections.nonNullList(errors);
         return this;
     }
 
     
-    public String[] getCustomOptions() {
-        return customOptions == null ? new String[0] : customOptions;
+    public List<String> getCustomOptions() {
+        return PrivateNutsUtilCollections.unmodifiableList(customOptions);
     }
 
     
-    public NutsBootOptions setCustomOptions(String[] properties) {
-        this.customOptions = properties == null ? new String[0] : properties;
+    public NutsBootOptions setCustomOptions(List<String> properties) {
+        this.customOptions = PrivateNutsUtilCollections.nonNullList(properties);
         return this;
     }
 
@@ -1379,10 +1385,10 @@ public final class NutsBootOptions implements Serializable, Cloneable {
         this.setStdout(other.getStdout());
         this.setStderr(other.getStderr());
         this.setExecutorService(other.getExecutorService());
-        this.setExcludedExtensions(other.getExcludedExtensions() == null ? null : Arrays.copyOf(other.getExcludedExtensions(), other.getExcludedExtensions().length));
-        this.setRepositories(other.getRepositories() == null ? null : Arrays.copyOf(other.getRepositories(), other.getRepositories().length));
-        this.setApplicationArguments(other.getApplicationArguments() == null ? null : Arrays.copyOf(other.getApplicationArguments(), other.getApplicationArguments().length));
-        this.setCustomOptions(other.getCustomOptions() == null ? null : Arrays.copyOf(other.getCustomOptions(), other.getCustomOptions().length));
+        this.setExcludedExtensions(PrivateNutsUtilCollections.nonNullList(other.getExcludedExtensions()));
+        this.setRepositories(PrivateNutsUtilCollections.nonNullList(other.getRepositories()));
+        this.setApplicationArguments(PrivateNutsUtilCollections.nonNullList(other.getApplicationArguments()));
+        this.setCustomOptions(PrivateNutsUtilCollections.nonNullList(other.getCustomOptions()));
         this.setExpireTime(other.getExpireTime());
         this.setErrors(other.getErrors());
         this.setSkipErrors(other.getSkipErrors());
@@ -1438,6 +1444,12 @@ public final class NutsBootOptions implements Serializable, Cloneable {
         return this;
     }
 
+    public NutsBootOptions addOutputFormatOptions(String... options) {
+        if(options!=null){
+            addOutputFormatOptions(Arrays.asList(options));
+        }
+        return this;
+    }
     /**
      * add output format options
      *
@@ -1445,7 +1457,7 @@ public final class NutsBootOptions implements Serializable, Cloneable {
      * @return {@code this} instance
      */
     
-    public NutsBootOptions addOutputFormatOptions(String... options) {
+    public NutsBootOptions addOutputFormatOptions(List<String> options) {
         if (options != null) {
             for (String option : options) {
                 if (option != null) {
@@ -1488,11 +1500,11 @@ public final class NutsBootOptions implements Serializable, Cloneable {
     /**
      * special
      */
-    private NutsBootDescriptor[] extensionBootDescriptors;
+    private List<NutsDescriptor> extensionBootDescriptors;
     /**
      * special
      */
-    private NutsClassLoaderNode[] extensionBootDependencyNodes;
+    private List<NutsClassLoaderNode> extensionBootDependencyNodes;
 
     /**
      * special
@@ -1502,7 +1514,7 @@ public final class NutsBootOptions implements Serializable, Cloneable {
     /**
      * special
      */
-    private URL[] classWorldURLs;
+    private List<URL> classWorldURLs;
 
     /**
      * special
@@ -1522,7 +1534,7 @@ public final class NutsBootOptions implements Serializable, Cloneable {
     /**
      * special
      */
-    private NutsBootDescriptor runtimeBootDescriptor;
+    private NutsDescriptor runtimeBootDescriptor;
 
 
     public String getBootRepositories() {
@@ -1543,20 +1555,20 @@ public final class NutsBootOptions implements Serializable, Cloneable {
         return this;
     }
 
-    public NutsBootDescriptor[] getExtensionBootDescriptors() {
+    public List<NutsDescriptor> getExtensionBootDescriptors() {
         return extensionBootDescriptors;
     }
 
-    public NutsBootOptions setExtensionBootDescriptors(NutsBootDescriptor[] extensionBootDescriptors) {
+    public NutsBootOptions setExtensionBootDescriptors(List<NutsDescriptor> extensionBootDescriptors) {
         this.extensionBootDescriptors = extensionBootDescriptors;
         return this;
     }
 
-    public NutsClassLoaderNode[] getExtensionBootDependencyNodes() {
+    public List<NutsClassLoaderNode> getExtensionBootDependencyNodes() {
         return extensionBootDependencyNodes;
     }
 
-    public NutsBootOptions setExtensionBootDependencyNodes(NutsClassLoaderNode[] extensionBootDependencyNodes) {
+    public NutsBootOptions setExtensionBootDependencyNodes(List<NutsClassLoaderNode> extensionBootDependencyNodes) {
         this.extensionBootDependencyNodes = extensionBootDependencyNodes;
         return this;
     }
@@ -1570,12 +1582,12 @@ public final class NutsBootOptions implements Serializable, Cloneable {
         return this;
     }
 
-    public URL[] getClassWorldURLs() {
+    public List<URL> getClassWorldURLs() {
         return classWorldURLs;
     }
 
-    public NutsBootOptions setClassWorldURLs(URL[] classWorldURLs) {
-        this.classWorldURLs = classWorldURLs;
+    public NutsBootOptions setClassWorldURLs(List<URL> classWorldURLs) {
+        this.classWorldURLs = PrivateNutsUtilCollections.nonNullList(classWorldURLs);
         return this;
     }
 
@@ -1606,11 +1618,11 @@ public final class NutsBootOptions implements Serializable, Cloneable {
         return this;
     }
 
-    public NutsBootDescriptor getRuntimeBootDescriptor() {
+    public NutsDescriptor getRuntimeBootDescriptor() {
         return runtimeBootDescriptor;
     }
 
-    public NutsBootOptions setRuntimeBootDescriptor(NutsBootDescriptor runtimeBootDescriptor) {
+    public NutsBootOptions setRuntimeBootDescriptor(NutsDescriptor runtimeBootDescriptor) {
         this.runtimeBootDescriptor = runtimeBootDescriptor;
         return this;
     }

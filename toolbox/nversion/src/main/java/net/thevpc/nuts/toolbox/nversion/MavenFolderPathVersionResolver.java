@@ -61,7 +61,7 @@ public class MavenFolderPathVersionResolver implements PathVersionResolver {
                     }
                 }
                 all.add(new VersionDescriptor(
-                        NutsIdBuilder.of(session).setGroupId(d.getId().getGroupId())
+                        new DefaultNutsIdBuilder().setGroupId(d.getId().getGroupId())
                                 .setRepository(d.getId().getArtifactId())
                                 .setVersion(d.getId().getVersion())
                                 .build(),

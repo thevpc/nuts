@@ -4,6 +4,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.session.NutsSessionUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
 
+import java.util.Arrays;
 import java.util.List;
 
 public class DefaultCustomCommandManager implements NutsCustomCommandManager {
@@ -20,9 +21,9 @@ public class DefaultCustomCommandManager implements NutsCustomCommandManager {
     }
 
     @Override
-    public NutsCommandFactoryConfig[] getCommandFactories() {
+    public List<NutsCommandFactoryConfig> getCommandFactories() {
         checkSession();
-        return model.getFactories(session);
+        return Arrays.asList(model.getFactories(session));
     }
 
     @Override

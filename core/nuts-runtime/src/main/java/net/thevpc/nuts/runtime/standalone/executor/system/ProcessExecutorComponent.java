@@ -38,7 +38,7 @@ import java.util.*;
 public class ProcessExecutorComponent implements NutsExecutorComponent {
 
     public static NutsId ID;
-    NutsSession ws;
+    NutsSession session;
 
     @Override
     public NutsId getId() {
@@ -47,9 +47,9 @@ public class ProcessExecutorComponent implements NutsExecutorComponent {
 
     @Override
     public int getSupportLevel(NutsSupportLevelContext nutsDefinition) {
-        this.ws=nutsDefinition.getSession();
+        this.session =nutsDefinition.getSession();
         if(ID==null){
-            ID=NutsId.of("net.thevpc.nuts.exec:exec-native",ws);
+            ID=NutsId.of("net.thevpc.nuts.exec:exec-native").get(session);
         }
         return DEFAULT_SUPPORT;
     }
@@ -67,10 +67,10 @@ public class ProcessExecutorComponent implements NutsExecutorComponent {
     public IProcessExecHelper execHelper(NutsExecutionContext executionContext) {
         NutsDefinition nutMainFile = executionContext.getDefinition();
         NutsPath storeFolder = nutMainFile.getInstallInformation().getInstallFolder();
-        String[] execArgs = executionContext.getExecutorArguments();
-        String[] appArgs = executionContext.getArguments();
+        List<String> execArgs = executionContext.getExecutorArguments();
+        List<String> appArgs = executionContext.getArguments();
 
-        List<String> app = new ArrayList<>(Arrays.asList(appArgs));
+        List<String> app = new ArrayList<>(appArgs);
         if (app.isEmpty()) {
             if (storeFolder == null) {
                 app.add("${nuts.file}");
@@ -85,15 +85,15 @@ public class ProcessExecutorComponent implements NutsExecutorComponent {
         osEnv.put("nuts_boot_args", bootArgumentsString);
         String dir = null;
         boolean showCommand = executionContext.getSession().boot().getBootCustomBoolArgument(false,false,false,"---show-command");
-        for (int i = 0; i < execArgs.length; i++) {
-            String arg = execArgs[i];
+        for (int i = 0; i < execArgs.size(); i++) {
+            String arg = execArgs.get(i);
             if (arg.equals("--show-command") || arg.equals("-show-command")) {
                 showCommand = true;
             } else if (arg.equals("--dir") || arg.equals("-dir")) {
                 i++;
-                dir = execArgs[i];
+                dir = execArgs.get(i);
             } else if (arg.startsWith("--dir=") || arg.startsWith("-dir=")) {
-                dir = execArgs[i].substring(arg.indexOf('=') + 1);
+                dir = execArgs.get(i).substring(arg.indexOf('=') + 1);
             }
         }
         String directory = NutsBlankable.isBlank(dir) ? null :

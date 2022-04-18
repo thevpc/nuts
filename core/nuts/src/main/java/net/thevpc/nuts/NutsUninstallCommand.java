@@ -27,6 +27,7 @@
 package net.thevpc.nuts;
 
 import java.util.Collection;
+import java.util.List;
 
 /**
  * @author thevpc
@@ -49,7 +50,7 @@ public interface NutsUninstallCommand extends NutsWorkspaceCommand {
 
     NutsUninstallCommand clearIds();
 
-    NutsId[] getIds();
+    List<NutsId> getIds();
 
     NutsUninstallCommand addArg(String arg);
 
@@ -59,7 +60,7 @@ public interface NutsUninstallCommand extends NutsWorkspaceCommand {
 
     NutsUninstallCommand clearArgs();
 
-    String[] getArgs();
+    List<String> getArgs();
 
     boolean isErase();
 

@@ -114,23 +114,23 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
             traceFixes();
         }
         checkSession();
-        NutsSession ws = getSession();
+        NutsSession session = getSession();
         Instant now = expireTime == null ? Instant.now() : expireTime;
-        NutsWorkspaceExt dws = NutsWorkspaceExt.of(ws);
+        NutsWorkspaceExt dws = NutsWorkspaceExt.of(session);
 //        NutsWorkspaceCurrentConfig actualBootConfig = ws.config().current();
 //        NutsWorkspaceCurrentConfig jsonBootConfig = getConfigManager().getBootContext();
-        NutsSession session = NutsWorkspaceUtils.of(getSession()).validateSession(this.getSession());
+        NutsSession session2 = NutsWorkspaceUtils.of(getSession()).validateSession(this.getSession());
         Map<String, NutsUpdateResult> allUpdates = new LinkedHashMap<>();
         Map<String, NutsUpdateResult> extUpdates = new LinkedHashMap<>();
         Map<String, NutsUpdateResult> regularUpdates = new HashMap<>();
         NutsUpdateResult apiUpdate = null;
-        NutsVersion bootVersion0 = ws.getWorkspace().getApiVersion();
+        NutsVersion bootVersion0 = session2.getWorkspace().getApiVersion();
         NutsVersion bootVersion = bootVersion0;
         if (!(this.getApiVersion() == null || this.getApiVersion().isBlank())) {
             bootVersion = this.getApiVersion();
         }
         if (this.isApi() || !(this.getApiVersion() == null || this.getApiVersion().isBlank())) {
-            apiUpdate = checkCoreUpdate(NutsId.of(NutsConstants.Ids.NUTS_API, ws), this.getApiVersion(), session, Type.API, now);
+            apiUpdate = checkCoreUpdate(NutsId.of(NutsConstants.Ids.NUTS_API).get( session2), this.getApiVersion(), session2, Type.API, now);
             if (apiUpdate.isUpdatable()) {
                 bootVersion = apiUpdate.getAvailable().getId().getVersion();
                 allUpdates.put(NutsConstants.Ids.NUTS_API, apiUpdate);
@@ -141,10 +141,10 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
         }
         NutsUpdateResult runtimeUpdate = null;
         if (this.isRuntime()) {
-            if (dws.requiresRuntimeExtension(session)) {
-                runtimeUpdate = checkCoreUpdate(NutsId.of(ws.getWorkspace().getRuntimeId().getShortName(), ws),
+            if (dws.requiresRuntimeExtension(session2)) {
+                runtimeUpdate = checkCoreUpdate(NutsId.of(session2.getWorkspace().getRuntimeId().getShortName()).get( session2),
                         apiUpdate != null && apiUpdate.getAvailable().getId() != null ? apiUpdate.getAvailable().getId().getVersion()
-                                : bootVersion, session, Type.RUNTIME, now);
+                                : bootVersion, session2, Type.RUNTIME, now);
                 if (runtimeUpdate.isUpdatable()) {
                     allUpdates.put(runtimeUpdate.getId().getShortName(), runtimeUpdate);
                 }
@@ -176,14 +176,14 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
             allUpdates.put(updated.getId().getShortName(), updated);
             regularUpdates.put(updated.getId().getShortName(), updated);
         }
-        NutsId[] lockedIds = this.getLockedIds();
-        if (lockedIds.length > 0) {
-            for (NutsId d : new HashSet<>(Arrays.asList(lockedIds))) {
-                NutsDependency dd = NutsDependencyParser.of(ws).parse(d.toString());
+        List<NutsId> lockedIds = this.getLockedIds();
+        if (lockedIds.size() > 0) {
+            for (NutsId d : new HashSet<>(lockedIds)) {
+                NutsDependency dd = NutsDependency.of(d.toString()).get(session2);
                 if (regularUpdates.containsKey(dd.getSimpleName())) {
                     NutsUpdateResult updated = regularUpdates.get(dd.getSimpleName());
                     //FIX ME
-                    if (!dd.getVersion().filter().acceptVersion(updated.getId().getVersion(), session)) {
+                    if (!dd.getVersion().filter(session2).acceptVersion(updated.getId().getVersion(), session2)) {
                         throw new NutsIllegalArgumentException(getSession(),
                                 NutsMessage.cstyle("%s unsatisfied  : %s", dd, updated.getId().getVersion())
                         );
@@ -192,8 +192,8 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
             }
         }
 
-        result = new DefaultNutsWorkspaceUpdateResult(apiUpdate, runtimeUpdate, extUpdates.values().toArray(new NutsUpdateResult[0]),
-                regularUpdates.values().toArray(new NutsUpdateResult[0])
+        result = new DefaultNutsWorkspaceUpdateResult(apiUpdate, runtimeUpdate, new ArrayList<>(extUpdates.values()),
+                new ArrayList<>(regularUpdates.values())
         );
         traceUpdates(result);
         return this;
@@ -310,11 +310,11 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
         checkSession();
         NutsSession session = getSession();
         NutsPrintStream out = getSession().out();
-        NutsUpdateResult[] all = result.getAllResults();
-        NutsUpdateResult[] updates = result.getUpdatable();
-        NutsUpdateResult[] notInstalled = Arrays.stream(result.getAllResults())
-                .filter(x -> !x.isInstalled()).toArray(NutsUpdateResult[]::new);
-        Arrays.sort(all, new Comparator<NutsUpdateResult>() {
+        List<NutsUpdateResult> all = result.getAllResults();
+        List<NutsUpdateResult> updates = result.getUpdatable();
+        List<NutsUpdateResult> notInstalled = result.getAllResults().stream()
+                .filter(x -> !x.isInstalled()).collect(Collectors.toList());
+        all.sort(new Comparator<NutsUpdateResult>() {
             private int itemOrder(NutsUpdateResult o) {
                 if (!o.isInstalled()) {
                     return 1;
@@ -334,24 +334,24 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
             }
         });
         if (getSession().isPlainTrace()) {
-            if (notInstalled.length == 0 && updates.length == 0) {
+            if (notInstalled.size() == 0 && updates.size() == 0) {
                 out.resetLine().printf("all packages are %s. You are running latest version%s.%n",
                         NutsTexts.of(session).ofStyled("up-to-date", NutsTextStyle.success()),
-                        result.getAllResults().length > 1 ? "s" : "");
+                        result.getAllResults().size() > 1 ? "s" : "");
             } else {
-                if (updates.length > 0 && notInstalled.length > 0) {
+                if (updates.size() > 0 && notInstalled.size() > 0) {
                     out.resetLine().printf("workspace has %s package%s not installed and %s package%s to update.%n",
-                            NutsTexts.of(session).ofStyled("" + notInstalled.length, NutsTextStyle.primary1()),
-                            (notInstalled.length > 1 ? "s" : ""),
-                            NutsTexts.of(session).ofStyled("" + updates.length, NutsTextStyle.primary1()),
-                            (updates.length > 1 ? "s" : "")
+                            NutsTexts.of(session).ofStyled("" + notInstalled.size(), NutsTextStyle.primary1()),
+                            (notInstalled.size() > 1 ? "s" : ""),
+                            NutsTexts.of(session).ofStyled("" + updates.size(), NutsTextStyle.primary1()),
+                            (updates.size() > 1 ? "s" : "")
                     );
-                } else if (updates.length > 0) {
-                    out.resetLine().printf("workspace has %s package%s to update.%n", NutsTexts.of(session).ofStyled("" + updates.length, NutsTextStyle.primary1()),
-                            (updates.length > 1 ? "s" : ""));
-                } else if (notInstalled.length > 0) {
-                    out.resetLine().printf("workspace has %s package%s not installed.%n", NutsTexts.of(session).ofStyled("" + notInstalled.length, NutsTextStyle.primary1()),
-                            (notInstalled.length > 1 ? "s" : ""));
+                } else if (updates.size() > 0) {
+                    out.resetLine().printf("workspace has %s package%s to update.%n", NutsTexts.of(session).ofStyled("" + updates.size(), NutsTextStyle.primary1()),
+                            (updates.size() > 1 ? "s" : ""));
+                } else if (notInstalled.size() > 0) {
+                    out.resetLine().printf("workspace has %s package%s not installed.%n", NutsTexts.of(session).ofStyled("" + notInstalled.size(), NutsTextStyle.primary1()),
+                            (notInstalled.size() > 1 ? "s" : ""));
                 }
                 int widthCol1 = 2;
                 int widthCol2 = 2;
@@ -385,9 +385,9 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
         } else {
             NutsElements e = NutsElements.of(getSession());
 
-            if (updates.length == 0 && notInstalled.length == 0) {
+            if (updates.size() == 0 && notInstalled.size() == 0) {
                 out.printlnf(e.ofObject()
-                        .set("message", "all packages are up-to-date. You are running latest version" + (result.getAllResults().length > 1 ? "s" : "") + ".")
+                        .set("message", "all packages are up-to-date. You are running latest version" + (result.getAllResults().size() > 1 ? "s" : "") + ".")
                         .build());
             } else {
                 NutsArrayElementBuilder arrayElementBuilder = e.ofArray();
@@ -448,7 +448,6 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
 
     protected NutsUpdateResult checkRegularUpdate(NutsId id, Type type, NutsVersion targetApiVersion, Instant now, boolean updateEvenIfExisting) {
         checkSession();
-        NutsWorkspace ws = getSession().getWorkspace();
         NutsSession session = getSession();
         NutsVersion version = id.getVersion();
         if (!updateEvenIfExisting && version.isSingleValue()) {
@@ -550,7 +549,7 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
         applyFixes();
         NutsUpdateResult apiUpdate = result.getApi();
         NutsUpdateResult runtimeUpdate = result.getRuntime();
-        List<NutsId> notInstalled = Arrays.stream(result.getAllResults())
+        List<NutsId> notInstalled = result.getAllResults().stream()
                 .filter(x -> x.getInstalled() == null) //not installed
                 .map(NutsUpdateResult::getId)
                 .collect(Collectors.toList());
@@ -601,7 +600,7 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
                 configModel.setExtraBootRuntimeId(
                         newApi,
                         runtimeUpdate.getAvailable().getId(),
-                        runtimeUpdate.getAvailable().getDependencies().transitive().toArray(NutsDependency[]::new),
+                        runtimeUpdate.getAvailable().getDependencies().transitive().toList(),
                         session);
             }
             traceSingleUpdate(runtimeUpdate);
@@ -706,7 +705,7 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
                 }
                 NutsVersion v = bootApiVersion;
                 if (v == null || v.isBlank()) {
-                    v = NutsVersion.of(NutsConstants.Versions.LATEST, getSession());
+                    v = NutsVersion.of(NutsConstants.Versions.LATEST).get( getSession());
                 }
                 try {
                     oldFile = fetch0().setId(oldId).setSession(session.copy().setFetchStrategy(NutsFetchStrategy.ONLINE)).getResultDefinition();
@@ -800,7 +799,7 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
         NutsId cnewId = toCanonicalForm(newId);
         NutsId coldId = toCanonicalForm(oldId);
         DefaultNutsUpdateResult defaultNutsUpdateResult = new DefaultNutsUpdateResult(id, oldFile, newFile,
-                newFile == null ? null : newFile.getDependencies().transitive().map(NutsDependency::toId, "toId").toArray(NutsId[]::new),
+                newFile == null ? null : newFile.getDependencies().transitive().map(NutsDependency::toId, "toId").toList(),
                 false);
         if (cnewId != null && newFile != null && coldId != null && cnewId.getVersion().compareTo(coldId.getVersion()) > 0) {
             defaultNutsUpdateResult.setUpdateVersionAvailable(true);

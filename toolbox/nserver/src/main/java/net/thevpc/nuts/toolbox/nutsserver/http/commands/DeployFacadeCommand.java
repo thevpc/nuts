@@ -71,7 +71,7 @@ public class DeployFacadeCommand extends AbstractFacadeCommand {
                 .setSha1(receivedContentHash)
                 .setDescriptor(descriptor)
                 .setSession(session.copy())
-                .getResult()[0];
+                .getResult().get(0);
 //                NutsId id = workspace.deploy(content, descriptor, null);
         context.sendResponseText(200, id.toString());
     }

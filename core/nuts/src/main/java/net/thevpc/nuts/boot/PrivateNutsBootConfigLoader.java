@@ -121,9 +121,9 @@ final class PrivateNutsBootConfigLoader {
         config.setJavaOptions((String) jsonObject.get("javaOptions"));
         config.setHomeLocations(asNutsHomeLocationMap((Map<Object, String>) jsonObject.get("homeLocations")));
         config.setStoreLocations(asNutsStoreLocationMap((Map<Object, String>) jsonObject.get("storeLocations")));
-        config.setStoreLocationStrategy(NutsStoreLocationStrategy.parseLenient((String) jsonObject.get("storeLocationStrategy"), null, null));
-        config.setStoreLocationLayout(NutsOsFamily.parseLenient((String) jsonObject.get("storeLocationLayout"), null, null));
-        config.setRepositoryStoreLocationStrategy(NutsStoreLocationStrategy.parseLenient((String) jsonObject.get("repositoryStoreLocationStrategy"), null, null));
+        config.setStoreLocationStrategy(NutsStoreLocationStrategy.parse((String) jsonObject.get("storeLocationStrategy")).orElse(null));
+        config.setStoreLocationLayout(NutsOsFamily.parse((String) jsonObject.get("storeLocationLayout")).orElse(null));
+        config.setRepositoryStoreLocationStrategy(NutsStoreLocationStrategy.parse((String) jsonObject.get("repositoryStoreLocationStrategy")).orElse(null));
         config.setBootRepositories((String) jsonObject.get("bootRepositories"));
 
         List<Map<String, Object>> extensions = (List<Map<String, Object>>) jsonObject.get("extensions");
@@ -153,7 +153,7 @@ final class PrivateNutsBootConfigLoader {
                 } else if (k == null) {
                     kk = NutsHomeLocation.of(null, null);
                 } else {
-                    kk = NutsHomeLocation.parse((String) k, NutsHomeLocation.of(null, null), null);
+                    kk = NutsHomeLocation.parse((String) k).orElse(NutsHomeLocation.of(null, null));
                 }
                 a.put(kk, e.getValue());
             }
@@ -172,7 +172,7 @@ final class PrivateNutsBootConfigLoader {
                 } else if (k == null) {
                     kk = null;
                 } else {
-                    kk = NutsStoreLocation.parse((String) k, null, null);
+                    kk = NutsStoreLocation.parse((String) k).orElse(null);
                 }
                 if (kk != null) {
                     a.put(kk, e.getValue());

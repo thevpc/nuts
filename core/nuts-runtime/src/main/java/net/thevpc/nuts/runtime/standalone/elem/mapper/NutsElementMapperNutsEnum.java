@@ -13,7 +13,7 @@ public class NutsElementMapperNutsEnum implements NutsElementMapper<NutsEnum> {
     @Override
     public NutsEnum createObject(NutsElement json, Type typeOfResult, NutsElementFactoryContext context) {
         Class cc = ReflectUtils.getRawClass(typeOfResult);
-        return NutsEnum.parse(cc,json.asString(),context.getSession());
+        return (NutsEnum) NutsEnum.parse(cc,json.asString()).get(context.getSession());
     }
 
     public NutsElement createElement(NutsEnum src, Type typeOfSrc, NutsElementFactoryContext context) {

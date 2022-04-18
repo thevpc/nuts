@@ -26,6 +26,8 @@
  */
 package net.thevpc.nuts;
 
+import java.util.List;
+
 /**
  * @author thevpc
  * @app.category Commands
@@ -37,9 +39,9 @@ public interface NutsWorkspaceUpdateResult {
 
     NutsUpdateResult getRuntime();
 
-    NutsUpdateResult[] getExtensions();
+    List<NutsUpdateResult> getExtensions();
 
-    NutsUpdateResult[] getArtifacts();
+    List<NutsUpdateResult> getArtifacts();
 
     boolean isUpdatableApi();
 
@@ -51,7 +53,7 @@ public interface NutsWorkspaceUpdateResult {
 
     int getUpdatesCount();
 
-    NutsUpdateResult[] getUpdatable();
+    List<NutsUpdateResult> getUpdatable();
 
-    NutsUpdateResult[] getAllResults();
+    List<NutsUpdateResult> getAllResults();
 }

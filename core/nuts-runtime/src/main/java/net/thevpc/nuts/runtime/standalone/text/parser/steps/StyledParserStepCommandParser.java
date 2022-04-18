@@ -296,7 +296,7 @@ public class StyledParserStepCommandParser {
                     default: {
                         String sb2 = n.toString().toUpperCase();
                         sb2 = sb2.replace('-', '_');
-                        NutsTextStyleType st = NutsTextStyleType.parseLenient(sb2,NutsTextStyleType.ERROR);
+                        NutsTextStyleType st = NutsTextStyleType.parse(sb2).orElse(NutsTextStyleType.ERROR);
                         r.nextChars(totLen);
                         return NutsTextStyle.of(st, variant);
                     }

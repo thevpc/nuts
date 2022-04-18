@@ -1108,13 +1108,13 @@ public final class CoreNutsArgumentsParser {
             }
         }
 
-        options.setCustomOptions(customOptions.toArray(new String[0]));
+        options.setCustomOptions(new ArrayList<>(customOptions));
         options.setLogConfig(logConfig);
-        options.setExcludedExtensions(excludedExtensions.toArray(new String[0]));
-        options.setRepositories(repositories.toArray(new String[0]));
-        options.setApplicationArguments(applicationArguments.toArray(new String[0]));
-        options.setExecutorOptions(executorOptions.toArray(new String[0]));
-        options.setErrors(showError.toArray(new NutsMessage[0]));
+        options.setExcludedExtensions(new ArrayList<>(excludedExtensions));
+        options.setRepositories(new ArrayList<>(repositories));
+        options.setApplicationArguments(applicationArguments);
+        options.setExecutorOptions(executorOptions);
+        options.setErrors(showError);
         //error only if not asking for help
         if (!(applicationArguments.size() > 0
                 && (
@@ -1257,7 +1257,7 @@ public final class CoreNutsArgumentsParser {
     }
 
     private static NutsStoreLocationStrategy parseNutsStoreLocationStrategy(String s, NutsSession session) {
-        NutsStoreLocationStrategy m = NutsStoreLocationStrategy.parseLenient(s, null, null);
+        NutsStoreLocationStrategy m = NutsStoreLocationStrategy.parse(s).orElse(null);
         if (m == null && !NutsBlankable.isBlank(s)) {
             throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("unable to parse value for NutsStoreLocationStrategy : %s", s));
         }
@@ -1265,7 +1265,7 @@ public final class CoreNutsArgumentsParser {
     }
 
     private static NutsOsFamily parseNutsOsFamily(String s, NutsSession session) {
-        NutsOsFamily m = NutsOsFamily.parseLenient(s, null, null);
+        NutsOsFamily m = NutsOsFamily.parse(s).orElse(null);
         if (m == null && !NutsBlankable.isBlank(s)) {
             throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("unable to parse value for NutsStoreLocationLayout : %s", s));
         }
@@ -1273,7 +1273,7 @@ public final class CoreNutsArgumentsParser {
     }
 
     private static NutsOpenMode parseNutsOpenMode(String s, NutsSession session) {
-        NutsOpenMode m = NutsOpenMode.parseLenient(s, null, null);
+        NutsOpenMode m = NutsOpenMode.parse(s).orElse(null);
         if (m == null && !NutsBlankable.isBlank(s)) {
             throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("unable to parse value for NutsOpenMode : %s", s));
         }

@@ -26,6 +26,7 @@
 package net.thevpc.nuts;
 
 import java.util.Collection;
+import java.util.List;
 
 /**
  * @author thevpc
@@ -48,7 +49,7 @@ public interface NutsUpdateCommand extends NutsWorkspaceCommand {
 
     NutsUpdateCommand clearIds();
 
-    NutsId[] getIds();
+    List<NutsId> getIds();
 
     NutsUpdateCommand addLockedId(NutsId id);
 
@@ -60,7 +61,7 @@ public interface NutsUpdateCommand extends NutsWorkspaceCommand {
 
     NutsUpdateCommand clearLockedIds();
 
-    NutsId[] getLockedIds();
+    List<NutsId> getLockedIds();
 
     NutsUpdateCommand addArg(String arg);
 
@@ -70,7 +71,7 @@ public interface NutsUpdateCommand extends NutsWorkspaceCommand {
 
     NutsUpdateCommand clearArgs();
 
-    String[] getArgs();
+    List<String> getArgs();
 
     /**
      * if true enable installing new artifacts when an update is request for

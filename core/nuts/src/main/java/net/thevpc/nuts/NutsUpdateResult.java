@@ -25,6 +25,8 @@
  */
 package net.thevpc.nuts;
 
+import java.util.List;
+
 /**
  * package update result
  *
@@ -101,6 +103,6 @@ public interface NutsUpdateResult {
      *
      * @return update dependencies
      */
-    NutsId[] getDependencies();
+    List<NutsId> getDependencies();
 
 }

@@ -48,7 +48,7 @@ public class NutsInstallStatusFilterOr extends AbstractInstallStatusFilter {
         return String.join(" Or ", Arrays.asList(all).stream().map(x -> "(" + x.toString() + ")").collect(Collectors.toList()));
     }
 
-    public NutsFilter[] getSubFilters() {
-        return all;
+    public List<NutsFilter> getSubFilters() {
+        return Arrays.asList(all);
     }
 }

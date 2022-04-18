@@ -27,6 +27,8 @@ package net.thevpc.nuts.spi;
 
 import net.thevpc.nuts.*;
 
+import java.util.List;
+
 /**
  * Nuts descriptors solver responsible to building traversable dependency tree
  *
@@ -43,7 +45,7 @@ public interface NutsDependencySolver {
         return NutsDependencySolvers.of(session).createSolver(solverName, session);
     }
 
-    static String[] getSolverNames(NutsSession session) {
+    static List<String> getSolverNames(NutsSession session) {
         return NutsDependencySolvers.of(session).getSolverNames(session);
     }
 

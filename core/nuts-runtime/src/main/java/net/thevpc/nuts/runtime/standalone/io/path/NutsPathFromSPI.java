@@ -4,7 +4,6 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.format.DefaultFormatBase;
 import net.thevpc.nuts.runtime.standalone.io.path.spi.NutsPathSPIHelper;
 import net.thevpc.nuts.runtime.standalone.io.path.spi.URLPath;
-import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.io.util.InputStreamMetadataAwareImpl;
 import net.thevpc.nuts.runtime.standalone.util.reflect.NutsUseDefaultUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceVarExpansionFunction;
@@ -20,14 +19,12 @@ import java.io.OutputStream;
 import java.net.URL;
 import java.nio.file.Path;
 import java.time.Instant;
-import java.util.Arrays;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Function;
 
 public class NutsPathFromSPI extends NutsPathBase {
     private final NutsPathSPI base;
-    private String[] items;
+    private List<String> items;
 
     public NutsPathFromSPI(NutsPathSPI base) {
         super(base.getSession());
@@ -418,15 +415,15 @@ public class NutsPathFromSPI extends NutsPathBase {
 
     @Override
     public String getItem(int index) {
-        return getItems()[index];
+        return getItems().get(index);
     }
 
     @Override
-    public String[] getItems() {
+    public List<String> getItems() {
         if (items == null) {
             items = base.getItems(this);
         }
-        return items == null ? new String[0] : items;
+        return items == null ? Collections.emptyList() : items;
     }
 
     @Override
@@ -473,7 +470,7 @@ public class NutsPathFromSPI extends NutsPathBase {
     }
 
     @Override
-    public NutsFormat formatter() {
+    public NutsFormat formatter(NutsSession session) {
         NutsFormatSPI fspi = null;
         if (NutsUseDefaultUtils.isUseDefault(base.getClass(), "formatter",
                 NutsPath.class)) {
@@ -499,7 +496,7 @@ public class NutsPathFromSPI extends NutsPathBase {
                 }
             };
         }
-        return super.formatter();
+        return super.formatter(session);
     }
 
     @Override

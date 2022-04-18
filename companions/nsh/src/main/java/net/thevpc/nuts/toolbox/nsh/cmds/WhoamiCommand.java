@@ -40,7 +40,7 @@ import java.util.*;
 public class WhoamiCommand extends SimpleJShellBuiltin {
 
     public WhoamiCommand() {
-        super("whoami", DEFAULT_SUPPORT,Options.class);
+        super("whoami", DEFAULT_SUPPORT, Options.class);
     }
 
     @Override
@@ -76,9 +76,9 @@ public class WhoamiCommand extends SimpleJShellBuiltin {
             result.login = login;
             if (options.argAll) {
                 NutsUser user = session.security().findUser(login);
-                Set<String> groups = new TreeSet<>(Arrays.asList(user.getGroups()));
-                Set<String> rights = new TreeSet<>(Arrays.asList(user.getPermissions()));
-                Set<String> inherited = new TreeSet<>(Arrays.asList(user.getInheritedPermissions()));
+                Set<String> groups = new TreeSet<>((user.getGroups()));
+                Set<String> rights = new TreeSet<>((user.getPermissions()));
+                Set<String> inherited = new TreeSet<>((user.getInheritedPermissions()));
                 result.loginStack = session.security().getCurrentLoginStack();
                 if (result.loginStack.length <= 1) {
                     result.loginStack = null;
@@ -107,15 +107,15 @@ public class WhoamiCommand extends SimpleJShellBuiltin {
                 List<RepoResult> rr = new ArrayList<>();
                 for (NutsRepository repository : context.getSession().repos().getRepositories()) {
                     NutsUser ruser = repository.security().getEffectiveUser(login);
-                    if (ruser != null && (ruser.getGroups().length > 0
-                            || ruser.getPermissions().length > 0
+                    if (ruser != null && (ruser.getGroups().size() > 0
+                            || ruser.getPermissions().size() > 0
                             || !NutsBlankable.isBlank(ruser.getRemoteIdentity()))) {
                         RepoResult rt = new RepoResult();
                         rr.add(rt);
                         rt.name = repository.getName();
-                        Set<String> rgroups = new TreeSet<>(Arrays.asList(ruser.getGroups()));
-                        Set<String> rrights = new TreeSet<>(Arrays.asList(ruser.getPermissions()));
-                        Set<String> rinherited = new TreeSet<>(Arrays.asList(ruser.getInheritedPermissions()));
+                        Set<String> rgroups = new TreeSet<>((ruser.getGroups()));
+                        Set<String> rrights = new TreeSet<>((ruser.getPermissions()));
+                        Set<String> rinherited = new TreeSet<>((ruser.getInheritedPermissions()));
                         if (!rgroups.isEmpty()) {
                             rt.identities = rgroups.toArray(new String[0]);
                         }

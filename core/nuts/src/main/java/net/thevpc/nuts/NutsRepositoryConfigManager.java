@@ -25,6 +25,7 @@ package net.thevpc.nuts;
 
 import net.thevpc.nuts.spi.NutsRepositoryLocation;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -90,7 +91,7 @@ public interface NutsRepositoryConfigManager {
 
     NutsRepository findMirrorByName(String repositoryNameOrId);
 
-    NutsRepository[] getMirrors();
+    List<NutsRepository> getMirrors();
 
     /**
      * search for (or throw error) a repository with the given repository name

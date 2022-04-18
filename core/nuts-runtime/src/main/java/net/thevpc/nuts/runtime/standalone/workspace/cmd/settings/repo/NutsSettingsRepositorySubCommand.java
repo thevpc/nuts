@@ -12,9 +12,7 @@ import net.thevpc.nuts.spi.NutsRepositoryDB;
 import net.thevpc.nuts.spi.NutsRepositoryLocation;
 import net.thevpc.nuts.spi.NutsRepositorySelectorList;
 
-import java.util.Arrays;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author thevpc
@@ -23,7 +21,8 @@ public class NutsSettingsRepositorySubCommand extends AbstractNutsSettingsSubCom
 
     public static RepoInfo repoInfo(NutsRepository x, boolean tree, NutsSession session) {
         return new RepoInfo(x.getName(), x.config().getType(), x.config().getLocationPath(), x.config().isEnabled() ? RepoStatus.enabled : RepoStatus.disabled,
-                tree ? Arrays.stream(x.config().setSession(session).getMirrors()).map(e -> repoInfo(e, tree, session)).toArray(RepoInfo[]::new) : null
+                tree ? x.config().setSession(session).getMirrors()
+                        .stream().map(e -> repoInfo(e, tree, session)).toArray(RepoInfo[]::new) : null
         );
     }
 
@@ -236,9 +235,9 @@ public class NutsSettingsRepositorySubCommand extends AbstractNutsSettingsSubCom
                 }
             }
             if (cmdLine.isExecMode()) {
-                NutsRepository[] r = parent == null ? session.repos().getRepositories() : session.repos().getRepository(parent).config().getMirrors();
+                List<NutsRepository> r = parent == null ? session.repos().getRepositories() : session.repos().getRepository(parent).config().getMirrors();
                 out.printlnf(
-                        Arrays.stream(session.repos().getRepositories())
+                        session.repos().getRepositories().stream()
                                 .map(x -> repoInfo(x, session.getOutputFormat() != NutsContentType.TABLE && session.getOutputFormat() != NutsContentType.PLAIN, session)
                                 )
                                 .toArray()
@@ -285,11 +284,11 @@ public class NutsSettingsRepositorySubCommand extends AbstractNutsSettingsSubCom
                 session.config().save();
             } else if (cmdLine.next("list repos", "lr") != null) {
                 NutsRepository editedRepo = session.repos().getRepository(repoId);
-                NutsRepository[] linkRepositories = editedRepo.config()
+                List<NutsRepository> linkRepositories = editedRepo.config()
                         .setSession(session)
                         .isSupportedMirroring()
-                        ? editedRepo.config().setSession(session).getMirrors() : new NutsRepository[0];
-                out.printf("%s sub repositories.%n", linkRepositories.length);
+                        ? editedRepo.config().setSession(session).getMirrors() : Collections.emptyList();
+                out.printf("%s sub repositories.%n", linkRepositories.size());
                 NutsTableFormat t = NutsTableFormat.of(session);
                 NutsMutableTableModel m = NutsMutableTableModel.of(session);
                 t.setValue(m);

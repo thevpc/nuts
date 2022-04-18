@@ -44,7 +44,7 @@ public class NutsTextFormatPropertiesTheme implements NutsTextFormatTheme {
                 }
             } else {
                 NutsPath themeFile = session.locations().getStoreLocation(
-                        NutsId.of("net.thevpc.nuts:nuts-runtime#SHARED", session),
+                        NutsId.of("net.thevpc.nuts:nuts-runtime#SHARED").get( session),
                         NutsStoreLocation.CONFIG
                 ).resolve("themes").resolve(name);
                 if (themeFile.isRegularFile()) {
@@ -167,7 +167,7 @@ public class NutsTextFormatPropertiesTheme implements NutsTextFormatTheme {
         if (n.equals("*") || n.isEmpty()) {
             n = "" + defaultVariant;
         }
-        NutsTextStyleType st = NutsTextStyleType.parseLenient(k, null);
+        NutsTextStyleType st = NutsTextStyleType.parse(k).orElse(null);
         if (st == null) {
             if (NutsBlankable.isBlank(n)) {
                 return NutsTextStyles.PLAIN;

@@ -29,6 +29,8 @@ package net.thevpc.nuts.spi;
 import net.thevpc.nuts.NutsId;
 import net.thevpc.nuts.NutsSession;
 
+import java.util.List;
+
 /**
  * Push Command
  *
@@ -74,7 +76,7 @@ public interface NutsPushRepositoryCommand extends NutsRepositoryCommand {
      *
      * @return all arguments to pass to the push command
      */
-    String[] getArgs();
+    List<String> getArgs();
 
     /**
      * args args to push
@@ -83,6 +85,7 @@ public interface NutsPushRepositoryCommand extends NutsRepositoryCommand {
      * @return {@code this} instance
      */
     NutsPushRepositoryCommand setArgs(String[] args);
+    NutsPushRepositoryCommand setArgs(List<String> args);
 
     /**
      * true if offline mode is activated

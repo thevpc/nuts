@@ -51,47 +51,16 @@ public enum NutsStoreLocationStrategy implements NutsEnum {
         this.id = name().toLowerCase().replace('_', '-');
     }
 
-    public static NutsStoreLocationStrategy parseLenient(String value) {
-        return parseLenient(value, null);
-    }
-
-    public static NutsStoreLocationStrategy parseLenient(String value, NutsStoreLocationStrategy emptyOrErrorValue) {
-        return parseLenient(value, emptyOrErrorValue, emptyOrErrorValue);
-    }
-
-    public static NutsStoreLocationStrategy parseLenient(String value, NutsStoreLocationStrategy emptyValue, NutsStoreLocationStrategy errorValue) {
-        if (value == null) {
-            value = "";
-        } else {
-            value = value.toUpperCase().trim().replace('-', '_');
-        }
-        if (value.isEmpty()) {
-            return emptyValue;
-        }
-        String s = value.toUpperCase().replace('-', '_');
-        switch (s) {
-            case "S":
-            case "STANDALONE":
-                return NutsStoreLocationStrategy.STANDALONE;
-            case "E":
-            case "EXPLODED":
-                return NutsStoreLocationStrategy.EXPLODED;
-        }
-        try {
-            return NutsStoreLocationStrategy.valueOf(value.toUpperCase());
-        } catch (Exception notFound) {
-            return errorValue;
-        }
-    }
-
-    public static NutsStoreLocationStrategy parse(String value, NutsSession session) {
-        return parse(value, null, session);
-    }
-
-    public static NutsStoreLocationStrategy parse(String value, NutsStoreLocationStrategy emptyValue, NutsSession session) {
-        NutsStoreLocationStrategy v = parseLenient(value, emptyValue, null);
-        NutsApiUtils.checkNonNullEnum(v, value, NutsStoreLocationStrategy.class, session);
-        return v;
+    public static NutsOptional<NutsStoreLocationStrategy> parse(String value) {
+        return NutsApiUtils.parse(value, NutsStoreLocationStrategy.class,s->{
+            switch (s.toUpperCase()) {
+                case "S":
+                    return NutsOptional.of(NutsStoreLocationStrategy.STANDALONE);
+                case "E":
+                    return NutsOptional.of(NutsStoreLocationStrategy.EXPLODED);
+            }
+            return null;
+        });
     }
 
     /**

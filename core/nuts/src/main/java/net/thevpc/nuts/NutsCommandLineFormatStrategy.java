@@ -52,41 +52,25 @@ public enum NutsCommandLineFormatStrategy implements NutsEnum {
         return SUPPORT_QUOTES;
     }
 
-    public static NutsCommandLineFormatStrategy parseLenient(String arch) {
-        return parseLenient(arch, DEFAULT, DEFAULT);
-    }
 
-    public static NutsCommandLineFormatStrategy parseLenient(String arch, NutsCommandLineFormatStrategy emptyValue) {
-        return parseLenient(arch, emptyValue, emptyValue);
-    }
-
-    public static NutsCommandLineFormatStrategy parseLenient(String arch, NutsCommandLineFormatStrategy emptyValue, NutsCommandLineFormatStrategy errorValue) {
-        arch = arch == null ? "" : arch.toLowerCase().replace('-', '_').trim();
-        switch (arch) {
-            case "": {
-                return emptyValue;
+    public static NutsOptional<NutsCommandLineFormatStrategy> parse(String value) {
+        return NutsApiUtils.parse(value, NutsCommandLineFormatStrategy.class,arch->{
+            arch = arch.toLowerCase();
+            switch (arch) {
+                case "default":
+                    return NutsOptional.of(DEFAULT);
+                case "no_quotes":
+                    return NutsOptional.of(NO_QUOTES);
+                case "require_quotes":
+                    return NutsOptional.of(REQUIRE_QUOTES);
+                case "support_quotes":
+                    return NutsOptional.of(SUPPORT_QUOTES);
             }
-            case "default":
-                return DEFAULT;
-            case "no_quotes":
-                return NO_QUOTES;
-            case "require_quotes":
-                return REQUIRE_QUOTES;
-            case "support_quotes":
-                return SUPPORT_QUOTES;
-        }
-        return errorValue;
+            return null;
+        });
     }
 
-    public static NutsCommandLineFormatStrategy parse(String value, NutsSession session) {
-        return parse(value, null, session);
-    }
 
-    public static NutsCommandLineFormatStrategy parse(String value, NutsCommandLineFormatStrategy emptyValue, NutsSession session) {
-        NutsCommandLineFormatStrategy v = parseLenient(value, emptyValue, null);
-        NutsApiUtils.checkNonNullEnum(v, value, NutsCommandLineFormatStrategy.class, session);
-        return v;
-    }
 
     /**
      * lower cased identifier.

@@ -34,7 +34,7 @@ public class NutsElementMapperEnum implements NutsElementMapper<Enum> {
                 NutsPrimitiveElement p = o.asPrimitive();
                 Class cc = ReflectUtils.getRawClass(to);
                 if(NutsEnum.class.isAssignableFrom(cc)){
-                    return (Enum) NutsEnum.parse(cc, p.getString(),context.getSession());
+                    return (Enum) NutsEnum.parse(cc, p.getString()).get(context.getSession());
                 }
                 return Enum.valueOf(cc, p.getString());
             }

@@ -28,6 +28,8 @@ import net.thevpc.nuts.*;
 
 import java.util.*;
 import java.util.function.Predicate;
+
+import net.thevpc.nuts.boot.PrivateNutsUtilCollections;
 import net.thevpc.nuts.runtime.standalone.util.CoreEnumUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.NutsWorkspaceCommandBase;
 
@@ -75,7 +77,7 @@ public abstract class AbstractNutsInstallCommand extends NutsWorkspaceCommandBas
     @Override
     public NutsInstallCommand addId(String id) {
         checkSession();
-        return addId(id == null ? null : NutsId.of(id,session));
+        return addId(id == null ? null : NutsId.of(id).get(session));
     }
 
     @Override
@@ -137,7 +139,7 @@ public abstract class AbstractNutsInstallCommand extends NutsWorkspaceCommandBas
     public NutsInstallCommand removeId(String id) {
         checkSession();
         if (id != null) {
-            this.ids.remove(NutsId.of(id,session));
+            this.ids.remove(NutsId.of(id).get(session));
         }
         return this;
     }
@@ -155,8 +157,8 @@ public abstract class AbstractNutsInstallCommand extends NutsWorkspaceCommandBas
     }
 
     @Override
-    public String[] getArgs() {
-        return args == null ? new String[0] : args.toArray(new String[0]);
+    public List<String> getArgs() {
+        return PrivateNutsUtilCollections.unmodifiableList(args);
     }
 
     @Override
@@ -199,8 +201,8 @@ public abstract class AbstractNutsInstallCommand extends NutsWorkspaceCommandBas
     }
 
     @Override
-    public NutsId[] getIds() {
-        return ids == null ? new NutsId[0] : ids.keySet().toArray(new NutsId[0]);
+    public List<NutsId> getIds() {
+        return PrivateNutsUtilCollections.unmodifiableList(ids==null?null:ids.keySet());
     }
 
     @Override

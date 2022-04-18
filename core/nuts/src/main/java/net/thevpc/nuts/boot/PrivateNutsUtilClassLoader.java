@@ -27,7 +27,6 @@
 package net.thevpc.nuts.boot;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.spi.NutsBootId;
 
 import java.io.File;
 import java.io.IOException;
@@ -45,7 +44,7 @@ import java.util.zip.ZipFile;
 class PrivateNutsUtilClassLoader {
     private static void fillBootDependencyNodes(NutsClassLoaderNode node, Set<URL> urls, Set<String> visitedIds,
                                                 PrivateNutsBootLog bLog) {
-        String shortName = NutsBootId.parse(node.getId()).getShortName();
+        String shortName = NutsId.of(node.getId()).get().getShortName();
         if (!visitedIds.contains(shortName)) {
             visitedIds.add(shortName);
             if (!node.isIncludedInClasspath()) {
@@ -69,13 +68,13 @@ class PrivateNutsUtilClassLoader {
         return urls.toArray(new URL[0]);
     }
 
-    public static URL findClassLoaderJar(NutsBootId id, URL[] urls) {
+    public static URL findClassLoaderJar(NutsId id, URL[] urls) {
         for (URL url : urls) {
-            NutsBootId[] nutsBootIds = PrivateNutsUtilMavenRepos.resolveJarIds(url);
-            for (NutsBootId i : nutsBootIds) {
+            NutsId[] nutsBootIds = PrivateNutsUtilMavenRepos.resolveJarIds(url);
+            for (NutsId i : nutsBootIds) {
                 if (NutsBlankable.isBlank(id.getGroupId()) || i.getGroupId().equals(id.getGroupId())) {
                     if (NutsBlankable.isBlank(id.getArtifactId()) || i.getArtifactId().equals(id.getArtifactId())) {
-                        if (NutsBlankable.isBlank(id.getVersionString()) || i.getVersion().toString().equals(id.getVersionString())) {
+                        if (NutsBlankable.isBlank(id.getVersion()) || i.getVersion().equals(id.getVersion())) {
                             return url;
                         }
                     }

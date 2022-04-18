@@ -28,24 +28,19 @@ package net.thevpc.nuts.runtime.standalone.version.filter;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.id.filter.NutsExprIdFilter;
-import net.thevpc.nuts.runtime.standalone.util.filters.CoreFilterUtils;
-import net.thevpc.nuts.runtime.standalone.version.DefaultNutsVersion;
-import net.thevpc.nuts.runtime.standalone.version.DefaultNutsVersionInterval;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
-import net.thevpc.nuts.runtime.standalone.util.Simplifiable;
+import net.thevpc.nuts.runtime.standalone.util.filters.CoreFilterUtils;
 
-import java.io.IOException;
 import java.io.Serializable;
-import java.io.StreamTokenizer;
-import java.io.StringReader;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
 /**
  * Examples [2.6,], ]2.6,] . Created by vpc on 1/20/17.
  */
-public class DefaultNutsVersionFilter extends AbstractVersionFilter implements NutsVersionFilter, Simplifiable<NutsVersionFilter>, NutsExprIdFilter, Serializable {
+public class DefaultNutsVersionFilter extends AbstractVersionFilter implements NutsExprIdFilter, Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -77,15 +72,21 @@ public class DefaultNutsVersionFilter extends AbstractVersionFilter implements N
         super(session, NutsFilterOp.CUSTOM);
     }
 
-    public static NutsVersionFilter parse(String version, NutsSession session) {
+    public static NutsOptional<NutsVersionFilter> parse(String version, NutsSession session) {
         if (DefaultNutsVersion.isBlankVersion(version) || "*".equals(version)) {
-//            if(session!=null){
-            return NutsVersionFilters.of(session).always();
-//            }
-//            return new NutsVersionFilterTrue(session.getWorkspace());
+            return NutsOptional.of(NutsVersionFilters.of(session).always());
         }
-        ParseHelper pp = new ParseHelper(session);
-        return pp.parse(version);
+
+        NutsOptional<List<NutsVersionInterval>> r = NutsVersionInterval.ofList(version);
+        return r.map(
+                x->{
+                    DefaultNutsVersionFilter dd = new DefaultNutsVersionFilter(session);
+                    for (NutsVersionInterval i : x) {
+                        dd.add(i);
+                    }
+                    return dd;
+                }
+        );
     }
 
     @Override
@@ -105,8 +106,9 @@ public class DefaultNutsVersionFilter extends AbstractVersionFilter implements N
 //        return parse(version,null);
 //    }
 
-    public NutsVersionInterval[] getIntervals() {
-        return intervals.toArray(new NutsVersionInterval[0]);
+    @Override
+    public NutsOptional<List<NutsVersionInterval>> intervals() {
+        return NutsOptional.of(intervals);
     }
 
     public void add(NutsVersionInterval interval) {
@@ -180,205 +182,4 @@ public class DefaultNutsVersionFilter extends AbstractVersionFilter implements N
         return sb.toString();
     }
 
-    private static class ParseHelper {
-
-        final int START = 0;
-        final int NEXT = 1;
-        final int NEXT_COMMA = 2;
-        final int EXPECT_V1 = 3;
-        final int EXPECT_V_COMMA = 4;
-        final int EXPECT_V2 = 5;
-        final int EXPECT_CLOSE = 6;
-        int t;
-        int state = NEXT;
-        int open = -1;
-        int close = -1;
-        String v1 = null;
-        String v2 = null;
-        DefaultNutsVersionFilter dd;
-        NutsSession session;
-
-        public ParseHelper(NutsSession session) {
-            this.session = session;
-            dd = new DefaultNutsVersionFilter(session);
-        }
-
-        void reset() {
-            open = -1;
-            close = -1;
-            v1 = null;
-            v2 = null;
-        }
-
-        void addNextValue(String sval) {
-            if (sval.endsWith("*")) {
-                String min = sval.substring(0, sval.length() - 1);
-                if (min.equals("")) {
-                    dd.add(new DefaultNutsVersionInterval(false, false, min, null));
-                } else {
-                    String max = NutsVersion.of(min,session).inc(-1).getValue();
-                    dd.add(new DefaultNutsVersionInterval(true, false, min, max));
-                }
-            } else {
-                dd.add(new DefaultNutsVersionInterval(true, true, sval, sval));
-            }
-        }
-
-        void addNextInterval() {
-            boolean inclusiveLowerBoundary = open == '[' && (v1 != null);
-            boolean inclusiveUpperBoundary = close == ']' && (v2 != null);
-            dd.add(new DefaultNutsVersionInterval(inclusiveLowerBoundary, inclusiveUpperBoundary, v1, v2));
-            reset();
-        }
-
-        NutsVersionFilter parse(String version) {
-            StreamTokenizer st = new StreamTokenizer(new StringReader(version));
-            st.resetSyntax();
-            st.whitespaceChars(0, 32);
-            for (int i = 33; i < 256; i++) {
-                switch ((char) i) {
-                    case '(':
-                    case ')':
-                    case ',':
-                    case '[':
-                    case ']': {
-                        break;
-                    }
-                    default: {
-                        st.wordChars(i, i);
-                    }
-                }
-            }
-            try {
-                while ((t = st.nextToken()) != StreamTokenizer.TT_EOF) {
-                    switch (state) {
-                        case START:
-                        case NEXT: {
-                            switch (t) {
-                                case StreamTokenizer.TT_WORD: {
-                                    addNextValue(st.sval);
-                                    state = NEXT_COMMA;
-                                    break;
-                                }
-                                case '[':
-                                case ']':
-                                case '(': {
-                                    open = t;
-                                    state = EXPECT_V1;
-                                    break;
-                                }
-                                default: {
-                                    throw new NutsParseException(session, NutsMessage.cstyle("unexpected  %s", ((char) t)));
-                                }
-                            }
-                            break;
-                        }
-                        case NEXT_COMMA: {
-                            switch (t) {
-                                case ',': {
-                                    state = NEXT;
-                                    break;
-                                }
-                                default: {
-                                    throw new NutsParseException(session, NutsMessage.cstyle("expected ',' found %s", ((char) t)));
-                                }
-                            }
-                            break;
-                        }
-                        case EXPECT_V1: {
-                            switch (t) {
-                                case StreamTokenizer.TT_WORD: {
-                                    v1 = st.sval;
-                                    state = EXPECT_V_COMMA;
-                                    break;
-                                }
-                                case ',': {
-                                    state = EXPECT_V2;
-                                    break;
-                                }
-                                default: {
-                                    throw new NutsParseException(session, NutsMessage.cstyle("unexpected %s", ((char) t)));
-                                }
-                            }
-                            break;
-
-                        }
-                        case EXPECT_V_COMMA: {
-                            switch (t) {
-                                case ',': {
-                                    state = EXPECT_V2;
-                                    break;
-                                }
-                                case ']': {
-                                    close = t;
-                                    v2 = v1;
-                                    addNextInterval();
-                                    state = NEXT_COMMA;
-                                    break;
-                                }
-                                case '[':
-                                case ')': {
-                                    close = t;
-                                    v2 = v1; //the same?
-                                    addNextInterval();
-                                    state = NEXT_COMMA;
-                                    break;
-                                }
-                                default: {
-                                    throw new NutsParseException(session, NutsMessage.cstyle("unexpected %s", ((char) t)));
-                                }
-                            }
-                            break;
-                        }
-                        case EXPECT_V2: {
-                            switch (t) {
-                                case StreamTokenizer.TT_WORD: {
-                                    v2 = st.sval;
-                                    state = EXPECT_CLOSE;
-                                    break;
-                                }
-                                case '[':
-                                case ']':
-                                case ')': {
-                                    close = t;
-                                    addNextInterval();
-                                    state = NEXT_COMMA;
-                                    break;
-                                }
-                                default: {
-                                    throw new NutsParseException(session, NutsMessage.cstyle("unexpected %s", ((char) t)));
-                                }
-                            }
-                            break;
-                        }
-                        case EXPECT_CLOSE: {
-                            switch (t) {
-                                case '[':
-                                case ']':
-                                case ')': {
-                                    close = t;
-                                    addNextInterval();
-                                    state = NEXT_COMMA;
-                                    break;
-                                }
-                                default: {
-                                    throw new NutsParseException(session, NutsMessage.cstyle("unexpected %s", ((char) t)));
-                                }
-                            }
-                            break;
-                        }
-                        default: {
-                            throw new NutsParseException(session, NutsMessage.cstyle("unsupported state %s", state));
-                        }
-                    }
-                }
-                if (state != NEXT_COMMA && state != START) {
-                    throw new NutsParseException(session, NutsMessage.cstyle("invalid state %s", state));
-                }
-            } catch (IOException ex) {
-                throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("parse version failed: %s", version), ex);
-            }
-            return dd;
-        }
-    }
 }

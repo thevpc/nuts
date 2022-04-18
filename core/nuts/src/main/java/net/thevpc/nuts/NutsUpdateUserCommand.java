@@ -27,6 +27,7 @@
 package net.thevpc.nuts;
 
 import java.util.Collection;
+import java.util.List;
 
 /**
  * @author thevpc
@@ -111,9 +112,9 @@ public interface NutsUpdateUserCommand extends NutsWorkspaceCommand {
 
     NutsUpdateUserCommand setRemoteCredentials(char[] password);
 
-    String[] getAddGroups();
+    List<String> getAddGroups();
 
-    String[] getRemoveGroups();
+    List<String> getRemoveGroups();
 
     char[] getCredentials();
 
@@ -127,9 +128,9 @@ public interface NutsUpdateUserCommand extends NutsWorkspaceCommand {
 
     NutsUpdateUserCommand setRemoteIdentity(String remoteIdentity);
 
-    String[] getAddPermissions();
+    List<String> getAddPermissions();
 
-    String[] getRemovePermissions();
+    List<String> getRemovePermissions();
 
     /**
      * update session

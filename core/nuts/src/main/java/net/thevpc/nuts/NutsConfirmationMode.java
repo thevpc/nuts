@@ -66,38 +66,8 @@ public enum NutsConfirmationMode implements NutsEnum {
         this.id = name().toLowerCase().replace('_', '-');
     }
 
-    public static NutsConfirmationMode parseLenient(String value) {
-        return parseLenient(value, null);
-    }
-
-    public static NutsConfirmationMode parseLenient(String value, NutsConfirmationMode emptyOrErrorValue) {
-        return parseLenient(value, emptyOrErrorValue, emptyOrErrorValue);
-    }
-
-    public static NutsConfirmationMode parseLenient(String value, NutsConfirmationMode emptyValue, NutsConfirmationMode errorValue) {
-        if (value == null) {
-            value = "";
-        } else {
-            value = value.toUpperCase().trim().replace('-', '_');
-        }
-        if (value.isEmpty()) {
-            return emptyValue;
-        }
-        try {
-            return NutsConfirmationMode.valueOf(value.toUpperCase());
-        } catch (Exception notFound) {
-            return errorValue;
-        }
-    }
-
-    public static NutsConfirmationMode parse(String value, NutsSession session) {
-        return parse(value, null, session);
-    }
-
-    public static NutsConfirmationMode parse(String value, NutsConfirmationMode emptyValue, NutsSession session) {
-        NutsConfirmationMode v = parseLenient(value, emptyValue, null);
-        NutsApiUtils.checkNonNullEnum(v, value, NutsConfirmationMode.class, session);
-        return v;
+    public static NutsOptional<NutsConfirmationMode> parse(String value) {
+        return NutsApiUtils.parse(value, NutsConfirmationMode.class);
     }
 
     /**

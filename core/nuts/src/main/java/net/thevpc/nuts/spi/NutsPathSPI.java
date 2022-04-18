@@ -33,6 +33,7 @@ import java.io.OutputStream;
 import java.net.URL;
 import java.nio.file.Path;
 import java.time.Instant;
+import java.util.List;
 import java.util.Set;
 
 public interface NutsPathSPI {
@@ -168,7 +169,7 @@ public interface NutsPathSPI {
 
     NutsPath subpath(NutsPath basePath, int beginIndex, int endIndex);
 
-    String[] getItems(NutsPath basePath);
+    List<String> getItems(NutsPath basePath);
 
     void moveTo(NutsPath basePath, NutsPath other, NutsPathOption... options);
 

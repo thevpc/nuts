@@ -62,39 +62,10 @@ public enum NutsPositionType implements NutsEnum {
         this.id = name().toLowerCase().replace('_', '-');
     }
 
-    public static NutsPositionType parseLenient(String value) {
-        return parseLenient(value, null);
+    public static NutsOptional<NutsPositionType> parse(String value) {
+        return NutsApiUtils.parse(value, NutsPositionType.class);
     }
 
-    public static NutsPositionType parseLenient(String value, NutsPositionType emptyOrErrorValue) {
-        return parseLenient(value, emptyOrErrorValue, emptyOrErrorValue);
-    }
-
-    public static NutsPositionType parseLenient(String value, NutsPositionType emptyValue, NutsPositionType errorValue) {
-        if (value == null) {
-            value = "";
-        } else {
-            value = value.toUpperCase().trim().replace('-', '_');
-        }
-        if (value.isEmpty()) {
-            return emptyValue;
-        }
-        try {
-            return NutsPositionType.valueOf(value.toUpperCase());
-        } catch (Exception notFound) {
-            return errorValue;
-        }
-    }
-
-    public static NutsPositionType parse(String value, NutsSession session) {
-        return parse(value, null, session);
-    }
-
-    public static NutsPositionType parse(String value, NutsPositionType emptyValue, NutsSession session) {
-        NutsPositionType v = parseLenient(value, emptyValue, null);
-        NutsApiUtils.checkNonNullEnum(v, value, NutsPositionType.class, session);
-        return v;
-    }
 
     /**
      * lower cased identifier.

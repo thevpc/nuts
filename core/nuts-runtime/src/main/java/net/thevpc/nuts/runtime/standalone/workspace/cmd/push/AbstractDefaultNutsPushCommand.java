@@ -24,6 +24,7 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.push;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.boot.PrivateNutsUtilCollections;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.NutsWorkspaceCommandBase;
 
 import java.util.*;
@@ -47,15 +48,15 @@ public abstract class AbstractDefaultNutsPushCommand extends NutsWorkspaceComman
     @Override
     public NutsPushCommand addId(String id) {
         checkSession();
-        NutsSession ws = getSession();
-        return addId(id == null ? null : NutsId.of(id,ws));
+        NutsSession session = getSession();
+        return addId(id == null ? null : NutsId.of(id).get(session));
     }
 
     @Override
     public NutsPushCommand addLockedId(String id) {
         checkSession();
-        NutsSession ws = getSession();
-        return addLockedId(id == null ? null : NutsId.of(id,ws));
+        NutsSession session = getSession();
+        return addLockedId(id == null ? null : NutsId.of(id).get(session));
     }
 
     @Override
@@ -81,8 +82,8 @@ public abstract class AbstractDefaultNutsPushCommand extends NutsWorkspaceComman
     public NutsPushCommand removeId(String id) {
         if (id != null) {
             checkSession();
-            NutsSession ws = getSession();
-            ids.remove(NutsId.of(id,ws));
+            NutsSession session = getSession();
+            ids.remove(NutsId.of(id).get(session));
         }
         return this;
     }
@@ -100,10 +101,10 @@ public abstract class AbstractDefaultNutsPushCommand extends NutsWorkspaceComman
     @Override
     public NutsPushCommand removeLockedId(String id) {
         checkSession();
-        NutsSession ws = getSession();
+        NutsSession session = getSession();
         if (id != null) {
             if (lockedIds != null) {
-                lockedIds.remove(NutsId.of(id,ws));
+                lockedIds.remove(NutsId.of(id).get(session));
             }
         }
         return this;
@@ -156,8 +157,8 @@ public abstract class AbstractDefaultNutsPushCommand extends NutsWorkspaceComman
     }
 
     @Override
-    public String[] getArgs() {
-        return args == null ? new String[0] : args.toArray(new String[0]);
+    public List<String> getArgs() {
+        return PrivateNutsUtilCollections.unmodifiableList(args);
     }
 
     @Override
@@ -194,13 +195,13 @@ public abstract class AbstractDefaultNutsPushCommand extends NutsWorkspaceComman
     }
 
     @Override
-    public NutsId[] getIds() {
-        return ids == null ? new NutsId[0] : ids.toArray(new NutsId[0]);
+    public List<NutsId> getIds() {
+        return PrivateNutsUtilCollections.unmodifiableList(ids);
     }
 
     @Override
-    public NutsId[] getLockedIds() {
-        return lockedIds == null ? new NutsId[0] : lockedIds.toArray(new NutsId[0]);
+    public List<NutsId> getLockedIds() {
+        return PrivateNutsUtilCollections.unmodifiableList(lockedIds);
     }
 
     @Override

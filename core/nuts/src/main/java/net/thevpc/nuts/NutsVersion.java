@@ -25,10 +25,10 @@
  */
 package net.thevpc.nuts;
 
-import net.thevpc.nuts.boot.NutsApiUtils;
-
 import java.io.Serializable;
 import java.math.BigInteger;
+import java.util.List;
+import java.util.regex.Pattern;
 
 /**
  * this class represents an <strong>immutable</strong> string representation of a version parsed as a suite of alternating numbers and words.
@@ -45,18 +45,24 @@ import java.math.BigInteger;
  * @since 0.5.4
  */
 public interface NutsVersion extends Serializable, /*NutsTokenFilter, */NutsFormattable, Comparable<NutsVersion>, NutsBlankable {
+    Pattern PATTERN = Pattern.compile("[A-Za-z0-9._*,()\\[\\] ${}+-]+");
+    NutsVersion BLANK = new DefaultNutsVersion("");
+
     /**
      * parses the version or create error
      *
-     * @param str     string value
-     * @param session session
+     * @param version string value
      * @return parsed value
      */
-    static NutsVersion of(String str, NutsSession session) {
-        return
-                NutsApiUtils
-                        .createSessionCachedType(NutsVersionParser.class, session, () -> NutsVersionParser.of(session))
-                        .parse(str);
+    static NutsOptional<NutsVersion> of(String version) {
+        if (NutsBlankable.isBlank(version)) {
+            return NutsOptional.of(new DefaultNutsVersion(""));
+        }
+        String version2 = NutsUtilStrings.trim(version);
+        if (PATTERN.matcher(version2).matches()) {
+            return NutsOptional.of(new DefaultNutsVersion(version2));
+        }
+        return NutsOptional.ofError(s -> NutsMessage.cstyle("invalid version format : %s", version));
     }
 
     /**
@@ -105,7 +111,7 @@ public interface NutsVersion extends Serializable, /*NutsTokenFilter, */NutsForm
      *
      * @return new instance of {@link NutsVersionFilter}
      */
-    NutsVersionFilter filter();
+    NutsVersionFilter filter(NutsSession session);
 
     /**
      * when the current version is a single value version X , returns ],X] version that guarantees backward compatibility
@@ -130,7 +136,7 @@ public interface NutsVersion extends Serializable, /*NutsTokenFilter, */NutsForm
      *
      * @return new interval array
      */
-    NutsVersionInterval[] intervals();
+    NutsOptional<List<NutsVersionInterval>> intervals();
 
     /**
      * return true if this version denotes as single value and does not match an interval.

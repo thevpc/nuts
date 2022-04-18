@@ -60,7 +60,7 @@ public class PermissionNonOption extends DefaultNonOption {
                 .setSession(context.getSession())
                 .getEffectiveUser(user) : 
                 context.getSession().security().setSession(context.getSession()).findUser(user);
-        Set<String> rights = new HashSet<>(info == null ? Collections.emptyList() : Arrays.asList(info.getPermissions()));
+        Set<String> rights = new HashSet<>(info == null ? Collections.emptyList() : (info.getPermissions()));
         while (i.hasNext()) {
             NutsArgumentCandidate right = i.next();
             if (existing) {

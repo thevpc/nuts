@@ -83,7 +83,7 @@ public class NutsIndexSubscriberListManager {
     }
 
     private String getRepositoryNameFromUuid(String repositoryUuid) {
-        NutsRepository[] repositories = defaultWorkspace.repos().getRepositories();
+        List<NutsRepository> repositories = defaultWorkspace.repos().getRepositories();
         for (NutsRepository repository : repositories) {
             if (repository.getUuid().equals(repositoryUuid)) {
                 return repository.getName();

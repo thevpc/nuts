@@ -25,9 +25,12 @@
  */
 package net.thevpc.nuts;
 
-import net.thevpc.nuts.boot.NutsApiUtils;
+import net.thevpc.nuts.boot.PrivateNutsIdListParser;
+import net.thevpc.nuts.boot.PrivateNutsIdParser;
 
+import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 /**
  * Immutable Artifact id information.
@@ -37,10 +40,15 @@ import java.util.Map;
  * @since 0.1.0
  */
 public interface NutsId extends Comparable<NutsId>, NutsFormattable, NutsBlankable {
+    Pattern PATTERN = Pattern.compile("^(?<group>[a-zA-Z0-9_.${}*-]+)(:(?<artifact>[a-zA-Z0-9_.${}*-]+))?(#(?<version>[^?]+))?(\\?(?<query>.+))?$");
+    NutsId BLANK = new DefaultNutsId();
 
-    static NutsId of(String value, NutsSession session) {
-        return NutsApiUtils.createSessionCachedType(NutsIdParser.class, session, () -> NutsIdParser.of(session))
-                .parse(value);
+    static NutsOptional<List<NutsId>> ofList(String value) {
+        return PrivateNutsIdListParser.parseIdList(value);
+    }
+
+    static NutsOptional<NutsId> of(String value) {
+        return PrivateNutsIdParser.parse(value);
     }
 
     /**
@@ -67,42 +75,6 @@ public interface NutsId extends Comparable<NutsId>, NutsFormattable, NutsBlankab
     boolean isLongId();
 
     boolean isShortId();
-
-//    /**
-//     * non null group id token
-//     * @return non null group id token
-//     */
-//    NutsTokenFilter groupIdToken();
-//
-//    /**
-//     * non null properties query token
-//     * @return non null properties query token
-//     */
-//    NutsTokenFilter propertiesToken();
-//
-//    /**
-//     * non null version token
-//     * @return non null version token
-//     */
-//    NutsTokenFilter versionToken();
-
-//    /**
-//     * non null artifact id token
-//     * @return non null artifact id token
-//     */
-//    NutsTokenFilter artifactIdToken();
-//
-//    /**
-//     * non null repository non null repository token
-//     * @return non null repository non null repository token
-//     */
-//    NutsTokenFilter repositoryToken();
-//
-//    /**
-//     * non null token filter that searches in all id fields
-//     * @return non null token filter that searches in all id fields
-//     */
-//    NutsTokenFilter anyToken();
 
     /**
      * id face define is a release file type selector of the id.
@@ -229,7 +201,7 @@ public interface NutsId extends Comparable<NutsId>, NutsFormattable, NutsBlankab
 
     NutsDependency toDependency();
 
-    NutsIdFilter filter();
+    NutsIdFilter filter(NutsSession session);
 
     /**
      * filter accepted any id with the defined version or greater

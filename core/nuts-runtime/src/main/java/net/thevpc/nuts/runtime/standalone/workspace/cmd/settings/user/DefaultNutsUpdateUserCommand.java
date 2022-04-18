@@ -116,19 +116,19 @@ public class DefaultNutsUpdateUserCommand extends AbstractNutsUpdateUserCommand 
         }
 
         if (resetGroups) {
-            u.setGroups(new String[0]);
+            u.setGroups(Collections.emptyList());
         }
         if (resetPermissions) {
-            u.setPermissions(new String[0]);
+            u.setPermissions(Collections.emptyList());
         }
-        LinkedHashSet<String> g = new LinkedHashSet<>(u.getGroups() == null ? new ArrayList<>() : Arrays.asList(u.getGroups()));
+        LinkedHashSet<String> g = new LinkedHashSet<>(u.getGroups() == null ? new ArrayList<>() : (u.getGroups()));
         g.addAll(groups);
         for (String group : rm_groups) {
             g.remove(group);
         }
-        u.setGroups(g.toArray(new String[0]));
+        u.setGroups(new ArrayList<>(g));
 
-        LinkedHashSet<String> r = new LinkedHashSet<>(u.getPermissions() == null ? new ArrayList<>() : Arrays.asList(u.getPermissions()));
+        LinkedHashSet<String> r = new LinkedHashSet<>(u.getPermissions() == null ? new ArrayList<>() : (u.getPermissions()));
         for (String group : permissions) {
             if (NutsConstants.Permissions.ALL.contains(group.toLowerCase())
                     || NutsConstants.Permissions.ALL.contains("!" + group.toLowerCase())) {
@@ -138,7 +138,7 @@ public class DefaultNutsUpdateUserCommand extends AbstractNutsUpdateUserCommand 
         for (String group : rm_permissions) {
             r.remove(group);
         }
-        u.setPermissions(r.toArray(new String[0]));
+        u.setPermissions(new ArrayList<>(r));
 
         if (remoteIdentity != null) {
             u.setRemoteIdentity(remoteIdentity);

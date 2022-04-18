@@ -76,9 +76,9 @@ public class RefreshDataService {
                 }
                 visited.put(id.get("stringId"), true);
 
-                NutsDependency[] directDependencies = definition.getEffectiveDescriptor().getDependencies();
+                List<NutsDependency> directDependencies = definition.getEffectiveDescriptor().getDependencies();
                 id.put("dependencies",
-                        NutsElements.of(session).json().setValue(Arrays.stream(directDependencies).map(Object::toString).collect(Collectors.toList()))
+                        NutsElements.of(session).json().setValue(directDependencies.stream().map(Object::toString).collect(Collectors.toList()))
                                 .setNtf(false).format().filteredText()
                 );
                 dataToIndex.add(id);

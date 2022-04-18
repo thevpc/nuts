@@ -39,5 +39,5 @@ public interface NutsVersionFilters extends NutsTypedFilters<NutsVersionFilter> 
         return session.extensions().createSupported(NutsVersionFilters.class, true, null);
     }
 
-    NutsVersionFilter byValue(String version);
+    NutsOptional<NutsVersionFilter> byValue(String version);
 }

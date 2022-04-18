@@ -24,11 +24,11 @@
 package net.thevpc.nuts.runtime.standalone.workspace.config;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.boot.PrivateNutsUtilCollections;
 import net.thevpc.nuts.runtime.standalone.session.NutsSessionUtils;
 import net.thevpc.nuts.runtime.standalone.util.CorePlatformUtils;
 import net.thevpc.nuts.runtime.standalone.util.collections.DefaultObservableMap;
 import net.thevpc.nuts.runtime.standalone.util.collections.ObservableMap;
-import net.thevpc.nuts.runtime.standalone.id.DefaultNutsIdParser;
 import net.thevpc.nuts.runtime.standalone.app.gui.CoreNutsUtilGui;
 import net.thevpc.nuts.runtime.standalone.util.jclass.NutsJavaSdkUtils;
 
@@ -53,8 +53,8 @@ public class DefaultNutsWorkspaceEnvManagerModel {
     private final NutsId os;
     private NutsOsFamily osFamily;
     private NutsShellFamily shellFamily;
-    private NutsId[] desktopEnvironments;
-    private NutsDesktopEnvironmentFamily[] osDesktopEnvironmentFamilies;
+    private Set<NutsId> desktopEnvironments;
+    private Set<NutsDesktopEnvironmentFamily> osDesktopEnvironmentFamilies;
     private NutsDesktopEnvironmentFamily osDesktopEnvironmentFamily;
     private final NutsId arch;
     private final NutsId osDist;
@@ -74,15 +74,14 @@ public class DefaultNutsWorkspaceEnvManagerModel {
 //                }
 //            }
 //        }
-        DefaultNutsIdParser nip = new DefaultNutsIdParser(session);
-        os = nip.parse(CorePlatformUtils.getPlatformOs(NutsSessionUtils.defaultSession(workspace)));
+        os = NutsId.of(CorePlatformUtils.getPlatformOs(NutsSessionUtils.defaultSession(workspace))).get();
         String platformOsDist = CorePlatformUtils.getPlatformOsDist(NutsSessionUtils.defaultSession(workspace));
         if (platformOsDist == null) {
             platformOsDist = "default";
         }
-        osDist = nip.parse(platformOsDist);
+        osDist = NutsId.of(platformOsDist).get();
         platform = NutsJavaSdkUtils.of(session).createJdkId(System.getProperty("java.version"), session);
-        arch = NutsId.of(System.getProperty("os.arch"), session);
+        arch = NutsId.of(System.getProperty("os.arch")).get();
 
     }
 
@@ -116,11 +115,11 @@ public class DefaultNutsWorkspaceEnvManagerModel {
     }
 
     /*fix this add field  like above*/
-    public NutsShellFamily[] getShellFamilies() {
+    public Set<NutsShellFamily> getShellFamilies() {
         return getShellFamilies(true);
     }
 
-    public NutsShellFamily[] getShellFamilies(boolean allEvenNonInstalled) {
+    public Set<NutsShellFamily> getShellFamilies(boolean allEvenNonInstalled) {
         ArrayList<NutsShellFamily> shellFamilies = new ArrayList<>();
         switch (this.getOsFamily()) {
             case UNIX:
@@ -167,10 +166,10 @@ public class DefaultNutsWorkspaceEnvManagerModel {
                 shellFamilies.add(NutsShellFamily.UNKNOWN);
             }
         }
-        return shellFamilies.toArray(new NutsShellFamily[0]);
+        return new LinkedHashSet<>(shellFamilies);
     }
 
-    public NutsId[] getDesktopEnvironments(NutsSession session) {
+    public Set<NutsId> getDesktopEnvironments(NutsSession session) {
         if (desktopEnvironments == null) {
             desktopEnvironments = getDesktopEnvironments0(session);
         }
@@ -193,7 +192,7 @@ public class DefaultNutsWorkspaceEnvManagerModel {
             ).toArray(new String[0]);
             String sd = _XDG_SESSION_DESKTOP.toLowerCase();
             for (int i = 0; i < supportedSessions.length; i++) {
-                NutsIdBuilder nb = NutsIdBuilder.of(session).setArtifactId(supportedSessions[i]);
+                NutsIdBuilder nb = new DefaultNutsIdBuilder().setArtifactId(supportedSessions[i]);
                 if ("kde".equals(sd)) {
                     String _KDE_FULL_SESSION = System.getenv("KDE_FULL_SESSION");
                     String _KDE_SESSION_VERSION = System.getenv("KDE_SESSION_VERSION");
@@ -219,51 +218,46 @@ public class DefaultNutsWorkspaceEnvManagerModel {
         return a.toArray(new NutsId[0]);
     }
 
-    protected NutsId[] getDesktopEnvironments0(NutsSession session) {
+    protected Set<NutsId> getDesktopEnvironments0(NutsSession session) {
         if (!isGraphicalDesktopEnvironment()) {
-            return new NutsId[]{
-                    NutsIdBuilder.of(session).setArtifactId(NutsDesktopEnvironmentFamily.HEADLESS.id()).build()
-            };
+            return Collections.singleton(
+                    new DefaultNutsIdBuilder().setArtifactId(NutsDesktopEnvironmentFamily.HEADLESS.id()).build());
         }
         switch (session.env().getOsFamily()) {
             case WINDOWS: {
-                return new NutsId[]{
-                        NutsIdBuilder.of(session).setArtifactId(NutsDesktopEnvironmentFamily.WINDOWS_SHELL.id()).build()
-                };
+                return Collections.singleton(new DefaultNutsIdBuilder().setArtifactId(NutsDesktopEnvironmentFamily.WINDOWS_SHELL.id()).build());
             }
             case MACOS: {
-                return new NutsId[]{
-                        NutsIdBuilder.of(session).setArtifactId(NutsDesktopEnvironmentFamily.MACOS_AQUA.id()).build()
-                };
+                return Collections.singleton(new DefaultNutsIdBuilder().setArtifactId(NutsDesktopEnvironmentFamily.MACOS_AQUA.id()).build());
             }
             case UNIX:
             case LINUX: {
                 NutsId[] all = getDesktopEnvironmentsXDGOrEmpty(session);
                 if (all.length == 0) {
-                    return new NutsId[]{NutsIdBuilder.of(session).setArtifactId(NutsDesktopEnvironmentFamily.UNKNOWN.id()).build()};
+                    return Collections.singleton(new DefaultNutsIdBuilder().setArtifactId(NutsDesktopEnvironmentFamily.UNKNOWN.id()).build());
                 }
-                return all;
+                return Collections.unmodifiableSet(new LinkedHashSet<>(Arrays.asList(all)));
             }
             default: {
-                return new NutsId[]{NutsIdBuilder.of(session).setArtifactId(NutsDesktopEnvironmentFamily.UNKNOWN.id()).build()};
+                return Collections.singleton(new DefaultNutsIdBuilder().setArtifactId(NutsDesktopEnvironmentFamily.UNKNOWN.id()).build());
             }
         }
     }
 
-    public NutsDesktopEnvironmentFamily[] getDesktopEnvironmentFamilies(NutsSession session) {
+    public Set<NutsDesktopEnvironmentFamily> getDesktopEnvironmentFamilies(NutsSession session) {
         if (osDesktopEnvironmentFamilies == null) {
             osDesktopEnvironmentFamilies = getDesktopEnvironmentFamilies0(session);
         }
         return osDesktopEnvironmentFamilies;
     }
 
-    public NutsDesktopEnvironmentFamily[] getDesktopEnvironmentFamilies0(NutsSession session) {
-        NutsId[] desktopEnvironments = getDesktopEnvironments(session);
+    public Set<NutsDesktopEnvironmentFamily> getDesktopEnvironmentFamilies0(NutsSession session) {
+        Set<NutsId> desktopEnvironments = getDesktopEnvironments(session);
         LinkedHashSet<NutsDesktopEnvironmentFamily> all = new LinkedHashSet<>();
         for (NutsId desktopEnvironment : desktopEnvironments) {
-            all.add(NutsDesktopEnvironmentFamily.parseLenient(desktopEnvironment.getShortName()));
+            all.add(NutsDesktopEnvironmentFamily.parse(desktopEnvironment.getShortName()).orElse(null));
         }
-        return all.toArray(new NutsDesktopEnvironmentFamily[0]);
+        return new LinkedHashSet<>(all);
     }
 
     public NutsDesktopEnvironmentFamily getDesktopEnvironmentFamily(NutsSession session) {
@@ -274,8 +268,8 @@ public class DefaultNutsWorkspaceEnvManagerModel {
     }
 
     public NutsDesktopEnvironmentFamily getDesktopEnvironmentFamily0(NutsSession session) {
-        NutsDesktopEnvironmentFamily[] all = getDesktopEnvironmentFamilies(session);
-        if (all.length == 0) {
+        Set<NutsDesktopEnvironmentFamily> all = getDesktopEnvironmentFamilies(session);
+        if (all.size() == 0) {
             return NutsDesktopEnvironmentFamily.UNKNOWN;
         }
         boolean unknown = false;

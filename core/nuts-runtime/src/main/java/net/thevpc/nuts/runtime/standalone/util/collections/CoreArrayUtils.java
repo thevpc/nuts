@@ -52,6 +52,26 @@ public class CoreArrayUtils {
         return all.toArray((T[]) Array.newInstance(cls, all.size()));
     }
 
+    public static List<String> toDistinctTrimmedNonEmptyList(List<String> values0) {
+        Set<String> set = CoreCollectionUtils.toTrimmedNonEmptySet(
+                values0==null?null:values0.toArray(new String[0])
+        );
+        return new ArrayList<>(set);
+    }
+    public static List<String> toDistinctTrimmedNonEmptyList(List<String> values0, List<String>... values) {
+        Set<String> set = CoreCollectionUtils.toTrimmedNonEmptySet(
+                values0==null?null:values0.toArray(new String[0])
+        );
+        if (values != null) {
+            for (List<String> value : values) {
+                set.addAll(CoreCollectionUtils.toTrimmedNonEmptySet(
+                        values0==null?null:values0.toArray(new String[0])
+                ));
+            }
+        }
+        return new ArrayList<>(set);
+    }
+
     public static String[] toDistinctTrimmedNonEmptyArray(String[] values0, String[]... values) {
         Set<String> set = CoreCollectionUtils.toTrimmedNonEmptySet(values0);
         if (values != null) {

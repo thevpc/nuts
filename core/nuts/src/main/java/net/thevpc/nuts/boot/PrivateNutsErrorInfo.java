@@ -27,16 +27,16 @@
 package net.thevpc.nuts.boot;
 
 import net.thevpc.nuts.NutsBlankable;
-import net.thevpc.nuts.spi.NutsBootId;
+import net.thevpc.nuts.NutsId;
 
 class PrivateNutsErrorInfo {
-    private final NutsBootId nutsId;
+    private final NutsId nutsId;
     private final String repository;
     private final String url;
     private final String message;
     private final Throwable throwable;
 
-    public PrivateNutsErrorInfo(NutsBootId nutsId, String repository, String url, String message, Throwable throwable) {
+    public PrivateNutsErrorInfo(NutsId nutsId, String repository, String url, String message, Throwable throwable) {
         this.nutsId = nutsId;
         this.repository = repository;
         this.url = url;
@@ -44,7 +44,7 @@ class PrivateNutsErrorInfo {
         this.throwable = throwable;
     }
 
-    public NutsBootId getNutsId() {
+    public NutsId getNutsId() {
         return nutsId;
     }
 

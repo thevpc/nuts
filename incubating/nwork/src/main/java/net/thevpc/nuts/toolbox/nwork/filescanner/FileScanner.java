@@ -35,7 +35,7 @@ public class FileScanner {
         NutsExpr evaluator = NutsExpr.of(session);
         evaluator.setFunction("tag", new NutsExpr.Fct() {
             @Override
-            public Object eval(String name, NutsExpr.Node[] args, NutsExpr context) {
+            public Object eval(String name, List<NutsExpr.Node> args, NutsExpr context) {
                 RichPath rc = (RichPath) context.getVar("this");
                 for (NutsExpr.Node arg : args) {
                     Object v = arg.eval(context);

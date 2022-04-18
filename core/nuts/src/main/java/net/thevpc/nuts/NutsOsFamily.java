@@ -57,7 +57,7 @@ public enum NutsOsFamily implements NutsEnum {
     UNKNOWN;
 
 
-    private static final NutsOsFamily _curr = parseLenient(System.getProperty("os.name"), UNKNOWN, UNKNOWN);
+    private static final NutsOsFamily _curr = parse(System.getProperty("os.name")).orElse(UNKNOWN);
     /**
      * lower-cased identifier for the enum entry
      */
@@ -67,89 +67,68 @@ public enum NutsOsFamily implements NutsEnum {
         this.id = name().toLowerCase().replace('_', '-');
     }
 
-    public static NutsOsFamily parseLenient(String value) {
-        return parseLenient(value, UNKNOWN);
-    }
-
-    public static NutsOsFamily parseLenient(String value, NutsOsFamily emptyOrErrorValue) {
-        return parseLenient(value, emptyOrErrorValue, emptyOrErrorValue);
-    }
-
-    public static NutsOsFamily parseLenient(String e, NutsOsFamily emptyValue, NutsOsFamily errorValue) {
-        if (e == null) {
-            e = "";
-        } else {
-            e = e.trim().toLowerCase();
-        }
-        switch (e.toLowerCase()) {
-            case "": {
-                return emptyValue;
+    public static NutsOptional<NutsOsFamily> parse(String value) {
+        return NutsApiUtils.parse(value, NutsOsFamily.class, s -> {
+            String e = s.toLowerCase();
+            switch (e) {
+                case "w":
+                case "win":
+                case "windows":
+                    return NutsOptional.of(WINDOWS);
+                case "l":
+                case "linux":
+                    return NutsOptional.of(LINUX);
+                case "m":
+                case "mac":
+                case "macos":
+                    return NutsOptional.of(MACOS);
+                case "u":
+                case "unix":
+                    return NutsOptional.of(UNIX);
+                case "unknown":
+                    return NutsOptional.of(UNKNOWN);
             }
-            case "w":
-            case "win":
-            case "windows":
-                return WINDOWS;
-            case "l":
-            case "linux":
-                return LINUX;
-            case "m":
-            case "mac":
-            case "macos":
-                return MACOS;
-            case "u":
-            case "unix":
-                return UNIX;
-            case "unknown":
-                return UNKNOWN;
-        }
-        if (e.startsWith("linux")) {
-            return NutsOsFamily.LINUX;
-        }
-        if (e.startsWith("win")) {
-            return NutsOsFamily.WINDOWS;
-        }
-        if (e.startsWith("mac")) {
-            return NutsOsFamily.MACOS;
-        }
-        if (e.startsWith("sunos")) {
-            return NutsOsFamily.UNIX;
-        }
-        if (e.startsWith("freebsd")) {
-            return NutsOsFamily.UNIX;
-        }
-        //process plexus os families
-        switch (e) {
-            case "dos":
-                return NutsOsFamily.WINDOWS;
-            case "netware":
-                return NutsOsFamily.UNKNOWN;
-            case "os/2":
-                return NutsOsFamily.UNKNOWN;
-            case "tandem":
-                return NutsOsFamily.UNKNOWN;
-            case "zos":
-                return NutsOsFamily.UNKNOWN;
-            case "os/400":
-                return NutsOsFamily.UNIX;
-            case "openvms":
-                return NutsOsFamily.UNKNOWN;
-        }
-        return errorValue;
+            if (e.startsWith("linux")) {
+                return NutsOptional.of(NutsOsFamily.LINUX);
+            }
+            if (e.startsWith("win")) {
+                return NutsOptional.of(NutsOsFamily.WINDOWS);
+            }
+            if (e.startsWith("mac")) {
+                return NutsOptional.of(NutsOsFamily.MACOS);
+            }
+            if (e.startsWith("sunos")) {
+                return NutsOptional.of(NutsOsFamily.UNIX);
+            }
+            if (e.startsWith("freebsd")) {
+                return NutsOptional.of(NutsOsFamily.UNIX);
+            }
+            //process plexus os families
+            switch (e) {
+                case "dos":
+                    return NutsOptional.of(NutsOsFamily.WINDOWS);
+                case "netware":
+                    return NutsOptional.of(NutsOsFamily.UNKNOWN);
+                case "os/2":
+                    return NutsOptional.of(NutsOsFamily.UNKNOWN);
+                case "tandem":
+                    return NutsOptional.of(NutsOsFamily.UNKNOWN);
+                case "zos":
+                    return NutsOptional.of(NutsOsFamily.UNKNOWN);
+                case "os/400":
+                    return NutsOptional.of(NutsOsFamily.UNIX);
+                case "openvms":
+                    return NutsOptional.of(NutsOsFamily.UNKNOWN);
+            }
+            return null;
+        });
     }
+
 
     public static NutsOsFamily getCurrent() {
         return _curr;
     }
 
-    public static NutsOsFamily parse(String value, NutsSession session) {
-        return parse(value, null, session);
-    }
-
-    public static NutsOsFamily parse(String value, NutsOsFamily emptyValue, NutsSession session) {
-        NutsOsFamily v = parseLenient(value, emptyValue, null);
-        NutsApiUtils.checkNonNullEnum(v, value, NutsOsFamily.class, session);
-        return v;
-    }
 
     /**
      * lower cased identifier.

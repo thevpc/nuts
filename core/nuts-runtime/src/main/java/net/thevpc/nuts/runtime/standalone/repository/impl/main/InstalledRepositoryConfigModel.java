@@ -4,7 +4,9 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.repository.config.NutsRepositoryConfigModel;
 import net.thevpc.nuts.spi.NutsRepositoryLocation;
 
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 class InstalledRepositoryConfigModel implements NutsRepositoryConfigModel {
@@ -89,8 +91,8 @@ class InstalledRepositoryConfigModel implements NutsRepositoryConfigModel {
     }
 
     @Override
-    public NutsRepository[] getMirrors(NutsSession session) {
-        return new NutsRepository[0];
+    public List<NutsRepository> getMirrors(NutsSession session) {
+        return Collections.emptyList();
     }
 
     @Override

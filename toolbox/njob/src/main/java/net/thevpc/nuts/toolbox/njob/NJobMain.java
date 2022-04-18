@@ -11,7 +11,6 @@ public class NJobMain implements NutsApplication {
 
     @Override
     public void run(NutsApplicationContext appContext) {
-        String[] args = appContext.getArguments();
         JobServiceCmd ts = new JobServiceCmd(appContext);
         NutsCommandLine cmdLine = appContext.getCommandLine();
         NutsArgument a;

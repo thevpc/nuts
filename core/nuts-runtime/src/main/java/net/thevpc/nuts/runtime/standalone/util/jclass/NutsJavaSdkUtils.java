@@ -55,7 +55,7 @@ public class NutsJavaSdkUtils {
     private static void fillNodes(NutsClassLoaderNode n, List<NutsClassLoaderNodeExt> list, boolean java9, NutsSession session) {
         NutsClassLoaderNodeExt k = new NutsClassLoaderNodeExt();
         k.node = n;
-        k.id = NutsId.of(n.getId(), session);
+        k.id = NutsId.of(n.getId()).get( session);
         k.path = NutsPath.of(n.getURL(), session);
         if (java9) {
             k.moduleInfo = JavaJarUtils.parseModuleInfo(k.path, session);
@@ -95,11 +95,11 @@ public class NutsJavaSdkUtils {
     public NutsPlatformLocation resolveJdkLocation(String requestedJavaVersion, NutsSession session) {
         String _requestedJavaVersion = requestedJavaVersion;
         requestedJavaVersion = NutsUtilStrings.trim(requestedJavaVersion);
-        NutsVersion vv = NutsVersion.of(requestedJavaVersion, session);
+        NutsVersion vv = NutsVersion.of(requestedJavaVersion).get( session);
         if (vv.isSingleValue()) {
             requestedJavaVersion = "[" + vv + ",[";
         }
-        NutsVersionFilter requestedVersionFilter = NutsVersionFilters.of(session).byValue(requestedJavaVersion);
+        NutsVersionFilter requestedVersionFilter = NutsVersionFilters.of(session).byValue(requestedJavaVersion).get();
         NutsPlatformLocation bestJava = session.env().platforms()
                 .findPlatformByVersion(NutsPlatformFamily.JAVA, requestedVersionFilter);
         if (bestJava == null) {
@@ -119,8 +119,8 @@ public class NutsJavaSdkUtils {
                     0
             );
             current.setConfigVersion(DefaultNutsWorkspace.VERSION_SDK_LOCATION);
-            NutsVersionFilter requestedJavaVersionFilter = vv.filter();
-            if (requestedJavaVersionFilter == null || requestedJavaVersionFilter.acceptVersion(NutsVersion.of(current.getVersion(), session), session)) {
+            NutsVersionFilter requestedJavaVersionFilter = vv.filter(session);
+            if (requestedJavaVersionFilter == null || requestedJavaVersionFilter.acceptVersion(NutsVersion.of(current.getVersion()).get( session), session)) {
                 bestJava = current;
             }
             if (bestJava == null) {
@@ -134,7 +134,7 @@ public class NutsJavaSdkUtils {
                 bestJava = current;
             }
         }
-        if (requestedVersionFilter.acceptVersion(NutsVersion.of(bestJava.getVersion(), session), session)) {
+        if (requestedVersionFilter.acceptVersion(NutsVersion.of(bestJava.getVersion()).get( session), session)) {
             return bestJava;
         }
         _LOGOP(session).level(Level.FINE).verb(NutsLogVerb.WARNING)
@@ -390,7 +390,7 @@ public class NutsJavaSdkUtils {
         if (NutsBlankable.isBlank(version)) {
             throw new NutsException(session, NutsMessage.formatted("missing version"));
         }
-        NutsVersion jv = NutsVersion.of(version, session);
+        NutsVersion jv = NutsVersion.of(version).get( session);
         long n1 = jv.getNumber(0, BigInteger.ZERO).longValue();
         long n2 = jv.getNumber(1, BigInteger.ZERO).longValue();
         long classFileId = 0;
@@ -401,7 +401,7 @@ public class NutsJavaSdkUtils {
         if (classFileId == 0) {
             classFileId = 52;
         }
-        return NutsIdBuilder.of(session).setArtifactId("java")
+        return new DefaultNutsIdBuilder().setArtifactId("java")
                 .setProperty("s", standard)
                 .setProperty("c", String.valueOf(classFileId))
                 .setVersion(version)

@@ -24,6 +24,8 @@
  */
 package net.thevpc.nuts;
 
+import java.util.List;
+
 /**
  * @author thevpc
  * @app.category Events
@@ -34,25 +36,25 @@ public interface NutsWorkspaceEventManager {
 
     NutsWorkspaceEventManager addRepositoryListener(NutsRepositoryListener listener);
 
-    NutsRepositoryListener[] getRepositoryListeners();
+    List<NutsRepositoryListener> getRepositoryListeners();
 
     NutsWorkspaceEventManager addUserPropertyListener(NutsMapListener<String, Object> listener);
 
     NutsWorkspaceEventManager removeUserPropertyListener(NutsMapListener<String, Object> listener);
 
-    NutsMapListener<String, Object>[] getUserPropertyListeners();
+    List<NutsMapListener<String, Object>> getUserPropertyListeners();
 
     NutsWorkspaceEventManager removeWorkspaceListener(NutsWorkspaceListener listener);
 
     NutsWorkspaceEventManager addWorkspaceListener(NutsWorkspaceListener listener);
 
-    NutsWorkspaceListener[] getWorkspaceListeners();
+    List<NutsWorkspaceListener> getWorkspaceListeners();
 
     NutsWorkspaceEventManager removeInstallListener(NutsInstallListener listener);
 
     NutsWorkspaceEventManager addInstallListener(NutsInstallListener listener);
 
-    NutsInstallListener[] getInstallListeners();
+    List<NutsInstallListener> getInstallListeners();
 
     NutsSession getSession();
 

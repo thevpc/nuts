@@ -14,6 +14,10 @@ public class InternalNutsIdFilters extends InternalNutsTypedFilters<NutsIdFilter
         super(session, NutsIdFilter.class);
     }
 
+    @Override
+    public NutsIdFilter byValue(NutsId id) {
+        return new NutsIdIdFilter(id,getSession());
+    }
 
     @Override
     public NutsIdFilter always() {
@@ -54,9 +58,9 @@ public class InternalNutsIdFilters extends InternalNutsTypedFilters<NutsIdFilter
         NutsIdFilter f = null;
         for (String wildcardId : names) {
             if (f == null) {
-                f = new NutsPatternIdFilter(getSession(), NutsId.of(wildcardId,getSession()));
+                f = new NutsPatternIdFilter(getSession(), NutsId.of(wildcardId).get(getSession()));
             } else {
-                f = (NutsIdFilter) f.or(new NutsPatternIdFilter(getSession(), NutsId.of(wildcardId,getSession())));
+                f = (NutsIdFilter) f.or(new NutsPatternIdFilter(getSession(), NutsId.of(wildcardId).get(getSession())));
             }
         }
         return f;

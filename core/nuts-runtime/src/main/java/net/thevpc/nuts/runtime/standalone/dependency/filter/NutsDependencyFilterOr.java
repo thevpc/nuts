@@ -4,6 +4,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.util.filters.CoreFilterUtils;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.stream.Collectors;
 
 public class NutsDependencyFilterOr extends AbstractDependencyFilter{
@@ -64,7 +65,7 @@ public class NutsDependencyFilterOr extends AbstractDependencyFilter{
         return true;
     }
 
-    public NutsFilter[] getSubFilters() {
-        return all;
+    public List<NutsFilter> getSubFilters() {
+        return Arrays.asList(all);
     }
 }

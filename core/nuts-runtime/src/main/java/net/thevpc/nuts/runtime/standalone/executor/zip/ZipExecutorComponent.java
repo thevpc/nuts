@@ -24,35 +24,14 @@
 package net.thevpc.nuts.runtime.standalone.executor.zip;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.standalone.executor.AbstractSyncIProcessExecHelper;
-import net.thevpc.nuts.runtime.standalone.executor.embedded.ClassloaderAwareRunnable;
 import net.thevpc.nuts.runtime.standalone.executor.exec.NutsExecHelper;
-import net.thevpc.nuts.runtime.standalone.executor.system.ProcessExecHelper;
-import net.thevpc.nuts.runtime.standalone.extension.DefaultNutsClassLoader;
-import net.thevpc.nuts.runtime.standalone.extension.DefaultNutsWorkspaceExtensionManager;
-import net.thevpc.nuts.runtime.standalone.io.net.util.NetUtils;
 import net.thevpc.nuts.runtime.standalone.io.util.IProcessExecHelper;
-import net.thevpc.nuts.runtime.standalone.util.CoreNumberUtils;
-import net.thevpc.nuts.runtime.standalone.util.CoreNutsUtils;
-import net.thevpc.nuts.runtime.standalone.util.NutsDebugString;
-import net.thevpc.nuts.runtime.standalone.util.collections.StringKeyValueList;
 import net.thevpc.nuts.spi.NutsComponentScope;
 import net.thevpc.nuts.spi.NutsComponentScopeType;
 import net.thevpc.nuts.spi.NutsExecutorComponent;
 import net.thevpc.nuts.spi.NutsSupportLevelContext;
 
-import java.io.File;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.net.MalformedURLException;
-import java.nio.file.Path;
 import java.util.*;
-import java.util.concurrent.Future;
-import java.util.logging.Filter;
-import java.util.logging.Level;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 /**
  * Created by vpc on 1/7/17.
@@ -61,7 +40,7 @@ import java.util.stream.Collectors;
 public class ZipExecutorComponent implements NutsExecutorComponent {
 
     public static NutsId ID;
-    NutsSession ws;
+    NutsSession session;
 
     @Override
     public NutsId getId() {
@@ -80,9 +59,9 @@ public class ZipExecutorComponent implements NutsExecutorComponent {
 
     @Override
     public int getSupportLevel(NutsSupportLevelContext ctx) {
-        this.ws = ctx.getSession();
+        this.session = ctx.getSession();
         if (ID == null) {
-            ID = NutsId.of("net.thevpc.nuts.exec:zip", ws);
+            ID = NutsId.of("net.thevpc.nuts.exec:zip").get(session);
         }
         NutsDefinition def = ctx.getConstraints(NutsDefinition.class);
         if (def != null) {
@@ -112,8 +91,8 @@ public class ZipExecutorComponent implements NutsExecutorComponent {
         if (executor == null) {
             throw new NutsIOException(session, NutsMessage.cstyle("missing executor for %s", def.getId()));
         }
-        List<String> args=new ArrayList<>(Arrays.asList(executionContext.getExecutorArguments()));
-        args.addAll(Arrays.asList(executionContext.getArguments()));
+        List<String> args=new ArrayList<>(executionContext.getExecutorArguments());
+        args.addAll(executionContext.getArguments());
         if (executor.getId() != null && !executor.getId().toString().equals("exec")) {
             // TODO: delegate to another executor!
             throw new NutsIOException(session, NutsMessage.cstyle("unsupported executor %s for %s", executor.getId(), def.getId()));

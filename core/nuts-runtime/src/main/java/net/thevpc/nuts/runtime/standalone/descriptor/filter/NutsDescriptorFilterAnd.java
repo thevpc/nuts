@@ -74,7 +74,7 @@ public class NutsDescriptorFilterAnd extends AbstractDescriptorFilter{
         return String.join(" and ", Arrays.asList(all).stream().map(x -> "(" + x.toString() + ")").collect(Collectors.toList()));
     }
 
-    public NutsFilter[] getSubFilters() {
-        return all;
+    public List<NutsFilter> getSubFilters() {
+        return Arrays.asList(all);
     }
 }

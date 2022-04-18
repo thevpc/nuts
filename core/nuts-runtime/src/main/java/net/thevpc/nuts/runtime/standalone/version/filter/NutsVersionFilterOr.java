@@ -10,7 +10,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class NutsVersionFilterOr extends AbstractVersionFilter implements NutsVersionFilter, Simplifiable<NutsVersionFilter>, NutsExprIdFilter {
+public class NutsVersionFilterOr extends AbstractVersionFilter implements NutsExprIdFilter {
 
     private NutsVersionFilter[] all;
 
@@ -104,8 +104,8 @@ public class NutsVersionFilterOr extends AbstractVersionFilter implements NutsVe
         return String.join(" Or ", Arrays.asList(all).stream().map(x -> "(" + x.toString() + ")").collect(Collectors.toList()));
     }
 
-    public NutsFilter[] getSubFilters() {
-        return all;
+    public List<NutsFilter> getSubFilters() {
+        return Arrays.asList(all);
     }
 
 }

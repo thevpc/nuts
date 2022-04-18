@@ -25,13 +25,13 @@
 */
 package net.thevpc.nuts.runtime.standalone.boot;
 
+import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.standalone.workspace.config.DefaultNutsWorkspaceCurrentConfig;
+
 import java.io.Serializable;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
-
-import net.thevpc.nuts.*;
-import net.thevpc.nuts.spi.NutsBootDescriptor;
-import net.thevpc.nuts.runtime.standalone.workspace.config.DefaultNutsWorkspaceCurrentConfig;
 
 /**
  * Nuts Boot editable configuration object
@@ -64,12 +64,12 @@ public final class NutsBootConfig implements Cloneable, Serializable {
     /**
      * runtime package dependencies id list (; separated)
      */
-    private NutsBootDescriptor runtimeBootDescriptor;
+    private NutsDescriptor runtimeBootDescriptor;
 
     /**
      *
      */
-    private NutsBootDescriptor[] extensionBootDescriptors;
+    private List<NutsDescriptor> extensionBootDescriptors;
 
     /**
      * bootRepositories list (; separated) where to look for runtime dependencies
@@ -204,20 +204,20 @@ public final class NutsBootConfig implements Cloneable, Serializable {
         return this;
     }
 
-    public NutsBootDescriptor getRuntimeBootDescriptor() {
+    public NutsDescriptor getRuntimeBootDescriptor() {
         return runtimeBootDescriptor;
     }
 
-    public NutsBootConfig setRuntimeBootDescriptor(NutsBootDescriptor runtimeBootDescriptor) {
+    public NutsBootConfig setRuntimeBootDescriptor(NutsDescriptor runtimeBootDescriptor) {
         this.runtimeBootDescriptor = runtimeBootDescriptor;
         return this;
     }
 
-    public NutsBootDescriptor[] getExtensionBootDescriptors() {
+    public List<NutsDescriptor> getExtensionBootDescriptors() {
         return extensionBootDescriptors;
     }
 
-    public NutsBootConfig setExtensionBootDescriptors(NutsBootDescriptor[] extensionBootDescriptors) {
+    public NutsBootConfig setExtensionBootDescriptors(List<NutsDescriptor> extensionBootDescriptors) {
         this.extensionBootDescriptors = extensionBootDescriptors;
         return this;
     }

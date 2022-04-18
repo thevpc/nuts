@@ -25,6 +25,8 @@
  */
 package net.thevpc.nuts;
 
+import java.util.List;
+
 /**
  * @author thevpc
  * @app.category Format
@@ -34,5 +36,5 @@ public interface NutsQuestionFormat<T> {
 
     String format(Object value, NutsQuestion<T> question);
 
-    Object[] getDefaultValues(Class type, NutsQuestion<T> question);
+    List<Object> getDefaultValues(Class type, NutsQuestion<T> question);
 }

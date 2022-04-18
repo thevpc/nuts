@@ -30,6 +30,7 @@ import java.io.File;
 import java.io.InputStream;
 import java.net.URL;
 import java.nio.file.Path;
+import java.util.List;
 
 /**
  * Nuts deploy command
@@ -221,7 +222,7 @@ public interface NutsDeployCommand extends NutsWorkspaceCommand {
      *
      * @return return ids to deploy from source repository
      */
-    NutsId[] getIds();
+    List<NutsId> getIds();
 
     /**
      * add id to deploy from source repository
@@ -320,6 +321,6 @@ public interface NutsDeployCommand extends NutsWorkspaceCommand {
      *
      * @return deploy result
      */
-    NutsId[] getResult();
+    List<NutsId> getResult();
 
 }

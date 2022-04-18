@@ -93,38 +93,8 @@ public enum NutsContentType implements NutsEnum {
         this.id = name().toLowerCase().replace('_', '-');
     }
 
-    public static NutsContentType parseLenient(String value) {
-        return parseLenient(value, null);
-    }
-
-    public static NutsContentType parseLenient(String value, NutsContentType emptyOrErrorValue) {
-        return parseLenient(value, emptyOrErrorValue, emptyOrErrorValue);
-    }
-
-    public static NutsContentType parseLenient(String value, NutsContentType emptyValue, NutsContentType errorValue) {
-        if (value == null) {
-            value = "";
-        } else {
-            value = value.toUpperCase().trim().replace('-', '_');
-        }
-        if (value.isEmpty()) {
-            return emptyValue;
-        }
-        try {
-            return NutsContentType.valueOf(value.toUpperCase());
-        } catch (Exception notFound) {
-            return errorValue;
-        }
-    }
-
-    public static NutsContentType parse(String value, NutsSession session) {
-        return parse(value, null, session);
-    }
-
-    public static NutsContentType parse(String value, NutsContentType emptyValue, NutsSession session) {
-        NutsContentType v = parseLenient(value, emptyValue, null);
-        NutsApiUtils.checkNonNullEnum(v, value, NutsContentType.class, session);
-        return v;
+    public static NutsOptional<NutsContentType> parse(String value) {
+        return NutsApiUtils.parse(value, NutsContentType.class);
     }
 
     /**

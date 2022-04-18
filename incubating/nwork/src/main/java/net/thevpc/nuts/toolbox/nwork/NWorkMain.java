@@ -15,7 +15,6 @@ public class NWorkMain implements NutsApplication {
 
     @Override
     public void run(NutsApplicationContext appContext) {
-        String[] args = appContext.getArguments();
         this.service = new WorkspaceService(appContext);
         NutsCommandLine cmdLine = appContext.getCommandLine();
         NutsArgument a;

@@ -660,8 +660,8 @@ public class DefaultNutsRepositoryConfigModel implements NutsRepositoryConfigMod
         return y;
     }
 
-    public NutsRepository[] getMirrors(NutsSession session) {
-        return repositoryRegistryHelper.getRepositories();
+    public List<NutsRepository> getMirrors(NutsSession session) {
+        return Arrays.asList(repositoryRegistryHelper.getRepositories());
     }
 
     public NutsRepository addMirror(NutsAddRepositoryOptions options, NutsSession session) {

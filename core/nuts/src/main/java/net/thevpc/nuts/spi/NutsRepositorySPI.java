@@ -27,6 +27,7 @@ package net.thevpc.nuts.spi;
 
 import net.thevpc.nuts.*;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -162,7 +163,7 @@ public interface NutsRepositorySPI {
      *
      * @return Repository Listeners
      */
-    NutsRepositoryListener[] getRepositoryListeners();
+    List<NutsRepositoryListener> getRepositoryListeners();
 
     /**
      * return mutable instance of user properties
@@ -188,7 +189,7 @@ public interface NutsRepositorySPI {
      *
      * @return array of registered user properties listeners
      */
-    NutsMapListener<String, Object>[] getUserPropertyListeners();
+    List<NutsMapListener<String, Object>> getUserPropertyListeners();
 
     /**
      * enabled if config is enabled and runtime is enabled

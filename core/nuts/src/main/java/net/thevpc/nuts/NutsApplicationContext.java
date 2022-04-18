@@ -29,6 +29,8 @@ package net.thevpc.nuts;
 
 import net.thevpc.nuts.spi.NutsApplicationContexts;
 
+import java.util.List;
+
 /**
  * Application context that store all relevant information about application
  * execution mode, workspace, etc.
@@ -69,7 +71,7 @@ public interface NutsApplicationContext extends NutsCommandLineConfigurable {
      *
      * @return application execution mode extra arguments
      */
-    String[] getModeArguments();
+    List<String> getModeArguments();
 
     /**
      * Auto complete instance associated with the
@@ -241,7 +243,7 @@ public interface NutsApplicationContext extends NutsCommandLineConfigurable {
      *
      * @return application arguments
      */
-    String[] getArguments();
+    List<String> getArguments();
 
     /**
      * application start time in milli-seconds

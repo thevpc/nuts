@@ -26,7 +26,7 @@ public interface NutsStreamMetadata {
 
     long getContentLength();
 
-    NutsString getFormattedPath();
+    NutsString getFormattedPath(NutsSession session);
 
     String getContentType();
 

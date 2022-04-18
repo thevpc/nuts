@@ -48,74 +48,30 @@ public enum NutsPlatformFamily implements NutsEnum {
         this.id = name().toLowerCase();//.replace('_', '-');
     }
 
+    public static NutsOptional<NutsPlatformFamily> parse(String value) {
+        return NutsApiUtils.parse(value, NutsPlatformFamily.class,s->{
+            switch (s.toUpperCase()) {
+                case "java":
+                case "jre":
+                case "jdk":
+                    return NutsOptional.of(JAVA);
 
-    /**
-     * parse string and return null if parse fails
-     *
-     * @param value value to parse
-     * @return parsed instance or null
-     */
-    public static NutsPlatformFamily parseLenient(String value) {
-        return parseLenient(value, null);
-    }
+                case ".net":
+                case "dotnet":
+                    return NutsOptional.of(DOTNET);
 
-    /**
-     * parse string and return {@code emptyOrErrorValue} if parse fails
-     *
-     * @param value             value to parse
-     * @param emptyOrErrorValue emptyOrErrorValue
-     * @return parsed instance or {@code emptyOrErrorValue}
-     */
-    public static NutsPlatformFamily parseLenient(String value, NutsPlatformFamily emptyOrErrorValue) {
-        return parseLenient(value, emptyOrErrorValue, emptyOrErrorValue);
-    }
+                case "python":
+                    return NutsOptional.of(PYTHON);
 
-    /**
-     * parse string and return {@code emptyValue} when null or {@code errorValue} if parse fails
-     *
-     * @param value      value to parse
-     * @param emptyValue value when the value is null or empty
-     * @param errorValue value when the value cannot be parsed
-     * @return parsed value
-     */
-    public static NutsPlatformFamily parseLenient(String value, NutsPlatformFamily emptyValue, NutsPlatformFamily errorValue) {
-        value = value == null ? "" : value.toLowerCase().replace('-', '_').trim();
-        switch (value) {
-            case "java":
-            case "jre":
-            case "jdk":
-                return JAVA;
+                case "js":
+                case "javascript":
+                    return NutsOptional.of(JAVASCRIPT);
 
-            case ".net":
-            case "dotnet":
-                return DOTNET;
-
-            case "python":
-                return PYTHON;
-
-            case "js":
-            case "javascript":
-                return JAVASCRIPT;
-
-            case "unknown":
-                return UNKNOWN;
-            case "": {
-                return emptyValue;
+                case "unknown":
+                    return NutsOptional.of(UNKNOWN);
             }
-            default: {
-                return errorValue;
-            }
-        }
-    }
-
-    public static NutsPlatformFamily parse(String value, NutsSession session) {
-        return parse(value, null, session);
-    }
-
-    public static NutsPlatformFamily parse(String value, NutsPlatformFamily emptyValue, NutsSession session) {
-        NutsPlatformFamily v = parseLenient(value, emptyValue, null);
-        NutsApiUtils.checkNonNullEnum(v, value, NutsPlatformFamily.class, session);
-        return v;
+            return null;
+        });
     }
 
     /**

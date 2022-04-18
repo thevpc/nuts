@@ -82,60 +82,10 @@ public enum NutsSpeedQualifier implements NutsEnum {
         this.id = name().toLowerCase().replace('_', '-');
     }
 
-    /**
-     * parse string and return null if parse fails
-     *
-     * @param value value to parse
-     * @return parsed instance or null
-     */
-    public static NutsSpeedQualifier parseLenient(String value) {
-        return parseLenient(value, null);
+    public static NutsOptional<NutsSpeedQualifier> parse(String value) {
+        return NutsApiUtils.parse(value, NutsSpeedQualifier.class);
     }
 
-    /**
-     * parse string and return {@code emptyOrErrorValue} if parse fails
-     *
-     * @param emptyOrErrorValue emptyOrErrorValue
-     * @param value             value to parse
-     * @return parsed instance or {@code emptyOrErrorValue}
-     */
-    public static NutsSpeedQualifier parseLenient(String value, NutsSpeedQualifier emptyOrErrorValue) {
-        return parseLenient(value, emptyOrErrorValue, emptyOrErrorValue);
-    }
-
-    /**
-     * parse string and return {@code emptyValue} when null or {@code errorValue} if parse fails
-     *
-     * @param value      value to parse
-     * @param emptyValue value when the value is null or empty
-     * @param errorValue value when the value cannot be parsed
-     * @return parsed value
-     */
-    public static NutsSpeedQualifier parseLenient(String value, NutsSpeedQualifier emptyValue, NutsSpeedQualifier errorValue) {
-        if (value == null) {
-            value = "";
-        } else {
-            value = value.toUpperCase().trim().replace('-', '_');
-        }
-        if (value.isEmpty()) {
-            return emptyValue;
-        }
-        try {
-            return NutsSpeedQualifier.valueOf(value.toUpperCase());
-        } catch (Exception notFound) {
-            return errorValue;
-        }
-    }
-
-    public static NutsSpeedQualifier parse(String value, NutsSession session) {
-        return parse(value, null, session);
-    }
-
-    public static NutsSpeedQualifier parse(String value, NutsSpeedQualifier emptyValue, NutsSession session) {
-        NutsSpeedQualifier v = parseLenient(value, emptyValue, null);
-        NutsApiUtils.checkNonNullEnum(v, value, NutsSpeedQualifier.class, session);
-        return v;
-    }
 
     /**
      * lower cased identifier.

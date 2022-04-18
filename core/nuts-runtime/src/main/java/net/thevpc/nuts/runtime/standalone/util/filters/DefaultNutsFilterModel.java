@@ -222,7 +222,7 @@ public class DefaultNutsFilterModel {
             for (NutsFilter other : others) {
                 if (other != null) {
                     if (other.getFilterOp() == NutsFilterOp.OR) {
-                        ok.addAll(Arrays.asList(other.getSubFilters()));
+                        ok.addAll(other.getSubFilters());
                     } else {
                         ok.addAll(Arrays.asList(other));
                     }
@@ -238,7 +238,7 @@ public class DefaultNutsFilterModel {
             for (NutsFilter other : others) {
                 if (other != null) {
                     if (other.getFilterOp() == NutsFilterOp.AND) {
-                        ok.addAll(Arrays.asList(other.getSubFilters()));
+                        ok.addAll(other.getSubFilters());
                     } else {
                         ok.addAll(Arrays.asList(other));
                     }
@@ -254,7 +254,7 @@ public class DefaultNutsFilterModel {
             for (NutsFilter other : others) {
                 if (other != null) {
                     if (other.getFilterOp() == NutsFilterOp.NOT) {
-                        ok.addAll(Arrays.asList(other.getSubFilters()));
+                        ok.addAll(other.getSubFilters());
                     } else {
                         ok.addAll(Arrays.asList(other));
                     }

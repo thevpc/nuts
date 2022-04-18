@@ -28,6 +28,7 @@ package net.thevpc.nuts;
 import net.thevpc.nuts.boot.NutsApiUtils;
 
 import java.io.Serializable;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -39,12 +40,8 @@ import java.util.Map;
  */
 public interface NutsDependency extends Serializable, NutsFormattable, NutsBlankable {
 
-    static NutsDependency of(String value, NutsSession session) {
-        NutsApiUtils.checkSession(session);
-        return
-                NutsApiUtils
-                        .createSessionCachedType(NutsDependencyParser.class, session, () -> NutsDependencyParser.of(session))
-                        .parse(value);
+    static NutsOptional<NutsDependency> of(String value) {
+        return NutsId.of(value).map(NutsId::toDependency);
     }
 
     /**
@@ -152,7 +149,7 @@ public interface NutsDependency extends Serializable, NutsFormattable, NutsBlank
      *
      * @return dependency exclusions
      */
-    NutsId[] getExclusions();
+    List<NutsId> getExclusions();
 
     /**
      * properties in the URL query form
@@ -171,5 +168,5 @@ public interface NutsDependency extends Serializable, NutsFormattable, NutsBlank
     Map<String, String> getProperties();
 
     @Override
-    NutsDependencyFormat formatter();
+    NutsDependencyFormat formatter(NutsSession session);
 }

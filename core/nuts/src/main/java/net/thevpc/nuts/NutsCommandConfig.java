@@ -26,7 +26,10 @@
  */
 package net.thevpc.nuts;
 
+import net.thevpc.nuts.boot.PrivateNutsUtilCollections;
+
 import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -57,17 +60,17 @@ public class NutsCommandConfig extends NutsConfigItem {
     /**
      * alias command arguments
      */
-    private String[] command;
+    private List<String> command;
 
     /**
      * alias command execution options
      */
-    private String[] executorOptions;
+    private List<String> executorOptions;
 
     /**
      * alias help command (command to display help)
      */
-    private String[] helpCommand;
+    private List<String> helpCommand;
 
     /**
      * alias help text (meaningful if helpCommand is not defined)
@@ -119,7 +122,7 @@ public class NutsCommandConfig extends NutsConfigItem {
      *
      * @return alias command arguments
      */
-    public String[] getCommand() {
+    public List<String> getCommand() {
         return command;
     }
 
@@ -130,7 +133,11 @@ public class NutsCommandConfig extends NutsConfigItem {
      * @return {@code this} instance
      */
     public NutsCommandConfig setCommand(String... value) {
-        this.command = value;
+        this.command = PrivateNutsUtilCollections.nonNullList(Arrays.asList(value));
+        return this;
+    }
+    public NutsCommandConfig setCommand(List<String> value) {
+        this.command = PrivateNutsUtilCollections.nonNullList(value);
         return this;
     }
 
@@ -159,7 +166,7 @@ public class NutsCommandConfig extends NutsConfigItem {
      *
      * @return alias command execution options
      */
-    public String[] getExecutorOptions() {
+    public List<String> getExecutorOptions() {
         return executorOptions;
     }
 
@@ -169,7 +176,7 @@ public class NutsCommandConfig extends NutsConfigItem {
      * @param value new value
      * @return {@code this} instance
      */
-    public NutsCommandConfig setExecutorOptions(String[] value) {
+    public NutsCommandConfig setExecutorOptions(List<String> value) {
         this.executorOptions = value;
         return this;
     }
@@ -179,7 +186,7 @@ public class NutsCommandConfig extends NutsConfigItem {
      *
      * @return alias help command (command to display help)
      */
-    public String[] getHelpCommand() {
+    public List<String> getHelpCommand() {
         return helpCommand;
     }
 
@@ -190,7 +197,11 @@ public class NutsCommandConfig extends NutsConfigItem {
      * @return {@code this} instance
      */
     public NutsCommandConfig setHelpCommand(String... value) {
-        this.helpCommand = value;
+        this.helpCommand = PrivateNutsUtilCollections.nonNullList(Arrays.asList(value));
+        return this;
+    }
+    public NutsCommandConfig setHelpCommand(List<String> value) {
+        this.helpCommand = PrivateNutsUtilCollections.nonNullList(value);
         return this;
     }
 
@@ -216,10 +227,7 @@ public class NutsCommandConfig extends NutsConfigItem {
 
     @Override
     public int hashCode() {
-        int result = Objects.hash(owner, name, factoryId, helpText);
-        result = 31 * result + Arrays.hashCode(command);
-        result = 31 * result + Arrays.hashCode(executorOptions);
-        result = 31 * result + Arrays.hashCode(helpCommand);
+        int result = Objects.hash(owner, name, factoryId, helpText,command,executorOptions,helpCommand);
         return result;
     }
 
@@ -231,9 +239,9 @@ public class NutsCommandConfig extends NutsConfigItem {
         return Objects.equals(owner, that.owner) &&
                 Objects.equals(name, that.name) &&
                 Objects.equals(factoryId, that.factoryId) &&
-                Arrays.equals(command, that.command) &&
-                Arrays.equals(executorOptions, that.executorOptions) &&
-                Arrays.equals(helpCommand, that.helpCommand) &&
+                Objects.equals(command, that.command) &&
+                Objects.equals(executorOptions, that.executorOptions) &&
+                Objects.equals(helpCommand, that.helpCommand) &&
                 Objects.equals(helpText, that.helpText);
     }
 
@@ -243,9 +251,9 @@ public class NutsCommandConfig extends NutsConfigItem {
                 "owner=" + owner +
                 ", name='" + name + '\'' +
                 ", factoryId='" + factoryId + '\'' +
-                ", command=" + Arrays.toString(command) +
-                ", executorOptions=" + Arrays.toString(executorOptions) +
-                ", helpCommand=" + Arrays.toString(helpCommand) +
+                ", command=" + command +
+                ", executorOptions=" + executorOptions +
+                ", helpCommand=" + helpCommand +
                 ", helpText='" + helpText + '\'' +
                 '}';
     }

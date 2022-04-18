@@ -519,7 +519,7 @@ final class PrivateNutsCommandLine  {
             }
         }
         for (String nameSeq : names) {
-            String[] nameSeqArray = PrivateNutsUtils.split(nameSeq, " ").toArray(new String[0]);
+            String[] nameSeqArray = NutsUtilStrings.split(nameSeq, " ").toArray(new String[0]);
             if (!isPrefixed(nameSeqArray)) {
                 continue;
             }

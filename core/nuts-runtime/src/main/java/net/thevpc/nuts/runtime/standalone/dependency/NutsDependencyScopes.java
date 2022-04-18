@@ -39,19 +39,19 @@ import java.util.logging.Logger;
 public class NutsDependencyScopes {
 
     public static boolean isDefaultScope(String s1) {
-        return NutsDependencyScope.parseLenient(s1, NutsDependencyScope.API, NutsDependencyScope.API) == NutsDependencyScope.API;
+        return NutsDependencyScope.parse(s1).orElse(NutsDependencyScope.API) == NutsDependencyScope.API;
     }
 
     public static boolean isCompileScope(String scope) {
         if (scope == null) {
             return true;
         }
-        NutsDependencyScope r = NutsDependencyScope.parseLenient(scope, NutsDependencyScope.API, NutsDependencyScope.API);
+        NutsDependencyScope r = NutsDependencyScope.parse(scope).orElse(NutsDependencyScope.API);
         return r != null && r.isCompile();
     }
 
     public static int getScopesPriority(String s1) {
-        NutsDependencyScope r = NutsDependencyScope.parseLenient(s1, NutsDependencyScope.API, NutsDependencyScope.API);
+        NutsDependencyScope r = NutsDependencyScope.parse(s1).orElse(NutsDependencyScope.API);
         if (r == null) {
             return -1;
         }

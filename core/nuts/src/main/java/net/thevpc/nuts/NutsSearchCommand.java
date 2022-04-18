@@ -26,6 +26,7 @@ package net.thevpc.nuts;
 import java.nio.file.Path;
 import java.time.Instant;
 import java.util.Collection;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -234,7 +235,7 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
      *
      * @return javascript filters
      */
-    String[] getScripts();
+    List<String> getScripts();
 
     /**
      * reset searched for archs
@@ -260,6 +261,8 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
      * @return {@code this} instance
      */
     NutsSearchCommand addLockedIds(NutsId... values);
+
+    NutsSearchCommand addLockedIds(List<NutsId> values);
 
     /**
      * reset locked ids
@@ -381,7 +384,7 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
      *
      * @return locked ids
      */
-    NutsId[] getLockedIds();
+    List<NutsId> getLockedIds();
 
     /**
      * define repository filter.
@@ -427,7 +430,7 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
      *
      * @return ids to search for
      */
-    NutsId[] getIds();
+    List<NutsId> getIds();
 
     /**
      * add ids to search.
@@ -552,9 +555,9 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
      */
     NutsSearchCommand setIdFilter(String filter);
 
-    String[] getArch();
+    List<String> getArch();
 
-    String[] getPackaging();
+    List<String> getPackaging();
 
     /**
      * when true, NutsNotFoundException instances are ignored

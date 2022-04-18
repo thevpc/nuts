@@ -26,6 +26,7 @@
 package net.thevpc.nuts;
 
 import java.util.Collection;
+import java.util.List;
 
 /**
  * Command class for adding users to workspaces and repositories. All Command
@@ -92,7 +93,7 @@ public interface NutsAddUserCommand extends NutsWorkspaceCommand {
      *
      * @return group list
      */
-    String[] getGroups();
+    List<String> getGroups();
 
     /**
      * return username
@@ -142,7 +143,7 @@ public interface NutsAddUserCommand extends NutsWorkspaceCommand {
      *
      * @return permissions
      */
-    String[] getPermissions();
+    List<String> getPermissions();
 
     /**
      * remove group

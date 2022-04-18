@@ -139,94 +139,67 @@ public enum NutsDependencyScopePattern implements NutsEnum {
         this.id = name().toLowerCase().replace('_', '-');
     }
 
-    public static NutsDependencyScopePattern parseLenient(String value) {
-        return parseLenient(value, null);
-    }
-
-    public static NutsDependencyScopePattern parseLenient(String value, NutsDependencyScopePattern emptyOrErrorValue) {
-        return parseLenient(value, emptyOrErrorValue, emptyOrErrorValue);
-    }
-
-    public static NutsDependencyScopePattern parseLenient(String value, NutsDependencyScopePattern emptyValue, NutsDependencyScopePattern errorValue) {
-        if (value == null) {
-            value = "";
-        } else {
-            value = value.toUpperCase().trim().replace('-', '_');
-        }
-        if (value.isEmpty()) {
-            return emptyValue;
-        }
-        switch (value.toLowerCase()) {
-            case "compileonly": //gradle
-            case "compile_only": //gradle
-            case "provided": //gradle
-                return NutsDependencyScopePattern.PROVIDED;
+    public static NutsOptional<NutsDependencyScopePattern> parse(String value) {
+        return NutsApiUtils.parse(value, NutsDependencyScopePattern.class,s->{
+            switch (s.toLowerCase()) {
+                case "compileonly": //gradle
+                case "compile_only": //gradle
+                case "provided": //gradle
+                    return NutsOptional.of(NutsDependencyScopePattern.PROVIDED);
 //            case "test"://maven
-            case "testcompile"://gradle
+                case "testcompile"://gradle
 //            case "test_compile":
-            case "testapi":
-            case "test_api":
-                return NutsDependencyScopePattern.TEST_API;
-            case "testruntime":
-            case "test_runtime":
-                return NutsDependencyScopePattern.TEST_RUNTIME;
-            case "testsystem":
-            case "test_system":
-                return NutsDependencyScopePattern.TEST_SYSTEM;
-            case "testprovided":
-            case "test_provided":
-            case "testcompileonly":
-            case "test_compile_only":
-                return NutsDependencyScopePattern.TEST_PROVIDED;
-            case "api":
+                case "testapi":
+                case "test_api":
+                    return NutsOptional.of(NutsDependencyScopePattern.TEST_API);
+                case "testruntime":
+                case "test_runtime":
+                    return NutsOptional.of(NutsDependencyScopePattern.TEST_RUNTIME);
+                case "testsystem":
+                case "test_system":
+                    return NutsOptional.of(NutsDependencyScopePattern.TEST_SYSTEM);
+                case "testprovided":
+                case "test_provided":
+                case "testcompileonly":
+                case "test_compile_only":
+                    return NutsOptional.of(NutsDependencyScopePattern.TEST_PROVIDED);
+                case "api":
 //            case "compile":
-                return NutsDependencyScopePattern.API;
-            case "impl":
-            case "implementation":
-                return NutsDependencyScopePattern.IMPLEMENTATION;
-            case "import":
-                return NutsDependencyScopePattern.IMPORT;
-            case "runtime":
-                return NutsDependencyScopePattern.RUNTIME;
-            case "test_impl":
-            case "test_implementation":
-                return NutsDependencyScopePattern.TEST_IMPLEMENTATION;
-            case "test_other":
-                return NutsDependencyScopePattern.TEST_OTHER;
-            case "other":
-                return NutsDependencyScopePattern.OTHER;
-            case "system":
-                return NutsDependencyScopePattern.SYSTEM;
+                    return NutsOptional.of(NutsDependencyScopePattern.API);
+                case "impl":
+                case "implementation":
+                    return NutsOptional.of(NutsDependencyScopePattern.IMPLEMENTATION);
+                case "import":
+                    return NutsOptional.of(NutsDependencyScopePattern.IMPORT);
+                case "runtime":
+                    return NutsOptional.of(NutsDependencyScopePattern.RUNTIME);
+                case "test_impl":
+                case "test_implementation":
+                    return NutsOptional.of(NutsDependencyScopePattern.TEST_IMPLEMENTATION);
+                case "test_other":
+                    return NutsOptional.of(NutsDependencyScopePattern.TEST_OTHER);
+                case "other":
+                    return NutsOptional.of(NutsDependencyScopePattern.OTHER);
+                case "system":
+                    return NutsOptional.of(NutsDependencyScopePattern.SYSTEM);
 
-            case "test_compile":
-                return NutsDependencyScopePattern.TEST_COMPILE;
-            case "test":
-                return NutsDependencyScopePattern.TEST;
-            case "compile":
-                return NutsDependencyScopePattern.COMPILE;
-            case "run":
-                return NutsDependencyScopePattern.RUN;
-            case "run_test":
-                return NutsDependencyScopePattern.RUN_TEST;
-            case "all":
-                return NutsDependencyScopePattern.ALL;
-        }
-        try {
-            return NutsDependencyScopePattern.valueOf(value.toUpperCase());
-        } catch (Exception notFound) {
-            return errorValue;
-        }
+                case "test_compile":
+                    return NutsOptional.of(NutsDependencyScopePattern.TEST_COMPILE);
+                case "test":
+                    return NutsOptional.of(NutsDependencyScopePattern.TEST);
+                case "compile":
+                    return NutsOptional.of(NutsDependencyScopePattern.COMPILE);
+                case "run":
+                    return NutsOptional.of(NutsDependencyScopePattern.RUN);
+                case "run_test":
+                    return NutsOptional.of(NutsDependencyScopePattern.RUN_TEST);
+                case "all":
+                    return NutsOptional.of(NutsDependencyScopePattern.ALL);
+            }
+            return null;
+        });
     }
 
-    public static NutsDependencyScopePattern parse(String value, NutsSession session) {
-        return parse(value, null, session);
-    }
-
-    public static NutsDependencyScopePattern parse(String value, NutsDependencyScopePattern emptyValue, NutsSession session) {
-        NutsDependencyScopePattern v = parseLenient(value, emptyValue, null);
-        NutsApiUtils.checkNonNullEnum(v, value, NutsDependencyScopePattern.class, session);
-        return v;
-    }
 
     /**
      * lower cased identifier.

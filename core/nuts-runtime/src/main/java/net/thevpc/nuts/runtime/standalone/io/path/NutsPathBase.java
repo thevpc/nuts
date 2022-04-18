@@ -172,7 +172,7 @@ public abstract class NutsPathBase implements NutsPath {
     }
 
     @Override
-    public NutsFormat formatter() {
+    public NutsFormat formatter(NutsSession session) {
         return new PathFormat(this)
                 .setSession(getSession())
                 ;

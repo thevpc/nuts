@@ -25,6 +25,8 @@
  */
 package net.thevpc.nuts;
 
+import java.util.List;
+
 /**
  * Question is helpful object that permits user interaction by reading a typed object from
  * standard input or an equivalent input system.
@@ -151,9 +153,9 @@ public interface NutsQuestion<T> extends NutsCommandLineConfigurable {
 
     NutsQuestion<T> setCancelMessage(NutsMessage message);
 
-    Object[] getAcceptedValues();
+    List<Object> getAcceptedValues();
 
-    NutsQuestion<T> setAcceptedValues(Object[] acceptedValues);
+    NutsQuestion<T> setAcceptedValues(List<Object> acceptedValues);
 
     T getDefaultValue();
 

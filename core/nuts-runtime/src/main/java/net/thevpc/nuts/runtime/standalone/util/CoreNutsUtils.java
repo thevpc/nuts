@@ -156,6 +156,22 @@ public class CoreNutsUtils {
                 && CoreStringUtils.containsVars(id.getVersion().getValue()));
     }
 
+    public static List<String> applyStringPropertiesList(List<String> child, Function<String, String> properties) {
+        return new ArrayList<>(
+                Arrays.asList(
+                        applyStringProperties(child.toArray(new String[0]),properties)
+                )
+        );
+    }
+
+    public static List<String> applyStringProperties(List<String> child, Function<String, String> properties) {
+        return new ArrayList<>(
+                Arrays.asList(
+                        applyStringProperties(child.toArray(new String[0]),properties)
+                )
+        );
+    }
+
     public static String[] applyStringProperties(String[] child, Function<String, String> properties) {
         String[] vals = new String[child.length];
         for (int i = 0; i < vals.length; i++) {
@@ -172,17 +188,17 @@ public class CoreNutsUtils {
         return m2;
     }
 
-    public static NutsVersion applyStringProperties(NutsVersion child, Function<String, String> properties, NutsSession ws) {
+    public static NutsVersion applyStringProperties(NutsVersion child, Function<String, String> properties) {
         if (child == null) {
             return child;
         }
         String s = child.getValue();
         if (NutsBlankable.isBlank(s)) {
-            return NutsVersion.of("", ws);
+            return NutsVersion.BLANK;
         }
         String s2 = applyStringProperties(s, properties);
         if (!NutsUtilStrings.trim(s2).equals(s)) {
-            return NutsVersion.of(s2, ws);
+            return NutsVersion.of(s2).orElse(NutsVersion.BLANK);
         }
         return child;
     }
@@ -210,7 +226,7 @@ public class CoreNutsUtils {
         return child;
     }
 
-    public static NutsId applyNutsIdInheritance(NutsId child, NutsId parent, NutsSession ws) {
+    public static NutsId applyNutsIdInheritance(NutsId child, NutsId parent) {
         if (parent != null) {
             boolean modified = false;
             String repository = child.getRepository();
@@ -240,7 +256,7 @@ public class CoreNutsUtils {
                 props.putAll(parentFaceMap);
             }
             if (modified) {
-                return NutsIdBuilder.of(ws).setRepository(repository)
+                return new DefaultNutsIdBuilder().setRepository(repository)
                         .setGroupId(group)
                         .setArtifactId(name)
                         .setVersion(version)
@@ -292,9 +308,9 @@ public class CoreNutsUtils {
             x.put("repository-uuid", def.getRepositoryUuid());
         }
         if (def.getDescriptor() != null) {
-            x.put("descriptor", def.getDescriptor().formatter().setSession(session).format());
+            x.put("descriptor", def.getDescriptor().formatter(session).format());
             x.put("effective-descriptor", NutsDescriptorUtils.getEffectiveDescriptor(def,session)
-                    .formatter().setSession(session).format());
+                    .formatter(session).format());
         }
         return x;
     }
@@ -504,7 +520,7 @@ public class CoreNutsUtils {
                     return NutsIdType.RUNTIME;
                 } else {
                     for (NutsClassLoaderNode n : session.boot().getBootExtensionClassLoaderNode()) {
-                        if (NutsId.of(n.getId(), session).equalsShortId(depId)) {
+                        if (NutsId.of(n.getId()).orElse(NutsId.BLANK).equalsShortId(depId)) {
                             return NutsIdType.EXTENSION;
                         }
                     }
@@ -516,7 +532,7 @@ public class CoreNutsUtils {
 
     public static List<NutsId> resolveNutsApiIds(NutsId id, NutsSession session) {
         List<NutsDependency> deps = session.fetch().setId(id).setDependencies(true).getResultDefinition().getDependencies().transitive().toList();
-        return resolveNutsApiIds(deps.toArray(new NutsDependency[0]), session);
+        return resolveNutsApiIds2(deps, session);
     }
 
     public static List<NutsId> resolveNutsApiIds(NutsDefinition def, NutsSession session) {
@@ -524,18 +540,18 @@ public class CoreNutsUtils {
     }
 
     public static List<NutsId> resolveNutsApiIds(NutsDependencies deps, NutsSession session) {
-        return resolveNutsApiIds(deps.transitiveWithSource().toArray(NutsDependency[]::new), session);
+        return resolveNutsApiIds(deps, session);
     }
 
-    public static List<NutsId> resolveNutsApiIds(NutsDependency[] deps, NutsSession session) {
-        return Arrays.stream(deps)
+    public static List<NutsId> resolveNutsApiIds2(List<NutsDependency> deps, NutsSession session) {
+        return deps.stream()
                 .map(NutsDependency::toId)
                 .filter(x -> x.getShortName().equals("net.thevpc.nuts:nuts"))
                 .distinct().collect(Collectors.toList());
     }
 
-    public static List<NutsId> resolveNutsApiIds(NutsId[] deps, NutsSession session) {
-        return Arrays.stream(deps)
+    public static List<NutsId> resolveNutsApiIds(List<NutsId> deps, NutsSession session) {
+        return deps.stream()
                 .filter(x -> x.getShortName().equals("net.thevpc.nuts:nuts"))
                 .distinct().collect(Collectors.toList());
     }

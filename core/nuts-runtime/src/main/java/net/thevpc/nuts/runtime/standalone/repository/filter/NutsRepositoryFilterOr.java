@@ -61,8 +61,8 @@ public class NutsRepositoryFilterOr extends AbstractRepositoryFilter{
         return Arrays.hashCode(all);
     }
 
-    public NutsFilter[] getSubFilters() {
-        return all;
+    public List<NutsFilter> getSubFilters() {
+        return Arrays.asList(all);
     }
 
 }

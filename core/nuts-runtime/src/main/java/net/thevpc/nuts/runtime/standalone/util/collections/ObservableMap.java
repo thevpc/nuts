@@ -39,6 +39,6 @@ public interface ObservableMap<K, V> extends Map<K, V> {
 
     void removeListener(NutsMapListener<K, V> listener);
 
-    NutsMapListener<K, V>[] getListeners();
+    List<NutsMapListener<K, V>> getListeners();
 
 }

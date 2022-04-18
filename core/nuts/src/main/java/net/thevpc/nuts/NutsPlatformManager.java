@@ -26,6 +26,7 @@
  */
 package net.thevpc.nuts;
 
+import java.util.List;
 import java.util.function.Predicate;
 
 /**
@@ -49,9 +50,9 @@ public interface NutsPlatformManager {
     NutsPlatformLocation findPlatformByVersion(NutsPlatformFamily platformType, NutsVersionFilter requestedVersion);
 
 
-    NutsPlatformLocation[] searchSystemPlatforms(NutsPlatformFamily platformType);
+    NutsStream<NutsPlatformLocation> searchSystemPlatforms(NutsPlatformFamily platformType);
 
-    NutsPlatformLocation[] searchSystemPlatforms(NutsPlatformFamily platformType, String path);
+    NutsStream<NutsPlatformLocation> searchSystemPlatforms(NutsPlatformFamily platformType, String path);
 
     /**
      * verify if the path is a valid platform path and return null if not
@@ -65,11 +66,11 @@ public interface NutsPlatformManager {
 
     NutsPlatformLocation findPlatform(NutsPlatformFamily type, Predicate<NutsPlatformLocation> filter);
 
-    NutsPlatformLocation[] findPlatforms(NutsPlatformFamily type, Predicate<NutsPlatformLocation> filter);
+    NutsStream<NutsPlatformLocation> findPlatforms(NutsPlatformFamily type, Predicate<NutsPlatformLocation> filter);
 
-    NutsPlatformLocation[] findPlatforms();
+    NutsStream<NutsPlatformLocation> findPlatforms();
 
-    NutsPlatformLocation[] findPlatforms(NutsPlatformFamily type);
+    NutsStream<NutsPlatformLocation> findPlatforms(NutsPlatformFamily type);
 
     NutsSession getSession();
 
