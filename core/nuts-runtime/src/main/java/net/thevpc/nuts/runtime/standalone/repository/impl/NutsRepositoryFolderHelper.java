@@ -214,7 +214,7 @@ public class NutsRepositoryFolderHelper {
                 String arch = query.get(NutsConstants.IdProperties.ARCH);
                 String dist = query.get(NutsConstants.IdProperties.OS_DIST);
                 String platform = query.get(NutsConstants.IdProperties.PLATFORM);
-                String de = query.get(NutsConstants.IdProperties.DESKTOP_ENVIRONMENT);
+                String de = query.get(NutsConstants.IdProperties.DESKTOP);
                 if (CoreFilterUtils.matchesEnv(arch, os, dist, platform, de, d.getCondition(), session)) {
                     return d;
                 }

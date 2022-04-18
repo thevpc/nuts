@@ -1,9 +1,4 @@
 TODO in API (planned for 0.8.4):
-+ Remove session dependency from NutsVersion,NutsId and NutsDescriptor
-+ Enum.parseLenient replaced by NutsOptional
-+ Add NutsDescriptor/NutsDescriptorBuilder::setLicenses
-+ Add NutsDescriptor/NutsDescriptorBuilder::setDevelopers
-+ Rename NutsConstants.IdProperties.DESKTOP_ENVIRONMENT -> NutsConstants.IdProperties.DESKTOP
 + Add NutsConstants.IdProperties.DESKTOP_ENVIRONMENT -> NutsConstants.IdProperties.PROPERTIES
 + Rename NutsRepositoryDB::getRepositoryNameByURL -> NutsRepositoryDB::getRepositoryNameByLocation
 + Rename NutsRepositoryDB::getRepositoryURLByName -> NutsRepositoryDB::getRepositoryLocationByName

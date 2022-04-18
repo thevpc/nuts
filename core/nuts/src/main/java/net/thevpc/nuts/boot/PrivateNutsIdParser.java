@@ -67,7 +67,7 @@ public class PrivateNutsIdParser {
                         sb.setOs(PrivateNutsUtilStrings.splitDefault(e.getValue()));
                         break;
                     }
-                    case NutsConstants.IdProperties.DESKTOP_ENVIRONMENT: {
+                    case NutsConstants.IdProperties.DESKTOP: {
                         sb.setDesktopEnvironment(PrivateNutsUtilStrings.splitDefault(e.getValue()));
                         break;
                     }

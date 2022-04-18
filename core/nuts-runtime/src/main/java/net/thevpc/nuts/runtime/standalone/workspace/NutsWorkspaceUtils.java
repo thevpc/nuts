@@ -121,7 +121,7 @@ public class NutsWorkspaceUtils {
                 && qm.get(NutsConstants.IdProperties.OS) == null
                 && qm.get(NutsConstants.IdProperties.OS_DIST) == null
                 && qm.get(NutsConstants.IdProperties.PLATFORM) == null
-                && qm.get(NutsConstants.IdProperties.DESKTOP_ENVIRONMENT) == null
+                && qm.get(NutsConstants.IdProperties.DESKTOP) == null
         ) {
             NutsWorkspaceEnvManager env = session.env();
             qm.put(NutsConstants.IdProperties.ARCH, env.getArchFamily().id());
@@ -133,7 +133,7 @@ public class NutsWorkspaceUtils {
                 qm.put(NutsConstants.IdProperties.PLATFORM, env.getPlatform().toString());
             }
             if (env.getDesktopEnvironment() != null) {
-                qm.put(NutsConstants.IdProperties.DESKTOP_ENVIRONMENT, env.getDesktopEnvironment().toString());
+                qm.put(NutsConstants.IdProperties.DESKTOP, env.getDesktopEnvironment().toString());
             }
             return id.builder().setProperties(qm).build();
         }

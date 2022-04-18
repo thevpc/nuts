@@ -17,6 +17,11 @@ Starred releases are most stable ones.
 - ADDED: Added new nuts LOGO
 - ADDED: Added NutsOptional a feature riche replacement of java's Optional
 - ADDED: Add NutsEnvCondition/NutsEnvConditionBuilder::setProperties/getProperties
+- Remove session dependency from NutsVersion,NutsId and NutsDescriptor
+- Enum.parseLenient replaced by NutsOptional
+- Add NutsDescriptor/NutsDescriptorBuilder::setLicenses
+- Add NutsDescriptor/NutsDescriptorBuilder::setDevelopers
++ Rename NutsConstants.IdProperties.DESKTOP_ENVIRONMENT -> NutsConstants.IdProperties.DESKTOP
 
 ## nuts 0.8.3.1 (PUBLISHED VERSION)
 - ```2022/02/01 	nuts 0.8.3.1``` released nuts-runtime-0.8.3.1.jar

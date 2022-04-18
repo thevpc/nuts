@@ -25,7 +25,6 @@ package net.thevpc.nuts.runtime.standalone.util;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.descriptor.util.NutsDescriptorUtils;
-import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.StringPlaceHolderParser;
 
 import java.io.File;
@@ -95,7 +94,7 @@ public class CoreNutsUtils {
         _QUERY_EMPTY_ENV.put(NutsConstants.IdProperties.OS, null);
         _QUERY_EMPTY_ENV.put(NutsConstants.IdProperties.OS_DIST, null);
         _QUERY_EMPTY_ENV.put(NutsConstants.IdProperties.PLATFORM, null);
-        _QUERY_EMPTY_ENV.put(NutsConstants.IdProperties.DESKTOP_ENVIRONMENT, null);
+        _QUERY_EMPTY_ENV.put(NutsConstants.IdProperties.DESKTOP, null);
     }
 
     public static String randomColorName() {

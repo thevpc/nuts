@@ -300,7 +300,7 @@ public class CoreFilterUtils {
                 faceMap == null ? null : faceMap.get(NutsConstants.IdProperties.OS),
                 faceMap == null ? null : faceMap.get(NutsConstants.IdProperties.OS_DIST),
                 faceMap == null ? null : faceMap.get(NutsConstants.IdProperties.PLATFORM),
-                faceMap == null ? null : faceMap.get(NutsConstants.IdProperties.DESKTOP_ENVIRONMENT),
+                faceMap == null ? null : faceMap.get(NutsConstants.IdProperties.DESKTOP),
                 ws);
     }
 
@@ -675,7 +675,7 @@ public class CoreFilterUtils {
         }
         s = condition.getDesktopEnvironment().stream().map(String::trim).filter(x -> !x.isEmpty()).collect(Collectors.joining(","));
         if (!NutsBlankable.isBlank(s)) {
-            m.put(NutsConstants.IdProperties.DESKTOP_ENVIRONMENT, s);
+            m.put(NutsConstants.IdProperties.DESKTOP, s);
         }
         s = condition.getProfile().stream().map(String::trim).filter(x -> !x.isEmpty()).collect(Collectors.joining(","));
         if (!NutsBlankable.isBlank(s)) {

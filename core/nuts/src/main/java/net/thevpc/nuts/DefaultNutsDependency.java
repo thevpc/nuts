@@ -271,7 +271,7 @@ public class DefaultNutsDependency implements NutsDependency {
                 p.put(NutsConstants.IdProperties.OS_DIST, String.join(",", condition.getOsDist()));
             }
             if (condition.getDesktopEnvironment().size() > 0) {
-                p.put(NutsConstants.IdProperties.DESKTOP_ENVIRONMENT, String.join(",", condition.getDesktopEnvironment()));
+                p.put(NutsConstants.IdProperties.DESKTOP, String.join(",", condition.getDesktopEnvironment()));
             }
             if (condition.getArch().size() > 0) {
                 p.put(NutsConstants.IdProperties.ARCH, String.join(",", condition.getArch()));

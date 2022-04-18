@@ -39,7 +39,7 @@ public class PrivateNutsUtilMaps {
         if (condition.getDesktopEnvironment() != null) {
             s = condition.getDesktopEnvironment().stream().map(String::trim).filter(x -> !x.isEmpty()).collect(Collectors.joining(","));
             if (!NutsBlankable.isBlank(s)) {
-                m.put(NutsConstants.IdProperties.DESKTOP_ENVIRONMENT, s);
+                m.put(NutsConstants.IdProperties.DESKTOP, s);
             }
         }
         if (condition.getProfile() != null) {

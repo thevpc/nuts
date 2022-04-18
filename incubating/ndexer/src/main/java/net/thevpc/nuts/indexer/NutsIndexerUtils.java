@@ -73,7 +73,7 @@ public class NutsIndexerUtils {
         _condPut(entity, NutsConstants.IdProperties.ARCH, String.join(",",id.getCondition().getArch()));
         _condPut(entity, NutsConstants.IdProperties.PLATFORM, String.join(",",id.getCondition().getPlatform()));
         _condPut(entity, NutsConstants.IdProperties.PROFILE, String.join(",",id.getCondition().getProfile()));
-        _condPut(entity, NutsConstants.IdProperties.DESKTOP_ENVIRONMENT, String.join(",",id.getCondition().getDesktopEnvironment()));
+        _condPut(entity, NutsConstants.IdProperties.DESKTOP, String.join(",",id.getCondition().getDesktopEnvironment()));
         _condPut(entity, NutsConstants.IdProperties.CLASSIFIER, id.getClassifier());
 //        _condPut(entity, NutsConstants.IdProperties.ALTERNATIVE, id.getAlternative());
         _condPut(entity, "stringId", id.toString());
@@ -96,7 +96,7 @@ public class NutsIndexerUtils {
         _condPut(entity, NutsConstants.IdProperties.ARCH, String.join(",",id2.getCondition().getArch()));
         _condPut(entity, NutsConstants.IdProperties.PLATFORM, String.join(",",id2.getCondition().getPlatform()));
         _condPut(entity, NutsConstants.IdProperties.PROFILE, String.join(",",id2.getCondition().getProfile()));
-        _condPut(entity, NutsConstants.IdProperties.DESKTOP_ENVIRONMENT, String.join(",",id2.getCondition().getDesktopEnvironment()));
+        _condPut(entity, NutsConstants.IdProperties.DESKTOP, String.join(",",id2.getCondition().getDesktopEnvironment()));
         _condPut(entity, NutsConstants.IdProperties.CLASSIFIER, id2.getClassifier());
 
 //        _condPut(entity, NutsConstants.IdProperties.ALTERNATIVE, dependency.getId().getAlternative());
@@ -132,7 +132,7 @@ public class NutsIndexerUtils {
                 .add(new PhraseQuery.Builder().add(new Term(NutsConstants.IdProperties.OS_DIST, osDist)).build(), BooleanClause.Occur.MUST)
                 .add(new PhraseQuery.Builder().add(new Term(NutsConstants.IdProperties.ARCH, arch)).build(), BooleanClause.Occur.MUST)
                 .add(new PhraseQuery.Builder().add(new Term(NutsConstants.IdProperties.PLATFORM, platform)).build(), BooleanClause.Occur.MUST)
-                .add(new PhraseQuery.Builder().add(new Term(NutsConstants.IdProperties.DESKTOP_ENVIRONMENT, desktopEnvironment)).build(), BooleanClause.Occur.MUST)
+                .add(new PhraseQuery.Builder().add(new Term(NutsConstants.IdProperties.DESKTOP, desktopEnvironment)).build(), BooleanClause.Occur.MUST)
                 .add(new PhraseQuery.Builder().add(new Term(NutsConstants.IdProperties.CLASSIFIER, classifier)).build(), BooleanClause.Occur.MUST)
 //                .add(new PhraseQuery.Builder().add(new Term(NutsConstants.IdProperties.ALTERNATIVE, alternative)).build(), BooleanClause.Occur.MUST)
                 .add(new BooleanClause(new MatchAllDocsQuery(), BooleanClause.Occur.SHOULD))
@@ -152,7 +152,7 @@ public class NutsIndexerUtils {
                                 .setOs(Arrays.asList(NutsUtilStrings.trim(map.get(NutsConstants.IdProperties.OS))))
                                 .setOsDist(Arrays.asList(NutsUtilStrings.trim(map.get(NutsConstants.IdProperties.OS_DIST))))
                                 .setPlatform(Arrays.asList(NutsUtilStrings.trim(map.get(NutsConstants.IdProperties.PLATFORM))))
-                                .setDesktopEnvironment(Arrays.asList(NutsUtilStrings.trim(map.get(NutsConstants.IdProperties.DESKTOP_ENVIRONMENT))))
+                                .setDesktopEnvironment(Arrays.asList(NutsUtilStrings.trim(map.get(NutsConstants.IdProperties.DESKTOP))))
                 )
                 .setClassifier(NutsUtilStrings.trim(map.get(NutsConstants.IdProperties.CLASSIFIER)))
 //                .setAlternative(trim(map.get(NutsConstants.IdProperties.ALTERNATIVE)))

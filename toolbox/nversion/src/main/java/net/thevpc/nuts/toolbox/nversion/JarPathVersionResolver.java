@@ -122,7 +122,7 @@ public class JarPathVersionResolver implements PathVersionResolver {
                                     properties.setProperty(NutsConstants.IdProperties.OS, String.join(";", d.getCondition().getOs()));
                                     properties.setProperty(NutsConstants.IdProperties.OS_DIST, String.join(";", d.getCondition().getOsDist()));
                                     properties.setProperty(NutsConstants.IdProperties.PLATFORM, String.join(";", d.getCondition().getPlatform()));
-                                    properties.setProperty(NutsConstants.IdProperties.DESKTOP_ENVIRONMENT, String.join(";", d.getCondition().getDesktopEnvironment()));
+                                    properties.setProperty(NutsConstants.IdProperties.DESKTOP, String.join(";", d.getCondition().getDesktopEnvironment()));
                                     properties.setProperty(NutsConstants.IdProperties.PROFILE, String.join(";", d.getCondition().getProfile()));
                                     properties.setProperty("nuts.version-provider", NutsConstants.Files.DESCRIPTOR_FILE_NAME);
                                     if (d.getProperties() != null) {

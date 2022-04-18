@@ -72,7 +72,7 @@ public class DefaultNutsIdBuilder implements NutsIdBuilder {
                     condition.setOsDist(PrivateNutsUtilStrings.parseAndTrimToDistinctList(value));
                     return true;
                 }
-                case NutsConstants.IdProperties.DESKTOP_ENVIRONMENT: {
+                case NutsConstants.IdProperties.DESKTOP: {
                     condition.setDesktopEnvironment(PrivateNutsUtilStrings.parseAndTrimToDistinctList(value));
                     return true;
                 }
@@ -241,7 +241,7 @@ public class DefaultNutsIdBuilder implements NutsIdBuilder {
             setProperty(NutsConstants.IdProperties.OS_DIST, null);
             setProperty(NutsConstants.IdProperties.ARCH, null);
             setProperty(NutsConstants.IdProperties.PLATFORM, null);
-            setProperty(NutsConstants.IdProperties.DESKTOP_ENVIRONMENT, null);
+            setProperty(NutsConstants.IdProperties.DESKTOP, null);
             setProperty(NutsConstants.IdProperties.PROFILE, null);
             condition.setProperties(null);
         } else {
@@ -249,7 +249,7 @@ public class DefaultNutsIdBuilder implements NutsIdBuilder {
             setProperty(NutsConstants.IdProperties.OS_DIST, PrivateNutsUtilStrings.joinAndTrimToNull(c.getOsDist()));
             setProperty(NutsConstants.IdProperties.ARCH, PrivateNutsUtilStrings.joinAndTrimToNull(c.getArch()));
             setProperty(NutsConstants.IdProperties.PLATFORM, PrivateNutsIdListParser.formatStringIdList(c.getPlatform()));
-            setProperty(NutsConstants.IdProperties.DESKTOP_ENVIRONMENT, PrivateNutsUtilStrings.joinAndTrimToNull(c.getDesktopEnvironment()));
+            setProperty(NutsConstants.IdProperties.DESKTOP, PrivateNutsUtilStrings.joinAndTrimToNull(c.getDesktopEnvironment()));
             setProperty(NutsConstants.IdProperties.PROFILE, PrivateNutsUtilStrings.joinAndTrimToNull(c.getProfile()));
             condition.setProperties(c.getProperties());
 
@@ -291,7 +291,7 @@ public class DefaultNutsIdBuilder implements NutsIdBuilder {
                 condition.setPlatform(PrivateNutsIdListParser.parseStringIdList(value));
                 break;
             }
-            case NutsConstants.IdProperties.DESKTOP_ENVIRONMENT: {
+            case NutsConstants.IdProperties.DESKTOP: {
                 condition.setDesktopEnvironment(PrivateNutsUtilStrings.parseAndTrimToDistinctList(value));
                 break;
             }

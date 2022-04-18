@@ -86,7 +86,7 @@ public class DefaultNutsDependencyBuilder implements NutsDependencyBuilder {
                     condition.setOsDist(PrivateNutsUtilStrings.parseAndTrimToDistinctList(value));
                     return true;
                 }
-                case NutsConstants.IdProperties.DESKTOP_ENVIRONMENT: {
+                case NutsConstants.IdProperties.DESKTOP: {
                     condition.setDesktopEnvironment(PrivateNutsUtilStrings.parseAndTrimToDistinctList(value));
                     return true;
                 }
