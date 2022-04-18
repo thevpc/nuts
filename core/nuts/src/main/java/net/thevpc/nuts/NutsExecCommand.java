@@ -413,9 +413,9 @@ public interface NutsExecCommand extends NutsWorkspaceCommand {
     @Override
     NutsExecCommand run();
 
-    int getSleepMillis();
+    long getSleepMillis();
 
-    NutsExecCommand setSleepMillis(int sleepMillis);
+    NutsExecCommand setSleepMillis(long sleepMillis);
 
     boolean isInheritSystemIO();
 

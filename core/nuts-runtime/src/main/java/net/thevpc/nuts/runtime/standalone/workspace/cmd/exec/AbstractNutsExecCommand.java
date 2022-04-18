@@ -36,7 +36,7 @@ public abstract class AbstractNutsExecCommand extends NutsWorkspaceCommandBase<N
     private boolean inheritSystemIO;
     private String redirectOutputFile;
     private String redirectInputFile;
-    private int sleepMillis = 1000;
+    private long sleepMillis = 1000;
 
     public AbstractNutsExecCommand(NutsWorkspace ws) {
         super(ws, "exec");
@@ -412,11 +412,11 @@ public abstract class AbstractNutsExecCommand extends NutsWorkspaceCommandBase<N
         return result;
     }
 
-    public int getSleepMillis() {
+    public long getSleepMillis() {
         return sleepMillis;
     }
 
-    public NutsExecCommand setSleepMillis(int sleepMillis) {
+    public NutsExecCommand setSleepMillis(long sleepMillis) {
         this.sleepMillis = sleepMillis;
         return this;
     }
