@@ -38,6 +38,19 @@ public abstract class NutsPathBase implements NutsPath {
     }
 
     @Override
+    public String getLongBaseName() {
+        String n = getName();
+        int i = n.lastIndexOf('.');
+        if (i < 0) {
+            return n;
+        }
+        if (i == n.length() - 1) {
+            return n;
+        }
+        return n.substring(0, i);
+    }
+
+    @Override
     public String getLastExtension() {
         String n = getName();
         int i = n.lastIndexOf('.');

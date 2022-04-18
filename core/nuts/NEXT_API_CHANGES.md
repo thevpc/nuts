@@ -7,4 +7,3 @@ TODO in API (planned for 0.8.4):
    + NutsStream::sorted must take comparator and descriptor!!
    + Add NutsElement::asBigInteger 
    + Add NutsElement::asBigDecimal 
-+ Add NutsPath::getLongBaseName // longest file name before last '.'

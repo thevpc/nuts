@@ -26,7 +26,7 @@ Starred releases are most stable ones.
 + Rename NutsRepositoryDB::getRepositoryNameByURL -> NutsRepositoryDB::getRepositoryNameByLocation
 + Rename NutsRepositoryDB::getRepositoryURLByName -> NutsRepositoryDB::getRepositoryLocationByName
 + change type to long in NutsExecCommand::getSleepMillis()/setSleepMillis(int sleepMillis);
-
++ Add NutsPath::getLongBaseName // longest file name before last '.'
 ## nuts 0.8.3.1 (PUBLISHED VERSION)
 - ```2022/02/01 	nuts 0.8.3.1``` released nuts-runtime-0.8.3.1.jar
 - UPDATED   : move support to repositories "nuts-public" and "nuts-preview"

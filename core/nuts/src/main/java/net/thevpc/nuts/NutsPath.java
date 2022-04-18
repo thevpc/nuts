@@ -105,6 +105,7 @@ public interface NutsPath extends NutsFormattable,NutsStreamMetadataAware {
     String getContentType();
 
     String getBaseName();
+    String getLongBaseName();
 
     String getLastExtension();
 
