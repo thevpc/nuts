@@ -1,5 +1,4 @@
 TODO in API (planned for 0.8.4):
-+ remove PrivateNutsUtilBootId::parseBootIdList;
 + Refactor NutsTextParser to support NutsPath and remove NutsTextFormatLoader as well as the followings...
    + NutsText parseResource(String resourceName, NutsTextFormatLoader loader);
    + NutsText parseResource(String resourceName, Reader reader, NutsTextFormatLoader loader);

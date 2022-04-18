@@ -32,49 +32,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 class PrivateNutsUtilBootId {
-    static NutsId[] parseBootIdList(String s) {
-        List<NutsId> boots = new ArrayList<>();
-        StringBuilder q = null;
-        boolean inBrackets = false;
-        for (char c : s.toCharArray()) {
-            if (q == null) {
-                q = new StringBuilder();
-                if (c == '[' || c == ']') {
-                    inBrackets = true;
-                    q.append(c);
-                } else if (c == ',' || Character.isWhitespace(c)) {
-                    //ignore
-                } else {
-                    q.append(c);
-                }
-            } else {
-                if (c == ',' || c == ' ') {
-                    if (inBrackets) {
-                        q.append(c);
-                    } else {
-                        boots.add(NutsId.of(q.toString()).get());
-                        q = null;
-                        inBrackets = false;
-                    }
-                } else if (c == '[' || c == ']') {
-                    if (inBrackets) {
-                        inBrackets = false;
-                        q.append(c);
-                    } else {
-                        inBrackets = true;
-                        q.append(c);
-                    }
-                } else {
-                    q.append(c);
-                }
-            }
-        }
-        if (q != null) {
-            boots.add(NutsId.of(q.toString()).get());
-        }
-        return boots.toArray(new NutsId[0]);
-    }
-
     static boolean isAcceptDependency(NutsDependency s, NutsBootOptions bOptions) {
         boolean bootOptionals = PrivateNutsUtilWorkspaceOptions.isBootOptional(bOptions);
         //by default ignore optionals
