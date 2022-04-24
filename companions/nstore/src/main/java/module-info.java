@@ -11,4 +11,5 @@ module net.thevpc.nuts.toolbox.nstore {
     requires org.kordamp.ikonli.core;
     requires org.kordamp.ikonli.fontawesome;
     requires java.logging;
+    requires nuts;
 }
