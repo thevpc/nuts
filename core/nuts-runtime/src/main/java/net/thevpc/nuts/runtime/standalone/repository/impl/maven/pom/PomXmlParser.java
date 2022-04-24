@@ -950,7 +950,7 @@ public class PomXmlParser {
                         if (a.startsWith("#")) {
                             //ignore!
                         } else {
-                            NutsId id = NutsId.of(a).orElse(null);
+                            NutsId id = NutsId.of(a).orNull();
                             if (id != null) {
                                 if (!NutsBlankable.isBlank(os)) {
                                     osMap.put(id.getShortName(), os);

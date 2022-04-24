@@ -86,9 +86,9 @@ public final class PrivateNutsUtilMavenRepos {
                         String artifactId = map.get("artifactId");
                         String version = map.get("version");
                         if (groupId != null && artifactId != null && version != null) {
-                            return new NutsId[]{new DefaultNutsId(
+                            return new NutsId[]{NutsId.of(
                                     groupId, artifactId, NutsVersion.of(version).get()
-                            )};
+                            ).get()};
                         }
                     }
                 }
@@ -114,7 +114,7 @@ public final class PrivateNutsUtilMavenRepos {
                                     Map<String, String> map = resolvePomTagValues(new String[]{"groupId", "artifactId", "version"}, is);
                                     if (map.containsKey("version")) {
                                         String version = map.get("version");
-                                        all.add(new DefaultNutsId(groupId, artifactId, NutsVersion.of(version).get()));
+                                        all.add(NutsId.of(groupId, artifactId, NutsVersion.of(version).get()).get());
                                     }
                                 }
                             }
@@ -130,7 +130,7 @@ public final class PrivateNutsUtilMavenRepos {
                                             Map<?, ?> map = ((Map<?, ?>) p);
                                             Object v = map.get("version");
                                             if (v instanceof String) {
-                                                all.add(new DefaultNutsId(groupId, artifactId, NutsVersion.of((String) v).get()));
+                                                all.add(NutsId.of(groupId, artifactId, NutsVersion.of((String) v).get()).get());
                                             }
                                         }
                                     }
@@ -341,10 +341,10 @@ public final class PrivateNutsUtilMavenRepos {
                             //this is maven dependency, using "compile"
                             if (NutsBlankable.isBlank(scope) || scope.equals("compile")) {
                                 depsSet.add(
-                                        new DefaultNutsId(
+                                        NutsId.of(
                                                 groupId,
                                                 artifactId,
-                                                NutsVersion.of(version).get())
+                                                NutsVersion.of(version).get()).get()
                                                 .builder()
                                                 .setProperty(NutsConstants.IdProperties.OPTIONAL, "" + NutsUtilStrings.parseBoolean(optional, false, false))
                                                 .setCondition(
@@ -512,7 +512,7 @@ public final class PrivateNutsUtilMavenRepos {
                                     if (bestVersion == null || bestVersion.compareTo(p) < 0) {
                                         //we will ignore artifact classifier to simplify search
                                         Path jarPath = file.toPath().resolve(
-                                                getFileName(new DefaultNutsId(zId.getGroupId(), zId.getArtifactId(), p), "jar")
+                                                getFileName(NutsId.of(zId.getGroupId(), zId.getArtifactId(), p).get(), "jar")
                                         );
                                         if (Files.isRegularFile(jarPath)) {
                                             bestVersion = p;
@@ -621,7 +621,7 @@ public final class PrivateNutsUtilMavenRepos {
         if (bestVersion == null) {
             return null;
         }
-        NutsId iid = new DefaultNutsId(zId.getGroupId(), zId.getArtifactId(), bestVersion);
+        NutsId iid = NutsId.of(zId.getGroupId(), zId.getArtifactId(), bestVersion).get();
         bLog.log(Level.FINEST, NutsLogVerb.SUCCESS, NutsMessage.jstyle("resolve {0} from {1}", iid, bestPath));
         return iid;
     }

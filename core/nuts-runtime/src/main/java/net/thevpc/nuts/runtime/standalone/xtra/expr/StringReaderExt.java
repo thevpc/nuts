@@ -96,4 +96,8 @@ public class StringReaderExt {
     public String toString() {
         return content.substring(pos);
     }
+
+    public String getContent() {
+        return content;
+    }
 }

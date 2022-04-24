@@ -28,7 +28,7 @@ public class NutsDependencyDEFilter extends AbstractDependencyFilter  {
         this.accepted = EnumSet.noneOf(NutsDesktopEnvironmentFamily.class);
         for (String e : StringTokenizerUtils.splitDefault(accepted)) {
             if (!e.isEmpty()) {
-                this.accepted.add(NutsDesktopEnvironmentFamily.parse(e).orElse(null));
+                this.accepted.add(NutsDesktopEnvironmentFamily.parse(e).orNull());
             }
         }
     }
@@ -47,7 +47,7 @@ public class NutsDependencyDEFilter extends AbstractDependencyFilter  {
             for (String e : current) {
                 if (!e.isEmpty()) {
                     empty = false;
-                    if (accepted.contains(NutsDesktopEnvironmentFamily.parse(e).orElse(null))) {
+                    if (accepted.contains(NutsDesktopEnvironmentFamily.parse(e).orNull())) {
                         return true;
                     }
                 }

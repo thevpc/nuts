@@ -325,7 +325,7 @@ public class DefaultCustomCommandsModel {
     public NutsWorkspaceCustomCommand find(String name, NutsId forId, NutsId forOwner, NutsSession session) {
         NutsWorkspaceCustomCommand a = find(name, session);
         if (a != null && a.getCommand() != null && a.getCommand().size() > 0) {
-            NutsId i = NutsId.of(a.getCommand().get(0)).orElse(null);
+            NutsId i = NutsId.of(a.getCommand().get(0)).orNull();
             if (i != null
                     && (forId == null
                     || i.getShortName().equals(forId.getArtifactId())

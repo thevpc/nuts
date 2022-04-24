@@ -25,9 +25,6 @@ package net.thevpc.nuts;
 
 import net.thevpc.nuts.boot.*;
 
-import java.util.Arrays;
-import java.util.logging.Level;
-
 /**
  * Nuts Top Class. Nuts is a Package manager for Java Applications and this
  * class is it's main class for creating and opening nuts workspaces.
@@ -86,7 +83,7 @@ public final class Nuts {
             runWorkspace(args);
             System.exit(0);
         } catch (Exception ex) {
-            NutsSession session = NutsExceptionBase.detectSession(ex);
+            NutsSession session = NutsSessionAwareExceptionBase.resolveSession(ex).orNull();
             if (session != null) {
                 System.exit(NutsApplicationExceptionHandler.of(session)
                         .processThrowable(args, ex, session));
@@ -136,7 +133,7 @@ public final class Nuts {
         options.setApplicationArguments(args);
         options.setInherited(true);
         options.setCreationTime(startTime);
-        if(term!=null) {
+        if (term != null) {
             options.setStdin(term.getIn());
             options.setStdout(term.getOut());
             options.setStderr(term.getErr());

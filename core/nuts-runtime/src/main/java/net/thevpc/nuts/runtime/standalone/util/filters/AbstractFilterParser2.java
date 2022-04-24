@@ -8,7 +8,7 @@ import java.util.Set;
 
 
 public abstract class AbstractFilterParser2<T> {
-    StringReaderExt str;
+    protected StringReaderExt str;
     Set<String> preOps=new LinkedHashSet<>();
     Set<String> binOps=new LinkedHashSet<>();
     boolean acceptPars=true;

@@ -105,7 +105,7 @@ public abstract class AbstractNutsStream<T> implements NutsStream<T> {
         if (it.hasNext()) {
             return it.next();
         }
-        NutsId n = NutsId.of(nutsBase).orElse(null);
+        NutsId n = NutsId.of(nutsBase).orNull();
         if (n != null) {
             throw new NutsNotFoundException(session, n);
         }
@@ -122,7 +122,7 @@ public abstract class AbstractNutsStream<T> implements NutsStream<T> {
             }
             return t;
         } else {
-            NutsId nid = NutsId.of(nutsBase).orElse(null);
+            NutsId nid = NutsId.of(nutsBase).orNull();
             if (nid != null) {
                 throw new NutsNotFoundException(session, nid);
             }

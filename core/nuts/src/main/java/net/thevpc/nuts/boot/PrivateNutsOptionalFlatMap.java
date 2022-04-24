@@ -16,8 +16,8 @@ public class PrivateNutsOptionalFlatMap<T, V> extends PrivateNutsOptionalImpl<V>
     }
 
     @Override
-    public V get(NutsMessage message,NutsSession session) {
-        T t = this.t.get(message,session);
+    public V get(NutsMessage message, NutsSession session) {
+        T t = this.t.get(message, session);
         return mapper.apply(t).get(session);
     }
 
@@ -33,13 +33,14 @@ public class PrivateNutsOptionalFlatMap<T, V> extends PrivateNutsOptionalImpl<V>
     }
 
     @Override
-    public boolean isBlank() {
-        if(isPresent()){
-            return mapper.apply(t.get()).isBlank();
-        }
-        return true;
+    public boolean isEmpty() {
+        return t.isEmpty();
     }
 
+    @Override
+    public boolean isNotPresent() {
+        return t.isNotPresent();
+    }
 
     @Override
     public boolean isError() {
@@ -48,6 +49,6 @@ public class PrivateNutsOptionalFlatMap<T, V> extends PrivateNutsOptionalImpl<V>
 
     @Override
     public Function<NutsSession, NutsMessage> getMessage() {
-        return ((PrivateNutsOptionalImpl<T>)t).getMessage();
+        return ((PrivateNutsOptionalImpl<T>) t).getMessage();
     }
 }

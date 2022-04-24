@@ -28,25 +28,51 @@ package net.thevpc.nuts.boot;
 
 import net.thevpc.nuts.*;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
-class PrivateNutsUtilBootId {
+public class PrivateNutsUtilIds {
+
+    public static String getIdShortName(String groupId, String artifactId) {
+        if (NutsBlankable.isBlank(groupId)) {
+            return NutsUtilStrings.trim(artifactId);
+        }
+        return NutsUtilStrings.trim(groupId) + ":" + NutsUtilStrings.trim(artifactId);
+    }
+
+    public static String getIdLongName(String groupId, String artifactId, NutsVersion version, String classifier) {
+        StringBuilder sb = new StringBuilder();
+        if (!NutsBlankable.isBlank(groupId)) {
+            sb.append(groupId).append(":");
+        }
+        sb.append(NutsUtilStrings.trim(artifactId));
+        if (version != null && !version.isBlank()) {
+            sb.append("#");
+            sb.append(version);
+        }
+        if (!NutsBlankable.isBlank(classifier)) {
+            sb.append("?");
+            sb.append("classifier=");
+            sb.append(classifier);
+        }
+        return sb.toString();
+    }
+
     static boolean isAcceptDependency(NutsDependency s, NutsBootOptions bOptions) {
         boolean bootOptionals = PrivateNutsUtilWorkspaceOptions.isBootOptional(bOptions);
         //by default ignore optionals
         String o = s.getOptional();
-        if(NutsBlankable.isBlank(o) || Boolean.parseBoolean(o)){
+        if (NutsBlankable.isBlank(o) || Boolean.parseBoolean(o)) {
             if (!bootOptionals && !PrivateNutsUtilWorkspaceOptions.isBootOptional(s.getArtifactId(), bOptions)) {
                 return false;
             }
         }
         List<String> oss = PrivateNutsUtilCollections.uniqueNonBlankList(s.getCondition().getOs());
         List<String> archs = PrivateNutsUtilCollections.uniqueNonBlankList(s.getCondition().getArch());
-        if(oss.isEmpty()){
+        if (oss.isEmpty()) {
             oss.add("");
         }
-        if(archs.isEmpty()){
+        if (archs.isEmpty()) {
             archs.add("");
         }
         if (!oss.isEmpty()) {
@@ -55,7 +81,7 @@ class PrivateNutsUtilBootId {
             for (String e : oss) {
                 NutsId ee = NutsId.of(e).get();
                 if (ee.getShortName().equalsIgnoreCase(eos.id())) {
-                    if (PrivateNutsUtilDescriptors.accept(ee.getVersion(),NutsVersion.of(System.getProperty("os.version")).get())) {
+                    if (PrivateNutsUtilDescriptors.accept(ee.getVersion(), NutsVersion.of(System.getProperty("os.version")).get())) {
                         osOk = true;
                     }
                     break;

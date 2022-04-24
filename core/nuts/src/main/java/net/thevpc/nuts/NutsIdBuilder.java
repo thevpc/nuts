@@ -90,24 +90,6 @@ public interface NutsIdBuilder extends NutsId, Serializable {
     NutsIdBuilder setProperty(String property, String value);
 
     /**
-     * update all properties property while retaining old,
-     * non overridden properties.
-     *
-     * @param queryMap new value
-     * @return {@code this} instance
-     */
-    NutsIdBuilder addProperties(Map<String, String> queryMap);
-
-    /**
-     * update all properties property while retaining old,
-     * non overridden properties.
-     *
-     * @param query new value
-     * @return {@code this} instance
-     */
-    NutsIdBuilder addProperties(String query);
-
-    /**
      * update all properties property.
      *
      * @param queryMap new value
@@ -121,7 +103,13 @@ public interface NutsIdBuilder extends NutsId, Serializable {
      * @param query new value
      * @return {@code this} instance
      */
-    NutsIdBuilder setProperties(String query);
+    NutsIdBuilder setPropertiesQuery(String query);
+
+    /**
+     * clear all properties
+     * @return {@code this} instance
+     */
+    NutsIdBuilder clearProperties();
 
     /**
      * update repository

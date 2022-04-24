@@ -1,23 +1,17 @@
 package net.thevpc.nuts.runtime.standalone.io.progress;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
-import net.thevpc.nuts.runtime.standalone.workspace.DefaultNutsWorkspace;
-import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
-import net.thevpc.nuts.runtime.standalone.xtra.expr.StringMapParser;
 
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
 
 public class NutsProgressUtils {
     public static ProgressOptions parseProgressOptions(NutsSession session) {
         ProgressOptions o = new ProgressOptions();
         boolean enabledVisited = false;
-        StringMapParser p = new StringMapParser("=", ",; ");
-        Map<String, String> m = p.parseMap(session.getProgressOptions(), session);
+        Map<String, String> m = NutsUtilStrings.parseMap(session.getProgressOptions(), "=", ",; ","").get(session);
         NutsElements elems = NutsElements.of(session);
         for (Map.Entry<String, String> e : m.entrySet()) {
             String k = e.getKey();

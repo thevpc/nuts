@@ -28,6 +28,7 @@ import net.thevpc.nuts.*;
 import java.io.*;
 import java.net.URL;
 import java.util.*;
+import java.util.function.Predicate;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
 
@@ -39,6 +40,29 @@ import java.util.stream.Collectors;
  */
 public final class PrivateNutsUtils {
 
+
+    public static <T> NutsOptional<T> findThrowable(Throwable th, Class<T> type, Predicate<Throwable> filter) {
+        Set<Throwable> visited = new HashSet<>();
+        Stack<Throwable> stack = new Stack<>();
+        if (th != null) {
+            stack.push(th);
+        }
+        while (!stack.isEmpty()) {
+            Throwable a = stack.pop();
+            if (visited.add(a)) {
+                if(type.isAssignableFrom(th.getClass())){
+                    if(filter==null||filter.test(th)){
+                        return NutsOptional.of((T) th);
+                    }
+                }
+                Throwable c = th.getCause();
+                if (c != null) {
+                    stack.add(c);
+                }
+            }
+        }
+        return NutsOptional.ofEmpty(x->NutsMessage.cstyle("error with type %s not found",type.getSimpleName()));
+    }
 
     public static boolean isValidWorkspaceName(String workspace) {
         if (NutsBlankable.isBlank(workspace)) {
@@ -397,5 +421,6 @@ public final class PrivateNutsUtils {
             super(name, value);
         }
     }
+
 
 }

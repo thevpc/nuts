@@ -46,7 +46,7 @@ public class PrivateNutsUtilApplication {
             return 0;
         }
 
-        NutsSession session = NutsExceptionBase.detectSession(ex);
+        NutsSession session = NutsSessionAwareExceptionBase.resolveSession(ex).orNull();
         NutsBootOptions bo = null;
         if (session != null) {
             bo = session.boot().getBootOptions().builder().toBootOptions();
@@ -96,23 +96,12 @@ public class PrivateNutsUtilApplication {
         if (ex == null) {
             return 0;
         }
-        NutsExceptionBase neb = NutsExceptionBase.detectExceptionBase(ex);
-        NutsBootException nbe = neb != null ? null : NutsBootException.detectBootException(ex);
-        int errorCode = 204;
-        if (nbe != null) {
-            errorCode = nbe.getExitCode();
-        } else if (neb instanceof NutsExecutionException) {
-            NutsExecutionException ex2 = (NutsExecutionException) ex;
-            errorCode = ex2.getExitCode();
-        }
+        NutsSession session = NutsSessionAwareExceptionBase.resolveSession(ex).orNull();
+        NutsString fm = NutsSessionAwareExceptionBase.resolveSessionAwareExceptionBase(ex).map(NutsSessionAwareExceptionBase::getFormattedString)
+                .orNull();
+        int errorCode = NutsExceptionWithExitCodeBase.resolveExitCode(ex).orElse(204);
         if (errorCode == 0) {
             return 0;
-        }
-        NutsSession session = null;
-        NutsString fm = null;
-        if (neb != null) {
-            session = neb.getSession();
-            fm = neb.getFormattedString();
         }
         String m = ex.getMessage();
         if (m == null || m.length() < 5) {

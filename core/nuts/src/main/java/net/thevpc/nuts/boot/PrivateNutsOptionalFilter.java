@@ -49,8 +49,13 @@ public class PrivateNutsOptionalFilter<T> extends PrivateNutsOptionalImpl<T> {
     }
 
     @Override
-    public boolean isBlank() {
-        return t.isBlank() || !isPresent();
+    public boolean isEmpty() {
+        return t.isEmpty() || !filter.test(t.get());
+    }
+
+    @Override
+    public boolean isNotPresent() {
+        return !isPresent();
     }
 
     @Override

@@ -26,11 +26,16 @@ public class PrivateNutsOptionalMap<T, V> extends PrivateNutsOptionalImpl<V> {
     }
 
     @Override
-    public boolean isBlank() {
+    public boolean isEmpty() {
         if (isPresent()) {
-            return NutsBlankable.isBlank(mapper.apply(t.get()));
+            return false;
         }
-        return true;
+        return t.isEmpty();
+    }
+
+    @Override
+    public boolean isNotPresent() {
+        return !isPresent();
     }
 
     @Override

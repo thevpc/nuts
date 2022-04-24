@@ -259,7 +259,7 @@ public class DefaultNutsEnvConditionBuilder implements Serializable, NutsEnvCond
         if (desktopEnvironment != null && !desktopEnvironment.isEmpty()) return false;
         if (profiles != null && !profiles.isEmpty()) return false;
         if (properties != null && !properties.isEmpty()) return false;
-        return false;
+        return true;
     }
 
     public Map<String, String> toMap() {

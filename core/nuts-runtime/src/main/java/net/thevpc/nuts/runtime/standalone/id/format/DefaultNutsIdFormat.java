@@ -1,11 +1,9 @@
 package net.thevpc.nuts.runtime.standalone.id.format;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.standalone.format.DefaultFormatBase;
 import net.thevpc.nuts.runtime.standalone.dependency.NutsDependencyScopes;
+import net.thevpc.nuts.runtime.standalone.format.DefaultFormatBase;
 import net.thevpc.nuts.runtime.standalone.util.filters.CoreFilterUtils;
-import net.thevpc.nuts.runtime.standalone.xtra.expr.QueryStringParser;
-import net.thevpc.nuts.runtime.standalone.xtra.expr.StringMapParser;
 import net.thevpc.nuts.spi.NutsSupportLevelContext;
 
 import java.util.*;
@@ -191,7 +189,7 @@ public class DefaultNutsIdFormat extends DefaultFormatBase<NutsIdFormat> impleme
                 sb.append("&", NutsTextStyle.separator());
             }
             sb.append("classifier", NutsTextStyle.keyword(2)).append("=", NutsTextStyle.separator());
-            sb.append(_encode(classifier));
+            sb.append(_encodeKey(classifier));
         }
 
 //        if (highlightScope) {
@@ -203,7 +201,7 @@ public class DefaultNutsIdFormat extends DefaultFormatBase<NutsIdFormat> impleme
                 sb.append("&", NutsTextStyle.separator());
             }
             sb.append("scope", NutsTextStyle.keyword(2)).append("=", NutsTextStyle.separator());
-            sb.append(_encode(scope));
+            sb.append(_encodeKey(scope));
         }
 //        }
 //        if (highlightOptional) {
@@ -215,7 +213,7 @@ public class DefaultNutsIdFormat extends DefaultFormatBase<NutsIdFormat> impleme
                 sb.append("&", NutsTextStyle.separator());
             }
             sb.append("optional", NutsTextStyle.keyword(2)).append("=", NutsTextStyle.separator());
-            sb.append(_encode(optional));
+            sb.append(_encodeKey(optional));
         }
 //        }
         if (!isOmitRepository()) {
@@ -227,20 +225,20 @@ public class DefaultNutsIdFormat extends DefaultFormatBase<NutsIdFormat> impleme
                     sb.append("&", NutsTextStyle.separator());
                 }
                 sb.append("repo", NutsTextStyle.keyword(2)).append("=", NutsTextStyle.separator());
-                sb.append(_encode(id.getRepository()), NutsTextStyle.pale());
+                sb.append(_encodeKey(id.getRepository()), NutsTextStyle.pale());
             }
         }
-        for (Map.Entry<String, String> e : CoreFilterUtils.toMap(id.getCondition(),getSession()).entrySet()) {
-            String kk=e.getKey();
-            String kv=e.getValue();
+        for (Map.Entry<String, String> e : CoreFilterUtils.toMap(id.getCondition(), getSession()).entrySet()) {
+            String kk = e.getKey();
+            String kv = e.getValue();
             if (firstQ) {
                 sb.append("?", NutsTextStyle.separator());
                 firstQ = false;
             } else {
                 sb.append("&", NutsTextStyle.separator());
             }
-            sb.append(_encode(kk), NutsTextStyle.keyword(2)).append("=", NutsTextStyle.separator());
-            sb.append(_encode(kv));
+            sb.append(_encodeKey(kk), NutsTextStyle.keyword(2)).append("=", NutsTextStyle.separator());
+            sb.append(_encodeValue(kv));
         }
         if (!NutsBlankable.isBlank(exclusions)) {
             if (firstQ) {
@@ -250,7 +248,7 @@ public class DefaultNutsIdFormat extends DefaultFormatBase<NutsIdFormat> impleme
                 sb.append("&", NutsTextStyle.separator());
             }
             sb.append("exclusions", NutsTextStyle.keyword(2)).append("=", NutsTextStyle.separator());
-            sb.append(_encode(exclusions), NutsTextStyle.warn());
+            sb.append(_encodeKey(exclusions), NutsTextStyle.warn());
         }
         if (!NutsBlankable.isBlank(id.getPropertiesQuery())) {
             Set<String> otherKeys = new TreeSet<>(queryMap.keySet());
@@ -263,9 +261,9 @@ public class DefaultNutsIdFormat extends DefaultFormatBase<NutsIdFormat> impleme
                     } else {
                         sb.append("&", NutsTextStyle.separator());
                     }
-                    sb.append(k, NutsTextStyle.pale());
+                    sb.append(_encodeKey(k), NutsTextStyle.pale());
                     sb.append("=", NutsTextStyle.separator());
-                    sb.append(_encode(v2));
+                    sb.append(_encodeValue(v2));
                 }
             }
         }
@@ -276,8 +274,12 @@ public class DefaultNutsIdFormat extends DefaultFormatBase<NutsIdFormat> impleme
         }
     }
 
-    private String _encode(String s){
-        return QueryStringParser.QPARSER.encode(s,false, StringMapParser.QuoteType.SIMPLE);
+    private String _encodeValue(String s) {
+        return NutsUtilStrings.formatStringLiteral(s, NutsUtilStrings.QuoteType.SIMPLE, NutsUtilStrings.QuoteCondition.QUOTE_REQUIRED, "");
+    }
+
+    private String _encodeKey(String s) {
+        return NutsUtilStrings.formatStringLiteral(s, NutsUtilStrings.QuoteType.SIMPLE, NutsUtilStrings.QuoteCondition.QUOTE_REQUIRED, "");
     }
 
     @Override

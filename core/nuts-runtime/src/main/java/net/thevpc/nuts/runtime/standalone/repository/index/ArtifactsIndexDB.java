@@ -72,6 +72,6 @@ public class ArtifactsIndexDB {
                 id.getLongId()
                         .builder().setRepository(id.getRepository())
                         .build().toDependency()
-                , session).findAny().orElse(null) != null;
+                , session).findAny().orNull() != null;
     }
 }

@@ -27,7 +27,7 @@ public class NutsDependencyPlatformFamilyFilter extends AbstractDependencyFilter
         this.accepted = EnumSet.noneOf(NutsPlatformFamily.class);
         for (NutsId e : NutsId.ofList(accepted).get(session)) {
             if (!e.isBlank()) {
-                this.accepted.add(NutsPlatformFamily.parse(e.getArtifactId()).orElse(null));
+                this.accepted.add(NutsPlatformFamily.parse(e.getArtifactId()).orNull());
             }
         }
     }
@@ -46,7 +46,7 @@ public class NutsDependencyPlatformFamilyFilter extends AbstractDependencyFilter
             for (String e : current) {
                 if (!e.isEmpty()) {
                     empty = false;
-                    if (accepted.contains(NutsPlatformFamily.parse(e).orElse(null))) {
+                    if (accepted.contains(NutsPlatformFamily.parse(e).orNull())) {
                         return true;
                     }
                 }

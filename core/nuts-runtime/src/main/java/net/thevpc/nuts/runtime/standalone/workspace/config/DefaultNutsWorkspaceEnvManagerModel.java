@@ -255,7 +255,7 @@ public class DefaultNutsWorkspaceEnvManagerModel {
         Set<NutsId> desktopEnvironments = getDesktopEnvironments(session);
         LinkedHashSet<NutsDesktopEnvironmentFamily> all = new LinkedHashSet<>();
         for (NutsId desktopEnvironment : desktopEnvironments) {
-            all.add(NutsDesktopEnvironmentFamily.parse(desktopEnvironment.getShortName()).orElse(null));
+            all.add(NutsDesktopEnvironmentFamily.parse(desktopEnvironment.getShortName()).orNull());
         }
         return new LinkedHashSet<>(all);
     }

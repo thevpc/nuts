@@ -32,22 +32,9 @@ public class DefaultNutsApplicationExceptionHandler implements NutsApplicationEx
             showGui = false;
         }
 
-        NutsExceptionBase neb = NutsExceptionBase.detectExceptionBase(throwable);
-        NutsBootException nbe = neb != null ? null : NutsBootException.detectBootException(throwable);
-        int errorCode = 204;
-        if (nbe != null) {
-            errorCode = nbe.getExitCode();
-        } else if (neb instanceof NutsExecutionException) {
-            NutsExecutionException ex2 = (NutsExecutionException) throwable;
-            errorCode = ex2.getExitCode();
-        }
-        if (errorCode == 0) {
-            return 0;
-        }
-        NutsString fm = null;
-        if (neb != null) {
-            fm = neb.getFormattedString();
-        }
+        int errorCode = NutsExceptionWithExitCodeBase.resolveExitCode(throwable).orElse(204);
+        NutsString fm = NutsSessionAwareExceptionBase.resolveSessionAwareExceptionBase(throwable)
+                .map(NutsSessionAwareExceptionBase::getFormattedString).orNull();
         String m = throwable.getMessage();
         if (m == null || m.length() < 5) {
             m = throwable.toString();

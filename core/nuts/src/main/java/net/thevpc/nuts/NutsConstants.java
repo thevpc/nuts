@@ -260,10 +260,10 @@ public final class NutsConstants {
         public static final String TYPE = "type";
 
         /**
-         * properties
+         * condition properties
          * @since 0.8.4
          */
-        public static final String PROPERTIES = "properties";
+        public static final String CONDITIONAL_PROPERTIES = "cond-properties";
 
         /**
          * private constructor

@@ -223,7 +223,7 @@ public class DefaultNutsDeployCommand extends AbstractNutsDeployCommand {
                 NutsId effId = dws.resolveEffectiveId(descriptor, session);
                 CorePlatformUtils.checkAcceptCondition(descriptor.getCondition(),false, session);
                 if (NutsBlankable.isBlank(repository)) {
-                    effId = NutsIdUtils.createContentFaceId(effId.builder().setProperties("").build(), descriptor,session);
+                    effId = NutsIdUtils.createContentFaceId(effId.builder().setPropertiesQuery("").build(), descriptor,session);
                     for (NutsRepository repo : wu.filterRepositoriesDeploy(effId, null)
                             .stream()
                             .filter(x->x.config().getDeployWeight()>0)
@@ -247,7 +247,7 @@ public class DefaultNutsDeployCommand extends AbstractNutsDeployCommand {
                     if (!repo.config().isEnabled()) {
                         throw new NutsRepositoryDisabledException(getSession(), repository);
                     }
-                    effId = NutsIdUtils.createContentFaceId(effId.builder().setProperties("").build(), descriptor,session);
+                    effId = NutsIdUtils.createContentFaceId(effId.builder().setPropertiesQuery("").build(), descriptor,session);
                     NutsRepositorySPI repoSPI = wu.repoSPI(repo);
                     repoSPI.deploy()
                             .setSession(session)

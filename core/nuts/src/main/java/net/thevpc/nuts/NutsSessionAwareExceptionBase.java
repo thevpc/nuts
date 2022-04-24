@@ -26,24 +26,32 @@
  */
 package net.thevpc.nuts;
 
+import net.thevpc.nuts.boot.PrivateNutsUtils;
+
 /**
- * Base Boot Nuts Exception. Thrown when the Workspace could is booting
- * and is not yet available.
+ * Base Nuts Exception Interface. Parent of all Nuts defined Exceptions.
  *
  * @author thevpc
  * @app.category Exceptions
  * @since 0.5.4
  */
-public class NutsMissingSessionException extends NutsNoSessionException {
-
-    public NutsMissingSessionException() {
+public interface NutsSessionAwareExceptionBase extends NutsExceptionBase {
+    static NutsOptional<NutsSessionAwareExceptionBase> resolveSessionAwareExceptionBase(Throwable th) {
+        return PrivateNutsUtils.findThrowable(th,NutsSessionAwareExceptionBase.class,null);
     }
 
-    public NutsMissingSessionException(NutsMessage message) {
-        super(message);
+    static NutsOptional<NutsSession> resolveSession(Throwable th) {
+        return resolveSessionAwareExceptionBase(th). map(NutsSessionAwareExceptionBase::getSession);
     }
 
-    public NutsMissingSessionException(NutsMessage message, Throwable cause) {
-        super(message, cause);
-    }
+    /**
+     * current workspace
+     *
+     * @return current workspace
+     */
+    NutsWorkspace getWorkspace();
+
+    NutsSession getSession();
+
+    NutsString getFormattedString();
 }

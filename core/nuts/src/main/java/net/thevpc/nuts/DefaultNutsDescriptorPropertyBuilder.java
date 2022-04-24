@@ -111,7 +111,7 @@ public class DefaultNutsDescriptorPropertyBuilder implements NutsDescriptorPrope
 
     @Override
     public NutsDescriptorProperty readOnly() {
-        return new DefaultNutsDescriptorProperty(getName(), getValue(), getCondition());
+        return new DefaultNutsDescriptorProperty(getName(), getValue(), getCondition().readOnly());
     }
 
     @Override

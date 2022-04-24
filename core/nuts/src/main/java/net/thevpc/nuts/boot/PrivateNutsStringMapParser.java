@@ -26,25 +26,41 @@
  */
 package net.thevpc.nuts.boot;
 
+import net.thevpc.nuts.NutsBlankable;
+import net.thevpc.nuts.NutsMessage;
+import net.thevpc.nuts.NutsOptional;
+import net.thevpc.nuts.NutsUtilStrings;
+
 import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
 import java.io.UncheckedIOException;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
 
 public class PrivateNutsStringMapParser {
 
-    private final String eqSeparators;
-    private final String entrySeparators;
+    private final String equalsChars;
+    private final String separatorChars;
+    private final String escapeChars;
+
+    public static PrivateNutsStringMapParser of(String equalsChars, String separatorChars, String escapeChars) {
+        return new PrivateNutsStringMapParser(equalsChars, separatorChars, escapeChars);
+    }
 
     /**
-     * @param eqSeparators    equality separators, example '='
-     * @param entrySeparators entry separators, example ','
+     * @param equalsChars    equality separators, example '='
+     * @param separatorChars entry separators, example ','
      */
-    public PrivateNutsStringMapParser(String eqSeparators, String entrySeparators) {
-        this.eqSeparators = eqSeparators;
-        this.entrySeparators = entrySeparators;
+    public PrivateNutsStringMapParser(String equalsChars, String separatorChars, String escapeChars) {
+        if (NutsBlankable.isBlank(equalsChars)) {
+            throw new IllegalArgumentException("missing equal separators");
+        }
+        if (NutsBlankable.isBlank(separatorChars)) {
+            throw new IllegalArgumentException("missing entry separators");
+        }
+        this.equalsChars = equalsChars;
+        this.separatorChars = separatorChars;
+        this.escapeChars = escapeChars==null?"":escapeChars;
     }
 
     /**
@@ -56,20 +72,20 @@ public class PrivateNutsStringMapParser {
      * @return next token
      * @throws IOException IOException
      */
-    private static int readToken(Reader reader, String stopTokens, StringBuilder result) throws IOException {
+    private static int readToken(Reader reader, String stopTokens, String escapedTokens, StringBuilder result) throws IOException {
         while (true) {
             int r = reader.read();
             if (r == -1) {
                 return -1;
             }
             if (r == '\"' || r == '\'') {
-                char s = (char) r;
+                char cr = (char) r;
                 while (true) {
                     r = reader.read();
                     if (r == -1) {
                         throw new RuntimeException("Expected " + '\"');
                     }
-                    if (r == s) {
+                    if (r == cr) {
                         break;
                     }
                     if (r == '\\') {
@@ -95,16 +111,30 @@ public class PrivateNutsStringMapParser {
                             }
                         }
                     } else {
-                        char cr = (char) r;
                         result.append(cr);
                     }
                 }
             } else {
                 char cr = (char) r;
-                if (stopTokens != null && stopTokens.indexOf(cr) >= 0) {
+                if (r == '\\') {
+                    r = reader.read();
+                    if (r == -1) {
+                        result.append(cr);
+                    } else {
+                        if (stopTokens.indexOf(r) >= 0) {
+                            result.append((char) r);
+                        } else if (escapedTokens.indexOf(r) >= 0) {
+                            result.append((char) r);
+                        } else {
+                            result.append(cr);
+                            result.append((char) r);
+                        }
+                    }
+                } else if (stopTokens.indexOf(cr) >= 0) {
                     return cr;
+                } else {
+                    result.append(cr);
                 }
-                result.append(cr);
             }
         }
     }
@@ -115,16 +145,22 @@ public class PrivateNutsStringMapParser {
      * @param text text to parse
      * @return parsed map
      */
-    public Map<String, String> parseMap(String text) {
+    public NutsOptional<Map<String, String>> parse(String text) {
         Map<String, String> m = new LinkedHashMap<>();
-        StringReader reader = new StringReader(text == null ? "" : text);
+        if(NutsBlankable.isBlank(text)){
+            return NutsOptional.of(m);
+        }
+        StringReader reader = new StringReader(text);
+        String sepAndEsc = separatorChars + escapeChars;
+        String eqAndSep = equalsChars + separatorChars;
+        String eqAndEsc = equalsChars + escapeChars;
         while (true) {
             StringBuilder key = new StringBuilder();
             int r = 0;
             try {
-                r = readToken(reader, eqSeparators + entrySeparators, key);
+                r = readToken(reader, eqAndSep, sepAndEsc, key);
             } catch (IOException e) {
-                throw new UncheckedIOException(e);
+                return NutsOptional.ofError(x-> NutsMessage.plain(e.toString()));
             }
             String t = key.toString();
             if (r == -1) {
@@ -134,23 +170,48 @@ public class PrivateNutsStringMapParser {
                 break;
             } else {
                 char c = (char) r;
-                if (eqSeparators.indexOf(c) >= 0) {
+                if (equalsChars.indexOf(c) >= 0) {
                     StringBuilder value = new StringBuilder();
                     try {
-                        r = readToken(reader, entrySeparators, value);
+                        r = readToken(reader, separatorChars, eqAndEsc, value);
                     } catch (IOException e) {
-                        throw new UncheckedIOException(e);
+                        return NutsOptional.ofError(x-> NutsMessage.plain(e.toString()));
                     }
                     m.put(t, value.toString());
                     if (r == -1) {
                         break;
                     }
+                } else if (separatorChars.indexOf(c) >= 0) {
+                    //this is a key without a value
+                    m.put(t, "");
                 } else {
                     //
                 }
             }
         }
-        return m;
+        return NutsOptional.of(m);
     }
 
+    public String format(Map<String, String> map, boolean sort) {
+        StringBuilder sb = new StringBuilder();
+        if (map != null) {
+            if (sort) {
+                map = new TreeMap<>(map);
+            }
+            String escapedChars = separatorChars + equalsChars;
+            Set<String> sortedKeys = map.keySet();
+            for (String k : sortedKeys) {
+                String v = map.get(k);
+                if (v != null && v.length() > 0) {
+                    if (sb.length() > 0) {
+                        sb.append(separatorChars);
+                    }
+                    sb.append(NutsUtilStrings.formatStringLiteral(k, NutsUtilStrings.QuoteType.SIMPLE, NutsUtilStrings.QuoteCondition.QUOTE_REQUIRED, escapedChars)).append(equalsChars).append(
+                            NutsUtilStrings.formatStringLiteral(v, NutsUtilStrings.QuoteType.SIMPLE, NutsUtilStrings.QuoteCondition.QUOTE_REQUIRED, escapedChars)
+                    );
+                }
+            }
+        }
+        return NutsUtilStrings.trimToNull(sb.toString());
+    }
 }

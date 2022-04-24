@@ -162,7 +162,7 @@ public class NutsApiUtils {
     public static String resolveNutsIdDigest() {
         //TODO COMMIT TO 0.8.4
         return resolveNutsIdDigest(
-                new DefaultNutsId("net.thevpc.nuts", "nuts", NutsVersion.of(Nuts.getVersion()).get()),
+                NutsId.of("net.thevpc.nuts", "nuts", NutsVersion.of(Nuts.getVersion()).get()).get(),
                 PrivateNutsUtilClassLoader.resolveClasspathURLs(Nuts.class.getClassLoader(), true)
         );
     }

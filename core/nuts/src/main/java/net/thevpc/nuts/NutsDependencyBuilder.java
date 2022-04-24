@@ -182,7 +182,7 @@ public interface NutsDependencyBuilder extends NutsDependency {
 
     NutsDependencyBuilder setProperty(String property, String value);
 
-    NutsDependencyBuilder setProperties(String propertiesQuery);
+    NutsDependencyBuilder setPropertiesQuery(String propertiesQuery);
 
     NutsDependencyBuilder setProperties(Map<String, String> queryMap);
 

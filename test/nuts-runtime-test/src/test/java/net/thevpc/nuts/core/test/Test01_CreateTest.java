@@ -358,7 +358,7 @@ public class Test01_CreateTest {
                 NutsHomeLocation.of(NutsOsFamily.MACOS, NutsStoreLocation.CACHE),
                 NutsHomeLocation.parse("").orElse( NutsHomeLocation.of(NutsOsFamily.MACOS, NutsStoreLocation.CACHE))
         );
-        Assertions.assertNull(NutsHomeLocation.parse("any error").orElse(NutsHomeLocation.of(NutsOsFamily.MACOS, NutsStoreLocation.CACHE)));
+        Assertions.assertNull(NutsHomeLocation.parse("any error").orElse(null));
         Assertions.assertEquals(
                 NutsHomeLocation.of(null, NutsStoreLocation.APPS),
                 NutsEnum.parse(NutsHomeLocation.class, "system-apps").orElse(null)
@@ -371,6 +371,7 @@ public class Test01_CreateTest {
                 NutsHomeLocation.of(NutsOsFamily.MACOS, NutsStoreLocation.CACHE),
                 NutsEnum.parse(NutsHomeLocation.class,"").orElse(NutsHomeLocation.of(NutsOsFamily.MACOS, NutsStoreLocation.CACHE) )
         );
-        Assertions.assertNull(NutsEnum.parse(NutsHomeLocation.class,"any error").orElse(NutsHomeLocation.of(NutsOsFamily.MACOS, NutsStoreLocation.CACHE)));
+        Assertions.assertNull(NutsEnum.parse(NutsHomeLocation.class,"any error")
+                .orElse(null));
     }
 }

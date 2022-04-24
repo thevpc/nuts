@@ -47,6 +47,10 @@ public interface NutsId extends Comparable<NutsId>, NutsFormattable, NutsBlankab
         return PrivateNutsIdListParser.parseIdList(value);
     }
 
+    static NutsOptional<NutsId> of(String groupId, String artifactId, NutsVersion version) {
+        return NutsOptional.of(new DefaultNutsId(groupId, artifactId, version));
+    }
+
     static NutsOptional<NutsId> of(String value) {
         return PrivateNutsIdParser.parse(value);
     }

@@ -647,7 +647,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
     }
 
     private URL getApiURL() {
-        NutsId nid = new DefaultNutsId("net.thevpc.nuts", "nuts", NutsVersion.of(Nuts.getVersion()).get());
+        NutsId nid = NutsId.of("net.thevpc.nuts", "nuts", NutsVersion.of(Nuts.getVersion()).get()).get();
         return NutsApiUtils.findClassLoaderJar(nid, NutsClassLoaderUtils.resolveClasspathURLs(Thread.currentThread().getContextClassLoader()));
     }
 

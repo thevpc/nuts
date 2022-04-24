@@ -26,7 +26,6 @@ package net.thevpc.nuts;
 import net.thevpc.nuts.boot.*;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * Created by vpc on 1/5/17.
@@ -40,64 +39,11 @@ public class DefaultNutsDependencyBuilder implements NutsDependencyBuilder {
     private String scope;
     private String optional;
     private String type;
-    private NutsEnvConditionBuilder condition;
+    private NutsEnvConditionBuilder condition = new DefaultNutsEnvConditionBuilder();
     private String classifier;
     private List<NutsId> exclusions = new ArrayList<>();
-    private final transient PrivateNutsQueryStringParser propertiesQuery = new PrivateNutsQueryStringParser(true, (name, value) -> {
-        if (name != null) {
-            switch (name) {
-                case NutsConstants.IdProperties.SCOPE: {
-                    setScope(value);
-                    return true;
-                }
-                case NutsConstants.IdProperties.VERSION: {
-                    setVersion(value);
-                    return true;
-                }
-                case NutsConstants.IdProperties.OPTIONAL: {
-                    setOptional(value);
-                    return true;
-                }
-                case NutsConstants.IdProperties.CLASSIFIER: {
-                    setClassifier(value);
-                    return true;
-                }
-                case NutsConstants.IdProperties.REPO: {
-                    setRepository(value);
-                    return true;
-                }
-                case NutsConstants.IdProperties.EXCLUSIONS: {
-                    setExclusions(value);
-                    return true;
-                }
-                case NutsConstants.IdProperties.OS: {
-                    condition.setOs(PrivateNutsUtilStrings.parseAndTrimToDistinctList(value));
-                    return true;
-                }
-                case NutsConstants.IdProperties.ARCH: {
-                    condition.setArch(PrivateNutsUtilStrings.parseAndTrimToDistinctList(value));
-                    return true;
-                }
-                case NutsConstants.IdProperties.PLATFORM: {
-                    condition.setPlatform(NutsId.ofList(value).map(x->x.stream().map(Object::toString)).get().collect(Collectors.toList()));
-                    return true;
-                }
-                case NutsConstants.IdProperties.OS_DIST: {
-                    condition.setOsDist(PrivateNutsUtilStrings.parseAndTrimToDistinctList(value));
-                    return true;
-                }
-                case NutsConstants.IdProperties.DESKTOP: {
-                    condition.setDesktopEnvironment(PrivateNutsUtilStrings.parseAndTrimToDistinctList(value));
-                    return true;
-                }
-                case NutsConstants.IdProperties.TYPE: {
-                    setType(value);
-                    return true;
-                }
-            }
-        }
-        return false;
-    });
+    private Map<String, String> properties = new LinkedHashMap<>();
+
 
     public DefaultNutsDependencyBuilder(NutsDependency d) {
         setAll(d);
@@ -372,30 +318,92 @@ public class DefaultNutsDependencyBuilder implements NutsDependencyBuilder {
 
     @Override
     public NutsDependencyBuilder setProperty(String property, String value) {
-        this.propertiesQuery.setProperty(property, value);
+        if (property != null) {
+            switch (property) {
+                case NutsConstants.IdProperties.SCOPE: {
+                    setScope(value);
+                    break;
+                }
+                case NutsConstants.IdProperties.VERSION: {
+                    setVersion(value);
+                    break;
+                }
+                case NutsConstants.IdProperties.OPTIONAL: {
+                    setOptional(value);
+                    break;
+                }
+                case NutsConstants.IdProperties.CLASSIFIER: {
+                    setClassifier(value);
+                    break;
+                }
+                case NutsConstants.IdProperties.REPO: {
+                    setRepository(value);
+                    break;
+                }
+                case NutsConstants.IdProperties.EXCLUSIONS: {
+                    setExclusions(value);
+                    break;
+                }
+                case NutsConstants.IdProperties.OS: {
+                    condition.setOs(NutsUtilStrings.parsePropertyIdList(value).get());
+                    break;
+                }
+                case NutsConstants.IdProperties.ARCH: {
+                    condition.setArch(NutsUtilStrings.parsePropertyIdList(value).get());
+                    break;
+                }
+                case NutsConstants.IdProperties.PLATFORM: {
+                    condition.setPlatform(NutsUtilStrings.parsePropertyIdList(value).get());
+                    break;
+                }
+                case NutsConstants.IdProperties.OS_DIST: {
+                    condition.setOsDist(NutsUtilStrings.parsePropertyIdList(value).get());
+                    break;
+                }
+                case NutsConstants.IdProperties.DESKTOP: {
+                    condition.setDesktopEnvironment(NutsUtilStrings.parsePropertyIdList(value).get());
+                    break;
+                }
+                case NutsConstants.IdProperties.TYPE: {
+                    setType(value);
+                    break;
+                }
+                default: {
+                    if (value == null) {
+                        properties.remove(property);
+                    } else {
+                        properties.put(property, value);
+                    }
+                }
+            }
+        }
         return this;
     }
 
     @Override
     public NutsDependencyBuilder setProperties(Map<String, String> queryMap) {
-        this.propertiesQuery.addProperties(queryMap);
+        if (queryMap != null) {
+            for (Map.Entry<String, String> e : queryMap.entrySet()) {
+                setProperty(e.getKey(), e.getValue());
+            }
+        }
         return this;
     }
 
     @Override
-    public NutsDependencyBuilder setProperties(String propertiesQuery) {
-        this.propertiesQuery.addProperties(propertiesQuery);
+    public NutsDependencyBuilder setPropertiesQuery(String propertiesQuery) {
+        setProperties(NutsUtilStrings.parseDefaultMap(propertiesQuery).get());
         return this;
     }
 
     @Override
     public String getPropertiesQuery() {
-        return propertiesQuery.getPropertiesQuery();
+        return NutsUtilStrings.formatDefaultMap(properties);
     }
 
     @Override
     public Map<String, String> getProperties() {
-        return propertiesQuery.getProperties();
+        return properties;
     }
 
 
@@ -441,16 +449,17 @@ public class DefaultNutsDependencyBuilder implements NutsDependencyBuilder {
 
     @Override
     public String getSimpleName() {
-        return build().getSimpleName();
+        return PrivateNutsUtilIds.getIdShortName(groupId, artifactId);
     }
 
     @Override
     public String getLongName() {
-        return build().getLongName();
+        return PrivateNutsUtilIds.getIdLongName(groupId, artifactId, version, classifier);
     }
 
     @Override
     public NutsDependencyFormat formatter(NutsSession session) {
         return build().formatter(session);
     }
+
 }

@@ -24,7 +24,6 @@
 package net.thevpc.nuts.runtime.standalone.elem;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 
 import java.lang.reflect.Constructor;
 import java.math.BigDecimal;
@@ -708,7 +707,7 @@ class DefaultNutsPrimitiveElement extends AbstractNutsElement implements NutsPri
             case NULL:
                 return "null";
             case STRING:
-                return CoreStringUtils.dblQuote(getString());
+                return NutsUtilStrings.dblQuotes(getString());
 //            case NUTS_STRING:
 //                return CoreStringUtils.dblQuote(getNutsString().toString());
             case BOOLEAN:
@@ -717,7 +716,7 @@ class DefaultNutsPrimitiveElement extends AbstractNutsElement implements NutsPri
             case FLOAT:
                 return String.valueOf(getNumber());
             case INSTANT:
-                return CoreStringUtils.dblQuote(getInstant().toString());
+                return NutsUtilStrings.dblQuotes(getInstant().toString());
         }
         return getString();
     }

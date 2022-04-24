@@ -79,7 +79,7 @@ public class NutsTextUtils {
             if (ne.getValue().type() == NutsElementType.STRING) {
                 sb.append(
                         txt.toText(
-                                CoreStringUtils.dblQuote(stringValueFormatted(ne.getValue(), escapeString, session).toString())
+                                NutsUtilStrings.dblQuotes(stringValueFormatted(ne.getValue(), escapeString, session).toString())
                         ));
 //            } else if (ne.getValue().type() == NutsElementType.NUTS_STRING) {
 //                sb.append(ne.getValue().asNutsString());
@@ -96,7 +96,7 @@ public class NutsTextUtils {
                     || (ne.getValue() instanceof NutsElement && ((NutsElement) ne.getValue()).isString())) {
                 sb.append(
                         txt.toText(
-                                CoreStringUtils.dblQuote(stringValueFormatted(ne.getValue(), escapeString, session).toString())
+                                NutsUtilStrings.dblQuotes(stringValueFormatted(ne.getValue(), escapeString, session).toString())
                         )
                 );
 //            } else if (ne.getValue() instanceof NutsElement && ((NutsElement) ne.getValue()).isNutsString()) {

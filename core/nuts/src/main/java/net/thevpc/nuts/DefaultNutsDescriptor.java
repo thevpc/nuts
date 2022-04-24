@@ -107,10 +107,8 @@ public class DefaultNutsDescriptor implements NutsDescriptor {
                                  List<NutsDescriptorMailingList> mailingLists,
                                  NutsDescriptorOrganization organization
     ) {
-        //id can have empty groupId (namely for executors like 'java')
-        this.id = NutsId.of("").orElse(null);
+        this.id = id;
         this.idType = idType == null ? NutsIdType.REGULAR : idType;
-//        this.alternative = NutsUtilStrings.trimToNull(alternative);
         this.packaging = NutsUtilStrings.trimToNull(packaging);
         this.parents = PrivateNutsUtilCollections.uniqueList(parents);
         this.description = NutsUtilStrings.trimToNull(description);

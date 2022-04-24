@@ -18,16 +18,14 @@ public abstract class PrivateNutsOptionalImpl<T> implements NutsOptional<T> {
     }
 
     public T get() {
-        if(isPresent()){
-            return get(null);
-        }
-        throw new NoSuchElementException("empty value");
+        return get(null);
     }
 
     static NutsMessage buildMessage(NutsSession session, Function<NutsSession, NutsMessage> message0, NutsMessage message) {
         NutsMessage m = message0.apply(session);
         return m.concat(session, NutsMessage.plain(" : "), message);
     }
+
     public <V> NutsOptional<V> flatMap(Function<T, NutsOptional<V>> mapper) {
         return new PrivateNutsOptionalFlatMap<>(mapper, this);
     }
@@ -44,8 +42,8 @@ public abstract class PrivateNutsOptionalImpl<T> implements NutsOptional<T> {
         return new PrivateNutsOptionalFilter(filter, this, message);
     }
 
-    public NutsOptional<T> ifPresent(Consumer<T> t){
-        if(isPresent()){
+    public NutsOptional<T> ifPresent(Consumer<T> t) {
+        if (isPresent()) {
             t.accept(get(null));
         }
         return this;
@@ -53,7 +51,7 @@ public abstract class PrivateNutsOptionalImpl<T> implements NutsOptional<T> {
 
     @Override
     public NutsOptional<T> orElseGetOptional(Supplier<NutsOptional<T>> other) {
-        if (isEmpty()) {
+        if (isNotPresent()) {
             return other.get();
         }
         return this;
@@ -61,7 +59,7 @@ public abstract class PrivateNutsOptionalImpl<T> implements NutsOptional<T> {
 
     @Override
     public T orElse(T other) {
-        if (isEmpty()) {
+        if (isNotPresent()) {
             return other;
         }
         return get(null);
@@ -70,23 +68,92 @@ public abstract class PrivateNutsOptionalImpl<T> implements NutsOptional<T> {
 
     @Override
     public T orElseGet(Supplier<? extends T> other) {
-        if (isEmpty()) {
+        if (isNotPresent()) {
             return other.get();
         }
         return get(null);
     }
 
     @Override
-    public boolean isEmpty() {
-        return !isPresent();
+    public NutsOptional<T> nonBlank(Function<NutsSession, NutsMessage> emptyMessage) {
+        if (emptyMessage == null) {
+            emptyMessage = session -> NutsMessage.cstyle("blank value");
+        }
+        if (isPresent()) {
+            T v = get();
+            if (NutsBlankable.isBlank(v)) {
+                return NutsOptional.ofEmpty(emptyMessage);
+            }
+        }
+        return this;
     }
 
     @Override
     public NutsOptional<T> nonBlank() {
-        if(isBlank()){
-            return asEmpty();
+        return nonBlank(null);
+    }
+
+    @Override
+    public NutsOptional<T> ifBlankGet(Supplier<NutsOptional<T>> other) {
+        if (isPresent()) {
+            T v = get();
+            if (NutsBlankable.isBlank(v)) {
+                return other.get();
+            }
+        }else if(isEmpty()){
+            return other.get();
         }
         return this;
+    }
+
+    @Override
+    public NutsOptional<T> ifEmptyGet(Supplier<NutsOptional<T>> other) {
+        if (isEmpty()) {
+            return other.get();
+        }
+        return this;
+    }
+
+    @Override
+    public NutsOptional<T> ifErrorGet(Supplier<NutsOptional<T>> other) {
+        if (isError()) {
+            return other.get();
+        }
+        return this;
+    }
+
+    @Override
+    public NutsOptional<T> ifBlank(T other) {
+        if (isPresent()) {
+            T v = get();
+            if (NutsBlankable.isBlank(v)) {
+                return NutsOptional.of(other);
+            }
+        }else if(isEmpty()){
+            return NutsOptional.of(other);
+        }
+        return this;
+    }
+
+    @Override
+    public NutsOptional<T> ifEmpty(T other) {
+        if (isEmpty()) {
+            return NutsOptional.of(other);
+        }
+        return this;
+    }
+
+    @Override
+    public NutsOptional<T> ifError(T other) {
+        if (isError()) {
+            return NutsOptional.of(other);
+        }
+        return this;
+    }
+
+    @Override
+    public T orNull() {
+        return orElse(null);
     }
 
 }

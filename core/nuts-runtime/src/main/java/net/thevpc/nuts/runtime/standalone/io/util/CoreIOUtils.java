@@ -673,7 +673,7 @@ public class CoreIOUtils {
                 .getOrCreate();
 
 //        final PersistentMap<String, String> cu=getCachedUrls(session);
-        CachedURL old = cacheTable.findByIndex("url", path, session).findFirst().orElse(null);
+        CachedURL old = cacheTable.findByIndex("url", path, session).findFirst().orNull();
 //        String cachedSha1 = cu.get("sha1://" + path);
 //        String oldLastModified =cu.get("lastModified://" + path);
 //        String oldSize =cu.get("length://" + path);

@@ -319,12 +319,4 @@ public class Test08_ElementTest {
         Assertions.assertEquals(expected,q);
     }
 
-    @Test
-    public void testError(){
-        NutsElement e = NutsElements.of(session).parse(
-                new File("/data/private/work-local/core-techs-solutions/internal-projects/toolbox/terminal-tools/cv/src/main/resources/com/cts/toolbox/cv/default-data.json")
-        );
-        System.out.println(e);
-    }
-
 }

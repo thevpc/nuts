@@ -206,7 +206,7 @@ public class DefaultNutsDescriptorParser implements NutsDescriptorParser {
                                 implVendorTitle = NutsUtilStrings.trimToNull(attrs.getValue(attrName));
                             }
                             if ("Nuts-Id".equals(attrName.toString())) {
-                                explicitId = NutsId.of(NutsUtilStrings.trimToNull(attrs.getValue(attrName))).orElse(null);
+                                explicitId = NutsId.of(NutsUtilStrings.trimToNull(attrs.getValue(attrName))).orNull();
                             }
                             if ("Nuts-Dependencies".equals(attrName.toString())) {
                                 String nutsDependencies = NutsUtilStrings.trimToNull(attrs.getValue(attrName));
@@ -214,7 +214,7 @@ public class DefaultNutsDescriptorParser implements NutsDescriptorParser {
                                         StringTokenizerUtils.splitSemiColon(nutsDependencies).stream()
                                                 .map(String::trim)
                                                 .filter(x -> x.length() > 0)
-                                                .map(x->NutsDependency.of(x).orElse(null))
+                                                .map(x->NutsDependency.of(x).orNull())
                                                 .filter(Objects::nonNull)
                                                 .collect(Collectors.toCollection(LinkedHashSet::new));
                             }
@@ -253,7 +253,7 @@ public class DefaultNutsDescriptorParser implements NutsDescriptorParser {
                                             StringTokenizerUtils.splitDefault(
                                                             all.get("Nuts-Flags")
                                                     ).stream()
-                                                    .map(x->NutsDescriptorFlag.parse(x).orElse(null))
+                                                    .map(x->NutsDescriptorFlag.parse(x).orNull())
                                                     .filter(Objects::nonNull)
                                                     .toArray(NutsDescriptorFlag[]::new)
                                     )

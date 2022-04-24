@@ -95,7 +95,7 @@ public class DefaultNutsWorkspaceExtensionModel {
         if (excluded != null) {
             for (String ex : excluded) {
                 for (String e : StringTokenizerUtils.splitDefault(ex)) {
-                    NutsId ee = NutsId.of(e).orElse(null);
+                    NutsId ee = NutsId.of(e).orNull();
                     if (ee != null) {
                         this.exclusions.add(ee.getShortName());
                     }

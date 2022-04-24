@@ -167,7 +167,7 @@ public class NutsTextFormatPropertiesTheme implements NutsTextFormatTheme {
         if (n.equals("*") || n.isEmpty()) {
             n = "" + defaultVariant;
         }
-        NutsTextStyleType st = NutsTextStyleType.parse(k).orElse(null);
+        NutsTextStyleType st = NutsTextStyleType.parse(k).orNull();
         if (st == null) {
             if (NutsBlankable.isBlank(n)) {
                 return NutsTextStyles.PLAIN;

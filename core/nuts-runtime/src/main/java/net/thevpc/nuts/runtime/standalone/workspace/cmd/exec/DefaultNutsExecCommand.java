@@ -159,11 +159,7 @@ public class DefaultNutsExecCommand extends AbstractNutsExecCommand {
             }
         } catch (Exception ex) {
             String p = getExtraErrorMessage();
-            NutsExceptionBase ee = NutsExceptionBase.detectExceptionBase(ex);
-            int exitCode = 244;
-            if (ee instanceof NutsExecutionException) {
-                exitCode = ((NutsExecutionException) ee).getExitCode();
-            }
+            int exitCode = NutsExceptionWithExitCodeBase.resolveExitCode(ex).orElse(244);
             if (exitCode != 0) {
                 if (p != null) {
                     result = new NutsExecutionException(getSession(),
@@ -205,12 +201,12 @@ public class DefaultNutsExecCommand extends AbstractNutsExecCommand {
         String goodKw = null;
         boolean forceInstalled = false;
         if (cmdName.endsWith("!")) {
-            goodId = NutsId.of(cmdName.substring(0, cmdName.length() - 1)).orElse(null);
+            goodId = NutsId.of(cmdName.substring(0, cmdName.length() - 1)).orNull();
             if (goodId != null) {
                 forceInstalled = true;
             }
         } else {
-            goodId = NutsId.of(cmdName).orElse(null);
+            goodId = NutsId.of(cmdName).orNull();
         }
 
         if (cmdName.contains("/") || cmdName.contains("\\")) {

@@ -33,7 +33,7 @@ import net.thevpc.nuts.boot.NutsApiUtils;
  * @app.category Exceptions
  * @since 0.5.4
  */
-public class NutsException extends RuntimeException implements NutsExceptionBase {
+public class NutsException extends RuntimeException implements NutsSessionAwareExceptionBase {
 
     private final NutsSession session;
     private final NutsMessage formattedMessage;

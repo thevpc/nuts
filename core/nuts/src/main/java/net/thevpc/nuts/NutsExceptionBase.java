@@ -26,6 +26,8 @@
  */
 package net.thevpc.nuts;
 
+import net.thevpc.nuts.boot.PrivateNutsUtils;
+
 import java.util.HashSet;
 import java.util.Set;
 import java.util.Stack;
@@ -38,47 +40,16 @@ import java.util.Stack;
  * @since 0.5.4
  */
 public interface NutsExceptionBase {
-    static NutsExceptionBase detectExceptionBase(Throwable th) {
-        Set<Throwable> visited = new HashSet<>();
-        Stack<Throwable> stack = new Stack<>();
-        if (th != null) {
-            stack.push(th);
-        }
-        while (!stack.isEmpty()) {
-            Throwable a = stack.pop();
-            if (visited.add(a)) {
-                if (th instanceof NutsExceptionBase) {
-                    return ((NutsExceptionBase) th);
-                }
-                Throwable c = th.getCause();
-                if (c != null) {
-                    stack.add(c);
-                }
-            }
-        }
-        return null;
+    static NutsOptional<NutsExceptionBase> resolveExceptionBase(Throwable th) {
+        return PrivateNutsUtils.findThrowable(th,NutsExceptionBase.class,null);
     }
 
-    static NutsSession detectSession(Throwable th) {
-        NutsExceptionBase e = detectExceptionBase(th);
-        if (e != null) {
-            return e.getSession();
-        }
-        return null;
-    }
+
 
     NutsMessage getFormattedMessage();
 
-    NutsString getFormattedString();
 
     String getMessage();
 
-    /**
-     * current workspace
-     *
-     * @return current workspace
-     */
-    NutsWorkspace getWorkspace();
 
-    NutsSession getSession();
 }

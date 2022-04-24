@@ -28,7 +28,7 @@ public class NutsDependencyOsFilter extends AbstractDependencyFilter  {
         this.os = EnumSet.noneOf(NutsOsFamily.class);
         for (String e : StringTokenizerUtils.splitDefault(os)) {
             if (!e.isEmpty()) {
-                this.os.add(NutsOsFamily.parse(e).orElse(null));
+                this.os.add(NutsOsFamily.parse(e).orNull());
             }
         }
     }
@@ -47,7 +47,7 @@ public class NutsDependencyOsFilter extends AbstractDependencyFilter  {
             for (String e : current) {
                 if (!e.isEmpty()) {
                     empty = false;
-                    if (os.contains(NutsOsFamily.parse(e).orElse(null))) {
+                    if (os.contains(NutsOsFamily.parse(e).orNull())) {
                         return true;
                     }
                 }

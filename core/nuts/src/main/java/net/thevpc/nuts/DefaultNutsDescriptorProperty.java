@@ -10,7 +10,7 @@ public class DefaultNutsDescriptorProperty implements NutsDescriptorProperty {
     public DefaultNutsDescriptorProperty(String name, String value, NutsEnvCondition condition) {
         this.name = name;
         this.value = value;
-        this.condition = condition==null?NutsEnvCondition.BLANK : condition;
+        this.condition = condition==null?NutsEnvCondition.BLANK : condition.readOnly();
     }
 
     @Override

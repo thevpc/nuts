@@ -4,10 +4,7 @@ import net.thevpc.nuts.NutsId;
 import net.thevpc.nuts.NutsOptional;
 import net.thevpc.nuts.NutsUtilStrings;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedHashSet;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class PrivateNutsIdListParser {
@@ -45,13 +42,9 @@ public class PrivateNutsIdListParser {
         return String.join(",", allIds);
     }
 
-    public static List<String> parseStringIdList(String s) {
-        return Arrays.asList(parseStringIdArray(s));
-    }
-
-    public static String[] parseStringIdArray(String s) {
+    public static NutsOptional<List<String>> parseStringIdList(String s) {
         if (s == null) {
-            return new String[0];
+            return NutsOptional.of(Collections.emptyList());
         }
         LinkedHashSet<String> allIds = new LinkedHashSet<>();
         StringBuilder q = null;
@@ -96,20 +89,27 @@ public class PrivateNutsIdListParser {
                 allIds.add(q.toString());
             }
         }
-        return allIds.toArray(new String[0]);
+        return NutsOptional.of(new ArrayList<>(allIds));
     }
 
     public static NutsOptional<List<NutsId>> parseIdList(String s) {
         List<NutsId> list = new ArrayList<>();
-        for (String x : parseStringIdArray(s)) {
-            NutsOptional<NutsId> y = NutsId.of(x);
-            if (y.isError()) {
-                return NutsOptional.ofError(y.getMessage());
+        NutsOptional<List<String>> o = parseStringIdList(s);
+        if(o.isPresent()) {
+            for (String x : o.get()) {
+                NutsOptional<NutsId> y = NutsId.of(x).nonBlank();
+                if (y.isError()) {
+                    return NutsOptional.ofError(y.getMessage());
+                }
+                if (y.isPresent()) {
+                    list.add(y.get());
+                }
             }
-            if (!y.isBlank()) {
-                list.add(y.get());
-            }
+            return NutsOptional.of(list);
         }
-        return NutsOptional.of(list);
+        if (o.isError()) {
+            return NutsOptional.ofError(o.getMessage());
+        }
+        return NutsOptional.ofEmpty(o.getMessage());
     }
 }

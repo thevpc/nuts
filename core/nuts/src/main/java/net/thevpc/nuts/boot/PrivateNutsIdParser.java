@@ -8,8 +8,6 @@ import java.util.Map;
 import java.util.regex.Matcher;
 
 public class PrivateNutsIdParser {
-    private static final PrivateNutsStringMapParser QPARSER = new PrivateNutsStringMapParser("=", "&");
-
     /**
      * examples : script://groupId:artifactId/version?face
      * script://groupId:artifactId/version script://groupId:artifactId
@@ -20,71 +18,77 @@ public class PrivateNutsIdParser {
      */
     public static NutsOptional<NutsId> parse(String nutsId) {
         if (NutsBlankable.isBlank(nutsId)) {
-            return NutsOptional.ofBlank(NutsId.BLANK, s->NutsMessage.plain("blank id"));
+            return NutsOptional.of(NutsId.BLANK);
         }
         Matcher m = NutsId.PATTERN.matcher(nutsId);
         if (m.find()) {
-            NutsIdBuilder builder = new DefaultNutsIdBuilder();
+            NutsIdBuilder idBuilder = new DefaultNutsIdBuilder();
             String group = m.group("group");
             String artifact = m.group("artifact");
-            builder.setArtifactId(artifact);
-            builder.setVersion(m.group("version"));
+            idBuilder.setArtifactId(artifact);
+            idBuilder.setVersion(m.group("version"));
             if (artifact == null) {
                 artifact = group;
                 group = null;
             }
-            builder.setArtifactId(artifact);
-            builder.setGroupId(group);
+            idBuilder.setArtifactId(artifact);
+            idBuilder.setGroupId(group);
 
-            Map<String, String> queryMap = QPARSER.parseMap(m.group("query"));
-            NutsEnvConditionBuilder sb = new DefaultNutsEnvConditionBuilder();
+            Map<String, String> queryMap = NutsUtilStrings.parseDefaultMap(m.group("query")).get();
+            NutsEnvConditionBuilder conditionBuilder = new DefaultNutsEnvConditionBuilder();
 
-            Map<String, String> props = new LinkedHashMap<>();
+            Map<String, String> idProperties = new LinkedHashMap<>();
             for (Iterator<Map.Entry<String, String>> iterator = queryMap.entrySet().iterator(); iterator.hasNext(); ) {
                 Map.Entry<String, String> e = iterator.next();
-                switch (e.getKey()) {
-                    case NutsConstants.IdProperties.CLASSIFIER: {
-                        builder.setClassifier(e.getValue());
-                        break;
-                    }
-                    case NutsConstants.IdProperties.PROFILE: {
-                        sb.setProfile(PrivateNutsUtilStrings.splitDefault(e.getValue()));
-                        break;
-                    }
-                    case NutsConstants.IdProperties.PLATFORM: {
-                        sb.setPlatform(PrivateNutsIdListParser.parseStringIdList(e.getValue()));
-                        break;
-                    }
-                    case NutsConstants.IdProperties.OS_DIST: {
-                        sb.setOsDist(PrivateNutsUtilStrings.splitDefault(e.getValue()));
-                        break;
-                    }
-                    case NutsConstants.IdProperties.ARCH: {
-                        sb.setArch(PrivateNutsUtilStrings.splitDefault(e.getValue()));
-                        break;
-                    }
-                    case NutsConstants.IdProperties.OS: {
-                        sb.setOs(PrivateNutsUtilStrings.splitDefault(e.getValue()));
-                        break;
-                    }
-                    case NutsConstants.IdProperties.DESKTOP: {
-                        sb.setDesktopEnvironment(PrivateNutsUtilStrings.splitDefault(e.getValue()));
-                        break;
-                    }
-                    case NutsConstants.IdProperties.PROPERTIES: {
-                        Map<String, String> mm = PrivateNutsCommaStringParser.parseMap(e.getValue());
-                        sb.setProperties(mm);
-                        break;
-                    }
-                    default: {
-                        props.put(e.getKey(), e.getValue());
-                    }
-                }
+                String key = e.getKey();
+                String value = e.getValue();
+                setProperty(key, value, idBuilder, conditionBuilder, idProperties);
             }
 
-            return NutsOptional.of(builder.setCondition(sb)
-                    .setProperties(props).build());
+            return NutsOptional.of(idBuilder.setCondition(conditionBuilder)
+                    .setProperties(idProperties).build());
         }
         return NutsOptional.ofError(session -> NutsMessage.cstyle("invalid id format : %s", nutsId));
+    }
+
+    private static void setProperty(String key, String value, NutsIdBuilder builder, NutsEnvConditionBuilder sb, Map<String, String> props) {
+        switch (key) {
+            case NutsConstants.IdProperties.CLASSIFIER: {
+                builder.setClassifier(value);
+                break;
+            }
+            case NutsConstants.IdProperties.PROFILE: {
+                sb.setProfile(PrivateNutsUtilStrings.splitDefault(value));
+                break;
+            }
+            case NutsConstants.IdProperties.PLATFORM: {
+                sb.setPlatform(NutsUtilStrings.parsePropertyIdList(value).get());
+                break;
+            }
+            case NutsConstants.IdProperties.OS_DIST: {
+                sb.setOsDist(NutsUtilStrings.parsePropertyIdList(value).get());
+                break;
+            }
+            case NutsConstants.IdProperties.ARCH: {
+                sb.setArch(NutsUtilStrings.parsePropertyIdList(value).get());
+                break;
+            }
+            case NutsConstants.IdProperties.OS: {
+                sb.setOs(NutsUtilStrings.parsePropertyIdList(value).get());
+                break;
+            }
+            case NutsConstants.IdProperties.DESKTOP: {
+                sb.setDesktopEnvironment(NutsUtilStrings.parsePropertyIdList(value).get());
+                break;
+            }
+            case NutsConstants.IdProperties.CONDITIONAL_PROPERTIES: {
+                Map<String, String> mm = NutsUtilStrings.parseMap(value, "=", ",").get();
+                sb.setProperties(mm);
+                break;
+            }
+            default: {
+                props.put(key, value);
+            }
+        }
     }
 }

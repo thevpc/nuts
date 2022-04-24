@@ -3,6 +3,7 @@ package net.thevpc.nuts.boot;
 import net.thevpc.nuts.NutsBlankable;
 import net.thevpc.nuts.NutsConstants;
 import net.thevpc.nuts.NutsEnvCondition;
+import net.thevpc.nuts.NutsUtilStrings;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -51,7 +52,7 @@ public class PrivateNutsUtilMaps {
         if (condition.getProperties() != null) {
             Map<String, String> properties = condition.getProperties();
             if (!properties.isEmpty()) {
-                m.put(NutsConstants.IdProperties.PROPERTIES, PrivateNutsCommaStringParser.formatPropertiesQuery(properties));
+                m.put(NutsConstants.IdProperties.CONDITIONAL_PROPERTIES, NutsUtilStrings.formatDefaultMap(properties));
             }
         }
         return m;

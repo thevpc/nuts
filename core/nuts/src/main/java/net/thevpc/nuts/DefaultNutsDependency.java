@@ -44,10 +44,11 @@ public class DefaultNutsDependency implements NutsDependency {
     private final List<NutsId> exclusions;
     private final String properties;
     private final NutsEnvCondition condition;
+
     public DefaultNutsDependency(String repository, String groupId, String artifactId, String classifier, NutsVersion version, String scope, String optional, List<NutsId> exclusions,
                                  NutsEnvCondition condition, String type,
                                  Map<String, String> properties) {
-        this(repository, groupId, artifactId, classifier, version, scope, optional, exclusions, condition, type, PrivateNutsQueryStringParser.formatSortedPropertiesQuery(properties));
+        this(repository, groupId, artifactId, classifier, version, scope, optional, exclusions, condition, type, NutsUtilStrings.formatDefaultMap(properties));
     }
 
     public DefaultNutsDependency(String repository, String groupId, String artifactId, String classifier, NutsVersion version, String scope, String optional, List<NutsId> exclusions,
@@ -73,9 +74,9 @@ public class DefaultNutsDependency implements NutsDependency {
                 throw new NullPointerException();
             }
         }
-        this.condition = condition==null?NutsEnvCondition.BLANK : condition;
+        this.condition = condition == null ? NutsEnvCondition.BLANK : condition;
         this.type = NutsUtilStrings.trimToNull(type);
-        this.properties = PrivateNutsQueryStringParser.formatSortedPropertiesQuery(properties);
+        this.properties = NutsUtilStrings.formatDefaultMap(NutsUtilStrings.parseDefaultMap(properties).get());
     }
 
     @Override
@@ -154,30 +155,12 @@ public class DefaultNutsDependency implements NutsDependency {
 
     @Override
     public String getSimpleName() {
-        if (NutsBlankable.isBlank(groupId)) {
-            return NutsUtilStrings.trim(artifactId);
-        }
-        return NutsUtilStrings.trim(groupId) + ":" + NutsUtilStrings.trim(artifactId);
+        return PrivateNutsUtilIds.getIdShortName(groupId,artifactId);
     }
 
     @Override
     public String getLongName() {
-        StringBuilder sb = new StringBuilder();
-        if (!NutsBlankable.isBlank(groupId)) {
-            sb.append(groupId).append(":");
-        }
-        sb.append(NutsUtilStrings.trim(artifactId));
-        NutsVersion v = getVersion();
-        if (!v.isBlank()) {
-            sb.append("#");
-            sb.append(v);
-        }
-        if (!NutsBlankable.isBlank(classifier)) {
-            sb.append("?");
-            sb.append("classifier=");
-            sb.append(classifier);
-        }
-        return sb.toString();
+        return PrivateNutsUtilIds.getIdLongName(groupId,artifactId,version, classifier);
     }
 
     @Override
@@ -212,7 +195,7 @@ public class DefaultNutsDependency implements NutsDependency {
 
     @Override
     public Map<String, String> getProperties() {
-        return PrivateNutsQueryStringParser.parseMap(properties);
+        return NutsUtilStrings.parseDefaultMap(properties).get();
     }
 
     @Override
@@ -283,9 +266,9 @@ public class DefaultNutsDependency implements NutsDependency {
                 p.put(NutsConstants.IdProperties.PROFILE, String.join(",", condition.getProfile()));
             }
             if (!condition.getProperties().isEmpty()) {
-                p.put(NutsConstants.IdProperties.PROPERTIES,
-                        PrivateNutsCommaStringParser.formatPropertiesQuery(condition.getProperties())
-                        );
+                p.put(NutsConstants.IdProperties.CONDITIONAL_PROPERTIES,
+                        NutsUtilStrings.formatDefaultMap(condition.getProperties())
+                );
             }
         }
         if (exclusions.size() > 0) {
@@ -295,7 +278,7 @@ public class DefaultNutsDependency implements NutsDependency {
         }
         if (!p.isEmpty()) {
             sb.append("?");
-            sb.append(PrivateNutsQueryStringParser.formatPropertiesQuery(p));
+            sb.append(NutsUtilStrings.formatDefaultMap(p));
         }
         return sb.toString();
     }

@@ -2,9 +2,9 @@ package net.thevpc.nuts.runtime.standalone.text.parser.steps;
 
 import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.NutsTexts;
+import net.thevpc.nuts.NutsUtilStrings;
 import net.thevpc.nuts.runtime.standalone.text.DefaultNutsTexts;
 import net.thevpc.nuts.runtime.standalone.text.parser.*;
-import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -66,7 +66,7 @@ public class TitleParserStep extends ParserStep {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder("Title(" + CoreStringUtils.dblQuote(start.toString()));
+        StringBuilder sb = new StringBuilder("Title(" + NutsUtilStrings.dblQuotes(start.toString()));
         for (ParserStep parserStep : children) {
             sb.append(",");
             sb.append(parserStep.toString());

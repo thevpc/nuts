@@ -27,7 +27,6 @@ package net.thevpc.nuts.runtime.standalone.util.filters;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.util.Simplifiable;
-import net.thevpc.nuts.runtime.standalone.xtra.expr.CommaStringParser;
 
 import java.lang.reflect.Array;
 import java.util.*;
@@ -342,8 +341,8 @@ public class CoreFilterUtils {
         if (NutsBlankable.isBlank(desc.getPackaging())) {
             return true;
         }
-        NutsId _v = NutsId.of(packaging).orElse(null);
-        NutsId _v2 = NutsId.of(desc.getPackaging()).orElse(null);
+        NutsId _v = NutsId.of(packaging).orNull();
+        NutsId _v2 = NutsId.of(desc.getPackaging()).orNull();
         if (_v == null || _v2 == null) {
             return _v == _v2;
         }
@@ -356,23 +355,23 @@ public class CoreFilterUtils {
     }
 
     public static boolean acceptDependency(NutsDependency dep, NutsSession session) {
-        if(CoreFilterUtils.acceptCondition(dep.getCondition(), false, session)) {
+        if (CoreFilterUtils.acceptCondition(dep.getCondition(), false, session)) {
             // fast reject jfx dependencies with different environment defined by classifier!
-            if(dep.getGroupId().equals("org.openjfx") && dep.getArtifactId().startsWith("javafx")){
+            if (dep.getGroupId().equals("org.openjfx") && dep.getArtifactId().startsWith("javafx")) {
                 String c = NutsUtilStrings.trim(dep.getClassifier());
-                if(c.length()>0){
+                if (c.length() > 0) {
                     String[] a = c.split("-");
-                    if(a.length>0){
-                        NutsOsFamily o = NutsOsFamily.parse(a[0]).orElse(null);
-                        if(o!=null){
-                            if(o!=session.env().getOsFamily()){
+                    if (a.length > 0) {
+                        NutsOsFamily o = NutsOsFamily.parse(a[0]).orNull();
+                        if (o != null) {
+                            if (o != session.env().getOsFamily()) {
                                 return false;
                             }
                         }
-                        if(a.length>1){
-                            NutsArchFamily af = NutsArchFamily.parse(a[1]).orElse(null);
-                            if(af!=null){
-                                if(af!=session.env().getArchFamily()){
+                        if (a.length > 1) {
+                            NutsArchFamily af = NutsArchFamily.parse(a[1]).orNull();
+                            if (af != null) {
+                                if (af != session.env().getArchFamily()) {
                                     return false;
                                 }
                             }
@@ -386,53 +385,53 @@ public class CoreFilterUtils {
     }
 
     public static boolean acceptCondition(NutsEnvCondition envCond, boolean currentVMOnLy, NutsSession session) {
-        if(envCond==null || envCond.isBlank()){
+        if (envCond == null || envCond.isBlank()) {
             return true;
         }
         NutsWorkspaceEnvManager env = session.env();
-        if(!matchesArch(
+        if (!matchesArch(
                 env.getArchFamily().id(),
                 envCond.getArch(), session
-        )){
+        )) {
             return false;
         }
-        if(!matchesOs(
+        if (!matchesOs(
                 env.getOsFamily().id(),
                 envCond.getOs(), session
-        )){
+        )) {
             return false;
         }
-        if(!matchesOsDist(
+        if (!matchesOsDist(
                 env.getOsDist().toString(),
                 envCond.getOsDist(), session
-        )){
+        )) {
             return false;
         }
-        if(currentVMOnLy){
-            if(!matchesPlatform(
+        if (currentVMOnLy) {
+            if (!matchesPlatform(
                     env.getPlatform().toString(),
                     envCond.getPlatform(), session
-            )){
+            )) {
                 return false;
             }
-        }else{
-            if(!matchesPlatform(
+        } else {
+            if (!matchesPlatform(
                     env.platforms().findPlatforms().toList(),
                     envCond.getPlatform(), session
-            )){
+            )) {
                 return false;
             }
         }
 
-        if(!matchesDesktopEnvironment(
+        if (!matchesDesktopEnvironment(
                 env.getDesktopEnvironments(),
                 envCond.getDesktopEnvironment(), session
-        )){
+        )) {
             return false;
         }
-        if(!matchesProperties(
+        if (!matchesProperties(
                 envCond.getProperties(), session
-        )){
+        )) {
             return false;
         }
         return true;
@@ -440,7 +439,7 @@ public class CoreFilterUtils {
 
     private static boolean matchesProperties(Map<String, String> props, NutsSession session) {
         for (Map.Entry<String, String> kv : props.entrySet()) {
-            if(!matchesProperty(kv.getKey(),kv.getValue(),session)){
+            if (!matchesProperty(kv.getKey(), kv.getValue(), session)) {
                 return false;
             }
         }
@@ -450,13 +449,13 @@ public class CoreFilterUtils {
     private static boolean matchesProperty(String k, String expected, NutsSession session) {
         //maven always checks System Props
         String f = System.getProperty(k);
-        if(expected==null){
-            return f!=null;
+        if (expected == null) {
+            return f != null;
         }
-        expected=NutsUtilStrings.trim(expected);
-        f=NutsUtilStrings.trim(f);
-        if(expected.startsWith("!")){
-            expected=expected.substring(1).trim();
+        expected = NutsUtilStrings.trim(expected);
+        f = NutsUtilStrings.trim(f);
+        if (expected.startsWith("!")) {
+            expected = expected.substring(1).trim();
             return !expected.equals(f);
         }
         return expected.equals(f);
@@ -473,9 +472,9 @@ public class CoreFilterUtils {
                     return true;
                 }
                 NutsId idCond = NutsId.of(cond).get(session);
-                NutsArchFamily w = NutsArchFamily.parse(idCond.getArtifactId()).orElse(null);
-                if(w!=null){
-                    idCond=idCond.builder().setArtifactId(w.id()).build();
+                NutsArchFamily w = NutsArchFamily.parse(idCond.getArtifactId()).orNull();
+                if (w != null) {
+                    idCond = idCond.builder().setArtifactId(w.id()).build();
                 }
                 if (idCond.equalsShortId(currentId)) {
                     if (idCond.getVersion().filter(session).acceptVersion(currentId.getVersion(), session)) {
@@ -500,11 +499,11 @@ public class CoreFilterUtils {
                     return true;
                 }
                 NutsId condId = NutsId.of(cond).get(session);
-                NutsOsFamily w = NutsOsFamily.parse(condId.getArtifactId()).orElse(null);
-                if(w!=null){
-                    condId=condId.builder().setArtifactId(w.id()).build();
+                NutsOsFamily w = NutsOsFamily.parse(condId.getArtifactId()).orNull();
+                if (w != null) {
+                    condId = condId.builder().setArtifactId(w.id()).build();
                 }
-                return condId.compatNewer().filter(session).acceptId(currentId,session);
+                return condId.compatNewer().filter(session).acceptId(currentId, session);
             }
             return false;
         } else {
@@ -523,7 +522,7 @@ public class CoreFilterUtils {
                     return true;
                 }
                 NutsId condId = NutsId.of(cond).get(session);
-                return condId.compatNewer().filter(session).acceptId(currentId,session);
+                return condId.compatNewer().filter(session).acceptId(currentId, session);
             }
             return false;
         } else {
@@ -535,8 +534,8 @@ public class CoreFilterUtils {
     public static boolean matchesPlatform(Collection<NutsPlatformLocation> platforms, Collection<String> allCond, NutsSession session) {
         for (NutsPlatformLocation platform : platforms) {
             NutsId id = platform.getId();
-            if(id!=null){
-                if(matchesPlatform(id.toString(),allCond, session)){
+            if (id != null) {
+                if (matchesPlatform(id.toString(), allCond, session)) {
                     return true;
                 }
             }
@@ -555,11 +554,11 @@ public class CoreFilterUtils {
                     return true;
                 }
                 NutsId condId = NutsId.of(cond).get(session);
-                NutsPlatformFamily w = NutsPlatformFamily.parse(condId.getArtifactId()).orElse(null);
-                if(w!=null){
-                    condId=condId.builder().setArtifactId(w.id()).build();
+                NutsPlatformFamily w = NutsPlatformFamily.parse(condId.getArtifactId()).orNull();
+                if (w != null) {
+                    condId = condId.builder().setArtifactId(w.id()).build();
                 }
-                return condId.compatNewer().filter(session).acceptId(currentId,session);
+                return condId.compatNewer().filter(session).acceptId(currentId, session);
             }
             return false;
         } else {
@@ -569,7 +568,7 @@ public class CoreFilterUtils {
 
     public static boolean matchesDesktopEnvironment(Collection<NutsId> platforms, Collection<String> allConds, NutsSession session) {
         for (NutsId platform : platforms) {
-            if(matchesDesktopEnvironment(platform.toString(),allConds,session)){
+            if (matchesDesktopEnvironment(platform.toString(), allConds, session)) {
                 return true;
             }
         }
@@ -587,11 +586,11 @@ public class CoreFilterUtils {
                     return true;
                 }
                 NutsId condId = NutsId.of(cond).get(session);
-                NutsDesktopEnvironmentFamily w = NutsDesktopEnvironmentFamily.parse(condId.getArtifactId()).orElse(null);
-                if(w!=null){
-                    condId=condId.builder().setArtifactId(w.id()).build();
+                NutsDesktopEnvironmentFamily w = NutsDesktopEnvironmentFamily.parse(condId.getArtifactId()).orNull();
+                if (w != null) {
+                    condId = condId.builder().setArtifactId(w.id()).build();
                 }
-                return condId.compatNewer().filter(session).acceptId(currentId,session);
+                return condId.compatNewer().filter(session).acceptId(currentId, session);
             }
             return false;
         } else {
@@ -655,7 +654,7 @@ public class CoreFilterUtils {
         return c0.equals(c1);
     }
 
-    public static Map<String, String> toMap(NutsEnvCondition condition,NutsSession session) {
+    public static Map<String, String> toMap(NutsEnvCondition condition, NutsSession session) {
         LinkedHashMap<String, String> m = new LinkedHashMap<>();
         String s = condition.getArch().stream().map(String::trim).filter(x -> !x.isEmpty()).collect(Collectors.joining(","));
         if (!NutsBlankable.isBlank(s)) {
@@ -669,7 +668,7 @@ public class CoreFilterUtils {
         if (!NutsBlankable.isBlank(s)) {
             m.put(NutsConstants.IdProperties.OS_DIST, s);
         }
-        s = String.join(",",condition.getPlatform());
+        s = String.join(",", condition.getPlatform());
         if (!NutsBlankable.isBlank(s)) {
             m.put(NutsConstants.IdProperties.PLATFORM, s);
         }
@@ -682,8 +681,8 @@ public class CoreFilterUtils {
             m.put(NutsConstants.IdProperties.PROFILE, s);
         }
         Map<String, String> properties = condition.getProperties();
-        if(!properties.isEmpty()){
-            m.put(NutsConstants.IdProperties.PROPERTIES, CommaStringParser.formatPropertiesQuery(properties));
+        if (!properties.isEmpty()) {
+            m.put(NutsConstants.IdProperties.CONDITIONAL_PROPERTIES, NutsUtilStrings.formatMap(properties, "=", ",", "", true));
         }
         return m;
     }

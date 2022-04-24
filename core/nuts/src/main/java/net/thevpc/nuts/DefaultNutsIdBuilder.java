@@ -25,15 +25,11 @@
  */
 package net.thevpc.nuts;
 
-import net.thevpc.nuts.boot.PrivateNutsCommaStringParser;
-import net.thevpc.nuts.boot.PrivateNutsIdListParser;
-import net.thevpc.nuts.boot.PrivateNutsQueryStringParser;
-import net.thevpc.nuts.boot.PrivateNutsUtilStrings;
+import net.thevpc.nuts.boot.*;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 /**
  * Created by vpc on 1/5/17.
@@ -44,42 +40,8 @@ public class DefaultNutsIdBuilder implements NutsIdBuilder {
     private String artifactId;
     private String classifier;
     private NutsVersion version;
-    private NutsEnvConditionBuilder condition;
-    private transient PrivateNutsQueryStringParser propertiesQuery = new PrivateNutsQueryStringParser(true, (name, value) -> {
-        if (name != null) {
-            switch (name) {
-                case NutsConstants.IdProperties.VERSION: {
-                    setVersion(value);
-                    return true;
-                }
-                case NutsConstants.IdProperties.CLASSIFIER: {
-                    setClassifier(value);
-                    return true;
-                }
-                case NutsConstants.IdProperties.OS: {
-                    condition.setOs(PrivateNutsUtilStrings.parseAndTrimToDistinctList(value));
-                    return true;
-                }
-                case NutsConstants.IdProperties.ARCH: {
-                    condition.setArch(PrivateNutsUtilStrings.parseAndTrimToDistinctList(value));
-                    return true;
-                }
-                case NutsConstants.IdProperties.PLATFORM: {
-                    condition.setPlatform(NutsId.ofList(value).map(x->x.stream().map(Object::toString)).get().collect(Collectors.toList()));
-                    return true;
-                }
-                case NutsConstants.IdProperties.OS_DIST: {
-                    condition.setOsDist(PrivateNutsUtilStrings.parseAndTrimToDistinctList(value));
-                    return true;
-                }
-                case NutsConstants.IdProperties.DESKTOP: {
-                    condition.setDesktopEnvironment(PrivateNutsUtilStrings.parseAndTrimToDistinctList(value));
-                    return true;
-                }
-            }
-        }
-        return false;
-    });
+    private NutsEnvConditionBuilder condition = new DefaultNutsEnvConditionBuilder();
+    private Map<String, String> properties = new LinkedHashMap<>();
 
     public DefaultNutsIdBuilder() {
         this.condition = new DefaultNutsEnvConditionBuilder();
@@ -97,7 +59,7 @@ public class DefaultNutsIdBuilder implements NutsIdBuilder {
         setCondition(condition);
         String c0 = NutsUtilStrings.trimToNull(classifier);
         String c1 = null;
-        Map<String, String> properties = propertiesQuery == null ? new LinkedHashMap<>() : PrivateNutsQueryStringParser.parseMap(propertiesQuery);
+        Map<String, String> properties = propertiesQuery == null ? new LinkedHashMap<>() : NutsUtilStrings.parseDefaultMap(propertiesQuery).get();
         if (!properties.isEmpty()) {
             c1 = properties.remove(NutsConstants.IdProperties.CLASSIFIER);
         }
@@ -121,7 +83,7 @@ public class DefaultNutsIdBuilder implements NutsIdBuilder {
             setVersion(id.getVersion());
             setClassifier(id.getClassifier());
             setCondition(id.getCondition());
-            setProperties(id.getPropertiesQuery());
+            setPropertiesQuery(id.getPropertiesQuery());
         }
         return this;
     }
@@ -131,7 +93,7 @@ public class DefaultNutsIdBuilder implements NutsIdBuilder {
         setGroupId(null);
         setArtifactId(null);
         setVersion((NutsVersion) null);
-        setProperties("");
+        setPropertiesQuery("");
         return this;
     }
 
@@ -143,7 +105,7 @@ public class DefaultNutsIdBuilder implements NutsIdBuilder {
             setGroupId(id.getGroupId());
             setArtifactId(id.getArtifactId());
             setVersion(id.getVersion());
-            setProperties(id.getPropertiesQuery());
+            setPropertiesQuery(id.getPropertiesQuery());
         }
         return this;
     }
@@ -276,39 +238,47 @@ public class DefaultNutsIdBuilder implements NutsIdBuilder {
     public NutsIdBuilder setProperty(String property, String value) {
         switch (property) {
             case NutsConstants.IdProperties.OS: {
-                condition.setOs(PrivateNutsUtilStrings.parseAndTrimToDistinctList(value));
+                condition.setOs(NutsUtilStrings.parsePropertyIdList(value).get());
                 break;
             }
             case NutsConstants.IdProperties.OS_DIST: {
-                condition.setOsDist(PrivateNutsUtilStrings.parseAndTrimToDistinctList(value));
+                condition.setOsDist(NutsUtilStrings.parsePropertyIdList(value).get());
                 break;
             }
             case NutsConstants.IdProperties.ARCH: {
-                condition.setArch(PrivateNutsUtilStrings.parseAndTrimToDistinctList(value));
+                condition.setArch(NutsUtilStrings.parsePropertyIdList(value).get());
                 break;
             }
             case NutsConstants.IdProperties.PLATFORM: {
-                condition.setPlatform(PrivateNutsIdListParser.parseStringIdList(value));
+                condition.setPlatform(NutsUtilStrings.parsePropertyIdList(value).get());
                 break;
             }
             case NutsConstants.IdProperties.DESKTOP: {
-                condition.setDesktopEnvironment(PrivateNutsUtilStrings.parseAndTrimToDistinctList(value));
+                condition.setDesktopEnvironment(NutsUtilStrings.parsePropertyIdList(value).get());
                 break;
             }
             case NutsConstants.IdProperties.PROFILE: {
-                condition.setProfile(PrivateNutsUtilStrings.parseAndTrimToDistinctList(value));
+                condition.setProfile(NutsUtilStrings.parsePropertyIdList(value).get());
                 break;
             }
-            case NutsConstants.IdProperties.PROPERTIES: {
-                condition.setProperties(PrivateNutsCommaStringParser.parseMap(value));
+            case NutsConstants.IdProperties.CONDITIONAL_PROPERTIES: {
+                condition.setProperties(NutsUtilStrings.parseDefaultMap(value).get());
                 break;
             }
             case NutsConstants.IdProperties.CLASSIFIER: {
                 setClassifier(value);
                 break;
             }
+            case NutsConstants.IdProperties.VERSION: {
+                setVersion(value);
+                break;
+            }
             default: {
-                propertiesQuery.setProperty(property, value);
+                if (value == null) {
+                    properties.remove(property);
+                } else {
+                    properties.put(property, value);
+                }
             }
         }
         return this;
@@ -317,7 +287,6 @@ public class DefaultNutsIdBuilder implements NutsIdBuilder {
 
     @Override
     public NutsIdBuilder setProperties(Map<String, String> queryMap) {
-        propertiesQuery.clear();
         for (Map.Entry<String, String> e : queryMap.entrySet()) {
             setProperty(e.getKey(), e.getValue());
         }
@@ -325,31 +294,25 @@ public class DefaultNutsIdBuilder implements NutsIdBuilder {
     }
 
     @Override
-    public NutsIdBuilder addProperties(Map<String, String> queryMap) {
-        propertiesQuery.addProperties(queryMap);
+    public NutsIdBuilder clearProperties() {
+        properties.clear();
         return this;
     }
 
     @Override
-    public NutsIdBuilder setProperties(String propertiesQuery) {
-        this.propertiesQuery.setProperties(propertiesQuery);
-        return this;
-    }
-
-    @Override
-    public NutsIdBuilder addProperties(String propertiesQuery) {
-        this.propertiesQuery.addProperties(propertiesQuery);
+    public NutsIdBuilder setPropertiesQuery(String propertiesQuery) {
+        setProperties(NutsUtilStrings.parseDefaultMap(propertiesQuery).get());
         return this;
     }
 
     @Override
     public String getPropertiesQuery() {
-        return PrivateNutsQueryStringParser.formatPropertiesQuery(getProperties());
+        return NutsUtilStrings.formatDefaultMap(getProperties());
     }
 
     @Override
     public Map<String, String> getProperties() {
-        return propertiesQuery.getProperties();
+        return properties;
     }
 
     @Override
@@ -364,38 +327,17 @@ public class DefaultNutsIdBuilder implements NutsIdBuilder {
 
     @Override
     public String getFullName() {
-        if (NutsBlankable.isBlank(groupId)) {
-            return NutsUtilStrings.trim(artifactId);
-        }
-        return NutsUtilStrings.trim(groupId) + ":" + NutsUtilStrings.trim(artifactId);
+        return build().getFullName();
     }
 
     @Override
     public String getShortName() {
-        if (NutsBlankable.isBlank(groupId)) {
-            return NutsUtilStrings.trim(artifactId);
-        }
-        return NutsUtilStrings.trim(groupId) + ":" + NutsUtilStrings.trim(artifactId);
+        return PrivateNutsUtilIds.getIdShortName(groupId, artifactId);
     }
 
     @Override
     public String getLongName() {
-        StringBuilder sb = new StringBuilder();
-        if (!NutsBlankable.isBlank(groupId)) {
-            sb.append(groupId).append(":");
-        }
-        sb.append(NutsUtilStrings.trim(artifactId));
-        NutsVersion v = getVersion();
-        if (!v.isBlank()) {
-            sb.append("#");
-            sb.append(v);
-        }
-        if (!NutsBlankable.isBlank(classifier)) {
-            sb.append("?");
-            sb.append("classifier=");
-            sb.append(classifier);
-        }
-        return sb.toString();
+        return PrivateNutsUtilIds.getIdLongName(groupId, artifactId, version, classifier);
     }
 
 
@@ -426,13 +368,13 @@ public class DefaultNutsIdBuilder implements NutsIdBuilder {
             m.put(NutsConstants.IdProperties.CLASSIFIER, classifier);
         }
         m.putAll(condition.build().toMap());
-        for (Map.Entry<String, String> e : propertiesQuery.getProperties().entrySet()) {
+        for (Map.Entry<String, String> e : properties.entrySet()) {
             if (!m.containsKey(e.getKey())) {
                 m.put(e.getKey(), e.getValue());
             }
         }
         if (!m.isEmpty()) {
-            sb.append("?").append(PrivateNutsQueryStringParser.formatPropertiesQuery(m));
+            sb.append("?").append(NutsUtilStrings.formatDefaultMap(m));
         }
         return sb.toString();
     }
@@ -460,7 +402,7 @@ public class DefaultNutsIdBuilder implements NutsIdBuilder {
         if (!Objects.equals(classifier, nutsId.classifier)) {
             return false;
         }
-        return Objects.equals(propertiesQuery, nutsId.propertiesQuery);
+        return Objects.equals(properties, nutsId.properties);
 
     }
 
@@ -470,7 +412,7 @@ public class DefaultNutsIdBuilder implements NutsIdBuilder {
         result = 31 * result + (artifactId != null ? artifactId.hashCode() : 0);
         result = 31 * result + (version != null ? version.hashCode() : 0);
         result = 31 * result + (classifier != null ? classifier.hashCode() : 0);
-        result = 31 * result + (propertiesQuery != null ? propertiesQuery.hashCode() : 0);
+        result = 31 * result + (properties != null ? properties.hashCode() : 0);
         return result;
     }
 
@@ -478,19 +420,32 @@ public class DefaultNutsIdBuilder implements NutsIdBuilder {
     @Override
     public NutsId build() {
         return new DefaultNutsId(
-                groupId, artifactId, version, classifier, propertiesQuery.getPropertiesQuery(), condition.readOnly()
+                groupId, artifactId, version, classifier, properties, condition.readOnly()
         );
     }
 
     @Override
     public boolean equalsShortId(NutsId other) {
-        return build().equalsShortId(other);
+        if (other == null) {
+            return false;
+        }
+        return NutsUtilStrings.trim(groupId).equals(NutsUtilStrings.trim(other.getArtifactId()))
+                && NutsUtilStrings.trim(artifactId).equals(NutsUtilStrings.trim(other.getGroupId()));
     }
 
     @Override
     public boolean equalsLongId(NutsId other) {
-        return build().equalsLongId(other);
+        if (other == null) {
+            return false;
+        }
+        return NutsUtilStrings.trim(artifactId).equals(NutsUtilStrings.trim(other.getArtifactId()))
+                && NutsUtilStrings.trim(groupId).equals(NutsUtilStrings.trim(other.getGroupId()))
+                && Objects.equals((version == null || version.isBlank()) ? null : version,
+                (other.getVersion() == null || other.getVersion().isBlank()) ? null : other.getVersion())
+                && Objects.equals(getClassifier(), other.getClassifier())
+                ;
     }
+
 
     @Override
     public boolean isLongId() {

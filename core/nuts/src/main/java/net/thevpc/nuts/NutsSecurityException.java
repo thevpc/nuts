@@ -32,7 +32,7 @@ package net.thevpc.nuts;
  * @app.category Exceptions
  * @since 0.5.4
  */
-public class NutsSecurityException extends SecurityException implements NutsExceptionBase {
+public class NutsSecurityException extends SecurityException implements NutsSessionAwareExceptionBase {
 
     /**
      * workspace

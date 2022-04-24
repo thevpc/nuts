@@ -3,7 +3,6 @@ package net.thevpc.nuts.runtime.standalone.text.parser.steps;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.text.DefaultNutsTexts;
 import net.thevpc.nuts.runtime.standalone.text.parser.DefaultNutsTextNodeParser;
-import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 
 
 public class NewLineParserStep extends ParserStep {
@@ -53,7 +52,7 @@ public class NewLineParserStep extends ParserStep {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder("NewLine(" + CoreStringUtils.dblQuote(start.toString()));
+        StringBuilder sb = new StringBuilder("NewLine(" + NutsUtilStrings.dblQuotes(start.toString()));
         return sb.append(")").toString();
     }
 

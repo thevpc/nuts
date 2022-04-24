@@ -34,14 +34,21 @@ public class PrivateNutsOptionalValid<T> extends PrivateNutsOptionalImpl<T> {
     }
 
     @Override
-    public boolean isBlank() {
-        return NutsBlankable.isBlank(value);
+    public boolean isNotPresent() {
+        return false;
     }
 
     @Override
+    public boolean isEmpty() {
+        return false;
+    }
+
     public NutsOptional<T> nonBlank() {
-        if(isBlank()){
-            return new PrivateNutsOptionalEmpty<>(session -> NutsMessage.cstyle("blank value"),false);
+        if(isPresent()){
+            T v = get();
+            if(NutsBlankable.isBlank(v)){
+                return NutsOptional.ofEmpty(null);
+            }
         }
         return this;
     }

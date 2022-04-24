@@ -38,7 +38,7 @@ public class CoreEnumUtils {
 
     public static <T extends Enum> T parseEnumString(String val, Class<T> e, boolean lenient) {
         if (NutsEnum.class.isAssignableFrom(e)) {
-            T r = (T) NutsEnum.parse((Class) e, val).orElse(null);
+            T r = (T) NutsEnum.parse((Class) e, val).orNull();
             if (r != null) {
                 return r;
             }

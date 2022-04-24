@@ -32,7 +32,7 @@ package net.thevpc.nuts;
  * @app.category Exceptions
  * @since 0.5.4
  */
-public class NutsExecutionException extends NutsException {
+public class NutsExecutionException extends NutsException implements NutsExceptionWithExitCodeBase {
 
     public static final int DEFAULT_ERROR_EXIT_CODE = 244;
     private final int exitCode;

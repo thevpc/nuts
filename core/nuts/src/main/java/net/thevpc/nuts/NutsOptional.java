@@ -1,6 +1,5 @@
 package net.thevpc.nuts;
 
-import net.thevpc.nuts.boot.PrivateNutsNutsOptionalBlank;
 import net.thevpc.nuts.boot.PrivateNutsOptionalEmpty;
 import net.thevpc.nuts.boot.PrivateNutsOptionalValid;
 
@@ -20,18 +19,8 @@ public interface NutsOptional<T> {
         return new PrivateNutsOptionalEmpty<>(errorMessage, true);
     }
 
-    static <T> NutsOptional<T> ofBlank(T value, Function<NutsSession, NutsMessage> blankMessage) {
-        if (value == null || !NutsBlankable.isBlank(value)) {
-            throw new IllegalArgumentException("expected a blank value");
-        }
-        return new PrivateNutsNutsOptionalBlank<>(value, blankMessage);
-    }
-
     static <T> NutsOptional<T> of(T value) {
-        if (value == null) {
-            return ofEmpty(s -> NutsMessage.cstyle("empty value"));
-        }
-        return new PrivateNutsOptionalValid<>(value);
+        return of(value, null);
     }
 
     static <T> NutsOptional<T> of(T value, Function<NutsSession, NutsMessage> emptyMessage) {
@@ -72,6 +61,20 @@ public interface NutsOptional<T> {
 
     T orElse(T other);
 
+    T orNull();
+
+    NutsOptional<T> ifEmpty(T other);
+
+    NutsOptional<T> ifBlank(T other);
+
+    NutsOptional<T> ifError(T other);
+
+    NutsOptional<T> ifEmptyGet(Supplier<NutsOptional<T>> other);
+
+    NutsOptional<T> ifBlankGet(Supplier<NutsOptional<T>> other);
+
+    NutsOptional<T> ifErrorGet(Supplier<NutsOptional<T>> other);
+
     NutsOptional<T> orElseGetOptional(Supplier<NutsOptional<T>> other);
 
     T orElseGet(Supplier<? extends T> other);
@@ -81,8 +84,10 @@ public interface NutsOptional<T> {
     boolean isError();
 
     boolean isPresent();
+    boolean isNotPresent();
 
-    boolean isBlank();
+    NutsOptional<T> nonBlank(Function<NutsSession, NutsMessage> emptyMessage);
+
     NutsOptional<T> nonBlank();
 
     Function<NutsSession, NutsMessage> getMessage();

@@ -549,7 +549,7 @@ public final class NutsBootWorkspace {
                 }
             }
 
-            NutsId bootApiId = NutsId.of("net.thevpc.nuts:nuts#" + NutsVersion.of(computedOptions.getApiVersion())).get();
+            NutsId bootApiId = NutsId.of("net.thevpc.nuts","nuts",NutsVersion.of(computedOptions.getApiVersion()).get()).get();
             Path nutsApiConfigBootPath
                     = Paths.get(computedOptions.getStoreLocation(NutsStoreLocation.CONFIG) + File.separator + NutsConstants.Folders.ID)
                     .resolve(PrivateNutsUtils.idToPath(bootApiId)).resolve(NutsConstants.Files.API_BOOT_CONFIG_FILE_NAME);
@@ -1369,7 +1369,7 @@ public final class NutsBootWorkspace {
 
         for (NutsDependency s : deps) {
             NutsClassLoaderNodeBuilder x = new NutsClassLoaderNodeBuilder();
-            if (PrivateNutsUtilBootId.isAcceptDependency(s, computedOptions)) {
+            if (PrivateNutsUtilIds.isAcceptDependency(s, computedOptions)) {
                 x.setId(s.toString())
                         .setUrl(PrivateNutsUtilMavenRepos.getBootCacheJar(s.toId(), repositories, workspaceBootLibFolder, !recover,
                                         name + " dependency",

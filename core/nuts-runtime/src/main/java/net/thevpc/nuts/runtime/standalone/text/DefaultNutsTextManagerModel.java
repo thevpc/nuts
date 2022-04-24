@@ -187,7 +187,7 @@ public class DefaultNutsTextManagerModel {
 
         if (lc.length() > 0) {
             try {
-                NutsTextStyle found = NutsTextStyle.parse(lc).orElse(null);
+                NutsTextStyle found = NutsTextStyle.parse(lc).orNull();
                 if (found != null) {
                     h = new CustomStyleCodeHighlighter(found, session);
                     _cachedHighlighters.put(lc, h);

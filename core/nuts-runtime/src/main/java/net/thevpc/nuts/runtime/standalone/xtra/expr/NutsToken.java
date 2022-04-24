@@ -1,5 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.xtra.expr;
 
+import net.thevpc.nuts.NutsUtilStrings;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 
 public class NutsToken {
@@ -52,14 +53,14 @@ public class NutsToken {
             return "NutsToken{" +
                     "ttype='" + (char)ttype +"'"+
                     ", lineno=" + lineno +
-                    ", sval=" + (sval==null?"null": CoreStringUtils.simpleQuote(sval)) +
+                    ", sval=" + (sval==null?"null": NutsUtilStrings.simpleQuotes(sval)) +
                     ", nval=" + nval +
                     '}';
         }
         return "NutsToken{" +
                 "ttype=" + ttype +
                 ", lineno=" + lineno +
-                ", sval=" + (sval==null?"null": CoreStringUtils.simpleQuote(sval)) +
+                ", sval=" + (sval==null?"null": NutsUtilStrings.simpleQuotes(sval)) +
                 ", nval=" + nval +
                 '}';
     }

@@ -195,7 +195,7 @@ public class NutsDescriptorUtils {
                 .setCondition(applyNutsConditionProperties(child.getCondition(), properties))
                 .setType(CoreNutsUtils.applyStringProperties(child.getType(), properties))
                 .setExclusions(exclusions)
-                .setProperties(CoreNutsUtils.applyStringProperties(child.getPropertiesQuery(), properties))
+                .setPropertiesQuery(CoreNutsUtils.applyStringProperties(child.getPropertiesQuery(), properties))
                 ;
     }
 

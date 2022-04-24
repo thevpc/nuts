@@ -1,10 +1,8 @@
 package net.thevpc.nuts.boot;
 
-import net.thevpc.nuts.NutsMessage;
-import net.thevpc.nuts.NutsNoSuchElementException;
-import net.thevpc.nuts.NutsOptional;
-import net.thevpc.nuts.NutsSession;
+import net.thevpc.nuts.*;
 
+import java.util.NoSuchElementException;
 import java.util.function.Function;
 
 public class PrivateNutsOptionalEmpty<T> extends PrivateNutsOptionalImpl<T> {
@@ -21,7 +19,19 @@ public class PrivateNutsOptionalEmpty<T> extends PrivateNutsOptionalImpl<T> {
 
     @Override
     public T get(NutsSession session) {
-        throw new NutsNoSuchElementException(session, message.apply(session));
+        if(error){
+            if (session == null) {
+                throw new NoSuchElementException(message.apply(null).toString());
+            } else {
+                throw new NutsOptionalErrorException(session, message.apply(session));
+            }
+        }else {
+            if (session == null) {
+                throw new NoSuchElementException(message.apply(null).toString());
+            } else {
+                throw new NutsNoSuchElementException(session, message.apply(session));
+            }
+        }
     }
 
     @Override
@@ -42,13 +52,18 @@ public class PrivateNutsOptionalEmpty<T> extends PrivateNutsOptionalImpl<T> {
     }
 
     @Override
-    public boolean isBlank() {
-        return true;
+    public boolean isPresent() {
+        return false;
     }
 
     @Override
-    public boolean isPresent() {
-        return false;
+    public boolean isEmpty() {
+        return !error;
+    }
+
+    @Override
+    public boolean isNotPresent() {
+        return true;
     }
 
     @Override

@@ -61,7 +61,7 @@ public interface NutsEnum {
             NutsMessage msg = NutsMessage.cstyle("NutsEnum %s must implement a public static method parse(String,NutsSession)", type.getName());
             return NutsOptional.ofError(session -> msg);
         }
-        if (!Modifier.isStatic(m.getModifiers()) || !Modifier.isPublic(m.getModifiers()) || !m.getReturnType().equals(type)) {
+        if (!Modifier.isStatic(m.getModifiers()) || !Modifier.isPublic(m.getModifiers()) || !m.getReturnType().equals(NutsOptional.class)) {
             NutsMessage msg = NutsMessage.cstyle("NutsEnum %s must implement a public static method parse(String,NutsSession)", type.getName());
             return NutsOptional.ofError(session -> msg);
         }

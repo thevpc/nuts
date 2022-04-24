@@ -1129,38 +1129,34 @@ public class DefaultNutsWorkspaceConfigModel {
                         NutsPath.of(n.getURL(), session)
                 );
             }
-            MavenUtils.DepsAndRepos dd = MavenUtils.of(session).loadDependenciesAndRepositoriesFromPomPath(id,
-                    resolveBootRepositoriesBootSelectionArray(session),
-                    session);
-            if (dd != null) {
-                String contentPath = id.getGroupId().replace('.', '/')
-                        + "/" + id.getArtifactId()
-                        + "/" + id.getVersion()
-                        + "/" + id.getArtifactId() + "-" + id.getVersion();
-                NutsPath pp = null;
-                for (String repo : dd.repos) {
-                    NutsRepositoryLocation r = NutsRepositoryLocation.of(repo);
-                    NutsPath base = NutsPath.of(r.getPath(), session);
-                    if (base.isLocal() && base.isDirectory()) {
-                        NutsPath a = base.resolve(contentPath + ".jar");
-                        if (a.isRegularFile()) {
-                            pp = a;
-                            break;
-                        }
+            String contentPath = id.getGroupId().replace('.', '/')
+                    + "/" + id.getArtifactId()
+                    + "/" + id.getVersion()
+                    + "/" + id.getArtifactId() + "-" + id.getVersion();
+            NutsPath jarPath = null;
+            NutsPath pomPath = null;
+            for (NutsRepositoryLocation nutsRepositoryLocation : resolveBootRepositoriesBootSelectionArray(session)) {
+                NutsPath base = NutsPath.of(nutsRepositoryLocation.getPath(), session);
+                if (base.isLocal() && base.isDirectory()) {
+                    NutsPath a = base.resolve(contentPath + ".jar");
+                    NutsPath b = base.resolve(contentPath + ".pom");
+                    if (a.isRegularFile() &&b.isRegularFile()) {
+                        jarPath = a;
+                        pomPath = b;
+                        break;
                     }
                 }
-                if (pp != null) {
-                    NutsDescriptor d = NutsDescriptorParser.of(session)
-                            .setDescriptorStyle(NutsDescriptorStyle.MAVEN)
-                            .parse(pp);
-                    //see only first level deps!
-                    return new NutsBootDef(
-                            id,
-                            d.getDependencies(),
-                            pp
-                    );
-                }
-                //bootDescFileContent.put("bootRepositories", String.join(";", dd.repos));
+            }
+            if (jarPath != null) {
+                NutsDescriptor d = NutsDescriptorParser.of(session)
+                        .setDescriptorStyle(NutsDescriptorStyle.MAVEN)
+                        .parse(pomPath);
+                //see only first level deps!
+                return new NutsBootDef(
+                        id,
+                        d.getDependencies(),
+                        jarPath
+                );
             }
         }
         throw new NutsNotFoundException(session, id);

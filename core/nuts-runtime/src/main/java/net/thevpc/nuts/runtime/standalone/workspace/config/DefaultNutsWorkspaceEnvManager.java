@@ -169,7 +169,7 @@ public class DefaultNutsWorkspaceEnvManager implements NutsWorkspaceEnvManager {
             NutsArgument bootCustomArgument = session.boot().getBootCustomArgument(optionName);
             String o = bootCustomArgument == null ? null : bootCustomArgument.getString();
             if (!NutsBlankable.isBlank(o)) {
-                NutsSupportMode q = NutsSupportMode.parse(o).orElse(null);
+                NutsSupportMode q = NutsSupportMode.parse(o).orNull();
                 if (q != null) {
                     return q;
                 }

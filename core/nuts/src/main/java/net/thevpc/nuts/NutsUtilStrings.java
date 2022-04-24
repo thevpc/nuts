@@ -26,12 +26,11 @@
  */
 package net.thevpc.nuts;
 
-import net.thevpc.nuts.boot.PrivateNutsUtils;
+import net.thevpc.nuts.boot.PrivateNutsIdListParser;
+import net.thevpc.nuts.boot.PrivateNutsStringMapParser;
+import net.thevpc.nuts.boot.PrivateNutsUtilStrings;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.StringTokenizer;
+import java.util.*;
 import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -197,4 +196,260 @@ public class NutsUtilStrings {
         }
         return sb.toString();
     }
+
+    public static String simpleQuotes(String text) {
+        return formatStringLiteral(text, QuoteType.SIMPLE, QuoteCondition.QUOTE_ALWAYS, null);
+    }
+
+    /**
+     * @param text         text
+     * @param compact      if true, quotes will not be used unless necessary
+     * @param escapedChars escapedChars, can be null
+     * @return quotes
+     */
+    public static String simpleQuotes(String text, boolean compact, String escapedChars) {
+        StringBuffer sb = new StringBuffer();
+        boolean requireQuotes = !compact;
+        for (char c : text.toCharArray()) {
+            switch (c) {
+                case '\n': {
+                    requireQuotes = true;
+                    sb.append("\\n");
+                    break;
+                }
+                case '\f': {
+                    requireQuotes = true;
+                    sb.append("\\f");
+                    break;
+                }
+                case '\r': {
+                    requireQuotes = true;
+                    sb.append("\\r");
+                    break;
+                }
+                case '\'':
+                case '\"':
+                case '\\': {
+                    requireQuotes = true;
+                    sb.append("\\").append(c);
+                    break;
+                }
+                default: {
+                    if (escapedChars != null && escapedChars.indexOf(c) >= 0) {
+                        requireQuotes = true;
+                        sb.append(c);
+                    } else {
+                        sb.append(c);
+                    }
+                    break;
+                }
+            }
+        }
+        if (requireQuotes) {
+            sb.insert(0, '\'');
+            sb.append('\'');
+        }
+        return sb.toString();
+    }
+
+    public static String dblQuotes(String text) {
+        return dblQuotes(text, false, null);
+    }
+
+    /**
+     * @param text            text
+     * @param compact         if true, quotes will not be used unless necessary
+     * @param entrySeparators entrySeparators extra characters to escape
+     * @return double quotes
+     */
+    public static String dblQuotes(String text, boolean compact, String entrySeparators) {
+        StringBuilder sb = new StringBuilder();
+        boolean q = !compact;
+        for (char c : text.toCharArray()) {
+            switch (c) {
+                case '\n': {
+                    q = true;
+                    sb.append("\\n");
+                    break;
+                }
+                case '\f': {
+                    q = true;
+                    sb.append("\\f");
+                    break;
+                }
+                case '\r': {
+                    q = true;
+                    sb.append("\\r");
+                    break;
+                }
+                case '\"': {
+                    q = true;
+                    sb.append("\\").append(c);
+                    break;
+                }
+                default: {
+                    if (entrySeparators != null && entrySeparators.indexOf(c) >= 0) {
+                        q = true;
+                        sb.append("\\").append(c);
+                    } else {
+                        sb.append(c);
+                    }
+                    break;
+                }
+            }
+        }
+        if (q) {
+            sb.insert(0, '\"');
+            sb.append('\"');
+        }
+        return sb.toString();
+    }
+
+    public static String formatStringLiteral(String text, QuoteType quoteType, QuoteCondition condition, String extraSeparators) {
+        StringBuilder sb = new StringBuilder();
+        boolean requireQuotes = condition == QuoteCondition.QUOTE_ALWAYS;
+        boolean allowQuotes = condition != QuoteCondition.QUOTE_NEVER;
+        for (char c : text.toCharArray()) {
+            switch (c) {
+                case '\n': {
+                    sb.append("\\n");
+                    if (!requireQuotes && allowQuotes) {
+                        requireQuotes = true;
+                    }
+                    break;
+                }
+                case '\f': {
+                    sb.append("\\f");
+                    if (!requireQuotes && allowQuotes) {
+                        requireQuotes = true;
+                    }
+                    break;
+                }
+                case '\r': {
+                    sb.append("\\r");
+                    if (!requireQuotes && allowQuotes) {
+                        requireQuotes = true;
+                    }
+                    break;
+                }
+                case '\t': {
+                    sb.append("\\t");
+                    if (!requireQuotes && allowQuotes) {
+                        requireQuotes = true;
+                    }
+                    break;
+                }
+                case '\"': {
+                    if (quoteType == QuoteType.DOUBLE) {
+                        sb.append("\\").append(c);
+                        if (!requireQuotes && allowQuotes) {
+                            requireQuotes = true;
+                        }
+                    } else {
+                        sb.append(c);
+                    }
+                    break;
+                }
+                case '\'': {
+                    if (quoteType == QuoteType.SIMPLE) {
+                        sb.append("\\").append(c);
+                        if (!requireQuotes && allowQuotes) {
+                            requireQuotes = true;
+                        }
+                    } else {
+                        sb.append(c);
+                    }
+                    break;
+                }
+                case '`': {
+                    if (quoteType == QuoteType.ANTI) {
+                        sb.append("\\").append(c);
+                        if (!requireQuotes && allowQuotes) {
+                            requireQuotes = true;
+                        }
+                    } else {
+                        sb.append(c);
+                    }
+                    break;
+                }
+                default: {
+                    if (extraSeparators != null && extraSeparators.indexOf(c) >= 0) {
+                        sb.append("\\").append(c);
+                        if (!requireQuotes && allowQuotes) {
+                            requireQuotes = true;
+                        }
+                    } else {
+                        sb.append(c);
+                    }
+                    break;
+                }
+            }
+        }
+        if (requireQuotes) {
+            switch (quoteType){
+                case DOUBLE:{
+                    sb.insert(0, '\"');
+                    sb.append('\"');
+                    break;
+                }
+                case SIMPLE:{
+                    sb.insert(0, '\'');
+                    sb.append('\'');
+                    break;
+                }
+                case ANTI:{
+                    sb.insert(0, '`');
+                    sb.append('`');
+                    break;
+                }
+            }
+        }
+        return sb.toString();
+    }
+
+    public static NutsOptional<Map<String, String>> parseDefaultMap(String text) {
+        return parseMap(text, "=", "&","");
+    }
+
+    public static NutsOptional<Map<String, String>> parseMap(String text, String eqSeparators, String entrySeparators) {
+        return parseMap(text,eqSeparators,entrySeparators,"");
+    }
+
+    public static NutsOptional<Map<String, String>> parseMap(String text, String eqSeparators, String entrySeparators, String escapeChars) {
+        return PrivateNutsStringMapParser.of(eqSeparators, entrySeparators,escapeChars).parse(text);
+    }
+
+    public static String formatDefaultMap(Map<String, String> map) {
+        return formatMap(map, "=", "&", "",true);
+    }
+
+    public static String formatMap(Map<String, String> map, String eqSeparators, String entrySeparators, boolean sort) {
+        return formatMap(map, eqSeparators, entrySeparators, "",sort);
+    }
+
+    public static String formatMap(Map<String, String> map, String eqSeparators, String entrySeparators, String escapeChars, boolean sort) {
+        return PrivateNutsStringMapParser.of(eqSeparators, entrySeparators,escapeChars).format(map, sort);
+    }
+
+    public static NutsOptional<List<String>> parsePropertyIdList(String s) {
+        return PrivateNutsIdListParser.parseStringIdList(s);
+    }
+
+    public static List<String> parsePropertyStringList(String s) {
+        return PrivateNutsUtilStrings.parseAndTrimToDistinctList(s);
+    }
+
+
+    public enum QuoteType {
+        DOUBLE,
+        SIMPLE,
+        ANTI,
+    }
+
+    public enum QuoteCondition {
+        QUOTE_ALWAYS,
+        QUOTE_REQUIRED,
+        QUOTE_NEVER,
+    }
+
 }

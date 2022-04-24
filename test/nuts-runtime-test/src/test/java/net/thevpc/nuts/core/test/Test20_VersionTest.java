@@ -57,12 +57,12 @@ public class Test20_VersionTest {
 
     @Test
     public void test4() {
-        checkEq("[1.0[", "[1.0,1.0[", session);
+        checkEq("[1.0,1.0[", "[1.0[", session);
     }
 
     @Test
     public void test5() {
-        checkEq("]1.0[", "]1.0,1.0[", session);
+        checkEq("]1.0,1.0[", "]1.0[", session);
     }
 
     @Test
@@ -78,13 +78,6 @@ public class Test20_VersionTest {
     @Test
     public void test8() {
         checkEq("[1,2[  ,  [1,3]", "[1,2[, [1,3]", session);
-    }
-
-    private void checkEq(String a, String b, NutsSession session) {
-        NutsVersionFilter u = NutsVersionFilters.of(session).parse(a);
-        String b2 = u.toString();
-        Assertions.assertEquals(b, b2);
-        TestUtils.println(a + " ==> " + b);
     }
 
     @Test
@@ -117,5 +110,17 @@ public class Test20_VersionTest {
         Assertions.assertTrue(DefaultNutsVersion.compareVersions("1.2-rc","1.2-ga")<0);
         Assertions.assertTrue(DefaultNutsVersion.compareVersions("1.2-gamma","1.2-Gamma")==0);
         Assertions.assertTrue(DefaultNutsVersion.compareVersions("1.2-gamma","1.2-hecta")<0);
+    }
+
+    @Test
+    public void test13() {
+        checkEq("[1,2[  ,  [1,2],  [1,3]", "[1,2[, [1,2], [1,3]", session);
+    }
+
+    private void checkEq(String a, String b, NutsSession session) {
+        NutsVersionFilter u = NutsVersionFilters.of(session).parse(a);
+        String b2 = u.toString();
+        Assertions.assertEquals(b, b2);
+        TestUtils.println(a + " ==> " + b);
     }
 }

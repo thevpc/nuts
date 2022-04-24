@@ -26,7 +26,6 @@
 package net.thevpc.nuts;
 
 import net.thevpc.nuts.boot.PrivateNutsUtilMaps;
-import net.thevpc.nuts.boot.PrivateNutsQueryStringParser;
 import net.thevpc.nuts.boot.PrivateNutsUtilStrings;
 
 import java.util.*;
@@ -77,12 +76,12 @@ public class DefaultNutsId implements NutsId {
             }
         }
         this.classifier = c0;
-        this.condition = condition == null ? NutsEnvCondition.BLANK : condition;
-        this.properties = PrivateNutsQueryStringParser.formatSortedPropertiesQuery(properties);
+        this.condition = condition == null ? NutsEnvCondition.BLANK : condition.readOnly();
+        this.properties = NutsUtilStrings.formatDefaultMap(properties);
     }
 
     public DefaultNutsId(String groupId, String artifactId, NutsVersion version, String classifier, String properties, NutsEnvCondition condition) {
-        this(groupId, artifactId, version, classifier, new PrivateNutsQueryStringParser(true, null).setProperties(properties).getProperties(), condition);
+        this(groupId, artifactId, version, classifier, NutsUtilStrings.parseDefaultMap(properties).get(), condition);
     }
 
     @Override
@@ -105,8 +104,8 @@ public class DefaultNutsId implements NutsId {
         if (other == null) {
             return false;
         }
-        return NutsUtilStrings.trim(artifactId).equals(NutsUtilStrings.trim(other.getArtifactId()))
-                && NutsUtilStrings.trim(groupId).equals(NutsUtilStrings.trim(other.getGroupId()));
+        return NutsUtilStrings.trim(groupId).equals(NutsUtilStrings.trim(other.getArtifactId()))
+                && NutsUtilStrings.trim(artifactId).equals(NutsUtilStrings.trim(other.getGroupId()));
     }
 
     @Override
@@ -169,7 +168,7 @@ public class DefaultNutsId implements NutsId {
 
     @Override
     public Map<String, String> getProperties() {
-        return PrivateNutsQueryStringParser.parseMap(properties);
+        return NutsUtilStrings.parseDefaultMap(properties).get();
     }
 
     @Override
@@ -254,13 +253,13 @@ public class DefaultNutsId implements NutsId {
             m.put(NutsConstants.IdProperties.CLASSIFIER, classifier);
         }
         m.putAll(PrivateNutsUtilMaps.toMap(condition));
-        for (Map.Entry<String, String> e : PrivateNutsQueryStringParser.parseMap(properties).entrySet()) {
+        for (Map.Entry<String, String> e : NutsUtilStrings.parseDefaultMap(properties).get().entrySet()) {
             if (!m.containsKey(e.getKey())) {
                 m.put(e.getKey(), e.getValue());
             }
         }
         if (!m.isEmpty()) {
-            sb.append("?").append(PrivateNutsQueryStringParser.formatPropertiesQuery(m));
+            sb.append("?").append(NutsUtilStrings.formatDefaultMap(m));
         }
         return sb.toString();
     }
