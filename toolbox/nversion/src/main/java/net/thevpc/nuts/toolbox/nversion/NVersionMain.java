@@ -69,31 +69,31 @@ public class NVersionMain implements NutsApplication {
         NutsArgument a;
         int processed = 0;
         while (commandLine.hasNext()) {
-            if ((a = commandLine.nextBoolean("--maven")) != null) {
-                maven = a.getBooleanValue();
-            } else if ((a = commandLine.nextBoolean("--win-pe")) != null) {
-                winPE = a.getBooleanValue();
-            } else if ((a = commandLine.nextBoolean("--exe")) != null) {
-                winPE = a.getBooleanValue();
-            } else if ((a = commandLine.nextBoolean("--dll")) != null) {
-                winPE = a.getBooleanValue();
-            } else if ((a = commandLine.nextBoolean("--long")) != null) {
-                longFormat = a.getBooleanValue();
-            } else if ((a = commandLine.nextBoolean("--name")) != null) {
-                nameFormat = a.getBooleanValue();
-            } else if ((a = commandLine.nextBoolean("--sort")) != null) {
-                sort = a.getBooleanValue();
-            } else if ((a = commandLine.nextBoolean("--id")) != null) {
-                idFormat = a.getBooleanValue();
-            } else if ((a = commandLine.nextBoolean("--all")) != null) {
-                all = a.getBooleanValue();
-            } else if ((a = commandLine.nextBoolean("--table")) != null) {
-                table = a.getBooleanValue();
-            } else if ((a = commandLine.nextBoolean("--error")) != null) {
-                error = a.getBooleanValue();
-            } else if (commandLine.peek().isNonOption()) {
-                a = commandLine.next();
-                jarFiles.add(a.getString());
+            if ((a = commandLine.nextBoolean("--maven").orNull())!=null) {
+                maven = a.getBooleanValue().get(session);
+            } else if ((a = commandLine.nextBoolean("--win-pe").orNull())!=null) {
+                winPE = a.getBooleanValue().get(session);
+            } else if ((a = commandLine.nextBoolean("--exe").orNull())!=null) {
+                winPE = a.getBooleanValue().get(session);
+            } else if ((a = commandLine.nextBoolean("--dll").orNull())!=null) {
+                winPE = a.getBooleanValue().get(session);
+            } else if ((a = commandLine.nextBoolean("--long").orNull())!=null) {
+                longFormat = a.getBooleanValue().get(session);
+            } else if ((a = commandLine.nextBoolean("--name").orNull())!=null) {
+                nameFormat = a.getBooleanValue().get(session);
+            } else if ((a = commandLine.nextBoolean("--sort").orNull())!=null) {
+                sort = a.getBooleanValue().get(session);
+            } else if ((a = commandLine.nextBoolean("--id").orNull())!=null) {
+                idFormat = a.getBooleanValue().get(session);
+            } else if ((a = commandLine.nextBoolean("--all").orNull())!=null) {
+                all = a.getBooleanValue().get(session);
+            } else if ((a = commandLine.nextBoolean("--table").orNull())!=null) {
+                table = a.getBooleanValue().get(session);
+            } else if ((a = commandLine.nextBoolean("--error").orNull())!=null) {
+                error = a.getBooleanValue().get(session);
+            } else if (commandLine.peek().get(session).isNonOption()) {
+                a = commandLine.next().get(session);
+                jarFiles.add(a.asString().get(session));
             } else {
                 context.configureLast(commandLine);
             }

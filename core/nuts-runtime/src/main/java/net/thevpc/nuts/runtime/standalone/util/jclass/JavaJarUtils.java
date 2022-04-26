@@ -1,7 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.util.jclass;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.standalone.io.util.InputStreamVisitor;
 import net.thevpc.nuts.runtime.standalone.io.util.ZipUtils;
 import net.thevpc.nuts.runtime.standalone.repository.impl.maven.pom.Pom;
 import net.thevpc.nuts.runtime.standalone.repository.impl.maven.pom.PomXmlParser;
@@ -188,7 +187,7 @@ public class JavaJarUtils {
                     return true;
                 });
             } else if (path.startsWith("META-INF/nuts/") && path.endsWith("/nuts.json") || path.equals("META-INF/"+NutsConstants.Files.DESCRIPTOR_FILE_NAME)) {
-                NutsDescriptor descriptor = NutsDescriptorParser.of(session).parse(inputStream);
+                NutsDescriptor descriptor = NutsDescriptorParser.of(session).parse(inputStream).get(session);
                 NutsArtifactCall executor = descriptor.getExecutor();
                 if(executor!=null){
                     List<String> arguments = executor.getArguments();
@@ -208,7 +207,7 @@ public class JavaJarUtils {
                 }
                 NutsDescriptorProperty mc = descriptor.getProperty("nuts.mainClass");
                 if(mc!=null){
-                    String s = NutsUtilStrings.trim(mc.getValue());
+                    String s = NutsUtilStrings.trim(mc.getValue().asString().get(session));
                     if (s.length() > 0) {
                         s=resolveMainClassString(s,descriptor);
                         classes.add(new DefaultNutsExecutionEntry(s, true, false));
@@ -265,7 +264,7 @@ public class JavaJarUtils {
     }
     private static String resolveMainClassString(String nameOrVar, NutsDescriptor pom) {
         if(nameOrVar.startsWith("${") && nameOrVar.endsWith("}")){
-            String e = pom.getPropertyValue(nameOrVar.substring(2, nameOrVar.length() - 1));
+            String e = pom.getPropertyValue(nameOrVar.substring(2, nameOrVar.length() - 1)).flatMap(NutsValue::asString).orNull();
             if(e!=null){
                 return e;
             }
@@ -274,7 +273,7 @@ public class JavaJarUtils {
     }
 
     public static NutsId parseMavenPluginElement(Node plugin, NutsSession session) {
-        NutsIdBuilder ib = new DefaultNutsIdBuilder();
+        NutsIdBuilder ib = NutsIdBuilder.of();
         for (Node node : XmlUtils.iterable(plugin)) {
             Element ne = XmlUtils.asElement(node);
             if (ne != null) {

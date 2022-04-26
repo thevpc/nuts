@@ -251,15 +251,15 @@ public abstract class AbstractDefaultNutsPushCommand extends NutsWorkspaceComman
 
     @Override
     public boolean configureFirst(NutsCommandLine cmdLine) {
-        NutsArgument a = cmdLine.peek();
+        NutsArgument a = cmdLine.peek().get(session);
         if (a == null) {
             return false;
         }
         boolean enabled = a.isActive();
-        switch (a.getKey().getString()) {
+        switch(a.getStringKey().orElse("")) {
             case "-o":
             case "--offline": {
-                boolean val = cmdLine.nextBoolean().getBooleanValue();
+                boolean val = cmdLine.nextBooleanValueLiteral().get(session);
                 if (enabled) {
                     setOffline(val);
                 }
@@ -267,7 +267,7 @@ public abstract class AbstractDefaultNutsPushCommand extends NutsWorkspaceComman
             }
             case "-x":
             case "--freeze": {
-                for (String id : cmdLine.nextString().getValue().getString().split(",")) {
+                for (String id : cmdLine.nextStringValueLiteral().get(session).split(",")) {
                     if (enabled) {
                         addLockedId(id);
                     }
@@ -277,7 +277,7 @@ public abstract class AbstractDefaultNutsPushCommand extends NutsWorkspaceComman
             case "-r":
             case "-repository":
             case "--from": {
-                String val = cmdLine.nextString().getValue().getString();
+                String val = cmdLine.nextStringValueLiteral().get(session);
                 if (enabled) {
                     setRepository(val);
                 }
@@ -297,10 +297,10 @@ public abstract class AbstractDefaultNutsPushCommand extends NutsWorkspaceComman
                     return true;
                 }
                 if (a.isOption()) {
-                    cmdLine.unexpectedArgument();
+                    cmdLine.throwUnexpectedArgument(session);
                 } else {
                     cmdLine.skip();
-                    addId(a.toElement().getString());
+                    addId(a.asString().get(session));
                     return true;
                 }
             }

@@ -24,7 +24,7 @@
 package net.thevpc.nuts.runtime.standalone.executor.system;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.standalone.app.cmdline.DefaultNutsArgument;
+import net.thevpc.nuts.DefaultNutsArgument;
 import net.thevpc.nuts.runtime.standalone.app.cmdline.NutsCommandLineShellOptions;
 import net.thevpc.nuts.runtime.standalone.io.util.MultiPipeThread;
 import net.thevpc.nuts.runtime.standalone.io.util.NonBlockingInputStreamAdapter;
@@ -60,24 +60,24 @@ public class ProcessBuilder2 {
     }
 
     private static String formatArg(String s, NutsSession session) {
-        DefaultNutsArgument a = new DefaultNutsArgument(s,'=',NutsElements.of(session));
+        DefaultNutsArgument a = new DefaultNutsArgument(s);
         StringBuilder sb = new StringBuilder();
         NutsTexts factory = NutsTexts.of(session);
         if (a.isKeyValue()) {
             if (a.isOption()) {
-                sb.append(factory.ofStyled(CoreStringUtils.enforceDoubleQuote(a.getKey().getString(), session), NutsTextStyle.option()));
+                sb.append(factory.ofStyled(CoreStringUtils.enforceDoubleQuote(a.getKey().asString().get(session), session), NutsTextStyle.option()));
                 sb.append("=");
-                sb.append(CoreStringUtils.enforceDoubleQuote(a.getValue().getString(), session));
+                sb.append(CoreStringUtils.enforceDoubleQuote(a.getStringValue().get(session), session));
             } else {
-                sb.append(factory.ofStyled(CoreStringUtils.enforceDoubleQuote(a.getKey().getString(), session), NutsTextStyle.primary4()));
+                sb.append(factory.ofStyled(CoreStringUtils.enforceDoubleQuote(a.getKey().asString().get(session), session), NutsTextStyle.primary4()));
                 sb.append("=");
-                sb.append(CoreStringUtils.enforceDoubleQuote(a.getValue().getString(), session));
+                sb.append(CoreStringUtils.enforceDoubleQuote(a.getStringValue().get(session), session));
             }
         } else {
             if (a.isOption()) {
-                sb.append(factory.ofStyled(CoreStringUtils.enforceDoubleQuote(a.getString(), session), NutsTextStyle.option()));
+                sb.append(factory.ofStyled(CoreStringUtils.enforceDoubleQuote(a.asString().get(session), session), NutsTextStyle.option()));
             } else {
-                sb.append(CoreStringUtils.enforceDoubleQuote(a.getString(), session));
+                sb.append(CoreStringUtils.enforceDoubleQuote(a.asString().get(session), session));
             }
         }
         return sb.toString();
@@ -381,25 +381,25 @@ public class ProcessBuilder2 {
                     if (isGrabOutputString()) {
                         throw new NutsExecutionException(session,
                                 NutsMessage.cstyle("execution failed with code %d and message : %s. Command was %s", result, getOutputString(),
-                                        NutsCommandLine.of(getCommand(), session)),
+                                        NutsCommandLine.of(getCommand())),
                                 result);
                     }
                 } else {
                     if (isGrabErrorString()) {
                         throw new NutsExecutionException(session,
                                 NutsMessage.cstyle("execution failed with code %d and message : %s. Command was %s", result, getOutputString(),
-                                        NutsCommandLine.of(getCommand(), session)),
+                                        NutsCommandLine.of(getCommand())),
                                 result);
                     }
                     if (isGrabOutputString()) {
                         throw new NutsExecutionException(session, NutsMessage.cstyle(
                                 "execution failed with code %d and message : %s. Command was %s", result, getOutputString(),
-                                NutsCommandLine.of(getCommand(), session)
+                                NutsCommandLine.of(getCommand())
                         ), result);
                     }
                 }
                 throw new NutsExecutionException(session, NutsMessage.cstyle("execution failed with code %d. Command was %s", result,
-                        NutsCommandLine.of(getCommand(), session)
+                        NutsCommandLine.of(getCommand())
                 ), result);
             }
         }

@@ -137,8 +137,8 @@ public abstract class PrivateNutsOptionalImpl<T> implements NutsOptional<T> {
 
     @Override
     public NutsOptional<T> ifEmpty(T other) {
-        if (isEmpty()) {
-            return NutsOptional.of(other);
+        if (!isError() && isEmpty()) {
+            return new PrivateNutsOptionalValid<>(other);
         }
         return this;
     }
@@ -146,7 +146,7 @@ public abstract class PrivateNutsOptionalImpl<T> implements NutsOptional<T> {
     @Override
     public NutsOptional<T> ifError(T other) {
         if (isError()) {
-            return NutsOptional.of(other);
+            return new PrivateNutsOptionalValid<>(other);
         }
         return this;
     }

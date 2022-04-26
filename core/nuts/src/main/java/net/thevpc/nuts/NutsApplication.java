@@ -59,15 +59,15 @@ package net.thevpc.nuts;
  *                  a=cmdLine.peek();
  *                  switch(a.getKey().getString())[
  *                      case "-o": case "--option":{
- *                          boolOption=cmdLine.nextBoolean().getBooleanValue();
+ *                          boolOption=cmdLine.nextBooleanValue().get(session);
  *                          break;
  *                      }
  *                      case "-n": case "--name":{
- *                          stringOption=cmdLine.nextString().getStringValue();
+ *                          stringOption=cmdLine.nextString().getStringValue().get(session);
  *                          break;
  *                      }
  *                      default:{
- *                          cmdLine.unexpectedArgument();
+ *                          cmdLine.throwUnexpectedArgument();
  *                      }
  *                  }
  *             }
@@ -100,12 +100,12 @@ package net.thevpc.nuts;
  *                     }
  *                     switch (argument.getKey().getString()) {
  *                         case "--clean": {
- *                             hl.clean(cmdLine.nextBoolean().getBooleanValue());
+ *                             hl.clean(cmdLine.nextBooleanValue().get(session));
  *                             return true;
  *                         }
  *                         case "-i":
  *                         case "--incremental":{
- *                             hl.setIncremental(cmdLine.nextBoolean().getBooleanValue());
+ *                             hl.setIncremental(cmdLine.nextBooleanValue().get(session));
  *                             return true;
  *                         }
  *                         case "-r":

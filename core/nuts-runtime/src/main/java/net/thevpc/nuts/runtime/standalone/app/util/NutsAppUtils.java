@@ -7,11 +7,11 @@ import net.thevpc.nuts.NutsSession;
 public class NutsAppUtils {
     public static boolean processHelpOptions(String[] args, NutsSession session) {
         if (isIncludesHelpOption(args)) {
-            NutsCommandLine cmdLine = NutsCommandLine.of(args, session);
+            NutsCommandLine cmdLine = NutsCommandLine.of(args);
             while (cmdLine.hasNext()) {
-                NutsArgument a = cmdLine.peek();
+                NutsArgument a = cmdLine.peek().get(session);
                 if (a.isOption()) {
-                    switch (a.getKey().getString()) {
+                    switch(a.getStringKey().orElse("")) {
                         case "--help": {
                             cmdLine.skip();
                             break;

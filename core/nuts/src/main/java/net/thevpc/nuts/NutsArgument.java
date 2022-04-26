@@ -26,8 +26,6 @@
  */
 package net.thevpc.nuts;
 
-import net.thevpc.nuts.boot.NutsApiUtils;
-
 /**
  * Command Line Argument
  *
@@ -35,18 +33,16 @@ import net.thevpc.nuts.boot.NutsApiUtils;
  * @app.category Command Line
  * @since 0.5.5
  */
-public interface NutsArgument {
+public interface NutsArgument extends NutsValue{
 
     /**
      * create instance for the given value and with the given session
      *
      * @param value   value
-     * @param session session (must not be null)
      * @return new instance
      */
-    static NutsArgument of(String value, NutsSession session) {
-        NutsApiUtils.checkSession(session);
-        return NutsCommandLines.of(session).createArgument(value);
+    static NutsArgument of(String value) {
+        return new DefaultNutsArgument(value);
     }
 
     /**
@@ -65,17 +61,13 @@ public interface NutsArgument {
     boolean isNonOption();
 
     /**
-     * string representation of the argument or null
-     *
-     * @return string representation of the argument or null
+     * equivalent to getStringKey().orElse("")
+     * @return non null key as string
      */
-    String getString();
+    String key();
+    NutsOptional<String> getStringKey();
 
-    String getStringValue();
-
-    String getStringKey();
-
-    String getStringValue(String defValue);
+    NutsOptional<String> getStringValue();
 
     /**
      * true if option is in one of the following forms :
@@ -140,7 +132,7 @@ public interface NutsArgument {
      * @return option prefix part  ('-' and '--')
      * @since 0.5.7
      */
-    NutsPrimitiveElement getOptionPrefix();
+    NutsValue getOptionPrefix();
 
     /**
      * return query value separator
@@ -156,7 +148,7 @@ public interface NutsArgument {
      * @return option key part excluding prefix ('-' and '--')
      * @since 0.5.7
      */
-    NutsPrimitiveElement getOptionName();
+    NutsValue getOptionName();
 
     /**
      * return new instance (never null) of the value part of the argument (after
@@ -179,13 +171,9 @@ public interface NutsArgument {
      * @return new instance (never null) of the value part of the argument
      * (after =)
      */
-    NutsPrimitiveElement getValue();
+    NutsValue getValue();
 
-    boolean getBooleanValue();
-
-    Boolean getBooleanValue(Boolean emptyValue,Boolean errValue);
-    Boolean getBooleanValue(Boolean emptyOrValue);
-
+    NutsOptional<Boolean> getBooleanValue();
 
     /**
      * return key part (never null) of the argument. The key does not include
@@ -207,9 +195,7 @@ public interface NutsArgument {
      *
      * @return string key
      */
-    NutsPrimitiveElement getKey();
-
-    NutsPrimitiveElement toElement();
+    NutsValue getKey();
 
 
 }

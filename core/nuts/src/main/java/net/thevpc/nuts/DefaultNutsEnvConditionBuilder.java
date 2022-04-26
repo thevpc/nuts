@@ -127,11 +127,11 @@ public class DefaultNutsEnvConditionBuilder implements Serializable, NutsEnvCond
     public NutsEnvConditionBuilder addAll(NutsEnvCondition other) {
         if (other != null) {
             setArch(mergeLists(getArch(), other.getArch()));
-            setOs(mergeLists(getArch(), other.getArch()));
-            setOsDist(mergeLists(getArch(), other.getArch()));
-            setPlatform(mergeLists(getArch(), other.getArch()));
-            setDesktopEnvironment(mergeLists(getArch(), other.getArch()));
-            setProfile(mergeLists(getArch(), other.getArch()));
+            setOs(mergeLists(getOs(), other.getOs()));
+            setOsDist(mergeLists(getOsDist(), other.getOsDist()));
+            setPlatform(mergeLists(getPlatform(), other.getPlatform()));
+            setDesktopEnvironment(mergeLists(getDesktopEnvironment(), other.getDesktopEnvironment()));
+            setProfile(mergeLists(getProfile(), other.getProfile()));
             setProperties(mergeMaps(getProperties(), other.getProperties()));
         }
         return this;

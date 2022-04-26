@@ -28,7 +28,7 @@ public class NutsElementMapperNutsVersion implements NutsElementMapper<NutsVersi
     @Override
     public NutsVersion createObject(NutsElement o, Type typeOfResult, NutsElementFactoryContext context) {
         NutsSession session = context.getSession();
-        return NutsVersion.of(o.asPrimitive().getString()).get(session);
+        return NutsVersion.of(o.asString().get(session)).get(session);
     }
 
 }

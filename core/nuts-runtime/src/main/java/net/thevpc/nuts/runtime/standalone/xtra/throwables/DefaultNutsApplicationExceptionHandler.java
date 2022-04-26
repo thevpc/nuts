@@ -12,8 +12,8 @@ public class DefaultNutsApplicationExceptionHandler implements NutsApplicationEx
     @Override
     public int processThrowable(String[] args, Throwable throwable, NutsSession session) {
         NutsApiUtils.checkSession(session);
-        NutsBootOptions bo = null;
-        bo = session.boot().getBootOptions().builder().toBootOptions();
+        NutsWorkspaceBootOptionsBuilder bo = null;
+        bo = session.boot().getBootOptions().builder();
         if (!session.env().isGraphicalDesktopEnvironment()) {
             bo.setGui(false);
         }

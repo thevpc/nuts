@@ -145,7 +145,7 @@ public abstract class DelegateNutsDescriptor extends AbstractNutsDescriptor {
     }
 
     @Override
-    public String getPropertyValue(String name) {
+    public NutsOptional<NutsValue> getPropertyValue(String name) {
         return getBase().getPropertyValue(name);
     }
 

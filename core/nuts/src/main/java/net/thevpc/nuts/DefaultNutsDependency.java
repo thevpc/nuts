@@ -128,7 +128,7 @@ public class DefaultNutsDependency implements NutsDependency {
         if (exclusions.size() > 0) {
             m.put(NutsConstants.IdProperties.EXCLUSIONS, PrivateNutsUtilDescriptors.toExclusionListString(exclusions));
         }
-        NutsId ii = new DefaultNutsIdBuilder()
+        NutsId ii = NutsIdBuilder.of()
                 .setGroupId(getGroupId())
                 .setArtifactId(getArtifactId())
                 .setClassifier(getClassifier())
@@ -155,12 +155,12 @@ public class DefaultNutsDependency implements NutsDependency {
 
     @Override
     public String getSimpleName() {
-        return PrivateNutsUtilIds.getIdShortName(groupId,artifactId);
+        return PrivateNutsUtilIds.getIdShortName(groupId, artifactId);
     }
 
     @Override
     public String getLongName() {
-        return PrivateNutsUtilIds.getIdLongName(groupId,artifactId,version, classifier);
+        return PrivateNutsUtilIds.getIdLongName(groupId, artifactId, version, classifier);
     }
 
     @Override
@@ -267,7 +267,7 @@ public class DefaultNutsDependency implements NutsDependency {
             }
             if (!condition.getProperties().isEmpty()) {
                 p.put(NutsConstants.IdProperties.CONDITIONAL_PROPERTIES,
-                        NutsUtilStrings.formatDefaultMap(condition.getProperties())
+                        NutsUtilStrings.formatMap(condition.getProperties(), "=", ",", "&", true)
                 );
             }
         }

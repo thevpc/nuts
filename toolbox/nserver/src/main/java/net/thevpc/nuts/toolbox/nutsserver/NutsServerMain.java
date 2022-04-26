@@ -1,7 +1,6 @@
 package net.thevpc.nuts.toolbox.nutsserver;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.NutsBootOptions;
 import net.thevpc.nuts.toolbox.nutsserver.bundled._IOUtils;
 import net.thevpc.nuts.toolbox.nutsserver.http.NutsHttpServerConfig;
 
@@ -50,15 +49,16 @@ public class NutsServerMain implements NutsApplication {
     }
 
     private void list(NutsApplicationContext context, NutsCommandLine cmdLine) {
-        NutsWorkspaceServerManager serverManager = new DefaultNutsWorkspaceServerManager(context.getSession());
-        cmdLine.setCommandName("nuts-server list").unexpectedArgument();
+        NutsSession session = context.getSession();
+        NutsWorkspaceServerManager serverManager = new DefaultNutsWorkspaceServerManager(session);
+        cmdLine.setCommandName("nuts-server list").throwUnexpectedArgument(session);
         if (cmdLine.isExecMode()) {
             List<NutsServer> servers = serverManager.getServers();
-            NutsPrintStream out = context.getSession().out();
+            NutsPrintStream out = session.out();
             if (servers.isEmpty()) {
                 out.print("No Server is Running by current instance\n");
             }
-            NutsTexts text = NutsTexts.of(context.getSession());
+            NutsTexts text = NutsTexts.of(session);
             for (NutsServer o : servers) {
                 if (o.isRunning()) {
                     out.printf("%s %s\n",
@@ -81,12 +81,12 @@ public class NutsServerMain implements NutsApplication {
         int count = 0;
         while (cmdLine.hasNext()) {
             if (count == 0) {
-                cmdLine.required();
+                cmdLine.peek().get(session);
             } else if (cmdLine.isEmpty()) {
                 break;
             }
             count++;
-            s = cmdLine.nextRequiredNonOption(NutsArgumentName.of("ServerName",session)).getString();
+            s = cmdLine.nextNonOption(NutsArgumentName.of("ServerName",session)).flatMap(NutsValue::asString).get(session);
             if (cmdLine.isExecMode()) {
                 serverManager.stopServer(s);
             }
@@ -94,8 +94,9 @@ public class NutsServerMain implements NutsApplication {
     }
 
     private void start(NutsApplicationContext context, NutsCommandLine commandLine) {
-        NutsWorkspaceServerManager serverManager = new DefaultNutsWorkspaceServerManager(context.getSession());
-        SrvInfoList servers = new SrvInfoList(context.getSession());
+        NutsSession session = context.getSession();
+        NutsWorkspaceServerManager serverManager = new DefaultNutsWorkspaceServerManager(session);
+        SrvInfoList servers = new SrvInfoList(session);
         NutsArgument a;
         while (commandLine.hasNext()) {
             if (commandLine.next("--http") != null) {
@@ -104,41 +105,41 @@ public class NutsServerMain implements NutsApplication {
                 servers.add().serverType = "https";
             } else if (commandLine.next("--admin") != null) {
                 servers.add().serverType = "admin";
-            } else if ((a = commandLine.nextBoolean("-R", "--read-only")) != null) {
-                servers.current().readOnly = a.getBooleanValue();
-            } else if ((a = commandLine.nextString("-n", "--name")) != null) {
-                servers.current().name = a.getValue().getString();
-            } else if ((a = commandLine.nextString("-a", "--address")) != null) {
-                servers.current().addr = a.getValue().getString();
-            } else if ((a = commandLine.nextString("-p", "--port")) != null) {
-                servers.current().port = a.getValue().getInt();
-            } else if ((a = commandLine.nextString("-h", "--host")) != null || (a = commandLine.nextNonOption()) != null) {
+            } else if ((a = commandLine.nextBoolean("-R", "--read-only").orNull()) != null) {
+                servers.current().readOnly = a.getBooleanValue().get(session);
+            } else if ((a = commandLine.nextString("-n", "--name").orNull()) != null) {
+                servers.current().name = a.getStringValue().get(session);
+            } else if ((a = commandLine.nextString("-a", "--address").orNull()) != null) {
+                servers.current().addr = a.getStringValue().get(session);
+            } else if ((a = commandLine.nextString("-p", "--port").orNull()) != null) {
+                servers.current().port = a.getValue().asInt().get(session);
+            } else if ((a = commandLine.nextString("-h", "--host").orNull()) != null || (a = commandLine.nextNonOption().orNull()) != null) {
                 StringBuilder s = new StringBuilder();
-                if (a.getKey().getString().equals("-h") || a.getKey().getString().equals("--host")) {
-                    s.append(a.getValue().getString());
+                if (a.getKey().asString().get(session).equals("-h") || a.getKey().asString().get(session).equals("--host")) {
+                    s.append(a.getStringValue());
                 } else {
-                    s.append(a.getString());
+                    s.append(a.asString());
                 }
                 HostStr u = parseHostStr(s.toString(), context,true);
                 if (u.protocol.isEmpty()) {
                     u.protocol = "http";
                 }
                 servers.add().set(u);
-            } else if ((a = commandLine.nextString("-l", "--backlog")) != null) {
-                servers.current().port = a.getValue().getInt();
-            } else if ((a = commandLine.nextString("--ssl-certificate")) != null) {
-                servers.current().sslCertificate = a.getValue().getString();
-            } else if ((a = commandLine.nextString("--ssl-passphrase")) != null) {
-                servers.current().sslPassphrase = a.getValue().getString();
-            } else if ((a = commandLine.nextString("-w", "--workspace")) != null) {
-                String ws = a.getString();
+            } else if ((a = commandLine.nextString("-l", "--backlog").orNull()) != null) {
+                servers.current().port = a.getValue().asInt().get(session);
+            } else if ((a = commandLine.nextString("--ssl-certificate").orNull()) != null) {
+                servers.current().sslCertificate = a.getStringValue().get(session);
+            } else if ((a = commandLine.nextString("--ssl-passphrase").orNull()) != null) {
+                servers.current().sslPassphrase = a.getStringValue().get(session);
+            } else if ((a = commandLine.nextString("-w", "--workspace").orNull()) != null) {
+                String ws = a.asString().get(session);
                 String serverContext = "";
                 if (ws.contains("@")) {
                     serverContext = ws.substring(0, ws.indexOf('@'));
                     ws = ws.substring(ws.indexOf('@') + 1);
                 }
                 if (servers.current().workspaceLocations.containsKey(serverContext)) {
-                    throw new NutsIllegalArgumentException(context.getSession(),
+                    throw new NutsIllegalArgumentException(session,
                             NutsMessage.cstyle("nuts-server: server workspace context already defined %s", serverContext));
                 }
                 servers.current().workspaceLocations.put(serverContext, ws);
@@ -161,16 +162,16 @@ public class NutsServerMain implements NutsApplication {
                     }
                     if (NutsBlankable.isBlank(wsContext)) {
                         if (context.getWorkspace() == null) {
-                            throw new NutsIllegalArgumentException(context.getSession(),
+                            throw new NutsIllegalArgumentException(session,
                                     NutsMessage.cstyle("nuts-server: missing workspace"));
                         }
-                        nutsSession = context.getSession();
+                        nutsSession = session;
                         server.workspaces.put(wsContext, nutsSession);
                     } else {
                         nutsSession = server.workspaces.get(wsContext);
                         if (nutsSession == null) {
                             nutsSession = Nuts.openWorkspace(
-                                    new NutsBootOptions()
+                                    new DefaultNutsWorkspaceOptionsBuilder()
                                             .setWorkspace(wsLocation)
                                             .setOpenMode(NutsOpenMode.OPEN_OR_ERROR)
                                             .setReadOnly(server.readOnly)
@@ -199,7 +200,7 @@ public class NutsServerMain implements NutsApplication {
                         if ("https".equals(server.serverType)) {
                             config.setTls(true);
                             if (server.sslCertificate == null) {
-                                throw new NutsIllegalArgumentException(context.getSession(),
+                                throw new NutsIllegalArgumentException(session,
                                         NutsMessage.cstyle("nuts-server: missing SSL certificate"));
                             }
                             try {
@@ -208,7 +209,7 @@ public class NutsServerMain implements NutsApplication {
                                 throw new UncheckedIOException(e);
                             }
                             if (server.sslPassphrase == null) {
-                                throw new NutsIllegalArgumentException(context.getSession(),
+                                throw new NutsIllegalArgumentException(session,
                                         NutsMessage.cstyle("nuts-server: missing SSL passphrase")
                                 );
                             }
@@ -231,7 +232,7 @@ public class NutsServerMain implements NutsApplication {
                         break;
                     }
                     default:
-                        throw new NutsIllegalArgumentException(context.getSession(),
+                        throw new NutsIllegalArgumentException(session,
                                 NutsMessage.cstyle("nuts-server: unsupported server type %s", server.serverType)
                         );
                 }
@@ -307,8 +308,9 @@ public class NutsServerMain implements NutsApplication {
     }
 
     private void status(NutsApplicationContext context, NutsCommandLine commandLine) {
-        NutsWorkspaceServerManager serverManager = new DefaultNutsWorkspaceServerManager(context.getSession());
-        SrvInfoList servers = new SrvInfoList(context.getSession());
+        NutsSession session = context.getSession();
+        NutsWorkspaceServerManager serverManager = new DefaultNutsWorkspaceServerManager(session);
+        SrvInfoList servers = new SrvInfoList(session);
         NutsArgument a;
         while (commandLine.hasNext()) {
             if (commandLine.next("--http") != null) {
@@ -317,16 +319,16 @@ public class NutsServerMain implements NutsApplication {
                 servers.add().serverType = "https";
             } else if (commandLine.next("--admin") != null) {
                 servers.add().serverType = "admin";
-            } else if ((a = commandLine.nextString("-a", "--address")) != null) {
-                servers.current().addr = a.getValue().getString();
-            } else if ((a = commandLine.nextString("-p", "--port")) != null) {
-                servers.current().port = a.getValue().getInt();
-            } else if ((a = commandLine.nextString("-h", "--host")) != null || (a = commandLine.nextNonOption()) != null) {
+            } else if ((a = commandLine.nextString("-a", "--address").orNull()) != null) {
+                servers.current().addr = a.getStringValue().get(session);
+            } else if ((a = commandLine.nextString("-p", "--port").orNull()) != null) {
+                servers.current().port = a.getValue().asInt().get(session);
+            } else if ((a = commandLine.nextString("-h", "--host").orNull()) != null || (a = commandLine.nextNonOption().orNull()) != null) {
                 StringBuilder s = new StringBuilder();
-                if (a.getKey().getString().equals("-h") || a.getKey().getString().equals("--host")) {
-                    s.append(a.getValue().getString());
+                if (a.getKey().asString().get(session).equals("-h") || a.getKey().asString().get(session).equals("--host")) {
+                    s.append(a.getStringValue());
                 } else {
-                    s.append(a.getString());
+                    s.append(a.asString());
                 }
                 HostStr u = parseHostStr(s.toString(), context,false);
                 servers.add().set(u);
@@ -388,10 +390,10 @@ public class NutsServerMain implements NutsApplication {
                     results.add(new StatusResult(url, (server.serverType.isEmpty() ? "?" : server.serverType), "stopped"));
                 }
             }
-            if (context.getSession().isPlainOut()) {
-                NutsTexts text = NutsTexts.of(context.getSession());
+            if (session.isPlainOut()) {
+                NutsTexts text = NutsTexts.of(session);
                 for (StatusResult result : results) {
-                    context.getSession().out().printf(
+                    session.out().printf(
                             "%s server at %s is %s%n",
                             text.ofStyled(result.type,NutsTextStyle.primary4()),
                             result.host,
@@ -401,7 +403,7 @@ public class NutsServerMain implements NutsApplication {
                     );
                 }
             } else {
-                context.getSession().out().printlnf(results);
+                session.out().printlnf(results);
             }
         }
     }

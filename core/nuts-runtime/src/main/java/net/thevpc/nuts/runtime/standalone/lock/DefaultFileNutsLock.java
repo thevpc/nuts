@@ -8,7 +8,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Condition;
-import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 
 public class DefaultFileNutsLock implements NutsLock {
 
@@ -25,7 +24,7 @@ public class DefaultFileNutsLock implements NutsLock {
 
     public TimePeriod getDefaultTimePeriod() {
         return TimePeriod.parse(
-                session.config().getConfigProperty("nuts.file-lock.timeout").getString(),
+                session.config().getConfigProperty("nuts.file-lock.timeout").asString().get(session),
                 TimeUnit.SECONDS
         ).orElse(FIVE_MINUTES);
     }

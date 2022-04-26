@@ -53,14 +53,14 @@ public class NutsToken {
             return "NutsToken{" +
                     "ttype='" + (char)ttype +"'"+
                     ", lineno=" + lineno +
-                    ", sval=" + (sval==null?"null": NutsUtilStrings.simpleQuotes(sval)) +
+                    ", sval=" + (sval==null?"null": NutsUtilStrings.formatStringLiteral(sval, NutsUtilStrings.QuoteType.SIMPLE)) +
                     ", nval=" + nval +
                     '}';
         }
         return "NutsToken{" +
                 "ttype=" + ttype +
                 ", lineno=" + lineno +
-                ", sval=" + (sval==null?"null": NutsUtilStrings.simpleQuotes(sval)) +
+                ", sval=" + (sval==null?"null": NutsUtilStrings.formatStringLiteral(sval, NutsUtilStrings.QuoteType.SIMPLE)) +
                 ", nval=" + nval +
                 '}';
     }

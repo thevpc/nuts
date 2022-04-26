@@ -134,6 +134,10 @@ public class DefaultNutsTexts implements NutsTexts {
         if (t instanceof NutsMessage) {
             return _NutsMessage_toString((NutsMessage) t);
         }
+        if (t instanceof NutsMessageFormattable) {
+            NutsMessage m = ((NutsMessageFormattable) t).format(getSession());
+            return _NutsMessage_toString(m);
+        }
         if (t instanceof NutsString) {
             return ((NutsString) t).toText();
         }

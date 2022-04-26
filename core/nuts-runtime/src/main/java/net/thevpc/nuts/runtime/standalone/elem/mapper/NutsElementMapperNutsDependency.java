@@ -22,7 +22,7 @@ public class NutsElementMapperNutsDependency implements NutsElementMapper<NutsDe
                         .format(), null);
             }
         }
-        return context.defaultDestruct(new DefaultNutsDependencyBuilder().setAll(o), null);
+        return context.defaultDestruct(NutsDependencyBuilder.of().setAll(o), null);
     }
 
     @Override
@@ -55,10 +55,10 @@ public class NutsElementMapperNutsDependency implements NutsElementMapper<NutsDe
     public NutsDependency createObject(NutsElement o, Type typeOfResult, NutsElementFactoryContext context) {
         NutsSession session = context.getSession();
         if (o.type() == NutsElementType.STRING) {
-            return NutsDependency.of(o.asPrimitive().getString()).get(session);
+            return NutsDependency.of(o.asString().get(session)).get(session);
         }
         NutsDependencyBuilder builder = context.defaultElementToObject(o, DefaultNutsDependencyBuilder.class);
-        return new DefaultNutsDependencyBuilder(builder).build();
+        return NutsDependencyBuilder.of().setAll(builder).build();
     }
 
 }

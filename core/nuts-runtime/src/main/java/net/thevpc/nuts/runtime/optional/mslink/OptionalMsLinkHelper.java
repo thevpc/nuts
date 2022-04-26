@@ -56,11 +56,11 @@ public class OptionalMsLinkHelper {
             //
         }
         byte[] oldContent=CoreIOUtils.loadFileContentLenient(outputFile);
-        String[] cmd = NutsCommandLine.of(command,session).setExpandSimpleOptions(false).toStringArray();
+        String[] cmd = NutsCommandLine.parseDefault(command).get(session).setExpandSimpleOptions(false).toStringArray();
         mslinks.ShellLink se = mslinks.ShellLink.createLink(cmd[0])
                 .setWorkingDir(wd)
                 .setCMDArgs(NutsCommandLine.of(
-                        Arrays.copyOfRange(cmd, 1, cmd.length),session
+                        Arrays.copyOfRange(cmd, 1, cmd.length)
                 ).toString());
 
         if (NutsBlankable.isBlank(icon)) {

@@ -51,6 +51,7 @@ public class NutsElementMapperObjReflect implements NutsElementMapper<Object> {
 
     @Override
     public Object createObject(NutsElement o, Type typeOfResult, NutsElementFactoryContext context) {
+        NutsSession session = context.getSession();
         Class c = ReflectUtils.getRawClass(typeOfResult);
         switch (o.type()) {
             case NULL: {
@@ -58,7 +59,7 @@ public class NutsElementMapperObjReflect implements NutsElementMapper<Object> {
             }
             case STRING: {
                 if (c.isAssignableFrom(String.class)) {
-                    return o.asString();
+                    return o.asString().orNull();
                 }
                 break;
             }
@@ -88,13 +89,13 @@ public class NutsElementMapperObjReflect implements NutsElementMapper<Object> {
             }
             case BIG_DECIMAL: {
                 if (c.isAssignableFrom(BigDecimal.class)) {
-                    return o.asPrimitive().getNumber();
+                    return o.asNumber();
                 }
                 break;
             }
             case BIG_INTEGER: {
                 if (c.isAssignableFrom(BigInteger.class)) {
-                    return o.asPrimitive().getNumber();
+                    return o.asNumber();
                 }
                 break;
             }
@@ -135,25 +136,25 @@ public class NutsElementMapperObjReflect implements NutsElementMapper<Object> {
                 break;
             }
             case CUSTOM:{
-                return c.cast(o.asCustom().getValue());
+                return c.cast(o.asCustom().get(session).getValue());
             }
         }
         int mod = c.getModifiers();
         if (Modifier.isAbstract(mod)) {
-            throw new NutsIllegalArgumentException(context.getSession(), NutsMessage.cstyle("cannot instantiate abstract class %s", typeOfResult));
+            throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("cannot instantiate abstract class %s", typeOfResult));
         }
         ReflectType m = defaultNutsElementFactoryService.getTypesRepository().getType(typeOfResult);
         Object instance;
         if (m.hasSessionConstructor()) {
-            instance = m.newInstance(context.getSession());
+            instance = m.newInstance(session);
         } else {
             instance = m.newInstance();
         }
-        NutsObjectElement eobj = o.asObject();
+        NutsObjectElement eobj = o.asObject().get(session);
         NutsElements prv = context.elem();
         for (ReflectProperty property : m.getProperties()) {
             if (property.isWrite()) {
-                NutsElement v = eobj.get(prv.ofString(property.getName()));
+                NutsElement v = eobj.get(property.getName()).orNull();
                 if (v != null) {
                     property.write(instance, context.elementToObject(v, property.getPropertyType()));
                 }

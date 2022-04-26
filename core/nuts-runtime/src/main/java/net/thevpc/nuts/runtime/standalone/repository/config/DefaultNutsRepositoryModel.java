@@ -389,7 +389,7 @@ public class DefaultNutsRepositoryModel {
         try (PrintStream o = new PrintStream(logError.resolve(fileName + ".error").getOutputStream())) {
             o.printf("workspace.path:%s%n", session.locations().getWorkspaceLocation());
             o.printf("repository.path:%s%n", file);
-            o.printf("workspace.options:%s%n", wboot.getBootOptions().formatter().setCompact(false).setRuntime(true).setInit(true).setExported(true).getBootCommandLine());
+            o.printf("workspace.options:%s%n", wboot.getBootOptions().toCommandLine(new NutsWorkspaceOptionsConfig().setCompact(false).setRuntime(true).setInit(true).setExported(true)));
             for (NutsStoreLocation location : NutsStoreLocation.values()) {
                 o.printf("location." + location.id() + ":%s%n", session.locations().getStoreLocation(location));
             }

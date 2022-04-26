@@ -170,7 +170,7 @@ public class DefaultNutsObjectElementBuilder implements NutsObjectElementBuilder
     @Override
     public NutsObjectElementBuilder add(NutsObjectElement other) {
         if (other != null) {
-            for (NutsElementEntry child : other.children()) {
+            for (NutsElementEntry child : other.entries()) {
                 add(child.getKey(), child.getValue());
             }
         }

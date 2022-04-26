@@ -213,7 +213,7 @@ public interface NutsDescriptor extends Serializable, NutsBlankable, NutsFormatt
      * @return custom property value by name
      * @since 0.8.3
      */
-    String getPropertyValue(String name);
+    NutsOptional<NutsValue> getPropertyValue(String name);
 
     /**
      * create new builder filled with this descriptor fields.

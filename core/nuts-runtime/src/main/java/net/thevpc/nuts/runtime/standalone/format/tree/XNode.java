@@ -64,7 +64,7 @@ public class XNode {
         if (destructedObject instanceof Map && ((Map) destructedObject).size() == 1) {
             value = ((Map) destructedObject).entrySet().toArray()[0];
         }else if (destructedObject instanceof NutsObjectElement && ((NutsObjectElement) destructedObject).size() == 1) {
-            value = ((NutsObjectElement) destructedObject).children().toArray()[0];
+            value = ((NutsObjectElement) destructedObject).entries().toArray()[0];
         } else {
             this.value = destructedObject;
         }

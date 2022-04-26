@@ -142,15 +142,15 @@ public abstract class AbstractNutsUninstallCommand extends NutsWorkspaceCommandB
 
     @Override
     public boolean configureFirst(NutsCommandLine cmdLine) {
-        NutsArgument a = cmdLine.peek();
+        NutsArgument a = cmdLine.peek().get(session);
         if (a == null) {
             return false;
         }
         boolean enabled = a.isActive();
-        switch (a.getKey().getString()) {
+        switch(a.getStringKey().orElse("")) {
             case "-e":
             case "--erase": {
-                boolean val = cmdLine.nextBoolean().getBooleanValue();
+                boolean val = cmdLine.nextBooleanValueLiteral().get(session);
                 if (enabled) {
                     this.setErase(val);
                 }
@@ -159,7 +159,7 @@ public abstract class AbstractNutsUninstallCommand extends NutsWorkspaceCommandB
             case "-g":
             case "--args": {
                 while (cmdLine.hasNext()) {
-                    String val = cmdLine.nextString().getValue().getString();
+                    String val = cmdLine.nextStringValueLiteral().get(session);
                     if (enabled) {
                         this.addArg(val);
                     }
@@ -174,7 +174,7 @@ public abstract class AbstractNutsUninstallCommand extends NutsWorkspaceCommandB
                     return false;
                 } else {
                     cmdLine.skip();
-                    addId(a.getString());
+                    addId(a.asString().get(session));
                     return true;
                 }
             }

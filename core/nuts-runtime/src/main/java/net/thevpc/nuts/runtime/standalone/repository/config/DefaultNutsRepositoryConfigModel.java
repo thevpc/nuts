@@ -6,7 +6,6 @@ import net.thevpc.nuts.runtime.standalone.repository.impl.NutsRepositoryExt;
 import net.thevpc.nuts.runtime.standalone.repository.util.NutsRepositoryUtils;
 import net.thevpc.nuts.runtime.standalone.session.NutsSessionUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.config.NutsRepositoryConfigManagerExt;
-import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.config.NutsStoreLocationsMap;
 import net.thevpc.nuts.NutsLogVerb;
 
@@ -445,13 +444,13 @@ public class DefaultNutsRepositoryConfigModel implements NutsRepositoryConfigMod
                     _LOGOP(session).level(Level.CONFIG).verb(NutsLogVerb.SUCCESS)
                             .log(NutsMessage.jstyle(
                                     "{0} created repository {1} at {2}",
-                                    CoreStringUtils.alignLeft(repository.getName(), 20) , repository.getName() ,
+                                    NutsUtilStrings.formatAlign(repository.getName(), 20,NutsPositionType.FIRST) , repository.getName() ,
                                     getStoreLocation()
                                     ));
                 } else {
                     _LOGOP(session).level(Level.CONFIG).verb(NutsLogVerb.SUCCESS).log(NutsMessage.jstyle(
                             "{0} updated repository {1} at {2}",
-                            CoreStringUtils.alignLeft(repository.getName(), 20) , repository.getName() ,
+                            NutsUtilStrings.formatAlign(repository.getName(), 20,NutsPositionType.FIRST) , repository.getName() ,
                             getStoreLocation()
                     ));
                 }
@@ -751,7 +750,7 @@ public class DefaultNutsRepositoryConfigModel implements NutsRepositoryConfigMod
             return t;
         }
         if (inherit) {
-            t = session.config().getConfigProperty(key).getString();
+            t = session.config().getConfigProperty(key).asString().get(session);
             if (!NutsBlankable.isBlank(t)) {
                 return t;
             }

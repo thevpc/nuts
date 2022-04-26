@@ -9,6 +9,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.io.util.InputStreamMetadataAwareImpl;
 import net.thevpc.nuts.runtime.standalone.io.util.NutsStreamOrPath;
 import net.thevpc.nuts.runtime.standalone.session.NutsSessionUtils;
+import net.thevpc.nuts.runtime.standalone.util.CoreNutsUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
 import net.thevpc.nuts.spi.NutsSupportLevelContext;
 
@@ -139,7 +140,7 @@ public class DefaultNutsInputStreamMonitor implements NutsInputStreamMonitor {
                 , isTraceProgress()
                 ,getProgressFactory());
         boolean verboseMode
-                = getSession().boot().getBootCustomBoolArgument(false,false,false,"---monitor-start");
+                = CoreNutsUtils.isCustomFalse("---monitor-start",getSession());
         long size = -1;
         try {
             if (verboseMode && monitor != null) {

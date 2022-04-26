@@ -38,7 +38,7 @@ public class DefaultNutsDescriptorPropertyBuilder implements NutsDescriptorPrope
     private static final long serialVersionUID = 1L;
 
     private String name;
-    private String value;
+    private NutsValue value = new DefaultNutsValue(null);
     private NutsEnvConditionBuilder condition;
 
     public DefaultNutsDescriptorPropertyBuilder() {
@@ -54,7 +54,7 @@ public class DefaultNutsDescriptorPropertyBuilder implements NutsDescriptorPrope
         return name;
     }
 
-    public String getValue() {
+    public NutsValue getValue() {
         return value;
     }
 
@@ -76,7 +76,7 @@ public class DefaultNutsDescriptorPropertyBuilder implements NutsDescriptorPrope
 
     @Override
     public NutsDescriptorPropertyBuilder setValue(String value) {
-        this.value = value;
+        this.value = new DefaultNutsValue(value);
         return this;
     }
 
@@ -88,7 +88,7 @@ public class DefaultNutsDescriptorPropertyBuilder implements NutsDescriptorPrope
             this.setCondition(null);
         } else {
             this.setName(value.getName());
-            this.setValue(value.getValue());
+            this.setValue(value.getValue().asString().orNull());
             this.setCondition(value.getCondition());
         }
         return this;

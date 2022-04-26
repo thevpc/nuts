@@ -18,8 +18,8 @@ class OnFinishIterator<T> extends NutsIteratorBase<T> {
 
     @Override
     public NutsElement describe(NutsElements elems) {
-        return NutsDescribables.resolveOrDestruct(base,elems)
-                .asSafeObject(true).builder()
+        return NutsDescribables.resolveOrDestructAsObject(base,elems)
+                .builder()
                 .set("onFinish", NutsDescribables.resolveOrToString(r,elems))
                 .build()
                 ;

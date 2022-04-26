@@ -27,7 +27,6 @@
 package net.thevpc.nuts.boot;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.NutsBootOptions;
 
 import java.io.File;
 import java.io.IOException;
@@ -45,7 +44,7 @@ class PrivateNutsUtilDeleteFiles {
     PrivateNutsUtilDeleteFiles() {
     }
 
-    static String getStoreLocationPath(NutsBootOptions bOptions, NutsStoreLocation value) {
+    static String getStoreLocationPath(NutsWorkspaceBootOptions bOptions, NutsStoreLocation value) {
         Map<NutsStoreLocation, String> storeLocations = bOptions.getStoreLocations();
         if (storeLocations != null) {
             return storeLocations.get(value);
@@ -57,7 +56,7 @@ class PrivateNutsUtilDeleteFiles {
      * @param includeRoot true if include root
      * @param locations   of type NutsStoreLocation, Path of File
      */
-    static long deleteStoreLocations(NutsBootOptions lastBootOptions, NutsBootOptions o, boolean includeRoot,
+    static long deleteStoreLocations(NutsWorkspaceBootOptions lastBootOptions, NutsWorkspaceBootOptions o, boolean includeRoot,
                                      PrivateNutsBootLog bLog, Object[] locations) {
         if (lastBootOptions == null) {
             return 0;
@@ -109,7 +108,7 @@ class PrivateNutsUtilDeleteFiles {
                 }
             }
         }
-        NutsBootOptions optionsCopy = o.copy();
+        NutsWorkspaceBootOptionsBuilder optionsCopy = o.builder();
         if (optionsCopy.isBot() || !PrivateNutsUtilGui.isGraphicalDesktopEnvironment()) {
             optionsCopy.setGui(false);
         }
@@ -117,12 +116,12 @@ class PrivateNutsUtilDeleteFiles {
     }
 
     public static long deleteAndConfirmAll(File[] folders, boolean force, String header, NutsSession session,
-                                           PrivateNutsBootLog bLog, NutsBootOptions bOptions) {
+                                           PrivateNutsBootLog bLog, NutsWorkspaceBootOptions bOptions) {
         return deleteAndConfirmAll(folders, force, new PrivateNutsDeleteFilesContextImpl(), header, session, bLog, bOptions);
     }
 
     private static long deleteAndConfirmAll(File[] folders, boolean force, PrivateNutsDeleteFilesContext refForceAll,
-                                            String header, NutsSession session, PrivateNutsBootLog bLog, NutsBootOptions bOptions) {
+                                            String header, NutsSession session, PrivateNutsBootLog bLog, NutsWorkspaceBootOptions bOptions) {
         long count = 0;
         boolean headerWritten = false;
         if (folders != null) {
@@ -150,7 +149,7 @@ class PrivateNutsUtilDeleteFiles {
     }
 
     private static long deleteAndConfirm(File directory, boolean force, PrivateNutsDeleteFilesContext refForceAll,
-                                         NutsSession session, PrivateNutsBootLog bLog, NutsBootOptions bOptions) {
+                                         NutsSession session, PrivateNutsBootLog bLog, NutsWorkspaceBootOptions bOptions) {
         if (directory.exists()) {
             if (!force && !refForceAll.isForce() && refForceAll.accept(directory)) {
                 String line = null;
@@ -201,7 +200,7 @@ class PrivateNutsUtilDeleteFiles {
                     refForceAll.setForce(true);
                 } else if ("c".equalsIgnoreCase(line)) {
                     throw new NutsUserCancelException(session);
-                } else if (!NutsUtilStrings.parseBoolean(line, false, false)) {
+                } else if (!NutsUtilStrings.parseBoolean(line).orElse(false)) {
                     refForceAll.ignore(directory);
                     return 0;
                 }

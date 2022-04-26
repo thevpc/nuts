@@ -27,7 +27,7 @@
 package net.thevpc.nuts.boot;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.NutsBootOptions;
+import net.thevpc.nuts.DefaultNutsWorkspaceBootOptionsBuilder;
 
 import java.io.PrintStream;
 import java.util.logging.Level;
@@ -47,9 +47,9 @@ public class PrivateNutsUtilApplication {
         }
 
         NutsSession session = NutsSessionAwareExceptionBase.resolveSession(ex).orNull();
-        NutsBootOptions bo = null;
+        NutsWorkspaceBootOptionsBuilder bo = null;
         if (session != null) {
-            bo = session.boot().getBootOptions().builder().toBootOptions();
+            bo = session.boot().getBootOptions().builder();
             if (bo.isGui()) {
                 if (!session.env().isGraphicalDesktopEnvironment()) {
                     bo.setGui(false);
@@ -57,14 +57,14 @@ public class PrivateNutsUtilApplication {
             }
         } else {
             PrivateNutsBootLog log = new PrivateNutsBootLog(new NutsBootTerminal(null,out,out));
-            NutsBootOptions options = new NutsBootOptions();
+            NutsWorkspaceBootOptionsBuilder options = new DefaultNutsWorkspaceBootOptionsBuilder();
             //load inherited
             String nutsArgs = NutsUtilStrings.trim(
                     NutsUtilStrings.trim(System.getProperty("nuts.boot.args"))
                             + " " + NutsUtilStrings.trim(System.getProperty("nuts.args"))
             );
             try {
-                NutsApiUtils.parseNutsArguments(NutsApiUtils.parseCommandLineArray(nutsArgs),options,log);
+                options.setCommandLine(NutsCommandLine.parseDefault(nutsArgs).get().toStringArray(),null);
             } catch (Exception e) {
                 //any, ignore...
             }

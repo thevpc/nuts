@@ -25,7 +25,8 @@ public class DefaultNutsSettingsInternalExecutable extends DefaultInternalNutsEx
     private List<NutsSettingsSubCommand> subCommands;
     @Override
     public void execute() {
-        if (NutsAppUtils.processHelpOptions(args, getSession())) {
+        NutsSession session = getSession();
+        if (NutsAppUtils.processHelpOptions(args, session)) {
             showDefaultHelp();
             return;
         }
@@ -34,20 +35,20 @@ public class DefaultNutsSettingsInternalExecutable extends DefaultInternalNutsEx
 //                Thread.currentThread().getContextClassLoader());
 
         Boolean autoSave = true;
-        NutsCommandLine cmd = NutsCommandLine.of(args,getSession());
+        NutsCommandLine cmd = NutsCommandLine.of(args);
         boolean empty = true;
         NutsArgument a;
         do {
-            a = cmd.peek();
+            a = cmd.peek().get(session);
             if(a==null){
                 break;
             }
             boolean enabled = a.isActive();
             if(a.isOption() &&
                     (
-                            a.getKey().getString().equals("-?")
-                            ||a.getKey().getString().equals("-h")
-                                    ||a.getKey().getString().equals("-help")
+                            a.getKey().asString().get(session).equals("-?")
+                            ||a.getKey().asString().get(session).equals("-h")
+                                    ||a.getKey().asString().get(session).equals("-help")
                     )
                     ){
                     cmd.skip();
@@ -56,39 +57,39 @@ public class DefaultNutsSettingsInternalExecutable extends DefaultInternalNutsEx
                             showDefaultHelp();
                         }
                         cmd.skipAll();
-                        throw new NutsExecutionException(getSession(), NutsMessage.cstyle("help"), 0);
+                        throw new NutsExecutionException(session, NutsMessage.cstyle("help"), 0);
                     }
                     break;
                 } else{
                     NutsSettingsSubCommand selectedSubCommand = null;
                     for (NutsSettingsSubCommand subCommand : getSubCommands()) {
-                        if (subCommand.exec(cmd, autoSave, getSession())) {
+                        if (subCommand.exec(cmd, autoSave, session)) {
                             selectedSubCommand = subCommand;
                             empty = false;
                             break;
                         }
                     }
                     if(selectedSubCommand==null){
-                        getSession().configureLast(cmd);
+                        session.configureLast(cmd);
                     }else{
                         if (!cmd.isExecMode()) {
                             return;
                         }
                         if (cmd.hasNext()) {
-                            NutsPrintStream out = getSession().err();
+                            NutsPrintStream out = session.err();
                             out.printf("unexpected %s%n", cmd.peek());
                             out.printf("type for more help : nuts settings -h%n");
-                            throw new NutsExecutionException(getSession(), NutsMessage.cstyle("unexpected %s", cmd.peek()), 1);
+                            throw new NutsExecutionException(session, NutsMessage.cstyle("unexpected %s", cmd.peek()), 1);
                         }
                         break;
                     }
                 }
         } while (cmd.hasNext());
         if (empty) {
-            NutsPrintStream out = getSession().err();
+            NutsPrintStream out = session.err();
             out.printf("missing settings command%n");
             out.printf("type for more help : nuts settings -h%n");
-            throw new NutsExecutionException(getSession(), NutsMessage.cstyle("missing settings command"), 1);
+            throw new NutsExecutionException(session, NutsMessage.cstyle("missing settings command"), 1);
         }
     }
 

@@ -102,7 +102,7 @@ public class ExePathVersionResolver implements PathVersionResolver{
                     if (!NutsBlankable.isBlank(artifactId) && !NutsBlankable.isBlank(artifactVersion)) {
                         NutsSession session = context.getSession();
                         d.add(new VersionDescriptor(
-                                new DefaultNutsIdBuilder().setArtifactId(artifactId).setVersion(artifactVersion).build(),
+                                NutsIdBuilder.of().setArtifactId(artifactId).setVersion(artifactVersion).build(),
                                 p
                         ));
                     }

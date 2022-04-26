@@ -827,7 +827,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
         shortcutName += "%s%v%s%h";
         shortcutName = NameBuilder.label(appDef.getId(), shortcutName, null, appDef.getDescriptor(), this.session).buildName();
 
-        String execCmd = NutsCommandLine.of(cmd, this.session).toString();
+        String execCmd = NutsCommandLine.of(cmd).toString();
         FreeDesktopEntry.Group sl = FreeDesktopEntry.Group.desktopEntry(shortcutName, execCmd, cwd);
         sl.setStartNotify(true);
         sl.setIcon(iconPath);
@@ -889,7 +889,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
             name = NameBuilder.label(options.resolveNutsApiId(), "Nuts Terminal%s%v%s%h", null, options.resolveNutsApiDef().getDescriptor(), session)
                     .buildName();
         }
-        String execCmd = NutsCommandLine.of(new String[]{cmd}, session).toString();
+        String execCmd = NutsCommandLine.of(new String[]{cmd}).toString();
         return createShortcut(nutsDesktopIntegrationItem,
                 options.resolveNutsApiId(),
                 fileName,

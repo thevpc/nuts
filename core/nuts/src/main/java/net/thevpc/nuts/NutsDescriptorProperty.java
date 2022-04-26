@@ -46,7 +46,7 @@ public interface NutsDescriptorProperty extends NutsBlankable {
      *
      * @return property value
      */
-    String getValue();
+    NutsValue getValue();
 
     /**
      * property condition

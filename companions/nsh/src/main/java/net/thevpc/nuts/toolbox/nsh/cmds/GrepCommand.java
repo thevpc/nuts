@@ -50,6 +50,7 @@ public class GrepCommand extends SimpleJShellBuiltin {
 
     @Override
     protected boolean configureFirst(NutsCommandLine commandLine, JShellExecutionContext context) {
+        NutsSession session = context.getSession();
         Options options = context.getOptions();
         NutsArgument a;
         if (commandLine.next("-") != null) {
@@ -70,21 +71,21 @@ public class GrepCommand extends SimpleJShellBuiltin {
         } else if (commandLine.next("-i", "--ignore-case") != null) {
             options.ignoreCase = true;
             return true;
-        } else if ((a = commandLine.next("-H", "--highlight", "--highlighter")) != null) {
-            options.highlighter = NutsUtilStrings.trim(a.getValue().getString());
+        } else if ((a = commandLine.next("-H", "--highlight", "--highlighter").orNull()) != null) {
+            options.highlighter = NutsUtilStrings.trim(a.getStringValue().get(session));
             return true;
-        } else if ((a = commandLine.next("-S", "--selection-style")) != null) {
-            options.selectionStyle = NutsUtilStrings.trimToNull(a.getValue().getString());
+        } else if ((a = commandLine.next("-S", "--selection-style").orNull()) != null) {
+            options.selectionStyle = NutsUtilStrings.trimToNull(a.getStringValue().get(session));
             return true;
         } else if (commandLine.next("-n") != null) {
             options.n = true;
             return true;
-        } else if (commandLine.peek().isNonOption()) {
+        } else if (commandLine.peek().get(session).isNonOption()) {
             if (options.expression == null) {
-                options.expression = commandLine.next().getString();
+                options.expression = commandLine.next().flatMap(NutsValue::asString).get(session);
             } else {
-                String path = commandLine.next().getString();
-                options.files.add(new FileInfo(NutsPath.of(path, context.getSession()), options.highlighter));
+                String path = commandLine.next().flatMap(NutsValue::asString).get(session);
+                options.files.add(new FileInfo(NutsPath.of(path, session), options.highlighter));
             }
             return true;
         } else {

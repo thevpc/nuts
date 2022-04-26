@@ -281,9 +281,9 @@ public class AntiQuote3ParserStep extends ParserStep {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder("Quoted(" + NutsUtilStrings.dblQuotes(start.toString()));
+        StringBuilder sb = new StringBuilder("Quoted(" + NutsUtilStrings.formatStringLiteral(start.toString(), NutsUtilStrings.QuoteType.DOUBLE));
         sb.append(",");
-        sb.append(NutsUtilStrings.dblQuotes(getPartialValue()));
+        sb.append(NutsUtilStrings.formatStringLiteral(getPartialValue(), NutsUtilStrings.QuoteType.DOUBLE));
         sb.append(",status=").append(status == 0 ? "EXPECT_START" : status == 1 ? "EXPECT_CONTENT" : status == 2 ? "EXPECT_END" : String.valueOf(status));
         sb.append(",end=");
         sb.append(end);

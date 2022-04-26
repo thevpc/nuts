@@ -23,6 +23,12 @@ public class PrivateNutsUtilCollections {
         }
         return new ArrayList<>(other);
     }
+    public static <T> Set<T> nonNullSet(Collection<T> other) {
+        if (other == null) {
+            return new LinkedHashSet<>();
+        }
+        return new LinkedHashSet<>(other);
+    }
 
     public static <T> List<T> uniqueNonBlankList(Collection<T> other) {
         return uniqueList(other).stream().filter(x -> !NutsBlankable.isBlank(x)).collect(Collectors.toList());

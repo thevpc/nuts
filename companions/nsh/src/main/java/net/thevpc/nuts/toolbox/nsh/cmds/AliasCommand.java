@@ -27,6 +27,7 @@ package net.thevpc.nuts.toolbox.nsh.cmds;
 
 import net.thevpc.nuts.NutsArgument;
 import net.thevpc.nuts.NutsCommandLine;
+import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.spi.NutsComponentScope;
 import net.thevpc.nuts.spi.NutsComponentScopeType;
 import net.thevpc.nuts.toolbox.nsh.SimpleJShellBuiltin;
@@ -48,20 +49,21 @@ public class AliasCommand extends SimpleJShellBuiltin {
     @Override
     protected boolean configureFirst(NutsCommandLine commandLine, JShellExecutionContext context) {
         Options options = context.getOptions();
-        final NutsArgument a = commandLine.peek();
+        NutsSession session = context.getSession();
+        final NutsArgument a = commandLine.peek().get(session);
         if (a.isOption()) {
-            if (a.getKey().getString().equals("--sort")) {
+            if (a.getKey().asString().get(session).equals("--sort")) {
                 commandLine.skip();
                 options.displayOptions.add(a.toString());
                 return true;
             }
         } else if (a.isKeyValue()) {
             commandLine.skip();
-            options.add.put(a.getKey().getString(), a.getValue().getString());
+            options.add.put(a.getKey().asString().get(session), a.getStringValue().get(session));
             return true;
         } else {
             commandLine.skip();
-            options.show.add(a.getString());
+            options.show.add(a.asString().get(session));
             return true;
         }
         return false;

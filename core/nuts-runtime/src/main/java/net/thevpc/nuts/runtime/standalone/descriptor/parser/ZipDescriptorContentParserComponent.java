@@ -74,7 +74,7 @@ public class ZipDescriptorContentParserComponent implements NutsDescriptorConten
             if (ZipUtils.extractFirstPath(parserContext.getFullStream(), POSSIBLE_PATHS, buffer, true)) {
                 NutsSession session = parserContext.getSession();
                 return NutsDescriptorParser.of(session)
-                        .parse(buffer.toByteArray());
+                        .parse(buffer.toByteArray()).get(session);
             }
         } catch (IOException ex) {
             throw new NutsIOException(parserContext.getSession(),ex);

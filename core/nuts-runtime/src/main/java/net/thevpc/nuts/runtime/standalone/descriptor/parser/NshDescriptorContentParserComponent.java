@@ -156,7 +156,7 @@ public class NshDescriptorContentParserComponent implements NutsDescriptorConten
                         .setExecutor(new DefaultNutsArtifactCall(NutsId.of("net.thevpc.nuts.toolbox:nsh").get(session)))
                         .build();
             }
-            return NutsDescriptorParser.of(session).parse(comment.getValidString());
+            return NutsDescriptorParser.of(session).parse(comment.getValidString()).get(session);
         } finally {
             if (r != null) {
                 r.close();

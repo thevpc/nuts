@@ -153,12 +153,12 @@ public class Test01_CreateTest {
         }
 
         {
-            NutsCommandLine cmd = NutsCommandLine.of(new String[]{"cmd", "--test"}, s);
+            NutsCommandLine cmd = NutsCommandLine.of(new String[]{"cmd", "--test"});
             Assertions.assertNotNull(cmd);
         }
 
         {
-            NutsArgument arg = NutsArgument.of("arg", s);
+            NutsArgument arg = NutsArgument.of("arg");
             Assertions.assertNotNull(arg);
         }
 

@@ -409,12 +409,12 @@ public abstract class AbstractNutsUpdateCommand extends NutsWorkspaceCommandBase
     @Override
     public boolean configureFirst(NutsCommandLine cmdLine) {
         checkSession();
-        NutsArgument a = cmdLine.peek();
+        NutsArgument a = cmdLine.peek().get(session);
         if (a == null) {
             return false;
         }
         boolean enabled = a.isActive();
-        switch (a.getKey().getString()) {
+        switch(a.getStringKey().orElse("")) {
             case "-a":
             case "--all": {
                 cmdLine.skip();
@@ -434,7 +434,7 @@ public abstract class AbstractNutsUpdateCommand extends NutsWorkspaceCommandBase
 //            }
             case "-i":
             case "--installed": {
-                boolean val = cmdLine.nextBoolean().getBooleanValue();
+                boolean val = cmdLine.nextBooleanValueLiteral().get(session);
                 if (enabled) {
                     this.setInstalled(val);
                 }
@@ -442,7 +442,7 @@ public abstract class AbstractNutsUpdateCommand extends NutsWorkspaceCommandBase
             }
             case "-r":
             case "--runtime": {
-                boolean val = cmdLine.nextBoolean().getBooleanValue();
+                boolean val = cmdLine.nextBooleanValueLiteral().get(session);
                 if (enabled) {
                     this.setRuntime(val);
                 }
@@ -450,7 +450,7 @@ public abstract class AbstractNutsUpdateCommand extends NutsWorkspaceCommandBase
             }
             case "-A":
             case "--api": {
-                boolean val = cmdLine.nextBoolean().getBooleanValue();
+                boolean val = cmdLine.nextBooleanValueLiteral().get(session);
                 if (enabled) {
                     this.setApi(val);
                 }
@@ -459,7 +459,7 @@ public abstract class AbstractNutsUpdateCommand extends NutsWorkspaceCommandBase
 
             case "-e":
             case "--extensions": {
-                boolean val = cmdLine.nextBoolean().getBooleanValue();
+                boolean val = cmdLine.nextBooleanValueLiteral().get(session);
                 if (enabled) {
                     this.setExtensions(val);
                 }
@@ -467,7 +467,7 @@ public abstract class AbstractNutsUpdateCommand extends NutsWorkspaceCommandBase
             }
             case "-c":
             case "--companions": {
-                boolean val = cmdLine.nextBoolean().getBooleanValue();
+                boolean val = cmdLine.nextBooleanValueLiteral().get(session);
                 if (enabled) {
                     this.setCompanions(val);
                 }
@@ -476,7 +476,7 @@ public abstract class AbstractNutsUpdateCommand extends NutsWorkspaceCommandBase
             case "-v":
             case "--api-version":
             case "--to-version": {
-                String val = cmdLine.nextString().getValue().getString();
+                String val = cmdLine.nextStringValueLiteral().get(session);
                 if (enabled) {
                     this.setApiVersion(NutsVersion.of(val).get(getSession()));
                 }
@@ -493,10 +493,10 @@ public abstract class AbstractNutsUpdateCommand extends NutsWorkspaceCommandBase
             }
             case "-N":
             case "--expire": {
-                a = cmdLine.next();
+                a = cmdLine.next().get(session);
                 if (enabled) {
-                    if (a.getValue().getString() != null) {
-                        expireTime=Instant.parse(a.getValue().getString());
+                    if (a.getStringValue() != null) {
+                        expireTime=Instant.parse(a.getStringValue().get(session));
                     } else {
                         expireTime=Instant.now();
                     }
@@ -512,7 +512,7 @@ public abstract class AbstractNutsUpdateCommand extends NutsWorkspaceCommandBase
                     return false;
                 } else {
                     cmdLine.skip();
-                    addId(a.getString());
+                    addId(a.asString().get(session));
                     return true;
                 }
             }

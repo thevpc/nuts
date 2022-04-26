@@ -23,13 +23,11 @@
  * <br>
  * ====================================================================
  */
-package net.thevpc.nuts.runtime.standalone.app.cmdline;
+package net.thevpc.nuts;
 
-import net.thevpc.nuts.NutsArgument;
-import net.thevpc.nuts.NutsElements;
-import net.thevpc.nuts.NutsPrimitiveElement;
-import net.thevpc.nuts.NutsUtilStrings;
-
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.time.Instant;
 import java.util.NoSuchElementException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -52,10 +50,9 @@ public class DefaultNutsArgument implements NutsArgument {
     private final boolean active;
     private final boolean option;
     private final String expression;
-    private transient final NutsElements elems;
 
-    public DefaultNutsArgument(String expression, NutsElements elems) {
-        this(expression, '=', elems);
+    public DefaultNutsArgument(String expression) {
+        this(expression, '=');
     }
 
 
@@ -65,8 +62,7 @@ public class DefaultNutsArgument implements NutsArgument {
      * @param expression expression
      * @param eq         equals
      */
-    public DefaultNutsArgument(String expression, char eq, NutsElements elems) {
-        this.elems = elems;
+    public DefaultNutsArgument(String expression, char eq) {
         this.eq = (eq == '\0' ? '=' : eq);
         this.expression = expression;
         Pattern currOptionsPattern;
@@ -152,27 +148,18 @@ public class DefaultNutsArgument implements NutsArgument {
     }
 
     @Override
-    public String getString() {
-        return expression;
+    public NutsOptional<String> getStringKey() {
+        return getKey().asString();
     }
 
     @Override
-    public String getStringValue() {
-        return getStringValue(null);
+    public String key() {
+        return getStringKey().orElse("");
     }
 
     @Override
-    public String getStringKey() {
-        return getKey().getString();
-    }
-
-    @Override
-    public String getStringValue(String defValue) {
-        NutsPrimitiveElement v = getValue();
-        if (v != null) {
-            return v.getString(defValue);
-        }
-        return defValue;
+    public NutsOptional<String> getStringValue() {
+        return getValue().asString();
     }
 
     @Override
@@ -208,8 +195,8 @@ public class DefaultNutsArgument implements NutsArgument {
         return value != null;
     }
 
-    public NutsPrimitiveElement getOptionPrefix() {
-        return elems.ofString(optionPrefix);
+    public NutsValue getOptionPrefix() {
+        return NutsValue.of(optionPrefix);
     }
 
     @Override
@@ -218,43 +205,164 @@ public class DefaultNutsArgument implements NutsArgument {
     }
 
     @Override
-    public NutsPrimitiveElement getOptionName() {
-        return elems.ofString(optionName);
+    public NutsValue getOptionName() {
+        return NutsValue.of(optionName);
     }
 
     @Override
-    public NutsPrimitiveElement getValue() {
-        return elems.ofString(value);
+    public NutsValue getValue() {
+        return NutsValue.of(value);
     }
 
     @Override
-    public boolean getBooleanValue() {
-        return getBooleanValue(true, false);
+    public NutsOptional<Boolean> getBooleanValue() {
+        if (isNegated()) {
+            return NutsUtilStrings.parseBoolean(value).ifEmpty(true).map(x -> isNegated() != x);
+        }
+        return NutsUtilStrings.parseBoolean(value);
     }
 
     @Override
-    public Boolean getBooleanValue(Boolean emptyValue, Boolean errValue) {
-        Boolean a = NutsUtilStrings.parseBoolean(value, emptyValue, errValue);
-        return isNegated() != a;
+    public NutsValue getKey() {
+        return NutsValue.of(key == null ? expression : key);
     }
 
-    @Override
-    public Boolean getBooleanValue(Boolean emptyOrValue) {
-        return getBooleanValue(emptyOrValue, emptyOrValue);
-    }
-
-    @Override
-    public NutsPrimitiveElement getKey() {
-        return elems.ofString(key == null ? expression : key);
-    }
-
-    @Override
-    public NutsPrimitiveElement toElement() {
-        return elems.ofString(expression);
+    private NutsValue toValue() {
+        return NutsValue.of(expression);
     }
 
     @Override
     public String toString() {
         return String.valueOf(expression);
+    }
+
+    @Override
+    public Object getObject() {
+        return expression;
+    }
+
+    @Override
+    public NutsOptional<Instant> asInstant() {
+        return toValue().asInstant();
+    }
+
+    @Override
+    public NutsOptional<Number> asNumber() {
+        return toValue().asNumber();
+    }
+
+    @Override
+    public NutsOptional<Boolean> asBoolean() {
+        return toValue().asBoolean();
+    }
+
+    @Override
+    public NutsOptional<Long> asLong() {
+        return toValue().asLong();
+    }
+
+    @Override
+    public NutsOptional<Double> asDouble() {
+        return toValue().asDouble();
+    }
+
+    @Override
+    public NutsOptional<Float> asFloat() {
+        return toValue().asFloat();
+    }
+
+    @Override
+    public NutsOptional<Byte> asByte() {
+        return toValue().asByte();
+    }
+
+    @Override
+    public NutsOptional<Short> asShort() {
+        return toValue().asShort();
+    }
+
+    @Override
+    public NutsOptional<Integer> asInt() {
+        return toValue().asInt();
+    }
+
+    @Override
+    public NutsOptional<BigInteger> asBigInt() {
+        return toValue().asBigInt();
+    }
+
+    @Override
+    public NutsOptional<BigDecimal> asBigDecimal() {
+        return toValue().asBigDecimal();
+    }
+
+    @Override
+    public boolean isBoolean() {
+        return toValue().isBoolean();
+    }
+
+    @Override
+    public boolean isString() {
+        return toValue().isString();
+    }
+
+    @Override
+    public boolean isNull() {
+        return toValue().isNull();
+    }
+
+    @Override
+    public boolean isByte() {
+        return toValue().isByte();
+    }
+
+    @Override
+    public boolean isInt() {
+        return toValue().isInt();
+    }
+
+    @Override
+    public boolean isLong() {
+        return toValue().isLong();
+    }
+
+    @Override
+    public boolean isShort() {
+        return toValue().isShort();
+    }
+
+    @Override
+    public boolean isFloat() {
+        return toValue().isFloat();
+    }
+
+    @Override
+    public boolean isDouble() {
+        return toValue().isDouble();
+    }
+
+    @Override
+    public boolean isInstant() {
+        return toValue().isInstant();
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return toValue().isEmpty();
+    }
+
+    @Override
+    public boolean isBlank() {
+        return toValue().isBlank();
+    }
+
+    @Override
+    public boolean isNumber() {
+        return toValue().isNumber();
+    }
+
+    @Override
+    public NutsOptional<String> asString() {
+        return toValue().asString();
     }
 }

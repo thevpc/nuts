@@ -44,11 +44,12 @@ public class DefaultSearchFormatProps extends DefaultSearchFormatBase {
     @Override
     public void next(Object object, long index) {
         Map<String, String> p = new LinkedHashMap<>();
+        NutsSession session = getSession();
         NutsFormatUtils.putAllInProps(String.valueOf(index + 1), p,
-                NutsElements.of(getSession())
-                        .toElement(object)
-        );
-        CoreIOUtils.storeProperties(p, getWriter().asPrintStream(), false,getSession());
+                NutsElements.of(session)
+                        .toElement(object),
+                session);
+        CoreIOUtils.storeProperties(p, getWriter().asPrintStream(), false, session);
         getWriter().flush();
     }
 

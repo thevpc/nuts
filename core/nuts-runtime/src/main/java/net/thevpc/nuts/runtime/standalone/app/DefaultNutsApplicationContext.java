@@ -1,19 +1,17 @@
 package net.thevpc.nuts.runtime.standalone.app;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.standalone.app.cmdline.NutsCommandLineUtils;
+import net.thevpc.nuts.runtime.standalone.session.NutsSessionUtils;
+import net.thevpc.nuts.runtime.standalone.util.NutsConfigurableHelper;
+import net.thevpc.nuts.runtime.standalone.util.jclass.JavaClassUtils;
+import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceExt;
+import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
-
-import net.thevpc.nuts.runtime.standalone.app.cmdline.DefaultNutsCommandLine;
-import net.thevpc.nuts.runtime.standalone.app.cmdline.NutsCommandLineUtils;
-import net.thevpc.nuts.runtime.standalone.session.NutsSessionUtils;
-import net.thevpc.nuts.runtime.standalone.util.jclass.JavaClassUtils;
-import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceExt;
-import net.thevpc.nuts.runtime.standalone.util.NutsConfigurableHelper;
-import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
 
 public class DefaultNutsApplicationContext implements NutsApplicationContext {
 
@@ -64,14 +62,15 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
         session = this.session;//will be used later
         int wordIndex = -1;
         if (args.size() > 0 && args.get(0).startsWith("--nuts-exec-mode=")) {
-            NutsCommandLine execModeCommand = NutsCommandLine.of(args.get(0).substring(args.get(0).indexOf('=') + 1), session);
+            NutsCommandLine execModeCommand = NutsCommandLine.parseDefault(
+                    args.get(0).substring(args.get(0).indexOf('=') + 1)).get(session);
             if (execModeCommand.hasNext()) {
-                NutsArgument a = execModeCommand.next();
-                switch (a.getKey().getString()) {
+                NutsArgument a = execModeCommand.next().get(session);
+                switch(a.getStringKey().orElse("")) {
                     case "auto-complete": {
                         mode = NutsApplicationMode.AUTO_COMPLETE;
                         if (execModeCommand.hasNext()) {
-                            wordIndex = execModeCommand.next().toElement().getInt();
+                            wordIndex = execModeCommand.next().get(session).asInt().get(session);
                         }
                         modeArgs = execModeCommand.toStringList();
                         execModeCommand.skipAll();
@@ -92,7 +91,7 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
                     case "update": {
                         mode = NutsApplicationMode.UPDATE;
                         if (execModeCommand.hasNext()) {
-                            appPreviousVersion = NutsVersion.of(execModeCommand.next().getString()).get(session);
+                            appPreviousVersion = NutsVersion.of(execModeCommand.next().flatMap(NutsValue::asString).get(session)).get(session);
                         }
                         modeArgs = execModeCommand.toStringList();
                         execModeCommand.skipAll();
@@ -172,7 +171,7 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
     @Override
     public void configureLast(NutsCommandLine commandLine) {
         if (!configureFirst(commandLine)) {
-            commandLine.unexpectedArgument();
+            commandLine.throwUnexpectedArgument(session);
         }
     }
 
@@ -338,7 +337,7 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
 
     @Override
     public NutsCommandLine getCommandLine() {
-        return NutsCommandLine.of(getArguments(), getSession())
+        return NutsCommandLine.of(getArguments())
                 .setCommandName(getAppId().getArtifactId())
                 .setAutoComplete(getAutoComplete());
     }
@@ -349,7 +348,7 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
         NutsArgument a;
         commandLineProcessor.onCmdInitParsing(cmd, this);
         while (cmd.hasNext()) {
-            a = cmd.peek();
+            a = cmd.peek().get(session);
             boolean consumed;
             if (a.isOption()) {
                 consumed = commandLineProcessor.onCmdNextOption(a, cmd, this);
@@ -357,7 +356,7 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
                 consumed = commandLineProcessor.onCmdNextNonOption(a, cmd, this);
             }
             if (consumed) {
-                NutsArgument next = cmd.peek();
+                NutsArgument next = cmd.peek().get(session);
                 //reference equality!
                 if (next == a) {
                     //was not consumed!
@@ -367,7 +366,7 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
                                     a));
                 }
             } else if (!configureFirst(cmd)) {
-                cmd.unexpectedArgument();
+                cmd.throwUnexpectedArgument(session);
             }
         }
         commandLineProcessor.onCmdFinishParsing(cmd, this);
@@ -428,12 +427,12 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
 
     @Override
     public boolean configureFirst(NutsCommandLine cmd) {
-        NutsArgument a = cmd.peek();
+        NutsArgument a = cmd.peek().orNull();
         if (a == null) {
             return false;
         }
         boolean enabled = a.isActive();
-        switch (a.getKey().getString()) {
+        switch(a.getStringKey().orElse("")) {
             case "-?":
             case "-h":
             case "--help": {
@@ -543,7 +542,7 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
 
         @Override
         public String getLine() {
-            return new DefaultNutsCommandLine(getSession()).setArguments(getWords()).toString();
+            return NutsCommandLine.of(getWords()).toString();
         }
 
         @Override

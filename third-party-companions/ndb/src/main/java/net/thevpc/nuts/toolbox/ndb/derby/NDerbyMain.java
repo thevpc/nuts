@@ -25,44 +25,44 @@ public class NDerbyMain implements NdbSupport {
         DerbyOptions options = new DerbyOptions();
         cmdLine.setCommandName("derby");
         while (cmdLine.hasNext()) {
-            if ((a = cmdLine.next("start")) != null) {
+            if ((a = cmdLine.next("start").orNull()) != null) {
                 options.cmd = Command.start;
-            } else if ((a = cmdLine.next("sys", "sysinfo", "sys-info")) != null) {
+            } else if ((a = cmdLine.next("sys", "sysinfo", "sys-info").orNull()) != null) {
                 options.cmd = Command.sysinfo;
-            } else if ((a = cmdLine.next("ping")) != null) {
+            } else if ((a = cmdLine.next("ping").orNull()) != null) {
                 options.cmd = Command.ping;
-            } else if ((a = cmdLine.next("status")) != null) {
+            } else if ((a = cmdLine.next("status").orNull()) != null) {
                 status(cmdLine, options);
                 return;
-            } else if ((a = cmdLine.next("rt", "runtime", "runtimeinfo", "runtime-info")) != null) {
+            } else if ((a = cmdLine.next("rt", "runtime", "runtimeinfo", "runtime-info").orNull()) != null) {
                 options.cmd = Command.runtimeinfo;
-            } else if ((a = cmdLine.nextString("trace")) != null) {
+            } else if ((a = cmdLine.nextString("trace").orNull()) != null) {
                 options.cmd = Command.trace;
-                options.extraArg = a.getValue().getString();
-            } else if ((a = cmdLine.nextString("trace-directory", "tracedirectory")) != null) {
+                options.extraArg = a.getStringValue().get(session);
+            } else if ((a = cmdLine.nextString("trace-directory", "tracedirectory").orNull()) != null) {
                 options.cmd = Command.tracedirectory;
-                options.extraArg = a.getValue().getString();
-            } else if ((a = cmdLine.nextString("max-threads", "maxthreads")) != null) {
+                options.extraArg = a.getStringValue().get(session);
+            } else if ((a = cmdLine.nextString("max-threads", "maxthreads").orNull()) != null) {
                 options.cmd = Command.maxthreads;
-                options.extraArg = a.getValue().getString();
-            } else if ((a = cmdLine.nextString("time-slice", "timeslice")) != null) {
+                options.extraArg = a.getStringValue().get(session);
+            } else if ((a = cmdLine.nextString("time-slice", "timeslice").orNull()) != null) {
                 options.cmd = Command.timeslice;
-                options.extraArg = a.getValue().getString();
-            } else if ((a = cmdLine.nextString("log-connections", "logconnections")) != null) {
+                options.extraArg = a.getStringValue().get(session);
+            } else if ((a = cmdLine.nextString("log-connections", "logconnections").orNull()) != null) {
                 options.cmd = Command.logconnections;
-                options.extraArg = a.getValue().getString();
-            } else if ((a = cmdLine.next("stop", "shutdown")) != null) {
+                options.extraArg = a.getStringValue().get(session);
+            } else if ((a = cmdLine.next("stop", "shutdown").orNull()) != null) {
                 options.cmd = Command.shutdown;
-            } else if ((a = cmdLine.next("ps")) != null) {
+            } else if ((a = cmdLine.next("ps").orNull()) != null) {
                 ps(cmdLine, options);
                 return;
-            } else if ((a = cmdLine.next("versions")) != null) {
+            } else if ((a = cmdLine.next("versions").orNull()) != null) {
                 versions(cmdLine, options);
                 return;
             } else if (_opt(cmdLine, options)) {
                 //
             } else {
-                cmdLine.setCommandName("derby").unexpectedArgument();
+                cmdLine.setCommandName("derby").throwUnexpectedArgument(session);
             }
         }
         if (cmdLine.isExecMode()) {
@@ -97,17 +97,17 @@ public class NDerbyMain implements NdbSupport {
     }
 
     public void status(NutsCommandLine cmdLine, DerbyOptions options) {
+        NutsSession session = appContext.getSession();
         cmdLine.setCommandName("tomcat --local status");
         NutsArgument a;
         while (cmdLine.hasNext()) {
             if (_opt(cmdLine, options)) {
                 //
             } else {
-                cmdLine.unexpectedArgument();
+                cmdLine.throwUnexpectedArgument(session);
             }
         }
         options.cmd = Command.ping;
-        NutsSession session = appContext.getSession();
         NutsTexts factory = NutsTexts.of(session);
         if (cmdLine.isExecMode()) {
             if (new DerbyService(appContext).isRunning()) {
@@ -119,52 +119,53 @@ public class NDerbyMain implements NdbSupport {
     }
 
     private boolean _opt(NutsCommandLine cmdLine, DerbyOptions options) {
+        NutsSession session = appContext.getSession();
         NutsArgument a;
-        if ((a = cmdLine.nextString("-v", "--derby-version")) != null) {
-            options.derbyVersion = a.getValue().getString();
+        if ((a = cmdLine.nextString("-v", "--derby-version").orNull()) != null) {
+            options.derbyVersion = a.getStringValue().get(session);
             return true;
-        } else if ((a = cmdLine.nextString("-d", "--db")) != null) {
-            options.derbyDataHomeRoot = a.getValue().getString();
+        } else if ((a = cmdLine.nextString("-d", "--db").orNull()) != null) {
+            options.derbyDataHomeRoot = a.getStringValue().get(session);
             return true;
-        } else if ((a = cmdLine.nextString("--nb")) != null) {
+        } else if ((a = cmdLine.nextString("--nb").orNull()) != null) {
             options.derbyDataHomeRoot = System.getProperty("user.home") + File.separator + ".netbeans-derby";
             return true;
-//        } else if ((a = cmdLine.nextString("--nb","--netbeans")) != null) {
+//        } else if ((a = cmdLine.nextString("--nb","--netbeans").orNull()) != null) {
 //            options.derbyDataHomeReplace = System.getProperty("user.home") + "/.netbeans-derby";
 //            return true;
-        } else if ((a = cmdLine.nextString("-h", "--host")) != null) {
-            options.host = a.getValue().getString();
+        } else if ((a = cmdLine.nextString("-h", "--host").orNull()) != null) {
+            options.host = a.getStringValue().get(session);
             return true;
-        } else if ((a = cmdLine.nextString("-p", "--port")) != null) {
-            options.port = a.getValue().getInt();
+        } else if ((a = cmdLine.nextString("-p", "--port").orNull()) != null) {
+            options.port = a.getValue().asInt().get(session);
             return true;
-        } else if ((a = cmdLine.nextString("-ssl", "--ssl")) != null) {
-            options.sslmode = SSLMode.valueOf(a.getValue().getString());
+        } else if ((a = cmdLine.nextString("-ssl", "--ssl").orNull()) != null) {
+            options.sslmode = SSLMode.valueOf(a.getStringValue().get(session));
             return true;
         } else if (appContext.configureFirst(cmdLine)) {
             return true;
         } else {
-            cmdLine.unexpectedArgument();
+            cmdLine.throwUnexpectedArgument(session);
             return false;
         }
     }
 
     public void ps(NutsCommandLine args, DerbyOptions options) {
+        NutsSession session = appContext.getSession();
         String format = "default";
         args.setCommandName("tomcat --local ps");
         NutsArgument a;
         while (args.hasNext()) {
-            if ((a = args.nextBoolean("-l", "--long")) != null) {
+            if ((a = args.nextBoolean("-l", "--long").orNull()) != null) {
                 format = "long";
-            } else if ((a = args.nextBoolean("-s", "--short")) != null) {
+            } else if ((a = args.nextBoolean("-s", "--short").orNull()) != null) {
                 format = "short";
             } else if (_opt(args, options)) {
                 //
             } else {
-                args.unexpectedArgument();
+                args.throwUnexpectedArgument(session);
             }
         }
-        NutsSession session = appContext.getSession();
         NutsTexts factory = NutsTexts.of(session);
         if (args.isExecMode()) {
             if (session.isPlainOut()) {
@@ -183,9 +184,7 @@ public class NDerbyMain implements NdbSupport {
                                     factory.ofPlain("HOME:"),
                                     factory.ofStyled(jpsResult.getHome(), NutsTextStyle.path()),
                                     factory.ofPlain("CMD:"),
-
-                                    appContext.getCommandLine().parseLine(jpsResult.getArgsLine())
-                                            .format(session)
+                                    NutsCommandLine.parseSystem(jpsResult.getArgsLine(), session)
                             );
                             break;
                         }
@@ -205,18 +204,19 @@ public class NDerbyMain implements NdbSupport {
     }
 
     public void versions(NutsCommandLine args, DerbyOptions options) {
+        NutsSession session = appContext.getSession();
         args.setCommandName("tomcat --local versions");
         NutsArgument a;
         while (args.hasNext()) {
             if (_opt(args, options)) {
                 //
             } else {
-                args.unexpectedArgument();
+                args.throwUnexpectedArgument(session);
             }
         }
         if (args.isExecMode()) {
             DerbyService srv = new DerbyService(appContext);
-            appContext.getSession().out().printlnf(srv.findVersions());
+            session.out().printlnf(srv.findVersions());
         }
     }
 

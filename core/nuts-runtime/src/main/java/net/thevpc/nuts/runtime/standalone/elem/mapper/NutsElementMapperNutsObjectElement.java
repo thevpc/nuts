@@ -9,11 +9,12 @@ public class NutsElementMapperNutsObjectElement extends NutsElementMapperNutsEle
     public NutsElementMapperNutsObjectElement() {
     }
 
-        @Override
+    @Override
     public NutsObjectElement createObject(NutsElement o, Type typeOfResult, NutsElementFactoryContext context) {
-        o=super.createObject(o,typeOfResult,context);
+        NutsSession session = context.getSession();
+        o = super.createObject(o, typeOfResult, context);
         if (o.type() == NutsElementType.OBJECT) {
-            return o.asObject();
+            return o.asObject().get(session);
         }
         return context.elem().ofObject().set("value", o).build();
     }

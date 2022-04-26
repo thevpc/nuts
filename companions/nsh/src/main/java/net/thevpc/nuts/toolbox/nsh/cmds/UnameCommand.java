@@ -48,8 +48,9 @@ public class UnameCommand extends SimpleJShellBuiltin {
 
     @Override
     protected boolean configureFirst(NutsCommandLine cmdLine, JShellExecutionContext context) {
+        NutsSession session = context.getSession();
         Options config = context.getOptions();
-        switch (cmdLine.peek().getKey().getString()) {
+        switch (cmdLine.peek().get(session).getKey().asString().get(session)) {
             case "-m": {
                 config.farch = true;
                 return true;

@@ -522,50 +522,50 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
             if (NutsBlankable.isBlank(property.getCondition())) {
                 switch (property.getName()) {
                     case "nuts.application": {
-                        if (NutsUtilStrings.parseBoolean(property.getValue(), false, false)) {
+                        if (property.getValue().asBoolean().orElse(false)) {
                             flags.add(NutsDescriptorFlag.APP);
                             flags.add(NutsDescriptorFlag.EXEC);
                         }
                         break;
                     }
                     case "nuts.executable": {
-                        if (NutsUtilStrings.parseBoolean(property.getValue(), false, false)) {
+                        if (property.getValue().asBoolean().orElse(false)) {
                             flags.add(NutsDescriptorFlag.EXEC);
                         }
                         break;
                     }
                     case "nuts.term": {
-                        if (NutsUtilStrings.parseBoolean(property.getValue(), false, false)) {
+                        if (property.getValue().asBoolean().orElse(false)) {
                             flags.add(NutsDescriptorFlag.TERM);
                         }
                         break;
                     }
                     case "nuts.gui": {
-                        if (NutsUtilStrings.parseBoolean(property.getValue(), false, false)) {
+                        if (property.getValue().asBoolean().orElse(false)) {
                             flags.add(NutsDescriptorFlag.GUI);
                         }
                         break;
                     }
                     case "nuts.extension": {
-                        if (NutsUtilStrings.parseBoolean(property.getValue(), false, false)) {
+                        if (property.getValue().asBoolean().orElse(false)) {
                             idType = NutsIdType.EXTENSION;
                         }
                         break;
                     }
                     case "nuts.runtime": {
-                        if (NutsUtilStrings.parseBoolean(property.getValue(), false, false)) {
+                        if (property.getValue().asBoolean().orElse(false)) {
                             idType = NutsIdType.RUNTIME;
                         }
                         break;
                     }
                     case "nuts.companion": {
-                        if (NutsUtilStrings.parseBoolean(property.getValue(), false, false)) {
+                        if (property.getValue().asBoolean().orElse(false)) {
                             idType = NutsIdType.COMPANION;
                         }
                         break;
                     }
                     case "nuts.api": {
-                        if (NutsUtilStrings.parseBoolean(property.getValue(), false, false)) {
+                        if (property.getValue().asBoolean().orElse(false)) {
                             flags.add(NutsDescriptorFlag.NUTS_API);
                         }
                         break;
@@ -670,9 +670,9 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
     }
 
     @Override
-    public String getPropertyValue(String name) {
+    public NutsOptional<NutsValue> getPropertyValue(String name) {
         NutsDescriptorProperty p = getProperty(name);
-        return p == null ? null : p.getValue();
+        return NutsOptional.of(p == null ? null : p.getValue(), session -> NutsMessage.cstyle("property not found : %s", name));
     }
 
     public NutsIdType getIdType() {
@@ -683,7 +683,6 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
         this.idType = idType == null ? NutsIdType.REGULAR : idType;
         return this;
     }
-
 
 
     private void _rebuildPropertiesBuilder() {
@@ -801,7 +800,6 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
         this.organization = organization;
         return this;
     }
-
 
 
 }

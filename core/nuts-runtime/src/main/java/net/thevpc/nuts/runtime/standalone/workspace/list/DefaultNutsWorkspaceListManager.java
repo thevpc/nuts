@@ -121,11 +121,11 @@ public class DefaultNutsWorkspaceListManager implements NutsWorkspaceListManager
 
     private NutsSession createWorkspace(String path) {
         return Nuts.openWorkspace(
-                NutsWorkspaceOptionsBuilder.of(this.defaultSession)
+                NutsWorkspaceOptionsBuilder.of()
                         .setWorkspace(path)
                         .setOpenMode(NutsOpenMode.OPEN_OR_CREATE)
                         .setSkipCompanions(true)
-                        .toBootOptions()
+                        .build()
         );
     }
 

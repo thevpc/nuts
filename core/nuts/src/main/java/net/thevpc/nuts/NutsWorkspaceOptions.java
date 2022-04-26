@@ -25,6 +25,8 @@
  */
 package net.thevpc.nuts;
 
+import net.thevpc.nuts.boot.PrivateWorkspaceOptionsConfigHelper;
+
 import java.io.InputStream;
 import java.io.PrintStream;
 import java.io.Serializable;
@@ -42,14 +44,6 @@ import java.util.function.Supplier;
  * @since 0.5.4
  */
 public interface NutsWorkspaceOptions extends Serializable {
-
-    /**
-     * create a new instance of options formatter that help formatting this instance.
-     *
-     * @return a new instance of options formatter that help formatting this instance.
-     */
-    NutsWorkspaceOptionsFormat formatter();
-
     /**
      * nuts api version to boot.
      * <br>
@@ -657,4 +651,10 @@ public interface NutsWorkspaceOptions extends Serializable {
     String getTheme();
 
     NutsWorkspaceOptionsBuilder builder();
+    NutsWorkspaceOptions readOnly();
+
+    NutsCommandLine toCommandLine();
+    NutsCommandLine toCommandLine(NutsWorkspaceOptionsConfig config);
+
+
 }

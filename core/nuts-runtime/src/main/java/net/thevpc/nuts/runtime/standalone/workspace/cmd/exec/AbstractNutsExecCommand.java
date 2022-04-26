@@ -477,7 +477,7 @@ public abstract class AbstractNutsExecCommand extends NutsWorkspaceCommandBase<N
 
     @Override
     public boolean configureFirst(NutsCommandLine cmdLine) {
-        NutsArgument a = cmdLine.peek();
+        NutsArgument a = cmdLine.peek().orNull();
         if (a == null) {
             return false;
         }
@@ -485,11 +485,11 @@ public abstract class AbstractNutsExecCommand extends NutsWorkspaceCommandBase<N
             command = new ArrayList<>();
         }
         if (!command.isEmpty()) {
-            command.add(a.getString());
+            command.add(a.asString().get(getSession()));
             return true;
         }
         boolean enabled = a.isActive();
-        switch (a.getKey().getString()) {
+        switch (a.getStringKey().orElse("")) {
             case "--external":
             case "--spawn":
             case "-x": {
@@ -537,12 +537,12 @@ public abstract class AbstractNutsExecCommand extends NutsWorkspaceCommandBase<N
                 return true;
             }
             case "--run-as": {
-                NutsArgument s = cmdLine.nextString();
+                NutsArgument s = cmdLine.nextString().get(session);
                 if (enabled) {
-                    if (NutsBlankable.isBlank(s.getValue().getString())) {
+                    if (NutsBlankable.isBlank(s.getStringValue())) {
                         throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("missing user name"));
                     }
-                    setRunAs(NutsRunAs.user(s.getValue().getString()));
+                    setRunAs(NutsRunAs.user(s.getStringValue().get(session)));
                 }
                 return true;
             }
@@ -554,15 +554,15 @@ public abstract class AbstractNutsExecCommand extends NutsWorkspaceCommandBase<N
                 return true;
             }
             case "--inherit-system-io": {
-                NutsArgument val = cmdLine.nextBoolean();
+                NutsArgument val = cmdLine.nextBoolean().get(session);
                 if (enabled) {
-                    setInheritSystemIO(val.getBooleanValue());
+                    setInheritSystemIO(val.getBooleanValue().get(session));
                 }
                 return true;
             }
             case "-dry":
             case "-d": {
-                boolean val = cmdLine.nextBoolean().getBooleanValue();
+                boolean val = cmdLine.nextBoolean().get(session).getBooleanValue().get(session);
                 if (enabled) {
                     setDry(val);
                 }
@@ -574,9 +574,9 @@ public abstract class AbstractNutsExecCommand extends NutsWorkspaceCommandBase<N
                 }
                 cmdLine.skip();
                 if (a.isOption()) {
-                    addExecutorOption(a.getString());
+                    addExecutorOption(a.asString().get(session));
                 } else {
-                    addCommand(a.getString());
+                    addCommand(a.asString().get(session));
                     addCommand(cmdLine.toStringArray());
                     cmdLine.skipAll();
                 }

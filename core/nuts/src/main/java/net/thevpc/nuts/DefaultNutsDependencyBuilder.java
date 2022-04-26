@@ -50,11 +50,12 @@ public class DefaultNutsDependencyBuilder implements NutsDependencyBuilder {
     }
 
     public DefaultNutsDependencyBuilder() {
-        //for serialization
+
     }
 
-    public DefaultNutsDependencyBuilder(NutsSession session) {
-        condition = new DefaultNutsEnvConditionBuilder();
+    public DefaultNutsDependencyBuilder(String groupId, String artifactId) {
+        this.groupId = NutsUtilStrings.trimToNull(groupId);
+        this.artifactId = NutsUtilStrings.trimToNull(artifactId);
     }
 
     @Override
@@ -207,7 +208,7 @@ public class DefaultNutsDependencyBuilder implements NutsDependencyBuilder {
         if (exclusions.size() > 0) {
             m.put(NutsConstants.IdProperties.EXCLUSIONS, PrivateNutsUtilDescriptors.toExclusionListString(exclusions));
         }
-        return new DefaultNutsIdBuilder()
+        return NutsIdBuilder.of()
                 .setRepository(getRepository())
                 .setGroupId(getGroupId())
                 .setArtifactId(getArtifactId())
@@ -381,7 +382,23 @@ public class DefaultNutsDependencyBuilder implements NutsDependencyBuilder {
     }
 
     @Override
+    public NutsDependencyBuilder addPropertiesQuery(String propertiesQuery) {
+        return addProperties(NutsUtilStrings.parseDefaultMap(propertiesQuery).get());
+    }
+
+    @Override
+    public NutsDependencyBuilder addProperties(Map<String, String> queryMap) {
+        if (queryMap != null) {
+            for (Map.Entry<String, String> e : queryMap.entrySet()) {
+                setProperty(e.getKey(), e.getValue());
+            }
+        }
+        return this;
+    }
+
+    @Override
     public NutsDependencyBuilder setProperties(Map<String, String> queryMap) {
+        properties.clear();
         if (queryMap != null) {
             for (Map.Entry<String, String> e : queryMap.entrySet()) {
                 setProperty(e.getKey(), e.getValue());

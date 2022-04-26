@@ -31,6 +31,7 @@ import static net.thevpc.nuts.runtime.standalone.util.CoreStringUtils.stringValu
 import net.thevpc.nuts.NutsBlankable;
 import net.thevpc.nuts.NutsElement;
 import net.thevpc.nuts.NutsElementEntry;
+import net.thevpc.nuts.NutsSession;
 
 /**
  *
@@ -38,7 +39,8 @@ import net.thevpc.nuts.NutsElementEntry;
  */
 public class NutsFormatUtils {
 
-    public static void putAllInProps(String prefix, Map<String, String> dest, NutsElement value) {
+    public static void putAllInProps(String prefix, Map<String, String> dest, NutsElement value, NutsSession session) {
+
         switch (value.type()) {
             case BOOLEAN:
             case INSTANT:
@@ -48,7 +50,7 @@ public class NutsFormatUtils {
 //            case NUTS_STRING:
             case NULL:
             {
-                dest.put(prefix, stringValue(value.asPrimitive().getValue()));
+                dest.put(prefix, stringValue(value.asPrimitive().get(session).getObject()));
                 break;
             }
             case OBJECT: {
@@ -57,8 +59,8 @@ public class NutsFormatUtils {
                 } else {
                     prefix = "";
                 }
-                for (NutsElementEntry e : value.asObject().children()) {
-                    putAllInProps(prefix + e.getKey(), dest, e.getValue());
+                for (NutsElementEntry e : value.asObject().get(session).entries()) {
+                    putAllInProps(prefix + e.getKey(), dest, e.getValue(), session);
                 }
                 break;
             }
@@ -69,8 +71,8 @@ public class NutsFormatUtils {
                     prefix = "";
                 }
                 int i = 0;
-                for (NutsElement e : value.asArray().children()) {
-                    putAllInProps(prefix + (i + 1), dest, e);
+                for (NutsElement e : value.asArray().get(session).items()) {
+                    putAllInProps(prefix + (i + 1), dest, e, session);
                     i++;
                 }
                 break;

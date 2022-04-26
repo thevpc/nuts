@@ -688,8 +688,8 @@ public class DefaultNutsSearchCommand extends AbstractNutsSearchCommand {
                                 }
                             }
                             return visited.values().iterator();
-                        }, e->NutsDescribables.resolveOrDestruct(curr,elems)
-                                .asSafeObject(true).builder()
+                        }, e->NutsDescribables.resolveOrDestructAsObject(curr,elems)
+                                .builder()
                                 .set("latest", true)
                                 .set("distinct", true)
                                 .build(),
@@ -710,8 +710,8 @@ public class DefaultNutsSearchCommand extends AbstractNutsSearchCommand {
                                 }
                             }
                             return IteratorBuilder.ofFlatMap(NutsIterator.of(visited.values().iterator(), "visited"), session).build();
-                        }, e -> NutsDescribables.resolveOrDestruct(curr,elems)
-                                .asSafeObject(true).builder()
+                        }, e -> NutsDescribables.resolveOrDestructAsObject(curr,elems)
+                                .builder()
                                 .set("latest", true)
                                 .set("duplicates", true)
                                 .build(),
@@ -754,8 +754,8 @@ public class DefaultNutsSearchCommand extends AbstractNutsSearchCommand {
                         }
                         return visited.values().iterator();
                     },
-                    e -> NutsDescribables.resolveOrDestruct(curr,elems)
-                            .asSafeObject(true).builder()
+                    e -> NutsDescribables.resolveOrDestructAsObject(curr,elems)
+                            .builder()
                             .set("latest", true)
                             .set("distinct", true)
                             .build(), session).build();
@@ -776,8 +776,8 @@ public class DefaultNutsSearchCommand extends AbstractNutsSearchCommand {
                         }
                         return IteratorBuilder.ofFlatMap(NutsIterator.of(visited.values().iterator(), "visited"), session).build();
                     },
-                    e -> NutsDescribables.resolveOrDestruct(curr,elems)
-                            .asSafeObject(true).builder()
+                    e -> NutsDescribables.resolveOrDestructAsObject(curr,elems)
+                            .builder()
                             .set("latest", true)
                             .set("duplicates", true)
                             .build(),

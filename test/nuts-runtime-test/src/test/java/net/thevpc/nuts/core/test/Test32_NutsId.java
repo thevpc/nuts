@@ -6,6 +6,7 @@
 package net.thevpc.nuts.core.test;
 
 import net.thevpc.nuts.NutsId;
+import net.thevpc.nuts.NutsIdBuilder;
 import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.core.test.utils.TestUtils;
 import org.junit.jupiter.api.Assertions;
@@ -14,11 +15,12 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author thevpc
  */
-public class Test32_NutsIdListHelper {
+public class Test32_NutsId {
 
     static NutsSession session;
 
@@ -56,7 +58,8 @@ public class Test32_NutsIdListHelper {
         Assertions.assertEquals("net.sourceforge.cobertura",s.getGroupId());
         Assertions.assertEquals("cobertura",s.getArtifactId());
         Assertions.assertEquals("asm:asm,asm:asm-tree,log4j:log4j,oro:oro",s.getProperties().get("exclusions"));
-        Assertions.assertEquals("a,b=c",s.getCondition().getProperties().get("exclusions"));
+        Assertions.assertEquals("",s.getCondition().getProperties().get("a"));
+        Assertions.assertEquals("c",s.getCondition().getProperties().get("b"));
         TestUtils.println(s);
     }
 
@@ -70,5 +73,16 @@ public class Test32_NutsIdListHelper {
         Assertions.assertEquals("",s.getCondition().getProperties().get("a"));
         Assertions.assertEquals("c",s.getCondition().getProperties().get("b"));
         TestUtils.println(s);
+    }
+
+    @Test
+    public void test06() {
+        NutsId a = NutsIdBuilder.of()
+                .setProperty("a", "?")
+                .build();
+        Map<String, String> p = a.getProperties();
+        TestUtils.println(a.toString());
+        Assertions.assertEquals(1,p.size());
+        Assertions.assertEquals("?a='?'",a.toString());
     }
 }

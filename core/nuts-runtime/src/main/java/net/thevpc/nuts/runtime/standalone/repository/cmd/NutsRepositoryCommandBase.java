@@ -104,11 +104,11 @@ public abstract class NutsRepositoryCommandBase<T extends NutsRepositoryCommand>
     @Override
     public boolean configureFirst(NutsCommandLine cmdLine) {
         checkSession();
-        NutsArgument a = cmdLine.peek();
+        NutsArgument a = cmdLine.peek().orNull();
         if (a == null) {
             return false;
         }
-//        switch (a.getKey().getString()) {
+//        switch(a.getStringKey().orElse("")) {
 //        }
 
         if (getSession().configureFirst(cmdLine)) {
@@ -119,4 +119,11 @@ public abstract class NutsRepositoryCommandBase<T extends NutsRepositoryCommand>
 
     @Override
     public abstract T run();
+
+    @Override
+    public void configureLast(NutsCommandLine commandLine) {
+        if (!configureFirst(commandLine)) {
+            commandLine.throwUnexpectedArgument(getSession());
+        }
+    }
 }

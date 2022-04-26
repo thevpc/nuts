@@ -3,6 +3,7 @@ package net.thevpc.nuts.runtime.standalone.elem.mapper;
 import net.thevpc.nuts.NutsElement;
 import net.thevpc.nuts.NutsElementFactoryContext;
 import net.thevpc.nuts.NutsElementMapper;
+import net.thevpc.nuts.NutsSession;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -31,16 +32,17 @@ public class NutsElementMapperMapEntry implements NutsElementMapper<Map.Entry> {
 
     @Override
     public Map.Entry createObject(NutsElement o, Type to, NutsElementFactoryContext context) {
+        NutsSession session = context.getSession();
         if (to instanceof ParameterizedType) {
             Type[] kvt = ((ParameterizedType) to).getActualTypeArguments();
             return new AbstractMap.SimpleEntry(
-                    context.elementToObject(o.asObject().get(context.elem().ofString("key")), kvt[0]),
-                    context.elementToObject(o.asObject().get(context.elem().ofString("value")), kvt[0])
+                    context.elementToObject(o.asObject().get(session).get(context.elem().ofString("key")).orNull(), kvt[0]),
+                    context.elementToObject(o.asObject().get(session).get(context.elem().ofString("value")).orNull(), kvt[0])
             );
         }
         return new AbstractMap.SimpleEntry(
-                context.elementToObject(o.asObject().get(context.elem().ofString("key")), Object.class),
-                context.elementToObject(o.asObject().get(context.elem().ofString("value")), Object.class)
+                context.elementToObject(o.asObject().get(session).get(context.elem().ofString("key")).orNull(), Object.class),
+                context.elementToObject(o.asObject().get(session).get(context.elem().ofString("value")).orNull(), Object.class)
         );
     }
 

@@ -96,4 +96,10 @@ public abstract class DefaultSearchFormatBase implements NutsIterableFormat {
         return writer;
     }
 
+    @Override
+    public void configureLast(NutsCommandLine commandLine) {
+        if (!configureFirst(commandLine)) {
+            commandLine.throwUnexpectedArgument(getSession());
+        }
+    }
 }

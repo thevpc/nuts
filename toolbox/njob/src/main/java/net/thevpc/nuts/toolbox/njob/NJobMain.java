@@ -11,6 +11,7 @@ public class NJobMain implements NutsApplication {
 
     @Override
     public void run(NutsApplicationContext appContext) {
+        NutsSession session = appContext.getSession();
         JobServiceCmd ts = new JobServiceCmd(appContext);
         NutsCommandLine cmdLine = appContext.getCommandLine();
         NutsArgument a;
@@ -28,11 +29,10 @@ public class NJobMain implements NutsApplication {
                 //okkay
                 return;
             } else {
-                cmdLine.unexpectedArgument();
+                cmdLine.throwUnexpectedArgument(session);
             }
         };
-        NutsSession session = appContext.getSession();
-        ts.runCommands(NutsCommandLine.of(new String[]{"summary"}, session));
+        ts.runCommands(NutsCommandLine.of(new String[]{"summary"}));
     }
 
 }

@@ -48,25 +48,9 @@ public interface NutsBootManager {
      */
     boolean isFirstBoot();
 
-    /**
-     * return a boolean value related to the first custom boot argument that matches any of the given names (checked in order).
-     * @param undefinedValue value returned when the option is not defined
-     * @param emptyValue value returned when the option is defined but has an empty value (unless it is negated)
-     * @param errValue value returned when the option is defined but has an error value (unless it is negated)
-     * @param names names to check against
-     * @return return a boolean value related to the first custom boot argument that matches any of the given names (checked in order)
-     */
-    Boolean getBootCustomBoolArgument(Boolean undefinedValue, Boolean emptyValue, Boolean errValue, String... names);
+    NutsOptional<NutsValue> getCustomBootOption(String... names);
 
-    /**
-     * return the first custom boot argument that matches any of the given names (checked in order) or null.
-     * custom boot arguments usually start with '---' (3 hyphens)
-     * @param names argument names to check.
-     * @return the first custom boot argument that matches any of the given names (checked in order) or null
-     */
-    NutsArgument getBootCustomArgument(String... names);
-
-    NutsWorkspaceOptions getBootOptions();
+    NutsWorkspaceBootOptions getBootOptions();
 
     ClassLoader getBootClassLoader();
 

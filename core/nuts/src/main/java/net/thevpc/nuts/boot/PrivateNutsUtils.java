@@ -50,8 +50,8 @@ public final class PrivateNutsUtils {
         while (!stack.isEmpty()) {
             Throwable a = stack.pop();
             if (visited.add(a)) {
-                if(type.isAssignableFrom(th.getClass())){
-                    if(filter==null||filter.test(th)){
+                if (type.isAssignableFrom(th.getClass())) {
+                    if (filter == null || filter.test(th)) {
                         return NutsOptional.of((T) th);
                     }
                 }
@@ -61,7 +61,7 @@ public final class PrivateNutsUtils {
                 }
             }
         }
-        return NutsOptional.ofEmpty(x->NutsMessage.cstyle("error with type %s not found",type.getSimpleName()));
+        return NutsOptional.ofEmpty(x -> NutsMessage.cstyle("error with type %s not found", type.getSimpleName()));
     }
 
     public static boolean isValidWorkspaceName(String workspace) {
@@ -193,8 +193,8 @@ public final class PrivateNutsUtils {
 
     public static boolean getSysBoolNutsProperty(String property, boolean defaultValue) {
         return
-                NutsUtilStrings.parseBoolean(System.getProperty("nuts." + property), defaultValue, false)
-                        || NutsUtilStrings.parseBoolean(System.getProperty("nuts.export." + property), defaultValue, false)
+                NutsUtilStrings.parseBoolean(System.getProperty("nuts." + property)).ifEmpty(defaultValue).orElse(false)
+                        || NutsUtilStrings.parseBoolean(System.getProperty("nuts.export." + property)).ifEmpty(defaultValue).orElse(false)
                 ;
     }
 
@@ -271,7 +271,7 @@ public final class PrivateNutsUtils {
         return false;
     }
 
-    public static String getHome(NutsStoreLocation storeFolder, NutsBootOptions bOptions) {
+    public static String getHome(NutsStoreLocation storeFolder, NutsWorkspaceBootOptions bOptions) {
         return NutsUtilPlatforms.getPlatformHomeFolder(
                 bOptions.getStoreLocationLayout(),
                 storeFolder,
@@ -293,68 +293,6 @@ public final class PrivateNutsUtils {
             return new LinkedHashSet<>(o);
         }
         return new LinkedHashSet<>();
-    }
-
-    public static Level parseLenientLogLevel(String value, Level emptyValue, Level errorValue) {
-        value = value == null ? "" : value.trim();
-        if (value.isEmpty()) {
-            return emptyValue;
-        }
-        switch (value.trim().toLowerCase()) {
-            case "off": {
-                return Level.OFF;
-            }
-            case "verbose":
-            case "finest": {
-                return Level.FINEST;
-            }
-            case "finer": {
-                return Level.FINER;
-            }
-            case "fine": {
-                return Level.FINE;
-            }
-            case "info": {
-                return Level.INFO;
-            }
-            case "all": {
-                return Level.ALL;
-            }
-            case "warning": {
-                return Level.WARNING;
-            }
-            case "severe": {
-                return Level.SEVERE;
-            }
-            case "config": {
-                return Level.CONFIG;
-            }
-        }
-        Integer i = NutsApiUtils.parseInt(value, null, null);
-        if (i != null) {
-            switch (i) {
-                case Integer.MAX_VALUE:
-                    return Level.OFF;
-                case 1000:
-                    return Level.SEVERE;
-                case 900:
-                    return Level.WARNING;
-                case 800:
-                    return Level.INFO;
-                case 700:
-                    return Level.CONFIG;
-                case 500:
-                    return Level.FINE;
-                case 400:
-                    return Level.FINER;
-                case 300:
-                    return Level.FINEST;
-                case Integer.MIN_VALUE:
-                    return Level.ALL;
-            }
-            return new CustomLogLevel("LEVEL" + i, i);
-        }
-        return errorValue;
     }
 
     public static Integer parseInt(String value, Integer emptyValue, Integer errorValue) {
@@ -381,17 +319,17 @@ public final class PrivateNutsUtils {
         }
     }
 
-    public static Integer parseFileSizeInBytes(String value, Integer defaultMultiplier, Integer emptyValue, Integer errorValue) {
+    public static NutsOptional<Integer> parseFileSizeInBytes(String value, Integer defaultMultiplier) {
         if (NutsBlankable.isBlank(value)) {
-            return emptyValue;
+            return NutsOptional.ofEmpty(session -> NutsMessage.cstyle("empty size"));
         }
         value = value.trim();
         Integer i = parseInt(value, null, null);
         if (i != null) {
             if (defaultMultiplier != null) {
-                return i * defaultMultiplier;
+                return NutsOptional.of(i * defaultMultiplier);
             } else {
-                return i;
+                return NutsOptional.of(i);
             }
         }
         for (String s : new String[]{"kb", "mb", "gb", "k", "m", "g"}) {
@@ -402,25 +340,21 @@ public final class PrivateNutsUtils {
                     switch (s) {
                         case "k":
                         case "kb":
-                            return i * 1024;
+                            return NutsOptional.of(i * 1024);
                         case "m":
                         case "mb":
-                            return i * 1024 * 1024;
+                            return NutsOptional.of(i * 1024 * 1024);
                         case "g":
                         case "gb":
-                            return i * 1024 * 1024 * 1024;
+                            return NutsOptional.of(i * 1024 * 1024 * 1024);
                     }
                 }
             }
         }
-        return errorValue;
+        String finalValue = value;
+        return NutsOptional.ofError(session->NutsMessage.cstyle("invalid size :%s", finalValue));
     }
 
-    private static class CustomLogLevel extends Level {
-        public CustomLogLevel(String name, int value) {
-            super(name, value);
-        }
-    }
 
 
 }

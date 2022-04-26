@@ -27,6 +27,7 @@ package net.thevpc.nuts.toolbox.nsh.cmds;
 
 import net.thevpc.nuts.NutsArgument;
 import net.thevpc.nuts.NutsCommandLine;
+import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.spi.NutsComponentScope;
 import net.thevpc.nuts.spi.NutsComponentScopeType;
 import net.thevpc.nuts.toolbox.nsh.SimpleJShellBuiltin;
@@ -49,13 +50,14 @@ public class UnsetCommand extends SimpleJShellBuiltin {
     @Override
     protected boolean configureFirst(NutsCommandLine commandLine, JShellExecutionContext context) {
         Options options = context.getOptions();
-        NutsArgument a = commandLine.peek();
+        NutsSession session = context.getSession();
+        NutsArgument a = commandLine.peek().get(session);
         if (a.isOption()) {
-            if (a.getKey().getString().equals("-v")) {
-                options.fct = !commandLine.nextBoolean().getBooleanValue();
+            if (a.getKey().asString().get(session).equals("-v")) {
+                options.fct = !commandLine.nextBooleanValueLiteral().get(session);
                 return true;
-            } else if (a.getKey().getString().equals("-f")) {
-                options.fct = commandLine.nextBoolean().getBooleanValue();
+            } else if (a.getKey().asString().get(session).equals("-f")) {
+                options.fct = commandLine.nextBooleanValueLiteral().get(session);
                 return true;
             }
         } else {

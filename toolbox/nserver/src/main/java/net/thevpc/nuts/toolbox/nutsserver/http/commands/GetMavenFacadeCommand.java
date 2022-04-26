@@ -28,7 +28,7 @@ public class GetMavenFacadeCommand extends AbstractFacadeCommand {
         NutsSession session = context.getSession();
         if (n.endsWith(".pom")) {
             if (split.size() >= 4) {
-                NutsId id = new DefaultNutsIdBuilder().setArtifactId(split.get(split.size() - 3))
+                NutsId id = NutsIdBuilder.of().setArtifactId(split.get(split.size() - 3))
                         .setGroupId(String.join(".", split.subList(0, split.size() - 3)))
                         .setVersion(split.get(split.size() - 2)).build();
                 NutsDefinition fetch = session.fetch().setId(id).setSession(session)
@@ -59,7 +59,7 @@ public class GetMavenFacadeCommand extends AbstractFacadeCommand {
 
                     xml.push("properties");
                     for (NutsDescriptorProperty e : d.getProperties()) {
-                        xml.append(e.getName(), e.getValue());
+                        xml.append(e.getName(), e.getValue().asString().get(session));
                     }
                     xml.pop();
 
@@ -106,7 +106,7 @@ public class GetMavenFacadeCommand extends AbstractFacadeCommand {
             }
         } else if (n.endsWith(".jar")) {
             if (split.size() >= 4) {
-                NutsId id = new DefaultNutsIdBuilder().setArtifactId(split.get(split.size() - 3))
+                NutsId id = NutsIdBuilder.of().setArtifactId(split.get(split.size() - 3))
                         .setGroupId(String.join(".", split.subList(0, split.size() - 3)))
                         .setVersion(split.get(split.size() - 2)).build();
                 NutsDefinition fetch = session.fetch().setId(id).setSession(session)
@@ -121,7 +121,7 @@ public class GetMavenFacadeCommand extends AbstractFacadeCommand {
             }
         } else if (n.equals("maven-metadata.xml")) {
             if (split.size() >= 3) {
-                NutsId id = new DefaultNutsIdBuilder().setArtifactId(split.get(split.size() - 2))
+                NutsId id = NutsIdBuilder.of().setArtifactId(split.get(split.size() - 2))
                         .setGroupId(String.join(".", split.subList(0, split.size() - 2))).build();
                 NutsStream<NutsId> resultIds = session.search().addId(id).setDistinct(true).setSorted(true).getResultIds();
                 if(context.isHeadMethod()){

@@ -33,7 +33,7 @@ import net.thevpc.nuts.NutsSession;
  * @author thevpc
  */
 public abstract class AbstractNutsArrayElement
-        extends AbstractNutsElement
+        extends AbstractNutsNavigatableElement
         implements NutsArrayElement{
 
     public AbstractNutsArrayElement(NutsSession session) {
@@ -42,6 +42,6 @@ public abstract class AbstractNutsArrayElement
     
     @Override
     public String toString() {
-        return "[" + children().stream().map(Object::toString).collect(Collectors.joining(", ")) + "]";
+        return "[" + items().stream().map(Object::toString).collect(Collectors.joining(", ")) + "]";
     }
 }

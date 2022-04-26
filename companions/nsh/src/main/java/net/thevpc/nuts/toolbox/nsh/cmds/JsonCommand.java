@@ -59,17 +59,18 @@ public class JsonCommand extends SimpleJShellBuiltin {
     @Override
     protected boolean configureFirst(NutsCommandLine commandLine, JShellExecutionContext context) {
         Options options = context.getOptions();
+        NutsSession session = context.getSession();
         NutsArgument a;
-        if ((a = commandLine.nextString("-f", "--file")) != null) {
-            options.input = a.getValue().getString();
+        if ((a = commandLine.nextString("-f", "--file").orNull()) != null) {
+            options.input = a.getStringValue().get(session);
             return true;
-        } else if ((a = commandLine.nextString("-q")) != null) {
+        } else if ((a = commandLine.nextString("-q").orNull()) != null) {
             options.queryType = "jpath";
-            options.queries.add(a.getValue().getString());
+            options.queries.add(a.getStringValue().get(session));
             return true;
-        } else if ((a = commandLine.nextString("--xpath")) != null) {
+        } else if ((a = commandLine.nextString("--xpath").orNull()) != null) {
             options.queryType = "xpath";
-            options.queries.add(a.getValue().getString());
+            options.queries.add(a.getStringValue().get(session));
             return true;
         }
         return false;

@@ -66,33 +66,16 @@ public class DefaultNutsBootManager implements NutsBootManager {
     }
 
     @Override
-    public Boolean getBootCustomBoolArgument(Boolean undefinedValue, Boolean emptyValue, Boolean errValue, String... names) {
+    public NutsOptional<NutsValue> getCustomBootOption(String... names) {
         checkSession();
-        for (String name : names) {
-            NutsArgument q = model.getCustomBootOptions().get(name);
-            if (q != null) {
-                return q.getBooleanValue(emptyValue, errValue);
-            }
-        }
-        return undefinedValue;
+        return model.getCustomBootOption(names);
     }
 
-    @Override
-    public NutsArgument getBootCustomArgument(String... names) {
-        checkSession();
-        for (String name : names) {
-            NutsArgument q = model.getCustomBootOptions().get(name);
-            if (q != null) {
-                return q;
-            }
-        }
-        return null;
-    }
 
     @Override
-    public NutsWorkspaceOptions getBootOptions() {
+    public NutsWorkspaceBootOptions getBootOptions() {
         checkSession();
-        return _configModel().getOptions(getSession());
+        return _configModel().getBootModel().getBootEffectiveOptions();
     }
 
     @Override

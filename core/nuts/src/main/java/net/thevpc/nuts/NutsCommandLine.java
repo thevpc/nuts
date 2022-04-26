@@ -92,23 +92,33 @@ import java.util.List;
  */
 public interface NutsCommandLine extends Iterable<NutsArgument>, NutsFormattable {
 
-    static NutsCommandLine of(String[] args, NutsSession session) {
-        return NutsCommandLines.of(session).createCommandline(args);
+    static NutsCommandLine of(String[] args) {
+        return new DefaultNutsCommandLine(args);
     }
 
-    static NutsCommandLine of(List<String> args, NutsSession session) {
-        return NutsCommandLines.of(session).createCommandline(args);
+    static NutsCommandLine of(List<String> args) {
+        return new DefaultNutsCommandLine(args);
     }
 
     /**
      * parses the line into a command line using system shell family
      *
-     * @param line    line to parse
-     * @param session session
+     * @param line line to parse
      * @return new command line instance
      */
-    static NutsCommandLine of(String line, NutsSession session) {
-        return NutsCommandLines.of(session).parseCommandline(line);
+    static NutsOptional<NutsCommandLine> parseDefault(String line) {
+        return DefaultNutsCommandLine.parseDefaultList(line)
+                .map(DefaultNutsCommandLine::new);
+    }
+
+    static NutsOptional<NutsCommandLine> parseSystem(String line, NutsSession session) {
+        return NutsOptional.of(NutsCommandLines.of(session).parseCommandline(line));
+    }
+
+    static NutsOptional<NutsCommandLine> parseSystem(String line, NutsShellFamily shellFamily,NutsSession session) {
+        return NutsOptional.of(NutsCommandLines.of(session)
+                        .setShellFamily(shellFamily)
+                .parseCommandline(line));
     }
 
     /**
@@ -160,10 +170,11 @@ public interface NutsCommandLine extends Iterable<NutsArgument>, NutsFormattable
      * helps considering '-version' as a single simple options when
      * {@code isExpandSimpleOptions()==true}
      *
-     * @param option option
+     * @param option  option
+     * @param session session
      * @return {@code this} instance
      */
-    NutsCommandLine registerSpecialSimpleOption(String option);
+    NutsCommandLine registerSpecialSimpleOption(String option, NutsSession session);
 
     /**
      * test if the option is a registered simple option This method helps
@@ -226,83 +237,43 @@ public interface NutsCommandLine extends Iterable<NutsArgument>, NutsFormattable
     NutsCommandLine setExpandSimpleOptions(boolean expand);
 
     /**
-     * throw exception if command line is empty or the first word is an option
+     * throw exception if command line is not empty
      *
+     * @param errorMessage message to throw
+     * @param session
      * @return {@code this} instance
      */
-    NutsCommandLine requireNonOption();
+    NutsCommandLine throwUnexpectedArgument(NutsString errorMessage, NutsSession session);
 
     /**
      * throw exception if command line is not empty
      *
      * @param errorMessage message to throw
+     * @param session
      * @return {@code this} instance
      */
-    NutsCommandLine unexpectedArgument(NutsString errorMessage);
+    NutsCommandLine throwUnexpectedArgument(NutsMessage errorMessage, NutsSession session);
+
+    NutsCommandLine throwMissingArgument(NutsSession session);
+
+    NutsCommandLine throwMissingArgument(NutsMessage errorMessage, NutsSession session);
 
     /**
      * throw exception if command line is not empty
      *
-     * @param errorMessage message to throw
      * @return {@code this} instance
      */
-    NutsCommandLine unexpectedArgument(NutsMessage errorMessage);
-
-    /**
-     * throw exception if command line is not empty
-     *
-     * @return {@code this} instance
-     */
-    NutsCommandLine unexpectedArgument();
-
-    /**
-     * throw exception if command line is empty
-     *
-     * @return {@code this} instance
-     */
-    NutsCommandLine required();
-
-
-    /**
-     * throw exception if command line is empty with a formatted message about missing options
-     * @param options missing option names
-     * @return {@code this} instance
-     */
-    NutsCommandLine requiredOptions(String ... options);
-
-    /**
-     * throw exception if command line is empty with a formatted message about missing non options
-     *
-     * @param nonOptions missing non option names
-     * @return {@code this} instance
-     */
-    NutsCommandLine requiredNonOptions(String ... nonOptions);
-
-    /**
-     * throw exception if command line is empty
-     *
-     * @param errorMessage message to throw
-     * @return {@code this} instance
-     */
-    NutsCommandLine required(NutsString errorMessage);
-
-
-    /**
-     * throw exception if command line is empty
-     *
-     * @param errorMessage message to throw
-     * @return {@code this} instance
-     */
-    NutsCommandLine required(NutsMessage errorMessage);
+    NutsCommandLine throwUnexpectedArgument(NutsSession session);
 
     /**
      * push back argument so that it will be first to be retrieved (using next
      * methods)
      *
-     * @param arg argument
+     * @param arg     argument
+     * @param session
      * @return {@code this} instance
      */
-    NutsCommandLine pushBack(NutsArgument arg);
+    NutsCommandLine pushBack(NutsArgument arg, NutsSession session);
 
     /**
      * consume (remove) the first argument and return it return null if not
@@ -310,7 +281,7 @@ public interface NutsCommandLine extends Iterable<NutsArgument>, NutsFormattable
      *
      * @return next argument
      */
-    NutsArgument next();
+    NutsOptional<NutsArgument> next();
 
     /**
      * consume (remove) the first argument and return it while adding a hint to
@@ -320,7 +291,17 @@ public interface NutsCommandLine extends Iterable<NutsArgument>, NutsFormattable
      * @param name expected argument name
      * @return next argument
      */
-    NutsArgument next(NutsArgumentName name);
+    NutsOptional<NutsArgument> next(NutsArgumentName name);
+
+    /**
+     * consume (remove) the first option and return it while adding a hint to
+     * Auto Complete about expected argument candidates return null if not
+     * argument is left
+     *
+     * @param option expected option name
+     * @return next argument
+     */
+    NutsOptional<NutsArgument> nextOption(String option);
 
     /**
      * the first argument to consume without removing/consuming it or null if
@@ -328,7 +309,11 @@ public interface NutsCommandLine extends Iterable<NutsArgument>, NutsFormattable
      *
      * @return the first argument to consume without removing/consuming it
      */
-    NutsArgument peek();
+    NutsOptional<NutsArgument> peek();
+
+    boolean isNextOption();
+
+    boolean isNextNonOption();
 
     /**
      * true if there still at least one argument to consume
@@ -344,7 +329,7 @@ public interface NutsCommandLine extends Iterable<NutsArgument>, NutsFormattable
      * @param names names
      * @return next argument
      */
-    NutsArgument nextBoolean(String... names);
+    NutsOptional<NutsArgument> nextBoolean(String... names);
 
     /**
      * next argument with string value. equivalent to
@@ -353,7 +338,15 @@ public interface NutsCommandLine extends Iterable<NutsArgument>, NutsFormattable
      * @param names names
      * @return next argument
      */
-    NutsArgument nextString(String... names);
+    NutsOptional<NutsArgument> nextString(String... names);
+
+    NutsOptional<String> nextStringValueLiteral(String... names);
+
+    NutsOptional<Boolean> nextBooleanValueLiteral(String... names);
+
+    NutsOptional<NutsValue> nextStringValue(String... names);
+
+    NutsOptional<NutsValue> nextBooleanValue(String... names);
 
     /**
      * next argument with any value type (may having not a value). equivalent to
@@ -362,7 +355,7 @@ public interface NutsCommandLine extends Iterable<NutsArgument>, NutsFormattable
      * @param names names
      * @return next argument
      */
-    NutsArgument next(String... names);
+    NutsOptional<NutsArgument> next(String... names);
 
     /**
      * next argument with any value type (may having not a value).
@@ -371,16 +364,7 @@ public interface NutsCommandLine extends Iterable<NutsArgument>, NutsFormattable
      * @param names       names
      * @return next argument
      */
-    NutsArgument next(NutsArgumentType expectValue, String... names);
-
-    /**
-     * next argument if it exists and it is a non option. Throw an error in all
-     * other cases.
-     *
-     * @param name argument specification (may be null)
-     * @return next argument if it exists and it is a non option
-     */
-    NutsArgument nextRequiredNonOption(NutsArgumentName name);
+    NutsOptional<NutsArgument> next(NutsArgumentType expectValue, String... names);
 
     /**
      * next argument if it exists and it is a non option. Return null in all
@@ -388,7 +372,7 @@ public interface NutsCommandLine extends Iterable<NutsArgument>, NutsFormattable
      *
      * @return next argument if it exists and it is a non option
      */
-    NutsArgument nextNonOption();
+    NutsOptional<NutsArgument> nextNonOption();
 
     /**
      * next argument if it exists and it is a non option. Return null in all
@@ -397,7 +381,16 @@ public interface NutsCommandLine extends Iterable<NutsArgument>, NutsFormattable
      * @param name argument specification (may be null)
      * @return next argument if it exists and it is a non option
      */
-    NutsArgument nextNonOption(NutsArgumentName name);
+    NutsOptional<NutsArgument> nextNonOption(NutsArgumentName name);
+
+    /**
+     * next argument if it exists and it is a non option. Return null in all
+     * other cases.
+     *
+     * @param name argument specification (may be null)
+     * @return next argument if it exists and it is a non option
+     */
+    NutsOptional<NutsArgument> nextNonOption(String name);
 
     /**
      * consume all words and return consumed count
@@ -444,7 +437,7 @@ public interface NutsCommandLine extends Iterable<NutsArgument>, NutsFormattable
      * @param name argument key name
      * @return find first argument with argument key name
      */
-    NutsArgument find(String name);
+    NutsOptional<NutsArgument> find(String name);
 
     /**
      * return argument at given index
@@ -452,7 +445,7 @@ public interface NutsCommandLine extends Iterable<NutsArgument>, NutsFormattable
      * @param index argument index
      * @return argument at given index
      */
-    NutsArgument get(int index);
+    NutsOptional<NutsArgument> get(int index);
 
     /**
      * return true if any argument is equal to the given name
@@ -490,6 +483,7 @@ public interface NutsCommandLine extends Iterable<NutsArgument>, NutsFormattable
      * @return returns un-parsed (or partially parsed) available arguments
      */
     String[] toStringArray();
+
     List<String> toStringList();
 
     NutsArgument[] toArgumentArray();
@@ -511,14 +505,6 @@ public interface NutsCommandLine extends Iterable<NutsArgument>, NutsFormattable
     boolean isNonOption(int index);
 
     /**
-     * reset this instance with the given parsed arguments
-     *
-     * @param commandLine to parse
-     * @return reset this instance with the given parsed arguments
-     */
-    NutsCommandLine parseLine(String commandLine);
-
-    /**
      * reset this instance with the given arguments
      *
      * @param arguments to parse
@@ -538,15 +524,17 @@ public interface NutsCommandLine extends Iterable<NutsArgument>, NutsFormattable
      * throw a new command line error
      *
      * @param message message
+     * @param session
      */
-    void throwError(NutsMessage message);
+    void throwError(NutsMessage message, NutsSession session);
 
     /**
      * throw a new command line error
      *
      * @param message message
+     * @param session
      */
-    void throwError(NutsString message);
+    void throwError(NutsString message, NutsSession session);
 
     NutsCommandLineFormat formatter(NutsSession session);
 }

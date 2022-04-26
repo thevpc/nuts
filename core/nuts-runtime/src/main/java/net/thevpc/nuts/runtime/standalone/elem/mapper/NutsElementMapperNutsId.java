@@ -31,7 +31,7 @@ public class NutsElementMapperNutsId implements NutsElementMapper<NutsId> {
     @Override
     public NutsId createObject(NutsElement o, Type typeOfResult, NutsElementFactoryContext context) {
         NutsSession session = context.getSession();
-        return NutsId.of(o.asPrimitive().getString()).get(session);
+        return NutsId.of(o.asPrimitive().flatMap(NutsValue::asString).get(session)).get(session);
     }
 
 }

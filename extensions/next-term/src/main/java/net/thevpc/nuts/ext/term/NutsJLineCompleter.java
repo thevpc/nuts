@@ -23,7 +23,7 @@ class NutsJLineCompleter implements Completer {
         NutsCommandAutoCompleteResolver autoCompleteResolver = nutsJLineTerminal.getAutoCompleteResolver();
         if (autoCompleteResolver != null) {
 
-            NutsCommandLine commandline = NutsCommandLine.of(line.words(),session);
+            NutsCommandLine commandline = NutsCommandLine.of(line.words());
             if (line.words().size() > 0) {
                 commandline.setCommandName(line.words().get(0));
             }

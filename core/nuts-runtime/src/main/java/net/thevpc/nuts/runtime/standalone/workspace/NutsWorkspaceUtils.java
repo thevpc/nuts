@@ -91,7 +91,7 @@ public class NutsWorkspaceUtils {
         if ("java".equalsIgnoreCase(type)) {
             return NutsJavaSdkUtils.of(ws).createJdkId(version, session);
         } else {
-            return new DefaultNutsIdBuilder().setArtifactId(type)
+            return NutsIdBuilder.of().setArtifactId(type)
                     .setVersion(version)
                     .build();
         }

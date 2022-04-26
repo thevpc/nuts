@@ -230,16 +230,17 @@ public class DefaultNutsTreeFormat extends DefaultFormatBase<NutsTreeFormat> imp
 
     @Override
     public boolean configureFirst(NutsCommandLine cmdLine) {
-        NutsArgument a = cmdLine.peek();
+        NutsSession session = getSession();
+        NutsArgument a = cmdLine.peek().orNull();
         if (a == null) {
             return false;
         }
         boolean enabled = a.isActive();
-        switch (a.getKey().getString()) {
+        switch(a.getStringKey().orElse("")) {
             case "--border": {
-                a = cmdLine.nextString("--border");
+                a = cmdLine.nextString("--border").get(session);
                 if (enabled) {
-                    switch (a.getValue().getString("")) {
+                    switch (a.getValue().asString().orElse("")) {
                         case "simple": {
                             setLinkFormat(LINK_ASCII_FORMATTER);
                             break;
@@ -253,23 +254,23 @@ public class DefaultNutsTreeFormat extends DefaultFormatBase<NutsTreeFormat> imp
                 return true;
             }
             case "--omit-root": {
-                boolean val = cmdLine.nextBoolean().getBooleanValue();
+                boolean val = cmdLine.nextBooleanValueLiteral().get(session);
                 if (enabled) {
                     setOmitRoot(val);
                 }
                 return true;
             }
             case "--infinite": {
-                boolean val = cmdLine.nextBoolean().getBooleanValue();
+                boolean val = cmdLine.nextBooleanValueLiteral().get(session);
                 if (enabled) {
                     this.infinite = val;
                 }
                 return true;
             }
             case DefaultNutsPropertiesFormat.OPTION_MULTILINE_PROPERTY: {
-                NutsArgument i = cmdLine.nextString();
+                NutsArgument i = cmdLine.nextString().get(session);
                 if (enabled) {
-                    addMultilineProperty(i.getKey().getString(), i.getValue().getString());
+                    addMultilineProperty(i.getKey().asString().get(session), i.getStringValue().get(session));
                 }
                 return true;
             }

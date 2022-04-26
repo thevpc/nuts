@@ -30,19 +30,19 @@ public class DefaultNutsOpenExecutable extends AbstractNutsExecutableCommand {
                                      String[] executorOptions, NutsSession session, NutsSession execSession, NutsExecCommand execCommand
     ) {
         super(cmd[0],
-                NutsCommandLine.of(cmd, session).toString(),
+                NutsCommandLine.of(cmd).toString(),
                 NutsExecutableType.SYSTEM);
         this.cmd = cmd;
         this.execCommand = execCommand;
         this.executorOptions = executorOptions == null ? new String[0] : executorOptions;
         this.session = session;
         this.execSession = execSession;
-        NutsCommandLine cmdLine = NutsCommandLine.of(this.executorOptions, session);
+        NutsCommandLine cmdLine = NutsCommandLine.of(this.executorOptions);
         while (cmdLine.hasNext()) {
-            NutsArgument a = cmdLine.peek();
-            switch (a.getKey().getString()) {
+            NutsArgument a = cmdLine.peek().get(session);
+            switch(a.getStringKey().orElse("")) {
                 case "--show-command": {
-                    showCommand = cmdLine.nextBoolean().getBooleanValue();
+                    showCommand = cmdLine.nextBooleanValueLiteral().get(session);
                     break;
                 }
                 default: {
@@ -125,9 +125,9 @@ public class DefaultNutsOpenExecutable extends AbstractNutsExecutableCommand {
     @Override
     public String toString() {
         if (effectiveOpenExecutable == null) {
-            return "open --fail " + NutsCommandLine.of(cmd, session).toString();
+            return "open --fail " + NutsCommandLine.of(cmd);
         }
-        return "open --with " + effectiveOpenExecutable[0] + " " + NutsCommandLine.of(cmd, session).toString();
+        return "open --with " + effectiveOpenExecutable[0] + " " + NutsCommandLine.of(cmd);
     }
 
 }

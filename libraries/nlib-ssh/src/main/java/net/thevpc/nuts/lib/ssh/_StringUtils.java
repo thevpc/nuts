@@ -51,6 +51,17 @@ public class _StringUtils {
 
     public static int readToken(Reader reader, String stopTokens, StringBuilder result) throws IOException {
         while (true) {
+            reader.mark(1);
+            int r = reader.read();
+            if (r == -1) {
+                return -1;
+            }
+            if (!Character.isWhitespace((char)r)) {
+                reader.reset();
+                break;
+            }
+        }
+        while (true) {
             int r = reader.read();
             if (r == -1) {
                 return -1;

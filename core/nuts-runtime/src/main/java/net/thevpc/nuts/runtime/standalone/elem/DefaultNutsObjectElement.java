@@ -2,7 +2,6 @@ package net.thevpc.nuts.runtime.standalone.elem;
 
 import net.thevpc.nuts.*;
 
-import java.time.Instant;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -24,218 +23,24 @@ public class DefaultNutsObjectElement extends AbstractNutsObjectElement {
 
     @Override
     public Iterator<NutsElementEntry> iterator() {
-        return children().iterator();
+        return entries().iterator();
     }
 
     @Override
-    public NutsElement get(String s) {
+    public NutsOptional<NutsElement> get(String s) {
         DefaultNutsElements element = (DefaultNutsElements) NutsElements.of(session);
-        return values.get(element.ofString(s));//no need for session
+        return NutsOptional.of(values.get(element.ofString(s)), session -> NutsMessage.cstyle("field not found : %s", s));
     }
 
     @Override
-    public NutsElement get(NutsElement s) {
-        return values.get(s);
+    public NutsOptional<NutsElement> get(NutsElement s) {
+        return NutsOptional.of(values.get(s), session -> NutsMessage.cstyle("field not found : %s", s));
     }
 
-    @Override
-    public NutsElement getSafe(String key) {
-        NutsElement a = get(key);
-        return a == null ? NutsElements.of(session).ofNull() : a;
-    }
+
 
     @Override
-    public Integer getSafeInt(String key) {
-        return getSafe(key).asSafeInt(null);
-    }
-
-    @Override
-    public Integer getSafeInt(String key, int def) {
-        return getSafe(key).asSafeInt(def);
-    }
-
-    @Override
-    public String getSafeString(String key) {
-        return getSafe(key).asString();
-    }
-
-    @Override
-    public String getSafeString(String key, String def) {
-        String s = getSafe(key).asString();
-        return s == null ? def : s;
-    }
-
-    @Override
-    public NutsElement getSafe(NutsElement key) {
-        NutsElement a = get(key);
-        return a == null ? NutsElements.of(session).ofNull() : a;
-    }
-
-    @Override
-    public NutsArrayElement getSafeArray(String key) {
-        return getSafe(key).asSafeArray(false);
-    }
-
-    @Override
-    public NutsArrayElement getSafeArray(NutsElement key) {
-        return getSafe(key).asSafeArray(false);
-    }
-
-    @Override
-    public NutsObjectElement getSafeObject(String key) {
-        return getSafe(key).asSafeObject(false);
-    }
-
-    @Override
-    public NutsObjectElement getSafeObject(NutsElement key) {
-        return getSafe(key).asSafeObject(false);
-    }
-
-    @Override
-    public NutsArrayElement getArray(String key) {
-        NutsElement e = get(key);
-        return e == null ? null : e.asArray();
-    }
-
-    @Override
-    public NutsArrayElement getArray(NutsElement key) {
-        NutsElement e = get(key);
-        return e == null ? null : e.asArray();
-    }
-
-    @Override
-    public NutsObjectElement getObject(String key) {
-        NutsElement b = get(key);
-        return b == null ? null : b.asObject();
-    }
-
-    @Override
-    public NutsObjectElement getObject(NutsElement key) {
-        return get(key).asObject();
-    }
-
-    @Override
-    public String getString(String key) {
-        NutsElement a = get(key);
-        return a == null ? null : a.asPrimitive().getString();
-    }
-
-    @Override
-    public String getString(NutsElement key) {
-        NutsElement a = get(key);
-        return a == null ? null : a.asPrimitive().getString();
-    }
-
-    @Override
-    public boolean getBoolean(String key) {
-        NutsElement b = get(key);
-        return b != null && b.asPrimitive().getBoolean();
-    }
-
-    @Override
-    public boolean getBoolean(NutsElement key) {
-        NutsElement b = get(key);
-        return b != null && b.asPrimitive().getBoolean();
-    }
-
-    @Override
-    public Number getNumber(String key) {
-        NutsElement b = get(key);
-        return b == null ? null : b.asPrimitive().getNumber();
-    }
-
-    @Override
-    public Number getNumber(NutsElement key) {
-        NutsElement b = get(key);
-        return b == null ? null : b.asPrimitive().getNumber();
-    }
-
-    @Override
-    public byte getByte(String key) {
-        NutsElement b = get(key);
-        return b == null ? 0 : b.asPrimitive().getByte();
-    }
-
-    @Override
-    public byte getByte(NutsElement key) {
-        NutsElement b = get(key);
-        return b == null ? 0 : b.asPrimitive().getByte();
-    }
-
-    @Override
-    public int getInt(String key) {
-        NutsElement b = get(key);
-        return b == null ? 0 : b.asPrimitive().getInt();
-    }
-
-    @Override
-    public int getInt(NutsElement key) {
-        NutsElement b = get(key);
-        return b == null ? 0 : b.asPrimitive().getInt();
-    }
-
-    @Override
-    public long getLong(String key) {
-        NutsElement b = get(key);
-        return b == null ? 0 : b.asPrimitive().getLong();
-    }
-
-    @Override
-    public long getLong(NutsElement key) {
-        NutsElement b = get(key);
-        return b == null ? 0 : b.asPrimitive().getLong();
-    }
-
-    @Override
-    public short getShort(String key) {
-        NutsElement b = get(key);
-        return b == null ? 0 : b.asPrimitive().getShort();
-    }
-
-    @Override
-    public short getShort(NutsElement key) {
-        NutsElement b = get(key);
-        return b == null ? 0 : b.asPrimitive().getShort();
-    }
-
-    @Override
-    public Instant getInstant(String key) {
-        NutsElement b = get(key);
-        return b == null ? null : b.asPrimitive().getInstant();
-    }
-
-    @Override
-    public Instant getInstant(NutsElement key) {
-        NutsElement b = get(key);
-        return b == null ? null : b.asPrimitive().getInstant();
-    }
-
-    @Override
-    public float getFloat(String key) {
-        NutsElement b = get(key);
-        return b == null ? 0 : b.asPrimitive().getFloat();
-    }
-
-    @Override
-    public float getFloat(NutsElement key) {
-        NutsElement b = get(key);
-        return b == null ? 0 : b.asPrimitive().getFloat();
-    }
-
-    @Override
-    public double getDouble(String key) {
-        NutsElement b = get(key);
-        return b == null ? 0 : b.asPrimitive().getDouble();
-    }
-
-    @Override
-    public double getDouble(NutsElement key) {
-        NutsElement b = get(key);
-        return b.asPrimitive().getDouble();
-    }
-
-    @Override
-    public Collection<NutsElementEntry> children() {
+    public Collection<NutsElementEntry> entries() {
         return values.entrySet().stream()
                 .map(x -> new DefaultNutsElementEntry(x.getKey(), x.getValue()))
                 .collect(Collectors.toList());
@@ -291,7 +96,7 @@ public class DefaultNutsObjectElement extends AbstractNutsObjectElement {
 
     @Override
     public String toString() {
-        return "{" + children().stream().map(x ->
+        return "{" + entries().stream().map(x ->
                 x.getKey()
                         + ":"
                         + x.getValue().toString()

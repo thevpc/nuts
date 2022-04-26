@@ -27,10 +27,10 @@ public class NutsSettingsBackupSubCommand extends AbstractNutsSettingsSubCommand
             String file = null;
             NutsArgument a;
             while (commandLine.hasNext()) {
-                if ((a = commandLine.nextString("--file", "-f")) != null) {
-                    file = a.getValue().getString("");
-                } else if (commandLine.peek().isNonOption()) {
-                    file = commandLine.nextString().getValue().getString("");
+                if ((a = commandLine.nextString("--file", "-f").orNull()) != null) {
+                    file = a.getValue().asString().orElse("");
+                } else if (commandLine.peek().get(session).isNonOption()) {
+                    file = commandLine.nextString().get(session).getValue().asString().orElse("");
                 } else {
                     session.configureLast(commandLine);
                 }
@@ -69,12 +69,12 @@ public class NutsSettingsBackupSubCommand extends AbstractNutsSettingsSubCommand
             String ws = null;
             NutsArgument a;
             while (commandLine.hasNext()) {
-                if ((a = commandLine.nextString("--file", "-f")) != null) {
-                    file = a.getValue().getString("");
-                } else if ((a = commandLine.nextString("--workspace", "-w")) != null) {
-                    ws = a.getValue().getString("");
-                } else if (commandLine.peek().isNonOption()) {
-                    file = commandLine.nextString().getValue().getString("");
+                if ((a = commandLine.nextString("--file", "-f").orNull()) != null) {
+                    file = a.getValue().asString().orElse("");
+                } else if ((a = commandLine.nextString("--workspace", "-w").orNull()) != null) {
+                    ws = a.getValue().asString().orElse("");
+                } else if (commandLine.peek().get(session).isNonOption()) {
+                    file = commandLine.nextString().get(session).getValue().asString().orElse("");
                 } else {
                     session.configureLast(commandLine);
                 }
@@ -90,7 +90,7 @@ public class NutsSettingsBackupSubCommand extends AbstractNutsSettingsSubCommand
                 file += ".zip";
             }
             if (!Files.isRegularFile(Paths.get(file))) {
-                commandLine.required(NutsMessage.cstyle("not a valid file : %s", file));
+                commandLine.throwMissingArgument(NutsMessage.cstyle("not a valid file : %s", file),session);
             }
             if (commandLine.isExecMode()) {
                 NutsObjectElement[] nutsWorkspaceConfigRef = new NutsObjectElement[1];
@@ -107,7 +107,7 @@ public class NutsSettingsBackupSubCommand extends AbstractNutsSettingsSubCommand
                             public boolean visitFile(String path, InputStream inputStream) {
                                 if ("/nuts-workspace.json".equals(path)) {
                                     NutsObjectElement e = elem.json()
-                                            .parse(inputStream, NutsObjectElement.class).asObject();
+                                            .parse(inputStream, NutsObjectElement.class).asObject().get(session);
                                     nutsWorkspaceConfigRef[0] = e;
                                     return false;
                                 }
@@ -115,14 +115,14 @@ public class NutsSettingsBackupSubCommand extends AbstractNutsSettingsSubCommand
                             }
                         });
                 if (nutsWorkspaceConfigRef[0] == null) {
-                    commandLine.required(NutsMessage.cstyle("not a valid file : %s", file));
+                    commandLine.throwMissingArgument(NutsMessage.cstyle("not a valid file : %s", file),session);
                 }
                 if (ws == null || ws.isEmpty()) {
                     NutsElements prv = elem.setSession(session);
-                    ws = nutsWorkspaceConfigRef[0].get(prv.ofString("name")).asString();
+                    ws = nutsWorkspaceConfigRef[0].getString("name").get(session);
                 }
                 if (ws == null || ws.isEmpty()) {
-                    commandLine.required(NutsMessage.cstyle("not a valid file : %s", file));
+                    commandLine.throwMissingArgument(NutsMessage.cstyle("not a valid file : %s", file),session);
                 }
                 String platformHomeFolder = NutsUtilPlatforms.getWorkspaceLocation(null,
                         session.config().stored().isGlobal(), ws);

@@ -30,7 +30,7 @@ public class NutsSettingsJavaSubCommand extends AbstractNutsSettingsSubCommand {
             if (cmdLine.next("--search") != null) {
                 List<String> extraLocations = new ArrayList<>();
                 while (cmdLine.hasNext()) {
-                    extraLocations.add(cmdLine.next().getString());
+                    extraLocations.add(cmdLine.next().flatMap(NutsValue::asString).get(session));
                 }
                 if (extraLocations.isEmpty()) {
                     for (NutsPlatformLocation loc : platforms.searchSystemPlatforms(NutsPlatformFamily.JAVA)) {
@@ -43,13 +43,14 @@ public class NutsSettingsJavaSubCommand extends AbstractNutsSettingsSubCommand {
                         }
                     }
                 }
-                cmdLine.setCommandName("config java").unexpectedArgument();
+                cmdLine.setCommandName("config java").throwUnexpectedArgument(session);
                 if (autoSave) {
                     conf.save(false);
                 }
             } else {
                 while (cmdLine.hasNext()) {
-                    NutsPlatformLocation loc = platforms.resolvePlatform(NutsPlatformFamily.JAVA, cmdLine.next().getString(), null);
+                    NutsPlatformLocation loc = platforms.resolvePlatform(NutsPlatformFamily.JAVA, cmdLine.next()
+                            .flatMap(NutsValue::asString).get(session), null);
                     if (loc != null) {
                         platforms.addPlatform(loc);
                     }
@@ -61,7 +62,8 @@ public class NutsSettingsJavaSubCommand extends AbstractNutsSettingsSubCommand {
             return true;
         } else if (cmdLine.next("remove java") != null) {
             while (cmdLine.hasNext()) {
-                String name = cmdLine.next().getString();
+                String name = cmdLine.next()
+                        .flatMap(NutsValue::asString).get(session);
                 NutsPlatformLocation loc = platforms.findPlatformByName(NutsPlatformFamily.JAVA, name);
                 if (loc == null) {
                     loc = platforms.findPlatformByPath(NutsPlatformFamily.JAVA, name);
@@ -86,7 +88,7 @@ public class NutsSettingsJavaSubCommand extends AbstractNutsSettingsSubCommand {
             m.addHeaderCells("Name", "Version", "Path");
             while (cmdLine.hasNext()) {
                 if (!t.configureFirst(cmdLine)) {
-                    cmdLine.setCommandName("config list java").unexpectedArgument();
+                    cmdLine.setCommandName("config list java").throwUnexpectedArgument(session);
                 }
             }
             if (cmdLine.isExecMode()) {

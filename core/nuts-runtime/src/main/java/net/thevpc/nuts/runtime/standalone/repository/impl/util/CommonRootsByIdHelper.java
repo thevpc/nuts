@@ -126,9 +126,10 @@ public class CommonRootsByIdHelper {
     }
 
     private static Set<NutsId> resolveRootId(String groupId, String artifactId, String version, NutsSession session) {
-        return new HashSet<>(Collections.singletonList(new DefaultNutsIdBuilder().setGroupId(
-                NutsBlankable.isBlank(groupId) ? "*" : groupId
-        ).setArtifactId(NutsBlankable.isBlank(artifactId) ? "*" : artifactId).build()));
+        return new HashSet<>(Collections.singletonList(NutsIdBuilder.of()
+                .setGroupId(NutsBlankable.isBlank(groupId) ? "*" : groupId)
+                .setArtifactId(NutsBlankable.isBlank(artifactId) ? "*" : artifactId)
+                .build()));
     }
 
     public static List<NutsId> resolveRootPaths(NutsIdFilter filter, NutsSession session) {

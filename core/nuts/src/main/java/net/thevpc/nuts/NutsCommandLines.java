@@ -51,31 +51,6 @@ public interface NutsCommandLines extends NutsComponent {
     NutsCommandLine parseCommandline(String line);
 
     /**
-     * return new Command line instance
-     *
-     * @param args command line args
-     * @return new Command line instance
-     */
-    NutsCommandLine createCommandline(String... args);
-
-    /**
-     * return new Command line instance
-     *
-     * @param args command line args
-     * @return new Command line instance
-     */
-    NutsCommandLine createCommandline(List<String> args);
-
-
-    /**
-     * create new argument
-     *
-     * @param argument new argument
-     * @return new argument
-     */
-    NutsArgument createArgument(String argument);
-
-    /**
      * create argument name
      *
      * @param type create argument type

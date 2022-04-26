@@ -29,11 +29,11 @@ public class DefaultNutsWelcomeInternalExecutable extends DefaultInternalNutsExe
             return;
         }
         NutsSession session = getSession();
-        NutsCommandLine commandLine = NutsCommandLine.of(args,session);
+        NutsCommandLine commandLine = NutsCommandLine.of(args);
         while (commandLine.hasNext()) {
-            NutsArgument a = commandLine.peek();
+            NutsArgument a = commandLine.peek().get(session);
             if (a.isOption()) {
-                switch (a.getKey().getString()) {
+                switch(a.getStringKey().orElse("")) {
                     default: {
                         getSession().configureLast(commandLine);
                     }

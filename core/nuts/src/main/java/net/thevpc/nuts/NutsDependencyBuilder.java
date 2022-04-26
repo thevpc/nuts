@@ -39,6 +39,14 @@ import java.util.Map;
  */
 public interface NutsDependencyBuilder extends NutsDependency {
 
+    static NutsDependencyBuilder of(String groupId, String artifactId) {
+        return new DefaultNutsDependencyBuilder(groupId, artifactId);
+    }
+
+    static NutsDependencyBuilder of() {
+        return new DefaultNutsDependencyBuilder();
+    }
+
     /**
      * set id value
      *
@@ -185,6 +193,10 @@ public interface NutsDependencyBuilder extends NutsDependency {
     NutsDependencyBuilder setPropertiesQuery(String propertiesQuery);
 
     NutsDependencyBuilder setProperties(Map<String, String> queryMap);
+
+    NutsDependencyBuilder addPropertiesQuery(String propertiesQuery);
+
+    NutsDependencyBuilder addProperties(Map<String, String> queryMap);
 
     /**
      * set condition

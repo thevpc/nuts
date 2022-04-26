@@ -3,6 +3,7 @@ package net.thevpc.nuts.runtime.standalone.executor.java;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.executor.AbstractSyncIProcessExecHelper;
 import net.thevpc.nuts.runtime.standalone.executor.system.ProcessExecHelper;
+import net.thevpc.nuts.runtime.standalone.util.CoreNutsUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.recom.NutsRecommendationPhase;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.recom.RequestQueryInfo;
@@ -63,7 +64,7 @@ class JavaProcessExecHelper extends AbstractSyncIProcessExecHelper {
     }
 
     private ProcessExecHelper preExec() {
-        if (joptions.isShowCommand() || getSession().boot().getBootCustomBoolArgument(false, false, false, "---show-command")) {
+        if (joptions.isShowCommand() || CoreNutsUtils.isShowCommand(getSession())) {
             NutsPrintStream out = execSession.out();
             out.printf("%s %n", NutsTexts.of(ws).ofStyled("nuts-exec", NutsTextStyle.primary1()));
             for (int i = 0; i < xargs.size(); i++) {

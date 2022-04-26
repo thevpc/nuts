@@ -28,6 +28,8 @@ package net.thevpc.nuts.toolbox.nsh.cmds;
 
 import net.thevpc.nuts.NutsArgument;
 import net.thevpc.nuts.NutsCommandLine;
+import net.thevpc.nuts.NutsSession;
+import net.thevpc.nuts.NutsValue;
 import net.thevpc.nuts.spi.NutsComponentScope;
 import net.thevpc.nuts.spi.NutsComponentScopeType;
 import net.thevpc.nuts.toolbox.nsh.SimpleJShellBuiltin;
@@ -49,16 +51,17 @@ public class CommandCommand extends SimpleJShellBuiltin {
 
     @Override
     protected boolean configureFirst(NutsCommandLine commandLine, JShellExecutionContext context) {
+        NutsSession session = context.getSession();
         Options options = context.getOptions();
         NutsArgument a = null;
         //inverse configuration order
         if (context.configureFirst(commandLine)) {
             return true;
-        } else if ((a = commandLine.nextBoolean("-p")) != null) {
-            options.p = a.getBooleanValue();
-        } else if (!commandLine.peek().isOption()) {
+        } else if ((a = commandLine.nextBoolean("-p").orNull()) != null) {
+            options.p = a.getBooleanValue().get(session);
+        } else if (!commandLine.isNextOption()) {
             if (options.commandName == null) {
-                options.commandName = commandLine.next().getString();
+                options.commandName = commandLine.next().flatMap(NutsValue::asString).get(session);
             }
             options.args.addAll(Arrays.asList(commandLine.toStringArray()));
             commandLine.skipAll();

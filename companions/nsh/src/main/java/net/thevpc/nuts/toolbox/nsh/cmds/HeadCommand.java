@@ -50,14 +50,15 @@ public class HeadCommand extends SimpleJShellBuiltin {
     @Override
     protected boolean configureFirst(NutsCommandLine commandLine, JShellExecutionContext context) {
         Options options = context.getOptions();
-        NutsArgument a = commandLine.peek();
+        NutsSession session = context.getSession();
+        NutsArgument a = commandLine.peek().get(session);
         if (a.isOption() && a.getKey().isInt()) {
-            options.max = a.getKey().getInt();
+            options.max = a.getKey().asInt().get(session);
             commandLine.skip();
             return true;
         } else if (!a.isOption()) {
-            String path = commandLine.next().getString();
-            String file = NutsPath.of(path, context.getSession()).toAbsolute(context.getShellContext().getCwd()).toString();
+            String path = commandLine.next().flatMap(NutsValue::asString).get(session);
+            String file = NutsPath.of(path, session).toAbsolute(context.getShellContext().getCwd()).toString();
             options.files.add(file);
             return true;
         }
@@ -67,8 +68,9 @@ public class HeadCommand extends SimpleJShellBuiltin {
     @Override
     protected void execBuiltin(NutsCommandLine commandLine, JShellExecutionContext context) {
         Options options = context.getOptions();
+        NutsSession session = context.getSession();
         if (options.files.isEmpty()) {
-            commandLine.required();
+            commandLine.throwMissingArgument(session);
         }
         for (String file : options.files) {
             head(file, options.max, context);

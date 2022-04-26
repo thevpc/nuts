@@ -27,6 +27,7 @@ public class NutsElementMapperFile implements NutsElementMapper<File> {
 
     @Override
     public File createObject(NutsElement o, Type typeOfResult, NutsElementFactoryContext context) {
-        return new File(o.asPrimitive().getString());
+        NutsSession session = context.getSession();
+        return new File(o.asString().get(session));
     }
 }

@@ -2,7 +2,6 @@ package net.thevpc.nuts.boot;
 
 import net.thevpc.nuts.NutsMessage;
 import net.thevpc.nuts.NutsNoSuchElementException;
-import net.thevpc.nuts.NutsOptional;
 import net.thevpc.nuts.NutsSession;
 
 import java.util.function.Function;

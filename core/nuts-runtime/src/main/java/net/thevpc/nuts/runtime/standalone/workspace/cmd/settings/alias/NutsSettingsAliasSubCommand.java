@@ -25,11 +25,11 @@ public class NutsSettingsAliasSubCommand extends AbstractNutsSettingsSubCommand 
             cmdLine.setCommandName("settings list aliases");
             List<String> toList = new ArrayList<>();
             while (cmdLine.hasNext()) {
-                if (!cmdLine.peek().isOption()) {
-                    NutsArgument a = cmdLine.next();
+                if (!cmdLine.isNextOption()) {
+                    NutsArgument a = cmdLine.next().get(session);
                     toList.add(a.toString());
                 } else {
-                    cmdLine.unexpectedArgument();
+                    cmdLine.throwUnexpectedArgument(session);
                 }
             }
             if (cmdLine.isExecMode()) {
@@ -62,7 +62,7 @@ public class NutsSettingsAliasSubCommand extends AbstractNutsSettingsSubCommand 
                             r.stream().collect(
                                     Collectors.toMap(
                                             NutsWorkspaceCustomCommand::getName,
-                                            x -> NutsCommandLine.of(x.getCommand(), session).toString(),
+                                            x -> NutsCommandLine.of(x.getCommand()).toString(),
                                             (x, y) -> {
                                                 throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("duplicate %s", x));
                                             },
@@ -80,7 +80,7 @@ public class NutsSettingsAliasSubCommand extends AbstractNutsSettingsSubCommand 
         } else if (cmdLine.next("remove alias") != null) {
             if (cmdLine.isExecMode()) {
                 while (cmdLine.hasNext()) {
-                    session.commands().removeCommand(cmdLine.next().toString());
+                    session.commands().removeCommand(cmdLine.next().get(session).toString());
                 }
                 session.config().save();
             }
@@ -90,15 +90,15 @@ public class NutsSettingsAliasSubCommand extends AbstractNutsSettingsSubCommand 
                 String n = null;
                 LinkedHashMap<String, AliasInfo> toAdd = new LinkedHashMap<>();
                 while (cmdLine.hasNext()) {
-                    if (!cmdLine.peek().isOption()) {
-                        NutsArgument a = cmdLine.next();
+                    if (!cmdLine.isNextOption()) {
+                        NutsArgument a = cmdLine.next().get(session);
                         if (a.isKeyValue()) {
                             if (n != null) {
-                                cmdLine.pushBack(a);
-                                cmdLine.unexpectedArgument();
+                                cmdLine.pushBack(a, session);
+                                cmdLine.throwUnexpectedArgument(session);
                             }
-                            String[] cmdAndArgs = splitCmdAndExecArgs(a.getValue().getString(), session);
-                            toAdd.put(a.getKey().getString(), new AliasInfo(a.getKey().getString(), cmdAndArgs[0], null, null, cmdAndArgs[1]));
+                            String[] cmdAndArgs = splitCmdAndExecArgs(a.getStringValue().get(session), session);
+                            toAdd.put(a.getKey().asString().get(session), new AliasInfo(a.getKey().asString().get(session), cmdAndArgs[0], null, null, cmdAndArgs[1]));
                         } else {
                             if (n == null) {
                                 n = a.toString();
@@ -109,11 +109,11 @@ public class NutsSettingsAliasSubCommand extends AbstractNutsSettingsSubCommand 
                             }
                         }
                     } else {
-                        cmdLine.unexpectedArgument();
+                        cmdLine.throwUnexpectedArgument(session);
                     }
                 }
                 if (toAdd.isEmpty()) {
-                    cmdLine.required();
+                    cmdLine.next().get(session);
                 }
                 for (AliasInfo value : toAdd.values()) {
                     session.commands()
@@ -136,9 +136,9 @@ public class NutsSettingsAliasSubCommand extends AbstractNutsSettingsSubCommand 
         NutsCommandLine cmdLine2 = NutsCommandLine.of(aliasValue, NutsShellFamily.BASH, session).setExpandSimpleOptions(false);
         List<String> executionOptions = new ArrayList<>();
         while (cmdLine2.hasNext()) {
-            NutsArgument r = cmdLine2.peek();
+            NutsArgument r = cmdLine2.peek().get(session);
             if (r.isOption()) {
-                executionOptions.add(cmdLine2.next().getString());
+                executionOptions.add(cmdLine2.next().flatMap(NutsValue::asString).get(session));
             } else {
                 break;
             }
@@ -146,7 +146,7 @@ public class NutsSettingsAliasSubCommand extends AbstractNutsSettingsSubCommand 
         if (executionOptions.isEmpty()) {
             return new String[]{aliasValue,null};
         } else {
-            return new String[]{cmdLine2.toString(),NutsCommandLine.of(executionOptions.toArray(new String[0]), session).toString()};
+            return new String[]{cmdLine2.toString(),NutsCommandLine.of(executionOptions.toArray(new String[0])).toString()};
         }
     }
 
@@ -168,8 +168,8 @@ public class NutsSettingsAliasSubCommand extends AbstractNutsSettingsSubCommand 
 
         public AliasInfo(NutsWorkspaceCustomCommand a, NutsSession ws) {
             name = a.getName();
-            command = NutsCommandLine.of(a.getCommand(), ws).toString();
-            executionOptions = NutsCommandLine.of(a.getExecutorOptions(), ws).toString();
+            command = NutsCommandLine.of(a.getCommand()).toString();
+            executionOptions = NutsCommandLine.of(a.getExecutorOptions()).toString();
             factoryId = a.getFactoryId();
             owner = a.getOwner();
         }

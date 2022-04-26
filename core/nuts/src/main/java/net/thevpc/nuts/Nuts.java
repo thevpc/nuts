@@ -25,6 +25,8 @@ package net.thevpc.nuts;
 
 import net.thevpc.nuts.boot.*;
 
+import java.util.Arrays;
+
 /**
  * Nuts Top Class. Nuts is a Package manager for Java Applications and this
  * class is it's main class for creating and opening nuts workspaces.
@@ -125,12 +127,12 @@ public final class Nuts {
                         + " " + NutsUtilStrings.trim(System.getProperty("nuts.args"))
         );
         PrivateNutsBootLog log = new PrivateNutsBootLog(term);
-        NutsBootOptions options = new NutsBootOptions();
+        NutsWorkspaceOptionsBuilder options = new DefaultNutsWorkspaceOptionsBuilder();
         if (!NutsBlankable.isBlank(nutsWorkspaceOptions)) {
-            String[] cml = NutsApiUtils.parseCommandLineArray(nutsWorkspaceOptions);
-            NutsApiUtils.parseNutsArguments(cml, options, log);
+            String[] cml = NutsCommandLine.parseDefault(nutsWorkspaceOptions).get().toStringArray();
+            options.setCommandLine(cml,null);
         }
-        options.setApplicationArguments(args);
+        options.setApplicationArguments(Arrays.asList(args));
         options.setInherited(true);
         options.setCreationTime(startTime);
         if (term != null) {
@@ -168,7 +170,7 @@ public final class Nuts {
      * @return new NutsSession instance
      */
     public static NutsSession openWorkspace() {
-        return openWorkspace((NutsBootOptions) null);
+        return openWorkspace((NutsWorkspaceOptions) null);
     }
 
     /**
@@ -177,7 +179,7 @@ public final class Nuts {
      * @param options boot options
      * @return new NutsSession instance
      */
-    public static NutsSession openWorkspace(NutsBootOptions options) {
+    public static NutsSession openWorkspace(NutsWorkspaceOptions options) {
         return new NutsBootWorkspace(options).openWorkspace();
     }
 

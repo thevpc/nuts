@@ -26,23 +26,24 @@
  */
 package net.thevpc.nuts.boot;
 
-import net.thevpc.nuts.NutsBootOptions;
+import net.thevpc.nuts.NutsArgument;
+import net.thevpc.nuts.NutsWorkspaceBootOptions;
 
 class PrivateNutsUtilWorkspaceOptions {
-    static boolean isBootOptional(String name, NutsBootOptions bOptions) {
+    static boolean isBootOptional(String name, NutsWorkspaceBootOptions bOptions) {
         for (String property : bOptions.getCustomOptions()) {
-            PrivateNutsArgument a = new PrivateNutsArgument(property, '=');
-            if (a.getKey().getString().equals("boot-" + name)) {
+            NutsArgument a = NutsArgument.of(property);
+            if (a.getKey().asString().orElse("").equals("boot-" + name)) {
                 return true;
             }
         }
         return false;
     }
 
-    static boolean isBootOptional(NutsBootOptions bOptions) {
+    static boolean isBootOptional(NutsWorkspaceBootOptions bOptions) {
         for (String property : bOptions.getCustomOptions()) {
-            PrivateNutsArgument a = new PrivateNutsArgument(property, '=');
-            if (a.getKey().getString().equals("boot-optional")) {
+            NutsArgument a = NutsArgument.of(property);
+            if (a.getKey().asString().orElse("").equals("boot-optional")) {
                 return true;
             }
         }

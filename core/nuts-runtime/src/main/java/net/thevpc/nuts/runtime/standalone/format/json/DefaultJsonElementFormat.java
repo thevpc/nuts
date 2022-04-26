@@ -51,22 +51,26 @@ public class DefaultJsonElementFormat implements NutsElementStreamFormat {
     }
 
     private void write(NutsPrintStream out, NutsElement data, String indent) {
+
         switch (data.type()) {
             case NULL: {
                 out.print("null");
                 break;
             }
             case BOOLEAN: {
-                out.print(data.asPrimitive().getBoolean());
+                out.print(data.asBoolean().orElse(false));
                 break;
             }
             case BYTE:
             case SHORT:
             case INTEGER:
-            case LONG:
+            case LONG:{
+                out.print(data.asNumber().orElse(0));
+                break;
+            }
             case FLOAT:
             case DOUBLE: {
-                out.print(data.asPrimitive().getNumber());
+                out.print(data.asNumber().orElse(0.0));
                 break;
             }
             case INSTANT:
@@ -74,7 +78,7 @@ public class DefaultJsonElementFormat implements NutsElementStreamFormat {
 //            case NUTS_STRING:
             {
                 StringBuilder sb = new StringBuilder("\"");
-                final String str = data.asPrimitive().getString();
+                final String str = data.asString().orElse("");
                 char[] chars = str.toCharArray();
 
                 for (int i = 0; i < chars.length; i++) {
@@ -141,13 +145,14 @@ public class DefaultJsonElementFormat implements NutsElementStreamFormat {
             }
 
             case ARRAY: {
-                if (data.asArray().size() == 0) {
+                NutsArrayElement arr = data.asArray().get();
+                if (arr.size() == 0) {
                     out.print("[]");
                 } else {
                     out.print('[');
                     boolean first = true;
                     String indent2 = indent + "  ";
-                    for (NutsElement e : data.asArray().children()) {
+                    for (NutsElement e : arr.items()) {
                         if (first) {
                             first = false;
                         } else {
@@ -170,13 +175,14 @@ public class DefaultJsonElementFormat implements NutsElementStreamFormat {
                 break;
             }
             case OBJECT: {
-                if (data.asObject().size() == 0) {
+                NutsObjectElement obj = data.asObject().get();
+                if (obj.size() == 0) {
                     out.print("{}");
                 } else {
                     out.print('{');
                     boolean first = true;
                     String indent2 = indent + "  ";
-                    for (NutsElementEntry e : data.asObject().children()) {
+                    for (NutsElementEntry e : obj.entries()) {
                         if (first) {
                             first = false;
                         } else {
@@ -334,6 +340,7 @@ public class DefaultJsonElementFormat implements NutsElementStreamFormat {
         }
 
         private NutsElement readJsonObject() {
+            NutsSession session = context.getSession();
             NutsObjectElementBuilder object = builder().ofObject();
             readNext();
             skipWhiteSpaceAndComments();
@@ -358,7 +365,7 @@ public class DefaultJsonElementFormat implements NutsElementStreamFormat {
                         break;
                     }
                     default: {
-                        name = k.asString();
+                        name = k.asString().get(session);
                     }
                 }
                 skipWhiteSpaceAndComments();

@@ -26,7 +26,7 @@
 package net.thevpc.nuts.boot;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.NutsBootOptions;
+import net.thevpc.nuts.DefaultNutsWorkspaceBootOptionsBuilder;
 
 import java.io.File;
 import java.io.StringReader;
@@ -42,7 +42,7 @@ import java.util.logging.Level;
  */
 final class PrivateNutsBootConfigLoader {
 
-    static NutsBootOptions loadBootConfig(String workspaceLocation, PrivateNutsBootLog bLog) {
+    static NutsWorkspaceBootOptionsBuilder loadBootConfig(String workspaceLocation, PrivateNutsBootLog bLog) {
         File bootFile = new File(workspaceLocation, NutsConstants.Files.WORKSPACE_CONFIG_FILE_NAME);
         try {
             if (bootFile.isFile()) {
@@ -61,10 +61,10 @@ final class PrivateNutsBootConfigLoader {
         return null;
     }
 
-    private static NutsBootOptions loadBootConfigJSON(String json, PrivateNutsBootLog bLog) {
+    private static NutsWorkspaceBootOptionsBuilder loadBootConfigJSON(String json, PrivateNutsBootLog bLog) {
         PrivateNutsJsonParser parser = new PrivateNutsJsonParser(new StringReader(json));
         Map<String, Object> jsonObject = parser.parseObject();
-        NutsBootOptions c = new NutsBootOptions();
+        NutsWorkspaceBootOptionsBuilder c = new DefaultNutsWorkspaceBootOptionsBuilder();
         String configVersion = (String) jsonObject.get("configVersion");
 
         if (configVersion == null) {
@@ -111,7 +111,7 @@ final class PrivateNutsBootConfigLoader {
      * @param jsonObject config JSON object
      */
     @SuppressWarnings("unchecked")
-    private static void loadConfigVersion507(NutsBootOptions config, Map<String, Object> jsonObject,
+    private static void loadConfigVersion507(NutsWorkspaceBootOptionsBuilder config, Map<String, Object> jsonObject,
                                              PrivateNutsBootLog bLog) {
         bLog.log(Level.CONFIG, NutsLogVerb.INFO, NutsMessage.jstyle("config version compatibility : 0.5.7"));
         config.setUuid((String) jsonObject.get("uuid"));
@@ -191,7 +191,7 @@ final class PrivateNutsBootConfigLoader {
      * @param jsonObject config JSON object
      */
     @SuppressWarnings("unchecked")
-    private static void loadConfigVersion506(NutsBootOptions config, Map<String, Object> jsonObject,
+    private static void loadConfigVersion506(NutsWorkspaceBootOptionsBuilder config, Map<String, Object> jsonObject,
                                              PrivateNutsBootLog bLog) {
         bLog.log(Level.CONFIG, NutsLogVerb.INFO, NutsMessage.jstyle("config version compatibility : 0.5.6"));
         config.setUuid((String) jsonObject.get("uuid"));
@@ -225,7 +225,7 @@ final class PrivateNutsBootConfigLoader {
      * @param config     config object to fill
      * @param jsonObject config JSON object
      */
-    private static void loadConfigVersion502(NutsBootOptions config, Map<String, Object> jsonObject,
+    private static void loadConfigVersion502(NutsWorkspaceBootOptionsBuilder config, Map<String, Object> jsonObject,
                                              PrivateNutsBootLog bLog) {
         bLog.log(Level.CONFIG, NutsLogVerb.INFO, NutsMessage.jstyle("config version compatibility : 0.5.2"));
         config.setUuid((String) jsonObject.get("uuid"));

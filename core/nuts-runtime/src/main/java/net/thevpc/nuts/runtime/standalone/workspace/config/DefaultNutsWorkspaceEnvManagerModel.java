@@ -24,7 +24,6 @@
 package net.thevpc.nuts.runtime.standalone.workspace.config;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.boot.PrivateNutsUtilCollections;
 import net.thevpc.nuts.runtime.standalone.session.NutsSessionUtils;
 import net.thevpc.nuts.runtime.standalone.util.CorePlatformUtils;
 import net.thevpc.nuts.runtime.standalone.util.collections.DefaultObservableMap;
@@ -69,7 +68,7 @@ public class DefaultNutsWorkspaceEnvManagerModel {
 //                if (property != null) {
 //                    DefaultNutsArgument a = new DefaultNutsArgument(property);
 //                    String key = a.getKey().getString();
-//                    String value = a.getStringValue();
+//                    String value = a.getStringValue().get(session);
 //                    this.options.put(key, value == null ? "" : value);
 //                }
 //            }
@@ -192,7 +191,7 @@ public class DefaultNutsWorkspaceEnvManagerModel {
             ).toArray(new String[0]);
             String sd = _XDG_SESSION_DESKTOP.toLowerCase();
             for (int i = 0; i < supportedSessions.length; i++) {
-                NutsIdBuilder nb = new DefaultNutsIdBuilder().setArtifactId(supportedSessions[i]);
+                NutsIdBuilder nb = NutsIdBuilder.of().setArtifactId(supportedSessions[i]);
                 if ("kde".equals(sd)) {
                     String _KDE_FULL_SESSION = System.getenv("KDE_FULL_SESSION");
                     String _KDE_SESSION_VERSION = System.getenv("KDE_SESSION_VERSION");
@@ -221,25 +220,25 @@ public class DefaultNutsWorkspaceEnvManagerModel {
     protected Set<NutsId> getDesktopEnvironments0(NutsSession session) {
         if (!isGraphicalDesktopEnvironment()) {
             return Collections.singleton(
-                    new DefaultNutsIdBuilder().setArtifactId(NutsDesktopEnvironmentFamily.HEADLESS.id()).build());
+                    NutsIdBuilder.of().setArtifactId(NutsDesktopEnvironmentFamily.HEADLESS.id()).build());
         }
         switch (session.env().getOsFamily()) {
             case WINDOWS: {
-                return Collections.singleton(new DefaultNutsIdBuilder().setArtifactId(NutsDesktopEnvironmentFamily.WINDOWS_SHELL.id()).build());
+                return Collections.singleton(NutsIdBuilder.of().setArtifactId(NutsDesktopEnvironmentFamily.WINDOWS_SHELL.id()).build());
             }
             case MACOS: {
-                return Collections.singleton(new DefaultNutsIdBuilder().setArtifactId(NutsDesktopEnvironmentFamily.MACOS_AQUA.id()).build());
+                return Collections.singleton(NutsIdBuilder.of().setArtifactId(NutsDesktopEnvironmentFamily.MACOS_AQUA.id()).build());
             }
             case UNIX:
             case LINUX: {
                 NutsId[] all = getDesktopEnvironmentsXDGOrEmpty(session);
                 if (all.length == 0) {
-                    return Collections.singleton(new DefaultNutsIdBuilder().setArtifactId(NutsDesktopEnvironmentFamily.UNKNOWN.id()).build());
+                    return Collections.singleton(NutsIdBuilder.of().setArtifactId(NutsDesktopEnvironmentFamily.UNKNOWN.id()).build());
                 }
                 return Collections.unmodifiableSet(new LinkedHashSet<>(Arrays.asList(all)));
             }
             default: {
-                return Collections.singleton(new DefaultNutsIdBuilder().setArtifactId(NutsDesktopEnvironmentFamily.UNKNOWN.id()).build());
+                return Collections.singleton(NutsIdBuilder.of().setArtifactId(NutsDesktopEnvironmentFamily.UNKNOWN.id()).build());
             }
         }
     }
@@ -347,7 +346,7 @@ public class DefaultNutsWorkspaceEnvManagerModel {
 
     public <T> T getOrCreateProperty(String property, Supplier<T> supplier, NutsSession session) {
         NutsElement a = getPropertyElement(property, session);
-        T o = a.isCustom() ? (T) a.asCustom().getValue() : (T) a.asPrimitive().getValue();
+        T o = a.isCustom() ? (T) a.asCustom().get(session).getValue() : (T) a.asPrimitive().get(session).getObject();
         if (o != null) {
             return o;
         }

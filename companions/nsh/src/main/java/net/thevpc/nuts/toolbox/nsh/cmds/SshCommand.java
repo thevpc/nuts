@@ -31,7 +31,6 @@ import net.thevpc.nuts.toolbox.nsh.SimpleJShellBuiltin;
 import net.thevpc.nuts.toolbox.nsh.jshell.JShellExecutionContext;
 import net.thevpc.nuts.toolbox.nsh.util.ShellHelper;
 
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -49,33 +48,34 @@ public class SshCommand extends SimpleJShellBuiltin {
     protected boolean configureFirst(NutsCommandLine commandLine, JShellExecutionContext context) {
         Options o = context.getOptions();
         NutsArgument a;
+        NutsSession session = context.getSession();
         if (!o.cmd.isEmpty()) {
-            o.cmd.add(commandLine.next().getString());
+            o.cmd.add(commandLine.next().flatMap(NutsValue::asString).get(session));
             return true;
-        } else if (commandLine.peek().isNonOption()) {
+        } else if (commandLine.peek().get(session).isNonOption()) {
             if (o.address == null) {
-                o.address = commandLine.next().getString();
+                o.address = commandLine.next().flatMap(NutsValue::asString).get(session);
             } else {
-                o.cmd.add(commandLine.next().getString());
+                o.cmd.add(commandLine.next().flatMap(NutsValue::asString).get(session));
             }
             return true;
-        } else if ((a = commandLine.next("--nuts")) != null) {
+        } else if ((a = commandLine.next("--nuts").orNull()) != null) {
             if (o.acceptDashNuts) {
                 o.invokeNuts = true;
             } else {
-                o.cmd.add(a.getString());
+                o.cmd.add(a.asString().get(session));
             }
             return true;
-        } else if ((a = commandLine.next("--nuts-jre")) != null) {
+        } else if ((a = commandLine.next("--nuts-jre").orNull()) != null) {
             if (o.acceptDashNuts) {
-                o.nutsJre = a.getValue().getString();
+                o.nutsJre = a.getStringValue().get(session);
             } else {
-                o.cmd.add(a.getString());
+                o.cmd.add(a.asString().get(session));
             }
             return true;
-        } else if (o.address == null || commandLine.peek().isNonOption()) {
+        } else if (o.address == null || commandLine.peek().get(session).isNonOption()) {
             o.acceptDashNuts = false;
-            o.cmd.add(commandLine.next().getString());
+            o.cmd.add(commandLine.next().flatMap(NutsValue::asString).get(session));
             return true;
         }
 
@@ -101,12 +101,12 @@ public class SshCommand extends SimpleJShellBuiltin {
             List<String> cmd = new ArrayList<>();
             if (o.invokeNuts) {
                 String workspace = null;
-                NutsCommandLine c = NutsCommandLine.of(o.cmd.subList(1, o.cmd.size()), session);
+                NutsCommandLine c = NutsCommandLine.of(o.cmd.subList(1, o.cmd.size()));
                 NutsArgument arg = null;
                 while (c.hasNext()) {
-                    if ((arg = c.next("--workspace")) != null) {
-                        workspace = c.requireNonOption().next().getString();
-                    } else if (c.peek().isNonOption()) {
+                    if ((arg = c.next("--workspace").orNull()) != null) {
+                        workspace = c.nextNonOption().get().asString().get(session);
+                    } else if (c.peek().isPresent() && c.peek().get().isNonOption()) {
                         break;
                     } else {
                         c.skip();

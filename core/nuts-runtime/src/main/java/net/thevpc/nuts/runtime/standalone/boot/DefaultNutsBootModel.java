@@ -24,15 +24,13 @@
 package net.thevpc.nuts.runtime.standalone.boot;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.optional.jansi.OptionalJansi;
 import net.thevpc.nuts.runtime.standalone.event.DefaultNutsWorkspaceEvent;
 import net.thevpc.nuts.runtime.standalone.io.printstream.NutsPrintStreamNull;
 import net.thevpc.nuts.runtime.standalone.io.terminal.*;
+import net.thevpc.nuts.runtime.standalone.session.DefaultNutsSession;
 import net.thevpc.nuts.runtime.standalone.session.NutsSessionUtils;
 import net.thevpc.nuts.runtime.standalone.util.CorePlatformUtils;
-import net.thevpc.nuts.runtime.standalone.session.DefaultNutsSession;
-import net.thevpc.nuts.runtime.standalone.app.cmdline.DefaultNutsArgument;
-import net.thevpc.nuts.runtime.optional.jansi.OptionalJansi;
-import net.thevpc.nuts.runtime.standalone.workspace.CoreNutsBootOptions;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.workspace.config.NutsWorkspaceModel;
 import net.thevpc.nuts.spi.NutsDefaultTerminalSpec;
@@ -42,14 +40,10 @@ import net.thevpc.nuts.spi.NutsTerminalSpec;
 import java.io.InputStream;
 import java.io.PrintStream;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.logging.Level;
 
 /**
- *
  * @author thevpc
  */
 public class DefaultNutsBootModel implements NutsBootModel {
@@ -58,22 +52,22 @@ public class DefaultNutsBootModel implements NutsBootModel {
     protected NutsWorkspace workspace;
     protected boolean firstBoot;
     protected boolean initializing;
-    protected CoreNutsBootOptions bOptions;
+    protected NutsWorkspaceBootOptions bOptions;
     protected NutsSession bootSession;
-    private Map<String, NutsArgument> customBootOptions;
+    private Map<String, NutsValue> customBootOptions;
     private NutsBootTerminal bootTerminal;
     private NutsLogger LOG;
     private NutsSystemTerminal systemTerminal;
 
-    public DefaultNutsBootModel(NutsWorkspace workspace, NutsBootOptions bOption0) {
+    public DefaultNutsBootModel(NutsWorkspace workspace, NutsWorkspaceBootOptions bOption0) {
         this.workspace = workspace;
         this.initializing = true;
         NutsWorkspaceModel _model = NutsWorkspaceExt.of(workspace).getModel();
         this.bootSession = new DefaultNutsSession(workspace, bOption0);
-        this.bOptions = new CoreNutsBootOptions(bOption0, workspace, this.bootSession);
-        this.bootTerminal = detectAnsiTerminalSupport(NutsOsFamily.getCurrent(), bOptions.getOptions(), true, bootSession);
+        this.bOptions = bOption0.readOnly();
+        this.bootTerminal = detectAnsiTerminalSupport(NutsOsFamily.getCurrent(), bOptions, true, bootSession);
         _model.uuid = bOptions.getUuid();
-        _model.name = Paths.get(bOptions.getWorkspaceLocation()).getFileName().toString();
+        _model.name = Paths.get(bOptions.getWorkspace()).getFileName().toString();
         DefaultSystemTerminal sys = new DefaultSystemTerminal(new DefaultNutsSystemTerminalBaseBoot(this));
 
         this.systemTerminal = NutsSystemTerminal_of_NutsSystemTerminalBase(sys, bootSession);
@@ -168,7 +162,7 @@ public class DefaultNutsBootModel implements NutsBootModel {
     }
 
     public void onInitializeWorkspace() {
-        this.bootTerminal = detectAnsiTerminalSupport(NutsOsFamily.getCurrent(), bOptions.getOptions(), false, bootSession);
+        this.bootTerminal = detectAnsiTerminalSupport(NutsOsFamily.getCurrent(), bOptions.getUserOptions(), false, bootSession);
     }
 
     public void setSystemTerminal(NutsSystemTerminalBase terminal, NutsSession session) {
@@ -262,12 +256,12 @@ public class DefaultNutsBootModel implements NutsBootModel {
         return syst;
     }
 
-    public CoreNutsBootOptions getCoreBootOptions() {
+    public NutsWorkspaceBootOptions getBootEffectiveOptions() {
         return bOptions;
     }
 
-    public NutsWorkspaceOptions getBootOptions() {
-        return bOptions.getOptions();
+    public NutsWorkspaceOptions getBootUserOptions() {
+        return bOptions.getUserOptions();
     }
 
     public NutsBootTerminal getBootTerminal() {
@@ -314,18 +308,33 @@ public class DefaultNutsBootModel implements NutsBootModel {
         return bootSession;
     }
 
-    public Map<String, NutsArgument> getCustomBootOptions() {
+    public NutsOptional<NutsValue> getCustomBootOption(String... names) {
+        for (String name : names) {
+            NutsValue r = getCustomBootOptions().get(name);
+            if (r != null) {
+                return NutsOptional.of(r);
+            }
+        }
+        return NutsOptional.ofEmpty(session -> NutsMessage.cstyle("option not found : %s", Arrays.asList(names)));
+    }
+
+    public NutsOptional<NutsValue> getCustomBootOption(String name) {
+        NutsValue r = getCustomBootOptions().get(name);
+        return NutsOptional.of(r, session -> NutsMessage.cstyle("option not found : %s", name));
+    }
+
+    public Map<String, NutsValue> getCustomBootOptions() {
         if (customBootOptions == null) {
             customBootOptions = new LinkedHashMap<>();
-            List<String> properties = bOptions.getOptions().getCustomOptions();
+            List<String> properties = bOptions.getUserOptions().getCustomOptions();
             NutsElements elems = NutsElements.of(bootSession);
             if (properties != null) {
                 for (String property : properties) {
                     if (property != null) {
-                        DefaultNutsArgument a = new DefaultNutsArgument(property, elems);
+                        DefaultNutsArgument a = new DefaultNutsArgument(property);
                         if (a.isActive()) {
-                            String key = a.getKey().getString();
-                            this.customBootOptions.put(key, a);
+                            String key = a.getKey().asString().orElse("");
+                            this.customBootOptions.put(key, NutsValue.of(a.getStringValue().orElse(null)));
                         }
                     }
                 }

@@ -440,7 +440,7 @@ public class DefaultProjectTemplate implements ProjectTemplate {
         }
         try {
             return NutsDescriptorParser.of(session).setDescriptorStyle(NutsDescriptorStyle.MAVEN)
-                    .parse(new File(getProjectRootFolder(), "pom.xml"));
+                    .parse(new File(getProjectRootFolder(), "pom.xml")).get(session);
         } catch (Exception ex) {
             throw new RuntimeException(ex);
         }

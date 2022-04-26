@@ -40,8 +40,12 @@ public class Docusaurus2Asciidoctor {
     }
 
     public Path getAdocFile() {
+        NutsSession session = project.getSession();
         String asciiDoctorBaseFolder = getAsciiDoctorBaseFolder();
-        String pdfOutput = getAsciiDoctorConfig().getSafeObject("pdf").getSafeString("output");
+        String pdfOutput = getAsciiDoctorConfig()
+                .getObject("pdf")
+                .orElse(NutsObjectElement.ofEmpty(session))
+                .getString("output").orNull();
         String pn=null;
         if(pdfOutput!=null && pdfOutput.endsWith(".pdf")){
             String pn0 = Paths.get(pdfOutput).getFileName().toString();
@@ -94,18 +98,19 @@ public class Docusaurus2Asciidoctor {
     }
 
     public Adoc2PdfConfig getAdoc2PdfConfig() {
+        NutsSession session = project.getSession();
         Adoc2PdfConfig config = new Adoc2PdfConfig();
         NutsObjectElement asciiDoctorConfig = getAsciiDoctorConfig();
-        config.setBin(asciiDoctorConfig.getSafeObject("pdf").getSafeObject("command").getSafeString("bin"));
-        config.setArgs(asciiDoctorConfig.getSafeObject("pdf").getSafeObject("command").getSafeArray("args")
-                .stream().map(x->x.asString()).toArray(String[]::new));
+        config.setBin(asciiDoctorConfig.getStringByPath("pdf","command","bin").get(session));
+        config.setArgs(asciiDoctorConfig.getArrayByPath("pdf","command","args").get(session)
+                .stream().map(x->x.asString().get(session)).toArray(String[]::new));
         config.setWorkDir(toCanonicalFile(Paths.get(project.getDocusaurusBaseFolder())).toString());
         config.setBaseDir(toCanonicalFile(Paths.get(getAsciiDoctorBaseFolder())).toString());
         config.setInputAdoc(getAdocFile().toString());
-        NutsElement output = asciiDoctorConfig.getSafeObject("pdf").getSafe("output");
+        NutsElement output = asciiDoctorConfig.getByPath("pdf","output"). get(session);
         String pdfFile=project.getProjectName();
         if(output.isString()){
-            String s=output.asString().trim();
+            String s=output.asString().get(session).trim();
             if(!s.isEmpty()){
                 if(s.endsWith("/") ||s.endsWith("\\")){
                     s+=project.getProjectName()+".pdf";
@@ -133,13 +138,13 @@ public class Docusaurus2Asciidoctor {
                 return r;
             }
             if (varName.startsWith("asciidoctor.")) {
-                return asciiDoctorConfig.get(varName.substring("asciidoctor.".length())).asString();
+                return asciiDoctorConfig.getString(varName.substring("asciidoctor.".length())).get(session);
             }
             if (varName.startsWith("docusaurus.")) {
-                return project.getConfig().get(varName.substring("docusaurus.".length())).asString();
+                return project.getConfig().getString(varName.substring("docusaurus.".length())).get(session);
             }
             //if (varName.startsWith("docusaurus.")) {
-                return project.getConfig().get(varName).asString();
+                return project.getConfig().getString(varName).get(session);
             //}
             //return null;
         });
@@ -147,7 +152,8 @@ public class Docusaurus2Asciidoctor {
     }
 
     private String getAsciiDoctorBaseFolder() {
-        String s = getAsciiDoctorConfig().get("path").asString();
+        NutsSession session = project.getSession();
+        String s = getAsciiDoctorConfig().getString("path").get(session);
         if (!new File(s).isAbsolute()) {
             s = project.getDocusaurusBaseFolder() + "/" + s;
         }
@@ -155,7 +161,8 @@ public class Docusaurus2Asciidoctor {
     }
 
     private NutsObjectElement getAsciiDoctorConfig() {
-        return project.getConfig().getSafeObject("customFields").getSafeObject("asciidoctor");
+        NutsSession session = project.getSession();
+        return project.getConfig().getObjectByPath("customFields","asciidoctor").get(session);
     }
 
 }

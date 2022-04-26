@@ -49,7 +49,7 @@ public interface NutsArrayElementBuilder extends NutsElementBuilder {
      *
      * @return array items
      */
-    List<NutsElement> children();
+    List<NutsElement> items();
 
     /**
      * element count

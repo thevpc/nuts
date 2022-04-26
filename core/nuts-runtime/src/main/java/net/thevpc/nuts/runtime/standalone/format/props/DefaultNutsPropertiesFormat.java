@@ -30,25 +30,25 @@ public class DefaultNutsPropertiesFormat extends DefaultFormatBase<NutsPropertie
     @Override
     public boolean configureFirst(NutsCommandLine commandLine) {
         NutsArgument a;
-        if ((a = commandLine.nextString(OPTION_MULTILINE_PROPERTY)) != null) {
-            NutsArgument i = NutsArgument.of(a.getValue().getString(),getSession());
+        if ((a = commandLine.nextString(OPTION_MULTILINE_PROPERTY).get(getSession())) != null) {
+            NutsArgument i = NutsArgument.of(a.getStringValue().get(getSession()));
             if (i.isActive()) {
-                addMultilineProperty(i.getKey().getString(), i.getValue().getString());
+                addMultilineProperty(i.getKey().asString().get(getSession()), i.getStringValue().get(getSession()));
             }
             return true;
-        } else if ((a = commandLine.nextBoolean("--compact")) != null) {
+        } else if ((a = commandLine.nextBoolean("--compact").orNull()) != null) {
             if (a.isActive()) {
-                this.compact = a.getBooleanValue();
+                this.compact = a.getBooleanValue().get(getSession());
             }
             return true;
-        } else if ((a = commandLine.nextBoolean("--props")) != null) {
+        } else if ((a = commandLine.nextBoolean("--props").orNull()) != null) {
             if (a.isActive()) {
-                this.javaProps = a.getBooleanValue();
+                this.javaProps = a.getBooleanValue().get(getSession());
             }
             return true;
-        } else if ((a = commandLine.nextBoolean("--escape-text")) != null) {
+        } else if ((a = commandLine.nextBoolean("--escape-text").orNull()) != null) {
             if (a.isActive()) {
-                this.escapeText = a.getBooleanValue();
+                this.escapeText = a.getBooleanValue().get(getSession());
             }
             return true;
         }
@@ -216,7 +216,7 @@ public class DefaultNutsPropertiesFormat extends DefaultFormatBase<NutsPropertie
         NutsString formattedKey = compact ? key
                 : txt.builder().append(key).append(CoreStringUtils.fillString(' ', len - key.textLength()));
         if (fancySep != null) {
-            NutsString cc = compact ? key : txt.ofPlain(CoreStringUtils.alignLeft("", len + 3));
+            NutsString cc = compact ? key : txt.ofPlain(NutsUtilStrings.formatAlign("", len + 3,NutsPositionType.FIRST));
             String[] split = value.toString().split(fancySep);
             if (split.length == 0) {
                 out.print(prefix);

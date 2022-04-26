@@ -17,7 +17,7 @@ public class VersionFacadeCommand extends AbstractFacadeCommand {
     public void executeImpl(FacadeCommandContext context) throws IOException {
         NutsSession session = context.getSession();
         context.sendResponseText(200,
-                new DefaultNutsIdBuilder()
+                NutsIdBuilder.of()
                         .setRepository(context.getServerId())
                         .setGroupId("net.thevpc.nuts")
                         .setArtifactId("nuts-server")

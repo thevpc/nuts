@@ -29,23 +29,23 @@ public class NutsSettingsUserSubCommand extends AbstractNutsSettingsSubCommand {
                 repository = editedRepo;
             } else {
                 if (cmdLine.next("--repo", "-r") != null) {
-                    repository = session.repos().getRepository(cmdLine.required().nextNonOption(NutsArgumentName.of("RepositoryId",session)).getString());
+                    repository = session.repos().getRepository(cmdLine.nextNonOption(NutsArgumentName.of("RepositoryId",session)).flatMap(NutsValue::asString).get(session));
                 }
             }
             if (repository == null) {
-                String user = cmdLine.required().nextNonOption(NutsArgumentName.of("Username",session)).getString();
-                char[] password = cmdLine.nextNonOption(NutsArgumentName.of("Password",session)).getString().toCharArray();
+                String user = cmdLine.nextNonOption(NutsArgumentName.of("Username",session)).flatMap(NutsValue::asString).get(session);
+                char[] password = cmdLine.nextNonOption(NutsArgumentName.of("Password",session)).flatMap(NutsValue::asString).get(session).toCharArray();
                 if (cmdLine.isExecMode()) {
                     session.security().addUser(user).setCredentials(password).run();
                 }
             } else {
-                String user = cmdLine.required().nextNonOption(NutsArgumentName.of("Username",session)).getString();
-                char[] password = cmdLine.nextNonOption(NutsArgumentName.of("Password",session)).getString().toCharArray();
+                String user = cmdLine.nextNonOption(NutsArgumentName.of("Username",session)).flatMap(NutsValue::asString).get(session);
+                char[] password = cmdLine.nextNonOption(NutsArgumentName.of("Password",session)).flatMap(NutsValue::asString).get(session).toCharArray();
                 String mappedUser=null;
                 char[] remotePassword=null;
                 if(!cmdLine.isEmpty()) {
-                    mappedUser = cmdLine.nextNonOption(NutsArgumentName.of("RemoteId",session)).getString();
-                    remotePassword = cmdLine.nextNonOption(NutsArgumentName.of("RemotePassword",session)).getString().toCharArray();
+                    mappedUser = cmdLine.nextNonOption(NutsArgumentName.of("RemoteId",session)).flatMap(NutsValue::asString).get(session);
+                    remotePassword = cmdLine.nextNonOption(NutsArgumentName.of("RemotePassword",session)).flatMap(NutsValue::asString).get(session).toCharArray();
                 }
                 if (cmdLine.isExecMode()) {
                     repository.security().addUser(user).setCredentials(password).setRemoteIdentity(mappedUser).setRemoteCredentials(remotePassword).run();
@@ -63,7 +63,7 @@ public class NutsSettingsUserSubCommand extends AbstractNutsSettingsSubCommand {
                     repository = editedRepo;
                 } else {
                     if (cmdLine.next("--repo", "-r") != null) {
-                        repository = session.repos().getRepository(cmdLine.required().nextNonOption(NutsArgumentName.of("repository",session)).getString());
+                        repository = session.repos().getRepository(cmdLine.nextNonOption(NutsArgumentName.of("repository",session)).flatMap(NutsValue::asString).get(session));
                     }
                 }
                 if (cmdLine.isExecMode()) {
@@ -91,7 +91,7 @@ public class NutsSettingsUserSubCommand extends AbstractNutsSettingsSubCommand {
                     repository = editedRepo;
                 } else {
                     if (cmdLine.next("--repo", "-r") != null) {
-                        repository = session.repos().getRepository(cmdLine.required().nextNonOption(NutsArgumentName.of("RepositoryId",session)).getString());
+                        repository = session.repos().getRepository(cmdLine.nextNonOption(NutsArgumentName.of("RepositoryId",session)).flatMap(NutsValue::asString).get(session));
                     }
                 }
 
@@ -100,13 +100,13 @@ public class NutsSettingsUserSubCommand extends AbstractNutsSettingsSubCommand {
                 char[] oldPassword = null;
                 do {
                     if (cmdLine.next("--user") != null) {
-                        user = cmdLine.required().nextNonOption(NutsArgumentName.of("Username",session)).getString();
+                        user = cmdLine.nextNonOption(NutsArgumentName.of("Username",session)).flatMap(NutsValue::asString).get(session);
                     } else if (cmdLine.next("--password") != null) {
-                        password = cmdLine.required().nextNonOption(NutsArgumentName.of("Password",session)).getString().toCharArray();
+                        password = cmdLine.nextNonOption(NutsArgumentName.of("Password",session)).flatMap(NutsValue::asString).get(session).toCharArray();
                     } else if (cmdLine.next("--old-password") != null) {
-                        oldPassword = cmdLine.required().nextNonOption(NutsArgumentName.of("OldPassword",session)).getString().toCharArray();
+                        oldPassword = cmdLine.nextNonOption(NutsArgumentName.of("OldPassword",session)).flatMap(NutsValue::asString).get(session).toCharArray();
                     } else {
-                        cmdLine.setCommandName("config password").unexpectedArgument();
+                        cmdLine.setCommandName("config password").throwUnexpectedArgument(session);
                     }
                 } while (cmdLine.hasNext());
                 if (cmdLine.isExecMode()) {
@@ -139,11 +139,11 @@ public class NutsSettingsUserSubCommand extends AbstractNutsSettingsSubCommand {
                     repository = editedRepo;
                 } else {
                     if (cmdLine.next("--repo", "-r") != null) {
-                        repository = session.repos().getRepository(cmdLine.required().nextNonOption(NutsArgumentName.of("RepositoryId",session)).getString());
+                        repository = session.repos().getRepository(cmdLine.nextNonOption(NutsArgumentName.of("RepositoryId",session)).flatMap(NutsValue::asString).get(session));
                     }
                 }
 
-                String user = cmdLine.required().nextNonOption(NutsArgumentName.of("Username",session)).getString();
+                String user = cmdLine.nextNonOption(NutsArgumentName.of("Username",session)).flatMap(NutsValue::asString).get(session);
                 if (cmdLine.isExecMode()) {
                     NutsUser u = null;
                     if (repository == null) {
@@ -183,7 +183,7 @@ public class NutsSettingsUserSubCommand extends AbstractNutsSettingsSubCommand {
                     } else {
                         switch (lastOption) {
                             case "--add-group": {
-                                String a = cmdLine.required().nextNonOption(NutsArgumentName.of("Group",session)).getString();
+                                String a = cmdLine.nextNonOption(NutsArgumentName.of("Group",session)).flatMap(NutsValue::asString).get(session);
                                 if (cmdLine.isExecMode()) {
                                     if (repository != null) {
                                         repository.security().updateUser(user).addGroup(a).run();
@@ -194,7 +194,7 @@ public class NutsSettingsUserSubCommand extends AbstractNutsSettingsSubCommand {
                                 break;
                             }
                             case "--remove-group": {
-                                String a = cmdLine.required().nextNonOption(NutsArgumentName.of("Group",session)).getString();
+                                String a = cmdLine.nextNonOption(NutsArgumentName.of("Group",session)).flatMap(NutsValue::asString).get(session);
                                 if (cmdLine.isExecMode()) {
                                     if (repository != null) {
                                         repository.security().updateUser(user).removeGroup(a).run();
@@ -205,7 +205,7 @@ public class NutsSettingsUserSubCommand extends AbstractNutsSettingsSubCommand {
                                 break;
                             }
                             case "--add-right": {
-                                String a = cmdLine.required().nextNonOption(NutsArgumentName.of("Right",session)).getString();
+                                String a = cmdLine.nextNonOption(NutsArgumentName.of("Right",session)).flatMap(NutsValue::asString).get(session);
                                 if (cmdLine.isExecMode()) {
                                     if (repository != null) {
                                         repository.security().updateUser(user).addPermission(a).run();
@@ -216,7 +216,7 @@ public class NutsSettingsUserSubCommand extends AbstractNutsSettingsSubCommand {
                                 break;
                             }
                             case "--remove-right": {
-                                String a = cmdLine.required().nextNonOption(NutsArgumentName.of("Right",session)).getString();
+                                String a = cmdLine.nextNonOption(NutsArgumentName.of("Right",session)).flatMap(NutsValue::asString).get(session);
                                 if (cmdLine.isExecMode()) {
                                     if (repository != null) {
                                         repository.security().updateUser(user).removePermission(a).run();
@@ -227,7 +227,7 @@ public class NutsSettingsUserSubCommand extends AbstractNutsSettingsSubCommand {
                                 break;
                             }
                             case "--mapped-user": {
-                                String a = cmdLine.required().nextNonOption(NutsArgumentName.of("RemoteIdentity",session)).getString();
+                                String a = cmdLine.nextNonOption(NutsArgumentName.of("RemoteIdentity",session)).flatMap(NutsValue::asString).get(session);
                                 if (cmdLine.isExecMode()) {
                                     if (repository != null) {
                                         repository.security().updateUser(user).setRemoteIdentity(a).run();
@@ -238,8 +238,8 @@ public class NutsSettingsUserSubCommand extends AbstractNutsSettingsSubCommand {
                                 break;
                             }
                             case "--password":
-                                char[] pwd = (cmdLine.required().nextNonOption(NutsArgumentName.of("password", "Password",session)).getString()).toCharArray();
-                                char[] old = (cmdLine.required().nextNonOption(NutsArgumentName.of("password", "OldPassword",session)).getString()).toCharArray();
+                                char[] pwd = (cmdLine.nextNonOption(NutsArgumentName.of("password", "Password",session)).flatMap(NutsValue::asString).get(session)).toCharArray();
+                                char[] old = (cmdLine.nextNonOption(NutsArgumentName.of("password", "OldPassword",session)).flatMap(NutsValue::asString).get(session)).toCharArray();
                                 if (cmdLine.isExecMode()) {
                                     if (repository != null) {
                                         repository.security().updateUser(user).setCredentials(pwd).setOldCredentials(old).run();
@@ -251,7 +251,7 @@ public class NutsSettingsUserSubCommand extends AbstractNutsSettingsSubCommand {
                                 Arrays.fill(old, '\0');
                                 break;
                             default:
-                                cmdLine.setCommandName("config edit user").unexpectedArgument();
+                                cmdLine.setCommandName("config edit user").throwUnexpectedArgument(session);
                                 break;
                         }
                     }
@@ -267,7 +267,7 @@ public class NutsSettingsUserSubCommand extends AbstractNutsSettingsSubCommand {
                     repository = editedRepo;
                 } else {
                     if (cmdLine.next("--repo", "-r") != null) {
-                        repository = session.repos().getRepository(cmdLine.required().nextNonOption(NutsArgumentName.of("RepositoryId",session)).getString());
+                        repository = session.repos().getRepository(cmdLine.nextNonOption(NutsArgumentName.of("RepositoryId",session)).flatMap(NutsValue::asString).get(session));
                     }
                 }
                 //unsecure-box
@@ -297,7 +297,7 @@ public class NutsSettingsUserSubCommand extends AbstractNutsSettingsSubCommand {
                     repository = editedRepo;
                 } else {
                     if (cmdLine.next("--repo", "-r") != null) {
-                        repository = session.repos().getRepository(cmdLine.required().nextNonOption(NutsArgumentName.of("RepositoryId",session)).getString());
+                        repository = session.repos().getRepository(cmdLine.nextNonOption(NutsArgumentName.of("RepositoryId",session)).flatMap(NutsValue::asString).get(session));
                     }
                 }
                 //secure-box

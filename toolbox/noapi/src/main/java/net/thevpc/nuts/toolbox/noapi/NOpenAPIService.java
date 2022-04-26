@@ -144,13 +144,16 @@ public class NOpenAPIService {
     }
 
     private void _fillIntroduction(NutsObjectElement entries, List<MdElement> all) {
+        NutsSession session = appContext.getSession();
         all.add(MdFactory.endParagraph());
         all.add(MdFactory.title(2, "INTRODUCTION"));
         all.add(MdFactory.endParagraph());
-        all.add(MdFactory.text(entries.getObject("info").getString("description").trim()));
+        NutsObjectElement info = entries.getObject("info").orElse(NutsObjectElement.ofEmpty(session));
+        all.add(MdFactory.text(info.getString("description").orElse("").trim()));
         all.add(MdFactory.endParagraph());
         all.add(MdFactory.title(3, "CONTACT"));
         all.add(MdFactory.endParagraph());
+        NutsObjectElement contact = info.getObject("contact").orElse(NutsObjectElement.ofEmpty(session));
         all.add(MdFactory.table()
                 .addColumns(
                         MdFactory.column().setName("NAME"),
@@ -159,16 +162,18 @@ public class NOpenAPIService {
                 )
                 .addRows(
                         MdFactory.row().addCells(
-                                MdFactory.text(entries.getObject("info").getObject("contact").getString("name")),
-                                MdFactory.text(entries.getObject("info").getObject("contact").getString("email")),
-                                MdFactory.text(entries.getObject("info").getObject("contact").getString("url"))
+                                MdFactory.text(contact.getString("name").orElse("")),
+                                MdFactory.text(contact.getString("email").orElse("")),
+                                MdFactory.text(contact.getString("url").orElse(""))
                         )
                 ).build()
         );
     }
 
     private void _fillHeaders(NutsObjectElement entries, List<MdElement> all) {
-        if (!entries.getObject("components").getObject("headers").isEmpty()) {
+        NutsSession session = appContext.getSession();
+        NutsObjectElement components = entries.getObject("components").orElse(NutsObjectElement.ofEmpty(session));
+        if (!components.getObject("headers").isEmpty()) {
             all.add(MdFactory.endParagraph());
             all.add(MdFactory.title(3, "HEADERS"));
             all.add(MdFactory.endParagraph());
@@ -182,13 +187,15 @@ public class NOpenAPIService {
                             MdFactory.column().setName("DESCRIPTION")
                     );
 
-            for (NutsElementEntry ee : entries.getObject("components").getObject("headers")) {
+            for (NutsElementEntry ee : components.getObject("headers").orElse(NutsObjectElement.ofEmpty(session))) {
                 table.addRows(
                         MdFactory.row().addCells(
-                                MdFactory.codeBacktick3("", ee.getKey() + (ee.getValue().asObject().getBoolean("deprecated") ? " (DEPRECATED)" : "")),
-                                MdFactory.codeBacktick3("", ee.getValue().asObject().getObject("schema").getString("type")),
-                                MdFactory.text(ee.getValue().asObject().getBoolean("required") ? "required" : ""),
-                                MdFactory.text(ee.getValue().asObject().getString("description"))
+                                MdFactory.codeBacktick3("", ee.getKey() + (ee.getValue().asObject().get(session).getBoolean("deprecated").orElse(false) ? " (DEPRECATED)" : "")),
+                                MdFactory.codeBacktick3("", ee.getValue().asObject().get(session).getObject("schema")
+                                        .orElse(NutsObjectElement.ofEmpty(session))
+                                        .getString("type").orElse("")),
+                                MdFactory.text(ee.getValue().asObject().get(session).getBoolean("required").orElse(false) ? "required" : ""),
+                                MdFactory.text(ee.getValue().asObject().get(session).getString("description").orElse(""))
                         )
                 );
             }
@@ -197,19 +204,22 @@ public class NOpenAPIService {
     }
 
     private void _fillSecuritySchemes(NutsObjectElement entries, List<MdElement> all) {
-        if (!entries.getObject("components").getObject("securitySchemes").isEmpty()) {
+        NutsSession session = appContext.getSession();
+        NutsObjectElement components = entries.getObject("components").orElse(NutsObjectElement.ofEmpty(session));
+        NutsObjectElement securitySchemes = components.getObject("securitySchemes").orElse(NutsObjectElement.ofEmpty(session));
+        if (!securitySchemes.isEmpty()) {
             all.add(MdFactory.endParagraph());
             all.add(MdFactory.title(3, "SECURITY AND AUTHENTICATION"));
             all.add(MdFactory.endParagraph());
             all.add(MdFactory.text("This section includes security configurations."));
-            for (NutsElementEntry ee : entries.getObject("components").getObject("securitySchemes")) {
-                String type = ee.getValue().asObject().getString("type");
+            for (NutsElementEntry ee : securitySchemes) {
+                String type = ee.getValue().asObject().get(session).getString("type").orElse("");
                 switch (type) {
                     case "apiKey": {
                         all.add(MdFactory.endParagraph());
                         all.add(MdFactory.title(4, ee.getKey() + " (Api Key)"));
                         all.add(MdFactory.endParagraph());
-                        all.add(MdFactory.text(ee.getValue().asObject().getString("description")));
+                        all.add(MdFactory.text(ee.getValue().asObject().get(session).getString("description").orElse("")));
                         all.add(MdFactory.endParagraph());
                         all.add(MdFactory
                                 .table().addColumns(
@@ -218,8 +228,8 @@ public class NOpenAPIService {
                                 )
                                 .addRows(MdFactory.row()
                                         .addCells(
-                                                MdFactory.codeBacktick3("", ee.getValue().asObject().getString("name")),
-                                                MdFactory.codeBacktick3("", ee.getValue().asObject().getString("in").toUpperCase())
+                                                MdFactory.codeBacktick3("", ee.getValue().asObject().get(session).getString("name").orElse("")),
+                                                MdFactory.codeBacktick3("", ee.getValue().asObject().get(session).getString("in").orElse("").toUpperCase())
                                         ))
                                 .build()
                         );
@@ -229,7 +239,7 @@ public class NOpenAPIService {
                         all.add(MdFactory.endParagraph());
                         all.add(MdFactory.title(4, ee.getKey() + " (Http)"));
                         all.add(MdFactory.endParagraph());
-                        all.add(MdFactory.text(ee.getValue().asObject().getString("description")));
+                        all.add(MdFactory.text(ee.getValue().asObject().get(session).getString("description").orElse("")));
                         all.add(MdFactory
                                 .table().addColumns(
                                         MdFactory.column().setName("SCHEME"),
@@ -237,8 +247,8 @@ public class NOpenAPIService {
                                 )
                                 .addRows(MdFactory.row()
                                         .addCells(
-                                                MdFactory.text(ee.getValue().asObject().getString("scheme")),
-                                                MdFactory.text(ee.getValue().asObject().getString("bearerFormat"))
+                                                MdFactory.text(ee.getValue().asObject().get(session).getString("scheme").orElse("")),
+                                                MdFactory.text(ee.getValue().asObject().get(session).getString("bearerFormat").orElse(""))
                                         ))
                                 .build()
                         );
@@ -248,7 +258,7 @@ public class NOpenAPIService {
                         all.add(MdFactory.endParagraph());
                         all.add(MdFactory.title(4, ee.getKey() + " (Oauth2)"));
                         all.add(MdFactory.endParagraph());
-                        all.add(MdFactory.text(ee.getValue().asObject().getString("description")));
+                        all.add(MdFactory.text(ee.getValue().asObject().get(session).getString("description").orElse("")));
 //                        all.add(MdFactory
 //                                .table().addColumns(
 //                                        MdFactory.column().setName("SCHEME"),
@@ -266,14 +276,14 @@ public class NOpenAPIService {
                         all.add(MdFactory.endParagraph());
                         all.add(MdFactory.title(4, ee.getKey() + " (OpenId Connect)"));
                         all.add(MdFactory.endParagraph());
-                        all.add(MdFactory.text(ee.getValue().asObject().getString("description")));
+                        all.add(MdFactory.text(ee.getValue().asObject().get(session).getString("description").orElse("")));
                         all.add(MdFactory
                                 .table().addColumns(
                                         MdFactory.column().setName("URL")
                                 )
                                 .addRows(MdFactory.row()
                                         .addCells(
-                                                MdFactory.text(ee.getValue().asObject().getString("openIdConnectUrl"))
+                                                MdFactory.text(ee.getValue().asObject().get(session).getString("openIdConnectUrl").orElse(""))
                                         ))
                                 .build()
                         );
@@ -282,7 +292,7 @@ public class NOpenAPIService {
                     default: {
                         all.add(MdFactory.endParagraph());
                         all.add(MdFactory.title(4, ee.getKey() + " (" + type + ")"));
-                        all.add(MdFactory.text(ee.getValue().asObject().getString("description")));
+                        all.add(MdFactory.text(ee.getValue().asObject().get(session).getString("description").orElse("")));
                     }
                 }
             }
@@ -292,7 +302,7 @@ public class NOpenAPIService {
 
 
     private void _fillSchemaTypes(NutsObjectElement entries, List<MdElement> all) {
-        Map<String, TypeInfo> allTypes = openApiParser.parseTypes(entries);
+        Map<String, TypeInfo> allTypes = openApiParser.parseTypes(entries,appContext.getSession());
         if (allTypes.isEmpty()) {
             return;
         }
@@ -342,33 +352,34 @@ public class NOpenAPIService {
     }
 
     private void _fillApiPaths(NutsObjectElement entries, List<MdElement> all) {
+        NutsSession session = appContext.getSession();
         all.add(MdFactory.endParagraph());
         all.add(MdFactory.title(2, "API PATHS"));
-        NutsObjectElement schemas = entries.getSafeObject("components").getSafeObject("schemas");
-        NutsElements prv = NutsElements.of(appContext.getSession());
-        for (NutsElementEntry path : entries.get(prv.ofString("paths")).asObject()) {
-            String url = path.getKey().asString();
+        NutsObjectElement schemas = entries.getObjectByPath("components","schemas").get(session);
+        NutsElements prv = NutsElements.of(session);
+        for (NutsElementEntry path : entries.get(prv.ofString("paths")).flatMap(NutsElement::asObject).get(session)) {
+            String url = path.getKey().asString().get(session);
             Map<String, NutsObjectElement> calls = new HashMap<>();
             String dsummary = null;
             String ddescription = null;
             NutsArrayElement dparameters = null;
-            for (NutsElementEntry ss : path.getValue().asObject()) {
-                String k = ss.getKey().asString();
+            for (NutsElementEntry ss : path.getValue().asObject().get(session)) {
+                String k = ss.getKey().asString().get(session);
                 switch (k) {
                     case "summary": {
-                        dsummary = ss.getValue().asString();
+                        dsummary = ss.getValue().asString().get(session);
                         break;
                     }
                     case "description": {
-                        ddescription = ss.getValue().asString();
+                        ddescription = ss.getValue().asString().get(session);
                         break;
                     }
                     case "parameters": {
-                        dparameters = ss.getValue().asArray();
+                        dparameters = ss.getValue().asArray().get(session);
                         break;
                     }
                     default: {
-                        calls.put(k, ss.getValue().asObject());
+                        calls.put(k, ss.getValue().asObject().get(session));
                     }
                 }
             }
@@ -379,27 +390,28 @@ public class NOpenAPIService {
     }
 
     private void _fillServerList(NutsObjectElement entries, List<MdElement> all) {
+        NutsSession session = appContext.getSession();
         all.add(MdFactory.endParagraph());
         all.add(MdFactory.title(3, "SERVER LIST"));
-        NutsElements prv = NutsElements.of(appContext.getSession());
-        for (NutsElement srv : entries.getArray(prv.ofString("servers"))) {
-            NutsObjectElement srvObj = (NutsObjectElement) srv.asObject();
-            all.add(MdFactory.title(4, srvObj.getString("url")));
-            all.add(MdFactory.text(srvObj.getString("description")));
-            NutsElement vars = srvObj.get(prv.ofString("variables"));
+        NutsElements prv = NutsElements.of(session);
+        for (NutsElement srv : entries.getArray(prv.ofString("servers")).orElse(prv.ofEmptyArray())) {
+            NutsObjectElement srvObj = (NutsObjectElement) srv.asObject().orElse(prv.ofEmptyObject());
+            all.add(MdFactory.title(4, srvObj.getString("url").orNull()));
+            all.add(MdFactory.text(srvObj.getString("description").orNull()));
+            NutsElement vars = srvObj.get(prv.ofString("variables")).orNull();
             if (vars != null && !vars.isEmpty()) {
                 MdTableBuilder mdTableBuilder = MdFactory.table().addColumns(
                         MdFactory.column().setName("NAME"),
                         MdFactory.column().setName("SPEC"),
                         MdFactory.column().setName("DESCRIPTION")
                 );
-                for (NutsElementEntry variables : vars.asObject()) {
+                for (NutsElementEntry variables : vars.asObject().get(session)) {
                     mdTableBuilder.addRows(
                             MdFactory.row().addCells(
-                                    MdFactory.text(variables.getKey().asString()),
+                                    MdFactory.text(variables.getKey().asString().get(session)),
                                     //                                MdFactory.text(variables.getValue().asObject().getString("enum")),
-                                    MdFactory.text(variables.getValue().asObject().getString("default")),
-                                    MdFactory.text(variables.getValue().asObject().getString("description"))
+                                    MdFactory.text(variables.getValue().asObject().get(session).getString("default").orNull()),
+                                    MdFactory.text(variables.getValue().asObject().get(session).getString("description").orNull())
                             )
                     );
                 }
@@ -409,6 +421,7 @@ public class NOpenAPIService {
     }
 
     private MdDocument toMarkdown(InputStream inputStream, boolean json,String folder) {
+        NutsSession session = appContext.getSession();
         MdDocumentBuilder doc = new MdDocumentBuilder();
         List<String> options=new ArrayList<>(
                 Arrays.asList(
@@ -431,12 +444,14 @@ public class NOpenAPIService {
         doc.setSubTitle("RESTRICTED - INTERNAL");
 
         NutsElement obj = loadElement(inputStream, json);
+        NutsElements prv = NutsElements.of(session);
         List<MdElement> all = new ArrayList<>();
-        NutsObjectElement entries = obj.asObject();
+        NutsObjectElement entries = obj.asObject().get(session);
         all.add(MdFactory.endParagraph());
-        String documentTitle = entries.getObject("info").getString("title");
+        NutsObjectElement infoObj = entries.getObject("info").orElse(prv.ofEmptyObject());
+        String documentTitle = infoObj.getString("title").orNull();
         doc.setTitle(documentTitle);
-        String documentVersion = entries.getObject("info").getString("version");
+        String documentVersion = infoObj.getString("version").orNull();
         doc.setVersion(documentVersion);
 
         all.add(MdFactory.title(1, documentTitle));
@@ -455,6 +470,7 @@ public class NOpenAPIService {
 
 
     private void _fillApiPathMethodParam(List<NutsElement> headerParameters, List<MdElement> all) {
+        NutsSession session = appContext.getSession();
         MdTable tab = new MdTable(
                 new MdColumn[]{
                         new MdColumn(MdFactory.text("NAME"), MdHorizontalAlign.LEFT),
@@ -464,18 +480,19 @@ public class NOpenAPIService {
                 },
                 headerParameters.stream().map(
                         headerParameter -> {
-                            boolean pdeprecated=Boolean.parseBoolean(headerParameter.asObject().getString("pdeprecated"));
-                            String type = _StringUtils.nvl(headerParameter.asObject().getString("type"), "string")
-                                    + (headerParameter.asObject().getBoolean("required") ? " [required]" : " [optional]")
+                            NutsObjectElement obj = headerParameter.asObject().orElse(NutsElements.of(session).ofEmptyObject());
+                            boolean pdeprecated=obj.getBoolean("pdeprecated").orElse(false);
+                            String type = _StringUtils.nvl(obj.getString("type").orNull(), "string")
+                                    + (obj.getBoolean("required").orElse(false) ? " [required]" : " [optional]")
                                     ;
                             return new MdRow(
                                     new MdElement[]{
-                                            MdFactory.codeBacktick3("", _StringUtils.nvl(headerParameter.asObject().getString("name"),"unknown")
+                                            MdFactory.codeBacktick3("", _StringUtils.nvl(obj.getString("name").orNull(),"unknown")
                                                     + (pdeprecated?" [DEPRECATED]":"")
                                             ),
                                             MdFactory.codeBacktick3("", type),
-                                            MdFactory.text(_StringUtils.nvl(headerParameter.asObject().getString("description"),"")),
-                                            MdFactory.text(_StringUtils.nvl(headerParameter.asObject().getString("example"),"")),
+                                            MdFactory.text(_StringUtils.nvl(obj.getString("description").orElse(""),"")),
+                                            MdFactory.text(_StringUtils.nvl(obj.getString("example").orElse(""),"")),
                                     }, false
                             );
                         }
@@ -485,14 +502,9 @@ public class NOpenAPIService {
     }
 
     private void _fillApiPathMethod(String method, NutsObjectElement call, List<MdElement> all, String url, NutsElements prv, String dsummary, String ddescription, NutsArrayElement dparameters, NutsObjectElement schemas) {
-        String nsummary = call.getString("summary");
-        if (nsummary == null) {
-            nsummary = dsummary;
-        }
-        String ndescription = call.getString("description");
-        if (ndescription == null) {
-            ndescription = ddescription;
-        }
+        NutsSession session = appContext.getSession();
+        String nsummary = call.getString("summary").orElse(dsummary);
+        String ndescription = call.getString("description").orElse(ddescription);
         all.add(MdFactory.endParagraph());
         all.add(MdFactory.title(3, method.toUpperCase() + " " + url));
         all.add(MdFactory.text(nsummary));
@@ -505,17 +517,13 @@ public class NOpenAPIService {
             all.add(MdFactory.text(ndescription));
             all.add(MdFactory.endParagraph());
         }
-        NutsArrayElement parameters = call.getArray(prv.ofString("parameters"));
-        if (parameters == null) {
-            parameters = dparameters;
-        }
-        if (parameters == null) {
-            parameters = NutsArrayElementBuilder.of(appContext.getSession()).build();
-        }
-        List<NutsElement> headerParameters = parameters.stream().filter(x -> "header".equals(x.asObject().getString("in"))).collect(Collectors.toList());
-        List<NutsElement> queryParameters = parameters.stream().filter(x -> "query".equals(x.asObject().getString("in"))).collect(Collectors.toList());
-        List<NutsElement> pathParameters = parameters.stream().filter(x -> "path".equals(x.asObject().getString("in"))).collect(Collectors.toList());
-        NutsObjectElement requestBody = call.getObject("requestBody");
+        NutsArrayElement parameters = call.getArray(prv.ofString("parameters"))
+                .orElseGetOptional(()->NutsOptional.of(dparameters))
+                .orElseGet(()->NutsArrayElementBuilder.of(session).build());
+        List<NutsElement> headerParameters = parameters.stream().filter(x -> "header".equals(x.asObject().get(session).getString("in").orNull())).collect(Collectors.toList());
+        List<NutsElement> queryParameters = parameters.stream().filter(x -> "query".equals(x.asObject().get(session).getString("in").orNull())).collect(Collectors.toList());
+        List<NutsElement> pathParameters = parameters.stream().filter(x -> "path".equals(x.asObject().get(session).getString("in").orNull())).collect(Collectors.toList());
+        NutsObjectElement requestBody = call.getObject("requestBody").orNull();
         if (
                 !headerParameters.isEmpty()
                         || !queryParameters.isEmpty()
@@ -542,14 +550,14 @@ public class NOpenAPIService {
                 _fillApiPathMethodParam(queryParameters, all);
             }
             if (requestBody != null && !requestBody.isEmpty()) {
-                boolean required = requestBody.getBoolean("required");
-                String desc = requestBody.getString("description");
-                NutsObjectElement r = requestBody.getObject("content");
+                boolean required = requestBody.getBoolean("required").orElse(false);
+                String desc = requestBody.getString("description").orElse("");
+                NutsObjectElement r = requestBody.getObject("content").orElseGet(()->NutsObjectElement.ofEmpty(session));
                 for (NutsElementEntry ii : r) {
                     all.add(MdFactory.endParagraph());
                     all.add(MdFactory.title(5, "REQUEST BODY - " + ii.getKey() + (required ? " [required]" : "[optional]")));
                     all.add(MdFactory.text(desc));
-                    TypeInfo o = openApiParser.parseOneType(ii.getValue().asObject(), null);
+                    TypeInfo o = openApiParser.parseOneType(ii.getValue().asObject().get(session), null,session);
                     if (o.ref != null) {
                         all.add(MdFactory.title(5, "REQUEST TYPE - " + o.ref));
                     } else {
@@ -561,15 +569,15 @@ public class NOpenAPIService {
 
         all.add(MdFactory.endParagraph());
         all.add(MdFactory.title(4, "RESPONSE"));
-        call.getObject("responses").stream()
+        call.getObject("responses").get(session).stream()
                 .forEach(x -> {
                     NutsElement s = x.getKey();
                     NutsElement v = x.getValue();
                     all.add(MdFactory.endParagraph());
                     all.add(MdFactory.title(5, "STATUS CODE - " + s));
-                    all.add(MdFactory.text(v.asObject().getString("description")));
-                    for (NutsElementEntry content : v.asObject().getObject("content")) {
-                        TypeInfo o = openApiParser.parseOneType(content.getValue().asObject(), null);
+                    all.add(MdFactory.text(v.asObject().get(session).getString("description").orElse("")));
+                    for (NutsElementEntry content : v.asObject().get(session).getObject("content").orElse(NutsObjectElement.ofEmpty(session))) {
+                        TypeInfo o = openApiParser.parseOneType(content.getValue().asObject().get(session), null,session);
                         if (o.userType.equals("$ref")) {
                             if(NutsBlankable.isBlank(o.example)) {
                                 all.add(MdFactory.table()
@@ -579,7 +587,7 @@ public class NOpenAPIService {
                                         )
                                         .addRows(
                                                 MdFactory.row().addCells(
-                                                        MdFactory.text(content.getKey().asString()),
+                                                        MdFactory.text(content.getKey().asString().get(session)),
                                                         MdFactory.text(o.ref)
                                                 )
                                         ).build()
@@ -593,7 +601,7 @@ public class NOpenAPIService {
                                         )
                                         .addRows(
                                                 MdFactory.row().addCells(
-                                                        MdFactory.text(content.getKey().asString()),
+                                                        MdFactory.text(content.getKey().asString().get(session)),
                                                         MdFactory.text(o.ref),
                                                         NutsBlankable.isBlank(o.example) ? MdFactory.text("") : MdFactory.codeBacktick3("json", o.example.toString())
                                                 )
@@ -608,7 +616,7 @@ public class NOpenAPIService {
                                         )
                                         .addRows(
                                                 MdFactory.row().addCells(
-                                                        MdFactory.text(content.getKey().asString()),
+                                                        MdFactory.text(content.getKey().asString().get(session)),
                                                         MdFactory.text(o.ref),
                                                         MdFactory.text("SEE BELOW...")
                                                 )

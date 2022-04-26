@@ -31,6 +31,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 /**
@@ -46,13 +47,14 @@ public class DefaultNutsArrayElement extends AbstractNutsArrayElement {
         this.values = values.toArray(new NutsElement[0]);
     }
 
+
     public DefaultNutsArrayElement(NutsElement[] values, NutsSession session) {
         super(session);
         this.values = Arrays.copyOf(values, values.length);
     }
 
     @Override
-    public Collection<NutsElement> children() {
+    public Collection<NutsElement> items() {
         return Arrays.asList(values);
     }
 
@@ -67,64 +69,69 @@ public class DefaultNutsArrayElement extends AbstractNutsArrayElement {
     }
 
     @Override
-    public NutsElement get(int index) {
-        return values[index];
+    public NutsOptional<NutsElement> get(int index) {
+        if(index>=0 && index<values.length){
+            return NutsOptional.of(values[index]);
+        }
+        return NutsOptional.ofError(s->NutsMessage.cstyle("invalid array index %s not in [%s,%s[",index,0,values.length));
     }
 
     @Override
-    public String getString(int index) {
-        return get(index).asString();
+    public NutsOptional<String> getString(int index) {
+        return get(index).flatMap(NutsElement::asString);
     }
 
     @Override
-    public boolean getBoolean(int index) {
-        return get(index).asBoolean();
+    public NutsOptional<Boolean> getBoolean(int index) {
+        return get(index).flatMap(NutsElement::asBoolean);
     }
 
     @Override
-    public byte getByte(int index) {
-        return get(index).asByte();
+    public NutsOptional<Byte> getByte(int index) {
+        return get(index).flatMap(NutsElement::asByte);
     }
 
     @Override
-    public short getShort(int index) {
-        return get(index).asShort();
+    public NutsOptional<Short> getShort(int index) {
+        return get(index).flatMap(NutsElement::asShort);
     }
 
     @Override
-    public int getInt(int index) {
-        return get(index).asInt();
+    public NutsOptional<Integer> getInt(int index) {
+        return get(index).flatMap(NutsElement::asInt);
     }
 
     @Override
-    public long getLong(int index) {
-        return get(index).asLong();
+    public NutsOptional<Long> getLong(int index) {
+        return get(index).flatMap(NutsElement::asLong);
     }
 
     @Override
-    public float getFloat(int index) {
-        return get(index).asFloat();
+    public NutsOptional<Float> getFloat(int index) {
+        return get(index).flatMap(NutsElement::asFloat);
     }
 
     @Override
-    public double getDouble(int index) {
-        return get(index).asDouble();
+    public NutsOptional<Double> getDouble(int index) {
+        return get(index).flatMap(NutsElement::asDouble);
     }
 
     @Override
-    public Instant getInstant(int index) {
-        return get(index).asInstant();
+    public NutsOptional<Instant> getInstant(int index) {
+        return get(index).flatMap(NutsElement::asInstant);
     }
 
     @Override
-    public NutsArrayElement getArray(int index) {
-        return get(index).asArray();
+    public NutsOptional<NutsArrayElement> getArray(int index) {
+        return get(index).flatMap(NutsElement::asArray);
     }
 
     @Override
-    public NutsObjectElement getObject(int index) {
-        return get(index).asObject();
+    public NutsOptional<NutsObjectElement> getObject(int index) {
+        return get(index).flatMap(NutsElement::asObject);
     }
+
+
 
     @Override
     public NutsArrayElementBuilder builder() {
@@ -140,7 +147,7 @@ public class DefaultNutsArrayElement extends AbstractNutsArrayElement {
 
     @Override
     public String toString() {
-        return "[" + children().stream().map(Object::toString).collect(Collectors.joining(", ")) + "]";
+        return "[" + items().stream().map(Object::toString).collect(Collectors.joining(", ")) + "]";
     }
 
     @Override
@@ -176,5 +183,25 @@ public class DefaultNutsArrayElement extends AbstractNutsArrayElement {
     @Override
     public boolean isBlank() {
         return values.length == 0;
+    }
+
+    @Override
+    public NutsOptional<NutsElement> get(String key) {
+        return NutsValue.of(key).asInt().flatMap(this::get);
+    }
+
+    @Override
+    public NutsOptional<NutsElement> get(NutsElement key) {
+        return key.isString()?key.asString().flatMap(this::get):key.asInt().flatMap(this::get);
+    }
+
+    @Override
+    public Collection<NutsElementEntry> entries() {
+        return IntStream.range(0, size())
+                .boxed()
+                .map(x->new DefaultNutsElementEntry(
+                        NutsElements.of(session).ofString(String.valueOf(x)),
+                        get(x).orNull()
+                )).collect(Collectors.toList());
     }
 }

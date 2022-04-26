@@ -47,13 +47,15 @@ public class RmCommand extends SimpleJShellBuiltin {
 
     @Override
     protected boolean configureFirst(NutsCommandLine commandLine, JShellExecutionContext context) {
+        NutsSession session = context.getSession();
         Options options = context.getOptions();
         NutsArgument a;
-        if ((a = commandLine.nextBoolean("-R")) != null) {
-            options.R = a.getBooleanValue();
+        if ((a = commandLine.nextBoolean("-R").orNull()) != null) {
+            options.R = a.getBooleanValue().get(session);
             return true;
-        } else if (commandLine.peek().isNonOption()) {
-            options.files.add(ShellHelper.xfileOf(commandLine.next().getString(), context.getShellContext().getCwd(), context.getSession()));
+        } else if (commandLine.peek().get(session).isNonOption()) {
+            options.files.add(ShellHelper.xfileOf(commandLine.next().flatMap(NutsValue::asString).get(session),
+                    context.getShellContext().getCwd(), session));
             return true;
         }
         return false;

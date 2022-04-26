@@ -41,9 +41,7 @@ import net.thevpc.nuts.runtime.standalone.io.terminal.DefaultNutsSessionTerminal
 import net.thevpc.nuts.runtime.standalone.io.terminal.UnmodifiableSessionTerminal;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.repository.impl.main.NutsInstalledRepository;
-import net.thevpc.nuts.runtime.standalone.repository.impl.maven.util.MavenUtils;
 import net.thevpc.nuts.runtime.standalone.repository.util.NutsRepositoryUtils;
-import net.thevpc.nuts.runtime.standalone.security.ReadOnlyNutsWorkspaceOptions;
 import net.thevpc.nuts.runtime.standalone.session.NutsSessionUtils;
 import net.thevpc.nuts.runtime.standalone.util.CoreNutsConstants;
 import net.thevpc.nuts.runtime.standalone.util.CoreNutsUtils;
@@ -114,7 +112,7 @@ public class DefaultNutsWorkspaceConfigModel {
 
     public DefaultNutsWorkspaceConfigModel(final DefaultNutsWorkspace ws) {
         this.ws = ws;
-        CoreNutsBootOptions bOptions = NutsWorkspaceExt.of(ws).getModel().bootModel.getCoreBootOptions();
+        NutsWorkspaceBootOptions bOptions = NutsWorkspaceExt.of(ws).getModel().bootModel.getBootEffectiveOptions();
         this.bootClassLoader = bOptions.getClassWorldLoader() == null ? Thread.currentThread().getContextClassLoader() : bOptions.getClassWorldLoader();
         this.bootClassWorldURLs = PrivateNutsUtilCollections.nonNullList(bOptions.getClassWorldURLs());
         workspaceSystemTerminalAdapter = new WorkspaceSystemTerminalAdapter(ws);
@@ -165,8 +163,7 @@ public class DefaultNutsWorkspaceConfigModel {
     }
 
     public boolean isReadOnly() {
-        CoreNutsBootOptions bOptions = NutsWorkspaceExt.of(ws).getModel().bootModel.getCoreBootOptions();
-        return bOptions.getOptions().isReadOnly();
+        return NutsWorkspaceExt.of(ws).getModel().bootModel.getBootUserOptions().isReadOnly();
     }
 
     public boolean save(boolean force, NutsSession session) {
@@ -377,9 +374,8 @@ public class DefaultNutsWorkspaceConfigModel {
         return false;
     }
 
-    public NutsWorkspaceOptions getOptions(NutsSession session) {
-        CoreNutsBootOptions bOptions = NutsWorkspaceExt.of(ws).getModel().bootModel.getCoreBootOptions();
-        return new ReadOnlyNutsWorkspaceOptions(bOptions.getOptions(), session);
+    public NutsWorkspaceOptions getBootUserOptions(NutsSession session) {
+        return NutsWorkspaceExt.of(ws).getModel().bootModel.getBootUserOptions();
     }
 
     public boolean isSupportedRepositoryType(String repositoryType, NutsSession session) {
@@ -502,7 +498,7 @@ public class DefaultNutsWorkspaceConfigModel {
 
     public void installBootIds(NutsSession session) {
         NutsWorkspaceModel wsModel = NutsWorkspaceExt.of(ws).getModel();
-        NutsDescriptor d = wsModel.bootModel.getCoreBootOptions().getRuntimeBootDescriptor();
+        NutsDescriptor d = wsModel.bootModel.getBootEffectiveOptions().getRuntimeBootDescriptor();
         NutsId iruntimeId = NutsId.of(d.getId().toString()).get(session);
         wsModel.configModel.prepareBootClassPathConf(NutsIdType.API, ws.getApiId(), null, iruntimeId, false, false, session);
         wsModel.configModel.prepareBootClassPathJar(ws.getApiId(), null, iruntimeId, false, session);
@@ -541,7 +537,7 @@ public class DefaultNutsWorkspaceConfigModel {
                 return false;
             }
             DefaultNutsWorkspaceCurrentConfig cConfig = new DefaultNutsWorkspaceCurrentConfig(ws).merge(_config, session);
-            CoreNutsBootOptions bOptions = NutsWorkspaceExt.of(ws).getModel().bootModel.getCoreBootOptions();
+            NutsWorkspaceBootOptions bOptions = NutsWorkspaceExt.of(ws).getModel().bootModel.getBootEffectiveOptions();
             if (cConfig.getApiId() == null) {
                 cConfig.setApiId(NutsId.of(NutsConstants.Ids.NUTS_API + "#" + bOptions.getApiVersion()).get(session));
             }
@@ -557,7 +553,7 @@ public class DefaultNutsWorkspaceConfigModel {
             if (cConfig.getBootRepositories() == null) {
                 cConfig.setBootRepositories(bOptions.getBootRepositories());
             }
-            cConfig.merge(getOptions(session), session);
+            cConfig.merge(getBootUserOptions(session), session);
 
             setCurrentConfig(cConfig.build(session.locations().getWorkspaceLocation(), session));
 
@@ -603,7 +599,7 @@ public class DefaultNutsWorkspaceConfigModel {
                 }
             }
 
-            if (bOptions.getOptions().isRecover() || bOptions.getOptions().isReset()) {
+            if (bOptions.getUserOptions().isRecover() || bOptions.getUserOptions().isReset()) {
                 //always reload boot resolved versions!
                 cConfig.setApiId(NutsId.of(NutsConstants.Ids.NUTS_API + "#" + bOptions.getApiVersion()).get(session));
                 cConfig.setRuntimeId(bOptions.getRuntimeId() == null ? null : bOptions.getRuntimeId().toString(), session);
@@ -1083,14 +1079,15 @@ public class DefaultNutsWorkspaceConfigModel {
     public String toString() {
         String s1 = "NULL";
         String s2 = "NULL";
-        s1 = ws.getApiId().toString();
-        s2 = String.valueOf(ws.getRuntimeId());
+        s1 = ws==null?"?":ws.getApiId().toString();
+        s2 = ws==null?"?":String.valueOf(ws.getRuntimeId());
         return "NutsWorkspaceConfig{"
                 + "workspaceBootId=" + s1
                 + ", workspaceRuntimeId=" + s2
                 + ", workspace=" + ((currentConfig == null) ? "NULL" : ("'"
-                + ((DefaultNutsWorkspaceLocationManager) (NutsSessionUtils.defaultSession(ws))
-                .locations()).getModel().getWorkspaceLocation() + '\''))
+                +
+                (ws==null?"?":""+((DefaultNutsWorkspaceLocationManager) (NutsSessionUtils.defaultSession(ws))
+                .locations()).getModel().getWorkspaceLocation()) + '\''))
                 + '}';
     }
 
@@ -1150,7 +1147,7 @@ public class DefaultNutsWorkspaceConfigModel {
             if (jarPath != null) {
                 NutsDescriptor d = NutsDescriptorParser.of(session)
                         .setDescriptorStyle(NutsDescriptorStyle.MAVEN)
-                        .parse(pomPath);
+                        .parse(pomPath).get(session);
                 //see only first level deps!
                 return new NutsBootDef(
                         id,
@@ -1306,7 +1303,12 @@ public class DefaultNutsWorkspaceConfigModel {
             o.println("workspace.path:");
             o.println(session.locations().getWorkspaceLocation());
             o.println("workspace.options:");
-            o.println(wconfig.getOptions(session).formatter().setCompact(false).setRuntime(true).setInit(true).setExported(true).getBootCommandLine());
+            o.println(wconfig.getBootUserOptions(session)
+                            .toCommandLine(
+                                    new NutsWorkspaceOptionsConfig()
+                                            .setCompact(false).setRuntime(true).setInit(true).setExported(true)
+                            )
+                    );
             for (NutsStoreLocation location : NutsStoreLocation.values()) {
                 o.println("location." + location.id() + ":");
                 o.println(session.locations().getStoreLocation(location));
@@ -1380,8 +1382,9 @@ public class DefaultNutsWorkspaceConfigModel {
         if (parsedBootRepositoriesList != null) {
             return parsedBootRepositoriesList;
         }
-        CoreNutsBootOptions bOptions = NutsWorkspaceExt.of(ws).getModel().bootModel.getCoreBootOptions();
-        parsedBootRepositoriesList = NutsRepositorySelectorList.ofAll(bOptions.getOptions().getRepositories(), NutsRepositoryDB.of(session), session);
+        NutsWorkspaceBootOptions bOptions = NutsWorkspaceExt.of(ws).getModel().bootModel.getBootEffectiveOptions();
+        parsedBootRepositoriesList = NutsRepositorySelectorList.ofAll(
+                bOptions.getUserOptions().getRepositories(), NutsRepositoryDB.of(session), session);
         return parsedBootRepositoriesList;
     }
 
@@ -1408,13 +1411,13 @@ public class DefaultNutsWorkspaceConfigModel {
                     executorService = session.boot().getBootOptions().getExecutorService();
                     if (executorService == null) {
 
-                        int minPoolSize = getConfigProperty("nuts.threads.min", session).getInt(2);
+                        int minPoolSize = getConfigProperty("nuts.threads.min", session).asInt().orElse(2);
                         if (minPoolSize < 1) {
                             minPoolSize = 60;
                         } else if (minPoolSize > 500) {
                             minPoolSize = 500;
                         }
-                        int maxPoolSize = getConfigProperty("nuts.threads.max", session).getInt(60);
+                        int maxPoolSize = getConfigProperty("nuts.threads.max", session).asInt().orElse(60);
                         if (maxPoolSize < 1) {
                             maxPoolSize = 60;
                         } else if (maxPoolSize > 500) {
@@ -1425,7 +1428,7 @@ public class DefaultNutsWorkspaceConfigModel {
                         }
                         TimePeriod defaultPeriod = new TimePeriod(3, TimeUnit.SECONDS);
                         TimePeriod period = TimePeriod.parse(
-                                getConfigProperty("nuts.threads.keep-alive", session).getString(),
+                                getConfigProperty("nuts.threads.keep-alive", session).asString().orElse(null),
                                 TimeUnit.SECONDS
                         ).orElse(defaultPeriod);
                         if (period.getCount() < 0) {
@@ -1497,12 +1500,13 @@ public class DefaultNutsWorkspaceConfigModel {
         ClassLoader finalClassLoader = classLoader;
         NutsSupported<NutsPathSPI> z = Arrays.stream(getPathFactories())
                 .map(x -> {
+                    NutsSupported<NutsPathSPI> v=null;
                     try {
-                        return x.createPath(path, session, finalClassLoader);
+                        v = x.createPath(path, session, finalClassLoader);
                     } catch (Exception ex) {
                         //
                     }
-                    return null;
+                    return v;
                 })
                 .filter(x -> x != null && x.getSupportLevel() > 0)
                 .max(Comparator.comparingInt(NutsSupported::getSupportLevel))

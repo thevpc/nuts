@@ -1,14 +1,13 @@
 package net.thevpc.nuts.indexer;
 
+import net.thevpc.nuts.DefaultNutsWorkspaceOptionsBuilder;
 import net.thevpc.nuts.Nuts;
 import net.thevpc.nuts.NutsSession;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
-
-import net.thevpc.nuts.NutsBootOptions;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 @Component
 public class NutsWorkspacePool {
@@ -23,7 +22,7 @@ public class NutsWorkspacePool {
             if (app.getApplicationContext().getSession().locations().getWorkspaceLocation().toString().equals(ws)) {
                 o = app.getApplicationContext().getSession();
             } else {
-                o = Nuts.openWorkspace(new NutsBootOptions()
+                o = Nuts.openWorkspace(new DefaultNutsWorkspaceOptionsBuilder()
                         .setSkipCompanions(true)
                         .setWorkspace(ws)
                 );

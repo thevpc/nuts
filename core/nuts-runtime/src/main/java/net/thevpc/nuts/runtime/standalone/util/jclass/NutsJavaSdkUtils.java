@@ -401,7 +401,7 @@ public class NutsJavaSdkUtils {
         if (classFileId == 0) {
             classFileId = 52;
         }
-        return new DefaultNutsIdBuilder().setArtifactId("java")
+        return NutsIdBuilder.of().setArtifactId("java")
                 .setProperty("s", standard)
                 .setProperty("c", String.valueOf(classFileId))
                 .setVersion(version)

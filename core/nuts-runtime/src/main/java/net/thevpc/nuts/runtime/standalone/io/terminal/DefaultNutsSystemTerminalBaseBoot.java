@@ -4,7 +4,6 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.boot.DefaultNutsBootModel;
 import net.thevpc.nuts.runtime.standalone.io.printstream.NutsPrintStreamSystem;
 import net.thevpc.nuts.runtime.standalone.session.NutsSessionUtils;
-import net.thevpc.nuts.runtime.standalone.workspace.CoreNutsBootOptions;
 import net.thevpc.nuts.spi.*;
 
 import java.io.IOException;
@@ -28,17 +27,17 @@ public class DefaultNutsSystemTerminalBaseBoot extends NutsSystemTerminalBaseImp
     public DefaultNutsSystemTerminalBaseBoot(DefaultNutsBootModel bootModel) {
         this.session = bootModel.bootSession();
         this.workspace = session.getWorkspace();
-        NutsWorkspaceOptions bo = bootModel.getBootOptions();
+        NutsWorkspaceOptions bo = bootModel.getBootUserOptions();
         NutsBootTerminal bootStdFd = new NutsBootTerminal(
                 (bo.getStdin()==null)?System.in:bo.getStdin(),
                 (bo.getStdout()==null)?System.out:bo.getStdout(),
                 (bo.getStderr()==null)?System.err:bo.getStderr(),
                 "boot"
         );
-        CoreNutsBootOptions bOptions = bootModel.getCoreBootOptions();
-        NutsTerminalMode terminalMode = bOptions.getOptions().getTerminalMode();
+        NutsWorkspaceBootOptions bOptions = bootModel.getBootEffectiveOptions();
+        NutsTerminalMode terminalMode = bOptions.getUserOptions().getTerminalMode();
         if (terminalMode == null) {
-            if (bOptions.getOptions().isBot()) {
+            if (bOptions.getUserOptions().isBot()) {
                 terminalMode = NutsTerminalMode.FILTERED;
             } else {
                 if (bootStdFd.getFlags().contains("ansi")) {

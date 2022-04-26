@@ -5,12 +5,13 @@ import java.util.Objects;
 
 public class DefaultNutsDescriptorProperty implements NutsDescriptorProperty {
     private final String name;
-    private final String value;
+    private final NutsValue value;
     private final NutsEnvCondition condition;
-    public DefaultNutsDescriptorProperty(String name, String value, NutsEnvCondition condition) {
+
+    public DefaultNutsDescriptorProperty(String name, NutsValue value, NutsEnvCondition condition) {
         this.name = name;
         this.value = value;
-        this.condition = condition==null?NutsEnvCondition.BLANK : condition.readOnly();
+        this.condition = condition == null ? NutsEnvCondition.BLANK : condition.readOnly();
     }
 
     @Override
@@ -19,7 +20,7 @@ public class DefaultNutsDescriptorProperty implements NutsDescriptorProperty {
     }
 
     @Override
-    public String getValue() {
+    public NutsValue getValue() {
         return value;
     }
 
@@ -32,7 +33,7 @@ public class DefaultNutsDescriptorProperty implements NutsDescriptorProperty {
     public NutsDescriptorPropertyBuilder builder() {
         return new DefaultNutsDescriptorPropertyBuilder()
                 .setName(getName())
-                .setValue(getValue())
+                .setValue(getValue().asString().orNull())
                 .setCondition(getCondition());
     }
 
@@ -57,7 +58,7 @@ public class DefaultNutsDescriptorProperty implements NutsDescriptorProperty {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         DefaultNutsDescriptorProperty that = (DefaultNutsDescriptorProperty) o;
-        return Objects.equals(name, that.name) && Objects.equals(value, that.value) && Objects.equals(condition, that.condition) ;
+        return Objects.equals(name, that.name) && Objects.equals(value, that.value) && Objects.equals(condition, that.condition);
     }
 
     @Override

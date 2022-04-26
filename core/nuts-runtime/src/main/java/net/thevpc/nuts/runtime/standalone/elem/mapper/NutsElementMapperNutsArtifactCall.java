@@ -24,12 +24,13 @@ public class NutsElementMapperNutsArtifactCall implements NutsElementMapper<Nuts
 
     @Override
     public NutsArtifactCall createObject(NutsElement o, Type typeOfResult, NutsElementFactoryContext context) {
-        NutsObjectElement object = o.asObject();
-        NutsId id = (NutsId) context.elementToObject(object.get(context.elem().ofString("id")), NutsId.class);
-        String[] arguments = (String[]) context.elementToObject(object.get(context.elem().ofString("arguments")), String[].class);
+        NutsSession session = context.getSession();
+        NutsObjectElement object = o.asObject().get(session);
+        NutsId id = (NutsId) context.elementToObject(object.get(context.elem().ofString("id")).orNull(), NutsId.class);
+        String[] arguments = (String[]) context.elementToObject(object.get(context.elem().ofString("arguments")).orNull(), String[].class);
         Map<String, String> properties = (Map<String, String>) context
                 .elementToObject(object.get(context.elem().
-                        ofString("properties")), ReflectUtils.createParametrizedType(Map.class, String.class, String.class));
+                        ofString("properties")).orNull(), ReflectUtils.createParametrizedType(Map.class, String.class, String.class));
 
         return new DefaultNutsArtifactCall(id, Arrays.asList(arguments), properties);
     }

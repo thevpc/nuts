@@ -45,7 +45,7 @@ public final class JavaExecutorOptions {
     public JavaExecutorOptions(NutsDefinition def, boolean tempId, List<String> args,
                                List<String> executorOptions, String dir, NutsSession session) {
         this.session = session;
-        showCommand = getSession().boot().getBootCustomBoolArgument(false, false, false, "---show-command");
+        showCommand = CoreNutsUtils.isShowCommand(session);
         NutsId id = def.getId();
         NutsDescriptor descriptor = null;
         if (tempId) {
@@ -66,20 +66,20 @@ public final class JavaExecutorOptions {
 //        List<String> classPath0 = new ArrayList<>();
 //        List<NutsClassLoaderNode> extraCp = new ArrayList<>();
         //will accept all -- and - based options!
-        NutsCommandLine cmdLine = NutsCommandLine.of(getExecArgs(), session).setExpandSimpleOptions(false);
+        NutsCommandLine cmdLine = NutsCommandLine.of(getExecArgs()).setExpandSimpleOptions(false);
         NutsArgument a;
         List<NutsClassLoaderNode> currentCP = new ArrayList<>();
         while (cmdLine.hasNext()) {
-            a = cmdLine.peek();
-            switch (a.getKey().getString()) {
+            a = cmdLine.peek().get(session);
+            switch(a.getStringKey().orElse("")) {
                 case "--java-version":
                 case "-java-version": {
-                    javaVersion = cmdLine.nextString().getValue().getString();
+                    javaVersion = cmdLine.nextStringValueLiteral().get(session);
                     break;
                 }
                 case "--java-home":
                 case "-java-home": {
-                    javaCommand = cmdLine.nextString().getValue().getString();
+                    javaCommand = cmdLine.nextStringValueLiteral().get(session);
                     break;
                 }
                 case "--class-path":
@@ -88,7 +88,7 @@ public final class JavaExecutorOptions {
                 case "-classpath":
                 case "--cp":
                 case "-cp": {
-                    String r = cmdLine.nextString().getValue().getString();
+                    String r = cmdLine.nextStringValueLiteral().get(session);
                     addCp(currentCP, r);
                     break;
                 }
@@ -99,73 +99,73 @@ public final class JavaExecutorOptions {
                 case "-nutspath":
                 case "--np":
                 case "-np": {
-                    addNp(currentCP, cmdLine.nextString().getValue().getString());
+                    addNp(currentCP, cmdLine.nextStringValueLiteral().get(session));
                     break;
                 }
                 case "--main-class":
                 case "-main-class":
                 case "--class":
                 case "-class": {
-                    this.mainClass = cmdLine.nextString().getValue().getString();
+                    this.mainClass = cmdLine.nextStringValueLiteral().get(session);
                     break;
                 }
                 case "--dir":
                 case "-dir": {
-                    this.dir = cmdLine.nextString().getValue().getString();
+                    this.dir = cmdLine.nextStringValueLiteral().get(session);
                     break;
                 }
                 case "--win":
                 case "--javaw": {
-                    this.javaw = cmdLine.nextBoolean().getBooleanValue();
+                    this.javaw = cmdLine.nextBooleanValueLiteral().get(session);
                     break;
                 }
                 case "--jar":
                 case "-jar": {
-                    this.jar = cmdLine.nextBoolean().getBooleanValue();
+                    this.jar = cmdLine.nextBooleanValueLiteral().get(session);
                     break;
                 }
                 case "--show-command":
                 case "-show-command": {
-                    this.showCommand = cmdLine.nextBoolean().getBooleanValue();
+                    this.showCommand = cmdLine.nextBooleanValueLiteral().get(session);
                     break;
                 }
                 case "--exclude-base":
                 case "-exclude-base": {
-                    this.excludeBase = cmdLine.nextBoolean().getBooleanValue();
+                    this.excludeBase = cmdLine.nextBooleanValueLiteral().get(session);
                     break;
                 }
                 case "--add-module": {
-                    this.j9_addModules.add(cmdLine.nextString().getStringValue());
+                    this.j9_addModules.add(cmdLine.nextString().get(session).getStringValue().get(session));
                     break;
                 }
                 case "-m":
                 case "--module": {
                     //<module>/<mainclass>
-                    this.j9_module = cmdLine.nextString().getStringValue();
+                    this.j9_module = cmdLine.nextString().get(session).getStringValue().get(session);
                     break;
                 }
                 case "--module-path": {
-                    this.j9_modulePath.add(cmdLine.nextString().getStringValue());
+                    this.j9_modulePath.add(cmdLine.nextString().get(session).getStringValue().get(session));
                     break;
                 }
                 case "-splash": {
-                    this.splash = cmdLine.nextString().getStringValue();
+                    this.splash = cmdLine.nextString().get(session).getStringValue().get(session);
                     break;
                 }
                 case "--upgrade-module-path": {
-                    this.j9_upgradeModulePath.add(cmdLine.nextString().getStringValue());
+                    this.j9_upgradeModulePath.add(cmdLine.nextString().get(session).getStringValue().get(session));
                     break;
                 }
                 case "--prepend-arg": {
-                    prependArgs.add(cmdLine.nextString().getStringValue());
+                    prependArgs.add(cmdLine.nextString().get(session).getStringValue().get(session));
                     break;
                 }
                 case "--append-arg": {
-                    appendArgs.add(cmdLine.nextString().getStringValue());
+                    appendArgs.add(cmdLine.nextString().get(session).getStringValue().get(session));
                     break;
                 }
                 case "-s": {
-                    NutsArgument s = cmdLine.next();
+                    NutsArgument s = cmdLine.next().get(session);
                     getJvmArgs().add("-Dswing.aatext=true");
                     getJvmArgs().add("-Dawt.useSystemAAFontSettings=on");
                     getJvmArgs().add("-Dapple.laf.useScreenMenuBar=true");
@@ -175,7 +175,7 @@ public final class JavaExecutorOptions {
                     break;
                 }
                 default: {
-                    getJvmArgs().add(cmdLine.next().getString());
+                    getJvmArgs().add(cmdLine.next().flatMap(NutsValue::asString).get(session));
                 }
             }
         }

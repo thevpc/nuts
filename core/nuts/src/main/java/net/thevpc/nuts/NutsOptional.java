@@ -23,6 +23,10 @@ public interface NutsOptional<T> {
         return of(value, null);
     }
 
+    static <T> NutsOptional<T> ofNullable(T value) {
+        return new PrivateNutsOptionalValid<>(value);
+    }
+
     static <T> NutsOptional<T> of(T value, Function<NutsSession, NutsMessage> emptyMessage) {
         if (value == null) {
             return ofEmpty(emptyMessage);

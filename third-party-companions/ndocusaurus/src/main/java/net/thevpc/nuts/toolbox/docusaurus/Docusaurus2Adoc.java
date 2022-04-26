@@ -43,14 +43,21 @@ public class Docusaurus2Adoc {
 //    }
 
     public Docusaurus2Adoc(DocusaurusProject project) {
-        NutsObjectElement asciidoctorConfig = project.getConfig().getSafeObject("customFields").getSafeObject("asciidoctor");
+
+        NutsObjectElement asciidoctorConfig = project.getConfig()
+                .getObject("customFields").orElse(NutsObjectElement.ofEmpty(session))
+                .getObject("asciidoctor").orElse(NutsObjectElement.ofEmpty(session));
         if (asciidoctorConfig == null) {
             throw new IllegalArgumentException("missing customFields.asciidoctor in docusaurus.config.js file");
         }
-        NutsArrayElement headersJson = asciidoctorConfig.getSafeObject("pdf").getSafeArray("headers");
+        NutsArrayElement headersJson = asciidoctorConfig.getObject("pdf")
+                .orElse(NutsObjectElement.ofEmpty(session))
+                .getArray("headers")
+                .orElse(NutsArrayElement.ofEmpty(session))
+                ;
         List<String> headersList = new ArrayList<>();
         for (NutsElement jsonItem : headersJson) {
-            headersList.add(jsonItem.asString());
+            headersList.add(jsonItem.asString().get(session));
         }
         this.projectName = project.getProjectName();
         this.projectTitle = project.getTitle();

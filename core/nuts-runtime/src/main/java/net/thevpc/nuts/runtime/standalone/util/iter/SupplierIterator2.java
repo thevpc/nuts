@@ -25,7 +25,7 @@ public class SupplierIterator2<T> extends NutsIteratorBase<T> {
                         NutsDescribables.resolveOr(from, elems, () -> {
                             NutsElement t = name.apply(elems);
                             return elems.ofObject().set("type", "compiled")
-                                    .addAll(t == null ? null : t.asSafeObject(true))
+                                    .addAll(t == null ? null : t.asObject().orNull())
                                     .build();
                         })
                 )

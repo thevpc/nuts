@@ -60,11 +60,11 @@ public class DefaultJShellExecutionContext implements JShellExecutionContext {
     }
     @Override
     public boolean configureFirst(NutsCommandLine cmd) {
-        NutsArgument a = cmd.peek();
+        NutsArgument a = cmd.peek().get(session);
         if (a == null) {
             return false;
         }
-        switch (a.getKey().getString()) {
+        switch(a.getStringKey().orElse("")) {
             case "--help": {
                 cmd.skip();
                 setAskHelp(true);
@@ -109,7 +109,7 @@ public class DefaultJShellExecutionContext implements JShellExecutionContext {
     @Override
     public void configureLast(NutsCommandLine cmd) {
         if (!configureFirst(cmd)) {
-            cmd.unexpectedArgument();
+            cmd.throwUnexpectedArgument(session);
         }
     }
 

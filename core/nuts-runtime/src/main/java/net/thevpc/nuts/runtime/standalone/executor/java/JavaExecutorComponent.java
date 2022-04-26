@@ -214,10 +214,10 @@ public class JavaExecutorComponent implements NutsExecutorComponent {
                     options2.setApiVersion(nutsDependencyVersion.toString());
                     options2.setRuntimeId(null);
                 }
-                String bootArgumentsString = options2.formatter()
-                        .setExported(true)
-                        .setCompact(true)
-                        .getBootCommandLine().formatter(session).setShellFamily(NutsShellFamily.SH).setNtf(false).toString();
+                String bootArgumentsString = options2.toCommandLine(new NutsWorkspaceOptionsConfig()
+                                .setExported(true)
+                                .setCompact(true))
+                        .formatter(session).setShellFamily(NutsShellFamily.SH).setNtf(false).toString();
                 if (!NutsBlankable.isBlank(bootArgumentsString)) {
                     osEnv.put("NUTS_BOOT_ARGS", bootArgumentsString);
                     joptions.getJvmArgs().add("-Dnuts.boot.args=" + bootArgumentsString);
@@ -365,7 +365,7 @@ public class JavaExecutorComponent implements NutsExecutorComponent {
                     text.builder()
                             .append("exec", NutsTextStyle.pale())
                             .append(" ")
-                            .append(NutsCommandLine.of(cmdLine, session))
+                            .append(NutsCommandLine.of(cmdLine))
             );
         }
 

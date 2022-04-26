@@ -255,7 +255,7 @@ public class CoreNutsUtils {
                 props.putAll(parentFaceMap);
             }
             if (modified) {
-                return new DefaultNutsIdBuilder().setRepository(repository)
+                return NutsIdBuilder.of().setRepository(repository)
                         .setGroupId(group)
                         .setArtifactId(name)
                         .setVersion(version)
@@ -316,10 +316,10 @@ public class CoreNutsUtils {
 
     //    public static NutsContentType readOptionOutputFormat(NutsCommandLine cmdLine) {
 //        NutsArgument a = cmdLine.peek();
-//        switch (a.getKey().getString()) {
+//        switch(a.getStringKey().orElse("")) {
 //            case "--output-format": {
 //                a = cmdLine.nextString();
-//                return CoreEnumUtils.parseEnumString(a.getValue().getString(), NutsContentType.class, false);
+//                return CoreEnumUtils.parseEnumString(a.getStringValue(), NutsContentType.class, false);
 //            }
 //            case "--json": {
 //                a = cmdLine.nextString();
@@ -585,5 +585,24 @@ public class CoreNutsUtils {
             return t;
         }
     }
+
+    public static boolean isCustomTrue(String name,NutsSession session) {
+        return session.boot().getCustomBootOption(name)
+                .ifEmpty(NutsValue.of("true"))
+                .flatMap(NutsValue::asBoolean)
+                .orElse(false);
+    }
+    public static boolean isCustomFalse(String name,NutsSession session) {
+        return session.boot().getCustomBootOption(name)
+                .flatMap(NutsValue::asBoolean)
+                .orElse(false);
+    }
+
+    public static boolean isShowCommand(NutsSession session) {
+        return session.boot().getCustomBootOption("---show-command")
+                .flatMap(NutsValue::asBoolean)
+                .orElse(false);
+    }
+
 
 }

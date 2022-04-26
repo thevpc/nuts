@@ -31,54 +31,54 @@ public class NJobsSubCmd {
         boolean list = false;
         boolean show = false;
         while (cmd.hasNext()) {
-            NutsArgument a = cmd.peek();
-            switch (a.getKey().getString()) {
+            NutsArgument a = cmd.peek().get();
+            switch (a.getStringKey().orElse("")) {
                 case "--list":
                 case "-l": {
-                    list = cmd.nextBoolean().getBooleanValue();
+                    list = cmd.nextBooleanValueLiteral().get(session);
                     break;
                 }
                 case "--show":
                 case "-s": {
-                    show = cmd.nextBoolean().getBooleanValue();
+                    show = cmd.nextBooleanValueLiteral().get(session);
                     break;
                 }
                 case "--time":
                 case "--on":
                 case "--start":
                 case "-t": {
-                    t.setStartTime(new TimeParser().parseInstant(cmd.nextString().getValue().getString(), false));
+                    t.setStartTime(new TimeParser().parseInstant(cmd.nextStringValueLiteral().get(session), false));
                     break;
                 }
                 case "--at": {
-                    t.setStartTime(new TimeParser().setTimeOnly(true).parseInstant(cmd.nextString().getValue().getString(), false));
+                    t.setStartTime(new TimeParser().setTimeOnly(true).parseInstant(cmd.nextStringValueLiteral().get(session), false));
                     break;
                 }
                 case "--for":
                 case "--project":
                 case "-p": {
-                    t.setProject(cmd.nextString().getValue().getString());
+                    t.setProject(cmd.nextStringValueLiteral().get(session));
                     break;
                 }
                 case "--obs":
                 case "-o": {
-                    t.setObservations(cmd.nextString().getValue().getString());
+                    t.setObservations(cmd.nextStringValueLiteral().get(session));
                     break;
                 }
                 case "--duration":
                 case "-d": {
-                    t.setDuration(TimePeriod.parse(cmd.nextString().getValue().getString(), false));
+                    t.setDuration(TimePeriod.parse(cmd.nextStringValueLiteral().get(session), false));
                     break;
                 }
                 default: {
                     if (a.isNonOption()) {
                         if (t.getName() == null) {
-                            t.setName(cmd.next().toString());
+                            t.setName(cmd.next().get(session).toString());
                         } else {
-                            cmd.unexpectedArgument();
+                            cmd.throwUnexpectedArgument(session);
                         }
                     } else {
-                        cmd.unexpectedArgument();
+                        cmd.throwUnexpectedArgument(session);
                     }
                 }
             }
@@ -92,10 +92,10 @@ public class NJobsSubCmd {
                 );
             }
             if (show) {
-                runJobShow(NutsCommandLine.of(new String[]{t.getId()}, session));
+                runJobShow(NutsCommandLine.of(new String[]{t.getId()}));
             }
             if (list) {
-                runJobList(NutsCommandLine.of(new String[0], session));
+                runJobList(NutsCommandLine.of(new String[0]));
             }
         }
     }
@@ -106,62 +106,62 @@ public class NJobsSubCmd {
         boolean show = false;
         List<Consumer<NJob>> runLater = new ArrayList<>();
         while (cmd.hasNext()) {
-            NutsArgument a = cmd.peek();
-            switch (a.getKey().getString()) {
+            NutsArgument a = cmd.peek().get(session);
+            switch (a.getStringKey().orElse("")) {
                 case "--list":
                 case "-l": {
-                    list = cmd.nextBoolean().getBooleanValue();
+                    list = cmd.nextBooleanValueLiteral().get(session);
                     break;
                 }
                 case "--show":
                 case "-s": {
-                    show = cmd.nextBoolean().getBooleanValue();
+                    show = cmd.nextBooleanValueLiteral().get(session);
                     break;
                 }
                 case "--start": {
-                    Instant v = new TimeParser().parseInstant(cmd.nextString().getValue().getString(), false);
+                    Instant v = new TimeParser().parseInstant(cmd.nextStringValueLiteral().get(session), false);
                     runLater.add(t -> t.setStartTime(v));
                     break;
                 }
                 case "-t":
                 case "--on": {
-                    String v = cmd.nextString().getValue().getString();
+                    String v = cmd.nextStringValueLiteral().get(session);
                     runLater.add(t -> t.setStartTime(TimePeriod.parseOpPeriodAsInstant(v, t.getStartTime(), true)));
                     break;
                 }
                 case "--at": {
-                    Instant v = new TimeParser().setTimeOnly(true).parseInstant(cmd.nextString().getValue().getString(), false);
+                    Instant v = new TimeParser().setTimeOnly(true).parseInstant(cmd.nextStringValueLiteral().get(session), false);
                     runLater.add(t -> t.setStartTime(v));
                     break;
                 }
                 case "-d":
                 case "--duration": {
-                    TimePeriod v = TimePeriod.parse(cmd.nextString().getValue().getString(), false);
+                    TimePeriod v = TimePeriod.parse(cmd.nextStringValueLiteral().get(session), false);
                     runLater.add(t -> t.setDuration(v));
                     break;
                 }
                 case "-n":
                 case "--name": {
-                    String v = cmd.nextString().getValue().getString();
+                    String v = cmd.nextStringValueLiteral().get(session);
                     runLater.add(t -> t.setName(v));
                     break;
                 }
                 case "-p":
                 case "--project": {
-                    String v = cmd.nextString().getValue().getString();
+                    String v = cmd.nextStringValueLiteral().get(session);
                     runLater.add(t -> t.setProject(v));
                     break;
                 }
                 case "-o":
                 case "--obs": {
-                    String v = cmd.nextString().getValue().getString();
+                    String v = cmd.nextStringValueLiteral().get(session);
                     runLater.add(t -> t.setObservations(v));
                     break;
                 }
                 case "-o+":
                 case "--obs+":
                 case "+obs": {
-                    String v = cmd.nextString().getValue().getString();
+                    String v = cmd.nextStringValueLiteral().get(session);
                     runLater.add(t -> {
                         String s = t.getObservations();
                         if (s == null) {
@@ -179,16 +179,16 @@ public class NJobsSubCmd {
                 }
                 default: {
                     if (a.isNonOption()) {
-                        NJob t = findJob(cmd.next().toString(), cmd);
+                        NJob t = findJob(cmd.next().get(session).toString(), cmd);
                         jobs.add(t);
                     } else {
-                        cmd.unexpectedArgument();
+                        cmd.throwUnexpectedArgument(session);
                     }
                 }
             }
         }
         if (jobs.isEmpty()) {
-            cmd.throwError(NutsMessage.formatted("job id expected"));
+            cmd.throwError(NutsMessage.formatted("job id expected"), session);
         }
         if (cmd.isExecMode()) {
             for (NJob job : jobs) {
@@ -208,11 +208,11 @@ public class NJobsSubCmd {
             }
             if (show) {
                 for (NJob t : new LinkedHashSet<>(jobs)) {
-                    runJobList(NutsCommandLine.of(new String[]{t.getId()}, session));
+                    runJobList(NutsCommandLine.of(new String[]{t.getId()}));
                 }
             }
             if (list) {
-                runJobList(NutsCommandLine.of(new String[0], session));
+                runJobList(NutsCommandLine.of(new String[0]));
             }
         }
     }
@@ -248,7 +248,7 @@ public class NJobsSubCmd {
     private void runJobRemove(NutsCommandLine cmd) {
         NutsTexts text = NutsTexts.of(context.getSession());
         while (cmd.hasNext()) {
-            NutsArgument a = cmd.next();
+            NutsArgument a = cmd.next().get(session);
             NJob t = findJob(a.toString(), cmd);
             if (cmd.isExecMode()) {
                 if (service.jobs().removeJob(t.getId())) {
@@ -270,7 +270,7 @@ public class NJobsSubCmd {
 
     private void runJobShow(NutsCommandLine cmd) {
         while (cmd.hasNext()) {
-            NutsArgument a = cmd.next();
+            NutsArgument a = cmd.next().get(session);
             if (cmd.isExecMode()) {
                 NJob job = findJob(a.toString(), cmd);
                 if (job == null) {
@@ -308,28 +308,28 @@ public class NJobsSubCmd {
         ChronoUnit timeUnit = null;
         Predicate<NJob> whereFilter = null;
         while (cmd.hasNext()) {
-            NutsArgument a = cmd.peek();
-            switch (a.getKey().getString()) {
+            NutsArgument a = cmd.peek().get(session);
+            switch (a.getStringKey().orElse("")) {
                 case "-w":
                 case "--weeks": {
                     countType = ChronoUnit.WEEKS;
-                    count = cmd.nextString().getValue().getInt();
+                    count = cmd.nextString().get(session).getValue().asInt().get(session);
                     break;
                 }
                 case "-m":
                 case "--months": {
                     countType = ChronoUnit.MONTHS;
-                    count = cmd.nextString().getValue().getInt();
+                    count = cmd.nextString().get(session).getValue().asInt().get(session);
                     break;
                 }
                 case "-l": {
                     countType = null;
-                    count = cmd.nextString().getValue().getInt();
+                    count = cmd.nextString().get(session).getValue().asInt().get(session);
                     break;
                 }
                 case "-u":
                 case "--unit": {
-                    timeUnit = TimePeriod.parseUnit(cmd.nextString().getValue().getString(), false);
+                    timeUnit = TimePeriod.parseUnit(cmd.nextStringValueLiteral().get(session), false);
                     break;
                 }
                 case "-g":
@@ -337,8 +337,8 @@ public class NJobsSubCmd {
                 case "--groupBy":
                 case "--groupby":
                 case "--group-by": {
-                    NutsArgument y = cmd.nextString();
-                    switch (y.getValue().getString()) {
+                    NutsArgument y = cmd.nextString().get(session);
+                    switch (y.getStringValue().get(session)) {
                         case "p":
                         case "project": {
                             groupBy = NJobGroup.PROJECT_NAME;
@@ -355,21 +355,21 @@ public class NJobsSubCmd {
                             break;
                         }
                         default: {
-                            cmd.pushBack(y).unexpectedArgument(NutsMessage.cstyle("invalid value"));
+                            cmd.pushBack(y, session).throwUnexpectedArgument(NutsMessage.cstyle("invalid value"), session);
                         }
                     }
                     break;
                 }
                 case "-p":
                 case "--project": {
-                    String s = cmd.nextString().getValue().getString();
+                    String s = cmd.nextStringValueLiteral().get(session);
                     Predicate<String> sp = parent.createProjectFilter(s);
                     Predicate<NJob> t = x -> sp.test(x.getProject());
                     whereFilter = parent.appendPredicate(whereFilter, t);
                     break;
                 }
                 case "--name": {
-                    String s = cmd.nextString().getValue().getString();
+                    String s = cmd.nextStringValueLiteral().get(session);
                     Predicate<String> sp = parent.createStringFilter(s);
                     Predicate<NJob> t = x -> sp.test(x.getName());
                     whereFilter = parent.appendPredicate(whereFilter, t);
@@ -377,7 +377,7 @@ public class NJobsSubCmd {
                 }
                 case "-b":
                 case "--beneficiary": {
-                    String s = cmd.nextString().getValue().getString();
+                    String s = cmd.nextStringValueLiteral().get(session);
                     Predicate<String> sp = parent.createStringFilter(s);
                     Predicate<NJob> t = x -> {
                         NProject project = service.projects().getProject(x.getProject());
@@ -388,7 +388,7 @@ public class NJobsSubCmd {
                 }
                 case "-c":
                 case "--company": {
-                    String s = cmd.nextString().getValue().getString();
+                    String s = cmd.nextStringValueLiteral().get(session);
                     Predicate<String> sp = parent.createStringFilter(s);
                     Predicate<NJob> t = x -> {
                         NProject project = service.projects().getProject(x.getProject());
@@ -399,7 +399,7 @@ public class NJobsSubCmd {
                 }
                 case "-d":
                 case "--duration": {
-                    String s = cmd.nextString().getValue().getString();
+                    String s = cmd.nextStringValueLiteral().get(session);
                     Predicate<TimePeriod> p = TimePeriod.parseFilter(s, false);
                     Predicate<NJob> t = x -> p.test(x.getDuration());
                     whereFilter = parent.appendPredicate(whereFilter, t);
@@ -408,13 +408,13 @@ public class NJobsSubCmd {
                 case "-t":
                 case "--startTime":
                 case "--start-time": {
-                    String s = cmd.nextString().getValue().getString();
+                    String s = cmd.nextStringValueLiteral().get(session);
                     Predicate<Instant> t = new TimeParser().parseInstantFilter(s, false);
                     whereFilter = parent.appendPredicate(whereFilter, x -> t.test(x.getStartTime()));
                     break;
                 }
                 default: {
-                    cmd.unexpectedArgument();
+                    cmd.throwUnexpectedArgument(session);
                 }
             }
         }
@@ -475,7 +475,7 @@ public class NJobsSubCmd {
             t = service.jobs().getJob(pid);
         }
         if (t == null) {
-            cmd.throwError(NutsMessage.cstyle("job not found: %s", pid));
+            cmd.throwError(NutsMessage.cstyle("job not found: %s", pid), session);
         }
         return t;
     }

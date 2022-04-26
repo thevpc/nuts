@@ -19,7 +19,6 @@ public class NutsElementMapperCommandLine implements NutsElementMapper<NutsComma
     @Override
     public NutsCommandLine createObject(NutsElement o, Type to, NutsElementFactoryContext context) {
         String[] i = context.defaultElementToObject(o, String[].class);
-        NutsSession session = context.getSession();
-        return NutsCommandLine.of(i,session);
+        return NutsCommandLine.of(i);
     }
 }

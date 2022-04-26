@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.elem.mapper;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.standalone.elem.DefaultNutsElementEntry;
+import net.thevpc.nuts.DefaultNutsElementEntry;
 
 import java.lang.reflect.Type;
 import java.util.*;
@@ -14,15 +14,16 @@ public class NutsElementMapperNutsElement implements NutsElementMapper<NutsEleme
 
     @Override
     public Object destruct(NutsElement src, Type typeOfSrc, NutsElementFactoryContext context) {
+        NutsSession session = context.getSession();
         switch (src.type()) {
             case ARRAY: {
-                return src.asArray().children().stream().map(x -> context.destruct(x, null)).collect(Collectors.toList());
+                return src.asArray().get(session).items().stream().map(x -> context.destruct(x, null)).collect(Collectors.toList());
             }
             case OBJECT: {
                 Set<Object> visited = new HashSet<>();
                 boolean map = true;
                 List<Map.Entry<Object, Object>> all = new ArrayList<>();
-                for (NutsElementEntry nutsElementEntry : src.asObject().children()) {
+                for (NutsElementEntry nutsElementEntry : src.asObject().get(session).entries()) {
                     Object k = context.destruct(nutsElementEntry.getKey(), null);
                     Object v = context.destruct(nutsElementEntry.getValue(), null);
                     if (map && visited.contains(k)) {
@@ -52,12 +53,13 @@ public class NutsElementMapperNutsElement implements NutsElementMapper<NutsEleme
 
     @Override
     public NutsElement createElement(NutsElement src, Type typeOfSrc, NutsElementFactoryContext context) {
+        NutsSession session = context.getSession();
         if(src.type().isPrimitive()){
             return src;
         }
         switch (src.type()){
             case ARRAY:{
-                NutsArrayElement arr = src.asArray();
+                NutsArrayElement arr = src.asArray().get(session);
                 List<NutsElement> children=new ArrayList<>(arr.size());
                 boolean someChange=false;
                 for (NutsElement c : arr) {
@@ -73,7 +75,7 @@ public class NutsElementMapperNutsElement implements NutsElementMapper<NutsEleme
                 return src;
             }
             case OBJECT:{
-                NutsObjectElement obj = src.asObject();
+                NutsObjectElement obj = src.asObject().get(session);
                 List<NutsElementEntry> children=new ArrayList<>(obj.size());
                 boolean someChange=false;
                 for (NutsElementEntry e : obj) {
@@ -101,7 +103,7 @@ public class NutsElementMapperNutsElement implements NutsElementMapper<NutsEleme
                 return src;
             }
             case CUSTOM:{
-                Object v1 = src.asCustom().getValue();
+                Object v1 = src.asCustom().get(session).getValue();
                 if(context.getIndestructibleObjects()!=null && context.getIndestructibleObjects().test(v1.getClass())){
                     return src;
                 }

@@ -8,8 +8,8 @@ import net.thevpc.nuts.spi.NutsSupportLevelContext;
 public class DefaultNutsCommandLineFormat extends DefaultFormatBase<NutsCommandLineFormat> implements NutsCommandLineFormat {
 
     private NutsCommandLine value;
-    private NutsShellFamily formatFamily=NutsShellFamily.getCurrent();
-    private NutsCommandLineFormatStrategy formatStrategy=NutsCommandLineFormatStrategy.DEFAULT;
+    private NutsShellFamily formatFamily = NutsShellFamily.getCurrent();
+    private NutsCommandLineFormatStrategy formatStrategy = NutsCommandLineFormatStrategy.DEFAULT;
 
     public DefaultNutsCommandLineFormat(NutsSession session) {
         super(session, "commandline");
@@ -29,19 +29,20 @@ public class DefaultNutsCommandLineFormat extends DefaultFormatBase<NutsCommandL
     @Override
     public NutsCommandLineFormat setValue(String[] args) {
         checkSession();
-        return setValue(args == null ? null : NutsCommandLine.of(args,getSession()));
+        return setValue(args == null ? null : NutsCommandLine.of(args));
     }
 
     @Override
     public NutsCommandLineFormat setValue(String args) {
-        return setValue(args == null ? null : NutsCommandLine.of(args,getSession()));
+        return setValue(args == null ? null : NutsCommandLines.of(getSession()).parseCommandline(args));
     }
+
     public NutsShellFamily getShellFamily() {
         return formatFamily;
     }
 
     public NutsCommandLineFormat setShellFamily(NutsShellFamily family) {
-        this.formatFamily = family==null?NutsShellFamily.getCurrent() : family;
+        this.formatFamily = family == null ? NutsShellFamily.getCurrent() : family;
         return this;
     }
 
@@ -50,7 +51,7 @@ public class DefaultNutsCommandLineFormat extends DefaultFormatBase<NutsCommandL
     }
 
     public void setFormatStrategy(NutsCommandLineFormatStrategy formatStrategy) {
-        this.formatStrategy = formatStrategy==null?NutsCommandLineFormatStrategy.DEFAULT : formatStrategy;
+        this.formatStrategy = formatStrategy == null ? NutsCommandLineFormatStrategy.DEFAULT : formatStrategy;
     }
 
     @Override
@@ -69,12 +70,12 @@ public class DefaultNutsCommandLineFormat extends DefaultFormatBase<NutsCommandL
         if (value != null) {
             String cmd =
                     NutsShellHelper.of(getShellFamily())
-                    .escapeArguments(value.toStringArray(),
-                            new NutsCommandLineShellOptions()
-                                    .setSession(getSession())
-                                    .setFormatStrategy(getFormatStrategy())
-                                    .setExpectEnv(true)
-                    );
+                            .escapeArguments(value.toStringArray(),
+                                    new NutsCommandLineShellOptions()
+                                            .setSession(getSession())
+                                            .setFormatStrategy(getFormatStrategy())
+                                            .setExpectEnv(true)
+                            );
             if (isNtf()) {
                 out.print("```system " + cmd + " ```");
             } else {

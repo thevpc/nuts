@@ -86,11 +86,12 @@ public class NutsElementFactoryXmlElement implements NutsElementMapper<Node> {
     }
 
     protected Node createObject0(NutsElement elem, Type typeOfResult, NutsElementFactoryContext context) {
+        NutsSession session = context.getSession();
         if (context.getProperties().get(Document.class.getName()) == null || !(context.getProperties().get(Document.class.getName()) instanceof Stack)) {
             Stack<Document> docs = new Stack<>();
             context.getProperties().put(Document.class.getName(), docs);
             try {
-                docs.push(XmlUtils.createDocument(context.getSession()));
+                docs.push(XmlUtils.createDocument(session));
                 return createObject(elem, typeOfResult, context);
             } finally {
                 docs.pop();
@@ -99,7 +100,7 @@ public class NutsElementFactoryXmlElement implements NutsElementMapper<Node> {
             Stack<Document> docs = (Stack<Document>) context.getProperties().get(Document.class.getName());
             if (docs.isEmpty()) {
                 try {
-                    docs.push(XmlUtils.createDocument(context.getSession()));
+                    docs.push(XmlUtils.createDocument(session));
                     return createObject(elem, typeOfResult, context);
                 } finally {
                     docs.pop();
@@ -116,7 +117,7 @@ public class NutsElementFactoryXmlElement implements NutsElementMapper<Node> {
             }
             case STRING: {
                 Element e = doc.createElement("string");
-                final String s = elem.asPrimitive().getString();
+                final String s = elem.asString().get(session);
                 if (isComplexString(s)) {
                     e.setTextContent(s);
                 } else {
@@ -135,47 +136,47 @@ public class NutsElementFactoryXmlElement implements NutsElementMapper<Node> {
 //                return e;
 //            }
             case BOOLEAN: {
-                return doc.createElement(String.valueOf(elem.asPrimitive().getBoolean()));
+                return doc.createElement(String.valueOf(elem.asBoolean()));
             }
             case BYTE: {
                 Element e = doc.createElement("byte");
-                e.setAttribute("value", String.valueOf(elem.asPrimitive().getByte()));
+                e.setAttribute("value", String.valueOf(elem.asByte()));
                 return e;
             }
             case SHORT: {
                 Element e = doc.createElement("short");
-                e.setAttribute("value", String.valueOf(elem.asPrimitive().getShort()));
+                e.setAttribute("value", String.valueOf(elem.asShort()));
                 return e;
             }
             case INTEGER: {
                 Element e = doc.createElement("int");
-                e.setAttribute("value", String.valueOf(elem.asPrimitive().getInt()));
+                e.setAttribute("value", String.valueOf(elem.asInt()));
                 return e;
             }
             case LONG: {
                 Element e = doc.createElement("long");
-                e.setAttribute("value", String.valueOf(elem.asPrimitive().getLong()));
+                e.setAttribute("value", String.valueOf(elem.asLong()));
                 return e;
             }
             case FLOAT: {
                 Element e = doc.createElement("float");
-                e.setAttribute("value", String.valueOf(elem.asPrimitive().getFloat()));
+                e.setAttribute("value", String.valueOf(elem.asFloat()));
                 return e;
             }
             case DOUBLE: {
                 Element e = doc.createElement("double");
-                e.setAttribute("value", String.valueOf(elem.asPrimitive().getDouble()));
+                e.setAttribute("value", String.valueOf(elem.asDouble()));
                 return e;
             }
             case INSTANT: {
                 Element e = doc.createElement("instant");
-                e.setAttribute("value", elem.asPrimitive().getInstant().toString());
+                e.setAttribute("value", elem.asInstant().toString());
                 return e;
             }
             case ARRAY: {
                 Element e = doc.createElement("array");
                 int count = 0;
-                for (NutsElement attribute : elem.asArray().children()) {
+                for (NutsElement attribute : elem.asArray().get(session).items()) {
                     Node c = createObject(attribute, Element.class, context);
                     if (c != null) {
                         e.appendChild(c);
@@ -186,10 +187,10 @@ public class NutsElementFactoryXmlElement implements NutsElementMapper<Node> {
             }
             case OBJECT: {
                 Element obj = doc.createElement("object");
-                for (NutsElementEntry ne : elem.asObject().children()) {
+                for (NutsElementEntry ne : elem.asObject().get(session).entries()) {
                     final NutsElementType kt = ne.getKey().type();
                     boolean complexKey = kt == NutsElementType.ARRAY || kt == NutsElementType.OBJECT
-                            || (kt == NutsElementType.STRING && isComplexString(ne.getKey().asPrimitive().getString())) //                            || (kt == NutsElementType.NUTS_STRING && isComplexString(ne.getKey().asPrimitive().getString()))
+                            || (kt == NutsElementType.STRING && isComplexString(ne.getKey().asString().get(session)))
                             ;
                     if (complexKey) {
                         Element entry = doc.createElement("entry");
@@ -202,11 +203,11 @@ public class NutsElementFactoryXmlElement implements NutsElementMapper<Node> {
                         obj.appendChild(entry);
                     } else {
                         String tagName
-                                = ne.getKey().type() == NutsElementType.BOOLEAN ? ne.getKey().asPrimitive().getString()
+                                = ne.getKey().type() == NutsElementType.BOOLEAN ? ne.getKey().asString().get(session)
                                 : ne.getKey().type().id();
                         Element entryElem = (Element) doc.createElement(tagName);
                         if (ne.getKey().type() != NutsElementType.BOOLEAN && ne.getKey().type() != NutsElementType.NULL) {
-                            entryElem.setAttribute("key", ne.getKey().asPrimitive().getString());
+                            entryElem.setAttribute("key", ne.getKey().asString().get(session));
                         }
                         switch (ne.getValue().type()) {
                             case ARRAY:
@@ -223,12 +224,12 @@ public class NutsElementFactoryXmlElement implements NutsElementMapper<Node> {
                                 break;
                             }
                             case STRING: {
-                                entryElem.setAttribute("value", ne.getValue().asPrimitive().getString());
+                                entryElem.setAttribute("value", ne.getValue().asString().get(session));
                                 obj.appendChild(entryElem);
                                 break;
                             }
                             default: {
-                                entryElem.setAttribute("value", ne.getValue().asPrimitive().getString());
+                                entryElem.setAttribute("value", ne.getValue().asString().get(session));
                                 entryElem.setAttribute("value-type", ne.getValue().type().id());
                                 obj.appendChild(entryElem);
                                 break;
@@ -308,7 +309,7 @@ public class NutsElementFactoryXmlElement implements NutsElementMapper<Node> {
     }
 
     public boolean isSimpleObject(NutsObjectElement obj) {
-        for (NutsElementEntry attribute : obj.children()) {
+        for (NutsElementEntry attribute : obj.entries()) {
             final NutsElementType tt = attribute.getKey().type();
             if (tt == NutsElementType.OBJECT || tt == NutsElementType.ARRAY) {
                 return false;

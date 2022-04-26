@@ -31,6 +31,7 @@ public class NutsMvnMain implements NutsApplication {
 
     @Override
     public void run(NutsApplicationContext appContext) {
+        NutsSession session = appContext.getSession();
         String command = null;
         List<String> args2 = new ArrayList<>();
         Options o = new Options();
@@ -40,18 +41,18 @@ public class NutsMvnMain implements NutsApplication {
             if (command == null) {
                 if (appContext.configureFirst(cmd)) {
                     //fo nothing
-                } else if ((a = cmd.nextBoolean("-j", "--json")) != null) {
-                    o.json = a.getBooleanValue();
-                } else if ((a = cmd.next("build")) != null) {
+                } else if ((a = cmd.nextBoolean("-j", "--json").orNull()) != null) {
+                    o.json = a.getBooleanValue().get(session);
+                } else if ((a = cmd.next("build").orNull()) != null) {
                     command = "build";
-                } else if ((a = cmd.next("get")) != null) {
+                } else if ((a = cmd.next("get").orNull()) != null) {
                     command = "get";
                 } else {
                     command = "default";
-                    args2.add(cmd.next().getString());
+                    args2.add(cmd.next().flatMap(NutsValue::asString).get(session));
                 }
             } else {
-                args2.add(cmd.next().getString());
+                args2.add(cmd.next().flatMap(NutsValue::asString).get(session));
             }
         }
         if (command == null) {
@@ -77,7 +78,7 @@ public class NutsMvnMain implements NutsApplication {
                     if (r == 0) {
                         return;
                     } else {
-                        throw new NutsExecutionException(appContext.getSession(), NutsMessage.cstyle("Maven Call exited with code %d", r), r);
+                        throw new NutsExecutionException(session, NutsMessage.cstyle("Maven Call exited with code %d", r), r);
                     }
                 }
                 case "get": {
@@ -95,7 +96,7 @@ public class NutsMvnMain implements NutsApplication {
                     if (repo != null) {
                         cli.setRepoUrl(repo);
                     }
-                    Path dir = createTempPom(appContext.getSession());
+                    Path dir = createTempPom(session);
                     cli.setWorkingDirectory(dir.toString());
                     int r = callMvn(cli,appContext, o,  "dependency:get");
                     try {
@@ -106,7 +107,7 @@ public class NutsMvnMain implements NutsApplication {
                     if (r == 0) {
                         return;
                     } else {
-                        throw new NutsExecutionException(appContext.getSession(), NutsMessage.cstyle("Maven Call exited with code %s", r), r);
+                        throw new NutsExecutionException(session, NutsMessage.cstyle("Maven Call exited with code %s", r), r);
                     }
                 }
             }

@@ -24,18 +24,15 @@ public class Hello extends SimpleJShellBuiltin {
 
     /**
      * simple constructor, it defines mainly what is the command name (here
-     * 'hello'), the class used to gather options (here an internal/private
-     * Options.class) and the support level (just ignore this, it is used to
-     * help overriding existing commands, let's say if you want to replace the
-     * implementation of 'ls')
+     * 'hello') and a supplier used create options instance (here an internal/private
+     * class 'Options')
      */
     public Hello() {
-        super("hello", DEFAULT_SUPPORT, Options.class);
+        super("hello", Options::new);
     }
 
     /**
-     * your special Options class. It can be private. Beware it need to have a
-     * default constructor (or none at all)
+     * your special Options class. It can be private.
      */
     private static class Options {
 
@@ -58,23 +55,30 @@ public class Hello extends SimpleJShellBuiltin {
      */
     @Override
     protected boolean configureFirst(NutsCommandLine cmdline, JShellExecutionContext ctx) {
+        NutsSession session = ctx.getSession();
         //get an instance of the current options object we are filling.
         Options o = ctx.getOptions();
         //get the next option (without consuming it)
-        NutsArgument a = cmdline.peek();
+        NutsArgument a = cmdline.peek().get(session);
         // arguments can be options in the form --key=value or -k=value
         //if not an option, the key will be resolved to all of the argument
-        switch (a.getKey().getString("")) {
+        switch (a.key()) {
             case "--who": {
                 //consume the next argument
                 //which is of the form
                 //        --who=me
                 //        or (using spaces)
                 //        --who me
-                a = cmdline.nextString();
-                //get the value 'me' from the option
-                o.who = a.getValue().asString();
-                //return true to say that the option was successfully proocessed
+                a = cmdline.nextString().get(session);
+                if(a.isActive()) {
+                    //get the value 'me' from the option
+                    o.who = a.getStringValue().get(session);
+                }
+                if(a.isActive()) {
+                    //get the value 'me' from the option
+                    o.who = a.getStringValue().get(session);
+                }
+                //return true to say that the option was successfully processed
                 return true;
             }
             case "-c":
@@ -86,10 +90,10 @@ public class Hello extends SimpleJShellBuiltin {
                 //        --complex
                 //        it can even be negated with '~' or '!'
                 //        --!complex
-                a = cmdline.nextBoolean();
+                a = cmdline.nextBoolean().get(session);
                 //get the value 'me' from the option
-                o.complex = a.getBooleanValue();
-                //return true to say that the option was successfully proocessed
+                o.complex = a.getBooleanValue().get(session);
+                //return true to say that the option was successfully processed
                 return true;
             }
         }
@@ -105,15 +109,15 @@ public class Hello extends SimpleJShellBuiltin {
             // print any object (it can be a simple string of course)
             // it will be formatted according to your "output format" (aka json, or any thing else)
             // you can try running your app with
-            // nuts olfa-shell --json -c hello --complex --who=NoneOfYourBusiness
+            // nuts my-shell --json -c hello --complex --who=NoneOfYourBusiness
             session.out().printf(new HashMap.SimpleEntry<String, String>(
                     "hello",
                     o.who == null ? System.getProperty("user.home") : o.who
             ));
         } else {
             // print a formatted string.
-            // the name will b in blue!
-            // nuts olfa-shell --json -c hello --~complex --who=NoneOfYourBusiness
+            // the name will be in blue!
+            // nuts my-shell --json -c hello --~complex --who=NoneOfYourBusiness
             // '##' is used to enclose the text we want in blue!
             // '###' for another color
             // you can see NTF for more details on coloring

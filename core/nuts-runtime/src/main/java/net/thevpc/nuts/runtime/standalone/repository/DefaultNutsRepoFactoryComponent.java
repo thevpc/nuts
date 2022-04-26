@@ -92,7 +92,7 @@ public class DefaultNutsRepoFactoryComponent implements NutsRepositoryFactoryCom
             } else if (NutsPath.of(config.getLocation().getPath(), session).isURL()) {
                 Map<String, String> e = config.getEnv();
                 if (e != null) {
-                    if (NutsUtilStrings.parseBoolean(e.get("nuts-api-server"), false, false)) {
+                    if (NutsUtilStrings.parseBoolean(e.get("nuts-api-server")).orElse(false)) {
                         return (new NutsHttpSrvRepository(options, session, parentRepository));
                     }
                 }

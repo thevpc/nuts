@@ -22,23 +22,22 @@ public class NutsElementMapperEnum implements NutsElementMapper<Enum> {
 
     @Override
     public Enum createObject(NutsElement o, Type to, NutsElementFactoryContext context) {
+        NutsSession session = context.getSession();
         switch (o.type()) {
             case BYTE:
             case SHORT:
             case INTEGER:
             case LONG: {
-                NutsPrimitiveElement p = o.asPrimitive();
-                return (Enum) ((Class) to).getEnumConstants()[p.getInt()];
+                return (Enum) ((Class) to).getEnumConstants()[o.asInt().get(session)];
             }
             case STRING: {
-                NutsPrimitiveElement p = o.asPrimitive();
                 Class cc = ReflectUtils.getRawClass(to);
                 if(NutsEnum.class.isAssignableFrom(cc)){
-                    return (Enum) NutsEnum.parse(cc, p.getString()).get(context.getSession());
+                    return (Enum) NutsEnum.parse(cc, o.asString().get(session)).get(session);
                 }
-                return Enum.valueOf(cc, p.getString());
+                return Enum.valueOf(cc, o.asString().get(session));
             }
         }
-        throw new NutsUnsupportedEnumException(context.getSession(), o.type());
+        throw new NutsUnsupportedEnumException(session, o.type());
     }
 }

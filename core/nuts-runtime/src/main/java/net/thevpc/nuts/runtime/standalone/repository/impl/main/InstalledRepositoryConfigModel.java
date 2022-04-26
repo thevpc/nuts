@@ -269,7 +269,7 @@ class InstalledRepositoryConfigModel implements NutsRepositoryConfigModel {
     @Override
     public String get(String key, String defaultValue, boolean inherit, NutsSession session) {
         if (inherit) {
-            return session.config().getConfigProperty(key).getString(defaultValue);
+            return session.config().getConfigProperty(key).asString().orElse(defaultValue);
         }
         return null;
     }

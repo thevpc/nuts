@@ -28,6 +28,7 @@ package net.thevpc.nuts.toolbox.nsh.cmds;
 
 import net.thevpc.nuts.NutsArgument;
 import net.thevpc.nuts.NutsCommandLine;
+import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.spi.NutsComponentScope;
 import net.thevpc.nuts.spi.NutsComponentScopeType;
 import net.thevpc.nuts.toolbox.nsh.SimpleJShellBuiltin;
@@ -49,8 +50,9 @@ public class DirNameCommand extends SimpleJShellBuiltin {
     @Override
     protected boolean configureFirst(NutsCommandLine cmdLine, JShellExecutionContext context) {
         Options options = context.getOptions();
-        NutsArgument a = cmdLine.peek();
-        switch (a.getKey().getString()) {
+        NutsSession session = context.getSession();
+        NutsArgument a = cmdLine.peek().get(session);
+        switch(a.getStringKey().orElse("")) {
             case "-z":
             case "--zero": {
                 cmdLine.skip();
@@ -61,7 +63,7 @@ public class DirNameCommand extends SimpleJShellBuiltin {
                 if (a.isOption()) {
 
                 } else {
-                    options.names.add(cmdLine.next().toString());
+                    options.names.add(cmdLine.next().get(session).toString());
                     return true;
                 }
             }
@@ -72,8 +74,9 @@ public class DirNameCommand extends SimpleJShellBuiltin {
     @Override
     protected void execBuiltin(NutsCommandLine cmdLine, JShellExecutionContext context) {
         Options options = context.getOptions();
+        NutsSession session = context.getSession();
         if (options.names.isEmpty()) {
-            cmdLine.required();
+            cmdLine.throwMissingArgument(session);
         }
         List<String> results = new ArrayList<>();
         for (String name : options.names) {
@@ -101,19 +104,19 @@ public class DirNameCommand extends SimpleJShellBuiltin {
                 results.add(sb.toString());
             }
         }
-        switch (context.getSession().getOutputFormat()) {
+        switch (session.getOutputFormat()) {
             case PLAIN: {
                 for (int i = 0; i < results.size(); i++) {
                     String name = results.get(i);
                     if (i > 0) {
-                        context.getSession().out().print(options.sep);
+                        session.out().print(options.sep);
                     }
-                    context.getSession().out().print(name);
+                    session.out().print(name);
                 }
                 break;
             }
             default: {
-                context.getSession().out().printlnf(results);
+                session.out().printlnf(results);
             }
         }
     }

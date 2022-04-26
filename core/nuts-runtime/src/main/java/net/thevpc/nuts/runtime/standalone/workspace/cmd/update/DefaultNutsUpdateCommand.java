@@ -84,12 +84,12 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
 
     @Override
     public boolean configureFirst(NutsCommandLine cmdLine) {
-        NutsArgument a = cmdLine.peek();
+        NutsArgument a = cmdLine.peek().get(session);
         if (a == null) {
             return false;
         }
         boolean enabled = a.isActive();
-        switch (a.getKey().getString()) {
+        switch(a.getStringKey().orElse("")) {
             case "--check-fixes": {
                 cmdLine.skip();
                 if (enabled) {
@@ -363,21 +363,21 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
                 for (NutsUpdateResult update : all) {
                     if (update.getInstalled() == null) {
                         out.printf("%s  : %s%n",
-                                factory.ofStyled(CoreStringUtils.alignLeft(update.getId().toString(), widthCol2), NutsTextStyle.primary6()),
+                                factory.ofStyled(NutsUtilStrings.formatAlign(update.getId().toString(), widthCol2,NutsPositionType.FIRST), NutsTextStyle.primary6()),
                                 factory.ofStyled("not installed", NutsTextStyle.error()));
                     } else if (update.isUpdateVersionAvailable()) {
                         out.printf("%s  : %s => %s%n",
-                                factory.ofStyled(CoreStringUtils.alignLeft(update.getInstalled().getId().getVersion().toString(), widthCol2), NutsTextStyle.primary6()),
-                                CoreStringUtils.alignLeft(update.getAvailable().getId().getShortName(), widthCol1),
+                                factory.ofStyled(NutsUtilStrings.formatAlign(update.getInstalled().getId().getVersion().toString(), widthCol2,NutsPositionType.FIRST), NutsTextStyle.primary6()),
+                                NutsUtilStrings.formatAlign(update.getAvailable().getId().getShortName(), widthCol1,NutsPositionType.FIRST),
                                 factory.ofPlain(update.getAvailable().getId().getVersion().toString()));
                     } else if (update.isUpdateStatusAvailable()) {
                         out.printf("%s  : %s => %s%n",
-                                factory.ofStyled(CoreStringUtils.alignLeft(update.getInstalled().getId().getVersion().toString(), widthCol2), NutsTextStyle.primary6()),
-                                CoreStringUtils.alignLeft(update.getAvailable().getId().getShortName(), widthCol1),
+                                factory.ofStyled(NutsUtilStrings.formatAlign(update.getInstalled().getId().getVersion().toString(), widthCol2,NutsPositionType.FIRST), NutsTextStyle.primary6()),
+                                NutsUtilStrings.formatAlign(update.getAvailable().getId().getShortName(), widthCol1,NutsPositionType.FIRST),
                                 factory.ofStyled("set as default", NutsTextStyle.primary4()));
                     } else {
                         out.printf("%s  : %s%n",
-                                factory.ofStyled(CoreStringUtils.alignLeft(update.getInstalled().getId().getVersion().toString(), widthCol2), NutsTextStyle.primary6()),
+                                factory.ofStyled(NutsUtilStrings.formatAlign(update.getInstalled().getId().getVersion().toString(), widthCol2,NutsPositionType.FIRST), NutsTextStyle.primary6()),
                                 factory.ofStyled("up-to-date", NutsTextStyle.warn()));
                     }
                 }

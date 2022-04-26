@@ -90,12 +90,12 @@ public abstract class AbstractNutsFetchCommand extends DefaultNutsQueryBaseOptio
 
     @Override
     public boolean configureFirst(NutsCommandLine cmdLine) {
-        NutsArgument a = cmdLine.peek();
+        NutsArgument a = cmdLine.peek().get(session);
         if (a == null) {
             return false;
         }
         boolean enabled = a.isActive();
-        switch (a.getKey().getString()) {
+        switch(a.getStringKey().orElse("")) {
             case "--not-installed": {
                 cmdLine.skip();
                 if (enabled) {

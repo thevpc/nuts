@@ -1,9 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.elem.mapper;
 
-import net.thevpc.nuts.NutsElement;
-import net.thevpc.nuts.NutsElementFactoryContext;
-import net.thevpc.nuts.NutsElementMapper;
-import net.thevpc.nuts.NutsPrimitiveElement;
+import net.thevpc.nuts.*;
 
 import java.lang.reflect.Type;
 
@@ -14,7 +11,7 @@ public class NutsElementMapperNutsPrimitiveElement implements NutsElementMapper<
 
     @Override
     public Object destruct(NutsPrimitiveElement src, Type typeOfSrc, NutsElementFactoryContext context) {
-        return src.getValue();
+        return src.getObject();
     }
 
     @Override
@@ -24,8 +21,9 @@ public class NutsElementMapperNutsPrimitiveElement implements NutsElementMapper<
 
     @Override
     public NutsPrimitiveElement createObject(NutsElement o, Type typeOfResult, NutsElementFactoryContext context) {
+        NutsSession session = context.getSession();
         if (o.type().isPrimitive()) {
-            return o.asPrimitive();
+            return o.asPrimitive().get(session);
         }
         return context.elem().ofString(o.toString());
     }

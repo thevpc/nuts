@@ -30,7 +30,6 @@ net.thevpc.nuts.runtime.standalone.repository.impl.maven.MavenRepositoryFactoryC
 net.thevpc.nuts.runtime.standalone.workspace.config.DefaultNutsIndexStoreFactory
 net.thevpc.nuts.runtime.standalone.security.DefaultNutsAuthenticationAgent
 net.thevpc.nuts.runtime.standalone.log.DefaultNutsLogManager
-net.thevpc.nuts.runtime.standalone.workspace.CoreNutsWorkspaceOptions
 net.thevpc.nuts.runtime.standalone.workspace.list.DefaultNutsWorkspaceListManager
 net.thevpc.nuts.runtime.standalone.xtra.hashname.DefaultNutsHashName
 net.thevpc.nuts.runtime.standalone.repository.DefaultNutsRepositoryDB

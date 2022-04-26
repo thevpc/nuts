@@ -105,7 +105,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
     public NutsLogger LOG;
     private NutsWorkspaceModel wsModel;
 
-    public DefaultNutsWorkspace(NutsBootOptions info) {
+    public DefaultNutsWorkspace(NutsWorkspaceBootOptions info) {
         initWorkspace(info);
     }
 
@@ -172,18 +172,18 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
         return set;
     }
 
-    private void initWorkspace(NutsBootOptions bOption0) {
+    private void initWorkspace(NutsWorkspaceBootOptions bOption0) {
         try {
             this.wsModel = new NutsWorkspaceModel(this);
             this.wsModel.bootModel = new DefaultNutsBootModel(this, bOption0);
             this.LOG = new DefaultNutsLogger(this, defaultSession(), DefaultNutsWorkspace.class, true);
 
-            CoreNutsBootOptions bOptions = this.wsModel.bootModel.getCoreBootOptions();
-            NutsWorkspaceOptions options = bOptions.getOptions();
+            NutsWorkspaceBootOptions bOptions = this.wsModel.bootModel.getBootEffectiveOptions();
+            NutsWorkspaceOptions options = bOptions.getUserOptions();
             this.wsModel.configModel = new DefaultNutsWorkspaceConfigModel(this);
-            String workspaceLocation = bOptions.getWorkspaceLocation();
+            String workspaceLocation = bOptions.getWorkspace();
             String apiVersion = bOptions.getApiVersion();
-            NutsId runtimeId = bOptions.getRuntimeId();
+            NutsId runtimeId = NutsId.of(bOptions.getRuntimeId()).orElse(null);
             String repositories = bOptions.getBootRepositories();
             NutsBootWorkspaceFactory bootFactory = bOptions.getBootWorkspaceFactory();
             ClassLoader bootClassLoader = bOptions.getClassWorldLoader();
@@ -201,9 +201,9 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                     NutsVersion.of(apiVersion).get(), null, (Map<String, String>) null,
                     NutsEnvCondition.BLANK);
             this.wsModel.runtimeId = new DefaultNutsId(
-                    bOptions.getRuntimeId().getGroupId(),
-                    bOptions.getRuntimeId().getArtifactId(),
-                    NutsVersion.of(bOptions.getRuntimeId().getVersion().toString()).get(),
+                    runtimeId.getGroupId(),
+                    runtimeId.getArtifactId(),
+                    NutsVersion.of(runtimeId.getVersion().toString()).get(),
                     null,
                     (Map<String, String>) null,
                     NutsEnvCondition.BLANK);
@@ -219,10 +219,11 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
             this.wsModel.envModel = new DefaultNutsWorkspaceEnvManagerModel(this, defaultSession());
             this.wsModel.aliasesModel = new DefaultCustomCommandsModel(this);
             this.wsModel.importModel = new DefaultImportModel(this);
-            this.wsModel.locationsModel = new DefaultNutsWorkspaceLocationModel(this, Paths.get(bOptions.getWorkspaceLocation()).toString());
+            this.wsModel.locationsModel = new DefaultNutsWorkspaceLocationModel(this,
+                    Paths.get(bOptions.getWorkspace()).toString());
             this.wsModel.eventsModel = new DefaultNutsWorkspaceEventModel(this);
             this.wsModel.textModel = new DefaultNutsTextManagerModel(this);
-            this.wsModel.location = bOptions.getWorkspaceLocation();
+            this.wsModel.location = bOptions.getWorkspace();
 
             this.wsModel.bootModel.onInitializeWorkspace();
 
@@ -268,9 +269,10 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                 LOGCSF.log(NutsMessage.jstyle(" "));
                 LOGCSF.log(NutsMessage.jstyle("start ```sh nuts``` ```primary3 {0}``` at {1}", Nuts.getVersion(), CoreNutsUtils.DEFAULT_DATE_TIME_FORMATTER.format(Instant.ofEpochMilli(options.getCreationTime()))));
                 LOGCRF.log(NutsMessage.jstyle("open Nuts Workspace               : {0}",
-                        options.formatter().getBootCommandLine()
+                        options.toCommandLine()
                 ));
-                LOGCRF.log(NutsMessage.jstyle("open Nuts Workspace (compact)     : {0}", options.formatter().setCompact(true).getBootCommandLine()));
+                LOGCRF.log(NutsMessage.jstyle("open Nuts Workspace (compact)     : {0}",
+                        options.toCommandLine(new NutsWorkspaceOptionsConfig().setCompact(true))));
 
                 LOGCRF.log(NutsMessage.jstyle("open Workspace with config        : "));
                 LOGCRF.log(NutsMessage.jstyle("   nuts-workspace-uuid            : {0}", NutsTextUtils.desc(bOptions.getUuid(), text)));
@@ -311,7 +313,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
 //            } else {
 //                LOG.log(Level.CONFIG, "\t execution-requirements         : satisfied");
 //            }
-                LOGCRF.log(NutsMessage.jstyle("   nuts-workspace                 : {0}", NutsTextUtils.formatLogValue(text, options.getWorkspace(), bOptions.getWorkspaceLocation())));
+                LOGCRF.log(NutsMessage.jstyle("   nuts-workspace                 : {0}", NutsTextUtils.formatLogValue(text, options.getWorkspace(), bOptions.getWorkspace())));
                 LOGCRF.log(NutsMessage.jstyle("   nuts-hash-name                 : {0}", getHashName()));
                 LOGCRF.log(NutsMessage.jstyle("   nuts-store-apps                : {0}", NutsTextUtils.formatLogValue(text, options.getStoreLocation(NutsStoreLocation.APPS), bOptions.getStoreLocation(NutsStoreLocation.APPS))));
                 LOGCRF.log(NutsMessage.jstyle("   nuts-store-config              : {0}", NutsTextUtils.formatLogValue(text, options.getStoreLocation(NutsStoreLocation.CONFIG), bOptions.getStoreLocation(NutsStoreLocation.CONFIG))));
@@ -337,7 +339,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                 LOGCRF.log(NutsMessage.jstyle("   option-open-mode               : {0}", NutsTextUtils.formatLogValue(text, options.getOpenMode(), options.getOpenMode() == null ? NutsOpenMode.OPEN_OR_CREATE : options.getOpenMode())));
                 NutsBootTerminal b = getModel().bootModel.getBootTerminal();
                 LOGCRF.log(NutsMessage.jstyle("   sys-terminal-flags             : {0}", String.join(", ", b.getFlags())));
-                NutsTerminalMode terminalMode = wsModel.bootModel.getBootOptions().getTerminalMode();
+                NutsTerminalMode terminalMode = wsModel.bootModel.getBootUserOptions().getTerminalMode();
                 LOGCRF.log(NutsMessage.jstyle("   sys-terminal-mode              : {0}", terminalMode == null ? "default" : terminalMode));
                 NutsWorkspaceEnvManager senv = defaultSession().env();
                 LOGCRF.log(NutsMessage.jstyle("   java-home                      : {0}", System.getProperty("java.home")));
@@ -452,12 +454,12 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                 wsModel.configModel.setConfigRuntime(rconfig, defaultSession());
                 //load all "---config.*" custom options into persistent config
                 for (String customOption : options.getCustomOptions()) {
-                    NutsArgument a = NutsArgument.of(customOption, defaultSession());
-                    if (a.getKey().getString().startsWith("config.")) {
+                    NutsArgument a = NutsArgument.of(customOption);
+                    if (a.getKey().asString().get().startsWith("config.")) {
                         if (a.isActive()) {
                             defaultSession().config().setConfigProperty(
-                                    a.getKey().getString("").substring("config.".length()),
-                                    a.getValue().getString()
+                                    a.getKey().asString().orElse("").substring("config.".length()),
+                                    a.getStringValue().orNull()
                             );
                         }
                     }
@@ -602,7 +604,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                                     CoreTimeUtils.formatPeriodMilli(_boot.getCreationFinishTimeMillis() - _boot.getCreationStartTimeMillis())
                             )
                     );
-            if (defaultSession().boot().getBootCustomBoolArgument(false, false, false, "---perf")) {
+            if (CoreNutsUtils.isCustomFalse("---perf",defaultSession())) {
                 if (defaultSession().isPlainOut()) {
                     defaultSession().out().printf("```sh nuts``` workspace loaded in %s%n",
                             text.ofStyled(CoreTimeUtils.formatPeriodMilli(_boot.getCreationFinishTimeMillis() - _boot.getCreationStartTimeMillis()),
@@ -728,7 +730,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
         List<NutsDependency> oldDependencies = new ArrayList<>();
         for (NutsDependency d : effectiveDescriptor.getDependencies()) {
             if (CoreFilterUtils.acceptDependency(d, session)) {
-                oldDependencies.add(d.builder().setCondition((NutsEnvCondition) null).build());
+                oldDependencies.add(d.builder().setCondition(null).build());
             }
         }
 
@@ -1471,7 +1473,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
         }
         if (CoreStringUtils.containsVars(g) || CoreStringUtils.containsVars(v) || CoreStringUtils.containsVars(a)) {
             Map<String, String> p = NutsDescriptorUtils.getPropertiesMap(descriptor.getProperties(), session);
-            NutsId bestId = new DefaultNutsIdBuilder().setGroupId(g).setArtifactId(thisId.getArtifactId()).setVersion(v).build();
+            NutsId bestId = NutsIdBuilder.of(g,thisId.getArtifactId()).setVersion(v).build();
             bestId = NutsDescriptorUtils.applyProperties(bestId.builder(),new MapToFunction(p)).build();
             if (CoreNutsUtils.isEffectiveId(bestId)) {
                 return bestId;
@@ -1491,7 +1493,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
             throw new NutsNotFoundException(session, bestId,
                     NutsMessage.cstyle("unable to fetchEffective for %s. best Result is %s", bestId, bestId), null);
         }
-        NutsId bestId = new DefaultNutsIdBuilder().setGroupId(g).setArtifactId(thisId.getArtifactId()).setVersion(v).build();
+        NutsId bestId = NutsIdBuilder.of(g,thisId.getArtifactId()).setVersion(v).build();
         if (!CoreNutsUtils.isEffectiveId(bestId)) {
             throw new NutsNotFoundException(session, bestId,
                     NutsMessage.cstyle("unable to fetchEffective for %s. best Result is %s", thisId, bestId), null);
@@ -1671,7 +1673,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
             eff = l.resolve(nn);
             if (eff.isRegularFile()) {
                 try {
-                    NutsDescriptor d = NutsDescriptorParser.of(session).parse(eff);
+                    NutsDescriptor d = NutsDescriptorParser.of(session).parse(eff).orNull();
                     if (d != null) {
                         return d;
                     }

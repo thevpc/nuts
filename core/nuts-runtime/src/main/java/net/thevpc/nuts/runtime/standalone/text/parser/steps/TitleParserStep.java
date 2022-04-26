@@ -66,7 +66,7 @@ public class TitleParserStep extends ParserStep {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder("Title(" + NutsUtilStrings.dblQuotes(start.toString()));
+        StringBuilder sb = new StringBuilder("Title(" + NutsUtilStrings.formatStringLiteral(start.toString(), NutsUtilStrings.QuoteType.DOUBLE));
         for (ParserStep parserStep : children) {
             sb.append(",");
             sb.append(parserStep.toString());

@@ -32,7 +32,6 @@ import java.io.PrintStream;
 import java.lang.reflect.Array;
 import java.net.URL;
 import java.util.Arrays;
-import java.util.Map;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.logging.Level;
@@ -89,7 +88,7 @@ public class NutsApiUtils {
     }
 
     public static String[] parseCommandLineArray(String commandLineString) {
-        return PrivateNutsCommandLine.parseCommandLineArray(commandLineString);
+        return NutsCommandLine.parseDefault(commandLineString).get().toStringArray();
     }
 
     public static int processThrowable(Throwable ex, PrintStream out) {
@@ -98,8 +97,8 @@ public class NutsApiUtils {
 
     public static int processThrowable(Throwable ex, String[] args) {
         PrivateNutsBootLog log = new PrivateNutsBootLog(null);
-        NutsBootOptions bo = new NutsBootOptions();
-        NutsApiUtils.parseNutsArguments(args, bo, log);
+        DefaultNutsWorkspaceBootOptionsBuilder bo = new DefaultNutsWorkspaceBootOptionsBuilder();
+        bo.setCommandLine(args, null);
         try {
             if (NutsApiUtils.isGraphicalDesktopEnvironment()) {
                 bo.setGui(false);
@@ -111,9 +110,7 @@ public class NutsApiUtils {
         boolean bot = bo.isBot();
         boolean gui = !bot && bo.isGui();
         boolean showTrace = bo.getDebug() != null;
-        showTrace |= (bo.getLogConfig() != null
-                && bo.getLogConfig().getLogTermLevel() != null
-                && bo.getLogConfig().getLogTermLevel().intValue() < Level.INFO.intValue());
+        showTrace |= (bo.getLogConfig() != null && bo.getLogConfig().getLogTermLevel() != null && bo.getLogConfig().getLogTermLevel().intValue() < Level.INFO.intValue());
         if (!showTrace) {
             showTrace = NutsApiUtils.getSysBoolNutsProperty("debug", false);
         }
@@ -144,16 +141,7 @@ public class NutsApiUtils {
         if (d == null) {
             ClassLoader cl = Thread.currentThread().getContextClassLoader();
             URL[] urls = PrivateNutsUtilClassLoader.resolveClasspathURLs(cl, true);
-            throw new NutsBootException(
-                    NutsMessage.plain(
-                            "unable to detect nuts digest. Most likely you are missing valid compilation of nuts." +
-                                    "\n\t 'pom.properties' could not be resolved and hence, we are unable to resolve nuts version." +
-                                    "\n\t java=" + System.getProperty("java.home") + " as " + System.getProperty("java.version") +
-                                    "\n\t class-path=" + System.getProperty("java.class.path") +
-                                    "\n\t urls=" + Arrays.toString(urls) +
-                                    "\n\t class-loader=" + cl.getClass().getName() + " as " + cl
-                    )
-            );
+            throw new NutsBootException(NutsMessage.plain("unable to detect nuts digest. Most likely you are missing valid compilation of nuts." + "\n\t 'pom.properties' could not be resolved and hence, we are unable to resolve nuts version." + "\n\t java=" + System.getProperty("java.home") + " as " + System.getProperty("java.version") + "\n\t class-path=" + System.getProperty("java.class.path") + "\n\t urls=" + Arrays.toString(urls) + "\n\t class-loader=" + cl.getClass().getName() + " as " + cl));
         }
         return d;
 
@@ -161,17 +149,11 @@ public class NutsApiUtils {
 
     public static String resolveNutsIdDigest() {
         //TODO COMMIT TO 0.8.4
-        return resolveNutsIdDigest(
-                NutsId.of("net.thevpc.nuts", "nuts", NutsVersion.of(Nuts.getVersion()).get()).get(),
-                PrivateNutsUtilClassLoader.resolveClasspathURLs(Nuts.class.getClassLoader(), true)
-        );
+        return resolveNutsIdDigest(NutsId.of("net.thevpc.nuts", "nuts", NutsVersion.of(Nuts.getVersion()).get()).get(), PrivateNutsUtilClassLoader.resolveClasspathURLs(Nuts.class.getClassLoader(), true));
     }
 
     public static String resolveNutsIdDigest(NutsId id, URL[] urls) {
-        return PrivateNutsUtilDigest.getURLDigest(
-                PrivateNutsUtilClassLoader.findClassLoaderJar(id, urls),
-                null
-        );
+        return PrivateNutsUtilDigest.getURLDigest(PrivateNutsUtilClassLoader.findClassLoaderJar(id, urls), null);
     }
 
     public static URL findClassLoaderJar(NutsId id, URL[] urls) {
@@ -189,10 +171,6 @@ public class NutsApiUtils {
         }
     }
 
-    public static Level parseLenientLogLevel(String value, Level emptyValue, Level errorValue) {
-        return PrivateNutsUtils.parseLenientLogLevel(value, emptyValue, errorValue);
-    }
-
     public static Integer parseInt(String value, Integer emptyValue, Integer errorValue) {
         return PrivateNutsUtils.parseInt(value, emptyValue, errorValue);
     }
@@ -201,8 +179,8 @@ public class NutsApiUtils {
         return PrivateNutsUtils.parseInt16(value, emptyValue, errorValue);
     }
 
-    public static Integer parseFileSizeInBytes(String value, Integer defaultMultiplier, Integer emptyValue, Integer errorValue) {
-        return PrivateNutsUtils.parseFileSizeInBytes(value, defaultMultiplier, emptyValue, errorValue);
+    public static NutsOptional<Integer> parseFileSizeInBytes(String value, Integer defaultMultiplier) {
+        return PrivateNutsUtils.parseFileSizeInBytes(value, defaultMultiplier);
     }
 
     @SuppressWarnings("unchecked")
@@ -224,14 +202,6 @@ public class NutsApiUtils {
 
     public static <T> T createSessionCachedType(Class<T> t, NutsSession session, Supplier<T> sup) {
         return createSessionCachedType("default", t, session, sup);
-    }
-
-    public static String defaultToString(NutsBootOptions options) {
-        return new PrivateNutsWorkspaceOptionsFormat(options).toString();
-    }
-
-    public static void parseNutsArguments(String[] args, NutsBootOptions nutsBootOptions, PrivateNutsBootLog log) {
-        PrivateNutsArgumentsParser.parseNutsArguments(args, nutsBootOptions, log);
     }
 
     public static <T extends Enum> NutsOptional<T> parse(String value, Class<T> type) {

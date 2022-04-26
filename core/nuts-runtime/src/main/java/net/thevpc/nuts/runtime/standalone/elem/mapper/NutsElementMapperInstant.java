@@ -1,9 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.elem.mapper;
 
-import net.thevpc.nuts.NutsElement;
-import net.thevpc.nuts.NutsElementFactoryContext;
-import net.thevpc.nuts.NutsElementMapper;
-import net.thevpc.nuts.NutsUnsupportedEnumException;
+import net.thevpc.nuts.*;
 
 import java.lang.reflect.Type;
 import java.time.Instant;
@@ -22,20 +19,21 @@ public class NutsElementMapperInstant implements NutsElementMapper<Instant> {
 
     @Override
     public Instant createObject(NutsElement o, Type to, NutsElementFactoryContext context) {
+        NutsSession session = context.getSession();
         switch (o.type()) {
             case INSTANT: {
-                return o.asPrimitive().getInstant();
+                return o.asInstant().get(session);
             }
             case INTEGER: {
-                return Instant.ofEpochMilli(o.asPrimitive().getInt());
+                return Instant.ofEpochMilli(o.asInt().get(session));
             }
             case LONG: {
-                return Instant.ofEpochMilli(o.asPrimitive().getLong());
+                return Instant.ofEpochMilli(o.asLong().get(session));
             }
             case STRING: {
-                return Instant.parse(o.asPrimitive().getString());
+                return Instant.parse(o.asString().get(session));
             }
         }
-        throw new NutsUnsupportedEnumException(context.getSession(), o.type());
+        throw new NutsUnsupportedEnumException(session, o.type());
     }
 }

@@ -3,6 +3,7 @@ package net.thevpc.nuts.runtime.standalone.elem.mapper;
 import net.thevpc.nuts.NutsElement;
 import net.thevpc.nuts.NutsElementFactoryContext;
 import net.thevpc.nuts.NutsElementMapper;
+import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.runtime.standalone.util.reflect.ReflectType;
 import net.thevpc.nuts.runtime.standalone.util.reflect.ReflectUtils;
 import net.thevpc.nuts.runtime.standalone.elem.DefaultNutsArrayElement;
@@ -37,7 +38,8 @@ public class NutsElementMapperCollection implements NutsElementMapper {
     }
 
     public Collection fillObject(NutsElement o, Collection coll, Type elemType, Type to, NutsElementFactoryContext context) {
-        for (NutsElement nutsElement : o.asArray().children()) {
+        NutsSession session = context.getSession();
+        for (NutsElement nutsElement : o.asArray().get(session).items()) {
             coll.add(context.elementToObject(nutsElement, elemType));
         }
         return coll;
@@ -45,6 +47,7 @@ public class NutsElementMapperCollection implements NutsElementMapper {
 
     @Override
     public Collection createObject(NutsElement o, Type to, NutsElementFactoryContext context) {
+        NutsSession session = context.getSession();
         Class cls = ReflectUtils.getRawClass(to);
         Type elemType = Object.class;
         if (to instanceof ParameterizedType) {
@@ -58,7 +61,7 @@ public class NutsElementMapperCollection implements NutsElementMapper {
             case "java.util.Collection":
             case "java.util.List":
             case "java.util.ArrayList": {
-                return fillObject(o, new ArrayList(o.asArray().size()), elemType, to, context);
+                return fillObject(o, new ArrayList(o.asArray().get(session).size()), elemType, to, context);
             }
             case "java.util.Set":
             case "java.util.LinkedHashset": {

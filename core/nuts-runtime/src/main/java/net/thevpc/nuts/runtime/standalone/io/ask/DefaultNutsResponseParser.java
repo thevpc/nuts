@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.io.ask;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.standalone.app.cmdline.DefaultNutsArgument;
+import net.thevpc.nuts.DefaultNutsArgument;
 import net.thevpc.nuts.runtime.standalone.util.CoreEnumUtils;
 
 public class DefaultNutsResponseParser<T> implements NutsQuestionParser<T> {
@@ -59,11 +59,11 @@ public class DefaultNutsResponseParser<T> implements NutsQuestionParser<T> {
                     response = String.valueOf(response);
                 }
                 String sReponse = response.toString();
-                NutsArgument a = new DefaultNutsArgument(sReponse,'=',NutsElements.of(session));
-                if (!a.toElement().isBoolean()) {
+                NutsArgument a = new DefaultNutsArgument(sReponse);
+                if (!a.isBoolean()) {
                     throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("invalid response %s", sReponse));
                 }
-                return (T) (Object) a.toElement().getBoolean();
+                return (T) (Object) a.asBoolean().get(session);
             }
 
             default: {

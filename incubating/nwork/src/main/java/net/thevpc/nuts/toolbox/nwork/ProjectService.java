@@ -1,7 +1,7 @@
 package net.thevpc.nuts.toolbox.nwork;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.NutsBootOptions;
+import net.thevpc.nuts.DefaultNutsWorkspaceBootOptionsBuilder;
 import net.thevpc.nuts.toolbox.nwork.config.ProjectConfig;
 import net.thevpc.nuts.toolbox.nwork.config.RepositoryAddress;
 
@@ -79,7 +79,7 @@ public class ProjectService {
                     NutsSession session = appContext.getSession();
                     return NutsDescriptorParser.of(session)
                             .setDescriptorStyle(NutsDescriptorStyle.MAVEN)
-                            .parse(new File(f, "pom.xml"));
+                            .parse(new File(f, "pom.xml")).get(session);
                 } catch (Exception ex) {
                     //
                 }
@@ -100,7 +100,7 @@ public class ProjectService {
                     NutsSession session = appContext.getSession();
                     NutsDescriptor g = NutsDescriptorParser.of(session)
                             .setDescriptorStyle(NutsDescriptorStyle.MAVEN)
-                            .parse(new File(f, "pom.xml"));
+                            .parse(new File(f, "pom.xml")).get(session);
                     if (g.getId().getGroupId() != null
                             && g.getId().getArtifactId() != null
                             && g.getId().getVersion() != null
@@ -182,7 +182,7 @@ public class ProjectService {
                         NutsSession session = appContext.getSession();
                         return NutsDescriptorParser.of(session)
                                 .setDescriptorStyle(NutsDescriptorStyle.MAVEN)
-                                .parse(new File(f, "pom.xml")).getId().getVersion().toString();
+                                .parse(new File(f, "pom.xml")).get(session).getId().getVersion().toString();
                     } catch (Exception e) {
                         throw new IllegalArgumentException(e);
                     }
@@ -211,7 +211,7 @@ public class ProjectService {
                 NutsSession s = null;
                 if (a.getNutsWorkspace() != null && a.getNutsWorkspace().trim().length() > 0 && !a.getNutsWorkspace().equals(session.locations().getWorkspaceLocation().toString())) {
                     s = Nuts.openWorkspace(
-                            new NutsBootOptions()
+                            new DefaultNutsWorkspaceBootOptionsBuilder()
                                     .setOpenMode(NutsOpenMode.OPEN_OR_ERROR)
                                     .setReadOnly(true)
                                     .setWorkspace(a.getNutsWorkspace())
@@ -258,11 +258,11 @@ public class ProjectService {
                     try {
                         NutsDescriptor g = NutsDescriptorParser.of(session)
                                 .setDescriptorStyle(NutsDescriptorStyle.MAVEN)
-                                .parse(new File(f, "pom.xml"));
+                                .parse(new File(f, "pom.xml")).get(session);
                         NutsSession s = null;
                         if (a.getNutsWorkspace() != null && a.getNutsWorkspace().trim().length() > 0 && !a.getNutsWorkspace().equals(session.locations().getWorkspaceLocation().toString())) {
                             s = Nuts.openWorkspace(
-                                    new NutsBootOptions()
+                                    new DefaultNutsWorkspaceBootOptionsBuilder()
                                             .setOpenMode(NutsOpenMode.OPEN_OR_ERROR)
                                             .setReadOnly(true)
                                             .setWorkspace(a.getNutsWorkspace())

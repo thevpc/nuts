@@ -26,9 +26,7 @@
  */
 package net.thevpc.nuts.toolbox.nsh.cmds;
 
-import net.thevpc.nuts.NutsArgument;
-import net.thevpc.nuts.NutsCommandLine;
-import net.thevpc.nuts.NutsPrimitiveElement;
+import net.thevpc.nuts.*;
 import net.thevpc.nuts.spi.NutsComponentScope;
 import net.thevpc.nuts.spi.NutsComponentScopeType;
 import net.thevpc.nuts.toolbox.nsh.SimpleJShellBuiltin;
@@ -48,13 +46,13 @@ public class ExitCommand extends SimpleJShellBuiltin {
     @Override
     protected boolean configureFirst(NutsCommandLine commandLine, JShellExecutionContext context) {
         Options options = context.getOptions();
-        final NutsArgument a = commandLine.peek();
+        NutsSession session = context.getSession();
+        final NutsArgument a = commandLine.peek().get(session);
         if (a.isOption()) {
             return false;
         } else {
-            NutsPrimitiveElement raw = a.toElement();
-            if (raw.isInt() && raw.getInt() > 0) {
-                options.code = raw.getInt();
+            if (a.isInt() && a.asInt().get(session) > 0) {
+                options.code = a.asInt().get(session);
                 return true;
             }
         }

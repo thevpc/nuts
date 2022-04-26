@@ -58,10 +58,10 @@ public class DefaultNutsRepositoryUndeployCommand extends AbstractNutsRepository
                 }
             }
             _LOGOP(session).level(Level.FINEST).verb(NutsLogVerb.SUCCESS)
-                    .log(NutsMessage.jstyle("{0} undeploy {1}", CoreStringUtils.alignLeft(getRepo().getName(), 20), this.getId()));
+                    .log(NutsMessage.jstyle("{0} undeploy {1}", NutsUtilStrings.formatAlign(getRepo().getName(), 20,NutsPositionType.FIRST), this.getId()));
         } catch (RuntimeException ex) {
             _LOGOP(session).level(Level.FINEST).verb(NutsLogVerb.FAIL)
-                    .log(NutsMessage.jstyle("{0} undeploy {1}", CoreStringUtils.alignLeft(getRepo().getName(), 20), this.getId()));
+                    .log(NutsMessage.jstyle("{0} undeploy {1}", NutsUtilStrings.formatAlign(getRepo().getName(), 20,NutsPositionType.FIRST), this.getId()));
         }
         return this;
     }

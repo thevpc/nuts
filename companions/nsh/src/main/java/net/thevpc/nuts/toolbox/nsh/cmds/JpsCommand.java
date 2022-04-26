@@ -80,27 +80,28 @@ public class JpsCommand extends SimpleJShellBuiltin {
 
     @Override
     protected boolean configureFirst(NutsCommandLine commandLine, JShellExecutionContext context) {
+        NutsSession session = context.getSession();
         Options options = context.getOptions();
-        if (commandLine.next("-l") != null) {
+        if (commandLine.next("-l").orNull() != null) {
             options.l = true;
             return true;
-        } else if (commandLine.next("-v") != null) {
+        } else if (commandLine.next("-v").orNull() != null) {
             options.v = true;
             return true;
-        } else if (commandLine.next("-m") != null) {
+        } else if (commandLine.next("-m").orNull() != null) {
             options.m = true;
             return true;
-        } else if (commandLine.next("-q") != null) {
+        } else if (commandLine.next("-q").orNull() != null) {
             options.q = true;
             return true;
-        } else if (commandLine.next("-V") != null) {
+        } else if (commandLine.next("-V").orNull() != null) {
             options.v = true;
             return true;
-        } else if (commandLine.peek().isOption()) {
+        } else if (commandLine.isNextOption()) {
             //
         } else {
             if (options.host == null) {
-                options.host = commandLine.next().toString();
+                options.host = commandLine.next().get(session).toString();
                 return true;
             }
         }

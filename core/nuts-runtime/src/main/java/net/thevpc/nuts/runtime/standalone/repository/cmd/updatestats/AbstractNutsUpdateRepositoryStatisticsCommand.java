@@ -27,11 +27,11 @@ public abstract class AbstractNutsUpdateRepositoryStatisticsCommand extends Nuts
 
     @Override
     public boolean configureFirst(NutsCommandLine cmdLine) {
-        NutsArgument a = cmdLine.peek();
+        NutsArgument a = cmdLine.peek().orNull();
         if (a == null) {
             return false;
         }
-        switch (a.getKey().getString()) {
+        switch(a.getStringKey().orElse("")) {
             default: {
                 if (super.configureFirst(cmdLine)) {
                     return true;

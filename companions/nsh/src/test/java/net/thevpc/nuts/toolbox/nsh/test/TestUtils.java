@@ -211,7 +211,7 @@ public class TestUtils {
         //disable auto-creation of nuts icons and menus
         argsList.add("---!init-launchers");
         //disable progress indicator
-        argsList.add("---!progress");
+        argsList.add("--!progress");
         //disable interactive mode and 'always confirm'
         argsList.add("--yes");
         //disable companions

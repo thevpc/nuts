@@ -28,6 +28,7 @@ package net.thevpc.nuts.toolbox.nsh.cmds;
 
 import net.thevpc.nuts.NutsArgument;
 import net.thevpc.nuts.NutsCommandLine;
+import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.spi.NutsComponentScope;
 import net.thevpc.nuts.spi.NutsComponentScopeType;
 import net.thevpc.nuts.toolbox.nsh.SimpleJShellBuiltin;
@@ -52,47 +53,48 @@ public class DateCommand extends SimpleJShellBuiltin {
     @Override
     protected boolean configureFirst(NutsCommandLine cmdLine, JShellExecutionContext context) {
         Options options = context.getOptions();
-        NutsArgument a = cmdLine.peek();
-        switch (a.getKey().getString()) {
+        NutsSession session = context.getSession();
+        NutsArgument a = cmdLine.peek().get(session);
+        switch(a.getStringKey().orElse("")) {
             case "-d":
             case "--date": {
                 if (context.getShell().getOptions().isNsh()) {
-                    a = cmdLine.nextString();
+                    a = cmdLine.nextString().get(session);
                     if (a.isActive()) {
-                        options.date = a.getValue().getString();
+                        options.date = a.getStringValue().get(session);
                     }
                 } else {
-                    a = cmdLine.next();
-                    options.date = a.getValue().getString();
+                    a = cmdLine.next().get(session);
+                    options.date = a.getStringValue().get(session);
                 }
                 return true;
             }
             case "-f":
             case "--file": {
                 if (context.getShell().getOptions().isNsh()) {
-                    a = cmdLine.nextString();
+                    a = cmdLine.nextString().get(session);
                     if (a.isActive()) {
-                        options.file = a.getValue().getString();
+                        options.file = a.getStringValue().get(session);
                     }
                 } else {
-                    a = cmdLine.next();
-                    options.file = a.getValue().getString();
+                    a = cmdLine.next().get(session);
+                    options.file = a.getStringValue().get(session);
                 }
                 return true;
             }
             case "--rfc-3339": {
                 if (context.getShell().getOptions().isNsh()) {
-                    a = cmdLine.next();
+                    a = cmdLine.next().get(session);
                     if (a.isActive()) {
-                        String s = a.getValue().getString();
+                        String s = a.getStringValue().get(session);
                         if (s == null) {
                             s = "";
                         }
                         options.rfc3339 = s;
                     }
                 } else {
-                    a = cmdLine.next();
-                    String s = a.getValue().getString();
+                    a = cmdLine.next().get(session);
+                    String s = a.getStringValue().get(session);
                     if (s == null) {
                         s = "";
                     }
@@ -102,17 +104,17 @@ public class DateCommand extends SimpleJShellBuiltin {
             }
             case "--iso-8601": {
                 if (context.getShell().getOptions().isNsh()) {
-                    a = cmdLine.next();
+                    a = cmdLine.next().get(session);
                     if (a.isActive()) {
-                        String s = a.getValue().getString();
+                        String s = a.getStringValue().get(session);
                         if (s == null) {
                             s = "";
                         }
                         options.rfc8601 = s;
                     }
                 } else {
-                    a = cmdLine.next();
-                    String s = a.getValue().getString();
+                    a = cmdLine.next().get(session);
+                    String s = a.getStringValue().get(session);
                     if (s == null) {
                         s = "";
                     }
@@ -123,17 +125,17 @@ public class DateCommand extends SimpleJShellBuiltin {
             case "-s":
             case "--set": {
                 if (context.getShell().getOptions().isNsh()) {
-                    a = cmdLine.next();
+                    a = cmdLine.next().get(session);
                     if (a.isActive()) {
-                        String s = a.getValue().getString();
+                        String s = a.getStringValue().get(session);
                         if (s == null) {
                             s = "";
                         }
                         options.setdate = s;
                     }
                 } else {
-                    a = cmdLine.next();
-                    String s = a.getValue().getString();
+                    a = cmdLine.next().get(session);
+                    String s = a.getStringValue().get(session);
                     if (s == null) {
                         s = "";
                     }
@@ -151,24 +153,24 @@ public class DateCommand extends SimpleJShellBuiltin {
             case "-Iseconds":
             case "-Ins": {
                 if (context.getShell().getOptions().isNsh()) {
-                    a = cmdLine.next();
+                    a = cmdLine.next().get(session);
                     if (a.isActive()) {
-                        options.rfc8601 = a.getString().substring(2);
+                        options.rfc8601 = a.asString().get(session).substring(2);
                     }
                 } else {
-                    a = cmdLine.next();
-                    options.rfc8601 = a.getString().substring(2);
+                    a = cmdLine.next().get(session);
+                    options.rfc8601 = a.asString().get(session).substring(2);
                 }
                 return true;
             }
             case "--debug": {
                 if (context.getShell().getOptions().isNsh()) {
-                    a = cmdLine.nextBoolean();
+                    a = cmdLine.nextBoolean().get(session);
                     if (a.isActive()) {
-                        options.debug = a.getBooleanValue();
+                        options.debug = a.getBooleanValue().get(session);
                     }
                 } else {
-                    a = cmdLine.next();
+                    a = cmdLine.next().get(session);
                     options.debug = true;
                 }
                 return true;
@@ -177,12 +179,12 @@ public class DateCommand extends SimpleJShellBuiltin {
             case "--utc":
             case "--universal": {
                 if (context.getShell().getOptions().isNsh()) {
-                    a = cmdLine.nextBoolean();
+                    a = cmdLine.nextBoolean().get(session);
                     if (a.isActive()) {
-                        options.utc = a.getBooleanValue();
+                        options.utc = a.getBooleanValue().get(session);
                     }
                 } else {
-                    a = cmdLine.next();
+                    a = cmdLine.next().get(session);
                     options.utc = true;
                 }
                 return true;
@@ -190,12 +192,12 @@ public class DateCommand extends SimpleJShellBuiltin {
             case "-R":
             case "--rfc-email": {
                 if (context.getShell().getOptions().isNsh()) {
-                    a = cmdLine.nextBoolean();
+                    a = cmdLine.nextBoolean().get(session);
                     if (a.isActive()) {
-                        options.rfcMail = a.getBooleanValue();
+                        options.rfcMail = a.getBooleanValue().get(session);
                     }
                 } else {
-                    a = cmdLine.next();
+                    a = cmdLine.next().get(session);
                     options.rfcMail = true;
                 }
                 return true;
@@ -276,7 +278,7 @@ public class DateCommand extends SimpleJShellBuiltin {
     }
 
     @Override
-    protected void initCommandLine(NutsCommandLine commandLine) {
+    protected void initCommandLine(NutsCommandLine commandLine, JShellExecutionContext context) {
         for (String s : new String[]{
                 "-Id", "-Idate",
                 "-Ih", "-Ihours",
@@ -284,7 +286,7 @@ public class DateCommand extends SimpleJShellBuiltin {
                 "-Is", "-Iseconds",
                 "-Ins"
         }) {
-            commandLine.registerSpecialSimpleOption(s);
+            commandLine.registerSpecialSimpleOption(s, context.getSession());
         }
     }
 

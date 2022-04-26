@@ -27,6 +27,8 @@
 package net.thevpc.nuts.toolbox.nsh.cmds;
 
 import net.thevpc.nuts.NutsCommandLine;
+import net.thevpc.nuts.NutsSession;
+import net.thevpc.nuts.NutsValue;
 import net.thevpc.nuts.spi.NutsComponentScope;
 import net.thevpc.nuts.spi.NutsComponentScopeType;
 import net.thevpc.nuts.toolbox.nsh.SimpleJShellBuiltin;
@@ -44,13 +46,14 @@ public class CdCommand extends SimpleJShellBuiltin {
 
     @Override
     protected boolean configureFirst(NutsCommandLine commandLine, JShellExecutionContext context) {
+        NutsSession session = context.getSession();
         Options options = context.getOptions();
-        if (commandLine.peek().isNonOption()) {
+        if (commandLine.peek().get(session).isNonOption()) {
             if (options.dirname == null) {
-                options.dirname = commandLine.next().getString();
+                options.dirname = commandLine.next().flatMap(NutsValue::asString).get(session);
                 return true;
             } else {
-                commandLine.unexpectedArgument();
+                commandLine.throwUnexpectedArgument(session);
             }
         }
         return false;

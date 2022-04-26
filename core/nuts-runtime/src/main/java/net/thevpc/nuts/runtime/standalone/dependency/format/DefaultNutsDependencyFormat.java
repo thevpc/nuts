@@ -210,46 +210,47 @@ public class DefaultNutsDependencyFormat extends DefaultFormatBase<NutsDependenc
 
     @Override
     public boolean configureFirst(NutsCommandLine cmdLine) {
-        NutsArgument a = cmdLine.peek();
+        NutsSession session = getSession();
+        NutsArgument a = cmdLine.peek().get(session);
         if (a == null) {
             return false;
         }
         boolean enabled=a.isActive();
-        switch (a.getKey().getString()) {
+        switch(a.getStringKey().orElse("")) {
             case "--omit-env": {
-                boolean val= cmdLine.nextBoolean().getBooleanValue();
+                boolean val= cmdLine.nextBooleanValueLiteral().get(session);
                 if(enabled) {
                     setOmitOtherProperties(val);
                 }
                 return true;
             }
 //            case "--omit-face": {
-//                setOmitFace(cmdLine.nextBoolean().getBooleanValue());
+//                setOmitFace(cmdLine.nextBooleanValue().get(session));
 //                return true;
 //            }
             case "--omit-group": {
-                boolean val = cmdLine.nextBoolean().getBooleanValue();
+                boolean val = cmdLine.nextBooleanValueLiteral().get(session);
                 if(enabled) {
                 setOmitGroupId(val);
                 }
                 return true;
             }
             case "--omit-imported-group": {
-                boolean val = cmdLine.nextBoolean().getBooleanValue();
+                boolean val = cmdLine.nextBooleanValueLiteral().get(session);
                 if(enabled) {
                     setOmitImportedGroup(val);
                 }
                 return true;
             }
             case "--omit-repo": {
-                boolean val = cmdLine.nextBoolean().getBooleanValue();
+                boolean val = cmdLine.nextBooleanValueLiteral().get(session);
                 if(enabled) {
                     setOmitRepository(val);
                 }
                 return true;
             }
             case "--highlight-imported-group": {
-                boolean val = cmdLine.nextBoolean().getBooleanValue();
+                boolean val = cmdLine.nextBooleanValueLiteral().get(session);
                 if(enabled) {
                     setHighlightImportedGroup(val);
                 }

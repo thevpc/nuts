@@ -181,7 +181,7 @@ public class NutsElementPathFilter {
         public List<NutsElement> filter(NutsElement element) {
             NutsArrayElementBuilder aa = builder.ofArray();
             aa.add(element);
-            return aa.children();
+            return aa.items();
         }
 
         @Override
@@ -190,7 +190,7 @@ public class NutsElementPathFilter {
             for (NutsElement element : elements) {
                 aa.add(element);
             }
-            return aa.children();
+            return aa.items();
         }
 
     }
@@ -212,7 +212,7 @@ public class NutsElementPathFilter {
         @Override
         public List<NutsElement> filter(NutsElement element) {
             if (element.type() == NutsElementType.ARRAY) {
-                List<NutsElement> arr = new ArrayList<>(element.asArray().children());
+                List<NutsElement> arr = new ArrayList<>(element.asArray().get(session).items());
                 List<NutsElement> result = new ArrayList<>();
                 int len = arr.size();
                 NutsElementIndexMatcher indexMatcher = matchesIndex(pattern);
@@ -226,7 +226,7 @@ public class NutsElementPathFilter {
                 return result;
             } else if (element.type() == NutsElementType.OBJECT) {
                 List<NutsElement> result = new ArrayList<>();
-                Collection<NutsElementEntry> aa0 = element.asObject().children();
+                Collection<NutsElementEntry> aa0 = element.asObject().get(session).entries();
                 int len = aa0.size();
                 int index = 0;
                 Map<String, Object> matchContext = new HashMap<>();
@@ -558,7 +558,7 @@ public class NutsElementPathFilter {
         @Override
         public boolean matches(int index, NutsElement name, int len, Map<String, Object> matchContext, NutsSession session) {
             if (name.type() == NutsElementType.STRING) {
-                String sname = name.asPrimitive().getString();
+                String sname = name.asString().get(session);
                 return lower
                         ? sname.toLowerCase().matches(pat)
                         : sname.matches(pat);

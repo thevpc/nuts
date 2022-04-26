@@ -50,7 +50,8 @@ public class SourceCommand extends SimpleJShellBuiltin {
     @Override
     protected boolean configureFirst(NutsCommandLine commandLine, JShellExecutionContext context) {
         Options options = context.getOptions();
-        final NutsArgument a = commandLine.peek();
+        NutsSession session = context.getSession();
+        final NutsArgument a = commandLine.peek().get(session);
         if (!a.isOption()) {
             options.args.addAll(Arrays.asList(commandLine.toStringArray()));
             commandLine.skipAll();

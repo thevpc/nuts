@@ -25,8 +25,8 @@
 //            if (context.configure(cmdLine)) {
 //                //
 //            } else {
-//                String id = cmdLine.required().nextNonOption(new NutsIdNonOption("Nuts", context.getWorkspace())).getString();
-//                String contentFile = cmdLine.required().nextNonOption(new FolderNonOption("folder")).getString();
+//                String id = cmdLine.nextNonOption(new NutsIdNonOption("Nuts", context.getWorkspace())).get(session).getString();
+//                String contentFile = cmdLine.nextNonOption(new FolderNonOption("folder")).get(session).getString();
 //                if (cmdLine.isExecMode()) {
 //                    NutsWorkspace ws = context.getWorkspace();
 //                    NutsDefinition nf = ws.checkout(

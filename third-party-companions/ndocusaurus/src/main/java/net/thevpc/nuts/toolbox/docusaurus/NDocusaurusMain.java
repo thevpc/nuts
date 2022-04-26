@@ -22,11 +22,12 @@ public class NDocusaurusMain implements NutsApplication, NutsAppCmdProcessor {
 
     @Override
     public boolean onCmdNextOption(NutsArgument option, NutsCommandLine commandline, NutsApplicationContext context) {
-        switch (option.getKey().getString()) {
+        NutsSession session = context.getSession();
+        switch (option.getKey().asString().get(session)) {
             case "-d":
             case "--dir": {
                 if (workdir == null) {
-                    workdir = commandline.nextString().getValue().getString();
+                    workdir = commandline.nextStringValueLiteral().get(session);
                     return true;
                 }
             }
@@ -36,17 +37,18 @@ public class NDocusaurusMain implements NutsApplication, NutsAppCmdProcessor {
 
     @Override
     public boolean onCmdNextNonOption(NutsArgument nonOption, NutsCommandLine commandline, NutsApplicationContext context) {
-        switch (nonOption.getString()) {
+        NutsSession session = context.getSession();
+        switch (nonOption.asString().get(session)) {
             case "start": {
-                start = commandline.nextBoolean().getBooleanValue();
+                start = commandline.nextBooleanValueLiteral().get(session);
                 return true;
             }
             case "build": {
-                build = commandline.nextBoolean().getBooleanValue();
+                build = commandline.nextBooleanValueLiteral().get(session);
                 return true;
             }
             case "pdf": {
-                buildPdf = commandline.nextBoolean().getBooleanValue();
+                buildPdf = commandline.nextBooleanValueLiteral().get(session);
                 return true;
             }
         }
@@ -55,8 +57,11 @@ public class NDocusaurusMain implements NutsApplication, NutsAppCmdProcessor {
 
     @Override
     public void onCmdFinishParsing(NutsCommandLine commandline, NutsApplicationContext context) {
+        NutsSession session = context.getSession();
         if (!start && !build && !buildPdf) {
-            commandline.required(NutsMessage.cstyle("missing command. try ```sh ndocusaurus pdf | start | build```"));
+            commandline.throwMissingArgument(
+                    NutsMessage.cstyle("missing command. try ```sh ndocusaurus pdf | start | build```"),
+                    session);
         }
     }
 

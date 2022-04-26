@@ -1,9 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.elem.mapper;
 
-import net.thevpc.nuts.NutsArrayElement;
-import net.thevpc.nuts.NutsElement;
-import net.thevpc.nuts.NutsElementFactoryContext;
-import net.thevpc.nuts.NutsElementMapper;
+import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.elem.DefaultNutsElementFactoryService;
 
 import java.lang.reflect.Type;
@@ -25,7 +22,8 @@ public class NutsElementMapperPrimitiveCharArray implements NutsElementMapper<ch
 
     @Override
     public char[] createObject(NutsElement o, Type typeOfResult, NutsElementFactoryContext context) {
-        NutsArrayElement earr = o.asArray();
+        NutsSession session = context.getSession();
+        NutsArrayElement earr = o.asArray().get(session);
         String s = (String) context.elementToObject(o, String.class);
         return s.toCharArray();
     }

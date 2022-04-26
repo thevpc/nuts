@@ -24,9 +24,8 @@
 package net.thevpc.nuts.runtime.standalone.log;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.standalone.workspace.CoreNutsBootOptions;
-import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.boot.DefaultNutsBootManager;
+import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceExt;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -51,9 +50,9 @@ public class DefaultNutsLogModel {
     private NutsSession defaultSession;
     private Map<String, NutsLogger> loaded = new LinkedHashMap<>();
 
-    public DefaultNutsLogModel(NutsWorkspace ws, CoreNutsBootOptions bOptions) {
+    public DefaultNutsLogModel(NutsWorkspace ws, NutsWorkspaceOptions bOptions) {
         this.workspace = ws;
-        NutsWorkspaceOptions bootOptions = NutsWorkspaceExt.of(this.workspace).getModel().bootModel.getBootOptions();
+        NutsWorkspaceOptions bootOptions = NutsWorkspaceExt.of(this.workspace).getModel().bootModel.getBootUserOptions();
         logFolder = Paths.get(bOptions.getStoreLocation(NutsStoreLocation.LOG));
         NutsLogConfig lc = bootOptions.getLogConfig();
         if (lc != null) {

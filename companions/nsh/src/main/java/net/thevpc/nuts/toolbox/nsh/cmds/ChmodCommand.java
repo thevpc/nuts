@@ -46,13 +46,14 @@ public class ChmodCommand extends SimpleJShellBuiltin {
 
     @Override
     protected boolean configureFirst(NutsCommandLine commandLine, JShellExecutionContext context) {
+        NutsSession session = context.getSession();
         Options options = context.getOptions();
         //invert processing order!
         if (context.configureFirst(commandLine)) {
             return true;
         }
-        NutsArgument a = commandLine.peek();
-        String s = a.getString();
+        NutsArgument a = commandLine.peek().get(session);
+        String s = a.asString().get(session);
         if (s.equals("-R") || s.equals("--recursive")) {
             commandLine.skip();
             options.m.recursive = true;
@@ -183,16 +184,17 @@ public class ChmodCommand extends SimpleJShellBuiltin {
 
     @Override
     protected void execBuiltin(NutsCommandLine commandLine, JShellExecutionContext context) {
+        NutsSession session = context.getSession();
         Options options = context.getOptions();
         if (options.files.isEmpty()) {
-            commandLine.required();
+            commandLine.throwMissingArgument(session);
         }
         LinkedHashMap<NutsPath, NutsMessage> errors = new LinkedHashMap<>();
         for (NutsPath f : options.files) {
             chmod(f, options.m, errors);
         }
         if (!errors.isEmpty()) {
-            throwExecutionException(errors, 1, context.getSession());
+            throwExecutionException(errors, 1, session);
         }
     }
 

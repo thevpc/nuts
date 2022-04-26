@@ -28,18 +28,19 @@ class NCodeMainCmdProcessor implements NutsAppCmdProcessor {
 
     @Override
     public boolean onCmdNextOption(NutsArgument option, NutsCommandLine commandline, NutsApplicationContext context) {
-        switch (option.getStringKey()) {
+        NutsSession session = context.getSession();
+        switch (option.getStringKey().get(session)) {
             case "-i": {
-                option = commandline.nextBoolean();
-                caseInsensitive = option.getBooleanValue();
+                option = commandline.nextBoolean().get(session);
+                caseInsensitive = option.getBooleanValue().get(session);
                 return true;
             }
             case "-t": {
-                typeComparators.add(comp(commandline.nextString().getStringValue()));
+                typeComparators.add(comp(commandline.nextString().get(session).getStringValue().get(session)));
                 return true;
             }
             case "-f": {
-                fileComparators.add(comp(commandline.nextString().getStringValue()));
+                fileComparators.add(comp(commandline.nextString().get(session).getStringValue().get(session)));
                 return true;
             }
         }
@@ -67,29 +68,31 @@ class NCodeMainCmdProcessor implements NutsAppCmdProcessor {
 
     @Override
     public boolean onCmdNextNonOption(NutsArgument nonOption, NutsCommandLine commandline, NutsApplicationContext context) {
-        paths.add(commandline.next().getString());
+        NutsSession session = context.getSession();
+        paths.add(commandline.next().flatMap(NutsValue::asString).get(session));
         return true;
     }
 
     @Override
     public void onCmdExec(NutsCommandLine commandline, NutsApplicationContext context) {
+        NutsSession session = context.getSession();
         if (paths.isEmpty()) {
             paths.add(".");
         }
         if(typeComparators.isEmpty() && fileComparators.isEmpty()){
-            commandline.throwError(NutsMessage.plain("missing filter"));
+            commandline.throwError(NutsMessage.plain("missing filter"),session);
         }
         List<Object> results=new ArrayList<>();
         if(!typeComparators.isEmpty()) {
             for (String path : paths) {
-                navigate(SourceFactory.create(new File(path)), new JavaSourceFilter(typeComparators, fileComparators), new JavaSourceFormatter(), context.getSession(), results);
+                navigate(SourceFactory.create(new File(path)), new JavaSourceFilter(typeComparators, fileComparators), new JavaSourceFormatter(), session, results);
             }
         }else{
             for (String path : paths) {
-                navigate(SourceFactory.create(new File(path)), new PathSourceFilter(fileComparators), new PathSourceFormatter(), context.getSession(), results);
+                navigate(SourceFactory.create(new File(path)), new PathSourceFilter(fileComparators), new PathSourceFormatter(), session, results);
             }
         }
-        context.getSession().out().printlnf(results);
+        session.out().printlnf(results);
     }
 
 }

@@ -289,15 +289,15 @@ public abstract class AbstractNutsInstallCommand extends NutsWorkspaceCommandBas
 
     @Override
     public boolean configureFirst(NutsCommandLine cmdLine) {
-        NutsArgument a = cmdLine.peek();
+        NutsArgument a = cmdLine.peek().get(session);
         if (a == null) {
             return false;
         }
         boolean enabled = a.isActive();
-        switch (a.getKey().getString()) {
+        switch(a.getStringKey().orElse("")) {
             case "-c":
             case "--companions": {
-                boolean val = cmdLine.nextBoolean().getBooleanValue();
+                boolean val = cmdLine.nextBooleanValueLiteral().get(session);
                 if (enabled) {
                     this.setCompanions(val);
                 }
@@ -305,7 +305,7 @@ public abstract class AbstractNutsInstallCommand extends NutsWorkspaceCommandBas
             }
             case "-i":
             case "--installed": {
-                boolean val = cmdLine.nextBoolean().getBooleanValue();
+                boolean val = cmdLine.nextBooleanValueLiteral().get(session);
                 if (enabled) {
                     this.setInstalled(val);
                 }
@@ -313,7 +313,7 @@ public abstract class AbstractNutsInstallCommand extends NutsWorkspaceCommandBas
             }
             case "-s":
             case "--strategy": {
-                String val = cmdLine.nextString().getString();
+                String val = cmdLine.nextString().flatMap(NutsValue::asString).get(session);
                 if (enabled) {
                     this.setStrategy(CoreEnumUtils.parseEnumString(val, NutsInstallStrategy.class, false));
                 }
@@ -358,7 +358,7 @@ public abstract class AbstractNutsInstallCommand extends NutsWorkspaceCommandBas
                     return false;
                 } else {
                     cmdLine.skip();
-                    addId(a.getString());
+                    addId(a.asString().get(session));
                     return true;
                 }
             }

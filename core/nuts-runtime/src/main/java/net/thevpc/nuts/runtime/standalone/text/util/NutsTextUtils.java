@@ -51,11 +51,11 @@ public class NutsTextUtils {
             return txt.toText(o);
         }
         if (o instanceof NutsPrimitiveElement) {
-            o = ((NutsPrimitiveElement) o).getValue();
+            o = ((NutsPrimitiveElement) o).getObject();
         } else if (o instanceof NutsArrayElement) {
-            o = ((NutsArrayElement) o).children();
+            o = ((NutsArrayElement) o).items();
         } else if (o instanceof NutsObjectElement) {
-            Collection<NutsElementEntry> c = ((NutsObjectElement) o).children();
+            Collection<NutsElementEntry> c = ((NutsObjectElement) o).entries();
             Object[] a = c.toArray();
             if (a.length == 0) {
                 return txt.ofBlank();
@@ -79,7 +79,7 @@ public class NutsTextUtils {
             if (ne.getValue().type() == NutsElementType.STRING) {
                 sb.append(
                         txt.toText(
-                                NutsUtilStrings.dblQuotes(stringValueFormatted(ne.getValue(), escapeString, session).toString())
+                                NutsUtilStrings.formatStringLiteral(stringValueFormatted(ne.getValue(), escapeString, session).toString(), NutsUtilStrings.QuoteType.DOUBLE)
                         ));
 //            } else if (ne.getValue().type() == NutsElementType.NUTS_STRING) {
 //                sb.append(ne.getValue().asNutsString());
@@ -96,7 +96,7 @@ public class NutsTextUtils {
                     || (ne.getValue() instanceof NutsElement && ((NutsElement) ne.getValue()).isString())) {
                 sb.append(
                         txt.toText(
-                                NutsUtilStrings.dblQuotes(stringValueFormatted(ne.getValue(), escapeString, session).toString())
+                                NutsUtilStrings.formatStringLiteral(stringValueFormatted(ne.getValue(), escapeString, session).toString(), NutsUtilStrings.QuoteType.DOUBLE)
                         )
                 );
 //            } else if (ne.getValue() instanceof NutsElement && ((NutsElement) ne.getValue()).isNutsString()) {

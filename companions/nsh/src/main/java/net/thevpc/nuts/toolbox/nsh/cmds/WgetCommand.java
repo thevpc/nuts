@@ -47,12 +47,13 @@ public class WgetCommand extends SimpleJShellBuiltin {
     @Override
     protected boolean configureFirst(NutsCommandLine commandLine, JShellExecutionContext context) {
         Options options = context.getOptions();
+        NutsSession session = context.getSession();
         if (commandLine.next("-O", "--output-document") != null) {
-            options.outputDocument = commandLine.requireNonOption().next().getString();
+            options.outputDocument = commandLine.nextNonOption().get(session).asString().orNull();
             return true;
-        } else if (!commandLine.peek().isOption()) {
+        } else if (!commandLine.isNextOption()) {
             while (commandLine.hasNext()) {
-                options.files.add(commandLine.next().getString());
+                options.files.add(commandLine.next().flatMap(NutsValue::asString).get(session));
             }
             return true;
         }

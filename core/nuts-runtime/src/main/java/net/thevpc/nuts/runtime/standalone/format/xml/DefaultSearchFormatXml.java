@@ -91,7 +91,8 @@ public class DefaultSearchFormatXml extends DefaultSearchFormatBase {
 
     @Override
     public boolean configureFirst(NutsCommandLine cmd) {
-        NutsArgument a = cmd.peek();
+        NutsSession session = getSession();
+        NutsArgument a = cmd.peek().get(session);
         if (a == null) {
             return false;
         }
@@ -99,16 +100,16 @@ public class DefaultSearchFormatXml extends DefaultSearchFormatBase {
             return true;
         }
         boolean enabled = a.isActive();
-        switch (a.getKey().getString()) {
+        switch(a.getStringKey().orElse("")) {
             case "--compact": {
-                boolean val = cmd.nextBoolean().getBooleanValue();
+                boolean val = cmd.nextBooleanValueLiteral().get(session);
                 if (enabled) {
                     this.compact = val;
                 }
                 return true;
             }
             case "--root-name": {
-                String val = cmd.nextString().getValue().getString();
+                String val = cmd.nextStringValueLiteral().get(session);
                 if (enabled) {
                     this.rootName = val;
                 }

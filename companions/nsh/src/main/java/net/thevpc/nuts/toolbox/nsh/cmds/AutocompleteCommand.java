@@ -47,9 +47,10 @@ public class AutocompleteCommand extends SimpleJShellBuiltin {
     @Override
     protected boolean configureFirst(NutsCommandLine cmdLine, JShellExecutionContext context) {
         Options options = context.getOptions();
-        if (!cmdLine.peek().isOption()) {
+        NutsSession session = context.getSession();
+        if (!cmdLine.isNextOption()) {
             while (cmdLine.hasNext()) {
-                String s = cmdLine.next().getString();
+                String s = cmdLine.next().flatMap(NutsValue::asString).get(session);
                 if (options.cmd == null) {
                     options.cmd = s;
                 } else {
@@ -79,7 +80,7 @@ public class AutocompleteCommand extends SimpleJShellBuiltin {
         }
         List<JShellAutoCompleteCandidate> aa = context.getShellContext().resolveAutoCompleteCandidates(
                 options.cmd, options.items, options.index,
-                NutsCommandLine.of(options.items, session).toString()
+                NutsCommandLine.of(options.items).toString()
         );
         Properties p = new Properties();
         for (JShellAutoCompleteCandidate autoCompleteCandidate : aa) {

@@ -46,12 +46,13 @@ public class EnvCommand extends SimpleJShellBuiltin {
     @Override
     protected boolean configureFirst(NutsCommandLine commandLine, JShellExecutionContext context) {
         Options options = context.getOptions();
-        NutsArgument a = commandLine.peek();
+        NutsSession session = context.getSession();
+        NutsArgument a = commandLine.peek().get(session);
         switch (options.readStatus) {
             case 0: {
-                switch (a.getKey().getString()) {
+                switch(a.getStringKey().orElse("")) {
                     case "--sort": {
-                        options.sort = (commandLine.nextBoolean().getBooleanValue());
+                        options.sort = (commandLine.nextBooleanValueLiteral().get(session));
                         return true;
                     }
                     case "--external":
@@ -88,23 +89,23 @@ public class EnvCommand extends SimpleJShellBuiltin {
                         return true;
                     }
                     case "--as-user": {
-                        a = commandLine.nextString();
-                        options.runAs = NutsRunAs.user(a.getValue().getString());
+                        a = commandLine.nextString().get(session);
+                        options.runAs = NutsRunAs.user(a.getStringValue().get(session));
                         return true;
                     }
                     case "-C":
                     case "--chdir": {
-                        options.dir = commandLine.nextString().getValue().getString();
+                        options.dir = commandLine.nextStringValueLiteral().get(session);
                         return true;
                     }
                     case "-u":
                     case "--unset": {
-                        options.unsetVers.add(commandLine.nextString().getValue().getString());
+                        options.unsetVers.add(commandLine.nextStringValueLiteral().get(session));
                         return true;
                     }
                     case "-i":
                     case "--ignore-environment": {
-                        options.ignoreEnvironment = (commandLine.nextBoolean().getBooleanValue());
+                        options.ignoreEnvironment = (commandLine.nextBooleanValueLiteral().get(session));
                         return true;
                     }
                     case "-": {
@@ -114,14 +115,14 @@ public class EnvCommand extends SimpleJShellBuiltin {
                     }
                     default: {
                         if (a.isKeyValue()) {
-                            options.newEnv.put(a.getKey().getString(), a.getValue().getString());
+                            options.newEnv.put(a.getKey().asString().get(session), a.getStringValue().get(session));
                             commandLine.skip();
                             options.readStatus = 1;
                             return true;
                         } else if (a.isOption()) {
                             return false;
                         } else {
-                            options.command.add(a.getString());
+                            options.command.add(a.asString().get(session));
                             commandLine.skip();
                             options.readStatus = 2;
                             return true;
@@ -131,16 +132,16 @@ public class EnvCommand extends SimpleJShellBuiltin {
             }
             case 1: {
                 if (a.isKeyValue()) {
-                    options.newEnv.put(a.getKey().getString(), a.getValue().getString());
+                    options.newEnv.put(a.getKey().asString().get(session), a.getStringValue().get(session));
                 } else {
-                    options.command.add(a.getString());
+                    options.command.add(a.asString().get(session));
                     options.readStatus = 2;
                 }
                 commandLine.skip();
                 return true;
             }
             case 2: {
-                options.command.add(a.getString());
+                options.command.add(a.asString().get(session));
                 commandLine.skip();
                 return true;
             }

@@ -279,21 +279,6 @@ public final class CoreStringUtils {
         return msg;
     }
 
-//    /**
-//     * copied from StringUtils (in order to remove dependency)
-//     *
-//     * @param cmd string array
-//     * @return the first non empty element of the array
-//     */
-//    public static String coalesce(String... cmd) {
-//        for (String string : cmd) {
-//            if (!NutsBlankable.isBlank(string)) {
-//                return string;
-//            }
-//        }
-//        return null;
-//    }
-
     /**
      * copied from StringUtils (in order to remove dependency)
      *
@@ -373,18 +358,6 @@ public final class CoreStringUtils {
             int x = width - sb.length();
             if (x > 0) {
                 sb.append(fillString(' ', x));
-            }
-        }
-        return sb.toString();
-    }
-
-    public static String alignRight(String s, int width) {
-        StringBuilder sb = new StringBuilder();
-        if (s != null) {
-            sb.append(s);
-            int x = width - sb.length();
-            if (x > 0) {
-                sb.insert(0, fillString(' ', x));
             }
         }
         return sb.toString();
@@ -474,14 +447,6 @@ public final class CoreStringUtils {
         return a==null?b:a;
     }
 
-    public static List<String> splitOn(String line,char sep) {
-        StringTokenizer st=new StringTokenizer(line,""+sep,true);
-        List<String> ret=new ArrayList<>();
-        while(st.hasMoreTokens()){
-            ret.add(st.nextToken());
-        }
-        return ret;
-    }
 
     public static List<String> splitOnNewlines(String line) {
         char[] text = line.toCharArray();

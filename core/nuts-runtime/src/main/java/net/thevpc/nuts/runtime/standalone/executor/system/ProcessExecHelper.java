@@ -2,6 +2,7 @@ package net.thevpc.nuts.runtime.standalone.executor.system;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.executor.AbstractSyncIProcessExecHelper;
+import net.thevpc.nuts.runtime.standalone.util.CoreNutsUtils;
 import net.thevpc.nuts.runtime.standalone.util.jclass.NutsJavaSdkUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
@@ -100,7 +101,7 @@ public class ProcessExecHelper extends AbstractSyncIProcessExecHelper {
                                     pb.getCommandString()
                             )));
         }
-        if (showCommand || session.boot().getBootCustomBoolArgument(false, false, false, "---show-command")) {
+        if (showCommand || CoreNutsUtils.isShowCommand(session)) {
             if (prepareTerminal.out().mode() == NutsTerminalMode.FORMATTED) {
                 prepareTerminal.out().printf("%s ", NutsTexts.of(session).ofStyled("[exec]", NutsTextStyle.primary4()));
                 prepareTerminal.out().println(NutsTexts.of(session).ofCode("system", pb.getCommandString()));
@@ -233,7 +234,7 @@ public class ProcessExecHelper extends AbstractSyncIProcessExecHelper {
             case WINDOWS: {
                 String s = (String) session.getProperty("nuts.windows.root-user");
                 if (s == null) {
-                    s = session.config().getConfigProperty("nuts.windows.root-user").getString();
+                    s = session.config().getConfigProperty("nuts.windows.root-user").asString().get(session);
                 }
                 if (NutsBlankable.isBlank(s)) {
                     s = "Administrator";

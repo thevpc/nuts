@@ -268,14 +268,14 @@ public abstract class DefaultNutsQueryBaseOptions<T extends NutsWorkspaceCommand
         if (getDisplayOptions().configureFirst(cmdLine)) {
             return true;
         }
-        NutsArgument a = cmdLine.peek();
+        NutsArgument a = cmdLine.peek().get(session);
         if (a == null) {
             return false;
         }
         boolean enabled = a.isActive();
-        switch (a.getKey().getString()) {
+        switch(a.getStringKey().orElse("")) {
             case "--failfast": {
-                boolean val = cmdLine.nextBoolean().getBooleanValue();
+                boolean val = cmdLine.nextBooleanValueLiteral().get(session);
                 if (enabled) {
                     this.setFailFast(val);
                 }
@@ -283,21 +283,21 @@ public abstract class DefaultNutsQueryBaseOptions<T extends NutsWorkspaceCommand
             }
             case "-r":
             case "--repository": {
-                String val = cmdLine.nextString().getValue().getString();
+                String val = cmdLine.nextStringValueLiteral().get(session);
                 if (enabled) {
                     addRepositoryFilter(NutsRepositoryFilters.of(getSession()).byName(val));
                 }
                 return true;
             }
             case "--dependencies": {
-                boolean val = cmdLine.nextBoolean().getBooleanValue();
+                boolean val = cmdLine.nextBooleanValueLiteral().get(session);
                 if (enabled) {
                     this.setDependencies(val);
                 }
                 return true;
             }
             case "--scope": {
-                String s = cmdLine.nextString().getValue().getString();
+                String s = cmdLine.nextStringValueLiteral().get(session);
                 if (enabled) {
                     NutsDependencyScopePattern p = NutsDependencyScopePattern.parse(s).orElse(NutsDependencyScopePattern.API);
                     this.addScope(p);
@@ -313,28 +313,28 @@ public abstract class DefaultNutsQueryBaseOptions<T extends NutsWorkspaceCommand
 //                return true;
 //            }
             case "--optional": {
-                NutsArgument v = cmdLine.nextString();
+                NutsArgument v = cmdLine.nextString().get(session);
                 if (enabled) {
-                    this.setOptional(NutsUtilStrings.parseBoolean(v.getString(), null, null));
+                    this.setOptional(NutsUtilStrings.parseBoolean(v.asString().get(session)).orNull());
                 }
                 return true;
             }
             case "--effective": {
-                boolean val = cmdLine.nextBoolean().getBooleanValue();
+                boolean val = cmdLine.nextBooleanValueLiteral().get(session);
                 if (enabled) {
                     this.setEffective(val);
                 }
                 return true;
             }
             case "--content": {
-                boolean val = cmdLine.nextBoolean().getBooleanValue();
+                boolean val = cmdLine.nextBooleanValueLiteral().get(session);
                 if (enabled) {
                     this.setContent(val);
                 }
                 return true;
             }
             case "--location": {
-                String location = cmdLine.nextString().getValue().getString();
+                String location = cmdLine.nextStringValueLiteral().get(session);
                 if (enabled) {
                     this.setLocation(NutsBlankable.isBlank(location) ? null : Paths.get(location));
                 }

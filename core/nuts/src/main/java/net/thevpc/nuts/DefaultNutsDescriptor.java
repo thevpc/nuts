@@ -373,9 +373,9 @@ public class DefaultNutsDescriptor implements NutsDescriptor {
     }
 
     @Override
-    public String getPropertyValue(String name) {
+    public NutsOptional<NutsValue> getPropertyValue(String name) {
         NutsDescriptorProperty p = getProperty(name);
-        return p == null ? null : p.getValue();
+        return NutsOptional.of(p == null ? null : p.getValue(), session -> NutsMessage.cstyle("property not found : %s", name));
     }
 
     @Override

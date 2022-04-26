@@ -80,7 +80,11 @@ public class DefaultNutsSearchVersionsRepositoryCommand extends AbstractNutsSear
             return this;
         } catch (RuntimeException ex) {
             _LOGOP(session).level(Level.FINEST).verb(NutsLogVerb.FAIL)
-                    .log(NutsMessage.jstyle("[{0}] {1} {2} {3}", CoreStringUtils.alignLeft(getFetchMode().toString(), 7), CoreStringUtils.alignLeft(getRepo().getName(), 20), CoreStringUtils.alignLeft("Fetch versions for", 24), id));
+                    .log(NutsMessage.jstyle("[{0}] {1} {2} {3}",
+                            NutsUtilStrings.formatAlign(getFetchMode().toString(), 7,NutsPositionType.FIRST),
+                            NutsUtilStrings.formatAlign(getRepo().getName(), 20,NutsPositionType.FIRST),
+                            NutsUtilStrings.formatAlign("Fetch versions for", 24,NutsPositionType.FIRST),
+                            id));
             throw ex;
         }
     }

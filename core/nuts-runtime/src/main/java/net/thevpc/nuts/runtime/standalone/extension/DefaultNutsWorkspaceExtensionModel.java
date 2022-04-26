@@ -8,20 +8,18 @@ package net.thevpc.nuts.runtime.standalone.extension;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.dependency.util.NutsClassLoaderUtils;
 import net.thevpc.nuts.runtime.standalone.id.util.NutsIdUtils;
-import net.thevpc.nuts.runtime.standalone.session.NutsSessionUtils;
-import net.thevpc.nuts.runtime.standalone.workspace.CoreNutsBootOptions;
-import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceFactory;
-import net.thevpc.nuts.runtime.standalone.workspace.config.NutsWorkspaceConfigManagerExt;
 import net.thevpc.nuts.runtime.standalone.io.printstream.NutsFormattedPrintStream;
-import net.thevpc.nuts.runtime.standalone.workspace.config.NutsWorkspaceConfigBoot;
-import net.thevpc.nuts.runtime.standalone.workspace.DefaultNutsWorkspaceFactory;
-import net.thevpc.nuts.runtime.standalone.util.filters.CoreFilterUtils;
-import net.thevpc.nuts.NutsLogVerb;
 import net.thevpc.nuts.runtime.standalone.io.terminal.DefaultNutsSessionTerminalFromSystem;
+import net.thevpc.nuts.runtime.standalone.session.NutsSessionUtils;
 import net.thevpc.nuts.runtime.standalone.util.CoreNutsUtils;
 import net.thevpc.nuts.runtime.standalone.util.collections.ListMap;
+import net.thevpc.nuts.runtime.standalone.util.filters.CoreFilterUtils;
+import net.thevpc.nuts.runtime.standalone.workspace.DefaultNutsWorkspaceFactory;
+import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceFactory;
+import net.thevpc.nuts.runtime.standalone.workspace.config.NutsWorkspaceConfigBoot;
+import net.thevpc.nuts.runtime.standalone.workspace.config.NutsWorkspaceConfigManagerExt;
+import net.thevpc.nuts.runtime.standalone.xtra.expr.StringTokenizerUtils;
 import net.thevpc.nuts.spi.*;
-import net.thevpc.nuts.spi.NutsExecutorComponent;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -32,7 +30,6 @@ import java.util.logging.Level;
 import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
-import net.thevpc.nuts.runtime.standalone.xtra.expr.StringTokenizerUtils;
 
 /**
  * @author thevpc
@@ -168,7 +165,7 @@ public class DefaultNutsWorkspaceExtensionModel {
         return a;
     }
 
-    public void onInitializeWorkspace(CoreNutsBootOptions bOptions, ClassLoader bootClassLoader, NutsSession session) {
+    public void onInitializeWorkspace(NutsWorkspaceBootOptions bOptions, ClassLoader bootClassLoader, NutsSession session) {
         objectFactory.discoverTypes(
                 NutsId.of(bOptions.getRuntimeBootDependencyNode().getId()).get(session),
                 bOptions.getRuntimeBootDependencyNode().getURL(),
@@ -584,7 +581,7 @@ public class DefaultNutsWorkspaceExtensionModel {
         //should parse this form config?
         //or should be parse from and extension component?
         String repos = NutsSessionUtils.defaultSession(ws).config()
-                .getConfigProperty("nuts.bootstrap-repository-locations").getString( "") + ";" //                + NutsConstants.BootstrapURLs.LOCAL_NUTS_FOLDER
+                .getConfigProperty("nuts.bootstrap-repository-locations").asString( ).orElse("") + ";" //                + NutsConstants.BootstrapURLs.LOCAL_NUTS_FOLDER
                 //                + ";" + NutsConstants.BootstrapURLs.REMOTE_NUTS_GIT
                 ;
         List<String> urls = new ArrayList<>();

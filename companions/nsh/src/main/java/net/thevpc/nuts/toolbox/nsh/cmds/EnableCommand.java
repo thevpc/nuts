@@ -28,6 +28,8 @@ package net.thevpc.nuts.toolbox.nsh.cmds;
 
 import net.thevpc.nuts.NutsArgument;
 import net.thevpc.nuts.NutsCommandLine;
+import net.thevpc.nuts.NutsSession;
+import net.thevpc.nuts.NutsValue;
 import net.thevpc.nuts.spi.NutsComponentScope;
 import net.thevpc.nuts.spi.NutsComponentScopeType;
 import net.thevpc.nuts.toolbox.nsh.SimpleJShellBuiltin;
@@ -49,41 +51,42 @@ public class EnableCommand extends SimpleJShellBuiltin {
     @Override
     protected boolean configureFirst(NutsCommandLine commandLine, JShellExecutionContext context) {
         Options options = context.getOptions();
-        final NutsArgument a = commandLine.peek();
+        NutsSession session = context.getSession();
+        final NutsArgument a = commandLine.peek().get(session);
         if (a.isOption()) {
-            if (a.getKey().getString().equals("--sort")) {
+            if (a.getKey().asString().get(session).equals("--sort")) {
                 options.displayOptions.add(a.toString());
                 return true;
             }
         } else if (a.isOption()) {
-            switch (a.getKey().getString()) {
+            switch(a.getStringKey().orElse("")) {
                 case "-a": {
-                    options.a = commandLine.nextBoolean().getBooleanValue();
+                    options.a = commandLine.nextBooleanValueLiteral().get(session);
                     return true;
                 }
                 case "-d": {
-                    options.d = commandLine.nextBoolean().getBooleanValue();
+                    options.d = commandLine.nextBooleanValueLiteral().get(session);
                     return true;
                 }
                 case "-n": {
-                    options.n = commandLine.nextBoolean().getBooleanValue();
+                    options.n = commandLine.nextBooleanValueLiteral().get(session);
                     return true;
                 }
                 case "-p": {
-                    options.p = commandLine.nextBoolean().getBooleanValue();
+                    options.p = commandLine.nextBooleanValueLiteral().get(session);
                     return true;
                 }
                 case "-s": {
-                    options.s = commandLine.nextBoolean().getBooleanValue();
+                    options.s = commandLine.nextBooleanValueLiteral().get(session);
                     return true;
                 }
                 case "-f": {
-                    options.file = commandLine.nextString().getValue().getString();
+                    options.file = commandLine.nextStringValueLiteral().get(session);
                     return true;
                 }
             }
         } else {
-            options.names.add(commandLine.next().getString());
+            options.names.add(commandLine.next().flatMap(NutsValue::asString).get(session));
             return true;
         }
         return false;

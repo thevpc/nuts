@@ -20,7 +20,7 @@ public class NutsElementMapperNutsRepositoryLocation implements NutsElementMappe
     @Override
     public NutsRepositoryLocation createObject(NutsElement o, Type typeOfResult, NutsElementFactoryContext context) {
         NutsSession session = context.getSession();
-        return NutsRepositoryLocation.of(o.asPrimitive().getString());
+        return NutsRepositoryLocation.of(o.asString().get(session));
     }
 
 }

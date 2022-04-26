@@ -35,31 +35,32 @@ public class NProjectsSubCmd {
         boolean list = false;
         boolean show = false;
         while (cmd.hasNext()) {
-            NutsArgument a = cmd.peek();
-            if (a.getKey().getString().equals("--list") || a.getKey().getString().equals("-l")) {
-                list = cmd.nextBoolean().getBooleanValue();
-            } else if (a.getKey().getString().equals("--show") || a.getKey().getString().equals("-s")) {
-                show = cmd.nextBoolean().getBooleanValue();
-            } else if (a.getKey().getString().equals("-t") || a.getKey().getString().equals("--start") || a.getKey().getString().equals("--on")) {
-                t.setStartTime(new TimeParser().parseInstant(cmd.nextString().getValue().getString(), false));
-            } else if (a.getKey().getString().equals("--at")) {
-                t.setStartTime(new TimeParser().setTimeOnly(true).parseInstant(cmd.nextString().getValue().getString(), false));
-            } else if (a.getKey().getString().equals("-b") || a.getKey().getString().equals("--beneficiary") || a.getKey().getString().equals("--for")) {
-                t.setBeneficiary(cmd.nextString().getValue().getString());
-            } else if (a.getKey().getString().equals("-c") || a.getKey().getString().equals("--company") || a.getKey().getString().equals("--via")) {
-                t.setCompany(cmd.nextString().getValue().getString());
-            } else if (a.getKey().getString().equals("-1") || a.getKey().getString().equals("--day1")) {
-                t.setStartWeekDay(WeekDay.parse(cmd.nextString().getValue().getString()));
-            } else if (a.getKey().getString().equals("-o") || a.getKey().getString().equals("--obs")) {
-                t.setObservations(cmd.nextString().getValue().getString());
+            NutsArgument a = cmd.peek().get(session);
+            String string = a.getKey().asString().get(session);
+            if (string.equals("--list") || string.equals("-l")) {
+                list = cmd.nextBooleanValueLiteral().get(session);
+            } else if (string.equals("--show") || string.equals("-s")) {
+                show = cmd.nextBooleanValueLiteral().get(session);
+            } else if (string.equals("-t") || string.equals("--start") || string.equals("--on")) {
+                t.setStartTime(new TimeParser().parseInstant(cmd.nextStringValueLiteral().get(session), false));
+            } else if (string.equals("--at")) {
+                t.setStartTime(new TimeParser().setTimeOnly(true).parseInstant(cmd.nextStringValueLiteral().get(session), false));
+            } else if (string.equals("-b") || string.equals("--beneficiary") || string.equals("--for")) {
+                t.setBeneficiary(cmd.nextStringValueLiteral().get(session));
+            } else if (string.equals("-c") || string.equals("--company") || string.equals("--via")) {
+                t.setCompany(cmd.nextStringValueLiteral().get(session));
+            } else if (string.equals("-1") || string.equals("--day1")) {
+                t.setStartWeekDay(WeekDay.parse(cmd.nextStringValueLiteral().get(session)));
+            } else if (string.equals("-o") || string.equals("--obs")) {
+                t.setObservations(cmd.nextStringValueLiteral().get(session));
             } else if (a.isNonOption()) {
                 if (t.getName() == null) {
-                    t.setName(cmd.next().toString());
+                    t.setName(cmd.next().get(session).toString());
                 } else {
-                    cmd.unexpectedArgument();
+                    cmd.throwUnexpectedArgument(session);
                 }
             } else {
-                cmd.unexpectedArgument();
+                cmd.throwUnexpectedArgument(session);
             }
         }
         if (cmd.isExecMode()) {
@@ -71,10 +72,10 @@ public class NProjectsSubCmd {
                 );
             }
             if (show) {
-                runProjectShow(NutsCommandLine.of(new String[]{t.getId()}, session));
+                runProjectShow(NutsCommandLine.of(new String[]{t.getId()}));
             }
             if (list) {
-                runProjectList(NutsCommandLine.of(new String[0], session));
+                runProjectList(NutsCommandLine.of(new String[0]));
             }
         }
     }
@@ -86,70 +87,70 @@ public class NProjectsSubCmd {
         String mergeTo = null;
         List<Consumer<NProject>> runLater = new ArrayList<>();
         while (cmd.hasNext()) {
-            NutsArgument a = cmd.peek();
-            switch (a.getKey().getString()) {
+            NutsArgument a = cmd.peek().get(session);
+            switch(a.getStringKey().orElse("")) {
                 case "-l":
                 case "--list": {
-                    list = cmd.nextBoolean().getBooleanValue();
+                    list = cmd.nextBooleanValueLiteral().get(session);
                     break;
                 }
                 case "-s":
                 case "--show": {
-                    show = cmd.nextBoolean().getBooleanValue();
+                    show = cmd.nextBooleanValueLiteral().get(session);
                     break;
                 }
                 case "--on":
                 case "--start": {
-                    Instant v = new TimeParser().parseInstant(cmd.nextString().getValue().getString(), false);
+                    Instant v = new TimeParser().parseInstant(cmd.nextStringValueLiteral().get(session), false);
                     runLater.add(t -> t.setStartTime(v));
                     break;
                 }
                 case "--at": {
-                    Instant v = new TimeParser().setTimeOnly(true).parseInstant(cmd.nextString().getValue().getString(), false);
+                    Instant v = new TimeParser().setTimeOnly(true).parseInstant(cmd.nextStringValueLiteral().get(session), false);
                     runLater.add(t -> t.setStartTime(v));
                     break;
                 }
                 case "--for":
                 case "--beneficiary":
                 case "-b": {
-                    String v = cmd.nextString().getValue().getString();
+                    String v = cmd.nextStringValueLiteral().get(session);
                     runLater.add(t -> t.setBeneficiary(v));
                     break;
                 }
                 case "--company":
                 case "--via":
                 case "-c": {
-                    String v = cmd.nextString().getValue().getString();
+                    String v = cmd.nextStringValueLiteral().get(session);
                     runLater.add(t -> t.setCompany(v));
                     break;
                 }
                 case "--day1":
                 case "-1": {
-                    WeekDay v = WeekDay.parse(cmd.nextString().getValue().getString());
+                    WeekDay v = WeekDay.parse(cmd.nextStringValueLiteral().get(session));
                     runLater.add(t -> t.setStartWeekDay(v));
                     break;
                 }
                 case "--obs":
                 case "-o": {
-                    String v = cmd.nextString().getValue().getString();
+                    String v = cmd.nextStringValueLiteral().get(session);
                     runLater.add(t -> t.setObservations(v));
                     break;
                 }
                 case "--merge-to": {
-                    NutsArgument c = cmd.nextString();
+                    NutsArgument c = cmd.nextString().get(session);
                     if (!c.isInactive()) {
                         if (mergeTo != null) {
-                            cmd.pushBack(c);
-                            cmd.unexpectedArgument();
+                            cmd.pushBack(c, session);
+                            cmd.throwUnexpectedArgument(session);
                         } else {
-                            mergeTo = c.getValue().getString();
+                            mergeTo = c.getStringValue().get(session);
                         }
                     }
                     break;
                 }
                 case "++obs":
                 case "+o": {
-                    String v = cmd.nextString().getValue().getString();
+                    String v = cmd.nextStringValueLiteral().get(session);
                     runLater.add(t -> {
                         String s = t.getObservations();
                         if (s == null) {
@@ -167,17 +168,17 @@ public class NProjectsSubCmd {
                 }
                 default: {
                     if (a.isNonOption()) {
-                        String pid = cmd.next().toString();
+                        String pid = cmd.next().get(session).toString();
                         NProject t = findProject(pid, cmd);
                         projects.add(t);
                     } else {
-                        cmd.unexpectedArgument();
+                        cmd.throwUnexpectedArgument(session);
                     }
                 }
             }
         }
         if (projects.isEmpty()) {
-            cmd.throwError(NutsMessage.formatted("project name expected"));
+            cmd.throwError(NutsMessage.formatted("project name expected"), session);
         }
         if (cmd.isExecMode()) {
             NutsTexts text = NutsTexts.of(context.getSession());
@@ -204,11 +205,11 @@ public class NProjectsSubCmd {
             }
             if (show) {
                 for (NProject t : new LinkedHashSet<>(projects)) {
-                    runProjectShow(NutsCommandLine.of(new String[]{t.getId()}, session));
+                    runProjectShow(NutsCommandLine.of(new String[]{t.getId()}));
                 }
             }
             if (list) {
-                runProjectList(NutsCommandLine.of(new String[0], session));
+                runProjectList(NutsCommandLine.of(new String[0]));
             }
         }
     }
@@ -216,11 +217,11 @@ public class NProjectsSubCmd {
     private void runProjectList(NutsCommandLine cmd) {
         Predicate<NProject> whereFilter = null;
         while (cmd.hasNext()) {
-            NutsArgument a = cmd.peek();
-            switch (a.getKey().getString()) {
+            NutsArgument a = cmd.peek().get(session);
+            switch(a.getStringKey().orElse("")) {
                 case "-b":
                 case "-beneficiary": {
-                    String s = cmd.nextString().getValue().getString();
+                    String s = cmd.nextStringValueLiteral().get(session);
                     Predicate<String> sp = parent.createStringFilter(s);
                     Predicate<NProject> t = x -> sp.test(x.getBeneficiary());
                     whereFilter = parent.appendPredicate(whereFilter, t);
@@ -228,7 +229,7 @@ public class NProjectsSubCmd {
                 }
                 case "-c":
                 case "-company": {
-                    String s = cmd.nextString().getValue().getString();
+                    String s = cmd.nextStringValueLiteral().get(session);
                     Predicate<String> sp = parent.createStringFilter(s);
                     Predicate<NProject> t = x -> sp.test(x.getCompany());
                     whereFilter = parent.appendPredicate(whereFilter, t);
@@ -236,14 +237,14 @@ public class NProjectsSubCmd {
                 }
                 case "-n":
                 case "--name": {
-                    String s = cmd.nextString().getValue().getString();
+                    String s = cmd.nextStringValueLiteral().get(session);
                     Predicate<String> sp = parent.createStringFilter(s);
                     Predicate<NProject> t = x -> sp.test(x.getName());
                     whereFilter = parent.appendPredicate(whereFilter, t);
                     break;
                 }
                 case "--unused": {
-                    boolean unused = cmd.nextBoolean().getBooleanValue();
+                    boolean unused = cmd.nextBooleanValueLiteral().get(session);
                     Predicate<NProject> t = x -> service.projects().isUsedProject(x.getId()) != unused;
                     whereFilter = parent.appendPredicate(whereFilter, t);
                     break;
@@ -251,13 +252,13 @@ public class NProjectsSubCmd {
                 case "-t":
                 case "--startTime":
                 case "--start-time": {
-                    String s = cmd.nextString().getValue().getString();
+                    String s = cmd.nextStringValueLiteral().get(session);
                     Predicate<Instant> t = new TimeParser().parseInstantFilter(s, false);
                     whereFilter = parent.appendPredicate(whereFilter, x -> t.test(x.getStartTime()));
                     break;
                 }
                 default: {
-                    cmd.unexpectedArgument();
+                    cmd.throwUnexpectedArgument(session);
                 }
             }
         }
@@ -312,7 +313,7 @@ public class NProjectsSubCmd {
     private void runProjectRemove(NutsCommandLine cmd) {
         NutsTexts text = NutsTexts.of(context.getSession());
         while (cmd.hasNext()) {
-            NutsArgument a = cmd.next();
+            NutsArgument a = cmd.next().get(session);
             if (cmd.isExecMode()) {
                 NProject t = findProject(a.toString(), cmd);
                 if (service.projects().removeProject(t.getId())) {
@@ -334,7 +335,7 @@ public class NProjectsSubCmd {
 
     private void runProjectShow(NutsCommandLine cmd) {
         while (cmd.hasNext()) {
-            NutsArgument a = cmd.next();
+            NutsArgument a = cmd.next().get(session);
             NProject project = findProject(a.toString(), cmd);
             if (project == null) {
                 context.getSession().out().printf("```kw %s```: ```error not found```.\n",
@@ -345,12 +346,12 @@ public class NProjectsSubCmd {
                         project.getId()
                 );
                 String prefix = "\t                    ";
-                context.getSession().out().printf("\t```kw2 project name```  : %s\n", parent.formatWithPrefix(project.getName(), prefix));
-                context.getSession().out().printf("\t```kw2 beneficiary```   : %s\n", parent.formatWithPrefix(project.getBeneficiary(), prefix));
-                context.getSession().out().printf("\t```kw2 company```       : %s\n", parent.formatWithPrefix(project.getCompany(), prefix));
-                context.getSession().out().printf("\t```kw2 start time```    : %s\n", parent.formatWithPrefix(project.getStartTime(), prefix));
-                context.getSession().out().printf("\t```kw2 start week day```: %s\n", parent.formatWithPrefix(project.getStartWeekDay(), prefix));
-                context.getSession().out().printf("\t```kw2 observations```  : %s\n", parent.formatWithPrefix(project.getObservations(), prefix));
+                context.getSession().out().printf("\t```kw2 project name```  : %s\n", JobServiceCmd.formatWithPrefix(project.getName(), prefix));
+                context.getSession().out().printf("\t```kw2 beneficiary```   : %s\n", JobServiceCmd.formatWithPrefix(project.getBeneficiary(), prefix));
+                context.getSession().out().printf("\t```kw2 company```       : %s\n", JobServiceCmd.formatWithPrefix(project.getCompany(), prefix));
+                context.getSession().out().printf("\t```kw2 start time```    : %s\n", JobServiceCmd.formatWithPrefix(project.getStartTime(), prefix));
+                context.getSession().out().printf("\t```kw2 start week day```: %s\n", JobServiceCmd.formatWithPrefix(project.getStartWeekDay(), prefix));
+                context.getSession().out().printf("\t```kw2 observations```  : %s\n", JobServiceCmd.formatWithPrefix(project.getObservations(), prefix));
             }
         }
 
@@ -359,7 +360,7 @@ public class NProjectsSubCmd {
     private NProject findProject(String pid, NutsCommandLine cmd) {
         NProject t = null;
         if (pid.startsWith("#")) {
-            int x = parent.parseIntOrFF(pid.substring(1));
+            int x = JobServiceCmd.parseIntOrFF(pid.substring(1));
             if (x >= 1) {
                 Object lastResults = context.getSession().getProperty("LastResults");
                 if (lastResults instanceof NProject[] && x <= ((NProject[]) lastResults).length) {
@@ -371,7 +372,7 @@ public class NProjectsSubCmd {
             t = service.projects().getProject(pid);
         }
         if (t == null) {
-            cmd.throwError(NutsMessage.cstyle("project not found: %s", pid));
+            cmd.throwError(NutsMessage.cstyle("project not found: %s", pid), session);
         }
         return t;
     }

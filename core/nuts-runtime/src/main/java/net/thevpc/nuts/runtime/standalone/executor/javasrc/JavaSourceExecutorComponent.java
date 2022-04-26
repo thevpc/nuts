@@ -106,7 +106,7 @@ public class JavaSourceExecutorComponent implements NutsExecutorComponent {
                                 "-d",
                                 "<temp-folder>",
                                 javaFile.toString()
-                        }, executionContext.getSession()
+                        }
                 )
         );
         JavaExecutorComponent cc = new JavaExecutorComponent();

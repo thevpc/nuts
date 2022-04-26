@@ -18,15 +18,16 @@ public class NutsElementMapperNutsPlatformLocation implements NutsElementMapper<
 
     @Override
     public NutsPlatformLocation createObject(NutsElement o, Type typeOfResult, NutsElementFactoryContext context) {
-        NutsObjectElement obj = o.asObject();
+        NutsSession session = context.getSession();
+        NutsObjectElement obj = o.asObject().get(session);
         NutsElements _prm = context.elem();
-        NutsId id = context.elementToObject(obj.get(_prm.ofString("id")), NutsId.class);
-        String product = context.elementToObject(obj.get(_prm.ofString("product")), String.class);
-        String name = context.elementToObject(obj.get(_prm.ofString("name")), String.class);
-        String path = context.elementToObject(obj.get(_prm.ofString("path")), String.class);
-        String version = context.elementToObject(obj.get(_prm.ofString("version")), String.class);
-        String packaging = context.elementToObject(obj.get(_prm.ofString("packaging")), String.class);
-        int priority = context.elementToObject(obj.get(_prm.ofString("priority")), int.class);
+        NutsId id = context.elementToObject(obj.get("id").orElse(_prm.ofString("")), NutsId.class);
+        String product = context.elementToObject(obj.get("product").orElse(_prm.ofString("")), String.class);
+        String name = context.elementToObject(obj.get("name").orElse(_prm.ofString("")), String.class);
+        String path = context.elementToObject(obj.get("path").orElse(_prm.ofString("")), String.class);
+        String version = context.elementToObject(obj.get("version").orElse(_prm.ofString("")), String.class);
+        String packaging = context.elementToObject(obj.get("packaging").orElse(_prm.ofString("")), String.class);
+        int priority = context.elementToObject(obj.get("priority").orElse(_prm.ofInt(0)), int.class);
         return new NutsPlatformLocation(id, product, name, path, version, packaging, priority);
     }
 

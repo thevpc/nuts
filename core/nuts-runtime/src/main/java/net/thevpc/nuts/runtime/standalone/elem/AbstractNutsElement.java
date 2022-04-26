@@ -25,6 +25,8 @@ package net.thevpc.nuts.runtime.standalone.elem;
 
 import net.thevpc.nuts.*;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.time.Instant;
 
 /**
@@ -46,81 +48,46 @@ public abstract class AbstractNutsElement implements NutsElement {
     }
 
     @Override
-    public NutsPrimitiveElement asPrimitive() {
+    public NutsOptional<NutsPrimitiveElement> asPrimitive() {
         if (this instanceof NutsPrimitiveElement) {
-            return (NutsPrimitiveElement) this;
+            return NutsOptional.of((NutsPrimitiveElement) this);
         }
-        throw new IllegalStateException("unable to cast " + type().id() + " to primitive" + this);
+        return NutsOptional.ofError(s -> NutsMessage.cstyle("unable to cast % to primitive: %s", type().id(), this));
     }
 
     @Override
-    public NutsObjectElement asObject() {
+    public NutsOptional<NutsObjectElement> asObject() {
         if (this instanceof NutsObjectElement) {
-            return (NutsObjectElement) this;
+            return NutsOptional.of((NutsObjectElement) this);
         }
-        throw new IllegalStateException("unable to cast " + type().id() + " to object: " + this);
+        return NutsOptional.ofError(s -> NutsMessage.cstyle("unable to cast % to object: %s", type().id(), this));
+    }
+    @Override
+    public NutsOptional<NutsNavigatableElement> asNavigatable() {
+        if (this instanceof NutsNavigatableElement) {
+            return NutsOptional.of((NutsNavigatableElement) this);
+        }
+        return NutsOptional.ofError(s -> NutsMessage.cstyle("unable to cast % to object/array: %s", type().id(), this));
     }
 
-    public NutsCustomElement asCustom() {
+    public NutsOptional<NutsCustomElement> asCustom() {
         if (this instanceof NutsCustomElement) {
-            return (NutsCustomElement) this;
+            return NutsOptional.of((NutsCustomElement) this);
         }
-        throw new IllegalStateException("unable to cast " + type().id() + " to custom: " + this);
+        return NutsOptional.ofError(s -> NutsMessage.cstyle("unable to cast % to custom: %s", type().id(), this));
+    }
+
+    @Override
+    public NutsOptional<NutsArrayElement> asArray() {
+        if (this instanceof NutsArrayElement) {
+            return NutsOptional.of((NutsArrayElement) this);
+        }
+        return NutsOptional.ofError(s -> NutsMessage.cstyle("unable to cast % to array: %s", type().id(), this));
     }
 
     @Override
     public boolean isCustom() {
         return this instanceof NutsCustomElement;
-    }
-
-    @Override
-    public NutsObjectElement asSafeObject() {
-        return asSafeObject(false);
-    }
-
-    @Override
-    public NutsArrayElement asSafeArray() {
-        return asSafeArray(false);
-    }
-
-    @Override
-    public NutsArrayElement asArray() {
-        if (this instanceof NutsArrayElement) {
-            return (NutsArrayElement) this;
-        }
-        throw new IllegalStateException("unable to cast " + type().id() + " to array" + this);
-    }
-
-    @Override
-    public NutsObjectElement asSafeObject(boolean embed) {
-        if (this instanceof NutsObjectElement) {
-            return (NutsObjectElement) this;
-        }
-        if(embed && type()!=NutsElementType.NULL){
-            return NutsElements.of(session)
-                    .ofObject()
-                    .set("value", this)
-                    .build();
-        }
-        return NutsElements.of(session)
-                .ofObject()
-                .build();
-    }
-
-    @Override
-    public NutsArrayElement asSafeArray(boolean embed) {
-        if (this instanceof NutsArrayElement) {
-            return (NutsArrayElement) this;
-        }
-        if(embed && type()!=NutsElementType.NULL){
-            return NutsElements.of(session)
-                    .ofArray()
-                    .add(this)
-                    .build();
-        }
-        return NutsElements.of(session)
-                .ofArray()
-                .build();
     }
 
     @Override
@@ -151,6 +118,7 @@ public abstract class AbstractNutsElement implements NutsElement {
 //    public NutsString asNutsString() {
 //        return asPrimitive().getNutsString();
 //    }
+
 
     @Override
     public boolean isNull() {
@@ -196,6 +164,11 @@ public abstract class AbstractNutsElement implements NutsElement {
     }
 
     @Override
+    public boolean isBoolean() {
+        return type() == NutsElementType.BOOLEAN;
+    }
+
+    @Override
     public boolean isObject() {
         NutsElementType t = type();
         return t == NutsElementType.OBJECT;
@@ -213,118 +186,71 @@ public abstract class AbstractNutsElement implements NutsElement {
     }
 
     @Override
-    public String asString() {
-        return asPrimitive().getString();
+    public NutsOptional<String> asString() {
+        return asPrimitive().flatMap(NutsValue::asString);
     }
 
     @Override
-    public boolean asBoolean() {
-        return asPrimitive().getBoolean();
+    public NutsOptional<Number> asNumber() {
+        return asPrimitive().flatMap(NutsValue::asNumber);
     }
 
     @Override
-    public byte asByte() {
-        return asPrimitive().getByte();
+    public NutsOptional<BigInteger> asBigInt() {
+        return asPrimitive().flatMap(NutsValue::asBigInt);
     }
 
     @Override
-    public double asDouble() {
-        return asPrimitive().getDouble();
+    public NutsOptional<BigDecimal> asBigDecimal() {
+        return asPrimitive().flatMap(NutsValue::asBigDecimal);
     }
 
     @Override
-    public float asFloat() {
-        return asPrimitive().getFloat();
-    }
-
-    @Override
-    public Instant asInstant() {
-        return asPrimitive().getInstant();
-    }
-
-
-
-    @Override
-    public Integer asSafeInt(Integer defaultValue) {
-        if(isPrimitive()){
-            return asPrimitive().getInt(defaultValue);
+    public Object getObject() {
+        if (isPrimitive()) {
+            return asPrimitive().get();
         }
-        return defaultValue;
+        return null;
     }
 
     @Override
-    public Instant asSafeInstant(Instant defaultValue) {
-        if(isPrimitive()){
-            return asPrimitive().getInstant(defaultValue);
-        }
-        return defaultValue;
+    public NutsOptional<Boolean> asBoolean() {
+        return asPrimitive().flatMap(NutsValue::asBoolean);
     }
 
     @Override
-    public Long asSafeLong(Long defaultValue) {
-        if(isPrimitive()){
-            return asPrimitive().getLong(defaultValue);
-        }
-        return defaultValue;
+    public NutsOptional<Byte> asByte() {
+        return asPrimitive().flatMap(NutsValue::asByte);
     }
 
     @Override
-    public Short asSafeShort(Short defaultValue) {
-        if(isPrimitive()){
-            return asPrimitive().getShort(defaultValue);
-        }
-        return defaultValue;
-    }
-
-
-
-    @Override
-    public Byte asSafeByte(Byte defaultValue) {
-        if(isPrimitive()){
-            return asPrimitive().getByte(defaultValue);
-        }
-        return defaultValue;
-    }
-
-
-    @Override
-    public Double asSafeDouble(Double defaultValue) {
-        if(isPrimitive()){
-            return asPrimitive().getDouble(defaultValue);
-        }
-        return defaultValue;
-    }
-
-
-    @Override
-    public Float asSafeFloat(Float defaultValue) {
-        if(isPrimitive()){
-            return asPrimitive().getFloat(defaultValue);
-        }
-        return defaultValue;
+    public NutsOptional<Double> asDouble() {
+        return asPrimitive().flatMap(NutsValue::asDouble);
     }
 
     @Override
-    public String asSafeString(String defaultValue) {
-        if(isPrimitive()){
-            return asPrimitive().getString(defaultValue);
-        }
-        return defaultValue;
+    public NutsOptional<Float> asFloat() {
+        return asPrimitive().flatMap(NutsValue::asFloat);
     }
 
     @Override
-    public int asInt() {
-        return asPrimitive().getInt();
+    public NutsOptional<Instant> asInstant() {
+        return asPrimitive().flatMap(NutsValue::asInstant);
     }
 
     @Override
-    public long asLong() {
-        return asPrimitive().getLong();
+    public NutsOptional<Integer> asInt() {
+        return asPrimitive().flatMap(NutsValue::asInt);
     }
 
     @Override
-    public short asShort() {
-        return asPrimitive().getShort();
+    public NutsOptional<Long> asLong() {
+        return asPrimitive().flatMap(NutsValue::asLong);
+    }
+
+    @Override
+    public NutsOptional<Short> asShort() {
+        return asPrimitive().flatMap(NutsValue::asShort);
     }
 
     @Override

@@ -346,7 +346,7 @@ public final class PrivateNutsUtilMavenRepos {
                                                 artifactId,
                                                 NutsVersion.of(version).get()).get()
                                                 .builder()
-                                                .setProperty(NutsConstants.IdProperties.OPTIONAL, "" + NutsUtilStrings.parseBoolean(optional, false, false))
+                                                .setProperty(NutsConstants.IdProperties.OPTIONAL, "" + NutsUtilStrings.parseBoolean(optional).orElse(false))
                                                 .setCondition(
                                                         new DefaultNutsEnvConditionBuilder()
                                                                 .setOs(Arrays.asList(osMap.get(groupId + ":" + artifactId)))
@@ -652,7 +652,7 @@ public final class PrivateNutsUtilMavenRepos {
     }
 
     static File getBootCacheJar(NutsId vid, NutsRepositoryLocation[] repositories, NutsRepositoryLocation cacheFolder, boolean useCache, String name,
-                                Instant expire, PrivateNutsErrorInfoList errorList, NutsBootOptions bOptions,
+                                Instant expire, PrivateNutsErrorInfoList errorList, NutsWorkspaceBootOptions bOptions,
                                 Function<String, String> pathExpansionConverter, PrivateNutsBootLog bLog) {
         File f = getBootCacheFile(vid, getFileName(vid, "jar"), repositories, cacheFolder, useCache, expire, errorList, bOptions, pathExpansionConverter, bLog);
         if (f == null) {
@@ -664,7 +664,7 @@ public final class PrivateNutsUtilMavenRepos {
 
     static File getBootCacheFile(NutsId vid, String fileName, NutsRepositoryLocation[] repositories, NutsRepositoryLocation cacheFolder,
                                  boolean useCache, Instant expire, PrivateNutsErrorInfoList errorList,
-                                 NutsBootOptions bOptions,
+                                 NutsWorkspaceBootOptions bOptions,
                                  Function<String, String> pathExpansionConverter, PrivateNutsBootLog bLog) {
         String path = getPathFile(vid, fileName);
         if (useCache && cacheFolder != null) {
@@ -688,7 +688,7 @@ public final class PrivateNutsUtilMavenRepos {
 
     private static File getBootCacheFile(NutsId nutsId, String path, NutsRepositoryLocation repository0, NutsRepositoryLocation cacheFolder,
                                          boolean useCache, Instant expire, PrivateNutsErrorInfoList errorList,
-                                         NutsBootOptions bOptions, Function<String, String> pathExpansionConverter,
+                                         NutsWorkspaceBootOptions bOptions, Function<String, String> pathExpansionConverter,
                                          PrivateNutsBootLog bLog) {
         boolean cacheLocalFiles = true;//Boolean.getBoolean("nuts.cache.cache-local-files");
         String repository = repository0.getPath();

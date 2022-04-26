@@ -51,16 +51,19 @@ public class TailCommand extends SimpleJShellBuiltin {
     protected boolean configureFirst(NutsCommandLine commandLine, JShellExecutionContext context) {
         Options options = context.getOptions();
         NutsSession session = context.getSession();
-        NutsArgument a = commandLine.peek();
+        NutsArgument a = commandLine.peek().get(session);
         if (a.isOption()) {
-            if (ShellHelper.isInt(a.getString().substring(1))) {
-                options.max = Integer.parseInt(commandLine.next().getString().substring(1));
+            if (ShellHelper.isInt(a.asString()
+                    .get(session).substring(1))) {
+                options.max = Integer.parseInt(commandLine.next()
+                        .get(session).asString()
+                        .get(session).substring(1));
                 return true;
             } else {
                 return false;
             }
         } else {
-            String path = a.getString();
+            String path = a.asString().get(session);
             NutsPath file = NutsPath.of(path, session).toAbsolute(context.getShellContext().getCwd());
             options.files.add(file);
             return true;

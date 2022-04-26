@@ -28,6 +28,8 @@ package net.thevpc.nuts;
 
 import net.thevpc.nuts.boot.NutsApiUtils;
 
+import java.util.function.Function;
+
 /**
  * Text align constants
  *
@@ -63,7 +65,21 @@ public enum NutsPositionType implements NutsEnum {
     }
 
     public static NutsOptional<NutsPositionType> parse(String value) {
-        return NutsApiUtils.parse(value, NutsPositionType.class);
+        return NutsApiUtils.parse(value, NutsPositionType.class, new Function<String, NutsOptional<NutsPositionType>>() {
+            @Override
+            public NutsOptional<NutsPositionType> apply(String s) {
+                switch (s.toLowerCase()){
+                    case "left":
+                    case "top":
+                    case "before":
+                        return NutsOptional.of(FIRST);
+                    case "right":
+                    case "bottom":
+                        return NutsOptional.of(LAST);
+                }
+                return null;
+            }
+        });
     }
 
 

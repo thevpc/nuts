@@ -49,42 +49,43 @@ public class HistoryCommand extends SimpleJShellBuiltin {
     @Override
     protected boolean configureFirst(NutsCommandLine commandLine, JShellExecutionContext context) {
         Options options = context.getOptions();
+        NutsSession session = context.getSession();
         NutsArgument a;
         if (commandLine.next("-c", "--clear") != null) {
             options.action = Action.CLEAR;
-            commandLine.setCommandName(getName()).unexpectedArgument();
+            commandLine.setCommandName(getName()).throwUnexpectedArgument(session);
             return true;
-        } else if ((a = commandLine.nextString("-d", "--delete")) != null) {
+        } else if ((a = commandLine.nextString("-d", "--delete").orNull()) != null) {
             options.action = Action.DELETE;
-            options.ival = a.getValue().getInt();
-            commandLine.setCommandName(getName()).unexpectedArgument();
+            options.ival = a.getValue().asInt().get(session);
+            commandLine.setCommandName(getName()).throwUnexpectedArgument(session);
             return true;
-        } else if ((a = commandLine.next("-D", "--remove-duplicates")) != null) {
+        } else if ((a = commandLine.next("-D", "--remove-duplicates").orNull()) != null) {
             options.action = Action.REMOVE_DUPLICATES;
-            commandLine.setCommandName(getName()).unexpectedArgument();
+            commandLine.setCommandName(getName()).throwUnexpectedArgument(session);
             return true;
-        } else if ((a = commandLine.next("-w", "--write")) != null) {
+        } else if ((a = commandLine.next("-w", "--write").orNull()) != null) {
             options.action = Action.WRITE;
             if (a.isKeyValue()) {
-                options.sval = a.getValue().getString();
+                options.sval = a.getStringValue().get(session);
             } else if (!commandLine.isEmpty()) {
-                options.sval = commandLine.next().getString();
+                options.sval = commandLine.next().flatMap(NutsValue::asString).get(session);
             }
-            commandLine.setCommandName(getName()).unexpectedArgument();
+            commandLine.setCommandName(getName()).throwUnexpectedArgument(session);
             return true;
-        } else if ((a = commandLine.next("-r", "--read")) != null) {
+        } else if ((a = commandLine.next("-r", "--read").orNull()) != null) {
             options.action = Action.READ;
             if (a.isKeyValue()) {
-                options.sval = a.getValue().getString();
+                options.sval = a.getStringValue().get(session);
             } else if (!commandLine.isEmpty()) {
-                options.sval = commandLine.next().getString();
+                options.sval = commandLine.next().flatMap(NutsValue::asString).get(session);
             }
-            commandLine.setCommandName(getName()).unexpectedArgument();
+            commandLine.setCommandName(getName()).throwUnexpectedArgument(session);
             return true;
         } else {
-            if (commandLine.peek().toElement().getInt(0) != 0) {
+            if (commandLine.peek().get(session).asInt().orElse(0) != 0) {
                 options.action = Action.PRINT;
-                options.ival = Math.abs(commandLine.next().toElement().getInt());
+                options.ival = Math.abs(commandLine.next().get(session).asInt().get(session));
                 return true;
             }
         }

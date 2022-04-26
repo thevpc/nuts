@@ -48,13 +48,13 @@ public class DefaultNutsSearchRepositoryCommand extends AbstractNutsSearchReposi
                     NutsRepositoryExt xrepo = NutsRepositoryExt.of(getRepo());
                     xrepo.checkAllowedFetch(null, session);
                     _LOGOP(session).level(Level.FINEST).verb(NutsLogVerb.START)
-                            .log(NutsMessage.jstyle("{0} search packages", CoreStringUtils.alignLeft(getRepo().getName(), 20)));
+                            .log(NutsMessage.jstyle("{0} search packages", NutsUtilStrings.formatAlign(getRepo().getName(), 20,NutsPositionType.FIRST)));
                 }, "CheckAuthorizations"
         );
         NutsRunnable endRunnable =
                 NutsRunnable.of(
                         () -> _LOGOP(session).level(Level.FINEST).verb(NutsLogVerb.SUCCESS)
-                                .log(NutsMessage.jstyle("{0} search packages", CoreStringUtils.alignLeft(getRepo().getName(), 20))),
+                                .log(NutsMessage.jstyle("{0} search packages", NutsUtilStrings.formatAlign(getRepo().getName(), 20,NutsPositionType.FIRST))),
                         "Log"
                 );
         try {
@@ -84,11 +84,11 @@ public class DefaultNutsSearchRepositoryCommand extends AbstractNutsSearchReposi
                     .build();
         } catch (NutsNotFoundException | SecurityException ex) {
             _LOGOP(session).level(Level.FINEST).verb(NutsLogVerb.FAIL)
-                    .log(NutsMessage.jstyle("{0} search packages", CoreStringUtils.alignLeft(getRepo().getName(), 20)));
+                    .log(NutsMessage.jstyle("{0} search packages", NutsUtilStrings.formatAlign(getRepo().getName(), 20,NutsPositionType.FIRST)));
             throw ex;
         } catch (RuntimeException ex) {
             _LOGOP(session).level(Level.SEVERE).verb(NutsLogVerb.FAIL)
-                    .log(NutsMessage.jstyle("{0} search packages", CoreStringUtils.alignLeft(getRepo().getName(), 20)));
+                    .log(NutsMessage.jstyle("{0} search packages", NutsUtilStrings.formatAlign(getRepo().getName(), 20,NutsPositionType.FIRST)));
             throw ex;
         }
         return this;

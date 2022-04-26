@@ -30,17 +30,17 @@ public class DefaultNutsHelpInternalExecutable extends DefaultInternalNutsExecut
     public void execute() {
         List<String> helpFor = new ArrayList<>();
         NutsSession session = getSession();
-        NutsCommandLine cmdLine = NutsCommandLine.of(args, session);
+        NutsCommandLine cmdLine = NutsCommandLine.of(args);
         boolean helpColors = false;
         while (cmdLine.hasNext()) {
-            NutsArgument a = cmdLine.peek();
+            NutsArgument a = cmdLine.peek().get(session);
             if (a.isOption()) {
-                switch (a.getKey().getString()) {
+                switch(a.getStringKey().orElse("")) {
                     case "--colors":
                     case "--ntf": {
-                        NutsArgument c = cmdLine.nextBoolean();
+                        NutsArgument c = cmdLine.nextBoolean().get(session);
                         if (c.isActive()) {
-                            helpColors = c.getBooleanValue();
+                            helpColors = c.getBooleanValue().get(session);
                         }
                         break;
                     }
@@ -56,7 +56,7 @@ public class DefaultNutsHelpInternalExecutable extends DefaultInternalNutsExecut
                 }
             } else {
                 cmdLine.skip();
-                helpFor.add(a.getString());
+                helpFor.add(a.asString().get(session));
                 helpFor.addAll(Arrays.asList(cmdLine.toStringArray()));
                 cmdLine.skipAll();
             }

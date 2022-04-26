@@ -18,7 +18,7 @@ public class NutsProgressUtils {
             String v = e.getValue();
             if (!enabledVisited) {
                 if (v == null) {
-                    Boolean a = NutsUtilStrings.parseBoolean(k, null, null);
+                    Boolean a = NutsUtilStrings.parseBoolean(k).orNull();
                     if (a != null) {
                         o.setEnabled(a);
                         enabledVisited = true;

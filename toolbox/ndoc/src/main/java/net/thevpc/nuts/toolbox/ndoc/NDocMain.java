@@ -24,25 +24,26 @@ public class NDocMain implements NutsApplication, NutsAppCmdProcessor {
 
     @Override
     public boolean onCmdNextOption(NutsArgument option, NutsCommandLine commandline,NutsApplicationContext context) {
-        switch (option.getKey().getString()) {
+        NutsSession session = context.getSession();
+        switch (option.getKey().asString().get(session)) {
             case "-s":
             case "--source": {
-                src.add(commandline.nextString().getValue().getString());
+                src.add(commandline.nextStringValueLiteral().get(session));
                 return true;
             }
             case "-t":
             case "--target": {
-                target = commandline.nextString().getValue().getString();
+                target = commandline.nextStringValueLiteral().get(session);
                 return true;
             }
             case "-p":
             case "--package": {
-                pck.add(commandline.nextString().getValue().getString());
+                pck.add(commandline.nextStringValueLiteral().get(session));
                 return true;
             }
             case "-b":
             case "--backend": {
-                backend= commandline.nextString().getValue().getString();
+                backend= commandline.nextStringValueLiteral().get(session);
                 return true;
             }
         }

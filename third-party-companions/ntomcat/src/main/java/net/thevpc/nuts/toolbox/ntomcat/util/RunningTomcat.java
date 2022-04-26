@@ -13,13 +13,14 @@ public class RunningTomcat {
     public RunningTomcat(NutsProcessInfo r, NutsSession session) {
         pid =r.getPid();
         argsLine=r.getCommandLine();
-        NutsCommandLine cmdline = NutsCommandLine.of(r.getCommandLine(),session).setExpandSimpleOptions(false);
+        NutsCommandLine cmdline = NutsCommandLine.parseSystem(r.getCommandLine(),session)
+                .get(session).setExpandSimpleOptions(false);
         NutsArgument a=null;
         while(cmdline.hasNext()){
-            if((a=cmdline.nextString("-Dcatalina.home"))!=null) {
-                home = NutsPath.of(a.getValue().getString(),session);
-            }else if((a=cmdline.nextString("-Dcatalina.base"))!=null){
-                base=a.getValue().getString();
+            if((a=cmdline.nextString("-Dcatalina.home").orNull())!=null) {
+                home = NutsPath.of(a.getStringValue().get(session),session);
+            }else if((a=cmdline.nextString("-Dcatalina.base").orNull())!=null){
+                base=a.getStringValue().get(session);
             }else{
                 cmdline.skip();
             }

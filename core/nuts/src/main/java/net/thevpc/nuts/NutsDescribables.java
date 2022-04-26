@@ -49,6 +49,16 @@ public final class NutsDescribables {
         return d == null ? null : d.get();
     }
 
+    public static NutsObjectElement resolveOrDestructAsObject(Object o, NutsElements elems) {
+        NutsElement e = resolveOrDestruct(o, elems);
+        if(e instanceof NutsObjectElement){
+            return (NutsObjectElement) e;
+        }
+        return NutsElements.of(elems.getSession())
+                .ofObject()
+                .set("value",e)
+                .build();
+    }
     public static NutsElement resolveOrDestruct(Object o, NutsElements elems) {
         NutsElement e = resolveOrNull(o, elems);
         if (e != null) {
@@ -130,14 +140,14 @@ public final class NutsDescribables {
         @Override
         public NutsElement describe(NutsElements elems) {
             NutsObjectElement b = NutsDescribables.resolveOr(base, elems, () -> elems.ofObject().build())
-                    .asSafeObject(true);
+                    .asObject().get(elems.getSession());
             NutsElement a = nfo.apply(elems);
             if (b.isEmpty()) {
                 return a;
             }
             if (a.isObject()) {
                 return b.builder()
-                        .addAll(a.asObject())
+                        .addAll(a.asObject().get(elems.getSession()))
                         .build()
                         ;
             } else {
@@ -176,14 +186,14 @@ public final class NutsDescribables {
         @Override
         public NutsElement describe(NutsElements elems) {
             NutsObjectElement b = NutsDescribables.resolveOr(base, elems, () -> elems.ofObject().build())
-                    .asSafeObject(true);
+                    .asObject().get(elems.getSession());
             NutsElement a = nfo.apply(elems);
             if (b.isEmpty()) {
                 return a;
             }
             if (a.isObject()) {
                 return b.builder()
-                        .addAll(a.asObject())
+                        .addAll(a.asObject().get(elems.getSession()))
                         .build()
                         ;
             } else {
@@ -217,14 +227,14 @@ public final class NutsDescribables {
         @Override
         public NutsElement describe(NutsElements elems) {
             NutsObjectElement b = NutsDescribables.resolveOr(base, elems, () -> elems.ofObject().build())
-                    .asSafeObject(true);
+                    .asObject().get(elems.getSession());
             NutsElement a = nfo.apply(elems);
             if (b.isEmpty()) {
                 return a;
             }
             if (a.isObject()) {
                 return b.builder()
-                        .addAll(a.asObject())
+                        .addAll(a.asObject().get(elems.getSession()))
                         .build()
                         ;
             } else {
@@ -282,15 +292,14 @@ public final class NutsDescribables {
 
         @Override
         public NutsElement describe(NutsElements elems) {
-            NutsObjectElement b = NutsDescribables.resolveOrDestruct(base, elems)
-                    .asSafeObject(true);
+            NutsObjectElement b = NutsDescribables.resolveOrDestructAsObject(base, elems);
             NutsElement a = nfo.apply(elems);
             if (b.isEmpty()) {
                 return a;
             }
             if (a.isObject()) {
                 return b.builder()
-                        .addAll(a.asObject())
+                        .addAll(a.asObject().get(elems.getSession()))
                         .build()
                         ;
             } else {
@@ -323,15 +332,14 @@ public final class NutsDescribables {
 
         @Override
         public NutsElement describe(NutsElements elems) {
-            NutsObjectElement b = NutsDescribables.resolveOrDestruct(base, elems)
-                    .asSafeObject(true);
+            NutsObjectElement b = NutsDescribables.resolveOrDestructAsObject(base, elems);
             NutsElement a = nfo.apply(elems);
             if (b.isEmpty()) {
                 return a;
             }
             if (a.isObject()) {
                 return b.builder()
-                        .addAll(a.asObject())
+                        .addAll(a.asObject().get(elems.getSession()))
                         .build()
                         ;
             } else {

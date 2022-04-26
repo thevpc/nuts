@@ -200,7 +200,7 @@ public class DefaultJShellOptionsParser implements JShellOptionsParser {
 
     protected void parseUnsupportedNextArgument(List<String> args, JShellOptions options) {
         NutsSession session = appContext.getSession();
-        NutsCommandLine a = NutsCommandLine.of(args, session);
+        NutsCommandLine a = NutsCommandLine.of(args);
         if (session.configureFirst(a)) {
             //replace remaining...
             args.clear();

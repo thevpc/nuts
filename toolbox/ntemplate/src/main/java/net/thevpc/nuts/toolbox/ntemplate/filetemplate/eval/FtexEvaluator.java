@@ -228,9 +228,9 @@ public class FtexEvaluator implements ExprEvaluator {
     }
 
     private Object evalAntiQuotesString(String value, FileTemplater ctx) {
-        NutsSession ws = ctx.getSession();
-        return ws.exec().addCommand(
-                        NutsCommandLine.of(value,ws).toStringArray()
+        NutsSession session = ctx.getSession();
+        return session.exec().addCommand(
+                        NutsCommandLine.parseDefault(value).get(session).toStringArray()
         ).setDirectory(ctx.getWorkingDirRequired())
                 .grabOutputString()
                 .run()

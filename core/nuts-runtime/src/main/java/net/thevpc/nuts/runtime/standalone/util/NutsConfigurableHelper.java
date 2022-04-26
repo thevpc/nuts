@@ -49,7 +49,7 @@ public class NutsConfigurableHelper {
      * @return {@code this} instance
      */
     public static <T> T configure(NutsCommandLineConfigurable c, NutsSession session, boolean skipUnsupported, String[] args, String commandName) {
-        c.configure(skipUnsupported, NutsCommandLine.of(args,session).setCommandName(commandName));
+        c.configure(skipUnsupported, NutsCommandLine.of(args).setCommandName(commandName));
         return (T) c;
     }
 
@@ -64,7 +64,7 @@ public class NutsConfigurableHelper {
                     if (skipUnsupported) {
                         commandLine.skip();
                     } else {
-                        commandLine.unexpectedArgument();
+                        commandLine.throwUnexpectedArgument(session);
                     }
                 } else {
                     conf = true;
@@ -84,7 +84,7 @@ public class NutsConfigurableHelper {
                     if (skipUnsupported) {
                         commandLine.skip();
                     } else {
-                        commandLine.unexpectedArgument();
+                        commandLine.throwUnexpectedArgument(session);
                     }
                 } else {
                     conf = true;

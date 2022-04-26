@@ -214,5 +214,11 @@ public abstract class DefaultFormatBase<T extends NutsFormat> extends DefaultFor
         return format().toString();
     }
 
+    @Override
+    public void configureLast(NutsCommandLine commandLine) {
+        if (!configureFirst(commandLine)) {
+            commandLine.throwUnexpectedArgument(getSession());
+        }
+    }
 
 }

@@ -30,7 +30,6 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.toolbox.nsh.SimpleJShellBuiltin;
 import net.thevpc.nuts.toolbox.nsh.jshell.JShellExecutionContext;
 
-import java.nio.file.Files;
 import java.time.Instant;
 import java.util.Stack;
 
@@ -48,15 +47,17 @@ public class TestCommand extends SimpleJShellBuiltin {
     }
 
     private static String evalStr(Eval a, JShellExecutionContext context) {
+        NutsSession session = context.getSession();
         if (a instanceof EvalArg) {
-            return ((EvalArg) a).arg.getString();
+            return ((EvalArg) a).arg.asString().get(session);
         }
         return String.valueOf(a.eval(context));
     }
 
     private static int evalInt(Eval a, JShellExecutionContext context) {
+        NutsSession session = context.getSession();
         if (a instanceof EvalArg) {
-            return ((EvalArg) a).arg.toElement().getInt();
+            return ((EvalArg) a).arg.asInt().get(session);
         }
         return a.eval(context);
     }
@@ -184,12 +185,13 @@ public class TestCommand extends SimpleJShellBuiltin {
 
     @Override
     protected boolean configureFirst(NutsCommandLine commandLine, JShellExecutionContext context) {
+        NutsSession session = context.getSession();
         commandLine.setExpandSimpleOptions(false);
         Options options=context.getOptions();
-        NutsArgument a = commandLine.next();
-        switch (a.getString()) {
+        NutsArgument a = commandLine.next().get(session);
+        switch (a.asString().get(session)) {
             case "(": {
-                options.operators.add(a.getString());
+                options.operators.add(a.asString().get(session));
                 return true;
             }
             case ")": {
@@ -211,9 +213,9 @@ public class TestCommand extends SimpleJShellBuiltin {
                 return true;
             }
             default: {
-                if (getArgsCount(a.getString()) > 0) {
-                    reduce(options.operators, options.operands, getArgsPrio(a.getString()));
-                    options.operators.add(a.getString());
+                if (getArgsCount(a.asString().get(session)) > 0) {
+                    reduce(options.operators, options.operands, getArgsPrio(a.asString().get(session)));
+                    options.operators.add(a.asString().get(session));
                 } else {
                     options.operands.add(new EvalArg(a));
                 }
@@ -285,7 +287,8 @@ public class TestCommand extends SimpleJShellBuiltin {
 
         @Override
         public int eval(JShellExecutionContext context) {
-            return arg.getString().length() > 0 ? 0 : 1;
+            NutsSession session = context.getSession();
+            return arg.asString().get(session).length() > 0 ? 0 : 1;
         }
 
     }
@@ -301,6 +304,7 @@ public class TestCommand extends SimpleJShellBuiltin {
 
         @Override
         public int eval(JShellExecutionContext context) {
+            NutsSession session = context.getSession();
             switch (type) {
                 case "!": {
                     return 1 - arg.eval(context);
@@ -371,7 +375,7 @@ public class TestCommand extends SimpleJShellBuiltin {
                 }
                 case "-r": {
                     EvalArg a = (EvalArg) arg;
-                    String path = a.arg.getString();
+                    String path = a.arg.asString().get(session);
                     try {
                         NutsPath pp = evalPath(arg, context);
                         return pp.exists() && pp.getPermissions().contains(NutsPathPermission.CAN_READ) ? 0 : 1;

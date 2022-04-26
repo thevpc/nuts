@@ -55,9 +55,7 @@ class MavenRepoIter extends NutsIdPathIteratorBase {
                                 gn.append(ns);
                             }
                             return validate(
-                                    new DefaultNutsIdBuilder()
-                                            .setGroupId(gn.toString())
-                                            .setArtifactId(an)
+                                    NutsIdBuilder.of(gn.toString(),an)
                                             .setVersion(vn)
                                             .build(),
                                     null, pomFile, rootPath, filter, repository, session);

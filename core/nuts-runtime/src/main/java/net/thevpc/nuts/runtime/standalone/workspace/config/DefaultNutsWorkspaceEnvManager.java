@@ -14,7 +14,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -166,8 +165,7 @@ public class DefaultNutsWorkspaceEnvManager implements NutsWorkspaceEnvManager {
             }
         }
         if (optionName != null) {
-            NutsArgument bootCustomArgument = session.boot().getBootCustomArgument(optionName);
-            String o = bootCustomArgument == null ? null : bootCustomArgument.getString();
+            String o = session.boot().getCustomBootOption(optionName).flatMap(NutsValue::asString).orElse(null);
             if (!NutsBlankable.isBlank(o)) {
                 NutsSupportMode q = NutsSupportMode.parse(o).orNull();
                 if (q != null) {

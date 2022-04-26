@@ -29,6 +29,7 @@ package net.thevpc.nuts.toolbox.nsh.cmds;
 import net.thevpc.nuts.NutsCommandLine;
 import net.thevpc.nuts.NutsExecutionException;
 import net.thevpc.nuts.NutsMessage;
+import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.toolbox.nsh.SimpleJShellBuiltin;
 import net.thevpc.nuts.toolbox.nsh.jshell.JShellBuiltin;
 import net.thevpc.nuts.toolbox.nsh.jshell.JShellExecutionContext;
@@ -55,12 +56,13 @@ public class BuiltinCommand extends SimpleJShellBuiltin {
     @Override
     protected void execBuiltin(NutsCommandLine commandLine, JShellExecutionContext context) {
         Options o = context.getOptions();
+        NutsSession session = context.getSession();
         if (o.args.length > 0) {
             JShellBuiltin a = context.getShellContext().builtins().get(o.args[0]);
             a.exec(Arrays.copyOfRange(o.args, 1, o.args.length), context);
             return;
         }
-        commandLine.required();
+        commandLine.throwMissingArgument(session);
     }
 
 

@@ -79,10 +79,8 @@ public class NutsComponentController {
             if (iterator.hasNext()) {
                 NutsWorkspaceLocation workspaceLocation = iterator.next();
                 NutsSession session = Nuts.openWorkspace("--workspace", workspaceLocation.getLocation());
-                NutsId id = new DefaultNutsIdBuilder()
-                        .setArtifactId(name)
+                NutsId id = NutsIdBuilder.of(group,name)
                         .setRepository(namespace)
-                        .setGroupId(group)
                         .setVersion(version)
                         .setCondition(
                                 new DefaultNutsEnvConditionBuilder()
@@ -126,10 +124,8 @@ public class NutsComponentController {
             if (iterator.hasNext()) {
                 NutsWorkspaceLocation workspaceLocation = iterator.next();
                 NutsSession session = Nuts.openWorkspace("--workspace", workspaceLocation.getLocation());
-                NutsId id = new DefaultNutsIdBuilder()
-                        .setArtifactId(name)
+                NutsId id = NutsIdBuilder.of(group,name)
                         .setRepository(namespace)
-                        .setGroupId(group)
                         .setCondition(new DefaultNutsEnvConditionBuilder()
                                 .setArch(Arrays.asList(arch))
                                 .setOs(Arrays.asList(os))
@@ -172,7 +168,7 @@ public class NutsComponentController {
                 NutsSession session = Nuts.openWorkspace("--workspace", workspaceLocation.getLocation());
                 NutsWorkspace ws = session.getWorkspace();
                 Map<String, String> data = NutsIndexerUtils.nutsIdToMap(
-                        new DefaultNutsIdBuilder()
+                        NutsIdBuilder.of()
                                 .setArtifactId(name)
                                 .setRepository(namespace)
                                 .setGroupId(group)
@@ -216,7 +212,7 @@ public class NutsComponentController {
             if (iterator.hasNext()) {
                 NutsWorkspaceLocation workspaceLocation = iterator.next();
                 NutsSession session = Nuts.openWorkspace("--workspace", workspaceLocation.getLocation());
-                NutsId id = new DefaultNutsIdBuilder()
+                NutsId id = NutsIdBuilder.of()
                         .setArtifactId(name)
                         .setRepository(namespace)
                         .setGroupId(group)

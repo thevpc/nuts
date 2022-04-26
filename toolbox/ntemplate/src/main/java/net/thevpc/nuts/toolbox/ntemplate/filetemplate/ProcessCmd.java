@@ -1,8 +1,6 @@
 package net.thevpc.nuts.toolbox.ntemplate.filetemplate;
 
-import net.thevpc.nuts.NutsCommandLine;
-import net.thevpc.nuts.NutsExecutionException;
-import net.thevpc.nuts.NutsMessage;
+import net.thevpc.nuts.*;
 import net.thevpc.nuts.toolbox.nsh.SimpleJShellBuiltin;
 import net.thevpc.nuts.toolbox.nsh.jshell.JShellExecutionContext;
 import net.thevpc.nuts.toolbox.ntemplate.filetemplate.util.StringUtils;
@@ -23,10 +21,11 @@ public class ProcessCmd extends SimpleJShellBuiltin {
     @Override
     protected boolean configureFirst(NutsCommandLine commandLine, JShellExecutionContext context) {
         Options o = context.getOptions();
+        NutsSession session = context.getSession();
         if (commandLine.isNonOption(0)) {
-            o.args.add(commandLine.next().getString());
+            o.args.add(commandLine.next().flatMap(NutsValue::asString).get(session));
             while (commandLine.hasNext()) {
-                o.args.add(commandLine.next().getString());
+                o.args.add(commandLine.next().flatMap(NutsValue::asString).get(session));
             }
             return true;
         }

@@ -35,7 +35,7 @@ class NutsRepoIter extends NutsIdPathIteratorBase {
         if (fn.endsWith(".pom")) {
             return MavenUtils.of(session).parsePomXmlAndResolveParents(in, fetchMode, pathname.toString(), repository);
         }else{
-            return NutsDescriptorParser.of(session).setDescriptorStyle(NutsDescriptorStyle.NUTS).parse(in);
+            return NutsDescriptorParser.of(session).setDescriptorStyle(NutsDescriptorStyle.NUTS).parse(in).get(session);
         }
     }
 
@@ -62,7 +62,7 @@ class NutsRepoIter extends NutsIdPathIteratorBase {
                                 gn.append(ns);
                             }
                             return validate(
-                                    new DefaultNutsIdBuilder()
+                                    NutsIdBuilder.of()
                                             .setGroupId(gn.toString())
                                             .setArtifactId(an)
                                             .setVersion(vn)
@@ -92,7 +92,7 @@ class NutsRepoIter extends NutsIdPathIteratorBase {
                                 gn.append(ns);
                             }
                             return validate(
-                                    new DefaultNutsIdBuilder()
+                                    NutsIdBuilder.of()
                                             .setGroupId(gn.toString())
                                             .setArtifactId(an)
                                             .setVersion(vn)

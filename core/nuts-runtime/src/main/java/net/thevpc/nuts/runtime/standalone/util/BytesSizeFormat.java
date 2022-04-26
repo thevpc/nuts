@@ -1,8 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.util;
 
-import net.thevpc.nuts.NutsIllegalArgumentException;
-import net.thevpc.nuts.NutsMessage;
-import net.thevpc.nuts.NutsSession;
+import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 
 /**
@@ -282,7 +280,7 @@ public class BytesSizeFormat {
 
     private String formatLeft(Object number, int size) {
         if (fixedLength) {
-            return CoreStringUtils.alignLeft(String.valueOf(number == null ? "" : number), size);
+            return NutsUtilStrings.formatAlign(String.valueOf(number == null ? "" : number), size, NutsPositionType.FIRST);
         } else {
             return String.valueOf(number);
         }

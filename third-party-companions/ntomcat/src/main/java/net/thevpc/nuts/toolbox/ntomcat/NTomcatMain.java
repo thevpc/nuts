@@ -13,9 +13,10 @@ public class NTomcatMain implements NutsApplication {
 
     @Override
     public void run(NutsApplicationContext appContext) {
-        NutsRepository apacheRepo = appContext.getSession().repos().findRepository("apache-tomcat");
+        NutsSession session = appContext.getSession();
+        NutsRepository apacheRepo = session.repos().findRepository("apache-tomcat");
         if (apacheRepo == null) {
-            appContext.getSession().repos().addRepository(
+            session.repos().addRepository(
                     new NutsAddRepositoryOptions()
                             .setRepositoryModel(new ApacheTomcatRepositoryModel())
                             .setTemporary(true)
@@ -26,11 +27,11 @@ public class NTomcatMain implements NutsApplication {
         Boolean local = null;
         boolean skipFirst = false;
         if (cmdLine.hasNext()) {
-            NutsArgument a = cmdLine.peek();
-            if ((a.getString().equals   ("--remote") || a.getString().equals("-r"))) {
+            NutsArgument a = cmdLine.peek().get(session);
+            if ((a.asString().equals   ("--remote") || a.asString().equals("-r"))) {
                 cmdLine.skip();
                 local = false;
-            } else if ((a.getString().equals("--local") || a.getString().equals("-l"))) {
+            } else if ((a.asString().equals("--local") || a.asString().equals("-l"))) {
                 cmdLine.skip();
                 local = true;
             }
@@ -41,11 +42,11 @@ public class NTomcatMain implements NutsApplication {
         if (local) {
             LocalTomcat m = new LocalTomcat(appContext, cmdLine);
             m.runArgs();
-            appContext.getSession().flush();
+            session.flush();
         } else {
             RemoteTomcat m = new RemoteTomcat(appContext, cmdLine);
             m.runArgs();
-            appContext.getSession().flush();
+            session.flush();
         }
     }
 

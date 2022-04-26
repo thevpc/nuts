@@ -18,7 +18,7 @@ public class NutsIndexerUtils {
 
     public static Path getCacheDir(NutsSession session, String entity) {
         String k = "NutsIndexerUtils.CACHE." + entity;
-        String m = session.env().getPropertyElement(k).asString();
+        String m = session.env().getPropertyElement(k).asString().orNull();
         if (m == null) {
             m = session.locations()
                     .getStoreLocation(NutsIdResolver.of(session).resolveId(NutsIndexerUtils.class),
@@ -140,7 +140,7 @@ public class NutsIndexerUtils {
     }
 
     public static NutsId mapToNutsId(Map<String, String> map, NutsSession session) {
-        return new DefaultNutsIdBuilder()
+        return NutsIdBuilder.of()
                 .setArtifactId(NutsUtilStrings.trim(map.get("name")))
                 .setRepository(NutsUtilStrings.trim(map.get("namespace")))
                 .setGroupId(NutsUtilStrings.trim(map.get("group")))

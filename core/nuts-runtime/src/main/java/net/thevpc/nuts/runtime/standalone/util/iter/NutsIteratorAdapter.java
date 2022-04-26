@@ -3,6 +3,7 @@ package net.thevpc.nuts.runtime.standalone.util.iter;
 import net.thevpc.nuts.NutsDescribables;
 import net.thevpc.nuts.NutsElement;
 import net.thevpc.nuts.NutsElements;
+import net.thevpc.nuts.NutsSession;
 
 import java.util.Iterator;
 import java.util.function.Function;
@@ -28,12 +29,13 @@ public class NutsIteratorAdapter<T> extends NutsIteratorBase<T> {
 
     @Override
     public NutsElement describe(NutsElements elems) {
+        NutsSession session = elems.getSession();
         NutsElement a = info.apply(elems);
         if(!a.isObject()){
             a=elems.ofObject().set("name",a).build();
         }
-        return NutsDescribables.resolveOrDestruct(base,elems)
-                        .asSafeObject(true).builder()
-                        .addAll(a.asObject()).build();
+        return NutsDescribables.resolveOrDestructAsObject(base,elems)
+                .builder()
+                        .addAll(a.asObject().get(session)).build();
     }
 }

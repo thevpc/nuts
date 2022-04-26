@@ -96,7 +96,7 @@ public interface NutsApplicationContext extends NutsCommandLineConfigurable {
     /**
      * calls configureFirst and ensure this is the last test.
      * If the argument is not supported, throws unsupported argument
-     * by calling {@link NutsCommandLine#unexpectedArgument()}
+     * by calling {@link NutsCommandLine#throwUnexpectedArgument(NutsSession)}
      *
      * @param commandLine arguments to configure with
      * @since 0.7.1
@@ -293,7 +293,7 @@ public interface NutsApplicationContext extends NutsCommandLineConfigurable {
      *                                     a));
      *                 }
      *             } else if (!configureFirst(cmd)) {
-     *                 cmd.unexpectedArgument();
+     *                 cmd.throwUnexpectedArgument();
      *             }
      *         }
      *         commandLineProcessor.onCmdFinishParsing(cmd, this);
@@ -320,12 +320,12 @@ public interface NutsApplicationContext extends NutsCommandLineConfigurable {
      *                 }
      *                 switch (argument.getKey().getString()) {
      *                     case "--clean": {
-     *                         hl.clean(cmdLine.nextBoolean().getBooleanValue());
+     *                         hl.clean(cmdLine.nextBooleanValue().get(session));
      *                         return true;
      *                     }
      *                     case "-i":
      *                     case "--incremental":{
-     *                         hl.setIncremental(cmdLine.nextBoolean().getBooleanValue());
+     *                         hl.setIncremental(cmdLine.nextBooleanValue().get(session));
      *                         return true;
      *                     }
      *                     case "-r":

@@ -27,9 +27,9 @@ public class DefaultNutsLicenseInternalExecutable extends DefaultInternalNutsExe
             return;
         }
         NutsSession session = getSession();
-        NutsCommandLine commandLine = NutsCommandLine.of(args,session);
+        NutsCommandLine commandLine = NutsCommandLine.of(args);
         while (commandLine.hasNext()) {
-            NutsArgument a = commandLine.peek();
+            NutsArgument a = commandLine.peek().get(session);
             session.configureLast(commandLine);
         }
 

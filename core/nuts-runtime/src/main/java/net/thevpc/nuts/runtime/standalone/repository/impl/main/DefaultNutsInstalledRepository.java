@@ -45,7 +45,6 @@ import net.thevpc.nuts.runtime.standalone.util.collections.CoreCollectionUtils;
 import net.thevpc.nuts.runtime.standalone.util.collections.LRUMap;
 import net.thevpc.nuts.runtime.standalone.util.filters.NutsIdFilterToPredicate;
 import net.thevpc.nuts.runtime.standalone.util.iter.IteratorBuilder;
-import net.thevpc.nuts.runtime.standalone.workspace.CoreNutsBootOptions;
 import net.thevpc.nuts.runtime.standalone.workspace.DefaultNutsWorkspace;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.StringTokenizerUtils;
@@ -69,7 +68,7 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
     private final Map<NutsId, String> cachedDefaultVersions = new LRUMap<>(200);
     private NutsLogger LOG;
 
-    public DefaultNutsInstalledRepository(NutsWorkspace ws, CoreNutsBootOptions bOptions) {
+    public DefaultNutsInstalledRepository(NutsWorkspace ws, NutsWorkspaceBootOptions bOptions) {
         this.workspace = ws;
         this.initSession = NutsSessionUtils.defaultSession(ws);
         this.deployments = new NutsRepositoryFolderHelper(this,
@@ -389,8 +388,9 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
         String p = path.toString().substring(rootFolder.toString().length());
         List<String> split = StringTokenizerUtils.split(p, "/\\");
         if (split.size() >= 4) {
-            return new DefaultNutsIdBuilder().setArtifactId(split.get(split.size() - 3))
+            return NutsIdBuilder.of()
                     .setGroupId(String.join(".", split.subList(0, split.size() - 3)))
+                    .setArtifactId(split.get(split.size() - 3))
                     .setVersion(split.get(split.size() - 2)).build();
 
         }

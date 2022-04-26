@@ -27,6 +27,7 @@ package net.thevpc.nuts.toolbox.nsh.cmds;
 
 import net.thevpc.nuts.NutsArgument;
 import net.thevpc.nuts.NutsCommandLine;
+import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.spi.NutsComponentScope;
 import net.thevpc.nuts.spi.NutsComponentScopeType;
 import net.thevpc.nuts.toolbox.nsh.SimpleJShellBuiltin;
@@ -50,11 +51,12 @@ public class SetCommand extends SimpleJShellBuiltin {
 
     @Override
     protected boolean configureFirst(NutsCommandLine commandLine, JShellExecutionContext context) {
+        NutsSession session = context.getSession();
         Options options = context.getOptions();
-        NutsArgument a = commandLine.peek();
+        NutsArgument a = commandLine.peek().get(session);
         if (a.isNonOption()) {
             if (a.isKeyValue()) {
-                options.vars.put(a.getKey().getString(), a.getValue().getString());
+                options.vars.put(a.getKey().asString().get(session), a.getStringValue().get(session));
                 return true;
             }
         }

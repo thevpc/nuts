@@ -43,21 +43,22 @@ public class AppExample implements NutsApplication {
      */
     @Override
     public void run(NutsApplicationContext context) {
+        NutsSession session = context.getSession();
         NutsCommandLine cmd = context.getCommandLine();
         NutsArgument a;
         String someStringOption = null;
         Boolean someBooleanOption = null;
         List<String> nonOptions = new ArrayList<>();
-        while ((a = cmd.peek()) != null) {
-            switch (a.getStringKey()) {
+        while ((a = cmd.peek().orNull()) != null) {
+            switch (a.getStringKey().orElse("")) {
                 case "--some-string-option": {
                     // example of calls
                     // your-app --some-string-option=yourValue
                     // your-app --some-string-option yourValue
 
-                    a = cmd.nextString();
+                    a = cmd.nextString().get(session);
                     if (a.isActive()) {
-                        someStringOption = a.getStringValue();
+                        someStringOption = a.getStringValue().get(session);
                     }
                     break;
                 }
@@ -66,30 +67,29 @@ public class AppExample implements NutsApplication {
                     // your-app --some-boolean-option=true
                     // your-app --some-boolean-option
                     // your-app --!some-string-option
-                    a = cmd.nextBoolean();
+                    a = cmd.nextBoolean().get(session);
                     if (a.isActive()) {
-                        someBooleanOption = a.getBooleanValue();
+                        someBooleanOption = a.getBooleanValue().get(session);
                     }
                     break;
                 }
                 default: {
                     if (a.isNonOption()) {
-                        nonOptions.add(cmd.next().getString());
+                        nonOptions.add(cmd.next().flatMap(NutsValue::asString).get(session));
                     } else {
                         // this is an unsupported options!
-                        cmd.unexpectedArgument();
+                        cmd.throwUnexpectedArgument(session);
                     }
                 }
             }
         }
         // this will fire an exception if no option is provided!
         if (someStringOption == null) {
-            cmd.requiredOptions("--some-string-option");
+            cmd.next("--some-string-option").get(session);
         }
         //the application can be run in one of 'execMode' and 'autoCompleteMode' modes
         if (context.isExecMode()) {
             //only run if in execMode
-            NutsSession session = context.getSession();
             //just display the options as an example of execution
             Map<String, Object> result = new LinkedHashMap<>();
             result.put("someStringOption", someStringOption);

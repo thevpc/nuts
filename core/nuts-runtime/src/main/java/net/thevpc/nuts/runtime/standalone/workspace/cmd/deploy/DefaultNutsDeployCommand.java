@@ -47,7 +47,7 @@ public class DefaultNutsDeployCommand extends AbstractNutsDeployCommand {
                 try {
                     c.descriptor = NutsDescriptorParser.of(session).parse(
                             c.contentStreamOrPath.getPath().resolve(NutsConstants.Files.DESCRIPTOR_FILE_NAME)
-                    );
+                    ).get(session);
                 } catch (Exception ex) {
                     //ignore
                 }
@@ -56,7 +56,7 @@ public class DefaultNutsDeployCommand extends AbstractNutsDeployCommand {
                 if (c.descriptor == null) {
                     Path ext = c.baseFile.resolve(NutsConstants.Files.DESCRIPTOR_FILE_NAME);
                     if (Files.exists(ext)) {
-                        c.descriptor = NutsDescriptorParser.of(session).parse(ext);
+                        c.descriptor = NutsDescriptorParser.of(session).parse(ext).get(session);
                     } else {
                         c.descriptor = NutsDescriptorContentResolver.resolveNutsDescriptorFromFileContent(c.baseFile, parseOptions, session);
                     }
@@ -76,7 +76,7 @@ public class DefaultNutsDeployCommand extends AbstractNutsDeployCommand {
                     NutsPath ext = NutsPath.of(c.baseFile.toString() + "." + NutsConstants.Files.DESCRIPTOR_FILE_NAME,session)
                             .toAbsolute();
                     if (ext.exists()) {
-                        c.descriptor = NutsDescriptorParser.of(session).parse(ext);
+                        c.descriptor = NutsDescriptorParser.of(session).parse(ext).get(session);
                     } else {
                         c.descriptor = NutsDescriptorContentResolver.resolveNutsDescriptorFromFileContent(c.baseFile, parseOptions, session);
                     }
@@ -177,7 +177,7 @@ public class DefaultNutsDeployCommand extends AbstractNutsDeployCommand {
                     Path descFile = contentFile.resolve(NutsConstants.Files.DESCRIPTOR_FILE_NAME);
                     NutsDescriptor descriptor2;
                     if (Files.exists(descFile)) {
-                        descriptor2 = NutsDescriptorParser.of(session).parse(descFile);
+                        descriptor2 = NutsDescriptorParser.of(session).parse(descFile).get(session);
                     } else {
                         descriptor2 = NutsDescriptorContentResolver.resolveNutsDescriptorFromFileContent(
                                 contentFile,
@@ -311,7 +311,7 @@ public class DefaultNutsDeployCommand extends AbstractNutsDeployCommand {
                         }
                     }
                     try (InputStream is = d.getInputStream()) {
-                        return NutsDescriptorParser.of(session).parse(is);
+                        return NutsDescriptorParser.of(session).parse(is).get(session);
                     } catch (IOException ex) {
                         throw new NutsIOException(session,ex);
                     }

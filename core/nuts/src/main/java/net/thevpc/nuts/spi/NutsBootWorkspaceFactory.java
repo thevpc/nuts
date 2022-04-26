@@ -26,8 +26,8 @@
  */
 package net.thevpc.nuts.spi;
 
-import net.thevpc.nuts.NutsBootOptions;
 import net.thevpc.nuts.NutsWorkspace;
+import net.thevpc.nuts.NutsWorkspaceBootOptions;
 
 /**
  * Class responsible of creating and initializing Workspace
@@ -47,7 +47,7 @@ public interface NutsBootWorkspaceFactory {
      * @param options command line options
      * @return support level
      */
-    int getBootSupportLevel(NutsBootOptions options);
+    int getBootSupportLevel(NutsWorkspaceBootOptions options);
 
     /**
      * create workspace with the given options
@@ -55,6 +55,6 @@ public interface NutsBootWorkspaceFactory {
      * @param options boot init options
      * @return initialized workspace
      */
-    NutsWorkspace createWorkspace(NutsBootOptions options);
+    NutsWorkspace createWorkspace(NutsWorkspaceBootOptions options);
 
 }

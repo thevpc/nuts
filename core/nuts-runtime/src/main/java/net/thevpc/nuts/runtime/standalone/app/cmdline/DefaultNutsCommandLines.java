@@ -46,7 +46,7 @@ public class DefaultNutsCommandLines implements NutsCommandLines {
     @Override
     public NutsCommandLine parseCommandline(String line) {
         checkSession();
-        return new DefaultNutsCommandLine(getSession(), parseCommandLineArr(line));
+        return new DefaultNutsCommandLine(parseCommandLineArr(line));
     }
 
     private String[] parseCommandLineArr(String line) {
@@ -61,23 +61,6 @@ public class DefaultNutsCommandLines implements NutsCommandLines {
         NutsSessionUtils.checkSession(ws, session);
     }
 
-    @Override
-    public NutsCommandLine createCommandline(String... args) {
-        checkSession();
-        return new DefaultNutsCommandLine(getSession(), args);
-    }
-
-    @Override
-    public NutsCommandLine createCommandline(List<String> args) {
-        checkSession();
-        return new DefaultNutsCommandLine(getSession(), args, null);
-    }
-
-    @Override
-    public NutsArgument createArgument(String argument) {
-        checkSession();
-        return Factory.createArgument0(getSession(), argument, '=');
-    }
 
     @Override
     public NutsArgumentName createName(String type, String label) {
@@ -92,10 +75,6 @@ public class DefaultNutsCommandLines implements NutsCommandLines {
     }
 
     public static class Factory {
-
-        public static NutsArgument createArgument0(NutsSession ws, String argument, char eq) {
-            return new DefaultNutsArgument(argument, eq,NutsElements.of(ws));
-        }
 
         public static NutsArgumentName createName0(NutsSession session, String type, String label) {
             if (type == null) {

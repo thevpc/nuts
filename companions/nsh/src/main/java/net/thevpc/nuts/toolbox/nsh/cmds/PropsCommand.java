@@ -49,13 +49,13 @@ public class PropsCommand extends SimpleJShellBuiltin {
         Options o = context.getOptions();
         NutsSession session = context.getSession();
         if (commandLine.next("get") != null) {
-            o.property = commandLine.next().getString();
+            o.property = commandLine.next().flatMap(NutsValue::asString).get(session);
             o.action = "get";
             while (commandLine.hasNext()) {
                 if (commandLine.next("--xml") != null) {
                     o.sourceFormat = Format.XML;
                     o.sourceType = SourceType.FILE;
-                    o.sourceFile = commandLine.required().nextNonOption(NutsArgumentName.of("file",session)).getString();
+                    o.sourceFile = commandLine.nextNonOption(NutsArgumentName.of("file",session)).flatMap(NutsValue::asString).get(session);
 
                 } else if (commandLine.next("--system") != null) {
                     o.sourceFormat = Format.PROPS;
@@ -65,39 +65,39 @@ public class PropsCommand extends SimpleJShellBuiltin {
                 } else if (commandLine.next("--props") != null) {
                     o.sourceFormat = Format.PROPS;
                     o.sourceType = SourceType.FILE;
-                    o.sourceFile = commandLine.required().nextNonOption(NutsArgumentName.of("file",session)).getString();
+                    o.sourceFile = commandLine.nextNonOption(NutsArgumentName.of("file",session)).flatMap(NutsValue::asString).get(session);
 
                 } else if (commandLine.next("--file") != null) {
                     o.sourceFormat = Format.AUTO;
                     o.sourceType = SourceType.FILE;
-                    o.sourceFile = commandLine.required().nextNonOption(NutsArgumentName.of("file",session)).getString();
+                    o.sourceFile = commandLine.nextNonOption(NutsArgumentName.of("file",session)).flatMap(NutsValue::asString).get(session);
                 } else {
-                    commandLine.setCommandName(getName()).unexpectedArgument();
+                    commandLine.setCommandName(getName()).throwUnexpectedArgument(session);
                 }
 
             }
             return true;
         } else if (commandLine.next("set") != null) {
-            String k = commandLine.next().getString();
-            String v = commandLine.next().getString();
+            String k = commandLine.next().flatMap(NutsValue::asString).get(session);
+            String v = commandLine.next().flatMap(NutsValue::asString).get(session);
             o.updates.put(k, v);
             o.action = "set";
             while (commandLine.hasNext()) {
                 if (commandLine.next("--comments") != null) {
-                    o.comments = commandLine.next().getValue().getString();
+                    o.comments = commandLine.next().get(session).getStringValue().get(session);
                 } else if (commandLine.next("--to-props-file") != null) {
                     o.targetFormat = Format.PROPS;
                     o.targetType = TargetType.FILE;
-                    o.targetFile = commandLine.required().nextNonOption(NutsArgumentName.of("file",session)).getString();
+                    o.targetFile = commandLine.nextNonOption(NutsArgumentName.of("file",session)).flatMap(NutsValue::asString).get(session);
 
                 } else if (commandLine.next("--to-xml-file") != null) {
                     o.targetFormat = Format.XML;
                     o.targetType = TargetType.FILE;
-                    o.targetFile = commandLine.required().nextNonOption(NutsArgumentName.of("file",session)).getString();
+                    o.targetFile = commandLine.nextNonOption(NutsArgumentName.of("file",session)).flatMap(NutsValue::asString).get(session);
                 } else if (commandLine.next("--to-file") != null) {
                     o.targetFormat = Format.AUTO;
                     o.targetType = TargetType.FILE;
-                    o.targetFile = commandLine.required().nextNonOption(NutsArgumentName.of("file",session)).getString();
+                    o.targetFile = commandLine.nextNonOption(NutsArgumentName.of("file",session)).flatMap(NutsValue::asString).get(session);
 
                 } else if (commandLine.next("--print-props") != null) {
                     o.targetFormat = Format.PROPS;
@@ -119,7 +119,7 @@ public class PropsCommand extends SimpleJShellBuiltin {
                 } else if (commandLine.next("--xml") != null) {
                     o.sourceFormat = Format.XML;
                     o.sourceType = SourceType.FILE;
-                    o.sourceFile = commandLine.required().nextNonOption(NutsArgumentName.of("file",session)).getString();
+                    o.sourceFile = commandLine.nextNonOption(NutsArgumentName.of("file",session)).flatMap(NutsValue::asString).get(session);
 
                 } else if (commandLine.next("--system") != null) {
                     o.sourceFormat = Format.PROPS;
@@ -129,13 +129,13 @@ public class PropsCommand extends SimpleJShellBuiltin {
                 } else if (commandLine.next("--props") != null) {
                     o.sourceFormat = Format.PROPS;
                     o.sourceType = SourceType.FILE;
-                    o.sourceFile = commandLine.required().nextNonOption(NutsArgumentName.of("file",session)).getString();
+                    o.sourceFile = commandLine.nextNonOption(NutsArgumentName.of("file",session)).flatMap(NutsValue::asString).get(session);
                 } else if (commandLine.next("--file") != null) {
                     o.sourceFormat = Format.AUTO;
                     o.sourceType = SourceType.FILE;
-                    o.sourceFile = commandLine.required().nextNonOption(NutsArgumentName.of("file",session)).getString();
+                    o.sourceFile = commandLine.nextNonOption(NutsArgumentName.of("file",session)).flatMap(NutsValue::asString).get(session);
                 } else {
-                    commandLine.setCommandName(getName()).unexpectedArgument();
+                    commandLine.setCommandName(getName()).throwUnexpectedArgument(session);
                 }
             }
             return true;
@@ -145,7 +145,7 @@ public class PropsCommand extends SimpleJShellBuiltin {
                 if (commandLine.next("--xml") != null) {
                     o.sourceFormat = Format.XML;
                     o.sourceType = SourceType.FILE;
-                    o.sourceFile = commandLine.required().nextNonOption(NutsArgumentName.of("file",session)).getString();
+                    o.sourceFile = commandLine.nextNonOption(NutsArgumentName.of("file",session)).flatMap(NutsValue::asString).get(session);
 
                 } else if (commandLine.next("--system") != null) {
                     o.sourceFormat = Format.PROPS;
@@ -155,17 +155,17 @@ public class PropsCommand extends SimpleJShellBuiltin {
                 } else if (commandLine.next("--props") != null) {
                     o.sourceFormat = Format.PROPS;
                     o.sourceType = SourceType.FILE;
-                    o.sourceFile = commandLine.required().nextNonOption(NutsArgumentName.of("file",session)).getString();
+                    o.sourceFile = commandLine.nextNonOption(NutsArgumentName.of("file",session)).flatMap(NutsValue::asString).get(session);
 
                 } else if (commandLine.next("--file") != null) {
                     o.sourceFormat = Format.AUTO;
                     o.sourceType = SourceType.FILE;
-                    o.sourceFile = commandLine.required().nextNonOption(NutsArgumentName.of("file",session)).getString();
+                    o.sourceFile = commandLine.nextNonOption(NutsArgumentName.of("file",session)).flatMap(NutsValue::asString).get(session);
                 } else if (commandLine.next("--sort") != null) {
                     o.sort = true;
                     session.addOutputFormatOptions("--sort");
                 } else {
-                    commandLine.setCommandName(getName()).unexpectedArgument();
+                    commandLine.setCommandName(getName()).throwUnexpectedArgument(session);
                 }
             }
             return true;

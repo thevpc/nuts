@@ -187,7 +187,8 @@ public class DefaultNutsWorkspaceFactory implements NutsWorkspaceFactory {
         }
         if (LOG.isLoggable(Level.CONFIG)) {
             LOG.with().session(validLogSession(session)).level(Level.FINEST).verb(NutsLogVerb.ADD)
-                    .log(NutsMessage.jstyle("bind    {0} for impl instance {1}", CoreStringUtils.alignLeft(extensionPoint.getSimpleName(), 40), implementation.getClass().getName()));
+                    .log(NutsMessage.jstyle("bind    {0} for impl instance {1}", NutsUtilStrings.formatAlign(extensionPoint.getSimpleName(), 40,NutsPositionType.FIRST),
+                            implementation.getClass().getName()));
         }
         instances.add(extensionPoint, implementation);
     }
@@ -200,7 +201,8 @@ public class DefaultNutsWorkspaceFactory implements NutsWorkspaceFactory {
         }
         if (LOG.isLoggable(Level.CONFIG)) {
             LOG.with().session(validLogSession(session)).level(Level.FINEST).verb(NutsLogVerb.ADD)
-                    .log(NutsMessage.jstyle("bind    {0} for impl type {1}", CoreStringUtils.alignLeft(extensionPoint.getSimpleName(), 40), implementation.getName()));
+                    .log(NutsMessage.jstyle("bind    {0} for impl type {1}", NutsUtilStrings.formatAlign(extensionPoint.getSimpleName(), 40,NutsPositionType.FIRST),
+                            implementation.getName()));
         }
         IdCache t = discoveredCacheById.get(source);
         if (t == null) {
@@ -495,7 +497,7 @@ public class DefaultNutsWorkspaceFactory implements NutsWorkspaceFactory {
                 _alreadyLogger.put(baseType.getName(), implType.getName());
                 LOG.with().session(validLogSession(session)).level(Level.FINEST).verb(NutsLogVerb.READ)
                         .log(NutsMessage.jstyle("resolve {0} to  ```underlined {1}``` {2}",
-                                CoreStringUtils.alignLeft(baseType.getSimpleName(), 40),
+                                NutsUtilStrings.formatAlign(baseType.getSimpleName(), 40,NutsPositionType.FIRST),
                                 scope,
                                 implType.getName()
                         ));
@@ -544,7 +546,7 @@ public class DefaultNutsWorkspaceFactory implements NutsWorkspaceFactory {
                 singletons.put(type, o);
                 if (LOG.isLoggable(Level.CONFIG)) {
                     LOG.with().session(validLogSession(session)).level(Level.FINEST).verb(NutsLogVerb.READ)
-                            .log(NutsMessage.jstyle("resolve {0} to  ```underlined singleton``` {1}", CoreStringUtils.alignLeft(apiType.getSimpleName(), 40), o.getClass().getName()));
+                            .log(NutsMessage.jstyle("resolve {0} to  ```underlined singleton``` {1}", NutsUtilStrings.formatAlign(apiType.getSimpleName(), 40,NutsPositionType.FIRST), o.getClass().getName()));
                 }
             }
             return (T) o;
@@ -552,7 +554,7 @@ public class DefaultNutsWorkspaceFactory implements NutsWorkspaceFactory {
             T o = instantiate0(type, argTypes, args, apiType, session);
             if (LOG.isLoggable(Level.CONFIG)) {
                 LOG.with().session(validLogSession(session)).level(Level.FINEST).verb(NutsLogVerb.READ)
-                        .log(NutsMessage.jstyle("resolve {0} to  ```underlined prototype``` {1}", CoreStringUtils.alignLeft(apiType.getSimpleName(), 40), o.getClass().getName()));
+                        .log(NutsMessage.jstyle("resolve {0} to  ```underlined prototype``` {1}", NutsUtilStrings.formatAlign(apiType.getSimpleName(), 40,NutsPositionType.FIRST), o.getClass().getName()));
             }
             return o;
         }
@@ -566,7 +568,7 @@ public class DefaultNutsWorkspaceFactory implements NutsWorkspaceFactory {
             //if static instance found, always return it!
             if (LOG.isLoggable(Level.CONFIG)) {
                 LOG.with().session(validLogSession(session)).level(Level.FINEST).verb(NutsLogVerb.READ)
-                        .log(NutsMessage.jstyle("resolve {0} to singleton {1}", CoreStringUtils.alignLeft(type.getSimpleName(), 40), one.getClass().getName()));
+                        .log(NutsMessage.jstyle("resolve {0} to singleton {1}", NutsUtilStrings.formatAlign(type.getSimpleName(), 40,NutsPositionType.FIRST), one.getClass().getName()));
             }
             return (T) one;
         }

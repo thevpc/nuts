@@ -3,6 +3,7 @@ package net.thevpc.nuts.runtime.standalone.elem.mapper;
 import net.thevpc.nuts.NutsElement;
 import net.thevpc.nuts.NutsElementFactoryContext;
 import net.thevpc.nuts.NutsElementMapper;
+import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.runtime.standalone.elem.DefaultNutsArrayElement;
 
 import java.lang.reflect.Type;
@@ -35,7 +36,8 @@ public class NutsElementMapperIterator implements NutsElementMapper<Iterator> {
 
     @Override
     public Iterator createObject(NutsElement o, Type to, NutsElementFactoryContext context) {
-        return o.asArray().children().stream().map(x -> context.elementToObject(x, Object.class)).collect(
+        NutsSession session = context.getSession();
+        return o.asArray().get(session).items().stream().map(x -> context.elementToObject(x, Object.class)).collect(
                 Collectors.toList()).iterator();
     }
 

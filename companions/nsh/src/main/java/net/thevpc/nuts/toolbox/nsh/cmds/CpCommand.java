@@ -50,21 +50,22 @@ public class CpCommand extends SimpleJShellBuiltin {
     @Override
     protected boolean configureFirst(NutsCommandLine commandLine, JShellExecutionContext context) {
         Options options = context.getOptions();
+        NutsSession session = context.getSession();
         NutsArgument a;
-        switch (commandLine.peek().getKey().getString()) {
+        switch (commandLine.peek().get(session).getKey().asString().get(session)) {
             case "--mkdir": {
-                options.mkdir = commandLine.nextBoolean().getBooleanValue();
+                options.mkdir = commandLine.nextBooleanValueLiteral().get(session);
                 return true;
             }
             case "-r":
             case "-R":
             case "--recursive": {
-                options.recursive = commandLine.nextBoolean().getBooleanValue();
+                options.recursive = commandLine.nextBooleanValueLiteral().get(session);
                 return true;
             }
             default: {
-                if (commandLine.peek().isNonOption()) {
-                    options.files.add(commandLine.next().getString());
+                if (commandLine.peek().get(session).isNonOption()) {
+                    options.files.add(commandLine.next().flatMap(NutsValue::asString).get(session));
                     return true;
                 }
             }

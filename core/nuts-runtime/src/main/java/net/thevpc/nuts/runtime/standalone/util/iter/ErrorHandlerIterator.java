@@ -31,8 +31,7 @@ public class ErrorHandlerIterator<T> extends NutsIteratorBase<T> {
 
     @Override
     public NutsElement describe(NutsElements elems) {
-        return NutsDescribables.resolveOrDestruct(base,elems)
-                .asSafeObject(true)
+        return NutsDescribables.resolveOrDestructAsObject(base,elems)
                 .builder()
                 .set("onError",type.toString().toLowerCase())
                 .build();

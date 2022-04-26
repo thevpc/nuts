@@ -50,7 +50,7 @@ public class DefaultNutsArrayElementBuilder implements NutsArrayElementBuilder {
     }
 
     @Override
-    public List<NutsElement> children() {
+    public List<NutsElement> items() {
         return Collections.unmodifiableList(values);
     }
 
@@ -69,7 +69,7 @@ public class DefaultNutsArrayElementBuilder implements NutsArrayElementBuilder {
         if (value == null) {
             add(_elements().ofNull());
         } else {
-            for (NutsElement child : value.children()) {
+            for (NutsElement child : value.items()) {
                 add(child);
             }
         }
@@ -101,7 +101,7 @@ public class DefaultNutsArrayElementBuilder implements NutsArrayElementBuilder {
         if (value == null) {
             add(_elements().ofNull());
         } else {
-            for (NutsElement child : value.children()) {
+            for (NutsElement child : value.items()) {
                 add(child);
             }
         }
@@ -271,7 +271,7 @@ public class DefaultNutsArrayElementBuilder implements NutsArrayElementBuilder {
 
     @Override
     public String toString() {
-        return "[" + children().stream().map(Object::toString).collect(Collectors.joining(", ")) + "]";
+        return "[" + items().stream().map(Object::toString).collect(Collectors.joining(", ")) + "]";
     }
 
     private NutsElement denull(NutsElement e) {

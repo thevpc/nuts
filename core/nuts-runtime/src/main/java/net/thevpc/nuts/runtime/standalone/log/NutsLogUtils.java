@@ -224,12 +224,12 @@ public class NutsLogUtils {
             sep = " : ";
         }
         long time = (startTime != 0) ? (System.currentTimeMillis() - startTime) : 0;
-        String modeString = CoreStringUtils.alignLeft(fetchMode.id(), 7);
+        String modeString = NutsUtilStrings.formatAlign(fetchMode.id(), 7,NutsPositionType.FIRST);
         log.with().session(session).level(lvl).verb(tracePhase).time(time)
                 .log(NutsMessage.jstyle("[{0}] {1} {2} {3} {4}",
                         modeString,
-                        CoreStringUtils.alignLeft(name, 20),
-                        CoreStringUtils.alignLeft(title, 18),
+                        NutsUtilStrings.formatAlign(name, 20,NutsPositionType.FIRST),
+                        NutsUtilStrings.formatAlign(title, 18,NutsPositionType.FIRST),
                         (id == null ? "" : id),
                         extraMsg));
     }
@@ -237,13 +237,13 @@ public class NutsLogUtils {
         if (log.isLoggable(Level.FINEST)) {
 
             long time = (startTime != 0) ? (System.currentTimeMillis() - startTime) : 0;
-            String fetchString = "[" + CoreStringUtils.alignLeft(fetchMode.id(), 7) + "] ";
+            String fetchString = "[" + NutsUtilStrings.formatAlign(fetchMode.id(), 7,NutsPositionType.FIRST) + "] ";
             log.with().level(Level.FINEST)
                     .verb(tracePhase).time(time)
                     .log(NutsMessage.jstyle("{0}{1} {2}",
                             fetchString,
                             id,
-                            CoreStringUtils.alignLeft(message, 18)
+                            NutsUtilStrings.formatAlign(message, 18,NutsPositionType.FIRST)
                     ));
         }
     }

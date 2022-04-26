@@ -12,11 +12,11 @@ public class RunningDerby {
     public RunningDerby(NutsProcessInfo r, NutsSession session) {
         pid =r.getPid();
         argsLine=r.getCommandLine();
-        NutsCommandLine cmdline = NutsCommandLine.of(r.getCommandLine(),session).setExpandSimpleOptions(false);
+        NutsCommandLine cmdline = NutsCommandLine.parseSystem(r.getCommandLine(),session).get(session).setExpandSimpleOptions(false);
         NutsArgument a=null;
         while(cmdline.hasNext()){
-            if((a=cmdline.nextString("-Dderby.system.home"))!=null) {
-                home = a.getValue().getString();
+            if((a=cmdline.nextString("-Dderby.system.home").orNull())!=null) {
+                home = a.getStringValue().get(session);
             }else{
                 cmdline.skip();
             }

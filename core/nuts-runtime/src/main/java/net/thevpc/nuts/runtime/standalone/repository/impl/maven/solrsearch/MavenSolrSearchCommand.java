@@ -27,7 +27,8 @@ public class MavenSolrSearchCommand {
 
     public boolean isSolrSearchEnabled(NutsSession session) {
         NutsPath solrSearchUrl = getSolrSearchUrl(session);
-        return solrSearchUrl != null && NutsUtilStrings.parseBoolean(repo.config().setSession(session).getConfigProperty("maven.solrsearch.enable", null), true, false);
+        return solrSearchUrl != null && NutsUtilStrings.parseBoolean(repo.config().setSession(session).getConfigProperty("maven.solrsearch.enable", null)
+                ).ifEmpty(true).orElse(false);
     }
 
     public NutsIterator<NutsId> search(NutsIdFilter filter, NutsId[] baseIds, NutsFetchMode fetchMode, NutsSession session) {
@@ -102,10 +103,10 @@ public class MavenSolrSearchCommand {
                                             .setLogProgress(true)
                                             .parse(query);
                                     if (e.isObject()) {
-                                        NutsObjectElement o = e.asObject();
-                                        String status = o.getSafeObject("responseHeader").getSafeString("status");
+                                        NutsObjectElement o = e.asObject().get(session);
+                                        String status = o.getStringByPath("responseHeader","status").orElse("");
                                         if ("0".equals(status)) {
-                                            arr = o.getSafeObject("response").getSafeArray("docs");
+                                            arr = o.getArrayByPath("response","docs").orElse(NutsArrayElement.ofEmpty(session));
                                         }
                                     }
                                 }
@@ -116,12 +117,12 @@ public class MavenSolrSearchCommand {
                             public NutsId next() {
                                 if (arr != null) {
                                     if (index < arr.size()) {
-                                        NutsObjectElement d = arr.getObject(index);
-                                        String g = d.getSafeString("g");
-                                        String a = d.getSafeString("a");
-                                        String v = d.getSafeString("v");
+                                        NutsObjectElement d = arr.getObject(index).get(session);
+                                        String g = d.getString("g").orElse("");
+                                        String a = d.getString("a").orElse("");
+                                        String v = d.getString("v").orElse("");
                                         index++;
-                                        return new DefaultNutsIdBuilder().setGroupId(g).setArtifactId(a).setVersion(v).build();
+                                        return NutsIdBuilder.of(g,a).setVersion(v).build();
                                     }
                                 }
                                 return null;

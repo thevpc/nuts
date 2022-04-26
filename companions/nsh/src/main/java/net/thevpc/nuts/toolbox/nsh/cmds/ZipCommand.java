@@ -48,10 +48,11 @@ public class ZipCommand extends SimpleJShellBuiltin {
         if (commandLine.next("-r") != null) {
             options.r = true;
             return true;
-        } else if (commandLine.peek().isOption()) {
+        } else if (commandLine.isNextOption()) {
             return false;
-        } else if (commandLine.peek().isNonOption()) {
-            String path = commandLine.required().nextNonOption(NutsArgumentName.of("file", session)).getString();
+        } else if (commandLine.peek().get(session).isNonOption()) {
+            String path = commandLine.nextNonOption(NutsArgumentName.of("file", session))
+                    .flatMap(NutsValue::asString).get(session);
             NutsPath file = NutsPath.of(path, session).toAbsolute(context.getShellContext().getCwd());
             if (options.outZip == null) {
                 options.outZip = file;
@@ -68,10 +69,10 @@ public class ZipCommand extends SimpleJShellBuiltin {
         Options options = context.getOptions();
         NutsSession session = context.getSession();
         if (options.files.isEmpty()) {
-            commandLine.required(NutsMessage.cstyle("missing input-files"));
+            commandLine.throwError(NutsMessage.cstyle("missing input-files"),session);
         }
         if (options.outZip == null) {
-            commandLine.required(NutsMessage.cstyle("missing out-zip"));
+            commandLine.throwError(NutsMessage.cstyle("missing out-zip"),session);
         }
         NutsCompress aa = NutsCompress.of(session)
                 .setTarget(options.outZip);

@@ -67,6 +67,7 @@ public class DefaultNutsElements extends DefaultFormatBase<NutsElements> impleme
                             || NutsElement.class.isAssignableFrom(x)
                             || NutsFormattable.class.isAssignableFrom(x)
                             || NutsMessage.class.isAssignableFrom(x)
+                            || NutsMessageFormattable.class.isAssignableFrom(x)
             );
         }
     };
@@ -373,8 +374,22 @@ public class DefaultNutsElements extends DefaultFormatBase<NutsElements> impleme
     }
 
     @Override
+    public NutsArrayElement ofEmptyArray() {
+        return ofArray().build();
+    }
+
+    @Override
+    public NutsObjectElement ofEmptyObject() {
+        return ofObject().build();
+    }
+
+    @Override
     public NutsPrimitiveElement ofBoolean(String value) {
-        return ofBoolean(NutsUtilStrings.parseBoolean(value, false, false));
+        NutsOptional<Boolean> o = NutsUtilStrings.parseBoolean(value);
+        if(o.isEmpty()){
+            return ofNull();
+        }
+        return ofBoolean(o.get());
     }
 
     //    public NutsPrimitiveElement forNutsString(NutsString str) {
@@ -498,7 +513,7 @@ public class DefaultNutsElements extends DefaultFormatBase<NutsElements> impleme
         if (value == null) {
             return ofNull();
         }
-        return new DefaultNutsPrimitiveElement(NutsElementType.INSTANT, DefaultNutsPrimitiveElement.parseInstant(value,getSession()), getSession());
+        return new DefaultNutsPrimitiveElement(NutsElementType.INSTANT, DefaultNutsValue.parseInstant(value).get(getSession()), getSession());
     }
 
     @Override

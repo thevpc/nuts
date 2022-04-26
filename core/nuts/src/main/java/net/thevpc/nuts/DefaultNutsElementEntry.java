@@ -21,10 +21,7 @@
  * governing permissions and limitations under the License.
  * <br> ====================================================================
  */
-package net.thevpc.nuts.runtime.standalone.elem;
-
-import net.thevpc.nuts.NutsElement;
-import net.thevpc.nuts.NutsElementEntry;
+package net.thevpc.nuts;
 
 import java.util.Objects;
 

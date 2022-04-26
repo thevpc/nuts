@@ -37,6 +37,14 @@ import java.util.Map;
  */
 public interface NutsIdBuilder extends NutsId, Serializable {
 
+    static NutsIdBuilder of(String groupId, String artifactId) {
+        return new DefaultNutsIdBuilder(groupId, artifactId);
+    }
+
+    static NutsIdBuilder of() {
+        return new DefaultNutsIdBuilder();
+    }
+
     /**
      * update id face which defines is a release file type selector
      *
@@ -107,6 +115,7 @@ public interface NutsIdBuilder extends NutsId, Serializable {
 
     /**
      * clear all properties
+     *
      * @return {@code this} instance
      */
     NutsIdBuilder clearProperties();

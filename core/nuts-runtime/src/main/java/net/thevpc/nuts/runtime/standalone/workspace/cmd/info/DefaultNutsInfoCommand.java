@@ -147,22 +147,23 @@ public class DefaultNutsInfoCommand extends DefaultFormatBase<NutsInfoCommand> i
 
     @Override
     public boolean configureFirst(NutsCommandLine cmdLine) {
-        NutsArgument a = cmdLine.peek();
+        NutsSession session = getSession();
+        NutsArgument a = cmdLine.peek().get(session);
         if (a == null) {
             return false;
         }
         boolean enabled = a.isActive();
-        switch (a.getKey().getString()) {
+        switch(a.getStringKey().orElse("")) {
             case "-r":
             case "--repos": {
-                boolean val = cmdLine.nextBoolean().getBooleanValue();
+                boolean val = cmdLine.nextBoolean().get(session).getBooleanValue().get(session);
                 if (enabled) {
                     this.setShowRepositories(val);
                 }
                 return true;
             }
             case "--fancy": {
-                boolean val = cmdLine.nextBoolean().getBooleanValue();
+                boolean val = cmdLine.nextBoolean().get(session).getBooleanValue().get(session);
                 if (enabled) {
                     this.setFancy(val);
                 }
@@ -170,17 +171,17 @@ public class DefaultNutsInfoCommand extends DefaultFormatBase<NutsInfoCommand> i
             }
             case "-l":
             case "--lenient": {
-                boolean val = cmdLine.nextBoolean().getBooleanValue();
+                boolean val = cmdLine.nextBoolean().get(session).getBooleanValue().get(session);
                 if (enabled) {
                     this.setLenient(val);
                 }
                 return true;
             }
             case "--add": {
-                NutsPrimitiveElement aa = cmdLine.nextString().getValue();
-                NutsArgument val = NutsArgument.of(aa.getString(), getSession());
+                String aa = cmdLine.nextString().get(session).getStringValue().get(session);
+                NutsArgument val = NutsArgument.of(aa);
                 if (enabled) {
-                    extraProperties.put(val.getKey().getString(), val.getValue().getString());
+                    extraProperties.put(val.getKey().asString().get(session), val.getStringValue().get(session));
                 }
                 return true;
             }
@@ -228,16 +229,16 @@ public class DefaultNutsInfoCommand extends DefaultFormatBase<NutsInfoCommand> i
             }
             case "-g":
             case "--get": {
-                String r = cmdLine.nextString().getValue().getString();
+                String r = cmdLine.nextString().get(session).getStringValue().get(session);
                 if (enabled) {
                     requests.add(r);
                 }
                 while (true) {
-                    NutsArgument p = cmdLine.peek();
+                    NutsArgument p = cmdLine.peek().orNull();
                     if (p != null && !p.isOption()) {
                         cmdLine.skip();
                         if (enabled) {
-                            requests.add(p.getString());
+                            requests.add(p.asString().get(session));
                         }
                     } else {
                         break;
@@ -246,7 +247,7 @@ public class DefaultNutsInfoCommand extends DefaultFormatBase<NutsInfoCommand> i
                 return true;
             }
             default: {
-                if (getSession().configureFirst(cmdLine)) {
+                if (session.configureFirst(cmdLine)) {
                     return true;
                 }
             }
@@ -370,9 +371,9 @@ public class DefaultNutsInfoCommand extends DefaultFormatBase<NutsInfoCommand> i
         props.put("user-home", NutsPath.ofUserHome(session));
         props.put("user-dir", NutsPath.ofUserDirectory(session));
         props.put("command-line-long",
-                session.boot().getBootOptions().formatter().setCompact(false).getBootCommandLine()
+                session.boot().getBootOptions().toCommandLine(new NutsWorkspaceOptionsConfig().setCompact(false))
         );
-        props.put("command-line-short", session.boot().getBootOptions().formatter().setCompact(true).getBootCommandLine());
+        props.put("command-line-short", session.boot().getBootOptions().toCommandLine(new NutsWorkspaceOptionsConfig().setCompact(true)));
         props.put("inherited", session.boot().getBootOptions().isInherited());
         // nuts-boot-args must always be parsed in bash format
         props.put("inherited-nuts-boot-args", NutsCommandLine.of(System.getProperty("nuts.boot.args"), NutsShellFamily.SH, session).format(session));

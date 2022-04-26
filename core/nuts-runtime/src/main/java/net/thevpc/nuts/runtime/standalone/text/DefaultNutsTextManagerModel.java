@@ -124,7 +124,7 @@ public class DefaultNutsTextManagerModel {
     public NutsTextFormatTheme getTheme(NutsSession session) {
         if (styleTheme == null) {
             if (styleThemeName == null) {
-                NutsWorkspaceOptions bootOptions = NutsWorkspaceExt.of(this.ws).getModel().bootModel.getBootOptions();
+                NutsWorkspaceOptions bootOptions = NutsWorkspaceExt.of(this.ws).getModel().bootModel.getBootUserOptions();
                 styleThemeName = bootOptions.getTheme();
             }
             styleTheme = createTheme(styleThemeName, session);

@@ -49,17 +49,18 @@ public class UnzipCommand extends SimpleJShellBuiltin {
     @Override
     protected boolean configureFirst(NutsCommandLine commandLine, JShellExecutionContext context) {
         Options options = context.getOptions();
+        NutsSession session = context.getSession();
         NutsArgument a;
         String mode="zip";
         while(commandLine.hasNext()){
             switch (mode){
                 case "zip":{
-                    if ((a = commandLine.nextBoolean("-l")) != null) {
-                        options.l = a.getBooleanValue();
-                    } else if ((a = commandLine.nextString("-d")) != null) {
-                        options.dir = a.getValue().getString();
-                    } else if (!commandLine.peek().isOption()) {
-                        String s = commandLine.next().toString();
+                    if ((a = commandLine.nextBoolean("-l").orNull()) != null) {
+                        options.l = a.getBooleanValue().get(session);
+                    } else if ((a = commandLine.nextString("-d").orNull()) != null) {
+                        options.dir = a.getStringValue().get(session);
+                    } else if (!commandLine.isNextOption()) {
+                        String s = commandLine.next().get(session).toString();
                         if(options.zfiles.isEmpty()||s.toLowerCase().endsWith(".zip")) {
                             options.zfiles.add(s);
                         }else{
@@ -67,39 +68,39 @@ public class UnzipCommand extends SimpleJShellBuiltin {
                             mode="internFiles";
                         }
                     }else{
-                        commandLine.unexpectedArgument();
+                        commandLine.throwUnexpectedArgument(session);
                     }
                     break;
                 }
                 case "internFiles":{
-                    if ((a = commandLine.nextBoolean("-l")) != null) {
-                        options.l = a.getBooleanValue();
-                    } else if ((a = commandLine.nextString("-d")) != null) {
-                        options.dir = a.getValue().getString();
-                    } else if ((a = commandLine.nextString("-x")) != null) {
-                        options.xFiles.add(a.getValue().getString());
+                    if ((a = commandLine.nextBoolean("-l").orNull()) != null) {
+                        options.l = a.getBooleanValue().get(session);
+                    } else if ((a = commandLine.nextString("-d").orNull()) != null) {
+                        options.dir = a.getStringValue().get(session);
+                    } else if ((a = commandLine.nextString("-x").orNull()) != null) {
+                        options.xFiles.add(a.getStringValue().get(session));
                         mode="xFiles";
-                    } else if (!commandLine.peek().isOption()) {
-                        options.xFiles.add(commandLine.next().toString());
+                    } else if (!commandLine.isNextOption()) {
+                        options.xFiles.add(commandLine.next().get(session).toString());
                     }else{
-                        commandLine.unexpectedArgument();
+                        commandLine.throwUnexpectedArgument(session);
                     }
                     break;
                 }
                 case "xFiles":{
-                    if ((a = commandLine.nextBoolean("-l")) != null) {
-                        options.l = a.getBooleanValue();
-                    } else if ((a = commandLine.nextString("-d")) != null) {
-                        options.dir = a.getValue().getString();
-                    } else if (!commandLine.peek().isOption()) {
-                        options.xFiles.add(commandLine.next().toString());
+                    if ((a = commandLine.nextBoolean("-l").orNull()) != null) {
+                        options.l = a.getBooleanValue().get(session);
+                    } else if ((a = commandLine.nextString("-d").orNull()) != null) {
+                        options.dir = a.getStringValue().get(session);
+                    } else if (!commandLine.isNextOption()) {
+                        options.xFiles.add(commandLine.next().get(session).toString());
                     }else{
-                        commandLine.unexpectedArgument();
+                        commandLine.throwUnexpectedArgument(session);
                     }
                     break;
                 }
                 default:{
-                    commandLine.unexpectedArgument();
+                    commandLine.throwUnexpectedArgument(session);
                 }
             }
         }
@@ -109,10 +110,10 @@ public class UnzipCommand extends SimpleJShellBuiltin {
     @Override
     protected void execBuiltin(NutsCommandLine commandLine, JShellExecutionContext context) {
         Options options = context.getOptions();
-        if (options.zfiles.isEmpty()) {
-            commandLine.required();
-        }
         NutsSession session = context.getSession();
+        if (options.zfiles.isEmpty()) {
+            commandLine.throwMissingArgument(session);
+        }
         for (String path : options.zfiles) {
             NutsPath file = NutsPath.of(path, session).toAbsolute(context.getShellContext().getCwd());
             try {

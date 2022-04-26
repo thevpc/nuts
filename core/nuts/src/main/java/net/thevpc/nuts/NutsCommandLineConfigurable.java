@@ -67,11 +67,12 @@ public interface NutsCommandLineConfigurable {
      */
     boolean configureFirst(NutsCommandLine commandLine);
 
-    default void configureLast(NutsCommandLine commandLine) {
-        if (!configureFirst(commandLine)) {
-            commandLine.unexpectedArgument();
-        }
-    }
+    void configureLast(NutsCommandLine commandLine);
+//    default void configureLast(NutsCommandLine commandLine) {
+//        if (!configureFirst(commandLine)) {
+//            commandLine.throwUnexpectedArgument(session);
+//        }
+//    }
 
 
 }

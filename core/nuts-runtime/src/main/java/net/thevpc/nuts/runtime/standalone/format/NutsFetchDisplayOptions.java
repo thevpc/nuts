@@ -42,11 +42,11 @@ public class NutsFetchDisplayOptions {
 
     private NutsIdFormat idFormat;
     private List<NutsDisplayProperty> displays = new ArrayList<>();
-    private NutsSession ws;
+    private NutsSession session;
 
-    public NutsFetchDisplayOptions(NutsSession ws) {
-        this.ws = ws;
-        this.idFormat = NutsIdFormat.of(ws);
+    public NutsFetchDisplayOptions(NutsSession session) {
+        this.session = session;
+        this.idFormat = NutsIdFormat.of(session);
         this.idFormat.setHighlightImportedGroupId(true);
         this.idFormat.setOmitOtherProperties(true);
         this.idFormat.setOmitFace(true);
@@ -119,7 +119,7 @@ public class NutsFetchDisplayOptions {
     }
 
     public final NutsFetchDisplayOptions configure(boolean skipUnsupported, String... args) {
-        configure(false, NutsCommandLine.of(args,ws));
+        configure(false, NutsCommandLine.of(args));
         return this;
     }
 
@@ -130,7 +130,7 @@ public class NutsFetchDisplayOptions {
                 if (skipUnsupported) {
                     commandLine.skip();
                 } else {
-                    commandLine.unexpectedArgument();
+                    commandLine.throwUnexpectedArgument(session);
                 }
             } else {
                 conf = true;
@@ -143,16 +143,16 @@ public class NutsFetchDisplayOptions {
         if (idFormat.configureFirst(cmdLine)) {
             return true;
         }
-        NutsArgument a = cmdLine.peek();
+        NutsArgument a = cmdLine.peek().get(session);
         if (a == null) {
             return false;
         }
-        switch (a.getKey().getString()) {
+        switch(a.getStringKey().orElse("")) {
             case "-l":
             case "--long": {
-                a = cmdLine.nextBoolean();
+                a = cmdLine.nextBoolean().get(session);
                 if(a.isActive()) {
-                    if(a.getBooleanValue()){
+                    if(a.getBooleanValue().get(session)){
                         setDisplay(DISPLAY_LONG);
                     }else {
                         setDisplay(DISPLAY_MIN);
@@ -162,9 +162,9 @@ public class NutsFetchDisplayOptions {
             }
             case "--ll":
             case "--long-long": {
-                a = cmdLine.nextBoolean();
+                a = cmdLine.nextBoolean().get(session);
                 if(a.isActive()) {
-                    if(a.getBooleanValue()){
+                    if(a.getBooleanValue().get(session)){
                         setDisplay(DISPLAY_LONG_LONG);
                     }else {
                         setDisplay(DISPLAY_MIN);
@@ -173,9 +173,9 @@ public class NutsFetchDisplayOptions {
                 return true;
             }
             case "--display": {
-                a = cmdLine.nextString();
+                a = cmdLine.nextString().get(session);
                 if(a.isActive()) {
-                    setDisplay(parseNutsDisplayProperty(a.getValue().getString()));
+                    setDisplay(parseNutsDisplayProperty(a.getStringValue().get(session)));
                 }
                 return true;
             }

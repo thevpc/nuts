@@ -26,10 +26,7 @@
  */
 package net.thevpc.nuts.boot;
 
-import net.thevpc.nuts.NutsBlankable;
-import net.thevpc.nuts.NutsMessage;
-import net.thevpc.nuts.NutsOptional;
-import net.thevpc.nuts.NutsUtilStrings;
+import net.thevpc.nuts.*;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -60,7 +57,7 @@ public class PrivateNutsStringMapParser {
         }
         this.equalsChars = equalsChars;
         this.separatorChars = separatorChars;
-        this.escapeChars = escapeChars==null?"":escapeChars;
+        this.escapeChars = escapeChars == null ? "" : escapeChars;
     }
 
     /**
@@ -83,7 +80,7 @@ public class PrivateNutsStringMapParser {
                 while (true) {
                     r = reader.read();
                     if (r == -1) {
-                        throw new RuntimeException("Expected " + '\"');
+                        throw new RuntimeException("Expected " + cr);
                     }
                     if (r == cr) {
                         break;
@@ -91,7 +88,7 @@ public class PrivateNutsStringMapParser {
                     if (r == '\\') {
                         r = reader.read();
                         if (r == -1) {
-                            throw new RuntimeException("Expected " + '\"');
+                            throw new RuntimeException("Expected " + cr);
                         }
                         switch ((char) r) {
                             case 'n': {
@@ -106,12 +103,17 @@ public class PrivateNutsStringMapParser {
                                 result.append('\f');
                                 break;
                             }
+                            case 't': {
+                                result.append('\t');
+                                break;
+                            }
                             default: {
+                                result.append('\\');
                                 result.append((char) r);
                             }
                         }
                     } else {
-                        result.append(cr);
+                        result.append((char) r);
                     }
                 }
             } else {
@@ -126,8 +128,32 @@ public class PrivateNutsStringMapParser {
                         } else if (escapedTokens.indexOf(r) >= 0) {
                             result.append((char) r);
                         } else {
-                            result.append(cr);
-                            result.append((char) r);
+                            switch ((char) r) {
+                                case ' ': {
+                                    result.append(' ');
+                                    break;
+                                }
+                                case 'n': {
+                                    result.append('\n');
+                                    break;
+                                }
+                                case 'r': {
+                                    result.append('\r');
+                                    break;
+                                }
+                                case 'f': {
+                                    result.append('\f');
+                                    break;
+                                }
+                                case 't': {
+                                    result.append('\t');
+                                    break;
+                                }
+                                default: {
+                                    result.append('\\');
+                                    result.append((char) r);
+                                }
+                            }
                         }
                     }
                 } else if (stopTokens.indexOf(cr) >= 0) {
@@ -147,7 +173,7 @@ public class PrivateNutsStringMapParser {
      */
     public NutsOptional<Map<String, String>> parse(String text) {
         Map<String, String> m = new LinkedHashMap<>();
-        if(NutsBlankable.isBlank(text)){
+        if (NutsBlankable.isBlank(text)) {
             return NutsOptional.of(m);
         }
         StringReader reader = new StringReader(text);
@@ -160,7 +186,7 @@ public class PrivateNutsStringMapParser {
             try {
                 r = readToken(reader, eqAndSep, sepAndEsc, key);
             } catch (IOException e) {
-                return NutsOptional.ofError(x-> NutsMessage.plain(e.toString()));
+                return NutsOptional.ofError(x -> NutsMessage.plain(e.toString()));
             }
             String t = key.toString();
             if (r == -1) {
@@ -175,7 +201,7 @@ public class PrivateNutsStringMapParser {
                     try {
                         r = readToken(reader, separatorChars, eqAndEsc, value);
                     } catch (IOException e) {
-                        return NutsOptional.ofError(x-> NutsMessage.plain(e.toString()));
+                        return NutsOptional.ofError(x -> NutsMessage.plain(e.toString()));
                     }
                     m.put(t, value.toString());
                     if (r == -1) {
@@ -198,17 +224,25 @@ public class PrivateNutsStringMapParser {
             if (sort) {
                 map = new TreeMap<>(map);
             }
-            String escapedChars = separatorChars + equalsChars;
+            String escapedChars = separatorChars + equalsChars + escapeChars;
             Set<String> sortedKeys = map.keySet();
             for (String k : sortedKeys) {
                 String v = map.get(k);
-                if (v != null && v.length() > 0) {
+                if (v != null) {
                     if (sb.length() > 0) {
                         sb.append(separatorChars);
                     }
-                    sb.append(NutsUtilStrings.formatStringLiteral(k, NutsUtilStrings.QuoteType.SIMPLE, NutsUtilStrings.QuoteCondition.QUOTE_REQUIRED, escapedChars)).append(equalsChars).append(
-                            NutsUtilStrings.formatStringLiteral(v, NutsUtilStrings.QuoteType.SIMPLE, NutsUtilStrings.QuoteCondition.QUOTE_REQUIRED, escapedChars)
-                    );
+                    if (v.isEmpty()) {
+                        sb.append(
+                                NutsUtilStrings.formatStringLiteral(k, NutsUtilStrings.QuoteType.SIMPLE, NutsSupportCondition.PREFERRED, escapedChars)
+                        );
+                    } else {
+                        sb.append(
+                                        NutsUtilStrings.formatStringLiteral(k, NutsUtilStrings.QuoteType.SIMPLE, NutsSupportCondition.PREFERRED, escapedChars))
+                                .append(equalsChars)
+                                .append(NutsUtilStrings.formatStringLiteral(v, NutsUtilStrings.QuoteType.SIMPLE, NutsSupportCondition.PREFERRED, escapedChars)
+                                );
+                    }
                 }
             }
         }

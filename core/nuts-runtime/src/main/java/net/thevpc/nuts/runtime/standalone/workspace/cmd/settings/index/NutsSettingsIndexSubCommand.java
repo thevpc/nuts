@@ -23,10 +23,10 @@ public class NutsSettingsIndexSubCommand extends AbstractNutsSettingsSubCommand 
         if (cmdLine.next("update stats") != null) {
             List<String> repos = new ArrayList<>();
             while (cmdLine.hasNext()) {
-                repos.add(cmdLine.next().getString());
+                repos.add(cmdLine.next().flatMap(NutsValue::asString).get(session));
             }
             updateStatistics(session, repos.toArray(new String[0]));
-            cmdLine.setCommandName(name).unexpectedArgument();
+            cmdLine.setCommandName(name).throwUnexpectedArgument(session);
             return true;
         } else {
             return false;

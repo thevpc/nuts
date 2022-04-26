@@ -541,13 +541,13 @@ public class DefaultNutsQuestion<T> implements NutsQuestion<T> {
 
     @Override
     public boolean configureFirst(NutsCommandLine cmd) {
-        NutsArgument a = cmd.peek();
+        NutsArgument a = cmd.peek().get(session);
         if (a == null) {
             return false;
         }
-        switch (a.getKey().getString()) {
+        switch(a.getStringKey().orElse("")) {
             case "trace-confirmation": {
-                boolean val = cmd.nextBoolean().getBooleanValue();
+                boolean val = cmd.nextBooleanValueLiteral().get(session);
                 if (a.isActive()) {
                     this.traceConfirmation = val;
                 }
@@ -559,5 +559,12 @@ public class DefaultNutsQuestion<T> implements NutsQuestion<T> {
 
     private void checkSession() {
         NutsSessionUtils.checkSession(ws, session);
+    }
+
+    @Override
+    public void configureLast(NutsCommandLine commandLine) {
+        if (!configureFirst(commandLine)) {
+            commandLine.throwUnexpectedArgument(getSession());
+        }
     }
 }

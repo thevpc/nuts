@@ -58,7 +58,7 @@ public class NutsDependencyOsFilter extends AbstractDependencyFilter  {
 
     @Override
     public String toString() {
-        return os.isEmpty() ? "true" : "os in (" + os.stream().map(x -> x.id()).collect(Collectors.joining(", ")) + ')';
+        return os.isEmpty() ? "true" : "os in (" + os.stream().map(NutsOsFamily::id).collect(Collectors.joining(", ")) + ')';
     }
 
     @Override

@@ -5,10 +5,7 @@
  */
 package net.thevpc.nuts.toolbox.docusaurus;
 
-import net.thevpc.nuts.NutsArrayElement;
-import net.thevpc.nuts.NutsElement;
-import net.thevpc.nuts.NutsElements;
-import net.thevpc.nuts.NutsSession;
+import net.thevpc.nuts.*;
 import net.thevpc.nuts.lib.md.*;
 import net.thevpc.nuts.lib.md.docusaurus.DocusaurusUtils;
 import net.thevpc.nuts.lib.md.util.MdUtils;
@@ -129,7 +126,7 @@ public class DocusaurusTreeTransform extends MdElementTransformBase {
         switch (e.getTag()) {
             case "Tabs": {
                 String props = DocusaurusUtils.skipJsonJSXBrackets(e.getProperties().get("values"));
-                NutsArrayElement rows = NutsElements.of(session).parse(props).asSafeArray();
+                NutsArrayElement rows = NutsElements.of(session).parse(props).asArray().orElse(NutsArrayElement.ofEmpty(session));
                 Map<String,MdElement> sub=new HashMap<>();
                 for (MdElement item : MdFactory.asBody(e.getContent()).getChildren()) {
                     if (item.isXml()) {
@@ -139,7 +136,7 @@ public class DocusaurusTreeTransform extends MdElementTransformBase {
                             String tt = "Unknown";
                             NutsElement v = NutsElements.of(session).parse(tabItem.getProperties().get("value"));
                             if (v != null) {
-                                tt = v.asString();
+                                tt = v.asString().get(session);
                             }
                             MdElement u = transformXml(path.append(tabItem));
                             sub.put(tt, u);
@@ -154,7 +151,7 @@ public class DocusaurusTreeTransform extends MdElementTransformBase {
                 }
                 List<MdElement> res=new ArrayList<>();
                 for (NutsElement row : rows) {
-                    MdElement r = sub.get(row.asSafeObject().getSafeString("value"));
+                    MdElement r = sub.get(row.asObject().orElse(NutsObjectElement.ofEmpty(session)).getString("value").orElse(""));
                     if(r!=null){
                         res.add(r);
                     }
@@ -166,12 +163,12 @@ public class DocusaurusTreeTransform extends MdElementTransformBase {
                 String tt = "Unknown";
                 NutsElement v = NutsElements.of(session).parse(e.getProperties().get("value"));
                 if (v != null) {
-                    tt = v.asString();
+                    tt = v.asString().get(session);
                 }
                 String props = DocusaurusUtils.skipJsonJSXBrackets(path.getParentPath().getElement().asXml().getProperties().get("values"));
-                for (NutsElement a : NutsElements.of(session).parse(props).asSafeArray()) {
-                    if (tt.equals(a.asSafeObject().getSafeString("value"))) {
-                        tt = a.asSafeObject().getSafeString("label");
+                for (NutsElement a : NutsElements.of(session).parse(props).asArray().orElse(NutsArrayElement.ofEmpty(session))) {
+                    if (tt.equals(a.asObject().orElse(NutsObjectElement.ofEmpty(session)).getString("value").orNull())) {
+                        tt = a.asObject().orElse(NutsObjectElement.ofEmpty(session)).getString("label").orNull();
                         break;
                     }
                 }

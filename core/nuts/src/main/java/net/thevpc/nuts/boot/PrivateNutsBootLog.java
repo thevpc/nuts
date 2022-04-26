@@ -26,10 +26,7 @@
  */
 package net.thevpc.nuts.boot;
 
-import net.thevpc.nuts.NutsBootTerminal;
-import net.thevpc.nuts.NutsLogVerb;
-import net.thevpc.nuts.NutsMessage;
-import net.thevpc.nuts.NutsBootOptions;
+import net.thevpc.nuts.*;
 
 import java.io.InputStream;
 import java.io.PrintStream;
@@ -37,13 +34,15 @@ import java.time.Instant;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Scanner;
+import java.util.function.Supplier;
 import java.util.logging.Level;
+import java.util.logging.LogRecord;
 
 /**
  * @author thevpc
  * @app.category Internal
  */
-public class PrivateNutsBootLog {
+public class PrivateNutsBootLog implements NutsLogger {
 
     /**
      * Universal Data and time format "yyyy-MM-dd HH:mm:ss.SSS"
@@ -51,7 +50,7 @@ public class PrivateNutsBootLog {
     public static final DateTimeFormatter DEFAULT_DATE_TIME_FORMATTER
             = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS")
             .withZone(ZoneId.systemDefault());
-    private NutsBootOptions options;
+    private NutsWorkspaceOptions options;
     private final NutsBootTerminal bootTerminal;
     private Scanner inScanner;
 
@@ -66,6 +65,28 @@ public class PrivateNutsBootLog {
         if (isLoggable(lvl)) {
             doLog(lvl, logVerb, message == null ? "" : message.toString());
         }
+    }
+
+    @Override
+    public void log(NutsSession session, Level level, NutsLogVerb verb, NutsMessage msg, Throwable thrown) {
+        log(level, msg, thrown);
+    }
+
+    @Override
+    public void log(NutsSession session, Level level, NutsLogVerb verb, Supplier<NutsMessage> msgSupplier, Supplier<Throwable> errorSupplier) {
+        if (isLoggable(level)) {
+            log(level, msgSupplier.get(), errorSupplier.get());
+        }
+    }
+
+    @Override
+    public void log(LogRecord record) {
+        log(record.getLevel(),NutsMessage.plain(record.getMessage()),record.getThrown());
+    }
+
+    @Override
+    public NutsLoggerOp with() {
+        return new PrivateNutsLoggerOp(this);
     }
 
     public void log(Level lvl, NutsMessage message, Throwable err) {
@@ -90,7 +111,7 @@ public class PrivateNutsBootLog {
         return lvl.intValue() >= options.getLogConfig().getLogTermLevel().intValue();
     }
 
-    public void setOptions(NutsBootOptions options) {
+    public void setOptions(NutsWorkspaceOptions options) {
         this.options = options;
     }
 
@@ -125,5 +146,81 @@ public class PrivateNutsBootLog {
             inScanner = new Scanner(System.in);
         }
         return inScanner.nextLine();
+    }
+
+    private static class PrivateNutsLoggerOp implements NutsLoggerOp {
+        private NutsSession session;
+        private PrivateNutsBootLog logger;
+        private Level level = Level.FINE;
+        private NutsLogVerb verb;
+        private NutsMessage msg;
+        private long time;
+        private Supplier<NutsMessage> msgSupplier;
+        private Throwable error;
+
+        public PrivateNutsLoggerOp(PrivateNutsBootLog logger) {
+            this.logger = logger;
+        }
+
+        public NutsSession getSession() {
+            return session;
+        }
+
+        @Override
+        public NutsLoggerOp session(NutsSession session) {
+            this.session = session;
+            return this;
+        }
+
+        @Override
+        public NutsLoggerOp verb(NutsLogVerb verb) {
+            this.verb = verb;
+            return this;
+        }
+
+        @Override
+        public NutsLoggerOp level(Level level) {
+            this.level = level == null ? Level.FINE : level;
+            return this;
+        }
+
+        @Override
+        public NutsLoggerOp error(Throwable error) {
+            this.error = error;
+            return this;
+        }
+
+        @Override
+        public void log(NutsMessage message) {
+            this.msg = message;
+            run();
+        }
+
+        @Override
+        public void log(Supplier<NutsMessage> msgSupplier) {
+            this.msgSupplier = msgSupplier;
+            run();
+        }
+
+        @Override
+        public NutsLoggerOp time(long time) {
+            this.time = time;
+            return this;
+        }
+
+        private void run() {
+            if (logger.isLoggable(level)) {
+                NutsMessage m = msg;
+                if (msgSupplier != null) {
+                    m = msgSupplier.get();
+                }
+                logger.log(level,m,error);
+            }
+        }
+
+        @Override
+        public boolean isLoggable(Level level) {
+            return logger.isLoggable(level);
+        }
     }
 }

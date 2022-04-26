@@ -49,7 +49,8 @@ public class DefaultSearchFormatTable extends DefaultSearchFormatBase {
 
     @Override
     public boolean configureFirst(NutsCommandLine cmd) {
-        NutsArgument a = cmd.peek();
+        NutsSession session = getSession();
+        NutsArgument a = cmd.peek().get(session);
         if (a == null) {
             return false;
         }

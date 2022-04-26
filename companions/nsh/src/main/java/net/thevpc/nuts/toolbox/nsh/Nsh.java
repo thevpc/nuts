@@ -106,8 +106,14 @@ public class Nsh implements NutsApplication {
                     }
                 }
                 cfg.save(false);
-                if (session.boot().getBootCustomBoolArgument(true, true, false, "---init-scripts")) {
-                    boolean initLaunchers = session.boot().getBootCustomBoolArgument(true, true, false, "---init-launchers");
+                if (session.boot().getCustomBootOption("---init-scripts")
+                        .ifEmpty(NutsValue.of("true"))
+                        .flatMap(NutsValue::asBoolean)
+                        .orElse(false)) {
+                    boolean initLaunchers =  session.boot().getCustomBootOption("---init-launchers")
+                            .ifEmpty(NutsValue.of("true"))
+                            .flatMap(NutsValue::asBoolean)
+                            .orElse(false);
                     session.env().addLauncher(
                             new NutsLauncherOptions()
                                     .setId(session.getAppId())

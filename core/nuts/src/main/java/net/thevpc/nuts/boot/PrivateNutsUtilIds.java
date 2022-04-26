@@ -29,7 +29,6 @@ package net.thevpc.nuts.boot;
 import net.thevpc.nuts.*;
 
 import java.util.List;
-import java.util.Objects;
 
 public class PrivateNutsUtilIds {
 
@@ -58,7 +57,7 @@ public class PrivateNutsUtilIds {
         return sb.toString();
     }
 
-    static boolean isAcceptDependency(NutsDependency s, NutsBootOptions bOptions) {
+    static boolean isAcceptDependency(NutsDependency s, NutsWorkspaceBootOptions bOptions) {
         boolean bootOptionals = PrivateNutsUtilWorkspaceOptions.isBootOptional(bOptions);
         //by default ignore optionals
         String o = s.getOptional();

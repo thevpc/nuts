@@ -7,7 +7,6 @@ package net.thevpc.nuts.runtime.standalone.workspace.cmd.exec;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.boot.PrivateNutsUtilCollections;
-import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.executor.system.ProcessExecHelper;
 
 import java.util.*;
@@ -28,7 +27,7 @@ public class DefaultNutsSystemExecutable extends AbstractNutsExecutableCommand {
     public DefaultNutsSystemExecutable(String[] cmd,
                                        List<String> executorOptions, NutsSession session, NutsSession execSession, NutsExecCommand execCommand) {
         super(cmd[0],
-                NutsCommandLine.of(cmd, session).toString(),
+                NutsCommandLine.of(cmd).toString(),
                 NutsExecutableType.SYSTEM);
         this.inheritSystemIO = execCommand.isInheritSystemIO();
         this.cmd = cmd;
@@ -36,12 +35,12 @@ public class DefaultNutsSystemExecutable extends AbstractNutsExecutableCommand {
         this.executorOptions = PrivateNutsUtilCollections.nonNullList(executorOptions);
         this.session = session;
         this.execSession = execSession;
-        NutsCommandLine cmdLine = NutsCommandLine.of(this.executorOptions, session);
+        NutsCommandLine cmdLine = NutsCommandLine.of(this.executorOptions);
         while (cmdLine.hasNext()) {
-            NutsArgument a = cmdLine.peek();
-            switch (a.getKey().getString()) {
+            NutsArgument a = cmdLine.peek().get(session);
+            switch(a.getStringKey().orElse("")) {
                 case "--show-command": {
-                    showCommand = cmdLine.nextBoolean().getBooleanValue();
+                    showCommand = cmdLine.nextBooleanValueLiteral().get(session);
                     break;
                 }
                 default: {
@@ -103,7 +102,7 @@ public class DefaultNutsSystemExecutable extends AbstractNutsExecutableCommand {
 
     @Override
     public String toString() {
-        return execCommand.getRunAs() + " " + NutsCommandLine.of(cmd, session).toString();
+        return execCommand.getRunAs() + " " + NutsCommandLine.of(cmd).toString();
     }
 
 }

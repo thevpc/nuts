@@ -25,25 +25,26 @@ public class NTemplateMain implements NutsApplication, NutsAppCmdProcessor {
 
     @Override
     public boolean onCmdNextOption(NutsArgument option, NutsCommandLine commandline, NutsApplicationContext context) {
-        switch (option.getKey().getString()) {
+        NutsSession session = context.getSession();
+        switch (option.getKey().asString().get(session)) {
             case "-i":
             case "--init": {
-                config.addInitScript(commandline.nextString().getValue().getString());
+                config.addInitScript(commandline.nextStringValueLiteral().get(session));
                 return true;
             }
             case "-s":
             case "--scriptType": {
-                config.setScriptType(commandline.nextString().getValue().getString());
+                config.setScriptType(commandline.nextStringValueLiteral().get(session));
                 return true;
             }
             case "-t":
             case "--to": {
-                config.setTargetFolder(commandline.nextString().getValue().getString());
+                config.setTargetFolder(commandline.nextStringValueLiteral().get(session));
                 return true;
             }
             case "-p":
             case "--project": {
-                config.setProjectPath(commandline.nextString().getValue().getString());
+                config.setProjectPath(commandline.nextStringValueLiteral().get(session));
                 return true;
             }
 
@@ -53,7 +54,8 @@ public class NTemplateMain implements NutsApplication, NutsAppCmdProcessor {
 
     @Override
     public boolean onCmdNextNonOption(NutsArgument nonOption, NutsCommandLine commandline, NutsApplicationContext context) {
-        config.addSource(commandline.next().getString());
+        NutsSession session = context.getSession();
+        config.addSource(commandline.next().flatMap(NutsValue::asString).get(session));
         return false;
     }
 

@@ -140,7 +140,7 @@ public class DocusaurusFolder implements DocusaurusFileOrFolder {
                         longId,
                         title,
                         order,
-                        config.asSafeObject(),
+                        config.asObject().get(session),
                         children.toArray(new DocusaurusFileOrFolder[0]),
                         baseContent == null ? null : baseContent.getContent(session),
                         path.toString()

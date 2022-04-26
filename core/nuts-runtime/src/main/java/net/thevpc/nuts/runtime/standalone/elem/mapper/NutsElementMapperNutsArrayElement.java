@@ -11,9 +11,10 @@ public class NutsElementMapperNutsArrayElement extends NutsElementMapperNutsElem
 
     @Override
     public NutsArrayElement createObject(NutsElement o, Type typeOfResult, NutsElementFactoryContext context) {
+        NutsSession session = context.getSession();
         o = super.createObject(o, typeOfResult, context);
         if (o.type() == NutsElementType.ARRAY) {
-            return o.asArray();
+            return o.asArray().get(session);
         }
         return context.elem().ofArray().add(o).build();
     }

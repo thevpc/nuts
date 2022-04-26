@@ -49,12 +49,15 @@ public class HelpCommand extends SimpleJShellBuiltin {
 
     @Override
     protected boolean configureFirst(NutsCommandLine commandLine, JShellExecutionContext context) {
+        NutsSession session = context.getSession();
         Options options = context.getOptions();
         if (commandLine.next("--ntf") != null) {
             options.code = true;
             return true;
-        } else if (commandLine.peek().isNonOption()) {
-            options.commandNames.add(commandLine.nextNonOption(new CommandNonOption("command", context.getShellContext())).required().getString());
+        } else if (commandLine.peek().get(session).isNonOption()) {
+            options.commandNames.add(
+                    commandLine.nextNonOption(new CommandNonOption("command", context.getShellContext()))
+                    .get().asString().get(session));
             return true;
         } else {
             return false;

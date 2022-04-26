@@ -52,27 +52,28 @@ public class CatCommand extends SimpleJShellBuiltin {
 
     @Override
     protected boolean configureFirst(NutsCommandLine commandLine, JShellExecutionContext context) {
+        NutsSession session = context.getSession();
         Options options = context.getOptions();
         NutsArgument a;
 
         if (commandLine.next("-") != null) {
             options.files.add(null);
             return true;
-        } else if ((a = commandLine.nextBoolean("-n", "--number")) != null) {
-            options.n = a.getBooleanValue();
+        } else if ((a = commandLine.nextBoolean("-n", "--number").orNull()) != null) {
+            options.n = a.getBooleanValue().get(session);
             return true;
-        } else if ((a = commandLine.nextBoolean("-t", "--show-tabs")) != null) {
-            options.T = a.getBooleanValue();
+        } else if ((a = commandLine.nextBoolean("-t", "--show-tabs").orNull()) != null) {
+            options.T = a.getBooleanValue().get(session);
             return true;
-        } else if ((a = commandLine.nextBoolean("-E", "--show-ends")) != null) {
-            options.E = a.getBooleanValue();
+        } else if ((a = commandLine.nextBoolean("-E", "--show-ends").orNull()) != null) {
+            options.E = a.getBooleanValue().get(session);
             return true;
-        } else if ((a = commandLine.next("-H", "--highlight", "--highlighter")) != null) {
-            options.highlighter = NutsUtilStrings.trim(a.getValue().getString());
+        } else if ((a = commandLine.next("-H", "--highlight", "--highlighter").orNull()) != null) {
+            options.highlighter = NutsUtilStrings.trim(a.getStringValue().get(session));
             return true;
-        } else if (!commandLine.peek().isOption()) {
-            String path = commandLine.next().getString();
-            options.files.add(new FileInfo(NutsPath.of(path, context.getSession()), options.highlighter));
+        } else if (!commandLine.isNextOption()) {
+            String path = commandLine.next().flatMap(NutsValue::asString).get(session);
+            options.files.add(new FileInfo(NutsPath.of(path, session), options.highlighter));
             return true;
         }
         return false;

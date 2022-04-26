@@ -27,6 +27,7 @@ package net.thevpc.nuts.toolbox.nsh.cmds;
 
 import net.thevpc.nuts.NutsArgument;
 import net.thevpc.nuts.NutsCommandLine;
+import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.spi.NutsComponentScope;
 import net.thevpc.nuts.spi.NutsComponentScopeType;
 import net.thevpc.nuts.toolbox.nsh.SimpleJShellBuiltin;
@@ -48,8 +49,9 @@ public class BaseNameCommand extends SimpleJShellBuiltin {
     @Override
     protected boolean configureFirst(NutsCommandLine cmdLine, JShellExecutionContext context) {
         Options options = context.getOptions();
-        NutsArgument a = cmdLine.peek();
-        switch (a.getKey().getString()) {
+        NutsSession session = context.getSession();
+        NutsArgument a = cmdLine.peek().get(session);
+        switch(a.getStringKey().orElse("")) {
             case "-z":
             case "--zero": {
                 cmdLine.skip();
@@ -59,12 +61,12 @@ public class BaseNameCommand extends SimpleJShellBuiltin {
             case "-a":
             case "--all":
             case "--multi": {
-                options.multi = cmdLine.nextBoolean().getBooleanValue();
+                options.multi = cmdLine.nextBooleanValueLiteral().get(session);
                 return true;
             }
             case "-s":
             case "--suffix": {
-                options.suffix = cmdLine.nextString().getValue().getString();
+                options.suffix = cmdLine.nextStringValueLiteral().get(session);
                 options.multi = true;
                 return true;
             }
@@ -73,7 +75,7 @@ public class BaseNameCommand extends SimpleJShellBuiltin {
 
                 } else {
                     while (!cmdLine.isEmpty()) {
-                        NutsArgument n = cmdLine.nextNonOption();
+                        NutsArgument n = cmdLine.nextNonOption().get(session);
                         if (options.names.isEmpty()) {
                             options.names.add(n.toString());
                         } else {
@@ -82,8 +84,8 @@ public class BaseNameCommand extends SimpleJShellBuiltin {
                             } else if (options.names.size() == 1 && options.suffix == null) {
                                 options.suffix = n.toString();
                             } else {
-                                cmdLine.pushBack(n);
-                                cmdLine.unexpectedArgument();
+                                cmdLine.pushBack(n, session);
+                                cmdLine.throwUnexpectedArgument(session);
                             }
                         }
                     }
@@ -97,8 +99,9 @@ public class BaseNameCommand extends SimpleJShellBuiltin {
     @Override
     protected void execBuiltin(NutsCommandLine commandLine, JShellExecutionContext context) {
         Options options = context.getOptions();
+        NutsSession session = context.getSession();
         if (options.names.isEmpty()) {
-            commandLine.required();
+            commandLine.throwMissingArgument(session);
         }
         List<String> results = new ArrayList<>();
         for (String name : options.names) {
@@ -121,19 +124,19 @@ public class BaseNameCommand extends SimpleJShellBuiltin {
             }
             results.add(basename);
         }
-        switch (context.getSession().getOutputFormat()) {
+        switch (session.getOutputFormat()) {
             case PLAIN: {
                 for (int i = 0; i < results.size(); i++) {
                     String name = results.get(i);
                     if (i > 0) {
-                        context.getSession().out().print(options.sep);
+                        session.out().print(options.sep);
                     }
-                    context.getSession().out().print(name);
+                    session.out().print(name);
                 }
                 break;
             }
             default: {
-                context.getSession().out().printlnf(results);
+                session.out().printlnf(results);
             }
         }
     }

@@ -29,7 +29,7 @@ public class ProgressOptions {
         if (q == null) {
             return false;
         }
-        return q.getBoolean(true);
+        return q.asBoolean().orElse(true);
     }
 
     public ProgressOptions setEnabled(boolean enabled) {

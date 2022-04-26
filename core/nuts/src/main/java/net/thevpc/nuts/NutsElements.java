@@ -342,6 +342,8 @@ public interface NutsElements extends NutsContentTypeFormat {
      * @return array element
      */
     NutsArrayElementBuilder ofArray();
+    NutsArrayElement ofEmptyArray();
+    NutsObjectElement ofEmptyObject();
 
     //    public NutsPrimitiveElement forNutsString(NutsString str) {
     //        return str == null ? DefaultNutsPrimitiveElementBuilder.NULL : new DefaultNutsPrimitiveElement(NutsElementType.NUTS_STRING, str);

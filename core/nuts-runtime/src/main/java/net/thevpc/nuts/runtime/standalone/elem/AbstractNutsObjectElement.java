@@ -31,7 +31,7 @@ import net.thevpc.nuts.NutsSession;
  *
  * @author thevpc
  */
-public abstract class AbstractNutsObjectElement extends AbstractNutsElement implements NutsObjectElement{
+public abstract class AbstractNutsObjectElement extends AbstractNutsNavigatableElement implements NutsObjectElement{
     public AbstractNutsObjectElement(NutsSession session) {
         super(NutsElementType.OBJECT,session);
     }

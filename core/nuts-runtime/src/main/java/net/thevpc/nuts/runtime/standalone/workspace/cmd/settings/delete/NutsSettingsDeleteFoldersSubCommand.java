@@ -50,17 +50,17 @@ public class NutsSettingsDeleteFoldersSubCommand extends AbstractNutsSettingsSub
                 locationsToDelete.add(value);
                 while (cmdLine.hasNext()) {
                     NutsArgument a;
-                    if ((a = cmdLine.nextBoolean("-y", "--yes")) != null) {
-                        force = a.getBooleanValue();
-                    } else if (!cmdLine.peek().isOption()) {
+                    if ((a = cmdLine.nextBoolean("-y", "--yes").orNull()) != null) {
+                        force = a.getBooleanValue().get(session);
+                    } else if (!cmdLine.isNextOption()) {
                         String s = cmdLine.peek().toString();
                         try {
                             locationsToDelete.add(NutsStoreLocation.valueOf(s.toUpperCase()));
                         } catch (Exception ex) {
-                            cmdLine.unexpectedArgument();
+                            cmdLine.throwUnexpectedArgument(session);
                         }
                     } else {
-                        cmdLine.unexpectedArgument();
+                        cmdLine.throwUnexpectedArgument(session);
                     }
                 }
                 if (cmdLine.isExecMode()) {

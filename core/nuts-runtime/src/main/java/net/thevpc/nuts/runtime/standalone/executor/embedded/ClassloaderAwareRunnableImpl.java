@@ -23,8 +23,8 @@ public class ClassloaderAwareRunnableImpl extends ClassloaderAwareRunnable {
     @Override
     public Object runWithContext() throws Throwable {
         if (cls.getName().equals("net.thevpc.nuts.Nuts")) {
-            NutsWorkspaceOptionsBuilder o = NutsWorkspaceOptionsBuilder.of(session).parseArguments(
-                    joptions.getAppArgs().toArray(new String[0])
+            NutsWorkspaceOptionsBuilder o = NutsWorkspaceOptionsBuilder.of().setCommandLine(
+                    joptions.getAppArgs().toArray(new String[0]),session
             );
             List<String> appArgs;
             if (o.getApplicationArguments().size() == 0) {
@@ -73,7 +73,7 @@ public class ClassloaderAwareRunnableImpl extends ClassloaderAwareRunnable {
             //NutsWorkspace
             System.setProperty("nuts.boot.args",
                     getSession().boot().getBootOptions()
-                            .formatter().setExported(true).setCompact(true).getBootCommandLine()
+                            .toCommandLine(new NutsWorkspaceOptionsConfig().setExported(true).setCompact(true))
                             .formatter(session).setShellFamily(NutsShellFamily.SH).toString()
             );
             mainMethod = cls.getMethod("main", String[].class);

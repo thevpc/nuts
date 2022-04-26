@@ -130,7 +130,7 @@ public class ApacheTomcatRepositoryModel implements NutsRepositoryModel {
         }
         //List<NutsId> all = new ArrayList<>();
 //        NutsWorkspace ws = session.getWorkspace();
-        NutsIdBuilder idBuilder = new DefaultNutsIdBuilder().setGroupId("org.apache.catalina").setArtifactId("apache-tomcat");
+        NutsIdBuilder idBuilder = NutsIdBuilder.of("org.apache.catalina","apache-tomcat");
         return NutsPath.of("htmlfs:https://archive.apache.org/dist/tomcat/", session)
                 .list()
                 .filter(x -> x.isDirectory() && x.getName().matches("tomcat-[0-9.]+"), "directory && tomcat")

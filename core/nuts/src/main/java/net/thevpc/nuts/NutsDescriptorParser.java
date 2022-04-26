@@ -54,7 +54,7 @@ public interface NutsDescriptorParser extends NutsComponent {
      * @return parsed Descriptor
      * @since 0.5.6
      */
-    NutsDescriptor parse(URL url);
+    NutsOptional<NutsDescriptor> parse(URL url);
 
     /**
      * parse descriptor.
@@ -63,7 +63,7 @@ public interface NutsDescriptorParser extends NutsComponent {
      * @return parsed Descriptor
      * @since 0.5.6
      */
-    NutsDescriptor parse(byte[] bytes);
+    NutsOptional<NutsDescriptor> parse(byte[] bytes);
 
     /**
      * parse descriptor.
@@ -72,7 +72,7 @@ public interface NutsDescriptorParser extends NutsComponent {
      * @return parsed Descriptor
      * @since 0.5.6
      */
-    NutsDescriptor parse(Path path);
+    NutsOptional<NutsDescriptor> parse(Path path);
 
     /**
      * parse descriptor.
@@ -81,7 +81,7 @@ public interface NutsDescriptorParser extends NutsComponent {
      * @return parsed Descriptor
      * @since 0.5.6
      */
-    NutsDescriptor parse(File file);
+    NutsOptional<NutsDescriptor> parse(File file);
 
     /**
      * parse descriptor.
@@ -90,9 +90,9 @@ public interface NutsDescriptorParser extends NutsComponent {
      * @return parsed Descriptor
      * @since 0.5.6
      */
-    NutsDescriptor parse(InputStream stream);
+    NutsOptional<NutsDescriptor> parse(InputStream stream);
 
-    NutsDescriptor parse(NutsPath path);
+    NutsOptional<NutsDescriptor> parse(NutsPath path);
 
     /**
      * parse descriptor.
@@ -101,15 +101,11 @@ public interface NutsDescriptorParser extends NutsComponent {
      * @return parsed Descriptor
      * @since 0.5.6
      */
-    NutsDescriptor parse(String descriptorString);
+    NutsOptional<NutsDescriptor> parse(String descriptorString);
 
     NutsDescriptorStyle getDescriptorStyle();
 
     NutsDescriptorParser setDescriptorStyle(NutsDescriptorStyle descriptorStyle);
-
-    boolean isLenient();
-
-    NutsDescriptorParser setLenient(boolean lenient);
 
     NutsSession getSession();
 

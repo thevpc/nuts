@@ -211,11 +211,11 @@ public abstract class AbstractNutsAddUserCommand extends NutsWorkspaceCommandBas
 
     @Override
     public boolean configureFirst(NutsCommandLine cmdLine) {
-        NutsArgument a = cmdLine.peek();
+        NutsArgument a = cmdLine.peek().get(session);
         if (a == null) {
             return false;
         }
-        switch (a.getKey().getString()) {
+        switch(a.getStringKey().orElse("")) {
             default: {
                 if (super.configureFirst(cmdLine)) {
                     return true;

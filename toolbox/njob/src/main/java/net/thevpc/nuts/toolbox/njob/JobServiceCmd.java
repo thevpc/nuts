@@ -328,7 +328,7 @@ public class JobServiceCmd {
                     lastError.printStackTrace(session.out().asPrintStream());
                 }
             } else {
-                NutsCommandLine cmd = NutsCommandLine.of(line,this.session);
+                NutsCommandLine cmd = NutsCommandLine.parseDefault(line).get(session);
                 cmd.setCommandName(context.getAppId().getArtifactId());
                 try {
                     lastError = null;

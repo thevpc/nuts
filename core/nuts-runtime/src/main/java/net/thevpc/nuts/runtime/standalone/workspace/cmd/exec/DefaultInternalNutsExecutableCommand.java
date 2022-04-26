@@ -67,7 +67,7 @@ public abstract class DefaultInternalNutsExecutableCommand extends AbstractNutsE
                             .append(" ")
                             .append(getName(), NutsTextStyle.primary5())
                             .append(" ")
-                            .append(NutsCommandLine.of(args, session))
+                            .append(NutsCommandLine.of(args))
             );
         } else {
             session.out().printlnf(NutsMessage.cstyle(
@@ -77,7 +77,7 @@ public abstract class DefaultInternalNutsExecutableCommand extends AbstractNutsE
                                     .append(" ")
                                     .append(getName(), NutsTextStyle.primary5())
                                     .append(" ")
-                                    .append(NutsCommandLine.of(args, session))
+                                    .append(NutsCommandLine.of(args))
                     )
             );
         }
@@ -85,7 +85,7 @@ public abstract class DefaultInternalNutsExecutableCommand extends AbstractNutsE
 
     @Override
     public String toString() {
-        return getName() + " " + NutsCommandLine.of(args, getSession()).toString();
+        return getName() + " " + NutsCommandLine.of(args).toString();
     }
 
 }

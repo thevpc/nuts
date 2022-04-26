@@ -28,6 +28,7 @@ package net.thevpc.nuts.toolbox.nsh.cmds;
 import net.thevpc.nuts.NutsArgument;
 import net.thevpc.nuts.NutsCommandLine;
 import net.thevpc.nuts.NutsPath;
+import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.spi.NutsComponentScope;
 import net.thevpc.nuts.spi.NutsComponentScopeType;
 import net.thevpc.nuts.toolbox.nsh.SimpleJShellBuiltin;
@@ -51,12 +52,13 @@ public class MkdirCommand extends SimpleJShellBuiltin {
 
     @Override
     protected boolean configureFirst(NutsCommandLine commandLine, JShellExecutionContext context) {
+        NutsSession session = context.getSession();
         Options options = context.getOptions();
         NutsArgument a;
-        if ((a = commandLine.nextBoolean("--parent", "-p")) != null) {
-            options.p = a.getBooleanValue();
+        if ((a = commandLine.nextBoolean("--parent", "-p").orNull()) != null) {
+            options.p = a.getBooleanValue().get(session);
             return true;
-        } else if (commandLine.peek().isNonOption()) {
+        } else if (commandLine.peek().get(session).isNonOption()) {
             options.files.addAll(Arrays.asList(commandLine.toStringArray()));
             commandLine.skipAll();
             return true;
@@ -67,9 +69,10 @@ public class MkdirCommand extends SimpleJShellBuiltin {
     @Override
     protected void execBuiltin(NutsCommandLine commandLine, JShellExecutionContext context) {
         Options options = context.getOptions();
-        options.xfiles = ShellHelper.xfilesOf(options.files, context.getShellContext().getCwd(), context.getSession());
+        NutsSession session = context.getSession();
+        options.xfiles = ShellHelper.xfilesOf(options.files, context.getShellContext().getCwd(), session);
         if (options.xfiles.size() < 1) {
-            commandLine.required();
+            commandLine.throwMissingArgument(session);
         }
 //        ShellHelper.WsSshListener listener = new ShellHelper.WsSshListener(context.getSession());
         for (NutsPath v : options.xfiles) {

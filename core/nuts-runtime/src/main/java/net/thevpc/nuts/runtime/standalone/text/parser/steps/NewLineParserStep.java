@@ -52,7 +52,7 @@ public class NewLineParserStep extends ParserStep {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder("NewLine(" + NutsUtilStrings.dblQuotes(start.toString()));
+        StringBuilder sb = new StringBuilder("NewLine(" + NutsUtilStrings.formatStringLiteral(start.toString(), NutsUtilStrings.QuoteType.DOUBLE));
         return sb.append(")").toString();
     }
 

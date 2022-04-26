@@ -34,26 +34,26 @@ package net.thevpc.nuts.toolbox.ndb.nmysql.remote;
 //                .setCommandName("mysql --remote");
 //        NutsArgument a;
 //        while (cmd.hasNext()) {
-//            if ((a = cmd.next("list", "ls")) != null) {
+//            if ((a = cmd.next("list", "ls").orNull())!=null) {
 //                list(cmd);
 //                return;
-//            } else if ((a = cmd.next("add", "create")) != null) {
+//            } else if ((a = cmd.next("add", "create").orNull())!=null) {
 //                add(cmd);
 //                return;
-//            } else if ((a = cmd.next("set", "update")) != null) {
+//            } else if ((a = cmd.next("set", "update").orNull())!=null) {
 //                set(cmd);
 //                return;
-//            } else if ((a = cmd.next("remove")) != null) {
+//            } else if ((a = cmd.next("remove").orNull())!=null) {
 //                remove(cmd);
 //                return;
-//            } else if ((a = cmd.next("push")) != null) {
+//            } else if ((a = cmd.next("push").orNull())!=null) {
 //                push(cmd);
 //                return;
-//            } else if ((a = cmd.next("pull")) != null) {
+//            } else if ((a = cmd.next("pull").orNull())!=null) {
 //                pull(cmd);
 //                return;
 //            } else {
-//                cmd.unexpectedArgument();
+//                cmd.throwUnexpectedArgument();
 //            }
 //        }
 //    }
@@ -62,9 +62,9 @@ package net.thevpc.nuts.toolbox.ndb.nmysql.remote;
 //        args.setCommandName("mysql --remote list");
 //        AtName name = null;
 //        while (args.hasNext()) {
-//            if (args.peek().getKey().getString().equals("--name")) {
+//            if (args.peek().get(session).getKey().getString().get(session).equals("--name")) {
 //                name = AtName.nextConfigOption(args);
-//            } else if (name == null && args.peek().isNonOption()) {
+//            } else if (name == null && args.peek().get(session).isNonOption()) {
 //                name = AtName.nextConfigNonOption(args);
 //            } else {
 //                context.configureLast(args);
@@ -122,13 +122,13 @@ package net.thevpc.nuts.toolbox.ndb.nmysql.remote;
 //        AtName remoteName = null;
 //        String server = null;
 //        while (commandLine.hasNext()) {
-//            if (commandLine.peek().isOption()) {
-//                switch (commandLine.peek().getKey().getString()) {
+//            if (commandLine.isNextOption()) {
+//                switch (commandLine.peek().get(session).getKey().getString().get(session)) {
 //                    case "--name": {
 //                        if (name == null) {
 //                            name = AtName.nextAppOption(commandLine);
 //                        } else {
-//                            commandLine.unexpectedArgument("already defined");
+//                            commandLine.throwUnexpectedArgument("already defined");
 //                        }
 //                        break;
 //                    }
@@ -136,7 +136,7 @@ package net.thevpc.nuts.toolbox.ndb.nmysql.remote;
 //                        if (localName == null) {
 //                            localName = AtName.nextAppOption(commandLine);
 //                        } else {
-//                            commandLine.unexpectedArgument("already defined");
+//                            commandLine.throwUnexpectedArgument("already defined");
 //                        }
 //                        break;
 //                    }
@@ -144,24 +144,24 @@ package net.thevpc.nuts.toolbox.ndb.nmysql.remote;
 //                        if (remoteName == null) {
 //                            remoteName = AtName.nextAppOption(commandLine);
 //                        } else {
-//                            commandLine.unexpectedArgument("already defined");
+//                            commandLine.throwUnexpectedArgument("already defined");
 //                        }
 //                        break;
 //                    }
 //                    case "--server": {
 //                        if (server == null) {
-//                            server = commandLine.nextString().getStringValue();
+//                            server = commandLine.nextString().getStringValue().get(session);
 //                        } else {
-//                            commandLine.unexpectedArgument("already defined");
+//                            commandLine.throwUnexpectedArgument("already defined");
 //                        }
 //                        break;
 //                    }
 //                    default: {
-//                        if(commandLine.peek().isNonOption()){
+//                        if(commandLine.peek().get(session).isNonOption()){
 //                            if (name == null) {
 //                                name = AtName.nextAppOption(commandLine);
 //                            } else {
-//                                commandLine.unexpectedArgument("already defined");
+//                                commandLine.throwUnexpectedArgument("already defined");
 //                            }
 //                        }else{
 //                            context.configureLast(commandLine);
@@ -173,7 +173,7 @@ package net.thevpc.nuts.toolbox.ndb.nmysql.remote;
 //                if (name == null) {
 //                    name = AtName.nextAppNonOption(commandLine);
 //                } else {
-//                    commandLine.unexpectedArgument();
+//                    commandLine.throwUnexpectedArgument();
 //                }
 //            }
 //        }
@@ -286,13 +286,13 @@ package net.thevpc.nuts.toolbox.ndb.nmysql.remote;
 //        AtName name = null;
 //        NutsArgument a;
 //        while (commandLine.hasNext()) {
-//             if (commandLine.peek().isOption()) {
-//                switch (commandLine.peek().getKey().getString()) {
+//             if (commandLine.isNextOption()) {
+//                switch (commandLine.peek().get(session).getKey().getString().get(session)) {
 //                    case "--name": {
 //                        if (name == null) {
 //                            name = AtName.nextAppOption(commandLine);
 //                        } else {
-//                            commandLine.unexpectedArgument("already defined");
+//                            commandLine.throwUnexpectedArgument("already defined");
 //                        }
 //                        break;
 //                    }
@@ -304,9 +304,9 @@ package net.thevpc.nuts.toolbox.ndb.nmysql.remote;
 //                if (name == null) {
 //                    name = AtName.nextAppNonOption(commandLine);
 //                } else {
-//                    commandLine.unexpectedArgument("already defined");
+//                    commandLine.throwUnexpectedArgument("already defined");
 //                }
-//                commandLine.unexpectedArgument();
+//                commandLine.throwUnexpectedArgument();
 //            }
 //        }
 //        if (name == null) {
@@ -327,13 +327,13 @@ package net.thevpc.nuts.toolbox.ndb.nmysql.remote;
 //        String path = null;
 //        NutsArgument a;
 //        while (commandLine.hasNext()) {
-//            if (commandLine.peek().isOption()) {
-//                switch (commandLine.peek().getKey().getString()) {
+//            if (commandLine.isNextOption()) {
+//                switch (commandLine.peek().get(session).getKey().getString().get(session)) {
 //                    case "--name": {
 //                        if (name == null) {
 //                            name = AtName.nextAppOption(commandLine);
 //                        } else {
-//                            commandLine.unexpectedArgument("already defined");
+//                            commandLine.throwUnexpectedArgument("already defined");
 //                        }
 //                        break;
 //                    }
@@ -342,13 +342,13 @@ package net.thevpc.nuts.toolbox.ndb.nmysql.remote;
 //                            switch (command) {
 //                                case "push":
 //                                case "pull": {
-//                                    commandLine.unexpectedArgument();
+//                                    commandLine.throwUnexpectedArgument();
 //                                    break;
 //                                }
 //                            }
-//                            path = commandLine.nextString().getStringValue();
+//                            path = commandLine.nextString().getStringValue().get(session);
 //                        } else {
-//                            commandLine.unexpectedArgument("already defined");
+//                            commandLine.throwUnexpectedArgument("already defined");
 //                        }
 //                        break;
 //                    }
@@ -363,13 +363,13 @@ package net.thevpc.nuts.toolbox.ndb.nmysql.remote;
 //                    switch (command) {
 //                        case "push":
 //                        case "pull": {
-//                            commandLine.unexpectedArgument();
+//                            commandLine.throwUnexpectedArgument();
 //                            break;
 //                        }
 //                    }
 //                    path = commandLine.next().getString();
 //                } else {
-//                    commandLine.unexpectedArgument();
+//                    commandLine.throwUnexpectedArgument();
 //                }
 //            }
 //        }

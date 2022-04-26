@@ -45,14 +45,15 @@ public class ShowerrCommand extends SimpleJShellBuiltin {
     @Override
     protected boolean configureFirst(NutsCommandLine commandLine, JShellExecutionContext context) {
         Options options = context.getOptions();
-        NutsArgument a = commandLine.peek();
+        NutsSession session = context.getSession();
+        NutsArgument a = commandLine.peek().get(session);
         if (!a.isOption()) {
-            NutsSession session = context.getSession();
             if (options.login == null) {
-                options.login = commandLine.next(NutsArgumentName.of("username", session)).getString();
+                options.login = commandLine.next(NutsArgumentName.of("username", session)).flatMap(NutsValue::asString).get(session);
                 return true;
             } else if (options.password == null) {
-                options.password = commandLine.next(NutsArgumentName.of("password", session)).getString().toCharArray();
+                options.password = commandLine.next(NutsArgumentName.of("password", session))
+                        .flatMap(NutsValue::asString).get(session).toCharArray();
                 return true;
             }
         }

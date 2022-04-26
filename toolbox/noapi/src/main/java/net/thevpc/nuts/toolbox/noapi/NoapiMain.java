@@ -25,7 +25,8 @@ public class NoapiMain implements NutsApplication, NutsAppCmdProcessor {
 
     @Override
     public boolean onCmdNextOption(NutsArgument option, NutsCommandLine commandline, NutsApplicationContext context) {
-        switch (option.getString()) {
+        NutsSession session = context.getSession();
+        switch (option.asString().get(session)) {
             case "--yaml": {
                 commandline.nextBoolean();
                 openAPIFormat = "yaml";
@@ -57,11 +58,12 @@ public class NoapiMain implements NutsApplication, NutsAppCmdProcessor {
 
     @Override
     public boolean onCmdNextNonOption(NutsArgument nonOption, NutsCommandLine commandline, NutsApplicationContext context) {
+        NutsSession session = context.getSession();
         if (path == null) {
-            path = commandline.nextString().getKey().getString();
+            path = commandline.nextString().get(session).getKey().asString().get(session);
             return true;
         } else if (target == null) {
-            target = commandline.nextString().getKey().getString();
+            target = commandline.nextString().get(session).getKey().asString().get(session);
             return true;
         }
         return false;
@@ -69,8 +71,9 @@ public class NoapiMain implements NutsApplication, NutsAppCmdProcessor {
 
     @Override
     public void onCmdFinishParsing(NutsCommandLine commandline, NutsApplicationContext context) {
+        NutsSession session = context.getSession();
         if (path == null) {
-            commandline.required(NutsMessage.cstyle("missing path"));
+            commandline.throwMissingArgument(NutsMessage.cstyle("missing path"),session);
         }
         if (command == null) {
             command = "pdf";

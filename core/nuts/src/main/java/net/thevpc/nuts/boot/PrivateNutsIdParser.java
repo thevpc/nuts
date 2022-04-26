@@ -22,7 +22,7 @@ public class PrivateNutsIdParser {
         }
         Matcher m = NutsId.PATTERN.matcher(nutsId);
         if (m.find()) {
-            NutsIdBuilder idBuilder = new DefaultNutsIdBuilder();
+            NutsIdBuilder idBuilder = NutsIdBuilder.of();
             String group = m.group("group");
             String artifact = m.group("artifact");
             idBuilder.setArtifactId(artifact);

@@ -51,6 +51,11 @@ public class DefaultNutsIdBuilder implements NutsIdBuilder {
         setAll(id);
     }
 
+    public DefaultNutsIdBuilder(String groupId, String artifactId) {
+        this.groupId = NutsUtilStrings.trimToNull(groupId);
+        this.artifactId = NutsUtilStrings.trimToNull(artifactId);
+    }
+
     public DefaultNutsIdBuilder(String groupId, String artifactId, NutsVersion version, String classifier, String propertiesQuery, NutsEnvCondition condition) {
         this.groupId = NutsUtilStrings.trimToNull(groupId);
         this.artifactId = NutsUtilStrings.trimToNull(artifactId);

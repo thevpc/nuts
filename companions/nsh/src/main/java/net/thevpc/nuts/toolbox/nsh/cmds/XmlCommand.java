@@ -56,13 +56,14 @@ public class XmlCommand extends SimpleJShellBuiltin {
 
     @Override
     protected boolean configureFirst(NutsCommandLine commandLine, JShellExecutionContext context) {
+        NutsSession session = context.getSession();
         Options options = context.getOptions();
         NutsArgument a;
-        if ((a = commandLine.nextString("-f", "--file")) != null) {
-            options.input = a.getValue().getString();
+        if ((a = commandLine.nextString("-f", "--file").orNull()) != null) {
+            options.input = a.getStringValue().get(session);
             return true;
-        } else if ((a = commandLine.nextString("-q", "--xpath")) != null) {
-            options.xpaths.add(a.getValue().getString());
+        } else if ((a = commandLine.nextString("-q", "--xpath").orNull()) != null) {
+            options.xpaths.add(a.getStringValue().get(session));
             return true;
         }
         return false;
@@ -71,17 +72,17 @@ public class XmlCommand extends SimpleJShellBuiltin {
     @Override
     protected void execBuiltin(NutsCommandLine commandLine, JShellExecutionContext context) {
         Options options = context.getOptions();
+        NutsSession session = context.getSession();
         if (options.xpaths.isEmpty()) {
-            commandLine.required();
+            commandLine.throwMissingArgument(session);
         }
 
         DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
         DocumentBuilder dBuilder;
-        NutsSession session = context.getSession();
         try {
             dBuilder = dbFactory.newDocumentBuilder();
         } catch (Exception ex) {
-            throw new NutsExecutionException(session, NutsMessage.cstyle("updable to initialize xml system"), ex, 3);
+            throw new NutsExecutionException(session, NutsMessage.cstyle("unable to initialize xml system"), ex, 3);
         }
 
         Document doc = null;

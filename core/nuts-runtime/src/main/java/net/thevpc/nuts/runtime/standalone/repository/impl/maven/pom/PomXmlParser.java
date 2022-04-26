@@ -153,7 +153,7 @@ public class PomXmlParser {
         if (d_scope.isEmpty()) {
             d_scope = "compile";
         }
-        NutsId id = new DefaultNutsIdBuilder().setGroupId(d_groupId).setArtifactId(d_artifactId).build();
+        NutsId id = NutsIdBuilder.of(d_groupId,d_artifactId).build();
         return new PomDependency(
                 d_groupId, d_artifactId, d_classifier, d_version, d_scope, d_optional,
                 props == null ? null : props.getOs(id),

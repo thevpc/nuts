@@ -35,7 +35,6 @@ import java.util.stream.Collectors;
 import net.thevpc.nuts.*;
 
 /**
- *
  * @author thevpc
  */
 public class JarPathVersionResolver implements PathVersionResolver {
@@ -91,14 +90,14 @@ public class JarPathVersionResolver implements PathVersionResolver {
                                         && !NutsBlankable.isBlank(Bundle_Name)
                                         && !NutsBlankable.isBlank(Bundle_Version)) {
                                     all.add(new VersionDescriptor(
-                                            new DefaultNutsIdBuilder().setGroupId(Bundle_SymbolicName).setArtifactId(Bundle_Name).setVersion(Bundle_Version).build(),
+                                            NutsIdBuilder.of().setGroupId(Bundle_SymbolicName).setArtifactId(Bundle_Name).setVersion(Bundle_Version).build(),
                                             properties
                                     ));
                                 }
 
                             } else if (("META-INF/" + NutsConstants.Files.DESCRIPTOR_FILE_NAME).equals(path)) {
                                 try {
-                                    NutsDescriptor d = NutsDescriptorParser.of(session).parse(inputStream);
+                                    NutsDescriptor d = NutsDescriptorParser.of(session).parse(inputStream).get(session);
                                     inputStream.close();
                                     Properties properties = new Properties();
                                     properties.setProperty("parents", d.getParents().stream().map(Object::toString).collect(Collectors.joining(",")));
@@ -141,7 +140,7 @@ public class JarPathVersionResolver implements PathVersionResolver {
                                 try {
                                     NutsDescriptor d = NutsDescriptorParser.of(session)
                                             .setDescriptorStyle(NutsDescriptorStyle.MAVEN)
-                                            .parse(inputStream);
+                                            .parse(inputStream).get(session);
                                     properties.put("groupId", d.getId().getGroupId());
                                     properties.put("artifactId", d.getId().getArtifactId());
                                     properties.put("version", d.getId().getVersion().toString());
@@ -153,7 +152,7 @@ public class JarPathVersionResolver implements PathVersionResolver {
                                         }
                                     }
                                     all.add(new VersionDescriptor(
-                                            new DefaultNutsIdBuilder().setGroupId(d.getId().getGroupId())
+                                            NutsIdBuilder.of().setGroupId(d.getId().getGroupId())
                                                     .setRepository(d.getId().getArtifactId())
                                                     .setVersion(d.getId().getVersion())
                                                     .build(),
@@ -176,8 +175,7 @@ public class JarPathVersionResolver implements PathVersionResolver {
                                     prop.setProperty("nuts.version-provider", "maven");
                                     if (version != null && version.trim().length() != 0) {
                                         all.add(new VersionDescriptor(
-                                                new DefaultNutsIdBuilder()
-                                                        .setGroupId(groupId).setArtifactId(artifactId).setVersion(version)
+                                                NutsIdBuilder.of(groupId, artifactId).setVersion(version)
                                                         .build(),
                                                 prop
                                         ));

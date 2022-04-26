@@ -59,22 +59,23 @@ public class LsCommand extends SimpleJShellBuiltin {
     @Override
     protected boolean configureFirst(NutsCommandLine commandLine, JShellExecutionContext context) {
         Options options = context.getOptions();
+        NutsSession session = context.getSession();
         NutsArgument a;
-        if ((a = commandLine.nextBoolean("-d", "--dir")) != null) {
-            options.d = a.getBooleanValue();
+        if ((a = commandLine.nextBoolean("-d", "--dir").orNull()) != null) {
+            options.d = a.getBooleanValue().get(session);
             return true;
-        } else if ((a = commandLine.nextBoolean("-l", "--list")) != null) {
-            options.l = a.getBooleanValue();
+        } else if ((a = commandLine.nextBoolean("-l", "--list").orNull()) != null) {
+            options.l = a.getBooleanValue().get(session);
             return true;
-        } else if ((a = commandLine.nextBoolean("-a", "--all")) != null) {
-            options.a = a.getBooleanValue();
+        } else if ((a = commandLine.nextBoolean("-a", "--all").orNull()) != null) {
+            options.a = a.getBooleanValue().get(session);
             return true;
-        } else if ((a = commandLine.nextBoolean("-h")) != null) {
-            options.h = a.getBooleanValue();
+        } else if ((a = commandLine.nextBoolean("-h").orNull()) != null) {
+            options.h = a.getBooleanValue().get(session);
             return true;
-        } else if (commandLine.peek().isNonOption()) {
-            NutsSession session = context.getSession();
-            String path = commandLine.next(NutsArgumentName.of("file", session)).getString();
+        } else if (commandLine.peek().get(session).isNonOption()) {
+            String path = commandLine.next(NutsArgumentName.of("file", session))
+                    .flatMap(NutsValue::asString).get(session);
             options.paths.add(path);
             options.paths.addAll(Arrays.asList(commandLine.toStringArray()));
             commandLine.skip();

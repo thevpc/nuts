@@ -146,7 +146,7 @@ public abstract class AbstractJShellContext implements JShellContext {
                 NutsDefinition def = session.search().addId(selectedId).setEffective(true).setSession(this.getSession()
                         .copy().setFetchStrategy(NutsFetchStrategy.OFFLINE)).getResultDefinitions().required();
                 NutsDescriptor d = def.getDescriptor();
-                String nuts_autocomplete_support = NutsUtilStrings.trim(d.getPropertyValue("nuts.autocomplete"));
+                String nuts_autocomplete_support = NutsUtilStrings.trim(d.getPropertyValue("nuts.autocomplete").flatMap(NutsValue::asString).get(session));
                 if (d.isApplication()
                         || "true".equalsIgnoreCase(nuts_autocomplete_support)
                         || "supported".equalsIgnoreCase(nuts_autocomplete_support)) {
@@ -171,9 +171,9 @@ public abstract class AbstractJShellContext implements JShellContext {
                                     String value = null;
                                     String display = null;
                                     if (args.hasNext()) {
-                                        value = args.next().getString();
+                                        value = args.next().flatMap(NutsValue::asString).get(session);
                                         if (args.hasNext()) {
-                                            display = args.next().getString();
+                                            display = args.next().flatMap(NutsValue::asString).get(session);
                                         }
                                     }
                                     if (value != null) {

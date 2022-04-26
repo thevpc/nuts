@@ -25,10 +25,7 @@
  */
 package net.thevpc.nuts.toolbox.nsh.cmds;
 
-import net.thevpc.nuts.NutsCommandLine;
-import net.thevpc.nuts.NutsTextCode;
-import net.thevpc.nuts.NutsTexts;
-import net.thevpc.nuts.NutsUtilStrings;
+import net.thevpc.nuts.*;
 import net.thevpc.nuts.spi.NutsComponentScope;
 import net.thevpc.nuts.spi.NutsComponentScopeType;
 import net.thevpc.nuts.toolbox.nsh.SimpleJShellBuiltin;
@@ -47,9 +44,10 @@ public class EchoCommand extends SimpleJShellBuiltin {
     @Override
     protected boolean configureFirst(NutsCommandLine commandLine, JShellExecutionContext context) {
         Options options = context.getOptions();
-        switch (commandLine.peek().getKey().getString()) {
+        NutsSession session = context.getSession();
+        switch (commandLine.peek().get(session).getKey().asString().get(session)) {
             case "-n": {
-                options.newLine = !commandLine.nextBoolean().getBooleanValue();
+                options.newLine = !commandLine.nextBooleanValueLiteral().get(session);
                 return true;
             }
             case "-p":
@@ -61,16 +59,20 @@ public class EchoCommand extends SimpleJShellBuiltin {
             case "--highlight":
             case "--highlighter":
             {
-                options.highlighter = NutsUtilStrings.trim(commandLine.next().getValue().getString());
+                options.highlighter = NutsUtilStrings.trim(
+                        commandLine.next()
+                        .get(session)
+                        .getStringValue().get(session)
+                );
                 return true;
             }
             default: {
-                if (commandLine.peek().isNonOption()) {
+                if (commandLine.peek().get(session).isNonOption()) {
                     while (commandLine.hasNext()) {
                         if (options.tokensCount > 0) {
                             options.message.append(" ");
                         }
-                        options.message.append(commandLine.next().toString());
+                        options.message.append(commandLine.next().get(session).toString());
                         options.tokensCount++;
                     }
                     return true;

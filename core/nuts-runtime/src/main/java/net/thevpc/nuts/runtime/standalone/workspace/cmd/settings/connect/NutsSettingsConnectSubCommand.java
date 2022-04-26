@@ -31,13 +31,13 @@ public class NutsSettingsConnectSubCommand extends AbstractNutsSettingsSubComman
             String server = null;
             NutsArgument a;
             while (commandLine.hasNext()) {
-                if ((a = commandLine.nextString("--password")) != null) {
-                    password = a.getValue().getString("").toCharArray();
-                } else if (commandLine.peek().isOption()) {
+                if ((a = commandLine.nextString("--password").orNull()) != null) {
+                    password = a.getValue().asString().orElse("").toCharArray();
+                } else if (commandLine.isNextOption()) {
                     session.configureLast(commandLine);
                 } else {
-                    server = commandLine.nextRequiredNonOption(NutsArgumentName.of("ServerAddress",session)).getString();
-                    commandLine.setCommandName("settings connect").unexpectedArgument();
+                    server = commandLine.nextNonOption(NutsArgumentName.of("ServerAddress",session)).flatMap(NutsValue::asString).get(session);
+                    commandLine.setCommandName("settings connect").throwUnexpectedArgument(session);
                 }
             }
             if (!commandLine.isExecMode()) {

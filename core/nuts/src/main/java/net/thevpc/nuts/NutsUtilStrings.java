@@ -26,12 +26,11 @@
  */
 package net.thevpc.nuts;
 
-import net.thevpc.nuts.boot.PrivateNutsIdListParser;
-import net.thevpc.nuts.boot.PrivateNutsStringMapParser;
-import net.thevpc.nuts.boot.PrivateNutsUtilStrings;
+import net.thevpc.nuts.boot.*;
 
 import java.util.*;
 import java.util.function.Function;
+import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -85,6 +84,21 @@ public class NutsUtilStrings {
         return errorValue;
     }
 
+    public static NutsOptional<Boolean> parseBoolean(String value) {
+        if (value == null || value.trim().isEmpty()) {
+            return NutsOptional.ofEmpty(session -> NutsMessage.cstyle("empty boolean"));
+        }
+        value = value.trim().toLowerCase();
+        if (value.matches("true|enable|enabled|yes|always|y|on|ok|t|o")) {
+            return NutsOptional.of(true);
+        }
+        if (value.matches("false|disable|disabled|no|none|never|n|off|ko|f")) {
+            return NutsOptional.of(false);
+        }
+        String finalValue = value;
+        return NutsOptional.ofError(session -> NutsMessage.cstyle("invalid boolean %s", finalValue));
+    }
+
     public static String toHexString(byte[] bytes) {
         char[] hexChars = new char[bytes.length * 2];
         for (int j = 0; j < bytes.length; j++) {
@@ -99,54 +113,54 @@ public class NutsUtilStrings {
         return BASE16_CHARS[nibble & 15];
     }
 
-    public static String compressString(String s) {
-        StringBuilder sb = new StringBuilder(s.length());
-        for (char c : s.toCharArray()) {
-            switch (c) {
-                case '\0': {
-                    sb.append("\\0");
-                    break;
+    public static String formatAlign(String text, int size,NutsPositionType position) {
+        if(text==null){
+            text="";
+        }
+        int len = text.length();
+        if(len>=size){
+            return text;
+        }
+        switch (position){
+            case FIRST:{
+                StringBuilder sb = new StringBuilder(size);
+                sb.append(text);
+                for (int i = len; i < size; i++) {
+                    sb.append(' ');
                 }
-                case '\n': {
-                    sb.append("\\n");
-                    break;
+                return sb.toString();
+            }
+            case LAST:{
+                StringBuilder sb = new StringBuilder(size);
+                for (int i = len; i < size; i++) {
+                    sb.append(' ');
                 }
-                case '\r': {
-                    sb.append("\\r");
-                    break;
+                sb.append(text);
+                return sb.toString();
+            }
+            case CENTER:{
+                StringBuilder sb = new StringBuilder(size);
+                int h=size/2+size%2;
+                for (int i = len; i < h; i++) {
+                    sb.append(' ');
                 }
-                case '\t': {
-                    sb.append("\\t");
-                    break;
+                sb.append(text);
+                h=size/2;
+                for (int i = len; i < h; i++) {
+                    sb.append(' ');
                 }
-                case '\f': {
-                    sb.append("\\f");
-                    break;
-                }
-                default: {
-                    sb.append(c);
-                }
+                return sb.toString();
             }
         }
-        return sb.toString();
-    }
-
-    public static String leftAlign(String s, int size) {
-        int len = s.length();
-        StringBuilder sb = new StringBuilder(Math.max(len, size));
-        sb.append(s);
-        for (int i = len; i < size; i++) {
-            sb.append(' ');
-        }
-        return sb.toString();
+        throw new UnsupportedOperationException();
     }
 
     @SuppressWarnings("unchecked")
-    public static List<String> split(String str, String separators) {
-        if (str == null) {
+    public static List<String> split(String text, String separators) {
+        if (text == null) {
             return Collections.EMPTY_LIST;
         }
-        StringTokenizer st = new StringTokenizer(str, separators);
+        StringTokenizer st = new StringTokenizer(text, separators);
         List<String> result = new ArrayList<>();
         while (st.hasMoreElements()) {
             result.add(st.nextToken());
@@ -154,8 +168,8 @@ public class NutsUtilStrings {
         return result;
     }
 
-    public static String replaceDollarString(String path, Function<String, String> m) {
-        Matcher matcher = DOLLAR_PLACE_HOLDER_PATTERN.matcher(path);
+    public static String replaceDollarString(String text, Function<String, String> m) {
+        Matcher matcher = DOLLAR_PLACE_HOLDER_PATTERN.matcher(text);
         StringBuffer sb = new StringBuffer();
         while (matcher.find()) {
             String x = m.apply(matcher.group("name"));
@@ -173,144 +187,44 @@ public class NutsUtilStrings {
         int s = (int) ((period % 60000L) / 1000L);
         int ms = (int) (period % 1000L);
         if (h > 0) {
-            sb.append(formatRight(String.valueOf(h), 2)).append("h ");
+            sb.append(formatAlign(String.valueOf(h), 2,NutsPositionType.LAST)).append("h ");
             started = true;
         }
         if (mn > 0 || started) {
-            sb.append(formatRight(String.valueOf(mn), 2)).append("mn ");
+            sb.append(formatAlign(String.valueOf(mn), 2,NutsPositionType.LAST)).append("mn ");
             started = true;
         }
         if (s > 0 || started) {
-            sb.append(formatRight(String.valueOf(s), 2)).append("s ");
+            sb.append(formatAlign(String.valueOf(s), 2,NutsPositionType.LAST)).append("s ");
             //started=true;
         }
-        sb.append(formatRight(String.valueOf(ms), 3)).append("ms");
+        sb.append(formatAlign(String.valueOf(ms), 3,NutsPositionType.LAST)).append("ms");
         return sb.toString();
     }
 
-    public static String formatRight(String str, int size) {
-        StringBuilder sb = new StringBuilder(size);
-        sb.append(str);
-        while (sb.length() < size) {
-            sb.insert(0, ' ');
-        }
-        return sb.toString();
+    public static String formatStringLiteral(String text, QuoteType quoteType) {
+        return formatStringLiteral(text, quoteType, NutsSupportCondition.ALWAYS);
     }
 
-    public static String simpleQuotes(String text) {
-        return formatStringLiteral(text, QuoteType.SIMPLE, QuoteCondition.QUOTE_ALWAYS, null);
+    public static String formatStringLiteral(String text, QuoteType quoteType, NutsSupportCondition condition) {
+        return formatStringLiteral(text, quoteType, condition, "");
     }
 
-    /**
-     * @param text         text
-     * @param compact      if true, quotes will not be used unless necessary
-     * @param escapedChars escapedChars, can be null
-     * @return quotes
-     */
-    public static String simpleQuotes(String text, boolean compact, String escapedChars) {
-        StringBuffer sb = new StringBuffer();
-        boolean requireQuotes = !compact;
+    public static String formatStringLiteral(String text, QuoteType quoteType, NutsSupportCondition condition, String escapeChars) {
+        StringBuilder sb = new StringBuilder();
+        boolean requireQuotes = condition == NutsSupportCondition.ALWAYS;
+        boolean allowQuotes = condition != NutsSupportCondition.NEVER;
         for (char c : text.toCharArray()) {
             switch (c) {
-                case '\n': {
-                    requireQuotes = true;
-                    sb.append("\\n");
-                    break;
-                }
-                case '\f': {
-                    requireQuotes = true;
-                    sb.append("\\f");
-                    break;
-                }
-                case '\r': {
-                    requireQuotes = true;
-                    sb.append("\\r");
-                    break;
-                }
-                case '\'':
-                case '\"':
-                case '\\': {
-                    requireQuotes = true;
-                    sb.append("\\").append(c);
-                    break;
-                }
-                default: {
-                    if (escapedChars != null && escapedChars.indexOf(c) >= 0) {
+                case ' ': {
+                    if (allowQuotes) {
+                        sb.append(" ");
                         requireQuotes = true;
-                        sb.append(c);
-                    } else {
-                        sb.append(c);
+                    }else{
+                        sb.append("\\ ");
                     }
                     break;
                 }
-            }
-        }
-        if (requireQuotes) {
-            sb.insert(0, '\'');
-            sb.append('\'');
-        }
-        return sb.toString();
-    }
-
-    public static String dblQuotes(String text) {
-        return dblQuotes(text, false, null);
-    }
-
-    /**
-     * @param text            text
-     * @param compact         if true, quotes will not be used unless necessary
-     * @param entrySeparators entrySeparators extra characters to escape
-     * @return double quotes
-     */
-    public static String dblQuotes(String text, boolean compact, String entrySeparators) {
-        StringBuilder sb = new StringBuilder();
-        boolean q = !compact;
-        for (char c : text.toCharArray()) {
-            switch (c) {
-                case '\n': {
-                    q = true;
-                    sb.append("\\n");
-                    break;
-                }
-                case '\f': {
-                    q = true;
-                    sb.append("\\f");
-                    break;
-                }
-                case '\r': {
-                    q = true;
-                    sb.append("\\r");
-                    break;
-                }
-                case '\"': {
-                    q = true;
-                    sb.append("\\").append(c);
-                    break;
-                }
-                default: {
-                    if (entrySeparators != null && entrySeparators.indexOf(c) >= 0) {
-                        q = true;
-                        sb.append("\\").append(c);
-                    } else {
-                        sb.append(c);
-                    }
-                    break;
-                }
-            }
-        }
-        if (q) {
-            sb.insert(0, '\"');
-            sb.append('\"');
-        }
-        return sb.toString();
-    }
-
-    public static String formatStringLiteral(String text, QuoteType quoteType, QuoteCondition condition, String extraSeparators) {
-        StringBuilder sb = new StringBuilder();
-        boolean requireQuotes = condition == QuoteCondition.QUOTE_ALWAYS;
-        boolean allowQuotes = condition != QuoteCondition.QUOTE_NEVER;
-        for (char c : text.toCharArray()) {
-            switch (c) {
                 case '\n': {
                     sb.append("\\n");
                     if (!requireQuotes && allowQuotes) {
@@ -373,10 +287,12 @@ public class NutsUtilStrings {
                     break;
                 }
                 default: {
-                    if (extraSeparators != null && extraSeparators.indexOf(c) >= 0) {
-                        sb.append("\\").append(c);
-                        if (!requireQuotes && allowQuotes) {
+                    if (escapeChars != null && escapeChars.indexOf(c) >= 0) {
+                        if(allowQuotes){
+                            sb.append(c);
                             requireQuotes = true;
+                        }else{
+                            sb.append("\\").append(c);
                         }
                     } else {
                         sb.append(c);
@@ -386,18 +302,18 @@ public class NutsUtilStrings {
             }
         }
         if (requireQuotes) {
-            switch (quoteType){
-                case DOUBLE:{
+            switch (quoteType) {
+                case DOUBLE: {
                     sb.insert(0, '\"');
                     sb.append('\"');
                     break;
                 }
-                case SIMPLE:{
+                case SIMPLE: {
                     sb.insert(0, '\'');
                     sb.append('\'');
                     break;
                 }
-                case ANTI:{
+                case ANTI: {
                     sb.insert(0, '`');
                     sb.append('`');
                     break;
@@ -408,27 +324,27 @@ public class NutsUtilStrings {
     }
 
     public static NutsOptional<Map<String, String>> parseDefaultMap(String text) {
-        return parseMap(text, "=", "&","");
+        return parseMap(text, "=", "&", "");
     }
 
     public static NutsOptional<Map<String, String>> parseMap(String text, String eqSeparators, String entrySeparators) {
-        return parseMap(text,eqSeparators,entrySeparators,"");
+        return parseMap(text, eqSeparators, entrySeparators, "");
     }
 
     public static NutsOptional<Map<String, String>> parseMap(String text, String eqSeparators, String entrySeparators, String escapeChars) {
-        return PrivateNutsStringMapParser.of(eqSeparators, entrySeparators,escapeChars).parse(text);
+        return PrivateNutsStringMapParser.of(eqSeparators, entrySeparators, escapeChars).parse(text);
     }
 
     public static String formatDefaultMap(Map<String, String> map) {
-        return formatMap(map, "=", "&", "",true);
+        return formatMap(map, "=", "&", "?", true);
     }
 
     public static String formatMap(Map<String, String> map, String eqSeparators, String entrySeparators, boolean sort) {
-        return formatMap(map, eqSeparators, entrySeparators, "",sort);
+        return formatMap(map, eqSeparators, entrySeparators, "", sort);
     }
 
     public static String formatMap(Map<String, String> map, String eqSeparators, String entrySeparators, String escapeChars, boolean sort) {
-        return PrivateNutsStringMapParser.of(eqSeparators, entrySeparators,escapeChars).format(map, sort);
+        return PrivateNutsStringMapParser.of(eqSeparators, entrySeparators, escapeChars).format(map, sort);
     }
 
     public static NutsOptional<List<String>> parsePropertyIdList(String s) {
@@ -439,6 +355,69 @@ public class NutsUtilStrings {
         return PrivateNutsUtilStrings.parseAndTrimToDistinctList(s);
     }
 
+    public static NutsOptional<Level> parseLogLevel(String value) {
+        value = value == null ? "" : value.trim();
+        if (value.isEmpty()) {
+            return NutsOptional.ofEmpty(s->NutsMessage.cstyle("empty level"));
+        }
+        switch (value.trim().toLowerCase()) {
+            case "off": {
+                return NutsOptional.of(Level.OFF);
+            }
+            case "verbose":
+            case "finest": {
+                return NutsOptional.of(Level.FINEST);
+            }
+            case "finer": {
+                return NutsOptional.of(Level.FINER);
+            }
+            case "fine": {
+                return NutsOptional.of(Level.FINE);
+            }
+            case "info": {
+                return NutsOptional.of(Level.INFO);
+            }
+            case "all": {
+                return NutsOptional.of(Level.ALL);
+            }
+            case "warning": {
+                return NutsOptional.of(Level.WARNING);
+            }
+            case "severe": {
+                return NutsOptional.of(Level.SEVERE);
+            }
+            case "config": {
+                return NutsOptional.of(Level.CONFIG);
+            }
+        }
+        Integer i = NutsApiUtils.parseInt(value, null, null);
+        if (i != null) {
+            switch (i) {
+                case Integer.MAX_VALUE:
+                    return NutsOptional.of(Level.OFF);
+                case 1000:
+                    return NutsOptional.of(Level.SEVERE);
+                case 900:
+                    return NutsOptional.of(Level.WARNING);
+                case 800:
+                    return NutsOptional.of(Level.INFO);
+                case 700:
+                    return NutsOptional.of(Level.CONFIG);
+                case 500:
+                    return NutsOptional.of(Level.FINE);
+                case 400:
+                    return NutsOptional.of(Level.FINER);
+                case 300:
+                    return NutsOptional.of(Level.FINEST);
+                case Integer.MIN_VALUE:
+                    return NutsOptional.of(Level.ALL);
+            }
+            return NutsOptional.of(new CustomLogLevel("LEVEL" + i, i));
+        }
+        String finalValue = value;
+        return NutsOptional.ofError(s->NutsMessage.cstyle("invalid level %s", finalValue));
+    }
+
 
     public enum QuoteType {
         DOUBLE,
@@ -446,10 +425,10 @@ public class NutsUtilStrings {
         ANTI,
     }
 
-    public enum QuoteCondition {
-        QUOTE_ALWAYS,
-        QUOTE_REQUIRED,
-        QUOTE_NEVER,
+    private static class CustomLogLevel extends Level {
+        public CustomLogLevel(String name, int value) {
+            super(name, value);
+        }
     }
 
 }

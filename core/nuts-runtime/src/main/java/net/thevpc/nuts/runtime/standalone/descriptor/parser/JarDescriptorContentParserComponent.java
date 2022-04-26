@@ -83,8 +83,7 @@ public class JarDescriptorContentParserComponent implements NutsDescriptorConten
                     try {
                         metainf.set(NutsDescriptorParser.of(session)
                                 .setDescriptorStyle(NutsDescriptorStyle.MANIFEST)
-                                .setLenient(true)
-                                .parse(inputStream));
+                                .parse(inputStream).orNull());
                     } finally {
                         inputStream.close();
                     }
@@ -94,7 +93,7 @@ public class JarDescriptorContentParserComponent implements NutsDescriptorConten
                     try {
                         nutsjson.set(NutsDescriptorParser.of(session)
                                 .setDescriptorStyle(NutsDescriptorStyle.NUTS)
-                                .parse(inputStream));
+                                .parse(inputStream).get(session));
                     } finally {
                         inputStream.close();
                     }
@@ -112,7 +111,7 @@ public class JarDescriptorContentParserComponent implements NutsDescriptorConten
                         try {
                             nutsjson.set(NutsDescriptorParser.of(session)
                                     .setDescriptorStyle(NutsDescriptorStyle.NUTS)
-                                    .parse(inputStream));
+                                    .parse(inputStream).get(session));
                         } finally {
                             inputStream.close();
                         }
@@ -160,17 +159,17 @@ public class JarDescriptorContentParserComponent implements NutsDescriptorConten
             d.append(parserContext.getFullStream());
             String artifactId = d.getDigest();
             baseNutsDescriptor = new DefaultNutsDescriptorBuilder()
-                    .setId(new DefaultNutsIdBuilder().setGroupId("temp").setArtifactId(artifactId).setVersion("1.0").build())
+                    .setId(NutsIdBuilder.of("temp",artifactId).setVersion("1.0").build())
                     .addFlag(mainClassString != null ? NutsDescriptorFlag.EXEC : null)
                     .setPackaging("jar")
                     .build();
         }
         boolean alwaysSelectAllMainClasses = false;
-        NutsCommandLine cmd = NutsCommandLine.of(parserContext.getParseOptions(), session);
+        NutsCommandLine cmd = NutsCommandLine.of(parserContext.getParseOptions());
         NutsArgument a;
         while (!cmd.isEmpty()) {
-            if ((a = cmd.nextBoolean("--all-mains")) != null) {
-                alwaysSelectAllMainClasses = a.getBooleanValue();
+            if ((a = cmd.nextBoolean("--all-mains").orNull()) != null) {
+                alwaysSelectAllMainClasses = a.getBooleanValue().get(session);
             } else {
                 cmd.skip();
             }

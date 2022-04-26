@@ -99,7 +99,7 @@ public class JPClassDoc implements JDClassDoc {
 
     @Override
     public String modifiers() {
-        return Arrays.stream(declaration.getModifiers().toArray()).map(x -> x.toString()).collect(Collectors.joining(" "));
+        return Arrays.stream(declaration.getModifiers().toArray()).map(Object::toString).collect(Collectors.joining(" "));
     }
 
     @Override

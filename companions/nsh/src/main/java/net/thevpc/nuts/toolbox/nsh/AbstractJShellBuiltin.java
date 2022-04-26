@@ -56,7 +56,7 @@ public abstract class AbstractJShellBuiltin implements JShellBuiltin {
 
     protected NutsCommandLine cmdLine(String[] args, JShellExecutionContext context) {
         NutsSession session = context.getSession();
-        return NutsCommandLine.of(args,session)
+        return NutsCommandLine.of(args)
                 .setAutoComplete(context.getShellContext().getAutoComplete())
                 .setCommandName(getName());
     }

@@ -32,19 +32,32 @@ import net.thevpc.nuts.toolbox.nsh.jshell.JShellExecutionContext;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
+import java.util.function.Supplier;
 
 /**
  * @author thevpc
  */
 public abstract class SimpleJShellBuiltin extends AbstractJShellBuiltin {
-    private Class optionsClass;
+    private Supplier<Object> optionsSupplier;
 
-    public SimpleJShellBuiltin(String name, int supportLevel, Class optionsClass) {
+    public SimpleJShellBuiltin(String name, int supportLevel, Class optionsSupplier) {
         super(name, supportLevel);
-        this.optionsClass = optionsClass;
+        this.optionsSupplier = ()->createOptions(optionsSupplier);
+    }
+    public SimpleJShellBuiltin(String name, Class optionsSupplier) {
+        super(name, DEFAULT_SUPPORT);
+        this.optionsSupplier = ()->createOptions(optionsSupplier);
+    }
+    public SimpleJShellBuiltin(String name, int supportLevel, Supplier optionsSupplier) {
+        super(name, supportLevel);
+        this.optionsSupplier = optionsSupplier;
+    }
+    public SimpleJShellBuiltin(String name, Supplier optionsSupplier) {
+        super(name, DEFAULT_SUPPORT);
+        this.optionsSupplier = optionsSupplier;
     }
 
-    protected Object createOptions() {
+    protected static Object createOptions(Class optionsClass) {
         if (optionsClass == null) {
             return null;
         }
@@ -71,10 +84,10 @@ public abstract class SimpleJShellBuiltin extends AbstractJShellBuiltin {
         int maxLoops = 1000;
         boolean robustMode = false;
         NutsSession session = context.getSession();
-        NutsCommandLine commandLine = NutsCommandLine.of(args, session).setCommandName(getName())
+        NutsCommandLine commandLine = NutsCommandLine.of(args).setCommandName(getName())
                 .setAutoComplete(context.getShellContext().getAutoComplete());
-        initCommandLine(commandLine);
-        context.setOptions(createOptions());
+        initCommandLine(commandLine, context);
+        context.setOptions(optionsSupplier==null?null:optionsSupplier.get());
         while (commandLine.hasNext()) {
             if (robustMode) {
                 String[] before = commandLine.toStringArray();
@@ -115,7 +128,7 @@ public abstract class SimpleJShellBuiltin extends AbstractJShellBuiltin {
         execBuiltin(commandLine, context);
     }
 
-    protected void initCommandLine(NutsCommandLine commandLine) {
+    protected void initCommandLine(NutsCommandLine commandLine, JShellExecutionContext context) {
 
     }
 

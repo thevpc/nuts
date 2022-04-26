@@ -65,21 +65,19 @@ public class DocusaurusCtrl {
     }
 
     public void run() {
+        NutsSession session = project.getSession();
         Path base = null;
         try {
             base = Paths.get(project.getDocusaurusBaseFolder()).normalize().toRealPath();
         } catch (IOException e) {
             throw new UncheckedIOException("invalid Docusaurus Base Folder: " + project.getDocusaurusBaseFolder(), e);
         }
-        String genSidebarMenuString = project.getConfig()
-                .getSafeObject("customFields")
-                .getSafeObject("docusaurus")
-                .getSafe("generateSidebarMenu")
-                .toString();
-        boolean genSidebarMenu = Boolean.parseBoolean(genSidebarMenuString);
+        boolean genSidebarMenu = project.getConfig()
+                .asObject().orElse(NutsObjectElement.ofEmpty(session))
+                .getBooleanByPath("customFields","docusaurus","generateSidebarMenu")
+                .orElse(false);
         Path basePath = base;
         Path preProcessor = getPreProcessorBaseDir();
-        NutsSession session = appContext.getSession();
         if (Files.isDirectory(preProcessor) && Files.isRegularFile(preProcessor.resolve("project.nsh"))) {
 //            Files.walk(base).filter(x->Files.isDirectory(base))
             Path docs = basePath.resolve("docs");
@@ -125,10 +123,8 @@ public class DocusaurusCtrl {
             }
 //            System.out.println(s);
         }
-        if (isBuildPdf() && !project.getConfig().getSafeObject("customFields")
-                .getSafeObject("asciidoctor")
-                .getSafe("path")
-                .isNull()) {
+        if (isBuildPdf() && !project.getConfig().getStringByPath("customFields","asciidoctor","path")
+                .isEmpty()) {
             Docusaurus2Asciidoctor d2a = new Docusaurus2Asciidoctor(project);
             session.out().printf("build adoc file : %s%n", d2a.getAdocFile());
             d2a.createAdocFile();
@@ -138,9 +134,8 @@ public class DocusaurusCtrl {
         if (isBuildWebSite()) {
             session.out().printf("build website%n");
             runNativeCommand(base, getEffectiveNpmCommandPath(), "run-script", "build");
-            String copyBuildPath = project.getConfig().getSafeObject("customFields")
-                    .getSafe("copyBuildPath")
-                    .asString();
+            String copyBuildPath = project.getConfig().getStringByPath("customFields","copyBuildPath")
+                    .get(session);
             if (copyBuildPath != null && copyBuildPath.length() > 0) {
                 String fromPath = null;
                 try {
@@ -341,8 +336,10 @@ public class DocusaurusCtrl {
         NutsElement config;
         String projectName;
         String projectTitle;
+        DocusaurusProject project;
 
         public DocusaurusCustomVarEvaluator(DocusaurusProject project) {
+            this.project=project;
             config = project.getConfig();
             projectName = project.getProjectName();
             projectTitle = project.getTitle();
@@ -350,6 +347,7 @@ public class DocusaurusCtrl {
 
         @Override
         public Object apply(String varName) {
+            NutsSession session = project.getSession();
             switch (varName) {
                 case "projectName": {
                     return projectName;
@@ -361,18 +359,18 @@ public class DocusaurusCtrl {
                     String[] a = Arrays.stream(varName.split("[./]")).map(String::trim).filter(x -> !x.isEmpty())
                             .toArray(String[]::new);
                     for (String s : a) {
-                        config = config.asSafeObject().getSafe(s);
+                        config = config.asObject().orElse(NutsObjectElement.ofEmpty(session)).get(s).get(session);
                     }
                     if (config.isNull()) {
                         return null;
                     }
                     if (config.isString()) {
-                        return config.asString();
+                        return config.asString().get(session);
                     }
                     if (config.isArray()) {
-                        return config.asArray().stream().map(x -> x.toString()).toArray(String[]::new);
+                        return config.asArray().get(session).stream().map(Object::toString).toArray(String[]::new);
                     }
-                    return config.asString();
+                    return config.asString().get(session);
                 }
             }
         }
@@ -389,22 +387,24 @@ public class DocusaurusCtrl {
 
         @Override
         public void processPath(Path source, String mimeType, FileTemplater context) {
+            NutsSession session = context.getSession();
             NutsObjectElement config = DocusaurusFolder.ofFolder(appContext.getSession(), source.getParent(),
                             Paths.get(context.getRootDirRequired()).resolve("docs"),
                             getPreProcessorBaseDir().resolve("src"),
                             0)
-                    .getConfig().getSafeObject("type");
+                    .getConfig().getObject("type").get(session);
             if (
-                    "javadoc".equals(config.getSafeString("name"))
-                            || "doc".equals(config.getSafeString("name"))
+                    "javadoc".equals(config.getString("name").orNull())
+                            || "doc".equals(config.getString("name").orNull())
             ) {
-                String[] sources = config.asSafeObject().getSafeArray("sources")
-                        .stream().map(x->x.asSafeString(null)).filter(Objects::nonNull).toArray(String[]::new);
+                String[] sources = config.getArray("sources").orElse(NutsArrayElement.ofEmpty(session))
+                        .stream().map(x->x.asString().orElse(null))
+                        .filter(Objects::nonNull).toArray(String[]::new);
                 if (sources.length == 0) {
                     throw new IllegalArgumentException("missing doc sources in " + source);
                 }
-                String[] packages = config.asSafeObject().getSafeArray("packages").stream().
-                        map(x->x.asSafeString(null)).filter(Objects::nonNull).toArray(String[]::new);
+                String[] packages = config.getArray("packages").orElse(NutsArrayElement.ofEmpty(session))
+                        .stream().map(x->x.asString().orNull()).filter(Objects::nonNull).toArray(String[]::new);
                 String target = context.getPathTranslator().translatePath(source.getParent().toString());
                 if (target == null) {
                     throw new IllegalArgumentException("invalid source " + source.getParent());

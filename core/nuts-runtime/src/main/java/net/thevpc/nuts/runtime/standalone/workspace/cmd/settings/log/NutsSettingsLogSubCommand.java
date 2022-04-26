@@ -64,7 +64,7 @@ public class NutsSettingsLogSubCommand extends AbstractNutsSettingsSubCommand {
                     throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("invalid loglevel"));
                 }
             }
-            cmdLine.setCommandName("config log").unexpectedArgument();
+            cmdLine.setCommandName("config log").throwUnexpectedArgument(session);
             return true;
         } else if (cmdLine.next("get loglevel") != null) {
             if (cmdLine.isExecMode()) {

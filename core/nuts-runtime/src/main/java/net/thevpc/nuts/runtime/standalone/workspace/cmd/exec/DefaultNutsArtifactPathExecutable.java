@@ -47,7 +47,7 @@ public class DefaultNutsArtifactPathExecutable extends AbstractNutsExecutableCom
 
     public DefaultNutsArtifactPathExecutable(String cmdName, String[] args, List<String> executorOptions, NutsExecutionType executionType, NutsRunAs runAs, NutsSession session, NutsSession execSession, DefaultNutsExecCommand execCommand, boolean inheritSystemIO) {
         super(cmdName,
-                NutsCommandLine.of(args,execSession).toString(),
+                NutsCommandLine.of(args).toString(),
                 NutsExecutableType.ARTIFACT);
         LOG = NutsLogger.of(DefaultNutsArtifactPathExecutable.class, session);
         this.runAs = runAs;
@@ -59,10 +59,10 @@ public class DefaultNutsArtifactPathExecutable extends AbstractNutsExecutableCom
         this.execCommand = execCommand;
         List<String> executorOptionsList = new ArrayList<>();
         for (String option : executorOptions) {
-            NutsArgument a = NutsArgument.of(option, session);
+            NutsArgument a = NutsArgument.of(option);
 //            if (a.getKey().getString().equals("--nuts-auto-install")) {
 //                if (a.isKeyValue()) {
-//                    autoInstall= a.isNegated() != a.getBooleanValue();
+//                    autoInstall= a.isNegated() != a.getBooleanValue().get(session);
 //                } else {
 //                    autoInstall=true;
 //                }
@@ -149,7 +149,7 @@ public class DefaultNutsArtifactPathExecutable extends AbstractNutsExecutableCom
             if (Files.isDirectory(fileSource)) {
                 Path ext = fileSource.resolve(NutsConstants.Files.DESCRIPTOR_FILE_NAME);
                 if (Files.exists(ext)) {
-                    c.descriptor = NutsDescriptorParser.of(session).parse(ext);
+                    c.descriptor = NutsDescriptorParser.of(session).parse(ext).get(session);
                 } else {
                     c.descriptor = NutsDescriptorContentResolver.resolveNutsDescriptorFromFileContent(c.contentFile, execOptions, session);
                 }
@@ -167,7 +167,7 @@ public class DefaultNutsArtifactPathExecutable extends AbstractNutsExecutableCom
             } else if (Files.isRegularFile(fileSource)) {
                 if (c.contentFile.getFileName().toString().endsWith(NutsConstants.Files.DESCRIPTOR_FILE_NAME)) {
                     try (InputStream in = Files.newInputStream(c.contentFile)) {
-                        c.descriptor = NutsDescriptorParser.of(session).parse(in);
+                        c.descriptor = NutsDescriptorParser.of(session).parse(in).get(session);
                     }
                     c.contentFile = null;
                     if (c.streamOrPath.isPath() && c.streamOrPath.getPath().isURL()) {
@@ -237,7 +237,7 @@ public class DefaultNutsArtifactPathExecutable extends AbstractNutsExecutableCom
 
     @Override
     public String toString() {
-        return "nuts " + cmdName + " " + NutsCommandLine.of(args,execSession).toString();
+        return "nuts " + cmdName + " " + NutsCommandLine.of(args).toString();
     }
 
 }

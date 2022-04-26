@@ -555,8 +555,9 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
     }
 
     private NutsTableModel createTableModel(Object o) {
+        NutsSession session = getSession();
         if (o == null) {
-            return NutsMutableTableModel.of(getSession());
+            return NutsMutableTableModel.of(session);
         }
         if (o instanceof NutsTableModel) {
             return (NutsTableModel) o;
@@ -568,7 +569,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
         }
         o = _elems().setIndestructibleFormat().destruct(o);
         if (o instanceof Collection) {
-            NutsMutableTableModel model = NutsMutableTableModel.of(getSession());
+            NutsMutableTableModel model = NutsMutableTableModel.of(session);
             LinkedHashSet<String> columns = new LinkedHashSet<>();
             resolveColumns(o, columns);
             for (String column : columns) {
@@ -581,14 +582,14 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
                     switch (elem2.type()) {
                         case OBJECT: {
                             Map<String, NutsElement> m = new HashMap<>();
-                            for (NutsElementEntry vv : elem2.asObject().children()) {
+                            for (NutsElementEntry vv : elem2.asObject().get(session).entries()) {
                                 NutsElement k = vv.getKey();
                                 if (!k.isString()) {
                                     k = _elems().ofString(
                                             k.toString()
                                     );
                                 }
-                                m.put(k.asPrimitive().getString(), vv.getValue());
+                                m.put(k.asString().get(session), vv.getValue());
                             }
                             for (String column : columns) {
                                 NutsElement vv = m.get(column);
@@ -640,7 +641,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
             return model;
         }
         if (o instanceof Map) {
-            NutsMutableTableModel model = NutsMutableTableModel.of(getSession());
+            NutsMutableTableModel model = NutsMutableTableModel.of(session);
             LinkedHashSet<String> columns = new LinkedHashSet<>();
             columns.add("Name");
             columns.add("Value");
@@ -672,28 +673,28 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
                 return createTableModel(_elems().toElement(a));
             }
             case OBJECT: {
-                return createTableModel(_elems().toElement(elem.asObject().children()));
+                return createTableModel(_elems().toElement(elem.asObject().get(session).entries()));
             }
             case ARRAY: {
-                NutsMutableTableModel model = NutsMutableTableModel.of(getSession());
+                NutsMutableTableModel model = NutsMutableTableModel.of(session);
                 LinkedHashSet<String> columns = new LinkedHashSet<>();
                 resolveColumns(elem, columns);
                 for (String column : columns) {
                     model.addHeaderCell(column);
                 }
-                for (NutsElement elem2 : elem.asArray().children()) {
+                for (NutsElement elem2 : elem.asArray().get(session).items()) {
                     model.newRow();
                     switch (elem2.type()) {
                         case OBJECT: {
                             Map<String, NutsElement> m = new HashMap<>();
-                            for (NutsElementEntry vv : elem2.asObject().children()) {
+                            for (NutsElementEntry vv : elem2.asObject().get(session).entries()) {
                                 NutsElement k = vv.getKey();
                                 if (!k.isString()) {
                                     k = _elems().ofString(
                                             k.toString()
                                     );
                                 }
-                                m.put(k.asPrimitive().getString(), vv.getValue());
+                                m.put(k.asString().get(session), vv.getValue());
                             }
                             for (String column : columns) {
                                 NutsElement vv = m.get(column);
@@ -719,29 +720,30 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
                 return model;
             }
             default: {
-                throw new NutsUnsupportedArgumentException(getSession(), NutsMessage.cstyle("unsupported %s", elem.type()));
+                throw new NutsUnsupportedArgumentException(session, NutsMessage.cstyle("unsupported %s", elem.type()));
             }
         }
     }
 
     public void resolveColumns(Object obj, LinkedHashSet<String> columns) {
+        NutsSession session = getSession();
         if (obj instanceof NutsElement) {
             NutsElement value = (NutsElement) obj;
             switch (value.type()) {
                 case OBJECT: {
-                    for (NutsElementEntry nutsNamedValue : value.asObject().children()) {
+                    for (NutsElementEntry nutsNamedValue : value.asObject().get(session).entries()) {
                         NutsElement k = nutsNamedValue.getKey();
                         if (!k.isString()) {
                             k = _elems().ofString(
                                     k.toString()
                             );
                         }
-                        columns.add(k.asPrimitive().getString());
+                        columns.add(k.asString().get(session));
                     }
                     break;
                 }
                 case ARRAY: {
-                    for (NutsElement value2 : value.asArray().children()) {
+                    for (NutsElement value2 : value.asArray().get(session).items()) {
                         resolveColumns(value2, columns);
                     }
                     break;
@@ -777,25 +779,26 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
 
     @Override
     public boolean configureFirst(NutsCommandLine cmdLine) {
+        NutsSession session = getSession();
         NutsArgument a;
-        if ((a = cmdLine.nextBoolean("--no-header")) != null) {
-            boolean val = a.getBooleanValue();
+        if ((a = cmdLine.nextBoolean("--no-header").orNull()) != null) {
+            boolean val = a.getBooleanValue().get(session);
             if (a.isActive()) {
                 setVisibleHeader(!val);
             }
             return true;
-        } else if ((a = cmdLine.nextBoolean("--header")) != null) {
-            boolean val = a.getBooleanValue();
+        } else if ((a = cmdLine.nextBoolean("--header").orNull()) != null) {
+            boolean val = a.getBooleanValue().get(session);
             if (a.isActive()) {
                 setVisibleHeader(val);
             }
             return true;
-        } else if ((a = cmdLine.nextString("--border")) != null) {
+        } else if ((a = cmdLine.nextString("--border").orNull()) != null) {
             if (a.isActive()) {
-                setBorder(a.getValue().getString(""));
+                setBorder(a.getValue().asString().orElse(""));
             }
             return true;
-        } else if (cmdLine.hasNext() && cmdLine.peek().isOption()) {
+        } else if (cmdLine.hasNext() && cmdLine.isNextOption()) {
             int cc = getModel().getColumnsCount();
 
             Map<String, Integer> columns = new HashMap<>();
@@ -807,12 +810,12 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
             }
             NutsArgument a2 = null;
             for (Map.Entry<String, Integer> e : columns.entrySet()) {
-                if ((a2 = cmdLine.next("--" + e.getKey())) != null) {
+                if ((a2 = cmdLine.next("--" + e.getKey()).orNull()) != null) {
                     if (a2.isActive()) {
                         setVisibleColumn(e.getValue(), true);
                     }
                     return true;
-                } else if ((a2 = cmdLine.next("--no-" + e.getKey())) != null) {
+                } else if ((a2 = cmdLine.next("--no-" + e.getKey()).orNull()) != null) {
                     if (a2.isActive()) {
                         setVisibleColumn(e.getValue(), false);
                     }

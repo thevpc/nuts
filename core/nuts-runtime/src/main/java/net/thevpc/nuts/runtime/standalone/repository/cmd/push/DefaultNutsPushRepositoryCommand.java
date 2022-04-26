@@ -44,12 +44,12 @@ public class DefaultNutsPushRepositoryCommand extends AbstractNutsPushRepository
         try {
             NutsRepositoryExt.of(getRepo()).pushImpl(this);
                 _LOGOP(session).level(Level.FINEST).verb(NutsLogVerb.SUCCESS)
-                        .log(NutsMessage.jstyle("{0} push {1}", CoreStringUtils.alignLeft(getRepo().getName(), 20), getId()));
+                        .log(NutsMessage.jstyle("{0} push {1}", NutsUtilStrings.formatAlign(getRepo().getName(), 20,NutsPositionType.FIRST), getId()));
         } catch (RuntimeException ex) {
 
             if (_LOG(session).isLoggable(Level.FINEST)) {
                 _LOGOP(session).level(Level.FINEST).verb(NutsLogVerb.FAIL)
-                        .log(NutsMessage.jstyle("{0} push {1}", CoreStringUtils.alignLeft(getRepo().getName(), 20), getId()));
+                        .log(NutsMessage.jstyle("{0} push {1}", NutsUtilStrings.formatAlign(getRepo().getName(), 20,NutsPositionType.FIRST), getId()));
             }
         }
         return this;

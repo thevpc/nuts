@@ -37,7 +37,7 @@ public class DeployFacadeCommand extends AbstractFacadeCommand {
                 case "descriptor":
                     try {
                         descriptor = NutsDescriptorParser.of(session)
-                                .setSession(session).parse(info.getContent());
+                                .setSession(session).parse(info.getContent()).get(session);
                     } finally {
                         info.getContent().close();
                     }

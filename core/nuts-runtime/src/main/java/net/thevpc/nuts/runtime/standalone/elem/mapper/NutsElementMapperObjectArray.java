@@ -1,9 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.elem.mapper;
 
-import net.thevpc.nuts.NutsArrayElement;
-import net.thevpc.nuts.NutsElement;
-import net.thevpc.nuts.NutsElementFactoryContext;
-import net.thevpc.nuts.NutsElementMapper;
+import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.elem.DefaultNutsElementFactoryService;
 
 import java.lang.reflect.Type;
@@ -25,10 +22,11 @@ public class NutsElementMapperObjectArray implements NutsElementMapper<Object[]>
 
     @Override
     public Object[] createObject(NutsElement o, Type typeOfResult, NutsElementFactoryContext context) {
-        NutsArrayElement earr = o.asArray();
+        NutsSession session = context.getSession();
+        NutsArrayElement earr = o.asArray().get(session);
         Object[] arr = new Object[earr.size()];
         for (int i = 0; i < arr.length; i++) {
-            arr[i] = (Object) context.elementToObject(earr.get(i), Object.class);
+            arr[i] = (Object) context.elementToObject(earr.get(i).get(session), Object.class);
         }
         return arr;
     }

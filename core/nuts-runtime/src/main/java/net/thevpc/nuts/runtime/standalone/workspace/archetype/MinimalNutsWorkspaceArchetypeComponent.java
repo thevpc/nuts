@@ -24,6 +24,7 @@
 package net.thevpc.nuts.runtime.standalone.workspace.archetype;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.standalone.util.CoreNutsUtils;
 import net.thevpc.nuts.spi.*;
 import net.thevpc.nuts.runtime.standalone.workspace.config.DefaultNutsWorkspaceConfigManager;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
@@ -67,14 +68,14 @@ public class MinimalNutsWorkspaceArchetypeComponent implements NutsWorkspaceArch
     @Override
     public void startWorkspace(NutsSession session) {
         NutsBootManager boot = session.boot();
-        boolean initializeAllPlatforms = boot.getBootCustomBoolArgument(true,true,false,"---init-platforms");
-        if (initializeAllPlatforms && boot.getBootCustomBoolArgument(true,true,false,"---init-java")) {
+        boolean initializeAllPlatforms = CoreNutsUtils.isCustomTrue("---init-platforms",session);
+        if (initializeAllPlatforms && CoreNutsUtils.isCustomTrue("---init-java",session)) {
             NutsWorkspaceUtils.of(session).installAllJVM();
         } else {
             NutsWorkspaceUtils.of(session).installCurrentJVM();
         }
-        Boolean initScripts = boot.getBootCustomBoolArgument(true,true,false,"---init-scripts");
-        Boolean initLaunchers = boot.getBootCustomBoolArgument(true,true,false,"---init-launchers");
+        Boolean initScripts = CoreNutsUtils.isCustomTrue("---init-scripts",session);
+        Boolean initLaunchers = CoreNutsUtils.isCustomTrue("---init-launchers",session);
         if (initScripts || initLaunchers) {
             NutsWorkspaceUtils.of(session).installLaunchers(initLaunchers);
         }

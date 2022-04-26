@@ -50,21 +50,22 @@ public class NutsElementMapperMap implements NutsElementMapper<Map> {
     }
 
     public Map fillObject(NutsElement o, Map all, Type elemType1, Type elemType2, Type to, NutsElementFactoryContext context) {
+        NutsSession session = context.getSession();
         if (o.type() == NutsElementType.OBJECT) {
-            for (NutsElementEntry kv : o.asObject().children()) {
+            for (NutsElementEntry kv : o.asObject().get(session).entries()) {
                 NutsElement k = kv.getKey();
                 NutsElement v = kv.getValue();
                 all.put(context.elementToObject(k, elemType1), context.elementToObject(v, elemType2));
             }
         } else if (o.type() == NutsElementType.ARRAY) {
-            for (NutsElement ee : o.asArray().children()) {
-                NutsObjectElement kv = ee.asObject();
-                NutsElement k = kv.get(context.elem().ofString("key"));
-                NutsElement v = kv.get(context.elem().ofString("value"));
+            for (NutsElement ee : o.asArray().get(session).items()) {
+                NutsObjectElement kv = ee.asObject().get(session);
+                NutsElement k = kv.get("key").orNull();
+                NutsElement v = kv.get("value").orNull();
                 all.put(context.elementToObject(k, elemType1), context.elementToObject(v, elemType2));
             }
         } else {
-            throw new NutsUnsupportedEnumException(context.getSession(), o.type());
+            throw new NutsUnsupportedEnumException(session, o.type());
         }
 
         return all;
@@ -72,6 +73,7 @@ public class NutsElementMapperMap implements NutsElementMapper<Map> {
 
     @Override
     public Map createObject(NutsElement o, Type to, NutsElementFactoryContext context) {
+        NutsSession session = context.getSession();
         Class cls = Map.class;
         Type elemType1 = null;//Object.class;
         Type elemType2 = null;//Object.class;
@@ -85,15 +87,15 @@ public class NutsElementMapperMap implements NutsElementMapper<Map> {
             elemType2 = pt.getActualTypeArguments()[1];
         }
         if (cls == null) {
-            throw new NutsIllegalArgumentException(context.getSession(), NutsMessage.plain("class is null"));
+            throw new NutsIllegalArgumentException(session, NutsMessage.plain("class is null"));
         }
         switch (cls.getName()) {
             case "java.util.Map":
             case "java.util.LinkedHashMap": {
-                return fillObject(o, new LinkedHashMap(o.asObject().size()), elemType1, elemType2, to, context);
+                return fillObject(o, new LinkedHashMap(o.asObject().get(session).size()), elemType1, elemType2, to, context);
             }
             case "java.util.HashMap": {
-                return fillObject(o, new HashMap(o.asObject().size()), elemType1, elemType2, to, context);
+                return fillObject(o, new HashMap(o.asObject().get(session).size()), elemType1, elemType2, to, context);
             }
             case "java.util.SortedMap":
             case "java.util.NavigableMap": {

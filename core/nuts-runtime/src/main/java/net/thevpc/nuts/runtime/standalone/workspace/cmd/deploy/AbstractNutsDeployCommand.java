@@ -310,15 +310,15 @@ public abstract class AbstractNutsDeployCommand extends NutsWorkspaceCommandBase
 
     @Override
     public boolean configureFirst(NutsCommandLine cmdLine) {
-        NutsArgument a = cmdLine.peek();
+        NutsArgument a = cmdLine.peek().get(session);
         if (a == null) {
             return false;
         }
         boolean enabled = a.isActive();
-        switch (a.getKey().getString()) {
+        switch(a.getStringKey().orElse("")) {
             case "-d":
             case "--desc": {
-                String val = cmdLine.nextString().getValue().getString();
+                String val = cmdLine.nextStringValueLiteral().get(session);
                 if (enabled) {
                     setDescriptor(val);
                 }
@@ -327,7 +327,7 @@ public abstract class AbstractNutsDeployCommand extends NutsWorkspaceCommandBase
             case "-s":
             case "--source":
             case "--from": {
-                String val = cmdLine.nextString().getValue().getString();
+                String val = cmdLine.nextStringValueLiteral().get(session);
                 if (enabled) {
                     from(val);
                 }
@@ -336,14 +336,14 @@ public abstract class AbstractNutsDeployCommand extends NutsWorkspaceCommandBase
             case "-r":
             case "--target":
             case "--to": {
-                String val = cmdLine.nextString().getValue().getString();
+                String val = cmdLine.nextStringValueLiteral().get(session);
                 if (enabled) {
                     to(val);
                 }
                 return true;
             }
             case "--desc-sha1": {
-                String val = cmdLine.nextString().getValue().getString();
+                String val = cmdLine.nextStringValueLiteral().get(session);
                 if (enabled) {
                     this.setDescSha1(val);
                 }
@@ -351,7 +351,7 @@ public abstract class AbstractNutsDeployCommand extends NutsWorkspaceCommandBase
             }
             case "--desc-sha1-file": {
                 try {
-                    String val = cmdLine.nextString().getValue().getString();
+                    String val = cmdLine.nextStringValueLiteral().get(session);
                     if (enabled) {
                         this.setDescSha1(new String(Files.readAllBytes(Paths.get(val))));
                     }
@@ -362,7 +362,7 @@ public abstract class AbstractNutsDeployCommand extends NutsWorkspaceCommandBase
                 return true;
             }
             case "--sha1": {
-                String val = cmdLine.nextString().getValue().getString();
+                String val = cmdLine.nextStringValueLiteral().get(session);
                 if (enabled) {
                     this.setSha1(val);
                 }
@@ -370,7 +370,7 @@ public abstract class AbstractNutsDeployCommand extends NutsWorkspaceCommandBase
             }
             case "--sha1-file": {
                 try {
-                    String val = cmdLine.nextString().getValue().getString();
+                    String val = cmdLine.nextStringValueLiteral().get(session);
                     if (enabled) {
                         this.setSha1(new String(Files.readAllBytes(Paths.get(val))));
                     }
@@ -385,10 +385,10 @@ public abstract class AbstractNutsDeployCommand extends NutsWorkspaceCommandBase
                     return true;
                 }
                 if (a.isOption()) {
-                    cmdLine.unexpectedArgument();
+                    cmdLine.throwUnexpectedArgument(session);
                 } else {
                     cmdLine.skip();
-                    String idOrPath = a.getString();
+                    String idOrPath = a.asString().get(session);
                     if (idOrPath.indexOf('/') >= 0 || idOrPath.indexOf('\\') >= 0) {
                         setContent(idOrPath);
                     } else {

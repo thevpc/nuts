@@ -23,6 +23,9 @@
  */
 package net.thevpc.nuts.runtime.standalone.util;
 
+import net.thevpc.nuts.NutsPositionType;
+import net.thevpc.nuts.NutsUtilStrings;
+
 /**
  *
  * @author thevpc
@@ -37,18 +40,18 @@ public class CoreTimeUtils {
         int s = (int) ((period % 60000L) / 1000L);
         int ms = (int) (period % 1000L);
         if (h > 0) {
-            sb.append(CoreStringUtils.alignRight(String.valueOf(h), 2)).append("h ");
+            sb.append(NutsUtilStrings.formatAlign(String.valueOf(h), 2, NutsPositionType.LAST)).append("h ");
             started = true;
         }
         if (mn > 0 || started) {
-            sb.append(CoreStringUtils.alignRight(String.valueOf(mn), 2)).append("mn ");
+            sb.append(NutsUtilStrings.formatAlign(String.valueOf(mn), 2, NutsPositionType.LAST)).append("mn ");
             started = true;
         }
         if (s > 0 || started) {
-            sb.append(CoreStringUtils.alignRight(String.valueOf(s), 2)).append("s ");
+            sb.append(NutsUtilStrings.formatAlign(String.valueOf(s), 2, NutsPositionType.LAST)).append("s ");
             //started=true;
         }
-        sb.append(CoreStringUtils.alignRight(String.valueOf(ms), 3)).append("ms");
+        sb.append(NutsUtilStrings.formatAlign(String.valueOf(ms), 3, NutsPositionType.LAST)).append("ms");
         return sb.toString();
     }
     

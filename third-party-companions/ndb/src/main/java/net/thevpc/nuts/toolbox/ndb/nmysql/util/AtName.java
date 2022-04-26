@@ -28,6 +28,7 @@ package net.thevpc.nuts.toolbox.ndb.nmysql.util;
 import net.thevpc.nuts.NutsArgument;
 import net.thevpc.nuts.NutsCommandLine;
 import net.thevpc.nuts.NutsMessage;
+import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.toolbox.ndb.util.NdbUtils;
 
 /**
@@ -39,12 +40,12 @@ public class AtName {
     private String config;
     private String name;
 
-    public static AtName nextConfigOption(NutsCommandLine cmd) {
-        NutsArgument a = cmd.nextString();
-        AtName name2 = new AtName(a.getValue().getString());
+    public static AtName nextConfigOption(NutsCommandLine cmd, NutsSession session) {
+        NutsArgument a = cmd.nextString().get(session);
+        AtName name2 = new AtName(a.getStringValue().get(session));
         if (!name2.getConfigName().isEmpty() && !name2.getDatabaseName().isEmpty()) {
-            cmd.pushBack(a);
-            cmd.unexpectedArgument(NutsMessage.cstyle("should be valid a config name"));
+            cmd.pushBack(a, session);
+            cmd.throwUnexpectedArgument(NutsMessage.cstyle("should be valid a config name"), session);
         }
         if (name2.getConfigName().isEmpty()) {
             name2 = new AtName(name2.getDatabaseName(), "");
@@ -57,21 +58,21 @@ public class AtName {
         return NdbUtils.coalesce(name, "default") + "@" + NdbUtils.coalesce(config, "default");
     }
 
-    public static AtName nextAppOption(NutsCommandLine cmd) {
-        NutsArgument a = cmd.nextString();
-        return a==null?null:new AtName(a.getValue().getString());
+    public static AtName nextAppOption(NutsCommandLine cmd, NutsSession session) {
+        NutsArgument a = cmd.nextString().get(session);
+        return a==null?null:new AtName(a.getStringValue().get(session));
     }
 
-    public static AtName nextAppNonOption(NutsCommandLine cmd) {
-        NutsArgument a = cmd.nextString();
-        return a==null?null:new AtName(a.getString());
+    public static AtName nextAppNonOption(NutsCommandLine cmd, NutsSession session) {
+        NutsArgument a = cmd.nextString().get(session);
+        return a==null?null:new AtName(a.asString().get(session));
     }
 
-    public static AtName nextConfigNonOption(NutsCommandLine cmd) {
-        NutsArgument a = cmd.peek();
-        AtName name2 = new AtName(a.getString());
+    public static AtName nextConfigNonOption(NutsCommandLine cmd, NutsSession session) {
+        NutsArgument a = cmd.peek().get(session);
+        AtName name2 = new AtName(a.asString().get(session));
         if (!name2.getConfigName().isEmpty() && !name2.getDatabaseName().isEmpty()) {
-            cmd.unexpectedArgument(NutsMessage.cstyle("should be valid a config name"));
+            cmd.throwUnexpectedArgument(NutsMessage.cstyle("should be valid a config name"), session);
         } else {
             cmd.skip();
         }

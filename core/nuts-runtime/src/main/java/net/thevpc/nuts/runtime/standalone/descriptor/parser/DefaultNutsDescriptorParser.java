@@ -22,7 +22,6 @@ public class DefaultNutsDescriptorParser implements NutsDescriptorParser {
 
     private final NutsWorkspace ws;
     private NutsSession session;
-    private boolean lenient = true;
     private NutsDescriptorStyle descriptorStyle;
     private String format;
 
@@ -32,57 +31,59 @@ public class DefaultNutsDescriptorParser implements NutsDescriptorParser {
     }
 
     @Override
-    public NutsDescriptor parse(URL url) {
+    public NutsOptional<NutsDescriptor> parse(URL url) {
         checkSession();
         return parse(NutsPath.of(url, getSession()));
     }
 
     @Override
-    public NutsDescriptor parse(byte[] bytes) {
+    public NutsOptional<NutsDescriptor> parse(byte[] bytes) {
         return parse(new ByteArrayInputStream(bytes), true);
     }
 
     @Override
-    public NutsDescriptor parse(Path path) {
+    public NutsOptional<NutsDescriptor> parse(Path path) {
         checkSession();
         return parse(NutsPath.of(path, getSession()));
     }
 
     @Override
-    public NutsDescriptor parse(File file) {
+    public NutsOptional<NutsDescriptor> parse(File file) {
         checkSession();
         return parse(file.toPath());
     }
 
     @Override
-    public NutsDescriptor parse(InputStream stream) {
+    public NutsOptional<NutsDescriptor> parse(InputStream stream) {
         checkSession();
         return parse(stream, false);
     }
 
     @Override
-    public NutsDescriptor parse(NutsPath path) {
+    public NutsOptional<NutsDescriptor> parse(NutsPath path) {
         checkSession();
-        boolean startParsing = false;
         try {
-            try (InputStream is = path.getInputStream()) {
-                startParsing = true;
-                return parse(is, true);
-            } catch (NutsException ex) {
-                throw ex;
-            } catch (RuntimeException ex) {
-                throw new NutsParseException(getSession(), NutsMessage.cstyle("unable to parse url %s", path), ex);
+            boolean startParsing = false;
+            try {
+                try (InputStream is = path.getInputStream()) {
+                    startParsing = true;
+                    return parse(is, true);
+                } catch (RuntimeException ex) {
+                    return NutsOptional.ofError(session1 -> NutsMessage.cstyle("unable to parse descriptor from %s : %S", path,ex));
+                }
+            } catch (IOException ex) {
+                if (!startParsing) {
+                    return NutsOptional.ofError(session1 -> NutsMessage.cstyle("unable to parse descriptor from %s : file not found", path));
+                }
+                return NutsOptional.ofError(session1 -> NutsMessage.cstyle("unable to parse descriptor from %s : %S", path,ex));
             }
-        } catch (IOException ex) {
-            if (!startParsing) {
-                throw new NutsNotFoundException(getSession(), null, NutsMessage.cstyle("at file %s", path), null);
-            }
-            throw new NutsParseException(getSession(), NutsMessage.cstyle("unable to parse url %s", path), ex);
+        } catch (Exception ex) {
+            return NutsOptional.ofError(session1 -> NutsMessage.cstyle("unable to parse descriptor from %s : %s", path, ex));
         }
     }
 
     @Override
-    public NutsDescriptor parse(String str) {
+    public NutsOptional<NutsDescriptor> parse(String str) {
         checkSession();
         if (NutsBlankable.isBlank(str)) {
             return null;
@@ -102,17 +103,6 @@ public class DefaultNutsDescriptorParser implements NutsDescriptorParser {
     }
 
     @Override
-    public boolean isLenient() {
-        return lenient;
-    }
-
-    @Override
-    public NutsDescriptorParser setLenient(boolean lenient) {
-        this.lenient = lenient;
-        return this;
-    }
-
-    @Override
     public NutsSession getSession() {
         return session;
     }
@@ -128,15 +118,12 @@ public class DefaultNutsDescriptorParser implements NutsDescriptorParser {
         NutsSessionUtils.checkSession(getWorkspace(), getSession());
     }
 
-    private NutsDescriptor parse(InputStream in, boolean closeStream) {
-        if (isLenient()) {
-            try {
-                return parseNonLenient(in, closeStream);
-            } catch (Exception ex) {
-                return null;
-            }
+    private NutsOptional<NutsDescriptor> parse(InputStream in, boolean closeStream) {
+        try {
+            return NutsOptional.of(parseNonLenient(in, closeStream));
+        } catch (Exception ex) {
+            return NutsOptional.ofError(session1 -> NutsMessage.cstyle("unable to parse descriptor : %s", ex));
         }
-        return parseNonLenient(in, closeStream);
     }
 
     private NutsDescriptor parseNonLenient(InputStream in, boolean closeStream) {
@@ -214,7 +201,7 @@ public class DefaultNutsDescriptorParser implements NutsDescriptorParser {
                                         StringTokenizerUtils.splitSemiColon(nutsDependencies).stream()
                                                 .map(String::trim)
                                                 .filter(x -> x.length() > 0)
-                                                .map(x->NutsDependency.of(x).orNull())
+                                                .map(x -> NutsDependency.of(x).orNull())
                                                 .filter(Objects::nonNull)
                                                 .collect(Collectors.toCollection(LinkedHashSet::new));
                             }
@@ -234,7 +221,7 @@ public class DefaultNutsDescriptorParser implements NutsDescriptorParser {
                             ) {
                                 String groupId = automaticModuleName == null ? "" : CorePlatformUtils.getPackageName(automaticModuleName);
                                 String artifactId = automaticModuleName == null ? "" : CorePlatformUtils.getSimpleClassName(automaticModuleName);
-                                explicitId = new DefaultNutsIdBuilder().setGroupId(groupId).setArtifactId(artifactId)
+                                explicitId = NutsIdBuilder.of(groupId, artifactId)
                                         .setVersion(
                                                 NutsBlankable.isBlank(mainVersion) ? "1.0" : mainVersion.trim()
                                         ).build();
@@ -242,8 +229,8 @@ public class DefaultNutsDescriptorParser implements NutsDescriptorParser {
                         }
                         if (explicitId != null || !deps.isEmpty()) {
                             String nutsName = NutsUtilStrings.trimToNull(all.get("Nuts-Name"));
-                            if(nutsName==null){
-                                nutsName=implVendorTitle;
+                            if (nutsName == null) {
+                                nutsName = implVendorTitle;
                             }
                             return new DefaultNutsDescriptorBuilder()
                                     .setId(explicitId)
@@ -253,7 +240,7 @@ public class DefaultNutsDescriptorParser implements NutsDescriptorParser {
                                             StringTokenizerUtils.splitDefault(
                                                             all.get("Nuts-Flags")
                                                     ).stream()
-                                                    .map(x->NutsDescriptorFlag.parse(x).orNull())
+                                                    .map(x -> NutsDescriptorFlag.parse(x).orNull())
                                                     .filter(Objects::nonNull)
                                                     .toArray(NutsDescriptorFlag[]::new)
                                     )
@@ -290,10 +277,10 @@ public class DefaultNutsDescriptorParser implements NutsDescriptorParser {
                                             .collect(Collectors.toList()))
                                     //.setCondition()
                                     .setExecutor(new DefaultNutsArtifactCall(
-                                            NutsId.of("java").get( getSession()),
+                                            NutsId.of("java").get(getSession()),
                                             //new String[]{"-jar"}
                                             NutsBlankable.isBlank(mainClass) ? Collections.emptyList()
-                                                    :Arrays.asList(
+                                                    : Arrays.asList(
                                                     "--main-class=", mainClass
                                             )
                                     ))

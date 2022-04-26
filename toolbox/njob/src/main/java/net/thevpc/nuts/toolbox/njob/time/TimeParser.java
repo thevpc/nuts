@@ -122,26 +122,26 @@ public class TimeParser {
             boolean future = false;
             DecimalFormat D2 = new DecimalFormat("00");
             while (!a.isEmpty()) {
-                if (parseDates && (s = a.readMatchAnyCase("today|tonight|yesterday|tomorrow|sunday|monday|tuesday|wednesday|thursday|friday|saturday|sun|mon|tue|wed|thu|fri|sat")) != null) {
+                if (parseDates && (s = a.readMatchAnyCase("today|tonight|yesterday|tomorrow|sunday|monday|tuesday|wednesday|thursday|friday|saturday|sun|mon|tue|wed|thu|fri|sat"))!=null) {
                     day = s;
-                } else if ((s = a.readMatchAnyCase("next")) != null) {
+                } else if ((s = a.readMatchAnyCase("next"))!=null) {
                     future = true;
-                } else if ((s = a.readMatchAnyCase("last")) != null) {
+                } else if ((s = a.readMatchAnyCase("last"))!=null) {
                     future = false;
-                } else if ((s = a.readMatchAnyCase("this")) != null) {
+                } else if ((s = a.readMatchAnyCase("this"))!=null) {
                     day = "today";
-                } else if ((s = a.readMatchAnyCase("morning|afternoon|evening|night|sametime|samehour|same-time|same-hour|midnight|midday")) != null) {
+                } else if ((s = a.readMatchAnyCase("morning|afternoon|evening|night|sametime|samehour|same-time|same-hour|midnight|midday"))!=null) {
                     time = timeStringFromKeyword(s);
-                } else if ((s = a.readMatchAnyCase("[0-9]{2}:[0-9]{2}:[0-9]{2}")) != null) {
+                } else if ((s = a.readMatchAnyCase("[0-9]{2}:[0-9]{2}:[0-9]{2}"))!=null) {
                     time = s;
-                } else if ((s = a.readMatchAnyCase("[0-9]{2}[hH][0-9]{2}")) != null) {
+                } else if ((s = a.readMatchAnyCase("[0-9]{2}[hH][0-9]{2}"))!=null) {
                     time = s.replace("[hH]", ":") + ":00";
-                } else if ((s = a.readMatchAnyCase("[0-9]{1,2}[hH]")) != null) {
+                } else if ((s = a.readMatchAnyCase("[0-9]{1,2}[hH]"))!=null) {
                     time = s.replace("[hH]", ":") + ":00:00";
                     if (time.length() == 7) {
                         time = "0" + time;
                     }
-                } else if ((s = a.readMatchAnyCase("[0-9]{1,2}am")) != null) {
+                } else if ((s = a.readMatchAnyCase("[0-9]{1,2}am"))!=null) {
                     int i = Integer.parseInt(s.substring(0, s.length() - 2));
                     if (i == 12) {
                         i = 0;
@@ -150,7 +150,7 @@ public class TimeParser {
                     if (time.length() == 7) {
                         time = "0" + time;
                     }
-                } else if ((s = a.readMatchAnyCase("[0-9]{1,2}pm")) != null) {
+                } else if ((s = a.readMatchAnyCase("[0-9]{1,2}pm"))!=null) {
                     int t = Integer.parseInt(s.substring(0, s.length() - 2));
                     t = t + 12;
                     if (t == 24) {

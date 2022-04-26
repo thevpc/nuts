@@ -73,7 +73,7 @@ public class MavenRemoteXmlRepository extends MavenFolderRepository {
                                     continue;
                                 }
                                 ret.add(
-                                        new DefaultNutsIdBuilder().setGroupId(groupId).setArtifactId(artifactId).setVersion(version).build()
+                                        NutsIdBuilder.of(groupId,artifactId).setVersion(version).build()
                                 );
                             }
                         }

@@ -3,21 +3,13 @@ package net.thevpc.nuts.runtime.standalone.executor.exec;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.app.cmdline.NutsCommandLineUtils;
 import net.thevpc.nuts.runtime.standalone.executor.AbstractSyncIProcessExecHelper;
-import net.thevpc.nuts.runtime.standalone.executor.system.NutsSysExecUtils;
-import net.thevpc.nuts.runtime.standalone.executor.system.ProcessBuilder2;
-import net.thevpc.nuts.runtime.standalone.util.jclass.NutsJavaSdkUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
-import net.thevpc.nuts.runtime.standalone.xtra.expr.StringPlaceHolderParser;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
 import java.util.concurrent.Future;
-import java.util.concurrent.FutureTask;
-import java.util.function.Function;
 import java.util.logging.Level;
 
 public class NutsExecHelper extends AbstractSyncIProcessExecHelper {
@@ -93,14 +85,16 @@ public class NutsExecHelper extends AbstractSyncIProcessExecHelper {
 //        }
 
         NutsLogger _LL = NutsLogger.of(NutsWorkspaceUtils.class, session);
-        NutsCommandLine commandOut = NutsCommandLine.of(pb.getCommand(), session);
+        NutsCommandLine commandOut = NutsCommandLine.of(pb.getCommand());
         if (_LL.isLoggable(Level.FINEST)) {
             _LL.with().level(Level.FINE).verb(NutsLogVerb.START).log(
                     NutsMessage.jstyle("[exec] {0}",
                             commandOut
                     ));
         }
-        if (showCommand || session.boot().getBootCustomBoolArgument(false, false, false, "---show-command")) {
+        if (showCommand || session.boot().getCustomBootOption("---show-command")
+                .flatMap(NutsValue::asBoolean)
+                .orElse(false)) {
             if (prepareTerminal.out().mode() == NutsTerminalMode.FORMATTED) {
                 prepareTerminal.out().printf("%s ", NutsTexts.of(session).ofStyled("[exec]", NutsTextStyle.primary4()));
                 prepareTerminal.out().println(NutsTexts.of(session).toText(commandOut));

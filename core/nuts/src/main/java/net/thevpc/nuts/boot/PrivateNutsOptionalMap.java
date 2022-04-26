@@ -1,6 +1,5 @@
 package net.thevpc.nuts.boot;
 
-import net.thevpc.nuts.NutsBlankable;
 import net.thevpc.nuts.NutsMessage;
 import net.thevpc.nuts.NutsSession;
 

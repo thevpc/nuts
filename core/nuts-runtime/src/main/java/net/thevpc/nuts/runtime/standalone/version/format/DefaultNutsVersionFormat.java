@@ -27,31 +27,32 @@ public class DefaultNutsVersionFormat extends DefaultFormatBase<NutsVersionForma
     @Override
     public boolean configureFirst(NutsCommandLine cmdLine) {
         checkSession();
-        NutsArgument a = cmdLine.peek();
+        NutsSession session = getSession();
+        NutsArgument a = cmdLine.peek().get(session);
         if (a == null) {
             return false;
         }
         boolean enabled = a.isActive();
-        switch (a.getKey().getString()) {
+        switch(a.getStringKey().orElse("")) {
             case "-a":
             case "--all": {
-                boolean val = cmdLine.nextBoolean().getBooleanValue();
+                boolean val = cmdLine.nextBooleanValueLiteral().get(session);
                 if (enabled) {
                     this.all = val;
                 }
                 return true;
             }
             case "--add": {
-                NutsArgument aa = cmdLine.nextString();
-                NutsArgument r = NutsArgument.of(aa.getValue().getString(),getSession());
+                NutsArgument aa = cmdLine.nextString().get(session);
+                NutsArgument r = NutsArgument.of(aa.getStringValue().get(session));
                 if (enabled) {
                     this.all = true;
-                    extraProperties.put(r.getKey().getString(), r.getValue().getString());
+                    extraProperties.put(r.getKey().asString().get(session), r.getStringValue().get(session));
                 }
                 return true;
             }
             default: {
-                if (getSession().configureFirst(cmdLine)) {
+                if (session.configureFirst(cmdLine)) {
                     return true;
                 }
             }

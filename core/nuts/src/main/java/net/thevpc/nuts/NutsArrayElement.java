@@ -35,23 +35,17 @@ import java.util.stream.Stream;
  * @app.category Elements
  * @since 0.5.6
  */
-public interface NutsArrayElement extends NutsElement, Iterable<NutsElement> {
+public interface NutsArrayElement extends NutsNavigatableElement, Iterable<NutsElement> {
+    static NutsArrayElement ofEmpty(NutsSession session) {
+        return NutsElements.of(session).ofEmptyArray();
+    }
 
     /**
      * array items
      *
      * @return array items
      */
-    Collection<NutsElement> children();
-
-    /**
-     * element count
-     *
-     * @return element count
-     */
-    int size();
-
-    boolean isEmpty();
+    Collection<NutsElement> items();
 
     Stream<NutsElement> stream();
 
@@ -61,32 +55,33 @@ public interface NutsArrayElement extends NutsElement, Iterable<NutsElement> {
      * @param index index
      * @return element at index
      */
-    NutsElement get(int index);
+    NutsOptional<NutsElement> get(int index);
 
-    String getString(int index);
+    NutsOptional<String> getString(int index);
 
-    boolean getBoolean(int index);
+    NutsOptional<Boolean> getBoolean(int index);
 
-    byte getByte(int index);
+    NutsOptional<Byte> getByte(int index);
 
-    short getShort(int index);
+    NutsOptional<Short> getShort(int index);
 
-    int getInt(int index);
+    NutsOptional<Integer> getInt(int index);
 
-    long getLong(int index);
+    NutsOptional<Long> getLong(int index);
 
-    float getFloat(int index);
+    NutsOptional<Float> getFloat(int index);
 
-    double getDouble(int index);
+    NutsOptional<Double> getDouble(int index);
 
-    Instant getInstant(int index);
+    NutsOptional<Instant> getInstant(int index);
 
-    NutsArrayElement getArray(int index);
+    NutsOptional<NutsArrayElement> getArray(int index);
 
-    NutsObjectElement getObject(int index);
+    NutsOptional<NutsObjectElement> getObject(int index);
 
     /**
      * return new builder initialized with this instance
+     *
      * @return new builder initialized with this instance
      */
     NutsArrayElementBuilder builder();

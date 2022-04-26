@@ -32,7 +32,7 @@ public class NutsDescriptorUtils {
         if (list != null) {
             for (NutsDescriptorProperty property : list) {
                 if (property.getCondition() == null || property.getCondition().isBlank()) {
-                    m.put(property.getName(), property.getValue());
+                    m.put(property.getName(), property.getValue().asString().get(session));
                 } else {
                     throw new NutsIllegalArgumentException(session, NutsMessage.plain("unexpected properties with conditions. probably a bug"));
                 }
@@ -85,7 +85,7 @@ public class NutsDescriptorUtils {
             throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("invalid descriptor id %s:%s#%s", groupId, artifactId, version));
         }
         return nutsDescriptor.builder()
-                .setId(new DefaultNutsIdBuilder().setGroupId(groupId).setArtifactId(artifactId).setVersion(version).build())
+                .setId(NutsIdBuilder.of(groupId,artifactId).setVersion(version).build())
                 .build();
     }
 
@@ -168,7 +168,7 @@ public class NutsDescriptorUtils {
     }
 
     public static NutsId applyNutsIdProperties(NutsDescriptor d,NutsId child, Function<String, String> properties) {
-        return new DefaultNutsIdBuilder()
+        return NutsIdBuilder.of()
                 .setRepository(CoreNutsUtils.applyStringProperties(child.getRepository(), properties))
                 .setGroupId(CoreNutsUtils.applyStringProperties(child.getGroupId(), properties))
                 .setArtifactId(CoreNutsUtils.applyStringProperties(child.getArtifactId(), properties))
@@ -184,7 +184,7 @@ public class NutsDescriptorUtils {
         List<NutsId> exclusions = child.getExclusions().stream().map(
                 x->applyNutsIdProperties(d,x, properties)
         ).collect(Collectors.toList());
-        return new DefaultNutsDependencyBuilder()
+        return NutsDependencyBuilder.of()
                 .setRepository(CoreNutsUtils.applyStringProperties(child.getRepository(), properties))
                 .setGroupId(CoreNutsUtils.applyStringProperties(child.getGroupId(), properties))
                 .setArtifactId(CoreNutsUtils.applyStringProperties(child.getArtifactId(), properties))
@@ -323,7 +323,7 @@ public class NutsDescriptorUtils {
         NutsArtifactCall n_installer = b.getInstaller();
         PrivateNutsDefaultNutsProperties n_props = new PrivateNutsDefaultNutsProperties();
         for (NutsDescriptorProperty property : b.getProperties()) {
-            String v = property.getValue();
+            String v = property.getValue().asString().get(session);
             if (CoreStringUtils.containsVars("${")) {
                 n_props.add(property.builder().setValue(CoreNutsUtils.applyStringProperties(v, map))
                         .readOnly());

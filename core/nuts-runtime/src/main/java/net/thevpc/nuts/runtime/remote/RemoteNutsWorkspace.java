@@ -21,10 +21,9 @@ public abstract class RemoteNutsWorkspace extends AbstractNutsWorkspace {
             byte[] result = cli.request("nuts/ws:"+wsURL, json.toString().getBytes());
             NutsObjectElement resultObject = e.parse(result, NutsObjectElement.class);
             NutsElements prv = NutsElements.of(session);
-            boolean success = resultObject.get(prv.ofString("success")
-                    ).asPrimitive().getBoolean();
+            boolean success = resultObject.getBoolean("success").get(session);
             if (success) {
-                return resultObject.get(prv.ofString("body"));
+                return resultObject.get("body").orNull();
             } else {
                 //TODO mush deserialize exception
                 throw new NutsException(session, NutsMessage.cstyle("unable to call %s",
