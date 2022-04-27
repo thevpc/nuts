@@ -70,35 +70,6 @@ public class NutsUtilStrings {
         return t;
     }
 
-    public static Boolean parseBoolean(String value, Boolean emptyValue, Boolean errorValue) {
-        if (value == null || value.trim().isEmpty()) {
-            return emptyValue;
-        }
-        value = value.trim().toLowerCase();
-        if (value.matches("true|enable|enabled|yes|always|y|on|ok|t|o")) {
-            return true;
-        }
-        if (value.matches("false|disable|disabled|no|none|never|n|off|ko|f")) {
-            return false;
-        }
-        return errorValue;
-    }
-
-    public static NutsOptional<Boolean> parseBoolean(String value) {
-        if (value == null || value.trim().isEmpty()) {
-            return NutsOptional.ofEmpty(session -> NutsMessage.cstyle("empty boolean"));
-        }
-        value = value.trim().toLowerCase();
-        if (value.matches("true|enable|enabled|yes|always|y|on|ok|t|o")) {
-            return NutsOptional.of(true);
-        }
-        if (value.matches("false|disable|disabled|no|none|never|n|off|ko|f")) {
-            return NutsOptional.of(false);
-        }
-        String finalValue = value;
-        return NutsOptional.ofError(session -> NutsMessage.cstyle("invalid boolean %s", finalValue));
-    }
-
     public static String toHexString(byte[] bytes) {
         char[] hexChars = new char[bytes.length * 2];
         for (int j = 0; j < bytes.length; j++) {

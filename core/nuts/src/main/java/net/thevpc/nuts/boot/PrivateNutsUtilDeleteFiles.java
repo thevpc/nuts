@@ -200,7 +200,7 @@ class PrivateNutsUtilDeleteFiles {
                     refForceAll.setForce(true);
                 } else if ("c".equalsIgnoreCase(line)) {
                     throw new NutsUserCancelException(session);
-                } else if (!NutsUtilStrings.parseBoolean(line).orElse(false)) {
+                } else if (!NutsValue.of(line).asBoolean().orElse(false)) {
                     refForceAll.ignore(directory);
                     return 0;
                 }

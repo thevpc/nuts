@@ -385,7 +385,7 @@ public class DefaultNutsElements extends DefaultFormatBase<NutsElements> impleme
 
     @Override
     public NutsPrimitiveElement ofBoolean(String value) {
-        NutsOptional<Boolean> o = NutsUtilStrings.parseBoolean(value);
+        NutsOptional<Boolean> o = NutsValue.of(value).asBoolean();
         if(o.isEmpty()){
             return ofNull();
         }

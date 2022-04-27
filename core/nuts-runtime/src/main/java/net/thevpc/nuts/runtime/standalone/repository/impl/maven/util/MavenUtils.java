@@ -207,7 +207,7 @@ public class MavenUtils {
                     urlDesc == null ? "pom.xml" : urlDesc, session);
             Pom pom = new PomXmlParser(session).parse(bytesStream, session);
             LinkedHashSet<NutsDescriptorFlag> flags = new LinkedHashSet<>();
-            if (NutsUtilStrings.parseBoolean(pom.getProperties().get("nuts.executable")).orElse(false)) {
+            if (NutsValue.of(pom.getProperties().get("nuts.executable")).asBoolean().orElse(false)) {
                 flags.add(NutsDescriptorFlag.EXEC);
             } else {
                 final Element ee = pom.getXml().getDocumentElement();
@@ -227,15 +227,15 @@ public class MavenUtils {
                     flags.add(NutsDescriptorFlag.EXEC);
                 }
             }
-            if (NutsUtilStrings.parseBoolean(pom.getProperties().get("nuts.application")).orElse(false)) {
+            if (NutsValue.of(pom.getProperties().get("nuts.application")).asBoolean().orElse(false)) {
                 flags.add(NutsDescriptorFlag.APP);
                 flags.add(NutsDescriptorFlag.EXEC);
             }
-            if (NutsUtilStrings.parseBoolean(pom.getProperties().get("nuts.gui")).orElse(false)) {
+            if (NutsValue.of(pom.getProperties().get("nuts.gui")).asBoolean().orElse(false)) {
                 flags.add(NutsDescriptorFlag.GUI);
                 flags.add(NutsDescriptorFlag.EXEC);
             }
-            if (NutsUtilStrings.parseBoolean(pom.getProperties().get("nuts.term")).orElse(false)) {
+            if (NutsValue.of(pom.getProperties().get("nuts.term")).asBoolean().orElse(false)) {
                 flags.add(NutsDescriptorFlag.TERM);
                 flags.add(NutsDescriptorFlag.EXEC);
             }

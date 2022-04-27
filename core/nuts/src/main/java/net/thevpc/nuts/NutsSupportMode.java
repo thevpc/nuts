@@ -50,7 +50,7 @@ public enum NutsSupportMode implements NutsEnum {
                 case "always":
                     return NutsOptional.of(PREFERRED);
                 default: {
-                    Boolean b = NutsUtilStrings.parseBoolean(s).orNull();
+                    Boolean b = NutsValue.of(s).asBoolean().orNull();
                     if (b != null) {
                         return NutsOptional.of(b ? SUPPORTED : UNSUPPORTED);
                     }

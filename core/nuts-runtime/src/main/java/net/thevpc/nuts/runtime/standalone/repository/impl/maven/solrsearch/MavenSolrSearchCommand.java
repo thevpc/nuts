@@ -27,8 +27,10 @@ public class MavenSolrSearchCommand {
 
     public boolean isSolrSearchEnabled(NutsSession session) {
         NutsPath solrSearchUrl = getSolrSearchUrl(session);
-        return solrSearchUrl != null && NutsUtilStrings.parseBoolean(repo.config().setSession(session).getConfigProperty("maven.solrsearch.enable", null)
-                ).ifEmpty(true).orElse(false);
+        String configProperty = repo.config().setSession(session).getConfigProperty("maven.solrsearch.enable", null);
+        return solrSearchUrl != null
+                && NutsValue.of(configProperty).asBoolean()
+                .ifEmpty(true).orElse(false);
     }
 
     public NutsIterator<NutsId> search(NutsIdFilter filter, NutsId[] baseIds, NutsFetchMode fetchMode, NutsSession session) {

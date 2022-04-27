@@ -201,7 +201,17 @@ public class DefaultNutsValue implements NutsValue {
                 );
             }
         }
-        return NutsUtilStrings.parseBoolean(String.valueOf(value));
+        String svalue=String.valueOf(value).trim().toLowerCase();
+        if (svalue.isEmpty()) {
+            return NutsOptional.ofEmpty(session -> NutsMessage.cstyle("empty boolean"));
+        }
+        if (svalue.matches("true|enable|enabled|yes|always|y|on|ok|t|o")) {
+            return NutsOptional.of(true);
+        }
+        if (svalue.matches("false|disable|disabled|no|none|never|n|off|ko|f")) {
+            return NutsOptional.of(false);
+        }
+        return NutsOptional.ofError(session -> NutsMessage.cstyle("invalid boolean % ",svalue));
     }
 
     @Override

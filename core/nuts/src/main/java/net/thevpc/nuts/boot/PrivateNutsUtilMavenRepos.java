@@ -346,7 +346,8 @@ public final class PrivateNutsUtilMavenRepos {
                                                 artifactId,
                                                 NutsVersion.of(version).get()).get()
                                                 .builder()
-                                                .setProperty(NutsConstants.IdProperties.OPTIONAL, "" + NutsUtilStrings.parseBoolean(optional).orElse(false))
+                                                .setProperty(NutsConstants.IdProperties.OPTIONAL, "" +
+                                                        NutsValue.of(optional).asBoolean().orElse(false))
                                                 .setCondition(
                                                         new DefaultNutsEnvConditionBuilder()
                                                                 .setOs(Arrays.asList(osMap.get(groupId + ":" + artifactId)))

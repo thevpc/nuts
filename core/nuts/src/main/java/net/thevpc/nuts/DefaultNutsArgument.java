@@ -217,9 +217,9 @@ public class DefaultNutsArgument implements NutsArgument {
     @Override
     public NutsOptional<Boolean> getBooleanValue() {
         if (isNegated()) {
-            return NutsUtilStrings.parseBoolean(value).ifEmpty(true).map(x -> isNegated() != x);
+            return getValue().asBoolean().ifEmpty(true).map(x -> isNegated() != x);
         }
-        return NutsUtilStrings.parseBoolean(value);
+        return getValue().asBoolean();
     }
 
     @Override

@@ -119,7 +119,7 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
         NutsArgument a = cmdLine.peek().orNull();
         if (a != null) {
             boolean active = a.isActive();
-            switch(a.getStringKey().orElse("")) {
+            switch (a.getStringKey().orElse("")) {
                 case "-T":
                 case "--output-format-option": {
                     a = cmdLine.nextString().get(this);
@@ -277,17 +277,17 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
                     NutsArgument v = cmdLine.next().get(this);
                     if (active) {
                         String s = v.getStringValue().get(this);
-                        if(a.isNegated()){
-                            Boolean q = NutsUtilStrings.parseBoolean(s).ifEmpty(true).orNull();
-                            if(q==null){
-                                if(NutsBlankable.isBlank(s)){
-                                    s="false";
-                                }else{
-                                    s="false,"+s;
+                        if (a.isNegated()) {
+                            Boolean q = NutsValue.of(s).asBoolean().ifEmpty(true).orNull();
+                            if (q == null) {
+                                if (NutsBlankable.isBlank(s)) {
+                                    s = "false";
+                                } else {
+                                    s = "false," + s;
                                 }
                             }
                             this.setProgressOptions(s);
-                        }else {
+                        } else {
                             this.setProgressOptions(s);
                         }
                         this.setProgressOptions(s);
@@ -297,15 +297,16 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
                 case "--debug": {
                     a = cmdLine.next().get(this);
                     if (active) {
-                        if(NutsBlankable.isBlank(a.getStringValue())){
+                        if (NutsBlankable.isBlank(a.getStringValue())) {
                             this.setDebug(String.valueOf(a.isEnabled()));
-                        }else {
-                            if(a.isNegated()){
+                        } else {
+                            if (a.isNegated()) {
                                 this.setDebug(
-                                        String.valueOf(!NutsUtilStrings.parseBoolean(a.getStringValue().get(this))
-                                                .ifEmpty(true).orElse(false)
+                                        String.valueOf(!
+                                                NutsValue.of(a.getStringValue().get(this)).asBoolean()
+                                                        .ifEmpty(true).orElse(false)
                                         ));
-                            }else {
+                            } else {
                                 this.setDebug(a.getStringValue().get(this));
                             }
                         }
@@ -719,7 +720,7 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
         try {
             DefaultNutsSession cloned = (DefaultNutsSession) clone();
             cloned.ws = new NutsWorkspaceSessionAwareImpl(cloned, ws);
-            cloned.terminal = terminal == null ? null : NutsSessionTerminal.of(terminal,cloned);
+            cloned.terminal = terminal == null ? null : NutsSessionTerminal.of(terminal, cloned);
             cloned.properties = properties == null ? null : properties.copy();
             cloned.outputFormatOptions = outputFormatOptions == null ? null : new ArrayList<>(outputFormatOptions);
             cloned.listeners = null;
@@ -800,7 +801,7 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
                 this.logFileLevel = logConfig.getLogFileLevel();
                 this.logFileFilter = logConfig.getLogFileFilter();
             }
-            this.dependencySolver=options.getDependencySolver();
+            this.dependencySolver = options.getDependencySolver();
         }
         return this;
     }
@@ -882,7 +883,7 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
         if (listeners != null) {
             LinkedHashSet<NutsListener> tt = listeners.get(type);
             if (tt != null) {
-                return new ArrayList<>((Collection)tt);
+                return new ArrayList<>((Collection) tt);
             }
         }
         return Collections.emptyList();
@@ -1502,9 +1503,9 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
         return this;
     }
 
-    private void parseLogLevel( NutsCommandLine cmdLine, boolean enabled) {
+    private void parseLogLevel(NutsCommandLine cmdLine, boolean enabled) {
         NutsArgument a = cmdLine.peek().get(this);
-        switch(a.getStringKey().orElse("")) {
+        switch (a.getStringKey().orElse("")) {
             //these options are just ignored!
 //            case "--log-file-size": {
 //                a = cmdLine.nextString();

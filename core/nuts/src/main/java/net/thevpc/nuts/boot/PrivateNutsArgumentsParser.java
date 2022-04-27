@@ -428,7 +428,7 @@ public final class PrivateNutsArgumentsParser {
                             if (v.isEmpty()) {
                                 options.setTerminalMode(a.isNegated() ? NutsTerminalMode.FILTERED : NutsTerminalMode.FORMATTED);
                             } else {
-                                Boolean b = NutsUtilStrings.parseBoolean(v).orNull();
+                                Boolean b = NutsValue.of(v).asBoolean().orNull();
                                 if (b != null) {
                                     if (b) {
                                         options.setTerminalMode(a.isNegated() ? NutsTerminalMode.FILTERED : NutsTerminalMode.FORMATTED);
@@ -501,7 +501,7 @@ public final class PrivateNutsArgumentsParser {
                         if (active) {
                             String s = a.getStringValue().get(session);
                             if (a.isNegated()) {
-                                Boolean q = NutsUtilStrings.parseBoolean(s).ifEmpty(true).orNull();
+                                Boolean q = NutsValue.of(s).asBoolean().ifEmpty(true).orNull();
                                 if (q == null) {
                                     if (NutsBlankable.isBlank(s)) {
                                         s = "false";
@@ -541,7 +541,8 @@ public final class PrivateNutsArgumentsParser {
                             } else {
                                 if (a.isNegated()) {
                                     options.setDebug(
-                                            String.valueOf(!NutsUtilStrings.parseBoolean(a.getStringValue().get(session))
+                                            String.valueOf(!
+                                                            NutsValue.of(a.getStringValue().get(session)).asBoolean()
                                                     .ifEmpty(true).ifError(false).get()));
                                 } else {
                                     options.setDebug(a.getStringValue().get(session));

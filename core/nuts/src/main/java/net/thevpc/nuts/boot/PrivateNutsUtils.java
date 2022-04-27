@@ -166,8 +166,8 @@ public final class PrivateNutsUtils {
 
     public static boolean getSysBoolNutsProperty(String property, boolean defaultValue) {
         return
-                NutsUtilStrings.parseBoolean(System.getProperty("nuts." + property)).ifEmpty(defaultValue).orElse(false)
-                        || NutsUtilStrings.parseBoolean(System.getProperty("nuts.export." + property)).ifEmpty(defaultValue).orElse(false)
+                NutsValue.of(System.getProperty("nuts." + property)).asBoolean().ifEmpty(defaultValue).orElse(false)
+                        || NutsValue.of(System.getProperty("nuts.export." + property)).asBoolean().ifEmpty(defaultValue).orElse(false)
                 ;
     }
 

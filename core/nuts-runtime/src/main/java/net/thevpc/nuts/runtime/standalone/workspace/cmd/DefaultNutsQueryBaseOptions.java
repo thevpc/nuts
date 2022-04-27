@@ -315,7 +315,9 @@ public abstract class DefaultNutsQueryBaseOptions<T extends NutsWorkspaceCommand
             case "--optional": {
                 NutsArgument v = cmdLine.nextString().get(session);
                 if (enabled) {
-                    this.setOptional(NutsUtilStrings.parseBoolean(v.asString().get(session)).orNull());
+                    this.setOptional(
+                            NutsValue.of(v.asString().get(session)).asBoolean()
+                            .orNull());
                 }
                 return true;
             }
