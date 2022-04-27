@@ -206,7 +206,7 @@ public abstract class AbstractNutsElement implements NutsElement {
     }
 
     @Override
-    public Object getObject() {
+    public Object getRaw() {
         if (isPrimitive()) {
             return asPrimitive().get();
         }

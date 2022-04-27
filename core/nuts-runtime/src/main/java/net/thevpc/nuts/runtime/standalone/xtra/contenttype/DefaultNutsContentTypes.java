@@ -9,7 +9,10 @@ import java.io.File;
 import java.io.InputStream;
 import java.net.URL;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class DefaultNutsContentTypes implements NutsContentTypes {
     private final NutsSession session;
@@ -52,6 +55,34 @@ public class DefaultNutsContentTypes implements NutsContentTypes {
             return null;
         }
         return best.getValue();
+    }
+
+    @Override
+    public List<String> findExtensionsByContentType(String contentType) {
+        List<NutsContentTypeResolver> allSupported = session.extensions()
+                .createAllSupported(NutsContentTypeResolver.class, null);
+        LinkedHashSet<String> all = new LinkedHashSet<>();
+        for (NutsContentTypeResolver r : allSupported) {
+            List<String> s = r.findExtensionsByContentType(contentType, session);
+            if (s != null) {
+                all.addAll(s.stream().filter(x->!NutsBlankable.isBlank(x)).collect(Collectors.toList()));
+            }
+        }
+        return new ArrayList<>(all);
+    }
+
+    @Override
+    public List<String> findContentTypesByExtension(String extension) {
+        List<NutsContentTypeResolver> allSupported = session.extensions()
+                .createAllSupported(NutsContentTypeResolver.class, null);
+        LinkedHashSet<String> all = new LinkedHashSet<>();
+        for (NutsContentTypeResolver r : allSupported) {
+            List<String> s = r.findContentTypesByExtension(extension, session);
+            if (s != null) {
+                all.addAll(s.stream().filter(NutsBlankable::isBlank).collect(Collectors.toList()));
+            }
+        }
+        return new ArrayList<>(all);
     }
 
     @Override

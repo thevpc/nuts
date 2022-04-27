@@ -1667,7 +1667,8 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
     public NutsDescriptor resolveEffectiveDescriptor(NutsDescriptor descriptor, NutsSession session) {
         NutsPath eff = null;
         NutsWorkspaceLocationManager loc = session.locations().setSession(session);
-        if (!descriptor.getId().getVersion().isBlank() && descriptor.getId().getVersion().isSingleValue() && descriptor.getId().toString().indexOf('$') < 0) {
+        if (!descriptor.getId().getVersion().isBlank() && descriptor.getId().getVersion().isSingleValue()
+                && descriptor.getId().toString().indexOf('$') < 0) {
             NutsPath l = loc.getStoreLocation(descriptor.getId(), NutsStoreLocation.CACHE);
             String nn = loc.getDefaultIdFilename(descriptor.getId().builder().setFace("eff-nuts.cache").build());
             eff = l.resolve(nn);

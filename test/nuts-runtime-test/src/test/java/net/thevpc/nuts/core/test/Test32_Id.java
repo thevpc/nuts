@@ -20,7 +20,7 @@ import java.util.Map;
 /**
  * @author thevpc
  */
-public class Test32_NutsId {
+public class Test32_Id {
 
     static NutsSession session;
 

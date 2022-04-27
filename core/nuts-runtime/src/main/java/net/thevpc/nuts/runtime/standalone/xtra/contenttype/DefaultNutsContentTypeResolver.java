@@ -26,21 +26,45 @@
  */
 package net.thevpc.nuts.runtime.standalone.xtra.contenttype;
 
+import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.standalone.io.util.ZipUtils;
 import net.thevpc.nuts.spi.NutsContentTypeResolver;
-import net.thevpc.nuts.NutsPath;
-import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.NutsSupported;
 import net.thevpc.nuts.spi.NutsSupportLevelContext;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.UncheckedIOException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.*;
 
 public class DefaultNutsContentTypeResolver implements NutsContentTypeResolver {
+    private Map<String, Set<String>> contentTypesToExtensions;
+    private Map<String, Set<String>> extensionsToContentType;
+
+    public DefaultNutsContentTypeResolver() {
+        contentTypesToExtensions=new HashMap<>();
+        extensionsToContentType=new HashMap<>();
+        Properties p=new Properties();
+        try(InputStream is=getClass().getResource("/net/thevpc/nuts/runtime/content-types.properties").openStream()){
+            p.load(is);
+        }catch (IOException ex){
+            throw new UncheckedIOException(ex);
+        }
+        for (Map.Entry<Object, Object> e : p.entrySet()) {
+            String extension=(String)e.getKey();
+            for (String contentType : NutsUtilStrings.split((String) e.getValue(), ",; ")) {
+                contentTypesToExtensions.computeIfAbsent(contentType,x->new LinkedHashSet<>())
+                        .add(extension);
+                extensionsToContentType.computeIfAbsent(extension,x->new LinkedHashSet<>())
+                        .add(contentType);
+            }
+        }
+    }
 
     public NutsSupported<String> probeContentType(NutsPath path, NutsSession session) {
         String contentType = null;
@@ -48,11 +72,7 @@ public class DefaultNutsContentTypeResolver implements NutsContentTypeResolver {
             if (path.isFile()) {
                 Path file = path.asFile();
                 if (file != null) {
-                    try {
-                        contentType = Files.probeContentType(file);
-                    } catch (IOException e) {
-                        //ignore
-                    }
+                    contentType = probeFile(file,session);
                 }
             }
             if (contentType == null) {
@@ -92,6 +112,49 @@ public class DefaultNutsContentTypeResolver implements NutsContentTypeResolver {
         return NutsSupported.invalid();
     }
 
+    private String probeFile(Path file,NutsSession session){
+        String contentType=null;
+        try {
+            contentType = Files.probeContentType(file);
+        } catch (IOException e) {
+            //ignore
+        }
+        if(contentType!=null){
+            switch (contentType){
+                case "application/zip":{
+                    NutsRef<Boolean> isJar=new NutsRef<>(false);
+                    NutsRef<Boolean> isWar=new NutsRef<>(false);
+                    ZipUtils.visitZipStream(file,(path, inputStream) -> {
+                        switch (path){
+                            case "META-INF/MANIFEST.MF":{
+                                isJar.set(true);
+                                if(isJar.orElse(false) && isWar.orElse(false)){
+                                    return false;
+                                }
+                                break;
+                            }
+                            case "WEB-INF/web.xml":{
+                                isWar.set(true);
+                                if(isJar.orElse(false) && isWar.orElse(false)){
+                                    return false;
+                                }
+                                break;
+                            }
+                        }
+                        return true;
+                    },session);
+                    if(isWar.get()){
+                        return "application/x-webarchive";
+                    }
+                    if(isJar.get()){
+                        return "application/java-archive";
+                    }
+                }
+            }
+        }
+        return contentType;
+    }
+
 
     @Override
     public NutsSupported<String> probeContentType(byte[] bytes, NutsSession session) {
@@ -107,6 +170,18 @@ public class DefaultNutsContentTypeResolver implements NutsContentTypeResolver {
             return NutsSupported.of(DEFAULT_SUPPORT, contentType);
         }
         return NutsSupported.invalid();
+    }
+
+    @Override
+    public List<String> findExtensionsByContentType(String contentType, NutsSession session) {
+        Set<String> v = contentTypesToExtensions.get(contentType);
+        return v==null?Collections.emptyList():new ArrayList<>(v);
+    }
+
+    @Override
+    public List<String> findContentTypesByExtension(String extension, NutsSession session) {
+        Set<String> v = extensionsToContentType.get(extension);
+        return v==null?Collections.emptyList():new ArrayList<>(v);
     }
 
     @Override

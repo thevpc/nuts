@@ -38,8 +38,9 @@ public class Test23_PerfTest {
     int nbr = 10;
 
     /**
-     * ROGUEi7-2021-11-24 ) avg: 8155ms 8915ms 9060ms
-     * ROGUEi7-2021-11-24 ) avg: 3035ms? 3681ms 3733,3790ms, 4061ms
+     * ROGUEi7 - 2021-11-24 ) avg: 8155ms 8915ms 9060ms
+     * ROGUEi7 - 2021-11-24 ) avg: 3035ms 3681ms 3733ms 3790ms 4061ms
+     * OMENi9  - 2021-04-26 ) avg: 2471ms
      */
     @Test
     public void testPerf() {

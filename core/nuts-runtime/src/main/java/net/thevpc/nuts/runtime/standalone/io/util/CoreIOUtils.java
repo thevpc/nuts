@@ -836,11 +836,12 @@ public class CoreIOUtils {
         return buffer.toString();
     }
 
-    public static Path toPathInputSource(NutsStreamOrPath is, List<Path> tempPaths, NutsSession session) {
+    public static Path toPathInputSource(NutsStreamOrPath is, List<Path> tempPaths, boolean enforceExtension,NutsSession session) {
         if (is.isPath() && is.getPath().isFile()) {
             return is.getPath().toFile();
         }
-        Path temp = NutsTmp.of(session)
+        NutsTmp tmps = NutsTmp.of(session);
+        Path temp = tmps
                 .createTempFile(is.getName()).toFile();
         NutsCp a = NutsCp.of(session).removeOptions(NutsPathOption.SAFE);
         if (is.isPath()) {
@@ -849,6 +850,29 @@ public class CoreIOUtils {
             a.from(is.getInputStream());
         }
         a.to(temp).setSession(session).run();
+
+        if(enforceExtension){
+            NutsPath pp = NutsPath.of(temp, session);
+            String ext = pp.getLastExtension();
+            if(ext.isEmpty()){
+                NutsContentTypes ctt = NutsContentTypes.of(session);
+                String ct = ctt.probeContentType(temp);
+                if(ct!=null){
+                    List<String> e = ctt.findExtensionsByContentType(ct);
+                    if(!e.isEmpty()){
+                        NutsPath newFile = tmps.createTempFile(is.getName() + "." + e.get(0));
+                        Path newFilePath = newFile.toFile();
+                        try {
+                            Files.move(temp, newFilePath,StandardCopyOption.REPLACE_EXISTING);
+                        } catch (IOException ex) {
+                            throw new NutsIOException(session,ex);
+                        }
+                        tempPaths.add(newFilePath);
+                        return newFilePath;
+                    }
+                }
+            }
+        }
         tempPaths.add(temp);
         return temp;
     }

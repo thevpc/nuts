@@ -222,10 +222,12 @@ public abstract class NutsFolderRepositoryBase extends NutsCachedRepository {
     }
 
     public NutsIterator<NutsId> findSingleVersionImpl(final NutsId id, NutsIdFilter idFilter, NutsFetchMode fetchMode, final NutsSession session) {
-        if (id.getVersion().isSingleValue()) {
+        String singleVersion = id.getVersion().asSingleValue().orNull();
+        if (singleVersion!=null) {
             String groupId = id.getGroupId();
             String artifactId = id.getArtifactId();
-            NutsPath metadataURL = config().setSession(session).getLocationPath().resolve(groupId.replace('.', '/') + "/" + artifactId + "/" + id.getVersion().toString() + "/"
+            NutsPath metadataURL = config().setSession(session).getLocationPath()
+                    .resolve(groupId.replace('.', '/') + "/" + artifactId + "/" + singleVersion + "/"
                     + getIdFilename(id.builder().setFaceDescriptor().build(), session)
             );
             return IteratorBuilder.ofSupplier(

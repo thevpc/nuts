@@ -2,7 +2,7 @@ package net.thevpc.nuts.boot;
 
 import net.thevpc.nuts.*;
 
-import java.util.NoSuchElementException;
+import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -11,10 +11,6 @@ import java.util.function.Supplier;
 public abstract class PrivateNutsOptionalImpl<T> implements NutsOptional<T> {
 
     public PrivateNutsOptionalImpl() {
-    }
-
-    public <V> PrivateNutsOptionalImpl<V> asEmpty() {
-        return new PrivateNutsOptionalEmpty<>(getMessage(), false);
     }
 
     public T get() {
@@ -27,26 +23,52 @@ public abstract class PrivateNutsOptionalImpl<T> implements NutsOptional<T> {
     }
 
     public <V> NutsOptional<V> flatMap(Function<T, NutsOptional<V>> mapper) {
-        return new PrivateNutsOptionalFlatMap<>(mapper, this);
+        Objects.requireNonNull(mapper);
+        if (isPresent()){
+            return Objects.requireNonNull(mapper.apply(get()));
+        }
+        return (NutsOptional) this;
     }
 
     public <V> NutsOptional<V> map(Function<T, V> mapper) {
-        return new PrivateNutsOptionalMap(mapper, this);
+        Objects.requireNonNull(mapper);
+        if (isPresent()) {
+            return NutsOptional.of(mapper.apply(get()));
+        }
+        return (NutsOptional) this;
     }
 
-    public <V> NutsOptional<V> filter(NutsMessagedPredicate<T> p) {
-        return new PrivateNutsOptionalFilter(p.filter(), this, p.message());
+    public NutsOptional<T> filter(NutsMessagedPredicate<T> predicate) {
+        Objects.requireNonNull(predicate);
+        Predicate<T> filter = predicate.filter();
+        Objects.requireNonNull(filter);
+        if (isPresent()) {
+            return filter.test(get()) ? this : NutsOptional.ofEmpty(predicate.message());
+        }
+        return this;
     }
 
-    public <V> NutsOptional<V> filter(Predicate<T> filter, Function<NutsSession, NutsMessage> message) {
-        return new PrivateNutsOptionalFilter(filter, this, message);
+    public NutsOptional<T> filter(Predicate<T> predicate, Function<NutsSession, NutsMessage> message) {
+        Objects.requireNonNull(predicate);
+        if (isPresent()) {
+            return predicate.test(get()) ? this : NutsOptional.ofEmpty(message);
+        }
+        return this;
     }
 
     public NutsOptional<T> ifPresent(Consumer<T> t) {
         if (isPresent()) {
-            t.accept(get(null));
+            t.accept(get());
         }
         return this;
+    }
+
+    public <R extends Throwable> T orElseThrow(Supplier<? extends R> exceptionSupplier) throws R {
+        if (isPresent()) {
+            return get();
+        } else {
+            throw exceptionSupplier.get();
+        }
     }
 
     @Override
@@ -100,7 +122,7 @@ public abstract class PrivateNutsOptionalImpl<T> implements NutsOptional<T> {
             if (NutsBlankable.isBlank(v)) {
                 return other.get();
             }
-        }else if(isEmpty()){
+        } else if (isEmpty()) {
             return other.get();
         }
         return this;
@@ -129,10 +151,20 @@ public abstract class PrivateNutsOptionalImpl<T> implements NutsOptional<T> {
             if (NutsBlankable.isBlank(v)) {
                 return NutsOptional.of(other);
             }
-        }else if(isEmpty()){
+        } else if (isEmpty()) {
             return NutsOptional.of(other);
         }
         return this;
+    }
+
+    @Override
+    public NutsOptional<T> ifEmptyNull() {
+        return ifEmpty(null);
+    }
+
+    @Override
+    public NutsOptional<T> ifErrorNull() {
+        return ifError(null);
     }
 
     @Override
@@ -154,6 +186,11 @@ public abstract class PrivateNutsOptionalImpl<T> implements NutsOptional<T> {
     @Override
     public T orNull() {
         return orElse(null);
+    }
+
+    @Override
+    public boolean isNotPresent() {
+        return !isPresent();
     }
 
 }

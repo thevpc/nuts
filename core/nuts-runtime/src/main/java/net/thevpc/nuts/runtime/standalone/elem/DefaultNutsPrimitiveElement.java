@@ -28,6 +28,7 @@ import net.thevpc.nuts.*;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.time.Instant;
+import java.util.Objects;
 
 /**
  * @author thevpc
@@ -42,8 +43,8 @@ class DefaultNutsPrimitiveElement extends AbstractNutsElement implements NutsPri
 
 
     @Override
-    public Object getObject() {
-        return value.getObject();
+    public Object getRaw() {
+        return value.getRaw();
     }
 
     @Override
@@ -166,6 +167,21 @@ class DefaultNutsPrimitiveElement extends AbstractNutsElement implements NutsPri
         return value.isNumber();
     }
 
+    @Override
+    public String toString() {
+        return String.valueOf(value);
+    }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        DefaultNutsPrimitiveElement that = (DefaultNutsPrimitiveElement) o;
+        return Objects.equals(value, that.value);
+    }
 
+    @Override
+    public int hashCode() {
+        return Objects.hash(value);
+    }
 }

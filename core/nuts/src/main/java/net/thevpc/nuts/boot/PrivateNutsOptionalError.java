@@ -5,13 +5,27 @@ import net.thevpc.nuts.*;
 import java.util.NoSuchElementException;
 import java.util.function.Function;
 
-public class PrivateNutsOptionalEmpty<T> extends PrivateNutsOptionalImpl<T> {
+public class PrivateNutsOptionalError<T> extends PrivateNutsOptionalImpl<T> {
     private Function<NutsSession, NutsMessage> message;
-    public PrivateNutsOptionalEmpty(Function<NutsSession, NutsMessage> message) {
+    private Throwable error;
+
+    public PrivateNutsOptionalError(Function<NutsSession, NutsMessage> message, Throwable error) {
         if (message == null) {
-            message = (s) -> NutsMessage.cstyle("missing value");
+            message = (s) -> {
+                Throwable error1 = PrivateNutsOptionalError.this.error;
+                if(error1==null) {
+                    return NutsMessage.cstyle("erroneous value");
+                }else{
+                    return NutsMessage.cstyle("erroneous value : %s",PrivateNutsUtilErrors.getErrorMessage(error));
+                }
+            };
         }
         this.message = message;
+        this.error = error;
+    }
+
+    public Throwable getError() {
+        return error;
     }
 
     @Override
@@ -19,7 +33,7 @@ public class PrivateNutsOptionalEmpty<T> extends PrivateNutsOptionalImpl<T> {
         if (session == null) {
             throw new NoSuchElementException(message.apply(null).toString());
         } else {
-            throw new NutsNoSuchElementException(session, message.apply(session));
+            throw new NutsOptionalErrorException(session, message.apply(session));
         }
     }
 
@@ -37,7 +51,7 @@ public class PrivateNutsOptionalEmpty<T> extends PrivateNutsOptionalImpl<T> {
 
     @Override
     public boolean isError() {
-        return false;
+        return true;
     }
 
     @Override
@@ -47,7 +61,7 @@ public class PrivateNutsOptionalEmpty<T> extends PrivateNutsOptionalImpl<T> {
 
     @Override
     public boolean isEmpty() {
-        return true;
+        return false;
     }
 
     @Override
@@ -59,9 +73,8 @@ public class PrivateNutsOptionalEmpty<T> extends PrivateNutsOptionalImpl<T> {
     public Function<NutsSession, NutsMessage> getMessage() {
         return message;
     }
-
     @Override
     public boolean isBlank() {
-        return true;
+        return false;
     }
 }

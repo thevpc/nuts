@@ -232,7 +232,7 @@ public class Test14_CommandLineTest {
     public void testArgument12(){
         String s="-Dcatalina.base=/home/vpc/.config/nuts/default-workspace/config/id/net/thevpc/nuts/toolbox/ntomcat/SHARED/catalina-base-10.0/default";
         DefaultNutsArgument a=new DefaultNutsArgument(s);
-        Assertions.assertEquals("-Dcatalina.base",a.getStringKey());
+        Assertions.assertEquals("-Dcatalina.base",a.getStringKey().get());
     }
 
     private static void checkDefaultNutsArgument(NutsArgument a, boolean active, boolean option, boolean keyValue, boolean negated
@@ -242,15 +242,16 @@ public class Test14_CommandLineTest {
             , String optionPrefix
             , String eq
     ){
-        Assertions.assertEquals(option,a.isOption(),"Option:"+a.asString());
-        Assertions.assertEquals(active,a.isActive(),"Enabled:"+a.asString());
-        Assertions.assertEquals(keyValue,a.isKeyValue(),"KeyValue:"+a.asString());
-        Assertions.assertEquals(negated,a.isNegated(),"Negated:"+a.asString());
-        Assertions.assertEquals(key,a.getKey().asString(),"StringKey:"+a.asString());
-        Assertions.assertEquals(value,a.getStringValue(),"StringValue:"+a.asString());
-        Assertions.assertEquals(optionName,a.getOptionName().asString(),"StringOptionName:"+a.asString());
-        Assertions.assertEquals(optionPrefix,a.getOptionPrefix().asString(),"StringOptionPrefix:"+a.asString());
-        Assertions.assertEquals(eq,a.getSeparator(),"KeyValueSeparator:"+a.asString());
-        TestUtils.println("OK : "+a.asString());
+        String s = a.asString().orNull();
+        Assertions.assertEquals(option,a.isOption(),"Option:"+ s);
+        Assertions.assertEquals(active,a.isActive(),"Enabled:"+ s);
+        Assertions.assertEquals(keyValue,a.isKeyValue(),"KeyValue:"+ s);
+        Assertions.assertEquals(negated,a.isNegated(),"Negated:"+ s);
+        Assertions.assertEquals(key,a.getKey().asString().orNull(),"StringKey:"+ s);
+        Assertions.assertEquals(value,a.getStringValue().orNull(),"StringValue:"+ s);
+        Assertions.assertEquals(optionName,a.getOptionName().asString().orNull(),"StringOptionName:"+ s);
+        Assertions.assertEquals(optionPrefix,a.getOptionPrefix().asString().orNull(),"StringOptionPrefix:"+ s);
+        Assertions.assertEquals(eq,a.getSeparator(),"KeyValueSeparator:"+ s);
+        TestUtils.println("OK : "+ s);
     }
 }

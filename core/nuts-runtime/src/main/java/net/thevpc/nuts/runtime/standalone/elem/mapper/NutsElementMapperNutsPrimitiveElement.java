@@ -11,7 +11,7 @@ public class NutsElementMapperNutsPrimitiveElement implements NutsElementMapper<
 
     @Override
     public Object destruct(NutsPrimitiveElement src, Type typeOfSrc, NutsElementFactoryContext context) {
-        return src.getObject();
+        return src.getRaw();
     }
 
     @Override

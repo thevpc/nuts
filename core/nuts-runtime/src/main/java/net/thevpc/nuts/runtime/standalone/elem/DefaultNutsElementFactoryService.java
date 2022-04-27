@@ -166,17 +166,19 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
         setCoreMapper(NutsArtifactCall.class, F_ARTIFACT_CALL);
         setCoreMapper(NutsPlatformLocation.class, F_NUTS_SDK_LOCATION);
         setCoreMapper(NutsEnvCondition.class, F_NUTS_ENV_CONDITION);
-        setCoreMapper(DefaultNutsEnvConditionBuilder.class, F_NUTS_ENV_CONDITION_BUILDER);
+        setCoreMapper(NutsEnvConditionBuilder.class, F_NUTS_ENV_CONDITION_BUILDER);
         setCoreMapper(NutsDescriptorProperty.class, F_DESCRIPTOR_PROPERTY);
-        setCoreMapper(DefaultNutsDescriptorPropertyBuilder.class, F_DESCRIPTOR_PROPERTY_BUILDER);
+        setCoreMapper(NutsDescriptorPropertyBuilder.class, F_DESCRIPTOR_PROPERTY_BUILDER);
         setCoreMapper(NutsEnum.class, F_NUTS_ENUM);
         setCoreMapper(NutsRepositoryLocation.class, F_NUTS_REPO_LOCATION);
+        setCoreMapper(NutsValue.class, new NutsElementMapperNutsValue());
         this.ws = ws;
         this.session = session;
     }
 
     public final void addDefaultMapper(Class cls, NutsElementMapper instance) {
         defaultMappers.put(cls, instance);
+        setCoreMapper(cls,instance);
     }
 
     public final void setCoreMapper(Class cls, NutsElementMapper instance) {

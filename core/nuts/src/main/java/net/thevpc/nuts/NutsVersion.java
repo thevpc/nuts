@@ -145,6 +145,8 @@ public interface NutsVersion extends Serializable, /*NutsTokenFilter, */NutsForm
      */
     boolean isSingleValue();
 
+    NutsOptional<String> asSingleValue();
+
     /**
      * return true if this is a filter
      *

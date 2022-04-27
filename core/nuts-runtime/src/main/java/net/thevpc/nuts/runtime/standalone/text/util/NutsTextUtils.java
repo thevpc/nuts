@@ -51,7 +51,7 @@ public class NutsTextUtils {
             return txt.toText(o);
         }
         if (o instanceof NutsPrimitiveElement) {
-            o = ((NutsPrimitiveElement) o).getObject();
+            o = ((NutsPrimitiveElement) o).getRaw();
         } else if (o instanceof NutsArrayElement) {
             o = ((NutsArrayElement) o).items();
         } else if (o instanceof NutsObjectElement) {

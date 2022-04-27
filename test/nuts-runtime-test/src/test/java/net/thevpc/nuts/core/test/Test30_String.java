@@ -5,20 +5,20 @@
  */
 package net.thevpc.nuts.core.test;
 
-import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.core.test.utils.TestUtils;
+import net.thevpc.nuts.boot.PrivateNutsUtilStrings;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.StringPlaceHolderParser;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+import java.util.Arrays;
 import java.util.function.Function;
 
 /**
  *
  * @author thevpc
  */
-public class Test30_StringPlaceHolder {
+public class Test30_String {
 
     @BeforeAll
     public static void init() {
@@ -38,6 +38,13 @@ public class Test30_StringPlaceHolder {
         });
 
         Assertions.assertEquals("AX.C XA hello",q);
+    }
+   @Test
+    public void test02() {
+       Assertions.assertEquals(
+               Arrays.asList("",""),
+               PrivateNutsUtilStrings.split(",", ",", true, false)
+       );
     }
 
 }

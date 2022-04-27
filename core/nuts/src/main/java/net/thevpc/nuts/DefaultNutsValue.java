@@ -7,7 +7,6 @@ import java.time.Instant;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.Objects;
-import java.util.function.Function;
 
 public class DefaultNutsValue implements NutsValue {
 
@@ -83,7 +82,7 @@ public class DefaultNutsValue implements NutsValue {
     }
 
     @Override
-    public Object getObject() {
+    public Object getRaw() {
         return value;
     }
 
@@ -381,11 +380,11 @@ public class DefaultNutsValue implements NutsValue {
     public NutsOptional<Byte> asByte() {
         return asLong()
                 .ifEmptyGet(() -> NutsOptional.ofEmpty(session -> NutsMessage.cstyle("empty Byte")))
-                .ifErrorGet(() -> NutsOptional.ofError(session -> NutsMessage.cstyle("invalid Byte : %s", getObject())))
+                .ifErrorGet(() -> NutsOptional.ofError(session -> NutsMessage.cstyle("invalid Byte : %s", getRaw())))
                 .flatMap(value -> {
                     byte smallValue = value.byteValue();
                     if (!Long.valueOf(smallValue).equals(value)) {
-                        return NutsOptional.ofError(session -> NutsMessage.cstyle("invalid Byte : %s", getObject()));
+                        return NutsOptional.ofError(session -> NutsMessage.cstyle("invalid Byte : %s", getRaw()));
                     }
                     return NutsOptional.of(smallValue);
                 });
@@ -395,11 +394,11 @@ public class DefaultNutsValue implements NutsValue {
     public NutsOptional<Short> asShort() {
         return asLong()
                 .ifEmptyGet(() -> NutsOptional.ofEmpty(session -> NutsMessage.cstyle("empty Short")))
-                .ifErrorGet(() -> NutsOptional.ofError(session -> NutsMessage.cstyle("invalid Short : %s", getObject())))
+                .ifErrorGet(() -> NutsOptional.ofError(session -> NutsMessage.cstyle("invalid Short : %s", getRaw())))
                 .flatMap(value -> {
                     short smallValue = value.shortValue();
                     if (!Long.valueOf(smallValue).equals(value)) {
-                        return NutsOptional.ofError(session -> NutsMessage.cstyle("invalid Short : %s", getObject()));
+                        return NutsOptional.ofError(session -> NutsMessage.cstyle("invalid Short : %s", getRaw()));
                     }
                     return NutsOptional.of(smallValue);
                 });
@@ -409,14 +408,14 @@ public class DefaultNutsValue implements NutsValue {
     public NutsOptional<Integer> asInt() {
         return asLong()
                 .ifEmptyGet(() -> NutsOptional.ofEmpty(session -> NutsMessage.cstyle("empty Integer")))
-                .ifErrorGet(() -> NutsOptional.ofError(session -> NutsMessage.cstyle("invalid Integer : %s", getObject())))
+                .ifErrorGet(() -> NutsOptional.ofError(session -> NutsMessage.cstyle("invalid Integer : %s", getRaw())))
                 .flatMap(value -> {
                     int smallValue = value.intValue();
                     if (!Long.valueOf(smallValue).equals(value)) {
-                        return NutsOptional.ofError(session -> NutsMessage.cstyle("invalid Integer : %s", getObject()));
+                        return NutsOptional.ofError(session -> NutsMessage.cstyle("invalid Integer : %s", getRaw()));
                     }
                     return NutsOptional.of(smallValue);
-                }).asEmpty();
+                });
     }
 
 
@@ -508,12 +507,16 @@ public class DefaultNutsValue implements NutsValue {
                 return "null";
             case STRING:
                 return NutsUtilStrings.formatStringLiteral(asString().get(), NutsUtilStrings.QuoteType.DOUBLE);
-//            case NUTS_STRING:
-//                return CoreStringUtils.dblQuote(getNutsString().toString());
             case BOOLEAN:
                 return String.valueOf(asBoolean());
+            case BYTE:
+            case LONG:
+            case BIG_DECIMAL:
+            case BIG_INTEGER:
+            case SHORT:
             case INTEGER:
             case FLOAT:
+            case DOUBLE:
                 return String.valueOf(asNumber());
             case INSTANT:
                 return NutsUtilStrings.formatStringLiteral(asInstant().toString(), NutsUtilStrings.QuoteType.DOUBLE);
@@ -650,5 +653,6 @@ public class DefaultNutsValue implements NutsValue {
         }
         return false;
     }
+
 }
 

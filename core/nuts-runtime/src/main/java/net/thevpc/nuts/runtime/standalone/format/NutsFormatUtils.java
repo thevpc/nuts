@@ -50,7 +50,7 @@ public class NutsFormatUtils {
 //            case NUTS_STRING:
             case NULL:
             {
-                dest.put(prefix, stringValue(value.asPrimitive().get(session).getObject()));
+                dest.put(prefix, stringValue(value.asPrimitive().get(session).getRaw()));
                 break;
             }
             case OBJECT: {

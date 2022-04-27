@@ -27,6 +27,7 @@ import net.thevpc.nuts.*;
 
 import java.io.*;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.util.Set;
 import java.util.function.Predicate;
@@ -300,6 +301,22 @@ public class ZipUtils {
 //            throw new RuntimeIOException(e);
 //        }
 //    }
+    public static boolean visitZipStream(NutsPath zipFile, InputStreamVisitor visitor, NutsSession session) {
+        try (InputStream is = zipFile.getInputStream()) {
+            return visitZipStream(is, visitor, session);
+        } catch (IOException ex) {
+            throw new NutsIOException(session, ex);
+        }
+    }
+
+    public static boolean visitZipStream(Path zipFile, InputStreamVisitor visitor, NutsSession session) {
+        try (InputStream is = Files.newInputStream(zipFile)) {
+            return visitZipStream(is, visitor, session);
+        } catch (IOException ex) {
+            throw new NutsIOException(session, ex);
+        }
+    }
+
     public static boolean visitZipStream(InputStream zipFile, InputStreamVisitor visitor, NutsSession session) {
         //byte[] buffer = new byte[4 * 1024];
 

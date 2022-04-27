@@ -346,7 +346,7 @@ public class DefaultNutsWorkspaceEnvManagerModel {
 
     public <T> T getOrCreateProperty(String property, Supplier<T> supplier, NutsSession session) {
         NutsElement a = getPropertyElement(property, session);
-        T o = a.isCustom() ? (T) a.asCustom().get(session).getValue() : (T) a.asPrimitive().get(session).getObject();
+        T o = a.isCustom() ? (T) a.asCustom().get(session).getValue() : (T) a.asPrimitive().get(session).getRaw();
         if (o != null) {
             return o;
         }

@@ -32,7 +32,7 @@ public class NutsDescriptorUtils {
         if (list != null) {
             for (NutsDescriptorProperty property : list) {
                 if (property.getCondition() == null || property.getCondition().isBlank()) {
-                    m.put(property.getName(), property.getValue().asString().get(session));
+                    m.put(property.getName(), property.getValue().asString().orNull());
                 } else {
                     throw new NutsIllegalArgumentException(session, NutsMessage.plain("unexpected properties with conditions. probably a bug"));
                 }
@@ -248,7 +248,7 @@ public class NutsDescriptorUtils {
         String n_desc = b.getDescription();
         NutsArtifactCall n_executor = b.getExecutor();
         NutsArtifactCall n_installer = b.getInstaller();
-        Map<String, NutsDescriptorProperty> n_props = new HashMap<>();
+        Map<String, NutsDescriptorProperty> n_props = new LinkedHashMap<>();
         for (NutsDescriptor parentDescriptor : parentDescriptors) {
             List<NutsDescriptorProperty> properties = parentDescriptor.getProperties();
             if (properties != null) {
@@ -269,7 +269,7 @@ public class NutsDescriptorUtils {
             if (n_executor == null) {
                 n_executor = parentDescriptor.getExecutor();
             }
-            if (n_executor == null) {
+            if (n_installer == null) {
                 n_installer = parentDescriptor.getInstaller();
             }
 

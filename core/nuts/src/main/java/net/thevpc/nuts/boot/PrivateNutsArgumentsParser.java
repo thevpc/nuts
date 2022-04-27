@@ -634,7 +634,7 @@ public final class PrivateNutsArgumentsParser {
                         a = cmdLine.nextString().get(session);
                         if (active) {
                             String t = a.getStringValue().orElse("");
-                            int i = PrivateNutsUtils.firstIndexOf(t, new char[]{' ', ';', ':', '='});
+                            int i = PrivateNutsUtilStrings.firstIndexOf(t, new char[]{' ', ';', ':', '='});
                             if (i > 0) {
                                 options.setOutputFormat(NutsContentType.valueOf(t.substring(0, i).toUpperCase()));
                                 options.addOutputFormatOptions(t.substring(i + 1).toUpperCase());

@@ -40,6 +40,13 @@ public class NutsRef<T> {
         return value;
     }
 
+    public T orElse(T other) {
+        if(value==null){
+            return other;
+        }
+        return value;
+    }
+
     public void set(T value) {
         this.value = value;
     }

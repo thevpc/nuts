@@ -25,15 +25,18 @@
  */
 package net.thevpc.nuts;
 
+import net.thevpc.nuts.boot.PrivateNutsUtilStrings;
+
 import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /**
  * Created by vpc on 1/15/17.
  */
 public class DefaultNutsVersion implements NutsVersion {
+    private static Pattern VERSION_PART_PATTERN = Pattern.compile("([0-9a-zA-Z_.-])+");
 
     private static final long serialVersionUID = 1L;
     protected String expression;
@@ -128,18 +131,12 @@ public class DefaultNutsVersion implements NutsVersion {
                     last.append(c);
                 }
             } else if (c == '.' || c == '-') {
-                if (last == null) {
-                    parts.add(new VersionPart(String.valueOf(c), VersionPartType.SEPARATOR));
-                    partType = VersionPartType.SEPARATOR;
-                } else if (partType == VersionPartType.NUMBER) {
+                if(last!=null){
                     parts.add(new VersionPart(last.toString(), partType));
-                    last = null;
-                    partType = VersionPartType.SEPARATOR;
-                } else {
-                    parts.add(new VersionPart(last.toString(), partType));
-                    last = null;
-                    partType = VersionPartType.SEPARATOR;
+                    last=null;
                 }
+                parts.add(new VersionPart(String.valueOf(c), VersionPartType.SEPARATOR));
+                partType = VersionPartType.SEPARATOR;
             } else {
                 if (last == null) {
                     partType = VersionPartType.QAL;
@@ -256,25 +253,28 @@ public class DefaultNutsVersion implements NutsVersion {
         return NutsVersionInterval.ofList(expression);
     }
 
-    @Override
-    public boolean isSingleValue() {
+    public NutsOptional<String> asSingleValue() {
+        if (VERSION_PART_PATTERN.matcher(expression).matches()) {
+            return NutsOptional.of(expression);
+        }
         int commas = 0;
         int seps = 0;
         String s = expression.trim();
+        NutsOptional<String> emptyVersion = NutsOptional.ofEmpty(session -> NutsMessage.cstyle("not a single value : %s", expression));
         if (s.isEmpty()) {
-            return false;
+            return emptyVersion;
         }
         for (char c : s.toCharArray()) {
             switch (c) {
                 case '*':
-                    return false;
+                    return emptyVersion;
                 case ',': {
                     commas++;
                     if (commas > 1) {
-                        return false;
+                        return emptyVersion;
                     }
                     if (seps >= 2) {
-                        return false;
+                        return emptyVersion;
                     }
                     break;
                 }
@@ -284,47 +284,67 @@ public class DefaultNutsVersion implements NutsVersion {
                 case ']': {
                     seps++;
                     if (seps > 2) {
-                        return false;
+                        return emptyVersion;
                     }
                     break;
                 }
                 default: {
                     if (!Character.isWhitespace(c)) {
-                        seps++;
                         if (seps >= 2) {
-                            return false;
+                            return emptyVersion;
                         }
                     }
                 }
             }
         }
         if (seps == 0) {
-            return true;
-        }
-        if (seps == 1) {
-            //this is an invalid filter
-            return false;
-        }
-        // this is now a simple version
-        char o = s.charAt(0);
-        char c = s.charAt(1);
-        if (o == '(') {
-            o = ']';
-        }
-        if (c == ')') {
-            c = '[';
-        }
-        s = s.substring(1, s.length() - 1).trim();
-        if (commas == 0) {
-            return (o == '[' && c == ']');
-        } else {
-            //commas==1
-            String[] two = s.split(",");
-            if (!two[0].trim().isEmpty() && two[0].trim().equals(two[1].trim())) {
-                return (o == '[' && c == ']');
+            if (commas == 0) {
+                if (VERSION_PART_PATTERN.matcher(expression).matches()) {
+                    return NutsOptional.of(expression.trim());
+                }
+            } else {
+                Set<String> all = new HashSet<>(PrivateNutsUtilStrings.split(s, ",", true, true));
+                if (all.size() == 1) {
+                    String one = all.stream().findAny().get();
+                    if (VERSION_PART_PATTERN.matcher(one).matches()) {
+                        return NutsOptional.of(one);
+                    }
+                }
+            }
+        } else if (seps == 2) {
+            // this is now a simple version
+            char o = s.charAt(0);
+            char c = s.charAt(s.length() - 1);
+            if (o == '(') {
+                o = ']';
+            }
+            if (c == ')') {
+                c = '[';
+            }
+            s = s.substring(1, s.length() - 1).trim();
+            if (o == '[' && c == ']') {
+                if (commas == 0) {
+                    if (VERSION_PART_PATTERN.matcher(s).matches()) {
+                        return NutsOptional.of(s);
+                    }
+                } else {
+                    //commas==1
+                    Set<String> two = new HashSet<>(PrivateNutsUtilStrings.split(s, ",", true, false));
+                    if (two.size() == 1) {
+                        String one = two.stream().findAny().get();
+                        if (VERSION_PART_PATTERN.matcher(one).matches()) {
+                            return NutsOptional.of(one);
+                        }
+                    }
+                }
             }
         }
-        return false;
+        return emptyVersion;
+    }
+
+    @Override
+    public boolean isSingleValue() {
+        return asSingleValue().isPresent();
     }
 
     @Override

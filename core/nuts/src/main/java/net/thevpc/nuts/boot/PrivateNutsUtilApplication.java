@@ -103,11 +103,7 @@ public class PrivateNutsUtilApplication {
         if (errorCode == 0) {
             return 0;
         }
-        String m = ex.getMessage();
-        if (m == null || m.length() < 5) {
-            m = ex.toString();
-        }
-
+        String m = PrivateNutsUtilErrors.getErrorMessage(ex);
         NutsPrintStream fout = null;
         if (out == null) {
             if (session != null) {
@@ -162,7 +158,7 @@ public class PrivateNutsUtilApplication {
                         );
                         if (showTrace) {
                             session.eout().add(NutsElements.of(session).ofObject().set("errorTrace",
-                                    NutsElements.of(session).ofArray().addAll(PrivateNutsUtils.stacktraceToArray(ex)).build()
+                                    NutsElements.of(session).ofArray().addAll(PrivateNutsUtilErrors.stacktraceToArray(ex)).build()
                             ).build());
                         }
                         NutsArrayElementBuilder e = session.eout();
@@ -178,7 +174,7 @@ public class PrivateNutsUtilApplication {
                                 .build());
                         if (showTrace) {
                             session.eout().add(NutsElements.of(session).ofObject().set("errorTrace",
-                                    NutsElements.of(session).ofArray().addAll(PrivateNutsUtils.stacktraceToArray(ex)).build()
+                                    NutsElements.of(session).ofArray().addAll(PrivateNutsUtilErrors.stacktraceToArray(ex)).build()
                             ).build());
                         }
                         NutsArrayElementBuilder e = session.eout();
@@ -215,7 +211,7 @@ public class PrivateNutsUtilApplication {
             if (showTrace) {
                 if (sb.length() > 0) {
                     sb.append("\n");
-                    sb.append(PrivateNutsUtils.stacktrace(ex));
+                    sb.append(PrivateNutsUtilErrors.stacktrace(ex));
                 }
             }
             if (session != null) {

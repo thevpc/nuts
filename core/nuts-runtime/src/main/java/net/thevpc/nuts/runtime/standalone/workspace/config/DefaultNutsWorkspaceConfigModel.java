@@ -1167,14 +1167,14 @@ public class DefaultNutsWorkspaceConfigModel {
             }
             case RUNTIME: {
                 NutsBootDef d = fetchBootDef(id, false, session);
-                for (NutsId apiId : CoreNutsUtils.resolveNutsApiIds2(d.deps, session)) {
+                for (NutsId apiId : CoreNutsUtils.resolveNutsApiIdsFromDependencyList(d.deps, session)) {
                     setExtraBootRuntimeId(apiId, d.id, d.deps, session);
                 }
                 break;
             }
             case EXTENSION: {
                 NutsBootDef d = fetchBootDef(id, false, session);
-                for (NutsId apiId : CoreNutsUtils.resolveNutsApiIds2(d.deps, session)) {
+                for (NutsId apiId : CoreNutsUtils.resolveNutsApiIdsFromDependencyList(d.deps, session)) {
                     setExtraBootRuntimeId(apiId, d.id, d.deps, session);
                 }
             }

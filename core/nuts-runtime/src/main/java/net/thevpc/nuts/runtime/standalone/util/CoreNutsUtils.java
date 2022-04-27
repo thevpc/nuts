@@ -203,7 +203,7 @@ public class CoreNutsUtils {
     }
 
     public static String applyStringProperties(String child, Function<String, String> properties) {
-        if (NutsBlankable.isBlank(child)) {
+        if (child==null) {
             return null;
         }
 //        return applyStringProperties(child, properties == null ? null : new StringConverterAdapter(properties));
@@ -529,27 +529,27 @@ public class CoreNutsUtils {
         }
     }
 
-    public static List<NutsId> resolveNutsApiIds(NutsId id, NutsSession session) {
+    public static List<NutsId> resolveNutsApiIdsFromId(NutsId id, NutsSession session) {
         List<NutsDependency> deps = session.fetch().setId(id).setDependencies(true).getResultDefinition().getDependencies().transitive().toList();
-        return resolveNutsApiIds2(deps, session);
+        return resolveNutsApiIdsFromDependencyList(deps, session);
     }
 
-    public static List<NutsId> resolveNutsApiIds(NutsDefinition def, NutsSession session) {
-        return resolveNutsApiIds(def.getDependencies(), session);
+    public static List<NutsId> resolveNutsApiIdsFromDefinition(NutsDefinition def, NutsSession session) {
+        return resolveNutsApiFromFromDependencies(def.getDependencies(), session);
     }
 
-    public static List<NutsId> resolveNutsApiIds(NutsDependencies deps, NutsSession session) {
-        return resolveNutsApiIds(deps, session);
+    public static List<NutsId> resolveNutsApiFromFromDependencies(NutsDependencies deps, NutsSession session) {
+        return resolveNutsApiIdsFromDependencyList(deps.transitiveWithSource().toList(), session);
     }
 
-    public static List<NutsId> resolveNutsApiIds2(List<NutsDependency> deps, NutsSession session) {
+    public static List<NutsId> resolveNutsApiIdsFromDependencyList(List<NutsDependency> deps, NutsSession session) {
         return deps.stream()
                 .map(NutsDependency::toId)
                 .filter(x -> x.getShortName().equals("net.thevpc.nuts:nuts"))
                 .distinct().collect(Collectors.toList());
     }
 
-    public static List<NutsId> resolveNutsApiIds(List<NutsId> deps, NutsSession session) {
+    public static List<NutsId> resolveNutsApiIdsFromIdList(List<NutsId> deps, NutsSession session) {
         return deps.stream()
                 .filter(x -> x.getShortName().equals("net.thevpc.nuts:nuts"))
                 .distinct().collect(Collectors.toList());

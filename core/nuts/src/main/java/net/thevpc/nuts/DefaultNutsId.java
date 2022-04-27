@@ -104,8 +104,8 @@ public class DefaultNutsId implements NutsId {
         if (other == null) {
             return false;
         }
-        return NutsUtilStrings.trim(groupId).equals(NutsUtilStrings.trim(other.getArtifactId()))
-                && NutsUtilStrings.trim(artifactId).equals(NutsUtilStrings.trim(other.getGroupId()));
+        return NutsUtilStrings.trim(groupId).equals(NutsUtilStrings.trim(other.getGroupId()))
+                && NutsUtilStrings.trim(artifactId).equals(NutsUtilStrings.trim(other.getArtifactId()));
     }
 
     @Override
@@ -131,8 +131,8 @@ public class DefaultNutsId implements NutsId {
         if (other == null) {
             return false;
         }
-        return NutsUtilStrings.trim(artifactId).equals(NutsUtilStrings.trim(other.getArtifactId()))
-                && NutsUtilStrings.trim(groupId).equals(NutsUtilStrings.trim(other.getGroupId()))
+        return NutsUtilStrings.trim(groupId).equals(NutsUtilStrings.trim(other.getGroupId()))
+                && NutsUtilStrings.trim(artifactId).equals(NutsUtilStrings.trim(other.getArtifactId()))
                 && Objects.equals((version == null || version.isBlank()) ? null : version,
                 (other.getVersion() == null || other.getVersion().isBlank()) ? null : other.getVersion())
                 && Objects.equals(getClassifier(), other.getClassifier())

@@ -75,4 +75,18 @@ public class PrivateNutsUtilCollections {
     public static <T> List<T> unmodifiableUniqueList(Collection<T> other) {
         return other == null ? Collections.emptyList() : Collections.unmodifiableList(uniqueList(other));
     }
+
+    public static <K, V> LinkedHashMap<K, V> copy(Map<K, V> o) {
+        if (o == null) {
+            return new LinkedHashMap<>();
+        }
+        return new LinkedHashMap<>(o);
+    }
+
+    public static <K> LinkedHashSet<K> copy(Set<K> o) {
+        if (o != null) {
+            return new LinkedHashSet<>(o);
+        }
+        return new LinkedHashSet<>();
+    }
 }

@@ -10,7 +10,6 @@ import java.util.List;
 
 public class PrivateNutsVersionIntervalParser {
 
-    final int START = 0;
     final int NEXT = 1;
     final int NEXT_COMMA = 2;
     final int EXPECT_V1 = 3;
@@ -77,7 +76,6 @@ public class PrivateNutsVersionIntervalParser {
         try {
             while ((t = st.nextToken()) != StreamTokenizer.TT_EOF) {
                 switch (state) {
-                    case START:
                     case NEXT: {
                         switch (t) {
                             case StreamTokenizer.TT_WORD: {
@@ -90,6 +88,10 @@ public class PrivateNutsVersionIntervalParser {
                             case '(': {
                                 open = t;
                                 state = EXPECT_V1;
+                                break;
+                            }
+                            case ',': {
+                                //just ignore
                                 break;
                             }
                             default: {
@@ -197,7 +199,7 @@ public class PrivateNutsVersionIntervalParser {
                     }
                 }
             }
-            if (state != NEXT_COMMA && state != START) {
+            if (state != NEXT_COMMA && state != NEXT) {
                 return NutsOptional.ofError(s -> NutsMessage.cstyle("invalid state %s", state));
             }
         } catch (IOException ex) {

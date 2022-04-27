@@ -32,6 +32,8 @@ import java.io.PrintStream;
 import java.lang.reflect.Array;
 import java.net.URL;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Map;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.logging.Level;
@@ -65,6 +67,12 @@ public class NutsApiUtils {
         }
         if (any.getClass().isArray()) {
             return Array.getLength(any) == 0;
+        }
+        if (any instanceof Collection) {
+            return ((Collection)any).isEmpty();
+        }
+        if (any instanceof Map) {
+            return ((Map)any).isEmpty();
         }
         return false;
     }
@@ -172,15 +180,15 @@ public class NutsApiUtils {
     }
 
     public static Integer parseInt(String value, Integer emptyValue, Integer errorValue) {
-        return PrivateNutsUtils.parseInt(value, emptyValue, errorValue);
+        return PrivateNutsUtilStrings.parseInt(value, emptyValue, errorValue);
     }
 
     public static Integer parseInt16(String value, Integer emptyValue, Integer errorValue) {
-        return PrivateNutsUtils.parseInt16(value, emptyValue, errorValue);
+        return PrivateNutsUtilStrings.parseInt16(value, emptyValue, errorValue);
     }
 
     public static NutsOptional<Integer> parseFileSizeInBytes(String value, Integer defaultMultiplier) {
-        return PrivateNutsUtils.parseFileSizeInBytes(value, defaultMultiplier);
+        return PrivateNutsUtilStrings.parseFileSizeInBytes(value, defaultMultiplier);
     }
 
     @SuppressWarnings("unchecked")
@@ -242,7 +250,7 @@ public class NutsApiUtils {
             return NutsOptional.of((T) Enum.valueOf(type, value.toUpperCase()));
         } catch (Exception notFound) {
             String finalValue = value;
-            return NutsOptional.ofError(s -> NutsMessage.cstyle(type.getSimpleName() + " invalid value : %s", finalValue));
+            return NutsOptional.ofError(s -> NutsMessage.cstyle(type.getSimpleName() + " invalid value : %s", finalValue),notFound);
         }
     }
 }

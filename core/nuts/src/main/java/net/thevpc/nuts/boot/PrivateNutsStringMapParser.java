@@ -186,7 +186,7 @@ public class PrivateNutsStringMapParser {
             try {
                 r = readToken(reader, eqAndSep, sepAndEsc, key);
             } catch (IOException e) {
-                return NutsOptional.ofError(x -> NutsMessage.plain(e.toString()));
+                return NutsOptional.ofError(x -> NutsMessage.plain("failed to read token"),e);
             }
             String t = key.toString();
             if (r == -1) {
@@ -201,7 +201,7 @@ public class PrivateNutsStringMapParser {
                     try {
                         r = readToken(reader, separatorChars, eqAndEsc, value);
                     } catch (IOException e) {
-                        return NutsOptional.ofError(x -> NutsMessage.plain(e.toString()));
+                        return NutsOptional.ofError(x -> NutsMessage.plain("failed to read token"),e);
                     }
                     m.put(t, value.toString());
                     if (r == -1) {

@@ -95,11 +95,11 @@ public class NutsCachedRepository extends AbstractNutsRepositoryBase {
             if (libDesc != null) {
                 return libDesc;
             }
-            if (cache.isReadEnabled()) {
+            if (cache.isReadEnabled()) {if(session.isCached()){
                 NutsDescriptor cacheDesc = cache.fetchDescriptorImpl(id, session);
                 if (cacheDesc != null) {
                     return cacheDesc;
-                }
+                }}
             }
         }
         RuntimeException mirrorsEx = null;

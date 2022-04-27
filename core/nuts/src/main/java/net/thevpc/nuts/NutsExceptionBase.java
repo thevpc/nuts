@@ -26,11 +26,7 @@
  */
 package net.thevpc.nuts;
 
-import net.thevpc.nuts.boot.PrivateNutsUtils;
-
-import java.util.HashSet;
-import java.util.Set;
-import java.util.Stack;
+import net.thevpc.nuts.boot.PrivateNutsUtilErrors;
 
 /**
  * Base Nuts Exception Interface. Parent of all Nuts defined Exceptions.
@@ -41,7 +37,7 @@ import java.util.Stack;
  */
 public interface NutsExceptionBase {
     static NutsOptional<NutsExceptionBase> resolveExceptionBase(Throwable th) {
-        return PrivateNutsUtils.findThrowable(th,NutsExceptionBase.class,null);
+        return PrivateNutsUtilErrors.findThrowable(th,NutsExceptionBase.class,null);
     }
 
 

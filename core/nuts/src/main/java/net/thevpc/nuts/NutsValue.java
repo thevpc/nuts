@@ -3,14 +3,13 @@ package net.thevpc.nuts;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.time.Instant;
-import java.util.function.Function;
 
 public interface NutsValue extends NutsBlankable{
     static NutsValue of(Object any){
         return new DefaultNutsValue(any);
     }
 
-    Object getObject();
+    Object getRaw();
 
     NutsOptional<Instant> asInstant();
 

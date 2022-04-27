@@ -67,6 +67,8 @@ public class FieldReflectProperty extends AbstractReflectProperty {
             field.set(instance, value);
         } catch (IllegalAccessException ex) {
             throw new IllegalArgumentException("illegal-access", ex);
+        } catch (IllegalArgumentException ex) {
+            throw ex;
         }
     }
 

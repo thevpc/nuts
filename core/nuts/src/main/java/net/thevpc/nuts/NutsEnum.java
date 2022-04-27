@@ -59,7 +59,7 @@ public interface NutsEnum {
             m = type.getMethod("parse", String.class);
         } catch (Exception ex) {
             NutsMessage msg = NutsMessage.cstyle("NutsEnum %s must implement a public static method parse(String,NutsSession)", type.getName());
-            return NutsOptional.ofError(session -> msg);
+            return NutsOptional.ofError(session -> msg,ex);
         }
         if (!Modifier.isStatic(m.getModifiers()) || !Modifier.isPublic(m.getModifiers()) || !m.getReturnType().equals(NutsOptional.class)) {
             NutsMessage msg = NutsMessage.cstyle("NutsEnum %s must implement a public static method parse(String,NutsSession)", type.getName());
@@ -70,7 +70,7 @@ public interface NutsEnum {
             r = (NutsOptional<T>) m.invoke(null, value);
         } catch (Exception ex) {
             NutsMessage msg = NutsMessage.cstyle("failed executing %s.parse(String) ", type.getName());
-            return NutsOptional.ofError(session -> msg);
+            return NutsOptional.ofError(session -> msg,ex);
         }
         return r;
     }

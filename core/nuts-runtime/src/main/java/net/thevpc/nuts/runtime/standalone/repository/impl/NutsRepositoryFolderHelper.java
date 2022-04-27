@@ -239,10 +239,11 @@ public class NutsRepositoryFolderHelper {
         if (!isReadEnabled()) {
             return null;
         }
-        if (id.getVersion().isSingleValue()) {
+        String singleVersion = id.getVersion().asSingleValue().orNull();
+        if (singleVersion!=null) {
             return IteratorBuilder.ofSupplier(
                     () -> {
-                        NutsId id1 = id.builder().setFaceDescriptor().build();
+                        NutsId id1 = id.builder().setVersion(singleVersion).setFaceDescriptor().build();
                         NutsPath localFile = getLongIdLocalFile(id1, session);
                         if (localFile != null && localFile.isRegularFile()) {
                             return Collections.singletonList(id.builder().setRepository(repo == null ? null : repo.getName()).build()).iterator();

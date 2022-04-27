@@ -237,7 +237,7 @@ public class DefaultNutsArgument implements NutsArgument {
     }
 
     @Override
-    public Object getObject() {
+    public Object getRaw() {
         return expression;
     }
 

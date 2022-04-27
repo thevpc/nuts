@@ -9,6 +9,7 @@ import java.util.stream.Stream;
 public class DefaultNutsObjectElement extends AbstractNutsObjectElement {
 
     private Map<NutsElement, NutsElement> values = new LinkedHashMap<>();
+    private NutsElements elements;
 
     public DefaultNutsObjectElement(Map<NutsElement, NutsElement> values, NutsSession session) {
         super(session);
@@ -28,15 +29,18 @@ public class DefaultNutsObjectElement extends AbstractNutsObjectElement {
 
     @Override
     public NutsOptional<NutsElement> get(String s) {
-        DefaultNutsElements element = (DefaultNutsElements) NutsElements.of(session);
-        return NutsOptional.of(values.get(element.ofString(s)), session -> NutsMessage.cstyle("field not found : %s", s));
+        if (elements == null) {
+            elements = NutsElements.of(session);
+        }
+        NutsPrimitiveElement newKey = elements.ofString(s);
+        NutsElement value = values.get(newKey);
+        return NutsOptional.of(value, session -> NutsMessage.cstyle("field not found : %s", s));
     }
 
     @Override
     public NutsOptional<NutsElement> get(NutsElement s) {
         return NutsOptional.of(values.get(s), session -> NutsMessage.cstyle("field not found : %s", s));
     }
-
 
 
     @Override

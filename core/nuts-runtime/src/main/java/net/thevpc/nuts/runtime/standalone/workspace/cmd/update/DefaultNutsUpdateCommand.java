@@ -13,7 +13,6 @@ import net.thevpc.nuts.runtime.standalone.workspace.cmd.DefaultNutsUpdateResult;
 import net.thevpc.nuts.runtime.standalone.workspace.config.DefaultNutsWorkspaceConfigModel;
 import net.thevpc.nuts.runtime.standalone.workspace.config.NutsWorkspaceConfigManagerExt;
 import net.thevpc.nuts.runtime.standalone.repository.impl.main.NutsInstalledRepository;
-import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
 
 import java.time.Instant;
@@ -143,7 +142,7 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
         if (this.isRuntime()) {
             if (dws.requiresRuntimeExtension(session2)) {
                 runtimeUpdate = checkCoreUpdate(NutsId.of(session2.getWorkspace().getRuntimeId().getShortName()).get( session2),
-                        apiUpdate != null && apiUpdate.getAvailable().getId() != null ? apiUpdate.getAvailable().getId().getVersion()
+                        apiUpdate != null && apiUpdate.getAvailable()!=null && apiUpdate.getAvailable().getId() != null ? apiUpdate.getAvailable().getId().getVersion()
                                 : bootVersion, session2, Type.RUNTIME, now);
                 if (runtimeUpdate.isUpdatable()) {
                     allUpdates.put(runtimeUpdate.getId().getShortName(), runtimeUpdate);
@@ -594,7 +593,7 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
 
             applyRegularUpdate(((DefaultNutsUpdateResult) runtimeUpdate));
             ((DefaultNutsUpdateResult) runtimeUpdate).setUpdateApplied(true);
-            List<NutsId> baseApiIds = CoreNutsUtils.resolveNutsApiIds(runtimeUpdate.getDependencies(), session);
+            List<NutsId> baseApiIds = CoreNutsUtils.resolveNutsApiIdsFromIdList(runtimeUpdate.getDependencies(), session);
             DefaultNutsWorkspaceConfigModel configModel = NutsWorkspaceExt.of(session).getModel().configModel;
             for (NutsId newApi : baseApiIds) {
                 configModel.setExtraBootRuntimeId(
@@ -609,7 +608,7 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
             if (!extension.isUpdateApplied()) {
                 if (extension.getAvailable() != null) {
                     applyRegularUpdate(((DefaultNutsUpdateResult) extension));
-                    List<NutsId> baseApiIds = CoreNutsUtils.resolveNutsApiIds(extension.getDependencies(), session);
+                    List<NutsId> baseApiIds = CoreNutsUtils.resolveNutsApiIdsFromIdList(extension.getDependencies(), session);
                     DefaultNutsWorkspaceConfigModel configModel = NutsWorkspaceExt.of(session).getModel().configModel;
                     for (NutsId newApi : baseApiIds) {
                         configModel.setExtraBootExtensionId(

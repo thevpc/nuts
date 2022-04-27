@@ -35,6 +35,7 @@ import java.io.File;
 import java.io.InputStream;
 import java.net.URL;
 import java.nio.file.Path;
+import java.util.List;
 
 /**
  * Probing content types (or mime types) from paths and contents.
@@ -61,4 +62,6 @@ public interface NutsContentTypes extends NutsComponent {
     String probeContentType(InputStream stream);
 
     String probeContentType(byte[] stream);
+    List<String> findExtensionsByContentType(String contentType);
+    List<String> findContentTypesByExtension(String extension);
 }

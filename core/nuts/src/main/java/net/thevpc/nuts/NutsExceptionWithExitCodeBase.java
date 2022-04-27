@@ -26,7 +26,7 @@
  */
 package net.thevpc.nuts;
 
-import net.thevpc.nuts.boot.PrivateNutsUtils;
+import net.thevpc.nuts.boot.PrivateNutsUtilErrors;
 
 /**
  * Base Nuts Exception Interface. Parent of all Nuts defined Exceptions.
@@ -39,7 +39,7 @@ public interface NutsExceptionWithExitCodeBase {
     int getExitCode();
 
     static NutsOptional<NutsExceptionWithExitCodeBase> resolveWithExitCodeExceptionBase(Throwable th) {
-        return PrivateNutsUtils.findThrowable(th, NutsExceptionWithExitCodeBase.class, null);
+        return PrivateNutsUtilErrors.findThrowable(th, NutsExceptionWithExitCodeBase.class, null);
     }
 
     static NutsOptional<Integer> resolveExitCode(Throwable th) {

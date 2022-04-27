@@ -160,7 +160,7 @@ public class JavaExecutorComponent implements NutsExecutorComponent {
                     }
                 }
                 NutsVersion nutsDependencyVersion = null;
-                for (NutsId d : CoreNutsUtils.resolveNutsApiIds(executionContext.getDefinition(), session)) {
+                for (NutsId d : CoreNutsUtils.resolveNutsApiIdsFromDefinition(executionContext.getDefinition(), session)) {
                     nutsDependencyVersion = d.getVersion();
                     if(nutsDependencyVersion!=null){
                         break;

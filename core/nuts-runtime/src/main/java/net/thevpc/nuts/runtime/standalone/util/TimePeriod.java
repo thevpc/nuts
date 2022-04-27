@@ -30,7 +30,7 @@ public class TimePeriod {
             try {
                 unitCount = Long.parseLong(matcher.group("val"));
             } catch (Exception ex) {
-                return NutsOptional.ofError(s -> NutsMessage.cstyle(TimePeriod.class.getSimpleName() + " invalid value : %s", str));
+                return NutsOptional.ofError(s -> NutsMessage.cstyle(TimePeriod.class.getSimpleName() + " invalid value : %s", str),ex);
             }
             String u = matcher.group("unit");
             if (u == null) {

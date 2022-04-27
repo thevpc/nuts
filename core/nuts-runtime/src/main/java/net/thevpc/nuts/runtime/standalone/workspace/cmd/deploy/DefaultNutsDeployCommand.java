@@ -38,7 +38,7 @@ public class DefaultNutsDeployCommand extends AbstractNutsDeployCommand {
         }
         CharacterizedDeployFile c = new CharacterizedDeployFile(session);
         try {
-            c.baseFile = CoreIOUtils.toPathInputSource(contentFile, c.temps, session);
+            c.baseFile = CoreIOUtils.toPathInputSource(contentFile, c.temps, true,session);
             c.contentStreamOrPath = contentFile;
             if (!Files.exists(c.baseFile)) {
                 throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("file does not exists %s", c.baseFile));

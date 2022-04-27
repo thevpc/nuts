@@ -63,7 +63,7 @@ public class DefaultNutsDescriptorProperty implements NutsDescriptorProperty {
 
     @Override
     public String toString() {
-        return name + "='" + value + '\'' +
+        return name + "=" + value +
                 (condition.isBlank() ? "" : (" when " + condition))
                 ;
     }

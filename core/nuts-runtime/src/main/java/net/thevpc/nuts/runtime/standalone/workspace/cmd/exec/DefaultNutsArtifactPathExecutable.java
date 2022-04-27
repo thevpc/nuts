@@ -141,7 +141,7 @@ public class DefaultNutsArtifactPathExecutable extends AbstractNutsExecutableCom
         CharacterizedExecFile c = new CharacterizedExecFile(session);
         try {
             c.streamOrPath = contentFile;
-            c.contentFile = CoreIOUtils.toPathInputSource(contentFile, c.temps, session);
+            c.contentFile = CoreIOUtils.toPathInputSource(contentFile, c.temps,true, session);
             Path fileSource = c.contentFile;
             if (!Files.exists(fileSource)) {
                 throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("file does not exists %s",fileSource));
@@ -177,7 +177,7 @@ public class DefaultNutsArtifactPathExecutable extends AbstractNutsExecutableCom
                                     NutsStreamOrPath.of(
                                             ub.resolveSibling(session.locations().getDefaultIdFilename(c.descriptor.getId())).toURL(),session
                                     ),
-                                    c.temps, session);
+                                    c.temps, true,session);
                         } catch (Exception ex) {
                             //TODO FIX ME
                             ex.printStackTrace();
@@ -191,7 +191,7 @@ public class DefaultNutsArtifactPathExecutable extends AbstractNutsExecutableCom
                                     try {
                                         c.contentFile = CoreIOUtils.toPathInputSource(
                                                 NutsStreamOrPath.of(new URL(location),session),
-                                                c.temps, session);
+                                                c.temps, true,session);
                                     } catch (Exception ex) {
 
                                     }
@@ -200,9 +200,9 @@ public class DefaultNutsArtifactPathExecutable extends AbstractNutsExecutableCom
                                     try {
                                         c.contentFile = CoreIOUtils.toPathInputSource(
                                                 NutsStreamOrPath.of(ub.resolveSibling(session.locations().getDefaultIdFilename(c.descriptor.getId())).toURL(),session),
-                                                c.temps, session);
+                                                c.temps, true,session);
                                     } catch (Exception ex) {
-
+                                        //TODO add log here
                                     }
                                 }
                                 if (c.contentFile == null) {

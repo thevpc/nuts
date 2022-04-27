@@ -30,6 +30,8 @@ import net.thevpc.nuts.NutsPath;
 import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.NutsSupported;
 
+import java.util.List;
+
 /**
  * implementations of this interface provide path/content content probing
  */
@@ -52,4 +54,8 @@ public interface NutsContentTypeResolver extends NutsComponent {
      * @return best probe of {@code NutsSupported.invalid()} (or null)
      */
     NutsSupported<String> probeContentType(byte[] bytes, NutsSession session);
+
+    List<String> findExtensionsByContentType(String contentType, NutsSession session);
+    List<String> findContentTypesByExtension(String extension, NutsSession session);
+
 }

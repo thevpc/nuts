@@ -57,4 +57,9 @@ public class PrivateNutsOptionalValid<T> extends PrivateNutsOptionalImpl<T> {
     public Function<NutsSession, NutsMessage> getMessage() {
         return (session) -> NutsMessage.cstyle("element not found");
     }
+
+    @Override
+    public boolean isBlank() {
+        return false;
+    }
 }

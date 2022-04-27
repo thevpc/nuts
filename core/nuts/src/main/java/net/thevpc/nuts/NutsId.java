@@ -28,8 +28,10 @@ package net.thevpc.nuts;
 import net.thevpc.nuts.boot.PrivateNutsIdListParser;
 import net.thevpc.nuts.boot.PrivateNutsIdParser;
 
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 /**
@@ -45,6 +47,9 @@ public interface NutsId extends Comparable<NutsId>, NutsFormattable, NutsBlankab
 
     static NutsOptional<List<NutsId>> ofList(String value) {
         return PrivateNutsIdListParser.parseIdList(value);
+    }
+    static NutsOptional<Set<NutsId>> ofSet(String value) {
+        return ofList(value).map(LinkedHashSet::new);
     }
 
     static NutsOptional<NutsId> of(String groupId, String artifactId, NutsVersion version) {

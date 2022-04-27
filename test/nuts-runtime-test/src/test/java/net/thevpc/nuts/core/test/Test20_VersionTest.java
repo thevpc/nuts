@@ -26,6 +26,7 @@
 package net.thevpc.nuts.core.test;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.boot.PrivateNutsVersionIntervalParser;
 import net.thevpc.nuts.core.test.utils.TestUtils;
 import org.junit.jupiter.api.*;
 
@@ -123,4 +124,100 @@ public class Test20_VersionTest {
         Assertions.assertEquals(b, b2);
         TestUtils.println(a + " ==> " + b);
     }
+
+    @Test
+    public void test14() {
+        String version = "";
+        Assertions.assertEquals(true,NutsVersion.of(version).get().isBlank());
+        Assertions.assertEquals(false,NutsVersion.of(version).get().isFilter());
+        Assertions.assertEquals(false,NutsVersion.of(version).get().isNull());
+        Assertions.assertEquals(false,NutsVersion.of(version).get().isSingleValue());
+    }
+    @Test
+    public void test15() {
+        String version = "a";
+        Assertions.assertEquals(false,NutsVersion.of(version).get().isBlank());
+        Assertions.assertEquals(false,NutsVersion.of(version).get().isFilter());
+        Assertions.assertEquals(false,NutsVersion.of(version).get().isNull());
+        Assertions.assertEquals(true,NutsVersion.of(version).get().isSingleValue());
+    }
+
+    @Test
+    public void test16() {
+        for (String version : new String[]{
+                "[a]","[a,a]","a,a",
+                "a,",
+                ",a"}) {
+            NutsVersion nutsVersion = NutsVersion.of(version).get();
+            Assertions.assertEquals(false, nutsVersion.isBlank(),version+".isBlank");
+            Assertions.assertEquals(false, nutsVersion.isNull(),version+".isNull");
+            Assertions.assertEquals(true, nutsVersion.isFilter(),version+".isFilter");
+            Assertions.assertEquals(true, nutsVersion.isSingleValue(),version+".isSingleValue");
+            Assertions.assertEquals(false, nutsVersion.intervals().isError(),version+".isError");
+        }
+    }
+    @Test
+    public void test17() {
+        for (String version : new String[]{
+                "[a["
+                ,"[a,a["
+                ,"a,[a]"
+                ,"a,[a["
+                ,","
+                ,"[a,]"
+                ,"*"
+                ,"[,a]"
+                ,"[,]"
+        }) {
+            NutsVersion nutsVersion = NutsVersion.of(version).get();
+            Assertions.assertEquals(false, nutsVersion.isBlank(),version+".isBlank");
+            Assertions.assertEquals(true, nutsVersion.isFilter(),version+".isFilter");
+            Assertions.assertEquals(false, nutsVersion.isNull(),version+".isNull");
+            Assertions.assertEquals(false, nutsVersion.isSingleValue(),version+".isSingleValue");
+            Assertions.assertEquals(false, nutsVersion.intervals().isError(),version+".isError");
+        }
+    }
+
+    @Test
+    public void test18() {
+        for (String version : new String[]{
+                "a["
+                ,"[a,a[a"
+                ,"],a"
+        }) {
+            NutsVersion nutsVersion = NutsVersion.of(version).get();
+            Assertions.assertEquals(false, nutsVersion.isBlank(),version+".isBlank");
+            Assertions.assertEquals(true, nutsVersion.isFilter(),version+".isFilter");
+            Assertions.assertEquals(false, nutsVersion.isNull(),version+".isNull");
+            Assertions.assertEquals(false, nutsVersion.isSingleValue(),version+".isSingleValue");
+            Assertions.assertEquals(true, nutsVersion.intervals().isError(),version+".isError");
+        }
+    }
+
+    @Test
+    public void test19() {
+        for (String version : new String[]{
+                " a a "
+        }) {
+            NutsVersion nutsVersion = NutsVersion.of(version).get();
+            Assertions.assertEquals(false, nutsVersion.isBlank(),version+".isBlank");
+            Assertions.assertEquals(false, nutsVersion.isFilter(),version+".isFilter");
+            Assertions.assertEquals(false, nutsVersion.isNull(),version+".isNull");
+            Assertions.assertEquals(false, nutsVersion.isSingleValue(),version+".isSingleValue");
+            Assertions.assertEquals(true, nutsVersion.intervals().isError(),version+".isError");
+        }
+    }
+
+    @Test
+    public void test20() {
+        new PrivateNutsVersionIntervalParser().parse(",,").get();
+    }
+
+    @Test
+    public void test21() {
+        NutsVersion r = NutsVersion.of("0.8.4.0").get().inc(-1, 10);
+        Assertions.assertEquals(r.toString(),"0.8.4.1");
+    }
+
+
 }

@@ -478,7 +478,7 @@ public class DefaultNutsFetchCommand extends AbstractNutsFetchCommand {
         checkSession();
         NutsSessionUtils.checkSession(this.ws, session);
         NutsWorkspaceExt dws = NutsWorkspaceExt.of(session);
-        boolean withCache = !(repo instanceof DefaultNutsInstalledRepository);
+        boolean withCache = !(repo instanceof DefaultNutsInstalledRepository) && session.isCached();
         NutsPath cachePath = null;
         NutsWorkspaceUtils wu = NutsWorkspaceUtils.of(session);
         NutsElements elem = NutsElements.of(getSession());

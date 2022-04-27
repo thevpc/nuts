@@ -30,7 +30,7 @@ public class DefaultNutsPropertiesFormat extends DefaultFormatBase<NutsPropertie
     @Override
     public boolean configureFirst(NutsCommandLine commandLine) {
         NutsArgument a;
-        if ((a = commandLine.nextString(OPTION_MULTILINE_PROPERTY).get(getSession())) != null) {
+        if ((a = commandLine.nextString(OPTION_MULTILINE_PROPERTY).orNull()) != null) {
             NutsArgument i = NutsArgument.of(a.getStringValue().get(getSession()));
             if (i.isActive()) {
                 addMultilineProperty(i.getKey().asString().get(getSession()), i.getStringValue().get(getSession()));

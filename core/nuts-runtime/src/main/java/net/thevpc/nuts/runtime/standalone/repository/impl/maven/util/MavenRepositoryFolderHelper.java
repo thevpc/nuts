@@ -110,8 +110,9 @@ public class MavenRepositoryFolderHelper {
     }
 
     public Iterator<NutsId> searchVersions(NutsId id, final NutsIdFilter filter, boolean deep, NutsSession session) {
-        if (id.getVersion().isSingleValue()) {
-            NutsId id1 = id.builder().setFaceDescriptor().build();
+        String singleVersion=id.getVersion().asSingleValue().orNull();
+        if (singleVersion!=null) {
+            NutsId id1 = id.builder().setVersion(singleVersion).setFaceDescriptor().build();
             NutsPath localFile = getIdLocalFile(id1, session);
             if (localFile != null && localFile.isRegularFile()) {
                 return Collections.singletonList(id.builder().setRepository(repo == null ? null : repo.getName()).build()).iterator();

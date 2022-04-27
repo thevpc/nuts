@@ -1,6 +1,7 @@
 package net.thevpc.nuts;
 
 import net.thevpc.nuts.boot.PrivateNutsOptionalEmpty;
+import net.thevpc.nuts.boot.PrivateNutsOptionalError;
 import net.thevpc.nuts.boot.PrivateNutsOptionalValid;
 
 import java.util.Optional;
@@ -9,14 +10,18 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
-public interface NutsOptional<T> {
+public interface NutsOptional<T> extends NutsBlankable{
 
     static <T> NutsOptional<T> ofEmpty(Function<NutsSession, NutsMessage> emptyMessage) {
-        return new PrivateNutsOptionalEmpty<>(emptyMessage, false);
+        return new PrivateNutsOptionalEmpty<>(emptyMessage);
     }
 
     static <T> NutsOptional<T> ofError(Function<NutsSession, NutsMessage> errorMessage) {
-        return new PrivateNutsOptionalEmpty<>(errorMessage, true);
+        return ofError(errorMessage, null);
+    }
+
+    static <T> NutsOptional<T> ofError(Function<NutsSession, NutsMessage> errorMessage, Throwable throwable) {
+        return new PrivateNutsOptionalError<>(errorMessage, throwable);
     }
 
     static <T> NutsOptional<T> of(T value) {
@@ -49,13 +54,13 @@ public interface NutsOptional<T> {
 
     <V> NutsOptional<V> map(Function<T, V> mapper);
 
-    <V> NutsOptional<V> filter(NutsMessagedPredicate<T> p);
+    NutsOptional<T> filter(NutsMessagedPredicate<T> predicate);
 
-    <V> NutsOptional<V> filter(Predicate<T> filter, Function<NutsSession, NutsMessage> message);
+    NutsOptional<T> filter(Predicate<T> predicate, Function<NutsSession, NutsMessage> message);
 
     NutsOptional<T> ifPresent(Consumer<T> t);
 
-    <V> NutsOptional<V> asEmpty();
+    <R extends Throwable> T orElseThrow(Supplier<? extends R> exceptionSupplier) throws R;
 
     T get();
 
@@ -67,9 +72,12 @@ public interface NutsOptional<T> {
 
     T orNull();
 
+    NutsOptional<T> ifEmptyNull();
     NutsOptional<T> ifEmpty(T other);
 
     NutsOptional<T> ifBlank(T other);
+
+    NutsOptional<T> ifErrorNull();
 
     NutsOptional<T> ifError(T other);
 
@@ -88,6 +96,7 @@ public interface NutsOptional<T> {
     boolean isError();
 
     boolean isPresent();
+
     boolean isNotPresent();
 
     NutsOptional<T> nonBlank(Function<NutsSession, NutsMessage> emptyMessage);

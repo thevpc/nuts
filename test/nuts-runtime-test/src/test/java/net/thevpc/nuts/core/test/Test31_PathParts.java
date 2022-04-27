@@ -16,7 +16,7 @@ import org.junit.jupiter.api.Test;
  *
  * @author thevpc
  */
-public class Test31_NutsPathParts {
+public class Test31_PathParts {
 
     static NutsSession session;
 

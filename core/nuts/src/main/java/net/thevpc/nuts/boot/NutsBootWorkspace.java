@@ -467,12 +467,12 @@ public final class NutsBootWorkspace {
                     computedOptions.setBootRepositories(lastConfigLoaded.getBootRepositories());
                     computedOptions.setJavaCommand(lastConfigLoaded.getJavaCommand());
                     computedOptions.setJavaOptions(lastConfigLoaded.getJavaOptions());
-                    computedOptions.setExtensionsSet(PrivateNutsUtils.copy(lastConfigLoaded.getExtensionsSet()));
+                    computedOptions.setExtensionsSet(PrivateNutsUtilCollections.copy(lastConfigLoaded.getExtensionsSet()));
                     computedOptions.setStoreLocationStrategy(lastConfigLoaded.getStoreLocationStrategy());
                     computedOptions.setRepositoryStoreLocationStrategy(lastConfigLoaded.getRepositoryStoreLocationStrategy());
                     computedOptions.setStoreLocationLayout(lastConfigLoaded.getStoreLocationLayout());
-                    computedOptions.setStoreLocations(PrivateNutsUtils.copy(lastConfigLoaded.getStoreLocations()));
-                    computedOptions.setHomeLocations(PrivateNutsUtils.copy(lastConfigLoaded.getHomeLocations()));
+                    computedOptions.setStoreLocations(PrivateNutsUtilCollections.copy(lastConfigLoaded.getStoreLocations()));
+                    computedOptions.setHomeLocations(PrivateNutsUtilCollections.copy(lastConfigLoaded.getHomeLocations()));
                 } else {
                     lastWorkspaceOptions = new DefaultNutsWorkspaceBootOptionsBuilder();
                     lastWorkspaceOptions.setWorkspace(lastNutsWorkspaceJsonConfigPath);
@@ -481,12 +481,12 @@ public final class NutsBootWorkspace {
                     lastWorkspaceOptions.setBootRepositories(lastConfigLoaded.getBootRepositories());
                     lastWorkspaceOptions.setJavaCommand(lastConfigLoaded.getJavaCommand());
                     lastWorkspaceOptions.setJavaOptions(lastConfigLoaded.getJavaOptions());
-                    lastWorkspaceOptions.setExtensionsSet(PrivateNutsUtils.copy(lastConfigLoaded.getExtensionsSet()));
+                    lastWorkspaceOptions.setExtensionsSet(PrivateNutsUtilCollections.copy(lastConfigLoaded.getExtensionsSet()));
                     lastWorkspaceOptions.setStoreLocationStrategy(lastConfigLoaded.getStoreLocationStrategy());
                     lastWorkspaceOptions.setRepositoryStoreLocationStrategy(lastConfigLoaded.getRepositoryStoreLocationStrategy());
                     lastWorkspaceOptions.setStoreLocationLayout(lastConfigLoaded.getStoreLocationLayout());
-                    lastWorkspaceOptions.setStoreLocations(PrivateNutsUtils.copy(lastConfigLoaded.getStoreLocations()));
-                    lastWorkspaceOptions.setHomeLocations(PrivateNutsUtils.copy(lastConfigLoaded.getHomeLocations()));
+                    lastWorkspaceOptions.setStoreLocations(PrivateNutsUtilCollections.copy(lastConfigLoaded.getStoreLocations()));
+                    lastWorkspaceOptions.setHomeLocations(PrivateNutsUtilCollections.copy(lastConfigLoaded.getHomeLocations()));
                 }
             }
             revalidateLocations(computedOptions, workspaceName, immediateLocation);
@@ -654,7 +654,7 @@ public final class NutsBootWorkspace {
                             try {
                                 Map<String, Object> obj = PrivateNutsJsonParser.parse(nutsRuntimeCacheConfigPath);
                                 bLog.log(Level.CONFIG, NutsLogVerb.READ, NutsMessage.jstyle("loaded {0} file : {1}", nutsRuntimeCacheConfigPath.getFileName(), nutsRuntimeCacheConfigPath.toString()));
-                                loadedDeps = PrivateNutsUtils.parseDependencies((String) obj.get("dependencies"));
+                                loadedDeps = NutsId.ofSet((String) obj.get("dependencies")).orElse(new LinkedHashSet<>());
                             } catch (Exception ex) {
                                 bLog.log(Level.FINEST, NutsLogVerb.FAIL, NutsMessage.jstyle("unable to load {0} file : {1} : {2}", nutsRuntimeCacheConfigPath.getFileName(), nutsRuntimeCacheConfigPath.toString(), ex.toString()));
                                 //ignore...
@@ -723,7 +723,7 @@ public final class NutsBootWorkspace {
                                     try {
                                         Properties obj = PrivateNutsUtilIO.loadURLProperties(extensionFile, bLog);
                                         bLog.log(Level.CONFIG, NutsLogVerb.READ, NutsMessage.jstyle("loaded {0} file : {1}", extensionFile.getFileName(), extensionFile.toString()));
-                                        loadedDeps = PrivateNutsUtils.parseDependencies(obj.getProperty("dependencies"));
+                                        loadedDeps = new LinkedHashSet<>(NutsId.ofList((String) obj.get("dependencies")).orElse(new ArrayList<>()));
                                     } catch (Exception ex) {
                                         bLog.log(Level.CONFIG, NutsLogVerb.FAIL, NutsMessage.jstyle("unable to load {0} file : {1} : {2}", extensionFile.getFileName(), extensionFile.toString(), ex.toString()));
                                         //ignore

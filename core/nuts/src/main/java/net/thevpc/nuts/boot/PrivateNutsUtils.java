@@ -27,10 +27,6 @@ import net.thevpc.nuts.*;
 
 import java.io.*;
 import java.net.URL;
-import java.util.*;
-import java.util.function.Predicate;
-import java.util.logging.Level;
-import java.util.stream.Collectors;
 
 /**
  * Created by vpc on 1/15/17.
@@ -40,29 +36,6 @@ import java.util.stream.Collectors;
  */
 public final class PrivateNutsUtils {
 
-
-    public static <T> NutsOptional<T> findThrowable(Throwable th, Class<T> type, Predicate<Throwable> filter) {
-        Set<Throwable> visited = new HashSet<>();
-        Stack<Throwable> stack = new Stack<>();
-        if (th != null) {
-            stack.push(th);
-        }
-        while (!stack.isEmpty()) {
-            Throwable a = stack.pop();
-            if (visited.add(a)) {
-                if (type.isAssignableFrom(th.getClass())) {
-                    if (filter == null || filter.test(th)) {
-                        return NutsOptional.of((T) th);
-                    }
-                }
-                Throwable c = th.getCause();
-                if (c != null) {
-                    stack.add(c);
-                }
-            }
-        }
-        return NutsOptional.ofEmpty(x -> NutsMessage.cstyle("error with type %s not found", type.getSimpleName()));
-    }
 
     public static boolean isValidWorkspaceName(String workspace) {
         if (NutsBlankable.isBlank(workspace)) {
@@ -198,60 +171,6 @@ public final class PrivateNutsUtils {
                 ;
     }
 
-
-    public static Set<NutsId> parseDependencies(String s) {
-        return s == null ? Collections.emptySet() :
-                Arrays.stream(s.split(";"))
-                        .map(String::trim)
-                        .filter(x -> x.length() > 0)
-                        .map(x -> NutsId.of(x).get())
-                        .collect(Collectors.toCollection(LinkedHashSet::new));
-    }
-
-    public static int firstIndexOf(String string, char[] chars) {
-        char[] value = string.toCharArray();
-        for (int i = 0; i < value.length; i++) {
-            for (char aChar : chars) {
-                if (value[i] == aChar) {
-                    return i;
-                }
-            }
-        }
-        return -1;
-    }
-
-    public static String[] stacktraceToArray(Throwable th) {
-        try {
-            StringWriter sw = new StringWriter();
-            try (PrintWriter pw = new PrintWriter(sw)) {
-                th.printStackTrace(pw);
-            }
-            BufferedReader br = new BufferedReader(new StringReader(sw.toString()));
-            List<String> s = new ArrayList<>();
-            String line;
-            while ((line = br.readLine()) != null) {
-                s.add(line);
-            }
-            return s.toArray(new String[0]);
-        } catch (Exception ex) {
-            // ignore
-        }
-        return new String[0];
-    }
-
-    public static String stacktrace(Throwable th) {
-        try {
-            StringWriter sw = new StringWriter();
-            try (PrintWriter pw = new PrintWriter(sw)) {
-                th.printStackTrace(pw);
-            }
-            return sw.toString();
-        } catch (Exception ex) {
-            // ignore
-        }
-        return "";
-    }
-
     public static boolean isInfiniteLoopThread(String className, String methodName) {
         Thread thread = Thread.currentThread();
         StackTraceElement[] elements = thread.getStackTrace();
@@ -280,81 +199,6 @@ public final class PrivateNutsUtils {
                 bOptions.getName()
         );
     }
-
-    public static <K, V> LinkedHashMap<K, V> copy(Map<K, V> o) {
-        if (o == null) {
-            return new LinkedHashMap<>();
-        }
-        return new LinkedHashMap<>(o);
-    }
-
-    public static <K> LinkedHashSet<K> copy(Set<K> o) {
-        if (o != null) {
-            return new LinkedHashSet<>(o);
-        }
-        return new LinkedHashSet<>();
-    }
-
-    public static Integer parseInt(String value, Integer emptyValue, Integer errorValue) {
-        if (NutsBlankable.isBlank(value)) {
-            return emptyValue;
-        }
-        value = value.trim();
-        try {
-            return Integer.parseInt(value);
-        } catch (Exception ex) {
-            return errorValue;
-        }
-    }
-
-    public static Integer parseInt16(String value, Integer emptyValue, Integer errorValue) {
-        if (NutsBlankable.isBlank(value)) {
-            return emptyValue;
-        }
-        value = value.trim();
-        try {
-            return Integer.parseInt(value, 16);
-        } catch (Exception ex) {
-            return errorValue;
-        }
-    }
-
-    public static NutsOptional<Integer> parseFileSizeInBytes(String value, Integer defaultMultiplier) {
-        if (NutsBlankable.isBlank(value)) {
-            return NutsOptional.ofEmpty(session -> NutsMessage.cstyle("empty size"));
-        }
-        value = value.trim();
-        Integer i = parseInt(value, null, null);
-        if (i != null) {
-            if (defaultMultiplier != null) {
-                return NutsOptional.of(i * defaultMultiplier);
-            } else {
-                return NutsOptional.of(i);
-            }
-        }
-        for (String s : new String[]{"kb", "mb", "gb", "k", "m", "g"}) {
-            if (value.toLowerCase().endsWith(s)) {
-                String v = value.substring(0, value.length() - s.length()).trim();
-                i = parseInt(v, null, null);
-                if (i != null) {
-                    switch (s) {
-                        case "k":
-                        case "kb":
-                            return NutsOptional.of(i * 1024);
-                        case "m":
-                        case "mb":
-                            return NutsOptional.of(i * 1024 * 1024);
-                        case "g":
-                        case "gb":
-                            return NutsOptional.of(i * 1024 * 1024 * 1024);
-                    }
-                }
-            }
-        }
-        String finalValue = value;
-        return NutsOptional.ofError(session->NutsMessage.cstyle("invalid size :%s", finalValue));
-    }
-
 
 
 }

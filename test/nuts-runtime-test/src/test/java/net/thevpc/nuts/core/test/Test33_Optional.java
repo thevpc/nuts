@@ -17,7 +17,7 @@ import java.util.NoSuchElementException;
 /**
  * @author thevpc
  */
-public class Test33_NutsOptional {
+public class Test33_Optional {
 
     static NutsSession session;
 

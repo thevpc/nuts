@@ -96,8 +96,9 @@ public class NutsJavaSdkUtils {
         String _requestedJavaVersion = requestedJavaVersion;
         requestedJavaVersion = NutsUtilStrings.trim(requestedJavaVersion);
         NutsVersion vv = NutsVersion.of(requestedJavaVersion).get( session);
-        if (vv.isSingleValue()) {
-            requestedJavaVersion = "[" + vv + ",[";
+        String singleVersion = vv.asSingleValue().orNull();
+        if (singleVersion!=null) {
+            requestedJavaVersion = "[" + singleVersion + ",[";
         }
         NutsVersionFilter requestedVersionFilter = NutsVersionFilters.of(session).byValue(requestedJavaVersion).get();
         NutsPlatformLocation bestJava = session.env().platforms()

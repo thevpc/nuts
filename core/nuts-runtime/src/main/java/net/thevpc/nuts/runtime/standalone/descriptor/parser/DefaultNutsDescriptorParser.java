@@ -69,16 +69,16 @@ public class DefaultNutsDescriptorParser implements NutsDescriptorParser {
                     startParsing = true;
                     return parse(is, true);
                 } catch (RuntimeException ex) {
-                    return NutsOptional.ofError(session1 -> NutsMessage.cstyle("unable to parse descriptor from %s : %S", path,ex));
+                    return NutsOptional.ofError(session1 -> NutsMessage.cstyle("unable to parse descriptor from %s : %S", path,ex),ex);
                 }
             } catch (IOException ex) {
                 if (!startParsing) {
-                    return NutsOptional.ofError(session1 -> NutsMessage.cstyle("unable to parse descriptor from %s : file not found", path));
+                    return NutsOptional.ofError(session1 -> NutsMessage.cstyle("unable to parse descriptor from %s : file not found", path),ex);
                 }
-                return NutsOptional.ofError(session1 -> NutsMessage.cstyle("unable to parse descriptor from %s : %S", path,ex));
+                return NutsOptional.ofError(session1 -> NutsMessage.cstyle("unable to parse descriptor from %s : %S", path,ex),ex);
             }
         } catch (Exception ex) {
-            return NutsOptional.ofError(session1 -> NutsMessage.cstyle("unable to parse descriptor from %s : %s", path, ex));
+            return NutsOptional.ofError(session1 -> NutsMessage.cstyle("unable to parse descriptor from %s : %s", path, ex),ex);
         }
     }
 
@@ -122,7 +122,7 @@ public class DefaultNutsDescriptorParser implements NutsDescriptorParser {
         try {
             return NutsOptional.of(parseNonLenient(in, closeStream));
         } catch (Exception ex) {
-            return NutsOptional.ofError(session1 -> NutsMessage.cstyle("unable to parse descriptor : %s", ex));
+            return NutsOptional.ofError(session1 -> NutsMessage.cstyle("unable to parse descriptor : %s", ex),ex);
         }
     }
 
