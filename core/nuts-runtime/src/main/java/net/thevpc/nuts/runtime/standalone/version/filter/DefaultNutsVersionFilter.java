@@ -73,7 +73,7 @@ public class DefaultNutsVersionFilter extends AbstractVersionFilter implements N
     }
 
     public static NutsOptional<NutsVersionFilter> parse(String version, NutsSession session) {
-        if (DefaultNutsVersion.isBlankVersion(version) || "*".equals(version)) {
+        if (NutsBlankable.isBlank(version) || "*".equals(version)) {
             return NutsOptional.of(NutsVersionFilters.of(session).always());
         }
 

@@ -216,7 +216,7 @@ public class Test20_VersionTest {
     @Test
     public void test21() {
         NutsVersion r = NutsVersion.of("0.8.4.0").get().inc(-1, 10);
-        Assertions.assertEquals(r.toString(),"0.8.4.1");
+        Assertions.assertEquals(r.toString(),"0.8.4.10");
     }
 
 

@@ -85,24 +85,27 @@ public class DefaultNutsFetchDescriptorRepositoryCommand extends AbstractNutsFet
         try {
             String versionString = id.getVersion().getValue();
             NutsDescriptor d = null;
-            if (DefaultNutsVersion.isBlankVersion(versionString)) {
+            NutsVersion nutsVersion = NutsVersion.of(versionString).orElse(NutsVersion.BLANK);
+            if (nutsVersion.isBlank()||nutsVersion.isReleaseVersion()||nutsVersion.isLatestVersion()) {
                 NutsId a = xrepo.searchLatestVersion(id.builder().setVersion("").build(), null, getFetchMode(), session);
                 if (a == null) {
                     throw new NutsNotFoundException(getSession(), id.getLongId());
                 }
                 a = a.builder().setFaceDescriptor().build();
                 d = xrepo.fetchDescriptorImpl(a, getFetchMode(), session);
-            } else if (DefaultNutsVersion.isStaticVersionPattern(versionString)) {
-                id = id.builder().setFaceDescriptor().build();
-                d = xrepo.fetchDescriptorImpl(id, getFetchMode(), session);
             } else {
-                NutsIdFilter filter = CoreFilterUtils.idFilterOf(id.getProperties(), NutsIdFilters.of(session).byName(id.getFullName()), null, session);
-                NutsId a = xrepo.searchLatestVersion(id.builder().setVersion("").build(), filter, getFetchMode(), session);
-                if (a == null) {
-                    throw new NutsNotFoundException(getSession(), id.getLongId());
+                if (nutsVersion.isSingleValue()) {
+                    id = id.builder().setFaceDescriptor().build();
+                    d = xrepo.fetchDescriptorImpl(id, getFetchMode(), session);
+                } else {
+                    NutsIdFilter filter = CoreFilterUtils.idFilterOf(id.getProperties(), NutsIdFilters.of(session).byName(id.getFullName()), null, session);
+                    NutsId a = xrepo.searchLatestVersion(id.builder().setVersion("").build(), filter, getFetchMode(), session);
+                    if (a == null) {
+                        throw new NutsNotFoundException(getSession(), id.getLongId());
+                    }
+                    a = a.builder().setFaceDescriptor().build();
+                    d = xrepo.fetchDescriptorImpl(a, getFetchMode(), session);
                 }
-                a = a.builder().setFaceDescriptor().build();
-                d = xrepo.fetchDescriptorImpl(a, getFetchMode(), session);
             }
             if (d == null) {
                 throw new NutsNotFoundException(getSession(), id.getLongId());

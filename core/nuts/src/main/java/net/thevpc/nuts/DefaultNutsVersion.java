@@ -46,13 +46,6 @@ public class DefaultNutsVersion implements NutsVersion {
         this.expression = (NutsUtilStrings.trim(expression));
     }
 
-    public static boolean versionMatches(String version, String pattern) {
-        if (isBlankVersion(pattern)) {
-            return true;
-        }
-        return pattern.equals(version);
-    }
-
     public static String incVersion(String oldVersion, int level, long count) {
         return incVersion(oldVersion, level, BigInteger.valueOf(count));
     }
@@ -131,9 +124,9 @@ public class DefaultNutsVersion implements NutsVersion {
                     last.append(c);
                 }
             } else if (c == '.' || c == '-') {
-                if(last!=null){
+                if (last != null) {
                     parts.add(new VersionPart(last.toString(), partType));
-                    last=null;
+                    last = null;
                 }
                 parts.add(new VersionPart(String.valueOf(c), VersionPartType.SEPARATOR));
                 partType = VersionPartType.SEPARATOR;
@@ -159,7 +152,7 @@ public class DefaultNutsVersion implements NutsVersion {
     }
 
 
-    public static Integer getKnownQualifierIndex(String v1) {
+    private static Integer getKnownQualifierIndex(String v1) {
         switch (v1.toLowerCase()) {
             case "a":
             case "alpha":
@@ -185,19 +178,20 @@ public class DefaultNutsVersion implements NutsVersion {
         return null;
     }
 
-
-    public static boolean isBlankVersion(String pattern) {
-        if (NutsBlankable.isBlank(pattern)) {
-            return true;
-        }
-        return NutsConstants.Versions.LATEST.equals(pattern) || NutsConstants.Versions.RELEASE.equals(pattern);
+    public boolean isLatestVersion() {
+        String s = asSingleValue().orNull();
+        return NutsConstants.Versions.LATEST.equalsIgnoreCase(s);
     }
 
-    public static boolean isStaticVersionPattern(String pattern) {
-        if (isBlankVersion(pattern)) {
-            return false;
-        }
-        return !pattern.contains("[") && !pattern.contains("]") && !pattern.contains(",") && !pattern.contains("*");
+    public boolean isReleaseVersion() {
+        String s = asSingleValue().orNull();
+        return NutsConstants.Versions.RELEASE.equalsIgnoreCase(s);
+    }
+
+    @Override
+    public boolean isSnapshotVersion() {
+        String s = asSingleValue().orNull();
+        return s != null && s.toUpperCase().endsWith("-SNAPSHOT");
     }
 
     @Override
@@ -672,23 +666,45 @@ public class DefaultNutsVersion implements NutsVersion {
                     i++;
                     j++;
                 } else if (i < v1.size()) {
-                    VersionPart a = v1.get(i);
-                    if (a.type == VersionPartType.NUMBER || a.type == VersionPartType.SEPARATOR) {
-                        return 1;
-                    } else {
+                    if(isQualifierFrom(i,v1)){
                         return -1;
                     }
+                    return 1;
                 } else {
-                    VersionPart b = v2.get(i);
-                    if (b.type == VersionPartType.NUMBER || b.type == VersionPartType.SEPARATOR) {
-                        return -1;
-                    } else {
+                    if(isQualifierFrom(i,v2)){
                         return 1;
                     }
+                    return -1;
                 }
             }
             return 0;
         }
+    }
+
+    private static boolean isQualifierFrom(int i,VersionParts v1){
+        VersionPart a = v1.get(i);
+        if (a.type== VersionPartType.SEPARATOR && a.string.equals("-")) {
+            if(i+1<v1.size()){
+                for (int j = i+1; j <v1.size() ; j++) {
+                    a = v1.get(j);
+                    switch (a.type) {
+                        case SEPARATOR:
+                            if (a.string.equals(".")) {
+                                return false;
+                            }
+                            break;
+                        case QAL:
+                            return true;
+                        default:
+                            return false;
+                    }
+                }
+                return true;
+            }else{
+                return true;
+            }
+        }
+        return false;
     }
 
 

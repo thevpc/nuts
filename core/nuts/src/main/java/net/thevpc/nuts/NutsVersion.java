@@ -273,4 +273,9 @@ public interface NutsVersion extends Serializable, /*NutsTokenFilter, */NutsForm
      * @since 0.8.3
      */
     long getLong(int index, long defaultValue);
+
+    boolean isLatestVersion();
+
+    boolean isReleaseVersion();
+    boolean isSnapshotVersion();
 }

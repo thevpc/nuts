@@ -35,6 +35,7 @@ import java.nio.file.FileVisitor;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Map;
 import java.util.TreeSet;
@@ -243,6 +244,10 @@ public class NutsRepositoryFolderHelper {
         if (singleVersion!=null) {
             return IteratorBuilder.ofSupplier(
                     () -> {
+                        if(NutsConstants.Versions.LATEST.equals(singleVersion) || NutsConstants.Versions.RELEASE.equals(singleVersion)){
+                            NutsId found = searchLatestVersion(id, filter, session);
+                            return (found!=null?Arrays.asList(found).iterator():Collections.emptyIterator());
+                        }
                         NutsId id1 = id.builder().setVersion(singleVersion).setFaceDescriptor().build();
                         NutsPath localFile = getLongIdLocalFile(id1, session);
                         if (localFile != null && localFile.isRegularFile()) {
