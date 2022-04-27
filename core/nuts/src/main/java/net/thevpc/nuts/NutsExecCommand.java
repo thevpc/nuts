@@ -60,7 +60,7 @@ public interface NutsExecCommand extends NutsWorkspaceCommand {
 
     /**
      * when the execution returns a non zero result, an exception is
-     * thrown.Particularly, if grabOutputString is used, error exception will
+     * thrown. Particularly, if grabOutputString is used, error exception will
      * state the output message
      *
      * @param failFast failFast if true an exception will be thrown if exit code
@@ -423,10 +423,10 @@ public interface NutsExecCommand extends NutsWorkspaceCommand {
 
     String getRedirectOutputFile();
 
-    NutsExecCommand setRedirectOutputFile(String redirectOuputFile);
+    NutsExecCommand setRedirectOutputFile(String redirectOutputFile);
 
     String getRedirectInputFile();
 
-    NutsExecCommand setRedirectInputFile(String redirectInpuFile);
+    NutsExecCommand setRedirectInputFile(String redirectInputFile);
 
 }

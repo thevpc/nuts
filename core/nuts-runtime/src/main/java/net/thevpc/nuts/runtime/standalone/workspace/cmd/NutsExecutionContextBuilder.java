@@ -179,15 +179,15 @@ public interface NutsExecutionContextBuilder {
 
     boolean isInheritSystemIO();
 
-    String getRedirectOuputFile();
+    String getRedirectOutputFile();
 
-    String getRedirectInpuFile();
+    String getRedirectInputFile();
 
     NutsExecutionContextBuilder setInheritSystemIO(boolean value);
 
-    NutsExecutionContextBuilder setRedirectOuputFile(String value);
+    NutsExecutionContextBuilder setRedirectOutputFile(String value);
 
-    NutsExecutionContextBuilder setRedirectInpuFile(String value);
+    NutsExecutionContextBuilder setRedirectInputFile(String value);
 
     NutsExecutionContext build();
 

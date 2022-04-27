@@ -520,8 +520,8 @@ public class DefaultNutsExecCommand extends AbstractNutsExecCommand {
                     .setCommandName(commandName)
                     .setSleepMillis(getSleepMillis())
                     .setInheritSystemIO(isInheritSystemIO())
-                    .setRedirectOuputFile(getRedirectOutputFile())
-                    .setRedirectInpuFile(getRedirectInputFile())
+                    .setRedirectOutputFile(getRedirectOutputFile())
+                    .setRedirectInputFile(getRedirectInputFile())
                     .build();
             if (dry) {
                 execComponent.dryExec(executionContext);

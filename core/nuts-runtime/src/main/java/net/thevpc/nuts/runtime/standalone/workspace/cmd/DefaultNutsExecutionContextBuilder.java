@@ -48,8 +48,8 @@ public class DefaultNutsExecutionContextBuilder implements NutsExecutionContextB
     private boolean temporary;
     private long sleepMillis = 1000;
     private boolean inheritSystemIO;
-    private String redirectOuputFile;
-    private String redirectInpuFile;
+    private String redirectOutputFile;
+    private String redirectInputFile;
 
     private NutsExecutionType executionType;
     private NutsRunAs runAs = NutsRunAs.currentUser();
@@ -340,12 +340,12 @@ public class DefaultNutsExecutionContextBuilder implements NutsExecutionContextB
         return inheritSystemIO;
     }
 
-    public String getRedirectOuputFile() {
-        return redirectOuputFile;
+    public String getRedirectOutputFile() {
+        return redirectOutputFile;
     }
 
-    public String getRedirectInpuFile() {
-        return redirectInpuFile;
+    public String getRedirectInputFile() {
+        return redirectInputFile;
     }
 
     public NutsExecutionContextBuilder setInheritSystemIO(boolean inheritSystemIO) {
@@ -353,13 +353,13 @@ public class DefaultNutsExecutionContextBuilder implements NutsExecutionContextB
         return this;
     }
 
-    public NutsExecutionContextBuilder setRedirectOuputFile(String redirectOuputFile) {
-        this.redirectOuputFile = redirectOuputFile;
+    public NutsExecutionContextBuilder setRedirectOutputFile(String redirectOutputFile) {
+        this.redirectOutputFile = redirectOutputFile;
         return this;
     }
 
-    public NutsExecutionContextBuilder setRedirectInpuFile(String redirectInpuFile) {
-        this.redirectInpuFile = redirectInpuFile;
+    public NutsExecutionContextBuilder setRedirectInputFile(String redirectInputFile) {
+        this.redirectInputFile = redirectInputFile;
         return this;
     }
 
@@ -368,7 +368,7 @@ public class DefaultNutsExecutionContextBuilder implements NutsExecutionContextB
         return new DefaultNutsExecutionContext(
                 definition, arguments, executorArguments, env, executorProperties, cwd, session, execSession,
                 workspace, failFast, temporary, executionType,
-                commandName, sleepMillis, inheritSystemIO, redirectOuputFile, redirectInpuFile
+                commandName, sleepMillis, inheritSystemIO, redirectOutputFile, redirectInputFile
         );
     }
 
@@ -390,8 +390,8 @@ public class DefaultNutsExecutionContextBuilder implements NutsExecutionContextB
         this.executorDescriptor = other.getExecutorDescriptor();
         this.sleepMillis = other.getSleepMillis();
         this.inheritSystemIO = other.isInheritSystemIO();
-        this.redirectOuputFile = other.getRedirectOutputFile();
-        this.redirectInpuFile = other.getRedirectInputFile();
+        this.redirectOutputFile = other.getRedirectOutputFile();
+        this.redirectInputFile = other.getRedirectInputFile();
         return this;
     }
 }

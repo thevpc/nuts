@@ -445,8 +445,8 @@ public abstract class AbstractNutsExecCommand extends NutsWorkspaceCommandBase<N
         return redirectInputFile;
     }
 
-    public NutsExecCommand setRedirectInputFile(String redirectInpuFile) {
-        this.redirectInputFile = redirectInpuFile;
+    public NutsExecCommand setRedirectInputFile(String redirectInputFile) {
+        this.redirectInputFile = redirectInputFile;
         return this;
     }
 
