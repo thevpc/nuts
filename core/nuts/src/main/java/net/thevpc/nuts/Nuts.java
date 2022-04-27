@@ -25,6 +25,7 @@ package net.thevpc.nuts;
 
 import net.thevpc.nuts.boot.*;
 
+import java.time.Instant;
 import java.util.Arrays;
 
 /**
@@ -121,7 +122,7 @@ public final class Nuts {
      * @return NutsSession instance
      */
     public static NutsSession openInheritedWorkspace(NutsBootTerminal term, String... args) throws NutsUnsatisfiedRequirementsException {
-        long startTime = System.currentTimeMillis();
+        Instant startTime = Instant.now();
         String nutsWorkspaceOptions = NutsUtilStrings.trim(
                 NutsUtilStrings.trim(System.getProperty("nuts.boot.args"))
                         + " " + NutsUtilStrings.trim(System.getProperty("nuts.args"))

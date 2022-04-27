@@ -184,7 +184,7 @@ public class NutsHttpSrvRepository extends NutsCachedRepository {
             throw new NutsNotFoundException(session, id, new NutsFetchModeNotSupportedException(session, this, fetchMode, id.toString(), null));
         }
         if (NutsIdLocationUtils.fetch(id, descriptor.getLocations(), localPath, session)) {
-            return new NutsDefaultContent(
+            return new DefaultNutsContent(
                     NutsPath.of(localPath, session), false, false);
         }
         boolean transitive = session.isTransitive();
@@ -203,7 +203,7 @@ public class NutsHttpSrvRepository extends NutsCachedRepository {
             String rhash = httpGetString(getUrl("/fetch-hash?id=" + CoreIOUtils.urlEncodeString(id.toString(),session) + (transitive ? ("&transitive") : "") + "&" + resolveAuthURLPart(session)), session);
             String lhash = NutsDigestUtils.evalSHA1Hex(NutsPath.of(localPath,session),session);
             if (rhash.equalsIgnoreCase(lhash)) {
-                return new NutsDefaultContent(
+                return new DefaultNutsContent(
                         NutsPath.of(localPath,session)
                         , false, temp);
             }
@@ -298,8 +298,8 @@ public class NutsHttpSrvRepository extends NutsCachedRepository {
         }
 
     @Override
-    public NutsElement describe(NutsElements elems) {
-        return elems.ofObject()
+    public NutsElement describe(NutsSession session) {
+        return NutsElements.of(session).ofObject()
                 .set("type","ScanArchetypeCatalog")
                 .set("source",source0.toString())
                 .build();

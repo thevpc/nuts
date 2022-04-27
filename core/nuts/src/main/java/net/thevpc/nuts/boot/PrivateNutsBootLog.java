@@ -57,7 +57,7 @@ public class PrivateNutsBootLog implements NutsLogger {
     public PrivateNutsBootLog(NutsBootTerminal bootTerminal) {
         InputStream in = (bootTerminal == null || bootTerminal.getIn() == null) ? System.in : bootTerminal.getIn();
         PrintStream out = (bootTerminal == null || bootTerminal.getOut() == null) ? System.out : bootTerminal.getOut();
-        PrintStream err = (bootTerminal == null || bootTerminal.getErr() == null) ? out : bootTerminal.getErr();
+        PrintStream err = (bootTerminal == null || bootTerminal.getErr() == null) ? System.out : bootTerminal.getErr();
         this.bootTerminal = new NutsBootTerminal(in, out, err);
     }
 

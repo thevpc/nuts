@@ -172,7 +172,7 @@ public class DefaultNutsInputStreamMonitor implements NutsInputStreamMonitor {
         }
         return InputStreamMetadataAwareImpl.of(
                 NutsProgressUtils.monitor(openedStream, source, sourceName, size, new SilentStartNutsProgressMonitorAdapter(monitor, sourceName.filteredText()), session),
-                new NutsDefaultStreamMetadata(source.getStreamMetaData())
+                new DefaultNutsStreamMetadata(source.getStreamMetaData())
                         .setUserKind(sourceTypeName)
         );
     }

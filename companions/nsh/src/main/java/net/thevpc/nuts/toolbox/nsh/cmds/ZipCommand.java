@@ -45,7 +45,7 @@ public class ZipCommand extends SimpleJShellBuiltin {
     protected boolean configureFirst(NutsCommandLine commandLine, JShellExecutionContext context) {
         Options options = context.getOptions();
         NutsSession session = context.getSession();
-        if (commandLine.next("-r") != null) {
+        if (commandLine.next("-r").isPresent()) {
             options.r = true;
             return true;
         } else if (commandLine.isNextOption()) {

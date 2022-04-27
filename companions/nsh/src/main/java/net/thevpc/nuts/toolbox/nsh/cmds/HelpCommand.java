@@ -51,7 +51,7 @@ public class HelpCommand extends SimpleJShellBuiltin {
     protected boolean configureFirst(NutsCommandLine commandLine, JShellExecutionContext context) {
         NutsSession session = context.getSession();
         Options options = context.getOptions();
-        if (commandLine.next("--ntf") != null) {
+        if (commandLine.next("--ntf").isPresent()) {
             options.code = true;
             return true;
         } else if (commandLine.peek().get(session).isNonOption()) {

@@ -26,8 +26,9 @@
 package net.thevpc.nuts.runtime.standalone.util.iter;
 
 import net.thevpc.nuts.NutsElement;
-import net.thevpc.nuts.NutsElements;
 import net.thevpc.nuts.NutsDescribables;
+import net.thevpc.nuts.NutsElements;
+import net.thevpc.nuts.NutsSession;
 
 import java.util.Iterator;
 import java.util.function.Function;
@@ -55,11 +56,11 @@ public class ConvertedNonNullIterator<F, T> extends NutsIteratorBase<T> {
     }
 
     @Override
-    public NutsElement describe(NutsElements elems) {
-        return elems.ofObject()
+    public NutsElement describe(NutsSession session) {
+        return NutsElements.of(session).ofObject()
                 .set("type", "Map")
                 .set("accept", "isNotNull")
-                .set("mapper", NutsDescribables.resolveOrDestructAsObject(converter, elems)
+                .set("mapper", NutsDescribables.resolveOrDestructAsObject(converter, session)
                         .builder()
                         .set("name", convertName)
                         .build()

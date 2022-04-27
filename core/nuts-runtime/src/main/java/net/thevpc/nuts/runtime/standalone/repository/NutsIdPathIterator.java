@@ -73,13 +73,13 @@ public class NutsIdPathIterator extends NutsIteratorBase<NutsId> {
     }
 
     @Override
-    public NutsElement describe(NutsElements elems) {
-        return elems.ofObject()
+    public NutsElement describe(NutsSession session) {
+        return NutsElements.of(session).ofObject()
                 .set("type", "ScanPath")
                 .set("repository", repository == null ? null : repository.getName())
-                .set("filter", NutsDescribables.resolveOrDestruct(filter, elems))
-                .set("path", elems.toElement(basePath))
-                .set("root", elems.toElement(rootFolder))
+                .set("filter", NutsDescribables.resolveOrDestruct(filter, session))
+                .set("path", NutsElements.of(session).toElement(basePath))
+                .set("root", NutsElements.of(session).toElement(rootFolder))
                 .set("maxDepth", maxDepth)
                 .addAll(extraProperties)
                 .build();

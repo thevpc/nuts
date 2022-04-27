@@ -400,13 +400,13 @@ public class NutsSettingsNdiSubCommand extends AbstractNutsSettingsSubCommand {
 
     @Override
     public boolean exec(NutsCommandLine cmdLine, Boolean autoSave, NutsSession session) {
-        if (cmdLine.next("add launcher", "lna") != null) {
+        if (cmdLine.next("add launcher", "lna").isPresent()) {
             runAddLauncher(cmdLine, session);
             return true;
-        } else if (cmdLine.next("remove launcher", "lnrm") != null) {
+        } else if (cmdLine.next("remove launcher", "lnrm").isPresent()) {
             runRemoveLauncher(cmdLine, session);
             return true;
-        } else if (cmdLine.next("switch", "lnsw") != null) {
+        } else if (cmdLine.next("switch", "lnsw").isPresent()) {
             runSwitch(cmdLine, session);
             return true;
         }

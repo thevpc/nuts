@@ -69,7 +69,7 @@ public class IteratorBuilder<T> {
 //        return of(new SupplierIterator<T>(from, null));
 //    }
 
-    public static <T> IteratorBuilder<T> ofSupplier(Supplier<Iterator<T>> from, Function<NutsElements, NutsElement> name, NutsSession session) {
+    public static <T> IteratorBuilder<T> ofSupplier(Supplier<Iterator<T>> from, Function<NutsSession, NutsElement> name, NutsSession session) {
         return of(new SupplierIterator2<T>(from, name), session);
     }
 
@@ -78,10 +78,10 @@ public class IteratorBuilder<T> {
     }
 
     public static <T> IteratorBuilder<T> ofArrayValues(T[] t, String n, NutsSession session) {
-        return ofArrayValues(t, e -> e.ofString(n), session);
+        return ofArrayValues(t, e -> NutsElements.of(e).ofString(n), session);
     }
 
-    public static <T> IteratorBuilder<T> ofArrayValues(T[] t, Function<NutsElements, NutsElement> n, NutsSession session) {
+    public static <T> IteratorBuilder<T> ofArrayValues(T[] t, Function<NutsSession, NutsElement> n, NutsSession session) {
         return of(t == null ? emptyIterator() :
                 new NutsIteratorAdapter<T>(
                         Arrays.asList(t).iterator(), n),
@@ -103,7 +103,7 @@ public class IteratorBuilder<T> {
         return of(new FlatMapIterator<>(from, Collection::iterator), session);
     }
 
-    public IteratorBuilder<T> filter(Predicate<? super T> t, Function<NutsElements, NutsElement> e) {
+    public IteratorBuilder<T> filter(Predicate<? super T> t, Function<NutsSession, NutsElement> e) {
         if (t == null) {
             return this;
         }
@@ -162,7 +162,7 @@ public class IteratorBuilder<T> {
     public <V> IteratorBuilder<T> named(String n) {
         if (n != null) {
             return new IteratorBuilder<>(new NutsIteratorAdapter<T>(
-                    it, e -> e.ofString(n)), session);
+                    it, e -> NutsElements.of(e).ofString(n)), session);
         }
         return this;
     }

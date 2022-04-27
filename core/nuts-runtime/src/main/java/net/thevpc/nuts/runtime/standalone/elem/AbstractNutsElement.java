@@ -254,7 +254,13 @@ public abstract class AbstractNutsElement implements NutsElement {
     }
 
     @Override
-    public NutsElement describe(NutsElements elems) {
+    public NutsElement describe(NutsSession session) {
         return this;
     }
+
+    @Override
+    public String toStringLiteral() {
+        return toString();
+    }
+
 }

@@ -73,7 +73,7 @@ public class DefaultNutsIndexStore extends AbstractNutsIndexStore {
                         return IteratorBuilder.emptyIterator();
                     }
                 },
-                e->e
+                e->NutsElements.of(e)
                         .ofObject()
                         .set("type","SearchIndexVersions")
                         .set("source", getIndexURL(session).resolve( NutsConstants.Folders.ID).resolve( "allVersions").toString())
@@ -103,10 +103,10 @@ public class DefaultNutsIndexStore extends AbstractNutsIndexStore {
 //                        return IteratorUtils.emptyIterator();
                     }
                 },
-                e->e
+                e->NutsElements.of(e)
                         .ofObject().set("type","SearchIndexPackages")
                         .set("source", getIndexURL(session).resolve(NutsConstants.Folders.ID).toString())
-                        .set("filter", NutsDescribables.resolveOrToString(filter,elems))
+                        .set("filter", NutsDescribables.resolveOrToString(filter,session))
                         .build(),
                 session).build();
     }

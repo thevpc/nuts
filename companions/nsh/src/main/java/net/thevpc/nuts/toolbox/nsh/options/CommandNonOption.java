@@ -28,6 +28,7 @@ package net.thevpc.nuts.toolbox.nsh.options;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.thevpc.nuts.DefaultNutsArgumentCandidate;
 import net.thevpc.nuts.NutsArgumentCandidate;
 import net.thevpc.nuts.NutsArgumentName;
 import net.thevpc.nuts.NutsCommandAutoComplete;
@@ -57,7 +58,7 @@ public class CommandNonOption implements NutsArgumentName {
     public List<NutsArgumentCandidate> getCandidates(NutsCommandAutoComplete context) {
         List<NutsArgumentCandidate> all = new ArrayList<>();
         for (JShellBuiltin command : this.context.builtins().getAll()) {
-            all.add(new NutsArgumentCandidate(command.getName()));
+            all.add(new DefaultNutsArgumentCandidate(command.getName()));
         }
         return all;
     }

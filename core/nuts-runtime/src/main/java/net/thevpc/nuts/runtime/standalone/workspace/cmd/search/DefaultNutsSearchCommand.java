@@ -600,7 +600,7 @@ public class DefaultNutsSearchCommand extends AbstractNutsSearchCommand {
                                                             elems.ofObject()
                                                                     .set("description", "searchVersions")
                                                                     .set("repository", repoAndMode.getRepository().getName())
-                                                                    .set("filter", NutsDescribables.resolveOrDestruct(filter, elems))
+                                                                    .set("filter", NutsDescribables.resolveOrDestruct(filter, session))
                                                                     .build()
                                                     ).safeIgnore().iterator()
                                     );
@@ -652,7 +652,7 @@ public class DefaultNutsSearchCommand extends AbstractNutsSearchCommand {
                                                 .set("description", "searchRepository")
                                                 .set("repository", repoAndMode.getRepository().getName())
                                                 .set("fetchMode", repoAndMode.getFetchMode().id())
-                                                .set("filter", NutsDescribables.resolveOrDestruct(filter, elems))
+                                                .set("filter", NutsDescribables.resolveOrDestruct(filter, session))
                                                 .build()
                                 ).iterator()
                 );
@@ -688,7 +688,7 @@ public class DefaultNutsSearchCommand extends AbstractNutsSearchCommand {
                                 }
                             }
                             return visited.values().iterator();
-                        }, e->NutsDescribables.resolveOrDestructAsObject(curr,elems)
+                        }, e->NutsDescribables.resolveOrDestructAsObject(curr,session)
                                 .builder()
                                 .set("latest", true)
                                 .set("distinct", true)
@@ -710,7 +710,7 @@ public class DefaultNutsSearchCommand extends AbstractNutsSearchCommand {
                                 }
                             }
                             return IteratorBuilder.ofFlatMap(NutsIterator.of(visited.values().iterator(), "visited"), session).build();
-                        }, e -> NutsDescribables.resolveOrDestructAsObject(curr,elems)
+                        }, e -> NutsDescribables.resolveOrDestructAsObject(curr,session)
                                 .builder()
                                 .set("latest", true)
                                 .set("duplicates", true)
@@ -754,7 +754,7 @@ public class DefaultNutsSearchCommand extends AbstractNutsSearchCommand {
                         }
                         return visited.values().iterator();
                     },
-                    e -> NutsDescribables.resolveOrDestructAsObject(curr,elems)
+                    e -> NutsDescribables.resolveOrDestructAsObject(curr,session)
                             .builder()
                             .set("latest", true)
                             .set("distinct", true)
@@ -776,7 +776,7 @@ public class DefaultNutsSearchCommand extends AbstractNutsSearchCommand {
                         }
                         return IteratorBuilder.ofFlatMap(NutsIterator.of(visited.values().iterator(), "visited"), session).build();
                     },
-                    e -> NutsDescribables.resolveOrDestructAsObject(curr,elems)
+                    e -> NutsDescribables.resolveOrDestructAsObject(curr,session)
                             .builder()
                             .set("latest", true)
                             .set("duplicates", true)

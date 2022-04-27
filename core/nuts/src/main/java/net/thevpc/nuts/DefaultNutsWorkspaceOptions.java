@@ -45,6 +45,13 @@ import java.util.function.Supplier;
  * @since 0.5.4
  */
 public class DefaultNutsWorkspaceOptions implements Serializable, NutsWorkspaceOptions {
+    public static NutsWorkspaceOptions BLANK = new DefaultNutsWorkspaceOptions(
+            null, null, null, null, null, null, null, null, null, null, null, null,
+            null, null, null, null, null, null, null, null, null, null, null, null,
+            null, null, null, null, null, null, null, null, null, null, null, null,
+            null, null, null, null, null, null, null, null, null, null, null, null,
+            null, null, null, null, null, null, null, null, null, null, null, null, null, null
+    );
 
     private static final long serialVersionUID = 1;
     /**
@@ -207,7 +214,7 @@ public class DefaultNutsWorkspaceOptions implements Serializable, NutsWorkspaceO
     /**
      * option-type : runtime (available only for the current workspace instance)
      */
-    private final long creationTime;
+    private final Instant creationTime;
 
     /**
      * if true no real execution, wil dry exec option-type : runtime (available
@@ -377,7 +384,7 @@ public class DefaultNutsWorkspaceOptions implements Serializable, NutsWorkspaceO
      */
     private final String theme;
 
-    public DefaultNutsWorkspaceOptions(List<String> outputFormatOptions, List<String> customOptions, String apiVersion, String runtimeId, String javaCommand, String javaOptions, String workspace, String outLinePrefix, String errLinePrefix, String name, Boolean skipCompanions, Boolean skipWelcome, Boolean skipBoot, Boolean global, Boolean gui, List<String> excludedExtensions, List<String> repositories, String userName, char[] credentials, NutsTerminalMode terminalMode, Boolean readOnly, Boolean trace, String progressOptions, String dependencySolver, NutsLogConfig logConfig, NutsConfirmationMode confirm, NutsContentType outputFormat, List<String> applicationArguments, NutsOpenMode openMode, long creationTime, Boolean dry, Supplier<ClassLoader> classLoaderSupplier, List<String> executorOptions, Boolean recover, Boolean reset, Boolean commandVersion, Boolean commandHelp, String debug, Boolean inherited, NutsExecutionType executionType, NutsRunAs runAs, String archetype, Boolean switchWorkspace, Map<NutsStoreLocation, String> storeLocations, Map<NutsHomeLocation, String> homeLocations, NutsOsFamily storeLocationLayout, NutsStoreLocationStrategy storeLocationStrategy, NutsStoreLocationStrategy repositoryStoreLocationStrategy, NutsFetchStrategy fetchStrategy, Boolean cached, Boolean indexed, Boolean transitive, Boolean bot, InputStream stdin, PrintStream stdout, PrintStream stderr, ExecutorService executorService, Instant expireTime, List<NutsMessage> errors, Boolean skipErrors, String locale, String theme) {
+    public DefaultNutsWorkspaceOptions(List<String> outputFormatOptions, List<String> customOptions, String apiVersion, String runtimeId, String javaCommand, String javaOptions, String workspace, String outLinePrefix, String errLinePrefix, String name, Boolean skipCompanions, Boolean skipWelcome, Boolean skipBoot, Boolean global, Boolean gui, List<String> excludedExtensions, List<String> repositories, String userName, char[] credentials, NutsTerminalMode terminalMode, Boolean readOnly, Boolean trace, String progressOptions, String dependencySolver, NutsLogConfig logConfig, NutsConfirmationMode confirm, NutsContentType outputFormat, List<String> applicationArguments, NutsOpenMode openMode, Instant creationTime, Boolean dry, Supplier<ClassLoader> classLoaderSupplier, List<String> executorOptions, Boolean recover, Boolean reset, Boolean commandVersion, Boolean commandHelp, String debug, Boolean inherited, NutsExecutionType executionType, NutsRunAs runAs, String archetype, Boolean switchWorkspace, Map<NutsStoreLocation, String> storeLocations, Map<NutsHomeLocation, String> homeLocations, NutsOsFamily storeLocationLayout, NutsStoreLocationStrategy storeLocationStrategy, NutsStoreLocationStrategy repositoryStoreLocationStrategy, NutsFetchStrategy fetchStrategy, Boolean cached, Boolean indexed, Boolean transitive, Boolean bot, InputStream stdin, PrintStream stdout, PrintStream stderr, ExecutorService executorService, Instant expireTime, List<NutsMessage> errors, Boolean skipErrors, String locale, String theme) {
         this.outputFormatOptions = PrivateNutsUtilCollections.unmodifiableList(outputFormatOptions);
         this.customOptions = PrivateNutsUtilCollections.unmodifiableList(customOptions);
         this.apiVersion = NutsUtilStrings.trimToNull(apiVersion);
@@ -484,7 +491,7 @@ public class DefaultNutsWorkspaceOptions implements Serializable, NutsWorkspaceO
 
 
     @Override
-    public long getCreationTime() {
+    public Instant getCreationTime() {
         return creationTime;
     }
 

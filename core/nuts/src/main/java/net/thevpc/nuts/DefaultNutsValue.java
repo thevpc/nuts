@@ -9,6 +9,16 @@ import java.util.Date;
 import java.util.Objects;
 
 public class DefaultNutsValue implements NutsValue {
+    private static NutsValue NULL = new DefaultNutsValue(null);
+    public static NutsValue of(Object any) {
+        if (any == null) {
+            return NULL;
+        }
+        if (any instanceof NutsValue) {
+            return (NutsValue) any;
+        }
+        return new DefaultNutsValue(any);
+    }
 
     public static final String[] DATE_FORMATS = {
             "yyyy-MM-dd HH:mm:ss.SSS",
@@ -512,6 +522,11 @@ public class DefaultNutsValue implements NutsValue {
 
     @Override
     public String toString() {
+        return Objects.toString(getRaw());
+    }
+
+    @Override
+    public String toStringLiteral() {
         switch (type()) {
             case NULL:
                 return "null";

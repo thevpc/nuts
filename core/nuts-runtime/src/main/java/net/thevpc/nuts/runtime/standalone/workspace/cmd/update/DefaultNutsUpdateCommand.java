@@ -35,8 +35,8 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
         }
 
         @Override
-        public NutsElement describe(NutsElements elems) {
-            return elems.ofString("latestVersionFirst");
+        public NutsElement describe(NutsSession session) {
+            return NutsElements.of(session).ofString("latestVersionFirst");
         }
     };
     private final NutsComparator<NutsId> DEFAULT_THEN_LATEST_VERSION_FIRST = new NutsComparator<NutsId>() {
@@ -53,8 +53,8 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
         }
 
         @Override
-        public NutsElement describe(NutsElements elems) {
-            return elems.ofString("defaultThenLatestVersionFirst");
+        public NutsElement describe(NutsSession session) {
+            return NutsElements.of(session).ofString("defaultThenLatestVersionFirst");
         }
     };
     private boolean checkFixes = false;

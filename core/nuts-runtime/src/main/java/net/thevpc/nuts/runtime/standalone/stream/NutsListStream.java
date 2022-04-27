@@ -18,9 +18,9 @@ import java.util.stream.Stream;
 public class NutsListStream<T> extends AbstractNutsStream<T> {
 
     private final List o;
-    private final Function<NutsElements, NutsElement> name;
+    private final Function<NutsSession, NutsElement> name;
 
-    public NutsListStream(NutsSession session, String nutsBase, List<T> o, Function<NutsElements, NutsElement> name) {
+    public NutsListStream(NutsSession session, String nutsBase, List<T> o, Function<NutsSession, NutsElement> name) {
         super(session, nutsBase);
         this.o = o;
         this.name = name;

@@ -71,13 +71,13 @@ public class FolderObjectIterator<T> extends NutsIteratorBase<T> {
     }
 
     @Override
-    public NutsElement describe(NutsElements elems) {
-        return elems.ofObject()
+    public NutsElement describe(NutsSession session) {
+        return NutsElements.of(session).ofObject()
                 .set("type", "ScanPath")
                 .set("name", name)
-                .set("path", NutsDescribables.resolveOrDestruct(folder, elems))
+                .set("path", NutsDescribables.resolveOrDestruct(folder, session))
                 .set("maxDepth", maxDepth)
-                .set("filter", NutsDescribables.resolveOrDestruct(filter, elems))
+                .set("filter", NutsDescribables.resolveOrDestruct(filter, session))
                 .build();
     }
 

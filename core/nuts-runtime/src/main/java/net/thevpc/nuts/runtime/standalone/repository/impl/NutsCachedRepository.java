@@ -234,7 +234,7 @@ public class NutsCachedRepository extends AbstractNutsRepositoryBase {
                     } else {
                         localPath2 = cachePath.toString();
                     }
-                    return NutsOptional.of(new NutsDefaultContent(
+                    return NutsOptional.of(new DefaultNutsContent(
                             NutsPath.of(localPath2, session), true, false));
                 } else {
                     return NutsOptional.ofError(session1 -> NutsMessage.cstyle("nuts content not found %s",id),new NutsNotFoundException(session, id));

@@ -92,7 +92,7 @@ public class MavenRemoteXmlRepository extends MavenFolderRepository {
                     }
                     return ret.iterator();
                 }
-                , e -> e.ofObject()
+                , e -> NutsElements.of(e).ofObject()
                         .set("type", "ScanMavenMetadataXml")
                         .set("path", metadataURL.toString())
                         .build(),

@@ -22,7 +22,7 @@ public class NutsSettingsBackupSubCommand extends AbstractNutsSettingsSubCommand
 
     @Override
     public boolean exec(NutsCommandLine commandLine, Boolean autoSave, NutsSession session) {
-        if (commandLine.next("backup") != null) {
+        if (commandLine.next("backup").isPresent()) {
             commandLine.setCommandName("settings backup");
             String file = null;
             NutsArgument a;
@@ -63,7 +63,7 @@ public class NutsSettingsBackupSubCommand extends AbstractNutsSettingsSubCommand
                 cmp.to(file).run();
             }
             return true;
-        } else if (commandLine.next("restore") != null) {
+        } else if (commandLine.next("restore").isPresent()) {
             commandLine.setCommandName("settings restore");
             String file = null;
             String ws = null;

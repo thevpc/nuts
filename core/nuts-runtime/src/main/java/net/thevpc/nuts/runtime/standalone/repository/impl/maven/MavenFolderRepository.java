@@ -133,7 +133,7 @@ public class MavenFolderRepository extends NutsFolderRepositoryBase {
             NutsPath content = getMavenLocalFolderContent(id, session);
             if (content != null && content.exists()) {
                 if (localPath == null) {
-                    return new NutsDefaultContent(
+                    return new DefaultNutsContent(
                             content, true, false);
                 } else {
                     String tempFile = NutsTmp.of(session)
@@ -141,7 +141,7 @@ public class MavenFolderRepository extends NutsFolderRepositoryBase {
                             .createTempFile(content.getName()).toString();
                     NutsCp.of(session)
                             .from(content).to(tempFile).addOptions(NutsPathOption.SAFE).run();
-                    return new NutsDefaultContent(
+                    return new DefaultNutsContent(
                             NutsPath.of(tempFile, session), true, false);
                 }
             }

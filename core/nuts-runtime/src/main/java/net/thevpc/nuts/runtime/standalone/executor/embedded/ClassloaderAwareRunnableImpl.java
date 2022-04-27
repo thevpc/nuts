@@ -71,9 +71,11 @@ public class ClassloaderAwareRunnableImpl extends ClassloaderAwareRunnable {
             mainMethod.invoke(nutsApp, sessionCopy, joptions.getAppArgs().toArray(new String[0]));
         } else {
             //NutsWorkspace
+            NutsWorkspaceBootOptionsBuilder bootOptions = getSession().boot().getBootOptions().builder();
             System.setProperty("nuts.boot.args",
-                    getSession().boot().getBootOptions()
+                    bootOptions
                             .toCommandLine(new NutsWorkspaceOptionsConfig().setExported(true).setCompact(true))
+                            .add(id.getLongName())
                             .formatter(session).setShellFamily(NutsShellFamily.SH).toString()
             );
             mainMethod = cls.getMethod("main", String[].class);

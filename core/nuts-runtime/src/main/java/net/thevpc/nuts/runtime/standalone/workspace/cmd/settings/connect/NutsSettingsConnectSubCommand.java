@@ -26,7 +26,7 @@ public class NutsSettingsConnectSubCommand extends AbstractNutsSettingsSubComman
     @Override
     public boolean exec(NutsCommandLine commandLine, Boolean autoSave, NutsSession session) {
         String cmd0 = commandLine.toString();
-        if (commandLine.next("connect") != null) {
+        if (commandLine.next("connect").isPresent()) {
             char[] password = null;
             String server = null;
             NutsArgument a;

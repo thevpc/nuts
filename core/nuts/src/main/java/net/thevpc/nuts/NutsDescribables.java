@@ -37,34 +37,34 @@ public final class NutsDescribables {
     private NutsDescribables() {
     }
 
-    public static NutsElement resolveOrToString(Object o, NutsElements elems) {
-        return resolveOr(o, elems, () -> elems.ofString(o.toString()));
+    public static NutsElement resolveOrToString(Object o, NutsSession session) {
+        return resolveOr(o, session, () -> NutsElements.of(session).ofString(o.toString()));
     }
 
-    public static NutsElement resolveOr(Object o, NutsElements elems, Supplier<NutsElement> d) {
-        NutsElement e = resolveOrNull(o, elems);
+    public static NutsElement resolveOr(Object o, NutsSession session, Supplier<NutsElement> d) {
+        NutsElement e = resolveOrNull(o, session);
         if (e != null) {
             return e;
         }
         return d == null ? null : d.get();
     }
 
-    public static NutsObjectElement resolveOrDestructAsObject(Object o, NutsElements elems) {
-        NutsElement e = resolveOrDestruct(o, elems);
+    public static NutsObjectElement resolveOrDestructAsObject(Object o, NutsSession session) {
+        NutsElement e = resolveOrDestruct(o, session);
         if(e instanceof NutsObjectElement){
             return (NutsObjectElement) e;
         }
-        return NutsElements.of(elems.getSession())
+        return NutsElements.of(session)
                 .ofObject()
                 .set("value",e)
                 .build();
     }
-    public static NutsElement resolveOrDestruct(Object o, NutsElements elems) {
-        NutsElement e = resolveOrNull(o, elems);
+    public static NutsElement resolveOrDestruct(Object o, NutsSession session) {
+        NutsElement e = resolveOrNull(o, session);
         if (e != null) {
             return e;
         }
-        return elems.toElement(o);
+        return NutsElements.of(session).toElement(o);
     }
 
     public static void cast(Object o) {
@@ -80,49 +80,49 @@ public final class NutsDescribables {
         return o instanceof NutsDescribable;
     }
 
-    public static NutsElement resolveOrNull(Object o, NutsElements elems) {
+    public static NutsElement resolveOrNull(Object o, NutsSession session) {
         if (o == null) {
             return null;
         }
         if (o instanceof NutsDescribable) {
-            return ((NutsDescribable) o).describe(elems);
+            return ((NutsDescribable) o).describe(session);
         }
         return null;
     }
 
-    public static NutsRunnable ofRunnable(Runnable runnable, Function<NutsElements, NutsElement> nfo) {
+    public static NutsRunnable ofRunnable(Runnable runnable, Function<NutsSession, NutsElement> nfo) {
         return new NamedRunnable(runnable, nfo);
     }
 
-    public static <F, T> NutsUnsafeFunction<F, T> ofUnsafeFunction(NutsUnsafeFunctionBase<F, T> fun, Function<NutsElements, NutsElement> nfo) {
+    public static <F, T> NutsUnsafeFunction<F, T> ofUnsafeFunction(NutsUnsafeFunctionBase<F, T> fun, Function<NutsSession, NutsElement> nfo) {
         return new NamedUnsafeFunction<>(fun, nfo);
     }
 
-    public static <F, T> NutsFunction<F, T> ofFunction(Function<F, T> fun, Function<NutsElements, NutsElement> name) {
+    public static <F, T> NutsFunction<F, T> ofFunction(Function<F, T> fun, Function<NutsSession, NutsElement> name) {
         return new NamedFunction<>(fun, name);
     }
 
-    public static <T> NutsComparator<T> ofComparator(Comparator<T> fun, Function<NutsElements, NutsElement> name) {
+    public static <T> NutsComparator<T> ofComparator(Comparator<T> fun, Function<NutsSession, NutsElement> name) {
         return new NamedComparator<>(fun, name);
     }
 
-    public static <T> NutsPredicate<T> ofPredicate(Predicate<T> fun, Function<NutsElements, NutsElement> nfo) {
+    public static <T> NutsPredicate<T> ofPredicate(Predicate<T> fun, Function<NutsSession, NutsElement> nfo) {
         return new NamedPredicate<>(fun, nfo);
     }
 
-    public static <T> NutsIterator<T> ofIterator(Iterator<T> fun, Function<NutsElements, NutsElement> nfo) {
+    public static <T> NutsIterator<T> ofIterator(Iterator<T> fun, Function<NutsSession, NutsElement> nfo) {
         return new NamedIterator<>(fun, nfo);
     }
 
-    public static <T> NutsIterable<T> ofIterable(Iterable<T> fun, Function<NutsElements, NutsElement> nfo) {
+    public static <T> NutsIterable<T> ofIterable(Iterable<T> fun, Function<NutsSession, NutsElement> nfo) {
         return new NamedIterable<>(fun, nfo);
     }
 
     private static class NamedPredicate<T> extends NutsPredicates.BasePredicate<T> {
         private final Predicate<T> base;
-        private final Function<NutsElements, NutsElement> nfo;
+        private final Function<NutsSession, NutsElement> nfo;
 
-        public NamedPredicate(Predicate<T> base, Function<NutsElements, NutsElement> nfo) {
+        public NamedPredicate(Predicate<T> base, Function<NutsSession, NutsElement> nfo) {
             this.base = base;
             this.nfo = nfo;
         }
@@ -138,16 +138,16 @@ public final class NutsDescribables {
         }
 
         @Override
-        public NutsElement describe(NutsElements elems) {
-            NutsObjectElement b = NutsDescribables.resolveOr(base, elems, () -> elems.ofObject().build())
-                    .asObject().get(elems.getSession());
-            NutsElement a = nfo.apply(elems);
+        public NutsElement describe(NutsSession session) {
+            NutsObjectElement b = NutsDescribables.resolveOr(base, session, () -> NutsElements.of(session).ofObject().build())
+                    .asObject().get(session);
+            NutsElement a = nfo.apply(session);
             if (b.isEmpty()) {
                 return a;
             }
             if (a.isObject()) {
                 return b.builder()
-                        .addAll(a.asObject().get(elems.getSession()))
+                        .addAll(a.asObject().get(session))
                         .build()
                         ;
             } else {
@@ -161,9 +161,9 @@ public final class NutsDescribables {
 
     private static class NamedIterator<T> implements NutsIterator<T> {
         private final Iterator<T> base;
-        private final Function<NutsElements, NutsElement> nfo;
+        private final Function<NutsSession, NutsElement> nfo;
 
-        public NamedIterator(Iterator<T> base, Function<NutsElements, NutsElement> nfo) {
+        public NamedIterator(Iterator<T> base, Function<NutsSession, NutsElement> nfo) {
             this.base = base;
             this.nfo = nfo;
         }
@@ -184,16 +184,16 @@ public final class NutsDescribables {
         }
 
         @Override
-        public NutsElement describe(NutsElements elems) {
-            NutsObjectElement b = NutsDescribables.resolveOr(base, elems, () -> elems.ofObject().build())
-                    .asObject().get(elems.getSession());
-            NutsElement a = nfo.apply(elems);
+        public NutsElement describe(NutsSession session) {
+            NutsObjectElement b = NutsDescribables.resolveOr(base, session, () -> NutsElements.of(session).ofObject().build())
+                    .asObject().get(session);
+            NutsElement a = nfo.apply(session);
             if (b.isEmpty()) {
                 return a;
             }
             if (a.isObject()) {
                 return b.builder()
-                        .addAll(a.asObject().get(elems.getSession()))
+                        .addAll(a.asObject().get(session))
                         .build()
                         ;
             } else {
@@ -207,9 +207,9 @@ public final class NutsDescribables {
 
     private static class NamedIterable<T> implements NutsIterable<T> {
         private final Iterable<T> base;
-        private final Function<NutsElements, NutsElement> nfo;
+        private final Function<NutsSession, NutsElement> nfo;
 
-        public NamedIterable(Iterable<T> base, Function<NutsElements, NutsElement> nfo) {
+        public NamedIterable(Iterable<T> base, Function<NutsSession, NutsElement> nfo) {
             this.base = base;
             this.nfo = nfo;
         }
@@ -225,16 +225,16 @@ public final class NutsDescribables {
         }
 
         @Override
-        public NutsElement describe(NutsElements elems) {
-            NutsObjectElement b = NutsDescribables.resolveOr(base, elems, () -> elems.ofObject().build())
-                    .asObject().get(elems.getSession());
-            NutsElement a = nfo.apply(elems);
+        public NutsElement describe(NutsSession session) {
+            NutsObjectElement b = NutsDescribables.resolveOr(base, session, () -> NutsElements.of(session).ofObject().build())
+                    .asObject().get(session);
+            NutsElement a = nfo.apply(session);
             if (b.isEmpty()) {
                 return a;
             }
             if (a.isObject()) {
                 return b.builder()
-                        .addAll(a.asObject().get(elems.getSession()))
+                        .addAll(a.asObject().get(session))
                         .build()
                         ;
             } else {
@@ -248,9 +248,9 @@ public final class NutsDescribables {
 
     private static class NamedFunction<F, T> implements NutsFunction<F, T> {
         private final Function<F, T> base;
-        private final Function<NutsElements, NutsElement> nfo;
+        private final Function<NutsSession, NutsElement> nfo;
 
-        public NamedFunction(Function<F, T> base, Function<NutsElements, NutsElement> nfo) {
+        public NamedFunction(Function<F, T> base, Function<NutsSession, NutsElement> nfo) {
             this.base = base;
             this.nfo = nfo;
         }
@@ -266,16 +266,16 @@ public final class NutsDescribables {
         }
 
         @Override
-        public NutsElement describe(NutsElements elems) {
-            return nfo.apply(elems);
+        public NutsElement describe(NutsSession session) {
+            return nfo.apply(session);
         }
     }
 
     private static class NamedComparator<T> implements NutsComparator<T> {
         private final Comparator<T> base;
-        private final Function<NutsElements, NutsElement> nfo;
+        private final Function<NutsSession, NutsElement> nfo;
 
-        public NamedComparator(Comparator<T> base, Function<NutsElements, NutsElement> nfo) {
+        public NamedComparator(Comparator<T> base, Function<NutsSession, NutsElement> nfo) {
             this.base = base;
             this.nfo = nfo;
         }
@@ -291,15 +291,15 @@ public final class NutsDescribables {
         }
 
         @Override
-        public NutsElement describe(NutsElements elems) {
-            NutsObjectElement b = NutsDescribables.resolveOrDestructAsObject(base, elems);
-            NutsElement a = nfo.apply(elems);
+        public NutsElement describe(NutsSession session) {
+            NutsObjectElement b = NutsDescribables.resolveOrDestructAsObject(base, session);
+            NutsElement a = nfo.apply(session);
             if (b.isEmpty()) {
                 return a;
             }
             if (a.isObject()) {
                 return b.builder()
-                        .addAll(a.asObject().get(elems.getSession()))
+                        .addAll(a.asObject().get(session))
                         .build()
                         ;
             } else {
@@ -313,9 +313,9 @@ public final class NutsDescribables {
 
     private static class NamedUnsafeFunction<F, T> implements NutsUnsafeFunction<F, T> {
         private final NutsUnsafeFunctionBase<F, T> base;
-        private final Function<NutsElements, NutsElement> nfo;
+        private final Function<NutsSession, NutsElement> nfo;
 
-        public NamedUnsafeFunction(NutsUnsafeFunctionBase<F, T> base, Function<NutsElements, NutsElement> nfo) {
+        public NamedUnsafeFunction(NutsUnsafeFunctionBase<F, T> base, Function<NutsSession, NutsElement> nfo) {
             this.base = base;
             this.nfo = nfo;
         }
@@ -331,15 +331,15 @@ public final class NutsDescribables {
         }
 
         @Override
-        public NutsElement describe(NutsElements elems) {
-            NutsObjectElement b = NutsDescribables.resolveOrDestructAsObject(base, elems);
-            NutsElement a = nfo.apply(elems);
+        public NutsElement describe(NutsSession session) {
+            NutsObjectElement b = NutsDescribables.resolveOrDestructAsObject(base, session);
+            NutsElement a = nfo.apply(session);
             if (b.isEmpty()) {
                 return a;
             }
             if (a.isObject()) {
                 return b.builder()
-                        .addAll(a.asObject().get(elems.getSession()))
+                        .addAll(a.asObject().get(session))
                         .build()
                         ;
             } else {
@@ -353,16 +353,16 @@ public final class NutsDescribables {
 
     private static class NamedRunnable implements NutsRunnable {
         private final Runnable base;
-        private final Function<NutsElements, NutsElement> nfo;
+        private final Function<NutsSession, NutsElement> nfo;
 
-        public NamedRunnable(Runnable base, Function<NutsElements, NutsElement> nfo) {
+        public NamedRunnable(Runnable base, Function<NutsSession, NutsElement> nfo) {
             this.base = base;
             this.nfo = nfo;
         }
 
         @Override
-        public NutsElement describe(NutsElements elems) {
-            return nfo.apply(elems);
+        public NutsElement describe(NutsSession session) {
+            return nfo.apply(session);
         }
 
         @Override

@@ -175,7 +175,7 @@ public class MavenNutsDependencySolver implements NutsDependencySolver {
                 nonMergedRootNodes.toArray(new NutsDependencyTreeNode[0]),
                 mergedDepsList,
                 mergedRootNodes.toArray(new NutsDependencyTreeNode[0]),
-                e->e.ofString("solver"),session
+                e->NutsElements.of(e).ofString("solver"),session
         );
     }
 

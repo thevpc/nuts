@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 public class NutsSettingsAliasSubCommand extends AbstractNutsSettingsSubCommand {
     @Override
     public boolean exec(NutsCommandLine cmdLine, Boolean autoSave, NutsSession session) {
-        if (cmdLine.next("list aliases") != null) {
+        if (cmdLine.next("list aliases").isPresent()) {
             cmdLine.setCommandName("settings list aliases");
             List<String> toList = new ArrayList<>();
             while (cmdLine.hasNext()) {
@@ -77,7 +77,7 @@ public class NutsSettingsAliasSubCommand extends AbstractNutsSettingsSubCommand 
                 }
             }
             return true;
-        } else if (cmdLine.next("remove alias") != null) {
+        } else if (cmdLine.next("remove alias").isPresent()) {
             if (cmdLine.isExecMode()) {
                 while (cmdLine.hasNext()) {
                     session.commands().removeCommand(cmdLine.next().get(session).toString());
@@ -85,7 +85,7 @@ public class NutsSettingsAliasSubCommand extends AbstractNutsSettingsSubCommand 
                 session.config().save();
             }
             return true;
-        } else if (cmdLine.next("add alias") != null) {
+        } else if (cmdLine.next("add alias").isPresent()) {
             if (cmdLine.isExecMode()) {
                 String n = null;
                 LinkedHashMap<String, AliasInfo> toAdd = new LinkedHashMap<>();

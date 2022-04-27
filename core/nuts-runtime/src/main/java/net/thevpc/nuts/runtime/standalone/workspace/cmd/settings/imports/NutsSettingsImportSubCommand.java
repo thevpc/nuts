@@ -18,7 +18,7 @@ public class NutsSettingsImportSubCommand extends AbstractNutsSettingsSubCommand
 
     @Override
     public boolean exec(NutsCommandLine cmdLine, Boolean autoSave, NutsSession session) {
-        if (cmdLine.next("list imports", "li") != null) {
+        if (cmdLine.next("list imports", "li").isPresent()) {
             cmdLine.setCommandName("config list imports").throwUnexpectedArgument(session);
             if (cmdLine.isExecMode()) {
                 for (String imp : (session.imports().getAllImports())) {
@@ -26,14 +26,14 @@ public class NutsSettingsImportSubCommand extends AbstractNutsSettingsSubCommand
                 }
             }
             return true;
-        } else if (cmdLine.next("clear imports", "ci") != null) {
+        } else if (cmdLine.next("clear imports", "ci").isPresent()) {
             cmdLine.setCommandName("config clear imports").throwUnexpectedArgument(session);
             if (cmdLine.isExecMode()) {
                 session.imports().clearImports();
                 session.config().save();
             }
             return true;
-        } else if (cmdLine.next("import", "ia") != null) {
+        } else if (cmdLine.next("import", "ia").isPresent()) {
             do {
                 String a = cmdLine.nextNonOption(NutsArgumentName.of("import",session)).get(session)
                         .asString().get(session);
@@ -45,7 +45,7 @@ public class NutsSettingsImportSubCommand extends AbstractNutsSettingsSubCommand
                 session.config().save();
             }
             return true;
-        } else if (cmdLine.next("unimport", "ir") != null) {
+        } else if (cmdLine.next("unimport", "ir").isPresent()) {
             while (cmdLine.hasNext()) {
                 String ii = cmdLine.nextNonOption(NutsArgumentName.of("import",session)).get(session)
                         .asString().get(session);

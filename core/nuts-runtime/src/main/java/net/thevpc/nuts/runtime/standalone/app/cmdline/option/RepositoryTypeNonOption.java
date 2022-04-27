@@ -27,7 +27,6 @@
 package net.thevpc.nuts.runtime.standalone.app.cmdline.option;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.standalone.repository.NutsRepositoryHelper;
 import net.thevpc.nuts.runtime.standalone.repository.util.NutsRepositoryUtils;
 
 import java.util.ArrayList;
@@ -61,7 +60,7 @@ public class RepositoryTypeNonOption extends DefaultNonOption {
         }
         List<NutsArgumentCandidate> all = new ArrayList<>();
         for (String v : allValid) {
-            all.add(new NutsArgumentCandidate(v));
+            all.add(new DefaultNutsArgumentCandidate(v));
         }
         return all;
     }

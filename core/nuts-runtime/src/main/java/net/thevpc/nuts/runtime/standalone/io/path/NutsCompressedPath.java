@@ -106,7 +106,7 @@ public class NutsCompressedPath extends NutsPathBase {
     public InputStream getInputStream() {
         InputStream is = base.getInputStream();
         NutsStreamMetadata m = NutsStreamMetadata.of(is);
-        NutsStreamMetadata m2 = new NutsDefaultStreamMetadata(m).setUserKind(getUserKind());
+        NutsStreamMetadata m2 = new DefaultNutsStreamMetadata(m).setUserKind(getUserKind());
         return InputStreamMetadataAwareImpl.of(is, m2);
     }
 

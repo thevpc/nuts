@@ -25,6 +25,7 @@
 */
 package net.thevpc.nuts.runtime.standalone.app.cmdline.option;
 
+import net.thevpc.nuts.DefaultNutsArgumentCandidate;
 import net.thevpc.nuts.NutsArgumentCandidate;
 import net.thevpc.nuts.NutsCommandAutoComplete;
 
@@ -44,10 +45,10 @@ public class ArchitectureNonOption extends DefaultNonOption {
     @Override
     public List<NutsArgumentCandidate> getCandidates(NutsCommandAutoComplete context) {
         List<NutsArgumentCandidate> all = new ArrayList<>();
-        all.add(new NutsArgumentCandidate("\"linux x86\""));
-        all.add(new NutsArgumentCandidate("\"linux x64\""));
-        all.add(new NutsArgumentCandidate("\"win x86\""));
-        all.add(new NutsArgumentCandidate("\"win x64\""));
+        all.add(new DefaultNutsArgumentCandidate("\"linux x86\""));
+        all.add(new DefaultNutsArgumentCandidate("\"linux x64\""));
+        all.add(new DefaultNutsArgumentCandidate("\"win x86\""));
+        all.add(new DefaultNutsArgumentCandidate("\"win x64\""));
         return all;
     }
 

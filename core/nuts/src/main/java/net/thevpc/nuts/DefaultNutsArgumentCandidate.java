@@ -9,6 +9,7 @@
  * dependencies at runtime. Nuts is not tied to java and is a good choice
  * to share shell scripts and other 'things' . Its based on an extensible
  * architecture to help supporting a large range of sub managers / repositories.
+ *
  * <br>
  * <p>
  * Copyright [2020] [thevpc]
@@ -23,58 +24,72 @@
  * <br>
  * ====================================================================
  */
-package net.thevpc.nuts.runtime.standalone.util.iter;
+package net.thevpc.nuts;
 
-import net.thevpc.nuts.NutsElement;
-import net.thevpc.nuts.NutsDescribables;
-import net.thevpc.nuts.NutsElements;
-import net.thevpc.nuts.NutsSession;
-
-import java.util.Iterator;
-import java.util.function.Function;
+import java.io.Serializable;
+import java.util.Objects;
 
 /**
- * Created by vpc on 1/9/17.
+ * Argument Candidate used in Auto Complete.
+ * <p>
  *
- * @param <F> From Type
- * @param <T> To Type
+ * @author thevpc
+ * @app.category Command Line
+ * @since 0.5.5
  */
-public class ConvertedIterator<F, T> extends NutsIteratorBase<T> {
+public class DefaultNutsArgumentCandidate implements Serializable, NutsArgumentCandidate {
 
-    private final Iterator<F> base;
-    private final Function<? super F, ? extends T> converter;
+    private final String value;
+    private final String display;
 
-    public ConvertedIterator(Iterator<F> base, Function<? super F, ? extends T> converter) {
-        this.base = base;
-        this.converter = converter;
+    /**
+     * @param value value
+     */
+    public DefaultNutsArgumentCandidate(String value) {
+        this.value = value;
+        this.display = value;
+    }
+
+    public DefaultNutsArgumentCandidate(String value, String display) {
+        this.value = value;
+        this.display = display;
+    }
+
+    /**
+     * argument value
+     *
+     * @return argument value
+     */
+    @Override
+    public String getValue() {
+        return value;
+    }
+
+    /**
+     * human display
+     *
+     * @return human display
+     */
+    @Override
+    public String getDisplay() {
+        return display;
     }
 
     @Override
-    public NutsElement describe(NutsSession session) {
-        return NutsElements.of(session).ofObject()
-                .set("type", "Map")
-                .set("mapper", NutsDescribables.resolveOrDestruct(converter, session))
-                .set("base", NutsDescribables.resolveOrDestruct(base, session))
-                .build();
+    public int hashCode() {
+        return Objects.hash(value, display);
     }
 
     @Override
-    public boolean hasNext() {
-        return base.hasNext();
-    }
-
-    @Override
-    public T next() {
-        return converter.apply(base.next());
-    }
-
-    @Override
-    public void remove() {
-        base.remove();
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        DefaultNutsArgumentCandidate that = (DefaultNutsArgumentCandidate) o;
+        return Objects.equals(value, that.value) && Objects.equals(display, that.display);
     }
 
     @Override
     public String toString() {
-        return converter + "(" + base + ")";
+        return String.valueOf(value);
     }
 }

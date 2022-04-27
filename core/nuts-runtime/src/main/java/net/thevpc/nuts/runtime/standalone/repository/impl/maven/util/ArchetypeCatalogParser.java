@@ -2,6 +2,7 @@ package net.thevpc.nuts.runtime.standalone.repository.impl.maven.util;
 
 import net.thevpc.nuts.NutsElement;
 import net.thevpc.nuts.NutsElements;
+import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.runtime.standalone.repository.impl.maven.pom.PomId;
 import net.thevpc.nuts.runtime.standalone.repository.impl.maven.pom.PomIdFilter;
 import net.thevpc.nuts.runtime.standalone.util.iter.NutsIteratorBase;
@@ -72,8 +73,8 @@ public class ArchetypeCatalogParser {
         }
 
         @Override
-        public NutsElement describe(NutsElements elems) {
-            return elems.ofObject()
+        public NutsElement describe(NutsSession session) {
+            return NutsElements.of(session).ofObject()
                     .set("type","ScanArchetypeCatalog")
                     .set("source",stream.toString())
                     .build();

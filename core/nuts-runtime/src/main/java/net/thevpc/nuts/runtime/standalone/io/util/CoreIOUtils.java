@@ -733,7 +733,7 @@ public class CoreIOUtils {
                 cacheTable.flush(session);
             }
         });
-        return InputStreamMetadataAwareImpl.of(ist, new NutsDefaultStreamMetadata(
+        return InputStreamMetadataAwareImpl.of(ist, new DefaultNutsStreamMetadata(
                         path,
                         ss->NutsTexts.of(session).ofStyled(path, NutsTextStyle.path()),
                         size, NutsPath.of(path, session).getContentType(), sourceTypeName
@@ -1050,7 +1050,7 @@ public class CoreIOUtils {
     public static InputStream createBytesStream(byte[] bytes, NutsMessage message, String contentType, String kind, NutsSession session) {
         return InputStreamMetadataAwareImpl.of(
                 new ByteArrayInputStream(bytes),
-                new NutsDefaultStreamMetadata(
+                new DefaultNutsStreamMetadata(
                         message,
                         bytes.length,
                         contentType,

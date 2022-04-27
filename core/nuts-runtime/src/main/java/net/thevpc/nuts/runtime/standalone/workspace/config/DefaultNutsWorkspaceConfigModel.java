@@ -61,6 +61,7 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.Duration;
 import java.time.Instant;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
@@ -99,8 +100,8 @@ public class DefaultNutsWorkspaceConfigModel {
     private boolean storeModelRuntimeChanged = false;
     private boolean storeModelSecurityChanged = false;
     private boolean storeModelMainChanged = false;
-    private long startCreateTime;
-    private long endCreateTime;
+    private Instant startCreateTime;
+    private Instant endCreateTime;
     private NutsIndexStoreFactory indexStoreClientFactory;
     //    private Set<String> excludedRepositoriesSet = new HashSet<>();
     private NutsStoreLocationsMap preUpdateConfigStoreLocations;
@@ -445,16 +446,19 @@ public class DefaultNutsWorkspaceConfigModel {
         return current().isGlobal();
     }
 
-    public long getCreationStartTimeMillis() {
+    public Instant getCreationStartTime() {
         return startCreateTime;
     }
 
-    public long getCreationFinishTimeMillis() {
+    public Instant getCreationFinishTime() {
         return endCreateTime;
     }
 
-    public long getCreationTimeMillis() {
-        return endCreateTime - startCreateTime;
+    public Duration getCreateDuration() {
+        if(startCreateTime==null||endCreateTime==null){
+            return Duration.ofMillis(0);
+        }
+        return Duration.between(startCreateTime,endCreateTime);
     }
 
     public NutsWorkspaceConfigMain getStoreModelMain() {
@@ -468,7 +472,7 @@ public class DefaultNutsWorkspaceConfigModel {
         return currentConfig;
     }
 
-    public void setStartCreateTimeMillis(long startCreateTime) {
+    public void setStartCreateTime(Instant startCreateTime) {
         this.startCreateTime = startCreateTime;
     }
 
@@ -492,7 +496,7 @@ public class DefaultNutsWorkspaceConfigModel {
         setConfigMain(config, session, true);
     }
 
-    public void setEndCreateTimeMillis(long endCreateTime) {
+    public void setEndCreateTime(Instant endCreateTime) {
         this.endCreateTime = endCreateTime;
     }
 
@@ -635,9 +639,9 @@ public class DefaultNutsWorkspaceConfigModel {
         NutsId apiId=session.getWorkspace().getApiId();
         NutsPath path = session.locations().getStoreLocation(apiId, NutsStoreLocation.CONFIG)
                 .getParent();
-        List<NutsId> olderIds= path.list().filter(NutsPath::isDirectory, elems->elems.ofString("isDirectory"))
+        List<NutsId> olderIds= path.list().filter(NutsPath::isDirectory, elems->NutsElements.of(elems).ofString("isDirectory"))
                 .map(x->NutsVersion.of(x.getName()).get(session),"toVersion")
-                .filter(x->x.compareTo(apiId.getVersion())<0, elems->elems.ofString("older"))
+                .filter(x->x.compareTo(apiId.getVersion())<0, elems->NutsElements.of(elems).ofString("older"))
                 .sorted(new NutsComparator<NutsVersion>() {
                     @Override
                     public int compare(NutsVersion o1, NutsVersion o2) {
@@ -645,10 +649,10 @@ public class DefaultNutsWorkspaceConfigModel {
                     }
 
                     @Override
-                    public NutsElement describe(NutsElements elems) {
-                        return elems.ofString("reverseOrder");
+                    public NutsElement describe(NutsSession session) {
+                        return NutsElements.of(session).ofString("reverseOrder");
                     }
-                }).map(x-> apiId.builder().setVersion(x).build(), elems->elems.ofString("toId"))
+                }).map(x-> apiId.builder().setVersion(x).build(), elems->NutsElements.of(elems).ofString("toId"))
                 .toList();
         return olderIds;
     }
@@ -1212,7 +1216,7 @@ public class DefaultNutsWorkspaceConfigModel {
             DefaultNutsDefinition b = new DefaultNutsDefinition(
                     null, null,
                     descriptor.getId(),
-                    descriptor, new NutsDefaultContent(NutsPath.of(tmp, session), true, true),
+                    descriptor, new DefaultNutsContent(NutsPath.of(tmp, session), true, true),
                     new DefaultNutsInstallInfo(descriptor.getId(), NutsInstallStatus.NONE, null, null, null, null, null, null, false, false),
                     null, session
             );

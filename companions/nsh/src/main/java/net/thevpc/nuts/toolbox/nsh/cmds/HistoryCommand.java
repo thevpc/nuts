@@ -51,7 +51,7 @@ public class HistoryCommand extends SimpleJShellBuiltin {
         Options options = context.getOptions();
         NutsSession session = context.getSession();
         NutsArgument a;
-        if (commandLine.next("-c", "--clear") != null) {
+        if (commandLine.next("-c", "--clear").isPresent()) {
             options.action = Action.CLEAR;
             commandLine.setCommandName(getName()).throwUnexpectedArgument(session);
             return true;

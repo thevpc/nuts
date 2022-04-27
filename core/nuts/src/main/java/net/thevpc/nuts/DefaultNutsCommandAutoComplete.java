@@ -29,7 +29,7 @@ import java.util.List;
 /**
  * @author thevpc
  */
-public class NutsDefaultCommandAutoComplete extends NutsCommandAutoCompleteBase {
+public class DefaultNutsCommandAutoComplete extends NutsCommandAutoCompleteBase {
 
     private NutsSession session;
     private List<String> words = new ArrayList<>();
@@ -41,7 +41,7 @@ public class NutsDefaultCommandAutoComplete extends NutsCommandAutoCompleteBase 
         return session;
     }
 
-    public NutsDefaultCommandAutoComplete setSession(NutsSession session) {
+    public DefaultNutsCommandAutoComplete setSession(NutsSession session) {
         this.session = session;
         return this;
     }
@@ -56,7 +56,7 @@ public class NutsDefaultCommandAutoComplete extends NutsCommandAutoCompleteBase 
         return words;
     }
 
-    public NutsDefaultCommandAutoComplete setWords(List<String> words) {
+    public DefaultNutsCommandAutoComplete setWords(List<String> words) {
         this.words = words;
         return this;
     }
@@ -66,12 +66,12 @@ public class NutsDefaultCommandAutoComplete extends NutsCommandAutoCompleteBase 
         return currentWordIndex;
     }
 
-    public NutsDefaultCommandAutoComplete setCurrentWordIndex(int currentWordIndex) {
+    public DefaultNutsCommandAutoComplete setCurrentWordIndex(int currentWordIndex) {
         this.currentWordIndex = currentWordIndex;
         return this;
     }
 
-    public NutsDefaultCommandAutoComplete setLine(String line) {
+    public DefaultNutsCommandAutoComplete setLine(String line) {
         this.line = line;
         return this;
     }

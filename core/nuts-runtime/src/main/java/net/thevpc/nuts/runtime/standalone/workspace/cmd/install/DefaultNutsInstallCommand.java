@@ -155,7 +155,7 @@ public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
         }
         return new NutsListStream<NutsDefinition>(getSession(),
                 ids.isEmpty() ? null : ids.keySet().toArray()[0].toString(),
-                Arrays.asList(result),e->e.ofString("InstallResult")
+                Arrays.asList(result),e->NutsElements.of(e).ofString("InstallResult")
         );
     }
 

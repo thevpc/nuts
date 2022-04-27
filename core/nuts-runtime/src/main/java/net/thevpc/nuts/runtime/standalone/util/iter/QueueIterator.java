@@ -26,10 +26,7 @@
 */
 package net.thevpc.nuts.runtime.standalone.util.iter;
 
-import net.thevpc.nuts.NutsIterator;
-import net.thevpc.nuts.NutsElement;
-import net.thevpc.nuts.NutsElements;
-import net.thevpc.nuts.NutsDescribables;
+import net.thevpc.nuts.*;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -44,16 +41,16 @@ public class QueueIterator<T> extends NutsIteratorBase<T> {
 
 
     @Override
-    public NutsElement describe(NutsElements elems) {
-        return elems
+    public NutsElement describe(NutsSession session) {
+        return NutsElements.of(session)
                 .ofObject()
                 .set("type","Queue")
                 .set("items",
-                        elems.ofArray()
+                        NutsElements.of(session).ofArray()
                                 .addAll(
                                         new ArrayList<>(children)
                                                 .stream().map(
-                                                        x-> NutsDescribables.resolveOrDestruct(x,elems)
+                                                        x-> NutsDescribables.resolveOrDestruct(x, session)
                                                 ).collect(Collectors.toList())
                                 )
                                 .build()

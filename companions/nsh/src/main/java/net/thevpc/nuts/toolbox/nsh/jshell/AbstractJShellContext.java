@@ -127,7 +127,7 @@ public abstract class AbstractJShellContext implements JShellContext {
     @Override
     public List<JShellAutoCompleteCandidate> resolveAutoCompleteCandidates(String commandName, List<String> autoCompleteWords, int wordIndex, String autoCompleteLine) {
         JShellBuiltin command = this.builtins().find(commandName);
-        NutsCommandAutoComplete autoComplete = new NutsDefaultCommandAutoComplete()
+        NutsCommandAutoComplete autoComplete = new DefaultNutsCommandAutoComplete()
                 .setSession(getSession()).setLine(autoCompleteLine).setWords(autoCompleteWords).setCurrentWordIndex(wordIndex);
 
         if (command != null) {
@@ -181,7 +181,7 @@ public abstract class AbstractJShellContext implements JShellContext {
                                             display = value;
                                         }
                                         autoComplete.addCandidate(
-                                                new NutsArgumentCandidate(
+                                                new DefaultNutsArgumentCandidate(
                                                         value
                                                 )
                                         );

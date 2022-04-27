@@ -19,8 +19,8 @@ public class NJobMain implements NutsApplication {
             if (appContext.configureFirst(cmdLine)) {
                 //
             } else if (
-                    cmdLine.peek().toString().equals("-i")
-                    ||cmdLine.peek().toString().equals("--interactive")
+                    cmdLine.peek().get().toString().equals("-i")
+                    ||cmdLine.peek().get().toString().equals("--interactive")
             ) {
                 //interactive
                 ts.runInteractive(cmdLine);

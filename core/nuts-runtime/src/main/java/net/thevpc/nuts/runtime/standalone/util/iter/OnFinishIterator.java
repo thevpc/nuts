@@ -1,8 +1,8 @@
 package net.thevpc.nuts.runtime.standalone.util.iter;
 
 import net.thevpc.nuts.NutsElement;
-import net.thevpc.nuts.NutsElements;
 import net.thevpc.nuts.NutsDescribables;
+import net.thevpc.nuts.NutsSession;
 
 import java.util.Iterator;
 
@@ -17,10 +17,10 @@ class OnFinishIterator<T> extends NutsIteratorBase<T> {
     }
 
     @Override
-    public NutsElement describe(NutsElements elems) {
-        return NutsDescribables.resolveOrDestructAsObject(base,elems)
+    public NutsElement describe(NutsSession session) {
+        return NutsDescribables.resolveOrDestructAsObject(base, session)
                 .builder()
-                .set("onFinish", NutsDescribables.resolveOrToString(r,elems))
+                .set("onFinish", NutsDescribables.resolveOrToString(r, session))
                 .build()
                 ;
     }

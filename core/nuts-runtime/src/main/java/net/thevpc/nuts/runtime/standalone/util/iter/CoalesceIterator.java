@@ -5,10 +5,7 @@
  */
 package net.thevpc.nuts.runtime.standalone.util.iter;
 
-import net.thevpc.nuts.NutsIterator;
-import net.thevpc.nuts.NutsElement;
-import net.thevpc.nuts.NutsElements;
-import net.thevpc.nuts.NutsDescribables;
+import net.thevpc.nuts.*;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -25,15 +22,15 @@ public class CoalesceIterator<T> extends NutsIteratorBase<T> {
     private int size = 0;
 
     @Override
-    public NutsElement describe(NutsElements elems) {
-        return elems.ofObject()
+    public NutsElement describe(NutsSession session) {
+        return NutsElements.of(session).ofObject()
                 .set("type", "Coalesce")
                 .set("items",
-                        elems.ofArray()
+                        NutsElements.of(session).ofArray()
                                 .addAll(
                                         new ArrayList<>(children)
                                                 .stream().map(
-                                                        x-> NutsDescribables.resolveOrDestruct(x,elems)
+                                                        x-> NutsDescribables.resolveOrDestruct(x, session)
                                                 ).collect(Collectors.toList())
                                 )
                                 .build()

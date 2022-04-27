@@ -704,7 +704,7 @@ public class DefaultNutsCommandLine implements NutsCommandLine {
 //                            }
                             skipToNext = true;
                         } else if (xs.length() > 0 && a.startsWith(xs) && !xs.equals(a)) {
-                            candidates.add(new NutsArgumentCandidate(a));
+                            candidates.add(new DefaultNutsArgumentCandidate(a));
                             skipToNext = true;
                         } else {
                             skipToNext = true;
@@ -719,7 +719,7 @@ public class DefaultNutsCommandLine implements NutsCommandLine {
                     NutsArgument p = get(nameSeqArray.length - 1).orNull();
                     if (p != null) {
                         if (name.startsWith(p.getKey().asString().orElse(""))) {
-                            candidates.add(new NutsArgumentCandidate(name));
+                            candidates.add(new DefaultNutsArgumentCandidate(name));
 //                            switch (expectValue) {
 //                                case ANY: {
 //                                    candidates.add(createCandidate("<AnyValueFor" + pgetKey().getString() + ">"));
@@ -739,7 +739,7 @@ public class DefaultNutsCommandLine implements NutsCommandLine {
 //                            }
                         }
                     } else {
-                        candidates.add(new NutsArgumentCandidate(name));
+                        candidates.add(new DefaultNutsArgumentCandidate(name));
                     }
                 }
             }
@@ -762,7 +762,7 @@ public class DefaultNutsCommandLine implements NutsCommandLine {
             if (isAutoComplete()) {
                 List<NutsArgumentCandidate> values = name == null ? null : name.getCandidates(getAutoComplete());
                 if (values == null || values.isEmpty()) {
-                    autoComplete.addCandidate(new NutsArgumentCandidate(name == null ? "<value>" : name.getName()));
+                    autoComplete.addCandidate(new DefaultNutsArgumentCandidate(name == null ? "<value>" : name.getName()));
                 } else {
                     for (NutsArgumentCandidate value : values) {
                         autoComplete.addCandidate(value);
@@ -780,7 +780,7 @@ public class DefaultNutsCommandLine implements NutsCommandLine {
                 if (isAutoComplete()) {
                     List<NutsArgumentCandidate> values = name == null ? null : name.getCandidates(getAutoComplete());
                     if (values == null || values.isEmpty()) {
-                        autoComplete.addCandidate(new NutsArgumentCandidate(name == null ? "<value>" : name.getName()));
+                        autoComplete.addCandidate(new DefaultNutsArgumentCandidate(name == null ? "<value>" : name.getName()));
                     } else {
                         for (NutsArgumentCandidate value : values) {
                             autoComplete.addCandidate(value);
@@ -1103,5 +1103,13 @@ public class DefaultNutsCommandLine implements NutsCommandLine {
             }
         }
         return i;
+    }
+
+    @Override
+    public NutsCommandLine add(String argument) {
+        if(argument!=null) {
+            args.add(argument);
+        }
+        return this;
     }
 }

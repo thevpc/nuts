@@ -21,7 +21,7 @@ public interface NutsStreamMetadata {
         if (a != null) {
             return a;
         }
-        return new NutsDefaultStreamMetadata();
+        return new DefaultNutsStreamMetadata();
     }
 
     long getContentLength();

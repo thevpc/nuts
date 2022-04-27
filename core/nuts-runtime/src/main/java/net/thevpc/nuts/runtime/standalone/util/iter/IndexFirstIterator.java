@@ -6,11 +6,9 @@
 package net.thevpc.nuts.runtime.standalone.util.iter;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 
 import java.util.Iterator;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * @author thevpc
@@ -31,12 +29,12 @@ public class IndexFirstIterator<T> extends NutsIteratorBase<T> {
     }
 
     @Override
-    public NutsElement describe(NutsElements elems) {
-        return elems
+    public NutsElement describe(NutsSession session) {
+        return NutsElements.of(session)
                 .ofObject()
                 .set("type","IndexFirst")
-                .set("index", NutsDescribables.resolveOrDestruct(index,elems))
-                .set("nonIndex", NutsDescribables.resolveOrDestruct(other,elems))
+                .set("index", NutsDescribables.resolveOrDestruct(index, session))
+                .set("nonIndex", NutsDescribables.resolveOrDestruct(other, session))
                 .build()
                 ;
     }

@@ -30,6 +30,8 @@ import net.thevpc.nuts.runtime.standalone.workspace.config.DefaultNutsWorkspaceC
 import net.thevpc.nuts.runtime.standalone.workspace.config.DefaultNutsWorkspaceConfigModel;
 
 import java.net.URL;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.Collections;
 import java.util.List;
 
@@ -97,32 +99,26 @@ public class DefaultNutsBootManager implements NutsBootManager {
     }
 
     @Override
-    public long getCreationStartTimeMillis() {
+    public Instant getCreationStartTime() {
         checkSession();
-        return _configModel().getCreationStartTimeMillis();
+        return _configModel().getCreationStartTime();
     }
 
     @Override
-    public long getCreationFinishTimeMillis() {
+    public Instant getCreationFinishTime() {
         checkSession();
-        return _configModel().getCreationFinishTimeMillis();
+        return _configModel().getCreationFinishTime();
     }
 
     @Override
-    public long getCreationTimeMillis() {
+    public Duration getCreationDuration() {
         checkSession();
-        return _configModel().getCreationTimeMillis();
+        return _configModel().getCreateDuration();
     }
 
     public NutsClassLoaderNode getBootRuntimeClassLoaderNode() {
         return model.bOptions.getRuntimeBootDependencyNode();
     }
-
-//    public ee(){
-//        NutsWorkspaceModel wsModel = ((NutsWorkspaceExt) session.getWorkspace()).getModel();
-//        wsModel.bootModel.getWorkspaceInitInformation().getOptions();
-//
-//    }
 
     public List<NutsClassLoaderNode> getBootExtensionClassLoaderNode() {
         return model.bOptions.getExtensionBootDependencyNodes();

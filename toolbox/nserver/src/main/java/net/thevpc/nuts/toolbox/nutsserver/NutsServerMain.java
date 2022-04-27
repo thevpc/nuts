@@ -29,16 +29,16 @@ public class NutsServerMain implements NutsApplication {
         NutsCommandLine cmdLine = context.getCommandLine().setCommandName("nuts-server");
         cmdLine.setCommandName("nuts-server");
         while (cmdLine.hasNext()) {
-            if (cmdLine.next("start") != null) {
+            if (cmdLine.next("start").isPresent()) {
                 start(context, cmdLine);
                 return;
-            } else if (cmdLine.next("stop") != null) {
+            } else if (cmdLine.next("stop").isPresent()) {
                 stop(context, cmdLine);
                 return;
-            } else if (cmdLine.next("list") != null) {
+            } else if (cmdLine.next("list").isPresent()) {
                 list(context, cmdLine);
                 return;
-            } else if (cmdLine.next("status") != null) {
+            } else if (cmdLine.next("status").isPresent()) {
                 status(context, cmdLine);
                 return;
             } else {
@@ -99,11 +99,11 @@ public class NutsServerMain implements NutsApplication {
         SrvInfoList servers = new SrvInfoList(session);
         NutsArgument a;
         while (commandLine.hasNext()) {
-            if (commandLine.next("--http") != null) {
+            if (commandLine.next("--http").isPresent()) {
                 servers.add().serverType = "http";
-            } else if (commandLine.next("--https") != null) {
+            } else if (commandLine.next("--https").isPresent()) {
                 servers.add().serverType = "https";
-            } else if (commandLine.next("--admin") != null) {
+            } else if (commandLine.next("--admin").isPresent()) {
                 servers.add().serverType = "admin";
             } else if ((a = commandLine.nextBoolean("-R", "--read-only").orNull()) != null) {
                 servers.current().readOnly = a.getBooleanValue().get(session);
@@ -313,11 +313,11 @@ public class NutsServerMain implements NutsApplication {
         SrvInfoList servers = new SrvInfoList(session);
         NutsArgument a;
         while (commandLine.hasNext()) {
-            if (commandLine.next("--http") != null) {
+            if (commandLine.next("--http").isPresent()) {
                 servers.add().serverType = "http";
-            } else if (commandLine.next("--https") != null) {
+            } else if (commandLine.next("--https").isPresent()) {
                 servers.add().serverType = "https";
-            } else if (commandLine.next("--admin") != null) {
+            } else if (commandLine.next("--admin").isPresent()) {
                 servers.add().serverType = "admin";
             } else if ((a = commandLine.nextString("-a", "--address").orNull()) != null) {
                 servers.current().addr = a.getStringValue().get(session);

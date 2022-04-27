@@ -16,11 +16,11 @@ public class SupplierIterator<T> extends NutsIteratorBase<T> {
     }
 
     @Override
-    public NutsElement describe(NutsElements elems) {
-        return elems.ofObject()
+    public NutsElement describe(NutsSession session) {
+        return NutsElements.of(session).ofObject()
                 .set("type","Supplier")
                 .set("template",
-                        NutsDescribables.resolveOr(from,elems,()->elems.ofObject().set("type","compiled").addAll(name).build())
+                        NutsDescribables.resolveOr(from, session,()-> NutsElements.of(session).ofObject().set("type","compiled").addAll(name).build())
                 )
                 .build();
     }

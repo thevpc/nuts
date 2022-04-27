@@ -1,9 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.util.iter;
 
-import net.thevpc.nuts.NutsElement;
-import net.thevpc.nuts.NutsElements;
-import net.thevpc.nuts.NutsPredicates;
-import net.thevpc.nuts.NutsDescribable;
+import net.thevpc.nuts.*;
 
 import java.util.HashSet;
 
@@ -25,8 +22,8 @@ class DistinctPredicate<T> extends NutsPredicates.BasePredicate<T> implements Nu
     }
 
     @Override
-    public NutsElement describe(NutsElements elems) {
-        return elems.ofString("distinct");
+    public NutsElement describe(NutsSession session) {
+        return NutsElements.of(session).ofString("distinct");
     }
 
 }

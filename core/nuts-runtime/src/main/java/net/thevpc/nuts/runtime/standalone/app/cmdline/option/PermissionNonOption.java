@@ -52,7 +52,7 @@ public class PermissionNonOption extends DefaultNonOption {
     public List<NutsArgumentCandidate> getCandidates(NutsCommandAutoComplete context) {
         List<NutsArgumentCandidate> all = new ArrayList<>();
         for (String r : NutsConstants.Permissions.ALL) {
-            all.add(new NutsArgumentCandidate(r));
+            all.add(new DefaultNutsArgumentCandidate(r));
         }
         Iterator<NutsArgumentCandidate> i = all.iterator();
         NutsRepository repository=context.get(NutsRepository.class);

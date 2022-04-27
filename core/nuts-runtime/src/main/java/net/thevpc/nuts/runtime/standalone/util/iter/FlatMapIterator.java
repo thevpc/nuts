@@ -1,8 +1,9 @@
 package net.thevpc.nuts.runtime.standalone.util.iter;
 
 import net.thevpc.nuts.NutsElement;
-import net.thevpc.nuts.NutsElements;
 import net.thevpc.nuts.NutsDescribables;
+import net.thevpc.nuts.NutsElements;
+import net.thevpc.nuts.NutsSession;
 
 import java.util.Collections;
 import java.util.Iterator;
@@ -21,12 +22,12 @@ public class FlatMapIterator<TT, RR> extends NutsIteratorBase<RR> {
     }
 
     @Override
-    public NutsElement describe(NutsElements elems) {
-        return elems
+    public NutsElement describe(NutsSession session) {
+        return NutsElements.of(session)
                 .ofObject()
                 .set("type","FlatMap")
-                .set("base", NutsDescribables.resolveOrDestruct(from,elems))
-                .set("mapper", NutsDescribables.resolveOrDestruct(converter,elems))
+                .set("base", NutsDescribables.resolveOrDestruct(from, session))
+                .set("mapper", NutsDescribables.resolveOrDestruct(converter, session))
                 .build()
                 ;
     }

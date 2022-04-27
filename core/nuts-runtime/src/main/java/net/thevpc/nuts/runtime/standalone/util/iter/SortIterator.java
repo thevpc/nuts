@@ -20,12 +20,12 @@ class SortIterator<T> extends NutsIteratorBase<T> {
     }
 
     @Override
-    public NutsElement describe(NutsElements elems) {
-        return NutsDescribables.resolveOrDestructAsObject(base,elems)
+    public NutsElement describe(NutsSession session) {
+        return NutsDescribables.resolveOrDestructAsObject(base, session)
                 .builder()
                 .set("sort",
-                        elems.ofObject()
-                                .set("comparator", NutsDescribables.resolveOrDestruct(c,elems))
+                        NutsElements.of(session).ofObject()
+                                .set("comparator", NutsDescribables.resolveOrDestruct(c, session))
                                 .set("distinct", removeDuplicates)
                                 .build()
                         )

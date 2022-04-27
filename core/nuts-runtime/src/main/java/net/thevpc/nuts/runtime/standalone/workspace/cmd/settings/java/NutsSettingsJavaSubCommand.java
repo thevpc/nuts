@@ -26,8 +26,8 @@ public class NutsSettingsJavaSubCommand extends AbstractNutsSettingsSubCommand {
         NutsPrintStream out = session.out();
         NutsWorkspaceConfigManager conf = session.config();
         NutsPlatformManager platforms = session.env().platforms();
-        if (cmdLine.next("add java") != null) {
-            if (cmdLine.next("--search") != null) {
+        if (cmdLine.next("add java").isPresent()) {
+            if (cmdLine.next("--search").isPresent()) {
                 List<String> extraLocations = new ArrayList<>();
                 while (cmdLine.hasNext()) {
                     extraLocations.add(cmdLine.next().flatMap(NutsValue::asString).get(session));
@@ -60,7 +60,7 @@ public class NutsSettingsJavaSubCommand extends AbstractNutsSettingsSubCommand {
                 }
             }
             return true;
-        } else if (cmdLine.next("remove java") != null) {
+        } else if (cmdLine.next("remove java").isPresent()) {
             while (cmdLine.hasNext()) {
                 String name = cmdLine.next()
                         .flatMap(NutsValue::asString).get(session);
@@ -79,7 +79,7 @@ public class NutsSettingsJavaSubCommand extends AbstractNutsSettingsSubCommand {
                 conf.save(false);
             }
             return true;
-        } else if (cmdLine.next("list java") != null) {
+        } else if (cmdLine.next("list java").isPresent()) {
             NutsTableFormat t = NutsTableFormat.of(session)
                     //                    .setBorder(TableFormatter.SPACE_BORDER)
                     .setVisibleHeader(true);

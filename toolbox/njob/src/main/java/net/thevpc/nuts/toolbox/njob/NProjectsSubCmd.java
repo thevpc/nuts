@@ -378,23 +378,23 @@ public class NProjectsSubCmd {
     }
 
     public boolean runProjectCommands(NutsCommandLine cmd) {
-        if (cmd.next("ap", "a p", "pa", "p a", "add project", "projects add") != null) {
+        if (cmd.next("ap", "a p", "pa", "p a", "add project", "projects add").isPresent()) {
             runProjectAdd(cmd);
             return true;
-        } else if (cmd.next("pu", "up", "p u", "u p", "update project", "projects update") != null) {
+        } else if (cmd.next("pu", "up", "p u", "u p", "update project", "projects update").isPresent()) {
             runProjectUpdate(cmd);
             return true;
-        } else if (cmd.next("lp", "pl", "l p", "p l", "list projects", "projects list") != null) {
+        } else if (cmd.next("lp", "pl", "l p", "p l", "list projects", "projects list").isPresent()) {
             runProjectList(cmd);
             return true;
-        } else if (cmd.next("rp", "rmp", "pr", "prm", "r p", "rm p", "p r", "p rm", "remove project", "remove projects", "rm project", "rm projects", "projects remove") != null) {
+        } else if (cmd.next("rp", "rmp", "pr", "prm", "r p", "rm p", "p r", "p rm", "remove project", "remove projects", "rm project", "rm projects", "projects remove").isPresent()) {
             runProjectRemove(cmd);
             return true;
-        } else if (cmd.next("ps", "sp", "s p", "p s", "show project", "show projects", "projects show") != null) {
+        } else if (cmd.next("ps", "sp", "s p", "p s", "show project", "show projects", "projects show").isPresent()) {
             runProjectShow(cmd);
             return true;
-        } else if (cmd.next("p", "projects") != null) {
-            if (cmd.next("--help") != null) {
+        } else if (cmd.next("p", "projects").isPresent()) {
+            if (cmd.next("--help").isPresent()) {
                 parent.showCustomHelp("njob-projects");
             } else {
                 runProjectList(cmd);

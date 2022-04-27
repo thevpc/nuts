@@ -93,8 +93,8 @@ public class NutsPredicates {
         }
 
         @Override
-        public NutsElement describe(NutsElements elems) {
-            return elems.ofString(toString());
+        public NutsElement describe(NutsSession session) {
+            return NutsElements.of(session).ofString(toString());
         }
     }
 

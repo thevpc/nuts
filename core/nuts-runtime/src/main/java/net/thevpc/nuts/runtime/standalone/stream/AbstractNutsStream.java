@@ -168,7 +168,7 @@ public abstract class AbstractNutsStream<T> implements NutsStream<T> {
     }
 
     @Override
-    public <R> NutsStream<R> map(Function<? super T, ? extends R> mapper, Function<NutsElements, NutsElement> name) {
+    public <R> NutsStream<R> map(Function<? super T, ? extends R> mapper, Function<NutsSession, NutsElement> name) {
         return map(NutsFunction.of(mapper, name));
     }
 
@@ -185,8 +185,8 @@ public abstract class AbstractNutsStream<T> implements NutsStream<T> {
             }
 
             @Override
-            public NutsElement describe(NutsElements elems) {
-                return mapper.describe(elems);
+            public NutsElement describe(NutsSession session) {
+                return mapper.describe(session);
             }
         });
     }
@@ -273,7 +273,7 @@ public abstract class AbstractNutsStream<T> implements NutsStream<T> {
 
     @Override
     public NutsStream<T> filter(Predicate<? super T> predicate, String name) {
-        return filter(predicate, e -> e.ofString(name));
+        return filter(predicate, e -> NutsElements.of(e).ofString(name));
     }
 
     @Override
@@ -282,7 +282,7 @@ public abstract class AbstractNutsStream<T> implements NutsStream<T> {
     }
 
     @Override
-    public NutsStream<T> filter(Predicate<? super T> predicate, Function<NutsElements, NutsElement> info) {
+    public NutsStream<T> filter(Predicate<? super T> predicate, Function<NutsSession, NutsElement> info) {
         NutsPredicate<? super T> p = predicate == null ? null : NutsPredicate.of(predicate, info);
         return new AbstractNutsStream<T>(session, nutsBase) {
             @Override
@@ -411,7 +411,7 @@ public abstract class AbstractNutsStream<T> implements NutsStream<T> {
         Set<Map.Entry<K, List<T>>> entries = (Set) it.collect(Collectors.groupingBy(classifier)).entrySet();
         return new NutsIteratorStream<Map.Entry<K, List<T>>>(
                 session, nutsBase, NutsIterator.of(entries.iterator(),
-                e -> e.ofObject()
+                e -> NutsElements.of(e).ofObject()
                         .set("type", "GroupBy")
                         .set("groupBy", classifier.describe(e))
                         .set("base", iterator().describe(e))
@@ -481,7 +481,7 @@ public abstract class AbstractNutsStream<T> implements NutsStream<T> {
     }
 
     @Override
-    public NutsElement describe(NutsElements elems) {
-        return iterator().describe(elems);
+    public NutsElement describe(NutsSession session) {
+        return iterator().describe(session);
     }
 }

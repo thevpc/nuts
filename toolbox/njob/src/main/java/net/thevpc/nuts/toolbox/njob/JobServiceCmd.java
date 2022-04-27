@@ -67,10 +67,10 @@ public class JobServiceCmd {
         if (tasks.runTaskCommands(cmd)) {
             return true;
         }
-        if (cmd.next("summary") != null) {
+        if (cmd.next("summary").isPresent()) {
             runSummary(cmd);
             return true;
-        } else if (cmd.next("help") != null) {
+        } else if (cmd.next("help").isPresent()) {
             for (String s : new String[]{"jobs", "projects", "tasks"}) {
                 if (cmd.isExecMode()) {
                     showCustomHelp("njob-" + s);

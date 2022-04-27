@@ -13,12 +13,12 @@ import java.util.function.Supplier;
  * @param <T> value type
  * @author thevpc
  */
-public class NutsDefaultSupported<T> implements NutsSupported<T> {
-    public static final NutsSupported INVALID = new NutsDefaultSupported<>(null, -1);
+public class DefaultNutsSupported<T> implements NutsSupported<T> {
+    public static final NutsSupported INVALID = new DefaultNutsSupported<>(null, -1);
     private final Supplier<T> value;
     private final int supportLevel;
 
-    public NutsDefaultSupported(Supplier<T> value, int supportLevel) {
+    public DefaultNutsSupported(Supplier<T> value, int supportLevel) {
         this.value = value;
         this.supportLevel = supportLevel;
     }

@@ -1,8 +1,9 @@
 package net.thevpc.nuts.runtime.standalone.util.iter;
 
 import net.thevpc.nuts.NutsElement;
-import net.thevpc.nuts.NutsElements;
 import net.thevpc.nuts.NutsDescribables;
+import net.thevpc.nuts.NutsElements;
+import net.thevpc.nuts.NutsSession;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -20,11 +21,11 @@ public class CollectorIterator<T> extends NutsIteratorBase<T> {
     }
 
     @Override
-    public NutsElement describe(NutsElements elems) {
-        return elems.ofObject()
+    public NutsElement describe(NutsSession session) {
+        return NutsElements.of(session).ofObject()
                 .set("type", "Collector")
                 .set("name", name)
-                .set("base", NutsDescribables.resolveOrDestruct(base, elems))
+                .set("base", NutsDescribables.resolveOrDestruct(base, session))
                 .build();
     }
 

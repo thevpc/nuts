@@ -365,4 +365,9 @@ public class DefaultNutsArgument implements NutsArgument {
     public NutsOptional<String> asString() {
         return toValue().asString();
     }
+
+    @Override
+    public String toStringLiteral() {
+        return toValue().toStringLiteral();
+    }
 }

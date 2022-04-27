@@ -20,7 +20,7 @@ public class NutsSettingsIndexSubCommand extends AbstractNutsSettingsSubCommand 
     public boolean exec(NutsCommandLine cmdLine, Boolean autoSave, NutsSession session) {
         String name = "settings update stats";
         NutsArgument a;
-        if (cmdLine.next("update stats") != null) {
+        if (cmdLine.next("update stats").isPresent()) {
             List<String> repos = new ArrayList<>();
             while (cmdLine.hasNext()) {
                 repos.add(cmdLine.next().flatMap(NutsValue::asString).get(session));

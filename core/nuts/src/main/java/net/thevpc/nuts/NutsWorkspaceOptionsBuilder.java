@@ -72,7 +72,7 @@ public interface NutsWorkspaceOptionsBuilder extends NutsWorkspaceOptions {
     NutsWorkspaceOptionsBuilder setDry(Boolean dry);
 
 
-    NutsWorkspaceOptionsBuilder setCreationTime(long creationTime);
+    NutsWorkspaceOptionsBuilder setCreationTime(Instant creationTime);
 
 
     NutsWorkspaceOptionsBuilder setExcludedExtensions(List<String> excludedExtensions);

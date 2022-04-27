@@ -1285,7 +1285,7 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
         return
                 elem.ofObject()
                         .set("SearchQueryPlan",
-                                NutsDescribables.resolveOrDestruct(it, elem))
+                                NutsDescribables.resolveOrDestruct(it, session))
                         .build();
     }
 

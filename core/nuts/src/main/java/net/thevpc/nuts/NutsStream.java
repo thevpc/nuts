@@ -42,36 +42,36 @@ import java.util.stream.*;
  * @since 0.5.4
  */
 public interface NutsStream<T> extends NutsIterable<T> {
-    static <T> NutsStream<T> of(T[] str, Function<NutsElements, NutsElement> name, NutsSession session) {
+    static <T> NutsStream<T> of(T[] str, Function<NutsSession, NutsElement> name, NutsSession session) {
         return NutsStreams.of(session).createStream(str, name);
     }
 
-    static <T> NutsStream<T> of(Iterable<T> str, Function<NutsElements, NutsElement> name, NutsSession session) {
+    static <T> NutsStream<T> of(Iterable<T> str, Function<NutsSession, NutsElement> name, NutsSession session) {
         return NutsStreams.of(session).createStream(str, name);
     }
 
-    static <T> NutsStream<T> of(Iterator<T> str, Function<NutsElements, NutsElement> name, NutsSession session) {
+    static <T> NutsStream<T> of(Iterator<T> str, Function<NutsSession, NutsElement> name, NutsSession session) {
         return NutsStreams.of(session).createStream(str, name);
     }
 
-    static <T> NutsStream<T> of(Stream<T> str, Function<NutsElements, NutsElement> name, NutsSession session) {
+    static <T> NutsStream<T> of(Stream<T> str, Function<NutsSession, NutsElement> name, NutsSession session) {
         return NutsStreams.of(session).createStream(str, name);
     }
 
     static <T> NutsStream<T> of(T[] str, NutsSession session) {
-        return NutsStreams.of(session).createStream(str, e->e.ofString("array"));
+        return NutsStreams.of(session).createStream(str, e->NutsElements.of(e).ofString("array"));
     }
 
     static <T> NutsStream<T> of(Iterable<T> str, NutsSession session) {
-        return NutsStreams.of(session).createStream(str, e->e.ofString("iterable"));
+        return NutsStreams.of(session).createStream(str, e->NutsElements.of(e).ofString("iterable"));
     }
 
     static <T> NutsStream<T> of(Iterator<T> str, NutsSession session) {
-        return NutsStreams.of(session).createStream(str, e->e.ofString("iterator"));
+        return NutsStreams.of(session).createStream(str, e->NutsElements.of(e).ofString("iterator"));
     }
 
     static <T> NutsStream<T> of(Stream<T> str, NutsSession session) {
-        return NutsStreams.of(session).createStream(str, e->e.ofString("stream"));
+        return NutsStreams.of(session).createStream(str, e->NutsElements.of(e).ofString("stream"));
     }
 
     static <T> NutsStream<T> of(NutsIterable<T> str, NutsSession session) {
@@ -189,7 +189,7 @@ public interface NutsStream<T> extends NutsIterable<T> {
 
     <R> NutsStream<R> map(Function<? super T, ? extends R> mapper, NutsElement name);
 
-    <R> NutsStream<R> map(Function<? super T, ? extends R> mapper, Function<NutsElements, NutsElement> name);
+    <R> NutsStream<R> map(Function<? super T, ? extends R> mapper, Function<NutsSession, NutsElement> name);
 
     <R> NutsStream<R> mapUnsafe(NutsUnsafeFunction<? super T, ? extends R> mapper, NutsFunction<Exception, ? extends R> onError);
 
@@ -211,7 +211,7 @@ public interface NutsStream<T> extends NutsIterable<T> {
 
     NutsStream<T> filter(Predicate<? super T> predicate, NutsElement name);
 
-    NutsStream<T> filter(Predicate<? super T> predicate, Function<NutsElements, NutsElement> info);
+    NutsStream<T> filter(Predicate<? super T> predicate, Function<NutsSession, NutsElement> info);
 
     NutsStream<T> filterNonNull();
 

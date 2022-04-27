@@ -4,9 +4,10 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.time.Instant;
 
-public interface NutsValue extends NutsBlankable{
-    static NutsValue of(Object any){
-        return new DefaultNutsValue(any);
+public interface NutsValue extends NutsBlankable {
+
+    static NutsValue of(Object any) {
+        return DefaultNutsValue.of(any);
     }
 
     Object getRaw();
@@ -41,6 +42,7 @@ public interface NutsValue extends NutsBlankable{
 
     /**
      * return true if this element can be cast to {@link NutsPrimitiveElement} of type string
+     *
      * @return true if this element can be cast to {@link NutsPrimitiveElement} of type string
      */
     boolean isString();
@@ -58,6 +60,8 @@ public interface NutsValue extends NutsBlankable{
     boolean isDouble();
 
     boolean isInstant();
+
+    String toStringLiteral();
 
     boolean isEmpty();
 

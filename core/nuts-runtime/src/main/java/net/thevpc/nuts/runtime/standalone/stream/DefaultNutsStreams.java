@@ -27,7 +27,7 @@ public class DefaultNutsStreams implements NutsStreams {
     }
 
     @Override
-    public <T> NutsStream<T> createStream(T[] str, Function<NutsElements, NutsElement> descr) {
+    public <T> NutsStream<T> createStream(T[] str, Function<NutsSession, NutsElement> descr) {
         checkSession();
         String name=null;
         if (str == null) {
@@ -53,7 +53,7 @@ public class DefaultNutsStreams implements NutsStreams {
     }
 
     @Override
-    public <T> NutsStream<T> createStream(Iterable<T> str, Function<NutsElements, NutsElement> descr) {
+    public <T> NutsStream<T> createStream(Iterable<T> str, Function<NutsSession, NutsElement> descr) {
         checkSession();
         String name=null;
         if (str == null) {
@@ -69,7 +69,7 @@ public class DefaultNutsStreams implements NutsStreams {
     }
 
     @Override
-    public <T> NutsStream<T> createStream(Iterator<T> str, Function<NutsElements, NutsElement> name) {
+    public <T> NutsStream<T> createStream(Iterator<T> str, Function<NutsSession, NutsElement> name) {
         return new NutsIteratorStream<T>(session, null,
                 NutsIterator.of(str, name)
         );
@@ -80,7 +80,7 @@ public class DefaultNutsStreams implements NutsStreams {
     }
 
     @Override
-    public <T> NutsStream<T> createStream(Stream<T> str, Function<NutsElements, NutsElement> name) {
+    public <T> NutsStream<T> createStream(Stream<T> str, Function<NutsSession, NutsElement> name) {
         checkSession();
         return new NutsJavaStream<>(getSession(), null, str, name);
     }

@@ -35,14 +35,14 @@ import java.util.function.Function;
  */
 public interface NutsUnsafeFunction<T, R> extends NutsUnsafeFunctionBase<T, R>, NutsDescribable{
     static <T, V> NutsUnsafeFunction<T, V> of(NutsUnsafeFunctionBase<T, V> o, String descr) {
-        return NutsDescribables.ofUnsafeFunction(o, e -> e.ofString(descr));
+        return NutsDescribables.ofUnsafeFunction(o, session -> NutsElements.of(session).ofString(descr));
     }
 
     static <T, V> NutsUnsafeFunction<T, V> of(NutsUnsafeFunctionBase<T, V> o, NutsElement descr) {
         return NutsDescribables.ofUnsafeFunction(o, e -> descr);
     }
 
-    static <T, V> NutsUnsafeFunction<T, V> of(NutsUnsafeFunctionBase<T, V> o, Function<NutsElements, NutsElement> descr) {
+    static <T, V> NutsUnsafeFunction<T, V> of(NutsUnsafeFunctionBase<T, V> o, Function<NutsSession, NutsElement> descr) {
         return NutsDescribables.ofUnsafeFunction(o, descr);
     }
 

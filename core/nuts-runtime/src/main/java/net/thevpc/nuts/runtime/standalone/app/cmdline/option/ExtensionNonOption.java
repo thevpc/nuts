@@ -43,7 +43,7 @@ public class ExtensionNonOption extends DefaultNonOption {
     @Override
     public List<NutsArgumentCandidate> getCandidates(NutsCommandAutoComplete context) {
         List<NutsArgumentCandidate> all = new ArrayList<>();
-        all.add(new NutsArgumentCandidate(NutsConstants.Ids.NUTS_RUNTIME));
+        all.add(new DefaultNutsArgumentCandidate(NutsConstants.Ids.NUTS_RUNTIME));
         //should find all nuts with packaging "nuts-extension"
         return all;
     }

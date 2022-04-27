@@ -26,8 +26,8 @@
 package net.thevpc.nuts.runtime.standalone.util.iter;
 
 import net.thevpc.nuts.NutsElement;
-import net.thevpc.nuts.NutsElements;
 import net.thevpc.nuts.NutsDescribables;
+import net.thevpc.nuts.NutsSession;
 
 import java.util.Iterator;
 
@@ -46,8 +46,8 @@ public class PushBackIterator<T> extends NutsIteratorBase<T> {
     }
 
     @Override
-    public NutsElement describe(NutsElements elems) {
-        return NutsDescribables.resolveOrDestructAsObject(base,elems)
+    public NutsElement describe(NutsSession session) {
+        return NutsDescribables.resolveOrDestructAsObject(base, session)
                 .builder()
                 .set("pushBack",true)
                 .build()

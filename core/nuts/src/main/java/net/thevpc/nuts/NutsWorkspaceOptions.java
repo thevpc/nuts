@@ -109,7 +109,7 @@ public interface NutsWorkspaceOptions extends Serializable {
      *
      * @return workspace creation evaluated time.
      */
-    long getCreationTime();
+    Instant getCreationTime();
 
     /**
      * extensions to be excluded when opening the workspace.

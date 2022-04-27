@@ -380,9 +380,9 @@ public class DefaultNutsInfoCommand extends DefaultFormatBase<NutsInfoCommand> i
         props.put("inherited-nuts-args", NutsCommandLine.of(System.getProperty("nuts.args"), NutsShellFamily.SH, session)
                 .format(session)
         );
-        props.put("creation-started", Instant.ofEpochMilli(session.boot().getCreationStartTimeMillis()));
-        props.put("creation-finished", Instant.ofEpochMilli(session.boot().getCreationFinishTimeMillis()));
-        props.put("creation-within", CoreTimeUtils.formatPeriodMilli(session.boot().getCreationTimeMillis()).trim());
+        props.put("creation-started", session.boot().getCreationStartTime());
+        props.put("creation-finished", session.boot().getCreationFinishTime());
+        props.put("creation-within", CoreTimeUtils.formatPeriodMilli(session.boot().getCreationDuration()).trim());
         props.put("repositories-count", (session.repos().setSession(getSession()).getRepositories().size()));
         for (String extraKey : extraKeys) {
             props.put(extraKey, extraProperties.get(extraKey));

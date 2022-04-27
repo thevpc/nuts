@@ -33,6 +33,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.Instant;
 import java.util.*;
 import java.util.function.Function;
 import java.util.logging.Level;
@@ -55,10 +56,10 @@ import java.util.stream.Collectors;
  */
 public final class NutsBootWorkspace {
 
-    private final long creationTime = System.currentTimeMillis();
+    private final Instant creationTime = Instant.now();
     private final NutsWorkspaceOptions userOptions;
     private final PrivateNutsBootLog bLog;
-    private final NutsWorkspaceBootOptionsBuilder computedOptions;
+    private final NutsWorkspaceBootOptionsBuilder computedOptions=new DefaultNutsWorkspaceBootOptionsBuilder();
     private final Function<String, String> pathExpansionConverter = new Function<String, String>() {
         @Override
         public String apply(String from) {
@@ -95,7 +96,7 @@ public final class NutsBootWorkspace {
             return "${" + from + "}";
         }
     };
-    private int newInstanceRequirements;
+    private int newInstanceRequirements=0;
     private NutsWorkspaceBootOptionsBuilder lastWorkspaceOptions;
     private Set<NutsRepositoryLocation> parsedBootRuntimeDependenciesRepositories;
     private Set<NutsRepositoryLocation> parsedBootRuntimeRepositories;
@@ -105,53 +106,48 @@ public final class NutsBootWorkspace {
 
     public NutsBootWorkspace(NutsBootTerminal bootTerminal, String... args) {
         this.bLog = new PrivateNutsBootLog(bootTerminal);
-        NutsWorkspaceOptionsBuilder o = new DefaultNutsWorkspaceOptionsBuilder();
-        o.setCreationTime(creationTime);
+        NutsWorkspaceOptionsBuilder userOptions = new DefaultNutsWorkspaceOptionsBuilder();
         if (bootTerminal != null) {
-            o.setStdin(bootTerminal.getIn());
-            o.setStdout(bootTerminal.getOut());
-            o.setStderr(bootTerminal.getErr());
+            userOptions.setStdin(bootTerminal.getIn());
+            userOptions.setStdout(bootTerminal.getOut());
+            userOptions.setStderr(bootTerminal.getErr());
         }
-        o.setCommandLine(args, null);
-        if (o.isSkipErrors()) {
+        userOptions.setCommandLine(args, null);
+        if (userOptions.isSkipErrors()) {
             StringBuilder errorMessage = new StringBuilder();
-            for (NutsMessage s : o.getErrors()) {
+            for (NutsMessage s : userOptions.getErrors()) {
                 errorMessage.append(s).append("\n");
             }
             errorMessage.append("Try 'nuts --help' for more information.");
             bLog.log(Level.WARNING, NutsLogVerb.WARNING, NutsMessage.cstyle("Error : %s", errorMessage));
         }
-        this.userOptions = o;
-        this.computedOptions = new DefaultNutsWorkspaceBootOptionsBuilder();
+        this.userOptions = userOptions.readOnly();
         this.computedOptions.setAll(this.userOptions);
-        this.computedOptions.setUserOptions(this.userOptions.readOnly());
+        this.computedOptions.setUserOptions(this.userOptions);
+        if (computedOptions.getCreationTime() == null) {
+            computedOptions.setCreationTime(creationTime);
+        }
         this.bLog.setOptions(this.computedOptions);
-        this.newInstanceRequirements = 0;
     }
 
     public NutsBootWorkspace(NutsWorkspaceOptions userOptions) {
         if (userOptions == null) {
-            this.bLog = new PrivateNutsBootLog(null);
-            this.userOptions = new DefaultNutsWorkspaceOptionsBuilder().setCreationTime(creationTime);
-            this.computedOptions = new DefaultNutsWorkspaceBootOptionsBuilder();
-            this.computedOptions.setAll(this.userOptions);
-        } else {
-            bLog = new PrivateNutsBootLog(
-                    new NutsBootTerminal(
-                            userOptions.getStdin(),
-                            userOptions.getStdout(),
-                            userOptions.getStderr()
-                    )
-            );
-            this.userOptions = userOptions.readOnly();
-            this.computedOptions = new DefaultNutsWorkspaceBootOptionsBuilder();
-            this.computedOptions.setAll(userOptions);
-            if (userOptions.getCreationTime() == 0) {
-                computedOptions.setCreationTime(creationTime);
-            }
+            userOptions=DefaultNutsWorkspaceOptions.BLANK;
+        }
+        this.bLog = new PrivateNutsBootLog(
+                new NutsBootTerminal(
+                        userOptions.getStdin(),
+                        userOptions.getStdout(),
+                        userOptions.getStderr()
+                )
+        );
+        this.userOptions = userOptions.readOnly();
+        this.computedOptions.setAll(userOptions);
+        this.computedOptions.setUserOptions(this.userOptions);
+        if (computedOptions.getCreationTime() == null) {
+            computedOptions.setCreationTime(creationTime);
         }
         this.bLog.setOptions(this.computedOptions);
-        this.newInstanceRequirements = 0;
     }
 
     private static void revalidateLocations(NutsWorkspaceBootOptionsBuilder options, String workspaceName, boolean immediateLocation) {

@@ -210,7 +210,7 @@ public class MonitoredInputStream extends InputStream implements NutsStreamMetad
     @Override
     public NutsStreamMetadata getStreamMetadata() {
         NutsStreamMetadata md = NutsStreamMetadata.of(base);
-        return new NutsDefaultStreamMetadata(sourceName, length, md.getContentType(),
+        return new DefaultNutsStreamMetadata(sourceName, length, md.getContentType(),
                 md.getUserKind()
         );
     }

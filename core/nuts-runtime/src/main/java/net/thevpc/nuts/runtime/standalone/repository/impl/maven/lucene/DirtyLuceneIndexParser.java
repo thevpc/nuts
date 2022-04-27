@@ -25,8 +25,8 @@ public class DirtyLuceneIndexParser extends NutsIteratorBase<String> implements 
     }
 
     @Override
-    public NutsElement describe(NutsElements elems) {
-        return elems.ofObject()
+    public NutsElement describe(NutsSession session) {
+        return NutsElements.of(session).ofObject()
                 .set("type","ScanLucene")
                 .set("source",source0.toString())
                 .build();

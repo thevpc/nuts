@@ -39,10 +39,10 @@ public class NutsPrintIterator<T> extends NutsIteratorBase<T> {
     }
 
     @Override
-    public NutsElement describe(NutsElements elems) {
-        return NutsDescribables.resolveOrDestructAsObject(curr,elems)
+    public NutsElement describe(NutsSession session) {
+        return NutsDescribables.resolveOrDestructAsObject(curr, session)
                 .builder()
-                .set("print",elems.ofObject().set("format",listFormat.getOutputFormat().id()).build())
+                .set("print", NutsElements.of(session).ofObject().set("format",listFormat.getOutputFormat().id()).build())
                 .build();
     }
 

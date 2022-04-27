@@ -28,7 +28,6 @@ package net.thevpc.nuts;
 
 import java.net.URL;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Objects;
 
 
@@ -39,7 +38,7 @@ import java.util.Objects;
  * @app.category Descriptor
  * @since 0.5.4
  */
-public class NutsDefaultContent implements NutsContent {
+public class DefaultNutsContent implements NutsContent {
 
     private final NutsPath path;
     private final boolean cached;
@@ -52,7 +51,7 @@ public class NutsDefaultContent implements NutsContent {
      * @param cached    true if the file is cached (may be not up to date)
      * @param temporary true if file is temporary (should be deleted later)
      */
-    public NutsDefaultContent(NutsPath path, boolean cached, boolean temporary) {
+    public DefaultNutsContent(NutsPath path, boolean cached, boolean temporary) {
         this.path = path;
         this.cached = cached;
         this.temporary = temporary;
@@ -107,7 +106,7 @@ public class NutsDefaultContent implements NutsContent {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        NutsDefaultContent that = (NutsDefaultContent) o;
+        DefaultNutsContent that = (DefaultNutsContent) o;
         return cached == that.cached &&
                 temporary == that.temporary &&
                 Objects.equals(path, that.path);

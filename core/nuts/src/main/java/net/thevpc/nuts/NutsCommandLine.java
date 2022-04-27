@@ -524,7 +524,7 @@ public interface NutsCommandLine extends Iterable<NutsArgument>, NutsFormattable
      * throw a new command line error
      *
      * @param message message
-     * @param session
+     * @param session session
      */
     void throwError(NutsMessage message, NutsSession session);
 
@@ -532,9 +532,17 @@ public interface NutsCommandLine extends Iterable<NutsArgument>, NutsFormattable
      * throw a new command line error
      *
      * @param message message
-     * @param session
+     * @param session session
      */
     void throwError(NutsString message, NutsSession session);
 
     NutsCommandLineFormat formatter(NutsSession session);
+
+    /**
+     * add new argument (ignoring null values)
+     * since 0.8.4
+     * @param argument new argument
+     * @return reset this instance
+     */
+    NutsCommandLine add(String argument);
 }

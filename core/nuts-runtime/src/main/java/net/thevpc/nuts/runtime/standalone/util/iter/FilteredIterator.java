@@ -27,8 +27,9 @@
 package net.thevpc.nuts.runtime.standalone.util.iter;
 
 import net.thevpc.nuts.NutsElement;
-import net.thevpc.nuts.NutsElements;
 import net.thevpc.nuts.NutsDescribables;
+import net.thevpc.nuts.NutsElements;
+import net.thevpc.nuts.NutsSession;
 
 import java.util.Iterator;
 import java.util.function.Predicate;
@@ -54,12 +55,12 @@ public class FilteredIterator<T> extends NutsIteratorBase<T> {
     }
 
     @Override
-    public NutsElement describe(NutsElements elems) {
-        return elems
+    public NutsElement describe(NutsSession session) {
+        return NutsElements.of(session)
                 .ofObject()
                 .set("type","Filter")
-                .set("base", NutsDescribables.resolveOrDestruct(base,elems))
-                .set("accept", NutsDescribables.resolveOrToString(filter,elems))
+                .set("base", NutsDescribables.resolveOrDestruct(base, session))
+                .set("accept", NutsDescribables.resolveOrToString(filter, session))
                 .build()
                 ;
     }

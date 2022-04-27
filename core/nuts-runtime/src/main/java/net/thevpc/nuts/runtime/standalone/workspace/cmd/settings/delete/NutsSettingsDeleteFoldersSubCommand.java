@@ -44,7 +44,7 @@ public class NutsSettingsDeleteFoldersSubCommand extends AbstractNutsSettingsSub
         for (NutsStoreLocation value : NutsStoreLocation.values()) {
             String cmdName = "delete " + value.id();
             cmdLine.setCommandName("settings " + cmdName);
-            if (cmdLine.next(cmdName) != null) {
+            if (cmdLine.next(cmdName).isPresent()) {
                 boolean force = false;
                 Set<NutsStoreLocation> locationsToDelete = new HashSet<>();
                 locationsToDelete.add(value);
@@ -53,7 +53,7 @@ public class NutsSettingsDeleteFoldersSubCommand extends AbstractNutsSettingsSub
                     if ((a = cmdLine.nextBoolean("-y", "--yes").orNull()) != null) {
                         force = a.getBooleanValue().get(session);
                     } else if (!cmdLine.isNextOption()) {
-                        String s = cmdLine.peek().toString();
+                        String s = cmdLine.peek().get(session).asString().get();
                         try {
                             locationsToDelete.add(NutsStoreLocation.valueOf(s.toUpperCase()));
                         } catch (Exception ex) {

@@ -64,18 +64,18 @@ public class GroupNonOption extends DefaultNonOption {
         NutsUserConfig securityEntityConfig=context.get(NutsUserConfig.class);
         if (securityEntityConfig != null) {
             for (String n : securityEntityConfig.getGroups()) {
-                all.add(new NutsArgumentCandidate(n));
+                all.add(new DefaultNutsArgumentCandidate(n));
             }
         } else if (repository != null) {
             for (NutsUser nutsSecurityEntityConfig : repository.security().setSession(context.getSession())
                     .findUsers()) {
-                all.add(new NutsArgumentCandidate(nutsSecurityEntityConfig.getUser()));
+                all.add(new DefaultNutsArgumentCandidate(nutsSecurityEntityConfig.getUser()));
             }
         } else {
             for (NutsUser nutsSecurityEntityConfig : context.getSession().security()
                     .setSession(context.getSession())
                     .findUsers()) {
-                all.add(new NutsArgumentCandidate(nutsSecurityEntityConfig.getUser()));
+                all.add(new DefaultNutsArgumentCandidate(nutsSecurityEntityConfig.getUser()));
             }
         }
         return all;

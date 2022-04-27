@@ -25,10 +25,6 @@
 */
 package net.thevpc.nuts;
 
-import net.thevpc.nuts.NutsArgumentCandidate;
-import net.thevpc.nuts.NutsArgumentName;
-import net.thevpc.nuts.NutsCommandAutoComplete;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -62,7 +58,7 @@ public class DefaultArgumentName implements NutsArgumentName {
     @Override
     public List<NutsArgumentCandidate> getCandidates(NutsCommandAutoComplete context) {
         List<NutsArgumentCandidate> list = new ArrayList<>();
-        list.add(new NutsArgumentCandidate("<" + getName() + ">"));
+        list.add(new DefaultNutsArgumentCandidate("<" + getName() + ">"));
         return list;
     }
 

@@ -75,7 +75,7 @@ public abstract class NutsFolderRepositoryBase extends NutsCachedRepository {
             throw new NutsNotFoundException(session, id, new NutsFetchModeNotSupportedException(session, this, fetchMode, id.toString(), null));
         }
         if (NutsIdLocationUtils.fetch(id, descriptor.getLocations(), localPath, session)) {
-            return new NutsDefaultContent(
+            return new DefaultNutsContent(
                     NutsPath.of(localPath, session), false, false);
         }
         return fetchContentCoreUsingRepoHelper(id, descriptor, localPath, fetchMode, session);
@@ -153,7 +153,7 @@ public abstract class NutsFolderRepositoryBase extends NutsCachedRepository {
             NutsPath p = getIdRemotePath(id, session);
             if (p.isLocal()) {
                 if (p.exists()) {
-                    return new NutsDefaultContent(p, false, false);
+                    return new DefaultNutsContent(p, false, false);
                 } else {
                     throw new NutsNotFoundException(session, id);
                 }
@@ -172,7 +172,7 @@ public abstract class NutsFolderRepositoryBase extends NutsCachedRepository {
                 } catch (UncheckedIOException | NutsIOException ex) {
                     throw new NutsNotFoundException(session, id, null, ex);
                 }
-                return new NutsDefaultContent(NutsPath.of(tempFile, session), true, true);
+                return new DefaultNutsContent(NutsPath.of(tempFile, session), true, true);
             }
         } else {
             try {
@@ -188,7 +188,7 @@ public abstract class NutsFolderRepositoryBase extends NutsCachedRepository {
             } catch (UncheckedIOException | NutsIOException ex) {
                 throw new NutsNotFoundException(session, id, null, ex);
             }
-            return new NutsDefaultContent(
+            return new DefaultNutsContent(
                     NutsPath.of(localPath, session), true, false);
         }
     }
@@ -214,7 +214,7 @@ public abstract class NutsFolderRepositoryBase extends NutsCachedRepository {
                     }
                     return NutsIterator.of(ret.iterator(), "findNonSingleVersion");
                 }
-                , e -> e.ofObject()
+                , e -> NutsElements.of(e).ofObject()
                         .set("type", "NonSingleVersion")
                         .set("path", foldersFileUrl.toString())
                         .build(),
@@ -240,7 +240,7 @@ public abstract class NutsFolderRepositoryBase extends NutsCachedRepository {
                         }
                         return ret.iterator();
                     }
-                    , e -> e.ofObject()
+                    , e -> NutsElements.of(e).ofObject()
                             .set("type", "SingleVersion")
                             .set("path", metadataURL.toString())
                             .build(),

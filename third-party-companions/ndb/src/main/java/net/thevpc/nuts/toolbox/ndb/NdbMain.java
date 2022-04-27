@@ -14,10 +14,10 @@ public class NdbMain implements NutsApplication {
     public void run(NutsApplicationContext context) {
         NutsCommandLine commandLine = context.getCommandLine();
         if (commandLine.hasNext()) {
-            if (commandLine.next("mysql") != null) {
+            if (commandLine.next("mysql").isPresent()) {
                 new NMysqlMain().run(context, commandLine);
                 return;
-            } else if (commandLine.next("derby") != null) {
+            } else if (commandLine.next("derby").isPresent()) {
                 new NDerbyMain().run(context, commandLine);
                 return;
             } else {

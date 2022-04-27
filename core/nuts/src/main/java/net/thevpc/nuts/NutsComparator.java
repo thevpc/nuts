@@ -32,12 +32,12 @@ import java.util.function.Function;
  */
 public interface NutsComparator<T> extends Comparator<T>, NutsDescribable {
     static <T> NutsComparator<T> of(Comparator<T> o,String value){
-        return NutsDescribables.ofComparator(o,e->e.ofString(value));
+        return NutsDescribables.ofComparator(o,session->NutsElements.of(session).ofString(value));
     }
     static <T> NutsComparator<T> of(Comparator<T> o,NutsElement value){
         return NutsDescribables.ofComparator(o,e->value);
     }
-    static <T> NutsComparator<T> of(Comparator<T> o, Function<NutsElements, NutsElement> descr){
+    static <T> NutsComparator<T> of(Comparator<T> o, Function<NutsSession, NutsElement> descr){
         return NutsDescribables.ofComparator(o,descr);
     }
 }

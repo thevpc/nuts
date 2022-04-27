@@ -10,21 +10,21 @@ public class SupplierIterator2<T> extends NutsIteratorBase<T> {
 
     private final Supplier<Iterator<T>> from;
     private NutsIterator<T> iterator;
-    private Function<NutsElements, NutsElement> name;
+    private Function<NutsSession, NutsElement> name;
 
-    public SupplierIterator2(Supplier<Iterator<T>> from, Function<NutsElements, NutsElement> name) {
+    public SupplierIterator2(Supplier<Iterator<T>> from, Function<NutsSession, NutsElement> name) {
         this.from = from;
         this.name = name;
     }
 
     @Override
-    public NutsElement describe(NutsElements elems) {
-        return elems.ofObject()
+    public NutsElement describe(NutsSession session) {
+        return NutsElements.of(session).ofObject()
                 .set("type", "Supplier")
                 .set("template",
-                        NutsDescribables.resolveOr(from, elems, () -> {
-                            NutsElement t = name.apply(elems);
-                            return elems.ofObject().set("type", "compiled")
+                        NutsDescribables.resolveOr(from, session, () -> {
+                            NutsElement t = name.apply(session);
+                            return NutsElements.of(session).ofObject().set("type", "compiled")
                                     .addAll(t == null ? null : t.asObject().orNull())
                                     .build();
                         })

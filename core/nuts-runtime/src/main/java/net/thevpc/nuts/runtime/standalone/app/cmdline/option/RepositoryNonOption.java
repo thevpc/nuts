@@ -50,12 +50,12 @@ public class RepositoryNonOption extends DefaultNonOption {
         if(repository!=null){
             if (repository.config().isSupportedMirroring()) {
                 for (NutsRepository repo : repository.config().setSession(context.getSession()).getMirrors()) {
-                    all.add(new NutsArgumentCandidate(repo.getName()));
+                    all.add(new DefaultNutsArgumentCandidate(repo.getName()));
                 }
             }
         }else{
             for (NutsRepository repo : context.getSession().repos().setSession(context.getSession()).getRepositories()) {
-                all.add(new NutsArgumentCandidate(repo.getName()));
+                all.add(new DefaultNutsArgumentCandidate(repo.getName()));
             }
 
         }

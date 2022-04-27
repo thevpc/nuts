@@ -324,7 +324,8 @@ public class PrivateWorkspaceOptionsConfigHelper {
     public NutsCommandLine toCommandLine() {
         NutsVersion apiVersionObj = config.getApiVersion();
         List<String> arguments = new ArrayList<>();
-        if (config.isExportedOptions() || isImplicitAll()) {
+        boolean implicitAll = isImplicitAll();
+        if (config.isExportedOptions() || implicitAll) {
             fillOption("--java", "-j", options.getJavaCommand(), arguments, false);
             fillOption("--java-options", "-O", options.getJavaOptions(), arguments, false);
             String wsString = options.getWorkspace();
@@ -427,7 +428,7 @@ public class PrivateWorkspaceOptionsConfigHelper {
             }
         }
 
-        if (config.isCreateOptions() || isImplicitAll()) {
+        if (config.isCreateOptions() || implicitAll) {
             fillOption("--name", null, NutsUtilStrings.trim(options.getName()), arguments, false);
             fillOption("--archetype", "-A", options.getArchetype(), arguments, false);
             fillOption("--store-layout", null, options.getStoreLocationLayout(), NutsOsFamily.class, arguments, false);
@@ -465,7 +466,7 @@ public class PrivateWorkspaceOptionsConfigHelper {
             }
         }
 
-        if (config.isRuntimeOptions() || isImplicitAll()) {
+        if (config.isRuntimeOptions() || implicitAll) {
             fillOption("--help", "-h", options.isCommandHelp(), false, arguments, false);
             fillOption("--version", "-v", options.isCommandVersion(), false, arguments, false);
 
@@ -477,18 +478,22 @@ public class PrivateWorkspaceOptionsConfigHelper {
             fillOption("--reset", "-Z", options.isReset(), false, arguments, false);
             fillOption("--recover", "-z", options.isRecover(), false, arguments, false);
             fillOption("--dry", "-D", options.isDry(), false, arguments, false);
-            if (!config.isOmitDefaults() || options.getExecutorOptions().size() > 0) {
-                arguments.add(selectOptionName("--exec", "-e"));
-            }
-            arguments.addAll(options.getExecutorOptions());
-            arguments.addAll(options.getApplicationArguments());
         }
-        if (true || isImplicitAll()) {
+        if (true || implicitAll) {
             if (apiVersionObj == null || apiVersionObj.compareTo("0.8.1") >= 0) {
                 if (options.getCustomOptions() != null) {
                     arguments.addAll(options.getCustomOptions());
                 }
             }
+        }
+        //final options for execution
+        if (config.isRuntimeOptions() || implicitAll) {
+            if ((!config.isOmitDefaults() && !options.getApplicationArguments().isEmpty())
+                            || options.getExecutorOptions().size() > 0) {
+                arguments.add(selectOptionName("--exec", "-e"));
+            }
+            arguments.addAll(options.getExecutorOptions());
+            arguments.addAll(options.getApplicationArguments());
         }
         return NutsCommandLine.of(arguments);
     }

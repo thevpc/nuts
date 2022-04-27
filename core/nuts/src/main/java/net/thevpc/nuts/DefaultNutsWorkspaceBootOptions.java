@@ -105,7 +105,7 @@ public class DefaultNutsWorkspaceBootOptions extends DefaultNutsWorkspaceOptions
                                            char[] credentials, NutsTerminalMode terminalMode, Boolean readOnly,
                                            Boolean trace, String progressOptions, String dependencySolver,
                                            NutsLogConfig logConfig, NutsConfirmationMode confirm, NutsContentType outputFormat,
-                                           List<String> applicationArguments, NutsOpenMode openMode, long creationTime,
+                                           List<String> applicationArguments, NutsOpenMode openMode, Instant creationTime,
                                            Boolean dry, Supplier<ClassLoader> classLoaderSupplier, List<String> executorOptions,
                                            Boolean recover, Boolean reset, Boolean commandVersion, Boolean commandHelp,
                                            String debug, Boolean inherited, NutsExecutionType executionType, NutsRunAs runAs,

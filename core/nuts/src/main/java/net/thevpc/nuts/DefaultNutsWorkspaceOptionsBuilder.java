@@ -203,7 +203,7 @@ public class DefaultNutsWorkspaceOptionsBuilder implements NutsWorkspaceOptionsB
     /**
      * option-type : runtime (available only for the current workspace instance)
      */
-    private long creationTime;
+    private Instant creationTime;
 
     /**
      * if true no real execution, wil dry exec option-type : runtime (available
@@ -377,7 +377,7 @@ public class DefaultNutsWorkspaceOptionsBuilder implements NutsWorkspaceOptionsB
 
     }
 
-    public DefaultNutsWorkspaceOptionsBuilder(List<String> outputFormatOptions, List<String> customOptions, String apiVersion, String runtimeId, String javaCommand, String javaOptions, String workspace, String outLinePrefix, String errLinePrefix, String name, Boolean skipCompanions, Boolean skipWelcome, Boolean skipBoot, Boolean global, Boolean gui, List<String> excludedExtensions, List<String> repositories, String userName, char[] credentials, NutsTerminalMode terminalMode, Boolean readOnly, Boolean trace, String progressOptions, String dependencySolver, NutsLogConfig logConfig, NutsConfirmationMode confirm, NutsContentType outputFormat, List<String> applicationArguments, NutsOpenMode openMode, long creationTime, Boolean dry, Supplier<ClassLoader> classLoaderSupplier, List<String> executorOptions, Boolean recover, Boolean reset, Boolean commandVersion, Boolean commandHelp, String debug, Boolean inherited, NutsExecutionType executionType, NutsRunAs runAs, String archetype, Boolean switchWorkspace, Map<NutsStoreLocation, String> storeLocations, Map<NutsHomeLocation, String> homeLocations, NutsOsFamily storeLocationLayout, NutsStoreLocationStrategy storeLocationStrategy, NutsStoreLocationStrategy repositoryStoreLocationStrategy, NutsFetchStrategy fetchStrategy, Boolean cached, Boolean indexed, Boolean transitive, Boolean bot, InputStream stdin, PrintStream stdout, PrintStream stderr, ExecutorService executorService, Instant expireTime, List<NutsMessage> errors, Boolean skipErrors, String locale, String theme) {
+    public DefaultNutsWorkspaceOptionsBuilder(List<String> outputFormatOptions, List<String> customOptions, String apiVersion, String runtimeId, String javaCommand, String javaOptions, String workspace, String outLinePrefix, String errLinePrefix, String name, Boolean skipCompanions, Boolean skipWelcome, Boolean skipBoot, Boolean global, Boolean gui, List<String> excludedExtensions, List<String> repositories, String userName, char[] credentials, NutsTerminalMode terminalMode, Boolean readOnly, Boolean trace, String progressOptions, String dependencySolver, NutsLogConfig logConfig, NutsConfirmationMode confirm, NutsContentType outputFormat, List<String> applicationArguments, NutsOpenMode openMode, Instant creationTime, Boolean dry, Supplier<ClassLoader> classLoaderSupplier, List<String> executorOptions, Boolean recover, Boolean reset, Boolean commandVersion, Boolean commandHelp, String debug, Boolean inherited, NutsExecutionType executionType, NutsRunAs runAs, String archetype, Boolean switchWorkspace, Map<NutsStoreLocation, String> storeLocations, Map<NutsHomeLocation, String> homeLocations, NutsOsFamily storeLocationLayout, NutsStoreLocationStrategy storeLocationStrategy, NutsStoreLocationStrategy repositoryStoreLocationStrategy, NutsFetchStrategy fetchStrategy, Boolean cached, Boolean indexed, Boolean transitive, Boolean bot, InputStream stdin, PrintStream stdout, PrintStream stderr, ExecutorService executorService, Instant expireTime, List<NutsMessage> errors, Boolean skipErrors, String locale, String theme) {
         this.outputFormatOptions = PrivateNutsUtilCollections.nonNullList(outputFormatOptions);
         this.customOptions = PrivateNutsUtilCollections.nonNullList(customOptions);
         this.apiVersion = NutsUtilStrings.trimToNull(apiVersion);
@@ -556,7 +556,7 @@ public class DefaultNutsWorkspaceOptionsBuilder implements NutsWorkspaceOptionsB
     }
 
     @Override
-    public long getCreationTime() {
+    public Instant getCreationTime() {
         return creationTime;
     }
 
@@ -567,7 +567,7 @@ public class DefaultNutsWorkspaceOptionsBuilder implements NutsWorkspaceOptionsB
      * @return {@code this} instance
      */
     @Override
-    public NutsWorkspaceOptionsBuilder setCreationTime(long creationTime) {
+    public NutsWorkspaceOptionsBuilder setCreationTime(Instant creationTime) {
         this.creationTime = creationTime;
         return this;
     }

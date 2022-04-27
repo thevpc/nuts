@@ -23,7 +23,6 @@
  */
 package net.thevpc.nuts.toolbox.njob;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -41,7 +40,7 @@ public class JobAutoCompleter implements NutsCommandAutoCompleteResolver {
     @Override
     public List<NutsArgumentCandidate> resolveCandidates(NutsCommandLine commandline, int wordIndex, NutsSession session) {
         JobServiceCmd fileContext = (JobServiceCmd) session.env().getProperties().get(JobServiceCmd.class.getName());
-        NutsDefaultCommandAutoComplete autoComplete = new NutsDefaultCommandAutoComplete()
+        DefaultNutsCommandAutoComplete autoComplete = new DefaultNutsCommandAutoComplete()
                 .setSession(session)
                 .setCurrentWordIndex(wordIndex)
                 .setLine(commandline.toString()).setWords(

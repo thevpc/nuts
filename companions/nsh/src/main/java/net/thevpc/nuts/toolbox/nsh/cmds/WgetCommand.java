@@ -48,7 +48,7 @@ public class WgetCommand extends SimpleJShellBuiltin {
     protected boolean configureFirst(NutsCommandLine commandLine, JShellExecutionContext context) {
         Options options = context.getOptions();
         NutsSession session = context.getSession();
-        if (commandLine.next("-O", "--output-document") != null) {
+        if (commandLine.next("-O", "--output-document").isPresent()) {
             options.outputDocument = commandLine.nextNonOption().get(session).asString().orNull();
             return true;
         } else if (!commandLine.isNextOption()) {

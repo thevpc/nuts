@@ -45,13 +45,13 @@ public class UserNonOption extends DefaultNonOption {
             for (NutsUser nutsSecurityEntityConfig : repository.security()
                     .setSession(context.getSession())
                     .findUsers()) {
-                all.add(new NutsArgumentCandidate(nutsSecurityEntityConfig.getUser()));
+                all.add(new DefaultNutsArgumentCandidate(nutsSecurityEntityConfig.getUser()));
             }
         } else {
             for (NutsUser nutsSecurityEntityConfig : context.getSession().security()
                     .setSession(context.getSession())
                     .findUsers()) {
-                all.add(new NutsArgumentCandidate(nutsSecurityEntityConfig.getUser()));
+                all.add(new DefaultNutsArgumentCandidate(nutsSecurityEntityConfig.getUser()));
             }
         }
 

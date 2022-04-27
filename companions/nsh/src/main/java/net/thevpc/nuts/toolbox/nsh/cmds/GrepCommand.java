@@ -77,7 +77,7 @@ public class GrepCommand extends SimpleJShellBuiltin {
         } else if ((a = commandLine.next("-S", "--selection-style").orNull()) != null) {
             options.selectionStyle = NutsUtilStrings.trimToNull(a.getStringValue().get(session));
             return true;
-        } else if (commandLine.next("-n") != null) {
+        } else if (commandLine.next("-n").isPresent()) {
             options.n = true;
             return true;
         } else if (commandLine.peek().get(session).isNonOption()) {

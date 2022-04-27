@@ -34,12 +34,12 @@ import java.util.function.Function;
  */
 public interface NutsIterable<T> extends Iterable<T>, NutsDescribable {
     static <T> NutsIterable<T> of(Iterable<T> o, String descr){
-        return NutsDescribables.ofIterable(o,e->e.ofString(descr));
+        return NutsDescribables.ofIterable(o,session->NutsElements.of(session).ofString(descr));
     }
     static <T> NutsIterable<T> of(Iterable<T> o,NutsElement descr){
         return NutsDescribables.ofIterable(o,e->descr);
     }
-    static <T> NutsIterable<T> of(Iterable<T> o, Function<NutsElements, NutsElement> descr){
+    static <T> NutsIterable<T> of(Iterable<T> o, Function<NutsSession, NutsElement> descr){
         return NutsDescribables.ofIterable(o,descr);
     }
     

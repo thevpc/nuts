@@ -52,6 +52,10 @@ public interface NutsId extends Comparable<NutsId>, NutsFormattable, NutsBlankab
         return ofList(value).map(LinkedHashSet::new);
     }
 
+    static NutsOptional<NutsId> of(String groupId, String artifactId) {
+        return NutsOptional.of(new DefaultNutsId(groupId, artifactId,null));
+    }
+
     static NutsOptional<NutsId> of(String groupId, String artifactId, NutsVersion version) {
         return NutsOptional.of(new DefaultNutsId(groupId, artifactId, version));
     }

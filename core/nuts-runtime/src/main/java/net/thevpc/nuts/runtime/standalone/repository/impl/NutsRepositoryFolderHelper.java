@@ -108,7 +108,7 @@ public class NutsRepositoryFolderHelper {
     public NutsContent fetchContentImpl(NutsId id, String localPath, NutsSession session) {
         NutsPath cacheContent = getLongIdLocalFile(id.builder().setFaceContent().build(), session);
         if (cacheContent != null && pathExists(cacheContent, session)) {
-            return new NutsDefaultContent(
+            return new DefaultNutsContent(
                     cacheContent,
                     cacheFolder, false);
         }
@@ -255,7 +255,7 @@ public class NutsRepositoryFolderHelper {
                         }
                         return IteratorBuilder.emptyIterator();
                     },
-                    e -> e
+                    e -> NutsElements.of(e)
                             .ofObject()
                             .set("type", "searchSingleVersion")
                             .set("repository", repo == null ? null : repo.getName())
@@ -438,7 +438,7 @@ public class NutsRepositoryFolderHelper {
                     .from(
                             InputStreamMetadataAwareImpl.of(
                                     new ByteArrayInputStream(bytes)
-                                    , new NutsDefaultStreamMetadata(
+                                    , new DefaultNutsStreamMetadata(
                                             NutsMessage.cstyle("sha1://%s", desc.getId()),
                                             bytes.length,
                                             CoreIOUtils.MIME_TYPE_SHA1,

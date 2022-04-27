@@ -27,7 +27,6 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.executor.java.JavaExecutorComponent;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.definition.DefaultNutsDefinition;
-import net.thevpc.nuts.runtime.standalone.util.collections.CoreArrayUtils;
 import net.thevpc.nuts.spi.NutsComponentScope;
 import net.thevpc.nuts.spi.NutsComponentScopeType;
 import net.thevpc.nuts.spi.NutsExecutorComponent;
@@ -70,7 +69,7 @@ public class JavaSourceExecutorComponent implements NutsExecutorComponent {
         JavaExecutorComponent cc = new JavaExecutorComponent();
         NutsDefinition d = executionContext.getDefinition();
         d = new DefaultNutsDefinition(d, session);
-        ((DefaultNutsDefinition) d).setContent(new NutsDefaultContent(
+        ((DefaultNutsDefinition) d).setContent(new DefaultNutsContent(
                 NutsPath.of(folder, session),
                 false,
                 true
@@ -112,7 +111,7 @@ public class JavaSourceExecutorComponent implements NutsExecutorComponent {
         JavaExecutorComponent cc = new JavaExecutorComponent();
         NutsDefinition d = executionContext.getDefinition();
         d = new DefaultNutsDefinition(d, executionContext.getSession());
-        ((DefaultNutsDefinition) d).setContent(new NutsDefaultContent(
+        ((DefaultNutsDefinition) d).setContent(new DefaultNutsContent(
                 NutsPath.of(folder, executionContext.getSession()),
                 false,
                 true

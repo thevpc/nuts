@@ -30,8 +30,9 @@ package net.thevpc.nuts;
 public interface NutsDescribable {
     /**
      * create an element that describes this instance
-     * @param elems elems builder
+     *
+     * @param session elems builder
      * @return Structured NutsElement description
      */
-    NutsElement describe(NutsElements elems);
+    NutsElement describe(NutsSession session);
 }

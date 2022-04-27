@@ -218,23 +218,23 @@ public class NJobsSubCmd {
     }
 
     public boolean runJobCommands(NutsCommandLine cmd) {
-        if (cmd.next("aj", "ja", "a j", "j a", "add job", "jobs add") != null) {
+        if (cmd.next("aj", "ja", "a j", "j a", "add job", "jobs add").isPresent()) {
             runJobAdd(cmd);
             return true;
-        } else if (cmd.next("lj", "jl", "l j", "j l", "list jobs", "jobs list") != null) {
+        } else if (cmd.next("lj", "jl", "l j", "j l", "list jobs", "jobs list").isPresent()) {
             runJobList(cmd);
             return true;
-        } else if (cmd.next("rj", "jr", "jrm", "rmj", "j rm", "rm j", "j r", "r j", "remove job", "remove jobs", "jobs remove") != null) {
+        } else if (cmd.next("rj", "jr", "jrm", "rmj", "j rm", "rm j", "j r", "r j", "remove job", "remove jobs", "jobs remove").isPresent()) {
             runJobRemove(cmd);
             return true;
-        } else if (cmd.next("uj", "ju", "j u", "u j", "update job", "update jobs", "jobs update", "jobs update") != null) {
+        } else if (cmd.next("uj", "ju", "j u", "u j", "update job", "update jobs", "jobs update", "jobs update").isPresent()) {
             runJobUpdate(cmd);
             return true;
-        } else if (cmd.next("js", "sj", "j s", "s j", "show job", "show jobs", "jobs show") != null) {
+        } else if (cmd.next("js", "sj", "j s", "s j", "show job", "show jobs", "jobs show").isPresent()) {
             runJobShow(cmd);
             return true;
-        } else if (cmd.next("j", "jobs") != null) {
-            if (cmd.next("--help") != null) {
+        } else if (cmd.next("j", "jobs").isPresent()) {
+            if (cmd.next("--help").isPresent()) {
                 parent.showCustomHelp("njob-jobs");
             } else {
                 runJobList(cmd);

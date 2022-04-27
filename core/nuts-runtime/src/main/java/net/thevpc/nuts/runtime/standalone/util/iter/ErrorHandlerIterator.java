@@ -6,11 +6,9 @@
 package net.thevpc.nuts.runtime.standalone.util.iter;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 
 import java.util.Iterator;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
@@ -30,8 +28,8 @@ public class ErrorHandlerIterator<T> extends NutsIteratorBase<T> {
     }
 
     @Override
-    public NutsElement describe(NutsElements elems) {
-        return NutsDescribables.resolveOrDestructAsObject(base,elems)
+    public NutsElement describe(NutsSession session) {
+        return NutsDescribables.resolveOrDestructAsObject(base, session)
                 .builder()
                 .set("onError",type.toString().toLowerCase())
                 .build();

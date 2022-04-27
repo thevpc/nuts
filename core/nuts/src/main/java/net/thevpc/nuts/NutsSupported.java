@@ -26,23 +26,22 @@
  */
 package net.thevpc.nuts;
 
-import java.util.List;
 import java.util.function.Supplier;
 
 public interface NutsSupported<T> {
     static <T> NutsSupported<T> of(int supportLevel, T value) {
-        return supportLevel <= 0 ? invalid() : new NutsDefaultSupported<>(() -> value, supportLevel);
+        return supportLevel <= 0 ? invalid() : new DefaultNutsSupported<>(() -> value, supportLevel);
     }
 
     static <T> NutsSupported<T> of(int supportLevel, Supplier<T> supplier) {
         return (supportLevel <= 0 || supplier == null) ? invalid()
-                : new NutsDefaultSupported<>(supplier, supportLevel)
+                : new DefaultNutsSupported<>(supplier, supportLevel)
                 ;
     }
 
     @SuppressWarnings("unchecked")
     static <T> NutsSupported<T> invalid() {
-        return NutsDefaultSupported.INVALID;
+        return DefaultNutsSupported.INVALID;
     }
 
     static <T> boolean isValid(NutsSupported<T> s) {

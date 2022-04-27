@@ -380,8 +380,8 @@ public class LsCommand extends SimpleJShellBuiltin {
         }
 
         @Override
-        public NutsElement describe(NutsElements elems) {
-            return elems.ofString("foldersFirst");
+        public NutsElement describe(NutsSession session) {
+            return NutsElements.of(session).ofString("foldersFirst");
         }
     }
 }

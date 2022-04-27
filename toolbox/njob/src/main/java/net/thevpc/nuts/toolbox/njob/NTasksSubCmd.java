@@ -685,23 +685,23 @@ public class NTasksSubCmd {
     }
 
     public boolean runTaskCommands(NutsCommandLine cmd) {
-        if (cmd.next("a t", "t a", "ta", "at", "add task", "tasks add") != null) {
+        if (cmd.next("a t", "t a", "ta", "at", "add task", "tasks add").isPresent()) {
             runTaskAdd(cmd);
             return true;
-        } else if (cmd.next("t u", "u t", "tu", "ut", "update task", "tasks update") != null) {
+        } else if (cmd.next("t u", "u t", "tu", "ut", "update task", "tasks update").isPresent()) {
             runTaskUpdate(cmd);
             return true;
-        } else if (cmd.next("l t", "t l", "lt", "tl", "list tasks", "tasks list") != null) {
+        } else if (cmd.next("l t", "t l", "lt", "tl", "list tasks", "tasks list").isPresent()) {
             runTaskList(cmd);
             return true;
         } else if (cmd.next("tr", "rt", "trm", "rmt", "t r", "r t", "t rm", "rm t", "remove task", "remove tasks", "rm task", "rm tasks",
-                "tasks remove", "tasks rm") != null) {
+                "tasks remove", "tasks rm").isPresent()) {
             runTaskRemove(cmd);
             return true;
-        } else if (cmd.next("st", "ts", "s t", "t s", "show task", "show tasks", "tasks show") != null) {
+        } else if (cmd.next("st", "ts", "s t", "t s", "show task", "show tasks", "tasks show").isPresent()) {
             runTaskShow(cmd);
             return true;
-        } else if (cmd.next("t", "tasks") != null) {
+        } else if (cmd.next("t", "tasks").isPresent()) {
             if (cmd.next("--help") != null) {
                 parent.showCustomHelp("njob-tasks");
             } else {

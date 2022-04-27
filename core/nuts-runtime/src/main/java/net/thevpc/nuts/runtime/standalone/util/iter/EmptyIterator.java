@@ -2,6 +2,7 @@ package net.thevpc.nuts.runtime.standalone.util.iter;
 
 import net.thevpc.nuts.NutsElement;
 import net.thevpc.nuts.NutsElements;
+import net.thevpc.nuts.NutsSession;
 
 import java.util.NoSuchElementException;
 import java.util.Objects;
@@ -35,7 +36,7 @@ public class EmptyIterator<E> extends NutsIteratorBase<E> {
     }
 
     @Override
-    public NutsElement describe(NutsElements elems) {
-        return elems.ofString("empty");
+    public NutsElement describe(NutsSession session) {
+        return NutsElements.of(session).ofString("empty");
     }
 }

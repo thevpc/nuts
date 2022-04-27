@@ -131,10 +131,11 @@ public class MavenSolrSearchCommand {
                             }
                         };
                     }
-                }, (elems) -> elems.ofObject().set("url", query.toString()).build(), session);
-                return it.filter(y->idFilter==null||idFilter.acceptId(y,session),elems->
-                                elems.ofObject().set(
-                                        "filterBy",elems.ofString(idFilter==null?"true":idFilter.toString())
+                }, (elems) -> NutsElements.of(elems).ofObject().set("url", query.toString()).build(), session);
+                return it.filter(y->idFilter==null||idFilter.acceptId(y,session),
+                                elems->
+                                        NutsElements.of(elems).ofObject().set(
+                                        "filterBy",NutsElements.of(elems).ofString(idFilter==null?"true":idFilter.toString())
                                 ).build()
                         )
 //                        .flatMap(

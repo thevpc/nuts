@@ -184,4 +184,10 @@ class DefaultNutsPrimitiveElement extends AbstractNutsElement implements NutsPri
     public int hashCode() {
         return Objects.hash(value);
     }
+
+    @Override
+    public String toStringLiteral() {
+        return value.toStringLiteral();
+    }
+
 }

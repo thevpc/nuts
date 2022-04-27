@@ -1,10 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.util.iter;
 
-import net.thevpc.nuts.NutsElement;
-import net.thevpc.nuts.NutsElements;
-import net.thevpc.nuts.NutsPredicates;
-import net.thevpc.nuts.NutsDescribable;
-import net.thevpc.nuts.NutsDescribables;
+import net.thevpc.nuts.*;
 
 import java.util.HashSet;
 import java.util.function.Function;
@@ -34,9 +30,9 @@ class DistinctWithConverterPredicate<F, T> extends NutsPredicates.BasePredicate<
     }
 
     @Override
-    public NutsElement describe(NutsElements elems) {
-        return elems.ofObject()
-                .set("distinctBy", NutsDescribables.resolveOrDestruct(converter,elems))
+    public NutsElement describe(NutsSession session) {
+        return NutsElements.of(session).ofObject()
+                .set("distinctBy", NutsDescribables.resolveOrDestruct(converter, session))
                 .build()
                 ;
     }

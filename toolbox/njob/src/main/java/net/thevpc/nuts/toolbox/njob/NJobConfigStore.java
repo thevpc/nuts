@@ -63,7 +63,7 @@ public class NJobConfigStore {
                 x -> x.isRegularFile() && x.getName().endsWith(".json"),
                         "isRegularFile() && matches(*.json"+")"
                 )
-                .map(parse,elem->elem.ofString("parse"))
+                .map(parse,session->NutsElements.of(session).ofString("parse"))
                 .filterNonNull().stream();
     }
 

@@ -26,6 +26,8 @@ package net.thevpc.nuts;
 import net.thevpc.nuts.boot.NutsApiUtils;
 
 import java.net.URL;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.List;
 
 /**
@@ -58,11 +60,11 @@ public interface NutsBootManager {
 
     String getBootRepositories();
 
-    long getCreationStartTimeMillis();
+    Instant getCreationStartTime();
 
-    long getCreationFinishTimeMillis();
+    Instant getCreationFinishTime();
 
-    long getCreationTimeMillis();
+    Duration getCreationDuration();
 
 
     NutsClassLoaderNode getBootRuntimeClassLoaderNode();
