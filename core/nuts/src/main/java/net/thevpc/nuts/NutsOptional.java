@@ -66,6 +66,8 @@ public interface NutsOptional<T> extends NutsBlankable{
 
     T get(NutsMessage message, NutsSession session);
 
+    Throwable getError();
+
     T get(NutsSession session);
 
     T orElse(T other);

@@ -24,6 +24,7 @@ public class PrivateNutsOptionalError<T> extends PrivateNutsOptionalImpl<T> {
         this.error = error;
     }
 
+    @Override
     public Throwable getError() {
         return error;
     }

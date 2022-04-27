@@ -24,6 +24,11 @@ public class PrivateNutsOptionalEmpty<T> extends PrivateNutsOptionalImpl<T> {
     }
 
     @Override
+    public Throwable getError() {
+        return null;
+    }
+
+    @Override
     public T get(NutsMessage message,NutsSession session) {
         throw new NutsNoSuchElementException(session,
                 this.message.apply(session).concat(session, NutsMessage.plain(" : "), message)

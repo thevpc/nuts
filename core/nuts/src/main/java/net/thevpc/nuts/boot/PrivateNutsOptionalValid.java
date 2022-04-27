@@ -24,6 +24,11 @@ public class PrivateNutsOptionalValid<T> extends PrivateNutsOptionalImpl<T> {
     }
 
     @Override
+    public Throwable getError() {
+        return null;
+    }
+
+    @Override
     public boolean isPresent() {
         return true;
     }

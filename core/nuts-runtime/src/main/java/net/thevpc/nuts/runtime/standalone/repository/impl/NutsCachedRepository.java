@@ -30,7 +30,6 @@ import net.thevpc.nuts.runtime.standalone.util.iter.IteratorBuilder;
 import net.thevpc.nuts.runtime.standalone.xtra.glob.GlobUtils;
 import net.thevpc.nuts.runtime.standalone.repository.cmd.NutsRepositorySupportedAction;
 import net.thevpc.nuts.runtime.standalone.repository.cmd.updatestats.AbstractNutsUpdateRepositoryStatisticsCommand;
-import net.thevpc.nuts.runtime.standalone.util.SuccessFailResult;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceExt;
 import net.thevpc.nuts.spi.NutsDeployRepositoryCommand;
 import net.thevpc.nuts.spi.NutsPushRepositoryCommand;
@@ -104,7 +103,7 @@ public class NutsCachedRepository extends AbstractNutsRepositoryBase {
         }
         RuntimeException mirrorsEx = null;
 
-        SuccessFailResult<NutsDescriptor, RuntimeException> res = NutsLocks.of(session).setSource(id.builder().setFaceDescriptor().build()).call(() -> {
+        NutsOptional<NutsDescriptor> res = NutsLocks.of(session).setSource(id.builder().setFaceDescriptor().build()).call(() -> {
             try {
                 NutsDescriptor success = fetchDescriptorCore(id, fetchMode, session);
                 if (success != null) {
@@ -115,16 +114,16 @@ public class NutsCachedRepository extends AbstractNutsRepositoryBase {
                         }
                         cache.deployDescriptor(success.getId(), success, NutsConfirmationMode.YES, session.copy().setConfirm(NutsConfirmationMode.YES));
                     }
-                    return SuccessFailResult.success(success);
+                    return NutsOptional.of(success);
                 } else {
-                    return SuccessFailResult.fail(new NutsNotFoundException(session, id));
+                    return NutsOptional.ofError(session1 -> NutsMessage.cstyle("nuts descriptor not found %s",id), new NutsNotFoundException(session, id));
                 }
             } catch (RuntimeException ex) {
-                return SuccessFailResult.fail(ex);
+                return NutsOptional.ofError(session1 -> NutsMessage.cstyle("nuts descriptor not found %s",id), ex);
             }
         });
-        if (res.getSuccess() != null) {
-            return res.getSuccess();
+        if (res.isPresent()) {
+            return res.get(session);
         }
         NutsDescriptor m = null;
         try {
@@ -135,8 +134,8 @@ public class NutsCachedRepository extends AbstractNutsRepositoryBase {
         if (m != null) {
             return m;
         }
-        if (res.getFail() != null) {
-            throw res.getFail();
+        if (res.getError() != null) {
+            throw (RuntimeException) res.getError();
         }
         if (mirrorsEx != null) {
             throw mirrorsEx;
@@ -221,7 +220,7 @@ public class NutsCachedRepository extends AbstractNutsRepositoryBase {
 
         RuntimeException mirrorsEx = null;
         NutsContent c = null;
-        SuccessFailResult<NutsContent, RuntimeException> res = NutsLocks.of(session).setSource(id.builder().setFaceContent().build()).call(() -> {
+        NutsOptional<NutsContent> res = NutsLocks.of(session).setSource(id.builder().setFaceContent().build()).call(() -> {
             if (cache.isWriteEnabled()) {
                 NutsPath cachePath = cache.getLongIdLocalFile(id, session);
                 NutsContent c2 = fetchContentCore(id, descriptor, cachePath.toString(), fetchMode, session);
@@ -235,10 +234,10 @@ public class NutsCachedRepository extends AbstractNutsRepositoryBase {
                     } else {
                         localPath2 = cachePath.toString();
                     }
-                    return SuccessFailResult.success(new NutsDefaultContent(
+                    return NutsOptional.of(new NutsDefaultContent(
                             NutsPath.of(localPath2, session), true, false));
                 } else {
-                    return SuccessFailResult.fail(new NutsNotFoundException(session, id));
+                    return NutsOptional.ofError(session1 -> NutsMessage.cstyle("nuts content not found %s",id),new NutsNotFoundException(session, id));
                 }
             } else {
                 NutsContent c2 = null;
@@ -249,17 +248,17 @@ public class NutsCachedRepository extends AbstractNutsRepositoryBase {
                     impl2Ex = ex;
                 }
                 if (c2 != null) {
-                    return SuccessFailResult.success(c2);
+                    return NutsOptional.of(c2);
                 } else if (impl2Ex != null) {
-                    return SuccessFailResult.fail(impl2Ex);
+                    return NutsOptional.ofError(session1 -> NutsMessage.cstyle("nuts content not found %s",id),impl2Ex);
                 } else {
-                    return SuccessFailResult.fail(new NutsNotFoundException(session, id));
+                    return NutsOptional.ofError(session1 -> NutsMessage.cstyle("nuts content not found %s",id),new NutsNotFoundException(session, id));
                 }
             }
         });
 
-        if (res.getSuccess() != null) {
-            return res.getSuccess();
+        if (res.isPresent()) {
+            return res.get(session);
         }
         try {
             c = mirroring.fetchContent(id, descriptor, localPath, fetchMode, session);
@@ -269,11 +268,11 @@ public class NutsCachedRepository extends AbstractNutsRepositoryBase {
         if (c != null) {
             return c;
         }
-        if (res.getFail() != null) {
-            if (res.getFail() instanceof NutsNotFoundException) {
-                throw res.getFail();
+        if (res.getError() != null) {
+            if (res.getError() instanceof NutsNotFoundException) {
+                throw (RuntimeException) res.getError();
             }
-            throw new NutsNotFoundException(session, id, res.getFail());
+            throw new NutsNotFoundException(session, id, res.getError());
         }
         if (mirrorsEx != null) {
             if (mirrorsEx instanceof NutsNotFoundException) {
