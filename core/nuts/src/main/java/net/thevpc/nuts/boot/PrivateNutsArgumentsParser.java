@@ -119,7 +119,7 @@ public final class PrivateNutsArgumentsParser {
                         a = cmdLine.nextString().get(session);
                         String v = a.getStringValue().get(session);
                         if (active) {
-                            options.setApiVersion(v);
+                            options.setApiVersion(NutsVersion.of(v).get(session));
                         }
                         break;
                     }
@@ -129,10 +129,10 @@ public final class PrivateNutsArgumentsParser {
                         if (active) {
                             if (br.indexOf("#") > 0) {
                                 //this is a full id
+                                options.setRuntimeId(NutsId.of(br).get(session));
                             } else {
-                                br = NutsConstants.Ids.NUTS_RUNTIME + "#" + br;
+                                options.setRuntimeId(NutsId.ofRuntime(br).orNull());
                             }
-                            options.setRuntimeId(br);
                         }
                         break;
                     }
@@ -499,7 +499,7 @@ public final class PrivateNutsArgumentsParser {
                     case "--progress": {
                         a = cmdLine.next().get(session);
                         if (active) {
-                            String s = a.getStringValue().get(session);
+                            String s = a.getStringValue().orNull();
                             if (a.isNegated()) {
                                 Boolean q = NutsValue.of(s).asBoolean().ifEmpty(true).orNull();
                                 if (q == null) {
@@ -1099,9 +1099,9 @@ public final class PrivateNutsArgumentsParser {
         if (!(applicationArguments.size() > 0
                 && (
                 applicationArguments.get(0).equals("help")
-                        || options.isCommandHelp()
+                        || options.getCommandHelp().orElse(false)
                         || applicationArguments.get(0).equals("version")
-                        || options.isCommandVersion()
+                        || options.getCommandVersion().orElse(false)
         )
         )) {
             if (!showError.isEmpty()) {
@@ -1110,7 +1110,7 @@ public final class PrivateNutsArgumentsParser {
                     errorMessage.append(s).append("\n");
                 }
                 errorMessage.append("Try 'nuts --help' for more information.");
-                if (!options.isSkipErrors()) {
+                if (!options.getSkipErrors().orElse(false)) {
                     throw new NutsBootException(NutsMessage.plain(errorMessage.toString()));
                 }
             }

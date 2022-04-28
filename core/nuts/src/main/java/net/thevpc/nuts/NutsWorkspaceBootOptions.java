@@ -7,30 +7,30 @@ import java.util.List;
 import java.util.Set;
 
 public interface NutsWorkspaceBootOptions extends NutsWorkspaceOptions{
-    NutsWorkspaceOptions getUserOptions();
+    NutsOptional<NutsWorkspaceOptions> getUserOptions();
+
+    NutsOptional<String> getBootRepositories();
+
+    NutsOptional<NutsClassLoaderNode> getRuntimeBootDependencyNode();
+
+    NutsOptional<List<NutsDescriptor>> getExtensionBootDescriptors();
+
+    NutsOptional<List<NutsClassLoaderNode>> getExtensionBootDependencyNodes();
+
+    NutsOptional<NutsBootWorkspaceFactory> getBootWorkspaceFactory();
+
+    NutsOptional<List<URL>> getClassWorldURLs();
+
+    NutsOptional<ClassLoader> getClassWorldLoader();
+
+    NutsOptional<String> getUuid();
+
+    NutsOptional<Set<String>> getExtensionsSet();
+
+    NutsOptional<NutsDescriptor> getRuntimeBootDescriptor();
 
     @Override
     NutsWorkspaceBootOptionsBuilder builder();
-
-    String getBootRepositories();
-
-    NutsClassLoaderNode getRuntimeBootDependencyNode();
-
-    List<NutsDescriptor> getExtensionBootDescriptors();
-
-    List<NutsClassLoaderNode> getExtensionBootDependencyNodes();
-
-    NutsBootWorkspaceFactory getBootWorkspaceFactory();
-
-    List<URL> getClassWorldURLs();
-
-    ClassLoader getClassWorldLoader();
-
-    String getUuid();
-
-    Set<String> getExtensionsSet();
-
-    NutsDescriptor getRuntimeBootDescriptor();
 
     @Override
     NutsWorkspaceBootOptions readOnly();

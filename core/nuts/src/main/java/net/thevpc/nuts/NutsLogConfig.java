@@ -40,6 +40,7 @@ import java.util.logging.Level;
  */
 public class NutsLogConfig implements Serializable, Cloneable {
     private static final long serialVersionUID = 1;
+    public static NutsLogConfig BLANK=new NutsLogConfig().readOnly();
 
     private Level logFileLevel = Level.OFF;
     private Filter logFileFilter = null;
@@ -52,11 +53,13 @@ public class NutsLogConfig implements Serializable, Cloneable {
     private int logFileCount = 0;
     private String logFileName = null;
     private String logFileBase = null;
+    private boolean readOnly;
 
     public NutsLogConfig() {
     }
 
-    public NutsLogConfig(NutsLogConfig other) {
+    public NutsLogConfig(NutsLogConfig other,boolean readOnly) {
+        this.readOnly=readOnly;
         if (other != null) {
             this.logFileLevel = other.logFileLevel;
             this.logTermLevel = other.logTermLevel;
@@ -74,6 +77,9 @@ public class NutsLogConfig implements Serializable, Cloneable {
     }
 
     public NutsLogConfig setLogFileFilter(Filter logFileFilter) {
+        if(readOnly){
+            throw new IllegalArgumentException("read only");
+        }
         this.logFileFilter = logFileFilter;
         return this;
     }
@@ -83,6 +89,9 @@ public class NutsLogConfig implements Serializable, Cloneable {
     }
 
     public NutsLogConfig setLogTermFilter(Filter logTermFilter) {
+        if(readOnly){
+            throw new IllegalArgumentException("read only");
+        }
         this.logTermFilter = logTermFilter;
         return this;
     }
@@ -92,6 +101,9 @@ public class NutsLogConfig implements Serializable, Cloneable {
     }
 
     public NutsLogConfig setLogFileLevel(Level logFileLevel) {
+        if(readOnly){
+            throw new IllegalArgumentException("read only");
+        }
         this.logFileLevel = logFileLevel;
         return this;
     }
@@ -101,6 +113,9 @@ public class NutsLogConfig implements Serializable, Cloneable {
     }
 
     public NutsLogConfig setLogTermLevel(Level logTermLevel) {
+        if(readOnly){
+            throw new IllegalArgumentException("read only");
+        }
         this.logTermLevel = logTermLevel;
         return this;
     }
@@ -121,6 +136,9 @@ public class NutsLogConfig implements Serializable, Cloneable {
      * @return {@code this} instance
      */
     public NutsLogConfig setLogFileSize(int logFileSize) {
+        if(readOnly){
+            throw new IllegalArgumentException("read only");
+        }
         this.logFileSize = logFileSize;
         return this;
     }
@@ -141,6 +159,9 @@ public class NutsLogConfig implements Serializable, Cloneable {
      * @return {@code this} instance
      */
     public NutsLogConfig setLogFileCount(int logFileCount) {
+        if(readOnly){
+            throw new IllegalArgumentException("read only");
+        }
         this.logFileCount = logFileCount;
         return this;
     }
@@ -161,6 +182,9 @@ public class NutsLogConfig implements Serializable, Cloneable {
      * @return {@code this} instance
      */
     public NutsLogConfig setLogFileName(String logFileName) {
+        if(readOnly){
+            throw new IllegalArgumentException("read only");
+        }
         this.logFileName = logFileName;
         return this;
     }
@@ -181,16 +205,22 @@ public class NutsLogConfig implements Serializable, Cloneable {
      * @return {@code this} instance
      */
     public NutsLogConfig setLogFileBase(String logFileBase) {
+        if(readOnly){
+            throw new IllegalArgumentException("read only");
+        }
         this.logFileBase = logFileBase;
         return this;
     }
 
     public NutsLogConfig copy() {
-        try {
-            return (NutsLogConfig) clone();
-        } catch (CloneNotSupportedException e) {
-            throw new NutsBootException(NutsMessage.plain("unsupported clone"));
+        return new NutsLogConfig(this,false);
+    }
+
+    public NutsLogConfig readOnly() {
+        if(readOnly) {
+            return this;
         }
+        return new NutsLogConfig(this,true);
     }
 
     @Override
@@ -220,6 +250,7 @@ public class NutsLogConfig implements Serializable, Cloneable {
                 ", logFileCount=" + logFileCount +
                 ", logFileName='" + logFileName + '\'' +
                 ", logFileBase='" + logFileBase + '\'' +
+                ", readOnly=" + readOnly  +
                 '}';
     }
 }

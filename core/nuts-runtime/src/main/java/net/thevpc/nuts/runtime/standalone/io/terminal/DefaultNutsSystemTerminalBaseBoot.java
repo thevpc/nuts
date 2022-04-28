@@ -29,15 +29,15 @@ public class DefaultNutsSystemTerminalBaseBoot extends NutsSystemTerminalBaseImp
         this.workspace = session.getWorkspace();
         NutsWorkspaceOptions bo = bootModel.getBootUserOptions();
         NutsBootTerminal bootStdFd = new NutsBootTerminal(
-                (bo.getStdin()==null)?System.in:bo.getStdin(),
-                (bo.getStdout()==null)?System.out:bo.getStdout(),
-                (bo.getStderr()==null)?System.err:bo.getStderr(),
+                bo.getStdin().orElse(System.in),
+                bo.getStdout().orElse(System.out),
+                bo.getStderr().orElse(System.err),
                 "boot"
         );
         NutsWorkspaceBootOptions bOptions = bootModel.getBootEffectiveOptions();
-        NutsTerminalMode terminalMode = bOptions.getUserOptions().getTerminalMode();
+        NutsTerminalMode terminalMode = bOptions.getUserOptions().get().getTerminalMode().orNull();
         if (terminalMode == null) {
-            if (bOptions.getUserOptions().isBot()) {
+            if (bOptions.getUserOptions().get().getBot().orElse(false)) {
                 terminalMode = NutsTerminalMode.FILTERED;
             } else {
                 if (bootStdFd.getFlags().contains("ansi")) {

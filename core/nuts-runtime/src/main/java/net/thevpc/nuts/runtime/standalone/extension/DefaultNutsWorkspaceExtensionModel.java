@@ -167,11 +167,11 @@ public class DefaultNutsWorkspaceExtensionModel {
 
     public void onInitializeWorkspace(NutsWorkspaceBootOptions bOptions, ClassLoader bootClassLoader, NutsSession session) {
         objectFactory.discoverTypes(
-                NutsId.of(bOptions.getRuntimeBootDependencyNode().getId()).get(session),
-                bOptions.getRuntimeBootDependencyNode().getURL(),
+                NutsId.of(bOptions.getRuntimeBootDependencyNode().get().getId()).get(session),
+                bOptions.getRuntimeBootDependencyNode().get().getURL(),
                 bootClassLoader,
                 session);
-        for (NutsClassLoaderNode idurl : bOptions.getExtensionBootDependencyNodes()) {
+        for (NutsClassLoaderNode idurl : bOptions.getExtensionBootDependencyNodes().orElseGet(Collections::emptyList)) {
             objectFactory.discoverTypes(
                     NutsId.of(idurl.getId()).get(session),
                     idurl.getURL(),

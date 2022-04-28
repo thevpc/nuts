@@ -478,7 +478,7 @@ public final class NutsUtilPlatforms {
                         break;
                     }
                 }
-            } else if (!new File(_storeLocation).isAbsolute()) {
+            } else if (!Paths.get(_storeLocation).isAbsolute()) {
                 switch (storeLocationStrategy) {
                     case STANDALONE: {
                         String c = NutsUtilPlatforms.getCustomPlatformHomeFolder(platformOsFamily, location, homeLocations);

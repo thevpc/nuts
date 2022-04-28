@@ -7,7 +7,7 @@ import net.thevpc.nuts.runtime.standalone.workspace.config.compat.AbstractNutsVe
 import net.thevpc.nuts.runtime.standalone.workspace.config.compat.CompatUtils;
 
 public class NutsVersionCompat803 extends AbstractNutsVersionCompat {
-    public NutsVersionCompat803(NutsSession ws, String apiVersion) {
+    public NutsVersionCompat803(NutsSession ws, NutsVersion apiVersion) {
         super(ws, apiVersion, 507);
     }
 

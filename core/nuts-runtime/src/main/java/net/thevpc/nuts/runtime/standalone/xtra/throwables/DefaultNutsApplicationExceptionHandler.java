@@ -18,12 +18,13 @@ public class DefaultNutsApplicationExceptionHandler implements NutsApplicationEx
             bo.setGui(false);
         }
 
-        boolean bot = bo.isBot();
-        boolean showGui = !bot && bo.isGui();
+        boolean bot = bo.getBot().orElse(false);
+        boolean showGui = !bot && bo.getGui().orElse(false);
         boolean showTrace = bo.getDebug()!=null;
-        showTrace |= (bo.getLogConfig() != null
-                && bo.getLogConfig().getLogTermLevel() != null
-                && bo.getLogConfig().getLogTermLevel().intValue() < Level.INFO.intValue());
+        NutsLogConfig logConfig = bo.getLogConfig().orElseGet(NutsLogConfig::new);
+        showTrace |= (
+                logConfig.getLogTermLevel() != null
+                && logConfig.getLogTermLevel().intValue() < Level.INFO.intValue());
         if (!showTrace) {
             showTrace = NutsApiUtils.getSysBoolNutsProperty("debug", false);
         }

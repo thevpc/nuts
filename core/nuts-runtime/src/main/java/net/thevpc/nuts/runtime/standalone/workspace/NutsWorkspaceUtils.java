@@ -317,7 +317,7 @@ public class NutsWorkspaceUtils {
                             .setId(session.getWorkspace().getApiId())
                             .setCreateScript(true)
                             .setSystemWideConfig(
-                                    session.boot().getBootOptions().isSwitchWorkspace()
+                                    session.boot().getBootOptions().getSwitchWorkspace().orElse(false)
                             )
                             .setCreateDesktopShortcut(gui ? NutsSupportCondition.PREFERRED : NutsSupportCondition.NEVER)
                             .setCreateMenuShortcut(gui ? NutsSupportCondition.SUPPORTED : NutsSupportCondition.NEVER)

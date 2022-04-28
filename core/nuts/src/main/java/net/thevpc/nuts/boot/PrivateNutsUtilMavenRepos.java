@@ -657,7 +657,7 @@ public final class PrivateNutsUtilMavenRepos {
                                 Function<String, String> pathExpansionConverter, PrivateNutsBootLog bLog) {
         File f = getBootCacheFile(vid, getFileName(vid, "jar"), repositories, cacheFolder, useCache, expire, errorList, bOptions, pathExpansionConverter, bLog);
         if (f == null) {
-            throw new NutsInvalidWorkspaceException(bOptions.getWorkspace(),
+            throw new NutsInvalidWorkspaceException(bOptions.getWorkspace().orNull(),
                     NutsMessage.cstyle("unable to load %s %s from repositories %s", name, vid, Arrays.asList(repositories)));
         }
         return f;
@@ -697,7 +697,7 @@ public final class PrivateNutsUtilMavenRepos {
         if (repository.startsWith("htmlfs:")) {
             repository = repository.substring("htmlfs:".length());
         }
-        repository = PrivateNutsUtilIO.expandPath(repository, bOptions.getWorkspace(), pathExpansionConverter);
+        repository = PrivateNutsUtilIO.expandPath(repository, bOptions.getWorkspace().get(), pathExpansionConverter);
         File repositoryFolder = null;
         if (PrivateNutsUtilIO.isURL(repository)) {
             try {

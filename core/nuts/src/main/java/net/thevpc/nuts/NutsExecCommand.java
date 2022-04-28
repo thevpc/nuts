@@ -156,6 +156,13 @@ public interface NutsExecCommand extends NutsWorkspaceCommand {
      */
     NutsExecCommand clearExecutorOptions();
 
+    List<String> getWorkspaceOptions();
+
+    NutsExecCommand clearWorkspaceOptions(String workspaceOptions);
+
+    NutsExecCommand addWorkspaceOptions(NutsWorkspaceOptions workspaceOptions);
+    NutsExecCommand addWorkspaceOptions(String workspaceOptions);
+
     /**
      * return env properties
      *

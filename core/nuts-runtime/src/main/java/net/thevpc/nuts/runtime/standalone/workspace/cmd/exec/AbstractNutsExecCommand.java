@@ -21,6 +21,7 @@ public abstract class AbstractNutsExecCommand extends NutsWorkspaceCommandBase<N
     protected NutsDefinition commandDefinition;
     protected List<String> command;
     protected List<String> executorOptions;
+    protected List<String> workspaceOptions;
     protected Map<String, String> env;
     protected NutsExecutionException result;
     protected boolean executed;
@@ -150,6 +151,36 @@ public abstract class AbstractNutsExecCommand extends NutsWorkspaceCommandBase<N
     @Override
     public NutsExecCommand clearExecutorOptions() {
         this.executorOptions = null;
+        return this;
+    }
+
+    @Override
+    public List<String> getWorkspaceOptions() {
+        return PrivateNutsUtilCollections.unmodifiableList(workspaceOptions);
+    }
+
+    @Override
+    public NutsExecCommand clearWorkspaceOptions(String workspaceOptions) {
+        this.workspaceOptions = null;
+        return this;
+    }
+
+    @Override
+    public NutsExecCommand addWorkspaceOptions(NutsWorkspaceOptions workspaceOptions) {
+        if (workspaceOptions != null) {
+            addWorkspaceOptions(workspaceOptions.toCommandLine().toString());
+        }
+        return this;
+    }
+
+    @Override
+    public NutsExecCommand addWorkspaceOptions(String workspaceOptions) {
+        if (workspaceOptions != null) {
+            if (this.workspaceOptions == null) {
+                this.workspaceOptions = new ArrayList<>();
+            }
+            this.workspaceOptions.add(workspaceOptions);
+        }
         return this;
     }
 

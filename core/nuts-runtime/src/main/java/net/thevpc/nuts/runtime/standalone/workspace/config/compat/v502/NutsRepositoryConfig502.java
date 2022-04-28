@@ -40,6 +40,7 @@ import net.thevpc.nuts.spi.NutsRepositoryLocation;
 public class NutsRepositoryConfig502 implements Serializable {
 
     private static final long serialVersionUID = 1;
+    public static final NutsVersion CONFIG_VERSION_502 = NutsVersion.of("0.5.2").get();
     /**
      * Api version having created the config
      */
@@ -373,7 +374,7 @@ public class NutsRepositoryConfig502 implements Serializable {
 
     public NutsRepositoryConfig toRepositoryConfig() {
         NutsRepositoryConfig c = new NutsRepositoryConfig();
-        c.setConfigVersion("0.5.2");
+        c.setConfigVersion(CONFIG_VERSION_502);
         c.setAuthenticationAgent(authenticationAgent);
         c.setEnv(env);
         c.setGroups(groups);

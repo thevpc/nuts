@@ -53,8 +53,8 @@ public class DefaultNutsLogModel {
     public DefaultNutsLogModel(NutsWorkspace ws, NutsWorkspaceOptions bOptions) {
         this.workspace = ws;
         NutsWorkspaceOptions bootOptions = NutsWorkspaceExt.of(this.workspace).getModel().bootModel.getBootUserOptions();
-        logFolder = Paths.get(bOptions.getStoreLocation(NutsStoreLocation.LOG));
-        NutsLogConfig lc = bootOptions.getLogConfig();
+        logFolder = Paths.get(bOptions.getStoreLocation(NutsStoreLocation.LOG).orNull());
+        NutsLogConfig lc = bootOptions.getLogConfig().orNull();
         if (lc != null) {
             if (lc.getLogFileLevel() != null) {
                 logConfig.setLogFileLevel(lc.getLogFileLevel());

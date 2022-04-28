@@ -66,8 +66,8 @@ public class DefaultNutsBootModel implements NutsBootModel {
         this.bootSession = new DefaultNutsSession(workspace, bOption0);
         this.bOptions = bOption0.readOnly();
         this.bootTerminal = detectAnsiTerminalSupport(NutsOsFamily.getCurrent(), bOptions, true, bootSession);
-        _model.uuid = bOptions.getUuid();
-        _model.name = Paths.get(bOptions.getWorkspace()).getFileName().toString();
+        _model.uuid = bOptions.getUuid().orNull();
+        _model.name = Paths.get(bOptions.getWorkspace().get()).getFileName().toString();
         DefaultSystemTerminal sys = new DefaultSystemTerminal(new DefaultNutsSystemTerminalBaseBoot(this));
 
         this.systemTerminal = NutsSystemTerminal_of_NutsSystemTerminalBase(sys, bootSession);
@@ -88,18 +88,18 @@ public class DefaultNutsBootModel implements NutsBootModel {
         InputStream stdIn = System.in;
         PrintStream stdOut = System.out;
         PrintStream stdErr = System.err;
-        if (bOption.getStdin() != null && bOption.getStdin() != System.in) {
-            stdIn = bOption.getStdin();
+        if (bOption.getStdin().isPresent() && bOption.getStdin().get() != System.in) {
+            stdIn = bOption.getStdin().orNull();
             flags.add("customIn");
             customIn = true;
         }
-        if (bOption.getStdout() != null && bOption.getStdout() != System.out) {
-            stdOut = bOption.getStdout();
+        if (bOption.getStdout().isPresent() && bOption.getStdout().get() != System.out) {
+            stdOut = bOption.getStdout().orNull();
             flags.add("customOut");
             customOut = true;
         }
-        if (bOption.getStderr() != null && bOption.getStderr() != System.err) {
-            stdErr = bOption.getStderr();
+        if (bOption.getStderr().isPresent() && bOption.getStderr().get() != System.err) {
+            stdErr = bOption.getStderr().orNull();
             flags.add("customErr");
             customErr = true;
         }
@@ -147,8 +147,8 @@ public class DefaultNutsBootModel implements NutsBootModel {
     }
 
     private static String ansiFlag(boolean defaultValue, NutsWorkspaceOptions bOption) {
-        if (bOption.getTerminalMode() != null) {
-            switch (bOption.getTerminalMode()) {
+        if (bOption.getTerminalMode().isPresent()) {
+            switch (bOption.getTerminalMode().get()) {
                 case FORMATTED:
                 case ANSI:
                     return "ansi";
@@ -162,7 +162,7 @@ public class DefaultNutsBootModel implements NutsBootModel {
     }
 
     public void onInitializeWorkspace() {
-        this.bootTerminal = detectAnsiTerminalSupport(NutsOsFamily.getCurrent(), bOptions.getUserOptions(), false, bootSession);
+        this.bootTerminal = detectAnsiTerminalSupport(NutsOsFamily.getCurrent(), bOptions.getUserOptions().get(), false, bootSession);
     }
 
     public void setSystemTerminal(NutsSystemTerminalBase terminal, NutsSession session) {
@@ -261,7 +261,7 @@ public class DefaultNutsBootModel implements NutsBootModel {
     }
 
     public NutsWorkspaceOptions getBootUserOptions() {
-        return bOptions.getUserOptions();
+        return bOptions.getUserOptions().get();
     }
 
     public NutsBootTerminal getBootTerminal() {
@@ -326,8 +326,7 @@ public class DefaultNutsBootModel implements NutsBootModel {
     public Map<String, NutsValue> getCustomBootOptions() {
         if (customBootOptions == null) {
             customBootOptions = new LinkedHashMap<>();
-            List<String> properties = bOptions.getUserOptions().getCustomOptions();
-            NutsElements elems = NutsElements.of(bootSession);
+            List<String> properties = bOptions.getUserOptions().get().getCustomOptions().orNull();
             if (properties != null) {
                 for (String property : properties) {
                     if (property != null) {

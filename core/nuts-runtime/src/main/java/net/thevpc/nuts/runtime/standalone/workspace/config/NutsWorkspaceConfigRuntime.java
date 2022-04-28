@@ -12,7 +12,7 @@ public class NutsWorkspaceConfigRuntime extends NutsConfigItem {
      *
      * @see NutsId#getLongId()
      */
-    private String id = null;
+    private NutsId id = null;
 
     /**
      * ';' separated list of package Ids in long format (as defined in
@@ -25,11 +25,11 @@ public class NutsWorkspaceConfigRuntime extends NutsConfigItem {
      */
     private String dependencies = null;
 
-    public String getId() {
+    public NutsId getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(NutsId id) {
         this.id = id;
     }
 

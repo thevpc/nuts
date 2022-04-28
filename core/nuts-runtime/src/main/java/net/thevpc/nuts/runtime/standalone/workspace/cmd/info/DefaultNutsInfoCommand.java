@@ -294,29 +294,29 @@ public class DefaultNutsInfoCommand extends DefaultFormatBase<NutsInfoCommand> i
         props.put("nuts-store-layout", session.locations().getStoreLocationLayout());
         props.put("nuts-store-strategy", session.locations().getStoreLocationStrategy());
         props.put("nuts-repo-store-strategy", session.locations().getRepositoryStoreLocationStrategy());
-        props.put("nuts-global", options.isGlobal());
+        props.put("nuts-global", options.getGlobal().orElse(false));
         props.put("nuts-workspace", session.locations().getWorkspaceLocation());
         for (NutsStoreLocation folderType : NutsStoreLocation.values()) {
             props.put("nuts-workspace-" + folderType.id(), session.locations().getStoreLocation(folderType));
         }
         props.put("nuts-open-mode", (options.getOpenMode() == null ? NutsOpenMode.OPEN_OR_CREATE : options.getOpenMode()));
         props.put("nuts-secure", (session.security().isSecure()));
-        props.put("nuts-gui", options.isGui());
-        props.put("nuts-inherited", options.isInherited());
-        props.put("nuts-recover", options.isRecover());
-        props.put("nuts-reset", options.isReset());
-        props.put("nuts-debug", NutsDebugString.of(options.getDebug(), getSession()));
-        props.put("nuts-trace", options.isTrace());
-        props.put("nuts-read-only", (options.isReadOnly()));
-        props.put("nuts-skip-companions", options.isSkipCompanions());
-        props.put("nuts-skip-welcome", options.isSkipWelcome());
-        props.put("nuts-skip-boot", options.isSkipBoot());
-        String ds = NutsDependencySolverUtils.resolveSolverName(options.getDependencySolver());
+        props.put("nuts-gui", options.getGui().orElse(false));
+        props.put("nuts-inherited", options.getInherited().orElse(false));
+        props.put("nuts-recover", options.getRecover().orElse(false));
+        props.put("nuts-reset", options.getReset().orElse(false));
+        props.put("nuts-debug", NutsDebugString.of(options.getDebug().orNull(), getSession()));
+        props.put("nuts-trace", options.getTrace().orElse(true));
+        props.put("nuts-read-only", (options.getReadOnly().orElse(false)));
+        props.put("nuts-skip-companions", options.getSkipCompanions().orElse(false));
+        props.put("nuts-skip-welcome", options.getSkipWelcome().orElse(false));
+        props.put("nuts-skip-boot", options.getSkipBoot().orElse(false));
+        String ds = NutsDependencySolverUtils.resolveSolverName(options.getDependencySolver().orNull());
         List<String> allDs = NutsDependencySolver.getSolverNames(session);
         props.put("nuts-solver",
                 txt.ofStyled(
                         ds,
-                        allDs.stream().map(x -> NutsDependencySolverUtils.resolveSolverName(x))
+                        allDs.stream().map(NutsDependencySolverUtils::resolveSolverName)
                                 .anyMatch(x -> x.equals(ds))
                                 ? NutsTextStyle.keyword() : NutsTextStyle.error())
         );
@@ -330,7 +330,7 @@ public class DefaultNutsInfoCommand extends DefaultFormatBase<NutsInfoCommand> i
         );
         NutsBootTerminal b = session.boot().getBootTerminal();
         props.put("sys-terminal-flags", b.getFlags());
-        NutsTerminalMode terminalMode = session.boot().getBootOptions().getTerminalMode();
+        NutsTerminalMode terminalMode = session.boot().getBootOptions().getTerminalMode().orNull();
         props.put("sys-terminal-mode", terminalMode == null ? "default" : terminalMode);
         props.put("java-version", NutsVersion.of(System.getProperty("java.version")).get(session));
         props.put("platform", session.env().getPlatform());
@@ -374,7 +374,7 @@ public class DefaultNutsInfoCommand extends DefaultFormatBase<NutsInfoCommand> i
                 session.boot().getBootOptions().toCommandLine(new NutsWorkspaceOptionsConfig().setCompact(false))
         );
         props.put("command-line-short", session.boot().getBootOptions().toCommandLine(new NutsWorkspaceOptionsConfig().setCompact(true)));
-        props.put("inherited", session.boot().getBootOptions().isInherited());
+        props.put("inherited", session.boot().getBootOptions().getInherited().orElse(false));
         // nuts-boot-args must always be parsed in bash format
         props.put("inherited-nuts-boot-args", NutsCommandLine.of(System.getProperty("nuts.boot.args"), NutsShellFamily.SH, session).format(session));
         props.put("inherited-nuts-args", NutsCommandLine.of(System.getProperty("nuts.args"), NutsShellFamily.SH, session)

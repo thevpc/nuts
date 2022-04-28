@@ -26,6 +26,7 @@
 package net.thevpc.nuts.runtime.standalone.boot;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.boot.PrivateNutsUtilCollections;
 import net.thevpc.nuts.runtime.standalone.workspace.config.DefaultNutsWorkspaceCurrentConfig;
 
 import java.io.Serializable;
@@ -54,12 +55,12 @@ public final class NutsBootConfig implements Cloneable, Serializable {
     /**
      * workspace api version
      */
-    private String apiVersion;
+    private NutsVersion apiVersion;
 
     /**
      * workspace runtime id (group, name with version)
      */
-    private String runtimeId;
+    private NutsId runtimeId;
 
     /**
      * runtime package dependencies id list (; separated)
@@ -122,18 +123,18 @@ public final class NutsBootConfig implements Cloneable, Serializable {
 
     public NutsBootConfig(NutsWorkspaceOptions options) {
         if (options != null) {
-            this.setWorkspace(options.getWorkspace());
-            this.setName(options.getName());
-            this.setStoreLocationStrategy(options.getStoreLocationStrategy());
-            this.setRepositoryStoreLocationStrategy(options.getRepositoryStoreLocationStrategy());
-            this.setStoreLocationLayout(options.getStoreLocationLayout());
-            this.storeLocations = new LinkedHashMap<>(options.getStoreLocations());
-            this.homeLocations = new LinkedHashMap<>(options.getHomeLocations());
-            this.setRuntimeId(options.getRuntimeId());
+            this.setWorkspace(options.getWorkspace().orNull());
+            this.setName(options.getName().orNull());
+            this.setStoreLocationStrategy(options.getStoreLocationStrategy().orNull());
+            this.setRepositoryStoreLocationStrategy(options.getRepositoryStoreLocationStrategy().orNull());
+            this.setStoreLocationLayout(options.getStoreLocationLayout().orNull());
+            this.storeLocations = PrivateNutsUtilCollections.nonNullMap(options.getStoreLocations().orNull());
+            this.homeLocations = PrivateNutsUtilCollections.nonNullMap(options.getHomeLocations().orNull());
+            this.setRuntimeId(options.getRuntimeId().orNull());
 //            this.setRuntimeDependencies(options.getBootRuntimeDependencies());
 //            this.setRepositories(options.getBootRepositories());
-            this.global = options.isGlobal();
-            this.runtimeId = options.getRuntimeId();
+            this.global = options.getGlobal().orElse(false);
+            this.runtimeId = options.getRuntimeId().orNull();
         }
     }
 
@@ -141,7 +142,7 @@ public final class NutsBootConfig implements Cloneable, Serializable {
         if (context != null) {
             this.name = context.getName();
             this.apiVersion = context.getApiVersion();
-            this.runtimeId = context.getRuntimeId().getLongName();
+            this.runtimeId = context.getRuntimeId();
             this.runtimeBootDescriptor = context.getRuntimeBootDescriptor();
             this.extensionBootDescriptors = context.getExtensionBootDescriptors();
             this.bootRepositories = context.getBootRepositories();
@@ -182,7 +183,7 @@ public final class NutsBootConfig implements Cloneable, Serializable {
         this.name = name;
     }
 
-    public String getApiVersion() {
+    public NutsVersion getApiVersion() {
         return apiVersion;
     }
 
@@ -190,16 +191,16 @@ public final class NutsBootConfig implements Cloneable, Serializable {
         return NutsConstants.Ids.NUTS_API + "#" + apiVersion;
     }
 
-    public NutsBootConfig setApiVersion(String apiVersion) {
+    public NutsBootConfig setApiVersion(NutsVersion apiVersion) {
         this.apiVersion = apiVersion;
         return this;
     }
 
-    public String getRuntimeId() {
+    public NutsId getRuntimeId() {
         return runtimeId;
     }
 
-    public NutsBootConfig setRuntimeId(String runtimeId) {
+    public NutsBootConfig setRuntimeId(NutsId runtimeId) {
         this.runtimeId = runtimeId;
         return this;
     }

@@ -57,11 +57,11 @@ public class NutsIdUtils {
     }
 
     public static boolean isApiId(NutsId id) {
-        return "net.thevpc.nuts:nuts".equals(id.getShortName());
+        return NutsId.ofApi("").get().equalsShortId(id);
     }
 
     public static boolean isRuntimeId(NutsId id) {
-        return "net.thevpc.nuts:nuts-runtime".equals(id.getShortName());
+        return NutsId.ofRuntime("").get().equalsShortId(id);
     }
 
     public static NutsId apiId(String apiVersion, NutsSession session) {
@@ -71,7 +71,7 @@ public class NutsIdUtils {
         if (apiVersion.equals(session.getWorkspace().getApiVersion().toString())) {
             return session.getWorkspace().getApiId();
         }
-        return NutsId.of("net.thevpc.nuts:nuts#" + apiVersion).get(session);
+        return NutsId.ofApi(apiVersion).get(session);
     }
 
     public static NutsId runtimeId(String runtimeVersion, NutsSession session) {
@@ -81,7 +81,7 @@ public class NutsIdUtils {
         if (runtimeVersion.equals(session.getWorkspace().getApiVersion().toString())) {
             return session.getWorkspace().getApiId();
         }
-        return NutsId.of("net.thevpc.nuts:nuts-runtime#" + runtimeVersion).get(session);
+        return NutsId.ofRuntime(runtimeVersion).get(session);
     }
 
     public static NutsId findRuntimeForApi(String apiVersion, NutsSession session) {
@@ -97,15 +97,15 @@ public class NutsIdUtils {
                     .setSession(session)
                     .json().parse(apiBoot, NutsWorkspaceConfigApi.class);
             if (!NutsBlankable.isBlank(c.getRuntimeId())) {
-                return NutsId.of(c.getRuntimeId()).get(session);
+                return c.getRuntimeId();
             }
         }
-        NutsId foundRT = session.search().addId("net.thevpc.nuts:nuts-runtime")
+        NutsId foundRT = session.search().addId(NutsId.ofRuntime("").get())
                 .setLatest(true)
                 .setTargetApiVersion(NutsVersion.of(apiVersion).get(session))
                 .setSession(session.copy().setFetchStrategy(NutsFetchStrategy.OFFLINE)).getResultIds().first();
         if (foundRT == null && session.getFetchStrategy() != NutsFetchStrategy.OFFLINE) {
-            foundRT = session.search().addId("net.thevpc.nuts:nuts-runtime")
+            foundRT = session.search().addId(NutsId.ofRuntime("").get())
                     .setLatest(true)
                     .setTargetApiVersion(NutsVersion.of(apiVersion).get(session))
                     .setSession(session).getResultIds().first();

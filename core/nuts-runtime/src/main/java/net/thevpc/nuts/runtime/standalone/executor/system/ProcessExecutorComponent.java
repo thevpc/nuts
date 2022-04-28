@@ -68,7 +68,7 @@ public class ProcessExecutorComponent implements NutsExecutorComponent {
     public IProcessExecHelper execHelper(NutsExecutionContext executionContext) {
         NutsDefinition nutMainFile = executionContext.getDefinition();
         NutsPath storeFolder = nutMainFile.getInstallInformation().getInstallFolder();
-        List<String> execArgs = executionContext.getExecutorArguments();
+        List<String> execArgs = executionContext.getExecutorOptions();
         List<String> appArgs = executionContext.getArguments();
 
         List<String> app = new ArrayList<>(appArgs);

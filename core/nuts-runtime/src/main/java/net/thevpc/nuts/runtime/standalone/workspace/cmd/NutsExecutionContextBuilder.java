@@ -53,7 +53,7 @@ public interface NutsExecutionContextBuilder {
      *
      * @return executor options
      */
-    String[] getExecutorArguments();
+    String[] getExecutorOptions();
 
     /**
      * executor properties
@@ -144,12 +144,13 @@ public interface NutsExecutionContextBuilder {
     
     NutsExecutionContextBuilder setEnv(Map<String, String> env);
 
-    NutsExecutionContextBuilder setExecutorArguments(List<String> executorOptions);
+    NutsExecutionContextBuilder setExecutorOptions(List<String> executorOptions);
+    NutsExecutionContextBuilder setWorkspaceOptions(List<String> workspaceOptions);
 
-    NutsExecutionContextBuilder setExecutorArguments(String[] executorOptions);
+    NutsExecutionContextBuilder setExecutorOptions(String[] executorOptions);
 
-    NutsExecutionContextBuilder addExecutorArguments(String[] executorArguments);
-    NutsExecutionContextBuilder addExecutorArguments(List<String> executorArguments);
+    NutsExecutionContextBuilder addExecutorOptions(String[] executorOptions);
+    NutsExecutionContextBuilder addExecutorOptions(List<String> executorOptions);
 
     NutsExecutionContextBuilder addExecutorProperties(Map<String, String> executorProperties);
 

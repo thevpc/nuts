@@ -53,7 +53,13 @@ public interface NutsExecutionContext {
      *
      * @return executor options
      */
-    List<String> getExecutorArguments();
+    List<String> getExecutorOptions();
+
+    /**
+     * extra executor arguments tha are passed to nuts aware applications
+     * @return all nuts arguments
+     */
+    List<String> getWorkspaceOptions();
 
     /**
      * executor properties

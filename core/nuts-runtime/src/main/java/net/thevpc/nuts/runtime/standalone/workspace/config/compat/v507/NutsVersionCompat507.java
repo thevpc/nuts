@@ -7,7 +7,10 @@ import net.thevpc.nuts.runtime.standalone.workspace.config.compat.AbstractNutsVe
 import net.thevpc.nuts.runtime.standalone.workspace.config.compat.CompatUtils;
 
 public class NutsVersionCompat507 extends AbstractNutsVersionCompat {
-    public NutsVersionCompat507(NutsSession ws, String apiVersion) {
+
+    public static final NutsVersion CONFIG_VERSION_507 = NutsVersion.of("5.0.7").get();
+
+    public NutsVersionCompat507(NutsSession ws, NutsVersion apiVersion) {
         super(ws, apiVersion, 507);
     }
 
@@ -70,7 +73,7 @@ public class NutsVersionCompat507 extends AbstractNutsVersionCompat {
         m.setCommandFactories(c.getCommandFactories());
         m.setRepositories(c.getRepositories());
         m.setImports(c.getImports());
-        m.setConfigVersion("5.0.7");
+        m.setConfigVersion(CONFIG_VERSION_507);
         m.setPlatforms(c.getSdk());
         return m;
     }

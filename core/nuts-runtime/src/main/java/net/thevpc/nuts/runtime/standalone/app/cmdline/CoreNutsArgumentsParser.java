@@ -1118,9 +1118,9 @@
 //        if (!(applicationArguments.size() > 0
 //                && (
 //                applicationArguments.get(0).equals("help")
-//                        || options.isCommandHelp()
+//                        || options.getCommandHelp().orElse(false)
 //                        || applicationArguments.get(0).equals("version")
-//                        || options.isCommandVersion()
+//                        || options.getCommandVersion().orElse(false)
 //        )
 //        )) {
 //            if (!showError.isEmpty()) {

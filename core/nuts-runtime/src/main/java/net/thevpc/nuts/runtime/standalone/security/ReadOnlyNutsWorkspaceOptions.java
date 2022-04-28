@@ -234,7 +234,7 @@
 //
 //    @Override
 //    public boolean isGui() {
-//        return options.isGui();
+//        return options.getGui().orElse(false);
 //    }
 //
 //    @Override
@@ -264,7 +264,7 @@
 //
 //    @Override
 //    public boolean isRecover() {
-//        return options.isRecover();
+//        return options.getRecover().orElse(false);
 //    }
 //
 //    @Override
@@ -274,7 +274,7 @@
 //
 //    @Override
 //    public boolean isReset() {
-//        return options.isReset();
+//        return options.getReset().orElse(false);
 //    }
 //
 //    @Override
@@ -284,7 +284,7 @@
 //
 //    @Override
 //    public boolean isCommandVersion() {
-//        return options.isCommandVersion();
+//        return options.getCommandVersion().orElse(false);
 //    }
 //
 //    @Override
@@ -294,7 +294,7 @@
 //
 //    @Override
 //    public boolean isCommandHelp() {
-//        return options.isCommandHelp();
+//        return options.getCommandHelp().orElse(false);
 //    }
 //
 //    @Override
@@ -318,8 +318,8 @@
 //    }
 //
 //    @Override
-//    public boolean isSkipWelcome() {
-//        return options.isSkipWelcome();
+//    public boolean .getSkipWelcome().orElse(false) {
+//        return options.getSkipWelcome().orElse(false);
 //    }
 //
 //    @Override
@@ -394,7 +394,7 @@
 //
 //    @Override
 //    public boolean isBot() {
-//        return options.isBot();
+//        return options.getBot().orElse(false);
 //    }
 //
 //    @Override

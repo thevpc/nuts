@@ -8,7 +8,7 @@ import net.thevpc.nuts.runtime.standalone.workspace.config.compat.CompatUtils;
 import java.util.List;
 
 public class NutsVersionCompat502 extends AbstractNutsVersionCompat {
-    public NutsVersionCompat502(NutsSession ws,String apiVersion) {
+    public NutsVersionCompat502(NutsSession ws,NutsVersion apiVersion) {
         super(ws,apiVersion, 502);
     }
 

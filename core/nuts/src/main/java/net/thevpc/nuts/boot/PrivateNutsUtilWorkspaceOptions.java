@@ -29,9 +29,11 @@ package net.thevpc.nuts.boot;
 import net.thevpc.nuts.NutsArgument;
 import net.thevpc.nuts.NutsWorkspaceBootOptions;
 
+import java.util.Collections;
+
 class PrivateNutsUtilWorkspaceOptions {
     static boolean isBootOptional(String name, NutsWorkspaceBootOptions bOptions) {
-        for (String property : bOptions.getCustomOptions()) {
+        for (String property : bOptions.getCustomOptions().orElseGet(Collections::emptyList)) {
             NutsArgument a = NutsArgument.of(property);
             if (a.getKey().asString().orElse("").equals("boot-" + name)) {
                 return true;
@@ -41,7 +43,7 @@ class PrivateNutsUtilWorkspaceOptions {
     }
 
     static boolean isBootOptional(NutsWorkspaceBootOptions bOptions) {
-        for (String property : bOptions.getCustomOptions()) {
+        for (String property : bOptions.getCustomOptions().orElseGet(Collections::emptyList)) {
             NutsArgument a = NutsArgument.of(property);
             if (a.getKey().asString().orElse("").equals("boot-optional")) {
                 return true;

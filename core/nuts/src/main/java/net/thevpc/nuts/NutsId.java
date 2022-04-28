@@ -42,22 +42,57 @@ import java.util.regex.Pattern;
  * @since 0.1.0
  */
 public interface NutsId extends Comparable<NutsId>, NutsFormattable, NutsBlankable {
+    NutsId API_ID = of(NutsConstants.Ids.NUTS_GROUP_ID, NutsConstants.Ids.NUTS_ARTIFACT, "").get();
+    NutsId RUNTIME_ID = of(NutsConstants.Ids.NUTS_GROUP_ID, NutsConstants.Ids.NUTS_RUNTIME_ARTIFACT, "").get();
     Pattern PATTERN = Pattern.compile("^(?<group>[a-zA-Z0-9_.${}*-]+)(:(?<artifact>[a-zA-Z0-9_.${}*-]+))?(#(?<version>[^?]+))?(\\?(?<query>.+))?$");
     NutsId BLANK = new DefaultNutsId();
 
     static NutsOptional<List<NutsId>> ofList(String value) {
         return PrivateNutsIdListParser.parseIdList(value);
     }
+
     static NutsOptional<Set<NutsId>> ofSet(String value) {
         return ofList(value).map(LinkedHashSet::new);
     }
 
     static NutsOptional<NutsId> of(String groupId, String artifactId) {
-        return NutsOptional.of(new DefaultNutsId(groupId, artifactId,null));
+        return NutsOptional.of(new DefaultNutsId(groupId, artifactId, null));
     }
 
     static NutsOptional<NutsId> of(String groupId, String artifactId, NutsVersion version) {
         return NutsOptional.of(new DefaultNutsId(groupId, artifactId, version));
+    }
+
+    static NutsOptional<NutsId> of(String groupId, String artifactId, String version) {
+        return NutsVersion.of(version).map(x -> new DefaultNutsId(groupId, artifactId, x));
+    }
+
+    static NutsOptional<NutsId> ofApi(NutsVersion version) {
+        if (NutsBlankable.isBlank(version)) {
+            return NutsOptional.of(API_ID);
+        }
+        return of(NutsConstants.Ids.NUTS_GROUP_ID, NutsConstants.Ids.NUTS_ARTIFACT, version);
+    }
+
+    static NutsOptional<NutsId> ofRuntime(NutsVersion version) {
+        if (NutsBlankable.isBlank(version)) {
+            return NutsOptional.of(RUNTIME_ID);
+        }
+        return of(NutsConstants.Ids.NUTS_GROUP_ID, NutsConstants.Ids.NUTS_RUNTIME, version);
+    }
+
+    static NutsOptional<NutsId> ofApi(String version) {
+        if (NutsBlankable.isBlank(version)) {
+            return NutsOptional.of(API_ID);
+        }
+        return of(NutsConstants.Ids.NUTS_GROUP_ID, NutsConstants.Ids.NUTS_ARTIFACT, version);
+    }
+
+    static NutsOptional<NutsId> ofRuntime(String version) {
+        if (NutsBlankable.isBlank(version)) {
+            return NutsOptional.of(RUNTIME_ID);
+        }
+        return of(NutsConstants.Ids.NUTS_GROUP_ID, NutsConstants.Ids.NUTS_RUNTIME, version);
     }
 
     static NutsOptional<NutsId> of(String value) {

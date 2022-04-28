@@ -57,7 +57,7 @@ public interface NutsWorkspaceOptionsBuilder extends NutsWorkspaceOptions {
      */
     NutsWorkspaceOptionsBuilder copy();
 
-    NutsWorkspaceOptionsBuilder setApiVersion(String apiVersion);
+    NutsWorkspaceOptionsBuilder setApiVersion(NutsVersion apiVersion);
 
     NutsWorkspaceOptionsBuilder setApplicationArguments(List<String> applicationArguments);
 
@@ -127,7 +127,7 @@ public interface NutsWorkspaceOptionsBuilder extends NutsWorkspaceOptions {
     NutsWorkspaceOptionsBuilder setRepositoryStoreLocationStrategy(NutsStoreLocationStrategy repositoryStoreLocationStrategy);
 
 
-    NutsWorkspaceOptionsBuilder setRuntimeId(String runtimeId);
+    NutsWorkspaceOptionsBuilder setRuntimeId(NutsId runtimeId);
 
     NutsWorkspaceOptionsBuilder setStoreLocationLayout(NutsOsFamily storeLocationLayout);
 
@@ -300,6 +300,7 @@ public interface NutsWorkspaceOptionsBuilder extends NutsWorkspaceOptions {
     NutsWorkspaceOptionsBuilder setTheme(String theme);
 
     NutsWorkspaceOptionsBuilder setAll(NutsWorkspaceOptions other);
+    NutsWorkspaceOptionsBuilder setAllPresent(NutsWorkspaceOptions other);
 
     NutsWorkspaceOptionsBuilder setCommandLine(String commandLine, NutsSession session);
 

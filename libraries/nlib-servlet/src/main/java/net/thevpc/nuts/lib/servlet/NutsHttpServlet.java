@@ -59,7 +59,7 @@ public class NutsHttpServlet extends HttpServlet {
     private NutsHttpServletFacade facade;
     private String serverId = "";
     private String workspaceLocation = null;
-    private String runtimeId = null;
+    private NutsId runtimeId = null;
     private int adminServerPort = -1;
     private Map<String, String> workspaces = new HashMap<>();
     private boolean adminServer = true;
@@ -100,7 +100,7 @@ public class NutsHttpServlet extends HttpServlet {
         }
         adminServerPort = parseInt(config.getInitParameter("nuts-admin-server-port"), -1);
         workspaceLocation = config.getInitParameter("nuts-workspace-location");
-        runtimeId = config.getInitParameter("nuts-runtime-id");
+        runtimeId = NutsId.of(config.getInitParameter("nuts-runtime-id")).orNull();
         adminServer = Boolean.valueOf(config.getInitParameter("nuts-admin"));
         try {
             String s = config.getInitParameter("nuts-workspaces-map");

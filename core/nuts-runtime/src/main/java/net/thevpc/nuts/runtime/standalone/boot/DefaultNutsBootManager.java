@@ -117,11 +117,11 @@ public class DefaultNutsBootManager implements NutsBootManager {
     }
 
     public NutsClassLoaderNode getBootRuntimeClassLoaderNode() {
-        return model.bOptions.getRuntimeBootDependencyNode();
+        return model.bOptions.getRuntimeBootDependencyNode().get();
     }
 
     public List<NutsClassLoaderNode> getBootExtensionClassLoaderNode() {
-        return model.bOptions.getExtensionBootDependencyNodes();
+        return model.bOptions.getExtensionBootDependencyNodes().orElseGet(Collections::emptyList);
     }
 
     @Override

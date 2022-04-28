@@ -19,7 +19,7 @@ public class PrivateNutsOptionalValid<T> extends PrivateNutsOptionalImpl<T> {
     }
 
     @Override
-    public T get(NutsMessage message,NutsSession session) {
+    public T get(NutsMessage message, NutsSession session) {
         return value;
     }
 
@@ -49,11 +49,9 @@ public class PrivateNutsOptionalValid<T> extends PrivateNutsOptionalImpl<T> {
     }
 
     public NutsOptional<T> nonBlank() {
-        if(isPresent()){
-            T v = get();
-            if(NutsBlankable.isBlank(v)){
-                return NutsOptional.ofEmpty(null);
-            }
+        T v = get();
+        if (NutsBlankable.isBlank(v)) {
+            return NutsOptional.ofEmpty((session) -> NutsMessage.cstyle("blank value"));
         }
         return this;
     }

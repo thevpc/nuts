@@ -32,6 +32,7 @@ import net.thevpc.nuts.spi.NutsSupportLevelContext;
 import java.io.File;
 import java.io.Writer;
 import java.nio.file.Path;
+import java.util.Collections;
 
 /**
  * @author thevpc
@@ -75,7 +76,7 @@ public class DefaultNutsObjectFormat extends DefaultFormatBase<NutsObjectFormat>
         NutsSession session = getSession();
         NutsContentTypeFormat base = createObjectFormat();
         base.setSession(session);
-        base.configure(true, session.boot().getBootOptions().getOutputFormatOptions().toArray(new String[0]));
+        base.configure(true, session.boot().getBootOptions().getOutputFormatOptions().orElseGet(Collections::emptyList).toArray(new String[0]));
         base.configure(true, session.getOutputFormatOptions().toArray(new String[0]));
         return base;
     }

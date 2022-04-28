@@ -46,20 +46,20 @@ public class DefaultNutsWorkspaceOptionsBuilder implements NutsWorkspaceOptionsB
     /**
      * option-type : exported (inherited in child workspaces)
      */
-    private List<String> outputFormatOptions = new ArrayList<>();
+    private List<String> outputFormatOptions;
 
     private List<String> customOptions;
     /**
      * nuts api version to boot option-type : exported (inherited in child
      * workspaces)
      */
-    private String apiVersion = null;
+    private NutsVersion apiVersion;
 
     /**
      * nuts runtime id (or version) to boot option-type : exported (inherited in
      * child workspaces)
      */
-    private String runtimeId;
+    private NutsId runtimeId;
 
     /**
      * option-type : exported (inherited in child workspaces)
@@ -75,23 +75,23 @@ public class DefaultNutsWorkspaceOptionsBuilder implements NutsWorkspaceOptionsB
      * workspace folder location path option-type : exported (inherited in child
      * workspaces)
      */
-    private String workspace = null;
+    private String workspace;
 
     /**
      * out line prefix, option-type : exported (inherited in child workspaces)
      */
-    private String outLinePrefix = null;
+    private String outLinePrefix;
 
     /**
      * err line prefix, option-type : exported (inherited in child workspaces)
      */
-    private String errLinePrefix = null;
+    private String errLinePrefix;
 
     /**
      * user friendly workspace name option-type : exported (inherited in child
      * workspaces)
      */
-    private String name = null;
+    private String name;
 
     /**
      * if true, do not install nuts companion tools upon workspace creation
@@ -143,17 +143,17 @@ public class DefaultNutsWorkspaceOptionsBuilder implements NutsWorkspaceOptionsB
     /**
      * option-type : exported (inherited in child workspaces)
      */
-    private String userName = null;
+    private String userName;
 
     /**
      * option-type : exported (inherited in child workspaces)
      */
-    private char[] credentials = null;
+    private char[] credentials;
 
     /**
      * option-type : exported (inherited in child workspaces)
      */
-    private NutsTerminalMode terminalMode = null;
+    private NutsTerminalMode terminalMode;
 
     /**
      * option-type : exported (inherited in child workspaces)
@@ -168,12 +168,12 @@ public class DefaultNutsWorkspaceOptionsBuilder implements NutsWorkspaceOptionsB
     /**
      * option-type : exported (inherited in child workspaces)
      */
-    private String progressOptions = null;
+    private String progressOptions;
 
     /**
      * option-type : exported (inherited in child workspaces)
      */
-    private String dependencySolver = null;
+    private String dependencySolver;
 
     /**
      * option-type : exported (inherited in child workspaces)
@@ -183,12 +183,12 @@ public class DefaultNutsWorkspaceOptionsBuilder implements NutsWorkspaceOptionsB
     /**
      * option-type : exported (inherited in child workspaces)
      */
-    private NutsConfirmationMode confirm = null;
+    private NutsConfirmationMode confirm;
 
     /**
      * option-type : exported (inherited in child workspaces)
      */
-    private NutsContentType outputFormat = null;
+    private NutsContentType outputFormat;
 
     /**
      * option-type : runtime (available only for the current workspace instance)
@@ -198,7 +198,7 @@ public class DefaultNutsWorkspaceOptionsBuilder implements NutsWorkspaceOptionsB
     /**
      * option-type : runtime (available only for the current workspace instance)
      */
-    private NutsOpenMode openMode = NutsOpenMode.OPEN_OR_CREATE;
+    private NutsOpenMode openMode;
 
     /**
      * option-type : runtime (available only for the current workspace instance)
@@ -260,7 +260,7 @@ public class DefaultNutsWorkspaceOptionsBuilder implements NutsWorkspaceOptionsB
      *
      * @since 0.8.1
      */
-    private NutsRunAs runAs = NutsRunAs.CURRENT_USER;
+    private NutsRunAs runAs;
 
     /**
      * option-type : create (used when creating new workspace. will not be
@@ -280,36 +280,36 @@ public class DefaultNutsWorkspaceOptionsBuilder implements NutsWorkspaceOptionsB
      * option-type : create (used when creating new workspace. will not be
      * exported nor promoted to runtime)
      */
-    private Map<NutsStoreLocation, String> storeLocations = new HashMap<>();
+    private Map<NutsStoreLocation, String> storeLocations;
 
     /**
      * option-type : create (used when creating new workspace. will not be
      * exported nor promoted to runtime)
      */
-    private Map<NutsHomeLocation, String> homeLocations = new HashMap<>();
+    private Map<NutsHomeLocation, String> homeLocations;
 
     /**
      * option-type : create (used when creating new workspace. will not be
      * exported nor promoted to runtime)
      */
-    private NutsOsFamily storeLocationLayout = null;
+    private NutsOsFamily storeLocationLayout;
 
     /**
      * option-type : create (used when creating new workspace. will not be
      * exported nor promoted to runtime)
      */
-    private NutsStoreLocationStrategy storeLocationStrategy = null;
+    private NutsStoreLocationStrategy storeLocationStrategy;
 
     /**
      * option-type : create (used when creating new workspace. will not be
      * exported nor promoted to runtime)
      */
-    private NutsStoreLocationStrategy repositoryStoreLocationStrategy = null;
+    private NutsStoreLocationStrategy repositoryStoreLocationStrategy;
 
     /**
      * option-type : exported (inherited in child workspaces)
      */
-    private NutsFetchStrategy fetchStrategy = NutsFetchStrategy.ONLINE;
+    private NutsFetchStrategy fetchStrategy;
 
     /**
      * option-type : exported (inherited in child workspaces)
@@ -335,32 +335,32 @@ public class DefaultNutsWorkspaceOptionsBuilder implements NutsWorkspaceOptionsB
      * not parsed option-type : runtime (available only for the current
      * workspace instance)
      */
-    private InputStream stdin = null;
+    private InputStream stdin;
 
     /**
      * not parsed option-type : runtime (available only for the current
      * workspace instance)
      */
-    private PrintStream stdout = null;
+    private PrintStream stdout;
 
     /**
      * not parsed option-type : runtime (available only for the current
      * workspace instance)
      */
-    private PrintStream stderr = null;
+    private PrintStream stderr;
 
     /**
      * not parsed option-type : runtime (available only for the current
      * workspace instance)
      */
-    private ExecutorService executorService = null;
+    private ExecutorService executorService;
 
     /**
      * option-type : runtime (available only for the current workspace instance)
      */
-//    private String bootRepositories = null;
-    private Instant expireTime = null;
-    private List<NutsMessage> errors = new ArrayList<>();
+//    private String bootRepositories;
+    private Instant expireTime;
+    private List<NutsMessage> errors;
     private Boolean skipErrors;
 
     /**
@@ -377,56 +377,56 @@ public class DefaultNutsWorkspaceOptionsBuilder implements NutsWorkspaceOptionsB
 
     }
 
-    public DefaultNutsWorkspaceOptionsBuilder(List<String> outputFormatOptions, List<String> customOptions, String apiVersion, String runtimeId, String javaCommand, String javaOptions, String workspace, String outLinePrefix, String errLinePrefix, String name, Boolean skipCompanions, Boolean skipWelcome, Boolean skipBoot, Boolean global, Boolean gui, List<String> excludedExtensions, List<String> repositories, String userName, char[] credentials, NutsTerminalMode terminalMode, Boolean readOnly, Boolean trace, String progressOptions, String dependencySolver, NutsLogConfig logConfig, NutsConfirmationMode confirm, NutsContentType outputFormat, List<String> applicationArguments, NutsOpenMode openMode, Instant creationTime, Boolean dry, Supplier<ClassLoader> classLoaderSupplier, List<String> executorOptions, Boolean recover, Boolean reset, Boolean commandVersion, Boolean commandHelp, String debug, Boolean inherited, NutsExecutionType executionType, NutsRunAs runAs, String archetype, Boolean switchWorkspace, Map<NutsStoreLocation, String> storeLocations, Map<NutsHomeLocation, String> homeLocations, NutsOsFamily storeLocationLayout, NutsStoreLocationStrategy storeLocationStrategy, NutsStoreLocationStrategy repositoryStoreLocationStrategy, NutsFetchStrategy fetchStrategy, Boolean cached, Boolean indexed, Boolean transitive, Boolean bot, InputStream stdin, PrintStream stdout, PrintStream stderr, ExecutorService executorService, Instant expireTime, List<NutsMessage> errors, Boolean skipErrors, String locale, String theme) {
-        this.outputFormatOptions = PrivateNutsUtilCollections.nonNullList(outputFormatOptions);
-        this.customOptions = PrivateNutsUtilCollections.nonNullList(customOptions);
-        this.apiVersion = NutsUtilStrings.trimToNull(apiVersion);
-        this.runtimeId = NutsUtilStrings.trimToNull(runtimeId);
-        this.javaCommand = NutsUtilStrings.trimToNull(javaCommand);
-        this.javaOptions = NutsUtilStrings.trimToNull(javaOptions);
-        this.workspace = NutsUtilStrings.trimToNull(workspace);
-        this.outLinePrefix = NutsUtilStrings.trimToNull(outLinePrefix);
-        this.errLinePrefix = NutsUtilStrings.trimToNull(errLinePrefix);
-        this.name = NutsUtilStrings.trimToNull(name);
+    public DefaultNutsWorkspaceOptionsBuilder(List<String> outputFormatOptions, List<String> customOptions, NutsVersion apiVersion, NutsId runtimeId, String javaCommand, String javaOptions, String workspace, String outLinePrefix, String errLinePrefix, String name, Boolean skipCompanions, Boolean skipWelcome, Boolean skipBoot, Boolean global, Boolean gui, List<String> excludedExtensions, List<String> repositories, String userName, char[] credentials, NutsTerminalMode terminalMode, Boolean readOnly, Boolean trace, String progressOptions, String dependencySolver, NutsLogConfig logConfig, NutsConfirmationMode confirm, NutsContentType outputFormat, List<String> applicationArguments, NutsOpenMode openMode, Instant creationTime, Boolean dry, Supplier<ClassLoader> classLoaderSupplier, List<String> executorOptions, Boolean recover, Boolean reset, Boolean commandVersion, Boolean commandHelp, String debug, Boolean inherited, NutsExecutionType executionType, NutsRunAs runAs, String archetype, Boolean switchWorkspace, Map<NutsStoreLocation, String> storeLocations, Map<NutsHomeLocation, String> homeLocations, NutsOsFamily storeLocationLayout, NutsStoreLocationStrategy storeLocationStrategy, NutsStoreLocationStrategy repositoryStoreLocationStrategy, NutsFetchStrategy fetchStrategy, Boolean cached, Boolean indexed, Boolean transitive, Boolean bot, InputStream stdin, PrintStream stdout, PrintStream stderr, ExecutorService executorService, Instant expireTime, List<NutsMessage> errors, Boolean skipErrors, String locale, String theme) {
+        this.outputFormatOptions = outputFormatOptions;
+        this.customOptions = customOptions;
+        this.apiVersion = apiVersion;
+        this.runtimeId = runtimeId;
+        this.javaCommand = javaCommand;
+        this.javaOptions = javaOptions;
+        this.workspace = workspace;
+        this.outLinePrefix = outLinePrefix;
+        this.errLinePrefix = errLinePrefix;
+        this.name = name;
         this.skipCompanions = skipCompanions;
         this.skipWelcome = skipWelcome;
         this.skipBoot = skipBoot;
         this.global = global;
         this.gui = gui;
-        this.excludedExtensions = PrivateNutsUtilCollections.nonNullList(excludedExtensions);
-        this.repositories = PrivateNutsUtilCollections.nonNullList(repositories);
-        this.userName = NutsUtilStrings.trimToNull(userName);
+        this.excludedExtensions = excludedExtensions;
+        this.repositories = repositories;
+        this.userName = userName;
         this.credentials = credentials == null ? null : Arrays.copyOf(credentials, credentials.length);
         this.terminalMode = terminalMode;
         this.readOnly = readOnly;
         this.trace = trace;
-        this.progressOptions = NutsUtilStrings.trimToNull(progressOptions);
-        this.dependencySolver = NutsUtilStrings.trimToNull(dependencySolver);
+        this.progressOptions = progressOptions;
+        this.dependencySolver = dependencySolver;
         this.logConfig = logConfig == null ? null : logConfig.copy();
         this.confirm = confirm;
         this.outputFormat = outputFormat;
-        this.applicationArguments = PrivateNutsUtilCollections.nonNullList(applicationArguments);
-        this.openMode = openMode == null ? NutsOpenMode.OPEN_OR_CREATE : openMode;
+        this.applicationArguments = applicationArguments;
+        this.openMode = openMode;
         this.creationTime = creationTime;
         this.dry = dry;
         this.classLoaderSupplier = classLoaderSupplier;
-        this.executorOptions = PrivateNutsUtilCollections.nonNullList(executorOptions);
+        this.executorOptions = executorOptions;
         this.recover = recover;
         this.reset = reset;
         this.commandVersion = commandVersion;
         this.commandHelp = commandHelp;
-        this.debug = NutsUtilStrings.trimToNull(debug);
+        this.debug = debug;
         this.inherited = inherited;
         this.executionType = executionType;
-        this.runAs = runAs == null ? NutsRunAs.CURRENT_USER : runAs;
-        this.archetype = NutsUtilStrings.trimToNull(archetype);
+        this.runAs = runAs;
+        this.archetype = archetype;
         this.switchWorkspace = switchWorkspace;
-        this.storeLocations = PrivateNutsUtilCollections.unmodifiableMap(storeLocations);
-        this.homeLocations = PrivateNutsUtilCollections.unmodifiableMap(homeLocations);
+        this.storeLocations = storeLocations;
+        this.homeLocations = homeLocations;
         this.storeLocationLayout = storeLocationLayout;
         this.storeLocationStrategy = storeLocationStrategy;
         this.repositoryStoreLocationStrategy = repositoryStoreLocationStrategy;
-        this.fetchStrategy = fetchStrategy == null ? NutsFetchStrategy.ONLINE : fetchStrategy;
+        this.fetchStrategy = fetchStrategy;
         this.cached = cached;
         this.indexed = indexed;
         this.transitive = transitive;
@@ -436,10 +436,10 @@ public class DefaultNutsWorkspaceOptionsBuilder implements NutsWorkspaceOptionsB
         this.stderr = stderr;
         this.executorService = executorService;
         this.expireTime = expireTime;
-        this.errors = PrivateNutsUtilCollections.nonNullList(errors);
+        this.errors = errors;
         this.skipErrors = skipErrors;
-        this.locale = NutsUtilStrings.trimToNull(locale);
-        this.theme = NutsUtilStrings.trimToNull(theme);
+        this.locale = locale;
+        this.theme = theme;
     }
 
     @Override
@@ -449,8 +449,8 @@ public class DefaultNutsWorkspaceOptionsBuilder implements NutsWorkspaceOptionsB
 
 
     @Override
-    public String getApiVersion() {
-        return apiVersion;
+    public NutsOptional<NutsVersion> getApiVersion() {
+        return NutsOptional.of(apiVersion);
     }
 
     /**
@@ -460,14 +460,14 @@ public class DefaultNutsWorkspaceOptionsBuilder implements NutsWorkspaceOptionsB
      * @return {@code this} instance
      */
     @Override
-    public NutsWorkspaceOptionsBuilder setApiVersion(String apiVersion) {
+    public NutsWorkspaceOptionsBuilder setApiVersion(NutsVersion apiVersion) {
         this.apiVersion = apiVersion;
         return this;
     }
 
     @Override
-    public List<String> getApplicationArguments() {
-        return applicationArguments;
+    public NutsOptional<List<String>> getApplicationArguments() {
+        return NutsOptional.of(applicationArguments);
     }
 
     /**
@@ -478,13 +478,13 @@ public class DefaultNutsWorkspaceOptionsBuilder implements NutsWorkspaceOptionsB
      */
     @Override
     public NutsWorkspaceOptionsBuilder setApplicationArguments(List<String> applicationArguments) {
-        this.applicationArguments = PrivateNutsUtilCollections.nonNullList(applicationArguments);
+        this.applicationArguments = applicationArguments;
         return this;
     }
 
     @Override
-    public String getArchetype() {
-        return archetype;
+    public NutsOptional<String> getArchetype() {
+        return NutsOptional.of(archetype);
     }
 
     /**
@@ -500,8 +500,8 @@ public class DefaultNutsWorkspaceOptionsBuilder implements NutsWorkspaceOptionsB
     }
 
     @Override
-    public Supplier<ClassLoader> getClassLoaderSupplier() {
-        return classLoaderSupplier;
+    public NutsOptional<Supplier<ClassLoader>> getClassLoaderSupplier() {
+        return NutsOptional.of(classLoaderSupplier);
     }
 
     /**
@@ -517,8 +517,8 @@ public class DefaultNutsWorkspaceOptionsBuilder implements NutsWorkspaceOptionsB
     }
 
     @Override
-    public NutsConfirmationMode getConfirm() {
-        return confirm;
+    public NutsOptional<NutsConfirmationMode> getConfirm() {
+        return NutsOptional.of(confirm);
     }
 
     /**
@@ -534,13 +534,8 @@ public class DefaultNutsWorkspaceOptionsBuilder implements NutsWorkspaceOptionsB
     }
 
     @Override
-    public boolean isDry() {
-        return dry != null && dry;
-    }
-
-    @Override
-    public Boolean getDry() {
-        return dry;
+    public NutsOptional<Boolean> getDry() {
+        return NutsOptional.of(dry);
     }
 
     /**
@@ -556,8 +551,8 @@ public class DefaultNutsWorkspaceOptionsBuilder implements NutsWorkspaceOptionsB
     }
 
     @Override
-    public Instant getCreationTime() {
-        return creationTime;
+    public NutsOptional<Instant> getCreationTime() {
+        return NutsOptional.of(creationTime);
     }
 
     /**
@@ -573,8 +568,8 @@ public class DefaultNutsWorkspaceOptionsBuilder implements NutsWorkspaceOptionsB
     }
 
     @Override
-    public List<String> getExcludedExtensions() {
-        return excludedExtensions;
+    public NutsOptional<List<String>> getExcludedExtensions() {
+        return NutsOptional.of(excludedExtensions);
     }
 
     /**
@@ -585,13 +580,13 @@ public class DefaultNutsWorkspaceOptionsBuilder implements NutsWorkspaceOptionsB
      */
     @Override
     public NutsWorkspaceOptionsBuilder setExcludedExtensions(List<String> excludedExtensions) {
-        this.excludedExtensions = PrivateNutsUtilCollections.nonNullList(excludedExtensions);
+        this.excludedExtensions = excludedExtensions;
         return this;
     }
 
     @Override
-    public NutsExecutionType getExecutionType() {
-        return executionType;
+    public NutsOptional<NutsExecutionType> getExecutionType() {
+        return NutsOptional.of(executionType);
     }
 
     /**
@@ -607,8 +602,8 @@ public class DefaultNutsWorkspaceOptionsBuilder implements NutsWorkspaceOptionsB
     }
 
     @Override
-    public NutsRunAs getRunAs() {
-        return runAs;
+    public NutsOptional<NutsRunAs> getRunAs() {
+        return NutsOptional.of(runAs);
     }
 
     /**
@@ -618,13 +613,13 @@ public class DefaultNutsWorkspaceOptionsBuilder implements NutsWorkspaceOptionsB
      * @return {@code this} instance
      */
     public NutsWorkspaceOptionsBuilder setRunAs(NutsRunAs runAs) {
-        this.runAs = runAs == null ? NutsRunAs.CURRENT_USER : runAs;
+        this.runAs = runAs;
         return this;
     }
 
     @Override
-    public List<String> getExecutorOptions() {
-        return executorOptions;
+    public NutsOptional<List<String>> getExecutorOptions() {
+        return NutsOptional.of(executorOptions);
     }
 
     /**
@@ -635,32 +630,36 @@ public class DefaultNutsWorkspaceOptionsBuilder implements NutsWorkspaceOptionsB
      */
     @Override
     public NutsWorkspaceOptionsBuilder setExecutorOptions(List<String> executorOptions) {
-        this.executorOptions = PrivateNutsUtilCollections.nonNullList(executorOptions);
+        this.executorOptions = executorOptions;
         return this;
     }
 
     @Override
-    public String getHomeLocation(NutsHomeLocation location) {
-        return homeLocations.get(location);
+    public NutsOptional<String> getHomeLocation(NutsHomeLocation location) {
+        return NutsOptional.of(homeLocations.get(location));
     }
 
     @Override
-    public Map<NutsHomeLocation, String> getHomeLocations() {
-        return new LinkedHashMap<>(homeLocations);
+    public NutsOptional<Map<NutsHomeLocation, String>> getHomeLocations() {
+        return NutsOptional.of(homeLocations);
     }
 
     @Override
     public NutsWorkspaceOptionsBuilder setHomeLocations(Map<NutsHomeLocation, String> homeLocations) {
-        this.homeLocations.clear();
         if (homeLocations != null) {
+            if (this.homeLocations == null) {
+                this.homeLocations = new HashMap<>();
+            }
             this.homeLocations.putAll(homeLocations);
+        } else {
+            this.homeLocations = null;
         }
         return this;
     }
 
     @Override
-    public String getJavaCommand() {
-        return javaCommand;
+    public NutsOptional<String> getJavaCommand() {
+        return NutsOptional.of(javaCommand);
     }
 
     @Override
@@ -670,8 +669,8 @@ public class DefaultNutsWorkspaceOptionsBuilder implements NutsWorkspaceOptionsB
     }
 
     @Override
-    public String getJavaOptions() {
-        return javaOptions;
+    public NutsOptional<String> getJavaOptions() {
+        return NutsOptional.of(javaOptions);
     }
 
     /**
@@ -687,8 +686,8 @@ public class DefaultNutsWorkspaceOptionsBuilder implements NutsWorkspaceOptionsB
     }
 
     @Override
-    public NutsLogConfig getLogConfig() {
-        return logConfig;
+    public NutsOptional<NutsLogConfig> getLogConfig() {
+        return NutsOptional.of(logConfig);
     }
 
     /**
@@ -699,13 +698,13 @@ public class DefaultNutsWorkspaceOptionsBuilder implements NutsWorkspaceOptionsB
      */
     @Override
     public NutsWorkspaceOptionsBuilder setLogConfig(NutsLogConfig logConfig) {
-        this.logConfig = logConfig;
+        this.logConfig = logConfig == null ? null : logConfig.copy();
         return this;
     }
 
     @Override
-    public String getName() {
-        return name;
+    public NutsOptional<String> getName() {
+        return NutsOptional.of(name);
     }
 
     /**
@@ -721,8 +720,8 @@ public class DefaultNutsWorkspaceOptionsBuilder implements NutsWorkspaceOptionsB
     }
 
     @Override
-    public NutsOpenMode getOpenMode() {
-        return openMode;
+    public NutsOptional<NutsOpenMode> getOpenMode() {
+        return NutsOptional.of(openMode);
     }
 
     /**
@@ -738,8 +737,8 @@ public class DefaultNutsWorkspaceOptionsBuilder implements NutsWorkspaceOptionsB
     }
 
     @Override
-    public NutsContentType getOutputFormat() {
-        return outputFormat;
+    public NutsOptional<NutsContentType> getOutputFormat() {
+        return NutsOptional.of(outputFormat);
     }
 
     /**
@@ -755,8 +754,8 @@ public class DefaultNutsWorkspaceOptionsBuilder implements NutsWorkspaceOptionsB
     }
 
     @Override
-    public List<String> getOutputFormatOptions() {
-        return PrivateNutsUtilCollections.unmodifiableList(outputFormatOptions);
+    public NutsOptional<List<String>> getOutputFormatOptions() {
+        return NutsOptional.of(outputFormatOptions);
     }
 
     /**
@@ -767,18 +766,29 @@ public class DefaultNutsWorkspaceOptionsBuilder implements NutsWorkspaceOptionsB
      */
     @Override
     public NutsWorkspaceOptionsBuilder setOutputFormatOptions(List<String> options) {
-        outputFormatOptions.clear();
-        return addOutputFormatOptions(PrivateNutsUtilCollections.nonNullList(options).toArray(new String[0]));
+        if (options != null) {
+            if (outputFormatOptions == null) {
+                outputFormatOptions = new ArrayList<>();
+            }
+            this.outputFormatOptions.clear();
+            return addOutputFormatOptions(PrivateNutsUtilCollections.nonNullList(options).toArray(new String[0]));
+        } else {
+            this.outputFormatOptions = null;
+        }
+        return this;
     }
 
     public NutsWorkspaceOptionsBuilder setOutputFormatOptions(String... options) {
+        if (outputFormatOptions == null) {
+            outputFormatOptions = new ArrayList<>();
+        }
         outputFormatOptions.clear();
         return addOutputFormatOptions(options);
     }
 
     @Override
-    public char[] getCredentials() {
-        return credentials;
+    public NutsOptional<char[]> getCredentials() {
+        return NutsOptional.of(credentials);
     }
 
     /**
@@ -794,8 +804,8 @@ public class DefaultNutsWorkspaceOptionsBuilder implements NutsWorkspaceOptionsB
     }
 
     @Override
-    public NutsStoreLocationStrategy getRepositoryStoreLocationStrategy() {
-        return repositoryStoreLocationStrategy;
+    public NutsOptional<NutsStoreLocationStrategy> getRepositoryStoreLocationStrategy() {
+        return NutsOptional.of(repositoryStoreLocationStrategy);
     }
 
     /**
@@ -811,8 +821,8 @@ public class DefaultNutsWorkspaceOptionsBuilder implements NutsWorkspaceOptionsB
     }
 
     @Override
-    public String getRuntimeId() {
-        return runtimeId;
+    public NutsOptional<NutsId> getRuntimeId() {
+        return NutsOptional.of(runtimeId);
     }
 
     /**
@@ -822,19 +832,19 @@ public class DefaultNutsWorkspaceOptionsBuilder implements NutsWorkspaceOptionsB
      * @return {@code this} instance
      */
     @Override
-    public NutsWorkspaceOptionsBuilder setRuntimeId(String runtimeId) {
+    public NutsWorkspaceOptionsBuilder setRuntimeId(NutsId runtimeId) {
         this.runtimeId = runtimeId;
         return this;
     }
 
     @Override
-    public String getStoreLocation(NutsStoreLocation folder) {
-        return storeLocations.get(folder);
+    public NutsOptional<String> getStoreLocation(NutsStoreLocation folder) {
+        return NutsOptional.of(storeLocations.get(folder));
     }
 
     @Override
-    public NutsOsFamily getStoreLocationLayout() {
-        return storeLocationLayout;
+    public NutsOptional<NutsOsFamily> getStoreLocationLayout() {
+        return NutsOptional.of(storeLocationLayout);
     }
 
     /**
@@ -850,8 +860,8 @@ public class DefaultNutsWorkspaceOptionsBuilder implements NutsWorkspaceOptionsB
     }
 
     @Override
-    public NutsStoreLocationStrategy getStoreLocationStrategy() {
-        return storeLocationStrategy;
+    public NutsOptional<NutsStoreLocationStrategy> getStoreLocationStrategy() {
+        return NutsOptional.of(storeLocationStrategy);
     }
 
     /**
@@ -867,22 +877,27 @@ public class DefaultNutsWorkspaceOptionsBuilder implements NutsWorkspaceOptionsB
     }
 
     @Override
-    public Map<NutsStoreLocation, String> getStoreLocations() {
-        return new LinkedHashMap<>(storeLocations);
+    public NutsOptional<Map<NutsStoreLocation, String>> getStoreLocations() {
+        return NutsOptional.of(storeLocations);
     }
 
     @Override
     public NutsWorkspaceOptionsBuilder setStoreLocations(Map<NutsStoreLocation, String> storeLocations) {
-        this.storeLocations.clear();
         if (storeLocations != null) {
-            this.storeLocations.putAll(storeLocations);
+            if (this.storeLocations == null) {
+                this.storeLocations = new HashMap<>();
+            }
+            this.storeLocations.clear();
+            this.storeLocations.putAll(PrivateNutsUtilCollections.nonNullMap(storeLocations));
+        } else {
+            this.storeLocations = null;
         }
         return this;
     }
 
     @Override
-    public NutsTerminalMode getTerminalMode() {
-        return terminalMode;
+    public NutsOptional<NutsTerminalMode> getTerminalMode() {
+        return NutsOptional.of(terminalMode);
     }
 
     /**
@@ -898,8 +913,8 @@ public class DefaultNutsWorkspaceOptionsBuilder implements NutsWorkspaceOptionsB
     }
 
     @Override
-    public List<String> getRepositories() {
-        return PrivateNutsUtilCollections.unmodifiableList(repositories);
+    public NutsOptional<List<String>> getRepositories() {
+        return NutsOptional.of(repositories);
     }
 
     /**
@@ -910,18 +925,18 @@ public class DefaultNutsWorkspaceOptionsBuilder implements NutsWorkspaceOptionsB
      */
     @Override
     public NutsWorkspaceOptionsBuilder setRepositories(List<String> repositories) {
-        this.repositories = PrivateNutsUtilCollections.nonNullList(repositories);
+        this.repositories = repositories;
         return this;
     }
 
     @Override
-    public String getUserName() {
-        return userName;
+    public NutsOptional<String> getUserName() {
+        return NutsOptional.of(userName);
     }
 
     @Override
-    public String getWorkspace() {
-        return workspace;
+    public NutsOptional<String> getWorkspace() {
+        return NutsOptional.of(workspace);
     }
 
     /**
@@ -937,8 +952,8 @@ public class DefaultNutsWorkspaceOptionsBuilder implements NutsWorkspaceOptionsB
     }
 
     @Override
-    public String getDebug() {
-        return debug;
+    public NutsOptional<String> getDebug() {
+        return NutsOptional.of(debug);
     }
 
     /**
@@ -954,13 +969,8 @@ public class DefaultNutsWorkspaceOptionsBuilder implements NutsWorkspaceOptionsB
     }
 
     @Override
-    public boolean isGlobal() {
-        return global != null && global;
-    }
-
-    @Override
-    public Boolean getGlobal() {
-        return global;
+    public NutsOptional<Boolean> getGlobal() {
+        return NutsOptional.of(global);
     }
 
     /**
@@ -976,13 +986,8 @@ public class DefaultNutsWorkspaceOptionsBuilder implements NutsWorkspaceOptionsB
     }
 
     @Override
-    public boolean isGui() {
-        return gui != null && gui;
-    }
-
-    @Override
-    public Boolean getGui() {
-        return gui;
+    public NutsOptional<Boolean> getGui() {
+        return NutsOptional.of(gui);
     }
 
     /**
@@ -998,13 +1003,8 @@ public class DefaultNutsWorkspaceOptionsBuilder implements NutsWorkspaceOptionsB
     }
 
     @Override
-    public boolean isInherited() {
-        return inherited != null && inherited;
-    }
-
-    @Override
-    public Boolean getInherited() {
-        return inherited;
+    public NutsOptional<Boolean> getInherited() {
+        return NutsOptional.of(inherited);
     }
 
     /**
@@ -1020,13 +1020,8 @@ public class DefaultNutsWorkspaceOptionsBuilder implements NutsWorkspaceOptionsB
     }
 
     @Override
-    public boolean isReadOnly() {
-        return readOnly != null && readOnly;
-    }
-
-    @Override
-    public Boolean getReadOnly() {
-        return readOnly;
+    public NutsOptional<Boolean> getReadOnly() {
+        return NutsOptional.of(readOnly);
     }
 
     /**
@@ -1042,13 +1037,8 @@ public class DefaultNutsWorkspaceOptionsBuilder implements NutsWorkspaceOptionsB
     }
 
     @Override
-    public boolean isRecover() {
-        return recover != null && recover;
-    }
-
-    @Override
-    public Boolean getRecover() {
-        return recover;
+    public NutsOptional<Boolean> getRecover() {
+        return NutsOptional.of(recover);
     }
 
     /**
@@ -1064,13 +1054,8 @@ public class DefaultNutsWorkspaceOptionsBuilder implements NutsWorkspaceOptionsB
     }
 
     @Override
-    public boolean isReset() {
-        return reset != null && reset;
-    }
-
-    @Override
-    public Boolean getReset() {
-        return reset;
+    public NutsOptional<Boolean> getReset() {
+        return NutsOptional.of(reset);
     }
 
     /**
@@ -1086,13 +1071,8 @@ public class DefaultNutsWorkspaceOptionsBuilder implements NutsWorkspaceOptionsB
     }
 
     @Override
-    public boolean isCommandVersion() {
-        return commandVersion != null && commandVersion;
-    }
-
-    @Override
-    public Boolean getCommandVersion() {
-        return commandVersion;
+    public NutsOptional<Boolean> getCommandVersion() {
+        return NutsOptional.of(commandVersion);
     }
 
     @Override
@@ -1102,13 +1082,8 @@ public class DefaultNutsWorkspaceOptionsBuilder implements NutsWorkspaceOptionsB
     }
 
     @Override
-    public boolean isCommandHelp() {
-        return commandHelp != null && commandHelp;
-    }
-
-    @Override
-    public Boolean getCommandHelp() {
-        return commandHelp;
+    public NutsOptional<Boolean> getCommandHelp() {
+        return NutsOptional.of(commandHelp);
     }
 
     @Override
@@ -1118,13 +1093,8 @@ public class DefaultNutsWorkspaceOptionsBuilder implements NutsWorkspaceOptionsB
     }
 
     @Override
-    public boolean isSkipCompanions() {
-        return skipCompanions != null && skipCompanions;
-    }
-
-    @Override
-    public Boolean getSkipCompanions() {
-        return skipCompanions;
+    public NutsOptional<Boolean> getSkipCompanions() {
+        return NutsOptional.of(skipCompanions);
     }
 
     /**
@@ -1140,13 +1110,8 @@ public class DefaultNutsWorkspaceOptionsBuilder implements NutsWorkspaceOptionsB
     }
 
     @Override
-    public boolean isSkipWelcome() {
-        return skipWelcome != null && skipWelcome;
-    }
-
-    @Override
-    public Boolean getSkipWelcome() {
-        return skipWelcome;
+    public NutsOptional<Boolean> getSkipWelcome() {
+        return NutsOptional.of(skipWelcome);
     }
 
     /**
@@ -1162,8 +1127,8 @@ public class DefaultNutsWorkspaceOptionsBuilder implements NutsWorkspaceOptionsB
     }
 
     @Override
-    public String getOutLinePrefix() {
-        return outLinePrefix;
+    public NutsOptional<String> getOutLinePrefix() {
+        return NutsOptional.of(outLinePrefix);
     }
 
     @Override
@@ -1173,8 +1138,8 @@ public class DefaultNutsWorkspaceOptionsBuilder implements NutsWorkspaceOptionsB
     }
 
     @Override
-    public String getErrLinePrefix() {
-        return errLinePrefix;
+    public NutsOptional<String> getErrLinePrefix() {
+        return NutsOptional.of(errLinePrefix);
     }
 
     @Override
@@ -1184,13 +1149,8 @@ public class DefaultNutsWorkspaceOptionsBuilder implements NutsWorkspaceOptionsB
     }
 
     @Override
-    public boolean isSkipBoot() {
-        return skipBoot != null && skipBoot;
-    }
-
-    @Override
-    public Boolean getSkipBoot() {
-        return skipBoot;
+    public NutsOptional<Boolean> getSkipBoot() {
+        return NutsOptional.of(skipBoot);
     }
 
     /**
@@ -1206,13 +1166,8 @@ public class DefaultNutsWorkspaceOptionsBuilder implements NutsWorkspaceOptionsB
     }
 
     @Override
-    public boolean isTrace() {
-        return trace == null || trace;
-    }
-
-    @Override
-    public Boolean getTrace() {
-        return trace;
+    public NutsOptional<Boolean> getTrace() {
+        return NutsOptional.of(trace);
     }
 
     /**
@@ -1227,8 +1182,8 @@ public class DefaultNutsWorkspaceOptionsBuilder implements NutsWorkspaceOptionsB
         return this;
     }
 
-    public String getProgressOptions() {
-        return progressOptions;
+    public NutsOptional<String> getProgressOptions() {
+        return NutsOptional.of(progressOptions);
     }
 
     @Override
@@ -1237,13 +1192,9 @@ public class DefaultNutsWorkspaceOptionsBuilder implements NutsWorkspaceOptionsB
         return this;
     }
 
-    public boolean isCached() {
-        return cached == null || cached;
-    }
-
     @Override
-    public Boolean getCached() {
-        return cached;
+    public NutsOptional<Boolean> getCached() {
+        return NutsOptional.of(cached);
     }
 
     @Override
@@ -1252,13 +1203,9 @@ public class DefaultNutsWorkspaceOptionsBuilder implements NutsWorkspaceOptionsB
         return this;
     }
 
-    public boolean isIndexed() {
-        return indexed == null || indexed;
-    }
-
     @Override
-    public Boolean getIndexed() {
-        return indexed;
+    public NutsOptional<Boolean> getIndexed() {
+        return NutsOptional.of(indexed);
     }
 
     @Override
@@ -1268,13 +1215,8 @@ public class DefaultNutsWorkspaceOptionsBuilder implements NutsWorkspaceOptionsB
     }
 
     @Override
-    public boolean isTransitive() {
-        return transitive == null || transitive;
-    }
-
-    @Override
-    public Boolean getTransitive() {
-        return transitive;
+    public NutsOptional<Boolean> getTransitive() {
+        return NutsOptional.of(transitive);
     }
 
     @Override
@@ -1284,13 +1226,8 @@ public class DefaultNutsWorkspaceOptionsBuilder implements NutsWorkspaceOptionsB
     }
 
     @Override
-    public boolean isBot() {
-        return bot != null && bot;
-    }
-
-    @Override
-    public Boolean getBot() {
-        return bot;
+    public NutsOptional<Boolean> getBot() {
+        return NutsOptional.of(bot);
     }
 
     @Override
@@ -1300,19 +1237,19 @@ public class DefaultNutsWorkspaceOptionsBuilder implements NutsWorkspaceOptionsB
     }
 
     @Override
-    public NutsFetchStrategy getFetchStrategy() {
-        return fetchStrategy;
+    public NutsOptional<NutsFetchStrategy> getFetchStrategy() {
+        return NutsOptional.of(fetchStrategy);
     }
 
     @Override
     public NutsWorkspaceOptionsBuilder setFetchStrategy(NutsFetchStrategy fetchStrategy) {
-        this.fetchStrategy = fetchStrategy == null ? NutsFetchStrategy.ONLINE : fetchStrategy;
+        this.fetchStrategy = fetchStrategy;
         return this;
     }
 
     @Override
-    public InputStream getStdin() {
-        return stdin;
+    public NutsOptional<InputStream> getStdin() {
+        return NutsOptional.of(stdin);
     }
 
     @Override
@@ -1322,8 +1259,8 @@ public class DefaultNutsWorkspaceOptionsBuilder implements NutsWorkspaceOptionsB
     }
 
     @Override
-    public PrintStream getStdout() {
-        return stdout;
+    public NutsOptional<PrintStream> getStdout() {
+        return NutsOptional.of(stdout);
     }
 
     @Override
@@ -1333,8 +1270,8 @@ public class DefaultNutsWorkspaceOptionsBuilder implements NutsWorkspaceOptionsB
     }
 
     @Override
-    public PrintStream getStderr() {
-        return stderr;
+    public NutsOptional<PrintStream> getStderr() {
+        return NutsOptional.of(stderr);
     }
 
     @Override
@@ -1344,8 +1281,8 @@ public class DefaultNutsWorkspaceOptionsBuilder implements NutsWorkspaceOptionsB
     }
 
     @Override
-    public ExecutorService getExecutorService() {
-        return executorService;
+    public NutsOptional<ExecutorService> getExecutorService() {
+        return NutsOptional.of(executorService);
     }
 
     @Override
@@ -1355,8 +1292,8 @@ public class DefaultNutsWorkspaceOptionsBuilder implements NutsWorkspaceOptionsB
     }
 
     @Override
-    public Instant getExpireTime() {
-        return expireTime;
+    public NutsOptional<Instant> getExpireTime() {
+        return NutsOptional.of(expireTime);
     }
 
     @Override
@@ -1366,13 +1303,8 @@ public class DefaultNutsWorkspaceOptionsBuilder implements NutsWorkspaceOptionsB
     }
 
     @Override
-    public boolean isSkipErrors() {
-        return skipErrors != null && skipErrors;
-    }
-
-    @Override
-    public Boolean getSkipErrors() {
-        return skipErrors;
+    public NutsOptional<Boolean> getSkipErrors() {
+        return NutsOptional.of(skipErrors);
     }
 
     @Override
@@ -1382,13 +1314,8 @@ public class DefaultNutsWorkspaceOptionsBuilder implements NutsWorkspaceOptionsB
     }
 
     @Override
-    public boolean isSwitchWorkspace() {
-        return switchWorkspace != null && switchWorkspace;
-    }
-
-    @Override
-    public Boolean getSwitchWorkspace() {
-        return switchWorkspace;
+    public NutsOptional<Boolean> getSwitchWorkspace() {
+        return NutsOptional.of(switchWorkspace);
     }
 
     public NutsWorkspaceOptionsBuilder setSwitchWorkspace(Boolean switchWorkspace) {
@@ -1397,30 +1324,30 @@ public class DefaultNutsWorkspaceOptionsBuilder implements NutsWorkspaceOptionsB
     }
 
     @Override
-    public List<NutsMessage> getErrors() {
-        return errors;
+    public NutsOptional<List<NutsMessage>> getErrors() {
+        return NutsOptional.of(errors);
     }
 
     @Override
     public NutsWorkspaceOptionsBuilder setErrors(List<NutsMessage> errors) {
-        this.errors = PrivateNutsUtilCollections.nonNullList(errors);
+        this.errors = errors;
         return this;
     }
 
     @Override
-    public List<String> getCustomOptions() {
-        return customOptions;
+    public NutsOptional<List<String>> getCustomOptions() {
+        return NutsOptional.of(customOptions);
     }
 
     @Override
     public NutsWorkspaceOptionsBuilder setCustomOptions(List<String> properties) {
-        this.customOptions = PrivateNutsUtilCollections.nonNullList(properties);
+        this.customOptions = properties;
         return this;
     }
 
     @Override
-    public String getLocale() {
-        return locale;
+    public NutsOptional<String> getLocale() {
+        return NutsOptional.of(locale);
     }
 
     @Override
@@ -1430,8 +1357,8 @@ public class DefaultNutsWorkspaceOptionsBuilder implements NutsWorkspaceOptionsB
     }
 
     @Override
-    public String getTheme() {
-        return theme;
+    public NutsOptional<String> getTheme() {
+        return NutsOptional.of(theme);
     }
 
     @Override
@@ -1442,71 +1369,266 @@ public class DefaultNutsWorkspaceOptionsBuilder implements NutsWorkspaceOptionsB
 
     @Override
     public NutsWorkspaceOptionsBuilder setAll(NutsWorkspaceOptions other) {
-        this.setApiVersion(other.getApiVersion());
-        this.setRuntimeId(other.getRuntimeId());
-        this.setJavaCommand(other.getJavaCommand());
-        this.setJavaOptions(other.getJavaOptions());
-        this.setWorkspace(other.getWorkspace());
-        this.setName(other.getName());
-        this.setSkipCompanions(other.getSkipCompanions());
-        this.setSkipWelcome(other.getSkipWelcome());
-        this.setSkipBoot(other.getSkipBoot());
-        this.setGlobal(other.getGlobal());
-        this.setGui(other.getGui());
-        this.setUsername(other.getUserName());
-        this.setCredentials(other.getCredentials());
-        this.setTerminalMode(other.getTerminalMode());
-        this.setReadOnly(other.getReadOnly());
-        this.setTrace(other.getTrace());
-        this.setProgressOptions(other.getProgressOptions());
-        this.setLogConfig(other.getLogConfig() == null ? null : new NutsLogConfig(other.getLogConfig())); //TODO
-        this.setConfirm(other.getConfirm());
-        this.setConfirm(other.getConfirm());
-        this.setOutputFormat(other.getOutputFormat());
-        this.setOutputFormatOptions(other.getOutputFormatOptions());
-        this.setOpenMode(other.getOpenMode());
-        this.setCreationTime(other.getCreationTime());
-        this.setDry(other.getDry());
-        this.setClassLoaderSupplier(other.getClassLoaderSupplier());
-        this.setExecutorOptions(other.getExecutorOptions());
-        this.setRecover(other.getRecover());
-        this.setReset(other.getReset());
-        this.setCommandVersion(other.getCommandVersion());
-        this.setCommandHelp(other.getCommandHelp());
-        this.setDebug(other.getDebug());
-        this.setInherited(other.getInherited());
-        this.setExecutionType(other.getExecutionType());
-        this.setRunAs(other.getRunAs());
-        this.setArchetype(other.getArchetype());
-        this.setStoreLocationStrategy(other.getStoreLocationStrategy());
-        this.setHomeLocations(other.getHomeLocations());
-        this.setStoreLocations(other.getStoreLocations());
-        this.setStoreLocationLayout(other.getStoreLocationLayout());
-        this.setStoreLocationStrategy(other.getStoreLocationStrategy());
-        this.setRepositoryStoreLocationStrategy(other.getRepositoryStoreLocationStrategy());
-        this.setFetchStrategy(other.getFetchStrategy());
-        this.setCached(other.getCached());
-        this.setIndexed(other.getIndexed());
-        this.setTransitive(other.getTransitive());
-        this.setBot(other.getBot());
-        this.setStdin(other.getStdin());
-        this.setStdout(other.getStdout());
-        this.setStderr(other.getStderr());
-        this.setExecutorService(other.getExecutorService());
+        this.setApiVersion(other.getApiVersion().orNull());
+        this.setRuntimeId(other.getRuntimeId().orNull());
+        this.setJavaCommand(other.getJavaCommand().orNull());
+        this.setJavaOptions(other.getJavaOptions().orNull());
+        this.setWorkspace(other.getWorkspace().orNull());
+        this.setName(other.getName().orNull());
+        this.setSkipCompanions(other.getSkipCompanions().orNull());
+        this.setSkipWelcome(other.getSkipWelcome().orNull());
+        this.setSkipBoot(other.getSkipBoot().orNull());
+        this.setGlobal(other.getGlobal().orNull());
+        this.setGui(other.getGui().orNull());
+        this.setUsername(other.getUserName().orNull());
+        this.setCredentials(other.getCredentials().orNull());
+        this.setTerminalMode(other.getTerminalMode().orNull());
+        this.setReadOnly(other.getReadOnly().orNull());
+        this.setTrace(other.getTrace().orNull());
+        this.setProgressOptions(other.getProgressOptions().orNull());
+        this.setLogConfig(other.getLogConfig().orNull());
+        this.setConfirm(other.getConfirm().orNull());
+        this.setConfirm(other.getConfirm().orNull());
+        this.setOutputFormat(other.getOutputFormat().orNull());
+        this.setOutputFormatOptions(other.getOutputFormatOptions().orNull());
+        this.setOpenMode(other.getOpenMode().orNull());
+        this.setCreationTime(other.getCreationTime().orNull());
+        this.setDry(other.getDry().orNull());
+        this.setClassLoaderSupplier(other.getClassLoaderSupplier().orNull());
+        this.setExecutorOptions(other.getExecutorOptions().orNull());
+        this.setRecover(other.getRecover().orNull());
+        this.setReset(other.getReset().orNull());
+        this.setCommandVersion(other.getCommandVersion().orNull());
+        this.setCommandHelp(other.getCommandHelp().orNull());
+        this.setDebug(other.getDebug().orNull());
+        this.setInherited(other.getInherited().orNull());
+        this.setExecutionType(other.getExecutionType().orNull());
+        this.setRunAs(other.getRunAs().orNull());
+        this.setArchetype(other.getArchetype().orNull());
+        this.setStoreLocationStrategy(other.getStoreLocationStrategy().orNull());
+        this.setHomeLocations(other.getHomeLocations().orNull());
+        this.setStoreLocations(other.getStoreLocations().orNull());
+        this.setStoreLocationLayout(other.getStoreLocationLayout().orNull());
+        this.setStoreLocationStrategy(other.getStoreLocationStrategy().orNull());
+        this.setRepositoryStoreLocationStrategy(other.getRepositoryStoreLocationStrategy().orNull());
+        this.setFetchStrategy(other.getFetchStrategy().orNull());
+        this.setCached(other.getCached().orNull());
+        this.setIndexed(other.getIndexed().orNull());
+        this.setTransitive(other.getTransitive().orNull());
+        this.setBot(other.getBot().orNull());
+        this.setStdin(other.getStdin().orNull());
+        this.setStdout(other.getStdout().orNull());
+        this.setStderr(other.getStderr().orNull());
+        this.setExecutorService(other.getExecutorService().orNull());
 //        this.setBootRepositories(other.getBootRepositories());
 
-        this.setExcludedExtensions(PrivateNutsUtilCollections.nonNullList(other.getExcludedExtensions()));
+        this.setExcludedExtensions(other.getExcludedExtensions().orNull());
 //        this.setExcludedRepositories(other.getExcludedRepositories() == null ? null : Arrays.copyOf(other.getExcludedRepositories(), other.getExcludedRepositories().length));
-        this.setRepositories(PrivateNutsUtilCollections.nonNullList(other.getRepositories()));
-        this.setApplicationArguments(PrivateNutsUtilCollections.nonNullList(other.getApplicationArguments()));
-        this.setCustomOptions(PrivateNutsUtilCollections.nonNullList(other.getCustomOptions()));
-        this.setExpireTime(other.getExpireTime());
-        this.setErrors(other.getErrors());
-        this.setSkipErrors(other.getSkipErrors());
-        this.setSwitchWorkspace(other.getSwitchWorkspace());
-        this.setLocale(other.getLocale());
-        this.setTheme(other.getTheme());
-        this.setDependencySolver(other.getDependencySolver());
+        this.setRepositories(other.getRepositories().orNull());
+        this.setApplicationArguments(other.getApplicationArguments().orNull());
+        this.setCustomOptions(other.getCustomOptions().orNull());
+        this.setExpireTime(other.getExpireTime().orNull());
+        this.setErrors(other.getErrors().orNull());
+        this.setSkipErrors(other.getSkipErrors().orNull());
+        this.setSwitchWorkspace(other.getSwitchWorkspace().orNull());
+        this.setLocale(other.getLocale().orNull());
+        this.setTheme(other.getTheme().orNull());
+        this.setDependencySolver(other.getDependencySolver().orNull());
+        return this;
+    }
+
+    @Override
+    public NutsWorkspaceOptionsBuilder setAllPresent(NutsWorkspaceOptions other) {
+        if (other != null) {
+            if (other.getApiVersion().isPresent()) {
+                this.setApiVersion(other.getApiVersion().orNull());
+            }
+            if (other.getRuntimeId().isPresent()) {
+                this.setRuntimeId(other.getRuntimeId().orNull());
+            }
+            if (other.getJavaCommand().isPresent()) {
+                this.setJavaCommand(other.getJavaCommand().orNull());
+            }
+            if (other.getJavaOptions().isPresent()) {
+                this.setJavaOptions(other.getJavaOptions().orNull());
+            }
+            if (other.getWorkspace().isPresent()) {
+                this.setWorkspace(other.getWorkspace().orNull());
+            }
+            if (other.getName().isPresent()) {
+                this.setName(other.getName().orNull());
+            }
+            if (other.getSkipCompanions().isPresent()) {
+                this.setSkipCompanions(other.getSkipCompanions().orNull());
+            }
+            if (other.getSkipWelcome().isPresent()) {
+                this.setSkipWelcome(other.getSkipWelcome().orNull());
+            }
+            if (other.getSkipBoot().isPresent()) {
+                this.setSkipBoot(other.getSkipBoot().orNull());
+            }
+            if (other.getGlobal().isPresent()) {
+                this.setGlobal(other.getGlobal().orNull());
+            }
+            if (other.getGui().isPresent()) {
+                this.setGui(other.getGui().orNull());
+            }
+            if (other.getUserName().isPresent()) {
+                this.setUsername(other.getUserName().orNull());
+            }
+            if (other.getCredentials().isPresent()) {
+                this.setCredentials(other.getCredentials().orNull());
+            }
+            if (other.getTerminalMode().isPresent()) {
+                this.setTerminalMode(other.getTerminalMode().orNull());
+            }
+            if (other.getReadOnly().isPresent()) {
+                this.setReadOnly(other.getReadOnly().orNull());
+            }
+            if (other.getTrace().isPresent()) {
+                this.setTrace(other.getTrace().orNull());
+            }
+            if (other.getProgressOptions().isPresent()) {
+                this.setProgressOptions(other.getProgressOptions().orNull());
+            }
+            if (other.getLogConfig().isPresent()) {
+                this.setLogConfig(other.getLogConfig().orNull());
+            }
+            if (other.getConfirm().isPresent()) {
+                this.setConfirm(other.getConfirm().orNull());
+            }
+            if (other.getConfirm().isPresent()) {
+                this.setConfirm(other.getConfirm().orNull());
+            }
+            if (other.getOutputFormat().isPresent()) {
+                this.setOutputFormat(other.getOutputFormat().orNull());
+            }
+            if (other.getOutputFormatOptions().isPresent()) {
+                this.setOutputFormatOptions(other.getOutputFormatOptions().orNull());
+            }
+            if (other.getOpenMode().isPresent()) {
+                this.setOpenMode(other.getOpenMode().orNull());
+            }
+            if (other.getCreationTime().isPresent()) {
+                this.setCreationTime(other.getCreationTime().orNull());
+            }
+            if (other.getDry().isPresent()) {
+                this.setDry(other.getDry().orNull());
+            }
+            if (other.getClassLoaderSupplier().isPresent()) {
+                this.setClassLoaderSupplier(other.getClassLoaderSupplier().orNull());
+            }
+            if (other.getExecutorOptions().isPresent()) {
+                this.setExecutorOptions(other.getExecutorOptions().orNull());
+            }
+            if (other.getRecover().isPresent()) {
+                this.setRecover(other.getRecover().orNull());
+            }
+            if (other.getReset().isPresent()) {
+                this.setReset(other.getReset().orNull());
+            }
+            if (other.getCommandVersion().isPresent()) {
+                this.setCommandVersion(other.getCommandVersion().orNull());
+            }
+            if (other.getCommandHelp().isPresent()) {
+                this.setCommandHelp(other.getCommandHelp().orNull());
+            }
+            if (other.getDebug().isPresent()) {
+                this.setDebug(other.getDebug().orNull());
+            }
+            if (other.getInherited().isPresent()) {
+                this.setInherited(other.getInherited().orNull());
+            }
+            if (other.getExecutionType().isPresent()) {
+                this.setExecutionType(other.getExecutionType().orNull());
+            }
+            if (other.getRunAs().isPresent()) {
+                this.setRunAs(other.getRunAs().orNull());
+            }
+            if (other.getArchetype().isPresent()) {
+                this.setArchetype(other.getArchetype().orNull());
+            }
+            if (other.getStoreLocationStrategy().isPresent()) {
+                this.setStoreLocationStrategy(other.getStoreLocationStrategy().orNull());
+            }
+            if (other.getHomeLocations().isPresent()) {
+                this.setHomeLocations(other.getHomeLocations().orNull());
+            }
+
+            if (other.getStoreLocations().isPresent()) {
+                this.setStoreLocations(other.getStoreLocations().orNull());
+            }
+            if (other.getStoreLocationLayout().isPresent()) {
+                this.setStoreLocationLayout(other.getStoreLocationLayout().orNull());
+            }
+            if (other.getStoreLocationStrategy().isPresent()) {
+                this.setStoreLocationStrategy(other.getStoreLocationStrategy().orNull());
+            }
+            if (other.getRepositoryStoreLocationStrategy().isPresent()) {
+                this.setRepositoryStoreLocationStrategy(other.getRepositoryStoreLocationStrategy().orNull());
+            }
+            if (other.getFetchStrategy().isPresent()) {
+                this.setFetchStrategy(other.getFetchStrategy().orNull());
+            }
+            if (other.getCached().isPresent()) {
+                this.setCached(other.getCached().orNull());
+            }
+            if (other.getIndexed().isPresent()) {
+                this.setIndexed(other.getIndexed().orNull());
+            }
+            if (other.getTransitive().isPresent()) {
+                this.setTransitive(other.getTransitive().orNull());
+            }
+            if (other.getBot().isPresent()) {
+                this.setBot(other.getBot().orNull());
+            }
+            if (other.getStdin().isPresent()) {
+                this.setStdin(other.getStdin().orNull());
+            }
+            if (other.getStdout().isPresent()) {
+                this.setStdout(other.getStdout().orNull());
+            }
+            if (other.getStderr().isPresent()) {
+                this.setStderr(other.getStderr().orNull());
+            }
+            if (other.getExecutorService().isPresent()) {
+                this.setExecutorService(other.getExecutorService().orNull());
+            }
+
+            if (other.getExcludedExtensions().isPresent()) {
+                this.setExcludedExtensions(other.getExcludedExtensions().orNull());
+            }
+            if (other.getRepositories().isPresent()) {
+                this.setRepositories(other.getRepositories().orNull());
+            }
+            if (other.getApplicationArguments().isPresent()) {
+                this.setApplicationArguments(other.getApplicationArguments().orNull());
+            }
+            if (other.getCustomOptions().isPresent()) {
+                this.setCustomOptions(other.getCustomOptions().orNull());
+            }
+            if (other.getExpireTime().isPresent()) {
+                this.setExpireTime(other.getExpireTime().orNull());
+            }
+            if (other.getErrors().isPresent()) {
+                this.setErrors(other.getErrors().orNull());
+            }
+            if (other.getSkipErrors().isPresent()) {
+                this.setSkipErrors(other.getSkipErrors().orNull());
+            }
+            if (other.getSwitchWorkspace().isPresent()) {
+                this.setSwitchWorkspace(other.getSwitchWorkspace().orNull());
+            }
+            if (other.getLocale().isPresent()) {
+                this.setLocale(other.getLocale().orNull());
+            }
+            if (other.getTheme().isPresent()) {
+                this.setTheme(other.getTheme().orNull());
+            }
+            if (other.getDependencySolver().isPresent()) {
+                this.setDependencySolver(other.getDependencySolver().orNull());
+            }
+        }
         return this;
     }
 
@@ -1544,8 +1666,13 @@ public class DefaultNutsWorkspaceOptionsBuilder implements NutsWorkspaceOptionsB
     @Override
     public NutsWorkspaceOptionsBuilder setStoreLocation(NutsStoreLocation location, String value) {
         if (NutsBlankable.isBlank(value)) {
-            storeLocations.remove(location);
+            if (storeLocations != null) {
+                storeLocations.remove(location);
+            }
         } else {
+            if (storeLocations == null) {
+                storeLocations = new HashMap<>();
+            }
             storeLocations.put(location, value);
         }
         return this;
@@ -1561,8 +1688,13 @@ public class DefaultNutsWorkspaceOptionsBuilder implements NutsWorkspaceOptionsB
     @Override
     public NutsWorkspaceOptionsBuilder setHomeLocation(NutsHomeLocation location, String value) {
         if (NutsBlankable.isBlank(value)) {
-            homeLocations.remove(location);
+            if (homeLocations != null) {
+                homeLocations.remove(location);
+            }
         } else {
+            if (homeLocations == null) {
+                homeLocations = new HashMap<>();
+            }
             homeLocations.put(location, value);
         }
         return this;
@@ -1581,6 +1713,9 @@ public class DefaultNutsWorkspaceOptionsBuilder implements NutsWorkspaceOptionsB
                 if (option != null) {
                     option = NutsUtilStrings.trim(option);
                     if (!option.isEmpty()) {
+                        if (outputFormatOptions == null) {
+                            outputFormatOptions = new ArrayList<>();
+                        }
                         outputFormatOptions.add(option);
                     }
                 }
@@ -1589,24 +1724,10 @@ public class DefaultNutsWorkspaceOptionsBuilder implements NutsWorkspaceOptionsB
         return this;
     }
 
-    @Override
-    public NutsWorkspaceOptions build() {
-        return new DefaultNutsWorkspaceOptions(
-                getOutputFormatOptions(), getCustomOptions(), getApiVersion(), getRuntimeId(), getJavaCommand(), getJavaOptions()
-                , getWorkspace(), getOutLinePrefix(), getErrLinePrefix(), getName(), getSkipCompanions(), getSkipWelcome(), getSkipBoot()
-                , getGlobal(), getGui(), getExcludedExtensions(), getRepositories(), getUserName(), getCredentials(), getTerminalMode()
-                , getReadOnly(), getTrace(), getProgressOptions(), getDependencySolver(), getLogConfig(), getConfirm(), getOutputFormat()
-                , getApplicationArguments(), getOpenMode(), getCreationTime(), getDry(), getClassLoaderSupplier(), getExecutorOptions()
-                , getRecover(), getReset(), getCommandVersion(), getCommandHelp(), getDebug(), getCommandHelp(), getExecutionType()
-                , getRunAs(), getArchetype(), getSwitchWorkspace(), getStoreLocations(), getHomeLocations(), getStoreLocationLayout()
-                , getStoreLocationStrategy(), getRepositoryStoreLocationStrategy(), getFetchStrategy(), getCached(), getCached()
-                , getTransitive(), getBot(), getStdin(), getStdout(), getStdout(), getExecutorService(), getExpireTime(), getErrors()
-                , getSkipErrors(), getLocale(), getTheme());
-    }
 
     @Override
-    public String getDependencySolver() {
-        return dependencySolver;
+    public NutsOptional<String> getDependencySolver() {
+        return NutsOptional.of(dependencySolver);
     }
 
     @Override
@@ -1618,6 +1739,18 @@ public class DefaultNutsWorkspaceOptionsBuilder implements NutsWorkspaceOptionsB
     @Override
     public String toString() {
         return toCommandLine().toString();
+    }
+
+    @Override
+    public NutsWorkspaceOptions build() {
+        return new DefaultNutsWorkspaceOptions(
+                getApiVersion().orNull(), getRuntimeId().orNull(), getWorkspace().orNull(), getName().orNull(), getJavaCommand().orNull(), getJavaOptions().orNull(), getOutLinePrefix().orNull(), getErrLinePrefix().orNull(), getUserName().orNull(), getCredentials().orNull(), getProgressOptions().orNull(), getDependencySolver().orNull(), getDebug().orNull(), getArchetype().orNull(), getLocale().orNull(), getTheme().orNull(), getLogConfig().orNull(), getConfirm().orNull(), getOutputFormat().orNull(), getOpenMode().orNull(), getExecutionType().orNull(), getStoreLocationStrategy().orNull(), getRepositoryStoreLocationStrategy().orNull(), getStoreLocationLayout().orNull(), getTerminalMode().orNull(), getFetchStrategy().orNull(), getRunAs().orNull(), getCreationTime().orNull(), getExpireTime().orNull(), getSkipCompanions().orNull(), getSkipWelcome().orNull(), getSkipBoot().orNull(), getGlobal().orNull(), getGui().orNull(), getReadOnly().orNull(), getTrace().orNull(), getDry().orNull(), getRecover().orNull(), getReset().orNull(), getCommandVersion().orNull(), getCommandHelp().orNull(), getCommandHelp().orNull(), getSwitchWorkspace().orNull(), getCached().orNull(), getCached().orNull(), getTransitive().orNull(), getBot().orNull(), getSkipErrors().orNull(), getStdin().orNull(), getStdout().orNull(), getStdout().orNull(), getExecutorService().orNull(), getClassLoaderSupplier().orNull(), getApplicationArguments().orNull(), getOutputFormatOptions().orNull(), getCustomOptions().orNull(),
+                getExcludedExtensions().orNull(), getRepositories().orNull()
+                ,
+                getExecutorOptions().orNull()
+                ,
+                getErrors().orNull(), getStoreLocations().orNull(), getHomeLocations().orNull()
+        );
     }
 
     @Override

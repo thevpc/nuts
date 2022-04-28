@@ -39,13 +39,14 @@ public class DefaultNutsArtifactPathExecutable extends AbstractNutsExecutableCom
     String cmdName;
     String[] args;
     List<String> executorOptions;
+    List<String> workspaceOptions;
     NutsExecutionType executionType;
     NutsRunAs runAs;
     NutsSession session;
     NutsSession execSession;
     DefaultNutsExecCommand execCommand;
 
-    public DefaultNutsArtifactPathExecutable(String cmdName, String[] args, List<String> executorOptions, NutsExecutionType executionType, NutsRunAs runAs, NutsSession session, NutsSession execSession, DefaultNutsExecCommand execCommand, boolean inheritSystemIO) {
+    public DefaultNutsArtifactPathExecutable(String cmdName, String[] args, List<String> executorOptions, List<String> workspaceOptions, NutsExecutionType executionType, NutsRunAs runAs, NutsSession session, NutsSession execSession, DefaultNutsExecCommand execCommand, boolean inheritSystemIO) {
         super(cmdName,
                 NutsCommandLine.of(args).toString(),
                 NutsExecutableType.ARTIFACT);
@@ -57,20 +58,8 @@ public class DefaultNutsArtifactPathExecutable extends AbstractNutsExecutableCom
         this.session = session;
         this.execSession = execSession;
         this.execCommand = execCommand;
-        List<String> executorOptionsList = new ArrayList<>();
-        for (String option : executorOptions) {
-            NutsArgument a = NutsArgument.of(option);
-//            if (a.getKey().getString().equals("--nuts-auto-install")) {
-//                if (a.isKeyValue()) {
-//                    autoInstall= a.isNegated() != a.getBooleanValue().get(session);
-//                } else {
-//                    autoInstall=true;
-//                }
-//            } else {
-                executorOptionsList.add(option);
-//            }
-        }
-        this.executorOptions = executorOptionsList;
+        this.executorOptions = executorOptions;
+        this.workspaceOptions = workspaceOptions;
     }
 
     @Override
@@ -121,9 +110,9 @@ public class DefaultNutsArtifactPathExecutable extends AbstractNutsExecutableCom
                 resolver.add(dependency);
             }
             nutToRun.setDependencies(resolver.solve());
-
+//            System.out.println(String.join(" ",args));
             try {
-                execCommand.ws_execId(nutToRun, cmdName, args, executorOptions, execCommand.getEnv(),
+                execCommand.ws_execId(nutToRun, cmdName, args, executorOptions, workspaceOptions, execCommand.getEnv(),
                         execCommand.getDirectory(), execCommand.isFailFast(), true, session, execSession, executionType,runAs, dry);
             } finally {
                 try {

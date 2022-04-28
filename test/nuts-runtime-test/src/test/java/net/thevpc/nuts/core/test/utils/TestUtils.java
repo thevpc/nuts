@@ -18,6 +18,7 @@ import java.util.stream.Stream;
 
 import net.thevpc.nuts.Nuts;
 import net.thevpc.nuts.NutsSession;
+import net.thevpc.nuts.NutsVersion;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 
 /**
@@ -31,7 +32,7 @@ public class TestUtils {
     public static final String LINUX_CACHE = new File(System.getProperty("user.home") + "/.cache/nuts").getPath();
     public static final String LINUX_TEMP = new File(System.getProperty("java.io.tmpdir") + "/" + System.getProperty("user.name") + "/nuts").getPath();
     public static final String[] NUTS_STD_FOLDERS = {LINUX_CONFIG, LINUX_CACHE, LINUX_TEMP, LINUX_APPS};
-    public static final String NUTS_VERSION = Nuts.getVersion();
+    public static final NutsVersion NUTS_VERSION = Nuts.getVersion();
 
     public static FileSystemStash STASH = new FileSystemStash();
 
@@ -225,7 +226,7 @@ public class TestUtils {
         //disable auto-creation of nuts icons and menus
         argsList.add("---!init-launchers");
         //disable progress indicator
-        argsList.add("---!progress");
+        argsList.add("--!progress");
         //disable interactive mode and 'always confirm'
         argsList.add("--yes");
         //disable installing nsh

@@ -41,7 +41,7 @@ public final class NutsWorkspaceConfigBoot506 extends NutsConfigItem {
     private boolean global;
     private String name = null;
     private String workspace = null;
-    private String apiVersion = null;
+    private NutsVersion apiVersion = null;
 
     /**
      * boot package Id in long format (as defined in
@@ -49,7 +49,7 @@ public final class NutsWorkspaceConfigBoot506 extends NutsConfigItem {
      *
      * @see NutsId#getLongId()
      */
-    private String runtimeId = null;
+    private NutsId runtimeId = null;
 
     /**
      * ';' separated list of package Ids in long format (as defined in
@@ -185,20 +185,20 @@ public final class NutsWorkspaceConfigBoot506 extends NutsConfigItem {
         return this;
     }
 
-    public String getApiVersion() {
+    public NutsVersion getApiVersion() {
         return apiVersion;
     }
 
-    public NutsWorkspaceConfigBoot506 setApiVersion(String apiVersion) {
+    public NutsWorkspaceConfigBoot506 setApiVersion(NutsVersion apiVersion) {
         this.apiVersion = apiVersion;
         return this;
     }
 
-    public String getRuntimeId() {
+    public NutsId getRuntimeId() {
         return runtimeId;
     }
 
-    public NutsWorkspaceConfigBoot506 setRuntimeId(String runtimeId) {
+    public NutsWorkspaceConfigBoot506 setRuntimeId(NutsId runtimeId) {
         this.runtimeId = runtimeId;
         return this;
     }

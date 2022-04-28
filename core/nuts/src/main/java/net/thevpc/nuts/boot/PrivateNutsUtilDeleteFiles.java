@@ -45,7 +45,7 @@ class PrivateNutsUtilDeleteFiles {
     }
 
     static String getStoreLocationPath(NutsWorkspaceBootOptions bOptions, NutsStoreLocation value) {
-        Map<NutsStoreLocation, String> storeLocations = bOptions.getStoreLocations();
+        Map<NutsStoreLocation, String> storeLocations = bOptions.getStoreLocations().orNull();
         if (storeLocations != null) {
             return storeLocations.get(value);
         }
@@ -61,10 +61,9 @@ class PrivateNutsUtilDeleteFiles {
         if (lastBootOptions == null) {
             return 0;
         }
-        NutsConfirmationMode confirm = o.getConfirm() == null ? NutsConfirmationMode.ASK : o.getConfirm();
+        NutsConfirmationMode confirm = o.getConfirm().orElse(NutsConfirmationMode.ASK);
         if (confirm == NutsConfirmationMode.ASK
-                && o.getOutputFormat() != null
-                && o.getOutputFormat() != NutsContentType.PLAIN) {
+                && o.getOutputFormat().orElse(NutsContentType.PLAIN) != NutsContentType.PLAIN) {
             throw new NutsBootException(
                     NutsMessage.cstyle("unable to switch to interactive mode for non plain text output format. "
                             + "You need to provide default response (-y|-n) for resetting/recovering workspace. "
@@ -87,9 +86,9 @@ class PrivateNutsUtilDeleteFiles {
             }
         }
         NutsWorkspaceConfigManager conf = null;
-        List<File> folders = new ArrayList<>();
+        List<Path> folders = new ArrayList<>();
         if (includeRoot) {
-            folders.add(new File(lastBootOptions.getWorkspace()));
+            folders.add(Paths.get(lastBootOptions.getWorkspace().get()));
         }
         for (Object ovalue : locations) {
             if (ovalue != null) {
@@ -97,41 +96,41 @@ class PrivateNutsUtilDeleteFiles {
                     NutsStoreLocation value = (NutsStoreLocation) ovalue;
                     String p = getStoreLocationPath(lastBootOptions, value);
                     if (p != null) {
-                        folders.add(new File(p));
+                        folders.add(Paths.get(p));
                     }
                 } else if (ovalue instanceof Path) {
-                    folders.add(((Path) ovalue).toFile());
+                    folders.add(((Path) ovalue));
                 } else if (ovalue instanceof File) {
-                    folders.add(((File) ovalue));
+                    folders.add(((File) ovalue).toPath());
                 } else {
                     throw new NutsBootException(NutsMessage.cstyle("unsupported path type : %s", ovalue));
                 }
             }
         }
         NutsWorkspaceBootOptionsBuilder optionsCopy = o.builder();
-        if (optionsCopy.isBot() || !PrivateNutsUtilGui.isGraphicalDesktopEnvironment()) {
+        if (optionsCopy.getBot().orElse(false) || !PrivateNutsUtilGui.isGraphicalDesktopEnvironment()) {
             optionsCopy.setGui(false);
         }
-        return deleteAndConfirmAll(folders.toArray(new File[0]), force, DELETE_FOLDERS_HEADER, null, bLog, optionsCopy);
+        return deleteAndConfirmAll(folders.toArray(new Path[0]), force, DELETE_FOLDERS_HEADER, null, bLog, optionsCopy);
     }
 
-    public static long deleteAndConfirmAll(File[] folders, boolean force, String header, NutsSession session,
+    public static long deleteAndConfirmAll(Path[] folders, boolean force, String header, NutsSession session,
                                            PrivateNutsBootLog bLog, NutsWorkspaceBootOptions bOptions) {
         return deleteAndConfirmAll(folders, force, new PrivateNutsDeleteFilesContextImpl(), header, session, bLog, bOptions);
     }
 
-    private static long deleteAndConfirmAll(File[] folders, boolean force, PrivateNutsDeleteFilesContext refForceAll,
+    private static long deleteAndConfirmAll(Path[] folders, boolean force, PrivateNutsDeleteFilesContext refForceAll,
                                             String header, NutsSession session, PrivateNutsBootLog bLog, NutsWorkspaceBootOptions bOptions) {
         long count = 0;
         boolean headerWritten = false;
         if (folders != null) {
-            for (File child : folders) {
-                if (child.exists()) {
+            for (Path child : folders) {
+                if (Files.exists(child)) {
                     if (!headerWritten) {
                         headerWritten = true;
                         if (!force && !refForceAll.isForce()) {
                             if (header != null) {
-                                if (!bOptions.isBot()) {
+                                if (!bOptions.getBot().orElse(false)) {
                                     if (session != null) {
                                         session.err().println(header);
                                     } else {
@@ -148,9 +147,9 @@ class PrivateNutsUtilDeleteFiles {
         return count;
     }
 
-    private static long deleteAndConfirm(File directory, boolean force, PrivateNutsDeleteFilesContext refForceAll,
+    private static long deleteAndConfirm(Path directory, boolean force, PrivateNutsDeleteFilesContext refForceAll,
                                          NutsSession session, PrivateNutsBootLog bLog, NutsWorkspaceBootOptions bOptions) {
-        if (directory.exists()) {
+        if (Files.exists(directory)) {
             if (!force && !refForceAll.isForce() && refForceAll.accept(directory)) {
                 String line = null;
                 if (session != null) {
@@ -158,23 +157,20 @@ class PrivateNutsUtilDeleteFiles {
                             .resetLine()
                             .forString("do you confirm deleting %s [y/n/c/a] (default 'n') ?", directory).setSession(session).getValue();
                 } else {
-                    if (bOptions.isBot()) {
-                        if (bOptions.getConfirm() == NutsConfirmationMode.YES) {
+                    if (bOptions.getBot().orElse(false)) {
+                        if (bOptions.getConfirm().orElse(NutsConfirmationMode.ASK) == NutsConfirmationMode.YES) {
                             line = "y";
                         } else {
                             throw new NutsBootException(NutsMessage.plain("failed to delete files in --bot mode without auto confirmation"));
                         }
                     } else {
-                        if (bOptions.isGui()) {
+                        if (bOptions.getGui().orElse(false)) {
                             line = PrivateNutsUtilGui.inputString(
                                     NutsMessage.cstyle("do you confirm deleting %s [y/n/c/a] (default 'n') ?", directory).toString(),
                                     null, () -> bLog.readLine(), bLog.err()
                             );
                         } else {
-                            NutsConfirmationMode cc = bOptions.getConfirm();
-                            if (cc == null) {
-                                cc = NutsConfirmationMode.ASK;
-                            }
+                            NutsConfirmationMode cc = bOptions.getConfirm().orElse(NutsConfirmationMode.ASK);
                             switch (cc) {
                                 case YES: {
                                     line = "y";
@@ -205,10 +201,9 @@ class PrivateNutsUtilDeleteFiles {
                     return 0;
                 }
             }
-            Path directoryPath = Paths.get(directory.getPath());
             long[] count = new long[1];
             try {
-                Files.walkFileTree(directoryPath, new SimpleFileVisitor<Path>() {
+                Files.walkFileTree(directory, new SimpleFileVisitor<Path>() {
                     @Override
                     public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
                         Files.delete(file);

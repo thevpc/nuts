@@ -218,7 +218,7 @@ public final class NutsApplications {
 
     public static void runApplication(NutsApplication applicationInstance, NutsApplicationContext applicationContext) {
         NutsSession session = applicationContext.getSession();
-        boolean inherited = session.boot().getBootOptions().isInherited();
+        boolean inherited = session.boot().getBootOptions().getInherited().orElse(false);
         NutsLogger.of(NutsApplications.class, session).with().level(Level.FINE).verb(NutsLogVerb.START)
                 .log(
                         NutsMessage.jstyle(

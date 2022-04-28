@@ -91,7 +91,7 @@ public class ZipExecutorComponent implements NutsExecutorComponent {
         if (executor == null) {
             throw new NutsIOException(session, NutsMessage.cstyle("missing executor for %s", def.getId()));
         }
-        List<String> args=new ArrayList<>(executionContext.getExecutorArguments());
+        List<String> args=new ArrayList<>(executionContext.getExecutorOptions());
         args.addAll(executionContext.getArguments());
         if (executor.getId() != null && !executor.getId().toString().equals("exec")) {
             // TODO: delegate to another executor!

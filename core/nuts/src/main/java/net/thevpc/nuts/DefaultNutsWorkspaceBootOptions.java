@@ -97,8 +97,8 @@ public class DefaultNutsWorkspaceBootOptions extends DefaultNutsWorkspaceOptions
     private final NutsDescriptor runtimeBootDescriptor;
     private final NutsWorkspaceOptions userOptions;
 
-    public DefaultNutsWorkspaceBootOptions(List<String> outputFormatOptions, List<String> customOptions, String apiVersion,
-                                           String runtimeId, String javaCommand, String javaOptions, String workspace,
+    public DefaultNutsWorkspaceBootOptions(List<String> outputFormatOptions, List<String> customOptions, NutsVersion apiVersion,
+                                           NutsId runtimeId, String javaCommand, String javaOptions, String workspace,
                                            String outLinePrefix, String errLinePrefix, String name, Boolean skipCompanions,
                                            Boolean skipWelcome, Boolean skipBoot, Boolean global, Boolean gui,
                                            List<String> excludedExtensions, List<String> repositories, String userName,
@@ -116,36 +116,33 @@ public class DefaultNutsWorkspaceBootOptions extends DefaultNutsWorkspaceOptions
                                            Boolean cached, Boolean indexed, Boolean transitive, Boolean bot, InputStream stdin,
                                            PrintStream stdout, PrintStream stderr, ExecutorService executorService,
                                            Instant expireTime, List<NutsMessage> errors, Boolean skipErrors, String locale,
-                                           String theme, String bootRepositories, NutsClassLoaderNode runtimeBootDependencyNode,
+                                           String theme, String uuid, String bootRepositories, NutsClassLoaderNode runtimeBootDependencyNode,
                                            List<NutsDescriptor> extensionBootDescriptors, List<NutsClassLoaderNode> extensionBootDependencyNodes,
-                                           NutsBootWorkspaceFactory bootWorkspaceFactory, List<URL> classWorldURLs, ClassLoader classWorldLoader,
-                                           String uuid, Set<String> extensionsSet, NutsDescriptor runtimeBootDescriptor,
+                                           List<URL> classWorldURLs, Set<String> extensionsSet, NutsBootWorkspaceFactory bootWorkspaceFactory, NutsDescriptor runtimeBootDescriptor, ClassLoader classWorldLoader,
                                            NutsWorkspaceOptions userOptions
                                            ) {
-        super(outputFormatOptions, customOptions, apiVersion, runtimeId, javaCommand, javaOptions, workspace, outLinePrefix,
-                errLinePrefix, name, skipCompanions, skipWelcome, skipBoot, global, gui, excludedExtensions, repositories, userName,
-                credentials, terminalMode, readOnly, trace, progressOptions, dependencySolver, logConfig, confirm, outputFormat,
-                applicationArguments, openMode, creationTime, dry, classLoaderSupplier, executorOptions, recover, reset,
-                commandVersion, commandHelp, debug, inherited, executionType, runAs, archetype, switchWorkspace, storeLocations,
-                homeLocations, storeLocationLayout, storeLocationStrategy, repositoryStoreLocationStrategy, fetchStrategy,
-                cached, indexed, transitive, bot, stdin, stdout, stderr, executorService, expireTime, errors, skipErrors,
-                locale, theme);
-        this.bootRepositories = NutsUtilStrings.trimToNull(bootRepositories);
+        super(apiVersion, runtimeId, workspace, name, javaCommand, javaOptions, outLinePrefix, errLinePrefix, userName, credentials, progressOptions, dependencySolver, debug, archetype, locale, theme, logConfig, confirm, outputFormat, openMode, executionType, storeLocationStrategy, repositoryStoreLocationStrategy, storeLocationLayout, terminalMode, fetchStrategy, runAs, creationTime, expireTime, skipCompanions, skipWelcome, skipBoot, global, gui, readOnly, trace, dry, recover, reset, commandVersion, commandHelp, inherited, switchWorkspace, cached, indexed, transitive, bot, skipErrors, stdin, stdout, stderr, executorService, classLoaderSupplier, applicationArguments, outputFormatOptions, customOptions,
+                excludedExtensions, repositories,
+                executorOptions,
+                errors, storeLocations,
+                homeLocations
+        );
+        this.bootRepositories = bootRepositories;
         this.runtimeBootDependencyNode = runtimeBootDependencyNode;
-        this.extensionBootDescriptors = extensionBootDescriptors;
-        this.extensionBootDependencyNodes = extensionBootDependencyNodes;
+        this.extensionBootDescriptors = PrivateNutsUtilCollections.unmodifiableOrNullList(extensionBootDescriptors);
+        this.extensionBootDependencyNodes = PrivateNutsUtilCollections.unmodifiableOrNullList(extensionBootDependencyNodes);
         this.bootWorkspaceFactory = bootWorkspaceFactory;
-        this.classWorldURLs = PrivateNutsUtilCollections.nonNullList(classWorldURLs);
+        this.classWorldURLs = PrivateNutsUtilCollections.unmodifiableOrNullList(classWorldURLs);
         this.classWorldLoader = classWorldLoader;
-        this.uuid = NutsUtilStrings.trimToNull(uuid);
-        this.extensionsSet = PrivateNutsUtilCollections.nonNullSet(extensionsSet);
+        this.uuid = uuid;
+        this.extensionsSet = PrivateNutsUtilCollections.unmodifiableOrNullSet(extensionsSet);
         this.runtimeBootDescriptor = runtimeBootDescriptor;
         this.userOptions = userOptions==null?null:userOptions.readOnly();
     }
 
     @Override
-    public NutsWorkspaceOptions getUserOptions() {
-        return userOptions;
+    public NutsOptional<NutsWorkspaceOptions> getUserOptions() {
+        return NutsOptional.of(userOptions);
     }
 
     @Override
@@ -154,60 +151,60 @@ public class DefaultNutsWorkspaceBootOptions extends DefaultNutsWorkspaceOptions
     }
 
     @Override
-    public String getBootRepositories() {
-        return bootRepositories;
+    public NutsOptional<String> getBootRepositories() {
+        return NutsOptional.of(bootRepositories);
     }
 
     @Override
-    public NutsClassLoaderNode getRuntimeBootDependencyNode() {
-        return runtimeBootDependencyNode;
-    }
-
-
-    @Override
-    public List<NutsDescriptor> getExtensionBootDescriptors() {
-        return extensionBootDescriptors;
-    }
-
-    @Override
-    public List<NutsClassLoaderNode> getExtensionBootDependencyNodes() {
-        return extensionBootDependencyNodes;
+    public NutsOptional<NutsClassLoaderNode> getRuntimeBootDependencyNode() {
+        return NutsOptional.of(runtimeBootDependencyNode);
     }
 
 
     @Override
-    public NutsBootWorkspaceFactory getBootWorkspaceFactory() {
-        return bootWorkspaceFactory;
+    public NutsOptional<List<NutsDescriptor>> getExtensionBootDescriptors() {
+        return NutsOptional.of(extensionBootDescriptors);
+    }
+
+    @Override
+    public NutsOptional<List<NutsClassLoaderNode>> getExtensionBootDependencyNodes() {
+        return NutsOptional.of(extensionBootDependencyNodes);
     }
 
 
     @Override
-    public List<URL> getClassWorldURLs() {
-        return classWorldURLs;
+    public NutsOptional<NutsBootWorkspaceFactory> getBootWorkspaceFactory() {
+        return NutsOptional.of(bootWorkspaceFactory);
     }
 
 
     @Override
-    public ClassLoader getClassWorldLoader() {
-        return classWorldLoader;
+    public NutsOptional<List<URL>> getClassWorldURLs() {
+        return NutsOptional.of(classWorldURLs);
     }
 
 
     @Override
-    public String getUuid() {
-        return uuid;
+    public NutsOptional<ClassLoader> getClassWorldLoader() {
+        return NutsOptional.of(classWorldLoader);
     }
 
 
     @Override
-    public Set<String> getExtensionsSet() {
-        return extensionsSet;
+    public NutsOptional<String> getUuid() {
+        return NutsOptional.of(uuid);
     }
 
 
     @Override
-    public NutsDescriptor getRuntimeBootDescriptor() {
-        return runtimeBootDescriptor;
+    public NutsOptional<Set<String>> getExtensionsSet() {
+        return NutsOptional.of(extensionsSet);
+    }
+
+
+    @Override
+    public NutsOptional<NutsDescriptor> getRuntimeBootDescriptor() {
+        return NutsOptional.of(runtimeBootDescriptor);
     }
 
     @Override

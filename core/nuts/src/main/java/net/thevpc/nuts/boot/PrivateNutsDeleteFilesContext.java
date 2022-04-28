@@ -27,6 +27,8 @@
 package net.thevpc.nuts.boot;
 
 import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 /**
  * @app.category Internal
@@ -37,7 +39,7 @@ interface PrivateNutsDeleteFilesContext {
 
     void setForce(boolean value);
 
-    boolean accept(File directory);
+    boolean accept(Path directory);
 
-    void ignore(File directory);
+    void ignore(Path directory);
 }

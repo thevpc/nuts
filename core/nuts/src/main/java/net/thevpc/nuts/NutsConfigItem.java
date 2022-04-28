@@ -37,13 +37,13 @@ public class NutsConfigItem implements Serializable {
     /**
      * Api version having created the config
      */
-    private String configVersion = null;
+    private NutsVersion configVersion = null;
 
-    public String getConfigVersion() {
+    public NutsVersion getConfigVersion() {
         return configVersion;
     }
 
-    public void setConfigVersion(String configVersion) {
+    public void setConfigVersion(NutsVersion configVersion) {
         this.configVersion = configVersion;
     }
 }

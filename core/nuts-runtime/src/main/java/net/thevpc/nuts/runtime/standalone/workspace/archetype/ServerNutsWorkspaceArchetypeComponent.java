@@ -93,10 +93,7 @@ public class ServerNutsWorkspaceArchetypeComponent implements NutsWorkspaceArche
         if (initScripts || initLaunchers) {
             NutsWorkspaceUtils.of(session).installLaunchers(initLaunchers);
         }
-        Boolean skipCompanions = session.boot().getBootOptions().getSkipCompanions();
-        if (skipCompanions == null) {
-            skipCompanions = true;
-        }
+        Boolean skipCompanions = session.boot().getBootOptions().getSkipCompanions().orElse(true);
         if (!skipCompanions) {
             NutsWorkspaceUtils.of(session).installCompanions();
         }

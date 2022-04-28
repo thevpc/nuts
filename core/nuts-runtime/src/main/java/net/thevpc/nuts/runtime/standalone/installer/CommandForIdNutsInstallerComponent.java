@@ -33,7 +33,6 @@ import net.thevpc.nuts.spi.NutsInstallerComponent;
 import net.thevpc.nuts.spi.NutsSupportLevelContext;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -84,7 +83,7 @@ public class CommandForIdNutsInstallerComponent implements NutsInstallerComponen
                     cmd.addExecutorOptions("--nuts-auto-install=false");
                 }
                 cmd.addCommand(executionContext.getArguments())
-                        .setExecutionType(executionContext.getSession().boot().getBootOptions().getExecutionType())
+                        .setExecutionType(executionContext.getSession().boot().getBootOptions().getExecutionType().orNull())
                         .setFailFast(true)
                         .run();
             }
@@ -100,14 +99,14 @@ public class CommandForIdNutsInstallerComponent implements NutsInstallerComponen
                                         )
                         );
                 List<String> eargs = new ArrayList<>();
-                for (String a : executionContext.getExecutorArguments()) {
+                for (String a : executionContext.getExecutorOptions()) {
                     eargs.add(evalString(a, mode, executionContext));
                 }
                 eargs.addAll(executionContext.getArguments());
                 executionContext.getExecSession().exec()
                         .setCommand(def2)
                         .addCommand(eargs)
-                        .setExecutionType(executionContext.getExecSession().boot().getBootOptions().getExecutionType())
+                        .setExecutionType(executionContext.getExecSession().boot().getBootOptions().getExecutionType().orNull())
                         .setExecutionType(
                                 "nsh".equals(def2.getId().getArtifactId()) ?
                                         NutsExecutionType.EMBEDDED : NutsExecutionType.SPAWN

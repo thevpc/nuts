@@ -651,7 +651,7 @@ public class StyledParserStep extends ParserStep {
     }
 
     private void logErr(String s) {
-        if(NutsDebugString.of(session.boot().getBootOptions().getDebug(),session).isEnabled()) {
+        if(NutsDebugString.of(session.boot().getBootOptions().getDebug().orNull(),session).isEnabled()) {
             session.err().println(s);
         }
     }

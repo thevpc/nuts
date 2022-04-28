@@ -3,10 +3,7 @@ package net.thevpc.nuts.boot;
 import net.thevpc.nuts.*;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 public class PrivateWorkspaceOptionsConfigHelper {
     private NutsWorkspaceOptionsConfig config;
@@ -34,18 +31,20 @@ public class PrivateWorkspaceOptionsConfigHelper {
         }
     }
 
-    private void fillOption(String longName, String shortName, boolean value, boolean defaultValue, List<String> arguments, boolean forceSingle) {
-        if (defaultValue) {
-            if (!value) {
-                if (config.isShortOptions() && shortName != null) {
-                    arguments.add("-!" + shortName.substring(1));
-                } else {
-                    arguments.add("--!" + longName.substring(2));
+    private void fillOption(String longName, String shortName, Boolean value, boolean defaultValue, List<String> arguments, boolean forceSingle) {
+        if(value!=null) {
+            if (defaultValue) {
+                if (!value) {
+                    if (config.isShortOptions() && shortName != null) {
+                        arguments.add("-!" + shortName.substring(1));
+                    } else {
+                        arguments.add("--!" + longName.substring(2));
+                    }
                 }
-            }
-        } else {
-            if (value) {
-                arguments.add(selectOptionName(longName, shortName));
+            } else {
+                if (value) {
+                    arguments.add(selectOptionName(longName, shortName));
+                }
             }
         }
     }
@@ -132,11 +131,14 @@ public class PrivateWorkspaceOptionsConfigHelper {
     }
 
     private boolean fillOption(NutsRunAs value, List<String> arguments) {
-        String apiVersion = options.getApiVersion();
+        if(value==null){
+            return false;
+        }
+        NutsVersion apiVersion = options.getApiVersion().orNull();
         switch (value.getMode()) {
             case CURRENT_USER: {
                 if (!NutsBlankable.isBlank(apiVersion) &&
-                        NutsVersion.of(apiVersion).get().compareTo(NutsVersion.of("0.8.1").get())
+                        apiVersion.compareTo(NutsVersion.of("0.8.1").get())
                                 < 0) {
                     arguments.add("--user-cmd");
                 } else {
@@ -148,7 +150,7 @@ public class PrivateWorkspaceOptionsConfigHelper {
             }
             case ROOT: {
                 if (!NutsBlankable.isBlank(apiVersion) &&
-                        NutsVersion.of(apiVersion).get().compareTo(NutsVersion.of("0.8.1").get())
+                        apiVersion.compareTo(NutsVersion.of("0.8.1").get())
                                 < 0) {
                     arguments.add("--root-cmd");
                 } else {
@@ -158,7 +160,7 @@ public class PrivateWorkspaceOptionsConfigHelper {
             }
             case SUDO: {
                 if (!NutsBlankable.isBlank(apiVersion) &&
-                        NutsVersion.of(apiVersion).get().compareTo(NutsVersion.of("0.8.1").get())
+                        apiVersion.compareTo(NutsVersion.of("0.8.1").get())
                                 < 0) {
                     //ignore
                 } else {
@@ -168,7 +170,7 @@ public class PrivateWorkspaceOptionsConfigHelper {
             }
             case USER: {
                 if (!NutsBlankable.isBlank(apiVersion) &&
-                        NutsVersion.of(apiVersion).get().compareTo(NutsVersion.of("0.8.1").get())
+                        apiVersion.compareTo(NutsVersion.of("0.8.1").get())
                                 < 0) {
                     //ignore
                 } else {
@@ -183,7 +185,7 @@ public class PrivateWorkspaceOptionsConfigHelper {
     }
 
     private boolean tryFillOptionShort(Enum value, List<String> arguments, boolean forceSingle) {
-        String apiVersion = options.getApiVersion();
+        NutsVersion apiVersion = options.getApiVersion().orNull();
         if (value != null) {
             if (config.isShortOptions()) {
                 if (value instanceof NutsOpenMode) {
@@ -212,7 +214,7 @@ public class PrivateWorkspaceOptionsConfigHelper {
                     switch ((NutsExecutionType) value) {
                         case SYSTEM: {
                             if (!NutsBlankable.isBlank(apiVersion) &&
-                                    NutsVersion.of(apiVersion).get().compareTo(NutsVersion.of("0.8.1").get())
+                                    apiVersion.compareTo(NutsVersion.of("0.8.1").get())
                                             < 0) {
                                 arguments.add("--user-cmd");
                             } else {
@@ -326,9 +328,9 @@ public class PrivateWorkspaceOptionsConfigHelper {
         List<String> arguments = new ArrayList<>();
         boolean implicitAll = isImplicitAll();
         if (config.isExportedOptions() || implicitAll) {
-            fillOption("--java", "-j", options.getJavaCommand(), arguments, false);
-            fillOption("--java-options", "-O", options.getJavaOptions(), arguments, false);
-            String wsString = options.getWorkspace();
+            fillOption("--java", "-j", options.getJavaCommand().orNull(), arguments, false);
+            fillOption("--java-options", "-O", options.getJavaOptions().orNull(), arguments, false);
+            String wsString = options.getWorkspace().orNull();
             if (NutsBlankable.isBlank(wsString)) {
                 //default workspace name
                 wsString = "";
@@ -339,15 +341,15 @@ public class PrivateWorkspaceOptionsConfigHelper {
                 //workspace name
             }
             fillOption("--workspace", "-w", wsString, arguments, false);
-            fillOption("--user", "-u", options.getUserName(), arguments, false);
-            fillOption("--password", "-p", options.getCredentials(), arguments, false);
-            fillOption("--boot-version", "-V", options.getApiVersion(), arguments, false);
-            fillOption("--boot-runtime", null, options.getRuntimeId(), arguments, false);
+            fillOption("--user", "-u", options.getUserName().orNull(), arguments, false);
+            fillOption("--password", "-p", options.getCredentials().orNull(), arguments, false);
+            fillOption("--boot-version", "-V", options.getApiVersion().map(Object::toString).orNull(), arguments, false);
+            fillOption("--boot-runtime", null, options.getRuntimeId().map(Object::toString).orNull(), arguments, false);
 
             if (!(config.isOmitDefaults() && options.getTerminalMode() == null)) {
-                fillOption("--color", "-c", options.getTerminalMode(), NutsTerminalMode.class, arguments, true);
+                fillOption("--color", "-c", options.getTerminalMode().orNull(), NutsTerminalMode.class, arguments, true);
             }
-            NutsLogConfig logConfig = options.getLogConfig();
+            NutsLogConfig logConfig = options.getLogConfig().orNull();
             if (logConfig != null) {
                 if (logConfig.getLogTermLevel() != null && logConfig.getLogTermLevel() == logConfig.getLogFileLevel()) {
                     fillOption("--log-" + logConfig.getLogFileLevel().toString().toLowerCase(), null, true, false, arguments, false);
@@ -366,75 +368,75 @@ public class PrivateWorkspaceOptionsConfigHelper {
                 fillOption("--log-file-base", null, logConfig.getLogFileBase(), arguments, false);
                 fillOption("--log-file-name", null, logConfig.getLogFileName(), arguments, false);
             }
-            fillOption("--exclude-extension", "-X", options.getExcludedExtensions(), ";", arguments, false);
+            fillOption("--exclude-extension", "-X", options.getExcludedExtensions().orElseGet(Collections::emptyList), ";", arguments, false);
 
             if (apiVersionObj == null || apiVersionObj.compareTo("0.8.1") >= 0) {
-                fillOption("--repositories", "-r", options.getRepositories(), ";", arguments, false);
+                fillOption("--repositories", "-r", options.getRepositories().orElseGet(Collections::emptyList), ";", arguments, false);
             } else {
-                fillOption("--repository", "-r", options.getRepositories(), ";", arguments, false);
+                fillOption("--repository", "-r", options.getRepositories().orElseGet(Collections::emptyList), ";", arguments, false);
             }
 
-            fillOption("--global", "-g", options.isGlobal(), false, arguments, false);
-            fillOption("--gui", null, options.isGui(), false, arguments, false);
-            fillOption("--read-only", "-R", options.isReadOnly(), false, arguments, false);
-            fillOption("--trace", "-t", options.isTrace(), true, arguments, false);
-            fillOption("--progress", "-P", options.getProgressOptions(), arguments, true);
-            fillOption("--solver", null, options.getDependencySolver(), arguments, false);
+            fillOption("--global", "-g", options.getGlobal().orNull(), false, arguments, false);
+            fillOption("--gui", null, options.getGui().orNull(), false, arguments, false);
+            fillOption("--read-only", "-R", options.getReadOnly().orNull(), false, arguments, false);
+            fillOption("--trace", "-t", options.getTrace().orNull(), true, arguments, false);
+            fillOption("--progress", "-P", options.getProgressOptions().orNull(), arguments, true);
+            fillOption("--solver", null, options.getDependencySolver().orNull(), arguments, false);
             if (apiVersionObj == null || apiVersionObj.compareTo("0.8.3") >= 0) {
-                fillOption("--debug", null, options.getDebug(), arguments, true);
+                fillOption("--debug", null, options.getDebug().orNull(), arguments, true);
             } else {
-                fillOption("--debug", null, options.getDebug() != null, false, arguments, true);
+                fillOption("--debug", null, options.getDebug().isPresent(), false, arguments, true);
             }
-            fillOption("--skip-companions", "-k", options.isSkipCompanions(), false, arguments, false);
-            fillOption("--skip-welcome", "-K", options.isSkipWelcome(), false, arguments, false);
-            fillOption("--out-line-prefix", null, options.getOutLinePrefix(), arguments, false);
-            fillOption("--skip-boot", "-Q", options.isSkipBoot(), false, arguments, false);
-            fillOption("--cached", null, options.isCached(), true, arguments, false);
-            fillOption("--indexed", null, options.isIndexed(), true, arguments, false);
-            fillOption("--transitive", null, options.isTransitive(), true, arguments, false);
+            fillOption("--skip-companions", "-k", options.getSkipCompanions().orNull(), false, arguments, false);
+            fillOption("--skip-welcome", "-K", options.getSkipWelcome().orElse(false), false, arguments, false);
+            fillOption("--out-line-prefix", null, options.getOutLinePrefix().orNull(), arguments, false);
+            fillOption("--skip-boot", "-Q", options.getSkipBoot().orNull(), false, arguments, false);
+            fillOption("--cached", null, options.getCached().orNull(), true, arguments, false);
+            fillOption("--indexed", null, options.getIndexed().orNull(), true, arguments, false);
+            fillOption("--transitive", null, options.getTransitive().orNull(), true, arguments, false);
             if (apiVersionObj == null || apiVersionObj.compareTo("0.8.1") >= 0) {
-                fillOption("--bot", "-B", options.isBot(), false, arguments, false);
+                fillOption("--bot", "-B", options.getBot().orNull(), false, arguments, false);
             }
-            if (options.getFetchStrategy() != null && options.getFetchStrategy() != NutsFetchStrategy.ONLINE) {
-                fillOption("--fetch", "-f", options.getFetchStrategy(), NutsFetchStrategy.class, arguments, false);
+            if (options.getFetchStrategy().isPresent() && options.getFetchStrategy().orNull() != NutsFetchStrategy.ONLINE) {
+                fillOption("--fetch", "-f", options.getFetchStrategy().orNull(), NutsFetchStrategy.class, arguments, false);
             }
-            fillOption(options.getConfirm(), arguments, false);
-            fillOption(options.getOutputFormat(), arguments, false);
-            for (String outputFormatOption : options.getOutputFormatOptions()) {
+            fillOption(options.getConfirm().orNull(), arguments, false);
+            fillOption(options.getOutputFormat().orNull(), arguments, false);
+            for (String outputFormatOption : options.getOutputFormatOptions().orElseGet(Collections::emptyList)) {
                 fillOption("--output-format-option", "-T", outputFormatOption, arguments, false);
             }
             if (apiVersionObj == null || apiVersionObj.compareTo("0.8.0") >= 0) {
                 fillOption("--expire", "-N",
-                        options.getExpireTime() == null ? null : options.getExpireTime().toString(),
+                        options.getExpireTime().map(Object::toString).orNull(),
                         arguments, false);
-                if (options.getOutLinePrefix() != null
+                if (options.getOutLinePrefix().isPresent()
                         && Objects.equals(options.getOutLinePrefix(), options.getErrLinePrefix())
-                        && options.getOutLinePrefix().length() > 0) {
-                    fillOption("--line-prefix", null, options.getOutLinePrefix(), arguments, false);
+                        && options.getOutLinePrefix().get().length() > 0) {
+                    fillOption("--line-prefix", null, options.getOutLinePrefix().orNull(), arguments, false);
                 } else {
-                    if (options.getOutLinePrefix() != null && options.getOutLinePrefix().length() > 0) {
-                        fillOption("--out-line-prefix", null, options.getOutLinePrefix(), arguments, false);
+                    if (options.getOutLinePrefix().isPresent() && options.getOutLinePrefix().get().length() > 0) {
+                        fillOption("--out-line-prefix", null, options.getOutLinePrefix().orNull(), arguments, false);
                     }
-                    if (options.getErrLinePrefix() != null && options.getErrLinePrefix().length() > 0) {
-                        fillOption("--err-line-prefix", null, options.getErrLinePrefix(), arguments, false);
+                    if (options.getErrLinePrefix().isPresent() && options.getErrLinePrefix().get().length() > 0) {
+                        fillOption("--err-line-prefix", null, options.getErrLinePrefix().orNull(), arguments, false);
                     }
                 }
             }
             if (apiVersionObj == null || apiVersionObj.compareTo("0.8.1") >= 0) {
-                fillOption("--theme", null, options.getTheme(), arguments, false);
+                fillOption("--theme", null, options.getTheme().orNull(), arguments, false);
             }
             if (apiVersionObj == null || apiVersionObj.compareTo("0.8.1") >= 0) {
-                fillOption("--locale", "-L", options.getLocale(), arguments, false);
+                fillOption("--locale", "-L", options.getLocale().orNull(), arguments, false);
             }
         }
 
         if (config.isCreateOptions() || implicitAll) {
-            fillOption("--name", null, NutsUtilStrings.trim(options.getName()), arguments, false);
-            fillOption("--archetype", "-A", options.getArchetype(), arguments, false);
-            fillOption("--store-layout", null, options.getStoreLocationLayout(), NutsOsFamily.class, arguments, false);
-            fillOption("--store-strategy", null, options.getStoreLocationStrategy(), NutsStoreLocationStrategy.class, arguments, false);
-            fillOption("--repo-store-strategy", null, options.getRepositoryStoreLocationStrategy(), NutsStoreLocationStrategy.class, arguments, false);
-            Map<NutsStoreLocation, String> storeLocations = options.getStoreLocations();
+            fillOption("--name", null, NutsUtilStrings.trim(options.getName().orNull()), arguments, false);
+            fillOption("--archetype", "-A", options.getArchetype().orNull(), arguments, false);
+            fillOption("--store-layout", null, options.getStoreLocationLayout().orNull(), NutsOsFamily.class, arguments, false);
+            fillOption("--store-strategy", null, options.getStoreLocationStrategy().orNull(), NutsStoreLocationStrategy.class, arguments, false);
+            fillOption("--repo-store-strategy", null, options.getRepositoryStoreLocationStrategy().orNull(), NutsStoreLocationStrategy.class, arguments, false);
+            Map<NutsStoreLocation, String> storeLocations = options.getStoreLocations().orElseGet(Collections::emptyMap);
             for (NutsStoreLocation location : NutsStoreLocation.values()) {
                 String s = storeLocations.get(location);
                 if (!NutsBlankable.isBlank(s)) {
@@ -442,7 +444,7 @@ public class PrivateWorkspaceOptionsConfigHelper {
                 }
             }
 
-            Map<NutsHomeLocation, String> homeLocations = options.getHomeLocations();
+            Map<NutsHomeLocation, String> homeLocations = options.getHomeLocations().orElseGet(Collections::emptyMap);
             if (homeLocations != null) {
                 for (NutsStoreLocation location : NutsStoreLocation.values()) {
                     String s = homeLocations.get(NutsHomeLocation.of(null, location));
@@ -460,40 +462,40 @@ public class PrivateWorkspaceOptionsConfigHelper {
                 }
             }
             if (apiVersionObj == null || apiVersionObj.compareTo("0.8.0") >= 0) {
-                if (options.getSwitchWorkspace() != null) {
-                    fillOption("--switch", null, options.getSwitchWorkspace(), false, arguments, false);
+                if (options.getSwitchWorkspace().isPresent()) {
+                    fillOption("--switch", null, options.getSwitchWorkspace().orNull(), false, arguments, false);
                 }
             }
         }
 
         if (config.isRuntimeOptions() || implicitAll) {
-            fillOption("--help", "-h", options.isCommandHelp(), false, arguments, false);
-            fillOption("--version", "-v", options.isCommandVersion(), false, arguments, false);
+            fillOption("--help", "-h", options.getCommandHelp().orElse(false), false, arguments, false);
+            fillOption("--version", "-v", options.getCommandVersion().orElse(false), false, arguments, false);
 
-            if (!(config.isOmitDefaults() && (options.getOpenMode() == null || options.getOpenMode() == NutsOpenMode.OPEN_OR_CREATE))) {
-                fillOption(options.getOpenMode(), arguments, false);
+            if (!(config.isOmitDefaults() && (options.getOpenMode().isNotPresent() || options.getOpenMode().orNull() == NutsOpenMode.OPEN_OR_CREATE))) {
+                fillOption(options.getOpenMode().orNull(), arguments, false);
             }
-            fillOption(options.getExecutionType(), arguments, false);
-            fillOption(options.getRunAs(), arguments);
-            fillOption("--reset", "-Z", options.isReset(), false, arguments, false);
-            fillOption("--recover", "-z", options.isRecover(), false, arguments, false);
-            fillOption("--dry", "-D", options.isDry(), false, arguments, false);
+            fillOption(options.getExecutionType().orNull(), arguments, false);
+            fillOption(options.getRunAs().orNull(), arguments);
+            fillOption("--reset", "-Z", options.getReset().orNull(), false, arguments, false);
+            fillOption("--recover", "-z", options.getRecover().orNull(), false, arguments, false);
+            fillOption("--dry", "-D", options.getDry().orNull(), false, arguments, false);
         }
         if (true || implicitAll) {
             if (apiVersionObj == null || apiVersionObj.compareTo("0.8.1") >= 0) {
                 if (options.getCustomOptions() != null) {
-                    arguments.addAll(options.getCustomOptions());
+                    arguments.addAll(options.getCustomOptions().orElseGet(Collections::emptyList));
                 }
             }
         }
         //final options for execution
         if (config.isRuntimeOptions() || implicitAll) {
-            if ((!config.isOmitDefaults() && !options.getApplicationArguments().isEmpty())
-                            || options.getExecutorOptions().size() > 0) {
+            if ((!config.isOmitDefaults() && options.getApplicationArguments().isPresent() && !options.getApplicationArguments().get().isEmpty())
+                            || options.getExecutorOptions().orElseGet(Collections::emptyList).size() > 0) {
                 arguments.add(selectOptionName("--exec", "-e"));
             }
-            arguments.addAll(options.getExecutorOptions());
-            arguments.addAll(options.getApplicationArguments());
+            arguments.addAll(options.getExecutorOptions().orElseGet(Collections::emptyList));
+            arguments.addAll(options.getApplicationArguments().orElseGet(Collections::emptyList));
         }
         return NutsCommandLine.of(arguments);
     }

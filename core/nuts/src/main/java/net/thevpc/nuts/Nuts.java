@@ -41,7 +41,7 @@ public final class Nuts {
     /**
      * current Nuts version
      */
-    public static String version;
+    public static NutsVersion version;
 
     /**
      * private constructor
@@ -54,7 +54,7 @@ public final class Nuts {
      *
      * @return current nuts version
      */
-    public static String getVersion() {
+    public static NutsVersion getVersion() {
         if (version == null) {
             synchronized (Nuts.class) {
                 if (version == null) {
@@ -66,7 +66,7 @@ public final class Nuts {
                                 )
                         );
                     }
-                    version = v;
+                    version = NutsVersion.of(v).get();
                 }
             }
         }

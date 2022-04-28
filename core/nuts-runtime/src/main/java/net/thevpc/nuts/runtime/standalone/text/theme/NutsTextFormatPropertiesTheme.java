@@ -44,7 +44,7 @@ public class NutsTextFormatPropertiesTheme implements NutsTextFormatTheme {
                 }
             } else {
                 NutsPath themeFile = session.locations().getStoreLocation(
-                        NutsId.of("net.thevpc.nuts:nuts-runtime#SHARED").get( session),
+                        NutsId.ofRuntime("SHARED").get(session),
                         NutsStoreLocation.CONFIG
                 ).resolve("themes").resolve(name);
                 if (themeFile.isRegularFile()) {

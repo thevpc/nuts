@@ -256,7 +256,7 @@ public class DefaultNutsRepositoryModel {
                     options.setEnabled(
                             session.boot().getBootOptions().getRepositories() == null
                                     || NutsRepositorySelectorList.ofAll(
-                                            session.boot().getBootOptions().getRepositories(),
+                                            session.boot().getBootOptions().getRepositories().orNull(),
                                     NutsRepositoryDB.of(session),session
                             ).acceptExisting(
                                     conf.getLocation().setName(options.getName())
@@ -268,7 +268,7 @@ public class DefaultNutsRepositoryModel {
                     options.setEnabled(
                             session.boot().getBootOptions().getRepositories() == null
                                     || NutsRepositorySelectorList.ofAll(
-                                            session.boot().getBootOptions().getRepositories(),
+                                            session.boot().getBootOptions().getRepositories().orNull(),
                                     NutsRepositoryDB.of(session),session
                             ).acceptExisting(
                                     conf.getLocation().setName(options.getName())
@@ -336,9 +336,9 @@ public class DefaultNutsRepositoryModel {
             try {
                 NutsElements elem = NutsElements.of(session);
                 Map<String, Object> a_config0 = elem.json().parse(bytes, Map.class);
-                String version = (String) a_config0.get("configVersion");
-                if (version == null) {
-                    version = session.getWorkspace().getApiVersion().toString();
+                NutsVersion version = NutsVersion.of((String) a_config0.get("configVersion")).orNull();
+                if (version == null || version.isBlank()) {
+                    version = session.getWorkspace().getApiVersion();
                 }
                 int buildNumber = CoreNutsUtils.getApiVersionOrdinalNumber(version);
                 if (buildNumber < 506) {
@@ -346,7 +346,7 @@ public class DefaultNutsRepositoryModel {
                 }
                 conf = elem.json().parse(file, NutsRepositoryConfig.class);
             } catch (RuntimeException ex) {
-                if (session.boot().getBootOptions().isRecover()) {
+                if (session.boot().getBootOptions().getRecover().orElse(false)) {
                     onLoadRepositoryError(file, name, null, ex, session);
                 } else {
                     throw ex;

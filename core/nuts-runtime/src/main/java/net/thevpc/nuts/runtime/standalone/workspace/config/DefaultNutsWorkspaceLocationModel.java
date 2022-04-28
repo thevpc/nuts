@@ -55,7 +55,7 @@ public class DefaultNutsWorkspaceLocationModel {
             return cfg().current().getStoreLocation(folderType,session);
         } catch (IllegalStateException stillInitializing) {
             NutsWorkspaceOptions info = NutsWorkspaceExt.of(ws).getModel().bootModel.getBootUserOptions();
-            String h = info.getStoreLocation(folderType);
+            String h = info.getStoreLocation(folderType).orNull();
             return h==null?null:NutsPath.of(h,session);
         }
     }

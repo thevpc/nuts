@@ -30,10 +30,7 @@ import java.io.InputStream;
 import java.io.PrintStream;
 import java.io.Serializable;
 import java.time.Instant;
-import java.util.Arrays;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.function.Supplier;
 
@@ -46,11 +43,10 @@ import java.util.function.Supplier;
  */
 public class DefaultNutsWorkspaceOptions implements Serializable, NutsWorkspaceOptions {
     public static NutsWorkspaceOptions BLANK = new DefaultNutsWorkspaceOptions(
-            null, null, null, null, null, null, null, null, null, null, null, null,
-            null, null, null, null, null, null, null, null, null, null, null, null,
-            null, null, null, null, null, null, null, null, null, null, null, null,
-            null, null, null, null, null, null, null, null, null, null, null, null,
-            null, null, null, null, null, null, null, null, null, null, null, null, null, null
+            null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null,
+            null, null,
+            null,
+            null, null, null
     );
 
     private static final long serialVersionUID = 1;
@@ -64,13 +60,13 @@ public class DefaultNutsWorkspaceOptions implements Serializable, NutsWorkspaceO
      * nuts api version to boot option-type : exported (inherited in child
      * workspaces)
      */
-    private final String apiVersion;
+    private final NutsVersion apiVersion;
 
     /**
      * nuts runtime id (or version) to boot option-type : exported (inherited in
      * child workspaces)
      */
-    private final String runtimeId;
+    private final NutsId runtimeId;
 
     /**
      * option-type : exported (inherited in child workspaces)
@@ -384,56 +380,59 @@ public class DefaultNutsWorkspaceOptions implements Serializable, NutsWorkspaceO
      */
     private final String theme;
 
-    public DefaultNutsWorkspaceOptions(List<String> outputFormatOptions, List<String> customOptions, String apiVersion, String runtimeId, String javaCommand, String javaOptions, String workspace, String outLinePrefix, String errLinePrefix, String name, Boolean skipCompanions, Boolean skipWelcome, Boolean skipBoot, Boolean global, Boolean gui, List<String> excludedExtensions, List<String> repositories, String userName, char[] credentials, NutsTerminalMode terminalMode, Boolean readOnly, Boolean trace, String progressOptions, String dependencySolver, NutsLogConfig logConfig, NutsConfirmationMode confirm, NutsContentType outputFormat, List<String> applicationArguments, NutsOpenMode openMode, Instant creationTime, Boolean dry, Supplier<ClassLoader> classLoaderSupplier, List<String> executorOptions, Boolean recover, Boolean reset, Boolean commandVersion, Boolean commandHelp, String debug, Boolean inherited, NutsExecutionType executionType, NutsRunAs runAs, String archetype, Boolean switchWorkspace, Map<NutsStoreLocation, String> storeLocations, Map<NutsHomeLocation, String> homeLocations, NutsOsFamily storeLocationLayout, NutsStoreLocationStrategy storeLocationStrategy, NutsStoreLocationStrategy repositoryStoreLocationStrategy, NutsFetchStrategy fetchStrategy, Boolean cached, Boolean indexed, Boolean transitive, Boolean bot, InputStream stdin, PrintStream stdout, PrintStream stderr, ExecutorService executorService, Instant expireTime, List<NutsMessage> errors, Boolean skipErrors, String locale, String theme) {
-        this.outputFormatOptions = PrivateNutsUtilCollections.unmodifiableList(outputFormatOptions);
-        this.customOptions = PrivateNutsUtilCollections.unmodifiableList(customOptions);
-        this.apiVersion = NutsUtilStrings.trimToNull(apiVersion);
-        this.runtimeId = NutsUtilStrings.trimToNull(runtimeId);
-        this.javaCommand = NutsUtilStrings.trimToNull(javaCommand);
-        this.javaOptions = NutsUtilStrings.trimToNull(javaOptions);
-        this.workspace = NutsUtilStrings.trimToNull(workspace);
-        this.outLinePrefix = NutsUtilStrings.trimToNull(outLinePrefix);
-        this.errLinePrefix = NutsUtilStrings.trimToNull(errLinePrefix);
-        this.name = NutsUtilStrings.trimToNull(name);
+    public DefaultNutsWorkspaceOptions(NutsVersion apiVersion, NutsId runtimeId, String workspace, String name, String javaCommand, String javaOptions, String outLinePrefix, String errLinePrefix, String userName, char[] credentials, String progressOptions, String dependencySolver, String debug, String archetype, String locale, String theme, NutsLogConfig logConfig, NutsConfirmationMode confirm, NutsContentType outputFormat, NutsOpenMode openMode, NutsExecutionType executionType, NutsStoreLocationStrategy storeLocationStrategy, NutsStoreLocationStrategy repositoryStoreLocationStrategy, NutsOsFamily storeLocationLayout, NutsTerminalMode terminalMode, NutsFetchStrategy fetchStrategy, NutsRunAs runAs, Instant creationTime, Instant expireTime, Boolean skipCompanions, Boolean skipWelcome, Boolean skipBoot, Boolean global, Boolean gui, Boolean readOnly, Boolean trace, Boolean dry, Boolean recover, Boolean reset, Boolean commandVersion, Boolean commandHelp, Boolean inherited, Boolean switchWorkspace, Boolean cached, Boolean indexed, Boolean transitive, Boolean bot, Boolean skipErrors, InputStream stdin, PrintStream stdout, PrintStream stderr, ExecutorService executorService, Supplier<ClassLoader> classLoaderSupplier, List<String> applicationArguments, List<String> outputFormatOptions, List<String> customOptions, List<String> excludedExtensions, List<String> repositories, List<String> executorOptions, List<NutsMessage> errors, Map<NutsStoreLocation, String> storeLocations, Map<NutsHomeLocation, String> homeLocations) {
+        this.outputFormatOptions = PrivateNutsUtilCollections.unmodifiableOrNullList(outputFormatOptions);
+        this.customOptions = PrivateNutsUtilCollections.unmodifiableOrNullList(customOptions);
+        this.excludedExtensions = PrivateNutsUtilCollections.unmodifiableOrNullList(excludedExtensions);
+        this.repositories = PrivateNutsUtilCollections.unmodifiableOrNullList(repositories);
+        this.applicationArguments = PrivateNutsUtilCollections.unmodifiableOrNullList(applicationArguments);
+        this.errors = PrivateNutsUtilCollections.unmodifiableOrNullList(errors);
+        this.executorOptions = PrivateNutsUtilCollections.unmodifiableOrNullList(executorOptions);
+
+        this.storeLocations = PrivateNutsUtilCollections.unmodifiableOrNullMap(storeLocations);
+        this.homeLocations = PrivateNutsUtilCollections.unmodifiableOrNullMap(homeLocations);
+
+        this.apiVersion = apiVersion;
+        this.runtimeId = runtimeId;
+        this.javaCommand = javaCommand;
+        this.javaOptions = javaOptions;
+        this.workspace = workspace;
+        this.outLinePrefix = outLinePrefix;
+        this.errLinePrefix = errLinePrefix;
+        this.name = name;
         this.skipCompanions = skipCompanions;
         this.skipWelcome = skipWelcome;
         this.skipBoot = skipBoot;
         this.global = global;
         this.gui = gui;
-        this.excludedExtensions = PrivateNutsUtilCollections.unmodifiableList(excludedExtensions);
-        this.repositories = PrivateNutsUtilCollections.unmodifiableList(repositories);
-        this.userName = NutsUtilStrings.trimToNull(userName);
+        this.userName = userName;
         this.credentials = credentials == null ? null : Arrays.copyOf(credentials, credentials.length);
         this.terminalMode = terminalMode;
         this.readOnly = readOnly;
         this.trace = trace;
-        this.progressOptions = NutsUtilStrings.trimToNull(progressOptions);
-        this.dependencySolver = NutsUtilStrings.trimToNull(dependencySolver);
-        this.logConfig = logConfig == null ? null : logConfig.copy();
+        this.progressOptions = progressOptions;
+        this.dependencySolver = dependencySolver;
+        this.logConfig = logConfig == null ? null : logConfig.readOnly();
         this.confirm = confirm;
         this.outputFormat = outputFormat;
-        this.applicationArguments = PrivateNutsUtilCollections.unmodifiableList(applicationArguments);
-        this.openMode = openMode == null ? NutsOpenMode.OPEN_OR_CREATE : openMode;
+        this.openMode = openMode;
         this.creationTime = creationTime;
         this.dry = dry;
         this.classLoaderSupplier = classLoaderSupplier;
-        this.executorOptions = PrivateNutsUtilCollections.unmodifiableList(executorOptions);
         this.recover = recover;
         this.reset = reset;
         this.commandVersion = commandVersion;
         this.commandHelp = commandHelp;
-        this.debug = NutsUtilStrings.trimToNull(debug);
+        this.debug = debug;
         this.inherited = inherited;
         this.executionType = executionType;
-        this.runAs = runAs == null ? NutsRunAs.CURRENT_USER : runAs;
-        this.archetype = NutsUtilStrings.trimToNull(archetype);
+        this.runAs = runAs;
+        this.archetype = archetype;
         this.switchWorkspace = switchWorkspace;
-        this.storeLocations = PrivateNutsUtilCollections.unmodifiableMap(storeLocations);
-        this.homeLocations = PrivateNutsUtilCollections.unmodifiableMap(homeLocations);
         this.storeLocationLayout = storeLocationLayout;
         this.storeLocationStrategy = storeLocationStrategy;
         this.repositoryStoreLocationStrategy = repositoryStoreLocationStrategy;
-        this.fetchStrategy = fetchStrategy == null ? NutsFetchStrategy.ONLINE : fetchStrategy;
+        this.fetchStrategy = fetchStrategy;
         this.cached = cached;
         this.indexed = indexed;
         this.transitive = transitive;
@@ -443,459 +442,366 @@ public class DefaultNutsWorkspaceOptions implements Serializable, NutsWorkspaceO
         this.stderr = stderr;
         this.executorService = executorService;
         this.expireTime = expireTime;
-        this.errors = PrivateNutsUtilCollections.unmodifiableList(errors);
         this.skipErrors = skipErrors;
-        this.locale = NutsUtilStrings.trimToNull(locale);
-        this.theme = NutsUtilStrings.trimToNull(theme);
+        this.locale = locale;
+        this.theme = theme;
     }
 
 
     @Override
-    public String getApiVersion() {
-        return apiVersion;
+    public NutsOptional<NutsVersion> getApiVersion() {
+        return NutsOptional.of(apiVersion,s->NutsMessage.cstyle("apiVersion is null"));
     }
 
     @Override
-    public List<String> getApplicationArguments() {
-        return PrivateNutsUtilCollections.unmodifiableList(applicationArguments);
+    public NutsOptional<List<String>> getApplicationArguments() {
+        return NutsOptional.of(applicationArguments);
     }
 
 
     @Override
-    public String getArchetype() {
-        return archetype;
+    public NutsOptional<String> getArchetype() {
+        return NutsOptional.of(archetype);
     }
 
 
     @Override
-    public Supplier<ClassLoader> getClassLoaderSupplier() {
-        return classLoaderSupplier;
+    public NutsOptional<Supplier<ClassLoader>> getClassLoaderSupplier() {
+        return NutsOptional.of(classLoaderSupplier);
     }
 
 
     @Override
-    public NutsConfirmationMode getConfirm() {
-        return confirm;
+    public NutsOptional<NutsConfirmationMode> getConfirm() {
+        return NutsOptional.of(confirm);
     }
 
 
     @Override
-    public boolean isDry() {
-        return dry != null && dry;
+    public NutsOptional<Boolean> getDry() {
+        return NutsOptional.of(dry);
     }
 
-    @Override
-    public Boolean getDry() {
-        return dry;
-    }
-
 
     @Override
-    public Instant getCreationTime() {
-        return creationTime;
+    public NutsOptional<Instant> getCreationTime() {
+        return NutsOptional.of(creationTime);
     }
 
 
     @Override
-    public List<String> getExcludedExtensions() {
-        return PrivateNutsUtilCollections.unmodifiableList(excludedExtensions);
+    public NutsOptional<List<String>> getExcludedExtensions() {
+        return NutsOptional.of(excludedExtensions);
     }
 
 
     @Override
-    public NutsExecutionType getExecutionType() {
-        return executionType;
+    public NutsOptional<NutsExecutionType> getExecutionType() {
+        return NutsOptional.of(executionType);
     }
 
 
     @Override
-    public NutsRunAs getRunAs() {
-        return runAs;
+    public NutsOptional<NutsRunAs> getRunAs() {
+        return NutsOptional.of(runAs);
     }
 
 
     @Override
-    public List<String> getExecutorOptions() {
-        return PrivateNutsUtilCollections.unmodifiableList(executorOptions);
+    public NutsOptional<List<String>> getExecutorOptions() {
+        return NutsOptional.of(executorOptions);
     }
 
-
-    @Override
-    public String getHomeLocation(NutsHomeLocation location) {
-        return homeLocations.get(location);
-    }
 
     @Override
-    public Map<NutsHomeLocation, String> getHomeLocations() {
-        return new LinkedHashMap<>(homeLocations);
+    public NutsOptional<String> getHomeLocation(NutsHomeLocation location) {
+        return NutsOptional.of(homeLocations.get(location));
     }
 
-
     @Override
-    public String getJavaCommand() {
-        return javaCommand;
+    public NutsOptional<Map<NutsHomeLocation, String>> getHomeLocations() {
+        return NutsOptional.of(homeLocations);
     }
 
 
     @Override
-    public String getJavaOptions() {
-        return javaOptions;
+    public NutsOptional<String> getJavaCommand() {
+        return NutsOptional.of(javaCommand);
     }
 
 
     @Override
-    public NutsLogConfig getLogConfig() {
-        return logConfig;
+    public NutsOptional<String> getJavaOptions() {
+        return NutsOptional.of(javaOptions);
     }
 
 
     @Override
-    public String getName() {
-        return name;
+    public NutsOptional<NutsLogConfig> getLogConfig() {
+        return NutsOptional.of(logConfig);
     }
 
 
     @Override
-    public NutsOpenMode getOpenMode() {
-        return openMode;
+    public NutsOptional<String> getName() {
+        return NutsOptional.of(name);
     }
 
 
     @Override
-    public NutsContentType getOutputFormat() {
-        return outputFormat;
+    public NutsOptional<NutsOpenMode> getOpenMode() {
+        return NutsOptional.of(openMode);
     }
 
 
     @Override
-    public List<String> getOutputFormatOptions() {
-        return PrivateNutsUtilCollections.unmodifiableList(outputFormatOptions);
+    public NutsOptional<NutsContentType> getOutputFormat() {
+        return NutsOptional.of(outputFormat);
     }
 
 
     @Override
-    public char[] getCredentials() {
-        return credentials == null ? null : Arrays.copyOf(credentials, credentials.length);
+    public NutsOptional<List<String>> getOutputFormatOptions() {
+        return NutsOptional.of(outputFormatOptions);
     }
 
-
-    @Override
-    public NutsStoreLocationStrategy getRepositoryStoreLocationStrategy() {
-        return repositoryStoreLocationStrategy;
-    }
 
     @Override
-    public String getRuntimeId() {
-        return runtimeId;
+    public NutsOptional<char[]> getCredentials() {
+        return NutsOptional.of(credentials == null ? null : Arrays.copyOf(credentials, credentials.length));
     }
-
 
-    @Override
-    public String getStoreLocation(NutsStoreLocation folder) {
-        return storeLocations.get(folder);
-    }
 
     @Override
-    public NutsOsFamily getStoreLocationLayout() {
-        return storeLocationLayout;
+    public NutsOptional<NutsStoreLocationStrategy> getRepositoryStoreLocationStrategy() {
+        return NutsOptional.of(repositoryStoreLocationStrategy);
     }
 
-
     @Override
-    public NutsStoreLocationStrategy getStoreLocationStrategy() {
-        return storeLocationStrategy;
+    public NutsOptional<NutsId> getRuntimeId() {
+        return NutsOptional.of(runtimeId);
     }
 
 
     @Override
-    public Map<NutsStoreLocation, String> getStoreLocations() {
-        return new LinkedHashMap<>(storeLocations);
+    public NutsOptional<String> getStoreLocation(NutsStoreLocation folder) {
+        return NutsOptional.of(storeLocations.get(folder));
     }
 
-
     @Override
-    public NutsTerminalMode getTerminalMode() {
-        return terminalMode;
+    public NutsOptional<NutsOsFamily> getStoreLocationLayout() {
+        return NutsOptional.of(storeLocationLayout);
     }
 
 
     @Override
-    public List<String> getRepositories() {
-        return PrivateNutsUtilCollections.unmodifiableList(repositories);
+    public NutsOptional<NutsStoreLocationStrategy> getStoreLocationStrategy() {
+        return NutsOptional.of(storeLocationStrategy);
     }
 
 
     @Override
-    public String getUserName() {
-        return userName;
+    public NutsOptional<Map<NutsStoreLocation, String>> getStoreLocations() {
+        return NutsOptional.of(storeLocations);
     }
 
-    @Override
-    public String getWorkspace() {
-        return workspace;
-    }
 
     @Override
-    public String getDebug() {
-        return debug;
+    public NutsOptional<NutsTerminalMode> getTerminalMode() {
+        return NutsOptional.of(terminalMode);
     }
-
 
-    @Override
-    public boolean isGlobal() {
-        return global != null && global;
-    }
 
     @Override
-    public Boolean getGlobal() {
-        return global;
+    public NutsOptional<List<String>> getRepositories() {
+        return NutsOptional.of(repositories);
     }
 
 
     @Override
-    public boolean isGui() {
-        return gui != null && gui;
+    public NutsOptional<String> getUserName() {
+        return NutsOptional.of(userName);
     }
 
     @Override
-    public Boolean getGui() {
-        return gui;
+    public NutsOptional<String> getWorkspace() {
+        return NutsOptional.of(workspace);
     }
 
-
-    @Override
-    public boolean isInherited() {
-        return inherited != null && inherited;
-    }
-
     @Override
-    public Boolean getInherited() {
-        return inherited;
+    public NutsOptional<String> getDebug() {
+        return NutsOptional.of(debug);
     }
-
 
-    @Override
-    public boolean isReadOnly() {
-        return readOnly != null && readOnly;
-    }
 
     @Override
-    public Boolean getReadOnly() {
-        return readOnly;
+    public NutsOptional<Boolean> getGlobal() {
+        return NutsOptional.of(global);
     }
 
 
     @Override
-    public boolean isRecover() {
-        return recover != null && recover;
+    public NutsOptional<Boolean> getGui() {
+        return NutsOptional.of(gui);
     }
 
-    @Override
-    public Boolean getRecover() {
-        return recover;
-    }
-
-
-    @Override
-    public boolean isReset() {
-        return reset != null && reset;
-    }
 
     @Override
-    public Boolean getReset() {
-        return reset;
+    public NutsOptional<Boolean> getInherited() {
+        return NutsOptional.of(inherited);
     }
 
 
-    @Override
-    public boolean isCommandVersion() {
-        return commandVersion != null && commandVersion;
-    }
 
     @Override
-    public Boolean getCommandVersion() {
-        return commandVersion;
+    public NutsOptional<Boolean> getReadOnly() {
+        return NutsOptional.of(readOnly);
     }
 
-    @Override
-    public boolean isCommandHelp() {
-        return commandHelp != null && commandHelp;
-    }
 
     @Override
-    public Boolean getCommandHelp() {
-        return commandHelp;
+    public NutsOptional<Boolean> getRecover() {
+        return NutsOptional.of(recover);
     }
 
-    @Override
-    public boolean isSkipCompanions() {
-        return skipCompanions != null && skipCompanions;
-    }
 
     @Override
-    public Boolean getSkipCompanions() {
-        return skipCompanions;
+    public NutsOptional<Boolean> getReset() {
+        return NutsOptional.of(reset);
     }
 
 
     @Override
-    public boolean isSkipWelcome() {
-        return skipWelcome != null && skipWelcome;
+    public NutsOptional<Boolean> getCommandVersion() {
+        return NutsOptional.of(commandVersion);
     }
 
     @Override
-    public Boolean getSkipWelcome() {
-        return skipWelcome;
+    public NutsOptional<Boolean> getCommandHelp() {
+        return NutsOptional.of(commandHelp);
     }
 
     @Override
-    public String getOutLinePrefix() {
-        return outLinePrefix;
+    public NutsOptional<Boolean> getSkipCompanions() {
+        return NutsOptional.of(skipCompanions);
     }
-
 
-    @Override
-    public String getErrLinePrefix() {
-        return errLinePrefix;
-    }
 
     @Override
-    public boolean isSkipBoot() {
-        return skipBoot != null && skipBoot;
+    public NutsOptional<Boolean> getSkipWelcome() {
+        return NutsOptional.of(skipWelcome);
     }
 
     @Override
-    public Boolean getSkipBoot() {
-        return skipBoot;
+    public NutsOptional<String> getOutLinePrefix() {
+        return NutsOptional.of(outLinePrefix);
     }
-
 
-    @Override
-    public boolean isTrace() {
-        return trace == null || trace;
-    }
 
     @Override
-    public Boolean getTrace() {
-        return trace;
-    }
-
-    public String getProgressOptions() {
-        return progressOptions;
+    public NutsOptional<String> getErrLinePrefix() {
+        return NutsOptional.of(errLinePrefix);
     }
 
-    public boolean isCached() {
-        return cached == null || cached;
-    }
-
     @Override
-    public Boolean getCached() {
-        return cached;
-    }
-
-    public boolean isIndexed() {
-        return indexed == null || indexed;
+    public NutsOptional<Boolean> getSkipBoot() {
+        return NutsOptional.of(skipBoot);
     }
 
-    @Override
-    public Boolean getIndexed() {
-        return indexed;
-    }
 
     @Override
-    public boolean isTransitive() {
-        return transitive == null || transitive;
+    public NutsOptional<Boolean> getTrace() {
+        return NutsOptional.of(trace);
     }
 
-    @Override
-    public Boolean getTransitive() {
-        return transitive;
+    public NutsOptional<String> getProgressOptions() {
+        return NutsOptional.of(progressOptions);
     }
 
     @Override
-    public boolean isBot() {
-        return bot != null && bot;
+    public NutsOptional<Boolean> getCached() {
+        return NutsOptional.of(cached);
     }
 
     @Override
-    public Boolean getBot() {
-        return bot;
+    public NutsOptional<Boolean> getIndexed() {
+        return NutsOptional.of(indexed);
     }
 
     @Override
-    public NutsFetchStrategy getFetchStrategy() {
-        return fetchStrategy;
+    public NutsOptional<Boolean> getTransitive() {
+        return NutsOptional.of(transitive);
     }
 
     @Override
-    public InputStream getStdin() {
-        return stdin;
+    public NutsOptional<Boolean> getBot() {
+        return NutsOptional.of(bot);
     }
 
     @Override
-    public PrintStream getStdout() {
-        return stdout;
+    public NutsOptional<NutsFetchStrategy> getFetchStrategy() {
+        return NutsOptional.of(fetchStrategy);
     }
 
     @Override
-    public PrintStream getStderr() {
-        return stderr;
+    public NutsOptional<InputStream> getStdin() {
+        return NutsOptional.of(stdin);
     }
 
     @Override
-    public ExecutorService getExecutorService() {
-        return executorService;
+    public NutsOptional<PrintStream> getStdout() {
+        return NutsOptional.of(stdout);
     }
 
     @Override
-    public Instant getExpireTime() {
-        return expireTime;
+    public NutsOptional<PrintStream> getStderr() {
+        return NutsOptional.of(stderr);
     }
 
     @Override
-    public boolean isSkipErrors() {
-        return skipErrors != null && skipErrors;
+    public NutsOptional<ExecutorService> getExecutorService() {
+        return NutsOptional.of(executorService);
     }
 
     @Override
-    public Boolean getSkipErrors() {
-        return skipErrors;
+    public NutsOptional<Instant> getExpireTime() {
+        return NutsOptional.of(expireTime);
     }
 
     @Override
-    public boolean isSwitchWorkspace() {
-        return switchWorkspace != null && switchWorkspace;
+    public NutsOptional<Boolean> getSkipErrors() {
+        return NutsOptional.of(skipErrors);
     }
 
     @Override
-    public Boolean getSwitchWorkspace() {
-        return switchWorkspace;
+    public NutsOptional<Boolean> getSwitchWorkspace() {
+        return NutsOptional.of(switchWorkspace);
     }
 
     @Override
-    public List<NutsMessage> getErrors() {
-        return PrivateNutsUtilCollections.unmodifiableList(errors);
+    public NutsOptional<List<NutsMessage>> getErrors() {
+        return NutsOptional.of(errors);
     }
 
     @Override
-    public List<String> getCustomOptions() {
-        return PrivateNutsUtilCollections.unmodifiableList(customOptions);
+    public NutsOptional<List<String>> getCustomOptions() {
+        return NutsOptional.of(customOptions);
     }
 
     @Override
-    public String getLocale() {
-        return locale;
+    public NutsOptional<String> getLocale() {
+        return NutsOptional.of(locale);
     }
 
     @Override
-    public String getTheme() {
-        return theme;
+    public NutsOptional<String> getTheme() {
+        return NutsOptional.of(theme);
     }
 
 
     @Override
-    public String getDependencySolver() {
-        return dependencySolver;
+    public NutsOptional<String> getDependencySolver() {
+        return NutsOptional.of(dependencySolver);
     }
 
     @Override

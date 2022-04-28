@@ -30,7 +30,6 @@ import net.thevpc.nuts.spi.NutsExecutorComponent;
 import net.thevpc.nuts.spi.NutsSupportLevelContext;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -65,7 +64,7 @@ public class ArtifactExecutorComponent implements NutsExecutorComponent {
 
     public void execHelper(NutsExecutionContext executionContext,boolean dry) {
         NutsDefinition nutMainFile = executionContext.getDefinition();
-        List<String> execArgs = executionContext.getExecutorArguments();
+        List<String> execArgs = executionContext.getExecutorOptions();
         List<String> appArgs = executionContext.getArguments();
 
         List<String> app = new ArrayList<>();

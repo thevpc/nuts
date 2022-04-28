@@ -65,14 +65,15 @@ final class PrivateNutsBootConfigLoader {
         PrivateNutsJsonParser parser = new PrivateNutsJsonParser(new StringReader(json));
         Map<String, Object> jsonObject = parser.parseObject();
         NutsWorkspaceBootOptionsBuilder c = new DefaultNutsWorkspaceBootOptionsBuilder();
-        String configVersion = (String) jsonObject.get("configVersion");
+        NutsVersion configVersion = NutsVersion.of((String) jsonObject.get("configVersion")).nonBlank()
+                .orElseGetOptional(()->NutsVersion.of((String) jsonObject.get("createApiVersion")))
+                .orElse(NutsVersion.BLANK);
 
-        if (configVersion == null) {
-            configVersion = (String) jsonObject.get("createApiVersion");
-        }
-        if (configVersion == null) {
+        if (configVersion.isBlank()) {
             configVersion = Nuts.getVersion();
             bLog.log(Level.FINEST, NutsLogVerb.FAIL, NutsMessage.jstyle("unable to detect config version. Fallback to {0}", configVersion));
+        }
+        if (configVersion == null) {
         }
         int buildNumber = getApiVersionOrdinalNumber(configVersion);
         if (buildNumber <= 501) {
@@ -91,10 +92,10 @@ final class PrivateNutsBootConfigLoader {
         return c;
     }
 
-    private static int getApiVersionOrdinalNumber(String s) {
+    private static int getApiVersionOrdinalNumber(NutsVersion s) {
         try {
             int a = 0;
-            for (String part : s.split("\\.")) {
+            for (String part : s.toString().split("\\.")) {
                 a = a * 100 + NutsApiUtils.parseInt(part, 0, 0);
             }
             return a;
@@ -197,8 +198,8 @@ final class PrivateNutsBootConfigLoader {
         config.setUuid((String) jsonObject.get("uuid"));
         config.setName((String) jsonObject.get("name"));
         config.setWorkspace((String) jsonObject.get("workspace"));
-        config.setApiVersion((String) jsonObject.get("apiVersion"));
-        String runtimeId = (String) jsonObject.get("runtimeId");
+        config.setApiVersion(NutsVersion.of((String) jsonObject.get("apiVersion")).orNull());
+        NutsId runtimeId = NutsId.of((String) jsonObject.get("runtimeId")).orNull();
         config.setRuntimeId(runtimeId);
         config.setJavaCommand((String) jsonObject.get("javaCommand"));
         config.setJavaOptions((String) jsonObject.get("javaOptions"));
@@ -231,8 +232,8 @@ final class PrivateNutsBootConfigLoader {
         config.setUuid((String) jsonObject.get("uuid"));
         config.setName((String) jsonObject.get("name"));
         config.setWorkspace((String) jsonObject.get("workspace"));
-        config.setApiVersion((String) jsonObject.get("bootApiVersion"));
-        String runtimeId = (String) jsonObject.get("bootRuntime");
+        config.setApiVersion(NutsVersion.of((String) jsonObject.get("bootApiVersion")).orNull());
+        NutsId runtimeId = NutsId.of((String) jsonObject.get("bootRuntime")).orNull();
         config.setRuntimeId(runtimeId);
         config.setJavaCommand((String) jsonObject.get("bootJavaCommand"));
         config.setJavaOptions((String) jsonObject.get("bootJavaOptions"));

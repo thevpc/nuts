@@ -97,8 +97,8 @@ public final class DefaultNutsWorkspaceBootOptionsBuilder extends DefaultNutsWor
     }
 
     @Override
-    public NutsWorkspaceOptions getUserOptions() {
-        return userOptions;
+    public NutsOptional<NutsWorkspaceOptions> getUserOptions() {
+        return NutsOptional.of(userOptions);
     }
 
     @Override
@@ -120,18 +120,23 @@ public final class DefaultNutsWorkspaceBootOptionsBuilder extends DefaultNutsWor
     @Override
     public NutsWorkspaceBootOptions build() {
         return new DefaultNutsWorkspaceBootOptions(
-                getOutputFormatOptions(), getCustomOptions(), getApiVersion(), getRuntimeId(), getJavaCommand(), getJavaOptions()
-                , getWorkspace(), getOutLinePrefix(), getErrLinePrefix(), getName(), getSkipCompanions(), getSkipWelcome(), getSkipBoot()
-                , getGlobal(), getGui(), getExcludedExtensions(), getRepositories(), getUserName(), getCredentials(), getTerminalMode()
-                , getReadOnly(), getTrace(), getProgressOptions(), getDependencySolver(), getLogConfig(), getConfirm(), getOutputFormat()
-                , getApplicationArguments(), getOpenMode(), getCreationTime(), getDry(), getClassLoaderSupplier(), getExecutorOptions()
-                , getRecover(), getReset(), getCommandVersion(), getCommandHelp(), getDebug(), getCommandHelp(), getExecutionType()
-                , getRunAs(), getArchetype(), getSwitchWorkspace(), getStoreLocations(), getHomeLocations(), getStoreLocationLayout()
-                , getStoreLocationStrategy(), getRepositoryStoreLocationStrategy(), getFetchStrategy(), getCached(), getCached()
-                , getTransitive(), getBot(), getStdin(), getStdout(), getStdout(), getExecutorService(), getExpireTime(), getErrors()
-                , getSkipErrors(), getLocale(), getTheme(), getBootRepositories(), getRuntimeBootDependencyNode(), getExtensionBootDescriptors(),
-                getExtensionBootDependencyNodes(), getBootWorkspaceFactory(), getClassWorldURLs(), getClassWorldLoader(), getUuid()
-                , getExtensionsSet(), getRuntimeBootDescriptor(),getUserOptions()
+                getOutputFormatOptions().orNull(), getCustomOptions().orNull(), getApiVersion().orNull(), getRuntimeId().orNull(), getJavaCommand().orNull()
+                , getJavaOptions().orNull(), getWorkspace().orNull(), getOutLinePrefix().orNull(), getErrLinePrefix().orNull()
+                , getName().orNull(), getSkipCompanions().orNull(), getSkipWelcome().orNull(), getSkipBoot().orNull()
+                , getGlobal().orNull(), getGui().orNull(), getExcludedExtensions().orNull(), getRepositories().orNull(), getUserName().orNull()
+                , getCredentials().orNull(), getTerminalMode().orNull(), getReadOnly().orNull(), getTrace().orNull(), getProgressOptions().orNull()
+                , getDependencySolver().orNull(), getLogConfig().orNull(), getConfirm().orNull(), getOutputFormat().orNull()
+                , getApplicationArguments().orNull(), getOpenMode().orNull(), getCreationTime().orNull(), getDry().orNull()
+                , getClassLoaderSupplier().orNull(), getExecutorOptions().orNull(), getRecover().orNull(), getReset().orNull()
+                , getCommandVersion().orNull(), getCommandHelp().orNull(), getDebug().orNull(), getCommandHelp().orNull()
+                , getExecutionType().orNull(), getRunAs().orNull(), getArchetype().orNull(), getSwitchWorkspace().orNull()
+                , getStoreLocations().orNull(), getHomeLocations().orNull(), getStoreLocationLayout().orNull(), getStoreLocationStrategy().orNull()
+                , getRepositoryStoreLocationStrategy().orNull(), getFetchStrategy().orNull(), getCached().orNull(), getCached().orNull()
+                , getTransitive().orNull(), getBot().orNull(), getStdin().orNull(), getStdout().orNull(), getStdout().orNull()
+                , getExecutorService().orNull(), getExpireTime().orNull(), getErrors().orNull(), getSkipErrors().orNull(), getLocale().orNull()
+                , getTheme().orNull(), getUuid().orNull(), getBootRepositories().orNull(), getRuntimeBootDependencyNode().orNull(), getExtensionBootDescriptors().orNull()
+                , getExtensionBootDependencyNodes().orNull(), getClassWorldURLs().orNull(), getExtensionsSet().orNull(), getBootWorkspaceFactory().orNull(), getRuntimeBootDescriptor().orNull(), getClassWorldLoader().orNull()
+                , getUserOptions().orNull()
         );
     }
 
@@ -139,23 +144,23 @@ public final class DefaultNutsWorkspaceBootOptionsBuilder extends DefaultNutsWor
         super.setAll(other);
         if (other instanceof DefaultNutsWorkspaceBootOptionsBuilder) {
             DefaultNutsWorkspaceBootOptionsBuilder b = (DefaultNutsWorkspaceBootOptionsBuilder) other;
-            setBootRepositories(b.getBootRepositories());
-            setRuntimeBootDependencyNode(b.getRuntimeBootDependencyNode());
-            setExtensionBootDescriptors(b.getExtensionBootDescriptors());
-            setExtensionBootDependencyNodes(b.getExtensionBootDependencyNodes());
-            setBootWorkspaceFactory(b.getBootWorkspaceFactory());
-            setClassWorldURLs(b.getClassWorldURLs());
-            setClassWorldLoader(b.getClassWorldLoader());
-            setUuid(b.getUuid());
-            setExtensionsSet(b.getExtensionsSet());
-            setRuntimeBootDescriptor(b.getRuntimeBootDescriptor());
-            setUserOptions(b.getUserOptions());
+            setBootRepositories(b.getBootRepositories().orNull());
+            setRuntimeBootDependencyNode(b.getRuntimeBootDependencyNode().orNull());
+            setExtensionBootDescriptors(b.getExtensionBootDescriptors().orNull());
+            setExtensionBootDependencyNodes(b.getExtensionBootDependencyNodes().orNull());
+            setBootWorkspaceFactory(b.getBootWorkspaceFactory().orNull());
+            setClassWorldURLs(b.getClassWorldURLs().orNull());
+            setClassWorldLoader(b.getClassWorldLoader().orNull());
+            setUuid(b.getUuid().orNull());
+            setExtensionsSet(b.getExtensionsSet().orNull());
+            setRuntimeBootDescriptor(b.getRuntimeBootDescriptor().orNull());
+            setUserOptions(b.getUserOptions().orNull());
         }
         return this;
     }
 
-    public String getBootRepositories() {
-        return bootRepositories;
+    public NutsOptional<String> getBootRepositories() {
+        return NutsOptional.of(bootRepositories);
     }
 
     @Override
@@ -164,8 +169,8 @@ public final class DefaultNutsWorkspaceBootOptionsBuilder extends DefaultNutsWor
         return this;
     }
 
-    public NutsClassLoaderNode getRuntimeBootDependencyNode() {
-        return runtimeBootDependencyNode;
+    public NutsOptional<NutsClassLoaderNode> getRuntimeBootDependencyNode() {
+        return NutsOptional.of(runtimeBootDependencyNode);
     }
 
     @Override
@@ -174,8 +179,8 @@ public final class DefaultNutsWorkspaceBootOptionsBuilder extends DefaultNutsWor
         return this;
     }
 
-    public List<NutsDescriptor> getExtensionBootDescriptors() {
-        return extensionBootDescriptors;
+    public NutsOptional<List<NutsDescriptor>> getExtensionBootDescriptors() {
+        return NutsOptional.of(extensionBootDescriptors);
     }
 
     @Override
@@ -184,8 +189,8 @@ public final class DefaultNutsWorkspaceBootOptionsBuilder extends DefaultNutsWor
         return this;
     }
 
-    public List<NutsClassLoaderNode> getExtensionBootDependencyNodes() {
-        return extensionBootDependencyNodes;
+    public NutsOptional<List<NutsClassLoaderNode>> getExtensionBootDependencyNodes() {
+        return NutsOptional.of(extensionBootDependencyNodes);
     }
 
     @Override
@@ -194,8 +199,8 @@ public final class DefaultNutsWorkspaceBootOptionsBuilder extends DefaultNutsWor
         return this;
     }
 
-    public NutsBootWorkspaceFactory getBootWorkspaceFactory() {
-        return bootWorkspaceFactory;
+    public NutsOptional<NutsBootWorkspaceFactory> getBootWorkspaceFactory() {
+        return NutsOptional.of(bootWorkspaceFactory);
     }
 
     @Override
@@ -204,8 +209,8 @@ public final class DefaultNutsWorkspaceBootOptionsBuilder extends DefaultNutsWor
         return this;
     }
 
-    public List<URL> getClassWorldURLs() {
-        return classWorldURLs;
+    public NutsOptional<List<URL>> getClassWorldURLs() {
+        return NutsOptional.of(classWorldURLs);
     }
 
     @Override
@@ -214,8 +219,8 @@ public final class DefaultNutsWorkspaceBootOptionsBuilder extends DefaultNutsWor
         return this;
     }
 
-    public ClassLoader getClassWorldLoader() {
-        return classWorldLoader;
+    public NutsOptional<ClassLoader> getClassWorldLoader() {
+        return NutsOptional.of(classWorldLoader);
     }
 
     @Override
@@ -224,8 +229,8 @@ public final class DefaultNutsWorkspaceBootOptionsBuilder extends DefaultNutsWor
         return this;
     }
 
-    public String getUuid() {
-        return uuid;
+    public NutsOptional<String> getUuid() {
+        return NutsOptional.of(uuid);
     }
 
     @Override
@@ -234,8 +239,8 @@ public final class DefaultNutsWorkspaceBootOptionsBuilder extends DefaultNutsWor
         return this;
     }
 
-    public Set<String> getExtensionsSet() {
-        return extensionsSet;
+    public NutsOptional<Set<String>> getExtensionsSet() {
+        return NutsOptional.of(extensionsSet);
     }
 
     @Override
@@ -244,13 +249,73 @@ public final class DefaultNutsWorkspaceBootOptionsBuilder extends DefaultNutsWor
         return this;
     }
 
-    public NutsDescriptor getRuntimeBootDescriptor() {
-        return runtimeBootDescriptor;
+    public NutsOptional<NutsDescriptor> getRuntimeBootDescriptor() {
+        return NutsOptional.of(runtimeBootDescriptor);
     }
 
     @Override
     public DefaultNutsWorkspaceBootOptionsBuilder setRuntimeBootDescriptor(NutsDescriptor runtimeBootDescriptor) {
         this.runtimeBootDescriptor = runtimeBootDescriptor;
+        return this;
+    }
+
+    @Override
+    public NutsWorkspaceOptionsBuilder setAll(NutsWorkspaceOptions other) {
+        super.setAll(other);
+        if (other instanceof NutsWorkspaceBootOptions) {
+            NutsWorkspaceBootOptions o = (NutsWorkspaceBootOptions) other;
+            setUserOptions(o.getUserOptions().orNull());
+            setBootRepositories(o.getBootRepositories().orNull());
+            setRuntimeBootDependencyNode(o.getRuntimeBootDependencyNode().orNull());
+            setExtensionBootDescriptors(o.getExtensionBootDescriptors().orNull());
+            setExtensionBootDependencyNodes(o.getExtensionBootDependencyNodes().orNull());
+            setBootWorkspaceFactory(o.getBootWorkspaceFactory().orNull());
+            setClassWorldURLs(o.getClassWorldURLs().orNull());
+            setClassWorldLoader(o.getClassWorldLoader().orNull());
+            setUuid(o.getUuid().orNull());
+            setExtensionsSet(o.getExtensionsSet().orNull());
+            setRuntimeBootDescriptor(o.getRuntimeBootDescriptor().orNull());
+        }
+        return this;
+    }
+
+    @Override
+    public NutsWorkspaceOptionsBuilder setAllPresent(NutsWorkspaceOptions other) {
+        super.setAllPresent(other);
+        if (other instanceof NutsWorkspaceBootOptions) {
+            NutsWorkspaceBootOptions o = (NutsWorkspaceBootOptions) other;
+            if (o.getUserOptions().isPresent()) {
+                setUserOptions(o.getUserOptions().orNull());
+            }
+            setBootRepositories(o.getBootRepositories().orNull());
+            if (o.getUserOptions().isPresent()) {
+                setRuntimeBootDependencyNode(o.getRuntimeBootDependencyNode().orNull());
+            }
+            if (o.getUserOptions().isPresent()) {
+                setExtensionBootDescriptors(o.getExtensionBootDescriptors().orNull());
+            }
+            if (o.getUserOptions().isPresent()) {
+                setExtensionBootDependencyNodes(o.getExtensionBootDependencyNodes().orNull());
+            }
+            if (o.getUserOptions().isPresent()) {
+                setBootWorkspaceFactory(o.getBootWorkspaceFactory().orNull());
+            }
+            if (o.getUserOptions().isPresent()) {
+                setClassWorldURLs(o.getClassWorldURLs().orNull());
+            }
+            if (o.getUserOptions().isPresent()) {
+                setClassWorldLoader(o.getClassWorldLoader().orNull());
+            }
+            if (o.getUserOptions().isPresent()) {
+                setUuid(o.getUuid().orNull());
+            }
+            if (o.getUserOptions().isPresent()) {
+                setExtensionsSet(o.getExtensionsSet().orNull());
+            }
+            if (o.getUserOptions().isPresent()) {
+                setRuntimeBootDescriptor(o.getRuntimeBootDescriptor().orNull());
+            }
+        }
         return this;
     }
 

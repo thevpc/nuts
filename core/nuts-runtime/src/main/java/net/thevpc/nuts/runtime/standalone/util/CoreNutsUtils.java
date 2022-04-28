@@ -418,8 +418,9 @@ public class CoreNutsUtils {
         return aa;
     }
 
-    public static int getApiVersionOrdinalNumber(String s) {
+    public static int getApiVersionOrdinalNumber(NutsVersion ss) {
         try {
+            String s=ss.getValue();
             int qualifierIndex = s.indexOf('-');
             if(qualifierIndex>=0){
                 s=s.substring(0,qualifierIndex);
@@ -545,13 +546,13 @@ public class CoreNutsUtils {
     public static List<NutsId> resolveNutsApiIdsFromDependencyList(List<NutsDependency> deps, NutsSession session) {
         return deps.stream()
                 .map(NutsDependency::toId)
-                .filter(x -> x.getShortName().equals("net.thevpc.nuts:nuts"))
+                .filter(x -> NutsId.ofApi("").get().equalsShortId(x))
                 .distinct().collect(Collectors.toList());
     }
 
     public static List<NutsId> resolveNutsApiIdsFromIdList(List<NutsId> deps, NutsSession session) {
         return deps.stream()
-                .filter(x -> x.getShortName().equals("net.thevpc.nuts:nuts"))
+                .filter(x -> NutsId.ofApi("").get().equalsShortId(x))
                 .distinct().collect(Collectors.toList());
     }
 

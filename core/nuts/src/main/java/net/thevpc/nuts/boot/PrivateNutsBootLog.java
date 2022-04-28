@@ -108,7 +108,8 @@ public class PrivateNutsBootLog implements NutsLogger {
         if (options == null || options.getLogConfig() == null) {
             return false;
         }
-        return lvl.intValue() >= options.getLogConfig().getLogTermLevel().intValue();
+        return lvl.intValue() >= options.getLogConfig().orElseGet(NutsLogConfig::new)
+                .getLogTermLevel().intValue();
     }
 
     public void setOptions(NutsWorkspaceOptions options) {

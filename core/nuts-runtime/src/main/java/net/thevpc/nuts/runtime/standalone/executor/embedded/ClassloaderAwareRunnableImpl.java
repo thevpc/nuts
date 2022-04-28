@@ -27,13 +27,13 @@ public class ClassloaderAwareRunnableImpl extends ClassloaderAwareRunnable {
                     joptions.getAppArgs().toArray(new String[0]),session
             );
             List<String> appArgs;
-            if (o.getApplicationArguments().size() == 0) {
-                if (o.isSkipWelcome()) {
+            if (o.getApplicationArguments().get().size() == 0) {
+                if (o.getSkipWelcome().orElse(false)) {
                     return null;
                 }
                 appArgs = Arrays.asList(new String[]{"welcome"});
             } else {
-                appArgs = o.getApplicationArguments();
+                appArgs = o.getApplicationArguments().get();
             }
             session.configure(o.build());
             Object oldId = NutsApplications.getSharedMap().get("nuts.embedded.application.id");
@@ -41,8 +41,8 @@ public class ClassloaderAwareRunnableImpl extends ClassloaderAwareRunnable {
             try {
                 session.exec()
                         .addCommand(appArgs)
-                        .addExecutorOptions(o.getExecutorOptions())
-                        .setExecutionType(o.getExecutionType())
+                        .addExecutorOptions(o.getExecutorOptions().orNull())
+                        .setExecutionType(o.getExecutionType().orNull())
                         .setFailFast(true)
                         .setDry(session.isDry())
                         .run();

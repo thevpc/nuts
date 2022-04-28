@@ -42,9 +42,9 @@ public class DefaultNutsPrintStreams implements NutsPrintStreams {
             return null;
         }
         NutsWorkspaceOptions woptions = session.boot().setSession(session).getBootOptions();
-        NutsTerminalMode expectedMode0 = woptions.getTerminalMode();
+        NutsTerminalMode expectedMode0 = woptions.getTerminalMode().orNull();
         if (expectedMode0 == null) {
-            if (woptions.isBot()) {
+            if (woptions.getBot().orElse(false)) {
                 expectedMode0 = NutsTerminalMode.FILTERED;
             } else {
                 expectedMode0 = NutsTerminalMode.FORMATTED;

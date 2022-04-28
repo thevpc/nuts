@@ -27,6 +27,7 @@ import net.thevpc.nuts.*;
 
 import java.io.*;
 import java.net.URL;
+import java.nio.file.Paths;
 
 /**
  * Created by vpc on 1/15/17.
@@ -59,7 +60,7 @@ public final class PrivateNutsUtils {
         } else {
             String p = null;
             try {
-                p = new File(workspaceName).getCanonicalFile().getName();
+                p = Paths.get(workspaceName).toRealPath().getFileName().toString();
             } catch (IOException ex) {
                 p = new File(workspaceName).getAbsoluteFile().getName();
             }
@@ -192,11 +193,11 @@ public final class PrivateNutsUtils {
 
     public static String getHome(NutsStoreLocation storeFolder, NutsWorkspaceBootOptions bOptions) {
         return NutsUtilPlatforms.getPlatformHomeFolder(
-                bOptions.getStoreLocationLayout(),
+                bOptions.getStoreLocationLayout().orNull(),
                 storeFolder,
-                bOptions.getHomeLocations(),
-                bOptions.isGlobal(),
-                bOptions.getName()
+                bOptions.getHomeLocations().orNull(),
+                bOptions.getGlobal().orElse(false),
+                bOptions.getName().orNull()
         );
     }
 

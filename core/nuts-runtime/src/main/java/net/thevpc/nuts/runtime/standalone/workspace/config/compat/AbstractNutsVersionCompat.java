@@ -1,13 +1,14 @@
 package net.thevpc.nuts.runtime.standalone.workspace.config.compat;
 
 import net.thevpc.nuts.NutsSession;
+import net.thevpc.nuts.NutsVersion;
 
 public abstract class AbstractNutsVersionCompat implements NutsVersionCompat {
     private NutsSession ws;
-    private String apiVersion;
+    private NutsVersion apiVersion;
     private int apiOrdinalVersion;
 
-    public AbstractNutsVersionCompat(NutsSession ws, String apiVersion, int apiOrdinalVersion) {
+    public AbstractNutsVersionCompat(NutsSession ws, NutsVersion apiVersion, int apiOrdinalVersion) {
         this.ws = ws;
         this.apiVersion = apiVersion;
         this.apiOrdinalVersion = apiOrdinalVersion;
@@ -17,7 +18,7 @@ public abstract class AbstractNutsVersionCompat implements NutsVersionCompat {
         return ws;
     }
 
-    public String getApiVersion() {
+    public NutsVersion getApiVersion() {
         return apiVersion;
     }
 

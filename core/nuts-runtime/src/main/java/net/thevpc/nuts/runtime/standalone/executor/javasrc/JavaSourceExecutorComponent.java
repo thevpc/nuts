@@ -75,7 +75,7 @@ public class JavaSourceExecutorComponent implements NutsExecutorComponent {
                 true
         ));
         String fileName = javaFile.getFileName().toString();
-        List<String> z = new ArrayList<>(executionContext.getExecutorArguments());
+        List<String> z = new ArrayList<>(executionContext.getExecutorOptions());
         z.addAll(Arrays.asList("--main-class",
                 new File(fileName.substring(fileName.length() - ".java".length())).getName(),
                 "--class-path",
@@ -84,7 +84,7 @@ public class JavaSourceExecutorComponent implements NutsExecutorComponent {
                 .createExecutionContext()
                 .setAll(executionContext)
                 .setDefinition(d)
-                .setExecutorArguments(z)
+                .setExecutorOptions(z)
                 .setFailFast(true)
                 .setTemporary(true)
                 .build();
@@ -117,7 +117,7 @@ public class JavaSourceExecutorComponent implements NutsExecutorComponent {
                 true
         ));
         String fileName = javaFile.getFileName().toString();
-        List<String> z = new ArrayList<>(executionContext.getExecutorArguments());
+        List<String> z = new ArrayList<>(executionContext.getExecutorOptions());
         z.addAll(Arrays.asList("--main-class",
                 new File(fileName.substring(fileName.length() - ".java".length())).getName(),
                 "--class-path",
@@ -126,7 +126,7 @@ public class JavaSourceExecutorComponent implements NutsExecutorComponent {
                 .createExecutionContext()
                 .setAll(executionContext)
                 .setDefinition(d)
-                .setExecutorArguments(z)
+                .setExecutorOptions(z)
                 .setFailFast(true)
                 .setTemporary(true)
                 .build();

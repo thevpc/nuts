@@ -115,10 +115,12 @@ public class NutsApiUtils {
             //exception may occur if the sdk is build without awt package for instance!
             bo.setGui(false);
         }
-        boolean bot = bo.isBot();
-        boolean gui = !bot && bo.isGui();
+        boolean bot = bo.getBot().orElse(false);
+        boolean gui = !bot && bo.getGui().orElse(false);
         boolean showTrace = bo.getDebug() != null;
-        showTrace |= (bo.getLogConfig() != null && bo.getLogConfig().getLogTermLevel() != null && bo.getLogConfig().getLogTermLevel().intValue() < Level.INFO.intValue());
+        NutsLogConfig nutsLogConfig = bo.getLogConfig().orElseGet(NutsLogConfig::new);
+        showTrace |= (nutsLogConfig.getLogTermLevel() != null
+                && nutsLogConfig.getLogTermLevel().intValue() < Level.INFO.intValue());
         if (!showTrace) {
             showTrace = NutsApiUtils.getSysBoolNutsProperty("debug", false);
         }
@@ -157,7 +159,7 @@ public class NutsApiUtils {
 
     public static String resolveNutsIdDigest() {
         //TODO COMMIT TO 0.8.4
-        return resolveNutsIdDigest(NutsId.of("net.thevpc.nuts", "nuts", NutsVersion.of(Nuts.getVersion()).get()).get(), PrivateNutsUtilClassLoader.resolveClasspathURLs(Nuts.class.getClassLoader(), true));
+        return resolveNutsIdDigest(NutsId.ofApi(Nuts.getVersion()).get(), PrivateNutsUtilClassLoader.resolveClasspathURLs(Nuts.class.getClassLoader(), true));
     }
 
     public static String resolveNutsIdDigest(NutsId id, URL[] urls) {

@@ -43,69 +43,60 @@ public final class DefaultNutsWorkspaceCurrentConfig {
 
     public DefaultNutsWorkspaceCurrentConfig merge(NutsWorkspaceOptions c, NutsSession session) {
         if (c.getName() != null) {
-            this.name = c.getName();
+            this.name = c.getName().orNull();
         }
-//        this.uuid = c.getUuid();
-//        this.bootAPI = c.getApiVersion() == null ? null : CoreNutsUtils.parseNutsId(NutsConstants.Ids.NUTS_API + "#" + c.getApiVersion());
-        if (c.getRuntimeId() != null) {
-            setRuntimeId(c.getRuntimeId(), session);
+        if (c.getRuntimeId().isPresent()) {
+            setRuntimeId(c.getRuntimeId().get(), session);
         }
-//        this.bootRuntimeDependencies = c.getRuntimeDependencies();
-//        this.bootExtensionDependencies = c.getExtensionDependencies();
-//        this.bootRepositories = c.getBootRepositories();
-        if (c.getJavaCommand() != null) {
-            this.bootJavaCommand = c.getJavaCommand();
+        if (c.getJavaCommand().isPresent()) {
+            this.bootJavaCommand = c.getJavaCommand().get();
         }
-        if (c.getJavaOptions() != null) {
-            this.bootJavaOptions = c.getJavaOptions();
+        if (c.getJavaOptions().isPresent()) {
+            this.bootJavaOptions = c.getJavaOptions().get();
         }
-        if (c.getStoreLocationStrategy() != null) {
-            this.storeLocationStrategy = c.getStoreLocationStrategy();
+        if (c.getStoreLocationStrategy().isPresent()) {
+            this.storeLocationStrategy = c.getStoreLocationStrategy().get();
         }
-        if (c.getRepositoryStoreLocationStrategy() != null) {
-            this.repositoryStoreLocationStrategy = c.getRepositoryStoreLocationStrategy();
+        if (c.getRepositoryStoreLocationStrategy().isPresent()) {
+            this.repositoryStoreLocationStrategy = c.getRepositoryStoreLocationStrategy().get();
         }
-        if (c.getStoreLocationLayout() != null) {
-            this.storeLocationLayout = c.getStoreLocationLayout();
+        if (c.getStoreLocationLayout().isPresent()) {
+            this.storeLocationLayout = c.getStoreLocationLayout().get();
         }
-        for (Map.Entry<NutsStoreLocation, String> e : new NutsStoreLocationsMap(c.getStoreLocations()).toMap().entrySet()) {
+        for (Map.Entry<NutsStoreLocation, String> e : new NutsStoreLocationsMap(c.getStoreLocations().orNull()).toMap().entrySet()) {
             String o = this.userStoreLocations.get(e.getKey());
             if(NutsBlankable.isBlank(o)){
                 this.userStoreLocations.put(e.getKey(),e.getValue());
             }
         }
-        for (Map.Entry<NutsHomeLocation, String> e : new NutsHomeLocationsMap(c.getHomeLocations()).toMap().entrySet()) {
+        for (Map.Entry<NutsHomeLocation, String> e : new NutsHomeLocationsMap(c.getHomeLocations().orNull()).toMap().entrySet()) {
             String o = this.homeLocations.get(e.getKey());
             if(NutsBlankable.isBlank(o)){
                 this.homeLocations.put(e.getKey(),e.getValue());
             }
         }
         if(this.global==null) {
-            this.global = c.isGlobal();
+            this.global = c.getGlobal().orElse(false);
         }
         return this;
     }
 
-    public void setRuntimeId(String s, NutsSession session) {
-        this.bootRuntime = s.contains("#")
-                ? NutsId.of(s).get(session)
-                : NutsId.of(NutsConstants.Ids.NUTS_RUNTIME + "#" + s).get(session);
+    public void setRuntimeId(NutsId s, NutsSession session) {
+        this.bootRuntime = s;
     }
 
     public DefaultNutsWorkspaceCurrentConfig mergeRuntime(NutsWorkspaceOptions c, NutsSession session) {
-        if (c.getRuntimeId() != null) {
-            this.bootRuntime = c.getRuntimeId().contains("#")
-                    ? NutsId.of(c.getRuntimeId()).get(session)
-                    : NutsId.of(NutsConstants.Ids.NUTS_RUNTIME + "#" + c.getRuntimeId()).get(session);
+        if (c.getRuntimeId().isPresent()) {
+            this.bootRuntime = c.getRuntimeId().get();
         }
 //        this.bootRuntimeDependencies = c.getRuntimeDependencies();
 //        this.bootExtensionDependencies = c.getExtensionDependencies();
 //        this.bootRepositories = c.getBootRepositories();
-        if (c.getJavaCommand() != null) {
-            this.bootJavaCommand = c.getJavaCommand();
+        if (c.getJavaCommand().isPresent()) {
+            this.bootJavaCommand = c.getJavaCommand().get();
         }
-        if (c.getJavaOptions() != null) {
-            this.bootJavaOptions = c.getJavaOptions();
+        if (c.getJavaOptions().isPresent()) {
+            this.bootJavaOptions = c.getJavaOptions().get();
         }
         return this;
     }
@@ -127,7 +118,7 @@ public final class DefaultNutsWorkspaceCurrentConfig {
             effStoreLocationPath[i] = Paths.get(effStoreLocationsMap.get(NutsStoreLocation.values()[i]));
         }
         if (apiId == null) {
-            apiId = NutsId.of(NutsConstants.Ids.NUTS_API + "#" + Nuts.getVersion()).get(session);
+            apiId = NutsId.ofApi(Nuts.getVersion()).get(session);
         }
         if (storeLocationLayout == null) {
             storeLocationLayout = session.env().getOsFamily();
@@ -136,13 +127,11 @@ public final class DefaultNutsWorkspaceCurrentConfig {
     }
 
     public DefaultNutsWorkspaceCurrentConfig merge(NutsWorkspaceConfigApi c, NutsSession session) {
-        if (c.getApiVersion() != null) {
-            this.apiId = NutsId.of(NutsConstants.Ids.NUTS_API + "#" + c.getApiVersion()).get(session);
+        if (c.getApiVersion() != null && !c.getApiVersion().isBlank()) {
+            this.apiId = NutsId.ofApi(c.getApiVersion()).get(session);
         }
         if (c.getRuntimeId() != null) {
-            this.bootRuntime = c.getRuntimeId().contains("#")
-                    ? NutsId.of(c.getRuntimeId()).get(session)
-                    : NutsId.of(NutsConstants.Ids.NUTS_RUNTIME + "#" + c.getRuntimeId()).get(session);
+            this.bootRuntime = c.getRuntimeId();
         }
 //        if (c.getExtensionDependencies() != null) {
 //            this.bootExtensionDependencies = c.getExtensionDependencies();
@@ -158,7 +147,7 @@ public final class DefaultNutsWorkspaceCurrentConfig {
 
     public DefaultNutsWorkspaceCurrentConfig merge(NutsWorkspaceConfigRuntime c, NutsSession session) {
         if (c.getId() != null) {
-            this.bootRuntime = NutsId.of(c.getId()).get(session);
+            this.bootRuntime = c.getId();
         }
         if (c.getDependencies() != null) {
             this.runtimeBootDescriptor = new DefaultNutsDescriptorBuilder()
@@ -200,7 +189,7 @@ public final class DefaultNutsWorkspaceCurrentConfig {
         if(this.global==null) {
             this.global = c.isGlobal();
         }
-//        this.gui |= c.isGui();
+//        this.gui |= c.getGui().orElse(false);
         return this;
     }
 
@@ -210,9 +199,7 @@ public final class DefaultNutsWorkspaceCurrentConfig {
             this.apiId = NutsId.of(NutsConstants.Ids.NUTS_API + "#" + c.getApiVersion()).get(session);
         }
         if (c.getRuntimeId() != null) {
-            this.bootRuntime = c.getRuntimeId().contains("#")
-                    ? NutsId.of(c.getRuntimeId()).get(session)
-                    : NutsId.of(NutsConstants.Ids.NUTS_RUNTIME + "#" + c.getRuntimeId()).get(session);
+            this.bootRuntime = c.getRuntimeId();
         }
         if (c.getRuntimeBootDescriptor() != null) {
             this.runtimeBootDescriptor = c.getRuntimeBootDescriptor();
@@ -284,8 +271,8 @@ public final class DefaultNutsWorkspaceCurrentConfig {
         return this;
     }
 
-    public String getApiVersion() {
-        return getApiId().getVersion().getValue();
+    public NutsVersion getApiVersion() {
+        return getApiId().getVersion();
     }
 
     public NutsId getApiId() {

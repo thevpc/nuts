@@ -73,7 +73,7 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
         this.initSession = NutsSessionUtils.defaultSession(ws);
         this.deployments = new NutsRepositoryFolderHelper(this,
                 NutsSessionUtils.defaultSession(ws),
-                NutsPath.of(bOptions.getStoreLocation(NutsStoreLocation.LIB), initSession).resolve(NutsConstants.Folders.ID)
+                NutsPath.of(bOptions.getStoreLocation(NutsStoreLocation.LIB).get(), initSession).resolve(NutsConstants.Folders.ID)
                 , false,
                 "lib", NutsElements.of(initSession).ofObject().set("repoKind", "lib").build()
         );
@@ -439,10 +439,10 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
             );
             if (c != null) {
                 boolean changeStatus = false;
-                NutsVersion v = NutsVersion.of(c.getConfigVersion()).get(session);
-                if (v.isBlank()) {
+                NutsVersion v = c.getConfigVersion();
+                if (NutsBlankable.isBlank(v)) {
                     c.setInstalled(true);
-                    c.setConfigVersion("0.5.8"); //last version before 0.6
+                    c.setConfigVersion(NutsVersion.of("0.5.8").get()); //last version before 0.6
                     changeStatus = true;
                 }
                 NutsId idOk = c.getId();
@@ -464,7 +464,7 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
                     NutsLocks.of(session).setSource(path).call(() -> {
                                 _LOGOP(session).level(Level.CONFIG)
                                         .log(NutsMessage.jstyle("install-info upgraded {0}", finalPath));
-                                c.setConfigVersion(workspace.getApiVersion().toString());
+                                c.setConfigVersion(workspace.getApiVersion());
                                 elem.json().setValue(c)
                                         .setNtf(false)
                                         .print(finalPath);
@@ -654,7 +654,7 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
     }
 
     public void printJson(NutsId id, String name, InstallInfoConfig value, NutsSession session) {
-        value.setConfigVersion(workspace.getApiVersion().toString());
+        value.setConfigVersion(workspace.getApiVersion());
         NutsElements.of(session).setNtf(false)
                 .setSession(session).json().setValue(value)
                 .print(getPath(id, name, session));

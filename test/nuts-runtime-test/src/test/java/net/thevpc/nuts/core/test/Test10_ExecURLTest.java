@@ -51,7 +51,10 @@ public class Test10_ExecURLTest {
             }
         }
         String result = session.exec()
-                .addExecutorOption("-Dnuts.args=--bot -w="+session.locations().getWorkspaceLocation().resolve("temp-ws"))
+                .addWorkspaceOptions(new DefaultNutsWorkspaceOptionsBuilder()
+                        .setBot(true)
+                        .setWorkspace(session.locations().getWorkspaceLocation().resolve("temp-ws").toString())
+                )
                 //.addExecutorOption("--main-class=Version")
                 .addCommand(
                         "https://search.maven.org/remotecontent?filepath=net/thevpc/hl/hl/0.1.0/hl-0.1.0.jar",

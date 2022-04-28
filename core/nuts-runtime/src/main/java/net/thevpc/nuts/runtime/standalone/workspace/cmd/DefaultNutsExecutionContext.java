@@ -38,7 +38,8 @@ public class DefaultNutsExecutionContext implements NutsExecutionContext {
 
     private NutsDefinition definition;
     private Map<String, String> env;
-    private List<String> executorArguments;
+    private List<String> executorOptions;
+    private List<String> workspaceOptions;
     private Map<String, String> executorProperties;
     private List<String> arguments;
     private NutsSession execSession;
@@ -77,7 +78,7 @@ public class DefaultNutsExecutionContext implements NutsExecutionContext {
 //        this.cwd = cwd;
 //    }
     public DefaultNutsExecutionContext(NutsDefinition definition,
-                                       List<String> arguments, List<String> executorArgs, Map<String, String> env, Map<String, String> executorProperties,
+                                       List<String> arguments, List<String> executorArgs, List<String> workspaceOptions, Map<String, String> env, Map<String, String> executorProperties,
                                        String cwd, NutsSession session, NutsSession execSession, NutsWorkspace workspace, boolean failFast,
                                        boolean temporary,
                                        NutsExecutionType executionType,
@@ -93,7 +94,8 @@ public class DefaultNutsExecutionContext implements NutsExecutionContext {
         this.execSession = execSession;
         this.session = session;
         this.workspace = workspace;
-        this.executorArguments = PrivateNutsUtilCollections.unmodifiableList(executorArgs);
+        this.executorOptions = PrivateNutsUtilCollections.unmodifiableList(executorArgs);
+        this.workspaceOptions = PrivateNutsUtilCollections.unmodifiableList(workspaceOptions);
         this.executorProperties = PrivateNutsUtilCollections.unmodifiableMap(executorProperties);
         this.sleepMillis = sleepMillis;
         this.cwd = cwd;
@@ -117,8 +119,9 @@ public class DefaultNutsExecutionContext implements NutsExecutionContext {
         this.execSession = other.getExecSession();
         this.session = other.getSession();
         this.workspace = other.getWorkspace();
-        this.executorArguments = other.getExecutorArguments();
+        this.executorOptions = other.getExecutorOptions();
         this.executorProperties = other.getExecutorProperties();
+        this.workspaceOptions = other.getWorkspaceOptions();
         this.cwd = other.getCwd();
         this.env = other.getEnv();
         this.failFast = other.isFailFast();
@@ -154,8 +157,13 @@ public class DefaultNutsExecutionContext implements NutsExecutionContext {
     }
 
     @Override
-    public List<String> getExecutorArguments() {
-        return executorArguments;
+    public List<String> getExecutorOptions() {
+        return executorOptions;
+    }
+
+    @Override
+    public List<String> getWorkspaceOptions() {
+        return workspaceOptions;
     }
 
     @Override
@@ -227,8 +235,8 @@ public class DefaultNutsExecutionContext implements NutsExecutionContext {
         return this;
     }
 
-    public DefaultNutsExecutionContext setExecutorArguments(String[] executorArguments) {
-        this.executorArguments = PrivateNutsUtilCollections.unmodifiableList(Arrays.asList(executorArguments));
+    public DefaultNutsExecutionContext setExecutorOptions(String[] executorOptions) {
+        this.executorOptions = PrivateNutsUtilCollections.unmodifiableList(Arrays.asList(executorOptions));
         return this;
     }
 

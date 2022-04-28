@@ -50,13 +50,12 @@ public class PrivateNutsUtilApplication {
         NutsWorkspaceBootOptionsBuilder bo = null;
         if (session != null) {
             bo = session.boot().getBootOptions().builder();
-            if (bo.isGui()) {
+            if (bo.getGui().orElse(false)) {
                 if (!session.env().isGraphicalDesktopEnvironment()) {
                     bo.setGui(false);
                 }
             }
         } else {
-            PrivateNutsBootLog log = new PrivateNutsBootLog(new NutsBootTerminal(null,out,out));
             NutsWorkspaceBootOptionsBuilder options = new DefaultNutsWorkspaceBootOptionsBuilder();
             //load inherited
             String nutsArgs = NutsUtilStrings.trim(
@@ -69,19 +68,20 @@ public class PrivateNutsUtilApplication {
                 //any, ignore...
             }
             bo = options;
-            if (bo.isGui()) {
+            if (bo.getGui().orElse(false)) {
                 if (!NutsApiUtils.isGraphicalDesktopEnvironment()) {
                     bo.setGui(false);
                 }
             }
         }
 
-        boolean bot = bo.isBot();
-        boolean gui = bo.isGui();
+        boolean bot = bo.getBot().orElse(false);
+        boolean gui = bo.getGui().orElse(false);
         boolean showTrace = bo.getDebug()!=null;
-        showTrace |= (bo.getLogConfig() != null
-                && bo.getLogConfig().getLogTermLevel() != null
-                && bo.getLogConfig().getLogTermLevel().intValue() < Level.INFO.intValue());
+        NutsLogConfig logConfig = bo.getLogConfig().orElseGet(NutsLogConfig::new);
+        showTrace |= (logConfig != null
+                && logConfig.getLogTermLevel() != null
+                && logConfig.getLogTermLevel().intValue() < Level.INFO.intValue());
         if (!showTrace) {
             showTrace = NutsApiUtils.getSysBoolNutsProperty("debug", false);
         }

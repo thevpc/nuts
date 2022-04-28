@@ -27,6 +27,7 @@
 package net.thevpc.nuts.boot;
 
 import java.io.File;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,7 +36,7 @@ import java.util.List;
  */
 class PrivateNutsDeleteFilesContextImpl implements PrivateNutsDeleteFilesContext {
 
-    private final List<File> ignoreDeletion = new ArrayList<>();
+    private final List<Path> ignoreDeletion = new ArrayList<>();
     private boolean force;
 
     @Override
@@ -49,17 +50,23 @@ class PrivateNutsDeleteFilesContextImpl implements PrivateNutsDeleteFilesContext
     }
 
     @Override
-    public boolean accept(File directory) {
-        for (File ignored : ignoreDeletion) {
-            String s = ignored.getPath() + File.separatorChar;
-            if (s.startsWith(directory.getPath() + "/")) {
+    public boolean accept(Path directory) {
+        for (Path ignored : ignoreDeletion) {
+            String s = ignored.toString() + File.separatorChar;
+            if (s.startsWith(directory.toString() + File.separatorChar)) {
                 return false;
+            }
+            if (File.separatorChar != '/') {
+                s = ignored.toString() + '/';
+                if (s.startsWith(directory + "/")) {
+                    return false;
+                }
             }
         }
         return true;
     }
 
-    public void ignore(File directory) {
+    public void ignore(Path directory) {
         ignoreDeletion.add(directory);
     }
 }

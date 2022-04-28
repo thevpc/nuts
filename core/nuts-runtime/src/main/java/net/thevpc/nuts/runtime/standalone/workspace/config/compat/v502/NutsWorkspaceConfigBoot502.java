@@ -43,12 +43,12 @@ public final class NutsWorkspaceConfigBoot502 implements Serializable {
     private String uuid = null;
     private boolean global;
     private String workspace = null;
-    private String bootApiVersion = null;
+    private NutsVersion bootApiVersion = null;
 
     /**
      * Api version having created the config
      */
-    private String createApiVersion = null;
+    private NutsVersion createApiVersion = null;
 
     /**
      * boot package Id in long format (as defined in
@@ -56,7 +56,7 @@ public final class NutsWorkspaceConfigBoot502 implements Serializable {
      *
      * @see NutsId#getLongId()
      */
-    private String bootRuntime = null;
+    private NutsId bootRuntime = null;
 
     /**
      * ';' separated list of package Ids in long format (as defined in
@@ -206,29 +206,29 @@ public final class NutsWorkspaceConfigBoot502 implements Serializable {
 
     }
 
-    public String getBootApiVersion() {
+    public NutsVersion getBootApiVersion() {
         return bootApiVersion;
     }
 
-    public void setBootApiVersion(String bootApiVersion) {
+    public void setBootApiVersion(NutsVersion bootApiVersion) {
         this.bootApiVersion = bootApiVersion;
 
     }
 
-    public String getCreateApiVersion() {
+    public NutsVersion getCreateApiVersion() {
         return createApiVersion;
     }
 
-    public void setCreateApiVersion(String createApiVersion) {
+    public void setCreateApiVersion(NutsVersion createApiVersion) {
         this.createApiVersion = createApiVersion;
 
     }
 
-    public String getBootRuntime() {
+    public NutsId getBootRuntime() {
         return bootRuntime;
     }
 
-    public void setBootRuntime(String bootRuntime) {
+    public void setBootRuntime(NutsId bootRuntime) {
         this.bootRuntime = bootRuntime;
 
     }

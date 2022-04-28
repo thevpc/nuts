@@ -18,6 +18,7 @@ public class DefaultNutsArtifactExecutable extends AbstractNutsExecutableCommand
     String commandName;
     String[] appArgs;
     List<String> executorOptions;
+    List<String> workspaceOptions;
     Map<String, String> env;
     String dir;
     boolean failFast;
@@ -29,10 +30,10 @@ public class DefaultNutsArtifactExecutable extends AbstractNutsExecutableCommand
     boolean autoInstall = true;
 
     public DefaultNutsArtifactExecutable(NutsDefinition def, String commandName, String[] appArgs, List<String> executorOptions,
-            Map<String, String> env, String dir, boolean failFast,
-            NutsSession session,
-            NutsSession execSession,
-            NutsExecutionType executionType, NutsRunAs runAs, DefaultNutsExecCommand execCommand) {
+                                         List<String> workspaceOptions, Map<String, String> env, String dir, boolean failFast,
+                                         NutsSession session,
+                                         NutsSession execSession,
+                                         NutsExecutionType executionType, NutsRunAs runAs, DefaultNutsExecCommand execCommand) {
         super(commandName, def.getId().getLongName(), NutsExecutableType.ARTIFACT);
         this.def = def;
         this.runAs = runAs;
@@ -70,6 +71,7 @@ public class DefaultNutsArtifactExecutable extends AbstractNutsExecutableCommand
             }
         }
         this.executorOptions = executorOptionsList;
+        this.workspaceOptions = workspaceOptions;
     }
 
     @Override
@@ -125,7 +127,7 @@ public class DefaultNutsArtifactExecutable extends AbstractNutsExecutableCommand
 //                }
 //            }
 //        }
-        execCommand.ws_execId(def, commandName, appArgs, executorOptions, env, dir, failFast, false, session, execSession, executionType,runAs, false);
+        execCommand.ws_execId(def, commandName, appArgs, executorOptions, workspaceOptions, env, dir, failFast, false, session, execSession, executionType,runAs, false);
     }
 
     @Override
@@ -135,7 +137,7 @@ public class DefaultNutsArtifactExecutable extends AbstractNutsExecutableCommand
             NutsPrintStream out = execSession.out();
             out.printf("[dry] ==install== %s%n", def.getId().getLongName());
         }
-        execCommand.ws_execId(def, commandName, appArgs, executorOptions, env, dir, failFast, false, session, execSession, executionType,runAs, true);
+        execCommand.ws_execId(def, commandName, appArgs, executorOptions, workspaceOptions, env, dir, failFast, false, session, execSession, executionType,runAs, true);
     }
 
     @Override

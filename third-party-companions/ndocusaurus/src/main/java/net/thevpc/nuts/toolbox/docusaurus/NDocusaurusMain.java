@@ -77,7 +77,7 @@ public class NDocusaurusMain implements NutsApplication, NutsAppCmdProcessor {
                 .setBuildWebSite(build)
                 .setStartWebSite(start)
                 .setBuildPdf(buildPdf)
-                .setAutoInstallNutsPackages(context.getSession().boot().getBootOptions().getConfirm() == NutsConfirmationMode.YES)
+                .setAutoInstallNutsPackages(context.getSession().boot().getBootOptions().getConfirm().orElse(NutsConfirmationMode.ASK) == NutsConfirmationMode.YES)
                 .run();
     }
 

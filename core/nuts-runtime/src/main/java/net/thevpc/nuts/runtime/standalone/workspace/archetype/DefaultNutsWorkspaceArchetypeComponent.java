@@ -117,10 +117,7 @@ public class DefaultNutsWorkspaceArchetypeComponent implements NutsWorkspaceArch
         if (initScripts || initLaunchers) {
             NutsWorkspaceUtils.of(session).installLaunchers(initLaunchers);
         }
-        Boolean skipCompanions = session.boot().getBootOptions().getSkipCompanions();
-        if (skipCompanions == null) {
-            skipCompanions = false;
-        }
+        Boolean skipCompanions = session.boot().getBootOptions().getSkipCompanions().orElse(false);
         if (!skipCompanions) {
             NutsWorkspaceUtils.of(session).installCompanions();
         }

@@ -31,7 +31,7 @@ public class NutsTomcatClassLoader extends WebappClassLoader {
     protected boolean nutsClassLoaderUnderConstruction;
     protected String nutsPath;
     protected String workspaceLocation;
-    protected String workspaceBootRuntime;
+    protected NutsId workspaceBootRuntime;
     protected String workspaceExcludedRepositories;
     protected String workspaceExcludedExtensions;
     protected String workspaceArchetype;
@@ -335,11 +335,11 @@ public class NutsTomcatClassLoader extends WebappClassLoader {
         this.workspaceLocation = workspaceLocation;
     }
 
-    public String getWorkspaceBootRuntime() {
+    public NutsId getWorkspaceBootRuntime() {
         return workspaceBootRuntime;
     }
 
-    public void setWorkspaceBootRuntime(String workspaceBootRuntime) {
+    public void setWorkspaceBootRuntime(NutsId workspaceBootRuntime) {
         this.workspaceBootRuntime = workspaceBootRuntime;
     }
 
