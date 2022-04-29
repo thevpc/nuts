@@ -100,6 +100,86 @@ public class JavaExecutorComponent implements NutsExecutorComponent {
         return NO_SUPPORT;
     }
 
+    public static NutsWorkspaceOptionsBuilder createChildOptions(NutsExecutionContext executionContext) {
+        NutsSession session = executionContext.getSession();
+        NutsSession execSession = executionContext.getExecSession();
+        NutsWorkspaceOptionsBuilder options = session.boot().getBootOptions().builder();
+
+        //copy session parameters to the newly created workspace
+        options.setDry(execSession.isDry());
+        options.setGui(execSession.isGui());
+        options.setOutLinePrefix(execSession.getOutLinePrefix());
+        options.setErrLinePrefix(execSession.getErrLinePrefix());
+        options.setDebug(execSession.getDebug());
+        options.setTrace(execSession.isTrace());
+        options.setBot(execSession.isBot());
+        options.setCached(execSession.isCached());
+        options.setIndexed(execSession.isIndexed());
+        options.setConfirm(execSession.getConfirm());
+        options.setTransitive(execSession.isTransitive());
+        options.setOutputFormat(execSession.getOutputFormat());
+        switch (options.getTerminalMode().orElse(NutsTerminalMode.DEFAULT)) {
+            //retain filtered
+            case DEFAULT:
+                options.setTerminalMode(execSession.getTerminal().out().mode());
+                //retain filtered
+            case FILTERED:
+                break;
+            //retain inherited
+            case INHERITED:
+                break;
+            default:
+                options.setTerminalMode(execSession.getTerminal().out().mode());
+                break;
+        }
+        options.setExpireTime(execSession.getExpireTime());
+
+        Filter logFileFilter = execSession.getLogFileFilter();
+        Filter logTermFilter = execSession.getLogTermFilter();
+        Level logTermLevel = execSession.getLogTermLevel();
+        Level logFileLevel = execSession.getLogFileLevel();
+        if (logFileFilter != null || logTermFilter != null || logTermLevel != null || logFileLevel != null) {
+            NutsLogConfig lc = options.getLogConfig().orNull();
+            if (lc == null) {
+                lc = new NutsLogConfig();
+            } else {
+                lc = lc.copy();
+            }
+            if (logTermLevel != null) {
+                lc.setLogTermLevel(logTermLevel);
+            }
+            if (logFileLevel != null) {
+                lc.setLogFileLevel(logFileLevel);
+            }
+            if (logTermFilter != null) {
+                lc.setLogTermFilter(logTermFilter);
+            }
+            if (logFileFilter != null) {
+                lc.setLogFileFilter(logFileFilter);
+            }
+        }
+        for (Iterator<String> iterator = executionContext.getExecutorOptions().iterator(); iterator.hasNext(); ) {
+            String a = iterator.next();
+            if (a.startsWith("-Dnuts.args=")) {
+                executionContext.getWorkspaceOptions().add(a.substring("-Dnuts.args=".length()));
+                iterator.remove();
+            }
+        }
+        for (String a : executionContext.getWorkspaceOptions()) {
+            NutsWorkspaceOptions extraOptions = NutsWorkspaceOptionsBuilder.of().setCommandLine(
+                    NutsCommandLine.parseDefault(a).get(session).toStringArray(),
+                    session
+            ).readOnly();
+            options.setAllPresent(extraOptions);
+        }
+        //sandbox workspace children are always confined
+        if (options.getIsolation().orNull() == NutsWorkspaceIsolation.SANDBOX) {
+            options.setIsolation(NutsWorkspaceIsolation.CONFINED);
+        }
+        options.unsetCreationOptions().unsetRuntimeOptions();
+        return options;
+    }
+
     //@Override
     public IProcessExecHelper execHelper(NutsExecutionContext executionContext) {
         NutsDefinition def = executionContext.getDefinition();
@@ -115,7 +195,7 @@ public class JavaExecutorComponent implements NutsExecutorComponent {
         final NutsSession execSession = executionContext.getExecSession();
         switch (executionContext.getExecutionType()) {
             case EMBEDDED: {
-                return new EmbeddedProcessExecHelper(def, execSession, joptions, execSession.out());
+                return new EmbeddedProcessExecHelper(def, execSession, joptions, execSession.out(), executionContext);
             }
             case SPAWN:
             default: {
@@ -129,36 +209,7 @@ public class JavaExecutorComponent implements NutsExecutorComponent {
                 }
 
                 HashMap<String, String> osEnv = new HashMap<>();
-                NutsWorkspaceOptionsBuilder options = this.session.boot().getBootOptions().builder();
 
-                //copy session parameters to the newly created workspace
-                options.setDry(execSession.isDry());
-                options.setGui(execSession.isGui());
-                options.setOutLinePrefix(execSession.getOutLinePrefix());
-                options.setErrLinePrefix(execSession.getErrLinePrefix());
-                options.setDebug(execSession.getDebug());
-                options.setTrace(execSession.isTrace());
-                options.setBot(execSession.isBot());
-                options.setCached(execSession.isCached());
-                options.setIndexed(execSession.isIndexed());
-                options.setConfirm(execSession.getConfirm());
-                options.setTransitive(execSession.isTransitive());
-                options.setOutputFormat(execSession.getOutputFormat());
-                if (null == options.getTerminalMode().orNull()) {
-                    options.setTerminalMode(execSession.getTerminal().out().mode());
-                } else {
-                    switch (options.getTerminalMode().get()) {
-                        //retain filtered
-                        case FILTERED:
-                            break;
-                        //retain inherited
-                        case INHERITED:
-                            break;
-                        default:
-                            options.setTerminalMode(execSession.getTerminal().out().mode());
-                            break;
-                    }
-                }
                 NutsVersion nutsDependencyVersion = null;
                 for (NutsId d : CoreNutsUtils.resolveNutsApiIdsFromDefinition(executionContext.getDefinition(), session)) {
                     nutsDependencyVersion = d.getVersion();
@@ -183,55 +234,19 @@ public class JavaExecutorComponent implements NutsExecutorComponent {
                         }
                     }
                 }
-                options.setExpireTime(execSession.getExpireTime());
 
-                Filter logFileFilter = execSession.getLogFileFilter();
-                Filter logTermFilter = execSession.getLogTermFilter();
-                Level logTermLevel = execSession.getLogTermLevel();
-                Level logFileLevel = execSession.getLogFileLevel();
-                if (logFileFilter != null || logTermFilter != null || logTermLevel != null || logFileLevel != null) {
-                    NutsLogConfig lc = options.getLogConfig().orNull();
-                    if (lc == null) {
-                        lc = new NutsLogConfig();
-                    } else {
-                        lc = lc.copy();
-                    }
-                    if (logTermLevel != null) {
-                        lc.setLogTermLevel(logTermLevel);
-                    }
-                    if (logFileLevel != null) {
-                        lc.setLogFileLevel(logFileLevel);
-                    }
-                    if (logTermFilter != null) {
-                        lc.setLogTermFilter(logTermFilter);
-                    }
-                    if (logFileFilter != null) {
-                        lc.setLogFileFilter(logFileFilter);
-                    }
-                }
-                NutsWorkspaceOptionsBuilder options2 = options.copy();
+
+                NutsWorkspaceOptionsBuilder options = createChildOptions(executionContext);
+                NutsWorkspaceOptionsConfig config = new NutsWorkspaceOptionsConfig().setCompact(true);
                 if (nutsDependencyVersion != null) {
-                    options2.setApiVersion(nutsDependencyVersion);
-                    options2.setRuntimeId(null);
-                }
-                for (Iterator<String> iterator = executionContext.getExecutorOptions().iterator(); iterator.hasNext(); ) {
-                    String a = iterator.next();
-                    if (a.startsWith("-Dnuts.args=")) {
-                        executionContext.getWorkspaceOptions().add(a.substring("-Dnuts.args=".length()));
-                        iterator.remove();
-                    }
-                }
-                for (String a : executionContext.getWorkspaceOptions()) {
-                    NutsWorkspaceOptions extraOptions = NutsWorkspaceOptionsBuilder.of().setCommandLine(
-                            NutsCommandLine.parseDefault(a).get(session).toStringArray(),
-                            session
-                    ).readOnly();
-                    options2.setAllPresent(extraOptions);
+                    config.setApiVersion(nutsDependencyVersion);
+                    // there is no need to specify api/runtime because we are
+                    // willing to run that specific version anyways...
+                    options.setApiVersion(null);
+                    options.setRuntimeId(null);
                 }
 
-                String bootArgumentsString = options2.toCommandLine(new NutsWorkspaceOptionsConfig()
-                                .setExported(true)
-                                .setCompact(true))
+                String bootArgumentsString = options.toCommandLine(config)
                         .add(executionContext.getDefinition().getId().getLongName())
                         .formatter(session).setShellFamily(NutsShellFamily.SH).setNtf(false).toString();
                 if (!NutsBlankable.isBlank(bootArgumentsString)) {
@@ -358,12 +373,14 @@ public class JavaExecutorComponent implements NutsExecutorComponent {
         private final NutsDefinition def;
         private final JavaExecutorOptions joptions;
         private final NutsPrintStream out;
+        private final NutsExecutionContext executionContext;
 
-        public EmbeddedProcessExecHelper(NutsDefinition def, NutsSession session, JavaExecutorOptions joptions, NutsPrintStream out) {
+        public EmbeddedProcessExecHelper(NutsDefinition def, NutsSession session, JavaExecutorOptions joptions, NutsPrintStream out, NutsExecutionContext executionContext) {
             super(session);
             this.def = def;
             this.joptions = joptions;
             this.out = out;
+            this.executionContext = executionContext;
         }
 
         @Override
@@ -413,7 +430,7 @@ public class JavaExecutorComponent implements NutsExecutorComponent {
                     }
                 }
                 Class<?> cls = Class.forName(joptions.getMainClass(), true, classLoader);
-                new ClassloaderAwareRunnableImpl(def.getId(), classLoader, cls, session, joptions).runAndWaitFor();
+                new ClassloaderAwareRunnableImpl(def.getId(), classLoader, cls, session, joptions,executionContext).runAndWaitFor();
                 return 0;
             } catch (InvocationTargetException e) {
                 th = e.getTargetException();

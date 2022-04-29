@@ -32,9 +32,9 @@ import java.util.List;
 public class NutsLauncherOptions implements Cloneable {
     private boolean createAlias;
     private boolean createScript;
-    private NutsSupportCondition createMenuShortcut;
-    private NutsSupportCondition createDesktopShortcut;
-    private NutsSupportCondition createCustomShortcut;
+    private NutsSupportMode createMenuLauncher;
+    private NutsSupportMode createDesktopLauncher;
+    private NutsSupportMode createUserLauncher;
     private boolean installExtensions;
     private String alias;
     private String shortcutName;
@@ -44,7 +44,7 @@ public class NutsLauncherOptions implements Cloneable {
     private String menuCategory;
     private boolean openTerminal;
 
-    private Boolean systemWideConfig;
+    private Boolean switchWorkspace;
     private NutsId id;
     private List<String> args = new ArrayList<>();
 
@@ -62,30 +62,30 @@ public class NutsLauncherOptions implements Cloneable {
         return this;
     }
 
-    public NutsSupportCondition getCreateMenuShortcut() {
-        return createMenuShortcut;
+    public NutsSupportMode getCreateMenuLauncher() {
+        return createMenuLauncher;
     }
 
-    public NutsLauncherOptions setCreateMenuShortcut(NutsSupportCondition createMenuShortcut) {
-        this.createMenuShortcut = createMenuShortcut;
+    public NutsLauncherOptions setCreateMenuLauncher(NutsSupportMode createMenuShortcut) {
+        this.createMenuLauncher = createMenuShortcut;
         return this;
     }
 
-    public NutsSupportCondition getCreateDesktopShortcut() {
-        return createDesktopShortcut;
+    public NutsSupportMode getCreateDesktopLauncher() {
+        return createDesktopLauncher;
     }
 
-    public NutsLauncherOptions setCreateDesktopShortcut(NutsSupportCondition createDesktopShortcut) {
-        this.createDesktopShortcut = createDesktopShortcut;
+    public NutsLauncherOptions setCreateDesktopLauncher(NutsSupportMode createDesktopLauncher) {
+        this.createDesktopLauncher = createDesktopLauncher;
         return this;
     }
 
-    public NutsSupportCondition getCreateCustomShortcut() {
-        return createCustomShortcut;
+    public NutsSupportMode getCreateUserLauncher() {
+        return createUserLauncher;
     }
 
-    public NutsLauncherOptions setCreateCustomShortcut(NutsSupportCondition createCustomShortcut) {
-        this.createCustomShortcut = createCustomShortcut;
+    public NutsLauncherOptions setCreateUserLauncher(NutsSupportMode createUserLauncher) {
+        this.createUserLauncher = createUserLauncher;
         return this;
     }
 
@@ -197,12 +197,12 @@ public class NutsLauncherOptions implements Cloneable {
         return this;
     }
 
-    public Boolean getSystemWideConfig() {
-        return systemWideConfig;
+    public Boolean getSwitchWorkspace() {
+        return switchWorkspace;
     }
 
-    public NutsLauncherOptions setSystemWideConfig(Boolean systemWideConfig) {
-        this.systemWideConfig = systemWideConfig;
+    public NutsLauncherOptions setSwitchWorkspace(Boolean switchWorkspace) {
+        this.switchWorkspace = switchWorkspace;
         return this;
     }
 

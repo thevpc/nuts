@@ -28,18 +28,19 @@ package net.thevpc.nuts;
 
 import net.thevpc.nuts.boot.NutsApiUtils;
 
-public enum NutsDesktopIntegrationItem implements NutsEnum {
-    MENU,
-    DESKTOP,
-    USER;
+public enum NutsWorkspaceIsolation implements NutsEnum {
+    SYSTEM,
+    USER,
+    CONFINED,
+    SANDBOX;
     private final String id;
 
-    NutsDesktopIntegrationItem() {
+    NutsWorkspaceIsolation() {
         this.id = name().toLowerCase().replace('_', '-');
     }
 
-    public static NutsOptional<NutsDesktopIntegrationItem> parse(String value) {
-        return NutsApiUtils.parse(value, NutsDesktopIntegrationItem.class);
+    public static NutsOptional<NutsWorkspaceIsolation> parse(String value) {
+        return NutsApiUtils.parse(value, NutsWorkspaceIsolation.class);
     }
 
     @Override

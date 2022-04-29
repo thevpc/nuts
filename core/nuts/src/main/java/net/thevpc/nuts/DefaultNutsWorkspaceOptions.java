@@ -24,7 +24,7 @@
 package net.thevpc.nuts;
 
 import net.thevpc.nuts.boot.PrivateNutsUtilCollections;
-import net.thevpc.nuts.boot.PrivateWorkspaceOptionsConfigHelper;
+import net.thevpc.nuts.boot.PrivateNutsWorkspaceOptionsArgumentsBuilder;
 
 import java.io.InputStream;
 import java.io.PrintStream;
@@ -43,11 +43,11 @@ import java.util.function.Supplier;
  */
 public class DefaultNutsWorkspaceOptions implements Serializable, NutsWorkspaceOptions {
     public static NutsWorkspaceOptions BLANK = new DefaultNutsWorkspaceOptions(
-            null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null,
+            null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null,
             null, null,
             null,
-            null, null, null
-    );
+            null, null, null,
+            null, null, null);
 
     private static final long serialVersionUID = 1;
     /**
@@ -379,8 +379,34 @@ public class DefaultNutsWorkspaceOptions implements Serializable, NutsWorkspaceO
      * option-type : exported (inherited in child workspaces)
      */
     private final String theme;
+    private final Boolean initLaunchers;
+    private final Boolean initScripts;
+    private final Boolean initPlatforms;
+    private final Boolean initJava;
+    private final NutsWorkspaceIsolation isolation;
+    private final NutsSupportMode desktopLauncher;
+    private final NutsSupportMode menuLauncher;
+    private final NutsSupportMode userLauncher;
 
-    public DefaultNutsWorkspaceOptions(NutsVersion apiVersion, NutsId runtimeId, String workspace, String name, String javaCommand, String javaOptions, String outLinePrefix, String errLinePrefix, String userName, char[] credentials, String progressOptions, String dependencySolver, String debug, String archetype, String locale, String theme, NutsLogConfig logConfig, NutsConfirmationMode confirm, NutsContentType outputFormat, NutsOpenMode openMode, NutsExecutionType executionType, NutsStoreLocationStrategy storeLocationStrategy, NutsStoreLocationStrategy repositoryStoreLocationStrategy, NutsOsFamily storeLocationLayout, NutsTerminalMode terminalMode, NutsFetchStrategy fetchStrategy, NutsRunAs runAs, Instant creationTime, Instant expireTime, Boolean skipCompanions, Boolean skipWelcome, Boolean skipBoot, Boolean global, Boolean gui, Boolean readOnly, Boolean trace, Boolean dry, Boolean recover, Boolean reset, Boolean commandVersion, Boolean commandHelp, Boolean inherited, Boolean switchWorkspace, Boolean cached, Boolean indexed, Boolean transitive, Boolean bot, Boolean skipErrors, InputStream stdin, PrintStream stdout, PrintStream stderr, ExecutorService executorService, Supplier<ClassLoader> classLoaderSupplier, List<String> applicationArguments, List<String> outputFormatOptions, List<String> customOptions, List<String> excludedExtensions, List<String> repositories, List<String> executorOptions, List<NutsMessage> errors, Map<NutsStoreLocation, String> storeLocations, Map<NutsHomeLocation, String> homeLocations) {
+    public DefaultNutsWorkspaceOptions(NutsVersion apiVersion, NutsId runtimeId, String workspace, String name, String javaCommand,
+                                       String javaOptions, String outLinePrefix, String errLinePrefix, String userName,
+                                       char[] credentials, String progressOptions, String dependencySolver,
+                                       String debug, String archetype, String locale, String theme, NutsLogConfig logConfig,
+                                       NutsConfirmationMode confirm, NutsContentType outputFormat, NutsOpenMode openMode,
+                                       NutsExecutionType executionType, NutsStoreLocationStrategy storeLocationStrategy,
+                                       NutsStoreLocationStrategy repositoryStoreLocationStrategy, NutsOsFamily storeLocationLayout,
+                                       NutsTerminalMode terminalMode, NutsFetchStrategy fetchStrategy, NutsRunAs runAs,
+                                       Instant creationTime, Instant expireTime, Boolean skipCompanions, Boolean skipWelcome,
+                                       Boolean skipBoot, Boolean global, Boolean gui, Boolean readOnly,
+                                       Boolean trace, Boolean dry, Boolean recover, Boolean reset, Boolean commandVersion,
+                                       Boolean commandHelp, Boolean inherited, Boolean switchWorkspace, Boolean cached,
+                                       Boolean indexed, Boolean transitive, Boolean bot, Boolean skipErrors,
+                                       NutsWorkspaceIsolation isolation, Boolean initLaunchers, Boolean initScripts, Boolean initPlatforms, Boolean initJava, InputStream stdin, PrintStream stdout, PrintStream stderr,
+                                       ExecutorService executorService, Supplier<ClassLoader> classLoaderSupplier,
+                                       List<String> applicationArguments, List<String> outputFormatOptions,
+                                       List<String> customOptions, List<String> excludedExtensions, List<String> repositories,
+                                       List<String> executorOptions, List<NutsMessage> errors, Map<NutsStoreLocation, String> storeLocations,
+                                       Map<NutsHomeLocation, String> homeLocations, NutsSupportMode desktopLauncher, NutsSupportMode menuLauncher, NutsSupportMode userLauncher) {
         this.outputFormatOptions = PrivateNutsUtilCollections.unmodifiableOrNullList(outputFormatOptions);
         this.customOptions = PrivateNutsUtilCollections.unmodifiableOrNullList(customOptions);
         this.excludedExtensions = PrivateNutsUtilCollections.unmodifiableOrNullList(excludedExtensions);
@@ -445,8 +471,55 @@ public class DefaultNutsWorkspaceOptions implements Serializable, NutsWorkspaceO
         this.skipErrors = skipErrors;
         this.locale = locale;
         this.theme = theme;
+        this.isolation = isolation;
+        this.initLaunchers=initLaunchers;
+        this.initScripts=initScripts;
+        this.initPlatforms=initPlatforms;
+        this.initJava=initJava;
+        this.desktopLauncher=desktopLauncher;
+        this.menuLauncher=menuLauncher;
+        this.userLauncher=userLauncher;
     }
 
+    @Override
+    public NutsOptional<NutsSupportMode> getDesktopLauncher() {
+        return NutsOptional.of(desktopLauncher);
+    }
+
+    @Override
+    public NutsOptional<NutsSupportMode> getMenuLauncher() {
+        return NutsOptional.of(menuLauncher);
+    }
+
+    @Override
+    public NutsOptional<NutsSupportMode> getUserLauncher() {
+        return NutsOptional.of(userLauncher);
+    }
+
+    @Override
+    public NutsOptional<NutsWorkspaceIsolation> getIsolation() {
+        return NutsOptional.of(isolation);
+    }
+
+    @Override
+    public NutsOptional<Boolean> getInitLaunchers() {
+        return NutsOptional.of(initLaunchers);
+    }
+
+    @Override
+    public NutsOptional<Boolean> getInitScripts() {
+        return NutsOptional.of(initScripts);
+    }
+
+    @Override
+    public NutsOptional<Boolean> getInitPlatforms() {
+        return NutsOptional.of(initPlatforms);
+    }
+
+    @Override
+    public NutsOptional<Boolean> getInitJava() {
+        return NutsOptional.of(initJava);
+    }
 
     @Override
     public NutsOptional<NutsVersion> getApiVersion() {
@@ -821,7 +894,7 @@ public class DefaultNutsWorkspaceOptions implements Serializable, NutsWorkspaceO
 
     @Override
     public NutsCommandLine toCommandLine(NutsWorkspaceOptionsConfig config) {
-        return new PrivateWorkspaceOptionsConfigHelper(config, this).toCommandLine();
+        return new PrivateNutsWorkspaceOptionsArgumentsBuilder(config, this).toCommandLine();
     }
 
     @Override

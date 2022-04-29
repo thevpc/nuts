@@ -35,6 +35,10 @@ import net.thevpc.nuts.boot.NutsApiUtils;
  */
 public enum NutsTerminalMode implements NutsEnum {
     /**
+     * default value
+     */
+    DEFAULT,
+    /**
      * streams in inherited mode will <strong>not process</strong> the content but delegate processing to it parents
      */
     INHERITED,

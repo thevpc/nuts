@@ -812,7 +812,7 @@ public class DefaultNutsCommandLine implements NutsCommandLine {
     @Override
     public String toString() {
         return toStringList().stream().map(x -> NutsUtilStrings.formatStringLiteral(
-                x, NutsUtilStrings.QuoteType.DOUBLE, NutsSupportCondition.PREFERRED
+                x, NutsUtilStrings.QuoteType.DOUBLE, NutsSupportMode.PREFERRED
         )).collect(Collectors.joining(" "));
     }
 

@@ -1,6 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.executor.embedded;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.standalone.executor.java.JavaExecutorComponent;
 import net.thevpc.nuts.runtime.standalone.executor.java.JavaExecutorOptions;
 
 import java.lang.reflect.Method;
@@ -12,12 +13,14 @@ public class ClassloaderAwareRunnableImpl extends ClassloaderAwareRunnable {
     private final Class<?> cls;
     private final JavaExecutorOptions joptions;
     private final NutsId id;
+    private final NutsExecutionContext executionContext;
 
-    public ClassloaderAwareRunnableImpl(NutsId id, ClassLoader classLoader, Class<?> cls, NutsSession session, JavaExecutorOptions joptions) {
+    public ClassloaderAwareRunnableImpl(NutsId id, ClassLoader classLoader, Class<?> cls, NutsSession session, JavaExecutorOptions joptions,NutsExecutionContext executionContext) {
         super(session.copy(), classLoader);
         this.id = id;
         this.cls = cls;
         this.joptions = joptions;
+        this.executionContext = executionContext;
     }
 
     @Override
@@ -71,10 +74,11 @@ public class ClassloaderAwareRunnableImpl extends ClassloaderAwareRunnable {
             mainMethod.invoke(nutsApp, sessionCopy, joptions.getAppArgs().toArray(new String[0]));
         } else {
             //NutsWorkspace
-            NutsWorkspaceBootOptionsBuilder bootOptions = getSession().boot().getBootOptions().builder();
+
+            NutsWorkspaceOptionsBuilder bootOptions = JavaExecutorComponent.createChildOptions(executionContext);
             System.setProperty("nuts.boot.args",
                     bootOptions
-                            .toCommandLine(new NutsWorkspaceOptionsConfig().setExported(true).setCompact(true))
+                            .toCommandLine(new NutsWorkspaceOptionsConfig().setCompact(true))
                             .add(id.getLongName())
                             .formatter(session).setShellFamily(NutsShellFamily.SH).toString()
             );

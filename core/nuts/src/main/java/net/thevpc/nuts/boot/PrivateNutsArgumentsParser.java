@@ -100,7 +100,7 @@ public final class PrivateNutsArgumentsParser {
                         a = cmdLine.nextString().get(session);
                         String v = a.getStringValue().orElse("");
                         if (active) {
-                            options.setUsername(v);
+                            options.setUserName(v);
                         }
                         break;
                     }
@@ -1055,7 +1055,76 @@ public final class PrivateNutsArgumentsParser {
                         }
                         break;
                     }
-
+                    case "--sandbox": {
+                        a = cmdLine.nextBoolean().get(session);
+                        if (active) {
+                            options.setIsolation(a.getBooleanValue().get(session)? NutsWorkspaceIsolation.SANDBOX : null);
+                        }
+                        break;
+                    }
+                    case "--confined": {
+                        a = cmdLine.nextBoolean().get(session);
+                        if (active) {
+                            options.setIsolation(a.getBooleanValue().get(session)? NutsWorkspaceIsolation.CONFINED : null);
+                        }
+                        break;
+                    }
+                    case "--isolation": {
+                        a = cmdLine.nextString().get(session);
+                        if (active) {
+                            options.setIsolation(NutsWorkspaceIsolation.parse(a.getStringValue().get(session)).get(session));
+                        }
+                        break;
+                    }
+                    case "--init-launchers": {
+                        a = cmdLine.nextBoolean().get(session);
+                        if (active) {
+                            options.setInitLaunchers(a.getBooleanValue().get(session));
+                        }
+                        break;
+                    }
+                    case "--init-java": {
+                        a = cmdLine.nextBoolean().get(session);
+                        if (active) {
+                            options.setInitJava(a.getBooleanValue().get(session));
+                        }
+                        break;
+                    }
+                    case "--init-platforms": {
+                        a = cmdLine.nextBoolean().get(session);
+                        if (active) {
+                            options.setInitPlatforms(a.getBooleanValue().get(session));
+                        }
+                        break;
+                    }
+                    case "--init-scripts": {
+                        a = cmdLine.nextBoolean().get(session);
+                        if (active) {
+                            options.setInitScripts(a.getBooleanValue().get(session));
+                        }
+                        break;
+                    }
+                    case "--desktop-launcher": {
+                        a = cmdLine.nextString().get(session);
+                        if (active) {
+                            options.setDesktopLauncher(NutsSupportMode.parse(a.getStringValue().get(session)).get(session));
+                        }
+                        break;
+                    }
+                    case "--menu-launcher": {
+                        a = cmdLine.nextString().get(session);
+                        if (active) {
+                            options.setMenuLauncher(NutsSupportMode.parse(a.getStringValue().get(session)).get(session));
+                        }
+                        break;
+                    }
+                    case "--user-launcher": {
+                        a = cmdLine.nextString().get(session);
+                        if (active) {
+                            options.setUserLauncher(NutsSupportMode.parse(a.getStringValue().get(session)).get(session));
+                        }
+                        break;
+                    }
                     //ERRORS
                     case "-C":
                     case "-I":
@@ -1077,7 +1146,7 @@ public final class PrivateNutsArgumentsParser {
                         } else {
                             cmdLine.skip();
                             if (a.isActive()) {
-                                showError.add(NutsMessage.cstyle("nuts: invalid option %s", a.asString()));
+                                showError.add(NutsMessage.cstyle("nuts: invalid option %s", a.asString().orNull()));
                             }
                         }
                     }

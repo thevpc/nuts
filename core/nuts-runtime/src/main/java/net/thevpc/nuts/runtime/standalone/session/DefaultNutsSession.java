@@ -1261,7 +1261,7 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
             if (options.getTransitive().isPresent()) {
                 this.setTransitive(options.getTransitive().orNull());
             }
-            if (options.getTerminalMode().isPresent()) {
+            if (options.getTerminalMode().isPresent() && NutsTerminalMode.DEFAULT!=options.getTerminalMode().orNull()) {
                 getTerminal().setOut(
                         getTerminal().getOut().setMode(options.getTerminalMode().orNull())
                 );

@@ -50,6 +50,22 @@ public interface NutsWorkspaceOptionsBuilder extends NutsWorkspaceOptions {
         return new DefaultNutsWorkspaceOptionsBuilder();
     }
 
+    NutsWorkspaceOptionsBuilder setInitLaunchers(Boolean initLaunchers);
+
+    NutsWorkspaceOptionsBuilder setInitScripts(Boolean initScripts);
+
+    NutsWorkspaceOptionsBuilder setInitPlatforms(Boolean initPlatforms);
+
+    NutsWorkspaceOptionsBuilder setInitJava(Boolean initJava);
+
+    NutsWorkspaceOptionsBuilder setIsolation(NutsWorkspaceIsolation isolation);
+
+    NutsWorkspaceOptionsBuilder setDesktopLauncher(NutsSupportMode desktopLauncher);
+
+    NutsWorkspaceOptionsBuilder setMenuLauncher(NutsSupportMode menuLauncher);
+
+    NutsWorkspaceOptionsBuilder setUserLauncher(NutsSupportMode userLauncher);
+
     /**
      * create a <strong>mutable</strong> copy of this instance
      *
@@ -306,7 +322,7 @@ public interface NutsWorkspaceOptionsBuilder extends NutsWorkspaceOptions {
 
     NutsWorkspaceOptionsBuilder setCommandLine(String[] args, NutsSession session);
 
-    NutsWorkspaceOptionsBuilder setUsername(String username);
+    NutsWorkspaceOptionsBuilder setUserName(String username);
 
     NutsWorkspaceOptionsBuilder setStoreLocation(NutsStoreLocation location, String value);
 
@@ -324,5 +340,8 @@ public interface NutsWorkspaceOptionsBuilder extends NutsWorkspaceOptions {
      * @since 0.8.3
      */
     NutsWorkspaceOptionsBuilder setDependencySolver(String dependencySolver);
+    NutsWorkspaceOptionsBuilder unsetRuntimeOptions();
+    NutsWorkspaceOptionsBuilder unsetCreationOptions();
+    NutsWorkspaceOptionsBuilder unsetExportedOptions();
 
 }

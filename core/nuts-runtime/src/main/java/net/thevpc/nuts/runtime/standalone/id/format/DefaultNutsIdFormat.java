@@ -275,11 +275,11 @@ public class DefaultNutsIdFormat extends DefaultFormatBase<NutsIdFormat> impleme
     }
 
     private String _encodeValue(String s) {
-        return NutsUtilStrings.formatStringLiteral(s, NutsUtilStrings.QuoteType.SIMPLE, NutsSupportCondition.PREFERRED);
+        return NutsUtilStrings.formatStringLiteral(s, NutsUtilStrings.QuoteType.SIMPLE, NutsSupportMode.PREFERRED);
     }
 
     private String _encodeKey(String s) {
-        return NutsUtilStrings.formatStringLiteral(s, NutsUtilStrings.QuoteType.SIMPLE, NutsSupportCondition.PREFERRED);
+        return NutsUtilStrings.formatStringLiteral(s, NutsUtilStrings.QuoteType.SIMPLE, NutsSupportMode.PREFERRED);
     }
 
     @Override

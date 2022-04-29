@@ -212,22 +212,22 @@ public class TestUtils {
         //this is not mandatory though, as we are creating a path based workspace
         argsList.add("--standalone");
         //disable creation of desktop icons
-        argsList.add("---system-desktop-launcher=unsupported");
+        argsList.add("--desktop-launcher=unsupported");
         //disable creation of desktop menus
-        argsList.add("---system-menu-launcher=unsupported");
+        argsList.add("--menu-launcher=unsupported");
         //disable creation of any icons
-        argsList.add("---system-custom-launcher=unsupported");
+        argsList.add("--user-launcher=unsupported");
         //disable creating of bashrc, etc...
         argsList.add("--!switch");
         //disable auto-detection of java
-        argsList.add("---!init-platforms");
+        argsList.add("--!init-platforms");
         //disable auto-creation of nuts scripts
-        argsList.add("---!init-scripts");
+        argsList.add("--!init-scripts");
         //disable auto-creation of nuts icons and menus
-        argsList.add("---!init-launchers");
+        argsList.add("--!init-launchers");
         //disable progress indicator
         argsList.add("--!progress");
-        //disable interactive mode and 'always confirm'
+        //disable interactive mode and 'always confirm'²
         argsList.add("--yes");
         //disable installing nsh
         argsList.add("--skip-companions");

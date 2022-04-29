@@ -309,18 +309,18 @@ public class NutsWorkspaceUtils {
         }
     }
 
-    public void installLaunchers(boolean gui) {
+    public void installScriptsAndLaunchers(boolean includeGraphicalLaunchers) {
         NutsWorkspaceEnvManager env = session.env();
         try {
             env.addLauncher(
                     new NutsLauncherOptions()
                             .setId(session.getWorkspace().getApiId())
                             .setCreateScript(true)
-                            .setSystemWideConfig(
+                            .setSwitchWorkspace(
                                     session.boot().getBootOptions().getSwitchWorkspace().orElse(false)
                             )
-                            .setCreateDesktopShortcut(gui ? NutsSupportCondition.PREFERRED : NutsSupportCondition.NEVER)
-                            .setCreateMenuShortcut(gui ? NutsSupportCondition.SUPPORTED : NutsSupportCondition.NEVER)
+                            .setCreateDesktopLauncher(includeGraphicalLaunchers ? NutsSupportMode.PREFERRED : NutsSupportMode.NEVER)
+                            .setCreateMenuLauncher(includeGraphicalLaunchers ? NutsSupportMode.SUPPORTED : NutsSupportMode.NEVER)
             );
         } catch (Exception ex) {
             _LOG(session).with().session(session).level(Level.FINEST).verb(NutsLogVerb.WARNING).error(ex)

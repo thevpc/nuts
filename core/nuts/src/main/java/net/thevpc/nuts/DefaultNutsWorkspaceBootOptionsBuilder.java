@@ -123,21 +123,23 @@ public final class DefaultNutsWorkspaceBootOptionsBuilder extends DefaultNutsWor
                 getOutputFormatOptions().orNull(), getCustomOptions().orNull(), getApiVersion().orNull(), getRuntimeId().orNull(), getJavaCommand().orNull()
                 , getJavaOptions().orNull(), getWorkspace().orNull(), getOutLinePrefix().orNull(), getErrLinePrefix().orNull()
                 , getName().orNull(), getSkipCompanions().orNull(), getSkipWelcome().orNull(), getSkipBoot().orNull()
-                , getGlobal().orNull(), getGui().orNull(), getExcludedExtensions().orNull(), getRepositories().orNull(), getUserName().orNull()
+                , getGlobal().orNull(), getGui().orNull(), getDry().orNull(), getRecover().orNull(), getReset().orNull(), getCommandVersion().orNull(), getCommandHelp().orNull(), getCommandHelp().orNull(), getSwitchWorkspace().orNull(), getCached().orNull(), getCached().orNull(), getTransitive().orNull(), getBot().orNull()
+                , getIsolation().orNull(), getInitLaunchers().orNull(), getInitScripts().orNull(), getInitPlatforms().orNull()
+                , getInitJava().orNull(), getExcludedExtensions().orNull(), getRepositories().orNull(), getUserName().orNull()
                 , getCredentials().orNull(), getTerminalMode().orNull(), getReadOnly().orNull(), getTrace().orNull(), getProgressOptions().orNull()
                 , getDependencySolver().orNull(), getLogConfig().orNull(), getConfirm().orNull(), getOutputFormat().orNull()
-                , getApplicationArguments().orNull(), getOpenMode().orNull(), getCreationTime().orNull(), getDry().orNull()
-                , getClassLoaderSupplier().orNull(), getExecutorOptions().orNull(), getRecover().orNull(), getReset().orNull()
-                , getCommandVersion().orNull(), getCommandHelp().orNull(), getDebug().orNull(), getCommandHelp().orNull()
-                , getExecutionType().orNull(), getRunAs().orNull(), getArchetype().orNull(), getSwitchWorkspace().orNull()
-                , getStoreLocations().orNull(), getHomeLocations().orNull(), getStoreLocationLayout().orNull(), getStoreLocationStrategy().orNull()
-                , getRepositoryStoreLocationStrategy().orNull(), getFetchStrategy().orNull(), getCached().orNull(), getCached().orNull()
-                , getTransitive().orNull(), getBot().orNull(), getStdin().orNull(), getStdout().orNull(), getStdout().orNull()
+                , getApplicationArguments().orNull(), getOpenMode().orNull(), getCreationTime().orNull(),
+                getClassLoaderSupplier().orNull(), getExecutorOptions().orNull(),
+                getDebug().orNull(),
+                getExecutionType().orNull(), getRunAs().orNull(), getArchetype().orNull(),
+                getStoreLocations().orNull(), getHomeLocations().orNull(), getStoreLocationLayout().orNull(), getStoreLocationStrategy().orNull()
+                , getRepositoryStoreLocationStrategy().orNull(), getFetchStrategy().orNull(),
+                getStdin().orNull(), getStdout().orNull(), getStdout().orNull()
                 , getExecutorService().orNull(), getExpireTime().orNull(), getErrors().orNull(), getSkipErrors().orNull(), getLocale().orNull()
                 , getTheme().orNull(), getUuid().orNull(), getBootRepositories().orNull(), getRuntimeBootDependencyNode().orNull(), getExtensionBootDescriptors().orNull()
                 , getExtensionBootDependencyNodes().orNull(), getClassWorldURLs().orNull(), getExtensionsSet().orNull(), getBootWorkspaceFactory().orNull(), getRuntimeBootDescriptor().orNull(), getClassWorldLoader().orNull()
-                , getUserOptions().orNull()
-        );
+                , getUserOptions().orNull(),
+                getDesktopLauncher().orNull(), getMenuLauncher().orNull(), getUserLauncher().orNull());
     }
 
     public DefaultNutsWorkspaceBootOptionsBuilder setAll(DefaultNutsWorkspaceOptionsBuilder other) {

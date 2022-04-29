@@ -26,6 +26,7 @@ package net.thevpc.nuts;
 import net.thevpc.nuts.boot.PrivateNutsArgumentsParser;
 import net.thevpc.nuts.boot.PrivateNutsUtilCollections;
 
+import java.io.File;
 import java.io.InputStream;
 import java.io.PrintStream;
 import java.time.Instant;
@@ -373,73 +374,80 @@ public class DefaultNutsWorkspaceOptionsBuilder implements NutsWorkspaceOptionsB
      */
     private String theme;
 
+    private Boolean initLaunchers;
+    private Boolean initScripts;
+    private Boolean initPlatforms;
+    private Boolean initJava;
+    private NutsWorkspaceIsolation isolation;
+    private NutsSupportMode desktopLauncher;
+    private NutsSupportMode menuLauncher;
+    private NutsSupportMode userLauncher;
+
     public DefaultNutsWorkspaceOptionsBuilder() {
 
     }
 
-    public DefaultNutsWorkspaceOptionsBuilder(List<String> outputFormatOptions, List<String> customOptions, NutsVersion apiVersion, NutsId runtimeId, String javaCommand, String javaOptions, String workspace, String outLinePrefix, String errLinePrefix, String name, Boolean skipCompanions, Boolean skipWelcome, Boolean skipBoot, Boolean global, Boolean gui, List<String> excludedExtensions, List<String> repositories, String userName, char[] credentials, NutsTerminalMode terminalMode, Boolean readOnly, Boolean trace, String progressOptions, String dependencySolver, NutsLogConfig logConfig, NutsConfirmationMode confirm, NutsContentType outputFormat, List<String> applicationArguments, NutsOpenMode openMode, Instant creationTime, Boolean dry, Supplier<ClassLoader> classLoaderSupplier, List<String> executorOptions, Boolean recover, Boolean reset, Boolean commandVersion, Boolean commandHelp, String debug, Boolean inherited, NutsExecutionType executionType, NutsRunAs runAs, String archetype, Boolean switchWorkspace, Map<NutsStoreLocation, String> storeLocations, Map<NutsHomeLocation, String> homeLocations, NutsOsFamily storeLocationLayout, NutsStoreLocationStrategy storeLocationStrategy, NutsStoreLocationStrategy repositoryStoreLocationStrategy, NutsFetchStrategy fetchStrategy, Boolean cached, Boolean indexed, Boolean transitive, Boolean bot, InputStream stdin, PrintStream stdout, PrintStream stderr, ExecutorService executorService, Instant expireTime, List<NutsMessage> errors, Boolean skipErrors, String locale, String theme) {
-        this.outputFormatOptions = outputFormatOptions;
-        this.customOptions = customOptions;
-        this.apiVersion = apiVersion;
-        this.runtimeId = runtimeId;
-        this.javaCommand = javaCommand;
-        this.javaOptions = javaOptions;
-        this.workspace = workspace;
-        this.outLinePrefix = outLinePrefix;
-        this.errLinePrefix = errLinePrefix;
-        this.name = name;
-        this.skipCompanions = skipCompanions;
-        this.skipWelcome = skipWelcome;
-        this.skipBoot = skipBoot;
-        this.global = global;
-        this.gui = gui;
-        this.excludedExtensions = excludedExtensions;
-        this.repositories = repositories;
-        this.userName = userName;
-        this.credentials = credentials == null ? null : Arrays.copyOf(credentials, credentials.length);
-        this.terminalMode = terminalMode;
-        this.readOnly = readOnly;
-        this.trace = trace;
-        this.progressOptions = progressOptions;
-        this.dependencySolver = dependencySolver;
-        this.logConfig = logConfig == null ? null : logConfig.copy();
-        this.confirm = confirm;
-        this.outputFormat = outputFormat;
-        this.applicationArguments = applicationArguments;
-        this.openMode = openMode;
-        this.creationTime = creationTime;
-        this.dry = dry;
-        this.classLoaderSupplier = classLoaderSupplier;
-        this.executorOptions = executorOptions;
-        this.recover = recover;
-        this.reset = reset;
-        this.commandVersion = commandVersion;
-        this.commandHelp = commandHelp;
-        this.debug = debug;
-        this.inherited = inherited;
-        this.executionType = executionType;
-        this.runAs = runAs;
-        this.archetype = archetype;
-        this.switchWorkspace = switchWorkspace;
-        this.storeLocations = storeLocations;
-        this.homeLocations = homeLocations;
-        this.storeLocationLayout = storeLocationLayout;
-        this.storeLocationStrategy = storeLocationStrategy;
-        this.repositoryStoreLocationStrategy = repositoryStoreLocationStrategy;
-        this.fetchStrategy = fetchStrategy;
-        this.cached = cached;
-        this.indexed = indexed;
-        this.transitive = transitive;
-        this.bot = bot;
-        this.stdin = stdin;
-        this.stdout = stdout;
-        this.stderr = stderr;
-        this.executorService = executorService;
-        this.expireTime = expireTime;
-        this.errors = errors;
-        this.skipErrors = skipErrors;
-        this.locale = locale;
-        this.theme = theme;
+    @Override
+    public NutsOptional<NutsSupportMode> getDesktopLauncher() {
+        return NutsOptional.of(desktopLauncher);
+    }
+
+    @Override
+    public NutsOptional<NutsSupportMode> getMenuLauncher() {
+        return NutsOptional.of(menuLauncher);
+    }
+
+    @Override
+    public NutsOptional<NutsSupportMode> getUserLauncher() {
+        return NutsOptional.of(userLauncher);
+    }
+
+    @Override
+    public NutsWorkspaceOptionsBuilder setInitLaunchers(Boolean initLaunchers) {
+        this.initLaunchers = initLaunchers;
+        return this;
+    }
+
+    @Override
+    public NutsWorkspaceOptionsBuilder setInitScripts(Boolean initScripts) {
+        this.initScripts = initScripts;
+        return this;
+    }
+
+    @Override
+    public NutsWorkspaceOptionsBuilder setInitPlatforms(Boolean initPlatforms) {
+        this.initPlatforms = initPlatforms;
+        return this;
+    }
+
+    @Override
+    public NutsWorkspaceOptionsBuilder setInitJava(Boolean initJava) {
+        this.initJava = initJava;
+        return this;
+    }
+
+    @Override
+    public NutsWorkspaceOptionsBuilder setIsolation(NutsWorkspaceIsolation isolation) {
+        this.isolation = isolation;
+        return this;
+    }
+
+    @Override
+    public NutsWorkspaceOptionsBuilder setDesktopLauncher(NutsSupportMode desktopLauncher) {
+        this.desktopLauncher = desktopLauncher;
+        return this;
+    }
+
+    @Override
+    public NutsWorkspaceOptionsBuilder setMenuLauncher(NutsSupportMode menuLauncher) {
+        this.menuLauncher = menuLauncher;
+        return this;
+    }
+
+    @Override
+    public NutsWorkspaceOptionsBuilder setUserLauncher(NutsSupportMode userLauncher) {
+        this.userLauncher = userLauncher;
+        return this;
     }
 
     @Override
@@ -1380,7 +1388,7 @@ public class DefaultNutsWorkspaceOptionsBuilder implements NutsWorkspaceOptionsB
         this.setSkipBoot(other.getSkipBoot().orNull());
         this.setGlobal(other.getGlobal().orNull());
         this.setGui(other.getGui().orNull());
-        this.setUsername(other.getUserName().orNull());
+        this.setUserName(other.getUserName().orNull());
         this.setCredentials(other.getCredentials().orNull());
         this.setTerminalMode(other.getTerminalMode().orNull());
         this.setReadOnly(other.getReadOnly().orNull());
@@ -1434,6 +1442,14 @@ public class DefaultNutsWorkspaceOptionsBuilder implements NutsWorkspaceOptionsB
         this.setLocale(other.getLocale().orNull());
         this.setTheme(other.getTheme().orNull());
         this.setDependencySolver(other.getDependencySolver().orNull());
+        this.setIsolation(other.getIsolation().orNull());
+        this.setInitLaunchers(other.getInitLaunchers().orNull());
+        this.setInitJava(other.getInitJava().orNull());
+        this.setInitScripts(other.getInitScripts().orNull());
+        this.setInitLaunchers(other.getInitLaunchers().orNull());
+        this.setDesktopLauncher(other.getDesktopLauncher().orNull());
+        this.setMenuLauncher(other.getMenuLauncher().orNull());
+        this.setUserLauncher(other.getUserLauncher().orNull());
         return this;
     }
 
@@ -1474,7 +1490,7 @@ public class DefaultNutsWorkspaceOptionsBuilder implements NutsWorkspaceOptionsB
                 this.setGui(other.getGui().orNull());
             }
             if (other.getUserName().isPresent()) {
-                this.setUsername(other.getUserName().orNull());
+                this.setUserName(other.getUserName().orNull());
             }
             if (other.getCredentials().isPresent()) {
                 this.setCredentials(other.getCredentials().orNull());
@@ -1594,7 +1610,6 @@ public class DefaultNutsWorkspaceOptionsBuilder implements NutsWorkspaceOptionsB
             if (other.getExecutorService().isPresent()) {
                 this.setExecutorService(other.getExecutorService().orNull());
             }
-
             if (other.getExcludedExtensions().isPresent()) {
                 this.setExcludedExtensions(other.getExcludedExtensions().orNull());
             }
@@ -1628,6 +1643,30 @@ public class DefaultNutsWorkspaceOptionsBuilder implements NutsWorkspaceOptionsB
             if (other.getDependencySolver().isPresent()) {
                 this.setDependencySolver(other.getDependencySolver().orNull());
             }
+            if (other.getIsolation().isPresent()) {
+                this.setIsolation(other.getIsolation().orNull());
+            }
+            if (other.getInitLaunchers().isPresent()) {
+                this.setInitLaunchers(other.getInitLaunchers().orNull());
+            }
+            if (other.getInitJava().isPresent()) {
+                this.setInitJava(other.getInitJava().orNull());
+            }
+            if (other.getInitScripts().isPresent()) {
+                this.setInitScripts(other.getInitScripts().orNull());
+            }
+            if (other.getInitLaunchers().isPresent()) {
+                this.setInitLaunchers(other.getInitLaunchers().orNull());
+            }
+            if (other.getDesktopLauncher().isPresent()) {
+                this.setDesktopLauncher(other.getDesktopLauncher().orNull());
+            }
+            if (other.getMenuLauncher().isPresent()) {
+                this.setMenuLauncher(other.getMenuLauncher().orNull());
+            }
+            if (other.getUserLauncher().isPresent()) {
+                this.setUserLauncher(other.getUserLauncher().orNull());
+            }
         }
         return this;
     }
@@ -1651,7 +1690,7 @@ public class DefaultNutsWorkspaceOptionsBuilder implements NutsWorkspaceOptionsB
      * @return {@code this} instance
      */
     @Override
-    public NutsWorkspaceOptionsBuilder setUsername(String username) {
+    public NutsWorkspaceOptionsBuilder setUserName(String username) {
         this.userName = username;
         return this;
     }
@@ -1744,13 +1783,26 @@ public class DefaultNutsWorkspaceOptionsBuilder implements NutsWorkspaceOptionsB
     @Override
     public NutsWorkspaceOptions build() {
         return new DefaultNutsWorkspaceOptions(
-                getApiVersion().orNull(), getRuntimeId().orNull(), getWorkspace().orNull(), getName().orNull(), getJavaCommand().orNull(), getJavaOptions().orNull(), getOutLinePrefix().orNull(), getErrLinePrefix().orNull(), getUserName().orNull(), getCredentials().orNull(), getProgressOptions().orNull(), getDependencySolver().orNull(), getDebug().orNull(), getArchetype().orNull(), getLocale().orNull(), getTheme().orNull(), getLogConfig().orNull(), getConfirm().orNull(), getOutputFormat().orNull(), getOpenMode().orNull(), getExecutionType().orNull(), getStoreLocationStrategy().orNull(), getRepositoryStoreLocationStrategy().orNull(), getStoreLocationLayout().orNull(), getTerminalMode().orNull(), getFetchStrategy().orNull(), getRunAs().orNull(), getCreationTime().orNull(), getExpireTime().orNull(), getSkipCompanions().orNull(), getSkipWelcome().orNull(), getSkipBoot().orNull(), getGlobal().orNull(), getGui().orNull(), getReadOnly().orNull(), getTrace().orNull(), getDry().orNull(), getRecover().orNull(), getReset().orNull(), getCommandVersion().orNull(), getCommandHelp().orNull(), getCommandHelp().orNull(), getSwitchWorkspace().orNull(), getCached().orNull(), getCached().orNull(), getTransitive().orNull(), getBot().orNull(), getSkipErrors().orNull(), getStdin().orNull(), getStdout().orNull(), getStdout().orNull(), getExecutorService().orNull(), getClassLoaderSupplier().orNull(), getApplicationArguments().orNull(), getOutputFormatOptions().orNull(), getCustomOptions().orNull(),
-                getExcludedExtensions().orNull(), getRepositories().orNull()
-                ,
-                getExecutorOptions().orNull()
-                ,
-                getErrors().orNull(), getStoreLocations().orNull(), getHomeLocations().orNull()
-        );
+                getApiVersion().orNull(), getRuntimeId().orNull(), getWorkspace().orNull(),
+                getName().orNull(), getJavaCommand().orNull(), getJavaOptions().orNull(),
+                getOutLinePrefix().orNull(), getErrLinePrefix().orNull(), getUserName().orNull(),
+                getCredentials().orNull(), getProgressOptions().orNull(), getDependencySolver().orNull(),
+                getDebug().orNull(), getArchetype().orNull(), getLocale().orNull(), getTheme().orNull(),
+                getLogConfig().orNull(), getConfirm().orNull(), getOutputFormat().orNull(), getOpenMode().orNull(),
+                getExecutionType().orNull(), getStoreLocationStrategy().orNull(), getRepositoryStoreLocationStrategy().orNull(),
+                getStoreLocationLayout().orNull(), getTerminalMode().orNull(), getFetchStrategy().orNull(),
+                getRunAs().orNull(), getCreationTime().orNull(), getExpireTime().orNull(),
+                getSkipCompanions().orNull(), getSkipWelcome().orNull(), getSkipBoot().orNull(),
+                getGlobal().orNull(), getGui().orNull(), getReadOnly().orNull(), getTrace().orNull(),
+                getDry().orNull(), getRecover().orNull(), getReset().orNull(), getCommandVersion().orNull(),
+                getCommandHelp().orNull(), getCommandHelp().orNull(), getSwitchWorkspace().orNull(), getCached().orNull(),
+                getIndexed().orNull(), getTransitive().orNull(), getBot().orNull(), getSkipErrors().orNull(),
+                getIsolation().orNull(), getInitLaunchers().orNull(), getInitScripts().orNull(), getInitPlatforms().orNull(),
+                getInitJava().orNull(), getStdin().orNull(), getStdout().orNull(), getStdout().orNull(), getExecutorService().orNull(),
+                getClassLoaderSupplier().orNull(), getApplicationArguments().orNull(), getOutputFormatOptions().orNull(),
+                getCustomOptions().orNull(), getExcludedExtensions().orNull(), getRepositories().orNull(),
+                getExecutorOptions().orNull(), getErrors().orNull(), getStoreLocations().orNull(), getHomeLocations().orNull(),
+                getDesktopLauncher().orNull(), getMenuLauncher().orNull(), getUserLauncher().orNull());
     }
 
     @Override
@@ -1773,4 +1825,102 @@ public class DefaultNutsWorkspaceOptionsBuilder implements NutsWorkspaceOptionsB
         return build().toCommandLine(config);
     }
 
+    @Override
+    public NutsOptional<NutsWorkspaceIsolation> getIsolation() {
+        return NutsOptional.of(isolation);
+    }
+
+    @Override
+    public NutsOptional<Boolean> getInitLaunchers() {
+        return NutsOptional.of(initLaunchers);
+    }
+
+    @Override
+    public NutsOptional<Boolean> getInitScripts() {
+        return NutsOptional.of(initScripts);
+    }
+
+    @Override
+    public NutsOptional<Boolean> getInitPlatforms() {
+        return NutsOptional.of(initPlatforms);
+    }
+
+    @Override
+    public NutsOptional<Boolean> getInitJava() {
+        return NutsOptional.of(initJava);
+    }
+
+    @Override
+    public NutsWorkspaceOptionsBuilder unsetRuntimeOptions() {
+        setCommandHelp(null);
+        setCommandVersion(null);
+        setOpenMode(null);
+        setExecutionType(null);
+        setRunAs(null);
+        setReset(null);
+        setRecover(null);
+        setDry(null);
+        setExecutorOptions(null);
+        setApplicationArguments(null);
+        return this;
+    }
+
+    @Override
+    public NutsWorkspaceOptionsBuilder unsetCreationOptions() {
+        setName(null);
+        setArchetype(null);
+        setStoreLocationLayout(null);
+        setStoreLocationStrategy(null);
+        setRepositoryStoreLocationStrategy(null);
+        setStoreLocations(null);
+        setHomeLocations(null);
+        setSwitchWorkspace(null);
+        return this;
+    }
+
+    @Override
+    public NutsWorkspaceOptionsBuilder unsetExportedOptions() {
+        setJavaCommand(null);
+        setJavaOptions(null);
+        setWorkspace(null);
+        setUserName(null);
+        setCredentials(null);
+        setApiVersion(null);
+        setRuntimeId(null);
+        setTerminalMode(null);
+        setLogConfig(null);
+        setExcludedExtensions(null);
+        setRepositories(null);
+        setGlobal(null);
+        setGui(null);
+        setReadOnly(null);
+        setTrace(null);
+        setProgressOptions(null);
+        setDependencySolver(null);
+        setDebug(null);
+        setSkipCompanions(null);
+        setSkipWelcome(null);
+        setSkipBoot(null);
+        setOutLinePrefix(null);
+        setErrLinePrefix(null);
+        setCached(null);
+        setIndexed(null);
+        setTransitive(null);
+        setBot(null);
+        setFetchStrategy(null);
+        setConfirm(null);
+        setOutputFormat(null);
+        setOutputFormatOptions((List<String>) null);
+        setExpireTime(null);
+        setTheme(null);
+        setLocale(null);
+        setInitLaunchers(null);
+        setInitPlatforms(null);
+        setInitScripts(null);
+        setInitJava(null);
+        setDesktopLauncher(null);
+        setMenuLauncher(null);
+        setUserLauncher(null);
+        return this;
+    }
 }

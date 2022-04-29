@@ -452,22 +452,28 @@ public class DefaultNutsTextNodeParser extends AbstractNutsTextNodeParser {
         }
 
         private RootParserStep root() {
+            if(statusStack.isEmpty()){
+                return null;
+            }
             return (RootParserStep) statusStack.get(0);
         }
 
         public int size() {
-            if (statusStack.isEmpty()) {
-                return 0;
-            }
-            return statusStack.size() + root().size();
+            RootParserStep root = root();
+            return statusStack.size() + (root==null?0:root.size());
         }
 
         public boolean isEmpty() {
-            return statusStack.isEmpty() || root().isEmpty();
+            RootParserStep root = root();
+            return statusStack.isEmpty() || root==null || root.isEmpty();
         }
 
         public NutsText consumeFDocNode() {
-            ParserStep s = root().poll();
+            RootParserStep root = root();
+            if(root==null){
+                return null;
+            }
+            ParserStep s = root.poll();
             if (s == null) {
                 return null;
             }
@@ -476,7 +482,11 @@ public class DefaultNutsTextNodeParser extends AbstractNutsTextNodeParser {
 
         public NutsText consumeNode(NutsTextVisitor visitor) {
 //            JOptionPane.showMessageDialog(null,"consumeNode "+this);
-            ParserStep s = root().poll();
+            RootParserStep root = root();
+            if(root==null){
+                return null;
+            }
+            ParserStep s = root.poll();
             if (s == null) {
                 while (!statusStack.isEmpty()) {
                     ParserStep s2 = statusStack.peek();
@@ -495,7 +505,8 @@ public class DefaultNutsTextNodeParser extends AbstractNutsTextNodeParser {
                         break;
                     }
                 }
-                s = root().poll();
+                root = root();
+                s = root==null?null:root.poll();
             }
             if (s == null) {
                 return null;

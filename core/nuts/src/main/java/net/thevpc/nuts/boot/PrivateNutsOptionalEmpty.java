@@ -9,7 +9,7 @@ public class PrivateNutsOptionalEmpty<T> extends PrivateNutsOptionalImpl<T> {
     private Function<NutsSession, NutsMessage> message;
     public PrivateNutsOptionalEmpty(Function<NutsSession, NutsMessage> message) {
         if (message == null) {
-            message = (s) -> NutsMessage.cstyle("missing value");
+            message = (s) -> NutsMessage.cstyle("missing value : "+PrivateNutsUtilErrors.stacktrace(new Throwable()));
         }
         this.message = message;
     }

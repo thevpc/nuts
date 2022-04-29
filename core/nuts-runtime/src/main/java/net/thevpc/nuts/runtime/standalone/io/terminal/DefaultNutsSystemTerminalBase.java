@@ -45,9 +45,9 @@ public class DefaultNutsSystemTerminalBase extends NutsSystemTerminalBaseImpl {
         this.session = criteria.getSession();
         this.workspace = session.getWorkspace();
         NutsWorkspaceOptions options = session.boot().getBootOptions();
-        NutsTerminalMode terminalMode = options.getTerminalMode().orNull();
+        NutsTerminalMode terminalMode = options.getTerminalMode().orElse(NutsTerminalMode.DEFAULT);
         NutsBootTerminal bootStdFd = NutsWorkspaceExt.of(session).getModel().bootModel.getBootTerminal();
-        if (terminalMode == null) {
+        if (terminalMode == NutsTerminalMode.DEFAULT) {
             if (options.getBot().orElse(false) || !bootStdFd.getFlags().contains("ansi")) {
                 terminalMode = NutsTerminalMode.FILTERED;
             } else {

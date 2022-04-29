@@ -30,9 +30,6 @@ import java.util.Objects;
  */
 public class NutsWorkspaceOptionsConfig {
 
-    private boolean exportedOptions;
-    private boolean runtimeOptions;
-    private boolean createOptions;
     private boolean shortOptions;
     private boolean singleArgOptions;
     private boolean omitDefaults;
@@ -48,33 +45,6 @@ public class NutsWorkspaceOptionsConfig {
         return apiVersion;
     }
 
-    public boolean isInit() {
-        return createOptions;
-    }
-
-    public NutsWorkspaceOptionsConfig setInit(boolean e) {
-        this.createOptions = true;
-        return this;
-    }
-
-    public boolean isRuntime() {
-        return runtimeOptions;
-    }
-
-    public NutsWorkspaceOptionsConfig setRuntime(boolean e) {
-        this.runtimeOptions = true;
-        return this;
-    }
-
-    public boolean isExported() {
-        return exportedOptions;
-    }
-
-    public NutsWorkspaceOptionsConfig setExported(boolean e) {
-        this.exportedOptions = true;
-        return this;
-    }
-
     public NutsWorkspaceOptionsConfig setCompact(boolean compact) {
         if (compact) {
             shortOptions = true;
@@ -86,18 +56,6 @@ public class NutsWorkspaceOptionsConfig {
             omitDefaults = false;
         }
         return this;
-    }
-
-    public boolean isExportedOptions() {
-        return exportedOptions;
-    }
-
-    public boolean isRuntimeOptions() {
-        return runtimeOptions;
-    }
-
-    public boolean isCreateOptions() {
-        return createOptions;
     }
 
     public boolean isShortOptions() {
@@ -114,7 +72,7 @@ public class NutsWorkspaceOptionsConfig {
 
     @Override
     public int hashCode() {
-        return Objects.hash(exportedOptions, runtimeOptions, createOptions, shortOptions, singleArgOptions, omitDefaults,apiVersion);
+        return Objects.hash(shortOptions, singleArgOptions, omitDefaults, apiVersion);
     }
 
     @Override
@@ -126,23 +84,15 @@ public class NutsWorkspaceOptionsConfig {
             return false;
         }
         NutsWorkspaceOptionsConfig that = (NutsWorkspaceOptionsConfig) o;
-        return exportedOptions == that.exportedOptions
-                && runtimeOptions == that.runtimeOptions
-                && createOptions == that.createOptions
-                && shortOptions == that.shortOptions
+        return shortOptions == that.shortOptions
                 && singleArgOptions == that.singleArgOptions
                 && omitDefaults == that.omitDefaults
-                && Objects.equals(apiVersion,that.apiVersion)
-
-                ;
+                && Objects.equals(apiVersion, that.apiVersion);
     }
 
     @Override
     public String toString() {
         return "NutsWorkspaceOptionsConfig{" +
-                "exportedOptions=" + exportedOptions +
-                ", runtimeOptions=" + runtimeOptions +
-                ", createOptions=" + createOptions +
                 ", shortOptions=" + shortOptions +
                 ", singleArgOptions=" + singleArgOptions +
                 ", omitDefaults=" + omitDefaults +

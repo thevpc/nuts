@@ -26,7 +26,6 @@ package net.thevpc.nuts.runtime.standalone.workspace.archetype;
 import java.util.*;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.standalone.util.CoreNutsUtils;
 import net.thevpc.nuts.spi.*;
 import net.thevpc.nuts.runtime.standalone.repository.NutsRepositorySelectorHelper;
 import net.thevpc.nuts.runtime.standalone.workspace.config.DefaultNutsWorkspaceConfigManager;
@@ -105,17 +104,19 @@ public class DefaultNutsWorkspaceArchetypeComponent implements NutsWorkspaceArch
     @Override
     public void startWorkspace(NutsSession session) {
         NutsBootManager boot = session.boot();
-        boolean initializeAllPlatforms = CoreNutsUtils.isCustomTrue("---init-platforms",session);
-        if (initializeAllPlatforms && CoreNutsUtils.isCustomTrue("---init-java",session)) {
+        boolean initializePlatforms = boot.getBootOptions().getInitPlatforms().ifEmpty(true).get(session);
+        boolean initializeJava = boot.getBootOptions().getInitJava().ifEmpty(initializePlatforms).get(session);
+        boolean initializeScripts = boot.getBootOptions().getInitScripts().ifEmpty(true).get(session);
+        boolean initializeLaunchers = boot.getBootOptions().getInitLaunchers().ifEmpty(true).get(session);
+
+        if (initializeJava) {
             NutsWorkspaceUtils.of(session).installAllJVM();
         } else {
             //at least add current vm
             NutsWorkspaceUtils.of(session).installCurrentJVM();
         }
-        Boolean initScripts = CoreNutsUtils.isCustomTrue("---init-scripts",session);
-        Boolean initLaunchers = CoreNutsUtils.isCustomTrue("---init-launchers",session);
-        if (initScripts || initLaunchers) {
-            NutsWorkspaceUtils.of(session).installLaunchers(initLaunchers);
+        if (initializeScripts || initializeLaunchers) {
+            NutsWorkspaceUtils.of(session).installScriptsAndLaunchers(initializeLaunchers);
         }
         Boolean skipCompanions = session.boot().getBootOptions().getSkipCompanions().orElse(false);
         if (!skipCompanions) {

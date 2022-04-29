@@ -58,18 +58,18 @@ Boot Runtime Version: ###${nuts.workspace-runtime.version}###
  * ##:_:open options##
  * ##:_:open exported options##
 
- ##:_:create exported options## are considered both when creating a new workspace and when running it. If they are specified in creation
-                    they will be persisted. If they are specified later they will override persisted values without persisting the changes
-
  ##:_:create options## are considered solely when creating a new workspace. They will be persisted then (to the configuration file)
                     but they will be ignored elsewhere if the workspace already exists : configured parameters will be in use.
 
- ##:_:open exported options## are open (so transient, non persistent) options that will override any configured value (if any)
-                      having the ability to be exported to any ##:_:Java™## child process (as system property ```sh -D```...)
+ ##:_:create exported options## are considered both when creating a new workspace and when running it. If they are specified in creation
+                    they will be persisted. If they are specified later they will override persisted values without persisting the changes
 
  ##:_:open options## are transient (non persistent) options that will override any configured value (if any) and will be
                      in use in the current process (and ignored elsewhere). Such options will be considered in creating workspaces
                      as well but still they are not persistent.
+
+ ##:_:open exported options## are open (so transient, non persistent) options that will override any configured value (if any)
+                      having the ability to be exported to any ##:_:Java™## child process (as system property ```sh -D```...)
 
 
 ###) NUTS CREATE EXPORTED OPTIONS:
@@ -94,6 +94,13 @@ Boot Runtime Version: ###${nuts.workspace-runtime.version}###
  ```sh --boot-version <boot-api-version> ```
  ```sh --boot-api-version <boot-api-version> ```
       run a new/different instance of ```sh nuts``` with the specified version
+ ```sh --sandbox=true|false ``` (default is ```kw false``` )
+      when creating the workspace, generate a random workspace, for testing purposes.
+      sandbox mode will be propagated/exported as ```kw --confined```
+ ```sh --confined=true|false ``` (default is ```kw false``` )
+      use a confined workspace that does not allow user wide or system wide alteration
+ ```sh --isolation=system|user|confined|sandbox ``` (default is ```kw system``` )
+      use the level of isolation for the workspace
 
  ```sh --boot-runtime <runtime-id-or-version> ``` (default is ```kw ""``` and points to the latest compatible nuts-runtime artifact)
       load runtime (nuts-runtime) version. either version may be expressed or full nuts implementation
@@ -307,7 +314,16 @@ Boot Runtime Version: ###${nuts.workspace-runtime.version}###
       java) in the system by using ```sh ---!init-platforms ``` flag. Please notice the '---' prefix which means that
       the option is not standard and can be removed in later versions. This option implies ```sh ---init-java ```
 
-###) NUTS OPEN EXPORTED OPTIONS:
+```sh --init-platforms=true|false ``` (default is ```kw true``` )
+      when creating the workspace, search for installed platforms (java,python,dotnet, etc..). For now only java is supported
+ ```sh --init-java=true|false ``` (default is ```kw true``` )
+      when creating the workspace, search for installed jdk/jre. This flag has precedence over ```sh --init-platforms ```
+ ```sh --init-scripts=true|false ``` (default is ```kw true``` )
+      when creating the workspace, install any required/helpful scripts
+ ```sh --init-launchers=true|false ``` (default is ```kw true``` )
+      when creating the workspace, install any required/helpful launchers (desktop integration, such as menus and shortcuts)
+
+ ###) NUTS OPEN EXPORTED OPTIONS:
  ```sh --global  or -g```  (default is false)
       use root/system wide workspace instead of user's own workspace.
       requires admin privileges.
@@ -532,7 +548,17 @@ Boot Runtime Version: ###${nuts.workspace-runtime.version}###
  ```sh --error```
       exit with error whenever interactive mode is required
 
-###) NUTS OPEN OPTIONS:
+```sh --desktop-launcher=never|supported|preferred|always ``` (default depends on the operating system and the availability
+                                                              of a desktop environment)
+      enable/disable desktop launchers support
+```sh --menu-launcher=never|supported|preferred|always ``` (default depends on the operating system and the availability
+                                                              of a desktop environment)
+      enable/disable menu launchers support
+```sh --user-launcher=never|supported|preferred|always ``` (default depends on the operating system and the availability
+                                                              of a desktop environment)
+      enable/disable custom user shortcut launchers support
+
+ ###) NUTS OPEN OPTIONS:
 
  ```sh --recover  or -z``` (defaults to ```bool false```)
       try to recover from invalid workspace by ignoring cache and re-resolving dependencies. User configuration will not be altered.

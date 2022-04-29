@@ -149,28 +149,27 @@ public class DefaultNutsWorkspaceEnvManager implements NutsWorkspaceEnvManager {
         if (item == null) {
             throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("missing item"));
         }
-        String optionName = null;
         switch (item) {
             case DESKTOP: {
-                optionName = "---system-desktop-launcher";
+                NutsSupportMode a = session.boot().getBootOptions().getDesktopLauncher().orNull();
+                if (a != null) {
+                    return a;
+                }
                 break;
             }
             case MENU: {
-                optionName = "---system-menu-launcher";
-                break;
-            }
-            case SHORTCUT: {
-                optionName = "---system-custom-launcher";
-                break;
-            }
-        }
-        if (optionName != null) {
-            String o = session.boot().getCustomBootOption(optionName).flatMap(NutsValue::asString).orElse(null);
-            if (!NutsBlankable.isBlank(o)) {
-                NutsSupportMode q = NutsSupportMode.parse(o).orNull();
-                if (q != null) {
-                    return q;
+                NutsSupportMode a = session.boot().getBootOptions().getMenuLauncher().orNull();
+                if (a != null) {
+                    return a;
                 }
+                break;
+            }
+            case USER: {
+                NutsSupportMode a = session.boot().getBootOptions().getUserLauncher().orNull();
+                if (a != null) {
+                    return a;
+                }
+                break;
             }
         }
         switch (getOsFamily()) {
@@ -182,14 +181,14 @@ public class DefaultNutsWorkspaceEnvManager implements NutsWorkspaceEnvManager {
                     case MENU: {
                         return NutsSupportMode.PREFERRED;
                     }
-                    case SHORTCUT: {
+                    case USER: {
                         return NutsSupportMode.PREFERRED;
                     }
                 }
                 break;
             }
             case UNIX: {
-                return NutsSupportMode.UNSUPPORTED;
+                return NutsSupportMode.NEVER;
             }
             case WINDOWS: {
                 switch (item) {
@@ -202,20 +201,20 @@ public class DefaultNutsWorkspaceEnvManager implements NutsWorkspaceEnvManager {
                     case MENU: {
                         return NutsSupportMode.PREFERRED;
                     }
-                    case SHORTCUT: {
+                    case USER: {
                         return NutsSupportMode.PREFERRED;
                     }
                 }
                 break;
             }
             case MACOS: {
-                return NutsSupportMode.UNSUPPORTED;
+                return NutsSupportMode.NEVER;
             }
             case UNKNOWN: {
-                return NutsSupportMode.UNSUPPORTED;
+                return NutsSupportMode.NEVER;
             }
         }
-        return NutsSupportMode.UNSUPPORTED;
+        return NutsSupportMode.NEVER;
     }
 
     public Path getDesktopPath() {
@@ -270,6 +269,15 @@ public class DefaultNutsWorkspaceEnvManager implements NutsWorkspaceEnvManager {
 
     public void addLauncher(NutsLauncherOptions launcher) {
         checkSession();
+        //apply isolation!
+        NutsWorkspaceIsolation isolation = session.boot().getBootOptions().getIsolation().orElse(NutsWorkspaceIsolation.SYSTEM);
+        if (isolation.compareTo(NutsWorkspaceIsolation.CONFINED) >= 0) {
+            launcher.setCreateDesktopLauncher(NutsSupportMode.NEVER);
+            launcher.setCreateMenuLauncher(NutsSupportMode.NEVER);
+            launcher.setCreateUserLauncher(NutsSupportMode.NEVER);
+            launcher.setSwitchWorkspace(false);
+            launcher.setSwitchWorkspaceLocation(null);
+        }
         NutsSession session = getSession();
         SystemNdi ndi = NutsSettingsNdiSubCommand.createNdi(session);
         if (ndi != null) {

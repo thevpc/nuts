@@ -25,8 +25,6 @@
  */
 package net.thevpc.nuts;
 
-import net.thevpc.nuts.boot.PrivateWorkspaceOptionsConfigHelper;
-
 import java.io.InputStream;
 import java.io.PrintStream;
 import java.io.Serializable;
@@ -44,6 +42,43 @@ import java.util.function.Supplier;
  * @since 0.5.4
  */
 public interface NutsWorkspaceOptions extends Serializable {
+
+    NutsOptional<NutsSupportMode> getDesktopLauncher();
+
+    NutsOptional<NutsSupportMode> getMenuLauncher();
+
+    NutsOptional<NutsSupportMode> getUserLauncher();
+
+    NutsOptional<NutsWorkspaceIsolation> getIsolation();
+
+    /**
+     * init launcher
+     * @since 0.8.4
+     * @return init launcher
+     */
+    NutsOptional<Boolean> getInitLaunchers();
+
+    /**
+     * init scripts
+     * @since 0.8.4
+     * @return init scripts
+     */
+    NutsOptional<Boolean> getInitScripts();
+
+    /**
+     * init platforms
+     * @since 0.8.4
+     * @return init platforms
+     */
+    NutsOptional<Boolean> getInitPlatforms();
+
+    /**
+     * init java
+     * @since 0.8.4
+     * @return init java
+     */
+    NutsOptional<Boolean> getInitJava();
+
     /**
      * nuts api version to boot.
      * <br>

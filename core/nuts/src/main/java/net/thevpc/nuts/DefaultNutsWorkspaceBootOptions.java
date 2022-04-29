@@ -101,32 +101,38 @@ public class DefaultNutsWorkspaceBootOptions extends DefaultNutsWorkspaceOptions
                                            NutsId runtimeId, String javaCommand, String javaOptions, String workspace,
                                            String outLinePrefix, String errLinePrefix, String name, Boolean skipCompanions,
                                            Boolean skipWelcome, Boolean skipBoot, Boolean global, Boolean gui,
-                                           List<String> excludedExtensions, List<String> repositories, String userName,
+                                           Boolean dry, Boolean recover, Boolean reset, Boolean commandVersion, Boolean commandHelp, Boolean inherited, Boolean switchWorkspace, Boolean cached, Boolean indexed, Boolean transitive, Boolean bot, NutsWorkspaceIsolation isolation, Boolean initLaunchers, Boolean initScripts, Boolean initPlatforms, Boolean initJava, List<String> excludedExtensions, List<String> repositories, String userName,
                                            char[] credentials, NutsTerminalMode terminalMode, Boolean readOnly,
                                            Boolean trace, String progressOptions, String dependencySolver,
                                            NutsLogConfig logConfig, NutsConfirmationMode confirm, NutsContentType outputFormat,
                                            List<String> applicationArguments, NutsOpenMode openMode, Instant creationTime,
-                                           Boolean dry, Supplier<ClassLoader> classLoaderSupplier, List<String> executorOptions,
-                                           Boolean recover, Boolean reset, Boolean commandVersion, Boolean commandHelp,
-                                           String debug, Boolean inherited, NutsExecutionType executionType, NutsRunAs runAs,
-                                           String archetype, Boolean switchWorkspace, Map<NutsStoreLocation, String> storeLocations,
+                                           Supplier<ClassLoader> classLoaderSupplier, List<String> executorOptions,
+                                           String debug, NutsExecutionType executionType, NutsRunAs runAs,
+                                           String archetype, Map<NutsStoreLocation, String> storeLocations,
                                            Map<NutsHomeLocation, String> homeLocations, NutsOsFamily storeLocationLayout,
                                            NutsStoreLocationStrategy storeLocationStrategy,
                                            NutsStoreLocationStrategy repositoryStoreLocationStrategy, NutsFetchStrategy fetchStrategy,
-                                           Boolean cached, Boolean indexed, Boolean transitive, Boolean bot, InputStream stdin,
+                                           InputStream stdin,
                                            PrintStream stdout, PrintStream stderr, ExecutorService executorService,
                                            Instant expireTime, List<NutsMessage> errors, Boolean skipErrors, String locale,
                                            String theme, String uuid, String bootRepositories, NutsClassLoaderNode runtimeBootDependencyNode,
                                            List<NutsDescriptor> extensionBootDescriptors, List<NutsClassLoaderNode> extensionBootDependencyNodes,
                                            List<URL> classWorldURLs, Set<String> extensionsSet, NutsBootWorkspaceFactory bootWorkspaceFactory, NutsDescriptor runtimeBootDescriptor, ClassLoader classWorldLoader,
-                                           NutsWorkspaceOptions userOptions
-                                           ) {
-        super(apiVersion, runtimeId, workspace, name, javaCommand, javaOptions, outLinePrefix, errLinePrefix, userName, credentials, progressOptions, dependencySolver, debug, archetype, locale, theme, logConfig, confirm, outputFormat, openMode, executionType, storeLocationStrategy, repositoryStoreLocationStrategy, storeLocationLayout, terminalMode, fetchStrategy, runAs, creationTime, expireTime, skipCompanions, skipWelcome, skipBoot, global, gui, readOnly, trace, dry, recover, reset, commandVersion, commandHelp, inherited, switchWorkspace, cached, indexed, transitive, bot, skipErrors, stdin, stdout, stderr, executorService, classLoaderSupplier, applicationArguments, outputFormatOptions, customOptions,
+                                           NutsWorkspaceOptions userOptions,
+                                           NutsSupportMode desktopLauncher, NutsSupportMode menuLauncher, NutsSupportMode userLauncher) {
+        super(apiVersion, runtimeId, workspace, name, javaCommand, javaOptions, outLinePrefix,
+                errLinePrefix, userName, credentials, progressOptions, dependencySolver, debug, archetype,
+                locale, theme, logConfig, confirm, outputFormat, openMode, executionType, storeLocationStrategy,
+                repositoryStoreLocationStrategy, storeLocationLayout, terminalMode, fetchStrategy, runAs, creationTime,
+                expireTime, skipCompanions, skipWelcome, skipBoot, global, gui, readOnly, trace, dry, recover, reset,
+                commandVersion, commandHelp, inherited, switchWorkspace, cached, indexed, transitive, bot, skipErrors,
+                isolation, initLaunchers, initScripts, initPlatforms, initJava, stdin, stdout, stderr, executorService,
+                classLoaderSupplier, applicationArguments, outputFormatOptions, customOptions,
                 excludedExtensions, repositories,
                 executorOptions,
                 errors, storeLocations,
-                homeLocations
-        );
+                homeLocations,
+                desktopLauncher, menuLauncher, userLauncher);
         this.bootRepositories = bootRepositories;
         this.runtimeBootDependencyNode = runtimeBootDependencyNode;
         this.extensionBootDescriptors = PrivateNutsUtilCollections.unmodifiableOrNullList(extensionBootDescriptors);

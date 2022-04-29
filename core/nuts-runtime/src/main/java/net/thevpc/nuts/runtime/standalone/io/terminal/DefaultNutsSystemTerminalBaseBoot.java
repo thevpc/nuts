@@ -35,8 +35,8 @@ public class DefaultNutsSystemTerminalBaseBoot extends NutsSystemTerminalBaseImp
                 "boot"
         );
         NutsWorkspaceBootOptions bOptions = bootModel.getBootEffectiveOptions();
-        NutsTerminalMode terminalMode = bOptions.getUserOptions().get().getTerminalMode().orNull();
-        if (terminalMode == null) {
+        NutsTerminalMode terminalMode = bOptions.getUserOptions().get().getTerminalMode().orElse(NutsTerminalMode.DEFAULT);
+        if (terminalMode == NutsTerminalMode.DEFAULT) {
             if (bOptions.getUserOptions().get().getBot().orElse(false)) {
                 terminalMode = NutsTerminalMode.FILTERED;
             } else {

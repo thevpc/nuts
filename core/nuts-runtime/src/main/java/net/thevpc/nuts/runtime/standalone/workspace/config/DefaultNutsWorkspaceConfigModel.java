@@ -1310,7 +1310,7 @@ public class DefaultNutsWorkspaceConfigModel {
             o.println(wconfig.getBootUserOptions(session)
                             .toCommandLine(
                                     new NutsWorkspaceOptionsConfig()
-                                            .setCompact(false).setRuntime(true).setInit(true).setExported(true)
+                                            .setCompact(false)
                             )
                     );
             for (NutsStoreLocation location : NutsStoreLocation.values()) {

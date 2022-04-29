@@ -174,17 +174,17 @@ public class NutsUtilStrings {
     }
 
     public static String formatStringLiteral(String text, QuoteType quoteType) {
-        return formatStringLiteral(text, quoteType, NutsSupportCondition.ALWAYS);
+        return formatStringLiteral(text, quoteType, NutsSupportMode.ALWAYS);
     }
 
-    public static String formatStringLiteral(String text, QuoteType quoteType, NutsSupportCondition condition) {
+    public static String formatStringLiteral(String text, QuoteType quoteType, NutsSupportMode condition) {
         return formatStringLiteral(text, quoteType, condition, "");
     }
 
-    public static String formatStringLiteral(String text, QuoteType quoteType, NutsSupportCondition condition, String escapeChars) {
+    public static String formatStringLiteral(String text, QuoteType quoteType, NutsSupportMode condition, String escapeChars) {
         StringBuilder sb = new StringBuilder();
-        boolean requireQuotes = condition == NutsSupportCondition.ALWAYS;
-        boolean allowQuotes = condition != NutsSupportCondition.NEVER;
+        boolean requireQuotes = condition == NutsSupportMode.ALWAYS;
+        boolean allowQuotes = condition != NutsSupportMode.NEVER;
         for (char c : text.toCharArray()) {
             switch (c) {
                 case ' ': {

@@ -25,10 +25,14 @@ package net.thevpc.nuts;
 
 import net.thevpc.nuts.boot.NutsApiUtils;
 
+import java.util.function.Function;
+
 public enum NutsSupportMode implements NutsEnum {
-    UNSUPPORTED,
     SUPPORTED,
-    PREFERRED;
+    PREFERRED,
+    ALWAYS,
+    NEVER
+    ;
 
     /**
      * lower-cased identifier for the enum entry
@@ -40,37 +44,46 @@ public enum NutsSupportMode implements NutsEnum {
     }
 
     public static NutsOptional<NutsSupportMode> parse(String value) {
-        return NutsApiUtils.parse(value, NutsSupportMode.class,s->{
-            switch (s.toLowerCase()) {
-                case "unsupported":
-                    return NutsOptional.of(UNSUPPORTED);
-                case "supported":
-                    return NutsOptional.of(SUPPORTED);
-                case "preferred":
-                case "always":
-                    return NutsOptional.of(PREFERRED);
-                default: {
-                    Boolean b = NutsValue.of(s).asBoolean().orNull();
-                    if (b != null) {
-                        return NutsOptional.of(b ? SUPPORTED : UNSUPPORTED);
-                    }
+        return NutsApiUtils.parse(value, NutsSupportMode.class, new Function<String, NutsOptional<NutsSupportMode>>() {
+            @Override
+            public NutsOptional<NutsSupportMode> apply(String s) {
+                switch (s.toLowerCase()){
+                    case "unsupported":
+                    case "no":
+                    case "false":
+                        return NutsOptional.of(NEVER);
+                    case "yes":
+                    case "true":
+                        return NutsOptional.of(ALWAYS);
                 }
+                return null;
             }
-            return null;
         });
     }
 
 
-    public boolean acceptCondition(NutsSupportCondition request, NutsSession session) {
+    /**
+     * lower cased identifier.
+     *
+     * @return lower cased identifier
+     */
+    public String id() {
+        return id;
+    }
+
+    public boolean acceptCondition(NutsSupportMode request, NutsSession session) {
         if (session == null) {
             throw new NutsMissingSessionException();
         }
         if (request == null) {
-            request = NutsSupportCondition.NEVER;
+            request = NutsSupportMode.NEVER;
         }
         switch (this) {
-            case UNSUPPORTED: {
+            case NEVER: {
                 return false;
+            }
+            case ALWAYS:{
+                return true;
             }
             case SUPPORTED: {
                 switch (request) {
@@ -108,8 +121,4 @@ public enum NutsSupportMode implements NutsEnum {
         }
     }
 
-    @Override
-    public String id() {
-        return id;
-    }
 }

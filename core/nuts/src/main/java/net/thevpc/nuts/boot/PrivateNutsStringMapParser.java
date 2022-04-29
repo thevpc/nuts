@@ -31,7 +31,6 @@ import net.thevpc.nuts.*;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
-import java.io.UncheckedIOException;
 import java.util.*;
 
 public class PrivateNutsStringMapParser {
@@ -234,13 +233,13 @@ public class PrivateNutsStringMapParser {
                     }
                     if (v.isEmpty()) {
                         sb.append(
-                                NutsUtilStrings.formatStringLiteral(k, NutsUtilStrings.QuoteType.SIMPLE, NutsSupportCondition.PREFERRED, escapedChars)
+                                NutsUtilStrings.formatStringLiteral(k, NutsUtilStrings.QuoteType.SIMPLE, NutsSupportMode.PREFERRED, escapedChars)
                         );
                     } else {
                         sb.append(
-                                        NutsUtilStrings.formatStringLiteral(k, NutsUtilStrings.QuoteType.SIMPLE, NutsSupportCondition.PREFERRED, escapedChars))
+                                        NutsUtilStrings.formatStringLiteral(k, NutsUtilStrings.QuoteType.SIMPLE, NutsSupportMode.PREFERRED, escapedChars))
                                 .append(equalsChars)
-                                .append(NutsUtilStrings.formatStringLiteral(v, NutsUtilStrings.QuoteType.SIMPLE, NutsSupportCondition.PREFERRED, escapedChars)
+                                .append(NutsUtilStrings.formatStringLiteral(v, NutsUtilStrings.QuoteType.SIMPLE, NutsSupportMode.PREFERRED, escapedChars)
                                 );
                     }
                 }
