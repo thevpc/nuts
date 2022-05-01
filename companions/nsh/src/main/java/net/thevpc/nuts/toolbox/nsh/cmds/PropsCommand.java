@@ -260,7 +260,7 @@ public class PropsCommand extends SimpleJShellBuiltin {
     private Map<String, String> readProperties(Options o, JShellExecutionContext context) {
         Map<String, String> p = new LinkedHashMap<>();
         String sourceFile = o.sourceFile;
-        NutsPath filePath = ShellHelper.xfileOf(sourceFile, context.getShellContext().getCwd(), context.getSession());
+        NutsPath filePath = ShellHelper.xfileOf(sourceFile, context.getCwd(), context.getSession());
         try (InputStream is = filePath.getInputStream()) {
 
             Format sourceFormat = o.sourceFormat;
@@ -329,7 +329,7 @@ public class PropsCommand extends SimpleJShellBuiltin {
                 }
             }
         } else {
-            NutsPath filePath = ShellHelper.xfileOf(targetFile, context.getShellContext().getCwd(), session);
+            NutsPath filePath = ShellHelper.xfileOf(targetFile, context.getCwd(), session);
             try (OutputStream os = filePath.getOutputStream()) {
                 Format format = o.targetFormat;
                 if (format == Format.AUTO) {

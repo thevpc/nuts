@@ -78,7 +78,7 @@ public class WgetCommand extends SimpleJShellBuiltin {
         if (!NutsBlankable.isBlank(output2)) {
             output2 = output2.replace("{}", urlName);
         }
-        NutsPath file = NutsPath.of(context.getShellContext().getAbsolutePath(NutsBlankable.isBlank(output2) ? urlName : output2),session);
+        NutsPath file = NutsPath.of(context.getAbsolutePath(NutsBlankable.isBlank(output2) ? urlName : output2),session);
         NutsCp.of(session)
                 .from(NutsPath.of(path,session)).to(file).setSession(session)
                 .addOptions(NutsPathOption.LOG, NutsPathOption.TRACE).run();

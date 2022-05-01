@@ -1,7 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.text;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.standalone.text.parser.DefaultNutsTextNodeParser;
 
 import java.io.ByteArrayOutputStream;
 import java.util.*;
@@ -179,11 +178,6 @@ public class DefaultNutsTextNodeBuilder implements NutsTextBuilder {
             return children.get(0);
         }
         return text1.ofList(children).simplify();
-    }
-
-    @Override
-    public NutsTextParser parser() {
-        return new DefaultNutsTextNodeParser(session);
     }
 
     @Override
@@ -499,7 +493,12 @@ public class DefaultNutsTextNodeBuilder implements NutsTextBuilder {
 
     @Override
     public int textLength() {
-        return immutable().textLength();
+        int count = 0;
+        for (NutsText child : children) {
+            count += child.textLength();
+        }
+        return count;
+//        return immutable().textLength();
     }
 
     @Override

@@ -1,10 +1,9 @@
-package net.thevpc.nuts.runtime.standalone.text.parser.steps;
+package net.thevpc.nuts.runtime.standalone.text.parser.v1;
 
 import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.NutsTexts;
 import net.thevpc.nuts.NutsUtilStrings;
 import net.thevpc.nuts.runtime.standalone.text.DefaultNutsTexts;
-import net.thevpc.nuts.runtime.standalone.text.parser.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,7 +24,7 @@ public class TitleParserStep extends ParserStep {
         if (c == ' ' && children.isEmpty()) {
             start.append(c);
         } else if (c == '\n' || c == '\r') {
-            p.applyPopReplay(c);
+            p.applyPopReplay(this, c);
         } else {
             p.applyPush(c, false, false, false);
         }
@@ -57,7 +56,7 @@ public class TitleParserStep extends ParserStep {
 
     @Override
     public void end(DefaultNutsTextNodeParser.State p) {
-        p.applyPop();
+        p.applyPop(this);
     }
 
     public boolean isComplete() {

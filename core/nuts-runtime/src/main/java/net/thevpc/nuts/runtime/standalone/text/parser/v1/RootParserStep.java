@@ -1,9 +1,8 @@
-package net.thevpc.nuts.runtime.standalone.text.parser.steps;
+package net.thevpc.nuts.runtime.standalone.text.parser.v1;
 
 import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.NutsTextPlain;
 import net.thevpc.nuts.NutsTexts;
-import net.thevpc.nuts.runtime.standalone.text.parser.DefaultNutsTextNodeParser;
 
 import java.util.ArrayList;
 import java.util.LinkedList;

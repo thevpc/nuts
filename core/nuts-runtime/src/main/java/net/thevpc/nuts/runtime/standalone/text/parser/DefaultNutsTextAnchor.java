@@ -40,7 +40,7 @@ public class DefaultNutsTextAnchor extends NutsTextSpecialBase implements NutsTe
     private String value;
 
     public DefaultNutsTextAnchor(NutsSession session, String start, String separator, String end, String value) {
-        super(session,start, "anchor", separator, end);
+        super(session, start, "anchor", separator, end);
         this.value = value;
     }
 
@@ -52,6 +52,7 @@ public class DefaultNutsTextAnchor extends NutsTextSpecialBase implements NutsTe
     public NutsTextType getType() {
         return NutsTextType.ANCHOR;
     }
+
     @Override
     public boolean isEmpty() {
         return false;
@@ -74,5 +75,10 @@ public class DefaultNutsTextAnchor extends NutsTextSpecialBase implements NutsTe
     @Override
     public String filteredText() {
         return "";
+    }
+
+    @Override
+    public int textLength() {
+        return 0;
     }
 }

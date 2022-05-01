@@ -424,50 +424,8 @@ public final class PrivateNutsArgumentsParser {
                         //if the value is not immediately attached with '=' don't consider
                         a = cmdLine.next().get(session);
                         if (active) {
-                            String v = a.getStringValue().orElse("");
-                            if (v.isEmpty()) {
-                                options.setTerminalMode(a.isNegated() ? NutsTerminalMode.FILTERED : NutsTerminalMode.FORMATTED);
-                            } else {
-                                Boolean b = NutsValue.of(v).asBoolean().orNull();
-                                if (b != null) {
-                                    if (b) {
-                                        options.setTerminalMode(a.isNegated() ? NutsTerminalMode.FILTERED : NutsTerminalMode.FORMATTED);
-                                    } else {
-                                        options.setTerminalMode(a.isNegated() ? NutsTerminalMode.FORMATTED : NutsTerminalMode.FILTERED);
-                                    }
-                                } else {
-                                    switch (v.toLowerCase()) {
-                                        case "formatted": {
-                                            options.setTerminalMode(a.isNegated() ? NutsTerminalMode.FILTERED : NutsTerminalMode.FORMATTED);
-                                            break;
-                                        }
-                                        case "filtered": {
-                                            options.setTerminalMode(a.isNegated() ? NutsTerminalMode.FORMATTED : NutsTerminalMode.FILTERED);
-                                            break;
-                                        }
-                                        case "h":
-                                        case "inherited": {
-                                            options.setTerminalMode(a.isNegated() ? NutsTerminalMode.FORMATTED : NutsTerminalMode.INHERITED);
-                                            break;
-                                        }
-                                        case "a":
-                                        case "ansi": {
-                                            options.setTerminalMode(a.isNegated() ? NutsTerminalMode.FORMATTED : NutsTerminalMode.ANSI);
-                                            break;
-                                        }
-                                        case "s":
-                                        case "auto":
-                                        case "system": {
-                                            options.setTerminalMode(a.isNegated() ? NutsTerminalMode.FORMATTED : null);
-                                            break;
-                                        }
-                                        default: {
-                                            cmdLine.pushBack(a, session);
-                                            cmdLine.throwUnexpectedArgument(session);
-                                        }
-                                    }
-                                }
-                            }
+                            options.setTerminalMode(a.getStringValue().flatMap(NutsTerminalMode::parse)
+                                    .ifEmpty(NutsTerminalMode.FORMATTED).get(session));
                         }
                         break;
                     }
@@ -501,16 +459,18 @@ public final class PrivateNutsArgumentsParser {
                         if (active) {
                             String s = a.getStringValue().orNull();
                             if (a.isNegated()) {
-                                Boolean q = NutsValue.of(s).asBoolean().ifEmpty(true).orNull();
-                                if (q == null) {
-                                    if (NutsBlankable.isBlank(s)) {
-                                        s = "false";
-                                    } else {
-                                        s = "false," + s;
-                                    }
+                                if (NutsBlankable.isBlank(s)) {
+                                    s = "false";
+                                } else {
+                                    s = "false," + s;
                                 }
                                 options.setProgressOptions(s);
                             } else {
+                                if (NutsBlankable.isBlank(s)) {
+                                    s = "true";
+                                } else {
+                                    s = "true," + s;
+                                }
                                 options.setProgressOptions(s);
                             }
                         }

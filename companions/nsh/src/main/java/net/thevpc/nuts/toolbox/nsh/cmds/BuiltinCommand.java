@@ -58,7 +58,7 @@ public class BuiltinCommand extends SimpleJShellBuiltin {
         Options o = context.getOptions();
         NutsSession session = context.getSession();
         if (o.args.length > 0) {
-            JShellBuiltin a = context.getShellContext().builtins().get(o.args[0]);
+            JShellBuiltin a = context.builtins().get(o.args[0]);
             a.exec(Arrays.copyOfRange(o.args, 1, o.args.length), context);
             return;
         }

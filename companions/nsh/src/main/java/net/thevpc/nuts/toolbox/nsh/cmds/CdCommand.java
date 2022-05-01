@@ -65,7 +65,7 @@ public class CdCommand extends SimpleJShellBuiltin {
         if (options.dirname == null) {
             options.dirname = System.getProperty("user.home");
         }
-        context.getShellContext().setCwd(options.dirname);
+        context.setCwd(options.dirname);
     }
 
     private static class Options {

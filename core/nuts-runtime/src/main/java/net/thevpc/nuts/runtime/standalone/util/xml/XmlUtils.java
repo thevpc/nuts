@@ -43,7 +43,6 @@ import javax.xml.transform.stream.StreamResult;
 import net.thevpc.nuts.*;
 
 import net.thevpc.nuts.NutsLogVerb;
-import org.jetbrains.annotations.NotNull;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -308,7 +307,6 @@ public class XmlUtils {
 
     public static Iterable<Node> iterable(Node n){
         return new Iterable<Node>() {
-            @NotNull
             @Override
             public Iterator<Node> iterator() {
                 NodeList nl = n.getChildNodes();

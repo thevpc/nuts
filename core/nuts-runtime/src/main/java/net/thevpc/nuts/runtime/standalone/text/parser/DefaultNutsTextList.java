@@ -40,25 +40,6 @@ public class DefaultNutsTextList extends AbstractNutsText implements NutsTextLis
 
     public DefaultNutsTextList(NutsSession session, NutsText... children) {
         super(session);
-//        NutsTextPlain lastPlain=null;
-//        NutsTextPlain newPlain=null;
-//        if (children != null) {
-//            for (NutsText c : children) {
-//                if (c != null) {
-//                    newPlain=(c instanceof NutsTextPlain)?(NutsTextPlain) c:null;
-//                    if(lastPlain!=null && newPlain!=null){
-//                        this.children.remove(this.children.size()-1);
-//                        newPlain = new DefaultNutsTextPlain(
-//                                session, lastPlain.getText() + newPlain.getText()
-//                        );
-//                        this.children.add(newPlain);
-//                    }else {
-//                        this.children.add(c);
-//                    }
-//                    lastPlain=newPlain;
-//                }
-//            }
-//        }
         if (children != null) {
             for (NutsText c : children) {
                 if (c != null) {
@@ -129,10 +110,20 @@ public class DefaultNutsTextList extends AbstractNutsText implements NutsTextLis
 
     @Override
     public String filteredText() {
-        StringBuilder sb=new StringBuilder();
+        StringBuilder sb = new StringBuilder();
         for (NutsText child : children) {
             sb.append(child.filteredText());
         }
         return sb.toString();
+    }
+
+    @Override
+    public int textLength() {
+        int count = 0;
+        for (NutsText child : children) {
+            count += child.textLength();
+        }
+        return count;
+//        return immutable().textLength();
     }
 }

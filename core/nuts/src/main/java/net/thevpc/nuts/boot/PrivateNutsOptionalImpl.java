@@ -9,12 +9,30 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 public abstract class PrivateNutsOptionalImpl<T> implements NutsOptional<T> {
+    private static boolean DEBUG;
+
+    static {
+        String property = System.getProperty("nuts.optional.debug");
+        DEBUG = (property == null || property.trim().isEmpty() || Boolean.parseBoolean(property));
+    }
+
+    private Throwable rootStack = DEBUG ? new Throwable() : null;
 
     public PrivateNutsOptionalImpl() {
     }
 
+    protected NutsMessage prepareMessage(NutsMessage m) {
+        if (DEBUG) {
+            return NutsMessage.cstyle("%s.\n    call stack:\n%s\n    root stack:\n%s", m,
+                    PrivateNutsUtilErrors.stacktrace(new Throwable()),
+                    PrivateNutsUtilErrors.stacktrace(rootStack)
+            );
+        }
+        return m;
+    }
+
     public T get() {
-        return get(null);
+        return get(null, null);
     }
 
     static NutsMessage buildMessage(NutsSession session, Function<NutsSession, NutsMessage> message0, NutsMessage message) {
@@ -24,7 +42,7 @@ public abstract class PrivateNutsOptionalImpl<T> implements NutsOptional<T> {
 
     public <V> NutsOptional<V> flatMap(Function<T, NutsOptional<V>> mapper) {
         Objects.requireNonNull(mapper);
-        if (isPresent()){
+        if (isPresent()) {
             return Objects.requireNonNull(mapper.apply(get()));
         }
         return (NutsOptional) this;
@@ -71,6 +89,7 @@ public abstract class PrivateNutsOptionalImpl<T> implements NutsOptional<T> {
         }
     }
 
+
     @Override
     public NutsOptional<T> orElseGetOptional(Supplier<NutsOptional<T>> other) {
         if (isNotPresent()) {
@@ -84,7 +103,7 @@ public abstract class PrivateNutsOptionalImpl<T> implements NutsOptional<T> {
         if (isNotPresent()) {
             return other;
         }
-        return get(null);
+        return get();
     }
 
 
@@ -93,7 +112,7 @@ public abstract class PrivateNutsOptionalImpl<T> implements NutsOptional<T> {
         if (isNotPresent()) {
             return other.get();
         }
-        return get(null);
+        return get();
     }
 
     @Override

@@ -74,15 +74,15 @@ public class AliasCommand extends SimpleJShellBuiltin {
         Options options = context.getOptions();
         JShell shell = context.getShell();
         if (options.add.isEmpty() && options.show.isEmpty()) {
-            options.show.addAll(context.getShellContext().aliases().getAll());
+            options.show.addAll(context.aliases().getAll());
         }
         for (Map.Entry<String, String> entry : options.add.entrySet()) {
-            context.getShellContext().aliases().set(entry.getKey(), entry.getValue());
+            context.aliases().set(entry.getKey(), entry.getValue());
         }
         List<ResultItem> outRes = new ArrayList<>();
         List<ResultItem> errRes = new ArrayList<>();
         for (String a : options.show) {
-            final String v = context.getShellContext().aliases().get(a);
+            final String v = context.aliases().get(a);
             if (v == null) {
                 errRes.add(new ResultItem(a, v));
             } else {

@@ -193,9 +193,9 @@ public class DefaultLexer extends AbstractLexer {
             if (t == null) {
                 return some;
             }
-            if (!t.type.equals("WHITE")
-                    && !t.type.equals("NEWLINE")
-                    && !t.type.equals("#")
+            if (!t.isWhite()
+                    && !t.isNewline()
+                    && !t.isSharp()
             ) {
                 return some;
             }
@@ -210,7 +210,7 @@ public class DefaultLexer extends AbstractLexer {
             if (t == null) {
                 return null;
             }
-            if (!t.type.equals("WHITE")) {
+            if (!t.isWhite()) {
                 return t;
             }
         }

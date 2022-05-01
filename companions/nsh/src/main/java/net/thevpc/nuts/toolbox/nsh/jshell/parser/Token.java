@@ -29,6 +29,14 @@ public class Token {
     public boolean isNewline() {
         return "NEWLINE".equals(type);
     }
+    public boolean isSemiColon() {
+        return ";".equals(type);
+    }
+
+    public boolean isSharp() {
+        return "#".equals(type);
+    }
+
     public boolean isEndCommand() {
         return ";".equals(type);
     }
@@ -113,4 +121,11 @@ public class Token {
                 ')';
     }
 
+    public boolean isDot() {
+        return ".".equals(type);
+    }
+
+    public boolean isEquals() {
+        return "=".equals(type);
+    }
 }

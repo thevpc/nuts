@@ -27,6 +27,9 @@ package net.thevpc.nuts.core.test;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.core.test.utils.*;
+import net.thevpc.nuts.runtime.standalone.text.parser.v2.NTFParser2;
+import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
+import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -941,5 +944,277 @@ public class Test04_NTFTest {
         NutsText t = text.parse(str);
         Assertions.assertEquals("```",t.filteredText());
     }
+   //////////////////
 
+
+    @Test
+    public void test14() {
+        NTFParser2 p = createParser();
+        p.offer("Hello World");
+        NutsText r = p.read();
+        Assertions.assertEquals(NutsTextType.PLAIN, r.getType());
+        Assertions.assertEquals("Hello World", r.toString());
+    }
+
+    @NotNull
+    private NTFParser2 createParser() {
+        return new NTFParser2(session);
+    }
+
+    @Test
+    public void test15() {
+        NTFParser2 p = createParser();
+        String s = "Hello #World#";
+        p.offer(s);
+        NutsText r = p.read();
+        Assertions.assertNull(r);
+        r = p.readFully();
+        Assertions.assertNotNull(r);
+        Assertions.assertEquals(NutsTextType.PLAIN, r.getType());
+        Assertions.assertEquals("Hello #World\\#", r.toString());
+    }
+
+    @Test
+    public void test16() {
+        NTFParser2 p = createParser();
+        String s = "#) Hello #World\\#";
+        p.offer(s);
+        NutsText r = p.read();
+        Assertions.assertNull(r);
+        r = p.readFully();
+        Assertions.assertNotNull(r);
+        Assertions.assertEquals(NutsTextType.TITLE, r.getType());
+        Assertions.assertEquals("#) Hello #World\\#", r.toString());
+    }
+
+    @Test
+    public void test17() {
+        for (int i = 1; i < 10; i++) {
+            String q = CoreStringUtils.fillString('#', i);
+            NTFParser2 p = createParser();
+            String s = q + ") Hello #World#";
+            p.offer(s);
+            NutsText r = p.read();
+            Assertions.assertNull(r);
+            r = p.readFully();
+            Assertions.assertNotNull(r);
+            Assertions.assertEquals(NutsTextType.TITLE, r.getType());
+            Assertions.assertEquals(i, ((NutsTextTitle) r).getLevel());
+            Assertions.assertEquals(q + ") Hello #World\\#", r.toString());
+        }
+    }
+
+    @Test
+    public void test18() {
+        for (int i = 1; i < 10; i++) {
+            String q = CoreStringUtils.fillString('#', i + 1);
+            NTFParser2 p = createParser();
+            String s = q + "Hello #World# " + q;
+            TestUtils.println(s);
+            p.offer(s);
+            NutsText r = p.read();
+            Assertions.assertNull(r);
+            r = p.readFully();
+            Assertions.assertNotNull(r);
+            Assertions.assertEquals(NutsTextType.STYLED, r.getType());
+//            Assertions.assertEquals(q + " Hello #World\\# " + q, r.toString());
+            Assertions.assertEquals("##{p" + i + ":Hello #World# }##\u001E", r.toString());
+        }
+    }
+
+    @Test
+    public void test19() {
+        NTFParser2 p = createParser();
+        String s = "```!anchor some anchor```";
+        TestUtils.println(s);
+        p.offer(s);
+        NutsText r = p.read();
+        Assertions.assertNull(r);
+        r = p.readFully();
+        Assertions.assertNotNull(r);
+        Assertions.assertEquals(NutsTextType.ANCHOR, r.getType());
+        Assertions.assertEquals("```!anchor some anchor```\u001E", r.toString());
+    }
+
+    @Test
+    public void test20() {
+        NTFParser2 p = createParser();
+        String s = "```!link some link```";
+        TestUtils.println(s);
+        p.offer(s);
+        NutsText r = p.read();
+        Assertions.assertNull(r);
+        r = p.readFully();
+        Assertions.assertNotNull(r);
+        Assertions.assertEquals(NutsTextType.LINK, r.getType());
+        Assertions.assertEquals("```!link some link```\u001E", r.toString());
+    }
+
+    @Test
+    public void test21() {
+        NTFParser2 p = createParser();
+        String s = "```!link:some link```";
+        TestUtils.println(s);
+        p.offer(s);
+        NutsText r = p.read();
+        Assertions.assertNull(r);
+        r = p.readFully();
+        Assertions.assertNotNull(r);
+        Assertions.assertEquals(NutsTextType.LINK, r.getType());
+        Assertions.assertEquals("```!link:some link```\u001E", r.toString());
+    }
+
+    @Test
+    public void test22() {
+        NTFParser2 p = createParser();
+        String s = "```!link\nsome link```";
+        TestUtils.println(s);
+        p.offer(s);
+        NutsText r = p.read();
+        Assertions.assertNull(r);
+        r = p.readFully();
+        Assertions.assertNotNull(r);
+        Assertions.assertEquals(NutsTextType.LINK, r.getType());
+        Assertions.assertEquals("```!link\nsome link```\u001E", r.toString());
+    }
+
+    @Test
+    public void test23() {
+        NTFParser2 p = createParser();
+        String s = "```java\npublic class \\` some thing \\``` some thing```";
+        TestUtils.println(s);
+        p.offer(s);
+        NutsText r = p.read();
+        Assertions.assertNull(r);
+        r = p.readFully();
+        Assertions.assertNotNull(r);
+        Assertions.assertEquals(NutsTextType.CODE, r.getType());
+        Assertions.assertEquals("public class \\` some thing ``` some thing", ((NutsTextCode) r).getText());
+        Assertions.assertEquals("```java\npublic class \\` some thing \\``` some thing```\u001E", r.toString());
+    }
+
+    @Test
+    public void test24() {
+        NTFParser2 p = createParser();
+        String s = "##:1:text##";
+        TestUtils.println(s);
+        p.offer(s);
+        NutsText r = p.read();
+        Assertions.assertNull(r);
+        r = p.readFully();
+        Assertions.assertNotNull(r);
+        Assertions.assertEquals(NutsTextType.STYLED, r.getType());
+        Assertions.assertEquals("##{p1:text}##\u001E", r.toString());
+    }
+
+    @Test
+    public void test25() {
+        for (char c : "/_+%!-".toCharArray()) {
+            NTFParser2 p = createParser();
+            String s = "##:"+c+":text##";
+            TestUtils.println(s);
+            p.offer(s);
+            NutsText r = p.read();
+            Assertions.assertNull(r);
+            r = p.readFully();
+            Assertions.assertNotNull(r);
+            Assertions.assertEquals(NutsTextType.STYLED, r.getType());
+            Assertions.assertEquals("##{"+c+":text}##\u001E", r.toString());
+        }
+    }
+
+    @Test
+    public void test26() {
+        for (String v : new String[]{
+                "/:italic",
+                "_/underlined",
+                "%:blink",
+                "!:reversed",
+                "+:bold",
+                "-:striked"
+        }) {
+            char c=v.charAt(0);
+            String rr=v.substring(2);
+            NTFParser2 p = createParser();
+            String s = "##:"+rr+":text##";
+            TestUtils.println(s);
+            p.offer(s);
+            NutsText r = p.read();
+            Assertions.assertNull(r);
+            r = p.readFully();
+            Assertions.assertNotNull(r);
+            Assertions.assertEquals(NutsTextType.STYLED, r.getType());
+            Assertions.assertEquals("##{"+c+":text}##\u001E", r.toString());
+        }
+
+        NTFParser2 p = createParser();
+        String s = "##:italic:text##";
+        TestUtils.println(s);
+        p.offer(s);
+        NutsText r = p.read();
+        Assertions.assertNull(r);
+        r = p.readFully();
+        Assertions.assertNotNull(r);
+        Assertions.assertEquals(NutsTextType.STYLED, r.getType());
+        Assertions.assertEquals("##{/:text}##\u001E", r.toString());
+    }
+
+    @Test
+    public void test27() {
+        NTFParser2 p = createParser();
+        String s = "##:_:text##";
+        TestUtils.println(s);
+        p.offer(s);
+        NutsText r = p.read();
+        Assertions.assertNull(r);
+        r = p.readFully();
+        Assertions.assertNotNull(r);
+        Assertions.assertEquals(NutsTextType.STYLED, r.getType());
+        Assertions.assertEquals("##{_:text}##\u001E", r.toString());
+    }
+
+    @Test
+    public void test28() {
+        NTFParser2 p = createParser();
+        String s = "```!clear-line```";
+        TestUtils.println(s);
+        p.offer(s);
+        NutsText r = p.read();
+        Assertions.assertNull(r);
+        r = p.readFully();
+        Assertions.assertNotNull(r);
+        Assertions.assertEquals(NutsTextType.COMMAND, r.getType());
+        Assertions.assertEquals("```!clear-line```\u001E", r.toString());
+    }
+
+    @Test
+    public void test29() {
+        NTFParser2 p = createParser();
+        String s = "##{version:0.8.4}##\u001E";
+        TestUtils.println(s);
+        p.offer(s);
+        NutsText r1 =  p.readFully();
+        NutsText r2 =  p.readFully();
+        Assertions.assertNotNull(r1);
+        Assertions.assertNull(r2);
+        Assertions.assertEquals(NutsTextType.STYLED, r1.getType());
+        Assertions.assertEquals("##{version:0.8.4}##\u001E", r1.toString());
+    }
+
+    @Test
+    public void test30() {
+        NutsTextBuilder b = NutsTexts.of(session).builder()
+                .append("a")
+                .appendCode("sh", "b")
+                .append("c");
+        Assertions.assertEquals(3,b.textLength());
+    }
+
+    @Test
+    public void test31() {
+        NutsString s = NutsString.of("a```sh b```\u001Ec", session);
+        NutsText t = s.toText();
+        Assertions.assertEquals(NutsTextType.LIST,t.getType());
+        Assertions.assertEquals(3,((NutsTextList)t).size());
+    }
 }

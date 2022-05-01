@@ -1,8 +1,7 @@
-package net.thevpc.nuts.runtime.standalone.text.parser.steps;
+package net.thevpc.nuts.runtime.standalone.text.parser.v1;
 
 import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.NutsTexts;
-import net.thevpc.nuts.runtime.standalone.text.parser.DefaultNutsTextNodeParser;
 import net.thevpc.nuts.runtime.standalone.util.StringBuilder2;
 
 import java.util.function.IntPredicate;
@@ -89,20 +88,20 @@ public class PlainParserStep extends ParserStep {
                     return;
                 } else {
                     if (exitCondition != null && exitCondition.test(c)) {
-                        p.applyPopReplay(c);
+                        p.applyPopReplay(this, c);
                         return;
                     } else {
                         if (oldLast == c) {
                             value.readLast();
                             if (value.length() == 0) {
-                                p.applyDropReplace(new StyledParserStep(c + "" + c, lineStart, session, state, exitOnBrace));
+                                p.applyDropReplace(this, new StyledParserStep(c + "" + c, lineStart, session, state, exitOnBrace));
                                 return;
                             } else {
-                                p.applyPopReplace(new StyledParserStep(c + "" + c, lineStart, session, state, exitOnBrace));
+                                p.applyPopReplace(this, new StyledParserStep(c + "" + c, lineStart, session, state, exitOnBrace));
                                 return;
                             }
                         }
-                        p.applyPopReplay(c);
+                        p.applyPopReplay(this, c);
                         return;
                     }
                 }
@@ -119,10 +118,10 @@ public class PlainParserStep extends ParserStep {
                     return;
                 } else {
                     if (exitCondition != null && exitCondition.test(c)) {
-                        p.applyPopReplay(c);
+                        p.applyPopReplay(this, c);
                         return;
                     } else {
-                        p.applyPop();
+                        p.applyPop(this);
                         return;
                     }
                 }
@@ -148,10 +147,10 @@ public class PlainParserStep extends ParserStep {
                     return;
                 } else {
                     if (exitCondition != null && exitCondition.test(c)) {
-                        p.applyPopReplay(c);
+                        p.applyPopReplay(this, c);
                         return;
                     } else {
-                        p.applyPopReplay(c);
+                        p.applyPopReplay(this, c);
                         return;
                     }
                 }
@@ -174,12 +173,12 @@ public class PlainParserStep extends ParserStep {
                     }
                     escape = null;
                     value.append(c);
-                    p.applyPop();
+                    p.applyPop(this);
 //                        if (!spreadLines) {
                     p.forceEnding();
 //                        }
                 } else {
-                    p.applyPopReplay(c);
+                    p.applyPopReplay(this, c);
                 }
 //                }
                 return;
@@ -260,7 +259,7 @@ public class PlainParserStep extends ParserStep {
                     return;
                 }
                 if ((c=='}'&& exitOnBrace) || (exitCondition != null && exitCondition.test(c))) {
-                    p.applyPopReplay(c);
+                    p.applyPopReplay(this, c);
                 } else {
                     value.append(c);
                 }
@@ -284,7 +283,7 @@ public class PlainParserStep extends ParserStep {
 
     @Override
     public void end(DefaultNutsTextNodeParser.State p) {
-        p.applyPop();
+        p.applyPop(this);
     }
 
     public boolean isComplete() {

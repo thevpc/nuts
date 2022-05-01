@@ -1,7 +1,7 @@
 /**
  * ====================================================================
- *            Nuts : Network Updatable Things Service
- *                  (universal package manager)
+ * Nuts : Network Updatable Things Service
+ * (universal package manager)
  * <br>
  * is a new Open Source Package Manager to help install packages
  * and libraries for runtime execution. Nuts is the ultimate companion for
@@ -11,7 +11,7 @@
  * architecture to help supporting a large range of sub managers / repositories.
  *
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc]
  * Licensed under the Apache License, Version 2.0 (the "License"); you may
  * not use this file except in compliance with the License. You may obtain a
@@ -23,7 +23,7 @@
  * governing permissions and limitations under the License.
  * <br>
  * ====================================================================
-*/
+ */
 package net.thevpc.nuts.runtime.standalone.text.parser;
 
 import net.thevpc.nuts.*;
@@ -41,8 +41,8 @@ public class DefaultNutsTextStyled extends AbstractNutsText implements NutsTextS
     private NutsTextStyles textStyles;
     private boolean completed;
 
-    public DefaultNutsTextStyled(NutsSession session,NutsText child, NutsTextStyles textStyle) {
-        this(session,"##" ,"##",child,true,textStyle);
+    public DefaultNutsTextStyled(NutsSession session, NutsText child, NutsTextStyles textStyle) {
+        this(session, "##", "##", child, true, textStyle);
     }
 
     public DefaultNutsTextStyled(NutsSession session, String start, String end, NutsText child, boolean completed, NutsTextStyles textStyle) {
@@ -107,4 +107,8 @@ public class DefaultNutsTextStyled extends AbstractNutsText implements NutsTextS
         return child.filteredText();
     }
 
+    @Override
+    public int textLength() {
+        return child.textLength();
+    }
 }

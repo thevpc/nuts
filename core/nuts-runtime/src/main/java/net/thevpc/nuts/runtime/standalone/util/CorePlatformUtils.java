@@ -43,13 +43,6 @@ import java.util.zip.ZipFile;
 public class CorePlatformUtils {
 
     public static final boolean SUPPORTS_UTF_ENCODING;
-//    private static final Set<String> SUPPORTED_ARCH = new HashSet<>(Arrays.asList("x86_32", "x86_64", "itanium_32", "itanium_64"
-//            , "sparc_32", "sparc_64", "arm_32", "aarch_64", "mips_32", "mipsel_32", "mips_64", "mipsel_64"
-//            , "ppc_32", "ppcle_32", "ppc_64", "ppcle_64", "s390_32", "s390_64"
-//    ));
-//    private static final Set<String> SUPPORTED_OS = new HashSet<>(Arrays.asList("linux", "windows", "macos", "sunos"
-//            , "freebsd", "openbsd", "netbsd", "aix", "hpux", "as400", "zos", "unknown"
-//    ));
     public static boolean IS_CYGWIN =
             System.getenv("PWD") != null
                     && System.getenv("PWD").startsWith("/")

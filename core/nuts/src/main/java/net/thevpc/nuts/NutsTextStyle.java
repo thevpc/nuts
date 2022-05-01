@@ -323,6 +323,20 @@ public class NutsTextStyle implements NutsEnum {
         if (value.isEmpty()) {
             return NutsOptional.ofEmpty(s -> NutsMessage.cstyle(NutsTextStyle.class.getSimpleName() + " is empty"));
         }
+        switch (value) {
+            case "/":
+                return NutsOptional.of(italic());
+            case "_":
+                return NutsOptional.of(underlined());
+            case "%":
+                return NutsOptional.of(blink());
+            case "!":
+                return NutsOptional.of(reversed());
+            case "+":
+                return NutsOptional.of(bold());
+            case "-":
+                return NutsOptional.of(striked());
+        }
         String finalValue = value;
         int par = value.indexOf('(');
         String nbr = "";
@@ -361,6 +375,9 @@ public class NutsTextStyle implements NutsEnum {
         key = key.trim();
         if (nbr.isEmpty()) {
             nbr = "0";
+        }
+        if (key.isEmpty()) {
+            key = "p";
         }
         NutsTextStyleType t = NutsTextStyleType.parse(key).orElse(null);
         if (t == null) {
@@ -423,6 +440,8 @@ public class NutsTextStyle implements NutsEnum {
                 return "s" + (variant <= 0 ? "" : String.valueOf(variant));
             case UNDERLINED:
                 return "_" + (variant <= 0 ? "" : String.valueOf(variant));
+            case STRIKED:
+                return "-" + (variant <= 0 ? "" : String.valueOf(variant));
             case BLINK:
                 return "%" + (variant <= 0 ? "" : String.valueOf(variant));
             case ITALIC:

@@ -49,7 +49,7 @@ public class PwdCommand extends SimpleJShellBuiltin {
     @Override
     protected void execBuiltin(NutsCommandLine commandLine, JShellExecutionContext context) {
         //Options options=context.getOptions();
-        context.getSession().out().printlnf(context.getShellContext().getCwd());
+        context.getSession().out().printlnf(context.getCwd());
     }
 
     private static class Options {

@@ -70,7 +70,7 @@ public class MkdirCommand extends SimpleJShellBuiltin {
     protected void execBuiltin(NutsCommandLine commandLine, JShellExecutionContext context) {
         Options options = context.getOptions();
         NutsSession session = context.getSession();
-        options.xfiles = ShellHelper.xfilesOf(options.files, context.getShellContext().getCwd(), session);
+        options.xfiles = ShellHelper.xfilesOf(options.files, context.getCwd(), session);
         if (options.xfiles.size() < 1) {
             commandLine.throwMissingArgument(session);
         }

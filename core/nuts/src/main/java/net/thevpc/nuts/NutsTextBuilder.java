@@ -72,8 +72,6 @@ public interface NutsTextBuilder extends NutsString {
 
     NutsText build();
 
-    NutsTextParser parser();
-
     List<NutsText> getChildren();
 
     NutsText subChildren(int from, int to);

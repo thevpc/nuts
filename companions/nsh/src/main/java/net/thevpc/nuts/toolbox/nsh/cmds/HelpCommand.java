@@ -87,7 +87,7 @@ public class HelpCommand extends SimpleJShellBuiltin {
                 String helpText = (n == null ? "no help found" : n.toString());
                 context.out().println(ss.apply(helpText));
                 context.out().println(NutsTexts.of(context.getSession()).ofStyled("AVAILABLE COMMANDS ARE:", NutsTextStyle.primary1()));
-                JShellBuiltin[] commands = context.getShellContext().builtins().getAll();
+                JShellBuiltin[] commands = context.builtins().getAll();
                 Arrays.sort(commands, new Comparator<JShellBuiltin>() {
                     @Override
                     public int compare(JShellBuiltin o1, JShellBuiltin o2) {
@@ -108,7 +108,7 @@ public class HelpCommand extends SimpleJShellBuiltin {
             } else {
                 int x = 0;
                 for (String commandName : options.commandNames) {
-                    JShellBuiltin command1 = context.getShellContext().builtins().find(commandName);
+                    JShellBuiltin command1 = context.builtins().find(commandName);
                     if (command1 == null) {
                         context.err().printf("command not found : %s\n", text.ofStyled(commandName, NutsTextStyle.error()));
                         x = 1;

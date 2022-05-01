@@ -106,9 +106,9 @@ public class NutsTextNodeWriterRaw {
             case LINK: {
                 DefaultNutsTextLink s = (DefaultNutsTextLink) node;
                 if (!ctx.isFiltered()) {
-                    flattenNode(s.getChild(), ctx, NutsTextStyles.of(NutsTextStyle.primary1()));//
+                    flattenNode(NutsTexts.of(session).ofPlain(s.getValue()), ctx, NutsTextStyles.of(NutsTextStyle.primary1()));//
                 } else {
-                    flattenNode(s.getChild(), ctx, style);//
+                    flattenNode(NutsTexts.of(session).ofPlain(s.getValue()), ctx, style);//
                 }
                 break;
             }

@@ -1,9 +1,8 @@
-package net.thevpc.nuts.runtime.standalone.text.parser.steps;
+package net.thevpc.nuts.runtime.standalone.text.parser.v1;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.util.collections.EvictingCharQueue;
 import net.thevpc.nuts.runtime.standalone.util.StringBuilder2;
-import net.thevpc.nuts.runtime.standalone.text.parser.DefaultNutsTextNodeParser;
 import net.thevpc.nuts.runtime.standalone.text.parser.DefaultNutsTextPlain;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.util.NutsDebugString;
@@ -82,7 +81,7 @@ public class StyledParserStep extends ParserStep {
                         wasEscape=true;
                         if(sharpsStartCount==1){
                             beforeChangingStep();
-                            state.applyDropReplacePreParsedPlain("#", exitOnBrace);
+                            state.applyDropReplacePreParsedPlain(this, "#", exitOnBrace);
                         }else{
                             curState=CurState.SHARP_CONTENT;
                         }
@@ -95,13 +94,13 @@ public class StyledParserStep extends ParserStep {
                     }
                     case ')': {
                         beforeChangingStep();
-                        state.applyDropReplace(new TitleParserStep(
+                        state.applyDropReplace(this, new TitleParserStep(
                                 CoreStringUtils.fillString("#", sharpsStartCount) + ")", session));
                         break;
                     }
                     case NutsConstants.Ntf.SILENT: {
                         beforeChangingStep();
-                        state.applyDropReplacePreParsedPlain(CoreStringUtils.fillString("#", sharpsStartCount), exitOnBrace);
+                        state.applyDropReplacePreParsedPlain(this, CoreStringUtils.fillString("#", sharpsStartCount), exitOnBrace);
                         break;
                     }
                     case ':': {
@@ -124,13 +123,13 @@ public class StyledParserStep extends ParserStep {
                     }
                     default: {
                         if(c=='}' && exitOnBrace){
-                            state.applyDropReplacePreParsedPlain(CoreStringUtils.fillString("#", sharpsStartCount),false);
-                            state.applyPop();
+                            state.applyDropReplacePreParsedPlain(this, CoreStringUtils.fillString("#", sharpsStartCount),false);
+                            state.applyPop(this);
                             state.applyNextChar(c);
                         }else {
                             if (sharpsStartCount == 1) {
                                 beforeChangingStep();
-                                state.applyDropReplacePreParsedPlain(CoreStringUtils.fillString("#", sharpsStartCount), exitOnBrace);
+                                state.applyDropReplacePreParsedPlain(this, CoreStringUtils.fillString("#", sharpsStartCount), exitOnBrace);
                                 state.applyNextChar(c);
                             } else {
                                 content.append(c);
@@ -222,7 +221,7 @@ public class StyledParserStep extends ParserStep {
                             } else if (curState == CurState.SHARP2_COL_NAME_CONTENT_SHARP) {
                                 curState = CurState.SHARP2_COL_NAME_CONTENT_SHARP_END;
                             }
-                            state.applyPopReplay(c);
+                            state.applyPopReplay(this, c);
                         }else{
                             content.append(CoreStringUtils.fillString("#", sharpsEndCount));
                             sharpsEndCount=0;
@@ -246,7 +245,7 @@ public class StyledParserStep extends ParserStep {
                             } else if (curState == CurState.SHARP2_COL_NAME_CONTENT_SHARP) {
                                 curState = CurState.SHARP2_COL_NAME_CONTENT_SHARP_END;
                             }
-                            state.applyPop();
+                            state.applyPop(this);
                         } else {
                             logErr("expected " + CoreStringUtils.fillString("#", sharpsStartCount) + "<END>");
                             sharpsEndCount=0;
@@ -266,7 +265,7 @@ public class StyledParserStep extends ParserStep {
                             } else if (curState == CurState.SHARP2_COL_NAME_CONTENT_SHARP) {
                                 curState = CurState.SHARP2_COL_NAME_CONTENT_SHARP_END;
                             }
-                            state.applyPopReplay(c);
+                            state.applyPopReplay(this, c);
                         } else {
                             if (curState == CurState.SHARP_CONTENT_SHARP) {
                                 curState = CurState.SHARP_CONTENT;
@@ -475,7 +474,7 @@ public class StyledParserStep extends ParserStep {
                     case '#': {
                         sharpsEndCount++;
                         curState = CurState.SHARP2_OBRACE_NAME_COL_CONTENT_CBRACE_SHARP2_END;
-                        state.applyPop();
+                        state.applyPop(this);
                         break;
                     }
                     case '`': {
@@ -514,14 +513,14 @@ public class StyledParserStep extends ParserStep {
                         for (int i = 0; i < _sharpsEndCount - 1; i++) {
                             state.applyNextChar('#');
                         }
-                        state.applyPopReplay(c);
+                        state.applyPopReplay(this, c);
                         break;
                     }
                     default:{
                         if (!content.isEmpty()) {
                             children.add(text.ofPlain(content.readAll()));
                         }
-                        state.applyPopReplay(c);
+                        state.applyPopReplay(this, c);
                     }
                 }
                 break;
@@ -538,14 +537,14 @@ public class StyledParserStep extends ParserStep {
                         for (int i = 0; i < _sharpsEndCount - 1; i++) {
                             state.applyNextChar('#');
                         }
-                        state.applyPopReplay(c);
+                        state.applyPopReplay(this, c);
                         break;
                     }
                     default:{
                         if (!content.isEmpty()) {
                             children.add(text.ofPlain(content.readAll()));
                         }
-                        state.applyPopReplay(c);
+                        state.applyPopReplay(this, c);
                     }
                 }
                 break;
@@ -554,7 +553,7 @@ public class StyledParserStep extends ParserStep {
                 if (!content.isEmpty()) {
                     children.add(text.ofPlain(content.readAll()));
                 }
-                state.applyPopReplay(c);
+                state.applyPopReplay(this, c);
                 break;
             }
             default: {
@@ -636,7 +635,7 @@ public class StyledParserStep extends ParserStep {
 
     @Override
     public void end(DefaultNutsTextNodeParser.State p) {
-        p.applyPop();
+        p.applyPop(this);
     }
 
     public boolean isComplete() {

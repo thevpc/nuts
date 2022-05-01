@@ -94,4 +94,10 @@ public class DefaultNutsTextTitle extends AbstractNutsText implements NutsTextTi
     public boolean isEmpty() {
         return false;
     }
+
+    @Override
+    public int textLength() {
+        // 1 is the length of '\n'
+        return child.textLength()+1;
+    }
 }

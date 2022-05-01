@@ -4,6 +4,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.toolbox.nsh.jshell.*;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class Yaccer {
 
@@ -117,7 +118,7 @@ public class Yaccer {
         if (u.type.equals("(")) {
             return readScriptPar();
         }
-        if (u.type.equals("#")) {
+        if (u.isSharp()) {
             Comments c = readComments();
             JShellCommandNode next = readScriptL1();
             return new CommentedNode(next, c);
@@ -511,7 +512,7 @@ public class Yaccer {
             Argument arg1 = ((ArgumentsLine) line).args.get(0);
             if (arg1.nodes.size() == 1 && arg1.nodes.get(0) instanceof TokenNode) {
                 Token token = ((TokenNode) arg1.nodes.get(0)).token;
-                if (token.type.equals("WORD")) {
+                if (token.isWord()) {
                     return token.value.toString();
                 }
             }
@@ -547,7 +548,7 @@ public class Yaccer {
             if (exit) {
                 break;
             }
-            if (t.type.equals("WHITE")) {
+            if (t.isWhite()) {
                 getLexer().nextToken();
                 //ignore
             } else {
@@ -576,7 +577,7 @@ public class Yaccer {
             if (t == null) {
                 break;
             }
-            if (t.type.equals("#")) {
+            if (t.isSharp()) {
                 getLexer().nextToken();
                 ok.add(t);
             } else {
@@ -593,10 +594,10 @@ public class Yaccer {
         List<JShellNode> a = new ArrayList<>();
         while (true) {
             Token t = getLexer().peekToken();
-            if (t == null || t.type.equals("NEWLINE") || t.type.equals(";")) {
+            if (t == null || t.isNewline() || t.isSemiColon()) {
                 break;
             }
-            if (t.type.equals("#")) {
+            if (t.isSharp()) {
                 if (!a.isEmpty()) {
                     break;
                 }
@@ -809,12 +810,33 @@ public class Yaccer {
 
         @Override
         public int eval(final JShellContext context) {
-            String cmd = op.type.equals("NEWLINE") ? ";" : String.valueOf(op.value);
+            String cmd = op.isNewline() ? ";" : String.valueOf(op.value);
             return context.getShell().getEvaluator().evalBinaryOperation(cmd, left, right, context);
+        }
+        private List<JShellCommandNode> expandCommands(JShellCommandNode c){
+            if(c instanceof BinOpCommand){
+                BinOpCommand b = (BinOpCommand) c;
+                if(b.op.isSemiColon()){
+                    List<JShellCommandNode> a=new ArrayList<>();
+                    a.addAll(expandCommands(b.left));
+                    a.addAll(expandCommands(b.right));
+                    return a;
+                }
+            }
+            return Arrays.asList(c);
         }
 
         @Override
         public String toString() {
+            if(op.isNewline()){
+                return
+                        left +
+                        " " + op.value +
+                        right;
+            }
+            if(op.isSemiColon()){
+                return expandCommands(this).stream().map(Object::toString).collect(Collectors.joining(";"));
+            }
             return "(" +
                     left +
                     " " + op.value +
@@ -943,7 +965,7 @@ public class Yaccer {
                 Argument arg = args2.get(0);
                 List<JShellNode> anodes = arg.nodes;
                 if (anodes.size() == 1
-                        && anodes.get(0) instanceof TokenNode && ((TokenNode) anodes.get(0)).token.type.equals(".")
+                        && anodes.get(0) instanceof TokenNode && ((TokenNode) anodes.get(0)).token.isDot()
                 ) {
                     source = true;
                     args2.remove(0);
@@ -954,8 +976,8 @@ public class Yaccer {
                     Argument arg = args2.get(0);
                     List<JShellNode> anodes = arg.nodes;
                     if (anodes.size() >= 2
-                            && anodes.get(0) instanceof TokenNode && ((TokenNode) anodes.get(0)).token.type.equals("WORD")
-                            && anodes.get(1) instanceof TokenNode && ((TokenNode) anodes.get(1)).token.type.equals("=")
+                            && anodes.get(0) instanceof TokenNode && ((TokenNode) anodes.get(0)).token.isWord()
+                            && anodes.get(1) instanceof TokenNode && ((TokenNode) anodes.get(1)).token.isEquals()
                     ) {
                         String varName = ((TokenNode) anodes.get(0)).evalString(context);
                         String[] varValues = (anodes.size() > 2) ? new Argument(anodes.subList(2, anodes.size())).evalString(context) : new String[]{""};

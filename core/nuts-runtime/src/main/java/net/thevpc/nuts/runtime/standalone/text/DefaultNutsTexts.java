@@ -251,7 +251,7 @@ public class DefaultNutsTexts implements NutsTexts {
     /**
      * this is the default theme!
      *
-     * @param other         other
+     * @param other  other
      * @param styles textNodeStyle
      * @return NutsText
      */
@@ -266,21 +266,98 @@ public class DefaultNutsTexts implements NutsTexts {
     }
 
     @Override
+    public NutsText ofCodeOrCommand(String lang, String text) {
+        return ofCodeOrCommand(lang, text, ' ');
+    }
+
+    @Override
+    public NutsText ofCodeOrCommand(String text) {
+        if(text==null){
+            text="";
+        }
+        int i = 0;
+        while (i < text.length() && text.charAt(i) != ':' && !Character.isWhitespace(text.charAt(i))) i++;
+        String cmd = null;
+        String value = null;
+        if(i==text.length()){
+            //this is a command only text, try
+            if(text.startsWith("!")){
+                cmd=text.trim();
+                value="";
+            }else{
+                cmd="";
+                value=text;
+            }
+            return ofCodeOrCommand(cmd,value);
+        }else {
+            char sep = ' ';
+            if (i < text.length()) {
+                cmd = text.substring(0, i);
+                value = text.substring(i + 1);
+                sep = text.charAt(i);
+                //normalize separator
+                if (sep == ' ' || sep == '\t' || sep == ':') {
+                    //ok
+                } else if (sep == '\n') {
+                    if (value.length() > 0 && value.charAt(0) == '\r') {
+                        value = value.substring(1);
+                    }
+                } else if (sep == '\r') {
+                    sep = '\n';
+                } else {
+                    sep = ' ';
+                }
+            } else {
+                cmd = null;
+                value = text;
+            }
+            return ofCodeOrCommand(cmd,value,sep);
+        }
+    }
+
+    @Override
+    public NutsText ofCodeOrCommand(String name, String text, char sep) {
+        checkValidSeparator(sep);
+        if (name != null && name.startsWith("!")) {
+            switch (name) {
+                case "!anchor": {
+                    return ofAnchor(text.trim(), sep);
+                }
+                case "!link": {
+                    return ofLink(text.trim(), sep);
+                }
+            }
+            NutsTerminalCommand ntc = NutsTerminalCommand.of(name.substring(1), text);
+            if (ntc == null) {
+                return ofCode(null, name + sep + text);
+            }
+            return ofCommand(ntc);
+        }
+        return ofCode(name, text, sep);
+    }
+
+    private void checkValidSeparator(char sep) {
+        if (sep != ':' && !Character.isWhitespace(sep)) {
+            throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("invalid separator '%s'", sep));
+        }
+    }
+
+    @Override
     public NutsTextCode ofCode(String lang, String text) {
+        return ofCode(lang, text, ' ');
+    }
+
+    @Override
+    public NutsTextCode ofCode(String lang, String text, char sep) {
+        checkValidSeparator(sep);
         checkSession();
         if (text == null) {
             text = "";
         }
         DefaultNutsTexts factory0 = (DefaultNutsTexts) NutsTexts.of(session);
-        if (text.indexOf('\n') >= 0) {
-            return factory0.createCode("```",
-                    lang, "\n", "```", text
-            );
-        } else {
-            return factory0.createCode("```",
-                    lang, "", "```", text
-            );
-        }
+        return factory0.createCode("```",
+                lang, "" + sep, "```", text
+        );
     }
 
     @Override
@@ -297,17 +374,29 @@ public class DefaultNutsTexts implements NutsTexts {
 
     @Override
     public NutsTextAnchor ofAnchor(String anchorName) {
+        return ofAnchor(anchorName, ' ');
+    }
+
+    @Override
+    public NutsTextAnchor ofAnchor(String anchorName, char sep) {
+        checkValidSeparator(sep);
         return createAnchor(
                 "```!",
-                "", "```", anchorName
+                "" + sep, "```", anchorName
         );
     }
 
     @Override
-    public NutsTextLink ofLink(NutsText value) {
+    public NutsTextLink ofLink(String value) {
+        return ofLink(value, ' ');
+    }
+
+    @Override
+    public NutsTextLink ofLink(String value, char sep) {
+        checkValidSeparator(sep);
         return createLink(
                 "```!",
-                "", "```", value
+                ""+sep, "```", value
         );
     }
 
@@ -365,7 +454,7 @@ public class DefaultNutsTexts implements NutsTexts {
     @Override
     public NutsTextParser parser() {
         checkSession();
-        return new DefaultNutsTextNodeParser(getSession());
+        return AbstractNutsTextNodeParserDefaults.createDefault(getSession());
     }
 
     public NutsText bg(String t, int level) {
@@ -485,6 +574,24 @@ public class DefaultNutsTexts implements NutsTexts {
         return createStyled("##:" + textStyles.id() + ":", "##", child, textStyles, completed);
     }
 
+    @Override
+    public NutsTextTitle ofTitle(NutsText other, int level) {
+        String prefix = CoreStringUtils.fillString('#', level) + ")";
+        return new DefaultNutsTextTitle(
+                session,
+                prefix, level, other
+        );
+    }
+
+    @Override
+    public NutsTextTitle ofTitle(String other, int level) {
+        return ofTitle(ofPlain(other), level);
+    }
+
+    @Override
+    public NutsTextTitle ofTitle(NutsString other, int level) {
+        return ofTitle(other.toText(), level);
+    }
 
     public NutsTextStyled createStyled(String start, String end, NutsText child, NutsTextStyles textStyle, boolean completed) {
         if (textStyle == null) {
@@ -504,7 +611,7 @@ public class DefaultNutsTexts implements NutsTexts {
         return new DefaultNutsTextCommand(getSession(), start, command, separator, end);
     }
 
-    public NutsTextLink createLink(String start, String separator, String end, NutsText value) {
+    public NutsTextLink createLink(String start, String separator, String end, String value) {
         checkSession();
         return new DefaultNutsTextLink(getSession(), start, separator, end, value);
     }

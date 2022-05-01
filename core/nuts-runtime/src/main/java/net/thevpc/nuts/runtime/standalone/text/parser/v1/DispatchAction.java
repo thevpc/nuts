@@ -1,6 +1,5 @@
-package net.thevpc.nuts.runtime.standalone.text.parser.steps;
+package net.thevpc.nuts.runtime.standalone.text.parser.v1;
 
-import net.thevpc.nuts.runtime.standalone.text.parser.DefaultNutsTextNodeParser;
 import net.thevpc.nuts.NutsText;
 
 public class DispatchAction extends ParserStep {
@@ -16,7 +15,7 @@ public class DispatchAction extends ParserStep {
 
     @Override
     public void consume(char c, DefaultNutsTextNodeParser.State p, boolean wasNewLine) {
-        p.applyDrop();
+        p.applyDrop(this);
         p.applyPush(c, spreadLines, lineStart, exitOnBrace);
     }
 
@@ -32,7 +31,7 @@ public class DispatchAction extends ParserStep {
 
     @Override
     public void end(DefaultNutsTextNodeParser.State p) {
-        p.applyDrop();
+        p.applyDrop(this);
     }
 
     @Override

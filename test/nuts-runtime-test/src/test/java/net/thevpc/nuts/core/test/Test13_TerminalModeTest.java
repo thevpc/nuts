@@ -118,14 +118,14 @@ public class Test13_TerminalModeTest {
 
         NutsText word_static = c.builder().substring(7, 13);
         session.out().printlnf(word_static);
-        Assertions.assertEquals("##:keyword:static##\u001E",word_static.toString());
+        Assertions.assertEquals("##{keyword:static}##\u001E",word_static.toString());
 
         NutsText portion_npar = c.builder().substring(22, 24);
         session.out().printlnf(portion_npar);
-        Assertions.assertEquals("n##:separator:(##\u001E",portion_npar.toString());
+        Assertions.assertEquals("n##{separator:(##\u001E",portion_npar.toString());
         NutsText rep=c.builder().replace(23,24,NutsTexts.of(session).ofStyled("()(",NutsTextStyle.danger())).build();
         session.out().printlnf(rep);
-        Assertions.assertEquals("##:keyword:public##\u001E ##:keyword:static##\u001E ##:keyword:void##\u001E main##:danger:()(##\u001EString##:separator:[##\u001E##:separator:]##\u001E args##:separator:)##\u001E##:separator:{##\u001E##:separator:}##\u001E",
+        Assertions.assertEquals("##{keyword:public}##\u001E ##{keyword:static}##\u001E ##{keyword:void}##\u001E main##{danger:()(}##\u001EString##{separator:[}##\u001E##{separator:]}##\u001E args##{separator:)}##\u001E##{separator:{}##\u001E##{separator:}}##\u001E",
                 rep.toString());
     }
 }

@@ -64,7 +64,7 @@ public class TailCommand extends SimpleJShellBuiltin {
             }
         } else {
             String path = a.asString().get(session);
-            NutsPath file = NutsPath.of(path, session).toAbsolute(context.getShellContext().getCwd());
+            NutsPath file = NutsPath.of(path, session).toAbsolute(context.getCwd());
             options.files.add(file);
             return true;
         }

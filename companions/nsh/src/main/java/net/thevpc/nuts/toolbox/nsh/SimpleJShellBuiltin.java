@@ -181,7 +181,7 @@ public abstract class SimpleJShellBuiltin extends AbstractJShellBuiltin {
 //        }
 //
 //        public String getCwd() {
-//            return context.getShellContext().getCwd();
+//            return context.getCwd();
 //        }
 //
 //        public JShellContext getGlobalContext() {

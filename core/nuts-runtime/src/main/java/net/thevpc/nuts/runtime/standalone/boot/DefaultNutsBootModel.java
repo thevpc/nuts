@@ -48,7 +48,7 @@ import java.util.logging.Level;
  */
 public class DefaultNutsBootModel implements NutsBootModel {
 
-    public final NutsPrintStream nullOut;
+    public NutsPrintStream nullOut;
     protected NutsWorkspace workspace;
     protected boolean firstBoot;
     protected boolean initializing;
@@ -59,8 +59,10 @@ public class DefaultNutsBootModel implements NutsBootModel {
     private NutsLogger LOG;
     private NutsSystemTerminal systemTerminal;
 
-    public DefaultNutsBootModel(NutsWorkspace workspace, NutsWorkspaceBootOptions bOption0) {
+    public DefaultNutsBootModel(NutsWorkspace workspace) {
         this.workspace = workspace;
+    }
+    public void init(NutsWorkspaceBootOptions bOption0){
         this.initializing = true;
         NutsWorkspaceModel _model = NutsWorkspaceExt.of(workspace).getModel();
         this.bootSession = new DefaultNutsSession(workspace, bOption0);

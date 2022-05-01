@@ -1,8 +1,7 @@
-package net.thevpc.nuts.runtime.standalone.text.parser.steps;
+package net.thevpc.nuts.runtime.standalone.text.parser.v1;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.text.DefaultNutsTexts;
-import net.thevpc.nuts.runtime.standalone.text.parser.*;
 
 public class AntiQuote3ParserStep extends ParserStep {
 
@@ -43,7 +42,7 @@ public class AntiQuote3ParserStep extends ParserStep {
                     } else {
                         //too much, ignore it all and consider it as forPlain
                         start.append(c);
-                        p.applyDropReplacePreParsedPlain(start.toString(),exitOnBrace);
+                        p.applyDropReplacePreParsedPlain(this, start.toString(),exitOnBrace);
                     }
                 } else {
                     if (start.length() == maxSize) {
@@ -59,7 +58,7 @@ public class AntiQuote3ParserStep extends ParserStep {
                         }
                     }else{
                         start.append(c);
-                        p.applyDropReplacePreParsedPlain(start.toString(),exitOnBrace);
+                        p.applyDropReplacePreParsedPlain(this, start.toString(),exitOnBrace);
                     }
                 }
 //                    p.applyContinue();
@@ -70,7 +69,7 @@ public class AntiQuote3ParserStep extends ParserStep {
                     status = END_QUOTES;
                     end.append(c);
                     if (end.length() >= start.length()) {
-                        p.applyPop();
+                        p.applyPop(this);
                         return;//new ConsumeResult(ConsumeResultType.POP, null);
                     }
                 } else {
@@ -126,7 +125,7 @@ public class AntiQuote3ParserStep extends ParserStep {
                 } else {
                     if(end.length()==maxSize){
                         //valid ending reached!
-                        p.applyPopReplay(c);
+                        p.applyPopReplay(this, c);
                     }else {
                         switch (c) {
                             case '\\': {
@@ -207,7 +206,7 @@ public class AntiQuote3ParserStep extends ParserStep {
                             start2,
                             w.toString(),
                             end.toString(),
-                            factory0.ofPlain(value)
+                            value
                     );
                 }
             }
@@ -272,7 +271,7 @@ public class AntiQuote3ParserStep extends ParserStep {
                 end.append(antiQuote);
             }
         }
-        p.applyPop();
+        p.applyPop(this);
     }
 
     public boolean isComplete() {

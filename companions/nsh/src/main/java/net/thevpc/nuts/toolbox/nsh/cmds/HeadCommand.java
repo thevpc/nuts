@@ -58,7 +58,7 @@ public class HeadCommand extends SimpleJShellBuiltin {
             return true;
         } else if (!a.isOption()) {
             String path = commandLine.next().flatMap(NutsValue::asString).get(session);
-            String file = NutsPath.of(path, session).toAbsolute(context.getShellContext().getCwd()).toString();
+            String file = NutsPath.of(path, session).toAbsolute(context.getCwd()).toString();
             options.files.add(file);
             return true;
         }

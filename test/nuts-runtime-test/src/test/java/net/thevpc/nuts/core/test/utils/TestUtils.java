@@ -195,48 +195,53 @@ public class TestUtils {
     }
 
     private static NutsSession openOrReOpenTestWorkspace(boolean deleteFolder, boolean run,String... args) {
-        String test_id = TestUtils.getCallerMethodId(2);
-        File path;
         try {
-            path = new File("./runtime/test/" + test_id).getCanonicalFile();
-            if(deleteFolder) {
-                CoreIOUtils.delete(null, path);
+            String test_id = TestUtils.getCallerMethodId(2);
+            File path;
+            try {
+                path = new File("./runtime/test/" + test_id).getCanonicalFile();
+                if (deleteFolder) {
+                    CoreIOUtils.delete(null, path);
+                }
+            } catch (IOException ex) {
+                throw new UncheckedIOException(ex);
             }
-        } catch (IOException ex) {
-            throw new UncheckedIOException(ex);
-        }
-        List<String> argsList=new ArrayList<>();
-        //create a new workspace for each new test case
-        argsList.add("--workspace="+path.getPath());
-        //workspace will contain all the data (do not consider system XDG layout)
-        //this is not mandatory though, as we are creating a path based workspace
-        argsList.add("--standalone");
-        //disable creation of desktop icons
-        argsList.add("--desktop-launcher=unsupported");
-        //disable creation of desktop menus
-        argsList.add("--menu-launcher=unsupported");
-        //disable creation of any icons
-        argsList.add("--user-launcher=unsupported");
-        //disable creating of bashrc, etc...
-        argsList.add("--!switch");
-        //disable auto-detection of java
-        argsList.add("--!init-platforms");
-        //disable auto-creation of nuts scripts
-        argsList.add("--!init-scripts");
-        //disable auto-creation of nuts icons and menus
-        argsList.add("--!init-launchers");
-        //disable progress indicator
-        argsList.add("--!progress");
-        //disable interactive mode and 'always confirm'²
-        argsList.add("--yes");
-        //disable installing nsh
-        argsList.add("--skip-companions");
+            List<String> argsList = new ArrayList<>();
+            //create a new workspace for each new test case
+            argsList.add("--workspace=" + path.getPath());
+            //workspace will contain all the data (do not consider system XDG layout)
+            //this is not mandatory though, as we are creating a path based workspace
+            argsList.add("--standalone");
+            //disable creation of desktop icons
+            argsList.add("--desktop-launcher=unsupported");
+            //disable creation of desktop menus
+            argsList.add("--menu-launcher=unsupported");
+            //disable creation of any icons
+            argsList.add("--user-launcher=unsupported");
+            //disable creating of bashrc, etc...
+            argsList.add("--!switch");
+            //disable auto-detection of java
+            argsList.add("--!init-platforms");
+            //disable auto-creation of nuts scripts
+            argsList.add("--!init-scripts");
+            //disable auto-creation of nuts icons and menus
+            argsList.add("--!init-launchers");
+            //disable progress indicator
+            argsList.add("--!progress");
+            //disable interactive mode and 'always confirm'²
+            argsList.add("--yes");
+            //disable installing nsh
+            argsList.add("--skip-companions");
 //        argsList.add("--embedded");
-        argsList.addAll(Arrays.asList(args));
-        if(run){
-            return Nuts.runWorkspace(argsList.toArray(new String[0]));
-        }else {
-            return Nuts.openWorkspace(argsList.toArray(new String[0]));
+            argsList.addAll(Arrays.asList(args));
+            if (run) {
+                return Nuts.runWorkspace(argsList.toArray(new String[0]));
+            } else {
+                return Nuts.openWorkspace(argsList.toArray(new String[0]));
+            }
+        }catch (RuntimeException ex){
+            ex.printStackTrace();
+            throw ex;
         }
     }
 

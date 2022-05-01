@@ -1,8 +1,8 @@
 package net.thevpc.nuts.runtime.standalone.text;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.standalone.text.parser.DefaultNutsTextNodeParser;
 import net.thevpc.nuts.runtime.standalone.io.outputstream.OutputHelper;
+import net.thevpc.nuts.runtime.standalone.text.parser.AbstractNutsTextNodeParserDefaults;
 import net.thevpc.nuts.spi.NutsSystemTerminalBase;
 
 public class FormatOutputStreamSupport {
@@ -23,7 +23,7 @@ public class FormatOutputStreamSupport {
     public FormatOutputStreamSupport(OutputHelper rawOutput, NutsSession session, NutsSystemTerminalBase term,boolean filtered) {
         this.session = session;
         this.ws = session.getWorkspace();
-        this.parser = new DefaultNutsTextNodeParser(session);
+        this.parser = AbstractNutsTextNodeParserDefaults.createDefault(session);
         this.nodeWriter = new NutsTextNodeWriterRenderer(rawOutput, session, term)
                 .setWriteConfiguration(writeConfiguration.setFiltered(false));
         this.writeConfiguration.setFiltered(filtered);
@@ -34,7 +34,7 @@ public class FormatOutputStreamSupport {
     }
 
     public FormatOutputStreamSupport setParser(NutsTextParser parser) {
-        this.parser = parser == null ? new DefaultNutsTextNodeParser(session) : parser;
+        this.parser = parser == null ? NutsTexts.of(session).parser() : parser;
         return this;
     }
 

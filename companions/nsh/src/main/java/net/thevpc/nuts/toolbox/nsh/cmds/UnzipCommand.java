@@ -115,7 +115,7 @@ public class UnzipCommand extends SimpleJShellBuiltin {
             commandLine.throwMissingArgument(session);
         }
         for (String path : options.zfiles) {
-            NutsPath file = NutsPath.of(path, session).toAbsolute(context.getShellContext().getCwd());
+            NutsPath file = NutsPath.of(path, session).toAbsolute(context.getCwd());
             try {
                 if (options.l) {
                     NutsUncompress.of(session)
@@ -135,9 +135,9 @@ public class UnzipCommand extends SimpleJShellBuiltin {
                 } else {
                     String dir = options.dir;
                     if (NutsBlankable.isBlank(dir)) {
-                        dir = context.getShellContext().getCwd();
+                        dir = context.getCwd();
                     }
-                    dir = context.getShellContext().getAbsolutePath(dir);
+                    dir = context.getAbsolutePath(dir);
                     NutsUncompress.of(session)
                             .from(file)
                             .to(dir)

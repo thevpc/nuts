@@ -6,6 +6,7 @@ import net.thevpc.nuts.NutsOptional;
 import net.thevpc.nuts.NutsSession;
 
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 public class PrivateNutsOptionalValid<T> extends PrivateNutsOptionalImpl<T> {
     private T value;
@@ -19,10 +20,14 @@ public class PrivateNutsOptionalValid<T> extends PrivateNutsOptionalImpl<T> {
     }
 
     @Override
-    public T get(NutsMessage message, NutsSession session) {
+    public T get(Function<NutsSession, NutsMessage> message, NutsSession session) {
         return value;
     }
 
+    @Override
+    public T get(Supplier<NutsMessage> message) {
+        return value;
+    }
     @Override
     public Throwable getError() {
         return null;
@@ -65,4 +70,5 @@ public class PrivateNutsOptionalValid<T> extends PrivateNutsOptionalImpl<T> {
     public boolean isBlank() {
         return false;
     }
+
 }

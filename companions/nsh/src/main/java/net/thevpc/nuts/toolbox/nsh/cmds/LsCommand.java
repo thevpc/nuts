@@ -88,11 +88,11 @@ public class LsCommand extends SimpleJShellBuiltin {
     protected void execBuiltin(NutsCommandLine commandLine, JShellExecutionContext context) {
         Options options = context.getOptions();
         ResultSuccess success = new ResultSuccess();
-        success.workingDir = context.getShellContext().getAbsolutePath(".");
+        success.workingDir = context.getAbsolutePath(".");
         ResultError errors = null;
         int exitCode = 0;
         if (options.paths.isEmpty()) {
-            options.paths.add(context.getShellContext().getAbsolutePath("."));
+            options.paths.add(context.getAbsolutePath("."));
         }
         NutsSession session = context.getSession();
         LinkedHashMap<NutsPath, ResultGroup> filesTodos = new LinkedHashMap<>();
@@ -101,7 +101,7 @@ public class LsCommand extends SimpleJShellBuiltin {
             if (NutsBlankable.isBlank(path)) {
                 if (errors == null) {
                     errors = new ResultError();
-                    errors.workingDir = context.getShellContext().getAbsolutePath(".");
+                    errors.workingDir = context.getAbsolutePath(".");
                 }
                 errors.result.put(path, NutsMessage.cstyle("cannot access '%s': No such file or directory", path));
                 continue;
@@ -110,17 +110,17 @@ public class LsCommand extends SimpleJShellBuiltin {
             if (file == null) {
                 if (errors == null) {
                     errors = new ResultError();
-                    errors.workingDir = context.getShellContext().getAbsolutePath(".");
+                    errors.workingDir = context.getAbsolutePath(".");
                 }
                 errors.result.put(path, NutsMessage.cstyle("cannot access '%s': No such file or directory", path));
                 continue;
             }
-            file = file.toAbsolute(NutsPath.of(context.getShellContext().getCwd(), session));
+            file = file.toAbsolute(NutsPath.of(context.getCwd(), session));
             if (!file.exists()) {
                 exitCode = 1;
                 if (errors == null) {
                     errors = new ResultError();
-                    errors.workingDir = context.getShellContext().getAbsolutePath(".");
+                    errors.workingDir = context.getAbsolutePath(".");
                 }
                 errors.result.put(path, NutsMessage.cstyle("cannot access '%s': No such file or directory", file));
             } else {

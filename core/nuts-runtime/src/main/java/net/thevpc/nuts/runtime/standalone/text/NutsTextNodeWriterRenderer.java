@@ -154,15 +154,18 @@ public class NutsTextNodeWriterRenderer extends AbstractNutsTextNodeWriter {
             case LINK: {
                 //ignore!!
                 DefaultNutsTexts factory0 = (DefaultNutsTexts) NutsTexts.of(session);
+                NutsTextPlain child = NutsTexts.of(session).ofPlain(((NutsTextLink) node).getValue());
                 writeNode(
                         formats,
-                        factory0.createStyledOrPlain(((NutsTextLink) node).getChild(),
+                        factory0.createStyledOrPlain(
+                                child
+                                ,
                                 NutsTextStyles.of(NutsTextStyle.underlined()),
                                 true
                         ),
                         ctx
                 );
-                writeRaw(formats, "see: " + ((NutsTextLink) node).getChild(), ctx.isFiltered());
+                writeRaw(formats, "see: " + ((NutsTextLink) node).getValue(), ctx.isFiltered());
                 break;
             }
             case CODE: {

@@ -1446,7 +1446,7 @@ public class DefaultNutsWorkspaceOptionsBuilder implements NutsWorkspaceOptionsB
         this.setInitLaunchers(other.getInitLaunchers().orNull());
         this.setInitJava(other.getInitJava().orNull());
         this.setInitScripts(other.getInitScripts().orNull());
-        this.setInitLaunchers(other.getInitLaunchers().orNull());
+        this.setInitPlatforms(other.getInitPlatforms().orNull());
         this.setDesktopLauncher(other.getDesktopLauncher().orNull());
         this.setMenuLauncher(other.getMenuLauncher().orNull());
         this.setUserLauncher(other.getUserLauncher().orNull());

@@ -202,7 +202,7 @@ public class TestUtils {
         //disable creation of desktop menus
         argsList.add("--menu-launcher=unsupported");
         //disable creation of any icons
-        argsList.add("--custom-launcher=unsupported");
+        argsList.add("--user-launcher=unsupported");
         //disable creating of bashrc, etc...
         argsList.add("--!switch");
         //disable auto-detection of java

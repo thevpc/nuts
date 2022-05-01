@@ -4,8 +4,12 @@ package net.thevpc.nuts.toolbox.nsh.jshell;
 import net.thevpc.nuts.*;
 
 import java.io.InputStream;
+import java.io.PrintStream;
+import java.util.Map;
 
 public class DefaultJShellExecutionContext implements JShellExecutionContext {
+
+
     private JShellContext shellContext;
     private NutsSession session;
     private JShellBuiltin builtin;
@@ -118,6 +122,7 @@ public class DefaultJShellExecutionContext implements JShellExecutionContext {
         return getShell().getAppContext();
     }
 
+    @Override
     public NutsTerminalMode geTerminalMode() {
         return terminalMode;
     }
@@ -127,6 +132,7 @@ public class DefaultJShellExecutionContext implements JShellExecutionContext {
         return askHelp;
     }
 
+    @Override
     public DefaultJShellExecutionContext setAskHelp(boolean askHelp) {
         this.askHelp = askHelp;
         return this;
@@ -139,5 +145,135 @@ public class DefaultJShellExecutionContext implements JShellExecutionContext {
     public DefaultJShellExecutionContext setOptions(Object options) {
         this.options = options;
         return this;
+    }
+
+    @Override
+    public JShellNode getRootNode() {
+        return shellContext.getRootNode();
+    }
+
+    @Override
+    public JShellNode getParentNode() {
+        return shellContext.getParentNode();
+    }
+
+    @Override
+    public JShellVariables vars() {
+        return shellContext.vars();
+    }
+
+    @Override
+    public JShellFunctionManager functions() {
+        return shellContext.functions();
+    }
+
+    @Override
+    public JShellExecutionContext setOut(PrintStream out) {
+        getSession().getTerminal().setErr(NutsPrintStream.of(out, getSession()));
+        return this;
+    }
+
+    @Override
+    public JShellExecutionContext setErr(PrintStream err) {
+        getSession().getTerminal().setErr(NutsPrintStream.of(err, getSession()));
+        return this;
+    }
+
+    @Override
+    public JShellExecutionContext setIn(InputStream in) {
+        getSession().getTerminal().setIn(in);
+        return this;
+    }
+
+    @Override
+    public JShellExecutionContext setEnv(Map<String, String> env) {
+        shellContext.setEnv(env);
+        return this;
+    }
+
+    @Override
+    public Map<String, Object> getUserProperties() {
+        return shellContext.getUserProperties();
+    }
+
+    @Override
+    public String getCwd() {
+        return shellContext.getCwd();
+    }
+
+    @Override
+    public String getHome() {
+        return shellContext.getHome();
+    }
+
+    @Override
+    public void setCwd(String cwd) {
+        shellContext.setCwd(cwd);
+    }
+
+    @Override
+    public JShellFileSystem getFileSystem() {
+        return shellContext.getFileSystem();
+    }
+
+    @Override
+    public String getAbsolutePath(String path) {
+        return shellContext.getAbsolutePath(path);
+    }
+
+    @Override
+    public String[] expandPaths(String path) {
+        return shellContext.expandPaths(path);
+    }
+
+    @Override
+    public JShellContext getParentContext() {
+        return shellContext.getParentContext();
+    }
+
+    @Override
+    public JShellAliasManager aliases() {
+        return shellContext.aliases();
+    }
+
+    @Override
+    public JShellBuiltinManager builtins() {
+        return shellContext.builtins();
+    }
+
+    @Override
+    public String getServiceName() {
+        return shellContext.getServiceName();
+    }
+
+//    public void setArgs(String[] args) {
+//        shellContext.setArgs(args);
+//    }
+//
+//    public String getArg(int index) {
+//        return shellContext.getArg(index);
+//    }
+//
+//    public int getArgsCount() {
+//        return shellContext.getArgsCount();
+//    }
+//
+//    public String[] getArgsArray() {
+//        return shellContext.getArgsArray();
+//    }
+//
+//    public List<String> getArgsList() {
+//        return shellContext.getArgsList();
+//    }
+
+    @Override
+    public JShellExecutionContext setSession(NutsSession session) {
+        this.session=session;
+        return this;
+    }
+
+    @Override
+    public NutsCommandAutoComplete getAutoComplete() {
+        return shellContext.getAutoComplete();
     }
 }

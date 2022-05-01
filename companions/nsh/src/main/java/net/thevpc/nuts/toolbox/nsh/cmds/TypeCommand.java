@@ -68,7 +68,7 @@ public class TypeCommand extends SimpleJShellBuiltin {
         JShell shell = context.getShell();
         List<ResultItem> result = new ArrayList<>();
         for (String cmd : config.commands) {
-            JShellBuiltin ic = context.getShellContext().builtins().find(cmd);
+            JShellBuiltin ic = context.builtins().find(cmd);
             if (ic != null && ic.isEnabled()) {
                 result.add(new ResultItem(
                         cmd,
@@ -76,7 +76,7 @@ public class TypeCommand extends SimpleJShellBuiltin {
                         cmd + " is a shell builtin"
                 ));
             } else {
-                String alias = context.getShellContext().aliases().get(cmd);
+                String alias = context.aliases().get(cmd);
                 if (alias != null) {
                     result.add(new ResultItem(
                             cmd,

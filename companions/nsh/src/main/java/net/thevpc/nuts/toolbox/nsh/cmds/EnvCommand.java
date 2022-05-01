@@ -157,7 +157,7 @@ public class EnvCommand extends SimpleJShellBuiltin {
         }
         SortedMap<String, String> env = new TreeMap<>();
         if (!options.ignoreEnvironment) {
-            env.putAll((Map) context.getShellContext().vars().getAll());
+            env.putAll((Map) context.vars().getAll());
         }
         for (String v : options.unsetVers) {
             env.remove(v);

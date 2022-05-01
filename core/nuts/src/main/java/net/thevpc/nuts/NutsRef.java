@@ -28,6 +28,15 @@ package net.thevpc.nuts;
 public class NutsRef<T> {
 
     private T value;
+    private boolean set;
+
+    public static <T> NutsRef<T> of(T t) {
+        return new NutsRef<>(t);
+    }
+
+    public static <T> NutsRef<T> ofNull() {
+        return new NutsRef<>(null);
+    }
 
     public NutsRef() {
     }
@@ -41,17 +50,37 @@ public class NutsRef<T> {
     }
 
     public T orElse(T other) {
-        if(value==null){
+        if (value == null) {
             return other;
         }
         return value;
     }
 
+    public void setNonNull(T value) {
+        if(value!=null){
+            set(value);
+        }
+    }
+
     public void set(T value) {
         this.value = value;
+        this.set = true;
+    }
+
+    public void unset() {
+        this.value = null;
+        this.set = false;
+    }
+
+    public boolean isNotNull() {
+        return value != null;
+    }
+
+    public boolean isNull() {
+        return value == null;
     }
 
     public boolean isSet() {
-        return value != null;
+        return set;
     }
 }

@@ -288,12 +288,7 @@ public class NutsWorkspaceUtils {
             if (session.isPlainTrace()) {
                 if (someAdded == 0) {
                     session.out().print("```error no new``` java installation locations found...\n");
-                } else if (someAdded == 1) {
-                    session.out().printf("%s new java installation location added...\n", factory.ofStyled("1", NutsTextStyle.primary2()));
-                } else {
-                    session.out().printf("%s new java installation locations added...\n", factory.ofStyled("" + someAdded, NutsTextStyle.primary2()));
                 }
-                session.out().println("you can always add another installation manually using 'nuts settings add java' command.");
             }
             if (!config.isReadOnly()) {
                 config.save();

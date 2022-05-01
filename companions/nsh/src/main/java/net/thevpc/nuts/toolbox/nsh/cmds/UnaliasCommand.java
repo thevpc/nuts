@@ -69,12 +69,12 @@ public class UnaliasCommand extends SimpleJShellBuiltin {
     protected void execBuiltin(NutsCommandLine commandLine, JShellExecutionContext context) {
         Options options = context.getOptions();
         if (options.all) {
-            for (String k : context.getShellContext().aliases().getAll()) {
-                context.getShellContext().aliases().set(k, null);
+            for (String k : context.aliases().getAll()) {
+                context.aliases().set(k, null);
             }
         } else {
             for (String k : options.list) {
-                context.getShellContext().aliases().set(k, null);
+                context.aliases().set(k, null);
             }
         }
     }

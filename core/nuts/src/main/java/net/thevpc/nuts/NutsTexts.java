@@ -91,9 +91,22 @@ public interface NutsTexts extends NutsComponent {
 
     NutsTextStyled ofStyled(NutsText other, NutsTextStyle styles);
 
+    NutsTextTitle ofTitle(String other, int level);
+
+    NutsTextTitle ofTitle(NutsString other, int level);
+
+    NutsTextTitle ofTitle(NutsText other, int level);
+
     NutsTextCommand ofCommand(NutsTerminalCommand command);
 
+    NutsTextCode ofCode(String lang, String text, char sep);
+
     NutsTextCode ofCode(String lang, String text);
+
+    NutsText ofCodeOrCommand(String lang, String text);
+
+    NutsText ofCodeOrCommand(String text);
+    NutsText ofCodeOrCommand(String lang, String text, char sep);
 
     NutsTextNumbering ofNumbering();
 
@@ -101,7 +114,9 @@ public interface NutsTexts extends NutsComponent {
 
     NutsTextAnchor ofAnchor(String anchorName);
 
-    NutsTextLink ofLink(NutsText value);
+    NutsTextLink ofLink(String value, char sep);
+    NutsTextAnchor ofAnchor(String anchorName, char sep);
+    NutsTextLink ofLink(String value);
 
     NutsTextFormatTheme getTheme();
 

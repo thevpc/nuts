@@ -87,7 +87,7 @@ public class XmlCommand extends SimpleJShellBuiltin {
 
         Document doc = null;
         if (options.input != null) {
-            NutsPath file = NutsPath.of(options.input, session).toAbsolute(context.getShellContext().getCwd());
+            NutsPath file = NutsPath.of(options.input, session).toAbsolute(context.getCwd());
             if (file.isFile()) {
                 try (InputStream is = file.getInputStream()) {
                     doc = dBuilder.parse(is);

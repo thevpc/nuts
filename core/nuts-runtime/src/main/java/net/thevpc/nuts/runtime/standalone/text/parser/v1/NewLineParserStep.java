@@ -1,8 +1,7 @@
-package net.thevpc.nuts.runtime.standalone.text.parser.steps;
+package net.thevpc.nuts.runtime.standalone.text.parser.v1;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.text.DefaultNutsTexts;
-import net.thevpc.nuts.runtime.standalone.text.parser.DefaultNutsTextNodeParser;
 
 
 public class NewLineParserStep extends ParserStep {
@@ -19,7 +18,7 @@ public class NewLineParserStep extends ParserStep {
         if(c=='\n') {
             start.append(c);
         }else /*if(c=='#')*/{
-            state.applyPopReplay(c);
+            state.applyPopReplay(this, c);
 //        }else if(c=='#'){
 //            state.applyAppendSibling(new PlainParserStep(start.toString(),state.isSpreadLine(),false,session.getWorkspace(),state,null));
 //            state.applyDropReplace(new StyledParserStep(c,true,session.getWorkspace(),state));
@@ -43,7 +42,7 @@ public class NewLineParserStep extends ParserStep {
 
     @Override
     public void end(DefaultNutsTextNodeParser.State p) {
-        p.applyPop();
+        p.applyPop(this);
     }
 
     public boolean isComplete() {

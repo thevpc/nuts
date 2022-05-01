@@ -4,6 +4,7 @@ import net.thevpc.nuts.*;
 
 import java.util.NoSuchElementException;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 public class PrivateNutsOptionalError<T> extends PrivateNutsOptionalImpl<T> {
     private Function<NutsSession, NutsMessage> message;
@@ -31,18 +32,26 @@ public class PrivateNutsOptionalError<T> extends PrivateNutsOptionalImpl<T> {
 
     @Override
     public T get(NutsSession session) {
-        if (session == null) {
-            throw new NoSuchElementException(message.apply(null).toString());
-        } else {
-            throw new NutsOptionalErrorException(session, message.apply(session));
-        }
+        return get(this.message,session);
     }
 
     @Override
-    public T get(NutsMessage message,NutsSession session) {
-        throw new NutsNoSuchElementException(session,
-                this.message.apply(session).concat(session, NutsMessage.plain(" : "), message)
-        );
+    public T get(Supplier<NutsMessage> message) {
+        return get(s->message.get(),null);
+    }
+
+
+    @Override
+    public T get(Function<NutsSession, NutsMessage> message, NutsSession session) {
+        if(message==null){
+            message=this.message;
+        }
+        NutsMessage m = prepareMessage(message.apply(session));
+        if (session == null) {
+            throw new NoSuchElementException(m.toString());
+        } else {
+            throw new NutsNoSuchElementException(session, m);
+        }
     }
 
     @Override

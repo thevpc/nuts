@@ -1,4 +1,4 @@
-package net.thevpc.nuts.runtime.standalone.text.parser.steps;
+package net.thevpc.nuts.runtime.standalone.text.parser.v1;
 
 import net.thevpc.nuts.NutsTextStyle;
 import net.thevpc.nuts.NutsTextStyleType;

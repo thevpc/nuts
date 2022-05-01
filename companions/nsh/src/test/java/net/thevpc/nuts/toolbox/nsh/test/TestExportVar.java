@@ -40,20 +40,24 @@ import java.io.ByteArrayInputStream;
 public class TestExportVar {
     @Test
     public void testVars1() {
-        NutsSession ws = TestUtils.openNewTestWorkspace("--verbose");
-        NutsPath tempFolder = NutsTmp.of(ws).createTempFolder();
+        NutsSession session = TestUtils.openNewTestWorkspace("--verbose");
+        NutsPath tempFolder = NutsTmp.of(session).createTempFolder();
         NutsPath a = tempFolder.resolve("a.nsh");
         NutsPath b = tempFolder.resolve("b.nsh");
         System.out.println("----------------------------------------------");
-        NutsCp.of(ws).from("echo 'run a' ; a=1; echo a0=$a ; source b.nsh ; echo 'back-to a' ; echo a1=$a ; echo b1=$b".getBytes()).to(a).run();
-        NutsCp.of(ws).from("echo 'run b' ; echo a2=$a ; a=2; b=3 ; echo a2=$a ; echo b2=$b".getBytes()).to(b).run();
-        JShell c = new JShell(ws,new String[]{a.toString()});
-        NutsSession session = c.getRootContext().getSession();
-        session.setTerminal(NutsSessionTerminal.ofMem(session));
+        NutsCp.of(session).from("echo 'run a' ; a=1; echo a0=$a ; source b.nsh ; echo 'back-to a' ; echo a1=$a ; echo b1=$b".getBytes())
+                .to(a).run();
+        NutsCp.of(session).from("echo 'run b' ; echo a2=$a ; a=2; b=3 ; echo a2=$a ; echo b2=$b".getBytes())
+                .to(b).run();
+        JShell c = new JShell(session,new String[]{a.toString()});
+        NutsSession shellSession = c.getRootContext().getSession();
+        shellSession.setTerminal(NutsSessionTerminal.ofMem(shellSession));
         c.getRootContext().setCwd(tempFolder.toString());
         c.run();
         System.out.println("-------------------------------------");
-        String result=session.out().toString();
+        String result=shellSession.out().toString();
+        String errorResult = shellSession.err().toString();
+        System.err.println(errorResult);
         System.out.println(result);
         Assertions.assertEquals(
                 "run a\n" +

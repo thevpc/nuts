@@ -321,7 +321,7 @@ public class JavaJarUtils {
                     for (Object o : attrs.keySet()) {
                         Attributes.Name attrName = (Attributes.Name) o;
                         if ("Automatic-Module-Name".equals(attrName.toString())) {
-                            automaticModuleName.set(NutsUtilStrings.trimToNull(attrs.getValue(attrName)));
+                            automaticModuleName.setNonNull(NutsUtilStrings.trimToNull(attrs.getValue(attrName)));
                             return false;
                         }
                     }

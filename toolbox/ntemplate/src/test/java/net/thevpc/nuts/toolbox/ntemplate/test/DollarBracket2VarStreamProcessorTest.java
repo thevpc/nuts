@@ -18,8 +18,8 @@ public class DollarBracket2VarStreamProcessorTest {
                 out,
                 new FileTemplater(Nuts.openWorkspace(
                         "-ZySbyKk",
-                        "--!install-java",
-                        "--!install-launchers",
+                        "--!init-java",
+                        "--!init-launchers",
                         "-w","test6"))
         );
         System.out.println(out);

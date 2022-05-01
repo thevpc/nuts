@@ -17,20 +17,25 @@ Starred releases are most stable ones.
 - ADDED: Added new nuts LOGO
 - ADDED: Added NutsOptional a feature riche replacement of java's Optional
 - ADDED: Add NutsEnvCondition/NutsEnvConditionBuilder::setProperties/getProperties
-- Remove session dependency from NutsVersion,NutsId and NutsDescriptor
-- Enum.parseLenient replaced by NutsOptional
-- Add NutsDescriptor/NutsDescriptorBuilder::setLicenses
-- Add NutsDescriptor/NutsDescriptorBuilder::setDevelopers
-+ Rename NutsConstants.IdProperties.DESKTOP_ENVIRONMENT -> NutsConstants.IdProperties.DESKTOP
-+ Add    NutsConstants.IdProperties.DESKTOP_ENVIRONMENT -> NutsConstants.IdProperties.PROPERTIES
-+ Rename NutsRepositoryDB::getRepositoryNameByURL -> NutsRepositoryDB::getRepositoryNameByLocation
-+ Rename NutsRepositoryDB::getRepositoryURLByName -> NutsRepositoryDB::getRepositoryLocationByName
-+ change type to long in NutsExecCommand::getSleepMillis()/setSleepMillis(int sleepMillis);
-+ Add NutsPath::getLongBaseName // longest file name before last '.'
-+ Add NutsMessageFormattable
-+ Now NutsWorkspaceOptionsBuilder extends NutsWorkspaceOptions
-+ Remove NutsBootOptions
-+ 
+- REMOVED: Remove session dependency from NutsVersion,NutsId and NutsDescriptor
+- CHANGED: Enum.parseLenient replaced by NutsOptional
+- ADDED: Add NutsDescriptor/NutsDescriptorBuilder::setLicenses
+- ADDED: Add NutsDescriptor/NutsDescriptorBuilder::setDevelopers
++ CHANGED: Rename NutsConstants.IdProperties.DESKTOP_ENVIRONMENT -> NutsConstants.IdProperties.DESKTOP
++ ADDED: Add    NutsConstants.IdProperties.DESKTOP_ENVIRONMENT -> NutsConstants.IdProperties.PROPERTIES
++ CHANGED: Rename NutsRepositoryDB::getRepositoryNameByURL -> NutsRepositoryDB::getRepositoryNameByLocation
++ CHANGED: Rename NutsRepositoryDB::getRepositoryURLByName -> NutsRepositoryDB::getRepositoryLocationByName
++ CHANGED: Change type to long in NutsExecCommand::getSleepMillis()/setSleepMillis(int sleepMillis);
++ ADDED: Add NutsPath::getLongBaseName // longest file name before last '.'
++ ADDED: Add NutsMessageFormattable
++ ADDED: Add NutsDescribable now takes a Session instead of NutsElements
++ CHANGED: Now NutsWorkspaceOptionsBuilder extends NutsWorkspaceOptions
++ REMOVED: Remove NutsBootOptions
++ ADDED: added cmdline arguments : --isolation,--confined, --sandbox
++ ADDED: promote cmdline arguments : --init-platforms,--init-launchers,--init-scripts, --init-java
++ ADDED: promote cmdline arguments : --desktop-launcher,--menu-launcher,--user-launcher
++ ADDED: Add NutsMessageFormattable
+
 ## nuts 0.8.3.1 (PUBLISHED VERSION)
 - ```2022/02/01 	nuts 0.8.3.1``` released nuts-runtime-0.8.3.1.jar
 - UPDATED   : move support to repositories "nuts-public" and "nuts-preview"

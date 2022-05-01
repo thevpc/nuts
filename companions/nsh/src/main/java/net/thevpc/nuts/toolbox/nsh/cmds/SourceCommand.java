@@ -23,10 +23,7 @@
  */
 package net.thevpc.nuts.toolbox.nsh.cmds;
 
-import net.thevpc.nuts.NutsArgument;
-import net.thevpc.nuts.NutsCommandLine;
-import net.thevpc.nuts.NutsPath;
-import net.thevpc.nuts.NutsSession;
+import net.thevpc.nuts.*;
 import net.thevpc.nuts.spi.NutsComponentScope;
 import net.thevpc.nuts.spi.NutsComponentScopeType;
 import net.thevpc.nuts.toolbox.nsh.SimpleJShellBuiltin;
@@ -68,31 +65,25 @@ public class SourceCommand extends SimpleJShellBuiltin {
         if (options.args.isEmpty()) {
             throwExecutionException("missing command", 1, session);
         }
-        final String[] paths = context.getShellContext().vars().get("PATH", "").split(":|;");
-        NutsPath goodFile = null;
-        String file = options.args.remove(0);
-        NutsPath file0 = NutsPath.of(file, session);
-        boolean found = false;
-        if (file0.isName()) {
+        final String[] paths = context.vars().get("PATH", "").split(":|;");
+        NutsPath file = NutsPath.of(options.args.remove(0), session);
+        if (file.isName()) {
             for (String path : paths) {
                 NutsPath basePathFolder = NutsPath.of(path, session);
-                if (basePathFolder.resolve(file0).isRegularFile()) {
-                    file = basePathFolder.resolve(file).toString();
+                if (basePathFolder.resolve(file).isRegularFile()) {
+                    file = basePathFolder.resolve(file);
                     break;
                 }
             }
         }
-        if (!NutsPath.of(file, session).isFile()) {
-            if (NutsPath.of(context.getShellContext().getCwd(), session).resolve(file).isRegularFile()) {
-                file = NutsPath.of(context.getShellContext().getCwd(), session).resolve(file).toString();
-            }
+        if(!file.isAbsolute()){
+            file=file.toAbsolute(context.getCwd());
         }
-        if (!NutsPath.of(file, session).isRegularFile()) {
-            throwExecutionException("file not found", 1, session);
+        if (!file.isRegularFile()) {
+            throwExecutionException(NutsMessage.cstyle("file not found : %s",file), 1, session);
         } else {
-            goodFile = NutsPath.of(file, session);
             JShellContext c2 = context.getShellContext();
-            JShellContext c = context.getShell().createInlineContext(c2, goodFile.toString(), options.args.toArray(new String[0]));
+            JShellContext c = context.getShell().createInlineContext(c2, file.toString(), options.args.toArray(new String[0]));
             context.getShell().executeServiceFile(c, false);
         }
     }

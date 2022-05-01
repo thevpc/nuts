@@ -28,6 +28,8 @@ package net.thevpc.nuts;
 
 import net.thevpc.nuts.boot.NutsApiUtils;
 
+import java.util.function.Function;
+
 /**
  * @author thevpc
  * @app.category Base
@@ -73,7 +75,28 @@ public enum NutsTerminalMode implements NutsEnum {
     }
 
     public static NutsOptional<NutsTerminalMode> parse(String value) {
-        return NutsApiUtils.parse(value, NutsTerminalMode.class);
+        return NutsApiUtils.parse(value, NutsTerminalMode.class, new Function<String, NutsOptional<NutsTerminalMode>>() {
+            @Override
+            public NutsOptional<NutsTerminalMode> apply(String s) {
+                switch (s.toLowerCase()){
+                    case "system":
+                    case "s":
+                    case "auto":
+                    case "d":
+                        return NutsOptional.of(DEFAULT);
+                    case "h":
+                        return NutsOptional.of(INHERITED);
+                    default:{
+                        Boolean b = NutsValue.of(s).asBoolean().orNull();
+                        if(b!=null){
+                            return NutsOptional.of(b?FORMATTED:FILTERED);
+                        }
+                        break;
+                    }
+                }
+                return null;
+            }
+        });
     }
 
     /**

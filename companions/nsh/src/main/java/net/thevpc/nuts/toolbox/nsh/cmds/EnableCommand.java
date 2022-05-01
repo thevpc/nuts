@@ -97,7 +97,7 @@ public class EnableCommand extends SimpleJShellBuiltin {
         Options options = context.getOptions();
         if (options.p || options.names.isEmpty()) {
             Map<String, String> result = new LinkedHashMap<>();
-            for (JShellBuiltin command : context.getShellContext().builtins().getAll()) {
+            for (JShellBuiltin command : context.builtins().getAll()) {
                 result.put(command.getName(), command.isEnabled() ? "enabled" : "disabled");
             }
             switch (context.getSession().getOutputFormat()) {
@@ -123,7 +123,7 @@ public class EnableCommand extends SimpleJShellBuiltin {
         } else if (options.n) {
             List<String> nobuiltin = new ArrayList<>();
             for (String name : options.names) {
-                JShellBuiltin c = context.getShellContext().builtins().find(name);
+                JShellBuiltin c = context.builtins().find(name);
                 if (c == null) {
                     nobuiltin.add(name);
                 } else {

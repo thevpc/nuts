@@ -9,7 +9,7 @@ public abstract class AbstractLexer implements Lexer {
             if (t == null) {
                 return some;
             }
-            if (!t.type.equals("WHITE")) {
+            if (!t.isWhite()) {
                 return some;
             }
             some=true;

@@ -76,4 +76,9 @@ public class DefaultNutsTextPlain extends AbstractNutsText implements NutsTextPl
     public String filteredText() {
         return text==null?"":text;
     }
+
+    @Override
+    public int textLength() {
+        return text==null?0:text.length();
+    }
 }

@@ -53,7 +53,7 @@ public class ZipCommand extends SimpleJShellBuiltin {
         } else if (commandLine.peek().get(session).isNonOption()) {
             String path = commandLine.nextNonOption(NutsArgumentName.of("file", session))
                     .flatMap(NutsValue::asString).get(session);
-            NutsPath file = NutsPath.of(path, session).toAbsolute(context.getShellContext().getCwd());
+            NutsPath file = NutsPath.of(path, session).toAbsolute(context.getCwd());
             if (options.outZip == null) {
                 options.outZip = file;
             } else {

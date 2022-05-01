@@ -294,34 +294,26 @@ Boot Runtime Version: ###${nuts.workspace-runtime.version}###
       type ```sh nuts``` it is that workspace that is used. You can change choose to "switch" the binding to the currently
       created workspace by arming this flag.
 
- ```sh ---init-scripts ``` (default is ```kw true``` for default archetype)
+ ```sh --init-scripts ``` (default is ```kw true``` for default archetype)
       When creating a new workspace, you can select to enable or disable creation of os shell scripts to point to nuts
       and other installed artifacts using ```sh ---!init-scripts ``` flag. Please notice the '---' prefix which means
       that the option is not standard and can be removed in later versions.
 
- ```sh ---init-launchers ``` (default is ```kw true``` for default archetype)
+ ```sh --init-launchers ``` (default is ```kw true``` for default archetype)
       When creating a new workspace, you can select to enable or disable creation of menus and desktop icons by using
       ```sh ---!init-launchers ``` flag. Please notice the '---' prefix which means that the option is not standard and
       can be removed in later versions. This option implies ```sh ---init-scripts ```
 
- ```sh ---init-java ``` (default is ```kw true``` for default archetype)
+ ```sh --init-java ``` (default is ```kw true``` for default archetype)
       When creating a new workspace, you can select to enable or disable registration of installed JDK/JRE in the system
       by using ```sh ---!init-java ``` flag. Please notice the '---' prefix which means that the option is not
       standard and can be removed in later versions. This option implies ```sh ---init-scripts ```
 
- ```sh ---init-platforms ``` (default is ```kw true``` for default archetype)
+ ```sh --init-platforms ``` (default is ```kw true``` for default archetype)
       When creating a new workspace, you can select to enable or disable registration of installed platforms (including
       java) in the system by using ```sh ---!init-platforms ``` flag. Please notice the '---' prefix which means that
       the option is not standard and can be removed in later versions. This option implies ```sh ---init-java ```
 
-```sh --init-platforms=true|false ``` (default is ```kw true``` )
-      when creating the workspace, search for installed platforms (java,python,dotnet, etc..). For now only java is supported
- ```sh --init-java=true|false ``` (default is ```kw true``` )
-      when creating the workspace, search for installed jdk/jre. This flag has precedence over ```sh --init-platforms ```
- ```sh --init-scripts=true|false ``` (default is ```kw true``` )
-      when creating the workspace, install any required/helpful scripts
- ```sh --init-launchers=true|false ``` (default is ```kw true``` )
-      when creating the workspace, install any required/helpful launchers (desktop integration, such as menus and shortcuts)
 
  ###) NUTS OPEN EXPORTED OPTIONS:
  ```sh --global  or -g```  (default is false)
@@ -548,15 +540,23 @@ Boot Runtime Version: ###${nuts.workspace-runtime.version}###
  ```sh --error```
       exit with error whenever interactive mode is required
 
-```sh --desktop-launcher=never|supported|preferred|always ``` (default depends on the operating system and the availability
-                                                              of a desktop environment)
-      enable/disable desktop launchers support
-```sh --menu-launcher=never|supported|preferred|always ``` (default depends on the operating system and the availability
-                                                              of a desktop environment)
-      enable/disable menu launchers support
-```sh --user-launcher=never|supported|preferred|always ``` (default depends on the operating system and the availability
-                                                              of a desktop environment)
-      enable/disable custom user shortcut launchers support
+
+```sh --desktop-launcher=never|unsupported|supported|preferred|always```  (default depends on the operating system and the availability of a desktop environment)
+   this option overrides default behaviour of the system
+   desktop environment. It defines the support mode for desktop icons (application shortcut on the Desktop) for the desktop
+   environment ( ##@see## NutsSupportMode class).
+   ```sh ---system-desktop-launcher=unsupported``` disables creating any desktop icon on the system
+   ```sh ---system-desktop-launcher=supported```   enables creating desktop icons whenever asked by an application
+   ```sh ---system-desktop-launcher=preferred```   enables creating desktop icons whenever asked by an application and
+                                                   that application requires this preference
+
+```sh ---menu-launcher=never|unsupported|supported|preferred|always``` (default depends on the operating system and the availability of a desktop environment)
+   this option overrides default behaviour of the system desktop environment.
+   It defines the support mode for creating a menu for the desktop environment.
+
+```sh ---user-launcher=never|unsupported|supported|preferred|always``` (default depends on the operating system and the availability of a desktop environment)
+   this option overrides default behaviour of the system desktop environment.
+   It defines the support mode for creating a custom application shortcut for the desktop environment.
 
  ###) NUTS OPEN OPTIONS:
 
@@ -643,20 +643,8 @@ Boot Runtime Version: ###${nuts.workspace-runtime.version}###
 Non standard options can be used by ```sh nuts``` or any ```sh nuts``` application. Such options start with three dashes
 (and not two dashes).
 
-```sh ---system-desktop-launcher=unsupported|supported|preferred``` this option overrides default behaviour of the system
-   desktop environment. It defines the support mode for desktop icons (application shortcut on the Desktop) for the desktop
-   environment ( ##@see## NutsSupportMode class).
-   ```sh ---system-desktop-launcher=unsupported``` disables creating any desktop icon on the system
-   ```sh ---system-desktop-launcher=supported```   enables creating desktop icons whenever asked by an application
-   ```sh ---system-desktop-launcher=preferred```   enables creating desktop icons whenever asked by an application and
-                                                   that application requires this preference
-
-```sh ---system-menu-launcher=unsupported|supported|preferred``` this option overrides default behaviour of the system desktop environment.
-   It defines the support mode for creating a menu for the desktop environment.
-
-```sh ---system-custom-launcher=unsupported|supported|preferred``` this option overrides default behaviour of the system desktop environment.
-   It defines the support mode for creating a custom application shortcut for the desktop environment.
-
+```sh ---show-command``` prints child process command arguments
+```sh ---monitor-start``` prints a message when starting a new monitor
 
 
 ###) SPECIAL OPTIONS:

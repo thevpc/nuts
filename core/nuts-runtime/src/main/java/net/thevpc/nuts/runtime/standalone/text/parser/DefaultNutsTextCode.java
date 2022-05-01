@@ -40,7 +40,7 @@ public class DefaultNutsTextCode extends NutsTextSpecialBase implements NutsText
     private final String text;
 
     public DefaultNutsTextCode(NutsSession session, String start, String kind, String separator, String end, String text) {
-        super(session,start, kind,
+        super(session, start, kind,
                 (kind != null && kind.length() > 0
                         &&
                         text != null && text.length() > 0
@@ -88,6 +88,11 @@ public class DefaultNutsTextCode extends NutsTextSpecialBase implements NutsText
 
     @Override
     public String filteredText() {
-        return text==null?"":text;
+        return text == null ? "" : text;
+    }
+
+    @Override
+    public int textLength() {
+        return text == null ? 0 : text.length();
     }
 }

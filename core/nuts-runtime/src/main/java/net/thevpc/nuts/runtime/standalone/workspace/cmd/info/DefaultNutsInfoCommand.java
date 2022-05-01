@@ -298,7 +298,7 @@ public class DefaultNutsInfoCommand extends DefaultFormatBase<NutsInfoCommand> i
         for (NutsStoreLocation folderType : NutsStoreLocation.values()) {
             props.put("nuts-workspace-" + folderType.id(), session.locations().getStoreLocation(folderType));
         }
-        props.put("nuts-open-mode", (options.getOpenMode() == null ? NutsOpenMode.OPEN_OR_CREATE : options.getOpenMode()));
+        props.put("nuts-open-mode", options.getOpenMode().orElse(NutsOpenMode.OPEN_OR_CREATE));
         props.put("nuts-secure", (session.security().isSecure()));
         props.put("nuts-gui", options.getGui().orElse(false));
         props.put("nuts-inherited", options.getInherited().orElse(false));

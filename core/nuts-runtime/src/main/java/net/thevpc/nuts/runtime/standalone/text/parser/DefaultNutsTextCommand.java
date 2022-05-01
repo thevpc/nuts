@@ -79,4 +79,9 @@ public class DefaultNutsTextCommand extends NutsTextSpecialBase implements NutsT
     public String filteredText() {
         return "";
     }
+
+    @Override
+    public int textLength() {
+        return 0;
+    }
 }

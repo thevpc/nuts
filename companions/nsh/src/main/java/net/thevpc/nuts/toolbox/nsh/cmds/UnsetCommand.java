@@ -72,11 +72,11 @@ public class UnsetCommand extends SimpleJShellBuiltin {
         Options options = context.getOptions();
         if (options.fct) {
             for (String k : options.list) {
-                context.getShellContext().functions().unset(k);
+                context.functions().unset(k);
             }
         } else {
             for (String k : options.list) {
-                context.getShellContext().aliases().set(k, null);
+                context.aliases().set(k, null);
             }
         }
     }

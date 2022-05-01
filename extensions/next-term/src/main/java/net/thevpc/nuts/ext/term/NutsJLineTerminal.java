@@ -135,7 +135,7 @@ public class NutsJLineTerminal extends NutsSystemTerminalBaseImpl {
             case LINK: {
                 NutsTextLink p = (NutsTextLink) n;
                 return toAttributedString(
-                        p.getChild(),
+                        NutsTexts.of(session).ofPlain(p.getValue()),
                         styles.append(NutsTextStyle.underlined()),
                         session);
             }

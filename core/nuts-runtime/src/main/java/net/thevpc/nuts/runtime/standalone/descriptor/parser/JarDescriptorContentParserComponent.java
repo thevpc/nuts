@@ -81,7 +81,7 @@ public class JarDescriptorContentParserComponent implements NutsDescriptorConten
             switch (path) {
                 case "META-INF/MANIFEST.MF": {
                     try {
-                        metainf.set(NutsDescriptorParser.of(session)
+                        metainf.setNonNull(NutsDescriptorParser.of(session)
                                 .setDescriptorStyle(NutsDescriptorStyle.MANIFEST)
                                 .parse(inputStream).orNull());
                     } finally {
@@ -91,7 +91,7 @@ public class JarDescriptorContentParserComponent implements NutsDescriptorConten
                 }
                 case ("META-INF/" + NutsConstants.Files.DESCRIPTOR_FILE_NAME): {
                     try {
-                        nutsjson.set(NutsDescriptorParser.of(session)
+                        nutsjson.setNonNull(NutsDescriptorParser.of(session)
                                 .setDescriptorStyle(NutsDescriptorStyle.NUTS)
                                 .parse(inputStream).get(session));
                     } finally {
@@ -102,14 +102,14 @@ public class JarDescriptorContentParserComponent implements NutsDescriptorConten
                 default: {
                     if (path.startsWith("META-INF/maven/") && path.endsWith("/pom.xml")) {
                         try {
-                            maven.set(MavenUtils.of(session).parsePomXmlAndResolveParents(inputStream, NutsFetchMode.REMOTE, path, null));
+                            maven.setNonNull(MavenUtils.of(session).parsePomXmlAndResolveParents(inputStream, NutsFetchMode.REMOTE, path, null));
                         } finally {
                             inputStream.close();
                         }
                         break;
                     } else if (path.startsWith("META-INF/nuts/") && path.endsWith("/nuts.json")) {
                         try {
-                            nutsjson.set(NutsDescriptorParser.of(session)
+                            nutsjson.setNonNull(NutsDescriptorParser.of(session)
                                     .setDescriptorStyle(NutsDescriptorStyle.NUTS)
                                     .parse(inputStream).get(session));
                         } finally {

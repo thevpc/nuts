@@ -26,10 +26,10 @@
  */
 package net.thevpc.nuts.runtime.standalone.text.parser;
 
+import net.thevpc.nuts.NutsBlankable;
 import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.NutsTextLink;
 import net.thevpc.nuts.NutsTextType;
-import net.thevpc.nuts.NutsText;
 
 import java.util.Objects;
 
@@ -37,25 +37,27 @@ import java.util.Objects;
  * Created by vpc on 5/23/17.
  */
 public class DefaultNutsTextLink extends NutsTextSpecialBase implements NutsTextLink {
-    private NutsText value;
+    private String value;
 
-    public DefaultNutsTextLink(NutsSession session, String start, String separator, String end, NutsText value) {
+    public DefaultNutsTextLink(NutsSession session, String start, String separator, String end, String value) {
         super(session, start, "link", separator, end);
         this.value = value;
     }
 
     @Override
-    public NutsText getChild() {
+    public String getValue() {
         return value;
     }
+
 
     @Override
     public NutsTextType getType() {
         return NutsTextType.LINK;
     }
+
     @Override
     public boolean isEmpty() {
-        return false;
+        return NutsBlankable.isBlank(value);
     }
 
     @Override
@@ -74,6 +76,11 @@ public class DefaultNutsTextLink extends NutsTextSpecialBase implements NutsText
 
     @Override
     public String filteredText() {
-        return value.filteredText();
+        return value == null ? "" : value;
+    }
+
+    @Override
+    public int textLength() {
+        return value == null ? 0 : value.length();
     }
 }
