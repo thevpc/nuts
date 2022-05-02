@@ -6,8 +6,15 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.uninstall;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.elem.NutsElements;
+import net.thevpc.nuts.io.NutsMemoryPrintStream;
+import net.thevpc.nuts.io.NutsPrintStream;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
+import net.thevpc.nuts.text.NutsText;
+import net.thevpc.nuts.text.NutsTextBuilder;
+import net.thevpc.nuts.text.NutsTextStyle;
+import net.thevpc.nuts.text.NutsTexts;
 
 import java.util.ArrayList;
 import java.util.List;

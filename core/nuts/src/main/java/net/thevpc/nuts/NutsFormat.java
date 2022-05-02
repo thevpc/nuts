@@ -26,6 +26,10 @@
  */
 package net.thevpc.nuts;
 
+import net.thevpc.nuts.cmdline.NutsCommandLineConfigurable;
+import net.thevpc.nuts.io.NutsPath;
+import net.thevpc.nuts.io.NutsPrintStream;
+import net.thevpc.nuts.io.NutsSessionTerminal;
 import net.thevpc.nuts.spi.NutsComponent;
 
 import java.io.File;

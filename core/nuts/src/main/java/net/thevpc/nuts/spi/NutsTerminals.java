@@ -26,9 +26,9 @@
  */
 package net.thevpc.nuts.spi;
 
-import net.thevpc.nuts.NutsPrintStream;
+import net.thevpc.nuts.io.NutsPrintStream;
 import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.NutsSessionTerminal;
+import net.thevpc.nuts.io.NutsSessionTerminal;
 import net.thevpc.nuts.boot.NutsApiUtils;
 
 import java.io.InputStream;

@@ -26,6 +26,9 @@
  */
 package net.thevpc.nuts;
 
+import net.thevpc.nuts.cmdline.NutsCommandLineConfigurable;
+import net.thevpc.nuts.io.NutsPath;
+
 import java.io.File;
 import java.io.InputStream;
 import java.net.URL;

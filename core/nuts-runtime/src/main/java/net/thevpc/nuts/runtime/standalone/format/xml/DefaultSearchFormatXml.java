@@ -9,9 +9,15 @@ import java.io.ByteArrayOutputStream;
 import java.io.PrintWriter;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.cmdline.NutsArgument;
+import net.thevpc.nuts.cmdline.NutsCommandLine;
+import net.thevpc.nuts.elem.NutsElements;
+import net.thevpc.nuts.io.NutsPrintStream;
 import net.thevpc.nuts.runtime.standalone.format.NutsFetchDisplayOptions;
 import net.thevpc.nuts.runtime.standalone.format.DefaultSearchFormatBase;
 import net.thevpc.nuts.runtime.standalone.util.xml.XmlUtils;
+import net.thevpc.nuts.text.NutsTextBuilder;
+import net.thevpc.nuts.text.NutsTexts;
 import org.w3c.dom.Document;
 
 /**

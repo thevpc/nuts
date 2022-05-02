@@ -1,9 +1,9 @@
 package net.thevpc.nuts.toolbox.nutsserver.http.commands;
 
-import net.thevpc.nuts.NutsPrintStream;
+import net.thevpc.nuts.io.NutsPrintStream;
 import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.NutsSessionTerminal;
-import net.thevpc.nuts.NutsTerminalMode;
+import net.thevpc.nuts.io.NutsSessionTerminal;
+import net.thevpc.nuts.io.NutsTerminalMode;
 import net.thevpc.nuts.toolbox.nutsserver.AbstractFacadeCommand;
 import net.thevpc.nuts.toolbox.nutsserver.FacadeCommandContext;
 

@@ -27,6 +27,10 @@
 package net.thevpc.nuts;
 
 
+import net.thevpc.nuts.cmdline.NutsCommandAutoComplete;
+import net.thevpc.nuts.cmdline.NutsCommandLine;
+import net.thevpc.nuts.cmdline.NutsCommandLineConfigurable;
+import net.thevpc.nuts.io.NutsPath;
 import net.thevpc.nuts.spi.NutsApplicationContexts;
 
 import java.util.List;

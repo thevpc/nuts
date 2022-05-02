@@ -26,6 +26,9 @@
  */
 package net.thevpc.nuts;
 
+import net.thevpc.nuts.text.NutsTextFormatStyle;
+import net.thevpc.nuts.text.NutsTexts;
+
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;

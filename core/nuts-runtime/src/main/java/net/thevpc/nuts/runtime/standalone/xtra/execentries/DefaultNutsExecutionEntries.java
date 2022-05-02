@@ -1,6 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.xtra.execentries;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.io.NutsIOException;
 import net.thevpc.nuts.runtime.standalone.util.jclass.JavaClassUtils;
 import net.thevpc.nuts.runtime.standalone.util.jclass.JavaJarUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;

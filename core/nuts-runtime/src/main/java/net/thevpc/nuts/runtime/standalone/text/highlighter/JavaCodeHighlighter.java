@@ -8,6 +8,7 @@ import java.util.*;
 import net.thevpc.nuts.spi.NutsComponent;
 import net.thevpc.nuts.NutsCodeHighlighter;
 import net.thevpc.nuts.spi.NutsSupportLevelContext;
+import net.thevpc.nuts.text.*;
 
 public class JavaCodeHighlighter implements NutsCodeHighlighter {
 

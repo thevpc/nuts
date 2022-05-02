@@ -24,10 +24,9 @@
 package net.thevpc.nuts.runtime.standalone.extension;
 
 import net.thevpc.nuts.NutsException;
-import net.thevpc.nuts.NutsIOException;
+import net.thevpc.nuts.io.NutsIOException;
 import net.thevpc.nuts.NutsMessage;
 import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.runtime.standalone.io.util.InputStreamVisitor;
 import net.thevpc.nuts.runtime.standalone.io.util.ZipUtils;
 
 import java.io.*;

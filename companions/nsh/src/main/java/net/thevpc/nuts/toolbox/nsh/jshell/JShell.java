@@ -31,14 +31,20 @@
 package net.thevpc.nuts.toolbox.nsh.jshell;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.cmdline.NutsCommandHistory;
+import net.thevpc.nuts.io.NutsPath;
+import net.thevpc.nuts.io.NutsPrintStream;
+import net.thevpc.nuts.io.NutsSessionTerminal;
+import net.thevpc.nuts.io.NutsSystemTerminal;
 import net.thevpc.nuts.spi.NutsDefaultSupportLevelContext;
 import net.thevpc.nuts.spi.NutsSupportLevelContext;
+import net.thevpc.nuts.text.NutsTextStyle;
+import net.thevpc.nuts.text.NutsTexts;
 import net.thevpc.nuts.toolbox.nsh.*;
 import net.thevpc.nuts.toolbox.nsh.jshell.parser.JShellParser;
 import net.thevpc.nuts.toolbox.nsh.jshell.util.ByteArrayPrintStream;
 
 import java.io.*;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;

@@ -24,7 +24,7 @@
 package net.thevpc.nuts.runtime.standalone.io.terminal.history;
 
 import java.time.Instant;
-import net.thevpc.nuts.NutsCommandHistoryEntry;
+import net.thevpc.nuts.cmdline.NutsCommandHistoryEntry;
 
 /**
  *

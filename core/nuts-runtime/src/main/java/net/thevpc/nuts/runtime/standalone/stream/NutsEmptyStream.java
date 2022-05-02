@@ -5,7 +5,7 @@
  */
 package net.thevpc.nuts.runtime.standalone.stream;
 
-import net.thevpc.nuts.NutsIterator;
+import net.thevpc.nuts.util.NutsIterator;
 import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.runtime.standalone.util.iter.IteratorBuilder;
 

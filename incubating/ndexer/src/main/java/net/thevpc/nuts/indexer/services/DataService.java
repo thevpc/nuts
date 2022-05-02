@@ -1,7 +1,9 @@
 package net.thevpc.nuts.indexer.services;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.elem.NutsElements;
 import net.thevpc.nuts.indexer.NutsIndexerUtils;
+import net.thevpc.nuts.util.NutsUtilStrings;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;

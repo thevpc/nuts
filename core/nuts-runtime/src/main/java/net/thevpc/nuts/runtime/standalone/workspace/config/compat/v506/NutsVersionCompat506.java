@@ -1,6 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.workspace.config.compat.v506;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.elem.NutsElements;
 import net.thevpc.nuts.runtime.standalone.workspace.config.*;
 import net.thevpc.nuts.runtime.standalone.workspace.config.compat.AbstractNutsVersionCompat;
 import net.thevpc.nuts.runtime.standalone.workspace.config.compat.CompatUtils;

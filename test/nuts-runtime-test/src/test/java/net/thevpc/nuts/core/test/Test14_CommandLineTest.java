@@ -6,8 +6,12 @@
 package net.thevpc.nuts.core.test;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.cmdline.NutsArgument;
+import net.thevpc.nuts.cmdline.NutsCommandLine;
 import net.thevpc.nuts.core.test.utils.TestUtils;
-import net.thevpc.nuts.DefaultNutsArgument;
+import net.thevpc.nuts.cmdline.DefaultNutsArgument;
+import net.thevpc.nuts.elem.NutsElements;
+import net.thevpc.nuts.io.NutsPath;
 import org.junit.jupiter.api.*;
 
 import java.util.*;

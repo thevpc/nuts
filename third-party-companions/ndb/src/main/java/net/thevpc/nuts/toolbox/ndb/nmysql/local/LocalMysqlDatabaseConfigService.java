@@ -1,6 +1,9 @@
 package net.thevpc.nuts.toolbox.ndb.nmysql.local;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.elem.NutsElements;
+import net.thevpc.nuts.text.NutsTextStyle;
+import net.thevpc.nuts.text.NutsTexts;
 import net.thevpc.nuts.toolbox.ndb.nmysql.local.config.LocalMysqlDatabaseConfig;
 
 import java.io.File;
@@ -103,7 +106,7 @@ public class LocalMysqlDatabaseConfigService {
             if (session.isPlainTrace()) {
                 session.out().printf("%s create archive %s%n", getBracketsPrefix(getDatabaseName()),
                         NutsTexts.of(session)
-                        .ofStyled(path,NutsTextStyle.path()));
+                        .ofStyled(path, NutsTextStyle.path()));
             }
 //                ProcessBuilder2 p = new ProcessBuilder2().setCommand("sh", "-c",
 //                        "set -o pipefail && \"" + mysql.getMysqldumpCommand() + "\" -u \"$CMD_USER\" -p\"$CMD_PWD\" --databases \"$CMD_DB\" | gzip > \"$CMD_FILE\""

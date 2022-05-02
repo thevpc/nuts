@@ -27,6 +27,7 @@
 package net.thevpc.nuts.boot;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.util.NutsLoggerVerb;
 
 import java.io.File;
 import java.io.IOException;
@@ -69,7 +70,7 @@ class PrivateNutsUtilDeleteFiles {
                             + "You need to provide default response (-y|-n) for resetting/recovering workspace. "
                             + "You was asked to confirm deleting folders as part as recover/reset option."), 243);
         }
-        bLog.log(Level.FINE, NutsLogVerb.WARNING, NutsMessage.jstyle("delete workspace location(s) at : {0}", lastBootOptions.getWorkspace()));
+        bLog.log(Level.FINE, NutsLoggerVerb.WARNING, NutsMessage.jstyle("delete workspace location(s) at : {0}", lastBootOptions.getWorkspace()));
         boolean force = false;
         switch (confirm) {
             case ASK: {
@@ -81,7 +82,7 @@ class PrivateNutsUtilDeleteFiles {
             }
             case NO:
             case ERROR: {
-                bLog.log(Level.WARNING, NutsLogVerb.WARNING, NutsMessage.jstyle("reset cancelled (applied '--no' argument)"));
+                bLog.log(Level.WARNING, NutsLoggerVerb.WARNING, NutsMessage.jstyle("reset cancelled (applied '--no' argument)"));
                 throw new PrivateNutsBootCancelException(NutsMessage.plain("cancel delete folder"));
             }
         }
@@ -134,7 +135,7 @@ class PrivateNutsUtilDeleteFiles {
                                     if (session != null) {
                                         session.err().println(header);
                                     } else {
-                                        bLog.log(Level.WARNING, NutsLogVerb.WARNING, NutsMessage.jstyle("{0}", header));
+                                        bLog.log(Level.WARNING, NutsLoggerVerb.WARNING, NutsMessage.jstyle("{0}", header));
                                     }
                                 }
                             }
@@ -185,7 +186,7 @@ class PrivateNutsUtilDeleteFiles {
                                 }
                                 case ASK: {
                                     // Level.OFF is to force logging in all cases
-                                    bLog.log(Level.OFF, NutsLogVerb.WARNING, NutsMessage.jstyle("do you confirm deleting {0} [y/n/c/a] (default 'n') ? : ", directory));
+                                    bLog.log(Level.OFF, NutsLoggerVerb.WARNING, NutsMessage.jstyle("do you confirm deleting {0} [y/n/c/a] (default 'n') ? : ", directory));
                                     line = bLog.readLine();
                                 }
                             }
@@ -241,7 +242,7 @@ class PrivateNutsUtilDeleteFiles {
                     }
                 });
                 count[0]++;
-                bLog.log(Level.FINEST, NutsLogVerb.WARNING, NutsMessage.jstyle("delete folder : {0} ({1} files/folders deleted)", directory, count[0]));
+                bLog.log(Level.FINEST, NutsLoggerVerb.WARNING, NutsMessage.jstyle("delete folder : {0} ({1} files/folders deleted)", directory, count[0]));
             } catch (IOException ex) {
                 throw new UncheckedIOException(ex);
             }

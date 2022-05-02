@@ -23,11 +23,11 @@
  */
 package net.thevpc.nuts.runtime.standalone.elem;
 
-import net.thevpc.nuts.NutsElementFactoryContext;
+import net.thevpc.nuts.elem.NutsElementFactoryContext;
 
 import java.io.Reader;
-import net.thevpc.nuts.NutsElement;
-import net.thevpc.nuts.NutsPrintStream;
+import net.thevpc.nuts.elem.NutsElement;
+import net.thevpc.nuts.io.NutsPrintStream;
 
 /**
  *

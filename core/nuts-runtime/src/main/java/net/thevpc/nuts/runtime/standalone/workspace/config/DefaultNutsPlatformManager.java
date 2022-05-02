@@ -4,6 +4,7 @@ import java.util.function.Predicate;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.session.NutsSessionUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
+import net.thevpc.nuts.util.NutsStream;
 
 public class DefaultNutsPlatformManager implements NutsPlatformManager {
 

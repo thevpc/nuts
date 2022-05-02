@@ -1,8 +1,12 @@
 package net.thevpc.nuts.toolbox.noapi;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.elem.*;
+import net.thevpc.nuts.io.NutsTmp;
 import net.thevpc.nuts.lib.md.*;
 import net.thevpc.nuts.lib.md.asciidoctor.AsciiDoctorWriter;
+import net.thevpc.nuts.text.NutsTextStyle;
+import net.thevpc.nuts.text.NutsTexts;
 import org.asciidoctor.Asciidoctor;
 import org.asciidoctor.OptionsBuilder;
 import org.asciidoctor.SafeMode;

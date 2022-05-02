@@ -14,10 +14,10 @@ public class PrivateNutsOptionalError<T> extends PrivateNutsOptionalImpl<T> {
         if (message == null) {
             message = (s) -> {
                 Throwable error1 = PrivateNutsOptionalError.this.error;
-                if(error1==null) {
+                if (error1 == null) {
                     return NutsMessage.cstyle("erroneous value");
-                }else{
-                    return NutsMessage.cstyle("erroneous value : %s",PrivateNutsUtilErrors.getErrorMessage(error));
+                } else {
+                    return NutsMessage.cstyle("erroneous value : %s", PrivateNutsUtilErrors.getErrorMessage(error));
                 }
             };
         }
@@ -32,25 +32,25 @@ public class PrivateNutsOptionalError<T> extends PrivateNutsOptionalImpl<T> {
 
     @Override
     public T get(NutsSession session) {
-        return get(this.message,session);
+        return get(this.message, session);
     }
 
     @Override
     public T get(Supplier<NutsMessage> message) {
-        return get(s->message.get(),null);
+        return get(s -> message.get(), null);
     }
 
 
     @Override
     public T get(Function<NutsSession, NutsMessage> message, NutsSession session) {
-        if(message==null){
-            message=this.message;
+        if (message == null) {
+            message = this.message;
         }
         NutsMessage m = prepareMessage(message.apply(session));
         if (session == null) {
-            throw new NoSuchElementException(m.toString());
+            throw new RuntimeException(m.toString());
         } else {
-            throw new NutsNoSuchElementException(session, m);
+            throw new NutsOptionalErrorException(session, m);
         }
     }
 
@@ -83,6 +83,7 @@ public class PrivateNutsOptionalError<T> extends PrivateNutsOptionalImpl<T> {
     public Function<NutsSession, NutsMessage> getMessage() {
         return message;
     }
+
     @Override
     public boolean isBlank() {
         return false;

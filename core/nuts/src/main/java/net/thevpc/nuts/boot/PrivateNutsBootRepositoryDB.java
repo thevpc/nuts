@@ -2,7 +2,7 @@ package net.thevpc.nuts.boot;
 
 import net.thevpc.nuts.NutsConstants;
 import net.thevpc.nuts.NutsStoreLocation;
-import net.thevpc.nuts.NutsUtilPlatforms;
+import net.thevpc.nuts.util.NutsUtilPlatforms;
 import net.thevpc.nuts.spi.NutsRepositoryDB;
 import net.thevpc.nuts.spi.NutsRepositoryLocation;
 import net.thevpc.nuts.spi.NutsSupportLevelContext;

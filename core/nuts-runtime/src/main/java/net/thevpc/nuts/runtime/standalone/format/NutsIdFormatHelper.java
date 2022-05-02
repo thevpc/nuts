@@ -36,6 +36,10 @@ import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.util.CoreNutsUtils;
 import net.thevpc.nuts.runtime.standalone.text.util.NutsTextUtils;
 import net.thevpc.nuts.runtime.standalone.util.CoreEnumUtils;
+import net.thevpc.nuts.text.NutsTextBuilder;
+import net.thevpc.nuts.text.NutsTextStyle;
+import net.thevpc.nuts.text.NutsTexts;
+import net.thevpc.nuts.util.NutsLogger;
 
 /**
  *
@@ -339,7 +343,7 @@ public class NutsIdFormatHelper {
 
     public NutsString buildMain(NutsFetchDisplayOptions oo, NutsDisplayProperty dp) {
         NutsSession ws = session;
-        NutsTexts text =NutsTexts.of(ws);
+        NutsTexts text = NutsTexts.of(ws);
         if (oo.isRequireDefinition()) {
             buildLong();
         }

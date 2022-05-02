@@ -1,12 +1,10 @@
 package net.thevpc.nuts.runtime.standalone.security.util;
 
-import net.thevpc.nuts.NutsPath;
+import net.thevpc.nuts.io.NutsPath;
 import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.NutsUtilStrings;
-import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
+import net.thevpc.nuts.util.NutsUtilStrings;
 
 import java.io.ByteArrayInputStream;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;

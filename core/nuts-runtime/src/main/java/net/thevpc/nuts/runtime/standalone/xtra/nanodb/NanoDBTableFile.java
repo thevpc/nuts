@@ -1,8 +1,8 @@
 package net.thevpc.nuts.runtime.standalone.xtra.nanodb;
 
-import net.thevpc.nuts.NutsIOException;
+import net.thevpc.nuts.io.NutsIOException;
 import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.NutsStream;
+import net.thevpc.nuts.util.NutsStream;
 
 import java.io.*;
 import java.nio.channels.FileChannel;

@@ -2,7 +2,7 @@ package net.thevpc.nuts.runtime.standalone.repository.index;
 
 import net.thevpc.nuts.NutsId;
 import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.NutsStream;
+import net.thevpc.nuts.util.NutsStream;
 import net.thevpc.nuts.runtime.standalone.xtra.nanodb.NanoDB;
 import net.thevpc.nuts.runtime.standalone.xtra.nanodb.NanoDBDefaultIndexDefinition;
 import net.thevpc.nuts.runtime.standalone.xtra.nanodb.NanoDBTableDefinition;

@@ -1,6 +1,6 @@
 package net.thevpc.nuts.spi;
 
-import net.thevpc.nuts.NutsPath;
+import net.thevpc.nuts.io.NutsPath;
 import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.boot.NutsApiUtils;
 

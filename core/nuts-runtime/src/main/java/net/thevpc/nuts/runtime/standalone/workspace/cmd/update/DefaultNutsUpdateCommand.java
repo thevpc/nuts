@@ -6,6 +6,13 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.update;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.cmdline.NutsArgument;
+import net.thevpc.nuts.cmdline.NutsCommandLine;
+import net.thevpc.nuts.elem.NutsArrayElementBuilder;
+import net.thevpc.nuts.elem.NutsElement;
+import net.thevpc.nuts.elem.NutsElements;
+import net.thevpc.nuts.format.NutsPositionType;
+import net.thevpc.nuts.io.NutsPrintStream;
 import net.thevpc.nuts.runtime.standalone.util.CoreNutsUtils;
 import net.thevpc.nuts.runtime.standalone.util.iter.IteratorUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceExt;
@@ -14,6 +21,11 @@ import net.thevpc.nuts.runtime.standalone.workspace.config.DefaultNutsWorkspaceC
 import net.thevpc.nuts.runtime.standalone.workspace.config.NutsWorkspaceConfigManagerExt;
 import net.thevpc.nuts.runtime.standalone.repository.impl.main.NutsInstalledRepository;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
+import net.thevpc.nuts.text.NutsTextStyle;
+import net.thevpc.nuts.text.NutsTexts;
+import net.thevpc.nuts.util.NutsComparator;
+import net.thevpc.nuts.util.NutsLoggerVerb;
+import net.thevpc.nuts.util.NutsUtilStrings;
 
 import java.time.Instant;
 import java.util.*;
@@ -362,7 +374,7 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
                 for (NutsUpdateResult update : all) {
                     if (update.getInstalled() == null) {
                         out.printf("%s  : %s%n",
-                                factory.ofStyled(NutsUtilStrings.formatAlign(update.getId().toString(), widthCol2,NutsPositionType.FIRST), NutsTextStyle.primary6()),
+                                factory.ofStyled(NutsUtilStrings.formatAlign(update.getId().toString(), widthCol2, NutsPositionType.FIRST), NutsTextStyle.primary6()),
                                 factory.ofStyled("not installed", NutsTextStyle.error()));
                     } else if (update.isUpdateVersionAvailable()) {
                         out.printf("%s  : %s => %s%n",
@@ -628,7 +640,7 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
 
         if (session.config().setSession(validWorkspaceSession).save(requireSave)) {
             if (_LOG(session).isLoggable(Level.INFO)) {
-                _LOGOP(session).level(Level.INFO).verb(NutsLogVerb.WARNING)
+                _LOGOP(session).level(Level.INFO).verb(NutsLoggerVerb.WARNING)
                         .log(NutsMessage.jstyle("workspace is updated. Nuts should be restarted for changes to take effect."));
             }
             if (apiUpdate != null && apiUpdate.isUpdatable() && !apiUpdate.isUpdateApplied()) {

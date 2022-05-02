@@ -2,6 +2,10 @@ package net.thevpc.nuts.runtime.standalone.text.parser.v1;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.text.DefaultNutsTexts;
+import net.thevpc.nuts.text.NutsTerminalCommand;
+import net.thevpc.nuts.text.NutsText;
+import net.thevpc.nuts.text.NutsTexts;
+import net.thevpc.nuts.util.NutsUtilStrings;
 
 public class AntiQuote3ParserStep extends ParserStep {
 

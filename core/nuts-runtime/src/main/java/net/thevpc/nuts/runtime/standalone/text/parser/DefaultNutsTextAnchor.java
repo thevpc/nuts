@@ -28,8 +28,8 @@ package net.thevpc.nuts.runtime.standalone.text.parser;
 
 
 import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.NutsTextAnchor;
-import net.thevpc.nuts.NutsTextType;
+import net.thevpc.nuts.text.NutsTextAnchor;
+import net.thevpc.nuts.text.NutsTextType;
 
 import java.util.Objects;
 

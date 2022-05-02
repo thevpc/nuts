@@ -1,6 +1,8 @@
 package net.thevpc.nuts.tutorial.naf.spring.installevents;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.cmdline.NutsArgument;
+import net.thevpc.nuts.cmdline.NutsCommandLine;
 import net.thevpc.nuts.lib.spring.boot.NutsSpringBootConfig;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

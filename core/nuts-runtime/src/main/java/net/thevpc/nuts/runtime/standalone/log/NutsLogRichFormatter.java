@@ -4,6 +4,9 @@ package net.thevpc.nuts.runtime.standalone.log;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.util.CoreNutsUtils;
 import net.thevpc.nuts.runtime.standalone.util.CoreTimeUtils;
+import net.thevpc.nuts.text.NutsTextBuilder;
+import net.thevpc.nuts.text.NutsTextStyle;
+import net.thevpc.nuts.text.NutsTexts;
 
 import java.time.Instant;
 import java.util.logging.Formatter;

@@ -1,6 +1,6 @@
 package net.thevpc.nuts.toolbox.ntemplate.filetemplate.eval;
 
-import net.thevpc.nuts.NutsCommandLine;
+import net.thevpc.nuts.cmdline.NutsCommandLine;
 import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.toolbox.ntemplate.filetemplate.ExprEvaluator;
 import net.thevpc.nuts.toolbox.ntemplate.filetemplate.FileTemplater;

@@ -24,6 +24,8 @@
  */
 package net.thevpc.nuts;
 
+import net.thevpc.nuts.io.NutsPath;
+
 import java.util.Map;
 
 /**

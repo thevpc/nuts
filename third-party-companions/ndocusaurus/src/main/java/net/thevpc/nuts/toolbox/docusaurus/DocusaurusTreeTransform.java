@@ -6,6 +6,10 @@
 package net.thevpc.nuts.toolbox.docusaurus;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.elem.NutsArrayElement;
+import net.thevpc.nuts.elem.NutsElement;
+import net.thevpc.nuts.elem.NutsElements;
+import net.thevpc.nuts.elem.NutsObjectElement;
 import net.thevpc.nuts.lib.md.*;
 import net.thevpc.nuts.lib.md.docusaurus.DocusaurusUtils;
 import net.thevpc.nuts.lib.md.util.MdUtils;

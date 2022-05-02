@@ -1,6 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.exec;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.io.NutsSessionTerminal;
 import net.thevpc.nuts.runtime.standalone.app.cmdline.NutsCommandLineUtils;
 import net.thevpc.nuts.runtime.standalone.executor.NutsExecutionContextUtils;
 import net.thevpc.nuts.runtime.standalone.executor.system.NutsSysExecUtils;
@@ -31,6 +32,9 @@ import net.thevpc.nuts.runtime.standalone.workspace.cmd.welcome.DefaultNutsWelco
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.which.DefaultNutsWhichInternalExecutable;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.StringPlaceHolderParser;
 import net.thevpc.nuts.spi.NutsExecutorComponent;
+import net.thevpc.nuts.text.NutsTextStyle;
+import net.thevpc.nuts.text.NutsTexts;
+import net.thevpc.nuts.util.NutsStream;
 
 import java.io.File;
 import java.nio.file.Files;

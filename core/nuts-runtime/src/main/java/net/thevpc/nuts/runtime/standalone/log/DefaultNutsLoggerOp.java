@@ -1,6 +1,8 @@
 package net.thevpc.nuts.runtime.standalone.log;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.util.NutsLoggerOp;
+import net.thevpc.nuts.util.NutsLoggerVerb;
 
 import java.util.function.Supplier;
 import java.util.logging.Level;
@@ -9,7 +11,7 @@ public class DefaultNutsLoggerOp implements NutsLoggerOp {
     private NutsSession session;
     private DefaultNutsLogger logger;
     private Level level = Level.FINE;
-    private NutsLogVerb verb;
+    private NutsLoggerVerb verb;
     private NutsMessage msg;
     private long time;
     private Supplier<NutsMessage> msgSupplier;
@@ -30,7 +32,7 @@ public class DefaultNutsLoggerOp implements NutsLoggerOp {
     }
 
     @Override
-    public NutsLoggerOp verb(NutsLogVerb verb) {
+    public NutsLoggerOp verb(NutsLoggerVerb verb) {
         this.verb = verb;
         return this;
     }

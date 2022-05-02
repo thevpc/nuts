@@ -1,8 +1,11 @@
 package net.thevpc.nuts.runtime.standalone.xtra.hashname;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.io.NutsHashName;
+import net.thevpc.nuts.io.NutsPath;
 import net.thevpc.nuts.runtime.standalone.util.CoreNutsUtils;
 import net.thevpc.nuts.spi.NutsSupportLevelContext;
+import net.thevpc.nuts.util.NutsUtilPlatforms;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;

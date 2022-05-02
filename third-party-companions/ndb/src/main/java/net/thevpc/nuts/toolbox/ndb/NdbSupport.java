@@ -24,7 +24,7 @@
 package net.thevpc.nuts.toolbox.ndb;
 
 import net.thevpc.nuts.NutsApplicationContext;
-import net.thevpc.nuts.NutsCommandLine;
+import net.thevpc.nuts.cmdline.NutsCommandLine;
 
 /**
  *

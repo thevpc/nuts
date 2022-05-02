@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.ndi;
 
 import net.thevpc.nuts.NutsId;
-import net.thevpc.nuts.NutsPath;
+import net.thevpc.nuts.io.NutsPath;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.util.PathInfo;
 
 public interface FreeDesktopEntryWriter {

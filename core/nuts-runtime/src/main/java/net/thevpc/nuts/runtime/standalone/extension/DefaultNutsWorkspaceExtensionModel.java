@@ -6,6 +6,10 @@
 package net.thevpc.nuts.runtime.standalone.extension;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.elem.NutsElements;
+import net.thevpc.nuts.io.NutsPath;
+import net.thevpc.nuts.io.NutsServiceLoader;
+import net.thevpc.nuts.io.NutsSessionTerminal;
 import net.thevpc.nuts.runtime.standalone.dependency.util.NutsClassLoaderUtils;
 import net.thevpc.nuts.runtime.standalone.id.util.NutsIdUtils;
 import net.thevpc.nuts.runtime.standalone.io.printstream.NutsFormattedPrintStream;
@@ -20,6 +24,9 @@ import net.thevpc.nuts.runtime.standalone.workspace.config.NutsWorkspaceConfigBo
 import net.thevpc.nuts.runtime.standalone.workspace.config.NutsWorkspaceConfigManagerExt;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.StringTokenizerUtils;
 import net.thevpc.nuts.spi.*;
+import net.thevpc.nuts.util.NutsLogger;
+import net.thevpc.nuts.util.NutsLoggerOp;
+import net.thevpc.nuts.util.NutsLoggerVerb;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -296,7 +303,7 @@ public class DefaultNutsWorkspaceExtensionModel {
             objectFactory.registerInstance(extensionPointType, extensionImpl, session);
             return true;
         }
-        _LOGOP(session).level(Level.FINE).verb(NutsLogVerb.WARNING)
+        _LOGOP(session).level(Level.FINE).verb(NutsLoggerVerb.WARNING)
                 .log(NutsMessage.jstyle("Bootstrap Extension Point {0} => {1} ignored. Already registered", extensionPointType.getName(), extensionImpl.getClass().getName()));
         return false;
     }
@@ -307,7 +314,7 @@ public class DefaultNutsWorkspaceExtensionModel {
             objectFactory.registerType(extensionPointType, extensionType, source, session);
             return true;
         }
-        _LOGOP(session).level(Level.FINE).verb(NutsLogVerb.WARNING)
+        _LOGOP(session).level(Level.FINE).verb(NutsLoggerVerb.WARNING)
                 .log(NutsMessage.jstyle("Bootstrap Extension Point {0} => {1} ignored. Already registered", extensionPointType.getName(), extensionType.getName()));
         return false;
     }
@@ -377,7 +384,7 @@ public class DefaultNutsWorkspaceExtensionModel {
                     //should check current classpath
                     //and the add to classpath
                     loadedExtensionIds.add(extension);
-                    _LOGOP(session).verb(NutsLogVerb.SUCCESS)
+                    _LOGOP(session).verb(NutsLoggerVerb.SUCCESS)
                             .log(NutsMessage.jstyle("extension {0} loaded", def.getId()
                             ));
                     someUpdates = true;
@@ -439,7 +446,7 @@ public class DefaultNutsWorkspaceExtensionModel {
             throw new NutsExtensionAlreadyRegisteredException(session, id, wired.toString());
         }
 
-        _LOGOP(session).level(Level.FINE).verb(NutsLogVerb.ADD).log(NutsMessage.jstyle("installing extension {0}", id));
+        _LOGOP(session).level(Level.FINE).verb(NutsLoggerVerb.ADD).log(NutsMessage.jstyle("installing extension {0}", id));
         NutsDefinition nutsDefinitions = session.search()
                 .copyFrom(options)
                 .addId(id)
@@ -464,14 +471,14 @@ public class DefaultNutsWorkspaceExtensionModel {
 //            }
 //        }
         extensions.put(id, workspaceExtension);
-        _LOGOP(session).level(Level.FINE).verb(NutsLogVerb.ADD).log(NutsMessage.jstyle("extension {0} installed successfully", id));
+        _LOGOP(session).level(Level.FINE).verb(NutsLoggerVerb.ADD).log(NutsMessage.jstyle("extension {0} installed successfully", id));
         NutsTerminalSpec spec = new NutsDefaultTerminalSpec();
         if (session.getTerminal() != null) {
             spec.put("ignoreClass", session.getTerminal().getClass());
         }
         NutsSessionTerminal newTerminal = createTerminal(spec, session);
         if (newTerminal != null) {
-            _LOGOP(session).level(Level.FINE).verb(NutsLogVerb.UPDATE)
+            _LOGOP(session).level(Level.FINE).verb(NutsLoggerVerb.UPDATE)
                     .log(NutsMessage.jstyle("extension {0} changed Terminal configuration. Reloading Session Terminal", id));
             session.setTerminal(newTerminal);
         }

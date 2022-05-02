@@ -1,10 +1,12 @@
 package net.thevpc.nuts.runtime.standalone.repository;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.format.NutsPositionType;
 import net.thevpc.nuts.runtime.standalone.repository.impl.NutsRepositoryExt;
 import net.thevpc.nuts.runtime.standalone.repository.impl.main.NutsInstalledRepository;
-import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
-import net.thevpc.nuts.NutsLogVerb;
+import net.thevpc.nuts.util.NutsLogger;
+import net.thevpc.nuts.util.NutsLoggerOp;
+import net.thevpc.nuts.util.NutsLoggerVerb;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,6 +15,7 @@ import java.util.logging.Level;
 
 import net.thevpc.nuts.runtime.standalone.repository.cmd.NutsRepositorySupportedAction;
 import net.thevpc.nuts.runtime.standalone.util.NutsSpeedQualifiers;
+import net.thevpc.nuts.util.NutsUtilStrings;
 
 public class NutsRepositoryHelper {
     private NutsLogger LOG;
@@ -142,8 +145,8 @@ public class NutsRepositoryHelper {
 
         public void fireOnAddRepository(NutsRepositoryEvent event) {
             if (u._LOG(event.getSession()).isLoggable(Level.FINEST)) {
-                u._LOGOP(event.getSession()).level(Level.FINEST).verb(NutsLogVerb.ADD)
-                        .log(NutsMessage.jstyle("{0} add    repo {1}", NutsUtilStrings.formatAlign(u.repo.getName(), 20,NutsPositionType.FIRST), event
+                u._LOGOP(event.getSession()).level(Level.FINEST).verb(NutsLoggerVerb.ADD)
+                        .log(NutsMessage.jstyle("{0} add    repo {1}", NutsUtilStrings.formatAlign(u.repo.getName(), 20, NutsPositionType.FIRST), event
                                 .getRepository().getName())
                         );
             }
@@ -160,7 +163,7 @@ public class NutsRepositoryHelper {
 
         public void fireOnRemoveRepository(NutsRepositoryEvent event) {
             if (u._LOG(event.getSession()).isLoggable(Level.FINEST)) {
-                u._LOGOP(event.getSession()).level(Level.FINEST).verb(NutsLogVerb.REMOVE).log(
+                u._LOGOP(event.getSession()).level(Level.FINEST).verb(NutsLoggerVerb.REMOVE).log(
                         NutsMessage.jstyle("{0} remove repo {1}", NutsUtilStrings.formatAlign(u.repo.getName(), 20,NutsPositionType.FIRST), event
                                 .getRepository().getName()));
             }

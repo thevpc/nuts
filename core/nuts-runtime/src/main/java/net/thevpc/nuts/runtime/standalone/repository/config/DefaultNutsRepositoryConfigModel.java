@@ -1,13 +1,18 @@
 package net.thevpc.nuts.runtime.standalone.repository.config;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.elem.NutsElements;
+import net.thevpc.nuts.format.NutsPositionType;
+import net.thevpc.nuts.io.NutsPath;
 import net.thevpc.nuts.runtime.standalone.repository.*;
 import net.thevpc.nuts.runtime.standalone.repository.impl.NutsRepositoryExt;
 import net.thevpc.nuts.runtime.standalone.repository.util.NutsRepositoryUtils;
 import net.thevpc.nuts.runtime.standalone.session.NutsSessionUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.config.NutsRepositoryConfigManagerExt;
 import net.thevpc.nuts.runtime.standalone.workspace.config.NutsStoreLocationsMap;
-import net.thevpc.nuts.NutsLogVerb;
+import net.thevpc.nuts.util.NutsLogger;
+import net.thevpc.nuts.util.NutsLoggerOp;
+import net.thevpc.nuts.util.NutsLoggerVerb;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -19,6 +24,7 @@ import net.thevpc.nuts.runtime.standalone.util.NutsSpeedQualifiers;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.DefaultNutsWorkspace;
 import net.thevpc.nuts.spi.NutsRepositoryLocation;
+import net.thevpc.nuts.util.NutsUtilStrings;
 
 public class DefaultNutsRepositoryConfigModel implements NutsRepositoryConfigModel {
 
@@ -216,7 +222,7 @@ public class DefaultNutsRepositoryConfigModel implements NutsRepositoryConfigMod
 
     @Override
     public NutsPath getLocationPath(NutsSession session) {
-        String s=NutsUtilStrings.trimToNull(config.getLocation().getPath());
+        String s= NutsUtilStrings.trimToNull(config.getLocation().getPath());
         if (s != null) {
             return NutsPath.of(s,session).toAbsolute(session.locations().getWorkspaceLocation());
         }
@@ -441,14 +447,14 @@ public class DefaultNutsRepositoryConfigModel implements NutsRepositoryConfigMod
             configurationChanged = false;
             if (_LOG(session).isLoggable(Level.CONFIG)) {
                 if (created) {
-                    _LOGOP(session).level(Level.CONFIG).verb(NutsLogVerb.SUCCESS)
+                    _LOGOP(session).level(Level.CONFIG).verb(NutsLoggerVerb.SUCCESS)
                             .log(NutsMessage.jstyle(
                                     "{0} created repository {1} at {2}",
-                                    NutsUtilStrings.formatAlign(repository.getName(), 20,NutsPositionType.FIRST) , repository.getName() ,
+                                    NutsUtilStrings.formatAlign(repository.getName(), 20, NutsPositionType.FIRST) , repository.getName() ,
                                     getStoreLocation()
                                     ));
                 } else {
-                    _LOGOP(session).level(Level.CONFIG).verb(NutsLogVerb.SUCCESS).log(NutsMessage.jstyle(
+                    _LOGOP(session).level(Level.CONFIG).verb(NutsLoggerVerb.SUCCESS).log(NutsMessage.jstyle(
                             "{0} updated repository {1} at {2}",
                             NutsUtilStrings.formatAlign(repository.getName(), 20,NutsPositionType.FIRST) , repository.getName() ,
                             getStoreLocation()

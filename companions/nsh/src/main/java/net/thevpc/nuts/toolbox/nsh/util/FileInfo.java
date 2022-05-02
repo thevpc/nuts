@@ -1,6 +1,6 @@
 package net.thevpc.nuts.toolbox.nsh.util;
 
-import net.thevpc.nuts.NutsPath;
+import net.thevpc.nuts.io.NutsPath;
 
 public class FileInfo {
     private NutsPath file;

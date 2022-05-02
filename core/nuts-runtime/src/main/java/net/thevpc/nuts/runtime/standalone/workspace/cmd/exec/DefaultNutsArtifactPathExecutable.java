@@ -12,16 +12,20 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.cmdline.NutsCommandLine;
+import net.thevpc.nuts.io.NutsIOException;
+import net.thevpc.nuts.io.NutsPath;
+import net.thevpc.nuts.io.NutsTmp;
 import net.thevpc.nuts.runtime.standalone.descriptor.parser.NutsDescriptorContentResolver;
 import net.thevpc.nuts.runtime.standalone.io.util.NutsStreamOrPath;
 import net.thevpc.nuts.runtime.standalone.definition.DefaultNutsDefinition;
 import net.thevpc.nuts.runtime.standalone.definition.DefaultNutsInstallInfo;
-import net.thevpc.nuts.NutsLogVerb;
+import net.thevpc.nuts.util.NutsLogger;
+import net.thevpc.nuts.util.NutsLoggerVerb;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.io.util.URLBuilder;
 import net.thevpc.nuts.runtime.standalone.io.util.ZipOptions;
@@ -118,7 +122,7 @@ public class DefaultNutsArtifactPathExecutable extends AbstractNutsExecutableCom
                 try {
                     CoreIOUtils.delete(session, Paths.get(tempFolder));
                 } catch (UncheckedIOException | NutsIOException e) {
-                    LOG.with().session(session).level(Level.FINEST).verb(NutsLogVerb.FAIL)
+                    LOG.with().session(session).level(Level.FINEST).verb(NutsLoggerVerb.FAIL)
                             .log(NutsMessage.jstyle("unable to delete temp folder created for execution : {0}",tempFolder));
                 }
             }

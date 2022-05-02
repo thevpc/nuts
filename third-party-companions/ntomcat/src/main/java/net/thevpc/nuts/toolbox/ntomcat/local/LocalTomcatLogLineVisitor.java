@@ -1,6 +1,6 @@
 package net.thevpc.nuts.toolbox.ntomcat.local;
 
-import net.thevpc.nuts.NutsPath;
+import net.thevpc.nuts.io.NutsPath;
 import net.thevpc.nuts.NutsSession;
 
 class LocalTomcatLogLineVisitor {

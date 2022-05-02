@@ -31,6 +31,11 @@ import net.thevpc.nuts.*;
 import static net.thevpc.nuts.ext.term.NutsJLineHistory.DEFAULT_HISTORY_FILE_SIZE;
 import static net.thevpc.nuts.ext.term.NutsJLineHistory.DEFAULT_HISTORY_SIZE;
 
+import net.thevpc.nuts.cmdline.NutsCommandHistory;
+import net.thevpc.nuts.cmdline.NutsCommandHistoryEntry;
+import net.thevpc.nuts.io.NutsIOException;
+import net.thevpc.nuts.io.NutsPath;
+import net.thevpc.nuts.io.NutsSystemTerminal;
 import net.thevpc.nuts.spi.NutsSupportLevelContext;
 import net.thevpc.nuts.spi.NutsSystemTerminalBase;
 import org.jline.reader.History;

@@ -1,8 +1,8 @@
 package net.thevpc.nuts.runtime.standalone.repository.impl.maven.lucene;
 
-import net.thevpc.nuts.NutsElement;
-import net.thevpc.nuts.NutsElements;
-import net.thevpc.nuts.NutsIOException;
+import net.thevpc.nuts.elem.NutsElement;
+import net.thevpc.nuts.elem.NutsElements;
+import net.thevpc.nuts.io.NutsIOException;
 import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.runtime.standalone.util.collections.EvictingIntQueue;
 import net.thevpc.nuts.runtime.standalone.util.iter.NutsIteratorBase;

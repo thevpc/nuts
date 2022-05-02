@@ -27,14 +27,17 @@ package net.thevpc.nuts.runtime.standalone.descriptor.parser;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.DefaultNutsArtifactCall;
+import net.thevpc.nuts.cmdline.NutsArgument;
+import net.thevpc.nuts.cmdline.NutsCommandLine;
 import net.thevpc.nuts.runtime.standalone.repository.impl.maven.util.MavenUtils;
-import net.thevpc.nuts.NutsRef;
+import net.thevpc.nuts.util.NutsRef;
 
 import java.util.*;
 
 import net.thevpc.nuts.runtime.standalone.io.util.ZipUtils;
 import net.thevpc.nuts.runtime.standalone.security.util.CoreDigestHelper;
 import net.thevpc.nuts.spi.*;
+import net.thevpc.nuts.util.NutsUtilStrings;
 
 /**
  * Created by vpc on 1/15/17.

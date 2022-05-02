@@ -23,8 +23,8 @@
  */
 package net.thevpc.nuts.runtime.standalone.elem;
 
-import net.thevpc.nuts.NutsElementType;
-import net.thevpc.nuts.NutsObjectElement;
+import net.thevpc.nuts.elem.NutsElementType;
+import net.thevpc.nuts.elem.NutsObjectElement;
 import net.thevpc.nuts.NutsSession;
 
 /**

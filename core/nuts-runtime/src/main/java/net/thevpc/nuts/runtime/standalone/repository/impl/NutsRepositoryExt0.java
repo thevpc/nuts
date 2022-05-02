@@ -6,7 +6,7 @@
 package net.thevpc.nuts.runtime.standalone.repository.impl;
 
 import net.thevpc.nuts.NutsId;
-import net.thevpc.nuts.NutsPath;
+import net.thevpc.nuts.io.NutsPath;
 import net.thevpc.nuts.NutsRepository;
 import net.thevpc.nuts.NutsSession;
 

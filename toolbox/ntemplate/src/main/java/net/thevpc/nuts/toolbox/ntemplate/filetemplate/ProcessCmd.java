@@ -1,6 +1,7 @@
 package net.thevpc.nuts.toolbox.ntemplate.filetemplate;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.cmdline.NutsCommandLine;
 import net.thevpc.nuts.toolbox.nsh.SimpleJShellBuiltin;
 import net.thevpc.nuts.toolbox.nsh.jshell.JShellExecutionContext;
 import net.thevpc.nuts.toolbox.ntemplate.filetemplate.util.StringUtils;

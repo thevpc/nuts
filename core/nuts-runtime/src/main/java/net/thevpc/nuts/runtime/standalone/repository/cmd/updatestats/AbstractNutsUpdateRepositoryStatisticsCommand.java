@@ -5,8 +5,8 @@
  */
 package net.thevpc.nuts.runtime.standalone.repository.cmd.updatestats;
 
-import net.thevpc.nuts.NutsArgument;
-import net.thevpc.nuts.NutsCommandLine;
+import net.thevpc.nuts.cmdline.NutsArgument;
+import net.thevpc.nuts.cmdline.NutsCommandLine;
 import net.thevpc.nuts.NutsRepository;
 import net.thevpc.nuts.runtime.standalone.repository.cmd.NutsRepositoryCommandBase;
 import net.thevpc.nuts.spi.NutsUpdateRepositoryStatisticsCommand;

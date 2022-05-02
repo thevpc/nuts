@@ -1,6 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.dependency.solver;
 
-import net.thevpc.nuts.NutsUtilStrings;
+import net.thevpc.nuts.util.NutsUtilStrings;
 
 public class NutsDependencySolverUtils {
 

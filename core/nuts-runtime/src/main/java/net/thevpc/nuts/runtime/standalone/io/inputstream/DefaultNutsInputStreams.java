@@ -1,13 +1,10 @@
 package net.thevpc.nuts.runtime.standalone.io.inputstream;
 
-import net.thevpc.nuts.NutsInputStreams;
+import net.thevpc.nuts.io.NutsInputStreams;
 import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.NutsWorkspace;
 import net.thevpc.nuts.runtime.standalone.boot.DefaultNutsBootModel;
 import net.thevpc.nuts.runtime.standalone.io.util.NullInputStream;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceExt;
-import net.thevpc.nuts.runtime.standalone.workspace.config.DefaultNutsWorkspaceConfigManager;
-import net.thevpc.nuts.runtime.standalone.workspace.config.DefaultNutsWorkspaceConfigModel;
 import net.thevpc.nuts.spi.NutsSupportLevelContext;
 
 import java.io.InputStream;

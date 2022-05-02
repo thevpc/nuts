@@ -26,7 +26,7 @@
 */
 package net.thevpc.nuts.toolbox.nsh;
 
-import net.thevpc.nuts.NutsPath;
+import net.thevpc.nuts.io.NutsPath;
 import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.toolbox.nsh.jshell.JShellContext;
 import net.thevpc.nuts.NutsExecutableInformation;

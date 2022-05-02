@@ -2,6 +2,7 @@ package net.thevpc.nuts.runtime.standalone.workspace.config;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.id.filter.NutsSearchIdById;
+import net.thevpc.nuts.util.NutsPredicates;
 
 class NutsIdFilterToNutsIdPredicate extends NutsPredicates.BasePredicate<NutsId> {
     private final NutsIdFilter filter;

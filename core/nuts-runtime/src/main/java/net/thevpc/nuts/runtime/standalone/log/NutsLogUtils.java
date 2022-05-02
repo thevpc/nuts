@@ -1,8 +1,11 @@
 package net.thevpc.nuts.runtime.standalone.log;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
+import net.thevpc.nuts.format.NutsPositionType;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceExt;
+import net.thevpc.nuts.util.NutsLogger;
+import net.thevpc.nuts.util.NutsLoggerVerb;
+import net.thevpc.nuts.util.NutsUtilStrings;
 
 import java.io.BufferedReader;
 import java.io.PrintWriter;
@@ -66,11 +69,11 @@ public class NutsLogUtils {
         Level lvl = record.getLevel();
         NutsLogRecord h = new NutsLogRecord(
                 session, lvl,
-                lvl.intValue() <= Level.SEVERE.intValue() ? NutsLogVerb.FAIL :
-                        lvl.intValue() <= Level.WARNING.intValue() ? NutsLogVerb.WARNING :
-                                lvl.intValue() <= Level.INFO.intValue() ? NutsLogVerb.INFO :
-                                        lvl.intValue() <= Level.FINE.intValue() ? NutsLogVerb.DEBUG :
-                                                NutsLogVerb.DEBUG,
+                lvl.intValue() <= Level.SEVERE.intValue() ? NutsLoggerVerb.FAIL :
+                        lvl.intValue() <= Level.WARNING.intValue() ? NutsLoggerVerb.WARNING :
+                                lvl.intValue() <= Level.INFO.intValue() ? NutsLoggerVerb.INFO :
+                                        lvl.intValue() <= Level.FINE.intValue() ? NutsLoggerVerb.DEBUG :
+                                                NutsLoggerVerb.DEBUG,
                 NutsMessage.jstyle(record.getMessage(),
                         record.getParameters()),
                 record.getMillis(),
@@ -212,7 +215,7 @@ public class NutsLogUtils {
         return session;
     }
 
-    public static void traceMessage(NutsLogger log, Level lvl, String name, NutsSession session, NutsFetchMode fetchMode, NutsId id, NutsLogVerb tracePhase, String title, long startTime, NutsMessage extraMsg) {
+    public static void traceMessage(NutsLogger log, Level lvl, String name, NutsSession session, NutsFetchMode fetchMode, NutsId id, NutsLoggerVerb tracePhase, String title, long startTime, NutsMessage extraMsg) {
         if (!log.isLoggable(lvl)) {
             return;
         }
@@ -224,7 +227,7 @@ public class NutsLogUtils {
             sep = " : ";
         }
         long time = (startTime != 0) ? (System.currentTimeMillis() - startTime) : 0;
-        String modeString = NutsUtilStrings.formatAlign(fetchMode.id(), 7,NutsPositionType.FIRST);
+        String modeString = NutsUtilStrings.formatAlign(fetchMode.id(), 7, NutsPositionType.FIRST);
         log.with().session(session).level(lvl).verb(tracePhase).time(time)
                 .log(NutsMessage.jstyle("[{0}] {1} {2} {3} {4}",
                         modeString,
@@ -233,7 +236,7 @@ public class NutsLogUtils {
                         (id == null ? "" : id),
                         extraMsg));
     }
-    public static void traceMessage(NutsLogger log,NutsFetchStrategy fetchMode, NutsId id, NutsLogVerb tracePhase, String message, long startTime) {
+    public static void traceMessage(NutsLogger log, NutsFetchStrategy fetchMode, NutsId id, NutsLoggerVerb tracePhase, String message, long startTime) {
         if (log.isLoggable(Level.FINEST)) {
 
             long time = (startTime != 0) ? (System.currentTimeMillis() - startTime) : 0;

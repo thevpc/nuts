@@ -26,6 +26,8 @@
  */
 package net.thevpc.nuts;
 
+import net.thevpc.nuts.io.NutsPath;
+
 import java.net.URL;
 import java.nio.file.Path;
 import java.util.Objects;

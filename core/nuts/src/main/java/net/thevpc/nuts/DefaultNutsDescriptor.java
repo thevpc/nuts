@@ -27,6 +27,7 @@ package net.thevpc.nuts;
 
 import net.thevpc.nuts.boot.PrivateNutsDefaultNutsProperties;
 import net.thevpc.nuts.boot.PrivateNutsUtilCollections;
+import net.thevpc.nuts.util.NutsUtilStrings;
 
 import java.util.*;
 

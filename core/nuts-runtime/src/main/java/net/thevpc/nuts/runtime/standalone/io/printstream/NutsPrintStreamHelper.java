@@ -1,6 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.io.printstream;
 
-import net.thevpc.nuts.NutsPrintStream;
+import net.thevpc.nuts.io.NutsPrintStream;
 import net.thevpc.nuts.runtime.standalone.io.outputstream.OutputHelper;
 
 public class NutsPrintStreamHelper implements OutputHelper {

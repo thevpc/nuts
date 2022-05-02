@@ -1,6 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.app.cmdline;
 
-import net.thevpc.nuts.NutsCommandLineFormatStrategy;
+import net.thevpc.nuts.cmdline.NutsCommandLineFormatStrategy;
 import net.thevpc.nuts.NutsSession;
 
 public class NutsCommandLineShellOptions implements Cloneable{

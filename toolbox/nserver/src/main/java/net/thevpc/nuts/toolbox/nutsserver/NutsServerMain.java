@@ -1,6 +1,12 @@
 package net.thevpc.nuts.toolbox.nutsserver;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.cmdline.NutsArgument;
+import net.thevpc.nuts.cmdline.NutsArgumentName;
+import net.thevpc.nuts.cmdline.NutsCommandLine;
+import net.thevpc.nuts.io.NutsPrintStream;
+import net.thevpc.nuts.text.NutsTextStyle;
+import net.thevpc.nuts.text.NutsTexts;
 import net.thevpc.nuts.toolbox.nutsserver.bundled._IOUtils;
 import net.thevpc.nuts.toolbox.nutsserver.http.NutsHttpServerConfig;
 
@@ -67,7 +73,7 @@ public class NutsServerMain implements NutsApplication {
                     );
                 } else {
                     out.printf("%s %s\n",
-                            text.ofStyled("stopped",NutsTextStyle.primary4()),
+                            text.ofStyled("stopped", NutsTextStyle.primary4()),
                             o.getServerId());
                 }
             }

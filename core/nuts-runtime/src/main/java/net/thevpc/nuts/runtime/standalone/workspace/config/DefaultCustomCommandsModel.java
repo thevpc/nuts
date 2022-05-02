@@ -1,10 +1,17 @@
 package net.thevpc.nuts.runtime.standalone.workspace.config;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.io.NutsPrintStream;
 import net.thevpc.nuts.runtime.standalone.workspace.DefaultNutsWorkspace;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.CommandNutsWorkspaceCommandFactory;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.ConfigNutsWorkspaceCommandFactory;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.alias.DefaultNutsWorkspaceCustomCommand;
+import net.thevpc.nuts.text.NutsTextStyle;
+import net.thevpc.nuts.text.NutsTextStyles;
+import net.thevpc.nuts.text.NutsTexts;
+import net.thevpc.nuts.util.NutsLogger;
+import net.thevpc.nuts.util.NutsLoggerOp;
+import net.thevpc.nuts.util.NutsLoggerVerb;
 
 import java.util.*;
 import java.util.logging.Level;
@@ -297,7 +304,7 @@ public class DefaultCustomCommandsModel {
     private NutsWorkspaceCustomCommand toDefaultNutsWorkspaceCommand(NutsCommandConfig c, NutsSession session) {
         if (c.getCommand() == null || c.getCommand().size() == 0) {
 
-            _LOGOP(session).level(Level.WARNING).verb(NutsLogVerb.FAIL)
+            _LOGOP(session).level(Level.WARNING).verb(NutsLoggerVerb.FAIL)
                     .log(NutsMessage.jstyle("invalid command definition ''{0}''. Missing command . Ignored", c.getName()));
             return null;
         }

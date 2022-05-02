@@ -28,7 +28,7 @@ package net.thevpc.nuts.runtime.standalone.util.filters;
 import java.util.Objects;
 import net.thevpc.nuts.NutsId;
 import net.thevpc.nuts.NutsIdFilter;
-import net.thevpc.nuts.NutsPredicates;
+import net.thevpc.nuts.util.NutsPredicates;
 import net.thevpc.nuts.NutsSession;
 
 /**

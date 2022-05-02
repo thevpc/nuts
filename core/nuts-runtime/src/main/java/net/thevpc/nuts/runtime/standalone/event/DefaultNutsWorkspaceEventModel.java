@@ -3,6 +3,7 @@ package net.thevpc.nuts.runtime.standalone.event;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.session.NutsSessionUtils;
 import net.thevpc.nuts.runtime.standalone.util.collections.ObservableMap;
+import net.thevpc.nuts.util.NutsMapListener;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,6 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.io.progress;
 
-import net.thevpc.nuts.NutsPrimitiveElement;
+import net.thevpc.nuts.elem.NutsPrimitiveElement;
 
 import java.util.LinkedHashMap;
 import java.util.Map;

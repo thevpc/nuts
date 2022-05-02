@@ -26,9 +26,12 @@
 package net.thevpc.nuts.runtime.standalone.io.progress;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.NutsStreamMetadataAware;
+import net.thevpc.nuts.io.DefaultNutsStreamMetadata;
+import net.thevpc.nuts.io.NutsStreamMetadata;
+import net.thevpc.nuts.io.NutsStreamMetadataAware;
 import net.thevpc.nuts.runtime.standalone.io.util.InterruptException;
 import net.thevpc.nuts.runtime.standalone.io.util.Interruptible;
+import net.thevpc.nuts.util.NutsProgressMonitor;
 
 import java.io.IOException;
 import java.io.InputStream;

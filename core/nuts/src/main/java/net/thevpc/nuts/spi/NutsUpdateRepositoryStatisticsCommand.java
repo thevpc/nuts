@@ -26,7 +26,7 @@
  */
 package net.thevpc.nuts.spi;
 
-import net.thevpc.nuts.NutsCommandLineConfigurable;
+import net.thevpc.nuts.cmdline.NutsCommandLineConfigurable;
 import net.thevpc.nuts.NutsSession;
 
 /**

@@ -6,9 +6,14 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.log;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.cmdline.NutsCommandLine;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.repository.impl.main.NutsInstallLogRecord;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.AbstractNutsSettingsSubCommand;
+import net.thevpc.nuts.text.NutsTextStyle;
+import net.thevpc.nuts.text.NutsTexts;
+import net.thevpc.nuts.util.NutsLogger;
+import net.thevpc.nuts.util.NutsUtilStrings;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -81,7 +86,7 @@ public class NutsSettingsLogSubCommand extends AbstractNutsSettingsSubCommand {
                                 r.getUser(),
                                 r.getAction(),
                                 r.isSucceeded()?
-                                        txt.ofStyled("Succeeded",NutsTextStyle.success())
+                                        txt.ofStyled("Succeeded", NutsTextStyle.success())
                                         :
                                         txt.ofStyled("Failed",NutsTextStyle.fail()),
                                 r.getId()==null?"":r.getId(),

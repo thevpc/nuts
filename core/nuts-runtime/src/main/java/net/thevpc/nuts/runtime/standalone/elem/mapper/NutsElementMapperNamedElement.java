@@ -1,12 +1,12 @@
 package net.thevpc.nuts.runtime.standalone.elem.mapper;
 
-import net.thevpc.nuts.NutsElement;
-import net.thevpc.nuts.NutsElementEntry;
-import net.thevpc.nuts.NutsElementFactoryContext;
-import net.thevpc.nuts.NutsElementMapper;
+import net.thevpc.nuts.elem.NutsElement;
+import net.thevpc.nuts.elem.NutsElementEntry;
+import net.thevpc.nuts.elem.NutsElementFactoryContext;
+import net.thevpc.nuts.elem.NutsElementMapper;
 import net.thevpc.nuts.runtime.standalone.util.reflect.ReflectUtils;
 import net.thevpc.nuts.runtime.standalone.util.reflect.SimpleParametrizedType;
-import net.thevpc.nuts.DefaultNutsElementEntry;
+import net.thevpc.nuts.elem.DefaultNutsElementEntry;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;

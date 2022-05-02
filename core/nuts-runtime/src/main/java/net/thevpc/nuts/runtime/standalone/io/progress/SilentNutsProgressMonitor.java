@@ -1,8 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.io.progress;
 
-import net.thevpc.nuts.*;
-
-import java.util.logging.Level;
+import net.thevpc.nuts.util.NutsProgressEvent;
+import net.thevpc.nuts.util.NutsProgressMonitor;
 
 public class SilentNutsProgressMonitor implements NutsProgressMonitor {
     public SilentNutsProgressMonitor() {

@@ -5,8 +5,8 @@
  */
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.imports;
 
-import net.thevpc.nuts.NutsArgumentName;
-import net.thevpc.nuts.NutsCommandLine;
+import net.thevpc.nuts.cmdline.NutsArgumentName;
+import net.thevpc.nuts.cmdline.NutsCommandLine;
 import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.AbstractNutsSettingsSubCommand;
 

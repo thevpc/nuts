@@ -1,6 +1,9 @@
 package net.thevpc.nuts.runtime.standalone.text.theme;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.text.NutsTextFormatTheme;
+import net.thevpc.nuts.text.NutsTextStyle;
+import net.thevpc.nuts.text.NutsTextStyles;
 
 public class DefaultNutsTextFormatTheme implements NutsTextFormatTheme {
 

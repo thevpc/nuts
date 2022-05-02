@@ -2,7 +2,7 @@ package net.thevpc.nuts.runtime.standalone.xtra.expr;
 
 import net.thevpc.nuts.NutsIllegalArgumentException;
 import net.thevpc.nuts.NutsMessage;
-import net.thevpc.nuts.NutsExpr;
+import net.thevpc.nuts.util.NutsExpr;
 
 import java.util.Arrays;
 import java.util.Collections;

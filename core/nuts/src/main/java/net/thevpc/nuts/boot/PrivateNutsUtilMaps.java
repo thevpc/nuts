@@ -3,7 +3,7 @@ package net.thevpc.nuts.boot;
 import net.thevpc.nuts.NutsBlankable;
 import net.thevpc.nuts.NutsConstants;
 import net.thevpc.nuts.NutsEnvCondition;
-import net.thevpc.nuts.NutsUtilStrings;
+import net.thevpc.nuts.util.NutsUtilStrings;
 
 import java.util.LinkedHashMap;
 import java.util.Map;

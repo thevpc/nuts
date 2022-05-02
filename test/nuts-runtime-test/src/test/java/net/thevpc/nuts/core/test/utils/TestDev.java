@@ -1,7 +1,7 @@
 package net.thevpc.nuts.core.test.utils;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.core.test.utils.TestUtils;
+import net.thevpc.nuts.text.NutsTexts;
 import org.junit.jupiter.api.Test;
 
 public class TestDev {

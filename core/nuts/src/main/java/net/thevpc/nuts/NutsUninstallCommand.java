@@ -26,6 +26,8 @@
  */
 package net.thevpc.nuts;
 
+import net.thevpc.nuts.cmdline.NutsCommandLineConfigurable;
+
 import java.util.Collection;
 import java.util.List;
 

@@ -7,6 +7,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
 
+import net.thevpc.nuts.io.NutsInputStreamMonitor;
+import net.thevpc.nuts.io.NutsPath;
+import net.thevpc.nuts.io.NutsPrintStream;
+import net.thevpc.nuts.io.NutsSessionTerminal;
 import net.thevpc.nuts.lib.ssh.SshListener;
 import net.thevpc.nuts.toolbox.nsh.bundles._IOUtils;
 

@@ -1,6 +1,8 @@
 package net.thevpc.nuts.indexer;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.elem.NutsElements;
+import net.thevpc.nuts.util.NutsUtilStrings;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.search.*;
 import org.springframework.util.StringUtils;

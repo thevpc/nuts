@@ -26,6 +26,9 @@
 package net.thevpc.nuts.toolbox.ndb.derby;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.io.NutsPath;
+import net.thevpc.nuts.util.NutsLogger;
+import net.thevpc.nuts.util.NutsLoggerVerb;
 
 import java.io.File;
 import java.io.IOException;
@@ -136,14 +139,14 @@ public class DerbyService {
             if (optional) {
                 Path r = appContext.getSession().fetch().setLocation(targetFile).setId(id).setFailFast(false).getResultPath();
                 if (r != null) {
-                    LOG.with().session(appContext.getSession()).level(Level.FINEST).verb(NutsLogVerb.READ).log(NutsMessage.jstyle("downloading {0} to {1}", id, targetFile));
+                    LOG.with().session(appContext.getSession()).level(Level.FINEST).verb(NutsLoggerVerb.READ).log(NutsMessage.jstyle("downloading {0} to {1}", id, targetFile));
                 }
             } else {
                 appContext.getSession().fetch().setLocation(targetFile).setId(id).setFailFast(true).getResultPath();
-                LOG.with().session(appContext.getSession()).level(Level.FINEST).verb(NutsLogVerb.READ).log(NutsMessage.jstyle("downloading {0} to {1}", id, targetFile));
+                LOG.with().session(appContext.getSession()).level(Level.FINEST).verb(NutsLoggerVerb.READ).log(NutsMessage.jstyle("downloading {0} to {1}", id, targetFile));
             }
         } else {
-            LOG.with().session(appContext.getSession()).level(Level.FINEST).verb(NutsLogVerb.READ).log(NutsMessage.jstyle("using {0} form {1}", id, targetFile));
+            LOG.with().session(appContext.getSession()).level(Level.FINEST).verb(NutsLoggerVerb.READ).log(NutsMessage.jstyle("using {0} form {1}", id, targetFile));
         }
         return targetFile;
     }

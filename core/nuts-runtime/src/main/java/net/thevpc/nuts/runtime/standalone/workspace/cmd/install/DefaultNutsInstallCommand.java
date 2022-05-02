@@ -24,11 +24,20 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.install;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.elem.NutsElements;
+import net.thevpc.nuts.io.NutsMemoryPrintStream;
+import net.thevpc.nuts.io.NutsPrintStream;
 import net.thevpc.nuts.runtime.standalone.dependency.util.NutsDependencyUtils;
 import net.thevpc.nuts.runtime.standalone.util.iter.IteratorUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.repository.impl.main.NutsInstalledRepository;
 import net.thevpc.nuts.runtime.standalone.stream.NutsListStream;
+import net.thevpc.nuts.text.NutsText;
+import net.thevpc.nuts.text.NutsTextBuilder;
+import net.thevpc.nuts.text.NutsTextStyle;
+import net.thevpc.nuts.text.NutsTexts;
+import net.thevpc.nuts.util.NutsLoggerVerb;
+import net.thevpc.nuts.util.NutsStream;
 
 import java.util.*;
 import java.util.function.Predicate;
@@ -103,7 +112,7 @@ public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
                 }
             }
         }else{
-            _LOGOP(session).verb(NutsLogVerb.WARNING).level(Level.FINE)
+            _LOGOP(session).verb(NutsLoggerVerb.WARNING).level(Level.FINE)
                     .log(NutsMessage.jstyle("failed to retrieve {0}", def.id));
         }
         return def.definition;
@@ -155,7 +164,7 @@ public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
         }
         return new NutsListStream<NutsDefinition>(getSession(),
                 ids.isEmpty() ? null : ids.keySet().toArray()[0].toString(),
-                Arrays.asList(result),e->NutsElements.of(e).ofString("InstallResult")
+                Arrays.asList(result),e-> NutsElements.of(e).ofString("InstallResult")
         );
     }
 
@@ -450,7 +459,7 @@ public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
                             resultList.add(info.definition);
                         }
                     } catch (RuntimeException ex) {
-                        _LOGOP(session).error(ex).verb(NutsLogVerb.WARNING).level(Level.FINE)
+                        _LOGOP(session).error(ex).verb(NutsLoggerVerb.WARNING).level(Level.FINE)
                                 .log(NutsMessage.jstyle("failed to install {0}", info.id));
                         failedList.add(info.id);
                         if (session.isPlainTrace()) {

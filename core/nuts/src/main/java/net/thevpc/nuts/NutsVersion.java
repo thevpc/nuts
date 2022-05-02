@@ -25,6 +25,8 @@
  */
 package net.thevpc.nuts;
 
+import net.thevpc.nuts.util.NutsUtilStrings;
+
 import java.io.Serializable;
 import java.math.BigInteger;
 import java.util.List;

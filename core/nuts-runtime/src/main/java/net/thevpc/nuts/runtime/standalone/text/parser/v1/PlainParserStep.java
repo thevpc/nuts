@@ -1,12 +1,12 @@
 package net.thevpc.nuts.runtime.standalone.text.parser.v1;
 
 import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.NutsTexts;
+import net.thevpc.nuts.text.NutsTexts;
 import net.thevpc.nuts.runtime.standalone.util.StringBuilder2;
 
 import java.util.function.IntPredicate;
 import net.thevpc.nuts.NutsConstants;
-import net.thevpc.nuts.NutsText;
+import net.thevpc.nuts.text.NutsText;
 
 public class PlainParserStep extends ParserStep {
 

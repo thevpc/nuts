@@ -6,7 +6,6 @@
 package net.thevpc.nuts.lib.template;
 
 import net.thevpc.nuts.NutsBlankable;
-import net.thevpc.nuts.NutsUtilStrings;
 
 import java.io.IOException;
 import java.io.StringReader;

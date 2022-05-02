@@ -1,7 +1,9 @@
 package net.thevpc.nuts.runtime.standalone.io.path.spi;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.standalone.io.path.spi.htmlfs.HtmlfsPath;
+import net.thevpc.nuts.cmdline.NutsCommandLine;
+import net.thevpc.nuts.format.NutsTreeVisitor;
+import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.runtime.standalone.session.NutsSessionUtils;
 import net.thevpc.nuts.runtime.standalone.util.CoreNutsConstants;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.StringTokenizerUtils;
@@ -10,6 +12,11 @@ import net.thevpc.nuts.spi.NutsFormatSPI;
 import net.thevpc.nuts.spi.NutsPathFactory;
 import net.thevpc.nuts.spi.NutsPathSPI;
 import net.thevpc.nuts.spi.NutsUseDefault;
+import net.thevpc.nuts.text.NutsTextBuilder;
+import net.thevpc.nuts.text.NutsTextStyle;
+import net.thevpc.nuts.util.NutsLoggerOp;
+import net.thevpc.nuts.util.NutsLoggerVerb;
+import net.thevpc.nuts.util.NutsStream;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -254,7 +261,7 @@ public class DotfilefsPath extends AbstractPathSPIAdapter {
                 }
             }
         } catch (UncheckedIOException | NutsIOException ex) {
-            NutsLoggerOp.of(DotfilefsPath.class,session).level(Level.FINE).verb(NutsLogVerb.FAIL)
+            NutsLoggerOp.of(DotfilefsPath.class,session).level(Level.FINE).verb(NutsLoggerVerb.FAIL)
                     .log(NutsMessage.jstyle("unable to navigate : file not found {0}", dotFilesUrl));
         }
         if (versionString.compareTo("0.5.7") < 0) {
@@ -266,7 +273,7 @@ public class DotfilefsPath extends AbstractPathSPIAdapter {
                     foldersFileContent = StringTokenizerUtils.splitNewLine(CoreIOUtils.loadString(stream, true,session))
                             .stream().map(x -> x.trim()).filter(x -> x.length() > 0).toArray(String[]::new);
                 } catch (IOException | UncheckedIOException | NutsIOException ex) {
-                    NutsLoggerOp.of(DotfilefsPath.class,session).level(Level.FINE).verb(NutsLogVerb.FAIL)
+                    NutsLoggerOp.of(DotfilefsPath.class,session).level(Level.FINE).verb(NutsLoggerVerb.FAIL)
                             .log(NutsMessage.jstyle("unable to navigate : file not found {0}", dotFolderUrl));
                 }
                 if (foldersFileContent != null) {

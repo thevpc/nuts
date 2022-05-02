@@ -1,9 +1,9 @@
 package net.thevpc.nuts.runtime.standalone.xtra.digest;
 
-import net.thevpc.nuts.NutsIOException;
-import net.thevpc.nuts.NutsPath;
+import net.thevpc.nuts.io.NutsIOException;
+import net.thevpc.nuts.io.NutsPath;
 import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.NutsUtilStrings;
+import net.thevpc.nuts.util.NutsUtilStrings;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 
 import java.io.*;

@@ -6,6 +6,10 @@ import net.thevpc.nuts.runtime.standalone.xtra.expr.StreamTokenizerExt;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.NutsToken;
 import net.thevpc.nuts.spi.NutsComponent;
 import net.thevpc.nuts.spi.NutsSupportLevelContext;
+import net.thevpc.nuts.text.NutsText;
+import net.thevpc.nuts.text.NutsTextStyle;
+import net.thevpc.nuts.text.NutsTexts;
+import net.thevpc.nuts.util.NutsUtilStrings;
 
 import java.io.StringReader;
 import java.util.ArrayList;

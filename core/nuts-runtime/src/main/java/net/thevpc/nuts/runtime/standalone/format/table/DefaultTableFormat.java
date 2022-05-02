@@ -24,12 +24,21 @@
 package net.thevpc.nuts.runtime.standalone.format.table;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.cmdline.NutsArgument;
+import net.thevpc.nuts.cmdline.NutsCommandLine;
+import net.thevpc.nuts.elem.NutsElement;
+import net.thevpc.nuts.elem.NutsElementEntry;
+import net.thevpc.nuts.elem.NutsElements;
+import net.thevpc.nuts.format.*;
+import net.thevpc.nuts.io.NutsIOException;
+import net.thevpc.nuts.io.NutsPrintStream;
 import net.thevpc.nuts.runtime.standalone.util.CorePlatformUtils;
 import net.thevpc.nuts.runtime.standalone.text.util.NutsTextUtils;
 import net.thevpc.nuts.runtime.standalone.util.StringBuilder2;
 import net.thevpc.nuts.runtime.standalone.format.DefaultFormatBase;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import net.thevpc.nuts.spi.NutsSupportLevelContext;
+import net.thevpc.nuts.text.NutsTexts;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -859,7 +868,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
             this.ws = session.getWorkspace();
         }
 
-        public RenderedCell(int c, int r, Object o, String str, NutsTableCellFormat formatter, NutsPositionType valign, NutsPositionType halign, NutsTexts metrics,NutsSession session) {
+        public RenderedCell(int c, int r, Object o, String str, NutsTableCellFormat formatter, NutsPositionType valign, NutsPositionType halign, NutsTexts metrics, NutsSession session) {
             this.session = session;
             this.ws = session.getWorkspace();
             this.formatter = formatter;

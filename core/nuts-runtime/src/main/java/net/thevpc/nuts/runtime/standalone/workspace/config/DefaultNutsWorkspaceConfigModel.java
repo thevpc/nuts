@@ -25,6 +25,13 @@ package net.thevpc.nuts.runtime.standalone.workspace.config;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.boot.PrivateNutsUtilCollections;
+import net.thevpc.nuts.elem.NutsElement;
+import net.thevpc.nuts.elem.NutsElements;
+import net.thevpc.nuts.elem.NutsPrimitiveElement;
+import net.thevpc.nuts.io.NutsIOException;
+import net.thevpc.nuts.io.NutsPath;
+import net.thevpc.nuts.io.NutsPrintStream;
+import net.thevpc.nuts.io.NutsSessionTerminal;
 import net.thevpc.nuts.runtime.standalone.boot.DefaultNutsBootManager;
 import net.thevpc.nuts.runtime.standalone.boot.DefaultNutsBootModel;
 import net.thevpc.nuts.runtime.standalone.definition.DefaultNutsDefinition;
@@ -55,6 +62,7 @@ import net.thevpc.nuts.runtime.standalone.workspace.config.compat.v507.NutsVersi
 import net.thevpc.nuts.runtime.standalone.workspace.config.compat.v803.NutsVersionCompat803;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.StringTokenizerUtils;
 import net.thevpc.nuts.spi.*;
+import net.thevpc.nuts.util.*;
 
 import java.io.*;
 import java.net.URL;
@@ -1286,7 +1294,7 @@ public class DefaultNutsWorkspaceConfigModel {
         String fileName = "nuts-workspace-" + fileSuffix;
         NutsPath logError = session.locations().getStoreLocation(ws.getApiId(), NutsStoreLocation.LOG).resolve("invalid-config");
         NutsPath logFile = logError.resolve(fileName + ".error");
-        _LOGOP(session).level(Level.SEVERE).verb(NutsLogVerb.FAIL)
+        _LOGOP(session).level(Level.SEVERE).verb(NutsLoggerVerb.FAIL)
                 .log(NutsMessage.jstyle("erroneous workspace config file. Unable to load file {0} : {1}", file, ex));
 
         try {
@@ -1295,7 +1303,7 @@ public class DefaultNutsWorkspaceConfigModel {
             throw new NutsIOException(session, NutsMessage.cstyle("unable to log workspace error while loading config file %s : %s", file, ex1), ex);
         }
         NutsPath newfile = logError.resolve(fileName + ".json");
-        _LOGOP(session).level(Level.SEVERE).verb(NutsLogVerb.FAIL)
+        _LOGOP(session).level(Level.SEVERE).verb(NutsLoggerVerb.FAIL)
                 .log(NutsMessage.jstyle("erroneous workspace config file will be replaced by a fresh one. Old config is copied to {0}\n error logged to  {1}", newfile.toString(), logFile));
         try {
             Files.move(file, newfile.toFile());
@@ -1351,7 +1359,7 @@ public class DefaultNutsWorkspaceConfigModel {
             }
             return createNutsVersionCompat(version, session).parseConfig(bytes, session);
         } catch (Exception ex) {
-            _LOGOP(session).level(Level.SEVERE).verb(NutsLogVerb.FAIL)
+            _LOGOP(session).level(Level.SEVERE).verb(NutsLoggerVerb.FAIL)
                     .log(NutsMessage.jstyle("erroneous workspace config file. Unable to load file {0} : {1}",
                             file, ex));
             throw new NutsIOException(session, NutsMessage.cstyle("unable to load config file %s", file), ex);

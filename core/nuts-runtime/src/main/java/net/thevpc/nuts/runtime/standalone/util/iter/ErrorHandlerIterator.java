@@ -6,6 +6,10 @@
 package net.thevpc.nuts.runtime.standalone.util.iter;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.elem.NutsElement;
+import net.thevpc.nuts.util.NutsDescribables;
+import net.thevpc.nuts.util.NutsLoggerOp;
+import net.thevpc.nuts.util.NutsLoggerVerb;
 
 import java.util.Iterator;
 import java.util.logging.Level;
@@ -44,7 +48,7 @@ public class ErrorHandlerIterator<T> extends NutsIteratorBase<T> {
             return v;
         } catch (RuntimeException ex) {
             NutsLoggerOp.of(IndexFirstIterator.class,session)
-                    .verb(NutsLogVerb.WARNING)
+                    .verb(NutsLoggerVerb.WARNING)
                     .level(Level.FINEST)
                     .log(NutsMessage.cstyle("error evaluating Iterator 'hasNext()' : %s", ex));
             switch (type) {

@@ -1,12 +1,20 @@
 package net.thevpc.nuts.runtime.standalone.io.path.spi.htmlfs;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.cmdline.NutsCommandLine;
+import net.thevpc.nuts.format.NutsTreeVisitor;
+import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.runtime.standalone.io.path.spi.AbstractPathSPIAdapter;
 import net.thevpc.nuts.runtime.standalone.session.NutsSessionUtils;
 import net.thevpc.nuts.spi.NutsFormatSPI;
 import net.thevpc.nuts.spi.NutsPathFactory;
 import net.thevpc.nuts.spi.NutsPathSPI;
 import net.thevpc.nuts.spi.NutsUseDefault;
+import net.thevpc.nuts.text.NutsTextBuilder;
+import net.thevpc.nuts.text.NutsTextStyle;
+import net.thevpc.nuts.util.NutsLoggerOp;
+import net.thevpc.nuts.util.NutsLoggerVerb;
+import net.thevpc.nuts.util.NutsStream;
 
 import java.io.*;
 import java.util.*;
@@ -226,7 +234,7 @@ public class HtmlfsPath extends AbstractPathSPIAdapter {
                         return p.parseHtmlTomcat(bytes, session);
                     } catch (Exception ex) {
                         NutsLoggerOp.of(HtmlfsPath.class, session)
-                                .verb(NutsLogVerb.FAIL)
+                                .verb(NutsLoggerVerb.FAIL)
                                 .level(Level.FINEST)
                                 .error(ex)
                                 .log(NutsMessage.cstyle("failed to parse using %s", p.getClass().getSimpleName()));

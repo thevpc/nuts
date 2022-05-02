@@ -8,7 +8,7 @@ package net.thevpc.nuts.runtime.standalone.repository.impl.util;
 import java.util.*;
 
 import net.thevpc.nuts.NutsIdFilter;
-import net.thevpc.nuts.NutsPath;
+import net.thevpc.nuts.io.NutsPath;
 import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.runtime.standalone.id.filter.NutsIdFilterAnd;
 import net.thevpc.nuts.runtime.standalone.id.filter.NutsIdFilterOr;

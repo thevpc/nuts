@@ -1,12 +1,16 @@
 package net.thevpc.nuts.toolbox.noapi;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.elem.NutsArrayElement;
+import net.thevpc.nuts.elem.NutsElement;
+import net.thevpc.nuts.elem.NutsElementEntry;
+import net.thevpc.nuts.elem.NutsObjectElement;
 
 import java.util.*;
 
 public class OpenApiParser {
 
-    public TypeInfo parseOneType(NutsObjectElement value, String name0,NutsSession session) {
+    public TypeInfo parseOneType(NutsObjectElement value, String name0, NutsSession session) {
         NutsObjectElement v = value.asObject().get(session);
         TypeInfo tt=new TypeInfo();
         String t = v.getString("type").get(session);

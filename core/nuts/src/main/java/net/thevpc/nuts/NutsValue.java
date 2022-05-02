@@ -1,5 +1,7 @@
 package net.thevpc.nuts;
 
+import net.thevpc.nuts.elem.NutsPrimitiveElement;
+
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.time.Instant;

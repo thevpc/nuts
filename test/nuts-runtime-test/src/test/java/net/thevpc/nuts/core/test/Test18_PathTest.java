@@ -25,10 +25,10 @@ package net.thevpc.nuts.core.test;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.core.test.utils.TestUtils;
+import net.thevpc.nuts.io.NutsPath;
 import org.junit.jupiter.api.*;
 
 import java.io.File;
-import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.HashSet;
 import java.util.List;

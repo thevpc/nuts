@@ -23,8 +23,8 @@
  */
 package net.thevpc.nuts.runtime.standalone.util;
 
-import net.thevpc.nuts.NutsPositionType;
-import net.thevpc.nuts.NutsUtilStrings;
+import net.thevpc.nuts.format.NutsPositionType;
+import net.thevpc.nuts.util.NutsUtilStrings;
 
 import java.time.Duration;
 

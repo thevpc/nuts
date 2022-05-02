@@ -1,7 +1,9 @@
 package net.thevpc.nuts.runtime.standalone.repository.impl.maven.util;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.io.NutsIOException;
 import net.thevpc.nuts.runtime.standalone.util.xml.XmlUtils;
+import net.thevpc.nuts.util.NutsLogger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -30,7 +32,7 @@ public class MavenMetadataParser {
 
     public MavenMetadataParser(NutsSession session) {
         this.session = session;
-        LOG=NutsLogger.of(MavenMetadataParser.class,session);
+        LOG= NutsLogger.of(MavenMetadataParser.class,session);
     }
 
     public String toXmlString(MavenMetadata m) {

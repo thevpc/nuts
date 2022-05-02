@@ -24,6 +24,7 @@
 package net.thevpc.nuts.runtime.standalone.repository.impl.maven;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.repository.impl.folder.NutsFolderRepositoryBase;
 import net.thevpc.nuts.runtime.standalone.repository.impl.maven.solrsearch.MavenSolrSearchCommand;
@@ -32,6 +33,9 @@ import net.thevpc.nuts.runtime.standalone.repository.impl.maven.util.MvnClient;
 import net.thevpc.nuts.runtime.standalone.util.CoreNutsConstants;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
 import net.thevpc.nuts.spi.NutsRepositorySPI;
+import net.thevpc.nuts.util.NutsIterator;
+import net.thevpc.nuts.util.NutsLogger;
+import net.thevpc.nuts.util.NutsUtilStrings;
 
 import java.io.IOException;
 import java.io.InputStream;

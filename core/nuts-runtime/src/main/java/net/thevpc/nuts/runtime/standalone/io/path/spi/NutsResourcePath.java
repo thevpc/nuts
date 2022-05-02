@@ -1,8 +1,10 @@
 package net.thevpc.nuts.runtime.standalone.io.path.spi;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.cmdline.NutsCommandLine;
+import net.thevpc.nuts.format.NutsTreeVisitor;
+import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.runtime.standalone.extension.DefaultNutsClassLoader;
-import net.thevpc.nuts.runtime.standalone.io.path.DefaultNutsCompressedPathHelper;
 import net.thevpc.nuts.runtime.standalone.io.path.NutsCompressedPath;
 import net.thevpc.nuts.runtime.standalone.io.path.NutsCompressedPathHelper;
 import net.thevpc.nuts.runtime.standalone.io.util.NutsPathParts;
@@ -11,6 +13,10 @@ import net.thevpc.nuts.runtime.standalone.xtra.expr.StringTokenizerUtils;
 import net.thevpc.nuts.spi.NutsFormatSPI;
 import net.thevpc.nuts.spi.NutsPathFactory;
 import net.thevpc.nuts.spi.NutsPathSPI;
+import net.thevpc.nuts.text.NutsTextBuilder;
+import net.thevpc.nuts.text.NutsTextStyle;
+import net.thevpc.nuts.text.NutsTexts;
+import net.thevpc.nuts.util.NutsStream;
 
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -86,7 +92,7 @@ public class NutsResourcePath implements NutsPathSPI {
         sb.append("nuts-resource://",NutsTextStyle.path());
         boolean complex = Arrays.stream(ids).map(Object::toString).anyMatch(x -> x.contains(";") || x.contains("/"));
         if (complex) {
-            sb.append("(",NutsTextStyle.separator());
+            sb.append("(", NutsTextStyle.separator());
             sb.appendJoined(
                     txt.ofStyled(";",NutsTextStyle.separator()),
                     Arrays.asList(ids)

@@ -1,6 +1,9 @@
 package net.thevpc.nuts.toolbox.nutsserver.http.commands;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.io.NutsCp;
+import net.thevpc.nuts.io.NutsDigest;
+import net.thevpc.nuts.io.NutsTmp;
 import net.thevpc.nuts.toolbox.nutsserver.AbstractFacadeCommand;
 import net.thevpc.nuts.toolbox.nutsserver.FacadeCommandContext;
 import net.thevpc.nuts.toolbox.nutsserver.util.ItemStreamInfo;

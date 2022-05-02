@@ -23,7 +23,7 @@
  */
 package net.thevpc.nuts.core.test;
 
-import net.thevpc.nuts.NutsExpr;
+import net.thevpc.nuts.util.NutsExpr;
 import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.core.test.utils.TestUtils;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.StreamTokenizerExt;

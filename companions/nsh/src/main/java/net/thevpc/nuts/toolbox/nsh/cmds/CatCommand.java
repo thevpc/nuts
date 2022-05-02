@@ -26,8 +26,14 @@
 package net.thevpc.nuts.toolbox.nsh.cmds;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.cmdline.NutsArgument;
+import net.thevpc.nuts.cmdline.NutsCommandLine;
+import net.thevpc.nuts.io.NutsCp;
+import net.thevpc.nuts.io.NutsPath;
+import net.thevpc.nuts.io.NutsPrintStream;
 import net.thevpc.nuts.spi.NutsComponentScope;
 import net.thevpc.nuts.spi.NutsComponentScopeType;
+import net.thevpc.nuts.text.*;
 import net.thevpc.nuts.toolbox.nsh.SimpleJShellBuiltin;
 import net.thevpc.nuts.toolbox.nsh.bundles._IOUtils;
 import net.thevpc.nuts.toolbox.nsh.bundles._StringUtils;
@@ -35,6 +41,7 @@ import net.thevpc.nuts.toolbox.nsh.jshell.JShellExecutionContext;
 import net.thevpc.nuts.toolbox.nsh.util.ColumnRuler;
 import net.thevpc.nuts.toolbox.nsh.util.FileInfo;
 import net.thevpc.nuts.toolbox.nsh.util.ShellHelper;
+import net.thevpc.nuts.util.NutsUtilStrings;
 
 import java.io.*;
 import java.util.ArrayList;

@@ -1,6 +1,8 @@
 package net.thevpc.nuts.toolbox.njob;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.cmdline.NutsArgument;
+import net.thevpc.nuts.cmdline.NutsCommandLine;
 
 public class NJobMain implements NutsApplication {
 

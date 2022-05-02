@@ -1,6 +1,8 @@
 package net.thevpc.nuts.runtime.standalone.io.ask;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.util.NutsQuestion;
+import net.thevpc.nuts.util.NutsQuestionFormat;
 
 import java.util.Arrays;
 import java.util.List;

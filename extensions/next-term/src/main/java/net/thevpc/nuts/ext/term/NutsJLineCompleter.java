@@ -1,6 +1,9 @@
 package net.thevpc.nuts.ext.term;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.cmdline.NutsArgumentCandidate;
+import net.thevpc.nuts.cmdline.NutsCommandAutoCompleteResolver;
+import net.thevpc.nuts.cmdline.NutsCommandLine;
 import org.jline.reader.Candidate;
 import org.jline.reader.Completer;
 import org.jline.reader.LineReader;

@@ -6,6 +6,10 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.java;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.cmdline.NutsCommandLine;
+import net.thevpc.nuts.format.NutsMutableTableModel;
+import net.thevpc.nuts.format.NutsTableFormat;
+import net.thevpc.nuts.io.NutsPrintStream;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.AbstractNutsSettingsSubCommand;
 
 import java.util.ArrayList;

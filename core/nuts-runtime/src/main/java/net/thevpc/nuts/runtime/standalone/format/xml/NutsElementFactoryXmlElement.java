@@ -39,6 +39,7 @@ import java.util.Stack;
 import java.util.function.Supplier;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.runtime.standalone.util.xml.XmlUtils;
 import org.w3c.dom.Attr;
 import org.w3c.dom.CDATASection;
@@ -48,7 +49,6 @@ import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Text;
-import net.thevpc.nuts.NutsElements;
 
 /**
  *

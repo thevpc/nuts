@@ -2,6 +2,7 @@ package net.thevpc.nuts.runtime.standalone.io.terminal;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.boot.NutsApiUtils;
+import net.thevpc.nuts.io.NutsTerminalMode;
 
 public enum NutsTerminalModeOp  implements NutsEnum {
     NOP(NutsTerminalMode.INHERITED, NutsTerminalMode.INHERITED),

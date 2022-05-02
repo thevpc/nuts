@@ -23,6 +23,8 @@
  */
 package net.thevpc.nuts;
 
+import net.thevpc.nuts.io.NutsPath;
+
 /**
  * application store location
  *

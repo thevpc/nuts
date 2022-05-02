@@ -26,12 +26,12 @@
 package net.thevpc.nuts.toolbox.nversion;
 
 import java.io.IOException;
-import java.io.UncheckedIOException;
 import java.util.HashSet;
 import java.util.Properties;
 import java.util.Set;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.io.NutsIOException;
 import org.boris.pecoff4j.PE;
 import org.boris.pecoff4j.ResourceDirectory;
 import org.boris.pecoff4j.ResourceEntry;

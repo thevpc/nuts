@@ -1,6 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.workspace.config;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.util.NutsUtilPlatforms;
 
 import java.nio.file.Paths;
 import java.util.Collections;
@@ -51,7 +52,7 @@ class DefaultNutsWorkspaceBootConfig implements NutsWorkspaceBootConfig {
         if (storeLocationStrategy == null) {
             storeLocationStrategy = NutsStoreLocationStrategy.EXPLODED;
         }
-        this.storeLocations=NutsUtilPlatforms.buildLocations(null,storeLocationStrategy, storeLocations, homeLocations, global, effectiveWorkspace,session);
+        this.storeLocations= NutsUtilPlatforms.buildLocations(null,storeLocationStrategy, storeLocations, homeLocations, global, effectiveWorkspace,session);
         List<NutsWorkspaceConfigBoot.ExtensionConfig> extensions = bootModel.getExtensions();
         if (extensions == null) {
             this.extensions= Collections.emptyList();

@@ -1,6 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.text.highlighter;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.io.NutsIOException;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.StringReaderExt;
 import net.thevpc.nuts.runtime.standalone.text.parser.DefaultNutsTextPlain;
 
@@ -14,6 +15,7 @@ import java.util.List;
 import net.thevpc.nuts.spi.NutsComponent;
 import net.thevpc.nuts.NutsCodeHighlighter;
 import net.thevpc.nuts.spi.NutsSupportLevelContext;
+import net.thevpc.nuts.text.*;
 
 public class BashCodeHighlighter implements NutsCodeHighlighter {
 

@@ -9,6 +9,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.core.test.utils.TestUtils;
 import java.util.List;
 
+import net.thevpc.nuts.util.NutsStream;
 import org.junit.jupiter.api.*;
 
 /**

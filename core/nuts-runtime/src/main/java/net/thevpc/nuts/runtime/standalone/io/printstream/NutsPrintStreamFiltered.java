@@ -1,14 +1,19 @@
 package net.thevpc.nuts.runtime.standalone.io.printstream;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.io.NutsPrintStream;
+import net.thevpc.nuts.io.NutsTerminalMode;
 import net.thevpc.nuts.runtime.standalone.text.parser.DefaultNutsTextPlain;
 import net.thevpc.nuts.runtime.standalone.text.parser.DefaultNutsTextStyled;
+import net.thevpc.nuts.text.NutsTerminalCommand;
+import net.thevpc.nuts.text.NutsTextStyle;
+import net.thevpc.nuts.text.NutsTextStyles;
 
 public class NutsPrintStreamFiltered extends NutsPrintStreamRendered {
     public NutsPrintStreamFiltered(NutsPrintStreamBase base, NutsSession session, Bindings bindings) {
         super(base, session, NutsTerminalMode.FILTERED,
                 bindings);
-        setFormattedName(new DefaultNutsTextStyled(session,new DefaultNutsTextPlain(session,"<filtered-stream>" ),NutsTextStyles.of(NutsTextStyle.path())));
+        setFormattedName(new DefaultNutsTextStyled(session,new DefaultNutsTextPlain(session,"<filtered-stream>" ), NutsTextStyles.of(NutsTextStyle.path())));
         if (bindings.filtered != null) {
             throw new IllegalArgumentException("already bound ansi");
         }

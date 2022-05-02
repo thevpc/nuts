@@ -29,6 +29,10 @@ package net.thevpc.nuts.runtime.standalone.text.parser;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.text.DefaultNutsTexts;
+import net.thevpc.nuts.text.NutsText;
+import net.thevpc.nuts.text.NutsTextCode;
+import net.thevpc.nuts.text.NutsTextType;
+import net.thevpc.nuts.text.NutsTexts;
 
 import java.util.Objects;
 

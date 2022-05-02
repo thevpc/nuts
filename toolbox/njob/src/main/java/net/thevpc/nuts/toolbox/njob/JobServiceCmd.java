@@ -1,11 +1,16 @@
 package net.thevpc.nuts.toolbox.njob;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.cmdline.NutsCommandHistory;
+import net.thevpc.nuts.cmdline.NutsCommandLine;
+import net.thevpc.nuts.io.NutsSystemTerminal;
+import net.thevpc.nuts.text.NutsTextBuilder;
+import net.thevpc.nuts.text.NutsTextStyle;
+import net.thevpc.nuts.text.NutsTexts;
 import net.thevpc.nuts.toolbox.njob.model.*;
 import net.thevpc.nuts.toolbox.njob.time.TimeFormatter;
 
 import java.io.InputStream;
-import java.nio.file.Paths;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;

@@ -27,10 +27,11 @@
 package net.thevpc.nuts.runtime.standalone.xtra.download;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.io.NutsIOException;
+import net.thevpc.nuts.io.NutsPath;
 import net.thevpc.nuts.runtime.standalone.io.SimpleHttpClient;
 import net.thevpc.nuts.spi.*;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
 import java.net.MalformedURLException;

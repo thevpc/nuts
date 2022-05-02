@@ -5,6 +5,7 @@ import net.thevpc.nuts.runtime.standalone.io.terminal.NutsTerminalModeOp;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
 import net.thevpc.nuts.spi.NutsSessionAware;
 import net.thevpc.nuts.spi.NutsSystemTerminalBase;
+import net.thevpc.nuts.text.NutsTexts;
 
 import java.io.OutputStream;
 import java.io.PrintWriter;

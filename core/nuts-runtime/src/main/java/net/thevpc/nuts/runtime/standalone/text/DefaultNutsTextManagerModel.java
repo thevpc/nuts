@@ -24,6 +24,7 @@
 package net.thevpc.nuts.runtime.standalone.text;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.io.NutsIOException;
 import net.thevpc.nuts.runtime.standalone.elem.DefaultNutsElementFactoryService;
 import net.thevpc.nuts.runtime.standalone.elem.NutsElementFactoryService;
 import net.thevpc.nuts.runtime.standalone.elem.NutsElementStreamFormat;
@@ -38,6 +39,9 @@ import net.thevpc.nuts.runtime.standalone.format.yaml.SimpleYaml;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.StringTokenizerUtils;
 import net.thevpc.nuts.spi.NutsDefaultSupportLevelContext;
+import net.thevpc.nuts.text.NutsTextFormatTheme;
+import net.thevpc.nuts.text.NutsTextStyle;
+import net.thevpc.nuts.util.NutsUtilStrings;
 
 import java.io.BufferedReader;
 import java.io.IOException;

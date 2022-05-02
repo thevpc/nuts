@@ -6,10 +6,14 @@
 package net.thevpc.nuts.toolbox.ntemplate.filetemplate;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.io.NutsIOException;
 import net.thevpc.nuts.toolbox.ntemplate.filetemplate.eval.FtexEvaluator;
 import net.thevpc.nuts.toolbox.ntemplate.filetemplate.processors.*;
 import net.thevpc.nuts.toolbox.ntemplate.filetemplate.util.FileProcessorUtils;
 import net.thevpc.nuts.toolbox.ntemplate.filetemplate.util.StringUtils;
+import net.thevpc.nuts.util.NutsLogger;
+import net.thevpc.nuts.util.NutsLoggerOp;
+import net.thevpc.nuts.util.NutsLoggerVerb;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -18,7 +22,6 @@ import java.nio.file.Paths;
 import java.util.*;
 import java.util.function.Function;
 import java.util.function.Predicate;
-import java.util.function.Supplier;
 import java.util.logging.Level;
 import java.util.stream.Stream;
 
@@ -84,19 +87,19 @@ public class FileTemplater {
 
             @Override
             public void info(String title, String message) {
-                log().verb(NutsLogVerb.INFO).level(Level.FINER)
+                log().verb(NutsLoggerVerb.INFO).level(Level.FINER)
                         .log(NutsMessage.jstyle("{0} : {1}", title, message));
             }
 
             @Override
             public void debug(String title, String message) {
-                log().verb(NutsLogVerb.DEBUG).level(Level.FINER)
+                log().verb(NutsLoggerVerb.DEBUG).level(Level.FINER)
                         .log(NutsMessage.jstyle("{0} : {1}", title, message));
             }
 
             @Override
             public void error(String title, String message) {
-                log().verb(NutsLogVerb.FAIL).level(Level.FINER)
+                log().verb(NutsLoggerVerb.FAIL).level(Level.FINER)
                         .log(NutsMessage.jstyle("{0} : {1}", title, message));
             }
 

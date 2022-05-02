@@ -1,6 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.shell;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.cmdline.NutsCommandLineFormatStrategy;
 import net.thevpc.nuts.runtime.standalone.app.cmdline.NutsCommandLineShellOptions;
 
 import java.util.ArrayList;

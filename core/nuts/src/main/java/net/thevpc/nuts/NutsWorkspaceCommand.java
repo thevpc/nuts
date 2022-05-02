@@ -26,6 +26,8 @@
  */
 package net.thevpc.nuts;
 
+import net.thevpc.nuts.cmdline.NutsCommandLineConfigurable;
+
 /**
  * Generic Command for usual workspace operations. All Command classes have a
  * 'run' method to perform the operation.

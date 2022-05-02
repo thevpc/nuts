@@ -7,11 +7,15 @@ package net.thevpc.nuts.runtime.standalone.io.progress;
 
 import java.text.DecimalFormat;
 
-import net.thevpc.nuts.*;
-
+import net.thevpc.nuts.io.NutsPrintStream;
 import net.thevpc.nuts.runtime.standalone.io.terminal.CoreTerminalUtils;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.util.BytesSizeFormat;
+import net.thevpc.nuts.text.NutsTextBuilder;
+import net.thevpc.nuts.text.NutsTextStyle;
+import net.thevpc.nuts.text.NutsTexts;
+import net.thevpc.nuts.util.NutsProgressEvent;
+import net.thevpc.nuts.util.NutsProgressMonitor;
 
 /**
  * @author thevpc
@@ -90,7 +94,7 @@ public class TraceNutsProgressMonitor implements NutsProgressMonitor/*, NutsOutp
             formattedLine.append(text.parse(p));
             BytesSizeFormat mf = new BytesSizeFormat("BTD1F", event.getSession());
 
-            formattedLine.append(" ").append(text.ofStyled(String.format("%6s", df.format(percent)),NutsTextStyle.config())).append("% ");
+            formattedLine.append(" ").append(text.ofStyled(String.format("%6s", df.format(percent)), NutsTextStyle.config())).append("% ");
             formattedLine.append(" ").append(text.ofStyled(String.format("%6s", mf.format(partialSpeed)),NutsTextStyle.config())).append("/s");
             if (event.getMaxValue() < 0) {
                 if (globalSpeed == 0) {

@@ -6,6 +6,8 @@ import net.thevpc.nuts.runtime.standalone.descriptor.util.NutsDescriptorUtils;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.spi.NutsDescriptorContentParserComponent;
 import net.thevpc.nuts.spi.NutsDescriptorContentParserContext;
+import net.thevpc.nuts.util.NutsLoggerOp;
+import net.thevpc.nuts.util.NutsLoggerVerb;
 
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -39,7 +41,7 @@ public class NutsDescriptorContentResolver {
                     } catch (Exception e) {
                         NutsLoggerOp.of(CoreIOUtils.class, session)
                                 .level(Level.FINE)
-                                .verb(NutsLogVerb.WARNING)
+                                .verb(NutsLoggerVerb.WARNING)
                                 .error(e)
                                 .log(NutsMessage.cstyle("error parsing %s with %s", localPath, parser.getClass().getSimpleName() + ". Error ignored"));
                         //e.printStackTrace();

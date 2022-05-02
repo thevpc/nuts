@@ -7,8 +7,8 @@ package net.thevpc.nuts.toolbox.ncode.processors;
 
 import net.thevpc.nuts.NutsMessage;
 import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.NutsTextStyle;
-import net.thevpc.nuts.NutsTexts;
+import net.thevpc.nuts.text.NutsTextStyle;
+import net.thevpc.nuts.text.NutsTexts;
 import net.thevpc.nuts.toolbox.ncode.SourceProcessor;
 import net.thevpc.nuts.toolbox.ncode.Source;
 import net.thevpc.nuts.toolbox.ncode.sources.JavaTypeSource;

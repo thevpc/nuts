@@ -24,6 +24,8 @@
  */
 package net.thevpc.nuts;
 
+import net.thevpc.nuts.util.NutsDescribable;
+
 import java.util.List;
 
 /**
@@ -31,7 +33,7 @@ import java.util.List;
  *
  * @app.category Base
  */
-public interface NutsFilter extends NutsDescribable{
+public interface NutsFilter extends NutsDescribable {
 
     NutsFilterOp getFilterOp();
 

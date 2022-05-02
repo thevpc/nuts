@@ -1,7 +1,8 @@
 package net.thevpc.nuts.runtime.standalone.elem.mapper;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.DefaultNutsElementEntry;
+import net.thevpc.nuts.elem.DefaultNutsElementEntry;
+import net.thevpc.nuts.elem.*;
 
 import java.lang.reflect.Type;
 import java.util.*;

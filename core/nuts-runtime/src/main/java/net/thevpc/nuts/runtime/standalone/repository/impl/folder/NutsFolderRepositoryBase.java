@@ -1,6 +1,10 @@
 package net.thevpc.nuts.runtime.standalone.repository.impl.folder;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.elem.NutsElements;
+import net.thevpc.nuts.format.NutsTreeVisitResult;
+import net.thevpc.nuts.format.NutsTreeVisitor;
+import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.runtime.standalone.repository.NutsIdPathIterator;
 import net.thevpc.nuts.runtime.standalone.repository.NutsIdPathIteratorBase;
 import net.thevpc.nuts.runtime.standalone.repository.impl.NutsCachedRepository;
@@ -8,6 +12,9 @@ import net.thevpc.nuts.runtime.standalone.repository.util.NutsIdLocationUtils;
 import net.thevpc.nuts.runtime.standalone.util.iter.IteratorBuilder;
 import net.thevpc.nuts.runtime.standalone.util.iter.IteratorUtils;
 import net.thevpc.nuts.runtime.standalone.xtra.digest.NutsDigestUtils;
+import net.thevpc.nuts.util.NutsIterator;
+import net.thevpc.nuts.util.NutsLoggerVerb;
+import net.thevpc.nuts.util.NutsUtilStrings;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -42,12 +49,12 @@ public abstract class NutsFolderRepositoryBase extends NutsCachedRepository {
             try {
                 return loc.exists();
             } finally {
-                LOG.with().level(Level.FINEST).verb(NutsLogVerb.SUCCESS)
+                LOG.with().level(Level.FINEST).verb(NutsLoggerVerb.SUCCESS)
                         .time(System.currentTimeMillis() - now)
                         .log(NutsMessage.cstyle("check available %s : success", getName()));
             }
         } catch (Exception e) {
-            LOG.with().level(Level.FINEST).verb(NutsLogVerb.FAIL)
+            LOG.with().level(Level.FINEST).verb(NutsLoggerVerb.FAIL)
                     .time(System.currentTimeMillis() - now)
                     .log(NutsMessage.cstyle("check available %s : failed", getName()));
             return false;
@@ -163,7 +170,7 @@ public abstract class NutsFolderRepositoryBase extends NutsCachedRepository {
                         .createTempFile(p.getName()).toString();
                 try {
                     NutsCp.of(session)
-                            .from(getStream(id, "artifact binaries", "retrieve", session)).to(tempFile).setValidator(new NutsIOCopyValidator() {
+                            .from(getStream(id, "artifact binaries", "retrieve", session)).to(tempFile).setValidator(new NutsCpValidator() {
                                 @Override
                                 public void validate(InputStream in) throws IOException {
                                     checkSHA1Hash(id.builder().setFace(NutsConstants.QueryFaces.CONTENT_HASH).build(), in, "artifact binaries", session);

@@ -25,7 +25,7 @@
 */
 package net.thevpc.nuts.runtime.standalone.util.iter;
 
-import net.thevpc.nuts.NutsIterable;
+import net.thevpc.nuts.util.NutsIterable;
 
 import java.util.ArrayList;
 import java.util.Iterator;

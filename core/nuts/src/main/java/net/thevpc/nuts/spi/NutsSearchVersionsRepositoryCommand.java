@@ -27,6 +27,7 @@
 package net.thevpc.nuts.spi;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.util.NutsIterator;
 
 /**
  * @author thevpc

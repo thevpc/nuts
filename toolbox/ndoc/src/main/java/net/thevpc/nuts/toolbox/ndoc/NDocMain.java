@@ -1,6 +1,8 @@
 package net.thevpc.nuts.toolbox.ndoc;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.cmdline.NutsArgument;
+import net.thevpc.nuts.cmdline.NutsCommandLine;
 import net.thevpc.nuts.toolbox.ndoc.doc.MdDoclet;
 import net.thevpc.nuts.toolbox.ndoc.doc.MdDocletConfig;
 
@@ -23,7 +25,7 @@ public class NDocMain implements NutsApplication, NutsAppCmdProcessor {
     }
 
     @Override
-    public boolean onCmdNextOption(NutsArgument option, NutsCommandLine commandline,NutsApplicationContext context) {
+    public boolean onCmdNextOption(NutsArgument option, NutsCommandLine commandline, NutsApplicationContext context) {
         NutsSession session = context.getSession();
         switch (option.getKey().asString().get(session)) {
             case "-s":

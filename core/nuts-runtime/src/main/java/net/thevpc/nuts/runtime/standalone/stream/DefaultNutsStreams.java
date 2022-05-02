@@ -1,10 +1,14 @@
 package net.thevpc.nuts.runtime.standalone.stream;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.elem.NutsElement;
 import net.thevpc.nuts.spi.NutsStreams;
 import net.thevpc.nuts.spi.NutsComponentScope;
 import net.thevpc.nuts.spi.NutsComponentScopeType;
 import net.thevpc.nuts.spi.NutsSupportLevelContext;
+import net.thevpc.nuts.util.NutsIterable;
+import net.thevpc.nuts.util.NutsIterator;
+import net.thevpc.nuts.util.NutsStream;
 
 import java.util.Arrays;
 import java.util.Collection;

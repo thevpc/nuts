@@ -5,12 +5,12 @@
  */
 package net.thevpc.nuts.runtime.standalone.format.table;
 
-import net.thevpc.nuts.NutsMutableTableModel;
+import net.thevpc.nuts.format.NutsMutableTableModel;
 import java.util.ArrayList;
 import java.util.List;
 
 import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.NutsTableCell;
+import net.thevpc.nuts.format.NutsTableCell;
 import net.thevpc.nuts.spi.NutsSupportLevelContext;
 
 /**

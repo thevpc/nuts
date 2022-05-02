@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.extension;
 
 import net.thevpc.nuts.spi.NutsComponent;
-import net.thevpc.nuts.NutsServiceLoader;
+import net.thevpc.nuts.io.NutsServiceLoader;
 
 import java.util.ArrayList;
 import java.util.List;

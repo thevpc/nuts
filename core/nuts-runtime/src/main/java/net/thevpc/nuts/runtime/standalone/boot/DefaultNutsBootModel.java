@@ -24,6 +24,9 @@
 package net.thevpc.nuts.runtime.standalone.boot;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.cmdline.DefaultNutsArgument;
+import net.thevpc.nuts.io.NutsPrintStream;
+import net.thevpc.nuts.io.NutsSystemTerminal;
 import net.thevpc.nuts.runtime.optional.jansi.OptionalJansi;
 import net.thevpc.nuts.runtime.standalone.event.DefaultNutsWorkspaceEvent;
 import net.thevpc.nuts.runtime.standalone.io.printstream.NutsPrintStreamNull;
@@ -36,6 +39,9 @@ import net.thevpc.nuts.runtime.standalone.workspace.config.NutsWorkspaceModel;
 import net.thevpc.nuts.spi.NutsDefaultTerminalSpec;
 import net.thevpc.nuts.spi.NutsSystemTerminalBase;
 import net.thevpc.nuts.spi.NutsTerminalSpec;
+import net.thevpc.nuts.util.NutsLogger;
+import net.thevpc.nuts.util.NutsLoggerOp;
+import net.thevpc.nuts.util.NutsLoggerVerb;
 
 import java.io.InputStream;
 import java.io.PrintStream;
@@ -222,14 +228,14 @@ public class DefaultNutsBootModel implements NutsBootModel {
                 );
                 setSystemTerminal(systemTerminal, session);
                 if (getSystemTerminal().isAutoCompleteSupported()) {
-                    _LOGOP(session).level(Level.FINE).verb(NutsLogVerb.SUCCESS)
+                    _LOGOP(session).level(Level.FINE).verb(NutsLoggerVerb.SUCCESS)
                             .log(NutsMessage.jstyle("enable rich terminal"));
                 } else {
-                    _LOGOP(session).level(Level.FINE).verb(NutsLogVerb.FAIL)
+                    _LOGOP(session).level(Level.FINE).verb(NutsLoggerVerb.FAIL)
                             .log(NutsMessage.jstyle("unable to enable rich terminal"));
                 }
             } else {
-                _LOGOP(session).level(Level.FINE).verb(NutsLogVerb.WARNING)
+                _LOGOP(session).level(Level.FINE).verb(NutsLoggerVerb.WARNING)
                         .log(NutsMessage.jstyle("enableRichTerm discarded; next-term is excluded."));
             }
         }
@@ -247,7 +253,7 @@ public class DefaultNutsBootModel implements NutsBootModel {
                 syst = new DefaultSystemTerminal(terminal);
                 NutsSessionUtils.setSession(syst, session);
             } catch (Exception ex) {
-                _LOGOP(session).level(Level.FINEST).verb(NutsLogVerb.WARNING)
+                _LOGOP(session).level(Level.FINEST).verb(NutsLoggerVerb.WARNING)
                         .log(NutsMessage.jstyle("unable to create system terminal : {0}", ex));
                 DefaultNutsSystemTerminalBase b = new DefaultNutsSystemTerminalBase();
                 NutsSessionUtils.setSession(b, session);

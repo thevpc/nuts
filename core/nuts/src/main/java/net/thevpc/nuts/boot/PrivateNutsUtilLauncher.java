@@ -27,6 +27,7 @@
 package net.thevpc.nuts.boot;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.util.NutsLoggerVerb;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
@@ -169,7 +170,7 @@ class PrivateNutsUtilLauncher {
                 }
             } catch (Exception e) {
                 //ignore
-                bLog.log(Level.FINEST, NutsLogVerb.FAIL, NutsMessage.jstyle("unable to undo NDI : {0}", e.toString()));
+                bLog.log(Level.FINEST, NutsLoggerVerb.FAIL, NutsMessage.jstyle("unable to undo NDI : {0}", e.toString()));
             }
         }
     }

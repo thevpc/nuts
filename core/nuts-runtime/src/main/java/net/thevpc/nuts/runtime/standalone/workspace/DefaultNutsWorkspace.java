@@ -26,6 +26,14 @@ package net.thevpc.nuts.runtime.standalone.workspace;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.boot.NutsApiUtils;
 import net.thevpc.nuts.boot.PrivateNutsUtilCollections;
+import net.thevpc.nuts.cmdline.NutsArgument;
+import net.thevpc.nuts.cmdline.NutsCommandLine;
+import net.thevpc.nuts.cmdline.NutsCommandLines;
+import net.thevpc.nuts.elem.NutsElementNotFoundException;
+import net.thevpc.nuts.elem.NutsElements;
+import net.thevpc.nuts.format.NutsTableFormat;
+import net.thevpc.nuts.format.NutsTableModel;
+import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.runtime.standalone.boot.DefaultNutsBootManager;
 import net.thevpc.nuts.runtime.standalone.boot.DefaultNutsBootModel;
 import net.thevpc.nuts.runtime.standalone.boot.NutsBootConfig;
@@ -73,6 +81,13 @@ import net.thevpc.nuts.runtime.standalone.workspace.cmd.uninstall.DefaultNutsUni
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.update.DefaultNutsUpdateCommand;
 import net.thevpc.nuts.runtime.standalone.workspace.config.*;
 import net.thevpc.nuts.spi.*;
+import net.thevpc.nuts.text.NutsText;
+import net.thevpc.nuts.text.NutsTextStyle;
+import net.thevpc.nuts.text.NutsTextStyles;
+import net.thevpc.nuts.text.NutsTexts;
+import net.thevpc.nuts.util.NutsLogger;
+import net.thevpc.nuts.util.NutsLoggerOp;
+import net.thevpc.nuts.util.NutsLoggerVerb;
 
 import java.io.IOException;
 import java.io.Writer;
@@ -239,13 +254,13 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
             try {
                 text.getTheme();
             } catch (Exception ex) {
-                LOG.with().level(Level.CONFIG).verb(NutsLogVerb.FAIL).session(defaultSession())
+                LOG.with().level(Level.CONFIG).verb(NutsLoggerVerb.FAIL).session(defaultSession())
                         .log(NutsMessage.jstyle("unable to load theme {0}. Reset to default!", bootOptions.getTheme()));
                 text.setTheme("");//set default!
             }
 
-            NutsLoggerOp LOGCRF = LOG.with().level(Level.CONFIG).verb(NutsLogVerb.READ).session(defaultSession());
-            NutsLoggerOp LOGCSF = LOG.with().level(Level.CONFIG).verb(NutsLogVerb.START).session(defaultSession());
+            NutsLoggerOp LOGCRF = LOG.with().level(Level.CONFIG).verb(NutsLoggerVerb.READ).session(defaultSession());
+            NutsLoggerOp LOGCSF = LOG.with().level(Level.CONFIG).verb(NutsLoggerVerb.START).session(defaultSession());
 //        NutsFormatManager formats = this.formats().setSession(defaultSession());
             NutsElements elems = NutsElements.of(defaultSession());
             if (LOG.isLoggable(Level.CONFIG)) {
@@ -405,7 +420,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                 //workspace wasn't loaded. Create new configuration...
                 justInstalled = true;
                 NutsWorkspaceUtils.of(defaultSession()).checkReadOnly();
-                LOG.with().session(defaultSession()).level(Level.CONFIG).verb(NutsLogVerb.SUCCESS)
+                LOG.with().session(defaultSession()).level(Level.CONFIG).verb(NutsLoggerVerb.SUCCESS)
                         .log(NutsMessage.jstyle("creating {0} workspace at {1}",
                                 text.ofStyled("new", NutsTextStyle.info()),
                                 defaultSession().locations().getWorkspaceLocation()
@@ -469,7 +484,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                 }
                 NutsVersion nutsVersion = getRuntimeId().getVersion();
                 if (LOG.isLoggable(Level.CONFIG)) {
-                    LOG.with().session(defaultSession()).level(Level.CONFIG).verb(NutsLogVerb.SUCCESS)
+                    LOG.with().session(defaultSession()).level(Level.CONFIG).verb(NutsLoggerVerb.SUCCESS)
                             .log(NutsMessage.jstyle("nuts workspace v{0} created.", nutsVersion));
                 }
                 //should install default
@@ -533,13 +548,13 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                     try {
                         defaultSession().install().setInstalled(true).setSession(defaultSession()).getResult();
                     } catch (Exception ex) {
-                        LOG.with().session(defaultSession()).level(Level.SEVERE).verb(NutsLogVerb.FAIL)
+                        LOG.with().session(defaultSession()).level(Level.SEVERE).verb(NutsLoggerVerb.FAIL)
                                 .error(ex)
                                 .log(NutsMessage.jstyle("reinstall artifacts failed : {0}", ex));
                     }
                 }
                 if (defaultSession().repos().getRepositories().size() == 0) {
-                    LOG.with().session(defaultSession()).level(Level.CONFIG).verb(NutsLogVerb.FAIL)
+                    LOG.with().session(defaultSession()).level(Level.CONFIG).verb(NutsLoggerVerb.FAIL)
                             .log(NutsMessage.jstyle("workspace has no repositories. Will re-create defaults"));
                     justInstalledArchetype = initializeWorkspace(bootOptions.getArchetype().orNull(), defaultSession());
                 }
@@ -596,7 +611,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                 defaultSession().security().setSession(defaultSession()).login(bootOptions.getUserName().get(), password);
             }
             wsModel.configModel.setEndCreateTime(Instant.now());
-            LOG.with().session(defaultSession()).level(Level.FINE).verb(NutsLogVerb.SUCCESS)
+            LOG.with().session(defaultSession()).level(Level.FINE).verb(NutsLoggerVerb.SUCCESS)
                     .log(
                             NutsMessage.jstyle("```sh nuts``` workspace loaded in ```error {0}```",
                                     CoreTimeUtils.formatPeriodMilli(_boot.getCreationDuration())
@@ -681,7 +696,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
     }
 
     protected NutsDescriptor _resolveEffectiveDescriptor(NutsDescriptor descriptor, NutsSession session) {
-        LOG.with().session(session).level(Level.FINEST).verb(NutsLogVerb.START)
+        LOG.with().session(session).level(Level.FINEST).verb(NutsLoggerVerb.START)
                 .log(NutsMessage.jstyle("resolve effective {0}", descriptor.getId()));
         checkSession(session);
         NutsDescriptorBuilder descrWithParents = _applyParentDescriptors(descriptor, session).builder();
@@ -780,7 +795,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                     }
                 }
                 if (d.getVersion().isBlank()) {
-                    LOG.with().session(session).level(Level.FINE).verb(NutsLogVerb.FAIL)
+                    LOG.with().session(session).level(Level.FINE).verb(NutsLoggerVerb.FAIL)
                             .log(NutsMessage.jstyle("failed to resolve effective version for {0}", d));
                 }
             }
@@ -1373,7 +1388,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                     .getUser(NutsConstants.Users.ADMIN, session);
             if (adminSecurity == null || NutsBlankable.isBlank(adminSecurity.getCredentials())) {
                 if (LOG.isLoggable(Level.CONFIG)) {
-                    LOG.with().session(session).level(Level.CONFIG).verb(NutsLogVerb.FAIL)
+                    LOG.with().session(session).level(Level.CONFIG).verb(NutsLoggerVerb.FAIL)
                             .log(NutsMessage.jstyle("{0} user has no credentials. reset to default", NutsConstants.Users.ADMIN));
                 }
                 session.security()
@@ -1384,7 +1399,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                 try {
                     session.commands().setSession(session).addCommandFactory(commandFactory);
                 } catch (Exception e) {
-                    LOG.with().session(session).level(Level.SEVERE).verb(NutsLogVerb.FAIL)
+                    LOG.with().session(session).level(Level.SEVERE).verb(NutsLoggerVerb.FAIL)
                             .log(NutsMessage.jstyle("unable to instantiate Command Factory {0}", commandFactory));
                 }
             }

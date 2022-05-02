@@ -1,6 +1,6 @@
 package net.thevpc.nuts.toolbox.nsh.bundles;
 
-import net.thevpc.nuts.NutsPath;
+import net.thevpc.nuts.io.NutsPath;
 import net.thevpc.nuts.NutsSession;
 
 import java.io.*;

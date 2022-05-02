@@ -1,6 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.xtra.scheduler;
 
-import net.thevpc.nuts.NutsScheduler;
+import net.thevpc.nuts.concurrent.NutsScheduler;
 import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceExt;
 import net.thevpc.nuts.spi.NutsSupportLevelContext;

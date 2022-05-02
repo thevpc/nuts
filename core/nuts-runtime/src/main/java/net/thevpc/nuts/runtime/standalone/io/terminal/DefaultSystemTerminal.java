@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.io.terminal;
 
 import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.NutsTextStyles;
+import net.thevpc.nuts.text.NutsTextStyles;
 import net.thevpc.nuts.spi.NutsSystemTerminalBase;
 
 public class DefaultSystemTerminal extends AbstractSystemTerminalAdapter {

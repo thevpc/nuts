@@ -23,10 +23,8 @@
  */
 package net.thevpc.nuts.runtime.standalone.boot;
 
-import net.thevpc.nuts.NutsPrintStream;
-import net.thevpc.nuts.NutsSystemTerminal;
-
-import java.io.InputStream;
+import net.thevpc.nuts.io.NutsPrintStream;
+import net.thevpc.nuts.io.NutsSystemTerminal;
 
 /**
  *

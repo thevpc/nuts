@@ -29,8 +29,8 @@ import java.util.Map;
 import static net.thevpc.nuts.runtime.standalone.util.CoreStringUtils.stringValue;
 
 import net.thevpc.nuts.NutsBlankable;
-import net.thevpc.nuts.NutsElement;
-import net.thevpc.nuts.NutsElementEntry;
+import net.thevpc.nuts.elem.NutsElement;
+import net.thevpc.nuts.elem.NutsElementEntry;
 import net.thevpc.nuts.NutsSession;
 
 /**

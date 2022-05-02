@@ -1,9 +1,11 @@
 package net.thevpc.nuts.runtime.remote;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.elem.NutsElements;
+import net.thevpc.nuts.elem.NutsObjectElementBuilder;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.search.AbstractNutsSearchCommand;
+import net.thevpc.nuts.util.NutsIterator;
 
-import java.util.Arrays;
 import java.util.List;
 
 public class RemoteNutsSearchCommand extends AbstractNutsSearchCommand {

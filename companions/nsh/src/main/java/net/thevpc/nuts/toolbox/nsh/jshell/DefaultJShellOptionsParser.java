@@ -1,7 +1,7 @@
 package net.thevpc.nuts.toolbox.nsh.jshell;
 
 import net.thevpc.nuts.NutsApplicationContext;
-import net.thevpc.nuts.NutsCommandLine;
+import net.thevpc.nuts.cmdline.NutsCommandLine;
 import net.thevpc.nuts.NutsMessage;
 import net.thevpc.nuts.NutsSession;
 

@@ -1,6 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.text;
 
-import net.thevpc.nuts.NutsOutputStreamTransparentAdapter;
+import net.thevpc.nuts.io.NutsOutputStreamTransparentAdapter;
 import net.thevpc.nuts.NutsWorkspace;
 
 import java.io.IOException;

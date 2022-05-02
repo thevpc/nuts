@@ -1,6 +1,8 @@
 package net.thevpc.nuts.runtime.standalone.workspace.config.compat.v507;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.elem.NutsElements;
+import net.thevpc.nuts.io.NutsPath;
 import net.thevpc.nuts.runtime.standalone.workspace.config.*;
 import net.thevpc.nuts.runtime.standalone.util.CoreNutsConstants;
 import net.thevpc.nuts.runtime.standalone.workspace.config.compat.AbstractNutsVersionCompat;
@@ -16,7 +18,7 @@ public class NutsVersionCompat507 extends AbstractNutsVersionCompat {
 
     @Override
     public NutsWorkspaceConfigBoot parseConfig(byte[] bytes, NutsSession session) {
-        return bytes==null?null:NutsElements.of(session).json().parse(bytes, NutsWorkspaceConfigBoot.class);
+        return bytes==null?null: NutsElements.of(session).json().parse(bytes, NutsWorkspaceConfigBoot.class);
     }
 
     @Override

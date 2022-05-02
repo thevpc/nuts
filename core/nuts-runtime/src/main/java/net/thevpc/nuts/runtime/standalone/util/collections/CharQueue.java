@@ -19,7 +19,7 @@ public class CharQueue implements CharSequence {
     //    private int count;
     private int to;
     private boolean eof;
-    private Map<String,Pattern> cachedPatterns=new HashMap<>();
+    private Map<String, Pattern> cachedPatterns = new HashMap<>();
 
     public CharQueue() {
         this(256);
@@ -175,6 +175,11 @@ public class CharQueue implements CharSequence {
 
     public NutsStringMatchResult peekPattern(String pattern) {
         return peekPattern(pattern, isEOF());
+    }
+
+    public void clear() {
+        from = 0;
+        to = 0;
     }
 
     private static class PatternInfo implements Comparable<PatternInfo> {

@@ -1,6 +1,8 @@
 package net.thevpc.nuts.lib.spring.boot;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.io.NutsPrintStream;
+import net.thevpc.nuts.io.NutsSessionTerminal;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.CommandLineRunner;

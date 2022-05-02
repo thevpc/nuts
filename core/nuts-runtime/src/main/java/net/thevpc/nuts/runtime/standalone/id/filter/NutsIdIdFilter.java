@@ -7,6 +7,7 @@ package net.thevpc.nuts.runtime.standalone.id.filter;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.util.Simplifiable;
+import net.thevpc.nuts.util.NutsLogger;
 
 import java.util.Map;
 import java.util.Objects;
@@ -36,7 +37,7 @@ public class NutsIdIdFilter extends AbstractIdFilter implements NutsIdFilter, Si
             return true;
         }
         if(LOG==null){
-            LOG=NutsLogger.of(NutsIdIdFilter.class,session);
+            LOG= NutsLogger.of(NutsIdIdFilter.class,session);
         }
         if(id.getShortName().equals(filter.getShortName())){
             if (!filter.getVersion().filter(session).acceptVersion(id.getVersion(), session)) {

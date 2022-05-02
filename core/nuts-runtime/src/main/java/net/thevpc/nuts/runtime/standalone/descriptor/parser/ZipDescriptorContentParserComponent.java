@@ -27,8 +27,10 @@
 package net.thevpc.nuts.runtime.standalone.descriptor.parser;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.io.NutsIOException;
 import net.thevpc.nuts.runtime.standalone.io.util.ZipUtils;
 import net.thevpc.nuts.spi.*;
+import net.thevpc.nuts.util.NutsUtilStrings;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;

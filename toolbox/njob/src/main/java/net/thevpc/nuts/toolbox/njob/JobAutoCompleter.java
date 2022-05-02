@@ -27,6 +27,10 @@ import java.util.Arrays;
 import java.util.List;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.cmdline.DefaultNutsCommandAutoComplete;
+import net.thevpc.nuts.cmdline.NutsArgumentCandidate;
+import net.thevpc.nuts.cmdline.NutsCommandAutoCompleteResolver;
+import net.thevpc.nuts.cmdline.NutsCommandLine;
 
 /**
  *

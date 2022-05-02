@@ -1,7 +1,9 @@
 package net.thevpc.nuts.toolbox.nsh.jshell.parser;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.io.NutsPath;
 import net.thevpc.nuts.toolbox.nsh.jshell.*;
+import net.thevpc.nuts.util.NutsGlob;
 
 import java.util.*;
 import java.util.stream.Collectors;

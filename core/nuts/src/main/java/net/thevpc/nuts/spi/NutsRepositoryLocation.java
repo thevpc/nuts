@@ -24,6 +24,7 @@
 package net.thevpc.nuts.spi;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.util.NutsUtilStrings;
 
 import java.util.Objects;
 import java.util.regex.Matcher;

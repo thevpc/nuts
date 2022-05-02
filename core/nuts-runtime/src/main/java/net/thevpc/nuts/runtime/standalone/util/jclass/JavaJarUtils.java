@@ -1,11 +1,15 @@
 package net.thevpc.nuts.runtime.standalone.util.jclass;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.io.NutsIOException;
+import net.thevpc.nuts.io.NutsPath;
 import net.thevpc.nuts.runtime.standalone.io.util.ZipUtils;
 import net.thevpc.nuts.runtime.standalone.repository.impl.maven.pom.Pom;
 import net.thevpc.nuts.runtime.standalone.repository.impl.maven.pom.PomXmlParser;
 import net.thevpc.nuts.runtime.standalone.util.xml.XmlUtils;
 import net.thevpc.nuts.runtime.standalone.xtra.execentries.DefaultNutsExecutionEntry;
+import net.thevpc.nuts.util.NutsRef;
+import net.thevpc.nuts.util.NutsUtilStrings;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
@@ -110,7 +114,7 @@ public class JavaJarUtils {
                 if (a != null) {
                     String v = a.getValue("Main-Class");
                     if (!NutsBlankable.isBlank(v)) {
-                        v=NutsUtilStrings.trim(v);
+                        v= NutsUtilStrings.trim(v);
                         classes.add(new DefaultNutsExecutionEntry(v, true, false));
                     }
                 }

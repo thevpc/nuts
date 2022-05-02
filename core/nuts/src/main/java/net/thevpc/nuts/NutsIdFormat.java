@@ -26,6 +26,7 @@
 package net.thevpc.nuts;
 
 import net.thevpc.nuts.boot.NutsApiUtils;
+import net.thevpc.nuts.cmdline.NutsCommandLineConfigurable;
 import net.thevpc.nuts.spi.NutsComponent;
 
 import java.util.List;

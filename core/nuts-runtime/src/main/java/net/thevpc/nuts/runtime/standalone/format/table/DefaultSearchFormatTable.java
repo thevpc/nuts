@@ -8,6 +8,11 @@ package net.thevpc.nuts.runtime.standalone.format.table;
 import java.util.Arrays;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.cmdline.NutsArgument;
+import net.thevpc.nuts.cmdline.NutsCommandLine;
+import net.thevpc.nuts.format.NutsMutableTableModel;
+import net.thevpc.nuts.format.NutsTableFormat;
+import net.thevpc.nuts.io.NutsPrintStream;
 import net.thevpc.nuts.runtime.standalone.format.NutsIdFormatHelper;
 import net.thevpc.nuts.runtime.standalone.format.DefaultSearchFormatBase;
 import net.thevpc.nuts.runtime.standalone.format.NutsFetchDisplayOptions;

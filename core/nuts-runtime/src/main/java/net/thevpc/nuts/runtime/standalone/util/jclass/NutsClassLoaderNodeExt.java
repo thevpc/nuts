@@ -2,7 +2,7 @@ package net.thevpc.nuts.runtime.standalone.util.jclass;
 
 import net.thevpc.nuts.NutsClassLoaderNode;
 import net.thevpc.nuts.NutsId;
-import net.thevpc.nuts.NutsPath;
+import net.thevpc.nuts.io.NutsPath;
 
 import java.util.ArrayList;
 import java.util.List;

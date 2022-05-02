@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.util.iter;
 
-import net.thevpc.nuts.NutsElement;
-import net.thevpc.nuts.NutsElements;
+import net.thevpc.nuts.elem.NutsElement;
+import net.thevpc.nuts.elem.NutsElements;
 import net.thevpc.nuts.NutsSession;
 
 import java.util.NoSuchElementException;

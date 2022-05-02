@@ -25,7 +25,7 @@ package net.thevpc.nuts.runtime.standalone.util.collections;
 
 import net.thevpc.nuts.NutsBlankable;
 import net.thevpc.nuts.NutsIdLocation;
-import net.thevpc.nuts.NutsUtilStrings;
+import net.thevpc.nuts.util.NutsUtilStrings;
 
 import java.util.*;
 

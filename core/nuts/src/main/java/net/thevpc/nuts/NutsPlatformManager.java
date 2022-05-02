@@ -26,7 +26,8 @@
  */
 package net.thevpc.nuts;
 
-import java.util.List;
+import net.thevpc.nuts.util.NutsStream;
+
 import java.util.function.Predicate;
 
 /**

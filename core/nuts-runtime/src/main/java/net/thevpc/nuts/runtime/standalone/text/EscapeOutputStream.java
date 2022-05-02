@@ -1,6 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.text;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.io.NutsTerminalMode;
 import net.thevpc.nuts.runtime.standalone.io.terminal.NutsTerminalModeOpUtils;
 import net.thevpc.nuts.runtime.standalone.io.outputstream.BaseTransparentFilterOutputStream;
 import net.thevpc.nuts.runtime.standalone.io.terminal.NutsTerminalModeOp;

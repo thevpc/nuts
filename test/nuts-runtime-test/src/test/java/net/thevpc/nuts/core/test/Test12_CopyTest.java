@@ -7,11 +7,16 @@ package net.thevpc.nuts.core.test;
 
 import net.thevpc.nuts.core.test.utils.TestUtils;
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.io.NutsCp;
+import net.thevpc.nuts.io.NutsPath;
+import net.thevpc.nuts.io.NutsPathOption;
+import net.thevpc.nuts.io.NutsTmp;
+import net.thevpc.nuts.util.NutsProgressEvent;
+import net.thevpc.nuts.util.NutsProgressMonitor;
 import org.junit.jupiter.api.*;
 
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;

@@ -1,9 +1,13 @@
 package net.thevpc.nuts.toolbox.docusaurus;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.elem.NutsElement;
+import net.thevpc.nuts.elem.NutsElements;
+import net.thevpc.nuts.elem.NutsObjectElement;
 import net.thevpc.nuts.lib.md.MdElement;
 import net.thevpc.nuts.lib.md.docusaurus.DocusaurusUtils;
 import net.thevpc.nuts.lib.md.util.MdUtils;
+import net.thevpc.nuts.util.NutsUtilStrings;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;

@@ -6,6 +6,11 @@
 package net.thevpc.nuts.runtime.standalone.util.iter;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.elem.NutsElement;
+import net.thevpc.nuts.elem.NutsElements;
+import net.thevpc.nuts.util.NutsDescribables;
+import net.thevpc.nuts.util.NutsLoggerOp;
+import net.thevpc.nuts.util.NutsLoggerVerb;
 
 import java.util.Iterator;
 import java.util.logging.Level;
@@ -62,7 +67,7 @@ public class IndexFirstIterator<T> extends NutsIteratorBase<T> {
                     index = null;
                 } catch (NutsIndexerNotAccessibleException ex) {
                     NutsLoggerOp.of(IndexFirstIterator.class,session)
-                            .verb(NutsLogVerb.WARNING)
+                            .verb(NutsLoggerVerb.WARNING)
                             .level(Level.FINEST)
                             .log(NutsMessage.cstyle("error evaluating Iterator 'hasNext()' : %s", ex));
                     other = null;

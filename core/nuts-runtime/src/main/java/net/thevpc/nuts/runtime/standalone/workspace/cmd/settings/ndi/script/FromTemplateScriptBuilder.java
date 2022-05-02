@@ -1,6 +1,8 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.ndi.script;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.io.NutsIOException;
+import net.thevpc.nuts.io.NutsPath;
 import net.thevpc.nuts.runtime.standalone.shell.AbstractScriptBuilder;
 import net.thevpc.nuts.runtime.standalone.shell.NutsShellHelper;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.ndi.NdiScriptOptions;

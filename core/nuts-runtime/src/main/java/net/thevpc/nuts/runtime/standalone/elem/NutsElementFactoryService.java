@@ -23,9 +23,9 @@
  */
 package net.thevpc.nuts.runtime.standalone.elem;
 
-import net.thevpc.nuts.NutsElementFactoryContext;
+import net.thevpc.nuts.elem.NutsElementFactoryContext;
 import java.lang.reflect.Type;
-import net.thevpc.nuts.NutsElement;
+import net.thevpc.nuts.elem.NutsElement;
 
 /**
  *

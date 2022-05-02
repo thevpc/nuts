@@ -24,6 +24,11 @@
 package net.thevpc.nuts.spi;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.cmdline.NutsCommandAutoCompleteResolver;
+import net.thevpc.nuts.cmdline.NutsCommandHistory;
+import net.thevpc.nuts.io.NutsPrintStream;
+import net.thevpc.nuts.text.NutsTerminalCommand;
+import net.thevpc.nuts.text.NutsTextStyles;
 
 import java.io.InputStream;
 import java.io.Serializable;

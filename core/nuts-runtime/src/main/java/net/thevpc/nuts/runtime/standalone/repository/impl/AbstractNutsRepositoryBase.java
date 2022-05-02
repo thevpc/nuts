@@ -24,6 +24,7 @@
 package net.thevpc.nuts.runtime.standalone.repository.impl;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.io.NutsPath;
 import net.thevpc.nuts.runtime.standalone.log.NutsLogUtils;
 import net.thevpc.nuts.runtime.standalone.repository.cmd.NutsRepositorySupportedAction;
 import net.thevpc.nuts.runtime.standalone.repository.cmd.deploy.DefaultNutsDeployRepositoryCommand;
@@ -41,6 +42,8 @@ import java.util.*;
 import java.util.logging.Level;
 import net.thevpc.nuts.runtime.standalone.xtra.glob.GlobUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.config.NutsRepositoryConfigManagerExt;
+import net.thevpc.nuts.util.NutsLogger;
+import net.thevpc.nuts.util.NutsLoggerVerb;
 
 /**
  * Created by vpc on 1/18/17.
@@ -129,7 +132,7 @@ public abstract class AbstractNutsRepositoryBase extends AbstractNutsRepository 
         return a;
     }
 
-    protected void traceMessage(NutsSession session, NutsFetchMode fetchMode, Level lvl, NutsId id, NutsLogVerb tracePhase, String title, long startTime, NutsMessage extraMessage) {
+    protected void traceMessage(NutsSession session, NutsFetchMode fetchMode, Level lvl, NutsId id, NutsLoggerVerb tracePhase, String title, long startTime, NutsMessage extraMessage) {
         NutsLogUtils.traceMessage(LOG, lvl, getName(), session, fetchMode, id, tracePhase, title, startTime, extraMessage);
     }
 

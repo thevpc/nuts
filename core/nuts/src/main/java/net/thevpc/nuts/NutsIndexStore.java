@@ -26,6 +26,8 @@
  */
 package net.thevpc.nuts;
 
+import net.thevpc.nuts.util.NutsIterator;
+
 /**
  * Classes implementations of {@code NutsIndexStore} handle
  * indexing of repositories to enable faster search.

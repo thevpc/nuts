@@ -27,10 +27,15 @@
 package net.thevpc.nuts.runtime.standalone.workspace.config;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.elem.NutsElements;
+import net.thevpc.nuts.io.NutsIOException;
+import net.thevpc.nuts.io.NutsPath;
 import net.thevpc.nuts.runtime.standalone.util.iter.IteratorBuilder;
-import net.thevpc.nuts.NutsDescribables;
+import net.thevpc.nuts.util.NutsDescribables;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
-import net.thevpc.nuts.spi.NutsTransportConnection;
+import net.thevpc.nuts.util.NutsIterator;
+import net.thevpc.nuts.util.NutsPredicates;
+import net.thevpc.nuts.util.NutsUtilStrings;
 
 import java.io.InputStreamReader;
 import java.io.UncheckedIOException;

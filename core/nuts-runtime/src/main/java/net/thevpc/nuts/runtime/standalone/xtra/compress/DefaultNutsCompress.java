@@ -6,12 +6,14 @@
 package net.thevpc.nuts.runtime.standalone.xtra.compress;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.runtime.standalone.io.util.NutsStreamOrPath;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.io.progress.SingletonNutsInputStreamProgressFactory;
 import net.thevpc.nuts.runtime.standalone.session.NutsSessionUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
 import net.thevpc.nuts.spi.NutsSupportLevelContext;
+import net.thevpc.nuts.util.*;
 
 import java.io.*;
 import java.net.URL;
@@ -87,7 +89,7 @@ public class DefaultNutsCompress implements NutsCompress {
         if (target == null) {
             throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("missing target"));
         }
-        _LOG(session).with().level(Level.FINEST).verb(NutsLogVerb.START).log(NutsMessage.jstyle("compress {0} to {1}", sources, target));
+        _LOG(session).with().level(Level.FINEST).verb(NutsLoggerVerb.START).log(NutsMessage.jstyle("compress {0} to {1}", sources, target));
         try {
             OutputStream fW = null;
             ZipOutputStream zip = null;
@@ -156,7 +158,7 @@ public class DefaultNutsCompress implements NutsCompress {
                 throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("unsupported target %s", target));
             }
         } catch (IOException ex) {
-            _LOG(session).with().level(Level.CONFIG).verb(NutsLogVerb.FAIL)
+            _LOG(session).with().level(Level.CONFIG).verb(NutsLoggerVerb.FAIL)
                     .log(NutsMessage.jstyle("error compressing {0} to {1} : {2}",
                             sources, target.getValue(), ex));
             throw new NutsIOException(session,ex);

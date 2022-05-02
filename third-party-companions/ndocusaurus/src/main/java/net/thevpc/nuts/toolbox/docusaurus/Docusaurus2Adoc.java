@@ -5,9 +5,9 @@
  */
 package net.thevpc.nuts.toolbox.docusaurus;
 
-import net.thevpc.nuts.NutsArrayElement;
-import net.thevpc.nuts.NutsElement;
-import net.thevpc.nuts.NutsObjectElement;
+import net.thevpc.nuts.elem.NutsArrayElement;
+import net.thevpc.nuts.elem.NutsElement;
+import net.thevpc.nuts.elem.NutsObjectElement;
 import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.lib.md.MdBody;
 import net.thevpc.nuts.lib.md.MdElement;

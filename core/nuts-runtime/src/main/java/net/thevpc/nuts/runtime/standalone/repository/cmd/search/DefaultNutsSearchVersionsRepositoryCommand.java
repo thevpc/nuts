@@ -10,12 +10,11 @@ import java.util.List;
 import java.util.logging.Level;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.NutsLogVerb;
-import net.thevpc.nuts.NutsDescribables;
+import net.thevpc.nuts.format.NutsPositionType;
+import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.runtime.standalone.id.util.NutsIdUtils;
 import net.thevpc.nuts.runtime.standalone.repository.impl.NutsRepositoryExt;
 import net.thevpc.nuts.runtime.standalone.session.NutsSessionUtils;
-import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.util.iter.IteratorBuilder;
 import net.thevpc.nuts.runtime.standalone.util.iter.IteratorUtils;
 import net.thevpc.nuts.spi.NutsSearchVersionsRepositoryCommand;
@@ -59,7 +58,7 @@ public class DefaultNutsSearchVersionsRepositoryCommand extends AbstractNutsSear
                     try {
                         d = xrepo.getIndexStore().searchVersions(id, session);
                     } catch (NutsException ex) {
-                        _LOGOP(session).level(Level.FINEST).verb(NutsLogVerb.FAIL)
+                        _LOGOP(session).level(Level.FINEST).verb(NutsLoggerVerb.FAIL)
                                 .log(NutsMessage.jstyle("error finding version with Indexer for {0} : {1}", getRepo().getName(), ex));
                     }
                     if (d != null && filter != null) {
@@ -79,9 +78,9 @@ public class DefaultNutsSearchVersionsRepositoryCommand extends AbstractNutsSear
             result = IteratorUtils.coalesce(resultList);
             return this;
         } catch (RuntimeException ex) {
-            _LOGOP(session).level(Level.FINEST).verb(NutsLogVerb.FAIL)
+            _LOGOP(session).level(Level.FINEST).verb(NutsLoggerVerb.FAIL)
                     .log(NutsMessage.jstyle("[{0}] {1} {2} {3}",
-                            NutsUtilStrings.formatAlign(getFetchMode().toString(), 7,NutsPositionType.FIRST),
+                            NutsUtilStrings.formatAlign(getFetchMode().toString(), 7, NutsPositionType.FIRST),
                             NutsUtilStrings.formatAlign(getRepo().getName(), 20,NutsPositionType.FIRST),
                             NutsUtilStrings.formatAlign("Fetch versions for", 24,NutsPositionType.FIRST),
                             id));

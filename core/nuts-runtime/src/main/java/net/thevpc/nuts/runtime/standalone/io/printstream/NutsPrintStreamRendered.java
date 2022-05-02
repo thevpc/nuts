@@ -1,6 +1,8 @@
 package net.thevpc.nuts.runtime.standalone.io.printstream;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.io.NutsPrintStream;
+import net.thevpc.nuts.io.NutsTerminalMode;
 import net.thevpc.nuts.runtime.standalone.text.FormatOutputStreamSupport;
 
 public abstract class NutsPrintStreamRendered extends NutsPrintStreamBase {

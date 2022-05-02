@@ -1,8 +1,11 @@
 package net.thevpc.nuts.runtime.standalone.io.ask;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.DefaultNutsArgument;
+import net.thevpc.nuts.cmdline.DefaultNutsArgument;
+import net.thevpc.nuts.cmdline.NutsArgument;
 import net.thevpc.nuts.runtime.standalone.util.CoreEnumUtils;
+import net.thevpc.nuts.util.NutsQuestion;
+import net.thevpc.nuts.util.NutsQuestionParser;
 
 public class DefaultNutsResponseParser<T> implements NutsQuestionParser<T> {
 

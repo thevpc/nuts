@@ -27,6 +27,9 @@
 package net.thevpc.nuts.runtime.standalone.app.cmdline.option;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.cmdline.DefaultNutsArgumentCandidate;
+import net.thevpc.nuts.cmdline.NutsArgumentCandidate;
+import net.thevpc.nuts.cmdline.NutsCommandAutoComplete;
 import net.thevpc.nuts.runtime.standalone.repository.util.NutsRepositoryUtils;
 
 import java.util.ArrayList;

@@ -1,6 +1,5 @@
 package net.thevpc.nuts.ext.term;
 
-import net.thevpc.nuts.NutsWorkspace;
 import org.jline.reader.History;
 import org.jline.reader.LineReader;
 import org.jline.utils.Log;
@@ -13,8 +12,8 @@ import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.time.Instant;
 import java.util.*;
-import net.thevpc.nuts.NutsCommandHistory;
-import net.thevpc.nuts.NutsCommandHistoryEntry;
+import net.thevpc.nuts.cmdline.NutsCommandHistory;
+import net.thevpc.nuts.cmdline.NutsCommandHistoryEntry;
 import net.thevpc.nuts.NutsSession;
 
 class NutsJLineHistory implements History {

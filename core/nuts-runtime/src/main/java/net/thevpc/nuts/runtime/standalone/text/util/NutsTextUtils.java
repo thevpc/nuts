@@ -25,8 +25,13 @@
 package net.thevpc.nuts.runtime.standalone.text.util;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.runtime.standalone.util.CoreNutsUtils;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
+import net.thevpc.nuts.text.NutsTextBuilder;
+import net.thevpc.nuts.text.NutsTextStyle;
+import net.thevpc.nuts.text.NutsTexts;
+import net.thevpc.nuts.util.NutsUtilStrings;
 
 import java.lang.reflect.Array;
 import java.time.Instant;

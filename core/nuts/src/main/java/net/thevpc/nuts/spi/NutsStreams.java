@@ -27,6 +27,10 @@
 package net.thevpc.nuts.spi;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.elem.NutsElement;
+import net.thevpc.nuts.util.NutsIterable;
+import net.thevpc.nuts.util.NutsIterator;
+import net.thevpc.nuts.util.NutsStream;
 
 import java.util.Iterator;
 import java.util.function.Function;

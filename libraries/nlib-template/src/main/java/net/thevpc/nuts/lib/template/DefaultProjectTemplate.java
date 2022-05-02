@@ -20,6 +20,11 @@ import java.util.Set;
 import java.util.function.Function;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.io.NutsSessionTerminal;
+import net.thevpc.nuts.text.NutsTextStyle;
+import net.thevpc.nuts.text.NutsTexts;
+import net.thevpc.nuts.util.NutsQuestion;
+import net.thevpc.nuts.util.NutsQuestionValidator;
 import org.w3c.dom.Document;
 
 /**
@@ -431,7 +436,7 @@ public class DefaultProjectTemplate implements ProjectTemplate {
                 if (!getSession().getTerminal().ask()
                         .resetLine()
                         .forBoolean("accept project location %s?",
-                        NutsTexts.of(applicationContext.getSession()).ofStyled(p.getPath(),NutsTextStyle.path()))
+                        NutsTexts.of(applicationContext.getSession()).ofStyled(p.getPath(), NutsTextStyle.path()))
                         .setDefaultValue(false)
                         .getBooleanValue()) {
                     throw new NutsUserCancelException(getSession());

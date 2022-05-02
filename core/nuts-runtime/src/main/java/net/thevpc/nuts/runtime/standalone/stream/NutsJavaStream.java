@@ -6,6 +6,8 @@
 package net.thevpc.nuts.runtime.standalone.stream;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.elem.NutsElement;
+import net.thevpc.nuts.util.NutsIterator;
 
 import java.util.*;
 import java.util.function.Function;

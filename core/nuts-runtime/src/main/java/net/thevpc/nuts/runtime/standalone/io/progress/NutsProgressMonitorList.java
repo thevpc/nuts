@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.io.progress;
 
-import net.thevpc.nuts.NutsProgressEvent;
-import net.thevpc.nuts.NutsProgressMonitor;
+import net.thevpc.nuts.util.NutsProgressEvent;
+import net.thevpc.nuts.util.NutsProgressMonitor;
 
 public class NutsProgressMonitorList implements NutsProgressMonitor {
     private NutsProgressMonitor[] all;

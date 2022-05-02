@@ -1,13 +1,13 @@
 package net.thevpc.nuts.runtime.standalone.text.highlighter;
 
-import net.thevpc.nuts.NutsTextStyle;
+import net.thevpc.nuts.text.NutsTextStyle;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.StringReaderExt;
 
 import java.util.ArrayList;
 import java.util.List;
 import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.NutsTexts;
-import net.thevpc.nuts.NutsText;
+import net.thevpc.nuts.text.NutsTexts;
+import net.thevpc.nuts.text.NutsText;
 
 public class StringReaderExtUtils {
 

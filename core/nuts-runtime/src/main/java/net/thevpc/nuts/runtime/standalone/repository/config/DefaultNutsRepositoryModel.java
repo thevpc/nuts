@@ -1,6 +1,10 @@
 package net.thevpc.nuts.runtime.standalone.repository.config;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.elem.NutsElements;
+import net.thevpc.nuts.io.NutsIOException;
+import net.thevpc.nuts.io.NutsPath;
+import net.thevpc.nuts.io.NutsPathPermission;
 import net.thevpc.nuts.runtime.standalone.repository.NutsRepositoryRegistryHelper;
 import net.thevpc.nuts.runtime.standalone.repository.NutsRepositorySelectorHelper;
 import net.thevpc.nuts.runtime.standalone.repository.util.NutsRepositoryUtils;
@@ -16,6 +20,9 @@ import net.thevpc.nuts.runtime.standalone.util.CoreNutsUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.config.ConfigEventType;
 import net.thevpc.nuts.runtime.standalone.repository.impl.main.DefaultNutsInstalledRepository;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
+import net.thevpc.nuts.util.NutsLogger;
+import net.thevpc.nuts.util.NutsLoggerOp;
+import net.thevpc.nuts.util.NutsLoggerVerb;
 
 import java.io.IOException;
 import java.io.PrintStream;
@@ -368,7 +375,7 @@ public class DefaultNutsRepositoryModel {
             throw new NutsIOException(session, NutsMessage.cstyle("error loading repository %s", file), ex);
         }
         String fileName = "nuts-repository" + (name == null ? "" : ("-") + name) + (uuid == null ? "" : ("-") + uuid) + "-" + Instant.now().toString();
-        LOG.with().session(session).level(Level.SEVERE).verb(NutsLogVerb.FAIL).log(
+        LOG.with().session(session).level(Level.SEVERE).verb(NutsLoggerVerb.FAIL).log(
                 NutsMessage.jstyle("erroneous repository config file. Unable to load file {0} : {1}", file, ex));
         NutsPath logError = session.locations().getStoreLocation(getWorkspace().getApiId(), NutsStoreLocation.LOG)
                 .resolve("invalid-config");
@@ -378,7 +385,7 @@ public class DefaultNutsRepositoryModel {
             throw new NutsIOException(session, NutsMessage.cstyle("unable to log repository error while loading config file %s : %s", file, ex1), ex);
         }
         NutsPath newfile = logError.resolve(fileName + ".json");
-        LOG.with().session(session).level(Level.SEVERE).verb(NutsLogVerb.FAIL)
+        LOG.with().session(session).level(Level.SEVERE).verb(NutsLoggerVerb.FAIL)
                 .log(NutsMessage.jstyle("erroneous repository config file will be replaced by a fresh one. Old config is copied to {0}", newfile));
         try {
             Files.move(file.toFile(), newfile.toFile());

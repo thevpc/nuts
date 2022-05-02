@@ -1,6 +1,12 @@
 package net.thevpc.nuts.toolbox.ntomcat.util;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.io.NutsCp;
+import net.thevpc.nuts.io.NutsPath;
+import net.thevpc.nuts.io.NutsPathOption;
+import net.thevpc.nuts.util.NutsFunction;
+import net.thevpc.nuts.util.NutsIterator;
+import net.thevpc.nuts.util.NutsStream;
 
 import java.io.InputStream;
 import java.net.MalformedURLException;

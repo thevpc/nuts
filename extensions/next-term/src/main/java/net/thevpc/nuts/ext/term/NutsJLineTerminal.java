@@ -26,9 +26,14 @@ package net.thevpc.nuts.ext.term;
 import java.awt.Color;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.cmdline.NutsCommandAutoCompleteResolver;
+import net.thevpc.nuts.cmdline.NutsCommandHistory;
+import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.spi.*;
+import net.thevpc.nuts.text.*;
+import net.thevpc.nuts.util.NutsLogger;
+import net.thevpc.nuts.util.NutsLoggerVerb;
 import org.jline.reader.*;
-import org.jline.terminal.Cursor;
 import org.jline.terminal.Terminal;
 import org.jline.terminal.TerminalBuilder;
 
@@ -244,7 +249,7 @@ public class NutsJLineTerminal extends NutsSystemTerminalBaseImpl {
             prepare(session);
         } catch (Exception ex) {
             NutsLogger.of(NutsJLineTerminal.class, session)
-                    .with().level(Level.FINEST).verb(NutsLogVerb.FAIL).error(ex)
+                    .with().level(Level.FINEST).verb(NutsLoggerVerb.FAIL).error(ex)
                     .log(NutsMessage.jstyle("unable to create NutsJLineTerminal. ignored."));
             return NO_SUPPORT;
         }

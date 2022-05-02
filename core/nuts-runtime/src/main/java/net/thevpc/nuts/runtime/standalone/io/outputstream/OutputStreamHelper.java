@@ -1,6 +1,8 @@
 package net.thevpc.nuts.runtime.standalone.io.outputstream;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.io.NutsIOException;
+import net.thevpc.nuts.io.NutsOutputStreamTransparentAdapter;
 
 import java.io.IOException;
 import java.io.OutputStream;

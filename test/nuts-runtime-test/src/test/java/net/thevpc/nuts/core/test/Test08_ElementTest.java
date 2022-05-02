@@ -25,8 +25,6 @@
  */
 package net.thevpc.nuts.core.test;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -34,6 +32,13 @@ import java.util.Map;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.core.test.utils.TestUtils;
+import net.thevpc.nuts.elem.NutsElement;
+import net.thevpc.nuts.elem.NutsElements;
+import net.thevpc.nuts.elem.NutsObjectElement;
+import net.thevpc.nuts.format.NutsObjectFormat;
+import net.thevpc.nuts.text.NutsTextStyle;
+import net.thevpc.nuts.text.NutsTextStyled;
+import net.thevpc.nuts.text.NutsTexts;
 import org.junit.jupiter.api.*;
 
 /**

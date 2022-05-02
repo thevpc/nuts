@@ -1,6 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.lock;
 
-import net.thevpc.nuts.NutsLocks;
+import net.thevpc.nuts.concurrent.NutsLocks;
 import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.NutsWorkspace;
 

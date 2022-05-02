@@ -5,6 +5,7 @@ import net.thevpc.nuts.*;
 import java.io.File;
 import java.nio.file.Path;
 
+import net.thevpc.nuts.io.NutsRm;
 import net.thevpc.nuts.runtime.standalone.session.NutsSessionUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
 

@@ -1,6 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.io.outputstream;
 
-import net.thevpc.nuts.NutsOutputStreamTransparentAdapter;
+import net.thevpc.nuts.io.NutsOutputStreamTransparentAdapter;
 
 import java.io.FilterOutputStream;
 import java.io.OutputStream;

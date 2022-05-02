@@ -26,7 +26,7 @@
  */
 package net.thevpc.nuts.boot;
 
-import net.thevpc.nuts.NutsUtilStrings;
+import net.thevpc.nuts.util.NutsUtilStrings;
 
 import java.io.*;
 import java.net.URL;

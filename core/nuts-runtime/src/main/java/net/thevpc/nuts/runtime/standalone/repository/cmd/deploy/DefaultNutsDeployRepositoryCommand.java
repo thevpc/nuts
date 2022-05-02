@@ -27,10 +27,13 @@ package net.thevpc.nuts.runtime.standalone.repository.cmd.deploy;
 import java.util.logging.Level;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.NutsLogVerb;
+import net.thevpc.nuts.format.NutsPositionType;
+import net.thevpc.nuts.util.NutsLogger;
+import net.thevpc.nuts.util.NutsLoggerOp;
+import net.thevpc.nuts.util.NutsLoggerVerb;
 import net.thevpc.nuts.runtime.standalone.repository.impl.NutsRepositoryExt;
-import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import net.thevpc.nuts.spi.NutsDeployRepositoryCommand;
+import net.thevpc.nuts.util.NutsUtilStrings;
 
 /**
  *
@@ -69,14 +72,14 @@ public class DefaultNutsDeployRepositoryCommand extends AbstractNutsDeployReposi
                 try {
                     xrepo.getIndexStore().revalidate(this.getId(), session);
                 } catch (NutsException ex) {
-                    _LOGOP(session).level(Level.FINEST).verb(NutsLogVerb.FAIL)
+                    _LOGOP(session).level(Level.FINEST).verb(NutsLoggerVerb.FAIL)
                             .log(NutsMessage.jstyle("error revalidating Indexer for {0} : {1}", getRepo().getName(), ex));
                 }
             }
-            _LOGOP(session).level(Level.FINEST).verb(NutsLogVerb.SUCCESS)
-                    .log(NutsMessage.jstyle("{0} deploy {1}", NutsUtilStrings.formatAlign(getRepo().getName(), 20,NutsPositionType.FIRST), this.getId()));
+            _LOGOP(session).level(Level.FINEST).verb(NutsLoggerVerb.SUCCESS)
+                    .log(NutsMessage.jstyle("{0} deploy {1}", NutsUtilStrings.formatAlign(getRepo().getName(), 20, NutsPositionType.FIRST), this.getId()));
         } catch (RuntimeException ex) {
-            _LOGOP(session).level(Level.FINEST).verb(NutsLogVerb.FAIL)
+            _LOGOP(session).level(Level.FINEST).verb(NutsLoggerVerb.FAIL)
                     .log(NutsMessage.jstyle("{0} deploy {1}", NutsUtilStrings.formatAlign(getRepo().getName(), 20,NutsPositionType.FIRST), this.getId()));
             throw ex;
         }

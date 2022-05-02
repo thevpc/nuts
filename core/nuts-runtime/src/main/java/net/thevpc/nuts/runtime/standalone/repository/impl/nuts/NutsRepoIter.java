@@ -1,8 +1,8 @@
 package net.thevpc.nuts.runtime.standalone.repository.impl.nuts;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.io.NutsPath;
 import net.thevpc.nuts.runtime.standalone.repository.NutsIdPathIteratorBase;
-import net.thevpc.nuts.runtime.standalone.repository.impl.maven.MavenFolderRepository;
 import net.thevpc.nuts.runtime.standalone.repository.impl.maven.util.MavenUtils;
 
 import java.io.IOException;

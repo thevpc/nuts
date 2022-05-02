@@ -5,7 +5,7 @@
  */
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.settings;
 
-import net.thevpc.nuts.NutsCommandLine;
+import net.thevpc.nuts.cmdline.NutsCommandLine;
 import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.spi.NutsComponent;
 

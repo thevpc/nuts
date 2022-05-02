@@ -2,6 +2,7 @@ package net.thevpc.nuts.runtime.standalone.workspace.config;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.util.iter.IteratorBuilder;
+import net.thevpc.nuts.util.NutsIterator;
 
 public class DummyNutsIndexStore extends AbstractNutsIndexStore {
 

@@ -26,10 +26,14 @@
 package net.thevpc.nuts.runtime.standalone.xtra.digest;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.io.NutsDigest;
+import net.thevpc.nuts.io.NutsIOException;
+import net.thevpc.nuts.io.NutsPath;
 import net.thevpc.nuts.runtime.standalone.io.util.NutsStreamOrPath;
 import net.thevpc.nuts.runtime.standalone.session.NutsSessionUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
 import net.thevpc.nuts.spi.NutsSupportLevelContext;
+import net.thevpc.nuts.util.NutsUtilStrings;
 
 import java.io.*;
 import java.nio.file.Path;

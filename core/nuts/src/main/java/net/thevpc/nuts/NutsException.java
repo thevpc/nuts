@@ -25,6 +25,7 @@
 package net.thevpc.nuts;
 
 import net.thevpc.nuts.boot.NutsApiUtils;
+import net.thevpc.nuts.text.NutsTexts;
 
 /**
  * Base Nuts Exception. Parent of all Nuts defined Exceptions.

@@ -1,12 +1,6 @@
 package net.thevpc.nuts.toolbox.nsh.util;
 
-import net.thevpc.nuts.NutsExpr;
-
-import java.util.ArrayList;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.function.LongPredicate;
+import net.thevpc.nuts.util.NutsExpr;
 
 public class RowFilter {
     NutsExpr.Node expr;

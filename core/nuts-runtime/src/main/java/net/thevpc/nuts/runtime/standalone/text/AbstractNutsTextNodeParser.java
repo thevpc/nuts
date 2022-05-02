@@ -1,7 +1,11 @@
 package net.thevpc.nuts.runtime.standalone.text;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.io.NutsIOException;
 import net.thevpc.nuts.runtime.standalone.text.parser.DefaultNutsTextNodeResourceParserHelper;
+import net.thevpc.nuts.text.*;
+import net.thevpc.nuts.util.NutsLoggerOp;
+import net.thevpc.nuts.util.NutsLoggerVerb;
 
 import java.io.*;
 import java.util.logging.Level;
@@ -201,7 +205,7 @@ public abstract class AbstractNutsTextNodeParser implements NutsTextParser {
             return out.toString();
         } catch (Exception ex) {
             NutsLoggerOp.of(AbstractNutsTextNodeParser.class, session)
-                    .verb(NutsLogVerb.WARNING)
+                    .verb(NutsLoggerVerb.WARNING)
                     .level(Level.FINEST)
                     .log(NutsMessage.cstyle("error parsing : %s", text));
             return text;

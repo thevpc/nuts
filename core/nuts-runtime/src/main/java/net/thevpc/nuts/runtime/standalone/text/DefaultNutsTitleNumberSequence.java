@@ -1,11 +1,11 @@
 package net.thevpc.nuts.runtime.standalone.text;
 
-import net.thevpc.nuts.NutsTitleNumber;
+import net.thevpc.nuts.text.NutsTitleNumber;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import net.thevpc.nuts.NutsTextNumbering;
+import net.thevpc.nuts.text.NutsTextNumbering;
 
 /**
  */

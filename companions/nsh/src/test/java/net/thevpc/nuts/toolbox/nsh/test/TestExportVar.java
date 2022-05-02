@@ -27,11 +27,13 @@
 package net.thevpc.nuts.toolbox.nsh.test;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.io.NutsCp;
+import net.thevpc.nuts.io.NutsPath;
+import net.thevpc.nuts.io.NutsSessionTerminal;
+import net.thevpc.nuts.io.NutsTmp;
 import net.thevpc.nuts.toolbox.nsh.jshell.JShell;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-
-import java.io.ByteArrayInputStream;
 
 /**
  *

@@ -5,8 +5,8 @@
  */
 package net.thevpc.nuts.runtime.standalone.stream;
 
-import net.thevpc.nuts.NutsIterable;
-import net.thevpc.nuts.NutsIterator;
+import net.thevpc.nuts.util.NutsIterable;
+import net.thevpc.nuts.util.NutsIterator;
 import net.thevpc.nuts.NutsSession;
 
 import java.util.*;

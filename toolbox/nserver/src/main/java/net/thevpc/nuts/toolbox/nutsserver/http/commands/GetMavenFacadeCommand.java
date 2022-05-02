@@ -5,6 +5,7 @@ import net.thevpc.nuts.toolbox.nutsserver.util.XmlHelper;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.toolbox.nutsserver.AbstractFacadeCommand;
 import net.thevpc.nuts.toolbox.nutsserver.FacadeCommandContext;
+import net.thevpc.nuts.util.NutsStream;
 
 import java.io.IOException;
 import java.net.URI;

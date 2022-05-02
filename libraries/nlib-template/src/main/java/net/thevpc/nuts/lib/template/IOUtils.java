@@ -5,8 +5,8 @@
  */
 package net.thevpc.nuts.lib.template;
 
-import net.thevpc.nuts.NutsTextStyle;
-import net.thevpc.nuts.NutsTexts;
+import net.thevpc.nuts.text.NutsTextStyle;
+import net.thevpc.nuts.text.NutsTexts;
 
 import java.io.BufferedReader;
 import java.io.File;

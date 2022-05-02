@@ -27,9 +27,12 @@
 package net.thevpc.nuts.runtime.standalone.stream;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.elem.NutsElement;
+import net.thevpc.nuts.elem.NutsElements;
 import net.thevpc.nuts.runtime.standalone.util.iter.IteratorBuilder;
 import net.thevpc.nuts.runtime.standalone.util.iter.IteratorUtils;
-import net.thevpc.nuts.NutsDescribables;
+import net.thevpc.nuts.util.NutsDescribables;
+import net.thevpc.nuts.util.*;
 
 import java.util.*;
 import java.util.function.*;

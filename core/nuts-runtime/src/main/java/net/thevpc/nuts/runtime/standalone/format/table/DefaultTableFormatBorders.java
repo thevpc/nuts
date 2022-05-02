@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.format.table;
 
-import net.thevpc.nuts.NutsTableBordersFormat;
-import net.thevpc.nuts.NutsTableSeparator;
+import net.thevpc.nuts.format.NutsTableBordersFormat;
+import net.thevpc.nuts.format.NutsTableSeparator;
 
 public class DefaultTableFormatBorders implements NutsTableBordersFormat {
 

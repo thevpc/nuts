@@ -5,10 +5,15 @@
  */
 package net.thevpc.nuts.runtime.standalone.io.progress;
 
-import net.thevpc.nuts.*;
+import net.thevpc.nuts.io.NutsPrintStream;
 import net.thevpc.nuts.runtime.standalone.util.BytesSizeFormat;
 import net.thevpc.nuts.runtime.standalone.io.terminal.CoreTerminalUtils;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
+import net.thevpc.nuts.text.NutsTextBuilder;
+import net.thevpc.nuts.text.NutsTextStyle;
+import net.thevpc.nuts.text.NutsTexts;
+import net.thevpc.nuts.util.NutsProgressEvent;
+import net.thevpc.nuts.util.NutsProgressMonitor;
 
 import java.text.DecimalFormat;
 
@@ -92,7 +97,7 @@ public class DefaultNutsCountProgressMonitor implements NutsProgressMonitor/*, N
 //            formattedLine.append("]");
             BytesSizeFormat mf = mf(event);
             DecimalFormat df = df(event);
-            formattedLine.append(" ").append(text.ofStyled(String.format("%6s", df.format(percent)),NutsTextStyle.config())).append("% ");
+            formattedLine.append(" ").append(text.ofStyled(String.format("%6s", df.format(percent)), NutsTextStyle.config())).append("% ");
             formattedLine.append(" ").append(text.ofStyled(mf.format(partialSpeed),NutsTextStyle.config())).append("/s");
             if (event.getMaxValue() < 0) {
                 if (globalSpeed == 0) {

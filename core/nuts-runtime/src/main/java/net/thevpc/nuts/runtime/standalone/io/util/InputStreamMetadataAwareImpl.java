@@ -5,8 +5,8 @@
  */
 package net.thevpc.nuts.runtime.standalone.io.util;
 
-import net.thevpc.nuts.NutsStreamMetadataAware;
-import net.thevpc.nuts.NutsStreamMetadata;
+import net.thevpc.nuts.io.NutsStreamMetadataAware;
+import net.thevpc.nuts.io.NutsStreamMetadata;
 
 import java.io.FilterInputStream;
 import java.io.InputStream;

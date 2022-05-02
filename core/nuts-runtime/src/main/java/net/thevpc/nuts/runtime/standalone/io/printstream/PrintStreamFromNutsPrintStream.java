@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.io.printstream;
 
-import net.thevpc.nuts.NutsPrintStream;
-import net.thevpc.nuts.NutsPrintStreamAdapter;
+import net.thevpc.nuts.io.NutsPrintStream;
+import net.thevpc.nuts.io.NutsPrintStreamAdapter;
 
 import java.io.PrintStream;
 

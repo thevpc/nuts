@@ -3,7 +3,7 @@ package net.thevpc.nuts.boot;
 import net.thevpc.nuts.NutsBlankable;
 import net.thevpc.nuts.NutsMessage;
 import net.thevpc.nuts.NutsOptional;
-import net.thevpc.nuts.NutsUtilStrings;
+import net.thevpc.nuts.util.NutsUtilStrings;
 
 import java.util.*;
 import java.util.stream.Collectors;

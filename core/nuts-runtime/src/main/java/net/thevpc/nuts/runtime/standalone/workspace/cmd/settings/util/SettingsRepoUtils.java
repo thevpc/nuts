@@ -1,6 +1,9 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.util;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.io.NutsPrintStream;
+import net.thevpc.nuts.text.NutsTextStyle;
+import net.thevpc.nuts.text.NutsTexts;
 
 public class SettingsRepoUtils {
     public static void showRepo(NutsApplicationContext context, NutsRepository repository, String prefix) {

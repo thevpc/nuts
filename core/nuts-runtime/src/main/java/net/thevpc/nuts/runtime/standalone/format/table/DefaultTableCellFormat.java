@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.format.table;
 
 import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.NutsTableCellFormat;
+import net.thevpc.nuts.format.NutsTableCellFormat;
 
 /**
  *

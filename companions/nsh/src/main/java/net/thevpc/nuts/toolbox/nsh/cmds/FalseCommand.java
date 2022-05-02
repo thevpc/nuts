@@ -26,7 +26,7 @@
  */
 package net.thevpc.nuts.toolbox.nsh.cmds;
 
-import net.thevpc.nuts.NutsCommandLine;
+import net.thevpc.nuts.cmdline.NutsCommandLine;
 import net.thevpc.nuts.NutsExecutionException;
 import net.thevpc.nuts.NutsMessage;
 import net.thevpc.nuts.spi.NutsComponentScope;

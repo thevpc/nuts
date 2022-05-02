@@ -1,10 +1,15 @@
 package net.thevpc.nuts.toolbox.nsh;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.cmdline.NutsCommandLine;
+import net.thevpc.nuts.text.NutsTextStyle;
+import net.thevpc.nuts.text.NutsTexts;
 import net.thevpc.nuts.toolbox.nsh.jshell.DefaultJShellOptionsParser;
 import net.thevpc.nuts.toolbox.nsh.jshell.JShell;
 import net.thevpc.nuts.toolbox.nsh.jshell.JShellBuiltin;
 import net.thevpc.nuts.toolbox.nsh.jshell.JShellOptions;
+import net.thevpc.nuts.util.NutsLoggerOp;
+import net.thevpc.nuts.util.NutsLoggerVerb;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -27,7 +32,7 @@ public class Nsh implements NutsApplication {
     @Override
     public void onInstallApplication(NutsApplicationContext applicationContext) {
         NutsLoggerOp log = NutsLoggerOp.of(Nsh.class, applicationContext.getSession());
-        log.level(Level.CONFIG).verb(NutsLogVerb.START).log(NutsMessage.plain("[nsh] Installation..."));
+        log.level(Level.CONFIG).verb(NutsLoggerVerb.START).log(NutsMessage.plain("[nsh] Installation..."));
         NutsSession session = applicationContext.getSession();
         applicationContext.processCommandLine(new NutsAppCmdProcessor() {
             @Override
@@ -38,7 +43,7 @@ public class Nsh implements NutsApplication {
             @Override
             public void onCmdExec(NutsCommandLine commandline, NutsApplicationContext context) {
                 if (session.isTrace() || session.isYes()) {
-                    log.level(Level.CONFIG).verb(NutsLogVerb.INFO).log(NutsMessage.jstyle("[nsh] activating options trace={0} yes={1}", session.isTrace(), session.isYes()));
+                    log.level(Level.CONFIG).verb(NutsLoggerVerb.INFO).log(NutsMessage.jstyle("[nsh] activating options trace={0} yes={1}", session.isTrace(), session.isYes()));
                 }
                 //id will not include version or
                 String nshIdStr = applicationContext.getAppId().getShortName();
@@ -83,11 +88,11 @@ public class Nsh implements NutsApplication {
                 }
 
                 if (firstInstalled.size() > 0) {
-                    log.level(Level.CONFIG).verb(NutsLogVerb.INFO).log(NutsMessage.jstyle("[nsh] registered {0} nsh commands : {1}", firstInstalled.size(),
+                    log.level(Level.CONFIG).verb(NutsLoggerVerb.INFO).log(NutsMessage.jstyle("[nsh] registered {0} nsh commands : {1}", firstInstalled.size(),
                             String.join(", ", firstInstalled)));
                 }
                 if (reinstalled.size() > 0) {
-                    log.level(Level.CONFIG).verb(NutsLogVerb.INFO).log(NutsMessage.jstyle("[nsh] re-registered {0} nsh commands : {1}", reinstalled.size(),
+                    log.level(Level.CONFIG).verb(NutsLoggerVerb.INFO).log(NutsMessage.jstyle("[nsh] re-registered {0} nsh commands : {1}", reinstalled.size(),
                             String.join(", ", reinstalled)));
                 }
                 if (session.isPlainTrace()) {
@@ -128,7 +133,7 @@ public class Nsh implements NutsApplication {
     @Override
     public void onUpdateApplication(NutsApplicationContext applicationContext) {
         NutsLoggerOp log = NutsLoggerOp.of(Nsh.class, applicationContext.getSession());
-        log.level(Level.CONFIG).verb(NutsLogVerb.INFO).log(NutsMessage.jstyle("[nsh] update..."));
+        log.level(Level.CONFIG).verb(NutsLoggerVerb.INFO).log(NutsMessage.jstyle("[nsh] update..."));
         NutsVersion currentVersion = applicationContext.getAppVersion();
         NutsVersion previousVersion = applicationContext.getAppPreviousVersion();
         onInstallApplication(applicationContext);
@@ -137,7 +142,7 @@ public class Nsh implements NutsApplication {
     @Override
     public void onUninstallApplication(NutsApplicationContext applicationContext) {
         NutsLoggerOp log = NutsLoggerOp.of(Nsh.class, applicationContext.getSession());
-        log.level(Level.CONFIG).verb(NutsLogVerb.INFO).log(NutsMessage.jstyle("[nsh] uninstallation..."));
+        log.level(Level.CONFIG).verb(NutsLoggerVerb.INFO).log(NutsMessage.jstyle("[nsh] uninstallation..."));
         try {
             NutsSession session = applicationContext.getSession();
             try {

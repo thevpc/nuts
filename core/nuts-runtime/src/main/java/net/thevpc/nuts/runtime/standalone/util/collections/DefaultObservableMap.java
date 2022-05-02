@@ -26,7 +26,7 @@
 */
 package net.thevpc.nuts.runtime.standalone.util.collections;
 
-import net.thevpc.nuts.NutsMapListener;
+import net.thevpc.nuts.util.NutsMapListener;
 
 import java.util.*;
 

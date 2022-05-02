@@ -2,8 +2,7 @@ package net.thevpc.nuts.lib.ssh;
 
 import com.jcraft.jsch.*;
 import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.NutsString;
-import net.thevpc.nuts.NutsTexts;
+import net.thevpc.nuts.text.NutsTexts;
 
 import java.io.*;
 import java.util.ArrayList;

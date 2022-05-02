@@ -2,6 +2,7 @@ package net.thevpc.nuts.runtime.standalone.xtra.glob;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.spi.NutsSupportLevelContext;
+import net.thevpc.nuts.util.NutsGlob;
 
 import java.io.File;
 import java.util.regex.Pattern;

@@ -24,6 +24,10 @@
 package net.thevpc.nuts.runtime.standalone.io.terminal.history;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.cmdline.NutsCommandHistory;
+import net.thevpc.nuts.cmdline.NutsCommandHistoryEntry;
+import net.thevpc.nuts.io.NutsIOException;
+import net.thevpc.nuts.io.NutsPath;
 import net.thevpc.nuts.spi.NutsSupportLevelContext;
 
 import java.io.*;

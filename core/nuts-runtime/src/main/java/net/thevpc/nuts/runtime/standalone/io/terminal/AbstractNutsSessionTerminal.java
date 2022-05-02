@@ -1,9 +1,9 @@
 package net.thevpc.nuts.runtime.standalone.io.terminal;
 
 import net.thevpc.nuts.NutsMessage;
-import net.thevpc.nuts.NutsPrintStream;
+import net.thevpc.nuts.io.NutsPrintStream;
 import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.NutsSessionTerminal;
+import net.thevpc.nuts.io.NutsSessionTerminal;
 
 public abstract class AbstractNutsSessionTerminal implements NutsSessionTerminal {
     @Override

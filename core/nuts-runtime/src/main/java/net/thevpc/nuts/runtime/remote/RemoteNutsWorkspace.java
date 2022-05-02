@@ -1,8 +1,13 @@
 package net.thevpc.nuts.runtime.remote;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.elem.NutsElement;
+import net.thevpc.nuts.elem.NutsElements;
+import net.thevpc.nuts.elem.NutsObjectElement;
 import net.thevpc.nuts.runtime.standalone.workspace.AbstractNutsWorkspace;
 import net.thevpc.nuts.runtime.standalone.xtra.ntalk.NTalkClient;
+import net.thevpc.nuts.text.NutsTextStyle;
+import net.thevpc.nuts.text.NutsTexts;
 
 
 public abstract class RemoteNutsWorkspace extends AbstractNutsWorkspace {
@@ -10,7 +15,7 @@ public abstract class RemoteNutsWorkspace extends AbstractNutsWorkspace {
     public RemoteNutsWorkspace() {
     }
 
-    public NutsElement createCall(String commandName, NutsElement body,NutsSession session) {
+    public NutsElement createCall(String commandName, NutsElement body, NutsSession session) {
         try (NTalkClient cli = new NTalkClient()) {
             NutsElements e = NutsElements.of(session).json();
             NutsObjectElement q = e.ofObject()
@@ -27,7 +32,7 @@ public abstract class RemoteNutsWorkspace extends AbstractNutsWorkspace {
             } else {
                 //TODO mush deserialize exception
                 throw new NutsException(session, NutsMessage.cstyle("unable to call %s",
-                        NutsTexts.of(session).ofStyled(commandName,NutsTextStyle.primary1())));
+                        NutsTexts.of(session).ofStyled(commandName, NutsTextStyle.primary1())));
             }
         }
     }

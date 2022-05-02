@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.log;
 
-import net.thevpc.nuts.NutsLogConfig;
-import net.thevpc.nuts.NutsPrintStream;
+import net.thevpc.nuts.util.NutsLogConfig;
+import net.thevpc.nuts.io.NutsPrintStream;
 import net.thevpc.nuts.NutsSession;
 
 import java.io.PrintStream;

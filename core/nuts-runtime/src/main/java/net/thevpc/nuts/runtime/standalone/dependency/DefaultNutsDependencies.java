@@ -1,6 +1,9 @@
 package net.thevpc.nuts.runtime.standalone.dependency;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.elem.NutsElement;
+import net.thevpc.nuts.util.NutsIterator;
+import net.thevpc.nuts.util.NutsStream;
 
 import java.util.Arrays;
 import java.util.function.Function;

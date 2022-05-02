@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.app.util;
 
-import net.thevpc.nuts.NutsArgument;
-import net.thevpc.nuts.NutsCommandLine;
+import net.thevpc.nuts.cmdline.NutsArgument;
+import net.thevpc.nuts.cmdline.NutsCommandLine;
 import net.thevpc.nuts.NutsSession;
 
 public class NutsAppUtils {

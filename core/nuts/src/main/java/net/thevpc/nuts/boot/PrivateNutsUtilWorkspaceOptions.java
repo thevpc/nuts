@@ -26,7 +26,7 @@
  */
 package net.thevpc.nuts.boot;
 
-import net.thevpc.nuts.NutsArgument;
+import net.thevpc.nuts.cmdline.NutsArgument;
 import net.thevpc.nuts.NutsWorkspaceBootOptions;
 
 import java.util.Collections;

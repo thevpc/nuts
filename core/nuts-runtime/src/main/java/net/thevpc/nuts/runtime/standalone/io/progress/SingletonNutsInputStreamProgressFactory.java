@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.io.progress;
 
-import net.thevpc.nuts.NutsProgressFactory;
-import net.thevpc.nuts.NutsProgressMonitor;
+import net.thevpc.nuts.util.NutsProgressFactory;
+import net.thevpc.nuts.util.NutsProgressMonitor;
 import net.thevpc.nuts.NutsSession;
 
 public class SingletonNutsInputStreamProgressFactory implements NutsProgressFactory {

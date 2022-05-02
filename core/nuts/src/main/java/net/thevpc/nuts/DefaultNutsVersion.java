@@ -26,11 +26,11 @@
 package net.thevpc.nuts;
 
 import net.thevpc.nuts.boot.PrivateNutsUtilStrings;
+import net.thevpc.nuts.util.NutsUtilStrings;
 
 import java.math.BigInteger;
 import java.util.*;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 /**
  * Created by vpc on 1/15/17.

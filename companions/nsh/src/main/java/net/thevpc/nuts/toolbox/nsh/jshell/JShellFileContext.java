@@ -1,6 +1,6 @@
 //package net.thevpc.nuts.toolbox.nsh.bundles.jshell;
 //
-//import net.thevpc.nuts.NutsPrintStream;
+//import net.thevpc.nuts.io.NutsPrintStream;
 //
 //import java.io.InputStream;
 //import java.io.OutputStream;

@@ -1,8 +1,8 @@
 package net.thevpc.nuts.runtime.standalone.format;
 
-import net.thevpc.nuts.NutsCommandLine;
+import net.thevpc.nuts.cmdline.NutsCommandLine;
 import net.thevpc.nuts.NutsFormat;
-import net.thevpc.nuts.NutsPrintStream;
+import net.thevpc.nuts.io.NutsPrintStream;
 import net.thevpc.nuts.spi.NutsFormatSPI;
 
 public class NutsFormatSPIFromNutsFormat implements NutsFormatSPI {

@@ -1,17 +1,23 @@
 package net.thevpc.nuts.runtime.standalone.io.printstream;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.io.NutsPrintStream;
+import net.thevpc.nuts.io.NutsTerminalMode;
 import net.thevpc.nuts.runtime.standalone.text.parser.DefaultNutsTextPlain;
 import net.thevpc.nuts.runtime.standalone.text.parser.DefaultNutsTextStyled;
+import net.thevpc.nuts.text.NutsTerminalCommand;
+import net.thevpc.nuts.text.NutsTextStyle;
+import net.thevpc.nuts.text.NutsTextStyles;
+import net.thevpc.nuts.text.NutsTexts;
 
 public class NutsPrintStreamFormatted extends NutsPrintStreamRendered {
     public NutsPrintStreamFormatted(NutsPrintStreamBase base, NutsSession session, Bindings bindings) {
-        super(base,session,NutsTerminalMode.FORMATTED,
+        super(base,session, NutsTerminalMode.FORMATTED,
                 bindings);
         if(bindings.formatted!=null){
             throw new NutsIllegalArgumentException(session,NutsMessage.plain("formatted already bound"));
         }
-        setFormattedName(new DefaultNutsTextStyled(session,new DefaultNutsTextPlain(session,"<formatted-stream>" ),NutsTextStyles.of(NutsTextStyle.path())));
+        setFormattedName(new DefaultNutsTextStyled(session,new DefaultNutsTextPlain(session,"<formatted-stream>" ), NutsTextStyles.of(NutsTextStyle.path())));
         bindings.formatted=this;
     }
 

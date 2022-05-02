@@ -1,8 +1,10 @@
 package net.thevpc.nuts.runtime.standalone.id.util;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.standalone.session.NutsSessionUtils;
+import net.thevpc.nuts.elem.NutsElements;
+import net.thevpc.nuts.io.NutsPath;
 import net.thevpc.nuts.runtime.standalone.workspace.config.NutsWorkspaceConfigApi;
+import net.thevpc.nuts.util.NutsUtilStrings;
 
 import java.util.Map;
 

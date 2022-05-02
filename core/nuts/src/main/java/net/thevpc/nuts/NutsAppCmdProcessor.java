@@ -26,6 +26,10 @@
  */
 package net.thevpc.nuts;
 
+import net.thevpc.nuts.cmdline.NutsArgument;
+import net.thevpc.nuts.cmdline.NutsCommandAutoComplete;
+import net.thevpc.nuts.cmdline.NutsCommandLine;
+
 /**
  * The processor is called to process the command line arguments.
  * <ul>

@@ -27,6 +27,8 @@ import java.nio.file.Path;
 import java.util.Objects;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.elem.NutsElementNotFoundException;
+import net.thevpc.nuts.io.NutsPath;
 
 /**
  * Created by vpc on 1/6/17.

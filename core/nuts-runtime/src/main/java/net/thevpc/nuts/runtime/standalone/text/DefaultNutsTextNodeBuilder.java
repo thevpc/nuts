@@ -1,6 +1,8 @@
 package net.thevpc.nuts.runtime.standalone.text;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.text.*;
+import net.thevpc.nuts.util.NutsStream;
 
 import java.io.ByteArrayOutputStream;
 import java.util.*;

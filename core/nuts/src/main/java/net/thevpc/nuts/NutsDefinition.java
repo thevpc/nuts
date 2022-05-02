@@ -25,8 +25,10 @@
  */
 package net.thevpc.nuts;
 
+import net.thevpc.nuts.elem.NutsElementNotFoundException;
+import net.thevpc.nuts.io.NutsPath;
+
 import java.io.Serializable;
-import java.net.URL;
 import java.nio.file.Path;
 
 /**

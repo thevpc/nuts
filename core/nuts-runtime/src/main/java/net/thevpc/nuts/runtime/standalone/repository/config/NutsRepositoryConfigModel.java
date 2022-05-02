@@ -24,6 +24,7 @@
 package net.thevpc.nuts.runtime.standalone.repository.config;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.io.NutsPath;
 import net.thevpc.nuts.spi.NutsRepositoryLocation;
 
 import java.util.List;

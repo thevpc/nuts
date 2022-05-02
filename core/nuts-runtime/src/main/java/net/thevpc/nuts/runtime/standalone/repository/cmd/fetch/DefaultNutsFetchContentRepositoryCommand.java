@@ -32,6 +32,9 @@ import net.thevpc.nuts.runtime.standalone.util.CoreNutsUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
 import net.thevpc.nuts.spi.NutsFetchContentRepositoryCommand;
 import net.thevpc.nuts.spi.NutsRepositorySPI;
+import net.thevpc.nuts.util.NutsLogger;
+import net.thevpc.nuts.util.NutsLoggerOp;
+import net.thevpc.nuts.util.NutsLoggerVerb;
 
 import java.util.logging.Level;
 
@@ -80,11 +83,11 @@ public class DefaultNutsFetchContentRepositoryCommand extends AbstractNutsFetchC
             if (f == null) {
                 throw new NutsNotFoundException(getSession(), id);
             }
-            NutsLogUtils.traceMessage(_LOG(session), Level.FINER, repo.getName(), session, getFetchMode(), id.getLongId(), NutsLogVerb.SUCCESS, "fetch package", startTime, null);
+            NutsLogUtils.traceMessage(_LOG(session), Level.FINER, repo.getName(), session, getFetchMode(), id.getLongId(), NutsLoggerVerb.SUCCESS, "fetch package", startTime, null);
             result = f;
         } catch (RuntimeException ex) {
             if (!CoreNutsUtils.isUnsupportedFetchModeException(ex)) {
-                NutsLogUtils.traceMessage(_LOG(session), Level.FINEST, repo.getName(), session, getFetchMode(), id.getLongId(), NutsLogVerb.FAIL, "fetch package", startTime, CoreStringUtils.exceptionToMessage(ex));
+                NutsLogUtils.traceMessage(_LOG(session), Level.FINEST, repo.getName(), session, getFetchMode(), id.getLongId(), NutsLoggerVerb.FAIL, "fetch package", startTime, CoreStringUtils.exceptionToMessage(ex));
             }
             throw ex;
         }

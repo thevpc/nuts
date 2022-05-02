@@ -1,6 +1,10 @@
 package net.thevpc.nuts.boot;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.cmdline.NutsCommandLine;
+import net.thevpc.nuts.io.NutsTerminalMode;
+import net.thevpc.nuts.util.NutsLogConfig;
+import net.thevpc.nuts.util.NutsUtilStrings;
 
 import java.io.File;
 import java.util.*;

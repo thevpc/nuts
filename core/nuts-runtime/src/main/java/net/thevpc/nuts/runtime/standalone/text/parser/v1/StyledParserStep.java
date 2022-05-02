@@ -6,6 +6,7 @@ import net.thevpc.nuts.runtime.standalone.util.StringBuilder2;
 import net.thevpc.nuts.runtime.standalone.text.parser.DefaultNutsTextPlain;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.util.NutsDebugString;
+import net.thevpc.nuts.text.*;
 
 import java.util.ArrayList;
 import java.util.List;

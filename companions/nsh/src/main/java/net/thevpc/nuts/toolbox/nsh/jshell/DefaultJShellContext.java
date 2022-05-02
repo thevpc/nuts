@@ -6,6 +6,7 @@
 package net.thevpc.nuts.toolbox.nsh.jshell;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.cmdline.NutsCommandAutoComplete;
 import net.thevpc.nuts.toolbox.nsh.NutsBuiltinManager;
 
 import java.util.*;

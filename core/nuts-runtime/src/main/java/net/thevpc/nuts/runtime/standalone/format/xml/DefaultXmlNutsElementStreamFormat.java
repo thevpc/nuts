@@ -28,8 +28,14 @@ import java.io.Reader;
 import javax.xml.transform.stream.StreamResult;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.elem.NutsElement;
+import net.thevpc.nuts.elem.NutsElementFactoryContext;
+import net.thevpc.nuts.io.NutsIOException;
+import net.thevpc.nuts.io.NutsMemoryPrintStream;
+import net.thevpc.nuts.io.NutsPrintStream;
 import net.thevpc.nuts.runtime.standalone.elem.NutsElementStreamFormat;
 import net.thevpc.nuts.runtime.standalone.util.xml.XmlUtils;
+import net.thevpc.nuts.text.NutsTexts;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;

@@ -1,6 +1,9 @@
 package net.thevpc.nuts.runtime.standalone.text.parser;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.text.NutsText;
+import net.thevpc.nuts.text.NutsTextBuilder;
+import net.thevpc.nuts.text.NutsTexts;
 
 public abstract class AbstractNutsText implements NutsText {
 

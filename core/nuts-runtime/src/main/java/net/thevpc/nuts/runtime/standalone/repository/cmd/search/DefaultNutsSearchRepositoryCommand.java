@@ -6,11 +6,11 @@
 package net.thevpc.nuts.runtime.standalone.repository.cmd.search;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.format.NutsPositionType;
 import net.thevpc.nuts.runtime.standalone.session.NutsSessionUtils;
 import net.thevpc.nuts.runtime.standalone.util.iter.*;
 import net.thevpc.nuts.runtime.standalone.repository.impl.NutsRepositoryExt;
-import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
-import net.thevpc.nuts.NutsLogVerb;
+import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.spi.NutsSearchRepositoryCommand;
 
 import java.util.Iterator;
@@ -47,13 +47,13 @@ public class DefaultNutsSearchRepositoryCommand extends AbstractNutsSearchReposi
                     getRepo().security().setSession(session).checkAllowed(NutsConstants.Permissions.FETCH_DESC, "search");
                     NutsRepositoryExt xrepo = NutsRepositoryExt.of(getRepo());
                     xrepo.checkAllowedFetch(null, session);
-                    _LOGOP(session).level(Level.FINEST).verb(NutsLogVerb.START)
-                            .log(NutsMessage.jstyle("{0} search packages", NutsUtilStrings.formatAlign(getRepo().getName(), 20,NutsPositionType.FIRST)));
+                    _LOGOP(session).level(Level.FINEST).verb(NutsLoggerVerb.START)
+                            .log(NutsMessage.jstyle("{0} search packages", NutsUtilStrings.formatAlign(getRepo().getName(), 20, NutsPositionType.FIRST)));
                 }, "CheckAuthorizations"
         );
         NutsRunnable endRunnable =
                 NutsRunnable.of(
-                        () -> _LOGOP(session).level(Level.FINEST).verb(NutsLogVerb.SUCCESS)
+                        () -> _LOGOP(session).level(Level.FINEST).verb(NutsLoggerVerb.SUCCESS)
                                 .log(NutsMessage.jstyle("{0} search packages", NutsUtilStrings.formatAlign(getRepo().getName(), 20,NutsPositionType.FIRST))),
                         "Log"
                 );
@@ -68,7 +68,7 @@ public class DefaultNutsSearchRepositoryCommand extends AbstractNutsSearchReposi
                 } catch (NutsIndexerNotAccessibleException ex) {
                     //just ignore
                 } catch (NutsException ex) {
-                    _LOGOP(session).level(Level.FINEST).verb(NutsLogVerb.FAIL)
+                    _LOGOP(session).level(Level.FINEST).verb(NutsLoggerVerb.FAIL)
                             .log(NutsMessage.jstyle("error search operation using Indexer for {0} : {1}", getRepo().getName(), ex));
                 }
                 if (o != null) {
@@ -83,11 +83,11 @@ public class DefaultNutsSearchRepositoryCommand extends AbstractNutsSearchReposi
                     .onFinish(endRunnable)
                     .build();
         } catch (NutsNotFoundException | SecurityException ex) {
-            _LOGOP(session).level(Level.FINEST).verb(NutsLogVerb.FAIL)
+            _LOGOP(session).level(Level.FINEST).verb(NutsLoggerVerb.FAIL)
                     .log(NutsMessage.jstyle("{0} search packages", NutsUtilStrings.formatAlign(getRepo().getName(), 20,NutsPositionType.FIRST)));
             throw ex;
         } catch (RuntimeException ex) {
-            _LOGOP(session).level(Level.SEVERE).verb(NutsLogVerb.FAIL)
+            _LOGOP(session).level(Level.SEVERE).verb(NutsLoggerVerb.FAIL)
                     .log(NutsMessage.jstyle("{0} search packages", NutsUtilStrings.formatAlign(getRepo().getName(), 20,NutsPositionType.FIRST)));
             throw ex;
         }

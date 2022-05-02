@@ -6,7 +6,7 @@
 package net.thevpc.nuts.ext.term;
 
 import java.time.Instant;
-import net.thevpc.nuts.NutsCommandHistoryEntry;
+import net.thevpc.nuts.cmdline.NutsCommandHistoryEntry;
 import org.jline.reader.History;
 
 /**

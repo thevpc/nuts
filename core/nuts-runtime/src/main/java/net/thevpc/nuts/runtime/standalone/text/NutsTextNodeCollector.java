@@ -1,6 +1,9 @@
 package net.thevpc.nuts.runtime.standalone.text;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.text.NutsText;
+import net.thevpc.nuts.text.NutsTextVisitor;
+import net.thevpc.nuts.text.NutsTexts;
 
 import java.util.ArrayList;
 import java.util.List;

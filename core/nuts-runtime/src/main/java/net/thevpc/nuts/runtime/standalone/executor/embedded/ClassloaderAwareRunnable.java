@@ -25,7 +25,7 @@
 */
 package net.thevpc.nuts.runtime.standalone.executor.embedded;
 
-import net.thevpc.nuts.NutsScheduler;
+import net.thevpc.nuts.concurrent.NutsScheduler;
 import net.thevpc.nuts.NutsSession;
 
 /**

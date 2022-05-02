@@ -28,6 +28,10 @@ package net.thevpc.nuts.spi;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.boot.NutsApiUtils;
+import net.thevpc.nuts.text.NutsTerminalCommand;
+import net.thevpc.nuts.text.NutsTextStyle;
+import net.thevpc.nuts.text.NutsTextStyles;
+import net.thevpc.nuts.util.NutsColor;
 
 public class NutsAnsiTermHelper {
     private static final int[] FG8 = {30, 31, 32, 33, 34, 35, 36, 37, 90, 91, 92, 93, 94, 95, 96, 97};

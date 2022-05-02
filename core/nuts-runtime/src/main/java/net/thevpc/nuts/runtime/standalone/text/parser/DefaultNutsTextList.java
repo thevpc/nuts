@@ -25,6 +25,9 @@
 package net.thevpc.nuts.runtime.standalone.text.parser;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.text.NutsText;
+import net.thevpc.nuts.text.NutsTextList;
+import net.thevpc.nuts.text.NutsTextType;
 
 import java.util.ArrayList;
 import java.util.Iterator;

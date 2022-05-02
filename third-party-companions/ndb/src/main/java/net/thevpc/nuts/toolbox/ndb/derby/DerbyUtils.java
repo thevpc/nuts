@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
 import net.thevpc.nuts.NutsApplicationContext;
-import net.thevpc.nuts.NutsPs;
+import net.thevpc.nuts.io.NutsPs;
 import net.thevpc.nuts.NutsSession;
 
 public class DerbyUtils {

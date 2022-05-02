@@ -1,7 +1,8 @@
 package net.thevpc.nuts.runtime.standalone.util;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
+import net.thevpc.nuts.format.NutsPositionType;
+import net.thevpc.nuts.util.NutsUtilStrings;
 
 /**
  * Created by vpc on 3/20/17.

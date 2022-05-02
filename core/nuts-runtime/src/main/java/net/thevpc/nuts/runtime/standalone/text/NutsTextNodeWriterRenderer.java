@@ -1,6 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.text;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.io.NutsPrintStream;
 import net.thevpc.nuts.runtime.standalone.text.parser.DefaultNutsTextCommand;
 import net.thevpc.nuts.runtime.standalone.text.parser.DefaultNutsTextStyled;
 import net.thevpc.nuts.runtime.standalone.text.parser.DefaultNutsTextTitle;
@@ -8,6 +9,7 @@ import net.thevpc.nuts.runtime.standalone.io.printstream.NutsPrintStreamHelper;
 import net.thevpc.nuts.runtime.standalone.io.outputstream.OutputHelper;
 import net.thevpc.nuts.runtime.standalone.io.outputstream.OutputStreamHelper;
 import net.thevpc.nuts.spi.NutsSystemTerminalBase;
+import net.thevpc.nuts.text.*;
 
 import java.io.OutputStream;
 

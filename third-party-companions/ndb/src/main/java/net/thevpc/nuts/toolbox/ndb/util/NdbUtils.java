@@ -24,7 +24,6 @@
 package net.thevpc.nuts.toolbox.ndb.util;
 
 import net.thevpc.nuts.NutsBlankable;
-import net.thevpc.nuts.NutsUtilStrings;
 
 /**
  *

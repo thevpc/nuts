@@ -1,8 +1,8 @@
 package net.thevpc.nuts.runtime.standalone.text.parser.v1;
 
-import net.thevpc.nuts.NutsTextStyle;
-import net.thevpc.nuts.NutsTextStyleType;
-import net.thevpc.nuts.NutsTextStyles;
+import net.thevpc.nuts.text.NutsTextStyle;
+import net.thevpc.nuts.text.NutsTextStyleType;
+import net.thevpc.nuts.text.NutsTextStyles;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.StringReaderExt;
 
 import java.util.ArrayList;

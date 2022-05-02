@@ -1,6 +1,9 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.fetch;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.elem.NutsElements;
+import net.thevpc.nuts.io.NutsDigest;
+import net.thevpc.nuts.io.NutsPath;
 import net.thevpc.nuts.runtime.standalone.dependency.util.NutsDependencyUtils;
 import net.thevpc.nuts.runtime.standalone.id.util.NutsIdUtils;
 import net.thevpc.nuts.runtime.standalone.log.NutsLogUtils;
@@ -19,6 +22,7 @@ import net.thevpc.nuts.runtime.standalone.workspace.cmd.NutsRepositoryAndFetchMo
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.NutsRepositoryAndFetchModeTracker;
 import net.thevpc.nuts.spi.NutsDependencySolver;
 import net.thevpc.nuts.spi.NutsRepositorySPI;
+import net.thevpc.nuts.util.NutsLoggerVerb;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -209,7 +213,7 @@ public class DefaultNutsFetchCommand extends AbstractNutsFetchCommand {
                     _LOGOP(getSession()).error(ex).level(Level.SEVERE)
                             .log(NutsMessage.jstyle("unexpected error while fetching descriptor for {0}", id));
                     if (_LOG(getSession()).isLoggable(Level.FINEST)) {
-                        NutsLogUtils.traceMessage(_LOG(getSession()),nutsFetchModes, id.getLongId(), NutsLogVerb.FAIL, "fetch def", startTime);
+                        NutsLogUtils.traceMessage(_LOG(getSession()),nutsFetchModes, id.getLongId(), NutsLoggerVerb.FAIL, "fetch def", startTime);
                     }
                     descTracker.addFailure(location);
                 }
@@ -221,7 +225,7 @@ public class DefaultNutsFetchCommand extends AbstractNutsFetchCommand {
                         foundDefinition.setEffectiveDescriptor(dws.resolveEffectiveDescriptor(foundDefinition.getDescriptor(), session));
                     } catch (NutsNotFoundException ex) {
                         //ignore
-                        _LOGOP(getSession()).level(Level.WARNING).verb(NutsLogVerb.WARNING)
+                        _LOGOP(getSession()).level(Level.WARNING).verb(NutsLoggerVerb.WARNING)
                                 .log(NutsMessage.jstyle("artifact descriptor found, but its parent is not: {0} with parent {1}", id.getLongName(),
                                         foundDefinition.getDescriptor().getParents()));
                         foundDefinition = null;
@@ -299,7 +303,7 @@ public class DefaultNutsFetchCommand extends AbstractNutsFetchCommand {
                             }
                         }
                         if (!contentSuccessful /*&& includedRemote*/) {
-                            NutsLogUtils.traceMessage(_LOG(getSession()),nutsFetchModes, id.getLongId(), NutsLogVerb.FAIL,
+                            NutsLogUtils.traceMessage(_LOG(getSession()),nutsFetchModes, id.getLongId(), NutsLoggerVerb.FAIL,
                                     "fetched descriptor but failed to fetch artifact binaries", startTime);
                         }
                     }
@@ -317,10 +321,10 @@ public class DefaultNutsFetchCommand extends AbstractNutsFetchCommand {
             }
         } catch (NutsNotFoundException ex) {
             reasons.add(ex);
-            NutsLogUtils.traceMessage(_LOG(getSession()),nutsFetchModes, id.getLongId(), NutsLogVerb.FAIL, "fetch definition", startTime);
+            NutsLogUtils.traceMessage(_LOG(getSession()),nutsFetchModes, id.getLongId(), NutsLoggerVerb.FAIL, "fetch definition", startTime);
             throw ex;
         } catch (RuntimeException ex) {
-            NutsLogUtils.traceMessage(_LOG(getSession()),nutsFetchModes, id.getLongId(), NutsLogVerb.FAIL, "[unexpected] fetch definition", startTime);
+            NutsLogUtils.traceMessage(_LOG(getSession()),nutsFetchModes, id.getLongId(), NutsLoggerVerb.FAIL, "[unexpected] fetch definition", startTime);
             throw ex;
         }
         if (foundDefinition != null) {
@@ -501,7 +505,7 @@ public class DefaultNutsFetchCommand extends AbstractNutsFetchCommand {
                                 //this is invalid cache!
                                 cachePath.delete();
                             } else {
-                                NutsLogUtils.traceMessage(_LOG(getSession()),nutsFetchModes, id.getLongId(), NutsLogVerb.CACHE, "fetch definition", 0);
+                                NutsLogUtils.traceMessage(_LOG(getSession()),nutsFetchModes, id.getLongId(), NutsLoggerVerb.CACHE, "fetch definition", 0);
                                 return d;
                             }
                         }

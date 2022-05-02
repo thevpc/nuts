@@ -26,7 +26,7 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.ndi.util;
 
 
-import net.thevpc.nuts.NutsIOException;
+import net.thevpc.nuts.io.NutsIOException;
 import net.thevpc.nuts.NutsIllegalArgumentException;
 import net.thevpc.nuts.NutsMessage;
 import net.thevpc.nuts.NutsSession;

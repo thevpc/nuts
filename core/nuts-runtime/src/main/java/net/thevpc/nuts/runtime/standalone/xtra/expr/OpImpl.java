@@ -1,6 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.xtra.expr;
 
-import net.thevpc.nuts.NutsExpr;
+import net.thevpc.nuts.util.NutsExpr;
 
 public class OpImpl implements NutsExpr.Op {
     private final String name;

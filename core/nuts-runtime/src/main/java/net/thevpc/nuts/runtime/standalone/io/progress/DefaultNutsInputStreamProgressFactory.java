@@ -2,6 +2,8 @@ package net.thevpc.nuts.runtime.standalone.io.progress;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.util.CoreNutsConstants;
+import net.thevpc.nuts.util.NutsProgressFactory;
+import net.thevpc.nuts.util.NutsProgressMonitor;
 
 public class DefaultNutsInputStreamProgressFactory implements NutsProgressFactory {
 

@@ -1,6 +1,8 @@
 package net.thevpc.nuts.toolbox.ndb.nmysql.remote;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.elem.NutsElements;
+import net.thevpc.nuts.io.NutsPath;
 
 import java.util.HashMap;
 import java.util.Map;

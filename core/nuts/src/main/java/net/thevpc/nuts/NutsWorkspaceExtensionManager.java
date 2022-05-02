@@ -26,6 +26,7 @@
  */
 package net.thevpc.nuts;
 
+import net.thevpc.nuts.io.NutsServiceLoader;
 import net.thevpc.nuts.spi.NutsComponent;
 
 import java.util.List;

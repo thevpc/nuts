@@ -42,7 +42,9 @@ import javax.xml.transform.stream.StreamResult;
 
 import net.thevpc.nuts.*;
 
-import net.thevpc.nuts.NutsLogVerb;
+import net.thevpc.nuts.io.NutsIOException;
+import net.thevpc.nuts.util.NutsLoggerOp;
+import net.thevpc.nuts.util.NutsLoggerVerb;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -248,21 +250,21 @@ public class XmlUtils {
             @Override
             public void warning(SAXParseException exception) throws SAXException {
                 NutsLoggerOp.of(XmlUtils.class,session)
-                        .level(Level.FINEST).verb(NutsLogVerb.WARNING)
+                        .level(Level.FINEST).verb(NutsLoggerVerb.WARNING)
                         .log(NutsMessage.jstyle("{0}",exception));
             }
 
             @Override
             public void error(SAXParseException exception) throws SAXException {
                 NutsLoggerOp.of(XmlUtils.class,session)
-                        .level(Level.FINEST).verb(NutsLogVerb.WARNING)
+                        .level(Level.FINEST).verb(NutsLoggerVerb.WARNING)
                         .log(NutsMessage.jstyle("{0}",exception));
             }
 
             @Override
             public void fatalError(SAXParseException exception) throws SAXException {
                 NutsLoggerOp.of(XmlUtils.class,session)
-                        .level(Level.FINEST).verb(NutsLogVerb.WARNING)
+                        .level(Level.FINEST).verb(NutsLoggerVerb.WARNING)
                         .log(NutsMessage.jstyle("{0}",exception));
             }
         });

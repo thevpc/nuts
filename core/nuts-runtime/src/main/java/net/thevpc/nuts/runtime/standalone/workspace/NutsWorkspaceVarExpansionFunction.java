@@ -1,6 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.workspace;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.io.NutsPath;
 
 import java.util.function.Function;
 

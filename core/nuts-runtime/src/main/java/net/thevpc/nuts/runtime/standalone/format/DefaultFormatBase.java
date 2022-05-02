@@ -6,6 +6,9 @@
 package net.thevpc.nuts.runtime.standalone.format;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.cmdline.NutsCommandLine;
+import net.thevpc.nuts.io.*;
+import net.thevpc.nuts.text.NutsTexts;
 
 import java.io.File;
 import java.io.IOException;

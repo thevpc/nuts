@@ -1,6 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.log;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.util.NutsLoggerVerb;
 
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
@@ -8,13 +9,13 @@ import java.util.logging.LogRecord;
 public class NutsLogRecord extends LogRecord {
     private NutsSession session;
     private NutsMessage nmsg;
-    private NutsLogVerb verb;
+    private NutsLoggerVerb verb;
     /**
      * duration
      */
     private long time;
 
-    public NutsLogRecord(NutsSession session, Level level, NutsLogVerb verb, NutsMessage msg, long time,Throwable thrown) {
+    public NutsLogRecord(NutsSession session, Level level, NutsLoggerVerb verb, NutsMessage msg, long time, Throwable thrown) {
         super(level, msg.getMessage());
         this.nmsg = msg;
         this.verb = verb;
@@ -32,7 +33,7 @@ public class NutsLogRecord extends LogRecord {
         return time;
     }
 
-    public NutsLogVerb getVerb() {
+    public NutsLoggerVerb getVerb() {
         return verb;
     }
 

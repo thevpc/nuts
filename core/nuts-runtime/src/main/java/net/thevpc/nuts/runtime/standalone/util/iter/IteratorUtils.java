@@ -5,8 +5,8 @@
  */
 package net.thevpc.nuts.runtime.standalone.util.iter;
 
-import net.thevpc.nuts.NutsComparator;
-import net.thevpc.nuts.NutsIterator;
+import net.thevpc.nuts.util.NutsComparator;
+import net.thevpc.nuts.util.NutsIterator;
 import net.thevpc.nuts.NutsSession;
 
 import java.util.*;

@@ -1,7 +1,7 @@
 package net.thevpc.nuts.spi;
 
 import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.NutsTerminalCommand;
+import net.thevpc.nuts.text.NutsTerminalCommand;
 
 public abstract class NutsSystemTerminalBaseImpl implements NutsSystemTerminalBase{
 

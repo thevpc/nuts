@@ -5,6 +5,11 @@
  */
 package net.thevpc.nuts.core.test;
 
+import net.thevpc.nuts.cmdline.NutsArgument;
+import net.thevpc.nuts.cmdline.NutsCommandHistory;
+import net.thevpc.nuts.cmdline.NutsCommandLine;
+import net.thevpc.nuts.cmdline.NutsCommandLineFormat;
+import net.thevpc.nuts.concurrent.NutsLocks;
 import net.thevpc.nuts.core.test.utils.TestUtils;
 import net.thevpc.nuts.*;
 
@@ -12,9 +17,17 @@ import java.io.File;
 import java.io.InputStream;
 import java.util.regex.Pattern;
 
+import net.thevpc.nuts.elem.NutsElements;
+import net.thevpc.nuts.format.NutsObjectFormat;
+import net.thevpc.nuts.format.NutsTableFormat;
+import net.thevpc.nuts.format.NutsTreeFormat;
+import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.spi.NutsApplicationContexts;
 import net.thevpc.nuts.spi.NutsDependencySolver;
 import net.thevpc.nuts.spi.NutsTerminals;
+import net.thevpc.nuts.text.NutsText;
+import net.thevpc.nuts.text.NutsTexts;
+import net.thevpc.nuts.util.*;
 import org.junit.jupiter.api.*;
 
 /**

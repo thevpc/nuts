@@ -14,6 +14,8 @@ import java.util.regex.Pattern;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.xtra.glob.GlobUtils;
+import net.thevpc.nuts.util.NutsPredicates;
+import net.thevpc.nuts.util.NutsUtilStrings;
 
 /**
  *

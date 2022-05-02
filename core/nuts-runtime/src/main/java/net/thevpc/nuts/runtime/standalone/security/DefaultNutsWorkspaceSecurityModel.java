@@ -41,6 +41,10 @@ import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.user.DefaultNut
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.user.DefaultNutsUpdateUserCommand;
 import net.thevpc.nuts.runtime.standalone.xtra.digest.NutsDigestUtils;
 import net.thevpc.nuts.spi.NutsAuthenticationAgent;
+import net.thevpc.nuts.util.NutsLogger;
+import net.thevpc.nuts.util.NutsLoggerOp;
+import net.thevpc.nuts.util.NutsLoggerVerb;
+import net.thevpc.nuts.util.NutsUtilStrings;
 
 import javax.security.auth.Subject;
 import javax.security.auth.callback.*;
@@ -117,7 +121,7 @@ public class DefaultNutsWorkspaceSecurityModel {
         NutsUser adminSecurity = findUser(NutsConstants.Users.ADMIN, session);
         if (adminSecurity == null || !adminSecurity.hasCredentials()) {
             if (_LOG(session).isLoggable(Level.CONFIG)) {
-                _LOGOP(session).level(Level.CONFIG).verb(NutsLogVerb.WARNING)
+                _LOGOP(session).level(Level.CONFIG).verb(NutsLoggerVerb.WARNING)
                         .log(NutsMessage.jstyle("{0} user has no credentials. reset to default",NutsConstants.Users.ADMIN));
             }
             NutsUserConfig u = NutsWorkspaceConfigManagerExt.of(session.config()).getModel().getUser(NutsConstants.Users.ADMIN, session);

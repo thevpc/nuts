@@ -11,10 +11,12 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.io.NutsPath;
 import net.thevpc.nuts.runtime.standalone.repository.impl.NutsRepositoryFolderHelper;
 import net.thevpc.nuts.runtime.standalone.repository.impl.maven.util.MavenRepositoryFolderHelper;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
 import net.thevpc.nuts.spi.NutsRepositorySPI;
+import net.thevpc.nuts.text.NutsTexts;
 
 /**
  * @author thevpc

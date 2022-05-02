@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.text;
 
-import net.thevpc.nuts.NutsText;
-import net.thevpc.nuts.NutsTextWriteConfiguration;
+import net.thevpc.nuts.text.NutsText;
+import net.thevpc.nuts.text.NutsTextWriteConfiguration;
 
 public interface NutsTextNodeWriter {
     NutsTextWriteConfiguration getWriteConfiguration();

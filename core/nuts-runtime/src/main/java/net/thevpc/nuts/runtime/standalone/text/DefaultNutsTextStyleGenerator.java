@@ -1,13 +1,13 @@
 package net.thevpc.nuts.runtime.standalone.text;
 
-import net.thevpc.nuts.NutsTextStyle;
-import net.thevpc.nuts.NutsTextStyleGenerator;
+import net.thevpc.nuts.text.NutsTextStyle;
+import net.thevpc.nuts.text.NutsTextStyleGenerator;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.function.Function;
-import net.thevpc.nuts.NutsTextStyles;
+import net.thevpc.nuts.text.NutsTextStyles;
 
 public class DefaultNutsTextStyleGenerator implements NutsTextStyleGenerator {
     private boolean includeForeground;

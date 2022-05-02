@@ -27,6 +27,7 @@ package net.thevpc.nuts.boot;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.DefaultNutsWorkspaceBootOptionsBuilder;
+import net.thevpc.nuts.util.NutsLoggerVerb;
 
 import java.io.File;
 import java.io.StringReader;
@@ -46,14 +47,14 @@ final class PrivateNutsBootConfigLoader {
         File bootFile = new File(workspaceLocation, NutsConstants.Files.WORKSPACE_CONFIG_FILE_NAME);
         try {
             if (bootFile.isFile()) {
-                bLog.log(Level.CONFIG, NutsLogVerb.READ, NutsMessage.jstyle("load boot file : {0}", bootFile.getPath()));
+                bLog.log(Level.CONFIG, NutsLoggerVerb.READ, NutsMessage.jstyle("load boot file : {0}", bootFile.getPath()));
                 String json = PrivateNutsUtilIO.readStringFromFile(bootFile).trim();
                 if (json.length() > 0) {
                     return loadBootConfigJSON(json, bLog);
                 }
             }
             if (bLog.isLoggable(Level.FINEST)) {
-                bLog.log(Level.CONFIG, NutsLogVerb.FAIL, NutsMessage.jstyle("previous Workspace config not found at {0}", bootFile.getPath()));
+                bLog.log(Level.CONFIG, NutsLoggerVerb.FAIL, NutsMessage.jstyle("previous Workspace config not found at {0}", bootFile.getPath()));
             }
         } catch (Exception ex) {
             bLog.log(Level.CONFIG, NutsMessage.jstyle("unable to load nuts version file {0}.\n", bootFile), ex);
@@ -71,22 +72,22 @@ final class PrivateNutsBootConfigLoader {
 
         if (configVersion.isBlank()) {
             configVersion = Nuts.getVersion();
-            bLog.log(Level.FINEST, NutsLogVerb.FAIL, NutsMessage.jstyle("unable to detect config version. Fallback to {0}", configVersion));
+            bLog.log(Level.FINEST, NutsLoggerVerb.FAIL, NutsMessage.jstyle("unable to detect config version. Fallback to {0}", configVersion));
         }
         if (configVersion == null) {
         }
         int buildNumber = getApiVersionOrdinalNumber(configVersion);
         if (buildNumber <= 501) {
             //load nothing!
-            bLog.log(Level.CONFIG, NutsLogVerb.READ, NutsMessage.jstyle("detect config version {0} ( considered as 0.5.1, very old config, ignored)", configVersion));
+            bLog.log(Level.CONFIG, NutsLoggerVerb.READ, NutsMessage.jstyle("detect config version {0} ( considered as 0.5.1, very old config, ignored)", configVersion));
         } else if (buildNumber <= 505) {
-            bLog.log(Level.CONFIG, NutsLogVerb.READ, NutsMessage.jstyle("detect config version {0} ( compatible with 0.5.2 config file )", configVersion));
+            bLog.log(Level.CONFIG, NutsLoggerVerb.READ, NutsMessage.jstyle("detect config version {0} ( compatible with 0.5.2 config file )", configVersion));
             loadConfigVersion502(c, jsonObject, bLog);
         } else if (buildNumber <= 506) {
-            bLog.log(Level.CONFIG, NutsLogVerb.READ, NutsMessage.jstyle("detect config version {0} ( compatible with 0.5.6 config file )", configVersion));
+            bLog.log(Level.CONFIG, NutsLoggerVerb.READ, NutsMessage.jstyle("detect config version {0} ( compatible with 0.5.6 config file )", configVersion));
             loadConfigVersion506(c, jsonObject, bLog);
         } else {
-            bLog.log(Level.CONFIG, NutsLogVerb.READ, NutsMessage.jstyle("detect config version {0} ( compatible with 0.5.7 config file )", configVersion));
+            bLog.log(Level.CONFIG, NutsLoggerVerb.READ, NutsMessage.jstyle("detect config version {0} ( compatible with 0.5.7 config file )", configVersion));
             loadConfigVersion507(c, jsonObject, bLog);
         }
         return c;
@@ -114,7 +115,7 @@ final class PrivateNutsBootConfigLoader {
     @SuppressWarnings("unchecked")
     private static void loadConfigVersion507(NutsWorkspaceBootOptionsBuilder config, Map<String, Object> jsonObject,
                                              PrivateNutsBootLog bLog) {
-        bLog.log(Level.CONFIG, NutsLogVerb.INFO, NutsMessage.jstyle("config version compatibility : 0.5.7"));
+        bLog.log(Level.CONFIG, NutsLoggerVerb.INFO, NutsMessage.jstyle("config version compatibility : 0.5.7"));
         config.setUuid((String) jsonObject.get("uuid"));
         config.setName((String) jsonObject.get("name"));
         config.setWorkspace((String) jsonObject.get("workspace"));
@@ -194,7 +195,7 @@ final class PrivateNutsBootConfigLoader {
     @SuppressWarnings("unchecked")
     private static void loadConfigVersion506(NutsWorkspaceBootOptionsBuilder config, Map<String, Object> jsonObject,
                                              PrivateNutsBootLog bLog) {
-        bLog.log(Level.CONFIG, NutsLogVerb.INFO, NutsMessage.jstyle("config version compatibility : 0.5.6"));
+        bLog.log(Level.CONFIG, NutsLoggerVerb.INFO, NutsMessage.jstyle("config version compatibility : 0.5.6"));
         config.setUuid((String) jsonObject.get("uuid"));
         config.setName((String) jsonObject.get("name"));
         config.setWorkspace((String) jsonObject.get("workspace"));
@@ -228,7 +229,7 @@ final class PrivateNutsBootConfigLoader {
      */
     private static void loadConfigVersion502(NutsWorkspaceBootOptionsBuilder config, Map<String, Object> jsonObject,
                                              PrivateNutsBootLog bLog) {
-        bLog.log(Level.CONFIG, NutsLogVerb.INFO, NutsMessage.jstyle("config version compatibility : 0.5.2"));
+        bLog.log(Level.CONFIG, NutsLoggerVerb.INFO, NutsMessage.jstyle("config version compatibility : 0.5.2"));
         config.setUuid((String) jsonObject.get("uuid"));
         config.setName((String) jsonObject.get("name"));
         config.setWorkspace((String) jsonObject.get("workspace"));

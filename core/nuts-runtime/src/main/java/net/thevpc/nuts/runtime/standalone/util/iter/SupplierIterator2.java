@@ -1,6 +1,10 @@
 package net.thevpc.nuts.runtime.standalone.util.iter;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.elem.NutsElement;
+import net.thevpc.nuts.elem.NutsElements;
+import net.thevpc.nuts.util.NutsDescribables;
+import net.thevpc.nuts.util.NutsIterator;
 
 import java.util.Iterator;
 import java.util.function.Function;

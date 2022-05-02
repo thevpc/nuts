@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.repository.impl.maven.util;
 
-import net.thevpc.nuts.NutsElement;
-import net.thevpc.nuts.NutsElements;
+import net.thevpc.nuts.elem.NutsElement;
+import net.thevpc.nuts.elem.NutsElements;
 import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.runtime.standalone.repository.impl.maven.pom.PomId;
 import net.thevpc.nuts.runtime.standalone.repository.impl.maven.pom.PomIdFilter;

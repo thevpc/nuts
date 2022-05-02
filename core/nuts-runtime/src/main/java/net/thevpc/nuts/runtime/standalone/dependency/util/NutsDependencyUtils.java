@@ -25,6 +25,9 @@ package net.thevpc.nuts.runtime.standalone.dependency.util;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.util.iter.IteratorBuilder;
+import net.thevpc.nuts.util.NutsFunction;
+import net.thevpc.nuts.util.NutsIterator;
+import net.thevpc.nuts.util.NutsUtilStrings;
 
 import java.util.Iterator;
 import java.util.TreeSet;

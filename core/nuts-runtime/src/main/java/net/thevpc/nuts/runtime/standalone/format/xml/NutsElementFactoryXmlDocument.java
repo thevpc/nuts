@@ -24,13 +24,13 @@
 package net.thevpc.nuts.runtime.standalone.format.xml;
 
 import java.lang.reflect.Type;
-import net.thevpc.nuts.NutsElement;
-import net.thevpc.nuts.NutsElementFactoryContext;
+import net.thevpc.nuts.elem.NutsElement;
+import net.thevpc.nuts.elem.NutsElementFactoryContext;
 import net.thevpc.nuts.runtime.standalone.util.xml.XmlUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
-import net.thevpc.nuts.NutsElementMapper;
+import net.thevpc.nuts.elem.NutsElementMapper;
 
 /**
  *

@@ -4,6 +4,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.io.outputstream.OutputHelper;
 import net.thevpc.nuts.runtime.standalone.text.parser.AbstractNutsTextNodeParserDefaults;
 import net.thevpc.nuts.spi.NutsSystemTerminalBase;
+import net.thevpc.nuts.text.*;
 
 public class FormatOutputStreamSupport {
     private NutsTextNodeWriter nodeWriter;

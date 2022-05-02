@@ -1,6 +1,8 @@
 package net.thevpc.nuts.toolbox.ntomcat;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.cmdline.NutsArgument;
+import net.thevpc.nuts.cmdline.NutsCommandLine;
 import net.thevpc.nuts.toolbox.ntomcat.remote.RemoteTomcat;
 import net.thevpc.nuts.toolbox.ntomcat.local.LocalTomcat;
 import net.thevpc.nuts.toolbox.ntomcat.util.ApacheTomcatRepositoryModel;

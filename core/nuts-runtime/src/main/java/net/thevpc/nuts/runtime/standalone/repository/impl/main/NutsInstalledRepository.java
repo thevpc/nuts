@@ -1,6 +1,8 @@
 package net.thevpc.nuts.runtime.standalone.repository.impl.main;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.util.NutsIterator;
+import net.thevpc.nuts.util.NutsStream;
 
 public interface NutsInstalledRepository extends NutsRepository {
 

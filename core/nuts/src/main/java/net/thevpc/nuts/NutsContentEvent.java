@@ -26,6 +26,8 @@
  */
 package net.thevpc.nuts;
 
+import net.thevpc.nuts.io.NutsPath;
+
 /**
  * Event for {@link NutsRepositoryListener} methods.
  *

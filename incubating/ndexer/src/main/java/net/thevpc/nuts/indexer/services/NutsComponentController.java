@@ -1,5 +1,6 @@
 package net.thevpc.nuts.indexer.services;
 
+import net.thevpc.nuts.elem.NutsElements;
 import net.thevpc.nuts.indexer.*;
 import net.thevpc.nuts.*;
 import org.slf4j.Logger;

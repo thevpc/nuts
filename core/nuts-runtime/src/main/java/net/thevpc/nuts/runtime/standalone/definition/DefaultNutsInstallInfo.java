@@ -28,7 +28,7 @@ package net.thevpc.nuts.runtime.standalone.definition;
 import net.thevpc.nuts.NutsId;
 import net.thevpc.nuts.NutsInstallInformation;
 import net.thevpc.nuts.NutsInstallStatus;
-import net.thevpc.nuts.NutsPath;
+import net.thevpc.nuts.io.NutsPath;
 
 import java.time.Instant;
 import java.util.Objects;

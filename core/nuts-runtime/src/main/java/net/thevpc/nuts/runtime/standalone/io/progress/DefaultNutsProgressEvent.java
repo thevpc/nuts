@@ -25,7 +25,7 @@
 */
 package net.thevpc.nuts.runtime.standalone.io.progress;
 
-import net.thevpc.nuts.NutsProgressEvent;
+import net.thevpc.nuts.util.NutsProgressEvent;
 import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.NutsString;
 import net.thevpc.nuts.NutsWorkspace;

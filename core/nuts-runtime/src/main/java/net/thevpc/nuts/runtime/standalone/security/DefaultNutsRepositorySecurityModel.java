@@ -18,6 +18,7 @@ import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.user.DefaultNut
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.user.DefaultNutsUpdateUserCommand;
 import net.thevpc.nuts.runtime.standalone.repository.config.DefaultNutsRepoConfigManager;
 import net.thevpc.nuts.spi.NutsAuthenticationAgent;
+import net.thevpc.nuts.util.NutsUtilStrings;
 
 /**
  *

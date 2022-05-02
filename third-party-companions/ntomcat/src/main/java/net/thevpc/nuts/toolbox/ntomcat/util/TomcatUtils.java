@@ -1,6 +1,9 @@
 package net.thevpc.nuts.toolbox.ntomcat.util;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.io.NutsPath;
+import net.thevpc.nuts.io.NutsPs;
+import net.thevpc.nuts.util.NutsUtilStrings;
 
 import java.io.*;
 import java.nio.file.Files;

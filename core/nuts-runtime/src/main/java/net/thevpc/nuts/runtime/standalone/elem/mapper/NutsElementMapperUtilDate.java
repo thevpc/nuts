@@ -1,8 +1,8 @@
 package net.thevpc.nuts.runtime.standalone.elem.mapper;
 
-import net.thevpc.nuts.NutsElement;
-import net.thevpc.nuts.NutsElementFactoryContext;
-import net.thevpc.nuts.NutsElementMapper;
+import net.thevpc.nuts.elem.NutsElement;
+import net.thevpc.nuts.elem.NutsElementFactoryContext;
+import net.thevpc.nuts.elem.NutsElementMapper;
 
 import java.lang.reflect.Type;
 import java.time.Instant;

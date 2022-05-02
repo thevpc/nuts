@@ -1,8 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.text.parser;
 
 import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.NutsTextParser;
-import net.thevpc.nuts.runtime.standalone.text.parser.v1.DefaultNutsTextNodeParser;
+import net.thevpc.nuts.text.NutsTextParser;
 import net.thevpc.nuts.runtime.standalone.text.parser.v2.NTFParser2;
 
 public class AbstractNutsTextNodeParserDefaults {

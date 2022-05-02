@@ -28,6 +28,7 @@ package net.thevpc.nuts.boot;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.spi.NutsRepositoryLocation;
+import net.thevpc.nuts.util.NutsLoggerVerb;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.SAXParseException;
@@ -189,7 +190,7 @@ public final class PrivateNutsUtilMavenRepos {
             }
         }
         for (NutsRepositoryLocation r : repositories) {
-            bLog.log(Level.FINE, NutsLogVerb.CACHE, NutsMessage.jstyle("checking {0} from {1}", nutsId, r));
+            bLog.log(Level.FINE, NutsLoggerVerb.CACHE, NutsMessage.jstyle("checking {0} from {1}", nutsId, r));
 //                File file = toFile(r);
             if (includeDesc) {
                 String path = resolveMavenFullPath(r, nutsId, "pom");
@@ -198,19 +199,19 @@ public final class PrivateNutsUtilMavenRepos {
                     PrivateNutsUtilIO.copy(new URL(path), cachedPomFile, bLog);
                 } catch (Exception ex) {
                     errors.add(new PrivateNutsErrorInfo(nutsId, r.toString(), path, "unable to load descriptor", ex));
-                    bLog.log(Level.SEVERE, NutsLogVerb.FAIL, NutsMessage.jstyle("unable to load descriptor {0} from {1}.\n", nutsId, r));
+                    bLog.log(Level.SEVERE, NutsLoggerVerb.FAIL, NutsMessage.jstyle("unable to load descriptor {0} from {1}.\n", nutsId, r));
                     continue;
                 }
             }
             String path = resolveMavenFullPath(r, nutsId, "jar");
             try {
                 PrivateNutsUtilIO.copy(new URL(path), cachedJarFile, bLog);
-                bLog.log(Level.CONFIG, NutsLogVerb.CACHE, NutsMessage.jstyle("cache jar file {0}", cachedJarFile.getPath()));
+                bLog.log(Level.CONFIG, NutsLoggerVerb.CACHE, NutsMessage.jstyle("cache jar file {0}", cachedJarFile.getPath()));
                 errors.removeErrorsFor(nutsId);
                 return cachedJarFile;
             } catch (Exception ex) {
                 errors.add(new PrivateNutsErrorInfo(nutsId, r.toString(), path, "unable to load binaries", ex));
-                bLog.log(Level.SEVERE, NutsLogVerb.FAIL, NutsMessage.jstyle("unable to load binaries {0} from {1}.\n", nutsId, r));
+                bLog.log(Level.SEVERE, NutsLoggerVerb.FAIL, NutsMessage.jstyle("unable to load binaries {0} from {1}.\n", nutsId, r));
             }
         }
         return null;
@@ -453,7 +454,7 @@ public final class PrivateNutsUtilMavenRepos {
                 //ignore
             }
             if (is != null) {
-                bLog.log(Level.FINEST, NutsLogVerb.SUCCESS, NutsMessage.jstyle("parsing {0}", mavenMetadata));
+                bLog.log(Level.FINEST, NutsLoggerVerb.SUCCESS, NutsMessage.jstyle("parsing {0}", mavenMetadata));
                 Document doc = builder.parse(is);
                 Element c = doc.getDocumentElement();
                 for (int i = 0; i < c.getChildNodes().getLength(); i++) {
@@ -519,7 +520,7 @@ public final class PrivateNutsUtilMavenRepos {
                                             bestVersion = p;
                                             bestPath = "local location : " + jarPath;
                                             if (bLog != null) {
-                                                bLog.log(Level.FINEST, NutsLogVerb.SUCCESS, NutsMessage.jstyle("{0}#{1} found in {2} as {3}", zId, bestVersion, repoUrl2, bestPath));
+                                                bLog.log(Level.FINEST, NutsLoggerVerb.SUCCESS, NutsMessage.jstyle("{0}#{1} found in {2} as {3}", zId, bestVersion, repoUrl2, bestPath));
                                             }
                                             if (stopFirst) {
                                                 break;
@@ -553,7 +554,7 @@ public final class PrivateNutsUtilMavenRepos {
                             bestVersion = p;
                             bestPath = "remote file " + basePath;
                             if (bLog != null) {
-                                bLog.log(Level.FINEST, NutsLogVerb.SUCCESS, NutsMessage.jstyle("{0}#{1} found in {2} as {3}", zId, bestVersion, repoUrl2, bestPath));
+                                bLog.log(Level.FINEST, NutsLoggerVerb.SUCCESS, NutsMessage.jstyle("{0}#{1} found in {2} as {3}", zId, bestVersion, repoUrl2, bestPath));
                             }
                             if (stopFirst) {
                                 break;
@@ -570,7 +571,7 @@ public final class PrivateNutsUtilMavenRepos {
                             bestVersion = p;
                             bestPath = "remote file " + mavenMetadata;
                             if (bLog != null) {
-                                bLog.log(Level.FINEST, NutsLogVerb.SUCCESS, NutsMessage.jstyle("{0}#{1} found in {2} as {3}", zId, bestVersion, repoUrl2, bestPath));
+                                bLog.log(Level.FINEST, NutsLoggerVerb.SUCCESS, NutsMessage.jstyle("{0}#{1} found in {2} as {3}", zId, bestVersion, repoUrl2, bestPath));
                             }
                             if (stopFirst) {
                                 break;
@@ -593,13 +594,13 @@ public final class PrivateNutsUtilMavenRepos {
                                        PrivateNutsBootLog bLog, Collection<NutsRepositoryLocation> bootRepositories) {
         if (bLog.isLoggable(Level.FINEST)) {
             if (bootRepositories.isEmpty()) {
-                bLog.log(Level.FINEST, NutsLogVerb.START, NutsMessage.jstyle("search for {0} nuts there are no repositories to look into.", zId));
+                bLog.log(Level.FINEST, NutsLoggerVerb.START, NutsMessage.jstyle("search for {0} nuts there are no repositories to look into.", zId));
             } else if (bootRepositories.size() == 1) {
-                bLog.log(Level.FINEST, NutsLogVerb.START, NutsMessage.jstyle("search for {0} in: {1}", zId, bootRepositories.toArray()[0]));
+                bLog.log(Level.FINEST, NutsLoggerVerb.START, NutsMessage.jstyle("search for {0} in: {1}", zId, bootRepositories.toArray()[0]));
             } else {
-                bLog.log(Level.FINEST, NutsLogVerb.START, NutsMessage.jstyle("search for {0} in: ", zId));
+                bLog.log(Level.FINEST, NutsLoggerVerb.START, NutsMessage.jstyle("search for {0} in: ", zId));
                 for (NutsRepositoryLocation repoUrl : bootRepositories) {
-                    bLog.log(Level.FINEST, NutsLogVerb.START, NutsMessage.jstyle("    {0}", repoUrl));
+                    bLog.log(Level.FINEST, NutsLoggerVerb.START, NutsMessage.jstyle("    {0}", repoUrl));
                 }
             }
         }
@@ -623,7 +624,7 @@ public final class PrivateNutsUtilMavenRepos {
             return null;
         }
         NutsId iid = NutsId.of(zId.getGroupId(), zId.getArtifactId(), bestVersion).get();
-        bLog.log(Level.FINEST, NutsLogVerb.SUCCESS, NutsMessage.jstyle("resolve {0} from {1}", iid, bestPath));
+        bLog.log(Level.FINEST, NutsLoggerVerb.SUCCESS, NutsMessage.jstyle("resolve {0} from {1}", iid, bestPath));
         return iid;
     }
 
@@ -741,11 +742,11 @@ public final class PrivateNutsUtilMavenRepos {
             if (file.isFile()) {
                 ff = file;
             } else {
-                bLog.log(Level.CONFIG, NutsLogVerb.FAIL, NutsMessage.jstyle("locate {0}", file));
+                bLog.log(Level.CONFIG, NutsLoggerVerb.FAIL, NutsMessage.jstyle("locate {0}", file));
             }
         } else {
             File file = new File(repoFolder, path.replace('/', File.separatorChar));
-            bLog.log(Level.CONFIG, NutsLogVerb.FAIL, NutsMessage.jstyle("locate {0} ; repository is not a valid folder : {1}", file, repoFolder));
+            bLog.log(Level.CONFIG, NutsLoggerVerb.FAIL, NutsMessage.jstyle("locate {0} ; repository is not a valid folder : {1}", file, repoFolder));
         }
 
         if (ff != null) {
@@ -766,15 +767,15 @@ public final class PrivateNutsUtilMavenRepos {
                     }
                     if (to.isFile()) {
                         PrivateNutsUtilIO.copy(ff, to, bLog);
-                        bLog.log(Level.CONFIG, NutsLogVerb.CACHE, NutsMessage.jstyle("recover cached {0} file {0} to {1}", ext, ff, to));
+                        bLog.log(Level.CONFIG, NutsLoggerVerb.CACHE, NutsMessage.jstyle("recover cached {0} file {0} to {1}", ext, ff, to));
                     } else {
                         PrivateNutsUtilIO.copy(ff, to, bLog);
-                        bLog.log(Level.CONFIG, NutsLogVerb.CACHE, NutsMessage.jstyle("cache {0} file {0} to {1}", ext, ff, to));
+                        bLog.log(Level.CONFIG, NutsLoggerVerb.CACHE, NutsMessage.jstyle("cache {0} file {0} to {1}", ext, ff, to));
                     }
                     return to;
                 } catch (IOException ex) {
                     errorList.add(new PrivateNutsErrorInfo(nutsId, repository, ff.getPath(), "unable to cache", ex));
-                    bLog.log(Level.CONFIG, NutsLogVerb.FAIL, NutsMessage.jstyle("error caching file {0} to {1} : {2}", ff, to, ex.toString()));
+                    bLog.log(Level.CONFIG, NutsLoggerVerb.FAIL, NutsMessage.jstyle("error caching file {0} to {1} : {2}", ff, to, ex.toString()));
                     //not found
                 }
                 return ff;

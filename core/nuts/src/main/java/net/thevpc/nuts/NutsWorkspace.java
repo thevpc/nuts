@@ -25,6 +25,7 @@
  */
 package net.thevpc.nuts;
 
+import net.thevpc.nuts.io.NutsPath;
 import net.thevpc.nuts.spi.NutsComponent;
 
 /**

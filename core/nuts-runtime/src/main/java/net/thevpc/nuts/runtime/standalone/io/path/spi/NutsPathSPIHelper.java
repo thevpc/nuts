@@ -1,7 +1,14 @@
 package net.thevpc.nuts.runtime.standalone.io.path.spi;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.elem.NutsElement;
+import net.thevpc.nuts.elem.NutsElements;
+import net.thevpc.nuts.format.NutsTreeVisitResult;
+import net.thevpc.nuts.format.NutsTreeVisitor;
+import net.thevpc.nuts.io.NutsPath;
+import net.thevpc.nuts.io.NutsPathOption;
 import net.thevpc.nuts.runtime.standalone.util.iter.NutsIteratorBase;
+import net.thevpc.nuts.util.NutsStream;
 
 import java.util.Iterator;
 import java.util.Stack;
@@ -25,7 +32,7 @@ public class NutsPathSPIHelper {
         return NutsStream.of(it, session);
     }
 
-    public static void walkDfs(NutsSession session,NutsPath basePath, NutsTreeVisitor<NutsPath> visitor, int maxDepth, NutsPathOption... options) {
+    public static void walkDfs(NutsSession session, NutsPath basePath, NutsTreeVisitor<NutsPath> visitor, int maxDepth, NutsPathOption... options) {
         boolean noMax=maxDepth<=0 || maxDepth==Integer.MAX_VALUE;
 
         Stack<Data> stack=new Stack<>();

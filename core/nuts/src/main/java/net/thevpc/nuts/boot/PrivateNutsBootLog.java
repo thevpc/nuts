@@ -27,6 +27,10 @@
 package net.thevpc.nuts.boot;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.util.NutsLogConfig;
+import net.thevpc.nuts.util.NutsLogger;
+import net.thevpc.nuts.util.NutsLoggerOp;
+import net.thevpc.nuts.util.NutsLoggerVerb;
 
 import java.io.InputStream;
 import java.io.PrintStream;
@@ -61,19 +65,19 @@ public class PrivateNutsBootLog implements NutsLogger {
         this.bootTerminal = new NutsBootTerminal(in, out, err);
     }
 
-    public void log(Level lvl, NutsLogVerb logVerb, NutsMessage message) {
+    public void log(Level lvl, NutsLoggerVerb logVerb, NutsMessage message) {
         if (isLoggable(lvl)) {
             doLog(lvl, logVerb, message == null ? "" : message.toString());
         }
     }
 
     @Override
-    public void log(NutsSession session, Level level, NutsLogVerb verb, NutsMessage msg, Throwable thrown) {
+    public void log(NutsSession session, Level level, NutsLoggerVerb verb, NutsMessage msg, Throwable thrown) {
         log(level, msg, thrown);
     }
 
     @Override
-    public void log(NutsSession session, Level level, NutsLogVerb verb, Supplier<NutsMessage> msgSupplier, Supplier<Throwable> errorSupplier) {
+    public void log(NutsSession session, Level level, NutsLoggerVerb verb, Supplier<NutsMessage> msgSupplier, Supplier<Throwable> errorSupplier) {
         if (isLoggable(level)) {
             log(level, msgSupplier.get(), errorSupplier.get());
         }
@@ -91,12 +95,12 @@ public class PrivateNutsBootLog implements NutsLogger {
 
     public void log(Level lvl, NutsMessage message, Throwable err) {
         if (isLoggable(lvl)) {
-            doLog(lvl, NutsLogVerb.FAIL, message == null ? "" : message.toString());
+            doLog(lvl, NutsLoggerVerb.FAIL, message == null ? "" : message.toString());
             err.printStackTrace(bootTerminal.getErr());
         }
     }
 
-    private void doLog(Level lvl, NutsLogVerb logVerb, String s) {
+    private void doLog(Level lvl, NutsLoggerVerb logVerb, String s) {
         errln("%s %-7s %-7s : %s", DEFAULT_DATE_TIME_FORMATTER.format(Instant.now()), lvl, logVerb, s);
     }
 
@@ -153,7 +157,7 @@ public class PrivateNutsBootLog implements NutsLogger {
         private NutsSession session;
         private PrivateNutsBootLog logger;
         private Level level = Level.FINE;
-        private NutsLogVerb verb;
+        private NutsLoggerVerb verb;
         private NutsMessage msg;
         private long time;
         private Supplier<NutsMessage> msgSupplier;
@@ -174,7 +178,7 @@ public class PrivateNutsBootLog implements NutsLogger {
         }
 
         @Override
-        public NutsLoggerOp verb(NutsLogVerb verb) {
+        public NutsLoggerOp verb(NutsLoggerVerb verb) {
             this.verb = verb;
             return this;
         }

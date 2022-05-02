@@ -25,9 +25,10 @@ package net.thevpc.nuts.core.test;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.core.test.utils.*;
+import net.thevpc.nuts.elem.NutsElement;
+import net.thevpc.nuts.elem.NutsElements;
+import net.thevpc.nuts.text.NutsTexts;
 import org.junit.jupiter.api.*;
-
-import java.io.IOException;
 
 /**
  *

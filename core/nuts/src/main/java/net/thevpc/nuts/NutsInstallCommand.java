@@ -26,6 +26,9 @@
  */
 package net.thevpc.nuts;
 
+import net.thevpc.nuts.cmdline.NutsCommandLineConfigurable;
+import net.thevpc.nuts.util.NutsStream;
+
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;

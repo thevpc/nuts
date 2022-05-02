@@ -1,9 +1,17 @@
 package net.thevpc.nuts.runtime.standalone.executor.exec;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.cmdline.NutsCommandLine;
+import net.thevpc.nuts.concurrent.NutsScheduler;
+import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.runtime.standalone.app.cmdline.NutsCommandLineUtils;
 import net.thevpc.nuts.runtime.standalone.executor.AbstractSyncIProcessExecHelper;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
+import net.thevpc.nuts.text.NutsTerminalCommand;
+import net.thevpc.nuts.text.NutsTextStyle;
+import net.thevpc.nuts.text.NutsTexts;
+import net.thevpc.nuts.util.NutsLogger;
+import net.thevpc.nuts.util.NutsLoggerVerb;
 
 import java.io.File;
 import java.io.InputStream;
@@ -87,7 +95,7 @@ public class NutsExecHelper extends AbstractSyncIProcessExecHelper {
         NutsLogger _LL = NutsLogger.of(NutsWorkspaceUtils.class, session);
         NutsCommandLine commandOut = NutsCommandLine.of(pb.getCommand());
         if (_LL.isLoggable(Level.FINEST)) {
-            _LL.with().level(Level.FINE).verb(NutsLogVerb.START).log(
+            _LL.with().level(Level.FINE).verb(NutsLoggerVerb.START).log(
                     NutsMessage.jstyle("[exec] {0}",
                             commandOut
                     ));

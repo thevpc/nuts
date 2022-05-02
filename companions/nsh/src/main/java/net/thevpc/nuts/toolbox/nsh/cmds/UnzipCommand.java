@@ -26,6 +26,12 @@
 package net.thevpc.nuts.toolbox.nsh.cmds;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.cmdline.NutsArgument;
+import net.thevpc.nuts.cmdline.NutsCommandLine;
+import net.thevpc.nuts.io.NutsIOException;
+import net.thevpc.nuts.io.NutsUncompressVisitor;
+import net.thevpc.nuts.io.NutsPath;
+import net.thevpc.nuts.io.NutsUncompress;
 import net.thevpc.nuts.spi.NutsComponentScope;
 import net.thevpc.nuts.spi.NutsComponentScopeType;
 import net.thevpc.nuts.toolbox.nsh.SimpleJShellBuiltin;
@@ -120,7 +126,7 @@ public class UnzipCommand extends SimpleJShellBuiltin {
                 if (options.l) {
                     NutsUncompress.of(session)
                             .from(file)
-                            .visit(new NutsIOUncompressVisitor() {
+                            .visit(new NutsUncompressVisitor() {
                                 @Override
                                 public boolean visitFolder(String path) {
                                     return true;

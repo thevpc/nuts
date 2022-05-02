@@ -7,6 +7,8 @@ package net.thevpc.nuts.runtime.standalone.text.parser.v1;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.text.AbstractNutsTextNodeParser;
+import net.thevpc.nuts.text.NutsText;
+import net.thevpc.nuts.text.NutsTextVisitor;
 
 import java.util.Objects;
 import java.util.Stack;
@@ -27,17 +29,22 @@ public class DefaultNutsTextNodeParser extends AbstractNutsTextNodeParser {
         state.reset();
     }
 
-    public void write(char[] str) {
-        write(str, 0, str.length);
+    @Override
+    public void offer(String c) {
+        offer(c.toCharArray());
     }
 
-    public void write(char[] s, int offset, int len) {
+    public void offer(char[] str) {
+        offer(str, 0, str.length);
+    }
+
+    public void offer(char[] s, int offset, int len) {
         for (int i = offset; i < len; i++) {
-            write(s[i]);
+            offer(s[i]);
         }
     }
 
-    public void write(char s) {
+    public void offer(char s) {
         state().onNewChar(s);
     }
 
@@ -46,13 +53,12 @@ public class DefaultNutsTextNodeParser extends AbstractNutsTextNodeParser {
     }
 
 
-
     @Override
     public long parseIncremental(char[] buf, int off, int len, NutsTextVisitor visitor) {
         if (len == 0) {
             return 0;
         }
-        write(buf, off, len);
+        offer(buf, off, len);
         return state().consumeNodes(false, visitor);
     }
 
@@ -69,6 +75,17 @@ public class DefaultNutsTextNodeParser extends AbstractNutsTextNodeParser {
     @Override
     public String toString() {
         return "DefaultNutsTextNodeParser{" + state() + "}";
+    }
+
+    @Override
+    public NutsText read() {
+        return state().consumeNode(null);
+    }
+
+
+    @Override
+    public NutsText readFully() {
+        return state().consumeNodeGreedy(null);
     }
 
     public class State {
@@ -99,15 +116,24 @@ public class DefaultNutsTextNodeParser extends AbstractNutsTextNodeParser {
 
         private void onNewChar(char c) {
             ParserStep st = statusStack.peek();
-            boolean wasNewLine=false;
-            if(st instanceof RootParserStep){
-                wasNewLine=((RootParserStep) st).isEmpty();
+            boolean wasNewLine = false;
+            if (st instanceof RootParserStep) {
+                wasNewLine = ((RootParserStep) st).isEmpty();
             }
             st.consume(c, this, wasNewLine);
         }
 
         public ParserStep applyDrop(ParserStep me) {
             return _pop(me);
+        }
+
+        public NutsText consumeNodeGreedy(NutsTextVisitor visitor) {
+            NutsText n = consumeNode(visitor);
+            if (n != null) {
+                return n;
+            }
+            forceEnding();
+            return consumeNode(visitor);
         }
 
         public long consumeNodes(boolean greedy, NutsTextVisitor visitor) {
@@ -125,8 +151,9 @@ public class DefaultNutsTextNodeParser extends AbstractNutsTextNodeParser {
             return count;
         }
 
+
         public synchronized ParserStep applyPop(ParserStep me) {
-            if(statusStack.size()<2){
+            if (statusStack.size() < 2) {
                 System.err.println("problem");
             }
             ParserStep tt = _pop(me);
@@ -147,7 +174,7 @@ public class DefaultNutsTextNodeParser extends AbstractNutsTextNodeParser {
         }
 
         public void applyDropReplacePreParsedPlain(ParserStep me, String text, boolean exitOnBrace) {
-            applyDropReplace(me, new PlainParserStep(text, lineStart, false, session, state, null,true,exitOnBrace));
+            applyDropReplace(me, new PlainParserStep(text, lineStart, false, session, state, null, true, exitOnBrace));
         }
 
         public void applyDropReplace(ParserStep me, ParserStep r) {
@@ -156,20 +183,21 @@ public class DefaultNutsTextNodeParser extends AbstractNutsTextNodeParser {
             _push(r);
         }
 
-        private void _push(ParserStep r){
-            if(statusStack.isEmpty()){
+        private void _push(ParserStep r) {
+            if (statusStack.isEmpty()) {
                 System.err.println("problem");
-            }else if(statusStack.peek() instanceof PlainParserStep && r instanceof PlainParserStep){
+            } else if (statusStack.peek() instanceof PlainParserStep && r instanceof PlainParserStep) {
                 System.err.println("problem");
             }
             statusStack.push(r);
         }
+
         private ParserStep _pop(ParserStep me) {
-            if(statusStack.size()<2){
+            if (statusStack.size() < 2) {
                 System.err.println("problem");
             }
             ParserStep r = statusStack.peek();
-            if(!Objects.equals(r,me)){
+            if (!Objects.equals(r, me)) {
                 System.err.println("problem");
             }
             return statusStack.pop();
@@ -182,13 +210,12 @@ public class DefaultNutsTextNodeParser extends AbstractNutsTextNodeParser {
         public void applyPopReplay(ParserStep me, char rejected) {
             ParserStep tt = statusStack.peek();
             ParserStep p = applyPop(me);
-            boolean wasNewLine=
-                    (tt instanceof NewLineParserStep)
-                    ;
+            boolean wasNewLine =
+                    (tt instanceof NewLineParserStep);
             p.consume(rejected, this, wasNewLine);
         }
 
-        public void applyPush(String c, boolean spreadLines, boolean lineStart,boolean exitOnBrace) {
+        public void applyPush(String c, boolean spreadLines, boolean lineStart, boolean exitOnBrace) {
             if (c.length() > 0) {
                 applyPush(c.charAt(0), spreadLines, lineStart, exitOnBrace);
                 for (int i = 1; i < c.length(); i++) {
@@ -200,11 +227,11 @@ public class DefaultNutsTextNodeParser extends AbstractNutsTextNodeParser {
         public void applyPush(char c, boolean spreadLines, boolean lineStart, boolean exitOnBrace) {
             switch (c) {
                 case '`': {
-                    this.applyPush(new AntiQuote3ParserStep(c, spreadLines, getSession(),exitOnBrace));
+                    this.applyPush(new AntiQuote3ParserStep(c, spreadLines, getSession(), exitOnBrace));
                     break;
                 }
                 case '#': {
-                    this.applyPush(new StyledParserStep(c, lineStart, getSession(), state(),exitOnBrace));
+                    this.applyPush(new StyledParserStep(c, lineStart, getSession(), state(), exitOnBrace));
                     break;
                 }
                 case NutsConstants.Ntf.SILENT: {
@@ -222,14 +249,14 @@ public class DefaultNutsTextNodeParser extends AbstractNutsTextNodeParser {
                 default: {
                     State state = state();
 //                    state.setLineStart(lineStart);
-                    this.applyPush(new PlainParserStep(c, lineStart, getSession(), state, null,exitOnBrace));
+                    this.applyPush(new PlainParserStep(c, lineStart, getSession(), state, null, exitOnBrace));
                 }
             }
         }
 
         public boolean isIncomplete() {
             RootParserStep root = root();
-            if(root==null){
+            if (root == null) {
                 return false;
             }
             if (root.isEmpty()) {
@@ -248,7 +275,7 @@ public class DefaultNutsTextNodeParser extends AbstractNutsTextNodeParser {
         }
 
         private RootParserStep root() {
-            if(statusStack.isEmpty()){
+            if (statusStack.isEmpty()) {
                 return null;
             }
             return (RootParserStep) statusStack.get(0);
@@ -256,17 +283,17 @@ public class DefaultNutsTextNodeParser extends AbstractNutsTextNodeParser {
 
         public int size() {
             RootParserStep root = root();
-            return statusStack.size() + (root==null?0:root.size());
+            return statusStack.size() + (root == null ? 0 : root.size());
         }
 
         public boolean isEmpty() {
             RootParserStep root = root();
-            return statusStack.isEmpty() || root==null || root.isEmpty();
+            return statusStack.isEmpty() || root == null || root.isEmpty();
         }
 
         public NutsText consumeFDocNode() {
             RootParserStep root = root();
-            if(root==null){
+            if (root == null) {
                 return null;
             }
             ParserStep s = root.poll();
@@ -279,7 +306,7 @@ public class DefaultNutsTextNodeParser extends AbstractNutsTextNodeParser {
         public NutsText consumeNode(NutsTextVisitor visitor) {
 //            JOptionPane.showMessageDialog(null,"consumeNode "+this);
             RootParserStep root = root();
-            if(root==null){
+            if (root == null) {
                 return null;
             }
             ParserStep s = root.poll();
@@ -302,7 +329,7 @@ public class DefaultNutsTextNodeParser extends AbstractNutsTextNodeParser {
                     }
                 }
                 root = root();
-                s = root==null?null:root.poll();
+                s = root == null ? null : root.poll();
             }
             if (s == null) {
                 return null;

@@ -1,6 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.io.path;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.io.NutsPath;
 import net.thevpc.nuts.runtime.standalone.io.path.spi.FilePath;
 import net.thevpc.nuts.runtime.standalone.io.path.spi.URLPath;
 import net.thevpc.nuts.runtime.standalone.session.NutsSessionUtils;
@@ -23,7 +24,7 @@ public class DefaultNutsPaths implements NutsPaths {
     }
 
     @Override
-    public NutsPath createPath(String path,NutsSession session) {
+    public NutsPath createPath(String path, NutsSession session) {
         checkSession(session);
         return createPath(path, null,session);
     }

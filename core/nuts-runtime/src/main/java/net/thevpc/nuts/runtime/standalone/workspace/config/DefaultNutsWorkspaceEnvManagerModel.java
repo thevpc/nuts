@@ -24,12 +24,15 @@
 package net.thevpc.nuts.runtime.standalone.workspace.config;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.elem.NutsElement;
+import net.thevpc.nuts.elem.NutsElements;
 import net.thevpc.nuts.runtime.standalone.session.NutsSessionUtils;
 import net.thevpc.nuts.runtime.standalone.util.CorePlatformUtils;
 import net.thevpc.nuts.runtime.standalone.util.collections.DefaultObservableMap;
 import net.thevpc.nuts.runtime.standalone.util.collections.ObservableMap;
 import net.thevpc.nuts.runtime.standalone.app.gui.CoreNutsUtilGui;
 import net.thevpc.nuts.runtime.standalone.util.jclass.NutsJavaSdkUtils;
+import net.thevpc.nuts.util.NutsUtilStrings;
 
 import java.nio.file.Files;
 import java.nio.file.Path;

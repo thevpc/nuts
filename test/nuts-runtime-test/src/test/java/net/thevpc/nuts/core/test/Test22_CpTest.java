@@ -11,6 +11,8 @@ import net.thevpc.nuts.*;
 
 import java.io.InputStream;
 
+import net.thevpc.nuts.io.NutsCp;
+import net.thevpc.nuts.io.NutsPathOption;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import org.junit.jupiter.api.*;
 import net.thevpc.nuts.core.test.utils.*;

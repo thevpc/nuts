@@ -1,6 +1,8 @@
 package net.thevpc.nuts.toolbox.ncode;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.cmdline.NutsArgument;
+import net.thevpc.nuts.cmdline.NutsCommandLine;
 import net.thevpc.nuts.toolbox.ncode.bundles.strings.StringComparator;
 import net.thevpc.nuts.toolbox.ncode.bundles.strings.StringComparators;
 import net.thevpc.nuts.toolbox.ncode.filters.JavaSourceFilter;

@@ -27,9 +27,9 @@
 package net.thevpc.nuts.runtime.standalone.text.parser;
 
 import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.NutsTerminalCommand;
-import net.thevpc.nuts.NutsTextCommand;
-import net.thevpc.nuts.NutsTextType;
+import net.thevpc.nuts.text.NutsTerminalCommand;
+import net.thevpc.nuts.text.NutsTextCommand;
+import net.thevpc.nuts.text.NutsTextType;
 
 import java.util.Objects;
 

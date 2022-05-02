@@ -26,7 +26,7 @@
  */
 package net.thevpc.nuts.spi;
 
-import net.thevpc.nuts.NutsLogger;
+import net.thevpc.nuts.util.NutsLogger;
 import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.boot.NutsApiUtils;
 

@@ -1,6 +1,6 @@
 package net.thevpc.nuts.toolbox.nsh.jshell;
 
-import net.thevpc.nuts.NutsCommandAutoComplete;
+import net.thevpc.nuts.cmdline.NutsCommandAutoComplete;
 import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.NutsWorkspace;
 

@@ -26,8 +26,8 @@
 package net.thevpc.nuts.runtime.standalone.io.printstream;
 
 import java.io.PrintStream;
-import net.thevpc.nuts.NutsOutputStreamTransparentAdapter;
-import net.thevpc.nuts.NutsPrintStream;
+import net.thevpc.nuts.io.NutsOutputStreamTransparentAdapter;
+import net.thevpc.nuts.io.NutsPrintStream;
 import net.thevpc.nuts.runtime.standalone.text.ExtendedFormatAware;
 
 /**

@@ -1,15 +1,22 @@
 package net.thevpc.nuts.runtime.standalone.io.terminal;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.cmdline.NutsCommandAutoCompleteResolver;
+import net.thevpc.nuts.cmdline.NutsCommandHistory;
+import net.thevpc.nuts.io.NutsPrintStream;
+import net.thevpc.nuts.io.NutsSystemTerminal;
 import net.thevpc.nuts.runtime.standalone.io.progress.NutsProgressUtils;
 import net.thevpc.nuts.runtime.standalone.io.progress.CProgressBar;
 import net.thevpc.nuts.spi.NutsSupportLevelContext;
 import net.thevpc.nuts.spi.NutsSystemTerminalBase;
 import net.thevpc.nuts.spi.NutsSystemTerminalBaseImpl;
+import net.thevpc.nuts.text.NutsTerminalCommand;
+import net.thevpc.nuts.text.NutsTextStyles;
+import net.thevpc.nuts.text.NutsTexts;
 
 import java.io.InputStream;
 
-public abstract class AbstractSystemTerminalAdapter extends NutsSystemTerminalBaseImpl implements NutsSystemTerminal{
+public abstract class AbstractSystemTerminalAdapter extends NutsSystemTerminalBaseImpl implements NutsSystemTerminal {
 
     protected CProgressBar progressBar;
     private NutsWorkspace ws;

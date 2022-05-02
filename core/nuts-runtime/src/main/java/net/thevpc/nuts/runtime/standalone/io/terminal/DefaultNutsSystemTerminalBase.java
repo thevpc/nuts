@@ -1,10 +1,19 @@
 package net.thevpc.nuts.runtime.standalone.io.terminal;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.cmdline.NutsCommandAutoCompleteResolver;
+import net.thevpc.nuts.cmdline.NutsCommandHistory;
+import net.thevpc.nuts.io.NutsIOException;
+import net.thevpc.nuts.io.NutsPrintStream;
+import net.thevpc.nuts.io.NutsPrintStreams;
+import net.thevpc.nuts.io.NutsTerminalMode;
 import net.thevpc.nuts.runtime.standalone.io.printstream.NutsPrintStreamSystem;
 import net.thevpc.nuts.runtime.standalone.util.NutsCachedValue;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceExt;
 import net.thevpc.nuts.spi.*;
+import net.thevpc.nuts.text.NutsTerminalCommand;
+import net.thevpc.nuts.text.NutsTextStyles;
+import net.thevpc.nuts.util.NutsLogger;
 
 import java.io.IOException;
 import java.io.InputStream;

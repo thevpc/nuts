@@ -7,6 +7,9 @@ package net.thevpc.nuts.runtime.standalone.workspace.cmd.exec;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.boot.PrivateNutsUtilCollections;
+import net.thevpc.nuts.cmdline.NutsArgument;
+import net.thevpc.nuts.cmdline.NutsCommandLine;
+import net.thevpc.nuts.io.NutsPath;
 import net.thevpc.nuts.runtime.standalone.executor.system.ProcessExecHelper;
 
 import java.util.*;
@@ -63,7 +66,7 @@ public class DefaultNutsSystemExecutable extends AbstractNutsExecutableCommand {
         }
         return ProcessExecHelper.ofArgs(null,
                 execCommand.getCommand().toArray(new String[0]), e2,
-                execCommand.getDirectory()==null?null:NutsPath.of(execCommand.getDirectory(),session).toFile(),
+                execCommand.getDirectory()==null?null: NutsPath.of(execCommand.getDirectory(),session).toFile(),
                 session.getTerminal(),
                 execSession.getTerminal(), showCommand, true, execCommand.getSleepMillis(),
                 inheritSystemIO,

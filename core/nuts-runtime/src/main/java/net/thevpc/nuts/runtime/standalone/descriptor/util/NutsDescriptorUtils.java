@@ -8,6 +8,9 @@ import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.util.MapToFunction;
 import net.thevpc.nuts.runtime.standalone.util.collections.CoreArrayUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceExt;
+import net.thevpc.nuts.util.NutsLoggerOp;
+import net.thevpc.nuts.util.NutsLoggerVerb;
+import net.thevpc.nuts.util.NutsUtilStrings;
 
 import java.util.*;
 import java.util.function.Function;
@@ -111,7 +114,7 @@ public class NutsDescriptorUtils {
                     // some times the variable is defined later in the pom that uses this POM standard Dependencies
                     // so just log a warning, this is not an error but a very bad practice from the dependency maintainer!
                     NutsLoggerOp.of(NutsDescriptorUtils.class,session)
-                            .verb(NutsLogVerb.WARNING).level(Level.FINE)
+                            .verb(NutsLoggerVerb.WARNING).level(Level.FINE)
                             .log(NutsMessage.jstyle("{0} is using {1} which defines an unresolved variable. This is a potential bug.",
                                     effectiveDescriptor.getId(),
                                     dependency
@@ -438,12 +441,12 @@ public class NutsDescriptorUtils {
                 if (a.equals(d)) {
                     NutsLoggerOp.of(DefaultNutsDescriptorBuilder.class, session)
                             .level(Level.FINER)
-                            .verb(NutsLogVerb.WARNING)
+                            .verb(NutsLoggerVerb.WARNING)
                             .log(NutsMessage.cstyle("dependency %s is duplicated", d));
                 } else {
                     NutsLoggerOp.of(DefaultNutsDescriptorBuilder.class, session)
                             .level(Level.FINER)
-                            .verb(NutsLogVerb.WARNING)
+                            .verb(NutsLoggerVerb.WARNING)
                             .log(NutsMessage.cstyle("dependency %s is overridden by %s", a, d));
                 }
             }

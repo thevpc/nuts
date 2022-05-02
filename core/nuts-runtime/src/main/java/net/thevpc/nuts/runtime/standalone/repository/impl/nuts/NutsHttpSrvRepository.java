@@ -24,13 +24,17 @@
 package net.thevpc.nuts.runtime.standalone.repository.impl.nuts;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.elem.NutsElement;
+import net.thevpc.nuts.elem.NutsElements;
+import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.runtime.standalone.repository.util.NutsIdLocationUtils;
 import net.thevpc.nuts.runtime.standalone.session.NutsSessionUtils;
 import net.thevpc.nuts.runtime.standalone.util.iter.NutsIteratorBase;
 import net.thevpc.nuts.runtime.standalone.id.filter.NutsExprIdFilter;
 import net.thevpc.nuts.runtime.standalone.repository.impl.NutsCachedRepository;
 import net.thevpc.nuts.runtime.standalone.workspace.config.NutsRepositoryConfigManagerExt;
-import net.thevpc.nuts.NutsLogVerb;
+import net.thevpc.nuts.util.NutsLogger;
+import net.thevpc.nuts.util.NutsLoggerVerb;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreSecurityUtils;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 
@@ -42,6 +46,8 @@ import net.thevpc.nuts.runtime.standalone.util.filters.CoreFilterUtils;
 import net.thevpc.nuts.runtime.standalone.util.iter.IteratorBuilder;
 import net.thevpc.nuts.runtime.standalone.xtra.digest.NutsDigestUtils;
 import net.thevpc.nuts.spi.*;
+import net.thevpc.nuts.util.NutsIterator;
+import net.thevpc.nuts.util.NutsUtilStrings;
 
 public class NutsHttpSrvRepository extends NutsCachedRepository {
 
@@ -54,7 +60,7 @@ public class NutsHttpSrvRepository extends NutsCachedRepository {
         try {
             remoteId = getRemoteId(session);
         } catch (Exception ex) {
-            LOG.with().session(session).level(Level.WARNING).verb(NutsLogVerb.FAIL)
+            LOG.with().session(session).level(Level.WARNING).verb(NutsLoggerVerb.FAIL)
                     .log(NutsMessage.jstyle("unable to initialize Repository NutsId for repository {0}", options.getLocation()));
         }
     }
@@ -68,7 +74,7 @@ public class NutsHttpSrvRepository extends NutsCachedRepository {
             try {
                 remoteId = NutsId.of(httpGetString(getUrl("/version"),session)).get(session);
             } catch (Exception ex) {
-                LOG.with().session(session).level(Level.WARNING).verb(NutsLogVerb.FAIL)
+                LOG.with().session(session).level(Level.WARNING).verb(NutsLoggerVerb.FAIL)
                         .log(NutsMessage.jstyle("unable to resolve Repository NutsId for remote repository {0}", config().getLocation()));
             }
         }
@@ -215,13 +221,13 @@ public class NutsHttpSrvRepository extends NutsCachedRepository {
     }
 
     private String httpGetString(String url, NutsSession session) {
-        LOG.with().session(session).level(Level.FINEST).verb(NutsLogVerb.START)
+        LOG.with().session(session).level(Level.FINEST).verb(NutsLoggerVerb.START)
                 .log(NutsMessage.jstyle("get URL{0}", url));
         return CoreIOUtils.loadString(NutsPath.of(url,session).getInputStream(), true,session);
     }
 
     private InputStream httpUpload(String url, NutsSession session, NutsTransportParamPart... parts) {
-        LOG.with().session(session).level(Level.FINEST).verb(NutsLogVerb.START)
+        LOG.with().session(session).level(Level.FINEST).verb(NutsLoggerVerb.START)
                 .log(NutsMessage.jstyle("uploading URL {0}", url));
         return CoreIOUtils.getHttpClientFacade(session, url).upload(parts);
     }

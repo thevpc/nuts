@@ -26,15 +26,14 @@
 package net.thevpc.nuts.runtime.standalone.executor.pom;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.io.NutsIOException;
 import net.thevpc.nuts.runtime.standalone.executor.AbstractSyncIProcessExecHelper;
-import net.thevpc.nuts.runtime.standalone.executor.system.ProcessExecHelper;
 import net.thevpc.nuts.runtime.standalone.io.util.IProcessExecHelper;
 import net.thevpc.nuts.spi.NutsComponentScope;
 import net.thevpc.nuts.spi.NutsComponentScopeType;
 import net.thevpc.nuts.spi.NutsExecutorComponent;
 import net.thevpc.nuts.spi.NutsSupportLevelContext;
-
-import java.util.*;
+import net.thevpc.nuts.util.NutsUtilStrings;
 
 /**
  * Created by vpc on 1/7/17.

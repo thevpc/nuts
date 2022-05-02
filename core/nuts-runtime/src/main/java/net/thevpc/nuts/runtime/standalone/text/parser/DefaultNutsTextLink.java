@@ -28,8 +28,8 @@ package net.thevpc.nuts.runtime.standalone.text.parser;
 
 import net.thevpc.nuts.NutsBlankable;
 import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.NutsTextLink;
-import net.thevpc.nuts.NutsTextType;
+import net.thevpc.nuts.text.NutsTextLink;
+import net.thevpc.nuts.text.NutsTextType;
 
 import java.util.Objects;
 

@@ -1,10 +1,14 @@
 package net.thevpc.nuts.runtime.standalone.io.printstream;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.io.NutsPrintStream;
+import net.thevpc.nuts.io.NutsTerminalMode;
 import net.thevpc.nuts.runtime.standalone.text.parser.DefaultNutsTextPlain;
 import net.thevpc.nuts.runtime.standalone.text.parser.DefaultNutsTextStyled;
-import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceExt;
 import net.thevpc.nuts.spi.NutsSystemTerminalBase;
+import net.thevpc.nuts.text.NutsTerminalCommand;
+import net.thevpc.nuts.text.NutsTextStyle;
+import net.thevpc.nuts.text.NutsTextStyles;
 
 import java.io.OutputStream;
 import java.io.PrintStream;
@@ -34,7 +38,7 @@ public class NutsPrintStreamSystem extends NutsPrintStreamBase{
     public NutsPrintStreamSystem(OutputStream out, Boolean autoFlush, String encoding, Boolean ansi, NutsSession session, Bindings bindings,NutsSystemTerminalBase term) {
         super(true, resolveMode(out, ansi, session), session, bindings,term);
         //Do not use NutsTexts, not yet initialized!
-        setFormattedName(new DefaultNutsTextStyled(session,new DefaultNutsTextPlain(session,"<system-stream>" ),NutsTextStyles.of(NutsTextStyle.path())));
+        setFormattedName(new DefaultNutsTextStyled(session,new DefaultNutsTextPlain(session,"<system-stream>" ), NutsTextStyles.of(NutsTextStyle.path())));
         this.out = out;
         if (out instanceof PrintStream) {
             PrintStream ps = (PrintStream) out;

@@ -1,6 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.text;
 
-import net.thevpc.nuts.NutsTitleNumber;
+import net.thevpc.nuts.text.NutsTitleNumber;
 
 /**
  */

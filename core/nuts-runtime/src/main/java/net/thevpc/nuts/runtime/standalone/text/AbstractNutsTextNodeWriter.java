@@ -1,6 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.text;
 
-import net.thevpc.nuts.NutsTextWriteConfiguration;
+import net.thevpc.nuts.text.NutsTextWriteConfiguration;
 
 public abstract class AbstractNutsTextNodeWriter implements NutsTextNodeWriter {
     private NutsTextWriteConfiguration config;

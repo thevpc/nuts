@@ -24,12 +24,9 @@
 package net.thevpc.nuts.runtime.standalone.elem;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
+import net.thevpc.nuts.elem.NutsCustomElement;
+import net.thevpc.nuts.elem.NutsElementType;
 
-import java.text.SimpleDateFormat;
-import java.time.Instant;
-import java.time.format.DateTimeFormatter;
-import java.util.Date;
 import java.util.Objects;
 
 /**

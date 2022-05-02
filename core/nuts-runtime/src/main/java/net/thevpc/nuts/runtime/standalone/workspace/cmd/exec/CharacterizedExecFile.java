@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.exec;
 
 import net.thevpc.nuts.NutsDescriptor;
-import net.thevpc.nuts.NutsIOException;
+import net.thevpc.nuts.io.NutsIOException;
 import net.thevpc.nuts.NutsId;
 import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.runtime.standalone.io.util.NutsStreamOrPath;

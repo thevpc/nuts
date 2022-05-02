@@ -27,6 +27,9 @@ package net.thevpc.nuts.runtime.standalone.util.filters;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.util.Simplifiable;
+import net.thevpc.nuts.util.NutsPredicate;
+import net.thevpc.nuts.util.NutsPredicates;
+import net.thevpc.nuts.util.NutsUtilStrings;
 
 import java.lang.reflect.Array;
 import java.util.*;

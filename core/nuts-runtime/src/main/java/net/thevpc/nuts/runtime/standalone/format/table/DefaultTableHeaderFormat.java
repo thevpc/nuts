@@ -1,6 +1,10 @@
 package net.thevpc.nuts.runtime.standalone.format.table;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.format.NutsPositionType;
+import net.thevpc.nuts.format.NutsTableCellFormat;
+import net.thevpc.nuts.text.NutsTextStyle;
+import net.thevpc.nuts.text.NutsTexts;
 
 /**
  *

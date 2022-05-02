@@ -26,8 +26,8 @@
  */
 package net.thevpc.nuts.spi;
 
-import net.thevpc.nuts.NutsCommandLine;
-import net.thevpc.nuts.NutsPrintStream;
+import net.thevpc.nuts.cmdline.NutsCommandLine;
+import net.thevpc.nuts.io.NutsPrintStream;
 
 /**
  * Base Format Interface used to print "things".

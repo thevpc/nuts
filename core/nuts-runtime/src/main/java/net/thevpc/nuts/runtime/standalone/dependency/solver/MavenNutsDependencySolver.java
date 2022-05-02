@@ -1,6 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.dependency.solver;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.elem.NutsElements;
 import net.thevpc.nuts.runtime.standalone.util.filters.CoreFilterUtils;
 import net.thevpc.nuts.runtime.standalone.dependency.DefaultNutsDependencies;
 import net.thevpc.nuts.runtime.standalone.dependency.DefaultNutsDependencyTreeNode;
@@ -175,7 +176,7 @@ public class MavenNutsDependencySolver implements NutsDependencySolver {
                 nonMergedRootNodes.toArray(new NutsDependencyTreeNode[0]),
                 mergedDepsList,
                 mergedRootNodes.toArray(new NutsDependencyTreeNode[0]),
-                e->NutsElements.of(e).ofString("solver"),session
+                e-> NutsElements.of(e).ofString("solver"),session
         );
     }
 

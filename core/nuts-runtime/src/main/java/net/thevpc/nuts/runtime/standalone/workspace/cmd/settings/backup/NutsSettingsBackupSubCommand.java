@@ -6,7 +6,16 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.backup;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.cmdline.NutsArgument;
+import net.thevpc.nuts.cmdline.NutsCommandLine;
+import net.thevpc.nuts.elem.NutsElements;
+import net.thevpc.nuts.elem.NutsObjectElement;
+import net.thevpc.nuts.io.NutsCompress;
+import net.thevpc.nuts.io.NutsUncompressVisitor;
+import net.thevpc.nuts.io.NutsPath;
+import net.thevpc.nuts.io.NutsUncompress;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.AbstractNutsSettingsSubCommand;
+import net.thevpc.nuts.util.NutsUtilPlatforms;
 
 import java.io.File;
 import java.io.InputStream;
@@ -97,7 +106,7 @@ public class NutsSettingsBackupSubCommand extends AbstractNutsSettingsSubCommand
                 NutsElements elem = NutsElements.of(session);
                 NutsUncompress.of(session)
                         .from(file)
-                        .visit(new NutsIOUncompressVisitor() {
+                        .visit(new NutsUncompressVisitor() {
                             @Override
                             public boolean visitFolder(String path) {
                                 return true;

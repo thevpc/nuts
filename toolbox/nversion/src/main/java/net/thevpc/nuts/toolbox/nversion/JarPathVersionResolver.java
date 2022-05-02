@@ -33,6 +33,11 @@ import java.util.jar.Manifest;
 import java.util.stream.Collectors;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.elem.NutsElements;
+import net.thevpc.nuts.io.NutsIOException;
+import net.thevpc.nuts.io.NutsUncompressVisitor;
+import net.thevpc.nuts.io.NutsPath;
+import net.thevpc.nuts.io.NutsUncompress;
 
 /**
  * @author thevpc
@@ -49,7 +54,7 @@ public class JarPathVersionResolver implements PathVersionResolver {
         try (InputStream is = (NutsPath.of(filePath, session).toAbsolute()).getInputStream()) {
             NutsUncompress.of(session)
                     .from(is)
-                    .visit(new NutsIOUncompressVisitor() {
+                    .visit(new NutsUncompressVisitor() {
                         @Override
                         public boolean visitFolder(String path) {
                             return true;

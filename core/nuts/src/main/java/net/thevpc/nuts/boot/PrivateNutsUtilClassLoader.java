@@ -27,6 +27,7 @@
 package net.thevpc.nuts.boot;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.util.NutsLoggerVerb;
 
 import java.io.File;
 import java.io.IOException;
@@ -50,7 +51,7 @@ class PrivateNutsUtilClassLoader {
             if (!node.isIncludedInClasspath()) {
                 urls.add(node.getURL());
             } else {
-                bLog.log(Level.WARNING, NutsLogVerb.CACHE, NutsMessage.jstyle("url will not be loaded (already in classloader) : {0}", node.getURL()));
+                bLog.log(Level.WARNING, NutsLoggerVerb.CACHE, NutsMessage.jstyle("url will not be loaded (already in classloader) : {0}", node.getURL()));
             }
             for (NutsClassLoaderNode dependency : node.getDependencies()) {
                 fillBootDependencyNodes(dependency, urls, visitedIds, bLog);
@@ -160,11 +161,11 @@ class PrivateNutsUtilClassLoader {
                             URL incp = contextClassLoader.getResource(zname);
                             String clz = zname.substring(0, zname.length() - 6).replace('/', '.');
                             if (incp != null) {
-                                bLog.log(Level.FINEST, NutsLogVerb.SUCCESS, NutsMessage.jstyle("url {0} is already in classpath. checked class {1} successfully",
+                                bLog.log(Level.FINEST, NutsLoggerVerb.SUCCESS, NutsMessage.jstyle("url {0} is already in classpath. checked class {1} successfully",
                                         url, clz));
                                 return true;
                             } else {
-                                bLog.log(Level.FINEST, NutsLogVerb.INFO, NutsMessage.jstyle("url {0} is not in classpath. failed to check class {1}",
+                                bLog.log(Level.FINEST, NutsLoggerVerb.INFO, NutsMessage.jstyle("url {0} is not in classpath. failed to check class {1}",
                                         url, clz));
                                 return false;
                             }
@@ -184,7 +185,7 @@ class PrivateNutsUtilClassLoader {
         } catch (IOException e) {
             //
         }
-        bLog.log(Level.FINEST, NutsLogVerb.FAIL, NutsMessage.jstyle("url {0} is not in classpath. no class found to check", url));
+        bLog.log(Level.FINEST, NutsLoggerVerb.FAIL, NutsMessage.jstyle("url {0} is not in classpath. no class found to check", url));
         return false;
     }
 }

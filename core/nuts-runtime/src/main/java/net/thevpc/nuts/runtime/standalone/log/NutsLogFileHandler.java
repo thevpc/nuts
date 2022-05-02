@@ -1,6 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.log;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.util.NutsLogConfig;
 
 import java.io.File;
 import java.io.IOException;

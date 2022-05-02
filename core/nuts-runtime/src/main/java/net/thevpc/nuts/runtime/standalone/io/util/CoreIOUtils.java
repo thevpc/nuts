@@ -24,6 +24,7 @@
 package net.thevpc.nuts.runtime.standalone.io.util;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.runtime.standalone.io.terminal.NutsTerminalModeOp;
 import net.thevpc.nuts.runtime.standalone.repository.index.CacheDB;
 import net.thevpc.nuts.runtime.standalone.session.NutsSessionUtils;
@@ -40,6 +41,12 @@ import net.thevpc.nuts.runtime.standalone.xtra.download.DefaultHttpTransportComp
 import net.thevpc.nuts.runtime.standalone.xtra.nanodb.NanoDB;
 import net.thevpc.nuts.runtime.standalone.xtra.nanodb.NanoDBTableFile;
 import net.thevpc.nuts.spi.*;
+import net.thevpc.nuts.text.NutsTextStyle;
+import net.thevpc.nuts.text.NutsTexts;
+import net.thevpc.nuts.util.NutsLogger;
+import net.thevpc.nuts.util.NutsLoggerVerb;
+import net.thevpc.nuts.util.NutsStream;
+import net.thevpc.nuts.util.NutsUtilStrings;
 
 import java.io.*;
 import java.net.*;
@@ -430,13 +437,13 @@ public class CoreIOUtils {
                     try {
                         Files.delete(file);
                         if (LOG != null) {
-                            LOG.with().session(session).level(Level.FINEST).verb(NutsLogVerb.WARNING).log(
+                            LOG.with().session(session).level(Level.FINEST).verb(NutsLoggerVerb.WARNING).log(
                                     NutsMessage.jstyle("delete file {0}", file));
                         }
                         deleted[0]++;
                     } catch (IOException e) {
                         if (LOG != null) {
-                            LOG.with().session(session).level(Level.FINEST).verb(NutsLogVerb.WARNING)
+                            LOG.with().session(session).level(Level.FINEST).verb(NutsLoggerVerb.WARNING)
                                     .log(NutsMessage.jstyle("failed deleting file : {0}", file)
                                     );
                         }
@@ -455,13 +462,13 @@ public class CoreIOUtils {
                     try {
                         Files.delete(dir);
                         if (LOG != null) {
-                            LOG.with().session(session).level(Level.FINEST).verb(NutsLogVerb.WARNING)
+                            LOG.with().session(session).level(Level.FINEST).verb(NutsLoggerVerb.WARNING)
                                     .log(NutsMessage.jstyle("delete folder {0}", dir));
                         }
                         deleted[1]++;
                     } catch (IOException e) {
                         if (LOG != null) {
-                            LOG.with().session(session).level(Level.FINEST).verb(NutsLogVerb.WARNING)
+                            LOG.with().session(session).level(Level.FINEST).verb(NutsLoggerVerb.WARNING)
                                     .log(NutsMessage.jstyle("failed deleting folder: {0}", dir)
                                     );
                         }

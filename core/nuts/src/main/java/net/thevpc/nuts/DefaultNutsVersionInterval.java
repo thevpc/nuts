@@ -27,7 +27,7 @@ package net.thevpc.nuts;
 
 import java.io.Serializable;
 
-import net.thevpc.nuts.*;
+import net.thevpc.nuts.util.NutsUtilStrings;
 
 /**
  * Created by vpc on 2/1/17.

@@ -1,7 +1,10 @@
 package net.thevpc.nuts.runtime.standalone.repository.impl.maven.pom;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.io.NutsPath;
 import net.thevpc.nuts.runtime.standalone.util.jclass.JavaClassUtils;
+import net.thevpc.nuts.util.NutsLoggerOp;
+import net.thevpc.nuts.util.NutsLoggerVerb;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -61,7 +64,7 @@ public class PomIdResolver {
                     all.add(new PomXmlParser(session).parse(new URL(s2), session).getPomId());
                 } catch (Exception ex) {
                     NutsLoggerOp.of(PomXmlParser.class,session)
-                            .verb(NutsLogVerb.WARNING)
+                            .verb(NutsLoggerVerb.WARNING)
                             .level(Level.FINEST)
                             .log(NutsMessage.cstyle("failed to parse pom file %s : %s", s2, ex));
                 }
@@ -88,7 +91,7 @@ public class PomIdResolver {
             }
         } catch (IOException ex) {
             NutsLoggerOp.of(PomXmlParser.class,session)
-                    .verb(NutsLogVerb.WARNING)
+                    .verb(NutsLoggerVerb.WARNING)
                     .level(Level.FINEST)
                     .log(NutsMessage.cstyle("failed to parse class %s : %s", clazz.getName(), ex));
         }
@@ -109,7 +112,7 @@ public class PomIdResolver {
         PomId[] pomIds = resolvePomIds(clazz);
         if (pomIds.length > 1) {
             NutsLoggerOp.of(PomXmlParser.class,session)
-                    .verb(NutsLogVerb.WARNING)
+                    .verb(NutsLoggerVerb.WARNING)
                     .level(Level.FINEST)
                     .log(NutsMessage.cstyle(
                             "multiple ids found : %s for class %s and id %s",

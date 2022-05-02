@@ -3,6 +3,8 @@ package net.thevpc.nuts.runtime.standalone.util.jclass;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.util.CorePlatformUtils;
 import net.thevpc.nuts.runtime.standalone.xtra.execentries.DefaultNutsExecutionEntry;
+import net.thevpc.nuts.util.NutsLoggerOp;
+import net.thevpc.nuts.util.NutsRef;
 
 import java.io.BufferedInputStream;
 import java.io.InputStream;

@@ -5,7 +5,6 @@
  */
 package net.thevpc.nuts.core.test;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.FileVisitResult;
@@ -18,11 +17,8 @@ import java.util.Arrays;
 
 import net.thevpc.nuts.NutsExecutionEntries;
 import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.NutsUtilStrings;
-import net.thevpc.nuts.boot.PrivateNutsUtilStrings;
+import net.thevpc.nuts.util.NutsUtilStrings;
 import net.thevpc.nuts.core.test.utils.TestUtils;
-import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
-import net.thevpc.nuts.runtime.standalone.util.CoreTimeUtils;
 import net.thevpc.nuts.runtime.standalone.util.jclass.JavaClassByteCode;
 import org.junit.jupiter.api.*;
 

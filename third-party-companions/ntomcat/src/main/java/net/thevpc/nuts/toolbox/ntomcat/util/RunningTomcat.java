@@ -1,6 +1,10 @@
 package net.thevpc.nuts.toolbox.ntomcat.util;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.cmdline.NutsArgument;
+import net.thevpc.nuts.cmdline.NutsCommandLine;
+import net.thevpc.nuts.io.NutsPath;
+import net.thevpc.nuts.io.NutsPsInfo;
 
 import java.util.Objects;
 
@@ -10,7 +14,7 @@ public class RunningTomcat {
     private String base;
     private String argsLine;
 
-    public RunningTomcat(NutsProcessInfo r, NutsSession session) {
+    public RunningTomcat(NutsPsInfo r, NutsSession session) {
         pid =r.getPid();
         argsLine=r.getCommandLine();
         NutsCommandLine cmdline = NutsCommandLine.parseSystem(r.getCommandLine(),session)

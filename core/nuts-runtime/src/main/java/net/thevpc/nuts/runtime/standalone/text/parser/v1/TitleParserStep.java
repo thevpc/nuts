@@ -1,13 +1,13 @@
 package net.thevpc.nuts.runtime.standalone.text.parser.v1;
 
 import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.NutsTexts;
-import net.thevpc.nuts.NutsUtilStrings;
+import net.thevpc.nuts.text.NutsTexts;
+import net.thevpc.nuts.util.NutsUtilStrings;
 import net.thevpc.nuts.runtime.standalone.text.DefaultNutsTexts;
 
 import java.util.ArrayList;
 import java.util.List;
-import net.thevpc.nuts.NutsText;
+import net.thevpc.nuts.text.NutsText;
 
 public class TitleParserStep extends ParserStep {
 

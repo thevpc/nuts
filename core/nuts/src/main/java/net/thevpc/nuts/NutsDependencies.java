@@ -25,6 +25,9 @@
  */
 package net.thevpc.nuts;
 
+import net.thevpc.nuts.util.NutsIterable;
+import net.thevpc.nuts.util.NutsStream;
+
 /**
  * Package dependencies representation
  *

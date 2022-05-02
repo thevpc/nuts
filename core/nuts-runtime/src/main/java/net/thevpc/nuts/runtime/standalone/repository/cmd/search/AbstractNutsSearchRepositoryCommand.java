@@ -6,8 +6,10 @@
 package net.thevpc.nuts.runtime.standalone.repository.cmd.search;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.cmdline.NutsCommandLine;
 import net.thevpc.nuts.runtime.standalone.repository.cmd.NutsRepositoryCommandBase;
 import net.thevpc.nuts.spi.NutsSearchRepositoryCommand;
+import net.thevpc.nuts.util.NutsIterator;
 
 /**
  *

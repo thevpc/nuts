@@ -6,6 +6,7 @@
 package net.thevpc.nuts.runtime.standalone.xtra.cp;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.runtime.standalone.io.progress.DefaultNutsProgressEvent;
 import net.thevpc.nuts.runtime.standalone.io.progress.NutsProgressUtils;
 import net.thevpc.nuts.runtime.standalone.io.progress.SingletonNutsInputStreamProgressFactory;
@@ -16,6 +17,9 @@ import net.thevpc.nuts.runtime.standalone.io.util.NutsStreamOrPath;
 import net.thevpc.nuts.runtime.standalone.session.NutsSessionUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
 import net.thevpc.nuts.spi.NutsSupportLevelContext;
+import net.thevpc.nuts.text.NutsText;
+import net.thevpc.nuts.text.NutsTexts;
+import net.thevpc.nuts.util.*;
 
 import java.io.*;
 import java.net.SocketException;
@@ -33,7 +37,7 @@ public class DefaultNutsCp implements NutsCp {
 
     private final NutsWorkspace ws;
     private NutsLogger LOG;
-    private NutsIOCopyValidator checker;
+    private NutsCpValidator checker;
     private boolean skipRoot = false;
     private int maxRepeatCount=3;
     private NutsStreamOrPath source;
@@ -285,12 +289,12 @@ public class DefaultNutsCp implements NutsCp {
     }
 
     @Override
-    public NutsIOCopyValidator getValidator() {
+    public NutsCpValidator getValidator() {
         return checker;
     }
 
     @Override
-    public DefaultNutsCp setValidator(NutsIOCopyValidator checker) {
+    public DefaultNutsCp setValidator(NutsCpValidator checker) {
         this.checker = checker;
         return this;
     }
@@ -689,7 +693,7 @@ public class DefaultNutsCp implements NutsCp {
             try{
                 NutsLoggerOp lop = _LOGOP(session);
                 if (i>1 && lop.isLoggable(Level.FINEST)) {
-                    lop.level(Level.FINEST).verb(NutsLogVerb.START).log(NutsMessage.jstyle("repeat download #{0} {1}",
+                    lop.level(Level.FINEST).verb(NutsLoggerVerb.START).log(NutsMessage.jstyle("repeat download #{0} {1}",
                             i,
                             source));
                 }
@@ -755,7 +759,7 @@ public class DefaultNutsCp implements NutsCp {
         }
         NutsLoggerOp lop = _LOGOP(session);
         if (lop.isLoggable(Level.FINEST)) {
-            lop.level(Level.FINEST).verb(NutsLogVerb.START).log(NutsMessage.jstyle("{0} {1} to {2}",
+            lop.level(Level.FINEST).verb(NutsLoggerVerb.START).log(NutsMessage.jstyle("{0} {1} to {2}",
                     m,
                     loggedSrc,
                     loggedTarget));
@@ -847,7 +851,7 @@ public class DefaultNutsCp implements NutsCp {
                 }
             }
         } catch (IOException ex) {
-            lop.level(Level.CONFIG).verb(NutsLogVerb.FAIL)
+            lop.level(Level.CONFIG).verb(NutsLoggerVerb.FAIL)
                     .log(NutsMessage.jstyle("error copying {0} to {1} : {2}", _source.getValue(),
                             target.getValue(), ex));
             throw new NutsIOException(session, ex);
@@ -858,10 +862,10 @@ public class DefaultNutsCp implements NutsCp {
         if (checker != null) {
             try (InputStream in = Files.newInputStream(temp)) {
                 checker.validate(in);
-            } catch (NutsIOCopyValidationException ex) {
+            } catch (NutsCpValidatorException ex) {
                 throw ex;
             } catch (Exception ex) {
-                throw new NutsIOCopyValidationException(session, NutsMessage.cstyle("validate file %s failed", temp), ex);
+                throw new NutsCpValidatorException(session, NutsMessage.cstyle("validate file %s failed", temp), ex);
             }
         }
     }
@@ -870,10 +874,10 @@ public class DefaultNutsCp implements NutsCp {
         if (checker != null) {
             try (InputStream in = new ByteArrayInputStream(temp)) {
                 checker.validate(in);
-            } catch (NutsIOCopyValidationException ex) {
+            } catch (NutsCpValidatorException ex) {
                 throw ex;
             } catch (Exception ex) {
-                throw new NutsIOCopyValidationException(session, NutsMessage.cstyle("validate file failed"), ex);
+                throw new NutsCpValidatorException(session, NutsMessage.cstyle("validate file failed"), ex);
             }
         }
     }

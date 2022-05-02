@@ -1,6 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.util;
 
-import net.thevpc.nuts.NutsArgument;
+import net.thevpc.nuts.cmdline.NutsArgument;
 import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.StringTokenizerUtils;
 

@@ -25,8 +25,8 @@
 */
 package net.thevpc.nuts.runtime.standalone.util.iter;
 
-import net.thevpc.nuts.NutsElement;
-import net.thevpc.nuts.NutsDescribables;
+import net.thevpc.nuts.elem.NutsElement;
+import net.thevpc.nuts.util.NutsDescribables;
 import net.thevpc.nuts.NutsSession;
 
 import java.util.Iterator;

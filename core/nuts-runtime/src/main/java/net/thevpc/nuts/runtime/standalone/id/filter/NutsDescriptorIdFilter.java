@@ -12,7 +12,8 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.util.filters.CoreFilterUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.repository.impl.maven.util.MavenRepositoryFolderHelper;
-import net.thevpc.nuts.NutsLogVerb;
+import net.thevpc.nuts.util.NutsLogger;
+import net.thevpc.nuts.util.NutsLoggerVerb;
 import net.thevpc.nuts.runtime.standalone.util.CoreNutsUtils;
 import net.thevpc.nuts.runtime.standalone.util.Simplifiable;
 
@@ -41,7 +42,7 @@ public class NutsDescriptorIdFilter extends AbstractIdFilter implements NutsIdFi
             return true;
         }
         if(LOG==null){
-            LOG=NutsLogger.of(MavenRepositoryFolderHelper.class,session);
+            LOG= NutsLogger.of(MavenRepositoryFolderHelper.class,session);
         }
         NutsDescriptor descriptor = null;
         try {
@@ -62,7 +63,7 @@ public class NutsDescriptorIdFilter extends AbstractIdFilter implements NutsIdFi
         } catch (Exception ex) {
             //suppose we cannot retrieve descriptor
             if (LOG.isLoggable(Level.FINER)) {
-                LOG.with().session(session).level(Level.FINER).verb(NutsLogVerb.FAIL)
+                LOG.with().session(session).level(Level.FINER).verb(NutsLoggerVerb.FAIL)
                         .log(
                                 NutsMessage.jstyle("unable to fetch descriptor for {0} : {1}",
                         id,ex)

@@ -24,6 +24,9 @@
 package net.thevpc.nuts;
 
 import net.thevpc.nuts.boot.NutsApiUtils;
+import net.thevpc.nuts.io.NutsSessionTerminal;
+import net.thevpc.nuts.util.NutsLogger;
+import net.thevpc.nuts.util.NutsLoggerVerb;
 
 import java.io.PrintStream;
 import java.lang.reflect.Constructor;
@@ -219,7 +222,7 @@ public final class NutsApplications {
     public static void runApplication(NutsApplication applicationInstance, NutsApplicationContext applicationContext) {
         NutsSession session = applicationContext.getSession();
         boolean inherited = session.boot().getBootOptions().getInherited().orElse(false);
-        NutsLogger.of(NutsApplications.class, session).with().level(Level.FINE).verb(NutsLogVerb.START)
+        NutsLogger.of(NutsApplications.class, session).with().level(Level.FINE).verb(NutsLoggerVerb.START)
                 .log(
                         NutsMessage.jstyle(
                                 "running application {0}: {1} {2}", inherited ? "(inherited)" : "",

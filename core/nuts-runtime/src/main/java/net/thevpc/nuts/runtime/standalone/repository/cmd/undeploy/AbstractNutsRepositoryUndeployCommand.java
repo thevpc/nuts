@@ -5,7 +5,7 @@
  */
 package net.thevpc.nuts.runtime.standalone.repository.cmd.undeploy;
 
-import net.thevpc.nuts.NutsCommandLine;
+import net.thevpc.nuts.cmdline.NutsCommandLine;
 import net.thevpc.nuts.NutsId;
 import net.thevpc.nuts.NutsRepository;
 import net.thevpc.nuts.runtime.standalone.repository.cmd.NutsRepositoryCommandBase;

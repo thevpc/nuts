@@ -24,12 +24,17 @@
 package net.thevpc.nuts.runtime.standalone.executor.system;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.DefaultNutsArgument;
+import net.thevpc.nuts.cmdline.DefaultNutsArgument;
+import net.thevpc.nuts.cmdline.NutsCommandLine;
+import net.thevpc.nuts.cmdline.NutsCommandLineFormatStrategy;
+import net.thevpc.nuts.io.NutsPath;
 import net.thevpc.nuts.runtime.standalone.app.cmdline.NutsCommandLineShellOptions;
 import net.thevpc.nuts.runtime.standalone.io.util.MultiPipeThread;
 import net.thevpc.nuts.runtime.standalone.io.util.NonBlockingInputStreamAdapter;
 import net.thevpc.nuts.runtime.standalone.shell.NutsShellHelper;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
+import net.thevpc.nuts.text.NutsTextStyle;
+import net.thevpc.nuts.text.NutsTexts;
 
 import java.io.*;
 import java.lang.reflect.Field;

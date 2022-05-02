@@ -3,7 +3,7 @@ package net.thevpc.nuts.runtime.standalone.app.gui;
 import net.thevpc.nuts.Nuts;
 import net.thevpc.nuts.NutsMessage;
 import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.NutsTexts;
+import net.thevpc.nuts.text.NutsTexts;
 
 import javax.swing.*;
 

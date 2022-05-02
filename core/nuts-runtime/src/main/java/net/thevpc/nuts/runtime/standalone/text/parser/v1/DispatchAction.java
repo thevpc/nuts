@@ -1,6 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.text.parser.v1;
 
-import net.thevpc.nuts.NutsText;
+import net.thevpc.nuts.text.NutsText;
 
 public class DispatchAction extends ParserStep {
     private boolean spreadLines;

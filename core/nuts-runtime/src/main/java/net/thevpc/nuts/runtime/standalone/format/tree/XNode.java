@@ -30,6 +30,11 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.elem.NutsArrayElement;
+import net.thevpc.nuts.elem.NutsElementEntry;
+import net.thevpc.nuts.elem.NutsElements;
+import net.thevpc.nuts.elem.NutsObjectElement;
+import net.thevpc.nuts.text.NutsTexts;
 
 /**
  *

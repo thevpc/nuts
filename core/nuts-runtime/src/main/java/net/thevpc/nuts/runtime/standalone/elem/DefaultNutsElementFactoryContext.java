@@ -29,7 +29,9 @@ import java.lang.reflect.Type;
 import java.util.*;
 import java.util.function.Predicate;
 
-import net.thevpc.nuts.NutsElements;
+import net.thevpc.nuts.elem.NutsElement;
+import net.thevpc.nuts.elem.NutsElementFactoryContext;
+import net.thevpc.nuts.elem.NutsElements;
 
 /**
  * @author thevpc

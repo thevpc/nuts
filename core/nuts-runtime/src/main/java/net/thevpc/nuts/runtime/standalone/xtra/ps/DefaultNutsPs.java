@@ -1,6 +1,9 @@
 package net.thevpc.nuts.runtime.standalone.xtra.ps;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.elem.NutsElements;
+import net.thevpc.nuts.io.NutsPsInfo;
+import net.thevpc.nuts.io.NutsPs;
 import net.thevpc.nuts.runtime.standalone.session.NutsSessionUtils;
 import net.thevpc.nuts.runtime.standalone.util.iter.IteratorBuilder;
 
@@ -11,6 +14,10 @@ import net.thevpc.nuts.runtime.standalone.stream.NutsEmptyStream;
 import net.thevpc.nuts.runtime.standalone.stream.NutsIteratorStream;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
 import net.thevpc.nuts.spi.NutsSupportLevelContext;
+import net.thevpc.nuts.util.NutsFunction;
+import net.thevpc.nuts.util.NutsIterator;
+import net.thevpc.nuts.util.NutsStream;
+import net.thevpc.nuts.util.NutsUtilStrings;
 
 public class DefaultNutsPs implements NutsPs {
 
@@ -136,7 +143,7 @@ public class DefaultNutsPs implements NutsPs {
     }
 
     @Override
-    public NutsStream<NutsProcessInfo> getResultList() {
+    public NutsStream<NutsPsInfo> getResultList() {
         checkSession();
         String processType = NutsUtilStrings.trim(getType());
         if (processType.toLowerCase().startsWith("java#")) {
@@ -151,9 +158,9 @@ public class DefaultNutsPs implements NutsPs {
         }
     }
 
-    private NutsStream<NutsProcessInfo> getResultListJava(String version) {
+    private NutsStream<NutsPsInfo> getResultListJava(String version) {
         checkSession();
-        NutsIterator<NutsProcessInfo> it = IteratorBuilder.ofSupplier(() -> {
+        NutsIterator<NutsPsInfo> it = IteratorBuilder.ofSupplier(() -> {
             String cmd = "jps";
             NutsExecCommand b = null;
             boolean mainArgs = true;
@@ -176,7 +183,7 @@ public class DefaultNutsPs implements NutsPs {
                 return Arrays.asList(split).iterator();
             }
             return IteratorBuilder.emptyIterator();
-        },e->NutsElements.of(e).ofString("jps"), session).map(
+        },e-> NutsElements.of(e).ofString("jps"), session).map(
                 NutsFunction.of(
                 line -> {
             int s1 = line.indexOf(' ');
@@ -184,7 +191,7 @@ public class DefaultNutsPs implements NutsPs {
             String pid = line.substring(0, s1).trim();
             String cls = line.substring(s1 + 1, s2 < 0 ? line.length() : s2).trim();
             String args = s2 >= 0 ? line.substring(s2 + 1).trim() : "";
-            return (NutsProcessInfo) new DefaultNutsProcessInfo(
+            return (NutsPsInfo) new DefaultNutsPsInfo(
                     pid, cls, null, args
             );
         },"processInfo")).build();

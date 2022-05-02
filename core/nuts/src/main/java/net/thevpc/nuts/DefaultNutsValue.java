@@ -1,5 +1,8 @@
 package net.thevpc.nuts;
 
+import net.thevpc.nuts.elem.NutsElementType;
+import net.thevpc.nuts.util.NutsUtilStrings;
+
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.text.SimpleDateFormat;

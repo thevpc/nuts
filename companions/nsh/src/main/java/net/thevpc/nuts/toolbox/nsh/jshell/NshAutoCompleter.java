@@ -1,6 +1,10 @@
 package net.thevpc.nuts.toolbox.nsh.jshell;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.cmdline.DefaultNutsArgumentCandidate;
+import net.thevpc.nuts.cmdline.NutsArgumentCandidate;
+import net.thevpc.nuts.cmdline.NutsCommandAutoCompleteResolver;
+import net.thevpc.nuts.cmdline.NutsCommandLine;
 
 import java.util.ArrayList;
 import java.util.Arrays;

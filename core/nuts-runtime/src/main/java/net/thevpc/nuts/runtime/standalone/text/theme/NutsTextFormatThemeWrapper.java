@@ -1,12 +1,12 @@
 package net.thevpc.nuts.runtime.standalone.text.theme;
 
-import net.thevpc.nuts.NutsTextFormatTheme;
-import net.thevpc.nuts.NutsTextStyle;
+import net.thevpc.nuts.text.NutsTextFormatTheme;
+import net.thevpc.nuts.text.NutsTextStyle;
 
 import java.util.ArrayList;
 import java.util.List;
 import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.NutsTextStyles;
+import net.thevpc.nuts.text.NutsTextStyles;
 
 public class NutsTextFormatThemeWrapper implements NutsTextFormatTheme {
 

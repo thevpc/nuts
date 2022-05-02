@@ -27,7 +27,7 @@ package net.thevpc.nuts.spi;
 
 import net.thevpc.nuts.NutsDescriptor;
 import net.thevpc.nuts.NutsId;
-import net.thevpc.nuts.NutsPath;
+import net.thevpc.nuts.io.NutsPath;
 import net.thevpc.nuts.NutsSession;
 
 import java.io.File;

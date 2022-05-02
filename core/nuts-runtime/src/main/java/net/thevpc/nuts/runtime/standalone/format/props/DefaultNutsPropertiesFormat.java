@@ -3,12 +3,23 @@ package net.thevpc.nuts.runtime.standalone.format.props;
 import java.util.*;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.cmdline.NutsArgument;
+import net.thevpc.nuts.cmdline.NutsCommandLine;
+import net.thevpc.nuts.elem.NutsArrayElement;
+import net.thevpc.nuts.elem.NutsElementEntry;
+import net.thevpc.nuts.elem.NutsElements;
+import net.thevpc.nuts.elem.NutsObjectElement;
+import net.thevpc.nuts.format.NutsPositionType;
+import net.thevpc.nuts.io.NutsPrintStream;
 import net.thevpc.nuts.runtime.standalone.format.DefaultFormatBase;
 import net.thevpc.nuts.runtime.standalone.format.ObjectOutputFormatWriterHelper;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.text.util.NutsTextUtils;
 import net.thevpc.nuts.spi.NutsSupportLevelContext;
+import net.thevpc.nuts.text.NutsTextStyle;
+import net.thevpc.nuts.text.NutsTexts;
+import net.thevpc.nuts.util.NutsUtilStrings;
 
 public class DefaultNutsPropertiesFormat extends DefaultFormatBase<NutsPropertiesFormat> implements NutsPropertiesFormat {
 
@@ -216,7 +227,7 @@ public class DefaultNutsPropertiesFormat extends DefaultFormatBase<NutsPropertie
         NutsString formattedKey = compact ? key
                 : txt.builder().append(key).append(CoreStringUtils.fillString(' ', len - key.textLength()));
         if (fancySep != null) {
-            NutsString cc = compact ? key : txt.ofPlain(NutsUtilStrings.formatAlign("", len + 3,NutsPositionType.FIRST));
+            NutsString cc = compact ? key : txt.ofPlain(NutsUtilStrings.formatAlign("", len + 3, NutsPositionType.FIRST));
             String[] split = value.toString().split(fancySep);
             if (split.length == 0) {
                 out.print(prefix);

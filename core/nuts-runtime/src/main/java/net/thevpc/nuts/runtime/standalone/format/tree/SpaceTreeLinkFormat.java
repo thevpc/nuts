@@ -23,8 +23,8 @@
  */
 package net.thevpc.nuts.runtime.standalone.format.tree;
 
-import net.thevpc.nuts.NutsPositionType;
-import net.thevpc.nuts.NutsTreeLinkFormat;
+import net.thevpc.nuts.format.NutsPositionType;
+import net.thevpc.nuts.format.NutsTreeLinkFormat;
 
 /**
  *

@@ -1,7 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.xtra.expr;
 
-import net.thevpc.nuts.NutsUtilStrings;
-import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
+import net.thevpc.nuts.util.NutsUtilStrings;
 
 public class NutsToken {
 

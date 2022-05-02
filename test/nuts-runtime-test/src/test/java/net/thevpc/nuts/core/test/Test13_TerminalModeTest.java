@@ -7,6 +7,13 @@ package net.thevpc.nuts.core.test;
 
 import net.thevpc.nuts.core.test.utils.TestUtils;
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.io.NutsPrintStream;
+import net.thevpc.nuts.io.NutsSessionTerminal;
+import net.thevpc.nuts.io.NutsSystemTerminal;
+import net.thevpc.nuts.io.NutsTerminalMode;
+import net.thevpc.nuts.text.NutsText;
+import net.thevpc.nuts.text.NutsTextStyle;
+import net.thevpc.nuts.text.NutsTexts;
 import org.junit.jupiter.api.*;
 
 /**
@@ -31,7 +38,7 @@ public class Test13_TerminalModeTest {
 //        testMode(session,NutsTerminalMode.INHERITED,NutsTerminalMode.ANSI,Result.FAIL);
 
 //        testMode(session,NutsTerminalMode.FORMATTED,NutsTerminalMode.INHERITED,Result.SUCCESS);
-        testMode(session,NutsTerminalMode.FORMATTED,NutsTerminalMode.FORMATTED,Result.SUCCESS);
+        testMode(session, NutsTerminalMode.FORMATTED,NutsTerminalMode.FORMATTED,Result.SUCCESS);
         testMode(session,NutsTerminalMode.FORMATTED,NutsTerminalMode.FILTERED,Result.SUCCESS);
         testMode(session,NutsTerminalMode.FORMATTED,NutsTerminalMode.ANSI,Result.FAIL);
 
@@ -123,7 +130,7 @@ public class Test13_TerminalModeTest {
         NutsText portion_npar = c.builder().substring(22, 24);
         session.out().printlnf(portion_npar);
         Assertions.assertEquals("n##{separator:(}##\u001E",portion_npar.toString());
-        NutsText rep=c.builder().replace(23,24,NutsTexts.of(session).ofStyled("()(",NutsTextStyle.danger())).build();
+        NutsText rep=c.builder().replace(23,24,NutsTexts.of(session).ofStyled("()(", NutsTextStyle.danger())).build();
         session.out().printlnf(rep);
         Assertions.assertEquals("##{keyword:public}##\u001E ##{keyword:static}##\u001E ##{keyword:void}##\u001E main##{danger:()(}##\u001EString##{separator:[}##\u001E##{separator:]}##\u001E args##{separator:)}##\u001E##{separator:{}##\u001E##{separator:}}##\u001E",
                 rep.toString());

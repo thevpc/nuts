@@ -25,6 +25,11 @@ package net.thevpc.nuts.runtime.standalone.repository.impl.maven.util;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.DefaultNutsArtifactCall;
+import net.thevpc.nuts.cmdline.NutsArgument;
+import net.thevpc.nuts.cmdline.NutsCommandLine;
+import net.thevpc.nuts.format.NutsPositionType;
+import net.thevpc.nuts.io.NutsIOException;
+import net.thevpc.nuts.io.NutsPath;
 import net.thevpc.nuts.runtime.standalone.descriptor.util.NutsDescriptorUtils;
 import net.thevpc.nuts.runtime.standalone.repository.impl.maven.pom.*;
 import net.thevpc.nuts.runtime.standalone.util.xml.XmlUtils;
@@ -33,6 +38,11 @@ import net.thevpc.nuts.runtime.standalone.xtra.expr.StringTokenizerUtils;
 import net.thevpc.nuts.DefaultNutsVersion;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.util.CoreNutsUtils;
+import net.thevpc.nuts.text.NutsTextStyle;
+import net.thevpc.nuts.text.NutsTexts;
+import net.thevpc.nuts.util.NutsLogger;
+import net.thevpc.nuts.util.NutsLoggerVerb;
+import net.thevpc.nuts.util.NutsUtilStrings;
 import org.w3c.dom.Element;
 
 import java.io.IOException;
@@ -176,7 +186,7 @@ public class MavenUtils {
             default: {
                 dependencyScope = NutsDependencyScope.parse(s).orElse( NutsDependencyScope.API);
                 if (dependencyScope == null) {
-                    LOG.with().session(session).level(Level.FINER).verb(NutsLogVerb.FAIL)
+                    LOG.with().session(session).level(Level.FINER).verb(NutsLoggerVerb.FAIL)
                             .log(NutsMessage.jstyle("unable to parse maven scope {0} for {1}", s, d));
                     dependencyScope = NutsDependencyScope.API;
                 }
@@ -247,8 +257,8 @@ public class MavenUtils {
             if (fetchMode == null) {
                 fetchMode = NutsFetchMode.REMOTE;
             }
-            String fetchString = "[" + NutsUtilStrings.formatAlign(fetchMode.id(), 7,NutsPositionType.FIRST) + "] ";
-            LOG.with().session(session).level(Level.FINEST).verb(NutsLogVerb.SUCCESS).time(time)
+            String fetchString = "[" + NutsUtilStrings.formatAlign(fetchMode.id(), 7, NutsPositionType.FIRST) + "] ";
+            LOG.with().session(session).level(Level.FINEST).verb(NutsLoggerVerb.SUCCESS).time(time)
                     .log(NutsMessage.jstyle("{0}{1} parse pom    {2}", fetchString,
                             NutsUtilStrings.formatAlign(repository == null ? "<no-repo>" : repository.getName(), 20,NutsPositionType.FIRST),
                             NutsTexts.of(session).ofStyled(urlDesc, NutsTextStyle.path())
@@ -378,7 +388,7 @@ public class MavenUtils {
                     .build();
         } catch (Exception e) {
             long time = System.currentTimeMillis() - startTime;
-            LOG.with().session(session).level(Level.FINEST).verb(NutsLogVerb.FAIL).time(time)
+            LOG.with().session(session).level(Level.FINEST).verb(NutsLoggerVerb.FAIL).time(time)
                     .log(NutsMessage.jstyle("caching pom file {0}", urlDesc));
             throw new NutsParseException(session, NutsMessage.cstyle("error parsing %s", urlDesc), e);
         }
@@ -418,7 +428,7 @@ public class MavenUtils {
                 if (nutsDescriptor.getId().getArtifactId() == null) {
                     //why name is null ? should checkout!
                     if (LOG.isLoggable(Level.FINE)) {
-                        LOG.with().session(session).level(Level.FINE).verb(NutsLogVerb.FAIL)
+                        LOG.with().session(session).level(Level.FINE).verb(NutsLoggerVerb.FAIL)
                                 .log(NutsMessage.jstyle("unable to fetch Valid Nuts from {0} : resolved id was {1}", path, nutsDescriptor.getId()));
                     }
                     return null;

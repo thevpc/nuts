@@ -1,7 +1,9 @@
 package net.thevpc.nuts.runtime.standalone.text;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.io.NutsIOException;
 import net.thevpc.nuts.runtime.standalone.text.parser.*;
+import net.thevpc.nuts.text.*;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;

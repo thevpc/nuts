@@ -1,7 +1,14 @@
 package net.thevpc.nuts.runtime.standalone.io.printstream;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.format.NutsObjectFormat;
+import net.thevpc.nuts.io.NutsPrintStream;
+import net.thevpc.nuts.io.NutsStreamMetadata;
+import net.thevpc.nuts.io.NutsTerminalMode;
 import net.thevpc.nuts.spi.NutsSystemTerminalBase;
+import net.thevpc.nuts.text.NutsTerminalCommand;
+import net.thevpc.nuts.text.NutsText;
+import net.thevpc.nuts.text.NutsTexts;
 
 import java.io.OutputStream;
 import java.io.PrintStream;

@@ -1,6 +1,10 @@
 package net.thevpc.nuts.runtime.standalone.repository.impl.maven.lucene;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.io.NutsCp;
+import net.thevpc.nuts.io.NutsIOException;
+import net.thevpc.nuts.io.NutsTmp;
+import net.thevpc.nuts.io.NutsUncompress;
 import net.thevpc.nuts.runtime.standalone.repository.index.ArtifactsIndexDB;
 
 import java.io.FileInputStream;

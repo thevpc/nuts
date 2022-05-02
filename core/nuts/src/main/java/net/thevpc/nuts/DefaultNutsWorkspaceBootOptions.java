@@ -26,7 +26,9 @@
 package net.thevpc.nuts;
 
 import net.thevpc.nuts.boot.PrivateNutsUtilCollections;
+import net.thevpc.nuts.io.NutsTerminalMode;
 import net.thevpc.nuts.spi.NutsBootWorkspaceFactory;
+import net.thevpc.nuts.util.NutsLogConfig;
 
 import java.io.InputStream;
 import java.io.PrintStream;

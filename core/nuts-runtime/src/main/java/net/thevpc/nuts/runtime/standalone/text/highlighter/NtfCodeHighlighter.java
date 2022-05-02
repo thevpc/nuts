@@ -2,8 +2,8 @@ package net.thevpc.nuts.runtime.standalone.text.highlighter;
 
 import net.thevpc.nuts.NutsCodeHighlighter;
 import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.NutsText;
-import net.thevpc.nuts.NutsTexts;
+import net.thevpc.nuts.text.NutsText;
+import net.thevpc.nuts.text.NutsTexts;
 import net.thevpc.nuts.spi.NutsComponent;
 import net.thevpc.nuts.spi.NutsSupportLevelContext;
 

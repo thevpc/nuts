@@ -1,6 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.repository.impl.maven.util;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.util.NutsLogger;
 
 import java.util.logging.Level;
 
@@ -19,7 +20,7 @@ public class MvnClient {
 
     public MvnClient(NutsSession session) {
         this.session = session;
-        LOG=NutsLogger.of(MvnClient.class,session);
+        LOG= NutsLogger.of(MvnClient.class,session);
     }
 
     public boolean get(NutsId id, String repoURL, NutsSession session) {

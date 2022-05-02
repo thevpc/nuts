@@ -2,6 +2,9 @@ package net.thevpc.nuts.runtime.standalone.log;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.spi.NutsLogManager;
+import net.thevpc.nuts.util.NutsLogger;
+import net.thevpc.nuts.util.NutsLoggerOp;
+import net.thevpc.nuts.util.NutsLoggerVerb;
 
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -79,11 +82,11 @@ public class DefaultNutsLogger implements NutsLogger {
         return false;
     }
 
-    public void log(Level level, NutsLogVerb verb, NutsMessage msg, Throwable thrown) {
+    public void log(Level level, NutsLoggerVerb verb, NutsMessage msg, Throwable thrown) {
         log(session, level, verb,msg, thrown);
     }
 
-    public void log(NutsSession session, Level level, NutsLogVerb verb, NutsMessage msg, Throwable thrown) {
+    public void log(NutsSession session, Level level, NutsLoggerVerb verb, NutsMessage msg, Throwable thrown) {
         if (!isLoggable(level)) {
             return;
         }
@@ -93,7 +96,7 @@ public class DefaultNutsLogger implements NutsLogger {
         doLog(new NutsLogRecord(session, level, verb, msg, defaultTime,thrown));
     }
 
-    public void log(NutsSession session,Level level, NutsLogVerb verb, Supplier<NutsMessage> msgSupplier, Supplier<Throwable> errorSupplier) {
+    public void log(NutsSession session, Level level, NutsLoggerVerb verb, Supplier<NutsMessage> msgSupplier, Supplier<Throwable> errorSupplier) {
         if (!isLoggable(level)) {
             return;
         }

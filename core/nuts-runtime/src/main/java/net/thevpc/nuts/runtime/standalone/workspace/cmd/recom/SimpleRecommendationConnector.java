@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.recom;
 
 import java.io.IOException;
-import net.thevpc.nuts.NutsElements;
+import net.thevpc.nuts.elem.NutsElements;
 import net.thevpc.nuts.NutsIllegalArgumentException;
 import net.thevpc.nuts.NutsMessage;
 import net.thevpc.nuts.NutsSession;
@@ -12,7 +12,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
 import java.util.Locale;
-import net.thevpc.nuts.NutsIOException;
+import net.thevpc.nuts.io.NutsIOException;
 
 public class SimpleRecommendationConnector extends AbstractRecommendationConnector {
     @Override

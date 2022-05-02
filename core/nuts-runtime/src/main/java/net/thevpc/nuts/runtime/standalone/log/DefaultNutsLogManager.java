@@ -1,6 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.log;
 
-import net.thevpc.nuts.NutsLogger;
+import net.thevpc.nuts.util.NutsLogger;
 import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.NutsWorkspace;
 import net.thevpc.nuts.runtime.standalone.session.NutsSessionUtils;

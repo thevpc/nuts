@@ -24,8 +24,8 @@
 package net.thevpc.nuts.runtime.standalone.elem;
 
 import java.util.stream.Collectors;
-import net.thevpc.nuts.NutsArrayElement;
-import net.thevpc.nuts.NutsElementType;
+import net.thevpc.nuts.elem.NutsArrayElement;
+import net.thevpc.nuts.elem.NutsElementType;
 import net.thevpc.nuts.NutsSession;
 
 /**

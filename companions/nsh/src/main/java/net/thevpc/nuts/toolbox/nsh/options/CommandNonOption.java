@@ -28,10 +28,10 @@ package net.thevpc.nuts.toolbox.nsh.options;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.thevpc.nuts.DefaultNutsArgumentCandidate;
-import net.thevpc.nuts.NutsArgumentCandidate;
-import net.thevpc.nuts.NutsArgumentName;
-import net.thevpc.nuts.NutsCommandAutoComplete;
+import net.thevpc.nuts.cmdline.DefaultNutsArgumentCandidate;
+import net.thevpc.nuts.cmdline.NutsArgumentCandidate;
+import net.thevpc.nuts.cmdline.NutsArgumentName;
+import net.thevpc.nuts.cmdline.NutsCommandAutoComplete;
 import net.thevpc.nuts.toolbox.nsh.jshell.JShellBuiltin;
 import net.thevpc.nuts.toolbox.nsh.jshell.JShellContext;
 

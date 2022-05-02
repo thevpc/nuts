@@ -6,6 +6,11 @@ import net.thevpc.nuts.runtime.standalone.text.DefaultNutsTexts;
 import net.thevpc.nuts.runtime.standalone.util.collections.CharQueue;
 import net.thevpc.nuts.runtime.standalone.util.collections.NutsMatchType;
 import net.thevpc.nuts.runtime.standalone.util.collections.NutsStringMatchResult;
+import net.thevpc.nuts.text.NutsText;
+import net.thevpc.nuts.text.NutsTextStyles;
+import net.thevpc.nuts.text.NutsTextVisitor;
+import net.thevpc.nuts.text.NutsTexts;
+import net.thevpc.nuts.util.NutsRef;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -58,6 +63,7 @@ public class NTFParser2 extends AbstractNutsTextNodeParser {
         this.txt = new DefaultNutsTexts(session);//NutsTexts.of(
     }
 
+    @Override
     public void offer(char c) {
         synchronized (q) {
             q.write(c);
@@ -70,18 +76,21 @@ public class NTFParser2 extends AbstractNutsTextNodeParser {
         }
     }
 
+    @Override
     public void offer(String c) {
         synchronized (q) {
             q.write(c);
         }
     }
 
+    @Override
     public void offer(char[] c) {
         synchronized (q) {
             q.write(c);
         }
     }
 
+    @Override
     public void offer(char[] c, int offset, int len) {
         synchronized (q) {
             q.write(c, offset, len);
@@ -92,10 +101,12 @@ public class NTFParser2 extends AbstractNutsTextNodeParser {
         buffer.delete(0, buffer.length());
     }
 
+    @Override
     public NutsText read() {
         return read(false);
     }
 
+    @Override
     public NutsText readFully() {
         return read(true);
     }
@@ -440,7 +451,6 @@ public class NTFParser2 extends AbstractNutsTextNodeParser {
     }
 
 
-
     private NutsText pushUp(NutsText t) {
         if (t == null) {
             return null;
@@ -470,7 +480,8 @@ public class NTFParser2 extends AbstractNutsTextNodeParser {
 
     @Override
     public void reset() {
-
+        q.clear();
+        stackedStyles.clear();
     }
 
     @Override
@@ -506,6 +517,6 @@ public class NTFParser2 extends AbstractNutsTextNodeParser {
 
     @Override
     public boolean isIncomplete() {
-        return q.length() > 0;
+        return q.length() > 0 || buffer.length() > 0 || !stackedStyles.isEmpty();
     }
 }

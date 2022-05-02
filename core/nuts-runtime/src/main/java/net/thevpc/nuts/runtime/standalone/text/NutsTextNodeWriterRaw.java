@@ -3,6 +3,7 @@ package net.thevpc.nuts.runtime.standalone.text;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.text.parser.*;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
+import net.thevpc.nuts.text.*;
 
 import java.util.ArrayList;
 import java.util.List;

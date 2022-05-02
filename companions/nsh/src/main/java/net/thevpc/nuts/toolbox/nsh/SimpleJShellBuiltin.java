@@ -27,6 +27,7 @@
 package net.thevpc.nuts.toolbox.nsh;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.cmdline.NutsCommandLine;
 import net.thevpc.nuts.toolbox.nsh.jshell.JShellExecutionContext;
 
 import java.lang.reflect.Constructor;

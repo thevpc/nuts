@@ -27,6 +27,7 @@
 package net.thevpc.nuts;
 
 import net.thevpc.nuts.boot.NutsApiUtils;
+import net.thevpc.nuts.cmdline.NutsCommandLineConfigurable;
 
 /**
  * Object format is responsible of formatting to terminal
