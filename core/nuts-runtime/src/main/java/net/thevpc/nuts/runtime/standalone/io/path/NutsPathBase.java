@@ -23,6 +23,8 @@ import java.util.stream.StreamSupport;
 public abstract class NutsPathBase implements NutsPath {
     private final NutsSession session;
     private String userKind;
+    private boolean userCache;
+    private boolean userTemp;
 
     public NutsPathBase(NutsSession session) {
         if (session == null) {
@@ -30,6 +32,37 @@ public abstract class NutsPathBase implements NutsPath {
         }
         //session will be used later
         this.session = session;
+    }
+
+    protected NutsPath copyExtraFrom(NutsPath other){
+        if(other instanceof NutsPathBase){
+            userKind=((NutsPathBase) other).userKind;
+            userCache =((NutsPathBase) other).userCache;
+            userTemp =((NutsPathBase) other).userTemp;
+        }
+        return this;
+    }
+
+    @Override
+    public boolean isUserCache() {
+        return userCache;
+    }
+
+    @Override
+    public NutsPath setUserCache(boolean userCache) {
+        this.userCache = userCache;
+        return this;
+    }
+
+    @Override
+    public boolean isUserTemporary() {
+        return userTemp;
+    }
+
+    @Override
+    public NutsPath setUserTemporary(boolean temporary) {
+        this.userTemp = temporary;
+        return this;
     }
 
     @Override

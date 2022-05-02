@@ -29,7 +29,7 @@ public class DefaultFileNutsLock implements NutsLock {
 
     public TimePeriod getDefaultTimePeriod() {
         return TimePeriod.parse(
-                session.config().getConfigProperty("nuts.file-lock.timeout").asString().get(session),
+                session.config().getConfigProperty("nuts.file-lock.timeout").flatMap(NutsValue::asString).get(session),
                 TimeUnit.SECONDS
         ).orElse(FIVE_MINUTES);
     }

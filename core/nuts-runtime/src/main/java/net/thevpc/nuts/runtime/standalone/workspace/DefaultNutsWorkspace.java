@@ -916,7 +916,8 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
         boolean remoteRepo = true;
         try {
             NutsDependencyFilter ndf = NutsDependencyFilters.of(session).byRunnable();
-            if (!def.isSetEffectiveDescriptor() || (!NutsDescriptorUtils.isNoContent(def.getDescriptor()) && def.getContent() == null)) {
+            if (def.getEffectiveDescriptor().isNotPresent()
+                    || (!NutsDescriptorUtils.isNoContent(def.getDescriptor()) && def.getContent().isNotPresent())) {
                 // reload def
                 NutsFetchCommand fetch2 = session.fetch()
                         .setSession(session)
@@ -924,8 +925,8 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                         .setContent(true)
                         .setRepositoryFilter(session.repos().filter().installedRepo())
                         .setFailFast(true);
-                if (def.isSetDependencies()) {
-                    fetch2.setDependencyFilter(def.getDependencies().filter());
+                if (def.getDependencies().isPresent()) {
+                    fetch2.setDependencyFilter(def.getDependencies().get(session).filter());
                     fetch2.setDependencies(true);
                 }
                 def = fetch2.getResultDefinition();
@@ -943,14 +944,14 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                             def.getId().getLongId()
                     );
                 } else if (strategy0 == InstallStrategy0.REQUIRE) {
-                    reinstall = def.getInstallInformation().getInstallStatus().isRequired();
+                    reinstall = def.getInstallInformation().get(session).getInstallStatus().isRequired();
                     if (reinstall) {
                         //session.out().println("re-requiring  " + id().formatter().set(def.getId().getLongNameId()).format() + " ...");
                     } else {
                         //session.out().println("requiring  " + id().formatter().set(def.getId().getLongNameId()).format() + " ...");
                     }
                 } else {
-                    reinstall = def.getInstallInformation().getInstallStatus().isInstalled();
+                    reinstall = def.getInstallInformation().get(session).getInstallStatus().isInstalled();
                     if (reinstall) {
                         session.out().resetLine().printf(
                                 "%s %s ...%n",
@@ -1020,7 +1021,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
             }
             out.flush();
             NutsWorkspaceConfigManager config = session.config().setSession(session);
-            if (def.getFile() != null || NutsDescriptorUtils.isNoContent(def.getDescriptor())) {
+            if (def.getContent().isPresent() || NutsDescriptorUtils.isNoContent(def.getDescriptor())) {
                 if (requireParents) {
                     List<NutsDefinition> requiredDefinitions = new ArrayList<>();
                     for (NutsId parent : def.getDescriptor().getParents()) {
@@ -1047,10 +1048,10 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                     }
                 }
                 if (requireDependencies) {
-                    def.getDependencies();
+                    def.getDependencies().get(session);
                     List<NutsDefinition> requiredDefinitions = new ArrayList<>();
                     //fetch required
-                    for (NutsDependency dependency : def.getDependencies()) {
+                    for (NutsDependency dependency : def.getDependencies().get(session)) {
                         if (ndf == null || ndf.acceptDependency(def.getId(), dependency, session)) {
                             if (!installedRepositorySPI.
                                     searchVersions().setId(dependency.toId())
@@ -1063,7 +1064,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                                         .setEffective(true)
                                         .getResultDefinitions().first();
                                 if (dd != null) {
-                                    if (dd.getFile() == null) {
+                                    if (dd.getContent().isNotPresent()) {
                                         throw new NutsInstallException(session, def.getId(),
                                                 NutsMessage.cstyle("unable to install %s. required dependency content is missing for %s", def.getId(), dependency.toId()),
                                                 null);
@@ -1116,8 +1117,8 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                         .setContent(true)
                         .setRepositoryFilter(session.repos().filter().installedRepo())
                         .setFailFast(true);
-                if (def.isSetDependencies()) {
-                    fetch2.setDependencyFilter(def.getDependencies().filter());
+                if (def.getDependencies().isPresent()) {
+                    fetch2.setDependencyFilter(def.getDependencies().get(session).filter());
                     fetch2.setDependencies(true);
                 }
                 NutsDefinition def2 = fetch2
@@ -1218,7 +1219,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                         session.getWorkspace().getApiId(),
                         wcfg.getModel().getStoredConfigBoot().getExtensions())
                         .save();
-                h.add(def.getId(), def.getDependencies().transitiveWithSource()
+                h.add(def.getId(), def.getDependencies().get(session).transitiveWithSource()
                         .toArray(NutsDependency[]::new));
                 wcfg.getModel().getStoredConfigBoot().setExtensions(h.getConfs());
                 wcfg.getModel().fireConfigurationChanged("extensions", session, ConfigEventType.BOOT);
@@ -1262,7 +1263,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                 }
                 if (installedString != null) {
                     //(reinstalled ? "re-installed" : "installed")
-                    if (def.getContent() == null) {
+                    if (def.getContent().isNotPresent()) {
                         //this happens when deploying a 'pom' artifact
                         if (session.isPlainTrace()) {
                             out.resetLine().printf("%s %s from %s repository (%s).%s%n",
@@ -1273,15 +1274,15 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                                     text.parse(setAsDefaultString)
                             );
                         }
-                    } else if (!def.getContent().isCached()) {
-                        if (def.getContent().isTemporary()) {
+                    } else if (!def.getContent().get(session).isUserCache()) {
+                        if (def.getContent().get(session).isUserTemporary()) {
                             if (session.isPlainTrace()) {
                                 out.resetLine().printf("%s %s from %s repository (%s) temporarily file %s.%s%n",
                                         installedString,
                                         def.getId().getLongId(),
                                         remoteRepo ? "remote" : "local",
                                         def.getRepositoryName(),
-                                        def.getPath(),
+                                        def.getContent().orNull(),
                                         text.parse(setAsDefaultString)
                                 );
                             }
@@ -1295,14 +1296,14 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                             }
                         }
                     } else {
-                        if (def.getContent().isTemporary()) {
+                        if (def.getContent().get(session).isUserTemporary()) {
                             if (session.isPlainTrace()) {
                                 out.resetLine().printf("%s %s from %s repository (%s) temporarily file %s.%s%n",
                                         installedString,
                                         def.getId().getLongId(),
                                         remoteRepo ? "remote" : "local",
                                         def.getRepositoryName(),
-                                        def.getPath(),
+                                        def.getContent().orNull(),
                                         text.parse(setAsDefaultString));
                             }
                         } else {
@@ -1554,7 +1555,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
     @Override
     public NutsInstallerComponent getInstaller(NutsDefinition nutToInstall, NutsSession session) {
         checkSession(session);
-        if (nutToInstall != null && nutToInstall.getFile() != null) {
+        if (nutToInstall != null && nutToInstall.getContent().isPresent()) {
             NutsDescriptor descriptor = nutToInstall.getDescriptor();
             NutsArtifactCall installerDescriptor = descriptor.getInstaller();
             NutsDefinition runnerFile = null;
@@ -1776,11 +1777,11 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
         Map<String, String> a = new LinkedHashMap<>();
         a.put("configVersion", Nuts.getVersion().toString());
         a.put("id", id.getLongName());
-        a.put("dependencies", m.getDependencies().transitive().map(NutsDependency::getLongName, "getLongName")
+        a.put("dependencies", m.getDependencies().get(session).transitive().map(NutsDependency::getLongName, "getLongName")
                 .collect(Collectors.joining(";")));
         defs.put(m.getId().getLongId(), m);
         if (withDependencies) {
-            for (NutsDependency dependency : m.getDependencies()) {
+            for (NutsDependency dependency : m.getDependencies().get(session)) {
                 if (!defs.containsKey(dependency.toId().getLongId())) {
                     m = session.fetch().setId(id).setContent(true).setDependencies(true).setFailFast(false).getResultDefinition();
                     defs.put(m.getId().getLongId(), m);
@@ -1790,7 +1791,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
         for (NutsDefinition def : defs.values()) {
             NutsPath bootstrapFolder = session.locations().getStoreLocation(NutsStoreLocation.LIB).resolve(NutsConstants.Folders.ID);
             NutsId id2 = def.getId();
-            NutsCp.of(session).from(def.getFile())
+            NutsCp.of(session).from(def.getContent().get(session))
                     .to(bootstrapFolder.resolve(session.locations().getDefaultIdBasedir(id2))
                             .resolve(session.locations().getDefaultIdFilename(id2.builder().setFaceContent().setPackaging("jar").build()))
                     ).run();
@@ -1811,7 +1812,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
             );
             pr.put("project.dependencies.compile",
                     String.join(";",
-                            def.getDependencies().transitive()
+                            def.getDependencies().get(session).transitive()
                                     .filter(x -> !x.isOptional()
                                                     && NutsDependencyFilters.of(session).byRunnable()
                                                     .acceptDependency(def.getId(), x, session),

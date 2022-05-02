@@ -23,12 +23,21 @@ public class NutsCompressedPath extends NutsPathBase {
     private final String compressedForm;
     private final NutsString formattedCompressedForm;
     private final NutsPath base;
+    private final NutsCompressedPathHelper compressedPathHelper;
 
     public NutsCompressedPath(NutsPath base,NutsCompressedPathHelper compressedPathHelper) {
         super(base.getSession());
         this.base = base;
         this.formattedCompressedForm = compressedPathHelper.toCompressedString(base,base.getSession());
         this.compressedForm = this.formattedCompressedForm.filteredText();
+        this.compressedPathHelper = compressedPathHelper;
+    }
+
+    @Override
+    public NutsPath copy() {
+        return new NutsCompressedPath(
+                base,compressedPathHelper
+        ).copyExtraFrom(this);
     }
 
     @Override

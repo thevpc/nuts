@@ -274,9 +274,9 @@ public class DefaultNutsQuestion<T> implements NutsQuestion<T> {
                 NutsDefinition def = session.search().setId(session.getAppId())
                         .setEffective(true).setLatest(true).getResultDefinitions().first();
                 if (def != null) {
-                    String n = def.getEffectiveDescriptor().getName();
+                    String n = def.getEffectiveDescriptor().get(session).getName();
                     if (!NutsBlankable.isBlank(n)) {
-                        title = NutsMessage.cstyle("%s - %s", n, def.getEffectiveDescriptor().getId().getVersion());
+                        title = NutsMessage.cstyle("%s - %s", n, def.getEffectiveDescriptor().get(session).getId().getVersion());
                     }
                 }
             } catch (Exception ex) {

@@ -364,18 +364,18 @@ public class DefaultNutsVersion implements NutsVersion {
     }
 
     @Override
-    public NutsVersion inc(int position) {
-        return inc(position, 1);
+    public NutsVersion inc(int index) {
+        return inc(index, 1);
     }
 
     @Override
-    public NutsVersion inc(int position, long amount) {
-        return new DefaultNutsVersion(incVersion(getValue(), position, amount));
+    public NutsVersion inc(int index, long amount) {
+        return new DefaultNutsVersion(incVersion(getValue(), index, amount));
     }
 
     @Override
-    public NutsVersion inc(int position, BigInteger amount) {
-        return new DefaultNutsVersion(incVersion(getValue(), position, amount));
+    public NutsVersion inc(int index, BigInteger amount) {
+        return new DefaultNutsVersion(incVersion(getValue(), index, amount));
     }
 
     public int size() {
@@ -388,60 +388,39 @@ public class DefaultNutsVersion implements NutsVersion {
         return getParts().getDigitCount();
     }
 
-    public String get(int level) {
+    public NutsOptional<NutsValue> get(int index) {
         VersionParts parts = getParts();
         int size = parts.size();
-        if (level >= 0) {
-            return parts.get(level).string;
+        if (index >= 0) {
+            if (index < parts.size()) {
+                return NutsOptional.of(NutsValue.of(parts.get(index).string));
+            }
         } else {
-            int x = size + level;
-            return parts.get(x).string;
+            int x = size + index;
+            if (x >= 0 && x < parts.size()) {
+                return NutsOptional.of(NutsValue.of(parts.get(x).string));
+            }
         }
+        return NutsOptional.ofEmpty(session -> NutsMessage.cstyle("version part not found : %s", index));
     }
 
-    public BigInteger getNumber(int level) {
+    public NutsOptional<NutsValue> getNumber(int level) {
         VersionParts parts = getParts();
         int size = parts.getDigitCount();
         if (level >= 0) {
-            return new BigInteger(parts.getDigit(level).string);
+            VersionPart digit = parts.getDigit(level);
+            return NutsOptional.of(
+                    digit == null ? null : NutsValue.of(digit.string),
+                    s -> NutsMessage.cstyle("missing number at %s", level)
+            );
         } else {
             int x = size + level;
-            return new BigInteger(parts.getDigit(x).string);
+            VersionPart digit = x >= 0 ? parts.getDigit(x) : null;
+            return NutsOptional.of(
+                    digit == null ? null : NutsValue.of(digit.string),
+                    s -> NutsMessage.cstyle("missing number at %s", level)
+            );
         }
-    }
-
-    public BigInteger getNumber(int level, BigInteger defaultValue) {
-        VersionParts parts = getParts();
-        int size = parts.getDigitCount();
-        if (level >= 0) {
-            if (level < size) {
-                return new BigInteger(parts.getDigit(level).string);
-            }
-        } else {
-            int x = size + level;
-            if (x < size) {
-                return new BigInteger(parts.getDigit(x).string);
-            }
-        }
-        return defaultValue;
-    }
-
-//    @Override
-//    public boolean matches(String expression) {
-//        if (NutsBlankable.isBlank(expression)) {
-//            return true;
-//        }
-//        return DefaultNutsVersionFilter.parse(expression,session).acceptVersion(this, session);
-//    }
-
-    @Override
-    public int getInt(int index, int defaultValue) {
-        return getNumber(index, BigInteger.valueOf(defaultValue)).intValue();
-    }
-
-    @Override
-    public long getLong(int index, long defaultValue) {
-        return getNumber(index, BigInteger.valueOf(defaultValue)).longValue();
     }
 
     @Override
@@ -666,12 +645,12 @@ public class DefaultNutsVersion implements NutsVersion {
                     i++;
                     j++;
                 } else if (i < v1.size()) {
-                    if(isQualifierFrom(i,v1)){
+                    if (isQualifierFrom(i, v1)) {
                         return -1;
                     }
                     return 1;
                 } else {
-                    if(isQualifierFrom(i,v2)){
+                    if (isQualifierFrom(i, v2)) {
                         return 1;
                     }
                     return -1;
@@ -681,11 +660,11 @@ public class DefaultNutsVersion implements NutsVersion {
         }
     }
 
-    private static boolean isQualifierFrom(int i,VersionParts v1){
+    private static boolean isQualifierFrom(int i, VersionParts v1) {
         VersionPart a = v1.get(i);
-        if (a.type== VersionPartType.SEPARATOR && a.string.equals("-")) {
-            if(i+1<v1.size()){
-                for (int j = i+1; j <v1.size() ; j++) {
+        if (a.type == VersionPartType.SEPARATOR && a.string.equals("-")) {
+            if (i + 1 < v1.size()) {
+                for (int j = i + 1; j < v1.size(); j++) {
                     a = v1.get(j);
                     switch (a.type) {
                         case SEPARATOR:
@@ -700,7 +679,7 @@ public class DefaultNutsVersion implements NutsVersion {
                     }
                 }
                 return true;
-            }else{
+            } else {
                 return true;
             }
         }

@@ -115,7 +115,7 @@ public interface NutsWorkspaceConfigManager {
 
     Map<String, String> getConfigMap();
 
-    NutsPrimitiveElement getConfigProperty(String property);
+    NutsOptional<NutsValue> getConfigProperty(String property);
 
     /**
      * @param property property

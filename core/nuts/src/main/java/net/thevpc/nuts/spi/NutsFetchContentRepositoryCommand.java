@@ -27,6 +27,7 @@
 package net.thevpc.nuts.spi;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.io.NutsPath;
 
 /**
  * Repository command bound to FetchCommand used to fetch an artifact content from a specific repository.
@@ -42,7 +43,7 @@ public interface NutsFetchContentRepositoryCommand extends NutsRepositoryCommand
      *
      * @return return fetch result.
      */
-    NutsContent getResult();
+    NutsPath getResult();
 
     /**
      * get id to fetch

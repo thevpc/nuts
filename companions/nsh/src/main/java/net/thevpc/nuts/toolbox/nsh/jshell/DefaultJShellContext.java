@@ -99,7 +99,7 @@ public class DefaultJShellContext extends AbstractJShellContext {
 //    }
     public DefaultJShellContext(JShellContext other) {
         this.parentContext = other;
-        copyFrom(other);
+        setAll(other);
     }
 
     @Override
@@ -240,9 +240,9 @@ public class DefaultJShellContext extends AbstractJShellContext {
         this.aliasManager = aliasManager == null ? new DefaultJShellAliasManager() : aliasManager;
     }
 
-    public void copyFrom(JShellContext other) {
+    public void setAll(JShellContext other) {
         if (other != null) {
-            super.copyFrom(other);
+            super.setAll(other);
             this.shell = other.getShell();
             this.vars = other.vars();
             this.userProperties = new HashMap<>();

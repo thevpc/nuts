@@ -94,7 +94,7 @@ public class DefaultSourceControlHelper {
         if ("zip".equals(nutToInstall.getDescriptor().getPackaging())) {
 
             try {
-                ZipUtils.unzip(session, nutToInstall.getFile().toString(), NutsPath.of(folder,session)
+                ZipUtils.unzip(session, nutToInstall.getContent().map(Object::toString).get(session), NutsPath.of(folder,session)
                         .toAbsolute().toString(), new UnzipOptions().setSkipRoot(false));
             } catch (IOException ex) {
                 throw new NutsIOException(session, ex);
@@ -112,11 +112,7 @@ public class DefaultSourceControlHelper {
                     nutToInstall.getRepositoryUuid(),
                     nutToInstall.getRepositoryName(),
                     newId.getLongId(),
-                    d,
-                    new DefaultNutsContent(
-                            NutsPath.of(folder,session),
-                            false,
-                            false),
+                    d,NutsPath.of(folder,session).setUserCache(false).setUserTemporary(false),
                     null, null, session
             );
         } else {

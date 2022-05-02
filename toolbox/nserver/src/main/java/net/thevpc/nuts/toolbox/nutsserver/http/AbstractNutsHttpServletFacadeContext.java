@@ -25,6 +25,8 @@
 */
 package net.thevpc.nuts.toolbox.nutsserver.http;
 
+import net.thevpc.nuts.io.NutsCp;
+import net.thevpc.nuts.io.NutsPath;
 import net.thevpc.nuts.toolbox.nutsserver.bundled._IOUtils;
 
 import java.io.*;
@@ -61,6 +63,16 @@ public abstract class AbstractNutsHttpServletFacadeContext implements NutsHttpSe
         if (file != null && Files.isRegularFile(file)) {
             sendResponseHeaders(code, Files.size(file));
             Files.copy(file, getResponseBody());
+        } else {
+            sendError(404, "File not found");
+        }
+    }
+
+    @Override
+    public void sendResponseFile(int code, NutsPath file) throws IOException {
+        if (file != null && file.isRegularFile()) {
+            sendResponseHeaders(code, file.getContentLength());
+            NutsCp.of(file.getSession()).from(file).to(getResponseBody()).run();
         } else {
             sendError(404, "File not found");
         }

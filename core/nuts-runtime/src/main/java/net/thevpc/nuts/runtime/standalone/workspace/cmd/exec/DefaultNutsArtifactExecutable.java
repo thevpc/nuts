@@ -41,10 +41,10 @@ public class DefaultNutsArtifactExecutable extends AbstractNutsExecutableCommand
         this.def = def;
         this.runAs = runAs;
         //all these information areavailable, an exception would be thrown if not!
-        def.getContent();
-        def.getDependencies();
-        def.getEffectiveDescriptor();
-        def.getInstallInformation();
+        def.getContent().get(session);
+        def.getDependencies().get(session);
+        def.getEffectiveDescriptor().get(session);
+//        def.getInstallInformation();
 
         this.commandName = commandName;
         this.appArgs = appArgs;
@@ -84,11 +84,11 @@ public class DefaultNutsArtifactExecutable extends AbstractNutsExecutableCommand
 
     @Override
     public void execute() {
-        NutsInstallStatus installStatus = def.getInstallInformation().getInstallStatus();
+        NutsInstallStatus installStatus = def.getInstallInformation().get(session).getInstallStatus();
         if (!installStatus.isInstalled()) {
             if(autoInstall) {
                 session.install().setSession(session).addId(def.getId()).run();
-                NutsInstallStatus st = session.fetch().setSession(session).setId(def.getId()).getResultDefinition().getInstallInformation().getInstallStatus();
+                NutsInstallStatus st = session.fetch().setSession(session).setId(def.getId()).getResultDefinition().getInstallInformation().get(session).getInstallStatus();
                 if (!st.isInstalled()) {
                     throw new NutsUnexpectedException(execSession, NutsMessage.cstyle("auto installation of %s failed",def.getId()));
                 }
@@ -135,7 +135,7 @@ public class DefaultNutsArtifactExecutable extends AbstractNutsExecutableCommand
 
     @Override
     public void dryExecute() {
-        if (autoInstall && !def.getInstallInformation().getInstallStatus().isInstalled()) {
+        if (autoInstall && !def.getInstallInformation().get(session).getInstallStatus().isInstalled()) {
             execSession.security().checkAllowed(NutsConstants.Permissions.AUTO_INSTALL, commandName);
             NutsPrintStream out = execSession.out();
             out.printf("[dry] ==install== %s%n", def.getId().getLongName());

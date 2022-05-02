@@ -23,7 +23,7 @@ public class NutsDescriptorUtils {
     }
 
     public static NutsDescriptor getEffectiveDescriptor(NutsDefinition def,NutsSession session) {
-        final NutsDescriptor d = def.getEffectiveDescriptor();
+        final NutsDescriptor d = def.getEffectiveDescriptor().orNull();
         if (d == null) {
             return NutsWorkspaceExt.of(session).resolveEffectiveDescriptor(def.getDescriptor(), session);
         }

@@ -28,6 +28,7 @@ package net.thevpc.nuts.runtime.standalone.repository.cmd.fetch;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NutsCommandLine;
+import net.thevpc.nuts.io.NutsPath;
 import net.thevpc.nuts.runtime.standalone.repository.cmd.NutsRepositoryCommandBase;
 import net.thevpc.nuts.spi.NutsFetchContentRepositoryCommand;
 
@@ -39,7 +40,7 @@ import net.thevpc.nuts.spi.NutsFetchContentRepositoryCommand;
 public abstract class AbstractNutsFetchContentRepositoryCommand extends NutsRepositoryCommandBase<NutsFetchContentRepositoryCommand> implements NutsFetchContentRepositoryCommand {
 
     protected NutsId id;
-    protected NutsContent result;
+    protected NutsPath result;
     protected NutsDescriptor descriptor;
     protected String localPath;
 
@@ -78,7 +79,7 @@ public abstract class AbstractNutsFetchContentRepositoryCommand extends NutsRepo
     }
 
     @Override
-    public NutsContent getResult() {
+    public NutsPath getResult() {
         if (result == null) {
             run();
         }

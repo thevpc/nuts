@@ -92,12 +92,12 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
 
     public DefaultNutsSession(NutsWorkspace ws) {
         this.ws = new NutsWorkspaceSessionAwareImpl(this, ws);
-        copyFrom(NutsSessionUtils.defaultSession(ws).boot().getBootOptions());
+        setAll(NutsSessionUtils.defaultSession(ws).boot().getBootOptions());
     }
 
     public DefaultNutsSession(NutsWorkspace ws, NutsWorkspaceOptions options) {
         this.ws = new NutsWorkspaceSessionAwareImpl(this, ws);
-        copyFrom(options);
+        setAll(options);
     }
 
     /**
@@ -623,7 +623,7 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
     }
 
     @Override
-    public NutsContentType getOutputFormat(NutsContentType defaultValue) {
+    public NutsContentType getOutputFormat() {
         if (this.outputFormat != null) {
             return this.outputFormat;
         }
@@ -631,12 +631,7 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
         if (o != null) {
             return o;
         }
-        return defaultValue;
-    }
-
-    @Override
-    public NutsContentType getOutputFormat() {
-        return getOutputFormat(NutsContentType.PLAIN);
+        return NutsContentType.PLAIN;
     }
 
     @Override
@@ -699,7 +694,7 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
     }
 
     @Override
-    public NutsSession copyFrom(NutsSession other) {
+    public NutsSession setAll(NutsSession other) {
         this.terminal = other.getTerminal();
         Map<String, Object> properties = other.getProperties();
         this.properties.setProperties(properties == null ? null : new LinkedHashMap<>(properties));
@@ -740,7 +735,7 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
     }
 
     @Override
-    public NutsSession copyFrom(NutsWorkspaceOptions options) {
+    public NutsSession setAll(NutsWorkspaceOptions options) {
         if (options != null) {
             this.trace = options.getTrace().orElse(true);
             this.debug = options.getDebug().orNull();

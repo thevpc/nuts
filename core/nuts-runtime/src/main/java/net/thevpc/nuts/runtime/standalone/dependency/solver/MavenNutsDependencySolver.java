@@ -83,7 +83,7 @@ public class MavenNutsDependencySolver implements NutsDependencySolver {
                             currentNode.getEffectiveDescriptor().getDependencies(),
                             effDependencyFilter, session);
                     immediates.addAll(immediate);
-                    for (NutsDependency dependency : currentNode.def.getEffectiveDescriptor().getDependencies()) {
+                    for (NutsDependency dependency : currentNode.def.getEffectiveDescriptor().get(session).getDependencies()) {
                         dependency = dependency.builder().setProperty("provided-by", currentNode.id.toString()).build();
 //                        if(dependency.toId().contains("jai_imageio")){
 //                            System.out.print("");
@@ -203,7 +203,7 @@ public class MavenNutsDependencySolver implements NutsDependencySolver {
                     .setEffective(true)
                     .setLatest(true).getResultDefinitions().required();
         }
-        if (!def.isSetEffectiveDescriptor()) {
+        if (def.getEffectiveDescriptor().isNotPresent()) {
             throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("expected an effective definition for %s", def.getId()));
         }
         NutsDependencyTreeNodeBuild info = new NutsDependencyTreeNodeBuild(null, def, dependency, dependency, 0, session);
@@ -384,7 +384,7 @@ public class MavenNutsDependencySolver implements NutsDependencySolver {
 
         private NutsDescriptor getEffectiveDescriptor() {
             if (effDescriptor == null && def != null) {
-                effDescriptor = def.getEffectiveDescriptor();
+                effDescriptor = def.getEffectiveDescriptor().orNull();
                 if (effDescriptor == null) {
                     throw new NutsIllegalArgumentException(session,
                             NutsMessage.cstyle("expected an effective definition for %s", def.getId()));

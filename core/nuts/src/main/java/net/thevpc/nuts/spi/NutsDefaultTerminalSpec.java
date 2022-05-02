@@ -66,23 +66,23 @@ public class NutsDefaultTerminalSpec implements NutsTerminalSpec {
     }
 
     @Override
-    public NutsTerminalSpec put(String name, Object o) {
+    public NutsTerminalSpec setProperty(String name, Object o) {
         other.put(name, o);
         return this;
     }
 
     @Override
-    public NutsTerminalSpec copyFrom(NutsTerminalSpec other) {
+    public NutsTerminalSpec setAll(NutsTerminalSpec other) {
         this.autoComplete = other.getAutoComplete();
-        putAll(other.getProperties());
+        setAll(other.getProperties());
         return this;
     }
 
     @Override
-    public NutsTerminalSpec putAll(Map<String, Object> other) {
+    public NutsTerminalSpec setAll(Map<String, Object> other) {
         if (other != null) {
             for (Map.Entry<String, Object> e : other.entrySet()) {
-                put(e.getKey(), e.getValue());
+                setProperty(e.getKey(), e.getValue());
             }
         }
         return this;

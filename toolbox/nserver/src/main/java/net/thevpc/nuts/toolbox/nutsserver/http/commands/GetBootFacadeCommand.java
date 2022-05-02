@@ -30,17 +30,17 @@ public class GetBootFacadeCommand extends AbstractFacadeCommand {
         }
         if (version == null) {
             NutsDefinition def = context.getSession().search().addId(NutsConstants.Ids.NUTS_API).setLatest(true).setContent(true).getResultDefinitions().first();
-            if (def != null) {
+            if (def != null && def.getContent().isPresent()) {
                 context.addResponseHeader("content-disposition", "attachment; filename=\"nuts-" + def.getId().getVersion().toString() + ".jar\"");
-                context.sendResponseFile(200, def.getFile());
+                context.sendResponseFile(200, def.getContent().orNull());
             } else {
                 context.sendError(404, "File Note Found");
             }
         } else {
             NutsDefinition def = context.getSession().fetch().setId(NutsConstants.Ids.NUTS_API + "#" + version).setContent(true).getResultDefinition();
-            if (def != null) {
+            if (def != null && def.getContent().isPresent()) {
                 context.addResponseHeader("content-disposition", "attachment; filename=\"nuts-" + def.getId().getVersion().toString() + ".jar\"");
-                context.sendResponseFile(200, def.getFile());
+                context.sendResponseFile(200, def.getContent().orNull());
             } else {
                 context.sendError(404, "File Note Found");
             }

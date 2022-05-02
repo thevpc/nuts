@@ -38,6 +38,7 @@ import net.thevpc.nuts.spi.NutsInstallerComponent;
 import net.thevpc.nuts.spi.NutsSupportLevelContext;
 
 import java.io.IOException;
+import java.util.Objects;
 
 /**
  * Created by vpc on 1/7/17.
@@ -61,20 +62,22 @@ public class ZipInstallerComponent implements NutsInstallerComponent {
     @Override
     public void install(NutsExecutionContext executionContext) {
         DefaultNutsDefinition nutsDefinition = (DefaultNutsDefinition) executionContext.getDefinition();
-        NutsPath installFolder = executionContext.getSession().locations().getStoreLocation(nutsDefinition.getId(), NutsStoreLocation.APPS);
+        NutsSession session = executionContext.getSession();
+        NutsPath installFolder = session.locations().getStoreLocation(nutsDefinition.getId(), NutsStoreLocation.APPS);
 
         String skipRoot = (String) executionContext.getExecutorProperties().get("unzip-skip-root");
         try {
-            ZipUtils.unzip(executionContext.getSession(),nutsDefinition.getFile().toString(),
+            ZipUtils.unzip(session,
+                    nutsDefinition.getContent().map(Object::toString).get(session),
                     installFolder.toString(),
                     new UnzipOptions().setSkipRoot("true".equalsIgnoreCase(skipRoot))
             );
         } catch (IOException ex) {
-            throw new NutsIOException(executionContext.getSession(),ex);
+            throw new NutsIOException(session,ex);
         }
-        nutsDefinition.setInstallInformation(NutsWorkspaceExt.of(executionContext.getSession()).getInstalledRepository().getInstallInformation(nutsDefinition.getId(), executionContext.getExecSession()));
+        nutsDefinition.setInstallInformation(NutsWorkspaceExt.of(session).getInstalledRepository().getInstallInformation(nutsDefinition.getId(), executionContext.getExecSession()));
         if (executionContext.getExecutorOptions().size() > 0) {
-            executionContext.getSession()
+            session
                     .exec()
                     .addCommand(executionContext.getExecutorOptions())
                     .setSession(executionContext.getExecSession())

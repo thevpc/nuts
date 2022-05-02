@@ -863,7 +863,7 @@ public final class NutsReservedUtils {
         NutsOptional<List<String>> o = parseStringIdList(s);
         if(o.isPresent()) {
             for (String x : o.get()) {
-                NutsOptional<NutsId> y = NutsId.of(x).nonBlank();
+                NutsOptional<NutsId> y = NutsId.of(x).ifBlankNull();
                 if (y.isError()) {
                     return NutsOptional.ofError(y.getMessage());
                 }

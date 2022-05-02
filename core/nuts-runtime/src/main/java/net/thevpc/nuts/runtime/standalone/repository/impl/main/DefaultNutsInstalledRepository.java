@@ -550,7 +550,7 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
             this.deploy()
                     .setId(id1)
                     .setSession(session.copy().setConfirm(NutsConfirmationMode.YES))
-                    .setContent(def.getFile())
+                    .setContent(def.getContent().orNull())
                     //.setFetchMode(NutsFetchMode.LOCAL)
                     .setDescriptor(def.getDescriptor())
                     .run();

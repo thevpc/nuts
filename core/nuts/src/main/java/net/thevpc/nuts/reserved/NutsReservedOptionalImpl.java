@@ -17,11 +17,6 @@ public abstract class NutsReservedOptionalImpl<T> implements NutsOptional<T> {
         return get(null, null);
     }
 
-    static NutsMessage buildMessage(NutsSession session, Function<NutsSession, NutsMessage> message0, NutsMessage message) {
-        NutsMessage m = message0.apply(session);
-        return m.concat(session, NutsMessage.plain(" : "), message);
-    }
-
     public <V> NutsOptional<V> flatMap(Function<T, NutsOptional<V>> mapper) {
         Objects.requireNonNull(mapper);
         if (isPresent()) {
@@ -58,6 +53,7 @@ public abstract class NutsReservedOptionalImpl<T> implements NutsOptional<T> {
 
     public NutsOptional<T> ifPresent(Consumer<T> t) {
         if (isPresent()) {
+            Objects.requireNonNull(t);
             t.accept(get());
         }
         return this;
@@ -73,9 +69,10 @@ public abstract class NutsReservedOptionalImpl<T> implements NutsOptional<T> {
 
 
     @Override
-    public NutsOptional<T> orElseGetOptional(Supplier<NutsOptional<T>> other) {
+    public NutsOptional<T> orElseUse(Supplier<NutsOptional<T>> other) {
         if (isNotPresent()) {
-            return other.get();
+            Objects.requireNonNull(other);
+            return Objects.requireNonNull(other.get());
         }
         return this;
     }
@@ -92,13 +89,14 @@ public abstract class NutsReservedOptionalImpl<T> implements NutsOptional<T> {
     @Override
     public T orElseGet(Supplier<? extends T> other) {
         if (isNotPresent()) {
+            Objects.requireNonNull(other);
             return other.get();
         }
         return get();
     }
 
     @Override
-    public NutsOptional<T> nonBlank(Function<NutsSession, NutsMessage> emptyMessage) {
+    public NutsOptional<T> ifBlankNull(Function<NutsSession, NutsMessage> emptyMessage) {
         if (emptyMessage == null) {
             emptyMessage = session -> NutsMessage.cstyle("blank value");
         }
@@ -112,35 +110,39 @@ public abstract class NutsReservedOptionalImpl<T> implements NutsOptional<T> {
     }
 
     @Override
-    public NutsOptional<T> nonBlank() {
-        return nonBlank(null);
+    public NutsOptional<T> ifBlankNull() {
+        return ifBlankNull(null);
     }
 
     @Override
-    public NutsOptional<T> ifBlankGet(Supplier<NutsOptional<T>> other) {
+    public NutsOptional<T> ifBlankUse(Supplier<NutsOptional<T>> other) {
         if (isPresent()) {
+            Objects.requireNonNull(other);
             T v = get();
             if (NutsBlankable.isBlank(v)) {
-                return other.get();
+                return Objects.requireNonNull(other.get());
             }
         } else if (isEmpty()) {
-            return other.get();
+            Objects.requireNonNull(other);
+            return Objects.requireNonNull(other.get());
         }
         return this;
     }
 
     @Override
-    public NutsOptional<T> ifEmptyGet(Supplier<NutsOptional<T>> other) {
+    public NutsOptional<T> ifEmptyUse(Supplier<NutsOptional<T>> other) {
         if (isEmpty()) {
-            return other.get();
+            Objects.requireNonNull(other);
+            return Objects.requireNonNull(other.get());
         }
         return this;
     }
 
     @Override
-    public NutsOptional<T> ifErrorGet(Supplier<NutsOptional<T>> other) {
+    public NutsOptional<T> ifErrorUse(Supplier<NutsOptional<T>> other) {
         if (isError()) {
-            return other.get();
+            Objects.requireNonNull(other);
+            return Objects.requireNonNull(other.get());
         }
         return this;
     }
@@ -186,7 +188,7 @@ public abstract class NutsReservedOptionalImpl<T> implements NutsOptional<T> {
 
     @Override
     public T orNull() {
-        return orNull();
+        return orElse(null);
     }
 
     @Override

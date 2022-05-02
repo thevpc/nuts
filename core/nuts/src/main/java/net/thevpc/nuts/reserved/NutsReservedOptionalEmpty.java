@@ -46,7 +46,7 @@ public class NutsReservedOptionalEmpty<T> extends NutsReservedOptionalThrowable<
 
 
     @Override
-    public NutsOptional<T> nonBlank() {
+    public NutsOptional<T> ifBlankNull() {
         return this;
     }
 

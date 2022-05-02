@@ -37,10 +37,10 @@ public class DefaultNutsFetchCommand extends AbstractNutsFetchCommand {
     }
 
     @Override
-    public NutsContent getResultContent() {
+    public NutsPath getResultContent() {
         try {
             NutsDefinition def = fetchDefinition(getId(), copy().setContent(true).setEffective(false), true, false);
-            return def.getContent();
+            return def.getContent().get(session);
         } catch (NutsNotFoundException ex) {
             if (!isFailFast()) {
                 return null;
@@ -56,7 +56,7 @@ public class DefaultNutsFetchCommand extends AbstractNutsFetchCommand {
             NutsWorkspace ws = getSession().getWorkspace();
             NutsDefinition def = fetchDefinition(getId(), this, false, false);
             if (isEffective()) {
-                return NutsWorkspaceExt.of(ws).resolveEffectiveId(def.getEffectiveDescriptor(), getSession());
+                return NutsWorkspaceExt.of(ws).resolveEffectiveId(def.getEffectiveDescriptor().get(session), getSession());
             }
             return def.getId();
         } catch (NutsNotFoundException ex) {
@@ -72,7 +72,7 @@ public class DefaultNutsFetchCommand extends AbstractNutsFetchCommand {
         try {
             checkSession();
             NutsSession ws = getSession();
-            Path f = getResultDefinition().getFile();
+            Path f = getResultDefinition().getContent().map(NutsPath::toFile).get(session);
             return NutsDigest.of(ws).setSource(f).computeString();
         } catch (NutsNotFoundException ex) {
             if (!isFailFast()) {
@@ -112,7 +112,7 @@ public class DefaultNutsFetchCommand extends AbstractNutsFetchCommand {
         try {
             NutsDefinition def = fetchDefinition(getId(), copy().setContent(false), false, false);
             if (isEffective()) {
-                return def.getEffectiveDescriptor();
+                return def.getEffectiveDescriptor().get(session);
             }
             return def.getDescriptor();
         } catch (NutsNotFoundException ex) {
@@ -139,7 +139,7 @@ public class DefaultNutsFetchCommand extends AbstractNutsFetchCommand {
     public Path getResultPath() {
         try {
             NutsDefinition def = fetchDefinition(getId(), copy().setContent(true).setEffective(false), true, false);
-            Path p = def.getFile();
+            Path p = def.getContent().map(NutsPath::toFile).orNull();
             if (getLocation() != null) {
                 return getLocation();
             }
@@ -157,7 +157,7 @@ public class DefaultNutsFetchCommand extends AbstractNutsFetchCommand {
         checkSession();
         NutsWorkspace ws = getSession().getWorkspace();
         DefaultNutsFetchCommand b = new DefaultNutsFetchCommand(ws);
-        b.copyFrom(this);
+        b.setAll(this);
         return b;
     }
 
@@ -297,7 +297,7 @@ public class DefaultNutsFetchCommand extends AbstractNutsFetchCommand {
                                         .setDescriptor(foundDefinition.getDescriptor())
                                         .setSession(this.session.copy().setConfirm(NutsConfirmationMode.YES))
                                         //.setFetchMode(mode)
-                                        .setContent(foundDefinition.getContent().getFile())
+                                        .setContent(foundDefinition.getContent().get(session))
                                         .run();
 
                             }
@@ -362,23 +362,21 @@ public class DefaultNutsFetchCommand extends AbstractNutsFetchCommand {
         NutsRepositorySPI repoSPI = NutsWorkspaceUtils.of(session).repoSPI(repo0);
         for (NutsFetchMode mode : nutsFetchModes) {
             try {
-                NutsContent content = repoSPI.fetchContent()
+                NutsPath content = repoSPI.fetchContent()
                         .setId(id1).setDescriptor(foundDefinition.getDescriptor())
                         .setLocalPath(copyTo == null ? null : copyTo.toString())
                         .setSession(session)
                         .setFetchMode(mode)
                         .getResult();
                 if (content != null) {
-                    if (content.getFile() == null) {
-                        content = repoSPI.fetchContent()
-                                .setId(id1).setDescriptor(foundDefinition.getDescriptor())
-                                .setLocalPath(copyTo == null ? null : copyTo.toString())
-                                .setSession(session)
-                                .setFetchMode(mode)
-                                .getResult();
-                    }
+                    content = repoSPI.fetchContent()
+                            .setId(id1).setDescriptor(foundDefinition.getDescriptor())
+                            .setLocalPath(copyTo == null ? null : copyTo.toString())
+                            .setSession(session)
+                            .setFetchMode(mode)
+                            .getResult();
                     foundDefinition.setContent(content);
-                    foundDefinition.setDescriptor(resolveExecProperties(foundDefinition.getDescriptor(), content.getFile()));
+                    foundDefinition.setDescriptor(resolveExecProperties(foundDefinition.getDescriptor(), content));
                     return true;
                 }
             } catch (NutsNotFoundException ex) {
@@ -392,23 +390,15 @@ public class DefaultNutsFetchCommand extends AbstractNutsFetchCommand {
     protected boolean fetchContent(NutsId id1, DefaultNutsDefinition foundDefinition, NutsRepositoryAndFetchMode repo, Path copyTo, List<Exception> reasons) {
         NutsRepositorySPI repoSPI = NutsWorkspaceUtils.of(getSession()).repoSPI(repo.getRepository());
         try {
-            NutsContent content = repoSPI.fetchContent()
+            NutsPath content = repoSPI.fetchContent()
                     .setId(id1).setDescriptor(foundDefinition.getDescriptor())
                     .setLocalPath(copyTo == null ? null : copyTo.toString())
                     .setSession(session)
                     .setFetchMode(repo.getFetchMode())
                     .getResult();
             if (content != null) {
-                if (content.getFile() == null) {
-                    content = repoSPI.fetchContent()
-                            .setId(id1).setDescriptor(foundDefinition.getDescriptor())
-                            .setLocalPath(copyTo == null ? null : copyTo.toString())
-                            .setSession(session)
-                            .setFetchMode(repo.getFetchMode())
-                            .getResult();
-                }
                 foundDefinition.setContent(content);
-                foundDefinition.setDescriptor(resolveExecProperties(foundDefinition.getDescriptor(), content.getFile()));
+                foundDefinition.setDescriptor(resolveExecProperties(foundDefinition.getDescriptor(), content));
                 return true;
             }
         } catch (NutsNotFoundException ex) {
@@ -418,12 +408,12 @@ public class DefaultNutsFetchCommand extends AbstractNutsFetchCommand {
         return false;
     }
 
-    protected NutsDescriptor resolveExecProperties(NutsDescriptor nutsDescriptor, Path jar) {
+    protected NutsDescriptor resolveExecProperties(NutsDescriptor nutsDescriptor, NutsPath jar) {
         checkSession();
         boolean executable = nutsDescriptor.isExecutable();
         boolean nutsApp = nutsDescriptor.isApplication();
         NutsSession session = getSession();
-        if (jar.getFileName().toString().toLowerCase().endsWith(".jar") && Files.isRegularFile(jar)) {
+        if (jar.getName().toLowerCase().endsWith(".jar") && jar.isRegularFile()) {
             NutsPath cachePath = session.locations().getStoreLocation(nutsDescriptor.getId(), NutsStoreLocation.CACHE)
                     .resolve(session.locations().getDefaultIdFilename(nutsDescriptor.getId()
                                     .builder()

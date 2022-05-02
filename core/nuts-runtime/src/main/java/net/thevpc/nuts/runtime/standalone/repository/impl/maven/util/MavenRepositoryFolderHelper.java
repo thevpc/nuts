@@ -88,10 +88,10 @@ public class MavenRepositoryFolderHelper {
                 .resolve(session.locations().getDefaultIdFilename(id));
     }
 
-    public NutsContent fetchContentImpl(NutsId id, Path localPath, NutsSession session) {
+    public NutsPath fetchContentImpl(NutsId id, Path localPath, NutsSession session) {
         NutsPath cacheContent = getIdLocalFile(id, session);
         if (cacheContent != null && cacheContent.exists()) {
-            return new DefaultNutsContent(cacheContent, true, false);
+            return cacheContent.setUserCache(true).setUserTemporary(false);
         }
         return null;
     }

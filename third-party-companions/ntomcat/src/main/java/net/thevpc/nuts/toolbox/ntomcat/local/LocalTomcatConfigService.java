@@ -30,7 +30,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
 
     public static final String LOCAL_CONFIG_EXT = ".local-config";
     private final LocalTomcat app;
-    private final NutsApplicationContext context;
+    private final NutsApplicationContext appContext;
     private final NutsPath sharedConfigFolder;
     private String name;
     private LocalTomcatConfig config;
@@ -48,7 +48,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
     public LocalTomcatConfigService(String name, LocalTomcat app) {
         this.app = app;
         setName(name);
-        this.context = app.getContext();
+        this.appContext = app.getContext();
         sharedConfigFolder = app.getContext().getVersionFolder(NutsStoreLocation.CONFIG, NTomcatConfigVersions.CURRENT);
     }
 
@@ -186,7 +186,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
             if (x2 > 0) {
                 v = v.substring(0, x2);
             }
-            catalinaBase = context.getSharedConfigFolder().resolve("catalina-base-" + v).resolve("default");
+            catalinaBase = appContext.getSharedConfigFolder().resolve("catalina-base-" + v).resolve("default");
         } else {
             if (!catalinaBase.isAbsolute()) {
                 String v = getValidCatalinaVersion();
@@ -195,7 +195,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
                 if (x2 > 0) {
                     v = v.substring(0, x2);
                 }
-                catalinaBase = context.getSharedConfigFolder().resolve("catalina-base-" + v).resolve(catalinaBase);
+                catalinaBase = appContext.getSharedConfigFolder().resolve("catalina-base-" + v).resolve(catalinaBase);
             }
         }
         return catalinaBase;
@@ -203,10 +203,10 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
 
     public NutsPath resolveCatalinaHome() {
         NutsDefinition f = getCatalinaNutsDefinition();
-        NutsPath u = f.getInstallInformation().getInstallFolder();
+        NutsPath u = f.getInstallInformation().get(appContext.getSession()).getInstallFolder();
         NutsPath[] paths;
         try {
-            paths = u.list().filter(x -> x.isDirectory(), "isDirectory").toArray(NutsPath[]::new);
+            paths = u.list().filter(NutsPath::isDirectory, "isDirectory").toArray(NutsPath[]::new);
             if (paths.length == 1 && paths[0].getName().toLowerCase().startsWith("apache-tomcat")) {
                 return paths[0];
             }
@@ -228,7 +228,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
     }
 
     private NutsSession getSession() {
-        return context.getSession();
+        return appContext.getSession();
     }
 
     public NutsString getFormattedError(String str) {
@@ -510,7 +510,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
             }
         }
         if (catalinaNutsDefinition == null || !Objects.equals(catalinaVersion, this.catalinaVersion)
-                || !catalinaNutsDefinition.getInstallInformation().getInstallStatus().isInstalled()) {
+                || !catalinaNutsDefinition.getInstallInformation().get(session).getInstallStatus().isInstalled()) {
             this.catalinaVersion = catalinaVersion;
             String cv = catalinaVersion;
             if (!cv.startsWith("[") && !cv.startsWith("]")) {
@@ -531,7 +531,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
                         .setSession(searchLatestCommand.getSession().copy().setFetchStrategy(NutsFetchStrategy.ONLINE))
                         .setInstallStatus(NutsInstallStatusFilters.of(session).byInstalled(false)).getResultDefinitions().required();
             }
-            if (r.getInstallInformation().isInstalledOrRequired()) {
+            if (r.getInstallInformation().get(session).isInstalledOrRequired()) {
                 return r;
             } else {
                 //TODO: FIX install return
@@ -543,7 +543,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
                             public void onInstall(NutsInstallEvent event) {
                                 if (getSession().isPlainOut()) {
                                     getSession().out().printf("%s Tomcat installed to catalina home %s\n", getFormattedPrefix(getName()),
-                                            event.getDefinition().getInstallInformation().getInstallFolder()
+                                            event.getDefinition().getInstallInformation().get(session).getInstallFolder()
                                     );
                                 }
                             }
@@ -586,7 +586,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
 
     public RunningTomcat getRunningTomcat() {
         NutsPath catalinaBase = getCatalinaBase();
-        return Arrays.stream(TomcatUtils.getRunningInstances(context))
+        return Arrays.stream(TomcatUtils.getRunningInstances(appContext))
                 .filter(p -> (catalinaBase == null
                 || catalinaBase.toString().equals(p.getBase())))
                 .findFirst().orElse(null);
@@ -1101,8 +1101,8 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
         return app;
     }
 
-    public NutsApplicationContext getContext() {
-        return context;
+    public NutsApplicationContext getAppContext() {
+        return appContext;
     }
 
     public Integer getShutdownPort() {

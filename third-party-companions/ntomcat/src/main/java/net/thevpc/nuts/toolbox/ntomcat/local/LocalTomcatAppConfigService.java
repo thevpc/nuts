@@ -33,7 +33,7 @@ public class LocalTomcatAppConfigService extends LocalTomcatServiceBase {
         this.config = config;
         this.tomcat = tomcat;
         this.context = tomcat.getTomcatServer().getContext();
-        sharedConfigFolder = tomcat.getContext().getVersionFolder(NutsStoreLocation.CONFIG, NTomcatConfigVersions.CURRENT);
+        sharedConfigFolder = tomcat.getAppContext().getVersionFolder(NutsStoreLocation.CONFIG, NTomcatConfigVersions.CURRENT);
     }
 
     @Override

@@ -343,7 +343,7 @@ public class DefaultNutsExecCommand extends AbstractNutsExecCommand {
         List<NutsId> ff = traceSession.search().addId(nid).setOptional(false).setLatest(true).setFailFast(false)
                 .setInstallStatus(NutsInstallStatusFilters.of(session).byDeployed(true))
                 .getResultDefinitions().stream()
-                .sorted(Comparator.comparing(x -> !x.getInstallInformation().isDefaultVersion())) // default first
+                .sorted(Comparator.comparing(x -> !x.getInstallInformation().get(session).isDefaultVersion())) // default first
                 .map(NutsDefinition::getId).collect(Collectors.toList());
         if (ff.isEmpty()) {
             if (!forceInstalled) {
@@ -451,7 +451,7 @@ public class DefaultNutsExecCommand extends AbstractNutsExecCommand {
         this.session.security().checkAllowed(NutsConstants.Permissions.EXEC, commandName);
         NutsSessionUtils.checkSession(ws, execSession);
         NutsSessionUtils.checkSession(ws, session);
-        if (def != null && def.getFile() != null) {
+        if (def != null && def.getContent().isPresent()) {
             NutsDescriptor descriptor = def.getDescriptor();
             if (!descriptor.isExecutable()) {
 //                session.getTerminal().getErr().println(nutToRun.getId()+" is not executable... will perform extra checks.");

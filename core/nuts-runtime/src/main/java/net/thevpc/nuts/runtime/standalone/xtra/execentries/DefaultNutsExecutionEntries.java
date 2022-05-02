@@ -2,6 +2,7 @@ package net.thevpc.nuts.runtime.standalone.xtra.execentries;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.io.NutsIOException;
+import net.thevpc.nuts.io.NutsPath;
 import net.thevpc.nuts.runtime.standalone.util.jclass.JavaClassUtils;
 import net.thevpc.nuts.runtime.standalone.util.jclass.JavaJarUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
@@ -28,6 +29,29 @@ public class DefaultNutsExecutionEntries implements NutsExecutionEntries {
     @Override
     public List<NutsExecutionEntry> parse(File file) {
         return parse(file.toPath());
+    }
+
+    @Override
+    public List<NutsExecutionEntry> parse(NutsPath file) {
+        if (file.getName().toLowerCase().endsWith(".jar")) {
+            try {
+                try (InputStream in = file.getInputStream()) {
+                    return parse(in, "jar", file.toAbsolute().normalize().toString());
+                }
+            } catch (IOException ex) {
+                throw new NutsIOException(session, ex);
+            }
+        } else if (file.getName().toLowerCase().endsWith(".class")) {
+            try {
+                try (InputStream in = file.getInputStream()) {
+                    return parse(in, "class", file.toAbsolute().normalize().toString());
+                }
+            } catch (IOException ex) {
+                throw new NutsIOException(session, ex);
+            }
+        } else {
+            return Collections.emptyList();
+        }
     }
 
     @Override

@@ -29,7 +29,6 @@ import net.thevpc.nuts.boot.NutsWorkspaceBootOptions;
 import net.thevpc.nuts.reserved.NutsReservedCollectionUtils;
 import net.thevpc.nuts.elem.NutsElement;
 import net.thevpc.nuts.elem.NutsElements;
-import net.thevpc.nuts.elem.NutsPrimitiveElement;
 import net.thevpc.nuts.io.NutsIOException;
 import net.thevpc.nuts.io.NutsPath;
 import net.thevpc.nuts.io.NutsPrintStream;
@@ -124,7 +123,7 @@ public class DefaultNutsWorkspaceConfigModel {
     public DefaultNutsWorkspaceConfigModel(final DefaultNutsWorkspace ws) {
         this.ws = ws;
         NutsWorkspaceBootOptions bOptions = NutsWorkspaceExt.of(ws).getModel().bootModel.getBootEffectiveOptions();
-        this.bootClassLoader = bOptions.getClassWorldLoader().orElseGet(()->Thread.currentThread().getContextClassLoader());
+        this.bootClassLoader = bOptions.getClassWorldLoader().orElseGet(() -> Thread.currentThread().getContextClassLoader());
         this.bootClassWorldURLs = NutsReservedCollectionUtils.nonNullList(bOptions.getClassWorldURLs().orNull());
         workspaceSystemTerminalAdapter = new WorkspaceSystemTerminalAdapter(ws);
 
@@ -465,10 +464,10 @@ public class DefaultNutsWorkspaceConfigModel {
     }
 
     public Duration getCreateDuration() {
-        if(startCreateTime==null||endCreateTime==null){
+        if (startCreateTime == null || endCreateTime == null) {
             return Duration.ofMillis(0);
         }
-        return Duration.between(startCreateTime,endCreateTime);
+        return Duration.between(startCreateTime, endCreateTime);
     }
 
     public NutsWorkspaceConfigMain getStoreModelMain() {
@@ -574,21 +573,21 @@ public class DefaultNutsWorkspaceConfigModel {
             NutsVersionCompat compat = createNutsVersionCompat(Nuts.getVersion(), session);
             NutsId apiId = session.getWorkspace().getApiId();
             NutsWorkspaceConfigApi aconfig = compat.parseApiConfig(apiId, session);
-            NutsId toImportOlderId=null;
+            NutsId toImportOlderId = null;
             if (aconfig != null) {
                 cConfig.merge(aconfig, session);
-            }else{
+            } else {
                 // will try to find older versions
                 List<NutsId> olderIds = findOlderNutsApiIds(session);
                 for (NutsId olderId : olderIds) {
                     aconfig = compat.parseApiConfig(olderId, session);
                     if (aconfig != null) {
                         // ask
-                        if(session.getTerminal().ask().forBoolean(NutsMessage.cstyle("import older config %s",apiId))
+                        if (session.getTerminal().ask().forBoolean(NutsMessage.cstyle("import older config %s", apiId))
                                 .setDefaultValue(true)
                                 .getBooleanValue()
-                        ){
-                            toImportOlderId=olderId;
+                        ) {
+                            toImportOlderId = olderId;
                             cConfig.merge(aconfig, session);
                         }
                         break;
@@ -601,15 +600,15 @@ public class DefaultNutsWorkspaceConfigModel {
                 cConfig.merge(rconfig, session);
             }
             NutsWorkspaceConfigSecurity sconfig = compat.parseSecurityConfig(apiId, session);
-            if(sconfig==null){
-                if(toImportOlderId!=null){
-                    sconfig=compat.parseSecurityConfig(toImportOlderId, session);
+            if (sconfig == null) {
+                if (toImportOlderId != null) {
+                    sconfig = compat.parseSecurityConfig(toImportOlderId, session);
                 }
             }
             NutsWorkspaceConfigMain mconfig = compat.parseMainConfig(apiId, session);
-            if(mconfig==null){
-                if(toImportOlderId!=null){
-                    mconfig=compat.parseMainConfig(toImportOlderId, session);
+            if (mconfig == null) {
+                if (toImportOlderId != null) {
+                    mconfig = compat.parseMainConfig(toImportOlderId, session);
                 }
             }
 
@@ -646,23 +645,23 @@ public class DefaultNutsWorkspaceConfigModel {
     }
 
     private List<NutsId> findOlderNutsApiIds(NutsSession session) {
-        NutsId apiId=session.getWorkspace().getApiId();
+        NutsId apiId = session.getWorkspace().getApiId();
         NutsPath path = session.locations().getStoreLocation(apiId, NutsStoreLocation.CONFIG)
                 .getParent();
-        List<NutsId> olderIds= path.list().filter(NutsPath::isDirectory, elems->NutsElements.of(elems).ofString("isDirectory"))
-                .map(x->NutsVersion.of(x.getName()).get(session),"toVersion")
-                .filter(x->x.compareTo(apiId.getVersion())<0, elems->NutsElements.of(elems).ofString("older"))
+        List<NutsId> olderIds = path.list().filter(NutsPath::isDirectory, elems -> NutsElements.of(elems).ofString("isDirectory"))
+                .map(x -> NutsVersion.of(x.getName()).get(session), "toVersion")
+                .filter(x -> x.compareTo(apiId.getVersion()) < 0, elems -> NutsElements.of(elems).ofString("older"))
                 .sorted(new NutsComparator<NutsVersion>() {
                     @Override
                     public int compare(NutsVersion o1, NutsVersion o2) {
-                        return Comparator.<NutsVersion>reverseOrder().compare(o1,o2);
+                        return Comparator.<NutsVersion>reverseOrder().compare(o1, o2);
                     }
 
                     @Override
                     public NutsElement describe(NutsSession session) {
                         return NutsElements.of(session).ofString("reverseOrder");
                     }
-                }).map(x-> apiId.builder().setVersion(x).build(), elems->NutsElements.of(elems).ofString("toId"))
+                }).map(x -> apiId.builder().setVersion(x).build(), elems -> NutsElements.of(elems).ofString("toId"))
                 .toList();
         return olderIds;
     }
@@ -873,7 +872,7 @@ public class DefaultNutsWorkspaceConfigModel {
 
     //    
     public NutsWorkspaceConfigApi getStoredConfigApi() {
-        if (storeModelApi.getApiVersion()==null || storeModelApi.getApiVersion().isBlank()) {
+        if (storeModelApi.getApiVersion() == null || storeModelApi.getApiVersion().isBlank()) {
             storeModelApi.setApiVersion(Nuts.getVersion());
         }
         return storeModelApi;
@@ -1093,15 +1092,15 @@ public class DefaultNutsWorkspaceConfigModel {
     public String toString() {
         String s1 = "NULL";
         String s2 = "NULL";
-        s1 = ws==null?"?":ws.getApiId().toString();
-        s2 = ws==null?"?":String.valueOf(ws.getRuntimeId());
+        s1 = ws == null ? "?" : ws.getApiId().toString();
+        s2 = ws == null ? "?" : String.valueOf(ws.getRuntimeId());
         return "NutsWorkspaceConfig{"
                 + "workspaceBootId=" + s1
                 + ", workspaceRuntimeId=" + s2
                 + ", workspace=" + ((currentConfig == null) ? "NULL" : ("'"
                 +
-                (ws==null?"?":""+((DefaultNutsWorkspaceLocationManager) (NutsSessionUtils.defaultSession(ws))
-                .locations()).getModel().getWorkspaceLocation()) + '\''))
+                (ws == null ? "?" : "" + ((DefaultNutsWorkspaceLocationManager) (NutsSessionUtils.defaultSession(ws))
+                        .locations()).getModel().getWorkspaceLocation()) + '\''))
                 + '}';
     }
 
@@ -1120,12 +1119,12 @@ public class DefaultNutsWorkspaceConfigModel {
                 .setDependencyFilter(NutsDependencyFilters.of(session).byRunnable())
                 .setFailFast(false).getResultDefinition();
         if (nd != null) {
-            if(content && nd.getContent()==null){
+            if (content && nd.getContent().isNotPresent()) {
                 //this is an unexpected behaviour, fail fast
                 throw new NutsNotFoundException(session, id);
             }
-            return new NutsBootDef(nd.getId(), nd.getDependencies().transitive().toList(),
-                    (content && nd.getContent() != null) ? nd.getContent().getPath() : null);
+            return new NutsBootDef(nd.getId(), nd.getDependencies().get(session).transitive().toList(),
+                    (content && nd.getContent().isPresent()) ? nd.getContent().get() : null);
         }
         if (isFirstBoot()) {
             NutsClassLoaderNode n = searchBootNode(id, session);
@@ -1151,7 +1150,7 @@ public class DefaultNutsWorkspaceConfigModel {
                 if (base.isLocal() && base.isDirectory()) {
                     NutsPath a = base.resolve(contentPath + ".jar");
                     NutsPath b = base.resolve(contentPath + ".pom");
-                    if (a.isRegularFile() &&b.isRegularFile()) {
+                    if (a.isRegularFile() && b.isRegularFile()) {
                         jarPath = a;
                         pomPath = b;
                         break;
@@ -1226,7 +1225,7 @@ public class DefaultNutsWorkspaceConfigModel {
             DefaultNutsDefinition b = new DefaultNutsDefinition(
                     null, null,
                     descriptor.getId(),
-                    descriptor, new DefaultNutsContent(NutsPath.of(tmp, session), true, true),
+                    descriptor, NutsPath.of(tmp, session).setUserCache(true).setUserTemporary(true),
                     new DefaultNutsInstallInfo(descriptor.getId(), NutsInstallStatus.NONE, null, null, null, null, null, null, false, false),
                     null, session
             );
@@ -1318,11 +1317,11 @@ public class DefaultNutsWorkspaceConfigModel {
             o.println(session.locations().getWorkspaceLocation());
             o.println("workspace.options:");
             o.println(wconfig.getBootUserOptions(session)
-                            .toCommandLine(
-                                    new NutsWorkspaceOptionsConfig()
-                                            .setCompact(false)
-                            )
-                    );
+                    .toCommandLine(
+                            new NutsWorkspaceOptionsConfig()
+                                    .setCompact(false)
+                    )
+            );
             for (NutsStoreLocation location : NutsStoreLocation.values()) {
                 o.println("location." + location.id() + ":");
                 o.println(session.locations().getStoreLocation(location));
@@ -1352,9 +1351,9 @@ public class DefaultNutsWorkspaceConfigModel {
         }
         try {
             Map<String, Object> a_config0 = NutsElements.of(session).json().parse(bytes, Map.class);
-            NutsVersion version = NutsVersion.of((String) a_config0.get("configVersion")).nonBlank().orNull();
+            NutsVersion version = NutsVersion.of((String) a_config0.get("configVersion")).ifBlankNull().orNull();
             if (version == null) {
-                version = NutsVersion.of((String) a_config0.get("createApiVersion")).nonBlank().orNull();
+                version = NutsVersion.of((String) a_config0.get("createApiVersion")).ifBlankNull().orNull();
                 if (version == null) {
                     version = Nuts.getVersion();
                 }
@@ -1425,13 +1424,13 @@ public class DefaultNutsWorkspaceConfigModel {
                     executorService = session.boot().getBootOptions().getExecutorService().orNull();
                     if (executorService == null) {
 
-                        int minPoolSize = getConfigProperty("nuts.threads.min", session).asInt().orElse(2);
+                        int minPoolSize = getConfigProperty("nuts.threads.min", session).flatMap(NutsValue::asInt).orElse(2);
                         if (minPoolSize < 1) {
                             minPoolSize = 60;
                         } else if (minPoolSize > 500) {
                             minPoolSize = 500;
                         }
-                        int maxPoolSize = getConfigProperty("nuts.threads.max", session).asInt().orElse(60);
+                        int maxPoolSize = getConfigProperty("nuts.threads.max", session).flatMap(NutsValue::asInt).orElse(60);
                         if (maxPoolSize < 1) {
                             maxPoolSize = 60;
                         } else if (maxPoolSize > 500) {
@@ -1442,7 +1441,7 @@ public class DefaultNutsWorkspaceConfigModel {
                         }
                         TimePeriod defaultPeriod = new TimePeriod(3, TimeUnit.SECONDS);
                         TimePeriod period = TimePeriod.parse(
-                                getConfigProperty("nuts.threads.keep-alive", session).asString().orElse(null),
+                                getConfigProperty("nuts.threads.keep-alive", session).flatMap(NutsValue::asString).orNull(),
                                 TimeUnit.SECONDS
                         ).orElse(defaultPeriod);
                         if (period.getCount() < 0) {
@@ -1514,7 +1513,7 @@ public class DefaultNutsWorkspaceConfigModel {
         ClassLoader finalClassLoader = classLoader;
         NutsSupported<NutsPathSPI> z = Arrays.stream(getPathFactories())
                 .map(x -> {
-                    NutsSupported<NutsPathSPI> v=null;
+                    NutsSupported<NutsPathSPI> v = null;
                     try {
                         v = x.createPath(path, session, finalClassLoader);
                     } catch (Exception ex) {
@@ -1555,12 +1554,13 @@ public class DefaultNutsWorkspaceConfigModel {
         return p;
     }
 
-    public NutsPrimitiveElement getConfigProperty(String property, NutsSession session) {
+    public NutsOptional<NutsValue> getConfigProperty(String property, NutsSession session) {
         Map<String, String> env = getStoreModelMain().getEnv();
         if (env != null) {
-            return NutsElements.of(session).ofString(env.get(property));
+            String v = env.get(property);
+            return NutsOptional.of(v == null ? null : NutsValue.of(v));
         }
-        return NutsElements.of(session).ofNull();
+        return NutsOptional.ofEmpty(s -> NutsMessage.cstyle("config property not found : %s", property));
     }
 
     public void setConfigProperty(String property, String value, NutsSession session) {
@@ -1664,7 +1664,7 @@ public class DefaultNutsWorkspaceConfigModel {
             NutsVersion v = getStoredConfigApi().getApiVersion();
             NutsSession session = NutsSessionUtils.defaultSession(DefaultNutsWorkspaceConfigModel.this.ws);
 
-            return (v == null || v.isBlank())? null : NutsId.ofApi(v).get(session);
+            return (v == null || v.isBlank()) ? null : NutsId.ofApi(v).get(session);
         }
 
         @Override

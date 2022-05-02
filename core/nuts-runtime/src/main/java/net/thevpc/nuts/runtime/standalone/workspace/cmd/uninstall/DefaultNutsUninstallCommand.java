@@ -54,7 +54,7 @@ public class DefaultNutsUninstallCommand extends AbstractNutsUninstallCommand {
                     .setDependencies(true)//include dependencies so that we can remove it by calling executor
                     .addScope(NutsDependencyScopePattern.RUN)
                     .getResultDefinitions().toList();
-            resultDefinitions.removeIf(it -> !it.getInstallInformation().isInstalledOrRequired());
+            resultDefinitions.removeIf(it -> !it.getInstallInformation().get(session).isInstalledOrRequired());
             if (resultDefinitions.isEmpty()) {
                 throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("not installed : %s", id));
             }

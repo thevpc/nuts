@@ -43,11 +43,11 @@ public interface NutsTerminalSpec extends Serializable {
 
     Object get(String name);
 
-    NutsTerminalSpec put(String name, Object o);
+    NutsTerminalSpec setProperty(String name, Object o);
 
-    NutsTerminalSpec copyFrom(NutsTerminalSpec other);
+    NutsTerminalSpec setAll(NutsTerminalSpec other);
 
-    NutsTerminalSpec putAll(Map<String, Object> other);
+    NutsTerminalSpec setAll(Map<String, Object> other);
 
     Map<String, Object> getProperties();
 }

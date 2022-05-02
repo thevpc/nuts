@@ -34,12 +34,6 @@ public class DefaultNutsRepoConfigManager implements NutsRepositoryConfigManager
         return getModel().getRepositoryRef(session);
     }
 
-//    @Override
-//    public String getName() {
-////        checkSession();
-//        return getModel().getName();
-//    }
-
     @Override
     public String getType() {
         checkSession();
@@ -225,9 +219,14 @@ public class DefaultNutsRepoConfigManager implements NutsRepositoryConfigManager
     }
 
     @Override
-    public String getConfigProperty(String key, String defaultValue, boolean inherit) {
+    public NutsOptional<NutsValue> getConfigProperty(String key, boolean inherit) {
         NutsSessionUtils.checkSession(model.getWorkspace(), session);
-        return model.get(key, defaultValue, inherit, getSession());
+        return model.get(key, inherit, getSession());
+    }
+    @Override
+    public NutsOptional<NutsValue> getConfigProperty(String property) {
+        NutsSessionUtils.checkSession(model.getWorkspace(), session);
+        return getConfigProperty(property, true);
     }
 
     @Override
@@ -236,11 +235,6 @@ public class DefaultNutsRepoConfigManager implements NutsRepositoryConfigManager
         return model.toMap(getSession());
     }
 
-    @Override
-    public String getConfigProperty(String property, String defaultValue) {
-        NutsSessionUtils.checkSession(model.getWorkspace(), session);
-        return model.get(property, defaultValue, getSession());
-    }
 
     @Override
     public NutsRepositoryConfigManager setConfigProperty(String property, String value) {

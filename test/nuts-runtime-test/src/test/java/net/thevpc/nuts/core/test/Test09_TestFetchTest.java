@@ -18,11 +18,11 @@ public class Test09_TestFetchTest {
             TestUtils.println(dependency);
         }
         TestUtils.println("-----------------");
-        for (NutsDependency dependency : resultDefinition.getDependencies()) {
+        for (NutsDependency dependency : resultDefinition.getDependencies().get(session)) {
             TestUtils.println(dependency);
         }
         TestUtils.println("-----------------");
-        show(resultDefinition.getDependencies().transitiveNodes().toArray(NutsDependencyTreeNode[]::new), "");
+        show(resultDefinition.getDependencies().get(session).transitiveNodes().toArray(NutsDependencyTreeNode[]::new), "");
     }
 
     // disable test because, for some reason it fails on Gitlab CI with

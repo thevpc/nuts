@@ -274,7 +274,7 @@ public class NutsRepositorySessionAwareImpl implements NutsRepository, NutsRepos
     }
 
     @Override
-    public NutsContent fetchContentImpl(NutsId id, NutsDescriptor descriptor, String localPath, NutsFetchMode fetchMode, NutsSession session) {
+    public NutsPath fetchContentImpl(NutsId id, NutsDescriptor descriptor, String localPath, NutsFetchMode fetchMode, NutsSession session) {
         return repoExt().fetchContentImpl(id, descriptor, localPath, fetchMode, session);
     }
 

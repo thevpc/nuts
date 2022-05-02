@@ -242,7 +242,7 @@ public class NutsComponentController {
                             .getResultDefinitions().iterator();
                     if (it.hasNext()) {
                         NutsDefinition definition = it.next();
-                        List<NutsDependency> directDependencies = definition.getEffectiveDescriptor().getDependencies();
+                        List<NutsDependency> directDependencies = definition.getEffectiveDescriptor().get(session).getDependencies();
                         data.put("dependencies", NutsElements.of(session).json()
                                 .setValue(directDependencies.stream().map(Object::toString)
                                         .collect(Collectors.toList()))

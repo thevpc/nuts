@@ -34,6 +34,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.net.URL;
+import java.nio.file.Path;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
@@ -237,7 +238,7 @@ public class DefaultNutsWorkspaceExtensionModel {
 //        }
 //    }
     public Set<Class> discoverTypes(NutsId id, ClassLoader classLoader, NutsSession session) {
-        URL url = session.fetch().setId(id).setSession(session).setContent(true).getResultContent().getURL();
+        URL url = session.fetch().setId(id).setSession(session).setContent(true).getResultContent().asURL();
         return objectFactory.discoverTypes(id, url, classLoader, session);
     }
 
@@ -374,7 +375,7 @@ public class DefaultNutsWorkspaceExtensionModel {
                             .setDependencyFilter(NutsDependencyFilters.of(session).byRunnable())
                             .setLatest(true)
                             .getResultDefinitions().required();
-                    if (def == null || def.getContent() == null) {
+                    if (def == null || def.getContent().isNotPresent()) {
                         throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("extension not found: %s", extension));
                     }
                     if (def.getDescriptor().getIdType() != NutsIdType.EXTENSION) {
@@ -382,7 +383,7 @@ public class DefaultNutsWorkspaceExtensionModel {
                     }
 //                    ws.install().setSession(session).id(def.getId());
                     workspaceExtensionsClassLoader.add(NutsClassLoaderUtils.definitionToClassLoaderNode(def, session));
-                    objectFactory.discoverTypes(def.getId(), def.getContent().getURL(), workspaceExtensionsClassLoader, session);
+                    objectFactory.discoverTypes(def.getId(), def.getContent().map(NutsPath::asURL).orNull(), workspaceExtensionsClassLoader, session);
                     //should check current classpath
                     //and the add to classpath
                     loadedExtensionIds.add(extension);
@@ -408,7 +409,7 @@ public class DefaultNutsWorkspaceExtensionModel {
                 .setDependencyFilter(NutsDependencyFilters.of(session).byRunnable())
                 .setLatest(true)
                 .getResultDefinitions().toList()) {
-            loadedExtensionURLs.add(def.getContent().getURL());
+            loadedExtensionURLs.add(def.getContent().map(NutsPath::asURL).orNull());
         }
     }
 
@@ -450,7 +451,7 @@ public class DefaultNutsWorkspaceExtensionModel {
 
         _LOGOP(session).level(Level.FINE).verb(NutsLoggerVerb.ADD).log(NutsMessage.jstyle("installing extension {0}", id));
         NutsDefinition nutsDefinitions = session.search()
-                .copyFrom(options)
+                .setAll(options)
                 .addId(id)
                 .setOptional(false)
                 .addScope(NutsDependencyScopePattern.RUN)
@@ -464,7 +465,7 @@ public class DefaultNutsWorkspaceExtensionModel {
         }
         DefaultNutsWorkspaceExtension workspaceExtension = new DefaultNutsWorkspaceExtension(id, nutsDefinitions.getId(), this.workspaceExtensionsClassLoader);
         //now will iterate over Extension classes to wire them ...
-        objectFactory.discoverTypes(nutsDefinitions.getId(), nutsDefinitions.getContent().getURL(), workspaceExtension.getClassLoader(), session);
+        objectFactory.discoverTypes(nutsDefinitions.getId(), nutsDefinitions.getContent().map(NutsPath::asURL).orNull(), workspaceExtension.getClassLoader(), session);
 //        for (Class extensionImpl : getExtensionTypes(NutsComponent.class, session)) {
 //            for (Class extensionPointType : resolveComponentTypes(extensionImpl)) {
 //                if (registerType(extensionPointType, extensionImpl, session)) {
@@ -476,7 +477,7 @@ public class DefaultNutsWorkspaceExtensionModel {
         _LOGOP(session).level(Level.FINE).verb(NutsLoggerVerb.ADD).log(NutsMessage.jstyle("extension {0} installed successfully", id));
         NutsTerminalSpec spec = new NutsDefaultTerminalSpec();
         if (session.getTerminal() != null) {
-            spec.put("ignoreClass", session.getTerminal().getClass());
+            spec.setProperty("ignoreClass", session.getTerminal().getClass());
         }
         NutsSessionTerminal newTerminal = createTerminal(spec, session);
         if (newTerminal != null) {
@@ -494,10 +495,10 @@ public class DefaultNutsWorkspaceExtensionModel {
         }
         try {
             //            NutsDefinition file = fetch(parse.toString(), session);
-            if (file.getFile() != null) {
+            if (file.getContent().isPresent()) {
                 ZipFile zipFile = null;
                 try {
-                    zipFile = new ZipFile(file.getFile().toFile());
+                    zipFile = new ZipFile(file.getContent().map(NutsPath::toFile).map(Path::toFile).get(session));
                     Enumeration<? extends ZipEntry> entries = zipFile.entries();
                     while (entries.hasMoreElements()) {
                         ZipEntry zipEntry = entries.nextElement();
@@ -519,7 +520,7 @@ public class DefaultNutsWorkspaceExtensionModel {
                         } catch (IOException ex) {
                             _LOGOP(session).level(Level.SEVERE)
                                     .error(ex).log(NutsMessage.jstyle("failed to close zip file {0} : {1}",
-                                    file.getFile(), ex));
+                                    file.getContent().orNull(), ex));
                             //ignore return false;
                         }
                     }
@@ -590,7 +591,7 @@ public class DefaultNutsWorkspaceExtensionModel {
         //should parse this form config?
         //or should be parse from and extension component?
         String repos = NutsSessionUtils.defaultSession(ws).config()
-                .getConfigProperty("nuts.bootstrap-repository-locations").asString( ).orElse("") + ";" //                + NutsConstants.BootstrapURLs.LOCAL_NUTS_FOLDER
+                .getConfigProperty("nuts.bootstrap-repository-locations").flatMap(NutsValue::asString).orElse("") + ";" //                + NutsConstants.BootstrapURLs.LOCAL_NUTS_FOLDER
                 //                + ";" + NutsConstants.BootstrapURLs.REMOTE_NUTS_GIT
                 ;
         List<String> urls = new ArrayList<>();

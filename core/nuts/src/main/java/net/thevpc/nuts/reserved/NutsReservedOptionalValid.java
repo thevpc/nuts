@@ -54,7 +54,7 @@ public class NutsReservedOptionalValid<T> extends NutsReservedOptionalImpl<T> {
         return false;
     }
 
-    public NutsOptional<T> nonBlank() {
+    public NutsOptional<T> ifBlankNull() {
         T v = get();
         if (NutsBlankable.isBlank(v)) {
             return NutsOptional.ofEmpty((session) -> NutsMessage.cstyle("blank value"));

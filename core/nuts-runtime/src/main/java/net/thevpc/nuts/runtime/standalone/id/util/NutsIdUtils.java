@@ -135,6 +135,7 @@ public class NutsIdUtils {
     }
 
     public static String getNutsApiVersion(NutsExecutionContext executionContext) {
+        NutsSession session = executionContext.getSession();
         NutsDescriptor descriptor = executionContext.getDefinition().getDescriptor();
         if (descriptor.isApplication()) {
             for (NutsDependency dependency : descriptor.getDependencies()) {
@@ -143,7 +144,7 @@ public class NutsIdUtils {
                 }
             }
         }
-        for (NutsDependency dependency : executionContext.getDefinition().getDependencies()) {
+        for (NutsDependency dependency : executionContext.getDefinition().getDependencies().get(session)) {
             if (dependency.toId().getShortName().equals(NutsConstants.Ids.NUTS_API)) {
                 return dependency.toId().getVersion().getValue();
             }

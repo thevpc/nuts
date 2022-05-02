@@ -82,7 +82,7 @@ public interface JShellContext {
 
     void setAliases(JShellAliasManager aliasManager);
 
-    void copyFrom(JShellContext other);
+    void setAll(JShellContext other);
 
     String getServiceName();
 

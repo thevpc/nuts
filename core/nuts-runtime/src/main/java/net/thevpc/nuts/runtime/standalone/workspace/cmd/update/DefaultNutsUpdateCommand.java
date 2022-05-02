@@ -479,7 +479,7 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
             //should not throw exception here, this is a check and not update method
             return r;
         }
-        if (!d0.getInstallInformation().isDefaultVersion()) {
+        if (!d0.getInstallInformation().get(session).isDefaultVersion()) {
             shouldUpdateDefault = true;
         }
         //search latest parse
@@ -611,7 +611,7 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
                 configModel.setExtraBootRuntimeId(
                         newApi,
                         runtimeUpdate.getAvailable().getId(),
-                        runtimeUpdate.getAvailable().getDependencies().transitive().toList(),
+                        runtimeUpdate.getAvailable().getDependencies().get(session).transitive().toList(),
                         session);
             }
             traceSingleUpdate(runtimeUpdate);
@@ -626,7 +626,7 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
                         configModel.setExtraBootExtensionId(
                                 newApi,
                                 extension.getAvailable().getId(),
-                                extension.getAvailable().getDependencies().transitive().toArray(NutsDependency[]::new),
+                                extension.getAvailable().getDependencies().get(session).transitive().toArray(NutsDependency[]::new),
                                 session);
                     }
                     ((DefaultNutsUpdateResult) extension).setUpdateApplied(true);
@@ -810,7 +810,7 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
         NutsId cnewId = toCanonicalForm(newId);
         NutsId coldId = toCanonicalForm(oldId);
         DefaultNutsUpdateResult defaultNutsUpdateResult = new DefaultNutsUpdateResult(id, oldFile, newFile,
-                newFile == null ? null : newFile.getDependencies().transitive().map(NutsDependency::toId, "toId").toList(),
+                newFile == null ? null : newFile.getDependencies().get(session).transitive().map(NutsDependency::toId, "toId").toList(),
                 false);
         if (cnewId != null && newFile != null && coldId != null && cnewId.getVersion().compareTo(coldId.getVersion()) > 0) {
             defaultNutsUpdateResult.setUpdateVersionAvailable(true);

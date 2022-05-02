@@ -25,6 +25,7 @@
 */
 package net.thevpc.nuts.toolbox.nutsserver;
 
+import net.thevpc.nuts.io.NutsPath;
 import net.thevpc.nuts.toolbox.nutsserver.http.NutsHttpServletFacadeContext;
 import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.NutsWorkspace;
@@ -116,6 +117,11 @@ public class FacadeCommandContext implements NutsHttpServletFacadeContext {
 
     @Override
     public void sendResponseFile(int code, Path file) throws IOException {
+        base.sendResponseFile(code, file);
+    }
+
+    @Override
+    public void sendResponseFile(int code, NutsPath file) throws IOException {
         base.sendResponseFile(code, file);
     }
 

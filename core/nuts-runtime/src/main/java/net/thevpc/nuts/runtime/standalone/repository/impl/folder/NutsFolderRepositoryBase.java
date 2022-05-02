@@ -77,13 +77,12 @@ public abstract class NutsFolderRepositoryBase extends NutsCachedRepository {
 
 
     @Override
-    public NutsContent fetchContentCore(NutsId id, NutsDescriptor descriptor, String localPath, NutsFetchMode fetchMode, NutsSession session) {
+    public NutsPath fetchContentCore(NutsId id, NutsDescriptor descriptor, String localPath, NutsFetchMode fetchMode, NutsSession session) {
         if (!acceptedFetchNoCache(fetchMode)) {
             throw new NutsNotFoundException(session, id, new NutsFetchModeNotSupportedException(session, this, fetchMode, id.toString(), null));
         }
         if (NutsIdLocationUtils.fetch(id, descriptor.getLocations(), localPath, session)) {
-            return new DefaultNutsContent(
-                    NutsPath.of(localPath, session), false, false);
+            return NutsPath.of(localPath, session);
         }
         return fetchContentCoreUsingRepoHelper(id, descriptor, localPath, fetchMode, session);
     }
@@ -155,12 +154,12 @@ public abstract class NutsFolderRepositoryBase extends NutsCachedRepository {
         return isRemote() || mode == NutsFetchMode.LOCAL;
     }
 
-    public NutsContent fetchContentCoreUsingRepoHelper(NutsId id, NutsDescriptor descriptor, String localPath, NutsFetchMode fetchMode, NutsSession session) {
+    public NutsPath fetchContentCoreUsingRepoHelper(NutsId id, NutsDescriptor descriptor, String localPath, NutsFetchMode fetchMode, NutsSession session) {
         if (localPath == null) {
             NutsPath p = getIdRemotePath(id, session);
             if (p.isLocal()) {
                 if (p.exists()) {
-                    return new DefaultNutsContent(p, false, false);
+                    return p.copy();
                 } else {
                     throw new NutsNotFoundException(session, id);
                 }
@@ -179,7 +178,7 @@ public abstract class NutsFolderRepositoryBase extends NutsCachedRepository {
                 } catch (UncheckedIOException | NutsIOException ex) {
                     throw new NutsNotFoundException(session, id, null, ex);
                 }
-                return new DefaultNutsContent(NutsPath.of(tempFile, session), true, true);
+                return NutsPath.of(tempFile, session).setUserTemporary( true).setUserCache(true);
             }
         } else {
             try {
@@ -195,8 +194,7 @@ public abstract class NutsFolderRepositoryBase extends NutsCachedRepository {
             } catch (UncheckedIOException | NutsIOException ex) {
                 throw new NutsNotFoundException(session, id, null, ex);
             }
-            return new DefaultNutsContent(
-                    NutsPath.of(localPath, session), true, false);
+            return NutsPath.of(localPath, session).setUserCache(true).setUserTemporary(false);
         }
     }
 

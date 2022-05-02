@@ -30,6 +30,7 @@ import java.util.*;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.boot.NutsClassLoaderNode;
+import net.thevpc.nuts.io.NutsPath;
 
 /**
  *
@@ -41,17 +42,15 @@ public final class NutsClassLoaderUtils {
         if (session == null) {
             throw new NullPointerException("session cannot be null");
         }
-        if (def.getContent() == null
-                || def.getContent().getURL() == null
-                || def.getDependencies() == null) {
-            throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("definition must provide content and dependencies"));
-        }
+        def.getDependencies().get(session);
+        def.getContent().get(session);
+        def.getContent().map(NutsPath::asURL).get(session);
         return new NutsClassLoaderNode(
                 def.getId().toString(),
-                def.getContent().getURL(),
+                def.getContent().map(NutsPath::asURL).orNull(),
                 true,
                 true,
-                def.getDependencies().transitiveNodes().stream().map(x -> toClassLoaderNode(x, session))
+                def.getDependencies().get(session).transitiveNodes().stream().map(x -> toClassLoaderNode(x, session))
                         .filter(Objects::nonNull)
                         .toArray(NutsClassLoaderNode[]::new)
         );
@@ -62,7 +61,7 @@ public final class NutsClassLoaderUtils {
     }
 
     private static NutsClassLoaderNode toClassLoaderNodeWithOptional(NutsDependencyTreeNode d, boolean isOptional,NutsSession session) {
-        NutsContent cc=null;
+        NutsPath cc=null;
         if(!isOptional) {
             if(!NutsDependencyUtils.isRequiredDependency(d.getDependency())){
                 isOptional=true;
@@ -76,7 +75,7 @@ public final class NutsClassLoaderUtils {
             //
         }
         if (cc != null) {
-            URL url = cc.getURL();
+            URL url = cc.asURL();
             if (url != null) {
                 List<NutsClassLoaderNode> aa=new ArrayList<>();
                 for (NutsDependencyTreeNode child : d.getChildren()) {

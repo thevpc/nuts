@@ -135,7 +135,7 @@ public class SshCommand extends SimpleJShellBuiltin {
                         nutsCommandFound = true;
                     }
                     if (!nutsCommandFound) {
-                        NutsPath from = session.search().addId(session.getWorkspace().getApiId()).getResultDefinitions().required().getPath();
+                        NutsPath from = session.search().addId(session.getWorkspace().getApiId()).getResultDefinitions().required().getContent().orNull();
                         if (from == null) {
                             throw new NutsExecutionException(context.getSession(), NutsMessage.cstyle("unable to resolve Nuts Jar File"), 2);
                         } else {

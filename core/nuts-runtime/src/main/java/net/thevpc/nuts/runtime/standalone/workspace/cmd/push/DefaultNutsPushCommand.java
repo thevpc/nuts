@@ -123,7 +123,7 @@ public class DefaultNutsPushCommand extends AbstractDefaultNutsPushCommand {
                 NutsRepositorySPI repoSPI = wu.repoSPI(repo);
                 repoSPI.deploy().setSession(session)
                         .setId(effId)
-                        .setContent(file.getFile())
+                        .setContent(file.getContent().orNull())
                         .setDescriptor(file.getDescriptor())
                         //                        .setFetchMode(fetchMode)
                         //                        .setOffline(this.isOffline())

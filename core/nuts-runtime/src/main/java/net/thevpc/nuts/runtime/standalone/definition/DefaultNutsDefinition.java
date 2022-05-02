@@ -40,7 +40,7 @@ public class DefaultNutsDefinition implements NutsDefinition {
     private String repositoryUuid;
     private String repositoryName;
 
-    private NutsContent content;
+    private NutsPath content;
     private NutsInstallInformation installInformation;
     private NutsDependencies dependencies;
     private NutsDescriptor effectiveDescriptor;
@@ -51,7 +51,7 @@ public class DefaultNutsDefinition implements NutsDefinition {
 //        System.out.println("");
     }
 
-    public DefaultNutsDefinition(String repoUuid, String repoName, NutsId id, NutsDescriptor descriptor, NutsContent content, NutsInstallInformation install, NutsId apiId, NutsSession session) {
+    public DefaultNutsDefinition(String repoUuid, String repoName, NutsId id, NutsDescriptor descriptor, NutsPath content, NutsInstallInformation install, NutsId apiId, NutsSession session) {
         this.descriptor = descriptor;
         this.content = content;
         this.id = id;
@@ -72,23 +72,13 @@ public class DefaultNutsDefinition implements NutsDefinition {
             this.repositoryUuid = other.getRepositoryUuid();
             this.repositoryName = other.getRepositoryName();
 
-            this.content = other.getContent();
-            this.installInformation = other.getInstallInformation();
-            this.effectiveDescriptor = !other.isSetEffectiveDescriptor() ? null : other.getEffectiveDescriptor();
-            this.dependencies = !other.isSetDependencies() ? null : other.getDependencies();
+            this.content = other.getContent().orNull();
+            this.installInformation = other.getInstallInformation().orNull();
+            this.effectiveDescriptor = other.getEffectiveDescriptor().orNull();
+            this.dependencies = other.getDependencies().orNull();
             this.apiId = other.getApiId();
         }
         this.session = session;
-    }
-
-    @Override
-    public boolean isSetDependencies() {
-        return dependencies != null;
-    }
-
-    @Override
-    public boolean isSetEffectiveDescriptor() {
-        return effectiveDescriptor != null;
     }
 
     @Override
@@ -112,7 +102,7 @@ public class DefaultNutsDefinition implements NutsDefinition {
     }
 
     public boolean isTemporary() {
-        return content != null && content.isTemporary();
+        return content != null && content.isUserTemporary();
     }
 
     public NutsDescriptor getDescriptor() {
@@ -132,44 +122,26 @@ public class DefaultNutsDefinition implements NutsDefinition {
     }
 
     @Override
-    public Path getFile() {
-        NutsContent c = getContent();
-        return c == null ? null : c.getFile();
+    public NutsOptional<NutsPath> getContent() {
+        return NutsOptional.of(content,s->NutsMessage.cstyle("content not found for id %s",getId()));
     }
 
     @Override
-    public NutsPath getPath() {
-        NutsContent c = getContent();
-        return c == null ? null : c.getPath();
+    public NutsOptional<NutsDescriptor> getEffectiveDescriptor() {
+        return NutsOptional.of(effectiveDescriptor,s->NutsMessage.cstyle("unable to get effectiveDescriptor for id %s. You need to call search.setEffective(...) first.",getId()));
     }
 
     @Override
-    public NutsContent getContent() {
-        return content;
+    public NutsOptional<NutsInstallInformation> getInstallInformation() {
+        return NutsOptional.of(installInformation,s->NutsMessage.cstyle("unable to get install information for id %s.",getId()));
     }
 
     @Override
-    public NutsDescriptor getEffectiveDescriptor() {
-        if (!isSetEffectiveDescriptor()) {
-            throw new NutsElementNotFoundException(session, NutsMessage.cstyle("unable to get effectiveDescriptor. You need to call search.setEffective(...) first."));
-        }
-        return effectiveDescriptor;
+    public NutsOptional<NutsDependencies> getDependencies() {
+        return NutsOptional.of(dependencies,s->NutsMessage.cstyle("unable to get dependencies for id %s. You need to call search.setDependencies(...) first.",getId()));
     }
 
-    @Override
-    public NutsInstallInformation getInstallInformation() {
-        return installInformation;
-    }
-
-    @Override
-    public NutsDependencies getDependencies() {
-        if (!isSetDependencies()) {
-            throw new NutsElementNotFoundException(session, NutsMessage.cstyle("unable to get dependencies. You need to call search.setDependencies(...) first."));
-        }
-        return this.dependencies;
-    }
-
-    public DefaultNutsDefinition setContent(NutsContent content) {
+    public DefaultNutsDefinition setContent(NutsPath content) {
         this.content = content;
         return this;
     }

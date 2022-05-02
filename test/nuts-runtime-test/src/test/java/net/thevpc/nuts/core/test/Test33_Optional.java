@@ -63,7 +63,7 @@ public class Test33_Optional {
             Assertions.assertEquals(true, a.isPresent());
             Assertions.assertEquals(false, a.isNotPresent());
 
-            NutsOptional<String> b=a.nonBlank();
+            NutsOptional<String> b=a.ifBlankNull();
             Assertions.assertThrows(NoSuchElementException.class, () -> b.get());
             Assertions.assertEquals(true, b.isEmpty());
             Assertions.assertEquals(false, b.isError());

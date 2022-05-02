@@ -45,7 +45,7 @@ public class NutsWorkspaceUtils {
 
     public static NutsSession bindSession(NutsWorkspace ws, NutsSession session) {
         if (ws != null && session != null && !Objects.equals(session.getWorkspace().getUuid(), ws.getUuid())) {
-            return ws.createSession().copyFrom(session);
+            return ws.createSession().setAll(session);
         }
         return session;
     }

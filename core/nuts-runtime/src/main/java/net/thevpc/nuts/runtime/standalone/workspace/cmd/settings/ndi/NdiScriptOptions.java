@@ -129,7 +129,7 @@ public class NdiScriptOptions implements Cloneable {
             if (getLauncher().getSwitchWorkspaceLocation() == null) {
                 NutsDefinition apiDef = session.search()
                         .addId(nid).setOptional(false).setLatest(true).setContent(true).getResultDefinitions().required();
-                nutsApiJarPath = apiDef.getPath();
+                nutsApiJarPath = apiDef.getContent().orNull();
             } else {
                 NutsWorkspaceBootConfig bootConfig = loadSwitchWorkspaceLocationConfig(getLauncher().getSwitchWorkspaceLocation());
                 nutsApiJarPath = NutsPath.of(bootConfig.getStoreLocation(nid, NutsStoreLocation.LIB),session);
@@ -206,7 +206,9 @@ public class NdiScriptOptions implements Cloneable {
                                             .getParent())
                             .filter(
                                     f
-                                            -> NutsVersion.of(f.getFileName().toString()).get(session).getLong(0, -1) == -1
+                                            -> NutsVersion.of(f.getFileName().toString())
+                                            .flatMap(v->v.getNumber(0))
+                                            .flatMap(NutsValue::asLong).isPresent()
                                             && Files.exists(f.resolve(NutsConstants.Files.API_BOOT_CONFIG_FILE_NAME))
                             ).map(
                                     f -> NutsVersion.of(f.getFileName().toString()).get(session)

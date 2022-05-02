@@ -128,8 +128,8 @@ public class ProcessExecHelper extends AbstractSyncIProcessExecHelper {
                                                  NutsSession execSession
     ) throws NutsExecutionException {
         NutsId id = nutMainFile.getId();
-        Path installerFile = nutMainFile.getFile();
-        NutsPath storeFolder = nutMainFile.getInstallInformation().getInstallFolder();
+        Path installerFile = nutMainFile.getContent().map(NutsPath::toFile).orNull();
+        NutsPath storeFolder = nutMainFile.getInstallInformation().get(session).getInstallFolder();
         HashMap<String, String> map = new HashMap<>();
         HashMap<String, String> envmap = new HashMap<>();
 //        for (Map.Entry<Object, Object> entry : System.getProperties().entrySet()) {
@@ -143,7 +143,7 @@ public class ProcessExecHelper extends AbstractSyncIProcessExecHelper {
             map.put("nuts.jar", nutsJarFile.toAbsolutePath().normalize().toString());
         }
         map.put("nuts.artifact", id.toString());
-        map.put("nuts.file", nutMainFile.getFile().toString());
+        map.put("nuts.file", nutMainFile.getContent().map(NutsPath::toFile).map(Object::toString).orNull());
         String defaultJavaCommand = NutsJavaSdkUtils.of(execSession.getWorkspace()).resolveJavaCommandByVersion("", false, session);
         if (defaultJavaCommand == null) {
             throw new NutsExecutionException(session, NutsMessage.plain("no java version was found"), 1);
@@ -191,8 +191,8 @@ public class ProcessExecHelper extends AbstractSyncIProcessExecHelper {
                     NutsDefinition nutsDefinition;
                     nutsDefinition = session.fetch().setId(NutsConstants.Ids.NUTS_API)
                             .setSession(session).getResultDefinition();
-                    if (nutsDefinition.getFile() != null) {
-                        return ("<::expand::> " + apply("java") + " -jar " + nutsDefinition.getFile());
+                    if (nutsDefinition.getContent().isPresent()) {
+                        return ("<::expand::> " + apply("java") + " -jar " + nutsDefinition.getContent());
                     }
                     return null;
                 }
@@ -242,7 +242,7 @@ public class ProcessExecHelper extends AbstractSyncIProcessExecHelper {
             case WINDOWS: {
                 String s = (String) session.getProperty("nuts.windows.root-user");
                 if (s == null) {
-                    s = session.config().getConfigProperty("nuts.windows.root-user").asString().get(session);
+                    s = session.config().getConfigProperty("nuts.windows.root-user").flatMap(NutsValue::asString).get(session);
                 }
                 if (NutsBlankable.isBlank(s)) {
                     s = "Administrator";

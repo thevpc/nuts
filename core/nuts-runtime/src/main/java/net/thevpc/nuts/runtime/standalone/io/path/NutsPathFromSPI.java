@@ -36,6 +36,11 @@ public class NutsPathFromSPI extends NutsPathBase {
     }
 
     @Override
+    public NutsPath copy() {
+        return new NutsPathFromSPI(base).copyExtraFrom(this);
+    }
+
+    @Override
     public String getContentEncoding() {
         return base.getContentEncoding(this);
     }
@@ -156,7 +161,7 @@ public class NutsPathFromSPI extends NutsPathBase {
     public NutsPath toCompressedForm() {
         NutsPath n = base.toCompressedForm(this);
         if (n == null) {
-            return new NutsCompressedPath(this,new DefaultNutsCompressedPathHelper());
+            return new NutsCompressedPath(this, new DefaultNutsCompressedPathHelper());
         }
         return n;
     }

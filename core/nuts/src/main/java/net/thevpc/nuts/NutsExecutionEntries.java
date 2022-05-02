@@ -27,6 +27,7 @@
 package net.thevpc.nuts;
 
 import net.thevpc.nuts.boot.NutsApiUtils;
+import net.thevpc.nuts.io.NutsPath;
 import net.thevpc.nuts.spi.NutsComponent;
 
 import java.io.File;
@@ -50,6 +51,8 @@ public interface NutsExecutionEntries extends NutsComponent {
      * @return execution entries (class names with main method)
      */
     List<NutsExecutionEntry> parse(File file);
+
+    List<NutsExecutionEntry> parse(NutsPath file);
 
     /**
      * parse Execution Entries

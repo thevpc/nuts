@@ -89,7 +89,7 @@ public interface NutsRepositoryModel {
         return null;
     }
 
-    default NutsContent fetchContent(NutsId id, NutsDescriptor descriptor, String localPath, NutsFetchMode fetchMode, NutsRepository repository, NutsSession session) {
+    default NutsPath fetchContent(NutsId id, NutsDescriptor descriptor, String localPath, NutsFetchMode fetchMode, NutsRepository repository, NutsSession session) {
         return null;
     }
 

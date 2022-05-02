@@ -139,9 +139,7 @@ public interface NutsRepositoryConfigModel {
     Map<String, String> toMap(NutsSession session);
 
 
-    String get(String key, String defaultValue, boolean inherit, NutsSession session);
-
-    String get(String property, String defaultValue, NutsSession session);
+    NutsOptional<NutsValue> get(String key, boolean inherit, NutsSession session);
 
     void set(String property, String value, NutsSession session);
 

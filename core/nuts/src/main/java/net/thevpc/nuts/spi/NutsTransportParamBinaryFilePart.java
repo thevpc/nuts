@@ -26,6 +26,8 @@
  */
 package net.thevpc.nuts.spi;
 
+import net.thevpc.nuts.io.NutsPath;
+
 import java.nio.file.Path;
 import java.util.Objects;
 
@@ -39,9 +41,9 @@ public class NutsTransportParamBinaryFilePart extends NutsTransportParamPart {
 
     private final String name;
     private final String fileName;
-    private final Path value;
+    private final NutsPath value;
 
-    public NutsTransportParamBinaryFilePart(String name, String fileName, Path value) {
+    public NutsTransportParamBinaryFilePart(String name, String fileName, NutsPath value) {
         this.name = name;
         this.fileName = fileName;
         this.value = value;
@@ -55,7 +57,7 @@ public class NutsTransportParamBinaryFilePart extends NutsTransportParamPart {
         return name;
     }
 
-    public Path getValue() {
+    public NutsPath getValue() {
         return value;
     }
 

@@ -63,7 +63,7 @@ public class JavaSourceExecutorComponent implements NutsExecutorComponent {
     @Override
     public void exec(NutsExecutionContext executionContext) {
         NutsDefinition nutMainFile = executionContext.getDefinition();//executionContext.getWorkspace().fetch(.getId().toString(), true, false);
-        Path javaFile = nutMainFile.getFile();
+        Path javaFile = nutMainFile.getContent().map(NutsPath::toFile).orNull();
         JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
         NutsSession session = executionContext.getSession();
         Path folder = NutsTmp.of(session)
@@ -75,11 +75,7 @@ public class JavaSourceExecutorComponent implements NutsExecutorComponent {
         JavaExecutorComponent cc = new JavaExecutorComponent();
         NutsDefinition d = executionContext.getDefinition();
         d = new DefaultNutsDefinition(d, session);
-        ((DefaultNutsDefinition) d).setContent(new DefaultNutsContent(
-                NutsPath.of(folder, session),
-                false,
-                true
-        ));
+        ((DefaultNutsDefinition) d).setContent(NutsPath.of(folder, session).setUserCache(false).setUserTemporary(true));
         String fileName = javaFile.getFileName().toString();
         List<String> z = new ArrayList<>(executionContext.getExecutorOptions());
         z.addAll(Arrays.asList("--main-class",
@@ -100,7 +96,7 @@ public class JavaSourceExecutorComponent implements NutsExecutorComponent {
     @Override
     public void dryExec(NutsExecutionContext executionContext) throws NutsExecutionException {
         NutsDefinition nutMainFile = executionContext.getDefinition();//executionContext.getWorkspace().fetch(.getId().toString(), true, false);
-        Path javaFile = nutMainFile.getFile();
+        Path javaFile = nutMainFile.getContent().map(NutsPath::toFile).orNull();
         String folder = "__temp_folder";
         NutsPrintStream out = executionContext.getSession().out();
         out.println(NutsTexts.of(executionContext.getSession()).ofStyled("compile", NutsTextStyle.primary4()));
@@ -117,11 +113,9 @@ public class JavaSourceExecutorComponent implements NutsExecutorComponent {
         JavaExecutorComponent cc = new JavaExecutorComponent();
         NutsDefinition d = executionContext.getDefinition();
         d = new DefaultNutsDefinition(d, executionContext.getSession());
-        ((DefaultNutsDefinition) d).setContent(new DefaultNutsContent(
-                NutsPath.of(folder, executionContext.getSession()),
-                false,
-                true
-        ));
+        ((DefaultNutsDefinition) d).setContent(
+                NutsPath.of(folder, executionContext.getSession()).setUserCache(false).setUserTemporary(true)
+        );
         String fileName = javaFile.getFileName().toString();
         List<String> z = new ArrayList<>(executionContext.getExecutorOptions());
         z.addAll(Arrays.asList("--main-class",

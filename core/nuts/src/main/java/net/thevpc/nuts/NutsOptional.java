@@ -80,19 +80,25 @@ public interface NutsOptional<T> extends NutsBlankable{
 
     NutsOptional<T> ifBlank(T other);
 
+    NutsOptional<T> ifBlankNull(Function<NutsSession, NutsMessage> emptyMessage);
+
+    NutsOptional<T> ifBlankNull();
+
+
     NutsOptional<T> ifErrorNull();
 
     NutsOptional<T> ifError(T other);
 
-    NutsOptional<T> ifEmptyGet(Supplier<NutsOptional<T>> other);
-
-    NutsOptional<T> ifBlankGet(Supplier<NutsOptional<T>> other);
-
-    NutsOptional<T> ifErrorGet(Supplier<NutsOptional<T>> other);
-
-    NutsOptional<T> orElseGetOptional(Supplier<NutsOptional<T>> other);
-
     T orElseGet(Supplier<? extends T> other);
+
+    NutsOptional<T> ifEmptyUse(Supplier<NutsOptional<T>> other);
+
+    NutsOptional<T> ifBlankUse(Supplier<NutsOptional<T>> other);
+
+    NutsOptional<T> ifErrorUse(Supplier<NutsOptional<T>> other);
+
+    NutsOptional<T> orElseUse(Supplier<NutsOptional<T>> other);
+
 
     boolean isEmpty();
 
@@ -101,10 +107,6 @@ public interface NutsOptional<T> extends NutsBlankable{
     boolean isPresent();
 
     boolean isNotPresent();
-
-    NutsOptional<T> nonBlank(Function<NutsSession, NutsMessage> emptyMessage);
-
-    NutsOptional<T> nonBlank();
 
     Function<NutsSession, NutsMessage> getMessage();
 

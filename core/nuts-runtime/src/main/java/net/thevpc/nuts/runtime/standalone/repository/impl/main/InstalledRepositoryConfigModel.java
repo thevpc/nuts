@@ -268,17 +268,14 @@ class InstalledRepositoryConfigModel implements NutsRepositoryConfigModel {
     }
 
     @Override
-    public String get(String key, String defaultValue, boolean inherit, NutsSession session) {
+    public NutsOptional<NutsValue> get(String key, boolean inherit, NutsSession session) {
+        NutsOptional<NutsValue> o = NutsOptional.ofEmpty(s -> NutsMessage.cstyle("repo config property not found : %s", key));
         if (inherit) {
-            return session.config().getConfigProperty(key).asString().orElse(defaultValue);
+            return o.orElseUse(()->session.config().getConfigProperty(key));
         }
-        return null;
+        return o;
     }
 
-    @Override
-    public String get(String property, String defaultValue, NutsSession session) {
-        return defaultValue;
-    }
 
     @Override
     public void set(String property, String value, NutsSession session) {

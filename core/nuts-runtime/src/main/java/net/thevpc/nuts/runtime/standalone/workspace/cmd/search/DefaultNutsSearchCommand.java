@@ -61,7 +61,7 @@ public class DefaultNutsSearchCommand extends AbstractNutsSearchCommand {
     @Override
     public NutsSearchCommand copy() {
         DefaultNutsSearchCommand b = new DefaultNutsSearchCommand(ws);
-        b.copyFrom(this);
+        b.setAll(this);
         return b;
     }
 
@@ -729,7 +729,7 @@ public class DefaultNutsSearchCommand extends AbstractNutsSearchCommand {
                             NutsFunction.of(
                                     x -> IteratorBuilder.of(
                                             toFetch().setId(x).setContent(false)
-                                                    .setDependencies(true).getResultDefinition().getDependencies().transitiveWithSource().iterator(),
+                                                    .setDependencies(true).getResultDefinition().getDependencies().get(session).transitiveWithSource().iterator(),
                                             session).build(), "getDependencies")
                     ).map(NutsFunction.of(NutsDependency::toId, "DependencyToId"))
                     .build();

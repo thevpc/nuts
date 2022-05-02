@@ -84,7 +84,7 @@ public class NutsHttpSrvRepository extends NutsCachedRepository {
     @Override
     public void pushImpl(NutsPushRepositoryCommand command) {
         NutsSession session = command.getSession();
-        NutsContent content = lib.fetchContentImpl(command.getId(), null, session);
+        NutsPath content = lib.fetchContentImpl(command.getId(), null, session);
         NutsDescriptor desc = lib.fetchDescriptorImpl(command.getId(), session);
         if (content == null || desc == null) {
             throw new NutsNotFoundException(session, command.getId());
@@ -96,9 +96,9 @@ public class NutsHttpSrvRepository extends NutsCachedRepository {
                 session,
                 new NutsTransportParamBinaryStreamPart("descriptor", "Project.nuts",
                         new ByteArrayInputStream(descStream.toByteArray())),
-                new NutsTransportParamBinaryFilePart("content", content.getPath().getName(), content.getFile()),
+                new NutsTransportParamBinaryFilePart("content", content.getName(), content),
                 new NutsTransportParamParamPart("descriptor-hash", NutsDigest.of(session).sha1().setSource(desc).computeString()),
-                new NutsTransportParamParamPart("content-hash", NutsDigestUtils.evalSHA1Hex(content.getPath(),session)),
+                new NutsTransportParamParamPart("content-hash", NutsDigestUtils.evalSHA1Hex(content,session)),
                 new NutsTransportParamParamPart("force", String.valueOf(session.isYes()))
         );
     }
@@ -185,13 +185,12 @@ public class NutsHttpSrvRepository extends NutsCachedRepository {
     }
 
     @Override
-    public NutsContent fetchContentCore(NutsId id, NutsDescriptor descriptor, String localPath, NutsFetchMode fetchMode, NutsSession session) {
+    public NutsPath fetchContentCore(NutsId id, NutsDescriptor descriptor, String localPath, NutsFetchMode fetchMode, NutsSession session) {
         if (fetchMode != NutsFetchMode.REMOTE) {
             throw new NutsNotFoundException(session, id, new NutsFetchModeNotSupportedException(session, this, fetchMode, id.toString(), null));
         }
         if (NutsIdLocationUtils.fetch(id, descriptor.getLocations(), localPath, session)) {
-            return new DefaultNutsContent(
-                    NutsPath.of(localPath, session), false, false);
+            return NutsPath.of(localPath, session);
         }
         boolean transitive = session.isTransitive();
         boolean temp = false;
@@ -209,9 +208,8 @@ public class NutsHttpSrvRepository extends NutsCachedRepository {
             String rhash = httpGetString(getUrl("/fetch-hash?id=" + CoreIOUtils.urlEncodeString(id.toString(),session) + (transitive ? ("&transitive") : "") + "&" + resolveAuthURLPart(session)), session);
             String lhash = NutsDigestUtils.evalSHA1Hex(NutsPath.of(localPath,session),session);
             if (rhash.equalsIgnoreCase(lhash)) {
-                return new DefaultNutsContent(
-                        NutsPath.of(localPath,session)
-                        , false, temp);
+                return NutsPath.of(localPath,session).setUserCache(false).setUserTemporary(temp)
+                       ;
             }
         } catch (UncheckedIOException | NutsIOException ex) {
             throw new NutsNotFoundException(session, id, ex);
@@ -268,7 +266,9 @@ public class NutsHttpSrvRepository extends NutsCachedRepository {
             }
         }
 
-        String passphrase = config().getConfigProperty(CoreSecurityUtils.ENV_KEY_PASSPHRASE, CoreSecurityUtils.DEFAULT_PASSPHRASE);
+        String passphrase = config().getConfigProperty(CoreSecurityUtils.ENV_KEY_PASSPHRASE)
+                .flatMap(NutsValue::asString)
+                .orElse(CoreSecurityUtils.DEFAULT_PASSPHRASE);
         newLogin = new String(CoreSecurityUtils.defaultEncryptChars(NutsStringUtils.trim(newLogin).toCharArray(), passphrase,session));
         credentials = CoreSecurityUtils.defaultEncryptChars(credentials, passphrase,session);
         return new String[]{newLogin, new String(credentials)};

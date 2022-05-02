@@ -70,8 +70,8 @@ public class ApacheTomcatRepositoryModel implements NutsRepositoryModel {
             }
             if (found) {
                 // http://tomcat.apache.org/whichversion.html
-                int i = id.getVersion().getInt(0, -1);
-                int j = id.getVersion().getInt(1, -1);
+                int i = id.getVersion().getNumber(0).flatMap(NutsValue::asInt).orElse(-1);
+                int j = id.getVersion().getNumber(1).flatMap(NutsValue::asInt).orElse(-1);
                 String javaVersion = "";
                 if (i <= 0) {
                     //
@@ -113,7 +113,7 @@ public class ApacheTomcatRepositoryModel implements NutsRepositoryModel {
     }
 
     @Override
-    public NutsContent fetchContent(NutsId id, NutsDescriptor descriptor, String localPath, NutsFetchMode fetchMode, NutsRepository repository, NutsSession session) {
+    public NutsPath fetchContent(NutsId id, NutsDescriptor descriptor, String localPath, NutsFetchMode fetchMode, NutsRepository repository, NutsSession session) {
         if (fetchMode != NutsFetchMode.REMOTE) {
             return null;
         }
@@ -123,8 +123,7 @@ public class ApacheTomcatRepositoryModel implements NutsRepositoryModel {
                 localPath = getIdLocalFile(id.builder().setFaceContent().build(), fetchMode, repository, session);
             }
             NutsCp.of(session).from(r).to(localPath).addOptions(NutsPathOption.SAFE, NutsPathOption.LOG, NutsPathOption.TRACE).run();
-            return new DefaultNutsContent(
-                    NutsPath.of(localPath, session), false, false);
+            return NutsPath.of(localPath, session);
         }
         return null;
     }
@@ -136,7 +135,7 @@ public class ApacheTomcatRepositoryModel implements NutsRepositoryModel {
         }
         //List<NutsId> all = new ArrayList<>();
 //        NutsWorkspace ws = session.getWorkspace();
-        NutsIdBuilder idBuilder = NutsIdBuilder.of("org.apache.catalina","apache-tomcat");
+        NutsIdBuilder idBuilder = NutsIdBuilder.of("org.apache.catalina", "apache-tomcat");
         return NutsPath.of("htmlfs:https://archive.apache.org/dist/tomcat/", session)
                 .list()
                 .filter(x -> x.isDirectory() && x.getName().matches("tomcat-[0-9.]+"), "directory && tomcat")
@@ -145,52 +144,52 @@ public class ApacheTomcatRepositoryModel implements NutsRepositoryModel {
                                 .filter(x2 -> x2.isDirectory() && x2.getName().startsWith("v"), "isDirectory")
                                 .flatMapStream(
                                         NutsFunction.of(
-                                        x3 -> {
-                                            String s2n = x3.getName();
-                                            String prefix = "apache-tomcat-";
-                                            String bin = "bin";
-                                            if (
-                                                    s2n.endsWith("-alpha/") || s2n.endsWith("-beta/")
-                                                            || s2n.endsWith("-copyforpermissions/") || s2n.endsWith("-original/")
-                                                            || s2n.matches(".*-RC[0-9]+/") || s2n.matches(".*-M[0-9]+/")
-                                            ) {
-                                                //will ignore all alpha versions
-                                                return NutsStream.ofEmpty(session);
-                                            }
-                                            NutsVersion version = NutsVersion.of(s2n.substring(1, s2n.length() - 1)).get( session);
-                                            if (version.compareTo("4.1.32") < 0) {
-                                                prefix = "jakarta-tomcat-";
-                                            }
-                                            if (version.compareTo("4.1.27") == 0) {
-                                                bin = "binaries";
-                                            }
-                                            boolean checkBin = false;
-                                            if (checkBin) {
-                                                String finalPrefix = prefix;
-                                                return x3.resolve(bin)
-                                                        .list()
-                                                        .filter(x4 -> x4.getName().matches(finalPrefix + "[0-9]+\\.[0-9]+\\.[0-9]+\\.zip"), "name.isZip")
-                                                        .map(x5 -> {
-                                                            String s3 = x5.getName();
-                                                            String v0 = s3.substring(finalPrefix.length(), s3.length() - 4);
-                                                            NutsVersion v = NutsVersion.of(v0).get( session);
-                                                            NutsId id2 = idBuilder.setVersion(v).build();
-                                                            if (filter == null || filter.acceptId(id2, session)) {
-                                                                return id2;
-                                                            }
-                                                            return null;
-                                                        }, "toZip")
-                                                        .nonNull();
-                                            } else {
-                                                NutsId id2 = idBuilder.setVersion(version).build();
-                                                if (filter == null || filter.acceptId(id2, session)) {
-                                                    return NutsStream.ofSingleton(id2, session);
+                                                x3 -> {
+                                                    String s2n = x3.getName();
+                                                    String prefix = "apache-tomcat-";
+                                                    String bin = "bin";
+                                                    if (
+                                                            s2n.endsWith("-alpha/") || s2n.endsWith("-beta/")
+                                                                    || s2n.endsWith("-copyforpermissions/") || s2n.endsWith("-original/")
+                                                                    || s2n.matches(".*-RC[0-9]+/") || s2n.matches(".*-M[0-9]+/")
+                                                    ) {
+                                                        //will ignore all alpha versions
+                                                        return NutsStream.ofEmpty(session);
+                                                    }
+                                                    NutsVersion version = NutsVersion.of(s2n.substring(1, s2n.length() - 1)).get(session);
+                                                    if (version.compareTo("4.1.32") < 0) {
+                                                        prefix = "jakarta-tomcat-";
+                                                    }
+                                                    if (version.compareTo("4.1.27") == 0) {
+                                                        bin = "binaries";
+                                                    }
+                                                    boolean checkBin = false;
+                                                    if (checkBin) {
+                                                        String finalPrefix = prefix;
+                                                        return x3.resolve(bin)
+                                                                .list()
+                                                                .filter(x4 -> x4.getName().matches(finalPrefix + "[0-9]+\\.[0-9]+\\.[0-9]+\\.zip"), "name.isZip")
+                                                                .map(x5 -> {
+                                                                    String s3 = x5.getName();
+                                                                    String v0 = s3.substring(finalPrefix.length(), s3.length() - 4);
+                                                                    NutsVersion v = NutsVersion.of(v0).get(session);
+                                                                    NutsId id2 = idBuilder.setVersion(v).build();
+                                                                    if (filter == null || filter.acceptId(id2, session)) {
+                                                                        return id2;
+                                                                    }
+                                                                    return null;
+                                                                }, "toZip")
+                                                                .nonNull();
+                                                    } else {
+                                                        NutsId id2 = idBuilder.setVersion(version).build();
+                                                        if (filter == null || filter.acceptId(id2, session)) {
+                                                            return NutsStream.ofSingleton(id2, session);
+                                                        }
+                                                        return NutsStream.ofEmpty(session);
+                                                    }
                                                 }
-                                                return NutsStream.ofEmpty(session);
-                                            }
-                                        }
-                                ,"flatMap"))
-                ,"flatMap")).iterator();
+                                                , "flatMap"))
+                        , "flatMap")).iterator();
     }
 
     private String getUrl(NutsVersion version, String extension) {
@@ -202,7 +201,7 @@ public class ApacheTomcatRepositoryModel implements NutsRepositoryModel {
         if (version.compareTo("4.1.27") == 0) {
             bin = "binaries";
         }
-        return HTTPS_ARCHIVE_APACHE_ORG_DIST_TOMCAT + "tomcat-" + version.get(0) + "/v" + version + "/" + bin + "/" + prefix + version + extension;
+        return HTTPS_ARCHIVE_APACHE_ORG_DIST_TOMCAT + "tomcat-" + version.get(0).flatMap(NutsValue::asString).orElse("unknown") + "/v" + version + "/" + bin + "/" + prefix + version + extension;
     }
 
     public String getIdLocalFile(NutsId id, NutsFetchMode fetchMode, NutsRepository repository, NutsSession session) {

@@ -35,7 +35,7 @@ public class NutsSimpleRepositoryWrapper extends NutsCachedRepository {
         return base.fetchDescriptor(id, fetchMode, this, session);
     }
 
-    public NutsContent fetchContentCore(NutsId id, NutsDescriptor descriptor, String localPath, NutsFetchMode fetchMode, NutsSession session) {
+    public NutsPath fetchContentCore(NutsId id, NutsDescriptor descriptor, String localPath, NutsFetchMode fetchMode, NutsSession session) {
         return base.fetchContent(id, descriptor, localPath, fetchMode, this, session);
     }
 

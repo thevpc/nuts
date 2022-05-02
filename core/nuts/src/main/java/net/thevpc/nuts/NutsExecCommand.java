@@ -348,7 +348,7 @@ public interface NutsExecCommand extends NutsWorkspaceCommand {
      * @param other command to copy from
      * @return {@code this} instance
      */
-    NutsExecCommand copyFrom(NutsExecCommand other);
+    NutsExecCommand setAll(NutsExecCommand other);
 
     /**
      * create a copy of {@code this} instance

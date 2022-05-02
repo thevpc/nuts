@@ -61,7 +61,7 @@ public abstract class AbstractRecommendationConnector implements RecommendationC
     @Override
     public Map getRecommendations(RequestQueryInfo ri, NutsRecommendationPhase phase, boolean failure, NutsSession session) {
         validateRequest(ri, session);
-        NutsId id = NutsId.of(ri.q.getId()).nonBlank().get(session);
+        NutsId id = NutsId.of(ri.q.getId()).ifBlankNull().get(session);
         String name=phase.name().toLowerCase()+(failure?"-failure":"")+"-recommendations.json";
         String url = "/repo/" + id.getGroupId().replace('.', '/')
                 + '/' + id.getArtifactId()

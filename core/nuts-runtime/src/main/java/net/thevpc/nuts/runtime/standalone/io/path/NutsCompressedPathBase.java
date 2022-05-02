@@ -30,7 +30,7 @@ public class NutsCompressedPathBase extends NutsPathBase {
     public NutsCompressedPathBase(NutsPath base) {
         super(base.getSession());
         this.base = base;
-        this.compressedForm = compressUrl(base.toString(),base.getSession());
+        this.compressedForm = compressUrl(base.toString(), base.getSession());
         this.formattedCompressedForm = NutsTexts.of(base.getSession()).ofStyled(compressedForm, NutsTextStyle.path());
     }
 
@@ -41,31 +41,39 @@ public class NutsCompressedPathBase extends NutsPathBase {
         this.base = base;
     }
 
-    public static String compressUrl(String path,NutsSession session) {
-        NutsPathParts p=new NutsPathParts(path,session);
-        switch (p.getType()){
-            case URL:{
+    @Override
+    public NutsPath copy() {
+        return new NutsCompressedPathBase(
+                base, compressedForm, formattedCompressedForm
+        ).copyExtraFrom(this);
+    }
+
+    public static String compressUrl(String path, NutsSession session) {
+        NutsPathParts p = new NutsPathParts(path, session);
+        switch (p.getType()) {
+            case URL: {
                 return new NutsPathParts(
                         p.getType(),
                         p.getProtocol(),
                         p.getAuthority(),
                         NutsPathParts.compressLocalPath(p.getLocation(), 0, 2),
-                        p.getQuery().length()>0?"...":"",
-                        p.getRef().length()>0?"...":"",
+                        p.getQuery().length() > 0 ? "..." : "",
+                        p.getRef().length() > 0 ? "..." : "",
                         session
 
                 ).toString();
             }
-            case REF:{
+            case REF: {
                 return "#...";
             }
-            case FILE:{
+            case FILE: {
                 return NutsPathParts.compressLocalPath(p.getLocation());
             }
-            case FILE_URL:{
-                return "file:"+ NutsPathParts.compressLocalPath(p.getLocation());
+            case FILE_URL: {
+                return "file:" + NutsPathParts.compressLocalPath(p.getLocation());
             }
-            case EMPTY: return "";
+            case EMPTY:
+                return "";
         }
         return path;
     }

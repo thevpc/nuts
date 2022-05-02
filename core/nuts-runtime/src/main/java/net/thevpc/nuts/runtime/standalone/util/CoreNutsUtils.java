@@ -160,7 +160,7 @@ public class CoreNutsUtils {
     public static List<String> applyStringPropertiesList(List<String> child, Function<String, String> properties) {
         return new ArrayList<>(
                 Arrays.asList(
-                        applyStringProperties(child.toArray(new String[0]),properties)
+                        applyStringProperties(child.toArray(new String[0]), properties)
                 )
         );
     }
@@ -168,7 +168,7 @@ public class CoreNutsUtils {
     public static List<String> applyStringProperties(List<String> child, Function<String, String> properties) {
         return new ArrayList<>(
                 Arrays.asList(
-                        applyStringProperties(child.toArray(new String[0]),properties)
+                        applyStringProperties(child.toArray(new String[0]), properties)
                 )
         );
     }
@@ -205,7 +205,7 @@ public class CoreNutsUtils {
     }
 
     public static String applyStringProperties(String child, Function<String, String> properties) {
-        if (child==null) {
+        if (child == null) {
             return null;
         }
 //        return applyStringProperties(child, properties == null ? null : new StringConverterAdapter(properties));
@@ -287,20 +287,19 @@ public class CoreNutsUtils {
     public static Map<String, Object> traceJsonNutsDefinition(NutsSession session, NutsDefinition def) {
         Map<String, Object> x = new LinkedHashMap<>();
         x.put("id", def.getId());
-        if (def.getContent() != null) {
-            if (def.getContent().getPath() != null) {
-                x.put("path", def.getContent().getPath().toString());
-            }
-            x.put("cached", def.getContent().isCached());
-            x.put("temporary", def.getContent().isTemporary());
+        if (def.getContent().isPresent()) {
+            x.put("path", def.getContent().get());
+            x.put("cached", def.getContent().get().isUserCache());
+            x.put("temporary", def.getContent().get().isUserTemporary());
         }
-        if (def.getInstallInformation() != null) {
-            if (def.getInstallInformation().getInstallFolder() != null) {
-                x.put("install-folder", def.getInstallInformation().getInstallFolder());
+        if (def.getInstallInformation().isPresent()) {
+            NutsInstallInformation nutsInstallInformation = def.getInstallInformation().get(session);
+            if (nutsInstallInformation.getInstallFolder() != null) {
+                x.put("install-folder", nutsInstallInformation.getInstallFolder());
             }
-            x.put("install-status", def.getInstallInformation().getInstallStatus().toString());
-            x.put("was-installed", def.getInstallInformation().isWasInstalled());
-            x.put("was-required", def.getInstallInformation().isWasRequired());
+            x.put("install-status", nutsInstallInformation.getInstallStatus().toString());
+            x.put("was-installed", nutsInstallInformation.isWasInstalled());
+            x.put("was-required", nutsInstallInformation.isWasRequired());
         }
         if (def.getRepositoryName() != null) {
             x.put("repository-name", def.getRepositoryName());
@@ -310,7 +309,7 @@ public class CoreNutsUtils {
         }
         if (def.getDescriptor() != null) {
             x.put("descriptor", def.getDescriptor().formatter(session).format());
-            x.put("effective-descriptor", NutsDescriptorUtils.getEffectiveDescriptor(def,session)
+            x.put("effective-descriptor", NutsDescriptorUtils.getEffectiveDescriptor(def, session)
                     .formatter(session).format());
         }
         return x;
@@ -422,10 +421,10 @@ public class CoreNutsUtils {
 
     public static int getApiVersionOrdinalNumber(NutsVersion ss) {
         try {
-            String s=ss.getValue();
+            String s = ss.getValue();
             int qualifierIndex = s.indexOf('-');
-            if(qualifierIndex>=0){
-                s=s.substring(0,qualifierIndex);
+            if (qualifierIndex >= 0) {
+                s = s.substring(0, qualifierIndex);
             }
             int a = 0;
             for (String part : s.split("\\.")) {
@@ -533,12 +532,13 @@ public class CoreNutsUtils {
     }
 
     public static List<NutsId> resolveNutsApiIdsFromId(NutsId id, NutsSession session) {
-        List<NutsDependency> deps = session.fetch().setId(id).setDependencies(true).getResultDefinition().getDependencies().transitive().toList();
+        List<NutsDependency> deps = session.fetch().setId(id).setDependencies(true).getResultDefinition()
+                .getDependencies().get(session).transitive().toList();
         return resolveNutsApiIdsFromDependencyList(deps, session);
     }
 
     public static List<NutsId> resolveNutsApiIdsFromDefinition(NutsDefinition def, NutsSession session) {
-        return resolveNutsApiFromFromDependencies(def.getDependencies(), session);
+        return resolveNutsApiFromFromDependencies(def.getDependencies().get(session), session);
     }
 
     public static List<NutsId> resolveNutsApiFromFromDependencies(NutsDependencies deps, NutsSession session) {
@@ -589,13 +589,14 @@ public class CoreNutsUtils {
         }
     }
 
-    public static boolean isCustomTrue(String name,NutsSession session) {
+    public static boolean isCustomTrue(String name, NutsSession session) {
         return session.boot().getCustomBootOption(name)
                 .ifEmpty(NutsValue.of("true"))
                 .flatMap(NutsValue::asBoolean)
                 .orElse(false);
     }
-    public static boolean isCustomFalse(String name,NutsSession session) {
+
+    public static boolean isCustomFalse(String name, NutsSession session) {
         return session.boot().getCustomBootOption(name)
                 .flatMap(NutsValue::asBoolean)
                 .orElse(false);

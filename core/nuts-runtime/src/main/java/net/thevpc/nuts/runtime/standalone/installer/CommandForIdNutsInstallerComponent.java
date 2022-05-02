@@ -61,19 +61,20 @@ public class CommandForIdNutsInstallerComponent implements NutsInstallerComponen
     }
 
     public void runMode(NutsExecutionContext executionContext, String mode) {
-        NutsWorkspaceUtils.of(executionContext.getSession()).checkReadOnly();
+        NutsSession session = executionContext.getSession();
+        NutsWorkspaceUtils.of(session).checkReadOnly();
         if (runnerId == null) {
             NutsDefinition definition = executionContext.getDefinition();
             NutsDescriptor descriptor = definition.getDescriptor();
             if (descriptor.isApplication()) {
-                DefaultNutsDefinition def2 = new DefaultNutsDefinition(definition, executionContext.getSession())
+                DefaultNutsDefinition def2 = new DefaultNutsDefinition(definition, session)
                         .setInstallInformation(
-                                new DefaultNutsInstallInfo(definition.getInstallInformation())
+                                new DefaultNutsInstallInfo(definition.getInstallInformation().get(session))
                                         .setInstallStatus(
-                                                definition.getInstallInformation().getInstallStatus().withInstalled(true)
+                                                definition.getInstallInformation().get(session).getInstallStatus().withInstalled(true)
                                         )
                         );
-                NutsExecCommand cmd = executionContext.getSession().exec()
+                NutsExecCommand cmd = session.exec()
                         .setSession(executionContext.getExecSession())
                         .setCommand(def2)
                         .addCommand("--nuts-exec-mode=" + mode);
@@ -83,7 +84,7 @@ public class CommandForIdNutsInstallerComponent implements NutsInstallerComponen
                     cmd.addExecutorOptions("--nuts-auto-install=false");
                 }
                 cmd.addCommand(executionContext.getArguments())
-                        .setExecutionType(executionContext.getSession().boot().getBootOptions().getExecutionType().orNull())
+                        .setExecutionType(session.boot().getBootOptions().getExecutionType().orNull())
                         .setFailFast(true)
                         .run();
             }
@@ -91,11 +92,11 @@ public class CommandForIdNutsInstallerComponent implements NutsInstallerComponen
             NutsDefinition definition = runnerId;
             NutsDescriptor descriptor = definition.getDescriptor();
             if (descriptor.isApplication()) {
-                DefaultNutsDefinition def2 = new DefaultNutsDefinition(definition, executionContext.getSession())
+                DefaultNutsDefinition def2 = new DefaultNutsDefinition(definition, session)
                         .setInstallInformation(
-                                new DefaultNutsInstallInfo(definition.getInstallInformation())
+                                new DefaultNutsInstallInfo(definition.getInstallInformation().get(session))
                                         .setInstallStatus(
-                                                definition.getInstallInformation().getInstallStatus().withInstalled(true)
+                                                definition.getInstallInformation().get(session).getInstallStatus().withInstalled(true)
                                         )
                         );
                 List<String> eargs = new ArrayList<>();

@@ -75,14 +75,6 @@ public interface NutsVersion extends Serializable, /*NutsTokenFilter, */NutsForm
     boolean isNull();
 
     /**
-     * return true the version value is a blank string
-     *
-     * @return true the version value is a blank string
-     */
-    boolean isBlank();
-
-
-    /**
      * return string representation of the version
      *
      * @return string representation of the version (never null)
@@ -165,30 +157,30 @@ public interface NutsVersion extends Serializable, /*NutsTokenFilter, */NutsForm
     NutsVersion inc();
 
     /**
-     * increment the number at {@code position}  in the version with 1
+     * increment the number at {@code index}  in the version with 1
      *
-     * @param position number position
+     * @param index number index
      * @return new version incrementing the last number
      */
-    NutsVersion inc(int position);
+    NutsVersion inc(int index);
 
     /**
      * increment the last number in the version with the given {@code amount}
      *
-     * @param position number position
+     * @param index number index
      * @param amount   amount of the increment
      * @return new version incrementing the last number
      */
-    NutsVersion inc(int position, long amount);
+    NutsVersion inc(int index, long amount);
 
     /**
      * increment the last number in the version with the given {@code amount}
      *
-     * @param position number position
+     * @param index number index
      * @param amount   amount of the increment
      * @return new version incrementing the last number
      */
-    NutsVersion inc(int position, BigInteger amount);
+    NutsVersion inc(int index, BigInteger amount);
 
     /**
      * number of elements in the version.
@@ -223,11 +215,11 @@ public interface NutsVersion extends Serializable, /*NutsTokenFilter, */NutsForm
      * @param index version part index
      * @return element at given index.
      */
-    String get(int index);
+    NutsOptional<NutsValue> get(int index);
 
     /**
      * number element at given index. if the index is negative will return from right (-1 is the first starting from the right).
-     * The version is first split (as a suite of number and words) then all words are discarded.
+     * The version is first split (as a suite of numbers and words) then all words are discarded.
      * <ul>
      *     <li>size(1.22)=3 {'1','.','22'}</li>
      *     <li>size(1.22_u1)=5 {'1','.','22','_u','1'}</li>
@@ -241,40 +233,7 @@ public interface NutsVersion extends Serializable, /*NutsTokenFilter, */NutsForm
      * @param index version part index
      * @return element at given index.
      */
-    BigInteger getNumber(int index);
-
-    /**
-     * return number element at position or default value. if the index is negative will return from right (-1 is the first starting from the right).
-     * The version is first split (as a suite of number and words) then all words are discarded.
-     *
-     * @param index        position
-     * @param defaultValue default value
-     * @return number element at position or default value
-     */
-
-    BigInteger getNumber(int index, BigInteger defaultValue);
-
-    /**
-     * return number element at position or default value. if the index is negative will return from right (-1 is the first starting from the right).
-     * The version is first split (as a suite of number and words) then all words are discarded.
-     *
-     * @param index        position
-     * @param defaultValue default value
-     * @return number element at position or default value
-     * @since 0.8.3
-     */
-    int getInt(int index, int defaultValue);
-
-    /**
-     * return number element at position or default value. if the index is negative will return from right (-1 is the first starting from the right).
-     * The version is first split (as a suite of number and words) then all words are discarded.
-     *
-     * @param index        position
-     * @param defaultValue default value
-     * @return number element at position or default value
-     * @since 0.8.3
-     */
-    long getLong(int index, long defaultValue);
+    NutsOptional<NutsValue> getNumber(int index);
 
     boolean isLatestVersion();
 

@@ -358,14 +358,14 @@ public class NutsIdFormatHelper {
                 return getFormattedStatusString();
             }
             case FILE: {
-                if (def != null && def.getContent() != null && def.getContent().getPath() != null) {
-                    return text.toText(def.getContent().getPath());
+                if (def != null && def.getContent().isPresent()) {
+                    return text.toText(def.getContent().orNull());
                 }
                 return text.ofStyled("missing-path", NutsTextStyle.error());
             }
             case FILE_NAME: {
-                if (def != null && def.getContent() != null && def.getContent().getPath() != null) {
-                    return text.ofPlain(def.getContent().getPath().getName());
+                if (def != null && def.getContent().isPresent()) {
+                    return text.ofPlain(def.getContent().get().getName());
                 }
                 return text.ofStyled("missing-file-name", NutsTextStyle.error());
             }
@@ -418,8 +418,8 @@ public class NutsIdFormatHelper {
                 return text.ofStyled("missing-desktop-environment", NutsTextStyle.error());
             }
             case INSTALL_DATE: {
-                if (def != null && def.getInstallInformation() != null) {
-                    return stringValue(def.getInstallInformation().getCreatedInstant());
+                if (def != null && def.getInstallInformation().isPresent()) {
+                    return stringValue(def.getInstallInformation().get(session).getCreatedInstant());
                 }
                 return text.ofStyled("<null>", NutsTextStyle.pale());
             }
@@ -462,8 +462,8 @@ public class NutsIdFormatHelper {
                 return stringValue(ruuid);
             }
             case INSTALL_USER: {
-                if (def != null && def.getInstallInformation() != null) {
-                    return stringValue(def.getInstallInformation().getInstallUser());
+                if (def != null && def.getInstallInformation().isPresent()) {
+                    return stringValue(def.getInstallInformation().get(session).getInstallUser());
                 }
                 return text.ofStyled("nobody", NutsTextStyle.error());
             }
@@ -510,9 +510,9 @@ public class NutsIdFormatHelper {
                 return text.ofStyled("<null>", NutsTextStyle.error());
             }
             case EXEC_ENTRY: {
-                if (def != null && def.getContent() != null && def.getContent().getPath() != null) {
+                if (def != null && def.getContent().isPresent()) {
                     List<NutsString> results = new ArrayList<>();
-                    for (NutsExecutionEntry entry : NutsExecutionEntries.of(session).parse(def.getContent().getFile())) {
+                    for (NutsExecutionEntry entry : NutsExecutionEntries.of(session).parse(def.getContent().get())) {
                         if (entry.isDefaultEntry()) {
                             //should all mark?
                             results.add(text.ofPlain(entry.getName()));
@@ -531,8 +531,8 @@ public class NutsIdFormatHelper {
                 return text.ofStyled("<missing-class>", NutsTextStyle.error());
             }
             case INSTALL_FOLDER: {
-                if (def != null && def.getInstallInformation() != null) {
-                    return stringValue(def.getInstallInformation().getInstallFolder());
+                if (def != null && def.getInstallInformation().isPresent()) {
+                    return stringValue(def.getInstallInformation().get(session).getInstallFolder());
                 }
                 return text.ofStyled("<null>", NutsTextStyle.pale());
             }

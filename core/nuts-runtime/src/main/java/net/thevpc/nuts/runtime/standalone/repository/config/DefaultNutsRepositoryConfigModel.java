@@ -721,15 +721,13 @@ public class DefaultNutsRepositoryConfigModel implements NutsRepositoryConfigMod
     }
 
 
-    public String get(String key, String defaultValue, boolean inherit,NutsSession session) {
-        return config_getEnv(key, defaultValue, inherit,session);
-    }
-
-
-
-
-    public String get(String property, String defaultValue,NutsSession session) {
-        return config_getEnv(property, defaultValue,true,session);
+    @Override
+    public NutsOptional<NutsValue> get(String key, boolean inherit, NutsSession session) {
+        NutsOptional<NutsValue> o =config_getEnv(key, inherit,session);
+        if (o.isBlank() && inherit) {
+            return o.orElseUse(()->session.config().getConfigProperty(key));
+        }
+        return o;
     }
 
 
@@ -745,7 +743,7 @@ public class DefaultNutsRepositoryConfigModel implements NutsRepositoryConfigMod
     ////////////////////////////////////////////
 
 
-    public String config_getEnv(String key, String defaultValue, boolean inherit,NutsSession session) {
+    public NutsOptional<NutsValue> config_getEnv(String key, boolean inherit,NutsSession session) {
         NutsRepositoryConfigModel model = ((DefaultNutsRepoConfigManager) repository.config()).getModel();
         NutsRepositoryConfig config = model.getConfig(session);
         String t = null;
@@ -753,15 +751,12 @@ public class DefaultNutsRepositoryConfigModel implements NutsRepositoryConfigMod
             t = config.getEnv().get(key);
         }
         if (!NutsBlankable.isBlank(t)) {
-            return t;
+            return NutsOptional.of(NutsValue.of(t));
         }
         if (inherit) {
-            t = session.config().getConfigProperty(key).asString().get(session);
-            if (!NutsBlankable.isBlank(t)) {
-                return t;
-            }
+            return session.config().getConfigProperty(key);
         }
-        return defaultValue;
+        return NutsOptional.ofEmpty(s->NutsMessage.cstyle("repository property not found : %s",key));
     }
 
     private Map<String, String> config_getEnv(boolean inherit,NutsSession session) {

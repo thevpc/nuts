@@ -25,6 +25,8 @@
 */
 package net.thevpc.nuts.toolbox.nutsserver.http;
 
+import net.thevpc.nuts.io.NutsPath;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -62,6 +64,7 @@ public interface NutsHttpServletFacadeContext {
 
     void sendResponseBytes(int code, byte[] bytes) throws IOException;
 
+    void sendResponseFile(int code, NutsPath file) throws IOException;
     void sendResponseFile(int code, Path file) throws IOException;
 
     Set<String> getRequestHeaderKeys(String header) throws IOException;

@@ -414,7 +414,7 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
      * @param other other instance
      * @return {@code this}
      */
-    NutsSearchCommand copyFrom(NutsSearchCommand other);
+    NutsSearchCommand setAll(NutsSearchCommand other);
 
     /**
      * copy content from given {@code other}
@@ -422,7 +422,7 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
      * @param other other instance
      * @return {@code this}
      */
-    NutsSearchCommand copyFrom(NutsFetchCommand other);
+    NutsSearchCommand setAll(NutsFetchCommand other);
 
     /**
      * create new instance copy of this

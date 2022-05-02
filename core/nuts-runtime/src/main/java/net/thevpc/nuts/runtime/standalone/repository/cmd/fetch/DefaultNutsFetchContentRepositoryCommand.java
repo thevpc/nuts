@@ -24,6 +24,7 @@
 package net.thevpc.nuts.runtime.standalone.repository.cmd.fetch;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.io.NutsPath;
 import net.thevpc.nuts.runtime.standalone.log.NutsLogUtils;
 import net.thevpc.nuts.runtime.standalone.repository.impl.NutsRepositoryExt;
 import net.thevpc.nuts.runtime.standalone.session.NutsSessionUtils;
@@ -79,7 +80,7 @@ public class DefaultNutsFetchContentRepositoryCommand extends AbstractNutsFetchC
         xrepo.checkAllowedFetch(id, session);
         long startTime = System.currentTimeMillis();
         try {
-            NutsContent f = xrepo.fetchContentImpl(id, descriptor0, localPath, getFetchMode(), session);
+            NutsPath f = xrepo.fetchContentImpl(id, descriptor0, localPath, getFetchMode(), session);
             if (f == null) {
                 throw new NutsNotFoundException(getSession(), id);
             }

@@ -27,6 +27,7 @@
 package net.thevpc.nuts;
 
 import net.thevpc.nuts.cmdline.NutsCommandLineConfigurable;
+import net.thevpc.nuts.io.NutsPath;
 
 import java.nio.file.Path;
 import java.util.Set;
@@ -115,7 +116,7 @@ public interface NutsFetchCommand extends NutsWorkspaceCommand {
      *
      * @return result as content
      */
-    NutsContent getResultContent();
+    NutsPath getResultContent();
 
     ////////////////////////////////////////////////////////
     // Result
@@ -188,7 +189,7 @@ public interface NutsFetchCommand extends NutsWorkspaceCommand {
      * @param other copy into {@code this} from {@code other} fetch command
      * @return {@code this} instance
      */
-    NutsFetchCommand copyFrom(NutsFetchCommand other);
+    NutsFetchCommand setAll(NutsFetchCommand other);
 
     /**
      * add dependency scope filter. Only relevant with {@link #setDependencies(boolean)}

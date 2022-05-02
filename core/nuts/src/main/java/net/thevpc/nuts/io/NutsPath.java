@@ -108,6 +108,14 @@ public interface NutsPath extends NutsFormattable, NutsStreamMetadataAware {
      */
     String getContentType();
 
+    boolean isUserCache();
+
+    NutsPath setUserCache(boolean userCache);
+
+    boolean isUserTemporary();
+
+    NutsPath setUserTemporary(boolean temporary);
+
     String getBaseName();
     String getLongBaseName();
 
@@ -351,4 +359,6 @@ public interface NutsPath extends NutsFormattable, NutsStreamMetadataAware {
      * @return true if this is a valid URL with http or https scheme
      */
     boolean isHttp();
+
+    NutsPath copy();
 }

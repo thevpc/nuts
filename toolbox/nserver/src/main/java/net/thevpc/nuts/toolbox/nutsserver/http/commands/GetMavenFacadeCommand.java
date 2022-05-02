@@ -112,11 +112,15 @@ public class GetMavenFacadeCommand extends AbstractFacadeCommand {
                         .setVersion(split.get(split.size() - 2)).build();
                 NutsDefinition fetch = session.fetch().setId(id).setSession(session)
                         .getResultDefinition();
-                if(context.isHeadMethod()){
-                    context.sendResponseHeaders(200,-1);
-                    return;
+                if(fetch.getContent().isPresent()) {
+                    if (context.isHeadMethod()) {
+                        context.sendResponseHeaders(200, -1);
+                        return;
+                    }
+                    context.sendResponseFile(200, fetch.getContent().orNull());
+                }else{
+                    context.sendError(404, "File Note Found");
                 }
-                context.sendResponseFile(200, fetch.getFile());
             } else {
                 context.sendError(404, "File Note Found");
             }

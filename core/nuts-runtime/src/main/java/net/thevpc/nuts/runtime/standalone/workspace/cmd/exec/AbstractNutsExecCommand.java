@@ -88,10 +88,10 @@ public abstract class AbstractNutsExecCommand extends NutsWorkspaceCommandBase<N
     public NutsExecCommand setCommand(NutsDefinition definition) {
         this.commandDefinition = definition;
         if (this.commandDefinition != null) {
-            this.commandDefinition.getContent();
-            this.commandDefinition.getDependencies();
-            this.commandDefinition.getEffectiveDescriptor();
-            this.commandDefinition.getInstallInformation();
+            this.commandDefinition.getContent().get(session);
+            this.commandDefinition.getDependencies().get(session);
+            this.commandDefinition.getEffectiveDescriptor().get(session);
+//            this.commandDefinition.getInstallInformation().get(session);
         }
         return this;
     }
@@ -395,7 +395,7 @@ public abstract class AbstractNutsExecCommand extends NutsWorkspaceCommandBase<N
     }
 
     @Override
-    public NutsExecCommand copyFrom(NutsExecCommand other) {
+    public NutsExecCommand setAll(NutsExecCommand other) {
         super.copyFromWorkspaceCommandBase((NutsWorkspaceCommandBase) other);
         addCommand(other.getCommand());
         addEnv(other.getEnv());
@@ -414,7 +414,7 @@ public abstract class AbstractNutsExecCommand extends NutsWorkspaceCommandBase<N
 
     @Override
     public NutsExecCommand copy() {
-        return session.exec().copyFrom(this);
+        return session.exec().setAll(this);
     }
 
     @Override

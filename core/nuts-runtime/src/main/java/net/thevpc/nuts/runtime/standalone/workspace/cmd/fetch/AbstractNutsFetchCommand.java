@@ -48,7 +48,7 @@ public abstract class AbstractNutsFetchCommand extends DefaultNutsQueryBaseOptio
     }
 
     @Override
-    public NutsFetchCommand copyFrom(NutsFetchCommand other) {
+    public NutsFetchCommand setAll(NutsFetchCommand other) {
         super.copyFromDefaultNutsQueryBaseOptions((DefaultNutsQueryBaseOptions) other);
         if (other != null) {
             NutsFetchCommand o = other;

@@ -9,6 +9,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.core.test.utils.TestUtils;
 import net.thevpc.nuts.elem.NutsElements;
 import net.thevpc.nuts.io.NutsIOException;
+import net.thevpc.nuts.io.NutsPath;
 import net.thevpc.nuts.io.NutsTmp;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import org.junit.jupiter.api.*;
@@ -105,13 +106,13 @@ public class Test06_UpdateTest {
 
         if (!data.fromToAPI.isIdentity()) {
             uws.deploy()
-                    .setContent(replaceAPIJar(data.apiDef.getFile(), data.fromToAPI, uws))
+                    .setContent(replaceAPIJar(data.apiDef.getContent().map(NutsPath::toFile).get(uws), data.fromToAPI, uws))
                     .setDescriptor(data.apiDef.getDescriptor().builder().setId(data.apiDef.getId().builder().setVersion(data.apiVersion2).build()).build())
                     //                        .setRepository("local")
                     .run();
         }
         uws.deploy()
-                .setContent(replaceRuntimeJar(data.rtDef.getFile(), data.fromToAPI, data.fromToImpl, uws))
+                .setContent(replaceRuntimeJar(data.rtDef.getContent().map(NutsPath::toFile).get(uws), data.fromToAPI, data.fromToImpl, uws))
                 .setDescriptor(
                         data.rtDef.getDescriptor()
                                 .builder()

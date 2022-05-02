@@ -2,7 +2,6 @@ package net.thevpc.nuts.runtime.standalone.io.terminal;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.io.*;
-import net.thevpc.nuts.runtime.standalone.io.progress.NutsProgressUtils;
 import net.thevpc.nuts.runtime.standalone.io.ask.DefaultNutsQuestion;
 import net.thevpc.nuts.runtime.standalone.io.progress.CProgressBar;
 import net.thevpc.nuts.spi.NutsSystemTerminalBase;
@@ -197,7 +196,7 @@ public class DefaultNutsSessionTerminalFromSystem extends AbstractNutsSessionTer
     @Override
     public NutsSessionTerminal copy() {
         final DefaultNutsSessionTerminalFromSystem r = new DefaultNutsSessionTerminalFromSystem(session, parent);
-        r.copyFrom(this);
+        r.setAll(this);
         return r;
     }
 
@@ -274,7 +273,7 @@ public class DefaultNutsSessionTerminalFromSystem extends AbstractNutsSessionTer
         return progressBar;
     }
 
-    protected void copyFrom(DefaultNutsSessionTerminalFromSystem other) {
+    protected void setAll(DefaultNutsSessionTerminalFromSystem other) {
         this.ws = other.ws;
         this.parent = other.parent;
         this.out = other.out;

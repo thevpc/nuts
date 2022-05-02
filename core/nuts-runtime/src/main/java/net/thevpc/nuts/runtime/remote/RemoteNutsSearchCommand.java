@@ -22,7 +22,7 @@ public class RemoteNutsSearchCommand extends AbstractNutsSearchCommand {
     @Override
     public NutsSearchCommand copy() {
         RemoteNutsSearchCommand b = new RemoteNutsSearchCommand(ws);
-        b.copyFrom(this);
+        b.setAll(this);
         return b;
     }
 

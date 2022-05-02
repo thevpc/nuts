@@ -402,8 +402,8 @@ public class DefaultNutsValue implements NutsValue {
     @Override
     public NutsOptional<Byte> asByte() {
         return asLong()
-                .ifEmptyGet(() -> NutsOptional.ofEmpty(session -> NutsMessage.cstyle("empty Byte")))
-                .ifErrorGet(() -> NutsOptional.ofError(session -> NutsMessage.cstyle("invalid Byte : %s", getRaw())))
+                .ifEmptyUse(() -> NutsOptional.ofEmpty(session -> NutsMessage.cstyle("empty Byte")))
+                .ifErrorUse(() -> NutsOptional.ofError(session -> NutsMessage.cstyle("invalid Byte : %s", getRaw())))
                 .flatMap(value -> {
                     byte smallValue = value.byteValue();
                     if (!Long.valueOf(smallValue).equals(value)) {
@@ -416,8 +416,8 @@ public class DefaultNutsValue implements NutsValue {
     @Override
     public NutsOptional<Short> asShort() {
         return asLong()
-                .ifEmptyGet(() -> NutsOptional.ofEmpty(session -> NutsMessage.cstyle("empty Short")))
-                .ifErrorGet(() -> NutsOptional.ofError(session -> NutsMessage.cstyle("invalid Short : %s", getRaw())))
+                .ifEmptyUse(() -> NutsOptional.ofEmpty(session -> NutsMessage.cstyle("empty Short")))
+                .ifErrorUse(() -> NutsOptional.ofError(session -> NutsMessage.cstyle("invalid Short : %s", getRaw())))
                 .flatMap(value -> {
                     short smallValue = value.shortValue();
                     if (!Long.valueOf(smallValue).equals(value)) {
@@ -430,8 +430,8 @@ public class DefaultNutsValue implements NutsValue {
     @Override
     public NutsOptional<Integer> asInt() {
         return asLong()
-                .ifEmptyGet(() -> NutsOptional.ofEmpty(session -> NutsMessage.cstyle("empty Integer")))
-                .ifErrorGet(() -> NutsOptional.ofError(session -> NutsMessage.cstyle("invalid Integer : %s", getRaw())))
+                .ifEmptyUse(() -> NutsOptional.ofEmpty(session -> NutsMessage.cstyle("empty Integer")))
+                .ifErrorUse(() -> NutsOptional.ofError(session -> NutsMessage.cstyle("invalid Integer : %s", getRaw())))
                 .flatMap(value -> {
                     int smallValue = value.intValue();
                     if (!Long.valueOf(smallValue).equals(value)) {

@@ -156,14 +156,6 @@ public interface NutsSession extends NutsCommandLineConfigurable {
     boolean isAsk();
 
     /**
-     * return current Output Format or {@code defaultValue} if null
-     *
-     * @param defaultValue value when Output Format is not set
-     * @return current Output Format or {@code defaultValue} if null
-     */
-    NutsContentType getOutputFormat(NutsContentType defaultValue);
-
-    /**
      * return effective trace output format. The effective trace output format
      * is the value of {@code getIterableFormat().getOutputFormat()} whenever {@code getIterableFormat()!=null
      * } otherwise it returns simply the value defined by calling
@@ -238,7 +230,7 @@ public interface NutsSession extends NutsCommandLineConfigurable {
      * @param other other session to copy from
      * @return return {@code this} instance
      */
-    NutsSession copyFrom(NutsSession other);
+    NutsSession setAll(NutsSession other);
 
     /**
      * copy into this instance from the given value
@@ -246,7 +238,7 @@ public interface NutsSession extends NutsCommandLineConfigurable {
      * @param options other workspace otions to copy from
      * @return return {@code this} instance
      */
-    NutsSession copyFrom(NutsWorkspaceOptions options);
+    NutsSession setAll(NutsWorkspaceOptions options);
 
     NutsId getAppId();
 

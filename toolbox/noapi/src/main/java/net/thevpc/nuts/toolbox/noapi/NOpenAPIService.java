@@ -522,7 +522,7 @@ public class NOpenAPIService {
             all.add(MdFactory.endParagraph());
         }
         NutsArrayElement parameters = call.getArray(prv.ofString("parameters"))
-                .orElseGetOptional(()->NutsOptional.of(dparameters))
+                .orElseUse(()->NutsOptional.of(dparameters))
                 .orElseGet(()->NutsArrayElementBuilder.of(session).build());
         List<NutsElement> headerParameters = parameters.stream().filter(x -> "header".equals(x.asObject().get(session).getString("in").orNull())).collect(Collectors.toList());
         List<NutsElement> queryParameters = parameters.stream().filter(x -> "query".equals(x.asObject().get(session).getString("in").orNull())).collect(Collectors.toList());

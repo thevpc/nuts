@@ -71,8 +71,8 @@ public class MavenFolderRepository extends NutsFolderRepositoryBase {
     }
 
 
-    public NutsContent fetchContentCoreUsingRepoHelper(NutsId id, NutsDescriptor descriptor, String localPath, NutsFetchMode fetchMode, NutsSession session) {
-        NutsContent cc = fetchContentCoreUsingWrapper(id, descriptor, localPath, fetchMode, session);
+    public NutsPath fetchContentCoreUsingRepoHelper(NutsId id, NutsDescriptor descriptor, String localPath, NutsFetchMode fetchMode, NutsSession session) {
+        NutsPath cc = fetchContentCoreUsingWrapper(id, descriptor, localPath, fetchMode, session);
         if (cc != null) {
             return cc;
         }
@@ -116,7 +116,7 @@ public class MavenFolderRepository extends NutsFolderRepositoryBase {
         return new MvnClient(session);
     }
 
-    public NutsContent fetchContentCoreUsingWrapper(NutsId id, NutsDescriptor descriptor, String localPath, NutsFetchMode fetchMode, NutsSession session) {
+    public NutsPath fetchContentCoreUsingWrapper(NutsId id, NutsDescriptor descriptor, String localPath, NutsFetchMode fetchMode, NutsSession session) {
         if (wrapper == null) {
             wrapper = getWrapper(session);
         }
@@ -137,16 +137,14 @@ public class MavenFolderRepository extends NutsFolderRepositoryBase {
             NutsPath content = getMavenLocalFolderContent(id, session);
             if (content != null && content.exists()) {
                 if (localPath == null) {
-                    return new DefaultNutsContent(
-                            content, true, false);
+                    return content.setUserCache(true).setUserTemporary(false);
                 } else {
                     String tempFile = NutsTmp.of(session)
                             .setRepositoryId(getUuid())
                             .createTempFile(content.getName()).toString();
                     NutsCp.of(session)
                             .from(content).to(tempFile).addOptions(NutsPathOption.SAFE).run();
-                    return new DefaultNutsContent(
-                            NutsPath.of(tempFile, session), true, false);
+                    return NutsPath.of(tempFile, session).setUserCache(true).setUserTemporary(false);
                 }
             }
         }

@@ -111,12 +111,10 @@ public class NutsRepositoryFolderHelper {
         return getStoreLocation().resolve(NutsRepositoryExt0.of(repo).getIdBasedir(id.builder().setVersion("").build(), session));
     }
 
-    public NutsContent fetchContentImpl(NutsId id, String localPath, NutsSession session) {
+    public NutsPath fetchContentImpl(NutsId id, String localPath, NutsSession session) {
         NutsPath cacheContent = getLongIdLocalFile(id.builder().setFaceContent().build(), session);
         if (cacheContent != null && pathExists(cacheContent, session)) {
-            return new DefaultNutsContent(
-                    cacheContent,
-                    cacheFolder, false);
+            return cacheContent.setUserCache(cacheFolder).setUserTemporary(false);
         }
         return null;
     }

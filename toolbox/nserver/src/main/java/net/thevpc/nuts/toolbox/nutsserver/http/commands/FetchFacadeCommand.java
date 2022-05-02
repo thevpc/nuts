@@ -1,6 +1,7 @@
 package net.thevpc.nuts.toolbox.nutsserver.http.commands;
 
 import net.thevpc.nuts.NutsDefinition;
+import net.thevpc.nuts.io.NutsPath;
 import net.thevpc.nuts.toolbox.nutsserver.AbstractFacadeCommand;
 import net.thevpc.nuts.toolbox.nutsserver.FacadeCommandContext;
 
@@ -27,8 +28,8 @@ public class FetchFacadeCommand extends AbstractFacadeCommand {
         } catch (Exception exc) {
             //
         }
-        if (fetch != null && fetch.getFile() != null && Files.exists(fetch.getFile())) {
-            context.sendResponseFile(200, fetch.getFile());
+        if (fetch != null && fetch.getContent().map(NutsPath::exists).orElse(false)) {
+            context.sendResponseFile(200, fetch.getContent().orNull());
         } else {
             context.sendError(404, "File Not Found");
         }

@@ -61,25 +61,7 @@ public interface NutsDefinition extends Serializable, Comparable<NutsDefinition>
      * @return artifact content file info
      * @throws NutsElementNotFoundException if the property is not requested
      */
-    NutsContent getContent();
-
-    /**
-     * return artifact content path.
-     * this is an <strong>optional</strong> property. It must be requested (see {@link NutsSearchCommand#setContent(boolean)}) to be available.
-     *
-     * @return artifact content file path
-     * @throws NutsElementNotFoundException if the property is not requested
-     */
-    NutsPath getPath();
-
-    /**
-     * return artifact content file path.
-     * this is an <strong>optional</strong> property. It must be requested (see {@link NutsSearchCommand#setContent(boolean)}) to be available.
-     *
-     * @return artifact content file path
-     * @throws NutsElementNotFoundException if the property is not requested
-     */
-    Path getFile();
+    NutsOptional<NutsPath> getContent();
 
     /**
      * return artifact install information.
@@ -87,7 +69,7 @@ public interface NutsDefinition extends Serializable, Comparable<NutsDefinition>
      * @return artifact install information
      * @throws NutsElementNotFoundException if the property is not requested
      */
-    NutsInstallInformation getInstallInformation();
+    NutsOptional<NutsInstallInformation> getInstallInformation();
 
     /**
      * return artifact effective descriptor.
@@ -97,7 +79,7 @@ public interface NutsDefinition extends Serializable, Comparable<NutsDefinition>
      * @return artifact effective descriptor
      * @throws NutsElementNotFoundException if the property is not requested
      */
-    NutsDescriptor getEffectiveDescriptor();
+    NutsOptional<NutsDescriptor> getEffectiveDescriptor();
 
     /**
      * return all or some of the transitive dependencies of the current Nuts as List
@@ -109,7 +91,7 @@ public interface NutsDefinition extends Serializable, Comparable<NutsDefinition>
      * result of the search command.
      * @throws NutsElementNotFoundException if the property is not requested
      */
-    NutsDependencies getDependencies();
+    NutsOptional<NutsDependencies> getDependencies();
 
     /**
      * return target api id (included in dependency) for the current id.
@@ -144,20 +126,5 @@ public interface NutsDefinition extends Serializable, Comparable<NutsDefinition>
      * @return name of the repository providing this id.
      */
     String getRepositoryName();
-
-
-    /**
-     * true if requested content
-     *
-     * @return true if requested content
-     */
-    boolean isSetDependencies();
-
-    /**
-     * true if requested effective descriptor
-     *
-     * @return true if requested content
-     */
-    boolean isSetEffectiveDescriptor();
 
 }

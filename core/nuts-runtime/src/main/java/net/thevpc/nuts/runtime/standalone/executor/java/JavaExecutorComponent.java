@@ -26,6 +26,7 @@ package net.thevpc.nuts.runtime.standalone.executor.java;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.boot.NutsClassLoaderNode;
 import net.thevpc.nuts.cmdline.NutsCommandLine;
+import net.thevpc.nuts.io.NutsPath;
 import net.thevpc.nuts.io.NutsPrintStream;
 import net.thevpc.nuts.io.NutsTerminalMode;
 import net.thevpc.nuts.runtime.standalone.executor.AbstractSyncIProcessExecHelper;
@@ -190,7 +191,7 @@ public class JavaExecutorComponent implements NutsExecutorComponent {
     //@Override
     public IProcessExecHelper execHelper(NutsExecutionContext executionContext) {
         NutsDefinition def = executionContext.getDefinition();
-        Path contentFile = def.getFile();
+        Path contentFile = def.getContent().map(NutsPath::toFile).orNull();
         NutsSession session = executionContext.getSession();
         final JavaExecutorOptions joptions = new JavaExecutorOptions(
                 def,

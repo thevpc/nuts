@@ -58,7 +58,7 @@ import java.util.List;
 public class JsonCommand extends SimpleJShellBuiltin {
 
     public JsonCommand() {
-        super("json", DEFAULT_SUPPORT,Options.class);
+        super("json", DEFAULT_SUPPORT, Options.class);
     }
 
     @Override
@@ -122,11 +122,8 @@ public class JsonCommand extends SimpleJShellBuiltin {
                             throw new NutsExecutionException(session, NutsMessage.cstyle("%s", ex), ex, 103);
                         }
                     }
-                    if (session.getOutputFormat(null) == null) {
-                        session.out().printlnf(NutsElements.of(session).json().setValue(resultDocument).format());
-                    } else {
-                        session.out().printlnf(resultDocument);
-                    }
+                    NutsElement json = NutsElements.of(session).toElement(resultDocument);
+                    session.out().printlnf(json);
                     break;
                 }
                 case "jpath": {
@@ -139,11 +136,8 @@ public class JsonCommand extends SimpleJShellBuiltin {
                         );
                     }
                     Object result = all.size() == 1 ? all.get(0) : all;
-                    if (session.getOutputFormat(null) == null) {
-                        session.out().printlnf(NutsElements.of(session).json().setValue(result).format());
-                    } else {
-                        session.out().printlnf(result);
-                    }
+                    NutsElement json = NutsElements.of(session).toElement(result);
+                    session.out().printlnf(result);
                     break;
                 }
             }

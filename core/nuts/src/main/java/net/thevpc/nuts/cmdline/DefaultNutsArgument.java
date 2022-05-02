@@ -164,10 +164,10 @@ public class DefaultNutsArgument implements NutsArgument {
     @Override
     public NutsOptional<String> getStringValue() {
         return getValue().asString()
-                .ifEmptyGet(
+                .ifEmptyUse(
                         () -> NutsOptional.ofEmpty(s -> NutsMessage.cstyle("missing value for : %s", getKey().asString().orElse("")))
                 )
-                .ifErrorGet(
+                .ifErrorUse(
                         () -> NutsOptional.ofEmpty(s -> NutsMessage.cstyle("erroneous value for : %s", getKey().asString().orElse("")))
                 );
     }
@@ -228,18 +228,18 @@ public class DefaultNutsArgument implements NutsArgument {
     public NutsOptional<Boolean> getBooleanValue() {
         if (isNegated()) {
             return getValue().asBoolean().ifEmpty(true).map(x -> isNegated() != x)
-                    .ifEmptyGet(
+                    .ifEmptyUse(
                             () -> NutsOptional.ofEmpty(s -> NutsMessage.cstyle("missing value for : %s", getKey().asString().orElse("")))
                     )
-                    .ifErrorGet(
+                    .ifErrorUse(
                             () -> NutsOptional.ofEmpty(s -> NutsMessage.cstyle("erroneous value for : %s", getKey().asString().orElse("")))
                     );
         }
         return getValue().asBoolean()
-                .ifEmptyGet(
+                .ifEmptyUse(
                         () -> NutsOptional.ofEmpty(s -> NutsMessage.cstyle("missing value for : %s", getKey().asString().orElse("")))
                 )
-                .ifErrorGet(
+                .ifErrorUse(
                         () -> NutsOptional.ofEmpty(s -> NutsMessage.cstyle("erroneous value for : %s", getKey().asString().orElse("")))
                 );
     }

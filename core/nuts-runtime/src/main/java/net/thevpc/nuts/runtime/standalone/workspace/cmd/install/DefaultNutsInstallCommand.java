@@ -107,7 +107,7 @@ public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
                 _loadIdContent(parent, id, session, false, loaded, NutsInstallStrategy.REQUIRE);
             }
             if (includeDeps) {
-                for (NutsDependency dependency : def.definition.getDependencies()) {
+                for (NutsDependency dependency : def.definition.getDependencies().get(session)) {
                     _loadIdContent(dependency.toId(), id, session, false, loaded, NutsInstallStrategy.REQUIRE);
                 }
             }

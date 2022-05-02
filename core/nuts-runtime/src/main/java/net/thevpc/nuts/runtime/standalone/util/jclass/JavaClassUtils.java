@@ -143,8 +143,8 @@ public class JavaClassUtils {
 
     public static String sourceVersionToClassVersion(String sourceVersion, NutsSession session) {
         NutsVersion v = NutsVersion.of(sourceVersion).get(session);
-        int major = v.getInt(0, 0);
-        int minor = v.getInt(1, 0);
+        int major = v.getNumber(0).flatMap(NutsValue::asInt).orElse(0);
+        int minor = v.getNumber(1).flatMap(NutsValue::asInt).orElse(-1);
         if (major < 1) {
             throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("invalid sourceVersion %s", sourceVersion));
         }

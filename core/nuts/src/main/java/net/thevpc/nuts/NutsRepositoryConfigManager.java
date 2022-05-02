@@ -135,11 +135,11 @@ public interface NutsRepositoryConfigManager {
 
     Map<String, String> getConfigMap(boolean inherit);
 
-    String getConfigProperty(String key, String defaultValue, boolean inherit);
+    NutsOptional<NutsValue> getConfigProperty(String key, boolean inherit);
 
     Map<String, String> getConfigMap();
 
-    String getConfigProperty(String property, String defaultValue);
+    NutsOptional<NutsValue> getConfigProperty(String property);
 
     NutsRepositoryConfigManager setConfigProperty(String property, String value);
 }

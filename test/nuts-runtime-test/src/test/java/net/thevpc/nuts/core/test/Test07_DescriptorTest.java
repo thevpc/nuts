@@ -41,7 +41,7 @@ public class Test07_DescriptorTest {
             System.out.println(dependency.toString());
         }
         TestUtils.println(u.getDescriptor());
-        TestUtils.println(u.getEffectiveDescriptor());
+        TestUtils.println(u.getEffectiveDescriptor().get(session));
         TestUtils.println(u.getId()+":"+(u.getDescriptor().isExecutable() ? "executable" : "non-executable"));
         TestUtils.println(u.getId()+":"+(u.getDescriptor().isApplication() ? "app" : "non-app"));
         Assertions.assertTrue(!u.getDescriptor().isExecutable());

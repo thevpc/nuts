@@ -223,7 +223,7 @@ public abstract class AbstractJShellContext implements JShellContext {
     }
 
     @Override
-    public void copyFrom(JShellContext other) {
+    public void setAll(JShellContext other) {
         if (other != null) {
             setSession(other.getSession() == null ? null : other.getSession().copy());
             setAliases(other.aliases());

@@ -6,6 +6,7 @@
 package net.thevpc.nuts.runtime.standalone.repository.impl;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.io.NutsPath;
 import net.thevpc.nuts.runtime.standalone.repository.cmd.NutsRepositorySupportedAction;
 import net.thevpc.nuts.spi.NutsDeployRepositoryCommand;
 import net.thevpc.nuts.spi.NutsPushRepositoryCommand;
@@ -36,7 +37,7 @@ public interface NutsRepositoryExt extends NutsRepositoryExt0{
 
     NutsIterator<NutsId> searchVersionsImpl(NutsId id, NutsIdFilter idFilter, NutsFetchMode fetchMode, NutsSession session);
 
-    NutsContent fetchContentImpl(NutsId id, NutsDescriptor descriptor, String localPath, NutsFetchMode fetchMode, NutsSession session);
+    NutsPath fetchContentImpl(NutsId id, NutsDescriptor descriptor, String localPath, NutsFetchMode fetchMode, NutsSession session);
 
     NutsIterator<NutsId> searchImpl(final NutsIdFilter filter, NutsFetchMode fetchMode, NutsSession session);
 

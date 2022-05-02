@@ -96,9 +96,8 @@ public class DefaultNutsArtifactPathExecutable extends AbstractNutsExecutableCom
                     null,
                     _id.getLongId(),
                     c.descriptor,
-                    new DefaultNutsContent(
-                            NutsPath.of(c.contentFile,execSession)
-                            , false, c.temps.size() > 0),
+                            NutsPath.of(c.contentFile,execSession).setUserCache(false).setUserTemporary(c.temps.size() > 0)
+                            ,
                     DefaultNutsInstallInfo.notInstalled(_id),
                     null, session
             );

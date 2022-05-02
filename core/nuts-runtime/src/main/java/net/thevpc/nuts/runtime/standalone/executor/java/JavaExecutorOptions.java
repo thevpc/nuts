@@ -68,7 +68,7 @@ public final class JavaExecutorOptions {
                 id = descriptor.getId();
             }
         }
-        Path path = def.getFile();
+        Path path = def.getContent().map(NutsPath::toFile).orNull();
         this.dir = dir;
         this.execArgs = executorOptions;
 //        List<String> classPath0 = new ArrayList<>();
@@ -289,7 +289,7 @@ public final class JavaExecutorOptions {
             boolean baseDetected = false;
             for (NutsDefinition nutsDefinition : nutsDefinitions) {
                 NutsClassLoaderNode nn = null;
-                if (nutsDefinition.getFile() != null) {
+                if (nutsDefinition.getContent().isPresent()) {
                     if (id.getLongName().equals(nutsDefinition.getId().getLongName())) {
                         baseDetected = true;
                         if (!isExcludeBase()) {
